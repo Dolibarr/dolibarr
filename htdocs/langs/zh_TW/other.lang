@@ -129,6 +129,7 @@ ClosedByLogin=已關閉的用戶登入名稱
 FileWasRemoved=檔案%s已刪除
 DirWasRemoved=資料夾%s已刪除
 FeatureNotYetAvailable=此功能在目前版本中尚不可用
+FeatureNotAvailableOnDevicesWithoutMouse=Feature not available on devices without mouse
 FeaturesSupported=已支援功能
 Width=寬度
 Height=高度
@@ -263,7 +264,7 @@ ContactCreatedByEmailCollector=電子郵件收集器從電子郵件MSGID %s建�
 ProjectCreatedByEmailCollector=電子郵件收集器從電子郵件MSGID %s建立的專案
 TicketCreatedByEmailCollector=電子郵件收集器從電子郵件MSGID %s建立的服務單
 OpeningHoursFormatDesc=使用-分隔營業開始時間和營業結束時間。 <br>使用空格輸入不同的範圍。 <br>範例：8-12 14-18
-PrefixSession=程序ID的前綴
+SuffixSessionName=Suffix for session name
 
 ##### Export #####
 ExportsArea=出口地區

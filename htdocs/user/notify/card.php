@@ -72,7 +72,7 @@ $permissiontoadd = (($object->id == $user->id) || (!empty($user->rights->user->u
 if ($user->socid) {
 	$id = $user->socid;
 }
-$result = restrictedArea($user, 'user', '', '');
+$result = restrictedArea($user, 'user', '', '', 'user');
 
 
 /*

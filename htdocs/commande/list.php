@@ -473,7 +473,7 @@ if ($search_user > 0) {
 $sql .= ' WHERE c.fk_soc = s.rowid';
 $sql .= ' AND c.entity IN ('.getEntity('commande').')';
 if ($search_product_category > 0) {
-	$sql .= " AND cp.fk_categorie = ".$search_product_category;
+	$sql .= " AND cp.fk_categorie = ".((int) $search_product_category);
 }
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
@@ -1373,7 +1373,7 @@ if ($resql) {
 	$generic_product = new Product($db);
 	$userstatic = new User($db);
 	$i = 0;
-	$totalarray = array();
+	$totalarray = array('nbfield' => 0, 'val' => array(), 'pos' => array());
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 
@@ -1610,7 +1610,11 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'c.total_ht';
 			}
-			  $totalarray['val']['c.total_ht'] += $obj->total_ht;
+			if (isset($totalarray['val']['c.total_ht'])) {
+				$totalarray['val']['c.total_ht'] += $obj->total_ht;
+			} else {
+				$totalarray['val']['c.total_ht'] = $obj->total_ht;
+			}
 		}
 		// Amount VAT
 		if (!empty($arrayfields['c.total_vat']['checked'])) {

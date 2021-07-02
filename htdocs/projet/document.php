@@ -164,8 +164,8 @@ if ($object->id > 0) {
 
 	print dol_get_fiche_end();
 
-	$modulepart = 'project';
-	$permission = ($userWrite > 0);
+	$modulepart = 'projet';
+	$permissiontoadd = ($userWrite > 0);
 	$permtoedit = ($userWrite > 0);
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

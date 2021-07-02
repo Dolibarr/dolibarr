@@ -2294,6 +2294,7 @@ if ($action == 'create') {
 		print $langs->trans('OutstandingBill');
 		print '</td><td class="valuefield">';
 		$arrayoutstandingbills = $soc->getOutstandingBills();
+		print ($arrayoutstandingbills['opened'] > $soc->outstanding_limit ? img_warning() : '');
 		print price($arrayoutstandingbills['opened']).' / ';
 		print price($soc->outstanding_limit, 0, $langs, 1, - 1, - 1, $conf->currency);
 		print '</td>';

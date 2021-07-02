@@ -129,6 +129,7 @@ ClosedByLogin=Identifiant utilisateur qui a fermé
 FileWasRemoved=Le fichier %s a été supprimé
 DirWasRemoved=Le répertoire %s a été supprimé
 FeatureNotYetAvailable=Fonctionnalité pas encore disponible dans cette version
+FeatureNotAvailableOnDevicesWithoutMouse=Fonctionnalité indisponible sur les équipements sans souris
 FeaturesSupported=Fonctionnalités prises en charge
 Width=Largeur
 Height=Hauteur
@@ -263,7 +264,7 @@ ContactCreatedByEmailCollector=Contact/adresse créé par le collecteur de courr
 ProjectCreatedByEmailCollector=Projet créé par le collecteur de courrier électronique à partir du courrier électronique MSGID %s
 TicketCreatedByEmailCollector=Ticket créé par le collecteur de courrier électronique à partir du courrier électronique MSGID %s
 OpeningHoursFormatDesc=Utilisez un - pour séparer les heures d'ouverture et de fermeture. <br> Utilisez un espace pour entrer différentes plages. <br> Exemple: 8-12 14-18
-PrefixSession=Préfixe pour l'ID de la session
+SuffixSessionName=Suffix for session name
 
 ##### Export #####
 ExportsArea=Espace exports
@@ -289,4 +290,4 @@ PopuProp=Produits / services par popularité dans les propositions
 PopuCom=Produits/services par popularité dans les commandes
 ProductStatistics=Statistiques sur les produits / services
 NbOfQtyInOrders=Qté en commandes
-SelectTheTypeOfObjectToAnalyze=Select an object to view its statistics...
+SelectTheTypeOfObjectToAnalyze=Sélectionner un objet pour en voir les statistiques

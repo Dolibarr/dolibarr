@@ -227,7 +227,7 @@ function societe_prepare_head(Societe $object)
 		if (empty($conf->stripe->enabled)) {
 			$sql .= " AND n.stripe_card_ref IS NULL";
 		} else {
-			$sql .= " AND (n.stripe_card_ref IS NULL OR (n.stripe_card_ref IS NOT NULL AND n.status = ".$servicestatus."))";
+			$sql .= " AND (n.stripe_card_ref IS NULL OR (n.stripe_card_ref IS NOT NULL AND n.status = ".((int) $servicestatus)."))";
 		}
 
 		$resql = $db->query($sql);
@@ -715,10 +715,7 @@ function getCountriesInEEC()
 	global $conf, $db;
 	$country_code_in_EEC = array();
 
-	if (!empty($conf->global->MAIN_COUNTRIES_IN_EEC)) {
-		// For example MAIN_COUNTRIES_IN_EEC = 'AT,BE,BG,CY,CZ,DE,DK,EE,ES,FI,FR,GB,GR,HR,NL,HU,IE,IM,IT,LT,LU,LV,MC,MT,PL,PT,RO,SE,SK,SI,UK'
-		$country_code_in_EEC = explode(',', $conf->global->MAIN_COUNTRIES_IN_EEC);
-	} elseif (!empty($conf->cache['country_code_in_EEC'])) {
+	if (!empty($conf->cache['country_code_in_EEC'])) {
 		// Use of cache to reduce number of database requests
 		$country_code_in_EEC = $conf->cache['country_code_in_EEC'];
 	} else {
@@ -963,9 +960,9 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 
 	$contactstatic->fields = array(
 		'name'      =>array('type'=>'varchar(128)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
-		'poste'     =>array('type'=>'varchar(128)', 'label'=>'PostOrFunction', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>20),
-		'address'   =>array('type'=>'varchar(128)', 'label'=>'Address', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>30),
-		'role'      =>array('type'=>'checkbox', 'label'=>'Role', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>40),
+		'poste'     =>array('type'=>'varchar(128)', 'label'=>'PostOrFunction', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>2, 'index'=>1, 'position'=>20),
+		'address'   =>array('type'=>'varchar(128)', 'label'=>'Address', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>3, 'index'=>1, 'position'=>30),
+		'role'      =>array('type'=>'checkbox', 'label'=>'Role', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>4, 'index'=>1, 'position'=>40),
 		'statut'    =>array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'default'=>0, 'index'=>1, 'position'=>50, 'arrayofkeyval'=>array(0=>$contactstatic->LibStatut(0, 1), 1=>$contactstatic->LibStatut(1, 1))),
 	);
 
@@ -1448,7 +1445,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		if (is_object($objcon) && $objcon->id > 0) {
 			$force_filter_contact = true;
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as r ON a.id = r.fk_actioncomm";
-			$sql .= " AND r.element_type = '".$db->escape($objcon->table_element)."' AND r.fk_element = ".$objcon->id;
+			$sql .= " AND r.element_type = '".$db->escape($objcon->table_element)."' AND r.fk_element = ".((int) $objcon->id);
 		}
 
 		if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur'))) {
@@ -1457,7 +1454,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_resources as er";
 			$sql .= " ON er.resource_type = 'dolresource'";
 			$sql .= " AND er.element_id = a.id";
-			$sql .= " AND er.resource_id = ".$filterobj->id;
+			$sql .= " AND er.resource_id = ".((int) $filterobj->id);
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Project') {
 			/* Nothing */
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') {
@@ -1616,8 +1613,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 
 						'contact_id'=>$obj->fk_contact,
 						'socpeopleassigned' => $contactaction->socpeopleassigned,
-						'lastname'=>$obj->lastname,
-						'firstname'=>$obj->firstname,
+						'lastname' => empty($obj->lastname) ? '' : $obj->lastname,
+						'firstname' => empty($obj->firstname) ? '' : $obj->firstname,
 						'fk_element'=>$obj->fk_element,
 						'elementtype'=>$obj->elementtype,
 						// Type of event
@@ -1940,7 +1937,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 
 	$sql = "SELECT s.rowid, s.client, s.fournisseur, s.nom as name, s.name_alias, s.email, s.address, s.zip, s.town, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql .= " WHERE s.parent = ".$object->id;
+	$sql .= " WHERE s.parent = ".((int) $object->id);
 	$sql .= " AND s.entity IN (".getEntity('societe').")";
 	$sql .= " ORDER BY s.nom";
 

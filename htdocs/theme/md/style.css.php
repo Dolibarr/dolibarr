@@ -599,6 +599,9 @@ input.pageplusone {
 .colorblack {
 	color: #000;
 }
+.fontsizeunset {
+	font-size: unset !important;
+}
 
 .vmirror {
 	transform: scale(1, -1);
@@ -1211,6 +1214,12 @@ select.flat.selectlimit {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
+.tdoverflowmax250 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 250px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 .tdoverflowmax300 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 300px;
 	overflow: hidden;
@@ -1511,6 +1520,10 @@ table[summary="list_of_modules"] .fa-cog {
 		display: inline-block;
 	}
 	
+	input.maxwidthinputfileonsmartphone {
+		width: 175px;
+	}
+	
 	.poweredbyimg {
 		width: 48px;
 	}
@@ -1664,7 +1677,7 @@ table.tableforfield tr>td:first-of-type, tr.trforfield>td:first-of-type, div.tab
 }
 
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
-.hideonprint { display: none; }
+.hideonprint { display: none !important; }
 <?php } ?>
 
 
@@ -3902,14 +3915,19 @@ tr.liste_sub_total, tr.liste_sub_total td {
 }
 
 .paymenttable, .margintable {
+	margin: 0px 0px 0px 0px !important;
+}
+.paymenttable, .margintable:not(.margintablenotop) {
 	border-top-width: <?php echo $borderwidth ?>px !important;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>) !important;
 	border-top-style: solid !important;
-	margin: 0px 0px 0px 0px !important;
+}
+.margintable.margintablenotop {
+	border-top-width: 0;
 }
 .paymenttable tr td:first-child, .margintable tr td:first-child
 {
-	padding-left: 2px;
+	//padding-left: 2px;
 }
 .paymenttable, .margintable tr td {
 	height: 22px;
@@ -4628,6 +4646,10 @@ div.visible {
 
 div.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
+}
+
+.unvisible {
+	visibility: hidden;
 }
 
 tr.visible {
@@ -5921,6 +5943,9 @@ dl.dropdown {
 	cursor:pointer;
 	display:inline-block;
 	padding: 0 3px 2px 0;
+}
+.maxwidthsearch .dropdown dt a span, .multiSel span {
+	padding: 0 3px 2px 3px;
 }
 .dropdown span.value {
 	display:none;

@@ -88,7 +88,7 @@ if (!empty($conf->propal->enabled)) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND p.fk_soc = ".$socid;
+		$sql .= " AND p.fk_soc = ".((int) $socid);
 	}
 
 	$resql = $db->query($sql);
@@ -150,7 +150,7 @@ print '<div class="ficheaddleft">';
  */
 
 $sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, date_cloture as datec";
-$sql .= ", s.nom as socname, s.rowid as socid, s.canvas, s.client";
+$sql .= ", s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta";
 $sql .= " FROM ".MAIN_DB_PREFIX."propal as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) {
@@ -160,7 +160,7 @@ $sql .= " WHERE c.entity IN (".getEntity($propalstatic->element).")";
 $sql .= " AND c.fk_soc = s.rowid";
 //$sql.= " AND c.fk_statut > 2";
 if ($socid) {
-	$sql .= " AND c.fk_soc = ".$socid;
+	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -185,6 +185,8 @@ if ($resql) {
 			$companystatic->name = $obj->socname;
 			$companystatic->client = $obj->client;
 			$companystatic->canvas = $obj->canvas;
+			$companystatic->email = $obj->email;
+			$companystatic->code_compta = $obj->code_compta;
 
 			$filename = dol_sanitizeFileName($obj->ref);
 			$filedir = $conf->propal->multidir_output[$obj->entity].'/'.dol_sanitizeFileName($obj->ref);
@@ -223,7 +225,7 @@ if ($resql) {
  * Open (validated) proposals
  */
 if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
-	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client";
+	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta";
 	$sql .= ", p.rowid as propalid, p.entity, p.total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."propal as p";
@@ -260,6 +262,8 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
 				$companystatic->name = $obj->socname;
 				$companystatic->client = $obj->client;
 				$companystatic->canvas = $obj->canvas;
+				$companystatic->email = $obj->email;
+				$companystatic->code_compta = $obj->code_compta;
 
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->propal->multidir_output[$obj->entity].'/'.dol_sanitizeFileName($obj->ref);
@@ -314,7 +318,7 @@ if (! empty($conf->propal->enabled))
 	$sql.= " WHERE c.fk_soc = s.rowid";
 	$sql.= " AND c.entity = ".$conf->entity;
 	$sql.= " AND c.fk_statut = 1";
-	if ($socid) $sql.= " AND c.fk_soc = ".$socid;
+	if ($socid) $sql.= " AND c.fk_soc = ".((int) $socid);
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	$sql.= " ORDER BY c.rowid DESC";
 
@@ -389,7 +393,7 @@ if (! empty($conf->propal->enabled))
 	$sql.= " WHERE c.fk_soc = s.rowid";
 	$sql.= " AND c.entity = ".$conf->entity;
 	$sql.= " AND c.fk_statut = 2 ";
-	if ($socid) $sql.= " AND c.fk_soc = ".$socid;
+	if ($socid) $sql.= " AND c.fk_soc = ".((int) $socid);
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	$sql.= " ORDER BY c.rowid DESC";
 

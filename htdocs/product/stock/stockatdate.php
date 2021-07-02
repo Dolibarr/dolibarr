@@ -45,7 +45,7 @@ if ($user->socid) {
 $result = restrictedArea($user, 'produit|service');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('stockreplenishlist'));
+$hookmanager->initHooks(array('stockatdate'));
 
 //checks if a product has been ordered
 
@@ -116,7 +116,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 $warehouseStatus = array();
-if ($conf->global->ENTREPOT_EXTRA_STATUS) {
+if (!empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
 	//$warehouseStatus[] = Entrepot::STATUS_CLOSED;
 	$warehouseStatus[] = Entrepot::STATUS_OPEN_ALL;
 	$warehouseStatus[] = Entrepot::STATUS_OPEN_INTERNAL;
@@ -136,10 +136,10 @@ if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 		$sql .= " AND w.statut IN (".$db->sanitize(implode(',', $warehouseStatus)).")";
 	}
 	if ($productid > 0) {
-		$sql .= " AND ps.fk_product = ".$productid;
+		$sql .= " AND ps.fk_product = ".((int) $productid);
 	}
 	if ($fk_warehouse > 0) {
-		$sql .= " AND ps.fk_entrepot = ".$fk_warehouse;
+		$sql .= " AND ps.fk_entrepot = ".((int) $fk_warehouse);
 	}
 	$sql .= " GROUP BY fk_product, fk_entrepot";
 	//print $sql;
@@ -294,8 +294,8 @@ if ($sortfield == 'stock' && $fk_warehouse > 0) {
 }
 $sql .= $db->order($sortfield, $sortorder);
 
+$nbtotalofrecords = 0;
 if ($date && $dateIsValid) {	// We avoid a heavy sql if mandatory parameter date not yet defined
-	$nbtotalofrecords = '';
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
@@ -618,7 +618,9 @@ if (empty($date) || ! $dateIsValid) {
 print '</table>';
 print '</div>';
 
-$db->free($resql);
+if (!empty($resql)) {
+	$db->free($resql);
+}
 
 print dol_get_fiche_end();
 

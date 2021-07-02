@@ -383,7 +383,7 @@ if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex")
 			$ecmfile->fullpath_orig = $fullpath;
 			$ecmfile->gen_or_uploaded = 'unknown';
 			$ecmfile->description = ''; // indexed content
-			$ecmfile->keyword = ''; // keyword content
+			$ecmfile->keywords = ''; // keyword content
 			$result = $ecmfile->create($user);
 			if ($result < 0) {
 				setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
@@ -448,7 +448,7 @@ if ($action == 'confirm_crop') {
 			$ecmfile->fullpath_orig = $fullpath;
 			$ecmfile->gen_or_uploaded = 'unknown';
 			$ecmfile->description = ''; // indexed content
-			$ecmfile->keyword = ''; // keyword content
+			$ecmfile->keywords = ''; // keyword content
 			$result = $ecmfile->create($user);
 			if ($result < 0) {
 				setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');

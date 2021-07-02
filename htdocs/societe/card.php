@@ -57,6 +57,10 @@ if (!empty($conf->accounting->enabled)) {
 if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
+if (! empty($conf->eventorganization->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
+}
+
 
 $langs->loadLangs(array("companies", "commercial", "bills", "banks", "users"));
 if (!empty($conf->adherent->enabled)) {
@@ -272,6 +276,7 @@ if (empty($reshook)) {
 						'Ticket' => '/ticket/class/ticket.class.php',
 						'User' => '/user/class/user.class.php',
 						'Account' => '/compta/bank/class/account.class.php',
+						'ConferenceOrBoothAttendee' => '/eventorganization/class/conferenceorboothattendee.class.php'
 					);
 
 					//First, all core objects must update their tables
@@ -859,6 +864,11 @@ if (empty($reshook)) {
 	if ($action == 'set_salesrepresentatives' && $user->rights->societe->creer) {
 		$object->fetch($socid);
 		$result = $object->setSalesRep(GETPOST('commercial', 'array'));
+	}
+
+	// warehouse
+	if ($action == 'setwarehouse' && $user->rights->societe->creer) {
+		$result = $object->setWarehouse(GETPOST('fk_warehouse', 'int'));
 	}
 
 	$id = $socid;
@@ -1649,8 +1659,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$accountancy_code_buy = GETPOST('accountancy_code_buy', 'alpha');
 				print $formaccounting->select_account($accountancy_code_buy, 'accountancy_code_buy', 1, null, 1, 1, '');
 				print '</td></tr>';
-			} else // For external software
-			{
+			} else { // For external software
 				// Accountancy_code_sell
 				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 				print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_sell" value="'.$object->accountancy_code_sell.'">';
@@ -2354,8 +2363,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<td>';
 					print $formaccounting->select_account($object->accountancy_code_buy, 'accountancy_code_buy', 1, '', 1, 1);
 					print '</td></tr>';
-				} else // For external software
-				{
+				} else { // For external software
 					// Accountancy_code_sell
 					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
 					print '<td><input name="accountancy_code_sell" class="maxwidth200" value="'.$object->accountancy_code_sell.'">';
@@ -2642,21 +2650,25 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 		print '</td></tr>';
 
-		// Third-Party Type
-		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('ThirdPartyType').'</td>';
-		if ($action != 'editthirdpartytype' && $user->rights->societe->creer) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editthirdpartytype&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
-		}
-		print '</tr></table>';
-		print '</td><td>';
-		$html_name = ($action == 'editthirdpartytype') ? 'typent_id' : 'none';
-		$formcompany->formThirdpartyType($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->typent_id, $html_name, '');
-		print '</td></tr>';
-
-		// Workforce/Staff
-		if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) {
-			print '<tr><td>'.$langs->trans("Workforce").'</td><td>'.$object->effectif.'</td></tr>';
+		// Warehouse
+		if (!empty($conf->stock->enabled) && !empty($conf->global->SOCIETE_ASK_FOR_WAREHOUSE)) {
+			$langs->load('stocks');
+			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+			$formproduct = new FormProduct($db);
+			print '<tr class="nowrap">';
+			print '<td>';
+			print $form->editfieldkey("Warehouse", 'warehouse', '', $object, $user->rights->societe->creer);
+			print '</td><td>';
+			if ($action == 'editwarehouse') {
+				$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'fk_warehouse', 1);
+			} else {
+				if ($object->fk_warehouse > 0) {
+					print img_picto('', 'stock', 'class="paddingrightonly"');
+				}
+				$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'none');
+			}
+			print '</td>';
+			print '</tr>';
 		}
 
 		print '</table>';
@@ -2684,6 +2696,24 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print $form->showCategories($object->id, Categorie::TYPE_SUPPLIER, 1);
 				print "</td></tr>";
 			}
+		}
+
+
+		// Third-Party Type
+		print '<tr><td>';
+		print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('ThirdPartyType').'</td>';
+		if ($action != 'editthirdpartytype' && $user->rights->societe->creer) {
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editthirdpartytype&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+		}
+		print '</tr></table>';
+		print '</td><td>';
+		$html_name = ($action == 'editthirdpartytype') ? 'typent_id' : 'none';
+		$formcompany->formThirdpartyType($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->typent_id, $html_name, '');
+		print '</td></tr>';
+
+		// Workforce/Staff
+		if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) {
+			print '<tr><td>'.$langs->trans("Workforce").'</td><td>'.$object->effectif.'</td></tr>';
 		}
 
 		// Legal

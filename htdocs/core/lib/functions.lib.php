@@ -778,8 +778,12 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 			do {
 				$oldstringtoclean = $out;
 
-				// We replace chars encoded with numeric HTML entities with real char (to avoid to have numeric entities used for obfuscation of injections)
-				$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+);/i', 'realCharForNumericEntities', $out);
+				// We replace chars from a/A to z/Z encoded with numeric HTML entities with the real char so we won't loose the chars at the next step.
+				// No need to use a loop here, this step is not to sanitize (this is done at next step, this is to try to save chars, even if they are
+				// using a non coventionnel way to be encoded, to not have them sanitized just after)
+				$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', 'realCharForNumericEntities', $out);
+
+				// Now we remove all remaining HTML entities staring with a number. We don't want such entities.
 				$out = preg_replace('/&#x?[0-9]+/i', '', $out);	// For example if we have j&#x61vascript with an entities without the ; to hide the 'a' of 'javascript'.
 
 				$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
@@ -989,7 +993,7 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 function dol_clone($object, $native = 0)
 {
 	if (empty($native)) {
-		$myclone = unserialize(serialize($object));
+		$myclone = unserialize(serialize($object));	// serialize then unserialize is hack to be sure to have a new object for all fields
 	} else {
 		$myclone = clone $object; // PHP clone is a shallow copy only, not a real clone, so properties of references will keep the reference (refering to the same target/variable)
 	}
@@ -1473,21 +1477,23 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
 	$out = '<a class="button bordertransp button_'.$name.'"'.$disabled.' title="'.dol_escape_htmltag($label).'">'.$buttonstring.'</a>';
+	$out .= '<!-- Add js code to open dialog popup on dialog -->';
 	$out .= '<script language="javascript">
-				 jQuery(document).ready(function () {
-					 jQuery(".button_'.$name.'").click(function () {
-						 var $dialog = $(\'<div></div>\').html(\'<iframe class="iframedialog" style="border: 0px;" src="'.DOL_URL_ROOT.$url.'" width="100%" height="98%"></iframe>\')
-						 .dialog({
-						 	autoOpen: false,
-						 	modal: true,
-						 	height: (window.innerHeight - 150),
-						 	width: \'80%\',
-						 	title: "'.dol_escape_js($label).'"
-						 });
-						 $dialog.dialog(\'open\');
-					 });
-				 });
-				 </script>';
+				jQuery(document).ready(function () {
+					jQuery(".button_'.$name.'").click(function () {
+						console.log("Open popup with jQuery(...).dialog() on URL '.dol_escape_js(DOL_URL_ROOT.$url).'")
+						var $dialog = $(\'<div></div>\').html(\'<iframe class="iframedialog" style="border: 0px;" src="'.DOL_URL_ROOT.$url.'" width="100%" height="98%"></iframe>\')
+							.dialog({
+								autoOpen: false,
+							 	modal: true,
+							 	height: (window.innerHeight - 150),
+							 	width: \'80%\',
+							 	title: "'.dol_escape_js($label).'"
+							});
+						$dialog.dialog(\'open\');
+					});
+				});
+			</script>';
 	return $out;
 }
 
@@ -1737,10 +1743,10 @@ function dol_get_fiche_end($notab = 0)
  *  @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
  *  @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field). Use 'none' for no prev/next search.
  *  @param	string	$fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
- *  @param	string	$morehtmlref  	More html to show after ref
+ *  @param	string	$morehtmlref  	More html to show after the ref (see $morehtmlleft for before)
  *  @param	string	$moreparam  	More param to add in nav link url.
  *	@param	int		$nodbprefix		Do not include DB prefix to forge table name
- *	@param	string	$morehtmlleft	More html code to show before ref
+ *	@param	string	$morehtmlleft	More html code to show before the ref (see $morehtmlref for after)
  *	@param	string	$morehtmlstatus	More html code to show under navigation arrows
  *  @param  int     $onlybanner     Put this to 1, if the card will contains only a banner (this add css 'arearefnobottom' on div)
  *	@param	string	$morehtmlright	More html code to show before navigation arrows
@@ -2824,7 +2830,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		} elseif (dol_strlen($phone) == 11) {
 			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 2).$separ.substr($newphone, 5, 2).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2);
 		} elseif (dol_strlen($phone) == 12) {
-			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 2);
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 1).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 2);
 		}
 	} elseif (strtoupper($countrycode) == "CA") {
 		if (dol_strlen($phone) == 10) {
@@ -3117,7 +3123,7 @@ function getUserRemoteIP()
 	if (empty($_SERVER['HTTP_X_FORWARDED_FOR']) || preg_match('/[^0-9\.\:,\[\]]/', $_SERVER['HTTP_X_FORWARDED_FOR'])) {
 		if (empty($_SERVER['HTTP_CLIENT_IP']) || preg_match('/[^0-9\.\:,\[\]]/', $_SERVER['HTTP_CLIENT_IP'])) {
 			if (empty($_SERVER["HTTP_CF_CONNECTING_IP"])) {
-				$ip = (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']);	// value may have been forged by client
+				$ip = (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']);	// value may have been the IP of the proxy and not the client
 			} else {
 				$ip = $_SERVER["HTTP_CF_CONNECTING_IP"];	// value here may have been forged by client
 			}
@@ -3499,7 +3505,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'accountancy', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'asset',
 				'bank_account', 'barcode', 'bank', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'bug', 'building',
 				'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype',
-				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'cron', 'cubes', 'multicurrency',
+				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cubes',
+				'multicurrency',
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
 				'edit', 'ellipsis-h', 'email', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus',
@@ -3509,12 +3516,14 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'label', 'language', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lot', 'long-arrow-alt-right',
 				'margin', 'map-marker-alt', 'member', 'meeting', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 				'off', 'on', 'order',
-				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'stock', 'resize', 'service', 'stats', 'trip',
+				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'stock', 'resize', 'service', 'stats', 'trip',
 				'security', 'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
 				'github', 'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
-				'partnership', 'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'projecttask', 'question', 'refresh', 'salary', 'shipment', 'supplier_invoice', 'technic', 'ticket',
+				'partnership', 'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'projecttask', 'question', 'refresh', 'salary', 'shipment',
+				'supplier_invoice', 'supplier_invoicea', 'supplier_invoicer', 'supplier_invoiced',
+				'technic', 'ticket',
 				'error', 'warning',
 				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource',
 				'shapes', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
@@ -3535,7 +3544,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 			$arrayconvpictotofa = array(
 				'account'=>'university', 'accountline'=>'receipt', 'accountancy'=>'search-dollar', 'action'=>'calendar-alt', 'add'=>'plus-circle', 'address'=> 'address-book', 'asset'=>'money-check-alt', 'autofill'=>'fill',
-				'bank_account'=>'university', 'bill'=>'file-invoice-dollar', 'billa'=>'file-excel', 'billr'=>'file-invoice-dollar', 'supplier_invoicea'=>'file-excel', 'billd'=>'file-medical', 'supplier_invoiced'=>'file-medical',
+				'bank_account'=>'university',
+				'bill'=>'file-invoice-dollar', 'billa'=>'file-excel', 'billr'=>'file-invoice-dollar', 'billd'=>'file-medical',
+				'supplier_invoice'=>'file-invoice-dollar', 'supplier_invoicea'=>'file-excel', 'supplier_invoicer'=>'file-invoice-dollar', 'supplier_invoiced'=>'file-medical',
 				'bom'=>'shapes',
 				'chart'=>'chart-line', 'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'collab'=>'people-arrows', 'conversation'=>'comments', 'country'=>'globe-americas', 'cron'=>'business-time',
 				'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
@@ -5185,7 +5196,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  * 	@param	int				$option			Put 1 if you know that content is already universal format number (so no correction on decimal will be done)
  * 											Put 2 if you know that number is a user input (so we know we don't have to fix decimal separator).
  *	@return	string							Amount with universal numeric format (Example: '99.99999').
- *											If conversion fails, it return text unchanged if $rounding = '' or '0' if $rounding is defined.
+ *											If conversion fails, it return text unchanged if ($rounding = '' and $option = 1) or '0' if ($rounding is defined and $option = 1).
  *											If amount is null or '', it returns '' if $rounding = '' or '0' if $rounding is defined..
  *
  *	@see    price()							Opposite function of price2num
@@ -5665,16 +5676,16 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 }
 
 /**
- *	Return vat rate of a product in a particular selling country or default country vat if product is unknown
- *  Function called by get_default_tva
+ *	Return vat rate of a product in a particular country, or default country vat if product is unknown.
+ *  Function called by get_default_tva().
  *
  *  @param	int			$idprod          	Id of product or 0 if not a predefined product
- *  @param  Societe		$thirdparty_seller  Thirdparty with a ->country_code defined (FR, US, IT, ...)
+ *  @param  Societe		$thirdpartytouse  	Thirdparty with a ->country_code defined (FR, US, IT, ...)
  *	@param	int			$idprodfournprice	Id product_fournisseur_price (for "supplier" proposal/order/invoice)
  *  @return float|string   				    Vat rate to use with format 5.0 or '5.0 (XXX)'
  *  @see get_product_localtax_for_country()
  */
-function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice = 0)
+function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournprice = 0)
 {
 	global $db, $conf, $mysoc;
 
@@ -5688,7 +5699,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 		$product = new Product($db);
 		$result = $product->fetch($idprod);
 
-		if ($mysoc->country_code == $thirdparty_seller->country_code) { // If selling country is ours
+		if ($mysoc->country_code == $thirdpartytouse->country_code) { // If country to consider is ours
 			if ($idprodfournprice > 0) {     // We want vat for product for a "supplier" object
 				$product->get_buyprice($idprodfournprice, 0, 0, 0);
 				$ret = $product->vatrate_supplier;
@@ -5703,8 +5714,8 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 			}
 			$found = 1;
 		} else {
-			// TODO Read default product vat according to countrycode and product. Vat for couple countrycode/product is a feature not implemeted yet.
-			// May be usefull/required if hidden option SERVICE_ARE_ECOMMERCE_200238EC is on
+			// TODO Read default product vat according to product and another countrycode.
+			// Vat for couple anothercountrycode/product is data that is not managed and store yet, so we will fallback on next rule.
 		}
 	}
 
@@ -5713,7 +5724,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 			// If vat of product for the country not found or not defined, we return the first higher vat of country.
 			$sql = "SELECT t.taux as vat_rate, t.code as default_vat_code";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-			$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($thirdparty_seller->country_code)."'";
+			$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($thirdpartytouse->country_code)."'";
 			$sql .= " ORDER BY t.taux DESC, t.code ASC, t.recuperableonly ASC";
 			$sql .= $db->plimit(1);
 
@@ -5740,15 +5751,15 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 }
 
 /**
- *	Return localtax vat rate of a product in a particular selling country or default country vat if product is unknown
+ *	Return localtax vat rate of a product in a particular country or default country vat if product is unknown
  *
  *  @param	int		$idprod         		Id of product
  *  @param  int		$local          		1 for localtax1, 2 for localtax 2
- *  @param  Societe	$thirdparty_seller    	Thirdparty with a ->country_code defined (FR, US, IT, ...)
+ *  @param  Societe	$thirdpartytouse    	Thirdparty with a ->country_code defined (FR, US, IT, ...)
  *  @return int             				<0 if KO, Vat rate if OK
  *  @see get_product_vat_for_country()
  */
-function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
+function get_product_localtax_for_country($idprod, $local, $thirdpartytouse)
 {
 	global $db, $mysoc;
 
@@ -5764,14 +5775,15 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
 		$product = new Product($db);
 		$result = $product->fetch($idprod);
 
-		if ($mysoc->country_code == $thirdparty_seller->country_code) { // If selling country is ours
+		if ($mysoc->country_code == $thirdpartytouse->country_code) { // If selling country is ours
 			/* Not defined yet, so we don't use this
 			if ($local==1) $ret=$product->localtax1_tx;
 			elseif ($local==2) $ret=$product->localtax2_tx;
 			$found=1;
 			*/
 		} else {
-			// TODO Read default product vat according to countrycode and product
+			// TODO Read default product vat according to product and another countrycode.
+			// Vat for couple anothercountrycode/product is data that is not managed and store yet, so we will fallback on next rule.
 		}
 	}
 
@@ -5779,7 +5791,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
 		// If vat of product for the country not found or not defined, we return higher vat of country.
 		$sql = "SELECT taux as vat_rate, localtax1, localtax2";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-		$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($thirdparty_seller->country_code)."'";
+		$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($thirdpartytouse->country_code)."'";
 		$sql .= " ORDER BY t.taux DESC, t.recuperableonly ASC";
 		$sql .= $db->plimit(1);
 
@@ -5804,12 +5816,12 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
 
 /**
  *	Function that return vat rate of a product line (according to seller, buyer and product vat rate)
- *   Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
- *	 Si le (pays vendeur = pays acheteur) alors TVA par defaut=TVA du produit vendu. Fin de regle.
- *	 Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
- *	 Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par defaut=TVA du produit vendu. Fin de regle
- *	 Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise avec num TVA) intra alors TVA par defaut=0. Fin de regle
- *	 Sinon TVA proposee par defaut=0. Fin de regle.
+ *   VATRULE 1: Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
+ *	 VATRULE 2: Si le (pays vendeur = pays acheteur) alors TVA par defaut=TVA du produit vendu. Fin de regle.
+ *	 VATRULE 3: Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
+ *	 VATRULE 4: Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
+ *	 VATRULE 5: Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise) alors TVA par defaut=0. Fin de regle
+ *	 VATRULE 6: Sinon TVA proposee par defaut=0. Fin de regle.
  *
  *	@param	Societe		$thirdparty_seller    	Objet societe vendeuse
  *	@param  Societe		$thirdparty_buyer   	Objet societe acheteuse
@@ -5838,9 +5850,19 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	// If services are eServices according to EU Council Directive 2002/38/EC (http://ec.europa.eu/taxation_customs/taxation/vat/traders/e-commerce/article_1610_en.htm)
 	// we use the buyer VAT.
 	if (!empty($conf->global->SERVICE_ARE_ECOMMERCE_200238EC)) {
-		if ($seller_in_cee && $buyer_in_cee && !$thirdparty_buyer->isACompany()) {
-			//print 'VATRULE 0';
-			return get_product_vat_for_country($idprod, $thirdparty_buyer, $idprodfournprice);
+		if ($seller_in_cee && $buyer_in_cee) {
+			$isacompany = $thirdparty_buyer->isACompany();
+			if ($isacompany && !empty($conf->global->MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL)) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+				if (!isValidVATID($thirdparty_buyer)) {
+					$isacompany = 0;
+				}
+			}
+
+			if (!$isacompany) {
+				//print 'VATRULE 0';
+				return get_product_vat_for_country($idprod, $thirdparty_buyer, $idprodfournprice);
+			}
 		}
 	}
 
@@ -5860,36 +5882,41 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	}
 
 	// Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
-	// Not supported
+	// 'VATRULE 3' - Not supported
 
 	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise) alors TVA par defaut=0. Fin de regle
 	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
 	if (($seller_in_cee && $buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
-		if ($isacompany) {
-			if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID)) {
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-				if (!isValidVATID($thirdparty_buyer)) {
-					//print 'VATRULE 6';
-					return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
-				}
+		if ($isacompany && !empty($conf->global->MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			if (!isValidVATID($thirdparty_buyer)) {
+				$isacompany = 0;
 			}
-			//print 'VATRULE 3';
-			return 0;
-		} else {
+		}
+
+		if (!$isacompany) {
 			//print 'VATRULE 4';
 			return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+		} else {
+			//print 'VATRULE 5';
+			return 0;
 		}
 	}
 
-	// Si (vendeur en France et acheteur hors Communaute europeenne et acheteur particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
-	if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC) && empty($buyer_in_cee) && !$thirdparty_buyer->isACompany()) {
-		return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+	// Si (vendeur dans Communaute europeene et acheteur hors Communaute europeenne et acheteur particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
+	// I don't see any use case that need this rule.
+	if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC) && empty($buyer_in_cee)) {
+		$isacompany = $thirdparty_buyer->isACompany();
+		if (!$isacompany) {
+			return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			//print 'VATRULE extra';
+		}
 	}
 
 	// Sinon la TVA proposee par defaut=0. Fin de regle.
 	// Rem: Cela signifie qu'au moins un des 2 est hors Communaute europeenne et que le pays differe
-	//print 'VATRULE 5';
+	//print 'VATRULE 6';
 	return 0;
 }
 
@@ -6850,6 +6877,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__DIRECTDOWNLOAD_URL_PROPOSAL__'] = 'Direct download url of a proposal';
 			$substitutionarray['__DIRECTDOWNLOAD_URL_ORDER__'] = 'Direct download url of an order';
 			$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = 'Direct download url of an invoice';
+			$substitutionarray['__DIRECTDOWNLOAD_URL_CONTRACT__'] = 'Direct download url of a contract';
+			$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_PROPOSAL__'] = 'Direct download url of a supplier proposal';
 
 			if (!empty($conf->expedition->enabled) && (!is_object($object) || $object->element == 'shipping')) {
 				$substitutionarray['__SHIPPINGTRACKNUM__'] = 'Shipping tracking number';
@@ -7134,14 +7163,14 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__AMOUNT_TAX3__']     = is_object($object) ? $object->total_localtax2 : '';
 		}
 
-		$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object) ? ($object->total_ttc ? price($object->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency) : null) : '';
-		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = is_object($object) ? ($object->total_ht ? price($object->total_ht, 0, $outputlangs, 0, 0, -1, $conf->currency) : null) : '';
-		$substitutionarray['__AMOUNT_VAT_FORMATED__']      = is_object($object) ? (isset($object->total_vat) ? price($object->total_vat, 0, $outputlangs, 0, 0, -1, $conf->currency) : ($object->total_tva ? price($object->total_tva, 0, $outputlangs, 0, 0, -1, $conf->currency) : null)) : '';
+		$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object) ? ($object->total_ttc ? price($object->total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
+		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = is_object($object) ? ($object->total_ht ? price($object->total_ht, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
+		$substitutionarray['__AMOUNT_VAT_FORMATED__']      = is_object($object) ? (isset($object->total_vat) ? price($object->total_vat, 0, $outputlangs, 0, -1, -1, $conf->currency) : ($object->total_tva ? price($object->total_tva, 0, $outputlangs, 0, -1, -1, $conf->currency) : null)) : '';
 		if ($onlykey != 2 || $mysoc->useLocalTax(1)) {
-			$substitutionarray['__AMOUNT_TAX2_FORMATED__']     = is_object($object) ? ($object->total_localtax1 ? price($object->total_localtax1, 0, $outputlangs, 0, 0, -1, $conf->currency) : null) : '';
+			$substitutionarray['__AMOUNT_TAX2_FORMATED__']     = is_object($object) ? ($object->total_localtax1 ? price($object->total_localtax1, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		}
 		if ($onlykey != 2 || $mysoc->useLocalTax(2)) {
-			$substitutionarray['__AMOUNT_TAX3_FORMATED__']     = is_object($object) ? ($object->total_localtax2 ? price($object->total_localtax2, 0, $outputlangs, 0, 0, -1, $conf->currency) : null) : '';
+			$substitutionarray['__AMOUNT_TAX3_FORMATED__']     = is_object($object) ? ($object->total_localtax2 ? price($object->total_localtax2, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		}
 
 		$substitutionarray['__AMOUNT_MULTICURRENCY__']          = (is_object($object) && isset($object->multicurrency_total_ttc)) ? $object->multicurrency_total_ttc : '';
@@ -7993,6 +8022,29 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1)
 
 	global $obj; // To get $obj used into list when dol_eval is used for computed fields and $obj is not yet $object
 	global $soc; // For backward compatibility
+
+	// Replace dangerous char (used for RCE), we allow only PHP variable testing.
+	if (strpos($s, '`') !== false) {
+		return 'Bad string syntax to evaluate: '.$s;
+	}
+
+	// We block using of php exec or php file functions
+	$forbiddenphpstrings = array("exec(", "passthru(", "shell_exec(", "system(", "proc_open(", "popen(", "eval(", "dol_eval(", "executeCLI(");
+	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array("fopen(", "file_put_contents(", "fputs(", "fputscsv(", "fwrite(", "fpassthru(", "unlink(", "mkdir(", "rmdir(", "symlink(", "touch(", "umask("));
+	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('function(', '$$', 'call_user_func('));
+	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST'));
+	$forbiddenphpregex = 'global\s+\$';
+	do {
+		$oldstringtoclean = $s;
+		$s = str_ireplace($forbiddenphpstrings, '__forbiddenstring__', $s);
+		$s = preg_replace('/'.$forbiddenphpregex.'/', '__forbiddenstring__', $s);
+		//$s = preg_replace('/\$[a-zA-Z0-9_\->\$]+\(/i', '', $s);	// Remove $function( call and $mycall->mymethod(
+	} while ($oldstringtoclean != $s);
+
+	if (strpos($s, '__forbiddenstring__') !== false) {
+		dol_syslog('Bad string syntax to evaluate: '.$s, LOG_WARNING);
+		return 'Bad string syntax to evaluate: '.$s;
+	}
 
 	//print $s."<br>\n";
 	if ($returnvalue) {
@@ -9671,7 +9723,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 /**
  * Function dolGetButtonAction
  *
- * @param string    $label      label of button no html : use in alt attribute for accessibility $html is not empty
+ * @param string    $label      label of button without HTML : use in alt attribute for accessibility $html is not empty
  * @param string    $html       optional : content with html
  * @param string    $actionType default, delete, danger
  * @param string    $url        the url for link
@@ -9689,8 +9741,9 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 	}
 
 	$attr = array(
-		'class' => $class
-		,'href' => empty($url) ? '' : $url
+		'class' => $class,
+		'href' => empty($url) ? '' : $url,
+		'title' => $label
 	);
 
 	if (empty($html)) {
@@ -10266,9 +10319,10 @@ function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
  */
 function showValueWithClipboardCPButton($valuetocopy, $showonlyonhover = 1, $texttoshow = '')
 {
+	/*
 	global $conf;
 
-	/*if (!empty($conf->dol_no_mouse_hover)) {
+	if (!empty($conf->dol_no_mouse_hover)) {
 		$showonlyonhover = 0;
 	}*/
 
@@ -10276,6 +10330,23 @@ function showValueWithClipboardCPButton($valuetocopy, $showonlyonhover = 1, $tex
 		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><span class="clipboardCPValue hidewithsize">'.$valuetocopy.'</span><span class="clipboardCPValueToPrint">'.$texttoshow.'</span><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText opacitymedium"></span></span>';
 	} else {
 		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><span class="clipboardCPValue">'.$valuetocopy.'</span><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText opacitymedium"></span></span>';
+	}
+
+	return $result;
+}
+
+
+/**
+ * Decode an encode string. The string can be encoded in json format (recommended) or with serialize (avoid this)
+ *
+ * @param 	string	$stringtodecode		String to decode (json or serialize coded)
+ * @return	mixed						The decoded object.
+ */
+function jsonOrUnserialize($stringtodecode)
+{
+	$result = json_decode($stringtodecode);
+	if ($result === null) {
+		$result = unserialize($stringtodecode);
 	}
 
 	return $result;

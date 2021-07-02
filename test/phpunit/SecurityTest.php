@@ -198,6 +198,9 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=testSqlAndScriptInject($test, 0);
 		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject expected 0b');
 
+		$test = 'This is the union of all for the selection of the best';
+		$result=testSqlAndScriptInject($test, 0);
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject expected 0c');
 
 		// Should detect attack
 		$expectedresult=1;
@@ -205,6 +208,18 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php/<svg>';
 		$result=testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
 		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject for PHP_SELF that should detect XSS');
+
+		$test = 'select @@version';
+		$result=testSqlAndScriptInject($test, 0);
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject for SQL1a. Should find an attack on POST param and did not.');
+
+		$test = 'select @@version';
+		$result=testSqlAndScriptInject($test, 1);
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject for SQL1b. Should find an attack on GET param and did not.');
+
+		$test = '... union ... selection ';
+		$result=testSqlAndScriptInject($test, 1);
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject for SQL2. Should find an attack on GET param and did not.');
 
 		$test = 'j&#x61;vascript:';
 		$result=testSqlAndScriptInject($test, 0);
@@ -330,7 +345,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_GET["param5"]="a_1-b";
 		$_POST["param6"]="&quot;&gt;<svg o&#110;load='console.log(&quot;123&quot;)'&gt;";
 		$_POST["param6b"]='<<<../>../>../svg><<<../>../>../animate =alert(1)>abc';
-		$_GET["param7"]='"c:\this is a path~1\aaa&#110;" abc<bad>def</bad>';
+		$_GET["param7"]='"c:\this is a path~1\aaa&#110; &#x&#x31;&#x31;&#x30;;" abc<bad>def</bad>';
 		$_POST["param8a"]="Hacker<svg o&#110;load='console.log(&quot;123&quot;)'";	// html tag is not closed so it is not detected as html tag but is still harmfull
 		$_POST['param8b']='<img src=x onerror=alert(document.location) t=';		// this is html obfuscated by non closing tag
 		$_POST['param8c']='< with space after is ok';
@@ -464,8 +479,8 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals('&quot;&gt;', $result);
 
 		$result=GETPOST("param7", 'restricthtml');
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('"c:\this is a path~1\aaan" abcdef', $result);
+		print __METHOD__." result param7 = ".$result."\n";
+		$this->assertEquals('"c:\this is a path~1\aaan &#x;;;;" abcdef', $result);
 
 		$result=GETPOST("param12", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
@@ -473,11 +488,11 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$result=GETPOST("param13", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('n n &gt; &lt; &quot; <a href=\"alert(document.domain)\">XSS</a>', $result, 'Test that HTML entities are decoded with restricthtml, but only for common alpha chars');
+		$this->assertEquals('n n &gt; &lt; &quot; <a href=\"alert(document.domain)\">XSS</a>', $result, 'Test 13 that HTML entities are decoded with restricthtml, but only for common alpha chars');
 
 		$result=GETPOST("param13b", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('n n &gt; &lt; &quot; <a href=\"jvascript:alert(document.domain)\">XSS</a>', $result, 'Test that HTML entities are decoded with restricthtml, but only for common alpha chars');
+		$this->assertEquals('n n &gt; &lt; &quot; <a href=\"alert(document.domain)\">XSS</a>', $result, 'Test 13b that HTML entities are decoded with restricthtml, but only for common alpha chars');
 
 		// Special test for GETPOST of backtopage, backtolist or backtourl parameter
 
@@ -703,17 +718,22 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$url = 'http://127.0.0.1';
 		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
 		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because localtest.me is not an external URL
+		$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because 127.0.0.1 is not an external URL
+
+		$url = 'http://127.0.2.1';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url."\n";
+		$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because 127.0.2.1 is not an external URL
 
 		$url = 'https://169.254.0.1';
 		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
 		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because localtest.me is not an external URL
+		$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because 169.254.0.1 is not an external URL
 
 		$url = 'http://[::1]';
 		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
 		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because localtest.me is not an external URL
+		$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because [::1] is not an external URL
 
 		/*$url = 'localtest.me';
 		 $tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
@@ -771,5 +791,49 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$result=dol_sanitizeFileName('bad file --evilparam');
 		$this->assertEquals('bad file _evilparam', $result);
+	}
+
+	/**
+	 * testDolEval
+	 *
+	 * @return void
+	 */
+	public function testDolEval()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$result=dol_eval('1==1', 1, 0);
+		print "result = ".$result."\n";
+		$this->assertTrue($result);
+
+		$result=dol_eval('1==2', 1, 0);
+		print "result = ".$result."\n";
+		$this->assertFalse($result);
+
+		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+		$result=dol_eval('(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: "Parent project not found"', 1, 1);
+		print "result = ".$result."\n";
+		$this->assertEquals('Parent project not found', $result);
+
+		$result=dol_eval('$a=function() { }; $a;', 1, 1);
+		print "result = ".$result."\n";
+		$this->assertContains('Bad string syntax to evaluate', $result);
+
+		$result=dol_eval('$a=exec("ls");', 1, 1);
+		print "result = ".$result."\n";
+		$this->assertContains('Bad string syntax to evaluate', $result);
+
+		$result=dol_eval('$a="test"; $$a;', 1, 0);
+		print "result = ".$result."\n";
+		$this->assertContains('Bad string syntax to evaluate', $result);
+
+		$result=dol_eval('`ls`', 1, 0);
+		print "result = ".$result."\n";
+		$this->assertContains('Bad string syntax to evaluate', $result);
 	}
 }

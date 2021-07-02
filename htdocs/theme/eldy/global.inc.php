@@ -350,7 +350,7 @@ a.butStatus {
 	padding-right: 5px;
 	background-color: transparent;
 	color: var(--colortext) !important;
-	border: 2px solid var( --butactionbg);
+	border: 2px solid var( --butactionbg) !important;
 	margin: 0 0.45em !important;
 }
 
@@ -427,7 +427,9 @@ input.pageplusone {
 .colorblack {
 	color: #000;
 }
-
+.fontsizeunset {
+	font-size: unset !important;
+}
 .vmirror {
 	transform: scale(1, -1);
 }
@@ -1138,6 +1140,12 @@ select.flat.selectlimit {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
+.tdoverflowmax250 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 250px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 .tdoverflowmax300 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 300px;
 	overflow: hidden;
@@ -1483,6 +1491,10 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		display: inline-block;
 	}
 
+	input.maxwidthinputfileonsmartphone {
+		width: 175px;
+	}
+
 	.logopublicpayment #dolpaymentlogo {
 		max-width: 260px;
 	}
@@ -1650,7 +1662,7 @@ table.tableforfield tr>td:first-of-type, tr.trforfield>td:first-of-type, div.tab
 }
 
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
-.hideonprint { display: none; }
+.hideonprint { display: none !important; }
 <?php } ?>
 
 
@@ -3896,7 +3908,7 @@ table.noborder.paymenttable {
 }
 .paymenttable tr td:first-child, .margintable tr td:first-child
 {
-	padding-left: 2px;
+	//padding-left: 2px;
 }
 .paymenttable, .margintable tr td {
 	height: 22px;
@@ -4698,7 +4710,9 @@ div.visible {
 div.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
 }
-
+.unvisible {
+	visibility: hidden;
+}
 tr.visible {
 	display: block;
 }
@@ -6062,6 +6076,9 @@ dl.dropdown {
 	display:inline-block;
 	padding: 0 3px 2px 0;
 }
+.maxwidthsearch .dropdown dt a span, .multiSel span {
+	padding: 0 3px 2px 3px;
+}
 .dropdown span.value {
 	display:none;
 }
@@ -6824,6 +6841,8 @@ span.clipboardCPValue.hidewithsize {
 		border-right: none;
 		border-left: none;
 	}
+
+	td.widthpictotitle { width: 30px; }
 }
 
 @media only screen and (max-width: 1024px)

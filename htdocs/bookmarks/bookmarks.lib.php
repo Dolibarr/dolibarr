@@ -45,10 +45,10 @@ function printDropdownBookmarksList()
 		$tmpurl = '';
 		// No urlencode, all param $url will be urlencoded later
 		if ($sortfield) {
-			$tmpurl .= ($tmpurl ? '&' : '').'sortfield='.$sortfield;
+			$tmpurl .= ($tmpurl ? '&' : '').'sortfield='.urlencode($sortfield);
 		}
 		if ($sortorder) {
-			$tmpurl .= ($tmpurl ? '&' : '').'sortorder='.$sortorder;
+			$tmpurl .= ($tmpurl ? '&' : '').'sortorder='.urlencode($sortorder);
 		}
 		if (is_array($_POST)) {
 			foreach ($_POST as $key => $val) {
@@ -80,7 +80,7 @@ function printDropdownBookmarksList()
 
 	// Menu with list of bookmarks
 	$sql = "SELECT rowid, title, url, target FROM ".MAIN_DB_PREFIX."bookmark";
-	$sql .= " WHERE (fk_user = ".$user->id." OR fk_user is NULL OR fk_user = 0)";
+	$sql .= " WHERE (fk_user = ".((int) $user->id)." OR fk_user is NULL OR fk_user = 0)";
 	$sql .= " AND entity IN (".getEntity('bookmarks').")";
 	$sql .= " ORDER BY position";
 	if ($resql = $db->query($sql)) {

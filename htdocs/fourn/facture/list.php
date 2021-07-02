@@ -1,17 +1,18 @@
 <?php
-/* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013-2019 Philippe Grand       <philippe.grand@atoo-net.com>
- * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2015-2007 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015 	   Abbes Bahfir         <bafbes@gmail.com>
- * Copyright (C) 2015-2016 Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2017      Josep Lluís Amador   <joseplluis@lliuretic.cat>
- * Copyright (C) 2018      Charlene Benke       <charlie@patas-monkey.com>
- * Copyright (C) 2018-2020 Frédéric France      <frederic.france@netlogic.fr>
+/* Copyright (C) 2002-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2013-2019	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2015-2007	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2015		Abbes Bahfir			<bafbes@gmail.com>
+ * Copyright (C) 2015-2016	Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2017		Josep Lluís Amador		<joseplluis@lliuretic.cat>
+ * Copyright (C) 2018		Charlene Benke			<charlie@patas-monkey.com>
+ * Copyright (C) 2018-2020	Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,12 +102,22 @@ $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
-$day = GETPOST('day', 'int');
-$month = GETPOST('month', 'int');
-$year = GETPOST('year', 'int');
-$day_lim = GETPOST('day_lim', 'int');
-$month_lim = GETPOST('month_lim', 'int');
-$year_lim	= GETPOST('year_lim', 'int');
+$search_date_startday = GETPOST('search_date_startday', 'int');
+$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
+$search_date_startyear = GETPOST('search_date_startyear', 'int');
+$search_date_endday = GETPOST('search_date_endday', 'int');
+$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
+$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
+$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
+$search_datelimit_startday = GETPOST('search_datelimit_startday', 'int');
+$search_datelimit_startmonth = GETPOST('search_datelimit_startmonth', 'int');
+$search_datelimit_startyear = GETPOST('search_datelimit_startyear', 'int');
+$search_datelimit_endday = GETPOST('search_datelimit_endday', 'int');
+$search_datelimit_endmonth = GETPOST('search_datelimit_endmonth', 'int');
+$search_datelimit_endyear = GETPOST('search_datelimit_endyear', 'int');
+$search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $search_datelimit_startday, $search_datelimit_startyear);
+$search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
 $toselect = GETPOST('toselect', 'array');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
@@ -257,12 +268,22 @@ if (empty($reshook)) {
 		$search_type = '';
 		$search_country = '';
 		$search_type_thirdparty = '';
-		$year = "";
-		$month = "";
-		$day = "";
-		$year_lim = "";
-		$month_lim = "";
-		$day_lim = "";
+		$search_date_startday = '';
+		$search_date_startmonth = '';
+		$search_date_startyear = '';
+		$search_date_endday = '';
+		$search_date_endmonth = '';
+		$search_date_endyear = '';
+		$search_date_start = '';
+		$search_date_end = '';
+		$search_datelimit_startday = '';
+		$search_datelimit_startmonth = '';
+		$search_datelimit_startyear = '';
+		$search_datelimit_endday = '';
+		$search_datelimit_endmonth = '';
+		$search_datelimit_endyear = '';
+		$search_datelimit_start = '';
+		$search_datelimit_end = '';
 		$toselect = '';
 		$search_array_options = array();
 		$filter = '';
@@ -330,7 +351,7 @@ if (empty($reshook)) {
 					if ($numprlv > 0) {
 						$error++;
 						setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
-					} elseif (!empty($objecttmp->mode_reglement_code) && $objecttmp->mode_reglement_code != 'PRE') {
+					} elseif (!empty($objecttmp->mode_reglement_code) && $objecttmp->mode_reglement_code != 'VIR') {
 						$error++;
 						setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
 					} else {
@@ -451,10 +472,10 @@ if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
 if ($search_product_category > 0) {
-	$sql .= " AND cp.fk_categorie = ".$search_product_category;
+	$sql .= " AND cp.fk_categorie = ".((int) $search_product_category);
 }
 if ($socid > 0) {
-	$sql .= ' AND s.rowid = '.$socid;
+	$sql .= ' AND s.rowid = '.((int) $socid);
 }
 if ($search_ref) {
 	if (is_numeric($search_ref)) {
@@ -548,8 +569,18 @@ if ($search_paymentmode > 0) {
 if ($search_paymentcond > 0) {
 	$sql .= " AND f.fk_cond_reglement = ".((int) $search_paymentcond);
 }
-$sql .= dolSqlDateFilter("f.datef", $day, $month, $year);
-$sql .= dolSqlDateFilter("f.date_lim_reglement", $day_lim, $month_lim, $year_lim);
+if ($search_date_start) {
+	$sql .= " AND f.datef >= '" . $db->idate($search_date_start) . "'";
+}
+if ($search_date_end) {
+	$sql .= " AND f.datef <= '" . $db->idate($search_date_end) . "'";
+}
+if ($search_datelimit_start) {
+	$sql .= " AND f.date_lim_reglement >= '" . $db->idate($search_datelimit_start) . "'";
+}
+if ($search_datelimit_end) {
+	$sql .= " AND f.date_lim_reglement <= '" . $db->idate($search_datelimit_end) . "'";
+}
 if ($option == 'late') {
 	$sql .= " AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->fournisseur->warning_delay)."'";
 }
@@ -669,23 +700,41 @@ if ($resql) {
 	if ($search_all) {
 		$param .= '&search_all='.urlencode($search_all);
 	}
-	if ($day) {
-		$param .= '&day='.urlencode($day);
+	if ($search_date_startday) {
+		$param .= '&search_date_startday='.urlencode($search_date_startday);
 	}
-	if ($month) {
-		$param .= '&month='.urlencode($month);
+	if ($search_date_startmonth) {
+		$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
 	}
-	if ($year) {
-		$param .= '&year='.urlencode($year);
+	if ($search_date_startyear) {
+		$param .= '&search_date_startyear='.urlencode($search_date_startyear);
 	}
-	if ($day_lim) {
-		$param .= '&day_lim='.urlencode($day_lim);
+	if ($search_date_endday) {
+		$param .= '&search_date_endday='.urlencode($search_date_endday);
 	}
-	if ($month_lim) {
-		$param .= '&month_lim='.urlencode($month_lim);
+	if ($search_date_endmonth) {
+		$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
 	}
-	if ($year_lim) {
-		$param .= '&year_lim='.urlencode($year_lim);
+	if ($search_date_endyear) {
+		$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+	}
+	if ($search_datelimit_startday) {
+		$param .= '&search_datelimit_startday='.urlencode($search_datelimit_startday);
+	}
+	if ($search_datelimit_startmonth) {
+		$param .= '&search_datelimit_startmonth='.urlencode($search_datelimit_startmonth);
+	}
+	if ($search_datelimit_startyear) {
+		$param .= '&search_datelimit_startyear='.urlencode($search_datelimit_startyear);
+	}
+	if ($search_datelimit_endday) {
+		$param .= '&search_datelimit_endday='.urlencode($search_datelimit_endday);
+	}
+	if ($search_datelimit_endmonth) {
+		$param .= '&search_datelimit_endmonth='.urlencode($search_datelimit_endmonth);
+	}
+	if ($search_datelimit_endyear) {
+		$param .= '&search_datelimit_endyear='.urlencode($search_datelimit_endyear);
 	}
 	if ($search_ref) {
 		$param .= '&search_ref='.urlencode($search_ref);
@@ -956,23 +1005,28 @@ if ($resql) {
 	}
 	// Date invoice
 	if (!empty($arrayfields['f.datef']['checked'])) {
-		print '<td class="liste_titre nowraponall center">';
-		if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-			print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="day" value="'.dol_escape_htmltag($day).'">';
-		}
-		print '<input class="flat width25 valignmiddle" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-		$formother->select_year($year ? $year : -1, 'year', 1, 20, 5);
+		print '<td class="liste_titre center">';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+		print '</div>';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+		print '</div>';
 		print '</td>';
 	}
 	// Date due
 	if (!empty($arrayfields['f.date_lim_reglement']['checked'])) {
-		print '<td class="liste_titre nowraponall center">';
-		if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-			print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="day_lim" value="'.dol_escape_htmltag($day_lim).'">';
-		}
-		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month_lim" value="'.$month_lim.'">';
-		$formother->select_year($year_lim ? $year_lim : -1, 'year_lim', 1, 20, 5);
-		print '<br><input type="checkbox" class="paddingright paddingleft" name="option" id="option" value="late"'.($option == 'late' ? ' checked' : '').'><label for="option">'.$langs->trans("Late").'</label>';
+		print '<td class="liste_titre center">';
+		print '<div class="nowrap">';
+		/*
+		print $langs->trans('From').' ';
+		print $form->selectDate($search_datelimit_start ? $search_datelimit_start : -1, 'search_datelimit_start', 0, 0, 1);
+		print '</div>';
+		print '<div class="nowrap">';
+		print $langs->trans('to').' ';*/
+		print $form->selectDate($search_datelimit_end ? $search_datelimit_end : -1, 'search_datelimit_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("Before"));
+		print '<br><input type="checkbox" name="search_option" value="late"'.($option == 'late' ? ' checked' : '').'> '.$langs->trans("Alert");
+		print '</div>';
 		print '</td>';
 	}
 	// Project

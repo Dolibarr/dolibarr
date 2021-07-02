@@ -213,3 +213,5 @@ SendReminderForExpiredSubscription=Sūtīt atgādinājumu pa e-pastu dalībnieki
 MembershipPaid=Dalība, kas samaksāta par kārtējo periodu (līdz %s)
 YouMayFindYourInvoiceInThisEmail=Jūsu rēķinu varat atrast šī e-pasta pielikumā
 XMembersClosed=%s dalībnieks (-i) slēgts
+XExternalUserCreated=%s external user(s) created
+ForceMemberNature=Force member nature (Individual or Corporation)

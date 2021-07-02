@@ -143,3 +143,4 @@ AsciiToHtmlConverter=Převodník ASCII na HTML
 AsciiToPdfConverter=Převodník ASCII na PDF
 TableNotEmptyDropCanceled=Tabulka není prázdná. Odstranění tabulky bylo zrušeno.
 ModuleBuilderNotAllowed=The module builder is available but not allowed to your user.
+ImportExportProfiles=Import and export profiles

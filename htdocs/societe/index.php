@@ -57,7 +57,7 @@ $resultboxes = FormOther::getBoxesArea($user, "3");
 if (GETPOST('addbox')) {
 	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOST('areacode', 'aZ09');
+	$zone = GETPOST('areacode', 'int');
 	$userid = GETPOST('userid', 'int');
 	$boxorder = GETPOST('boxorder', 'aZ09');
 	$boxorder .= GETPOST('boxcombo', 'aZ09');
@@ -185,6 +185,7 @@ $thirdpartygraph .= '</td></tr>';
 $thirdpartygraph .= '</table>';
 $thirdpartygraph .= '</div>';
 
+$thirdpartycateggraph = '';
 if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$elementtype = 'societe';

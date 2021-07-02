@@ -106,7 +106,8 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if ($page == -1 || $page == null) {
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
 }
 $offset = $limit * $page;
@@ -390,7 +391,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_extrafields as ef ON (a.id = ef.fk_object) ";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_extrafields as ef ON (a.id = ef.fk_object)";
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 }
@@ -577,8 +578,8 @@ if ($resql) {
 	//print dol_get_fiche_end();
 
 	// Add link to show birthdays
-	$link = '';
 	/*
+	$link = '';
 	if (empty($conf->use_javascript_ajax))
 	{
 		$newparam=$param;   // newparam is for birthday links
@@ -840,7 +841,7 @@ if ($resql) {
 
 		// Ref
 		if (!empty($arrayfields['a.id']['checked'])) {
-			print '<td>';
+			print '<td class="nowraponall">';
 			print $actionstatic->getNomUrl(1, -1);
 			print '</td>';
 		}

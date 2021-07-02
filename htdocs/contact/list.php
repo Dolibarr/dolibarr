@@ -375,13 +375,13 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = p.fk_pays";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_stcommcontact as st ON st.id = p.fk_stcommcontact";
-if (!empty($search_categ)) {
+if (!empty($search_categ) && $search_categ != '-1') {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_contact as cc ON p.rowid = cc.fk_socpeople"; // We need this table joined to the select in order to filter by categ
 }
-if (!empty($search_categ_thirdparty)) {
+if (!empty($search_categ_thirdparty) && $search_categ_thirdparty != '-1') {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc"; // We need this table joined to the select in order to filter by categ
 }
-if (!empty($search_categ_supplier)) {
+if (!empty($search_categ_supplier) && $search_categ_supplier != '-1') {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs2 ON s.rowid = cs2.fk_soc"; // We need this table joined to the select in order to filter by categ
 }
 if (!$user->rights->societe->client->voir && !$socid) {
@@ -392,7 +392,7 @@ if (!$user->rights->societe->client->voir && !$socid) { //restriction
 	$sql .= " AND (sc.fk_user = ".$user->id." OR p.fk_soc IS NULL)";
 }
 if (!empty($userid)) {    // propre au commercial
-	$sql .= " AND p.fk_user_creat=".$db->escape($userid);
+	$sql .= " AND p.fk_user_creat=".((int) $userid);
 }
 if ($search_level) {
 	$sql .= natural_search("p.fk_prospectcontactlevel", join(',', $search_level), 3);
@@ -414,19 +414,19 @@ if ($search_priv != '0' && $search_priv != '1') {
 }
 
 if ($search_categ > 0) {
-	$sql .= " AND cc.fk_categorie = ".$db->escape($search_categ);
+	$sql .= " AND cc.fk_categorie = ".((int) $search_categ);
 }
 if ($search_categ == -2) {
 	$sql .= " AND cc.fk_categorie IS NULL";
 }
 if ($search_categ_thirdparty > 0) {
-	$sql .= " AND cs.fk_categorie = ".$db->escape($search_categ_thirdparty);
+	$sql .= " AND cs.fk_categorie = ".((int) $search_categ_thirdparty);
 }
 if ($search_categ_thirdparty == -2) {
 	$sql .= " AND cs.fk_categorie IS NULL";
 }
 if ($search_categ_supplier > 0) {
-	$sql .= " AND cs2.fk_categorie = ".$db->escape($search_categ_supplier);
+	$sql .= " AND cs2.fk_categorie = ".((int) $search_categ_supplier);
 }
 if ($search_categ_supplier == -2) {
 	$sql .= " AND cs2.fk_categorie IS NULL";
@@ -495,10 +495,10 @@ if (count($search_roles) > 0) {
 	$sql .= " AND p.rowid IN (SELECT sc.fk_socpeople FROM ".MAIN_DB_PREFIX."societe_contacts as sc WHERE sc.fk_c_type_contact IN (".$db->sanitize(implode(',', $search_roles))."))";
 }
 if ($search_no_email != '' && $search_no_email >= 0) {
-	$sql .= " AND p.no_email = ".$db->escape($search_no_email);
+	$sql .= " AND p.no_email = ".((int) $search_no_email);
 }
 if ($search_status != '' && $search_status >= 0) {
-	$sql .= " AND p.statut = ".$db->escape($search_status);
+	$sql .= " AND p.statut = ".((int) $search_status);
 }
 if ($search_import_key) {
 	$sql .= natural_search("p.import_key", $search_import_key);

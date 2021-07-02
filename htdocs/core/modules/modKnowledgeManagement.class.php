@@ -68,7 +68,7 @@ class modKnowledgeManagement extends DolibarrModules
 		$this->descriptionlong = "Manage a Knowledge Management (KM) or Help-Desk base";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'development';
+		$this->version = 'experimental';
 		// Url to the file with your last numberversion of this module
 		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
@@ -261,17 +261,17 @@ class modKnowledgeManagement extends DolibarrModules
 		// Add here entries to declare new permissions
 		/* BEGIN MODULEBUILDER PERMISSIONS */
 		$this->rights[$r][0] = $this->numero + $r + 1; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Read objects of Knowledge Management'; // Permission label
+		$this->rights[$r][1] = 'Read articles'; // Permission label
 		$this->rights[$r][4] = 'knowledgerecord'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
 		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r + 1; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/Update objects of Knowledge Management'; // Permission label
+		$this->rights[$r][1] = 'Create/Update articles'; // Permission label
 		$this->rights[$r][4] = 'knowledgerecord'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
 		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r + 1; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Delete objects of Knowledge Management'; // Permission label
+		$this->rights[$r][1] = 'Delete articles'; // Permission label
 		$this->rights[$r][4] = 'knowledgerecord'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
 		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
 		$r++;
@@ -282,6 +282,7 @@ class modKnowledgeManagement extends DolibarrModules
 		$r = 0;
 		// Add here entries to declare new menus
 		/* BEGIN MODULEBUILDER TOPMENU */
+		/*
 		$this->menu[$r++] = array(
 			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'top', // This is a Top menu entry
@@ -297,60 +298,17 @@ class modKnowledgeManagement extends DolibarrModules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
-		/* END MODULEBUILDER TOPMENU */
-		/* BEGIN MODULEBUILDER LEFTMENU KNOWLEDGERECORD
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=knowledgemanagement',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',                          // This is a Top menu entry
-			'titre'=>'KnowledgeRecord',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
-			'mainmenu'=>'knowledgemanagement',
-			'leftmenu'=>'knowledgerecord',
-			'url'=>'/knowledgemanagement/knowledgemanagementindex.php',
-			'langs'=>'knowledgemanagement@knowledgemanagement',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->knowledgemanagement->enabled',  // Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled.
-			'perms'=>'$user->rights->knowledgemanagement->knowledgerecord->read',			                // Use 'perms'=>'$user->rights->knowledgemanagement->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=knowledgemanagement,fk_leftmenu=knowledgerecord',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'List_KnowledgeRecord',
-			'mainmenu'=>'knowledgemanagement',
-			'leftmenu'=>'knowledgemanagement_knowledgerecord_list',
-			'url'=>'/knowledgemanagement/knowledgerecord_list.php',
-			'langs'=>'knowledgemanagement@knowledgemanagement',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->knowledgemanagement->enabled',  // Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->knowledgemanagement->knowledgerecord->read',			                // Use 'perms'=>'$user->rights->knowledgemanagement->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=knowledgemanagement,fk_leftmenu=knowledgerecord',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'New_KnowledgeRecord',
-			'mainmenu'=>'knowledgemanagement',
-			'leftmenu'=>'knowledgemanagement_knowledgerecord_new',
-			'url'=>'/knowledgemanagement/knowledgerecord_card.php?action=create',
-			'langs'=>'knowledgemanagement@knowledgemanagement',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->knowledgemanagement->enabled',  // Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->knowledgemanagement->knowledgerecord->write',			                // Use 'perms'=>'$user->rights->knowledgemanagement->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
 		*/
+		/* END MODULEBUILDER TOPMENU */
 
 		$this->menu[$r++]=array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu'=>'fk_mainmenu=knowledgemanagement',
+			'fk_menu'=>'fk_mainmenu=ticket',
 			// This is a Left menu entry
 			'type'=>'left',
 			'titre'=>'MenuKnowledgeRecord',
-			'mainmenu'=>'knowledgemanagement',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
+			'mainmenu'=>'ticket',
 			'leftmenu'=>'knowledgemanagement_knowledgerecord',
 			'url'=>'/knowledgemanagement/knowledgerecord_list.php',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -366,11 +324,11 @@ class modKnowledgeManagement extends DolibarrModules
 		);
 		$this->menu[$r++]=array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu'=>'fk_mainmenu=knowledgemanagement,fk_leftmenu=knowledgemanagement_knowledgerecord',
+			'fk_menu'=>'fk_mainmenu=ticket,fk_leftmenu=knowledgemanagement_knowledgerecord',
 			// This is a Left menu entry
 			'type'=>'left',
 			'titre'=>'ListKnowledgeRecord',
-			'mainmenu'=>'knowledgemanagement',
+			'mainmenu'=>'ticket',
 			'leftmenu'=>'knowledgemanagement_list',
 			'url'=>'/knowledgemanagement/knowledgerecord_list.php',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -386,11 +344,11 @@ class modKnowledgeManagement extends DolibarrModules
 		);
 		$this->menu[$r++]=array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu'=>'fk_mainmenu=knowledgemanagement,fk_leftmenu=knowledgemanagement_knowledgerecord',
+			'fk_menu'=>'fk_mainmenu=ticket,fk_leftmenu=knowledgemanagement_knowledgerecord',
 			// This is a Left menu entry
 			'type'=>'left',
 			'titre'=>'NewKnowledgeRecord',
-			'mainmenu'=>'knowledgemanagement',
+			'mainmenu'=>'ticket',
 			'leftmenu'=>'knowledgemanagement_new',
 			'url'=>'/knowledgemanagement/knowledgerecord_card.php?action=create',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -406,6 +364,7 @@ class modKnowledgeManagement extends DolibarrModules
 		);
 
 		/* END MODULEBUILDER LEFTMENU KNOWLEDGERECORD */
+
 		// Exports profiles provided by this module
 		$r = 1;
 		/* BEGIN MODULEBUILDER EXPORT KNOWLEDGERECORD */

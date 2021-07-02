@@ -66,12 +66,15 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action 		= GETPOST('action', 'alpha');
 $confirm		= GETPOST('confirm', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'purchaseordercard'; // To manage different context of search
+
+$backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+
 $socid = GETPOST('socid', 'int');
 $projectid = GETPOST('projectid', 'int');
 $cancel         = GETPOST('cancel', 'alpha');
 $lineid         = GETPOST('lineid', 'int');
-
-$lineid = GETPOST('lineid', 'int');
 $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
 
@@ -153,12 +156,16 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($cancel) {
-		if (!empty($backtopage)) {
-			header("Location: ".$backtopage);
-			exit;
+	$backurlforlist = DOL_URL_ROOT.'/fourn/commande/list.php'.($socid > 0 ? '&socid='.((int) $socid)  : '');
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/fourn/commande/card.php?id='.($id > 0 ? $id : '__ID__');
+			}
 		}
-		$action = '';
 	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
@@ -960,6 +967,9 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'confirm_refuse' && $confirm == 'yes' && $usercanapprove) {
+		if (GETPOST('refuse_note')) {
+			$object->refuse_note = GETPOST('refuse_note');
+		}
 		$result = $object->refuse($user);
 		if ($result > 0) {
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
@@ -1572,10 +1582,16 @@ if ($action == 'create') {
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
-	print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	print '<input type="hidden" name="remise_percent" value="'.$soc->remise_supplier_percent.'">';
 	print '<input type="hidden" name="origin" value="'.$origin.'">';
 	print '<input type="hidden" name="originid" value="'.$originid.'">';
+	if ($backtopage) {
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	}
+	if ($backtopageforcancel) {
+		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+	}
+
 	if (!empty($currency_tx)) {
 		print '<input type="hidden" name="originmulticurrency_tx" value="'.$currency_tx.'">';
 	}
@@ -1591,9 +1607,9 @@ if ($action == 'create') {
 	print '<tr><td class="fieldrequired">'.$langs->trans('Supplier').'</td>';
 	print '<td>';
 
-	if ($socid > 0) {
+	if ($societe->id > 0) {
 		print $societe->getNomUrl(1);
-		print '<input type="hidden" name="socid" value="'.$socid.'">';
+		print '<input type="hidden" name="socid" value="'.$societe->id.'">';
 	} else {
 		print img_picto('', 'company').$form->select_company((empty($socid) ? '' : $socid), 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 		// reload page to retrieve customer informations
@@ -1875,7 +1891,16 @@ if ($action == 'create') {
 
 	// Confirmation de la desapprobation
 	if ($action == 'refuse') {
-		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("DenyingThisOrder"), $langs->trans("ConfirmDenyingThisOrder", $object->ref), "confirm_refuse", '', 0, 1);
+		$formquestion = array(
+			array(
+				'type' => 'text',
+				'name' => 'refuse_note',
+				'label' => $langs->trans("MotifCP"),
+				'value' => '',
+				'morecss' => 'minwidth300'
+			)
+		);
+		$formconfirm  = $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("DenyingThisOrder"), $langs->trans("ConfirmDenyingThisOrder", $object->ref), "confirm_refuse", $formquestion, 0, 1);
 	}
 
 	// Confirmation de l'annulation

@@ -110,7 +110,7 @@ class Localtax extends CommonObject
 		$sql .= "fk_user_creat,";
 		$sql .= "fk_user_modif";
 		$sql .= ") VALUES (";
-		$sql .= " ".$this->ltt.",";
+		$sql .= " ".((int) $this->ltt).",";
 		$sql .= " '".$this->db->idate($this->tms)."',";
 		$sql .= " '".$this->db->idate($this->datep)."',";
 		$sql .= " '".$this->db->idate($this->datev)."',";
@@ -170,7 +170,7 @@ class Localtax extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."localtax SET";
-		$sql .= " localtaxtype=".$this->ltt.",";
+		$sql .= " localtaxtype=".((int) $this->ltt).",";
 		$sql .= " tms='".$this->db->idate($this->tms)."',";
 		$sql .= " datep='".$this->db->idate($this->datep)."',";
 		$sql .= " datev='".$this->db->idate($this->datev)."',";

@@ -626,7 +626,7 @@ if ($id > 0 || !empty($ref)) {
 		$sql .= ' p.surface, p.surface_units, p.volume, p.volume_units';
 		$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
-		$sql .= " WHERE cd.fk_commande = ".$object->id;
+		$sql .= " WHERE cd.fk_commande = ".((int) $object->id);
 		$sql .= " ORDER BY cd.rang, cd.rowid";
 
 		//print $sql;

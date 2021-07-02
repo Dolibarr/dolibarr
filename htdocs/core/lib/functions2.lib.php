@@ -1043,7 +1043,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$regType = array();
 	if (preg_match('/\{(t+)\}/i', $mask, $regType)) {
 		$masktype = $regType[1];
-		$masktype_value = substr(preg_replace('/^TE_/', '', $objsoc->typent_code), 0, dol_strlen($regType[1])); // get n first characters of thirdpaty typent_code (where n is length in mask)
+		$masktype_value = substr(preg_replace('/^TE_/', '', $objsoc->typent_code), 0, dol_strlen($regType[1])); // get n first characters of thirdparty typent_code (where n is length in mask)
 		$masktype_value = str_pad($masktype_value, dol_strlen($regType[1]), "#", STR_PAD_RIGHT); // we fill on right with # to have same number of char than into mask
 	} else {
 		$masktype = '';
@@ -2676,57 +2676,6 @@ if (!function_exists('dolEscapeXML')) {
 	{
 		return strtr($string, array('\''=>'&apos;', '"'=>'&quot;', '&'=>'&amp;', '<'=>'&lt;', '>'=>'&gt;'));
 	}
-}
-
-
-/**
- *	Return automatic or manual in current language
- *
- *	@param	string	$automaticmanual   Value to test (1, 'automatic', 'true' or 0, 'manual', 'false')
- *	@param	integer	$case			   1=Yes/No, 0=yes/no, 2=Disabled checkbox, 3=Disabled checkbox + Automatic/Manual
- *	@param	int		$color			   0=texte only, 1=Text is formated with a color font style ('ok' or 'error'), 2=Text is formated with 'ok' color.
- *	@return	string					   HTML string
- */
-function autoOrManual($automaticmanual, $case = 1, $color = 0)
-{
-	global $langs;
-	$result = 'unknown';
-	$classname = '';
-	if ($automaticmanual == 1 || strtolower($automaticmanual) == 'automatic' || strtolower($automaticmanual) == 'true') { 	// A mettre avant test sur no a cause du == 0
-		$result = $langs->trans('automatic');
-		if ($case == 1 || $case == 3) {
-			$result = $langs->trans("Automatic");
-		}
-		if ($case == 2) {
-			$result = '<input type="checkbox" value="1" checked disabled>';
-		}
-		if ($case == 3) {
-			$result = '<input type="checkbox" value="1" checked disabled> '.$result;
-		}
-
-		$classname = 'ok';
-	} elseif ($automaticmanual == 0 || strtolower($automaticmanual) == 'manual' || strtolower($automaticmanual) == 'false') {
-		$result = $langs->trans("manual");
-		if ($case == 1 || $case == 3) {
-			$result = $langs->trans("Manual");
-		}
-		if ($case == 2) {
-			$result = '<input type="checkbox" value="0" disabled>';
-		}
-		if ($case == 3) {
-			$result = '<input type="checkbox" value="0" disabled> '.$result;
-		}
-
-		if ($color == 2) {
-			$classname = 'ok';
-		} else {
-			$classname = 'error';
-		}
-	}
-	if ($color) {
-		return '<font class="'.$classname.'">'.$result.'</font>';
-	}
-	return $result;
 }
 
 

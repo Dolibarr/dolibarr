@@ -489,10 +489,16 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			'MAIN_MODULE_VARIANTS'=>'newboxdefonly',
 			'MAIN_MODULE_WEBSITE'=>'newboxdefonly',
 		);
-		migrate_reload_modules($db, $langs, $conf, $listofmodule);
 
+		$result = migrate_reload_modules($db, $langs, $conf, $listofmodule);
+		if ($result < 0) {
+			$error++;
+		}
 		// Reload menus (this must be always and only into last targeted version)
-		migrate_reload_menu($db, $langs, $conf);
+		$result = migrate_reload_menu($db, $langs, $conf);
+		if ($result < 0) {
+			$error++;
+		}
 	}
 
 	// Can force activation of some module during migration with parameter 'enablemodules=MAIN_MODULE_XXX,MAIN_MODULE_YYY,...'
@@ -545,10 +551,11 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	print '</table>';
 
 
-	// Set constant to ask to remake a new ping to inform about upgrade (if first ping was done and OK)
-	$sql = 'UPDATE '.MAIN_DB_PREFIX."const SET VALUE = 'torefresh' WHERE name = 'MAIN_FIRST_PING_OK_ID'";
-	$db->query($sql, 1);
-
+	if (!$error) {
+		// Set constant to ask to remake a new ping to inform about upgrade (if first ping was done and OK)
+		$sql = 'UPDATE '.MAIN_DB_PREFIX."const SET VALUE = 'torefresh' WHERE name = 'MAIN_FIRST_PING_OK_ID'";
+		$db->query($sql, 1);
+	}
 
 	// We always commit.
 	// Process is designed so we can run it several times whatever is situation.
@@ -1183,7 +1190,7 @@ function migrate_contracts_date2($db, $langs, $conf)
 					print $langs->trans('MigrationContractsInvalidDateFix', $obj->cref, $obj->date_contrat, $obj->datemin)."<br>\n";
 					$sql = "UPDATE ".MAIN_DB_PREFIX."contrat";
 					$sql .= " SET date_contrat='".$db->idate($datemin)."'";
-					$sql .= " WHERE rowid=".$obj->cref;
+					$sql .= " WHERE rowid = ".((int) $obj->cref);
 					$resql2 = $db->query($sql);
 					if (!$resql2) {
 						dol_print_error($db);
@@ -1275,8 +1282,8 @@ function migrate_contracts_open($db, $langs, $conf)
 
 				print $langs->trans('MigrationReopenThisContract', $obj->cref)."<br>\n";
 				$sql = "UPDATE ".MAIN_DB_PREFIX."contrat";
-				$sql .= " SET statut=1";
-				$sql .= " WHERE rowid=".$obj->cref;
+				$sql .= " SET statut = 1";
+				$sql .= " WHERE rowid = ".((int) $obj->cref);
 				$resql2 = $db->query($sql);
 				if (!$resql2) {
 					dol_print_error($db);
@@ -2465,7 +2472,7 @@ function migrate_restore_missing_links($db, $langs, $conf)
 				print 'Line '.$obj->rowid.' in '.$table1.' is linked to record '.$obj->field.' in '.$table2.' that has no link to '.$table1.'. We fix this.<br>';
 				$sql = "UPDATE ".MAIN_DB_PREFIX.$table2." SET";
 				$sql .= " ".$field2." = '".$db->escape($obj->rowid)."'";
-				$sql .= " WHERE rowid=".$obj->field;
+				$sql .= " WHERE rowid = ".((int) $obj->field);
 
 				$resql2 = $db->query($sql);
 				if (!$resql2) {
@@ -2522,7 +2529,7 @@ function migrate_restore_missing_links($db, $langs, $conf)
 				print 'Line '.$obj->rowid.' in '.$table1.' is linked to record '.$obj->field.' in '.$table2.' that has no link to '.$table1.'. We fix this.<br>';
 				$sql = "UPDATE ".MAIN_DB_PREFIX.$table2." SET";
 				$sql .= " ".$field2." = '".$db->escape($obj->rowid)."'";
-				$sql .= " WHERE rowid=".$obj->field;
+				$sql .= " WHERE rowid = ".((int) $obj->field);
 
 				$resql2 = $db->query($sql);
 				if (!$resql2) {
@@ -2835,8 +2842,8 @@ function migrate_project_task_time($db, $langs, $conf)
 					$newtime = $hour + $min;
 
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."projet_task_time SET";
-					$sql2 .= " task_duration = ".$newtime;
-					$sql2 .= " WHERE rowid = ".$obj->rowid;
+					$sql2 .= " task_duration = ".((int) $newtime);
+					$sql2 .= " WHERE rowid = ".((int) $obj->rowid);
 
 					$resql2 = $db->query($sql2);
 					if (!$resql2) {
@@ -2865,7 +2872,7 @@ function migrate_project_task_time($db, $langs, $conf)
 				if ($oldtime > 0) {
 					foreach ($totaltime as $taskid => $total_duration) {
 						$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task SET";
-						$sql .= " duration_effective = ".$total_duration;
+						$sql .= " duration_effective = ".((int) $total_duration);
 						$sql .= " WHERE rowid = ".((int) $taskid);
 
 						$resql = $db->query($sql);
@@ -2945,7 +2952,7 @@ function migrate_customerorder_shipping($db, $langs, $conf)
 						$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
 						$sqlUpdate .= " ref_customer = '".$db->escape($obj->ref_client)."'";
 						$sqlUpdate .= ", date_delivery = '".$db->escape($obj->delivery_date ? $obj->delivery_date : 'null')."'";
-						$sqlUpdate .= " WHERE rowid = ".$obj->shipping_id;
+						$sqlUpdate .= " WHERE rowid = ".((int) $obj->shipping_id);
 
 						$result = $db->query($sqlUpdate);
 						if (!$result) {
@@ -3407,8 +3414,8 @@ function migrate_categorie_association($db, $langs, $conf)
 					$obj = $db->fetch_object($resql);
 
 					$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."categorie SET ";
-					$sqlUpdate .= "fk_parent = ".$obj->fk_categorie_mere;
-					$sqlUpdate .= " WHERE rowid = ".$obj->fk_categorie_fille;
+					$sqlUpdate .= "fk_parent = ".((int) $obj->fk_categorie_mere);
+					$sqlUpdate .= " WHERE rowid = ".((int) $obj->fk_categorie_fille);
 
 					$result = $db->query($sqlUpdate);
 					if (!$result) {
@@ -4282,6 +4289,22 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 				$mod->remove('noboxes'); // We need to remove because a permission id has been removed
 				$mod->init($reloadmode);
 			}
+		} elseif ($moduletoreload == 'MAIN_MODULE_KNOWLEDGEMANAGEMENT') {    // Permission has changed into 3.0 and 3.1
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Knowledge Management");
+			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modKnowledgeManagement.class.php';
+			if ($res) {
+				$mod = new modKnowledgeManagement($db);
+				$mod->remove('noboxes'); // We need to remove because a permission id has been removed
+				$mod->init($reloadmode);
+			}
+		} elseif ($moduletoreload == 'MAIN_MODULE_EVENTORGANIZATION') {    // Permission has changed into 3.0 and 3.1
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules EventOrganization");
+			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modEventOrganization.class.php';
+			if ($res) {
+				$mod = new modEventOrganization($db);
+				$mod->remove('noboxes'); // We need to remove because a permission id has been removed
+				$mod->init($reloadmode);
+			}
 		} elseif ($moduletoreload == 'MAIN_MODULE_PAYBOX') {    // Permission has changed into 3.0
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Paybox module");
 			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modPaybox.class.php';
@@ -4710,7 +4733,7 @@ function migrate_contacts_socialnetworks()
 	$db->begin();
 	print '<tr><td colspan="4">';
 	$sql = 'SELECT rowid, socialnetworks';
-	$sql .= ', jabberid, skype, twitter, facebook, linkedin, instagram, snapchat, googleplus, youtube, whatsapp FROM '.MAIN_DB_PREFIX.'socpeople WHERE ';
+	$sql .= ', jabberid, skype, twitter, facebook, linkedin, instagram, snapchat, googleplus, youtube, whatsapp FROM '.MAIN_DB_PREFIX.'socpeople WHERE';
 	$sql .= " jabberid IS NOT NULL OR jabberid <> ''";
 	$sql .= " OR skype IS NOT NULL OR skype <> ''";
 	$sql .= " OR twitter IS NOT NULL OR twitter <> ''";

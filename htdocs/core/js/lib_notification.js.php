@@ -153,7 +153,7 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
 						// Update status of all notifications we sent on browser (listofreminderids)
 						console.log("Flag notification as done for listofreminderids="+listofreminderids);
 						$.ajax("<?php print DOL_URL_ROOT.'/core/ajax/check_notifications.php?action=stopreminder&listofreminderids='; ?>"+listofreminderids, {
-							type: "post",   // Usually post or get
+							type: "POST",   // Usually post or get
 							async: true,
 							data: { time_js_next_test: time_js_next_test, token: 'notrequired' }
 						});

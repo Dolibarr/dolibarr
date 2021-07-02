@@ -1727,15 +1727,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Password
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-			print '<tr><td>'.$langs->trans("Password").'</td><td>'.preg_replace('/./i', '*', $object->pass);
+			print '<tr><td>'.$langs->trans("Password").'</td><td>';
 			if ($object->pass) {
 				print preg_replace('/./i', '*', $object->pass);
 			} else {
 				if ($user->admin) {
-					print $langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
-				} else {
-					print $langs->trans("Hidden");
+					print '<!-- '.$langs->trans("Crypted").': '.$object->pass_indatabase_crypted.' -->';
 				}
+				print '<span class="opacitymedium"'.$langs->trans("Hidden").'</span>';
 			}
 			if ((!empty($object->pass) || !empty($object->pass_crypted)) && empty($object->user_id)) {
 				$langs->load("errors");
@@ -1908,7 +1907,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 
 				// Reactivate
-				if (Adherent::STATUS_RESILIATED == $object->statut || Adherent::STATUS_EXCLUDED == $Object->statut) {
+				if (Adherent::STATUS_RESILIATED == $object->statut || Adherent::STATUS_EXCLUDED == $object->statut) {
 					if ($user->rights->adherent->creer) {
 						print '<a class="butAction" href="card.php?rowid='.$id.'&action=valid">'.$langs->trans("Reenable")."</a>\n";
 					} else {

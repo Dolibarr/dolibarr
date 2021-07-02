@@ -195,6 +195,11 @@ if ($urllogo) {
 	}
 	print '</div>';
 }
+if (!empty($conf->global->PROPOSAL_IMAGE_PUBLIC_SIGN)) {
+	print '<div class="backimagepublicproposalsign">';
+	print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->PROPOSAL_IMAGE_PUBLIC_SIGN.'">';
+	print '</div>';
+}
 
 // Output introduction text
 $text = '';

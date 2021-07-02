@@ -28,7 +28,9 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+if (!empty($conf->accounting->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "salaries", "bills", "hrm"));
@@ -52,8 +54,12 @@ if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST(
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortfield) $sortfield = "s.datep,s.rowid";
-if (!$sortorder) $sortorder = "DESC,DESC";
+if (!$sortfield) {
+	$sortfield = "s.datep,s.rowid";
+}
+if (!$sortorder) {
+	$sortorder = "DESC,DESC";
+}
 
 // Initialize technical objects
 $object = new PaymentSalary($db);
@@ -66,8 +72,12 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-if (!$sortfield) $sortfield = "s.datep,s.rowid";
-if (!$sortorder) $sortorder = "DESC,DESC";
+if (!$sortfield) {
+	$sortfield = "s.datep,s.rowid";
+}
+if (!$sortorder) {
+	$sortorder = "DESC,DESC";
+}
 
 $search_ref = GETPOST('search_ref', 'int');
 $search_ref_salary = GETPOST('search_ref_salary', 'int');
@@ -89,7 +99,9 @@ if (!GETPOST('search_type_id', 'int')) {
 	$filterarray = explode('-', $newfiltre);
 	foreach ($filterarray as $val) {
 		$part = explode(':', $val);
-		if ($part[0] == 's.fk_typepayment') $search_type_id = $part[1];
+		if ($part[0] == 's.fk_typepayment') {
+			$search_type_id = $part[1];
+		}
 	}
 } else {
 	$search_type_id = GETPOST('search_type_id', 'int');
@@ -107,7 +119,9 @@ foreach ($object->fields as $key => $val) {
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
 foreach ($object->fields as $key => $val) {
-	if ($val['searchall']) $fieldstosearchall['t.'.$key] = $val['label'];
+	if (!empty($val['searchall'])) {
+		$fieldstosearchall['t.'.$key] = $val['label'];
+	}
 }
 
 $permissiontoread = $user->rights->salaries->read;
@@ -131,7 +145,9 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if (empty($reshook)) {
 	// Selection of new fields
@@ -201,24 +217,50 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.ro
 $sql .= " ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = sal.fk_user";
 $sql .= " AND s.entity IN (".getEntity('payment_salaries').")";
-if (empty($user->rights->salaries->readall)) $sql .= " AND s.fk_user IN (".$db->sanitize(join(',', $childids)).")";
+if (empty($user->rights->salaries->readall)) {
+	$sql .= " AND s.fk_user IN (".$db->sanitize(join(',', $childids)).")";
+}
 
 // Search criteria
-if ($search_ref)			$sql .= " AND s.rowid=".((int) $search_ref);
-if ($search_ref_salary)		$sql .= " AND sal.rowid=".((int) $search_ref_salary);
-if ($search_user)			$sql .= natural_search(array('u.login', 'u.lastname', 'u.firstname', 'u.email'), $search_user);
-if ($search_label)			$sql .= natural_search(array('sal.label'), $search_label);
-if ($search_date_start)     $sql .= " AND s.datep >= '".$db->idate($search_date_start)."'";
-if ($search_date_end)		$sql .= " AND s.datep <= '".$db->idate($search_date_end)."'";
-if ($search_dateep_start)     $sql .= " AND sal.dateep >= '".$db->idate($search_dateep_start)."'";
-if ($search_dateep_end)		$sql .= " AND sal.dateep <= '".$db->idate($search_dateep_end)."'";
-if ($search_amount)			$sql .= natural_search("s.amount", $search_amount, 1);
-if ($search_account > 0)	$sql .= " AND b.fk_account=".((int) $search_account);
-if ($search_fk_bank)			$sql .= " AND s.fk_bank=".((int) $search_fk_bank);
-if ($search_chq_number)		$sql .= natural_search(array('s.num_payment'), $search_chq_number);
+if ($search_ref) {
+	$sql .= " AND s.rowid=".((int) $search_ref);
+}
+if ($search_ref_salary) {
+	$sql .= " AND sal.rowid=".((int) $search_ref_salary);
+}
+if ($search_user) {
+	$sql .= natural_search(array('u.login', 'u.lastname', 'u.firstname', 'u.email'), $search_user);
+}
+if ($search_label) {
+	$sql .= natural_search(array('sal.label'), $search_label);
+}
+if ($search_date_start) {
+	$sql .= " AND s.datep >= '".$db->idate($search_date_start)."'";
+}
+if ($search_date_end) {
+	$sql .= " AND s.datep <= '".$db->idate($search_date_end)."'";
+}
+if ($search_dateep_start) {
+	$sql .= " AND sal.dateep >= '".$db->idate($search_dateep_start)."'";
+}
+if ($search_dateep_end) {
+	$sql .= " AND sal.dateep <= '".$db->idate($search_dateep_end)."'";
+}
+if ($search_amount) {
+	$sql .= natural_search("s.amount", $search_amount, 1);
+}
+if ($search_account > 0) {
+	$sql .= " AND b.fk_account=".((int) $search_account);
+}
+if ($search_fk_bank) {
+	$sql .= " AND s.fk_bank=".((int) $search_fk_bank);
+}
+if ($search_chq_number) {
+	$sql .= natural_search(array('s.num_payment'), $search_chq_number);
+}
 
 if ($search_type_id > 0) {
-	$sql .= " AND s.fk_typepayment=".$search_type_id;
+	$sql .= " AND s.fk_typepayment=".((int) $search_type_id);
 }
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -236,7 +278,9 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit))) {
 	$num = $nbtotalofrecords;
 } else {
-	if ($limit) $sql .= $db->plimit($limit + 1, $offset);
+	if ($limit) {
+		$sql .= $db->plimit($limit + 1, $offset);
+	}
 
 	$resql = $db->query($sql);
 	if (!$resql) {
@@ -255,21 +299,51 @@ llxHeader('', $title, $help_url);
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-if ($search_type_id) $param .= '&search_type_id='.urlencode($search_type_id);
-if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
-if ($search_ref) $param .= '&search_ref='.urlencode($search_ref);
-if ($search_ref_salary) $param .= '&search_ref_salary='.urlencode($search_ref_salary);
-if ($search_user) $param .= '&search_user='.urlencode($search_user);
-if ($search_label) $param .= '&search_label='.urlencode($search_label);
-if ($search_fk_bank) $param .= '&search_fk_bank='.urlencode($search_fk_bank);
-if ($search_chq_number) $param .= '&search_chq_number='.urlencode($search_chq_number);
-if ($search_account) $param .= '&search_account='.urlencode($search_account);
-if ($search_date_start) $param .= '&search_date_startday='.urlencode(GETPOST('search_date_startday', 'int')).'&search_date_startmonth='.urlencode(GETPOST('search_date_startmonth', 'int')).'&search_date_startyear='.urlencode(GETPOST('search_date_startyear', 'int'));
-if ($search_dateep_start) $param .= '&search_dateep_startday='.urlencode(GETPOST('search_dateep_startday', 'int')).'&search_dateep_startmonth='.urlencode(GETPOST('search_dateep_startmonth', 'int')).'&search_dateep_startyear='.urlencode(GETPOST('search_dateep_startyear', 'int'));
-if ($search_date_end) $param .= '&search_date_endday='.urlencode(GETPOST('search_date_endday', 'int')).'&search_date_endmonth='.urlencode(GETPOST('search_date_endmonth', 'int')).'&search_date_endyear='.urlencode(GETPOST('search_date_endyear', 'int'));
-if ($search_dateep_end) $param .= '&search_dateep_endday='.urlencode(GETPOST('search_dateep_endday', 'int')).'&search_dateep_endmonth='.urlencode(GETPOST('search_dateep_endmonth', 'int')).'&search_dateep_endyear='.urlencode(GETPOST('search_dateep_endyear', 'int'));
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+	$param .= '&contextpage='.urlencode($contextpage);
+}
+if ($limit > 0 && $limit != $conf->liste_limit) {
+	$param .= '&limit='.urlencode($limit);
+}
+if ($search_type_id) {
+	$param .= '&search_type_id='.urlencode($search_type_id);
+}
+if ($optioncss != '') {
+	$param .= '&optioncss='.urlencode($optioncss);
+}
+if ($search_ref) {
+	$param .= '&search_ref='.urlencode($search_ref);
+}
+if ($search_ref_salary) {
+	$param .= '&search_ref_salary='.urlencode($search_ref_salary);
+}
+if ($search_user) {
+	$param .= '&search_user='.urlencode($search_user);
+}
+if ($search_label) {
+	$param .= '&search_label='.urlencode($search_label);
+}
+if ($search_fk_bank) {
+	$param .= '&search_fk_bank='.urlencode($search_fk_bank);
+}
+if ($search_chq_number) {
+	$param .= '&search_chq_number='.urlencode($search_chq_number);
+}
+if ($search_account) {
+	$param .= '&search_account='.urlencode($search_account);
+}
+if ($search_date_start) {
+	$param .= '&search_date_startday='.urlencode(GETPOST('search_date_startday', 'int')).'&search_date_startmonth='.urlencode(GETPOST('search_date_startmonth', 'int')).'&search_date_startyear='.urlencode(GETPOST('search_date_startyear', 'int'));
+}
+if ($search_dateep_start) {
+	$param .= '&search_dateep_startday='.urlencode(GETPOST('search_dateep_startday', 'int')).'&search_dateep_startmonth='.urlencode(GETPOST('search_dateep_startmonth', 'int')).'&search_dateep_startyear='.urlencode(GETPOST('search_dateep_startyear', 'int'));
+}
+if ($search_date_end) {
+	$param .= '&search_date_endday='.urlencode(GETPOST('search_date_endday', 'int')).'&search_date_endmonth='.urlencode(GETPOST('search_date_endmonth', 'int')).'&search_date_endyear='.urlencode(GETPOST('search_date_endyear', 'int'));
+}
+if ($search_dateep_end) {
+	$param .= '&search_dateep_endday='.urlencode(GETPOST('search_dateep_endday', 'int')).'&search_dateep_endmonth='.urlencode(GETPOST('search_dateep_endmonth', 'int')).'&search_dateep_endyear='.urlencode(GETPOST('search_dateep_endyear', 'int'));
+}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -279,11 +353,15 @@ $arrayofmassactions = array(
 	//'buildsepa'=>$langs->trans("BuildSepa"),	// TODO
 );
 //if ($permissiontodelete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
+	$arrayofmassactions = array();
+}
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
-if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+if ($optioncss != '') {
+	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+}
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';
@@ -292,7 +370,9 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $url = DOL_URL_ROOT.'/salaries/card.php?action=create';
-if (!empty($socid)) $url .= '&socid='.$socid;
+if (!empty($socid)) {
+	$url .= '&socid='.$socid;
+}
 $newcardbutton = dolGetButtonTitle($langs->trans('NewSalaryPayment'), '', 'fa fa-plus-circle', $url, '', $user->rights->salaries->write);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $totalnboflines, 'object_payment', 0, $newcardbutton, '', $limit, 0, 0, 1);
@@ -411,7 +491,10 @@ print '</tr>'."\n";
 $needToFetchEachLine = 0;
 if (is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-		if (preg_match('/\$object/', $val)) $needToFetchEachLine++; // There is at least one compute field that use $object
+		if (preg_match('/\$object/', $val)) {
+			$needToFetchEachLine++;
+		}
+		// There is at least one compute field that use $object
 	}
 }
 
@@ -422,7 +505,10 @@ $total = 0;
 $totalarray = array();
 while ($i < ($limit ? min($num, $limit) : $num)) {
 	$obj = $db->fetch_object($resql);
-	if (empty($obj)) break; // Should not happen
+	if (empty($obj)) {
+		break;
+	}
+	// Should not happen
 
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
@@ -447,22 +533,32 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	// Ref
 	print "<td>".$paymentsalstatic->getNomUrl(1)."</td>\n";
-	if (!$i) $totalarray['nbfield']++;
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	print "<td>".$salstatic->getNomUrl(1)."</td>\n";
-	if (!$i) $totalarray['nbfield']++;
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	// Label payment
 	print "<td>".dol_trunc($obj->label, 40)."</td>\n";
-	if (!$i) $totalarray['nbfield']++;
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	// Date end period
 	print '<td class="center">'.dol_print_date($db->jdate($obj->dateep), 'day')."</td>\n";
-		if (!$i) $totalarray['nbfield']++;
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	// Date payment
 	print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
-	if (!$i) $totalarray['nbfield']++;
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	// Date value
 	/*print '<td class="center">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>\n";
@@ -470,15 +566,21 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	// Employee
 	print "<td>".$userstatic->getNomUrl(1)."</td>\n";
-	if (!$i) $totalarray['nbfield']++;
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	// Type
 	print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).'</td>';
-	if (!$i) $totalarray['nbfield']++;
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	// Chq number
 	print '<td>'.$obj->num_payment.'</td>';
-	if (!$i) $totalarray['nbfield']++;
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	// Account
 	if (!empty($conf->banque->enabled)) {
@@ -487,7 +589,9 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$accountlinestatic->id = $obj->fk_bank;
 		print $accountlinestatic->getNomUrl(1);
 		print '</td>';
-		if (!$i) $totalarray['nbfield']++;
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		print '<td>';
 		if ($obj->fk_bank > 0) {
@@ -512,15 +616,23 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if ($accountstatic->id > 0) {
 				print $accountstatic->getNomUrl(1);
 			}
-		} else print '&nbsp;';
+		} else {
+			print '&nbsp;';
+		}
 		print '</td>';
-		if (!$i) $totalarray['nbfield']++;
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	// Amount
 	print '<td class="nowrap right"><span class="amount">'.price($obj->amount).'</span></td>';
-	if (!$i) $totalarray['nbfield']++;
-	if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
+	if (!$i) {
+		$totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
+	}
 	$totalarray['val']['totalttcfield'] += $obj->amount;
 
 	// Extra fields
@@ -533,11 +645,15 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	print '<td class="nowrap center">';
 	if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 		$selected = 0;
-		if (in_array($object->id, $arrayofselected)) $selected = 1;
+		if (in_array($object->id, $arrayofselected)) {
+			$selected = 1;
+		}
 		print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
 	}
 	print '</td>';
-	if (!$i) $totalarray['nbfield']++;
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	print '</tr>'."\n";
 
@@ -551,7 +667,10 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 // If no record found
 if ($num == 0) {
 	$colspan = 1;
-	foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) $colspan++; }
+	foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) {
+			$colspan++;
+	}
+	}
 	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 

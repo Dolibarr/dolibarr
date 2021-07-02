@@ -2,12 +2,15 @@
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Grootboekrekening voor medewerker derde partij
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=De boekhoudrekening die in het gebruikersbestand is gedefinieerd, wordt alleen gebruikt voor aanvullende boekhouding. Deze wordt gebruikt voor het grootboek en als standaardwaarde voor aanvullende boekhouding als de speciale rekening van de gebruiker niet is gedefinieerd.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Standaard grootboekrekening voor salaris betalingen
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Laat standaard de optie "Automatisch een totale betaling aanmaken" leeg bij het aanmaken van een Salaris
 Salary=Salaris
 Salaries=Salarissen
-NewSalaryPayment=Nieuwe salarisbetaling
+NewSalary=Nieuw salaris
+NewSalaryPayment=Nieuwe salariskaart
 AddSalaryPayment=Salarisbetaling toevoegen
 SalaryPayment=Salarisbetaling
 SalariesPayments=Salarisbetalingen
+SalariesPaymentsOf=Salarisbetalingen van %s
 ShowSalaryPayment=Toon salarisbetaling
 THM=Gemiddeld uurtarief
 TJM=Gemiddeld dagtarief

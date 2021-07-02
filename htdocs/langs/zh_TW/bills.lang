@@ -259,6 +259,7 @@ DateMaxPayment=付款到期日
 DateInvoice=發票日期
 DatePointOfTax=稅點
 NoInvoice=沒有發票
+NoOpenInvoice=No open invoice
 ClassifyBill=分類發票
 SupplierBillsToPay=未付款的供應商發票
 CustomerBillsUnpaid=尚未付款的客戶發票
@@ -589,3 +590,4 @@ FacParentLine=發票的母行
 SituationTotalRayToRest=剩下的不含稅
 PDFSituationTitle=情況n°%d
 SituationTotalProgress=總進度%d %%
+SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s

@@ -606,7 +606,7 @@ if ($action == 'new') {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
 	$sql .= " WHERE ba.entity IN (".getEntity('bank_account').")";
 	$sql .= " AND b.fk_type= 'CHQ'";
-	$sql .= " AND b.fk_bordereau = ".$object->id;
+	$sql .= " AND b.fk_bordereau = ".((int) $object->id);
 	$sql .= $db->order($sortfield, $sortorder);
 
 	$resql = $db->query($sql);

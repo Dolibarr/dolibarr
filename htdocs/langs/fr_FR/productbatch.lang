@@ -30,14 +30,16 @@ BatchLotNumberingModules=Options pour la génération automatique de produits en
 BatchSerialNumberingModules=Options pour la génération automatique de produits en lots gérés par numéros de série
 ManageLotMask=Masque personnalisé
 CustomMasks=Ajoute une option pour définir le masque dans la fiche produit
-LotProductTooltip=Crée un champ dans la fiche produit pour définir un modèle spécifique de numéro de lot
-SNProductTooltip=Crée un champ dans la fiche produit pour définir un modèle spécifique de numéro de série
+LotProductTooltip=Ajoute une option dans la fiche produit pour définir un masque de numéro de lot dédié
+SNProductTooltip=Ajoute une option dans la fiche produit pour définir un masque de numéro de série dédié
 QtyToAddAfterBarcodeScan=Quantité à ajouter pour chaque code à barres/lot/série scanné
 LifeTime=Durée de vie (en jours)
-EndOfLife=Date de fin de vie
+EndOfLife=Fin d'utilisation
 ManufacturingDate=Date de fabrication
-DestructionDate=Date de mise au rebut
-FirstUseDate=Date de mise en service
-QCFrequency=Periodicité de contrôle (en jours)
+DestructionDate=Date de destruction
+FirstUseDate=Date de première mise en service
+QCFrequency=Fréquence du contrôle qualité (en jours)
+
+#Traceability - qc status
+OutOfOrder=Hors d'usage
 InWorkingOrder=En état de marche
-OutOfOrder=Hors d’usage

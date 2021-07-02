@@ -275,17 +275,17 @@ class Holiday extends CommonObject
 		$sql .= "entity";
 		$sql .= ") VALUES (";
 		$sql .= "'(PROV)',";
-		$sql .= "'".$this->db->escape($this->fk_user)."',";
+		$sql .= " ".((int) $this->fk_user).",";
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->escape($this->description)."',";
 		$sql .= " '".$this->db->idate($this->date_debut)."',";
 		$sql .= " '".$this->db->idate($this->date_fin)."',";
-		$sql .= " ".$this->halfday.",";
+		$sql .= " ".((int) $this->halfday).",";
 		$sql .= " '1',";
-		$sql .= " '".$this->db->escape($this->fk_validator)."',";
-		$sql .= " ".$this->fk_type.",";
-		$sql .= " ".$user->id.",";
-		$sql .= " ".$conf->entity;
+		$sql .= " ".((int) $this->fk_validator).",";
+		$sql .= " ".((int) $this->fk_type).",";
+		$sql .= " ".((int) $user->id).",";
+		$sql .= " ".((int) $conf->entity);
 		$sql .= ")";
 
 		$this->db->begin();
@@ -1393,7 +1393,7 @@ class Holiday extends CommonObject
 	 *	Met à jour le timestamp de la dernière mise à jour du solde des CP
 	 *
 	 *	@param		int		$userID		Id of user
-	 *	@param		int		$nbHoliday	Nb of days
+	 *	@param		float	$nbHoliday	Nb of days
 	 *  @param		int		$fk_type	Type of vacation
 	 *  @return     int					0=Nothing done, 1=OK, -1=KO
 	 */
@@ -1477,7 +1477,7 @@ class Holiday extends CommonObject
 				if ($num > 0) {
 					// Update for user
 					$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_users SET";
-					$sql .= " nb_holiday = ".$nbHoliday;
+					$sql .= " nb_holiday = ".((float) $nbHoliday);
 					$sql .= " WHERE fk_user = ".(int) $userID." AND fk_type = ".(int) $fk_type;
 					$result = $this->db->query($sql);
 					if (!$result) {
@@ -1487,7 +1487,7 @@ class Holiday extends CommonObject
 				} else {
 					// Insert for user
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_users(nb_holiday, fk_user, fk_type) VALUES (";
-					$sql .= $nbHoliday;
+					$sql .= ((float) $nbHoliday);
 					$sql .= ", ".(int) $userID.", ".(int) $fk_type.")";
 					$result = $this->db->query($sql);
 					if (!$result) {
@@ -1952,12 +1952,12 @@ class Holiday extends CommonObject
 		$sql .= "fk_type";
 		$sql .= ") VALUES (";
 		$sql .= " '".$this->db->idate(dol_now())."',";
-		$sql .= " '".$this->db->escape($fk_user_action)."',";
-		$sql .= " '".$this->db->escape($fk_user_update)."',";
+		$sql .= " ".((int) $fk_user_action).",";
+		$sql .= " ".((int) $fk_user_update).",";
 		$sql .= " '".$this->db->escape($label)."',";
-		$sql .= " '".$this->db->escape($prev_solde)."',";
-		$sql .= " '".$this->db->escape($new_solde)."',";
-		$sql .= " ".$fk_type;
+		$sql .= " ".((float) $prev_solde).",";
+		$sql .= " ".((float) $new_solde).",";
+		$sql .= " ".((int) $fk_type);
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);

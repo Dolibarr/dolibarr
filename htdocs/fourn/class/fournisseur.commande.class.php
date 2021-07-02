@@ -156,6 +156,8 @@ class CommandeFournisseur extends CommonOrder
 	public $user_approve_id;
 	public $user_approve_id2; // Used when SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set
 
+	public $refuse_note;
+
 	public $extraparams = array();
 
 	/**
@@ -695,7 +697,7 @@ class CommandeFournisseur extends CommonOrder
 	public function LibStatut($status, $mode = 0, $billed = 0)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		if (empty($this->statuts) || empty($this->statutshort)) {
 			$langs->load('orders');
@@ -754,6 +756,11 @@ class CommandeFournisseur extends CommonOrder
 		$statusLong = $langs->transnoentitiesnoconv($this->statuts[$status]).$billedtext;
 		$statusShort = $langs->transnoentitiesnoconv($this->statutshort[$status]);
 
+		$parameters = array('status' => $status, 'mode' => $mode, 'billed' => $billed);
+		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
+		if ($reshook > 0) {
+			return $hookmanager->resPrint;
+		}
 		return dolGetStatus($statusLong, $statusShort, '', $statusClass, $mode);
 	}
 
@@ -3051,7 +3058,7 @@ class CommandeFournisseur extends CommonOrder
 		if ($this->methode_commande_id > 0) {
 			$sql = "SELECT rowid, code, libelle as label";
 			$sql .= " FROM ".MAIN_DB_PREFIX.'c_input_method';
-			$sql .= " WHERE active=1 AND rowid = ".$this->db->escape($this->methode_commande_id);
+			$sql .= " WHERE active=1 AND rowid = ".((int) $this->methode_commande_id);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -3674,19 +3681,19 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql .= "'".$this->db->escape($this->rang)."',";
 		$sql .= "'".$this->db->escape($this->qty)."', ";
 		$sql .= " ".(empty($this->vat_src_code) ? "''" : "'".$this->db->escape($this->vat_src_code)."'").",";
-		$sql .= " ".$this->tva_tx.", ";
-		$sql .= " ".$this->localtax1_tx.",";
-		$sql .= " ".$this->localtax2_tx.",";
+		$sql .= " ".price2num($this->tva_tx).", ";
+		$sql .= " ".price2num($this->localtax1_tx).",";
+		$sql .= " ".price2num($this->localtax2_tx).",";
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql .= " ".$this->remise_percent.", ".price2num($this->subprice, 'MU').", '".$this->db->escape($this->ref_supplier)."',";
+		$sql .= " ".((float) $this->remise_percent).", ".price2num($this->subprice, 'MU').", '".$this->db->escape($this->ref_supplier)."',";
 		$sql .= " ".price2num($this->total_ht).",";
 		$sql .= " ".price2num($this->total_tva).",";
 		$sql .= " ".price2num($this->total_localtax1).",";
 		$sql .= " ".price2num($this->total_localtax2).",";
 		$sql .= " ".price2num($this->total_ttc).",";
 		$sql .= ($this->fk_unit ? "'".$this->db->escape($this->fk_unit)."'" : "null");
-		$sql .= ", ".($this->fk_multicurrency ? $this->fk_multicurrency : "null");
+		$sql .= ", ".($this->fk_multicurrency ? ((int) $this->fk_multicurrency) : "null");
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".($this->multicurrency_subprice ? price2num($this->multicurrency_subprice) : '0');
 		$sql .= ", ".($this->multicurrency_total_ht ? price2num($this->multicurrency_total_ht) : '0');

@@ -9,11 +9,11 @@ ConfirmDeleteEstablishment=Är du säker på att du vill radera den här anlägg
 OpenEtablishment=Öppen anläggning
 CloseEtablishment=Stäng anläggningen
 # Dictionary
-DictionaryPublicHolidays=HRM - Public holidays
+DictionaryPublicHolidays=Ledighet - Helgdagar
 DictionaryDepartment=HRM - Avdelningslista
-DictionaryFunction=HRM - Job positions
+DictionaryFunction=HRM - Jobbpositioner
 # Module
 Employees=anställda
 Employee=Anställd
 NewEmployee=Ny anställd
-ListOfEmployees=List of employees
+ListOfEmployees=Lista över anställda

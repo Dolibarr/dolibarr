@@ -682,7 +682,7 @@ while ($i < min($num, $limit)) {
 		print "<tr>";
 		print '<td colspan="'.($totalarray['nbfield'] ? $totalarray['nbfield'] : 10).'" style="font-weight:bold; border-bottom: 1pt solid black;">';
 		if ($line->subledger_account != "" && $line->subledger_account != '-1') {
-			print $object->get_compte_desc($line->numero_compte).' : '.length_accounta($line->subledger_account);
+			print $line->subledger_label.' : '.length_accounta($line->subledger_account);
 		} else {
 			// Should not happen: subledger account must be null or a non empty value
 			print '<span class="error">'.$langs->trans("Unknown");
@@ -821,7 +821,7 @@ while ($i < min($num, $limit)) {
 
 	// Amount debit
 	if (!empty($arrayfields['t.debit']['checked'])) {
-		print '<td class="nowrap right">'.($line->debit ? price($line->debit) : '').'</td>';
+		print '<td class="right nowraponall amount">'.($line->debit ? price($line->debit) : '').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -833,7 +833,7 @@ while ($i < min($num, $limit)) {
 
 	// Amount credit
 	if (!empty($arrayfields['t.credit']['checked'])) {
-		print '<td class="nowrap right">'.($line->credit ? price($line->credit) : '').'</td>';
+		print '<td class="right nowraponall amount">'.($line->credit ? price($line->credit) : '').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

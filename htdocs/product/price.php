@@ -50,7 +50,6 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'bills', 'companies', 'other'));
 
-$mesg = '';
 $error = 0;
 $errors = array();
 
@@ -346,6 +345,7 @@ if (empty($reshook)) {
 
 				$newprice = price2num($newprice, 'MU');
 				$newprice_min = price2num($val['price_min'], 'MU');
+				$newvattx = price2num($val['vat_tx']);
 
 				if (!empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE) && $newprice_min < $maxpricesupplier) {
 					setEventMessages($langs->trans("MinimumPriceLimit", price($maxpricesupplier, 0, '', 1, - 1, - 1, 'auto')), null, 'errors');
@@ -353,12 +353,11 @@ if (empty($reshook)) {
 					break;
 				}
 
-				if ($object->multiprices[$key] != $newprice || $object->multiprices_min[$key] != $newprice_min || $object->multiprices_base_type[$key] != $val['price_base_type']) {
+				if ($object->multiprices[$key] != $newprice || $object->multiprices_min[$key] != $newprice_min || $object->multiprices_base_type[$key] != $val['price_base_type'] || $object->multiprices_tva_tx[$key] != $newvattx) {
 					$res = $object->updatePrice($newprice, $val['price_base_type'], $user, $val['vat_tx'], $newprice_min, $key, $val['npr'], $psq, 0, $val['localtaxes_array'], $val['default_vat_code']);
 				} else {
 					$res = 0;
 				}
-
 
 				if ($res < 0) {
 					$error++;
@@ -1212,15 +1211,17 @@ if ($action == 'edit_price' && $object->getRights()->creer) {
 		// Only show price mode and expression selector if module is enabled
 		if (!empty($conf->dynamicprices->enabled)) {
 			// Price mode selector
+			print '<!-- Show price mode of dynamicprices editor -->'."\n";
 			print '<tr><td>'.$langs->trans("PriceMode").'</td><td>';
+			print img_picto('', 'dynamicprice', 'class="pictofixedwidth"');
 			$price_expression = new PriceExpression($db);
-			$price_expression_list = array(0 => $langs->trans("PriceNumeric")); //Put the numeric mode as first option
+			$price_expression_list = array(0 => $langs->trans("Numeric").' <span class="opacitymedium">('.$langs->trans("NoDynamicPrice").')</span>'); //Put the numeric mode as first option
 			foreach ($price_expression->list_price_expression() as $entry) {
 				$price_expression_list[$entry->id] = $entry->title;
 			}
 			$price_expression_preselection = GETPOST('eid') ? GETPOST('eid') : ($object->fk_price_expression ? $object->fk_price_expression : '0');
 			print $form->selectarray('eid', $price_expression_list, $price_expression_preselection);
-			print '&nbsp; <div id="expression_editor" class="button">'.$langs->trans("PriceExpressionEditor").'</div>';
+			print '&nbsp; <a id="expression_editor" class="classlink">'.$langs->trans("PriceExpressionEditor").'</a>';
 			print '</td></tr>';
 
 			// This code hides the numeric price input if is not selected, loads the editor page if editor button is pressed

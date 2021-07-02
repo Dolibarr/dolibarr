@@ -257,7 +257,7 @@ if ($search_product_category > 0) {
 $sql .= " WHERE c.entity = ".$conf->entity;
 $sql .= " AND c.rowid = cd.fk_contrat";
 if ($search_product_category > 0) {
-	$sql .= " AND cp.fk_categorie = ".$search_product_category;
+	$sql .= " AND cp.fk_categorie = ".((int) $search_product_category);
 }
 $sql .= " AND c.fk_soc = s.rowid";
 if (!$user->rights->societe->client->voir && !$socid) {

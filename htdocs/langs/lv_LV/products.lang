@@ -396,3 +396,5 @@ ActionAvailableOnVariantProductOnly=Darbība pieejama tikai produkta variantam
 ProductsPricePerCustomer=Produktu cenas uz vienu klientu
 ProductSupplierExtraFields=Papildu atribūti (piegādātāju cenas)
 DeleteLinkedProduct=Izdzēsiet kombinēto produktu, kas saistīts ar to
+PMPValue=Vidējā svērtā cena
+PMPValueShort=VSC
