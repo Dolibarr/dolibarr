@@ -204,7 +204,7 @@ class Translate
 			dol_print_error('', get_class($this)."::Load ErrorWrongParameters");
 			return -1;
 		}
-		if ($this->defaultlang == 'none_NONE') {
+		if ($this->defaultlang === 'none_NONE') {
 			return 0; // Special language code to not translate keys
 		}
 
@@ -735,7 +735,7 @@ class Translate
 	 *  @param	string	$str            string root to translate
 	 *  @param  string	$countrycode    country code (FR, ...)
 	 *  @return	string         			translated string
-	 *  @see transcountrynoentities()
+	 *  @see transcountrynoentities(), picto_from_langcode()
 	 */
 	public function transcountry($str, $countrycode)
 	{
@@ -753,7 +753,7 @@ class Translate
 	 *  @param	string	$str            string root to translate
 	 *  @param  string	$countrycode    country code (FR, ...)
 	 *  @return string         			translated string
-	 *  @see transcountry()
+	 *  @see transcountry(), picto_from_langcode()
 	 */
 	public function transcountrynoentities($str, $countrycode)
 	{

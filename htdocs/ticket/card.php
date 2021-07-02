@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2016 Jean-François FERRY <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2018      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +53,7 @@ $ref       = GETPOST('ref', 'alpha');
 $projectid = GETPOST('projectid', 'int');
 $cancel    = GETPOST('cancel', 'alpha');
 $action    = GETPOST('action', 'aZ09');
+$backtopage = GETPOST('$backtopage', 'alpha');
 
 $notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
 
@@ -111,8 +113,8 @@ if ($id || $track_id || $ref) {
 $url_page_current = DOL_URL_ROOT.'/ticket/card.php';
 
 // Security check - Protection if external user
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
+$socid = 0;
+if ($user->socid > 0) $socid = $user->socid;
 $result = restrictedArea($user, 'ticket', $object->id);
 
 $triggermodname = 'TICKET_MODIFY';
@@ -151,7 +153,7 @@ if (empty($reshook)) {
 	}
 
 	// Action to add an action (not a message)
-	if (GETPOST('add', 'alpha') && $user->rights->ticket->write) {
+	if (GETPOST('add', 'alpha') && !empty($user->rights->ticket->write)) {
 		$error = 0;
 
 		if (!GETPOST("subject", 'alphanohtml')) {
@@ -211,14 +213,14 @@ if (empty($reshook)) {
 				}
 
 				// Auto assign user
-				if ($conf->global->TICKET_AUTO_ASSIGN_USER_CREATE) {
+				if (!empty($conf->global->TICKET_AUTO_ASSIGN_USER_CREATE)) {
 					$result = $object->assignUser($user, $user->id, 1);
 					$object->add_contact($user->id, "SUPPORTTEC", 'internal');
 				}
 
 				// Auto assign contrat
 				$contractid = 0;
-				if ($conf->global->TICKET_AUTO_ASSIGN_CONTRACT_CREATE) {
+				if (!empty($conf->global->TICKET_AUTO_ASSIGN_CONTRACT_CREATE)) {
 					$contrat = new Contrat($db);
 					$contrat->socid = $object->fk_soc;
 					$list = $contrat->getListOfContracts();
@@ -233,7 +235,7 @@ if (empty($reshook)) {
 				}
 
 				// Auto create fiche intervention
-				if ($conf->global->TICKET_AUTO_CREATE_FICHINTER_CREATE) {
+				if (!empty($conf->global->TICKET_AUTO_CREATE_FICHINTER_CREATE)) {
 					$fichinter = new Fichinter($db);
 					$fichinter->socid = $object->fk_soc;
 					$fichinter->fk_project = $projectid;
@@ -724,7 +726,7 @@ if ($action == 'create' || $action == 'presend') {
 
 	// Subject
 	print '<tr><td><label for="subject"><span class="fieldrequired">'.$langs->trans("Subject").'</span></label></td><td>';
-	print '<input class="text" size="50" id="subject" name="subject" value="'.dol_escape_htmltag(GETPOSTISSET('subject') ? GETPOST('subject', 'alpha') : $object->subject).'" />';
+	print '<input class="text minwidth200" id="subject" name="subject" value="'.dol_escape_htmltag(GETPOSTISSET('subject') ? GETPOST('subject', 'alpha') : $object->subject).'" />';
 	print '</td></tr>';
 
 	// Other attributes
@@ -751,7 +753,7 @@ if ($action == 'create' || $action == 'presend') {
 	|| $action == 'editsubject' || $action == 'edit_extras' || $action == 'update_extras' || $action == 'edit_extrafields' || $action == 'set_extrafields' || $action == 'classify' || $action == 'sel_contract' || $action == 'edit_message_init' || $action == 'set_status' || $action == 'dellink') {
 	if ($res > 0) {
 		// or for unauthorized internals users
-		if (!$user->socid && ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
+		if (!$user->socid && (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
 			accessforbidden('', 0, 1);
 		}
 
@@ -853,7 +855,7 @@ if ($action == 'create' || $action == 'presend') {
 			print dol_get_fiche_end();
 		}
 
-		if (!$user->socid && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
+		if (!$user->socid && !empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) {
 			$object->next_prev_filter = "te.fk_user_assign = '".$user->id."'";
 		} elseif ($user->socid > 0) {
 			$object->next_prev_filter = "te.fk_soc = '".$user->socid."'";
@@ -872,11 +874,12 @@ if ($action == 'create' || $action == 'presend') {
 			$langs->load("users");
 			$fuser = new User($db);
 			$fuser->fetch($object->fk_user_create);
-			$morehtmlref .= $fuser->getNomUrl(0);
+			$morehtmlref .= $fuser->getNomUrl(-1);
 		}
 		if (!empty($object->origin_email)) {
 			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
-			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small>('.$langs->trans("TicketEmailOriginIssuer").')</small>';
+			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
+			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").')</small>';
 		}
 
 		// Thirdparty
@@ -966,8 +969,8 @@ if ($action == 'create' || $action == 'presend') {
 		print '<tr><td>'.$langs->trans("TicketReadOn").'</td><td>';
 		if (!empty($object->date_read)) {
 			print dol_print_date($object->date_read, 'dayhour', 'tzuser');
-			print '<span class="opacitymedium"> - '.$langs->trans("TicketTimeToRead").': <i>'.convertSecondToTime(roundUpToNextMultiple($object->date_read - $object->datec, 60)).'</i>';
-			print ' - '.$langs->trans("TimeElapsedSince").': <i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->date_read, 60)).'</i></span>';
+			print '<span class="opacitymedium"> - '.$langs->trans("TicketTimeElapsedBeforeSince").': <i>'.convertSecondToTime(roundUpToNextMultiple($object->date_read - $object->datec, 60)).'</i>';
+			print ' / <i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->date_read, 60)).'</i></span>';
 		}
 		print '</td></tr>';
 
@@ -989,7 +992,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '</td><td>';
 		if ($object->fk_user_assign > 0) {
 			$userstat->fetch($object->fk_user_assign);
-			print $userstat->getNomUrl(1);
+			print $userstat->getNomUrl(-1);
 		}
 
 		// Show user list to assignate one if status is "read"
@@ -1030,7 +1033,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '</tr>';
 
 		// Timing (Duration sum of linked fichinter)
-		if ($conf->fichinter->enabled) {
+		if ($conf->ficheinter->enabled) {
 			$object->fetchObjectLinked();
 			$num = count($object->linkedObjects);
 			$timing = 0;
@@ -1181,7 +1184,7 @@ if ($action == 'create' || $action == 'presend') {
 
 					if ($tab[$i]['socid'] > 0) {
 						$companystatic->fetch($tab[$i]['socid']);
-						echo $companystatic->getNomUrl(1);
+						echo $companystatic->getNomUrl(-1);
 					}
 					if ($tab[$i]['socid'] < 0) {
 						echo $conf->global->MAIN_INFO_SOCIETE_NOM;
@@ -1194,12 +1197,12 @@ if ($action == 'create' || $action == 'presend') {
 					print '<div class="tagtd">';
 					if ($tab[$i]['source'] == 'internal') {
 						if ($userstatic->fetch($tab[$i]['id'])) {
-							print $userstatic->getNomUrl(1);
+							print $userstatic->getNomUrl(-1);
 						}
 					}
 					if ($tab[$i]['source'] == 'external') {
 						if ($contactstatic->fetch($tab[$i]['id'])) {
-							print $contactstatic->getNomUrl(1);
+							print $contactstatic->getNomUrl(-1);
 						}
 					}
 					print ' </div>
@@ -1319,15 +1322,32 @@ if ($action == 'create' || $action == 'presend') {
 
 		// add a message
 		if ($action == 'presend' || $action == 'presend_addmessage') {
+			if ($object->fk_soc > 0) {
+				$object->fetch_thirdparty();
+			}
+
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				$newlang = GETPOST('lang_id', 'aZ09');
+			} elseif ($conf->global->MAIN_MULTILANGS && empty($newlang) && is_object($object->thirdparty)) {
+				$newlang = $object->thirdparty->default_lang;
+			}
+			if (!empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+
+			$arrayoffamiliestoexclude = array('objectamount');
+
 			$action = 'add_message'; // action to use to post the message
 			$modelmail = 'ticket_send';
 
 			// Substitution array
 			$morehtmlright = '';
 			$help = "";
-			$substitutionarray = array();
+			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
 			if ($object->fk_soc > 0) {
-				$object->fetch_thirdparty();
 				$substitutionarray['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
 			}
 			$substitutionarray['__USER_SIGNATURE__'] = $user->signature;
@@ -1359,16 +1379,6 @@ if ($action == 'create' || $action == 'presend') {
 			print load_fiche_titre($langs->trans('TicketAddMessage'), $morehtmlright, 'messages@ticket');
 
 			print '<hr>';
-
-			// Define output language
-			$outputlangs = $langs;
-			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && !empty($_REQUEST['lang_id'])) {
-				$newlang = $_REQUEST['lang_id'];
-			}
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
-				$newlang = $object->default_lang;
-			}
 
 			$formticket = new FormTicket($db);
 
@@ -1451,9 +1461,11 @@ if ($action == 'create' || $action == 'presend') {
 
 				$MAXEVENT = 10;
 
-				$morehtmlcenter = dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT.'/ticket/messaging.php?id='.$object->id);
+				$morehtmlcenter = '<div class="nowraponall">';
+				$morehtmlcenter .= dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT.'/ticket/messaging.php?id='.$object->id);
 				$morehtmlcenter .= ' ';
 				$morehtmlcenter .= dolGetButtonTitle($langs->trans('FullList'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/ticket/agenda.php?id='.$object->id);
+				$morehtmlcenter .= '</div>';
 
 				// List of actions on element
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

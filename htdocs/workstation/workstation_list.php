@@ -71,6 +71,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 // Default sort order (if not yet defined by previous GETPOST)
 if (!$sortfield) {
+	reset($object->fields);					// Reset is required to avoid key() to return null.
 	$sortfield = "t.".key($object->fields); // Set here default search field. By default 1st field in definition.
 }
 if (!$sortorder) {
@@ -91,13 +92,13 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 
-$groups = GETPOST('groups');
-$resources = GETPOST('resources');
+$groups = GETPOST('groups', 'array:int');
+$resources = GETPOST('resources', 'array:int');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
 foreach ($object->fields as $key => $val) {
-	if ($val['searchall']) {
+	if (!empty($val['searchall'])) {
 		$fieldstosearchall['t.'.$key] = $val['label'];
 	}
 }
@@ -113,7 +114,7 @@ foreach ($object->fields as $key => $val) {
 			'checked'=>(($visible < 0) ? 0 : 1),
 			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
 			'position'=>$val['position'],
-			'help'=>$val['help']
+			'help' => empty($val['help']) ? '' : $val['help']
 		);
 	}
 }
@@ -123,7 +124,7 @@ $arrayfields['wug.fk_usergroup'] = array(
 	'checked'=>(($visible < 0) ? 0 : 1),
 	'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
 	'position'=>1000,
-	'help'=>$val['help']
+	'help' => empty($val['help']) ? '' : $val['help']
 );
 
 $arrayfields['wr.fk_resource'] = array(
@@ -131,7 +132,7 @@ $arrayfields['wr.fk_resource'] = array(
 	'checked'=>(($visible < 0) ? 0 : 1),
 	'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
 	'position'=>1001,
-	'help'=>$val['help']
+	'help' => empty($val['help']) ? '' : $val['help']
 );
 
 // Extra fields
@@ -145,7 +146,7 @@ $permissiontoadd = $user->rights->workstation->workstation->write;
 $permissiontodelete = $user->rights->workstation->workstation->delete;
 
 // Security check
-restrictedArea($user, $object->element, 0, '', 'workstation');
+restrictedArea($user, $object->element, 0, $object->table_element, 'workstation');
 
 
 /*
@@ -219,7 +220,7 @@ $sql .= $object->getFieldList('t');
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.' as options_'.$key.', ' : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key.', ' : '');
 	}
 }
 // Add fields from hooks
@@ -252,7 +253,7 @@ foreach ($search as $key => $val) {
 			continue;
 		}
 		$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
-		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0)) {
+		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0) || !empty($object->fields[$key]['arrayofkeyval'])) {
 			if ($search[$key] == '-1' || $search[$key] === '0') {
 				$search[$key] = '';
 			}
@@ -283,12 +284,12 @@ if ($search_all) {
 
 // usergroups
 if (!empty($groups)) {
-	$sql.= ' AND wug.fk_usergroup IN('.implode(',', $groups).')';
+	$sql.= ' AND wug.fk_usergroup IN('.$db->sanitize(implode(',', $groups)).')';
 }
 
 // resources
 if (!empty($resources)) {
-	$sql.= ' AND wr.fk_resource IN('.implode(',', $resources).')';
+	$sql.= ' AND wr.fk_resource IN('.$db->sanitize(implode(',', $resources)).')';
 }
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -306,11 +307,12 @@ if (! empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
 }
 // Add where from hooks
-$parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object);    // Note that $action and $object may have been modified by hook
-$sql.=$hookmanager->resPrint;
-$sql=preg_replace('/,\s*$/', '', $sql);
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object);    // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= $db->order($sortfield, $sortorder);
+//print $sql;
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -352,21 +354,6 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 // --------------------------------------------------------------------
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'classforhorizontalscrolloftabs');
-
-// Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function() {
-		init_myfunc();
-	});
-});
-</script>';
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -632,6 +619,12 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if (!empty($val['isameasure'])) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
+				}
+				if (!isset($totalarray['val'])) {
+					$totalarray['val'] = array();
+				}
+				if (!isset($totalarray['val']['t.'.$key])) {
+					$totalarray['val']['t.'.$key] = 0;
 				}
 				$totalarray['val']['t.'.$key] += $object->$key;
 			}

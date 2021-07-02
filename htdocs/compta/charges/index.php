@@ -227,9 +227,10 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 					$accountstatic->id = $obj->bid;
 					$accountstatic->ref = $obj->bref;
 					$accountstatic->number = $obj->bnumber;
-					$accountstatic->accountancy_number = $obj->account_number;
-					$accountstatic->accountancy_journal = $obj->accountancy_journal;
+					$accountstatic->account_number = $obj->account_number;
+					$accountstatic->fk_accountancy_journal = $obj->fk_accountancy_journal;
 					$accountstatic->label = $obj->blabel;
+
 					print $accountstatic->getNomUrl(1);
 				} else {
 					print '&nbsp;';
@@ -348,9 +349,10 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 					$accountstatic->id = $obj->bid;
 					$accountstatic->ref = $obj->bref;
 					$accountstatic->number = $obj->bnumber;
-					$accountstatic->accountancy_number = $obj->account_number;
-					$accountstatic->accountancy_journal = $obj->accountancy_journal;
+					$accountstatic->account_number = $obj->account_number;
+					$accountstatic->fk_accountancy_journal = $obj->fk_accountancy_journal;
 					$accountstatic->label = $obj->blabel;
+
 					print $accountstatic->getNomUrl(1);
 				} else {
 					print '&nbsp;';

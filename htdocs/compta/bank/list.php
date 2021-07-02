@@ -130,7 +130,7 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 $permissiontoadd = $user->rights->banque->modifier;
-$permissiontodelete = $user->rights->banque->supprimer;
+$permissiontodelete = $user->rights->banque->configurer;
 
 /*
  * Actions
@@ -295,8 +295,8 @@ $param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
-//    'presend'=>img_picto('', 'email').$langs->trans("SendByMail"),
-//    'builddoc'=>img_picto('', 'pdf').$langs->trans("PDFMerge"),
+//    'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+//    'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
 if ($permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
@@ -503,6 +503,7 @@ print "</tr>\n";
 
 
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 $found = 0;
 $i = 0;
 $lastcurrencycode = '';
@@ -537,7 +538,7 @@ foreach ($accounts as $key => $type) {
 
 	// Label
 	if (!empty($arrayfields['b.label']['checked'])) {
-		print '<td>'.$objecttmp->label.'</td>';
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objecttmp->label).'">'.dol_escape_htmltag($objecttmp->label).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -555,7 +556,7 @@ foreach ($accounts as $key => $type) {
 
 	// Number
 	if (!empty($arrayfields['b.number']['checked'])) {
-		print '<td>'.$objecttmp->number.'</td>';
+		print '<td>'.dol_escape_htmltag($objecttmp->number).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

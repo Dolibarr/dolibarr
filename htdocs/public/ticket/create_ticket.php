@@ -79,6 +79,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 /*
  * Actions
  */
+
 $parameters = array(
 	'id' => $id,
 );

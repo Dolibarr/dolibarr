@@ -134,7 +134,7 @@ if ($socid > 0) {
 				$sql .= " ".MAIN_DB_PREFIX."paiementfourn as p";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON p.fk_user_author = u.rowid";
 				$sql .= " WHERE pf.fk_paiementfourn = p.rowid";
-				$sql .= " AND pf.fk_facturefourn = ".$fac->id;
+				$sql .= " AND pf.fk_facturefourn = ".((int) $fac->id);
 
 				$resqlp = $db->query($sql);
 				if ($resqlp) {

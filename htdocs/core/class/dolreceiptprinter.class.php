@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015-2019  Frédéric France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2015-2021  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Andreu Bisquerra    <jove@bisquerra.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,6 +50,7 @@
  * {dol_print_object_local_tax}                     Print object local tax
  * {dol_print_object_total}                         Print object total
  * {dol_print_order_lines}                          Print order lines for Printer
+ * {dol_print_object_lines_with_notes}              Print object lines with notes
  * {dol_print_payment}                              Print payment method
  *
  * Code which can be placed everywhere
@@ -191,6 +192,7 @@ class dolReceiptPrinter extends Printer
 			'dol_value_object_id' => 'InvoiceID',
 			'dol_value_object_ref' => 'InvoiceRef',
 			'dol_print_object_lines' => 'DOL_PRINT_OBJECT_LINES',
+			'dol_print_object_lines_with_notes' => 'DOL_PRINT_OBJECT_LINES_WITH_NOTES',
 			'dol_print_object_tax' => 'TotalVAT',
 			'dol_print_object_local_tax1' => 'TotalLT1',
 			'dol_print_object_local_tax2' => 'TotalLT2',
@@ -222,6 +224,7 @@ class dolReceiptPrinter extends Printer
 			'dol_value_vendor_lastname' => 'VendorLastname',
 			'dol_value_vendor_firstname' => 'VendorFirstname',
 			'dol_value_vendor_mail' => 'VendorEmail',
+			'dol_value_place' => 'DOL_VALUE_PLACE',
 		);
 	}
 
@@ -641,6 +644,23 @@ class dolReceiptPrinter extends Printer
 							}
 						}
 						break;
+					case 'DOL_PRINT_OBJECT_LINES_WITH_NOTES':
+						foreach ($object->lines as $line) {
+							if ($line->fk_product) {
+								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
+								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
+								$this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
+								$this->printer->text(strip_tags(htmlspecialchars_decode($line->product_label))."\n");
+								$spacestoadd = $nbcharactbyline - strlen($line->description) - strlen($line->qty) - 10 - 1;
+								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
+								$this->printer->text($line->description."\n");
+							} else {
+								$spacestoadd = $nbcharactbyline - strlen($line->description) - strlen($line->qty) - 10 - 1;
+								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
+								$this->printer->text($line->description.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
+							}
+						}
+						break;
 					case 'DOL_PRINT_OBJECT_TAX':
 						//var_dump($object);
 						$vatarray = array();
@@ -806,6 +826,14 @@ class dolReceiptPrinter extends Printer
 								}
 								$i++;
 							}
+						}
+						break;
+					case 'DOL_VALUE_PLACE':
+							$sql = "SELECT floor, label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid=".((int) str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $object->ref)));
+							$resql = $this->db->query($sql);
+							$obj = $this->db->fetch_object($resql);
+						if ($obj) {
+							$this->printer->text($obj->label);
 						}
 						break;
 					default:

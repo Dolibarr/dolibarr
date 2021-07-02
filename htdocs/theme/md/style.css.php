@@ -369,7 +369,7 @@ select.vmenusearchselectcombo {
 	background-color: unset;
 }
 
-textarea:focus, button:focus {
+textarea:focus {
 	/* v6 box-shadow: 0 0 4px #8091BF; */
 	border: 1px solid #aaa !important;
 }
@@ -599,6 +599,9 @@ input.pageplusone {
 .colorblack {
 	color: #000;
 }
+.fontsizeunset {
+	font-size: unset !important;
+}
 
 .vmirror {
 	transform: scale(1, -1);
@@ -738,6 +741,9 @@ div.floatright
 .largenumber {
 	font-size: 1.4em;
 }
+button:focus {
+	outline: none;
+}
 
 th .button {
 	-webkit-box-shadow: none !important;
@@ -777,6 +783,9 @@ th .button {
 textarea.centpercent {
 	width: 96%;
 }
+.quatrevingtpercentminusx {
+	width: calc(80% - 52px);
+}
 .small, small {
 	font-size: 85%;
 }
@@ -790,9 +799,18 @@ textarea.centpercent {
 	color: #777;
 }
 
+.flip {
+	transform: scaleX(-1) translate(2px, 0);
+}
+.rotate90 {
+	transform: rotate(90deg) translate(0, 2px);
+}
 .center {
 	text-align: center;
 	margin: 0px auto;
+}
+.alignstart {
+	text-align: start;
 }
 .left {
 	text-align: <?php print $left; ?>;
@@ -990,8 +1008,8 @@ body[class*="colorblind-"] .text-success{
 	height: 28px;
 	vertical-align: middle;
 }
-.divsocialnetwork:not(:first-child) {
-	padding-left: 20px;
+.divsocialnetwork:not(:last-child) {
+	padding-<?php print $right; ?>: 20px;
 }
 div.divsearchfield {
 	float: <?php print $left; ?>;
@@ -1196,6 +1214,12 @@ select.flat.selectlimit {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
+.tdoverflowmax250 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 250px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 .tdoverflowmax300 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 300px;
 	overflow: hidden;
@@ -1390,6 +1414,9 @@ table[summary="list_of_modules"] .fa-cog {
 .width125 { width: 125px; }
 .width150 { width: 150px; }
 .width200 { width: 200px; }
+.width300 { width: 300px; }
+.width400 { width: 400px; }
+.width500 { width: 500px; }
 .maxwidth25  { max-width: 25px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
@@ -1480,6 +1507,33 @@ table[summary="list_of_modules"] .fa-cog {
 	div.divphotoref {
 		padding-right: 10px !important;
 	}
+	
+	.hideonsmartphone { display: none; }
+	.hideonsmartphoneimp { display: none !important; }
+	
+	select.minwidth100imp, select.minwidth100, select.minwidth200, select.minwidth200imp, select.minwidth300 {
+		width: calc(100% - 40px) !important;
+		display: inline-block;
+	}
+	select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
+		width: calc(100% - 70px) !important;
+		display: inline-block;
+	}
+	
+	input.maxwidthinputfileonsmartphone {
+		width: 175px;
+	}
+	
+	.poweredbyimg {
+		width: 48px;
+	}
+	input.buttonpayment, button.buttonpayment, div.buttonpayment {
+		min-width: 270px;
+	}
+
+	.smallonsmartphone {
+		font-size: 0.8em;
+	}
 }
 
 /* Force values for small screen 570 */
@@ -1554,8 +1608,6 @@ table[summary="list_of_modules"] .fa-cog {
 		line-height: 1.4em;
 	 }
 
-	.hideonsmartphone { display: none; }
-	.hideonsmartphoneimp { display: none !important; }
 	.noenlargeonsmartphone { width : 50px !important; display: inline !important; }
 	.maxwidthonsmartphone, #search_newcompany.ui-autocomplete-input { max-width: 100px; }
 	.maxwidth50onsmartphone { max-width: 40px; }
@@ -1625,7 +1677,7 @@ table.tableforfield tr>td:first-of-type, tr.trforfield>td:first-of-type, div.tab
 }
 
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
-.hideonprint { display: none; }
+.hideonprint { display: none !important; }
 <?php } ?>
 
 
@@ -1997,6 +2049,9 @@ div.nopadding {
 	margin : 0px auto;
 }
 
+td.nobordernopadding.widthpictotitle.col-picto {
+	opacity: 0.9;
+}
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
 	margin-bottom: 4px;
@@ -3827,7 +3882,7 @@ tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre
 	font-family: <?php print $fontlist ?>;
 	font-weight: normal;
 	border-bottom: 1px solid #FDFFFF;
-	text-decoration: underline;
+	/* text-decoration: underline; */
 }
 input.liste_titre {
 	background: transparent;
@@ -3860,14 +3915,19 @@ tr.liste_sub_total, tr.liste_sub_total td {
 }
 
 .paymenttable, .margintable {
+	margin: 0px 0px 0px 0px !important;
+}
+.paymenttable, .margintable:not(.margintablenotop) {
 	border-top-width: <?php echo $borderwidth ?>px !important;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>) !important;
 	border-top-style: solid !important;
-	margin: 0px 0px 0px 0px !important;
+}
+.margintable.margintablenotop {
+	border-top-width: 0;
 }
 .paymenttable tr td:first-child, .margintable tr td:first-child
 {
-	padding-left: 2px;
+	//padding-left: 2px;
 }
 .paymenttable, .margintable tr td {
 	height: 22px;
@@ -4272,10 +4332,10 @@ div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a
 .photowithborder {
 	border: 1px solid #f0f0f0;
 }
-.photointoolitp {
+.photointooltip {
 	margin-top: 8px;
 	margin-bottom: 6px;
-	text-align: center;
+	text-align: center !important;
 }
 .photodelete {
 	margin-top: 6px !important;
@@ -4577,7 +4637,7 @@ table.dp {
 
 
 /* ============================================================================== */
-/*  Afficher/cacher                                                               */
+/*  Show/Hide                                                                     */
 /* ============================================================================== */
 
 div.visible {
@@ -4586,6 +4646,10 @@ div.visible {
 
 div.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
+}
+
+.unvisible {
+	visibility: hidden;
 }
 
 tr.visible {
@@ -4831,9 +4895,10 @@ td.gtaskname {
 /* ============================================================================== */
 
 /* CSS for treeview */
-.treeview ul { background-color: transparent !important; margin-top: 0; }
-.treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 20px; }
-.treeview .hover { color: rgb(<?php print $colortextlink; ?>) !important; text-decoration: underline !important; }
+.treeview ul { background-color: transparent !important; margin-bottom: 4px !important; margin-top: 0 !important; padding-top: 8px !important; }
+.treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 30px; }
+.treeview .hover { color: var(--colortextlink) !important; text-decoration: underline !important; }
+.treeview .hitarea { margin-top: 3px; }
 
 
 
@@ -5879,6 +5944,9 @@ dl.dropdown {
 	display:inline-block;
 	padding: 0 3px 2px 0;
 }
+.maxwidthsearch .dropdown dt a span, .multiSel span {
+	padding: 0 3px 2px 3px;
+}
 .dropdown span.value {
 	display:none;
 }
@@ -6580,6 +6648,14 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 	font-family: "Font Awesome 5 Free" !important;
 }
 
+
+/* ============================================================================== */
+/* CSS style used for jCrop                                                       */
+/* ============================================================================== */
+
+.jcrop-holder { background: unset !important; }
+
+
 /* ============================================================================== */
 /* CSS style used for jFlot                                                       */
 /* ============================================================================== */
@@ -6589,6 +6665,25 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 	font-weight: 400;
 	writing-mode: vertical-rl;
 	white-space: nowrap;
+}
+
+
+/* ============================================================================== */
+/* For copy-paste feature                                                         */
+/* ============================================================================== */
+
+span.clipboardCPValueToPrint {
+	display: inline-block;
+}
+span.clipboardCPValue.hidewithsize {
+	width: 0 !important;
+	display: inline-block;
+	color: transparent;
+	white-space: nowrap;
+}
+
+.clipboardCPShowOnHover .clipboardCPButton {
+	display: none;
 }
 
 

@@ -44,4 +44,4 @@ ValidateOrderFirstBeforeReception=Sie müssen zunächst die order validate valid
 ReceptionsNumberingModules=Nummerierungsmodul für Empfänge
 ReceptionsReceiptModel=Dokumentvorlagen für Empfänge
 NoMorePredefinedProductToDispatch=Keine vordefinierten Produkte mehr zum Versand
-
+ReceptionExist=A reception exists

@@ -22,7 +22,7 @@ ProductService=Produto ou servizo
 AllProducts=Todos os produtos e servizos
 ChooseProduct/Service=Eescolla o produto ou servizo
 ForceBuyingPriceIfNull=Forzar prezo de compra/custo ao prezo de venda se non se define
-ForceBuyingPriceIfNullDetails=Se o prezo de compra/custo non foi definido, e esta opción está activada, a marxe será cero na liña (prezo de compra/custo = prezo de venda), do contrario a marxe será igual ao suxerido por defecto.
+ForceBuyingPriceIfNullDetails=Se o prezo de compra/custo non se proporciona cando engadimos unha nova liña e esta opción está "ACTIVADA", a marxe será 0 na nova liña (prezo de compra/custo = prezo de venda). Se esta opción está "DESACTIVADA" (recomendada), a marxe será igual ao valor suxerido por defecto (e pode ser do 100% se non se atopa ningún valor predeterminado). 
 MARGIN_METHODE_FOR_DISCOUNT=Método de xestión de descontos globais
 UseDiscountAsProduct=Como un produto
 UseDiscountAsService=Como un servizo

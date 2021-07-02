@@ -165,10 +165,10 @@ class Subscription extends CommonObject
 		} else {
 			$type = $this->fk_type;
 		}
-		$sql .= " VALUES (".$this->fk_adherent.", '".$this->db->escape($type)."', '".$this->db->idate($now)."',";
+		$sql .= " VALUES (".((int) $this->fk_adherent).", '".$this->db->escape($type)."', '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->idate($this->dateh)."',";
 		$sql .= " '".$this->db->idate($this->datef)."',";
-		$sql .= " ".$this->amount.",";
+		$sql .= " ".((float) $this->amount).",";
 		$sql .= " '".$this->db->escape($this->note_public ? $this->note_public : $this->note)."')";
 
 		$resql = $this->db->query($sql);
@@ -217,7 +217,7 @@ class Subscription extends CommonObject
 		$sql .= " datef,";
 		$sql .= " subscription, note, fk_bank";
 		$sql .= " FROM ".MAIN_DB_PREFIX."subscription";
-		$sql .= "	WHERE rowid=".$rowid;
+		$sql .= "	WHERE rowid=".((int) $rowid);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -267,14 +267,14 @@ class Subscription extends CommonObject
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."subscription SET ";
-		$sql .= " fk_type = ".$this->fk_type.",";
-		$sql .= " fk_adherent = ".$this->fk_adherent.",";
+		$sql .= " fk_type = ".((int) $this->fk_type).",";
+		$sql .= " fk_adherent = ".((int) $this->fk_adherent).",";
 		$sql .= " note=".($this->note ? "'".$this->db->escape($this->note)."'" : 'null').",";
 		$sql .= " subscription = ".price2num($this->amount).",";
 		$sql .= " dateadh='".$this->db->idate($this->dateh)."',";
 		$sql .= " datef='".$this->db->idate($this->datef)."',";
 		$sql .= " datec='".$this->db->idate($this->datec)."',";
-		$sql .= " fk_bank = ".($this->fk_bank ? $this->fk_bank : 'null');
+		$sql .= " fk_bank = ".($this->fk_bank ? ((int) $this->fk_bank) : 'null');
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -341,7 +341,7 @@ class Subscription extends CommonObject
 		}
 
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."subscription WHERE rowid = ".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."subscription WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {

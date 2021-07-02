@@ -40,6 +40,7 @@ if (!empty($conf->expensereport->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 }
 if (!empty($conf->salaries->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 }
 
@@ -58,6 +59,29 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 $feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
+
+$object = new User($db);
+if ($id > 0 || !empty($ref)) {
+	$result = $object->fetch($id, $ref, '', 1);
+	$object->getrights();
+}
+
+$account = new UserBankAccount($db);
+if (!$bankid) {
+	$account->fetch(0, '', $id);
+} else {
+	$account->fetch($bankid);
+}
+if (empty($account->userid)) {
+	$account->userid = $object->id;
+}
+
+
+// Define value to know what current user can do on users
+$canadduser = (!empty($user->admin) || $user->rights->user->user->creer);
+$canreaduser = (!empty($user->admin) || $user->rights->user->user->lire);
+$permissiontoaddbankaccount = (!empty($user->rights->salaries->write) || !empty($user->rights->hrm->employee->write) || !empty($user->rights->user->creer));
+
 // Ok if user->rights->salaries->read or user->rights->hrm->read
 //$result = restrictedArea($user, 'salaries|hrm', $id, 'user&user', $feature2);
 $ok = false;
@@ -77,30 +101,12 @@ if (!$ok) {
 	accessforbidden();
 }
 
-$object = new User($db);
-if ($id > 0 || !empty($ref)) {
-	$result = $object->fetch($id, $ref, '', 1);
-	$object->getrights();
-}
-
-$account = new UserBankAccount($db);
-if (!$bankid) {
-	$account->fetch(0, '', $id);
-} else {
-	$account->fetch($bankid);
-}
-if (empty($account->userid)) {
-	$account->userid = $object->id;
-}
-
-$permissiontoaddbankaccount = (!empty($user->rights->salaries->write) || !empty($user->rights->hrm->employee->write) || !empty($user->rights->user->creer));
-
 
 /*
  *	Actions
  */
 
-if ($action == 'add' && !$cancel) {
+if ($action == 'add' && !$cancel && $permissiontoaddbankaccount) {
 	$account->userid          = $object->id;
 
 	$account->bank            = GETPOST('bank', 'alpha');
@@ -127,7 +133,7 @@ if ($action == 'add' && !$cancel) {
 	}
 }
 
-if ($action == 'update' && !$cancel) {
+if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 	$account->userid = $object->id;
 
 	/*
@@ -198,7 +204,7 @@ if ($action == 'update' && !$cancel) {
 }
 
 // update personal email
-if ($action == 'setpersonal_email') {
+if ($action == 'setpersonal_email' && $canadduser) {
 	$object->personal_email = (string) GETPOST('personal_email', 'alphanohtml');
 	$result = $object->update($user);
 	if ($result < 0) {
@@ -207,7 +213,7 @@ if ($action == 'setpersonal_email') {
 }
 
 // update personal mobile
-if ($action == 'setpersonal_mobile') {
+if ($action == 'setpersonal_mobile' && $canadduser) {
 	$object->personal_mobile = (string) GETPOST('personal_mobile', 'alphanohtml');
 	$result = $object->update($user);
 	if ($result < 0) {
@@ -215,24 +221,25 @@ if ($action == 'setpersonal_mobile') {
 	}
 }
 
-// update default_c_exp_tax_cat
-if ($action == 'setdefault_c_exp_tax_cat') {
-	$object->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat', 'int');
-	$result = $object->update($user);
-	if ($result < 0) {
-		setEventMessages($object->error, $object->errors, 'errors');
+if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+	// update default_c_exp_tax_cat
+	if ($action == 'setdefault_c_exp_tax_cat' && $canadduser) {
+		$object->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat', 'int');
+		$result = $object->update($user);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
+	// update default range
+	if ($action == 'setdefault_range' && $canadduser) {
+		$object->default_range = GETPOST('default_range', 'int');
+		$result = $object->update($user);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 }
-
-// update default range
-if ($action == 'setdefault_range') {
-	$object->default_range = GETPOST('default_range', 'int');
-	$result = $object->update($user);
-	if ($result < 0) {
-		setEventMessages($object->error, $object->errors, 'errors');
-	}
-}
-
 
 
 /*
@@ -354,16 +361,18 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	// Latest payments of salaries
 	if (!empty($conf->salaries->enabled) &&
-		$user->rights->salaries->read && (in_array($object->id, $childids) || $object->id == $user->id)
+		(($user->rights->salaries->read && (in_array($object->id, $childids) || $object->id == $user->id)) || (!empty($user->rights->salaries->readall)))
 		) {
 		$payment_salary = new PaymentSalary($db);
+		$salary = new Salary($db);
 
-		$sql = "SELECT ps.rowid, s.datesp, s.dateep, ps.amount";
-		$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as ps";
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."salary as s ON (s.rowid = ps.fk_salary)";
+		$sql = "SELECT s.rowid as sid, s.ref as sref, s.label, s.datesp, s.dateep, s.paye, SUM(ps.amount) as alreadypaid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_salary as ps ON (s.rowid = ps.fk_salary)";
 		$sql .= " WHERE s.fk_user = ".$object->id;
-		$sql .= " AND ps.entity = ".$conf->entity;
-		$sql .= " ORDER BY ps.rowid DESC";
+		$sql .= " AND s.entity IN (".getEntity('salary').")";
+		$sql .= " GROUP BY s.rowid, s.ref, s.label, s.datesp, s.dateep, s.paye";
+		$sql .= " ORDER BY s.dateep DESC";
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -372,7 +381,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			print '<table class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
-			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSalaries", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/salaries/payments.php?search_user='.$object->login.'">'.$langs->trans("AllSalaries").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSalaries", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/salaries/list.php?search_user='.$object->login.'">'.$langs->trans("AllSalaries").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 			print '</tr></table></td>';
 			print '</tr>';
 
@@ -380,16 +389,26 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			while ($i < $num && $i < $MAXLIST) {
 				$objp = $db->fetch_object($resql);
 
+				$payment_salary->id = $objp->rowid;
+				$payment_salary->ref = $objp->ref;
+				$payment_salary->datep = $db->jdate($objp->datep);
+
+				$salary->id = $objp->sid;
+				$salary->ref = $objp->sref ? $objp->sref : $objp->sid;
+				$salary->label = $objp->label;
+				$salary->datesp = $db->jdate($objp->datesp);
+				$salary->dateep = $db->jdate($objp->dateep);
+				$salary->paye = $objp->paye;
+
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
-				$payment_salary->id = $objp->rowid;
-				$payment_salary->ref = $objp->rowid;
-				print $payment_salary->getNomUrl(1);
+				print $salary->getNomUrl(1);
 				print '</td>';
 
 				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->datesp), 'day')."</td>\n";
 				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->dateep), 'day')."</td>\n";
-				print '<td class="right" style="min-width: 60px">'.price($objp->amount).'</td>';
+				//print '<td class="right" class="nowraponall"><span class="ampount">'.price($objp->amount).'</span></td>';
+				print '<td class="right" class="nowraponall">'.$salary->getLibStatut(5, $objp->alreadypaid).'</td>';
 
 				print '</tr>';
 				$i++;

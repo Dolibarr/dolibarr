@@ -102,7 +102,7 @@ if (!defined('JS_JQUERY_DISABLE_DROPDOWN')) {
 				  var lastopendropdown = null;
 
                   // Click onto the link "link to" or "hamburger", toggle dropdown
-				  $(".dropdown dt a").on(\'click\', function () {
+				  $(document).on(\'click\', \'.dropdown dt a\', function () {
                   	  console.log("toggle dropdown dt a");
 
                       //$(this).parent().parent().find(\'dd ul\').slideToggle(\'fast\');
@@ -198,7 +198,9 @@ print '
 					{
 						if (this.href)
 						{
+							console.log("We click on tag with .reposition class. this.ref was "+this.href);
 							var hrefarray = this.href.split("#", 2);
+							hrefarray[0]=hrefarray[0].replace(/&page_y=(\d+)/, \'\');		/* remove page_y param if already present */
 							this.href=hrefarray[0]+\'&page_y=\'+page_y;
 							console.log("We click on tag with .reposition class. this.ref is now "+this.href);
 						}
@@ -214,17 +216,17 @@ print '
 print "\n/* JS CODE TO ENABLE ClipBoard copy paste*/\n";
 print 'jQuery(\'.clipboardCPShowOnHover\').hover(
 			function() {
-			console.log("We hover a value with a copy paste feature");
+				console.log("We hover a value with a copy paste feature");
 				$(this).children(".clipboardCPButton, .clipboardCPText").show();
 			},
 			function() {
-			console.log("We hover out the value with a copy paste feature");
+				console.log("We hover out the value with a copy paste feature");
 				$(this).children(".clipboardCPButton, .clipboardCPText").hide();
 			}
 		);';
-print 'jQuery(\'.clipboardCPButton\').click(function() {
+print 'jQuery(\'.clipboardCPButton, .clipboardCPValueToPrint\').click(function() {
 		/* console.log(this.parentNode); */
-		console.log("We click on a clipboardCPButton tag");
+		console.log("We click on a clipboardCPButton or clipboardCPValueToPrint class");
 		if (window.getSelection) {
 			selection = window.getSelection();
 

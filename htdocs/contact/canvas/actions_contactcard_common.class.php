@@ -283,10 +283,7 @@ abstract class ActionsContactCardCommon
 		// phpcs:enable
 		global $langs, $mysoc;
 
-		$this->object->old_name = GETPOST("old_name");
-		$this->object->old_firstname = GETPOST("old_firstname");
-
-		$this->object->socid = GETPOST("socid");
+		$this->object->socid = GETPOST("socid", 'int');
 		$this->object->lastname			= GETPOST("name");
 		$this->object->firstname		= GETPOST("firstname");
 		$this->object->civility_id = GETPOST("civility_id");
@@ -301,7 +298,6 @@ abstract class ActionsContactCardCommon
 		$this->object->phone_mobile = GETPOST("phone_mobile");
 		$this->object->fax = GETPOST("fax");
 		$this->object->email			= GETPOST("email");
-		$this->object->jabberid = GETPOST("jabberid");
 		$this->object->priv				= GETPOST("priv");
 		$this->object->note				= GETPOST("note", "restricthtml");
 		$this->object->canvas = GETPOST("canvas");

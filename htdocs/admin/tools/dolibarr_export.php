@@ -157,7 +157,7 @@ $title = $langs->trans("BackupDumpWizard");
 
 print load_fiche_titre($title);
 
-print '<table width="100%" class="'.($useinecm ? 'nobordernopadding' : 'liste').' nohover">';
+print '<table width="100%" class="'.(!empty($useinecm) ? 'nobordernopadding' : 'liste').' nohover">';
 print '<tr class="liste_titre">';
 print '<td class="liste_titre">';
 print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
@@ -239,7 +239,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	print '<label for="checkbox_use_quick">';
 	print $form->textwithpicto($langs->trans('ExportUseMySQLQuickParameter'), $langs->trans('ExportUseMySQLQuickParameterHelp'));
 	print '</label>';
-	print '<br/>';
+	print '<br>';
 
 	print '<!-- <input type="checkbox" name="drop_database" value="yes" id="checkbox_drop_database" />';
 	print '<label for="checkbox_drop_database">'.$langs->trans("AddDropDatabase").'</label>';

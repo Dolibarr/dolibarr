@@ -18,3 +18,4 @@ SetHereATitleForLink=Задать имя закладки
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Использовать внешнюю/абсолютную ссылку (https://URL) или внутреннюю/относительную ссылку (/DOLIBARR_ROOT/ htdocs /...)
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Выберите, должна ли связанная страница открываться в текущей вкладке или в новой вкладке
 BookmarksManagement=Управление закладками
+BookmarksMenuShortCut=Ctrl + Shift + M

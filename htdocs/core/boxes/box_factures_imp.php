@@ -132,7 +132,9 @@ class box_factures_imp extends ModeleBoxes
 
 				while ($line < $num) {
 					$objp = $this->db->fetch_object($result);
+
 					$datelimite = $this->db->jdate($objp->datelimite);
+
 					$facturestatic->id = $objp->facid;
 					$facturestatic->ref = $objp->ref;
 					$facturestatic->type = $objp->type;
@@ -163,7 +165,7 @@ class box_factures_imp extends ModeleBoxes
 
 					$late = '';
 					if ($facturestatic->hasDelay()) {
-						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day')));
+						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day', 'tzuserrel')));
 					}
 
 					$this->info_box_contents[$line][] = array(
@@ -186,7 +188,7 @@ class box_factures_imp extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($datelimite, 'day'),
+						'text' => dol_print_date($datelimite, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(

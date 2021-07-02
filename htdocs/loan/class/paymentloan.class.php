@@ -182,10 +182,10 @@ class PaymentLoan extends CommonObject
 			$sql .= " fk_typepayment, num_payment, note_private, note_public, fk_user_creat, fk_bank)";
 			$sql .= " VALUES (".$this->chid.", '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datep)."',";
-			$sql .= " ".$this->amount_capital.",";
-			$sql .= " ".$this->amount_insurance.",";
-			$sql .= " ".$this->amount_interest.",";
-			$sql .= " ".$this->paymenttype.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_private)."', '".$this->db->escape($this->note_public)."', ".$user->id.",";
+			$sql .= " ".price2num($this->amount_capital).",";
+			$sql .= " ".price2num($this->amount_insurance).",";
+			$sql .= " ".price2num($this->amount_interest).",";
+			$sql .= " ".((int) $this->paymenttype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_private)."', '".$this->db->escape($this->note_public)."', ".$user->id.",";
 			$sql .= " 0)";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);

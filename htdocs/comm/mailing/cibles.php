@@ -68,6 +68,8 @@ $modulesdir = dolGetModulesDirs('/mailings');
 $object = new Mailing($db);
 $result = $object->fetch($id);
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('ciblescard', 'globalcard'));
 
 // Security check
 if (!$user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
@@ -104,8 +106,6 @@ if ($action == 'add') {
 	}
 	if ($result > 0) {
 		setEventMessages($langs->trans("XTargetsAdded", $result), null, 'mesgs');
-		//header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-		//exit;
 		$action = '';
 	}
 	if ($result == 0) {
@@ -167,7 +167,7 @@ if (GETPOST('exportcsv', 'int')) {
 
 if ($action == 'delete') {
 	// Ici, rowid indique le destinataire et id le mailing
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid=".$rowid;
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid = ".((int) $rowid);
 	$resql = $db->query($sql);
 	if ($resql) {
 		if (!empty($id)) {
@@ -440,6 +440,10 @@ if ($object->fetch($id) >= 0) {
 			}
 		}	// End foreach dir
 
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+
 		print '</div>';
 
 		print '<br><br>';
@@ -678,8 +682,9 @@ if ($object->fetch($id) >= 0) {
 
 				// Search Icon
 				print '<td class="right">';
+				print '<!-- ID mailing_cibles = '.$obj->rowid.' -->';
 				if ($obj->statut == 0) {	// Not sent yet
-					if ($user->rights->mailing->creer && $allowaddtarget) {
+					if (!empty($user->rights->mailing->creer) && $allowaddtarget) {
 						print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.$obj->rowid.$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';
 					}
 				}

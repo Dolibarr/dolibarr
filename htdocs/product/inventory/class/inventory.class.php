@@ -82,7 +82,7 @@ class Inventory extends CommonObject
 	 *  'help' is a string visible as a tooltip on field
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
-	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 */
 
 	// BEGIN MODULEBUILDER PROPERTIES
@@ -619,7 +619,12 @@ class Inventory extends CommonObject
 		$labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
 		$labelStatusShort[self::STATUS_RECORDED] = $langs->trans('Closed');
 
-		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', 'status'.$status, $mode);
+		$statusType = 'status'.$status;
+		if ($status == self::STATUS_RECORDED) {
+			$statusType = 'status5';
+		}
+
+		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 	/**
@@ -630,31 +635,33 @@ class Inventory extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
-		$sql .= ' fk_user_creat, fk_user_modif';
+		$sql = 'SELECT rowid, date_creation as datec, tms as datem, date_validation as datev,';
+		$sql .= ' fk_user_creat, fk_user_modif, fk_user_valid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE t.rowid = '.((int) $id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
+
+				if ($obj->fk_user_creat > 0) {
 					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
+					$cuser->fetch($obj->fk_user_creat);
 					$this->user_creation = $cuser;
 				}
 
-				if ($obj->fk_user_valid) {
+				if ($obj->fk_user_modif > 0) {
+					$muser = new User($this->db);
+					$muser->fetch($obj->fk_user_modif);
+					$this->user_creation = $muser;
+				}
+
+				if ($obj->fk_user_valid > 0) {
 					$vuser = new User($this->db);
 					$vuser->fetch($obj->fk_user_valid);
 					$this->user_validation = $vuser;
-				}
-
-				if ($obj->fk_user_cloture) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
 				}
 
 				$this->date_creation     = $this->db->jdate($obj->datec);

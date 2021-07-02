@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('bills', 'compta', 'admin', 'other', 'products', 'banks'));
+$langs->loadLangs(array('bills', 'companies', 'compta', 'admin', 'other', 'products', 'banks'));
 
 $action     = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
@@ -193,11 +193,11 @@ if (empty($reshook)) {
 				$action = "create";
 				$error++;
 			}
-			if ($nb_gen_max === '') {
+			/*if ($nb_gen_max === '') {
 				setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("MaxPeriodNumber")), null, 'errors');
 				$action = "create";
 				$error++;
-			}
+			}*/
 		}
 
 		if (!$error) {
@@ -770,7 +770,7 @@ if (empty($reshook)) {
 		}
 
 		/*$line = new FactureLigne($db);
-		$line->fetch(GETPOST('lineid'));
+		$line->fetch(GETPOST('lineid', 'int'));
 		$percent = $line->get_prev_progress($object->id);
 
 		if (GETPOST('progress') < $percent)
@@ -823,7 +823,7 @@ if (empty($reshook)) {
 		// Update line
 		if (!$error) {
 			$result = $object->updateline(
-				GETPOST('lineid'),
+				GETPOST('lineid', 'int'),
 				$description,
 				$pu_ht,
 				$qty,
@@ -964,7 +964,7 @@ if ($action == 'create') {
 
 		// Title
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Title").'</td><td>';
-		print '<input class="flat quatrevingtpercent" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("titre", 'alphanohtml')).'">';
+		print '<input class="flat quatrevingtpercent" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'alphanohtml')).'">';
 		print '</td></tr>';
 
 		// Third party
@@ -1469,7 +1469,7 @@ if ($action == 'create') {
 			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'">';
 			print '<input type="hidden" name="action" value="setfrequency">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+			print '<table class="nobordernopadding">';
 			print '<tr><td>';
 			print "<input type='text' name='frequency' value='".$object->frequency."' size='5' />&nbsp;".$form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), ($object->unit_frequency ? $object->unit_frequency : 'm'));
 			print '</td>';
@@ -1597,7 +1597,7 @@ if ($action == 'create') {
 
 
 		// Lines
-		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid')).'" method="POST">
+		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
         	<input type="hidden" name="token" value="' . newToken().'">
         	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
         	<input type="hidden" name="mode" value="">
@@ -1620,10 +1620,12 @@ if ($action == 'create') {
 		if ($object->statut == $object::STATUS_DRAFT && $user->rights->facture->creer && $action != 'valid' && $action != 'editline') {
 			if ($action != 'editline') {
 				// Add free products/services
-				$object->formAddObjectLine(0, $mysoc, $object->thirdparty); // No date selector for template invoice
 
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				if (empty($reshook))
+					$object->formAddObjectLine(0, $mysoc, $object->thirdparty); // No date selector for template invoice
 			}
 		}
 

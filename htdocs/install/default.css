@@ -16,6 +16,10 @@
  */
 
 
+.paddingright {
+	padding-right: 4px;
+}
+
 .opacitymedium {
 	opacity: 0.5;
 }
@@ -362,7 +366,7 @@ tr.choiceselected td .button {
 }
 
 a.button:link,a.button:visited,a.button:active {
-    color: #888;
+    color: #555;
     
 }
 .button {

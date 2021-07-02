@@ -89,7 +89,7 @@ class EmailCollector extends CommonObject
 	 *  'help' is a string visible as a tooltip on field
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
-	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 */
 
 	// BEGIN MODULEBUILDER PROPERTIES
@@ -193,8 +193,9 @@ class EmailCollector extends CommonObject
 	 */
 	public $datelastresult;
 
-
+	public $codelastresult;
 	public $lastresult;
+	public $datelastok;
 	// END MODULEBUILDER PROPERTIES
 
 	public $filters;
@@ -274,7 +275,7 @@ class EmailCollector extends CommonObject
 			}
 		}
 
-		if (is_array($this->filters) && count($this->filters)) {
+		if (is_array($this->actions) && count($this->actions)) {
 			$emailcollectoroperation = new EmailCollectorAction($this->db);
 
 			foreach ($this->actions as $operation) {
@@ -653,6 +654,9 @@ class EmailCollector extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
+		$this->host = 'localhost';
+		$this->login = 'alogin';
+
 		$this->initAsSpecimenCommon();
 	}
 
@@ -947,7 +951,7 @@ class EmailCollector extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-		dol_syslog("EmailCollector::doCollectOneCollector start", LOG_DEBUG);
+		dol_syslog("EmailCollector::doCollectOneCollector start for id=".$this->id, LOG_DEBUG);
 
 		$langs->loadLangs(array("project", "companies", "mails", "errors", "ticket", "agenda"));
 
@@ -1610,7 +1614,7 @@ class EmailCollector extends CommonObject
 
 					// Make Operation
 					dol_syslog("Execute action ".$operation['type']." actionparam=".$operation['actionparam'].' thirdpartystatic->id='.$thirdpartystatic->id.' contactstatic->id='.$contactstatic->id.' projectstatic->id='.$projectstatic->id);
-					dol_syslog("Execute action fk_element_id=".$fk_element_id." fk_element_type=".$fk_element_type);
+					dol_syslog("Execute action fk_element_id=".$fk_element_id." fk_element_type=".$fk_element_type);	// If a Dolibarr tracker id is found, we should now the id of object
 
 					$actioncode = 'EMAIL_IN';
 					// If we scan the Sent box, we use the code for out email
@@ -1720,6 +1724,13 @@ class EmailCollector extends CommonObject
 
 										// Overwrite values with values extracted from source email
 										$errorforthisaction = $this->overwritePropertiesOfObject($thirdpartystatic, $operation['actionparam'], $messagetext, $subject, $header);
+
+										if ($thirdpartystatic->client && empty($thirdpartystatic->code_client)) {
+											$thirdpartystatic->code_client = 'auto';
+										}
+										if ($thirdpartystatic->fournisseur && empty($thirdpartystatic->code_fournisseur)) {
+											$thirdpartystatic->code_fournisseur = 'auto';
+										}
 
 										if ($errorforthisaction) {
 											$errorforactions++;

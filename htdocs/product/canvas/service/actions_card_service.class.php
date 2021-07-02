@@ -217,7 +217,7 @@ class ActionsCardService
 	 *
 	 *  @return	void
 	 */
-	private function getFieldList()
+	private function getFieldListCanvas()
 	{
 		global $conf, $langs;
 
@@ -276,7 +276,7 @@ class ActionsCardService
 		global $conf;
 		global $search_categ, $sall, $sref, $search_barcode, $snom, $catid;
 
-		$this->getFieldList();
+		$this->getFieldListCanvas();
 
 		$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
 		$sql .= ' p.fk_product_type, p.tms as datem,';
@@ -298,29 +298,29 @@ class ActionsCardService
 			$sql .= " AND (p.ref LIKE '%".$this->db->escape($sall)."%' OR p.label LIKE '%".$this->db->escape($sall)."%' OR p.description LIKE '%".$this->db->escape($sall)."%' OR p.note LIKE '%".$this->db->escape($sall)."%')";
 		}
 		if ($sref) {
-			$sql .= " AND p.ref LIKE '%".$sref."%'";
+			$sql .= " AND p.ref LIKE '%".$this->db->escape($sref)."%'";
 		}
 		if ($search_barcode) {
-			$sql .= " AND p.barcode LIKE '%".$search_barcode."%'";
+			$sql .= " AND p.barcode LIKE '%".$this->db->escape($search_barcode)."%'";
 		}
 		if ($snom) {
 			$sql .= " AND p.label LIKE '%".$this->db->escape($snom)."%'";
 		}
-		if (isset($_GET["tosell"]) && dol_strlen($_GET["tosell"]) > 0) {
-			$sql .= " AND p.tosell = ".$this->db->escape($_GET["tosell"]);
+		if (GETPOSTISSET("tosell")) {
+			$sql .= " AND p.tosell = ".((int) GETPOST("tosell", 'int'));
 		}
-		if (isset($_GET["canvas"]) && dol_strlen($_GET["canvas"]) > 0) {
-			$sql .= " AND p.canvas = '".$this->db->escape($_GET["canvas"])."'";
+		if (GETPOSTISSET("canvas")) {
+			$sql .= " AND p.canvas = '".$this->db->escape(GETPOST("canvas"))."'";
 		}
 		if ($catid) {
-			$sql .= " AND cp.fk_categorie = ".$catid;
+			$sql .= " AND cp.fk_categorie = ".((int) $catid);
 		}
 		if ($fourn_id > 0) {
-			$sql .= " AND p.rowid = pfp.fk_product AND pfp.fk_soc = ".$fourn_id;
+			$sql .= " AND p.rowid = pfp.fk_product AND pfp.fk_soc = ".((int) $fourn_id);
 		}
 		// Insert categ filter
 		if ($search_categ) {
-			$sql .= " AND cp.fk_categorie = ".$this->db->escape($search_categ);
+			$sql .= " AND cp.fk_categorie = ".((int) $search_categ);
 		}
 		$sql .= $this->db->order($sortfield, $sortorder);
 		$sql .= $this->db->plimit($limit + 1, $offset);

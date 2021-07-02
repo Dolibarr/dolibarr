@@ -11,7 +11,7 @@
  * Copyright (C) 2017       Juanjo Menent      	    <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
-
+ * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -221,7 +221,7 @@ $checkedprofid6 = 0;
 $checkprospectlevel = (in_array($contextpage, array('prospectlist')) ? 1 : 0);
 $checkstcomm = (in_array($contextpage, array('prospectlist')) ? 1 : 0);
 $arrayfields = array(
-	's.rowid'=>array('label'=>"TechnicalID", 'position'=>1, 'checked'=>($conf->global->MAIN_SHOW_TECHNICAL_ID ? 1 : 0), 'enabled'=>($conf->global->MAIN_SHOW_TECHNICAL_ID ? 1 : 0)),
+	's.rowid'=>array('label'=>"TechnicalID", 'position'=>1, 'checked'=>(!empty($conf->global->MAIN_SHOW_TECHNICAL_ID)), 'enabled'=>(!empty($conf->global->MAIN_SHOW_TECHNICAL_ID))),
 	's.nom'=>array('label'=>"ThirdPartyName", 'position'=>2, 'checked'=>1),
 	's.name_alias'=>array('label'=>"AliasNameShort", 'position'=>3, 'checked'=>1),
 	's.barcode'=>array('label'=>"Gencod", 'position'=>5, 'checked'=>1, 'enabled'=>(!empty($conf->barcode->enabled))),
@@ -288,11 +288,11 @@ if ($action == "change") {	// Change customer for TakePOS
 		$invoice->module_source = 'takepos';
 		$invoice->pos_source = $_SESSION["takeposterminal"];
 		$placeid = $invoice->create($user);
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid=".$placeid;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid = ".((int) $placeid);
 		$db->query($sql);
 	}
 
-	$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$idcustomer." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+	$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".((int) $idcustomer)." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
 	$resql = $db->query($sql);
 	?>
 		<script>
@@ -467,10 +467,10 @@ if ($search_sale && $search_sale != '-1') {
 	$sql .= ", sc.fk_soc, sc.fk_user";
 }
 // We'll need these fields in order to filter by categ
-if ($search_categ_cus) {
+if ($search_categ_cus && $search_categ_cus!=-1) {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
 }
-if ($search_categ_sup) {
+if ($search_categ_sup && $search_categ_sup!=-1) {
 	$sql .= ", cs.fk_categorie, cs.fk_soc";
 }
 // Add fields from extrafields
@@ -494,10 +494,10 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_effectif as staff on (staff.id = s.fk_ef
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.	code_region = state.fk_region)";
 // We'll need this table joined to the select in order to filter by categ
-if (!empty($search_categ_cus)) {
+if (!empty($search_categ_cus) && $search_categ_cus!=-1) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 }
-if (!empty($search_categ_sup)) {
+if (!empty($search_categ_sup) && $search_categ_sup!=-1) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs ON s.rowid = cs.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 }
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."c_stcomm as st ON s.fk_stcomm = st.id";
@@ -508,6 +508,10 @@ if ($search_sale == -2) {
 } elseif (!empty($search_sale) && $search_sale != '-1' || (empty($user->rights->societe->client->voir) && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE s.entity IN (".getEntity('societe').")";
 //if (empty($user->rights->societe->client->voir) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->societe->client->readallthirdparties_advance)) && !$socid)	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 if (empty($user->rights->societe->client->voir) && !$socid) {
@@ -522,13 +526,13 @@ if (!$user->rights->fournisseur->lire) {
 if ($search_sale == -2) {
 	$sql .= " AND sc.fk_user IS NULL";
 } elseif ($search_sale > 0) {
-	$sql .= " AND sc.fk_user = ".$db->escape($search_sale);
+	$sql .= " AND sc.fk_user = ".((int) $search_sale);
 }
 if ($search_categ_cus > 0) {
-	$sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
+	$sql .= " AND cc.fk_categorie = ".((int) $search_categ_cus);
 }
 if ($search_categ_sup > 0) {
-	$sql .= " AND cs.fk_categorie = ".$db->escape($search_categ_sup);
+	$sql .= " AND cs.fk_categorie = ".((int) $search_categ_sup);
 }
 if ($search_categ_cus == -2) {
 	$sql .= " AND cc.fk_categorie IS NULL";
@@ -663,9 +667,13 @@ $parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 }
+$sql .= $hookmanager->resPrint;
+// Add GroupBy from hooks
+$parameters = array('all' => $all, 'fieldstosearchall' => $fieldstosearchall);
+$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
@@ -848,14 +856,14 @@ if (GETPOST('delsoc')) {
 // List of mass actions available
 $arrayofmassactions = array(
 'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
-//    'builddoc'=>img_picto('', 'pdf').$langs->trans("PDFMerge"),
+//    'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 if ($user->rights->societe->supprimer) {
-	$arrayofmassactions['predelete'] = img_picto('', 'delete').$langs->trans("Delete");
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if ($user->rights->societe->creer) {
-	$arrayofmassactions['preaffecttag'] = img_picto('', 'category').$langs->trans("AffectTag");
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
 	$arrayofmassactions = array();
@@ -942,7 +950,7 @@ if (empty($type) || $type == 'c' || $type == 'p') {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('Categories');
-		$moreforfilter .= img_picto($tmptile, 'category', 'class="pictofixedwidth"');
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
 		$moreforfilter .= $formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $langs->trans('CustomersProspectsCategoriesShort'));
 		$moreforfilter .= '</div>';
 	}
@@ -953,7 +961,7 @@ if (empty($type) || $type == 'f') {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('Categories');
-		$moreforfilter .= img_picto($tmptilte, 'category', 'class="pictofixedwidth"');
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
 		$moreforfilter .= $formother->select_categories('supplier', $search_categ_sup, 'search_categ_sup', 1, $langs->trans('SuppliersCategoriesShort'));
 		$moreforfilter .= '</div>';
 	}
@@ -962,8 +970,8 @@ if (empty($type) || $type == 'f') {
 // If the user can view prospects other than his'
 if ($user->rights->societe->client->voir || $socid) {
 	$moreforfilter .= '<div class="divsearchfield">';
-	$tmptile = $langs->trans('SalesRepresentatives');
-	$moreforfilter .= img_picto($tmptile, 'user', 'class="pictofixedwidth"');
+	$tmptitle = $langs->trans('SalesRepresentatives');
+	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"');
 	$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $langs->trans('SalesRepresentatives'), ($conf->dol_optimize_smallscreen ? 'maxwidth200' : 'maxwidth300'), 1);
 	$moreforfilter .= '</div>';
 }
@@ -1405,7 +1413,7 @@ while ($i < min($num, $limit)) {
 	}
 	if (!empty($arrayfields['s.name_alias']['checked'])) {
 		print '<td class="tdoverflowmax200">';
-		print $companystatic->name_alias;
+		print dol_escape_htmltag($companystatic->name_alias);
 		print "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1413,70 +1421,70 @@ while ($i < min($num, $limit)) {
 	}
 	// Barcode
 	if (!empty($arrayfields['s.barcode']['checked'])) {
-		print '<td>'.$obj->barcode.'</td>';
+		print '<td>'.dol_escape_htmltag($obj->barcode).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Customer code
 	if (!empty($arrayfields['s.code_client']['checked'])) {
-		print '<td class="nowraponall">'.$obj->code_client.'</td>';
+		print '<td class="nowraponall">'.dol_escape_htmltag($obj->code_client).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Supplier code
 	if (!empty($arrayfields['s.code_fournisseur']['checked'])) {
-		print '<td class="nowraponall">'.$obj->code_fournisseur.'</td>';
+		print '<td class="nowraponall">'.dol_escape_htmltag($obj->code_fournisseur).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Account customer code
 	if (!empty($arrayfields['s.code_compta']['checked'])) {
-		print '<td>'.$obj->code_compta.'</td>';
+		print '<td>'.dol_escape_htmltag($obj->code_compta).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Account supplier code
 	if (!empty($arrayfields['s.code_compta_fournisseur']['checked'])) {
-		print '<td>'.$obj->code_compta_fournisseur.'</td>';
+		print '<td>'.dol_escape_htmltag($obj->code_compta_fournisseur).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Address
 	if (!empty($arrayfields['s.address']['checked'])) {
-		print '<td>'.$obj->address.'</td>';
+		print '<td>'.dol_escape_htmltag($obj->address).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Zip
 	if (!empty($arrayfields['s.zip']['checked'])) {
-		print "<td>".$obj->zip."</td>\n";
+		print "<td>".dol_escape_htmltag($obj->zip)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) {
-		print "<td>".$obj->town."</td>\n";
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->town).'">'.dol_escape_htmltag($obj->town)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// State
 	if (!empty($arrayfields['state.nom']['checked'])) {
-		print "<td>".$obj->state_name."</td>\n";
+		print "<td>".dol_escape_htmltag($obj->state_name)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Region
 	if (!empty($arrayfields['region.nom']['checked'])) {
-		print "<td>".$obj->region_name."</td>\n";
+		print "<td>".dol_escape_htmltag($obj->region_name)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -252,7 +252,9 @@ $productlot = new ProductLot($db);
 $warehousestatic = new Entrepot($db);
 $userstatic = new User($db);
 
-llxHeader('', $langs->trans('Mo'), '');
+$help_url = 'EN:Module_Manufacturing_Orders|FR:Module_Ordres_de_Fabrication';
+
+llxHeader('', $langs->trans('Mo'), $help_url);
 
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
@@ -439,7 +441,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$sql .= " WHERE m.fk_product = p.rowid";
 	$sql .= " AND m.origintype = 'mo' AND m.fk_origin = ".(int) $object->id;
 	if ($msid > 0) {
-		$sql .= " AND m.rowid = ".$msid;
+		$sql .= " AND m.rowid = ".((int) $msid);
 	}
 	$sql .= " AND m.fk_entrepot = e.rowid";
 	$sql .= " AND e.entity IN (".getEntity('stock').")";

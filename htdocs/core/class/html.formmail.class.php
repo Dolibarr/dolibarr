@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2011 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015-2017 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015-2017 Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -584,7 +584,10 @@ class FormMail extends Form
 						$liste['company'] = $conf->global->MAIN_INFO_SOCIETE_NOM.' &lt;'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'&gt;';
 
 						// Add also email aliases if there is some
-						$listaliases = array('user_aliases'=>$user->email_aliases, 'global_aliases'=>$conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
+						$listaliases = array(
+							'user_aliases' => (empty($user->email_aliases) ? '' : $user->email_aliases),
+							'global_aliases' => getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'),
+						);
 
 						// Also add robot email
 						if (!empty($this->fromalsorobot)) {
@@ -1275,10 +1278,10 @@ class FormMail extends Form
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql .= " AND (private = 0 OR fk_user = ".$user->id.")"; // Get all public or private owned
 		if ($active >= 0) {
-			$sql .= " AND active = ".$active;
+			$sql .= " AND active = ".((int) $active);
 		}
 		if ($label) {
-			$sql .= " AND label ='".$db->escape($label)."'";
+			$sql .= " AND label = '".$db->escape($label)."'";
 		}
 		if (!($id > 0) && $languagetosearch) {
 			$sql .= " AND (lang = '".$db->escape($languagetosearch)."'".($languagetosearchmain ? " OR lang = '".$db->escape($languagetosearchmain)."'" : "")." OR lang IS NULL OR lang = '')";
@@ -1434,7 +1437,7 @@ class FormMail extends Form
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql .= " AND (private = 0 OR fk_user = ".$user->id.")"; // See all public templates or templates I own.
 		if ($active >= 0) {
-			$sql .= " AND active = ".$active;
+			$sql .= " AND active = ".((int) $active);
 		}
 		//if (is_object($outputlangs)) $sql.= " AND (lang = '".$this->db->escape($outputlangs->defaultlang)."' OR lang IS NULL OR lang = '')";	// Return all languages
 		$sql .= $this->db->order("position,lang,label", "ASC");
@@ -1594,6 +1597,9 @@ class FormMail extends Form
 					if ($conf->adherent->enabled) {
 						$tmparray['__SECUREKEYPAYMENT_MEMBER__'] = 'SecureKeyPAYMENTUniquePerMember';
 					}
+					if ($conf->donation->enabled) {
+						$tmparray['__SECUREKEYPAYMENT_DONATION__'] = 'SecureKeyPAYMENTUniquePerDonation';
+					}
 					if ($conf->facture->enabled) {
 						$tmparray['__SECUREKEYPAYMENT_INVOICE__'] = 'SecureKeyPAYMENTUniquePerInvoice';
 					}
@@ -1602,6 +1608,23 @@ class FormMail extends Form
 					}
 					if ($conf->contrat->enabled) {
 						$tmparray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'SecureKeyPAYMENTUniquePerContractLine';
+					}
+
+					//Online payement link
+					if ($conf->adherent->enabled) {
+						$tmparray['__ONLINEPAYMENTLINK_MEMBER__'] = 'OnlinePaymentLinkUniquePerMember';
+					}
+					if ($conf->donation->enabled) {
+						$tmparray['__ONLINEPAYMENTLINK_DONATION__'] = 'OnlinePaymentLinkUniquePerDonation';
+					}
+					if ($conf->facture->enabled) {
+						$tmparray['__ONLINEPAYMENTLINK_INVOICE__'] = 'OnlinePaymentLinkUniquePerInvoice';
+					}
+					if ($conf->commande->enabled) {
+						$tmparray['__ONLINEPAYMENTLINK_ORDER__'] = 'OnlinePaymentLinkUniquePerOrder';
+					}
+					if ($conf->contrat->enabled) {
+						$tmparray['__ONLINEPAYMENTLINK_CONTRACTLINE__'] = 'OnlinePaymentLinkUniquePerContractLine';
 					}
 				}
 			} else {
@@ -1612,6 +1635,9 @@ class FormMail extends Form
 				$vars['__SECUREKEYPAYMENT_ORDER__']='';
 				$vars['__SECUREKEYPAYMENT_CONTRACTLINE__']='';
 				*/
+			}
+			if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
+				$substitutionarray['__PUBLICLINK_NEWMEMBERFORM__'] = 'BlankSubscriptionForm';
 			}
 		}
 

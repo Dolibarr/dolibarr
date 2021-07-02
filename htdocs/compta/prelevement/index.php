@@ -59,7 +59,7 @@ llxHeader('', $langs->trans("CustomersStandingOrdersArea"));
 
 if (prelevement_check_config() < 0) {
 	$langs->load("errors");
-	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Withdraw")), null, 'errors');
+	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("PaymentByDirectDebit")), null, 'errors');
 }
 
 print load_fiche_titre($langs->trans("CustomersStandingOrdersArea"));
