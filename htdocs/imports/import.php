@@ -141,6 +141,7 @@ $endatlinenb		= (GETPOST('endatlinenb') ? GETPOST('endatlinenb') : '');
 $updatekeys			= (GETPOST('updatekeys', 'array') ? GETPOST('updatekeys', 'array') : array());
 $separator			= (GETPOST('separator', 'nohtml') ? GETPOST('separator', 'nohtml') : (!empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE) ? $conf->global->IMPORT_CSV_SEPARATOR_TO_USE : ','));
 $enclosure			= (GETPOST('enclosure', 'nohtml') ? GETPOST('enclosure', 'nohtml') : '"');
+$import_force       = (GETPOSTISSET('import_force') ? GETPOST('import_force', 'int') : 0);
 
 $objimport = new Import($db);
 $objimport->load_arrays($user, ($step == 1 ? '' : $datatoimport));
@@ -1733,6 +1734,30 @@ if ($step == 5 && $datatoimport) {
 
 		print '<br>';
 
+		if ($user->rights->import->run && !empty($nboferrors) && empty($objimport->array_import_run_sql_after[0])) {
+			print '<div class="center">';
+			print '<input type="checkbox" class="valignmiddle" id="import_force" name="import_force" value="1" /> <label for="import_force">' . $langs->trans('RunImportForce') . '</label>';
+			print '</div>';
+			print '<br>';
+
+			$outJS  = '<script type="text/javascript">';
+			$outJS .= 'jQuery(document).ready(function(){';
+			$outJS .= ' jQuery("#import_force").click(function(){';
+			$outJS .= '     if (jQuery(this).is(":checked")) {';
+			$outJS .= '         jQuery("#btn_run_import_file").prop("disabled", false);';
+			$outJS .= '         jQuery("#btn_run_import_file").removeClass("butActionRefused");';
+			$outJS .= '         jQuery("#btn_run_import_file").addClass("butAction");';
+			$outJS .= '     } else {';
+			$outJS .= '         jQuery("#btn_run_import_file").prop("disabled", true);';
+			$outJS .= '         jQuery("#btn_run_import_file").removeClass("butAction");';
+			$outJS .= '         jQuery("#btn_run_import_file").addClass("butActionRefused");';
+			$outJS .= '     }';
+			$outJS .= ' });';
+			$outJS .= '});';
+			$outJS .= '</script>';
+			print $outJS;
+		}
+
 		// Actions
 		print '<div class="center">';
 		if ($user->rights->import->run) {
@@ -1741,7 +1766,9 @@ if ($step == 5 && $datatoimport) {
 			} else {
 				//print '<input type="submit" class="butAction" value="'.dol_escape_htmltag($langs->trans("RunSimulateImportFile")).'">';
 
-				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("CorrectErrorBeforeRunningImport")).'">'.$langs->trans("RunImportFile").'</a>';
+				print '<input type="hidden" name="step" value="6" />';
+				print '<input type="hidden" name="importid" value="' . $importid . '" />';
+				print '<input type="submit" class="butActionRefused" id="btn_run_import_file" title="' . dol_escape_htmltag($langs->transnoentitiesnoconv("CorrectErrorBeforeRunningImport")) . '" value="' . dol_escape_htmltag($langs->trans("RunImportFile")) . '" disabled="disabled">';
 			}
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("RunSimulateImportFile").'</a>';
@@ -2030,7 +2057,7 @@ if ($step == 6 && $datatoimport) {
 		print $langs->trans("ErrorFailedToOpenFile", $pathfile);
 	}
 
-	if (count($arrayoferrors) > 0) {
+	if (count($arrayoferrors) > 0 && empty($import_force)) {
 		$db->rollback(); // We force rollback because this was errors.
 	} else {
 		$error = 0;
@@ -2041,9 +2068,11 @@ if ($step == 6 && $datatoimport) {
 			$i = 0;
 			foreach ($objimport->array_import_run_sql_after[0] as $sqlafterimport) {
 				$i++;
+
 				$resqlafterimport = $db->query($sqlafterimport);
+
 				if (!$resqlafterimport) {
-					$arrayoferrors['none'][] = array('lib'=>$langs->trans("Error running final request: ".$sqlafterimport));
+					$arrayoferrors['none'][] = array('lib' => $langs->trans("Error running final request: " . $sqlafterimport));
 					$error++;
 				}
 			}
