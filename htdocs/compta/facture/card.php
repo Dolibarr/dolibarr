@@ -5252,7 +5252,7 @@ if ($action == 'create')
 			}
 
 			// Create a credit note
-			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $object->statut > 0 && $usercancreate)
+			if (($object->type == Facture::TYPE_STANDARD || ($object->type == Facture::TYPE_DEPOSIT && empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS) ) || $object->type == Facture::TYPE_PROFORMA) && $object->statut > 0 && $usercancreate)
 			{
 				if (!$objectidnext)
 				{

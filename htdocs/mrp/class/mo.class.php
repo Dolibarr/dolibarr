@@ -658,7 +658,7 @@ class Mo extends CommonObject
 							if ($line->qty_frozen) {
 								$moline->qty = $line->qty; // Qty to consume does not depends on quantity to produce
 							} else {
-								$moline->qty = price2num(($line->qty / $bom->qty) * $this->qty / $line->efficiency, 'MS'); // Calculate with Qty to produce and  more presition
+								$moline->qty = price2num(($line->qty / ( ! empty($bom->qty) ? $bom->qty : 1 ) ) * $this->qty / ( ! empty($line->efficiency) ? $line->efficiency : 1 ), 'MS'); // Calculate with Qty to produce and  more presition
 							}
 							if ($moline->qty <= 0) {
 								$error++;
