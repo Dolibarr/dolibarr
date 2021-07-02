@@ -73,6 +73,7 @@ $fontsizesmaller = '0.75em';
 $topMenuFontSize = '1.1em';
 $toolTipBgColor = 'rgba(255, 255, 255, 0.96)';
 $toolTipFontColor = '#333';
+$colorshadow = '85, 85, 85';
 
 // text color
 $textSuccess   = '#28a745';
