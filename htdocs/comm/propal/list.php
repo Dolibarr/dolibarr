@@ -112,7 +112,7 @@ if (!$sortfield) $sortfield = 'p.ref';
 if (!$sortorder) $sortorder = 'DESC';
 
 $permissiontoread = $user->rights->propal->lire;
-$permissiontoadd = $user->rights->propal->write;
+$permissiontoadd = $user->rights->propal->creer;
 $permissiontodelete = $user->rights->propal->supprimer;
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 	$permissiontoclose = $user->rights->propale->propal_advance->close;
