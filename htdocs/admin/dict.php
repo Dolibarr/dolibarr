@@ -2221,7 +2221,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 
 	foreach ($fieldlist as $field => $value) {
 		if ($value == 'entity') {
-			$withentity = $obj->{$value};
+			$withentity = isset($obj->{$value}) ? $obj->{$value} : '';
 			continue;
 		}
 
@@ -2312,7 +2312,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			// Special case for labels
 			if ($tabname == MAIN_DB_PREFIX.'c_payment_term') {
 				$langs->load("bills");
-				$transkey = "PaymentCondition".strtoupper($obj->code);
+				$transkey = "PaymentCondition".strtoupper(empty($obj->code) ? '' : $obj->code);
 				if ($langs->trans($transkey) != $transkey) {
 					$transfound = 1;
 					print $form->textwithpicto($langs->trans($transkey), $langs->trans("GoIntoTranslationMenuToChangeThis"));
@@ -2396,7 +2396,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 				}
 				if ($tabname == MAIN_DB_PREFIX.'c_payment_term' && !empty($obj->code)) {
 					$langs->load("bills");
-					$transkey = "PaymentConditionShort".strtoupper($obj->code);
+					$transkey = "PaymentConditionShort".strtoupper(empty($obj->code) ? '' : $obj->code);
 				}
 				if ($transkey && $langs->trans($transkey) != $transkey) {
 					$transfound = 1;
