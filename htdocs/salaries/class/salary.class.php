@@ -502,6 +502,9 @@ class Salary extends CommonObject
 		if ($this->datesp && $this->dateep) {
 			$label .= '<br><b>'.$langs->trans('Period').':</b> '.dol_print_date($this->datesp, 'day').' - '.dol_print_date($this->dateep, 'day');
 		}
+		if (isset($this->amount)) {
+			$label .= '<br><b>'.$langs->trans('Amount').':</b> '.price($this->amount);
+		}
 
 		$url = DOL_URL_ROOT.'/salaries/card.php?id='.$this->id;
 

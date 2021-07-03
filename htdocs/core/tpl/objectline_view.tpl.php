@@ -354,6 +354,15 @@ if ($outputalsopricetotalwithtax) {
 }
 
 if ($this->statut == 0 && ($object_rights->creer) && $action != 'selectlines') {
+
+	$situationinvoicelinewithparent = 0;
+	if ($line->fk_prev_id != null && in_array($object->element, array('facture', 'facturedet'))) {
+		if ($object->type == $object::TYPE_SITUATION) {	// The constant TYPE_SITUATION exists only for object invoice
+			// Set constant to disallow editing during a situation cycle
+			$situationinvoicelinewithparent = 1;
+		}
+	}
+
 	print '<td class="linecoledit center">';
 	$coldisplay++;
 	if (($line->info_bits & 2) == 2 || !empty($disableedit)) {
@@ -365,7 +374,7 @@ if ($this->statut == 0 && ($object_rights->creer) && $action != 'selectlines') {
 
 	print '<td class="linecoldelete center">';
 	$coldisplay++;
-	if (($line->fk_prev_id == null) && empty($disableremove)) { //La suppression n'est autorisée que si il n'y a pas de ligne dans une précédente situation
+	if (!$situationinvoicelinewithparent && empty($disableremove)) { // For situation invoice, deletion is not possible if there is a parent company.
 		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=ask_deleteline&amp;lineid='.$line->id.'">';
 		print img_delete();
 		print '</a>';
