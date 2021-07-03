@@ -53,7 +53,8 @@ TypeOfLineServiceOrProduct=回線の種類(0 =製品、1 =サービス)
 FileWithDataToImport=インポートするデータを持つファイル
 FileToImport=インポートするソースファイル
 FileMustHaveOneOfFollowingFormat=インポートするファイルは、次のいずれかの形式である必要がある
-DownloadEmptyExample=フィールドコンテンツ情報を含むテンプレートファイルをダウンロードする(*は必須フィールド )
+DownloadEmptyExample=フィールドコンテンツ情報を含むテンプレートファイルをダウンロードする
+StarAreMandatory=*は必須フィールド
 ChooseFormatOfFileToImport=%sアイコンをクリックして選択し、インポートファイル形式として使用するファイル形式を選択する...
 ChooseFileToImport=ファイルをアップロードし、%sアイコンをクリックして、ソースインポートファイルとしてファイルを選択する。
 SourceFileFormat=ソースファイルの形式

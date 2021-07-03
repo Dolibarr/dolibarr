@@ -4,7 +4,7 @@ Actions=Notikumi
 Agenda=Darba kārtība
 TMenuAgenda=Darba kārtība
 Agendas=Darba kārtības
-LocalAgenda=Default calendar
+LocalAgenda=Noklusējuma kalendārs
 ActionsOwnedBy=Notikums pieder
 ActionsOwnedByShort=Īpašnieks
 AffectedTo=Piešķirts
@@ -20,7 +20,7 @@ MenuToDoActions=Visi nepabeigtie pasākumi
 MenuDoneActions=Visi izbeigtie notikumi
 MenuToDoMyActions=Mani nepabeigtie notikumi
 MenuDoneMyActions=Mani izbeigtie notikumi
-ListOfEvents=List of events (default calendar)
+ListOfEvents=Notikumu saraksts (noklusējuma kalendārs)
 ActionsAskedBy=Notikumu ziņoja
 ActionsToDoBy=Pasākums piešķirts
 ActionsDoneBy=Pasākumi, ko veikuši
@@ -38,7 +38,7 @@ ActionsEvents=Pasākumi, par kuriem Dolibarr radīs prasību kārtībā automāt
 EventRemindersByEmailNotEnabled=Pasākumu atgādinājumi pa e-pastu netika iespējoti %s moduļa iestatījumos.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Trešā puse izveidota %s
-COMPANY_MODIFYInDolibarr=Third party %s modified
+COMPANY_MODIFYInDolibarr=Trešā puse %s modificēta
 COMPANY_DELETEInDolibarr=Izdzēsta trešā persona %s
 ContractValidatedInDolibarr=Līgumi %s apstiprināti
 CONTRACT_DELETEInDolibarr=Līgums %s svītrots
@@ -88,7 +88,7 @@ OrderDeleted=Pasūtījums dzēsts
 InvoiceDeleted=Rēķins dzēsts
 DraftInvoiceDeleted=Rēķina melnraksts ir izdzēsts
 CONTACT_CREATEInDolibarr=Kontaktpersona %s ir izveidota
-CONTACT_MODIFYInDolibarr=Contact %s modified
+CONTACT_MODIFYInDolibarr=Saziņa %s ir modificēta
 CONTACT_DELETEInDolibarr=Kontaktpersona %s ir izdzēsta
 PRODUCT_CREATEInDolibarr=Produkts %s ir izveidots
 PRODUCT_MODIFYInDolibarr=Produkts %s ir labots
@@ -121,7 +121,7 @@ MRP_MO_UNVALIDATEInDolibarr=MO iestatīts uz melnraksta statusu
 MRP_MO_PRODUCEDInDolibarr=MO ražots
 MRP_MO_DELETEInDolibarr=MO ir izdzēsts
 MRP_MO_CANCELInDolibarr=MO atcelts
-PAIDInDolibarr=%s paid
+PAIDInDolibarr=%s samaksāts
 ##### End agenda events #####
 AgendaModelModule=Dokumentu veidnes notikumam
 DateActionStart=Sākuma datums
@@ -133,7 +133,7 @@ AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to use
 AgendaUrlOptionsProject=<b> project = __ PROJECT_ID __ </ b>, lai ierobežotu izlaidi darbībām, kas saistītas ar projektu <b> __ PROJECT_ID __ </ b>.
 AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </b>, lai izslēgtu automātiskus notikumus.
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b>, lai iekļautu svētku pasākumus.
-AgendaShowBirthdayEvents=Birthdays of contacts
+AgendaShowBirthdayEvents=Kontaktu dzimšanas dienas
 AgendaHideBirthdayEvents=Slēpt kontaktu dzimšanas dienas
 Busy=Aizņemts
 ExportDataset_event1=Notikumu saraksts
