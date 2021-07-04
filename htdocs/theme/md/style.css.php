@@ -3091,8 +3091,8 @@ div.tabsElem a {
 div.tabBar {
 	color: #<?php echo $colortextbacktab; ?>;
 	padding-top: 21px;
-	padding-left: 18px;
-	padding-right: 18px;
+	padding-left: 24px;
+	padding-right: 24px;
 	padding-bottom: 18px;
 	margin: 0px 0px 18px 0px;
 	-webkit-border-radius: 3px;
@@ -3439,9 +3439,9 @@ tr.liste_titre_filter td.liste_titre {
 }
 .liste_titre_create td, .liste_titre_create th, .liste_titre_create .tagtd
 {
-	/*border-top-width: 1px;
+	border-top-width: 1px;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
-	border-top-style: solid;*/
+	border-top-style: solid;
 }
 .liste_titre_add td, .liste_titre_add th, .liste_titre_add .tagtd
 {
@@ -3830,7 +3830,7 @@ div.liste_titre_bydiv, .liste_titre div.tagtr, tr.liste_titre, tr.liste_titre_se
 {
 	background: rgb(<?php echo $colorbacktitle1; ?>);
 	font-weight: <?php echo $useboldtitle ? 'bold' : 'normal'; ?>;
-	border-bottom: 1px solid #FDFFFF;
+	/* border-bottom: 1px solid #FDFFFF; */
 
 	color: rgb(<?php echo $colortexttitle; ?>);
 	font-family: <?php print $fontlist ?>;
