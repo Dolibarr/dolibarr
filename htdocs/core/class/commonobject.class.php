@@ -7717,7 +7717,7 @@ abstract class CommonObject
 			$buyPrice = $unitPrice * (1 - $discountPercent / 100);
 		} else {
 			// Get cost price for margin calculation
-			if (!empty($fk_product)) {
+			if (!empty($fk_product) && $fk_product > 0) {
 				if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'costprice') {
 					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 					$product = new Product($this->db);

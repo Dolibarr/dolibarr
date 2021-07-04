@@ -1040,6 +1040,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	// State
 	if (empty($conf->global->USER_DISABLE_STATE)) {
 		print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
+		print img_picto('', 'state', 'class="pictofixedwidth"');
 		print $formcompany->select_state($object->state_id, $object->country_code, 'state_id');
 		print '</td></tr>';
 	}
@@ -2363,6 +2364,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if (empty($conf->global->USER_DISABLE_STATE)) {
 				print '<tr><td class="tdoverflow">'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td>';
 				if ($caneditfield) {
+					print img_picto('', 'state', 'class="pictofixedwidth"');
 					print $formcompany->select_state($object->state_id, $object->country_code, 'state_id');
 				} else {
 					print $object->state_label;

@@ -417,7 +417,7 @@ print '<input name="MAIN_INFO_SOCIETE_TOWN" class="minwidth200" id="MAIN_INFO_SO
 
 // Country
 print '<tr class="oddeven"><td class="fieldrequired"><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td class="maxwidthonsmartphone">';
-print img_picto('', 'globe-americas', 'class="paddingrightonly"');
+print img_picto('', 'globe-americas', 'class="pictofixedwidth"');
 print $form->select_country($mysoc->country_id, 'country_id', '', 0);
 if ($user->admin) {
 	print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
@@ -430,35 +430,37 @@ if (!empty($conf->global->MAIN_INFO_SOCIETE_STATE)) {
 	$tmp = explode(':', $conf->global->MAIN_INFO_SOCIETE_STATE);
 	$state_id = $tmp[0];
 }
-$formcompany->select_departement($state_id, $mysoc->country_code, 'state_id');
+print img_picto('', 'state', 'class="pictofixedwidth"');
+print $formcompany->select_state($state_id, $mysoc->country_code, 'state_id');
 print '</td></tr>'."\n";
 
 // Currency
 print '<tr class="oddeven"><td><label for="currency">'.$langs->trans("CompanyCurrency").'</label></td><td>';
+print img_picto('', 'multicurrency', 'class="pictofixedwidth"');
 print $form->selectCurrency($conf->currency, "currency");
 print '</td></tr>'."\n";
 
 // Phone
 print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("Phone").'</label></td><td>';
-print img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright');
+print img_picto('', 'object_phoning', '', false, 0, 0, '', 'pictofixedwidth');
 print '<input class="maxwidth150 widthcentpercentminusx" name="tel" id="phone" value="'.dol_escape_htmltag((GETPOSTISSET('tel') ? GETPOST('tel', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_TEL) ? $conf->global->MAIN_INFO_SOCIETE_TEL : ''))).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Fax
 print '<tr class="oddeven"><td><label for="fax">'.$langs->trans("Fax").'</label></td><td>';
-print img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright');
+print img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'pictofixedwidth');
 print '<input class="maxwidth150" name="fax" id="fax" value="'.dol_escape_htmltag((GETPOSTISSET('fax') ? GETPOST('fax', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_FAX) ? $conf->global->MAIN_INFO_SOCIETE_FAX : ''))).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Email
 print '<tr class="oddeven"><td><label for="email">'.$langs->trans("EMail").'</label></td><td>';
-print img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright');
+print img_picto('', 'object_email', '', false, 0, 0, '', 'pictofixedwidth');
 print '<input class="maxwidth150" name="mail" id="email" value="'.dol_escape_htmltag((GETPOSTISSET('mail') ? GETPOST('mail', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL) ? $conf->global->MAIN_INFO_SOCIETE_MAIL : ''))).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Web
 print '<tr class="oddeven"><td><label for="web">'.$langs->trans("Web").'</label></td><td>';
-print img_picto('', 'globe', '', false, 0, 0, '', 'paddingright');
+print img_picto('', 'globe', '', false, 0, 0, '', 'pictofixedwidth');
 print '<input class="maxwidth300 widthcentpercentminusx" name="web" id="web" value="'.dol_escape_htmltag((GETPOSTISSET('web') ? GETPOST('web', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_WEB) ? $conf->global->MAIN_INFO_SOCIETE_WEB : ''))).'"></td></tr>';
 print '</td></tr>'."\n";
 
@@ -466,7 +468,7 @@ print '</td></tr>'."\n";
 if (!empty($conf->barcode->enabled)) {
 	print '<tr class="oddeven"><td>';
 	print '<label for="barcode">'.$langs->trans("Gencod").'</label></td><td>';
-	print '<span class="fa paddingright fa-barcode"></span>';
+	print '<span class="fa fa-barcode pictofixedwidth"></span>';
 	print '<input name="barcode" id="barcode" class="minwidth150 widthcentpercentminusx maxwidth300" value="'.dol_escape_htmltag((GETPOSTISSET('barcode') ? GETPOST('barcode', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_GENCODE) ? $conf->global->MAIN_INFO_SOCIETE_GENCODE : ''))).'"></td></tr>';
 	print '</td></tr>';
 }

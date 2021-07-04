@@ -93,7 +93,7 @@ class FormProduct
 		}
 
 		$sql = "SELECT e.rowid, e.ref as label, e.description, e.fk_parent";
-		if (!empty($fk_product)) {
+		if (!empty($fk_product) && $fk_product > 0) {
 			if (!empty($batch)) {
 				$sql .= ", pb.qty as stock";
 			} else {
@@ -104,7 +104,7 @@ class FormProduct
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_entrepot = e.rowid";
-		if (!empty($fk_product)) {
+		if (!empty($fk_product) && $fk_product > 0) {
 			$sql .= " AND ps.fk_product = ".((int) $fk_product);
 			if (!empty($batch)) {
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb on pb.fk_product_stock = ps.rowid AND pb.batch = '".$this->db->escape($batch)."'";
@@ -123,11 +123,11 @@ class FormProduct
 
 		// minimum stock
 		if ($stockMin !== false) {
-			if (!empty($fk_product)) {
+			if (!empty($fk_product) && $fk_product > 0) {
 				if (!empty($batch)) {
-					$sql .= " AND pb.qty > ".$this->db->escape($stockMin);
+					$sql .= " AND pb.qty > ".((float) $stockMin);
 				} else {
-					$sql .= " AND ps.reel > ".$this->db->escape($stockMin);
+					$sql .= " AND ps.reel > ".((float) $stockMin);
 				}
 			}
 		}
@@ -137,7 +137,7 @@ class FormProduct
 
 			// minimum stock
 			if ($stockMin !== false) {
-				$sql .= " HAVING sum(ps.reel) > ".$this->db->escape($stockMin);
+				$sql .= " HAVING sum(ps.reel) > ".((float) $stockMin);
 			}
 		}
 		$sql .= " ORDER BY ".$orderBy;
@@ -234,7 +234,7 @@ class FormProduct
 		if (empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
 			$filterstatus = '';
 		}
-		if (!empty($fk_product)) {
+		if (!empty($fk_product) && $fk_product > 0) {
 			$this->cache_warehouses = array();
 		}
 
@@ -549,8 +549,8 @@ class FormProduct
 		$out = '';
 		$productIdArray = array();
 		if (!is_array($objectLines) || !count($objectLines)) {
-			if (!empty($fk_product)) {
-				$productIdArray[] = $fk_product;
+			if (!empty($fk_product) && $fk_product > 0) {
+				$productIdArray[] = (int) $fk_product;
 			}
 		} else {
 			foreach ($objectLines as $line) {
@@ -572,8 +572,8 @@ class FormProduct
 		if ($empty) {
 			$out .= '<option value="-1">'.($empty_label ? $empty_label : '&nbsp;').'</option>';
 		}
-		if (!empty($fk_product)) {
-			$productIdArray = array($fk_product); // only show lot stock for product
+		if (!empty($fk_product) && $fk_product > 0) {
+			$productIdArray = array((int) $fk_product); // only show lot stock for product
 		} else {
 			foreach ($this->cache_lot as $key => $value) {
 				$productIdArray[] = $key;

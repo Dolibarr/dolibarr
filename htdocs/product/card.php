@@ -1106,11 +1106,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Product specific batch number management
 			$status_batch = GETPOST('status_batch');
 			if ($status_batch !== '0') {
+				$langs->load("admin");
 				$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
-				$tooltip .= $langs->trans("GenericMaskCodes2");
-				$tooltip .= $langs->trans("GenericMaskCodes3");
-				$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
-				$tooltip .= $langs->trans("GenericMaskCodes5");
+				$tooltip .= '<br>'.$langs->trans("GenericMaskCodes2");
+				$tooltip .= '<br>'.$langs->trans("GenericMaskCodes3");
+				$tooltip .= '<br>'.$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
+				$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5");
 				if (($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced')
 					|| ($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced')) {
 					print '<tr><td id="mask_option">'.$langs->trans("ManageLotMask").'</td>';
@@ -1301,7 +1302,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td>'.$langs->trans("CountryOrigin").'</td>';
 			print '<td>';
 			print img_picto('', 'globe-americas', 'class="paddingrightonly"');
-			print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 widthcentpercentminusx');
+			print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 widthcentpercentminusx maxwidth500');
 			if ($user->admin) {
 				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			}
@@ -1316,6 +1317,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td>';
 				}
 
+				print img_picto('', 'state', 'class="pictofixedwidth"');
 				print $formcompany->select_state($object->state_id, $object->country_code);
 				print '</tr>';
 			}
@@ -1627,11 +1629,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print $form->selectarray('status_batch', $statutarray, $object->status_batch);
 					print '</td></tr>';
 					if ($object->status_batch !== '0') {
+						$langs->load("admin");
 						$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
-						$tooltip .= $langs->trans("GenericMaskCodes2");
-						$tooltip .= $langs->trans("GenericMaskCodes3");
-						$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
-						$tooltip .= $langs->trans("GenericMaskCodes5");
+						$tooltip .= '<br>'.$langs->trans("GenericMaskCodes2");
+						$tooltip .= '<br>'.$langs->trans("GenericMaskCodes3");
+						$tooltip .= '<br>'.$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
+						$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5");
 						print '<tr><td id="mask_option">'.$langs->trans("ManageLotMask").'</td>';
 						if ($object->status_batch == '1' && $conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced') {
 							$mask = !empty($object->batch_mask) ? $object->batch_mask : $conf->global->LOT_ADVANCED_MASK;
@@ -1724,6 +1727,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Public Url
 			if (empty($conf->global->PRODUCT_DISABLE_PUBLIC_URL)) {
 				print '<tr><td>'.$langs->trans("PublicUrl").'</td><td>';
+				print img_picto('', 'globe', 'class="pictofixedwidth"');
 				print '<input type="text" name="url" class="quatrevingtpercent" value="'.$object->url.'">';
 				print '</td></tr>';
 			}
@@ -1732,6 +1736,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if ($object->isProduct() && !empty($conf->stock->enabled)) {
 				// Default warehouse
 				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+				print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
 				print $formproduct->selectWarehouses($object->fk_default_warehouse, 'fk_default_warehouse', 'warehouseopen', 1);
 				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?action=create&type='.GETPOST('type', 'int')).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span></a>';
 				print '</td></tr>';
@@ -1835,6 +1840,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td>';
 					}
 
+					print img_picto('', 'state', 'class="pictofixedwidth"');
 					print $formcompany->select_state($object->state_id, $object->country_code);
 					print '</td>';
 					print '</tr>';

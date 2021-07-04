@@ -2144,3 +2144,4 @@ YouEnableDeprecatedWSAPIsUseRESTAPIsInstead=非推奨のWS APIが有効化され
 RandomlySelectedIfSeveral=画像が複数ある場合はランダムに選択
 DatabasePasswordObfuscated=データベースのパスワードは conf ファイルで難読化されている
 DatabasePasswordNotObfuscated=データベースのパスワードは conf ファイルで難読化されていない
+APIsAreNotEnabled=APIモジュールが有効になっていない

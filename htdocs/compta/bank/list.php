@@ -564,7 +564,7 @@ foreach ($accounts as $key => $type) {
 
 	// Account number
 	if (!empty($arrayfields['b.account_number']['checked'])) {
-		print '<td class="tdoverflowmax300">';
+		print '<td class="tdoverflowmax250">';
 		if (!empty($conf->accounting->enabled) && !empty($objecttmp->account_number)) {
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch('', $objecttmp->account_number, 1);

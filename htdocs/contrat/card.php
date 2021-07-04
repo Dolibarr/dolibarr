@@ -386,7 +386,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
 			$error++;
 		}
-		if (GETPOST('prod_entry_mode', 'alpha') == 'free' && empty($idprod) && empty($product_desc)) {
+		if (GETPOST('prod_entry_mode', 'alpha') == 'free' && (empty($idprod) || $idprod < 0) && empty($product_desc)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")), null, 'errors');
 			$error++;
 		}

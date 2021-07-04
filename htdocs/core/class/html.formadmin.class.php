@@ -444,6 +444,8 @@ class FormAdmin
 		}
 		$out .= '</select>';
 
+		$out .= ajax_combobox($htmlname);
+
 		return $out;
 	}
 }

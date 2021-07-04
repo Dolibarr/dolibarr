@@ -37,15 +37,7 @@ About = Om
 KnowledgeManagementAbout = Om Knowledge Management
 KnowledgeManagementAboutPage = Videnstyring om side
 
-#
-# Sample page
-#
 KnowledgeManagementArea = Videnshåndtering
-
-
-#
-# Menu
-#
 MenuKnowledgeRecord = Videnbase
 ListKnowledgeRecord = Liste over artikler
 NewKnowledgeRecord = Ny artikel
@@ -53,3 +45,5 @@ ValidateReply = Valider løsning
 KnowledgeRecords = Artikler
 KnowledgeRecord = Artikel
 KnowledgeRecordExtraFields = Ekstra felter til artikel
+GroupOfTicket=Gruppe af billetter
+YouCanLinkArticleToATicketCategory=Du kan linke en artikel til en billetgruppe (så artiklen vil blive foreslået under kvalificeringen af nye billetter)

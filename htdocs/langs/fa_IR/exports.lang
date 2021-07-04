@@ -53,7 +53,8 @@ TypeOfLineServiceOrProduct=نوع سطر (0 = محصول، 1 = خدمات)
 FileWithDataToImport=فایل حاوی داده برای وارد کردن
 FileToImport=فایل منبع برای واردکردن
 FileMustHaveOneOfFollowingFormat=فایلی که وارد می‌شود باید یکی از انواع زیر باشد
-DownloadEmptyExample=دریافت فایل قالب با اطلاعات محتوای بخش‌ها ( * بخش‌های الزامی است)
+DownloadEmptyExample=Download template file with field content information
+StarAreMandatory=* are mandatory fields
 ChooseFormatOfFileToImport=انتخاب نوع فایل برای استفاده به‌عنوان فایل واردات با کلیک بر روی نمادک %s برای انتخاب آن ...
 ChooseFileToImport=فایل را بالاگذاری کرده و سپس روی نشانک %s کلیک کرده تا به‌عنوان فایل منبع واردات استفاده شود.
 SourceFileFormat=نوع فایل منبع

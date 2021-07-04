@@ -587,7 +587,7 @@ class SupplierProposal extends CommonObject
 			$this->line->date_end = $date_end;
 
 			// infos marge
-			if (!empty($fk_product) && empty($fk_fournprice) && empty($pa_ht)) {
+			if (!empty($fk_product) && $fk_product > 0 && empty($fk_fournprice) && empty($pa_ht)) {
 				// When fk_fournprice is 0, we take the lowest buying price
 				include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 				$productFournisseur = new ProductFournisseur($this->db);
@@ -777,7 +777,7 @@ class SupplierProposal extends CommonObject
 			$this->line->fk_unit = $fk_unit;
 
 			// infos marge
-			if (!empty($fk_product) && empty($fk_fournprice) && empty($pa_ht)) {
+			if (!empty($fk_product) && $fk_product > 0 && empty($fk_fournprice) && empty($pa_ht)) {
 				// by external module, take lowest buying price
 				include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 				$productFournisseur = new ProductFournisseur($this->db);

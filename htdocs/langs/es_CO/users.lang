@@ -1,2 +1,4 @@
 # Dolibarr language file - Source file is en_US - users
 MenuUsersAndGroups=Usuarios y Grupos
+NbOfUsers=No. of users
+NbOfPermissions=No. of permissions

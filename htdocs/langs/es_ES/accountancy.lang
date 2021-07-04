@@ -48,7 +48,8 @@ CountriesNotInEEC=Países no incluidos en la CEE
 CountriesInEECExceptMe=Países en la CEE excepto %s
 CountriesExceptMe=Todos los países excepto %s
 AccountantFiles=Exportar documentos de origen
-ExportAccountingSourceDocHelp=Con esta herramienta, puede exportar los eventos de origen (lista y PDF) que se utilizaron para generar su contabilidad. Para exportar sus diarios, use la entrada de menú %s - %s.
+ExportAccountingSourceDocHelp=Con esta herramienta, puede exportar los eventos de origen (lista en CSV y PDF) que se utilizaron para generar su contabilidad.
+ExportAccountingSourceDocHelp2=Para exportar sus diarios, use la entrada de menú %s - %s.
 VueByAccountAccounting=Ver por cuenta contable
 VueBySubAccountAccounting=Ver por subcuenta contable
 
@@ -328,9 +329,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Deshabilitar la vinculación y transfere
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Desactive la vinculación y transferencia en contabilidad en informes de gastos (los informes de gastos no se tendrán en cuenta en la contabilidad)
 
 ## Export
-NotifiedExportDate=Notified export date (modification of the entries will not be possible)
-NotifiedValidationDate=Validation of the entries (modification or deletion of the entries will not be possible)
-ConfirmExportFile=Confirmation of the generation of the accounting export file ?
+NotifiedExportDate=Fecha de exportación notificada (no será posible modificar las entradas)
+NotifiedValidationDate=Validación de las entradas (no será posible modificar o eliminar las entradas)
+ConfirmExportFile=¿Confirmación de la generación del archivo de exportación contable?
 ExportDraftJournal=Exportar libro borrador
 Modelcsv=Modelo de exportación
 Selectmodelcsv=Seleccione un modelo de exportación

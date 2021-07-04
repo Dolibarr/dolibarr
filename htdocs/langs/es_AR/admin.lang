@@ -523,6 +523,7 @@ LDAPFieldCompany=Compañía
 ViewProductDescInFormAbility=Mostrar descripción de productos en formularios (de otro forma es mostrado en una venta emergente tooltip popup)
 Target=Destino
 Sell=Vender
+ClickToDialUseTelLinkDesc=Use this method if your users have a softphone or a software interface installed on the same computer as the browser, and called when you click on a link in your browser that starts with "tel:". If you need a full server solution (no need of local software installation), you must set this to "No" and fill next field.
 PositionIntoComboList=Posición de la línea en las listas de combo
 SellTaxRate=Tasa de impuesto de venta
 RecuperableOnly=Sí, para el IVA "No percibido pero recuperable" dedicado a algún estado de Francia. Mantenga el valor en "No" en todos los demás casos.
