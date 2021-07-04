@@ -843,16 +843,16 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($prod_entry_mode == 'free' && empty($idprod) && GETPOST('type') < 0) {
+		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && GETPOST('type') < 0) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 			$error++;
 		}
 
-		if ($prod_entry_mode == 'free' && empty($idprod) && $price_ht === '' && $price_ht_devise === '') { 	// Unit price can be 0 but not ''. Also price can be negative for proposal.
+		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && $price_ht === '' && $price_ht_devise === '') { 	// Unit price can be 0 but not ''. Also price can be negative for proposal.
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
 			$error++;
 		}
-		if ($prod_entry_mode == 'free' && empty($idprod) && empty($product_desc)) {
+		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && empty($product_desc)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")), null, 'errors');
 			$error++;
 		}
@@ -871,7 +871,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error && ($qty >= 0) && (!empty($product_desc) || !empty($idprod))) {
+		if (!$error && ($qty >= 0) && (!empty($product_desc) || (!empty($idprod) && $idprod > 0))) {
 			$pu_ht = 0;
 			$pu_ttc = 0;
 			$price_min = 0;
@@ -885,7 +885,7 @@ if (empty($reshook)) {
 			// Ecrase $desc par celui du produit
 			// Ecrase $tva_tx par celui du produit
 			// Replaces $fk_unit with the product unit
-			if (!empty($idprod)) {
+			if (!empty($idprod) && $idprod > 0) {
 				$prod = new Product($db);
 				$prod->fetch($idprod);
 

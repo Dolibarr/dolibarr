@@ -605,7 +605,7 @@ class Propal extends CommonObject
 			$this->db->begin();
 
 			$product_type = $type;
-			if (!empty($fk_product)) {
+			if (!empty($fk_product) && $fk_product > 0) {
 				$product = new Product($this->db);
 				$result = $product->fetch($fk_product);
 				$product_type = $product->type;
