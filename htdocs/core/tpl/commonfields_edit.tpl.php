@@ -63,7 +63,7 @@ foreach ($object->fields as $key => $val) {
 	print '</td>';
 	print '<td class="valuefieldcreate">';
 	if (!empty($val['picto'])) {
-		print img_picto('', $val['picto']);
+		print img_picto('', $val['picto'], '', false, 0, 0, '', 'pictofixedwidth');
 	}
 	if (in_array($val['type'], array('int', 'integer'))) {
 		$value = GETPOSTISSET($key) ?GETPOST($key, 'int') : $object->$key;
