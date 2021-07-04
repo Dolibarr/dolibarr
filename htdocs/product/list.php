@@ -1023,11 +1023,15 @@ if ($resql) {
 	}
 	// Country
 	if (!empty($arrayfields['p.fk_country']['checked'])) {
-		print '<td class="liste_titre center">'.$form->select_country($search_country, 'search_country', '', 0).'</td>';
+		print '<td class="liste_titre center">';
+		print $form->select_country($search_country, 'search_country', '', 0);
+		print '</td>';
 	}
 	// State
 	if (!empty($arrayfields['p.fk_state']['checked'])) {
-		print '<td class="liste_titre center">'.$formcompany->select_state($search_state, $search_country).'</td>';
+		print '<td class="liste_titre center">';
+		print $formcompany->select_state($search_state, $search_country);
+		print '</td>';
 	}
 	// Accountancy code sell
 	if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_sell']['checked'])) {

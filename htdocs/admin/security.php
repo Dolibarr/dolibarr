@@ -251,7 +251,7 @@ foreach ($arrayhandler as $key => $module) {
 		} elseif ($tmp == 'NotConfigured') {
 			print $langs->trans($tmp);
 		} else {
-			print $tmp;
+			print '<span class="opacitymedium">'.$tmp.'</span>';
 		}
 		print '</td>'."\n";
 

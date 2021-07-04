@@ -1507,10 +1507,10 @@ table[summary="list_of_modules"] .fa-cog {
 	div.divphotoref {
 		padding-right: 10px !important;
 	}
-	
+
 	.hideonsmartphone { display: none; }
 	.hideonsmartphoneimp { display: none !important; }
-	
+
 	select.minwidth100imp, select.minwidth100, select.minwidth200, select.minwidth200imp, select.minwidth300 {
 		width: calc(100% - 40px) !important;
 		display: inline-block;
@@ -1519,11 +1519,11 @@ table[summary="list_of_modules"] .fa-cog {
 		width: calc(100% - 70px) !important;
 		display: inline-block;
 	}
-	
+
 	input.maxwidthinputfileonsmartphone {
 		width: 175px;
 	}
-	
+
 	.poweredbyimg {
 		width: 48px;
 	}
@@ -3090,11 +3090,11 @@ div.tabsElem a {
 }
 div.tabBar {
 	color: #<?php echo $colortextbacktab; ?>;
-	padding-top: 16px;
-	padding-left: 16px;
-	padding-right: 16px;
-	padding-bottom: 16px;
-	margin: 0px 0px 16px 0px;
+	padding-top: 21px;
+	padding-left: 18px;
+	padding-right: 18px;
+	padding-bottom: 18px;
+	margin: 0px 0px 18px 0px;
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
 	border-right: 1px solid #BBB;
