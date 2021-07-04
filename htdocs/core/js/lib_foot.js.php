@@ -245,3 +245,59 @@ print 'jQuery(\'.clipboardCPButton, .clipboardCPValueToPrint\').click(function()
 		lastchild.innerHTML = \''.dol_escape_js($langs->trans('CopiedToClipboard')).'\';
 		setTimeout(() => { lastchild.innerHTML = tmp; }, 1000);
 	})'."\n";
+
+
+print "\n/* JS CODE TO ENABLE ClipBoard copy paste*/\n";
+print '$( document ).ready(function() {
+	$(document).on("click", \'.butActionConfirm\', function(event) {
+		event.preventDefault();
+
+		// I don\'t use jquery $(this).data(\'confirm-url\'); to get $(this).attr(\'data-confirm-url\'); because .data() can doesn\'t work with ajax
+		var confirmUrl  			= $(this).attr(\'data-confirm-url\');
+		var confirmTitle 			= $(this).attr(\'data-confirm-title\');
+		var confirmContent 			= $(this).attr(\'data-confirm-content\');
+		var confirmActionBtnLabel 	= $(this).attr(\'data-confirm-action-btn-label\');
+		var confirmCancelBtnLabel 	= $(this).attr(\'data-confirm-cancel-btn-label\');
+
+		var confirmId = \'confirm-dialog-box\';
+		if($(this).attr(\'id\') != undefined){ var confirmId = confirmId + "-" + $(this).attr(\'id\'); }
+		if($("#" + confirmId)  != undefined) { $(\'#\' + confirmId).remove(); }
+
+		// Create modal box
+
+		var $confirmBox = $(\'<div/>\', {
+			id: confirmId,
+			title: confirmTitle
+		}).appendTo(\'body\');
+
+		$confirmBox.dialog({
+			autoOpen: true,
+			modal: false,
+			//width: Math.min($( window ).width() - 50, 1700),
+			dialogClass: \'confirm-dialog-box\',
+			buttons: [
+				{
+					text: confirmActionBtnLabel,
+					"class": \'ui-state-information\',
+					click: function () {
+					window.location.replace(confirmUrl);
+				}
+				},
+				{
+					text: confirmCancelBtnLabel,
+					"class": \'ui-state-information\',
+					click: function () {
+					$(this).dialog("close");
+				}
+				}
+			],
+			close: function( event, ui ) {
+	$(\'#\'+confirmBox).remove();
+},
+			open: function( event, ui ) {
+	$confirmBox.html(confirmContent);
+}
+		});
+	});
+});
+'."\n";
