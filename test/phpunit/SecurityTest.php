@@ -799,7 +799,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals('bad file _ evilaction', $result);
 
 		$result=dol_sanitizeFileName('bad file -evilparam --evilparam ---evilparam ----evilparam');
-		$this->assertEquals('bad file_evilparam _evilparam _evilparam _evilparam', $result);
+		$this->assertEquals('bad file _evilparam _evilparam _evilparam _evilparam', $result);
 	}
 
 	/**
