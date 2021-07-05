@@ -470,7 +470,7 @@ if (empty($reshook) && $action == 'add') {
 
 						$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH;
 						if (!empty($labeltouse)) {
-							$arraydefaultmessage = $formmail->getEMailTemplate($db, 'eventorganization_send', $user, $outputlangs, $labeltouse, 1, '');
+							$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $labeltouse, 1, '');
 						}
 
 						if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
