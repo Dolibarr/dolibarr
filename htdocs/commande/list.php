@@ -513,12 +513,9 @@ if ($search_status <> '') {
 		//$sql.= ' AND c.facture = 0'; // invoice not created
 		$sql .= ' AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))'; // validated, in process or closed but not billed
 	}
-	if ($search_status == -4)	// To bill
-	{
-
+	if ($search_status == -4) {	// To bill
 		$sql .= ' AND (c.fk_statut IN (1,2))'; // validated, in process
 	}
-
 }
 
 if ($search_datecloture_start) {
