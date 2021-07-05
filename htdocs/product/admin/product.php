@@ -624,9 +624,10 @@ if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) {
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("OnProductSelectAddProductDesc").'</td>';
 print '<td class="right">';
+print '<!-- PRODUIT_AUTOFILL_DESC -->';
 print $form->selectarray(
 	"activate_FillProductDescAuto",
-	array(1=>'AutoFillFormFieldBeforeSubmit', 0=>'DoNotAutofillButAutoConcat', -1=>'DoNotUseDescriptionOfProdut'),
+	array(0=>'DoNotAutofillButAutoConcat', 1=>'AutoFillFormFieldBeforeSubmit', 2=>'DoNotUseDescriptionOfProdut'),
 	empty($conf->global->PRODUIT_AUTOFILL_DESC) ? 0 : $conf->global->PRODUIT_AUTOFILL_DESC,
 	0,
 	0,
