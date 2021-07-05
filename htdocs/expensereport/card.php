@@ -1675,15 +1675,15 @@ if ($action == 'create') {
 			 print '<tr>';
 			 print '<td class="titlefield">'.$langs->trans("User").'</td>';
 			 print '<td>';
-			if ($object->fk_user_author > 0) {
-				$userauthor = new User($db);
-				$result = $userauthor->fetch($object->fk_user_author);
-				if ($result < 0) {
-					dol_print_error('', $userauthor->error);
-				} elseif ($result > 0) {
-					print $userauthor->getNomUrl(-1);
-				}
-			}
+			 if ($object->fk_user_author > 0) {
+			 	$userauthor = new User($db);
+			 	$result = $userauthor->fetch($object->fk_user_author);
+			 	if ($result < 0) {
+			 		dol_print_error('', $userauthor->error);
+			 	} elseif ($result > 0) {
+			 		print $userauthor->getNomUrl(-1);
+			 	}
+			 }
 			 print '</td></tr>';
 
 			 // Period
@@ -2474,32 +2474,32 @@ if ($action == 'create') {
 					print '</tr>';
 			} // Fin si c'est payé/validé
 
-				print '</table>';
-				print '</div>';
+			print '</table>';
+			print '</div>';
 
-				print '<script javascript>
+			print '<script javascript>
 
-				/* JQuery for product free or predefined select */
-				jQuery(document).ready(function() {
-					jQuery("#value_unit_ht").keyup(function(event) {
-						console.log(event.which);		// discard event tag and arrows
-						if (event.which != 9 && (event.which < 37 ||event.which > 40) && jQuery("#value_unit_ht").val() != "") {
-							jQuery("#value_unit").val("");
-						}
-					});
-					jQuery("#value_unit").keyup(function(event) {
-						console.log(event.which);		// discard event tag and arrows
-						if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#value_unit").val() != "") {
-							jQuery("#value_unit_ht").val("");
-						}
-					});
+			/* JQuery for product free or predefined select */
+			jQuery(document).ready(function() {
+				jQuery("#value_unit_ht").keyup(function(event) {
+					console.log(event.which);		// discard event tag and arrows
+					if (event.which != 9 && (event.which < 37 ||event.which > 40) && jQuery("#value_unit_ht").val() != "") {
+						jQuery("#value_unit").val("");
+					}
 				});
+				jQuery("#value_unit").keyup(function(event) {
+					console.log(event.which);		// discard event tag and arrows
+					if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#value_unit").val() != "") {
+						jQuery("#value_unit_ht").val("");
+					}
+				});
+			});
 
-				</script>';
+			</script>';
 
-				print '</form>';
+			print '</form>';
 
-				print dol_get_fiche_end();
+			print dol_get_fiche_end();
 		}
 	} else {
 		dol_print_error($db);
