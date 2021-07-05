@@ -400,8 +400,10 @@ foreach ($configfileparameters as $key => $value) {
 			if (in_array($newkey, array('dolibarr_main_db_pass', 'dolibarr_main_auth_ldap_admin_pass'))) {
 				if (empty($dolibarr_main_prod)) {
 					print '<!-- '.${$newkey}.' -->';
+					print showValueWithClipboardCPButton(${$newkey}, 0, '********');
+				} else {
+					print '**********';
 				}
-				print '**********';
 			} elseif ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/', ${$newkey})) {
 				print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
 			} elseif ($newkey == 'dolibarr_main_document_root_alt') {
@@ -420,9 +422,14 @@ foreach ($configfileparameters as $key => $value) {
 				}
 			} elseif ($newkey == 'dolibarr_main_instance_unique_id') {
 				//print $conf->file->instance_unique_id;
-				global $dolibarr_main_cookie_cryptkey;
-				$valuetoshow = ${$newkey} ? ${$newkey} : $dolibarr_main_cookie_cryptkey; // Use $dolibarr_main_instance_unique_id first then $dolibarr_main_cookie_cryptkey
-				print $valuetoshow;
+				global $dolibarr_main_cookie_cryptkey, $dolibarr_main_instance_unique_id;
+				$valuetoshow = $dolibarr_main_instance_unique_id ? $dolibarr_main_instance_unique_id : $dolibarr_main_cookie_cryptkey; // Use $dolibarr_main_instance_unique_id first then $dolibarr_main_cookie_cryptkey
+				if (empty($dolibarr_main_prod)) {
+					print '<!-- '.${$newkey}.' -->';
+					print showValueWithClipboardCPButton($valuetoshow, 0, '********');
+				} else {
+					print '**********';
+				}
 				if (empty($valuetoshow)) {
 					print img_warning("EditConfigFileToAddEntry", 'dolibarr_main_instance_unique_id');
 				}
