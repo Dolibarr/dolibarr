@@ -310,13 +310,13 @@ print '<br>';
 // Parameters in conf.php file (when a parameter start with ?, it is shown only if defined)
 $configfileparameters = array(
 	'dolibarr_main_prod' => 'Production mode (Hide all error messages)',
+	'dolibarr_main_instance_unique_id' => $langs->trans("InstanceUniqueID"),
 	'separator0' => '',
 	'dolibarr_main_url_root' => $langs->trans("URLRoot"),
 	'?dolibarr_main_url_root_alt' => $langs->trans("URLRoot").' (alt)',
 	'dolibarr_main_document_root'=> $langs->trans("DocumentRootServer"),
 	'?dolibarr_main_document_root_alt' => $langs->trans("DocumentRootServer").' (alt)',
 	'dolibarr_main_data_root' => $langs->trans("DataRootServer"),
-	'dolibarr_main_instance_unique_id' => $langs->trans("InstanceUniqueID"),
 	'separator1' => '',
 	'dolibarr_main_db_host' => $langs->trans("DatabaseServer"),
 	'dolibarr_main_db_port' => $langs->trans("DatabasePort"),
