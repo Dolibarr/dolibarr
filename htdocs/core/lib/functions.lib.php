@@ -778,12 +778,16 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 			do {
 				$oldstringtoclean = $out;
 
+				// Ckeditor use the numeric entitic for apostrophe so we force it to text entity (all other special chars are correctly
+				// encoded using text entities). This is a fix for CKeditor (CKeditor still encode in HTML4 instead of HTML5).
+				$out = preg_replace('/&#39;/i', '&apos;', $out);
+
 				// We replace chars from a/A to z/Z encoded with numeric HTML entities with the real char so we won't loose the chars at the next step.
 				// No need to use a loop here, this step is not to sanitize (this is done at next step, this is to try to save chars, even if they are
 				// using a non coventionnel way to be encoded, to not have them sanitized just after)
 				$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', 'realCharForNumericEntities', $out);
 
-				// Now we remove all remaining HTML entities staring with a number. We don't want such entities.
+				// Now we remove all remaining HTML entities starting with a number. We don't want such entities.
 				$out = preg_replace('/&#x?[0-9]+/i', '', $out);	// For example if we have j&#x61vascript with an entities without the ; to hide the 'a' of 'javascript'.
 
 				$out = dol_string_onlythesehtmltags($out, 0, 1, 1);

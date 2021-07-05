@@ -321,6 +321,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$test="<a onpointerdown=alert(document.domain)>XSS</a>";
 		$result=testSqlAndScriptInject($test, 0);
 		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject lll');
+
+		$test="Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submited by CKEditor)";
+		$result=testSqlAndScriptInject($test, 0);
+		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject mmm');
 	}
 
 	/**
@@ -358,6 +362,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_POST["param12"]='<!DOCTYPE html><html>aaa</html>';
 		$_POST["param13"]='&#110; &#x6E; &gt; &lt; &quot; <a href=\"j&#x61;vascript:alert(document.domain)\">XSS</a>';
 		$_POST["param13b"]='&#110; &#x6E; &gt; &lt; &quot; <a href=\"j&#x61vascript:alert(document.domain)\">XSS</a>';
+		$_POST["param14"]="Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submited by CKEditor)";
 		//$_POST["param13"]='javascript%26colon%26%23x3B%3Balert(1)';
 		//$_POST["param14"]='javascripT&javascript#x3a alert(1)';
 
@@ -493,6 +498,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=GETPOST("param13b", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('n n &gt; &lt; &quot; <a href=\"alert(document.domain)\">XSS</a>', $result, 'Test 13b that HTML entities are decoded with restricthtml, but only for common alpha chars');
+
+		$result=GETPOST("param14", 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals("Text with ' encoded with the numeric html entity converted into text entity &apos; (like when submited by CKEditor)", $result, 'Test 14');
 
 		// Special test for GETPOST of backtopage, backtolist or backtourl parameter
 
