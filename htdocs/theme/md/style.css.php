@@ -1862,7 +1862,7 @@ div.login_block {
 
 
 div.backgroundsemitransparent {
-	background:rgba(255,255,255,0.6);
+	background:rgba(255, 255, 255, 0.7);
 	padding-left: 10px;
 	padding-right: 10px;
 }
@@ -3941,6 +3941,11 @@ tr.liste_sub_total, tr.liste_sub_total td {
 .shadow {
 	-webkit-box-shadow: 2px 2px 5px #CCC !important;
 	box-shadow: 2px 2px 5px #CCC !important;
+}
+
+.boxshadow {
+	-webkit-box-shadow: 0px 0px 5px #888;
+	box-shadow: 0px 0px 5px #888;
 }
 
 div.tabBar .noborder {

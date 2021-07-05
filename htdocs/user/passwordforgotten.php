@@ -128,7 +128,7 @@ if (empty($reshook)) {
 			}
 
 			if ($result <= 0 && $edituser->error == 'USERNOTFOUND') {
-				$message = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent').'">';
+				$message = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'">';
 				if (!$isanemail) {
 					$message .= $langs->trans("IfLoginExistPasswordRequestSent");
 				} else {
@@ -147,7 +147,7 @@ if (empty($reshook)) {
 					} else {
 						// Success
 						if ($edituser->send_password($user, $newpassword, 1) > 0) {
-							$message = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent').'">';
+							$message = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'">';
 							if (!$isanemail) {
 								$message .= $langs->trans("IfLoginExistPasswordRequestSent");
 							} else {
