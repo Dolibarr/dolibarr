@@ -53,6 +53,7 @@ InternalUser=Internal user
 ExternalUser=External user
 InternalUsers=Internal users
 ExternalUsers=External users
+UserInterface=User interface
 GUISetup=Display
 SetupArea=Setup
 UploadNewTemplate=Upload new template(s)
