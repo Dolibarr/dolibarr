@@ -87,14 +87,14 @@ if (empty($reshook)) {
 	// Validate new password
 	if ($action == 'validatenewpassword' && $username && $passworduidhash) {
 		$edituser = new User($db);
-		$result = $edituser->fetch('', $_GET["username"]);
+		$result = $edituser->fetch('', $username);
 		if ($result < 0) {
 			$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorLoginDoesNotExists", $username)).'</div>';
 		} else {
 			global $dolibarr_main_instance_unique_id;
 
 			//print $edituser->pass_temp.'-'.$edituser->id.'-'.$dolibarr_main_instance_unique_id.' '.$passworduidhash;
-			if (dol_verifyHash($edituser->pass_temp.'-'.$edituser->id.'-'.$dolibarr_main_instance_unique_id, $passworduidhash)) {
+			if ($edituser->pass_temp && dol_verifyHash($edituser->pass_temp.'-'.$edituser->id.'-'.$dolibarr_main_instance_unique_id, $passworduidhash)) {
 				// Clear session
 				unset($_SESSION['dol_login']);
 				$_SESSION['dol_loginmesg'] = $langs->trans('NewPasswordValidated'); // Save message for the session page
