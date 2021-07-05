@@ -778,6 +778,16 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 			do {
 				$oldstringtoclean = $out;
 
+				if (!empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML)) {
+					$dom = new DOMDocument;
+					try {
+						$dom->loadHTML($out, LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_HTML_NODEFDTD|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
+					} catch(Exception $e) {
+						return 'InvalidHTMLString';
+					}
+					$out = $dom->saveHTML();
+				}
+
 				// Ckeditor use the numeric entitic for apostrophe so we force it to text entity (all other special chars are correctly
 				// encoded using text entities). This is a fix for CKeditor.
 				$out = preg_replace('/&#39;/i', '&apos;', $out);
@@ -794,7 +804,8 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 
 				// We should also exclude non expected attributes
 				if (!empty($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)) {
-					$out = dol_string_onlythesehtmlattributes($out);
+					// Warning, the function may add a LF so we are forced to trim to compare with old $out without having always a difference and an infinit loop.
+					$out = trim(dol_string_onlythesehtmlattributes($out));
 				}
 			} while ($oldstringtoclean != $out);
 			break;
@@ -6311,7 +6322,7 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	$stringtoclean = preg_replace('/&#58;|&#0+58|&#x3A/i', '', $stringtoclean); // refused string ':' encoded (no reason to have a : encoded like this) to disable 'javascript:...'
 	$stringtoclean = preg_replace('/javascript\s*:/i', '', $stringtoclean);
 
-	$temp = strip_tags($stringtoclean, $allowed_tags_string);
+	$temp = strip_tags($stringtoclean, $allowed_tags_string);	// Warning: This remove also undesired </> changing string obfuscated with </> that pass injection detection into harmfull string
 
 	if ($cleanalsosomestyles) {	// Clean for remaining html tags
 		$temp = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/i', '', $temp); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
@@ -6361,8 +6372,8 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 		}
 
 		$return = $dom->saveHTML();
-
 		//$return = '<html><body>aaaa</p>bb<p>ssdd</p>'."\n<p>aaa</p>aa<p>bb</p>";
+
 		$return = preg_replace('/^<html><body>/', '', $return);
 		$return = preg_replace('/<\/body><\/html>$/', '', $return);
 		return $return;
