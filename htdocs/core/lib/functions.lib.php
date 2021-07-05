@@ -8091,7 +8091,7 @@ function picto_from_langcode($codelang, $moreatt = '')
 	}
 
 	if ($codelang == 'auto') {
-		return '<span class="fa fa-globe"></span>';
+		return '<span class="fa fa-language"></span>';
 	}
 
 	$langtocountryflag = array(

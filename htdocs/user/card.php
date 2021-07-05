@@ -1421,10 +1421,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if ($object->socid > 0) {
 				$type = $langs->trans("External");
 			}
+			print '<span class="badgeneutral">';
 			print $type;
 			if ($object->ldap_sid) {
 				print ' ('.$langs->trans("DomainUser").')';
 			}
+			print '</span>';
 			print '</td></tr>'."\n";
 
 			// Ldap sid
@@ -1534,7 +1536,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				// Salary
 				print '<tr><td>'.$langs->trans("Salary").'</td>';
 				print '<td>';
-				print ($object->salary != '' ? img_picto('', 'salary', 'class="pictofixedwidth paddingright"').price($object->salary, '', $langs, 1, -1, -1, $conf->currency) : '');
+				print ($object->salary != '' ? img_picto('', 'salary', 'class="pictofixedwidth paddingright"').'<span class="amount">'.price($object->salary, '', $langs, 1, -1, -1, $conf->currency) : '').'</span>';
 				print '</td>';
 				print "</tr>\n";
 			}
