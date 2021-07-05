@@ -2,6 +2,9 @@
 
 require 'Segment.php';
 
+/**
+ * Class of ODT Exception
+ */
 class OdfException extends Exception
 {
 }
@@ -148,7 +151,7 @@ class Odf
 
 	/**
 	 * Replaces html tags in odt tags and returns a compatible string
-	 * @param string   $key        Name of the variable within the template
+	 *
 	 * @param string   $value      Replacement value
 	 * @param bool     $encode     If true, special XML characters are encoded
 	 * @param string   $charset    Charset
@@ -395,6 +398,7 @@ class Odf
 	 * Function to convert a HTML string into an ODT string
 	 *
 	 * @param	string	$value	String to convert
+	 * @return	string			String converted
 	 */
 	public function htmlToUTFAndPreOdf($value)
 	{
@@ -427,6 +431,7 @@ class Odf
 	 * Function to convert a HTML string into an ODT string
 	 *
 	 * @param	string	$value	String to convert
+	 * @return	string			String converted
 	 */
 	public function preOdfToOdf($value)
 	{
@@ -564,9 +569,9 @@ IMG;
 					dol_syslog("We found a IF and it was processed");
 					//var_dump($sav);exit;
 				}*/
-			}
-			// Else the value is false, then two cases: no ELSE and we're done, or there is at least one place where there is an ELSE clause, then we replace it
-			else {
+			} else {
+				// Else the value is false, then two cases: no ELSE and we're done, or there is at least one place where there is an ELSE clause, then we replace it
+
 				//dol_syslog("Var ".$key." is not defined, we remove the IF, ELSE and ENDIF ");
 				//$sav=$this->contentXml;
 				// Find all conditional blocks for this variable: from IF to ELSE and to ENDIF
