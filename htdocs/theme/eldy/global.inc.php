@@ -2640,7 +2640,7 @@ table.login_table_securitycode tr td {
 }
 
 div.backgroundsemitransparent {
-	background:rgba(255,255,255,0.68);
+	background:rgba(255, 255, 255, 0.7);
 	padding-left: 10px;
 	padding-right: 10px;
 }
@@ -3920,6 +3920,11 @@ table.noborder.paymenttable {
 .shadow {
 	-webkit-box-shadow: 1px 1px 7px #CCC !important;
 	box-shadow: 1px 1px 7px #CCC !important;
+}
+
+.boxshadow {
+	-webkit-box-shadow: 0px 0px 5px #888;
+	box-shadow: 0px 0px 5px #888;
 }
 
 div.tabBar .noborder {
