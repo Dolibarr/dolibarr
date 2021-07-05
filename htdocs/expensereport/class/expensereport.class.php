@@ -2703,10 +2703,10 @@ class ExpenseReportLine
 		$sql .= " '".$this->db->escape(empty($this->vat_src_code) ? '' : $this->vat_src_code)."',";
 		$sql .= " '".$this->db->escape($this->comments)."',";
 		$sql .= " ".((float) $this->qty).",";
-		$sql .= " ".((int) $this->value_unit).",";
-		$sql .= " ".price2num($this->total_ht).",";
-		$sql .= " ".price2num($this->total_tva).",";
-		$sql .= " ".price2num($this->total_ttc).",";
+		$sql .= " ".((float) $this->value_unit).",";
+		$sql .= " ".((float) price2num($this->total_ht)).",";
+		$sql .= " ".((float) price2num($this->total_tva)).",";
+		$sql .= " ".((float) price2num($this->total_ttc)).",";
 		$sql .= " '".$this->db->idate($this->date)."',";
 		$sql .= " ".(empty($this->rule_warning_message) ? 'null' : "'".$this->db->escape($this->rule_warning_message)."'").",";
 		$sql .= " ".((int) $this->fk_c_exp_tax_cat).",";
