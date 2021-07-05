@@ -1084,7 +1084,7 @@ if (empty($reshook)) {
 
 		$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat', 'int');
 
-		$qty = GETPOST('qty', 'int');
+		$qty = price2num(GETPOST('qty', 'alpha'));
 		if (empty($qty)) {
 			$qty = 1;
 		}
@@ -1101,20 +1101,20 @@ if (empty($reshook)) {
 			$action = '';
 		}
 
-		// Si aucune date n'est rentrée
+		// If no date entered
 		if (empty($date) || $date == "--") {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
+		} elseif ($date < $object->date_debut || $date > ($object->date_fin + (24 * 3600 - 1))) {
+			// Warning if date out of range
+			$langs->load("errors");
+			setEventMessages($langs->trans("WarningDateOfLineMustBeInExpenseReportRange"), null, 'warnings');
 		}
-		// Si aucun prix n'est rentré
+
+		// If no price entered
 		if ($value_unit == 0) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PriceUTTC")), null, 'errors');
-		}
-		// Warning if date out of range
-		if ($date < $object->date_debut || $date > ($object->date_fin + (24 * 3600 - 1))) {
-			$langs->load("errors");
-			setEventMessages($langs->trans("WarningDateOfLineMustBeInExpenseReportRange"), null, 'warnings');
 		}
 
 		if (!$error) {
@@ -1215,12 +1215,12 @@ if (empty($reshook)) {
 			}
 		}
 
-		$rowid = $_POST['rowid'];
+		$rowid = GETPOST('rowid', 'int');
 		$type_fees_id = GETPOST('fk_c_type_fees', 'int');
 		$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat', 'int');
 		$projet_id = $fk_project;
 		$comments = GETPOST('comments', 'restricthtml');
-		$qty = GETPOST('qty', 'int');
+		$qty = price2num(GETPOST('qty', 'alpha'));
 		$vatrate = GETPOST('vatrate', 'alpha');
 
 		// if VAT is not used in Dolibarr, set VAT rate to 0 because VAT rate is necessary.
@@ -2511,9 +2511,11 @@ if ($action == 'create') {
 	exit(1);
 }
 
+
 /*
  * Action bar
  */
+
 print '<div class="tabsAction">';
 
 if ($action != 'create' && $action != 'edit') {
