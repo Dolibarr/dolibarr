@@ -340,6 +340,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+		// Force default mode
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
+
 		$_COOKIE["id"]=111;
 		$_GET["param1"]="222";
 		$_POST["param1"]="333";

@@ -775,18 +775,21 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 			}
 			break;
 		case 'restricthtml':		// Recommended for most html textarea
+		case 'restricthtmlallowunvalid':
 			do {
 				$oldstringtoclean = $out;
 
-				if (!empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML)) {
-					$dom = new DOMDocument;
+				if (!empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML) && $check != 'restricthtmlallowunvalid') {
 					try {
+						$dom = new DOMDocument;
 						$dom->loadHTML($out, LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_HTML_NODEFDTD|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
 					} catch(Exception $e) {
+						//print $e->getMessage();
 						return 'InvalidHTMLString';
 					}
 					$out = $dom->saveHTML();
 				}
+				//var_dump($oldstringtoclean);var_dump($out);
 
 				// Ckeditor use the numeric entitic for apostrophe so we force it to text entity (all other special chars are correctly
 				// encoded using text entities). This is a fix for CKeditor.
