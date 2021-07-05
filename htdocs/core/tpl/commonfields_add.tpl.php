@@ -47,7 +47,7 @@ foreach ($object->fields as $key => $val) {
 	print '<tr class="field_'.$key.'">';
 	print '<td';
 	print ' class="titlefieldcreate';
-	if ($val['notnull'] > 0) {
+	if (isset($val['notnull']) && $val['notnull'] > 0) {
 		print ' fieldrequired';
 	}
 	if ($val['type'] == 'text' || $val['type'] == 'html') {
