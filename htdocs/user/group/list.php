@@ -122,7 +122,7 @@ if (empty($reshook)) {
 
 llxHeader();
 
-$sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec, COUNT(DISTINCT ugu.fk_user) as nb, COUNT(DISTINCT ugr.fk_id) as nbpermissions";
+$sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec, g.tms as datem, COUNT(DISTINCT ugu.fk_user) as nb, COUNT(DISTINCT ugr.fk_id) as nbpermissions";
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_rights as ugr ON ugr.fk_usergroup = g.rowid";
@@ -137,7 +137,7 @@ if (!empty($search_group)) {
 if ($sall) {
 	$sql .= natural_search(array("g.nom", "g.note"), $sall);
 }
-$sql .= " GROUP BY g.rowid, g.nom, g.note, g.entity, g.datec";
+$sql .= " GROUP BY g.rowid, g.nom, g.note, g.entity, g.datec, g.tms";
 $sql .= $db->order($sortfield, $sortorder);
 
 $resql = $db->query($sql);
@@ -197,6 +197,7 @@ if ($resql) {
 	print_liste_field_titre("NbOfUsers", $_SERVER["PHP_SELF"], "nb", $param, "", '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("NbOfPermissions", $_SERVER["PHP_SELF"], "nbpermissions", $param, "", '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("DateCreationShort", $_SERVER["PHP_SELF"], "g.datec", $param, "", '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("DateLastModification", $_SERVER["PHP_SELF"], "g.tms", $param, "", '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("", $_SERVER["PHP_SELF"]);
 	print "</tr>\n";
 
@@ -222,8 +223,11 @@ if ($resql) {
 			print '<td class="center">'.$mc->label.'</td>';
 		}
 		print '<td class="center">'.$obj->nb.'</td>';
-		print '<td class="center">'.$obj->nbpermissions.'</td>';
+		print '<td class="center">';
+		print '<a href="'.DOL_URL_ROOT.'/user/group/perms.php?id='.$obj->rowid.'">'.$obj->nbpermissions.'</a>';
+		print '</td>';
 		print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->datec), "dayhour").'</td>';
+		print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->datem), "dayhour").'</td>';
 		print '<td></td>';
 		print "</tr>\n";
 		$i++;

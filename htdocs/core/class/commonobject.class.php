@@ -6254,10 +6254,12 @@ abstract class CommonObject
 					$this->array_options["options_".$key] = price2num($this->array_options["options_".$key]);
 					break;
 				case 'date':
-					$this->array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key]);
-					break;
 				case 'datetime':
-					$this->array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key]);
+					if (empty($this->array_options["options_".$key])) {
+						$this->array_options["options_".$key] = null;
+					} else {
+						$this->array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key]);
+					}
 					break;
 				/*
 				case 'link':
@@ -6305,7 +6307,11 @@ abstract class CommonObject
 			}
 
 			if ($linealreadyfound) {
-				$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element."_extrafields SET ".$key." = '".$this->db->escape($this->array_options["options_".$key])."'";
+				if ($this->array_options["options_".$key] === null) {
+					$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element."_extrafields SET ".$key." = null";
+				} else {
+					$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element."_extrafields SET ".$key." = '".$this->db->escape($this->array_options["options_".$key])."'";
+				}
 				$sql .= " WHERE fk_object = ".$this->id;
 			} else {
 				$result = $this->insertExtraFields('', $user);
@@ -7711,7 +7717,7 @@ abstract class CommonObject
 			$buyPrice = $unitPrice * (1 - $discountPercent / 100);
 		} else {
 			// Get cost price for margin calculation
-			if (!empty($fk_product)) {
+			if (!empty($fk_product) && $fk_product > 0) {
 				if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'costprice') {
 					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 					$product = new Product($this->db);

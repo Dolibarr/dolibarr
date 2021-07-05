@@ -48,7 +48,8 @@ CountriesNotInEEC=EECにない国
 CountriesInEECExceptMe=%sを除くEECの国
 CountriesExceptMe=%sを除くすべての国
 AccountantFiles=ソースドキュメントのエクスポート
-ExportAccountingSourceDocHelp=このツールを使用すると、会計処理の生成に使用されたソースイベント(リストとPDF)をエクスポートできる。仕訳をエクスポートするには、メニューエントリ%s-%sを使用する。
+ExportAccountingSourceDocHelp=このツールを使用すると、会計の生成に使用されたソースイベント(CSVおよびPDFのリスト)をエクスポートできる。
+ExportAccountingSourceDocHelp2=ジャーナルをエクスポートするには、メニューエントリ%s --%sを使用。
 VueByAccountAccounting=会計科目順に表示
 VueBySubAccountAccounting=アカウンティングサブアカウントで表示
 

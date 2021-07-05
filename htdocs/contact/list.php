@@ -1097,28 +1097,28 @@ while ($i < min($num, $limit)) {
 	}
 	// Phone
 	if (!empty($arrayfields['p.phone']['checked'])) {
-		print '<td class="nowraponall">'.dol_print_phone($obj->phone_pro, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone').'</td>';
+		print '<td class="nowraponall tdoverflowmax150">'.dol_print_phone($obj->phone_pro, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Phone perso
 	if (!empty($arrayfields['p.phone_perso']['checked'])) {
-		print '<td class="nowraponall">'.dol_print_phone($obj->phone_perso, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone').'</td>';
+		print '<td class="nowraponall tdoverflowmax150">'.dol_print_phone($obj->phone_perso, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Phone mobile
 	if (!empty($arrayfields['p.phone_mobile']['checked'])) {
-		print '<td class="nowraponall">'.dol_print_phone($obj->phone_mobile, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'mobile').'</td>';
+		print '<td class="nowraponall tdoverflowmax150">'.dol_print_phone($obj->phone_mobile, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'mobile').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Fax
 	if (!empty($arrayfields['p.fax']['checked'])) {
-		print '<td class="nowraponall">'.dol_print_phone($obj->fax, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'fax').'</td>';
+		print '<td class="nowraponall tdoverflowmax150">'.dol_print_phone($obj->fax, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'fax').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

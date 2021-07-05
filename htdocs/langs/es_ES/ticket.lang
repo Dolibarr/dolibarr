@@ -34,7 +34,8 @@ TicketDictResolution=Ticket - Resolución
 
 TicketTypeShortCOM=Pregunta comercial
 TicketTypeShortHELP=Solicitud de ayuda funcional
-TicketTypeShortISSUE=Asunto, error o problema
+TicketTypeShortISSUE=Problema o error
+TicketTypeShortPROBLEM=Problema
 TicketTypeShortREQUEST=Solicitud de cambio o mejora
 TicketTypeShortPROJET=Proyecto
 TicketTypeShortOTHER=Otro
@@ -54,14 +55,15 @@ TypeContact_ticket_internal_SUPPORTTEC=Usuario asignado
 TypeContact_ticket_external_SUPPORTCLI=Contacto cliente / seguimiento de incidentes
 TypeContact_ticket_external_CONTRIBUTOR=Contribuidor externo
 
-OriginEmail=Origen E-Mail
+OriginEmail=Remitente de correo electrónico
 Notify_TICKET_SENTBYMAIL=Enviar mensaje de ticket por e-mail
 
 # Status
 Read=Leido
 Assigned=Asignado
 InProgress=En progreso
-NeedMoreInformation=En espera de información
+NeedMoreInformation=Esperando comentarios del remitente
+NeedMoreInformationShort=Esperando comentarios
 Answered=Contestado
 Waiting=En espera
 Closed=Cerrado
@@ -160,7 +162,7 @@ CreatedBy=Creado por
 NewTicket=Nuevo ticket
 SubjectAnswerToTicket=Respuesta
 TicketTypeRequest=Tipo de solicitud
-TicketCategory=Grupo
+TicketCategory=Categorización de tickets
 SeeTicket=Ver ticket
 TicketMarkedAsRead=El ticket ha sido marcado como leído
 TicketReadOn=Leído el
@@ -211,6 +213,7 @@ TicketMessageHelp=Solo este texto se guardará en la lista de mensajes en la fic
 TicketMessageSubstitutionReplacedByGenericValues=Las variables de sustitución se reemplazan por valores genéricos.
 TimeElapsedSince=Tiempo transcurrido desde
 TicketTimeToRead=Tiempo transcurrido antes de leer el ticket
+TicketTimeElapsedBeforeSince=Tiempo transcurrido antes / desde
 TicketContacts=Contactos del ticket
 TicketDocumentsLinked=Documentos relacionados con el ticket
 ConfirmReOpenTicket=¿Está seguro de querer reabrir este ticket?

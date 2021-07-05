@@ -34,7 +34,8 @@ TicketDictResolution=服務單-決議
 
 TicketTypeShortCOM=商業問題
 TicketTypeShortHELP=請求有用的幫助
-TicketTypeShortISSUE=錯誤或問題
+TicketTypeShortISSUE=問題或錯誤
+TicketTypeShortPROBLEM=問題
 TicketTypeShortREQUEST=變更或增強要求
 TicketTypeShortPROJET=專案
 TicketTypeShortOTHER=其他
@@ -54,14 +55,15 @@ TypeContact_ticket_internal_SUPPORTTEC=已分配用戶
 TypeContact_ticket_external_SUPPORTCLI=客戶聯絡人/事件追踪
 TypeContact_ticket_external_CONTRIBUTOR=外部合作者
 
-OriginEmail=電子郵件來源
+OriginEmail=電子郵件作者
 Notify_TICKET_SENTBYMAIL=以電子郵件發送服務單訊息
 
 # Status
 Read=已讀取
 Assigned=已分配
 InProgress=進行中
-NeedMoreInformation=等待訊息
+NeedMoreInformation=等待作者回覆
+NeedMoreInformationShort=等待回覆
 Answered=已回覆
 Waiting=等待中
 Closed=已關閉
@@ -117,7 +119,7 @@ TicketsShowModuleLogoHelp=啟用此選項可在公共界面的頁面中隱藏商
 TicketsShowCompanyLogo=在公共界面上顯示公司商標
 TicketsShowCompanyLogoHelp=啟用此選項可在公共界面的頁面中隱藏主要公司的商標
 TicketsEmailAlsoSendToMainAddress=同時向主要電子郵件地址寄送通知
-TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
+TicketsEmailAlsoSendToMainAddressHelp=啟用此選項會同時寄送一封Email至設定中預設的電子信箱"%s"(查看分頁"%s")
 TicketsLimitViewAssignedOnly=限制顯示分配給目前用戶的服務單。（對外部用戶無效，始終被限制於他們所依賴的合作方）
 TicketsLimitViewAssignedOnlyHelp=僅顯示分配給目前用戶的服務單。不適用於具有服務單管理權限的用戶。
 TicketsActivatePublicInterface=啟用公共界面
@@ -131,7 +133,7 @@ TicketsDisableCustomerEmail=從公共界面建立服務單時，始終禁用電�
 TicketsPublicNotificationNewMessage=當有新的訊息/意見新增到服務單時寄送Email
 TicketsPublicNotificationNewMessageHelp=當公共界面有新增訊息時寄送電子郵件(給已分配用戶或寄送通知電子郵件給(更新)與/或通知電子郵件給)
 TicketPublicNotificationNewMessageDefaultEmail=通知電子郵件寄送到（更新）
-TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
+TicketPublicNotificationNewMessageDefaultEmailHelp=如果服務單未分配給用戶或是用戶沒有已知的電子郵件則為每一個新訊息提醒寄送一封電子郵件至這個信箱
 #
 # Index & list page
 #
@@ -160,7 +162,7 @@ CreatedBy=建立者
 NewTicket=新服務單
 SubjectAnswerToTicket=服務單回應
 TicketTypeRequest=需求類型
-TicketCategory=群組
+TicketCategory=服務單分類
 SeeTicket=查閱服務單
 TicketMarkedAsRead=服務單已標記為已讀
 TicketReadOn=繼續讀取
@@ -211,6 +213,7 @@ TicketMessageHelp=此段文字將會被儲存在服務單卡片的訊息清單�
 TicketMessageSubstitutionReplacedByGenericValues=替換變量將被替換為一般值。
 TimeElapsedSince=已經過時間
 TicketTimeToRead=讀取前經過的時間
+TicketTimeElapsedBeforeSince=之前/之後經過的時間
 TicketContacts=聯絡人服務單
 TicketDocumentsLinked=已連結到服務單的文件
 ConfirmReOpenTicket=您確定要重新開啟此服務單嗎?

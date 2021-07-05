@@ -1407,7 +1407,7 @@ if ($resql) {
 		// Type ent
 		if (!empty($arrayfields['typent.code']['checked'])) {
 			print '<td class="center">';
-			if (count($typenArray) == 0) {
+			if (empty($typenArray)) {
 				$typenArray = $formcompany->typent_array(1);
 			}
 			print $typenArray[$obj->typent_code];

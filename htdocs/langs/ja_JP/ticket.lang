@@ -34,7 +34,8 @@ TicketDictResolution=チケット-解決策
 
 TicketTypeShortCOM=商業的な質問
 TicketTypeShortHELP=機能的なヘルプのリクエスト
-TicketTypeShortISSUE=問題、バグまたは問題
+TicketTypeShortISSUE=問題またはバグ
+TicketTypeShortPROBLEM=問題
 TicketTypeShortREQUEST=変更または拡張リクエスト
 TicketTypeShortPROJET=プロジェクト
 TicketTypeShortOTHER=その他
@@ -54,14 +55,15 @@ TypeContact_ticket_internal_SUPPORTTEC=割り当てられたユーザー
 TypeContact_ticket_external_SUPPORTCLI=顧客連絡/インシデント追跡
 TypeContact_ticket_external_CONTRIBUTOR=外部寄稿者
 
-OriginEmail=メールソース
+OriginEmail=メールレポーター
 Notify_TICKET_SENTBYMAIL=メールでチケットメッセージを送信する
 
 # Status
 Read=読む
 Assigned=割り当て済
 InProgress=進行中
-NeedMoreInformation=情報を待っている
+NeedMoreInformation=記者のフィードバック待機中
+NeedMoreInformationShort=フィードバック待機中
 Answered=答えた
 Waiting=待っている
 Closed=閉じた
@@ -160,7 +162,7 @@ CreatedBy=によって作成された
 NewTicket=新規チケット
 SubjectAnswerToTicket=チケットの回答
 TicketTypeRequest=リクエストの種類
-TicketCategory=グループ
+TicketCategory=チケット分類
 SeeTicket=チケットを見る
 TicketMarkedAsRead=チケットは既読としてマークされている
 TicketReadOn=読む
@@ -211,6 +213,7 @@ TicketMessageHelp=このテキストのみがチケットカードのメッセ�
 TicketMessageSubstitutionReplacedByGenericValues=置換変数は一般的な値に置き換えられます。
 TimeElapsedSince=からの経過時間
 TicketTimeToRead=読み取るまでの経過時間
+TicketTimeElapsedBeforeSince=前後の経過時間
 TicketContacts=連絡先チケット
 TicketDocumentsLinked=チケットにリンクされているドキュメント
 ConfirmReOpenTicket=このチケットを再度開くことを確認するか？

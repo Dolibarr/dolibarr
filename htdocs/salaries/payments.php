@@ -124,6 +124,22 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 
+// Definition of array of fields for columns
+$arrayfields = array();
+foreach ($object->fields as $key => $val) {
+	// If $val['visible']==0, then we never show the field
+	if (!empty($val['visible'])) {
+		$visible = (int) dol_eval($val['visible'], 1);
+		$arrayfields['t.'.$key] = array(
+			'label'=>$val['label'],
+			'checked'=>(($visible < 0) ? 0 : 1),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'position'=>$val['position'],
+			'help'=>$val['help']
+		);
+	}
+}
+
 $permissiontoread = $user->rights->salaries->read;
 $permissiontoadd = $user->rights->salaries->write;
 $permissiontodelete = $user->rights->salaries->delete;
@@ -666,11 +682,13 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 // If no record found
 if ($num == 0) {
-	$colspan = 1;
-	foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) {
+	/*$colspan = 1;
+	foreach ($arrayfields as $key => $val) {
+		if (!empty($val['checked'])) {
 			$colspan++;
-	}
-	}
+		}
+	}*/
+	$colspan = 12;
 	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 

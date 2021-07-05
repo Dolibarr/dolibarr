@@ -228,9 +228,6 @@ if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 	$permissiontoclose = $user->rights->propal->creer;
 }
 
-
-
-
 /*
  * Actions
  */

@@ -34,7 +34,8 @@ TicketDictResolution=Opgave - Afsluttet
 
 TicketTypeShortCOM=Kommercielt spørgsmål
 TicketTypeShortHELP=Anmodning om hjælp
-TicketTypeShortISSUE=Problem, fejl eller problemer
+TicketTypeShortISSUE=Problem eller fejl
+TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Skift eller anmodning om forbedring
 TicketTypeShortPROJET=Projekt
 TicketTypeShortOTHER=Andre
@@ -54,14 +55,15 @@ TypeContact_ticket_internal_SUPPORTTEC=Tildelt bruger
 TypeContact_ticket_external_SUPPORTCLI=Kundekontakt / hændelsesporing
 TypeContact_ticket_external_CONTRIBUTOR=Ekstern bidragyder
 
-OriginEmail=Email kilde
+OriginEmail=E-mail reporter
 Notify_TICKET_SENTBYMAIL=Send opgaver besked via Email
 
 # Status
 Read=Læs
 Assigned=Tildelt
 InProgress=I gang
-NeedMoreInformation=Venter på information
+NeedMoreInformation=Venter på reporterfeedback
+NeedMoreInformationShort=Venter på feedback
 Answered=Besvaret
 Waiting=Venter
 Closed=Lukket
@@ -160,7 +162,7 @@ CreatedBy=Lavet af
 NewTicket=Ny opgave
 SubjectAnswerToTicket=Opgave svar
 TicketTypeRequest=Anmodningstype
-TicketCategory=Gruppe
+TicketCategory=Billetkategorisering
 SeeTicket=Se opgave
 TicketMarkedAsRead=Opgaven er blevet markeret som læst
 TicketReadOn=Læs videre
@@ -211,6 +213,7 @@ TicketMessageHelp=Kun denne tekst gemmes i meddelelseslisten på billetkort.
 TicketMessageSubstitutionReplacedByGenericValues=Substitutionsvariabler erstattes af generiske værdier.
 TimeElapsedSince=Tid forløbet siden
 TicketTimeToRead=Tid forløbet før læst
+TicketTimeElapsedBeforeSince=Forløbet tid før / siden
 TicketContacts=Kontakter billet
 TicketDocumentsLinked=Dokumenter knyttet til opgaven
 ConfirmReOpenTicket=Bekræft genåbne denne opgave?
