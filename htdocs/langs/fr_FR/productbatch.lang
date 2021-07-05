@@ -22,3 +22,4 @@ ProductLotSetup=Configuration du module lot/série
 ShowCurrentStockOfLot=Afficher le stock actuel pour le couple produit / lot
 ShowLogOfMovementIfLot=Afficher l'historique des mouvements de couple produit / lot
 StockDetailPerBatch=Stock détaillé par lot
+ForNegativeStockCorrectionQuantitiesUseRemoveOption=Nombres positifs uniquement : pour diminuer le stock, utilisez l’option "Supprimer".

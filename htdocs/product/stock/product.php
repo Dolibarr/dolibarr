@@ -225,7 +225,7 @@ if ($action == "correct_stock" && !$cancel)
 	{
 		$priceunit = price2num(GETPOST("unitprice"));
 		$nbpiece = price2num(GETPOST("nbpiece", 'alphanohtml'));
-		if (is_numeric($nbpiece) && $nbpiece != 0 && $id)
+		if (is_numeric($nbpiece) && $nbpiece > 0 && $id)
 		{
 			$origin_element = '';
 			$origin_id = null;
@@ -290,6 +290,9 @@ if ($action == "correct_stock" && !$cancel)
 			    setEventMessages($object->error, $object->errors, 'errors');
 			    $action = 'correction';
 			}
+		} elseif ($nbpiece < 0) {
+			setEventMessages($langs->trans('ForNegativeStockCorrectionQuantitiesUseRemoveOption'), array(), 'errors');
+			$action = 'correction';
 		}
 	}
 }

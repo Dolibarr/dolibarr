@@ -144,7 +144,6 @@ class MouvementStock extends CommonObject
 	{
 	    // phpcs:disable
 	    global $conf, $langs;
-
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
