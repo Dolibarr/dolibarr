@@ -323,8 +323,8 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject lll');
 
 		$test="Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submited by CKEditor)";
-		$result=testSqlAndScriptInject($test, 0);
-		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject mmm');
+		$result=testSqlAndScriptInject($test, 0);	// result must be 0
+		$this->assertEquals(0, $result, 'Error on testSqlAndScriptInject mmm');
 	}
 
 	/**
