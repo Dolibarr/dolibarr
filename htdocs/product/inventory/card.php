@@ -183,7 +183,7 @@ if ($action == 'create') {
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
-	if (isset($backtopageforcancel)) {
+	if (!empty($backtopageforcancel)) {
 		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 	}
 
