@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2021	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Alexandre Spangaro   <aspangaro@open-dsi.fr>
@@ -130,6 +130,30 @@ print "</tr>\n";
 $listoftype = $tripandexpense_static->listOfTypes();
 foreach ($listoftype as $code => $label) {
 	$dataseries[] = array($label, (isset($somme[$code]) ? (int) $somme[$code] : 0));
+}
+
+// Sort array with most important first
+$dataseries = dol_sort_array($dataseries, 1, 'desc');
+
+// Merge all entrie after the $KEEPNFIRST one into one entry called "Other..." (to avoid to have too much entries in graphic).
+$KEEPNFIRST = 7;	// Keep first $KEEPNFIRST one + 1 with the remain
+$i = 0;
+if (count($dataseries) > ($KEEPNFIRST + 1)) {
+	foreach($dataseries as $key => $val) {
+		if ($i < $KEEPNFIRST) {
+			$i++;
+			continue;
+		}
+		// Here $key = $KEEPNFIRST
+		$dataseries[$KEEPNFIRST][0] = $langs->trans("Other").'...';
+		if ($key == $KEEPNFIRST) {
+			$i++;
+			continue;
+		}
+		$dataseries[$KEEPNFIRST][1] += $dataseries[$key][1];
+		unset($dataseries[$key]);
+		$i++;
+	}
 }
 
 if ($conf->use_javascript_ajax) {
