@@ -5497,7 +5497,7 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = "", $thirdparty_sell
 	} else {
 		$sql .= " AND t.recuperableonly = '".$db->escape($vatnpr)."'";
 	}
-	dol_syslog("get_localtax", LOG_DEBUG);
+
 	$resql = $db->query($sql);
 
 	if ($resql) {
