@@ -151,7 +151,7 @@ MessageListViewType=Afişare listă ca tabel
 #
 # Ticket card
 #
-Ticket=Tichet
+Ticket=Tichete
 TicketCard=Fişă tichet
 CreateTicket=Creare tichet
 EditTicket=Editare tichet
@@ -304,7 +304,7 @@ BoxLastModifiedTicket=Ultimele tichete modificate
 BoxLastModifiedTicketDescription=Ultimele %s tichet modificate 
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Nu există tichete modificate recent
-BoxTicketType=Număr tichete deschise după tip
+BoxTicketType=Distribuţia tichetelor deschise după tip
 BoxTicketSeverity=Număr tichete deschise după severitate
 BoxNoTicketSeverity=Nr. tichete deschise
 BoxTicketLastXDays=Numărul de tichete noi după zile din ultimele %s zile

@@ -259,6 +259,7 @@ DateMaxPayment=Thanh toán vào ngày
 DateInvoice=Ngày hóa đơn
 DatePointOfTax=Điểm thuế
 NoInvoice=Không có hoá đơn
+NoOpenInvoice=No open invoice
 ClassifyBill=Phân loại hóa đơn
 SupplierBillsToPay=Hóa đơn nhà cung cấp chưa thanh toán
 CustomerBillsUnpaid=Hóa đơn khách hàng chưa thanh toán
@@ -589,3 +590,4 @@ FacParentLine=Invoice Line Parent
 SituationTotalRayToRest=Remainder to pay without taxe
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=Total progress %d %%
+SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s

@@ -259,6 +259,7 @@ DateMaxPayment=Fecha límite de pago
 DateInvoice=Fecha facturación
 DatePointOfTax=Impuestos
 NoInvoice=Ninguna factura
+NoOpenInvoice=Sin factura abierta
 ClassifyBill=Clasificar la factura
 SupplierBillsToPay=Facturas de proveedor pendientes de pago
 CustomerBillsUnpaid=Facturas a cliente pendientes de cobro
@@ -589,3 +590,4 @@ FacParentLine=Línea de factura principal
 SituationTotalRayToRest=Resto a pagar sin impuestos
 PDFSituationTitle=Situación n ° %d
 SituationTotalProgress=Progreso total %d %%
+SearchUnpaidInvoicesWithDueDate=Buscar facturas impagas con una fecha de vencimiento = %s

@@ -259,6 +259,7 @@ DateMaxPayment=Payment due on
 DateInvoice=Datum računa
 DatePointOfTax=Porezna stavka
 NoInvoice=Nema računa
+NoOpenInvoice=No open invoice
 ClassifyBill=Svrstavanje računa
 SupplierBillsToPay=Neplaćeni ulazni računi
 CustomerBillsUnpaid=Neplaćeni izlazni računi
@@ -589,3 +590,4 @@ FacParentLine=Invoice Line Parent
 SituationTotalRayToRest=Remainder to pay without taxe
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=Total progress %d %%
+SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s

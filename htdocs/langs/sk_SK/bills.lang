@@ -259,6 +259,7 @@ DateMaxPayment=Payment due on
 DateInvoice=Faktúra Dátum
 DatePointOfTax=Point of tax
 NoInvoice=No faktúra
+NoOpenInvoice=No open invoice
 ClassifyBill=Klasifikovať faktúru
 SupplierBillsToPay=Unpaid vendor invoices
 CustomerBillsUnpaid=Nezaplatené zákaznické faktúry
@@ -589,3 +590,4 @@ FacParentLine=Invoice Line Parent
 SituationTotalRayToRest=Remainder to pay without taxe
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=Total progress %d %%
+SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s

@@ -396,3 +396,5 @@ ActionAvailableOnVariantProductOnly=Hành động chỉ có hiệu lực trên b
 ProductsPricePerCustomer=Giá sản phẩm mỗi khách hàng
 ProductSupplierExtraFields=Thuộc tính bổ sung (Giá Nhà cung cấp)
 DeleteLinkedProduct=Xóa sản phẩm con được liên kết với sự kết hợp
+PMPValue=Giá bình quân gia quyền
+PMPValueShort=WAP

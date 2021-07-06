@@ -44,4 +44,4 @@ ValidateOrderFirstBeforeReception=Anda harus terlebih dahulu memvalidasi pesanan
 ReceptionsNumberingModules=Modul penomoran untuk penerimaan
 ReceptionsReceiptModel=Templat dokumen untuk penerimaan
 NoMorePredefinedProductToDispatch=Tidak ada lagi produk yang telah ditentukan untuk dikirim
-
+ReceptionExist=A reception exists

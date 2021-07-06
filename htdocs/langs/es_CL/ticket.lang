@@ -60,6 +60,7 @@ CreateTicket=Crear boleto
 TicketsManagement=Gestión de Tickets
 NewTicket=Nuevo Ticket
 SubjectAnswerToTicket=Respuesta del Ticket
+TicketCategory=Group
 SeeTicket=Ver Ticket
 TicketReadOn=Sigue leyendo
 TicketHistory=Historial de Tickets

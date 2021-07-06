@@ -1,4 +1,5 @@
 # Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -81,7 +82,10 @@ PriceOfBoothHelp=Abonnementspris for at stå en kabine
 EventOrganizationICSLink=Link ICS til begivenheder
 ConferenceOrBoothInformation=Oplysninger om konference eller stand
 Attendees = Deltagere
+DownloadICSLink = Download ICS-link
 EVENTORGANIZATION_SECUREKEY = Sikker nøgle til linket til offentlig registrering til en konference
+SERVICE_BOOTH_LOCATION = Service, der bruges til fakturarække om en standplacering
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service, der bruges til fakturarække om et deltagerabonnement på en konference
 #
 # Status
 #
@@ -94,8 +98,46 @@ EvntOrgCancelled = Annulleret
 #
 # Public page
 #
+SuggestForm = Forslagsside
+RegisterPage = Side til konferencer eller stand
+EvntOrgRegistrationHelpMessage = Her kan du stemme på et arrangement eller foreslå en ny konference eller stand til projektet
+EvntOrgRegistrationConfHelpMessage = Her kan du foreslå en ny konference til projektet
+EvntOrgRegistrationBoothHelpMessage = Her kan du foreslå en ny stand til projektet
+ListOfSuggestedConferences = Liste over foreslåede konferencer
+ListOfSuggestedBooths = Liste over foreslåede stand
+SuggestConference = Foreslå en ny konference
+SuggestBooth = Foreslå en kabine
+ViewAndVote = Se og stem på foreslåede begivenheder
 PublicAttendeeSubscriptionPage = Offentlig link til registrering til en konference
 MissingOrBadSecureKey = Sikkerhedsnøglen er ugyldig eller mangler
-EvntOrgWelcomeMessage = Denne formular giver dig mulighed for at registrere dig som en ny deltager i konferencen
-EvntOrgStartDuration = Denne konference starter den
-EvntOrgEndDuration =  og slutter på
+EvntOrgWelcomeMessage = Denne formular giver dig mulighed for at registrere dig som en ny deltager til konferencen: '%s'
+EvntOrgDuration = Denne konference starter på %s og slutter på %s.
+ConferenceAttendeeFee = Konferencedeltagergebyr for begivenheden: '%s', der forekommer fra %s til %s.
+BoothLocationFee = Standplacering for begivenheden: '%s' der forekommer fra %s til %s
+EventType = Begivenhedstype
+
+#
+# Vote page
+#
+EvntOrgRegistrationWelcomeMessage = Velkommen til konferencesiden eller messesiden.
+EvntOrgRegistrationConfWelcomeMessage = Velkommen til konferencesiden.
+EvntOrgRegistrationBoothWelcomeMessage = Velkommen til siden med forslag til stand.
+EvntOrgVoteHelpMessage = Her kan du se og stemme på de foreslåede begivenheder for projektet
+VoteOk = Din stemme er blevet accepteret.
+AlreadyVoted = Du har allerede stemt på denne begivenhed.
+VoteError = Der opstod en fejl under afstemningen. Prøv igen.
+
+#
+# SubscriptionOk page
+#
+SubscriptionOk = Dit abonnement på denne konference er valideret
+#
+# Subscription validation mail
+#
+ConfAttendeeSubscriptionConfirmation = Bekræftelse af dit abonnement på en konference
+#
+# Payment page
+#
+Attendee = Deltager
+PaymentConferenceAttendee = Konference deltager betaling
+PaymentBoothLocation = Betaling af standplacering

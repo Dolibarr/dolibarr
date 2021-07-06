@@ -53,7 +53,8 @@ TypeOfLineServiceOrProduct=Veids (0=produkts, 1=pakalpojums)
 FileWithDataToImport=Fails ar datiem, lai importētu
 FileToImport=Avota fails, kas jāimportē
 FileMustHaveOneOfFollowingFormat=Importa failam ir jābūt šādam formātam
-DownloadEmptyExample=Lejupielādēt veidlapas failu ar lauka satura informāciju (* ir obligāti aizpildāmie lauki)
+DownloadEmptyExample=Lejupielādējiet veidnes failu ar lauka satura informāciju
+StarAreMandatory=* ir obligāti aizpildāmi lauki
 ChooseFormatOfFileToImport=Izvēlieties faila formātu, ko izmantot kā importa faila formātu, noklikšķinot uz %s ikonas, lai to atlasītu ...
 ChooseFileToImport=Augšupielādējiet failu, pēc tam noklikšķiniet uz %s ikonas, lai atlasītu failu kā avota importa failu ...
 SourceFileFormat=Avota faila formāts
@@ -133,4 +134,4 @@ KeysToUseForUpdates=Atslēga (sleja), ko izmantot esošo datu <b> atjaunināšan
 NbInsert=Ievietoto līniju skaits: %s
 NbUpdate=Atjaunināto līniju skaits: %s
 MultipleRecordFoundWithTheseFilters=Ar šiem filtriem tika atrasti vairāki ieraksti: %s
-StocksWithBatch=Stocks and location (warehouse) of products with batch/serial number
+StocksWithBatch=Produktu krājumi un atrašanās vieta (noliktava) ar partijas / sērijas numuru

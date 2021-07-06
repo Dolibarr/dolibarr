@@ -44,4 +44,4 @@ ValidateOrderFirstBeforeReception=Primeiro debe validar o pedimento antes de pod
 ReceptionsNumberingModules=Módulo de numeración para recepcións
 ReceptionsReceiptModel=Modeloss de documentos para recepcións.
 NoMorePredefinedProductToDispatch=Non hai máis produtos predefinidos para enviar
-
+ReceptionExist=Xa hai unha recepción
