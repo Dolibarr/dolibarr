@@ -139,7 +139,7 @@ $dataseries = dol_sort_array($dataseries, 1, 'desc');
 $KEEPNFIRST = 7;	// Keep first $KEEPNFIRST one + 1 with the remain
 $i = 0;
 if (count($dataseries) > ($KEEPNFIRST + 1)) {
-	foreach($dataseries as $key => $val) {
+	foreach ($dataseries as $key => $val) {
 		if ($i < $KEEPNFIRST) {
 			$i++;
 			continue;

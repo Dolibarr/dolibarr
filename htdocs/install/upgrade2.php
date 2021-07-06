@@ -4984,4 +4984,3 @@ function migrate_export_import_profiles($mode = 'export')
 		print '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$langs->trans("NothingToDo")."</td></tr>\n";
 	}
 }
-

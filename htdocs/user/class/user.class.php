@@ -3223,7 +3223,7 @@ class User extends CommonObject
 				if (preg_match('/'.$keyfilter1.'/', $val['fullpath']) || preg_match('/'.$keyfilter2.'/', $val['fullpath'])
 					|| preg_match('/'.$keyfilter3.'/', $val['fullpath']) || preg_match('/'.$keyfilter4.'/', $val['fullpath'])) {
 						unset($this->users[$key]);
-					}
+				}
 			}
 		}
 

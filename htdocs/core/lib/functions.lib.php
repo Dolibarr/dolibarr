@@ -783,7 +783,7 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 					try {
 						$dom = new DOMDocument;
 						$dom->loadHTML($out, LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_HTML_NODEFDTD|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
-					} catch(Exception $e) {
+					} catch (Exception $e) {
 						//print $e->getMessage();
 						return 'InvalidHTMLString';
 					}
