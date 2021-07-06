@@ -72,6 +72,7 @@ if ($setterminal > 0) {
 
 if ($setcurrency != "") {
 	$_SESSION["takeposcustomercurrency"] = $setcurrency;
+	// We will recalculate amount for foreign currency at next call of invoice.php when $_SESSION["takeposcustomercurrency"] differs from invoice->multicurrency_code.
 }
 
 $_SESSION["urlfrom"] = '/takepos/index.php';

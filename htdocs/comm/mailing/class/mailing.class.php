@@ -208,6 +208,12 @@ class Mailing extends CommonObject
 	{
 		global $conf, $langs;
 
+		// Check properties
+		if ($this->body === 'InvalidHTMLString') {
+			$this->error = 'InvalidHTMLString';
+			return -1;
+		}
+
 		$this->db->begin();
 
 		$this->title = trim($this->title);
@@ -257,6 +263,12 @@ class Mailing extends CommonObject
 	 */
 	public function update($user)
 	{
+		// Check properties
+		if ($this->body === 'InvalidHTMLString') {
+			$this->error = 'InvalidHTMLString';
+			return -1;
+		}
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
 		$sql .= " SET titre = '".$this->db->escape($this->title)."'";
 		$sql .= ", sujet = '".$this->db->escape($this->sujet)."'";
