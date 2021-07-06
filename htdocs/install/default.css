@@ -80,6 +80,10 @@ div.soustitre {
 	text-align: right;
 }
 
+.wordbreak {
+    word-break: break-word;
+}
+
 .minwidth100 { min-width: 100px; }
 .minwidth200 { min-width: 200px; }
 .minwidth300 { min-width: 300px; }

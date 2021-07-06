@@ -163,6 +163,14 @@ if ($invoice->socid > 0) {
  * Actions
  */
 
+// Change the currency of invoice if it was modified
+if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"] != "") {
+	if ($invoice->multicurrency_code != $_SESSION["takeposcustomercurrency"]) {
+		$invoice->setMulticurrencyCode($_SESSION["takeposcustomercurrency"]);
+	}
+}
+
+
 // Action to record a payment on a TakePOS invoice
 if ($action == 'valid' && $user->rights->facture->creer) {
 	$bankaccount = 0;
@@ -311,7 +319,7 @@ if ($action == 'valid' && $user->rights->facture->creer) {
 	}
 }
 
-if ($action == 'creditnote') {
+if ($action == 'creditnote' && $user->rights->facture->creer) {
 	$creditnote = new Facture($db);
 	$creditnote->socid = $invoice->socid;
 	$creditnote->date = dol_now();
@@ -457,10 +465,6 @@ if ($action == 'history' || $action == 'creditnote') {
 	}
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
-}
-
-if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"] != "") {
-	$invoice->setMulticurrencyCode($_SESSION["takeposcustomercurrency"]);
 }
 
 if (($action == "addline" || $action == "freezone") && $placeid == 0) {
@@ -631,8 +635,11 @@ if ($action == "delete") {
 if ($action == "updateqty") {
 	foreach ($invoice->lines as $line) {
 		if ($line->id == $idline) {
-			if (!$user->rights->takepos->editlines || (!$user->rights->takepos->editorderedlines && $line->special_code == "4")) dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);
-			else $result = $invoice->updateline($line->id, $line->desc, $line->subprice, $number, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+			if (!$user->rights->takepos->editlines || (!$user->rights->takepos->editorderedlines && $line->special_code == "4")) {
+				dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);
+			} else {
+				$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $number, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+			}
 		}
 	}
 
@@ -640,12 +647,13 @@ if ($action == "updateqty") {
 }
 
 if ($action == "updateprice") {
+	$customer = new Societe($db);
+	$customer->fetch($invoice->socid);
+
 	foreach ($invoice->lines as $line) {
 		if ($line->id == $idline) {
 			$prod = new Product($db);
 			$prod->fetch($line->fk_product);
-			$customer = new Societe($db);
-			$customer->fetch($invoice->socid);
 			$datapriceofproduct = $prod->getSellPrice($mysoc, $customer, 0);
 			$price_min = $datapriceofproduct['price_min'];
 			$usercanproductignorepricemin = ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS));
@@ -654,34 +662,50 @@ if ($action == "updateprice") {
 			if ($usercanproductignorepricemin && (!empty($price_min) && (price2num($pu_ht) * (1 - price2num($line->remise_percent) / 100) < price2num($price_min)))) {
 				echo $langs->trans("CantBeLessThanMinPrice");
 			} else {
-				if (!$user->rights->takepos->editlines || (!$user->rights->takepos->editorderedlines && $line->special_code == "4")) dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);
-				else $result = $invoice->updateline($line->id, $line->desc, $number, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'TTC', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+				if (empty($user->rights->takepos->editlines) || (empty($user->rights->takepos->editorderedlines) && $line->special_code == "4")) {
+					dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);
+				} else {
+					$result = $invoice->updateline($line->id, $line->desc, $number, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'TTC', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+				}
 			}
 		}
 	}
+
+	// Reload data
 	$invoice->fetch($placeid);
 }
 
 if ($action == "updatereduction") {
+	$customer = new Societe($db);
+	$customer->fetch($invoice->socid);
+
 	foreach ($invoice->lines as $line) {
 		if ($line->id == $idline) {
+			dol_syslog("updatereduction Process line ".$line->id.' to apply discount of '.$number.'%');
+
 			$prod = new Product($db);
 			$prod->fetch($line->fk_product);
-			$customer = new Societe($db);
-			$customer->fetch($invoice->socid);
+
 			$datapriceofproduct = $prod->getSellPrice($mysoc, $customer, 0);
 			$price_min = $datapriceofproduct['price_min'];
 			$usercanproductignorepricemin = ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS));
-			$pu_ht = price2num($line->multicurrency_subprice / (1 + ($line->tva_tx / 100)), 'MU');
-			//Check min price
-			if ($usercanproductignorepricemin && (!empty($price_min) && (price2num($line->multicurrency_subprice) * (1 - price2num($number) / 100) < price2num($price_min)))) {
+
+			$pu_ht = price2num($line->subprice / (1 + ($line->tva_tx / 100)), 'MU');
+
+			// Check min price
+			if ($usercanproductignorepricemin && (!empty($price_min) && (price2num($line->subprice) * (1 - price2num($number) / 100) < price2num($price_min)))) {
 				echo $langs->trans("CantBeLessThanMinPrice");
 			} else {
-				if (!$user->rights->takepos->editlines || (!$user->rights->takepos->editorderedlines && $line->special_code == "4")) dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);
-				else $result = $invoice->updateline($line->id, $line->desc, $line->multicurrency_subprice, $line->qty, $number, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+				if (empty($user->rights->takepos->editlines) || (empty($user->rights->takepos->editorderedlines) && $line->special_code == "4")) {
+					dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);
+				} else {
+					$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty, $number, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+				}
 			}
 		}
 	}
+
+	// Reload data
 	$invoice->fetch($placeid);
 } elseif ($action == 'update_reduction_global') {
 	foreach ($invoice->lines as $line) {
@@ -709,6 +733,7 @@ if ($action == "order" and $placeid != 0) {
 	$catsprinter1 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_1);
 	$catsprinter2 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_2);
 	$catsprinter3 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_3);
+	$linestoprint = 0;
 	foreach ($invoice->lines as $line) {
 		if ($line->special_code == "4") {
 			continue;
