@@ -251,7 +251,7 @@ print '<br>';
 if (empty($conf->global->SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF)) {
 	print '<strong>$dolibarr_main_db_pass</strong>: ';
 	if (!empty($dolibarr_main_db_pass) && empty($dolibarr_main_db_encrypted_pass)) {
-		print img_picto('', 'warning').' '.$langs->trans("DatabasePasswordNotObfuscated").' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommanded").': '.$langs->trans("SetOptionTo", $langs->transnoentitiesnoconv("MainDbPasswordFileConfEncrypted"), yn(1)).')</span>';
+		print img_picto('', 'warning').' '.$langs->trans("DatabasePasswordNotObfuscated").' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("SetOptionTo", $langs->transnoentitiesnoconv("MainDbPasswordFileConfEncrypted"), yn(1)).')</span>';
 		//print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("IPsOfUsers")).')</span>';
 	} else {
 		print img_picto('', 'tick').' '.$langs->trans("DatabasePasswordObfuscated");
@@ -267,49 +267,14 @@ if (empty($conf->global->SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF)) {
 print '<br>';
 print '<br>';
 print '<br>';
-print load_fiche_titre($langs->trans("Menu").' '.$langs->trans("SecuritySetup").' + '.$langs->trans("OtherSetup"), '', 'folder');
 
-//print '<strong>'.$langs->trans("PasswordEncryption").'</strong>: ';
-print '<strong>MAIN_SECURITY_HASH_ALGO</strong> = '.(empty($conf->global->MAIN_SECURITY_HASH_ALGO) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_HASH_ALGO)." &nbsp; ";
-if (empty($conf->global->MAIN_SECURITY_HASH_ALGO)) {
-	print '<span class="opacitymedium"> &nbsp; &nbsp; If unset: \'md5\'</span>';
-}
-if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
-	print '<br><strong>MAIN_SECURITY_SALT</strong> = '.(empty($conf->global->MAIN_SECURITY_SALT) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_SALT).'<br>';
-} else {
-	print '<span class="opacitymedium">('.$langs->trans("Recommanded").': password_hash)</span>';
-	print '<br>';
-}
-if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
-	print '<div class="info">The recommanded value for MAIN_SECURITY_HASH_ALGO is now \'password_hash\' but setting it now will make ALL existing passwords of all users not valid, so update is not possible.<br>';
-	print 'If you really want to switch, you must:<br>';
-	print '- Go on home - setup - other and add constant MAIN_SECURITY_HASH_ALGO to value \'password_hash\'<br>';
-	print '- In same session, WITHOUT LOGGING OUT, go into your admin user record and set a new password<br>';
-	print '- You can now logout and login with this new password. You must now reset password of all other users.<br>';
-	print '</div><br>';
-}
+print load_fiche_titre($langs->trans("Menu").' '.$langs->trans("SecuritySetup"), '', 'folder');
+
+
+print '<strong>'.$langs->trans("UseCaptchaCode").'</strong>: ';
+print empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA) ? '' : img_picto('', 'tick').' ';
+print yn(empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA) ? 0 : 1);
 print '<br>';
-
-
-print '<strong>MAIN_SECURITY_ANTI_SSRF_SERVER_IP</strong> = '.(empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span> &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': static-ips-of-server - '.$langs->trans("Note").': common loopback ip like 127.*.*.*, [::1] are already added)</span>' : $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP)."<br>";
-print '<br>';
-
-print '<strong>MAIN_ALLOW_SVG_FILES_AS_IMAGES</strong> = '.(empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES) ? '0 &nbsp; <span class="opacitymedium">('.$langs->trans("Recommanded").': 0)</span>' : $conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES)."<br>";
-print '<br>';
-
-print '<strong>MAIN_EXEC_USE_POPEN</strong> = ';
-if (empty($conf->global->MAIN_EXEC_USE_POPEN)) {
-	print '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>';
-} else {
-	print $conf->global->MAIN_EXEC_USE_POPEN;
-}
-if ($execmethod == 1) {
-	print ' &nbsp; <span class="opacitymedium">("exec" PHP method will be used for shell commands)</span>';
-}
-if ($execmethod == 2) {
-	print ' &nbsp; <span class="opacitymedium">("popen" PHP method will be used for shell commands)</span>';
-}
-print "<br>";
 print '<br>';
 
 
@@ -354,6 +319,62 @@ if (empty($out)) {
 }
 
 print '<br>';
+print '<br>';
+print '<br>';
+print '<br>';
+
+
+print load_fiche_titre($langs->trans("OtherSetup").' ('.$langs->trans("Experimental").')', '', 'folder');
+
+
+//print '<strong>'.$langs->trans("PasswordEncryption").'</strong>: ';
+print '<strong>MAIN_SECURITY_HASH_ALGO</strong> = '.(empty($conf->global->MAIN_SECURITY_HASH_ALGO) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_HASH_ALGO)." &nbsp; ";
+if (empty($conf->global->MAIN_SECURITY_HASH_ALGO)) {
+	print '<span class="opacitymedium"> &nbsp; &nbsp; If unset: \'md5\'</span>';
+}
+if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
+	print '<br><strong>MAIN_SECURITY_SALT</strong> = '.(empty($conf->global->MAIN_SECURITY_SALT) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_SALT).'<br>';
+} else {
+	print '<span class="opacitymedium">('.$langs->trans("Recommanded").': password_hash)</span>';
+	print '<br>';
+}
+if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
+	print '<div class="info">The recommanded value for MAIN_SECURITY_HASH_ALGO is now \'password_hash\' but setting it now will make ALL existing passwords of all users not valid, so update is not possible.<br>';
+	print 'If you really want to switch, you must:<br>';
+	print '- Go on home - setup - other and add constant MAIN_SECURITY_HASH_ALGO to value \'password_hash\'<br>';
+	print '- In same session, WITHOUT LOGGING OUT, go into your admin user record and set a new password<br>';
+	print '- You can now logout and login with this new password. You must now reset password of all other users.<br>';
+	print '</div><br>';
+}
+print '<br>';
+
+print '<strong>MAIN_SECURITY_ANTI_SSRF_SERVER_IP</strong> = '.(empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span> &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': static-ips-of-server - '.$langs->trans("Note").': common loopback ip like 127.*.*.*, [::1] are already added)</span>' : $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP)."<br>";
+print '<br>';
+
+print '<strong>MAIN_ALLOW_SVG_FILES_AS_IMAGES</strong> = '.(empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES) ? '0 &nbsp; <span class="opacitymedium">('.$langs->trans("Recommanded").': 0)</span>' : $conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES)."<br>";
+print '<br>';
+
+print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML</strong> = '.(empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommanded").': 1)</span>' : '')."<br>";
+print '<br>';
+
+print '<strong>MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES</strong> = '.(empty($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommanded").': 1)</span>' : '')."<br>";
+print '<br>';
+
+print '<strong>MAIN_EXEC_USE_POPEN</strong> = ';
+if (empty($conf->global->MAIN_EXEC_USE_POPEN)) {
+	print '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>';
+} else {
+	print $conf->global->MAIN_EXEC_USE_POPEN;
+}
+if ($execmethod == 1) {
+	print ' &nbsp; <span class="opacitymedium">("exec" PHP method will be used for shell commands)</span>';
+}
+if ($execmethod == 2) {
+	print ' &nbsp; <span class="opacitymedium">("popen" PHP method will be used for shell commands)</span>';
+}
+print "<br>";
+print '<br>';
+
 
 
 // Modules/Applications
@@ -405,7 +426,7 @@ if (empty($conf->api->enabled) && empty($conf->webservices->enabled)) {
 		print '<br>';
 	}
 	if (!empty($conf->api->enabled)) {
-		print '<strong>API_ENDPOINT_RULES</strong> = '.(empty($conf->global->API_ENDPOINT_RULES) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->API_ENDPOINT_RULES)."<br>\n";
+		print '<strong>API_ENDPOINT_RULES</strong> = '.(empty($conf->global->API_ENDPOINT_RULES) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Example").': endpoint1:1,endpoint2:1,...)</span>' : $conf->global->API_ENDPOINT_RULES)."<br>\n";
 		print '<br>';
 	}
 }
