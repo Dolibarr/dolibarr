@@ -2048,7 +2048,7 @@ class Holiday extends CommonObject
 	{
 		global $mysoc;
 
-		$sql = "SELECT rowid, code, label, affect, delay, newByMonth";
+		$sql = "SELECT rowid, code, label, affect, delay, newbymonth";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_holiday_types";
 		$sql .= " WHERE (fk_country IS NULL OR fk_country = ".$mysoc->country_id.')';
 		if ($active >= 0) $sql .= " AND active = ".((int) $active);
@@ -2062,7 +2062,7 @@ class Holiday extends CommonObject
 			{
 				while ($obj = $this->db->fetch_object($result))
 				{
-					$types[$obj->rowid] = array('rowid'=> $obj->rowid, 'code'=> $obj->code, 'label'=>$obj->label, 'affect'=>$obj->affect, 'delay'=>$obj->delay, 'newByMonth'=>$obj->newByMonth);
+					$types[$obj->rowid] = array('rowid'=> $obj->rowid, 'code'=> $obj->code, 'label'=>$obj->label, 'affect'=>$obj->affect, 'delay'=>$obj->delay, 'newByMonth'=>$obj->newbymonth);
 				}
 
 				return $types;
