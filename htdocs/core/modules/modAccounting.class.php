@@ -60,7 +60,7 @@ class modAccounting extends DolibarrModules
 		$this->dirs = array('/accounting/temp');
 
 		// Config pages
-		$this->config_page_url = array('accounting.php');
+		$this->config_page_url = array('accounting.php?mainmenu=accountancy&leftmenu=accountancy_admin');
 
 		// Dependencies
 		$this->depends = array("modFacture", "modBanque", "modTax"); // List of modules id that must be enabled if this module is enabled
