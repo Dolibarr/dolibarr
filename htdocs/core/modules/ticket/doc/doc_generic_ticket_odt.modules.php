@@ -293,7 +293,7 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 
 				// Recipient name
 				if (!empty($usecontact)) {
-					if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
+					if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT))) {
 						$socobject = $object->contact;
 					} else {
 						$socobject = $object->thirdparty;

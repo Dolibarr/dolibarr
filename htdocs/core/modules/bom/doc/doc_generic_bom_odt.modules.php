@@ -296,7 +296,7 @@ class doc_generic_bom_odt extends ModelePDFBom
 				$contactobject = null;
 				if (!empty($usecontact)) {
 					// On peut utiliser le nom de la societe du contact
-					if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
+					if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT))) {
 						$socobject = $object->contact;
 					} else {
 						$socobject = $object->thirdparty;
