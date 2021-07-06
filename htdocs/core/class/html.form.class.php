@@ -1118,6 +1118,7 @@ class Form
 
 		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT) && !$forcecombo)
 		{
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 			// No immediate load of all database
 			$placeholder = '';
 			if ($selected && empty($selected_input_value))
