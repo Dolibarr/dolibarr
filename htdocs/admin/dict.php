@@ -100,7 +100,7 @@ $hookmanager->initHooks(array('admin'));
 // Put here declaration of dictionaries properties
 
 // Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-$taborder = array(9, 0, 4, 3, 2, 0, 1, 8, 19, 16, 39, 27, 40, 38, 0, 5, 11, 0, 6, 0, 29, 0, 33, 34, 32, 24, 28, 17, 35, 36, 0, 10, 23, 12, 13, 7, 0, 14, 0, 22, 20, 18, 21, 41, 0, 15, 30, 0, 37, 42, 0, 43, 0, 25, 0);
+$taborder = array(9, 15, 30, 0, 4, 3, 2, 0, 1, 8, 19, 16, 39, 27, 40, 38, 0, 5, 11, 0, 6, 24, 0, 29, 0, 33, 34, 32, 28, 17, 35, 36, 0, 10, 23, 12, 13, 7, 0, 14, 0, 22, 20, 18, 21, 41, 0, 37, 42, 0, 43, 0, 25, 0);
 
 // Name of SQL tables of dictionaries
 $tabname = array();
@@ -568,8 +568,8 @@ $tabhelp[43] = array('code'=>$langs->trans("EnterAnyCode"));
 // Table to store complete informations (will replace all other table). Key is table name.
 $tabcomplete = array(
 	'c_forme_juridique'=>array('picto'=>'company'),
-	'c_departements'=>array('picto'=>'country'),
-	'c_regions'=>array('picto'=>'country'),
+	'c_departements'=>array('picto'=>'state'),
+	'c_regions'=>array('picto'=>'region'),
 	'c_country'=>array('picto'=>'country'),
 	'c_civility'=>array('picto'=>'contact'),
 	'c_actioncomm'=>array('picto'=>'action'),
