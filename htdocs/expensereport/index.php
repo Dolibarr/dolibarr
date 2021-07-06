@@ -145,7 +145,7 @@ if (count($dataseries) > ($KEEPNFIRST + 1)) {
 			continue;
 		}
 		// Here $key = $KEEPNFIRST
-		$dataseries[$KEEPNFIRST][0] = $langs->trans("Other").'...';
+		$dataseries[$KEEPNFIRST][0] = $langs->trans("Others").'...';
 		if ($key == $KEEPNFIRST) {
 			$i++;
 			continue;
