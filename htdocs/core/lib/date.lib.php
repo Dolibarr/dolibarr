@@ -294,32 +294,36 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 
 
 /**
- * Generate a SQL string to make a filter into a range (for second of date until last second of date)
+ * Generate a SQL string to make a filter into a range (for second of date until last second of date).
+ * This method allows to maje SQL request that will deal correctly the timezone of server.
  *
  * @param      string	$datefield			Name of SQL field where apply sql date filter
  * @param      int		$day_date			Day date
  * @param      int		$month_date			Month date
  * @param      int		$year_date			Year date
  * @param	   int      $excludefirstand	Exclude first and
+ * @param	   mixed	$gm					False or 0 or 'tzserver' = Input date fields are date info in the server TZ. True or 1 or 'gmt' = Input are date info in GMT TZ.
+ * 											Note: In database, dates are always fot the server TZ.
  * @return     string	$sqldate			String with SQL filter
  */
-function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $excludefirstand = 0)
+function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $excludefirstand = 0, $gm = false)
 {
 	global $db;
 	$sqldate = "";
 	if ($month_date > 0) {
 		if ($year_date > 0 && empty($day_date)) {
-			$sqldate .= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, $month_date, false));
-			$sqldate .= "' AND '".$db->idate(dol_get_last_day($year_date, $month_date, false))."'";
+			$sqldate .= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, $month_date, $gm));
+			$sqldate .= "' AND '".$db->idate(dol_get_last_day($year_date, $month_date, $gm))."'";
 		} elseif ($year_date > 0 && !empty($day_date)) {
-			$sqldate .= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_date, $day_date, $year_date));
-			$sqldate .= "' AND '".$db->idate(dol_mktime(23, 59, 59, $month_date, $day_date, $year_date))."'";
+			$sqldate .= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_date, $day_date, $year_date, $gm));
+			$sqldate .= "' AND '".$db->idate(dol_mktime(23, 59, 59, $month_date, $day_date, $year_date, $gm))."'";
 		} else {
+			// This case is not reliable on TZ, but we should not need it.
 			$sqldate .= ($excludefirstand ? "" : " AND ")." date_format( ".$datefield.", '%c') = '".$db->escape($month_date)."'";
 		}
 	} elseif ($year_date > 0) {
-		$sqldate .= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, 1, false));
-		$sqldate .= "' AND '".$db->idate(dol_get_last_day($year_date, 12, false))."'";
+		$sqldate .= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, 1, $gm));
+		$sqldate .= "' AND '".$db->idate(dol_get_last_day($year_date, 12, $gm))."'";
 	}
 	return $sqldate;
 }

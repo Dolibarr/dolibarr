@@ -22,6 +22,10 @@
 /**
  *	\file 		htdocs/core/class/ldap.class.php
  *	\brief 		File of class to manage LDAP features
+ *
+ *  Note:
+ *  LDAP_ESCAPE_FILTER is to escape char  array('\\', '*', '(', ')', "\x00")
+ *  LDAP_ESCAPE_DN is to escape char  array('\\', ',', '=', '+', '<', '>', ';', '"', '#')
  */
 
 /**
@@ -132,6 +136,7 @@ class Ldap
 		$this->ldapProtocolVersion = $conf->global->LDAP_SERVER_PROTOCOLVERSION;
 		$this->dn                  = $conf->global->LDAP_SERVER_DN;
 		$this->serverType          = $conf->global->LDAP_SERVER_TYPE;
+
 		$this->domain              = $conf->global->LDAP_SERVER_DN;
 		$this->searchUser          = $conf->global->LDAP_ADMIN_DN;
 		$this->searchPassword      = $conf->global->LDAP_ADMIN_PASS;
@@ -953,7 +958,7 @@ class Ldap
 		}
 
 		// Define filter
-		if (!empty($activefilter)) {
+		if (!empty($activefilter)) {	// Use a predefined trusted filter (defined into setup by admin).
 			if (((string) $activefilter == '1' || (string) $activefilter == 'user') && $this->filter) {
 				$filter = '('.$this->filter.')';
 			} elseif (((string) $activefilter == 'group') && $this->filtergroup ) {
@@ -961,11 +966,11 @@ class Ldap
 			} elseif (((string) $activefilter == 'member') && $this->filter) {
 				$filter = '('.$this->filtermember.')';
 			} else {
-				// If this->filter is empty, make fiter on * (all)
-				$filter = '('.$useridentifier.'=*)';
+				// If this->filter/this->filtergroup is empty, make fiter on * (all)
+				$filter = '('.ldap_escape($useridentifier, '', LDAP_ESCAPE_FILTER).'=*)';
 			}
-		} else {
-			$filter = '('.$useridentifier.'='.$search.')';
+		} else {						// Use a filter forged using the $search value
+			$filter = '('.ldap_escape($useridentifier, '', LDAP_ESCAPE_FILTER).'='.ldap_escape($search, '', LDAP_ESCAPE_FILTER).')';
 		}
 
 		if (is_array($attributeArray)) {

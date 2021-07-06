@@ -533,3 +533,5 @@ UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NUL
 --ALTER TABLE llx_tablename ROW_FORMAT=DYNAMIC;
 
 
+DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
+

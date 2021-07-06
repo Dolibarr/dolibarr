@@ -363,9 +363,9 @@ if ($action == 'show_day') {
 //print dol_print_date($firstdaytoshow,'dayhour').' '.dol_print_date($lastdaytoshow,'dayhour');
 
 /*$title = $langs->trans("DoneAndToDoActions");
-if ($status == 'done') $title = $langs->trans("DoneActions");
-if ($status == 'todo') $title = $langs->trans("ToDoActions");
-*/
+ if ($status == 'done') $title = $langs->trans("DoneActions");
+ if ($status == 'todo') $title = $langs->trans("ToDoActions");
+ */
 
 $param = '';
 if ($actioncode || GETPOSTISSET('search_actioncode')) {
@@ -454,13 +454,13 @@ $param .= '&year='.$year.'&month='.$month.($day ? '&day='.$day : '');
 
 
 /*$tabactive = '';
-if ($action == 'show_month') $tabactive = 'cardmonth';
-if ($action == 'show_week') $tabactive = 'cardweek';
-if ($action == 'show_day')  $tabactive = 'cardday';
-if ($action == 'show_list') $tabactive = 'cardlist';
-if ($action == 'show_pertuser') $tabactive = 'cardperuser';
-if ($action == 'show_pertype') $tabactive = 'cardpertype';
-*/
+ if ($action == 'show_month') $tabactive = 'cardmonth';
+ if ($action == 'show_week') $tabactive = 'cardweek';
+ if ($action == 'show_day')  $tabactive = 'cardday';
+ if ($action == 'show_list') $tabactive = 'cardlist';
+ if ($action == 'show_pertuser') $tabactive = 'cardperuser';
+ if ($action == 'show_pertype') $tabactive = 'cardpertype';
+ */
 
 $paramnoaction = preg_replace('/action=[a-z_]+/', '', $param);
 $paramnoactionodate = preg_replace('/action=[a-z_]+/', '', $paramnodate);
@@ -502,13 +502,11 @@ $viewmode .= img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="p
 //$viewmode .= '</span>';
 $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewDay").'</span></a>';
 
-$viewmode .= '<a class="btnTitle reposition marginrightonly" href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
+$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
 $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewPerUser").'</span></a>';
-
-$viewmode .= '<span class="marginrightonly"></span>';
 
 // Add more views from hooks
 $parameters = array(); $object = null;
@@ -518,6 +516,8 @@ if (empty($reshook)) {
 } elseif ($reshook > 1) {
 	$viewmode = $hookmanager->resPrint;
 }
+
+$viewmode .= '<span class="marginrightonly"></span>';	// To add a space before the navigation tools
 
 
 $newcardbutton = '';
@@ -925,13 +925,13 @@ if ($showbirthday) {
 			$eventarray[$daykey][] = $event;
 
 			/*$loop = true;
-			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee);
-			do {
-				$eventarray[$daykey][] = $event;
-				$daykey += 60 * 60 * 24;
-				if ($daykey > $event->date_end_in_calendar) $loop = false;
-			} while ($loop);
-			*/
+			 $daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee);
+			 do {
+			 $eventarray[$daykey][] = $event;
+			 $daykey += 60 * 60 * 24;
+			 if ($daykey > $event->date_end_in_calendar) $loop = false;
+			 } while ($loop);
+			 */
 			$i++;
 		}
 	} else {
@@ -1543,13 +1543,13 @@ if (empty($action) || $action == 'show_month') {      // View by month
 	echo " </td>\n";
 
 	/*
-	echo ' <div class="tagtr">';
-	echo '  <div class="tagtd width100"></div>';
-	echo '  <div class="tagtd center">';
-	echo show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, -1);
-	echo '  </div>'."\n";
-	echo " </div>\n";
-	*/
+	 echo ' <div class="tagtr">';
+	 echo '  <div class="tagtd width100"></div>';
+	 echo '  <div class="tagtd center">';
+	 echo show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, -1);
+	 echo '  </div>'."\n";
+	 echo " </div>\n";
+	 */
 
 	echo '</table>';
 	print '</div>';
@@ -1793,7 +1793,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					} else {
 						if ($user->rights->agenda->allactions->create ||
 							(($event->authorid == $user->id || $event->userownerid == $user->id) && $user->rights->agenda->myactions->create)) {
-							$cssclass .= " movable cursormove";
+								$cssclass .= " movable cursormove";
 						} else {
 							$cssclass .= " unmovable";
 						}

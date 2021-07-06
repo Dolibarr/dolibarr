@@ -3017,13 +3017,13 @@ class CommandeFournisseur extends CommonOrder
 			$response->warning_delay = $conf->commande->fournisseur->warning_delay / 60 / 60 / 24;
 			$response->label = $langs->trans("SuppliersOrdersToProcess");
 			$response->labelShort = $langs->trans("Opened");
-			$response->url = DOL_URL_ROOT.'/fourn/commande/list.php?statut=1,2&mainmenu=commercial&leftmenu=orders_suppliers';
+			$response->url = DOL_URL_ROOT.'/fourn/commande/list.php?search_status=1,2&mainmenu=commercial&leftmenu=orders_suppliers';
 			$response->img = img_object('', "order");
 
 			if ($mode === 'awaiting') {
 				$response->label = $langs->trans("SuppliersOrdersAwaitingReception");
 				$response->labelShort = $langs->trans("AwaitingReception");
-				$response->url = DOL_URL_ROOT.'/fourn/commande/list.php?statut=3,4&mainmenu=commercial&leftmenu=orders_suppliers';
+				$response->url = DOL_URL_ROOT.'/fourn/commande/list.php?search_status=3,4&mainmenu=commercial&leftmenu=orders_suppliers';
 			}
 
 			while ($obj = $this->db->fetch_object($resql)) {

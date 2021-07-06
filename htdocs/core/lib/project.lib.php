@@ -681,7 +681,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				// Title of task
 				if (count($arrayfields) > 0 && !empty($arrayfields['t.label']['checked'])) {
-					print "<td>";
+					print '<td>';
 					if ($showlineingray) {
 						print '<i>';
 					}
@@ -849,7 +849,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				// Contacts of task
 				if (count($arrayfields) > 0 && !empty($arrayfields['c.assigned']['checked'])) {
-					print '<td>';
+					print '<td class="center">';
 					foreach (array('internal', 'external') as $source) {
 						$tab = $lines[$i]->liste_contact(-1, $source);
 						$num = count($tab);

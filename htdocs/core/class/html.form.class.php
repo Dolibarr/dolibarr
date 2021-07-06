@@ -957,7 +957,7 @@ class Form
 					if ($row['code_iso']) {
 						$labeltoshow .= ' <span class="opacitymedium">('.$row['code_iso'].')</span>';
 						if (empty($hideflags)) {
-							$tmpflag = picto_from_langcode($row['code_iso'], 'class="saturatemedium marginrightonly"');
+							$tmpflag = picto_from_langcode($row['code_iso'], 'class="saturatemedium paddingrightonly"');
 							$labeltoshow = $tmpflag.' '.$labeltoshow;
 						}
 					}
@@ -978,7 +978,7 @@ class Form
 
 		// Make select dynamic
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-		$out .= ajax_combobox('select'.$htmlname);
+		$out .= ajax_combobox('select'.$htmlname, array(), 0, 0, 'resolve');
 
 		return $out;
 	}
@@ -2176,7 +2176,7 @@ class Form
 	 *
 	 *  @param		int			$selected				Preselected products
 	 *  @param		string		$htmlname				Name of HTML select field (must be unique in page).
-	 *  @param		int			$filtertype				Filter on product type (''=nofilter, 0=product, 1=service)
+	 *  @param		int|string	$filtertype				Filter on product type (''=nofilter, 0=product, 1=service)
 	 *  @param		int			$limit					Limit on number of returned lines
 	 *  @param		int			$price_level			Level of price to show
 	 *  @param		int			$status					Sell status -1=Return all products, 0=Products not on sell, 1=Products on sell
@@ -2604,7 +2604,7 @@ class Form
 				}
 			}
 			if ($showempty) {
-				$out .= '<option value="0" selected>'.($textifempty ? $textifempty : '&nbsp;').'</option>';
+				$out .= '<option value="-1" selected>'.($textifempty ? $textifempty : '&nbsp;').'</option>';
 			}
 
 			$i = 0;
@@ -4682,7 +4682,7 @@ class Form
 	{
 		global $langs, $conf;
 
-		$more = '<!-- formconfirm for page='.dol_escape_htmltag($page).' -->';
+		$more = '<!-- formconfirm before calling page='.dol_escape_htmltag($page).' -->';
 		$formconfirm = '';
 		$inputok = array();
 		$inputko = array();
@@ -5085,7 +5085,12 @@ class Form
 		} else {
 			if ($selected) {
 				$this->load_cache_conditions_paiements();
-				print $this->cache_conditions_paiements[$selected]['label'];
+				if (isset($this->cache_conditions_paiements[$selected])) {
+					print $this->cache_conditions_paiements[$selected]['label'];
+				} else {
+					$langs->load('errors');
+					print $langs->trans('ErrorNotInDictionaryPaymentConditions');
+				}
 			} else {
 				print "&nbsp;";
 			}
@@ -7778,7 +7783,7 @@ class Form
 						print '<input type="radio" name="idtolinkto" id="'.$key.'_'.$objp->rowid.'" value="'.$objp->rowid.'">';
 						print '</td>';
 						print '<td class="center"><label for="'.$key.'_'.$objp->rowid.'">'.$objp->ref.'</label></td>';
-						print '<td>'.(!empty($objp->ref_client) ? $objp->ref_client : $objp->ref_supplier).'</td>';
+						print '<td>'.(!empty($objp->ref_client) ? $objp->ref_client : (!empty($objp->ref_supplier) ? $objp->ref_supplier : '')).'</td>';
 						print '<td class="right">';
 						if ($possiblelink['label'] == 'LinkToContract') {
 							$form = new Form($this->db);
@@ -7791,8 +7796,13 @@ class Form
 						$i++;
 					}
 					print '</table>';
-					print '<div class="center"><input type="submit" class="button valignmiddle" value="'.$langs->trans('ToLink').'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
-
+					print '<div class="center">';
+					print '<input type="submit" class="button valignmiddle marginleftonly marginrightonly" value="'.$langs->trans('ToLink').'">';
+					if (empty($conf->use_javascript_ajax)) {
+						print '<input type="submit" class="button button-cancel marginleftonly marginrightonly" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+					} else {
+						print '<input type="submit"; onclick="javascript:jQuery(\'#'.$key.'list\').toggle(); return false;" class="button button-cancel marginleftonly marginrightonly" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+					}
 					print '</form>';
 					$this->db->free($resqllist);
 				} else {
@@ -7833,7 +7843,7 @@ class Form
 				<script>
 				jQuery(document).ready(function() {
 					jQuery(".linkto").click(function() {
-						console.log("We choose to show/hide link for rel="+jQuery(this).attr(\'rel\'));
+						console.log("We choose to show/hide links for rel="+jQuery(this).attr(\'rel\')+" so #"+jQuery(this).attr(\'rel\')+"list");
 					    jQuery("#"+jQuery(this).attr(\'rel\')+"list").toggle();
 					});
 				});
@@ -8494,7 +8504,7 @@ class Form
 	 */
 	public function showFilterButtons()
 	{
-		$out = '<div class="nowrap">';
+		$out = '<div class="nowraponall">';
 		$out .= '<button type="submit" class="liste_titre button_search" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
 		$out .= '<button type="submit" class="liste_titre button_removefilter" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
 		$out .= '</div>';
@@ -8628,14 +8638,11 @@ class Form
 
 									if ($("select[name='.$target.']").val() == '.$obj->id.') {
 										// get price of kilometer to fill the unit price
-										var data = '.json_encode($params).';
-										data.fk_c_exp_tax_cat = $(this).val();
-
 										$.ajax({
 											method: "POST",
 											dataType: "json",
-											data: data,
-											url: "'.(DOL_URL_ROOT.'/expensereport/ajax/ajaxik.php').'",
+											data: { fk_c_exp_tax_cat: $(this).val(), token: \''.currentToken().'\' },
+											url: "'.(DOL_URL_ROOT.'/expensereport/ajax/ajaxik.php?'.$params).'",
 										}).done(function( data, textStatus, jqXHR ) {
 											console.log(data);
 											if (typeof data.up != "undefined") {

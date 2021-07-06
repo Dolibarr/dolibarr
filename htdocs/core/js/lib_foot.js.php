@@ -198,7 +198,9 @@ print '
 					{
 						if (this.href)
 						{
+							console.log("We click on tag with .reposition class. this.ref was "+this.href);
 							var hrefarray = this.href.split("#", 2);
+							hrefarray[0]=hrefarray[0].replace(/&page_y=(\d+)/, \'\');		/* remove page_y param if already present */
 							this.href=hrefarray[0]+\'&page_y=\'+page_y;
 							console.log("We click on tag with .reposition class. this.ref is now "+this.href);
 						}

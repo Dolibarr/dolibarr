@@ -489,7 +489,7 @@ abstract class CommonDocGenerator
 		$array_key.'_remain_to_pay'=>price2num($object->total_ttc - $remain_to_pay, 'MT')
 		);
 
-		if (method_exists($object, 'getTotalDiscount')) {
+		if (method_exists($object, 'getTotalDiscount') && in_array(get_class($object), array('Proposal', 'Commande', 'Facture', 'SupplierProposal', 'CommandeFournisseur', 'FactureFournisseur'))) {
 			$resarray[$array_key.'_total_discount_ht_locale'] = price($object->getTotalDiscount(), 0, $outputlangs);
 			$resarray[$array_key.'_total_discount_ht'] = price2num($object->getTotalDiscount());
 		} else {
@@ -532,10 +532,10 @@ abstract class CommonDocGenerator
 			}
 
 			// @GS: Calculate total up and total discount percentage
-			// Note that this added fields correspond to nothing in Dolibarr (Dolibarr manage discount on lines not globally)
+			// Note that this added fields does not match a field into database in Dolibarr (Dolibarr manage discount on lines not as a global property of object)
 			$resarray['object_total_up'] = $totalUp;
 			$resarray['object_total_up_locale'] = price($resarray['object_total_up'], 0, $outputlangs);
-			if (method_exists($object, 'getTotalDiscount')) {
+			if (method_exists($object, 'getTotalDiscount') && in_array(get_class($object), array('Proposal', 'Commande', 'Facture', 'SupplierProposal', 'CommandeFournisseur', 'FactureFournisseur'))) {
 				$totalDiscount = $object->getTotalDiscount();
 			} else {
 				$totalDiscount = 0;

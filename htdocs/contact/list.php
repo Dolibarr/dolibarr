@@ -375,13 +375,13 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = p.fk_pays";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_stcommcontact as st ON st.id = p.fk_stcommcontact";
-if (!empty($search_categ)) {
+if (!empty($search_categ) && $search_categ != '-1') {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_contact as cc ON p.rowid = cc.fk_socpeople"; // We need this table joined to the select in order to filter by categ
 }
-if (!empty($search_categ_thirdparty)) {
+if (!empty($search_categ_thirdparty) && $search_categ_thirdparty != '-1') {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc"; // We need this table joined to the select in order to filter by categ
 }
-if (!empty($search_categ_supplier)) {
+if (!empty($search_categ_supplier) && $search_categ_supplier != '-1') {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs2 ON s.rowid = cs2.fk_soc"; // We need this table joined to the select in order to filter by categ
 }
 if (!$user->rights->societe->client->voir && !$socid) {
@@ -1097,28 +1097,28 @@ while ($i < min($num, $limit)) {
 	}
 	// Phone
 	if (!empty($arrayfields['p.phone']['checked'])) {
-		print '<td class="nowraponall">'.dol_print_phone($obj->phone_pro, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone').'</td>';
+		print '<td class="nowraponall tdoverflowmax150">'.dol_print_phone($obj->phone_pro, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Phone perso
 	if (!empty($arrayfields['p.phone_perso']['checked'])) {
-		print '<td class="nowraponall">'.dol_print_phone($obj->phone_perso, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone').'</td>';
+		print '<td class="nowraponall tdoverflowmax150">'.dol_print_phone($obj->phone_perso, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Phone mobile
 	if (!empty($arrayfields['p.phone_mobile']['checked'])) {
-		print '<td class="nowraponall">'.dol_print_phone($obj->phone_mobile, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'mobile').'</td>';
+		print '<td class="nowraponall tdoverflowmax150">'.dol_print_phone($obj->phone_mobile, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'mobile').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Fax
 	if (!empty($arrayfields['p.fax']['checked'])) {
-		print '<td class="nowraponall">'.dol_print_phone($obj->fax, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'fax').'</td>';
+		print '<td class="nowraponall tdoverflowmax150">'.dol_print_phone($obj->fax, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'fax').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

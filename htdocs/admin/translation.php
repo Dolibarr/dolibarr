@@ -296,19 +296,8 @@ if ($mode == 'overwrite') {
 	print '</td><td>';
 	print '<input type="text" class="quatrevingtpercent"'.$disablededit.' name="transvalue" id="transvalue" value="'.(!empty($transvalue) ? $transvalue : "").'">';
 	print '</td>';
-	// Limit to superadmin
-	/*if (! empty($conf->multicompany->enabled) && !$user->entity)
-	{
-		print '<td>';
-		print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
-		print '</td>';
-		print '<td class="center">';
-	}
-	else
-	{*/
-		print '<td class="center">';
-		print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
-	//}
+	print '<td class="center">';
+	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 	print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add" title="'.dol_escape_htmltag($langs->trans("YouMustEnabledTranslationOverwriteBefore")).'">';
 	print "</td>\n";
 	print '</tr>';
@@ -500,7 +489,7 @@ if ($mode == 'searchkey') {
 	//}
 	print '</td>';
 	// Action column
-	print '<td class="nowrap right">';
+	print '<td class="nowraponall">';
 	$searchpicto = $form->showFilterAndCheckAddButtons(!empty($massactionbutton) ? 1 : 0, 'checkforselect', 1);
 	print $searchpicto;
 	print '</td>';

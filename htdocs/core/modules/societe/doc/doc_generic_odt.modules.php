@@ -76,12 +76,12 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$this->marge_haute = 0;
 		$this->marge_basse = 0;
 
-		$this->option_logo = 1; // Affiche logo
+		$this->option_logo = 1; // Display logo
 
 		// Retrieves transmitter
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2); // Par defaut, si n'etait pas defini
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if was not defined
 		}
 	}
 
@@ -266,6 +266,11 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				//exit;
 
 				dol_mkdir($conf->societe->multidir_temp[$object->entity]);
+				if (!is_writable($conf->societe->multidir_temp[$object->entity])) {
+					$this->error = "Failed to write in temp directory ".$conf->societe->multidir_temp[$object->entity];
+					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					return -1;
+				}
 
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';

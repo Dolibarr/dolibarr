@@ -1393,7 +1393,7 @@ class Holiday extends CommonObject
 	 *	Met à jour le timestamp de la dernière mise à jour du solde des CP
 	 *
 	 *	@param		int		$userID		Id of user
-	 *	@param		int		$nbHoliday	Nb of days
+	 *	@param		float	$nbHoliday	Nb of days
 	 *  @param		int		$fk_type	Type of vacation
 	 *  @return     int					0=Nothing done, 1=OK, -1=KO
 	 */
@@ -1477,7 +1477,7 @@ class Holiday extends CommonObject
 				if ($num > 0) {
 					// Update for user
 					$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_users SET";
-					$sql .= " nb_holiday = ".((int) $nbHoliday);
+					$sql .= " nb_holiday = ".((float) $nbHoliday);
 					$sql .= " WHERE fk_user = ".(int) $userID." AND fk_type = ".(int) $fk_type;
 					$result = $this->db->query($sql);
 					if (!$result) {
@@ -1487,7 +1487,7 @@ class Holiday extends CommonObject
 				} else {
 					// Insert for user
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_users(nb_holiday, fk_user, fk_type) VALUES (";
-					$sql .= ((int) $nbHoliday);
+					$sql .= ((float) $nbHoliday);
 					$sql .= ", ".(int) $userID.", ".(int) $fk_type.")";
 					$result = $this->db->query($sql);
 					if (!$result) {
@@ -1955,8 +1955,8 @@ class Holiday extends CommonObject
 		$sql .= " ".((int) $fk_user_action).",";
 		$sql .= " ".((int) $fk_user_update).",";
 		$sql .= " '".$this->db->escape($label)."',";
-		$sql .= " '".$this->db->escape($prev_solde)."',";
-		$sql .= " '".$this->db->escape($new_solde)."',";
+		$sql .= " ".((float) $prev_solde).",";
+		$sql .= " ".((float) $new_solde).",";
 		$sql .= " ".((int) $fk_type);
 		$sql .= ")";
 
@@ -2261,7 +2261,7 @@ class Holiday extends CommonObject
 			$response->warning_delay = $conf->holiday->approve->warning_delay / 60 / 60 / 24;
 			$response->label = $langs->trans("HolidaysToApprove");
 			$response->labelShort = $langs->trans("ToApprove");
-			$response->url = DOL_URL_ROOT.'/holiday/list.php?search_statut=2&amp;mainmenu=hrm&amp;leftmenu=holiday';
+			$response->url = DOL_URL_ROOT.'/holiday/list.php?search_status=2&amp;mainmenu=hrm&amp;leftmenu=holiday';
 			$response->img = img_object('', "holiday");
 
 			while ($obj = $this->db->fetch_object($resql)) {

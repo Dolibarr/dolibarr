@@ -18,7 +18,7 @@
 
 /**
  *	\defgroup   clicktodial      Module clicktodial
- *	\brief      Module pour gerer l'appel automatique
+ *	\brief      Module to manage a ClickToDial system
  *	\file       htdocs/core/modules/modClickToDial.class.php
  *	\ingroup    clicktodial
  *	\brief      Description and activation file for the module Click to Dial
@@ -46,7 +46,8 @@ class modClickToDial extends DolibarrModules
 		$this->family = "interface";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "Gestion du Click To Dial";
+		$this->description = "Integration of a ClickToDial system (Asterisk, ...)";
+		$this->descriptionlong = "Support a Click To Dial feature with a SIP system. When clicking on a phone number, your phone system automatically call the callee.";
 
 		$this->version = 'dolibarr'; // 'development' or 'experimental' or 'dolibarr' or version
 
