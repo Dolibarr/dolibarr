@@ -4942,11 +4942,11 @@ function migrate_export_import_profiles($mode = 'export')
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
 			$oldfield = $obj->field;
-			$newfield = str_replace(array('f.facnumber,', 'f.total,', 'f.tva,'), array('f.ref,', 'f.total_ht,', 'f.total_tva,'), $oldfield);
+			$newfield = str_replace(array(',f.facnumber', 'f.facnumber,', 'f.total,', 'f.tva,'), array(',f.ref', 'f.ref,', 'f.total_ht,', 'f.total_tva,'), $oldfield);
 
 			if ($mode == 'export') {
 				$oldfilter = $obj->filter;
-				$newfilter = str_replace(array('f.facnumber,', 'f.total,', 'f.tva,'), array('f.ref,', 'f.total_ht,', 'f.total_tva,'), $oldfilter);
+				$newfilter = str_replace(array('f.facnumber=', 'f.total=', 'f.tva='), array('f.ref=', 'f.total_ht=', 'f.total_tva='), $oldfilter);
 			} else {
 				$oldfilter = '';
 				$newfilter = '';
