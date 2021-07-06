@@ -138,13 +138,13 @@ if (empty($action) && !GETPOSTISSET('action')) {
 if ($action == 'default') {	// When action is default, we want a calendar view and not the list
 	$action = (($defaultview != 'show_list') ? $defaultview : 'show_month');
 }
-if (GETPOST('viewcal', 'restricthtml') && GETPOST('action', 'alpha') != 'show_day' && GETPOST('action', 'alpha') != 'show_week') {
+if (GETPOST('viewcal', 'int') && GETPOST('action', 'alpha') != 'show_day' && GETPOST('action', 'alpha') != 'show_week') {
 	$action = 'show_month'; $day = '';
 } // View by month
-if (GETPOST('viewweek', 'restricthtml') || GETPOST('action', 'alpha') == 'show_week') {
+if (GETPOST('viewweek', 'int') || GETPOST('action', 'alpha') == 'show_week') {
 	$action = 'show_week'; $week = ($week ? $week : date("W")); $day = ($day ? $day : date("d"));
 } // View by week
-if (GETPOST('viewday', 'restricthtml') || GETPOST('action', 'alpha') == 'show_day') {
+if (GETPOST('viewday', 'int') || GETPOST('action', 'alpha') == 'show_day') {
 	$action = 'show_day'; $day = ($day ? $day : date("d"));
 } // View by day
 
