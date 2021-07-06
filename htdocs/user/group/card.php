@@ -428,6 +428,7 @@ if ($action == 'create') {
 				 * Group members
 				 */
 
+				print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre">';
 				print '<td class="liste_titre">'.$langs->trans("Login").'</td>';
@@ -440,7 +441,7 @@ if ($action == 'create') {
 				if (!empty($object->members)) {
 					foreach ($object->members as $useringroup) {
 						print '<tr class="oddeven">';
-						print '<td>';
+						print '<td class="tdoverflowmax150">';
 						print $useringroup->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
 						if ($useringroup->admin && !$useringroup->entity) {
 							print img_picto($langs->trans("SuperAdministrator"), 'redstar');
@@ -465,6 +466,7 @@ if ($action == 'create') {
 					print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 				}
 				print "</table>";
+				print '</div>';
 			}
 
 			print "<br>";

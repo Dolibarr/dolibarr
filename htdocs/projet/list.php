@@ -25,7 +25,7 @@
 
 /**
  *	\file       htdocs/projet/list.php
- *	\ingroup    projet
+ *	\ingroup    project
  *	\brief      Page to list projects
  */
 
@@ -174,14 +174,26 @@ foreach ($object->fields as $key => $val) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
-// Add none object fields to fields for list
+// Add non object fields to fields for list
 $arrayfields['s.nom'] = array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'position'=>21, 'enabled'=>(empty($conf->societe->enabled) ? 0 : 1));
 $arrayfields['commercial'] = array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>0, 'position'=>23);
 $arrayfields['opp_weighted_amount'] = array('label'=>$langs->trans('OpportunityWeightedAmountShort'), 'checked'=>0, 'position'=> 116, 'enabled'=>(empty($conf->global->PROJECT_USE_OPPORTUNITIES) ? 0 : 1), 'position'=>106);
+// Force some fields according to search_usage filter...
+if (GETPOST('search_usage_opportunity')) {
+	//$arrayfields['p.usage_opportunity']['visible'] = 1;	// Not require, filter on search_opp_status is enough
+	//$arrayfields['p.usage_opportunity']['checked'] = 1;	// Not require, filter on search_opp_status is enough
+}
+if (GETPOST('search_usage_event_organization')) {
+	$arrayfields['p.fk_opp_status']['enabled'] = 0;
+	$arrayfields['p.opp_amount']['enabled'] = 0;
+	$arrayfields['p.opp_percent']['enabled'] = 0;
+	$arrayfields['opp_weighted_amount']['enabled'] = 0;
+	$arrayfields['p.usage_organize_event']['visible'] = 1;
+	$arrayfields['p.usage_organize_event']['checked'] = 1;
+}
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-
 
 
 /*
@@ -333,6 +345,7 @@ $distinct = 'DISTINCT'; // We add distinct until we are added a protection to be
 $sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.fk_statut as status, p.fk_opp_status, p.public, p.fk_user_creat,";
 $sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_update, p.budget_amount,";
 $sql .= " p.usage_opportunity, p.usage_task, p.usage_bill_time, p.usage_organize_event,";
+$sql .= " p.email_msgid,";
 $sql .= " accept_conference_suggestions, accept_booth_suggestions, price_registration, price_booth,";
 $sql .= " s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.code_client,";
 $sql .= " country.code as country_code,";
@@ -719,6 +732,7 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
+
 print '<div class="div-table-responsive">';
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
@@ -861,6 +875,11 @@ if (!empty($arrayfields['p.tms']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
+if (!empty($arrayfields['p.email_msgid']['checked'])) {
+	// Email msg id
+	print '<td class="liste_titre">';
+	print '</td>';
+}
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	print '<td class="liste_titre nowrap right">';
 	$arrayofstatus = array();
@@ -952,6 +971,9 @@ if (!empty($arrayfields['p.datec']['checked'])) {
 }
 if (!empty($arrayfields['p.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+}
+if (!empty($arrayfields['p.email_msgid']['checked'])) {
+	print_liste_field_titre($arrayfields['p.email_msgid']['label'], $_SERVER["PHP_SELF"], "p.email_msgid", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	print_liste_field_titre($arrayfields['p.fk_statut']['label'], $_SERVER["PHP_SELF"], "p.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
@@ -1293,6 +1315,13 @@ while ($i < min($num, $limit)) {
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
+		}
+		// Email MsgID
+		if (!empty($arrayfields['p.email_msgid']['checked'])) {
+			print '<td class="center">';
+			print $obj->email_msgid;
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// Status
 		if (!empty($arrayfields['p.fk_statut']['checked'])) {

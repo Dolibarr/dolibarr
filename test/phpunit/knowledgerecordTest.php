@@ -27,22 +27,27 @@ global $conf, $user, $langs, $db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/knowledgemanagement/class/knowledgerecord.class.php';
+$langs->load("main");
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
 }
+
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
-$langs->load("main");
+
 
 
 /**
  * Class KnowledgeRecordTest
- * @package Testknowledgemanagement
+ *
+ * @backupGlobals disabled
+ * @backupStaticAttributes enabled
+ * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class KnowledgeRecordTest extends \PHPUnit\Framework\TestCase
+class KnowledgeRecordTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -53,7 +58,7 @@ class KnowledgeRecordTest extends \PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return KnowledgeRecord
+	 * @return KnowledgeRecordTest
 	 */
 	public function __construct()
 	{
@@ -73,6 +78,7 @@ class KnowledgeRecordTest extends \PHPUnit\Framework\TestCase
 
 	/**
 	 * Global test setup
+	 *
 	 * @return void
 	 */
 	public static function setUpBeforeClass()
@@ -80,11 +86,14 @@ class KnowledgeRecordTest extends \PHPUnit\Framework\TestCase
 		global $conf, $user, $langs, $db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-		print __METHOD__."\n";
+		if (empty($conf->knowledgemanagement->enabled)) {
+			print __METHOD__." module knowledgemanagement must be enabled.\n"; die(1);
+		}
 	}
 
 	/**
 	 * Unit test setup
+	 *
 	 * @return void
 	 */
 	protected function setUp()
@@ -100,6 +109,7 @@ class KnowledgeRecordTest extends \PHPUnit\Framework\TestCase
 
 	/**
 	 * Unit test teardown
+	 *
 	 * @return void
 	 */
 	protected function tearDown()
@@ -109,6 +119,7 @@ class KnowledgeRecordTest extends \PHPUnit\Framework\TestCase
 
 	/**
 	 * Global test teardown
+	 *
 	 * @return void
 	 */
 	public static function tearDownAfterClass()
@@ -159,7 +170,7 @@ class KnowledgeRecordTest extends \PHPUnit\Framework\TestCase
 		$result = $localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
-		$this->assertLessThan($result, 0);
+		$this->assertGreaterThanOrEqual(0, $result);
 
 		return $result;
 	}
@@ -182,11 +193,15 @@ class KnowledgeRecordTest extends \PHPUnit\Framework\TestCase
 		$db = $this->savdb;
 
 		$localobject = new KnowledgeRecord($this->savdb);
+		print __METHOD__." id=".$id."\n";
 		$result = $localobject->fetch($id);
+		print __METHOD__." result=".$result."\n";
+		$this->assertGreaterThanOrEqual(0, $result, 'fetch in testKnowledgeRecordDelete with id='.$id);
+
 		$result = $localobject->delete($user);
 
-		print __METHOD__." id=".$id." result=".$result."\n";
-		$this->assertLessThan($result, 0);
+		print __METHOD__." result=".$result."\n";
+		$this->assertGreaterThanOrEqual(0, $result, 'delete in testKnowledgeRecordDelete');
 		return $result;
 	}
 }

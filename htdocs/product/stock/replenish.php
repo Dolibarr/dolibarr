@@ -394,6 +394,11 @@ if (!empty($conf->variants->eabled) && empty($conf->global->VARIANT_ALLOW_STOCK_
 if ($fk_supplier > 0) {
 	$sql .= ' AND EXISTS (SELECT pfp.rowid FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp WHERE pfp.fk_product = p.rowid AND pfp.fk_soc = '.((int) $fk_supplier).' AND pfp.entity IN ('.getEntity('product_fournisseur_price').'))';
 }
+// Add where from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 $sql .= ' GROUP BY p.rowid, p.ref, p.label, p.description, p.price';
 $sql .= ', p.price_ttc, p.price_base_type,p.fk_product_type, p.tms';
 $sql .= ', p.duration, p.tobuy';

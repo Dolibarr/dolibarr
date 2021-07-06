@@ -113,6 +113,11 @@ if ($socid > 0) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border tableforfield" width="100%">';
 
+	// Type Prospect/Customer/Supplier
+	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+	print $object->getTypeUrl(1);
+	print '</td></tr>';
+
 	if ($object->client) {
 		print '<tr><td class="titlefield">';
 		print $langs->trans('CustomerCode').'</td><td colspan="3">';
@@ -137,7 +142,7 @@ if ($socid > 0) {
 
 	// Total Margin
 	print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td colspan="3">';
-	print '<span id="totalMargin"></span>'; // set by jquery (see below)
+	print '<span id="totalMargin" class="amount"></span>'; // set by jquery (see below)
 	print '</td></tr>';
 
 	// Margin Rate
@@ -237,9 +242,9 @@ if ($socid > 0) {
 				print "</td>\n";
 				print "<td class=\"center\">";
 				print dol_print_date($db->jdate($objp->datef), 'day')."</td>";
-				print "<td class=\"right\">".price(price2num($objp->selling_price, 'MT'))."</td>\n";
-				print "<td class=\"right\">".price(price2num(($objp->type == 2 ? -1 : 1) * $objp->buying_price, 'MT'))."</td>\n";
-				print "<td class=\"right\">".$sign.price(price2num($objp->marge, 'MT'))."</td>\n";
+				print "<td class=\"right amount\">".price(price2num($objp->selling_price, 'MT'))."</td>\n";
+				print "<td class=\"right amount\">".price(price2num(($objp->type == 2 ? -1 : 1) * $objp->buying_price, 'MT'))."</td>\n";
+				print "<td class=\"right amount\">".$sign.price(price2num($objp->marge, 'MT'))."</td>\n";
 				if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
 					print "<td class=\"right\">".(($marginRate === '') ? 'n/a' : $sign.price(price2num($marginRate, 'MT'))."%")."</td>\n";
 				}

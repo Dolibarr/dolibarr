@@ -72,6 +72,7 @@ if ($setterminal > 0) {
 
 if ($setcurrency != "") {
 	$_SESSION["takeposcustomercurrency"] = $setcurrency;
+	// We will recalculate amount for foreign currency at next call of invoice.php when $_SESSION["takeposcustomercurrency"] differs from invoice->multicurrency_code.
 }
 
 $_SESSION["urlfrom"] = '/takepos/index.php';
@@ -705,6 +706,7 @@ function OpenDrawer(){
 	console.log("OpenDrawer call ajax url http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print");
 	$.ajax({
 		type: "POST",
+		data: { token: 'notrequired' },
 		<?php
 		if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
 			echo "url: '".$conf->global->TAKEPOS_PRINT_SERVER."/printer/drawer.php',";
@@ -717,10 +719,11 @@ function OpenDrawer(){
 }
 
 function DolibarrOpenDrawer() {
-	console.log("DolibarrOpenDrawer call ajax url /takepos/ajax/ajax.php?action=opendrawer&term=<?php print $_SESSION["takeposterminal"] ?>");
+	console.log("DolibarrOpenDrawer call ajax url /takepos/ajax/ajax.php?action=opendrawer&term=<?php print urlencode($_SESSION["takeposterminal"]); ?>");
 	$.ajax({
 		type: "GET",
-		url: "<?php print dol_buildpath('/takepos/ajax/ajax.php', 1).'?action=opendrawer&term='.$_SESSION["takeposterminal"]; ?>",
+		data: { token: '<?php echo currentToken(); ?>' },
+		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=opendrawer&term='.urlencode($_SESSION["takeposterminal"]); ?>",
 	});
 }
 
@@ -777,6 +780,7 @@ function WeighingScale(){
 	console.log("Weighing Scale");
 	$.ajax({
 		type: "POST",
+		data: { token: 'notrequired' },
 		url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/scale/index.php',
 	})
 	.done(function( editnumber ) {

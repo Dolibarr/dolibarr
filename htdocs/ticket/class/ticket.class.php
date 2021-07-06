@@ -294,7 +294,7 @@ class Ticket extends CommonObject
 			self::STATUS_ASSIGNED => 'Assigned',
 			self::STATUS_IN_PROGRESS => 'InProgress',
 			self::STATUS_WAITING => 'OnHold',
-			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation',
+			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformationShort',
 			self::STATUS_CLOSED => 'Closed',
 			self::STATUS_CANCELED => 'Canceled'
 		);
@@ -531,7 +531,7 @@ class Ticket extends CommonObject
 		global $langs;
 
 		// Check parameters
-		if (!$id && !$track_id && !$ref && !$email_msgid) {
+		if (empty($id) && empty($ref) && empty($track_id) && empty($email_msgid)) {
 			$this->error = 'ErrorWrongParameters';
 			dol_print_error(get_class($this)."::fetch ".$this->error);
 			return -1;

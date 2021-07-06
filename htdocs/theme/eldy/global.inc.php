@@ -209,7 +209,7 @@ input, select {
 	margin-bottom: 1px;
 	margin-top: 1px;
 }
-#mainbody input.button:not(.buttongen):not(.bordertransp) {
+#mainbody input.button:not(.buttongen):not(.bordertransp), #mainbody a.button:not(.buttongen):not(.bordertransp) {
 	background: var(--butactionbg);
 	color: #FFF !important;
 	border-radius: 3px;
@@ -425,7 +425,9 @@ input.pageplusone {
 .colorblack {
 	color: #000;
 }
-
+.fontsizeunset {
+	font-size: unset !important;
+}
 .vmirror {
 	transform: scale(1, -1);
 }
@@ -1136,6 +1138,12 @@ select.flat.selectlimit {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
+.tdoverflowmax250 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 250px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 .tdoverflowmax300 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 300px;
 	overflow: hidden;
@@ -1481,6 +1489,10 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		display: inline-block;
 	}
 
+	input.maxwidthinputfileonsmartphone {
+		width: 175px;
+	}
+
 	.logopublicpayment #dolpaymentlogo {
 		max-width: 260px;
 	}
@@ -1648,7 +1660,7 @@ table.tableforfield tr>td:first-of-type, tr.trforfield>td:first-of-type, div.tab
 }
 
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
-.hideonprint { display: none; }
+.hideonprint { display: none !important; }
 <?php } ?>
 
 
@@ -2628,7 +2640,7 @@ table.login_table_securitycode tr td {
 }
 
 div.backgroundsemitransparent {
-	background:rgba(255,255,255,0.68);
+	background:rgba(255, 255, 255, 0.7);
 	padding-left: 10px;
 	padding-right: 10px;
 }
@@ -3910,6 +3922,11 @@ table.noborder.paymenttable {
 	box-shadow: 1px 1px 7px #CCC !important;
 }
 
+.boxshadow {
+	-webkit-box-shadow: 0px 0px 5px #888;
+	box-shadow: 0px 0px 5px #888;
+}
+
 div.tabBar .noborder {
 	-webkit-box-shadow: 0px 0px 0px #DDD !important;
 	box-shadow: 0px 0px 0px #DDD !important;
@@ -4696,7 +4713,9 @@ div.visible {
 div.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
 }
-
+.unvisible {
+	visibility: hidden;
+}
 tr.visible {
 	display: block;
 }
@@ -6060,6 +6079,9 @@ dl.dropdown {
 	display:inline-block;
 	padding: 0 3px 2px 0;
 }
+.maxwidthsearch .dropdown dt a span, .multiSel span {
+	padding: 0 3px 2px 3px;
+}
 .dropdown span.value {
 	display:none;
 }
@@ -6822,6 +6844,8 @@ span.clipboardCPValue.hidewithsize {
 		border-right: none;
 		border-left: none;
 	}
+
+	td.widthpictotitle { width: 30px; }
 }
 
 @media only screen and (max-width: 1024px)

@@ -874,11 +874,12 @@ if ($action == 'create' || $action == 'presend') {
 			$langs->load("users");
 			$fuser = new User($db);
 			$fuser->fetch($object->fk_user_create);
-			$morehtmlref .= $fuser->getNomUrl(0);
+			$morehtmlref .= $fuser->getNomUrl(-1);
 		}
 		if (!empty($object->origin_email)) {
 			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
-			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small>('.$langs->trans("TicketEmailOriginIssuer").')</small>';
+			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
+			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").')</small>';
 		}
 
 		// Thirdparty
@@ -968,8 +969,8 @@ if ($action == 'create' || $action == 'presend') {
 		print '<tr><td>'.$langs->trans("TicketReadOn").'</td><td>';
 		if (!empty($object->date_read)) {
 			print dol_print_date($object->date_read, 'dayhour', 'tzuser');
-			print '<span class="opacitymedium"> - '.$langs->trans("TicketTimeToRead").': <i>'.convertSecondToTime(roundUpToNextMultiple($object->date_read - $object->datec, 60)).'</i>';
-			print ' - '.$langs->trans("TimeElapsedSince").': <i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->date_read, 60)).'</i></span>';
+			print '<span class="opacitymedium"> - '.$langs->trans("TicketTimeElapsedBeforeSince").': <i>'.convertSecondToTime(roundUpToNextMultiple($object->date_read - $object->datec, 60)).'</i>';
+			print ' / <i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->date_read, 60)).'</i></span>';
 		}
 		print '</td></tr>';
 
@@ -991,7 +992,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '</td><td>';
 		if ($object->fk_user_assign > 0) {
 			$userstat->fetch($object->fk_user_assign);
-			print $userstat->getNomUrl(1);
+			print $userstat->getNomUrl(-1);
 		}
 
 		// Show user list to assignate one if status is "read"
@@ -1183,7 +1184,7 @@ if ($action == 'create' || $action == 'presend') {
 
 					if ($tab[$i]['socid'] > 0) {
 						$companystatic->fetch($tab[$i]['socid']);
-						echo $companystatic->getNomUrl(1);
+						echo $companystatic->getNomUrl(-1);
 					}
 					if ($tab[$i]['socid'] < 0) {
 						echo $conf->global->MAIN_INFO_SOCIETE_NOM;
@@ -1196,12 +1197,12 @@ if ($action == 'create' || $action == 'presend') {
 					print '<div class="tagtd">';
 					if ($tab[$i]['source'] == 'internal') {
 						if ($userstatic->fetch($tab[$i]['id'])) {
-							print $userstatic->getNomUrl(1);
+							print $userstatic->getNomUrl(-1);
 						}
 					}
 					if ($tab[$i]['source'] == 'external') {
 						if ($contactstatic->fetch($tab[$i]['id'])) {
-							print $contactstatic->getNomUrl(1);
+							print $contactstatic->getNomUrl(-1);
 						}
 					}
 					print ' </div>
@@ -1329,10 +1330,14 @@ if ($action == 'create' || $action == 'presend') {
 			$newlang = '';
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
-			}
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && is_object($object->thirdparty)) {
+			} elseif ($conf->global->MAIN_MULTILANGS && empty($newlang) && is_object($object->thirdparty)) {
 				$newlang = $object->thirdparty->default_lang;
 			}
+			if (!empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+
 			$arrayoffamiliestoexclude = array('objectamount');
 
 			$action = 'add_message'; // action to use to post the message
@@ -1341,7 +1346,7 @@ if ($action == 'create' || $action == 'presend') {
 			// Substitution array
 			$morehtmlright = '';
 			$help = "";
-			$substitutionarray = getCommonSubstitutionArray($newlang, 0, $arrayoffamiliestoexclude, $object);
+			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
 			if ($object->fk_soc > 0) {
 				$substitutionarray['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
 			}
@@ -1456,9 +1461,11 @@ if ($action == 'create' || $action == 'presend') {
 
 				$MAXEVENT = 10;
 
-				$morehtmlcenter = dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT.'/ticket/messaging.php?id='.$object->id);
+				$morehtmlcenter = '<div class="nowraponall">';
+				$morehtmlcenter .= dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT.'/ticket/messaging.php?id='.$object->id);
 				$morehtmlcenter .= ' ';
 				$morehtmlcenter .= dolGetButtonTitle($langs->trans('FullList'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/ticket/agenda.php?id='.$object->id);
+				$morehtmlcenter .= '</div>';
 
 				// List of actions on element
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

@@ -112,8 +112,14 @@ if (empty($endyear)) {
 }
 
 $startyear = $endyear - 1;
+
+// Change default WIDHT and HEIGHT (we need a smaller than default for both desktop and smartphone)
 $WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '100%' : '80%';
-$HEIGHT = '200';
+if (empty($conf->dol_optimize_smallscreen)) {
+	$HEIGHT = '200';
+} else {
+	$HEIGHT = '160';
+}
 
 print '<div class="clearboth"></div>';
 print '<div class="fichecenter fichecenterbis">';
@@ -298,7 +304,7 @@ print '</div>'."\n";
 print '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
 /*
- * Latest tickets
+ * Latest unread tickets
  */
 
 $max = 10;
