@@ -179,6 +179,9 @@ if ($action == 'validatehistory') {
 	}
 	$sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 	$sql .= " AND l.product_type <= 2";
+	if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
+		$sql .= " AND f.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
+	}
 
 	dol_syslog('htdocs/accountancy/supplier/index.php');
 
