@@ -3983,7 +3983,7 @@ function img_edit($titlealt = 'default', $float = 0, $other = '')
  *	@param  string	$other		Add more attributes on img
  *	@return string      		Return tag img
  */
-function img_view($titlealt = 'default', $float = 0, $other = '')
+function img_view($titlealt = 'default', $float = 0, $other = 'class="valignmiddle"')
 {
 	global $langs;
 
