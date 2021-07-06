@@ -340,6 +340,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+		// Force default mode
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
+
 		$_COOKIE["id"]=111;
 		$_GET["param1"]="222";
 		$_POST["param1"]="333";
@@ -363,6 +367,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_POST["param13"]='&#110; &#x6E; &gt; &lt; &quot; <a href=\"j&#x61;vascript:alert(document.domain)\">XSS</a>';
 		$_POST["param13b"]='&#110; &#x6E; &gt; &lt; &quot; <a href=\"j&#x61vascript:alert(document.domain)\">XSS</a>';
 		$_POST["param14"]="Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submited by CKEditor)";
+		$_POST["param15"]="<img onerror<=alert(document.domain)> src=>0xbeefed";
 		//$_POST["param13"]='javascript%26colon%26%23x3B%3Balert(1)';
 		//$_POST["param14"]='javascripT&javascript#x3a alert(1)';
 
@@ -480,7 +485,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		// Test with restricthtml we must remove html open/close tag and content but not htmlentities (we can decode html entities for ascii chars like &#110;)
 
 		$result=GETPOST("param6", 'restricthtml');
-		print __METHOD__." result=".$result."\n";
+		print __METHOD__." result param6=".$result."\n";
 		$this->assertEquals('&quot;&gt;', $result);
 
 		$result=GETPOST("param7", 'restricthtml');
@@ -502,6 +507,29 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=GETPOST("param14", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("Text with ' encoded with the numeric html entity converted into text entity &apos; (like when submited by CKEditor)", $result, 'Test 14');
+
+		$result=GETPOST("param15", 'restricthtml');		// <img onerror<=alert(document.domain)> src=>0xbeefed
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals("<img onerror=alert(document.domain) src=>0xbeefed", $result, 'Test 15a');	// The GETPOST return a harmull string
+
+		// Test with restricthtml + MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES to test disabling of bad atrributes
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
+
+		$result=GETPOST("param15", 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('InvalidHTMLString', $result, 'Test 15b');
+
+		unset($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML);
+
+		// Test with restricthtml + MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES to test disabling of bad atrributes
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;
+
+		$result=GETPOST("param15", 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('<img src="">0xbeefed', $result, 'Test 15b');
+
+		unset($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES);
+
 
 		// Special test for GETPOST of backtopage, backtolist or backtourl parameter
 
