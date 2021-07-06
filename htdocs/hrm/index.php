@@ -310,11 +310,11 @@ if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 				$userstatic->photo = $obj->photo;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowraponall">'.$expensereportstatic->getNomUrl(1).'</td>';
+				print '<td class="tdoverflowmax200">'.$expensereportstatic->getNomUrl(1).'</td>';
 				print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1).'</td>';
-				print '<td class="right">'.price($obj->total_ttc).'</td>';
+				print '<td class="right amount">'.price($obj->total_ttc).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
-				print '<td class="right nowrap" width="16">'.$expensereportstatic->LibStatut($obj->status, 3).'</td>';
+				print '<td class="right nowraponall" width="16">'.$expensereportstatic->LibStatut($obj->status, 3).'</td>';
 				print '</tr>';
 
 				$i++;

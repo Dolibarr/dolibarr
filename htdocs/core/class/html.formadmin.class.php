@@ -393,9 +393,10 @@ class FormAdmin
 	 *  @param      string	$htmlname       Name of HTML select field
 	 *  @param		string	$filter			Value to filter on code
 	 *  @param		int		$showempty		Add empty value
+	 * 	@param		int		$forcecombo		Force to load all values and output a standard combobox (with no beautification)
 	 *  @return		string					Return HTML output
 	 */
-	public function select_paper_format($selected = '', $htmlname = 'paperformat_id', $filter = 0, $showempty = 0)
+	public function select_paper_format($selected = '', $htmlname = 'paperformat_id', $filter = 0, $showempty = 0, $forcecombo = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -444,7 +445,10 @@ class FormAdmin
 		}
 		$out .= '</select>';
 
-		$out .= ajax_combobox($htmlname);
+		if (!$forcecombo) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$out .= ajax_combobox($htmlname);
+		}
 
 		return $out;
 	}
