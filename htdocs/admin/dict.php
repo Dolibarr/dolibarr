@@ -882,12 +882,12 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 			}
 
 			if ($keycode == 'sortorder') {		// For column name 'sortorder', we use the field name 'position'
-				$sql .= "'".(int) GETPOST('position', 'int')."'";
+				$sql .= (int) GETPOST('position', 'int');
 			} elseif ($_POST[$keycode] == '' && !($keycode == 'code' && $id == 10)) {
 				$sql .= "null"; // For vat, we want/accept code = ''
 			} elseif ($keycode == 'content') {
 				$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
-			} elseif (in_array($keycode, array('joinfile', 'private', 'position', 'scale'))) {
+			} elseif (in_array($keycode, array('joinfile', 'private', 'pos', 'position', 'scale'))) {
 				$sql .= (int) GETPOST($keycode, 'int');
 			} else {
 				$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
@@ -898,8 +898,8 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 		$sql .= ",1)";
 
 		dol_syslog("actionadd", LOG_DEBUG);
-		$result = $db->query($sql);
-		if ($result) {	// Add is ok
+		$resql = $db->query($sql);
+		if ($resql) {	// Add is ok
 			setEventMessages($langs->transnoentities("RecordCreatedSuccessfully"), null, 'mesgs');
 
 			// Clean $_POST array, we keep only id of dictionary
@@ -956,7 +956,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 				$sql .= "null"; // For vat, we want/accept code = ''
 			} elseif ($keycode == 'content') {
 				$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
-			} elseif (in_array($keycode, array('private', 'position', 'scale'))) {
+			} elseif (in_array($keycode, array('joinfile', 'private', 'pos', 'position', 'scale'))) {
 				$sql .= (int) GETPOST($keycode, 'int');
 			} else {
 				$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
@@ -1626,11 +1626,8 @@ if ($id) {
 			if ($value == 'code') {
 				$valuetoshow = $langs->trans("Code");
 			}
-			if ($value == 'pos') {
-				$cssprefix = 'right '; $valuetoshow = $langs->trans("Position");
-			}
-			if ($value == 'position') {
-				$cssprefix = 'right '; $valuetoshow = $langs->trans("Position");
+			if (in_array($value, array('pos', 'position'))) {
+				$valuetoshow = $langs->trans("Position"); $cssprefix = 'right ';
 			}
 			if ($value == 'libelle' || $value == 'label') {
 				$valuetoshow = $langs->trans("Label");
@@ -1998,14 +1995,11 @@ if ($id) {
 							if ($value == 'tracking') {
 								$class .= ' tdoverflowauto';
 							}
-							if ($value == 'position') {
+							if (in_array($value, array('pos', 'position'))) {
 								$class .= ' right';
 							}
 							if (in_array($value, array('localtax1_type', 'localtax2_type'))) {
 								$class .= ' nowrap';
-							}
-							if ($value == 'pos') {
-								$class .= ' right';
 							}
 							if (in_array($value, array('use_default', 'fk_parent'))) {
 								$class .= ' center';
@@ -2386,7 +2380,10 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			if ($fieldlist[$field] == 'code') {
 				$class = 'maxwidth100';
 			}
-			if (in_array($fieldlist[$field], array('dayrule', 'day', 'month', 'year', 'pos', 'use_default', 'affect', 'delay', 'position', 'public', 'sortorder', 'sens', 'category_type', 'fk_parent'))) {
+			if (in_array($fieldlist[$field], array('pos', 'position'))) {
+				$classtd = 'right'; $class = 'maxwidth50 right';
+			}
+			if (in_array($fieldlist[$field], array('dayrule', 'day', 'month', 'year', 'use_default', 'affect', 'delay', 'public', 'sortorder', 'sens', 'category_type', 'fk_parent'))) {
 				$class = 'maxwidth50 center';
 			}
 			if (in_array($fieldlist[$field], array('use_default', 'public', 'fk_parent'))) {
