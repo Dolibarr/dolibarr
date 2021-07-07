@@ -506,7 +506,6 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 				$exp->id = $objp->rowid;
 				$exp->ref = $objp->ref;
-				$exp->fk_type = $objp->fk_type;
 				$exp->status = $objp->status;
 
 				print '<tr class="oddeven">';
@@ -557,7 +556,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	print_liste_field_titre("RIB");
 	print_liste_field_titre("IBAN");
 	print_liste_field_titre("BIC");
-	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
+	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', '', '', 'maxwidthsearch ');
 	print "</tr>\n";
 
 	if ($account->id > 0) {
