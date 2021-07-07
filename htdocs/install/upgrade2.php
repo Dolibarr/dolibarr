@@ -4955,7 +4955,7 @@ function migrate_export_import_profiles($mode = 'export')
 			if ($oldfield != $newfield || $oldfilter != $newfilter) {
 				$sqlupd = 'UPDATE '.MAIN_DB_PREFIX.$mode."_model SET field = '".$db->escape($newfield)."'";
 				if ($mode == 'export') {
-					$sql .= ", filter = '".$db->escape($newfilter)."'";
+					$sqlupd .= ", filter = '".$db->escape($newfilter)."'";
 				}
 				$sqlupd .= ' WHERE rowid='.$obj->rowid;
 				$resultstring .= '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$sqlupd."</td></tr>\n";
