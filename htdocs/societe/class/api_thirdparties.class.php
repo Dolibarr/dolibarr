@@ -120,6 +120,7 @@ class Thirdparties extends DolibarrApi
 	 * @param   string  $sortorder  Sort order
 	 * @param   int     $limit      Limit for list
 	 * @param   int     $page       Page number
+	 * @param string   	$thirdparty_ids	    Thirdparty ids to filter thirdparties of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param   int     $mode       Set to 1 to show only customers
 	 *                              Set to 2 to show only prospects
 	 *                              Set to 3 to show only those are not customer neither prospect
@@ -128,12 +129,12 @@ class Thirdparties extends DolibarrApi
 	 * @param   string  $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.nom:like:'TheCompany%') and (t.date_creation:<:'20160101')"
 	 * @return  array               Array of thirdparty objects
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $mode = 0, $category = 0, $sqlfilters = '')
 	{
 		$obj_ret = array();
 
 		// case of external user, we force socids
-		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
