@@ -66,11 +66,13 @@ function shipping_prepare_head($object)
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
 	    $objectsrc = $object;
+	    /*
 	    if ($object->origin == 'commande' && $object->origin_id > 0)
 	    {
 	        $objectsrc = new Commande($db);
 	        $objectsrc->fetch($object->origin_id);
 	    }
+	    */
 	    $nbContact = count($objectsrc->liste_contact(-1, 'internal')) + count($objectsrc->liste_contact(-1, 'external'));
 	    $head[$h][0] = DOL_URL_ROOT."/expedition/contact.php?id=".$object->id;
     	$head[$h][1] = $langs->trans("ContactsAddresses");

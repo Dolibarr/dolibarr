@@ -95,7 +95,7 @@ if ($permission) {
 		<div class="tagtd maxwidthonsmartphone">
 		<?php
 		$tmpobject=$object;
-		if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) $tmpobject=$objectsrc;
+		//if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) $tmpobject=$objectsrc;
 		echo $formcompany->selectTypeContact($tmpobject, '', 'type', 'internal');
 		?></div>
 		<div class="tagtd">&nbsp;</div>
@@ -134,7 +134,7 @@ if ($permission) {
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
 			<?php
 			$tmpobject=$object;
-			if (($object->element == 'shipping'|| $object->element == 'reception') && is_object($objectsrc)) $tmpobject=$objectsrc;
+			//if (($object->element == 'shipping'|| $object->element == 'reception') && is_object($objectsrc)) $tmpobject=$objectsrc;
 			$formcompany->selectTypeContact($tmpobject, '', 'type', 'external', 'position', 0, 'minwidth100imp'); ?>
 		</div>
 		<div class="tagtd noborderbottom">&nbsp;</div>
@@ -164,7 +164,7 @@ if ($permission) {
 	foreach($arrayofsource as $source) {
 
 		$tmpobject=$object;
-		if (($object->element == 'shipping'|| $object->element == 'reception') && is_object($objectsrc)) $tmpobject=$objectsrc;
+		//if (($object->element == 'shipping'|| $object->element == 'reception') && is_object($objectsrc)) $tmpobject=$objectsrc;
 
 		$tab = $tmpobject->liste_contact(-1, $source);
 		$num=count($tab);

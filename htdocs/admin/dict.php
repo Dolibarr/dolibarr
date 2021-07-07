@@ -569,7 +569,8 @@ if ($id == 11)
 			'commande'          => $langs->trans('Order'),
 			'facture'           => $langs->trans('Bill'),
 			'fichinter'         => $langs->trans('InterventionCard'),
-			'contrat'           => $langs->trans('Contract')
+			'contrat'           => $langs->trans('Contract'),
+			'shipping'			=> $langs->trans('Expedition')
 	);
 	if (! empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) $elementList["societe"] = $langs->trans('ThirdParty');
 
