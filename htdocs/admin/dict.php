@@ -695,7 +695,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 	$listfieldmodify = explode(',', $tabfieldinsert[$id]);
 	$listfieldvalue = explode(',', $tabfieldvalue[$id]);
 
-	// Check that all fields are filled
+	// Check that all mandatory fields are filled
 	$ok = 1;
 	foreach ($listfield as $f => $value) {
 		// Discard check of mandatory fields for country for some tables
@@ -1341,6 +1341,9 @@ if ($id) {
 			if ($value == 'short_label') {
 				$valuetoshow = $langs->trans("ShortLabel");
 			}
+			if ($value == 'fk_parent') {
+				$valuetoshow = $langs->trans("ParentID"); $class = 'center';
+			}
 			if ($value == 'range_account') {
 				$valuetoshow = $langs->trans("Range");
 			}
@@ -1686,6 +1689,9 @@ if ($id) {
 			if ($value == 'short_label') {
 				$valuetoshow = $langs->trans("ShortLabel");
 			}
+			if ($value == 'fk_parent') {
+				$valuetoshow = $langs->trans("ParentID"); $cssprefix = 'center ';
+			}
 			if ($value == 'range_account') {
 				$valuetoshow = $langs->trans("Range");
 			}
@@ -1995,16 +2001,13 @@ if ($id) {
 							if ($value == 'position') {
 								$class .= ' right';
 							}
-							if ($value == 'localtax1_type') {
-								$class .= ' nowrap';
-							}
-							if ($value == 'localtax2_type') {
+							if (in_array($value, array('localtax1_type', 'localtax2_type'))) {
 								$class .= ' nowrap';
 							}
 							if ($value == 'pos') {
 								$class .= ' right';
 							}
-							if ($value == 'use_default') {
+							if (in_array($value, array('use_default', 'fk_parent'))) {
 								$class .= ' center';
 							}
 							if ($value == 'public') {
@@ -2271,7 +2274,13 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print '<td>';
 			print $form->selectarray('source', $sourceList, (!empty($obj->{$value}) ? $obj->{$value}:''));
 			print '</td>';
+		} elseif (in_array($value, array('public', 'use_default'))) {
+			// Fields 0/1 with a combo select Yes/No
+			print '<td class="center">';
+			print $form->selectyesno($value, (!empty($obj->{$value}) ? $obj->{$value}:''), 1);
+			print '</td>';
 		} elseif ($value == 'private') {
+			// Fields 'no'/'yes' with a combo select Yes/No
 			print '<td>';
 			print $form->selectyesno("private", (!empty($obj->{$value}) ? $obj->{$value}:''));
 			print '</td>';
@@ -2367,7 +2376,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print $form->selectExpenseRanges($obj->fk_range);
 			print '</td>';
 		} else {
-			$fieldValue = isset($obj->{$value}) ? $obj->{$value}:'';
+			$fieldValue = isset($obj->{$value}) ? $obj->{$value}: '';
 
 			if ($value == 'sortorder') {
 				$fieldlist[$field] = 'position';
@@ -2377,14 +2386,20 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			if ($fieldlist[$field] == 'code') {
 				$class = 'maxwidth100';
 			}
-			if (in_array($fieldlist[$field], array('dayrule', 'day', 'month', 'year', 'pos', 'use_default', 'affect', 'delay', 'position', 'public', 'sortorder', 'sens', 'category_type'))) {
+			if (in_array($fieldlist[$field], array('dayrule', 'day', 'month', 'year', 'pos', 'use_default', 'affect', 'delay', 'position', 'public', 'sortorder', 'sens', 'category_type', 'fk_parent'))) {
 				$class = 'maxwidth50 center';
 			}
-			if (in_array($fieldlist[$field], array('use_default', 'public'))) {
+			if (in_array($fieldlist[$field], array('use_default', 'public', 'fk_parent'))) {
 				$classtd = 'center';
 			}
 			if (in_array($fieldlist[$field], array('libelle', 'label', 'tracking'))) {
 				$class = 'quatrevingtpercent';
+			}
+			// Fields that must be suggested as '0' instead of ''
+			if ($fieldlist[$field] == 'fk_parent') {
+				if (empty($fieldValue)) {
+					$fieldValue = '0';
+				}
 			}
 			print '<td class="'.$classtd.'">';
 			$transfound = 0;

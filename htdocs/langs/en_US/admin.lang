@@ -118,6 +118,7 @@ MultiCurrencySetup=Multi-currency setup
 MenuLimits=Limits and accuracy
 MenuIdParent=Parent menu ID
 DetailMenuIdParent=ID of parent menu (empty for a top menu)
+ParentID=Parent ID
 DetailPosition=Sort number to define menu position
 AllMenus=All
 NotConfigured=Module/Application not configured
