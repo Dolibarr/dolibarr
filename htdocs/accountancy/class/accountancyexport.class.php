@@ -1791,8 +1791,17 @@ class AccountancyExport
 			//Conversion de chaine UTF8 en Latin9
 			$tab[] = mb_convert_encoding(str_replace(' - Compte auxiliaire','',$line->label_operation),"Windows-1252",'UTF-8');
 
+			//Calcul de la longueur des numéros de comptes
+			$taille_numero = strlen(length_accountg($line->numero_compte));
+
+			//Création du numéro de client générique
+			$numero_cpt_client = '411';
+			for ($i = 1; $i <= ($taille_numero - 3); $i++){
+				$numero_cpt_client .= '0';
+			}
+
 			//Création des comptes auxiliaire des clients
-			if (length_accountg($line->numero_compte)=='4110000') {
+			if (length_accountg($line->numero_compte) == $numero_cpt_client) {			
 				$tab[] = rtrim(length_accounta($line->subledger_account),"0");
 			} else {
 				$tab[] = length_accountg($line->numero_compte);
