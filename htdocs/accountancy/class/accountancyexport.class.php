@@ -59,6 +59,7 @@ class AccountancyExport
 	public static $EXPORT_TYPE_LDCOMPTA10 = 120;
 	public static $EXPORT_TYPE_GESTIMUMV3 = 130;
 	public static $EXPORT_TYPE_GESTIMUMV5 = 135;
+	public static $EXPORT_TYPE_ISUITEEXPERT = 990;
 	public static $EXPORT_TYPE_FEC = 1000;
 	public static $EXPORT_TYPE_FEC2 = 1010;
 
@@ -123,6 +124,7 @@ class AccountancyExport
 			self::$EXPORT_TYPE_GESTIMUMV5 => $langs->trans('Modelcsv_Gestinum_v5'),
 			self::$EXPORT_TYPE_FEC => $langs->trans('Modelcsv_FEC'),
 			self::$EXPORT_TYPE_FEC2 => $langs->trans('Modelcsv_FEC2'),
+			self::$EXPORT_TYPE_ISUITEEXPERT => 'Export iSuite Expert',
 		);
 
 		ksort($listofexporttypes, SORT_NUMERIC);
@@ -158,6 +160,7 @@ class AccountancyExport
 			self::$EXPORT_TYPE_GESTIMUMV5 => 'gestimumv5',
 			self::$EXPORT_TYPE_FEC => 'fec',
 			self::$EXPORT_TYPE_FEC2 => 'fec2',
+			self::$EXPORT_TYPE_ISUITEEXPERT => 'isuiteexpert',
 		);
 
 		return $formatcode[$type];
@@ -242,6 +245,10 @@ class AccountancyExport
 				self::$EXPORT_TYPE_FEC2 => array(
 					'label' => $langs->trans('Modelcsv_FEC2'),
 					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
+				),
+				self::$EXPORT_TYPE_ISUITEEXPERT => array(
+					'label' => 'iSuite Expert',
+					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
 				),
 			),
 			'cr'=> array(
@@ -333,6 +340,9 @@ class AccountancyExport
 				break;
 			case self::$EXPORT_TYPE_FEC2:
 				$this->exportFEC2($TData);
+				break;
+			case self::$EXPORT_TYPE_ISUITEEXPERT :
+				$this->exportiSuiteExpert($TData);
 				break;
 			default:
 				$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
@@ -1749,6 +1759,53 @@ class AccountancyExport
 				print 'EUR';
 				print $this->end_line;
 			}
+		}
+	}
+
+	/**
+	* Export format : iSuite Expert
+	*
+	* by OpenSolus [https://opensolus.fr] 
+	*
+	* @param array $objectLines data
+	*
+	* @return void
+	*/
+	public function exportiSuiteExpert($objectLines)
+	{
+		$this->separator = ';';
+        $this->end_line = "\r\n";
+				
+
+		foreach ($objectLines as $line) {
+			$tab = array();
+
+			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
+
+			$tab[] = $line->piece_num;
+			$tab[] = $date;
+			$tab[] = substr($date,6,4);
+			$tab[] = substr($date,3,2);
+			$tab[] = substr($date,0,2);
+			$tab[] = $line->doc_ref;
+			//Conversion de chaine UTF8 en Latin9
+			$tab[] = mb_convert_encoding(str_replace(' - Compte auxiliaire','',$line->label_operation),"Windows-1252",'UTF-8');
+
+			//Création des comptes auxiliaire des clients
+			if (length_accountg($line->numero_compte)=='4110000') {
+				$tab[] = rtrim(length_accounta($line->subledger_account),"0");
+			} else {
+				$tab[] = length_accountg($line->numero_compte);
+			}
+			$nom_client = explode(" - ",$line->label_operation);
+			$tab[] = mb_convert_encoding($nom_client[0],"Windows-1252",'UTF-8');
+			$tab[] = price($line->debit);
+			$tab[] = price($line->credit);
+			$tab[] = price($line->montant);
+			$tab[] = $line->code_journal;
+
+			$separator = $this->separator;
+			print implode($separator, $tab) . $this->end_line;
 		}
 	}
 
