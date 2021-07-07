@@ -887,7 +887,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 				$sql .= "null"; // For vat, we want/accept code = ''
 			} elseif ($keycode == 'content') {
 				$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
-			} elseif (in_array($keycode, array('joinfile', 'private', 'pos', 'position', 'scale'))) {
+			} elseif (in_array($keycode, array('joinfile', 'private', 'pos', 'position', 'scale', 'use_default'))) {
 				$sql .= (int) GETPOST($keycode, 'int');
 			} else {
 				$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
@@ -956,7 +956,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 				$sql .= "null"; // For vat, we want/accept code = ''
 			} elseif ($keycode == 'content') {
 				$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
-			} elseif (in_array($keycode, array('joinfile', 'private', 'pos', 'position', 'scale'))) {
+			} elseif (in_array($keycode, array('joinfile', 'private', 'pos', 'position', 'scale', 'use_default'))) {
 				$sql .= (int) GETPOST($keycode, 'int');
 			} else {
 				$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
@@ -1234,7 +1234,7 @@ if ($id) {
 			$class = '';
 
 			if ($value == 'pos') {
-				$valuetoshow = $langs->trans("Position"); $class = 'maxwidth100';
+				$valuetoshow = $langs->trans("Position"); $class = 'right';
 			}
 			if ($value == 'source') {
 				$valuetoshow = $langs->trans("Contact");
