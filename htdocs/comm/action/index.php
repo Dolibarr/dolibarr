@@ -943,6 +943,7 @@ if ($showbirthday) {
 	}
 }
 
+// LEAVE CALENDAR
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.statut, x.rowid, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = x.fk_user";
@@ -1881,7 +1882,8 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 							$cacheusers[$tmpid] = $newuser;
 						}
 
-						$listofusertoshow .= '<br>'.$cacheusers[$tmpid]->getNomUrl(-3, '', 0, 0, 0, 0, '', 'paddingright valigntextbottom');
+						$listofusertoshow = '';
+						$listofusertoshow .= '<br>'.$cacheusers[$tmpid]->getNomUrl(-1, '', 0, 0, 0, 0, '', 'paddingright valigntextbottom');
 						print $listofusertoshow;
 					} else {										// Other calendar
 						// Picto
