@@ -1675,15 +1675,15 @@ if ($action == 'create') {
 			 print '<tr>';
 			 print '<td class="titlefield">'.$langs->trans("User").'</td>';
 			 print '<td>';
-			 if ($object->fk_user_author > 0) {
-			 	$userauthor = new User($db);
-			 	$result = $userauthor->fetch($object->fk_user_author);
-			 	if ($result < 0) {
-			 		dol_print_error('', $userauthor->error);
-			 	} elseif ($result > 0) {
-			 		print $userauthor->getNomUrl(-1);
-			 	}
-			 }
+			if ($object->fk_user_author > 0) {
+				$userauthor = new User($db);
+				$result = $userauthor->fetch($object->fk_user_author);
+				if ($result < 0) {
+					dol_print_error('', $userauthor->error);
+				} elseif ($result > 0) {
+					print $userauthor->getNomUrl(-1);
+				}
+			}
 			 print '</td></tr>';
 
 			 // Period

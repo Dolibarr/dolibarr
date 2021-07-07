@@ -59,7 +59,9 @@ $pagenext = $page + 1;
 // Initialize technical objects
 $object = new Inventory($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction = $conf->inventory->dir_output.'/temp/massgeneration/'.$user->id;
+// no inventory docs yet
+// $diroutputmassaction = $conf->inventory->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = null;
 $hookmanager->initHooks(array('inventorylist')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -106,7 +108,7 @@ foreach ($object->fields as $key => $val) {
 			'checked'=>(($visible < 0) ? 0 : 1),
 			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
 			'position'=>$val['position'],
-			'help'=>$val['help']
+			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
 	}
 }
@@ -127,9 +129,9 @@ if ($user->socid > 0) {	// Protection if external user
 	accessforbidden();
 }
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	$result = restrictedArea($user, 'stock', $objectid);
+	$result = restrictedArea($user, 'stock');
 } else {
-	$result = restrictedArea($user, 'stock', $objectid, '', 'inventory_advance');
+	$result = restrictedArea($user, 'stock', 0, '', 'inventory_advance');
 }
 
 
@@ -624,7 +626,8 @@ print '</table>'."\n";
 print '</div>'."\n";
 
 print '</form>'."\n";
-
+// no inventory docs yet
+/*
 if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
 	$hidegeneratedfilelistifempty = 1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
@@ -644,7 +647,7 @@ if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $n
 
 	print $formfile->showdocuments('massfilesarea_mymodule', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
-
+*/
 // End of page
 llxFooter();
 $db->close();
