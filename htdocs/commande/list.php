@@ -515,8 +515,7 @@ if ($search_status <> '') {
 	}
 
 
-	if ($search_status == -4)	//  "validate and in progress"
-	{
+	if ($search_status == -4) {	//  "validate and in progress"
 		$sql .= ' AND (c.fk_statut IN (1,2))'; // validated, in process
 	}
 }
