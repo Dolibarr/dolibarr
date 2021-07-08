@@ -1636,14 +1636,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						$tooltip .= '<br>'.$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
 						$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5");
 						print '<tr><td id="mask_option">'.$langs->trans("ManageLotMask").'</td>';
-						if ($object->status_batch == '1' && $conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced') {
-							$mask = !empty($object->batch_mask) ? $object->batch_mask : $conf->global->LOT_ADVANCED_MASK;
+						if ($object->status_batch == '1' && getDolGlobalString('PRODUCTBATCH_LOT_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced') {
+							$mask = !empty($object->batch_mask) ? $object->batch_mask : getDolGlobalString('LOT_ADVANCED_MASK');
 						}
-						if ($object->status_batch == '2' && $conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced') {
+						if ($object->status_batch == '2' && getDolGlobalString('PRODUCTBATCH_SN_USE_PRODUCT_MASKS') && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced') {
 							$mask = !empty($object->batch_mask) ? $object->batch_mask : $conf->global->SN_ADVANCED_MASK;
 						}
-						$inherited_mask_lot = $conf->global->LOT_ADVANCED_MASK;
-						$inherited_mask_sn = $conf->global->SN_ADVANCED_MASK;
+						$inherited_mask_lot = getDolGlobalString('LOT_ADVANCED_MASK');
+						$inherited_mask_sn = getDolGlobalString('SN_ADVANCED_MASK');
 						print '<td id="field_mask">';
 						print $form->textwithpicto('<input type="text" class="flat minwidth175" name="batch_mask" id="batch_mask_input" value="'.$mask.'">', $tooltip, 1, 1);
 
@@ -1651,12 +1651,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						$(document).ready(function() {
 							$("#field_mask").parent().addClass("hideobject");
 							var preselect = document.getElementById("status_batch");';
-						if ($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS) {
+						if (getDolGlobalString('PRODUCTBATCH_SN_USE_PRODUCT_MASKS')) {
 							print 'if (preselect.value == "2") {
 									$("#field_mask").parent().removeClass("hideobject");
 								}';
 						}
-						if ($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS) {
+						if (getDolGlobalString('PRODUCTBATCH_LOT_USE_PRODUCT_MASKS')) {
 							print 'if (preselect.value == "1") {
 									$("#field_mask").parent().removeClass("hideobject");
 								}';
@@ -1666,7 +1666,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 								var valueSelected = this.value;
 								$("#field_mask").parent().addClass("hideobject");
 						';
-						if ($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced') {
+						if (getDolGlobalString('PRODUCTBATCH_LOT_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced') {
 							print '
 								if (this.value == 1) {
 									$("#field_mask").parent().removeClass("hideobject");
@@ -1674,7 +1674,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 								}
 							';
 						}
-						if ($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced') {
+						if (getDolGlobalString('PRODUCTBATCH_SN_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced') {
 							print '
 								if (this.value == 2) {
 									$("#field_mask").parent().removeClass("hideobject");
