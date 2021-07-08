@@ -782,14 +782,22 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 				if (!empty($out) && !empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML) && $check != 'restricthtmlallowunvalid') {
 					try {
 						$dom = new DOMDocument;
+						// Add a trick to solve pb with text without parent tag
+						// like '<h1>Foo</h1><p>bar</p>' that ends up with '<h1>Foo<p>bar</p></h1>'
+						// like 'abc' that ends up with '<p>abc</p>'
+						$out = '<div class="tricktoremove">'.$out.'</div>';
+
 						$dom->loadHTML($out, LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_HTML_NODEFDTD|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
+						$out = trim($dom->saveHTML());
+
+						// Remove the trick added to solve pb with text without parent tag
+						$out = preg_replace('/^<div class="tricktoremove">/', '', $out);
+						$out = preg_replace('/<\/div>$/', '', $out);
 					} catch (Exception $e) {
 						//print $e->getMessage();
 						return 'InvalidHTMLString';
 					}
-					$out = $dom->saveHTML();
 				}
-				//var_dump($oldstringtoclean);var_dump($out);
 
 				// Ckeditor use the numeric entitic for apostrophe so we force it to text entity (all other special chars are correctly
 				// encoded using text entities). This is a fix for CKeditor.
