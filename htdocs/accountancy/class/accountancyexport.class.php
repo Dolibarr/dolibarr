@@ -59,7 +59,8 @@ class AccountancyExport
 	public static $EXPORT_TYPE_LDCOMPTA10 = 120;
 	public static $EXPORT_TYPE_GESTIMUMV3 = 130;
 	public static $EXPORT_TYPE_GESTIMUMV5 = 135;
-	public static $EXPORT_TYPE_ISUITEEXPERT = 990;
+	public static $EXPORT_TYPE_ISUITEEXPERT = 200;
+	// Generic FEC after that
 	public static $EXPORT_TYPE_FEC = 1000;
 	public static $EXPORT_TYPE_FEC2 = 1010;
 
