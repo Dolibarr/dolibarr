@@ -94,7 +94,9 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 		$langs->load("agenda");
 
-		if (empty($object->actiontypecode)) {
+		if (strpos($action, 'SENTBYMAIL') && (empty($object->actiontypecode) || $object->actiontypecode == 'AC_OTH_AUTO')) {
+			$object->actiontypecode = 'AC_EMAIL';
+		} elseif (empty($object->actiontypecode)) {
 			$object->actiontypecode = 'AC_OTH_AUTO';
 		}
 
@@ -991,7 +993,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 		$actioncomm = new ActionComm($this->db);
 		$actioncomm->type_code   = $object->actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
-		$actioncomm->code        = 'AC_'.$action;
+		$actioncomm->code        = 'AC_' . $action;
 		$actioncomm->label       = $object->actionmsg2;
 		$actioncomm->note_private = $object->actionmsg; // TODO Replace with ($actioncomm->email_msgid ? $object->email_content : $object->actionmsg)
 		$actioncomm->fk_project  = $projectid;
