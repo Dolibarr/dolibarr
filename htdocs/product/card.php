@@ -1650,21 +1650,20 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						print '<script type="text/javascript">
 						$(document).ready(function() {
 							$("#field_mask").parent().addClass("hideobject");
-							var preselect = $("#status_batch option:selected");';
+							var preselect = document.getElementById("status_batch");';
 						if ($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS)
 						{
-						print 'if (preselect == "2") {
-								$("#field_mask").parent().toggleClass("hideobject");
+						print 'if (preselect.value == "2") {
+								$("#field_mask").parent().removeClass("hideobject");
 							}';
 						}
 						if ($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS)
 						{
-						print 'if (preselect == "1") {
-								$("#field_mask").parent().toggleClass("hideobject");
+						print 'if (preselect.value == "1") {
+								$("#field_mask").parent().removeClass("hideobject");
 							}';
 						}
 						print '$("#status_batch").on("change", function () {
-								console.log("We change batch status");
 								var optionSelected = $("option:selected", this);
 								var valueSelected = this.value;
 								$("#field_mask").parent().addClass("hideobject");
@@ -1672,7 +1671,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						if ($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced') {
 							print '
 								if (this.value == 1) {
-									$("#field_mask").parent().toggleClass("hideobject");
+									$("#field_mask").parent().removeClass("hideobject");
 									$("#batch_mask_input").val("'.$inherited_mask_lot.'");
 								}
 							';
@@ -1680,7 +1679,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						if ($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced') {
 							print '
 								if (this.value == 2) {
-									$("#field_mask").parent().toggleClass("hideobject");
+									$("#field_mask").parent().removeClass("hideobject");
 									$("#batch_mask_input").val("'.$inherited_mask_sn.'");
 								}
 							';
