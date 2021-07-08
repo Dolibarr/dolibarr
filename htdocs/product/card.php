@@ -383,32 +383,32 @@ if (empty($reshook)) {
 			$accountancy_code_buy_intra = GETPOST('accountancy_code_buy_intra', 'alpha');
 			$accountancy_code_buy_export = GETPOST('accountancy_code_buy_export', 'alpha');
 
-			if ($accountancy_code_sell <= 0) {
+			if (empty($accountancy_code_sell) || $accountancy_code_sell == '-1') {
 				$object->accountancy_code_sell = '';
 			} else {
 				$object->accountancy_code_sell = $accountancy_code_sell;
 			}
-			if ($accountancy_code_sell_intra <= 0) {
+			if (empty($accountancy_code_sell_intra) || $accountancy_code_sell_intra == '-1') {
 				$object->accountancy_code_sell_intra = '';
 			} else {
 				$object->accountancy_code_sell_intra = $accountancy_code_sell_intra;
 			}
-			if ($accountancy_code_sell_export <= 0) {
+			if (empty($accountancy_code_sell_export) || $accountancy_code_sell_export == '-1') {
 				$object->accountancy_code_sell_export = '';
 			} else {
 				$object->accountancy_code_sell_export = $accountancy_code_sell_export;
 			}
-			if ($accountancy_code_buy <= 0) {
+			if (empty($accountancy_code_buy) || $accountancy_code_buy == '-1') {
 				$object->accountancy_code_buy = '';
 			} else {
 				$object->accountancy_code_buy = $accountancy_code_buy;
 			}
-			if ($accountancy_code_buy_intra <= 0) {
+			if (empty($accountancy_code_buy_intra) || $accountancy_code_buy_intra == '-1') {
 				$object->accountancy_code_buy_intra = '';
 			} else {
 				$object->accountancy_code_buy_intra = $accountancy_code_buy_intra;
 			}
-			if ($accountancy_code_buy_export <= 0) {
+			if (empty($accountancy_code_buy_export) || $accountancy_code_buy_export == '-1') {
 				$object->accountancy_code_buy_export = '';
 			} else {
 				$object->accountancy_code_buy_export = $accountancy_code_buy_export;
@@ -552,32 +552,32 @@ if (empty($reshook)) {
 				$accountancy_code_buy_intra = GETPOST('accountancy_code_buy_intra', 'alpha');
 				$accountancy_code_buy_export = GETPOST('accountancy_code_buy_export', 'alpha');
 
-				if ($accountancy_code_sell <= 0) {
+				if (empty($accountancy_code_sell) || $accountancy_code_sell == '-1') {
 					$object->accountancy_code_sell = '';
 				} else {
 					$object->accountancy_code_sell = $accountancy_code_sell;
 				}
-				if ($accountancy_code_sell_intra <= 0) {
+				if (empty($accountancy_code_sell_intra) || $accountancy_code_sell_intra == '-1') {
 					$object->accountancy_code_sell_intra = '';
 				} else {
 					$object->accountancy_code_sell_intra = $accountancy_code_sell_intra;
 				}
-				if ($accountancy_code_sell_export <= 0) {
+				if (empty($accountancy_code_sell_export) || $accountancy_code_sell_export == '-1') {
 					$object->accountancy_code_sell_export = '';
 				} else {
 					$object->accountancy_code_sell_export = $accountancy_code_sell_export;
 				}
-				if ($accountancy_code_buy <= 0) {
+				if (empty($accountancy_code_buy) || $accountancy_code_buy == '-1') {
 					$object->accountancy_code_buy = '';
 				} else {
 					$object->accountancy_code_buy = $accountancy_code_buy;
 				}
-				if ($accountancy_code_buy_intra <= 0) {
+				if (empty($accountancy_code_buy_intra) || $accountancy_code_buy_intra == '-1') {
 					$object->accountancy_code_buy_intra = '';
 				} else {
 					$object->accountancy_code_buy_intra = $accountancy_code_buy_intra;
 				}
-				if ($accountancy_code_buy_export <= 0) {
+				if (empty($accountancy_code_buy_export) || $accountancy_code_buy_export == '-1') {
 					$object->accountancy_code_buy_export = '';
 				} else {
 					$object->accountancy_code_buy_export = $accountancy_code_buy_export;
