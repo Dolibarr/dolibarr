@@ -1854,7 +1854,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $conf->browser->layout != 'phone') {
 			$qs = dol_escape_htmltag($_SERVER["QUERY_STRING"]);
 
-			if (is_array($_POST)) {
+			if (isset($_POST) && is_array($_POST)) {
 				foreach ($_POST as $key => $value) {
 					if ($key !== 'action' && $key !== 'password' && !is_array($value)) {
 						$qs .= '&'.$key.'='.urlencode($value);
