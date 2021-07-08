@@ -1811,7 +1811,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if (GETPOSTISSET('accountancy_code_sell')) {
 					$accountancy_code_sell  = GETPOST('accountancy_code_sell', 'alpha');
 
-					if ($accountancy_code_sell <= 0) {
+					if (empty($accountancy_code_sell) || $accountancy_code_sell == '-1') {
 						$object->accountancy_code_sell = '';
 					} else {
 						$object->accountancy_code_sell = $accountancy_code_sell;
@@ -1820,7 +1820,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if (GETPOSTISSET('accountancy_code_buy')) {
 					$accountancy_code_buy   = GETPOST('accountancy_code_buy', 'alpha');
 
-					if ($accountancy_code_buy <= 0) {
+					if (empty($accountancy_code_buy) || $accountancy_code_buy == '-1') {
 						$object->accountancy_code_buy = '';
 					} else {
 						$object->accountancy_code_buy = $accountancy_code_buy;
