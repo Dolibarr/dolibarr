@@ -919,7 +919,6 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			if ($objMod->needUpdate) {
 				$versionTitle = $langs->trans('ModuleUpdateAvailable').' : '.$objMod->lastVersion;
 				print '<span class="badge badge-warning classfortooltip" title="'.dol_escape_htmltag($versionTitle).'">'.$versiontrans.'</span>';
-				$foundoneexternalmodulewithupdate++;
 			} else {
 				print $versiontrans;
 			}
@@ -936,6 +935,9 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print '</td>';
 
 			print "</tr>\n";
+		}
+		if ($objMod->needUpdate) {
+			$foundoneexternalmodulewithupdate++;
 		}
 	}
 
