@@ -887,10 +887,8 @@ class Societe extends CommonObject
 			$sql .= ", fk_multicurrency";
 			$sql .= ", multicurrency_code";
 			if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
-				if (empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-					$sql .= ", accountancy_code_buy";
-					$sql .= ", accountancy_code_sell";
-				}
+				$sql .= ", accountancy_code_buy";
+				$sql .= ", accountancy_code_sell";
 			}
 			$sql .= ") VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".$this->db->escape($this->entity).", '".$this->db->idate($now)."'";
 			$sql .= ", ".(!empty($user->id) ? ((int) $user->id) : "null");
@@ -905,10 +903,8 @@ class Societe extends CommonObject
 			$sql .= ", ".(int) $this->fk_multicurrency;
 			$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 			if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
-				if (empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-					$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
-					$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
-				}
+				$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
+				$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
 			}
 			$sql .= ")";
 
@@ -920,26 +916,24 @@ class Societe extends CommonObject
 				$ret = $this->update($this->id, $user, 0, 1, 1, 'add');
 
 				// update accountancy for this entity
-				if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
-					if (!$error && !empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-						$this->db->query("DELETE FROM " . MAIN_DB_PREFIX . "societe_perentity WHERE fk_soc = " . $this->id . " AND entity = " . $conf->entity);
+				if (!$error && !empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+					$this->db->query("DELETE FROM " . MAIN_DB_PREFIX . "societe_perentity WHERE fk_soc = " . $this->id . " AND entity = " . $conf->entity);
 
-						$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_perentity (";
-						$sql .= " fk_soc";
-						$sql .= ", entity";
-						$sql .= ", accountancy_code_buy";
-						$sql .= ", accountancy_code_sell";
-						$sql .= ") VALUES (";
-						$sql .= $this->id;
-						$sql .= ", " . $conf->entity;
-						$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
-						$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
-						$sql .= ")";
-						$result = $this->db->query($sql);
-						if (!$result) {
-							$error++;
-							$this->error = 'ErrorFailedToUpdateAccountancyForEntity';
-						}
+					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_perentity (";
+					$sql .= " fk_soc";
+					$sql .= ", entity";
+					$sql .= ", accountancy_code_buy";
+					$sql .= ", accountancy_code_sell";
+					$sql .= ") VALUES (";
+					$sql .= $this->id;
+					$sql .= ", " . $conf->entity;
+					$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
+					$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
+					$sql .= ")";
+					$result = $this->db->query($sql);
+					if (!$result) {
+						$error++;
+						$this->error = 'ErrorFailedToUpdateAccountancyForEntity';
 					}
 				}
 
@@ -1454,10 +1448,8 @@ class Societe extends CommonObject
 			$sql .= ",supplier_order_min_amount= ".($this->supplier_order_min_amount != '' ? $this->supplier_order_min_amount : 'null');
 			$sql .= ",fk_prospectlevel='".$this->db->escape($this->fk_prospectlevel)."'";
 			if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
-				if (empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-					$sql .= ", accountancy_code_buy = '" . $this->db->escape($this->accountancy_code_buy) . "'";
-					$sql .= ", accountancy_code_sell= '" . $this->db->escape($this->accountancy_code_sell) . "'";
-				}
+				$sql .= ", accountancy_code_buy = '" . $this->db->escape($this->accountancy_code_buy) . "'";
+				$sql .= ", accountancy_code_sell= '" . $this->db->escape($this->accountancy_code_sell) . "'";
 			}
 			$sql .= ",webservices_url = ".(!empty($this->webservices_url) ? "'".$this->db->escape($this->webservices_url)."'" : "null");
 			$sql .= ",webservices_key = ".(!empty($this->webservices_key) ? "'".$this->db->escape($this->webservices_key)."'" : "null");
@@ -1541,26 +1533,24 @@ class Societe extends CommonObject
 				$action = 'update';
 
 				// update accountancy for this entity
-				if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
-					if (!$error && !empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-						$this->db->query("DELETE FROM " . MAIN_DB_PREFIX . "societe_perentity WHERE fk_soc = " . $this->id . " AND entity = " . $conf->entity);
+				if (!$error && !empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+					$this->db->query("DELETE FROM " . MAIN_DB_PREFIX . "societe_perentity WHERE fk_soc = " . $this->id . " AND entity = " . $conf->entity);
 
-						$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_perentity (";
-						$sql .= " fk_soc";
-						$sql .= ", entity";
-						$sql .= ", accountancy_code_buy";
-						$sql .= ", accountancy_code_sell";
-						$sql .= ") VALUES (";
-						$sql .= $this->id;
-						$sql .= ", " . $conf->entity;
-						$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
-						$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
-						$sql .= ")";
-						$result = $this->db->query($sql);
-						if (!$result) {
-							$error++;
-							$this->error = 'ErrorFailedToUpdateAccountancyForEntity';
-						}
+					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_perentity (";
+					$sql .= " fk_soc";
+					$sql .= ", entity";
+					$sql .= ", accountancy_code_buy";
+					$sql .= ", accountancy_code_sell";
+					$sql .= ") VALUES (";
+					$sql .= $this->id;
+					$sql .= ", " . $conf->entity;
+					$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
+					$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
+					$sql .= ")";
+					$result = $this->db->query($sql);
+					if (!$result) {
+						$error++;
+						$this->error = 'ErrorFailedToUpdateAccountancyForEntity';
 					}
 				}
 
