@@ -241,7 +241,7 @@ if ($defaultvalue) {
 }
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && !empty($debug)) ? '?debug=1' : '').'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
