@@ -589,6 +589,7 @@ class Form
 		if (!$htmltext) {
 			return $text;
 		}
+		$direction = (int) $direction;	// For backward compatibility when $direction was set to '' instead of 0
 
 		$tag = 'td';
 		if ($notabs == 2) {
