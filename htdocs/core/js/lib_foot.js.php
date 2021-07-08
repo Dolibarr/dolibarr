@@ -247,7 +247,7 @@ print 'jQuery(\'.clipboardCPButton, .clipboardCPValueToPrint\').click(function()
 	})'."\n";
 
 
-print "\n/* JS CODE TO ENABLE ClipBoard copy paste*/\n";
+print "\n/* JS CODE TO ENABLE DIALOG CONFIRM POPUP ON ACTION BUTTON */\n";
 print '$( document ).ready(function() {
 	$(document).on("click", \'.butActionConfirm\', function(event) {
 		event.preventDefault();
