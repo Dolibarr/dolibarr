@@ -135,7 +135,7 @@ if (($line->info_bits & 2) == 2) {
 	$format = (!empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 'dayhour' : 'day');
 
 	if ($line->fk_product > 0) {
-		print $form->textwithtooltip($text, $description, 3, '', '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
+		print $form->textwithtooltip($text, $description, 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
 	} else {
 		$type = (!empty($line->product_type) ? $line->product_type : $line->fk_product_type);
 		if ($type == 1) {
@@ -146,7 +146,7 @@ if (($line->info_bits & 2) == 2) {
 
 		if (!empty($line->label)) {
 			$text .= ' <strong>'.$line->label.'</strong>';
-			print $form->textwithtooltip($text, dol_htmlentitiesbr($line->description), 3, '', '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
+			print $form->textwithtooltip($text, dol_htmlentitiesbr($line->description), 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
 		} else {
 			if (!empty($line->fk_parent_line)) {
 				print img_picto('', 'rightarrow');
@@ -179,7 +179,7 @@ if (($line->info_bits & 2) == 2) {
 		}
 	} else {
 		if ($line->date_start || $line->date_end) {
-			print '<br><div class="clearboth nowraponall">'.get_date_range($line->date_start, $line->date_end, $format).'</div>';
+			print '<br><div class="clearboth nowraponall opacitymedium">'.get_date_range($line->date_start, $line->date_end, $format).'</div>';
 		}
 		//print get_date_range($line->date_start, $line->date_end, $format);
 	}

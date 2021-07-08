@@ -35,6 +35,7 @@ $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all',
 $search_group = GETPOST('search_group');
 $optioncss = GETPOST('optioncss', 'alpha');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
+$contextpage = GETPOST('optioncss', 'aZ09');
 
 // Defini si peux lire/modifier utilisateurs et permisssions
 $caneditperms = ($user->admin || $user->rights->user->user->creer);
@@ -168,7 +169,6 @@ if ($resql) {
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="mode" value="'.$mode.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 	print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'object_group', 0, $newcardbutton, '', $limit, 0, 0, 1);
