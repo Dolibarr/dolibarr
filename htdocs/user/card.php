@@ -1451,7 +1451,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 			} else {
 				$huser = new User($db);
-				if ($huser->fetch($object->fk_user) > 0) {
+				if ($object->fk_user > 0) {
+					$huser->fetch($object->fk_user);
 					print $huser->getNomUrl(1);
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
