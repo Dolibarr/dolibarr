@@ -127,7 +127,6 @@ PriceByCustomer=Diferentes precios para cada cliente
 PriceCatalogue=Un único precio de venta por producto / servicio
 PricingRule=Reglas para los precios de venta.
 AddCustomerPrice=Agregar precio por cliente
-ForceUpdateChildPriceSoc=Establezca el mismo precio en las subsidiarias de los clientes
 PriceByCustomerLog=Registro de precios anteriores de los clientes
 MinimumPriceLimit=El precio mínimo no puede ser inferior a %s
 PriceExpressionSelected=Expresión de precio seleccionado

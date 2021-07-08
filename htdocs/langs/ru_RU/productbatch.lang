@@ -1,4 +1,4 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Использовать номер партии/серийный номер
 ProductStatusOnBatch=Да (требуется лот) 
 ProductStatusOnSerial=Да (требуется уникальный серийный номер)
@@ -30,6 +30,16 @@ BatchLotNumberingModules=Опции для автоматического соз
 BatchSerialNumberingModules=Опции для автоматического создания серийной продукции по серийным номерам 
 ManageLotMask=Пользовательская маска
 CustomMasks=Добавляет возможность определения маски в карточке товара
-LotProductTooltip=Adds an option in the product card to define a dedicated batch number mask
-SNProductTooltip=Adds an option in the product card to define a dedicated serial number mask
+LotProductTooltip=Добавляет параметр в карточку продукта для определения специальной маски номера партии
+SNProductTooltip=Добавляет параметр в карточку продукта для определения специальной маски серийного номера
 QtyToAddAfterBarcodeScan=Кол-во для добавления для каждого отсканированного штрих-кода / партии / серийного номера 
+LifeTime=Продолжительность жизни (в днях)
+EndOfLife=Конец жизни
+ManufacturingDate=Дата производства
+DestructionDate=Дата разрушения
+FirstUseDate=Дата первого использования
+QCFrequency=Периодичность контроля качества (в днях)
+
+#Traceability - qc status
+OutOfOrder=Не работает
+InWorkingOrder=В рабочем порядке

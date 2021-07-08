@@ -44,4 +44,4 @@ ValidateOrderFirstBeforeReception=Nejprve musíte potvrdit objednávku, než bud
 ReceptionsNumberingModules=Modul číslování pro recepce
 ReceptionsReceiptModel=Šablony dokumentů pro recepce
 NoMorePredefinedProductToDispatch=Žádné další předdefinované produkty k odeslání
-
+ReceptionExist=A reception exists

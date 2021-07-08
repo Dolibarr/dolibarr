@@ -173,7 +173,7 @@ class Conf
 	{
 		dol_syslog(get_class($this)."::setValues");
 
-		if (!defined('NOREQUIREDB')) {
+		if (!is_null($db) && is_object($db)) {
 			// Define all global constants into $this->global->key=value
 			$sql = "SELECT ".$db->decrypt('name')." as name,";
 			$sql .= " ".$db->decrypt('value')." as value, entity";

@@ -86,6 +86,9 @@ DELETE FROM llx_user_param where param = 'MAIN_THEME' and value in ('auguria', '
 
 -- For v14
 
+UPDATE llx_c_ticket_type set label = 'Issue or bug' WHERE code = 'ISSUE';
+INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('PROBLEM', '22', 'Problem', 0, 0, NULL);
+
 ALTER TABLE llx_import_model MODIFY COLUMN type varchar(64);
 ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
 
@@ -425,6 +428,10 @@ create table llx_eventorganization_conferenceorboothattendee_extrafields
 ALTER TABLE llx_eventorganization_conferenceorboothattendee_extrafields ADD INDEX idx_conferenceorboothattendee_fk_object(fk_object);
 
 ALTER TABLE llx_c_ticket_category ADD COLUMN public integer DEFAULT 0;
+
+-- VPGSQL8.2 ALTER TABLE llx_c_ticket_category ALTER COLUMN pos TYPE INTEGER USING pos::INTEGER;
+-- VPGSQL8.2 ALTER TABLE llx_c_ticket_category ALTER COLUMN pos SET NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_c_ticket_category ALTER COLUMN pos SET DEFAULT 0;
 ALTER TABLE llx_c_ticket_category MODIFY COLUMN pos	integer DEFAULT 0 NOT NULL;
 
 

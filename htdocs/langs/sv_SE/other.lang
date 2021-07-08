@@ -129,6 +129,7 @@ ClosedByLogin=Användarinloggning som stängde
 FileWasRemoved=Arkiv %s togs bort
 DirWasRemoved=Nummer %s togs bort
 FeatureNotYetAvailable=Funktionen är ännu inte tillgänglig i den nuvarande versionen
+FeatureNotAvailableOnDevicesWithoutMouse=Feature not available on devices without mouse
 FeaturesSupported=Stödda funktioner
 Width=Bredd
 Height=Höjd
@@ -263,7 +264,7 @@ ContactCreatedByEmailCollector=Kontakt / adress skapad via e-post samlare från 
 ProjectCreatedByEmailCollector=Projekt skapat av e-post samlare från email MSGID %s
 TicketCreatedByEmailCollector=Biljett skapad av e-post samlare från email MSGID %s
 OpeningHoursFormatDesc=Use a - to separate opening and closing hours.<br>Use a space to enter different ranges.<br>Example: 8-12 14-18
-PrefixSession=Prefix for session ID
+SuffixSessionName=Suffix for session name
 
 ##### Export #####
 ExportsArea=Export område

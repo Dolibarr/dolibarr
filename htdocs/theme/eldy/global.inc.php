@@ -209,7 +209,7 @@ input, select {
 	margin-bottom: 1px;
 	margin-top: 1px;
 }
-#mainbody input.button:not(.buttongen):not(.bordertransp) {
+#mainbody input.button:not(.buttongen):not(.bordertransp), #mainbody a.button:not(.buttongen):not(.bordertransp) {
 	background: var(--butactionbg);
 	color: #FFF !important;
 	border-radius: 3px;
@@ -2640,7 +2640,7 @@ table.login_table_securitycode tr td {
 }
 
 div.backgroundsemitransparent {
-	background:rgba(255,255,255,0.68);
+	background:rgba(255, 255, 255, 0.7);
 	padding-left: 10px;
 	padding-right: 10px;
 }
@@ -3922,6 +3922,11 @@ table.noborder.paymenttable {
 	box-shadow: 1px 1px 7px #CCC !important;
 }
 
+.boxshadow {
+	-webkit-box-shadow: 0px 0px 5px #888;
+	box-shadow: 0px 0px 5px #888;
+}
+
 div.tabBar .noborder {
 	-webkit-box-shadow: 0px 0px 0px #DDD !important;
 	box-shadow: 0px 0px 0px #DDD !important;
@@ -4708,7 +4713,9 @@ div.visible {
 div.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
 }
-
+.unvisible {
+	visibility: hidden;
+}
 tr.visible {
 	display: block;
 }

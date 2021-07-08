@@ -396,3 +396,5 @@ ActionAvailableOnVariantProductOnly=A művelet csak a termék változatánál é
 ProductsPricePerCustomer=Termékárak vevőnként
 ProductSupplierExtraFields=További tulajdonságok (szállítói árak)
 DeleteLinkedProduct=Törölje a kombinációhoz kapcsolt gyermekterméket
+PMPValue=Súlyozott átlagár
+PMPValueShort=SÁÉ

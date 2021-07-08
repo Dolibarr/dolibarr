@@ -74,6 +74,8 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))) {
 			}
 		}
 	}
+
+	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 }
 
 

@@ -131,7 +131,7 @@ InvoiceLinesDone=Línies de factura comptabilitzades
 ExpenseReportLines=Línies d'informes de despeses a comptabilitzar
 ExpenseReportLinesDone=Línies comptabilitzades d'informes de despeses
 IntoAccount=Línia comptabilitzada amb el compte comptable
-TotalForAccount=Total accounting account
+TotalForAccount=Compte comptable total
 
 
 Ventilate=Comptabilitza
@@ -158,7 +158,7 @@ ACCOUNTING_LENGTH_AACCOUNT=Longitud dels subcomptes (Si s'estableix el valor a 6
 ACCOUNTING_MANAGE_ZERO=Gestiona un nombre diferent de zero al final d'un compte comptable. És necessari per a alguns països (com Suïssa). Si es manté apagat (per defecte), podeu configurar els següents dos paràmetres per a demanar a l'aplicació d'afegir zeros virtuals.
 BANK_DISABLE_DIRECT_INPUT=Desactiva el registre directe de transaccions al compte bancari
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Habilita l'exportació d'esborrany en el diari
-ACCOUNTANCY_COMBO_FOR_AUX=Activa la llista de combo per al compte subsidiari (pot ser lent si tens molts tercers)
+ACCOUNTANCY_COMBO_FOR_AUX=Activa la llista combinada per a un compte subsidiari (pot ser lent si tens molts tercers, trenca la capacitat de cerca en una part del valor)
 ACCOUNTING_DATE_START_BINDING=Definiu una data per a començar la vinculació i transferència a la comptabilitat. Per sota d’aquesta data, les transaccions no es transferiran a la comptabilitat.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=En el cas de transferència de comptabilitat, seleccioneu el període a mostrar per defecte
 
@@ -202,7 +202,7 @@ Docref=Referència
 LabelAccount=Etiqueta de compte
 LabelOperation=Etiqueta de l'operació
 Sens=Direcció
-AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you have received<br>For an accounting account of a supplier, use Debit to record a payment you made
+AccountingDirectionHelp=Per a un compte comptable d'un client, utilitzeu Crèdit per registrar un pagament que heu rebut <br> Per a un compte comptable d'un proveïdor, utilitzeu Dèbit per registrar el pagament que heu fet
 LetteringCode=Codi de retolació
 Lettering=Lletres
 Codejournal=Diari
@@ -297,7 +297,7 @@ NoNewRecordSaved=No hi ha més registres pel diari
 ListOfProductsWithoutAccountingAccount=Llista de productes no comptabilitzats en cap compte comptable
 ChangeBinding=Canvia la comptabilització
 Accounted=Comptabilitzat en el llibre major
-NotYetAccounted=Not yet accounted in the ledger
+NotYetAccounted=Encara no es dóna compte al llibre major
 ShowTutorial=Mostrar Tutorial
 NotReconciled=No conciliat
 WarningRecordWithoutSubledgerAreExcluded=Advertiment: totes les operacions sense subcompte comptable definit es filtren i s'exclouen d'aquesta vista
@@ -328,6 +328,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Desactiva la vinculació i transferènci
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Desactiva la vinculació i transferència de comptes en els informes de despeses (els informes de despeses no es tindran en compte a la comptabilitat)
 
 ## Export
+NotifiedExportDate=Notified export date (modification of the entries will not be possible)
+NotifiedValidationDate=Validation of the entries (modification or deletion of the entries will not be possible)
+ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=Exporta els esborranys del llibre
 Modelcsv=Model d'exportació
 Selectmodelcsv=Selecciona un model d'exportació
@@ -402,29 +405,29 @@ UseMenuToSetBindindManualy=Línies encara no enllaçades, utilitzeu el menú <a 
 
 ## Import
 ImportAccountingEntries=Entrades de comptabilitat
-ImportAccountingEntriesFECFormat=Accounting entries - FEC format
-FECFormatJournalCode=Code journal (JournalCode)
-FECFormatJournalLabel=Label journal (JournalLib)
-FECFormatEntryNum=Piece number (EcritureNum)
-FECFormatEntryDate=Piece date (EcritureDate)
-FECFormatGeneralAccountNumber=General account number (CompteNum)
-FECFormatGeneralAccountLabel=General account label (CompteLib)
-FECFormatSubledgerAccountNumber=Subledger account number (CompAuxNum)
-FECFormatSubledgerAccountLabel=Subledger account number (CompAuxLib)
-FECFormatPieceRef=Piece ref (PieceRef)
-FECFormatPieceDate=Piece date creation (PieceDate)
-FECFormatLabelOperation=Label operation (EcritureLib)
-FECFormatDebit=Debit (Debit)
-FECFormatCredit=Credit (Credit)
-FECFormatReconcilableCode=Reconcilable code (EcritureLet)
-FECFormatReconcilableDate=Reconcilable date (DateLet)
-FECFormatValidateDate=Piece date validated (ValidDate)
-FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
-FECFormatMulticurrencyCode=Multicurrency code (Idevise)
+ImportAccountingEntriesFECFormat=Entrades comptables: format FEC
+FECFormatJournalCode=Diari de codis (JournalCode)
+FECFormatJournalLabel=Etiqueta de diari (JournalLib)
+FECFormatEntryNum=Número de peça (EcritureNum)
+FECFormatEntryDate=Data de la peça (EcritureDate)
+FECFormatGeneralAccountNumber=Número de compte general (CompteNum)
+FECFormatGeneralAccountLabel=Etiqueta de compte general (CompteLib)
+FECFormatSubledgerAccountNumber=Número de compte de Subledger (CompAuxNum)
+FECFormatSubledgerAccountLabel=Número de compte de Subledger (CompAuxLib)
+FECFormatPieceRef=Peça ref (PieceRef)
+FECFormatPieceDate=Creació de la data de la peça (PieceDate)
+FECFormatLabelOperation=Funcionament de l'etiqueta (EcritureLib)
+FECFormatDebit=Dèbit (dèbit)
+FECFormatCredit=Crèdit (Crèdit)
+FECFormatReconcilableCode=Codi reconciliable (EcritureLet)
+FECFormatReconcilableDate=Data conciliable (DateLet)
+FECFormatValidateDate=Data de validació de la peça (ValidDate)
+FECFormatMulticurrencyAmount=Import de múltiples divises (Montantdevise)
+FECFormatMulticurrencyCode=Codi multidivisa (Idevise)
 
 DateExport=Data d'exportació
 WarningReportNotReliable=Avís, aquest informe no està basat en el Llibre Major, de manera que no conté assentaments modificats manualment en el Llibre Major. Si el registre diari està actualitzat, la vista de comptes és més precisa.
 ExpenseReportJournal=Diari d'informe de despeses
 InventoryJournal=Diari d'inventari
 
-NAccounts=%s accounts
+NAccounts=comptes %s

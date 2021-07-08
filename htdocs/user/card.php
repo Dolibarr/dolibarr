@@ -1040,6 +1040,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	// State
 	if (empty($conf->global->USER_DISABLE_STATE)) {
 		print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
+		print img_picto('', 'state', 'class="pictofixedwidth"');
 		print $formcompany->select_state($object->state_id, $object->country_code, 'state_id');
 		print '</td></tr>';
 	}
@@ -1420,10 +1421,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if ($object->socid > 0) {
 				$type = $langs->trans("External");
 			}
+			print '<span class="badgeneutral">';
 			print $type;
 			if ($object->ldap_sid) {
 				print ' ('.$langs->trans("DomainUser").')';
 			}
+			print '</span>';
 			print '</td></tr>'."\n";
 
 			// Ldap sid
@@ -1533,7 +1536,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				// Salary
 				print '<tr><td>'.$langs->trans("Salary").'</td>';
 				print '<td>';
-				print ($object->salary != '' ? img_picto('', 'salary', 'class="pictofixedwidth paddingright"').price($object->salary, '', $langs, 1, -1, -1, $conf->currency) : '');
+				print ($object->salary != '' ? img_picto('', 'salary', 'class="pictofixedwidth paddingright"').'<span class="amount">'.price($object->salary, '', $langs, 1, -1, -1, $conf->currency) : '').'</span>';
 				print '</td>';
 				print "</tr>\n";
 			}
@@ -2363,6 +2366,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if (empty($conf->global->USER_DISABLE_STATE)) {
 				print '<tr><td class="tdoverflow">'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td>';
 				if ($caneditfield) {
+					print img_picto('', 'state', 'class="pictofixedwidth"');
 					print $formcompany->select_state($object->state_id, $object->country_code, 'state_id');
 				} else {
 					print $object->state_label;

@@ -44,4 +44,4 @@ ValidateOrderFirstBeforeReception=受付を行う前に、まず注文を確認�
 ReceptionsNumberingModules=受付のナンバリングモジュール
 ReceptionsReceiptModel=受付のドキュメントテンプレート
 NoMorePredefinedProductToDispatch=ディスパッチする事前定義された製品はもうない
-
+ReceptionExist=レセプションがある

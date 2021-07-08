@@ -2050,7 +2050,7 @@ class Project extends CommonObject
 				$response->nbtodo++;
 
 				$project_static->statut = $obj->status;
-				$project_static->opp_status = $obj->opp_status;
+				$project_static->opp_status = $obj->fk_opp_status;
 				$project_static->datee = $this->db->jdate($obj->datee);
 
 				if ($project_static->hasDelay()) {
