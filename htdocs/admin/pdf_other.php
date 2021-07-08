@@ -78,7 +78,8 @@ $head = pdf_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'other', $langs->trans("other"), -1, 'pdf');
 
-print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("PDFOtherDesc"), $s)."</span><br>\n";
+$tooltiptext = '';
+print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("PDFOtherDesc"), $tooltiptext)."</span><br>\n";
 print "<br>\n";
 
 print load_fiche_titre($langs->trans("Proposal"), '', '');
