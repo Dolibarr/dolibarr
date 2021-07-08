@@ -1639,8 +1639,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						if ($object->status_batch == '1' && getDolGlobalString('PRODUCTBATCH_LOT_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced') {
 							$mask = !empty($object->batch_mask) ? $object->batch_mask : getDolGlobalString('LOT_ADVANCED_MASK');
 						}
-						if ($object->status_batch == '2' && getDolGlobalString('PRODUCTBATCH_SN_USE_PRODUCT_MASKS') && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced') {
-							$mask = !empty($object->batch_mask) ? $object->batch_mask : $conf->global->SN_ADVANCED_MASK;
+						if ($object->status_batch == '2' && getDolGlobalString('PRODUCTBATCH_SN_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced') {
+							$mask = !empty($object->batch_mask) ? $object->batch_mask : getDolGlobalString('SN_ADVANCED_MASK');
 						}
 						$inherited_mask_lot = getDolGlobalString('LOT_ADVANCED_MASK');
 						$inherited_mask_sn = getDolGlobalString('SN_ADVANCED_MASK');
