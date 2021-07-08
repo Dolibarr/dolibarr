@@ -114,7 +114,7 @@ if (GETPOST('save', 'alpha'))
 		$error++;
 	}
 
-	$fckeditor_test = GETPOST('formtestfield');
+	$fckeditor_test = GETPOST('formtestfield', 'restricthtml');
 	if (!empty($fckeditor_test)) {
 		if (!dolibarr_set_const($db, 'FCKEDITOR_TEST', $fckeditor_test, 'chaine', 0, '', $conf->entity)) {
 			$error++;
