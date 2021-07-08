@@ -514,7 +514,7 @@ if ($search_status <> '') {
 		$sql .= ' AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))'; // validated, in process or closed but not billed
 	}
 
-	if ($search_status == -4)	//  "To validate and in progress"
+	if ($search_status == -4)	//  "validate and in progress"
 	{
 		$sql .= ' AND (c.fk_statut IN (1,2))'; // validated, in process
 	}
