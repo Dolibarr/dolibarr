@@ -201,11 +201,13 @@ if ($action == 'validatehistory') {
 				}
 			}
 
-			// Level 3: Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
-			if (!empty($objp->company_code_sell)) {
-				$objp->code_sell_t = $objp->company_code_sell;
-				$objp->aarowid_suggest = $objp->aarowid_thirdparty;
-				$suggestedaccountingaccountfor = '';
+			if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
+				// Level 3: Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
+				if (!empty($objp->company_code_sell)) {
+					$objp->code_sell_t = $objp->company_code_sell;
+					$objp->aarowid_suggest = $objp->aarowid_thirdparty;
+					$suggestedaccountingaccountfor = '';
+				}
 			}
 
 			if ($objp->aarowid_suggest > 0) {
