@@ -1651,17 +1651,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						$(document).ready(function() {
 							$("#field_mask").parent().addClass("hideobject");
 							var preselect = document.getElementById("status_batch");';
-						if ($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS)
-						{
-						print 'if (preselect.value == "2") {
-								$("#field_mask").parent().removeClass("hideobject");
-							}';
+						if ($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS) {
+							print 'if (preselect.value == "2") {
+									$("#field_mask").parent().removeClass("hideobject");
+								}';
 						}
-						if ($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS)
-						{
-						print 'if (preselect.value == "1") {
-								$("#field_mask").parent().removeClass("hideobject");
-							}';
+						if ($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS) {
+							print 'if (preselect.value == "1") {
+									$("#field_mask").parent().removeClass("hideobject");
+								}';
 						}
 						print '$("#status_batch").on("change", function () {
 								var optionSelected = $("option:selected", this);
