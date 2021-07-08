@@ -4434,7 +4434,7 @@ class Form
                          			var more = "";
 									var inputvalue;
                          			if ($("input[name=\'" + inputname + "\']").attr("type") == "radio") {
-										inputvalue = $("input[name=\'" + inputname + "\']").val();
+										inputvalue = $("input[name=\'" + inputname + "\']:checked").val();
 									} else {
                          		    	if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
                          				inputvalue = $("#" + inputname + more).val();
