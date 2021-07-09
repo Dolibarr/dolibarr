@@ -42,9 +42,11 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$search_user = GETPOST('search_user', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
+$contextpage = GETPOST('optioncss', 'aZ09');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
 // Load mode employee
 $mode = GETPOST("mode", 'alpha');
@@ -94,7 +96,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 	$data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
 	foreach ($fulltree as $key => $val) {
 		$userstatic->id = $val['id'];
-		$userstatic->ref = $val['label'];
+		$userstatic->ref = $val['id'];
 		$userstatic->login = $val['login'];
 		$userstatic->firstname = $val['firstname'];
 		$userstatic->lastname = $val['lastname'];
@@ -145,6 +147,8 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 
 	$newcardbutton = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1' : '').'&leftmenu=', '', $canadduser);
+
+	$morehtmlright = '';
 
 	$morehtmlright .= dolGetButtonTitle($langs->trans("List"), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : ''));
 	$param = array('morecss'=>'marginleftonly btnTitleSelected');

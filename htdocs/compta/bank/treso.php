@@ -163,8 +163,8 @@ if (GETPOST("account") || GETPOST("ref")) {
 	$sqls[] = $sql;
 
 	// Social contributions
-	$sql = " SELECT 'social_contribution' as family, cs.rowid as objid, cs.libelle as ref, (-1*cs.amount) as total_ttc, ccs.libelle as type, cs.date_ech as dlr";
-	$sql .= ", cs.fk_account";
+	$sql = " SELECT 'social_contribution' as family, cs.rowid as objid, cs.libelle as ref, (-1*cs.amount) as total_ttc, ccs.libelle as type, cs.date_ech as dlr,";
+	$sql .= " 0 as socid, 'noname' as name, 0 as fournisseur";
 	$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as ccs ON cs.fk_type = ccs.id";
 	$sql .= " WHERE cs.entity = ".$conf->entity;
@@ -188,7 +188,18 @@ if (GETPOST("account") || GETPOST("ref")) {
 		$resql = $db->query($sql);
 		if ($resql) {
 			while ($sqlobj = $db->fetch_object($resql)) {
-				$tab_sqlobj[] = $sqlobj;
+				$tmpobj = new stdClass();
+				$tmpobj->family = $sqlobj->family;
+				$tmpobj->objid = $sqlobj->objid;
+				$tmpobj->ref = $sqlobj->ref;
+				$tmpobj->total_ttc = $sqlobj->total_ttc;
+				$tmpobj->type = $sqlobj->type;
+				$tmpobj->dlt = $sqlobj->dlr;
+				$tmpobj->socid = $sqlobj->socid;
+				$tmpobj->name = $sqlobj->name;
+				$tmpobj->fournisseur = $sqlobj->fournisseur;
+
+				$tab_sqlobj[] = $tmpobj;
 				$tab_sqlobjOrder[] = $db->jdate($sqlobj->dlr);
 			}
 			$db->free($resql);
@@ -200,15 +211,6 @@ if (GETPOST("account") || GETPOST("ref")) {
 	// Sort array
 	if (!$error) {
 		array_multisort($tab_sqlobjOrder, $tab_sqlobj);
-
-		// Apply distinct filter
-		foreach ($tab_sqlobj as $key => $value) {
-			$tab_sqlobj[$key] = "'".serialize($value)."'";
-		}
-		$tab_sqlobj = array_unique($tab_sqlobj);
-		foreach ($tab_sqlobj as $key => $value) {
-			$tab_sqlobj[$key] = unserialize(trim($value, "'"));
-		}
 
 		$num = count($tab_sqlobj);
 

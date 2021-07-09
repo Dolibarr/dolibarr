@@ -72,7 +72,7 @@ if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES)) {
 						}
 						// If the preview file is found
 						if (file_exists($fileimage)) {
-							$thumbshown = '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
+							$thumbshown = '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=apercu'.urlencode($modulepart).'&file='.urlencode($relativepathimage).'">';
 						}
 					}
 				}

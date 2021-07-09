@@ -697,7 +697,8 @@ class FormTicket
 			if ($num_rows == 1) {
 				return '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.dol_escape_htmltag($groupvalue).'">';
 			}
-			$stringtoprint .= '</select>&nbsp';
+			$stringtoprint .= '</select>&nbsp;';
+
 			$levelid = 1;
 			while ($levelid <= $use_multilevel) {
 				$tabscript = array();
@@ -741,7 +742,7 @@ class FormTicket
 							$iselected = $groupticketchild == $obj->code ?'selected':'';
 							$stringtoprint .= '<option '.$iselected.' class="'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
 							if (empty($tabscript[$groupcodefather])) {
-								$tabscript[$groupcodefather] = 'if($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'")[0].value == "'.dol_escape_js($groupcodefather).'"){
+								$tabscript[$groupcodefather] = 'if ($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'")[0].value == "'.dol_escape_js($groupcodefather).'"){
 									$(".'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'").show()
 									console.log("We show childs tickets of '.$groupcodefather.' group ticket")
 								}else{
@@ -756,23 +757,31 @@ class FormTicket
 					dol_print_error($this->db);
 				}
 				$stringtoprint .='</select>';
+				//$stringtoprint .= ajax_combobox($htmlname.'_child_'.$levelid);
 
 				$stringtoprint .='<script>';
 				$stringtoprint .='arraynotparents = '.json_encode($arraycodenotparent).';';
 				$stringtoprint .='if (arraynotparents.includes($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'")[0].value)){$("#'.$htmlname.'_child_'.$levelid.'").hide()}
+
 				$("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'").change(function() {
-					child_id = this.attributes.child_id.value;
+					child_id = $("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'").attr("child_id");
+				    console.log("We select a new value into combo child_id="+child_id);
+
+					/* Hide all selected box that are child of the one modified */
 					$(".groupticketchild").each(function(){
-						if(this.attributes.child_id.value > child_id){
-							this.value = ""
-							$(this).attr("style", "display : none;")
+						if ($(this).attr("child_id") > child_id) {
+							console.log("hide child_id="+$(this).attr("child_id"));
+							$(this).val("");
+							$(this).hide();
 						}
 					})
-					$("#'.$htmlname.'_child_'.$levelid.'")[0].value = ""
+
+					/* Now we enable the next combo */
+					$("#'.$htmlname.'_child_'.$levelid.'").val("");
 					if (!arraynotparents.includes(this.value)) {
-					$("#'.$htmlname.'_child_'.$levelid.'").show()
+						$("#'.$htmlname.'_child_'.$levelid.'").show()
 					} else {
-					$("#'.$htmlname.'_child_'.$levelid.'").hide()
+						$("#'.$htmlname.'_child_'.$levelid.'").hide()
 					}
 				';
 				$levelid++;
@@ -782,6 +791,8 @@ class FormTicket
 				$stringtoprint .='})';
 				$stringtoprint .='</script>';
 			}
+			$stringtoprint .= ajax_combobox($htmlname);
+
 			return $stringtoprint;
 		}
 	}

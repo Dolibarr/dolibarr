@@ -507,13 +507,15 @@ print "<br>";
 
 print "<br>";
 
-print load_fiche_titre($langs->trans("ProductOtherConf"), '', '');
-
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="other">';
 print '<input type="hidden" name="page_y" value="">';
+
+
+print load_fiche_titre($langs->trans("ProductOtherConf"), '', '');
+
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
@@ -592,6 +594,38 @@ print $form->selectPriceBaseType($conf->global->PRODUCT_PRICE_BASE_TYPE, "price_
 print '</td>';
 print '</tr>';
 
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("UseProductFournDesc").'</td>';
+	print '<td class="right">';
+	print $form->selectyesno("activate_useProdFournDesc", (!empty($conf->global->PRODUIT_FOURN_TEXTS) ? $conf->global->PRODUIT_FOURN_TEXTS : 0), 1);
+	print '</td>';
+	print '</tr>';
+
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("UseProductSupplierPackaging").'</td>';
+	print '<td align="right">';
+	print $form->selectyesno("activate_useProdSupplierPackaging", (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING) ? $conf->global->PRODUCT_USE_SUPPLIER_PACKAGING : 0), 1);
+	print '</td>';
+	print '</tr>';
+}
+
+print '</table>';
+
+print '<div class="center">';
+print '<input type="submit" class="button reposition" value="'.$langs->trans("Modify").'">';
+print '</div>';
+
+
+print load_fiche_titre($langs->trans("UserInterface"), '', '');
+
+
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameters").'</td>'."\n";
+print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+print '</tr>'."\n";
+
 // Use Ajax form to select a product
 
 print '<tr class="oddeven">';
@@ -624,9 +658,10 @@ if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) {
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("OnProductSelectAddProductDesc").'</td>';
 print '<td class="right">';
+print '<!-- PRODUIT_AUTOFILL_DESC -->';
 print $form->selectarray(
 	"activate_FillProductDescAuto",
-	array(1=>'AutoFillFormFieldBeforeSubmit', 0=>'DoNotAutofillButAutoConcat', -1=>'DoNotUseDescriptionOfProdut'),
+	array(0=>'DoNotAutofillButAutoConcat', 1=>'AutoFillFormFieldBeforeSubmit', 2=>'DoNotUseDescriptionOfProdut'),
 	empty($conf->global->PRODUIT_AUTOFILL_DESC) ? 0 : $conf->global->PRODUIT_AUTOFILL_DESC,
 	0,
 	0,
@@ -678,22 +713,6 @@ if (!empty($conf->global->MAIN_MULTILANGS)) {
 	print '<td>'.$langs->trans("ViewProductDescInThirdpartyLanguageAbility").'</td>';
 	print '<td class="right">';
 	print $form->selectyesno("activate_viewProdTextsInThirdpartyLanguage", (!empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) ? $conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE : 0), 1);
-	print '</td>';
-	print '</tr>';
-}
-
-if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("UseProductFournDesc").'</td>';
-	print '<td class="right">';
-	print $form->selectyesno("activate_useProdFournDesc", (!empty($conf->global->PRODUIT_FOURN_TEXTS) ? $conf->global->PRODUIT_FOURN_TEXTS : 0), 1);
-	print '</td>';
-	print '</tr>';
-
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("UseProductSupplierPackaging").'</td>';
-	print '<td align="right">';
-	print $form->selectyesno("activate_useProdSupplierPackaging", (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING) ? $conf->global->PRODUCT_USE_SUPPLIER_PACKAGING : 0), 1);
 	print '</td>';
 	print '</tr>';
 }
