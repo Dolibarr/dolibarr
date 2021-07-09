@@ -49,13 +49,19 @@ if ($id > 0) {
 $permissionnote = $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('contactcard'));
+// $hookmanager->initHooks(array('contactcard')); -> Name conflict with product/card.php
+$hookmanager->initHooks(array('contactnote'));
+
 
 /*
  * Actions
  */
+$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) 
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
+if (empty($reshook)) 
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
 
 /*

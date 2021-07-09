@@ -63,11 +63,18 @@ if ($object->id > 0) {
 }
 
 
+$hookmanager->initHooks(array('productnote'));
+
+
 /*
  * Actions
  */
+$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) 
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
+if (empty($reshook)) 
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
 
 /*
