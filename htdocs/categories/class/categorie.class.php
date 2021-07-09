@@ -263,15 +263,16 @@ class Categorie extends CommonObject
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('constructCategory', $parameters, $this); // Note that $action and $object may have been modified by some hooks
 			if ($reshook >= 0 && !empty($hookmanager->resArray)) {
-				$mapList = $hookmanager->resArray;
-				$mapId   = $mapList['id'];
-				$mapCode = $mapList['code'];
-				self::$MAP_ID_TO_CODE[$mapId] = $mapCode;
-				$this->MAP_ID[$mapCode] = $mapId;
-				$this->MAP_CAT_FK[$mapCode] = $mapList['cat_fk'];
-				$this->MAP_CAT_TABLE[$mapCode] = $mapList['cat_table'];
-				$this->MAP_OBJ_CLASS[$mapCode] = $mapList['obj_class'];
-				$this->MAP_OBJ_TABLE[$mapCode] = $mapList['obj_table'];
+				foreach ($hookmanager->resArray as $mapList) {
+					$mapId = $mapList['id'];
+					$mapCode = $mapList['code'];
+					self::$MAP_ID_TO_CODE[$mapId] = $mapCode;
+					$this->MAP_ID[$mapCode] = $mapId;
+					$this->MAP_CAT_FK[$mapCode] = $mapList['cat_fk'];
+					$this->MAP_CAT_TABLE[$mapCode] = $mapList['cat_table'];
+					$this->MAP_OBJ_CLASS[$mapCode] = $mapList['obj_class'];
+					$this->MAP_OBJ_TABLE[$mapCode] = $mapList['obj_table'];
+				}
 			}
 		}
 	}
