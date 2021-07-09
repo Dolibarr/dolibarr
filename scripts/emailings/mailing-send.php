@@ -86,6 +86,11 @@ if (!empty($conf->global->MAILING_DELAY)) {
 if ($conf->global->MAILING_LIMIT_SENDBYCLI == '-1') {
 }
 
+if (!empty($dolibarr_main_db_readonly)) {
+	print "Error: instance in read-only mode\n";
+	exit(-1);
+}
+
 $user = new User($db);
 // for signature, we use user send as parameter
 if (!empty($login)) {

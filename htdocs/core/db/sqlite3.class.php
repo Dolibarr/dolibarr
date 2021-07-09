@@ -397,7 +397,7 @@ class DoliDBSqlite3 extends DoliDB
 	 */
 	public function query($query, $usesavepoint = 0, $type = 'auto')
 	{
-		global $conf;
+		global $conf, $dolibarr_main_db_readonly;
 
 		$ret = null;
 
@@ -453,6 +453,15 @@ class DoliDBSqlite3 extends DoliDB
 		}
 		if (empty($query)) {
 			return false; // Return false = error if empty request
+		}
+
+		if (!empty($dolibarr_main_db_readonly)) {
+			if (preg_match('/^(INSERT|UPDATE|DELETE|CREATE|ALTER|TRUNCATE|DROP)/i', $query)) {
+				$this->lasterror = 'Application in read-only mode';
+				$this->lasterrno = 'APPREADONLY';
+				$this->lastquery = $query;
+				return false;
+			}
 		}
 
 		// Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
