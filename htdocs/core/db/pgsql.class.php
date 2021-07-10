@@ -532,7 +532,7 @@ class DoliDBPgsql extends DoliDB
 		}
 
 		if (!empty($dolibarr_main_db_readonly)) {
-			if (preg_match('/^(INSERT|UPDATE|DELETE|CREATE|ALTER|TRUNCATE|DROP)/i', $query)) {
+			if (preg_match('/^(INSERT|UPDATE|REPLACE|DELETE|CREATE|ALTER|TRUNCATE|DROP)/i', $query)) {
 				$this->lasterror = 'Application in read-only mode';
 				$this->lasterrno = 'APPREADONLY';
 				$this->lastquery = $query;
