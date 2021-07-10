@@ -1628,7 +1628,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
 					print $form->selectarray('status_batch', $statutarray, $object->status_batch);
 					print '</td></tr>';
-					if ($object->status_batch !== '0') {
+					if (!empty($object->status_batch) || !empty($conf->use_javascript_ajax)) {
 						$langs->load("admin");
 						$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
 						$tooltip .= '<br>'.$langs->trans("GenericMaskCodes2");
