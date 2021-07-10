@@ -1859,7 +1859,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$sub2 = 1;
 			}
 
-			if ($conf->use_javascript_ajax) {
+			if (!empty($conf->use_javascript_ajax)) {
 				print "\n".'<script type="text/javascript">';
 				print '$(document).ready(function () {
     			var val='.$sub.';
