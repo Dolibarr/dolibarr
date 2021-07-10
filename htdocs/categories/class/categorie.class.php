@@ -1499,6 +1499,9 @@ class Categorie extends CommonObject
 			$sql = "SELECT ct.fk_categorie, c.label, c.rowid";
 			$sql .= " FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type])." as ct, ".MAIN_DB_PREFIX."categorie as c";
 			$sql .= " WHERE ct.fk_categorie = c.rowid AND ct.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = ".(int) $id;
+			// This seems useless because the table already contains id of category of 1 unique type. So commented.
+			// So now it works also with external added categories.
+			//$sql .= " AND c.type = ".$this->MAP_ID[$type];
 			$sql .= " AND c.entity IN (".getEntity('category').")";
 
 			$res = $this->db->query($sql);
