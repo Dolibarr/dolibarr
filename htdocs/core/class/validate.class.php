@@ -49,7 +49,8 @@ class Validate
 	 *    Constructor
 	 *
 	 * @param DoliDB $db Database handler
-	 * @param Translate   $outputLang
+	 * @param Translate   $outputLang output lang for error
+	 * @return null
 	 */
 	public function __construct($db, $outputLang = false)
 	{
@@ -68,6 +69,7 @@ class Validate
 
 	/**
 	 * Use to clear errors msg or other ghost vars
+	 * @return null
 	 */
 	protected function clear()
 	{
@@ -76,6 +78,9 @@ class Validate
 
 	/**
 	 * Use to clear errors msg or other ghost vars
+	 *
+	 * @param string $errMsg your error message
+	 * @return null
 	 */
 	protected function setError($errMsg)
 	{
@@ -86,7 +91,7 @@ class Validate
 	 * Check for e-mail validity
 	 *
 	 * @param string $email e-mail address to validate
-	 * @param int   $maxLength
+	 * @param int   $maxLength string max length
 	 * @return boolean Validity is ok or not
 	 */
 	public function isEmail($email, $maxLength = false)
@@ -163,7 +168,6 @@ class Validate
 	 * Check for string not empty
 	 *
 	 * @param string $string to validate
-	 * @param int  $length max length
 	 * @return boolean Validity is ok or not
 	 */
 	public function isNotEmptyString($string)
