@@ -84,7 +84,7 @@ class Validate
 	 */
 	protected function setError($errMsg)
 	{
-		$this->error = '';
+		$this->error = $errMsg;
 	}
 
 	/**
