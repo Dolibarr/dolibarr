@@ -301,3 +301,4 @@ ErrorActionCommPropertyUserowneridNotDefined=Brugerens ejer kræves
 ErrorActionCommBadType=Den valgte hændelsestype (id: %n, kode: %s) findes ikke i begivenhedstypeordbogen
 CheckVersionFail=Versionskontrol mislykkedes
 ErrorWrongFileName=Filens navn kan ikke indeholde __SOMETHING__
+ErrorNotInDictionaryPaymentConditions=Ikke i ordbogen om betalingsbetingelser, bedes du ændre.

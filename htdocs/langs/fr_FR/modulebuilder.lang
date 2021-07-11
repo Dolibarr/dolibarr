@@ -143,4 +143,4 @@ AsciiToHtmlConverter=Convertisseur Ascii en HTML
 AsciiToPdfConverter=Convertisseur Ascii en PDF
 TableNotEmptyDropCanceled=La table n’est pas vide. La suppression a été annulée.
 ModuleBuilderNotAllowed=Le module builder est activé mais son accès n'est pas autorisé pour votre utilisateur
-ImportExportProfiles=Import and export profiles
+ImportExportProfiles=Importer et exporter des profils

@@ -53,7 +53,8 @@ TypeOfLineServiceOrProduct=Typ av linje (0 = produkt, 1 = tjänst)
 FileWithDataToImport=Fil med data för att importera
 FileToImport=Källa fil du vill importera
 FileMustHaveOneOfFollowingFormat=Fil som ska importeras måste ha ett av följande format
-DownloadEmptyExample=Hämta mallfil med fältinnehållsinformation (* är obligatoriska fält)
+DownloadEmptyExample=Ladda ner mall med fält för innehållsinformation
+StarAreMandatory=* alla fält krävs
 ChooseFormatOfFileToImport=Välj det filformat som ska användas som importfilformat genom att klicka på ikonen %s för att välja den ...
 ChooseFileToImport=Ladda upp filen och klicka sedan på %s ikonen för att välja fil som källa importfil ...
 SourceFileFormat=Källa filformat

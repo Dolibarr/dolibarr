@@ -53,8 +53,8 @@ TypeOfLineServiceOrProduct=Rodzaj pozycji (0=produkt, 1=usługa)
 FileWithDataToImport=Plik z danymi do importu
 FileToImport=Plik źródłowy do zaimportowania
 FileMustHaveOneOfFollowingFormat=Plik do zaimportowania musi mieć jeden z następujących formatów
-DownloadEmptyExample=Download template file with field content information
-StarAreMandatory=* are mandatory fields
+DownloadEmptyExample=Pobierz plik szablonu z informacjami o zawartości pola
+StarAreMandatory=* są polami obowiązkowymi
 ChooseFormatOfFileToImport=Wybierz format pliku, który ma być używany jako format pliku importu, klikając ikonę %s, aby go wybrać ...
 ChooseFileToImport=Prześlij plik, a następnie kliknij ikonę %s, aby wybrać plik jako źródłowy plik importu ...
 SourceFileFormat=Format pliku źródłowego

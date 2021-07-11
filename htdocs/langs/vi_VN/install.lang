@@ -206,6 +206,7 @@ MigrationUserPhotoPath=Di chuyển đường dẫn ảnh cho người dùng
 MigrationFieldsSocialNetworks=Di chuyển các trường người dùng mạng xã hội (%s)
 MigrationReloadModule=Tải lại mô-đun %s
 MigrationResetBlockedLog=Đặt lại mô-đun BlockedLog cho thuật toán v7
+MigrationImportOrExportProfiles=Migration of import or export profiles (%s)
 ShowNotAvailableOptions=Hiển thị các tùy chọn không khả dụng
 HideNotAvailableOptions=Ẩn các tùy chọn không khả dụng
 ErrorFoundDuringMigration=(Các) lỗi đã được báo cáo trong quá trình di chuyển nên bước tiếp theo không khả dụng. Để bỏ qua lỗi, bạn có thể <a href="%s">nhấp vào đây</a> , nhưng ứng dụng hoặc một số tính năng có thể không hoạt động chính xác cho đến khi lỗi được giải quyết.

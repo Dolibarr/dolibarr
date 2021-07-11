@@ -11,5 +11,3 @@ DisableAUser=Deshabilitar un usuario
 EnableAUser=Habilitar un usuario
 LastName=Apellido
 FirstName=Nombre(s)
-NbOfUsers=No. of users
-NbOfPermissions=No. of permissions

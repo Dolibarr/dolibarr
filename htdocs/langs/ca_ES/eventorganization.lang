@@ -86,6 +86,7 @@ DownloadICSLink = Download ICS link
 EVENTORGANIZATION_SECUREKEY = Clau segura de l'enllaç de registre públic a una conferència
 SERVICE_BOOTH_LOCATION = Servei que s'utilitza per a la fila de factures sobre una ubicació de l'estand
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Servei que s'utilitza per a la fila de factures sobre una subscripció d'assistent a una conferència
+NbVotes=Number of votes
 #
 # Status
 #
@@ -115,6 +116,9 @@ EvntOrgDuration = Aquesta conferència comença el dia %s i finalitza el dia %s.
 ConferenceAttendeeFee = Tarifa de l'assistent a la conferència per a l'esdeveniment: "%s" que passa de %s a %s.
 BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
 EventType = Tipus d'esdeveniment
+LabelOfBooth=Booth label
+LabelOfconference=Conference label
+ConferenceIsNotConfirmed=Subcription not available, conference is not confirmed yet
 
 #
 # Vote page

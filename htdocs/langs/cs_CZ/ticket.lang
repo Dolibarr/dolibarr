@@ -34,7 +34,8 @@ TicketDictResolution=Vstupenka - rozlišení
 
 TicketTypeShortCOM=Obchodní otázka
 TicketTypeShortHELP=Žádost o funkční pomoc
-TicketTypeShortISSUE=Problém, chyba nebo problém
+TicketTypeShortISSUE=Issue or bug
+TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Žádost o změnu nebo vylepšení
 TicketTypeShortPROJET=Projekt
 TicketTypeShortOTHER=Jiný
@@ -54,14 +55,15 @@ TypeContact_ticket_internal_SUPPORTTEC=Přiřazený uživatel
 TypeContact_ticket_external_SUPPORTCLI=Kontakt zákazníka / sledování incidentů
 TypeContact_ticket_external_CONTRIBUTOR=Externí přispěvatel
 
-OriginEmail=Zdroj e-mailu
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Odeslat e-mailem zprávu o lince
 
 # Status
 Read=Číst
 Assigned=Přidělené
 InProgress=probíhá
-NeedMoreInformation=Čekání na informace
+NeedMoreInformation=Waiting for reporter feedback
+NeedMoreInformationShort=Waiting for feedback
 Answered=Odpovězeno
 Waiting=Čekání
 Closed=Zavřeno
@@ -160,7 +162,7 @@ CreatedBy=Vytvořil
 NewTicket=Nová vstupenka
 SubjectAnswerToTicket=Odpověď na lístek
 TicketTypeRequest=Typ požadavku
-TicketCategory=Skupina
+TicketCategory=Ticket categorization
 SeeTicket=Viz lístek
 TicketMarkedAsRead=Lístek byl označen jako přečtený
 TicketReadOn=Číst dál
@@ -211,6 +213,7 @@ TicketMessageHelp=Pouze tento text bude uložen do seznamu zpráv na kartě lís
 TicketMessageSubstitutionReplacedByGenericValues=Substituční proměnné jsou nahrazeny obecnými hodnotami.
 TimeElapsedSince=Čas uplynul od
 TicketTimeToRead=Čas uplynul před čtením
+TicketTimeElapsedBeforeSince=Time elapsed before / since
 TicketContacts=Kontaktní lístek
 TicketDocumentsLinked=Dokumenty spojené s lístkem
 ConfirmReOpenTicket=Potvrďte znovutevření tento lístek?

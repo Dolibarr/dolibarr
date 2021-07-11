@@ -17,8 +17,8 @@ TJM=Vidējā dienas likme
 CurrentSalary=Pašreizējā alga
 THMDescription=Šo vērtību var izmantot, lai aprēķinātu laiku, kas patērēts projektā, ko ievadījuši lietotāji, ja tiek izmantots modulis projekts
 TJMDescription=Šī vērtībai ir tikai informatīva un netiek izmantota aprēķiniem
-LastSalaries=Jaunākie %s algu maksājumi
-AllSalaries=Visi algu maksājumi
+LastSalaries=Jaunākās %s algas
+AllSalaries=Visas algas
 SalariesStatistics=Algas statistika
-# Export
 SalariesAndPayments=Algas un maksājumi
+ConfirmDeleteSalaryPayment=Vai vēlaties dzēst šo algas maksājumu?

@@ -55,7 +55,7 @@ TypeContact_ticket_internal_SUPPORTTEC=Usuario asignado
 TypeContact_ticket_external_SUPPORTCLI=Contacto cliente / seguimiento de incidentes
 TypeContact_ticket_external_CONTRIBUTOR=Contribuidor externo
 
-OriginEmail=Remitente de correo electrónico
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Enviar mensaje de ticket por e-mail
 
 # Status

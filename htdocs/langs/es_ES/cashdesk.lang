@@ -127,4 +127,4 @@ AllowDelayedPayment=Permitir pago aplazado
 PrintPaymentMethodOnReceipts=Imprimir método de pago en tickets|recibos
 WeighingScale=Balanza
 ShowPriceHT = Mostrar la columna con el precio sin impuestos (en pantalla)
-ShowPriceHTOnReceipt = Mostrar la columna con el precio sin impuestos (al recibirlo)
+ShowPriceHTOnReceipt = Display the column with the price excluding tax (on the receipt)

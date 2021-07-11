@@ -277,7 +277,7 @@ PriceByCustomer=Different prices for each customer
 PriceCatalogue=A single sell price per product/service
 PricingRule=Rules for selling prices
 AddCustomerPrice=إضافة السعر من قبل العملاء
-ForceUpdateChildPriceSoc=تعيين نفس السعر على الشركات التابعة العملاء
+ForceUpdateChildPriceSoc=Set same price on customer's subsidiaries
 PriceByCustomerLog=سجل الأسعار العملاء السابقة
 MinimumPriceLimit=سعر الحد الأدنى لا يمكن أن يكون أقل ثم٪ الصورة
 MinimumRecommendedPrice=Minimum recommended price is: %s
@@ -296,6 +296,7 @@ ComposedProductIncDecStock=زيادة / نقصان الأسهم على التغ�
 ComposedProduct=Child products
 MinSupplierPrice=الحد الأدنى من سعر الشراء
 MinCustomerPrice=Minimum selling price
+NoDynamicPrice=No dynamic price
 DynamicPriceConfiguration=التكوين سعر ديناميكي
 DynamicPriceDesc=You may define mathematical formulae to calculate Customer or Vendor prices. Such formulas can use all mathematical operators, some constants and variables. You can define here the variables you wish to use. If the variable needs an automatic update, you may define the external URL to allow Dolibarr to update the value automatically.
 AddVariable=Add Variable
