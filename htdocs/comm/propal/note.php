@@ -66,11 +66,12 @@ restrictedArea($user, 'propal', $object->id, 'propal');
 $permissionnote = $user->rights->propale->creer; // Used by the include of actions_setnotes.inc.php
 
 $reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0)
+if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-
-if (empty($reshook))
+}
+if (empty($reshook)){
 	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+}
 
 
 
