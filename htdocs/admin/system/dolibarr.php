@@ -327,6 +327,7 @@ $configfileparameters = array(
 	'dolibarr_main_db_character_set' => $langs->trans("DBStoringCharset"),
 	'dolibarr_main_db_collation' => $langs->trans("DBSortingCollation"),
 	'?dolibarr_main_db_prefix' => $langs->trans("DatabasePrefix"),
+	'dolibarr_main_db_readonly' => $langs->trans("ReadOnlyMode"),
 	'separator2' => '',
 	'dolibarr_main_authentication' => $langs->trans("AuthenticationMode"),
 	'?multicompany_transverse_mode'=>  $langs->trans("MultiCompanyMode"),
@@ -448,6 +449,13 @@ foreach ($configfileparameters as $key => $value) {
 				$valuetoshow = ${$newkey};
 				if (!empty($valuetoshow)) {
 					print img_warning($langs->trans('SwitchThisForABetterSecurity', 0));
+				}
+			} elseif ($newkey == 'dolibarr_main_db_readonly') {
+				print ${$newkey};
+
+				$valuetoshow = ${$newkey};
+				if (!empty($valuetoshow)) {
+					print img_warning($langs->trans('ReadOnlyMode', 1));
 				}
 			} else {
 				print (empty(${$newkey}) ? '' : ${$newkey});
