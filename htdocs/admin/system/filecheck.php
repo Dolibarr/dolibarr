@@ -155,6 +155,10 @@ if (GETPOST('target') == 'local') {
 			}
 		}
 		$xml = simplexml_load_file($xmlfile);
+		if ($xml === false) {
+			print '<div class="warning">'.$langs->trans('XmlCorrupted').': '.$xmlfile.'</span>';
+			$error++;
+		}
 	} else {
 		print '<div class="warning">'.$langs->trans('XmlNotFound').': '.$xmlfile.'</span>';
 		$error++;
