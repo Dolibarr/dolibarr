@@ -166,7 +166,6 @@ SurfaceUnits=Unidad de superficie
 SizeUnits=Unidad de tamaño
 ConfirmDeleteProductBuyPrice=¿Estás seguro de que deseas eliminar este precio de compra?
 SubProduct=Sub producto
-UseProductFournDesc=Agregue una función para definir las descripciones de los productos definidos por los proveedores además de las descripciones para los clientes.
 ProductSupplierDescription=Descripción del vendedor para el producto.
 ProductAttributeName=Atributo de variante %s
 ProductAttributeDeleteDialog=¿Estás seguro de que deseas eliminar este atributo? Todos los valores serán eliminados

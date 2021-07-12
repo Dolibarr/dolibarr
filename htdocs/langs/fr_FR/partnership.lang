@@ -20,9 +20,9 @@ ModulePartnershipName=Gestion des partenariats
 PartnershipDescription=Module de gestion des partenariats
 PartnershipDescriptionLong= Module de gestion des partenariats
 
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
+AddPartnership=Ajouter un partenariat
+CancelPartnershipForExpiredMembers=Partenariat : annuler le partenariat des adhérents dont les cotisations ont expirés
+PartnershipCheckBacklink=Partenariat : Vérifiez le backlink référent
 
 #
 # Menu
@@ -37,10 +37,10 @@ PartnershipSetup=Page de configuration du module Partenariat
 PartnershipAbout=À propos de Partenariat
 PartnershipAboutPage=Page d'informations du module Partenariat
 partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
+PARTNERSHIP_IS_MANAGED_FOR=Partenariat géré pour
 PARTNERSHIP_BACKLINKS_TO_CHECK=Liens de retour à vérifier
 PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
+ReferingWebsiteCheck=Vérification du site référent
 ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
 
 #
@@ -54,10 +54,10 @@ DatePartnershipEnd=Date de fin
 ReasonDecline=Raison du refus
 ReasonDeclineOrCancel=Raison du refus
 PartnershipAlreadyExist=Partenariat déjà existant
-ManagePartnership=Manage partnership
+ManagePartnership=Gestion de partenariat
 BacklinkNotFoundOnPartnerWebsite=Lien de retour non trouvé sur le site web partenaire
 ConfirmClosePartnershipAsk=Êtes-vous sûr de vouloir annuler ce partenariat ?
-PartnershipType=Partnership type
+PartnershipType=Type de partenariat
 
 #
 # Template Mail

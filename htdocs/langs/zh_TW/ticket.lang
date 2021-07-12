@@ -55,7 +55,7 @@ TypeContact_ticket_internal_SUPPORTTEC=已分配用戶
 TypeContact_ticket_external_SUPPORTCLI=客戶聯絡人/事件追踪
 TypeContact_ticket_external_CONTRIBUTOR=外部合作者
 
-OriginEmail=電子郵件作者
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=以電子郵件發送服務單訊息
 
 # Status

@@ -5,5 +5,3 @@ PasswordChangedAndSentTo=Passwort geändert und an <b>%s</b> gesandt.
 PasswordChangeRequestSent=Antrag auf eine Änderung das Passworts für <b>%s</b> an <b>%s</b> gesandt.
 LinkedToDolibarrUser=Mit Systembenutzer verknüpfen
 LinkedToDolibarrThirdParty=Mit Partner verknüpfen
-NbOfUsers=No. of users
-NbOfPermissions=No. of permissions

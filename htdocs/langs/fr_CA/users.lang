@@ -10,5 +10,3 @@ LastUsersCreated=Derniers %s utilisateurs créés
 ConfirmCreateContact=Êtes-vous sûr de vouloir créer un compte Dolibarr pour ce contact?
 ConfirmCreateLogin=Êtes-vous sûr de vouloir créer un compte Dolibarr pour ce membre?
 ConfirmCreateThirdParty=Êtes-vous sûr de vouloir créer un tiers pour ce membre?
-NbOfUsers=No. of users
-NbOfPermissions=No. of permissions

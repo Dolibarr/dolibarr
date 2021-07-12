@@ -611,7 +611,7 @@ class DolGraph
 
 		$nbseries = (empty($this->data[0]) ? 0 : count($this->data[0]) - 1);
 
-		foreach($this->data as $x) {	// Loop on each x
+		foreach ($this->data as $x) {	// Loop on each x
 			for ($i = 0; $i < $nbseries; $i++) {	// Loop on each serie
 				if (is_null($max)) {
 					$max = $x[$i + 1];		// $i+1 because the index 0 is the legend
@@ -641,7 +641,7 @@ class DolGraph
 
 		$nbseries = (empty($this->data[0]) ? 0 : count($this->data[0]) - 1);
 
-		foreach($this->data as $x) {	// Loop on each x
+		foreach ($this->data as $x) {	// Loop on each x
 			for ($i = 0; $i < $nbseries; $i++) {	// Loop on each serie
 				if (is_null($min)) {
 					$min = $x[$i + 1];		// $i+1 because the index 0 is the legend

@@ -127,4 +127,4 @@ AllowDelayedPayment=Verzögerte Zahlung zulassen
 PrintPaymentMethodOnReceipts=Zahlungsmethode auf Tickets | Quittungen drucken
 WeighingScale=Waage
 ShowPriceHT = Display the column with the price excluding tax (on screen)
-ShowPriceHTOnReceipt = Display the column with the price excluding tax (on receipt)
+ShowPriceHTOnReceipt = Display the column with the price excluding tax (on the receipt)

@@ -301,3 +301,4 @@ ErrorActionCommPropertyUserowneridNotDefined=需要用戶的擁有者
 ErrorActionCommBadType=選擇的事件類型（id：%n，代碼：%s）在事件類型分類中不存在
 CheckVersionFail=版本檢查失敗
 ErrorWrongFileName=檔案名稱中不可以有__SOMETHING__
+ErrorNotInDictionaryPaymentConditions=不在支付條款類別中，請修改。

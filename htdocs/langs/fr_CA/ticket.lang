@@ -1,7 +1,4 @@
 # Dolibarr language file - Source file is en_US - ticket
-TicketTypeShortISSUE=Issue, bug or problem
 TypeContact_ticket_internal_CONTRIBUTOR=Donateur
-OriginEmail=Email source
-NeedMoreInformation=Waiting for information
 Closed=Fermée
 TicketMailExchanges=Messages courriels

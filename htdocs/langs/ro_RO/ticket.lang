@@ -34,7 +34,8 @@ TicketDictResolution=Tichet - Rezoluție
 
 TicketTypeShortCOM=Întrebare comercială
 TicketTypeShortHELP=Solicitare funcţionalitate
-TicketTypeShortISSUE=Solicitare, eroare sau problemă
+TicketTypeShortISSUE=Problemă sau bug
+TicketTypeShortPROBLEM=Problemă
 TicketTypeShortREQUEST=Solicitare de modificare sau îmbunătăţire
 TicketTypeShortPROJET=Proiect
 TicketTypeShortOTHER=Altele
@@ -54,14 +55,15 @@ TypeContact_ticket_internal_SUPPORTTEC=Utilizator atribuit
 TypeContact_ticket_external_SUPPORTCLI=Contact client urmărire incidente
 TypeContact_ticket_external_CONTRIBUTOR=Contributor extern
 
-OriginEmail=Email sursă
+OriginEmail=Email raportor
 Notify_TICKET_SENTBYMAIL=Trimite mesaj tichet pe email
 
 # Status
 Read=Citit
 Assigned=Atribuit
 InProgress=În curs
-NeedMoreInformation=În aşteptarea de informaţii
+NeedMoreInformation=În aşteptare feedback de la raportor
+NeedMoreInformationShort=În aşteptare feedback
 Answered=S-a răspuns
 Waiting=În aşteptare
 Closed=Închis
@@ -160,7 +162,7 @@ CreatedBy=Creat de
 NewTicket=Tichet nou
 SubjectAnswerToTicket=Răspuns la tichet
 TicketTypeRequest=Tip de solicitare
-TicketCategory=Grup
+TicketCategory=Categorizare tichet
 SeeTicket=Vezi tichetul
 TicketMarkedAsRead=Tichetul a fost marcat ca citit
 TicketReadOn=Citește mai departe
@@ -211,6 +213,7 @@ TicketMessageHelp=Numai acest text va fi salvat în lista de mesaje de pe fişa 
 TicketMessageSubstitutionReplacedByGenericValues=Variabilele de substituție sunt înlocuite cu valori generice.
 TimeElapsedSince=Timpul trecut de atunci
 TicketTimeToRead=Timpul trecut înainte de citire
+TicketTimeElapsedBeforeSince=Timpul scurs înainte de / de atunci
 TicketContacts=Contacte tichet
 TicketDocumentsLinked=Documente legate de tichet
 ConfirmReOpenTicket=Confirmați redeschiderea acestui tichet?

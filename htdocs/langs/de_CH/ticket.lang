@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - ticket
-TicketTypeShortISSUE=Issue, bug or problem
 TypeContact_ticket_external_SUPPORTCLI=Kundenkontakt / Störfallverfolgung
-OriginEmail=Email source
 InProgress=In Bearbeitung
-NeedMoreInformation=Waiting for information
 TicketCloseOn=Schliessungsdatum
 TicketAddIntervention=Einsatz erstellen

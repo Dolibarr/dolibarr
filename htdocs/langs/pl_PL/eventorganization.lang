@@ -86,6 +86,7 @@ DownloadICSLink = Pobierz link do ICS
 EVENTORGANIZATION_SECUREKEY = Klucz bezpieczeństwa dla publicznego łącza do rejestracji na konferencję
 SERVICE_BOOTH_LOCATION = Usługa używana do wiersza faktury o lokalizacji stoiska
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Usługa używana w wierszu faktury za subskrypcję uczestnika na konferencję
+NbVotes=Number of votes
 #
 # Status
 #
@@ -115,6 +116,9 @@ EvntOrgDuration = Ta konferencja zaczyna się %s i kończy się %s.
 ConferenceAttendeeFee = Opłata uczestnika konferencji za wydarzenie: '%s' występujące od %s do %s.
 BoothLocationFee = Lokalizacja stoiska dla wydarzenia: „%s” występujące od %s do %s
 EventType = Typ wydarzenia
+LabelOfBooth=Booth label
+LabelOfconference=Conference label
+ConferenceIsNotConfirmed=Subcription not available, conference is not confirmed yet
 
 #
 # Vote page

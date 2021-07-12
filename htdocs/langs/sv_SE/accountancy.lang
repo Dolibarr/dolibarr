@@ -48,7 +48,8 @@ CountriesNotInEEC=Länder inte i EEG
 CountriesInEECExceptMe=Länder i EEG förutom %s
 CountriesExceptMe=Alla länder utom %s
 AccountantFiles=Exportera källdokument
-ExportAccountingSourceDocHelp=Med det här verktyget kan du exportera de källhändelser (lista och PDF-filer) som användes för att generera din bokföring. För att exportera dina tidskrifter, använd menyposten %s - %s.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that were used to generate your accountancy.
+ExportAccountingSourceDocHelp2=För att exportera verifikationer, använd menyn %s - %s
 VueByAccountAccounting=Visa baserat på redovisningskonto
 VueBySubAccountAccounting=Visa efter redovisning av underkonto
 
@@ -328,7 +329,7 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Inaktivera bindning och överföring av 
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Inaktivera bindning och överföring i bokföring på kostnadsrapporter (kostnadsrapporter kommer inte att beaktas vid redovisning)
 
 ## Export
-NotifiedExportDate=Notified export date (modification of the entries will not be possible)
+NotifiedExportDate=Exporteringsdatum (ändringar kan ej göras)
 NotifiedValidationDate=Validation of the entries (modification or deletion of the entries will not be possible)
 ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=Exportera utkast till loggbok

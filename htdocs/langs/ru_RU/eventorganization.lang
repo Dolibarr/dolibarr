@@ -86,6 +86,7 @@ DownloadICSLink = Ссылка для скачивания ICS
 EVENTORGANIZATION_SECUREKEY = Защищенный ключ общедоступной регистрационной ссылки на конференцию
 SERVICE_BOOTH_LOCATION = Услуга, используемая для строки счета-фактуры о местонахождении стенда
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Служба, используемая для строки счета-фактуры о подписке участника на конференцию
+NbVotes=Number of votes
 #
 # Status
 #
@@ -115,6 +116,9 @@ EvntOrgDuration = Конференция начинается %s и заканч
 ConferenceAttendeeFee = Плата за участие в конференции: «%s», происходящая от %s до %s.
 BoothLocationFee = Место расположения стенда для события : '%s' происходящего с %s до %s
 EventType = Тип события
+LabelOfBooth=Booth label
+LabelOfconference=Conference label
+ConferenceIsNotConfirmed=Subcription not available, conference is not confirmed yet
 
 #
 # Vote page
