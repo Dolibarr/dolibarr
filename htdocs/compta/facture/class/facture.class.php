@@ -3213,7 +3213,7 @@ class Facture extends CommonInvoice
 			$this->db->begin();
 
 			$product_type = $type;
-			if (!empty($fk_product)) {
+			if (!empty($fk_product) && $fk_product > 0) {
 				$product = new Product($this->db);
 				$result = $product->fetch($fk_product);
 				$product_type = $product->type;
@@ -5342,7 +5342,7 @@ class FactureLigne extends CommonInvoiceLine
 			$this->error = 'ErrorProductTypeMustBe0orMore';
 			return -1;
 		}
-		if (!empty($this->fk_product)) {
+		if (!empty($this->fk_product) && $this->fk_product > 0) {
 			// Check product exists
 			$result = Product::isExistingObject('product', $this->fk_product);
 			if ($result <= 0) {
@@ -5377,7 +5377,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= " ".price2num($this->localtax2_tx).",";
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql .= ' '.(!empty($this->fk_product) ? $this->fk_product : "null").',';
+		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? $this->fk_product : "null").',';
 		$sql .= " ".((int) $this->product_type).",";
 		$sql .= " ".price2num($this->remise_percent).",";
 		$sql .= " ".price2num($this->subprice).",";

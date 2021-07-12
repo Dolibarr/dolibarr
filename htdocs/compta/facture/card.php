@@ -2000,7 +2000,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (empty($idprod) && ($price_ht < 0) && ($qty < 0)) {
+		if ((empty($idprod) || $idprod < 0) && ($price_ht < 0) && ($qty < 0)) {
 			setEventMessages($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 		}
@@ -2010,11 +2010,11 @@ if (empty($reshook)) {
 				$error++;
 			}
 		}
-		if ($prod_entry_mode == 'free' && empty($idprod) && GETPOST('type') < 0) {
+		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && GETPOST('type') < 0) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 			$error++;
 		}
-		if (($prod_entry_mode == 'free' && empty($idprod) && (($price_ht < 0 && empty($conf->global->FACTURE_ENABLE_NEGATIVE_LINES)) || $price_ht == '') && $price_ht_devise == '') && $object->type != Facture::TYPE_CREDIT_NOTE) { 	// Unit price can be 0 but not ''
+		if (($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && (($price_ht < 0 && empty($conf->global->FACTURE_ENABLE_NEGATIVE_LINES)) || $price_ht == '') && $price_ht_devise == '') && $object->type != Facture::TYPE_CREDIT_NOTE) { 	// Unit price can be 0 but not ''
 			if ($price_ht < 0 && empty($conf->global->FACTURE_ENABLE_NEGATIVE_LINES)) {
 				$langs->load("errors");
 				if ($object->type == $object::TYPE_DEPOSIT) {
@@ -2057,7 +2057,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error && ($qty >= 0) && (!empty($product_desc) || !empty($idprod))) {
+		if (!$error && ($qty >= 0) && (!empty($product_desc) || (!empty($idprod) && $idprod > 0))) {
 			$ret = $object->fetch($id);
 			if ($ret < 0) {
 				dol_print_error($db, $object->error);
@@ -2079,7 +2079,7 @@ if (empty($reshook)) {
 			// Ecrase $tva_tx par celui du produit
 			// Ecrase $base_price_type par celui du produit
 			// Replaces $fk_unit with the product's
-			if (!empty($idprod)) {
+			if (!empty($idprod) && $idprod > 0) {
 				$prod = new Product($db);
 				$prod->fetch($idprod);
 
@@ -5195,10 +5195,11 @@ if ($action == 'create') {
 		}
 	}
 
-	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
+	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
 	<input type="hidden" name="token" value="' . newToken().'">
 	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 	<input type="hidden" name="mode" value="">
+	<input type="hidden" name="page_y" value="">
 	<input type="hidden" name="id" value="' . $object->id.'">
 	';
 
@@ -5393,7 +5394,7 @@ if ($action == 'create') {
 			}
 
 			// Create a credit note
-			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $object->statut > 0 && $usercancreate) {
+			if (($object->type == Facture::TYPE_STANDARD || ($object->type == Facture::TYPE_DEPOSIT && empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) || $object->type == Facture::TYPE_PROFORMA) && $object->statut > 0 && $usercancreate) {
 				if (!$objectidnext) {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->socid.'&amp;fac_avoir='.$object->id.'&amp;action=create&amp;type=2'.($object->fk_project > 0 ? '&amp;projectid='.$object->fk_project : '').($object->entity > 0 ? '&amp;originentity='.$object->entity : '').'">'.$langs->trans("CreateCreditNote").'</a>';
 				}

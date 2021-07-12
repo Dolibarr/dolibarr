@@ -616,7 +616,7 @@ if ($object->id > 0) {
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
-			if (is_object($cacheOfWarehouses[$obj->fk_warehouse])) {
+			if (isset($cacheOfWarehouses[$obj->fk_warehouse])) {
 				$warehouse_static = $cacheOfWarehouses[$obj->fk_warehouse];
 			} else {
 				$warehouse_static = new Entrepot($db);
@@ -625,7 +625,7 @@ if ($object->id > 0) {
 				$cacheOfWarehouses[$warehouse_static->id] = $warehouse_static;
 			}
 
-			if (is_object($cacheOfProducts[$obj->fk_product])) {
+			if (isset($cacheOfProducts[$obj->fk_product])) {
 				$product_static = $cacheOfProducts[$obj->fk_product];
 			} else {
 				$product_static = new Product($db);

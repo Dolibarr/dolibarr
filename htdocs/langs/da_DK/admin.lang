@@ -2144,3 +2144,4 @@ YouEnableDeprecatedWSAPIsUseRESTAPIsInstead=Du aktiverede forældet WS API. Du s
 RandomlySelectedIfSeveral=Valgt tilfældigt, hvis der er flere billeder tilgængelige
 DatabasePasswordObfuscated=Databaseadgangskode er tilsløret i conf-fil
 DatabasePasswordNotObfuscated=Databaseadgangskode er IKKE tilsløret i conf-fil
+APIsAreNotEnabled=API-moduler er ikke aktiveret

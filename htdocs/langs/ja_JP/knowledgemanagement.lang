@@ -37,15 +37,7 @@ About = 約
 KnowledgeManagementAbout = 知識管理について
 KnowledgeManagementAboutPage = 知識管理に関するページ
 
-#
-# Sample page
-#
 KnowledgeManagementArea = 知識管理
-
-
-#
-# Menu
-#
 MenuKnowledgeRecord = 知識ベース
 ListKnowledgeRecord = 記事一覧
 NewKnowledgeRecord = 新しい記事
@@ -53,3 +45,5 @@ ValidateReply = ソリューションを検証する
 KnowledgeRecords = 記事
 KnowledgeRecord = 記事
 KnowledgeRecordExtraFields = 記事のエクストラフィールド
+GroupOfTicket=チケットのグループ
+YouCanLinkArticleToATicketCategory=記事をチケットグループにリンクできる(新規チケット認定時に記事が提案されるようになる)

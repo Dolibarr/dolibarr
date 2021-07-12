@@ -495,10 +495,22 @@ if (empty($reshook)) {
 			$object->webservices_key		= GETPOST('webservices_key', 'san_alpha');
 
 			if (GETPOSTISSET('accountancy_code_sell')) {
-				$object->accountancy_code_sell  = GETPOST('accountancy_code_sell', 'alpha');
+				$accountancy_code_sell  = GETPOST('accountancy_code_sell', 'alpha');
+
+				if (empty($accountancy_code_sell) || $accountancy_code_sell == '-1') {
+					$object->accountancy_code_sell = '';
+				} else {
+					$object->accountancy_code_sell = $accountancy_code_sell;
+				}
 			}
 			if (GETPOSTISSET('accountancy_code_buy')) {
-				$object->accountancy_code_buy   = GETPOST('accountancy_code_buy', 'alpha');
+				$accountancy_code_buy   = GETPOST('accountancy_code_buy', 'alpha');
+
+				if (empty($accountancy_code_buy) || $accountancy_code_buy == '-1') {
+					$object->accountancy_code_buy = '';
+				} else {
+					$object->accountancy_code_buy = $accountancy_code_buy;
+				}
 			}
 
 			// Incoterms
@@ -554,7 +566,7 @@ if (empty($reshook)) {
 				}
 
 				// We set country_id, country_code and country for the selected country
-				$object->country_id = GETPOST('country_id') != '' ?GETPOST('country_id') : $mysoc->country_id;
+				$object->country_id = GETPOST('country_id', 'int') != '' ? GETPOST('country_id', 'int') : $mysoc->country_id;
 				if ($object->country_id) {
 					$tmparray = getCountry($object->country_id, 'all');
 					$object->country_code = $tmparray['code'];
@@ -1058,10 +1070,22 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$object->default_lang = GETPOST('default_lang');
 
 		if (GETPOSTISSET('accountancy_code_sell')) {
-			$object->accountancy_code_sell  = GETPOST('accountancy_code_sell', 'alpha');
+			$accountancy_code_sell  = GETPOST('accountancy_code_sell', 'alpha');
+
+			if (empty($accountancy_code_sell) || $accountancy_code_sell == '-1') {
+				$object->accountancy_code_sell = '';
+			} else {
+				$object->accountancy_code_sell = $accountancy_code_sell;
+			}
 		}
 		if (GETPOSTISSET('accountancy_code_buy')) {
-			$object->accountancy_code_buy   = GETPOST('accountancy_code_buy', 'alpha');
+			$accountancy_code_buy   = GETPOST('accountancy_code_buy', 'alpha');
+
+			if (empty($accountancy_code_buy) || $accountancy_code_buy == '-1') {
+				$object->accountancy_code_buy = '';
+			} else {
+				$object->accountancy_code_buy = $accountancy_code_buy;
+			}
 		}
 
 		$object->logo = (isset($_FILES['photo']) ?dol_sanitizeFileName($_FILES['photo']['name']) : '');
@@ -1385,6 +1409,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			if ($object->country_id) {
+				print img_picto('', 'state', 'class="pictofixedwidth"');
 				print $formcompany->select_state($object->state_id, $object->country_code);
 			} else {
 				print $countrynotdefined;
@@ -1784,10 +1809,22 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$object->webservices_key        = GETPOST('webservices_key', 'san_alpha');
 
 				if (GETPOSTISSET('accountancy_code_sell')) {
-					$object->accountancy_code_sell  = GETPOST('accountancy_code_sell', 'alpha');
+					$accountancy_code_sell  = GETPOST('accountancy_code_sell', 'alpha');
+
+					if (empty($accountancy_code_sell) || $accountancy_code_sell == '-1') {
+						$object->accountancy_code_sell = '';
+					} else {
+						$object->accountancy_code_sell = $accountancy_code_sell;
+					}
 				}
 				if (GETPOSTISSET('accountancy_code_buy')) {
-					$object->accountancy_code_buy   = GETPOST('accountancy_code_buy', 'alpha');
+					$accountancy_code_buy   = GETPOST('accountancy_code_buy', 'alpha');
+
+					if (empty($accountancy_code_buy) || $accountancy_code_buy == '-1') {
+						$object->accountancy_code_buy = '';
+					} else {
+						$object->accountancy_code_buy = $accountancy_code_buy;
+					}
 				}
 
 				//Incoterms
@@ -2068,6 +2105,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td colspan="3">';
 				}
 
+				print img_picto('', 'state', 'class="pictofixedwidth"');
 				print $formcompany->select_state($object->state_id, $object->country_code);
 				print '</td></tr>';
 			}

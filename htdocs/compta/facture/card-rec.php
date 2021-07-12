@@ -447,15 +447,15 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (empty($idprod) && ($price_ht < 0) && ($qty < 0)) {
+		if ((empty($idprod) || $idprod < 0) && ($price_ht < 0) && ($qty < 0)) {
 			setEventMessages($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 		}
-		if ($prod_entry_mode == 'free' && empty($idprod) && GETPOST('type') < 0) {
+		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && GETPOST('type') < 0) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 			$error++;
 		}
-		if ($prod_entry_mode == 'free' && empty($idprod) && (!($price_ht >= 0) || $price_ht == '')) { 	// Unit price can be 0 but not ''
+		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && (!($price_ht >= 0) || $price_ht == '')) { 	// Unit price can be 0 but not ''
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
 			$error++;
 		}
@@ -463,7 +463,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 		}
-		if ($prod_entry_mode == 'free' && empty($idprod) && empty($product_desc)) {
+		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && empty($product_desc)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
 			$error++;
 		}
@@ -473,7 +473,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (!$error && ($qty >= 0) && (!empty($product_desc) || !empty($idprod))) {
+		if (!$error && ($qty >= 0) && (!empty($product_desc) || (!empty($idprod) && $idprod > 0))) {
 			$ret = $object->fetch($id);
 			if ($ret < 0) {
 				dol_print_error($db, $object->error);
@@ -495,7 +495,7 @@ if (empty($reshook)) {
 			// Ecrase $tva_tx par celui du produit
 			// Ecrase $base_price_type par celui du produit
 			// Replaces $fk_unit with the product's
-			if (!empty($idprod)) {
+			if (!empty($idprod) && $idprod > 0) {
 				$prod = new Product($db);
 				$prod->fetch($idprod);
 

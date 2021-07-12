@@ -2152,7 +2152,7 @@ class Task extends CommonObject
 
 		$now = dol_now();
 
-		$datetouse = ($this->date_end > 0) ? $this->date_end : ($this->datee > 0 ? $this->datee : 0);
+		$datetouse = ($this->date_end > 0) ? $this->date_end : ((isset($this->datee) && $this->datee > 0) ? $this->datee : 0);
 
 		return ($datetouse > 0 && ($datetouse < ($now - $conf->projet->task->warning_delay)));
 	}

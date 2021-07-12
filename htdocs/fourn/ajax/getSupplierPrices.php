@@ -43,7 +43,7 @@ $idprod = GETPOST('idprod', 'int');
 $prices = array();
 
 // Load translation files required by the page
-$langs->loadLangs(array("stocks", "margins"));
+$langs->loadLangs(array("stocks", "margins", "products"));
 
 
 /*

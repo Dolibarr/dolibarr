@@ -3550,7 +3550,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 			$this->error = 'ErrorProductTypeMustBe0orMore';
 			return -1;
 		}
-		if (!empty($this->fk_product)) {
+		if (!empty($this->fk_product) && $this->fk_product > 0) {
 			// Check product exists
 			$result = Product::isExistingObject('product', $this->fk_product);
 			if ($result <= 0) {
@@ -3583,7 +3583,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= " ".price2num($this->localtax2_tx).",";
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql .= ' '.(!empty($this->fk_product) ? $this->fk_product : "null").',';
+		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? $this->fk_product : "null").',';
 		$sql .= " ".((int) $this->product_type).",";
 		$sql .= " ".price2num($this->remise_percent).",";
 		$sql .= ' '.(! empty($this->fk_remise_except) ? ((int) $this->fk_remise_except) : "null").',';
