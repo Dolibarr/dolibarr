@@ -1054,7 +1054,7 @@ if ($type == Categorie::TYPE_TICKET) {
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><td>';
 			print $langs->trans("AddTicketIntoCategory").' &nbsp;';
-			$form->select_tickets('', 'elemid');
+			$form->selectTickets('', 'elemid');
 			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 			print '</tr>';
 			print '</table>';
