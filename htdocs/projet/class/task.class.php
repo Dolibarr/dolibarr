@@ -1581,7 +1581,6 @@ class Task extends CommonObject
 				$this->error = $this->db->lasterror();
 				$ret = -2;
 			}
-
 		}
 
 		if ($ret >= 0) {
