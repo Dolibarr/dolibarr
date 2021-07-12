@@ -6588,6 +6588,7 @@ class Form
 	 *
 	 *  @param		int			$selected				Preselected tickets
 	 *  @param		string		$htmlname				Name of HTML select field (must be unique in page).
+	 *  @param  	string		$filtertype     		To add a filter
 	 *  @param		int			$limit					Limit on number of returned lines
 	 *  @param		int			$status					Ticket status
 	 *  @param		string		$selected_input_value	Value of preselected input text (for use with ajax)
@@ -6611,12 +6612,10 @@ class Form
 		// check parameters
 		if (is_null($ajaxoptions)) $ajaxoptions = array();
 
-		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->TICKET_USE_SEARCH_TO_SELECT))
-		{
+		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->TICKET_USE_SEARCH_TO_SELECT)) {
 			$placeholder = '';
 
-			if ($selected && empty($selected_input_value))
-			{
+			if ($selected && empty($selected_input_value)) {
 				require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 				$tickettmpselect = new Ticket($this->db);
 				$tickettmpselect->fetch($selected);
@@ -6679,16 +6678,14 @@ class Form
 		$sql .= ' WHERE p.entity IN ('.getEntity('ticket').')';
 
 		// Add criteria on ref/label
-		if ($filterkey != '')
-		{
+		if ($filterkey != '') {
 			$sql .= ' AND (';
 			$prefix = empty($conf->global->TICKET_DONOTSEARCH_ANYWHERE) ? '%' : ''; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
 			// For natural search
 			$scrit = explode(' ', $filterkey);
 			$i = 0;
 			if (count($scrit) > 1) $sql .= "(";
-			foreach ($scrit as $crit)
-			{
+			foreach ($scrit as $crit) {
 				if ($i > 0) $sql .= " AND ";
 				$sql .= "(p.ref LIKE '".$this->db->escape($prefix.$crit)."%' OR p.label LIKE '".$this->db->escape($prefix.$crit)."%'";
 				$sql .= ")";
@@ -6703,8 +6700,7 @@ class Form
 		// Build output string
 		dol_syslog(get_class($this)."::select_tickets_list search tickets", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 
@@ -6712,8 +6708,7 @@ class Form
 
 			$events = null;
 
-			if (!$forcecombo)
-			{
+			if (!$forcecombo) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 				$out .= ajax_combobox($htmlname, $events, $conf->global->TICKET_USE_SEARCH_TO_SELECT);
 			}
@@ -6723,8 +6718,7 @@ class Form
 			$textifempty = '';
 			// Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
 			//if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
-			if (!empty($conf->global->TICKET_USE_SEARCH_TO_SELECT))
-			{
+			if (!empty($conf->global->TICKET_USE_SEARCH_TO_SELECT)) {
 				if ($showempty && !is_numeric($showempty)) $textifempty = $langs->trans($showempty);
 				else $textifempty .= $langs->trans("All");
 			} else {
@@ -6733,8 +6727,7 @@ class Form
 			if ($showempty) $out .= '<option value="0" selected>'.$textifempty.'</option>';
 
 			$i = 0;
-			while ($num && $i < $num)
-			{
+			while ($num && $i < $num) {
 				$opt = '';
 				$optJson = array();
 				$objp = $this->db->fetch_object($result);
