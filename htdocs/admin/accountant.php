@@ -99,14 +99,16 @@ print "<br>\n";
 /**
  * Edit parameters
  */
-print "\n".'<script type="text/javascript" language="javascript">';
-print '$(document).ready(function () {
+if (!empty($conf->use_javascript_ajax)) {
+	print "\n".'<script type="text/javascript" language="javascript">';
+	print '$(document).ready(function () {
 		  $("#selectcountry_id").change(function() {
 			document.form_index.action.value="updateedit";
 			document.form_index.submit();
 		  });
 	  });';
-print '</script>'."\n";
+	print '</script>'."\n";
+}
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="form_index">';
 print '<input type="hidden" name="token" value="'.newToken().'">';

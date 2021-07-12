@@ -34,7 +34,8 @@ TicketDictResolution=Ticket-Auflösung
 
 TicketTypeShortCOM=Anfrage an Verkauf
 TicketTypeShortHELP=Erbitte funktionale Hilfestellung
-TicketTypeShortISSUE=Aspekt, Fehler oder Problem
+TicketTypeShortISSUE=Issue or bug
+TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Änderungs- oder Erweiterungsanforderung
 TicketTypeShortPROJET=Projekt
 TicketTypeShortOTHER=Sonstige
@@ -54,14 +55,15 @@ TypeContact_ticket_internal_SUPPORTTEC=Zugewiesener Benutzer
 TypeContact_ticket_external_SUPPORTCLI=Kundenkontakt / Tracking
 TypeContact_ticket_external_CONTRIBUTOR=Externer Mitarbeiter
 
-OriginEmail=E-Mail Absender
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Ticket Nachricht per E-Mail versenden
 
 # Status
 Read=Lesen
 Assigned=Zugewiesen
 InProgress=in Bearbeitung
-NeedMoreInformation=Auf Information warten
+NeedMoreInformation=Waiting for reporter feedback
+NeedMoreInformationShort=Waiting for feedback
 Answered=Beantwortet
 Waiting=Wartend
 Closed=Geschlossen
@@ -160,7 +162,7 @@ CreatedBy=Erstellt durch
 NewTicket=Ticket erstellen
 SubjectAnswerToTicket=Ticketantwort
 TicketTypeRequest=Anfrageart
-TicketCategory=Gruppe
+TicketCategory=Ticket categorization
 SeeTicket=Ticket zeigen
 TicketMarkedAsRead=Ticket als gelesen markiert
 TicketReadOn=Gelesen um
@@ -211,6 +213,7 @@ TicketMessageHelp=Nur dieser Text wird in der Mitteilungsliste auf der Ticketkar
 TicketMessageSubstitutionReplacedByGenericValues=Ersetzungsvariablen werden durch generische Werte ersetzt.
 TimeElapsedSince=Seit
 TicketTimeToRead=Zeit bis das Ticket gelesen wurde
+TicketTimeElapsedBeforeSince=Time elapsed before / since
 TicketContacts=Kontakte zum Ticket
 TicketDocumentsLinked=Dokumente zum Ticket
 ConfirmReOpenTicket=Dieses Ticket wirklich wieder öffnen?

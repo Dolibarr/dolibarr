@@ -263,15 +263,16 @@ class Categorie extends CommonObject
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('constructCategory', $parameters, $this); // Note that $action and $object may have been modified by some hooks
 			if ($reshook >= 0 && !empty($hookmanager->resArray)) {
-				$mapList = $hookmanager->resArray;
-				$mapId   = $mapList['id'];
-				$mapCode = $mapList['code'];
-				self::$MAP_ID_TO_CODE[$mapId] = $mapCode;
-				$this->MAP_ID[$mapCode] = $mapId;
-				$this->MAP_CAT_FK[$mapCode] = $mapList['cat_fk'];
-				$this->MAP_CAT_TABLE[$mapCode] = $mapList['cat_table'];
-				$this->MAP_OBJ_CLASS[$mapCode] = $mapList['obj_class'];
-				$this->MAP_OBJ_TABLE[$mapCode] = $mapList['obj_table'];
+				foreach ($hookmanager->resArray as $mapList) {
+					$mapId = $mapList['id'];
+					$mapCode = $mapList['code'];
+					self::$MAP_ID_TO_CODE[$mapId] = $mapCode;
+					$this->MAP_ID[$mapCode] = $mapId;
+					$this->MAP_CAT_FK[$mapCode] = $mapList['cat_fk'];
+					$this->MAP_CAT_TABLE[$mapCode] = $mapList['cat_table'];
+					$this->MAP_OBJ_CLASS[$mapCode] = $mapList['obj_class'];
+					$this->MAP_OBJ_TABLE[$mapCode] = $mapList['obj_table'];
+				}
 			}
 		}
 	}
@@ -1497,7 +1498,10 @@ class Categorie extends CommonObject
 		} else {
 			$sql = "SELECT ct.fk_categorie, c.label, c.rowid";
 			$sql .= " FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type])." as ct, ".MAIN_DB_PREFIX."categorie as c";
-			$sql .= " WHERE ct.fk_categorie = c.rowid AND ct.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = ".(int) $id." AND c.type = ".$this->MAP_ID[$type];
+			$sql .= " WHERE ct.fk_categorie = c.rowid AND ct.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = ".(int) $id;
+			// This seems useless because the table already contains id of category of 1 unique type. So commented.
+			// So now it works also with external added categories.
+			//$sql .= " AND c.type = ".$this->MAP_ID[$type];
 			$sql .= " AND c.entity IN (".getEntity('category').")";
 
 			$res = $this->db->query($sql);

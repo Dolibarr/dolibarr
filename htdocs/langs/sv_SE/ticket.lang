@@ -34,7 +34,8 @@ TicketDictResolution=Ticket - Resolution
 
 TicketTypeShortCOM=Kommersiell fråga
 TicketTypeShortHELP=Begäran om funktionell hjälp
-TicketTypeShortISSUE=Problem, fel eller problem
+TicketTypeShortISSUE=Issue or bug
+TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Ändrings- eller förbättringsbegäran
 TicketTypeShortPROJET=Projekt
 TicketTypeShortOTHER=Andra
@@ -54,14 +55,15 @@ TypeContact_ticket_internal_SUPPORTTEC=Tilldelad användare
 TypeContact_ticket_external_SUPPORTCLI=Kundkontakt / incidentspårning
 TypeContact_ticket_external_CONTRIBUTOR=Extern bidragsyter
 
-OriginEmail=E-postkälla
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Skicka biljettmeddelande via e-post
 
 # Status
 Read=Läsa
 Assigned=Tilldelad
 InProgress=Pågående
-NeedMoreInformation=Väntar på information
+NeedMoreInformation=Waiting for reporter feedback
+NeedMoreInformationShort=Waiting for feedback
 Answered=Besvarade
 Waiting=Väntar
 Closed=Stängt
@@ -160,7 +162,7 @@ CreatedBy=Skapad av
 NewTicket=Ny biljett
 SubjectAnswerToTicket=Biljettsvar
 TicketTypeRequest=Förfrågan typ
-TicketCategory=Grupp
+TicketCategory=Ticket categorization
 SeeTicket=Se biljett
 TicketMarkedAsRead=Biljett har markerats som läst
 TicketReadOn=Läs vidare
@@ -211,6 +213,7 @@ TicketMessageHelp=Endast den här texten sparas i meddelandelistan på biljettko
 TicketMessageSubstitutionReplacedByGenericValues=Substitutionsvariabler ersätts av generiska värden.
 TimeElapsedSince=Tid förflutit sedan
 TicketTimeToRead=Tid förfluten innan den läste
+TicketTimeElapsedBeforeSince=Time elapsed before / since
 TicketContacts=Kontakter biljett
 TicketDocumentsLinked=Dokument kopplade till biljett
 ConfirmReOpenTicket=Bekräfta återuppta denna biljett?

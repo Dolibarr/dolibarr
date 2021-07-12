@@ -34,7 +34,8 @@ TicketDictResolution=Destek Bildirimi - Çözüm
 
 TicketTypeShortCOM=Ticari soru
 TicketTypeShortHELP=Request for functionnal help
-TicketTypeShortISSUE=Issue, bug or problem
+TicketTypeShortISSUE=Issue or bug
+TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=Proje
 TicketTypeShortOTHER=Diğer
@@ -54,14 +55,15 @@ TypeContact_ticket_internal_SUPPORTTEC=Atanan kullanıcı
 TypeContact_ticket_external_SUPPORTCLI=Customer contact / incident tracking
 TypeContact_ticket_external_CONTRIBUTOR=Dış iştirakçi
 
-OriginEmail=E-posta kaynağı
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Destek bildirimini e-posta ile gönderil
 
 # Status
 Read=Okundu
 Assigned=Atanan
 InProgress=Devam etmekte
-NeedMoreInformation=Bilgi bekleniyor
+NeedMoreInformation=Waiting for reporter feedback
+NeedMoreInformationShort=Waiting for feedback
 Answered=Cevaplandı
 Waiting=Bekliyor
 Closed=Kapalı
@@ -160,7 +162,7 @@ CreatedBy=Oluşturan
 NewTicket=Yeni destek bildirimi
 SubjectAnswerToTicket=Destek bildirimi cevabı
 TicketTypeRequest=İstek türü
-TicketCategory=Grup
+TicketCategory=Ticket categorization
 SeeTicket=Destek bildirimini gör
 TicketMarkedAsRead=Destek bildirimi okundu olarak işaretlendi
 TicketReadOn=Okumaya devam et
@@ -211,6 +213,7 @@ TicketMessageHelp=Destek bildirimi kartı üzerindeki mesaj listesinde sadece bu
 TicketMessageSubstitutionReplacedByGenericValues=Substitutions variables are replaced by generic values.
 TimeElapsedSince=Time elapsed since
 TicketTimeToRead=Time elapsed before read
+TicketTimeElapsedBeforeSince=Time elapsed before / since
 TicketContacts=Kişilerin destek bildirimleri
 TicketDocumentsLinked=Destek bildirimine bağlı dokümanlar
 ConfirmReOpenTicket=Bu destek bildirimini yeniden açmayı onaylıyor musunuz?
