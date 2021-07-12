@@ -53,7 +53,8 @@ TypeOfLineServiceOrProduct=Jenis garis (0 = produk, 1 = layanan)
 FileWithDataToImport=File dengan data untuk diimpor
 FileToImport=Sumber file untuk diimpor
 FileMustHaveOneOfFollowingFormat=File yang akan diimpor harus memiliki salah satu format berikut
-DownloadEmptyExample=Unduh file template dengan informasi konten bidang (* adalah bidang wajib)
+DownloadEmptyExample=Download template file with field content information
+StarAreMandatory=* are mandatory fields
 ChooseFormatOfFileToImport=Pilih format file untuk digunakan sebagai format file impor dengan mengklik ikon %s untuk memilihnya ...
 ChooseFileToImport=Unggah file kemudian klik ikon %s untuk memilih file sebagai file impor sumber ...
 SourceFileFormat=Format file sumber

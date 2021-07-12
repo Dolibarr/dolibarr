@@ -48,7 +48,8 @@ CountriesNotInEEC=Lande ikke i EU
 CountriesInEECExceptMe=Lande i EU undtagen %s
 CountriesExceptMe=Alle lande undtagen %s
 AccountantFiles=Eksporter kildedokumenter
-ExportAccountingSourceDocHelp=Med dette værktøj kan du eksportere de kildehændelser (liste og PDF-filer), der blev brugt til at generere din regnskab. For at eksportere dine tidsskrifter skal du bruge menuindgangen %s - %s.
+ExportAccountingSourceDocHelp=Med dette værktøj kan du eksportere de kildehændelser (liste i CSV og PDF-filer), der blev brugt til at generere din regnskab.
+ExportAccountingSourceDocHelp2=For at eksportere dine tidsskrifter skal du bruge menuindgangen %s - %s.
 VueByAccountAccounting=Vis efter regnskabskonto
 VueBySubAccountAccounting=Vis efter regnskabsmæssig underkonto
 

@@ -476,8 +476,8 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 			}
 
 			$generated_password = str_shuffle($randomCode);
-		} else // Old platform, non cryptographic random
-		{
+		} else {
+			// Old platform, non cryptographic random
 			$max = strlen($lowercase) - 1;
 			for ($x = 0; $x < $nbofchar; $x++) {
 				$tmp = mt_rand(0, $max);

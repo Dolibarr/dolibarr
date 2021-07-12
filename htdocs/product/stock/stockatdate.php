@@ -356,14 +356,14 @@ print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
 print '<span class="fieldrequired">'.$langs->trans('Date').'</span> '.$form->selectDate(($date ? $date : -1), 'date');
 
 print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddingrightonly">&nbsp;</span> ';
-print img_picto('', 'product').' ';
-print $langs->trans('Product').'</span> ';
-print $form->select_produits($productid, 'productid', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'maxwidth300', 0, '', null, 1);
+print img_picto('', 'product', 'class="pictofiwedwidth"').' ';
+print '</span> ';
+print $form->select_produits($productid, 'productid', '', 0, 0, -1, 2, '', 0, array(), 0, $langs->trans('Product'), 0, 'maxwidth300', 0, '', null, 1);
 
 print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddingrightonly">&nbsp;</span> ';
-print img_picto('', 'stock').' ';
-print $langs->trans('Warehouse').'</span> ';
-print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? $fk_warehouse : 'ifone'), 'fk_warehouse', '', 1, 0, 0, '', 0, 0, null, '', null, 1, false, 'e.ref');
+print img_picto('', 'stock', 'class="pictofiwedwidth"');
+print '</span> ';
+print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? $fk_warehouse : 'ifone'), 'fk_warehouse', '', 1, 0, 0, $langs->trans('Warehouse'), 0, 0, null, '', null, 1, false, 'e.ref');
 print '</div>';
 
 $parameters = array();

@@ -53,7 +53,8 @@ TypeOfLineServiceOrProduct=Satır türü (0 = ürün, 1 = hizmet)
 FileWithDataToImport=İçe aktarılacak verileri içeren dosya
 FileToImport=İçe aktarılacak kaynak dosya
 FileMustHaveOneOfFollowingFormat=İçe aktarılacak dosya aşağıdaki formatlardan biri olmalıdır
-DownloadEmptyExample=Şablon dosyasını alan içeriği bilgisiyle indir (* olanlar zorunlu alanlardır)
+DownloadEmptyExample=Download template file with field content information
+StarAreMandatory=* are mandatory fields
 ChooseFormatOfFileToImport=Kullanmak istediğiniz içe aktarma dosya biçimini, %s simgesine tıklayarak seçin...
 ChooseFileToImport=Dosyayı yükleyin ve daha sonra bu dosyayı kaynak içe aktarma dosyası olarak seçmek için %s simgesine tıklayın...
 SourceFileFormat=Kaynak dosya biçimi

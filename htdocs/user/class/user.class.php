@@ -442,7 +442,7 @@ class User extends CommonObject
 
 		if ($entity < 0) {
 			if ((empty($conf->multicompany->enabled) || empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) && (!empty($user->entity))) {
-				$sql .= " WHERE u.entity IN (0, ".$this->db->sanitize($conf->entity).")";
+				$sql .= " WHERE u.entity IN (0, ".((int) $conf->entity).")";
 			} else {
 				$sql .= " WHERE u.entity IS NOT NULL"; // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
 			}
@@ -451,7 +451,7 @@ class User extends CommonObject
 			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 				$sql .= " WHERE u.entity IS NOT NULL"; // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
 			} else {
-				$sql .= " WHERE u.entity IN (0, ".$this->db->sanitize(($entity != '' && $entity >= 0) ? $entity : $conf->entity).")"; // search in entity provided in parameter
+				$sql .= " WHERE u.entity IN (0, ".((int) (($entity != '' && $entity >= 0) ? $entity : $conf->entity)).")"; // search in entity provided in parameter
 			}
 		}
 
@@ -2109,8 +2109,8 @@ class User extends CommonObject
 		$outputlangs = new Translate("", $conf);
 
 		if (isset($this->conf->MAIN_LANG_DEFAULT)
-		&& $this->conf->MAIN_LANG_DEFAULT != 'auto') {	// If user has defined its own language (rare because in most cases, auto is used)
-			$outputlangs->getDefaultLang($this->conf->MAIN_LANG_DEFAULT);
+			&& $this->conf->MAIN_LANG_DEFAULT != 'auto') {	// If user has defined its own language (rare because in most cases, auto is used)
+				$outputlangs->getDefaultLang($this->conf->MAIN_LANG_DEFAULT);
 		}
 
 		if ($this->conf->MAIN_LANG_DEFAULT) {
@@ -2184,7 +2184,7 @@ class User extends CommonObject
 			'',
 			'',
 			$trackid
-		);
+			);
 
 		if ($mailfile->sendfile()) {
 			return 1;
@@ -3222,7 +3222,7 @@ class User extends CommonObject
 			foreach ($this->users as $key => $val) {
 				if (preg_match('/'.$keyfilter1.'/', $val['fullpath']) || preg_match('/'.$keyfilter2.'/', $val['fullpath'])
 					|| preg_match('/'.$keyfilter3.'/', $val['fullpath']) || preg_match('/'.$keyfilter4.'/', $val['fullpath'])) {
-					unset($this->users[$key]);
+						unset($this->users[$key]);
 				}
 			}
 		}
@@ -3298,7 +3298,7 @@ class User extends CommonObject
 		$i = 0; $cursor_user = $id_user;
 
 		$useridfound = array($id_user);
-		while (!empty($this->parentof[$cursor_user])) {
+		while (!empty($this->parentof[$cursor_user]) && !empty($this->users[$this->parentof[$cursor_user]])) {
 			if (in_array($this->parentof[$cursor_user], $useridfound)) {
 				dol_syslog("The hierarchy of user has a recursive loop", LOG_WARNING);
 				return -1; // Should not happen. Protection against looping hierarchy

@@ -894,7 +894,7 @@ class Societe extends CommonObject
 			$sql .= ", ".(!empty($user->id) ? ((int) $user->id) : "null");
 			$sql .= ", ".(!empty($this->typent_id) ? ((int) $this->typent_id) : "null");
 			$sql .= ", ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null");
-			$sql .= ", ".$this->status;
+			$sql .= ", ".((int) $this->status);
 			$sql .= ", ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 			$sql .= ", 0";
 			$sql .= ", ".(int) $this->fk_incoterms;
@@ -1369,13 +1369,13 @@ class Societe extends CommonObject
 			$sql .= ",zip = ".(!empty($this->zip) ? "'".$this->db->escape($this->zip)."'" : "null");
 			$sql .= ",town = ".(!empty($this->town) ? "'".$this->db->escape($this->town)."'" : "null");
 
-			$sql .= ",fk_departement = '".(!empty($this->state_id) ? $this->state_id : '0')."'";
-			$sql .= ",fk_pays = '".(!empty($this->country_id) ? $this->country_id : '0')."'";
+			$sql .= ",fk_departement = ".((!empty($this->state_id) && $this->state_id > 0) ? ((int) $this->state_id) : 'null');
+			$sql .= ",fk_pays = ".((!empty($this->country_id) && $this->country_id > 0) ? ((int) $this->country_id) : 'null');
 
 			$sql .= ",phone = ".(!empty($this->phone) ? "'".$this->db->escape($this->phone)."'" : "null");
 			$sql .= ",fax = ".(!empty($this->fax) ? "'".$this->db->escape($this->fax)."'" : "null");
 			$sql .= ",email = ".(!empty($this->email) ? "'".$this->db->escape($this->email)."'" : "null");
-			$sql .= ", socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
+			$sql .= ",socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
 			$sql .= ",url = ".(!empty($this->url) ? "'".$this->db->escape($this->url)."'" : "null");
 
 			$sql .= ",parent = ".($this->parent > 0 ? $this->parent : "null");
