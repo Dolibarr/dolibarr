@@ -6663,7 +6663,6 @@ class Form
 	 */
 	public function select_tickets_list($selected = '', $htmlname = 'ticketid', $filtertype = '', $limit = 20, $filterkey = '', $status = 1, $outputmode = 0, $showempty = '1', $forcecombo = 0, $morecss = '')
 	{
-		// phpcs:enable
 		global $langs, $conf, $user, $db;
 
 		$out = '';
@@ -6737,7 +6736,6 @@ class Form
 				// "label" value of json key array is used by jQuery automatically as text for combo box
 				$out .= $opt;
 				array_push($outarray, $optJson);
-
 
 				$i++;
 			}
