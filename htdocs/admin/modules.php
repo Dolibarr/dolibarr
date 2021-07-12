@@ -481,7 +481,9 @@ print load_fiche_titre($langs->trans("ModulesSetup"), '', 'title_setup');
 $deschelp  = '';
 if ($mode == 'common' || $mode == 'commonkanban') {
 	$desc = $langs->trans("ModulesDesc", '{picto}');
+	$desc .= ' '.$langs->trans("ModulesDesc2", '{picto2}');
 	$desc = str_replace('{picto}', img_picto('', 'switch_off'), $desc);
+	$desc = str_replace('{picto2}', img_picto('', 'setup'), $desc);
 	if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only minimal initial modules enabled
 		$deschelp = '<div class="info hideonsmartphone">'.$desc."<br></div><br>\n";
 	}
