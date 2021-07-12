@@ -1249,7 +1249,13 @@ if ($mode == 'develop') {
 	print '<div class="imgmaxheight50 logo_setup"></div>';
 	print '</td>';
 	print '<td>'.$langs->trans("TryToUseTheModuleBuilder", $langs->transnoentitiesnoconv("ModuleBuilder")).'</td>';
-	print '<td>'.$langs->trans("SeeTopRightMenu").'</td>';
+	print '<td class="maxwidth300">';
+	if (!empty($conf->modulebuilder->enabled)) {
+		print $langs->trans("SeeTopRightMenu");
+	} else {
+		print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("ModuleBuilder")).'</span>';
+	}
+	print '</td>';
 	print '</tr>';
 
 	print '<tr class="oddeven" height="80">'."\n";
