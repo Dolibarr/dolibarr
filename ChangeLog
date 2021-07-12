@@ -2,6 +2,27 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 13.0.4 compared to 13.0.2 *****
+
+FIX: Allow disabling of a module (not a dangerous action) even if there is problem with token (due to bugged modules).
+FIX: 13.0 - fatal - missing inclusion of ajax.lib.php for calling `ajax_autocompleter()`
+FIX: #17919 pictures in docs.
+FIX: #18006
+FIX: Accountancy - if we define a date start, automatic binding try to continue to solve old binding
+FIX: Accoutancy Limit date payment not registered on purchases operations
+FIX: Can't edit replacement invoice
+FIX: deposit can create credit note in payment conf
+FIX: division by zero on create
+FIX: holiday: balances not updated correctly with pgsql because of case sensitivity field
+FIX: holiday: status filter parameter has been renamed but not in links it was used
+FIX: List and Create Companies Left Menus
+FIX: method exists
+FIX: need to add payment sum to getlibstatus function in object linked block
+FIX: permission to close a proposal when using advanced permissions
+FIX: Problem of z-index with popup and top menu
+FIX: same thing on supplier orders
+FIX: Status of invoice when making a replacement invoice
+FIX: update contact birthday alert
 
 ***** ChangeLog for 13.0.3 compared to 13.0.2 *****
 
