@@ -6582,7 +6582,6 @@ class Form
 		return;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of tickets in Ajax if Ajax activated or go to select_tickets_list
 	 *
@@ -6602,7 +6601,7 @@ class Form
 	 *  @param		string		$nooutput				No print, return the output into a string
 	 *  @return		void|string
 	 */
-	public function select_tickets($selected = '', $htmlname = 'ticketid', $filtertype = '', $limit = 0, $status = 1, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $selected_combinations = null, $nooutput = 0)
+	public function selectTickets($selected = '', $htmlname = 'ticketid', $filtertype = '', $limit = 0, $status = 1, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $selected_combinations = null, $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -6648,7 +6647,7 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return list of tickets.
-	 *  Called by select_tickets.
+	 *  Called by selectTickets.
 	 *
 	 *	@param      int		$selected           Preselected ticket
 	 *	@param      string	$htmlname           Name of select html
