@@ -7754,11 +7754,12 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 	{
 		$parameters = array('object' => $object, 'mode' => $mode, 'head' => $head);
 		$reshook = $hookmanager->executeHooks('completeTabsHead', $parameters);
-		if ($reshook > 0)
-		{
+		if ($reshook > 0) {		// Hook ask to replace completely the array
 			$head = $hookmanager->resArray;
-			$h = count($head);
+		} else {				// Hook
+			$head = array_merge($head, $hookmanager->resArray);
 		}
+		$h = count($head);
 	}
 }
 

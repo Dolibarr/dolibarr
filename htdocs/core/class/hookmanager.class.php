@@ -254,16 +254,29 @@ class HookManager
 					// Hooks that must return int (hooks with type 'addreplace')
 					if ($hooktype == 'addreplace')
 					{
-						$resaction += $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
-						if ($resaction < 0 || !empty($actionclassinstance->error) || (!empty($actionclassinstance->errors) && count($actionclassinstance->errors) > 0))
-						{
+						$resactiontmp = $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
+						$resaction += $resactiontmp;
+
+						if ($resactiontmp < 0 || !empty($actionclassinstance->error) || (!empty($actionclassinstance->errors) && count($actionclassinstance->errors) > 0)) {
 							$error++;
 							$this->error = $actionclassinstance->error; $this->errors = array_merge($this->errors, (array) $actionclassinstance->errors);
 							dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error) ? '' : " ".$this->error).(empty($this->errors) ? '' : " ".join(",", $this->errors)), LOG_ERR);
 						}
 
-						if (isset($actionclassinstance->results) && is_array($actionclassinstance->results))  $this->resArray = array_merge($this->resArray, $actionclassinstance->results);
-						if (!empty($actionclassinstance->resprints)) $this->resPrint .= $actionclassinstance->resprints;
+						if (isset($actionclassinstance->results) && is_array($actionclassinstance->results)) {
+							if ($resactiontmp > 0) {
+								$this->resArray = $actionclassinstance->results;
+							} else {
+								$this->resArray = array_merge($this->resArray, $actionclassinstance->results);
+							}
+						}
+						if (!empty($actionclassinstance->resprints)) {
+							if ($resactiontmp > 0) {
+								$this->resPrint = $actionclassinstance->resprints;
+							} else {
+								$this->resPrint .= $actionclassinstance->resprints;
+							}
+						}
 					}
 					// Generic hooks that return a string or array (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...)
 					else {
