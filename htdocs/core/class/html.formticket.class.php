@@ -561,28 +561,27 @@ class FormTicket
 	/**
 	 *      Return html list of ticket anaytic codes
 	 *
-	 *      @param  string $selected    Id categorie pre-selectionnée
-	 *      @param  string $htmlname    Nom de la zone select
-	 *      @param  string $filtertype  To filter on some properties in llx_c_ticket_category ('public = 1'). This parameter must not come from input of users.
-	 *      @param  int    $format      0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
-	 *      @param  int    $empty       1=peut etre vide, 0 sinon
-	 *      @param  int    $noadmininfo 0=Add admin info, 1=Disable admin info
-	 *      @param  int    $maxlength   Max length of label
-	 *      @param	string	$morecss	More CSS
-	 * 		@param	int 	$use_multilevel	if > 0 create a multilevel select which use $htmlname example: $use_multilevel = 1 permit to have 2 select boxes.
+	 *      @param  string 	$selected   		Id categorie pre-selectionnée
+	 *      @param  string 	$htmlname   		Name of select component
+	 *      @param  string 	$filtertype 		To filter on some properties in llx_c_ticket_category ('public = 1'). This parameter must not come from input of users.
+	 *      @param  int    	$format     		0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
+	 *      @param  int    	$empty      		1=peut etre vide, 0 sinon
+	 *      @param  int    	$noadmininfo		0=Add admin info, 1=Disable admin info
+	 *      @param  int    	$maxlength  		Max length of label
+	 *      @param	string	$morecss			More CSS
+	 * 		@param	int 	$use_multilevel		If > 0 create a multilevel select which use $htmlname example: $use_multilevel = 1 permit to have 2 select boxes.
 	 *      @return void
 	 */
 	public function selectGroupTickets($selected = '', $htmlname = 'ticketcategory', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '', $use_multilevel = 0)
 	{
 		global $langs, $user;
 
+		dol_syslog(get_class($this)."::selectCategoryTickets ".$selected.", ".$htmlname.", ".$filtertype.", ".$format, LOG_DEBUG);
+
+		$ticketstat = new Ticket($this->db);
+		$ticketstat->loadCacheCategoriesTickets();
+
 		if ($use_multilevel <= 0) {
-			$ticketstat = new Ticket($this->db);
-
-			dol_syslog(get_class($this)."::selectCategoryTickets ".$selected.", ".$htmlname.", ".$filtertype.", ".$format, LOG_DEBUG);
-
-			$ticketstat->loadCacheCategoriesTickets();
-
 			print '<select id="select'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
 			if ($empty) {
 				print '<option value="">&nbsp;</option>';
@@ -667,15 +666,17 @@ class FormTicket
 			$sql = "SELECT ctc.rowid, ctc.code, ctc.label, ctc.fk_parent, ";
 			$sql .= $this->db->ifsql("ctc.rowid NOT IN (SELECT ctcfather.rowid FROM llx_c_ticket_category as ctcfather JOIN llx_c_ticket_category as ctcjoin ON ctcfather.rowid = ctcjoin.fk_parent)", "'NOTPARENT'", "'PARENT'")." as isparent";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category as ctc";
-			$sql .= " WHERE ctc.public = 1";
-			$sql .= " AND ctc.active = 1";
+			$sql .= " WHERE ctc.active > 0";
+			if ($filtertype == 'public=1') {
+				$sql .= " AND ctc.public = 1";
+			}
 			$sql .= " AND ctc.fk_parent = 0";
 			$sql .= $this->db->order('ctc.pos', 'ASC');
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				$num_rows = $this->db->num_rows($resql);
+				$num_rows_level0 = $this->db->num_rows($resql);
 				$i = 0;
-				while ($i < $num_rows) {
+				while ($i < $num_rows_level0) {
 					$obj = $this->db->fetch_object($resql);
 					if ($obj) {
 						$grouprowid = $obj->rowid;
@@ -694,10 +695,11 @@ class FormTicket
 			} else {
 				dol_print_error($this->db);
 			}
-			if ($num_rows == 1) {
+			if ($num_rows_level0 == 1) {
 				return '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.dol_escape_htmltag($groupvalue).'">';
 			}
-			$stringtoprint .= '</select>&nbsp';
+			$stringtoprint .= '</select>&nbsp;';
+
 			$levelid = 1;
 			while ($levelid <= $use_multilevel) {
 				$tabscript = array();
@@ -708,8 +710,10 @@ class FormTicket
 				$sql .= $this->db->ifsql("ctc.rowid NOT IN (SELECT ctcfather.rowid FROM llx_c_ticket_category as ctcfather JOIN llx_c_ticket_category as ctcjoin ON ctcfather.rowid = ctcjoin.fk_parent)", "'NOTPARENT'", "'PARENT'")." as isparent";
 				$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category as ctc";
 				$sql .= " JOIN ".MAIN_DB_PREFIX."c_ticket_category as ctcjoin ON ctc.fk_parent = ctcjoin.rowid";
-				$sql .= " WHERE ctc.public = 1";
-				$sql .= " AND ctc.active = 1";
+				$sql .= " WHERE ctc.active = 1";
+				if ($filtertype == 'public=1') {
+					$sql .= " AND ctc.public = 1";
+				}
 				if (!empty($arrayidused)) {
 					$sql .= " AND ctc.fk_parent IN ( ";
 					foreach ($arrayidused as $idused) {
@@ -741,7 +745,7 @@ class FormTicket
 							$iselected = $groupticketchild == $obj->code ?'selected':'';
 							$stringtoprint .= '<option '.$iselected.' class="'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
 							if (empty($tabscript[$groupcodefather])) {
-								$tabscript[$groupcodefather] = 'if($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'")[0].value == "'.dol_escape_js($groupcodefather).'"){
+								$tabscript[$groupcodefather] = 'if ($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'")[0].value == "'.dol_escape_js($groupcodefather).'"){
 									$(".'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'").show()
 									console.log("We show childs tickets of '.$groupcodefather.' group ticket")
 								}else{
@@ -756,23 +760,31 @@ class FormTicket
 					dol_print_error($this->db);
 				}
 				$stringtoprint .='</select>';
+				//$stringtoprint .= ajax_combobox($htmlname.'_child_'.$levelid);
 
 				$stringtoprint .='<script>';
 				$stringtoprint .='arraynotparents = '.json_encode($arraycodenotparent).';';
 				$stringtoprint .='if (arraynotparents.includes($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'")[0].value)){$("#'.$htmlname.'_child_'.$levelid.'").hide()}
+
 				$("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'").change(function() {
-					child_id = this.attributes.child_id.value;
+					child_id = $("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'").attr("child_id");
+				    console.log("We select a new value into combo child_id="+child_id);
+
+					/* Hide all selected box that are child of the one modified */
 					$(".groupticketchild").each(function(){
-						if(this.attributes.child_id.value > child_id){
-							this.value = ""
-							$(this).attr("style", "display : none;")
+						if ($(this).attr("child_id") > child_id) {
+							console.log("hide child_id="+$(this).attr("child_id"));
+							$(this).val("");
+							$(this).hide();
 						}
 					})
-					$("#'.$htmlname.'_child_'.$levelid.'")[0].value = ""
+
+					/* Now we enable the next combo */
+					$("#'.$htmlname.'_child_'.$levelid.'").val("");
 					if (!arraynotparents.includes(this.value)) {
-					$("#'.$htmlname.'_child_'.$levelid.'").show()
+						$("#'.$htmlname.'_child_'.$levelid.'").show()
 					} else {
-					$("#'.$htmlname.'_child_'.$levelid.'").hide()
+						$("#'.$htmlname.'_child_'.$levelid.'").hide()
 					}
 				';
 				$levelid++;
@@ -782,6 +794,9 @@ class FormTicket
 				$stringtoprint .='})';
 				$stringtoprint .='</script>';
 			}
+
+			$stringtoprint .= ajax_combobox($htmlname);
+
 			return $stringtoprint;
 		}
 	}

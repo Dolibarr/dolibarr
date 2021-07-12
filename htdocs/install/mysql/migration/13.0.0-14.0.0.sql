@@ -428,6 +428,10 @@ create table llx_eventorganization_conferenceorboothattendee_extrafields
 ALTER TABLE llx_eventorganization_conferenceorboothattendee_extrafields ADD INDEX idx_conferenceorboothattendee_fk_object(fk_object);
 
 ALTER TABLE llx_c_ticket_category ADD COLUMN public integer DEFAULT 0;
+
+-- VPGSQL8.2 ALTER TABLE llx_c_ticket_category ALTER COLUMN pos TYPE INTEGER USING pos::INTEGER;
+-- VPGSQL8.2 ALTER TABLE llx_c_ticket_category ALTER COLUMN pos SET NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_c_ticket_category ALTER COLUMN pos SET DEFAULT 0;
 ALTER TABLE llx_c_ticket_category MODIFY COLUMN pos	integer DEFAULT 0 NOT NULL;
 
 

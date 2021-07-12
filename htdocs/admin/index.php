@@ -51,6 +51,7 @@ if (!empty($conf->global->MAIN_MOTD_SETUPPAGE)) {
 	$conf->global->MAIN_MOTD_SETUPPAGE = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', $conf->global->MAIN_MOTD_SETUPPAGE);
 	if (!empty($conf->global->MAIN_MOTD_SETUPPAGE)) {
 		$i = 0;
+		$reg = array();
 		while (preg_match('/__\(([a-zA-Z|@]+)\)__/i', $conf->global->MAIN_MOTD_SETUPPAGE, $reg) && $i < 100) {
 			$tmp = explode('|', $reg[1]);
 			if (!empty($tmp[1])) {

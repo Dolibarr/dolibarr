@@ -589,6 +589,7 @@ class Form
 		if (!$htmltext) {
 			return $text;
 		}
+		$direction = (int) $direction;	// For backward compatibility when $direction was set to '' instead of 0
 
 		$tag = 'td';
 		if ($notabs == 2) {
@@ -1251,6 +1252,9 @@ class Form
 			if (is_null($ajaxoptions)) {
 				$ajaxoptions = array();
 			}
+
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+
 			// No immediate load of all database
 			$placeholder = '';
 			if ($selected && empty($selected_input_value)) {
@@ -2176,7 +2180,7 @@ class Form
 	 *
 	 *  @param		int			$selected				Preselected products
 	 *  @param		string		$htmlname				Name of HTML select field (must be unique in page).
-	 *  @param		int			$filtertype				Filter on product type (''=nofilter, 0=product, 1=service)
+	 *  @param		int|string	$filtertype				Filter on product type (''=nofilter, 0=product, 1=service)
 	 *  @param		int			$limit					Limit on number of returned lines
 	 *  @param		int			$price_level			Level of price to show
 	 *  @param		int			$status					Sell status -1=Return all products, 0=Products not on sell, 1=Products on sell
@@ -2604,7 +2608,7 @@ class Form
 				}
 			}
 			if ($showempty) {
-				$out .= '<option value="0" selected>'.($textifempty ? $textifempty : '&nbsp;').'</option>';
+				$out .= '<option value="-1" selected>'.($textifempty ? $textifempty : '&nbsp;').'</option>';
 			}
 
 			$i = 0;

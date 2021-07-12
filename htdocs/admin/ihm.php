@@ -255,7 +255,7 @@ if ($action == 'update') {
 
 	$_SESSION["mainmenu"] = ""; // Le gestionnaire de menu a pu changer
 
-	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
+	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup".(GETPOSTISSET('page_y', 'int') ? '&page_y='.GETPOST('page_y', 'int') : ''));
 	exit;
 }
 
@@ -281,6 +281,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 print '<form enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
+print '<input type="hidden" name="page_y" value="">';
 
 clearstatcache();
 
@@ -292,8 +293,9 @@ print '</tr>';
 
 // Default language
 print '<tr class="oddeven"><td>'.$langs->trans("DefaultLanguage").'</td><td>';
+print img_picto('', 'language', 'class="pictofixedwidth"');
 print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'MAIN_LANG_DEFAULT', 1, null, '', 0, 0, 'minwidth300', 2);
-print '<input class="button button-save" type="submit" name="submit" value="'.$langs->trans("Save").'">';
+//print '<input class="button button-save smallpaddingimp" type="submit" name="submit" value="'.$langs->trans("Save").'">';
 print '</td>';
 print '</tr>';
 
@@ -303,12 +305,24 @@ print ajax_constantonoff("MAIN_MULTILANGS", array(), $conf->entity, 0, 0, 1, 0);
 print '</td>';
 print '</tr>';
 
-print '</table><br>'."\n";
+print '</table>'."\n";
 print '</div>';
+
+print '<br>';
+print '<div class="center">';
+print '<input class="button button-save" type="submit" name="submit" value="'.$langs->trans("Save").'">';
+print '</div>';
+
+print '<br><br>';
 
 // Themes and themes options
 showSkins(null, 1);
 print '<br>';
+print '<div class="center">';
+print '<input class="button button-save reposition" type="submit" name="submit" value="'.$langs->trans("Save").'">';
+print '</div>';
+
+print '<br><br>';
 
 // Other
 print '<div class="div-table-responsive-no-min">';
@@ -440,6 +454,12 @@ print '</div>';
 
 print '<br>';
 
+print '<div class="center">';
+print '<input class="button button-save reposition" type="submit" name="submit" value="'.$langs->trans("Save").'">';
+print '</div>';
+
+print '<br><br>';
+
 // Other
 print '<div class="div-table-responsive-no-min">';
 print '<table summary="edit" class="noborder centpercent editmode tableforfield">';
@@ -497,7 +517,7 @@ print '</div>';
 
 print '<br>';
 print '<div class="center">';
-print '<input class="button button-save" type="submit" name="submit" value="'.$langs->trans("Save").'">';
+print '<input class="button button-save reposition" type="submit" name="submit" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';

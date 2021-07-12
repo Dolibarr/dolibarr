@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2020 Laurent Destailleur  <eldy@users.sourceforge.org>
+ * Copyright (C) 2005-2021 Laurent Destailleur  <eldy@users.sourceforge.org>
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 /**
  *   \file       htdocs/admin/clicktodial.php
  *   \ingroup    clicktodial
- *   \brief      Page to setup module clicktodial
+ *   \brief      Page to setup module ClickToDial
  */
 
 require '../main.inc.php';
@@ -99,7 +99,12 @@ print '<input class="quatrevingtpercent" type="text" id="CLICKTODIAL_URL" name="
 print ajax_autoselect('CLICKTODIAL_URL');
 print '<br>';
 print $langs->trans("ClickToDialUrlDesc").'<br>';
-print $langs->trans("Example").':<br>http://myphoneserver/mypage?login=__LOGIN__&password=__PASS__&caller=__PHONEFROM__&called=__PHONETO__';
+print '<br>';
+print '<span class="opacitymedium">';
+print $langs->trans("Example").':<br>';
+print 'http://myphoneserver/mypage?login=__LOGIN__&password=__PASS__&caller=__PHONEFROM__&called=__PHONETO__<br>';
+print 'sip:__PHONETO__@my.sip.server';
+print '</span>';
 
 //if (! empty($user->clicktodial_url))
 //{
