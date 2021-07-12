@@ -1034,19 +1034,16 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 	}
 }
 
-if ($type == Categorie::TYPE_TICKET)
-{
+if ($type == Categorie::TYPE_TICKET) {
 	$permission = ($user->rights->categorie->creer || $user->rights->categorie->creer);
 
 	$tickets = $object->getObjectsInCateg($type, 0, $limit, $offset);
-	if ($tickets < 0)
-	{
+	if ($tickets < 0) {
 		dol_print_error($db, $object->error, $object->errors);
 	} else {
 		// Form to add record into a category
 		$showclassifyform = 1;
-		if ($showclassifyform)
-		{
+		if ($showclassifyform) {
 			print '<br>';
 			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1079,11 +1076,9 @@ if ($type == Categorie::TYPE_TICKET)
 		print '<table class="noborder centpercent">'."\n";
 		print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Ref").'</td></tr>'."\n";
 
-		if (count($tickets) > 0)
-		{
+		if (count($tickets) > 0) {
 			$i = 0;
-			foreach ($tickets as $ticket)
-			{
+			foreach ($tickets as $ticket) {
 				$i++;
 				if ($i > $limit) break;
 
@@ -1094,8 +1089,7 @@ if ($type == Categorie::TYPE_TICKET)
 				print '<td class="tdtop">'.$ticket->label."</td>\n";
 				// Link to delete from category
 				print '<td class="right">';
-				if ($permission)
-				{
+				if ($permission) {
 					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$ticket->id."'>";
 					print $langs->trans("DeleteFromCat");
 					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');

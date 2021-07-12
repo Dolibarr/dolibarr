@@ -1069,7 +1069,7 @@ if ($action == 'create' || $action == 'presend') {
 			print $form->showCategories($object->id, Categorie::TYPE_TICKET, 1);
 			print "</td></tr>";
 		}
-		
+
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
