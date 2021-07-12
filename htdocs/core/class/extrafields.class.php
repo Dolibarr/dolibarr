@@ -936,7 +936,7 @@ class ExtraFields
 					$this->attribute_computed[$tab->name] = $tab->fieldcomputed;
 					$this->attribute_unique[$tab->name] = $tab->fieldunique;
 					$this->attribute_required[$tab->name] = $tab->fieldrequired;
-					$this->attribute_param[$tab->name] = ($tab->param ? unserialize($tab->param) : '');
+					$this->attribute_param[$tab->name] = ($tab->param ? jsonOrUnserialize($tab->param) : '');
 					$this->attribute_pos[$tab->name] = $tab->pos;
 					$this->attribute_alwayseditable[$tab->name] = $tab->alwayseditable;
 					$this->attribute_perms[$tab->name] = (strlen($tab->perms) == 0 ? 1 : $tab->perms);
@@ -954,7 +954,7 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['computed'][$tab->name] = $tab->fieldcomputed;
 					$this->attributes[$tab->elementtype]['unique'][$tab->name] = $tab->fieldunique;
 					$this->attributes[$tab->elementtype]['required'][$tab->name] = $tab->fieldrequired;
-					$this->attributes[$tab->elementtype]['param'][$tab->name] = ($tab->param ? unserialize($tab->param) : '');
+					$this->attributes[$tab->elementtype]['param'][$tab->name] = ($tab->param ? jsonOrUnserialize($tab->param) : '');
 					$this->attributes[$tab->elementtype]['pos'][$tab->name] = $tab->pos;
 					$this->attributes[$tab->elementtype]['alwayseditable'][$tab->name] = $tab->alwayseditable;
 					$this->attributes[$tab->elementtype]['perms'][$tab->name] = (strlen($tab->perms) == 0 ? 1 : $tab->perms);
@@ -1613,7 +1613,7 @@ class ExtraFields
 		if (!empty($extrafieldsobjectkey)) {
 			$label = $this->attributes[$extrafieldsobjectkey]['label'][$key];
 			$type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
-			$size = (int) $this->attributes[$extrafieldsobjectkey]['size'][$key];
+			$size = $this->attributes[$extrafieldsobjectkey]['size'][$key];			// Can be '255', '24,8'...
 			$default = $this->attributes[$extrafieldsobjectkey]['default'][$key];
 			$computed = $this->attributes[$extrafieldsobjectkey]['computed'][$key];
 			$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
@@ -1911,7 +1911,7 @@ class ExtraFields
 		} elseif ($type == 'password') {
 			$value = dol_trunc(preg_replace('/./i', '*', $value), 8, 'right', 'UTF-8', 1);
 		} else {
-			$showsize = round($size);
+			$showsize = round((float) $size);
 			if ($showsize > 48) {
 				$showsize = 48;
 			}
@@ -2006,30 +2006,32 @@ class ExtraFields
 					$collapse_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? ($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key] ? true : false) : ($extrafield_collapse_display_value == 2 ? false : true));
 					$extrafields_collapse_num = $this->attributes[$object->table_element]['pos'][$key].(!empty($object->id)?'_'.$object->id:'');
 
-					$out .= '<!-- Add js script to manage the collapse/uncollapse of extrafields separators '.$key.' -->'."\n";
-					$out .= '<script type="text/javascript">'."\n";
-					$out .= 'jQuery(document).ready(function(){'."\n";
-					if ($collapse_display === false) {
-						$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.'").prepend("<span class=\"cursorpointer far fa-plus-square\"></span>&nbsp;");'."\n";
-						$out .= '   jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").hide();'."\n";
-					} else {
-						$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.'").prepend("<span class=\"cursorpointer far fa-minus-square\"></span>&nbsp;");'."\n";
-						$out .= '   document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
+					if (!empty($conf->use_javascript_ajax)) {
+						$out .= '<!-- Add js script to manage the collapse/uncollapse of extrafields separators '.$key.' -->'."\n";
+						$out .= '<script type="text/javascript">'."\n";
+						$out .= 'jQuery(document).ready(function(){'."\n";
+						if ($collapse_display === false) {
+							$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.'").prepend("<span class=\"cursorpointer far fa-plus-square\"></span>&nbsp;");'."\n";
+							$out .= '   jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").hide();'."\n";
+						} else {
+							$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.'").prepend("<span class=\"cursorpointer far fa-minus-square\"></span>&nbsp;");'."\n";
+							$out .= '   document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
+						}
+						$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'").click(function(){'."\n";
+						$out .= '       console.log("We click on collapse/uncollapse .trextrafields_collapse'.$extrafields_collapse_num.'");'."\n";
+						$out .= '       jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").toggle(300, function(){'."\n";
+						$out .= '           if (jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").is(":hidden")) {'."\n";
+						$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-plus-square").removeClass("fa-minus-square");'."\n";
+						$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=0; path='.$_SERVER["PHP_SELF"].'"'."\n";
+						$out .= '           } else {'."\n";
+						$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-minus-square").removeClass("fa-plus-square");'."\n";
+						$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
+						$out .= '           }'."\n";
+						$out .= '       });'."\n";
+						$out .= '   });'."\n";
+						$out .= '});'."\n";
+						$out .= '</script>'."\n";
 					}
-					$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'").click(function(){'."\n";
-					$out .= '       console.log("We click on collapse/uncollapse .trextrafields_collapse'.$extrafields_collapse_num.'");'."\n";
-					$out .= '       jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").toggle(300, function(){'."\n";
-					$out .= '           if (jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").is(":hidden")) {'."\n";
-					$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-plus-square").removeClass("fa-minus-square");'."\n";
-					$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=0; path='.$_SERVER["PHP_SELF"].'"'."\n";
-					$out .= '           } else {'."\n";
-					$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-minus-square").removeClass("fa-plus-square");'."\n";
-					$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
-					$out .= '           }'."\n";
-					$out .= '       });'."\n";
-					$out .= '   });'."\n";
-					$out .= '});'."\n";
-					$out .= '</script>'."\n";
 				}
 			}
 		}

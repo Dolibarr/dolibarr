@@ -193,8 +193,9 @@ class EmailCollector extends CommonObject
 	 */
 	public $datelastresult;
 
-
+	public $codelastresult;
 	public $lastresult;
+	public $datelastok;
 	// END MODULEBUILDER PROPERTIES
 
 	public $filters;
@@ -274,7 +275,7 @@ class EmailCollector extends CommonObject
 			}
 		}
 
-		if (is_array($this->filters) && count($this->filters)) {
+		if (is_array($this->actions) && count($this->actions)) {
 			$emailcollectoroperation = new EmailCollectorAction($this->db);
 
 			foreach ($this->actions as $operation) {
@@ -653,6 +654,9 @@ class EmailCollector extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
+		$this->host = 'localhost';
+		$this->login = 'alogin';
+
 		$this->initAsSpecimenCommon();
 	}
 
@@ -1610,7 +1614,7 @@ class EmailCollector extends CommonObject
 
 					// Make Operation
 					dol_syslog("Execute action ".$operation['type']." actionparam=".$operation['actionparam'].' thirdpartystatic->id='.$thirdpartystatic->id.' contactstatic->id='.$contactstatic->id.' projectstatic->id='.$projectstatic->id);
-					dol_syslog("Execute action fk_element_id=".$fk_element_id." fk_element_type=".$fk_element_type);
+					dol_syslog("Execute action fk_element_id=".$fk_element_id." fk_element_type=".$fk_element_type);	// If a Dolibarr tracker id is found, we should now the id of object
 
 					$actioncode = 'EMAIL_IN';
 					// If we scan the Sent box, we use the code for out email
@@ -1720,6 +1724,13 @@ class EmailCollector extends CommonObject
 
 										// Overwrite values with values extracted from source email
 										$errorforthisaction = $this->overwritePropertiesOfObject($thirdpartystatic, $operation['actionparam'], $messagetext, $subject, $header);
+
+										if ($thirdpartystatic->client && empty($thirdpartystatic->code_client)) {
+											$thirdpartystatic->code_client = 'auto';
+										}
+										if ($thirdpartystatic->fournisseur && empty($thirdpartystatic->code_fournisseur)) {
+											$thirdpartystatic->code_fournisseur = 'auto';
+										}
 
 										if ($errorforthisaction) {
 											$errorforactions++;

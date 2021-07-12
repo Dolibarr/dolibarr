@@ -377,7 +377,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 				$ecmfile->fullpath_orig = $filearray[$key]['fullname'];
 				$ecmfile->gen_or_uploaded = 'unknown';
 				$ecmfile->description = ''; // indexed content
-				$ecmfile->keyword = ''; // keyword content
+				$ecmfile->keywords = ''; // keyword content
 				$result = $ecmfile->create($user);
 				if ($result < 0) {
 					setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
@@ -933,7 +933,7 @@ function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
 					$ecmfile->fullpath_orig = $srcfile;
 					$ecmfile->gen_or_uploaded = 'unknown';
 					$ecmfile->description = ''; // indexed content
-					$ecmfile->keyword = ''; // keyword content
+					$ecmfile->keywords = ''; // keyword content
 					$resultecm = $ecmfile->create($user);
 					if ($resultecm < 0) {
 						setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
@@ -1785,11 +1785,18 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 		$ecmfile->fullpath_orig = $fullpathorig;
 		$ecmfile->gen_or_uploaded = $mode;
 		$ecmfile->description = ''; // indexed content
-		$ecmfile->keyword = ''; // keyword content
+		$ecmfile->keywords = ''; // keyword content
 
 		if (is_object($object) && $object->id > 0) {
 			$ecmfile->src_object_id = $object->id;
-			$ecmfile->src_object_type = $object->table_element;
+			if (isset($object->table_element)) {
+				$ecmfile->src_object_type = $object->table_element;
+			} else {
+				dol_syslog('Error: object ' . get_class($object) . ' has no table_element attribute.');
+				return -1;
+			}
+			if (isset($object->src_object_description)) $ecmfile->description = $object->src_object_description;
+			if (isset($object->src_object_keywords)) $ecmfile->keywords = $object->src_object_keywords;
 		}
 
 		if ($setsharekey) {

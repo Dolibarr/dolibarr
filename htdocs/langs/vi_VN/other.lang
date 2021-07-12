@@ -129,6 +129,7 @@ ClosedByLogin=Người sử dụng đăng nhập người đóng
 FileWasRemoved=Tập tin% s đã được gỡ bỏ
 DirWasRemoved=Thư mục% s đã được gỡ bỏ
 FeatureNotYetAvailable=Tính năng chưa có trong phiên bản hiện tại
+FeatureNotAvailableOnDevicesWithoutMouse=Feature not available on devices without mouse
 FeaturesSupported=Các tính năng được hỗ trợ
 Width=Chiều rộng
 Height=Chiều cao
@@ -263,7 +264,7 @@ ContactCreatedByEmailCollector=Liên hệ / địa chỉ được tạo bởi tr
 ProjectCreatedByEmailCollector=Dự án được tạo bởi trình thu thập email từ email MSGID %s
 TicketCreatedByEmailCollector=Vé được tạo bởi trình thu thập email từ email MSGID %s
 OpeningHoursFormatDesc=Sử dụng một - để tách giờ mở và đóng cửa. <br> Sử dụng một khoảng trắng để nhập các phạm vi khác nhau. <br> Ví dụ: 8-12 14-18
-PrefixSession=Prefix for session ID
+SuffixSessionName=Suffix for session name
 
 ##### Export #####
 ExportsArea=Khu vực xuất khẩu

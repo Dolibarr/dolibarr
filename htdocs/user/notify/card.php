@@ -72,7 +72,7 @@ $permissiontoadd = (($object->id == $user->id) || (!empty($user->rights->user->u
 if ($user->socid) {
 	$id = $user->socid;
 }
-$result = restrictedArea($user, 'user', '', '');
+$result = restrictedArea($user, 'user', '', '', 'user');
 
 
 /*
@@ -437,7 +437,7 @@ if ($result > 0) {
 	}
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
-	if ($optioncss != '') {
+	if (isset($optioncss) && $optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';

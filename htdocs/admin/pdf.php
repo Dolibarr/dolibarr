@@ -371,17 +371,7 @@ print $formadmin->select_language($selected, 'PDF_USE_ALSO_LANGUAGE_CODE', 0, nu
 //}
 print '</td></tr>';
 
-//Desc
-
-print '<tr class="oddeven"><td>'.$langs->trans("HideDescOnPDF").'</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('MAIN_GENERATE_DOCUMENTS_HIDE_DESC');
-} else {
-	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DESC', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC : 0, 1);
-}
-print '</td></tr>';
-
-//Ref
+// Ref
 
 print '<tr class="oddeven"><td>'.$langs->trans("HideRefOnPDF").'</td><td>';
 if ($conf->use_javascript_ajax) {
@@ -391,7 +381,17 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
-//Details
+// Desc
+
+print '<tr class="oddeven"><td>'.$langs->trans("HideDescOnPDF").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_GENERATE_DOCUMENTS_HIDE_DESC');
+} else {
+	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DESC', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC : 0, 1);
+}
+print '</td></tr>';
+
+// Details
 
 print '<tr class="oddeven"><td>'.$langs->trans("HideDetailsOnPDF").'</td><td>';
 if ($conf->use_javascript_ajax) {

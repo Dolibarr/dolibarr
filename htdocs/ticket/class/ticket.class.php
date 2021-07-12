@@ -294,7 +294,7 @@ class Ticket extends CommonObject
 			self::STATUS_ASSIGNED => 'Assigned',
 			self::STATUS_IN_PROGRESS => 'InProgress',
 			self::STATUS_WAITING => 'OnHold',
-			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation',
+			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformationShort',
 			self::STATUS_CLOSED => 'Closed',
 			self::STATUS_CANCELED => 'Canceled'
 		);
@@ -531,7 +531,7 @@ class Ticket extends CommonObject
 		global $langs;
 
 		// Check parameters
-		if (!$id && !$track_id && !$ref && !$email_msgid) {
+		if (empty($id) && empty($ref) && empty($track_id) && empty($email_msgid)) {
 			$this->error = 'ErrorWrongParameters';
 			dol_print_error(get_class($this)."::fetch ".$this->error);
 			return -1;
@@ -1177,7 +1177,7 @@ class Ticket extends CommonObject
 		}
 		// Cache deja charge
 
-		$sql = "SELECT rowid, code, label, use_default, pos, description, public, active";
+		$sql = "SELECT rowid, code, label, use_default, pos, description, public, active, force_severity, fk_parent";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category";
 		$sql .= " WHERE active > 0";
 		$sql .= " ORDER BY pos";
@@ -1196,6 +1196,8 @@ class Ticket extends CommonObject
 				$this->cache_category_tickets[$obj->rowid]['pos'] = $obj->pos;
 				$this->cache_category_tickets[$obj->rowid]['public'] = $obj->public;
 				$this->cache_category_tickets[$obj->rowid]['active'] = $obj->active;
+				$this->cache_category_tickets[$obj->rowid]['force_severity'] = $obj->force_severity;
+				$this->cache_category_tickets[$obj->rowid]['fk_parent'] = $obj->fk_parent;
 				$i++;
 			}
 			return $num;

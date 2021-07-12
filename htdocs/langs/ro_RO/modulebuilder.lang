@@ -143,3 +143,4 @@ AsciiToHtmlConverter=Convertor ASCII la HTML
 AsciiToPdfConverter=Convertor ASCII la PDF
 TableNotEmptyDropCanceled=Tabelul nu este gol. Operaţiunea de drop a fost anulată. 
 ModuleBuilderNotAllowed=Generatorul de module este disponibil, dar nu-ţi este permis să-l utilizezi.
+ImportExportProfiles=Profile import şi export

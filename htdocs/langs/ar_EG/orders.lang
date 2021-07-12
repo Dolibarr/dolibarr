@@ -8,6 +8,7 @@ Orders=الطلبات
 OrderDateShort=تاريخ الأمر
 OrderToProcess=طلب تحت التشغيل
 NewOrder=أمر جديد
+NewSupplierOrderShort=أمر جديد
 ToOrder=إصدار أمر
 MakeOrder=إصدار أمر
 SuppliersOrders=أوامر الشراء

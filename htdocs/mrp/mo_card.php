@@ -138,6 +138,16 @@ if (empty($reshook)) {
 	// Actions when printing a doc from card
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
+	// Action to build doc
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
+	if ($action == 'set_thirdparty' && $permissiontoadd) {
+		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, 'MO_MODIFY');
+	}
+	if ($action == 'classin' && $permissiontoadd) {
+		$object->setProject(GETPOST('projectid', 'int'));
+	}
+
 	// Actions to send emails
 	$triggersendname = 'MO_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_MO_TO';
@@ -146,13 +156,6 @@ if (empty($reshook)) {
 
 	// Action to move up and down lines of object
 	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
-
-	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, 'MO_MODIFY');
-	}
-	if ($action == 'classin' && $permissiontoadd) {
-		$object->setProject(GETPOST('projectid', 'int'));
-	}
 
 	// Action close produced
 	if ($action == 'confirm_produced' && $confirm == 'yes' && $permissiontoadd) {
@@ -198,20 +201,6 @@ $title = $langs->trans('Mo')." - ".$langs->trans("Card");
 
 llxHeader('', $title, '');
 
-// Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function() {
-		init_myfunc();
-	});
-});
-</script>';
 
 
 // Part to create
@@ -517,10 +506,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		//$result = $object->getLinesArray();
 		$object->fetchLines();
 
-		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
+		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
     	<input type="hidden" name="token" value="' . newToken().'">
     	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
     	<input type="hidden" name="mode" value="">
+		<input type="hidden" name="page_y" value="">
     	<input type="hidden" name="id" value="' . $object->id.'">
     	';
 

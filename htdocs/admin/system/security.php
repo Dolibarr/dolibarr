@@ -251,7 +251,7 @@ print '<br>';
 if (empty($conf->global->SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF)) {
 	print '<strong>$dolibarr_main_db_pass</strong>: ';
 	if (!empty($dolibarr_main_db_pass) && empty($dolibarr_main_db_encrypted_pass)) {
-		print img_picto('', 'warning').' '.$langs->trans("DatabasePasswordNotObfuscated").' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommanded").': '.$langs->trans("SetOptionTo", $langs->transnoentitiesnoconv("MainDbPasswordFileConfEncrypted"), yn(1)).')</span>';
+		print img_picto('', 'warning').' '.$langs->trans("DatabasePasswordNotObfuscated").' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("SetOptionTo", $langs->transnoentitiesnoconv("MainDbPasswordFileConfEncrypted"), yn(1)).')</span>';
 		//print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("IPsOfUsers")).')</span>';
 	} else {
 		print img_picto('', 'tick').' '.$langs->trans("DatabasePasswordObfuscated");
@@ -267,7 +267,65 @@ if (empty($conf->global->SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF)) {
 print '<br>';
 print '<br>';
 print '<br>';
-print load_fiche_titre($langs->trans("Menu").' '.$langs->trans("SecuritySetup").' + '.$langs->trans("OtherSetup"), '', 'folder');
+
+print load_fiche_titre($langs->trans("Menu").' '.$langs->trans("SecuritySetup"), '', 'folder');
+
+
+print '<strong>'.$langs->trans("UseCaptchaCode").'</strong>: ';
+print empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA) ? '' : img_picto('', 'tick').' ';
+print yn(empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA) ? 0 : 1);
+print '<br>';
+print '<br>';
+
+
+print '<strong>'.$langs->trans("AntivirusEnabledOnUpload").'</strong>: ';
+print empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? '' : img_picto('', 'tick').' ';
+print yn(empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? 0 : 1);
+if (!empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
+	print ' &nbsp; - '.$conf->global->MAIN_ANTIVIRUS_COMMAND;
+	if (defined('MAIN_ANTIVIRUS_COMMAND')) {
+		print ' - <span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
+	}
+}
+print '<br>';
+print '<br>';
+
+$securityevent = new Events($db);
+$eventstolog = $securityevent->eventstolog;
+
+print '<strong>'.$langs->trans("AuditedSecurityEvents").'</strong>: ';
+$out = '';
+if (!empty($eventstolog) && is_array($eventstolog)) {
+	// Loop on each event type
+	$i = 0;
+	foreach ($eventstolog as $key => $arr) {
+		if ($arr['id']) {
+			$key = 'MAIN_LOGEVENTS_'.$arr['id'];
+			$value = empty($conf->global->$key) ? '' : $conf->global->$key;
+			if ($value) {
+				if ($i > 0) {
+					$out .= ', ';
+				}
+				$out .= '<span class="opacitymedium">'.$key.'</span>';
+				$i++;
+			}
+		}
+	}
+	print $out;
+}
+
+if (empty($out)) {
+	print img_warning().' '.$langs->trans("NoSecurityEventsAreAduited", $langs->transnoentities("Home").' - '.$langs->transnoentities("Setup").' - '.$langs->transnoentities("Security").' - '.$langs->transnoentities("Audit")).'<br>';
+}
+
+print '<br>';
+print '<br>';
+print '<br>';
+print '<br>';
+
+
+print load_fiche_titre($langs->trans("OtherSetup").' ('.$langs->trans("Experimental").')', '', 'folder');
+
 
 //print '<strong>'.$langs->trans("PasswordEncryption").'</strong>: ';
 print '<strong>MAIN_SECURITY_HASH_ALGO</strong> = '.(empty($conf->global->MAIN_SECURITY_HASH_ALGO) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_HASH_ALGO)." &nbsp; ";
@@ -290,11 +348,16 @@ if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
 }
 print '<br>';
 
-
 print '<strong>MAIN_SECURITY_ANTI_SSRF_SERVER_IP</strong> = '.(empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span> &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': static-ips-of-server - '.$langs->trans("Note").': common loopback ip like 127.*.*.*, [::1] are already added)</span>' : $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP)."<br>";
 print '<br>';
 
 print '<strong>MAIN_ALLOW_SVG_FILES_AS_IMAGES</strong> = '.(empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES) ? '0 &nbsp; <span class="opacitymedium">('.$langs->trans("Recommanded").': 0)</span>' : $conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES)."<br>";
+print '<br>';
+
+print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML</strong> = '.(empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommanded").': 1)</span>' : $conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML)."<br>";
+print '<br>';
+
+print '<strong>MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES</strong> = '.(empty($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommanded").': 1)</span>' : $conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)."<br>";
 print '<br>';
 
 print '<strong>MAIN_EXEC_USE_POPEN</strong> = ';
@@ -312,43 +375,6 @@ if ($execmethod == 2) {
 print "<br>";
 print '<br>';
 
-
-print '<strong>'.$langs->trans("AntivirusEnabledOnUpload").'</strong>: ';
-print empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? '' : img_picto('', 'tick').' ';
-print yn(empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? 0 : 1);
-if (!empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
-	print ' &nbsp; - '.$conf->global->MAIN_ANTIVIRUS_COMMAND;
-	if (defined('MAIN_ANTIVIRUS_COMMAND')) {
-		print ' - <span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
-	}
-}
-print '<br>';
-print '<br>';
-
-$securityevent = new Events($db);
-$eventstolog = $securityevent->eventstolog;
-
-print '<strong>'.$langs->trans("AuditedSecurityEvents").'</strong>: ';
-if (!empty($eventstolog) && is_array($eventstolog)) {
-	// Loop on each event type
-	$i = 0;
-	foreach ($eventstolog as $key => $arr) {
-		if ($arr['id']) {
-			$key = 'MAIN_LOGEVENTS_'.$arr['id'];
-			$value = empty($conf->global->$key) ? '' : $conf->global->$key;
-			if ($value) {
-				if ($i > 0) {
-					print ', ';
-				}
-				print '<span class="opacitymedium">'.$key.'</span>';
-				$i++;
-			}
-		}
-	}
-	print '<br>';
-} else {
-	print img_warning().' '.$langs->trans("NoSecurityEventsAreAduited", $langs->transnoentities("Home").' - '.$langs->transnoentities("Setup").' - '.$langs->transnoentities("Audit")).'<br>';
-}
 
 
 // Modules/Applications
@@ -400,7 +426,7 @@ if (empty($conf->api->enabled) && empty($conf->webservices->enabled)) {
 		print '<br>';
 	}
 	if (!empty($conf->api->enabled)) {
-		print '<strong>API_ENDPOINT_RULES</strong> = '.(empty($conf->global->API_ENDPOINT_RULES) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->API_ENDPOINT_RULES)."<br>\n";
+		print '<strong>API_ENDPOINT_RULES</strong> = '.(empty($conf->global->API_ENDPOINT_RULES) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Example").': endpoint1:1,endpoint2:1,...)</span>' : $conf->global->API_ENDPOINT_RULES)."<br>\n";
 		print '<br>';
 	}
 }

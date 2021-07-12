@@ -589,6 +589,7 @@ class Form
 		if (!$htmltext) {
 			return $text;
 		}
+		$direction = (int) $direction;	// For backward compatibility when $direction was set to '' instead of 0
 
 		$tag = 'td';
 		if ($notabs == 2) {
@@ -957,7 +958,7 @@ class Form
 					if ($row['code_iso']) {
 						$labeltoshow .= ' <span class="opacitymedium">('.$row['code_iso'].')</span>';
 						if (empty($hideflags)) {
-							$tmpflag = picto_from_langcode($row['code_iso'], 'class="saturatemedium marginrightonly"');
+							$tmpflag = picto_from_langcode($row['code_iso'], 'class="saturatemedium paddingrightonly"');
 							$labeltoshow = $tmpflag.' '.$labeltoshow;
 						}
 					}
@@ -978,7 +979,7 @@ class Form
 
 		// Make select dynamic
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-		$out .= ajax_combobox('select'.$htmlname);
+		$out .= ajax_combobox('select'.$htmlname, array(), 0, 0, 'resolve');
 
 		return $out;
 	}
@@ -1251,6 +1252,9 @@ class Form
 			if (is_null($ajaxoptions)) {
 				$ajaxoptions = array();
 			}
+
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+
 			// No immediate load of all database
 			$placeholder = '';
 			if ($selected && empty($selected_input_value)) {
@@ -2176,7 +2180,7 @@ class Form
 	 *
 	 *  @param		int			$selected				Preselected products
 	 *  @param		string		$htmlname				Name of HTML select field (must be unique in page).
-	 *  @param		int			$filtertype				Filter on product type (''=nofilter, 0=product, 1=service)
+	 *  @param		int|string	$filtertype				Filter on product type (''=nofilter, 0=product, 1=service)
 	 *  @param		int			$limit					Limit on number of returned lines
 	 *  @param		int			$price_level			Level of price to show
 	 *  @param		int			$status					Sell status -1=Return all products, 0=Products not on sell, 1=Products on sell
@@ -2604,7 +2608,7 @@ class Form
 				}
 			}
 			if ($showempty) {
-				$out .= '<option value="0" selected>'.($textifempty ? $textifempty : '&nbsp;').'</option>';
+				$out .= '<option value="-1" selected>'.($textifempty ? $textifempty : '&nbsp;').'</option>';
 			}
 
 			$i = 0;
@@ -4682,7 +4686,7 @@ class Form
 	{
 		global $langs, $conf;
 
-		$more = '<!-- formconfirm for page='.dol_escape_htmltag($page).' -->';
+		$more = '<!-- formconfirm before calling page='.dol_escape_htmltag($page).' -->';
 		$formconfirm = '';
 		$inputok = array();
 		$inputko = array();
@@ -5085,7 +5089,12 @@ class Form
 		} else {
 			if ($selected) {
 				$this->load_cache_conditions_paiements();
-				print $this->cache_conditions_paiements[$selected]['label'];
+				if (isset($this->cache_conditions_paiements[$selected])) {
+					print $this->cache_conditions_paiements[$selected]['label'];
+				} else {
+					$langs->load('errors');
+					print $langs->trans('ErrorNotInDictionaryPaymentConditions');
+				}
 			} else {
 				print "&nbsp;";
 			}
@@ -7058,7 +7067,7 @@ class Form
 	public static function selectArrayAjax($htmlname, $url, $id = '', $moreparam = '', $moreparamtourl = '', $disabled = 0, $minimumInputLength = 1, $morecss = '', $callurlonselect = 0, $placeholder = '', $acceptdelayedhtml = 0)
 	{
 		global $conf, $langs;
-		global $delayedhtmlcontent;
+		global $delayedhtmlcontent;	// Will be used later outside of this function
 
 		// TODO Use an internal dolibarr component instead of select2
 		if (empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && !defined('REQUIRE_JQUERY_MULTISELECT')) {
@@ -7067,68 +7076,71 @@ class Form
 
 		$out = '<select type="text" class="'.$htmlname.($morecss ? ' '.$morecss : '').'" '.($moreparam ? $moreparam.' ' : '').'name="'.$htmlname.'"></select>';
 
-		$tmpplugin = 'select2';
-		$outdelayed = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
-	    	<script>
-	    	$(document).ready(function () {
+		$outdelayed = '';
+		if (!empty($conf->use_javascript_ajax)) {
+			$tmpplugin = 'select2';
+			$outdelayed = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+		    	<script>
+		    	$(document).ready(function () {
 
-    	        '.($callurlonselect ? 'var saveRemoteData = [];' : '').'
+	    	        '.($callurlonselect ? 'var saveRemoteData = [];' : '').'
 
-                $(".'.$htmlname.'").select2({
-			    	ajax: {
-				    	dir: "ltr",
-				    	url: "'.$url.'",
-				    	dataType: \'json\',
-				    	delay: 250,
-				    	data: function (params) {
-				    		return {
-						    	q: params.term, 	// search term
-				    			page: params.page
-				    		};
-			    		},
-			    		processResults: function (data) {
-			    			// parse the results into the format expected by Select2.
-			    			// since we are using custom formatting functions we do not need to alter the remote JSON data
-			    			//console.log(data);
-							saveRemoteData = data;
-				    	    /* format json result for select2 */
-				    	    result = []
-				    	    $.each( data, function( key, value ) {
-				    	       result.push({id: key, text: value.text});
-                            });
-			    			//return {results:[{id:\'none\', text:\'aa\'}, {id:\'rrr\', text:\'Red\'},{id:\'bbb\', text:\'Search a into projects\'}], more:false}
-			    			//console.log(result);
-			    			return {results: result, more: false}
-			    		},
-			    		cache: true
-			    	},
-	 				language: select2arrayoflanguage,
-					containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
-				    placeholder: "'.dol_escape_js($placeholder).'",
-			    	escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
-			    	minimumInputLength: '.$minimumInputLength.',
-			        formatResult: function(result, container, query, escapeMarkup) {
-                        return escapeMarkup(result.text);
-                    },
-			    });
+	                $(".'.$htmlname.'").select2({
+				    	ajax: {
+					    	dir: "ltr",
+					    	url: "'.$url.'",
+					    	dataType: \'json\',
+					    	delay: 250,
+					    	data: function (params) {
+					    		return {
+							    	q: params.term, 	// search term
+					    			page: params.page
+					    		};
+				    		},
+				    		processResults: function (data) {
+				    			// parse the results into the format expected by Select2.
+				    			// since we are using custom formatting functions we do not need to alter the remote JSON data
+				    			//console.log(data);
+								saveRemoteData = data;
+					    	    /* format json result for select2 */
+					    	    result = []
+					    	    $.each( data, function( key, value ) {
+					    	       result.push({id: key, text: value.text});
+	                            });
+				    			//return {results:[{id:\'none\', text:\'aa\'}, {id:\'rrr\', text:\'Red\'},{id:\'bbb\', text:\'Search a into projects\'}], more:false}
+				    			//console.log(result);
+				    			return {results: result, more: false}
+				    		},
+				    		cache: true
+				    	},
+		 				language: select2arrayoflanguage,
+						containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
+					    placeholder: "'.dol_escape_js($placeholder).'",
+				    	escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
+				    	minimumInputLength: '.$minimumInputLength.',
+				        formatResult: function(result, container, query, escapeMarkup) {
+	                        return escapeMarkup(result.text);
+	                    },
+				    });
 
-                '.($callurlonselect ? '
-                /* Code to execute a GET when we select a value */
-                $(".'.$htmlname.'").change(function() {
-			    	var selected = $(".'.$htmlname.'").val();
-                	console.log("We select in selectArrayAjax the entry "+selected)
-			        $(".'.$htmlname.'").val("");  /* reset visible combo value */
-    			    $.each( saveRemoteData, function( key, value ) {
-    				        if (key == selected)
-    			            {
-    			                 console.log("selectArrayAjax - Do a redirect to "+value.url)
-    			                 location.assign(value.url);
-    			            }
-                    });
-    			});' : '').'
+	                '.($callurlonselect ? '
+	                /* Code to execute a GET when we select a value */
+	                $(".'.$htmlname.'").change(function() {
+				    	var selected = $(".'.$htmlname.'").val();
+	                	console.log("We select in selectArrayAjax the entry "+selected)
+				        $(".'.$htmlname.'").val("");  /* reset visible combo value */
+	    			    $.each( saveRemoteData, function( key, value ) {
+	    				        if (key == selected)
+	    			            {
+	    			                 console.log("selectArrayAjax - Do a redirect to "+value.url)
+	    			                 location.assign(value.url);
+	    			            }
+	                    });
+	    			});' : '').'
 
-    	   });
-	       </script>';
+	    	   });
+		       </script>';
+		}
 
 		if ($acceptdelayedhtml) {
 			$delayedhtmlcontent .= $outdelayed;
@@ -7159,7 +7171,7 @@ class Form
 	public static function selectArrayFilter($htmlname, $array, $id = '', $moreparam = '', $disableFiltering = 0, $disabled = 0, $minimumInputLength = 1, $morecss = '', $callurlonselect = 0, $placeholder = '', $acceptdelayedhtml = 0)
 	{
 		global $conf, $langs;
-		global $delayedhtmlcontent;
+		global $delayedhtmlcontent;	// Will be used later outside of this function
 
 		// TODO Use an internal dolibarr component instead of select2
 		if (empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && !defined('REQUIRE_JQUERY_MULTISELECT')) {
@@ -7178,74 +7190,77 @@ class Form
 			$formattedarrayresult[] = $o;
 		}
 
-		$tmpplugin = 'select2';
-		$outdelayed = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
-			<script>
-			$(document).ready(function () {
-				var data = '.json_encode($formattedarrayresult).';
+		$outdelayed = '';
+		if (!empty($conf->use_javascript_ajax)) {
+			$tmpplugin = 'select2';
+			$outdelayed = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+				<script>
+				$(document).ready(function () {
+					var data = '.json_encode($formattedarrayresult).';
 
-				'.($callurlonselect ? 'var saveRemoteData = '.json_encode($array).';' : '').'
+					'.($callurlonselect ? 'var saveRemoteData = '.json_encode($array).';' : '').'
 
-				$(".'.$htmlname.'").select2({
-					data: data,
-					language: select2arrayoflanguage,
-					containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
-					placeholder: "'.dol_escape_js($placeholder).'",
-					escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
-					minimumInputLength: '.$minimumInputLength.',
-					formatResult: function(result, container, query, escapeMarkup) {
-						return escapeMarkup(result.text);
-					},
-					matcher: function (params, data) {
+					$(".'.$htmlname.'").select2({
+						data: data,
+						language: select2arrayoflanguage,
+						containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
+						placeholder: "'.dol_escape_js($placeholder).'",
+						escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
+						minimumInputLength: '.$minimumInputLength.',
+						formatResult: function(result, container, query, escapeMarkup) {
+							return escapeMarkup(result.text);
+						},
+						matcher: function (params, data) {
 
-						if(! data.id) return null;';
+							if(! data.id) return null;';
 
-		if ($callurlonselect) {
+			if ($callurlonselect) {
+				$outdelayed .= '
+
+							var urlBase = data.url;
+							var separ = urlBase.indexOf("?") >= 0 ? "&" : "?";
+							/* console.log("params.term="+params.term); */
+							/* console.log("params.term encoded="+encodeURIComponent(params.term)); */
+							saveRemoteData[data.id].url = urlBase + separ + "sall=" + encodeURIComponent(params.term.replace(/\"/g, ""));';
+			}
+
+			if (!$disableFiltering) {
+				$outdelayed .= '
+
+							if(data.text.match(new RegExp(params.term))) {
+								return data;
+							}
+
+							return null;';
+			} else {
+				$outdelayed .= '
+
+							return data;';
+			}
+
 			$outdelayed .= '
-
-						var urlBase = data.url;
-						var separ = urlBase.indexOf("?") >= 0 ? "&" : "?";
-						/* console.log("params.term="+params.term); */
-						/* console.log("params.term encoded="+encodeURIComponent(params.term)); */
-						saveRemoteData[data.id].url = urlBase + separ + "sall=" + encodeURIComponent(params.term.replace(/\"/g, ""));';
-		}
-
-		if (!$disableFiltering) {
-			$outdelayed .= '
-
-						if(data.text.match(new RegExp(params.term))) {
-							return data;
-						}
-
-						return null;';
-		} else {
-			$outdelayed .= '
-
-						return data;';
-		}
-
-		$outdelayed .= '
-					}
-				});
-
-				'.($callurlonselect ? '
-				/* Code to execute a GET when we select a value */
-				$(".'.$htmlname.'").change(function() {
-					var selected = $(".'.$htmlname.'").val();
-					console.log("We select "+selected)
-
-					$(".'.$htmlname.'").val("");  /* reset visible combo value */
-					$.each( saveRemoteData, function( key, value ) {
-						if (key == selected)
-						{
-							console.log("selectArrayFilter - Do a redirect to "+value.url)
-							location.assign(value.url);
 						}
 					});
-				});' : '').'
 
-			});
-			</script>';
+					'.($callurlonselect ? '
+					/* Code to execute a GET when we select a value */
+					$(".'.$htmlname.'").change(function() {
+						var selected = $(".'.$htmlname.'").val();
+						console.log("We select "+selected)
+
+						$(".'.$htmlname.'").val("");  /* reset visible combo value */
+						$.each( saveRemoteData, function( key, value ) {
+							if (key == selected)
+							{
+								console.log("selectArrayFilter - Do a redirect to "+value.url)
+								location.assign(value.url);
+							}
+						});
+					});' : '').'
+
+				});
+				</script>';
+		}
 
 		if ($acceptdelayedhtml) {
 			$delayedhtmlcontent .= $outdelayed;
@@ -7288,7 +7303,7 @@ class Form
 		}
 
 		// Add code for jquery to use multiselect
-		if (!empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT')) {
+		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT')) {
 			$out .= "\n".'<!-- JS CODE TO ENABLE select for id '.$htmlname.', addjscombo='.$addjscombo.' -->';
 			$out .= "\n".'<script>'."\n";
 			if ($addjscombo == 1) {
@@ -7778,7 +7793,7 @@ class Form
 						print '<input type="radio" name="idtolinkto" id="'.$key.'_'.$objp->rowid.'" value="'.$objp->rowid.'">';
 						print '</td>';
 						print '<td class="center"><label for="'.$key.'_'.$objp->rowid.'">'.$objp->ref.'</label></td>';
-						print '<td>'.(!empty($objp->ref_client) ? $objp->ref_client : $objp->ref_supplier).'</td>';
+						print '<td>'.(!empty($objp->ref_client) ? $objp->ref_client : (!empty($objp->ref_supplier) ? $objp->ref_supplier : '')).'</td>';
 						print '<td class="right">';
 						if ($possiblelink['label'] == 'LinkToContract') {
 							$form = new Form($this->db);
@@ -7791,8 +7806,13 @@ class Form
 						$i++;
 					}
 					print '</table>';
-					print '<div class="center"><input type="submit" class="button valignmiddle" value="'.$langs->trans('ToLink').'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
-
+					print '<div class="center">';
+					print '<input type="submit" class="button valignmiddle marginleftonly marginrightonly" value="'.$langs->trans('ToLink').'">';
+					if (empty($conf->use_javascript_ajax)) {
+						print '<input type="submit" class="button button-cancel marginleftonly marginrightonly" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+					} else {
+						print '<input type="submit"; onclick="javascript:jQuery(\'#'.$key.'list\').toggle(); return false;" class="button button-cancel marginleftonly marginrightonly" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+					}
 					print '</form>';
 					$this->db->free($resqllist);
 				} else {
@@ -7833,7 +7853,7 @@ class Form
 				<script>
 				jQuery(document).ready(function() {
 					jQuery(".linkto").click(function() {
-						console.log("We choose to show/hide link for rel="+jQuery(this).attr(\'rel\'));
+						console.log("We choose to show/hide links for rel="+jQuery(this).attr(\'rel\')+" so #"+jQuery(this).attr(\'rel\')+"list");
 					    jQuery("#"+jQuery(this).attr(\'rel\')+"list").toggle();
 					});
 				});
@@ -8494,7 +8514,7 @@ class Form
 	 */
 	public function showFilterButtons()
 	{
-		$out = '<div class="nowrap">';
+		$out = '<div class="nowraponall">';
 		$out .= '<button type="submit" class="liste_titre button_search" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
 		$out .= '<button type="submit" class="liste_titre button_removefilter" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
 		$out .= '</div>';
@@ -8628,14 +8648,11 @@ class Form
 
 									if ($("select[name='.$target.']").val() == '.$obj->id.') {
 										// get price of kilometer to fill the unit price
-										var data = '.json_encode($params).';
-										data.fk_c_exp_tax_cat = $(this).val();
-
 										$.ajax({
 											method: "POST",
 											dataType: "json",
-											data: data,
-											url: "'.(DOL_URL_ROOT.'/expensereport/ajax/ajaxik.php').'",
+											data: { fk_c_exp_tax_cat: $(this).val(), token: \''.currentToken().'\' },
+											url: "'.(DOL_URL_ROOT.'/expensereport/ajax/ajaxik.php?'.$params).'",
 										}).done(function( data, textStatus, jqXHR ) {
 											console.log(data);
 											if (typeof data.up != "undefined") {

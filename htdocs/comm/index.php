@@ -65,6 +65,8 @@ $socid = GETPOST("socid", 'int');
 if ($user->socid > 0) {
 	$action = '';
 	$id = $user->socid;
+} else {
+	$id = 0;
 }
 restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
 

@@ -382,6 +382,31 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'submenus' => array(),
 	);
 
+	// Tickets and knwoledge base
+	$tmpentry = array(
+		'enabled'=>(!empty($conf->ticket->enabled) || !empty($conf->knwoledgemanagement->enabled)),
+		'perms'=>(!empty($user->rights->ticket->read) || !empty($user->rights->knwoledgemanagement->read)),
+		'module'=>'ticket|knwoledgemanagement'
+	);
+	$menu_arr[] = array(
+		'name' => 'Ticket',
+		'link' => '/ticket/index.php?mainmenu=ticket&amp;leftmenu=',
+		'title' =>  "Tickets",
+		'level' => 0,
+		'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
+		'target' => $atarget,
+		'mainmenu' => "ticket",
+		'leftmenu' => '',
+		'position' => 88,
+		'id' => $id,
+		'idsel' => 'ticket',
+		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "ticket") ? 'class="tmenusel"' : 'class="tmenu"',
+		'prefix' => img_picto('', 'ticket', 'class="fa-fw paddingright"'),
+		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "ticket") ? 0 : 1),
+		'loadLangs' => array("other"),
+		'submenus' => array(),
+	);
+
 	// Tools
 	$tmpentry = array(
 		'enabled'=>1,
@@ -1772,11 +1797,11 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$newmenu->add("/holiday/card.php?mainmenu=hrm&leftmenu=holiday&action=create", $langs->trans("New"), 1, $user->rights->holiday->write);
 				$newmenu->add("/holiday/list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("List"), 1, $user->rights->holiday->read);
 				if ($usemenuhider || empty($leftmenu) || $leftmenu == "hrm") {
-					$newmenu->add("/holiday/list.php?search_statut=1&mainmenu=hrm&leftmenu=hrm", $langs->trans("DraftCP"), 2, $user->rights->holiday->read);
-					$newmenu->add("/holiday/list.php?search_statut=2&mainmenu=hrm&leftmenu=hrm", $langs->trans("ToReviewCP"), 2, $user->rights->holiday->read);
-					$newmenu->add("/holiday/list.php?search_statut=3&mainmenu=hrm&leftmenu=hrm", $langs->trans("ApprovedCP"), 2, $user->rights->holiday->read);
-					$newmenu->add("/holiday/list.php?search_statut=4&mainmenu=hrm&leftmenu=hrm", $langs->trans("CancelCP"), 2, $user->rights->holiday->read);
-					$newmenu->add("/holiday/list.php?search_statut=5&mainmenu=hrm&leftmenu=hrm", $langs->trans("RefuseCP"), 2, $user->rights->holiday->read);
+					$newmenu->add("/holiday/list.php?search_status=1&mainmenu=hrm&leftmenu=hrm", $langs->trans("DraftCP"), 2, $user->rights->holiday->read);
+					$newmenu->add("/holiday/list.php?search_status=2&mainmenu=hrm&leftmenu=hrm", $langs->trans("ToReviewCP"), 2, $user->rights->holiday->read);
+					$newmenu->add("/holiday/list.php?search_status=3&mainmenu=hrm&leftmenu=hrm", $langs->trans("ApprovedCP"), 2, $user->rights->holiday->read);
+					$newmenu->add("/holiday/list.php?search_status=4&mainmenu=hrm&leftmenu=hrm", $langs->trans("CancelCP"), 2, $user->rights->holiday->read);
+					$newmenu->add("/holiday/list.php?search_status=5&mainmenu=hrm&leftmenu=hrm", $langs->trans("RefuseCP"), 2, $user->rights->holiday->read);
 				}
 				$newmenu->add("/holiday/define_holiday.php?mainmenu=hrm&action=request", $langs->trans("MenuConfCP"), 1, $user->rights->holiday->read);
 				$newmenu->add("/holiday/month_report.php?mainmenu=hrm&leftmenu=holiday", $langs->trans("MenuReportMonth"), 1, $user->rights->holiday->readall);

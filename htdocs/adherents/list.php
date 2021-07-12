@@ -65,6 +65,7 @@ $search_filter = GETPOST("search_filter", 'alpha');
 $search_status = GETPOST("search_status", 'intcomma');
 $catid        = GETPOST("catid", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
+$socid = GETPOST('socid', 'int');
 
 $filter = GETPOST("filter", 'alpha');
 if ($filter) {
@@ -363,13 +364,13 @@ if ($search_type > 0) {
 	$sql .= " AND t.rowid=".((int) $search_type);
 }
 if ($search_filter == 'withoutsubscription') {
-	$sql .= " AND (datefin IS NULL OR t.subscription = 0)";
+	$sql .= " AND (datefin IS NULL OR t.subscription = '0')";
 }
 if ($search_filter == 'uptodate') {
-	$sql .= " AND (datefin >= '".$db->idate($now)."' OR t.subscription = 0)";
+	$sql .= " AND (datefin >= '".$db->idate($now)."' OR t.subscription = '0')";
 }
 if ($search_filter == 'outofdate') {
-	$sql .= " AND (datefin < '".$db->idate($now)."' AND t.subscription = 1)";
+	$sql .= " AND (datefin < '".$db->idate($now)."' AND t.subscription = '1')";
 }
 if ($search_status != '') {
 	// Peut valoir un nombre ou liste de nombre separes par virgules

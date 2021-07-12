@@ -577,7 +577,6 @@ if (empty($reshook)) {
 
 		if (!$isupload) {
 			$mesgs = array();
-
 			$object->sujet          = (string) GETPOST("sujet");
 			$object->body           = (string) GETPOST("bodyemail", 'restricthtml');
 			$object->bgcolor        = (string) GETPOST("bgcolor");
@@ -744,7 +743,7 @@ if ($action == 'create') {
 	print '<div style="padding-top: 10px">';
 	// wysiwyg editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('bodyemail', GETPOST('bodyemail', 'restricthtml'), '', 600, 'dolibarr_mailings', '', true, true, $conf->global->FCKEDITOR_ENABLE_MAILING, 20, '90%');
+	$doleditor = new DolEditor('bodyemail', GETPOST('bodyemail', 'restricthtmlallowunvalid'), '', 600, 'dolibarr_mailings', '', true, true, $conf->global->FCKEDITOR_ENABLE_MAILING, 20, '90%');
 	$doleditor->Create();
 	print '</div>';
 

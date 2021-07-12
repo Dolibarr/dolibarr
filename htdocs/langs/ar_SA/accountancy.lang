@@ -158,7 +158,7 @@ ACCOUNTING_LENGTH_AACCOUNT=طول حسابات الطرف الثالث المح�
 ACCOUNTING_MANAGE_ZERO=السماح بإدارة عدد مختلف من الأصفار في نهاية الحساب المحاسبي. تحتاجه بعض الدول (مثل سويسرا). إذا تم الضبط على إيقاف (افتراضي) ، يمكنك تعيين المعاملين التاليتين لتطلب من التطبيق إضافة أصفار افتراضية.
 BANK_DISABLE_DIRECT_INPUT=تعطيل التسجيل المباشر للمعاملة في الحساب المصرفي
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=تفعيل تصدير المسودة الى دفتر اليومية
-ACCOUNTANCY_COMBO_FOR_AUX=تمكين قائمة التحرير والسرد للحساب الفرعي (قد يكون بطيئًا إذا كان لديك الكثير من الأطراف الثالثة)
+ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
 ACCOUNTING_DATE_START_BINDING=تحديد موعد لبدء الربط والتحويل في المحاسبة. بعد هذا التاريخ ، لن يتم تحويل المعاملات إلى المحاسبة.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=في نقل المحاسبة ، حدد فترة العرض بشكل افتراضي
 
@@ -328,6 +328,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=تعطيل الربط والتحويل �
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=تعطيل الربط والتحويل في المحاسبة على تقارير المصروفات (لن يتم أخذ تقارير المصروفات في الاعتبار في المحاسبة)
 
 ## Export
+NotifiedExportDate=Notified export date (modification of the entries will not be possible)
+NotifiedValidationDate=Validation of the entries (modification or deletion of the entries will not be possible)
+ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=تصدير مسودة دفتر اليومية
 Modelcsv=نموذج التصدير
 Selectmodelcsv=تحديد نموذج للتصدير
