@@ -17,8 +17,8 @@ TJM=Tarifa mitjana diària
 CurrentSalary=Salari actual
 THMDescription=Aquest valor es pot utilitzar per a calcular el cost del temps consumit en un projecte introduït pels usuaris si s'utilitza el mòdul de projecte
 TJMDescription=Aquest valor només és informatiu i no s'utilitza en cap càlcul
-LastSalaries=Últims %s pagaments de salari
-AllSalaries=Tots els pagaments de salari
+LastSalaries=Latest %s salaries
+AllSalaries=All salaries
 SalariesStatistics=Estadístiques de salaris
-# Export
 SalariesAndPayments=Salaris i pagaments
+ConfirmDeleteSalaryPayment=Do you want to delete this salary payment ?

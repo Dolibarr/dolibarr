@@ -569,3 +569,30 @@ create table llx_c_partnership_type
 )ENGINE=innodb;
 
 DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
+
+
+CREATE TABLE llx_ecm_directories_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                             -- import key
+) ENGINE=innodb;
+
+DROP TABLE llx_categorie_association;
+DROP TABLE llx_cond_reglement;
+DROP TABLE llx_zapier_hook_extrafields;
+
+create table llx_onlinesignature
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  entity                    integer DEFAULT 1 NOT NULL,
+  object_type               varchar(32) NOT NULL,
+  object_id					integer NOT NULL,
+  datec                     datetime NOT NULL,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  name						varchar(255) NOT NULL,
+  ip						varchar(128),
+  pathoffile				varchar(255)
+)ENGINE=innodb;
+

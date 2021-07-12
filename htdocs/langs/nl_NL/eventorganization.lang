@@ -86,6 +86,7 @@ DownloadICSLink = ICS-link downloaden
 EVENTORGANIZATION_SECUREKEY = Beveiligde sleutel van de openbare registratielink naar een conferentie
 SERVICE_BOOTH_LOCATION = Service gebruikt voor de factuurregel over een standlocatie
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service die wordt gebruikt voor de factuurrij over een deelnemersabonnement op een conferentie
+NbVotes=Number of votes
 #
 # Status
 #
@@ -115,6 +116,9 @@ EvntOrgDuration = Deze conferentie begint op %s en eindigt op %s.
 ConferenceAttendeeFee = Conferentiebezoekerstarief voor het evenement: '%s' variërend van %s tot %s.
 BoothLocationFee = Standplaats voor het evenement : '%s' van %s tot %s
 EventType = Taak type
+LabelOfBooth=Booth label
+LabelOfconference=Conference label
+ConferenceIsNotConfirmed=Subcription not available, conference is not confirmed yet
 
 #
 # Vote page

@@ -37,15 +37,7 @@ About = О
 KnowledgeManagementAbout = Об управлении знаниями
 KnowledgeManagementAboutPage = Управление знаниями о странице
 
-#
-# Sample page
-#
 KnowledgeManagementArea = Управление знаниями
-
-
-#
-# Menu
-#
 MenuKnowledgeRecord = База знаний
 ListKnowledgeRecord = Список статей
 NewKnowledgeRecord = Новая статья
@@ -53,3 +45,5 @@ ValidateReply = Проверить решение
 KnowledgeRecords = Статьи
 KnowledgeRecord = Статья
 KnowledgeRecordExtraFields = Дополнительные поля для статьи
+GroupOfTicket=Группа билетов
+YouCanLinkArticleToATicketCategory=Вы можете привязать статью к группе заявок (чтобы статья предлагалась во время квалификации новых билетов)

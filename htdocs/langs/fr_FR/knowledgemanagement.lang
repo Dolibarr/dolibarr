@@ -20,12 +20,12 @@
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = Gestion d'une base de connaissance
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
+ModuleKnowledgeManagementDesc=Gérer une base de connaissance ou d'assistance (KM)
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management System setup
+KnowledgeManagementSetup = Configuration du système de gestion des connaissances
 Settings = Paramètres
 KnowledgeManagementSetupPage = Paramétrages du module de base de connaissance
 
@@ -37,15 +37,7 @@ About = À propos
 KnowledgeManagementAbout = A propos de la base de connaissances
 KnowledgeManagementAboutPage = A propos de la base de connaissances
 
-#
-# Sample page
-#
 KnowledgeManagementArea = Base de connaissances
-
-
-#
-# Menu
-#
 MenuKnowledgeRecord = Base de connaissance
 ListKnowledgeRecord = Liste des articles
 NewKnowledgeRecord = Nouvel article
@@ -53,3 +45,5 @@ ValidateReply = Valider la réponse
 KnowledgeRecords = Articles
 KnowledgeRecord = Article
 KnowledgeRecordExtraFields = Atribut supplémentaires (articles)
+GroupOfTicket=Groupe de tickets
+YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)

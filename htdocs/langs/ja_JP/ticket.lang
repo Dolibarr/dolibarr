@@ -55,7 +55,7 @@ TypeContact_ticket_internal_SUPPORTTEC=割り当てられたユーザー
 TypeContact_ticket_external_SUPPORTCLI=顧客連絡/インシデント追跡
 TypeContact_ticket_external_CONTRIBUTOR=外部寄稿者
 
-OriginEmail=メールレポーター
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=メールでチケットメッセージを送信する
 
 # Status

@@ -34,7 +34,8 @@ TicketDictResolution=Εισιτήριο - Ανάλυση
 
 TicketTypeShortCOM=Εμπορική ερώτηση
 TicketTypeShortHELP=Αίτημα για λειτουργική βοήθεια
-TicketTypeShortISSUE=Θέμα, σφάλμα ή πρόβλημα
+TicketTypeShortISSUE=Issue or bug
+TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Αίτημα αλλαγής ή βελτίωσης
 TicketTypeShortPROJET=Έργο
 TicketTypeShortOTHER=Άλλο
@@ -54,14 +55,15 @@ TypeContact_ticket_internal_SUPPORTTEC=Εκχωρημένος χρήστης
 TypeContact_ticket_external_SUPPORTCLI=Παρακολούθηση επαφών πελατών / συμβάντων
 TypeContact_ticket_external_CONTRIBUTOR=Εξωτερικός συνεργάτης
 
-OriginEmail=Πηγή ηλεκτρονικού ταχυδρομείου
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Στείλτε μήνυμα εισιτηρίου μέσω ηλεκτρονικού ταχυδρομείου
 
 # Status
 Read=Ανάγνωση
 Assigned=Ανατεθεί
 InProgress=Σε εξέλιξη
-NeedMoreInformation=Αναμονή για πληροφορίες
+NeedMoreInformation=Waiting for reporter feedback
+NeedMoreInformationShort=Waiting for feedback
 Answered=Απαντήθηκε
 Waiting=Αναμονή
 Closed=Έκλεισε
@@ -160,7 +162,7 @@ CreatedBy=Δημιουργήθηκε από
 NewTicket=Νέο εισιτήριο
 SubjectAnswerToTicket=Απάντηση εισιτηρίου
 TicketTypeRequest=Τύπος αιτήματος
-TicketCategory=Ομάδα
+TicketCategory=Ticket categorization
 SeeTicket=Δείτε εισιτήριο
 TicketMarkedAsRead=Το εισιτήριο έχει επισημανθεί ως αναγνωσμένο
 TicketReadOn=Συνέχισε να διαβάζεις
@@ -211,6 +213,7 @@ TicketMessageHelp=Μόνο αυτό το κείμενο θα αποθηκευτ�
 TicketMessageSubstitutionReplacedByGenericValues=Οι μεταβλητές αντικατάστασης αντικαθίστανται από γενικές τιμές.
 TimeElapsedSince=Χρόνος που πέρασε από τότε
 TicketTimeToRead=Ο χρόνος που παρέμενε πριν διαβάσετε
+TicketTimeElapsedBeforeSince=Time elapsed before / since
 TicketContacts=Επαφές εισιτήριο
 TicketDocumentsLinked=Έγγραφα που συνδέονται με το εισιτήριο
 ConfirmReOpenTicket=Επιβεβαιώστε ξανανοίξτε αυτό το εισιτήριο;

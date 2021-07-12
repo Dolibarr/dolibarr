@@ -127,4 +127,4 @@ AllowDelayedPayment=Atļaut kavētu maksājumu
 PrintPaymentMethodOnReceipts=Izdrukājiet maksājuma veidu uz biļetēm |
 WeighingScale=Svari
 ShowPriceHT = Parādīt kolonnu ar cenu bez nodokļiem (ekrānā)
-ShowPriceHTOnReceipt = Parādīt kolonnu ar cenu bez nodokļiem (saņemot)
+ShowPriceHTOnReceipt = Display the column with the price excluding tax (on the receipt)

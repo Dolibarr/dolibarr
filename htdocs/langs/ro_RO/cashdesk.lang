@@ -127,4 +127,4 @@ AllowDelayedPayment= Permite plata cu întârziere
 PrintPaymentMethodOnReceipts=Tipăriți metoda de plată pe bonuri|chitanțe 
 WeighingScale=Cântar
 ShowPriceHT = Afișare coloană preț fără taxe (pe ecran)
-ShowPriceHTOnReceipt = Afișare coloană preț fără taxe (pe bon)
+ShowPriceHTOnReceipt = Afișare coloană cu prețul fără taxe (pe chitanță/bon) 

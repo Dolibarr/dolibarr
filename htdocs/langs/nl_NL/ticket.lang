@@ -34,7 +34,8 @@ TicketDictResolution=Ticket - resolutie
 
 TicketTypeShortCOM=Commerciële vraag
 TicketTypeShortHELP=Verzoek om functionele hulp
-TicketTypeShortISSUE=Probleem of bug
+TicketTypeShortISSUE=Issue or bug
+TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Verander-  of verbeteringsverzoek
 TicketTypeShortPROJET=Project
 TicketTypeShortOTHER=Overig
@@ -54,14 +55,15 @@ TypeContact_ticket_internal_SUPPORTTEC=Toegewezen gebruiker
 TypeContact_ticket_external_SUPPORTCLI=Klanten contact / opvolging
 TypeContact_ticket_external_CONTRIBUTOR=Externe bijdrage
 
-OriginEmail=E-mail bron
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Verzend ticketbericht per e-mail
 
 # Status
 Read=Gelezen
 Assigned=Toegekend
 InProgress=Reeds bezig
-NeedMoreInformation=Wachten op informatie
+NeedMoreInformation=Waiting for reporter feedback
+NeedMoreInformationShort=Waiting for feedback
 Answered=Beantwoord
 Waiting=Wachtend
 Closed=Gesloten
@@ -160,7 +162,7 @@ CreatedBy=Aangemaakt door
 NewTicket=Nieuw Ticket
 SubjectAnswerToTicket=Ticket antwoord
 TicketTypeRequest=Aanvraag type
-TicketCategory=Groep
+TicketCategory=Ticket categorization
 SeeTicket=Bekijk ticket
 TicketMarkedAsRead=Ticket is gemarkeerd als gelezen
 TicketReadOn=Lees verder
@@ -211,6 +213,7 @@ TicketMessageHelp=Alleen deze tekst zal worden bewaard in de berichtenlijst op d
 TicketMessageSubstitutionReplacedByGenericValues=Vervangingsvariabelen worden vervangen door generieke waarden.
 TimeElapsedSince=Verstreken tijd sinds
 TicketTimeToRead=Tijd verstreken voordat gelezen
+TicketTimeElapsedBeforeSince=Time elapsed before / since
 TicketContacts=Contact ticket
 TicketDocumentsLinked=Documenten gekoppeld aan ticket
 ConfirmReOpenTicket=Ticket heropenen?
