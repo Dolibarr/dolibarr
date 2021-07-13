@@ -6582,7 +6582,7 @@ class Form
 	}
 
 	/**
-	 *  Return list of tickets in Ajax if Ajax activated or go to select_tickets_list
+	 *  Return list of tickets in Ajax if Ajax activated or go to selectTicketsList
 	 *
 	 *  @param		int			$selected				Preselected tickets
 	 *  @param		string		$htmlname				Name of HTML select field (must be unique in page).
@@ -6634,7 +6634,7 @@ class Form
 				$out .= img_picto($langs->trans("Search"), 'search');
 			}
 		} else {
-			$out .= $this->select_tickets_list($selected, $htmlname, $filtertype, $limit, $status, 0, $socid, $showempty, $forcecombo, $morecss);
+			$out .= $this->selectTicketsList($selected, $htmlname, $filtertype, $limit, $status, 0, $socid, $showempty, $forcecombo, $morecss);
 		}
 
 		if (empty($nooutput)) print $out;
@@ -6642,7 +6642,6 @@ class Form
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return list of tickets.
 	 *  Called by selectTickets.
@@ -6659,7 +6658,7 @@ class Form
 	 *  @param      string  $morecss            Add more css on select
 	 *  @return     array    				    Array of keys for json
 	 */
-	public function select_tickets_list($selected = '', $htmlname = 'ticketid', $filtertype = '', $limit = 20, $filterkey = '', $status = 1, $outputmode = 0, $showempty = '1', $forcecombo = 0, $morecss = '')
+	public function selectTicketsList($selected = '', $htmlname = 'ticketid', $filtertype = '', $limit = 20, $filterkey = '', $status = 1, $outputmode = 0, $showempty = '1', $forcecombo = 0, $morecss = '')
 	{
 		global $langs, $conf, $user, $db;
 
@@ -6694,7 +6693,7 @@ class Form
 		$sql .= $this->db->plimit($limit, 0);
 
 		// Build output string
-		dol_syslog(get_class($this)."::select_tickets_list search tickets", LOG_DEBUG);
+		dol_syslog(get_class($this)."::selectTicketsList search tickets", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
