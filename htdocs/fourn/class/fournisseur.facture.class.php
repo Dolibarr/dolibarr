@@ -748,7 +748,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->fk_incoterms = $obj->fk_incoterms;
 				$this->location_incoterms = $obj->location_incoterms;
 				$this->label_incoterms = $obj->label_incoterms;
-				$this->transport_mode_id = $obj->fk_transport_mode;
+				$this->transport_mode_id = $obj->fk_mode_transport;
 
 				// Multicurrency
 				$this->fk_multicurrency = $obj->fk_multicurrency;
