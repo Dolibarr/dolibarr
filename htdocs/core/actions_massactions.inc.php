@@ -1477,8 +1477,8 @@ if (!$error && ($massaction == 'enable' || ($action == 'enable' && $confirm == '
 	$nbok = 0;
 	foreach ($toselect as $toselectid) {
 		$result = $objecttmp->fetch($toselectid);
-		if($result>0){
-			if (in_array($objecttmp->element,array('societe'))) {
+		if ($result>0) {
+			if (in_array($objecttmp->element, array('societe'))) {
 				$result =$objecttmp->setStatut(1);
 			}
 			if ($result <= 0) {
@@ -1488,7 +1488,7 @@ if (!$error && ($massaction == 'enable' || ($action == 'enable' && $confirm == '
 			} else {
 				$nbok++;
 			}
-		}else {
+		} else {
 			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 			$error++;
 			break;
@@ -1514,8 +1514,8 @@ if (!$error && ($massaction == 'disable' || ($action == 'disable' && $confirm ==
 	$nbok = 0;
 	foreach ($toselect as $toselectid) {
 		$result = $objecttmp->fetch($toselectid);
-		if($result>0){
-			if (in_array($objecttmp->element,array('societe'))) {
+		if ($result>0) {
+			if (in_array($objecttmp->element, array('societe'))) {
 				$result =$objecttmp->setStatut(0);
 			}
 			if ($result <= 0) {
@@ -1525,7 +1525,7 @@ if (!$error && ($massaction == 'disable' || ($action == 'disable' && $confirm ==
 			} else {
 				$nbok++;
 			}
-		}else {
+		} else {
 			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 			$error++;
 			break;
