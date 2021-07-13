@@ -263,6 +263,8 @@ print '$( document ).ready(function() {
 		var confirmContent 			= $(this).attr(\'data-confirm-content\');
 		var confirmActionBtnLabel 	= $(this).attr(\'data-confirm-action-btn-label\');
 		var confirmCancelBtnLabel 	= $(this).attr(\'data-confirm-cancel-btn-label\');
+		var confirmModal	= $(this).attr(\'data-confirm-modal\');
+		if(confirmModal == undefined){ confirmModal = false; }
 
 		var confirmId = \'confirm-dialog-box\';
 		if($(this).attr(\'id\') != undefined){ var confirmId = confirmId + "-" + $(this).attr(\'id\'); }
@@ -277,8 +279,9 @@ print '$( document ).ready(function() {
 
 		$confirmBox.dialog({
 			autoOpen: true,
-			modal: false,
+			modal: confirmModal,
 			//width: Math.min($( window ).width() - 50, 1700),
+			width: \'auto\',
 			dialogClass: \'confirm-dialog-box\',
 			buttons: [
 				{
@@ -297,11 +300,11 @@ print '$( document ).ready(function() {
 				}
 			],
 			close: function( event, ui ) {
-	$(\'#\'+confirmBox).remove();
-},
+				$(\'#\'+confirmBox).remove();
+			},
 			open: function( event, ui ) {
-	$confirmBox.html(confirmContent);
-}
+				$confirmBox.html(confirmContent);
+			}
 		});
 	});
 });

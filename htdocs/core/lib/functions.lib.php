@@ -9818,7 +9818,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 	}
 
 	// Js Confirm button
-	if (!empty($params['confirm'])) {
+	if ($userRight && !empty($params['confirm'])) {
 		if (!is_array($params['confirm'])) {
 			$params['confirm'] = array(
 				'url' => $url . (strpos($url, '?') > 0 ? '&' : '?') . 'confirm=yes'
@@ -9829,8 +9829,11 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 		$attr['data-confirm-url'] = $params['confirm']['url'];
 		$attr['data-confirm-title'] = !empty($params['confirm']['title']) ? $params['confirm']['title'] : $langs->trans('ConfirmBtnCommonTitle', $label);
 		$attr['data-confirm-content'] = !empty($params['confirm']['content']) ? $params['confirm']['content'] : $langs->trans('ConfirmBtnCommonContent', $label);
+		$attr['data-confirm-content'] = preg_replace("/\r|\n/", "", $attr['data-confirm-content']);
 		$attr['data-confirm-action-btn-label'] = !empty($params['confirm']['action-btn-label']) ? $params['confirm']['action-btn-label'] : $langs->trans('Confirm');
 		$attr['data-confirm-cancel-btn-label'] = !empty($params['confirm']['cancel-btn-label']) ? $params['confirm']['cancel-btn-label'] : $langs->trans('CloseDialog');
+		$attr['data-confirm-modal'] = !empty($params['confirm']['modal']) ? $params['confirm']['modal'] : true;
+
 		$attr['class'].= ' butActionConfirm';
 	}
 
