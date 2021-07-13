@@ -59,7 +59,7 @@ if (!empty($id) && !empty($action) && !empty($htmlname)) {
 		$showempty = 0;
 	}
 
-	$return['value']	= $form->selectcontacts($id, '', $htmlname, $showempty, '', '', 0, '', true);
+	$return['value']	= $form->selectcontactlist($id, '', $htmlname, $showempty, '', '', 0, 0, 0, array(), '', 0, true);
 	$return['num'] = $form->num;
 	$return['error']	= $form->error;
 
