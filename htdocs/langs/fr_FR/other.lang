@@ -264,7 +264,7 @@ ContactCreatedByEmailCollector=Contact/adresse créé par le collecteur de courr
 ProjectCreatedByEmailCollector=Projet créé par le collecteur de courrier électronique à partir du courrier électronique MSGID %s
 TicketCreatedByEmailCollector=Ticket créé par le collecteur de courrier électronique à partir du courrier électronique MSGID %s
 OpeningHoursFormatDesc=Utilisez un - pour séparer les heures d'ouverture et de fermeture. <br> Utilisez un espace pour entrer différentes plages. <br> Exemple: 8-12 14-18
-SuffixSessionName=Suffix for session name
+SuffixSessionName=Suffixe pour le nom de la session
 
 ##### Export #####
 ExportsArea=Espace exports

@@ -34,7 +34,8 @@ TicketDictResolution=Ticket - Resolution
 
 TicketTypeShortCOM=商业问题
 TicketTypeShortHELP=Request for functionnal help
-TicketTypeShortISSUE=Issue, bug or problem
+TicketTypeShortISSUE=Issue or bug
+TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=项目
 TicketTypeShortOTHER=其他
@@ -54,14 +55,15 @@ TypeContact_ticket_internal_SUPPORTTEC=指定用户
 TypeContact_ticket_external_SUPPORTCLI=客户联系/事件跟踪
 TypeContact_ticket_external_CONTRIBUTOR=外部贡献者
 
-OriginEmail=电邮来源
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Send ticket message by email
 
 # Status
 Read=阅读
 Assigned=分配
 InProgress=进行中
-NeedMoreInformation=Waiting for information
+NeedMoreInformation=Waiting for reporter feedback
+NeedMoreInformationShort=Waiting for feedback
 Answered=回答
 Waiting=等候
 Closed=关闭
@@ -160,7 +162,7 @@ CreatedBy=制作：
 NewTicket=新票据
 SubjectAnswerToTicket=票据应答
 TicketTypeRequest=请求类型
-TicketCategory=组
+TicketCategory=Ticket categorization
 SeeTicket=查看票据
 TicketMarkedAsRead=票据已标记为已读
 TicketReadOn=请继续阅读
@@ -211,6 +213,7 @@ TicketMessageHelp=只有此文本将保存在故障单卡的消息列表中。
 TicketMessageSubstitutionReplacedByGenericValues=替换变量由通用值替换。
 TimeElapsedSince=Time elapsed since
 TicketTimeToRead=Time elapsed before read
+TicketTimeElapsedBeforeSince=Time elapsed before / since
 TicketContacts=联系票
 TicketDocumentsLinked=与票证相关的文件
 ConfirmReOpenTicket=确认重新打开此票？

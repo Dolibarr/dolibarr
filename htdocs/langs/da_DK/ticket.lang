@@ -55,7 +55,7 @@ TypeContact_ticket_internal_SUPPORTTEC=Tildelt bruger
 TypeContact_ticket_external_SUPPORTCLI=Kundekontakt / hændelsesporing
 TypeContact_ticket_external_CONTRIBUTOR=Ekstern bidragyder
 
-OriginEmail=E-mail reporter
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Send opgaver besked via Email
 
 # Status

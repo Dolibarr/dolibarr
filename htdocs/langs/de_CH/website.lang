@@ -5,7 +5,6 @@ WEBSITE_TYPE_CONTAINER=Seiten - / Containertyp
 WEBSITE_PAGE_EXAMPLE=Webseite als Vorlage benutzen
 WEBSITE_ALIASALT=Zusätzliche Seitennamen / Aliase
 WEBSITE_CSS_URL=URL zu externer CSS Datei
-PreviewOfSiteNotYetAvailable=Preview of your website <strong>%s</strong> not yet available. You must first '<strong>Import a full website template</strong>' or just '<strong>Add a page/container</strong>'.
 ViewSiteInNewTab=Webauftritt in neuem Tab anzeigen
 SetAsHomePage=Als Startseite definieren
 WebsiteAccounts=Webseitenkonten

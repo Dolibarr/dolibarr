@@ -665,11 +665,11 @@ class FormTicket
 			print ajax_combobox('select'.$htmlname);
 		} elseif ($htmlname!='') {
 			$groupticket=GETPOST($htmlname, 'aZ09');
-			$groupticketchild=GETPOST($htmlname.'_child', 'aZ09');
+			$child_id=GETPOST($htmlname.'_child_id', 'aZ09')?GETPOST($htmlname.'_child_id', 'aZ09'):0;
 			$arraycodenotparent[] = "";
 			$arrayidused = array();
 			$stringtoprint = '<span class="supportemailfield bold">'.$langs->trans("GroupOfTicket").'</span> ';
-			$stringtoprint .= '<select name="'.$htmlname.'" id ="'.$htmlname.'" class="maxwidth500 minwidth400" child_id="0">';
+			$stringtoprint .= '<select id ="'.$htmlname.'" class="maxwidth500 minwidth400" child_id="0">';
 			$stringtoprint .= '<option value="">&nbsp;</option>';
 
 			$sql = "SELECT ctc.rowid, ctc.code, ctc.label, ctc.fk_parent, ";
@@ -706,13 +706,17 @@ class FormTicket
 			}
 			if ($num_rows_level0 == 1) {
 				return '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.dol_escape_htmltag($groupvalue).'">';
+			} else {
+				$stringtoprint .= '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'_select" class="maxwidth500 minwidth400">';
+				$stringtoprint .= '<input type="hidden" name="'.$htmlname.'_child_id" id="'.$htmlname.'_select_child_id" class="maxwidth500 minwidth400">';
 			}
+			$stringtoprint .= '<input type="submit" value="Envoyer le formulaire">';
 			$stringtoprint .= '</select>&nbsp;';
 
 			$levelid = 1;
 			while ($levelid <= $use_multilevel) {
 				$tabscript = array();
-				$stringtoprint .= '<select name="'.$htmlname.'_child_'.$levelid.'" id ="'.$htmlname.'_child_'.$levelid.'" class="maxwidth500 minwidth400 groupticketchild" child_id="'.$levelid.'">';
+				$stringtoprint .= '<select id ="'.$htmlname.'_child_'.$levelid.'" class="maxwidth500 minwidth400 groupticketchild" child_id="'.$levelid.'">';
 				$stringtoprint .= '<option value="">&nbsp;</option>';
 
 				$sql = "SELECT ctc.rowid, ctc.code, ctc.label, ctc.fk_parent, ctcjoin.code as codefather, ";
@@ -751,7 +755,7 @@ class FormTicket
 							if ($isparent == 'NOTPARENT') {
 								$arraycodenotparent[] = $groupvalue;
 							}
-							$iselected = $groupticketchild == $obj->code ?'selected':'';
+							$iselected = $groupticket == $obj->code ?'selected':'';
 							$stringtoprint .= '<option '.$iselected.' class="'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
 							if (empty($tabscript[$groupcodefather])) {
 								$tabscript[$groupcodefather] = 'if ($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'")[0].value == "'.dol_escape_js($groupcodefather).'"){
@@ -769,15 +773,43 @@ class FormTicket
 					dol_print_error($this->db);
 				}
 				$stringtoprint .='</select>';
-				//$stringtoprint .= ajax_combobox($htmlname.'_child_'.$levelid);
 
 				$stringtoprint .='<script>';
 				$stringtoprint .='arraynotparents = '.json_encode($arraycodenotparent).';';
-				$stringtoprint .='if (arraynotparents.includes($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'")[0].value)){$("#'.$htmlname.'_child_'.$levelid.'").hide()}
-
+				$stringtoprint .='if (arraynotparents.includes($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'")[0].value)){
+					console.log("'.$htmlname.'_child_'.$levelid.'")
+					if($("#'.$htmlname.'_child_'.$levelid.'")[0].value == "" && ($("#'.$htmlname.'_child_'.$levelid.'").attr("child_id")>'.$child_id.')){
+						$("#'.$htmlname.'_child_'.$levelid.'").hide();
+						console.log("We hide '.$htmlname.'_child_'.$levelid.' input")
+					}else if(($("#'.$htmlname.'_child_'.$levelid.'").attr("child_id")!=0) && ($("#'.$htmlname.'_child_'.$levelid.'").attr("child_id")<'.$child_id.')){
+						$("#'.$htmlname.'_child_'.$levelid.'").attr("disabled",true);
+						console.log("We disable '.$htmlname.'_child_'.$levelid.' input");
+					}else{
+						$("#'.$htmlname.'_child_'.$levelid.'").attr("disabled",true);
+						$("#ticketcategory_select_child_id")[0].value = $("#'.$htmlname.'_child_'.$levelid.'").attr("child_id")
+						$("#ticketcategory_select")[0].value = $("#'.$htmlname.'_child_'.$levelid.'")[0].value;
+						console.log("We disable '.$htmlname.'_child_'.$levelid.' input and reload hidden input");
+					}
+					if(arraynotparents.includes("'.$groupticket.'") && '.$child_id.' == 0){
+						$("#ticketcategory_select_child_id")[0].value = $("#'.$htmlname.'").attr("child_id")
+						$("#ticketcategory_select")[0].value = $("#'.$htmlname.'")[0].value;
+						console.log("We choose '.$htmlname.' input and reload hidden input");
+					}
+				}
 				$("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'").change(function() {
-					child_id = $("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'").attr("child_id");
-				    console.log("We select a new value into combo child_id="+child_id);
+					child_id = $("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid:'').'").attr("child_id");
+
+					/* Change of value to select this value*/
+					if (arraynotparents.includes(this.value) || $(this).attr("child_id") == '.$use_multilevel.') {
+						$("#ticketcategory_select")[0].value = this.value;
+						$("#ticketcategory_select_child_id")[0].value = $(this).attr("child_id");
+						console.log("We choose to select "+ $("#ticketcategory_select")[0].value );
+					}else{
+						$("#ticketcategory_select")[0].value = "";
+						$("#ticketcategory_select_child_id")[0].value = "";
+					}
+
+					console.log("We select a new value into combo child_id="+child_id);
 
 					/* Hide all selected box that are child of the one modified */
 					$(".groupticketchild").each(function(){
@@ -803,7 +835,13 @@ class FormTicket
 				$stringtoprint .='})';
 				$stringtoprint .='</script>';
 			}
-
+			$stringtoprint .='<script>';
+			$stringtoprint .='$("#'.$htmlname.'_child_'.$use_multilevel.'").change(function() {
+				$("#ticketcategory_select")[0].value = this.value;
+				$("#ticketcategory_select_child_id")[0].value = $(this).attr("child_id");
+				console.log($("#ticketcategory_select")[0].value);
+			})';
+			$stringtoprint .='</script>';
 			$stringtoprint .= ajax_combobox($htmlname);
 
 			return $stringtoprint;

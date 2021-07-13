@@ -37,19 +37,13 @@ About = Quant a
 KnowledgeManagementAbout = Sobre la gestió del coneixement
 KnowledgeManagementAboutPage = Gestió del coneixement sobre la pàgina
 
-#
-# Sample page
-#
 KnowledgeManagementArea = Gestió del coneixement
-
-
-#
-# Menu
-#
 MenuKnowledgeRecord = Base de coneixements
-ListKnowledgeRecord = List of articles
+ListKnowledgeRecord = Llista d'articles
 NewKnowledgeRecord = Nou article
 ValidateReply = Validar la solució
 KnowledgeRecords = Articles
 KnowledgeRecord = Article
 KnowledgeRecordExtraFields = Camps extra per a l'article
+GroupOfTicket=Grup de tiquets
+YouCanLinkArticleToATicketCategory=Podeu adjuntar un article a un grup de tiquets (per tant, l'article es suggerirà durant la qualificació dels nous tiquets)

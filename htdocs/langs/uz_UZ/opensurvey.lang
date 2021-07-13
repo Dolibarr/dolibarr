@@ -57,5 +57,5 @@ ErrorInsertingComment=Fikringizni kiritishda xatolik yuz berdi
 MoreChoices=Saylovchilar uchun ko'proq tanlovlarni kiriting
 SurveyExpiredInfo=Ovoz berish yopildi yoki ovoz berishni kechiktirish muddati tugadi.
 EmailSomeoneVoted=%s qatorni to'ldirdi.\nSo'rovnomangizni havoladan topishingiz mumkin:\n%s
-ShowSurvey=Show survey
-UserMustBeSameThanUserUsedToVote=You must have voted and use the same user name that the one used to vote, to post a comment
+ShowSurvey=So'rovnomani ko'rsatish
+UserMustBeSameThanUserUsedToVote=Siz ovoz bergan bo'lishingiz kerak va sharh yuborish uchun foydalanuvchi ovoz bergan foydalanuvchi nomidan foydalaning

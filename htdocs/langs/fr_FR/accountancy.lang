@@ -48,7 +48,8 @@ CountriesNotInEEC=Pays hors CEE
 CountriesInEECExceptMe=Pays de la CEE sauf %s
 CountriesExceptMe=Tous les pays sauf %s
 AccountantFiles=Exporter les documents sources
-ExportAccountingSourceDocHelp=Avec cet outil, vous pouvez exporter les événements sources (liste et PDF) qui ont été utilisés pour générer votre comptabilité. Pour exporter vos journaux, utilisez l'entrée de menu %s - %s.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that were used to generate your accountancy.
+ExportAccountingSourceDocHelp2=Pour exporter vos journaux, utilisez l'entrée de menu %s - %s.
 VueByAccountAccounting=Vue par comptes comptables
 VueBySubAccountAccounting=Affichage par compte auxiliaire
 
@@ -328,9 +329,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Désactiver la liaison et le transfert e
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Désactiver la liaison et le transfert en comptabilité des notes de frais (les notes de frais ne seront pas prises en compte en comptabilité).
 
 ## Export
-NotifiedExportDate=Notified export date (modification of the entries will not be possible)
-NotifiedValidationDate=Validation of the entries (modification or deletion of the entries will not be possible)
-ConfirmExportFile=Confirmation of the generation of the accounting export file ?
+NotifiedExportDate=Date d'exportation notifiée (la modification des enregistrements ne sera pas possible)
+NotifiedValidationDate=Validation des enregistrements (la modification ou la suppression des enregistrements ne sera pas possible)
+ConfirmExportFile=Confirmation de la génération du fichier d'export comptable ?
 ExportDraftJournal=Exporter le journal brouillon
 Modelcsv=Modèle d'export
 Selectmodelcsv=Sélectionner un modèle d'export

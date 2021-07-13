@@ -127,4 +127,4 @@ AllowDelayedPayment=Zezwalaj na opóźnioną płatność
 PrintPaymentMethodOnReceipts=Wydrukuj metodę płatności na biletach | paragonach
 WeighingScale=Skalę ważenia
 ShowPriceHT = Wyświetl kolumnę z ceną bez podatku (na ekranie)
-ShowPriceHTOnReceipt = Wyświetl kolumnę z ceną bez podatku (na paragonie)
+ShowPriceHTOnReceipt = Display the column with the price excluding tax (on the receipt)

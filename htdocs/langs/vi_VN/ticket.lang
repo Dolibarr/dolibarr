@@ -34,7 +34,8 @@ TicketDictResolution=Ticket - Resolution
 
 TicketTypeShortCOM=Câu hỏi thương mại
 TicketTypeShortHELP=Yêu cầu trợ giúp chức năng
-TicketTypeShortISSUE=Sự cố, lỗi hoặc vấn đề
+TicketTypeShortISSUE=Issue or bug
+TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Yêu cầu thay đổi hoặc nâng cao
 TicketTypeShortPROJET=Dự án
 TicketTypeShortOTHER=Khác
@@ -54,14 +55,15 @@ TypeContact_ticket_internal_SUPPORTTEC=Người dùng được chỉ định
 TypeContact_ticket_external_SUPPORTCLI=Theo dõi liên lạc / sự cố khách hàng 
 TypeContact_ticket_external_CONTRIBUTOR=Người cộng tác bên ngoài
 
-OriginEmail=Nguồn email
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Gửi tin nhắn vé qua email
 
 # Status
 Read=Đọc
 Assigned=Phân công
 InProgress=Trong tiến trình xử lý
-NeedMoreInformation=Đang chờ thông tin
+NeedMoreInformation=Waiting for reporter feedback
+NeedMoreInformationShort=Waiting for feedback
 Answered=Đã trả lời
 Waiting=Đang chờ
 Closed=Đã đóng
@@ -160,7 +162,7 @@ CreatedBy=Được tạo bởi
 NewTicket=Vé mới
 SubjectAnswerToTicket=Trả lời vé
 TicketTypeRequest=Loại yêu cầu
-TicketCategory=Nhóm
+TicketCategory=Ticket categorization
 SeeTicket=Xem vé
 TicketMarkedAsRead=Vé đã được đánh dấu là đã đọc
 TicketReadOn=Đọc tiếp
@@ -211,6 +213,7 @@ TicketMessageHelp=Chỉ văn bản này sẽ được lưu trong danh sách tin 
 TicketMessageSubstitutionReplacedByGenericValues=Các biến thay thế được thay thế bằng các giá trị chung.
 TimeElapsedSince=Thời gian trôi qua kể từ khi
 TicketTimeToRead=Thời gian trôi qua trước khi đọc
+TicketTimeElapsedBeforeSince=Time elapsed before / since
 TicketContacts=Liên hệ vé
 TicketDocumentsLinked=Tài liệu liên kết với vé
 ConfirmReOpenTicket=Xác nhận mở lại vé này?

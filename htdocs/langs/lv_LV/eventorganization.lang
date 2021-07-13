@@ -86,6 +86,7 @@ DownloadICSLink = Lejupielādēt ICS saiti
 EVENTORGANIZATION_SECUREKEY = Konferences publiskās reģistrācijas saites drošā atslēga
 SERVICE_BOOTH_LOCATION = Pakalpojums, kas izmantots rēķinu rindai par kabīnes atrašanās vietu
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Pakalpojums, kas tiek izmantots rēķina rindā par konferences dalībnieka abonementu
+NbVotes=Number of votes
 #
 # Status
 #
@@ -115,6 +116,9 @@ EvntOrgDuration = Šī konference sākas ar %s un beidzas ar %s.
 ConferenceAttendeeFee = Konferences dalībnieka maksa par pasākumu: '%s', kas notiek no %s līdz %s.
 BoothLocationFee = Pasākuma stenda atrašanās vieta: '%s', kas notiek no %s līdz %s
 EventType = Pasākuma veids
+LabelOfBooth=Booth label
+LabelOfconference=Conference label
+ConferenceIsNotConfirmed=Subcription not available, conference is not confirmed yet
 
 #
 # Vote page
