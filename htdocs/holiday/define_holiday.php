@@ -196,10 +196,6 @@ llxHeader('', $title);
 
 
 $typeleaves = $holiday->getTypes(1, 1);
-$result = $holiday->updateBalance(); // Create users into table holiday if they don't exists. TODO Remove this whif we use field into table user.
-if ($result < 0) {
-	setEventMessages($holiday->error, $holiday->errors, 'errors');
-}
 
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
