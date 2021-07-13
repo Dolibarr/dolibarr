@@ -71,7 +71,7 @@ create table llx_facture_fourn
   fk_incoterms          integer,						-- for incoterms
   location_incoterms    varchar(255),					-- for incoterms
 
-  fk_mode_transport     integer,						-- for intracomm report
+  fk_transport_mode     integer,						-- for intracomm report
 
   model_pdf				varchar(255),
   last_main_doc			varchar(255),					-- relative filepath+filename of last main generated document
