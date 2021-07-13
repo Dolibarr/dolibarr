@@ -754,7 +754,24 @@ class Holiday extends CommonObject
 	public function approve($user = null, $notrigger = 0)
 	{
 		global $conf, $langs;
+		$now = dol_now();
 		$error = 0;
+
+		if ($this->statut != self::STATUS_VALIDATED) {
+			$this->error = 'HolidayApprovalBadStatus';
+			dol_syslog(get_class($this)."::setApproved holiday already with approve status", LOG_WARNING);
+			return 0;
+		}
+
+		if (! empty($this->fk_validator) && $user->id != $this->fk_validator) {
+			$this->error = 'HolidayNotApprobator';
+			return 0;
+		}
+
+		if (empty($user->rights->holiday->approve)) {
+			$this->error = 'HolidayNoRightForApproval';
+			return 0;
+		}
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";
@@ -773,7 +790,7 @@ class Holiday extends CommonObject
 		}
 		$sql .= " halfday = ".$this->halfday.",";
 		if (!empty($this->statut) && is_numeric($this->statut)) {
-			$sql .= " statut = ".$this->statut.",";
+			$sql .= " statut = ".self::STATUS_APPROVED.",";
 		} else {
 			$error++;
 		}
@@ -783,7 +800,7 @@ class Holiday extends CommonObject
 			$error++;
 		}
 		if (!empty($this->date_valid)) {
-			$sql .= " date_valid = '".$this->db->idate($this->date_valid)."',";
+			$sql .= " date_valid = '".$this->db->idate($now)."',";
 		} else {
 			$sql .= " date_valid = NULL,";
 		}
@@ -848,6 +865,10 @@ class Holiday extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		} else {
+			// date approval
+			$this->date_valid = $now;
+			$this->fk_user_valid = $user->id;
+			$this->statut = self::STATUS_APPROVED;
 			$this->db->commit();
 			return 1;
 		}

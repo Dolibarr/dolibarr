@@ -132,3 +132,12 @@ FreeLegalTextOnHolidays=Free text on PDF
 WatermarkOnDraftHolidayCards=Watermarks on draft leave requests
 HolidaysToApprove=Holidays to approve
 NobodyHasPermissionToValidateHolidays=Nobody has permission to validate holidays
+HolidayNotFound=ID %s not found
+ConfirmHolidayMassApprove=Confirm holiday approval ?
+ConfirmHolidayMassApproveQuestion=Do you want to confirm the approval of the selected holidays ?
+MassHolidayApprovalOK=Holiday %s approved
+MassHolidayApprovalKO=Holiday %s not approved : %s
+HolidayApprovalBadStatus=Incorrect status
+HolidayNoRightForApproval=The user doesn't have the right to approve
+HolidayNotApprobator=The user is not the designated approbator
+

@@ -215,6 +215,53 @@ if (empty($reshook)) {
 	$permissiontodelete = $user->rights->holiday->delete;
 	$uploaddir = $conf->holiday->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+	// Mass action sign (after a confirmation question, it is $action that is used).
+	if ($action == 'confirm_approve' && ! empty($user->rights->holiday->approve)) {
+		if (GETPOST('confirm') == 'yes') {
+			$tmpholiday = new Holiday($db);
+
+			$db->begin();
+			$error = 0;
+
+			foreach ($toselect as $checked) {
+				$res1 = $tmpholiday->fetch($checked);
+
+				if ($res1 <= 0) {
+					if ($res1 < 0) {
+						dol_print_error($db);
+						$error++;
+					}
+
+					setEventMessage($langs->trans('MassHolidayApprovalKO', '', $langs->transnoentitiesnoconv('HolidayNotFound', $checked)), 'errors');
+					continue;
+				}
+
+				$res2 = $tmpholiday->approve($user);
+
+				if ($res2 < 0) {
+					dol_print_error($db);
+					$error++;
+					continue;
+				}
+
+				if (empty($res2)) {
+					setEventMessage($langs->trans('MassHolidayApprovalKO', $tmpholiday->ref, $langs->transnoentitiesnoconv($tmpholiday->error)), 'warnings');
+					continue;
+				}
+
+				setEventMessage($langs->trans('MassHolidayApprovalOK', $tmpholiday->ref));
+			}
+
+			if ($error) {
+				$db->rollback();
+				$action = '';
+				$massaction = 'approve';
+			} else {
+				$db->commit();
+			}
+		}
+	}
 }
 
 
