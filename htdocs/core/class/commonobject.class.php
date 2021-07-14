@@ -5917,7 +5917,10 @@ abstract class CommonObject
 			$type = 'varchar';
 		} elseif (is_array($this->fields[$key]['arrayofkeyval'])) {
 			$param['options'] = $this->fields[$key]['arrayofkeyval'];
-			$type = 'select';
+			$type = $this->fields[$key]['type'];
+			if(!in_array($type, array('select', 'checkbox', 'radio'))) {
+				$type = 'select';
+			}
 		} else {
 			$param['options'] = array();
 			$type = $this->fields[$key]['type'];
