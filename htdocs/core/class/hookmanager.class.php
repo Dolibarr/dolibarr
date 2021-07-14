@@ -296,9 +296,9 @@ class HookManager
 								$this->resPrint .= $actionclassinstance->resprints;
 							}
 						}
-					}
-					// Generic hooks that return a string or array (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...)
-					else {
+					} else {
+						// Generic hooks that return a string or array (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...)
+
 						// TODO. this test should be done into the method of hook by returning nothing
 						if (is_array($parameters) && !empty($parameters['special_code']) && $parameters['special_code'] > 3 && $parameters['special_code'] != $actionclassinstance->module_number) {
 							continue;
