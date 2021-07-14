@@ -710,7 +710,6 @@ class FormTicket
 				$stringtoprint .= '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'_select" class="maxwidth500 minwidth400">';
 				$stringtoprint .= '<input type="hidden" name="'.$htmlname.'_child_id" id="'.$htmlname.'_select_child_id" class="maxwidth500 minwidth400">';
 			}
-			$stringtoprint .= '<input type="submit" value="Envoyer le formulaire">';
 			$stringtoprint .= '</select>&nbsp;';
 
 			$levelid = 1;
