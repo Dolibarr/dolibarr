@@ -833,7 +833,7 @@ if ($ispaymentok) {
 			$currencyCodeType = $_SESSION['currencyCodeType'];
 
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
-			if (!empty($conf->banque->enabled)) {
+			if (!empty($conf->facture->enabled)) {
 				if (!empty($FinalPaymentAmt) && $paymentTypeId > 0 ) {
 					include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 					$invoice = new Facture($db);
