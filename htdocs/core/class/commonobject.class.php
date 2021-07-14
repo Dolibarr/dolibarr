@@ -7492,10 +7492,8 @@ abstract class CommonObject
 
 						if ($display_type == 'card') {
 							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="valuefieldcreate '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
-							if ( ! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ) {
-								$out .= '<td></td>';
-							}
-							$out .= '<td class="wordbreak';
+							if ( ! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ) $out .= '<td class="';
+							else $out .= '<td class="wordbreak';
 						} elseif ($display_type == 'line') {
 							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="valuefieldlinecreate '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
 							$out .= '<div style="display: inline-block; padding-right:4px" class="wordbreak';
