@@ -5918,8 +5918,10 @@ abstract class CommonObject
 		} elseif (is_array($this->fields[$key]['arrayofkeyval'])) {
 			$param['options'] = $this->fields[$key]['arrayofkeyval'];
 			$type = $this->fields[$key]['type'];
-			if(!in_array($type, array('select', 'checkbox', 'radio'))) {
+			if (!in_array($type, array('select', 'checkbox', 'radio'))) {
 				$type = 'select';
+			} else {
+				$type = $this->fields[$key]['type'];
 			}
 		} else {
 			$param['options'] = array();
