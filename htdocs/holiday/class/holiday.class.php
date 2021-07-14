@@ -1251,6 +1251,8 @@ class Holiday extends CommonObject
 	public function LibStatut($status, $mode = 0, $startdate = '')
 	{
 		// phpcs:enable
+		global $langs;
+
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
@@ -1266,9 +1268,11 @@ class Holiday extends CommonObject
 			$this->labelStatusShort[self::STATUS_REFUSED] = $langs->trans('RefuseCP');
 		}
 
+		$params = array();
 		$statusType = 'status6';
-		if (!empty($startdate) && $startdate > dol_now()) {
+		if (!empty($startdate) && $startdate >= dol_now()) {		// If not yet passed, we use a green "in live" color
 			$statusType = 'status4';
+			$params = array('tooltip'=>$this->labelStatus[$status].' - '.$langs->trans("Forthcoming"));
 		}
 		if ($status == self::STATUS_DRAFT) {
 			$statusType = 'status0';
@@ -1283,7 +1287,7 @@ class Holiday extends CommonObject
 			$statusType = 'status5';
 		}
 
-		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode, '', $params);
 	}
 
 
