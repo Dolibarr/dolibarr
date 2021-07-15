@@ -1280,7 +1280,8 @@ class Societe extends CommonObject
 			$this->get_codefournisseur($this, 1);
 		}
 
-		$this->code_compta = trim($this->code_compta);
+		$this->code_compta_client = trim(empty($this->code_compta) ? $this->code_compta_client : $this->code_compta);
+		$this->code_compta = $this->code_compta_client;		// for backward compatbility
 		$this->code_compta_fournisseur = trim($this->code_compta_fournisseur);
 
 		// Check parameters. More tests are done later in the ->verify()
@@ -1292,8 +1293,8 @@ class Societe extends CommonObject
 
 		$customer = false;
 		if (!empty($allowmodcodeclient) && !empty($this->client)) {
-			// Attention get_codecompta peut modifier le code suivant le module utilise
-			if (empty($this->code_compta)) {
+			// If $allowmodcodeclient is set and value is not set, we generate it
+			if (empty($this->code_compta_client)) {
 				$ret = $this->get_codecompta('customer');
 				if ($ret < 0) {
 					return -1;
@@ -1305,8 +1306,8 @@ class Societe extends CommonObject
 
 		$supplier = false;
 		if (!empty($allowmodcodefournisseur) && !empty($this->fournisseur)) {
-			// Attention get_codecompta peut modifier le code suivant le module utilise
-			if ($this->code_compta_fournisseur == "") {
+			// If $allowmodcodefournisseur is set and value is not set, we generate it
+			if (empty($this->code_compta_fournisseur)) {
 				$ret = $this->get_codecompta('supplier');
 				if ($ret < 0) {
 					return -1;
@@ -1460,7 +1461,7 @@ class Societe extends CommonObject
 
 			if ($customer) {
 				$sql .= ", code_client = ".(!empty($this->code_client) ? "'".$this->db->escape($this->code_client)."'" : "null");
-				$sql .= ", code_compta = ".(!empty($this->code_compta) ? "'".$this->db->escape($this->code_compta)."'" : "null");
+				$sql .= ", code_compta = ".(!empty($this->code_compta_client) ? "'".$this->db->escape($this->code_compta_client)."'" : "null");
 			}
 
 			if ($supplier) {
@@ -3311,7 +3312,8 @@ class Societe extends CommonObject
 				$result = $mod->get_code($this->db, $this, $type);
 
 				if ($type == 'customer') {
-					$this->code_compta = $mod->code;
+					$this->code_compta_client = $mod->code;
+					$this->code_compta = $this->code_compta_client;		// For backward compatibility
 				} elseif ($type == 'supplier') {
 					$this->code_compta_fournisseur = $mod->code;
 				}
@@ -3323,6 +3325,7 @@ class Societe extends CommonObject
 			}
 		} else {
 			if ($type == 'customer') {
+				$this->code_compta_client = '';
 				$this->code_compta = '';
 			} elseif ($type == 'supplier') {
 				$this->code_compta_fournisseur = '';
