@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2021  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2003       Brian Fraval            <brian@fraval.org>
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
@@ -4265,21 +4265,6 @@ class Societe extends CommonObject
 		return $lib;
 	}
 
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Set prospect level
-	 *
-	 *  @param  User	$user		User who sets the discount
-	 *	@return	int					<0 if KO, >0 if OK
-	 * @deprecated Use update function instead
-	 */
-	public function set_prospect_level(User $user)
-	{
-		// phpcs:enable
-		return $this->update($this->id, $user);
-	}
-
 	/**
 	 *  Return status of prospect
 	 *
@@ -4357,20 +4342,6 @@ class Societe extends CommonObject
 		}
 
 		return "Error, mode/status not found";
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Set outstanding value
-	 *
-	 *  @param  User	$user		User making change
-	 *	@return	int					<0 if KO, >0 if OK
-	 * @deprecated Use update function instead
-	 */
-	public function set_OutstandingBill(User $user)
-	{
-		// phpcs:enable
-		return $this->update($this->id, $user);
 	}
 
 	/**
