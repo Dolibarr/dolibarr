@@ -103,6 +103,7 @@ $debuginfo = '';
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -236,7 +237,6 @@ if ($action == 'confirm_collect') {
 
 	$action = '';
 }
-
 
 
 
@@ -434,6 +434,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$connectstringtarget = $connectstringserver.$object->getEncodedUtf7($targetdir);
 			}
 
+			$timeoutconnect = empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 10 : $conf->global->MAIN_USE_CONNECT_TIMEOUT;
+			$timeoutread = empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT;
+
+			dol_syslog("imap_open connectstring=".$connectstringsource." login=".$object->login." password=".$object->password." timeoutconnect=".$timeoutconnect." timeoutread=".$timeoutread);
+
+			imap_timeout(IMAP_OPENTIMEOUT, $timeoutconnect);
+			imap_timeout(IMAP_READTIMEOUT, $timeoutread);
+
 			$connection = imap_open($connectstringsource, $object->login, $object->password);
 		} catch (Exception $e) {
 			print $e->getMessage();
@@ -449,12 +457,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (function_exists('imap_last_error')) {
 			$morehtml .= '<br>'.imap_last_error();
 		}
+		dol_syslog("Error ".$morehtml, LOG_WARNING);
 		//var_dump(imap_errors())
 	} else {
+		dol_syslog("Imap connected. Now we call imap_num_msg()");
 		$morehtml .= imap_num_msg($connection);
 	}
 
 	if ($connection) {
+		dol_syslog("Imap close");
 		imap_close($connection);
 	}
 
