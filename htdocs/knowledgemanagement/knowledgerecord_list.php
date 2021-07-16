@@ -118,7 +118,7 @@ foreach ($object->fields as $key => $val) {
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
-	}else if ($key = 'default_lang'){
+	} elseif ($key = 'default_lang') {
 		$visible = (int) dol_eval($val['visible'], 1);
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
@@ -466,9 +466,9 @@ foreach ($object->fields as $key => $val) {
 		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:')=== 0)) {
 			print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth125', 1);
 		} elseif (!preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
-			if($key == 'default_lang'){
+			if ($key == 'default_lang') {
 				print $formadmin->select_language($search[$key], 'search_default_lang', 0, null, 1, 0, 0, 'minwidth300', 2);
-			}else{
+			} else {
 				print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
 			}
 		} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
@@ -607,7 +607,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 					}
 					print $user_temp->getNomUrl(-1);
 				}
-			}else if($key == 'default_lang'){
+			} elseif ($key == 'default_lang') {
 				$labellang = ($object->default_lang ? $langs->trans('Language_'.$object->default_lang) : '');
 				print picto_from_langcode($object->default_lang, 'class="paddingrightonly saturatemedium opacitylow"');
 				print $labellang;
