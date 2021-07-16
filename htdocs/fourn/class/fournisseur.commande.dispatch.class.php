@@ -204,8 +204,8 @@ class CommandeFournisseurDispatch extends CommonObject
 				// want this action calls a trigger.
 
 				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+				$result=$this->call_trigger('LINERECEPTION_CREATE', $user);
+				if ($result < 0) $error++;
 				//// End call triggers
 			}
 		}
@@ -419,8 +419,8 @@ class CommandeFournisseurDispatch extends CommonObject
 				// want this action calls a trigger.
 
 				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+				$result=$this->call_trigger('LINERECEPTION_DELETE', $user);
+				if ($result < 0) $error++;
 				//// End call triggers
 			}
 		}
