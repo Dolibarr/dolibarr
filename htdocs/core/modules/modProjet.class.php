@@ -202,6 +202,12 @@ class modProjet extends DolibarrModules
 		$this->rights[$r][4] = 'all';
 		$this->rights[$r][5] = 'supprimer';
 
+		$r++;
+		$this->rights[$r][0] = 145; // id de la permission
+		$this->rights[$r][1] = "Can enter time consumed on assigned tasks (timesheet)"; // libelle de la permission
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][4] = 'time';
 
 		// Menus
 		//-------

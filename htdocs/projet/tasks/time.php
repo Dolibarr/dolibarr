@@ -149,7 +149,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$action = '';
 }
 
-if ($action == 'addtimespent' && $user->rights->projet->lire) {
+if ($action == 'addtimespent' && $user->rights->projet->time) {
 	$error = 0;
 
 	$timespent_durationhour = GETPOST('timespent_durationhour', 'int');
@@ -281,7 +281,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->lire) {
+if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->supprimer) {
 	$object->fetchTimeSpent(GETPOST('lineid', 'int'));
 	// TODO Check that ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids))
 	$result = $object->delTimeSpent($user);
@@ -722,7 +722,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 		$linktocreatetimeBtnStatus = 0;
 		$linktocreatetimeUrl = '';
 		$linktocreatetimeHelpText = '';
-		if ($user->rights->projet->all->lire || $user->rights->projet->lire) {	// To enter time, read permission is enough
+		if ($user->rights->projet->all->lire || $user->rights->projet->time) {
 			if ($projectstatic->public || $userRead > 0) {
 				$linktocreatetimeBtnStatus = 1;
 
@@ -940,7 +940,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 			print '<input type="hidden" name="action" value="updateline">';
 		} elseif ($action == 'splitline') {
 			print '<input type="hidden" name="action" value="updatesplitline">';
-		} elseif ($action == 'createtime' && $user->rights->projet->lire) {
+		} elseif ($action == 'createtime' && $user->rights->projet->time) {
 			print '<input type="hidden" name="action" value="addtimespent">';
 		} elseif ($massaction == 'generateinvoice' && $user->rights->facture->lire) {
 			print '<input type="hidden" name="action" value="confirm_generateinvoice">';
@@ -1122,7 +1122,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 		/*
 		 * Form to add a new line of time spent
 		 */
-		if ($action == 'createtime' && $user->rights->projet->lire) {
+		if ($action == 'createtime' && $user->rights->projet->time) {
 			print '<!-- table to add time spent -->'."\n";
 			if (!empty($id)) {
 				print '<input type="hidden" name="taskid" value="'.$id.'">';
@@ -1537,7 +1537,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 				print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-save" name="save" value="'.$langs->trans("Save").'">';
 				print '<br>';
 				print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-			} elseif ($user->rights->projet->lire || $user->rights->projet->all->creer) {	 // Read project and enter time consumed on assigned tasks
+			} elseif ($user->rights->projet->time || $user->rights->projet->all->creer) {	 // Read project and enter time consumed on assigned tasks
 				if ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids) || $user->rights->projet->all->creer) {
 					if ($conf->MAIN_FEATURES_LEVEL >= 2) {
 						print '&nbsp;';
