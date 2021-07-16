@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 if (!empty($conf->projet->enabled)) {
 	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -202,6 +203,10 @@ if (empty($reshook)) {
 				$contactid = GETPOST('contactid', 'int');
 				$type_contact = GETPOST("type", 'alpha');
 
+				// Category association
+				$categories = GETPOST('categories', 'array');
+				$object->setCategories($categories);
+
 				if ($contactid > 0 && $type_contact) {
 					$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 					$result = $object->add_contact($contactid, $typeid, 'external');
@@ -312,7 +317,11 @@ if (empty($reshook)) {
 			$object->severity_code = GETPOST('severity_code', 'alpha');
 
 			$ret = $object->update($user);
-			if ($ret <= 0) {
+			if ($ret > 0) {
+				// Category association
+				$categories = GETPOST('categories', 'array');
+				$object->setCategories($categories);
+			} else {
 				$error++;
 			}
 
@@ -1052,6 +1061,13 @@ if ($action == 'create' || $action == 'presend') {
 			print '</td><td>';
 			print convertSecondToTime($timing, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
 			print '</td></tr>';
+		}
+
+		// Categories
+		if ($conf->categorie->enabled) {
+			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td colspan="3">';
+			print $form->showCategories($object->id, Categorie::TYPE_TICKET, 1);
+			print "</td></tr>";
 		}
 
 		// Other attributes
