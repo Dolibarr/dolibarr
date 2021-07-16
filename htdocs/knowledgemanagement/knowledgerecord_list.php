@@ -607,9 +607,9 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 					}
 					print $user_temp->getNomUrl(-1);
 				}
-			}else if($key == 'lang'){
-				$labellang = ($object->lang ? $langs->trans('Language_'.$object->lang) : '');
-				print picto_from_langcode($object->lang, 'class="paddingrightonly saturatemedium opacitylow"');
+			}else if($key == 'default_lang'){
+				$labellang = ($object->default_lang ? $langs->trans('Language_'.$object->default_lang) : '');
+				print picto_from_langcode($object->default_lang, 'class="paddingrightonly saturatemedium opacitylow"');
 				print $labellang;
 			} else {
 				print $object->showOutputField($val, $key, $object->$key, '');

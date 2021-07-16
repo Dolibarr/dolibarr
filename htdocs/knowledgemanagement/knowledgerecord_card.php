@@ -190,7 +190,7 @@ if ($action == 'create') {
 	//Language of question/response
 	print '<tr class="oddeven"><td>'.$langs->trans("Language").'</td><td>';
 	print img_picto('', 'language', 'class="pictofixedwidth"');
-	print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'default_lang', 0, null, 1, 0, 0, 'minwidth300', 2);
+	print $formadmin->select_language('', 'default_lang', 0, null, 1, 0, 0, 'minwidth300', 2);
 	print '</td>';
 	print '</tr>';
 
@@ -237,7 +237,7 @@ if (($id || $ref) && $action == 'edit') {
 	//Language of question/response
 	print '<tr class="oddeven"><td>'.$langs->trans("Language").'</td><td>';
 	print img_picto('', 'language', 'class="pictofixedwidth"');
-	print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'default_lang', 0, null, 1, 0, 0, 'minwidth300', 2);
+	print $formadmin->select_language($object->default_lang, 'default_lang', 0, null, 1, 0, 0, 'minwidth300', 2);
 	print '</td>';
 	print '</tr>';
 
