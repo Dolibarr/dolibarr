@@ -118,6 +118,11 @@ if (empty($reshook)) {
 
 	$triggermodname = 'KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_MODIFY'; // Name of trigger action code to execute when we modify record
 
+	// Upadate / add for lang
+	if (($action == 'update' || $action == 'add') && !empty($permissiontoadd)) {
+		$object->lang = GETPOSTISSET('langkm', 'aZ09')?GETPOST('langkm', 'aZ09'):$object->lang;
+	}
+
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
@@ -190,7 +195,7 @@ if ($action == 'create') {
 	//Language of question/response
 	print '<tr class="oddeven"><td>'.$langs->trans("Language").'</td><td>';
 	print img_picto('', 'language', 'class="pictofixedwidth"');
-	print $formadmin->select_language('', 'default_lang', 0, null, 1, 0, 0, 'minwidth300', 2);
+	print $formadmin->select_language('', 'langkm', 0, null, 1, 0, 0, 'minwidth300', 2);
 	print '</td>';
 	print '</tr>';
 
@@ -237,7 +242,7 @@ if (($id || $ref) && $action == 'edit') {
 	//Language of question/response
 	print '<tr class="oddeven"><td>'.$langs->trans("Language").'</td><td>';
 	print img_picto('', 'language', 'class="pictofixedwidth"');
-	print $formadmin->select_language($object->default_lang, 'default_lang', 0, null, 1, 0, 0, 'minwidth300', 2);
+	print $formadmin->select_language($object->lang, 'langkm', 0, null, 1, 0, 0, 'minwidth300', 2);
 	print '</td>';
 	print '</tr>';
 
@@ -351,8 +356,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	//Language of question/response
 	print '<tr class="oddeven"><td>'.$langs->trans("Language").'</td><td>';
 	$langs->load("languages");
-	$labellang = ($object->default_lang ? $langs->trans('Language_'.$object->default_lang) : '');
-	print picto_from_langcode($object->default_lang, 'class="paddingrightonly saturatemedium opacitylow"');
+	$labellang = ($object->lang ? $langs->trans('Language_'.$object->lang) : '');
+	print picto_from_langcode($object->lang, 'class="paddingrightonly saturatemedium opacitylow"');
 	print $labellang;
 	print '</td>';
 	print '</tr>';

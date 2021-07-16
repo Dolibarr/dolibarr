@@ -596,4 +596,4 @@ create table llx_onlinesignature
   pathoffile				varchar(255)
 )ENGINE=innodb;
 
-ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD default_lang varchar(6)
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD lang varchar(6);
