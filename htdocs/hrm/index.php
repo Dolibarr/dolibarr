@@ -68,6 +68,16 @@ if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INF
 $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 
+/*
+ * Actions
+ */
+
+// Update sold
+if (!empty($conf->holiday->enabled) && !empty($setupcompanynotcomplete)) {
+	$holidaystatic = new Holiday($db);
+	$result = $holidaystatic->updateBalance();
+}
+
 
 /*
  * View
