@@ -28,6 +28,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
 require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/lib/knowledgemanagement_knowledgerecord.lib.php';
 
@@ -156,6 +157,7 @@ if ($action == 'confirm_validate') {
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
+$formadmin = new FormAdmin($db);
 
 $title = $langs->trans("KnowledgeRecord");
 $help_url = '';
@@ -184,6 +186,13 @@ if ($action == 'create') {
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_add.tpl.php';
+
+	//Language of question/response
+	print '<tr class="oddeven"><td>'.$langs->trans("Language").'</td><td>';
+	print img_picto('', 'language', 'class="pictofixedwidth"');
+	print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'default_lang', 0, null, 1, 0, 0, 'minwidth300', 2);
+	print '</td>';
+	print '</tr>';
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
@@ -224,6 +233,13 @@ if (($id || $ref) && $action == 'edit') {
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_edit.tpl.php';
+
+	//Language of question/response
+	print '<tr class="oddeven"><td>'.$langs->trans("Language").'</td><td>';
+	print img_picto('', 'language', 'class="pictofixedwidth"');
+	print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'default_lang', 0, null, 1, 0, 0, 'minwidth300', 2);
+	print '</td>';
+	print '</tr>';
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
@@ -331,6 +347,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
+
+	//Language of question/response
+	print '<tr class="oddeven"><td>'.$langs->trans("Language").'</td><td>';
+	$langs->load("languages");
+	$labellang = ($object->default_lang ? $langs->trans('Language_'.$object->default_lang) : '');
+	print picto_from_langcode($object->default_lang, 'class="paddingrightonly saturatemedium opacitylow"');
+	print $labellang;
+	print '</td>';
+	print '</tr>';
 
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
