@@ -6828,6 +6828,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$substitutionarray = array_merge($substitutionarray, array(
 			'__MYCOMPANY_NAME__'    => $mysoc->name,
 			'__MYCOMPANY_EMAIL__'   => $mysoc->email,
+			'__MYCOMPANY_PHONE__'   => $mysoc->phone,
+			'__MYCOMPANY_FAX__'     => $mysoc->fax,
 			'__MYCOMPANY_PROFID1__' => $mysoc->idprof1,
 			'__MYCOMPANY_PROFID2__' => $mysoc->idprof2,
 			'__MYCOMPANY_PROFID3__' => $mysoc->idprof3,
@@ -8487,8 +8489,10 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 	if (!empty($hookmanager)) {
 		$parameters = array('object' => $object, 'mode' => $mode, 'head' => &$head);
 		$reshook = $hookmanager->executeHooks('completeTabsHead', $parameters);
-		if ($reshook > 0) {
+		if ($reshook > 0) {		// Hook ask to replace completely the array
 			$head = $hookmanager->resArray;
+		} else {				// Hook
+			$head = array_merge($head, $hookmanager->resArray);
 		}
 		$h = count($head);
 	}

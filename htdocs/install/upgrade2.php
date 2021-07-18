@@ -3439,19 +3439,6 @@ function migrate_categorie_association($db, $langs, $conf)
 			}
 
 			if (!$error) {
-				// TODO DROP table in the next release
-				/*
-				$sqlDrop = "DROP TABLE ".MAIN_DB_PREFIX."categorie_association";
-				if ($db->query($sqlDrop))
-				{
-					$db->commit();
-				}
-				else
-				{
-					$db->rollback();
-				}
-				*/
-
 				$db->commit();
 			} else {
 				$db->rollback();
