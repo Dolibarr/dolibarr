@@ -319,7 +319,7 @@ if ($resql) {
 		$moreforfilter .= '<td colspan="2" class="liste_titre">'.img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
 		$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ').'</td>';
 
-	// Filter on warehouse categories
+		// Filter on warehouse categories
 		$moreforfilter .= '<td colspan="9" class="liste_titre">'.img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
 		$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_WAREHOUSE, $search_warehouse_categ, 'search_warehouse_categ').'</td>';
 		$moreforfilter .= '</tr>';
