@@ -6,6 +6,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2019       Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2021       Noé Cendrier			<noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,6 +73,7 @@ $offset = $limit * $page;
 // Load sale and categ filters
 $search_sale = GETPOST("search_sale");
 $search_categ = GETPOST("search_categ");
+$search_warehouse_categ = GETPOST("search_warehouse_categ");
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $canvas = GETPOST("canvas");
@@ -101,6 +103,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$tobuy = "";
 	$search_sale = "";
 	$search_categ = "";
+	$search_warehouse_categ = "";
 	$type = "";
 	$catid = '';
 	$toolowstock = '';
@@ -135,13 +138,13 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as e on ps.fk_entrepot = e.rowid'
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_batch as pb on pb.fk_product_stock = ps.rowid'; // Detail for each lot on each warehouse
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot as pl on pl.fk_product = p.rowid AND pl.batch = pb.batch'; // Link on unique key
 // We'll need this table joined to the select in order to filter by categ
-if ($search_categ) {
-	$sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
+if ($search_categ > 0) {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
+}
+if ($search_warehouse_categ > 0) {
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_warehouse as cw on e.rowid = cw.fk_warehouse';
 }
 $sql .= " WHERE p.entity IN (".getEntity('product').")";
-if ($search_categ) {
-	$sql .= " AND p.rowid = cp.fk_product"; // Join for the needed table to filter by categ
-}
 if ($sall) {
 	$sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
 }
@@ -178,8 +181,11 @@ if ($fourn_id > 0) {
 	$sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".((int) $fourn_id);
 }
 // Insert categ filter
-if ($search_categ) {
+if ($search_categ > 0) {
 	$sql .= " AND cp.fk_categorie = ".((int) $search_categ);
+}
+if ($search_warehouse_categ > 0) {
+	$sql .= " AND cw.fk_categorie = " . (int) $search_warehouse_categ;
 }
 if ($search_warehouse) {
 	$sql .= natural_search("e.ref", $search_warehouse);
@@ -277,8 +283,11 @@ if ($resql) {
 	if ($search_sale) {
 		$param .= "&search_sale=".urlencode($search_sale);
 	}
-	if ($search_categ) {
+	if ($search_categ > 0) {
 		$param .= "&search_categ=".urlencode($search_categ);
+	}
+	if ($search_warehouse_categ > 0) {
+		$param .= "&search_warehouse_categ=".urlencode($search_warehouse_categ);
 	}
 	/*if ($eatby)		$param.="&eatby=".$eatby;
 	if ($sellby)	$param.="&sellby=".$sellby;*/
@@ -303,28 +312,30 @@ if ($resql) {
 		print "</div><br>";
 	}
 
-	// Filter on categories
+	// Filter on product categories
 	$moreforfilter = '';
 	if (!empty($conf->categorie->enabled)) {
-		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
-		$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ');
-		$moreforfilter .= '</div>';
+		$moreforfilter .= '<tr class="liste_titre_filter divsearchfield">';
+		$moreforfilter .= '<td colspan="2" class="liste_titre">'.img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
+		$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ').'</td>';
+
+	// Filter on warehouse categories
+		$moreforfilter .= '<td colspan="9" class="liste_titre">'.img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
+		$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_WAREHOUSE, $search_warehouse_categ, 'search_warehouse_categ').'</td>';
+		$moreforfilter .= '</tr>';
 	}
 	//$moreforfilter.=$langs->trans("StockTooLow").' <input type="checkbox" name="toolowstock" value="1"'.($toolowstock?' checked':'').'>';
-
-	if (!empty($moreforfilter)) {
-		print '<div class="liste_titre liste_titre_bydiv centpercent">';
-		print $moreforfilter;
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
-		print '</div>';
-	}
 
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">';
+	if (!empty($moreforfilter)) {
+		print $moreforfilter;
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+	}
+
 
 	// Fields title search
 	print '<tr class="liste_titre_filter">';
