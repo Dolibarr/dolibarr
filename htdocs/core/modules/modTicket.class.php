@@ -283,6 +283,19 @@ class modTicket extends DolibarrModules
 			'target' => '',
 			'user' => 0);
 		$r++;
+
+		$this->menu[$r] = array('fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=ticket',
+			'type' => 'left',
+			'titre' => 'Categories',
+			'mainmenu' => 'ticket',
+			'url' => '/categories/index.php?type=12',
+			'langs' => 'ticket',
+			'position' => 107,
+			'enabled' => '$conf->categorie->enabled',
+			'perms' => '$user->rights->ticket->read',
+			'target' => '',
+			'user' => 0);
+		$r++;
 	}
 
 	/**

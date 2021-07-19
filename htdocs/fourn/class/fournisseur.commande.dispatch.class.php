@@ -220,13 +220,12 @@ class CommandeFournisseurDispatch extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
 			if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
+				// Call triggers
+				$result=$this->call_trigger('LINERECEPTION_CREATE', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
 			}
 		}
 
