@@ -449,7 +449,7 @@ if ($object->id > 0) {
 	print dol_get_fiche_end();
 
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form name="formrecord" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="updateinventorylines">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -537,6 +537,63 @@ if ($object->id > 0) {
 
 	// Popup for mass barcode scanning
 	if ($action == 'updatebyscaning') {
+		print '<script>';
+		print 'function barcodescannerjs(){
+			var barcodemode = $("input[name=barcodemode]:checked").val();
+			var barcodeproductqty = $("input[name=barcodeproductqty]").val();
+			var textarea = $("textarea[name=barcodelist]").val();
+			var textarray = textarea.split("\n");
+			if(textarray[0] != ""){
+				var tabproduct = [];
+				$(".expectedqty").each(function(){
+					id = this.id;
+					warehouse = $("#"+id+"_warehouse")[0].firstChild.lastChild.data;
+
+					productbarcode = $("#"+id+"_product")[0].firstChild.title;
+					productbarcode = productbarcode.split("<br>");
+					productbarcode = productbarcode.filter(barcode => barcode.includes("'.$langs->trans('BarCode').'"))[0];
+					productbarcode = productbarcode.slice(productbarcode.indexOf("</b> ")+5);
+
+					productbatchcode = $("#"+id+"_batch")[0].firstChild;
+					if(productbatchcode != null){
+						productbatchcode = productbatchcode.data;
+					}
+
+					tabproduct.push({\'Id\':id,\'Warehouse\':warehouse,\'Barecode\':productbarcode,\'Batch\':productbatchcode,\'Qty\':0});
+				})
+				switch(barcodemode){
+					case "barcodeforautodetect":
+						break;
+					case "barcodeforproduct":
+						textarray.forEach(function(element,index){
+							console.log("Product "+(index+=1)+": "+element);
+							BarCodeDoesNotExist=0;
+							tabproduct.forEach(product => {
+								if(product.Barecode == element){
+									product.Qty+=1;
+								}else{
+									BarCodeDoesNotExist+=1;
+								}
+							})
+							if(BarCodeDoesNotExist >= tabproduct.length){
+								alert("'.$langs->trans('ProductDoesNotExist').': "+element);
+							}
+						})
+						break;
+					case "barcodeforlotserial":
+						break;
+					default:
+						alert("'.$langs->trans("ErrorWrongBarcodemode").' \""+barcodemode+"\"");
+				}
+				tabproduct.forEach(product => {
+					if(product.Qty!=0){
+						$("#"+product.Id+"_input")[0].value = product.Qty*barcodeproductqty;
+					}
+				})
+				document.forms["formrecord"].submit();
+			}
+		}';
+		print '</script>';
 		include DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 		$formother = new FormOther($db);
 		print $formother->getHTMLScannerForm();
@@ -639,15 +696,15 @@ if ($object->id > 0) {
 			}
 
 			print '<tr class="oddeven">';
-			print '<td>';
+			print '<td id="id_'.$obj->rowid.'_warehouse">';
 			print $warehouse_static->getNomUrl(1);
 			print '</td>';
-			print '<td>';
+			print '<td id="id_'.$obj->rowid.'_product">';
 			print $product_static->getNomUrl(1);
 			print '</td>';
 
 			if ($conf->productbatch->enabled) {
-				print '<td>';
+				print '<td id="id_'.$obj->rowid.'_batch">';
 				print $obj->batch;
 				print '</td>';
 			}
@@ -667,6 +724,8 @@ if ($object->id > 0) {
 				print '<td class="right">';
 				print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&token='.newToken().'">'.img_delete().'</a>';
 				print '</td>';
+				$qty_tmp = GETPOST("id_".$obj->rowid."_input_tmp") && price2num(GETPOST("id_".$obj->rowid."_input_tmp", 'MS')) >= 0 ? GETPOST("id_".$obj->rowid."_input_tmp") : $qty_view;
+				print '<input type="hidden" class="maxwidth75 right realqty" name="id_'.$obj->rowid.'_input_tmp" id="id_'.$obj->rowid.'_input_tmp" value="'.$qty_tmp.'">';
 			} else {
 				print $obj->qty_view;
 				$totalfound += $obj->qty_view;
@@ -685,7 +744,7 @@ if ($object->id > 0) {
 	print '</div>';
 
 	if ($object->status == $object::STATUS_VALIDATED) {
-		print '<center><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'"></center>';
+		print '<center><input id="submitrecord" type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'"></center>';
 	}
 
 	print '</div>';
