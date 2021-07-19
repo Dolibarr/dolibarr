@@ -135,17 +135,16 @@ $sql .= ' SUM(pb.qty) as stock_physique, COUNT(pb.rowid) as nbinbatchtable';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps on p.rowid = ps.fk_product'; // Detail for each warehouse
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as e on ps.fk_entrepot = e.rowid'; // Link on unique key
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_warehouse as cw on e.rowid = cw.fk_warehouse';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_batch as pb on pb.fk_product_stock = ps.rowid'; // Detail for each lot on each warehouse
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot as pl on pl.fk_product = p.rowid AND pl.batch = pb.batch'; // Link on unique key
 // We'll need this table joined to the select in order to filter by categ
-if ($search_categ) {
+if ($search_categ > 0) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
 }
+if ($search_warehouse_categ > 0) {
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_warehouse as cw on e.rowid = cw.fk_warehouse';
+}
 $sql .= " WHERE p.entity IN (".getEntity('product').")";
-// if ($search_categ) {
-// 	$sql .= " AND "; // Join for the needed table to filter by categ
-// }
 if ($sall) {
 	$sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
 }
@@ -186,7 +185,6 @@ if ($search_categ > 0) {
 	$sql .= " AND cp.fk_categorie = ".((int) $search_categ);
 }
 if ($search_warehouse_categ > 0) {
-	// $sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_WAREHOUSE, "e.rowid", $search_warehouse_categ);
 	$sql .= " AND cw.fk_categorie = " . (int) $search_warehouse_categ;
 }
 if ($search_warehouse) {
@@ -285,10 +283,10 @@ if ($resql) {
 	if ($search_sale) {
 		$param .= "&search_sale=".urlencode($search_sale);
 	}
-	if ($search_categ) {
+	if ($search_categ > 0) {
 		$param .= "&search_categ=".urlencode($search_categ);
 	}
-	if ($search_warehouse_categ) {
+	if ($search_warehouse_categ > 0) {
 		$param .= "&search_warehouse_categ=".urlencode($search_warehouse_categ);
 	}
 	/*if ($eatby)		$param.="&eatby=".$eatby;
@@ -332,12 +330,10 @@ if ($resql) {
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">';
 	if (!empty($moreforfilter)) {
-		// print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
-		// print '</div>';
 	}
 
 
