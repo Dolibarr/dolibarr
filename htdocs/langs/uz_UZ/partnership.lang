@@ -16,72 +16,72 @@
 #
 # Generic
 #
-ModulePartnershipName=Partnership management
-PartnershipDescription=Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
+ModulePartnershipName=Hamkorlikni boshqarish
+PartnershipDescription=Modul sherikligini boshqarish
+PartnershipDescriptionLong= Modul sherikligini boshqarish
 
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
+AddPartnership=Hamkorlik qo'shing
+CancelPartnershipForExpiredMembers=Hamkorlik: muddati o'tgan obunalari bo'lgan a'zolarning sherikligini bekor qiling
+PartnershipCheckBacklink=Hamkorlik: teskari bog'lanishni tekshiring
 
 #
 # Menu
 #
-NewPartnership=New Partnership
-ListOfPartnerships=List of partnership
+NewPartnership=Yangi hamkorlik
+ListOfPartnerships=Hamkorlik ro'yxati
 
 #
 # Admin page
 #
-PartnershipSetup=Partnership setup
-PartnershipAbout=About Partnership
-PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+PartnershipSetup=Hamkorlikni o'rnatish
+PartnershipAbout=Hamkorlik haqida
+PartnershipAboutPage=Sahifa haqida hamkorlik
+partnershipforthirdpartyormember=Hamkor maqomi "uchinchi tomon" yoki "a'zo" da o'rnatilishi kerak
+PARTNERSHIP_IS_MANAGED_FOR=Hamkorlik boshqarildi
+PARTNERSHIP_BACKLINKS_TO_CHECK=Tekshirish uchun qayta bog'lanishlar
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Obuna muddati tugaganidan keyin hamkorlik maqomini bekor qilishdan bir necha kun oldin
+ReferingWebsiteCheck=Veb-saytga yo'naltirilganligini tekshiring
+ReferingWebsiteCheckDesc=Siz o'zingizning veb-saytingizda sheriklaringizning veb-sayt domenlariga orqa bog'lanishni qo'shganligini tekshirish uchun xususiyatni yoqishingiz mumkin.
 
 #
 # Object
 #
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
-DatePartnershipStart=Start date
-DatePartnershipEnd=End date
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
+DeletePartnership=Hamkorlikni o'chirib tashlang
+PartnershipDedicatedToThisThirdParty=Ushbu uchinchi tomonga bag'ishlangan hamkorlik
+PartnershipDedicatedToThisMember=Ushbu a'zoga bag'ishlangan hamkorlik
+DatePartnershipStart=Boshlanish vaqti
+DatePartnershipEnd=Tugash sanasi
+ReasonDecline=Rad etish sababi
+ReasonDeclineOrCancel=Rad etish sababi
+PartnershipAlreadyExist=Hamkorlik allaqachon mavjud
+ManagePartnership=Hamkorlikni boshqarish
+BacklinkNotFoundOnPartnerWebsite=Backlink sherik veb-saytida topilmadi
+ConfirmClosePartnershipAsk=Haqiqatan ham ushbu hamkorlikni bekor qilmoqchimisiz?
+PartnershipType=Hamkorlik turi
 
 #
 # Template Mail
 #
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
+SendingEmailOnPartnershipWillSoonBeCanceled=Yaqinda hamkorlik bekor qilinadi
+SendingEmailOnPartnershipRefused=Hamkorlik rad etildi
+SendingEmailOnPartnershipAccepted=Hamkorlik qabul qilindi
+SendingEmailOnPartnershipCanceled=Hamkorlik bekor qilindi
 
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
+YourPartnershipWillSoonBeCanceledTopic=Yaqinda hamkorlik bekor qilinadi
+YourPartnershipRefusedTopic=Hamkorlik rad etildi
+YourPartnershipAcceptedTopic=Hamkorlik qabul qilindi
+YourPartnershipCanceledTopic=Hamkorlik bekor qilindi
 
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
+YourPartnershipWillSoonBeCanceledContent=Sizning hamkorligingiz yaqinda bekor qilinishini xabar qilamiz (Backlink topilmadi)
+YourPartnershipRefusedContent=Sizning sheriklik so'rovingiz rad etilganligi haqida xabar beramiz.
+YourPartnershipAcceptedContent=Sizga sheriklik so'rovingiz qabul qilinganligi to'g'risida xabar beramiz.
+YourPartnershipCanceledContent=Sizning hamkorligingiz bekor qilinganligi haqida xabar beramiz.
 
 #
 # Status
 #
-PartnershipDraft=Draft
-PartnershipAccepted=Accepted
-PartnershipRefused=Refused
-PartnershipCanceled=Canceled
-PartnershipManagedFor=Partners are
+PartnershipDraft=Qoralama
+PartnershipAccepted=Qabul qilindi
+PartnershipRefused=Rad etildi
+PartnershipCanceled=Bekor qilindi
+PartnershipManagedFor=Hamkorlar

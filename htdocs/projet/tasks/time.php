@@ -261,10 +261,10 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$object->timespent_duration = GETPOSTINT("new_durationhour") * 60 * 60; // We store duration in seconds
 			$object->timespent_duration += (GETPOSTINT("new_durationmin") ? GETPOSTINT('new_durationmin') : 0) * 60; // We store duration in seconds
 			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0) {	// If hour was entered
-				$object->timespent_date = dol_mktime(GETPOST("timelinehour"), GETPOST("timelinemin"), 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
+				$object->timespent_date = dol_mktime(GETPOST("timelinehour", 'int'), GETPOST("timelinemin", 'int'), 0, GETPOST("timelinemonth", 'int'), GETPOST("timelineday", 'int'), GETPOST("timelineyear", 'int'));
 				$object->timespent_withhour = 1;
 			} else {
-				$object->timespent_date = dol_mktime(12, 0, 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
+				$object->timespent_date = dol_mktime(12, 0, 0, GETPOST("timelinemonth", 'int'), GETPOST("timelineday", 'int'), GETPOST("timelineyear", 'int'));
 			}
 			$object->timespent_fk_user = GETPOST("userid_line", 'int');
 
@@ -353,6 +353,13 @@ if ($action == 'confirm_generateinvoice') {
 		$prodDurationHours = 1.0;
 		if ($idprod > 0) {
 			$tmpproduct->fetch($idprod);
+
+			if (empty($tmpproduct->duration_value)) {
+				$error++;
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice"), null, 'errors');
+			}
+
 			if ($tmpproduct->duration_unit == 'i') {
 				$prodDurationHours = 1. / 60;
 			}
@@ -380,6 +387,8 @@ if ($action == 'confirm_generateinvoice') {
 			$localtax1 = $dataforprice['localtax1'];
 			$localtax2 = $dataforprice['localtax2'];
 		} else {
+			$prodDurationHours = 1;
+
 			$pu_ht = 0;
 			$txtva = get_default_tva($mysoc, $projectstatic->thirdparty);
 			$localtax1 = get_default_localtax($mysoc, $projectstatic->thirdparty, 1);
@@ -482,14 +491,14 @@ if ($action == 'confirm_generateinvoice') {
 						break;
 					}
 				}
-			} elseif ($generateinvoicemode == 'onelinepertask') {
+			} elseif ($generateinvoicemode == 'onelinepertask') {	// One line for each different task
 				$arrayoftasks = array();
 				foreach ($toselect as $key => $value) {
 					// Get userid, timepent
-					$object->fetchTimeSpent($value);
-					// $object->id is the task id
+					$object->fetchTimeSpent($value);		// Call method to get list of timespent for a timespent line id (We use the utiliy method found into Task object)
+					// $object->id is now the task id
 					$arrayoftasks[$object->id]['timespent'] += $object->timespent_duration;
-					$arrayoftasks[$object->id]['totalvaluetodivideby3600'] += $object->timespent_duration * $object->timespent_thm;
+					$arrayoftasks[$object->id]['totalvaluetodivideby3600'] += ($object->timespent_duration * $object->timespent_thm);
 				}
 
 				foreach ($arrayoftasks as $task_id => $value) {
@@ -499,23 +508,45 @@ if ($action == 'confirm_generateinvoice') {
 					$qtyhour = $value['timespent'] / 3600;
 					$qtyhourtext = convertSecondToTime($value['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
 
-					// If no unit price known
-					if (empty($pu_ht)) {
-						$pu_ht = price2num($value['totalvaluetodivideby3600'] / 3600, 'MU');
+					if ($idprod > 0) {
+						// If a product is defined, we msut use the $prodDurationHours and $pu_ht of product (already set previously).
+						$pu_ht_for_task = $pu_ht;
+						// If we want to reuse the value of timespent (so use same price than cost price)
+						if (!empty($conf->global->PROJECT_TIME_SPENT_INTO_INVOICE_USE_VALUE)) {
+							$pu_ht_for_task = price2num($value['totalvaluetodivideby3600'] / $value['timespent'], 'MU') * $prodDurationHours;
+						}
+						$pa_ht = price2num($value['totalvaluetodivideby3600'] / $value['timespent'], 'MU') * $prodDurationHours;
+					} else {
+						// If not product used, we use the hour unit for duration and unit price.
+						$pu_ht_for_task = 0;
+						// If we want to reuse the value of timespent (so use same price than cost price)
+						if (!empty($conf->global->PROJECT_TIME_SPENT_INTO_INVOICE_USE_VALUE)) {
+							$pu_ht_for_task = price2num($value['totalvaluetodivideby3600'] / $value['timespent'], 'MU');
+						}
+						$pa_ht = price2num($value['totalvaluetodivideby3600'] / $value['timespent'], 'MU');
 					}
 
 					// Add lines
+					$date_start = '';
+					$date_end = '';
 					$lineName = $ftask->ref.' - '.$ftask->label;
-					$lineid = $tmpinvoice->addline($lineName, $pu_ht, round($qtyhour / $prodDurationHours, 2), $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
-
-					// Update lineid into line of timespent
-					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.((int) $lineid).', invoice_id = '.((int) $tmpinvoice->id);
-					$sql .= ' WHERE rowid IN ('.$db->sanitize(join(',', $toselect)).')';
-					$result = $db->query($sql);
-					if (!$result) {
+					$lineid = $tmpinvoice->addline($lineName, $pu_ht_for_task, price2num($qtyhour / $prodDurationHours, 'MS'), $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0), 0, $date_start, $date_end, 0, 0, '', 'HT', 0, 1, -1, 0, '', 0, 0, null, $pa_ht);
+					if ($lineid < 0) {
 						$error++;
-						setEventMessages($db->lasterror(), null, 'errors');
+						setEventMessages($tmpinvoice->error, $tmpinvoice->errors, 'errors');
 						break;
+					}
+
+					if (!$error) {
+						// Update lineid into line of timespent
+						$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.((int) $lineid).', invoice_id = '.((int) $tmpinvoice->id);
+						$sql .= ' WHERE rowid IN ('.$db->sanitize(join(',', $toselect)).')';
+						$result = $db->query($sql);
+						if (!$result) {
+							$error++;
+							setEventMessages($db->lasterror(), null, 'errors');
+							break;
+						}
 					}
 				}
 			}
@@ -960,7 +991,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 			print '<input type="hidden" name="massaction" value="confirm_createbills">';
 
 			if ($projectstatic->thirdparty->id > 0) {
-				print '<table class="noborder" width="100%" >';
+				print '<table class="noborder centerpercent">';
 				print '<tr>';
 				print '<td class="titlefield">';
 				print $langs->trans('DateInvoice');
@@ -1352,10 +1383,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 				break;
 			}
 
-			print '<tr class="oddeven">';
-
 			$date1 = $db->jdate($task_time->task_date);
 			$date2 = $db->jdate($task_time->task_datehour);
+
+			print '<tr class="oddeven">';
 
 			// Date
 			if (!empty($arrayfields['t.task_date']['checked'])) {
@@ -1480,9 +1511,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 
 			// Value spent
 			if (!empty($arrayfields['value']['checked'])) {
+				$langs->load("salaries");
+
 				print '<td class="nowraponall right">';
 				$value = price2num($task_time->thm * $task_time->task_duration / 3600, 'MT', 1);
+				print '<span class="amount" title="'.$langs->trans("THM").': '.price($task_time->thm).'">';
 				print price($value, 1, $langs, 1, -1, -1, $conf->currency);
+				print '</span>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

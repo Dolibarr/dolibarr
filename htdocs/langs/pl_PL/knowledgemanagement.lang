@@ -37,15 +37,7 @@ About = O
 KnowledgeManagementAbout = O Zarządzaniu wiedzą
 KnowledgeManagementAboutPage = Strona informacyjna Zarządzania wiedzą
 
-#
-# Sample page
-#
 KnowledgeManagementArea = Zarządzanie wiedzą
-
-
-#
-# Menu
-#
 MenuKnowledgeRecord = Baza wiedzy
 ListKnowledgeRecord = Lista artykułów
 NewKnowledgeRecord = Nowy artykuł
@@ -53,3 +45,5 @@ ValidateReply = Sprawdź poprawność rozwiązania
 KnowledgeRecords = Artykuły
 KnowledgeRecord = Artykuł
 KnowledgeRecordExtraFields = Extrapola dla artykułu
+GroupOfTicket=Grupa biletów
+YouCanLinkArticleToATicketCategory=Możesz powiązać artykuł z grupą biletów (aby artykuł był sugerowany podczas kwalifikacji nowych biletów)

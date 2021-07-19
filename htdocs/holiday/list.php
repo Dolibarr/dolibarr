@@ -730,6 +730,7 @@ if ($resql) {
 			$holidaystatic->id = $obj->rowid;
 			$holidaystatic->ref = ($obj->ref ? $obj->ref : $obj->rowid);
 			$holidaystatic->statut = $obj->status;
+			$holidaystatic->date_debut = $db->jdate($obj->date_debut);
 
 			// User
 			$userstatic->id = $obj->fk_user;
@@ -790,7 +791,7 @@ if ($resql) {
 			}
 			if (!empty($arrayfields['duration']['checked'])) {
 				print '<td class="right">';
-				$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday);
+				$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday);	// user jdate(..., 1) because num_open_day need UTC dates
 				print $nbopenedday.' '.$langs->trans('DurationDays');
 				print '</td>';
 				if (!$i) {

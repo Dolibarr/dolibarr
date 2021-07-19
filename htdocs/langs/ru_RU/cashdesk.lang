@@ -127,4 +127,4 @@ AllowDelayedPayment=Разрешить отсроченный платеж
 PrintPaymentMethodOnReceipts=Распечатать способ оплаты на билетах | квитанциях
 WeighingScale=Весы
 ShowPriceHT = Отобразить столбец с ценой без налога (на экране)
-ShowPriceHTOnReceipt = Вывести столбец с ценой без налога (при получении)
+ShowPriceHTOnReceipt = Display the column with the price excluding tax (on the receipt)

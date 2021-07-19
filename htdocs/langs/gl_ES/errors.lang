@@ -301,3 +301,4 @@ ErrorActionCommPropertyUserowneridNotDefined=É preciso o supervisor do usuario
 ErrorActionCommBadType=O tipo de evento seleccionado (id: %n, código: %s) non existe no diccionario Tipo de Evento
 CheckVersionFail=Fallou a comprobación da versión
 ErrorWrongFileName=O nome do ficheiro non pode conte  __SOMETHING__ nel
+ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.

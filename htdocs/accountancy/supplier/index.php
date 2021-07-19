@@ -166,6 +166,9 @@ if ($action == 'validatehistory') {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa4 ON " . $alias_product_perentity . ".accountancy_code_buy = aa4.account_number        AND aa4.active = 1 AND aa4.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa4.entity = ".$conf->entity;
 	$sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 	$sql .= " AND l.product_type <= 2";
+	if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
+		$sql .= " AND f.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
+	}
 
 	dol_syslog('htdocs/accountancy/supplier/index.php');
 
@@ -202,11 +205,13 @@ if ($action == 'validatehistory') {
 				}
 			}
 
-			// Level 3: Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
-			if (!empty($objp->company_code_buy)) {
-				$objp->code_buy_t = $objp->company_code_buy;
-				$objp->aarowid_suggest = $objp->aarowid_thirdparty;
-				$suggestedaccountingaccountfor = '';
+			if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
+				// Level 3: Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
+				if (!empty($objp->company_code_buy)) {
+					$objp->code_buy_t = $objp->company_code_buy;
+					$objp->aarowid_suggest = $objp->aarowid_thirdparty;
+					$suggestedaccountingaccountfor = '';
+				}
 			}
 
 			if ($objp->aarowid_suggest > 0) {

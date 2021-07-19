@@ -301,3 +301,4 @@ ErrorActionCommPropertyUserowneridNotDefined=Der Besitzer des Benutzers ist erfo
 ErrorActionCommBadType=Der ausgewählte Ereignistyp (ID: %n, Code: %s) ist im Wörterbuch für den Ereignistyp nicht vorhanden
 CheckVersionFail=Versionsprüfung fehlgeschlagen
 ErrorWrongFileName=Name of the file cannot have __SOMETHING__ in it
+ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.

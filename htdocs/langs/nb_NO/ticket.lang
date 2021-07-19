@@ -34,7 +34,8 @@ TicketDictResolution=Billett - Løsning
 
 TicketTypeShortCOM=Prisforespørsel
 TicketTypeShortHELP=Be om funksjonell hjelp
-TicketTypeShortISSUE=Problem eller feil
+TicketTypeShortISSUE=Issue or bug
+TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Endring- eller forbedringsforespørsel
 TicketTypeShortPROJET=Prosjekt
 TicketTypeShortOTHER=Annet
@@ -54,14 +55,15 @@ TypeContact_ticket_internal_SUPPORTTEC=Tilordnet bruker
 TypeContact_ticket_external_SUPPORTCLI=Kundekontakt / hendelsessporing
 TypeContact_ticket_external_CONTRIBUTOR=Ekstern bidragsyter
 
-OriginEmail=Epostkilde
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Send billettmelding via e-post
 
 # Status
 Read=Les
 Assigned=Tildelt
 InProgress=Pågår
-NeedMoreInformation=Venter på informasjon
+NeedMoreInformation=Waiting for reporter feedback
+NeedMoreInformationShort=Waiting for feedback
 Answered=Besvarte
 Waiting=Venter
 Closed=Lukket
@@ -160,7 +162,7 @@ CreatedBy=Laget av
 NewTicket=Ny supportseddel
 SubjectAnswerToTicket=Supportseddel-svar
 TicketTypeRequest=Forespørselstype
-TicketCategory=Gruppe
+TicketCategory=Ticket categorization
 SeeTicket=Se supportseddel
 TicketMarkedAsRead=Supportseddel merket som lest
 TicketReadOn=Les videre
@@ -211,6 +213,7 @@ TicketMessageHelp=Kun denne teksten blir lagret i meldingslisten på supportsedd
 TicketMessageSubstitutionReplacedByGenericValues=Substitusjonsvariabler erstattes av generiske verdier.
 TimeElapsedSince=Tid forløpt siden
 TicketTimeToRead=Tid forløpt før lesing
+TicketTimeElapsedBeforeSince=Time elapsed before / since
 TicketContacts=Kontakter supportseddel
 TicketDocumentsLinked=Dokumenter knyttet til supportseddel 
 ConfirmReOpenTicket=Bekreft gjenåpning av denne supportseddelen?
