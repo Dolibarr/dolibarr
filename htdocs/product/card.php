@@ -551,7 +551,7 @@ if (empty($reshook)) {
 				$accountancy_code_buy = GETPOST('accountancy_code_buy', 'alpha');
 				$accountancy_code_buy_intra = GETPOST('accountancy_code_buy_intra', 'alpha');
 				$accountancy_code_buy_export = GETPOST('accountancy_code_buy_export', 'alpha');
-
+				$checkmandatory = GETPOST('mandatoryperiod', 'alpha');
 				if (empty($accountancy_code_sell) || $accountancy_code_sell == '-1') {
 					$object->accountancy_code_sell = '';
 				} else {
@@ -582,6 +582,11 @@ if (empty($reshook)) {
 				} else {
 					$object->accountancy_code_buy_export = $accountancy_code_buy_export;
 				}
+				if ($object->isService()){
+					$object->mandatory_period =  (!empty($checkmandatory)) ? 1 : 0 ;
+				}
+
+
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -1981,6 +1986,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyExportCode").'</td>';
 					print '<td><input name="accountancy_code_buy_export" class="maxwidth200" value="'.$object->accountancy_code_buy_export.'">';
 					print '</td></tr>';
+
+					if ($object->isService()) {
+						// Mandatory period
+						print '<tr><td class="titlefieldcreate">'.$langs->trans("mandatoryperiod").'</td>';
+						print '<td><input type="checkbox" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').' /> ';
+						print '</td></tr>';
+					}
+
+
+
 				}
 			}
 			print '</table>';
@@ -2258,6 +2273,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 				print (!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
 
+				print '</td></tr>';
+
+				// Mandatory period
+
+				print '<tr><td class="titlefield">'.$langs->trans("mandatoryperiod").'</td><td>';
+				print '<input type="checkbox" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').' disabled/> ';
 				print '</td></tr>';
 			} else {
 				if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {

@@ -399,3 +399,4 @@ ProductSupplierExtraFields=Attributs supplémentaires (Prix fournisseur)
 DeleteLinkedProduct=Supprimer le produit enfant lié à la combinaison
 PMPValue=Prix moyen pondéré (PMP)
 PMPValueShort=PMP
+mandatoryperiod=Période obligatoires
