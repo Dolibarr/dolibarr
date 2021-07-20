@@ -549,17 +549,13 @@ if ($object->id > 0) {
 					var tabproduct = [];
 					$(".expectedqty").each(function(){
 						id = this.id;
-						warehouse = $("#"+id+"_warehouse")[0].firstChild.lastChild.data;
-
-						productbarcode = $("#"+id+"_product")[0].firstChild.title;
+						warehouse = $("#"+id+"_warehouse").children().first().text();
+						productbarcode = $("#"+id+"_product").children().first().attr("title");
 						productbarcode = productbarcode.split("<br>");
 						productbarcode = productbarcode.filter(barcode => barcode.includes("'.$langs->trans('BarCode').'"))[0];
 						productbarcode = productbarcode.slice(productbarcode.indexOf("</b> ")+5);
 
-						productbatchcode = $("#"+id+"_batch")[0].firstChild;
-						if(productbatchcode != null){
-							productbatchcode = productbatchcode.data;
-						}
+						productbatchcode = $("#"+id+"_batch").text();
 						if(barcodemode != "barcodeforproduct"){
 							tabproduct.forEach(product=>{
 								if(product.Batch == productbatchcode){
@@ -626,7 +622,7 @@ if ($object->id > 0) {
 					tabproduct.forEach(product => {
 						if(product.Qty!=0){
 							console.log("We change #"+product.Id+"_input to match input in scanner box");
-							$("#"+product.Id+"_input")[0].value = product.Qty*barcodeproductqty;
+							$("#"+product.Id+"_input").val(product.Qty*barcodeproductqty);
 						}
 					})
 					document.forms["formrecord"].submit();
