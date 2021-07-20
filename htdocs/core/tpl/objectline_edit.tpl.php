@@ -341,7 +341,7 @@ $coldisplay++;
 
 		$res = $line->fetch_product();
 		if ($res  > 0  ) {
-			if ($line->product->isMandatoryPeriod() && $line->product->isService()) {
+			if ( $line->product->isMandatoryPeriod() && $line->product->isService()) {
 				print  'jQuery("#date_start").addClass("error");';
 			}
 		}

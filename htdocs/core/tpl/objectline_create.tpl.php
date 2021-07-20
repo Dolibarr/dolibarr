@@ -716,8 +716,6 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 
 						//  service and we setted mandatory_period to true
 						if (data.mandatory_period == 1 && data.type == 1 ) {
-							console.log("we are good to color date input");
-
 							jQuery("#date_start").addClass("error");
 							jQuery("#date_end").addClass("error");
 						}else{
