@@ -461,7 +461,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 	// Array of action code where CSRFCHECK with token will be forced (so token must be provided on url request)
 	$arrayofactiontoforcetokencheck = array(
 		'activate', 'add', 'addtimespent', 'update', 'install',
-		'confirm_create_user', 'confirm_create_thirdparty', 'confirm_purge', 'confirm_reject_check', 'confirm_deletedir',
+		'confirm_create_user', 'confirm_create_thirdparty', 'confirm_purge', 'confirm_reject_check', 'confirm_delete', 'confirm_deletedir',
 		'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'disable',
 		'doprev', 'donext', 'dvprev', 'dvnext',
 		'enable', 'setpricelevel'
