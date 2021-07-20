@@ -1958,15 +1958,14 @@ if ($action == 'create') {
 			$notify = new Notify($db);
 			$text .= '<br>';
 			$text .= $notify->confirmMessage('PROPAL_VALIDATE', $object->socid, $object);
-
 		}
 
 		// mandatoryPeriod
 		$nbMandated = 0;
-		foreach ($object->lines as $line){
+		foreach ($object->lines as $line) {
 			$res = $line->fetch_product();
-			if ($res  > 0  ){
-				if ($line->product->isService() && $line->product->isMandatoryPeriod() && (empty($line->date_start) || empty($line->date_end) )){
+			if ($res  > 0  ) {
+				if ($line->product->isService() && $line->product->isMandatoryPeriod() && (empty($line->date_start) || empty($line->date_end) )) {
 					$nbMandated++;
 					break;
 				}
