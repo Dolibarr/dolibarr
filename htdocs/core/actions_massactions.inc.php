@@ -1547,7 +1547,7 @@ if (!$error && ($massaction == 'disable' || ($action == 'disable' && $confirm ==
 $parameters['toselect'] = $toselect;
 $parameters['uploaddir'] = $uploaddir;
 $parameters['massaction'] = $massaction;
-$parameters['diroutputmassaction'] = $diroutputmassaction;
+$parameters['diroutputmassaction'] = empty($diroutputmassaction) ? '' : $diroutputmassaction;
 
 $reshook = $hookmanager->executeHooks('doMassActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
