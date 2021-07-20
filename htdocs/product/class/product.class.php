@@ -747,7 +747,7 @@ class Product extends CommonObject
 					$sql .= ", ".((empty($this->status_batch) || $this->status_batch < 0) ? '0' : $this->status_batch);
 					$sql .= ", '".$this->db->escape($this->batch_mask)."'";
 					$sql .= ", ".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
-					$sql .= ", '".$this->mandatory_period."'";
+					$sql .= ", '".$this->db->escape($this->mandatory_period)."'";
 					$sql .= ")";
 
 					dol_syslog(get_class($this)."::Create", LOG_DEBUG);
