@@ -314,8 +314,8 @@ if (empty($reshook)) {
 
 			$id = $object->create($user);
 			if ($id > 0) {
-				if (GETPOST('password')) {
-					$object->setPassword($user, GETPOST('password'));
+				if (GETPOST('password', 'none')) {
+					$object->setPassword($user, GETPOST('password', 'none'));
 				}
 				if (!empty($conf->categorie->enabled)) {
 					// Categories association
