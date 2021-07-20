@@ -1280,6 +1280,10 @@ class User extends CommonObject
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login"));
 			return -1;
+		} elseif (preg_match('/[,@<>"\']/', $this->login)) {
+		    $langs->load("errors");
+		    $this->error = $langs->trans("ErrorBadCharIntoLoginName");
+		    return -1;
 		}
 
 		$this->datec = dol_now();
@@ -1669,6 +1673,10 @@ class User extends CommonObject
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorFieldRequired", 'Login');
 			return -1;
+		} elseif (preg_match('/[,@<>"\']/', $this->login)) {
+		    $langs->load("errors");
+		    $this->error = $langs->trans("ErrorBadCharIntoLoginName");
+		    return -1;
 		}
 
 		$this->db->begin();
