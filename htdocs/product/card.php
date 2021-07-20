@@ -2279,7 +2279,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				print '<tr><td class="titlefield">'.$langs->trans("mandatoryperiod").'</td><td>';
 				print '<input type="checkbox" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').' disabled/> ';
+				print '</td>';
+
+				$htmltooltip = '<br>'.$langs->trans("mandatoryHelper");
+
+
+				print '<td class="center">';
+				print $form->textwithpicto('', $htmltooltip, 1, 0);
 				print '</td></tr>';
+
 			} else {
 				if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
 					// Nature
