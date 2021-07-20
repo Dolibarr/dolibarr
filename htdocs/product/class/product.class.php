@@ -636,7 +636,7 @@ class Product extends CommonObject
 
 		// Barcode value
 		$this->barcode = trim($this->barcode);
-
+		$this->mandatory_period = empty($this->mandatory_period) ? 0 : $this->mandatory_period;
 		// Check parameters
 		if (empty($this->label)) {
 			$this->error = 'ErrorMandatoryParametersNotProvided';
@@ -718,6 +718,7 @@ class Product extends CommonObject
 					$sql .= ", tobatch";
 					$sql .= ", batch_mask";
 					$sql .= ", fk_unit";
+					$sql .= ", mandatory_period";
 					$sql .= ") VALUES (";
 					$sql .= "'".$this->db->idate($now)."'";
 					$sql .= ", ".$conf->entity;
@@ -746,6 +747,7 @@ class Product extends CommonObject
 					$sql .= ", ".((empty($this->status_batch) || $this->status_batch < 0) ? '0' : $this->status_batch);
 					$sql .= ", '".$this->db->escape($this->batch_mask)."'";
 					$sql .= ", ".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+					$sql .= ", '".$this->mandatory_period."'";
 					$sql .= ")";
 
 					dol_syslog(get_class($this)."::Create", LOG_DEBUG);
