@@ -481,7 +481,9 @@ print load_fiche_titre($langs->trans("ModulesSetup"), '', 'title_setup');
 $deschelp  = '';
 if ($mode == 'common' || $mode == 'commonkanban') {
 	$desc = $langs->trans("ModulesDesc", '{picto}');
+	$desc .= ' '.$langs->trans("ModulesDesc2", '{picto2}');
 	$desc = str_replace('{picto}', img_picto('', 'switch_off'), $desc);
+	$desc = str_replace('{picto2}', img_picto('', 'setup'), $desc);
 	if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only minimal initial modules enabled
 		$deschelp = '<div class="info hideonsmartphone">'.$desc."<br></div><br>\n";
 	}
@@ -919,7 +921,6 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			if ($objMod->needUpdate) {
 				$versionTitle = $langs->trans('ModuleUpdateAvailable').' : '.$objMod->lastVersion;
 				print '<span class="badge badge-warning classfortooltip" title="'.dol_escape_htmltag($versionTitle).'">'.$versiontrans.'</span>';
-				$foundoneexternalmodulewithupdate++;
 			} else {
 				print $versiontrans;
 			}
@@ -936,6 +937,9 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print '</td>';
 
 			print "</tr>\n";
+		}
+		if ($objMod->needUpdate) {
+			$foundoneexternalmodulewithupdate++;
 		}
 	}
 
@@ -1245,7 +1249,13 @@ if ($mode == 'develop') {
 	print '<div class="imgmaxheight50 logo_setup"></div>';
 	print '</td>';
 	print '<td>'.$langs->trans("TryToUseTheModuleBuilder", $langs->transnoentitiesnoconv("ModuleBuilder")).'</td>';
-	print '<td>'.$langs->trans("SeeTopRightMenu").'</td>';
+	print '<td class="maxwidth300">';
+	if (!empty($conf->modulebuilder->enabled)) {
+		print $langs->trans("SeeTopRightMenu");
+	} else {
+		print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("ModuleBuilder")).'</span>';
+	}
+	print '</td>';
 	print '</tr>';
 
 	print '<tr class="oddeven" height="80">'."\n";

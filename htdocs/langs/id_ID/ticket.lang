@@ -34,7 +34,8 @@ TicketDictResolution=Tiket - Resolusi
 
 TicketTypeShortCOM=Pertanyaan komersial
 TicketTypeShortHELP=Permintaan bantuan fungsional
-TicketTypeShortISSUE=Masalah, bug, atau masalah
+TicketTypeShortISSUE=Issue or bug
+TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Ubah atau tingkatkan permintaan
 TicketTypeShortPROJET=Proyek
 TicketTypeShortOTHER=Lainnya
@@ -54,14 +55,15 @@ TypeContact_ticket_internal_SUPPORTTEC=Pengguna yang ditugaskan
 TypeContact_ticket_external_SUPPORTCLI=Kontak pelanggan/pelacakan kejadian
 TypeContact_ticket_external_CONTRIBUTOR=Kontributor eksternal
 
-OriginEmail=Sumber email
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Kirim pesan tiket melalui email
 
 # Status
 Read=Baca
 Assigned=Ditugaskan
 InProgress=Sedang berlangsung
-NeedMoreInformation=Menunggu informasi
+NeedMoreInformation=Waiting for reporter feedback
+NeedMoreInformationShort=Waiting for feedback
 Answered=Dijawab
 Waiting=Menunggu
 Closed=Ditutup
@@ -160,7 +162,7 @@ CreatedBy=Dibuat oleh
 NewTicket=Tiket Baru
 SubjectAnswerToTicket=Jawaban tiket
 TicketTypeRequest=Jenis permintaan
-TicketCategory=Group
+TicketCategory=Ticket categorization
 SeeTicket=Lihat tiket
 TicketMarkedAsRead=Tiket telah ditandai sebagai sudah dibaca
 TicketReadOn=Baca terus
@@ -211,6 +213,7 @@ TicketMessageHelp=Hanya teks ini yang akan disimpan dalam daftar pesan di kartu 
 TicketMessageSubstitutionReplacedByGenericValues=Variabel substitusi digantikan oleh nilai generik.
 TimeElapsedSince=Waktu berlalu sejak itu
 TicketTimeToRead=Waktu berlalu sebelum membaca
+TicketTimeElapsedBeforeSince=Time elapsed before / since
 TicketContacts=Tiket kontak
 TicketDocumentsLinked=Dokumen terkait dengan tiket
 ConfirmReOpenTicket=Konfirmasikan kembali tiket ini?

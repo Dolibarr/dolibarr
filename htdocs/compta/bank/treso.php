@@ -98,44 +98,6 @@ if (GETPOST("account") || GETPOST("ref")) {
 
 	print dol_get_fiche_end();
 
-	print '<br>';
-
-	$solde = $object->solde(0);
-	if ($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED) {
-		$colspan = 6;
-	} else {
-		$colspan = 5;
-	}
-
-	// Show next coming entries
-	print '<div class="div-table-responsive">';
-	print '<table class="noborder centpercent">';
-
-	// Ligne de titre tableau des ecritures
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("DateDue").'</td>';
-	print '<td>'.$langs->trans("Description").'</td>';
-	if ($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED) {
-		print '<td>'.$langs->trans("Entity").'</td>';
-	}
-	print '<td>'.$langs->trans("ThirdParty").'</td>';
-	print '<td class="right">'.$langs->trans("Debit").'</td>';
-	print '<td class="right">'.$langs->trans("Credit").'</td>';
-	print '<td class="right" width="80">'.$langs->trans("BankBalance").'</td>';
-	print '</tr>';
-
-	// Current balance
-	print '<tr class="liste_total">';
-	print '<td class="left" colspan="5">'.$langs->trans("CurrentBalance").'</td>';
-	print '<td class="nowrap right">'.price($solde).'</td>';
-	print '</tr>';
-
-
-	print '<tr class="liste_titre">';
-	print '<td class="left" colspan="'.$colspan.'">'.$langs->trans("RemainderToPay").'</td>';
-	print '<td class="nowrap right">&nbsp;</td>';
-	print '</tr>';
-
 
 	// Remainder to pay in future
 	$sqls = array();
@@ -183,10 +145,12 @@ if (GETPOST("account") || GETPOST("ref")) {
 	$error = 0;
 	$tab_sqlobjOrder = array();
 	$tab_sqlobj = array();
+	$nbtotalofrecords = 0;
 
 	foreach ($sqls as $sql) {
 		$resql = $db->query($sql);
 		if ($resql) {
+			$nbtotalofrecords += $db->num_rows($resql);
 			while ($sqlobj = $db->fetch_object($resql)) {
 				$tmpobj = new stdClass();
 				$tmpobj->family = $sqlobj->family;
@@ -194,7 +158,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 				$tmpobj->ref = $sqlobj->ref;
 				$tmpobj->total_ttc = $sqlobj->total_ttc;
 				$tmpobj->type = $sqlobj->type;
-				$tmpobj->dlt = $sqlobj->dlr;
+				$tmpobj->dlr = $db->jdate($sqlobj->dlr);
 				$tmpobj->socid = $sqlobj->socid;
 				$tmpobj->name = $sqlobj->name;
 				$tmpobj->fournisseur = $sqlobj->fournisseur;
@@ -208,6 +172,48 @@ if (GETPOST("account") || GETPOST("ref")) {
 		}
 	}
 
+	$param = '';
+	$sortfield = '';
+	$sortorder = '';
+	$massactionbutton = '';
+	$num = 0;
+	$picto = '';
+	$morehtml = '';
+	$limit = 0;
+
+	print_barre_liste($langs->trans("RemainderToPay"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $morehtml, '', $limit, 0, 0, 1);
+
+
+	$solde = $object->solde(0);
+	if ($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED) {
+		$colspan = 6;
+	} else {
+		$colspan = 5;
+	}
+
+	// Show next coming entries
+	print '<div class="div-table-responsive">';
+	print '<table class="noborder centpercent">';
+
+	// Ligne de titre tableau des ecritures
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("DateDue").'</td>';
+	print '<td>'.$langs->trans("Description").'</td>';
+	if ($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED) {
+		print '<td>'.$langs->trans("Entity").'</td>';
+	}
+	print '<td>'.$langs->trans("ThirdParty").'</td>';
+	print '<td class="right">'.$langs->trans("Debit").'</td>';
+	print '<td class="right">'.$langs->trans("Credit").'</td>';
+	print '<td class="right" width="80">'.$langs->trans("BankBalance").'</td>';
+	print '</tr>';
+
+	// Current balance
+	print '<tr class="liste_total">';
+	print '<td class="left" colspan="5">'.$langs->trans("CurrentBalance").'</td>';
+	print '<td class="nowrap right">'.price($solde).'</td>';
+	print '</tr>';
+
 	// Sort array
 	if (!$error) {
 		array_multisort($tab_sqlobjOrder, $tab_sqlobj);
@@ -220,60 +226,60 @@ if (GETPOST("account") || GETPOST("ref")) {
 			$refcomp = '';
 			$totalpayment = '';
 
-			$obj = array_shift($tab_sqlobj);
+			$tmpobj = array_shift($tab_sqlobj);
 
-			if ($obj->family == 'invoice_supplier') {
+			if ($tmpobj->family == 'invoice_supplier') {
 				$showline = 1;
 				// Uncomment this line to avoid to count suppliers credit note (ff.type = 2)
-				//$showline=(($obj->total_ttc < 0 && $obj->type != 2) || ($obj->total_ttc > 0 && $obj->type == 2))
+				//$showline=(($tmpobj->total_ttc < 0 && $tmpobj->type != 2) || ($tmpobj->total_ttc > 0 && $tmpobj->type == 2))
 				if ($showline) {
-					$ref = $obj->ref;
+					$ref = $tmpobj->ref;
 					$facturefournstatic->ref = $ref;
-					$facturefournstatic->id = $obj->objid;
-					$facturefournstatic->type = $obj->type;
+					$facturefournstatic->id = $tmpobj->objid;
+					$facturefournstatic->type = $tmpobj->type;
 					$ref = $facturefournstatic->getNomUrl(1, '');
 
-					$societestatic->id = $obj->socid;
-					$societestatic->name = $obj->name;
+					$societestatic->id = $tmpobj->socid;
+					$societestatic->name = $tmpobj->name;
 					$refcomp = $societestatic->getNomUrl(1, '', 24);
 
 					$totalpayment = -1 * $facturefournstatic->getSommePaiement(); // Payment already done
 				}
 			}
-			if ($obj->family == 'invoice') {
-				$facturestatic->ref = $obj->ref;
-				$facturestatic->id = $obj->objid;
-				$facturestatic->type = $obj->type;
+			if ($tmpobj->family == 'invoice') {
+				$facturestatic->ref = $tmpobj->ref;
+				$facturestatic->id = $tmpobj->objid;
+				$facturestatic->type = $tmpobj->type;
 				$ref = $facturestatic->getNomUrl(1, '');
 
-				$societestatic->id = $obj->socid;
-				$societestatic->name = $obj->name;
+				$societestatic->id = $tmpobj->socid;
+				$societestatic->name = $tmpobj->name;
 				$refcomp = $societestatic->getNomUrl(1, '', 24);
 
 				$totalpayment = $facturestatic->getSommePaiement(); // Payment already done
 				$totalpayment += $facturestatic->getSumDepositsUsed();
 				$totalpayment += $facturestatic->getSumCreditNotesUsed();
 			}
-			if ($obj->family == 'social_contribution') {
-				$socialcontribstatic->ref = $obj->ref;
-				$socialcontribstatic->id = $obj->objid;
-				$socialcontribstatic->label = $obj->type;
+			if ($tmpobj->family == 'social_contribution') {
+				$socialcontribstatic->ref = $tmpobj->ref;
+				$socialcontribstatic->id = $tmpobj->objid;
+				$socialcontribstatic->label = $tmpobj->type;
 				$ref = $socialcontribstatic->getNomUrl(1, 24);
 
 				$totalpayment = -1 * $socialcontribstatic->getSommePaiement(); // Payment already done
 			}
 
-			$parameters = array('obj' => $obj, 'ref' => $ref, 'refcomp' => $refcomp, 'totalpayment' => $totalpayment);
-			$reshook = $hookmanager->executeHooks('moreFamily', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			$parameters = array('obj' => $tmpobj, 'ref' => $ref, 'refcomp' => $refcomp, 'totalpayment' => $totalpayment);
+			$reshook = $hookmanager->executeHooks('moreFamily', $parameters, $tmpobject, $action); // Note that $action and $tmpobject may have been modified by hook
 			if (empty($reshook)) {
 				$ref = isset($hookmanager->resArray['ref']) ? $hookmanager->resArray['ref'] : $ref;
 				$refcomp = isset($hookmanager->resArray['refcomp']) ? $hookmanager->resArray['refcomp'] : $refcomp;
 				$totalpayment = isset($hookmanager->resArray['totalpayment']) ? $hookmanager->resArray['totalpayment'] : $totalpayment;
 			}
 
-			$total_ttc = $obj->total_ttc;
+			$total_ttc = $tmpobj->total_ttc;
 			if ($totalpayment) {
-				$total_ttc = $obj->total_ttc - $totalpayment;
+				$total_ttc = $tmpobj->total_ttc - $totalpayment;
 			}
 			$solde += $total_ttc;
 
@@ -282,26 +288,26 @@ if (GETPOST("account") || GETPOST("ref")) {
 				// Show line
 				print '<tr class="oddeven">';
 				print '<td>';
-				if ($obj->dlr) {
-					print dol_print_date($db->jdate($obj->dlr), "day");
+				if ($tmpobj->dlr) {
+					print dol_print_date($tmpobj->dlr, "day");
 				} else {
 					print $langs->trans("NotDefined");
 				}
 				print "</td>";
 				print "<td>".$ref."</td>";
 				if ($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED) {
-					if ($obj->family == 'invoice') {
-						$mc->getInfo($obj->entity);
+					if ($tmpobj->family == 'invoice') {
+						$mc->getInfo($tmpobj->entity);
 						print "<td>".$mc->label."</td>";
 					} else {
 						print "<td></td>";
 					}
 				}
 				print "<td>".$refcomp."</td>";
-				if ($obj->total_ttc < 0) {
+				if ($tmpobj->total_ttc < 0) {
 					print '<td class="nowrap right">'.price(abs($total_ttc))."</td><td>&nbsp;</td>";
 				};
-				if ($obj->total_ttc >= 0) {
+				if ($tmpobj->total_ttc >= 0) {
 					print '<td>&nbsp;</td><td class="nowrap right">'.price($total_ttc)."</td>";
 				};
 				print '<td class="nowrap right">'.price($solde).'</td>';

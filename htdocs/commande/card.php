@@ -91,6 +91,10 @@ $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($con
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('ordercard', 'globalcard'));
+
 $result = restrictedArea($user, 'commande', $id);
 
 $object = new Commande($db);
@@ -101,9 +105,6 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('ordercard', 'globalcard'));
 
 $usercanread = $user->rights->commande->lire;
 $usercancreate = $user->rights->commande->creer;

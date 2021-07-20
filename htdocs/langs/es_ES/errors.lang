@@ -301,3 +301,4 @@ ErrorActionCommPropertyUserowneridNotDefined=Se requiere el propietario del usua
 ErrorActionCommBadType=El tipo de evento seleccionado (id: %n, código: %s) no existe en el diccionario de tipo de evento
 CheckVersionFail=Error de verificación de versión
 ErrorWrongFileName=El nombre del archivo no puede contener __SOMETHING__
+ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.

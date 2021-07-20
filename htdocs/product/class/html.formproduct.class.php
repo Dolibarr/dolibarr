@@ -414,7 +414,7 @@ class FormProduct
 			dol_print_error($db);
 			return -1;
 		} else {
-			$return .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$name.'">';
+			$return .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$name.'" id="'.$name.'">';
 			if ($adddefault || $adddefault === '') {
 				$return .= '<option value="0">'.($adddefault ? $langs->trans("Default") : '').'</option>';
 			}
@@ -446,6 +446,8 @@ class FormProduct
 			}
 			$return .= '</select>';
 		}
+
+		$return .= ajax_combobox($name);
 
 		return $return;
 	}

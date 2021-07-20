@@ -301,3 +301,4 @@ ErrorActionCommPropertyUserowneridNotDefined=Brukerens eier kreves
 ErrorActionCommBadType=Selected event type (id: %n, code: %s) do not exist in Event Type dictionary
 CheckVersionFail=Versjonskontroll mislyktes
 ErrorWrongFileName=Name of the file cannot have __SOMETHING__ in it
+ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.

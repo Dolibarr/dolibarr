@@ -1899,7 +1899,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			}
 
 			// Status
-			$out .= '<td class="nowrap center">'.$actionstatic->LibStatut($histo[$key]['percent'], 3, 0, $histo[$key]['datestart']).'</td>';
+			$out .= '<td class="nowrap center">'.$actionstatic->LibStatut($histo[$key]['percent'], 2, 0, $histo[$key]['datestart']).'</td>';
 
 			// Actions
 			$out .= '<td></td>';

@@ -5,7 +5,7 @@ DeleteResource=Radera resurs
 ConfirmDeleteResourceElement=Bekräfta radera resurs för detta element
 NoResourceInDatabase=Ingen resurs i databasen.
 NoResourceLinked=Ingen resurs kopplad
-
+ActionsOnResource=Händelser om den här resursen
 ResourcePageIndex=Listan över resurser
 ResourceSingular=Resurs
 ResourceCard=Resurs kort
@@ -16,7 +16,7 @@ ResourceFormLabel_description=Resursbeskrivning
 
 ResourcesLinkedToElement=Resurser kopplade till elementet
 
-ShowResource=Show resource
+ShowResource=Visa resurs
 
 ResourceElementPage=Element resurser
 ResourceCreatedWithSuccess=Resursen har skapats
@@ -30,7 +30,10 @@ DictionaryResourceType=Typ av resurser
 
 SelectResource=Välj resurs
 
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
+IdResource=ID-resurs
+AssetNumber=Serienummer
+ResourceTypeCode=Typ av resurs typ
 ImportDataset_resource_1=Resurser
+
+ErrorResourcesAlreadyInUse=Vissa resurser är använda
+ErrorResourceUseInEvent=%s använt i %s

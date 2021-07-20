@@ -383,32 +383,32 @@ if (empty($reshook)) {
 			$accountancy_code_buy_intra = GETPOST('accountancy_code_buy_intra', 'alpha');
 			$accountancy_code_buy_export = GETPOST('accountancy_code_buy_export', 'alpha');
 
-			if ($accountancy_code_sell <= 0) {
+			if (empty($accountancy_code_sell) || $accountancy_code_sell == '-1') {
 				$object->accountancy_code_sell = '';
 			} else {
 				$object->accountancy_code_sell = $accountancy_code_sell;
 			}
-			if ($accountancy_code_sell_intra <= 0) {
+			if (empty($accountancy_code_sell_intra) || $accountancy_code_sell_intra == '-1') {
 				$object->accountancy_code_sell_intra = '';
 			} else {
 				$object->accountancy_code_sell_intra = $accountancy_code_sell_intra;
 			}
-			if ($accountancy_code_sell_export <= 0) {
+			if (empty($accountancy_code_sell_export) || $accountancy_code_sell_export == '-1') {
 				$object->accountancy_code_sell_export = '';
 			} else {
 				$object->accountancy_code_sell_export = $accountancy_code_sell_export;
 			}
-			if ($accountancy_code_buy <= 0) {
+			if (empty($accountancy_code_buy) || $accountancy_code_buy == '-1') {
 				$object->accountancy_code_buy = '';
 			} else {
 				$object->accountancy_code_buy = $accountancy_code_buy;
 			}
-			if ($accountancy_code_buy_intra <= 0) {
+			if (empty($accountancy_code_buy_intra) || $accountancy_code_buy_intra == '-1') {
 				$object->accountancy_code_buy_intra = '';
 			} else {
 				$object->accountancy_code_buy_intra = $accountancy_code_buy_intra;
 			}
-			if ($accountancy_code_buy_export <= 0) {
+			if (empty($accountancy_code_buy_export) || $accountancy_code_buy_export == '-1') {
 				$object->accountancy_code_buy_export = '';
 			} else {
 				$object->accountancy_code_buy_export = $accountancy_code_buy_export;
@@ -552,32 +552,32 @@ if (empty($reshook)) {
 				$accountancy_code_buy_intra = GETPOST('accountancy_code_buy_intra', 'alpha');
 				$accountancy_code_buy_export = GETPOST('accountancy_code_buy_export', 'alpha');
 
-				if ($accountancy_code_sell <= 0) {
+				if (empty($accountancy_code_sell) || $accountancy_code_sell == '-1') {
 					$object->accountancy_code_sell = '';
 				} else {
 					$object->accountancy_code_sell = $accountancy_code_sell;
 				}
-				if ($accountancy_code_sell_intra <= 0) {
+				if (empty($accountancy_code_sell_intra) || $accountancy_code_sell_intra == '-1') {
 					$object->accountancy_code_sell_intra = '';
 				} else {
 					$object->accountancy_code_sell_intra = $accountancy_code_sell_intra;
 				}
-				if ($accountancy_code_sell_export <= 0) {
+				if (empty($accountancy_code_sell_export) || $accountancy_code_sell_export == '-1') {
 					$object->accountancy_code_sell_export = '';
 				} else {
 					$object->accountancy_code_sell_export = $accountancy_code_sell_export;
 				}
-				if ($accountancy_code_buy <= 0) {
+				if (empty($accountancy_code_buy) || $accountancy_code_buy == '-1') {
 					$object->accountancy_code_buy = '';
 				} else {
 					$object->accountancy_code_buy = $accountancy_code_buy;
 				}
-				if ($accountancy_code_buy_intra <= 0) {
+				if (empty($accountancy_code_buy_intra) || $accountancy_code_buy_intra == '-1') {
 					$object->accountancy_code_buy_intra = '';
 				} else {
 					$object->accountancy_code_buy_intra = $accountancy_code_buy_intra;
 				}
-				if ($accountancy_code_buy_export <= 0) {
+				if (empty($accountancy_code_buy_export) || $accountancy_code_buy_export == '-1') {
 					$object->accountancy_code_buy_export = '';
 				} else {
 					$object->accountancy_code_buy_export = $accountancy_code_buy_export;
@@ -1016,14 +1016,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		//WYSIWYG Editor
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-		print '<script type="text/javascript">';
-				print '$(document).ready(function () {
+		if (!empty($conf->use_javascript_ajax)) {
+			print '<script type="text/javascript">';
+			print '$(document).ready(function () {
                         $("#selectcountry_id").change(function() {
                         	document.formprod.action.value="create";
                         	document.formprod.submit();
                         });
                      });';
-				print '</script>'."\n";
+			print '</script>'."\n";
+		}
 
 		// Load object modCodeProduct
 		$module = (!empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) ? $conf->global->PRODUCT_CODEPRODUCT_ADDON : 'mod_codeproduct_leopard');
@@ -1232,7 +1234,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if ($type == 1) {
 			print '<tr><td>'.$langs->trans("Duration").'</td><td>';
 			print '<input name="duration_value" size="4" value="'.GETPOST('duration_value', 'int').'">';
-			print $formproduct->selectMeasuringUnits("duration_unit", "time", GETPOST('duration_value', 'alpha'), 0, 1);
+			print $formproduct->selectMeasuringUnits("duration_unit", "time", (GETPOSTISSET('duration_value') ? GETPOSTISSET('duration_value', 'alpha') : 'h'), 0, 1);
 			print '</td></tr>';
 		}
 
@@ -1551,14 +1553,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			//WYSIWYG Editor
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-			print '<script type="text/javascript">';
+			if (!empty($conf->use_javascript_ajax)) {
+				print '<script type="text/javascript">';
 				print '$(document).ready(function () {
                         $("#selectcountry_id").change(function () {
                         	document.formprod.action.value="edit";
                         	document.formprod.submit();
                         });
-		});';
+				});';
 				print '</script>'."\n";
+			}
 
 			// We set country_id, country_code and country for the selected country
 			$object->country_id = GETPOST('country_id') ? GETPOST('country_id') : $object->country_id;
@@ -1628,7 +1632,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
 					print $form->selectarray('status_batch', $statutarray, $object->status_batch);
 					print '</td></tr>';
-					if ($object->status_batch !== '0') {
+					if (!empty($object->status_batch) || !empty($conf->use_javascript_ajax)) {
 						$langs->load("admin");
 						$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
 						$tooltip .= '<br>'.$langs->trans("GenericMaskCodes2");
@@ -1636,50 +1640,58 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						$tooltip .= '<br>'.$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
 						$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5");
 						print '<tr><td id="mask_option">'.$langs->trans("ManageLotMask").'</td>';
-						if ($object->status_batch == '1' && $conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced') {
-							$mask = !empty($object->batch_mask) ? $object->batch_mask : $conf->global->LOT_ADVANCED_MASK;
+						if ($object->status_batch == '1' && getDolGlobalString('PRODUCTBATCH_LOT_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced') {
+							$mask = !empty($object->batch_mask) ? $object->batch_mask : getDolGlobalString('LOT_ADVANCED_MASK');
 						}
-						if ($object->status_batch == '2' && $conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced') {
-							$mask = !empty($object->batch_mask) ? $object->batch_mask : $conf->global->SN_ADVANCED_MASK;
+						if ($object->status_batch == '2' && getDolGlobalString('PRODUCTBATCH_SN_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced') {
+							$mask = !empty($object->batch_mask) ? $object->batch_mask : getDolGlobalString('SN_ADVANCED_MASK');
 						}
-						$inherited_mask_lot = $conf->global->LOT_ADVANCED_MASK;
-						$inherited_mask_sn = $conf->global->SN_ADVANCED_MASK;
+						$inherited_mask_lot = getDolGlobalString('LOT_ADVANCED_MASK');
+						$inherited_mask_sn = getDolGlobalString('SN_ADVANCED_MASK');
 						print '<td id="field_mask">';
 						print $form->textwithpicto('<input type="text" class="flat minwidth175" name="batch_mask" id="batch_mask_input" value="'.$mask.'">', $tooltip, 1, 1);
-
-						print '<script type="text/javascript">
-						$(document).ready(function() {
-							$("#field_mask, #mask_option").addClass("hideobject");
-							var preselect = $("#status_batch option:selected");
-							if (preselect !== "0") {
-								$("#field_mask, #mask_option").toggleClass("hideobject");
+						// Add javascript to sho/hide field for custom mask
+						if (!empty($conf->use_javascript_ajax)) {
+							print '<script type="text/javascript">
+							$(document).ready(function() {
+								$("#field_mask").parent().addClass("hideobject");
+								var preselect = document.getElementById("status_batch");';
+							if (getDolGlobalString('PRODUCTBATCH_SN_USE_PRODUCT_MASKS')) {
+								print 'if (preselect.value == "2") {
+										$("#field_mask").parent().removeClass("hideobject");
+									}';
 							}
-							$("#status_batch").on("change", function () {
-								console.log("We change batch status");
-								var optionSelected = $("option:selected", this);
-								var valueSelected = this.value;
-								$("#field_mask, #mask_option").addClass("hideobject");
-						';
-						if ($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced') {
-							print '
-								if (this.value == 1) {
-									$("#field_mask, #mask_option").toggleClass("hideobject");
-									$("#batch_mask_input").val("'.$inherited_mask_lot.'");
-								}
+							if (getDolGlobalString('PRODUCTBATCH_LOT_USE_PRODUCT_MASKS')) {
+								print 'if (preselect.value == "1") {
+										$("#field_mask").parent().removeClass("hideobject");
+									}';
+							}
+							print '$("#status_batch").on("change", function () {
+									var optionSelected = $("option:selected", this);
+									var valueSelected = this.value;
+									$("#field_mask").parent().addClass("hideobject");
 							';
-						}
-						if ($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced') {
+							if (getDolGlobalString('PRODUCTBATCH_LOT_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced') {
+								print '
+									if (this.value == 1) {
+										$("#field_mask").parent().removeClass("hideobject");
+										$("#batch_mask_input").val("'.$inherited_mask_lot.'");
+									}
+								';
+							}
+							if (getDolGlobalString('PRODUCTBATCH_SN_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced') {
+								print '
+									if (this.value == 2) {
+										$("#field_mask").parent().removeClass("hideobject");
+										$("#batch_mask_input").val("'.$inherited_mask_sn.'");
+									}
+								';
+							}
 							print '
-								if (this.value == 2) {
-									$("#field_mask, #mask_option").toggleClass("hideobject");
-									$("#batch_mask_input").val("'.$inherited_mask_sn.'");
-								}
-							';
-						}
-						print '
+								})
 							})
-						})
-					</script>';
+						</script>';
+						}
 						print '</td></tr>';
 					}
 				}

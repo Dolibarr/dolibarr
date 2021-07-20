@@ -1075,7 +1075,8 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 }
 
 /**
- *	Clean a string to use it as a path name
+ *	Clean a string to use it as a path name.
+ *  Replace also '--' and ' -' strings, they are used for parameters separation.
  *
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with
@@ -1087,7 +1088,10 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 {
 	$filesystem_forbidden_chars = array('<', '>', '?', '*', '|', '"', '°');
-	return dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
+	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
+	$tmp = preg_replace('/\-\-+/', '_', $tmp);
+	$tmp = preg_replace('/\s+\-/', ' _', $tmp);
+	return $tmp;
 }
 
 /**
@@ -6824,6 +6828,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$substitutionarray = array_merge($substitutionarray, array(
 			'__MYCOMPANY_NAME__'    => $mysoc->name,
 			'__MYCOMPANY_EMAIL__'   => $mysoc->email,
+			'__MYCOMPANY_PHONE__'   => $mysoc->phone,
+			'__MYCOMPANY_FAX__'     => $mysoc->fax,
 			'__MYCOMPANY_PROFID1__' => $mysoc->idprof1,
 			'__MYCOMPANY_PROFID2__' => $mysoc->idprof2,
 			'__MYCOMPANY_PROFID3__' => $mysoc->idprof3,
@@ -8483,8 +8489,10 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 	if (!empty($hookmanager)) {
 		$parameters = array('object' => $object, 'mode' => $mode, 'head' => &$head);
 		$reshook = $hookmanager->executeHooks('completeTabsHead', $parameters);
-		if ($reshook > 0) {
+		if ($reshook > 0) {		// Hook ask to replace completely the array
 			$head = $hookmanager->resArray;
+		} else {				// Hook
+			$head = array_merge($head, $hookmanager->resArray);
 		}
 		$h = count($head);
 	}
@@ -9764,11 +9772,29 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * @param string    $url        the url for link
  * @param string    $id         attribute id of button
  * @param int       $userRight  user action right
- * @param array     $params     various params for future : recommended rather than adding more function arguments
+ * // phpcs:disable
+ * @param array 	$params = [ // Various params for future : recommended rather than adding more function arguments
+ *                          	'attr' => [ // to add or override button attributes
+ *                          		'xxxxx' => '', // your xxxxx attribute you want
+ *                          		'class' => '', // to add more css class to the button class attribute
+ *                          		'classOverride' => '' // to replace class attribute of the button
+ *                          	],
+ *                          	'confirm' => [
+ *                          		'url' => 'http://', // Overide Url to go when user click on action btn, if empty default url is $url.?confirm=yes, for no js compatibility use $url for fallback confirm.
+ *                          		'title' => '', // Overide title of modal,  if empty default title use "ConfirmBtnCommonTitle" lang key
+ *                          		'action-btn-label' => '', // Overide label of action button,  if empty default label use "Confirm" lang key
+ *                          		'cancel-btn-label' => '', // Overide label of cancel button,  if empty default label use "CloseDialog" lang key
+ *                          		'content' => '', // Overide text of content,  if empty default content use "ConfirmBtnCommonContent" lang key
+ *                          		'modal' => true, // true|false to display dialog as a modal (with dark background)
+ *                      		],
+ *                          ]
+ * // phpcs:enable
  * @return string               html button
  */
 function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
 {
+	global $hookmanager, $action, $object, $langs;
+
 	$class = 'butAction';
 	if ($actionType == 'danger' || $actionType == 'delete') {
 		$class = 'butActionDelete';
@@ -9809,11 +9835,29 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 		}
 	}
 
+	// Js Confirm button
+	if ($userRight && !empty($params['confirm'])) {
+		if (!is_array($params['confirm'])) {
+			$params['confirm'] = array(
+				'url' => $url . (strpos($url, '?') > 0 ? '&' : '?') . 'confirm=yes'
+			);
+		}
+
+		// for js desabled compatibility set $url as call to confirm action and $params['confirm']['url'] to confirmed action
+		$attr['data-confirm-url'] = $params['confirm']['url'];
+		$attr['data-confirm-title'] = !empty($params['confirm']['title']) ? $params['confirm']['title'] : $langs->trans('ConfirmBtnCommonTitle', $label);
+		$attr['data-confirm-content'] = !empty($params['confirm']['content']) ? $params['confirm']['content'] : $langs->trans('ConfirmBtnCommonContent', $label);
+		$attr['data-confirm-content'] = preg_replace("/\r|\n/", "", $attr['data-confirm-content']);
+		$attr['data-confirm-action-btn-label'] = !empty($params['confirm']['action-btn-label']) ? $params['confirm']['action-btn-label'] : $langs->trans('Confirm');
+		$attr['data-confirm-cancel-btn-label'] = !empty($params['confirm']['cancel-btn-label']) ? $params['confirm']['cancel-btn-label'] : $langs->trans('CloseDialog');
+		$attr['data-confirm-modal'] = !empty($params['confirm']['modal']) ? $params['confirm']['modal'] : true;
+
+		$attr['class'].= ' butActionConfirm';
+	}
+
 	if (isset($attr['href']) && empty($attr['href'])) {
 		unset($attr['href']);
 	}
-
-	// TODO : add a hook
 
 	// escape all attribute
 	$attr = array_map('dol_escape_htmltag', $attr);
@@ -9827,7 +9871,29 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 
 	$tag = !empty($attr['href']) ? 'a' : 'span';
 
-	return '<'.$tag.' '.$compiledAttributes.'>'.$html.'</'.$tag.'>';
+
+	$parameters = array(
+		'TCompiledAttr' => $TCompiledAttr,
+		'compiledAttributes' => $compiledAttributes,
+		'attr' => $attr,
+		'tag' => $tag,
+		'label' => $label,
+		'html' => $html,
+		'actionType' => $actionType,
+		'url' => $url,
+		'id' => $id,
+		'userRight' => $userRight,
+		'params' => $params
+	);
+
+	$reshook = $hookmanager->executeHooks('dolGetButtonAction', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+	if (empty($reshook)) {
+		return '<' . $tag . ' ' . $compiledAttributes . '>' . $html . '</' . $tag . '>';
+	} else {
+		return $hookmanager->resPrint;
+	}
 }
 
 /**

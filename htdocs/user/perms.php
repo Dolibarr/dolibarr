@@ -407,7 +407,7 @@ if ($result) {
 			print '<td class="center nowrap">';
 			print img_picto($langs->trans("Active"), 'tick');
 			print '</td>';
-		} elseif (is_array($permsgroupbyentity[$entity])) {
+		} elseif (isset($permsgroupbyentity[$entity]) && is_array($permsgroupbyentity[$entity])) {
 			if (in_array($obj->id, $permsgroupbyentity[$entity])) {	// Permission granted by group
 				if ($caneditperms) {
 					print '<td class="center">';

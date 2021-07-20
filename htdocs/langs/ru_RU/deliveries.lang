@@ -30,3 +30,4 @@ NonShippable=Не возможно к отправке
 ShowShippableStatus=Показать статус доставки
 ShowReceiving=Показать квитанцию о доставке
 NonExistentOrder=Несуществующий заказ
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Объемы запасов, уже распределенные по предыдущим строкам

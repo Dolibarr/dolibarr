@@ -230,7 +230,7 @@ if ($mode == 'setup' && $user->admin) {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setconst">';
 
-
+		print '<div class="div-table-responsive">';
 		print '<table class="noborder centpercent">'."\n";
 
 		print '<tr class="liste_titre">';
@@ -262,15 +262,15 @@ if ($mode == 'setup' && $user->admin) {
 			print $langs->trans("NoAccessToken");
 		}
 		print '</td>';
-		print '<td>';
+		print '<td width="50%">';
 		// Links to delete/checks token
 		if (is_object($tokenobj)) {
 			//test on $storage->hasAccessToken($OAUTH_SERVICENAME) ?
-			print '<a class="button" href="'.$urltodelete.'">'.$langs->trans('DeleteAccess').'</a><br>';
+			print '<a class="button smallpaddingimp" href="'.$urltodelete.'">'.$langs->trans('DeleteAccess').'</a><br>';
 		}
 		// Request remote token
 		if ($urltorenew) {
-			print '<a class="button" href="'.$urltorenew.'">'.$langs->trans('RequestAccess').'</a><br>';
+			print '<a class="button smallpaddingimp" href="'.$urltorenew.'">'.$langs->trans('RequestAccess').'</a><br>';
 		}
 		// Check remote access
 		if ($urltocheckperms) {
@@ -330,6 +330,7 @@ if ($mode == 'setup' && $user->admin) {
 		}
 
 		print '</table>';
+		print '</div>';
 
 		if (!empty($driver)) {
 			if ($submit_enabled) {
@@ -345,6 +346,7 @@ if ($mode == 'setup' && $user->admin) {
 if ($mode == 'test' && $user->admin) {
 	print $langs->trans('PrintTestDesc'.$driver)."<br><br>\n";
 
+	print '<div class="div-table-responsive">';
 	print '<table class="noborder centpercent">';
 	if (!empty($driver)) {
 		require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
@@ -364,11 +366,13 @@ if ($mode == 'test' && $user->admin) {
 	}
 
 	print '</table>';
+	print '</div>';
 }
 
 if ($mode == 'userconf' && $user->admin) {
 	print $langs->trans('PrintUserConfDesc'.$driver)."<br><br>\n";
 
+	print '<div class="div-table-responsive">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th>'.$langs->trans("User").'</th>';
@@ -395,6 +399,7 @@ if ($mode == 'userconf' && $user->admin) {
 		print "</tr>\n";
 	}
 	print '</table>';
+	print '</div>';
 }
 
 print dol_get_fiche_end();

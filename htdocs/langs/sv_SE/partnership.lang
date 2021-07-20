@@ -16,66 +16,66 @@
 #
 # Generic
 #
-ModulePartnershipName=Partnership management
-PartnershipDescription=Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
+ModulePartnershipName=Partnerskapshantering
+PartnershipDescription=Partnerskapshanteringsmodul
+PartnershipDescriptionLong= Partnerskapshanteringsmodul
 
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
+AddPartnership=Lägg till partnerskap
+CancelPartnershipForExpiredMembers=Partnerskap: Avbryt partnerskap med inaktiva abonnemang
 PartnershipCheckBacklink=Partnership: Check referring backlink
 
 #
 # Menu
 #
-NewPartnership=New Partnership
-ListOfPartnerships=List of partnership
+NewPartnership=Nytt partnerskap
+ListOfPartnerships=Lista över partnerskap
 
 #
 # Admin page
 #
-PartnershipSetup=Partnership setup
-PartnershipAbout=About Partnership
-PartnershipAboutPage=Partnership about page
+PartnershipSetup=Partnerskapsupplägg
+PartnershipAbout=Om partnerskap
+PartnershipAboutPage=Om partnerskapssidan
 partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
+PARTNERSHIP_IS_MANAGED_FOR=Partnerskap hanterad för
 PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Antal dagar innan partnerskap avbryts när ett abonnemang har löpt ut
 ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+ReferingWebsiteCheckDesc=Du kan aktivera en funktion för att kontrollera om din partner har länkat tillbaka till er hemsida via deras egen hemsida.
 
 #
 # Object
 #
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
+DeletePartnership=Ta bort partnerskap
+PartnershipDedicatedToThisThirdParty=Partnerskap dedikerat till denna kund/leverantör
 PartnershipDedicatedToThisMember=Partnership dedicated to this member
 DatePartnershipStart=Startdatum
 DatePartnershipEnd=Slutdatum
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
+ReasonDecline=Avslagsanledning
+ReasonDeclineOrCancel=Avslagsanledning
+PartnershipAlreadyExist=Partnerskap finns redan
+ManagePartnership=Hantera partnerskap
 BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
+ConfirmClosePartnershipAsk=Är du säker på att du vill avbryta detta partnerskap?
+PartnershipType=Partnerskapstyp
 
 #
 # Template Mail
 #
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
+SendingEmailOnPartnershipWillSoonBeCanceled=Partnerskap kommer snart att avbrytas
+SendingEmailOnPartnershipRefused=Partnerskap nekat
+SendingEmailOnPartnershipAccepted=Partnerskap accepterat
+SendingEmailOnPartnershipCanceled=Partnerskap avbrutet
 
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
+YourPartnershipWillSoonBeCanceledTopic=Partnerskap kommer snart att avbrytas
+YourPartnershipRefusedTopic=Partnerskap nekat
+YourPartnershipAcceptedTopic=Partnerskap accepterat
+YourPartnershipCanceledTopic=Partnerskap avbrutet
 
 YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
+YourPartnershipRefusedContent=Vi vill informera dig om att parnterskapsförfrågan har blivit nekad.
+YourPartnershipAcceptedContent=Vi vill informera dig om att partnerskapsförfrågan har blivit accepterad
+YourPartnershipCanceledContent=Vi vill informera dig om att partnerskapsförfrågan har blivit avbruten
 
 #
 # Status
@@ -84,4 +84,4 @@ PartnershipDraft=Utkast
 PartnershipAccepted=Accepted
 PartnershipRefused=Refused
 PartnershipCanceled=Annullerad
-PartnershipManagedFor=Partners are
+PartnershipManagedFor=Partnerutrymme
