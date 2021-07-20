@@ -460,15 +460,15 @@ if (!defined('NOTOKENRENEWAL')) {
 if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN)) || defined('CSRFCHECK_WITH_TOKEN')) {
 	// Array of action code where CSRFCHECK with token will be forced (so token must be provided on url request)
 	$arrayofactiontoforcetokencheck = array(
-        'activate', 'add', 'addrights', 'addtimespent',
-        'confirm_create_user', 'confirm_create_thirdparty', 'confirm_purge', 'confirm_reject_check', 'confirm_deletedir', 'confirm_deletefile',
-        'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'delrights',
-        'disable',
-        'doprev', 'donext', 'dvprev', 'dvnext',
-        'enable',
-        'install',
-        'setpricelevel',
-        'update'
+		'activate', 'add', 'addrights', 'addtimespent',
+		'confirm_create_user', 'confirm_create_thirdparty', 'confirm_purge', 'confirm_reject_check', 'confirm_deletedir', 'confirm_deletefile',
+		'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'delrights',
+		'disable',
+		'doprev', 'donext', 'dvprev', 'dvnext',
+		'enable',
+		'install',
+		'setpricelevel',
+		'update'
 	);
 	$sensitiveget = false;
 	if (in_array(GETPOST('action', 'aZ09'), $arrayofactiontoforcetokencheck)) {
