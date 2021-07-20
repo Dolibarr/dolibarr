@@ -11,6 +11,7 @@
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Ferran Marcet         	<fmarcet@2byte.es>
+ * Copyright (C) 2021       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -460,7 +461,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " l.vat_src_code, l.tva_tx, l.remise_percent, l.subprice,";
 		$sql .= " l.localtax1_tx, l. localtax2_tx, l.localtax1_type, l. localtax2_type, l.total_localtax1, l.total_localtax2,";
 		$sql .= " l.total_ht, l.total_tva, l.total_ttc, l.special_code, l.fk_parent_line, l.rang,";
-		$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc,";
+		$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc, p.tobatch as product_tobatch, p.barcode as product_barcode,";
 		$sql .= " l.fk_unit,";
 		$sql .= " l.date_start, l.date_end,";
 		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc';
@@ -516,6 +517,8 @@ class CommandeFournisseur extends CommonOrder
 				$line->libelle             = $objp->product_label; // deprecated
 				$line->product_label       = $objp->product_label;
 				$line->product_desc        = $objp->product_desc;
+				$line->product_tobatch     = $objp->product_tobatch;
+				$line->product_barcode     = $objp->product_barcode;
 
 				$line->ref                 = $objp->product_ref; // Ref of product
 				$line->product_ref         = $objp->product_ref; // Ref of product
