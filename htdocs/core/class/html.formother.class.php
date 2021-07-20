@@ -92,10 +92,6 @@ class FormOther
 		$out .= '<input type="submit" class="button marginleftonly marginrightonly" name="cancel" value="'.$langs->trans("Cancel").'">';
 		$out .= '<br>';
 
-		$out .= '<span class="opacitymedium">'.$langs->trans("FeatureNotYetAvailable").'</span>';
-
-		// TODO Add call of javascript $jstoexecuteonadd so each scan will add qty into the inventory page + an ajax save.
-
 		$out .= '<script>';
 		$out .= '$("#exec'.dol_escape_js($jstoexecuteonadd).'").click(function(){
 			console.log("We call js to execute '.dol_escape_js($jstoexecuteonadd).'");

@@ -537,68 +537,120 @@ if ($object->id > 0) {
 
 	// Popup for mass barcode scanning
 	if ($action == 'updatebyscaning') {
-		print '<script>';
-		print 'function barcodescannerjs(){
-			var barcodemode = $("input[name=barcodemode]:checked").val();
-			var barcodeproductqty = $("input[name=barcodeproductqty]").val();
-			var textarea = $("textarea[name=barcodelist]").val();
-			var textarray = textarea.split("\n");
-			if(textarray[0] != ""){
-				var tabproduct = [];
-				$(".expectedqty").each(function(){
-					id = this.id;
-					warehouse = $("#"+id+"_warehouse")[0].firstChild.lastChild.data;
+		if ($permissiontoadd) {
+			print '<script>';
+			print 'function barcodescannerjs(){
+				console.log("We catch inputs in sacnner box");
+				var barcodemode = $("input[name=barcodemode]:checked").val();
+				var barcodeproductqty = $("input[name=barcodeproductqty]").val();
+				var textarea = $("textarea[name=barcodelist]").val();
+				var textarray = textarea.split("\n");
+				if(textarray[0] != ""){
+					var tabproduct = [];
+					$(".expectedqty").each(function(){
+						id = this.id;
+						warehouse = $("#"+id+"_warehouse")[0].firstChild.lastChild.data;
 
-					productbarcode = $("#"+id+"_product")[0].firstChild.title;
-					productbarcode = productbarcode.split("<br>");
-					productbarcode = productbarcode.filter(barcode => barcode.includes("'.$langs->trans('BarCode').'"))[0];
-					productbarcode = productbarcode.slice(productbarcode.indexOf("</b> ")+5);
+						productbarcode = $("#"+id+"_product")[0].firstChild.title;
+						productbarcode = productbarcode.split("<br>");
+						productbarcode = productbarcode.filter(barcode => barcode.includes("'.$langs->trans('BarCode').'"))[0];
+						productbarcode = productbarcode.slice(productbarcode.indexOf("</b> ")+5);
 
-					productbatchcode = $("#"+id+"_batch")[0].firstChild;
-					if(productbatchcode != null){
-						productbatchcode = productbatchcode.data;
-					}
-
-					tabproduct.push({\'Id\':id,\'Warehouse\':warehouse,\'Barecode\':productbarcode,\'Batch\':productbatchcode,\'Qty\':0});
-				})
-				switch(barcodemode){
-					case "barcodeforautodetect":
-						break;
-					case "barcodeforproduct":
-						textarray.forEach(function(element,index){
-							console.log("Product "+(index+=1)+": "+element);
-							BarCodeDoesNotExist=0;
-							tabproduct.forEach(product => {
-								if(product.Barecode == element){
-									product.Qty+=1;
-								}else{
-									BarCodeDoesNotExist+=1;
+						productbatchcode = $("#"+id+"_batch")[0].firstChild;
+						if(productbatchcode != null){
+							productbatchcode = productbatchcode.data;
+						}
+						if(barcodemode != "barcodeforproduct"){
+							tabproduct.forEach(product=>{
+								if(product.Batch == productbatchcode){
+									alert("'.$langs->trans('ErrorSameBatchNumber').': "+productbatchcode);
+									throw"'.$langs->trans('ErrorSameBatchNumber').': "+productbatchcode;
 								}
 							})
-							if(BarCodeDoesNotExist >= tabproduct.length){
-								alert("'.$langs->trans('ProductDoesNotExist').': "+element);
-							}
-						})
-						break;
-					case "barcodeforlotserial":
-						break;
-					default:
-						alert("'.$langs->trans("ErrorWrongBarcodemode").' \""+barcodemode+"\"");
-				}
-				tabproduct.forEach(product => {
-					if(product.Qty!=0){
-						$("#"+product.Id+"_input")[0].value = product.Qty*barcodeproductqty;
+						}
+						tabproduct.push({\'Id\':id,\'Warehouse\':warehouse,\'Barcode\':productbarcode,\'Batch\':productbatchcode,\'Qty\':0});
+					})
+					switch(barcodemode){
+						case "barcodeforautodetect":
+							textarray.forEach(function(element,index){
+								console.log("Product autodetect "+(index+=1)+": "+element);
+								BatchCodeDoesNotExist=0;
+								tabproduct.forEach(product => {
+									if(product.Batch == element || product.Barcode == element){
+										product.Qty+=1;
+									}else{
+										BatchCodeDoesNotExist+=1;
+									}
+								})
+								if(BatchCodeDoesNotExist >= tabproduct.length){
+									alert("'.$langs->trans('ProductDoesNotExist').': "+element);
+								}
+							})
+							break;
+						case "barcodeforproduct":
+							textarray.forEach(function(element,index){
+								console.log("Product "+(index+=1)+": "+element);
+								BarCodeDoesNotExist=0;
+								tabproduct.forEach(product => {
+									if(product.Barcode == element){
+										product.Qty+=1;
+									}else{
+										BarCodeDoesNotExist+=1;
+									}
+								})
+								if(BarCodeDoesNotExist >= tabproduct.length){
+									alert("'.$langs->trans('ProductBarcodeDoesNotExist').': "+element);
+								}
+							})
+							break;
+						case "barcodeforlotserial":
+							textarray.forEach(function(element,index){
+								console.log("Product batch/serial "+(index+=1)+": "+element);
+								BatchCodeDoesNotExist=0;
+								tabproduct.forEach(product => {
+									if(product.Batch == element){
+										product.Qty+=1;
+									}else{
+										BatchCodeDoesNotExist+=1;
+									}
+								})
+								if(BatchCodeDoesNotExist >= tabproduct.length){
+									alert("'.$langs->trans('ProductBatchDoesNotExist').': "+element);
+								}
+							})
+							break;
+						default:
+							alert("'.$langs->trans("ErrorWrongBarcodemode").' \""+barcodemode+"\"");
+							throw"'.$langs->trans('ErrorWrongBarcodemode').' \""+barcodemode+"\"";
 					}
-				})
-				document.forms["formrecord"].submit();
-			}
-		}';
-		print '</script>';
+					tabproduct.forEach(product => {
+						if(product.Qty!=0){
+							console.log("We change #"+product.Id+"_input to match input in scanner box");
+							$("#"+product.Id+"_input")[0].value = product.Qty*barcodeproductqty;
+						}
+					})
+					document.forms["formrecord"].submit();
+				}
+			}';
+			print '</script>';
+		}
 		include DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 		$formother = new FormOther($db);
 		print $formother->getHTMLScannerForm();
 	}
 
+	//Call method to undo changes in real qty
+	print '<script>';
+	print 'jQuery(document).ready(function() {
+		$(".undochangesqty").on("click",function undochangesqty(){
+			id = this.id;
+			id = id.split("_")[1];
+			tmpvalue = $("#id_"+id+"_input_tmp").val()
+			$("#id_"+id+"_input")[0].value = tmpvalue;
+			document.forms["formrecord"].submit();
+		});
+	});';
+	print '</script>';
 
 	print '<div class="fichecenter">';
 	//print '<div class="fichehalfleft">';
@@ -722,9 +774,10 @@ if ($object->id > 0) {
 				print '<input type="text" class="maxwidth75 right realqty" name="id_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input" value="'.$qty_view.'">';
 				print '</td>';
 				print '<td class="right">';
+				print '<a id="undochangesqty_'.$obj->rowid.'" href="#" class="undochangesqty"><span class="fas fa-undo pictoundo" ></span></a> &nbsp';
 				print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&token='.newToken().'">'.img_delete().'</a>';
 				print '</td>';
-				$qty_tmp = GETPOST("id_".$obj->rowid."_input_tmp") && price2num(GETPOST("id_".$obj->rowid."_input_tmp", 'MS')) >= 0 ? GETPOST("id_".$obj->rowid."_input_tmp") : $qty_view;
+				$qty_tmp = price2num(GETPOST("id_".$obj->rowid."_input_tmp", 'MS')) >= 0 ? GETPOST("id_".$obj->rowid."_input_tmp") : $qty_view;
 				print '<input type="hidden" class="maxwidth75 right realqty" name="id_'.$obj->rowid.'_input_tmp" id="id_'.$obj->rowid.'_input_tmp" value="'.$qty_tmp.'">';
 			} else {
 				print $obj->qty_view;

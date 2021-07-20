@@ -258,3 +258,6 @@ CollapseBatchDetailHelp=You can set batch detail default display in stocks modul
 FieldCannotBeNegative=Field "%s" cannot be negative
 ErrorWrongBarcodemode=Unknown Barcode mode
 ProductDoesNotExist=Product does not exist
+ErrorSameBatchNumber=Same batch number found in inventory list
+ProductBatchDoesNotExist=Product with batch/serial does not exist
+ProductBarcodeDoesNotExist=Product with barcode does not exist
