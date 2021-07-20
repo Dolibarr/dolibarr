@@ -4464,7 +4464,7 @@ class Form
 		$sql .= " WHERE 1=1";
 		if ($status != 2) {
 			$sql .= " AND status = ".(int) $status;
-		}isset($objecttmp->ismultientitymanaged) &&
+		}
 		if ($filtre) {
 			$sql .= " AND ".$filtre;
 		}
