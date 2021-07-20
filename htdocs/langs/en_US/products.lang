@@ -399,3 +399,6 @@ ProductSupplierExtraFields=Additional Attributes (Supplier Prices)
 DeleteLinkedProduct=Delete the child product linked to the combination
 PMPValue=Weighted average price
 PMPValueShort=WAP
+mandatoryperiod=Mandatory periods
+mandatoryPeriodNeedTobeSet=Attention periods not entered and mandatory
+mandatoryPeriodNeedTobeSetMsgValidate=A service requires a start and end period

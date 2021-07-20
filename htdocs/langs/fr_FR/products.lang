@@ -401,3 +401,4 @@ PMPValue=Prix moyen pondéré (PMP)
 PMPValueShort=PMP
 mandatoryperiod=Périodes obligatoires
 mandatoryPeriodNeedTobeSet=Attention périodes non saisies et obligatoires
+mandatoryPeriodNeedTobeSetMsgValidate=Un service nécessite une période de début et de fin
