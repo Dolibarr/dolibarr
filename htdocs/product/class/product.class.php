@@ -5642,6 +5642,16 @@ class Product extends CommonObject
 		return ($this->type == Product::TYPE_SERVICE ? true : false);
 	}
 
+
+	/**
+	 * Return if  object have a constraint on mandatory_period
+	 *
+	 * @return boolean     True if mandatory_period setted to 1
+	 */
+	public function isMandatoryPeriod()
+	{
+		return ($this->mandatory_period == 1 ? true : false);
+	}
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Get a barcode from the module to generate barcode values.

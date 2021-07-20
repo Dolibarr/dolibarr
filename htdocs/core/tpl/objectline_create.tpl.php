@@ -678,10 +678,10 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 	/* When changing predefined product, we reload list of supplier prices required for margin combo */
 	$("#idprod, #idprodfournprice").change(function()
 	{
-		console.log("Call method change() after change on #idprod or #idprodfournprice (senderissupplier=<?php echo $senderissupplier; ?>). this.val = "+$(this).val());
+		console.log("Call method change() 1 after change on #idprod or #idprodfournprice (senderissupplier=<?php echo $senderissupplier; ?>). this.val = "+$(this).val());
 
 		setforpredef();		// TODO Keep vat combo visible and set it to first entry into list that match result of get_default_tva
-
+		setColorToDateSelector($(this).val());
 		jQuery('#trlinefordates').show();
 
 		<?php
@@ -703,6 +703,21 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 					{ 'id': $(this).val(), 'socid': <?php print $object->socid; ?> },
 					function(data) {
 						console.log("Load unit price end, we got value "+data.price_ht);
+
+
+						console.log(data);
+						console.log(jQuery("#date_start").val());
+						console.log(jQuery("#date_end").val());
+						//  service and we setted mandatory_period to true
+						if (data.mandatory_period == 1 && data.type == 1 ) {
+							console.log("we are good to color date input");
+							jQuery("#date_start").css("background-color","#f2cf87");
+							jQuery("#date_end").css("background-color","#f2cf87");
+						}else{
+							jQuery("#date_start").css("background-color","#FFF");
+							jQuery("#date_end").css("background-color","#FFF");
+						}
+
 						jQuery("#price_ht").val(data.price_ht);
 						<?php
 						if (!empty($conf->global->PRODUIT_AUTOFILL_DESC) && $conf->global->PRODUIT_AUTOFILL_DESC == 1) {
@@ -984,6 +999,10 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 		jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").show();
 		jQuery("#fournprice_predef").hide();
 	}
+    function setColorToDateSelector(val){
+	console.log("from function "+val);
+	}
+
 	function setforpredef() {
 		console.log("Call setforpredef. We hide some fields and show dates");
 		jQuery("#select_type").val(-1);

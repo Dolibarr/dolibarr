@@ -333,8 +333,18 @@ $coldisplay++;
 		if (isset($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {
 			print 'jQuery("#date_starthour").val("'.$conf->global->MAIN_DEFAULT_DATE_START_HOUR.'");';
 		}
+
+
 		if (isset($conf->global->MAIN_DEFAULT_DATE_START_MIN)) {
 			print 'jQuery("#date_startmin").val("'.$conf->global->MAIN_DEFAULT_DATE_START_MIN.'");';
+		}
+
+		$res = $line->fetch_product();
+		// on doit fetch le product là !!! pour connaître le type
+		if ($res  > 0  ){
+			if ($line->product->isMandatoryPeriod() && $line->product->isService()) {
+				print  'jQuery("#date_start").css("background-color","#f2cf87");';
+			}
 		}
 	}
 	if (!$line->date_end) {
@@ -343,6 +353,14 @@ $coldisplay++;
 		}
 		if (isset($conf->global->MAIN_DEFAULT_DATE_END_MIN)) {
 			print 'jQuery("#date_endmin").val("'.$conf->global->MAIN_DEFAULT_DATE_END_MIN.'");';
+		}
+
+		$res = $line->fetch_product();
+		// on doit fetch le product là !!! pour connaître le type
+		if ($res  > 0  ){
+			if ($line->product->isMandatoryperiod() && $line->product->isService()) {
+				print  'jQuery("#date_end").css("background-color","#f2cf87");';
+			}
 		}
 	}
 	print '</script>'
