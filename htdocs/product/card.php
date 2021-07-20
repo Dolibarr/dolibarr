@@ -582,7 +582,7 @@ if (empty($reshook)) {
 				} else {
 					$object->accountancy_code_buy_export = $accountancy_code_buy_export;
 				}
-				if ($object->isService()){
+				if ($object->isService()) {
 					$object->mandatory_period =  (!empty($checkmandatory)) ? 1 : 0 ;
 				}
 
@@ -1993,9 +1993,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						print '<td><input type="checkbox" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').' /> ';
 						print '</td></tr>';
 					}
-
-
-
 				}
 			}
 			print '</table>';
@@ -2287,7 +2284,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<td class="center">';
 				print $form->textwithpicto('', $htmltooltip, 1, 0);
 				print '</td></tr>';
-
 			} else {
 				if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
 					// Nature

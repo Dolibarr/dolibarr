@@ -180,14 +180,13 @@ if (($line->info_bits & 2) == 2) {
 	} else {
 		if ($line->date_start || $line->date_end) {
 			print '<br><div class="clearboth nowraponall opacitymedium">'.get_date_range($line->date_start, $line->date_end, $format).'</div>';
-
 		}
-		if (!$line->date_start || !$line->date_end){
+		if (!$line->date_start || !$line->date_end) {
 			// show warning under line
 			// we need to fetch product associated to line for some test
 			$res = $line->fetch_product();
-			if ($res  > 0  ){
-				if ($line->product->isService() && $line->product->isMandatoryPeriod()){
+			if ($res  > 0  ) {
+				if ($line->product->isService() && $line->product->isMandatoryPeriod()) {
 					print '<div><span class="clearboth nowraponall warning">'.$langs->trans("mandatoryPeriodNeedTobeSet").'</span></div>';
 				}
 			}

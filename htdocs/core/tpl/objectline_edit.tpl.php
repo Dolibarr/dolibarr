@@ -340,7 +340,7 @@ $coldisplay++;
 		}
 
 		$res = $line->fetch_product();
-		if ($res  > 0  ){
+		if ($res  > 0  ) {
 			if ($line->product->isMandatoryPeriod() && $line->product->isService()) {
 				print  'jQuery("#date_start").addClass("error");';
 			}
@@ -356,7 +356,7 @@ $coldisplay++;
 
 		$res = $line->fetch_product();
 		// on doit fetch le product là !!! pour connaître le type
-		if ($res  > 0  ){
+		if ($res  > 0  ) {
 			if ($line->product->isMandatoryperiod() && $line->product->isService()) {
 				print  'jQuery("#date_end").addClass("error");';
 			}
