@@ -674,6 +674,15 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 		<?php
 	}
 	?>
+	$("#date_start, #date_end").focusout(function()
+	{
+
+		if ( $(this).val() == ''  && !$(this).hasClass("error") ) {
+			$(this).addClass('error');
+		}else{
+			$(this).removeClass('error');
+		}
+	});
 
 	/* When changing predefined product, we reload list of supplier prices required for margin combo */
 	$("#idprod, #idprodfournprice").change(function()
@@ -681,7 +690,6 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 		console.log("Call method change() 1 after change on #idprod or #idprodfournprice (senderissupplier=<?php echo $senderissupplier; ?>). this.val = "+$(this).val());
 
 		setforpredef();		// TODO Keep vat combo visible and set it to first entry into list that match result of get_default_tva
-		setColorToDateSelector($(this).val());
 		jQuery('#trlinefordates').show();
 
 		<?php
@@ -705,17 +713,16 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 						console.log("Load unit price end, we got value "+data.price_ht);
 
 
-						console.log(data);
-						console.log(jQuery("#date_start").val());
-						console.log(jQuery("#date_end").val());
+
 						//  service and we setted mandatory_period to true
 						if (data.mandatory_period == 1 && data.type == 1 ) {
 							console.log("we are good to color date input");
-							jQuery("#date_start").css("background-color","#f2cf87");
-							jQuery("#date_end").css("background-color","#f2cf87");
+
+							jQuery("#date_start").addClass("error");
+							jQuery("#date_end").addClass("error");
 						}else{
-							jQuery("#date_start").css("background-color","#FFF");
-							jQuery("#date_end").css("background-color","#FFF");
+							jQuery("#date_start").removeClass("error");
+							jQuery("#date_end").removeClass("error");
 						}
 
 						jQuery("#price_ht").val(data.price_ht);
@@ -733,6 +740,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 							if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
 						if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
 						{
+							var editor = CKEDITOR.instances['dp_desc'];
 							var editor = CKEDITOR.instances['dp_desc'];
 							if (editor) {
 								editor.setData(proddesc);
@@ -998,9 +1006,6 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 		jQuery("#price_ht, #multicurrency_price_ht, #price_ttc, #price_ttc, #fourn_ref, #tva_tx, #buying_price, #title_fourn_ref, #title_vat, #title_up_ht, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").show();
 		jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").show();
 		jQuery("#fournprice_predef").hide();
-	}
-    function setColorToDateSelector(val){
-	console.log("from function "+val);
 	}
 
 	function setforpredef() {

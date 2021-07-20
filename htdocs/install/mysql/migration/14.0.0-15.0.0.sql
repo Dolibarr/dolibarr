@@ -36,5 +36,5 @@
 
 
 -- v15
-ALTER TABLE llx_product ADD COLUMN mandatory_period tinyint NULL DEFAULT 0 AFTER fk_project;
+ALTER TABLE llx_product ADD COLUMN mandatory_period tinyint NULL DEFAULT 0;
 

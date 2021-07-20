@@ -340,10 +340,9 @@ $coldisplay++;
 		}
 
 		$res = $line->fetch_product();
-		// on doit fetch le product là !!! pour connaître le type
 		if ($res  > 0  ){
 			if ($line->product->isMandatoryPeriod() && $line->product->isService()) {
-				print  'jQuery("#date_start").css("background-color","#f2cf87");';
+				print  'jQuery("#date_start").addClass("error");';
 			}
 		}
 	}
@@ -359,7 +358,7 @@ $coldisplay++;
 		// on doit fetch le product là !!! pour connaître le type
 		if ($res  > 0  ){
 			if ($line->product->isMandatoryperiod() && $line->product->isService()) {
-				print  'jQuery("#date_end").css("background-color","#f2cf87");';
+				print  'jQuery("#date_end").addClass("error");';
 			}
 		}
 	}
@@ -469,6 +468,15 @@ jQuery(document).ready(function()
 		}
 	});
 
+	$("#date_start, #date_end").focusout(function()
+	{
+
+		if ( $(this).val() == ''  && !$(this).hasClass("error") ) {
+			$(this).addClass('error');
+		}else{
+			$(this).removeClass('error');
+		}
+	});
 	<?php
 	if (!empty($conf->margin->enabled)) {
 		?>
