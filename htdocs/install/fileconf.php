@@ -559,7 +559,7 @@ if (!empty($force_install_noedit)) {
 				   class="needroot text-security"
 				   value="<?php
 					// If $force_install_databaserootpass is on, we don't want to set password here, we just show '***'. Real value will be extracted from the forced install file at step1.
-				    $autofill = ((!empty($force_install_databaserootpass)) ? str_pad('', strlen($force_install_databaserootpass), '*') : (isset($db_pass_root) ? $db_pass_root : ''));
+                    $autofill = ((!empty($force_install_databaserootpass)) ? str_pad('', strlen($force_install_databaserootpass), '*') : (isset($db_pass_root) ? $db_pass_root : ''));
 					if (!empty($dolibarr_main_prod)) {
 						$autofill = '';
 					}
