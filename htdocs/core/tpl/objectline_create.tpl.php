@@ -68,6 +68,7 @@ if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf-
 if (in_array($object->element, array('propal', 'commande', 'order', 'facture', 'facturerec', 'invoice', 'supplier_proposal', 'order_supplier', 'invoice_supplier'))) {
 	$colspan++; // With this, there is a column move button
 }
+
 //print $object->element;
 // Lines for extrafield
 $objectline = null;
@@ -674,16 +675,17 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 		<?php
 	}
 	?>
+
+<?php if ($this->table_element_line != 'commande_fournisseurdet' || $this->table_element_line == 'facture_fourn_det') { ?>
 	$("#date_start, #date_end").focusout(function()
 	{
-
 		if ( $(this).val() == ''  && !$(this).hasClass("error") ) {
 			$(this).addClass('error');
 		}else{
 			$(this).removeClass('error');
 		}
 	});
-
+<?php } ?>
 	/* When changing predefined product, we reload list of supplier prices required for margin combo */
 	$("#idprod, #idprodfournprice").change(function()
 	{
@@ -711,8 +713,6 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 					{ 'id': $(this).val(), 'socid': <?php print $object->socid; ?> },
 					function(data) {
 						console.log("Load unit price end, we got value "+data.price_ht);
-
-
 
 						//  service and we setted mandatory_period to true
 						if (data.mandatory_period == 1 && data.type == 1 ) {
