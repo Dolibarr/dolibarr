@@ -679,8 +679,9 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 <?php if ($this->table_element_line != 'commande_fournisseurdet' || $this->table_element_line == 'facture_fourn_det') { ?>
 	$("#date_start, #date_end").focusout(function()
 	{
-	   type = $(this).attr('type');
-		if (type == 1){
+	    let  	type = $(this).attr('type');
+	 	let 	mandatoryP = $(this).attr('mandatoryperiod');
+		if (type == 1 && mandatoryP == 1 ){
 			if ( $(this).val() == ''  && !$(this).hasClass("error") ) {
 				$(this).addClass('error');
 			}else{
@@ -721,6 +722,11 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 							$( '#date_end' ).removeAttr( "type" );
 							$('#date_start').attr('type', data.type);
 							$('#date_end').attr('type', data.type);
+
+							$( '#date_start').removeAttr( "mandatoryperiod" );
+							$( '#date_end' ).removeAttr( "mandatoryperiod" );
+							$('#date_start').attr('mandatoryperiod', data.mandatory_period);
+							$('#date_end').attr('mandatoryperiod', data.mandatory_period);
 
 						//  service and we setted mandatory_period to true
 						if (data.mandatory_period == 1 && data.type == 1 ) {
