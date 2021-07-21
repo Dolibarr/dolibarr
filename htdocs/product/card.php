@@ -265,7 +265,7 @@ if (empty($reshook)) {
 			$object->ref                   = $ref;
 			$object->label                 = GETPOST('label', $label_security_check);
 			$object->price_base_type       = GETPOST('price_base_type', 'aZ09');
-			$object->mandatory_period 	   = !empty(GETPOST("mandatoryperiod",'alpha')) ? 1 : 0;
+			$object->mandatory_period 	   = !empty(GETPOST("mandatoryperiod", 'alpha')) ? 1 : 0;
 			if ($object->price_base_type == 'TTC') {
 				$object->price_ttc = GETPOST('price');
 			} else {
@@ -1402,13 +1402,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print $form->load_tva("tva_tx", $defaultva, $mysoc, $mysoc, 0, 0, '', false, 1);
 				print '</td></tr>';
 
-				if (!empty($conf->service->enabled)){
-					if ($object->isService()){
+				if (!empty($conf->service->enabled)) {
+					if ($object->isService()) {
 						// Mandatory period
 						print '<tr><td class="titlefieldcreate">'.$langs->trans("mandatoryperiod").'</td>';
 						print '<td><input type="checkbox" name="mandatoryperiod" /> ';
 						print '</td></tr>';
-
 					}
 				}
 				print '</table>';
