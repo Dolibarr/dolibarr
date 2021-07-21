@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2021  Kévin Bernard-Allies <kevin.bernard.allies@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -198,6 +199,9 @@ class EmailCollector extends CommonObject
 	public $datelastok;
 	// END MODULEBUILDER PROPERTIES
 
+	/**
+	 * @var array<int, array{id: int, type: string, rulevalue: string, status: string}> $filters
+	 */
 	public $filters;
 	public $actions;
 
@@ -1001,109 +1005,20 @@ class EmailCollector extends CommonObject
 		$host = dol_getprefix('email');
 		//$host = '123456';
 
-		// Define the IMAP search string
-		// See https://tools.ietf.org/html/rfc3501#section-6.4.4 for IMAPv4 (PHP not yet compatible)
-		// See https://tools.ietf.org/html/rfc1064 page 13 for IMAPv2
-		//$search='ALL';
-		$search = 'UNDELETED'; // Seems not supported by some servers
-		$searchhead = '';
-		$searchfilterdoltrackid = 0;
-		$searchfilternodoltrackid = 0;
-		$searchfilterisanswer = 0;
-		$searchfilterisnotanswer = 0;
-		foreach ($this->filters as $rule) {
-			if (empty($rule['status'])) {
-				continue;
-			}
+		// Most filter (but not all) are applied by using an IMAP SEARCH query.
+		// Other filters will be applied later, using checkFilters().
+		$search = $this->getIMAPSearchFromFilters($this->filters);
 
-			if ($rule['type'] == 'to') {
-				$tmprulevaluearray = explode('*', $rule['rulevalue']);
-				if (count($tmprulevaluearray) >= 2) {
-					foreach ($tmprulevaluearray as $tmprulevalue) {
-						$search .= ($search ? ' ' : '').'TO "'.str_replace('"', '', $tmprulevalue).'"';
-					}
-				} else {
-					$search .= ($search ? ' ' : '').'TO "'.str_replace('"', '', $rule['rulevalue']).'"';
-				}
+		if (empty($targetdir)) {
+			// If the collector does not move processed emails to another dir,
+			// use the last date to fetch only new messages.
+			if ($this->datelastok > 0) {
+				$search .= ' SINCE '.date('j-M-Y', $this->datelastok - 1);
+				// SENTSINCE not supported. Date must be X-Abc-9999 (X on 1 digit if < 10)
+				// Ex: 'SINCE 8-Apr-2018'
 			}
-			if ($rule['type'] == 'bcc') {
-				$search .= ($search ? ' ' : '').'BCC';
-			}
-			if ($rule['type'] == 'cc') {
-				$search .= ($search ? ' ' : '').'CC';
-			}
-			if ($rule['type'] == 'from') {
-				$search .= ($search ? ' ' : '').'FROM "'.str_replace('"', '', $rule['rulevalue']).'"';
-			}
-			if ($rule['type'] == 'subject') {
-				$search .= ($search ? ' ' : '').'SUBJECT "'.str_replace('"', '', $rule['rulevalue']).'"';
-			}
-			if ($rule['type'] == 'body') {
-				$search .= ($search ? ' ' : '').'BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
-			}
-			if ($rule['type'] == 'header') {
-				$search .= ($search ? ' ' : '').'HEADER '.$rule['rulevalue'];
-			}
-
-			if ($rule['type'] == 'notinsubject') {
-				$search .= ($search ? ' ' : '').'SUBJECT NOT "'.str_replace('"', '', $rule['rulevalue']).'"';
-			}
-			if ($rule['type'] == 'notinbody') {
-				$search .= ($search ? ' ' : '').'BODY NOT "'.str_replace('"', '', $rule['rulevalue']).'"';
-			}
-
-			if ($rule['type'] == 'seen') {
-				$search .= ($search ? ' ' : '').'SEEN';
-			}
-			if ($rule['type'] == 'unseen') {
-				$search .= ($search ? ' ' : '').'UNSEEN';
-			}
-			if ($rule['type'] == 'unanswered') {
-				$search .= ($search ? ' ' : '').'UNANSWERED';
-			}
-			if ($rule['type'] == 'answered') {
-				$search .= ($search ? ' ' : '').'ANSWERED';
-			}
-			if ($rule['type'] == 'smaller') {
-				$search .= ($search ? ' ' : '').'SMALLER "'.str_replace('"', '', $rule['rulevalue']).'"';
-			}
-			if ($rule['type'] == 'larger') {
-				$search .= ($search ? ' ' : '').'LARGER "'.str_replace('"', '', $rule['rulevalue']).'"';
-			}
-
-			if ($rule['type'] == 'withtrackingidinmsgid') {
-				$searchfilterdoltrackid++; $searchhead .= '/Message-ID.*@'.preg_quote($host, '/').'/';
-			}
-			if ($rule['type'] == 'withouttrackingidinmsgid') {
-				$searchfilterdoltrackid++; $searchhead .= '/Message-ID.*@'.preg_quote($host, '/').'/';
-			}
-			if ($rule['type'] == 'withtrackingid') {
-				$searchfilterdoltrackid++; $searchhead .= '/References.*@'.preg_quote($host, '/').'/';
-			}
-			if ($rule['type'] == 'withouttrackingid') {
-				$searchfilternodoltrackid++; $searchhead .= '! /References.*@'.preg_quote($host, '/').'/';
-			}
-
-			if ($rule['type'] == 'isanswer') {
-				$searchfilterisanswer++; $searchhead .= '/References.*@.*/';
-			}
-			if ($rule['type'] == 'isnotanswer') {
-				$searchfilterisnotanswer++; $searchhead .= '! /References.*@.*/';
-			}
-		}
-
-		if (empty($targetdir)) {	// Use last date as filter if there is no targetdir defined.
-			$fromdate = 0;
-			if ($this->datelastok) {
-				$fromdate = $this->datelastok;
-			}
-			if ($fromdate > 0) {
-				$search .= ($search ? ' ' : '').'SINCE '.date('j-M-Y', $fromdate - 1); // SENTSINCE not supported. Date must be X-Abc-9999 (X on 1 digit if < 10)
-			}
-			//$search.=($search?' ':'').'SINCE 8-Apr-2018';
 		}
 		dol_syslog("IMAP search string = ".$search);
-		//var_dump($search);
 
 		$nbemailprocessed = 0;
 		$nbemailok = 0;
@@ -1237,54 +1152,11 @@ class EmailCollector extends CommonObject
 				dol_syslog("** Process email ".$iforemailloop." References: ".$headers['References']);
 				//print "Process mail ".$iforemailloop." Subject: ".dol_escape_htmltag($headers['Subject'])." References: ".dol_escape_htmltag($headers['References'])." In-Reply-To: ".dol_escape_htmltag($headers['In-Reply-To'])."<br>\n";
 
-				// If there is a filter on trackid
-				if ($searchfilterdoltrackid > 0) {
-					if (empty($headers['References']) || !preg_match('/@'.preg_quote($host, '/').'/', $headers['References'])) {
-						$nbemailprocessed++;
-						continue; // Exclude email
-					}
-				}
-				if ($searchfilternodoltrackid > 0) {
-					if (!empty($headers['References']) && preg_match('/@'.preg_quote($host, '/').'/', $headers['References'])) {
-						$nbemailprocessed++;
-						continue; // Exclude email
-					}
-				}
-
-				if ($searchfilterisanswer > 0) {
-					if (empty($headers['In-Reply-To'])) {
-						$nbemailprocessed++;
-						continue; // Exclude email
-					}
-					// Note: we can have
-					// Message-ID=A, In-Reply-To=B, References=B and message can BE an answer or NOT (a transfer rewriten)
-					$isanswer = 0;
-					if (preg_match('/Re\s*:\s+/i', $headers['Subject'])) {
-						$isanswer = 1;
-					}
-					//if ($headers['In-Reply-To'] != $headers['Message-ID'] && empty($headers['References'])) $isanswer = 1;	// If in-reply-to differs of message-id, this is a reply
-					//if ($headers['In-Reply-To'] != $headers['Message-ID'] && !empty($headers['References']) && strpos($headers['References'], $headers['Message-ID']) !== false) $isanswer = 1;
-
-					if (!$isanswer) {
-						$nbemailprocessed++;
-						continue; // Exclude email
-					}
-				}
-				if ($searchfilterisnotanswer > 0) {
-					if (!empty($headers['In-Reply-To'])) {
-						// Note: we can have
-						// Message-ID=A, In-Reply-To=B, References=B and message can BE an answer or NOT (a transfer rewriten)
-						$isanswer = 0;
-						if (preg_match('/Re\s*:\s+/i', $headers['Subject'])) {
-							$isanswer = 1;
-						}
-						//if ($headers['In-Reply-To'] != $headers['Message-ID'] && empty($headers['References'])) $isanswer = 1;	// If in-reply-to differs of message-id, this is a reply
-						//if ($headers['In-Reply-To'] != $headers['Message-ID'] && !empty($headers['References']) && strpos($headers['References'], $headers['Message-ID']) !== false) $isanswer = 1;
-						if ($isanswer) {
-							$nbemailprocessed++;
-							continue; // Exclude email
-						}
-					}
+				if (!$this->checkFilters($this->filters, $headers, $host)) {
+					dol_syslog('Email does not pass filters; ignored.');
+					// Exclude email
+					$nbemailprocessed++;
+					continue;
 				}
 
 				//print "Process mail ".$iforemailloop." Subject: ".dol_escape_htmltag($headers['Subject'])." selected<br>\n";
@@ -2260,9 +2132,6 @@ class EmailCollector extends CommonObject
 		$this->datelastresult = $now;
 		$this->lastresult = $output;
 		$this->debuginfo = 'IMAP search string used : '.$search;
-		if ($searchhead) {
-			$this->debuginfo .= '<br>Then search string into email header : '.$searchhead;
-		}
 
 		if (!$error) {
 			$this->datelastok = $now;
@@ -2471,5 +2340,169 @@ class EmailCollector extends CommonObject
 		}
 
 		return $subject;
+	}
+
+	/**
+	 * Create an IMAP search query string from a list of filters.
+	 *
+	 * @param	array<int, array{id: int, type: string, rulevalue: string, status: string}>	$filters	List of filters.
+	 * @return	string		query string. It is always a valid query (ie, it can't be an empty value).
+	 * @see checkFilters()
+	 */
+	protected function getIMAPSearchFromFilters($filters)
+	{
+		// See https://tools.ietf.org/html/rfc3501#section-6.4.4 for IMAPv4 (PHP not yet compatible)
+		// See https://tools.ietf.org/html/rfc1064 page 13 for IMAPv2
+
+		// $search_parts = ['ALL'];
+		$search_parts = ['UNDELETED']; // Default criteria: message not deleted.
+		foreach ($filters as $filter) {
+			if (empty($filter['status']))
+				continue;
+			$search_parts[] = $this->getIMAPSearchPartFromFilter($filter);
+		}
+		return implode(' ', $search_parts);
+	}
+
+	/**
+	 * Escape a user string to be used in an IMAP search.
+	 *
+	 * @param	string	$v	user input
+	 * @return	string 		escaped value for IMAP searhc query.
+	 */
+	protected function escapeIMAPString($v)
+	{
+		// See https://datatracker.ietf.org/doc/html/rfc3501#section-4.3
+		return '"' . str_replace('"', '', $v) . '"';
+	}
+
+	/**
+	 * Generate a part of IMAP search string from a filter
+	 *
+	 * @param	array{id: int, type: string, rulevalue: string, status: string}	$filter  collector filter
+	 * @return	string	IMAP search query string.
+	 */
+	protected function getIMAPSearchPartFromFilter($filter)
+	{
+
+		switch ($filter['type']) {
+			case 'from':
+			case 'to':
+			case 'bcc':
+			case 'cc':
+				$imap_search_verb = dol_strtoupper($filter['type']);
+				// Split search value by '*' symbols to search for each part.
+				// Ex:  foo*@example.com will search every mail containing both "foo" and "@example.com"
+				// it may lead to false positive (such "xxx-foo@example.com"), but it's good enough for us.
+				$rulevalue_array = explode('*', $filter['rulevalue']);
+				$result = array();
+				foreach ($rulevalue_array as $rule_value) {
+					if (!empty($rule_value))
+						$result[] = $imap_search_verb . ' ' . $this->escapeIMAPString($rule_value);
+				}
+				return implode(' ', $result);
+			case 'subject':
+				return 'SUBJECT '. $this->escapeIMAPString($filter['rulevalue']);
+			case 'body':
+				return 'BODY '. $this->escapeIMAPString($filter['rulevalue']);
+			case 'header':
+				// Expected format: HEADER <field-name> <string>
+				// We don't escape rulevalue to let the user put both "field-name" and "string".
+				// NOTE: if "string" is empty, it search for message with the header existing.
+				// TODO: we should prevent the user to put more than 2 values.
+				//  Example of input causing an error: $rulevalue = "X-My-Header xxx BCC"
+				return 'HEADER '.$filter['rulevalue'];
+			case 'notinsubject':
+				return 'SUBJECT NOT '. $this->escapeIMAPString($filter['rulevalue']);
+			case 'notinbody':
+				return 'BODY NOT '. $this->escapeIMAPString($filter['rulevalue']);
+			case 'seen':
+			case 'unseen':
+			case 'unanswered':
+			case 'answered':
+				return dol_strtoupper($filter['type']);
+			case 'smaller':
+				// value should be a number of octets.
+				// TODO: check it works with quote ?
+				return 'SMALLER '. $this->escapeIMAPString($filter['rulevalue']);
+			case 'larger':
+				// value should be a number of octets.
+				$safe_value = str_replace('"', '', $filter['rulevalue']);
+				return 'LARGER '. $this->escapeIMAPString($filter['rulevalue']);
+			case 'withtrackingidinmsgid':
+			case 'withouttrackingidinmsgid':
+			case 'withtrackingid':
+			case 'withouttrackingid':
+			case 'isanswer':
+			case 'isnotanswer':
+				// These filters does not modify the IMAP search; they are applied latter in PHP code.
+				return '';
+			default:
+				$msg = 'EmailCollector filter '. $filter['id'] . ' has unknown ';
+				$msg .= 'type: "'.$filter['type'].'"; It will be ignored.';
+				dol_syslog($msg, LOG_WARNING);
+				return '';
+		}
+	}
+
+	/**
+	 * Check whether an email pass collector filters.
+	 *
+	 * @param	array<int, array{id: int, type: string, rulevalue: string, status: string}>	$filters  collector filters
+	 * @param	array<string, string>	$headers  Email headers
+	 * @param	string	$reference_prefix	prefix applied to each reference-id created by Dolibarr.
+	 * @return	bool	true if the email pass all filters; false otherwise.
+	 * @see 	getIMAPSearchFromFilters()
+	 */
+	protected function checkFilters($filters, $headers, $reference_prefix)
+	{
+		foreach ($filters as $filter) {
+			if (empty($rule['status']))
+				continue;
+			if ($this->checkFilter($filter, $headers, $reference_prefix) == false)
+				return false;
+		}
+		return true;
+	}
+
+	/**
+	 * @param	array{id: int, type: string, rulevalue: string, status: string}	$filter  collector filter
+	 * @param	array<string, string>	$headers Email headers
+	 * @param	string	$reference_prefix	prefix applied to each reference-id created by Dolibarr.
+	 * @return	bool	true if the email pass the filter; false otherwise.
+	 */
+	protected function checkFilter($filter, $headers, $reference_prefix)
+	{
+		switch ($filter['type']) {
+			case 'withtrackingidinmsgid':
+			case 'withtrackingid':
+				if (empty($headers['References']) || !preg_match('/@'.preg_quote($reference_prefix, '/').'/', $headers['References'])) {
+					return false;
+				}
+				return true;
+			case 'withouttrackingidinmsgid':
+			case 'withouttrackingid':
+				if (!empty($headers['References']) && preg_match('/@'.preg_quote($reference_prefix, '/').'/', $headers['References'])) {
+					return false;
+				}
+				return true;
+			case 'isanswer':
+			case 'isnotanswer':
+				$is_answer = false;
+				if (empty($headers['In-Reply-To'])) {
+					return ($filter['type'] == 'isanswer') ? $is_answer : !$is_answer;
+				}
+
+				// Note: we can have
+				// Message-ID=A, In-Reply-To=B, References=B and message can BE an answer or NOT (a transfer rewriten)
+				if (preg_match('/Re\s*:\s+/i', $headers['Subject'])) {
+					$is_answer = true;
+				}
+				//if ($headers['In-Reply-To'] != $headers['Message-ID'] && empty($headers['References'])) $isanswer = 1;	// If in-reply-to differs of message-id, this is a reply
+				//if ($headers['In-Reply-To'] != $headers['Message-ID'] && !empty($headers['References']) && strpos($headers['References'], $headers['Message-ID']) !== false) $isanswer = 1;
+
+				return ($filter['type'] == 'isanswer') ? $is_answer : !$is_answer;
+		}
+		return true;
 	}
 }
