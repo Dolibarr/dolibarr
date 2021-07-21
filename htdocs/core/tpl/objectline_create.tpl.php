@@ -679,10 +679,13 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 <?php if ($this->table_element_line != 'commande_fournisseurdet' || $this->table_element_line == 'facture_fourn_det') { ?>
 	$("#date_start, #date_end").focusout(function()
 	{
-		if ( $(this).val() == ''  && !$(this).hasClass("error") ) {
-			$(this).addClass('error');
-		}else{
-			$(this).removeClass('error');
+	   type = $(this).attr('type');
+		if (type == 1){
+			if ( $(this).val() == ''  && !$(this).hasClass("error") ) {
+				$(this).addClass('error');
+			}else{
+				$(this).removeClass('error');
+			}
 		}
 	});
 <?php } ?>
@@ -713,6 +716,11 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 					{ 'id': $(this).val(), 'socid': <?php print $object->socid; ?> },
 					function(data) {
 						console.log("Load unit price end, we got value "+data.price_ht);
+
+							$( '#date_start').removeAttr( "type" );
+							$( '#date_end' ).removeAttr( "type" );
+							$('#date_start').attr('type', data.type);
+							$('#date_end').attr('type', data.type);
 
 						//  service and we setted mandatory_period to true
 						if (data.mandatory_period == 1 && data.type == 1 ) {
