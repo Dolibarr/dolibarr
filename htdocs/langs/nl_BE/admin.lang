@@ -234,7 +234,6 @@ YouMustEnableOneModule=Je moet minstens 1 module aktiveren
 BillsPDFModules=Factuur documentsjablonen
 LDAPGlobalParameters=Globale instellingen
 LDAPPassword=Beheerderswachtwoord
-ClickToDialUseTelLinkDesc=Use this method if your users have a softphone or a software interface installed on the same computer as the browser, and called when you click on a link in your browser that starts with "tel:". If you need a full server solution (no need of local software installation), you must set this to "No" and fill next field.
 SalariesSetup=Setup van module salarissen
 MailToSendProposal=Klant voorstellen
 MailToSendInvoice=Klantfacturen

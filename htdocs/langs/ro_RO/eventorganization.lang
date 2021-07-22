@@ -86,6 +86,7 @@ DownloadICSLink = Link descărcare ICS
 EVENTORGANIZATION_SECUREKEY = Cheie securizată link public de înregistrare la o conferință
 SERVICE_BOOTH_LOCATION = Serviciu utilizat pentru linia de facturare privind locaţia standului
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Serviciu utilizat pentru linia de facturare pentru o taxă de participare la o conferință
+NbVotes=Număr de voturi
 #
 # Status
 #
@@ -115,6 +116,9 @@ EvntOrgDuration = Această conferinţă începe pe %s şi se termină pe %s.
 ConferenceAttendeeFee = Taxă de participare la conferință pentru evenimentul: '%s' care are loc de pe %s până la %s.
 BoothLocationFee = Locaţie stand pentru evenimentul: '%s' care se desfăşoară între %s şi %s
 EventType = Tip eveniment
+LabelOfBooth=Etichetă stand
+LabelOfconference=Etichetă conferinţă
+ConferenceIsNotConfirmed=Înscrierea nu este disponibilă, conferinţa nu este confirmată încă
 
 #
 # Vote page

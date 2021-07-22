@@ -9,11 +9,11 @@ ConfirmDeleteEstablishment=Ushbu muassasa o'chirilishini xohlaysizmi?
 OpenEtablishment=Ochiq muassasa
 CloseEtablishment=Yaqin muassasasi
 # Dictionary
-DictionaryPublicHolidays=Leave - Public holidays
+DictionaryPublicHolidays=Ta'til - rasmiy bayramlar
 DictionaryDepartment=HRM - bo'limlar ro'yxati
 DictionaryFunction=HRM - ish joylari
 # Module
 Employees=Xodimlar
 Employee=Xodim
 NewEmployee=Yangi ishchi
-ListOfEmployees=List of employees
+ListOfEmployees=Xodimlar ro'yxati

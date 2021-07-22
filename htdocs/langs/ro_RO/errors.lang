@@ -301,3 +301,4 @@ ErrorActionCommPropertyUserowneridNotDefined=Utilizatorul deţinător este oblig
 ErrorActionCommBadType=Tipul evenimentului selectat (id: %n, cod: %s) nu există în dicţionarul Tipuri evenimente
 CheckVersionFail=Verificarea versiunii a eşuat
 ErrorWrongFileName=Numele fișierului nu poate să conțină _SOMETHING_ în el
+ErrorNotInDictionaryPaymentConditions=Nu se află în dicționarul Condiții de plată, vă rugăm să modificați.

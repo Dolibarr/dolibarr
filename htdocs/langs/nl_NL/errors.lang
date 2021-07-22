@@ -301,3 +301,4 @@ ErrorActionCommPropertyUserowneridNotDefined=Eigenaar van gebruiker is vereist
 ErrorActionCommBadType=Het geselecteerde gebeurtenistype (id: %n, code: %s) bestaat niet in het woordenboek voor gebeurtenistypes
 CheckVersionFail=Versiecontrole mislukt
 ErrorWrongFileName=De naam van het bestand mag niet __SOMETHING__ bevatten
+ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.

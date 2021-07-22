@@ -1,9 +1,5 @@
 # Dolibarr language file - Source file is en_US - ticket
-TicketTypeShortISSUE=Issue, bug or problem
-OriginEmail=Email source
 Read=Leer
-NeedMoreInformation=Waiting for information
 Type=Tipo
 TicketSettings=Configuración
-TicketCategory=Group
 TicketNewEmailBodyInfosTrackUrl=Puedes ver la progresión del ticket haciendo click sobre el seguimiento del ticket.

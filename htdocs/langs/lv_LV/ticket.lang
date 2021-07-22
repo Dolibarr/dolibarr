@@ -55,7 +55,7 @@ TypeContact_ticket_internal_SUPPORTTEC=Piešķirtais lietotājs
 TypeContact_ticket_external_SUPPORTCLI=Klientu kontaktu / incidentu izsekošana
 TypeContact_ticket_external_CONTRIBUTOR=Ārējais ieguldītājs
 
-OriginEmail=E-pasta reportieris
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Sūtīt biļeti pa e-pastu
 
 # Status

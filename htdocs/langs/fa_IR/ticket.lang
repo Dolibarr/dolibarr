@@ -34,7 +34,8 @@ TicketDictResolution=Ticket - Resolution
 
 TicketTypeShortCOM=سوال تجاری
 TicketTypeShortHELP=Request for functionnal help
-TicketTypeShortISSUE=Issue, bug or problem
+TicketTypeShortISSUE=Issue or bug
+TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=طرح
 TicketTypeShortOTHER=سایر
@@ -54,14 +55,15 @@ TypeContact_ticket_internal_SUPPORTTEC=کاربر نسبت داده شده
 TypeContact_ticket_external_SUPPORTCLI=طرف‌تماس‌مشتری / ره‌گیری حادثه
 TypeContact_ticket_external_CONTRIBUTOR=مشارکت‌کنندۀ بیرونی
 
-OriginEmail=منبع رایانامه
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=ارسال پیام برگه با رایانامه
 
 # Status
 Read=خوانده‌شده
 Assigned=نسبت‌داده شده
 InProgress=در حال انجام
-NeedMoreInformation=در انتظار اطلاعات
+NeedMoreInformation=Waiting for reporter feedback
+NeedMoreInformationShort=Waiting for feedback
 Answered=پاسخ داده شده
 Waiting=در انتظار
 Closed=بسته
@@ -160,7 +162,7 @@ CreatedBy=ساخته‌شده توسط
 NewTicket=برگۀ جدید
 SubjectAnswerToTicket=پاسخ برگه
 TicketTypeRequest=نوع درخواست
-TicketCategory=گروه
+TicketCategory=Ticket categorization
 SeeTicket=نمایش برگه
 TicketMarkedAsRead=برگه به صورت خوانده شده علامت‌گذاری شد
 TicketReadOn=خواندن
@@ -211,6 +213,7 @@ TicketMessageHelp=تنها این نوشته در فهرست پیام در کا�
 TicketMessageSubstitutionReplacedByGenericValues=متغیرهای جایگزین با مقادیر عمومی جایگزین خواهند شد
 TimeElapsedSince=زمان سپری شده از
 TicketTimeToRead=زمان سپری شد قبل از خوانده‌شدن
+TicketTimeElapsedBeforeSince=Time elapsed before / since
 TicketContacts=برگۀ طرف‌های تماس
 TicketDocumentsLinked=مستندات پیوند شده با برگۀ‌تماس
 ConfirmReOpenTicket=تائید بازگشائی این برگه؟

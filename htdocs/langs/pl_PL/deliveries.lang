@@ -30,4 +30,4 @@ NonShippable=Nie do wysyłki
 ShowShippableStatus=Pokaż status do wysyłki
 ShowReceiving=Pokaż przyjęte dostawy
 NonExistentOrder=Nieistniejący porządek
-StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Ilości magazynowe już przydzielone na poprzednich liniach
