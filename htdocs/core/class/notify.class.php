@@ -65,7 +65,7 @@ class Notify
 	// Les codes actions sont definis dans la table llx_notify_def
 
 	// codes actions supported are
-	// @todo defined also into interface_50_modNotificiation_Notification.class.php
+	// @todo defined also into interface_50_modNotification_Notification.class.php
 	public $arrayofnotifsupported = array(
 		'BILL_VALIDATE',
 		'BILL_PAYED',
