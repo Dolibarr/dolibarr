@@ -205,7 +205,7 @@ if ($massaction == 'predisable') {
 // Allow Pre-Mass-Action hook (eg for confirmation dialog)
 $parameters = array(
 	'toselect' => $toselect,
-	'uploaddir' => $uploaddir
+	'uploaddir' => empty($uploaddir) ? '' : $uploaddir
 );
 
 $reshook = $hookmanager->executeHooks('doPreMassActions', $parameters, $object, $action);

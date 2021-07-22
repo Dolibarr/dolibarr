@@ -367,7 +367,7 @@ $boxlist .= $resultboxes['boxlista'];
 $boxlist .= '</div>'."\n";
 
 $boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
-$boxlist .= $lastmodified;
+$boxlist .= empty($lastmodified) ? '' : $lastmodified;
 $boxlist .= '<br>';
 $boxlist .= $resultboxes['boxlistb'];
 $boxlist .= '</div>'."\n";

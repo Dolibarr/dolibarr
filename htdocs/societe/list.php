@@ -485,7 +485,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s2 ON s.parent = s2.rowid";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (s.rowid = ef.fk_object)";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
@@ -517,10 +517,10 @@ $sql .= " WHERE s.entity IN (".getEntity('societe').")";
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
-if ($search_sale && $search_sale != '-1' && $search_sale != '-2') {
+if (!empty($search_sale) && $search_sale != '-1' && $search_sale != '-2') {
 	$sql .= " AND s.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 }
-if (!$user->rights->fournisseur->lire) {
+if (empty($user->rights->fournisseur->lire)) {
 	$sql .= " AND (s.fournisseur <> 1 OR s.client <> 0)"; // client=0, fournisseur=0 must be visible
 }
 if ($search_sale == -2) {
@@ -541,7 +541,7 @@ if ($search_categ_sup == -2) {
 	$sql .= " AND cs.fk_categorie IS NULL";
 }
 
-if ($search_all) {
+if (!empty($search_all)) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 if (strlen($search_cti)) {
@@ -551,46 +551,46 @@ if (strlen($search_cti)) {
 if ($search_id > 0) {
 	$sql .= natural_search("s.rowid", $search_id, 1);
 }
-if ($search_nom) {
+if (!empty($search_nom)) {
 	$sql .= natural_search("s.nom", $search_nom);
 }
-if ($search_alias) {
+if (!empty($search_alias)) {
 	$sql .= natural_search("s.name_alias", $search_alias);
 }
-if ($search_nom_only) {
+if (!empty($search_nom_only)) {
 	$sql .= natural_search("s.nom", $search_nom_only);
 }
-if ($search_customer_code) {
+if (!empty($search_customer_code)) {
 	$sql .= natural_search("s.code_client", $search_customer_code);
 }
-if ($search_supplier_code) {
+if (!empty($search_supplier_code)) {
 	$sql .= natural_search("s.code_fournisseur", $search_supplier_code);
 }
-if ($search_account_customer_code) {
+if (!empty($search_account_customer_code)) {
 	$sql .= natural_search("s.code_compta", $search_account_customer_code);
 }
-if ($search_account_supplier_code) {
+if (!empty($search_account_supplier_code)) {
 	$sql .= natural_search("s.code_compta_fournisseur", $search_account_supplier_code);
 }
-if ($search_address) {
+if (!empty($search_address)) {
 	$sql.= natural_search('s.address', $search_address);
 }
-if ($search_town) {
+if (!empty($search_town)) {
 	$sql .= natural_search("s.town", $search_town);
 }
 if (strlen($search_zip)) {
 	$sql .= natural_search("s.zip", $search_zip);
 }
-if ($search_state) {
+if (!empty($search_state)) {
 	$sql .= natural_search("state.nom", $search_state);
 }
-if ($search_region) {
+if (!empty($search_region)) {
 	$sql .= natural_search("region.nom", $search_region);
 }
-if ($search_country && $search_country != '-1') {
+if (!empty($search_country) && $search_country != '-1') {
 	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
 }
-if ($search_email) {
+if (!empty($search_email)) {
 	$sql .= natural_search("s.email", $search_email);
 }
 if (strlen($search_phone)) {
@@ -599,7 +599,7 @@ if (strlen($search_phone)) {
 if (strlen($search_fax)) {
 	$sql .= natural_search("s.fax", $search_fax);
 }
-if ($search_url) {
+if (!empty($search_url)) {
 	$sql .= natural_search("s.url", $search_url);
 }
 if (strlen($search_idprof1)) {
@@ -639,19 +639,19 @@ if ($search_status != '' && $search_status >= 0) {
 if (!empty($conf->barcode->enabled) && $search_barcode) {
 	$sql .= natural_search("s.barcode", $search_barcode);
 }
-if ($search_prive_level && $search_prive_level != '-1') {
+if (!empty($search_prive_level) && $search_prive_level != '-1') {
 	$sql .= natural_search("s.price_level", $search_prive_level, 2);
 }
-if ($search_type_thirdparty && $search_type_thirdparty > 0) {
+if (!empty($search_type_thirdparty) && $search_type_thirdparty > 0) {
 	$sql .= natural_search("s.fk_typent", $search_type_thirdparty, 2);
 }
 if (!empty($search_staff) && $search_staff != '-1') {
 	$sql .= natural_search("s.fk_effectif", $search_staff, 2);
 }
-if ($search_level) {
+if (!empty($search_level)) {
 	$sql .= natural_search("s.fk_prospectlevel", join(',', $search_level), 3);
 }
-if ($search_parent_name) {
+if (!empty($search_parent_name)) {
 	$sql .= natural_search("s2.nom", $search_parent_name);
 }
 if ($search_stcomm != '' && $search_stcomm != -2) {
@@ -672,7 +672,7 @@ if (empty($reshook)) {
 }
 $sql .= $hookmanager->resPrint;
 // Add GroupBy from hooks
-$parameters = array('all' => $all, 'fieldstosearchall' => $fieldstosearchall);
+$parameters = array('all' => empty($all) ? '' : $all, 'fieldstosearchall' => $fieldstosearchall);
 $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
@@ -813,7 +813,7 @@ if ($search_idprof6 != '') {
 if ($search_vat != '') {
 	$param .= '&search_vat='.urlencode($search_vat);
 }
-if ($search_prive_level != '') {
+if (!empty($search_prive_level) && $search_prive_level != '') {
 	$param .= '&search_prive_level='.urlencode($search_prive_level);
 }
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
