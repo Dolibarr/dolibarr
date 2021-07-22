@@ -129,7 +129,7 @@ class box_prospect extends ModeleBoxes
 					$thirdpartystatic->entity = $objp->entity;
 
 					$this->info_box_contents[$line][] = array(
-						'td' => '',
+						'td' => 'class="tdoverflowmax150"',
 						'text' => $thirdpartystatic->getNomUrl(1),
 						'asis' => 1,
 					);

@@ -916,6 +916,7 @@ if (!$variants) {
 	print '<td></td>';
 	print '<td></td>';
 	print '</tr>';
+
 	if ((!empty($conf->productbatch->enabled)) && $object->hasbatch()) {
 		$colspan = 3;
 		print '<tr class="liste_titre"><td width="14%">';
@@ -979,6 +980,8 @@ if (!$variants) {
 
 			$stock_real = price2num($obj->reel, 'MS');
 			print '<tr class="oddeven">';
+
+			// Warehouse
 			print '<td colspan="4">';
 			print $entrepotstatic->getNomUrl(1);
 			if (!empty($conf->use_javascript_ajax) && !empty($conf->productbatch->enabled) && $object->hasbatch()) {
@@ -987,25 +990,28 @@ if (!$variants) {
 				print '</a>';
 			}
 			print '</td>';
+
 			print '<td class="right">'.$stock_real.($stock_real < 0 ? ' '.img_warning() : '').'</td>';
+
 			// PMP
-			print '<td class="right">'.(price2num($object->pmp) ? price2num($object->pmp, 'MU') : '').'</td>';
+			print '<td class="right nowraponall">'.(price2num($object->pmp) ? price2num($object->pmp, 'MU') : '').'</td>';
+
 			// Value purchase
-			print '<td class="right">'.(price2num($object->pmp) ? price(price2num($object->pmp * $obj->reel, 'MT')) : '').'</td>';
+			print '<td class="right amount nowraponall">'.(price2num($object->pmp) ? price(price2num($object->pmp * $obj->reel, 'MT')) : '').'</td>';
+
 			// Sell price
 			print '<td class="right">';
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-				print price(price2num($object->price, 'MU'), 1);
-			} else {
-				print $langs->trans("Variable");
+			print price(price2num($object->price, 'MU'), 1);
+			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+				print $form->textwithpicto('', $langs->trans("Variable"));
 			}
 			print '</td>';
+
 			// Value sell
-			print '<td class="right">';
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-				print price(price2num($object->price * $obj->reel, 'MT'), 1);
-			} else {
-				print $langs->trans("Variable");
+			print '<td class="right amount nowraponall">';
+			print price(price2num($object->price * $obj->reel, 'MT'), 1);
+			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+				print $form->textwithpicto('', $langs->trans("Variable"));
 			}
 			print '</td>';
 			print '<td></td>';
@@ -1117,10 +1123,9 @@ if (!$variants) {
 	print $totalvalue ? price(price2num($totalvalue, 'MT'), 1) : '&nbsp;';
 	print '</td>';
 	print '<td class="liste_total right">';
-	if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-		print ($total ? price($totalvaluesell / $total, 1) : '&nbsp;');
-	} else {
-		print $langs->trans("Variable");
+	print ($total ? price($totalvaluesell / $total, 1) : '&nbsp;');
+	if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+		print $form->textwithpicto('', $langs->trans("Variable"));
 	}
 	print '</td>';
 	// Value to sell

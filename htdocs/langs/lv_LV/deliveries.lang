@@ -27,5 +27,7 @@ Recipient=Saņēmējs
 ErrorStockIsNotEnough=Nav pietiekami daudz krājumu
 Shippable=Shippable
 NonShippable=Nav nosūtāms
+ShowShippableStatus=Rādīt pārsūtāmo statusu
 ShowReceiving=Rādīt piegādes kvīti
 NonExistentOrder=Neeksistējošs pasūtījums
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Krājumu daudzumi, kas jau piešķirti iepriekšējās rindās

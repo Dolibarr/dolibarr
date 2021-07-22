@@ -538,7 +538,7 @@ foreach ($accounts as $key => $type) {
 
 	// Label
 	if (!empty($arrayfields['b.label']['checked'])) {
-		print '<td>'.$objecttmp->label.'</td>';
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objecttmp->label).'">'.dol_escape_htmltag($objecttmp->label).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -556,7 +556,7 @@ foreach ($accounts as $key => $type) {
 
 	// Number
 	if (!empty($arrayfields['b.number']['checked'])) {
-		print '<td>'.$objecttmp->number.'</td>';
+		print '<td>'.dol_escape_htmltag($objecttmp->number).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -564,7 +564,7 @@ foreach ($accounts as $key => $type) {
 
 	// Account number
 	if (!empty($arrayfields['b.account_number']['checked'])) {
-		print '<td class="tdoverflowmax300">';
+		print '<td class="tdoverflowmax250">';
 		if (!empty($conf->accounting->enabled) && !empty($objecttmp->account_number)) {
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch('', $objecttmp->account_number, 1);

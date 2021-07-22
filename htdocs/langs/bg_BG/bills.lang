@@ -259,6 +259,7 @@ DateMaxPayment=Краен срок за плащане
 DateInvoice=Дата на документ
 DatePointOfTax=Дата на данъчно събитие
 NoInvoice=Няма фактура
+NoOpenInvoice=No open invoice
 ClassifyBill=Класифициране на фактура
 SupplierBillsToPay=Неплатени фактури за доставка
 CustomerBillsUnpaid=Неплатени фактури за продажба
@@ -589,3 +590,4 @@ FacParentLine=Invoice Line Parent
 SituationTotalRayToRest=Remainder to pay without taxe
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=Total progress %d %%
+SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s

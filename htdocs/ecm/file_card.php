@@ -205,7 +205,7 @@ if ($action == 'update' && $permtoadd) {
 			$object->fullpath_orig = '';
 			$object->gen_or_uploaded = 'unknown';
 			$object->description = ''; // indexed content
-			$object->keyword = ''; // keyword content
+			$object->keywords = ''; // keyword content
 			$result = $object->create($user);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'warnings');

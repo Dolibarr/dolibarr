@@ -906,7 +906,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	}
 
 	// Use MAIN_OPTIMIZEFORTEXTBROWSER
-	if ($foruserprofile) {
+	if ($foruserprofile && !empty($fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 		//$default=yn($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER);
 		$default = $langs->trans('No');
 		print '<tr class="oddeven">';
@@ -953,7 +953,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 
 
 	// Use MAIN_OPTIMIZEFORTEXTBROWSER
-	if ($foruserprofile) {
+	if ($foruserprofile && !empty($fuser->conf->MAIN_OPTIMIZEFORCOLORBLIND)) {
 		//$default=yn($conf->global->MAIN_OPTIMIZEFORCOLORBLIND);
 		$default = $langs->trans('No');
 		print '<tr class="oddeven">';

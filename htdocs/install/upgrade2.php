@@ -448,7 +448,16 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			migrate_contacts_socialnetworks();
 			migrate_thirdparties_socialnetworks();
 		}
+
+		// Scripts for 14.0
+		$afterversionarray = explode('.', '13.0.9');
+		$beforeversionarray = explode('.', '14.0.9');
+		if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+			migrate_export_import_profiles('export');
+			migrate_export_import_profiles('import');
+		}
 	}
+
 
 	// Code executed only if migration is LAST ONE. Must always be done.
 	if (versioncompare($versiontoarray, $versionranarray) >= 0 || versioncompare($versiontoarray, $versionranarray) <= -3) {
@@ -489,10 +498,16 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			'MAIN_MODULE_VARIANTS'=>'newboxdefonly',
 			'MAIN_MODULE_WEBSITE'=>'newboxdefonly',
 		);
-		migrate_reload_modules($db, $langs, $conf, $listofmodule);
 
+		$result = migrate_reload_modules($db, $langs, $conf, $listofmodule);
+		if ($result < 0) {
+			$error++;
+		}
 		// Reload menus (this must be always and only into last targeted version)
-		migrate_reload_menu($db, $langs, $conf);
+		$result = migrate_reload_menu($db, $langs, $conf);
+		if ($result < 0) {
+			$error++;
+		}
 	}
 
 	// Can force activation of some module during migration with parameter 'enablemodules=MAIN_MODULE_XXX,MAIN_MODULE_YYY,...'
@@ -545,10 +560,11 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	print '</table>';
 
 
-	// Set constant to ask to remake a new ping to inform about upgrade (if first ping was done and OK)
-	$sql = 'UPDATE '.MAIN_DB_PREFIX."const SET VALUE = 'torefresh' WHERE name = 'MAIN_FIRST_PING_OK_ID'";
-	$db->query($sql, 1);
-
+	if (!$error) {
+		// Set constant to ask to remake a new ping to inform about upgrade (if first ping was done and OK)
+		$sql = 'UPDATE '.MAIN_DB_PREFIX."const SET VALUE = 'torefresh' WHERE name = 'MAIN_FIRST_PING_OK_ID'";
+		$db->query($sql, 1);
+	}
 
 	// We always commit.
 	// Process is designed so we can run it several times whatever is situation.
@@ -3423,19 +3439,6 @@ function migrate_categorie_association($db, $langs, $conf)
 			}
 
 			if (!$error) {
-				// TODO DROP table in the next release
-				/*
-				$sqlDrop = "DROP TABLE ".MAIN_DB_PREFIX."categorie_association";
-				if ($db->query($sqlDrop))
-				{
-					$db->commit();
-				}
-				else
-				{
-					$db->rollback();
-				}
-				*/
-
 				$db->commit();
 			} else {
 				$db->rollback();
@@ -4282,6 +4285,22 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 				$mod->remove('noboxes'); // We need to remove because a permission id has been removed
 				$mod->init($reloadmode);
 			}
+		} elseif ($moduletoreload == 'MAIN_MODULE_KNOWLEDGEMANAGEMENT') {    // Permission has changed into 3.0 and 3.1
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Knowledge Management");
+			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modKnowledgeManagement.class.php';
+			if ($res) {
+				$mod = new modKnowledgeManagement($db);
+				$mod->remove('noboxes'); // We need to remove because a permission id has been removed
+				$mod->init($reloadmode);
+			}
+		} elseif ($moduletoreload == 'MAIN_MODULE_EVENTORGANIZATION') {    // Permission has changed into 3.0 and 3.1
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules EventOrganization");
+			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modEventOrganization.class.php';
+			if ($res) {
+				$mod = new modEventOrganization($db);
+				$mod->remove('noboxes'); // We need to remove because a permission id has been removed
+				$mod->init($reloadmode);
+			}
 		} elseif ($moduletoreload == 'MAIN_MODULE_PAYBOX') {    // Permission has changed into 3.0
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Paybox module");
 			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modPaybox.class.php';
@@ -4880,4 +4899,75 @@ function migrate_thirdparties_socialnetworks()
 	}
 	print '<b>'.$langs->trans('MigrationFieldsSocialNetworks', 'Thirdparties')."</b><br>\n";
 	print '</td></tr>';
+}
+
+
+/**
+ * Migrate export and import profiles to fix field name that was renamed
+ *
+ * @param	string		$mode		'export' or 'import'
+ * @return  void
+ */
+function migrate_export_import_profiles($mode = 'export')
+{
+	global $db, $langs;
+
+	$error = 0;
+	$resultstring = '';
+
+	$db->begin();
+
+	print '<tr class="trforrunsql"><td colspan="4">';
+	$sql = 'SELECT rowid, field';
+	if ($mode == 'export') {
+		$sql .= ', filter';
+	}
+	$sql .= ' FROM '.MAIN_DB_PREFIX.$mode.'_model WHERE';
+	$sql .= " type LIKE 'propale_%' OR type LIKE 'commande_%' OR type LIKE 'facture_%'";
+	//print $sql;
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			$oldfield = $obj->field;
+			$newfield = str_replace(array(',f.facnumber', 'f.facnumber,', 'f.total,', 'f.tva,'), array(',f.ref', 'f.ref,', 'f.total_ht,', 'f.total_tva,'), $oldfield);
+
+			if ($mode == 'export') {
+				$oldfilter = $obj->filter;
+				$newfilter = str_replace(array('f.facnumber=', 'f.total=', 'f.tva='), array('f.ref=', 'f.total_ht=', 'f.total_tva='), $oldfilter);
+			} else {
+				$oldfilter = '';
+				$newfilter = '';
+			}
+
+			if ($oldfield != $newfield || $oldfilter != $newfilter) {
+				$sqlupd = 'UPDATE '.MAIN_DB_PREFIX.$mode."_model SET field = '".$db->escape($newfield)."'";
+				if ($mode == 'export') {
+					$sqlupd .= ", filter = '".$db->escape($newfilter)."'";
+				}
+				$sqlupd .= ' WHERE rowid='.$obj->rowid;
+				$resultstring .= '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$sqlupd."</td></tr>\n";
+				$resqlupd = $db->query($sqlupd);
+				if (!$resqlupd) {
+					dol_print_error($db);
+					$error++;
+				}
+			}
+		}
+	} else {
+		$error++;
+	}
+	if (!$error) {
+		$db->commit();
+	} else {
+		dol_print_error($db);
+		$db->rollback();
+	}
+	print '<b>'.$langs->trans('MigrationImportOrExportProfiles', $mode)."</b><br>\n";
+	print '</td></tr>';
+
+	if ($resultstring) {
+		print $resultstring;
+	} else {
+		print '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$langs->trans("NothingToDo")."</td></tr>\n";
+	}
 }

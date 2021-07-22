@@ -91,9 +91,9 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		$perm = 1;
 	} elseif ($table_element_line == 'supplier_proposaldet' && $user->rights->supplier_proposal->write) {
 		$perm = 1;
-	} elseif ($table_element_line == 'commande_fournisseurdet' && $user->rights->fourn->commande->creer) {
+	} elseif ($table_element_line == 'commande_fournisseurdet' && $user->rights->fournisseur->commande->creer) {
 		$perm = 1;
-	} elseif ($table_element_line == 'facture_fourn_det' && $user->rights->fourn->facture->creer) {
+	} elseif ($table_element_line == 'facture_fourn_det' && $user->rights->fournisseur->facture->creer) {
 		$perm = 1;
 	} elseif ($table_element_line == 'ecm_files' && $fk_element == 'fk_product' && (!empty($user->rights->produit->creer) || !empty($user->rights->service->creer))) {
 		$perm = 1;

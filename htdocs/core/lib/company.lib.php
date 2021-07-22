@@ -715,10 +715,7 @@ function getCountriesInEEC()
 	global $conf, $db;
 	$country_code_in_EEC = array();
 
-	if (!empty($conf->global->MAIN_COUNTRIES_IN_EEC)) {
-		// For example MAIN_COUNTRIES_IN_EEC = 'AT,BE,BG,CY,CZ,DE,DK,EE,ES,FI,FR,GB,GR,HR,NL,HU,IE,IM,IT,LT,LU,LV,MC,MT,PL,PT,RO,SE,SK,SI,UK'
-		$country_code_in_EEC = explode(',', $conf->global->MAIN_COUNTRIES_IN_EEC);
-	} elseif (!empty($conf->cache['country_code_in_EEC'])) {
+	if (!empty($conf->cache['country_code_in_EEC'])) {
 		// Use of cache to reduce number of database requests
 		$country_code_in_EEC = $conf->cache['country_code_in_EEC'];
 	} else {
@@ -1902,7 +1899,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			}
 
 			// Status
-			$out .= '<td class="nowrap center">'.$actionstatic->LibStatut($histo[$key]['percent'], 3, 0, $histo[$key]['datestart']).'</td>';
+			$out .= '<td class="nowrap center">'.$actionstatic->LibStatut($histo[$key]['percent'], 2, 0, $histo[$key]['datestart']).'</td>';
 
 			// Actions
 			$out .= '<td></td>';

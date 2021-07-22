@@ -1368,7 +1368,7 @@ class Commande extends CommonOrder
 		}
 		// Possibility to add external linked objects with hooks
 		$this->linked_objects[$this->origin] = $this->origin_id;
-		if (is_array($object->other_linked_objects) && !empty($object->other_linked_objects)) {
+		if (isset($object->other_linked_objects) && is_array($object->other_linked_objects) && !empty($object->other_linked_objects)) {
 			$this->linked_objects = array_merge($this->linked_objects, $object->other_linked_objects);
 		}
 
@@ -1518,7 +1518,7 @@ class Commande extends CommonOrder
 			$this->db->begin();
 
 			$product_type = $type;
-			if (!empty($fk_product)) {
+			if (!empty($fk_product) && $fk_product > 0) {
 				$product = new Product($this->db);
 				$result = $product->fetch($fk_product);
 				$product_type = $product->type;
@@ -2346,6 +2346,10 @@ class Commande extends CommonOrder
 
 					// For triggers
 					$line->fetch($lineid);
+
+					// Memorize previous line for triggers
+					$staticline = clone $line;
+					$line->oldline = $staticline;
 
 					if ($line->delete($user) > 0) {
 						$result = $this->update_price(1);
@@ -4010,7 +4014,7 @@ class Commande extends CommonOrder
 
 		$now = dol_now();
 
-		return max($this->date_commande, $this->date_livraison) < ($now - $conf->commande->client->warning_delay);
+		return max($this->date, $this->date_livraison) < ($now - $conf->commande->client->warning_delay);
 	}
 
 	/**
@@ -4127,7 +4131,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= ' cd.fk_unit,';
 		$sql .= ' cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc, p.tobatch as product_tobatch,';
-		$sql .= ' cd.date_start, cd.date_end';
+		$sql .= ' cd.date_start, cd.date_end, cd.vat_src_code';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
 		$sql .= ' WHERE cd.rowid = '.((int) $rowid);
@@ -4348,7 +4352,8 @@ class OrderLine extends CommonOrderLine
 
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring) {
-			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0) {
+			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product);
+			if ($result < 0) {
 				return $result;
 			} else {
 				$this->pa_ht = $result;
@@ -4384,7 +4389,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= " '".price2num($this->localtax2_tx)."',";
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql .= ' '.(!empty($this->fk_product) ? $this->fk_product : "null").',';
+		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? $this->fk_product : "null").',';
 		$sql .= " '".$this->db->escape($this->product_type)."',";
 		$sql .= " '".price2num($this->remise_percent)."',";
 		$sql .= " ".(price2num($this->subprice) !== '' ?price2num($this->subprice) : "null").",";
@@ -4525,7 +4530,8 @@ class OrderLine extends CommonOrderLine
 
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring) {
-			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0) {
+			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product);
+			if ($result < 0) {
 				return $result;
 			} else {
 				$this->pa_ht = $result;

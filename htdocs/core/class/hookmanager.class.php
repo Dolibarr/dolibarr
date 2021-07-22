@@ -272,8 +272,10 @@ class HookManager
 					$parameters['currentcontext'] = $context;
 					// Hooks that must return int (hooks with type 'addreplace')
 					if ($hooktype == 'addreplace') {
-						$resaction += $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
-						if ($resaction < 0 || !empty($actionclassinstance->error) || (!empty($actionclassinstance->errors) && count($actionclassinstance->errors) > 0)) {
+						$resactiontmp = $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
+						$resaction += $resactiontmp;
+
+						if ($resactiontmp < 0 || !empty($actionclassinstance->error) || (!empty($actionclassinstance->errors) && count($actionclassinstance->errors) > 0)) {
 							$error++;
 							$this->error = $actionclassinstance->error;
 							$this->errors = array_merge($this->errors, (array) $actionclassinstance->errors);
@@ -281,13 +283,22 @@ class HookManager
 						}
 
 						if (isset($actionclassinstance->results) && is_array($actionclassinstance->results)) {
-							$this->resArray = array_merge($this->resArray, $actionclassinstance->results);
+							if ($resactiontmp > 0) {
+								$this->resArray = $actionclassinstance->results;
+							} else {
+								$this->resArray = array_merge($this->resArray, $actionclassinstance->results);
+							}
 						}
 						if (!empty($actionclassinstance->resprints)) {
-							$this->resPrint .= $actionclassinstance->resprints;
+							if ($resactiontmp > 0) {
+								$this->resPrint = $actionclassinstance->resprints;
+							} else {
+								$this->resPrint .= $actionclassinstance->resprints;
+							}
 						}
 					} else {
 						// Generic hooks that return a string or array (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...)
+
 						// TODO. this test should be done into the method of hook by returning nothing
 						if (is_array($parameters) && !empty($parameters['special_code']) && $parameters['special_code'] > 3 && $parameters['special_code'] != $actionclassinstance->module_number) {
 							continue;

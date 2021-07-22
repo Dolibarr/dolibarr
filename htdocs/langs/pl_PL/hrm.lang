@@ -9,9 +9,9 @@ ConfirmDeleteEstablishment=Jesteś pewien, że chcesz usunąć to przedsiębiors
 OpenEtablishment=Otwórz kierownictwo
 CloseEtablishment=Zakończ kierownictwo
 # Dictionary
-DictionaryPublicHolidays=HRM - Public holidays
+DictionaryPublicHolidays=Urlop - święta państwowe
 DictionaryDepartment=HR - Lisa departamentów
-DictionaryFunction=HRM - Job positions
+DictionaryFunction=Zarządzanie personelem - stanowiska pracy
 # Module
 Employees=Zatrudnionych
 Employee=Pracownik
