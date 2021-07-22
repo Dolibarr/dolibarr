@@ -9,10 +9,10 @@ For users:
 ----------
 NEW: Module Recruitement to follow application to job positions is now stable.
 NEW: Feature to make Stock Inventories
-NEW: Several security issues after a second private bug hunting campaign.
+NEW: Several security issues after a second private bug hunting campaign. 
 NEW: A lot of fix into english text after a small proofreading campaign (still not perfect, but really better)
 NEW: All main menu entries are using the picto of the module
-NEW: Add a copy to clipboard button on some fields
+NEW: Add a copy to clipboard button on some fields 
 NEW: Add an example of scheduled job to send email reminder for unpaid invoices
 NEW: Add some color and picto for the direction of movement
 NEW: add the column "Channel" into the list of orders
@@ -82,7 +82,7 @@ NEW: can show the leave dates/holidays on the agenda view
 NEW: Support color for types of event
 
  Bank
-NEW: Bank Entries : display user linked to a salary or a taxes
+NEW: Bank Entries : display user linked to a salary or a taxes 
 NEW: Add bulk actions for Bank Transfer
 
  ECM/GED
@@ -105,7 +105,7 @@ NEW: option to automatically create a login/user when a new subscription of a me
 NEW: option to select membership type on the online payment page for membership subscription or renewal
 
  Products
-NEW: Add price min and price min including tax into product export
+NEW: Add price min and price min including tax into product export 
 NEW: Add a ref in product customer price
 NEW: customer ref for product customer prices
 NEW: Set status of all variants when changing status of parent
@@ -158,8 +158,8 @@ NEW: add option in Workflow module to set a shipment as closed
 
 
  for Admins
-NEW: Add a security center page with all information and advices related to the security of your instance
-NEW: Add a performance center page with all information and advices related to the performance of your instance
+NEW: Add a security center page with all information and advices related to the security of your instance 
+NEW: Add a performance center page with all information and advices related to the performance of your instance 
 
  Modules
 NEW: Module Recruitement is now stable
@@ -202,7 +202,7 @@ NEW: API get the list of product ids only
 NEW: add link to OpenAPI specifications XML file in REST API module setup: swagger.json file can be included into external tools like redoc
 NEW: add native compression in REST APIs
 NEW: Product Variants API, add variant stock to response by parameter
-NEW: Product API route added to get product stock and product with or without variants #13739 #17390
+NEW: Product API route added to get product stock and product with or without variants #13739 #17390 
 
  Hooks
 NEW: hook printFieldListTitle for cabyprodserv.php
@@ -422,7 +422,7 @@ NEW: Module "Credit transfer SEPA" to manage payment of vendors using bank credi
 NEW: Module Intracomm report
 NEW: Module Reception (for a more accurate management of your receptions) moved from experimental to stable.
 NEW: Module Recruitment to manage Job position and applications.
-NEW: Several security issues after a private bug bounty campaign.
+NEW: Several security issues after a private bug bounty campaign. 
 NEW: Accountancy - add chart of sub accounts
 NEW: Accountancy - add options to disable binding on sales, purchases & expense reports independently of the modules
 NEW: Accountancy balance - add a menu entry to show subtotal by group
@@ -559,7 +559,7 @@ NEW: show user on external calender events (when found)
 NEW: subject title with company name instead of application title in ticket message
 NEW: Support for Samba4 AD
 NEW: TakePOS appearance tab with more visual parameters
-NEW: TakePOS add alert before changing thirdparty
+NEW: TakePOS add alert before changing thirdparty 
 NEW: TakePOS add third order printer
 NEW: TakePOS can change thirdparty with barcode scan
 NEW: TakePOS can create a thirdparty customer from TakePOS frontend
@@ -570,9 +570,9 @@ NEW: TakePOS display resiliate status for members
 NEW: TakePOS Gift Receipt
 NEW: TakePOS multicurrency compatibility
 NEW: TakePOS multicurrency total
-NEW: TakePOS print payment method and change
+NEW: TakePOS print payment method and change 
 NEW: TakePOS restrict thirdparty to customer
-NEW: TakePOS show available stock
+NEW: TakePOS show available stock 
 NEW: TakePOS Weighing Scale compatibility with TakePOS connector #14725
 NEW: Thirdparty Import new fields: mother company,outstanding debt limit,bank account,incoterms
 NEW: Thirdparty module : box on customer/supplier tab for invoice outsantding amount late
@@ -585,8 +585,8 @@ NEW: VAT report - Invert constant to show by default zero VAT in reports
 NEW: website page fields selection
 NEW: website - global header of a website can also have dynamic content
 NEW: when creating a user from a member linked to a thirdparty, you can choose to create it as external or internal user
-NEW: add clone button on miscellaneous payment
-NEW: add option to put the product label in bold in the PDF templates if configured #15065
+NEW: add clone button on miscellaneous payment 
+NEW: add option to put the product label in bold in the PDF templates if configured #15065 
 NEW: add option "If the feature to manage kits of module Stock is used, show details of subproducts of a kit on PDF."
 
 
