@@ -1182,7 +1182,7 @@ class Form
 			// mode 1
 			$urloption = 'htmlname='.urlencode($htmlname).'&outjson=1&filter='.urlencode($filter).($showtype ? '&showtype='.urlencode($showtype) : '');
 			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
-			$out .= '<style type="text/css">.ui-autocomplete { z-index: 250; }</style>';
+			$out .= '<style type="text/css">.ui-autocomplete { z-index: 1003; }</style>';
 			if (empty($hidelabel)) print $langs->trans("RefOrLabel").' : ';
 			elseif ($hidelabel > 1) {
 				$placeholder = ' placeholder="'.$langs->trans("RefOrLabel").'"';
@@ -6052,7 +6052,7 @@ class Form
 			$urloption = 'htmlname='.$htmlname.'&outjson=1&objectdesc='.$objectdesc.'&filter='.urlencode($objecttmp->filter);
 			// Activate the auto complete using ajax call.
 			$out .= ajax_autocompleter($preselectedvalue, $htmlname, $urlforajaxcall, $urloption, $conf->global->$confkeyforautocompletemode, 0, array());
-			$out .= '<style type="text/css">.ui-autocomplete { z-index: 250; }</style>';
+			$out .= '<style type="text/css">.ui-autocomplete { z-index: 1003; }</style>';
 			if ($placeholder) $placeholder = ' placeholder="'.$placeholder.'"';
 			$out .= '<input type="text" class="'.$morecss.'"'.($disabled ? ' disabled="disabled"' : '').' name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
 		}
