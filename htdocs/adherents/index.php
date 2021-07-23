@@ -100,7 +100,7 @@ $sql .= " GROUP BY t.rowid, t.libelle, t.subscription, d.statut";
 
 dol_syslog("index.php::select nb of members per type", LOG_DEBUG);
 $result = $db->query($sql);
-if ($result) {
+if (!empty($result)) {
 	$num = $db->num_rows($result);
 	$i = 0;
 	while ($i < $num) {
@@ -144,7 +144,7 @@ $sql .= " GROUP BY d.fk_adherent_type";
 
 dol_syslog("index.php::select nb of uptodate members by type", LOG_DEBUG);
 $result = $db->query($sql);
-if ($result) {
+if (!empty($result)) {
 	$num = $db->num_rows($result);
 	$i = 0;
 	while ($i < $num) {
@@ -160,7 +160,7 @@ if ($result) {
  */
 
 $boxgraph = '';
-if ($conf->use_javascript_ajax) {
+if (!empty($conf->use_javascript_ajax)) {
 	$boxgraph .='<div class="div-table-responsive-no-min">';
 	$boxgraph .='<table class="noborder nohover centpercent">';
 	$boxgraph .='<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';

@@ -115,7 +115,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 $sql .= $db->plimit($limit + 1, $offset);
 
 $result = $db->query($sql);
-if ($result) {
+if (!empty($result)) {
 	$num = $db->num_rows($result);
 
 	$i = 0;
@@ -140,7 +140,7 @@ if ($result) {
 	print '<td class="right">'.$langs->trans("Statut").'</td>';
 	print '</tr>';
 
-	if ($num) {
+	if (!empty($num)) {
 		while ($i < $num && $i < $max) {
 			$obj = $db->fetch_object($result);
 

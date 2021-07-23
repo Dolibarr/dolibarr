@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors'));
 
-if (!$user->admin) {
+if (empty($user->admin)) {
 	accessforbidden();
 }
 

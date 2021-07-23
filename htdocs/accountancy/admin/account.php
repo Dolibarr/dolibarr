@@ -138,12 +138,12 @@ if (empty($reshook)) {
 	}
 	if ((GETPOST('valid_change_chart', 'alpha') && GETPOST('chartofaccounts', 'int') > 0)	// explicit click on button 'Change and load' with js on
 		|| (GETPOST('chartofaccounts', 'int') > 0 && GETPOST('chartofaccounts', 'int') != $conf->global->CHARTOFACCOUNTS)) {	// a submit of form is done and chartofaccounts combo has been modified
-		if ($chartofaccounts > 0 && $permissiontoadd) {
+		if ($chartofaccounts > 0 && !empty($permissiontoadd)) {
 			// Get language code for this $chartofaccounts
 			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_country as c, '.MAIN_DB_PREFIX.'accounting_system as a';
 			$sql .= ' WHERE c.rowid = a.fk_country AND a.rowid = '.(int) $chartofaccounts;
 			$resql = $db->query($sql);
-			if ($resql) {
+			if (!empty($resql)) {
 				$obj = $db->fetch_object($resql);
 				$country_code = $obj->code;
 			} else {
@@ -151,7 +151,7 @@ if (empty($reshook)) {
 			}
 
 			// Try to load sql file
-			if ($country_code) {
+			if (!empty($country_code)) {
 				$sqlfile = DOL_DOCUMENT_ROOT.'/install/mysql/data/llx_accounting_account_'.strtolower($country_code).'.sql';
 
 				$offsetforchartofaccount = 0;
@@ -234,7 +234,7 @@ $sql .= " WHERE asy.rowid = ".((int) $pcgver);
 //print $sql;
 if (strlen(trim($search_account))) {
 	$lengthpaddingaccount = 0;
-	if ($conf->global->ACCOUNTING_LENGTH_GACCOUNT || $conf->global->ACCOUNTING_LENGTH_AACCOUNT) {
+	if (!empty($conf->global->ACCOUNTING_LENGTH_GACCOUNT) || !empty($conf->global->ACCOUNTING_LENGTH_AACCOUNT)) {
 		$lengthpaddingaccount = max($conf->global->ACCOUNTING_LENGTH_GACCOUNT, $conf->global->ACCOUNTING_LENGTH_AACCOUNT);
 	}
 	$search_account_tmp = $search_account;
@@ -249,8 +249,8 @@ if (strlen(trim($search_account))) {
 	}
 
 	//var_dump($search_account); exit;
-	if ($search_account_tmp) {
-		if ($weremovedsomezero) {
+	if (!empty($search_account_tmp)) {
+		if (!empty($weremovedsomezero)) {
 			$search_account_tmp_clean = $search_account_tmp;
 			$search_account_clean = $search_account;
 			$startchar = '%';
@@ -293,7 +293,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 }
 
 // List of mass actions available
-if ($user->rights->accounting->chartofaccount) {
+if (!empty($user->rights->accounting->chartofaccount)) {
 	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 }
 if (in_array($massaction, array('presend', 'predelete', 'closed'))) {
@@ -307,7 +307,7 @@ $sql .= $db->plimit($limit + 1, $offset);
 dol_syslog('accountancy/admin/account.php:: $sql='.$sql);
 $resql = $db->query($sql);
 
-if ($resql) {
+if (!empty($resql)) {
 	$num = $db->num_rows($resql);
 
 	$param = '';
@@ -317,19 +317,19 @@ if ($resql) {
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.urlencode($limit);
 	}
-	if ($search_account) {
+	if (!empty($search_account)) {
 		$param .= '&search_account='.urlencode($search_account);
 	}
-	if ($search_label) {
+	if (!empty($search_label)) {
 		$param .= '&search_label='.urlencode($search_label);
 	}
-	if ($search_labelshort) {
+	if (!empty($search_labelshort)) {
 		$param .= '&search_labelshort='.urlencode($search_labelshort);
 	}
 	if ($search_accountparent > 0 || $search_accountparent == '0') {
 		$param .= '&search_accountparent='.urlencode($search_accountparent);
 	}
-	if ($search_pcgtype) {
+	if (!empty($search_pcgtype)) {
 		$param .= '&search_pcgtype='.urlencode($search_pcgtype);
 	}
 	if ($optioncss != '') {
@@ -374,7 +374,7 @@ if ($resql) {
 	dol_syslog('accountancy/admin/account.php $sql='.$sql);
 
 	$resqlchart = $db->query($sql);
-	if ($resqlchart) {
+	if (!empty($resqlchart)) {
 		$numbis = $db->num_rows($resqlchart);
 		$i = 0;
 		print '<option value="-1">&nbsp;</option>';
@@ -528,7 +528,7 @@ if ($resql) {
 				$accountparent->account_number = $obj->account_number2; // Sotre an account number for output
 				print $accountparent->getNomUrl(1);
 				print "</td>\n";
-				if (!$i) {
+				if (empty($i)) {
 					$totalarray['nbfield']++;
 				}
 			} else {
@@ -537,7 +537,7 @@ if ($resql) {
 					print '<!-- Bad value for obj->account_parent = '.$obj->account_parent.': is a rowid that does not exists -->';
 				}
 				print '</td>';
-				if (!$i) {
+				if (empty($i)) {
 					$totalarray['nbfield']++;
 				}
 			}
@@ -548,7 +548,7 @@ if ($resql) {
 			print "<td>";
 			print $obj->pcg_type;
 			print "</td>\n";
-			if (!$i) {
+			if (empty($i)) {
 				$totalarray['nbfield']++;
 			}
 		}
@@ -567,7 +567,7 @@ if ($resql) {
 					print '</a>';
 				}
 				print '</td>';
-				if (!$i) {
+				if (empty($i)) {
 					$totalarray['nbfield']++;
 				}
 			}
@@ -586,14 +586,14 @@ if ($resql) {
 				print '</a>';
 			}
 			print '</td>';
-			if (!$i) {
+			if (empty($i)) {
 				$totalarray['nbfield']++;
 			}
 		}
 
 		// Action
 		print '<td class="center nowraponall">';
-		if ($user->rights->accounting->chartofaccount) {
+		if (!empty($user->rights->accounting->chartofaccount)) {
 			print '<a class="editfielda" href="./card.php?action=update&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
 			print img_edit();
 			print '</a>';
@@ -602,7 +602,7 @@ if ($resql) {
 			print img_delete();
 			print '</a>';
 			print '&nbsp;';
-			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			if (!empty($massactionbutton) || !empty($massaction)) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
 				if (in_array($obj->rowid, $arrayofselected)) {
 					$selected = 1;
@@ -611,7 +611,7 @@ if ($resql) {
 			}
 		}
 		print '</td>'."\n";
-		if (!$i) {
+		if (empty($i)) {
 			$totalarray['nbfield']++;
 		}
 

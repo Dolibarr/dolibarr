@@ -96,7 +96,7 @@ if ($action == 'update') {
 				$error++;
 			}
 		}
-		if ($error) {
+		if (!empty($error)) {
 			setEventMessages($langs->trans("Error"), null, 'errors');
 		}
 
@@ -111,7 +111,7 @@ if ($action == 'update') {
 				$error++;
 			}
 		}
-		if ($error) {
+		if (!empty($error)) {
 			setEventMessages($langs->trans("Error"), null, 'errors');
 		}
 	}

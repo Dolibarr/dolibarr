@@ -66,7 +66,7 @@ if (GETPOST('cancel', 'alpha')) {
 	exit;
 }
 
-if ($action == 'add' && $user->rights->accounting->chartofaccount) {
+if ($action == 'add' && !empty($user->rights->accounting->chartofaccount)) {
 	if (!$cancel) {
 		if (!$account_number) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountNumber")), null, 'errors');
@@ -127,7 +127,7 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount) {
 			}
 		}
 	}
-} elseif ($action == 'edit' && $user->rights->accounting->chartofaccount) {
+} elseif ($action == 'edit' && !empty($user->rights->accounting->chartofaccount)) {
 	if (!$cancel) {
 		if (!$account_number) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountNumber")), null, 'errors');
@@ -181,7 +181,7 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount) {
 		header("Location: ".$urltogo);
 		exit();
 	}
-} elseif ($action == 'delete' && $user->rights->accounting->chartofaccount) {
+} elseif ($action == 'delete' && !empty($user->rights->accounting->chartofaccount)) {
 	$result = $object->fetch($id);
 
 	if (!empty($object->id)) {

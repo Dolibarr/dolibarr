@@ -48,7 +48,7 @@ $help_url = "EN:Module_Double_Entry_Accounting";
 
 llxHeader('', $title, $help_url);
 
-if ($id) {
+if (!empty($id)) {
 	$object = new Fiscalyear($db);
 	$object->fetch($id);
 	$object->info($id);

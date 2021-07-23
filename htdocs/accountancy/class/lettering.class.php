@@ -85,7 +85,7 @@ class Lettering extends BookKeeping
 		// echo $sql;
 		//
 		$resql = $this->db->query($sql);
-		if ($resql) {
+		if (!empty($resql)) {
 			$num = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -114,7 +114,7 @@ class Lettering extends BookKeeping
 					$sql .= " )  ";
 
 					$resql2 = $this->db->query($sql);
-					if ($resql2) {
+					if (!empty($resql2)) {
 						while ($obj2 = $this->db->fetch_object($resql2)) {
 							$ids[$obj2->rowid] = $obj2->rowid;
 							$ids_fact[] = $obj2->fact_id;
@@ -142,7 +142,7 @@ class Lettering extends BookKeeping
 						$sql .= ") ";
 
 						$resql2 = $this->db->query($sql);
-						if ($resql2) {
+						if (!empty($resql2)) {
 							while ($obj2 = $this->db->fetch_object($resql2)) {
 								$ids[$obj2->rowid] = $obj2->rowid;
 							}
@@ -173,7 +173,7 @@ class Lettering extends BookKeeping
 					$sql .= " )";
 
 					$resql2 = $this->db->query($sql);
-					if ($resql2) {
+					if (!empty($resql2)) {
 						while ($obj2 = $this->db->fetch_object($resql2)) {
 							$ids[$obj2->rowid] = $obj2->rowid;
 							$ids_fact[] = $obj2->fact_id;
@@ -201,7 +201,7 @@ class Lettering extends BookKeeping
 						$sql .= " )  ";
 
 						$resql2 = $this->db->query($sql);
-						if ($resql2) {
+						if (!empty($resql2)) {
 							while ($obj2 = $this->db->fetch_object($resql2)) {
 								$ids[$obj2->rowid] = $obj2->rowid;
 							}
@@ -217,7 +217,7 @@ class Lettering extends BookKeeping
 				}
 			}
 		}
-		if ($error) {
+		if (!empty($error)) {
 			foreach ($this->errors as $errmsg) {
 				dol_syslog(__METHOD__.' '.$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
@@ -243,7 +243,7 @@ class Lettering extends BookKeeping
 		$sql .= " lettering_code != '' ORDER BY lettering_code DESC limit 1";
 
 		$result = $this->db->query($sql);
-		if ($result) {
+		if (!empty($result)) {
 			$obj = $this->db->fetch_object($result);
 			$lettre = (empty($obj->lettering_code) ? 'AAA' : $obj->lettering_code);
 			if (!empty($obj->lettering_code)) {
@@ -257,7 +257,7 @@ class Lettering extends BookKeeping
 		$sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred FROM ".MAIN_DB_PREFIX."accounting_bookkeeping WHERE ";
 		$sql .= " rowid IN (".$this->db->sanitize(implode(',', $ids)).") AND date_validated IS NULL";
 		$result = $this->db->query($sql);
-		if ($result) {
+		if (!empty($result)) {
 			$obj = $this->db->fetch_object($result);
 			if (!(round(abs($obj->deb), 2) === round(abs($obj->cred), 2))) {
 				$this->errors[] = 'Total not exacts '.round(abs($obj->deb), 2).' vs '.round(abs($obj->cred), 2);
@@ -288,7 +288,7 @@ class Lettering extends BookKeeping
 		}
 
 		// Commit or rollback
-		if ($error) {
+		if (!empty($error)) {
 			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);

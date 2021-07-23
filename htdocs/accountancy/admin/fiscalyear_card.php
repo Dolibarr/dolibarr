@@ -198,7 +198,7 @@ if ($action == 'create') {
 	print '</div>';
 
 	print '</form>';
-} elseif ($id) {
+} elseif (!empty($id)) {
 	$result = $object->fetch($id);
 	if ($result > 0) {
 		$head = fiscalyear_prepare_head($object);

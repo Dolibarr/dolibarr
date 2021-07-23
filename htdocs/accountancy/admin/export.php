@@ -200,7 +200,7 @@ print '<td colspan="3">'.$langs->trans('Options').'</td>';
 print "</tr>\n";
 
 $num = count($main_option);
-if ($num) {
+if (!empty($num)) {
 	foreach ($main_option as $key) {
 		print '<tr class="oddeven value">';
 
@@ -252,7 +252,7 @@ print "<br>\n";
  */
 
 $num2 = count($model_option);
-if ($num2) {
+if (!empty($num2)) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="3">'.$langs->trans('OtherOptions').'</td>';
