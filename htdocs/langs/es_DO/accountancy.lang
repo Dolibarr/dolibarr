@@ -1,0 +1,2 @@
+# Dolibarr language file - Source file is en_US - accountancy
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.

@@ -28,15 +28,18 @@
 // $langs must be defined
 // $hidedetails, $hidedesc, $hideref must de defined
 
-if ($action == 'up' && $permissiontoedit)
-{
+if ($action == 'up' && $permissiontoedit) {
 	$object->line_up(GETPOST('rowid'));
 
 	// Define output language
 	$outputlangs = $langs;
 	$newlang = '';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		$newlang = GETPOST('lang_id', 'aZ09');
+	}
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+		$newlang = $object->thirdparty->default_lang;
+	}
 	if (!empty($newlang)) {
 		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang($newlang);
@@ -50,15 +53,18 @@ if ($action == 'up' && $permissiontoedit)
 	exit();
 }
 
-if ($action == 'down' && $permissiontoedit)
-{
+if ($action == 'down' && $permissiontoedit) {
 	$object->line_down(GETPOST('rowid'));
 
 	// Define output language
 	$outputlangs = $langs;
 	$newlang = '';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		$newlang = GETPOST('lang_id', 'aZ09');
+	}
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+		$newlang = $object->thirdparty->default_lang;
+	}
 	if (!empty($newlang)) {
 		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang($newlang);

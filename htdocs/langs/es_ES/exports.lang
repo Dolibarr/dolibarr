@@ -53,7 +53,8 @@ TypeOfLineServiceOrProduct=Tipo de línea (0=producto, 1=servicio)
 FileWithDataToImport=Archivo que contiene los datos a importar
 FileToImport=Archivo origen a importar
 FileMustHaveOneOfFollowingFormat=El archivo de importación debe tener uno de los siguientes formatos
-DownloadEmptyExample=Descargar una plantilla con la información de los contenidos de los campos (los marcados con * son obligatorios)
+DownloadEmptyExample=Descargar archivo de plantilla con información de contenido de campo
+StarAreMandatory=* son campos obligatorios
 ChooseFormatOfFileToImport=Elija el formato de archivo que desea importar haciendo en la imagen %s para seleccionarlo...
 ChooseFileToImport=Cargue el archivo y luego haga clic en el icono %s para seleccionar el archivo como archivo de importación de origen ...
 SourceFileFormat=Formato del archivo origen
@@ -133,3 +134,4 @@ KeysToUseForUpdates=Clave (columna) a usar para <b>actualizar</b> datos existent
 NbInsert=Número de líneas añadidas: %s
 NbUpdate=Número de líneas actualizadas: %s
 MultipleRecordFoundWithTheseFilters=Se han encontrado varios registros con estos filtros: %s
+StocksWithBatch=Existencias y ubicación (almacén) de productos con número de lote / serie

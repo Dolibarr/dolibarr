@@ -53,7 +53,8 @@ TypeOfLineServiceOrProduct=Použitý typ řádku (0 = produkt, 1 = služba)
 FileWithDataToImport=Soubor s daty pro import
 FileToImport=Zdrojový soubor k importu
 FileMustHaveOneOfFollowingFormat=Importovaný soubor musí mít jeden z následujících formátů
-DownloadEmptyExample=Stáhnout soubor šablony s informacemi o obsahu pole (* jsou povinná pole)
+DownloadEmptyExample=Download template file with field content information
+StarAreMandatory=* are mandatory fields
 ChooseFormatOfFileToImport=Vyberte formát souboru, který chcete použít jako formát souboru importu klepnutím na ikonu %s pro jeho výběr ...
 ChooseFileToImport=Pro nahrání souboru klepněte na ikonku %s pro výběr souboru jako zdrojový soubor importu ...
 SourceFileFormat=Zdrojový soubor
@@ -133,3 +134,4 @@ KeysToUseForUpdates=Klíč (sloupec), který chcete použít pro <b> aktualizaci
 NbInsert=Počet vložených řádků: %s
 NbUpdate=Počet aktualizovaných řádků: %s
 MultipleRecordFoundWithTheseFilters=Bylo nalezeno více záznamů s těmito filtry: %s
+StocksWithBatch=Stocks and location (warehouse) of products with batch/serial number

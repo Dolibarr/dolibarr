@@ -161,3 +161,4 @@ AtLeastOneDefaultBankAccountMandatory=Es muss mindestens 1 Standardbankkonto def
 RESTRICT_ON_IP=Erlauben Sie nur den Zugriff auf eine Host-IP (Platzhalter nicht zulässig, verwenden Sie Leerzeichen zwischen den Werten). Leer bedeutet, dass jeder Host darauf zugreifen kann.
 FeatureNotAvailableWithReceptionModule=Funktion nicht verfügbar, wenn das Modul Empfang aktiviert ist
 EmailTemplate=Vorlage für E-Mail
+YouShouldDisablePHPFunctions=PHP Funktionen sollten deaktiviert werden

@@ -26,14 +26,18 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+if (!empty($conf->accounting->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'salaries', 'bills', 'hrm', 'stripe'));
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 //$result = restrictedArea($user, 'salaries', '', '', '');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -41,11 +45,14 @@ $rowid = GETPOST("rowid", 'alpha');
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+$result = restrictedArea($user, 'banque');
 
 
 /*
@@ -78,8 +85,8 @@ $stripeacc = $stripe->getStripeAccount($service);
 if (!$rowid) {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') {
-        print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    }
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
@@ -101,7 +108,7 @@ if (!$rowid) {
 	//print_liste_field_titre("CustomerId", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 	//print_liste_field_titre("Origin", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
-    print_liste_field_titre("DateOperation", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("DateOperation", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'left ');
 	print_liste_field_titre("Paid", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', '', '', 'right ');
@@ -110,15 +117,13 @@ if (!$rowid) {
 	print "</tr>\n";
 
 	try {
-		if ($stripeacc)
-		{
+		if ($stripeacc) {
 			$payout = \Stripe\Payout::all(array("limit" => $limit), array("stripe_account" => $stripeacc));
 		} else {
 			$payout = \Stripe\Payout::all(array("limit" => $limit));
 		}
 
-		foreach ($payout->data as $payout)
-		{
+		foreach ($payout->data as $payout) {
 			//$charge = $payout;
 			//var_dump($payout);
 
@@ -157,14 +162,16 @@ if (!$rowid) {
 			print '<tr class="oddeven">';
 
 			// Ref
-	        if (!empty($stripeacc)) $connect = $stripeacc.'/';
+			if (!empty($stripeacc)) {
+				$connect = $stripeacc.'/';
+			}
 
 			$url = 'https://dashboard.stripe.com/'.$connect.'test/payouts/'.$payout->id;
 			if ($servicestatus) {
 				$url = 'https://dashboard.stripe.com/'.$connect.'payouts/'.$payout->id;
 			}
 
-	        print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." ".$payout->id."</a></td>\n";
+			print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." ".$payout->id."</a></td>\n";
 
 
 			// Stripe customer
@@ -194,7 +201,7 @@ if (!$rowid) {
 			//print "</td>\n";
 			// Date payment
 			print '<td class="center">'.dol_print_date($payout->created, '%d/%m/%Y %H:%M')."</td>\n";
-	        // Date payment
+			// Date payment
 			print '<td class="center">'.dol_print_date($payout->arrival_date, '%d/%m/%Y %H:%M')."</td>\n";
 			// Type
 			print '<td>'.$payout->description.'</td>';
@@ -203,16 +210,16 @@ if (!$rowid) {
 			// Status
 			print "<td class='right'>";
 			if ($payout->status == 'paid') {
-	            print img_picto($langs->trans("".$payout->status.""), 'statut4');
-	        } elseif ($payout->status == 'pending') {
-	            print img_picto($langs->trans("".$payout->status.""), 'statut7');
-	        } elseif ($payout->status == 'in_transit') {
-	            print img_picto($langs->trans("".$payout->status.""), 'statut7');
-	        } elseif ($payout->status == 'failed') {
-	            print img_picto($langs->trans("".$payout->status.""), 'statut7');
-	        } elseif ($payout->status == 'canceled') {
-	            print img_picto($langs->trans("".$payout->status.""), 'statut8');
-	        }
+				print img_picto($langs->trans("".$payout->status.""), 'statut4');
+			} elseif ($payout->status == 'pending') {
+				print img_picto($langs->trans("".$payout->status.""), 'statut7');
+			} elseif ($payout->status == 'in_transit') {
+				print img_picto($langs->trans("".$payout->status.""), 'statut7');
+			} elseif ($payout->status == 'failed') {
+				print img_picto($langs->trans("".$payout->status.""), 'statut7');
+			} elseif ($payout->status == 'canceled') {
+				print img_picto($langs->trans("".$payout->status.""), 'statut8');
+			}
 			print '</td>';
 			print "</tr>\n";
 		}

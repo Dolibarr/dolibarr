@@ -36,15 +36,29 @@ if ($object->fetch($id) < 1) {
 	exit();
 }
 
+$permissiontoread = $user->rights->produit->lire || $user->rights->service->lire;
+
+// Security check
+if (empty($conf->variants->enabled)) {
+	accessforbidden('Module not enabled');
+}
+if ($user->socid > 0) { // Protection if external user
+	accessforbidden();
+}
+//$result = restrictedArea($user, 'variant');
+if (!$permissiontoread) accessforbidden();
+
 
 /*
  * Actions
  */
 
-if ($cancel) $action = '';
+if ($cancel) {
+	$action = '';
+}
 
-if ($_POST) {
-	if ($action == 'edit') {
+if ($action) {
+	if ($action == 'update') {
 		$object->ref = $ref;
 		$object->label = $label;
 
@@ -55,24 +69,21 @@ if ($_POST) {
 			header('Location: '.dol_buildpath('/variants/card.php?id='.$id, 2));
 			exit();
 		}
-	} elseif ($action == 'update') {
+	} elseif ($action == 'update_value') {
 		if ($objectval->fetch($valueid) > 0) {
 			$objectval->ref = $ref;
 			$objectval->value = GETPOST('value', 'alpha');
 
-			if (empty($objectval->ref))
-			{
+			if (empty($objectval->ref)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Ref")), null, 'errors');
 			}
-			if (empty($objectval->value))
-			{
+			if (empty($objectval->value)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				if ($objectval->update($user) > 0) {
 					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 				} else {
@@ -102,8 +113,7 @@ if ($confirm == 'yes') {
 			header('Location: '.dol_buildpath('/variants/list.php', 2));
 		}
 		exit();
-	} elseif ($action == 'confirm_deletevalue')
-	{
+	} elseif ($action == 'confirm_deletevalue') {
 		if ($objectval->fetch($valueid) > 0) {
 			if ($objectval->delete($user) < 1) {
 				setEventMessages($langs->trans('CoreErrorMessage'), $objectval->errors, 'errors');
@@ -124,9 +134,11 @@ if ($confirm == 'yes') {
 
 $langs->load('products');
 
+$help_url = 'EN:Module_Products#Variants';
+
 $title = $langs->trans('ProductAttributeName', dol_htmlentities($object->label));
 
-llxHeader('', $title);
+llxHeader('', $title, $help_url);
 
 //print load_fiche_titre($title);
 
@@ -136,16 +148,21 @@ $head[$h][1] = $langs->trans("ProductAttributeName");
 $head[$h][2] = 'variant';
 $h++;
 
-dol_fiche_head($head, 'variant', $langs->trans('ProductAttributeName'), -1, 'generic');
+print dol_get_fiche_head($head, 'variant', $langs->trans('ProductAttributeName'), -1, 'generic');
 
 if ($action == 'edit') {
-    print '<form method="POST">';
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="update">';
+		print '<input type="hidden" name="id" value="'.$id.'">';
+		print '<input type="hidden" name="valueid" value="'.$valueid.'">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 }
 
 
 if ($action != 'edit') {
-    print '<div class="fichecenter">';
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 }
 print '<table class="border centpercent tableforfield">';
 print '<tr>';
@@ -173,17 +190,17 @@ print '</table>';
 
 
 if ($action != 'edit') {
-    print '</div>';
+	print '</div>';
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 if ($action == 'edit') {
 	print '<div style="text-align: center;">';
 	print '<div class="inline-block divButAction">';
-	print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
+	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 	print '&nbsp; &nbsp;';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 	print '</div></form>';
 } else {
@@ -232,7 +249,7 @@ if ($action == 'edit') {
 	if ($action == 'edit_value') {
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="action" value="update">';
+		print '<input type="hidden" name="action" value="update_value">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="valueid" value="'.$valueid.'">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -252,9 +269,9 @@ if ($action == 'edit') {
 				<td><input type="text" name="ref" value="<?php echo $attrval->ref ?>"></td>
 				<td><input type="text" name="value" value="<?php echo $attrval->value ?>"></td>
 				<td class="right">
-					<input type="submit" value="<?php echo $langs->trans('Save') ?>" class="button">
+					<input type="submit" value="<?php echo $langs->trans("Save") ?>" class="button button-save">
 					&nbsp; &nbsp;
-					<input type="submit" name="cancel" value="<?php echo $langs->trans('Cancel') ?>" class="button">
+					<input type="submit" name="cancel" value="<?php echo $langs->trans("Cancel") ?>" class="button button-cancel">
 				</td>
 			<?php
 		} else {

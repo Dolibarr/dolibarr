@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - vendors
 Suppliers=供应商
 SuppliersInvoice=供应商发票
+SupplierInvoices=供应商发票
 ShowSupplierInvoice=显示供应商发票
 NewSupplier=新供应商
 History=历史
@@ -38,6 +39,7 @@ MenuOrdersSupplierToBill=采购订单发票
 NbDaysToDelivery=Delivery delay (days)
 DescNbDaysToDelivery=The longest delivery delay of the products from this order
 SupplierReputation=供应商声誉
+ReferenceReputation=Reference reputation
 DoNotOrderThisProductToThisSupplier=不订购
 NotTheGoodQualitySupplier=Low quality
 ReputationForThisProduct=信誉

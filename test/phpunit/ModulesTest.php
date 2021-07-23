@@ -28,8 +28,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 
-if (empty($user->id))
-{
+if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
@@ -74,64 +73,64 @@ class ModulesTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-    	global $conf,$user,$langs,$db;
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass()
+	{
+		global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass()
+	{
+		global $conf,$user,$langs,$db;
 		$db->rollback();
 
 		print __METHOD__."\n";
-    }
+	}
 
 	/**
 	 * Init phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function setUp()
-    {
-    	global $conf,$user,$langs,$db;
+	protected function setUp()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		print __METHOD__."\n";
-    }
+	}
 	/**
 	 * End phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function tearDown()
-    {
-    	print __METHOD__."\n";
-    }
+	protected function tearDown()
+	{
+		print __METHOD__."\n";
+	}
 
-    /**
-     * testModulesInit
-     *
-     * @return int
-     */
-    public function testModulesInit()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * testModulesInit
+	 *
+	 * @return int
+	 */
+	public function testModulesInit()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
@@ -144,22 +143,20 @@ class ModulesTest extends PHPUnit\Framework\TestCase
 		'Mailing','MailmanSpip','Margin','ModuleBuilder','MultiCurrency',
 		'Notification','Oauth','OpenSurvey','Paybox','Paypal','Prelevement','Printing','Product','ProductBatch','Projet','Propale','ReceiptPrinter','Resource',
 		'Salaries','Service','SocialNetworks','Societe','Stock','Stripe','SupplierProposal','Syslog','TakePos','Tax','Ticket','User','Variants','WebServices','WebServicesClient','Website','Workflow');
-		foreach ($modulelist as $modlabel)
-		{
-    		require_once DOL_DOCUMENT_ROOT.'/core/modules/mod'.$modlabel.'.class.php';
-            $class='mod'.$modlabel;
-    		$mod=new $class($db);
-            $result=$mod->remove();
-            $result=$mod->init();
-        	$this->assertLessThan($result, 0, $modlabel);
-        	print __METHOD__." test remove/init for module ".$modlabel.", result=".$result."\n";
+		foreach ($modulelist as $modlabel) {
+			require_once DOL_DOCUMENT_ROOT.'/core/modules/mod'.$modlabel.'.class.php';
+			$class='mod'.$modlabel;
+			$mod=new $class($db);
+			$result=$mod->remove();
+			$result=$mod->init();
+			$this->assertLessThan($result, 0, $modlabel);
+			print __METHOD__." test remove/init for module ".$modlabel.", result=".$result."\n";
 
-        	if (in_array($modlabel, array('Ldap', 'MailmanSpip')))
-        	{
-        	    $result=$mod->remove();
-        	}
+			if (in_array($modlabel, array('Ldap', 'MailmanSpip'))) {
+				$result=$mod->remove();
+			}
 		}
 
-        return 0;
-    }
+		return 0;
+	}
 }

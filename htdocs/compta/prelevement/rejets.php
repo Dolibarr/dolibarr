@@ -35,7 +35,9 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 $type = GETPOST('type', 'aZ09');
@@ -45,7 +47,9 @@ $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -62,10 +66,14 @@ if ($type == 'bank-transfer') {
 
 llxHeader('', $title);
 
-if ($sortorder == "") $sortorder = "DESC";
-if ($sortfield == "") $sortfield = "p.datec";
+if ($sortorder == "") {
+	$sortorder = "DESC";
+}
+if ($sortfield == "") {
+	$sortfield = "p.datec";
+}
 
-$rej = new RejetPrelevement($db, $user);
+$rej = new RejetPrelevement($db, $user, $type);
 $line = new LignePrelevement($db);
 
 $hookmanager->initHooks(array('withdrawalsreceiptsrejectedlist'));
@@ -90,13 +98,14 @@ if ($type == 'bank-transfer') {
 } else {
 	$sql .= " AND p.type = 'debit-order'";
 }
-if ($socid) $sql .= " AND s.rowid = ".$socid;
+if ($socid) {
+	$sql .= " AND s.rowid = ".((int) $socid);
+}
 $sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($limit + 1, $offset);
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
 
@@ -104,7 +113,7 @@ if ($result)
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
 	print"\n<!-- debut table -->\n";
-	print '<table class="noborder tagtable liste" width="100%" cellspacing="0" cellpadding="4">';
+	print '<table class="noborder tagtable liste" width="100%" cellpadding="4">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Line", $_SERVER["PHP_SELF"], "p.ref", '', $param);
 	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $param);
@@ -112,8 +121,7 @@ if ($result)
 	print "</tr>\n";
 
 	if ($num) {
-		while ($i < min($num, $limit))
-		{
+		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($result);
 
 			print '<tr class="oddeven">';

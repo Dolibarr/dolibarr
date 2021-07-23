@@ -33,7 +33,9 @@ $langs->loadLangs(array("admin", "recruitment"));
 
 $action = GETPOST('action', 'aZ09');
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $error = 0;
 
@@ -43,22 +45,27 @@ $error = 0;
  */
 
 if ($action == 'setRECRUITMENT_ENABLE_PUBLIC_INTERFACE') {
-	if (GETPOST('value')) dolibarr_set_const($db, 'RECRUITMENT_ENABLE_PUBLIC_INTERFACE', 1, 'chaine', 0, '', $conf->entity);
-	else dolibarr_set_const($db, 'RECRUITMENT_ENABLE_PUBLIC_INTERFACE', 0, 'chaine', 0, '', $conf->entity);
+	if (GETPOST('value')) {
+		dolibarr_set_const($db, 'RECRUITMENT_ENABLE_PUBLIC_INTERFACE', 1, 'chaine', 0, '', $conf->entity);
+	} else {
+		dolibarr_set_const($db, 'RECRUITMENT_ENABLE_PUBLIC_INTERFACE', 0, 'chaine', 0, '', $conf->entity);
+	}
 }
 
 if ($action == 'update') {
 	$public = GETPOST('RECRUITMENT_ENABLE_PUBLIC_INTERFACE');
 
-    $res = dolibarr_set_const($db, "RECRUITMENT_ENABLE_PUBLIC_INTERFACE", $public, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "RECRUITMENT_ENABLE_PUBLIC_INTERFACE", $public, 'chaine', 0, '', $conf->entity);
 
-    if (!$res > 0) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
- 	if (!$error) {
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-	    setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 
@@ -84,7 +91,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-dol_fiche_head($head, 'publicurl', '', -1, '');
+print dol_get_fiche_head($head, 'publicurl', '', -1, '');
 
 
 print '<span class="opacitymedium">'.$langs->trans("PublicInterfaceRecruitmentDesc").'</span><br><br>';
@@ -165,7 +172,7 @@ if (!empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE)) {
 }
 */
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '</form>';
 

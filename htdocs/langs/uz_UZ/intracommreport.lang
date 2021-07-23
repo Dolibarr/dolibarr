@@ -1,0 +1,40 @@
+Module68000Name = Ichki hisobot
+Module68000Desc = Ichki hisobotlarni boshqarish (Frantsiyaning DEB / DES formatini qo'llab-quvvatlash)
+IntracommReportSetup = Hisobot ichidagi modulni sozlash
+IntracommReportAbout = Intracommreport haqida
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
+INTRACOMMREPORT_TYPE_ACTEUR=D'acteur yozing
+INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les kirishlari
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
+INTRACOMMREPORT_CATEG_FRAISDEPORT="Frais de port" turidagi xizmatlar
+
+INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+
+# Menu
+MenuIntracommReport=Ichki hisobot
+MenuIntracommReportNew=Yangi deklaratsiya
+MenuIntracommReportList=Ro'yxat
+
+# View
+NewDeclaration=Yangi deklaratsiya
+Declaration=Deklaratsiya
+AnalysisPeriod=Tahlil davri
+TypeOfDeclaration=Deklaratsiya turi
+DEB=Tovarlar almashinuvi to'g'risidagi deklaratsiya (DEB)
+DES=Xizmatlar almashinuvi to'g'risidagi deklaratsiya (DES)
+
+# Export page
+IntracommReportTitle=ProDouane formatida XML faylini tayyorlash
+
+# List
+IntracommReportList=Yaratilgan deklaratsiyalar ro'yxati
+IntracommReportNumber=Deklaratsiya raqami
+IntracommReportPeriod=Tahlil davri
+IntracommReportTypeDeclaration=Deklaratsiya turi
+IntracommReportDownload=XML faylini yuklab oling
+
+# Invoice
+IntracommReportTransportMode=Transport rejimi

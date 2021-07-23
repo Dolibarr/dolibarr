@@ -49,7 +49,7 @@ create table llx_commande_fournisseur
   amount_ht					double(24,8)      default 0,
   remise_percent			real      default 0,
   remise					real      default 0,
-  tva						double(24,8)      default 0,
+  total_tva						double(24,8)      default 0,
   localtax1					double(24,8)      default 0,
   localtax2					double(24,8)      default 0,
   total_ht					double(24,8)      default 0,

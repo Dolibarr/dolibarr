@@ -16,8 +16,10 @@ descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Kennzeichne die verknüpften Auftr�
 # Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Setzt das verknüpfte Lieferantenangebot auf "abgerechnet", sofern die Lieferanrenrechnung erstellt wurde und sofern der Rechnungsbetrag identisch zur Angebotsumme ist. 
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Kennzeichne die verknüpfte Einkaufsbestellung als abgerechnet wenn die Lieferantenrechnung erstellt wurde und wenn die Beträge überein stimmen.
-descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+descWORKFLOW_BILL_ON_RECEPTION=Klassifizieren Sie Empfänge als "in Rechnung gestellt", wenn eine verknüpfte Lieferantenbestellung validiert wird
 # Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Schließen Sie alle mit dem Ticket verknüpften Interaktionen, wenn ein Ticket geschlossen wird
 AutomaticCreation=automatische Erstellung
 AutomaticClassification=Automatische Klassifikation
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Klassifizieren Sie die verknüpfte Quellensendung als geschlossen, wenn die Kundenrechnung validiert ist.

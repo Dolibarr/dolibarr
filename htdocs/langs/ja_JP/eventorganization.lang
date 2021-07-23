@@ -1,0 +1,147 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModuleEventOrganizationName = イベント組織
+EventOrganizationDescription = モジュールプロジェクトによるイベント編成
+EventOrganizationDescriptionLong= 公開サブスクリプションページを使用して、会議、出席者、講演者、および出席者のイベント組織を管理する
+#
+# Menu
+#
+EventOrganizationMenuLeft = 開催済イベント
+EventOrganizationConferenceOrBoothMenuLeft = 会議またはブース
+
+#
+# Admin page
+#
+EventOrganizationSetup = イベント組織の設定
+Settings = 設定
+EventOrganizationSetupPage = イベント組織設定ページ
+EVENTORGANIZATION_TASK_LABEL = プロジェクトが検証されたときに自動的に作成するタスクのラベル
+EVENTORGANIZATION_TASK_LABELTooltip = 組織化されたイベントを検証すると、プロジェクトにいくつかのタスクが自動的に作成される。<br><br>例：<br>会議の呼び出しを送信<br>ブースの呼び出しを送信 <br>会議の呼出を受信 <br>ブースの呼出を受信 <br>参加者にイベントへのサブスクリプションを公開 <br> 話者にイベントのリマインダーを送信<br>ブースの主催者にイベントのリマインダーを送信<br>出席者にイベントのリマインダーを送信
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = 誰かが会議を提案したときに自動的に作成される取引先に追加するカテゴリ
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = ブースを提案したときに自動的に作成される取引先に追加するカテゴリ
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = 会議の提案を受け取った後に送信する電子メールのテンプレート。
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = ブースの提案を受けて送信するメールのテンプレート。
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = ブースのサブスクリプションが支払われた後に送信する電子メールのテンプレート。
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = イベントのサブスクリプションが支払われた後に送信する電子メールのテンプレート。
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = 出席する大虐殺の電子メールのテンプレート
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = 話者への虐待の電子メールのテンプレート
+EVENTORGANIZATION_FILTERATTENDEES_CAT = 参加者作成カード/フォームで取引先の選択リストをカテゴリでフィルタリングする
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = 顧客タイプを使用して、出席者作成カード/フォームで取引先の選択リストをフィルタリングする
+
+#
+# Object
+#
+EventOrganizationConfOrBooth= 会議またはブース
+ManageOrganizeEvent = イベント組織を管理する
+ConferenceOrBooth = 会議またはブース
+ConferenceOrBoothTab = 会議またはブース
+AmountOfSubscriptionPaid = 支払われたサブスクリプションの金額
+DateSubscription = サブスクリプションの日付
+ConferenceOrBoothAttendee = 会議またはブースの参加者
+
+#
+# Template Mail
+#
+YourOrganizationEventConfRequestWasReceived = 会議リクエストは受信済
+YourOrganizationEventBoothRequestWasReceived = ブースの要望は受信済み
+EventOrganizationEmailAskConf = 会議のリクエスト
+EventOrganizationEmailAskBooth = ブースのご要望
+EventOrganizationEmailSubsBooth = ブースのサブスクリプション
+EventOrganizationEmailSubsEvent = イベントのサブスクリプション
+EventOrganizationMassEmailAttendees = 出席者へのコミュニケーション
+EventOrganizationMassEmailSpeakers = 話者とのコミュニケーション
+
+#
+# Event
+#
+AllowUnknownPeopleSuggestConf=未知の人からの会議提案を許可
+AllowUnknownPeopleSuggestConfHelp=未知の人からの会議提案を許可
+AllowUnknownPeopleSuggestBooth=未知の人からのブース提案を許可
+AllowUnknownPeopleSuggestBoothHelp=未知の人からのブース提案を許可
+PriceOfRegistration=登録価格
+PriceOfRegistrationHelp=登録価格
+PriceOfBooth=ブース立ちのサブスクリプション価格
+PriceOfBoothHelp=ブース出展用サブスクリプション価格
+EventOrganizationICSLink=イベントのICSをリンクする
+ConferenceOrBoothInformation=会議またはブース情報
+Attendees = 参加者
+DownloadICSLink = ICS リンクをダウンロード
+EVENTORGANIZATION_SECUREKEY = 会議への公開登録リンクのセキュアキー
+SERVICE_BOOTH_LOCATION = ブースの場所に関する請求書の行に使用されるサービス
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = 会議への参加者のサブスクリプションに関する請求書の行に使用されるサービス
+NbVotes=Number of votes
+#
+# Status
+#
+EvntOrgDraft = 下書き
+EvntOrgSuggested = 提案済
+EvntOrgConfirmed = 確認済み
+EvntOrgNotQualified = 資格なし
+EvntOrgDone = 済
+EvntOrgCancelled = キャンセル
+#
+# Public page
+#
+SuggestForm = 提案ページ
+RegisterPage = 会議やブースのページ
+EvntOrgRegistrationHelpMessage = ここでは、イベントに投票したり、プロジェクトの新規会議やブースを提案したりできる。
+EvntOrgRegistrationConfHelpMessage = ここで、プロジェクトの新規会議を提案できる
+EvntOrgRegistrationBoothHelpMessage = ここでは、プロジェクトの新規ブースを提案できる。
+ListOfSuggestedConferences = 提案された会議のリスト
+ListOfSuggestedBooths = 提案ブース一覧
+SuggestConference = 新規会議を提案する
+SuggestBooth = ブースを提案する
+ViewAndVote = 提案されたイベントを表示して投票する
+PublicAttendeeSubscriptionPage = 会議登録への公開リンク
+MissingOrBadSecureKey = セキュリティキーが無効であるか欠落している
+EvntOrgWelcomeMessage = このフォームを使用すると、会議： '%s' の新規参加者として登録できる
+EvntOrgDuration = この会議は%sで始まり、%sで終わる。
+ConferenceAttendeeFee = イベント:「 '%s' 開催は%sから%sまで」への会議参加料金。
+BoothLocationFee = イベントのブース位置: '%s' で %s から %s まで
+EventType = イベント種別
+LabelOfBooth=Booth label
+LabelOfconference=Conference label
+ConferenceIsNotConfirmed=Subcription not available, conference is not confirmed yet
+
+#
+# Vote page
+#
+EvntOrgRegistrationWelcomeMessage = 会議またはブースの提案ページへようこそ。
+EvntOrgRegistrationConfWelcomeMessage = カンファレンスの提案ページへようこそ。
+EvntOrgRegistrationBoothWelcomeMessage = ブース提案ページへようこそ。
+EvntOrgVoteHelpMessage = ここで、プロジェクトの提案されたイベントを表示して投票できる
+VoteOk = あなたの投票が承認された。
+AlreadyVoted = あなたはすでにこのイベントに投票している。
+VoteError = 投票中にエラーが発生した。もう一度やり直し願う。
+
+#
+# SubscriptionOk page
+#
+SubscriptionOk = この会議へのサブスクリプションが検証された
+#
+# Subscription validation mail
+#
+ConfAttendeeSubscriptionConfirmation = 会議へのサブスクリプションの確認
+#
+# Payment page
+#
+Attendee = 出席者
+PaymentConferenceAttendee = 会議出席者の支払い
+PaymentBoothLocation = ブースの場所の支払い

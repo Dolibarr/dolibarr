@@ -21,23 +21,45 @@
  * \brief      File that include javascript functions (included if option use_javascript activated)
  */
 
-if (!defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
-if (!defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
-if (!defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
-if (!defined('NOLOGIN'))         define('NOLOGIN', 1);
-if (!defined('NOREQUIREMENU'))   define('NOREQUIREMENU', 1);
-if (!defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
-if (!defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', 1);
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1);
+}
+if (!defined('NOLOGIN')) {
+	define('NOLOGIN', 1);
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', 1);
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', 1);
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
 
 session_cache_limiter('public');
 
 require_once '../../main.inc.php';
 
+
+/*
+ * View
+ */
+
 // Define javascript type
 top_httphead('text/javascript; charset=UTF-8');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) header('Cache-Control: max-age=10800, public, must-revalidate');
-else header('Cache-Control: no-cache');
+if (empty($dolibarr_nocache)) {
+	header('Cache-Control: max-age=10800, public, must-revalidate');
+} else {
+	header('Cache-Control: no-cache');
+}
 
 //var_dump($conf);
 
@@ -46,32 +68,31 @@ else header('Cache-Control: no-cache');
 print "\n/* JS CODE TO ENABLE Tooltips on all object with class classfortooltip */\n";
 print "jQuery(document).ready(function () {\n";
 
-if (empty($conf->dol_no_mouse_hover))
-{
+if (empty($conf->dol_no_mouse_hover)) {
 	print 'jQuery(".classfortooltip").tooltip({
-				show: { collision: "flipfit", effect:\'toggle\', delay:50 },
-				hide: { delay: 250 },
-				tooltipClass: "mytooltip",
-				content: function () {
-                    console.log("Return title for popup");
-            		return $(this).prop(\'title\');		/* To force to get title as is */
-          		}
-			});'."\n";
+		show: { collision: "flipfit", effect:"toggle", delay:50, duration: 20 },
+		hide: { delay: 250, duration: 20 },
+		tooltipClass: "mytooltip",
+		content: function () {
+    		console.log("Return title for popup");
+            return $(this).prop("title");		/* To force to get title as is */
+   		}
+	});'."\n";
 }
 
 print '
-jQuery(".classfortooltiponclicktext").dialog(
-    { closeOnEscape: true, classes: { "ui-dialog": "highlight" },
+jQuery(".classfortooltiponclicktext").dialog({
+    closeOnEscape: true, classes: { "ui-dialog": "highlight" },
     maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? max($_SESSION['dol_screenwidth'] - 20, 320) : 700).',
     modal: true,
-    autoOpen: false }).css("z-index: 5000");
+    autoOpen: false
+    }).css("z-index: 5000");
 jQuery(".classfortooltiponclick").click(function () {
     console.log("We click on tooltip for element with dolid="+$(this).attr(\'dolid\'));
-    if ($(this).attr(\'dolid\'))
-    {
+    if ($(this).attr(\'dolid\')) {
         obj=$("#idfortooltiponclick_"+$(this).attr(\'dolid\'));		/* obj is a div component */
         obj.dialog("open");
-		return false;
+        return false;
     }
 });'."\n";
 
@@ -79,15 +100,14 @@ print "});\n";
 
 
 // Wrapper to manage dropdown
-if (!defined('JS_JQUERY_DISABLE_DROPDOWN'))
-{
+if (!defined('JS_JQUERY_DISABLE_DROPDOWN')) {
 	print "\n/* JS CODE TO ENABLE dropdown (hamburger, linkto, ...) */\n";
 	print '
               jQuery(document).ready(function () {
 				  var lastopendropdown = null;
 
                   // Click onto the link "link to" or "hamburger", toggle dropdown
-				  $(".dropdown dt a").on(\'click\', function () {
+				  $(document).on(\'click\', \'.dropdown dt a\', function () {
                   	  console.log("toggle dropdown dt a");
 
                       //$(this).parent().parent().find(\'dd ul\').slideToggle(\'fast\');
@@ -149,8 +169,7 @@ if (!defined('JS_JQUERY_DISABLE_DROPDOWN'))
 }
 
 // Wrapper to manage document_preview
-if ($conf->browser->layout != 'phone')
-{
+if ($conf->browser->layout != 'phone') {
 	print "\n/* JS CODE TO ENABLE document_preview */\n"; // Function document_preview is into header
 	print '
                 jQuery(document).ready(function () {
@@ -184,7 +203,9 @@ print '
 					{
 						if (this.href)
 						{
+							console.log("We click on tag with .reposition class. this.ref was "+this.href);
 							var hrefarray = this.href.split("#", 2);
+							hrefarray[0]=hrefarray[0].replace(/&page_y=(\d+)/, \'\');		/* remove page_y param if already present */
 							this.href=hrefarray[0]+\'&page_y=\'+page_y;
 							console.log("We click on tag with .reposition class. this.ref is now "+this.href);
 						}
@@ -196,3 +217,95 @@ print '
 					}
 				});
 			});'."\n";
+
+print "\n/* JS CODE TO ENABLE ClipBoard copy paste*/\n";
+print 'jQuery(\'.clipboardCPShowOnHover\').hover(
+			function() {
+				console.log("We hover a value with a copy paste feature");
+				$(this).children(".clipboardCPButton, .clipboardCPText").show();
+			},
+			function() {
+				console.log("We hover out the value with a copy paste feature");
+				$(this).children(".clipboardCPButton, .clipboardCPText").hide();
+			}
+		);';
+print 'jQuery(\'.clipboardCPButton, .clipboardCPValueToPrint\').click(function() {
+		/* console.log(this.parentNode); */
+		console.log("We click on a clipboardCPButton or clipboardCPValueToPrint class");
+		if (window.getSelection) {
+			selection = window.getSelection();
+
+			range = document.createRange();
+			range.selectNodeContents(this.parentNode.firstChild);
+
+			selection.removeAllRanges();
+			selection.addRange( range );
+		}
+		document.execCommand( \'copy\' );
+		window.getSelection().removeAllRanges();
+
+		/* Show message */
+		var lastchild = this.parentNode.lastChild;
+		var tmp = lastchild.innerHTML
+		lastchild.innerHTML = \''.dol_escape_js($langs->trans('CopiedToClipboard')).'\';
+		setTimeout(() => { lastchild.innerHTML = tmp; }, 1000);
+	})'."\n";
+
+
+print "\n/* JS CODE TO ENABLE DIALOG CONFIRM POPUP ON ACTION BUTTON */\n";
+print '$( document ).ready(function() {
+	$(document).on("click", \'.butActionConfirm\', function(event) {
+		event.preventDefault();
+
+		// I don\'t use jquery $(this).data(\'confirm-url\'); to get $(this).attr(\'data-confirm-url\'); because .data() can doesn\'t work with ajax
+		var confirmUrl  			= $(this).attr(\'data-confirm-url\');
+		var confirmTitle 			= $(this).attr(\'data-confirm-title\');
+		var confirmContent 			= $(this).attr(\'data-confirm-content\');
+		var confirmActionBtnLabel 	= $(this).attr(\'data-confirm-action-btn-label\');
+		var confirmCancelBtnLabel 	= $(this).attr(\'data-confirm-cancel-btn-label\');
+		var confirmModal	= $(this).attr(\'data-confirm-modal\');
+		if(confirmModal == undefined){ confirmModal = false; }
+
+		var confirmId = \'confirm-dialog-box\';
+		if($(this).attr(\'id\') != undefined){ var confirmId = confirmId + "-" + $(this).attr(\'id\'); }
+		if($("#" + confirmId)  != undefined) { $(\'#\' + confirmId).remove(); }
+
+		// Create modal box
+
+		var $confirmBox = $(\'<div/>\', {
+			id: confirmId,
+			title: confirmTitle
+		}).appendTo(\'body\');
+
+		$confirmBox.dialog({
+			autoOpen: true,
+			modal: confirmModal,
+			//width: Math.min($( window ).width() - 50, 1700),
+			width: \'auto\',
+			dialogClass: \'confirm-dialog-box\',
+			buttons: [
+				{
+					text: confirmActionBtnLabel,
+					"class": \'ui-state-information\',
+					click: function () {
+					window.location.replace(confirmUrl);
+				}
+				},
+				{
+					text: confirmCancelBtnLabel,
+					"class": \'ui-state-information\',
+					click: function () {
+					$(this).dialog("close");
+				}
+				}
+			],
+			close: function( event, ui ) {
+				$(\'#\'+confirmBox).remove();
+			},
+			open: function( event, ui ) {
+				$confirmBox.html(confirmContent);
+			}
+		});
+	});
+});
+'."\n";

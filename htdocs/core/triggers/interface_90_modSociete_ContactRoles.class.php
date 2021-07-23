@@ -33,23 +33,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceContactRoles extends DolibarrTriggers
 {
-
-	public $family = 'agenda';
-
-	public $description = "Triggers of this module auto link contact to company.";
-
 	/**
-	 * Version of the trigger
+	 * Constructor
 	 *
-	 * @var string
+	 * @param DoliDB $db Database handler
 	 */
-	public $version = self::VERSION_DOLIBARR;
+	public function __construct($db)
+	{
+		$this->db = $db;
 
-	/**
-	 *
-	 * @var string Image of the trigger
-	 */
-	public $picto = 'action';
+		$this->name = preg_replace('/^Interface/i', '', get_class($this));
+		$this->family = "agenda";
+		$this->description = "Triggers of this module auto link contact to company.";
+		// 'development', 'experimental', 'dolibarr' or version
+		$this->version = self::VERSION_DOLIBARR;
+		$this->picto = 'company';
+	}
 
 	/**
 	 * Function called when a Dolibarrr business event is done.
@@ -83,26 +82,25 @@ class InterfaceContactRoles extends DolibarrTriggers
 
 				if (is_array($TContact) && !empty($TContact)) {
 					$TContactAlreadyLinked = array();
-					if ($object->id > 0) {
-						$cloneFrom = dol_clone($object, 1);
 
-						if (!empty($cloneFrom->id)) {
-							$TContactAlreadyLinked = array_merge($cloneFrom->liste_contact(-1, 'external'), $cloneFrom->liste_contact(-1, 'internal'));
-						}
+					if ($object->id > 0) {
+						$TContactAlreadyLinked = array_merge($object->liste_contact(-1, 'external'), $object->liste_contact(-1, 'internal'));
 					}
 
 					foreach ($TContact as $i => $infos) {
 						foreach ($TContactAlreadyLinked as $contactData) {
-							if ($contactData['id'] == $infos['fk_socpeople'] && $contactData['fk_c_type_contact'] == $infos['type_contact'])
+							if ($contactData['id'] == $infos['fk_socpeople'] && $contactData['fk_c_type_contact'] == $infos['type_contact']) {
 								unset($TContact[$i]);
+							}
 						}
 					}
 
 					$nb = 0;
 					foreach ($TContact as $infos) {
 						$res = $object->add_contact($infos['fk_socpeople'], $infos['type_contact']);
-						if ($res > 0)
+						if ($res > 0) {
 							$nb++;
+						}
 					}
 
 					if ($nb > 0) {

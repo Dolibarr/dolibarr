@@ -34,8 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'exports', 'other'));
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 
@@ -71,7 +72,7 @@ $head[$h][1] = $langs->trans("Setup");
 $head[$h][2] = 'setup';
 $h++;
 
-dol_fiche_head($head, 'setup', $langs->trans("ExportsArea"), -1, "technic");
+print dol_get_fiche_head($head, 'setup', $langs->trans("ExportsArea"), -1, "technic");
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -85,13 +86,14 @@ print '<td class="center" width="20">&nbsp;</td>';
 print '<td class="center" width="100"></td>'."\n";
 print '</tr>';
 
-// Example with a yes / no select
+/* No more need for this, you can set that a profile is public when saving it.
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("EXPORTS_SHARE_MODELS").'</td>';
 print '<td class="center" width="20">&nbsp;</td>';
 print '<td class="center" width="100">';
 print ajax_constantonoff('EXPORTS_SHARE_MODELS');
 print '</td></tr>';
+*/
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ExportCsvSeparator").'</td>';
@@ -103,7 +105,7 @@ print '</table>';
 
 print '</form>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

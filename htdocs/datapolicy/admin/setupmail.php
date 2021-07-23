@@ -39,8 +39,9 @@ if (GETPOST('l')) {
 	$l = $langs->defaultlang;
 }
 // Access control
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 /*
  * Actions
@@ -62,8 +63,9 @@ if ($action == 'setvalue' && $user->admin) {
 	$result = dolibarr_set_const($db, $sub, GETPOST($sub), 'chaine', 0, '', $conf->entity);
 	$sub = "DATAPOLICIESREFUSE_".$l;
 	$result = dolibarr_set_const($db, $sub, GETPOST($sub), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0)
+	if (!$result > 0) {
 		$error++;
+	}
 	if (!$error) {
 		$db->commit();
 		setEventMessage($langs->trans("SetupSaved"));
@@ -88,7 +90,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'object_datapolicy@
 
 // Configuration header
 $head = datapolicyAdminPrepareHead();
-dol_fiche_head($head, 'settings', '', -1, "datapolicy@datapolicy");
+print dol_get_fiche_head($head, 'settings', '', -1, "datapolicy@datapolicy");
 
 
 print "<script type='text/javascript'>
@@ -153,7 +155,7 @@ print '<br><center><input type="submit" class="button" value="'.$langs->trans("M
 
 print '</form>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<br><br>';
 
