@@ -572,8 +572,6 @@ class PaymentSalary extends CommonObject
 				// Add link 'user' in bank_url between user and bank transaction
 				if (!$error) {
 					foreach ($this->amounts as $key => $value) {
-						dol_syslog(get_class($this) . '::Insertuser ' . $key);
-
 						if ($mode == 'payment_salary') {
 							$fuser = new User($this->db);
 							$fuser->fetch($this->fk_user);
