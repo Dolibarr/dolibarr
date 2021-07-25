@@ -130,24 +130,34 @@ class PaymentSalary extends CommonObject
 
 		$now = dol_now();
 
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
-
-		// Validate parametres
-		if (!$this->datepaye) {
-			$this->error = 'ErrorBadValueForParameterCreatePaymentSalary';
-			return -1;
-		}
-
 		// Clean parameters
-		if (isset($this->fk_salary)) $this->fk_salary = (int) $this->fk_salary;
-		if (isset($this->amount)) $this->amount = trim($this->amount);
-		if (isset($this->fk_typepayment)) $this->fk_typepayment = (int) $this->fk_typepayment;
-		if (isset($this->num_paiement)) $this->num_paiement = trim($this->num_paiement); // deprecated
-		if (isset($this->num_payment)) $this->num_payment = trim($this->num_payment);
-		if (isset($this->note)) $this->note = trim($this->note);
-		if (isset($this->fk_bank)) $this->fk_bank = (int) $this->fk_bank;
-		if (isset($this->fk_user_author)) $this->fk_user_author = (int) $this->fk_user_author;
-		if (isset($this->fk_user_modif)) $this->fk_user_modif = (int) $this->fk_user_modif;
+		if (isset($this->fk_salary)) {
+			$this->fk_salary = (int) $this->fk_salary;
+		}
+		if (isset($this->amount)) {
+			$this->amount = trim($this->amount);
+		}
+		if (isset($this->fk_typepayment)) {
+			$this->fk_typepayment = (int) $this->fk_typepayment;
+		}
+		if (isset($this->num_paiement)) {
+			$this->num_paiement = trim($this->num_paiement); // deprecated
+		}
+		if (isset($this->num_payment)) {
+			$this->num_payment = trim($this->num_payment);
+		}
+		if (isset($this->note)) {
+			$this->note = trim($this->note);
+		}
+		if (isset($this->fk_bank)) {
+			$this->fk_bank = (int) $this->fk_bank;
+		}
+		if (isset($this->fk_user_author)) {
+			$this->fk_user_author = (int) $this->fk_user_author;
+		}
+		if (isset($this->fk_user_modif)) {
+			$this->fk_user_modif = (int) $this->fk_user_modif;
+		}
 
 		$totalamount = 0;
 		foreach ($this->amounts as $key => $value) {  // How payment is dispatch
@@ -158,20 +168,41 @@ class PaymentSalary extends CommonObject
 		$totalamount = price2num($totalamount);
 
 		// Check parameters
-		if ($totalamount == 0) return -1; // On accepte les montants negatifs pour les rejets de prelevement mais pas null
-
+		if ($totalamount == 0) {
+			return -1; // We accept negative amounts for withdrawal rejects but not null
+		}
+		if (!$this->datepaye) {
+			$this->error = 'ErrorBadValueForParameterCreatePaymentSalary';
+			return -1;
+		}
 
 		$this->db->begin();
 
 		if ($totalamount != 0) {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_salary (fk_salary, datec, datep, amount,";
-			$sql .= " fk_typepayment, num_payment, note, fk_user_author, fk_bank)";
-			$sql .= " VALUES ($this->chid, '".$this->db->idate($now)."',";
-			$sql .= " '".$this->db->idate($this->datepaye)."',";
-			$sql .= " ".price2num($totalamount).",";
-			$sql .= " ".((int) $this->paiementtype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".((int) $user->id).",";
-			$sql .= " 0)";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_salary (";
+			$sql .= " fk_salary";
+			$sql .= ", datec";
+			$sql .= ", datep";
+			$sql .= ", amount";
+			$sql .= ", fk_typepayment";
+			$sql .= ", num_payment";
+			$sql .= ", note";
+			$sql .= ", fk_user_author";
+			$sql .= ", fk_bank";
+			$sql .= ")";
+			$sql .= " VALUES (";
+			$sql .= $this->chid;
+			$sql .= ", '".$this->db->idate($now)."'";
+			$sql .= ", '".$this->db->idate($this->datepaye)."'";
+			$sql .= ", ".price2num($totalamount);
+			$sql .= ", ".((int) $this->paiementtype);
+			$sql .= ", '".$this->db->escape($this->num_payment)."'";
+			$sql .= ", '".$this->db->escape($this->note)."'";
+			$sql .= ", ".((int) $user->id);
+			$sql .= ", 0";
+			$sql .= ")";
 
+			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_salary");
@@ -195,7 +226,7 @@ class PaymentSalary extends CommonObject
 							$remaintopay = price2num($contrib->amount - $paiement - $creditnotes - $deposits, 'MT');
 							if ($remaintopay == 0) {
 								$result = $contrib->set_paid($user);
-							} else dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
+							} else dol_syslog("Remain to pay for contrib ".$contribid." not null. We do nothing.");
 						}
 					}
 				}
@@ -486,7 +517,7 @@ class PaymentSalary extends CommonObject
 	 */
 	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
 	{
-		global $conf;
+		global $langs, $conf;
 
 		// Clean data
 		$this->num_payment = trim($this->num_payment ? $this->num_payment : $this->num_paiement);
@@ -516,8 +547,8 @@ class PaymentSalary extends CommonObject
 				$this->datev
 			);
 
-			// Mise a jour fk_bank dans llx_paiement.
-			// On connait ainsi le paiement qui a genere l'ecriture bancaire
+			// Update fk_bank in llx_paiement.
+			// Thus we know the payment that generated the bank entry
 			if ($bank_line_id > 0) {
 				$result = $this->update_fk_bank($bank_line_id);
 				if ($result <= 0) {
@@ -525,9 +556,11 @@ class PaymentSalary extends CommonObject
 					dol_print_error($this->db);
 				}
 
-				// Add link 'payment', 'payment_supplier', 'payment_sc' in bank_url between payment and bank transaction
+				// Add link 'payment' in bank_url between payment and bank transaction
 				$url = '';
-				if ($mode == 'payment_salary') $url = DOL_URL_ROOT.'/salaries/payment_salary/card.php?id=';
+				if ($mode == 'payment_salary') {
+					$url = DOL_URL_ROOT . '/salaries/payment_salary/card.php?id=';
+				}
 				if ($url) {
 					$result = $acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
 					if ($result <= 0) {
@@ -536,14 +569,29 @@ class PaymentSalary extends CommonObject
 					}
 				}
 
-				// Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
-				$linkaddedforthirdparty = array();
-				foreach ($this->amounts as $key => $value) {
-					if ($mode == 'payment_salary') {
-						$salary = new Salary($this->db);
-						$salary->fetch($key);
-						$result = $acc->add_url_line($bank_line_id, $salary->id, DOL_URL_ROOT.'/salaries/card.php?id=', '('.$salary->label.')', 'salary');
-						if ($result <= 0) dol_print_error($this->db);
+				// Add link 'user' in bank_url between user and bank transaction
+				if (!$error) {
+					foreach ($this->amounts as $key => $value) {
+
+						dol_syslog(get_class($this) . '::Insertuser ' . $key);
+
+						if ($mode == 'payment_salary') {
+							$fuser = new User($this->db);
+							$fuser->fetch($this->fk_user);
+
+							$result = $acc->add_url_line(
+								$bank_line_id,
+								$fuser->id,
+								DOL_URL_ROOT . '/user/card.php?id=',
+								$fuser->getFullName($langs),
+								'user'
+							);
+							if ($result <= 0) {
+								$this->error = $this->db->lasterror();
+								dol_syslog(get_class($this) . '::addPaymentToBank ' . $this->error);
+								$error++;
+							}
+						}
 					}
 				}
 			} else {

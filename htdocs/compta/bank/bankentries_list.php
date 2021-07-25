@@ -1423,7 +1423,6 @@ if ($resql) {
 				} elseif ($links[$key]['type'] == 'member') {
 				} elseif ($links[$key]['type'] == 'sc') {
 				} elseif ($links[$key]['type'] == 'vat') {
-				} elseif ($links[$key]['type'] == 'salary') {
 				} else {
 					// Show link with label $links[$key]['label']
 					if (!empty($objp->label) && !empty($links[$key]['label'])) {
@@ -1510,9 +1509,9 @@ if ($resql) {
 			print '<td class="tdoverflowmax150">';
 
 			$companylinked_id = 0;
-				$userlinked_id = 0;
+			$userlinked_id = 0;
 
-				//payment line type to define user display and user or company linked
+			//payment line type to define user display and user or company linked
 			foreach ($links as $key => $value) {
 				if ($links[$key]['type'] == 'payment_sc') {
 					$type_link = 'payment_sc';
@@ -1520,7 +1519,6 @@ if ($resql) {
 				if ($links[$key]['type'] == 'payment_salary') {
 					$type_link = 'payment_salary';
 				}
-
 				if ($links[$key]['type'] == 'company') {
 					$companylinked_id = $links[$key]['url_id'];
 				}
