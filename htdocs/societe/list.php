@@ -655,7 +655,7 @@ if ($search_parent_name) {
 	$sql .= natural_search("s2.nom", $search_parent_name);
 }
 if ($search_stcomm != '' && $search_stcomm != -2) {
-	$sql .= natural_search("s.fk_stcomm", $search_stcomm, 2);
+	$sql .= natural_search("s.fk_stcomm", $search_stcomm, 1);
 }
 if ($search_import_key) {
 	$sql .= natural_search("s.import_key", $search_import_key);
