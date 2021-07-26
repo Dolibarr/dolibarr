@@ -251,8 +251,8 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 	$thirdpartycateggraph .= '</table>';
 	$thirdpartycateggraph .= '</div>';
 } else {
-$thirdpartycateggraph = '';
-}	
+	$thirdpartycateggraph = '';
+}
 
 
 /*
