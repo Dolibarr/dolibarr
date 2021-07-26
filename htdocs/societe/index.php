@@ -250,7 +250,9 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 	$thirdpartycateggraph .= '</td></tr>';
 	$thirdpartycateggraph .= '</table>';
 	$thirdpartycateggraph .= '</div>';
-}
+} else {
+$thirdpartycateggraph = '';
+}	
 
 
 /*
