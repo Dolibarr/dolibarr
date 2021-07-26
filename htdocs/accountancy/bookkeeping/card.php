@@ -683,7 +683,7 @@ if ($action == 'create') {
 						print '<td class="right nowraponall amount">'.price($line->debit).'</td>';
 						print '<td class="right nowraponall amount">'.price($line->credit).'</td>';
 
-						if (empty($line->date_export) || empty($line->date_validation)) {
+						if (empty($line->date_export) && empty($line->date_validation)) {
 							print '<td class="center">';
 							print '<a class="editfielda reposition" href="' . $_SERVER["PHP_SELF"] . '?action=update&id=' . $line->id . '&piece_num=' . urlencode($line->piece_num) . '&mode=' . urlencode($mode) . '&token=' . urlencode(newToken()) . '">';
 							print img_edit('', 0, 'class="marginrightonly"');
@@ -713,7 +713,7 @@ if ($action == 'create') {
 					setEventMessages(null, array($langs->trans('MvtNotCorrectlyBalanced', $total_debit, $total_credit)), 'warnings');
 				}
 
-				if (empty($object->date_export) || empty($object->date_validation)) {
+				if (empty($object->date_export) && empty($object->date_validation)) {
 					if ($action == "" || $action == 'add') {
 						print '<tr class="oddeven">';
 						print '<!-- td columns in add mode -->';
