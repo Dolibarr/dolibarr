@@ -10136,7 +10136,7 @@ function isAFileWithExecutableContent($filename)
  */
 function newToken()
 {
-	return $_SESSION['newtoken'];
+	return isset($_SESSION['token']) ? $_SESSION['token'] : null;
 }
 
 /**
