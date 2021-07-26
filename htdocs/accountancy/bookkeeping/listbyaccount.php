@@ -2,7 +2,7 @@
 /* Copyright (C) 2016       Neil Orley          <neil.orley@oeris.fr>
  * Copyright (C) 2013-2016  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2013-2020  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2020  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2021  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -56,6 +56,14 @@ $search_date_export_endmonth =  GETPOST('search_date_export_endmonth', 'int');
 $search_date_export_endday =  GETPOST('search_date_export_endday', 'int');
 $search_date_export_start = dol_mktime(0, 0, 0, $search_date_export_startmonth, $search_date_export_startday, $search_date_export_startyear);
 $search_date_export_end = dol_mktime(23, 59, 59, $search_date_export_endmonth, $search_date_export_endday, $search_date_export_endyear);
+$search_date_validation_startyear =  GETPOST('search_date_validation_startyear', 'int');
+$search_date_validation_startmonth =  GETPOST('search_date_validation_startmonth', 'int');
+$search_date_validation_startday =  GETPOST('search_date_validation_startday', 'int');
+$search_date_validation_endyear =  GETPOST('search_date_validation_endyear', 'int');
+$search_date_validation_endmonth =  GETPOST('search_date_validation_endmonth', 'int');
+$search_date_validation_endday =  GETPOST('search_date_validation_endday', 'int');
+$search_date_validation_start = dol_mktime(0, 0, 0, $search_date_validation_startmonth, $search_date_validation_startday, $search_date_validation_startyear);
+$search_date_validation_end = dol_mktime(23, 59, 59, $search_date_validation_endmonth, $search_date_validation_endday, $search_date_validation_endyear);
 
 $search_accountancy_code = GETPOST("search_accountancy_code");
 $search_accountancy_code_start = GETPOST('search_accountancy_code_start', 'alpha');
@@ -81,7 +89,7 @@ if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt.x") || GETPOST("button_
 }
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -144,6 +152,7 @@ $arrayfields = array(
 	't.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1),
 	't.lettering_code'=>array('label'=>$langs->trans("LetteringCode"), 'checked'=>1),
 	't.date_export'=>array('label'=>$langs->trans("DateExport"), 'checked'=>1),
+	't.date_validated'=>array('label'=>$langs->trans("DateValidation"), 'checked'=>1),
 );
 
 if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
@@ -221,6 +230,14 @@ if (empty($reshook)) {
 		$search_date_export_endyear = '';
 		$search_date_export_endmonth = '';
 		$search_date_export_endday = '';
+		$search_date_validation_start = '';
+		$search_date_validation_end = '';
+		$search_date_validation_startyear = '';
+		$search_date_validation_startmonth = '';
+		$search_date_validation_startday = '';
+		$search_date_validation_endyear = '';
+		$search_date_validation_endmonth = '';
+		$search_date_validation_endday = '';
 		$search_debit = '';
 		$search_credit = '';
 		$search_lettering_code = '';
@@ -300,6 +317,14 @@ if (empty($reshook)) {
 	if (!empty($search_date_export_end)) {
 		$filter['t.date_export<='] = $search_date_export_end;
 		$param .= '&search_date_export_endmonth='.$search_date_export_endmonth.'&search_date_export_endday='.$search_date_export_endday.'&search_date_export_endyear='.$search_date_export_endyear;
+	}
+	if (!empty($search_date_validation_start)) {
+		$filter['t.date_validated>='] = $search_date_validation_start;
+		$param .= '&search_date_validation_startmonth='.$search_date_validation_startmonth.'&search_date_validation_startday='.$search_date_validation_startday.'&search_date_validation_startyear='.$search_date_validation_startyear;
+	}
+	if (!empty($search_date_validation_end)) {
+		$filter['t.date_validated<='] = $search_date_validation_end;
+		$param .= '&search_date_validation_endmonth='.$search_date_validation_endmonth.'&search_date_validation_endday='.$search_date_validation_endday.'&search_date_validation_endyear='.$search_date_validation_endyear;
 	}
 }
 
@@ -564,6 +589,17 @@ if (!empty($arrayfields['t.date_export']['checked'])) {
 	print '</div>';
 	print '</td>';
 }
+// Date validation
+if (!empty($arrayfields['t.date_validated']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_validation_start, 'search_date_validation_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_validation_end, 'search_date_validation_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
+	print '</div>';
+	print '</td>';
+}
 
 // Fields from hook
 $parameters = array('arrayfields'=>$arrayfields);
@@ -605,6 +641,9 @@ if (!empty($arrayfields['t.lettering_code']['checked'])) {
 if (!empty($arrayfields['t.date_export']['checked'])) {
 	print_liste_field_titre($arrayfields['t.date_export']['label'], $_SERVER['PHP_SELF'], "t.date_export", "", $param, '', $sortfield, $sortorder, 'center ');
 }
+if (!empty($arrayfields['t.date_validated']['checked'])) {
+	print_liste_field_titre($arrayfields['t.date_validated']['label'], $_SERVER['PHP_SELF'], "t.date_validated", "", $param, '', $sortfield, $sortorder, 'center ');
+}
 // Hook fields
 $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
@@ -635,12 +674,15 @@ while ($i < min($num, $limit)) {
 	// Is it a break ?
 	if ($accountg != $displayed_account_number || !isset($displayed_account_number)) {
 		$colnumber = 5;
-		$colnumberend = 7;
+		$colnumberend = 8;
 
 		if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING) || empty($arrayfields['t.lettering_code']['checked'])) {
 			$colnumber--;
 		}
 		if (empty($arrayfields['t.date_export']['checked'])) {
+			$colnumber--;
+		}
+		if (empty($arrayfields['t.date_validated']['checked'])) {
 			$colnumber--;
 		}
 
@@ -840,6 +882,14 @@ while ($i < min($num, $limit)) {
 	// Exported operation date
 	if (!empty($arrayfields['t.date_export']['checked'])) {
 		print '<td class="center">'.dol_print_date($line->date_export, 'dayhour').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	// Validated operation date
+	if (!empty($arrayfields['t.date_validated']['checked'])) {
+		print '<td class="center">'.dol_print_date($line->date_validation, 'dayhour').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
