@@ -1892,13 +1892,13 @@ if ($action == 'create') {
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ApproveThisOrder"), $text, "confirm_".$action, $formquestion, 1, 1, 240);
 	}
 
-	// Confirmation de la desapprobation
+	// Confirmation of disapproval
 	if ($action == 'refuse') {
 		$formquestion = array(
 			array(
 				'type' => 'text',
 				'name' => 'refuse_note',
-				'label' => $langs->trans("MotifCP"),
+				'label' => $langs->trans("Reason"),
 				'value' => '',
 				'morecss' => 'minwidth300'
 			)
