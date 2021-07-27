@@ -798,7 +798,7 @@ foreach ($object->fields as $key => $val) {
 			if (!empty($search[$key])) {
 				$selectedarray = array_values($search[$key]);
 			}
-			print Form::multiselectarray('search_fk_statut', $arrayofstatus, $selectedarray, 0, 0, 'minwidth100 maxwidth150', 1, 0, '', '', '');
+			print Form::multiselectarray('search_fk_statut', $arrayofstatus, $selectedarray, 0, 0, 'minwidth100imp maxwidth150', 1, 0, '', '', '');
 			print '</td>';
 		} elseif ($key == "fk_soc") {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'"><input type="text" class="flat maxwidth75" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
