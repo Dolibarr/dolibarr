@@ -1108,34 +1108,41 @@ print dol_get_fiche_end();
 /*
  * Action bar
  */
+
+
 if (!$action || $action == 'delete' || $action == 'showlog_customer_price' || $action == 'showlog_default_price' || $action == 'add_customer_price'
 	|| $action == 'activate_price_by_qty' || $action == 'disable_price_by_qty') {
 	print "\n".'<div class="tabsAction">'."\n";
 
-	if ($object->isVariant()) {
-		if ($user->rights->produit->creer || $user->rights->service->creer) {
-			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEditVariants")).'">'.$langs->trans("UpdateDefaultPrice").'</a></div>';
-		}
-	} else {
-		if (empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
-			if ($user->rights->produit->creer || $user->rights->service->creer) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit_price&amp;id='.$object->id.'">'.$langs->trans("UpdateDefaultPrice").'</a></div>';
-			}
-		}
 
-		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+	if (empty($reshook)) {
+		if ($object->isVariant()) {
 			if ($user->rights->produit->creer || $user->rights->service->creer) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=add_customer_price&amp;id='.$object->id.'">'.$langs->trans("AddCustomerPrice").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("NoEditVariants")) . '">' . $langs->trans("UpdateDefaultPrice") . '</a></div>';
 			}
-		}
-
-		if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
-			if ($user->rights->produit->creer || $user->rights->service->creer) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit_vat&amp;id='.$object->id.'">'.$langs->trans("UpdateVAT").'</a></div>';
+		} else {
+			if (empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
+				if ($user->rights->produit->creer || $user->rights->service->creer) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_price&amp;id=' . $object->id . '">' . $langs->trans("UpdateDefaultPrice") . '</a></div>';
+				}
 			}
 
-			if ($user->rights->produit->creer || $user->rights->service->creer) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit_price&amp;id='.$object->id.'">'.$langs->trans("UpdateLevelPrices").'</a></div>';
+			if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+				if ($user->rights->produit->creer || $user->rights->service->creer) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=add_customer_price&amp;id=' . $object->id . '">' . $langs->trans("AddCustomerPrice") . '</a></div>';
+				}
+			}
+
+			if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
+				if ($user->rights->produit->creer || $user->rights->service->creer) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_vat&amp;id=' . $object->id . '">' . $langs->trans("UpdateVAT") . '</a></div>';
+				}
+
+				if ($user->rights->produit->creer || $user->rights->service->creer) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_price&amp;id=' . $object->id . '">' . $langs->trans("UpdateLevelPrices") . '</a></div>';
+				}
 			}
 		}
 	}
