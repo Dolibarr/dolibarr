@@ -1374,7 +1374,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
         			print '</td>';
         			if (!$i) $totalarray['nbfield']++;
     			}
-            } else {
+            } elseif ($action !== 'createtime') {
             	print '<input type="hidden" name="taskid" value="'.$id.'">';
             }
 
