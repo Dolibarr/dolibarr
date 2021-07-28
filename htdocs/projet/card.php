@@ -132,9 +132,12 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (GETPOST('opp_amount') != '' && !(GETPOST('opp_status') > 0)) {
-			$error++;
-			setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+		{
+			if (GETPOST('opp_amount') != '' && !(GETPOST('opp_status') > 0)) {
+				$error++;
+				setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+			}
 		}
 
 		// Create with status validated immediatly
@@ -270,9 +273,12 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($object->opp_amount && ($object->opp_status <= 0)) {
-			$error++;
-			setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+		{
+			if ($object->opp_amount && ($object->opp_status <= 0)) {
+				$error++;
+				setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+			}
 		}
 
 		if (!$error) {
