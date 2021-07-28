@@ -10204,7 +10204,7 @@ function newToken()
  */
 function currentToken()
 {
-	return isset($_SESSION['token']) ? $_SESSION['token'] : null;
+	return isset($_SESSION['token']) ? $_SESSION['token'] : '';
 }
 
 /**
