@@ -464,14 +464,14 @@ class AccountancyExport
                 $code_compta = length_accounta($data->subledger_account);
             }
 
-            $date_creation = dol_print_date($data->date_creation, '%Y%m%d');
-            $date_document = dol_print_date($data->doc_date, '%Y%m%d');
+			$date_document = dol_print_date($data->doc_date, '%Y%m%d');
+			$date_echeance = dol_print_date($data->date_lim_reglement, '%Y%m%d');
 
 			$Tab = array();
 			$Tab['num_ecriture'] = str_pad($data->piece_num, 5);
 			$Tab['code_journal'] = str_pad($data->code_journal, 2);
-			$Tab['date_ecriture'] = $date_creation;
-			$Tab['date_ope'] = $date_document;
+			$Tab['date_ecriture'] = str_pad($date_document, 8, ' ', STR_PAD_LEFT);
+			$Tab['date_echeance'] = str_pad($date_echeance, 8, ' ', STR_PAD_LEFT);
 			$Tab['num_piece'] = str_pad(self::trunc($data->doc_ref, 12), 12);
 			$Tab['num_compte'] = str_pad(self::trunc($code_compta, 11), 11);
 			$Tab['libelle_ecriture'] = str_pad(self::trunc(dol_string_unaccent($data->doc_ref).dol_string_unaccent($data->label_operation), 25), 25);
