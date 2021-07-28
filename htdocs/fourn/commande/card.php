@@ -983,7 +983,9 @@ if (empty($reshook)) {
 	if ($action == 'commande') {
 		$methodecommande = GETPOST('methodecommande', 'int');
 
-		if ($methodecommande <= 0) {
+		if ($cancel) {
+			$action = '';
+		} elseif ($methodecommande <= 0) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("OrderMode")), null, 'errors');
 			$action = 'makeorder';
 		}
