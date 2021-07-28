@@ -132,8 +132,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-		{
+		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 			if (GETPOST('opp_amount') != '' && !(GETPOST('opp_status') > 0)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
@@ -273,8 +272,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-		{
+		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 			if ($object->opp_amount && ($object->opp_status <= 0)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
