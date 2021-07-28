@@ -496,7 +496,7 @@ while ($i < min($num, $limit)) {
 	$adherent->gender = $obj->gender;
 	$adherent->morphy = $obj->morphy;
 	$adherent->email = $obj->email;
-	$adherent->typeid = $obj->type;
+	$adherent->typeid = $obj->fk_type;
 	$adherent->datefin = $db->jdate($obj->datef);
 
 	$typeid = ($obj->fk_type > 0 ? $obj->fk_type : $adherent->typeid);
