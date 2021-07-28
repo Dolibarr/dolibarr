@@ -441,6 +441,7 @@ class AccountancyExport
 	/**
 	 * Export format : CIEL (Format XIMPORT)
 	 * Format since 2003 compatible CIEL version > 2002 / Sage50
+	 * Last review for this format : 2021/07/28 Alexandre Spangaro (aspangaro@open-dsi.fr)
 	 *
 	 * Help : https://sage50c.online-help.sage.fr/aide-technique/
 	 * In sage software | Use menu : "Exchange" > "Importing entries..."
