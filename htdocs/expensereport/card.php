@@ -2314,7 +2314,7 @@ if ($action == 'create')
 
 							// Quantity
 							print '<td class="right">';
-							print '<input type="number" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($line->qty).'" />';
+							print '<input type="text" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($line->qty).'" />';
 							print '</td>';
 
 							//print '<td class="right">'.$langs->trans('AmountHT').'</td>';
