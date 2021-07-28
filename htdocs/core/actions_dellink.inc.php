@@ -27,10 +27,10 @@
 // $permissiondellink must be defined
 
 $dellinkid = GETPOST('dellinkid', 'int');
-$addlink = GETPOST('addlink','alpha');
+$addlink = GETPOST('addlink', 'alpha');
 $addlinkid = GETPOST('idtolinkto', 'int');
-$addlinkref = GETPOST('reftolinkto','alpha');
-$cancellink = GETPOST('cancel','alpha');
+$addlinkref = GETPOST('reftolinkto', 'alpha');
+$cancellink = GETPOST('cancel', 'alpha');
 
 // Link invoice to order
 if ($action == 'addlink' && !empty($permissiondellink) && !$cancellink && $id > 0 && $addlinkid > 0) {
