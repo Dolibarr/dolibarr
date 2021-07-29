@@ -89,6 +89,8 @@ $socid = GETPOST('socid', 'int');
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 restrictedArea($user, 'projet', $object->id, 'projet&project');
 
+$permissiondellink = $user->rights->projet->creer;	// Used by the include of actions_dellink.inc.php
+
 
 /*
  * Actions
@@ -121,6 +123,8 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
+
 	if ($action == 'add' && $user->rights->projet->creer) {
 		$error = 0;
 		if (!GETPOST('ref')) {
@@ -132,9 +136,11 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (GETPOST('opp_amount') != '' && !(GETPOST('opp_status') > 0)) {
-			$error++;
-			setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			if (GETPOST('opp_amount') != '' && !(GETPOST('opp_status') > 0)) {
+				$error++;
+				setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+			}
 		}
 
 		// Create with status validated immediatly
@@ -270,9 +276,11 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($object->opp_amount && ($object->opp_status <= 0)) {
-			$error++;
-			setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			if ($object->opp_amount && ($object->opp_status <= 0)) {
+				$error++;
+				setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+			}
 		}
 
 		if (!$error) {

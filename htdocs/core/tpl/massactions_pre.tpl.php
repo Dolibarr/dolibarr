@@ -197,7 +197,7 @@ if ($massaction == 'presend') {
 // Allow Pre-Mass-Action hook (eg for confirmation dialog)
 $parameters = array(
 	'toselect' => $toselect,
-	'uploaddir' => $uploaddir
+	'uploaddir' => isset($uploaddir) ? $uploaddir : null
 );
 
 $reshook = $hookmanager->executeHooks('doPreMassActions', $parameters, $object, $action);
