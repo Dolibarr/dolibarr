@@ -218,8 +218,8 @@ class Ticket extends CommonObject
 	const STATUS_IN_PROGRESS = 3;
 	const STATUS_NEED_MORE_INFO = 5;
 	const STATUS_WAITING = 7;			// on hold
-	const STATUS_CLOSED = 8;
-	const STATUS_CANCELED = 9;
+	const STATUS_CLOSED = 8;			// Closed - Solved
+	const STATUS_CANCELED = 9;			// Closed - Not solved
 
 
 	/**
@@ -272,8 +272,8 @@ class Ticket extends CommonObject
 		'message' => array('type'=>'text', 'label'=>'Message', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1,),
 		'email_msgid' => array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'help'=>'EmailMsgIDDesc'),
 		'progress' => array('type'=>'varchar(100)', 'label'=>'Progression', 'visible'=>-1, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'css'=>'right', 'help'=>"", 'isameasure'=>1),
-		'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-1, 'enabled'=>1, 'position'=>550, 'notnull'=>1),
-		'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted')),
+		//'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-1, 'enabled'=>1, 'position'=>550, 'notnull'=>1),
+		'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'SolvedClosed', 9 => 'Deleted')),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
 	);
 	// END MODULEBUILDER PROPERTIES
@@ -295,7 +295,7 @@ class Ticket extends CommonObject
 			self::STATUS_IN_PROGRESS => 'InProgress',
 			self::STATUS_WAITING => 'OnHold',
 			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformationShort',
-			self::STATUS_CLOSED => 'Closed',
+			self::STATUS_CLOSED => 'SolvedClosed',
 			self::STATUS_CANCELED => 'Canceled'
 		);
 		$this->statuts = array(
@@ -305,7 +305,7 @@ class Ticket extends CommonObject
 			self::STATUS_IN_PROGRESS => 'InProgress',
 			self::STATUS_WAITING => 'OnHold',
 			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation',
-			self::STATUS_CLOSED => 'Closed',
+			self::STATUS_CLOSED => 'SolvedClosed',
 			self::STATUS_CANCELED => 'Canceled'
 		);
 	}
@@ -1747,21 +1747,22 @@ class Ticket extends CommonObject
 	/**
 	 *    Close a ticket
 	 *
-	 *    @param    User    $user      User that close
-	 *    @return   int		           <0 if KO, >0 if OK
+	 *    @param    User    $user      	User that close
+	 *    @param	int		$mode		0=Close solved, 1=Close abandonned
+	 *    @return   int		           	<0 if KO, >0 if OK
 	 */
-	public function close(User $user)
+	public function close(User $user, $mode = 0)
 	{
 		global $conf, $langs;
 
-		if ($this->fk_statut != Ticket::STATUS_CLOSED) { // not closed
+		if ($this->fk_statut != Ticket::STATUS_CLOSED && $this->fk_statut != Ticket::STATUS_CANCELED) { // not closed
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
-			$sql .= " SET fk_statut=".Ticket::STATUS_CLOSED.", progress=100, date_close='".$this->db->idate(dol_now())."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " SET fk_statut=".($mode ? Ticket::STATUS_CANCELED : Ticket::STATUS_CLOSED).", progress=100, date_close='".$this->db->idate(dol_now())."'";
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
-			dol_syslog(get_class($this)."::close sql=".$sql);
+			dol_syslog(get_class($this)."::close mode=".$mode);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$error = 0;
