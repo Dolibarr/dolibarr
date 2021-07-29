@@ -262,8 +262,10 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 		// Category
 		print '<tr><td>'.$langs->trans("Category").'</td><td>';
-		print img_picto('', 'category', 'class="pictofixedwidth"');
-		print dol_escape_htmltag($object->dao->category_label);
+		if ($object->dao->category_label) {
+			print img_picto('', 'category', 'class="pictofixedwidth"');
+			print dol_escape_htmltag($object->dao->category_label);
+		}
 		print '</td></tr>';
 
 		// Severity
