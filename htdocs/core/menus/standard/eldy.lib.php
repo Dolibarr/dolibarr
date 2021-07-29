@@ -1641,7 +1641,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				}
 			}
 
-			if($conf->stocktransfer->enabled) {
+			if ($conf->stocktransfer->enabled) {
 				$newmenu->add('/product/stock/stocktransfer/stocktransfer_list.php', $langs->trans("ModuleStockTransferName"), 0, $user->rights->stocktransfer->stocktransfer->read, '', $mainmenu, 'stocktransfer', 0, '', '', '', img_picto('', 'stock', 'class="pictofixedwidth"'));
 				$newmenu->add('/product/stock/stocktransfer/stocktransfer_card.php?action=create', $langs->trans('StockTransferNew'), 1, $user->rights->stocktransfer->stocktransfer->write);
 				$newmenu->add('/product/stock/stocktransfer/stocktransfer_list.php', $langs->trans('List'), 1, $user->rights->stocktransfer->stocktransfer->read);
