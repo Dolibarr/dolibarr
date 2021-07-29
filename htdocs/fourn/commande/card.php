@@ -1073,6 +1073,8 @@ if (empty($reshook)) {
 				if ($result > 0) {
 					$langs->load("deliveries");
 					setEventMessages($langs->trans("DeliveryStateSaved"), null);
+
+					$trigger = $object->call_trigger('ORDER_SUPPLIER_DISPATCH', $user);
 					$action = '';
 				} elseif ($result == -3) {
 					$error++;
