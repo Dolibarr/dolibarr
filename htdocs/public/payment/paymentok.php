@@ -1031,6 +1031,8 @@ if ($ispaymentok) {
 						if ($resultattendee < 0) {
 							setEventMessages(null, $attendeetovalidate->errors, "errors");
 						} else {
+							$attendeetovalidate->amount=$FinalPaymentAmt;
+							$attendeetovalidate->update($user);
 							$attendeetovalidate->validate($user);
 
 							// Sending mail
@@ -1051,8 +1053,9 @@ if ($ispaymentok) {
 								$arraydefaultmessage = null;
 
 								$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;
+
 								if (!empty($labeltouse)) {
-									$arraydefaultmessage = $formmail->getEMailTemplate($db, 'eventorganization_send', $user, $outputlangs, $labeltouse, 1, '');
+									$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $labeltouse, 1, '');
 								}
 
 								if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
@@ -1066,7 +1069,7 @@ if ($ispaymentok) {
 								$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
 								$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
 
-								$sendto = $thirdparty->email;
+								$sendto = $attendeetovalidate->email;
 								$from = $conf->global->MAILING_EMAIL_FROM;
 								$urlback = $_SERVER["REQUEST_URI"];
 
@@ -1233,7 +1236,7 @@ if ($ispaymentok) {
 
 										$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;
 										if (!empty($labeltouse)) {
-											$arraydefaultmessage = $formmail->getEMailTemplate($db, 'eventorganization_send', $user, $outputlangs, $labeltouse, 1, '');
+											$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $labeltouse, 1, '');
 										}
 
 										if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {

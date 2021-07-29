@@ -421,8 +421,6 @@ if ($projectid > 0) {
 	$message = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
 	$message .= '&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...');
 	$message .= "&project=".$projectid.'&module='.urlencode('@eventorganization').'&status='.ConferenceOrBooth::STATUS_CONFIRMED.'">'.$langs->trans('DownloadICSLink').'</a>';
-	$message .= '</div>';
-	$message .= '<br>';
 	print $message;
 	print "</td></tr>";
 
