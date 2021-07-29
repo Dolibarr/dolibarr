@@ -1473,7 +1473,7 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 $parameters['toselect'] = $toselect;
 $parameters['uploaddir'] = $uploaddir;
 $parameters['massaction'] = $massaction;
-$parameters['diroutputmassaction'] = $diroutputmassaction;
+$parameters['diroutputmassaction'] = isset($diroutputmassaction) ? $diroutputmassaction : null;
 
 $reshook = $hookmanager->executeHooks('doMassActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
