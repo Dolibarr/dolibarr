@@ -1964,7 +1964,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		'mainmenu' => $mainmenu,
 	);
 	$hook_items = $menu_array;
-	$reshook = $hookmanager->executeHooks('menu_LeftMenuArray', $parameters, $hook_items); // Note that $action and $object may have been modified by some hooks
+	$reshook = $hookmanager->executeHooks('menuLeftMenuItems', $parameters, $hook_items); // Note that $action and $object may have been modified by some hooks
 
 	if (is_numeric($reshook)) {
 		if ($reshook == 0 && !empty($hookmanager->results)) {
