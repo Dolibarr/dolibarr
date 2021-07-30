@@ -688,9 +688,9 @@ function print_end_menu_array()
  * @param 	int			$type_user     		0=Menu for backoffice, 1=Menu for front office
  * @return	int								Nb of menu entries
  */
-function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabMenu, &$menu, $noout = 0, $forcemainmenu = '', $forceleftmenu = '', $moredata = null, $type_user = 0)
-{
-	global $user, $conf, $langs, $dolibarr_main_db_name, $mysoc;
+function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabMenu, &$menu, $noout = 0, $forcemainmenu = '', $forceleftmenu = '', $moredata = null, $type_user = 0) {
+
+	global $user, $conf, $langs, $dolibarr_main_db_name, $mysoc, $hookmanager;
 
 	//var_dump($tabMenu);
 
@@ -1956,6 +1956,28 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 	//var_dump($menu_array);exit;
 	if (!is_array($menu_array)) {
 		return 0;
+	}
+
+	// Allow the $menu_array of the menu to be manipulated by modules
+	$parameters = array(
+		'mainmenu' => $mainmenu,
+	);
+	$hook_items = $menu_array;
+	$reshook = $hookmanager->executeHooks('menu_LeftMenuArray', $parameters, $hook_items); // Note that $action and $object may have been modified by some hooks
+
+	if (is_numeric($reshook)) {
+		if ($reshook == 0 && !empty($hookmanager->results)) {
+			$menu_array[] = $hookmanager->results; // add
+		} elseif ($reshook == 1) {
+			$menu_array = $hookmanager->results; // replace
+		}
+
+		// @todo Sort menu items by 'position' value
+//		$position = array();
+//		foreach ($menu_array as $key => $row) {
+//			$position[$key] = $row['position'];
+//		}
+//		array_multisort($position, SORT_ASC, $menu_array);
 	}
 
 	// TODO Use the position property in menu_array to reorder the $menu_array
