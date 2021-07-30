@@ -193,7 +193,8 @@ abstract class ModeleProductCode
 	{
 		global $conf;
 
-		$langs->load("admin");
+		$langs->loadLangs(array("admin", "companies"));
+
 		$strikestart = '';
 		$strikeend = '';
 		if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {

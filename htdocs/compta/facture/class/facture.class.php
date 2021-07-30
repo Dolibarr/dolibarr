@@ -522,7 +522,7 @@ class Facture extends CommonInvoice
 			$this->fk_project        = GETPOST('projectid', 'int') > 0 ? ((int) GETPOST('projectid', 'int')) : $_facrec->fk_project;
 			$this->note_public       = GETPOST('note_public', 'none') ? GETPOST('note_public', 'restricthtml') : $_facrec->note_public;
 			$this->note_private      = GETPOST('note_private', 'none') ? GETPOST('note_private', 'restricthtml') : $_facrec->note_private;
-			$this->model_pdf          = GETPOST('model', 'alpha') ? GETPOST('model', 'alpha') : $_facrec->model_pdf;
+			$this->model_pdf = GETPOST('model', 'alpha') ? GETPOST('model', 'alpha') : $_facrec->model_pdf;
 			$this->cond_reglement_id = GETPOST('cond_reglement_id', 'int') > 0 ? ((int) GETPOST('cond_reglement_id', 'int')) : $_facrec->cond_reglement_id;
 			$this->mode_reglement_id = GETPOST('mode_reglement_id', 'int') > 0 ? ((int) GETPOST('mode_reglement_id', 'int')) : $_facrec->mode_reglement_id;
 			$this->fk_account        = GETPOST('fk_account') > 0 ? ((int) GETPOST('fk_account')) : $_facrec->fk_account;
@@ -1180,8 +1180,8 @@ class Facture extends CommonInvoice
 
 		// Clear fields
 		$object->date               = (empty($this->date) ? dol_now() : $this->date);
-		$object->user_author        = $user->id;	// deprecated
-		$object->user_valid         = null;			// deprecated
+		$object->user_author        = $user->id; // deprecated
+		$object->user_valid         = null; // deprecated
 		$object->fk_user_author     = $user->id;
 		$object->fk_user_valid      = null;
 		$object->fk_facture_source  = 0;
@@ -1227,7 +1227,7 @@ class Facture extends CommonInvoice
 				}
 			}
 
-			$object->lines[$i]->ref_ext = '';	// Do not clone ref_ext
+			$object->lines[$i]->ref_ext = ''; // Do not clone ref_ext
 		}
 
 		// Create clone
@@ -1235,14 +1235,20 @@ class Facture extends CommonInvoice
 		$result = $object->create($user);
 		if ($result < 0) {
 			$error++;
+			$this->error = $object->error;
+			$this->errors = $object->errors;
 		} else {
 			// copy internal contacts
 			if ($object->copy_linked_contact($this, 'internal') < 0) {
 				$error++;
+				$this->error = $object->error;
+				$this->errors = $object->errors;
 			} elseif ($this->socid == $object->socid) {
 				// copy external contacts if same company
 				if ($object->copy_linked_contact($this, 'external') < 0) {
 					$error++;
+					$this->error = $object->error;
+					$this->errors = $object->errors;
 				}
 			}
 		}
@@ -1672,9 +1678,9 @@ class Facture extends CommonInvoice
 				$this->note = $obj->note_private; // deprecated
 				$this->note_private = $obj->note_private;
 				$this->note_public			= $obj->note_public;
-				$this->user_author			= $obj->fk_user_author;	// deprecated
-				$this->user_valid           = $obj->fk_user_valid;	// deprecated
-				$this->fk_user_author		= $obj->fk_user_author;
+				$this->user_author			= $obj->fk_user_author; // deprecated
+				$this->user_valid           = $obj->fk_user_valid; // deprecated
+				$this->fk_user_author = $obj->fk_user_author;
 				$this->fk_user_valid        = $obj->fk_user_valid;
 				$this->model_pdf = $obj->model_pdf;
 				$this->modelpdf = $obj->model_pdf; // deprecated
@@ -3207,7 +3213,7 @@ class Facture extends CommonInvoice
 			$this->db->begin();
 
 			$product_type = $type;
-			if (!empty($fk_product)) {
+			if (!empty($fk_product) && $fk_product > 0) {
 				$product = new Product($this->db);
 				$result = $product->fetch($fk_product);
 				$product_type = $product->type;
@@ -3430,7 +3436,7 @@ class Facture extends CommonInvoice
 			$qty			= price2num($qty);
 			$pu 			= price2num($pu);
 			$pu_ht_devise = price2num($pu_ht_devise);
-			$pa_ht			= price2num($pa_ht);
+			$pa_ht = price2num($pa_ht);
 			if (!preg_match('/\((.*)\)/', $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
@@ -4084,8 +4090,8 @@ class Facture extends CommonInvoice
 	 *	Invoices matching the following rules are returned:
 	 *	(Status validated or abandonned for a reason 'other') + not payed + no payment at all + not already replaced
 	 *
-	 *	@param		int		$socid		Id thirdparty
-	 *	@return    	array|int			Array of invoices ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
+	 *	@param		int			$socid		Id thirdparty
+	 *	@return    	array|int				Array of invoices ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
 	 */
 	public function list_replacable_invoices($socid = 0)
 	{
@@ -4094,28 +4100,34 @@ class Facture extends CommonInvoice
 
 		$return = array();
 
-		$sql = "SELECT f.rowid as rowid, f.ref, f.fk_statut,";
+		$sql = "SELECT f.rowid as rowid, f.ref, f.fk_statut as status, f.paye as paid,";
 		$sql .= " ff.rowid as rowidnext";
+		//$sql .= ", SUM(pf.amount) as alreadypaid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as ff ON f.rowid = ff.fk_facture_source";
 		$sql .= " WHERE (f.fk_statut = ".self::STATUS_VALIDATED." OR (f.fk_statut = ".self::STATUS_ABANDONED." AND f.close_code = '".self::CLOSECODE_ABANDONED."'))";
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
-		$sql .= " AND f.paye = 0"; // Pas classee payee completement
-		$sql .= " AND pf.fk_paiement IS NULL"; // Aucun paiement deja fait
-		$sql .= " AND ff.fk_statut IS NULL"; // Renvoi vrai si pas facture de remplacement
+		$sql .= " AND f.paye = 0"; // Not paid completely
+		$sql .= " AND pf.fk_paiement IS NULL"; // No payment already done
+		$sql .= " AND ff.fk_statut IS NULL"; // Return true if it is not a replacement invoice
 		if ($socid > 0) {
 			$sql .= " AND f.fk_soc = ".((int) $socid);
 		}
+		//$sql .= " GROUP BY f.rowid, f.ref, f.fk_statut, f.paye, ff.rowid";
 		$sql .= " ORDER BY f.ref";
 
 		dol_syslog(get_class($this)."::list_replacable_invoices", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
-				$return[$obj->rowid] = array('id' => $obj->rowid,
-				'ref' => $obj->ref,
-				'status' => $obj->fk_statut);
+				$return[$obj->rowid] = array(
+					'id' => $obj->rowid,
+					'ref' => $obj->ref,
+					'status' => $obj->status,
+					'paid' => $obj->paid,
+					'alreadypaid' => 0
+				);
 			}
 			//print_r($return);
 			return $return;
@@ -4153,20 +4165,23 @@ class Facture extends CommonInvoice
 		//	$sql.= " AND (f.paye = 1";				// Classee payee completement
 		//	$sql.= " OR f.close_code IS NOT NULL)";	// Classee payee partiellement
 		$sql .= " AND ff.type IS NULL"; // Renvoi vrai si pas facture de remplacement
-		$sql .= " AND f.type != ".self::TYPE_CREDIT_NOTE; // Type non 2 si facture non avoir
+		$sql .= " AND f.type <> ".self::TYPE_CREDIT_NOTE; // Exclude credit note invoices from selection
 
 		if (!empty($conf->global->INVOICE_USE_SITUATION_CREDIT_NOTE)) {
-			// Select the last situation invoice
-			$sqlSit = 'SELECT MAX(fs.rowid)';
-			$sqlSit .= " FROM ".MAIN_DB_PREFIX."facture as fs";
-			$sqlSit .= " WHERE fs.entity IN (".getEntity('invoice').")";
-			$sqlSit .= " AND fs.type = ".self::TYPE_SITUATION;
-			$sqlSit .= " AND fs.fk_statut in (".self::STATUS_VALIDATED.",".self::STATUS_CLOSED.")";
-			$sqlSit .= " GROUP BY fs.situation_cycle_ref";
-			$sqlSit .= " ORDER BY fs.situation_counter";
-			$sql .= " AND ( f.type != ".self::TYPE_SITUATION." OR f.rowid IN (".$this->db->sanitize($sqlSit).") )"; // Type non 5 si facture non avoir
+			// Keep invoices that are not situation invoices or that are the last in serie if it is a situation invoice
+			$sql .= " AND (f.type <> ".self::TYPE_SITUATION." OR f.rowid IN ";
+			$sql .= '(SELECT MAX(fs.rowid)'; // This select returns several ID becasue of the group by later
+			$sql .= " FROM ".MAIN_DB_PREFIX."facture as fs";
+			$sql .= " WHERE fs.entity IN (".getEntity('invoice').")";
+			$sql .= " AND fs.type = ".self::TYPE_SITUATION;
+			$sql .= " AND fs.fk_statut IN (".self::STATUS_VALIDATED.",".self::STATUS_CLOSED.")";
+			if ($socid > 0) {
+				$sql .= " AND fs.fk_soc = ".((int) $socid);
+			}
+			$sql .= " GROUP BY fs.situation_cycle_ref)"; // For each situation_cycle_ref, we take the higher rowid
+			$sql .= ")";
 		} else {
-			$sql .= " AND f.type != ".self::TYPE_SITUATION; // Type non 5 si facture non avoir
+			$sql .= " AND f.type <> ".self::TYPE_SITUATION; // Keep invoices that are not situation invoices
 		}
 
 		if ($socid > 0) {
@@ -4247,7 +4262,7 @@ class Facture extends CommonInvoice
 				$generic_facture->statut = $obj->fk_statut;
 
 				$response->nbtodo++;
-				$response->total += $obj->total;
+				$response->total += $obj->total_ht;
 
 				if ($generic_facture->hasDelay()) {
 					$response->nbtodolate++;
@@ -5327,7 +5342,7 @@ class FactureLigne extends CommonInvoiceLine
 			$this->error = 'ErrorProductTypeMustBe0orMore';
 			return -1;
 		}
-		if (!empty($this->fk_product)) {
+		if (!empty($this->fk_product) && $this->fk_product > 0) {
 			// Check product exists
 			$result = Product::isExistingObject('product', $this->fk_product);
 			if ($result <= 0) {
@@ -5362,7 +5377,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= " ".price2num($this->localtax2_tx).",";
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql .= ' '.(!empty($this->fk_product) ? $this->fk_product : "null").',';
+		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? $this->fk_product : "null").',';
 		$sql .= " ".((int) $this->product_type).",";
 		$sql .= " ".price2num($this->remise_percent).",";
 		$sql .= " ".price2num($this->subprice).",";
@@ -5591,7 +5606,7 @@ class FactureLigne extends CommonInvoiceLine
 			$sql .= ", total_localtax2=".price2num($this->total_localtax2);
 		}
 		$sql .= ", fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape($this->fk_fournprice)."'" : "null");
-		$sql .= ", buy_price_ht=".(($this->pa_ht || $this->pa_ht === 0 || $this->pa_ht === '0') ? price2num($this->pa_ht) : "null");	// $this->pa_ht should always be defined (set to 0 or to sell price depending on option)
+		$sql .= ", buy_price_ht=".(($this->pa_ht || $this->pa_ht === 0 || $this->pa_ht === '0') ? price2num($this->pa_ht) : "null"); // $this->pa_ht should always be defined (set to 0 or to sell price depending on option)
 		$sql .= ", fk_parent_line=".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null");
 		if (!empty($this->rang)) {
 			$sql .= ", rang=".((int) $this->rang);

@@ -1013,7 +1013,7 @@ class Setup extends DolibarrApi
 					$list[$tab->elementtype][$tab->name]['computed'] = $tab->fieldcomputed;
 					$list[$tab->elementtype][$tab->name]['unique'] = $tab->fieldunique;
 					$list[$tab->elementtype][$tab->name]['required'] = $tab->fieldrequired;
-					$list[$tab->elementtype][$tab->name]['param'] = ($tab->param ? unserialize($tab->param) : '');
+					$list[$tab->elementtype][$tab->name]['param'] = ($tab->param ? jsonOrUnserialize($tab->param) : '');	// This may be a string encoded with serialise() or json_encode()
 					$list[$tab->elementtype][$tab->name]['pos'] = $tab->pos;
 					$list[$tab->elementtype][$tab->name]['alwayseditable'] = $tab->alwayseditable;
 					$list[$tab->elementtype][$tab->name]['perms'] = $tab->perms;

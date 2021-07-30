@@ -236,6 +236,9 @@ class box_funnel_of_prospection extends ModeleBoxes
 					$dolgraph->SetDataColor(array_values($colorseriesstat));
 					$dolgraph->setBorderColor(array_values($bordercolorseries));
 					$dolgraph->setShowLegend(2);
+					if (!empty($conf->dol_optimize_smallscreen)) {
+						$px1->SetWidth(320);
+					}
 					$dolgraph->setShowPercent(1);
 					$dolgraph->setMirrorGraphValues(true);
 					$dolgraph->setBorderWidth(2);

@@ -2119,7 +2119,7 @@ class ExpenseReport extends CommonObject
 
 			$this->line->fk_ecm_files = $fk_ecm_files;
 
-			$this->line->id = $rowid;
+			$this->line->id = ((int) $rowid);
 
 			// Select des infos sur le type fees
 			$sql = "SELECT c.code as code_type_fees, c.label as libelle_type_fees";
@@ -2697,20 +2697,20 @@ class ExpenseReportLine
 		$sql .= ' (fk_expensereport, fk_c_type_fees, fk_projet,';
 		$sql .= ' tva_tx, vat_src_code, comments, qty, value_unit, total_ht, total_tva, total_ttc, date, rule_warning_message, fk_c_exp_tax_cat, fk_ecm_files)';
 		$sql .= " VALUES (".$this->db->escape($this->fk_expensereport).",";
-		$sql .= " ".$this->db->escape($this->fk_c_type_fees).",";
-		$sql .= " ".$this->db->escape((!empty($this->fk_project) && $this->fk_project > 0) ? $this->fk_project : ((!empty($this->fk_projet) && $this->fk_projet > 0) ? $this->fk_projet : 'null')).",";
-		$sql .= " ".$this->db->escape($this->vatrate).",";
+		$sql .= " ".((int) $this->fk_c_type_fees).",";
+		$sql .= " ".((int) (!empty($this->fk_project) && $this->fk_project > 0) ? $this->fk_project : ((!empty($this->fk_projet) && $this->fk_projet > 0) ? $this->fk_projet : 'null')).",";
+		$sql .= " ".((float) $this->vatrate).",";
 		$sql .= " '".$this->db->escape(empty($this->vat_src_code) ? '' : $this->vat_src_code)."',";
 		$sql .= " '".$this->db->escape($this->comments)."',";
-		$sql .= " ".$this->db->escape($this->qty).",";
-		$sql .= " ".$this->db->escape($this->value_unit).",";
-		$sql .= " ".$this->db->escape($this->total_ht).",";
-		$sql .= " ".$this->db->escape($this->total_tva).",";
-		$sql .= " ".$this->db->escape($this->total_ttc).",";
+		$sql .= " ".((float) $this->qty).",";
+		$sql .= " ".((float) $this->value_unit).",";
+		$sql .= " ".((float) price2num($this->total_ht)).",";
+		$sql .= " ".((float) price2num($this->total_tva)).",";
+		$sql .= " ".((float) price2num($this->total_ttc)).",";
 		$sql .= " '".$this->db->idate($this->date)."',";
 		$sql .= " ".(empty($this->rule_warning_message) ? 'null' : "'".$this->db->escape($this->rule_warning_message)."'").",";
-		$sql .= " ".$this->db->escape($this->fk_c_exp_tax_cat).",";
-		$sql .= " ".($this->fk_ecm_files > 0 ? $this->fk_ecm_files : 'null');
+		$sql .= " ".((int) $this->fk_c_exp_tax_cat).",";
+		$sql .= " ".($this->fk_ecm_files > 0 ? ((int) $this->fk_ecm_files) : 'null');
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);
@@ -2811,26 +2811,26 @@ class ExpenseReportLine
 		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."expensereport_det SET";
 		$sql .= " comments='".$this->db->escape($this->comments)."'";
-		$sql .= ",value_unit = ".((float) $this->value_unit);
-		$sql .= ",qty=".((float) $this->qty);
-		$sql .= ",date='".$this->db->idate($this->date)."'";
-		$sql .= ",total_ht=".((float) price2num($this->total_ht, 'MT'))."";
-		$sql .= ",total_tva=".((float) price2num($this->total_tva, 'MT'))."";
-		$sql .= ",total_ttc=".((float) price2num($this->total_ttc, 'MT'))."";
-		$sql .= ",tva_tx=".((float) $this->vatrate);
-		$sql .= ",vat_src_code='".$this->db->escape($this->vat_src_code)."'";
-		$sql .= ",rule_warning_message='".$this->db->escape($this->rule_warning_message)."'";
-		$sql .= ",fk_c_exp_tax_cat=".$this->db->escape($this->fk_c_exp_tax_cat);
-		$sql .= ",fk_ecm_files=".($this->fk_ecm_files > 0 ? ((int) $this->fk_ecm_files) : 'null');
+		$sql .= ", value_unit = ".((float) $this->value_unit);
+		$sql .= ", qty=".((float) $this->qty);
+		$sql .= ", date='".$this->db->idate($this->date)."'";
+		$sql .= ", total_ht=".((float) price2num($this->total_ht, 'MT'))."";
+		$sql .= ", total_tva=".((float) price2num($this->total_tva, 'MT'))."";
+		$sql .= ", total_ttc=".((float) price2num($this->total_ttc, 'MT'))."";
+		$sql .= ", tva_tx=".((float) $this->vatrate);
+		$sql .= ", vat_src_code='".$this->db->escape($this->vat_src_code)."'";
+		$sql .= ", rule_warning_message='".$this->db->escape($this->rule_warning_message)."'";
+		$sql .= ", fk_c_exp_tax_cat=".$this->db->escape($this->fk_c_exp_tax_cat);
+		$sql .= ", fk_ecm_files=".($this->fk_ecm_files > 0 ? ((int) $this->fk_ecm_files) : 'null');
 		if ($this->fk_c_type_fees) {
-			$sql .= ",fk_c_type_fees = ".((int) $this->fk_c_type_fees);
+			$sql .= ", fk_c_type_fees = ".((int) $this->fk_c_type_fees);
 		} else {
-			$sql .= ",fk_c_type_fees=null";
+			$sql .= ", fk_c_type_fees=null";
 		}
 		if ($this->fk_project > 0) {
-			$sql .= ",fk_projet=".((int) $this->fk_project);
+			$sql .= ", fk_projet=".((int) $this->fk_project);
 		} else {
-			$sql .= ",fk_projet=null";
+			$sql .= ", fk_projet=null";
 		}
 		$sql .= " WHERE rowid = ".((int) ($this->rowid ? $this->rowid : $this->id));
 

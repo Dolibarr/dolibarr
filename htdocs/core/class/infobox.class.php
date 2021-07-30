@@ -85,7 +85,7 @@ class InfoBox
 	 *
 	 *  @param	DoliDB		$db				Database handler
 	 *  @param	string		$mode			'available' or 'activated'
-	 *  @param	string		$zone			Name or area (-1 for all, 0 for Homepage, 1 for Accountancy, 2 for xxx, ...)
+	 *  @param	int			$zone			Name or area (-1 for all, 0 for Homepage, 1 for Accountancy, 2 for xxx, ...)
 	 *  @param  User|null   $user	  		Object user to filter
 	 *  @param	array		$excludelist	Array of box id (box.box_id = boxes_def.rowid) to exclude
 	 *  @param  int         $includehidden  Include also hidden boxes
@@ -97,7 +97,6 @@ class InfoBox
 
 		$boxes = array();
 
-		$confuserzone = 'MAIN_BOXES_'.$zone;
 		if ($mode == 'activated') {	// activated
 			$sql = "SELECT b.rowid, b.position, b.box_order, b.fk_user,";
 			$sql .= " d.rowid as box_id, d.file, d.note, d.tms";
@@ -217,7 +216,7 @@ class InfoBox
 	 *  Save order of boxes for area and user
 	 *
 	 *  @param	DoliDB	$db				Database handler
-	 *  @param	string	$zone       	Name of area (0 for Homepage, ...)
+	 *  @param	int		$zone       	Name of area (0 for Homepage, ...)
 	 *  @param  string  $boxorder   	List of boxes with correct order 'A:123,456,...-B:789,321...'
 	 *  @param  int     $userid     	Id of user
 	 *  @return int                   	<0 if KO, 0=Nothing done, > 0 if OK
@@ -278,14 +277,13 @@ class InfoBox
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes";
 						$sql .= "(box_id, position, box_order, fk_user, entity)";
 						$sql .= " values (";
-						$sql .= " ".$id.",";
-						$sql .= " ".$zone.",";
+						$sql .= " ".((int) $id).",";
+						$sql .= " ".((int) $zone).",";
 						$sql .= " '".$db->escape($colonne.$ii)."',";
-						$sql .= " ".$userid.",";
-						$sql .= " ".$conf->entity;
+						$sql .= " ".((int) $userid).",";
+						$sql .= " ".((int) $conf->entity);
 						$sql .= ")";
 
-						dol_syslog(get_class()."::saveboxorder", LOG_DEBUG);
 						$result = $db->query($sql);
 						if ($result < 0) {
 							$error++;

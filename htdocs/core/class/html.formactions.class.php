@@ -97,7 +97,7 @@ class FormActions
                 function select_status() {
                     var defaultvalue = $('#select' + htmlname).val();
                     var percentage = $('input[name=percentage]');
-                    var selected = '".(isset($selected) ? $selected : '')."';
+                    var selected = '".(isset($selected) ? dol_escape_js($selected) : '')."';
                     var value = (selected>0?selected:(defaultvalue>=0?defaultvalue:''));
 
                     percentage.val(value);

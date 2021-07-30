@@ -59,6 +59,9 @@ if (!empty($user->socid)) {
 $fieldvalue = (!empty($id) ? $id : $ref);
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('productstatscard', 'globalcard'));
+
 $tmp = dol_getdate(dol_now());
 $currentyear = $tmp['year'];
 if (empty($search_year)) {
@@ -185,8 +188,8 @@ if ($result || empty($id)) {
 		// Tag
 		if ($conf->categorie->enabled) {
 			print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
-			$moreforfilter .= img_picto($langs->trans("Categories"), 'category', 'paddingright');
-			$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1);
+			$moreforfilter .= img_picto($langs->trans("Categories"), 'category', 'class="pictofixedwidth"');
+			$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1, 1, 'widthcentpercentminusx maxwidth300');
 			print $moreforfilter;
 			print '</td></tr>';
 		}
@@ -208,7 +211,7 @@ if ($result || empty($id)) {
 	print $form->selectarray('search_year', $arrayyears, $search_year, 1, 0, 0, '', 0, 0, 0, '', 'width75');
 	print '</td></tr>';
 	print '</table>';
-	print '<div class="center"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></div>';
+	print '<div class="center"><input type="submit" name="submit" class="button small" value="'.$langs->trans("Refresh").'"></div>';
 	print '</form><br>';
 
 	print '<br>';

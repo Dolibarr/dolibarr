@@ -531,39 +531,48 @@ if (!$error && $db->connected && $action == "set") {
 				if ($db->connected) {
 					$resultbis = 1;
 
-					// Create user
-					$result = $db->DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
-
-					// Create user bis
-					if ($databasefortest == 'mysql') {
-						if (!in_array($dolibarr_main_db_host, array('127.0.0.1', '::1', 'localhost', 'localhost.local'))) {
-							$resultbis = $db->DDLCreateUser('%', $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
-						}
-					}
-
-					if ($result > 0 && $resultbis > 0) {
+					if (empty($dolibarr_main_db_pass)) {
+						dolibarr_install_syslog("step1: failed to create user, password is empty", LOG_ERR);
 						print '<tr><td>';
 						print $langs->trans("UserCreation").' : ';
 						print $dolibarr_main_db_user;
 						print '</td>';
-						print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
+						print '<td>'.$langs->trans("Error").": A password for database user is mandatory.</td></tr>";
 					} else {
-						if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS'
-						|| $db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS'
-						|| $db->errno() == 'DB_ERROR_USER_ALREADY_EXISTS') {
-							dolibarr_install_syslog("step1: user already exists");
+						// Create user
+						$result = $db->DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
+
+						// Create user bis
+						if ($databasefortest == 'mysql') {
+							if (!in_array($dolibarr_main_db_host, array('127.0.0.1', '::1', 'localhost', 'localhost.local'))) {
+								$resultbis = $db->DDLCreateUser('%', $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
+							}
+						}
+
+						if ($result > 0 && $resultbis > 0) {
 							print '<tr><td>';
 							print $langs->trans("UserCreation").' : ';
 							print $dolibarr_main_db_user;
 							print '</td>';
-							print '<td>'.$langs->trans("LoginAlreadyExists").'</td></tr>';
+							print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
 						} else {
-							dolibarr_install_syslog("step1: failed to create user", LOG_ERR);
-							print '<tr><td>';
-							print $langs->trans("UserCreation").' : ';
-							print $dolibarr_main_db_user;
-							print '</td>';
-							print '<td>'.$langs->trans("Error").': '.$db->errno().' '.$db->error().($db->error ? '. '.$db->error : '')."</td></tr>";
+							if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS'
+							|| $db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS'
+							|| $db->errno() == 'DB_ERROR_USER_ALREADY_EXISTS') {
+								dolibarr_install_syslog("step1: user already exists");
+								print '<tr><td>';
+								print $langs->trans("UserCreation").' : ';
+								print $dolibarr_main_db_user;
+								print '</td>';
+								print '<td>'.$langs->trans("LoginAlreadyExists").'</td></tr>';
+							} else {
+								dolibarr_install_syslog("step1: failed to create user", LOG_ERR);
+								print '<tr><td>';
+								print $langs->trans("UserCreation").' : ';
+								print $dolibarr_main_db_user;
+								print '</td>';
+								print '<td>'.$langs->trans("Error").': '.$db->errno().' '.$db->error().($db->error ? '. '.$db->error : '')."</td></tr>";
+							}
 						}
 					}
 

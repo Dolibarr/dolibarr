@@ -494,7 +494,7 @@ if ($search_billed != '' && $search_billed >= 0) {
 	$sql .= ' AND c.facture = '.((int) $search_billed);
 }
 if ($search_status <> '') {
-	if ($search_status < 4 && $search_status > -3) {
+	if ($search_status < 4 && $search_status > -4) {
 		if ($search_status == 1 && empty($conf->expedition->enabled)) {
 			$sql .= ' AND c.fk_statut IN (1,2)'; // If module expedition disabled, we include order with status 'sending in process' into 'validated'
 		} else {
@@ -512,6 +512,11 @@ if ($search_status <> '') {
 		//$sql.= ' AND c.fk_statut in (1,2,3)';
 		//$sql.= ' AND c.facture = 0'; // invoice not created
 		$sql .= ' AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))'; // validated, in process or closed but not billed
+	}
+
+
+	if ($search_status == -4) {	//  "validate and in progress"
+		$sql .= ' AND (c.fk_statut IN (1,2))'; // validated, in process
 	}
 }
 
@@ -674,6 +679,9 @@ if ($resql) {
 	}
 	if ($search_status == -3) {
 		$title .= ' - '.$langs->trans('StatusOrderValidated').', '.(empty($conf->expedition->enabled) ? '' : $langs->trans("StatusOrderSent").', ').$langs->trans('StatusOrderToBill');
+	}
+	if ($search_status == -4) {
+		$title .= ' - '.$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort");
 	}
 
 	$num = $db->num_rows($resql);
@@ -1236,6 +1244,7 @@ if ($resql) {
 			Commande::STATUS_SHIPMENTONPROCESS=>$langs->trans("StatusOrderSentShort"),
 			Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
 			-3=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort").'+'.$langs->trans("StatusOrderDelivered"),
+			-4=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort"),
 			Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceledShort")
 		);
 		print $form->selectarray('search_status', $liststatus, $search_status, -4, 0, 0, '', 0, 0, 0, '', 'maxwidth100', 1);
@@ -1373,7 +1382,7 @@ if ($resql) {
 	$generic_product = new Product($db);
 	$userstatic = new User($db);
 	$i = 0;
-	$totalarray = array();
+	$totalarray = array('nbfield' => 0, 'val' => array(), 'pos' => array());
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 
@@ -1610,7 +1619,11 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'c.total_ht';
 			}
-			  $totalarray['val']['c.total_ht'] += $obj->total_ht;
+			if (isset($totalarray['val']['c.total_ht'])) {
+				$totalarray['val']['c.total_ht'] += $obj->total_ht;
+			} else {
+				$totalarray['val']['c.total_ht'] = $obj->total_ht;
+			}
 		}
 		// Amount VAT
 		if (!empty($arrayfields['c.total_vat']['checked'])) {

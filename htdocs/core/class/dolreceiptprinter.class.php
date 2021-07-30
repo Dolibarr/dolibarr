@@ -390,7 +390,7 @@ class dolReceiptPrinter extends Printer
 		$error = 0;
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'printer_receipt';
 		$sql .= ' (name, fk_type, fk_profile, parameter, entity)';
-		$sql .= ' VALUES ("'.$this->db->escape($name).'", '.$type.', '.$profile.', "'.$this->db->escape($parameter).'", '.$conf->entity.')';
+		$sql .= ' VALUES ("'.$this->db->escape($name).'", '.((int) $type).', '.((int) $profile).', "'.$this->db->escape($parameter).'", '.$conf->entity.')';
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;
@@ -415,10 +415,10 @@ class dolReceiptPrinter extends Printer
 		$error = 0;
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'printer_receipt';
 		$sql .= ' SET name="'.$this->db->escape($name).'"';
-		$sql .= ', fk_type='.$type;
-		$sql .= ', fk_profile='.$profile;
+		$sql .= ', fk_type='.((int) $type);
+		$sql .= ', fk_profile='.((int) $profile);
 		$sql .= ', parameter="'.$this->db->escape($parameter).'"';
-		$sql .= ' WHERE rowid='.$printerid;
+		$sql .= ' WHERE rowid='.((int) $printerid);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;
@@ -438,7 +438,7 @@ class dolReceiptPrinter extends Printer
 		global $conf;
 		$error = 0;
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'printer_receipt';
-		$sql .= ' WHERE rowid='.$printerid;
+		$sql .= ' WHERE rowid='.((int) $printerid);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;
@@ -480,7 +480,7 @@ class dolReceiptPrinter extends Printer
 		global $conf;
 		$error = 0;
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'printer_receipt_template';
-		$sql .= " WHERE rowid = ".((int) $this->db->escape($templateid));
+		$sql .= " WHERE rowid = ".((int) $templateid);
 		$sql .= " AND entity = ".$conf->entity;
 		$resql = $this->db->query($sql);
 		if (!$resql) {
@@ -505,7 +505,7 @@ class dolReceiptPrinter extends Printer
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'printer_receipt_template';
 		$sql .= ' SET name="'.$this->db->escape($name).'"';
 		$sql .= ', template="'.$this->db->escape($template).'"';
-		$sql .= ' WHERE rowid='.$templateid;
+		$sql .= ' WHERE rowid='.((int) $templateid);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;
@@ -524,6 +524,7 @@ class dolReceiptPrinter extends Printer
 	public function sendTestToPrinter($printerid)
 	{
 		global $conf;
+
 		$error = 0;
 		$img = EscposImage::load(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo_bw.png');
 		//$this->profile = CapabilityProfile::load("TM-T88IV");
@@ -543,7 +544,7 @@ class dolReceiptPrinter extends Printer
 
 				// If is DummyPrintConnector send to log to debugging
 				if ($this->printer->connector instanceof DummyPrintConnector) {
-					$data = $this->printer->connector-> getData();
+					$data = $this->printer->connector->getData();
 					dol_syslog($data);
 				}
 				$this->printer->close();
@@ -679,9 +680,7 @@ class dolReceiptPrinter extends Printer
 						foreach ($object->lines as $line) {
 							$total_localtax1 += $line->total_localtax1;
 						}
-						foreach ($vatarray as $vatkey => $vatvalue) {
-							$this->printer->text(str_pad(price($total_localtax1), 10, ' ', STR_PAD_LEFT)."\n");
-						}
+						$this->printer->text(str_pad(price($total_localtax1), 10, ' ', STR_PAD_LEFT)."\n");
 						break;
 					case 'DOL_PRINT_OBJECT_TAX2':
 						//var_dump($object);
@@ -689,9 +688,7 @@ class dolReceiptPrinter extends Printer
 						foreach ($object->lines as $line) {
 							$total_localtax2 += $line->total_localtax2;
 						}
-						foreach ($vatarray as $vatkey => $vatvalue) {
-							$this->printer->text(str_pad(price($total_localtax2), 10, ' ', STR_PAD_LEFT)."\n");
-						}
+						$this->printer->text(str_pad(price($total_localtax2), 10, ' ', STR_PAD_LEFT)."\n");
 						break;
 					case 'DOL_PRINT_OBJECT_TOTAL':
 						$title = $langs->trans('TotalHT');
@@ -899,7 +896,7 @@ class dolReceiptPrinter extends Printer
 	public function initPrinter($printerid)
 	{
 		global $conf;
-		if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
+		if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 			$this->connector = new DummyPrintConnector();
 			$this->printer = new Printer($this->connector, $this->profile);
 			return;
@@ -934,8 +931,8 @@ class dolReceiptPrinter extends Printer
 						$parameters = explode(':', $parameter);
 						$this->connector = new NetworkPrintConnector($parameters[0], $parameters[1]);
 						break;
-					case 4:
-						$this->connector = new WindowsPrintConnector($parameter);
+					case 4:	// LPT1, smb://...
+						$this->connector = new WindowsPrintConnector(dol_sanitizePathName($parameter));
 						break;
 					case 5:
 						$this->connector = new CupsPrintConnector($parameter);

@@ -100,15 +100,15 @@ class Contact extends CommonObject
 		'firstname' =>array('type'=>'varchar(50)', 'label'=>'Firstname', 'enabled'=>1, 'visible'=>1, 'position'=>50, 'showoncombobox'=>1, 'searchall'=>1),
 		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
 		'zip' =>array('type'=>'varchar(25)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>1, 'position'=>60),
-		'town' =>array('type'=>'text', 'label'=>'Town', 'enabled'=>1, 'visible'=>1, 'position'=>65),
+		'town' =>array('type'=>'text', 'label'=>'Town', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
 		'fk_departement' =>array('type'=>'integer', 'label'=>'Fk departement', 'enabled'=>1, 'visible'=>3, 'position'=>70),
 		'fk_pays' =>array('type'=>'integer', 'label'=>'Fk pays', 'enabled'=>1, 'visible'=>3, 'position'=>75),
 		'birthday' =>array('type'=>'date', 'label'=>'Birthday', 'enabled'=>1, 'visible'=>3, 'position'=>80),
 		'poste' =>array('type'=>'varchar(80)', 'label'=>'PostOrFunction', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
 		'phone' =>array('type'=>'varchar(30)', 'label'=>'Phone', 'enabled'=>1, 'visible'=>1, 'position'=>90, 'searchall'=>1),
-		'phone_perso' =>array('type'=>'varchar(30)', 'label'=>'PhonePerso', 'enabled'=>1, 'visible'=>1, 'position'=>95, 'searchall'=>1),
+		'phone_perso' =>array('type'=>'varchar(30)', 'label'=>'PhonePerso', 'enabled'=>1, 'visible'=>-1, 'position'=>95, 'searchall'=>1),
 		'phone_mobile' =>array('type'=>'varchar(30)', 'label'=>'PhoneMobile', 'enabled'=>1, 'visible'=>1, 'position'=>100, 'searchall'=>1),
-		'fax' =>array('type'=>'varchar(30)', 'label'=>'Fax', 'enabled'=>1, 'visible'=>1, 'position'=>105, 'searchall'=>1),
+		'fax' =>array('type'=>'varchar(30)', 'label'=>'Fax', 'enabled'=>1, 'visible'=>-1, 'position'=>105, 'searchall'=>1),
 		'email' =>array('type'=>'varchar(255)', 'label'=>'Email', 'enabled'=>1, 'visible'=>1, 'position'=>110, 'searchall'=>1),
 		'socialnetworks' =>array('type'=>'text', 'label'=>'SocialNetworks', 'enabled'=>1, 'visible'=>3, 'position'=>115),
 		'photo' =>array('type'=>'varchar(255)', 'label'=>'Photo', 'enabled'=>1, 'visible'=>3, 'position'=>170),
@@ -455,18 +455,18 @@ class Contact extends CommonObject
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($now)."',";
 		if ($this->socid > 0) {
-			$sql .= " ".$this->db->escape($this->socid).",";
+			$sql .= " ".((int) $this->socid).",";
 		} else {
 			$sql .= "null,";
 		}
 		$sql .= "'".$this->db->escape($this->lastname)."',";
 		$sql .= "'".$this->db->escape($this->firstname)."',";
-		$sql .= " ".($user->id > 0 ? "'".$this->db->escape($user->id)."'" : "null").",";
-		$sql .= " ".$this->db->escape($this->priv).",";
+		$sql .= " ".($user->id > 0 ? ((int) $user->id) : "null").",";
+		$sql .= " ".((int) $this->priv).",";
 		$sql .= " 0,";
-		$sql .= " ".$this->db->escape($this->statut).",";
+		$sql .= " ".((int) $this->statut).",";
 		$sql .= " ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null").",";
-		$sql .= " ".$this->db->escape($this->entity).",";
+		$sql .= " ".((int) $this->entity).",";
 		$sql .= "'".$this->db->escape($this->ref_ext)."',";
 		$sql .= " ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= ")";
@@ -539,6 +539,7 @@ class Contact extends CommonObject
 		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
 
 		// Clean parameters
+		$this->ref_ext = trim($this->ref_ext);
 		$this->lastname = trim($this->lastname) ?trim($this->lastname) : trim($this->lastname);
 		$this->firstname = trim($this->firstname);
 		$this->email = trim($this->email);
@@ -559,18 +560,19 @@ class Contact extends CommonObject
 		}
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET";
 		if ($this->socid > 0) {
-			$sql .= " fk_soc='".$this->db->escape($this->socid)."',";
+			$sql .= " fk_soc = ".((int) $this->socid).",";
 		} elseif ($this->socid == -1) {
-			$sql .= " fk_soc=null,";
+			$sql .= " fk_soc = NULL,";
 		}
-		$sql .= "  civility='".$this->db->escape($this->civility_code)."'";
+		$sql .= " civility='".$this->db->escape($this->civility_code)."'";
 		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
 		$sql .= ", address='".$this->db->escape($this->address)."'";
 		$sql .= ", zip='".$this->db->escape($this->zip)."'";
 		$sql .= ", town='".$this->db->escape($this->town)."'";
+		$sql .= ", ref_ext = ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "NULL");
 		$sql .= ", fk_pays=".($this->country_id > 0 ? $this->country_id : 'NULL');
 		$sql .= ", fk_departement=".($this->state_id > 0 ? $this->state_id : 'NULL');
 		$sql .= ", poste='".$this->db->escape($this->poste)."'";
@@ -579,11 +581,11 @@ class Contact extends CommonObject
 		$sql .= ", socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
 		$sql .= ", photo='".$this->db->escape($this->photo)."'";
 		$sql .= ", birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
-		$sql .= ", note_private = ".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
-		$sql .= ", note_public = ".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null");
-		$sql .= ", phone = ".(isset($this->phone_pro) ? "'".$this->db->escape($this->phone_pro)."'" : "null");
-		$sql .= ", phone_perso = ".(isset($this->phone_perso) ? "'".$this->db->escape($this->phone_perso)."'" : "null");
-		$sql .= ", phone_mobile = ".(isset($this->phone_mobile) ? "'".$this->db->escape($this->phone_mobile)."'" : "null");
+		$sql .= ", note_private = ".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "NULL");
+		$sql .= ", note_public = ".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "NULL");
+		$sql .= ", phone = ".(isset($this->phone_pro) ? "'".$this->db->escape($this->phone_pro)."'" : "NULL");
+		$sql .= ", phone_perso = ".(isset($this->phone_perso) ? "'".$this->db->escape($this->phone_perso)."'" : "NULL");
+		$sql .= ", phone_mobile = ".(isset($this->phone_mobile) ? "'".$this->db->escape($this->phone_mobile)."'" : "NULL");
 		$sql .= ", priv = '".$this->db->escape($this->priv)."'";
 		$sql .= ", fk_prospectcontactlevel = '".$this->db->escape($this->fk_prospectlevel)."'";
 		if (isset($this->stcomm_id)) {
@@ -883,30 +885,32 @@ class Contact extends CommonObject
 			$this->error = $this->db->lasterror();
 		}
 
-		// Mis a jour alerte birthday
-		if (!empty($this->birthday_alert)) {
-			//check existing
-			$sql_check = "SELECT rowid FROM ".MAIN_DB_PREFIX."user_alert WHERE type=1 AND fk_contact=".$this->db->escape($id)." AND fk_user=".$user->id;
-			$result_check = $this->db->query($sql_check);
-			if (!$result_check || ($this->db->num_rows($result_check) < 1)) {
-				//insert
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_alert(type,fk_contact,fk_user) ";
-				$sql .= "VALUES (1,".$this->db->escape($id).",".$user->id.")";
+		if ($user) {
+			// Update birthday alert
+			if (!empty($this->birthday_alert)) {
+				//check existing
+				$sql_check = "SELECT rowid FROM " . MAIN_DB_PREFIX . "user_alert WHERE type = 1 AND fk_contact = " . ((int) $id) . " AND fk_user = " . ((int) $user->id);
+				$result_check = $this->db->query($sql_check);
+				if (!$result_check || ($this->db->num_rows($result_check) < 1)) {
+					//insert
+					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "user_alert(type, fk_contact, fk_user) ";
+					$sql .= "VALUES (1," . ((int) $id) . "," . ((int) $user->id) . ")";
+					$result = $this->db->query($sql);
+					if (!$result) {
+						$error++;
+						$this->error = $this->db->lasterror();
+					}
+				} else {
+					$result = true;
+				}
+			} else {
+				$sql = "DELETE FROM " . MAIN_DB_PREFIX . "user_alert ";
+				$sql .= "WHERE type=1 AND fk_contact=" . ((int) $id) . " AND fk_user=" . ((int) $user->id);
 				$result = $this->db->query($sql);
 				if (!$result) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
-			} else {
-				$result = true;
-			}
-		} else {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_alert ";
-			$sql .= "WHERE type=1 AND fk_contact=".$this->db->escape($id)." AND fk_user=".$user->id;
-			$result = $this->db->query($sql);
-			if (!$result) {
-				$error++;
-				$this->error = $this->db->lasterror();
 			}
 		}
 

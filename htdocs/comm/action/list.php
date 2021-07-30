@@ -47,7 +47,7 @@ $massaction = GETPOST('massaction', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'actioncommlist'; // To manage different context of search
 $resourceid = GETPOST("search_resourceid", "int") ?GETPOST("search_resourceid", "int") : GETPOST("resourceid", "int");
 $pid = GETPOST("search_projectid", 'int', 3) ?GETPOST("search_projectid", 'int', 3) : GETPOST("projectid", 'int', 3);
-$search_status = (GETPOST("search_status", 'alpha') != '') ?GETPOST("search_status", 'alpha') : GETPOST("status", 'alpha');
+$search_status = (GETPOST("search_status", 'aZ09') != '') ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09');
 $type = GETPOST('search_type', 'alphanohtml') ?GETPOST('search_type', 'alphanohtml') : GETPOST('type', 'alphanohtml');
 $optioncss = GETPOST('optioncss', 'alpha');
 $year = GETPOST("year", 'int');
@@ -391,7 +391,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_extrafields as ef ON (a.id = ef.fk_object) ";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_extrafields as ef ON (a.id = ef.fk_object)";
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 }
@@ -578,8 +578,8 @@ if ($resql) {
 	//print dol_get_fiche_end();
 
 	// Add link to show birthdays
-	$link = '';
 	/*
+	$link = '';
 	if (empty($conf->use_javascript_ajax))
 	{
 		$newparam=$param;   // newparam is for birthday links
@@ -841,7 +841,7 @@ if ($resql) {
 
 		// Ref
 		if (!empty($arrayfields['a.id']['checked'])) {
-			print '<td>';
+			print '<td class="nowraponall">';
 			print $actionstatic->getNomUrl(1, -1);
 			print '</td>';
 		}

@@ -91,7 +91,7 @@ $(document).ready(function () {
 <div class="login_vertical_align">
 
 <form id="login" name="login" method="POST" action="<?php echo $php_self; ?>">
-<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
+<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 <input type="hidden" name="action" value="buildnewpassword">
 
 
@@ -216,7 +216,7 @@ if (!empty($morelogincontent)) {
 </form>
 
 
-<div class="center login_main_home divpasswordmessagedesc paddingtopbottom<?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent'; ?>" style="max-width: 70%">
+<div class="center login_main_home divpasswordmessagedesc paddingtopbottom<?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow'; ?>" style="max-width: 70%">
 <?php if ($mode == 'dolibarr' || !$disabled) { ?>
 	<span class="passwordmessagedesc">
 	<?php echo $langs->trans('SendNewPasswordDesc'); ?>

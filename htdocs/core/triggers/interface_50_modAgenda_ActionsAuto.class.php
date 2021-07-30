@@ -566,6 +566,11 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 			$object->actionmsg = $langs->transnoentities("SupplierOrderSubmitedInDolibarr", ($object->newref ? $object->newref : $object->ref));
 
+			if (!empty($object->context['comments'])) {
+				$object->actionmsg .= '<br>';
+				$object->actionmsg .= $langs->trans("Comment") . ': '.$object->context['comments'];
+			}
+
 			$object->sendtoid = 0;
 		} elseif ($action == 'ORDER_SUPPLIER_RECEIVE') {
 			// Load translation files required by the page

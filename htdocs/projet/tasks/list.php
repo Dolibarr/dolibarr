@@ -878,8 +878,8 @@ while ($i < min($num, $limit)) {
 		}
 		// Label
 		if (!empty($arrayfields['t.label']['checked'])) {
-			print '<td>';
-			print $object->label;
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($object->label).'">';
+			print dol_escape_htmltag($object->label);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -888,7 +888,7 @@ while ($i < min($num, $limit)) {
 		// Description
 		if (!empty($arrayfields['t.description']['checked'])) {
 			print '<td>';
-			print $object->description;
+			print dol_escape_htmltag($object->description);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

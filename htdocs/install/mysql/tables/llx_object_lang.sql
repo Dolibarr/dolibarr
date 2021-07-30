@@ -25,7 +25,7 @@ create table llx_object_lang
   fk_object      integer      DEFAULT 0 NOT NULL,
   type_object    varchar(32)  NOT NULL,					-- value found into $object->element: 'thirdparty', 'contact', '...'
   property       varchar(32)  NOT NULL,					-- name of property
-  lang           varchar(5)   DEFAULT 0 NOT NULL,
+  lang           varchar(5)   DEFAULT '' NOT NULL,
   value          text,
   import_key varchar(14) DEFAULT NULL
 )ENGINE=innodb;

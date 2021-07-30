@@ -613,8 +613,10 @@ jQuery(document).ready(function () {
 		var fk_block = $(this).attr("data-blockid");
 
 		$.ajax({
-			url:"../ajax/block-info.php?id="+fk_block
-			,dataType:"html"
+			method: "GET",
+			data: { token: \''.currentToken().'\' },
+			url: "'.DOL_URL_ROOT.'/blockedlog/ajax/block-info.php?id="+fk_block,
+			dataType: "html"
 		}).done(function(data) {
 			jQuery("#dialogforpopup").html(data);
 		});
@@ -630,10 +632,11 @@ if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->glob
 		<script type="text/javascript">
 
 			$.ajax({
-				url : "<?php echo dol_buildpath('/blockedlog/ajax/check_signature.php', 1) ?>"
-				,dataType:"html"
+				method: "GET",
+				data: { token: '<?php echo currentToken() ?>' },
+				url: '<?php echo DOL_URL_ROOT.'/blockedlog/ajax/check_signature.php' ?>',
+				dataType: 'html'
 			}).done(function(data) {
-
 				if(data == 'hashisok') {
 					$('#blockchainstatus').html('<?php echo $langs->trans('AuthorityReconizeFingerprintConformity').' '.img_picto($langs->trans('SignatureOK'), 'on') ?>');
 				}

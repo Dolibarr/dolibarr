@@ -29,7 +29,7 @@
  *  \brief      Page to activate/disable all modules
  */
 
-if (!defined('CSRFCHECK_WITH_TOKEN')) {
+if (!defined('CSRFCHECK_WITH_TOKEN') && (empty($_GET['action']) || $_GET['action'] != 'reset')) {	// We force security except to disable modules so we can do it if problem of a module
 	define('CSRFCHECK_WITH_TOKEN', '1'); // Force use of CSRF protection with tokens even for GET
 }
 
@@ -481,7 +481,9 @@ print load_fiche_titre($langs->trans("ModulesSetup"), '', 'title_setup');
 $deschelp  = '';
 if ($mode == 'common' || $mode == 'commonkanban') {
 	$desc = $langs->trans("ModulesDesc", '{picto}');
+	$desc .= ' '.$langs->trans("ModulesDesc2", '{picto2}');
 	$desc = str_replace('{picto}', img_picto('', 'switch_off'), $desc);
+	$desc = str_replace('{picto2}', img_picto('', 'setup'), $desc);
 	if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only minimal initial modules enabled
 		$deschelp = '<div class="info hideonsmartphone">'.$desc."<br></div><br>\n";
 	}
@@ -535,7 +537,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 	$moreforfilter .= '<div class="colorbacktimesheet float valignmiddle">';
 	$moreforfilter .= '<div class="divsearchfield paddingtop">';
-	$moreforfilter .= img_picto($langs->trans("Filter"), 'filter', 'class="paddingright opacityhigh"').'<input type="text" id="search_keyword" name="search_keyword" class="maxwidth125" value="'.dol_escape_htmltag($search_keyword).'" placeholder="'.dol_escape_htmltag($langs->trans('Keyword')).'">';
+	$moreforfilter .= img_picto($langs->trans("Filter"), 'filter', 'class="paddingright opacityhigh hideonsmartphone"').'<input type="text" id="search_keyword" name="search_keyword" class="maxwidth125" value="'.dol_escape_htmltag($search_keyword).'" placeholder="'.dol_escape_htmltag($langs->trans('Keyword')).'">';
 	$moreforfilter .= '</div>';
 	$moreforfilter .= '<div class="divsearchfield paddingtop">';
 	$moreforfilter .= $form->selectarray('search_nature', $arrayofnatures, dol_escape_htmltag($search_nature), $langs->trans('Origin'), 0, 0, '', 0, 0, 0, '', 'maxwidth200', 1);
@@ -826,8 +828,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			} else {
 				$codetoconfig .= img_picto($langs->trans("NothingToSetup"), "setup", 'class="opacitytransp" style="padding-right: 6px"', false, 0, 0, '', 'fa-15');
 			}
-		} else // Module not yet activated
-		{
+		} else { // Module not yet activated
 			// Set $codeenabledisable
 			if (!empty($objMod->always_enabled)) {
 				// Should never happened
@@ -884,11 +885,11 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		} else {
 			print '<tr class="oddeven">'."\n";
 			if (!empty($conf->global->MAIN_MODULES_SHOW_LINENUMBERS)) {
-				print '<td width="20px">'.$linenum.'</td>';
+				print '<td class="width50">'.$linenum.'</td>';
 			}
 
 			// Picto + Name of module
-			print '  <td width="200px">';
+			print '  <td class="tdoverflowmax300" title="'.dol_escape_htmltag($objMod->getName()).'">';
 			$alttext = '';
 			//if (is_array($objMod->need_dolibarr_version)) $alttext.=($alttext?' - ':'').'Dolibarr >= '.join('.',$objMod->need_dolibarr_version);
 			//if (is_array($objMod->phpmin)) $alttext.=($alttext?' - ':'').'PHP >= '.join('.',$objMod->phpmin);
@@ -920,7 +921,6 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			if ($objMod->needUpdate) {
 				$versionTitle = $langs->trans('ModuleUpdateAvailable').' : '.$objMod->lastVersion;
 				print '<span class="badge badge-warning classfortooltip" title="'.dol_escape_htmltag($versionTitle).'">'.$versiontrans.'</span>';
-				$foundoneexternalmodulewithupdate++;
 			} else {
 				print $versiontrans;
 			}
@@ -937,6 +937,9 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print '</td>';
 
 			print "</tr>\n";
+		}
+		if ($objMod->needUpdate) {
+			$foundoneexternalmodulewithupdate++;
 		}
 	}
 
@@ -1015,7 +1018,7 @@ if ($mode == 'marketplace') {
 					<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 					<input type="hidden" name="mode" value="marketplace">
 					<div class="divsearchfield">
-						<input name="search_keyword" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" size="50" value="<?php echo $options['search'] ?>"><br>
+						<input name="search_keyword" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" class="minwidth200" value="<?php echo $options['search'] ?>"><br>
 					</div>
 					<div class="divsearchfield">
 						<input class="button buttongen" value="<?php echo $langs->trans('Rechercher') ?>" type="submit">
@@ -1246,7 +1249,13 @@ if ($mode == 'develop') {
 	print '<div class="imgmaxheight50 logo_setup"></div>';
 	print '</td>';
 	print '<td>'.$langs->trans("TryToUseTheModuleBuilder", $langs->transnoentitiesnoconv("ModuleBuilder")).'</td>';
-	print '<td>'.$langs->trans("SeeTopRightMenu").'</td>';
+	print '<td class="maxwidth300">';
+	if (!empty($conf->modulebuilder->enabled)) {
+		print $langs->trans("SeeTopRightMenu");
+	} else {
+		print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("ModuleBuilder")).'</span>';
+	}
+	print '</td>';
 	print '</tr>';
 
 	print '<tr class="oddeven" height="80">'."\n";

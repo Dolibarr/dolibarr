@@ -1930,7 +1930,7 @@ if ($action == 'create') {
 		print $societe->getNomUrl(1);
 		print '<input type="hidden" name="socid" value="'.$societe->id.'">';
 	} else {
-		print img_picto('', 'company').$form->select_company($societe->id, 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+		print img_picto('', 'company').$form->select_company($societe->id, 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 widthcentpercentminusxx');
 		// reload page to retrieve supplier informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE)) {
 			print '<script type="text/javascript">
@@ -2034,7 +2034,7 @@ if ($action == 'create') {
 			// Type invoice
 			$facids = $facturestatic->list_replacable_supplier_invoices($societe->id);
 			if ($facids < 0) {
-				dol_print_error($db, $facturestatic);
+				dol_print_error($db, $facturestatic->error, $facturestatic->errors);
 				exit();
 			}
 			$options = "";
@@ -2096,7 +2096,7 @@ if ($action == 'create') {
 				// Show link for credit note
 				$facids = $facturestatic->list_qualified_avoir_supplier_invoices($societe->id);
 				if ($facids < 0) {
-					dol_print_error($db, $facturestatic);
+					dol_print_error($db, $facturestatic->error, $facturestatic->errors);
 					exit;
 				}
 				$optionsav = "";
@@ -2739,14 +2739,17 @@ if ($action == 'create') {
 
 		// Label
 		print '<tr>';
-		print '<td>'.$form->editfieldkey("Label", 'label', $object->label, $object, ($usercancreate)).'</td>';
-		print '<td>'.$form->editfieldval("Label", 'label', $object->label, $object, ($usercancreate)).'</td>';
+		print '<td>'.$form->editfieldkey("Label", 'label', $object->label, $object, $usercancreate).'</td>';
+		print '<td>'.$form->editfieldval("Label", 'label', $object->label, $object, $usercancreate).'</td>';
 		print '</tr>';
 
 		$form_permission = ($object->statut < FactureFournisseur::STATUS_CLOSED) && $usercancreate && ($object->getSommePaiement() <= 0);
+		$form_permission2 = ($object->statut < FactureFournisseur::STATUS_CLOSED) && $usercancreate;
 
 		// Date
-		print '<tr><td>'.$form->editfieldkey("DateInvoice", 'datef', $object->datep, $object, $form_permission, 'datepicker').'</td><td colspan="3">';
+		print '<tr><td>';
+		print $form->editfieldkey("DateInvoice", 'datef', $object->datep, $object, $form_permission, 'datepicker');
+		print '</td><td colspan="3">';
 		print $form->editfieldval("Date", 'datef', $object->datep, $object, $form_permission, 'datepicker');
 		print '</td>';
 
@@ -2756,11 +2759,11 @@ if ($action == 'create') {
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('PaymentConditions');
 		print '<td>';
-		if ($action != 'editconditions' && $usercancreate) {
+		if ($action != 'editconditions' && $form_permission) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
 		}
 		print '</tr></table>';
-		print '</td><td colspan="2">';
+		print '</td><td>';
 		if ($action == 'editconditions') {
 			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id');
 		} else {
@@ -2770,8 +2773,10 @@ if ($action == 'create') {
 		print '</tr>';
 
 		// Due date
-		print '<tr><td>'.$form->editfieldkey("DateMaxPayment", 'date_lim_reglement', $object->date_echeance, $object, $form_permission, 'datepicker').'</td><td colspan="3">';
-		print $form->editfieldval("DateMaxPayment", 'date_lim_reglement', $object->date_echeance, $object, $form_permission, 'datepicker');
+		print '<tr><td>';
+		print $form->editfieldkey("DateMaxPayment", 'date_lim_reglement', $object->date_echeance, $object, $form_permission2, 'datepicker');
+		print '</td><td>';
+		print $form->editfieldval("DateMaxPayment", 'date_lim_reglement', $object->date_echeance, $object, $form_permission2, 'datepicker');
 		if ($action != 'editdate_lim_reglement' && $object->hasDelay()) {
 			print img_warning($langs->trans('Late'));
 		}
@@ -2783,11 +2788,11 @@ if ($action == 'create') {
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('PaymentMode');
 		print '</td>';
-		if ($action != 'editmode' && $usercancreate) {
+		if ($action != 'editmode' && $form_permission2) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
-		print '</td><td colspan="2">';
+		print '</td><td>';
 		if ($action == 'editmode') {
 			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', 'DBIT', 1, 1);
 		} else {
@@ -2807,7 +2812,7 @@ if ($action == 'create') {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencycode&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 			}
 			print '</tr></table>';
-			print '</td><td colspan="3">';
+			print '</td><td>';
 			if ($action == 'editmulticurrencycode') {
 				$form->form_multicurrency_code($_SERVER['PHP_SELF'].'?id='.$object->id, $object->multicurrency_code, 'multicurrency_code');
 			} else {
@@ -2819,14 +2824,14 @@ if ($action == 'create') {
 			if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
 				print '<tr>';
 				print '<td>';
-				print '<table class="nobordernopadding" width="100%"><tr><td>';
+				print '<table class="nobordernopadding centpercent"><tr><td>';
 				print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
 				print '</td>';
 				if ($action != 'editmulticurrencyrate' && $object->statut == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencyrate&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 				}
 				print '</tr></table>';
-				print '</td><td colspan="3">';
+				print '</td><td>';
 				if ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') {
 					if ($action == 'actualizemulticurrencyrate') {
 						list($object->fk_multicurrency, $object->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($object->db, $object->multicurrency_code);
@@ -2854,7 +2859,7 @@ if ($action == 'create') {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 			}
 			print '</tr></table>';
-			print '</td><td colspan="3">';
+			print '</td><td>';
 			if ($action == 'editbankaccount') {
 				$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
 			} else {
@@ -2877,7 +2882,7 @@ if ($action == 'create') {
 			}
 			print '</td></tr></table>';
 			print '</td>';
-			print '<td colspan="3">';
+			print '<td>';
 			if ($action != 'editincoterm') {
 				print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 			} else {
@@ -2898,7 +2903,6 @@ if ($action == 'create') {
 			}
 			print '</tr></table>';
 			print '</td>';
-
 			print '<td>';
 			if ($action == 'editmode') {
 				$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?id='.$object->id, $object->transport_mode_id, 'transport_mode_id', 1, 1);
@@ -2913,8 +2917,8 @@ if ($action == 'create') {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		print '</table>';
-
 		print '</div>';
+
 		print '<div class="fichehalfright">';
 		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
@@ -2933,7 +2937,7 @@ if ($action == 'create') {
 			print '</tr>';
 
 			// Multicurrency Amount TTC
-			print '<tr><td height="10">'.$form->editfieldkey('MulticurrencyAmountTTC', 'multicurrency_total_ttc', '', $object, 0).'</td>';
+			print '<tr><td>'.$form->editfieldkey('MulticurrencyAmountTTC', 'multicurrency_total_ttc', '', $object, 0).'</td>';
 			print '<td>'.price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
 			print '</tr>';
 		}
@@ -2977,9 +2981,8 @@ if ($action == 'create') {
 
 		print '</table>';
 
-		/*
-		 * List of payments
-		 */
+
+		// List of payments
 
 		$totalpaye = 0;
 
@@ -3292,10 +3295,11 @@ if ($action == 'create') {
 		/*
 		 * Lines
 		 */
-		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">';
+		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.(($action != 'editline') ? 'addline' : 'updateline').'">';
 		print '<input type="hidden" name="mode" value="">';
+		print '<input type="hidden" name="page_y" value="">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 		print '<input type="hidden" name="socid" value="'.$societe->id.'">';
 

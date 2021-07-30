@@ -711,7 +711,7 @@ class UserGroup extends CommonObject
 	 *  Use this->id,this->lastname, this->firstname
 	 *
 	 *  @param  int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
-	 *	@param  string	$option						On what the link point to ('nolink', )
+	 *	@param  string	$option						On what the link point to ('nolink', 'permissions')
 	 *  @param	integer	$notooltip					1=Disable tooltip on picto and name
 	 *  @param  string  $morecss            		Add more css on link
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
@@ -730,12 +730,16 @@ class UserGroup extends CommonObject
 		$result = ''; $label = '';
 
 		$label .= '<div class="centpercent">';
-		$label .= '<u>'.$langs->trans("Group").'</u><br>';
+		$label .= img_picto('', 'group').' <u>'.$langs->trans("Group").'</u><br>';
 		$label .= '<b>'.$langs->trans('Name').':</b> '.$this->name;
 		$label .= '<br><b>'.$langs->trans("Description").':</b> '.$this->note;
 		$label .= '</div>';
 
-		$url = DOL_URL_ROOT.'/user/group/card.php?id='.$this->id;
+		if ($option == 'permissions') {
+			$url = DOL_URL_ROOT.'/user/group/perms.php?id='.$this->id;
+		} else {
+			$url = DOL_URL_ROOT.'/user/group/card.php?id='.$this->id;
+		}
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not

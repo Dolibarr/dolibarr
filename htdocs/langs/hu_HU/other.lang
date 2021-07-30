@@ -129,6 +129,7 @@ ClosedByLogin=Lezárta
 FileWasRemoved=Fájl %s eltávolították
 DirWasRemoved=Directory %s eltávolították
 FeatureNotYetAvailable=A funkció a jelenlegi verzióban még nem érhető el
+FeatureNotAvailableOnDevicesWithoutMouse=Feature not available on devices without mouse
 FeaturesSupported=Támogatott szolgáltatások
 Width=Szélesség
 Height=Magasság
@@ -263,7 +264,7 @@ ContactCreatedByEmailCollector=Az elérhetőség/cím létrehozva az e-mail gyű
 ProjectCreatedByEmailCollector=A projektet létrehozva az e-mail gyűjtő által az MSGID %s e-mailből
 TicketCreatedByEmailCollector=A jegy létrehozva az e-mail gyűjtő által az MSGID %s e-mailből
 OpeningHoursFormatDesc=A nyitvatartási időket (-tól-ig) kötőjellel (-) válassza el. <br> Használjon szóközt a különböző idősávok megadásához. <br> Példa: 8-12 14-18
-PrefixSession=Prefix for session ID
+SuffixSessionName=Suffix for session name
 
 ##### Export #####
 ExportsArea=Az export területén

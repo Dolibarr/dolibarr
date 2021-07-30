@@ -626,6 +626,7 @@ function updateContact($authentication, $contact)
 		if (!empty($object->id)) {
 			$objectfound = true;
 
+			$object->ref_ext = $contact['ref_ext'];
 
 			$object->firstname = $contact['firstname'];
 			$object->lastname = $contact['lastname'];

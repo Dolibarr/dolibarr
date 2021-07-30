@@ -93,7 +93,7 @@ class PriceGlobalVariable
 		$sql .= ") VALUES (";
 		$sql .= " ".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "''").",";
 		$sql .= " ".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "''").",";
-		$sql .= " ".$this->value;
+		$sql .= " ".((float) $this->value);
 		$sql .= ")";
 
 		$this->db->begin();

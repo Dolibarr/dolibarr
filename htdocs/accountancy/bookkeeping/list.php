@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2020  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -44,15 +44,47 @@ $action = GETPOST('action', 'aZ09');
 $search_mvt_num = GETPOST('search_mvt_num', 'int');
 $search_doc_type = GETPOST("search_doc_type", 'alpha');
 $search_doc_ref = GETPOST("search_doc_ref", 'alpha');
-$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
-$search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
+$search_date_startyear =  GETPOST('search_date_startyear', 'int');
+$search_date_startmonth =  GETPOST('search_date_startmonth', 'int');
+$search_date_startday =  GETPOST('search_date_startday', 'int');
+$search_date_endyear =  GETPOST('search_date_endyear', 'int');
+$search_date_endmonth =  GETPOST('search_date_endmonth', 'int');
+$search_date_endday =  GETPOST('search_date_endday', 'int');
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);
+$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
-$search_date_creation_start = dol_mktime(0, 0, 0, GETPOST('date_creation_startmonth', 'int'), GETPOST('date_creation_startday', 'int'), GETPOST('date_creation_startyear', 'int'));
-$search_date_creation_end = dol_mktime(23, 59, 59, GETPOST('date_creation_endmonth', 'int'), GETPOST('date_creation_endday', 'int'), GETPOST('date_creation_endyear', 'int'));
-$search_date_modification_start = dol_mktime(0, 0, 0, GETPOST('date_modification_startmonth', 'int'), GETPOST('date_modification_startday', 'int'), GETPOST('date_modification_startyear', 'int'));
-$search_date_modification_end = dol_mktime(23, 59, 59, GETPOST('date_modification_endmonth', 'int'), GETPOST('date_modification_endday', 'int'), GETPOST('date_modification_endyear', 'int'));
-$search_date_export_start = dol_mktime(0, 0, 0, GETPOST('date_export_startmonth', 'int'), GETPOST('date_export_startday', 'int'), GETPOST('date_export_startyear', 'int'));
-$search_date_export_end = dol_mktime(23, 59, 59, GETPOST('date_export_endmonth', 'int'), GETPOST('date_export_endday', 'int'), GETPOST('date_export_endyear', 'int'));
+$search_date_creation_startyear =  GETPOST('search_date_creation_startyear', 'int');
+$search_date_creation_startmonth =  GETPOST('search_date_creation_startmonth', 'int');
+$search_date_creation_startday =  GETPOST('search_date_creation_startday', 'int');
+$search_date_creation_endyear =  GETPOST('search_date_creation_endyear', 'int');
+$search_date_creation_endmonth =  GETPOST('search_date_creation_endmonth', 'int');
+$search_date_creation_endday =  GETPOST('search_date_creation_endday', 'int');
+$search_date_creation_start = dol_mktime(0, 0, 0, $search_date_creation_startmonth, $search_date_creation_startday, $search_date_creation_startyear);
+$search_date_creation_end = dol_mktime(23, 59, 59, $search_date_creation_endmonth, $search_date_creation_endday, $search_date_creation_endyear);
+$search_date_modification_startyear =  GETPOST('search_date_modification_startyear', 'int');
+$search_date_modification_startmonth =  GETPOST('search_date_modification_startmonth', 'int');
+$search_date_modification_startday =  GETPOST('search_date_modification_startday', 'int');
+$search_date_modification_endyear =  GETPOST('search_date_modification_endyear', 'int');
+$search_date_modification_endmonth =  GETPOST('search_date_modification_endmonth', 'int');
+$search_date_modification_endday =  GETPOST('search_date_modification_endday', 'int');
+$search_date_modification_start = dol_mktime(0, 0, 0, $search_date_modification_startmonth, $search_date_modification_startday, $search_date_modification_startyear);
+$search_date_modification_end = dol_mktime(23, 59, 59, $search_date_modification_endmonth, $search_date_modification_endday, $search_date_modification_endyear);
+$search_date_export_startyear =  GETPOST('search_date_export_startyear', 'int');
+$search_date_export_startmonth =  GETPOST('search_date_export_startmonth', 'int');
+$search_date_export_startday =  GETPOST('search_date_export_startday', 'int');
+$search_date_export_endyear =  GETPOST('search_date_export_endyear', 'int');
+$search_date_export_endmonth =  GETPOST('search_date_export_endmonth', 'int');
+$search_date_export_endday =  GETPOST('search_date_export_endday', 'int');
+$search_date_export_start = dol_mktime(0, 0, 0, $search_date_export_startmonth, $search_date_export_startday, $search_date_export_startyear);
+$search_date_export_end = dol_mktime(23, 59, 59, $search_date_export_endmonth, $search_date_export_endday, $search_date_export_endyear);
+$search_date_validation_startyear =  GETPOST('search_date_validation_startyear', 'int');
+$search_date_validation_startmonth =  GETPOST('search_date_validation_startmonth', 'int');
+$search_date_validation_startday =  GETPOST('search_date_validation_startday', 'int');
+$search_date_validation_endyear =  GETPOST('search_date_validation_endyear', 'int');
+$search_date_validation_endmonth =  GETPOST('search_date_validation_endmonth', 'int');
+$search_date_validation_endday =  GETPOST('search_date_validation_endday', 'int');
+$search_date_validation_start = dol_mktime(0, 0, 0, $search_date_validation_startmonth, $search_date_validation_startday, $search_date_validation_startyear);
+$search_date_validation_end = dol_mktime(23, 59, 59, $search_date_validation_endmonth, $search_date_validation_endday, $search_date_validation_endyear);
 
 //var_dump($search_date_start);exit;
 if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt.x") || GETPOST("button_delmvt")) {
@@ -157,6 +189,7 @@ $arrayfields = array(
 	't.date_creation'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0),
 	't.tms'=>array('label'=>$langs->trans("DateModification"), 'checked'=>0),
 	't.date_export'=>array('label'=>$langs->trans("DateExport"), 'checked'=>1),
+	't.date_validated'=>array('label'=>$langs->trans("DateValidation"), 'checked'=>1),
 );
 
 if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
@@ -216,14 +249,46 @@ if (empty($reshook)) {
 		$search_mvt_label = '';
 		$search_direction = '';
 		$search_ledger_code = array();
+		$search_date_startyear = '';
+		$search_date_startmonth = '';
+		$search_date_startday = '';
+		$search_date_endyear = '';
+		$search_date_endmonth = '';
+		$search_date_endday = '';
 		$search_date_start = '';
 		$search_date_end = '';
+		$search_date_creation_startyear = '';
+		$search_date_creation_startmonth = '';
+		$search_date_creation_startday = '';
+		$search_date_creation_endyear = '';
+		$search_date_creation_endmonth = '';
+		$search_date_creation_endday = '';
 		$search_date_creation_start = '';
 		$search_date_creation_end = '';
+		$search_date_modification_startyear = '';
+		$search_date_modification_startmonth = '';
+		$search_date_modification_startday = '';
+		$search_date_modification_endyear = '';
+		$search_date_modification_endmonth = '';
+		$search_date_modification_endday = '';
 		$search_date_modification_start = '';
 		$search_date_modification_end = '';
+		$search_date_export_startyear = '';
+		$search_date_export_startmonth = '';
+		$search_date_export_startday = '';
+		$search_date_export_endyear = '';
+		$search_date_export_endmonth = '';
+		$search_date_export_endday = '';
 		$search_date_export_start = '';
 		$search_date_export_end = '';
+		$search_date_validation_startyear = '';
+		$search_date_validation_startmonth = '';
+		$search_date_validation_startday = '';
+		$search_date_validation_endyear = '';
+		$search_date_validation_endmonth = '';
+		$search_date_validation_endday = '';
+		$search_date_validation_start = '';
+		$search_date_validation_end = '';
 		$search_debit = '';
 		$search_credit = '';
 		$search_lettering_code = '';
@@ -327,6 +392,16 @@ if (empty($reshook)) {
 		$filter['t.date_export<='] = $search_date_export_end;
 		$tmp = dol_getdate($search_date_export_end);
 		$param .= '&date_export_endmonth='.urlencode($tmp['mon']).'&date_export_endday='.urlencode($tmp['mday']).'&date_export_endyear='.urlencode($tmp['year']);
+	}
+	if (!empty($search_date_validation_start)) {
+		$filter['t.date_validated>='] = $search_date_validation_start;
+		$tmp = dol_getdate($search_date_validation_start);
+		$param .= '&date_validation_startmonth='.urlencode($tmp['mon']).'&date_validation_startday='.urlencode($tmp['mday']).'&date_validation_startyear='.urlencode($tmp['year']);
+	}
+	if (!empty($search_date_validation_end)) {
+		$filter['t.date_validated<='] = $search_date_validation_end;
+		$tmp = dol_getdate($search_date_validation_end);
+		$param .= '&date_validation_endmonth='.urlencode($tmp['mon']).'&date_validation_endday='.urlencode($tmp['mday']).'&date_validation_endyear='.urlencode($tmp['year']);
 	}
 	if (!empty($search_debit)) {
 		$filter['t.debit'] = $search_debit;
@@ -447,7 +522,8 @@ $sql .= " t.journal_label,";
 $sql .= " t.piece_num,";
 $sql .= " t.date_creation,";
 $sql .= " t.tms as date_modification,";
-$sql .= " t.date_export";
+$sql .= " t.date_export,";
+$sql .= " t.date_validated as date_validation";
 $sql .= ' FROM '.MAIN_DB_PREFIX.$object->table_element.' as t';
 // Manage filter
 $sqlwhere = array();
@@ -470,6 +546,8 @@ if (count($filter) > 0) {
 		} elseif ($key == 't.tms>=' || $key == 't.tms<=') {
 			$sqlwhere[] = $key.'\''.$db->idate($value).'\'';
 		} elseif ($key == 't.date_export>=' || $key == 't.date_export<=') {
+			$sqlwhere[] = $key.'\''.$db->idate($value).'\'';
+		} elseif ($key == 't.date_validated>=' || $key == 't.date_validated<=') {
 			$sqlwhere[] = $key.'\''.$db->idate($value).'\'';
 		} elseif ($key == 't.credit' || $key == 't.debit') {
 			$sqlwhere[] = natural_search($key, $value, 1, 1);
@@ -508,10 +586,13 @@ if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->ex
 		$accountancyexport = new AccountancyExport($db);
 		$accountancyexport->export($object->lines, $formatexportset);
 
+		$notifiedexportdate = GETPOST('notifiedexportdate', 'alpha');
+		$notifiedvalidationdate = GETPOST('notifiedvalidationdate', 'alpha');
+
 		if (!empty($accountancyexport->errors)) {
 			setEventMessages('', $accountancyexport->errors, 'errors');
-		} else {
-			// Specify as export : update field date_export
+		} elseif (!$notifiedexportdate || !$notifiedvalidationdate) {
+			// Specify as export : update field date_export or date_validated
 			$error = 0;
 			$db->begin();
 
@@ -520,8 +601,15 @@ if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->ex
 					$now = dol_now();
 
 					$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
-					$sql .= " SET date_export = '".$db->idate($now)."'";
-					$sql .= " , date_validated = '".$db->idate($now)."'";
+					$sql .= " SET";
+					if (!$notifiedexportdate && !$notifiedvalidationdate) {
+						$sql .= " date_export = '".$db->idate($now)."'";
+						$sql .= ", date_validated = '".$db->idate($now)."'";
+					} elseif (!$notifiedexportdate) {
+						$sql .= " date_export = '".$db->idate($now)."'";
+					} elseif (!$notifiedvalidationdate) {
+						$sql .= " date_validated = '".$db->idate($now)."'";
+					}
 					$sql .= " WHERE rowid = ".((int) $movement->id);
 
 					dol_syslog("/accountancy/bookeeping/list.php Function export_file Specify movements as exported sql=".$sql, LOG_DEBUG);
@@ -535,11 +623,11 @@ if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->ex
 
 			if (!$error) {
 				$db->commit();
-				// setEventMessages($langs->trans("AllExportedMovementsWereRecordedAsExported"), null, 'mesgs');
+				// setEventMessages($langs->trans("AllExportedMovementsWereRecordedAsExportedOrValidated"), null, 'mesgs');
 			} else {
 				$error++;
 				$db->rollback();
-				setEventMessages($langs->trans("NotAllExportedMovementsCouldBeRecordedAsExported"), null, 'errors');
+				setEventMessages($langs->trans("NotAllExportedMovementsCouldBeRecordedAsExportedOrValidated"), null, 'errors');
 			}
 		}
 		exit;
@@ -587,6 +675,8 @@ if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords) {
 
 llxHeader('', $title_page);
 
+$formconfirm = '';
+
 if ($action == 'export_file') {
 	$form_question = array();
 
@@ -598,17 +688,15 @@ if ($action == 'export_file') {
 	);
 	$form_question['notifiedvalidationdate'] = array(
 		'name' => 'notifiedvalidationdate',
-		'type' => 'checkbox', // We don't use select here, the journal_array is already a select html component
+		'type' => 'checkbox',
 		'label' => $langs->trans('NotifiedValidationDate'),
 		'value' => (!empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE) ? 'false' : 'true'),
 	);
 
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 300);
-	print $formconfirm;
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 300, 600);
 }
 if ($action == 'delmouv') {
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?mvt_num='.GETPOST('mvt_num').$param, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvtPartial'), 'delmouvconfirm', '', 0, 1);
-	print $formconfirm;
 }
 if ($action == 'delbookkeepingyear') {
 	$form_question = array();
@@ -648,8 +736,10 @@ if ($action == 'delbookkeepingyear') {
 	);
 
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt', $langs->transnoentitiesnoconv("RegistrationInAccounting")), 'delbookkeepingyearconfirm', $form_question, '', 1, 300);
-	print $formconfirm;
 }
+
+// Print form confirm
+print $formconfirm;
 
 //$param='';	param started before
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
@@ -668,6 +758,8 @@ if ($optioncss != '') {
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.urlencode($sortfield).'">';
 print '<input type="hidden" name="sortorder" value="'.urlencode($sortorder).'">';
+
+$massactionbutton = '';
 
 if (count($filter)) {
 	$buttonLabel = $langs->trans("ExportFilteredList");
@@ -701,7 +793,7 @@ if (empty($reshook)) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', $url, '', $user->rights->accounting->mouvements->creer);
 }
 
-print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
@@ -841,6 +933,17 @@ if (!empty($arrayfields['t.date_export']['checked'])) {
 	print '</div>';
 	print '</td>';
 }
+// Date validation
+if (!empty($arrayfields['t.date_validated']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_validation_start, 'date_validation_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_validation_end, 'date_validation_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
+	print '</div>';
+	print '</td>';
+}
 // Action column
 print '<td class="liste_titre center">';
 $searchpicto = $form->showFilterButtons();
@@ -892,6 +995,9 @@ if (!empty($arrayfields['t.tms']['checked'])) {
 if (!empty($arrayfields['t.date_export']['checked'])) {
 	print_liste_field_titre($arrayfields['t.date_export']['label'], $_SERVER['PHP_SELF'], "t.date_export", "", $param, '', $sortfield, $sortorder, 'center ');
 }
+if (!empty($arrayfields['t.date_validated']['checked'])) {
+	print_liste_field_titre($arrayfields['t.date_validated']['label'], $_SERVER['PHP_SELF'], "t.date_validated", "", $param, '', $sortfield, $sortorder, 'center ');
+}
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
 
@@ -934,6 +1040,7 @@ while ($i < min($num, $limit)) {
 	$line->date_creation = $db->jdate($obj->date_creation);
 	$line->date_modification = $db->jdate($obj->date_modification);
 	$line->date_export = $db->jdate($obj->date_export);
+	$line->date_validation = $db->jdate($obj->date_validation);
 
 	$total_debit += $line->debit;
 	$total_credit += $line->credit;
@@ -1067,7 +1174,7 @@ while ($i < min($num, $limit)) {
 
 	// Amount debit
 	if (!empty($arrayfields['t.debit']['checked'])) {
-		print '<td class="nowrap right">'.($line->debit != 0 ? price($line->debit) : '').'</td>';
+		print '<td class="right nowraponall amount">'.($line->debit != 0 ? price($line->debit) : '').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1079,7 +1186,7 @@ while ($i < min($num, $limit)) {
 
 	// Amount credit
 	if (!empty($arrayfields['t.credit']['checked'])) {
-		print '<td class="nowrap right">'.($line->credit != 0 ? price($line->credit) : '').'</td>';
+		print '<td class="right nowraponall amount">'.($line->credit != 0 ? price($line->credit) : '').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1126,12 +1233,22 @@ while ($i < min($num, $limit)) {
 		}
 	}
 
+	// Validated operation date
+	if (!empty($arrayfields['t.date_validated']['checked'])) {
+		print '<td class="center">'.dol_print_date($line->date_validation, 'dayhour').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
 	// Action column
 	print '<td class="nowraponall center">';
-	if (empty($line->date_export)) {
+	if (empty($line->date_export) || empty($line->date_validation)) {
 		if ($user->rights->accounting->mouvements->creer) {
-			print '<a class="editfielda paddingleft marginrightonly" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num='.$line->piece_num.$param.'&page='.$page.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">'.img_edit().'</a>';
+			print '<a class="editfielda paddingleft marginrightonly" href="' . DOL_URL_ROOT . '/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield=' . $sortfield : '') . ($sortorder ? '&sortorder=' . $sortorder : '') . '">' . img_edit() . '</a>';
 		}
+	}
+	if (empty($line->date_validation)) {
 		if ($user->rights->accounting->mouvements->supprimer) {
 			print '<a class="reposition paddingleft marginrightonly" href="'.$_SERVER['PHP_SELF'].'?action=delmouv&mvt_num='.$line->piece_num.$param.'&page='.$page.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">'.img_delete().'</a>';
 		}

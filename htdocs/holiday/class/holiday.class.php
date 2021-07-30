@@ -227,7 +227,7 @@ class Holiday extends CommonObject
 
 		if ($result >= 0) {
 			$this->db->commit();
-			return 1;
+			return 0; // for cronjob use (0 is OK, any other value is an error code)
 		} else {
 			$this->db->rollback();
 			return -1;
@@ -275,17 +275,17 @@ class Holiday extends CommonObject
 		$sql .= "entity";
 		$sql .= ") VALUES (";
 		$sql .= "'(PROV)',";
-		$sql .= "'".$this->db->escape($this->fk_user)."',";
+		$sql .= " ".((int) $this->fk_user).",";
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->escape($this->description)."',";
 		$sql .= " '".$this->db->idate($this->date_debut)."',";
 		$sql .= " '".$this->db->idate($this->date_fin)."',";
-		$sql .= " ".$this->halfday.",";
+		$sql .= " ".((int) $this->halfday).",";
 		$sql .= " '1',";
-		$sql .= " '".$this->db->escape($this->fk_validator)."',";
-		$sql .= " ".$this->fk_type.",";
-		$sql .= " ".$user->id.",";
-		$sql .= " ".$conf->entity;
+		$sql .= " ".((int) $this->fk_validator).",";
+		$sql .= " ".((int) $this->fk_type).",";
+		$sql .= " ".((int) $user->id).",";
+		$sql .= " ".((int) $conf->entity);
 		$sql .= ")";
 
 		$this->db->begin();
@@ -1251,6 +1251,8 @@ class Holiday extends CommonObject
 	public function LibStatut($status, $mode = 0, $startdate = '')
 	{
 		// phpcs:enable
+		global $langs;
+
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
@@ -1266,9 +1268,11 @@ class Holiday extends CommonObject
 			$this->labelStatusShort[self::STATUS_REFUSED] = $langs->trans('RefuseCP');
 		}
 
+		$params = array();
 		$statusType = 'status6';
-		if (!empty($startdate) && $startdate > dol_now()) {
+		if (!empty($startdate) && $startdate >= dol_now()) {		// If not yet passed, we use a green "in live" color
 			$statusType = 'status4';
+			$params = array('tooltip'=>$this->labelStatus[$status].' - '.$langs->trans("Forthcoming"));
 		}
 		if ($status == self::STATUS_DRAFT) {
 			$statusType = 'status0';
@@ -1283,7 +1287,7 @@ class Holiday extends CommonObject
 			$statusType = 'status5';
 		}
 
-		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode, '', $params);
 	}
 
 
@@ -1292,11 +1296,11 @@ class Holiday extends CommonObject
 	 *
 	 *   @param 	int		$selected   	Id of preselected status
 	 *   @param		string	$htmlname		Name of HTML select field
+	 *   @param		string	$morecss		More CSS on select component
 	 *   @return    string					Show select of status
 	 */
-	public function selectStatutCP($selected = '', $htmlname = 'select_statut')
+	public function selectStatutCP($selected = '', $htmlname = 'select_statut', $morecss = 'minwidth125')
 	{
-
 		global $langs;
 
 		// Liste des statuts
@@ -1304,7 +1308,7 @@ class Holiday extends CommonObject
 		$nb = count($name) + 1;
 
 		// Select HTML
-		$out = '<select name="'.$htmlname.'" id="'.$htmlname.'" class="flat">'."\n";
+		$out = '<select name="'.$htmlname.'" id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">'."\n";
 		$out .= '<option value="-1">&nbsp;</option>'."\n";
 
 		// Boucle des statuts
@@ -1393,7 +1397,7 @@ class Holiday extends CommonObject
 	 *	Met à jour le timestamp de la dernière mise à jour du solde des CP
 	 *
 	 *	@param		int		$userID		Id of user
-	 *	@param		int		$nbHoliday	Nb of days
+	 *	@param		float	$nbHoliday	Nb of days
 	 *  @param		int		$fk_type	Type of vacation
 	 *  @return     int					0=Nothing done, 1=OK, -1=KO
 	 */
@@ -1477,7 +1481,7 @@ class Holiday extends CommonObject
 				if ($num > 0) {
 					// Update for user
 					$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_users SET";
-					$sql .= " nb_holiday = ".((int) $nbHoliday);
+					$sql .= " nb_holiday = ".((float) $nbHoliday);
 					$sql .= " WHERE fk_user = ".(int) $userID." AND fk_type = ".(int) $fk_type;
 					$result = $this->db->query($sql);
 					if (!$result) {
@@ -1487,7 +1491,7 @@ class Holiday extends CommonObject
 				} else {
 					// Insert for user
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_users(nb_holiday, fk_user, fk_type) VALUES (";
-					$sql .= ((int) $nbHoliday);
+					$sql .= ((float) $nbHoliday);
 					$sql .= ", ".(int) $userID.", ".(int) $fk_type.")";
 					$result = $this->db->query($sql);
 					if (!$result) {
@@ -1952,12 +1956,12 @@ class Holiday extends CommonObject
 		$sql .= "fk_type";
 		$sql .= ") VALUES (";
 		$sql .= " '".$this->db->idate(dol_now())."',";
-		$sql .= " '".$this->db->escape($fk_user_action)."',";
-		$sql .= " '".$this->db->escape($fk_user_update)."',";
+		$sql .= " ".((int) $fk_user_action).",";
+		$sql .= " ".((int) $fk_user_update).",";
 		$sql .= " '".$this->db->escape($label)."',";
-		$sql .= " '".$this->db->escape($prev_solde)."',";
-		$sql .= " '".$this->db->escape($new_solde)."',";
-		$sql .= " ".$fk_type;
+		$sql .= " ".((float) $prev_solde).",";
+		$sql .= " ".((float) $new_solde).",";
+		$sql .= " ".((int) $fk_type);
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);
@@ -2261,7 +2265,7 @@ class Holiday extends CommonObject
 			$response->warning_delay = $conf->holiday->approve->warning_delay / 60 / 60 / 24;
 			$response->label = $langs->trans("HolidaysToApprove");
 			$response->labelShort = $langs->trans("ToApprove");
-			$response->url = DOL_URL_ROOT.'/holiday/list.php?search_statut=2&amp;mainmenu=hrm&amp;leftmenu=holiday';
+			$response->url = DOL_URL_ROOT.'/holiday/list.php?search_status=2&amp;mainmenu=hrm&amp;leftmenu=holiday';
 			$response->img = img_object('', "holiday");
 
 			while ($obj = $this->db->fetch_object($resql)) {

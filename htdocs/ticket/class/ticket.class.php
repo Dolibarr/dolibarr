@@ -294,7 +294,7 @@ class Ticket extends CommonObject
 			self::STATUS_ASSIGNED => 'Assigned',
 			self::STATUS_IN_PROGRESS => 'InProgress',
 			self::STATUS_WAITING => 'OnHold',
-			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation',
+			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformationShort',
 			self::STATUS_CLOSED => 'Closed',
 			self::STATUS_CANCELED => 'Canceled'
 		);
@@ -531,7 +531,7 @@ class Ticket extends CommonObject
 		global $langs;
 
 		// Check parameters
-		if (!$id && !$track_id && !$ref && !$email_msgid) {
+		if (empty($id) && empty($ref) && empty($track_id) && empty($email_msgid)) {
 			$this->error = 'ErrorWrongParameters';
 			dol_print_error(get_class($this)."::fetch ".$this->error);
 			return -1;
@@ -1177,7 +1177,7 @@ class Ticket extends CommonObject
 		}
 		// Cache deja charge
 
-		$sql = "SELECT rowid, code, label, use_default, pos, description, public, active";
+		$sql = "SELECT rowid, code, label, use_default, pos, description, public, active, force_severity, fk_parent";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category";
 		$sql .= " WHERE active > 0";
 		$sql .= " ORDER BY pos";
@@ -1196,6 +1196,8 @@ class Ticket extends CommonObject
 				$this->cache_category_tickets[$obj->rowid]['pos'] = $obj->pos;
 				$this->cache_category_tickets[$obj->rowid]['public'] = $obj->public;
 				$this->cache_category_tickets[$obj->rowid]['active'] = $obj->active;
+				$this->cache_category_tickets[$obj->rowid]['force_severity'] = $obj->force_severity;
+				$this->cache_category_tickets[$obj->rowid]['fk_parent'] = $obj->fk_parent;
 				$i++;
 			}
 			return $num;
@@ -1829,7 +1831,6 @@ class Ticket extends CommonObject
 	public function searchSocidByEmail($email, $type = '0', $filters = array(), $clause = 'AND')
 	{
 		$thirdparties = array();
-		$case = 0;
 		$exact = 0;
 
 		// Generation requete recherche
@@ -1843,7 +1844,7 @@ class Ticket extends CommonObject
 			}
 		}
 		if (!empty($email)) {
-			if (!$exact) {
+			if (empty($exact)) {
 				$regs = array();
 				if (preg_match('/^([\*])?[^*]+([\*])?$/', $email, $regs) && count($regs) > 1) {
 					$email = str_replace('*', '%', $email);
@@ -1856,15 +1857,11 @@ class Ticket extends CommonObject
 				$sql .= "(";
 			}
 
-			if (!$case) {
-				$sql .= "email LIKE '".$this->db->escape($email)."'";
-			} else {
-				$sql .= "email LIKE BINARY '".$this->db->escape($email)."'";
-			}
+			$sql .= "email LIKE '".$this->db->escape($email)."'";
 		}
 		if (is_array($filters) && !empty($filters)) {
 			foreach ($filters as $field => $value) {
-				$sql .= " ".$clause." ".$field." LIKE BINARY '".$this->db->escape($value)."'";
+				$sql .= " ".$clause." ".$field." LIKE '".$this->db->escape($value)."'";
 			}
 			if (!empty($email)) {
 				$sql .= ")";
@@ -2502,6 +2499,51 @@ class Ticket extends CommonObject
 		return array('listofpaths'=>$listofpaths, 'listofnames'=>$listofnames, 'listofmimes'=>$mimetype);
 	}
 
+	/**
+	 * Sets object to supplied categories.
+	 *
+	 * Deletes object from existing categories not supplied.
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param  int[]|int $categories Category or categories IDs
+	 * @return void
+	 */
+	public function setCategories($categories)
+	{
+		// Handle single category
+		if (!is_array($categories)) {
+			$categories = array($categories);
+		}
+
+		// Get current categories
+		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		$c = new Categorie($this->db);
+		$existing = $c->containing($this->id, Categorie::TYPE_TICKET, 'id');
+
+		// Diff
+		if (is_array($existing)) {
+			$to_del = array_diff($existing, $categories);
+			$to_add = array_diff($categories, $existing);
+		} else {
+			$to_del = array(); // Nothing to delete
+			$to_add = $categories;
+		}
+
+		// Process
+		foreach ($to_del as $del) {
+			if ($c->fetch($del) > 0) {
+				$c->del_type($this, Categorie::TYPE_TICKET);
+			}
+		}
+		foreach ($to_add as $add) {
+			if ($c->fetch($add) > 0) {
+				$c->add_type($this, Categorie::TYPE_TICKET);
+			}
+		}
+
+		return;
+	}
 
 	/**
 	 * Add new message on a ticket (private/public area). Can also send it be email if GETPOST('send_email', 'int') is set.

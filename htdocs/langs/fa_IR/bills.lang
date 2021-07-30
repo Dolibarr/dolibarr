@@ -259,6 +259,7 @@ DateMaxPayment=موعد پرداخت در
 DateInvoice=تاریخ صورت‌حساب
 DatePointOfTax=نقطۀ مالیات
 NoInvoice=بدون صورت‌حساب
+NoOpenInvoice=No open invoice
 ClassifyBill=طبقه‌بندی صورت‌حساب
 SupplierBillsToPay=صورت‌حساب‌های پرداخت‌نشدۀ فروشنده
 CustomerBillsUnpaid=صورت‌حساب‌های پرداخت‌نشدۀ مشتری
@@ -589,3 +590,4 @@ FacParentLine=Invoice Line Parent
 SituationTotalRayToRest=Remainder to pay without taxe
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=Total progress %d %%
+SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s

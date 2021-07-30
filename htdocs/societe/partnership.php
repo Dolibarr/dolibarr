@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
 require_once DOL_DOCUMENT_ROOT.'/partnership/lib/partnership.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","partnership", "other"));
+$langs->loadLangs(array("companies", "partnership", "other"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -82,19 +82,27 @@ foreach ($object->fields as $key => $val) {
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-$permissiontoread 		= $user->rights->partnership->read;
-$permissiontoadd 		= $user->rights->partnership->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontoread = $user->rights->partnership->read;
+$permissiontoadd = $user->rights->partnership->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete 	= $user->rights->partnership->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-$permissionnote 		= $user->rights->partnership->write; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->partnership->write; // Used by the include of actions_setnotes.inc.php
 $permissiondellink 		= $user->rights->partnership->write; // Used by the include of actions_dellink.inc.php
-$usercanclose 			= $user->rights->partnership->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$upload_dir 			= $conf->partnership->multidir_output[isset($object->entity) ? $object->entity : 1];
+$usercanclose = $user->rights->partnership->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$upload_dir = $conf->partnership->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 
-if (!empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) && $conf->global->PARTNERSHIP_IS_MANAGED_FOR != 'thirdparty') accessforbidden();
-if (empty($conf->partnership->enabled)) accessforbidden();
-if (empty($permissiontoread)) accessforbidden();
-if ($action == 'edit' && empty($permissiontoadd)) accessforbidden();
+if (!empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) && $conf->global->PARTNERSHIP_IS_MANAGED_FOR != 'thirdparty') {
+	accessforbidden();
+}
+if (empty($conf->partnership->enabled)) {
+	accessforbidden();
+}
+if (empty($permissiontoread)) {
+	accessforbidden();
+}
+if ($action == 'edit' && empty($permissiontoadd)) {
+	accessforbidden();
+}
 
 if (($action == 'update' || $action == 'edit') && $object->status != $object::STATUS_DRAFT && !empty($user->socid)) {
 	accessforbidden();
@@ -128,7 +136,9 @@ if (empty($reshook)) {
 }
 
 $object->fields['fk_soc']['visible'] = 0;
-if ($object->id > 0 && $object->status == $object::STATUS_REFUSED && empty($action)) $object->fields['reason_decline_or_cancel']['visible'] = 1;
+if ($object->id > 0 && $object->status == $object::STATUS_REFUSED && empty($action)) {
+	$object->fields['reason_decline_or_cancel']['visible'] = 1;
+}
 $object->fields['note_public']['visible'] = 1;
 
 

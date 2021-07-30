@@ -213,3 +213,5 @@ SendReminderForExpiredSubscription=Изпращане на напомняне п
 MembershipPaid=Членството е платено за текущия период (до %s)
 YouMayFindYourInvoiceInThisEmail=Може да откриете вашата фактура, прикачена към този имейл.
 XMembersClosed=%s член(а) е(са) приключен(и)
+XExternalUserCreated=%s external user(s) created
+ForceMemberNature=Force member nature (Individual or Corporation)

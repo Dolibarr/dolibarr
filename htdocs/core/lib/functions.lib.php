@@ -775,18 +775,48 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 			}
 			break;
 		case 'restricthtml':		// Recommended for most html textarea
+		case 'restricthtmlallowunvalid':
 			do {
 				$oldstringtoclean = $out;
 
-				// We replace chars encoded with numeric HTML entities with real char (to avoid to have numeric entities used for obfuscation of injections)
-				$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+);/i', 'realCharForNumericEntities', $out);
+				if (!empty($out) && !empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML) && $check != 'restricthtmlallowunvalid') {
+					try {
+						$dom = new DOMDocument;
+						// Add a trick to solve pb with text without parent tag
+						// like '<h1>Foo</h1><p>bar</p>' that ends up with '<h1>Foo<p>bar</p></h1>'
+						// like 'abc' that ends up with '<p>abc</p>'
+						$out = '<div class="tricktoremove">'.$out.'</div>';
+
+						$dom->loadHTML($out, LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_HTML_NODEFDTD|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
+						$out = trim($dom->saveHTML());
+
+						// Remove the trick added to solve pb with text without parent tag
+						$out = preg_replace('/^<div class="tricktoremove">/', '', $out);
+						$out = preg_replace('/<\/div>$/', '', $out);
+					} catch (Exception $e) {
+						//print $e->getMessage();
+						return 'InvalidHTMLString';
+					}
+				}
+
+				// Ckeditor use the numeric entitic for apostrophe so we force it to text entity (all other special chars are correctly
+				// encoded using text entities). This is a fix for CKeditor (CKeditor still encode in HTML4 instead of HTML5).
+				$out = preg_replace('/&#39;/i', '&apos;', $out);
+
+				// We replace chars from a/A to z/Z encoded with numeric HTML entities with the real char so we won't loose the chars at the next step.
+				// No need to use a loop here, this step is not to sanitize (this is done at next step, this is to try to save chars, even if they are
+				// using a non coventionnel way to be encoded, to not have them sanitized just after)
+				$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', 'realCharForNumericEntities', $out);
+
+				// Now we remove all remaining HTML entities starting with a number. We don't want such entities.
 				$out = preg_replace('/&#x?[0-9]+/i', '', $out);	// For example if we have j&#x61vascript with an entities without the ; to hide the 'a' of 'javascript'.
 
 				$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
 
 				// We should also exclude non expected attributes
 				if (!empty($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)) {
-					$out = dol_string_onlythesehtmlattributes($out);
+					// Warning, the function may add a LF so we are forced to trim to compare with old $out without having always a difference and an infinit loop.
+					$out = trim(dol_string_onlythesehtmlattributes($out));
 				}
 			} while ($oldstringtoclean != $out);
 			break;
@@ -989,7 +1019,7 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 function dol_clone($object, $native = 0)
 {
 	if (empty($native)) {
-		$myclone = unserialize(serialize($object));
+		$myclone = unserialize(serialize($object));	// serialize then unserialize is hack to be sure to have a new object for all fields
 	} else {
 		$myclone = clone $object; // PHP clone is a shallow copy only, not a real clone, so properties of references will keep the reference (refering to the same target/variable)
 	}
@@ -1021,10 +1051,11 @@ function dol_size($size, $type = '')
 
 
 /**
- *	Clean a string to use it as a file name
+ *	Clean a string to use it as a file name.
+ *  Replace also '--' and ' -' strings, they are used for parameters separation.
  *
  *	@param	string	$str            String to clean
- * 	@param	string	$newstr			String to replace bad chars with
+ * 	@param	string	$newstr			String to replace bad chars with.
  *  @param	int	    $unaccent		1=Remove also accent (default), 0 do not remove them
  *	@return string          		String cleaned (a-zA-Z_)
  *
@@ -1036,12 +1067,16 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 	// Char '>' '<' '|' '$' and ';' are special chars for shells.
 	// Char '/' and '\' are file delimiters.
 	// -- car can be used into filename to inject special paramaters like --use-compress-program to make command with file as parameter making remote execution of command
-	$filesystem_forbidden_chars = array('<', '>', '/', '\\', '?', '*', '|', '"', ':', '°', '$', ';', '--');
-	return dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
+	$filesystem_forbidden_chars = array('<', '>', '/', '\\', '?', '*', '|', '"', ':', '°', '$', ';');
+	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
+	$tmp = preg_replace('/\-\-+/', '_', $tmp);
+	$tmp = preg_replace('/\s+\-/', ' _', $tmp);
+	return $tmp;
 }
 
 /**
- *	Clean a string to use it as a path name
+ *	Clean a string to use it as a path name.
+ *  Replace also '--' and ' -' strings, they are used for parameters separation.
  *
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with
@@ -1053,7 +1088,10 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 {
 	$filesystem_forbidden_chars = array('<', '>', '?', '*', '|', '"', '°');
-	return dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
+	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
+	$tmp = preg_replace('/\-\-+/', '_', $tmp);
+	$tmp = preg_replace('/\s+\-/', ' _', $tmp);
+	return $tmp;
 }
 
 /**
@@ -1149,21 +1187,26 @@ function dol_string_unaccent($str)
  *	Clean a string from all punctuation characters to use it as a ref or login.
  *  This is a more complete function than dol_sanitizeFileName.
  *
- *	@param	string	$str            	String to clean
- * 	@param	string	$newstr				String to replace forbidden chars with
- *  @param  array	$badcharstoreplace  List of forbidden characters
- * 	@return string          			Cleaned string
+ *	@param	string			$str            	String to clean
+ * 	@param	string			$newstr				String to replace forbidden chars with
+ *  @param  array|string	$badcharstoreplace  List of forbidden characters to replace
+ *  @param  array|string	$badcharstoremove   List of forbidden characters to remove
+ * 	@return string          					Cleaned string
  *
  * 	@see    		dol_sanitizeFilename(), dol_string_unaccent(), dol_string_nounprintableascii()
  */
-function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '')
+function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '', $badcharstoremove = '')
 {
 	$forbidden_chars_to_replace = array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ",", ";", "=", '°'); // more complete than dol_sanitizeFileName
 	$forbidden_chars_to_remove = array();
+	//$forbidden_chars_to_remove=array("(",")");
+
 	if (is_array($badcharstoreplace)) {
 		$forbidden_chars_to_replace = $badcharstoreplace;
 	}
-	//$forbidden_chars_to_remove=array("(",")");
+	if (is_array($badcharstoremove)) {
+		$forbidden_chars_to_remove = $badcharstoremove;
+	}
 
 	return str_replace($forbidden_chars_to_replace, $newstr, str_replace($forbidden_chars_to_remove, "", $str));
 }
@@ -1473,21 +1516,23 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
 	$out = '<a class="button bordertransp button_'.$name.'"'.$disabled.' title="'.dol_escape_htmltag($label).'">'.$buttonstring.'</a>';
+	$out .= '<!-- Add js code to open dialog popup on dialog -->';
 	$out .= '<script language="javascript">
-				 jQuery(document).ready(function () {
-					 jQuery(".button_'.$name.'").click(function () {
-						 var $dialog = $(\'<div></div>\').html(\'<iframe class="iframedialog" style="border: 0px;" src="'.DOL_URL_ROOT.$url.'" width="100%" height="98%"></iframe>\')
-						 .dialog({
-						 	autoOpen: false,
-						 	modal: true,
-						 	height: (window.innerHeight - 150),
-						 	width: \'80%\',
-						 	title: "'.dol_escape_js($label).'"
-						 });
-						 $dialog.dialog(\'open\');
-					 });
-				 });
-				 </script>';
+				jQuery(document).ready(function () {
+					jQuery(".button_'.$name.'").click(function () {
+						console.log("Open popup with jQuery(...).dialog() on URL '.dol_escape_js(DOL_URL_ROOT.$url).'")
+						var $dialog = $(\'<div></div>\').html(\'<iframe class="iframedialog" style="border: 0px;" src="'.DOL_URL_ROOT.$url.'" width="100%" height="98%"></iframe>\')
+							.dialog({
+								autoOpen: false,
+							 	modal: true,
+							 	height: (window.innerHeight - 150),
+							 	width: \'80%\',
+							 	title: "'.dol_escape_js($label).'"
+							});
+						$dialog.dialog(\'open\');
+					});
+				});
+			</script>';
 	return $out;
 }
 
@@ -1737,10 +1782,10 @@ function dol_get_fiche_end($notab = 0)
  *  @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
  *  @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field). Use 'none' for no prev/next search.
  *  @param	string	$fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
- *  @param	string	$morehtmlref  	More html to show after ref
+ *  @param	string	$morehtmlref  	More html to show after the ref (see $morehtmlleft for before)
  *  @param	string	$moreparam  	More param to add in nav link url.
  *	@param	int		$nodbprefix		Do not include DB prefix to forge table name
- *	@param	string	$morehtmlleft	More html code to show before ref
+ *	@param	string	$morehtmlleft	More html code to show before the ref (see $morehtmlref for after)
  *	@param	string	$morehtmlstatus	More html code to show under navigation arrows
  *  @param  int     $onlybanner     Put this to 1, if the card will contains only a banner (this add css 'arearefnobottom' on div)
  *	@param	string	$morehtmlright	More html code to show before navigation arrows
@@ -2824,7 +2869,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		} elseif (dol_strlen($phone) == 11) {
 			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 2).$separ.substr($newphone, 5, 2).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2);
 		} elseif (dol_strlen($phone) == 12) {
-			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 2);
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 1).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 2);
 		}
 	} elseif (strtoupper($countrycode) == "CA") {
 		if (dol_strlen($phone) == 10) {
@@ -3117,7 +3162,7 @@ function getUserRemoteIP()
 	if (empty($_SERVER['HTTP_X_FORWARDED_FOR']) || preg_match('/[^0-9\.\:,\[\]]/', $_SERVER['HTTP_X_FORWARDED_FOR'])) {
 		if (empty($_SERVER['HTTP_CLIENT_IP']) || preg_match('/[^0-9\.\:,\[\]]/', $_SERVER['HTTP_CLIENT_IP'])) {
 			if (empty($_SERVER["HTTP_CF_CONNECTING_IP"])) {
-				$ip = (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']);	// value may have been forged by client
+				$ip = (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']);	// value may have been the IP of the proxy and not the client
 			} else {
 				$ip = $_SERVER["HTTP_CF_CONNECTING_IP"];	// value here may have been forged by client
 			}
@@ -3510,13 +3555,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'label', 'language', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lot', 'long-arrow-alt-right',
 				'margin', 'map-marker-alt', 'member', 'meeting', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 				'off', 'on', 'order',
-				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'stock', 'resize', 'service', 'stats', 'trip',
+				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'stock', 'resize', 'service', 'stats', 'trip',
 				'security', 'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
 				'github', 'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
-				'partnership', 'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'projecttask', 'question', 'refresh', 'salary', 'shipment',
-				'supplier_invoice', 'supplier_invoicea', 'supplier_invoicer', 'supplier_invoiced',
+				'partnership', 'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'projecttask', 'question', 'refresh', 'region',
+				'salary', 'shipment', 'state', 'supplier_invoice', 'supplier_invoicea', 'supplier_invoicer', 'supplier_invoiced',
 				'technic', 'ticket',
 				'error', 'warning',
 				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource',
@@ -3565,8 +3610,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'partnership'=>'handshake', 'payment'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
 				'recent' => 'question', 'reception'=>'dolly', 'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
 				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
-				'refresh'=>'redo', 'resource'=>'laptop-house',
-				'security'=>'key', 'salary'=>'wallet', 'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'stripe'=>'stripe-s',
+				'refresh'=>'redo', 'region'=>'map-marked', 'resource'=>'laptop-house',
+				'state'=>'map-marked-alt', 'security'=>'key', 'salary'=>'wallet', 'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'stripe'=>'stripe-s',
 				'supplier'=>'building', 'supplier_invoice'=>'file-invoice-dollar', 'technic'=>'cogs', 'ticket'=>'ticket-alt',
 				'timespent'=>'clock', 'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
 				'title_agenda'=>'calendar-alt',
@@ -3604,13 +3649,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			}
 
 			if (in_array($pictowithouttext, array('dollyrevert', 'member', 'members', 'contract', 'group', 'resource', 'shipment'))) {
-				$morecss = 'em092';
+				$morecss .= ' em092';
 			}
 			if (in_array($pictowithouttext, array('conferenceorbooth', 'collab', 'eventorganization', 'holiday', 'info', 'project', 'workstation'))) {
-				$morecss = 'em088';
+				$morecss .= ' em088';
 			}
 			if (in_array($pictowithouttext, array('asset', 'intervention', 'payment', 'loan', 'partnership', 'stock', 'technic'))) {
-				$morecss = 'em080';
+				$morecss .= ' em080';
 			}
 
 			// Define $marginleftonlyshort
@@ -3667,7 +3712,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'partnership'=>'#6c6aa8', 'playdisabled'=>'#ccc', 'printer'=>'#444', 'projectpub'=>'#986c6a', 'reception'=>'#a69944', 'resize'=>'#444', 'rss'=>'#cba',
 				//'shipment'=>'#a69944',
 				'security'=>'#999', 'stats'=>'#444', 'switch_off'=>'#999', 'technic'=>'#999', 'timespent'=>'#555',
-				'uncheck'=>'#800', 'uparrow'=>'#555', 'user-cog'=>'#999', 'country'=>'#aaa', 'globe-americas'=>'#aaa',
+				'uncheck'=>'#800', 'uparrow'=>'#555', 'user-cog'=>'#999', 'country'=>'#aaa', 'globe-americas'=>'#aaa', 'region'=>'#aaa', 'state'=>'#aaa',
 				'website'=>'#304', 'workstation'=>'#a69944'
 			);
 			if (isset($arrayconvpictotocolor[$pictowithouttext])) {
@@ -3950,7 +3995,7 @@ function img_edit($titlealt = 'default', $float = 0, $other = '')
  *	@param  string	$other		Add more attributes on img
  *	@return string      		Return tag img
  */
-function img_view($titlealt = 'default', $float = 0, $other = '')
+function img_view($titlealt = 'default', $float = 0, $other = 'class="valignmiddle"')
 {
 	global $langs;
 
@@ -5190,7 +5235,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  * 	@param	int				$option			Put 1 if you know that content is already universal format number (so no correction on decimal will be done)
  * 											Put 2 if you know that number is a user input (so we know we don't have to fix decimal separator).
  *	@return	string							Amount with universal numeric format (Example: '99.99999').
- *											If conversion fails, it return text unchanged if $rounding = '' or '0' if $rounding is defined.
+ *											If conversion fails, it return text unchanged if ($rounding = '' and $option = 1) or '0' if ($rounding is defined and $option = 1).
  *											If amount is null or '', it returns '' if $rounding = '' or '0' if $rounding is defined..
  *
  *	@see    price()							Opposite function of price2num
@@ -5464,7 +5509,7 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = "", $thirdparty_sell
 	} else {
 		$sql .= " AND t.recuperableonly = '".$db->escape($vatnpr)."'";
 	}
-	dol_syslog("get_localtax", LOG_DEBUG);
+
 	$resql = $db->query($sql);
 
 	if ($resql) {
@@ -5670,16 +5715,16 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 }
 
 /**
- *	Return vat rate of a product in a particular selling country or default country vat if product is unknown
- *  Function called by get_default_tva
+ *	Return vat rate of a product in a particular country, or default country vat if product is unknown.
+ *  Function called by get_default_tva().
  *
  *  @param	int			$idprod          	Id of product or 0 if not a predefined product
- *  @param  Societe		$thirdparty_seller  Thirdparty with a ->country_code defined (FR, US, IT, ...)
+ *  @param  Societe		$thirdpartytouse  	Thirdparty with a ->country_code defined (FR, US, IT, ...)
  *	@param	int			$idprodfournprice	Id product_fournisseur_price (for "supplier" proposal/order/invoice)
  *  @return float|string   				    Vat rate to use with format 5.0 or '5.0 (XXX)'
  *  @see get_product_localtax_for_country()
  */
-function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice = 0)
+function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournprice = 0)
 {
 	global $db, $conf, $mysoc;
 
@@ -5693,7 +5738,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 		$product = new Product($db);
 		$result = $product->fetch($idprod);
 
-		if ($mysoc->country_code == $thirdparty_seller->country_code) { // If selling country is ours
+		if ($mysoc->country_code == $thirdpartytouse->country_code) { // If country to consider is ours
 			if ($idprodfournprice > 0) {     // We want vat for product for a "supplier" object
 				$product->get_buyprice($idprodfournprice, 0, 0, 0);
 				$ret = $product->vatrate_supplier;
@@ -5708,8 +5753,8 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 			}
 			$found = 1;
 		} else {
-			// TODO Read default product vat according to countrycode and product. Vat for couple countrycode/product is a feature not implemeted yet.
-			// May be usefull/required if hidden option SERVICE_ARE_ECOMMERCE_200238EC is on
+			// TODO Read default product vat according to product and another countrycode.
+			// Vat for couple anothercountrycode/product is data that is not managed and store yet, so we will fallback on next rule.
 		}
 	}
 
@@ -5718,7 +5763,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 			// If vat of product for the country not found or not defined, we return the first higher vat of country.
 			$sql = "SELECT t.taux as vat_rate, t.code as default_vat_code";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-			$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($thirdparty_seller->country_code)."'";
+			$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($thirdpartytouse->country_code)."'";
 			$sql .= " ORDER BY t.taux DESC, t.code ASC, t.recuperableonly ASC";
 			$sql .= $db->plimit(1);
 
@@ -5745,15 +5790,15 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 }
 
 /**
- *	Return localtax vat rate of a product in a particular selling country or default country vat if product is unknown
+ *	Return localtax vat rate of a product in a particular country or default country vat if product is unknown
  *
  *  @param	int		$idprod         		Id of product
  *  @param  int		$local          		1 for localtax1, 2 for localtax 2
- *  @param  Societe	$thirdparty_seller    	Thirdparty with a ->country_code defined (FR, US, IT, ...)
+ *  @param  Societe	$thirdpartytouse    	Thirdparty with a ->country_code defined (FR, US, IT, ...)
  *  @return int             				<0 if KO, Vat rate if OK
  *  @see get_product_vat_for_country()
  */
-function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
+function get_product_localtax_for_country($idprod, $local, $thirdpartytouse)
 {
 	global $db, $mysoc;
 
@@ -5769,14 +5814,15 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
 		$product = new Product($db);
 		$result = $product->fetch($idprod);
 
-		if ($mysoc->country_code == $thirdparty_seller->country_code) { // If selling country is ours
+		if ($mysoc->country_code == $thirdpartytouse->country_code) { // If selling country is ours
 			/* Not defined yet, so we don't use this
 			if ($local==1) $ret=$product->localtax1_tx;
 			elseif ($local==2) $ret=$product->localtax2_tx;
 			$found=1;
 			*/
 		} else {
-			// TODO Read default product vat according to countrycode and product
+			// TODO Read default product vat according to product and another countrycode.
+			// Vat for couple anothercountrycode/product is data that is not managed and store yet, so we will fallback on next rule.
 		}
 	}
 
@@ -5784,7 +5830,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
 		// If vat of product for the country not found or not defined, we return higher vat of country.
 		$sql = "SELECT taux as vat_rate, localtax1, localtax2";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-		$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($thirdparty_seller->country_code)."'";
+		$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($thirdpartytouse->country_code)."'";
 		$sql .= " ORDER BY t.taux DESC, t.recuperableonly ASC";
 		$sql .= $db->plimit(1);
 
@@ -5809,12 +5855,12 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
 
 /**
  *	Function that return vat rate of a product line (according to seller, buyer and product vat rate)
- *   Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
- *	 Si le (pays vendeur = pays acheteur) alors TVA par defaut=TVA du produit vendu. Fin de regle.
- *	 Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
- *	 Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par defaut=TVA du produit vendu. Fin de regle
- *	 Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise avec num TVA) intra alors TVA par defaut=0. Fin de regle
- *	 Sinon TVA proposee par defaut=0. Fin de regle.
+ *   VATRULE 1: Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
+ *	 VATRULE 2: Si le (pays vendeur = pays acheteur) alors TVA par defaut=TVA du produit vendu. Fin de regle.
+ *	 VATRULE 3: Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
+ *	 VATRULE 4: Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
+ *	 VATRULE 5: Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise) alors TVA par defaut=0. Fin de regle
+ *	 VATRULE 6: Sinon TVA proposee par defaut=0. Fin de regle.
  *
  *	@param	Societe		$thirdparty_seller    	Objet societe vendeuse
  *	@param  Societe		$thirdparty_buyer   	Objet societe acheteuse
@@ -5843,9 +5889,19 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	// If services are eServices according to EU Council Directive 2002/38/EC (http://ec.europa.eu/taxation_customs/taxation/vat/traders/e-commerce/article_1610_en.htm)
 	// we use the buyer VAT.
 	if (!empty($conf->global->SERVICE_ARE_ECOMMERCE_200238EC)) {
-		if ($seller_in_cee && $buyer_in_cee && !$thirdparty_buyer->isACompany()) {
-			//print 'VATRULE 0';
-			return get_product_vat_for_country($idprod, $thirdparty_buyer, $idprodfournprice);
+		if ($seller_in_cee && $buyer_in_cee) {
+			$isacompany = $thirdparty_buyer->isACompany();
+			if ($isacompany && !empty($conf->global->MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL)) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+				if (!isValidVATID($thirdparty_buyer)) {
+					$isacompany = 0;
+				}
+			}
+
+			if (!$isacompany) {
+				//print 'VATRULE 0';
+				return get_product_vat_for_country($idprod, $thirdparty_buyer, $idprodfournprice);
+			}
 		}
 	}
 
@@ -5865,36 +5921,41 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	}
 
 	// Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
-	// Not supported
+	// 'VATRULE 3' - Not supported
 
 	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise) alors TVA par defaut=0. Fin de regle
 	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
 	if (($seller_in_cee && $buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
-		if ($isacompany) {
-			if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID)) {
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-				if (!isValidVATID($thirdparty_buyer)) {
-					//print 'VATRULE 6';
-					return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
-				}
+		if ($isacompany && !empty($conf->global->MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			if (!isValidVATID($thirdparty_buyer)) {
+				$isacompany = 0;
 			}
-			//print 'VATRULE 3';
-			return 0;
-		} else {
+		}
+
+		if (!$isacompany) {
 			//print 'VATRULE 4';
 			return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+		} else {
+			//print 'VATRULE 5';
+			return 0;
 		}
 	}
 
-	// Si (vendeur en France et acheteur hors Communaute europeenne et acheteur particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
-	if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC) && empty($buyer_in_cee) && !$thirdparty_buyer->isACompany()) {
-		return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+	// Si (vendeur dans Communaute europeene et acheteur hors Communaute europeenne et acheteur particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
+	// I don't see any use case that need this rule.
+	if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC) && empty($buyer_in_cee)) {
+		$isacompany = $thirdparty_buyer->isACompany();
+		if (!$isacompany) {
+			return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			//print 'VATRULE extra';
+		}
 	}
 
 	// Sinon la TVA proposee par defaut=0. Fin de regle.
 	// Rem: Cela signifie qu'au moins un des 2 est hors Communaute europeenne et que le pays differe
-	//print 'VATRULE 5';
+	//print 'VATRULE 6';
 	return 0;
 }
 
@@ -6276,7 +6337,7 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	$stringtoclean = preg_replace('/&#58;|&#0+58|&#x3A/i', '', $stringtoclean); // refused string ':' encoded (no reason to have a : encoded like this) to disable 'javascript:...'
 	$stringtoclean = preg_replace('/javascript\s*:/i', '', $stringtoclean);
 
-	$temp = strip_tags($stringtoclean, $allowed_tags_string);
+	$temp = strip_tags($stringtoclean, $allowed_tags_string);	// Warning: This remove also undesired </> changing string obfuscated with </> that pass injection detection into harmfull string
 
 	if ($cleanalsosomestyles) {	// Clean for remaining html tags
 		$temp = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/i', '', $temp); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
@@ -6326,8 +6387,8 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 		}
 
 		$return = $dom->saveHTML();
-
 		//$return = '<html><body>aaaa</p>bb<p>ssdd</p>'."\n<p>aaa</p>aa<p>bb</p>";
+
 		$return = preg_replace('/^<html><body>/', '', $return);
 		$return = preg_replace('/<\/body><\/html>$/', '', $return);
 		return $return;
@@ -6767,6 +6828,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$substitutionarray = array_merge($substitutionarray, array(
 			'__MYCOMPANY_NAME__'    => $mysoc->name,
 			'__MYCOMPANY_EMAIL__'   => $mysoc->email,
+			'__MYCOMPANY_PHONE__'   => $mysoc->phone,
+			'__MYCOMPANY_FAX__'     => $mysoc->fax,
 			'__MYCOMPANY_PROFID1__' => $mysoc->idprof1,
 			'__MYCOMPANY_PROFID2__' => $mysoc->idprof2,
 			'__MYCOMPANY_PROFID3__' => $mysoc->idprof3,
@@ -6855,6 +6918,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__DIRECTDOWNLOAD_URL_PROPOSAL__'] = 'Direct download url of a proposal';
 			$substitutionarray['__DIRECTDOWNLOAD_URL_ORDER__'] = 'Direct download url of an order';
 			$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = 'Direct download url of an invoice';
+			$substitutionarray['__DIRECTDOWNLOAD_URL_CONTRACT__'] = 'Direct download url of a contract';
+			$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_PROPOSAL__'] = 'Direct download url of a supplier proposal';
 
 			if (!empty($conf->expedition->enabled) && (!is_object($object) || $object->element == 'shipping')) {
 				$substitutionarray['__SHIPPINGTRACKNUM__'] = 'Shipping tracking number';
@@ -7139,14 +7204,14 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__AMOUNT_TAX3__']     = is_object($object) ? $object->total_localtax2 : '';
 		}
 
-		$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object) ? ($object->total_ttc ? price($object->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency) : null) : '';
-		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = is_object($object) ? ($object->total_ht ? price($object->total_ht, 0, $outputlangs, 0, 0, -1, $conf->currency) : null) : '';
-		$substitutionarray['__AMOUNT_VAT_FORMATED__']      = is_object($object) ? (isset($object->total_vat) ? price($object->total_vat, 0, $outputlangs, 0, 0, -1, $conf->currency) : ($object->total_tva ? price($object->total_tva, 0, $outputlangs, 0, 0, -1, $conf->currency) : null)) : '';
+		$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object) ? ($object->total_ttc ? price($object->total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
+		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = is_object($object) ? ($object->total_ht ? price($object->total_ht, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
+		$substitutionarray['__AMOUNT_VAT_FORMATED__']      = is_object($object) ? (isset($object->total_vat) ? price($object->total_vat, 0, $outputlangs, 0, -1, -1, $conf->currency) : ($object->total_tva ? price($object->total_tva, 0, $outputlangs, 0, -1, -1, $conf->currency) : null)) : '';
 		if ($onlykey != 2 || $mysoc->useLocalTax(1)) {
-			$substitutionarray['__AMOUNT_TAX2_FORMATED__']     = is_object($object) ? ($object->total_localtax1 ? price($object->total_localtax1, 0, $outputlangs, 0, 0, -1, $conf->currency) : null) : '';
+			$substitutionarray['__AMOUNT_TAX2_FORMATED__']     = is_object($object) ? ($object->total_localtax1 ? price($object->total_localtax1, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		}
 		if ($onlykey != 2 || $mysoc->useLocalTax(2)) {
-			$substitutionarray['__AMOUNT_TAX3_FORMATED__']     = is_object($object) ? ($object->total_localtax2 ? price($object->total_localtax2, 0, $outputlangs, 0, 0, -1, $conf->currency) : null) : '';
+			$substitutionarray['__AMOUNT_TAX3_FORMATED__']     = is_object($object) ? ($object->total_localtax2 ? price($object->total_localtax2, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		}
 
 		$substitutionarray['__AMOUNT_MULTICURRENCY__']          = (is_object($object) && isset($object->multicurrency_total_ttc)) ? $object->multicurrency_total_ttc : '';
@@ -7411,7 +7476,7 @@ function print_date_range($date_start, $date_end, $format = '', $outputlangs = '
  *    @param    int			$date_end      		End date
  *    @param    string		$format        		Output format
  *    @param	Translate	$outputlangs   		Output language
- *    @param	integer		$withparenthesis	1=Add parenthesis, 0=non parenthesis
+ *    @param	integer		$withparenthesis	1=Add parenthesis, 0=no parenthesis
  *    @return	string							String
  */
 function get_date_range($date_start, $date_end, $format = '', $outputlangs = '', $withparenthesis = 1)
@@ -8009,7 +8074,7 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1)
 	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array("fopen(", "file_put_contents(", "fputs(", "fputscsv(", "fwrite(", "fpassthru(", "unlink(", "mkdir(", "rmdir(", "symlink(", "touch(", "umask("));
 	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('function(', '$$', 'call_user_func('));
 	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST'));
-	$forbiddenphpregex = array('global\s+\$');
+	$forbiddenphpregex = 'global\s+\$';
 	do {
 		$oldstringtoclean = $s;
 		$s = str_ireplace($forbiddenphpstrings, '__forbiddenstring__', $s);
@@ -8063,7 +8128,7 @@ function picto_from_langcode($codelang, $moreatt = '')
 	}
 
 	if ($codelang == 'auto') {
-		return '<span class="fa fa-globe"></span>';
+		return '<span class="fa fa-language"></span>';
 	}
 
 	$langtocountryflag = array(
@@ -8424,8 +8489,10 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 	if (!empty($hookmanager)) {
 		$parameters = array('object' => $object, 'mode' => $mode, 'head' => &$head);
 		$reshook = $hookmanager->executeHooks('completeTabsHead', $parameters);
-		if ($reshook > 0) {
+		if ($reshook > 0) {		// Hook ask to replace completely the array
 			$head = $hookmanager->resArray;
+		} else {				// Hook
+			$head = array_merge($head, $hookmanager->resArray);
 		}
 		$h = count($head);
 	}
@@ -9705,11 +9772,29 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * @param string    $url        the url for link
  * @param string    $id         attribute id of button
  * @param int       $userRight  user action right
- * @param array     $params     various params for future : recommended rather than adding more function arguments
+ * // phpcs:disable
+ * @param array 	$params = [ // Various params for future : recommended rather than adding more function arguments
+ *                          	'attr' => [ // to add or override button attributes
+ *                          		'xxxxx' => '', // your xxxxx attribute you want
+ *                          		'class' => '', // to add more css class to the button class attribute
+ *                          		'classOverride' => '' // to replace class attribute of the button
+ *                          	],
+ *                          	'confirm' => [
+ *                          		'url' => 'http://', // Overide Url to go when user click on action btn, if empty default url is $url.?confirm=yes, for no js compatibility use $url for fallback confirm.
+ *                          		'title' => '', // Overide title of modal,  if empty default title use "ConfirmBtnCommonTitle" lang key
+ *                          		'action-btn-label' => '', // Overide label of action button,  if empty default label use "Confirm" lang key
+ *                          		'cancel-btn-label' => '', // Overide label of cancel button,  if empty default label use "CloseDialog" lang key
+ *                          		'content' => '', // Overide text of content,  if empty default content use "ConfirmBtnCommonContent" lang key
+ *                          		'modal' => true, // true|false to display dialog as a modal (with dark background)
+ *                      		],
+ *                          ]
+ * // phpcs:enable
  * @return string               html button
  */
 function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
 {
+	global $hookmanager, $action, $object, $langs;
+
 	$class = 'butAction';
 	if ($actionType == 'danger' || $actionType == 'delete') {
 		$class = 'butActionDelete';
@@ -9750,11 +9835,29 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 		}
 	}
 
+	// Js Confirm button
+	if ($userRight && !empty($params['confirm'])) {
+		if (!is_array($params['confirm'])) {
+			$params['confirm'] = array(
+				'url' => $url . (strpos($url, '?') > 0 ? '&' : '?') . 'confirm=yes'
+			);
+		}
+
+		// for js desabled compatibility set $url as call to confirm action and $params['confirm']['url'] to confirmed action
+		$attr['data-confirm-url'] = $params['confirm']['url'];
+		$attr['data-confirm-title'] = !empty($params['confirm']['title']) ? $params['confirm']['title'] : $langs->trans('ConfirmBtnCommonTitle', $label);
+		$attr['data-confirm-content'] = !empty($params['confirm']['content']) ? $params['confirm']['content'] : $langs->trans('ConfirmBtnCommonContent', $label);
+		$attr['data-confirm-content'] = preg_replace("/\r|\n/", "", $attr['data-confirm-content']);
+		$attr['data-confirm-action-btn-label'] = !empty($params['confirm']['action-btn-label']) ? $params['confirm']['action-btn-label'] : $langs->trans('Confirm');
+		$attr['data-confirm-cancel-btn-label'] = !empty($params['confirm']['cancel-btn-label']) ? $params['confirm']['cancel-btn-label'] : $langs->trans('CloseDialog');
+		$attr['data-confirm-modal'] = !empty($params['confirm']['modal']) ? $params['confirm']['modal'] : true;
+
+		$attr['class'].= ' butActionConfirm';
+	}
+
 	if (isset($attr['href']) && empty($attr['href'])) {
 		unset($attr['href']);
 	}
-
-	// TODO : add a hook
 
 	// escape all attribute
 	$attr = array_map('dol_escape_htmltag', $attr);
@@ -9768,7 +9871,29 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 
 	$tag = !empty($attr['href']) ? 'a' : 'span';
 
-	return '<'.$tag.' '.$compiledAttributes.'>'.$html.'</'.$tag.'>';
+
+	$parameters = array(
+		'TCompiledAttr' => $TCompiledAttr,
+		'compiledAttributes' => $compiledAttributes,
+		'attr' => $attr,
+		'tag' => $tag,
+		'label' => $label,
+		'html' => $html,
+		'actionType' => $actionType,
+		'url' => $url,
+		'id' => $id,
+		'userRight' => $userRight,
+		'params' => $params
+	);
+
+	$reshook = $hookmanager->executeHooks('dolGetButtonAction', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+	if (empty($reshook)) {
+		return '<' . $tag . ' ' . $compiledAttributes . '>' . $html . '</' . $tag . '>';
+	} else {
+		return $hookmanager->resPrint;
+	}
 }
 
 /**
@@ -10079,7 +10204,7 @@ function newToken()
  */
 function currentToken()
 {
-	return $_SESSION['token'];
+	return isset($_SESSION['token']) ? $_SESSION['token'] : '';
 }
 
 /**
@@ -10277,9 +10402,10 @@ function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
  */
 function showValueWithClipboardCPButton($valuetocopy, $showonlyonhover = 1, $texttoshow = '')
 {
+	/*
 	global $conf;
 
-	/*if (!empty($conf->dol_no_mouse_hover)) {
+	if (!empty($conf->dol_no_mouse_hover)) {
 		$showonlyonhover = 0;
 	}*/
 
@@ -10287,6 +10413,23 @@ function showValueWithClipboardCPButton($valuetocopy, $showonlyonhover = 1, $tex
 		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><span class="clipboardCPValue hidewithsize">'.$valuetocopy.'</span><span class="clipboardCPValueToPrint">'.$texttoshow.'</span><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText opacitymedium"></span></span>';
 	} else {
 		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><span class="clipboardCPValue">'.$valuetocopy.'</span><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText opacitymedium"></span></span>';
+	}
+
+	return $result;
+}
+
+
+/**
+ * Decode an encode string. The string can be encoded in json format (recommended) or with serialize (avoid this)
+ *
+ * @param 	string	$stringtodecode		String to decode (json or serialize coded)
+ * @return	mixed						The decoded object.
+ */
+function jsonOrUnserialize($stringtodecode)
+{
+	$result = json_decode($stringtodecode);
+	if ($result === null) {
+		$result = unserialize($stringtodecode);
 	}
 
 	return $result;

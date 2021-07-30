@@ -1499,8 +1499,8 @@ class FichinterLigne extends CommonObjectLine
 		$sql .= " VALUES (".$this->fk_fichinter.",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
 		$sql .= " '".$this->db->idate($this->datei)."',";
-		$sql .= " ".$this->duration.",";
-		$sql .= ' '.$rangToUse;
+		$sql .= " ".((int) $this->duration).",";
+		$sql .= ' '.((int) $rangToUse);
 		$sql .= ')';
 
 		dol_syslog("FichinterLigne::insert", LOG_DEBUG);

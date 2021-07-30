@@ -127,19 +127,19 @@ class modTicket extends DolibarrModules
 			'tabsql' => array(
 				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_type as f',
 				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_severity as f',
-				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.public FROM '.MAIN_DB_PREFIX.'c_ticket_category as f',
+				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.public, f.fk_parent FROM '.MAIN_DB_PREFIX.'c_ticket_category as f',
 				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_resolution as f'
 			),
 			'tabsqlsort' => array("pos ASC", "pos ASC", "pos ASC", "pos ASC"),
-			'tabfield' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public", "code,label,pos,use_default"),
-			'tabfieldvalue' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public", "code,label,pos,use_default"),
-			'tabfieldinsert' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public", "code,label,pos,use_default"),
+			'tabfield' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public,fk_parent", "code,label,pos,use_default"),
+			'tabfieldvalue' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public,fk_parent", "code,label,pos,use_default"),
+			'tabfieldinsert' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public,fk_parent", "code,label,pos,use_default"),
 			'tabrowid' => array("rowid", "rowid", "rowid", "rowid"),
 			'tabcond' => array($conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled),
 			'tabhelp' => array(
 				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")),
 				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")),
-				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1"), 'public'=>$langs->trans("Enter0or1").'<br>'.$langs->trans("TicketGroupIsPublicDesc")),
+				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1"), 'public'=>$langs->trans("Enter0or1").'<br>'.$langs->trans("TicketGroupIsPublicDesc"), 'fk_parent'=>$langs->trans("IfThisCategoryIsChildOfAnother")),
 				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1"))
 			),
 		);
@@ -200,7 +200,7 @@ class modTicket extends DolibarrModules
 		$this->menus = array(); // List of menus to add
 		$r = 0;
 
-		$this->menu[$r] = array('fk_menu' => 0, // Put 0 if this is a top menu
+		/*$this->menu[$r] = array('fk_menu' => 0, // Put 0 if this is a top menu
 			'type' => 'top', // This is a Top menu entry
 			'titre' => 'Ticket',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
@@ -209,11 +209,11 @@ class modTicket extends DolibarrModules
 			'url' => '/ticket/index.php',
 			'langs' => 'ticket', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 88,
-			'enabled' => '$conf->ticket->enabled', // Define condition to show or hide menu entry. Use '$conf->ticket->enabled' if entry must be visible if module is enabled.
+			'enabled' => '$conf->ticket->enabled',
 			'perms' => '$user->rights->ticket->read', // Use 'perms'=>'$user->rights->ticket->level1->level2' if you want your menu with a permission rules
 			'target' => '',
 			'user' => 2); // 0=Menu for internal users, 1=external users, 2=both
-		$r++;
+		$r++;*/
 
 		$this->menu[$r] = array('fk_menu' => 'fk_mainmenu=ticket',
 			'type' => 'left',
@@ -279,6 +279,19 @@ class modTicket extends DolibarrModules
 			'langs' => 'ticket',
 			'position' => 107,
 			'enabled' => '$conf->ticket->enabled',
+			'perms' => '$user->rights->ticket->read',
+			'target' => '',
+			'user' => 0);
+		$r++;
+
+		$this->menu[$r] = array('fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=ticket',
+			'type' => 'left',
+			'titre' => 'Categories',
+			'mainmenu' => 'ticket',
+			'url' => '/categories/index.php?type=12',
+			'langs' => 'ticket',
+			'position' => 107,
+			'enabled' => '$conf->categorie->enabled',
 			'perms' => '$user->rights->ticket->read',
 			'target' => '',
 			'user' => 0);

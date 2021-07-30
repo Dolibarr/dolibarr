@@ -495,17 +495,21 @@ if (empty($reshook)) {
 			$object->webservices_key		= GETPOST('webservices_key', 'san_alpha');
 
 			if (GETPOSTISSET('accountancy_code_sell')) {
-				if (GETPOST('accountancy_code_sell', 'int')==-1) {
-					$object->accountancy_code_sell  = 0;
+				$accountancy_code_sell  = GETPOST('accountancy_code_sell', 'alpha');
+
+				if (empty($accountancy_code_sell) || $accountancy_code_sell == '-1') {
+					$object->accountancy_code_sell = '';
 				} else {
-					$object->accountancy_code_sell  = GETPOST('accountancy_code_sell', 'int');
+					$object->accountancy_code_sell = $accountancy_code_sell;
 				}
 			}
 			if (GETPOSTISSET('accountancy_code_buy')) {
-				if (GETPOST('accountancy_code_buy', 'int')==-1) {
-					$object->accountancy_code_buy  = 0;
+				$accountancy_code_buy   = GETPOST('accountancy_code_buy', 'alpha');
+
+				if (empty($accountancy_code_buy) || $accountancy_code_buy == '-1') {
+					$object->accountancy_code_buy = '';
 				} else {
-					$object->accountancy_code_buy  = GETPOST('accountancy_code_buy', 'int');
+					$object->accountancy_code_buy = $accountancy_code_buy;
 				}
 			}
 
@@ -562,7 +566,7 @@ if (empty($reshook)) {
 				}
 
 				// We set country_id, country_code and country for the selected country
-				$object->country_id = GETPOST('country_id') != '' ?GETPOST('country_id') : $mysoc->country_id;
+				$object->country_id = GETPOST('country_id', 'int') != '' ? GETPOST('country_id', 'int') : $mysoc->country_id;
 				if ($object->country_id) {
 					$tmparray = getCountry($object->country_id, 'all');
 					$object->country_code = $tmparray['code'];
@@ -874,6 +878,11 @@ if (empty($reshook)) {
 		$result = $object->setSalesRep(GETPOST('commercial', 'array'));
 	}
 
+	// warehouse
+	if ($action == 'setwarehouse' && $user->rights->societe->creer) {
+		$result = $object->setWarehouse(GETPOST('fk_warehouse', 'int'));
+	}
+
 	$id = $socid;
 	$object->fetch($socid);
 
@@ -1061,10 +1070,22 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$object->default_lang = GETPOST('default_lang');
 
 		if (GETPOSTISSET('accountancy_code_sell')) {
-			$object->accountancy_code_sell  = GETPOST('accountancy_code_sell', 'alpha');
+			$accountancy_code_sell  = GETPOST('accountancy_code_sell', 'alpha');
+
+			if (empty($accountancy_code_sell) || $accountancy_code_sell == '-1') {
+				$object->accountancy_code_sell = '';
+			} else {
+				$object->accountancy_code_sell = $accountancy_code_sell;
+			}
 		}
 		if (GETPOSTISSET('accountancy_code_buy')) {
-			$object->accountancy_code_buy   = GETPOST('accountancy_code_buy', 'alpha');
+			$accountancy_code_buy   = GETPOST('accountancy_code_buy', 'alpha');
+
+			if (empty($accountancy_code_buy) || $accountancy_code_buy == '-1') {
+				$object->accountancy_code_buy = '';
+			} else {
+				$object->accountancy_code_buy = $accountancy_code_buy;
+			}
 		}
 
 		$object->logo = (isset($_FILES['photo']) ?dol_sanitizeFileName($_FILES['photo']['name']) : '');
@@ -1388,6 +1409,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			if ($object->country_id) {
+				print img_picto('', 'state', 'class="pictofixedwidth"');
 				print $formcompany->select_state($object->state_id, $object->country_code);
 			} else {
 				print $countrynotdefined;
@@ -1662,8 +1684,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$accountancy_code_buy = GETPOST('accountancy_code_buy', 'alpha');
 				print $formaccounting->select_account($accountancy_code_buy, 'accountancy_code_buy', 1, null, 1, 1, '');
 				print '</td></tr>';
-			} else // For external software
-			{
+			} else { // For external software
 				// Accountancy_code_sell
 				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 				print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_sell" value="'.$object->accountancy_code_sell.'">';
@@ -1788,10 +1809,22 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$object->webservices_key        = GETPOST('webservices_key', 'san_alpha');
 
 				if (GETPOSTISSET('accountancy_code_sell')) {
-					$object->accountancy_code_sell  = GETPOST('accountancy_code_sell', 'alpha');
+					$accountancy_code_sell  = GETPOST('accountancy_code_sell', 'alpha');
+
+					if (empty($accountancy_code_sell) || $accountancy_code_sell == '-1') {
+						$object->accountancy_code_sell = '';
+					} else {
+						$object->accountancy_code_sell = $accountancy_code_sell;
+					}
 				}
 				if (GETPOSTISSET('accountancy_code_buy')) {
-					$object->accountancy_code_buy   = GETPOST('accountancy_code_buy', 'alpha');
+					$accountancy_code_buy   = GETPOST('accountancy_code_buy', 'alpha');
+
+					if (empty($accountancy_code_buy) || $accountancy_code_buy == '-1') {
+						$object->accountancy_code_buy = '';
+					} else {
+						$object->accountancy_code_buy = $accountancy_code_buy;
+					}
 				}
 
 				//Incoterms
@@ -1826,7 +1859,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$sub2 = 1;
 			}
 
-			if ($conf->use_javascript_ajax) {
+			if (!empty($conf->use_javascript_ajax)) {
 				print "\n".'<script type="text/javascript">';
 				print '$(document).ready(function () {
     			var val='.$sub.';
@@ -2072,6 +2105,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td colspan="3">';
 				}
 
+				print img_picto('', 'state', 'class="pictofixedwidth"');
 				print $formcompany->select_state($object->state_id, $object->country_code);
 				print '</td></tr>';
 			}
@@ -2367,8 +2401,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<td>';
 					print $formaccounting->select_account($object->accountancy_code_buy, 'accountancy_code_buy', 1, '', 1, 1);
 					print '</td></tr>';
-				} else // For external software
-				{
+				} else { // For external software
 					// Accountancy_code_sell
 					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
 					print '<td><input name="accountancy_code_sell" class="maxwidth200" value="'.$object->accountancy_code_sell.'">';
@@ -2655,21 +2688,25 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 		print '</td></tr>';
 
-		// Third-Party Type
-		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('ThirdPartyType').'</td>';
-		if ($action != 'editthirdpartytype' && $user->rights->societe->creer) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editthirdpartytype&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
-		}
-		print '</tr></table>';
-		print '</td><td>';
-		$html_name = ($action == 'editthirdpartytype') ? 'typent_id' : 'none';
-		$formcompany->formThirdpartyType($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->typent_id, $html_name, '');
-		print '</td></tr>';
-
-		// Workforce/Staff
-		if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) {
-			print '<tr><td>'.$langs->trans("Workforce").'</td><td>'.$object->effectif.'</td></tr>';
+		// Warehouse
+		if (!empty($conf->stock->enabled) && !empty($conf->global->SOCIETE_ASK_FOR_WAREHOUSE)) {
+			$langs->load('stocks');
+			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+			$formproduct = new FormProduct($db);
+			print '<tr class="nowrap">';
+			print '<td>';
+			print $form->editfieldkey("Warehouse", 'warehouse', '', $object, $user->rights->societe->creer);
+			print '</td><td>';
+			if ($action == 'editwarehouse') {
+				$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'fk_warehouse', 1);
+			} else {
+				if ($object->fk_warehouse > 0) {
+					print img_picto('', 'stock', 'class="paddingrightonly"');
+				}
+				$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'none');
+			}
+			print '</td>';
+			print '</tr>';
 		}
 
 		print '</table>';
@@ -2697,6 +2734,24 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print $form->showCategories($object->id, Categorie::TYPE_SUPPLIER, 1);
 				print "</td></tr>";
 			}
+		}
+
+
+		// Third-Party Type
+		print '<tr><td>';
+		print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('ThirdPartyType').'</td>';
+		if ($action != 'editthirdpartytype' && $user->rights->societe->creer) {
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editthirdpartytype&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+		}
+		print '</tr></table>';
+		print '</td><td>';
+		$html_name = ($action == 'editthirdpartytype') ? 'typent_id' : 'none';
+		$formcompany->formThirdpartyType($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->typent_id, $html_name, '');
+		print '</td></tr>';
+
+		// Workforce/Staff
+		if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) {
+			print '<tr><td>'.$langs->trans("Workforce").'</td><td>'.$object->effectif.'</td></tr>';
 		}
 
 		// Legal

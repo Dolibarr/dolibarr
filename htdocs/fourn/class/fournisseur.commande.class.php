@@ -3017,13 +3017,13 @@ class CommandeFournisseur extends CommonOrder
 			$response->warning_delay = $conf->commande->fournisseur->warning_delay / 60 / 60 / 24;
 			$response->label = $langs->trans("SuppliersOrdersToProcess");
 			$response->labelShort = $langs->trans("Opened");
-			$response->url = DOL_URL_ROOT.'/fourn/commande/list.php?statut=1,2&mainmenu=commercial&leftmenu=orders_suppliers';
+			$response->url = DOL_URL_ROOT.'/fourn/commande/list.php?search_status=1,2&mainmenu=commercial&leftmenu=orders_suppliers';
 			$response->img = img_object('', "order");
 
 			if ($mode === 'awaiting') {
 				$response->label = $langs->trans("SuppliersOrdersAwaitingReception");
 				$response->labelShort = $langs->trans("AwaitingReception");
-				$response->url = DOL_URL_ROOT.'/fourn/commande/list.php?statut=3,4&mainmenu=commercial&leftmenu=orders_suppliers';
+				$response->url = DOL_URL_ROOT.'/fourn/commande/list.php?search_status=3,4&mainmenu=commercial&leftmenu=orders_suppliers';
 			}
 
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -3681,19 +3681,19 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql .= "'".$this->db->escape($this->rang)."',";
 		$sql .= "'".$this->db->escape($this->qty)."', ";
 		$sql .= " ".(empty($this->vat_src_code) ? "''" : "'".$this->db->escape($this->vat_src_code)."'").",";
-		$sql .= " ".$this->tva_tx.", ";
-		$sql .= " ".$this->localtax1_tx.",";
-		$sql .= " ".$this->localtax2_tx.",";
+		$sql .= " ".price2num($this->tva_tx).", ";
+		$sql .= " ".price2num($this->localtax1_tx).",";
+		$sql .= " ".price2num($this->localtax2_tx).",";
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql .= " ".$this->remise_percent.", ".price2num($this->subprice, 'MU').", '".$this->db->escape($this->ref_supplier)."',";
+		$sql .= " ".((float) $this->remise_percent).", ".price2num($this->subprice, 'MU').", '".$this->db->escape($this->ref_supplier)."',";
 		$sql .= " ".price2num($this->total_ht).",";
 		$sql .= " ".price2num($this->total_tva).",";
 		$sql .= " ".price2num($this->total_localtax1).",";
 		$sql .= " ".price2num($this->total_localtax2).",";
 		$sql .= " ".price2num($this->total_ttc).",";
 		$sql .= ($this->fk_unit ? "'".$this->db->escape($this->fk_unit)."'" : "null");
-		$sql .= ", ".($this->fk_multicurrency ? $this->fk_multicurrency : "null");
+		$sql .= ", ".($this->fk_multicurrency ? ((int) $this->fk_multicurrency) : "null");
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".($this->multicurrency_subprice ? price2num($this->multicurrency_subprice) : '0');
 		$sql .= ", ".($this->multicurrency_total_ht ? price2num($this->multicurrency_total_ht) : '0');

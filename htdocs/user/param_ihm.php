@@ -370,10 +370,12 @@ if ($action == 'edit') {
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
 	print '> '.$langs->trans("UsePersonalValue").'</td>';
 	print '<td>';
-	if (!empty($tmparray[$object->conf->MAIN_LANDING_PAGE])) {
-		print $langs->trans($tmparray[$object->conf->MAIN_LANDING_PAGE]);
-	} else {
-		print $object->conf->MAIN_LANDING_PAGE;
+	if (!empty($object->conf->MAIN_LANDING_PAGE)) {
+		if (!empty($tmparray[$object->conf->MAIN_LANDING_PAGE])) {
+			print $langs->trans($tmparray[$object->conf->MAIN_LANDING_PAGE]);
+		} else {
+			print $object->conf->MAIN_LANDING_PAGE;
+		}
 	}
 	//print $form->selectarray('MAIN_LANDING_PAGE', $tmparray, (! empty($object->conf->MAIN_LANDING_PAGE)?$object->conf->MAIN_LANDING_PAGE:''), 0, 0, 0, '', 1);
 	print '</td></tr>';
