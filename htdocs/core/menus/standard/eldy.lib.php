@@ -688,7 +688,8 @@ function print_end_menu_array()
  * @param 	int			$type_user     		0=Menu for backoffice, 1=Menu for front office
  * @return	int								Nb of menu entries
  */
-function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabMenu, &$menu, $noout = 0, $forcemainmenu = '', $forceleftmenu = '', $moredata = null, $type_user = 0) {
+function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabMenu, &$menu, $noout = 0, $forcemainmenu = '', $forceleftmenu = '', $moredata = null, $type_user = 0)
+{
 
 	global $user, $conf, $langs, $dolibarr_main_db_name, $mysoc, $hookmanager;
 
@@ -1973,11 +1974,11 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		}
 
 		// @todo Sort menu items by 'position' value
-//		$position = array();
-//		foreach ($menu_array as $key => $row) {
-//			$position[$key] = $row['position'];
-//		}
-//		array_multisort($position, SORT_ASC, $menu_array);
+		//      $position = array();
+		//      foreach ($menu_array as $key => $row) {
+		//          $position[$key] = $row['position'];
+		//      }
+		//      array_multisort($position, SORT_ASC, $menu_array);
 	}
 
 	// TODO Use the position property in menu_array to reorder the $menu_array
