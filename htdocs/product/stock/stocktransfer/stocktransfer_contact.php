@@ -92,17 +92,11 @@ if ($action == 'addcontact' && $user->rights->stocktransfer->stocktransfer->writ
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-}
-
-// Toggle the status of a contact
-elseif ($action == 'swapstatut' && $user->rights->stocktransfer->stocktransfer->write) {
+} elseif ($action == 'swapstatut' && $user->rights->stocktransfer->stocktransfer->write) { // Toggle the status of a contact
 	if ($object->id > 0) {
 		$result = $object->swapContactStatus(GETPOST('ligne'));
 	}
-}
-
-// Deletes a contact
-elseif ($action == 'deletecontact' && $user->rights->stocktransfer->stocktransfer->write) {
+} elseif ($action == 'deletecontact' && $user->rights->stocktransfer->stocktransfer->write) { // Deletes a contact
 	$result = $object->delete_contact($lineid);
 
 	if ($result >= 0) {

@@ -347,6 +347,13 @@ class StockTransfer extends CommonObject
 		return $result;
 	}
 
+	/**
+	 * Used to sort lines by rank
+	 *
+	 * @param $a	1st element to test
+	 * @param $b	1st element to test
+	 * @return int
+	 */
 	function cmp($a, $b)
 	{
 		if ($a->rang == $b->rang) {
@@ -355,6 +362,11 @@ class StockTransfer extends CommonObject
 		return ($a->rang < $b->rang) ? -1 : 1;
 	}
 
+	/**
+	 * Used to get total PMP amount of all quantities of products of Stock Transfer
+	 *
+	 * @return float	total amount of Stock Transfer
+	 */
 	function getValorisationTotale()
 	{
 

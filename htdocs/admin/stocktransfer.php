@@ -122,10 +122,7 @@ if ($action == 'updateMask') {
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
-}
-
-// Activate a model
-elseif ($action == 'set') {
+} elseif ($action == 'set') { // Activate a model
 	$ret = addDocumentModel($value, 'stocktransfer', $label, $scandir);
 } elseif ($action == 'del') {
 	$tmpobjectkey = GETPOST('object');
@@ -135,10 +132,7 @@ elseif ($action == 'set') {
 		$constforval = strtoupper($tmpobjectkey).'_ADDON_PDF';
 		if ($conf->global->$constforval == "$value") dolibarr_del_const($db, $constforval, $conf->entity);
 	}
-}
-
-// Set default model
-elseif ($action == 'setdoc') {
+} elseif ($action == 'setdoc') { // Set default model
 	$tmpobjectkey = GETPOST('object');
 	$constforval = strtoupper($tmpobjectkey).'_ADDON_PDF';
 	if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity)) {

@@ -435,6 +435,14 @@ class StockTransferLine extends CommonObject
 		return $this->deleteLineCommon($user, $idline, $notrigger);
 	}
 
+	/**
+	 * Makes all stock movements (add quantity, remove quantity or cancel all actions)
+	 *
+	 * @param string $label			label of stock movement
+	 * @param int 	 $fk_entrepot	Warehouse concerned by stock movement
+	 * @param int 	 $direction		add or remove qty
+	 * @return int	 1 if ok, <= 0 if ko
+	 */
 	function doStockMovement($label, $fk_entrepot, $direction = 1)
 	{
 
