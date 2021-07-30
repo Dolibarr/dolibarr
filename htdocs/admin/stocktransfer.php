@@ -89,7 +89,7 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
-	$tmpobjectkey = GETPOST('object');
+	$tmpobjectkey = 'StockTransfer';
 
 	$tmpobject = new $tmpobjectkey($db);
 	$tmpobject->initAsSpecimen();
@@ -98,7 +98,7 @@ if ($action == 'updateMask') {
 	$file = ''; $classname = ''; $filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
-		$file = dol_buildpath($reldir."core/modules/stocktransfer/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
+		$file = dol_buildpath($reldir."core/modules/stocktransfer/doc/pdf_".$modele.".modules.php", 0);
 		if (file_exists($file)) {
 			$filefound = 1;
 			$classname = "pdf_".$modele;
@@ -127,7 +127,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$tmpobjectkey = GETPOST('object');
 
-	$ret = delDocumentModel($value, $type);
+	$ret = delDocumentModel($value, 'stocktransfer');
 	if ($ret > 0) {
 		$constforval = strtoupper($tmpobjectkey).'_ADDON_PDF';
 		if ($conf->global->$constforval == "$value") dolibarr_del_const($db, $constforval, $conf->entity);
@@ -142,9 +142,9 @@ if ($action == 'updateMask') {
 	}
 
 	// On active le modele
-	$ret = delDocumentModel($value, $type);
+	$ret = delDocumentModel($value, 'stocktransfer');
 	if ($ret > 0) {
-		$ret = addDocumentModel($value, $type, $label, $scandir);
+		$ret = addDocumentModel($value, 'stocktransfer', $label, $scandir);
 	}
 } elseif ($action == 'setmod') {
 	// TODO Check if numbering module chosen can be activated
@@ -349,7 +349,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		$def = array();
 		$sql = "SELECT nom";
 		$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-		$sql .= " WHERE type = '".$type."'";
+		$sql .= " WHERE type = '".$db->escape($type)."'";
 		$sql .= " AND entity = ".$conf->entity;
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -426,11 +426,11 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 										// Default
 										print '<td class="center">';
-										$constforvar = 'STOCKTRANSFER_'.strtoupper($myTmpObjectKey).'_ADDON';
+										$constforvar = strtoupper($myTmpObjectKey).'_ADDON_PDF';
 										if ($conf->global->$constforvar == $name) {
 											print img_picto($langs->trans("Default"), 'on');
 										} else {
-											print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+											print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&object='.$myTmpObjectKey.'&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 										}
 										print '</td>';
 
