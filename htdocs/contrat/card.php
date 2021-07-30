@@ -1003,7 +1003,7 @@ if ($action == 'create') {
 		$soc->fetch($socid);
 	}
 
-	if (GETPOST('origin') && GETPOST('originid')) {
+	if (GETPOST('origin') && GETPOST('originid', 'int')) {
 		// Parse element/subelement (ex: project_task)
 		$regs = array();
 		$element = $subelement = GETPOST('origin');
@@ -1013,7 +1013,7 @@ if ($action == 'create') {
 		}
 
 		if ($element == 'project') {
-			$projectid = GETPOST('originid');
+			$projectid = GETPOST('originid', 'int');
 		} else {
 			// For compatibility
 			if ($element == 'order' || $element == 'commande') {
@@ -1094,7 +1094,8 @@ if ($action == 'create') {
 		print '</td>';
 	} else {
 		print '<td>';
-		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300');
+		print img_picto('', 'company', 'class="pictofixedwidth"');
+		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
 		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		print '</td>';
 	}
@@ -1121,11 +1122,13 @@ if ($action == 'create') {
 
 	// Commercial suivi
 	print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPFOLL").'</span></td><td>';
+	print img_picto('', 'user', 'class="pictofixedwidth"');
 	print $form->select_dolusers(GETPOST("commercial_suivi_id") ?GETPOST("commercial_suivi_id") : $user->id, 'commercial_suivi_id', 1, '');
 	print '</td></tr>';
 
 	// Commercial signature
 	print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPSIGN").'</span></td><td>';
+	print img_picto('', 'user', 'class="pictofixedwidth"');
 	print $form->select_dolusers(GETPOST("commercial_signature_id") ?GETPOST("commercial_signature_id") : $user->id, 'commercial_signature_id', 1, '');
 	print '</td></tr>';
 
@@ -1686,7 +1689,7 @@ if ($action == 'create') {
 						$colspan++;
 					}
 
-					// Ligne dates prevues
+					// Line dates planed
 					print '<tr class="oddeven">';
 					print '<td colspan="'.$colspan.'">';
 					print $langs->trans("DateStartPlanned").' ';
@@ -1786,7 +1789,7 @@ if ($action == 'create') {
 				print '<table class="notopnoleftnoright tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').'" width="100%">';
 
 				print '<tr class="oddeven" '.$moreparam.'>';
-				print '<td>'.$langs->trans("ServiceStatus").': '.$object->lines[$cursorline - 1]->getLibStatut(4).'</td>';
+				print '<td><span class="valignmiddle hideonsmartphone">'.$langs->trans("ServiceStatus").':</span> '.$object->lines[$cursorline - 1]->getLibStatut(4).'</td>';
 				print '<td width="30" class="right">';
 				if ($user->socid == 0) {
 					if ($object->statut > 0 && $action != 'activateline' && $action != 'unactivateline') {

@@ -33,8 +33,10 @@
 -- Missing in v14 or lower
 
 
-
-
 -- v15
 ALTER TABLE llx_product ADD COLUMN mandatory_period tinyint NULL DEFAULT 0;
+
+ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN ref_fourn varchar(128);
+ALTER TABLE llx_product_customer_price MODIFY COLUMN ref_customer varchar(128);
+
 
