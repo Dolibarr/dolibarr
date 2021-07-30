@@ -17,15 +17,14 @@
  */
 
 /**
- * \file        class/productlangs.class.php
+ * \file        product/class/productlang.class.php
  * \ingroup     product
- * \brief       This file is a CRUD class file for ProductLangs (Create/Read/Update/Delete)
+ * \brief       This file is a CRUD class file for ProductLang (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+
 
 /**
  * Class for ProductLangs
@@ -35,7 +34,7 @@ class ProductLang extends CommonObject
 	/**
 	 * @var string ID of module.
 	 */
-	public $module = 'produit';
+	public $module = 'product';
 
 	/**
 	 * @var string ID to identify managed object.
@@ -59,7 +58,7 @@ class ProductLang extends CommonObject
 	public $isextrafieldmanaged = 1;
 
 	/**
-	 * @var string String with name of icon for productlangs. Must be the part after the 'object_' into object_productlangs.png
+	 * @var string String with name of icon for productlang. Must be the part after the 'object_' into object_productlang.png
 	 */
 	public $picto = 'product';
 
@@ -113,42 +112,6 @@ class ProductLang extends CommonObject
 	// END MODULEBUILDER PROPERTIES
 
 
-	// If this object has a subtable with lines
-
-	// /**
-	//  * @var string    Name of subtable line
-	//  */
-	// public $table_element_line = 'machinbidule_productlangsline';
-
-	// /**
-	//  * @var string    Field with ID of parent key if this object has a parent
-	//  */
-	// public $fk_element = 'fk_productlangs';
-
-	// /**
-	//  * @var string    Name of subtable class that manage subtable lines
-	//  */
-	// public $class_element_line = 'ProductLangsline';
-
-	// /**
-	//  * @var array	List of child tables. To test if we can delete object.
-	//  */
-	// protected $childtables = array();
-
-	// /**
-	//  * @var array    List of child tables. To know object to delete on cascade.
-	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
-	//  */
-	// protected $childtablesoncascade = array('machinbidule_productlangsdet');
-
-	// /**
-	//  * @var ProductLangsLine[]     Array of subtable lines
-	//  */
-	// public $lines = array();
-
-
-
 	/**
 	 * Constructor
 	 *
@@ -167,11 +130,6 @@ class ProductLang extends CommonObject
 			$this->fields['entity']['enabled'] = 0;
 		}
 
-		// Example to show how to set values of fields definition dynamically
-		/*if ($user->rights->machinbidule->productlangs->read) {
-			$this->fields['myfield']['visible'] = 1;
-			$this->fields['myfield']['noteditable'] = 0;
-		}*/
 
 		// Unset fields that are disabled
 		foreach ($this->fields as $key => $val) {
