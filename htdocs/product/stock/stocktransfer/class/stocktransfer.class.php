@@ -101,7 +101,7 @@ class StockTransfer extends CommonObject
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth200'/*, 'help'=>"Help text"*/, 'showoncombobox'=>'1',),
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>31, 'notnull'=>0, 'visible'=>3,),
-		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'1', 'position'=>32, 'notnull'=>-1, 'visible'=>-1, 'index'=>1,),
+		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'position'=>32, 'notnull'=>-1, 'visible'=>-1, 'index'=>1,),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1/*, 'help'=>"LinkToThirparty"*/,),
 		'fk_warehouse_source' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Entrepôt source', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1, 'help'=>'HelpWarehouseStockTransferSource',),
 		'fk_warehouse_destination' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Entrepôt de destination', 'enabled'=>'1', 'position'=>51, 'notnull'=>0, 'visible'=>1, 'help'=>'HelpWarehouseStockTransferDestination'),
@@ -469,7 +469,10 @@ class StockTransfer extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
-		return $this->updateCommon($user, $notrigger);
+		$res = $this->updateCommon($user, $notrigger);
+		if($this->socid > 0 || $this->fk_soc > 0 && empty($this->thirdparty)) $this->fetch_thirdparty();
+		if(empty($this->socid) && empty($this->fk_soc)) unset($this->thirdparty);
+		return $res;
 	}
 
 	/**
