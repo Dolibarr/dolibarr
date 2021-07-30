@@ -354,7 +354,7 @@ class StockTransfer extends CommonObject
 	 * @param $b	1st element to test
 	 * @return int
 	 */
-	function cmp($a, $b)
+	public function cmp($a, $b)
 	{
 		if ($a->rang == $b->rang) {
 			return 0;
@@ -367,7 +367,7 @@ class StockTransfer extends CommonObject
 	 *
 	 * @return float	total amount of Stock Transfer
 	 */
-	function getValorisationTotale()
+	public function getValorisationTotale()
 	{
 
 		$total_pmp = 0;

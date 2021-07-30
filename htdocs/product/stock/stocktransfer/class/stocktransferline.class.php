@@ -443,7 +443,7 @@ class StockTransferLine extends CommonObject
 	 * @param int 	 $direction		add or remove qty
 	 * @return int	 1 if ok, <= 0 if ko
 	 */
-	function doStockMovement($label, $fk_entrepot, $direction = 1)
+	public function doStockMovement($label, $fk_entrepot, $direction = 1)
 	{
 
 		global $db, $conf, $user, $langs;

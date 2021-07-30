@@ -830,7 +830,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 	 * @param $object	Stock Transfer object
 	 * @return bool		true if at least one line has batch set, false if not
 	 */
-	function atLeastOneBatch($object)
+	public function atLeastOneBatch($object)
 	{
 
 		$atLeastOneBatch = false;

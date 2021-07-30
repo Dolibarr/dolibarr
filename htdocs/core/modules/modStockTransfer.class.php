@@ -504,7 +504,7 @@ class modStockTransfer extends DolibarrModules
 	 *  Returns next available id to insert new roles in llx_c_type_contact
 	 * 	@return     int		> 0 if OK, < 0 if KO
 	 */
-	function getNextId()
+	public function getNextId()
 	{
 		global $db;
 
