@@ -348,26 +348,26 @@ class modStockTransfer extends DolibarrModules
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user'=>2
 		);
-        $this->menu[$r++]=array(
-            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'fk_menu'=>'fk_mainmenu=products,fk_leftmenu=stock',
-            // This is a Left menu entry
-            'type'=>'left',
-            'titre'=>$langs->trans('StockTransferList'),
-            'mainmenu'=>'products',
-            'leftmenu'=>'stocktransfer_stocktransferlist',
-            'url'=>'/stocktransfer/stocktransfer_list.php',
-            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-            'langs'=>'stocktransfer@stocktransfer',
-            'position'=>1100+$r,
-            // Define condition to show or hide menu entry. Use '$conf->stocktransfer->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-            'enabled'=>'$conf->stocktransfer->enabled',
-            // Use 'perms'=>'$user->rights->stocktransfer->level1->level2' if you want your menu with a permission rules
-            'perms'=>'1',
-            'target'=>'',
-            // 0=Menu for internal users, 1=external users, 2=both
-            'user'=>2,
-        );*/
+		$this->menu[$r++]=array(
+			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'fk_menu'=>'fk_mainmenu=products,fk_leftmenu=stock',
+			// This is a Left menu entry
+			'type'=>'left',
+			'titre'=>$langs->trans('StockTransferList'),
+			'mainmenu'=>'products',
+			'leftmenu'=>'stocktransfer_stocktransferlist',
+			'url'=>'/stocktransfer/stocktransfer_list.php',
+			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs'=>'stocktransfer@stocktransfer',
+			'position'=>1100+$r,
+			// Define condition to show or hide menu entry. Use '$conf->stocktransfer->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'enabled'=>'$conf->stocktransfer->enabled',
+			// Use 'perms'=>'$user->rights->stocktransfer->level1->level2' if you want your menu with a permission rules
+			'perms'=>'1',
+			'target'=>'',
+			// 0=Menu for internal users, 1=external users, 2=both
+			'user'=>2,
+		);*/
 
 		/* END MODULEBUILDER LEFTMENU STOCKTRANSFER */
 
@@ -464,13 +464,11 @@ class modStockTransfer extends DolibarrModules
 				$dirodt=DOL_DATA_ROOT.'/doctemplates/stocktransfer';
 				$dest=$dirodt.'/template_stocktransfers.odt';
 
-				if (file_exists($src) && ! file_exists($dest))
-				{
+				if (file_exists($src) && ! file_exists($dest)) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 					dol_mkdir($dirodt);
 					$result=dol_copy($src, $dest, 0, 0);
-					if ($result < 0)
-					{
+					if ($result < 0) {
 						$langs->load("errors");
 						$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
 						return 0;
@@ -489,20 +487,21 @@ class modStockTransfer extends DolibarrModules
 		// Rôles
 		$resql = $db->query('SELECT rowid FROM '.MAIN_DB_PREFIX.'c_type_contact WHERE code = "STDEST" AND element = "StockTransfer" AND source = "internal"');
 		$res = $db->fetch_object($resql);
-		if(empty($res)) $db->query('INSERT INTO '.MAIN_DB_PREFIX.'c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES('.$this->getNextId().', "StockTransfer", "internal", "STRESP", "Responsable du transfert de stocks", 1, NULL, 0)');
+		if (empty($res)) $db->query('INSERT INTO '.MAIN_DB_PREFIX.'c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES('.$this->getNextId().', "StockTransfer", "internal", "STRESP", "Responsable du transfert de stocks", 1, NULL, 0)');
 
 		$resql = $db->query('SELECT rowid FROM '.MAIN_DB_PREFIX.'c_type_contact WHERE code = "STFROM" AND element = "StockTransfer" AND source = "external"');
 		$res = $db->fetch_object($resql);
-		if(empty($res)) $db->query('INSERT INTO '.MAIN_DB_PREFIX.'c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES('.$this->getNextId().', "StockTransfer", "external", "STFROM", "Contact expéditeur transfert de stocks", 1, NULL, 0)');
+		if (empty($res)) $db->query('INSERT INTO '.MAIN_DB_PREFIX.'c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES('.$this->getNextId().', "StockTransfer", "external", "STFROM", "Contact expéditeur transfert de stocks", 1, NULL, 0)');
 
 		$resql = $db->query('SELECT rowid FROM '.MAIN_DB_PREFIX.'c_type_contact WHERE code = "STDEST" AND element = "StockTransfer" AND source = "external"');
 		$res = $db->fetch_object($resql);
-		if(empty($res)) $db->query('INSERT INTO '.MAIN_DB_PREFIX.'c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES('.$this->getNextId().', "StockTransfer", "external", "STDEST", "Contact destinataire transfert de stocks", 1, NULL, 0)');
+		if (empty($res)) $db->query('INSERT INTO '.MAIN_DB_PREFIX.'c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES('.$this->getNextId().', "StockTransfer", "external", "STDEST", "Contact destinataire transfert de stocks", 1, NULL, 0)');
 
 		return $this->_init($sql, $options);
 	}
 
-	function getNextId() {
+	function getNextId()
+	{
 
 		global $db;
 
@@ -510,8 +509,7 @@ class modStockTransfer extends DolibarrModules
 		$newid = 0;
 		$sql = "SELECT max(rowid) newid from ".MAIN_DB_PREFIX."c_type_contact";
 		$result = $db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$obj = $db->fetch_object($result);
 			$newid = ($obj->newid + 1);
 		} else {

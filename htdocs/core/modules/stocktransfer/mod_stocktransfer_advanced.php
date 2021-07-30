@@ -114,8 +114,7 @@ class mod_stocktransfer_advanced extends ModeleNumRefStockTransfer
 		/*$mysoc->code_client = $old_code_client;
 		$mysoc->typent_code = $old_code_type;*/
 
-		if (!$numExample)
-		{
+		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
@@ -136,8 +135,7 @@ class mod_stocktransfer_advanced extends ModeleNumRefStockTransfer
 		// We get cursor rule
 		$mask = $conf->global->STOCKTRANSFER_STOCKTRANSFER_ADVANCED_MASK;
 
-		if (!$mask)
-		{
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}

@@ -90,8 +90,7 @@ $form = new Form($db);
 $help_url = '';
 llxHeader('', $langs->trans('ModuleStockTransferName'), $help_url);
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();
 
 	$head = stocktransferPrepareHead($object);
