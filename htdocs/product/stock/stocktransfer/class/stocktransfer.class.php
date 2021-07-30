@@ -453,8 +453,8 @@ class StockTransfer extends CommonObject
 	public function update(User $user, $notrigger = false)
 	{
 		$res = $this->updateCommon($user, $notrigger);
-		if($this->socid > 0 || $this->fk_soc > 0 && empty($this->thirdparty)) $this->fetch_thirdparty();
-		if(empty($this->socid) && empty($this->fk_soc)) unset($this->thirdparty);
+		if ($this->socid > 0 || $this->fk_soc > 0 && empty($this->thirdparty)) $this->fetch_thirdparty();
+		if (empty($this->socid) && empty($this->fk_soc)) unset($this->thirdparty);
 		return $res;
 	}
 
