@@ -576,7 +576,7 @@ if (!empty($sortfield)) {
 // Export into a file with format defined into setup (FEC, CSV, ...)
 // Must be after definition of $sql
 if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->export) {
-	// TODO Replace the fetchAll + ->export later that consume too much memory on large export with the query($sql) and loop on each line to export them.
+	// TODO Replace the fetchAll to get all ->line followed by call to ->export(). It consumew too much memory on large export. Replace this with the query($sql) and loop on each line to export them.
 	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', (empty($conf->global->ACCOUNTING_REEXPORT) ? 0 : 1));
 
 	if ($result < 0) {
@@ -822,7 +822,7 @@ if (!empty($arrayfields['t.piece_num']['checked'])) {
 // Code journal
 if (!empty($arrayfields['t.code_journal']['checked'])) {
 	print '<td class="liste_titre center">';
-	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1);
+	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1, 'maxwidth150');
 	print '</td>';
 }
 // Date document
@@ -865,7 +865,7 @@ if (!empty($arrayfields['t.subledger_account']['checked'])) {
 		print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', $langs->trans('to'), 'maxwidth250', 'subledgeraccount');
 		print '</div>';
 	} else {
-		print '<input type="text" class="maxwidth100" name="search_accountancy_aux_code" value="'.$search_accountancy_aux_code.'">';
+		print '<input type="text" class="maxwidth75" name="search_accountancy_aux_code" value="'.$search_accountancy_aux_code.'">';
 	}
 	print '</td>';
 }
