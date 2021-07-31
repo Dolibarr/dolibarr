@@ -141,15 +141,19 @@ class mailing_contacts1 extends MailingTargets
 		$resql = $this->db->query($sql);
 
 		$s .= $langs->trans("PostOrFunction").': ';
-		$s .= '<select name="filter_jobposition" class="flat">';
+		$s .= '<select name="filter_jobposition" class="flat" placeholder="'.dol_escape_htmltag($langs->trans("PostOrFunction")).'">';
 		$s .= '<option value="all">&nbsp;</option>';
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			while ($i < $num) {
-				$obj = $this->db->fetch_object($resql);
-				$s .= '<option value="'.dol_escape_htmltag($obj->poste).'">'.dol_escape_htmltag($obj->poste).' ('.$obj->nb.')</option>';
-				$i++;
+			if ($num > 0) {
+				while ($i < $num) {
+					$obj = $this->db->fetch_object($resql);
+					$s .= '<option value="'.dol_escape_htmltag($obj->poste).'">'.dol_escape_htmltag($obj->poste).' ('.$obj->nb.')</option>';
+					$i++;
+				}
+			} else {
+				$s .= '<option disabled="disabled" value="">'.$langs->trans("None").'</option>';
 			}
 		} else {
 			dol_print_error($this->db);
