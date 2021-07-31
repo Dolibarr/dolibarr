@@ -140,8 +140,8 @@ class mailing_contacts1 extends MailingTargets
 		$sql .= " ORDER BY sp.poste";
 		$resql = $this->db->query($sql);
 
-		$s .= $langs->trans("PostOrFunction").': ';
-		$s .= '<select name="filter_jobposition" class="flat" placeholder="'.dol_escape_htmltag($langs->trans("PostOrFunction")).'">';
+		$s .= $langs->trans("PostOrFunction").' ';
+		$s .= '<select name="filter_jobposition" class="flat marginrightonly" placeholder="'.dol_escape_htmltag($langs->trans("PostOrFunction")).'">';
 		$s .= '<option value="all">&nbsp;</option>';
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -163,7 +163,7 @@ class mailing_contacts1 extends MailingTargets
 		$s .= ' ';
 
 		// Filter on contact category
-		$s .= $langs->trans("ContactCategoriesShort").': ';
+		$s .= $langs->trans("ContactCategoriesShort").' ';
 		$sql = "SELECT c.label, count(distinct(sp.email)) AS nb";
 		$sql .= " FROM ";
 		$sql .= " ".MAIN_DB_PREFIX."socpeople as sp,";
@@ -179,7 +179,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql .= " ORDER BY c.label";
 		$resql = $this->db->query($sql);
 
-		$s .= '<select name="filter_category" class="flat">';
+		$s .= '<select name="filter_category" class="flat marginrightonly">';
 		$s .= '<option value="all">&nbsp;</option>';
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -201,8 +201,8 @@ class mailing_contacts1 extends MailingTargets
 		$s .= '<br>';
 
 		// Add prospect of a particular level
-		$s .= $langs->trans("NatureOfThirdParty").': ';
-		$s .= '<select name="filter" class="flat">';
+		$s .= $langs->trans("NatureOfThirdParty").' ';
+		$s .= '<select name="filter" class="flat marginrightonly">';
 		$sql = "SELECT code, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
 		$sql .= " WHERE active > 0";
@@ -238,7 +238,7 @@ class mailing_contacts1 extends MailingTargets
 		$s .= ' ';
 
 		// Filter on thirdparty category
-		$s .= $langs->trans("CustomersProspectsCategoriesShort").': ';
+		$s .= $langs->trans("CustomersProspectsCategoriesShort").' ';
 		$sql = "SELECT c.label, count(distinct(sp.email)) AS nb";
 		$sql .= " FROM ";
 		$sql .= " ".MAIN_DB_PREFIX."socpeople as sp,";
@@ -254,7 +254,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql .= " ORDER BY c.label";
 		$resql = $this->db->query($sql);
 
-		$s .= '<select name="filter_category_customer" class="flat">';
+		$s .= '<select name="filter_category_customer" class="flat marginrightonly maxwidth200">';
 		$s .= '<option value="all">&nbsp;</option>';
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -276,7 +276,7 @@ class mailing_contacts1 extends MailingTargets
 		$s .= ' ';
 
 		// Filter on thirdparty category
-		$s .= $langs->trans("SuppliersCategoriesShort").': ';
+		$s .= $langs->trans("SuppliersCategoriesShort").' ';
 		$sql = "SELECT c.label, count(distinct(sp.email)) AS nb";
 		$sql .= " FROM ";
 		$sql .= " ".MAIN_DB_PREFIX."socpeople as sp,";
@@ -292,7 +292,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql .= " ORDER BY c.label";
 		$resql = $this->db->query($sql);
 
-		$s .= '<select name="filter_category_supplier" class="flat">';
+		$s .= '<select name="filter_category_supplier" class="flat marginrightonly maxwidth200">';
 		$s .= '<option value="all">&nbsp;</option>';
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
