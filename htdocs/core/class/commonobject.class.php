@@ -3791,7 +3791,6 @@ abstract class CommonObject
 					} elseif ($objecttype == 'contact') {
 						 $module = 'societe';
 					}
-
 					// Set classfile
 					$classfile = strtolower($subelement);
 					$classname = ucfirst($subelement);
@@ -3822,6 +3821,11 @@ abstract class CommonObject
 						$classpath = 'eventorganization/class';
 						$classfile = 'conferenceorboothattendee';
 						$classname = 'ConferenceOrBoothAttendee';
+						$module = 'eventorganization';
+					} elseif ($objecttype == 'conferenceorbooth') {
+						$classpath = 'eventorganization/class';
+						$classfile = 'conferenceorbooth';
+						$classname = 'ConferenceOrBooth';
 						$module = 'eventorganization';
 					}
 

@@ -40,8 +40,8 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Modèle de courriel à envoyer aprè
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Modèle de courriel à envoyer après avoir reçu une suggestion d'un stand.
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Modèle de courriel à envoyer après paiement d'une inscription à un stand.
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Modèle de courriel à envoyer après paiement d'une inscription à un événement.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Modèle de courriel pour action de masse aux participants
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Modèle de courriel pour action de masse aux intervenants
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Modèle de courriel pour action de masse aux intervenants
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Modèle de courriel pour action de masse aux participants
 EVENTORGANIZATION_FILTERATTENDEES_CAT = Filtrer la liste de sélection des tiers dans la fiche/le formulaire de création des participants avec/selon la catégorie
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filtrer la liste de sélection des tiers dans la fiche/le formulaire de création des participants avec le type de client
 
