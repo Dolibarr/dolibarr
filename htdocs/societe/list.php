@@ -94,7 +94,7 @@ $search_categ_cus = trim(GETPOST("search_categ_cus", 'int'));
 $search_categ_sup = trim(GETPOST("search_categ_sup", 'int'));
 $search_country = GETPOST("search_country", 'intcomma');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
-$search_price_level = GETPOST('search_prive_level', 'int');
+$search_price_level = GETPOST('search_price_level', 'int');
 $search_staff = GETPOST("search_staff", 'int');
 $search_status = GETPOST("search_status", 'int');
 $search_type = GETPOST('search_type', 'alpha');
@@ -356,7 +356,7 @@ if (empty($reshook)) {
 		$search_idprof6 = '';
 		$search_vat = '';
 		$search_type = '';
-		$search_prive_level = '';
+		$search_price_level = '';
 		$search_type_thirdparty = '';
 		$search_staff = '';
 		$search_status = -1;
@@ -639,8 +639,8 @@ if ($search_status != '' && $search_status >= 0) {
 if (!empty($conf->barcode->enabled) && $search_barcode) {
 	$sql .= natural_search("s.barcode", $search_barcode);
 }
-if ($search_prive_level && $search_prive_level != '-1') {
-	$sql .= natural_search("s.price_level", $search_prive_level, 2);
+if ($search_price_level && $search_price_level != '-1') {
+	$sql .= natural_search("s.price_level", $search_price_level, 2);
 }
 if ($search_type_thirdparty && $search_type_thirdparty > 0) {
 	$sql .= natural_search("s.fk_typent", $search_type_thirdparty, 2);
@@ -654,8 +654,8 @@ if ($search_level) {
 if ($search_parent_name) {
 	$sql .= natural_search("s2.nom", $search_parent_name);
 }
-if ($search_stcomm != '' && $search_stcomm != -2) {
-	$sql .= natural_search("s.fk_stcomm", $search_stcomm, 2);
+if ($search_stcomm != '' && $search_stcomm != '-2') {	// -2 is not filter
+	$sql .= natural_search("s.fk_stcomm", $search_stcomm, 1);
 }
 if ($search_import_key) {
 	$sql .= natural_search("s.import_key", $search_import_key);
@@ -813,8 +813,8 @@ if ($search_idprof6 != '') {
 if ($search_vat != '') {
 	$param .= '&search_vat='.urlencode($search_vat);
 }
-if ($search_prive_level != '') {
-	$param .= '&search_prive_level='.urlencode($search_prive_level);
+if ($search_price_level != '') {
+	$param .= '&search_price_level='.urlencode($search_price_level);
 }
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 	$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
@@ -830,7 +830,7 @@ if (is_array($search_level) && count($search_level)) {
 if ($search_status != '') {
 	$param .= '&search_status='.urlencode($search_status);
 }
-if ($search_stcomm != '') {
+if ($search_stcomm != '' && $search_stcomm != '-2') {		// -2 is no filter
 	$param .= '&search_stcomm='.urlencode($search_stcomm);
 }
 if ($search_parent_name != '') {
@@ -1100,7 +1100,7 @@ if (!empty($arrayfields['typent.code']['checked'])) {
 // Multiprice level
 if (!empty($arrayfields['s.price_level']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_prive_level" value="'.dol_escape_htmltag($search_prive_level).'">';
+	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_price_level" value="'.dol_escape_htmltag($search_price_level).'">';
 	print '</td>';
 }
 // Staff

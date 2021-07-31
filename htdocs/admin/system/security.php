@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("install", "other", "admin"));
+$langs->loadLangs(array("install", "other", "admin", "errors"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -198,6 +198,7 @@ if (empty($fileswithwritepermission)) {
 	}
 }
 print '<br>';
+print '<br>';
 
 print '<strong>'.$langs->trans("PermissionsOnFile", $conffile).'</strong>: ';		// $conffile is defined into filefunc.inc.php
 $perms = fileperms($dolibarr_main_document_root.'/'.$conffile);
@@ -217,6 +218,16 @@ if ($perms) {
 	}
 } else {
 	print img_warning().' '.$langs->trans("FailedToReadFile", $conffile);
+}
+print '<br>';
+print '<br>';
+
+$installlock = DOL_DATA_ROOT.'/install.lock';
+print '<strong>'.$langs->trans("DolibarrSetup").'</strong>: ';
+if (file_exists($installlock)) {
+	print img_picto('', 'tick').' '.$langs->trans("InstallAndUpgradeLockedBy", $installlock);
+} else {
+	print img_warning().' '.$langs->trans("WarningLockFileDoesNotExists", DOL_DATA_ROOT);
 }
 print '<br>';
 
