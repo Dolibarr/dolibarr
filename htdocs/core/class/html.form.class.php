@@ -7849,6 +7849,10 @@ class Form
 					$tplpath = 'expensereport';
 				} elseif ($objecttype == 'subscription') {
 					$tplpath = 'adherents';
+				} elseif ($objecttype == 'conferenceorbooth') {
+					$tplpath = 'eventorganization';
+				} elseif ($objecttype == 'conferenceorboothattendee') {
+					$tplpath = 'eventorganization';
 				}
 
 				global $linkedObjectBlock;
