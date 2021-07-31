@@ -654,8 +654,8 @@ if ($search_level) {
 if ($search_parent_name) {
 	$sql .= natural_search("s2.nom", $search_parent_name);
 }
-if ($search_stcomm != '' && $search_stcomm != -2) {
-	$sql .= natural_search("s.fk_stcomm", $search_stcomm, 2);
+if ($search_stcomm != '' && $search_stcomm != '-2') {	// -2 is not filter
+	$sql .= natural_search("s.fk_stcomm", $search_stcomm, 1);
 }
 if ($search_import_key) {
 	$sql .= natural_search("s.import_key", $search_import_key);
@@ -830,7 +830,7 @@ if (is_array($search_level) && count($search_level)) {
 if ($search_status != '') {
 	$param .= '&search_status='.urlencode($search_status);
 }
-if ($search_stcomm != '') {
+if ($search_stcomm != '' && $search_stcomm != '-2') {		// -2 is no filter
 	$param .= '&search_stcomm='.urlencode($search_stcomm);
 }
 if ($search_parent_name != '') {
