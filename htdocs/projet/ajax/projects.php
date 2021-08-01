@@ -63,7 +63,7 @@ if (!GETPOST('mode', 'aZ09') || GETPOST('mode', 'aZ09') != 'gettasks') {
 // Mode to get list of tasks
 if (GETPOST('mode', 'aZ09') == 'gettasks') {
 	$formproject = new FormProjets($db);
-	$formproject->selectTasks((!empty($$socid) ? $socid : -1), 0, 'taskid', 24, 1, '1', 1, 0, 0, 'maxwidth500', GETPOST('projectid', 'int'), '');
+	$formproject->selectTasks((!empty($socid) ? $socid : -1), 0, 'taskid', 24, 1, '1', 1, 0, 0, 'maxwidth500', GETPOST('projectid', 'int'), '');
 	return;
 }
 
