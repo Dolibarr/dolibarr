@@ -122,7 +122,7 @@ interface Database
 	 *  List tables into a database
 	 *
 	 *  @param	string		$database	Name of database
-	 *  @param	string		$table		Name of table filter ('xxx%')
+	 *  @param	string		$table		Nmae of table filter ('xxx%')
 	 *  @return	array					List of tables in an array
 	 */
 	public function DDLListTables($database, $table = '');
@@ -189,7 +189,7 @@ interface Database
 	/**
 	 * Get last ID after an insert INSERT
 	 *
-	 * @param	string 	$tab 		Table name concerned by insert. Not used under MySql but required for compatibility with Postgresql
+	 * @param	string 	$tab 		Table name concerned by insert. Ne sert pas sous MySql mais requis pour compatibilite avec Postgresql
 	 * @param   string 	$fieldid 	Field name
 	 * @return  int                	Id of row
 	 */
