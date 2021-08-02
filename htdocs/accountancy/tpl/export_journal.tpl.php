@@ -16,6 +16,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// $formatexportset ùust be defined
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf))
 {
@@ -58,6 +60,8 @@ if ($accountancyexport->getFormatCode($formatexportset) == $accountancyexport::$
 	$endaccountingperiod = dol_print_date(dol_get_last_day($tmparray['year'], $tmparray['mon']), 'dayxcard');
 
 	$completefilename = $siren."FEC".$endaccountingperiod.".txt";
+} elseif ($accountancyexport->getFormatCode($formatexportset) == $accountancyexport::$EXPORT_TYPE_CIEL && $type_export == "general_ledger" && !empty($conf->global->ACCOUNTING_EXPORT_XIMPORT_FORCE_FILENAME)) {
+	$completefilename = "XIMPORT.TXT";
 } else {
 	$completefilename = ($code ? $code."_" : "").($prefix ? $prefix."_" : "").$filename.($nodateexport ? "" : $date_export).".".$format;
 }

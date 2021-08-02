@@ -2369,7 +2369,7 @@ function convertBackOfficeMediasLinksToPublicLinks($notetoshow)
  *		Function to format a value into a defined format for French administration (no thousand separator & decimal separator force to ',' with two decimals)
  *		Function used into accountancy FEC export
  *
- *		@param	float		$amount			Amount to format
+ *		@param	float		$amount		Amount to format
  *		@return	string					Chain with formatted upright
  *		@see	price2num()				Format a numeric into a price for FEC files
  */

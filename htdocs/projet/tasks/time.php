@@ -1306,12 +1306,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 						$tasktmp->label = $task_time->label;
 						print $tasktmp->getNomUrl(1, 'withproject', 'time');
 					}
-					print '</td>';
-					if (!$i) $totalarray['nbfield']++;
-				}
-			} else {
-				print '<input type="hidden" name="taskid" value="'.$id.'">';
-			}
+        			print '</td>';
+        			if (!$i) $totalarray['nbfield']++;
+    			}
+            } elseif ($action !== 'createtime') {
+            	print '<input type="hidden" name="taskid" value="'.$id.'">';
+            }
 
 			// Task label
 			if (!empty($arrayfields['t.task_label']['checked']))
