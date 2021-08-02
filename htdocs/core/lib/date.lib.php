@@ -137,11 +137,11 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit)
 	$deltastring = 'P';
 
 	if ($duration_value > 0) {
-		$deltastring .= abs( (int) $duration_value);
+		$deltastring .= abs((int) $duration_value);
 		$sub = false;
 	}
 	if ($duration_value < 0) {
-		$deltastring .= abs( (int) $duration_value);
+		$deltastring .= abs((int) $duration_value);
 		$sub = true;
 	}
 	if ($duration_unit == 'd') {
