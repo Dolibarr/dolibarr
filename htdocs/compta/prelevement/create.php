@@ -206,7 +206,7 @@ print $nb;
 print '</td></tr>';
 
 print '<tr><td>'.$langs->trans("AmountTotal").'</td>';
-print '<td>';
+print '<td class="amount">';
 print price($pricetowithdraw);
 print '</td>';
 print '</tr>';
@@ -225,7 +225,11 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 if ($nb) {
 	if ($pricetowithdraw) {
-		print $langs->trans('BankToReceiveWithdraw').': ';
+		$title = print $langs->trans('BankToReceiveWithdraw').': ';
+		if ($type == 'bank-transfer') {
+			$title .= $langs->trans('BankToPayCreditTransfer').': ';
+		}
+		print $title;
 		$form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT, 'id_bankaccount', 0, "courant=1");
 		print ' - ';
 
