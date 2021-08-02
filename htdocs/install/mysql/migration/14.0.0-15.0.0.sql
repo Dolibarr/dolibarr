@@ -38,6 +38,8 @@
 ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN ref_fourn varchar(128);
 ALTER TABLE llx_product_customer_price MODIFY COLUMN ref_customer varchar(128);
 
+-- -- add action trigger
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('ORDER_SUPPLIER_CANCEL','Supplier order request canceled','Executed when a supplier order is canceled','order_supplier',13);
 
 CREATE TABLE llx_stocktransfer_stocktransfer(
 	-- BEGIN MODULEBUILDER FIELDS
