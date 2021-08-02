@@ -1255,7 +1255,7 @@ class FormMail extends Form
 	 */
 	public function getEMailTemplate($db, $type_template, $user, $outputlangs, $id = 0, $active = 1, $label = '')
 	{
-		global $conf;
+		global $conf, $langs;
 
 		$ret = new ModelMail();
 
