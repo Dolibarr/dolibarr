@@ -828,10 +828,10 @@ if ($id > 0 || !empty($ref)) {
 								print $linktoprod;
 								print "</td>";
 								print '<td class="dispatch_batch_number"></td>';
-								if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+								if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 									print '<td class="dispatch_dluo"></td>';
 								}
-								if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+								if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 									print '<td class="dispatch_dlc"></td>';
 								}
 							} else {
@@ -841,10 +841,10 @@ if ($id > 0 || !empty($ref)) {
 								print '<td class="dispatch_batch_number">';
 								print $langs->trans("ProductDoesNotUseBatchSerial");
 								print '</td>';
-								if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+								if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 									print '<td class="dispatch_dluo"></td>';
 								}
-								if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+								if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 									print '<td class="dispatch_dlc"></td>';
 								}
 							}
@@ -919,7 +919,7 @@ if ($id > 0 || !empty($ref)) {
 								print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, '', '', 1, '');
 								print '</td>';
 							}
-							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 								print '<td class="nowraponall">';
 								$dluodatesuffix = dol_mktime(0, 0, 0, GETPOST('dluo'.$suffix.'month'), GETPOST('dluo'.$suffix.'day'), GETPOST('dluo'.$suffix.'year'));
 								print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, '', '', 1, '');
