@@ -281,6 +281,7 @@ TypeContact_stocktransfer_internal_STFROM=Contact expéditeur transfert de stock
 TypeContact_stocktransfer_internal_STDEST=Contact destinataire transfert de stocks
 TypeContact_stocktransfer_internal_STRESP=Responsable du transfert de stocks
 StockTransferSheet=Bon de transfert
+StockTransferSheetProforma=Bon de transfert proforma
 StockTransferDecrementation=Décrémenter les entrepôts sources
 StockTransferIncrementation=Incrémenter les entrepôts de destination
 StockTransferDecrementationCancel=Annuler décrémentation des entrepôts sources

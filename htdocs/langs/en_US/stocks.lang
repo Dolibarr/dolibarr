@@ -286,6 +286,7 @@ TypeContact_stocktransfer_internal_STFROM=Sender of stocks transfer
 TypeContact_stocktransfer_internal_STDEST=Recipient of stocks transfer
 TypeContact_stocktransfer_internal_STRESP=Responsible of stocks transfer
 StockTransferSheet=Stocks transfer sheet
+StockTransferSheetProforma=Proforma stocks transfer sheet
 StockTransferDecrementation=Decrease source warehouses
 StockTransferIncrementation=Increase destination warehouses
 StockTransferDecrementationCancel=Cancel decrease of source warehouses

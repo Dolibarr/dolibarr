@@ -38,6 +38,7 @@ CREATE TABLE llx_stocktransfer_stocktransfer(
 	fk_user_modif integer, 
 	import_key varchar(14), 
 	model_pdf varchar(255), 
+	last_main_doc varchar(255),
 	status smallint NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

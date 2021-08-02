@@ -125,7 +125,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'set') { // Activate a model
 	$ret = addDocumentModel($value, 'stocktransfer', $label, $scandir);
 } elseif ($action == 'del') {
-	$tmpobjectkey = GETPOST('object');
+	$tmpobjectkey = 'StockTransfer';
 
 	$ret = delDocumentModel($value, 'stocktransfer');
 	if ($ret > 0) {
@@ -133,7 +133,7 @@ if ($action == 'updateMask') {
 		if ($conf->global->$constforval == "$value") dolibarr_del_const($db, $constforval, $conf->entity);
 	}
 } elseif ($action == 'setdoc') { // Set default model
-	$tmpobjectkey = GETPOST('object');
+	$tmpobjectkey = 'StockTransfer';
 	$constforval = strtoupper($tmpobjectkey).'_ADDON_PDF';
 	if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity)) {
 		// The constant that was read before the new set
@@ -149,7 +149,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'setmod') {
 	// TODO Check if numbering module chosen can be activated
 	// by calling method canBeActivated
-	$tmpobjectkey = GETPOST('object');
+	$tmpobjectkey = 'StockTransfer';
 	$constforval = 'STOCKTRANSFER_'.strtoupper($tmpobjectkey)."_ADDON";
 	dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity);
 }
