@@ -56,6 +56,9 @@ $prodstatic = new Product($db);
 $prodattr = new ProductAttribute($db);
 $prodattr_val = new ProductAttributeValue($db);
 
+if (GETPOSTISSET('price_impact')) $price_impact = price2num($price_impact);
+if (GETPOSTISSET('weight_impact')) $weight_impact = price2num($weight_impact);
+
 $object = new Product($db);
 if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
@@ -128,8 +131,6 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		if (empty($reference)) {
 			$reference = false;
 		}
-		$weight_impact = price2num($weight_impact);
-		$price_impact = price2num($price_impact);
 
 		// for conf PRODUIT_MULTIPRICES
 		if ($conf->global->PRODUIT_MULTIPRICES) {

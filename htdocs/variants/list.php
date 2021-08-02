@@ -16,8 +16,8 @@
  */
 
 require '../main.inc.php';
-require DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 
 $action = GETPOST('action', 'aZ09');
 $object = new ProductAttribute($db);
