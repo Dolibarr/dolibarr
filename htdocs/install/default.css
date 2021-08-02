@@ -415,3 +415,6 @@ a.button:hover {
 	vertical-align: text-bottom;
 }
 
+.text-security {
+	-webkit-text-security: disc;
+}

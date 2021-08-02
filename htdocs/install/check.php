@@ -100,7 +100,7 @@ print "<br>\n";
 // Check PHP support for $_GET and $_POST
 if (!isset($_GET["testget"]) && !isset($_POST["testpost"])) {	// We must keep $_GET and $_POST here
 	print '<img src="../theme/eldy/img/warning.png" alt="Warning"> '.$langs->trans("PHPSupportPOSTGETKo");
-	print ' (<a href="'.$_SERVER["PHP_SELF"].'?testget=ok">'.$langs->trans("Recheck").'</a>)';
+	print ' (<a href="'.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?testget=ok">'.$langs->trans("Recheck").'</a>)';
 	print "<br>\n";
 	$checksok = 0;
 } else {

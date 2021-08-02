@@ -1332,7 +1332,7 @@ class Form
 		}
 
 		// We search companies
-		$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
+		$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.tva_intra, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
 		if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
 			$sql .= ", s.address, s.zip, s.town";
 			$sql .= ", dictp.code as country_code";
@@ -1384,6 +1384,7 @@ class Form
 				$sql .= " OR s.barcode LIKE '".$this->db->escape($prefix.$filterkey)."%'";
 			}
 			$sql .= " OR s.code_client LIKE '".$this->db->escape($prefix.$filterkey)."%' OR s.code_fournisseur LIKE '".$this->db->escape($prefix.$filterkey)."%'";
+			$sql .= " OR s.name_alias LIKE '".$this->db->escape($prefix.$filterkey)."%' OR s.tva_intra LIKE '".$this->db->escape($prefix.$filterkey)."%'";
 			$sql .= ")";
 		}
 		$sql .= $this->db->order("nom", "ASC");
@@ -6974,13 +6975,15 @@ class Form
 
 		// Search data
 		$sql = "SELECT t.rowid, ".$fieldstoshow." FROM ".MAIN_DB_PREFIX.$objecttmp->table_element." as t";
-		if (isset($objecttmp->ismultientitymanaged) && !is_numeric($objecttmp->ismultientitymanaged)) {
-			$tmparray = explode('@', $objecttmp->ismultientitymanaged);
-			$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.$tmparray[1].' as parenttable ON parenttable.rowid = t.'.$tmparray[0];
-		}
-		if ($objecttmp->ismultientitymanaged == 'fk_soc@societe') {
-			if (!$user->rights->societe->client->voir && !$user->socid) {
-				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (isset($objecttmp->ismultientitymanaged)) {
+			if (!is_numeric($objecttmp->ismultientitymanaged)) {
+				$tmparray = explode('@', $objecttmp->ismultientitymanaged);
+				$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.$tmparray[1].' as parenttable ON parenttable.rowid = t.'.$tmparray[0];
+			}
+			if ($objecttmp->ismultientitymanaged == 'fk_soc@societe') {
+				if (!$user->rights->societe->client->voir && !$user->socid) {
+					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+				}
 			}
 		}
 
@@ -6991,26 +6994,28 @@ class Form
 			$sql .= $hookmanager->resPrint;
 		} else {
 			$sql .= " WHERE 1=1";
-			if (isset($objecttmp->ismultientitymanaged) && $objecttmp->ismultientitymanaged == 1) {
-				$sql .= " AND t.entity IN (".getEntity($objecttmp->table_element).")";
-			}
-			if (isset($objecttmp->ismultientitymanaged) && !is_numeric($objecttmp->ismultientitymanaged)) {
-				$sql .= ' AND parenttable.entity = t.'.$tmparray[0];
-			}
-			if ($objecttmp->ismultientitymanaged == 1 && !empty($user->socid)) {
-				if ($objecttmp->element == 'societe') {
-					$sql .= " AND t.rowid = ".$user->socid;
-				} else {
-					$sql .= " AND t.fk_soc = ".$user->socid;
+			if (isset($objecttmp->ismultientitymanaged)) {
+				if ($objecttmp->ismultientitymanaged == 1) {
+					$sql .= " AND t.entity IN (".getEntity($objecttmp->table_element).")";
+				}
+				if (!is_numeric($objecttmp->ismultientitymanaged)) {
+					$sql .= ' AND parenttable.entity = t.'.$tmparray[0];
+				}
+				if ($objecttmp->ismultientitymanaged == 1 && !empty($user->socid)) {
+					if ($objecttmp->element == 'societe') {
+						$sql .= " AND t.rowid = ".$user->socid;
+					} else {
+						$sql .= " AND t.fk_soc = ".$user->socid;
+					}
+				}
+				if ($objecttmp->ismultientitymanaged == 'fk_soc@societe') {
+					if (!$user->rights->societe->client->voir && !$user->socid) {
+						$sql .= " AND t.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+					}
 				}
 			}
 			if ($searchkey != '') {
 				$sql .= natural_search(explode(',', $fieldstoshow), $searchkey);
-			}
-			if ($objecttmp->ismultientitymanaged == 'fk_soc@societe') {
-				if (!$user->rights->societe->client->voir && !$user->socid) {
-					$sql .= " AND t.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-				}
 			}
 			if ($objecttmp->filter) {	 // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 				/*if (! DolibarrApi::_checkFilters($objecttmp->filter))
@@ -7848,6 +7853,10 @@ class Form
 					$tplpath = 'expensereport';
 				} elseif ($objecttype == 'subscription') {
 					$tplpath = 'adherents';
+				} elseif ($objecttype == 'conferenceorbooth') {
+					$tplpath = 'eventorganization';
+				} elseif ($objecttype == 'conferenceorboothattendee') {
+					$tplpath = 'eventorganization';
 				}
 
 				global $linkedObjectBlock;
@@ -7970,6 +7979,21 @@ class Form
 
 			if (!empty($possiblelink['perms']) && (empty($restrictlinksto) || in_array($key, $restrictlinksto)) && (empty($excludelinksto) || !in_array($key, $excludelinksto))) {
 				print '<div id="'.$key.'list"'.(empty($conf->use_javascript_ajax) ? '' : ' style="display:none"').'>';
+
+				if (!empty($conf->global->MAIN_LINK_BY_REF_IN_LINKTO)) {
+					print '<br><form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinkedbyref' . $key . '">';
+					print '<input type="hidden" name="id" value="' . $object->id . '">';
+					print '<input type="hidden" name="action" value="addlinkbyref">';
+					print '<input type="hidden" name="addlink" value="' . $key . '">';
+					print '<table class="noborder">';
+					print '<tr>';
+					print '<td>' . $langs->trans("Ref") . '</td>';
+					print '<td><input type="text" name="reftolinkto" value="' . dol_escape_htmltag(GETPOST('reftolinkto', 'alpha')) . '">&nbsp;<input type="submit" class="button valignmiddle" value="' . $langs->trans('ToLink') . '">&nbsp;<input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></td>';
+					print '</tr>';
+					print '</table>';
+					print '</form>';
+				}
+
 				$sql = $possiblelink['sql'];
 
 				$resqllist = $this->db->query($sql);
@@ -8027,7 +8051,7 @@ class Form
 				print '</div>';
 
 				//$linktoelem.=($linktoelem?' &nbsp; ':'');
-				if ($num > 0) {
+				if ($num > 0 || !empty($conf->global->MAIN_LINK_BY_REF_IN_LINKTO)) {
 					$linktoelemlist .= '<li><a href="#linkto'.$key.'" class="linkto dropdowncloseonclick" rel="'.$key.'">'.$langs->trans($possiblelink['label']).' ('.$num.')</a></li>';
 					// } else $linktoelem.=$langs->trans($possiblelink['label']);
 				} else {

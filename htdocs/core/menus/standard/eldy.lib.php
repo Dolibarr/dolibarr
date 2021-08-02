@@ -690,7 +690,8 @@ function print_end_menu_array()
  */
 function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabMenu, &$menu, $noout = 0, $forcemainmenu = '', $forceleftmenu = '', $moredata = null, $type_user = 0)
 {
-	global $user, $conf, $langs, $dolibarr_main_db_name, $mysoc;
+
+	global $user, $conf, $langs, $dolibarr_main_db_name, $mysoc, $hookmanager;
 
 	//var_dump($tabMenu);
 
@@ -1732,11 +1733,11 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 				$titleboth = $langs->trans("LeadsOrProjects");
 				$titlenew = $langs->trans("NewLeadOrProject"); // Leads and opportunities by default
-				if ($conf->global->PROJECT_USE_OPPORTUNITIES == 0) {
+				if (isset($conf->global->PROJECT_USE_OPPORTUNITIES) && $conf->global->PROJECT_USE_OPPORTUNITIES == 0) {
 					$titleboth = $langs->trans("Projects");
 					$titlenew = $langs->trans("NewProject");
 				}
-				if ($conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
+				if (isset($conf->global->PROJECT_USE_OPPORTUNITIES) && $conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
 					$titleboth = $langs->trans("Leads");
 					$titlenew = $langs->trans("NewLead");
 				}
@@ -1745,13 +1746,13 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$newmenu->add("/projet/index.php?leftmenu=projects".($search_project_user ? '&search_project_user='.$search_project_user : ''), $titleboth, 0, $user->rights->projet->lire, '', $mainmenu, 'projects', 0, '', '', '', img_picto('', 'project', 'class="pictofixedwidth"'));
 				$newmenu->add("/projet/card.php?leftmenu=projects&action=create".($search_project_user ? '&search_project_user='.$search_project_user : ''), $titlenew, 1, $user->rights->projet->creer);
 
-				if ($conf->global->PROJECT_USE_OPPORTUNITIES == 0) {
+				if (isset($conf->global->PROJECT_USE_OPPORTUNITIES) && $conf->global->PROJECT_USE_OPPORTUNITIES == 0) {
 					$newmenu->add("/projet/list.php?leftmenu=projets".($search_project_user ? '&search_project_user='.$search_project_user : '').'&search_status=99', $langs->trans("List"), 1, $showmode, '', 'project', 'list');
-				} elseif ($conf->global->PROJECT_USE_OPPORTUNITIES == 1) {
+				} elseif (isset($conf->global->PROJECT_USE_OPPORTUNITIES) && $conf->global->PROJECT_USE_OPPORTUNITIES == 1) {
 					$newmenu->add("/projet/list.php?leftmenu=projets".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("List"), 1, $showmode, '', 'project', 'list');
 					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_usage_opportunity=1&search_status=99&search_opp_status=openedopp&contextpage=lead', $langs->trans("ListOpenLeads"), 2, $showmode);
 					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_opp_status=notopenedopp&search_status=99&contextpage=project', $langs->trans("ListOpenProjects"), 2, $showmode);
-				} elseif ($conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
+				} elseif (isset($conf->global->PROJECT_USE_OPPORTUNITIES) && $conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
 					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_usage_opportunity=1&search_status=99', $langs->trans("List"), 2, $showmode);
 				}
 
@@ -1956,6 +1957,28 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 	//var_dump($menu_array);exit;
 	if (!is_array($menu_array)) {
 		return 0;
+	}
+
+	// Allow the $menu_array of the menu to be manipulated by modules
+	$parameters = array(
+		'mainmenu' => $mainmenu,
+	);
+	$hook_items = $menu_array;
+	$reshook = $hookmanager->executeHooks('menuLeftMenuItems', $parameters, $hook_items); // Note that $action and $object may have been modified by some hooks
+
+	if (is_numeric($reshook)) {
+		if ($reshook == 0 && !empty($hookmanager->results)) {
+			$menu_array[] = $hookmanager->results; // add
+		} elseif ($reshook == 1) {
+			$menu_array = $hookmanager->results; // replace
+		}
+
+		// @todo Sort menu items by 'position' value
+		//      $position = array();
+		//      foreach ($menu_array as $key => $row) {
+		//          $position[$key] = $row['position'];
+		//      }
+		//      array_multisort($position, SORT_ASC, $menu_array);
 	}
 
 	// TODO Use the position property in menu_array to reorder the $menu_array

@@ -983,7 +983,9 @@ if (empty($reshook)) {
 	if ($action == 'commande') {
 		$methodecommande = GETPOST('methodecommande', 'int');
 
-		if ($methodecommande <= 0) {
+		if ($cancel) {
+			$action = '';
+		} elseif ($methodecommande <= 0) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("OrderMode")), null, 'errors');
 			$action = 'makeorder';
 		}
@@ -1059,36 +1061,43 @@ if (empty($reshook)) {
 
 	// Set status of reception (complete, partial, ...)
 	if ($action == 'livraison' && $usercanreceived) {
-		$db->begin();
+		if ($cancel) {
+			$action = '';
+		} else {
+			$db->begin();
 
-		if (GETPOST("type") != '') {
-			$date_liv = dol_mktime(GETPOST('rehour'), GETPOST('remin'), GETPOST('resec'), GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
+			if (GETPOST("type") != '') {
+				$date_liv = dol_mktime(GETPOST('rehour'), GETPOST('remin'), GETPOST('resec'), GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
 
-			$result = $object->Livraison($user, $date_liv, GETPOST("type"), GETPOST("comment")); // GETPOST("type") is 'tot', 'par', 'nev', 'can'
-			if ($result > 0) {
-				$langs->load("deliveries");
-				setEventMessages($langs->trans("DeliveryStateSaved"), null);
-				$action = '';
-			} elseif ($result == -3) {
-				$error++;
-				setEventMessages($object->error, $object->errors, 'errors');
+				$result = $object->Livraison($user, $date_liv, GETPOST("type"), GETPOST("comment")); // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+				if ($result > 0) {
+					$langs->load("deliveries");
+					setEventMessages($langs->trans("DeliveryStateSaved"), null);
+					$action = '';
+				} elseif ($result == -3) {
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
+				} else {
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
 			} else {
 				$error++;
-				setEventMessages($object->error, $object->errors, 'errors');
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Delivery")), null, 'errors');
 			}
-		} else {
-			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Delivery")), null, 'errors');
-		}
 
-		if (!$error) {
-			$db->commit();
-		} else {
-			$db->rollback();
+			if (!$error) {
+				$db->commit();
+			} else {
+				$db->rollback();
+			}
 		}
 	}
 
 	if ($action == 'confirm_cancel' && $confirm == 'yes' && $usercanorder) {
+		if (GETPOST('cancel_note')) {
+			$object->cancel_note = GETPOST('cancel_note');
+		}
 		$result = $object->cancel($user);
 		if ($result > 0) {
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
@@ -1889,13 +1898,13 @@ if ($action == 'create') {
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ApproveThisOrder"), $text, "confirm_".$action, $formquestion, 1, 1, 240);
 	}
 
-	// Confirmation de la desapprobation
+	// Confirmation of disapproval
 	if ($action == 'refuse') {
 		$formquestion = array(
 			array(
 				'type' => 'text',
 				'name' => 'refuse_note',
-				'label' => $langs->trans("MotifCP"),
+				'label' => $langs->trans("Reason"),
 				'value' => '',
 				'morecss' => 'minwidth300'
 			)
@@ -1903,9 +1912,18 @@ if ($action == 'create') {
 		$formconfirm  = $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("DenyingThisOrder"), $langs->trans("ConfirmDenyingThisOrder", $object->ref), "confirm_refuse", $formquestion, 0, 1);
 	}
 
-	// Confirmation de l'annulation
+	// Confirmation of cancellation
 	if ($action == 'cancel') {
-		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("Cancel"), $langs->trans("ConfirmCancelThisOrder", $object->ref), "confirm_cancel", '', 0, 1);
+		$formquestion = array(
+			array(
+				'type' => 'text',
+				'name' => 'cancel_note',
+				'label' => $langs->trans("Reason"),
+				'value' => '',
+				'morecss' => 'minwidth300'
+			)
+		);
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("Cancel"), $langs->trans("ConfirmCancelThisOrder", $object->ref), "confirm_cancel", $formquestion, 0, 1);
 	}
 
 	// Confirmation de l'envoi de la commande
@@ -2640,7 +2658,11 @@ if ($action == 'create') {
 
 					print '</td></tr>';
 					print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment"></td></tr>';
-					print '<tr><td class="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Receive").'"></td></tr>';
+					print '<tr><td class="center" colspan="2">';
+					print '<input type="submit" name="receive" class="button" value="'.$langs->trans("Receive").'">';
+					print ' &nbsp; &nbsp; ';
+					print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
+					print '</td></tr>';
 					print "</table>\n";
 					print "</form>\n";
 					print "<br>";

@@ -1506,6 +1506,7 @@ class BookKeeping extends CommonObject
 		$sql = "DELETE";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE piece_num = ".(int) $piecenum;
+		$sql .= " AND date_validated IS NULL";		// For security, exclusion of validated entries at the time of deletion
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
 
 		$resql = $this->db->query($sql);

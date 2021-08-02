@@ -402,7 +402,7 @@ class Productlot extends CommonObject
 		$sql .= ' sellby = '.(!isset($this->sellby) || dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null').',';
 		$sql .= ' eol_date = '.(!isset($this->eol_date) || dol_strlen($this->eol_date) != 0 ? "'".$this->db->idate($this->eol_date)."'" : 'null').',';
 		$sql .= ' manufacturing_date = '.(!isset($this->manufacturing_date) || dol_strlen($this->manufacturing_date) != 0 ? "'".$this->db->idate($this->manufacturing_date)."'" : 'null').',';
-		$sql .= ' scrapping_date = '.(!isset($this->destruction_date) || dol_strlen($this->destruction_date) != 0 ? "'".$this->db->idate($this->destruction_date)."'" : 'null').',';
+		$sql .= ' scrapping_date = '.(!isset($this->scrapping_date) || dol_strlen($this->scrapping_date) != 0 ? "'".$this->db->idate($this->scrapping_date)."'" : 'null').',';
 		//$sql .= ' commissionning_date = '.(!isset($this->first_use_date) || dol_strlen($this->first_use_date) != 0 ? "'".$this->db->idate($this->first_use_date)."'" : 'null').',';
 		//$sql .= ' qc_frequency = '.(!isset($this->qc_frequency) || dol_strlen($this->qc_frequency) != 0 ? "'".$this->db->escape($this->qc_frequency)."'" : 'null').',';
 		$sql .= ' datec = '.(!isset($this->datec) || dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').',';

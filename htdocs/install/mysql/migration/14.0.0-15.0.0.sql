@@ -33,8 +33,6 @@
 -- Missing in v14 or lower
 
 
-
-
 -- v15
 
 CREATE TABLE llx_categorie_ticket
@@ -50,3 +48,8 @@ ALTER TABLE llx_categorie_ticket ADD INDEX idx_categorie_ticket_fk_ticket (fk_ti
 
 ALTER TABLE llx_categorie_ticket ADD CONSTRAINT fk_categorie_ticket_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_ticket ADD CONSTRAINT fk_categorie_ticket_ticket_rowid   FOREIGN KEY (fk_ticket) REFERENCES llx_ticket (rowid);
+ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN ref_fourn varchar(128);
+ALTER TABLE llx_product_customer_price MODIFY COLUMN ref_customer varchar(128);
+
+-- -- add action trigger
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('ORDER_SUPPLIER_CANCEL','Supplier order request canceled','Executed when a supplier order is canceled','order_supplier',13);
