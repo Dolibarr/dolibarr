@@ -1229,7 +1229,7 @@ class Commande extends CommonOrder
 			$error++;
 		}
 
-		if (!$error) {
+		if (!$error && empty($conf->global->ORDER_DONT_KEEP_INTERNAL_CONTACTS_ON_CLONING)) {
 			// copy internal contacts
 			if ($this->copy_linked_contact($objFrom, 'internal') < 0) {
 				$error++;
