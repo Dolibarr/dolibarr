@@ -1,6 +1,5 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021  Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -62,6 +61,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/class/stocktransfer.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/class/stocktransferline.class.php';
@@ -102,7 +102,8 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 // Initialize array of search criterias
 $search_all = trim(GETPOST("search_all", 'alpha'));
 $search = array();
-foreach ($object->fields as $key => $val) {
+foreach ($object->fields as $key => $val)
+{
 	if (GETPOST('search_'.$key, 'alpha')) $search[$key] = GETPOST('search_'.$key, 'alpha');
 }
 
@@ -140,15 +141,16 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (empty($reshook)) {
+if (empty($reshook))
+{
 	$error = 0;
 
-	$backurlforlist = dol_buildpath('/product/stock/stocktransfer/stocktransfer_list.php', 1);
+	$backurlforlist = dol_buildpath('/stocktransfer/stocktransfer_list.php', 1);
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
-			else $backtopage = dol_buildpath('/product/stock/stocktransfer/stocktransfer_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+			else $backtopage = dol_buildpath('/stocktransfer/stocktransfer_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
 		}
 	}
 	$triggermodname = 'STOCKTRANSFER_STOCKTRANSFER_MODIFY'; // Name of trigger action code to execute when we modify record
@@ -168,27 +170,30 @@ if (empty($reshook)) {
 	// Action to build doc
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
-	if ($action == 'set_thirdparty' && $permissiontoadd) {
+	if ($action == 'set_thirdparty' && $permissiontoadd)
+	{
 		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, 'STOCKTRANSFER_MODIFY');
 	}
-	if ($action == 'classin' && $permissiontoadd) {
+	if ($action == 'classin' && $permissiontoadd)
+	{
 		$object->setProject(GETPOST('projectid', 'int'));
 	}
 
-	if ($action == 'addline' && $permissiontoadd) {
-		if ($qty <= 0) {
+	if($action == 'addline' && $permissiontoadd) {
+
+		if($qty <= 0) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
 			$action = 'view';
 		}
 
-		if ($fk_warehouse_source <= 0) {
+		if($fk_warehouse_source <= 0) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WarehouseSource")), null, 'errors');
 			$action = 'view';
 		}
 
-		if ($fk_warehouse_destination <= 0) {
+		if($fk_warehouse_destination <= 0) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WarehouseTarget")), null, 'errors');
 			$action = 'view';
@@ -196,23 +201,25 @@ if (empty($reshook)) {
 
 		$prod = new Product($db);
 		$prod->fetch($fk_product);
-		if ($prod->hasbatch()) {
-			if (empty($batch)) {
+		if ($prod->hasbatch())
+		{
+			if (empty($batch))
+			{
 				$error++;
 				$langs->load("errors");
-				setEventMessages($langs->transnoentities("ErrorTryToMakeMoveOnProductRequiringBatchData", $prod->getNomUrl()), null, 'errors');
+				setEventMessages($langs->trans("ErrorTryToMakeMoveOnProductRequiringBatchData", $prod->ref), null, 'errors');
 			}
 		} else {
-			if (!empty($batch)) {
+			if(!empty($batch)) {
 				$error++;
-				setEventMessages($langs->transnoentities('StockTransferNoBatchForProduct', $prod->getNomUrl()), '', 'errors');
+				setEventMessages($langs->trans('StockTransferNoBatchForProduct', $prod->getNomUrl()), '', 'errors');
 			}
 		}
 
-		if (empty($error)) {
+		if(empty($error)) {
 			$line = new StockTransferLine($db);
 			$records = $line->fetchAll('', '', 0, 0, array('customsql'=>' fk_stocktransfer = '.$id.' AND fk_product = '.$fk_product.' AND fk_warehouse_source = '.$fk_warehouse_source.' AND fk_warehouse_destination = '.$fk_warehouse_destination.' AND ('.(empty($batch) ? 'batch = "" or batch IS NULL' : 'batch = "'.$batch.'"' ).')'));
-			if (!empty($records[key($records)])) $line = $records[key($records)];
+			if(!empty($records[key($records)])) $line = $records[key($records)];
 			$line->fk_stocktransfer = $id;
 			$line->qty += $qty;
 			$line->fk_warehouse_source = $fk_warehouse_source;
@@ -221,27 +228,28 @@ if (empty($reshook)) {
 			$line->batch = $batch;
 
 			$line->pmp = $prod->pmp;
-			if ($line->id > 0) $line->update($user);
+			if($line->id > 0) $line->update($user);
 			else {
 				$line->rang = count($object->lines) + 1;
 				$line->create($user);
 			}
 			$object->fetchLines();
 		}
-	} elseif ($action === 'updateline' && $permissiontoadd) {
-		if ($qty <= 0) {
+	} elseif($action === 'updateline' && $permissiontoadd) {
+
+		if($qty <= 0) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
 			$action = 'editline';
 		}
 
-		if ($fk_warehouse_source <= 0) {
+		if($fk_warehouse_source <= 0) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WarehouseSource")), null, 'errors');
 			$action = 'editline';
 		}
 
-		if ($fk_warehouse_destination <= 0) {
+		if($fk_warehouse_destination <= 0) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WarehouseTarget")), null, 'errors');
 			$action = 'editline';
@@ -249,22 +257,24 @@ if (empty($reshook)) {
 
 		$prod = new Product($db);
 		$prod->fetch($fk_product);
-		if ($prod->hasbatch()) {
-			if (empty($batch)) {
+		if ($prod->hasbatch())
+		{
+			if (empty($batch))
+			{
 				$error++;
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorTryToMakeMoveOnProductRequiringBatchData", $prod->ref), null, 'errors');
 				$action = 'editline';
 			}
 		} else {
-			if (!empty($batch)) {
+			if(!empty($batch)) {
 				$error++;
 				setEventMessages($langs->trans('StockTransferNoBatchForProduct', $prod->getNomUrl()), '', 'errors');
 				$action = 'editline';
 			}
 		}
 
-		if (empty($error)) {
+		if(empty($error)) {
 			$line = new StockTransferLine($db);
 			$line->fetch($lineid);
 			$line->qty = $qty;
@@ -278,18 +288,18 @@ if (empty($reshook)) {
 	}
 
 	// Décrémentation
-	if ($action == 'confirm_destock' && $confirm == 'yes' && $object->status == $object::STATUS_VALIDATED) {
+	if($action == 'confirm_destock' && $confirm == 'yes' && $object->status == $object::STATUS_VALIDATED) {
 		$lines = $object->getLinesArray();
-		if (!empty($lines)) {
+		if(!empty($lines)) {
 			$db->begin();
 			foreach ($lines as $line) {
 				$res = $line->doStockMovement($label, $line->fk_warehouse_source);
-				if ($res <= 0) $error++;
+				if($res <= 0) $error++;
 			}
-			if (empty($error)) $db->commit();
+			if(empty($error)) $db->commit();
 			else $db->rollback();
 		}
-		if (empty($error)) {
+		if(empty($error)) {
 			$object->setStatut($object::STATUS_TRANSFERED, $id);
 			$object->status = $object::STATUS_TRANSFERED;
 			$object->date_reelle_depart = date('Y-m-d');
@@ -299,18 +309,18 @@ if (empty($reshook)) {
 	}
 
 	// Annulation décrémentation
-	if ($action == 'confirm_destockcancel' && $confirm == 'yes' && $object->status == $object::STATUS_TRANSFERED) {
+	if($action == 'confirm_destockcancel' && $confirm == 'yes' && $object->status == $object::STATUS_TRANSFERED) {
 		$lines = $object->getLinesArray();
-		if (!empty($lines)) {
+		if(!empty($lines)) {
 			$db->begin();
 			foreach ($lines as $line) {
 				$res = $line->doStockMovement($label, $line->fk_warehouse_source, 0);
-				if ($res <= 0) $error++;
+				if($res <= 0) $error++;
 			}
-			if (empty($error)) $db->commit();
+			if(empty($error)) $db->commit();
 			else $db->rollback();
 		}
-		if (empty($error)) {
+		if(empty($error)) {
 			$object->setStatut($object::STATUS_VALIDATED, $id);
 			$object->status = $object::STATUS_VALIDATED;
 			$object->date_reelle_depart = null;
@@ -320,18 +330,18 @@ if (empty($reshook)) {
 	}
 
 	// Incrémentation
-	if ($action == 'confirm_addstock' && $confirm == 'yes' && $object->status == $object::STATUS_TRANSFERED) {
+	if($action == 'confirm_addstock' && $confirm == 'yes' && $object->status == $object::STATUS_TRANSFERED) {
 		$lines = $object->getLinesArray();
-		if (!empty($lines)) {
+		if(!empty($lines)) {
 			$db->begin();
 			foreach ($lines as $line) {
 				$res = $line->doStockMovement($label, $line->fk_warehouse_destination, 0);
-				if ($res <= 0) $error++;
+				if($res <= 0) $error++;
 			}
-			if (empty($error)) $db->commit();
+			if(empty($error)) $db->commit();
 			else $db->rollback();
 		}
-		if (empty($error)) {
+		if(empty($error)) {
 			$object->setStatut($object::STATUS_CLOSED, $id);
 			$object->status = $object::STATUS_CLOSED;
 			$object->date_reelle_arrivee = date('Y-m-d');
@@ -341,18 +351,18 @@ if (empty($reshook)) {
 	}
 
 	// Annulation incrémentation
-	if ($action == 'confirm_addstockcancel' && $confirm == 'yes' && $object->status == $object::STATUS_CLOSED) {
+	if($action == 'confirm_addstockcancel' && $confirm == 'yes' && $object->status == $object::STATUS_CLOSED) {
 		$lines = $object->getLinesArray();
-		if (!empty($lines)) {
+		if(!empty($lines)) {
 			$db->begin();
 			foreach ($lines as $line) {
 				$res = $line->doStockMovement($label, $line->fk_warehouse_destination);
-				if ($res <= 0) $error++;
+				if($res <= 0) $error++;
 			}
-			if (empty($error)) $db->commit();
+			if(empty($error)) $db->commit();
 			else $db->rollback();
 		}
-		if (empty($error)) {
+		if(empty($error)) {
 			$object->setStatut($object::STATUS_TRANSFERED, $id);
 			$object->status = $object::STATUS_TRANSFERED;
 			$object->date_reelle_arrivee = null;
@@ -390,8 +400,8 @@ jQuery(document).ready(function() {';
 // Affichage alerte date prévue de départ si transfert concerné
 $date_prevue_depart = $object->date_prevue_depart;
 $date_prevue_depart_plus_delai = $date_prevue_depart;
-if ($object->lead_time_for_warning > 0) $date_prevue_depart_plus_delai = strtotime(date('Y-m-d', $date_prevue_depart) . ' + '.$object->lead_time_for_warning.' day');
-if (!empty($date_prevue_depart) && $date_prevue_depart_plus_delai < strtotime(date('Y-m-d'))) {
+if($object->lead_time_for_warning > 0) $date_prevue_depart_plus_delai = strtotime(date('Y-m-d', $date_prevue_depart) . ' + '.$object->lead_time_for_warning.' day');
+if(!empty($date_prevue_depart) && $date_prevue_depart_plus_delai < strtotime(date('Y-m-d'))) {
 	print "$('.valuefield.fieldname_date_prevue_depart').append('";
 	print img_warning($langs->trans('Alert').' - '.$langs->trans('Late'));
 	print "');";
@@ -402,7 +412,8 @@ print '});
 
 
 // Part to create
-if ($action == 'create') {
+if ($action == 'create')
+{
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("StockTransfer")), '', 'object_'.$object->picto);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -450,41 +461,43 @@ if ($action == 'create') {
 }
 
 // Part to edit record
-if (($id || $ref) && $action == 'edit') {
+if (($id || $ref) && $action == 'edit')
+{
 	//if($object->status < 3) {
-		print load_fiche_titre($langs->trans("StockTransfer"), '', 'object_' . $object->picto);
+	print load_fiche_titre($langs->trans("StockTransfer"), '', 'object_' . $object->picto);
 
-		print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
-		print '<input type="hidden" name="token" value="' . newToken() . '">';
-		print '<input type="hidden" name="action" value="update">';
-		print '<input type="hidden" name="id" value="' . $object->id . '">';
-		if ($backtopage) print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
-		if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="' . $backtopageforcancel . '">';
+	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
+	print '<input type="hidden" name="token" value="' . newToken() . '">';
+	print '<input type="hidden" name="action" value="update">';
+	print '<input type="hidden" name="id" value="' . $object->id . '">';
+	if ($backtopage) print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
+	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="' . $backtopageforcancel . '">';
 
-		dol_fiche_head();
+	dol_fiche_head();
 
-		print '<table class="border centpercent tableforfieldedit">' . "\n";
+	print '<table class="border centpercent tableforfieldedit">' . "\n";
 
-		// Common attributes
-		include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';
+	// Common attributes
+	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';
 
-		// Other attributes
-		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_edit.tpl.php';
+	// Other attributes
+	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_edit.tpl.php';
 
-		print '</table>';
+	print '</table>';
 
-		dol_fiche_end();
+	dol_fiche_end();
 
-		print '<div class="center"><input type="submit" class="button" name="save" value="' . $langs->trans("Save") . '">';
-		print ' &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
-		print '</div>';
+	print '<div class="center"><input type="submit" class="button" name="save" value="' . $langs->trans("Save") . '">';
+	print ' &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
+	print '</div>';
 
-		print '</form>';
+	print '</form>';
 	//} else $action = 'view';
 }
 
 // Part to show record
-if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
+if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
+{
 	$res = $object->fetch_optionals();
 
 	$head = stocktransferPrepareHead($object);
@@ -493,11 +506,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$formconfirm = '';
 
 	// Confirmation to delete
-	if ($action == 'delete') {
+	if ($action == 'delete')
+	{
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteStockTransfer'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
 	}
 	// Confirmation to delete line
-	if ($action == 'deleteline') {
+	if ($action == 'deleteline')
+	{
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
 	}
 	// Clone confirmation
@@ -505,22 +520,30 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Create an array for form
 		$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
-	} elseif ($action == 'destock') { // Destock confirmation
+	}
+	// Destock confirmation
+	elseif ($action == 'destock') {
 		// Create an array for form
 		$formquestion = array(	'text' => '',
 			array('type' => 'text', 'name' => 'label', 'label' => $langs->trans("Label"), 'value' => $langs->trans('ConfirmDestock', $object->ref), 'size'=>40));
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DestockAllProduct'), '', 'confirm_destock', $formquestion, 'yes', 1);
-	} elseif ($action == 'destockcancel') { // Destock confirmation cancel
+	}
+	// Destock confirmation cancel
+	elseif ($action == 'destockcancel') {
 		// Create an array for form
 		$formquestion = array(	'text' => '',
 			array('type' => 'text', 'name' => 'label', 'label' => $langs->trans("Label"), 'value' => $langs->trans('ConfirmDestockCancel', $object->ref), 'size'=>40));
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DestockAllProductCancel'), '', 'confirm_destockcancel', $formquestion, 'yes', 1);
-	} elseif ($action == 'addstock') { // Addstock confirmation
+	}
+	// Addstock confirmation
+	elseif ($action == 'addstock') {
 		// Create an array for form
 		$formquestion = array(	'text' => '',
 			array('type' => 'text', 'name' => 'label', 'label' => $langs->trans("Label").'&nbsp;:', 'value' => $langs->trans('ConfirmAddStock', $object->ref), 'size'=>40));
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('AddStockAllProduct'), '', 'confirm_addstock', $formquestion, 'yes', 1);
-	} elseif ($action == 'addstockcancel') { // Addstock confirmation cancel
+	}
+	// Addstock confirmation cancel
+	elseif ($action == 'addstockcancel') {
 		// Create an array for form
 		$formquestion = array(	'text' => '',
 			array('type' => 'text', 'name' => 'label', 'label' => $langs->trans("Label").'&nbsp;:', 'value' => $langs->trans('ConfirmAddStockCancel', $object->ref), 'size'=>40));
@@ -528,7 +551,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Confirmation of action xxxx
-	if ($action == 'xxx') {
+	if ($action == 'xxx')
+	{
 		$formquestion = array();
 		/*
 		$forcecombo=0;
@@ -546,7 +570,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	if ($action == 'valid' && $permissiontoadd) {
 		$nextref=$object->getNextNumRef();
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Validate'), $langs->transnoentities('ConfirmValidateStockTransfer', $nextref), 'confirm_validate', $formquestion, 0, 2);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Validate'), $langs->trans('ConfirmValidateStockTransfer', $nextref), 'confirm_validate', $formquestion, 0, 2);
 	}
 
 	// Call Hook formConfirm
@@ -561,18 +585,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.dol_buildpath('/product/stock/stocktransfer/stocktransfer_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dol_buildpath('/stocktransfer/stocktransfer_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
-	if ($conf->societe->enabled) {
-		// Thirdparty
+
+	// Thirdparty
+	if($conf->societe->enabled) {
 		$morehtmlref .= $langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '').'<br>';
 	}
-	 // Project
+	// Project
 	if (! empty($conf->projet->enabled)) {
 		$langs->load("projects");
 		$morehtmlref.=$langs->trans('Project') . ' ';
-		if ($permissiontoadd) {
+		if ($permissiontoadd)
+		{
 			//if ($action != 'classify') $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
 			$morehtmlref.=' : ';
 			if ($action == 'classify') {
@@ -636,7 +662,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 * Lines
 	 */
 
-	if (!empty($object->table_element_line)) {
+	if (!empty($object->table_element_line))
+	{
 		// Show object lines
 		/*$result = $object->getLinesArray();
 
@@ -693,13 +720,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		<input type="hidden" name="mode" value="">
 		<input type="hidden" name="id" value="' . $object->id.'">
 		';
-	if ($lineid > 0) print '<input type="hidden" name="lineid" value="'.$lineid.'" />';
+	if($lineid > 0) print '<input type="hidden" name="lineid" value="'.$lineid.'" />';
 	print '<table id="tablelines" class="liste centpercent">';
-	//print '<div class="tagtable centpercent">';
+//print '<div class="tagtable centpercent">';
 
 	$param = '';
-
-	$conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE=true; // Full display needed to see all column title details
 
 	print '<tr class="liste_titre">';
 	print getTitleFieldOfList($langs->trans('ProductRef'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
@@ -709,9 +734,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print getTitleFieldOfList($langs->trans('WarehouseSource'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
 	print getTitleFieldOfList($langs->trans('WarehouseTarget'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
 	print getTitleFieldOfList($langs->trans('Qty'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'center tagtd maxwidthonsmartphone ');
+	if ($conf->global->PRODUCT_USE_UNITS) {
+		print getTitleFieldOfList($langs->trans('Unit'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
+	}
 	print getTitleFieldOfList($langs->trans('AverageUnitPricePMPShort'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'center tagtd maxwidthonsmartphone ');
-	print getTitleFieldOfList($langs->trans('EstimatedStockValueShort'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'center tagtd maxwidthonsmartphone ');
-	if (empty($object->status)) {
+	print getTitleFieldOfList($langs->trans('PMPValue'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'center tagtd maxwidthonsmartphone ');
+	if(empty($object->status)) {
 		print getTitleFieldOfList('', 0);
 		print getTitleFieldOfList('', 0);
 		print getTitleFieldOfList('', 0);
@@ -724,7 +752,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$warehousestatics = new Entrepot($db);
 	$warehousestatict = new Entrepot($db);
 
-	foreach ($listofdata as $key => $line) {
+	foreach ($listofdata as $key => $line)
+	{
 		$productstatic->fetch($line->fk_product);
 		$warehousestatics->fetch($line->fk_warehouse_source);
 		$warehousestatict->fetch($line->fk_warehouse_destination);
@@ -737,33 +766,53 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print '<tr id="row-'.$line->id.'" class="drag drop oddeven" '.$domData.'>';
 		print '<td class="titlefield">';
-		if ($action === 'editline' && $line->id == $lineid) $form->select_produits($line->fk_product, 'fk_product', $filtertype, $limit, 0, -1, 2, '', 0, array(), 0, 0, 0, 'minwidth200imp maxwidth300', 1);
+		if($action === 'editline' && $line->id == $lineid) $form->select_produits($line->fk_product, 'fk_product', $filtertype, $limit, 0, -1, 2, '', 0, array(), 0, 0, 0, 'minwidth200imp maxwidth300', 1);
 		else print $productstatic->getNomUrl(1).' - '.$productstatic->label;
 		print '</td>';
-		if ($conf->productbatch->enabled) {
+		if ($conf->productbatch->enabled)
+		{
 			print '<td>';
-			if ($action === 'editline' && $line->id == $lineid) print '<input type="text" value="'.$line->batch.'" name="batch" class="flat maxwidth50"/>';
-			else print $line->batch;
+			if($action === 'editline' && $line->id == $lineid) print '<input type="text" value="'.$line->batch.'" name="batch" class="flat maxwidth50"/>';
+			else {
+				$productlot = new Productlot($db);
+				if($productlot->fetch(0, $line->fk_product, $line->batch) > 0) {
+					print $productlot->getNomUrl(1);
+				} elseif(!empty($line->batch)) print $line->batch.'&nbsp;'.img_warning($langs->trans('BatchNotFound'));;
+			}
 			print '</td>';
 		}
+
 		print '<td>';
-		if ($action === 'editline' && $line->id == $lineid) print $formproduct->selectWarehouses($line->fk_warehouse_source, 'fk_warehouse_source', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200', $TExcludedWarehouseSource);
+
+		if($action === 'editline' && $line->id == $lineid) print $formproduct->selectWarehouses($line->fk_warehouse_source, 'fk_warehouse_source', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200', $TExcludedWarehouseSource);
 		else print $warehousestatics->getNomUrl(1);
 		print '</td>';
 		print '<td>';
-		if ($action === 'editline' && $line->id == $lineid) print $formproduct->selectWarehouses($line->fk_warehouse_destination, 'fk_warehouse_destination', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200', $TExcludedWarehouseDestination);
+		if($action === 'editline' && $line->id == $lineid) print $formproduct->selectWarehouses($line->fk_warehouse_destination,'fk_warehouse_destination', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200', $TExcludedWarehouseDestination);
 		else print $warehousestatict->getNomUrl(1);
 		print '</td>';
-		if ($action === 'editline' && $line->id == $lineid) print '<td class="center"><input type="text" class="flat maxwidth50" name="qty" value="'.$line->qty.'"></td>';
+		if($action === 'editline' && $line->id == $lineid) print '<td class="center"><input type="text" class="flat maxwidth50" name="qty" value="'.$line->qty.'"></td>';
 		else print '<td class="center">'.$line->qty.'</td>';
+
+		if ($conf->global->PRODUCT_USE_UNITS)
+		{
+			print '<td class="linecoluseunit nowrap left">';
+			$label = $productstatic->getLabelOfUnit('short');
+			if ($label !== '') {
+				print $langs->trans($label);
+			}
+			print '</td>';
+		}
+
 		print '<td class="center">';
 		print price($line->pmp, 0, '', 1, -1, -1, $conf->currency);
 		print '</td>';
 		print '<td class="center">';
 		print price($line->pmp * $line->qty, 0, '', 1, -1, -1, $conf->currency);
 		print '</td>';
-		if (empty($object->status)) {
-			if ($action === 'editline' && $line->id == $lineid) {
+		if(empty($object->status)) {
+
+			if($action === 'editline' && $line->id == $lineid) {
 				//print '<td class="right" colspan="2"><input type="submit" class="button" name="addline" value="' . dol_escape_htmltag($langs->trans('Save')) . '"></td>';
 				print '<td class="center valignmiddle" colspan="2"><input type="submit" class="button buttongen marginbottomonly" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'"><br>';
 				print '<input type="submit" class="button buttongen marginbottomonly" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
@@ -802,9 +851,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</tr>';
 	}
 
-	if (empty($object->status) && $action !== 'editline') {
+	if(empty($object->status) && $action !== 'editline') {
 		print '<tr class="oddeven">';
-		// Product
+// Product
 		print '<td class="titlefield">';
 		$filtertype = 0;
 		if (!empty($conf->global->STOCK_SUPPORTS_SERVICES)) $filtertype = '';
@@ -827,21 +876,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		// On stock ceux qui ne doivent pas être proposés dans la liste
 		$TExcludedWarehouseSource=array();
-		if (!empty($object->fk_warehouse_source)) {
+		if(!empty($object->fk_warehouse_source)) {
 			$source_ent = new Entrepot($db);
 			$source_ent->fetch($object->fk_warehouse_source);
 			foreach ($formproduct->cache_warehouses as $TDataCacheWarehouse) {
-				if (strpos($TDataCacheWarehouse['full_label'], $source_ent->label) === false) $TExcludedWarehouseSource[] = $TDataCacheWarehouse['id'];
+				if(strpos($TDataCacheWarehouse['full_label'], $source_ent->label) === false) $TExcludedWarehouseSource[] = $TDataCacheWarehouse['id'];
 			}
 		}
 
 		// On stock ceux qui ne doivent pas être proposés dans la liste
 		$TExcludedWarehouseDestination=array();
-		if (!empty($object->fk_warehouse_destination)) {
+		if(!empty($object->fk_warehouse_destination)) {
 			$dest_ent = new Entrepot($db);
 			$dest_ent->fetch($object->fk_warehouse_destination);
 			foreach ($formproduct->cache_warehouses as $TDataCacheWarehouse) {
-				if (strpos($TDataCacheWarehouse['full_label'], $dest_ent->label) === false) $TExcludedWarehouseDestination[] = $TDataCacheWarehouse['id'];
+				if(strpos($TDataCacheWarehouse['full_label'], $dest_ent->label) === false) $TExcludedWarehouseDestination[] = $TDataCacheWarehouse['id'];
 			}
 		}
 
@@ -863,6 +912,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<td class="center"><input type="text" class="flat maxwidth50" name="qty" '.(!empty($error) ? 'value="'.$qty.'"' : '').'></td>';
 		// PMP
 		print '<td></td>';
+		if($conf->global->PRODUCT_USE_UNITS) {
+			// Unité
+			print '<td></td>';
+		}
 		// PMP * Qty
 		print '<td></td>';
 		// Button to add line
@@ -870,6 +923,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Grad and drop lines
 		print '<td></td>';
 		print '</tr>';
+
 	}
 
 	print '</table>';
@@ -884,21 +938,25 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-		if (empty($reshook)) {
+		if (empty($reshook))
+		{
 			// Send
 			if (empty($user->socid)) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
 			}
 
 			// Back to draft
-			if ($object->status == $object::STATUS_VALIDATED) {
-				if ($permissiontoadd) {
+			if ($object->status == $object::STATUS_VALIDATED)
+			{
+				if ($permissiontoadd)
+				{
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes">'.$langs->trans("SetToDraft").'</a>';
 				}
 			}
 
 			// Modify
-			if ($permissiontoadd) {
+			if ($permissiontoadd)
+			{
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit">'.$langs->trans("Modify").'</a>'."\n";
 			}
 			/*else
@@ -907,26 +965,38 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}*/
 
 			// Validate
-			if ($object->status == $object::STATUS_DRAFT) {
-				if ($permissiontoadd) {
-					if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) {
+			if ($object->status == $object::STATUS_DRAFT)
+			{
+				if ($permissiontoadd)
+				{
+					if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0))
+					{
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=valid">'.$langs->trans("Validate").'</a>';
-					} else {
+					}
+					else
+					{
 						$langs->load("errors");
 						print '<a class="butActionRefused" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
 					}
 				}
-			} elseif ($object->status == $object::STATUS_VALIDATED) {
+			}
+
+			elseif($object->status == $object::STATUS_VALIDATED) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=destock">'.$langs->trans("StockTransferDecrementation").'</a>';
-			} elseif ($object->status == $object::STATUS_TRANSFERED) {
+			}
+
+			elseif($object->status == $object::STATUS_TRANSFERED) {
 				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=destockcancel">'.$langs->trans("StockTransferDecrementationCancel").'</a>';
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=addstock">'.$langs->trans("StockTransferIncrementation").'</a>';
-			} elseif ($object->status == $object::STATUS_CLOSED) {
+			}
+
+			elseif($object->status == $object::STATUS_CLOSED) {
 				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=addstockcancel">'.$langs->trans("StockTransferIncrementationCancel").'</a>';
 			}
 
 			// Clone
-			if ($permissiontoadd) {
+			if ($permissiontoadd)
+			{
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&object=stocktransfer">'.$langs->trans("ToClone").'</a>'."\n";
 			}
 
@@ -956,7 +1026,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			*/
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
-			if ($object->status < $object::STATUS_TRANSFERED && $permissiontoadd) {
+			if ($object->status < $object::STATUS_TRANSFERED && $permissiontoadd)
+			{
 				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
 			}
 			/*else
@@ -973,7 +1044,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$action = 'presend';
 	}
 
-	if ($action != 'presend') {
+	if ($action != 'presend')
+	{
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 		print '<a name="builddoc"></a>'; // ancre
 
@@ -999,7 +1071,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$MAXEVENT = 10;
 
-		$morehtmlright = '<a href="'.dol_buildpath('/product/stock/stocktransfer/stocktransfer_agenda.php', 1).'?id='.$object->id.'">';
+		$morehtmlright = '<a href="'.dol_buildpath('/stocktransfer/stocktransfer_agenda.php', 1).'?id='.$object->id.'">';
 		$morehtmlright .= $langs->trans("SeeAll");
 		$morehtmlright .= '</a>';
 
