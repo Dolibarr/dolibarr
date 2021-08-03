@@ -149,7 +149,7 @@ if (!empty($conf->global->CLICKTODIAL_URL)) {
 	}
 
 	if ($setupcomplete) {
-		print $langs->trans("LinkToTest", $user->login).': '.dol_print_phone($phonefortest, '', 0, 0, 'AC_TEL', '', 1);
+		print $langs->trans("LinkToTest", $user->login).': &nbsp; '.dol_print_phone($phonefortest, '', 0, 0, 'AC_TEL', '', 'mobile');
 	} else {
 		$langs->load("errors");
 		print '<div class="warning">'.$langs->trans("WarningClickToDialUserSetupNotComplete").'</div>';
