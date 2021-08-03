@@ -1378,6 +1378,10 @@ class Propal extends CommonObject
 			$object->note_private = '';
 			$object->note_public = '';
 		}
+		if ( ! empty($conf->global->PROPAL_DONT_KEEP_SHIPPING_INFOS_ON_CLONING)) {
+			$object->availability_id = '';
+			$object->date_livraison = '';
+		}
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
