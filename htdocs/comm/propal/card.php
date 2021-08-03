@@ -1929,7 +1929,7 @@ if ($action == 'create') {
 
 		if (empty($conf->global->PROPAL_CLOSE_AS_SIGNED)) {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetAcceptedRefused'), $text, 'confirm_closeas', $formquestion, '', 1, 250);
-		} else {
+		} else {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?statut=3&id=' . $object->id, $langs->trans('Close'), $text, 'confirm_closeas', $formquestion, '', 1, 250);
 		}
 	} elseif ($action == 'delete') {
