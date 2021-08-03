@@ -67,6 +67,7 @@ $hookmanager->initHooks(array('directdebitcreatecard', 'globalcard'));
 /*
  * Actions
  */
+
 if (GETPOST('cancel', 'alpha')) {
 	$massaction = '';
 }
@@ -165,7 +166,11 @@ llxHeader('', $langs->trans("NewStandingOrder"));
 
 if (prelevement_check_config($type) < 0) {
 	$langs->load("errors");
-	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Withdraw")), null, 'errors');
+	$modulenametoshow = "Withdraw";
+	if ($type == 'bank-transfer') {
+		$modulenametoshow = "PaymentByBankTransfer";
+	}
+	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv($modulenametoshow)), null, 'errors');
 }
 
 
