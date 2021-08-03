@@ -680,7 +680,7 @@ if (empty($reshook)) {
 		if ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED) {
 			$db->begin();
 
-			$result = $object->reopen($user, 1);
+			$result = $object->reopen($user, empty($conf->global->PROPAL_REOPEN_TO_DRAFT));
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
