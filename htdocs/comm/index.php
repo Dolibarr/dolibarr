@@ -182,7 +182,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 				print '<tr class="oddeven">';
 				print '<td class="nowrap tdoverflowmax100">'.$propalstatic->getNomUrl(1).'</td>';
 				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'customer').'</td>';
-				print '<td class="nowrap right tdamount">'.price((!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc)).'</td>';
+				print '<td class="nowrap right tdamount amount">'.price((!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc)).'</td>';
 				print '</tr>';
 
 				$i++;
@@ -278,7 +278,7 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 				print '<tr class="oddeven">';
 				print '<td class="nowrap tdoverflowmax100">'.$supplierproposalstatic->getNomUrl(1).'</td>';
 				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'supplier').'</td>';
-				print '<td class="nowrap right tdamount">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
+				print '<td class="nowrap right tdamount amount">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '</tr>';
 
 				$i++;
@@ -375,7 +375,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 				print '<tr class="oddeven">';
 				print '<td class="nowrap tdoverflowmax100">'.$orderstatic->getNomUrl(1).'</td>';
 				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'customer').'</td>';
-				print '<td class="nowrap right tdamount">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
+				print '<td class="nowrap right tdamount amount">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '</tr>';
 
 				$i++;
@@ -472,7 +472,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				print '<tr class="oddeven">';
 				print '<td class="nowrap tdoverflowmax100">'.$supplierorderstatic->getNomUrl(1).'</td>';
 				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'supplier').'</td>';
-				print '<td class="nowrap right tdamount">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
+				print '<td class="nowrap right tdamount amount">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '</tr>';
 
 				$i++;
@@ -906,7 +906,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
 				print '<td class="right tddate">'.dol_print_date($db->jdate($obj->dp), 'day').'</td>';
-				print '<td class="right tdamount">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
+				print '<td class="right tdamount amount">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut, 3).'</td>';
 
 				print '</tr>';
@@ -1023,7 +1023,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
 				print '<td class="right tddate">'.dol_print_date($db->jdate($obj->dv), 'day').'</td>';
-				print '<td class="right tdamount">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
+				print '<td class="right tdamount amount">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '<td align="center" width="14">'.$orderstatic->LibStatut($obj->fk_statut, $obj->billed, 3).'</td>';
 
 				print '</tr>';
