@@ -530,7 +530,7 @@ class Shipments extends DolibarrApi
 		if ($result < 0) {
 			throw new RestException(500, 'Error when validating Shipment: '.$this->shipment->error);
 		}
-		
+
 		// Reload shipment
 		$result = $this->shipment->fetch($id);
 
