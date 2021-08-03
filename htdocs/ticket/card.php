@@ -189,7 +189,7 @@ if (empty($reshook)) {
 			$notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
 			$object->notify_tiers_at_create = empty($notifyTiers) ? 0 : 1;
 			$fk_user_assign = GETPOST("fk_user_assign", 'int');
-			if (!empty($fk_user_assign)) {
+			if ($fk_user_assign > 0) {
 				$object->fk_user_assign = $fk_user_assign;
 				$object->fk_statut = $object::STATUS_ASSIGNED;
 			}
