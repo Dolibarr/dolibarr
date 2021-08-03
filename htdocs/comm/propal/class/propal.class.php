@@ -1387,7 +1387,7 @@ class Propal extends CommonObject
 			$error++;
 		}
 
-		if (!$error) {
+		if ( ! $error && empty($conf->global->PROPAL_DONT_KEEP_INTERNAL_CONTACTS_ON_CLONING)) {
 			// copy internal contacts
 			if ($object->copy_linked_contact($this, 'internal') < 0) {
 				$error++;
