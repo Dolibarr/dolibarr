@@ -27,7 +27,7 @@ CREATE TABLE llx_stocktransfer_stocktransfer(
     description text,
 	note_public text, 
 	note_private text,
-	tms timestamp,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     date_creation datetime NOT NULL,
     date_prevue_depart date DEFAULT NULL,
     date_reelle_depart date DEFAULT NULL,
