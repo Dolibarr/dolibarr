@@ -2579,7 +2579,7 @@ if ($action == 'create' && $usercancreate) {
 				}
 
 				// Cancel order
-				if ($object->statut == Commande::STATUS_VALIDATED && (!empty($usercanclose) || !empty($usercancancel))) {
+				if (($object->statut == Commande::STATUS_VALIDATED || ($object->statut == Commande::STATUS_DRAFT && !empty($conf->global->ORDER_ALLOW_DRAFT_CANCEL))) && (!empty($usercanclose) || !empty($usercancancel))) {
 					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel">'.$langs->trans("Cancel").'</a>';
 				}
 

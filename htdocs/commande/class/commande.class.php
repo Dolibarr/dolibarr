@@ -696,8 +696,10 @@ class Commande extends CommonOrder
 
 		$this->db->begin();
 
+		$newstatus = empty($conf->global->ORDER_REOPEN_TO_DRAFT) ? self::STATUS_VALIDATED : self::STATUS_DRAFT;
+
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-		$sql .= ' SET fk_statut='.self::STATUS_VALIDATED.', facture=0';
+		$sql .= ' SET fk_statut=' . $newstatus . ', facture=0';
 		$sql .= ' WHERE rowid = '.$this->id;
 
 		dol_syslog(get_class($this)."::set_reopen", LOG_DEBUG);
@@ -808,7 +810,11 @@ class Commande extends CommonOrder
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
 		$sql .= " SET fk_statut = ".self::STATUS_CANCELED;
 		$sql .= " WHERE rowid = ".$this->id;
-		$sql .= " AND fk_statut = ".self::STATUS_VALIDATED;
+		if (empty($conf->global->ORDER_ALLOW_DRAFT_CANCEL)) {
+			$sql .= " AND fk_statut = ".self::STATUS_VALIDATED;
+		} else {
+			$sql .= " AND fk_statut <= ".self::STATUS_VALIDATED;
+		}
 
 		dol_syslog(get_class($this)."::cancel", LOG_DEBUG);
 		if ($this->db->query($sql)) {
