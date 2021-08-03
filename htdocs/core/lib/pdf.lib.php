@@ -2286,12 +2286,12 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 			$outputlangs->load('orders');
 
 			if (count($objects) > 1) {
-				$object->note_public .= dol_concatdesc($object->note_public,'<br>'.$outputlangs->transnoentities("RefOrder").' : <br>');
+				$object->note_public .= dol_concatdesc($object->note_public, '<br>'.$outputlangs->transnoentities("RefOrder").' : <br>');
 				foreach ($objects as $elementobject) {
-					$object->note_public .= dol_concatdesc($object->note_public,$outputlangs->transnoentities($elementobject->ref).($elementobject->ref_client ? ' ('.$elementobject->ref_client.')' : '').($elementobject->ref_supplier ? ' ('.$elementobject->ref_supplier.')' : '').' ');
-					$object->note_public .= dol_concatdesc($object->note_public,$outputlangs->transnoentities("OrderDate").' : ');
-					$object->note_public .= dol_concatdesc($object->note_public,dol_print_date($elementobject->date, 'day', '', $outputlangs));
-					$object->note_public .= dol_concatdesc($object->note_public,'<br>');
+					$object->note_public .= dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref).($elementobject->ref_client ? ' ('.$elementobject->ref_client.')' : '').($elementobject->ref_supplier ? ' ('.$elementobject->ref_supplier.')' : '').' ');
+					$object->note_public .= dol_concatdesc($object->note_public, $outputlangs->transnoentities("OrderDate").' : ');
+					$object->note_public .= dol_concatdesc($object->note_public, dol_print_date($elementobject->date, 'day', '', $outputlangs));
+					$object->note_public .= dol_concatdesc($object->note_public, '<br>');
 				}
 			} elseif (count($objects) == 1) {
 				$elementobject = array_shift($objects);
@@ -2321,8 +2321,8 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 
 			if (count($objects) > 1) {
 				$order = null;
-				if (empty($object->linkedObjects['commande']) && $object->element != 'commande') $object->note_public .= dol_concatdesc($object->note_public,'<br>'.$outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending").' : <br>');
-				else $object->note_public .= dol_concatdesc($object->note_public,'<br>'.$outputlangs->transnoentities("RefSending").' : <br>');
+				if (empty($object->linkedObjects['commande']) && $object->element != 'commande') $object->note_public .= dol_concatdesc($object->note_public, '<br>'.$outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending").' : <br>');
+				else $object->note_public .= dol_concatdesc($object->note_public, '<br>'.$outputlangs->transnoentities("RefSending").' : <br>');
 				// We concat this record info into fields xxx_value. title is overwrote.
 				foreach ($objects as $elementobject) {
 					if (empty($object->linkedObjects['commande']) && $object->element != 'commande') {    // There is not already a link to order and object is not the order, so we show also info with order
@@ -2338,12 +2338,12 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 					}
 
 					if (! is_object($order)) {
-						$object->note_public .= dol_concatdesc($object->note_public,$outputlangs->transnoentities($elementobject->ref));
-						$object->note_public .= dol_concatdesc($object->note_public,'<br>');
+						$object->note_public .= dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref));
+						$object->note_public .= dol_concatdesc($object->note_public, '<br>');
 					} else {
-						$object->note_public .= dol_concatdesc($object->note_public,$outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : ''));
-						$object->note_public .= dol_concatdesc($object->note_public,' / '.$outputlangs->transnoentities($elementobject->ref));
-						$object->note_public .= dol_concatdesc($object->note_public,'<br>');
+						$object->note_public .= dol_concatdesc($object->note_public, $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : ''));
+						$object->note_public .= dol_concatdesc($object->note_public, ' / '.$outputlangs->transnoentities($elementobject->ref));
+						$object->note_public .= dol_concatdesc($object->note_public, '<br>');
 					}
 				}
 			} elseif (count($objects) == 1) {
