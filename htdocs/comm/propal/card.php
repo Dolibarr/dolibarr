@@ -1913,10 +1913,11 @@ if ($action == 'create') {
 
 	if ($action == 'closeas') {
 		//Form to close proposal (signed or not)
-		$formquestion = array(
-			array('type' => 'select', 'name' => 'statut', 'label' => '<span class="fieldrequired">'.$langs->trans("CloseAs").'</span>', 'values' => array($object::STATUS_SIGNED => $object->LibStatut($object::STATUS_SIGNED), $object::STATUS_NOTSIGNED => $object->LibStatut($object::STATUS_NOTSIGNED))),
-			array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"), 'value' => '')				// Field to complete private note (not replace)
-		);
+		$formquestion = array();
+		if (empty($conf->global->PROPAL_CLOSE_AS_SIGNED)) {
+			$formquestion[] = array('type' => 'select', 'name' => 'statut', 'label' => '<span class="fieldrequired">'.$langs->trans("CloseAs").'</span>', 'values' => array($object::STATUS_SIGNED => $object->LibStatut($object::STATUS_SIGNED), $object::STATUS_NOTSIGNED => $object->LibStatut($object::STATUS_NOTSIGNED)));
+		}
+		$formquestion[] = array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"), 'value' => '');				// Field to complete private note (not replace)
 
 		if (!empty($conf->notification->enabled)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
@@ -1926,7 +1927,11 @@ if ($action == 'create') {
 			));
 		}
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetAcceptedRefused'), $text, 'confirm_closeas', $formquestion, '', 1, 250);
+		if (empty($conf->global->PROPAL_CLOSE_AS_SIGNED)) {
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetAcceptedRefused'), $text, 'confirm_closeas', $formquestion, '', 1, 250);
+		} else {
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?statut=3&id=' . $object->id, $langs->trans('Close'), $text, 'confirm_closeas', $formquestion, '', 1, 250);
+		}
 	} elseif ($action == 'delete') {
 		// Confirm delete
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp', $object->ref), 'confirm_delete', '', 0, 1);
