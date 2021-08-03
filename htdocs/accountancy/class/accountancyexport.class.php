@@ -488,8 +488,8 @@ class AccountancyExport
 		foreach ($TData as $data) {
 			$code_compta = length_accountg($data->numero_compte);
 			if (!empty($data->subledger_account)) {
-                $code_compta = length_accounta($data->subledger_account);
-            }
+				$code_compta = length_accounta($data->subledger_account);
+			}
 
 			$date_document = dol_print_date($data->doc_date, '%Y%m%d');
 			$date_echeance = dol_print_date($data->date_lim_reglement, '%Y%m%d');
