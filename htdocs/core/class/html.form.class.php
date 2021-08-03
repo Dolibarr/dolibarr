@@ -1953,15 +1953,12 @@ class Form
 		}
 
 		dol_syslog(get_class($this)."::select_dolusers", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num) {
-				// Enhance with select2
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlname);
-
 				// do not use maxwidthonsmartphone by default. Set it by caller so auto size to 100% will work when not defined
 				$out .= '<select class="flat'.($morecss ? ' '.$morecss : ' minwidth200').'" id="'.$htmlname.'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.($disabled ? ' disabled' : '').'>';
 				if ($show_empty && !$multiple) {
@@ -2069,6 +2066,12 @@ class Form
 				$out .= '<option value="">'.$langs->trans("None").'</option>';
 			}
 			$out .= '</select>';
+
+			if ($num) {
+				// Enhance with select2
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+				$out .= ajax_combobox($htmlname);
+			}
 		} else {
 			dol_print_error($this->db);
 		}
