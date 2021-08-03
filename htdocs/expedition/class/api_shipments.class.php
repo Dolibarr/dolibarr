@@ -530,14 +530,9 @@ class Shipments extends DolibarrApi
 		if ($result < 0) {
 			throw new RestException(500, 'Error when validating Shipment: '.$this->shipment->error);
 		}
+		
+		// Reload shipment
 		$result = $this->shipment->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'Shipment not found');
-		}
-
-		if (!DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
 
 		$this->shipment->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->shipment);
@@ -659,14 +654,8 @@ class Shipments extends DolibarrApi
 			throw new RestException(500, 'Error when closing Order: '.$this->commande->error);
 		}
 
+		// Reload shipment
 		$result = $this->shipment->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'Shipment not found');
-		}
-
-		if (!DolibarrApi::_checkAccessToResource('expedition', $this->commande->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
 
 		$this->shipment->fetchObjectLinked();
 
