@@ -35,6 +35,8 @@
 
 -- v15
 
+ALTER TABLE llx_emailcollector_emailcollectoraction MODIFY COLUMN actionparam TEXT;
+
 ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD lang varchar(6);
 
 CREATE TABLE llx_categorie_ticket
