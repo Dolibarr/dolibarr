@@ -1914,7 +1914,7 @@ if ($action == 'create') {
 	if ($action == 'closeas') {
 		//Form to close proposal (signed or not)
 		$formquestion = array();
-		if (empty($conf->global->PROPAL_CLOSE_AS_SIGNED)) {
+		if (empty($conf->global->PROPAL_SKIP_ACCEPT_REFUSE)) {
 			$formquestion[] = array('type' => 'select', 'name' => 'statut', 'label' => '<span class="fieldrequired">'.$langs->trans("CloseAs").'</span>', 'values' => array($object::STATUS_SIGNED => $object->LibStatut($object::STATUS_SIGNED), $object::STATUS_NOTSIGNED => $object->LibStatut($object::STATUS_NOTSIGNED)));
 		}
 		$formquestion[] = array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"), 'value' => '');				// Field to complete private note (not replace)
@@ -1927,7 +1927,7 @@ if ($action == 'create') {
 			));
 		}
 
-		if (empty($conf->global->PROPAL_CLOSE_AS_SIGNED)) {
+		if (empty($conf->global->PROPAL_SKIP_ACCEPT_REFUSE)) {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetAcceptedRefused'), $text, 'confirm_closeas', $formquestion, '', 1, 250);
 		} else {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?statut=3&id=' . $object->id, $langs->trans('Close'), $text, 'confirm_closeas', $formquestion, '', 1, 250);
@@ -2599,14 +2599,22 @@ if ($action == 'create') {
 					}
 				}
 
-				// Close as accepted/refused
-				if ($object->statut == Propal::STATUS_VALIDATED) {
-					if ($usercanclose) {
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=closeas'.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close').'"';
-						print '>'.$langs->trans('SetAcceptedRefused').'</a>';
-					} else {
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'"';
-						print '>'.$langs->trans('SetAcceptedRefused').'</a>';
+				if (empty($conf->global->PROPAL_SKIP_ACCEPT_REFUSE)) {
+					// Close as accepted/refused
+					if ($object->statut == Propal::STATUS_VALIDATED) {
+						if ($usercanclose) {
+							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=closeas'.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close').'"';
+							print '>'.$langs->trans('SetAcceptedRefused').'</a>';
+						} else {
+							print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'"';
+							print '>'.$langs->trans('SetAcceptedRefused').'</a>';
+						}
+					}
+				} else {
+					// Set not signed (close)
+					if ($object->statut == Propal::STATUS_DRAFT && $usercanclose) {
+						print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=closeas' . (empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close') . '"';
+						print '>' . $langs->trans('Close') . '</a>';
 					}
 				}
 
