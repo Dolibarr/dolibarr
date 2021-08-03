@@ -595,5 +595,3 @@ create table llx_onlinesignature
   ip						varchar(128),
   pathoffile				varchar(255)
 )ENGINE=innodb;
-
-ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD lang varchar(6);
