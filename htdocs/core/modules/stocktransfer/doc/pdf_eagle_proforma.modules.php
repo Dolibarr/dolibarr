@@ -760,7 +760,8 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 				$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 
 				// Affiche zone infos
-				$posy = $this->drawInfoTable($pdf, $object, $bottomlasttab, $outputlangs);
+				// ! No paiement information for this model !
+				//$posy = $this->drawInfoTable($pdf, $object, $bottomlasttab, $outputlangs);
 
 				// Affiche zone totaux
 				$posy = $this->drawTotalTable($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
