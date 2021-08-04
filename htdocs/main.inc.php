@@ -80,7 +80,7 @@ function realCharForNumericEntities($matches)
  * Warning: Such a protection can't be enough. It is not reliable as it will always be possible to bypass this. Good protection can
  * only be guaranted by escaping data during output.
  *
- * @param		string		$val		Value brut found int $_GET, $_POST or PHP_SELF
+ * @param		string		$val		Brut value found into $_GET, $_POST or PHP_SELF
  * @param		string		$type		0=POST, 1=GET, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
  * @return		int						>0 if there is an injection, 0 if none
  */
@@ -265,7 +265,7 @@ if (!empty($_POST["DOL_AUTOSET_COOKIE"])) {
 	$cookiename = $tmpautoset[0];
 	$cookievalue = json_encode($cookiearrayvalue);
 	//var_dump('setcookie cookiename='.$cookiename.' cookievalue='.$cookievalue);
-	setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', null, false, true); // keep cookie 1 year and add tag httponly
+	setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // keep cookie 1 year and add tag httponly
 	if (empty($cookievalue)) {
 		unset($_COOKIE[$cookiename]);
 	}
@@ -460,11 +460,15 @@ if (!defined('NOTOKENRENEWAL')) {
 if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN)) || defined('CSRFCHECK_WITH_TOKEN')) {
 	// Array of action code where CSRFCHECK with token will be forced (so token must be provided on url request)
 	$arrayofactiontoforcetokencheck = array(
-		'activate', 'add', 'addtimespent', 'update', 'install',
-		'confirm_create_user', 'confirm_create_thirdparty', 'confirm_purge', 'confirm_reject_check',
-		'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'disable',
+		'activate', 'add', 'addrights', 'addtimespent',
+		'confirm_create_user', 'confirm_create_thirdparty', 'confirm_delete', 'confirm_deletedir', 'confirm_deletefile', 'confirm_purge', 'confirm_reject_check',
+		'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'delrights',
+		'disable',
 		'doprev', 'donext', 'dvprev', 'dvnext',
-		'enable', 'setpricelevel'
+		'enable',
+		'install',
+		'setpricelevel',
+		'update'
 	);
 	$sensitiveget = false;
 	if (in_array(GETPOST('action', 'aZ09'), $arrayofactiontoforcetokencheck)) {

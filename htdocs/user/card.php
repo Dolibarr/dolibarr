@@ -314,8 +314,8 @@ if (empty($reshook)) {
 
 			$id = $object->create($user);
 			if ($id > 0) {
-				if (GETPOST('password')) {
-					$object->setPassword($user, GETPOST('password'));
+				if (GETPOST('password', 'none')) {
+					$object->setPassword($user, GETPOST('password', 'none'));
 				}
 				if (!empty($conf->categorie->enabled)) {
 					// Categories association
@@ -1437,7 +1437,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Employee
-			print '<tr><td>'.$langs->trans("Employee").'</td><td colspan="2">';
+			print '<tr><td>'.$langs->trans("Employee").'</td><td>';
 			print '<input type="checkbox" disabled name="employee" value="1"'.($object->employee ? ' checked="checked"' : '').'>';
 			//print yn($object->employee);
 			print '</td></tr>'."\n";
@@ -1803,7 +1803,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print dol_print_date($object->datepreviouslogin, "dayhour").' <span class="opacitymedium">('.$langs->trans("Previous").')</span>, ';
 			}
 			if ($object->datelastlogin) {
-				print dol_print_date($object->datelastlogin, "dayhour").' <span class="opacitymedium">('.$langs->trans("Current").')</span>';
+				print dol_print_date($object->datelastlogin, "dayhour").' <span class="opacitymedium">('.$langs->trans("Currently").')</span>';
 			}
 			print '</td>';
 			print "</tr>\n";

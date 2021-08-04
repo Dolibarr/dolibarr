@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@uers.sourceforge.net>
+ * Copyright (C) 2005-2021 Laurent Destailleur  <eldy@uers.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014	   Florian Henry        <florian.henry@open-concept.pro>
  *
@@ -337,6 +337,7 @@ if ($object->fetch($id) >= 0) {
 			if (is_resource($handle)) {
 				while (($file = readdir($handle)) !== false) {
 					if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS') {
+						$reg = array();
 						if (preg_match("/(.*)\.modules\.php$/i", $file, $reg)) {
 							if ($reg[1] == 'example') {
 								continue;
@@ -534,9 +535,9 @@ if ($object->fetch($id) >= 0) {
 
 		$morehtmlcenter = '';
 		if ($allowaddtarget) {
-			$morehtmlcenter = '<span class="opacitymedium">'.$langs->trans("ToClearAllRecipientsClickHere").'</span> <a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition">'.$langs->trans("TargetsReset").'</a>';
+			$morehtmlcenter = '<span class="opacitymedium">'.$langs->trans("ToClearAllRecipientsClickHere").'</span> <a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition smallpaddingimp">'.$langs->trans("TargetsReset").'</a>';
 		}
-		$morehtmlcenter .= ' <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?exportcsv=1&id='.$object->id.'">'.$langs->trans("Download").'</a>';
+		$morehtmlcenter .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?exportcsv=1&id='.$object->id.'">'.$langs->trans("Download").'</a>';
 
 		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit);
 
