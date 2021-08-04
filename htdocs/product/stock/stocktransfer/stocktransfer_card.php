@@ -253,13 +253,13 @@ if (empty($reshook)) {
 			if (empty($batch)) {
 				$error++;
 				$langs->load("errors");
-				setEventMessages($langs->trans("ErrorTryToMakeMoveOnProductRequiringBatchData", $prod->ref), null, 'errors');
+				setEventMessages($langs->transnoentities("ErrorTryToMakeMoveOnProductRequiringBatchData", $prod->getNomUrl()), null, 'errors');
 				$action = 'editline';
 			}
 		} else {
 			if (!empty($batch)) {
 				$error++;
-				setEventMessages($langs->trans('StockTransferNoBatchForProduct', $prod->getNomUrl()), '', 'errors');
+				setEventMessages($langs->transnoentities('StockTransferNoBatchForProduct', $prod->getNomUrl()), '', 'errors');
 				$action = 'editline';
 			}
 		}
