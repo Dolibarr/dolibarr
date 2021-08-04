@@ -131,8 +131,8 @@ function check_events() {
 
 						if (value.type == 'agenda')
 						{
-							 url = '<?php print DOL_URL_ROOT.'/comm/action/card.php?id='; ?>' + value.id_agenda;
-							title = '<?php print dol_escape_js($langs->trans('EventReminder')) ?>';
+							url = '<?php print DOL_URL_ROOT.'/comm/action/card.php?id='; ?>' + value.id_agenda;
+							title = '<?php print dol_escape_js($langs->transnoentities('EventReminder')) ?>';
 						}
 						var extra = {
 							icon: '<?php print DOL_URL_ROOT.'/theme/common/bell.png'; ?>',

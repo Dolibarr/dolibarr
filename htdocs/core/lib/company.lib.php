@@ -1948,7 +1948,9 @@ function show_subsidiaries($conf, $langs, $db, $object)
 		$socstatic = new Societe($db);
 
 		print load_fiche_titre($langs->trans("Subsidiaries"), '', '');
-		print "\n".'<table class="noborder centpercent">'."\n";
+
+		print "\n".'<div class="div-table-responsive-no-min">'."\n";
+		print '<table class="noborder centpercent">'."\n";
 
 		print '<tr class="liste_titre"><td>'.$langs->trans("Company").'</td>';
 		print '<td>'.$langs->trans("Address").'</td><td>'.$langs->trans("Zip").'</td>';
@@ -1976,17 +1978,17 @@ function show_subsidiaries($conf, $langs, $db, $object)
 
 			print '<tr class="oddeven">';
 
-			print '<td>';
+			print '<td class="tdoverflowmax150">';
 			print $socstatic->getNomUrl(1);
 			print '</td>';
 
-			print '<td>'.$obj->address.'</td>';
-			print '<td>'.$obj->zip.'</td>';
-			print '<td>'.$obj->town.'</td>';
-			print '<td>'.$obj->code_client.'</td>';
+			print '<td class="tdoverflowmax400" title="'.dol_escape_htmltag($obj->address).'">'.dol_escape_htmltag($obj->address).'</td>';
+			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->zip).'">'.$obj->zip.'</td>';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->town).'">'.$obj->town.'</td>';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->code_client).'">'.$obj->code_client.'</td>';
 
 			print '<td class="center">';
-			print '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$obj->rowid.'&amp;action=edit">';
+			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/societe/card.php?socid='.((int) $obj->rowid).'&action=edit">';
 			print img_edit();
 			print '</a></td>';
 
@@ -1994,6 +1996,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 			$i++;
 		}
 		print "\n</table>\n";
+		print '</div>'."\n";
 	}
 
 	print "<br>\n";
