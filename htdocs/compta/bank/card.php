@@ -212,7 +212,7 @@ if (empty($reshook)) {
 		$object->ics = trim(GETPOST("ics", 'alpha'));
 		$object->ics_transfer = trim(GETPOST("ics_transfer", 'alpha'));
 
-		$account_number = GETPOST('account_number', 'alpha');
+		$account_number = GETPOST('account_number', 'alphanohtml');
 		if (empty($account_number) || $account_number == '-1') {
 			$object->account_number = '';
 		} else {
@@ -754,13 +754,13 @@ if ($action == 'create') {
 			print '</td></tr>';
 
 			if ($conf->prelevement->enabled) {
-				print '<tr><td>'.$langs->trans("ICS").'</td>';
+				print '<tr><td>'.$langs->trans("ICS").' ('.$langs->trans("StandingOrder").')</td>';
 				print '<td>'.$object->ics.'</td>';
 				print '</tr>';
 			}
 
 			if ($conf->paymentbybanktransfer->enabled) {
-				print '<tr><td>'.$langs->trans("ICSTransfer").'</td>';
+				print '<tr><td>'.$langs->trans("ICS").' ('.$langs->trans("BankTransfer").')</td>';
 				print '<td>'.$object->ics_transfer.'</td>';
 				print '</tr>';
 			}
@@ -1053,12 +1053,12 @@ if ($action == 'create') {
 			print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="11" type="text" class="flat" name="bic" value="'.$object->bic.'"></td></tr>';
 
 			if ($conf->prelevement->enabled) {
-				print '<tr><td>'.$langs->trans("ICS").'</td>';
+				print '<tr><td>'.$langs->trans("ICS").' ('.$langs->trans("StandingOrder").')</td>';
 				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics" value="'.$object->ics.'"></td></tr>';
 			}
 
 			if ($conf->paymentbybanktransfer->enabled) {
-				print '<tr><td>'.$langs->trans("ICSTransfer").'</td>';
+				print '<tr><td>'.$langs->trans("ICS").' ('.$langs->trans("BankTransfer").')</td>';
 				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics_transfer" value="'.$object->ics_transfer.'"></td></tr>';
 			}
 
