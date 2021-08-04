@@ -230,12 +230,13 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 if ($nb) {
 	if ($pricetowithdraw) {
-		$title = print $langs->trans('BankToReceiveWithdraw').': ';
+		$title = $langs->trans('BankToReceiveWithdraw').': ';
 		if ($type == 'bank-transfer') {
 			$title = $langs->trans('BankToPayCreditTransfer').': ';
 		}
 		print $title;
-		$form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT, 'id_bankaccount', 0, "courant=1");
+		print img_picto('', 'bank_account');
+		print $form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT, 'id_bankaccount', 0, "courant=1", 0, '', 0, '', 1);
 		print ' - ';
 
 		print $langs->trans('ExecutionDate').' ';
