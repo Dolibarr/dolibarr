@@ -148,12 +148,6 @@ if ($type == 'bank-transfer') {
 llxHeader('', $title, $helpurl);
 
 
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode fiche                                                                  */
-/*                                                                             */
-/* *************************************************************************** */
-
 if ($object->id > 0) {
 	$selleruserevenustamp = $mysoc->useRevenueStamp();
 
@@ -471,6 +465,7 @@ if ($object->id > 0) {
 	print "</td>";
 	print '</tr>';
 
+	// IBAN of seller or supplier
 	$title = 'CustomerIBAN';
 	if ($type == 'bank-transfer') {
 		$title = 'SupplierIBAN';

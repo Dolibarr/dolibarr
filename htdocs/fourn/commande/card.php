@@ -1095,6 +1095,9 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'confirm_cancel' && $confirm == 'yes' && $usercanorder) {
+		if (GETPOST('cancel_note')) {
+			$object->cancel_note = GETPOST('cancel_note');
+		}
 		$result = $object->cancel($user);
 		if ($result > 0) {
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
@@ -1895,13 +1898,13 @@ if ($action == 'create') {
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ApproveThisOrder"), $text, "confirm_".$action, $formquestion, 1, 1, 240);
 	}
 
-	// Confirmation de la desapprobation
+	// Confirmation of disapproval
 	if ($action == 'refuse') {
 		$formquestion = array(
 			array(
 				'type' => 'text',
 				'name' => 'refuse_note',
-				'label' => $langs->trans("MotifCP"),
+				'label' => $langs->trans("Reason"),
 				'value' => '',
 				'morecss' => 'minwidth300'
 			)
@@ -1909,9 +1912,18 @@ if ($action == 'create') {
 		$formconfirm  = $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("DenyingThisOrder"), $langs->trans("ConfirmDenyingThisOrder", $object->ref), "confirm_refuse", $formquestion, 0, 1);
 	}
 
-	// Confirmation de l'annulation
+	// Confirmation of cancellation
 	if ($action == 'cancel') {
-		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("Cancel"), $langs->trans("ConfirmCancelThisOrder", $object->ref), "confirm_cancel", '', 0, 1);
+		$formquestion = array(
+			array(
+				'type' => 'text',
+				'name' => 'cancel_note',
+				'label' => $langs->trans("Reason"),
+				'value' => '',
+				'morecss' => 'minwidth300'
+			)
+		);
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("Cancel"), $langs->trans("ConfirmCancelThisOrder", $object->ref), "confirm_cancel", $formquestion, 0, 1);
 	}
 
 	// Confirmation de l'envoi de la commande

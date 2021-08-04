@@ -1182,7 +1182,7 @@ class FormFile
 		);
 		$reshook = $hookmanager->executeHooks('showFilesList', $parameters, $object);
 
-		if (isset($reshook) && $reshook != '') { // null or '' for bypass
+		if (!empty($reshook)) { // null or '' for bypass
 			return $reshook;
 		} else {
 			if (!is_object($form)) {
