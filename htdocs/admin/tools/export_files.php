@@ -22,6 +22,10 @@
  *		\brief      Page to export documents into a compressed file
  */
 
+if (! defined('CSRFCHECK_WITH_TOKEN')) {
+	define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
+}
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
