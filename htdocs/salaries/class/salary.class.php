@@ -88,6 +88,12 @@ class Salary extends CommonObject
 	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var user	User
+	 */
+	public $user;
+
+
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;
 

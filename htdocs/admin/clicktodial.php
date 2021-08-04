@@ -134,7 +134,7 @@ if (!empty($conf->global->CLICKTODIAL_URL)) {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print $langs->trans("LinkToTestClickToDial", $user->login).' : ';
 	print '<input class="flat" type="text" name="phonefortest" value="'.dol_escape_htmltag($phonefortest).'">';
-	print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("RefreshPhoneLink")).'">';
+	print '<input type="submit" class="button small" value="'.dol_escape_htmltag($langs->trans("RefreshPhoneLink")).'">';
 	print '</form>';
 
 	$setupcomplete = 1;
@@ -149,7 +149,7 @@ if (!empty($conf->global->CLICKTODIAL_URL)) {
 	}
 
 	if ($setupcomplete) {
-		print $langs->trans("LinkToTest", $user->login).': '.dol_print_phone($phonefortest, '', 0, 0, 'AC_TEL');
+		print $langs->trans("LinkToTest", $user->login).': '.dol_print_phone($phonefortest, '', 0, 0, 'AC_TEL', '', 1);
 	} else {
 		$langs->load("errors");
 		print '<div class="warning">'.$langs->trans("WarningClickToDialUserSetupNotComplete").'</div>';

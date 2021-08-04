@@ -67,6 +67,7 @@ $hookmanager->initHooks(array('directdebitcreatecard', 'globalcard'));
 /*
  * Actions
  */
+
 if (GETPOST('cancel', 'alpha')) {
 	$massaction = '';
 }
@@ -165,7 +166,11 @@ llxHeader('', $langs->trans("NewStandingOrder"));
 
 if (prelevement_check_config($type) < 0) {
 	$langs->load("errors");
-	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Withdraw")), null, 'errors');
+	$modulenametoshow = "Withdraw";
+	if ($type == 'bank-transfer') {
+		$modulenametoshow = "PaymentByBankTransfer";
+	}
+	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv($modulenametoshow)), null, 'errors');
 }
 
 
@@ -206,7 +211,7 @@ print $nb;
 print '</td></tr>';
 
 print '<tr><td>'.$langs->trans("AmountTotal").'</td>';
-print '<td>';
+print '<td class="amount">';
 print price($pricetowithdraw);
 print '</td>';
 print '</tr>';
@@ -225,7 +230,11 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 if ($nb) {
 	if ($pricetowithdraw) {
-		print $langs->trans('BankToReceiveWithdraw').': ';
+		$title = print $langs->trans('BankToReceiveWithdraw').': ';
+		if ($type == 'bank-transfer') {
+			$title .= $langs->trans('BankToPayCreditTransfer').': ';
+		}
+		print $title;
 		$form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT, 'id_bankaccount', 0, "courant=1");
 		print ' - ';
 
