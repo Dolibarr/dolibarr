@@ -638,8 +638,7 @@ if (!empty($arrayfields['e.date_delivery']['checked'])) {
 	print '</div>';
 	print '</td>';
 }
-if (!empty($arrayfields['e.shipping_method_id']['checked']))
-{
+if (!empty($arrayfields['e.shipping_method_id']['checked'])) {
 	// Delivery method
 	print '<td class="liste_titre center">';
 	$shipment->fetch_delivery_methods();
@@ -885,12 +884,11 @@ while ($i < min($num, $limit)) {
 		print dol_print_date($db->jdate($obj->delivery_date), "dayhour");
 		print "</td>\n";
 	}
-	if (!empty($arrayfields['e.shipping_method_id']['checked']))
-	{
+	if (!empty($arrayfields['e.shipping_method_id']['checked'])) {
 		// Get code using getLabelFromKey
 		$code=$langs->getLabelFromKey($db, $shipment->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
 		print '<td class="center">';
-		if($shipment->shipping_method_id > 0) print $langs->trans("SendingMethod".strtoupper($code));
+		if ($shipment->shipping_method_id > 0) print $langs->trans("SendingMethod".strtoupper($code));
 		print '</td>';
 	}
 	// Tracking number
