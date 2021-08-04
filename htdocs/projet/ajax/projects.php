@@ -82,7 +82,7 @@ if (empty($mode) || $mode != 'gettasks') {
 // Mode to get list of tasks
 if ($mode == 'gettasks') {
 	$formproject = new FormProjets($db);
-	$formproject->selectTasks((!empty($$socid) ? $socid : -1), 0, 'taskid', 24, 1, '1', 1, 0, 0, 'maxwidth500', GETPOST('projectid', 'int'), '');
+	$formproject->selectTasks((!empty($socid) ? $socid : -1), 0, 'taskid', 24, 1, '1', 1, 0, 0, 'maxwidth500', GETPOST('projectid', 'int'), '');
 	return;
 }
 

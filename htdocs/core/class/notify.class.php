@@ -687,7 +687,7 @@ class Notify
 						break;
 					case 'BILL_PAYED':
 						$link = '<a href="'.$urlwithroot.'/compta/facture/card.php?facid='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
-						$dir_output = $$conf->facture->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'invoice');
+						$dir_output = $conf->facture->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'invoice');
 						$object_type = 'facture';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInvoicePayed", $link);
 						break;

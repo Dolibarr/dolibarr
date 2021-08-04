@@ -680,9 +680,7 @@ class dolReceiptPrinter extends Printer
 						foreach ($object->lines as $line) {
 							$total_localtax1 += $line->total_localtax1;
 						}
-						foreach ($vatarray as $vatkey => $vatvalue) {
-							$this->printer->text(str_pad(price($total_localtax1), 10, ' ', STR_PAD_LEFT)."\n");
-						}
+						$this->printer->text(str_pad(price($total_localtax1), 10, ' ', STR_PAD_LEFT)."\n");
 						break;
 					case 'DOL_PRINT_OBJECT_TAX2':
 						//var_dump($object);
@@ -690,9 +688,7 @@ class dolReceiptPrinter extends Printer
 						foreach ($object->lines as $line) {
 							$total_localtax2 += $line->total_localtax2;
 						}
-						foreach ($vatarray as $vatkey => $vatvalue) {
-							$this->printer->text(str_pad(price($total_localtax2), 10, ' ', STR_PAD_LEFT)."\n");
-						}
+						$this->printer->text(str_pad(price($total_localtax2), 10, ' ', STR_PAD_LEFT)."\n");
 						break;
 					case 'DOL_PRINT_OBJECT_TOTAL':
 						$title = $langs->trans('TotalHT');
