@@ -440,7 +440,7 @@ if ($resql) {
 			}
 			print '</td>';
 			// Amount
-			print '<td class="right">';
+			print '<td class="right amount">';
 			print price($obj->amount, 0, $langs, 0, 0, -1, $conf->currency);
 			print '</td>';
 			// Date
