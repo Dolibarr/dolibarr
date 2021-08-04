@@ -123,6 +123,7 @@ function versioncompare($versionarray1, $versionarray2)
  *	Return version PHP
  *
  *	@return     array               Tableau de version (vermajeur,vermineur,autre)
+ *  @see versioncompare()
  */
 function versionphparray()
 {
@@ -133,6 +134,7 @@ function versionphparray()
  *	Return version Dolibarr
  *
  *	@return     array               Tableau de version (vermajeur,vermineur,autre)
+ *  @see versioncompare()
  */
 function versiondolibarrarray()
 {
