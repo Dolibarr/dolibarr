@@ -235,7 +235,8 @@ if ($nb) {
 			$title = $langs->trans('BankToPayCreditTransfer').': ';
 		}
 		print $title;
-		$form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT, 'id_bankaccount', 0, "courant=1");
+		print img_picto('', 'bank_account');
+		print $form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT, 'id_bankaccount', 0, "courant=1", 0, '', 0, '', 1);
 		print ' - ';
 
 		print $langs->trans('ExecutionDate').' ';
