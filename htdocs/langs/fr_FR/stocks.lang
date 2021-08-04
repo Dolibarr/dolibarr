@@ -298,3 +298,4 @@ StockTransferSetupPage = Page de configuration du module transferts de stocks
 StockTransferRightRead=Lire les transferts de stocks
 StockTransferRightCreateUpdate=Créer/Mettre à jour les transferts de stocks
 StockTransferRightDelete=Supprimer les transferts de stocks
+BatchNotFound=Lot / série non trouvé(e) pour ce produit
