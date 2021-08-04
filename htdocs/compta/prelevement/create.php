@@ -230,7 +230,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 if ($nb) {
 	if ($pricetowithdraw) {
-		$title = print $langs->trans('BankToReceiveWithdraw').': ';
+		$title = $langs->trans('BankToReceiveWithdraw').': ';
 		if ($type == 'bank-transfer') {
 			$title = $langs->trans('BankToPayCreditTransfer').': ';
 		}
