@@ -232,7 +232,7 @@ if ($nb) {
 	if ($pricetowithdraw) {
 		$title = print $langs->trans('BankToReceiveWithdraw').': ';
 		if ($type == 'bank-transfer') {
-			$title .= $langs->trans('BankToPayCreditTransfer').': ';
+			$title = $langs->trans('BankToPayCreditTransfer').': ';
 		}
 		print $title;
 		$form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT, 'id_bankaccount', 0, "courant=1");
