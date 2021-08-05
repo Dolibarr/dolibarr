@@ -1782,7 +1782,7 @@ ClickToDialSetup=Click To Dial module setup
 ClickToDialUrlDesc=Url called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with clicktodial login (defined on user card)<br><b>__PASS__</b> that will be replaced with clicktodial password (defined on user card).
 ClickToDialDesc=This module change phone numbers, when using a desktop computer, into clickable links. A click will call the number. This can be used to start the phone call when using a soft phone on your desktop or when using a CTI system based on SIP protocol for example. Note: When using a smartphone, phone numbers are always clickable.
 ClickToDialUseTelLink=Use just a link "tel:" on phone numbers
-ClickToDialUseTelLinkDesc=Use this method if your users have a softphone or a software interface, installed on the same computer as the browser, and called when you click on a link starting with "tel:" in your browser. If you need link that start with "sip:" or a full server solution (no need of local software installation), you must set this to "No" and fill next field.
+ClickToDialUseTelLinkDesc=Use this method if your users have a softphone or a software interface, installed on the same computer as the browser, and called when you click on a link starting with "tel:" in your browser. If you need a link that start with "sip:" or a full server solution (no need of local software installation), you must set this to "No" and fill the next field.
 ##### Point Of Sale (CashDesk) #####
 CashDesk=Point of Sale
 CashDeskSetup=Point of Sales module setup
@@ -2151,3 +2151,4 @@ DatabasePasswordObfuscated=Database password is obfuscated in conf file
 DatabasePasswordNotObfuscated=Database password is NOT obfuscated in conf file
 APIsAreNotEnabled=APIs modules are not enabled
 YouShouldSetThisToOff=You should set this to 0 or off
+InstallAndUpgradeLockedBy=Install and upgrades are locked by the file <b>%s</b>

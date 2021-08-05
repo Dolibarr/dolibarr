@@ -2326,7 +2326,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 					$domainname = $objp->virtualhost;
 				}
 				if (! preg_match('/^http/i', $domainname)) {
-					$domainname .= 'https://'.$domainname;
+					$domainname = 'https://'.$domainname;
 				}
 				//$pathofpage = $dolibarr_main_url_root.'/'.$pageurl.'.php';
 

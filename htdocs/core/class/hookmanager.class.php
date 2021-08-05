@@ -193,6 +193,7 @@ class HookManager
 				'getFormatedSupplierRef',
 				'getIdProfUrl',
 				'getInputIdProf',
+				'menuLeftMenuItems',
 				'moveUploadedFile',
 				'moreHtmlStatus',
 				'pdf_build_address',

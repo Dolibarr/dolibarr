@@ -26,7 +26,7 @@
 -- To set a field as NOT NULL:                 -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET NOT NULL;
 -- To set a field as default NULL:             -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
 -- Note: fields with type BLOB/TEXT can't have default value.
--- To rebuild sequence for postgresql after insert by forcing id autoincrement fields: 
+-- To rebuild sequence for postgresql after insert by forcing id autoincrement fields:
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
@@ -35,9 +35,25 @@
 
 -- v15
 
+ALTER TABLE llx_emailcollector_emailcollectoraction MODIFY COLUMN actionparam TEXT;
+
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD lang varchar(6);
+
+CREATE TABLE llx_categorie_ticket
+(
+  fk_categorie  integer NOT NULL,
+  fk_ticket    integer NOT NULL,
+  import_key    varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_categorie_ticket ADD PRIMARY KEY pk_categorie_ticket (fk_categorie, fk_ticket);
+ALTER TABLE llx_categorie_ticket ADD INDEX idx_categorie_ticket_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_ticket ADD INDEX idx_categorie_ticket_fk_ticket (fk_ticket);
+
+ALTER TABLE llx_categorie_ticket ADD CONSTRAINT fk_categorie_ticket_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_ticket ADD CONSTRAINT fk_categorie_ticket_ticket_rowid   FOREIGN KEY (fk_ticket) REFERENCES llx_ticket (rowid);
 ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN ref_fourn varchar(128);
 ALTER TABLE llx_product_customer_price MODIFY COLUMN ref_customer varchar(128);
-
 
 create table llx_product_lang_extrafields
 (
@@ -49,4 +65,6 @@ create table llx_product_lang_extrafields
 
 ALTER TABLE llx_product_lang_extrafields ADD INDEX idx_product_lang_extrafields (fk_object);
 
+-- -- add action trigger
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('ORDER_SUPPLIER_CANCEL','Supplier order request canceled','Executed when a supplier order is canceled','order_supplier',13);
 

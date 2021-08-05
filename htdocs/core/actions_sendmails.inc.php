@@ -182,8 +182,13 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 
 		$tmparray = array();
 		if (trim($_POST['sendto'])) {
-			// Recipients are provided into free text
+			// Recipients are provided into free text field
 			$tmparray[] = trim($_POST['sendto']);
+		}
+
+		if (trim($_POST['tomail'])) {
+			// Recipients are provided into free hidden text field
+			$tmparray[] = trim($_POST['tomail']);
 		}
 
 		if (count($receiver) > 0) {

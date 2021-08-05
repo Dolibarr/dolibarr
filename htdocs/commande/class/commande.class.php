@@ -195,7 +195,7 @@ class Commande extends CommonOrder
 
 	/**
 	 * @var int	Date expected for delivery
-	 * @see delivery_date
+	 * @see $delivery_date
 	 * @deprecated
 	 */
 	public $date_livraison;
