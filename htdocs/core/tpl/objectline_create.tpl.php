@@ -676,11 +676,11 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 	}
 	?>
 
-<?php if ($this->table_element_line != 'commande_fournisseurdet' || $this->table_element_line == 'facture_fourn_det') { ?>
+<?php if ($this->table_element_line != 'commande_fournisseurdet') { ?>
 	$("#date_start, #date_end").focusout(function()
 	{
 		let  	type = $(this).attr('type');
-		 let 	mandatoryP = $(this).attr('mandatoryperiod');
+		let 	mandatoryP = $(this).attr('mandatoryperiod');
 		if (type == 1 && mandatoryP == 1 ){
 			if ( $(this).val() == ''  && !$(this).hasClass("error") ) {
 				$(this).addClass('error');
