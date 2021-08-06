@@ -366,10 +366,10 @@ print '<br>';
 print '<strong>MAIN_SECURITY_ANTI_SSRF_SERVER_IP</strong> = '.(empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span> &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': List of static IPs of server separated with coma - '.$langs->trans("Note").': common loopback ip like 127.*.*.*, [::1] are already added)</span>' : $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP)."<br>";
 print '<br>';
 
-print '<strong>MAIN_ALLOW_SVG_FILES_AS_IMAGES</strong> = '.(empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES) ? '0 &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0)</span>' : $conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES)."<br>";
+print '<strong>MAIN_ALLOW_SVG_FILES_AS_IMAGES</strong> = '.(empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES) ? '0' : $conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES).' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0)</span><br>';
 print '<br>';
 
-print '<strong>MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE</strong> = '.(empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>' : $conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE)."<br>";
+print '<strong>MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE</strong> = '.(empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE).' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 1)</span><br>';
 print '<br>';
 
 print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML</strong> = '.(empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>' : $conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML)."<br>";
