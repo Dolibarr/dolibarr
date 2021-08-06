@@ -878,11 +878,17 @@ textarea.centpercent {
 .paddingleft2 {
 	padding-<?php print $left; ?>: 2px;
 }
+.paddingleft2imp {
+	padding-<?php print $left; ?>: 2px !important;
+}
 .paddingright {
 	padding-<?php print $right; ?>: 4px;
 }
 .paddingright2 {
 	padding-<?php print $right; ?>: 2px;
+}
+.paddingright2imp {
+	padding-<?php print $right; ?>: 2px !important;
 }
 .marginleft2 {
 	margin-<?php print $left; ?>: 2px;

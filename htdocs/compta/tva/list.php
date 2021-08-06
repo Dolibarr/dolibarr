@@ -31,6 +31,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
@@ -135,6 +136,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formother = new FormOther($db);
+$formfile = new FormFile($db);
 $tva_static = new Tva($db);
 $bankstatic = new Account($db);
 $accountingjournal = new AccountingJournal($db);
@@ -445,7 +447,13 @@ while ($i < min($num, $limit)) {
 
 	// Ref
 	if (!empty($arrayfields['t.rowid']['checked'])) {
-		print '<td>'.$tva_static->getNomUrl(1).'</td>';
+		print '<td>';
+		print $tva_static->getNomUrl(1);
+		$filename = dol_sanitizeFileName($tva_static->ref);
+		$filedir = $conf->tax->dir_output.'/vat/'.dol_sanitizeFileName($tva_static->ref);
+		$urlsource = $_SERVER['PHP_SELF'].'?id='.$tva_static->id;
+		print $formfile->getDocumentsLink($tva_static->element, $filename, $filedir, '', 'valignmiddle paddingleft2imp');
+		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
