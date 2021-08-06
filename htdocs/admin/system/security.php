@@ -350,7 +350,7 @@ if (empty($conf->global->MAIN_SECURITY_HASH_ALGO)) {
 if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
 	print '<br><strong>MAIN_SECURITY_SALT</strong> = '.(empty($conf->global->MAIN_SECURITY_SALT) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_SALT).'<br>';
 } else {
-	print '<span class="opacitymedium">('.$langs->trans("Recommanded").': password_hash)</span>';
+	print '<span class="opacitymedium">('.$langs->trans("Recommended").': password_hash)</span>';
 	print '<br>';
 }
 if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
@@ -363,19 +363,19 @@ if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
 }
 print '<br>';
 
-print '<strong>MAIN_SECURITY_ANTI_SSRF_SERVER_IP</strong> = '.(empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span> &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': static-ips-of-server - '.$langs->trans("Note").': common loopback ip like 127.*.*.*, [::1] are already added)</span>' : $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP)."<br>";
+print '<strong>MAIN_SECURITY_ANTI_SSRF_SERVER_IP</strong> = '.(empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span> &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': List of static IPs of server separated with coma - '.$langs->trans("Note").': common loopback ip like 127.*.*.*, [::1] are already added)</span>' : $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP)."<br>";
 print '<br>';
 
-print '<strong>MAIN_ALLOW_SVG_FILES_AS_IMAGES</strong> = '.(empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES) ? '0 &nbsp; <span class="opacitymedium">('.$langs->trans("Recommanded").': 0)</span>' : $conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES)."<br>";
+print '<strong>MAIN_ALLOW_SVG_FILES_AS_IMAGES</strong> = '.(empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES) ? '0 &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0)</span>' : $conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES)."<br>";
 print '<br>';
 
-print '<strong>MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE</strong> = '.(empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommanded").': 1)</span>' : $conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE)."<br>";
+print '<strong>MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE</strong> = '.(empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>' : $conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE)."<br>";
 print '<br>';
 
-print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML</strong> = '.(empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommanded").': 1)</span>' : $conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML)."<br>";
+print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML</strong> = '.(empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>' : $conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML)."<br>";
 print '<br>';
 
-print '<strong>MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES</strong> = '.(empty($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommanded").': 1)</span>' : $conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)."<br>";
+print '<strong>MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES</strong> = '.(empty($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>' : $conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)."<br>";
 print '<br>';
 
 print '<strong>MAIN_EXEC_USE_POPEN</strong> = ';
@@ -385,10 +385,14 @@ if (empty($conf->global->MAIN_EXEC_USE_POPEN)) {
 	print $conf->global->MAIN_EXEC_USE_POPEN;
 }
 if ($execmethod == 1) {
-	print ' &nbsp; <span class="opacitymedium">("exec" PHP method will be used for shell commands)</span>';
+	print '<span class="opacitymedium">, "exec" PHP method will be used for shell commands';
+	print ' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 1)';
+	print '</span>';
 }
 if ($execmethod == 2) {
-	print ' &nbsp; <span class="opacitymedium">("popen" PHP method will be used for shell commands)</span>';
+	print '<span class="opacitymedium">, "popen" PHP method will be used for shell commands';
+	print ' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 1)';
+	print '</span>';
 }
 print "<br>";
 print '<br>';
