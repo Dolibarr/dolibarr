@@ -1718,7 +1718,7 @@ class ExtraFields
 
 			$sql = 'SELECT '.$keyList;
 			$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
-			if (strpos($InfoFieldList[4], 'extra') !== false) {
+			if (isset($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
 			if ($selectkey == 'rowid' && empty($value)) {
