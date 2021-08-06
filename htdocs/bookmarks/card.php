@@ -40,7 +40,7 @@ $action = GETPOST("action", "alpha");
 $title = (string) GETPOST("title", "alpha");
 $url = (string) GETPOST("url", "alpha");
 $urlsource = GETPOST("urlsource", "alpha");
-$target = GETPOST("target", "alpha");
+$target = GETPOST("target", "int");
 $userid = GETPOST("userid", "int");
 $position = GETPOST("position", "int");
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -169,7 +169,7 @@ if ($action == 'create') {
 	// Target
 	print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
 	$liste = array(0=>$langs->trans("ReplaceWindow"), 1=>$langs->trans("OpenANewWindow"));
-	print $form->selectarray('target', $liste, 1);
+	print $form->selectarray('target', $liste, GETPOST('target', 'int'));
 	print '</td><td class="hideonsmartphone"><span class="opacitymedium">'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</span></td></tr>';
 
 	// Owner
