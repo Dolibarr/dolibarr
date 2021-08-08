@@ -175,6 +175,9 @@ class Odf
 				'<style:style style:name="supText" style:family="text"><style:text-properties style:text-position="super 58%" /></style:style>'
 			);
 
+			$customStyles = array();
+			$fontDeclarations = array();
+
 			$convertedValue = $this->_replaceHtmlWithOdtTag($this->_getDataFromHtml($value), $customStyles, $fontDeclarations);
 
 			foreach ($customStyles as $key => $val) {
