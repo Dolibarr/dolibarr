@@ -99,9 +99,9 @@ if (empty($reshook)) {
 		} else {
 			dol_print_error($db);
 		}
-		
-		$object->clearrights();
-		$object->getrights();
+
+		$user->clearrights();
+		$user->getrights();
 	}
 
 	if ($action == 'delrights' && $caneditperms) {
@@ -115,9 +115,9 @@ if (empty($reshook)) {
 		} else {
 			dol_print_error($db);
 		}
-		
-		$object->clearrights();
-		$object->getrights();
+
+		$user->clearrights();
+		$user->getrights();
 	}
 }
 
@@ -201,7 +201,7 @@ if ($object->id > 0) {
 	/*
 	 * Part to add/remove permissions
 	 */
-	
+
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
@@ -285,7 +285,7 @@ if ($object->id > 0) {
 			}
 
 			$objMod = $modules[$obj->module];
-			
+
 			// Break found, it's a new module to catch
 			if (isset($obj->module) && ($oldmod <> $obj->module)) {
 				$oldmod = $obj->module;
@@ -311,7 +311,7 @@ if ($object->id > 0) {
 				}
 				print '<td>&nbsp;</td>';
 				print '<td>&nbsp;</td>';
-				
+
 				// Permission id
 				if ($user->admin) {
 					print '<td class="right"></td>';
