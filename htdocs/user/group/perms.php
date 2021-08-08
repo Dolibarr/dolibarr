@@ -100,8 +100,8 @@ if (empty($reshook)) {
 			dol_print_error($db);
 		}
 
-		$object->clearrights();
-		$object->getrights();
+		$user->clearrights();
+		$user->getrights();
 	}
 
 	if ($action == 'delrights' && $caneditperms) {
@@ -116,8 +116,8 @@ if (empty($reshook)) {
 			dol_print_error($db);
 		}
 
-		$object->clearrights();
-		$object->getrights();
+		$user->clearrights();
+		$user->getrights();
 	}
 }
 
