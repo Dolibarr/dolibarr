@@ -103,6 +103,16 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
+print '<tr class="oddeven"><td>'.$langs->trans("PDF_SENDER_UNDER_LOGO");
+print '</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('PDF_SENDER_UNDER_LOGO');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("PDF_SENDER_UNDER_LOGO", $arrval, $conf->global->PDF_SENDER_UNDER_LOGO);
+}
+print '</td></tr>';
+
 /*
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING").'</td><td>';
 if ($conf->use_javascript_ajax) {

@@ -1567,7 +1567,11 @@ class pdf_azur extends ModelePDFPropales
 			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
-			$posy = 42 + $top_shift;
+			if(!empty($conf->global->PDF_SENDER_UNDER_LOGO)){
+				$posy = $this->marge_haute + $height + 5 + $top_shift;
+			}else{
+				$posy = 42 + $top_shift;
+			}
 			$posx = $this->marge_gauche;
 			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
 				$posx = $this->page_largeur - $this->marge_droite - 80;
@@ -1578,7 +1582,9 @@ class pdf_azur extends ModelePDFPropales
 			$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posx, $posy - 5);
-			$pdf->MultiCell(80, 5, $outputlangs->transnoentities("BillFrom"), 0, $ltrdirection);
+			if(empty($conf->global->PDF_SENDER_UNDER_LOGO)){
+				$pdf->MultiCell(80, 5, $outputlangs->transnoentities("BillFrom"), 0, $ltrdirection);
+			}
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetFillColor(230, 230, 230);
 			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
