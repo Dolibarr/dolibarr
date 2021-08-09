@@ -531,7 +531,7 @@ abstract class CommonDocGenerator
 				$totalUp += $line->subprice * $line->qty;
 			}
 
-			// @GS: Calculate total up and total discount percentage
+			// Calculate total up and total discount percentage
 			// Note that this added fields does not match a field into database in Dolibarr (Dolibarr manage discount on lines not as a global property of object)
 			$resarray['object_total_up'] = $totalUp;
 			$resarray['object_total_up_locale'] = price($resarray['object_total_up'], 0, $outputlangs);
