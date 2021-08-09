@@ -891,6 +891,11 @@ class pdf_azur extends ModelePDFPropales
 		}
 
 		$posxval = 52;
+		if (!empty($conf->global->PDF_DISPLAY_DATETEXT)) {
+			$displaydate = "daytext";
+		} else {
+			$displaydate = "day";
+		}
 
 		// Show shipping date
 		if (!empty($object->delivery_date)) {
@@ -901,7 +906,7 @@ class pdf_azur extends ModelePDFPropales
 			$pdf->MultiCell(80, 4, $titre, 0, 'L');
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posxval, $posy);
-			$dlp = dol_print_date($object->delivery_date, "daytext", false, $outputlangs, true);
+			$dlp = dol_print_date($object->delivery_date, $displaydate, false, $outputlangs, true);
 			$pdf->MultiCell(80, 4, $dlp, 0, 'L');
 
 			$posy = $pdf->GetY() + 1;
@@ -1513,15 +1518,21 @@ class pdf_azur extends ModelePDFPropales
 			}
 		}
 
-		$posy += 4;
-		$pdf->SetXY($posx, $posy);
-		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DatePropal")." : ".dol_print_date($object->date, "day", false, $outputlangs, true), '', 'R');
+		if (!empty($conf->global->PDF_DISPLAY_DATETEXT)) {
+			$displaydate = "daytext";
+		} else {
+			$displaydate = "day";
+		}
 
 		$posy += 4;
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEndPropal")." : ".dol_print_date($object->fin_validite, "day", false, $outputlangs, true), '', 'R');
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DatePropal")." : ".dol_print_date($object->date, $displaydate , false, $outputlangs, true), '', 'R');
+
+		$posy += 4;
+		$pdf->SetXY($posx, $posy);
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEndPropal")." : ".dol_print_date($object->fin_validite, $displaydate , false, $outputlangs, true), '', 'R');
 
 		if ($object->thirdparty->code_client) {
 			$posy += 4;
