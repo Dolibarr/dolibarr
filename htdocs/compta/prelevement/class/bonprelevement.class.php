@@ -82,7 +82,8 @@ class BonPrelevement extends CommonObject
 
 	const STATUS_DRAFT = 0;
 	const STATUS_TRANSFERED = 1;
-	const STATUS_CREDITED = 2;
+	const STATUS_CREDITED = 2;		// STATUS_CREDITED and STATUS_DEBITED is same. Difference is in ->type
+	const STATUS_DEBITED = 2;		// STATUS_CREDITED and STATUS_DEBITED is same. Difference is in ->type
 
 
 	/**
@@ -2343,17 +2344,22 @@ class BonPrelevement extends CommonObject
 			//$langs->load("mymodule");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('StatusWaiting');
 			$this->labelStatus[self::STATUS_TRANSFERED] = $langs->trans('StatusTrans');
-			$this->labelStatus[self::STATUS_CREDITED] = $langs->trans('StatusCredited');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('StatusWaiting');
 			$this->labelStatusShort[self::STATUS_TRANSFERED] = $langs->trans('StatusTrans');
-			$this->labelStatusShort[self::STATUS_CREDITED] = $langs->trans('StatusCredited');
+			if ($this->type == 'bank-transfer') {
+				$this->labelStatus[self::STATUS_DEBITED] = $langs->trans('StatusDebited');
+				$this->labelStatusShort[self::STATUS_DEBITED] = $langs->trans('StatusDebited');
+			} else {
+				$this->labelStatus[self::STATUS_CREDITED] = $langs->trans('StatusCredited');
+				$this->labelStatusShort[self::STATUS_CREDITED] = $langs->trans('StatusCredited');
+			}
 		}
 
 		$statusType = 'status1';
 		if ($status == self::STATUS_TRANSFERED) {
 			$statusType = 'status3';
 		}
-		if ($status == self::STATUS_CREDITED) {
+		if ($status == self::STATUS_CREDITED || $status == self::STATUS_DEBITED) {
 			$statusType = 'status6';
 		}
 
