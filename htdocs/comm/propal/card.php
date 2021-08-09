@@ -2509,6 +2509,22 @@ if ($action == 'create') {
 																									   // modified by hook
 		if (empty($reshook)) {
 			if ($action != 'editline') {
+				// Add title line in propal
+				if ($object->statut == Propal::STATUS_DRAFT&& $usercancreate) {
+					if ($usercanvalidate) {
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addtitleline">'.$langs->trans('AddTitleLine').'</a>';
+					} else {
+						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('AddTitleLine').'</a>';
+					}
+				}
+				// Add sub-total in propal
+				if ($object->statut == Propal::STATUS_DRAFT && $usercancreate) {
+					if ($usercanvalidate) {
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('AddSubTotalLine').'</a>';
+					} else {
+						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('AddSubTotalLine').'</a>';
+					}
+				}
 				// Validate
 				if (($object->statut == Propal::STATUS_DRAFT && $object->total_ttc >= 0 && count($object->lines) > 0)
 					|| ($object->statut == Propal::STATUS_DRAFT && !empty($conf->global->PROPAL_ENABLE_NEGATIVE) && count($object->lines) > 0)) {

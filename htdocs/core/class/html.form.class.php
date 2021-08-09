@@ -1112,6 +1112,18 @@ class Form
 			}
 			print '>'.$langs->trans("Service");
 
+			print '<option value="8"';
+			if (1 == $selected) {
+				print ' selected';
+			}
+			print '>'.$langs->trans("Title");
+
+			print '<option value="9"';
+			if (1 == $selected) {
+				print ' selected';
+			}
+			print '>'.$langs->trans("Sub-total");
+
 			print '</select>';
 			print ajax_combobox('select_'.$htmlname);
 			//if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);

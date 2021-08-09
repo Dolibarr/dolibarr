@@ -64,6 +64,8 @@ AvailabilityPeriod=Availability delay
 SetAvailability=Set availability delay
 AfterOrder=after order
 OtherProposals=Other proposals
+AddTitleLine=Add title line 
+AddSubTotalLine=Add sub-total line
 ##### Availability #####
 AvailabilityTypeAV_NOW=Immediate
 AvailabilityTypeAV_1W=1 week

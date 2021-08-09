@@ -143,7 +143,9 @@ if (($line->info_bits & 2) == 2) {
 		} else {
 			$text = img_object($langs->trans('Product'), 'product');
 		}
-
+		if ($type == 8 || $type == 9) {
+			$text = img_object($langs->trans('Title'), '');
+		}
 		if (!empty($line->label)) {
 			$text .= ' <strong>'.$line->label.'</strong>';
 			print $form->textwithtooltip($text, dol_htmlentitiesbr($line->description), 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
@@ -241,7 +243,9 @@ if (price2num($line->total_localtax2)) {
 if (empty($positiverates)) {
 	$positiverates = '0';
 }
-print vatrate($positiverates.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), '%', $line->info_bits);
+if ($type <> 8 && $type <> 9){
+	print vatrate($positiverates.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), '%', $line->info_bits);
+}
 //print vatrate($line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''), '%', $line->info_bits);
 ?></td>
 
