@@ -1513,9 +1513,9 @@ class pdf_azur extends ModelePDFPropales
 			}
 		}
 
-		if(!empty($conf->global->PDF_DISPLAY_DATETEXT)){
+		if (!empty($conf->global->PDF_DISPLAY_DATETEXT)) {
 			$displaydate = "daytext";
-		}else{
+		} else {
 			$displaydate = "day";
 		}
 
