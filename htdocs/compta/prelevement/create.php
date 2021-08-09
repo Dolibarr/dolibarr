@@ -96,7 +96,7 @@ if (empty($reshook)) {
 		$bank = new Account($db);
 		$bank->fetch($conf->global->{$default_account});
 		if (empty($bank->ics) || empty($bank->ics_transfer)) {
-			$errormessage = str_replace('{url}', $bank->getNomUrl(1), $langs->trans("ErrorICSmissing", '{url}'));
+			$errormessage = str_replace('{url}', $bank->getNomUrl(1, '', '', -1, 1), $langs->trans("ErrorICSmissing", '{url}'));
 			setEventMessages($errormessage, null, 'errors');
 			header("Location: ".DOL_URL_ROOT.'/compta/prelevement/create.php');
 			exit;
@@ -125,9 +125,13 @@ if (empty($reshook)) {
 			}
 		} else {
 			if ($type != 'bank-transfer') {
-				setEventMessages($langs->trans("DirectDebitOrderCreated", $bprev->getNomUrl(1)), null);
+				$texttoshow = $langs->trans("DirectDebitOrderCreated", '{s}');
+				$texttoshow = str_replace('{s}', $bprev->getNomUrl(1), $texttoshow);
+				setEventMessages($texttoshow, null);
 			} else {
-				setEventMessages($langs->trans("CreditTransferOrderCreated", $bprev->getNomUrl(1)), null);
+				$texttoshow = $langs->trans("CreditTransferOrderCreated", '{s}');
+				$texttoshow = str_replace('{s}', $bprev->getNomUrl(1), $texttoshow);
+				setEventMessages($texttoshow, null);
 			}
 
 			header("Location: ".DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$bprev->id);
@@ -230,12 +234,13 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 if ($nb) {
 	if ($pricetowithdraw) {
-		$title = print $langs->trans('BankToReceiveWithdraw').': ';
+		$title = $langs->trans('BankToReceiveWithdraw').': ';
 		if ($type == 'bank-transfer') {
-			$title .= $langs->trans('BankToPayCreditTransfer').': ';
+			$title = $langs->trans('BankToPayCreditTransfer').': ';
 		}
 		print $title;
-		$form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT, 'id_bankaccount', 0, "courant=1");
+		print img_picto('', 'bank_account');
+		print $form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT, 'id_bankaccount', 0, "courant=1", 0, '', 0, '', 1);
 		print ' - ';
 
 		print $langs->trans('ExecutionDate').' ';
@@ -439,7 +444,7 @@ if ($resql) {
 			}
 			print '</td>';
 			// Amount
-			print '<td class="right">';
+			print '<td class="right amount">';
 			print price($obj->amount, 0, $langs, 0, 0, -1, $conf->currency);
 			print '</td>';
 			// Date
