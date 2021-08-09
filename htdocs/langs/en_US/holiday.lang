@@ -133,3 +133,4 @@ WatermarkOnDraftHolidayCards=Watermarks on draft leave requests
 HolidaysToApprove=Holidays to approve
 NobodyHasPermissionToValidateHolidays=Nobody has permission to validate holidays
 HolidayBalanceMonthlyUpdate=Monthly update of holiday balance
+XIsAUsualNonWorkingDay=%s is usualy a NON working day
