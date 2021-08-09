@@ -4865,8 +4865,8 @@ class Product extends CommonObject
 	 * @param  int      $movement       0 = add, 1 = remove
 	 * @param  string   $label          Label of stock movement
 	 * @param  double   $price          Price to use for stock eval
-	 * @param  integer  $dlc            eat-by date
-	 * @param  integer  $dluo           sell-by date
+	 * @param  integer  $eatby          eat-by date
+	 * @param  integer  $sellby         sell-by date
 	 * @param  string   $lot            Lot number
 	 * @param  string   $inventorycode  Inventory code
 	 * @param  string   $origin_element Origin element type
@@ -4874,7 +4874,7 @@ class Product extends CommonObject
 	 * @param  int	    $disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
 	 * @return int                      <0 if KO, >0 if OK
 	 */
-	public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $lot = '', $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0)
+	public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $eatby = '', $sellby = '', $lot = '', $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0)
 	{
 		// phpcs:enable
 		if ($id_entrepot) {
@@ -4887,7 +4887,7 @@ class Product extends CommonObject
 
 			$movementstock = new MouvementStock($this->db);
 			$movementstock->setOrigin($origin_element, $origin_id);
-			$result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode, '', $dlc, $dluo, $lot, false, 0, $disablestockchangeforsubproduct);
+			$result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode, '', $eatby, $sellby, $lot, false, 0, $disablestockchangeforsubproduct);
 
 			if ($result >= 0) {
 				$this->db->commit();

@@ -158,8 +158,8 @@ class StockMovements extends DolibarrApi
 	 * You can use the following message to test this RES API:
 	 * { "product_id": 1, "warehouse_id": 1, "qty": 1, "lot": "", "movementcode": "INV123", "movementlabel": "Inventory 123", "price": 0 }
 	 * $price Can be set to update AWP (Average Weighted Price) when you make a stock increase
-	 * $dlc Eat-by date. Will be used if lot does not exists yet and will be created.
-	 * $dluo Sell-by date. Will be used if lot does not exists yet and will be created.
+	 * $eatby Eat-by date. Will be used if lot does not exists yet and will be created.
+	 * $sellby Sell-by date. Will be used if lot does not exists yet and will be created.
 	 *
 	 * @param int $product_id Id product id {@min 1} {@from body} {@required true}
 	 * @param int $warehouse_id Id warehouse {@min 1} {@from body} {@required true}
@@ -168,13 +168,13 @@ class StockMovements extends DolibarrApi
 	 * @param string $movementcode Movement code {@example INV123} {@from body}
 	 * @param string $movementlabel Movement label {@example Inventory number 123} {@from body}
 	 * @param string $price To update AWP (Average Weighted Price) when you make a stock increase (qty must be higher then 0). {@from body}
-	 * @param string $dlc Eat-by date. {@from body} {@type date}
-	 * @param string $dluo Sell-by date. {@from body} {@type date}
+	 * @param string $eatby Eat-by date. {@from body} {@type date}
+	 * @param string $sellby Sell-by date. {@from body} {@type date}
 	 *
 	 * @return  int                         ID of stock movement
 	 * @throws RestException
 	 */
-	public function post($product_id, $warehouse_id, $qty, $lot = '', $movementcode = '', $movementlabel = '', $price = '', $dlc = '', $dluo = '')
+	public function post($product_id, $warehouse_id, $qty, $lot = '', $movementcode = '', $movementlabel = '', $price = '', $eatby = '', $sellby = '')
 	{
 		if (!DolibarrApiAccess::$user->rights->stock->creer) {
 			throw new RestException(401);
@@ -191,8 +191,8 @@ class StockMovements extends DolibarrApi
 		}
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		$eatBy = empty($dluo) ? '' : dol_stringtotime($dluo);
-		$sellBy = empty($dlc) ? '' : dol_stringtotime($dlc);
+		$eatBy = empty($eatby) ? '' : dol_stringtotime($eatby);
+		$sellBy = empty($sellby) ? '' : dol_stringtotime($sellby);
 
 		if ($this->stockmovement->_create(DolibarrApiAccess::$user, $product_id, $warehouse_id, $qty, $type, $price, $movementlabel, $movementcode, '', $eatBy, $sellBy, $lot) <= 0) {
 			$errormessage = $this->stockmovement->error;

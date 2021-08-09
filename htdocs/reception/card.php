@@ -300,8 +300,8 @@ if (empty($reshook))
 				}
 				$qty = "qtyl".$i;
 				$comment = "comment".$i;
-				$eatby = "dlc".$i;
-				$sellby = "dluo".$i;
+				$eatby = "eatby".$i;
+				$sellby = "sellby".$i;
 				$batch = "batch".$i;
 
 				$timeFormat = '%d/%m/%Y';
@@ -596,11 +596,11 @@ if (empty($reshook))
 
 					if (!empty($conf->productbatch->enabled)) {
 						$batch = "batch".$line_id;
-						$dlc = "dlc".$line_id;
-						$dluo = "dluo".$line_id;
-						$eatby = GETPOST($dlc, 'alpha');
+						$eatby = "eatby".$line_id;
+						$sellby = "sellby".$line_id;
+						$eatby = GETPOST($eatby, 'alpha');
 						$eatbydate = str_replace('/', '-', $eatby);
-						$sellby = GETPOST($dluo, 'alpha');
+						$sellby = GETPOST($sellby, 'alpha');
 						$sellbydate = str_replace('/', '-', $sellby);
 						$line->batch = GETPOST($batch, 'alpha');
 						$line->eatby = strtotime($eatbydate);
@@ -908,10 +908,10 @@ if ($action == 'create')
 					$ent = 'entrepot_'.$reg[1].'_'.$reg[2];
 					$pu = 'pu_'.$reg[1].'_'.$reg[2];
 					$lot = 'lot_number_'.$reg[1].'_'.$reg[2];
-					$dDLUO = dol_mktime(12, 0, 0, $_POST['dluo_'.$reg[1].'_'.$reg[2].'month'], $_POST['dluo_'.$reg[1].'_'.$reg[2].'day'], $_POST['dluo_'.$reg[1].'_'.$reg[2].'year']);
-					$dDLC = dol_mktime(12, 0, 0, $_POST['dlc_'.$reg[1].'_'.$reg[2].'month'], $_POST['dlc_'.$reg[1].'_'.$reg[2].'day'], $_POST['dlc_'.$reg[1].'_'.$reg[2].'year']);
+					$dSellBy = dol_mktime(12, 0, 0, GETPOST('sellby_' . $reg[1] . '_' . $reg[2] . 'month', 'int'), GETPOST('sellby_' . $reg[1] . '_' . $reg[2] . 'day', 'int'), GETPOST('sellby_' . $reg[1] . '_' . $reg[2] . 'year', 'int'));
+					$dEatBy = dol_mktime(12, 0, 0, GETPOST('eatby_' . $reg[1] . '_' . $reg[2] . 'month', 'int'), GETPOST('eatby_' . $reg[1] . '_' . $reg[2] . 'day', 'int'), GETPOST('eatby_' . $reg[1] . '_' . $reg[2] . 'year', 'int'));
 					$fk_commandefourndet = 'fk_commandefourndet_'.$reg[1].'_'.$reg[2];
-					$dispatchLines[$numAsked] = array('prod' => GETPOST($prod, 'int'), 'qty' =>GETPOST($qty), 'ent' =>GETPOST($ent, 'int'), 'pu' =>GETPOST($pu), 'comment' =>GETPOST('comment'), 'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'), 'DLC'=> $dDLC, 'DLUO'=> $dDLUO, 'lot'=> GETPOST($lot, 'alpha'));
+					$dispatchLines[$numAsked] = array('prod' => GETPOST($prod, 'int'), 'qty' =>GETPOST($qty), 'ent' =>GETPOST($ent, 'int'), 'pu' =>GETPOST($pu), 'comment' =>GETPOST('comment'), 'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'), 'EATBY'=> $dEatBy, 'SELLBY'=> $dSellBy, 'lot'=> GETPOST($lot, 'alpha'));
 				}
 
 				// If create form is coming from same page post was sent but an error occured
@@ -927,10 +927,10 @@ if ($action == 'create')
 					$ent = 'entl'.$reg[1];
 					$pu = 'pul'.$reg[1];
 					$lot = 'batch'.$reg[1];
-					$dDLUO = dol_mktime(12, 0, 0, GETPOST('dluo'.$reg[1].'month', 'int'), GETPOST('dluo'.$reg[1].'day', 'int'), GETPOST('dluo'.$reg[1].'year', 'int'));
-					$dDLC = dol_mktime(12, 0, 0, GETPOST('dlc'.$reg[1].'month', 'int'), GETPOST('dlc'.$reg[1].'day', 'int'), GETPOST('dlc'.$reg[1].'year', 'int'));
+					$dSellBy = dol_mktime(12, 0, 0, GETPOST('sellby' . $reg[1] . 'month', 'int'), GETPOST('sellby' . $reg[1] . 'day', 'int'), GETPOST('sellby' . $reg[1] . 'year', 'int'));
+					$dEatBy = dol_mktime(12, 0, 0, GETPOST('eatby' . $reg[1] . 'month', 'int'), GETPOST('eatby' . $reg[1] . 'day', 'int'), GETPOST('eatby' . $reg[1] . 'year', 'int'));
 					$fk_commandefourndet = 'fk_commandefournisseurdet'.$reg[1];
-					$dispatchLines[$numAsked] = array('prod' => GETPOST($prod, 'int'), 'qty' =>GETPOST($qty), 'ent' =>GETPOST($ent, 'int'), 'pu' =>GETPOST($pu), 'comment' =>GETPOST($comment), 'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'), 'DLC'=> $dDLC, 'DLUO'=> $dDLUO, 'lot'=> GETPOST($lot, 'alpha'));
+					$dispatchLines[$numAsked] = array('prod' => GETPOST($prod, 'int'), 'qty' =>GETPOST($qty), 'ent' =>GETPOST($ent, 'int'), 'pu' =>GETPOST($pu), 'comment' =>GETPOST($comment), 'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'), 'EATBY'=> $dEatBy, 'SELLBY'=> $dSellBy, 'lot'=> GETPOST($lot, 'alpha'));
 				}
 			}
 
@@ -1132,12 +1132,12 @@ if ($action == 'create')
 							print '<td><input name="batch'.$indiceAsked.'" value="'.$dispatchLines[$indiceAsked]['lot'].'"></td>';
 							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 								print '<td>';
-								print $form->selectDate($dispatchLines[$indiceAsked]['DLC'], 'dlc'.$indiceAsked, '', '', 1, "");
+								print $form->selectDate($dispatchLines[$indiceAsked]['EATBY'], 'eatby'.$indiceAsked, '', '', 1, "");
 								print '</td>';
 							}
 							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 								print '<td>';
-								print $form->selectDate($dispatchLines[$indiceAsked]['DLUO'], 'dluo'.$indiceAsked, '', '', 1, "");
+								print $form->selectDate($dispatchLines[$indiceAsked]['SELLBY'], 'sellby'.$indiceAsked, '', '', 1, "");
 								print '</td>';
 							}
 						} else {
@@ -1829,11 +1829,11 @@ if ($action == 'create')
 							print '<td>  <input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"> </br>';
 							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 								print $langs->trans('EatByDate').' : ';
-								print $form->selectDate($lines[$i]->eatby, 'dlc'.$line_id, '', '', 1, "").'</br>';
+								print $form->selectDate($lines[$i]->eatby, 'eatby'.$line_id, '', '', 1, "").'</br>';
 							}
 							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 								print $langs->trans('SellByDate').' : ';
-								print $form->selectDate($lines[$i]->sellby, 'dluo'.$line_id, '', '', 1, "");
+								print $form->selectDate($lines[$i]->sellby, 'sellby'.$line_id, '', '', 1, "");
 							}
 							print '</td>';
 						}

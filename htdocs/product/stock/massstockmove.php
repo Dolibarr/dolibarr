@@ -178,8 +178,8 @@ if ($action == 'createmovements')
 			$id_tw = $val['id_tw'];
 			$qty = price2num($val['qty']);
 			$batch = $val['batch'];
-			$dlc = -1; // They are loaded later from serial
-			$dluo = -1; // They are loaded later from serial
+			$eatby = -1; // They are loaded later from serial
+			$sellby = -1; // They are loaded later from serial
 
 			if (!$error && $id_sw <> $id_tw && is_numeric($qty) && $id_product)
 			{
@@ -232,12 +232,11 @@ if ($action == 'createmovements')
 					if (count($arraybatchinfo) > 0)
 					{
 						$firstrecord = array_shift($arraybatchinfo);
-						$dlc = $firstrecord['eatby'];
-						$dluo = $firstrecord['sellby'];
-						//var_dump($batch); var_dump($arraybatchinfo); var_dump($firstrecord); var_dump($dlc); var_dump($dluo); exit;
+						$eatby = $firstrecord['eatby'];
+						$sellby = $firstrecord['sellby'];
 					} else {
-						$dlc = '';
-						$dluo = '';
+						$eatby = '';
+						$sellby = '';
 					}
 
 					// Remove stock
@@ -248,8 +247,8 @@ if ($action == 'createmovements')
 						1,
 						GETPOST("label"),
 						$pricesrc,
-						$dlc,
-						$dluo,
+						$eatby,
+						$sellby,
 						$batch,
 						GETPOST("codemove")
 					);
@@ -267,8 +266,8 @@ if ($action == 'createmovements')
 						0,
 						GETPOST("label"),
 						$pricedest,
-						$dlc,
-						$dluo,
+						$eatby,
+						$sellby,
 						$batch,
 						GETPOST("codemove")
 					);
