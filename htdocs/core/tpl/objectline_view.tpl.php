@@ -243,7 +243,7 @@ if (price2num($line->total_localtax2)) {
 if (empty($positiverates)) {
 	$positiverates = '0';
 }
-if ($type <> 8 && $type <> 9){
+if ($type <> 8 && $type <> 9) {
 	print vatrate($positiverates.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), '%', $line->info_bits);
 }
 //print vatrate($line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''), '%', $line->info_bits);
