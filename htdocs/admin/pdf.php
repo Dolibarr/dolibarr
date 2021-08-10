@@ -371,7 +371,7 @@ print $formadmin->select_language($selected, 'PDF_USE_ALSO_LANGUAGE_CODE', 0, nu
 //}
 print '</td></tr>';
 
-// 
+//
 
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_NO_CUSTOMER_CODE");
 print '</td><td>';
