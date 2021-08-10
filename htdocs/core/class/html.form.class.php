@@ -969,7 +969,7 @@ class Form
 						$out .= '<option value="'.($usecodeaskey ? ($usecodeaskey == 'code2' ? $row['code_iso'] : $row['code_iso3']) : $row['rowid']).'" data-html="'.dol_escape_htmltag($labeltoshow).'" data-eec="'.((int) $row['eec']).'">';
 					}
 					$out .= $labeltoshow;
-					$out .= '</option>';
+					$out .= '</option>'."\n";
 				}
 			}
 			$out .= '</select>';
