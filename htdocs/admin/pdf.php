@@ -253,6 +253,15 @@ for ($i = 1; $i <= 6; $i++) {
 	}
 }
 
+// Show sender name
+
+print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_NO_SENDER_NAME").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_PDF_NO_SENDER_NAME');
+} else {
+	print $form->selectyesno('MAIN_PDF_NO_SENDER_NAME', (!empty($conf->global->MAIN_PDF_NO_SENDER_NAME)) ? $conf->global->MAIN_PDF_NO_SENDER_NAME : 0, 1);
+}
+print '</td></tr>';
 print '</table>';
 print '</div>';
 
