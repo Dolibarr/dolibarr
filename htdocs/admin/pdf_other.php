@@ -53,6 +53,9 @@ if ($cancel) {
 }
 
 if ($action == 'update') {
+
+	if (GETPOSTISSET('MAIN_GENERATE_PROPOSALS_WITH_PICTURE')) dolibarr_set_const($db, "MAIN_GENERATE_PROPOSALS_WITH_PICTURE", GETPOST("MAIN_GENERATE_PROPOSALS_WITH_PICTURE"), 'chaine', 0, '', $conf->entity);
+
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
