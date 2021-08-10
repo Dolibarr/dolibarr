@@ -2019,7 +2019,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId1", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton(!empty($conf->global->MAIN_INFO_SIREN)).'</span>';
 	}
 	if ($langs->transcountry("ProfId2", $mysoc->country_code) != '-') {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId2", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIRET).'</span>';
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId2", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton(!empty($conf->global->MAIN_INFO_SIRET)).'</span>';
 	}
 	if ($langs->transcountry("ProfId3", $mysoc->country_code) != '-') {
 		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId3", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_APE).'</span>';
