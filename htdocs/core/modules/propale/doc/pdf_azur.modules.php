@@ -891,7 +891,7 @@ class pdf_azur extends ModelePDFPropales
 		}
 
 		$posxval = 52;
-		if (!empty($conf->global->PDF_DISPLAY_DATETEXT)) {
+		if (!empty($conf->global->MAIN_PDF_DISPLAY_DATETEXT)) {
 			$displaydate = "daytext";
 		} else {
 			$displaydate = "day";
@@ -1518,7 +1518,7 @@ class pdf_azur extends ModelePDFPropales
 			}
 		}
 
-		if (!empty($conf->global->PDF_DISPLAY_DATETEXT)) {
+		if (!empty($conf->global->MAIN_PDF_DISPLAY_DATETEXT)) {
 			$displaydate = "daytext";
 		} else {
 			$displaydate = "day";

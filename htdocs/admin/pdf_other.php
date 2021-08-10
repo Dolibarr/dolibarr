@@ -103,17 +103,6 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
-print '<tr class="oddeven"><td>'.$langs->trans("PDF_DISPLAY_DATETEXT");
-print ' <span class="opacitymedium">('.$langs->trans("DisplayDateText").')</span>';
-print '</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('PDF_DISPLAY_DATETEXT');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("PDF_DISPLAY_DATETEXT", $arrval, $conf->global->PDF_DISPLAY_DATETEXT);
-}
-print '</td></tr>';
-
 /*
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING").'</td><td>';
 if ($conf->use_javascript_ajax) {
