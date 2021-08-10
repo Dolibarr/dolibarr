@@ -253,6 +253,18 @@ for ($i = 1; $i <= 6; $i++) {
 	}
 }
 
+// Pos sender address
+
+print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_SENDER_UNDER_LOGO");
+print '</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_PDF_SENDER_UNDER_LOGO');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("MAIN_PDF_SENDER_UNDER_LOGO", $arrval, $conf->global->MAIN_PDF_SENDER_UNDER_LOGO);
+}
+print '</td></tr>';
+
 print '</table>';
 print '</div>';
 
