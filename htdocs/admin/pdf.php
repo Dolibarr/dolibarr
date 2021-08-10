@@ -65,6 +65,8 @@ if ($action == 'update') {
 	if (GETPOSTISSET('MAIN_PROFID5_IN_ADDRESS')) dolibarr_set_const($db, "MAIN_PROFID5_IN_ADDRESS", GETPOST("MAIN_PROFID5_IN_ADDRESS"), 'chaine', 0, '', $conf->entity);
 	if (GETPOSTISSET('MAIN_PROFID6_IN_ADDRESS')) dolibarr_set_const($db, "MAIN_PROFID6_IN_ADDRESS", GETPOST("MAIN_PROFID6_IN_ADDRESS"), 'chaine', 0, '', $conf->entity);
 
+	if (GETPOSTISSET('MAIN_PDF_NO_SENDER_NAME')) dolibarr_set_const($db, "MAIN_PDF_NO_SENDER_NAME", GETPOST("MAIN_PDF_NO_SENDER_NAME"), 'chaine', 0, '', $conf->entity);
+
 	if (GETPOSTISSET('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT", GETPOST("MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT"), 'chaine', 0, '', $conf->entity);
 
 	if (GETPOSTISSET('MAIN_TVAINTRA_NOT_IN_ADDRESS')) dolibarr_set_const($db, "MAIN_TVAINTRA_NOT_IN_ADDRESS", GETPOST("MAIN_TVAINTRA_NOT_IN_ADDRESS"), 'chaine', 0, '', $conf->entity);
