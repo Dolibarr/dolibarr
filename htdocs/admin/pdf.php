@@ -371,6 +371,8 @@ print $formadmin->select_language($selected, 'PDF_USE_ALSO_LANGUAGE_CODE', 0, nu
 //}
 print '</td></tr>';
 
+// Format display date
+
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_DISPLAY_DATETEXT");
 print ' <span class="opacitymedium">('.$langs->trans("DisplayDateText").')</span>';
 print '</td><td>';
