@@ -18,6 +18,10 @@
 /**
  * \file 	dev/tools/spider.php
  * \brief 	Script to spider Dolibarr app.
+ *
+ * To use it:
+ * - Disable module "bookmark"
+ * - Exclude param  optioncss, token, sortfield, sortorder
  */
 
 $crawledLinks=array();
