@@ -89,6 +89,8 @@ if ($action == 'update') {
 	if (GETPOSTISSET('MAIN_DOCUMENTS_LOGO_HEIGHT')) dolibarr_set_const($db, "MAIN_DOCUMENTS_LOGO_HEIGHT", GETPOST("MAIN_DOCUMENTS_LOGO_HEIGHT", 'int'), 'chaine', 0, '', $conf->entity);
 	if (GETPOSTISSET('MAIN_INVERT_SENDER_RECIPIENT')) dolibarr_set_const($db, "MAIN_INVERT_SENDER_RECIPIENT", GETPOST("MAIN_INVERT_SENDER_RECIPIENT"), 'chaine', 0, '', $conf->entity);
 	if (GETPOSTISSET('MAIN_PDF_USE_ISO_LOCATION')) dolibarr_set_const($db, "MAIN_PDF_USE_ISO_LOCATION", GETPOST("MAIN_PDF_USE_ISO_LOCATION"), 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('MAIN_PDF_NO_CUSTOMER_CODE')) dolibarr_set_const($db, "MAIN_PDF_NO_CUSTOMER_CODE", GETPOST("MAIN_PDF_NO_CUSTOMER_CODE"), 'chaine', 0, '', $conf->entity);
+
 	if (GETPOSTISSET('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS", GETPOST("MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS"), 'chaine', 0, '', $conf->entity);
 
 	if (GETPOSTISSET('MAIN_PDF_MAIN_HIDE_SECOND_TAX')) dolibarr_set_const($db, "MAIN_PDF_MAIN_HIDE_SECOND_TAX", GETPOST("MAIN_PDF_MAIN_HIDE_SECOND_TAX"), 'chaine', 0, '', $conf->entity);
