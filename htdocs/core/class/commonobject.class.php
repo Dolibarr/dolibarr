@@ -123,6 +123,12 @@ abstract class CommonObject
 	 */
 	protected $table_ref_field = '';
 
+	/**
+	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
+	 * @var integer
+	 */
+	public $restrictiononfksoc = 0;
+
 
 
 	// Following vars are used by some objects only. We keep this property here in CommonObject to be able to provide common method using them.
