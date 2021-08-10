@@ -5,7 +5,7 @@
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2021  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2014  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2021  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2008       Matteli
  * Copyright (C) 2011-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@altairis.fr>
@@ -2016,7 +2016,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$dropdownBody .= '<div id="topmenulogincompanyinfo" >';
 
 	if ($langs->transcountry("ProfId1", $mysoc->country_code) != '-') {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId1", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIREN).'</span>';
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId1", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton(!empty($conf->global->MAIN_INFO_SIREN)).'</span>';
 	}
 	if ($langs->transcountry("ProfId2", $mysoc->country_code) != '-') {
 		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId2", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIRET).'</span>';
