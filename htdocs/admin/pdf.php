@@ -349,6 +349,18 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
+// Document ref in title
+
+print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_REF_IN_TITLE");
+print '</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_PDF_REF_IN_TITLE');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("MAIN_PDF_REF_IN_TITLE", $arrval, $conf->global->MAIN_PDF_REF_IN_TITLE);
+}
+print '</td></tr>';
+
 // Place customer adress to the ISO location
 
 print '<tr class="oddeven"><td>'.$langs->trans("PlaceCustomerAddressToIsoLocation").'</td><td>';
