@@ -1575,7 +1575,7 @@ class pdf_azur extends ModelePDFPropales
 			$hautcadre = 40;
 
 			// Show sender frame
-			if (empty($conf->global->PDF_NO_SENDER_FRAME)) {
+			if (empty($conf->global->MAIN_PDF_NO_SENDER_FRAME)) {
 				$pdf->SetTextColor(0, 0, 0);
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($posx, $posy - 5);
@@ -1630,7 +1630,7 @@ class pdf_azur extends ModelePDFPropales
 			}
 
 			// Show recipient frame
-			if (empty($conf->global->PDF_NO_RECIPENT_FRAME)) {
+			if (empty($conf->global->MAIN_PDF_NO_RECIPENT_FRAME)) {
 				$pdf->SetTextColor(0, 0, 0);
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($posx + 2, $posy - 5);

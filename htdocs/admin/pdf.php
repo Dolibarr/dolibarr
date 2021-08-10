@@ -253,6 +253,33 @@ for ($i = 1; $i <= 6; $i++) {
 	}
 }
 
+// Height of logo
+
+print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DOCUMENTS_LOGO_HEIGHT").'</td><td>';
+print '<input type="text" class="maxwidth50" name="MAIN_DOCUMENTS_LOGO_HEIGHT" value="'.(!empty($conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT) ? $conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT : 20).'">';
+print '</td></tr>';
+print '<tr class="oddeven"><td>'.$langs->trans("PDF_NO_SENDER_FRAME");
+print '</td><td>';
+
+// Frame address
+
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_PDF_NO_SENDER_FRAME');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("MAIN_PDF_NO_SENDER_FRAME", $arrval, $conf->global->MAIN_PDF_NO_SENDER_FRAME);
+}
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_NO_RECIPENT_FRAME");
+print '</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_PDF_NO_RECIPENT_FRAME');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("MAIN_PDF_NO_RECIPENT_FRAME", $arrval, $conf->global->MAIN_PDF_NO_RECIPENT_FRAME);
+}
+
 print '</table>';
 print '</div>';
 
@@ -322,12 +349,6 @@ print load_fiche_titre($langs->trans("Other"), '', '');
 print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
-
-// Height of logo
-
-print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DOCUMENTS_LOGO_HEIGHT").'</td><td>';
-print '<input type="text" class="maxwidth50" name="MAIN_DOCUMENTS_LOGO_HEIGHT" value="'.(!empty($conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT) ? $conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT : 20).'">';
-print '</td></tr>';
 
 // Show project
 
