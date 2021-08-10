@@ -1523,7 +1523,7 @@ class pdf_azur extends ModelePDFPropales
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEndPropal")." : ".dol_print_date($object->fin_validite, "day", false, $outputlangs, true), '', 'R');
 
-		if ($object->thirdparty->code_client && empty($conf->global->PDF_NO_CODE_CLIENT)) {
+		if ($object->thirdparty->code_client && empty($conf->global->MAIN_PDF_NO_CODE_CLIENT)) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
