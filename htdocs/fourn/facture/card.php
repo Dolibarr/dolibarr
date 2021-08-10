@@ -208,7 +208,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
 				// Define output language
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE) && empty($conf->global->SUPPLIER_INVOICE_DISABLE_PDF_AUTOUPDATE)) {
 					$outputlangs = $langs;
 					$newlang = '';
 					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -261,7 +261,7 @@ if (empty($reshook)) {
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($newlang);
 			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE) && empty($conf->global->SUPPLIER_INVOICE_DISABLE_PDF_AUTOUPDATE)) {
 				$ret = $object->fetch($object->id); // Reload to get new records
 				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}*/
@@ -332,7 +332,7 @@ if (empty($reshook)) {
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($newlang);
 			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE) && empty($conf->global->SUPPLIER_INVOICE_DISABLE_PDF_AUTOUPDATE)) {
 				$ret = $object->fetch($object->id); // Reload to get new records
 				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
@@ -478,7 +478,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE) && empty($conf->global->SUPPLIER_INVOICE_DISABLE_PDF_AUTOUPDATE)) {
 			$outputlangs = $langs;
 			$newlang = '';
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -1208,7 +1208,7 @@ if (empty($reshook)) {
 		} else {
 			$db->commit();
 
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE) && empty($conf->global->SUPPLIER_INVOICE_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				if ($result < 0) {
@@ -1541,7 +1541,7 @@ if (empty($reshook)) {
 			$db->commit();
 
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE) && empty($conf->global->SUPPLIER_INVOICE_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
 				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -1641,7 +1641,7 @@ if (empty($reshook)) {
 				$object->setDraft($user, $idwarehouse);
 
 				// Define output language
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE) && empty($conf->global->SUPPLIER_INVOICE_DISABLE_PDF_AUTOUPDATE)) {
 					$outputlangs = $langs;
 					$newlang = '';
 					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
