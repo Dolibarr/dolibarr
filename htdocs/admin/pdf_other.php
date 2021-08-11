@@ -102,26 +102,6 @@ if ($conf->use_javascript_ajax) {
 	print $form->selectarray("MAIN_GENERATE_PROPOSALS_WITH_PICTURE", $arrval, $conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE);
 }
 print '</td></tr>';
-
-print '<tr class="oddeven"><td>'.$langs->trans("PDF_NO_SENDER_FRAME");
-print '</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('PDF_NO_SENDER_FRAME');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("PDF_NO_SENDER_FRAME", $arrval, $conf->global->PDF_NO_SENDER_FRAME);
-}
-print '</td></tr>';
-
-print '<tr class="oddeven"><td>'.$langs->trans("PDF_NO_RECIPENT_FRAME");
-print '</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('PDF_NO_RECIPENT_FRAME');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("PDF_NO_RECIPENT_FRAME", $arrval, $conf->global->PDF_NO_RECIPENT_FRAME);
-}
-print '</td></tr>';
 /*
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING").'</td><td>';
 if ($conf->use_javascript_ajax) {
