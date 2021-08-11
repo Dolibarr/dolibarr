@@ -375,7 +375,7 @@ print '</td></tr>';
 
 //
 
-print '<tr class="oddeven"><td>'.$langs->trans("DOC_SHOW_CUSTOMER_CODE");
+print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_HIDE_CUSTOMER_CODE");
 print '</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('DOC_SHOW_CUSTOMER_CODE');
