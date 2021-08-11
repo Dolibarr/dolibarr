@@ -1521,7 +1521,9 @@ class Account extends CommonObject
 	{
 		global $conf;
 
-		if ( ! empty($conf->global->MAIN_IBAN_NOT_MANDATORY) ) return 0;
+		if (!empty($conf->global->MAIN_IBAN_IS_NEVER_MANDATORY)) {
+			return 0;
+		}
 
 		$country_code = $this->getCountryCode();
 
