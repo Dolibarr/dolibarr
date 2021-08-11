@@ -81,6 +81,9 @@ if (($id > 0) || $ref)
     }
 }
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('holidaycard', 'globalcard'));
+
 $cancreate = 0;
 if (!empty($user->rights->holiday->write_all)) $cancreate = 1;
 if (!empty($user->rights->holiday->write) && in_array($fuserid, $childids)) $cancreate = 1;
