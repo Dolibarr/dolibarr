@@ -1912,7 +1912,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<table class="border centpercent">';
 
 			if (!$object->isService() && !empty($conf->bom->enabled)) {
-					print '<tr><td>'.$form->textwithpicto($langs->trans("DefaultBOM"), $langs->trans("DefaultBOMDesc")).'</td><td colspan="3">';
+					print '<tr><td>'.$form->textwithpicto($langs->trans("DefaultBOM"), $langs->trans("DefaultBOMDesc")).'</td><td>';
 					$bomkey = "Bom:bom/class/bom.class.php:0:t.status=1 AND t.fk_product=".$object->id;
 					print $form->selectForForms($bomkey, 'fk_default_bom', $object->fk_default_bom, 1);
 					print '</td></tr>';
