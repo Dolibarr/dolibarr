@@ -1003,6 +1003,9 @@ class pdf_espadon extends ModelePdfExpedition
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$title = $outputlangs->transnoentities("SendingSheet");
+		if (!empty($conf->global->MAIN_PDF_REF_IN_TITLE)) {
+			$title .= " " . $outputlangs->convToOutputCharset($object->ref);
+		}
 		$pdf->MultiCell($w, 4, $title, '', 'R');
 
 		$pdf->SetFont('', '', $default_font_size + 1);

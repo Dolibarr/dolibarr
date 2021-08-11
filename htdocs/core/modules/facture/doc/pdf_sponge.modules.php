@@ -986,6 +986,9 @@ class pdf_sponge extends ModelePDFFactures
 		if ($object->type == 2) {
 			$title = $outputlangs->transnoentities("PaymentsBackAlreadyDone");
 		}
+		if (!empty($conf->global->MAIN_PDF_REF_IN_TITLE)) {
+			$title .= " " . $outputlangs->convToOutputCharset($object->ref);
+		}
 
 		$pdf->SetFont('', '', $default_font_size - 3);
 		$pdf->SetXY($tab3_posx, $tab3_top - 4);
