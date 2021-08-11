@@ -144,7 +144,7 @@ if (empty($reshook)) {
 		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
-		} else if ($origin == 'order_supplier' && $originid) {
+		} elseif ($origin == 'order_supplier' && $originid) {
 			$page = DOL_URL_ROOT.'/fourn/commande/card.php?id='.$originid;
 			header("Location: ".$page);
 			exit;

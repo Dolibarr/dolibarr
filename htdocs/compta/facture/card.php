@@ -176,7 +176,7 @@ if (empty($reshook)) {
 		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
-		} else if ($originid) {
+		} elseif ($originid) {
 			if ($origin == 'propal') {
 				$page = DOL_URL_ROOT.'/comm/propal/card.php?id='.$originid;
 			} elseif ($origin == 'commande') {
