@@ -652,7 +652,7 @@ class pdf_strato extends ModelePDFContract
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref), '', 'R');
-			}
+		}
 
 		$posy += 1;
 		$pdf->SetFont('', '', $default_font_size);
