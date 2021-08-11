@@ -1680,7 +1680,7 @@ if ($resql) {
 		// Author
 		if (!empty($arrayfields['u.login']['checked'])) {
 			print '<td align="center">';
-			if ($userstatic->id) {
+			if ($userstatic->id > 0) {
 				print $userstatic->getLoginUrl(1);
 			} else {
 				print '&nbsp;';
@@ -1704,7 +1704,6 @@ if ($resql) {
 					// We print only number
 					print $nbofsalesrepresentative;
 				} elseif ($nbofsalesrepresentative > 0) {
-					$userstatic = new User($db);
 					$j = 0;
 					foreach ($listsalesrepresentatives as $val) {
 						$userstatic->id = $val['id'];
