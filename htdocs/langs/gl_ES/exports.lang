@@ -53,7 +53,8 @@ TypeOfLineServiceOrProduct=Tipo de liña (0=producto, 1=servizo)
 FileWithDataToImport=Ficheiro cos datos a importar
 FileToImport=Ficheiro orixe a importar
 FileMustHaveOneOfFollowingFormat=O ficheiro de importación debe conter un dos seguintes formatos
-DownloadEmptyExample=Descargar ficheiro de exemplo baleiro
+DownloadEmptyExample=Descargue un ficheiro de modelo con información de contido do campo 
+StarAreMandatory=* son campos obrigatorios 
 ChooseFormatOfFileToImport=Escolla o formato de ficheiro que desexa importar e prema na imaxe %s para seleccionalo...
 ChooseFileToImport=Escolla o ficheiro de importación e faga clic na imaxe %s para seleccionalo como ficheiro orixe de importación...
 SourceFileFormat=Formato do ficheiro orixe

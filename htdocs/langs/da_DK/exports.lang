@@ -53,7 +53,8 @@ TypeOfLineServiceOrProduct=Strækningstype (0= produkt, 1= tjeneste)
 FileWithDataToImport=Fil med data til at importere
 FileToImport=Kildefilen til at importere
 FileMustHaveOneOfFollowingFormat=Fil, der skal importeres, skal have et af følgende formater
-DownloadEmptyExample=Download skabelonfil med feltindholdsinformation (* er obligatoriske felter)
+DownloadEmptyExample=Download skabelonfil med feltindholdsoplysninger
+StarAreMandatory=* er obligatoriske felter
 ChooseFormatOfFileToImport=Vælg det filformat, der skal bruges som importfilformat, ved at klikke på ikonet %s for at vælge det ...
 ChooseFileToImport=Upload fil og klik derefter på ikonet %s for at vælge fil som kilde importfil ...
 SourceFileFormat=Kilde filformat

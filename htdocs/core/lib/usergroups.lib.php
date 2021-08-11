@@ -110,7 +110,7 @@ function user_prepare_head($object)
 		$nbNote = 0;
 		$sql = "SELECT COUNT(n.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n";
-		$sql .= " WHERE fk_user = ".$object->id;
+		$sql .= " WHERE fk_user = ".((int) $object->id);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
@@ -339,7 +339,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 
 	$thumbsbyrow = 6;
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder centpercent'.($edit ? ' editmode' : '').' tableforfield">';
+	print '<table class="noborder centpercent'.($edit ? ' editmode' : '').'">';
 
 	// Title
 	if ($foruserprofile) {
@@ -906,7 +906,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	}
 
 	// Use MAIN_OPTIMIZEFORTEXTBROWSER
-	if ($foruserprofile) {
+	if ($foruserprofile && !empty($fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 		//$default=yn($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER);
 		$default = $langs->trans('No');
 		print '<tr class="oddeven">';
@@ -953,7 +953,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 
 
 	// Use MAIN_OPTIMIZEFORTEXTBROWSER
-	if ($foruserprofile) {
+	if ($foruserprofile && !empty($fuser->conf->MAIN_OPTIMIZEFORCOLORBLIND)) {
 		//$default=yn($conf->global->MAIN_OPTIMIZEFORCOLORBLIND);
 		$default = $langs->trans('No');
 		print '<tr class="oddeven">';

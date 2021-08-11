@@ -190,13 +190,13 @@ if (!function_exists('ftp_connect')) {
 
 	print '<tr class="impair">';
 	print '<td>'.$langs->trans("User").'</td>';
-	print '<td><input type="text" name="FTP_USER_'.($lastftpentry + 1).'" value="'.GETPOST("FTP_USER_".($lastftpentry + 1)).'" size="24"></td>';
+	print '<td><input type="text" name="FTP_USER_'.($lastftpentry + 1).'" value="'.GETPOST("FTP_USER_".($lastftpentry + 1)).'" class="minwidth175"></td>';
 	print '<td>myftplogin</td>';
 	print '</tr>';
 
 	print '<tr class="pair">';
 	print '<td>'.$langs->trans("Password").'</td>';
-	print '<td><input type="password" name="FTP_PASSWORD_'.($lastftpentry + 1).'" value="'.GETPOST("FTP_PASSWORD_".($lastftpentry + 1)).'" size="24"></td>';
+	print '<td><input type="password" name="FTP_PASSWORD_'.($lastftpentry + 1).'" value="'.GETPOST("FTP_PASSWORD_".($lastftpentry + 1)).'" class="minwidth175"></td>';
 	print '<td>myftppassword</td>';
 	print '</tr>';
 

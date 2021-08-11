@@ -9,7 +9,7 @@ ConfirmDeleteEstablishment=Are you sure you wish to delete this establishment?
 OpenEtablishment=Otvori ogranak
 CloseEtablishment=Zatvori ogranak
 # Dictionary
-DictionaryPublicHolidays=HRM - Public holidays
+DictionaryPublicHolidays=Leave - Public holidays
 DictionaryDepartment=HR - Lista odeljenja
 DictionaryFunction=HRM - Job positions
 # Module

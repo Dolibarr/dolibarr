@@ -129,6 +129,7 @@ ClosedByLogin=Bruker-login som lukket
 FileWasRemoved=Filen ble slettet
 DirWasRemoved=Mappen ble slettet
 FeatureNotYetAvailable=Funksjonen er ikke tilgjengelig i gjeldende versjon
+FeatureNotAvailableOnDevicesWithoutMouse=Feature not available on devices without mouse
 FeaturesSupported=Støttede funksjoner
 Width=Bredde
 Height=Høyde
@@ -263,7 +264,7 @@ ContactCreatedByEmailCollector=Kontakt/adresse opprettet av e-post samler fra e-
 ProjectCreatedByEmailCollector=Prosjekt opprettet av e-post samler fra e-post MSGID %s
 TicketCreatedByEmailCollector=Supportseddel opprettet av e-post samler fra e-post MSGID %s
 OpeningHoursFormatDesc=Bruk en bindestrek for å skille åpning og stengetid. <br> Bruk et mellomrom for å angi forskjellige områder. <br> Eksempel: 8-12 14-18
-PrefixSession=Prefiks for økt-ID
+SuffixSessionName=Suffix for session name
 
 ##### Export #####
 ExportsArea=Eksportområde

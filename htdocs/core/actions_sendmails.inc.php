@@ -182,8 +182,13 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 
 		$tmparray = array();
 		if (trim($_POST['sendto'])) {
-			// Recipients are provided into free text
+			// Recipients are provided into free text field
 			$tmparray[] = trim($_POST['sendto']);
+		}
+
+		if (trim($_POST['tomail'])) {
+			// Recipients are provided into free hidden text field
+			$tmparray[] = trim($_POST['tomail']);
 		}
 
 		if (count($receiver) > 0) {
@@ -345,7 +350,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 			$subject = make_substitutions($subject, $substitutionarray);
 			$message = make_substitutions($message, $substitutionarray);
 
-			if (method_exists($object, 'makeSubstitution')) {
+			if (is_object($object) && method_exists($object, 'makeSubstitution')) {
 				$subject = $object->makeSubstitution($subject);
 				$message = $object->makeSubstitution($message);
 			}

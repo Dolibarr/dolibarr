@@ -161,7 +161,7 @@ class box_contacts extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($datem, "day"),
+						'text' => dol_print_date($datem, "day", 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(

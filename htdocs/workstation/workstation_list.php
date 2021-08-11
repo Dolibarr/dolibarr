@@ -98,7 +98,7 @@ $resources = GETPOST('resources', 'array:int');
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
 foreach ($object->fields as $key => $val) {
-	if ($val['searchall']) {
+	if (!empty($val['searchall'])) {
 		$fieldstosearchall['t.'.$key] = $val['label'];
 	}
 }
@@ -114,7 +114,7 @@ foreach ($object->fields as $key => $val) {
 			'checked'=>(($visible < 0) ? 0 : 1),
 			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
 			'position'=>$val['position'],
-			'help'=>$val['help']
+			'help' => empty($val['help']) ? '' : $val['help']
 		);
 	}
 }
@@ -124,7 +124,7 @@ $arrayfields['wug.fk_usergroup'] = array(
 	'checked'=>(($visible < 0) ? 0 : 1),
 	'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
 	'position'=>1000,
-	'help'=>$val['help']
+	'help' => empty($val['help']) ? '' : $val['help']
 );
 
 $arrayfields['wr.fk_resource'] = array(
@@ -132,7 +132,7 @@ $arrayfields['wr.fk_resource'] = array(
 	'checked'=>(($visible < 0) ? 0 : 1),
 	'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
 	'position'=>1001,
-	'help'=>$val['help']
+	'help' => empty($val['help']) ? '' : $val['help']
 );
 
 // Extra fields
@@ -619,6 +619,12 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if (!empty($val['isameasure'])) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
+				}
+				if (!isset($totalarray['val'])) {
+					$totalarray['val'] = array();
+				}
+				if (!isset($totalarray['val']['t.'.$key])) {
+					$totalarray['val']['t.'.$key] = 0;
 				}
 				$totalarray['val']['t.'.$key] += $object->$key;
 			}

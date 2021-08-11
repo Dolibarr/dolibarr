@@ -149,7 +149,7 @@ if ($massaction == 'presend') {
 	$formmail->withtofree = empty($liste) ? 1 : 0;
 	$formmail->withtocc = 1;
 	$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
-	$formmail->withtopic = $langs->transnoentities($topicmail, '__REF__', '__REFCLIENT__');
+	$formmail->withtopic = $langs->transnoentities($topicmail, '__REF__', '__REF_CLIENT__');
 	$formmail->withfile = 1;
 	// $formmail->withfile = 2; Not yet supported in mass action
 	$formmail->withmaindocfile = 1; // Add a checkbox "Attach also main document"
@@ -194,10 +194,18 @@ if ($massaction == 'presend') {
 
 	print dol_get_fiche_end();
 }
+
+if ($massaction == 'preenable') {
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassEnabling"), $langs->trans("ConfirmMassEnablingQuestion", count($toselect)), "enable", null, '', 0, 200, 500, 1);
+}
+if ($massaction == 'predisable') {
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDisabling"), $langs->trans("ConfirmMassDisablingQuestion", count($toselect)), "disable", null, '', 0, 200, 500, 1);
+}
+
 // Allow Pre-Mass-Action hook (eg for confirmation dialog)
 $parameters = array(
 	'toselect' => $toselect,
-	'uploaddir' => $uploaddir
+	'uploaddir' => isset($uploaddir) ? $uploaddir : null
 );
 
 $reshook = $hookmanager->executeHooks('doPreMassActions', $parameters, $object, $action);

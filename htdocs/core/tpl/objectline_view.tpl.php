@@ -132,10 +132,10 @@ if (($line->info_bits & 2) == 2) {
 		}
 	}
 } else {
-	$format = $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE ? 'dayhour' : 'day';
+	$format = (!empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 'dayhour' : 'day');
 
 	if ($line->fk_product > 0) {
-		print $form->textwithtooltip($text, $description, 3, '', '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
+		print $form->textwithtooltip($text, $description, 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
 	} else {
 		$type = (!empty($line->product_type) ? $line->product_type : $line->fk_product_type);
 		if ($type == 1) {
@@ -146,7 +146,7 @@ if (($line->info_bits & 2) == 2) {
 
 		if (!empty($line->label)) {
 			$text .= ' <strong>'.$line->label.'</strong>';
-			print $form->textwithtooltip($text, dol_htmlentitiesbr($line->description), 3, '', '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
+			print $form->textwithtooltip($text, dol_htmlentitiesbr($line->description), 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
 		} else {
 			if (!empty($line->fk_parent_line)) {
 				print img_picto('', 'rightarrow');
@@ -179,7 +179,7 @@ if (($line->info_bits & 2) == 2) {
 		}
 	} else {
 		if ($line->date_start || $line->date_end) {
-			print '<br><div class="clearboth nowraponall">'.get_date_range($line->date_start, $line->date_end, $format).'</div>';
+			print '<br><div class="clearboth nowraponall opacitymedium">'.get_date_range($line->date_start, $line->date_end, $format).'</div>';
 		}
 		//print get_date_range($line->date_start, $line->date_end, $format);
 	}
@@ -288,7 +288,7 @@ if (!empty($line->remise_percent) && $line->special_code != 3) {
 }
 
 // Fields for situation invoices
-if ($this->situation_cycle_ref) {
+if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 	$coldisplay++;
 	print '<td class="linecolcycleref nowrap right">'.$line->situation_percent.'%</td>';
@@ -353,7 +353,15 @@ if ($outputalsopricetotalwithtax) {
 	$coldisplay++;
 }
 
-if ($this->statut == 0 && ($object_rights->creer) && $action != 'selectlines') {
+if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlines') {
+	$situationinvoicelinewithparent = 0;
+	if ($line->fk_prev_id != null && in_array($object->element, array('facture', 'facturedet'))) {
+		if ($object->type == $object::TYPE_SITUATION) {	// The constant TYPE_SITUATION exists only for object invoice
+			// Set constant to disallow editing during a situation cycle
+			$situationinvoicelinewithparent = 1;
+		}
+	}
+
 	print '<td class="linecoledit center">';
 	$coldisplay++;
 	if (($line->info_bits & 2) == 2 || !empty($disableedit)) {
@@ -365,7 +373,7 @@ if ($this->statut == 0 && ($object_rights->creer) && $action != 'selectlines') {
 
 	print '<td class="linecoldelete center">';
 	$coldisplay++;
-	if (($line->fk_prev_id == null) && empty($disableremove)) { //La suppression n'est autorisée que si il n'y a pas de ligne dans une précédente situation
+	if (!$situationinvoicelinewithparent && empty($disableremove)) { // For situation invoice, deletion is not possible if there is a parent company.
 		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=ask_deleteline&amp;lineid='.$line->id.'">';
 		print img_delete();
 		print '</a>';

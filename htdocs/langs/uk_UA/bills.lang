@@ -259,6 +259,7 @@ DateMaxPayment=Payment due on
 DateInvoice=Дата рахунку-фактури
 DatePointOfTax=Point of tax
 NoInvoice=Немає рахунків-фактур
+NoOpenInvoice=No open invoice
 ClassifyBill=Класифікувати рахунок-фактуру
 SupplierBillsToPay=Unpaid vendor invoices
 CustomerBillsUnpaid=Несплачені рахунки клієнта
@@ -589,3 +590,4 @@ FacParentLine=Invoice Line Parent
 SituationTotalRayToRest=Remainder to pay without taxe
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=Total progress %d %%
+SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s

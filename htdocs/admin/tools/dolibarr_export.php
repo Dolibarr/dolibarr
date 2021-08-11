@@ -136,7 +136,7 @@ $title = $langs->trans("Backup");
 print load_fiche_titre($title, '', 'title_setup');
 //print_barre_liste($langs->trans("Backup"), '', '', '', '', '', $langs->trans("BackupDesc",DOL_DATA_ROOT), 0, 0, 'title_setup');
 
-print '<div class="center opacitymedium">';
+print '<div class="center">';
 print $langs->trans("BackupDesc", DOL_DATA_ROOT);
 print '</div>';
 print '<br>';
@@ -147,8 +147,11 @@ print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="export_type" value="server" />';
 print '<fieldset id="fieldsetexport"><legend class="legendforfieldsetstep" style="font-size: 3em">1</legend>';
 
+print '<span class="opacitymedium">';
 print $langs->trans("BackupDesc3", $dolibarr_main_db_name).'<br>';
 //print $langs->trans("BackupDescY").'<br>';
+print '</span>';
+
 print '<br>';
 
 print '<div id="backupdatabaseleft" class="fichehalfleft" >';
@@ -157,7 +160,7 @@ $title = $langs->trans("BackupDumpWizard");
 
 print load_fiche_titre($title);
 
-print '<table width="100%" class="'.(!empty($useinecm) ? 'nobordernopadding' : 'liste').' nohover">';
+print '<table class="'.(!empty($useinecm) ? 'nobordernopadding' : 'liste noborderbottom').' nohover centpercent">';
 print '<tr class="liste_titre">';
 print '<td class="liste_titre">';
 print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
@@ -554,8 +557,10 @@ print '<input type="hidden" name="page_y" value="" />';
 
 print '<fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">2</legend>';
 
+print '<span class="opacitymedium">';
 print $langs->trans("BackupDesc2", DOL_DATA_ROOT).'<br>';
 print $langs->trans("BackupDescX").'<br><br>';
+print '</span>';
 
 print '<div id="backupfilesleft" class="fichehalfleft">';
 

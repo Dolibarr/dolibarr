@@ -44,4 +44,4 @@ ValidateOrderFirstBeforeReception=Du må først validere ordren før du kan gjø
 ReceptionsNumberingModules=Nummereringsmodul for mottak
 ReceptionsReceiptModel=Dokumentmaler for mottak
 NoMorePredefinedProductToDispatch=Ingen flere forhåndsdefinerte varer som skal sendes
-
+ReceptionExist=Et mottak finnes

@@ -37,7 +37,7 @@ if (class_exists($keyforclass)) {
 			/*
 			 * case 'sellist':
 			 * $tmp='';
-			 * $tmpparam=unserialize($obj->param); // $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
+			 * $tmpparam=jsonOrUnserialize($obj->param); // $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
 			 * if ($tmpparam['options'] && is_array($tmpparam['options'])) {
 			 * $tmpkeys=array_keys($tmpparam['options']);
 			 * $tmp=array_shift($tmpkeys);

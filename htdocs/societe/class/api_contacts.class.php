@@ -75,7 +75,7 @@ class Contacts extends DolibarrApi
 			throw new RestException(401, 'No permission to read contacts');
 		}
 
-		if ($id == 0) {
+		if ($id === 0) {
 			$result = $this->contact->initAsSpecimen();
 		} else {
 			$result = $this->contact->fetch($id);
@@ -210,7 +210,7 @@ class Contacts extends DolibarrApi
 
 		// Select contacts of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".$this->db->escape($category);
+			$sql .= " AND c.fk_categorie = ".((int) $category);
 			$sql .= " AND c.fk_socpeople = t.rowid ";
 		}
 

@@ -123,6 +123,7 @@ function versioncompare($versionarray1, $versionarray2)
  *	Return version PHP
  *
  *	@return     array               Tableau de version (vermajeur,vermineur,autre)
+ *  @see versioncompare()
  */
 function versionphparray()
 {
@@ -133,6 +134,7 @@ function versionphparray()
  *	Return version Dolibarr
  *
  *	@return     array               Tableau de version (vermajeur,vermineur,autre)
+ *  @see versioncompare()
  */
 function versiondolibarrarray()
 {
@@ -1545,6 +1547,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 		print '<input type="hidden" name="action" value="updateall">';
 	}
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td class="">'.$langs->trans("Description").'</td>';
@@ -1715,6 +1718,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 		}
 	}
 	print '</table>';
+	print '</div>';
 
 	if (!empty($strictw3c) && $strictw3c == 1) {
 		print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';

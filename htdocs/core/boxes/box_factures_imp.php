@@ -165,7 +165,7 @@ class box_factures_imp extends ModeleBoxes
 
 					$late = '';
 					if ($facturestatic->hasDelay()) {
-						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day')));
+						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day', 'tzuserrel')));
 					}
 
 					$this->info_box_contents[$line][] = array(
@@ -182,13 +182,13 @@ class box_factures_imp extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="nowraponall right"',
+						'td' => 'class="nowraponall right amount"',
 						'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
 					);
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($datelimite, 'day'),
+						'text' => dol_print_date($datelimite, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(

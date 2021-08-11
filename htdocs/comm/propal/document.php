@@ -80,6 +80,8 @@ if (!$sortfield) {
 $object = new Propal($db);
 $object->fetch($id, $ref);
 
+$permissiontoadd = $user->rights->propale->creer;
+
 // Security check
 if (!empty($user->socid)) {
 	$socid = $user->socid;
@@ -187,7 +189,7 @@ if ($object->id > 0) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'propal';
-	$permission = $user->rights->propal->creer;
+	$permissiontoadd = $user->rights->propal->creer;
 	$permtoedit = $user->rights->propal->creer;
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

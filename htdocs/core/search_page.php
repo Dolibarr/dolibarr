@@ -20,7 +20,7 @@
 
 /**
  *       \file       htdocs/core/search_page.php
- *       \brief      File to return a page with search boxes
+ *       \brief      File to return a page with the complete search form (all search input fields)
  */
 
 //if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -77,7 +77,7 @@ $hookmanager->initHooks(array('searchform'));
 // Define $searchform
 $searchform = '';
 
-if ($conf->use_javascript_ajax && 1 == 2) {   // select2 is ko with jmobile
+if ($conf->use_javascript_ajax && 1 == 2) {   // select2 is not best with smartphone
 	if (!is_object($form)) {
 		$form = new Form($db);
 	}

@@ -197,6 +197,8 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateall">';
 
 print load_fiche_titre($langs->trans("MemberMainOptions"), '', '');
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -261,6 +263,7 @@ if ($conf->facture->enabled) {
 		print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
 		print '<td>';
 		$selected = (empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) ? '' : $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
+		print img_picto('', 'product', 'class="pictofixedwidth"');
 		$form->select_produits($selected, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', '', 0);
 		print '</td>';
 	}
@@ -268,6 +271,7 @@ if ($conf->facture->enabled) {
 }
 
 print '</table>';
+print '</div>';
 
 print '<div class="center">';
 print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
@@ -338,6 +342,7 @@ if ($resql) {
 
 print load_fiche_titre($langs->trans("MembersDocModules"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -446,6 +451,8 @@ foreach ($dirmodels as $reldir) {
 }
 
 print '</table>';
+print '</div>';
+
 print "<br>";
 
 print dol_get_fiche_end();

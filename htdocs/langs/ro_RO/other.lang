@@ -129,6 +129,7 @@ ClosedByLogin=Utilizatorul care a închis
 FileWasRemoved=Fişier %s a fost şters
 DirWasRemoved=Directorul %s a fost şters
 FeatureNotYetAvailable=Caracteristică care nu este încă disponibilă în versiunea curentă
+FeatureNotAvailableOnDevicesWithoutMouse=Caracteristică indisponibilă pe dispozitivele fără mouse
 FeaturesSupported=Caracteristici disponibile
 Width=Lăţime
 Height=Înălţime
@@ -263,7 +264,7 @@ ContactCreatedByEmailCollector=Contact/adresă creată de colectorul de email-ur
 ProjectCreatedByEmailCollector=Proiect creat de colectorul de email-uri din email-ul cu MSGID %s
 TicketCreatedByEmailCollector=Tichet creat de colectorul de email-uri din email-ul cu MSGID %s
 OpeningHoursFormatDesc=Foloseşte un - pentru a separa orele de lucru.<br>Foloseşte un spaţiu pentru a introduce intervale oarare diferite.<br>Exemplu: 8-12 14-18
-PrefixSession=Prefix pentru ID-ul sesiunii
+SuffixSessionName=Sufix pentru numele sesiunii
 
 ##### Export #####
 ExportsArea=Export date

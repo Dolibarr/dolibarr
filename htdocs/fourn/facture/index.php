@@ -58,8 +58,8 @@ print load_fiche_titre($langs->trans("SupplierInvoicesArea"), '', 'supplier_invo
 print '<div class="fichecenter">';
 
 print '<div class="fichethirdleft">';
-
-print getPurchaseInvoicePieChart($socid);
+print getNumberInvoicesPieChart('suppliers');
+//print getPurchaseInvoicePieChart($socid);
 print '<br>';
 print getDraftSupplierTable($maxDraftCount, $socid);
 
