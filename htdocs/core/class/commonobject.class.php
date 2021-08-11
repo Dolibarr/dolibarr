@@ -4111,7 +4111,7 @@ abstract class CommonObject
 		$sql .= " SET ".$fieldstatus." = ".((int) $status);
 		// If status = 1 = validated, update also fk_user_valid
 		if ($status == 1 && $elementTable == 'expensereport') {
-			$sql .= ", fk_user_valid = ".$user->id;
+			$sql .= ", fk_user_valid = ".((int) $user->id);
 		}
 		$sql .= " WHERE rowid=".((int) $elementId);
 
