@@ -1959,7 +1959,6 @@ if ($resql) {
 						// We print only number
 						print $nbofsalesrepresentative;
 					} elseif ($nbofsalesrepresentative > 0) {
-						$userstatic = new User($db);
 						$j = 0;
 						foreach ($listsalesrepresentatives as $val) {
 							$userstatic->id = $val['id'];
