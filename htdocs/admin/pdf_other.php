@@ -53,6 +53,16 @@ if ($cancel) {
 }
 
 if ($action == 'update') {
+	if (GETPOSTISSET('PROPOSAL_PDF_HIDE_PAYMENTTERM')) {
+    dolibarr_set_const($db, "PROPOSAL_PDF_HIDE_PAYMENTTERM", GETPOST("PROPOSAL_PDF_HIDE_PAYMENTTERM"), 'chaine', 0, '', $conf->entity);
+  }
+	if (GETPOSTISSET('PROPOSAL_PDF_HIDE_PAYMENTMODE')) {
+    dolibarr_set_const($db, "PROPOSAL_PDF_HIDE_PAYMENTMODE", GETPOST("PROPOSAL_PDF_HIDE_PAYMENTMODE"), 'chaine', 0, '', $conf->entity);
+  }
+	if (GETPOSTISSET('MAIN_GENERATE_PROPOSALS_WITH_PICTURE')) {
+    dolibarr_set_const($db, "MAIN_GENERATE_PROPOSALS_WITH_PICTURE", GETPOST("MAIN_GENERATE_PROPOSALS_WITH_PICTURE"), 'chaine', 0, '', $conf->entity);
+  }
+  
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
@@ -102,6 +112,7 @@ if ($conf->use_javascript_ajax) {
 	print $form->selectarray("MAIN_GENERATE_PROPOSALS_WITH_PICTURE", $arrval, $conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE);
 }
 print '</td></tr>';
+
 /*
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING").'</td><td>';
 if ($conf->use_javascript_ajax) {
