@@ -740,11 +740,13 @@ class pdf_strato extends ModelePDFContract
 			}
 
 			// Show recipient frame
-			$pdf->SetTextColor(0, 0, 0);
-			$pdf->SetFont('', '', $default_font_size - 2);
-			$pdf->SetXY($posx + 2, $posy - 5);
-			$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
-			$pdf->SetTextColor(0, 0, 0);
+			if (empty($conf->global->MAIN_PDF_NO_RECIPENT_FRAME)) {
+				$pdf->SetTextColor(0, 0, 0);
+				$pdf->SetFont('', '', $default_font_size - 2);
+				$pdf->SetXY($posx + 2, $posy - 5);
+				$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+				$pdf->SetTextColor(0, 0, 0);
+			}
 
 			// Show recipient name
 			$pdf->SetXY($posx + 2, $posy + 3);
