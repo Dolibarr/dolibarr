@@ -68,7 +68,7 @@ if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
 if (!empty($conf->bom->enabled)) {
-  require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 }
 
 // Load translation files required by the page
