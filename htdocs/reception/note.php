@@ -33,45 +33,29 @@ if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-$langs->load("receptions");
-$langs->load("companies");
-$langs->load("bills");
-$langs->load('deliveries');
-$langs->load('orders');
-$langs->load('stocks');
-$langs->load('other');
-$langs->load('propal');
+$langs->loadLangs(array("receptions", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal'));
 
 $id = (GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
-// Security check
-$socid = '';
-if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, $origin, $origin_id);
-
 $object = new Reception($db);
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
 
-	if (!empty($object->origin))
-	{
+	if (!empty($object->origin)) {
 		$typeobject = $object->origin;
 		$origin = $object->origin;
 		$object->fetch_origin();
 	}
 
 	// Linked documents
-	if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled))
-	{
+	if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled)) {
 		$objectsrc = new Commande($db);
 		$objectsrc->fetch($object->$typeobject->id);
 	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled))
-	{
+	if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled)) {
 		$objectsrc = new Propal($db);
 		$objectsrc->fetch($object->$typeobject->id);
 	}
@@ -79,12 +63,42 @@ if ($id > 0 || !empty($ref))
 
 $permissionnote = $user->rights->reception->creer; // Used by the include of actions_setnotes.inc.php
 
+// Security check
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
+
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('receptionnote'));
+
+if ($origin == 'reception') {
+	$result = restrictedArea($user, $origin, $object->id);
+} else {
+	if ($origin == 'reception') {
+		$result = restrictedArea($user, $origin, $object->id);
+	} else {
+		if ($origin == 'supplierorder' || $origin == 'order_supplier') {
+			$result = restrictedArea($user, 'fournisseur', $origin_id, 'commande_fournisseur', 'commande');
+		} elseif (empty($user->rights->{$origin}->lire) && empty($user->rights->{$origin}->read)) {
+			accessforbidden();
+		}
+	}
+}
+
+
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
+$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+}
 
 
 /*
@@ -95,8 +109,7 @@ llxHeader('', 'Reception');
 
 $form = new Form($db);
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$head = reception_prepare_head($object);
 	print dol_get_fiche_head($head, 'note', $langs->trans("Reception"), -1, 'dollyrevert');
 
@@ -146,7 +159,6 @@ if ($id > 0 || !empty($ref))
 	}
 	$morehtmlref .= '</div>';
 
-	$object->picto = 'sending';
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 

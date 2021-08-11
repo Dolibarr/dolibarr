@@ -29,26 +29,24 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $langs->load("admin");
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 $actionsave = GETPOST("save");
 
 // Sauvegardes parametres
-if ($actionsave)
-{
+if ($actionsave) {
 	$i = 0;
 
 	$db->begin();
 
 	$i += dolibarr_set_const($db, 'WEBSERVICES_KEY', GETPOST("WEBSERVICES_KEY"), 'chaine', 0, '', $conf->entity);
 
-	if ($i >= 1)
-	{
+	if ($i >= 1) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else {
+	} else {
 		$db->rollback();
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
@@ -62,13 +60,16 @@ if ($actionsave)
 llxHeader();
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+
 print load_fiche_titre($langs->trans("WebServicesSetup"), $linkback, 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->trans("WebServicesDesc")."</span><br>\n";
 print "<br>\n";
 
-print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="save">';
+
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
@@ -78,11 +79,12 @@ print "<td>".$langs->trans("Value")."</td>";
 print "<td>&nbsp;</td>";
 print "</tr>";
 
-print '<tr class="impair">';
+print '<tr class="oddeven">';
 print '<td class="fieldrequired">'.$langs->trans("KeyForWebServicesAccess").'</td>';
 print '<td><input type="text" class="flat" id="WEBSERVICES_KEY" name="WEBSERVICES_KEY" value="'.(GETPOST('WEBSERVICES_KEY') ?GETPOST('WEBSERVICES_KEY') : (!empty($conf->global->WEBSERVICES_KEY) ? $conf->global->WEBSERVICES_KEY : '')).'" size="40">';
-if (!empty($conf->use_javascript_ajax))
+if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+}
 print '</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
@@ -115,9 +117,10 @@ $webservices = array(
 
 // WSDL
 print '<u>'.$langs->trans("WSDLCanBeDownloadedHere").':</u><br>';
-foreach ($webservices as $name => $right)
-{
-	if (!empty($right) && !verifCond($right)) continue;
+foreach ($webservices as $name => $right) {
+	if (!empty($right) && !verifCond($right)) {
+		continue;
+	}
 	$url = DOL_MAIN_URL_ROOT.'/webservices/server_'.$name.'.php?wsdl';
 	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 }
@@ -126,9 +129,10 @@ print '<br>';
 
 // Endpoint
 print '<u>'.$langs->trans("EndPointIs").':</u><br>';
-foreach ($webservices as $name => $right)
-{
-	if (!empty($right) && !verifCond($right)) continue;
+foreach ($webservices as $name => $right) {
+	if (!empty($right) && !verifCond($right)) {
+		continue;
+	}
 	$url = DOL_MAIN_URL_ROOT.'/webservices/server_'.$name.'.php';
 	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 }
@@ -138,8 +142,7 @@ print '<br>';
 print '<br>';
 print $langs->trans("OnlyActiveElementsAreShown", DOL_URL_ROOT.'/admin/modules.php');
 
-if (!empty($conf->use_javascript_ajax))
-{
+if (!empty($conf->use_javascript_ajax)) {
 	print "\n".'<script type="text/javascript">';
 	print '$(document).ready(function () {
             $("#generate_token").click(function() {

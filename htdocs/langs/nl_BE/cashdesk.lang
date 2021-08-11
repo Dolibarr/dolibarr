@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - cashdesk
+CashDeskBankCash=Bankrekening (cash)
 CashDeskBankCheque=Bankrekening (cheque)
 CashdeskShowServices=Verkoop van diensten
 SellFinished=Verkoop afgerond
@@ -7,3 +8,4 @@ BankToPay=Betalingsaccount
 ShowCompany=Toon bedrijf
 ShowStock=Toon magazijn
 DolibarrReceiptPrinter=Dolibarr Ontvangsten Printer
+Receipt=Ontvangst

@@ -34,6 +34,11 @@ class FormWebsite
 	 */
 	public $error;
 
+	/**
+	 * var int		A number of lines
+	 */
+	public $num;
+
 
 	/**
 	 *	Constructor
@@ -63,21 +68,17 @@ class FormWebsite
 		$sql .= " WHERE 1 = 1";
 		$sql .= " ORDER BY rowid";
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$out .= '<select class="flat minwidth100" name="'.$htmlname.'" id="'.$htmlname.'">';
-			if ($useempty)
-			{
+			if ($useempty) {
 				$out .= '<option value="-1">&nbsp;</option>';
 			}
 
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($selected == $obj->rowid)
-				{
+				if ($selected == $obj->rowid) {
 					$out .= '<option value="'.$obj->rowid.'" selected>';
 				} else {
 					$out .= '<option value="'.$obj->rowid.'">';
@@ -102,9 +103,10 @@ class FormWebsite
 	 *  @param	string	$selected			Selected value
 	 *  @param  int		$useempty          	1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *  @param  string  $moreattrib         More attributes on HTML select tag
+	 *  @param	int		$addjscombo			Add js combo
 	 * 	@return	void
 	 */
-	public function selectTypeOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '')
+	public function selectTypeOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '', $addjscombo = 0)
 	{
 		global $langs, $conf, $user;
 
@@ -117,23 +119,18 @@ class FormWebsite
 
 		dol_syslog(get_class($this)."::selectTypeOfContainer", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			if ($num)
-			{
-				print '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
-				if ($useempty == 1 || ($useempty == 2 && $num > 1))
-				{
+			if ($num) {
+				print '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer minwidth200" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
+				if ($useempty == 1 || ($useempty == 2 && $num > 1)) {
 					print '<option value="-1">&nbsp;</option>';
 				}
 
-				while ($i < $num)
-				{
+				while ($i < $num) {
 					$obj = $this->db->fetch_object($result);
-					if ($selected == $obj->rowid || $selected == $obj->code)
-					{
+					if ($selected == $obj->rowid || $selected == $obj->code) {
 						print '<option value="'.$obj->code.'" selected>';
 					} else {
 						print '<option value="'.$obj->code.'">';
@@ -143,7 +140,13 @@ class FormWebsite
 					$i++;
 				}
 				print "</select>";
-				if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+				if ($user->admin) {
+					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+				}
+
+				if ($addjscombo) {
+					print ajax_combobox('select'.$htmlname);
+				}
 			} else {
 				print $langs->trans("NoTypeOfPagePleaseEditDictionary");
 			}
@@ -160,9 +163,10 @@ class FormWebsite
 	 *  @param	string	$selected			Selected value
 	 *  @param  int		$useempty          	1=Add an empty value in list
 	 *  @param  string  $moreattrib         More attributes on HTML select tag
+	 *  @param	int		$addjscombo			Add js combo
 	 * 	@return	string						HTML select component with list of type of containers
 	 */
-	public function selectSampleOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '')
+	public function selectSampleOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '', $addjscombo = 0)
 	{
 		global $langs, $conf, $user;
 
@@ -172,30 +176,27 @@ class FormWebsite
 
 		$arrayofsamples = array();
 		$arrayofsamples['empty'] = 'EmptyPage'; // Always this one first
-		foreach ($listofsamples as $sample)
-		{
+		foreach ($listofsamples as $sample) {
 			$reg = array();
-			if (preg_match('/^page-sample-(.*)\.html$/', $sample['name'], $reg))
-			{
+			if (preg_match('/^page-sample-(.*)\.html$/', $sample['name'], $reg)) {
 				$key = $reg[1];
 				$labelkey = ucfirst($key);
-				if ($key == 'empty') $labelkey = 'EmptyPage';
+				if ($key == 'empty') {
+					$labelkey = 'EmptyPage';
+				}
 				$arrayofsamples[$key] = $labelkey;
 			}
 		}
 
 		$out = '';
-		$out .= '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
+		$out .= '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer minwidth200" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
 
-		if ($useempty == 1 || $useempty == 2)
-		{
+		if ($useempty == 1 || $useempty == 2) {
 			$out .= '<option value="-1">&nbsp;</option>';
 		}
 
-		foreach ($arrayofsamples as $key => $val)
-		{
-			if ($selected == $key)
-			{
+		foreach ($arrayofsamples as $key => $val) {
+			if ($selected == $key) {
 				$out .= '<option value="'.$key.'" selected>';
 			} else {
 				$out .= '<option value="'.$key.'">';
@@ -204,6 +205,10 @@ class FormWebsite
 			$out .= '</option>';
 		}
 		$out .= "</select>";
+
+		if ($addjscombo) {
+			$out .= ajax_combobox('select'.$htmlname);
+		}
 
 		return $out;
 	}
@@ -220,40 +225,44 @@ class FormWebsite
 	 *  @param	string		$action			Action on page that use this select list
 	 *  @param	string		$morecss		More CSS
 	 *  @param	array		$excludeids		Exclude some ID in list
-	 * 	@return	string						HTML select component with list of type of containers
+	 * 	@return	string						HTML select component with list of block containers
 	 */
 	public function selectContainer($website, $htmlname = 'pageid', $pageid = 0, $showempty = 0, $action = '', $morecss = 'minwidth200', $excludeids = null)
 	{
-		global $langs;
+		$this->num = 0;
 
 		$atleastonepage = (is_array($website->lines) && count($website->lines) > 0);
 
 		$out = '';
-		if ($atleastonepage && $action != 'editsource')
-		{
+		if ($atleastonepage && $action != 'editsource') {
 			$out .= '<select name="'.$htmlname.'" id="'.$htmlname.'" class="maxwidth300'.($morecss ? ' '.$morecss : '').'">';
 		} else {
 			$out .= '<select name="pageidbis" id="pageid" class="maxwidth300'.($morecss ? ' '.$morecss : '').'" disabled="disabled">';
 		}
 
-		if ($showempty || !$atleastonepage) $out .= '<option value="-1">&nbsp;</option>';
+		if ($showempty || !$atleastonepage) {
+			$out .= '<option value="-1">&nbsp;</option>';
+		}
 
-		if ($atleastonepage)
-		{
-			if (empty($pageid) && $action != 'createcontainer')      // Page id is not defined, we try to take one
-			{
-				$firstpageid = 0; $homepageid = 0;
-				foreach ($website->lines as $key => $valpage)
-				{
-					if (empty($firstpageid)) $firstpageid = $valpage->id;
-					if ($website->fk_default_home && $key == $website->fk_default_home) $homepageid = $valpage->id;
+		if ($atleastonepage) {
+			if (empty($pageid) && $action != 'createcontainer') {      // Page id is not defined, we try to take one
+				$firstpageid = 0;
+				$homepageid = 0;
+				foreach ($website->lines as $key => $valpage) {
+					if (empty($firstpageid)) {
+						$firstpageid = $valpage->id;
+					}
+					if ($website->fk_default_home && $key == $website->fk_default_home) {
+						$homepageid = $valpage->id;
+					}
 				}
 				$pageid = $homepageid ? $homepageid : $firstpageid; // We choose home page and if not defined yet, we take first page
 			}
 
-			foreach ($website->lines as $key => $valpage)
-			{
-				if (is_array($excludeids) && count($excludeids) && in_array($valpage->id, $excludeids)) continue;
+			foreach ($website->lines as $key => $valpage) {
+				if (is_array($excludeids) && count($excludeids) && in_array($valpage->id, $excludeids)) {
+					continue;
+				}
 
 				$valueforoption = '<span class="opacitymedium">['.$valpage->type_container.' '.sprintf("%03d", $valpage->id).']</span> ';
 				$valueforoption .= $valpage->pageurl.' - '.$valpage->title;
@@ -268,17 +277,20 @@ class FormWebsite
 				}
 
 				$out .= '<option value="'.$key.'"';
-				if ($pageid > 0 && $pageid == $key) $out .= ' selected'; // To preselect a value
+				if ($pageid > 0 && $pageid == $key) {
+					$out .= ' selected'; // To preselect a value
+				}
 				$out .= ' data-html="'.dol_escape_htmltag($valueforoption).'"';
 				$out .= '>';
 				$out .= $valueforoption;
 				$out .= '</option>';
+
+				++$this->num;
 			}
 		}
 		$out .= '</select>';
 
-		if ($atleastonepage && $action != 'editsource')
-		{
+		if ($atleastonepage && $action != 'editsource') {
 			$out .= ajax_combobox($htmlname);
 		} else {
 			$out .= '<input type="hidden" name="'.$htmlname.'" value="'.$pageid.'">';

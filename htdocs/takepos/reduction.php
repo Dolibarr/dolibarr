@@ -25,11 +25,21 @@
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
 //if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN', '1');
-if (!defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
-if (!defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
-if (!defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1');
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
 
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -48,19 +58,16 @@ if (empty($user->rights->takepos->run)) {
  */
 
 $invoice = new Facture($db);
-if ($invoiceid > 0)
-{
+if ($invoiceid > 0) {
 	$invoice->fetch($invoiceid);
 } else {
 	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
 	$resql = $db->query($sql);
 	$obj = $db->fetch_object($resql);
-	if ($obj)
-	{
+	if ($obj) {
 		$invoiceid = $obj->rowid;
 	}
-	if (!$invoiceid)
-	{
+	if (!$invoiceid) {
 		$invoiceid = 0; // Invoice does not exist yet
 	} else {
 		$invoice->fetch($invoiceid);
@@ -74,9 +81,9 @@ top_htmlhead($head, '', 0, 0, $arrayofjs, $arrayofcss);
 
 $langs->loadLangs(array('main', 'bills', 'cashdesk'));
 
-if (!empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON)) {
+if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON)) {
 	$htmlReductionPercent = '<span class="fa fa-2x fa-percent"></span>';
-	$htmlReductionAmount = '<span class="fa fa-2x fa-money"></span>';
+	$htmlReductionAmount = '<span class="fa fa-2x fa-money"></span><br>'.$langs->trans('Amount');
 } else {
 	$htmlReductionPercent = $langs->trans('ReductionShort').'<br>%';
 	$htmlReductionAmount = $langs->trans('ReductionShort').'<br>'.$langs->trans('Amount');
@@ -87,111 +94,111 @@ if (!empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON)) {
 <body>
 
 <script>
-    var reductionType ='';
+	var reductionType ='';
 	var reductionTotal = '';
-    var editAction = '';
-    var editNumber = '';
+	var editAction = '';
+	var editNumber = '';
 	var htmlBtnOK = '<span style="font-size: 14pt;">OK</span>';
 	var htmlReductionPercent = '<?php echo dol_escape_js($htmlReductionPercent); ?>';
 	var htmlReductionAmount = '<?php echo dol_escape_js($htmlReductionAmount); ?>';
 
-    /**
-     * Reset values
-     */
-    function Reset()
-    {
-        reductionType = '';
-        reductionTotal = '';
-        editAction = '';
-        editNumber = '';
-        jQuery('#reduction_total').val(reductionTotal);
+	/**
+	 * Reset values
+	 */
+	function Reset()
+	{
+		reductionType = '';
+		reductionTotal = '';
+		editAction = '';
+		editNumber = '';
+		jQuery('#reduction_total').val(reductionTotal);
 		jQuery("#reduction_type_percent").html(htmlReductionPercent);
 		jQuery('#reduction_type_amount').html(htmlReductionAmount);
-    }
+	}
 
-    /**
-     * Edit action
-     *
-     * @param   {string}  number    Number pressed
-     */
-    function Edit(number)
-    {
-        console.log('Edit ' + number);
+	/**
+	 * Edit action
+	 *
+	 * @param   {string}  number    Number pressed
+	 */
+	function Edit(number)
+	{
+		console.log('Edit ' + number);
 
-        if (number === 'p') {
-            if (editAction === 'p' && reductionType === 'percent'){
-                ValidateReduction();
-            } else {
-                editAction = 'p';
-            }
-            reductionType = 'percent';
-        } else if (number === 'a') {
-            if (editAction === 'a' && reductionType === 'amount'){
-                ValidateReduction();
-            } else {
-                editAction = 'a';
-            }
-            reductionType = 'amount';
-        }
+		if (number === 'p') {
+			if (editAction === 'p' && reductionType === 'percent'){
+				ValidateReduction();
+			} else {
+				editAction = 'p';
+			}
+			reductionType = 'percent';
+		} else if (number === 'a') {
+			if (editAction === 'a' && reductionType === 'amount'){
+				ValidateReduction();
+			} else {
+				editAction = 'a';
+			}
+			reductionType = 'amount';
+		}
 
-        if (editAction === 'p'){
+		if (editAction === 'p'){
 			jQuery('#reduction_type_percent').html(htmlBtnOK);
 			jQuery('#reduction_type_amount').html(htmlReductionAmount);
-        } else if (editAction === 'a'){
+		} else if (editAction === 'a'){
 			jQuery('#reduction_type_amount').html(htmlBtnOK);
 			jQuery("#reduction_type_percent").html(htmlReductionPercent);
-        } else {
+		} else {
 			jQuery('#reduction_type_percent').html(htmlReductionPercent);
 			jQuery('#reduction_type_amount').html(htmlReductionAmount);
-        }
-    }
+		}
+	}
 
-    /**
-     * Add a number in reduction input
-     *
-     * @param   {string}    reductionNumber     Number pressed
-     */
-    function AddReduction(reductionNumber)
-    {
-        console.log('AddReduction ' + reductionNumber);
+	/**
+	 * Add a number in reduction input
+	 *
+	 * @param   {string}    reductionNumber     Number pressed
+	 */
+	function AddReduction(reductionNumber)
+	{
+		console.log('AddReduction ' + reductionNumber);
 
-        reductionTotal += String(reductionNumber);
-        jQuery('#reduction_total').val(reductionTotal);
-    }
+		reductionTotal += String(reductionNumber);
+		jQuery('#reduction_total').val(reductionTotal);
+	}
 
-    /**
-     * Validate a reduction
-     */
+	/**
+	 * Validate a reduction
+	 */
 	function ValidateReduction()
 	{
-        console.log('ValidateReduction');
+		console.log('ValidateReduction');
 
-	    if (reductionTotal.length <= 0) {
-            console.error('Error no reduction');
-	        return;
-        }
+		if (reductionTotal.length <= 0) {
+			console.error('Error no reduction');
+			return;
+		}
 
-	    var reductionNumber = parseFloat(reductionTotal);
-	    if (isNaN(reductionNumber)) {
-            console.error('Error not a valid number :', reductionNumber);
-            return;
-        }
+		var reductionNumber = parseFloat(reductionTotal);
+		if (isNaN(reductionNumber)) {
+			console.error('Error not a valid number :', reductionNumber);
+			return;
+		}
 
-	    if (reductionType === 'percent') {
-            var invoiceid = <?php echo ($invoiceid > 0 ? $invoiceid : 0); ?>;
-            parent.$("#poslines").load("invoice.php?action=update_reduction_global&place=<?php echo $place; ?>&number="+reductionNumber+"&invoiceid="+invoiceid, function() {
-                Reset();
-                parent.$.colorbox.close();
-            });
-        } else if (reductionType === 'amount') {
-	        var desc = "<?php echo dol_escape_js($langs->transnoentities('Reduction')); ?>";
-            parent.$("#poslines").load("invoice.php?action=freezone&place=<?php echo $place; ?>&number=-"+reductionNumber+"&desc="+desc, function() {
-                Reset();
-                parent.$.colorbox.close();
-            });
-	    } else {
-	        console.error('Error bad reduction type :', reductionType);
-        }
+		if (reductionType === 'percent') {
+			var invoiceid = <?php echo ($invoiceid > 0 ? $invoiceid : 0); ?>;
+			parent.$("#poslines").load("invoice.php?action=update_reduction_global&place=<?php echo $place; ?>&number="+reductionNumber+"&invoiceid="+invoiceid, function() {
+				Reset();
+				parent.$.colorbox.close();
+			});
+		} else if (reductionType === 'amount') {
+			var desc = "<?php echo dol_escape_js($langs->transnoentities('Reduction')); ?>";
+			parent.$("#poslines").load("invoice.php?action=freezone&place=<?php echo $place; ?>&number=-"+reductionNumber+"&desc="+desc, function() {
+				Reset();
+				parent.$.colorbox.close();
+			});
+		} else {
+			console.error('Error bad reduction type :', reductionType);
+		}
 	}
 </script>
 

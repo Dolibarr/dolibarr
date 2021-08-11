@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012      Charles-François BENKE <charles.fr@benke.fr>
  * Copyright (C) 2005-2017 Laurent Destailleur    <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2015 Frederic France        <frederic.france@free.fr>
+ * Copyright (C) 2014-2020 Frederic France        <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,8 +92,11 @@ class box_lastlogin extends ModeleBoxes
 			'td' => '',
 			'text' => $langs->trans("PreviousConnexion"),
 		);
-		if ($user->datepreviouslogin) $tmp = dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser');
-		else $tmp = $langs->trans("Unknown");
+		if ($user->datepreviouslogin) {
+			$tmp = dol_print_date($user->datepreviouslogin, "dayhour", 'tzuserrel');
+		} else {
+			$tmp = $langs->trans("Unknown");
+		}
 		$this->info_box_contents[$line][1] = array(
 			'td' => '',
 			'text' => $tmp,
@@ -107,10 +110,10 @@ class box_lastlogin extends ModeleBoxes
 	 *  @param	array	$head       Array with properties of box title
 	 *  @param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
-	 *  @return	void
+	 *  @return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)
 	{
-		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }

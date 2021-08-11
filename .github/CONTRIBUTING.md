@@ -4,14 +4,17 @@ How to contribute to Dolibarr
 Bug reports and feature requests
 --------------------------------
 
-<a name="not-a-support-forum"></a>*Note*: Issues are not a support forum. If you need help using the software, please use [the forums](https://www.dolibarr.org/forum).
+<a name="not-a-support-forum"></a>*Note*: **GitHub Issues is not a support forum.** If you have questions about Dolibarr / need help using the software, please use [the forums](https://www.dolibarr.org/forum.php). Forums exist in different languages.
 
-Issues are managed on [GitHub](https://github.com/Dolibarr/dolibarr/issues).
+Issues are managed on [GitHub](https://github.com/Dolibarr/dolibarr/issues). 
+Default **language here is english**. So please prepare your contributions in english.
 
 1. Please [use the search engine](https://help.github.com/articles/searching-issues) to check if nobody's already reported your problem.
 2. [Create an issue](https://help.github.com/articles/creating-an-issue). Choose an appropriate title. Prepend appropriately with Bug or Feature Request.
-4. Tell us the version you are using!
-3. Write a report with as much detail as possible (Use [screenshots](https://help.github.com/articles/issue-attachments) or even screencasts and provide logging and debugging informations whenever possible).
+3. Tell us the version you are using!   (look at  /htdocs/admin/system/dolibarr.php?  and check if you are using the latest version) 
+4. Write a report with as much detail as possible (Use [screenshots](https://help.github.com/articles/issue-attachments) or even screencasts and provide logging and debugging informations whenever possible).
+5. Delete unnecessary submissions.
+6. **Check your Message at Preview before sending.**
 
 
 
@@ -26,7 +29,8 @@ Issues are managed on [GitHub](https://github.com/Dolibarr/dolibarr/issues).
 4. Commit and push your changes.
 5. [Make a pull request](https://help.github.com/articles/creating-a-pull-request).
 
-### <a name="branches"></a>Branches
+<span id="branches" name="branches"></span>
+### Branches
 
 Unless you're fixing a bug, all pull requests should be made against the *develop* branch.
 

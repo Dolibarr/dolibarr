@@ -128,7 +128,6 @@ class Opensurveysondage extends CommonObject
 	const STATUS_CLOSED = 2;
 
 
-
 	/**
 	 *  Constructor
 	 *
@@ -149,6 +148,8 @@ class Opensurveysondage extends CommonObject
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
+		global $conf;
+
 		$error = 0;
 
 		// Clean parameters
@@ -173,7 +174,8 @@ class Opensurveysondage extends CommonObject
 		$sql .= "mailsonde,";
 		$sql .= "allow_comments,";
 		$sql .= "allow_spy,";
-		$sql .= "sujet";
+		$sql .= "sujet,";
+		$sql .= "entity";
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->escape($this->id_sondage)."',";
 		$sql .= " ".(empty($this->description) ? 'NULL' : "'".$this->db->escape($this->description)."'").",";
@@ -182,24 +184,29 @@ class Opensurveysondage extends CommonObject
 		$sql .= " '".$this->db->idate($this->date_fin)."',";
 		$sql .= " ".(int) $this->status.",";
 		$sql .= " '".$this->db->escape($this->format)."',";
-		$sql .= " ".$this->db->escape($this->mailsonde).",";
-		$sql .= " ".$this->db->escape($this->allow_comments).",";
-		$sql .= " ".$this->db->escape($this->allow_spy).",";
-		$sql .= " '".$this->db->escape($this->sujet)."'";
+		$sql .= " ".((int) $this->mailsonde).",";
+		$sql .= " ".((int) $this->allow_comments).",";
+		$sql .= " ".((int) $this->allow_spy).",";
+		$sql .= " '".$this->db->escape($this->sujet)."',";
+		$sql .= " ".((int) $conf->entity);
 		$sql .= ")";
 
 		$this->db->begin();
 
 		   dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		}
 
 		if (!$error && !$notrigger) {
 			global $langs, $conf;
 
 			// Call trigger
 			$result = $this->call_trigger('OPENSURVEY_CREATE', $user);
-			if ($result < 0) $error++;
+			if ($result < 0) {
+				$error++;
+			}
 			// End call triggers
 		}
 
@@ -247,10 +254,8 @@ class Opensurveysondage extends CommonObject
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id_sondage = $obj->id_sondage;
@@ -316,9 +321,9 @@ class Opensurveysondage extends CommonObject
 		$sql .= " date_fin=".(dol_strlen($this->date_fin) != 0 ? "'".$this->db->idate($this->date_fin)."'" : 'null').",";
 		$sql .= " status=".(isset($this->status) ? "'".$this->db->escape($this->status)."'" : "null").",";
 		$sql .= " format=".(isset($this->format) ? "'".$this->db->escape($this->format)."'" : "null").",";
-		$sql .= " mailsonde=".(isset($this->mailsonde) ? $this->db->escape($this->mailsonde) : "null").",";
-		$sql .= " allow_comments=".$this->db->escape($this->allow_comments).",";
-		$sql .= " allow_spy=".$this->db->escape($this->allow_spy);
+		$sql .= " mailsonde=".(isset($this->mailsonde) ? ((int) $this->mailsonde) : "null").",";
+		$sql .= " allow_comments=".((int) $this->allow_comments).",";
+		$sql .= " allow_spy=".((int) $this->allow_spy);
 		$sql .= " WHERE id_sondage='".$this->db->escape($this->id_sondage)."'";
 
 		$this->db->begin();
@@ -333,15 +338,15 @@ class Opensurveysondage extends CommonObject
 		if (!$error && !$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('OPENSURVEY_MODIFY', $user);
-			if ($result < 0) $error++;
+			if ($result < 0) {
+				$error++;
+			}
 			// End call triggers
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -366,8 +371,7 @@ class Opensurveysondage extends CommonObject
 		global $conf, $langs;
 		$error = 0;
 
-		if (empty($numsondage))
-		{
+		if (empty($numsondage)) {
 			$numsondage = $this->id_sondage;
 		}
 
@@ -376,12 +380,13 @@ class Opensurveysondage extends CommonObject
 		if (!$error && !$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('OPENSURVEY_DELETE', $user);
-			if ($result < 0) $error++;
+			if ($result < 0) {
+				$error++;
+			}
 			// End call triggers
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."opensurvey_comments WHERE id_sondage = '".$this->db->escape($numsondage)."'";
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -394,14 +399,14 @@ class Opensurveysondage extends CommonObject
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+			if (!$resql) {
+				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -428,7 +433,9 @@ class Opensurveysondage extends CommonObject
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
 		global $menumanager;
 
-		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
 
@@ -441,14 +448,16 @@ class Opensurveysondage extends CommonObject
 
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-		if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			$add_save_lastsearch_values = 1;
+		}
+		if ($add_save_lastsearch_values) {
+			$url .= '&save_lastsearch_values=1';
+		}
 
 		$linkclose = '';
-		if (empty($notooltip))
-		{
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-			{
+		if (empty($notooltip)) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -463,8 +472,12 @@ class Opensurveysondage extends CommonObject
 		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= $this->ref;
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		}
+		if ($withpicto != 2) {
+			$result .= $this->ref;
+		}
 		$result .= $linkend;
 
 		return $result;
@@ -485,19 +498,19 @@ class Opensurveysondage extends CommonObject
 		$sql .= " WHERE id_sondage = '".$this->db->escape($this->id_sondage)."'";
 		$resql = $this->db->query($sql);
 
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 				$tmp = array('id_users'=>$obj->id_users, 'nom'=>$obj->name, 'reponses'=>$obj->reponses);
 
 				$ret[] = $tmp;
 				$i++;
 			}
-		} else dol_print_error($this->db);
+		} else {
+			dol_print_error($this->db);
+		}
 
 		$this->lines = $ret;
 
@@ -540,14 +553,11 @@ class Opensurveysondage extends CommonObject
 		$sql .= " ORDER BY id_comment";
 		$resql = $this->db->query($sql);
 
-		if ($resql)
-		{
+		if ($resql) {
 			$num_rows = $this->db->num_rows($resql);
 
-			if ($num_rows > 0)
-			{
-				while ($obj = $this->db->fetch_object($resql))
-				{
+			if ($num_rows > 0) {
+				while ($obj = $this->db->fetch_object($resql)) {
 					$comments[] = $obj;
 				}
 			}
@@ -584,7 +594,7 @@ class Opensurveysondage extends CommonObject
 	 */
 	public function deleteComment($id_comment)
 	{
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'opensurvey_comments WHERE id_comment = '.$id_comment.' AND id_sondage = "'.$this->db->escape($this->id_sondage).'"';
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'opensurvey_comments WHERE id_comment = '.((int) $id_comment).' AND id_sondage = "'.$this->db->escape($this->id_sondage).'"';
 		$resql = $this->db->query($sql);
 
 		if (!$resql) {
@@ -639,8 +649,7 @@ class Opensurveysondage extends CommonObject
 		// phpcs:enable
 		global $langs, $conf;
 
-		if (empty($this->labelStatus) || empty($this->labelStatusShort))
-		{
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
@@ -653,10 +662,15 @@ class Opensurveysondage extends CommonObject
 
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_VALIDATED) {
-			if (0) $statusType = 'status1';
-			else $statusType = 'status4';
+			if (0) {
+				$statusType = 'status1';
+			} else {
+				$statusType = 'status4';
+			}
 		}
-		if ($status == self::STATUS_CLOSED) $statusType = 'status6';
+		if ($status == self::STATUS_CLOSED) {
+			$statusType = 'status6';
+		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}

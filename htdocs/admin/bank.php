@@ -34,8 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "companies", "bills", "other", "banks"));
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 $actionsave = GETPOST('save', 'alpha');
@@ -51,8 +52,7 @@ $type = 'bankaccount';
 
 // Order display of bank account
 if ($action == 'setbankorder') {
-	if (dolibarr_set_const($db, "BANK_SHOW_ORDER_OPTION", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity) > 0)
-	{
+	if (dolibarr_set_const($db, "BANK_SHOW_ORDER_OPTION", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity) > 0) {
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
@@ -62,16 +62,14 @@ if ($action == 'setbankorder') {
 
 // Auto report last num releve on conciliate
 if ($action == 'setreportlastnumreleve') {
-	if (dolibarr_set_const($db, "BANK_REPORT_LAST_NUM_RELEVE", 1, 'chaine', 0, '', $conf->entity) > 0)
-	{
+	if (dolibarr_set_const($db, "BANK_REPORT_LAST_NUM_RELEVE", 1, 'chaine', 0, '', $conf->entity) > 0) {
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
 		dol_print_error($db);
 	}
 } elseif ($action == 'unsetreportlastnumreleve') {
-	if (dolibarr_set_const($db, "BANK_REPORT_LAST_NUM_RELEVE", 0, 'chaine', 0, '', $conf->entity) > 0)
-	{
+	if (dolibarr_set_const($db, "BANK_REPORT_LAST_NUM_RELEVE", 0, 'chaine', 0, '', $conf->entity) > 0) {
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
@@ -81,16 +79,14 @@ if ($action == 'setreportlastnumreleve') {
 
 // Colorize movements
 if ($action == 'setbankcolorizemovement') {
-	if (dolibarr_set_const($db, "BANK_COLORIZE_MOVEMENT", 1, 'chaine', 0, '', $conf->entity) > 0)
-	{
+	if (dolibarr_set_const($db, "BANK_COLORIZE_MOVEMENT", 1, 'chaine', 0, '', $conf->entity) > 0) {
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
 		dol_print_error($db);
 	}
 } elseif ($action == 'unsetbankcolorizemovement') {
-	if (dolibarr_set_const($db, "BANK_COLORIZE_MOVEMENT", 0, 'chaine', 0, '', $conf->entity) > 0)
-	{
+	if (dolibarr_set_const($db, "BANK_COLORIZE_MOVEMENT", 0, 'chaine', 0, '', $conf->entity) > 0) {
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
@@ -98,31 +94,34 @@ if ($action == 'setbankcolorizemovement') {
 	}
 }
 
-if ($actionsave)
-{
+if ($actionsave) {
 	$db->begin();
 
 	$i = 1; $errorsaved = 0;
 	$error = 0;
 
 	// Save colors
-	while ($i <= 2)
-	{
+	while ($i <= 2) {
 		$color = GETPOST('BANK_COLORIZE_MOVEMENT_COLOR'.$i, 'alpha');
-		if ($color == '-1') $color = '';
+		if ($color == '-1') {
+			$color = '';
+		}
 
 		$res = dolibarr_set_const($db, 'BANK_COLORIZE_MOVEMENT_COLOR'.$i, $color, 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) $error++;
+		if (!($res > 0)) {
+			$error++;
+		}
 		$i++;
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		$db->rollback();
-		if (empty($errorsaved))	setEventMessages($langs->trans("Error"), null, 'errors');
+		if (empty($errorsaved)) {
+			setEventMessages($langs->trans("Error"), null, 'errors');
+		}
 	}
 }
 
@@ -175,12 +174,12 @@ if ($action == 'set') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->BANKADDON_PDF == "$value")
+		if ($conf->global->BANKADDON_PDF == "$value") {
 			dolibarr_del_const($db, 'BANKADDON_PDF', $conf->entity);
+		}
 	}
-}
-// Set default model
-elseif ($action == 'setdoc') {
+} elseif ($action == 'setdoc') {
+	// Set default model
 	if (dolibarr_set_const($db, "BANKADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
 		// The constant that was read before the new set
 		// We therefore requires a variable to have a coherent view
@@ -247,8 +246,9 @@ while ($i < $nbofbank) {
 	print '<td class="nowrap">';
 	$tmparray = explode(' ', $bankorder[$i][2]);
 	foreach ($tmparray as $key => $val) {
-		if ($key > 0)
+		if ($key > 0) {
 			print ', ';
+		}
 		print $langs->trans($val);
 	}
 	print "</td>\n";
@@ -333,18 +333,22 @@ foreach ($dirmodels as $reldir) {
 							$module = new $classname($db);
 
 							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2)
+							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
 								$modulequalified = 0;
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1)
+							}
+							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
 								$modulequalified = 0;
+							}
 
 							if ($modulequalified) {
 								print '<tr class="oddeven"><td width="100">';
 								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
-								if (method_exists($module, 'info'))
+								if (method_exists($module, 'info')) {
 									print $module->info($langs);
-								else print $module->description;
+								} else {
+									print $module->description;
+								}
 								print '</td>';
 
 								// Active
@@ -391,7 +395,7 @@ foreach ($dirmodels as $reldir) {
 								// Preview
 								print '<td class="center">';
 								if ($module->type == 'pdf') {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
 									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 								}
@@ -436,11 +440,9 @@ if ($conf->global->BANK_COLORIZE_MOVEMENT) {
 
 print "</tr>\n";
 
-if (!empty($conf->global->BANK_COLORIZE_MOVEMENT))
-{
+if (!empty($conf->global->BANK_COLORIZE_MOVEMENT)) {
 	$i = 1;
-	while ($i <= 2)
-	{
+	while ($i <= 2) {
 		$key = $i;
 		$color = 'BANK_COLORIZE_MOVEMENT_COLOR'.$key;
 

@@ -4,12 +4,12 @@ IntracommReportSetup = Oppsett av iIntracommrapport
 IntracommReportAbout = Om intracommreport
 
 # Setup
-INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
+INTRACOMMREPORT_NUM_AGREMENT=Godkjenningsnummer (utstedt av vedleggets CISD)
 INTRACOMMREPORT_TYPE_ACTEUR=Aktørtype
 INTRACOMMREPORT_ROLE_ACTEUR=Aktørrolle
-INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
-INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
-INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Forpliktelsesnivå ved introduksjoner
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Forpliktelsesnivå på forsendelser
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Servicekategori av typen "Porto"
 
 INTRACOMMREPORT_NUM_DECLARATION=Deklarantnummer
 
@@ -31,7 +31,7 @@ IntracommReportTitle=Klargjøring av en XML-fil i ProDouane-format
 
 # List
 IntracommReportList=Liste over genererte deklarasjoner
-IntracommReportNumber=Numero of declaration
+IntracommReportNumber=Antall erklæringer
 IntracommReportPeriod=Analyseperiode
 IntracommReportTypeDeclaration=Type deklarasjon
 IntracommReportDownload=last ned XML-fil

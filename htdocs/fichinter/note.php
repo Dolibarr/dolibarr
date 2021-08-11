@@ -39,7 +39,10 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$hookmanager->initHooks(array('fichinternote'));
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 $object = new Fichinter($db);
@@ -51,7 +54,13 @@ $permissionnote = $user->rights->ficheinter->creer; // Used by the include of ac
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
+$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+}
 
 
 /*
@@ -62,8 +71,7 @@ llxHeader('', $langs->trans("Intervention"));
 
 $form = new Form($db);
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();
 
 	$head = fichinter_prepare_head($object);
@@ -80,12 +88,10 @@ if ($id > 0 || !empty($ref))
 	// Thirdparty
 	$morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 	// Project
-	if (!empty($conf->projet->enabled))
-	{
+	if (!empty($conf->projet->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-		if ($user->rights->commande->creer)
-		{
+		if ($user->rights->commande->creer) {
 			if ($action != 'classify') {
 				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				$morehtmlref .= ' : ';

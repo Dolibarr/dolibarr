@@ -2,6 +2,7 @@
 BillsCustomersUnpaid=Facturas a clientes pendientes de cobro
 CreateCreditNote=Crear factura de abono
 BillShortStatusConverted=Pagada
+ConfirmClassifyPaidPartiallyReasonProductReturned=Productos parcialmente devueltos
 CustomerBillsUnpaid=Facturas a clientes pendientes de cobro
 Statut=Estatuto
 PaymentConditionShortPT_ORDER=Pedido

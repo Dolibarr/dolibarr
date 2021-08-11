@@ -1,40 +1,40 @@
-Module68000Name = Intracomm report
-Module68000Desc = Intracomm report management (Support for French DEB/DES format)
-IntracommReportSetup = Intracommreport module setup
-IntracommReportAbout = About intracommreport
+Module68000Name = Informe intracomm
+Module68000Desc = Xestión de informes intracomm (soporte para o formato francés DEB / DES)
+IntracommReportSetup = Configuración do módulo Intracommreport
+IntracommReportAbout = Acerca de intracommreport
 
 # Setup
-INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
-INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
-INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
-INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
-INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
-INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
+INTRACOMMREPORT_NUM_AGREMENT=Número de aprobación (emitido polo CISD do anexo)
+INTRACOMMREPORT_TYPE_ACTEUR=Tipo de actor
+INTRACOMMREPORT_ROLE_ACTEUR=Rol interpretado polo actor
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Nivel de obriga das presentacións
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Nivel de obriga dos envíos
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Categoría de servizos tipo "Franqueo"
 
-INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+INTRACOMMREPORT_NUM_DECLARATION=Número de declarante
 
 # Menu
-MenuIntracommReport=Intracomm report
-MenuIntracommReportNew=New declaration
+MenuIntracommReport=Informe intracomm
+MenuIntracommReportNew=Nova declaración
 MenuIntracommReportList=Listaxe
 
 # View
-NewDeclaration=New declaration
-Declaration=Declaration
-AnalysisPeriod=Analysis period
-TypeOfDeclaration=Type of declaration
-DEB=Goods exchange declaration (DEB)
-DES=Services exchange declaration (DES)
+NewDeclaration=Nova declaración
+Declaration=Declaracion
+AnalysisPeriod=Período de análise
+TypeOfDeclaration=Tipo de declaración
+DEB=Declaración de cambio de mercadorías (DEB)
+DES=Declaración de intercambio de servizos (DES)
 
 # Export page
-IntracommReportTitle=Preparation of an XML file in ProDouane format
+IntracommReportTitle=Preparación dun ficheiro XML en formato ProAduana
 
 # List
-IntracommReportList=List of generated declarations
-IntracommReportNumber=Numero of declaration
-IntracommReportPeriod=Period of nalysis
-IntracommReportTypeDeclaration=Type of declaration
-IntracommReportDownload=download XML file
+IntracommReportList=Lista de declaracións xeradas
+IntracommReportNumber=Número de declaración
+IntracommReportPeriod=Período de análise
+IntracommReportTypeDeclaration=Tipo de declaración
+IntracommReportDownload=descargar o ficheiro XML
 
 # Invoice
-IntracommReportTransportMode=Transport mode
+IntracommReportTransportMode=Modo de transporte

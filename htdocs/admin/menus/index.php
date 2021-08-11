@@ -31,13 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("other", "admin"));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $dirstandard = array();
 $dirsmartphone = array();
 $dirmenus = array_merge(array("/core/menus/"), (array) $conf->modules_parts['menus']);
-foreach ($dirmenus as $dirmenu)
-{
+foreach ($dirmenus as $dirmenu) {
 	$dirstandard[] = $dirmenu.'standard';
 	$dirsmartphone[] = $dirmenu.'smartphone';
 }
@@ -54,8 +55,12 @@ $menu_handler_smartphone = preg_replace('/(_frontoffice\.php|_menu\.php)/i', '',
 
 $menu_handler = $menu_handler_top;
 
-if (GETPOST("handler_origine")) $menu_handler = GETPOST("handler_origine");
-if (GETPOST("menu_handler"))    $menu_handler = GETPOST("menu_handler");
+if (GETPOST("handler_origine")) {
+	$menu_handler = GETPOST("handler_origine");
+}
+if (GETPOST("menu_handler")) {
+	$menu_handler = GETPOST("menu_handler");
+}
 
 $menu_handler_to_search = preg_replace('/(_backoffice|_frontoffice|_menu)?(\.php)?/i', '', $menu_handler);
 
@@ -64,8 +69,7 @@ $menu_handler_to_search = preg_replace('/(_backoffice|_frontoffice|_menu)?(\.php
  * Actions
  */
 
-if ($action == 'up')
-{
+if ($action == 'up') {
 	$current = array();
 	$previous = array();
 
@@ -77,8 +81,7 @@ if ($action == 'up')
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
 	$i = 0;
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 		$current['rowid'] = $obj->rowid;
 		$current['order'] = $obj->position;
@@ -100,8 +103,7 @@ if ($action == 'up')
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
 	$i = 0;
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 		$previous['rowid'] = $obj->rowid;
 		$previous['order'] = $obj->position;
@@ -109,17 +111,16 @@ if ($action == 'up')
 	}
 
 	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " SET m.position = ".$previous['order'];
-	$sql .= " WHERE m.rowid = ".$current['rowid']; // Up the selected entry
+	$sql .= " SET m.position = ".((int) $previous['order']);
+	$sql .= " WHERE m.rowid = ".((int) $current['rowid']); // Up the selected entry
 	dol_syslog("admin/menus/index.php ".$sql);
 	$db->query($sql);
 	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " SET m.position = ".($current['order'] != $previous['order'] ? $current['order'] : $current['order'] + 1);
-	$sql .= " WHERE m.rowid = ".$previous['rowid']; // Descend celui du dessus
+	$sql .= " SET m.position = ".((int) ($current['order'] != $previous['order'] ? $current['order'] : $current['order'] + 1));
+	$sql .= " WHERE m.rowid = ".((int) $previous['rowid']); // Descend celui du dessus
 	dol_syslog("admin/menus/index.php ".$sql);
 	$db->query($sql);
-} elseif ($action == 'down')
-{
+} elseif ($action == 'down') {
 	$current = array();
 	$next = array();
 
@@ -131,8 +132,7 @@ if ($action == 'up')
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
 	$i = 0;
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 		$current['rowid'] = $obj->rowid;
 		$current['order'] = $obj->position;
@@ -154,8 +154,7 @@ if ($action == 'up')
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
 	$i = 0;
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 		$next['rowid'] = $obj->rowid;
 		$next['order'] = $obj->position;
@@ -163,24 +162,22 @@ if ($action == 'up')
 	}
 
 	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " SET m.position = ".($current['order'] != $next['order'] ? $next['order'] : $current['order'] + 1); // Down the selected entry
-	$sql .= " WHERE m.rowid = ".$current['rowid'];
+	$sql .= " SET m.position = ".((int) ($current['order'] != $next['order'] ? $next['order'] : $current['order'] + 1)); // Down the selected entry
+	$sql .= " WHERE m.rowid = ".((int) $current['rowid']);
 	dol_syslog("admin/menus/index.php ".$sql);
 	$db->query($sql);
 	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m"; // Up the next entry
-	$sql .= " SET m.position = ".$current['order'];
-	$sql .= " WHERE m.rowid = ".$next['rowid'];
+	$sql .= " SET m.position = ".((int) $current['order']);
+	$sql .= " WHERE m.rowid = ".((int) $next['rowid']);
 	dol_syslog("admin/menus/index.php ".$sql);
 	$db->query($sql);
-} elseif ($action == 'confirm_delete' && $confirm == 'yes')
-{
+} elseif ($action == 'confirm_delete' && $confirm == 'yes') {
 	$db->begin();
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
 	$sql .= " WHERE rowid = ".GETPOST('menuId', 'int');
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$db->commit();
 
 		setEventMessages($langs->trans("MenuDeleted"), null, 'mesgs');
@@ -224,11 +221,6 @@ $head[$h][1] = $langs->trans("MenuAdmin");
 $head[$h][2] = 'editor';
 $h++;
 
-$head[$h][0] = DOL_URL_ROOT."/admin/menus/other.php";
-$head[$h][1] = $langs->trans("Miscellaneous");
-$head[$h][2] = 'misc';
-$h++;
-
 print dol_get_fiche_head($head, 'editor', '', -1);
 
 print '<span class="opacitymedium">'.$langs->trans("MenusEditorDesc")."</span><br>\n";
@@ -236,8 +228,7 @@ print "<br>\n";
 
 
 // Confirmation for remove menu entry
-if ($action == 'delete')
-{
+if ($action == 'delete') {
 	$sql = "SELECT m.titre as title";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql .= " WHERE m.rowid = ".GETPOST('menuId', 'int');
@@ -248,8 +239,7 @@ if ($action == 'delete')
 }
 
 $newcardbutton = '';
-if ($user->admin)
-{
+if ($user->admin) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/admin/menus/edit.php?menuId=0&action=create&menu_handler='.urlencode($menu_handler).'&backtopage='.urlencode($_SERVER['PHP_SELF']));
 }
 
@@ -282,8 +272,7 @@ print '<td colspan="2">';
 
 $rangLast = 0;
 $idLast = -1;
-if ($conf->use_javascript_ajax)
-{
+if ($conf->use_javascript_ajax) {
 	/*-------------------- MAIN -----------------------
 	tableau des elements de l'arbre:
 	c'est un tableau a 2 dimensions.
@@ -309,14 +298,14 @@ if ($conf->use_javascript_ajax)
 	$sql .= " ORDER BY m.position, m.rowid"; // Order is position then rowid (because we need a sort criteria when position is same)
 
 	$res  = $db->query($sql);
-	if ($res)
-	{
+	if ($res) {
 		$num = $db->num_rows($res);
 
 		$i = 1;
-		while ($menu = $db->fetch_array($res))
-		{
-			if (!empty($menu['langs'])) $langs->load($menu['langs']);
+		while ($menu = $db->fetch_array($res)) {
+			if (!empty($menu['langs'])) {
+				$langs->load($menu['langs']);
+			}
 			$titre = $langs->trans($menu['titre']);
 
 			$entry = '<table class="nobordernopadding centpercent"><tr><td>';
@@ -325,14 +314,14 @@ if ($conf->use_javascript_ajax)
 			$entry .= '<a class="editfielda marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit('default', 0, 'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> ';
 			$entry .= '<a class="marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> ';
 			$entry .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> ';
-			$entry .= '&nbsp; &nbsp; &nbsp;';
+			$entry .= '&nbsp; ';
 			$entry .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_picto("Up", "1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down", "1downarrow").'</a>';
 			$entry .= '</td></tr></table>';
 
 			$buttons = '<a class="editfielda marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit('default', 0, 'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> ';
 			$buttons .= '<a class="marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> ';
 			$buttons .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> ';
-			$buttons .= '&nbsp; &nbsp; &nbsp;';
+			$buttons .= '&nbsp; ';
 			$buttons .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_picto("Up", "1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down", "1downarrow").'</a>';
 
 			$data[] = array(
@@ -370,14 +359,14 @@ if ($conf->use_javascript_ajax)
 
 	// Process remaining records (records that are not linked to root by any path)
 	$remainingdata = array();
-	foreach ($data as $datar)
-	{
-		if (empty($datar['rowid']) || $tree_recur_alreadyadded[$datar['rowid']]) continue;
+	foreach ($data as $datar) {
+		if (empty($datar['rowid']) || !empty($tree_recur_alreadyadded[$datar['rowid']])) {
+			continue;
+		}
 		$remainingdata[] = $datar;
 	}
 
-	if (count($remainingdata))
-	{
+	if (count($remainingdata)) {
 		print '<table class="noborder centpercent">';
 
 		print '<tr class="liste_titre">';
@@ -387,8 +376,7 @@ if ($conf->use_javascript_ajax)
 
 		print '<tr>';
 		print '<td colspan="2">';
-		foreach ($remainingdata as $datar)
-		{
+		foreach ($remainingdata as $datar) {
 			$father = array('rowid'=>$datar['rowid'], 'title'=>"???", 'mainmenu'=>$datar['fk_mainmenu'], 'leftmenu'=>$datar['fk_leftmenu'], 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
 			//print 'Start with rowid='.$datar['rowid'].' mainmenu='.$father ['mainmenu'].' leftmenu='.$father ['leftmenu'].'<br>'."\n";
 			tree_recur($data, $father, 0, 'iddivjstree'.$datar['rowid'], 1, 1);

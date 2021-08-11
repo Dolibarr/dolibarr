@@ -33,8 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'other', 'ecm'));
@@ -80,7 +81,7 @@ print "<br>\n";
 
 $head = ecm_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'attributes_ecm_files', $langs->trans("ECM"), -1, 'ecm');
+print dol_get_fiche_head($head, 'attributes_ecm_files', '', -1, '');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
@@ -95,23 +96,14 @@ if ($action != 'create' && $action != 'edit') {
 }
 
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Creation of an optional field                                              */
-/*                                                                            */
-/* ************************************************************************** */
-
+// Creation of an optional field
 if ($action == 'create') {
 	print '<br><div id="newattrib"></div>';
 	print load_fiche_titre($langs->trans('NewAttribute'));
 	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
 }
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Edition of an optional field                                                */
-/*                                                                            */
-/* ************************************************************************** */
+// Edition of an optional field
 if ($action == 'edit' && !empty($attrname)) {
 	print "<br>";
 	print load_fiche_titre($langs->trans("FieldEdition", $attrname));

@@ -30,7 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
 
 // Security check
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $langs->loadLangs(array("admin", "cashdesk", "commercial"));
 
@@ -38,8 +40,7 @@ $langs->loadLangs(array("admin", "cashdesk", "commercial"));
  * Actions
  */
 
-if (GETPOST('action', 'alpha') == 'set')
-{
+if (GETPOST('action', 'alpha') == 'set') {
 	$db->begin();
 
 	$res = dolibarr_set_const($db, "TAKEPOS_COLOR_THEME", GETPOST('TAKEPOS_COLOR_THEME', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -47,18 +48,18 @@ if (GETPOST('action', 'alpha') == 'set')
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
- 	if (!$error)
-	{
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		$db->rollback();
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif (GETPOST('action', 'alpha') == 'setmethod')
-{
+} elseif (GETPOST('action', 'alpha') == 'setmethod') {
 	dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity);
 }
 

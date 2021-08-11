@@ -36,14 +36,15 @@ $id = GETPOST('id', 'int');
 
 // Security check
 $socid = 0;
-if ($user->socid > 0) $socid = $user->socid;
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
 $feature2 = 'user';
 $result = restrictedArea($user, 'user', $id, 'user', $feature2);
 
 
 $result = $user2->fetch($id);
-if ($result <= 0)
-{
+if ($result <= 0) {
 	dol_print_error($user2->error);
 	exit;
 }
@@ -51,8 +52,7 @@ if ($result <= 0)
 $physicalperson = 1;
 
 $company = new Societe($db);
-if ($user2->socid)
-{
+if ($user2->socid) {
 	$result = $company->fetch($user2->socid);
 }
 
@@ -61,7 +61,7 @@ $v = new vCard();
 $v->setProdId('Dolibarr '.DOL_VERSION);
 
 $v->setUid('DOLIBARR-USERID-'.$user2->id);
-$v->setName($user2->lastname, $user2->firstname, "", $user2->civility, "");
+$v->setName($user2->lastname, $user2->firstname, "", $user2->civility_code, "");
 $v->setFormattedName($user2->getFullName($langs, 1));
 
 $v->setPhoneNumber($user2->phone_pro, "TYPE=WORK;VOICE");
@@ -79,33 +79,32 @@ $v->setNote($user2->note);
 $v->setTitle($user2->poste);
 
 // Data from linked company
-if ($company->id)
-{
+if ($company->id) {
 	$v->setURL($company->url, "TYPE=WORK");
-	if (!$user2->phone_pro) $v->setPhoneNumber($company->phone, "TYPE=WORK;VOICE");
-	if (!$user2->fax)       $v->setPhoneNumber($company->fax, "TYPE=WORK;FAX");
-	if (!$user2->zip)       $v->setAddress("", "", $company->address, $company->town, $company->state, $company->zip, $company->country, "TYPE=WORK;POSTAL");
+	if (!$user2->phone_pro) {
+		$v->setPhoneNumber($company->phone, "TYPE=WORK;VOICE");
+	}
+	if (!$user2->fax) {
+		$v->setPhoneNumber($company->fax, "TYPE=WORK;FAX");
+	}
+	if (!$user2->zip) {
+		$v->setAddress("", "", $company->address, $company->town, $company->state, $company->zip, $company->country, "TYPE=WORK;POSTAL");
+	}
 
 	// when company e-mail is empty, use only user e-mail
-	if (empty(trim($company->email)))
-	{
+	if (empty(trim($company->email))) {
 		// was set before, don't set twice
-	}
-	// when user e-mail is empty, use only company e-mail
-	elseif (empty(trim($user2->email)))
-	{
+	} elseif (empty(trim($user2->email))) {
+		// when user e-mail is empty, use only company e-mail
 		$v->setEmail($company->email);
-	}
-	// when e-mail domain of user and company are the same, use user e-mail at first (and company e-mail at second)
-	elseif (strtolower(end(explode("@", $user2->email))) == strtolower(end(explode("@", $company->email))))
-	{
+	} elseif (strtolower(end(explode("@", $user2->email))) == strtolower(end(explode("@", $company->email)))) {
+		// when e-mail domain of user and company are the same, use user e-mail at first (and company e-mail at second)
 		$v->setEmail($user2->email);
 
 		// support by Microsoft Outlook (2019 and possible earlier)
 		$v->setEmail($company->email, 'INTERNET');
-	}
-	// when e-mail of user and company complete different use company e-mail at first (and user e-mail at second)
-	else {
+	} else {
+		// when e-mail of user and company complete different use company e-mail at first (and user e-mail at second)
 		$v->setEmail($company->email);
 
 		// support by Microsoft Outlook (2019 and possible earlier)
@@ -113,12 +112,16 @@ if ($company->id)
 	}
 
 	// Si user lie a un tiers non de type "particulier"
-	if ($user2->typent_code != 'TE_PRIVATE') $v->setOrg($company->name);
+	if ($user2->typent_code != 'TE_PRIVATE') {
+		$v->setOrg($company->name);
+	}
 }
 
 // Personal informations
 $v->setPhoneNumber($user2->phone_perso, "TYPE=HOME;VOICE");
-if ($user2->birth) $v->setBirthday($user2->birth);
+if ($user2->birth) {
+	$v->setBirthday($user2->birth);
+}
 
 $db->close();
 

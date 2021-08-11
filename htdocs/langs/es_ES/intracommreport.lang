@@ -1,5 +1,5 @@
 Module68000Name = Informe intracomunitario
-Module68000Desc = Gestión de informes intracomm (soporte para formato francés DEB / DES)
+Module68000Desc = Gestión de informe intracomunitario (soporte para formato francés DEB / DES)
 IntracommReportSetup = Configuración del módulo de intracommreport
 IntracommReportAbout = Acerca de intracommreport
 
@@ -32,7 +32,7 @@ IntracommReportTitle=Preparación de un archivo XML en formato ProDouane
 # List
 IntracommReportList=Lista de declaraciones generadas
 IntracommReportNumber=Número de declaración
-IntracommReportPeriod=Período de análisis
+IntracommReportPeriod=Periodo de análisis
 IntracommReportTypeDeclaration=Tipo de declaración
 IntracommReportDownload=descargar archivo XML
 

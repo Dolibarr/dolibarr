@@ -41,6 +41,8 @@ class box_graph_invoices_permonth extends ModeleBoxes
 	public $info_box_head = array();
 	public $info_box_contents = array();
 
+	public $widgettype = 'graph';
+
 
 	/**
 	 *  Constructor
@@ -75,7 +77,9 @@ class box_graph_invoices_permonth extends ModeleBoxes
 		//$facturestatic=new Facture($this->db);
 
 		$startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1;
-		if (empty($conf->global->GRAPH_USE_FISCAL_YEAR)) $startmonth = 1;
+		if (empty($conf->global->GRAPH_USE_FISCAL_YEAR)) {
+			$startmonth = 1;
+		}
 
 		$text = $langs->trans("BoxCustomersInvoicesPerMonth", $max);
 		$this->info_box_head = array(
@@ -92,11 +96,14 @@ class box_graph_invoices_permonth extends ModeleBoxes
 		$dir = ''; // We don't need a path because image file will not be saved into disk
 		$prefix = '';
 		$socid = 0;
-		if ($user->socid) $socid = $user->socid;
-		if (!$user->rights->societe->client->voir || $socid) $prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
+		if ($user->socid) {
+			$socid = $user->socid;
+		}
+		if (!$user->rights->societe->client->voir || $socid) {
+			$prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
+		}
 
-		if ($user->rights->facture->lire)
-		{
+		if ($user->rights->facture->lire) {
 			$mesg = '';
 
 			$param_year = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
@@ -106,21 +113,26 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 			$autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
-			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode, $autosetarray))
-			{
+			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode, $autosetarray)) {
 				$endyear = GETPOST($param_year, 'int');
 				$shownb = GETPOST($param_shownb, 'alpha');
 				$showtot = GETPOST($param_showtot, 'alpha');
 			} else {
-				$tmparray = json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode], true);
-				$endyear = $tmparray['year'];
-				$shownb = $tmparray['shownb'];
-				$showtot = $tmparray['showtot'];
+				$tmparray = (!empty($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode]) ? json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode], true) : array());
+				$endyear = (!empty($tmparray['year']) ? $tmparray['year'] : '');
+				$shownb = (!empty($tmparray['shownb']) ? $tmparray['shownb'] : '');
+				$showtot = (!empty($tmparray['showtot']) ? $tmparray['showtot'] : '');
 			}
-			if (empty($shownb) && empty($showtot)) { $shownb = 1; $showtot = 1; }
+			if (empty($shownb) && empty($showtot)) {
+				$shownb = 1;
+				$showtot = 1;
+			}
 			$nowarray = dol_getdate(dol_now(), true);
-			if (empty($endyear)) $endyear = $nowarray['year'];
-			$startyear = $endyear - 1;
+			if (empty($endyear)) {
+				$endyear = $nowarray['year'];
+			}
+			$startyear = $endyear - (empty($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH) ? 2 : ($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH - 1));
+
 			$mode = 'customer';
 			$WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '256' : '320';
 			$HEIGHT = '192';
@@ -128,28 +140,27 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			$stats = new FactureStats($this->db, $socid, $mode, 0);
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
-			if ($shownb)
-			{
+			if ($shownb) {
 				$data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), ($WIDTH < 300 ? 2 : 0), $startmonth);
 
 				$filenamenb = $dir."/".$prefix."invoicesnbinyear-".$endyear.".png";
 				// default value for customer mode
 				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$endyear.'.png';
-				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicessuppliernbinyear-'.$endyear.'.png';
+				if ($mode == 'supplier') {
+					$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicessuppliernbinyear-'.$endyear.'.png';
+				}
 
 				$px1 = new DolGraph();
 				$mesg = $px1->isGraphKo();
-				if (!$mesg)
-				{
+				if (!$mesg) {
 					$langs->load("bills");
 
 					$px1->SetData($data1);
 					unset($data1);
-					$i = $startyear; $legend = array();
-					while ($i <= $endyear)
-					{
-						if ($startmonth != 1)
-						{
+					$i = $startyear;
+					$legend = array();
+					while ($i <= $endyear) {
+						if ($startmonth != 1) {
 							$legend[] = sprintf("%d/%d", $i - 2001, $i - 2000);
 						} else {
 							$legend[] = $i;
@@ -173,28 +184,27 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			}
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
-			if ($showtot)
-			{
+			if ($showtot) {
 				$data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), ($WIDTH < 300 ? 2 : 0), $startmonth);
 
 				$filenamenb = $dir."/".$prefix."invoicesamountinyear-".$endyear.".png";
 				// default value for customer mode
 				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesamountinyear-'.$endyear.'.png';
-				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicessupplieramountinyear-'.$endyear.'.png';
+				if ($mode == 'supplier') {
+					$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicessupplieramountinyear-'.$endyear.'.png';
+				}
 
 				$px2 = new DolGraph();
 				$mesg = $px2->isGraphKo();
-				if (!$mesg)
-				{
+				if (!$mesg) {
 					$langs->load("bills");
 
 					$px2->SetData($data2);
 					unset($data2);
-					$i = $startyear; $legend = array();
-					while ($i <= $endyear)
-					{
-						if ($startmonth != 1)
-						{
+					$i = $startyear;
+					$legend = array();
+					while ($i <= $endyear) {
+						if ($startmonth != 1) {
 							$legend[] = sprintf("%d/%d", $i - 2001, $i - 2000);
 						} else {
 							$legend[] = $i;
@@ -216,14 +226,12 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				}
 			}
 
-			if (empty($conf->use_javascript_ajax))
-			{
+			if (empty($conf->use_javascript_ajax)) {
 				$langs->load("errors");
 				$mesg = $langs->trans("WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs");
 			}
 
-			if (!$mesg)
-			{
+			if (!$mesg) {
 				$stringtoshow = '';
 				$stringtoshow .= '<script type="text/javascript" language="javascript">
 					jQuery(document).ready(function() {
@@ -246,20 +254,21 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				$stringtoshow .= '<input class="reposition inline-block valigntextbottom" type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', '', 1).'">';
 				$stringtoshow .= '</form>';
 				$stringtoshow .= '</div>';
-				if ($shownb && $showtot)
-				{
+				if ($shownb && $showtot) {
 					$stringtoshow .= '<div class="fichecenter">';
 					$stringtoshow .= '<div class="fichehalfleft">';
 				}
-				if ($shownb) $stringtoshow .= $px1->show();
-				if ($shownb && $showtot)
-				{
+				if ($shownb) {
+					$stringtoshow .= $px1->show();
+				}
+				if ($shownb && $showtot) {
 					$stringtoshow .= '</div>';
 					$stringtoshow .= '<div class="fichehalfright">';
 				}
-				if ($showtot) $stringtoshow .= $px2->show();
-				if ($shownb && $showtot)
-				{
+				if ($showtot) {
+					$stringtoshow .= $px2->show();
+				}
+				if ($shownb && $showtot) {
 					$stringtoshow .= '</div>';
 					$stringtoshow .= '</div>';
 				}
@@ -269,8 +278,8 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

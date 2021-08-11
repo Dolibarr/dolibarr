@@ -21,7 +21,7 @@
  *
  *  \file       htdocs/core/modules/modEmailCollector.class.php
  *  \ingroup    emailcollector
- *  \brief      Description and activation file for module emailcollector
+ *  \brief      Description and activation file for the module emailcollector
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -91,7 +91,7 @@ class modEmailCollector extends DolibarrModules
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("admin");
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(7, 0); // Minimum version of Dolibarr required by module
 		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
@@ -108,8 +108,7 @@ class modEmailCollector extends DolibarrModules
 		);
 
 
-		if (!isset($conf->emailcollector) || !isset($conf->emailcollector->enabled))
-		{
+		if (!isset($conf->emailcollector) || !isset($conf->emailcollector->enabled)) {
 			$conf->emailcollector = new stdClass();
 			$conf->emailcollector->enabled = 0;
 		}
@@ -147,19 +146,19 @@ class modEmailCollector extends DolibarrModules
 		// Dictionaries
 		$this->dictionaries = array();
 		/* Example:
-        $this->dictionaries=array(
-            'langs'=>'mylangfile@dav',
-            'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
-            'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
-            'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),	// Request to select fields
-            'tabsqlsort'=>array("label ASC","label ASC","label ASC"),																					// Sort order
-            'tabfield'=>array("code,label","code,label","code,label"),																					// List of fields (result of select to show dictionary)
-            'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
-            'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
-            'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
-            'tabcond'=>array($conf->dav->enabled,$conf->dav->enabled,$conf->dav->enabled)												// Condition to show each dictionary
-        );
-        */
+		$this->dictionaries=array(
+			'langs'=>'mylangfile@dav',
+			'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
+			'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
+			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),	// Request to select fields
+			'tabsqlsort'=>array("label ASC","label ASC","label ASC"),																					// Sort order
+			'tabfield'=>array("code,label","code,label","code,label"),																					// List of fields (result of select to show dictionary)
+			'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
+			'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
+			'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
+			'tabcond'=>array($conf->dav->enabled,$conf->dav->enabled,$conf->dav->enabled)												// Condition to show each dictionary
+		);
+		*/
 
 
 		// Boxes/Widgets
@@ -304,7 +303,9 @@ class modEmailCollector extends DolibarrModules
 				$sql[] = $sqlforexampleFilterA3;
 				$sql[] = $sqlforexampleA4;
 			}
-		} else dol_print_error($this->db);
+		} else {
+			dol_print_error($this->db);
+		}
 
 		$tmpsql = "SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_Out' and entity = ".$conf->entity;
 		$tmpresql = $this->db->query($tmpsql);
@@ -313,7 +314,7 @@ class modEmailCollector extends DolibarrModules
 				$descriptionA1 = 'This collector will scan your mailbox "Sent" directory to find emails that was sent as an answer of another email directly from your email software and not from Dolibarr. If such an email is found, the event of answer is recorded into Dolibarr.';
 
 				$sqlforexampleA1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
-				$sqlforexampleA1 .= " VALUES (".$conf->entity.", 'Collect_Responses_Out', 'Example to collect answers to emails done from email software', '".$this->db->escape($descriptionA1)."', 'Sent', '".$this->db->idate(dol_now())."', ".$user->id.", 0)";
+				$sqlforexampleA1 .= " VALUES (".$conf->entity.", 'Collect_Responses_Out', 'Example to collect answers to emails done from your external email software', '".$this->db->escape($descriptionA1)."', 'Sent', '".$this->db->idate(dol_now())."', ".$user->id.", 0)";
 
 				$sqlforexampleFilterA1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
 				$sqlforexampleFilterA1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_Out' and entity = ".$conf->entity."), 'isanswer', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
@@ -333,10 +334,10 @@ class modEmailCollector extends DolibarrModules
 		$tmpresql = $this->db->query($tmpsql);
 		if ($tmpresql) {
 			if ($this->db->num_rows($tmpresql) == 0) {
-				$descriptionB1 = 'This collector will scan your mailbox to find all emails that are an answer of an email sent from your application. An event (Module Agenda must be enabled) with the email response will be recorded at the good place. For example, if your send a commercial proposal, order, invoice or message for a ticket by email from the application, and your customer answers your email, the system will automatically find the answer and add it into your ERP.';
+				$descriptionB1 = 'This collector will scan your mailbox to find all emails that are an answer of an email sent from your application. An event (Module Agenda must be enabled) with the email response will be recorded at the good place. For example, if your send a commercial proposal, order, invoice or message for a ticket by email from the application, and your customer answers your email, the system will automatically catch the answer and add it into your ERP.';
 
 				$sqlforexampleB1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
-				$sqlforexampleB1 .= " VALUES (".$conf->entity.", 'Collect_Responses_In', 'Example to collect any input email responses', '".$this->db->escape($descriptionB1)."', 'INBOX', '".$this->db->idate(dol_now())."', ".$user->id.", 0)";
+				$sqlforexampleB1 .= " VALUES (".$conf->entity.", 'Collect_Responses_In', 'Example to collect any received email that is a response of an email sent from Dolibarr', '".$this->db->escape($descriptionB1)."', 'INBOX', '".$this->db->idate(dol_now())."', ".$user->id.", 0)";
 				$sqlforexampleB2 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
 				$sqlforexampleB2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_In' and entity = ".$conf->entity."), 'isanswer', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
 				$sqlforexampleB3 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectoraction (fk_emailcollector, type, date_creation, fk_user_creat, status)";
@@ -346,7 +347,9 @@ class modEmailCollector extends DolibarrModules
 				$sql[] = $sqlforexampleB2;
 				$sql[] = $sqlforexampleB3;
 			}
-		} else dol_print_error($this->db);
+		} else {
+			dol_print_error($this->db);
+		}
 
 		$tmpsql = "SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".$conf->entity;
 		$tmpresql = $this->db->query($tmpsql);
@@ -375,7 +378,9 @@ class modEmailCollector extends DolibarrModules
 				$sql[] = $sqlforexampleFilterC3;
 				$sql[] = $sqlforexampleC4;
 			}
-		} else dol_print_error($this->db);
+		} else {
+			dol_print_error($this->db);
+		}
 
 		$tmpsql = "SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".$conf->entity;
 		$tmpresql = $this->db->query($tmpsql);
@@ -403,7 +408,9 @@ class modEmailCollector extends DolibarrModules
 				$sql[] = $sqlforexampleFilterC3;
 				$sql[] = $sqlforexampleC4;
 			}
-		} else dol_print_error($this->db);
+		} else {
+			dol_print_error($this->db);
+		}
 
 		return $this->_init($sql, $options);
 	}

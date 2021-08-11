@@ -60,7 +60,7 @@ CronErrEndDateStartDt=End date cannot be before start date
 StatusAtInstall=Status at module installation
 CronStatusActiveBtn=Schedule
 CronStatusInactiveBtn=Disable
-CronTaskInactive=This job is disabled
+CronTaskInactive=This job is disabled (not scheduled)
 CronId=Id
 CronClassFile=Filename with class
 CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For example to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
@@ -85,3 +85,7 @@ MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression 
 WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.
 DATAPOLICYJob=Data cleaner and anonymizer
 JobXMustBeEnabled=Job %s must be enabled
+# Cron Boxes
+LastExecutedScheduledJob=Last executed scheduled job
+NextScheduledJobExecute=Next scheduled job to execute
+NumberScheduledJobError=Number of scheduled jobs in error

@@ -9,10 +9,11 @@ ConfirmDeleteEstablishment=Are you sure you wish to delete this establishment?
 OpenEtablishment=Avaa laitos
 CloseEtablishment=Sulje laitos
 # Dictionary
-DictionaryPublicHolidays=HRM - Public holidays
+DictionaryPublicHolidays=Leave - Public holidays
 DictionaryDepartment=HRM - Osastolista
 DictionaryFunction=HRM - Job positions
 # Module
 Employees=Työntekijät
 Employee=Työntekijä
 NewEmployee=Uusi työntekijä
+ListOfEmployees=List of employees

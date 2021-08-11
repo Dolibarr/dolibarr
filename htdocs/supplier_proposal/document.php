@@ -36,7 +36,7 @@ if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 // Load translation files required by the page
-$langs->loadLangs(array('compta', 'other'));
+$langs->loadLangs(array('compta', 'supplier_proposal', 'other'));
 
 $action		= GETPOST('action', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
@@ -45,8 +45,7 @@ $ref		= GETPOST('ref', 'alpha');
 
 // Security check
 $socid = '';
-if (!empty($user->socid))
-{
+if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'supplier_proposal', $id);
@@ -56,33 +55,38 @@ $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "ASC";
-if (!$sortfield) $sortfield = "name";
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+if (!$sortfield) {
+	$sortfield = "name";
+}
 
 $object = new SupplierProposal($db);
 $object->fetch($id, $ref);
-if ($object->id > 0)
-{
+if ($object->id > 0) {
 	$object->fetch_thirdparty();
 	$upload_dir = $conf->supplier_proposal->dir_output.'/'.dol_sanitizeFileName($object->ref);
-	include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 }
 
 
 /*
  * View
  */
-
-llxHeader('', $langs->trans('CommRequest'), 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur');
+$title = $langs->trans('CommRequest')." - ".$langs->trans('Documents');
+$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 
-if ($object->id > 0)
-{
+if ($object->id > 0) {
 	$upload_dir = $conf->supplier_proposal->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
 	$head = supplier_proposal_prepare_head($object);
@@ -91,8 +95,7 @@ if ($object->id > 0)
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
 	$totalsize = 0;
-	foreach ($filearray as $key => $file)
-	{
+	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
 	}
 
@@ -108,12 +111,10 @@ if ($object->id > 0)
 	// Thirdparty
 	$morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 	// Project
-	if (!empty($conf->projet->enabled))
-	{
+	if (!empty($conf->projet->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-		if ($user->rights->supplier_proposal->creer)
-		{
+		if ($user->rights->supplier_proposal->creer) {
 			if ($action != 'classify') {
 				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				$morehtmlref .= ' : ';
@@ -162,10 +163,10 @@ if ($object->id > 0)
 	print dol_get_fiche_end();
 
 	$modulepart = 'supplier_proposal';
-	$permission = $user->rights->supplier_proposal->creer;
+	$permissiontoadd = $user->rights->supplier_proposal->creer;
 	$permtoedit = $user->rights->supplier_proposal->creer;
 	$param = '&id='.$object->id;
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	print $langs->trans("ErrorUnknown");
 }

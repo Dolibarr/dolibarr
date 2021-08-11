@@ -1,5 +1,5 @@
 const admin_username = process.env.ADMIN_USERNAME || 'admin';
-const admin_password = process.env.ADMIN_PASSWORD || 'password';
+const admin_password = process.env.ADMIN_PASSWORD || 'admin';
 const launch_url = process.env.LAUNCH_URL || 'http://localhost/dolibarr/htdocs/';
 module.exports = {
 	page_objects_path : './test/acceptance/pageObjects/', // jshint ignore:line

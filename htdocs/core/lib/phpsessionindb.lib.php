@@ -19,7 +19,7 @@
 /**
  *  \file		htdocs/core/lib/phpsessionindb.lib.php
  *  \ingroup    core
- *  \brief		Set function handlers for PHP session management in DB
+ *  \brief		Set function handlers for PHP session management in DB.
  */
 
 // The session handler file must be included just after the call of the master.inc.php into main.inc.php
@@ -150,7 +150,7 @@ function dolSessionGC($max_lifetime)
 
 	$time_stamp = dol_now();
 
-	$delete_query =	"DELETE FROM ".MAIN_DB_PREFIX."session";
+	$delete_query = "DELETE FROM ".MAIN_DB_PREFIX."session";
 	$delete_query .= " WHERE last_accessed < '".$dbsession->idate($time_stamp - $max_lifetime)."'";
 
 	$resql = $dbsession->query($delete_query);

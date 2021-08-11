@@ -30,17 +30,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 $langs->loadLangs(array("admin", "compta"));
 
 // Security check
-if ($user->socid > 0)
+if ($user->socid > 0) {
 	accessforbidden();
-if (!$user->rights->accounting->fiscalyear->write)
+}
+if (!$user->rights->accounting->fiscalyear->write) {
 	accessforbidden();
+}
 
 $id = GETPOST('id', 'int');
 
+
 // View
+
 $title = $langs->trans("Fiscalyear")." - ".$langs->trans("Info");
-$helpurl = "";
-llxHeader("", $title, $helpurl);
+
+$help_url = "EN:Module_Double_Entry_Accounting";
+
+llxHeader('', $title, $help_url);
 
 if ($id) {
 	$object = new Fiscalyear($db);

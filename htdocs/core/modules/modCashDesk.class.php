@@ -20,7 +20,7 @@
  *      \brief      Module to manage points of sale
  *      \file       htdocs/core/modules/modCashDesk.class.php
  *      \ingroup    pos
- *      \brief      File to enable/disable module Point Of Sales
+ *      \brief      Description and activation file for the module Point Of Sales
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -51,7 +51,7 @@ class modCashDesk extends DolibarrModules
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "CashDesk module";
 
-		$this->version = 'dolibarr';
+		$this->version = 'deprecated';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->picto = 'cash-register';
@@ -66,7 +66,7 @@ class modCashDesk extends DolibarrModules
 		$this->hidden = false; // A condition to hide module
 		$this->depends = array('always'=>"modBanque", 'always'=>"modFacture", 'always'=>"modProduct", 'FR'=>'modBlockedLog'); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(2, 4); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("cashdesk");
 		$this->warnings_activation = array('FR'=>'WarningNoteModulePOSForFrenchLaw'); // Warning to show when we activate module. array('always'='text') or array('FR'='text')
@@ -98,6 +98,8 @@ class modCashDesk extends DolibarrModules
 									'type'=>'top', // This is a Top menu entry
 									'titre'=>'PointOfSaleShort',
 									'mainmenu'=>'cashdesk',
+									'leftmenu'=>'',
+									'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
 									'url'=>'/cashdesk/index.php?user=__USER_LOGIN__',
 									'langs'=>'cashdesk', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>900,

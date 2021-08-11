@@ -67,12 +67,15 @@ class MenuManager
 		global $conf, $user, $langs;
 
 		// We save into session the main menu selected
-		if (GETPOSTISSET("mainmenu")) $_SESSION["mainmenu"] = GETPOST("mainmenu", 'aZ09');
-		if (GETPOSTISSET("idmenu"))   $_SESSION["idmenu"] = GETPOST("idmenu", 'int');
+		if (GETPOSTISSET("mainmenu")) {
+			$_SESSION["mainmenu"] = GETPOST("mainmenu", 'aZ09');
+		}
+		if (GETPOSTISSET("idmenu")) {
+			$_SESSION["idmenu"] = GETPOST("idmenu", 'int');
+		}
 
 		// Read now mainmenu and leftmenu that define which menu to show
-		if (GETPOSTISSET("mainmenu"))
-		{
+		if (GETPOSTISSET("mainmenu")) {
 			// On sauve en session le menu principal choisi
 			$mainmenu = GETPOST("mainmenu", 'aZ09');
 			$_SESSION["mainmenu"] = $mainmenu;
@@ -81,16 +84,16 @@ class MenuManager
 			// On va le chercher en session si non defini par le lien
 			$mainmenu = isset($_SESSION["mainmenu"]) ? $_SESSION["mainmenu"] : '';
 		}
-		if (!empty($forcemainmenu)) $mainmenu = $forcemainmenu;
+		if (!empty($forcemainmenu)) {
+			$mainmenu = $forcemainmenu;
+		}
 
-		if (GETPOSTISSET("leftmenu"))
-		{
+		if (GETPOSTISSET("leftmenu")) {
 			// On sauve en session le menu principal choisi
 			$leftmenu = GETPOST("leftmenu", 'aZ09');
 			$_SESSION["leftmenu"] = $leftmenu;
 
-			if ($_SESSION["leftmenuopened"] == $leftmenu)	// To collapse
-			{
+			if ($_SESSION["leftmenuopened"] == $leftmenu) {	// To collapse
 				//$leftmenu="";
 				$_SESSION["leftmenuopened"] = "";
 			} else {
@@ -100,7 +103,9 @@ class MenuManager
 			// On va le chercher en session si non defini par le lien
 			$leftmenu = isset($_SESSION["leftmenu"]) ? $_SESSION["leftmenu"] : '';
 		}
-		if (!empty($forceleftmenu)) $leftmenu = $forceleftmenu;
+		if (!empty($forceleftmenu)) {
+			$leftmenu = $forceleftmenu;
+		}
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 		$tabMenu = array();
@@ -129,8 +134,7 @@ class MenuManager
 
 		require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy.lib.php';
 
-		if ($this->type_user == 1)
-		{
+		if ($this->type_user == 1) {
 			$conf->global->MAIN_SEARCHFORM_SOCIETE_DISABLED = 1;
 			$conf->global->MAIN_SEARCHFORM_CONTACT_DISABLED = 1;
 		}
@@ -138,36 +142,39 @@ class MenuManager
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
 		$this->menu = new Menu();
 
-		if (empty($conf->global->MAIN_MENU_INVERT))
-		{
-			if ($mode == 'top')  print_eldy_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 0, $mode);
-			if ($mode == 'left') print_left_eldy_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $this->menu, 0, '', '', $moredata);
+		if (empty($conf->global->MAIN_MENU_INVERT)) {
+			if ($mode == 'top') {
+				print_eldy_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 0, $mode);
+			}
+			if ($mode == 'left') {
+				print_left_eldy_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $this->menu, 0, '', '', $moredata, $this->type_user);
+			}
 		} else {
 			$conf->global->MAIN_SHOW_LOGO = 0;
-			if ($mode == 'top')  print_left_eldy_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $this->menu, 0);
-			if ($mode == 'left') print_eldy_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 0, $mode);
+			if ($mode == 'top') {
+				print_left_eldy_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $this->menu, 0, '', '', $moredata, $this->type_user);
+			}
+			if ($mode == 'left') {
+				print_eldy_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 0, $mode);
+			}
 		}
-		if ($mode == 'topnb')
-		{
+		if ($mode == 'topnb') {
 			print_eldy_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 1, $mode); // no output
 			return $this->menu->getNbOfVisibleMenuEntries();
 		}
 
-		if ($mode == 'jmobile')     // Used to get menu in xml ul/li
-		{
+		if ($mode == 'jmobile') {     // Used to get menu in xml ul/li
 			print_eldy_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 1, $mode); // Fill this->menu that is empty with top menu
 
 			// $this->menu->liste is top menu
 			//var_dump($this->menu->liste);exit;
 			$lastlevel = array();
 			print '<!-- Generate menu list from menu handler '.$this->name.' -->'."\n";
-			foreach ($this->menu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
-			{
+			foreach ($this->menu->liste as $key => $val) {		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
 				print '<ul class="ulmenu" data-inset="true">';
 				print '<li class="lilevel0">';
 
-				if ($val['enabled'] == 1)
-				{
+				if ($val['enabled'] == 1) {
 					$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
 					$substitarray['__USERID__'] = $user->id; // For backward compatibility
 					$val['url'] = make_substitutions($val['url'], $substitarray);
@@ -178,7 +185,9 @@ class MenuManager
 					print '<a class="alilevel0" href="#">';
 
 					// Add font-awesome
-					if ($val['level'] == 0 && $val['mainmenu'] == 'home') print '<span class="fa fa-home fa-fw paddingright" aria-hidden="true"></span>';
+					if ($val['level'] == 0 && !empty($val['prefix'])) {
+						print $val['prefix'];
+					}
 
 					print $val['titre'];
 					print '</a>'."\n";
@@ -187,7 +196,7 @@ class MenuManager
 					$tmpmainmenu = $val['mainmenu'];
 					$tmpleftmenu = 'all';
 					$submenu = new Menu();
-					print_left_eldy_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $submenu, 1, $tmpmainmenu, $tmpleftmenu); // Fill $submenu (example with tmpmainmenu='home' tmpleftmenu='all', return left menu tree of Home)
+					print_left_eldy_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $submenu, 1, $tmpmainmenu, $tmpleftmenu, null, $this->type_user); // Fill $submenu (example with tmpmainmenu='home' tmpleftmenu='all', return left menu tree of Home)
 					// Note: $submenu contains menu entry with substitution not yet done
 					//if ($tmpmainmenu.'-'.$tmpleftmenu == 'home-all') { var_dump($submenu); exit; }
 					//if ($tmpmainmenu=='accountancy') { var_dump($submenu->liste); exit; }
@@ -199,27 +208,27 @@ class MenuManager
 					//var_dump($canonnexturl);
 					print '<ul>'."\n";
 					if (($canonrelurl != $canonnexturl && !in_array($val['mainmenu'], array('tools')))
-						|| (strpos($canonrelurl, '/product/index.php') !== false || strpos($canonrelurl, '/compta/bank/list.php') !== false))
-					{
+						|| (strpos($canonrelurl, '/product/index.php') !== false || strpos($canonrelurl, '/compta/bank/list.php') !== false)) {
 						// We add sub entry
 						print str_pad('', 1).'<li class="lilevel1 ui-btn-icon-right ui-btn">'; // ui-btn to highlight on clic
 						print '<a href="'.$relurl.'">';
-						if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard")  // No translation
-						{
-							if (in_array($val['mainmenu'], array('cashdesk', 'externalsite', 'website', 'collab'))) print $langs->trans("Access");
-							else print $langs->trans("Dashboard");
-						} else print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
+						if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard") {  // No translation
+							if (in_array($val['mainmenu'], array('cashdesk', 'externalsite', 'website', 'collab', 'takepos'))) {
+								print $langs->trans("Access");
+							} else {
+								print $langs->trans("Dashboard");
+							}
+						} else {
+							print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
+						}
 						print '</a>';
 						print '</li>'."\n";
 					}
 
-					if ($val['level'] == 0)
-					{
-						if ($val['enabled'])
-						{
+					if ($val['level'] == 0) {
+						if ($val['enabled']) {
 							$lastlevel[0] = 'enabled';
-						} elseif ($showmenu)                 // Not enabled but visible (so greyed)
-						{
+						} elseif ($showmenu) {                 // Not enabled but visible (so greyed)
 							$lastlevel[0] = 'greyed';
 						} else {
 							$lastlevel[0] = 'hidden';
@@ -227,52 +236,52 @@ class MenuManager
 					}
 
 					$lastlevel2 = array();
-	   				foreach ($submenu->liste as $key2 => $val2)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
-	   				{
+					foreach ($submenu->liste as $key2 => $val2) {		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
 						$showmenu = true;
-						if (!empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) && empty($val2['enabled'])) $showmenu = false;
+						if (!empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) && empty($val2['enabled'])) {
+							$showmenu = false;
+						}
 
 						// If at least one parent is not enabled, we do not show any menu of all children
-						if ($val2['level'] > 0)
-						{
+						if ($val2['level'] > 0) {
 							$levelcursor = $val2['level'] - 1;
-							while ($levelcursor >= 0)
-							{
-								if ($lastlevel2[$levelcursor] != 'enabled') $showmenu = false;
+							while ($levelcursor >= 0) {
+								if ($lastlevel2[$levelcursor] != 'enabled') {
+									$showmenu = false;
+								}
 								$levelcursor--;
 							}
 						}
 
-	   					if ($showmenu)		// Visible (option to hide when not allowed is off or allowed)
-	   					{
-	   						$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
-	   						$substitarray['__USERID__'] = $user->id; // For backward compatibility
-	   						$val2['url'] = make_substitutions($val2['url'], $substitarray); // Make also substitution of __(XXX)__ and __[XXX]__
+						if ($showmenu) {		// Visible (option to hide when not allowed is off or allowed)
+							$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
+							$substitarray['__USERID__'] = $user->id; // For backward compatibility
+							$val2['url'] = make_substitutions($val2['url'], $substitarray); // Make also substitution of __(XXX)__ and __[XXX]__
 
-	   						if (!preg_match("/^(http:\/\/|https:\/\/)/i", $val2['url']))
-	   						{
-	   							$relurl2 = dol_buildpath($val2['url'], 1);
-	   						} else {
-	   							$relurl2 = $val2['url'];
-	   						}
+							if (!preg_match("/^(http:\/\/|https:\/\/)/i", $val2['url'])) {
+								$relurl2 = dol_buildpath($val2['url'], 1);
+							} else {
+								$relurl2 = $val2['url'];
+							}
 							$canonurl2 = preg_replace('/\?.*$/', '', $val2['url']);
 							//var_dump($val2['url'].' - '.$canonurl2.' - '.$val2['level']);
-							if (in_array($canonurl2, array('/admin/index.php', '/admin/tools/index.php', '/core/tools.php'))) $relurl2 = '';
+							if (in_array($canonurl2, array('/admin/index.php', '/admin/tools/index.php', '/core/tools.php'))) {
+								$relurl2 = '';
+							}
 
 							$disabled = '';
-							if (!$val2['enabled'])
-							{
+							if (!$val2['enabled']) {
 								$disabled = " vsmenudisabled";
 							}
 
 							print str_pad('', $val2['level'] + 1);
 							print '<li class="lilevel'.($val2['level'] + 1);
-							if ($val2['level'] == 0) print ' ui-btn-icon-right ui-btn'; // ui-btn to highlight on clic
+							if ($val2['level'] == 0) {
+								print ' ui-btn-icon-right ui-btn'; // ui-btn to highlight on clic
+							}
 							print $disabled.'">'; // ui-btn to highlight on clic
-							if ($relurl2)
-							{
-								if ($val2['enabled'])	// Allowed
-								{
+							if ($relurl2) {
+								if ($val2['enabled']) {	// Allowed
 									print '<a href="'.$relurl2.'"';
 									//print ' data-ajax="false"';
 									print '>';
@@ -283,28 +292,27 @@ class MenuManager
 									$lastlevel2[$val2['level']] = 'greyed';
 								}
 							} else {
-								if ($val2['enabled'])	// Allowed
-								{
+								if ($val2['enabled']) {	// Allowed
 									$lastlevel2[$val2['level']] = 'enabled';
 								} else {
 									$lastlevel2[$val2['level']] = 'greyed';
 								}
 							}
 							print $val2['titre'];
-							if ($relurl2)
-							{
-								if ($val2['enabled'])	// Allowed
+							if ($relurl2) {
+								if ($val2['enabled']) {	// Allowed
 									print '</a>';
-								else print '</a>';
+								} else {
+									print '</a>';
+								}
 							}
 							print '</li>'."\n";
-	   					}
-	   				}
+						}
+					}
 					//var_dump($submenu);
 					print '</ul>';
 				}
-				if ($val['enabled'] == 2)
-				{
+				if ($val['enabled'] == 2) {
 					print '<font class="vsmenudisabled">'.$val['titre'].'</font>';
 				}
 				print '</li>';

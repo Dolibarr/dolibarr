@@ -41,36 +41,46 @@ $childids = $user->getAllChildIds(1);
 
 // Security check
 $socid = 0;
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$hookmanager->initHooks(array('expensereportnote'));
+
 $result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
 
 $object = new ExpenseReport($db);
-if (!$object->fetch($id, $ref) > 0)
-{
+if (!$object->fetch($id, $ref) > 0) {
 	dol_print_error($db);
 }
 
 $permissionnote = $user->rights->expensereport->creer; // Used by the include of actions_setnotes.inc.php
 
-if ($object->id > 0)
-{
+if ($object->id > 0) {
 	// Check current user can read this expense report
 	$canread = 0;
-	if (!empty($user->rights->expensereport->readall)) $canread = 1;
-	if (!empty($user->rights->expensereport->lire) && in_array($object->fk_user_author, $childids)) $canread = 1;
-	if (!$canread)
-	{
+	if (!empty($user->rights->expensereport->readall)) {
+		$canread = 1;
+	}
+	if (!empty($user->rights->expensereport->lire) && in_array($object->fk_user_author, $childids)) {
+		$canread = 1;
+	}
+	if (!$canread) {
 		accessforbidden();
 	}
 }
-
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+}
 
 
 /*
@@ -82,8 +92,7 @@ llxHeader("", $title, $helpurl);
 
 $form = new Form($db);
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$object = new ExpenseReport($db);
 	$object->fetch($id, $ref);
 	$object->info($object->id);

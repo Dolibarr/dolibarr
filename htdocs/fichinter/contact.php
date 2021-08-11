@@ -39,13 +39,14 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 $object = new Fichinter($db);
 $result = $object->fetch($id, $ref);
-if (!$result)
-{
+if (!$result) {
 	print 'Record not found';
 	exit;
 }
@@ -54,16 +55,14 @@ if (!$result)
  * Adding a new contact
  */
 
-if ($action == 'addcontact' && $user->rights->ficheinter->creer)
-{
-	if ($result > 0 && $id > 0)
-	{
+if ($action == 'addcontact' && $user->rights->ficheinter->creer) {
+	if ($result > 0 && $id > 0) {
 		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
-  		$result = $object->add_contact($contactid, GETPOST('type', 'int'), GETPOST('source', 'alpha'));
+		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 	}
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
@@ -76,21 +75,14 @@ if ($action == 'addcontact' && $user->rights->ficheinter->creer)
 
 		setEventMessages($mesg, null, 'errors');
 	}
-}
-
-// Toggle the status of a contact
-elseif ($action == 'swapstatut' && $user->rights->ficheinter->creer)
-{
+} elseif ($action == 'swapstatut' && $user->rights->ficheinter->creer) {
+	// Toggle the status of a contact
 	$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
-}
-
-// Deletes a contact
-elseif ($action == 'deletecontact' && $user->rights->ficheinter->creer)
-{
+} elseif ($action == 'deletecontact' && $user->rights->ficheinter->creer) {
+	// Deletes a contact
 	$result = $object->delete_contact(GETPOST('lineid', 'int'));
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
@@ -113,8 +105,7 @@ llxHeader('', $langs->trans("Intervention"));
 
 // Mode vue et edition
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();
 
 	$head = fichinter_prepare_head($object);
@@ -132,12 +123,10 @@ if ($id > 0 || !empty($ref))
 	// Thirdparty
 	$morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 	// Project
-	if (!empty($conf->projet->enabled))
-	{
+	if (!empty($conf->projet->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-		if ($user->rights->ficheinter->creer)
-		{
+		if ($user->rights->ficheinter->creer) {
 			if ($action != 'classify') {
 				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				$morehtmlref .= ' : ';
@@ -173,15 +162,20 @@ if ($id > 0 || !empty($ref))
 
 	print '<br>';
 
-	if (!empty($conf->global->FICHINTER_HIDE_ADD_CONTACT_USER))     $hideaddcontactforuser = 1;
-	if (!empty($conf->global->FICHINTER_HIDE_ADD_CONTACT_THIPARTY)) $hideaddcontactforthirdparty = 1;
+	if (!empty($conf->global->FICHINTER_HIDE_ADD_CONTACT_USER)) {
+		$hideaddcontactforuser = 1;
+	}
+	if (!empty($conf->global->FICHINTER_HIDE_ADD_CONTACT_THIPARTY)) {
+		$hideaddcontactforthirdparty = 1;
+	}
 
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
 	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
-	foreach ($dirtpls as $reldir)
-	{
+	foreach ($dirtpls as $reldir) {
 		$res = @include dol_buildpath($reldir.'/contacts.tpl.php');
-		if ($res) break;
+		if ($res) {
+			break;
+		}
 	}
 }
 

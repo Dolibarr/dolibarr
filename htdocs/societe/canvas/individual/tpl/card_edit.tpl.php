@@ -17,8 +17,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -73,7 +72,7 @@ if (empty($conf) || !is_object($conf))
 			<tr>
 				<td>
 				<?php if ($this->control->tpl['ismodifiable_customercode']) { ?>
-				<input type="text" name="code_client" size="16" value="<?php echo $this->control->tpl['customercode']; ?>" maxlength="15">
+				<input type="text" name="code_client" size="16" value="<?php echo $this->control->tpl['customercode']; ?>" maxlength="24">
 				<?php } else { ?>
 					<?php echo $this->control->tpl['customercode']; ?>
 				<input type="hidden" name="code_client" value="<?php echo $this->control->tpl['customercode']; ?>">
@@ -94,7 +93,7 @@ if (empty($conf) || !is_object($conf))
 			<tr>
 				<td>
 				<?php if ($this->control->tpl['ismodifiable_suppliercode']) { ?>
-				<input type="text" name="code_fournisseur" size="16" value="<?php echo $this->control->tpl['suppliercode']; ?>" maxlength="15">
+				<input type="text" name="code_fournisseur" size="16" value="<?php echo $this->control->tpl['suppliercode']; ?>" maxlength="24">
 				<?php } else { ?>
 					<?php echo $this->control->tpl['suppliercode']; ?>
 				<input type="hidden" name="code_fournisseur" value="<?php echo $this->control->tpl['suppliercode']; ?>">
@@ -173,7 +172,9 @@ if ($this->control->tpl['fournisseur']) {
 	<td colspan="3"><?php echo $this->control->tpl['yn_assujtva']; ?></td>
 </tr>
 
-<?php if (!empty($this->control->tpl['localtax'])) echo $this->control->tpl['localtax']; ?>
+<?php if (!empty($this->control->tpl['localtax'])) {
+	echo $this->control->tpl['localtax'];
+} ?>
 
 </table>
 <br>

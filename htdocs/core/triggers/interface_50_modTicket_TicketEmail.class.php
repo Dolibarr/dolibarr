@@ -61,7 +61,9 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	{
 		$ok = 0;
 
-		if (empty($conf->ticket->enabled)) return 0; // Module not active, we do nothing
+		if (empty($conf->ticket) || empty($conf->ticket->enabled)) {
+			return 0; // Module not active, we do nothing
+		}
 
 		switch ($action) {
 			case 'TICKET_ASSIGNED':
@@ -132,8 +134,9 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				$langs->load('ticket');
 
 				// Send email to notification email
-				$sendto = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 				if (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) && empty($object->context['disableticketemail'])) {
+					$sendto = empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? '' : $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+
 					if ($sendto) {
 						// Init to avoid errors
 						$filepath = array();
@@ -197,11 +200,21 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 				if (empty($conf->global->TICKET_DISABLE_CUSTOMER_MAILS) && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create) {
 					$sendto = '';
-					if (empty($user->socid) && empty($user->email)) {
-							  $object->fetch_thirdparty();
-							  $sendto = $object->thirdparty->email;
-					} else {
-						$sendto = $user->email;
+
+					//if contact selected send to email's contact else send to email's thirdparty
+
+					$contactid = GETPOST('contactid', 'alpha');
+
+					if (!empty($contactid)) {
+						$contact = new Contact($this->db);
+						$res = $contact->fetch($contactid);
+					}
+
+					if ($res > 0 && !empty($contact->email) && !empty($contact->statut)) {
+						$sendto = $contact->email;
+					} elseif (!empty($object->fk_soc)) {
+						$object->fetch_thirdparty();
+						$sendto = $object->thirdparty->email;
 					}
 
 					if ($sendto) {
@@ -229,10 +242,16 @@ class InterfaceTicketEmail extends DolibarrTriggers
 							}
 
 							$qualified = true;
-							if (empty($enabled)) $qualified = false;
-							if (empty($perms)) $qualified = false;
+							if (empty($enabled)) {
+								$qualified = false;
+							}
+							if (empty($perms)) {
+								$qualified = false;
+							}
 
-							if ($qualified) $message_customer .= '<li>'.$langs->trans($key).' : '.$value.'</li>';
+							if ($qualified) {
+								$message_customer .= '<li>'.$langs->trans($key).' : '.$value.'</li>';
+							}
 						}
 
 						$message_customer .= '</ul>';
@@ -246,7 +265,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						$message_customer .= '<p>'.$langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer').' : <a href="'.$url_public_ticket.'">'.$url_public_ticket.'</a></p>';
 						$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmail').'</p>';
 
-						$from = $conf->global->MAIN_INFO_SOCIETE_NOM.'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
+						$from = (empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? '' : $conf->global->MAIN_INFO_SOCIETE_NOM.' ').'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
 						$replyto = $from;
 
 						$trackid = 'tic'.$object->id;
@@ -275,13 +294,13 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 				break;
 
-		   	case 'TICKET_MODIFY':
-		   		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-		   		break;
+			case 'TICKET_MODIFY':
+				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+				break;
 
-		   	case 'TICKET_CLOSE':
-		   		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-		   		break;
+			case 'TICKET_CLOSE':
+				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+				break;
 		}
 
 

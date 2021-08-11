@@ -27,7 +27,7 @@ create table llx_product_fournisseur_price
   tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_product			integer,
   fk_soc				integer,
-  ref_fourn				varchar(30),
+  ref_fourn				varchar(128),
   desc_fourn            text,
   fk_availability		integer,	   
   price					double(24,8) DEFAULT 0,		-- price without tax for quantity
@@ -50,6 +50,7 @@ create table llx_product_fournisseur_price
   import_key			varchar(14),                -- Import key
   delivery_time_days    integer,
   supplier_reputation varchar(10),
+  packaging			    varchar(64),
   
   fk_multicurrency		integer,
   multicurrency_code	varchar(255),

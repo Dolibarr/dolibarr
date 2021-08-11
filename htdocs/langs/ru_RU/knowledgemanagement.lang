@@ -1,0 +1,49 @@
+# Copyright (C) 2021 SuperAdmin
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see .
+
+#
+# Generic
+#
+
+# Module label 'ModuleKnowledgeManagementName'
+ModuleKnowledgeManagementName = Система управления знаниями
+# Module description 'ModuleKnowledgeManagementDesc'
+ModuleKnowledgeManagementDesc=Управление системой управления знаний или справочной службы
+
+#
+# Admin page
+#
+KnowledgeManagementSetup = Настройка системы управления знаниями
+Settings = Настройки
+KnowledgeManagementSetupPage = Страница настройки системы управления знаниями
+
+
+#
+# About page
+#
+About = О
+KnowledgeManagementAbout = Об управлении знаниями
+KnowledgeManagementAboutPage = Управление знаниями о странице
+
+KnowledgeManagementArea = Управление знаниями
+MenuKnowledgeRecord = База знаний
+ListKnowledgeRecord = Список статей
+NewKnowledgeRecord = Новая статья
+ValidateReply = Проверить решение
+KnowledgeRecords = Статьи
+KnowledgeRecord = Статья
+KnowledgeRecordExtraFields = Дополнительные поля для статьи
+GroupOfTicket=Группа билетов
+YouCanLinkArticleToATicketCategory=Вы можете привязать статью к группе заявок (чтобы статья предлагалась во время квалификации новых билетов)

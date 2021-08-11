@@ -30,7 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "intracommreport"));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 
@@ -46,10 +48,8 @@ $list_DES = array(
 if ($action == 'update') {
 	$error = 0;
 
-	if (!$error)
-	{
-		foreach ($list_DEB as $constname)
-		{
+	if (!$error) {
+		foreach ($list_DEB as $constname) {
 			$constvalue = GETPOST($constname, 'alpha');
 
 			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
@@ -57,8 +57,7 @@ if ($action == 'update') {
 			}
 		}
 
-		foreach ($list_DES as $constname)
-		{
+		foreach ($list_DES as $constname) {
 			$constvalue = GETPOST($constname, 'alpha');
 
 			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
@@ -110,8 +109,7 @@ print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>';
 
-foreach ($list_DEB as $key)
-{
+foreach ($list_DEB as $key) {
 	print '<tr class="oddeven value">';
 
 	// Param
@@ -159,9 +157,8 @@ print "</tr>\n";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("INTRACOMMREPORT_CATEG_FRAISDEPORT").'</td>';
-$arraychoices = array(3=>'Seuil de 460 000 €', 4=>'En dessous de 460 000 €');
 print '<td>';
-print $formother->select_categories(0, $conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT, 'INTRACOMMREPORT_CATEG_FRAISDEPORT');
+print $formother->select_categories('product', $conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT, 'INTRACOMMREPORT_CATEG_FRAISDEPORT');
 print '</td>';
 print "</tr>\n";
 
@@ -176,8 +173,7 @@ print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>';
 
-foreach ($list_DES as $key)
-{
+foreach ($list_DES as $key) {
 	print '<tr class="oddeven value">';
 
 	// Param
@@ -193,10 +189,8 @@ foreach ($list_DES as $key)
 
 print '</table>';
 
-print '<div class="tabsAction">';
-print '<div class="inline-block divButAction">';
-print '<input type="submit" name="bt_save" class="butAction button-save" value="'.$langs->trans("Save").'" />';
-print '</div>';
+print '<div class="center">';
+print '<input type="submit" name="bt_save" class="butAction button-save" value="'.$langs->trans("Update").'" />';
 print '</div>';
 
 print '</form>';

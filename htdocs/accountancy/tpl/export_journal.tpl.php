@@ -16,9 +16,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// $formatexportset ùust be defined
+
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -37,11 +38,9 @@ header('Content-Type: text/csv');
 include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
 $accountancyexport = new AccountancyExport($db);
 
-if ($accountancyexport->getFormatCode($formatexportset) == $accountancyexport::$EXPORT_TYPE_FEC && $type_export == "general_ledger") // Specific filename for FEC model export into the general ledger
-{
+if ($accountancyexport->getFormatCode($formatexportset) == $accountancyexport::$EXPORT_TYPE_FEC && $type_export == "general_ledger") { // Specific filename for FEC model export into the general ledger
 	// FEC format is defined here: https://www.legifrance.gouv.fr/affichCodeArticle.do?idArticle=LEGIARTI000027804775&cidTexte=LEGITEXT000006069583&dateTexte=20130802&oldAction=rechCodeArticle
-	if (empty($search_date_end))
-	{
+	if (empty($search_date_end)) {
 		// TODO Get the max date into bookeeping table
 		$search_date_end = dol_now();
 	}
@@ -49,8 +48,9 @@ if ($accountancyexport->getFormatCode($formatexportset) == $accountancyexport::$
 	$tmparray = dol_getdate($datetouseforfilename);
 	$fiscalmonth = empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START;
 	// Define end of month to use
-	if ($tmparray['mon'] <= $fiscalmonth) $tmparray['mon'] = $fiscalmonth;
-	else {
+	if ($tmparray['mon'] <= $fiscalmonth) {
+		$tmparray['mon'] = $fiscalmonth;
+	} else {
 		$tmparray['mon'] = $fiscalmonth;
 		$tmparray['year']++;
 	}
@@ -58,6 +58,8 @@ if ($accountancyexport->getFormatCode($formatexportset) == $accountancyexport::$
 	$endaccountingperiod = dol_print_date(dol_get_last_day($tmparray['year'], $tmparray['mon']), 'dayxcard');
 
 	$completefilename = $siren."FEC".$endaccountingperiod.".txt";
+} elseif ($accountancyexport->getFormatCode($formatexportset) == $accountancyexport::$EXPORT_TYPE_CIEL && $type_export == "general_ledger" && !empty($conf->global->ACCOUNTING_EXPORT_XIMPORT_FORCE_FILENAME)) {
+	$completefilename = "XIMPORT.TXT";
 } else {
 	$completefilename = ($code ? $code."_" : "").($prefix ? $prefix."_" : "").$filename.($nodateexport ? "" : $date_export).".".$format;
 }

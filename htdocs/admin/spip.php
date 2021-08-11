@@ -35,7 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "members", "mailmanspip"));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 $type = array('yesno', 'texte', 'chaine');
@@ -48,18 +50,15 @@ $action = GETPOST('action', 'aZ09');
  */
 
 // Action mise a jour ou ajout d'une constante
-if ($action == 'update' || $action == 'add')
-{
+if ($action == 'update' || $action == 'add') {
 	$constnamearray = GETPOST("constname", 'array');
 	$constvaluearray = GETPOST("constvalue", 'array');
 	$consttypearray = GETPOST("consttype", 'array');
 	$constnotearray = GETPOST("constnote", 'array');
 
 	// Action mise a jour ou ajout d'une constante
-	if ($action == 'update' || $action == 'add')
-	{
-		foreach ($constnamearray as $key => $val)
-		{
+	if ($action == 'update' || $action == 'add') {
+		foreach ($constnamearray as $key => $val) {
 			$constname = dol_escape_htmltag($constnamearray[$key]);
 			$constvalue = dol_escape_htmltag($constvaluearray[$key]);
 			$consttype = dol_escape_htmltag($consttypearray[$key]);
@@ -67,11 +66,12 @@ if ($action == 'update' || $action == 'add')
 
 			$res = dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
 
-			if (!$res > 0) $error++;
+			if (!($res > 0)) {
+				$error++;
+			}
 		}
 
-	 	if (!$error)
-		{
+		if (!$error) {
 			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 		} else {
 			setEventMessages($langs->trans("Error"), null, 'errors');
@@ -80,21 +80,17 @@ if ($action == 'update' || $action == 'add')
 }
 
 // Action activation d'un sous module du module adherent
-if ($action == 'set')
-{
+if ($action == 'set') {
 	$result = dolibarr_set_const($db, $_GET["name"], $_GET["value"], '', 0, '', $conf->entity);
-	if ($result < 0)
-	{
+	if ($result < 0) {
 		dol_print_error($db);
 	}
 }
 
 // Action desactivation d'un sous module du module adherent
-if ($action == 'unset')
-{
+if ($action == 'unset') {
 	$result = dolibarr_del_const($db, $_GET["name"], $conf->entity);
-	if ($result < 0)
-	{
+	if ($result < 0) {
 		dol_print_error($db);
 	}
 }
@@ -120,8 +116,7 @@ $head = mailmanspip_admin_prepare_head();
 /*
  * Spip
  */
-if (!empty($conf->global->ADHERENT_USE_SPIP))
-{
+if (!empty($conf->global->ADHERENT_USE_SPIP)) {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';

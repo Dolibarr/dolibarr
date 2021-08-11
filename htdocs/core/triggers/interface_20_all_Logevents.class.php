@@ -61,13 +61,19 @@ class InterfaceLogevents extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (!empty($conf->global->MAIN_LOGEVENTS_DISABLE_ALL)) return 0; // Log events is disabled (hidden features)
+		if (!empty($conf->global->MAIN_LOGEVENTS_DISABLE_ALL)) {
+			return 0; // Log events is disabled (hidden features)
+		}
 
 		$key = 'MAIN_LOGEVENTS_'.$action;
 		//dol_syslog("xxxxxxxxxxx".$key);
-		if (empty($conf->global->$key)) return 0; // Log events not enabled for this action
+		if (empty($conf->global->$key)) {
+			return 0; // Log events not enabled for this action
+		}
 
-		if (empty($conf->entity)) $conf->entity = $entity; // forcing of the entity if it's not defined (ex: in login form)
+		if (empty($conf->entity)) {
+			$conf->entity = $entity; // forcing of the entity if it's not defined (ex: in login form)
+		}
 
 		$date = dol_now();
 
@@ -156,15 +162,17 @@ class InterfaceLogevents extends DolibarrTriggers
 
 		// If not found
 		/*
-        else
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
+		else
+		{
+			dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
 			return 0;
-        }
-        */
+		}
+		*/
 
 		// Add more information into desc from the context property
-		if (!empty($desc) && !empty($object->context['audit'])) $desc .= ' - '.$object->context['audit'];
+		if (!empty($desc) && !empty($object->context['audit'])) {
+			$desc .= ' - '.$object->context['audit'];
+		}
 
 		// Add entry in event table
 		include_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
@@ -174,7 +182,7 @@ class InterfaceLogevents extends DolibarrTriggers
 		$event->dateevent = $date;
 		$event->label = $text;
 		$event->description = $desc;
-		$event->user_agent = (empty($_SERVER["HTTP_USER_AGENT"])?'':$_SERVER["HTTP_USER_AGENT"]);
+		$event->user_agent = (empty($_SERVER["HTTP_USER_AGENT"]) ? '' : $_SERVER["HTTP_USER_AGENT"]);
 
 		$result = $event->create($user);
 		if ($result > 0) {

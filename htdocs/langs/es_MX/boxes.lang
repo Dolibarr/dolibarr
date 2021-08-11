@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
-BoxLoginInformation=Información de Login
+BoxLoginInformation=Información de Sesión
 BoxLastRssInfos=Información RSS
 BoxLastProducts=Últimos %s Productos/Servicios
 BoxLastSupplierBills=Últimas facturas de proveedor
@@ -7,7 +7,7 @@ BoxLastCustomerBills=Últimas facturas de clientes
 BoxOldestUnpaidCustomerBills=Facturas de clientes sin pagar más antiguas
 BoxOldestUnpaidSupplierBills=Facturas de proveedores sin pagar más antiguas
 BoxLastProposals=Últimas propuestas comerciales
-BoxLastCustomerOrders=Últimos pedidos de venta
+BoxLastCustomerOrders=Últimos pedidos
 BoxCurrentAccounts=Saldo de cuentas abiertas
 BoxSuppliersOrdersPerMonth=Órdenes a proveedor por mes
 BoxTitleLastModifiedPropals=Últimas %s cotizaciones modificadas

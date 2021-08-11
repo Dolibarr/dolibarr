@@ -56,6 +56,11 @@ class pdf_strato extends ModelePDFContract
 	public $description;
 
 	/**
+	 * @var int     Save the name of generated file as the main doc when generating a doc with this template
+	 */
+	public $update_main_doc_field;
+
+	/**
 	 * @var string document type
 	 */
 	public $type;
@@ -131,6 +136,7 @@ class pdf_strato extends ModelePDFContract
 		$this->db = $db;
 		$this->name = 'strato';
 		$this->description = $langs->trans("StandardContractsTemplate");
+		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		// Page size for A4 format
 		$this->type = 'pdf';
@@ -154,7 +160,9 @@ class pdf_strato extends ModelePDFContract
 
 		// Get source company
 		$this->emetteur = $mysoc;
-		if (empty($this->emetteur->country_code)) $this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if not defined
+		if (empty($this->emetteur->country_code)) {
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if not defined
+		}
 
 		// Define position of columns
 		$this->posxdesc = $this->marge_gauche + 1;
@@ -177,42 +185,40 @@ class pdf_strato extends ModelePDFContract
 		// phpcs:enable
 		global $user, $langs, $conf, $hookmanager, $mysoc;
 
-		if (!is_object($outputlangs)) $outputlangs = $langs;
+		if (!is_object($outputlangs)) {
+			$outputlangs = $langs;
+		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output = 'ISO-8859-1';
+		if (!empty($conf->global->MAIN_USE_FPDF)) {
+			$outputlangs->charset_output = 'ISO-8859-1';
+		}
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "contracts"));
 
-		if ($conf->contrat->dir_output)
-		{
+		if ($conf->contrat->dir_output) {
 			$object->fetch_thirdparty();
 
 			// Definition of $dir and $file
-			if ($object->specimen)
-			{
+			if ($object->specimen) {
 				$dir = $conf->contrat->dir_output;
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->contrat->dir_output."/".$objectref;
+				$dir = $conf->contrat->multidir_output[$object->entity]."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 
-			if (!file_exists($dir))
-			{
-				if (dol_mkdir($dir) < 0)
-				{
+			if (!file_exists($dir)) {
+				if (dol_mkdir($dir) < 0) {
 					$this->error = $outputlangs->trans("ErrorCanNotCreateDir", $dir);
 					return 0;
 				}
 			}
 
-			if (file_exists($dir))
-			{
+			if (file_exists($dir)) {
 				// Add pdfgeneration hook
-				if (!is_object($hookmanager))
-				{
+				if (!is_object($hookmanager)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 					$hookmanager = new HookManager($this->db);
 				}
@@ -226,18 +232,18 @@ class pdf_strato extends ModelePDFContract
 				$heightforinfotot = 50; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) $heightforfooter += 6;
+				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) {
+					$heightforfooter += 6;
+				}
 				$pdf->SetAutoPageBreak(1, 0);
 
-				if (class_exists('TCPDF'))
-				{
+				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
 					$pdf->setPrintFooter(false);
 				}
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
-				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
-				{
+				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
 					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
 					$tplidx = $pdf->importPage(1);
 				}
@@ -251,13 +257,17 @@ class pdf_strato extends ModelePDFContract
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("ContractCard")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
-				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
+				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
+					$pdf->SetCompression(false);
+				}
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// New page
 				$pdf->AddPage();
-				if (!empty($tplidx)) $pdf->useTemplate($tplidx);
+				if (!empty($tplidx)) {
+					$pdf->useTemplate($tplidx);
+				}
 				$pagenb++;
 				$this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('', '', $default_font_size - 1);
@@ -268,8 +278,7 @@ class pdf_strato extends ModelePDFContract
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 : 10);
 
 				// Display notes
-				if (!empty($object->note_public))
-				{
+				if (!empty($object->note_public)) {
 					$tab_top -= 2;
 
 					$pdf->SetFont('', '', $default_font_size - 1);
@@ -295,14 +304,12 @@ class pdf_strato extends ModelePDFContract
 				$nblines = count($object->lines);
 
 				// Loop on each lines
-				for ($i = 0; $i < $nblines; $i++)
-				{
+				for ($i = 0; $i < $nblines; $i++) {
 					$objectligne = $object->lines[$i];
 
 					$valide = $objectligne->id ? 1 : 0;
 
-					if ($valide > 0 || $object->specimen)
-					{
+					if ($valide > 0 || $object->specimen) {
 						$curX = $this->posxdesc - 1;
 						$curY = $nexY;
 						$pdf->SetFont('', '', $default_font_size - 1); // Into loop to work with multipage
@@ -340,10 +347,8 @@ class pdf_strato extends ModelePDFContract
 							$datere = $langs->trans("Unknown");
 						}
 
-						$txtpredefinedservice = '';
-						$txtpredefinedservice = $objectligne->product_label;
-						if ($objectligne->product_label)
-						{
+						$txtpredefinedservice = $objectligne->product_ref;
+						if ($objectligne->product_label) {
 							$txtpredefinedservice .= ' - ';
 							$txtpredefinedservice .= $objectligne->product_label;
 						}
@@ -351,23 +356,22 @@ class pdf_strato extends ModelePDFContract
 						$desc = dol_htmlentitiesbr($objectligne->desc, 1); // Desc (not empty for free lines)
 						$txt = '';
 						$txt .= $outputlangs->transnoentities("Quantity").' : <strong>'.$objectligne->qty.'</strong> - '.$outputlangs->transnoentities("UnitPrice").' : <strong>'.price($objectligne->subprice).'</strong>'; // Desc (not empty for free lines)
-						if (empty($conf->global->CONTRACT_HIDE_PLANNED_DATE_ON_PDF))
-						{
+						if (empty($conf->global->CONTRACT_HIDE_PLANNED_DATE_ON_PDF)) {
 							$txt .= '<br>';
 							$txt .= $outputlangs->transnoentities("DateStartPlannedShort")." : <strong>".$datei."</strong> - ".$outputlangs->transnoentities("DateEndPlanned")." : <strong>".$datee.'</strong>';
 						}
-						if (empty($conf->global->CONTRACT_HIDE_REAL_DATE_ON_PDF))
-						{
+						if (empty($conf->global->CONTRACT_HIDE_REAL_DATE_ON_PDF)) {
 							$txt .= '<br>';
 							$txt .= $outputlangs->transnoentities("DateStartRealShort")." : <strong>".$daters.'</strong>';
-							if ($objectligne->date_cloture) $txt .= " - ".$outputlangs->transnoentities("DateEndRealShort")." : '<strong>'".$datere.'</strong>';
+							if ($objectligne->date_cloture) {
+								$txt .= " - ".$outputlangs->transnoentities("DateEndRealShort")." : '<strong>'".$datere.'</strong>';
+							}
 						}
 
 						$pdf->startTransaction();
 						$pdf->writeHTMLCell(0, 0, $curX, $curY, dol_concatdesc($txtpredefinedservice, dol_concatdesc($txt, $desc)), 0, 1, 0);
 						$pageposafter = $pdf->getPage();
-						if ($pageposafter > $pageposbefore)	// There is a pagebreak
-						{
+						if ($pageposafter > $pageposbefore) {	// There is a pagebreak
 							$pdf->rollbackTransaction(true);
 							$pageposafter = $pageposbefore;
 							//print $pageposafter.'-'.$pageposbefore;exit;
@@ -376,22 +380,26 @@ class pdf_strato extends ModelePDFContract
 							$pageposafter = $pdf->getPage();
 							$posyafter = $pdf->GetY();
 
-							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot)))	// There is no space left for total+free text
-							{
-								if ($i == ($nblines - 1))	// No more lines, and no space left to show total, so we create a new page
-								{
+							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// There is no space left for total+free text
+								if ($i == ($nblines - 1)) {	// No more lines, and no space left to show total, so we create a new page
 									$pdf->AddPage('', '', true);
-									if (!empty($tplidx)) $pdf->useTemplate($tplidx);
-									if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+									if (!empty($tplidx)) {
+										$pdf->useTemplate($tplidx);
+									}
+									if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+										$this->_pagehead($pdf, $object, 0, $outputlangs);
+									}
 									$pdf->setPage($pageposafter + 1);
 								}
 							} else {
 								// We found a page break
 
 								// Allows data in the first page if description is long enough to break in multiples pages
-								if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+								if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE)) {
 									$showpricebeforepagebreak = 1;
-								else $showpricebeforepagebreak = 0;
+								} else {
+									$showpricebeforepagebreak = 0;
+								}
 							}
 						} else // No pagebreak
 						{
@@ -407,17 +415,16 @@ class pdf_strato extends ModelePDFContract
 
 						// We suppose that a too long description is moved completely on next page
 						if ($pageposafter > $pageposbefore) {
-							$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
+							$pdf->setPage($pageposafter);
+							$curY = $tab_top_newpage;
 						}
 
 						$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
 
 						// Detect if some page were added automatically and output _tableau for past pages
-						while ($pagenb < $pageposafter)
-						{
+						while ($pagenb < $pageposafter) {
 							$pdf->setPage($pagenb);
-							if ($pagenb == 1)
-							{
+							if ($pagenb == 1) {
 								$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext, 0, $outputlangs, 0, 1);
 							} else {
 								$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter - $heightforfreetext, 0, $outputlangs, 1, 1);
@@ -428,10 +435,8 @@ class pdf_strato extends ModelePDFContract
 							$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
 						}
 
-						if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak)
-						{
-							if ($pagenb == 1)
-							{
+						if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
+							if ($pagenb == 1) {
 								$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext, 0, $outputlangs, 0, 1);
 							} else {
 								$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter - $heightforfreetext, 0, $outputlangs, 1, 1);
@@ -439,15 +444,16 @@ class pdf_strato extends ModelePDFContract
 							$this->_pagefoot($pdf, $object, $outputlangs, 1);
 							// New page
 							$pdf->AddPage();
-							if (!empty($tplidx)) $pdf->useTemplate($tplidx);
+							if (!empty($tplidx)) {
+								$pdf->useTemplate($tplidx);
+							}
 							$pagenb++;
 						}
 					}
 				}
 
 				// Show square
-				if ($pagenb == 1)
-				{
+				if ($pagenb == 1) {
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
 					$this->tabSignature($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, $outputlangs);
 					$bottomlasttab = $this->page_hauteur - $heightforfooter - $heightforfooter + 1;
@@ -458,15 +464,16 @@ class pdf_strato extends ModelePDFContract
 				}
 
 				$this->_pagefoot($pdf, $object, $outputlangs);
-				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
+				if (method_exists($pdf, 'AliasNbPages')) {
+					$pdf->AliasNbPages();
+				}
 
 				$pdf->Close();
 
 				$pdf->Output($file, 'F');
 
 				// Add pdfgeneration hook
-				if (!is_object($hookmanager))
-				{
+				if (!is_object($hookmanager)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 					$hookmanager = new HookManager($this->db);
 				}
@@ -474,14 +481,14 @@ class pdf_strato extends ModelePDFContract
 				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-				if ($reshook < 0)
-				{
+				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK))
-				@chmod($file, octdec($conf->global->MAIN_UMASK));
+				if (!empty($conf->global->MAIN_UMASK)) {
+					@chmod($file, octdec($conf->global->MAIN_UMASK));
+				}
 
 				$this->result = array('fullpath'=>$file);
 
@@ -515,7 +522,9 @@ class pdf_strato extends ModelePDFContract
 
 		// Force to disable hidetop and hidebottom
 		$hidebottom = 0;
-		if ($hidetop) $hidetop = -1;
+		if ($hidetop) {
+			$hidetop = -1;
+		}
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 		/*
@@ -542,7 +551,7 @@ class pdf_strato extends ModelePDFContract
 		$pdf->line($this->marge_gauche, $nexY, $this->page_largeur-$this->marge_droite, $nexY);
 
 		$pdf->MultiCell(0, 3, '');		// Set interline to 3. Then writeMultiCell must use 3 also.
-        */
+		*/
 
 		// Output Rect
 		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height + 3); // Rect takes a length in 3rd parameter and 4th parameter
@@ -597,8 +606,7 @@ class pdf_strato extends ModelePDFContract
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		//Affiche le filigrane brouillon - Print Draft Watermark
-		if ($object->statut == 0 && (!empty($conf->global->CONTRACT_DRAFT_WATERMARK)))
-		{
+		if ($object->statut == 0 && (!empty($conf->global->CONTRACT_DRAFT_WATERMARK))) {
 			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->CONTRACT_DRAFT_WATERMARK);
 		}
 
@@ -613,10 +621,8 @@ class pdf_strato extends ModelePDFContract
 
 		// Logo
 		$logo = $conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
-		if ($this->emetteur->logo)
-		{
-			if (is_readable($logo))
-			{
+		if ($this->emetteur->logo) {
+			if (is_readable($logo)) {
 				$height = pdf_getHeightForLogo($logo);
 				$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
 			} else {
@@ -651,22 +657,19 @@ class pdf_strato extends ModelePDFContract
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date_contrat, "day", false, $outputlangs, true), '', 'R');
 
-		if ($object->thirdparty->code_client)
-		{
+		if ($object->thirdparty->code_client) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
 		}
 
-		if ($showaddress)
-		{
+		if ($showaddress) {
 			// Sender properties
 			$carac_emetteur = '';
 			// Add internal contact of proposal if defined
 			$arrayidcontact = $object->getIdContact('internal', 'INTERREPFOLL');
-			if (count($arrayidcontact) > 0)
-			{
+			if (count($arrayidcontact) > 0) {
 				$object->fetch_user($arrayidcontact[0]);
 				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
 			}
@@ -676,7 +679,9 @@ class pdf_strato extends ModelePDFContract
 			// Show sender
 			$posy = 42;
 			$posx = $this->marge_gauche;
-			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx = $this->page_largeur - $this->marge_droite - 80;
+			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
+				$posx = $this->page_largeur - $this->marge_droite - 80;
+			}
 			$hautcadre = 40;
 
 			// Show sender frame
@@ -703,17 +708,15 @@ class pdf_strato extends ModelePDFContract
 			// If CUSTOMER contact defined, we use it
 			$usecontact = false;
 			$arrayidcontact = $object->getIdContact('external', 'CUSTOMER');
-			if (count($arrayidcontact) > 0)
-			{
+			if (count($arrayidcontact) > 0) {
 				$usecontact = true;
 				$result = $object->fetch_contact($arrayidcontact[0]);
 			}
 
 			$this->recipient = $object->thirdparty;
 
-			//Recipient name
-			// You can use the name of the contact company
-			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+			// Recipient name
+			if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;
@@ -725,10 +728,14 @@ class pdf_strato extends ModelePDFContract
 
 			// Show recipient
 			$widthrecbox = 100;
-			if ($this->page_largeur < 210) $widthrecbox = 84; // To work with US executive format
+			if ($this->page_largeur < 210) {
+				$widthrecbox = 84; // To work with US executive format
+			}
 			$posy = 42;
 			$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
-			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx = $this->marge_gauche;
+			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
+				$posx = $this->marge_gauche;
+			}
 
 			// Show recipient frame
 			$pdf->SetTextColor(0, 0, 0);

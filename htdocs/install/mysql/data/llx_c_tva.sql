@@ -23,17 +23,33 @@
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 
---
+-- 
 -- Ne pas placer de commentaire en fin de ligne, ce fichier est parsé lors
 -- de l'install et tous les sigles '--' sont supprimés.
 --
 
 --
--- Taux TVA
--- Source des taux: http://fr.wikipedia.org/wiki/Taxe_sur_la_valeur_ajout%C3%A9e
+-- FR:
+-- Taux TVA 
+-- Source des taux: https://fr.wikipedia.org/wiki/Taxe_sur_la_valeur_ajout%C3%A9e
+--
+-- EN:
+-- VAT - value-added tax 
+-- Source:  https://en.wikipedia.org/wiki/Value-added_tax 
 --
 
+
 delete from llx_c_tva;
+
+-- ALGERIA (id country=13)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 131, 13,     '0','0','TVA 0%',   1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 132, 13,  '9','0','TVA 9%',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 133, 13,     '19','0','TVA 19%',   1);
+
+-- ANGOLA (id country=35)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 351,  35,   '0','0','VAT Rate 0', 1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 352,  35,   '7','0','VAT reduced rate',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 353,  35,  '14','0','VAT standard rate',1);
 
 -- ARGENTINA (id country=23)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (231, 23,   '0','0','IVA Rate 0', 1);
@@ -202,6 +218,13 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 1
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 173,  17,  '19','0','Algemeen BTW tarief',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 174,  17,  '21','0','Algemeen BTW tarief (vanaf 1 oktober 2012)',0);
 
+-- NEW CALEDONIA (id country=165)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1651, 165,   '0','0','VAT Rate 0', 1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1652, 165,   '3','0','VAT standard 3', 1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1653, 165,   '6','0','VAT standard 6', 1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1654, 165,  '11','0','VAT standard rate', 1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1655, 165,  '22','0','VAT standard high', 1);
+
 -- NEW ZEALAND (id country=166)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1661, 166,   '0','0','VAT Rate 0', 1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1662, 166,  '15','0','VAT standard rate', 1);
@@ -360,12 +383,6 @@ INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (20
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2321,232,     '0','0','No VAT',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2322,232,    '12','0','VAT 12%',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2323,232,     '8','0','VAT 8%',1);
-
--- ALGERIA(id country=13)
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 131, 13,     '0','0','TVA 0%',   1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 132, 13,  '9','0','TVA 9%',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 133, 13,     '19','0','TVA 19%',   1);
-
 
 -- Example of code to insert a vat rate 0 for each country
 --delete from llx_c_tva where rowid = 1181;		-- to delete a record that does not follow rules for rowid (fk_pays+'1')
