@@ -155,11 +155,15 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($cancel) {
-		$action = '';
 		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
+		} else {
+			$page = DOL_URL_ROOT.'/societe/index.php?leftmenu=thirdparties';
+			header("Location: ".$page);
+			exit;
 		}
+		$action = '';
 	}
 
 	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->rights->societe->creer) {
@@ -1701,16 +1705,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		print dol_get_fiche_end();
 
+		// Button "Add Thirdparty"
 		print '<div class="center">';
-		print '<input type="submit" class="button" name="create" value="'.$langs->trans('AddThirdParty').'">';
-		if (!empty($backtopage)) {
-			print ' &nbsp; &nbsp; ';
-			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-		} else {
-			print ' &nbsp; &nbsp; ';
-			print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-		}
-		print '</div>'."\n";
+		print '<input type="submit" class="button" name="save" value="'.$langs->trans('AddThirdParty').'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '</div>';
 
 		print '</form>'."\n";
 	} elseif ($action == 'edit') {

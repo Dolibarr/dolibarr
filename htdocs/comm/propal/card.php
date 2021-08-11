@@ -151,6 +151,10 @@ if (empty($reshook)) {
 		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
+		} else {
+			$page = DOL_URL_ROOT.'/comm/propal/index.php?leftmenu=propals';
+			header("Location: ".$page);
+			exit;
 		}
 		$action = '';
 	}
@@ -1860,10 +1864,11 @@ if ($action == 'create') {
 	print dol_get_fiche_end();
 
 	$langs->load("bills");
+
+	// Button "Create Draft"
 	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("CreateDraft").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+	print '<input type="submit" class="button" name="save" value="'.$langs->trans('CreateDraft').'">';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print "</form>";

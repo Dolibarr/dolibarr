@@ -3799,7 +3799,7 @@ if ($action == 'create') {
 
 	// Button "Create Draft"
 	print '<div class="center">';
-	print '<input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'">';
+	print '<input type="submit" class="button" name="save" value="'.$langs->trans('CreateDraft').'">';
 	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 

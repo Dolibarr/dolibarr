@@ -114,9 +114,12 @@ if (empty($reshook)) {
 				dol_syslog($object->error, LOG_DEBUG);
 				setEventMessages($langs->trans("CantRemoveProject", $langs->transnoentitiesnoconv("ProjectOverview")), null, 'errors');
 			}
-		}
-		if ($backtopage) {
+		} elseif ($backtopage) {
 			header("Location: ".$backtopage);
+			exit;
+		} else {
+			$page = DOL_URL_ROOT.'/projet/index.php?leftmenu=projects';
+			header("Location: ".$page);
 			exit;
 		}
 
@@ -690,21 +693,16 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 	print dol_get_fiche_end();
 
+	// Button "Create Draft"
 	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("CreateDraft").'">';
-	if (!empty($backtopage)) {
-		print ' &nbsp; &nbsp; ';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	} else {
-		print ' &nbsp; &nbsp; ';
-		print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-	}
+	print '<input type="submit" class="button" name="save" value="'.$langs->trans('CreateDraft').'">';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print '</form>';
 
 	// Change probability from status
-	print '<script type="text/javascript" language="javascript">
+	print '<script type="text/javascript">
         jQuery(document).ready(function() {
         	function change_percent()
         	{

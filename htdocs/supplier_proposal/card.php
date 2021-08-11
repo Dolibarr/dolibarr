@@ -60,6 +60,7 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 $origin = GETPOST('origin', 'alpha');
 $originid = GETPOST('originid', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -135,6 +136,10 @@ if (empty($reshook)) {
 	if ($cancel) {
 		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
+			exit;
+		} else {
+			$page = DOL_URL_ROOT.'/supplier_proposal/index.php?leftmenu=propals_supplier';
+			header("Location: ".$page);
 			exit;
 		}
 		$action = '';
@@ -1330,10 +1335,10 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
+	// Button "Create Draft"
 	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("CreateDraft").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+	print '<input type="submit" class="button" name="save" value="'.$langs->trans('CreateDraft').'">';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print "</form>";
