@@ -53,25 +53,26 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO'])) {
 
 /**
  * Return the real char for a numeric entities.
- * This function is required by testSqlAndScriptInject().
+ * WARNING: This function is required by testSqlAndScriptInject() and the GETPOST 'restricthtml'. Regex calling must be similar.
  *
  * @param	string		$matches			String of numeric entity
  * @return	string							New value
  */
 function realCharForNumericEntities($matches)
 {
-	$newstringnumentity = $matches[1];
+	$newstringnumentity = preg_replace('/;$/', '', $matches[1]);
+	//print  ' $newstringnumentity='.$newstringnumentity;
 
 	if (preg_match('/^x/i', $newstringnumentity)) {
 		$newstringnumentity = hexdec(preg_replace('/^x/i', '', $newstringnumentity));
 	}
 
-	// The numeric value we don't want as entities
+	// The numeric value we don't want as entities because they encode ascii char, and why using html entities on ascii except for haking ?
 	if (($newstringnumentity >= 65 && $newstringnumentity <= 90) || ($newstringnumentity >= 97 && $newstringnumentity <= 122)) {
 		return chr((int) $newstringnumentity);
 	}
 
-	return '&#'.$matches[1];
+	return '&#'.$matches[1];	// Value will be unchanged because regex was /&#(  )/
 }
 
 /**
@@ -79,7 +80,7 @@ function realCharForNumericEntities($matches)
  * Warning: Such a protection can't be enough. It is not reliable as it will always be possible to bypass this. Good protection can
  * only be guaranted by escaping data during output.
  *
- * @param		string		$val		Value brut found int $_GET, $_POST or PHP_SELF
+ * @param		string		$val		Brut value found into $_GET, $_POST or PHP_SELF
  * @param		string		$type		0=POST, 1=GET, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
  * @return		int						>0 if there is an injection, 0 if none
  */
@@ -104,25 +105,26 @@ function testSqlAndScriptInject($val, $type)
 	$val = preg_replace('/<!--[^>]*-->/', '', $val);
 
 	$inj = 0;
-	// For SQL Injection (only GET are used to be included into bad escaped SQL requests)
+	// For SQL Injection (only GET are used to scan for such injection strings)
 	if ($type == 1 || $type == 3) {
 		$inj += preg_match('/delete\s+from/i', $val);
 		$inj += preg_match('/create\s+table/i', $val);
 		$inj += preg_match('/insert\s+into/i', $val);
 		$inj += preg_match('/select\s+from/i', $val);
 		$inj += preg_match('/into\s+(outfile|dumpfile)/i', $val);
-		$inj += preg_match('/user\s*\(/i', $val); // avoid to use function user() that return current database login
+		$inj += preg_match('/user\s*\(/i', $val); // avoid to use function user() or mysql_user() that return current database login
 		$inj += preg_match('/information_schema/i', $val); // avoid to use request that read information_schema database
 		$inj += preg_match('/<svg/i', $val); // <svg can be allowed in POST
+		$inj += preg_match('/update.+set.+=/i', $val);
+		$inj += preg_match('/union.+select/i', $val);
 	}
 	if ($type == 3) {
 		$inj += preg_match('/select|update|delete|truncate|replace|group\s+by|concat|count|from|union/i', $val);
 	}
 	if ($type != 2) {	// Not common key strings, so we can check them both on GET and POST
 		$inj += preg_match('/updatexml\(/i', $val);
-		$inj += preg_match('/update.+set.+=/i', $val);
-		$inj += preg_match('/union.+select/i', $val);
 		$inj += preg_match('/(\.\.%2f)+/i', $val);
+		$inj += preg_match('/\s@@/', $val);
 	}
 	// For XSS Injection done by closing textarea to execute content into a textarea field
 	$inj += preg_match('/<\/textarea/i', $val);
@@ -263,7 +265,7 @@ if (!empty($_POST["DOL_AUTOSET_COOKIE"])) {
 	$cookiename = $tmpautoset[0];
 	$cookievalue = json_encode($cookiearrayvalue);
 	//var_dump('setcookie cookiename='.$cookiename.' cookievalue='.$cookievalue);
-	setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', null, false, true); // keep cookie 1 year and add tag httponly
+	setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // keep cookie 1 year and add tag httponly
 	if (empty($cookievalue)) {
 		unset($_COOKIE[$cookiename]);
 	}
@@ -438,15 +440,18 @@ if ((!empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VE
 
 // Creation of a token against CSRF vulnerabilities
 if (!defined('NOTOKENRENEWAL')) {
-	// Rolling token at each call ($_SESSION['token'] contains token of previous page)
-	if (isset($_SESSION['newtoken'])) {
-		$_SESSION['token'] = $_SESSION['newtoken'];
-	}
+	// No token renewal on .css.php, .js.php and .json.php
+	if (!preg_match('/\.(css|js|json)\.php$/', $_SERVER["PHP_SELF"])) {
+		// Rolling token at each call ($_SESSION['token'] contains token of previous page)
+		if (isset($_SESSION['newtoken'])) {
+			$_SESSION['token'] = $_SESSION['newtoken'];
+		}
 
-	// Save in $_SESSION['newtoken'] what will be next token. Into forms, we will add param token = newToken();
-	$token = dol_hash(uniqid(mt_rand(), true)); // Generates a hash of a random number
-	$_SESSION['newtoken'] = $token;
-	dol_syslog("NEW TOKEN reclaimed by : " . $_SERVER['PHP_SELF'], LOG_DEBUG);
+		// Save in $_SESSION['newtoken'] what will be next token. Into forms, we will add param token = $_SESSION['newtoken']
+		$token = dol_hash(uniqid(mt_rand(), false), 'md5'); // Generates a hash of a random number. We don't need a secured hash, just a changing random value.
+		$_SESSION['newtoken'] = $token;
+		dol_syslog("NEW TOKEN generated by : " . $_SERVER['PHP_SELF'], LOG_DEBUG);
+	}
 }
 
 //dol_syslog("aaaa - ".defined('NOCSRFCHECK')." - ".$dolibarr_nocsrfcheck." - ".$conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN." - ".$_SERVER['REQUEST_METHOD']." - ".GETPOST('token', 'alpha'));
@@ -455,11 +460,15 @@ if (!defined('NOTOKENRENEWAL')) {
 if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN)) || defined('CSRFCHECK_WITH_TOKEN')) {
 	// Array of action code where CSRFCHECK with token will be forced (so token must be provided on url request)
 	$arrayofactiontoforcetokencheck = array(
-		'activate', 'add', 'addtimespent', 'update', 'install',
-		'confirm_create_user', 'confirm_create_thirdparty', 'confirm_purge', 'confirm_reject_check',
-		'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'disable',
+		'activate', 'add', 'addrights', 'addtimespent',
+		'confirm_create_user', 'confirm_create_thirdparty', 'confirm_delete', 'confirm_deletedir', 'confirm_deletefile', 'confirm_purge', 'confirm_reject_check',
+		'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'delrights',
+		'disable',
 		'doprev', 'donext', 'dvprev', 'dvnext',
-		'enable', 'setpricelevel'
+		'enable',
+		'install',
+		'setpricelevel',
+		'update'
 	);
 	$sensitiveget = false;
 	if (in_array(GETPOST('action', 'aZ09'), $arrayofactiontoforcetokencheck)) {
@@ -504,7 +513,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 		//print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
 		setEventMessages('SecurityTokenHasExpiredSoActionHasBeenCanceledPleaseRetry', null, 'warnings');
 		//if ($conf->global->MAIN_FEATURES_LEVEL >= 1) setEventMessages('Unset POST and GET params by CSRF protection in main.inc.php (Token provided was not generated by the previous page).'."<br>\n".'$_SERVER[REQUEST_URI] = '.$_SERVER['REQUEST_URI'].' $_SERVER[REQUEST_METHOD] = '.$_SERVER['REQUEST_METHOD'].' GETPOST(token) = '.GETPOST('token', 'alpha').' $_SESSION[token] = '.$_SESSION['token'], null, 'warnings');
-		$savid = ((int) $_POST['id']);
+		if (isset($_POST['id'])) $savid = ((int) $_POST['id']);
 		unset($_POST);
 		//unset($_POST['action']); unset($_POST['massaction']);
 		//unset($_POST['confirm']); unset($_POST['confirmmassaction']);
@@ -512,7 +521,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 		unset($_GET['action']);
 		unset($_GET['confirmmassaction']);
 		unset($_GET['massaction']);
-		$_POST['id'] = ((int) $savid);
+		if (isset($savid)) $_POST['id'] = ((int) $savid);
 	}
 
 	// Note: There is another CSRF protection into the filefunc.inc.php
@@ -658,7 +667,7 @@ if (!defined('NOLOGIN')) {
 				// Hooks on failed login
 				$action = '';
 				$hookmanager->initHooks(array('login'));
-				$parameters = array('dol_authmode'=>$dol_authmode, 'dol_loginmesg'=>$_SESSION["dol_loginmesg"]);
+				$parameters = array('dol_authmode'=>$authmode, 'dol_loginmesg'=>$_SESSION["dol_loginmesg"]);
 				$reshook = $hookmanager->executeHooks('afterLoginFailed', $parameters, $user, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
 					$error++;
@@ -1684,7 +1693,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 			// Global js function
 			print '<!-- Includes JS of Dolibarr -->'."\n";
-			print '<script src="'.DOL_URL_ROOT.'/core/js/lib_head.js.php?lang='.$langs->defaultlang.($ext ? '&'.$ext : '').'"></script>'."\n";
+			print '<script src="'.DOL_URL_ROOT.'/core/js/lib_head.js.php?lang='.$langs->defaultlang.($ext ? '&amp;'.$ext : '').'"></script>'."\n";
 
 			// JS forced by modules (relative url starting with /)
 			if (!empty($conf->modules_parts['js'])) {		// $conf->modules_parts['js'] is array('module'=>array('file1','file2'))
@@ -1693,7 +1702,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 					$filesjs = (array) $filesjs; // To be sure filejs is an array
 					foreach ($filesjs as $jsfile) {
 						// jsfile is a relative path
-						print '<!-- Include JS added by module '.$modjs.'-->'."\n".'<script src="'.dol_buildpath($jsfile, 1).'"></script>'."\n";
+						print '<!-- Include JS added by module '.$modjs.'-->'."\n".'<script src="'.dol_buildpath($jsfile, 1).((strpos($jsfile, '?') === false) ? '?' : '&amp;').'lang='.$langs->defaultlang.'"></script>'."\n";
 					}
 				}
 			}
@@ -1702,9 +1711,9 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				print '<!-- Includes JS added by page -->'."\n";
 				foreach ($arrayofjs as $jsfile) {
 					if (preg_match('/^(http|\/\/)/i', $jsfile)) {
-						print '<script src="'.$jsfile.'"></script>'."\n";
+						print '<script src="'.$jsfile.((strpos($jsfile, '?') === false) ? '?' : '&amp;').'lang='.$langs->defaultlang.'"></script>'."\n";
 					} else {
-						print '<script src="'.dol_buildpath($jsfile, 1).'"></script>'."\n";
+						print '<script src="'.dol_buildpath($jsfile, 1).((strpos($jsfile, '?') === false) ? '?' : '&amp;').'lang='.$langs->defaultlang.'"></script>'."\n";
 					}
 				}
 			}
@@ -1849,7 +1858,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $conf->browser->layout != 'phone') {
 			$qs = dol_escape_htmltag($_SERVER["QUERY_STRING"]);
 
-			if (is_array($_POST)) {
+			if (isset($_POST) && is_array($_POST)) {
 				foreach ($_POST as $key => $value) {
 					if ($key !== 'action' && $key !== 'password' && !is_array($value)) {
 						$qs .= '&'.$key.'='.urlencode($value);
@@ -1905,9 +1914,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				}
 				$text .= '">';
 				$text .= '<span class="fa fa-question-circle atoplogin valignmiddle'.($helppresent ? ' '.$helppresent : '').'"></span>';
-				if ($helppresent) {
-					$text .= '<span class="fa fa-circle helppresentcircle"></span>';
-				}
+				$text .= '<span class="fa fa-circle helppresentcircle'.($helppresent ? '' : ' unvisible').'"></span>';
 				$text .= '</a>';
 				$toprightmenu .= $form->textwithtooltip('', $title, 2, 1, $text, 'login_block_elem', 2);
 			}
@@ -2008,27 +2015,25 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$dropdownBody .= '<span id="topmenulogincompanyinfo-btn"><i class="fa fa-caret-right"></i> '.$langs->trans("ShowCompanyInfos").'</span>';
 	$dropdownBody .= '<div id="topmenulogincompanyinfo" >';
 
-	if (!empty($conf->global->MAIN_INFO_SIREN)) {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId1Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIREN).'</span>';
+	if ($langs->transcountry("ProfId1", $mysoc->country_code) != '-') {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId1", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIREN).'</span>';
 	}
-	if (!empty($conf->global->MAIN_INFO_SIRET)) {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId2Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIRET).'</span>';
+	if ($langs->transcountry("ProfId2", $mysoc->country_code) != '-') {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId2", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIRET).'</span>';
 	}
-	if (!empty($conf->global->MAIN_INFO_APE)) {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId3Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_APE).'</span>';
+	if ($langs->transcountry("ProfId3", $mysoc->country_code) != '-') {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId3", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_APE).'</span>';
 	}
-	if (!empty($conf->global->MAIN_INFO_RCS)) {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId4Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_RCS).'</span>';
+	if ($langs->transcountry("ProfId4", $mysoc->country_code) != '-') {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId4", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_RCS).'</span>';
 	}
-	if (!empty($conf->global->MAIN_INFO_PROFID5)) {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId5Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID5).'</span>';
+	if ($langs->transcountry("ProfId5", $mysoc->country_code) != '-') {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId5", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID5).'</span>';
 	}
-	if (!empty($conf->global->MAIN_INFO_PROFID6)) {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId6Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID6).'</span>';
+	if ($langs->transcountry("ProfId6", $mysoc->country_code) != '-') {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId6", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID6).'</span>';
 	}
-	if (!empty($conf->global->MAIN_INFO_TVAINTRA)) {
-		$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_TVAINTRA).'</span>';
-	}
+	$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_TVAINTRA).'</span>';
 
 	$dropdownBody .= '</div>';
 
@@ -2060,7 +2065,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$dropdownBody .= '<br><b>'.$langs->trans("ConnectedSince").':</b> '.dol_print_date($user->datelastlogin, "dayhour", 'tzuser');
 	$dropdownBody .= '<br><b>'.$langs->trans("PreviousConnexion").':</b> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser');
 	$dropdownBody .= '<br><b>'.$langs->trans("CurrentTheme").':</b> '.$conf->theme;
-	$dropdownBody .= '<br><b>'.$langs->trans("CurrentMenuManager").':</b> '.$menumanager->name;
+	$dropdownBody .= '<br><b>'.$langs->trans("CurrentMenuManager").':</b> '.(isset($menumanager) ? $menumanager->name : 'unknown');
 	$langFlag = picto_from_langcode($langs->getDefaultLang());
 	$dropdownBody .= '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.($langFlag ? $langFlag.' ' : '').$langs->getDefaultLang();
 
@@ -3143,7 +3148,7 @@ if (!function_exists("llxFooter")) {
 		}
 
 		// Wrapper to add log when clicking on download or preview
-		if (!empty($conf->blockedlog->enabled) && is_object($object) && $object->id > 0 && $object->statut > 0) {
+		if (!empty($conf->blockedlog->enabled) && is_object($object) && !empty($object->id) && $object->id > 0 && $object->statut > 0) {
 			if (in_array($object->element, array('facture'))) {       // Restrict for the moment to element 'facture'
 				print "\n<!-- JS CODE TO ENABLE log when making a download or a preview of a document -->\n";
 				?>

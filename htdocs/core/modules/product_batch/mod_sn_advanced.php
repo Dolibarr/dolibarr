@@ -139,16 +139,16 @@ class mod_sn_advanced extends ModeleNumRefBatch
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask = $conf->global->BATCH_ADVANCED_MASK;
+		$mask = $conf->global->SN_ADVANCED_MASK;
 
 		if (!$mask)	{
 			$this->error = 'NotConfigured';
 			return 0;
 		}
 
-		$date = $object->date;
+		$date = dol_now();
 
-		$numFinal = get_next_value($db, $mask, 'product_sn', 'ref', '', null, $date);
+		$numFinal = get_next_value($db, $mask, 'product_lot', 'batch', '', null, $date);
 
 		return  $numFinal;
 	}

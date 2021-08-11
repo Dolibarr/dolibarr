@@ -316,6 +316,7 @@ class FormFile
 			if ($nooutput) {
 				return $out;
 			} else {
+				print $out;
 				return 1;
 			}
 		}
@@ -846,7 +847,7 @@ class FormFile
 					}
 
 					// Show file name with link to download
-					$out .= '<td class="minwidth200">';
+					$out .= '<td class="minwidth200 tdoverflowmax300">';
 					$out .= '<a class="documentdownload paddingright" href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
 
 					$mime = dol_mimetype($relativepath, '', 0);
@@ -869,7 +870,7 @@ class FormFile
 					$out .= '<td class="nowrap right">'.dol_print_date($date, 'dayhour', 'tzuser').'</td>';
 
 					// Show share link
-					$out .= '<td class="nowrap">';
+					$out .= '<td class="nowraponall">';
 					if (!empty($file['share'])) {
 						// Define $urlwithroot
 						$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -889,7 +890,7 @@ class FormFile
 						$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
 
 						$out .= img_picto($langs->trans("FileSharedViaALink"), 'globe').' ';
-						$out .= '<input type="text" class="quatrevingtpercent width75" id="downloadlink'.$file['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
+						$out .= '<input type="text" class="quatrevingtpercentminusx width75" id="downloadlink'.$file['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
 						$out .= ajax_autoselect('downloadlink'.$file['rowid']);
 					} else {
 						//print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
@@ -980,13 +981,15 @@ class FormFile
 	 *  You may want to call this into a div like this:
 	 *  print '<div class="inline-block valignmiddle">'.$formfile->getDocumentsLink($element_doc, $filename, $filedir).'</div>';
 	 *
-	 *	@param	string	$modulepart		propal, facture, facture_fourn, ...
+	 *	@param	string	$modulepart		'propal', 'facture', 'facture_fourn', ...
 	 *	@param	string	$modulesubdir	Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.
 	 *	@param	string	$filedir		Full path to directory to scan
 	 *  @param	string	$filter			Filter filenames on this regex string (Example: '\.pdf$')
+	 *  @param	string	$morecss		Add more css to the download picto
+	 *  @param	string	$allfiles		0=Only generated docs, 1=All files
 	 *	@return	string              	Output string with HTML link of documents (might be empty string). This also fill the array ->infofiles
 	 */
-	public function getDocumentsLink($modulepart, $modulesubdir, $filedir, $filter = '')
+	public function getDocumentsLink($modulepart, $modulesubdir, $filedir, $filter = '', $morecss = 'valignmiddle', $allfiles = 0)
 	{
 		global $conf, $langs;
 
@@ -1004,12 +1007,11 @@ class FormFile
 			$entity = ((!empty($regs[1]) && $regs[1] > 1) ? $regs[1] : 1); // If entity id not found in $filedir this is entity 1 by default
 		}
 
-		// Get list of files starting with name of ref (but not followed by "-" to discard uploaded files and get only generated files)
-		// @todo Why not showing by default all files by just removing the '[^\-]+' at end of regex ?
-		if (!empty($conf->global->MAIN_SHOW_ALL_FILES_ON_DOCUMENT_TOOLTIP)) {
-			$filterforfilesearch = preg_quote(basename($modulesubdir), '/');
+		// Get list of files starting with name of ref (Note: files with '^ref\.extension' are generated files, files with '^ref-...' are uploaded files)
+		if ($allfiles || !empty($conf->global->MAIN_SHOW_ALL_FILES_ON_DOCUMENT_TOOLTIP)) {
+			$filterforfilesearch = '^'.preg_quote(basename($modulesubdir), '/');
 		} else {
-			$filterforfilesearch = preg_quote(basename($modulesubdir), '/').'[^\-]+';
+			$filterforfilesearch = '^'.preg_quote(basename($modulesubdir), '/').'\.';
 		}
 		$file_list = dol_dir_list($filedir, 'files', 0, $filterforfilesearch, '\.meta$|\.png$'); // We also discard .meta and .png preview
 
@@ -1018,7 +1020,7 @@ class FormFile
 		$out .= '<!-- html.formfile::getDocumentsLink -->'."\n";
 		if (!empty($file_list)) {
 			$out = '<dl class="dropdown inline-block">
-    			<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight', '', 0, 0, 0, '', 'valignmiddle').'</a></dt>
+    			<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight', '', 0, 0, 0, '', $morecss).'</a></dt>
     			<dd><div class="multichoicedoc" style="position:absolute;left:100px;" ><ul class="ulselectedfields">';
 			$tmpout = '';
 
@@ -1181,7 +1183,7 @@ class FormFile
 		);
 		$reshook = $hookmanager->executeHooks('showFilesList', $parameters, $object);
 
-		if (isset($reshook) && $reshook != '') { // null or '' for bypass
+		if (!empty($reshook)) { // null or '' for bypass
 			return $reshook;
 		} else {
 			if (!is_object($form)) {

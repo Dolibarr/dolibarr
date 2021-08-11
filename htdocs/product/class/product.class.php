@@ -261,6 +261,13 @@ class Product extends CommonObject
 	 */
 	public $finished;
 
+		/**
+	 * fk_default_bom indicates the default bom
+	 *
+	 * @var int
+	 */
+	public $fk_default_bom;
+
 	/**
 	 * We must manage lot/batch number, sell-by date and so on : '1':yes '0':no
 	 *
@@ -1102,6 +1109,7 @@ class Product extends CommonObject
 			$sql .= ", batch_mask = '".$this->db->escape($this->batch_mask)."'";
 
 			$sql .= ", finished = ".((!isset($this->finished) || $this->finished < 0 || $this->finished == '') ? "null" : (int) $this->finished);
+			$sql .= ", fk_default_bom = ".((!isset($this->fk_default_bom) || $this->fk_default_bom < 0 || $this->fk_default_bom == '') ? "null" : (int) $this->fk_default_bom);
 			$sql .= ", net_measure = ".($this->net_measure != '' ? "'".$this->db->escape($this->net_measure)."'" : 'null');
 			$sql .= ", net_measure_units = ".($this->net_measure_units != '' ? "'".$this->db->escape($this->net_measure_units)."'" : 'null');
 			$sql .= ", weight = ".($this->weight != '' ? "'".$this->db->escape($this->weight)."'" : 'null');
@@ -2236,7 +2244,7 @@ class Product extends CommonObject
 		// Check parameters
 		if (!$id && !$ref && !$ref_ext && !$barcode) {
 			$this->error = 'ErrorWrongParameters';
-			dol_syslog(get_class($this)."::fetch ".$this->error);
+			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -2244,7 +2252,7 @@ class Product extends CommonObject
 		$sql .= " p.price_min, p.price_min_ttc, p.price_base_type, p.cost_price, p.default_vat_code, p.tva_tx, p.recuperableonly as tva_npr, p.localtax1_tx, p.localtax2_tx, p.localtax1_type, p.localtax2_type, p.tosell,";
 		$sql .= " p.tobuy, p.fk_product_type, p.duration, p.fk_default_warehouse, p.seuil_stock_alerte, p.canvas, p.net_measure, p.net_measure_units, p.weight, p.weight_units,";
 		$sql .= " p.length, p.length_units, p.width, p.width_units, p.height, p.height_units,";
-		$sql .= " p.surface, p.surface_units, p.volume, p.volume_units, p.barcode, p.fk_barcode_type, p.finished,";
+		$sql .= " p.surface, p.surface_units, p.volume, p.volume_units, p.barcode, p.fk_barcode_type, p.finished, p.fk_default_bom,";
 		if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 			$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
 		} else {
@@ -2286,8 +2294,9 @@ class Product extends CommonObject
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 		}
 		if ($separatedStock) {
-			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_stock as sp ON sp.fk_product = p.rowid";
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_stock as sp ON sp.fk_product = p.rowid AND sp.fk_entrepot IN (SELECT rowid FROM ".MAIN_DB_PREFIX."entrepot WHERE entity IN (".$this->db->sanitize($visibleWarehousesEntities)."))";
 		}
+
 		if ($id) {
 			$sql .= " WHERE p.rowid = ".((int) $id);
 		} else {
@@ -2299,9 +2308,6 @@ class Product extends CommonObject
 			} elseif ($barcode) {
 				$sql .= " AND p.barcode = '".$this->db->escape($barcode)."'";
 			}
-		}
-		if ($separatedStock) {
-			$sql .= " AND sp.fk_entrepot IN (SELECT rowid FROM ".MAIN_DB_PREFIX."entrepot WHERE entity IN (".$this->db->sanitize($visibleWarehousesEntities)."))";
 		}
 		if ($separatedStock) {
 			$sql .= " GROUP BY p.rowid, p.ref, p.ref_ext, p.label, p.description, p.url, p.note_public, p.note, p.customcode, p.fk_country, p.fk_state, p.lifetime, p.qc_frequency, p.price, p.price_ttc,";
@@ -2373,6 +2379,8 @@ class Product extends CommonObject
 				$this->localtax2_type                = $obj->localtax2_type;
 
 				$this->finished                        = $obj->finished;
+				$this->fk_default_bom                  = $obj->fk_default_bom;
+
 				$this->duration                        = $obj->duration;
 				$this->duration_value                = substr($obj->duration, 0, dol_strlen($obj->duration) - 1);
 				$this->duration_unit = substr($obj->duration, -1);
@@ -2666,7 +2674,7 @@ class Product extends CommonObject
 				$obj = $this->db->fetch_object($result);
 				$this->stats_mo['customers_'.$role] = $obj->nb_customers ? $obj->nb_customers : 0;
 				$this->stats_mo['nb_'.$role] = $obj->nb ? $obj->nb : 0;
-				$this->stats_mo['qty_'.$role] = $obj->qty ? $obj->qty : 0;
+				$this->stats_mo['qty_'.$role] = $obj->qty ? price2num($obj->qty, 'MS') : 0;		// qty may be a float due to the SUM()
 			} else {
 				$this->error = $this->db->error();
 				$error++;
@@ -5154,9 +5162,10 @@ class Product extends CommonObject
 	/**
 	 * Load information about stock of a product into ->stock_reel, ->stock_warehouse[] (including stock_warehouse[idwarehouse]->detail_batch for batch products)
 	 * This function need a lot of load. If you use it on list, use a cache to execute it once for each product id.
-	 * If ENTREPOT_EXTRA_STATUS set, filtering on warehouse status possible.
+	 * If ENTREPOT_EXTRA_STATUS is set, filtering on warehouse status is possible.
 	 *
 	 * @param  	string 	$option 					'' = Load all stock info, also from closed and internal warehouses, 'nobatch', 'novirtual'
+	 * 												You can also filter on 'warehouseclosed', 'warehouseopen', 'warehouseinternal'
 	 * @param	int		$includedraftpoforvirtual	Include draft status of PO for virtual stock calculation
 	 * @return 	int                  				< 0 if KO, > 0 if OK
 	 * @see    	load_virtual_stock(), loadBatchInfo()
@@ -5170,16 +5179,20 @@ class Product extends CommonObject
 		$this->stock_warehouse = array();
 		$this->stock_theorique = 0;
 
+		// Set filter on warehouse status
 		$warehouseStatus = array();
-
 		if (preg_match('/warehouseclosed/', $option)) {
-			$warehouseStatus[] = Entrepot::STATUS_CLOSED;
+			$warehouseStatus[Entrepot::STATUS_CLOSED] = Entrepot::STATUS_CLOSED;
 		}
 		if (preg_match('/warehouseopen/', $option)) {
-			$warehouseStatus[] = Entrepot::STATUS_OPEN_ALL;
+			$warehouseStatus[Entrepot::STATUS_OPEN_ALL] = Entrepot::STATUS_OPEN_ALL;
 		}
 		if (preg_match('/warehouseinternal/', $option)) {
-			$warehouseStatus[] = Entrepot::STATUS_OPEN_INTERNAL;
+			if (!empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
+				$warehouseStatus[Entrepot::STATUS_OPEN_INTERNAL] = Entrepot::STATUS_OPEN_INTERNAL;
+			} else {
+				$warehouseStatus[Entrepot::STATUS_OPEN_ALL] = Entrepot::STATUS_OPEN_ALL;
+			}
 		}
 
 		$sql = "SELECT ps.rowid, ps.reel, ps.fk_entrepot";
@@ -5188,7 +5201,7 @@ class Product extends CommonObject
 		$sql .= " WHERE w.entity IN (".getEntity('stock').")";
 		$sql .= " AND w.rowid = ps.fk_entrepot";
 		$sql .= " AND ps.fk_product = ".$this->id;
-		if (!empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
+		if (count($warehouseStatus)) {
 			$sql .= " AND w.statut IN (".$this->db->sanitize(implode(',', $warehouseStatus)).")";
 		}
 
@@ -5279,17 +5292,6 @@ class Product extends CommonObject
 				dol_print_error($this->db, $this->error);
 			}
 			$stock_commande_fournisseur = $this->stats_commande_fournisseur['qty'];
-		}
-		if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && empty($conf->reception->enabled)) {
-			$filterStatus = '4';
-			if (isset($includedraftpoforvirtual)) {
-				$filterStatus = '0,'.$filterStatus;
-			}
-			$result = $this->load_stats_reception(0, $filterStatus, 1);
-			if ($result < 0) {
-				dol_print_error($this->db, $this->error);
-			}
-			$stock_reception_fournisseur = $this->stats_reception['qty'];
 		}
 		if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && empty($conf->reception->enabled)) {
 			$filterStatus = '4';

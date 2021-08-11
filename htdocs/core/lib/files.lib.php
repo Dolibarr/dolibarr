@@ -377,7 +377,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 				$ecmfile->fullpath_orig = $filearray[$key]['fullname'];
 				$ecmfile->gen_or_uploaded = 'unknown';
 				$ecmfile->description = ''; // indexed content
-				$ecmfile->keyword = ''; // keyword content
+				$ecmfile->keywords = ''; // keyword content
 				$result = $ecmfile->create($user);
 				if ($result < 0) {
 					setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
@@ -933,7 +933,7 @@ function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
 					$ecmfile->fullpath_orig = $srcfile;
 					$ecmfile->gen_or_uploaded = 'unknown';
 					$ecmfile->description = ''; // indexed content
-					$ecmfile->keyword = ''; // keyword content
+					$ecmfile->keywords = ''; // keyword content
 					$resultecm = $ecmfile->create($user);
 					if ($resultecm < 0) {
 						setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
@@ -1785,11 +1785,18 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 		$ecmfile->fullpath_orig = $fullpathorig;
 		$ecmfile->gen_or_uploaded = $mode;
 		$ecmfile->description = ''; // indexed content
-		$ecmfile->keyword = ''; // keyword content
+		$ecmfile->keywords = ''; // keyword content
 
 		if (is_object($object) && $object->id > 0) {
 			$ecmfile->src_object_id = $object->id;
-			$ecmfile->src_object_type = $object->table_element;
+			if (isset($object->table_element)) {
+				$ecmfile->src_object_type = $object->table_element;
+			} else {
+				dol_syslog('Error: object ' . get_class($object) . ' has no table_element attribute.');
+				return -1;
+			}
+			if (isset($object->src_object_description)) $ecmfile->description = $object->src_object_description;
+			if (isset($object->src_object_keywords)) $ecmfile->keywords = $object->src_object_keywords;
 		}
 
 		if ($setsharekey) {
@@ -2235,7 +2242,7 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
  * Security check when accessing to a document (used by document.php, viewimage.php and webservices to get documents).
  * TODO Replace code that set $accesallowed by a call to restrictedArea()
  *
- * @param	string	$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp')
+ * @param	string	$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Exemple: 'medias', 'invoice', 'logs', 'tax-vat', ...
  * @param	string	$original_file		Relative path with filename, relative to modulepart.
  * @param	string	$entity				Restrict onto entity (0=no restriction)
  * @param  	User	$fuser				User object (forced)
@@ -2263,9 +2270,12 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$entity = 0;
 		}
 	}
-	// Fix modulepart
+	// Fix modulepart for backward compatibility
 	if ($modulepart == 'users') {
 		$modulepart = 'user';
+	}
+	if ($modulepart == 'tva') {
+		$modulepart = 'tax-vat';
 	}
 
 	//print 'dol_check_secure_access_document modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity;
@@ -2436,7 +2446,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = (!empty($conf->product->multidir_temp[$entity]) ? $conf->product->multidir_temp[$entity] : $conf->service->multidir_temp[$entity]).'/'.$original_file;
-	} elseif (in_array($modulepart, array('tax', 'tax-vat')) && !empty($conf->tax->dir_output)) {
+	} elseif (in_array($modulepart, array('tax', 'tax-vat', 'tva')) && !empty($conf->tax->dir_output)) {
 		// Wrapping for taxes
 		if ($fuser->rights->tax->charges->{$lire}) {
 			$accessallowed = 1;

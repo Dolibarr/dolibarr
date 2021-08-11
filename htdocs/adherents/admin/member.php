@@ -263,6 +263,7 @@ if ($conf->facture->enabled) {
 		print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
 		print '<td>';
 		$selected = (empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) ? '' : $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
+		print img_picto('', 'product', 'class="pictofixedwidth"');
 		$form->select_produits($selected, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', '', 0);
 		print '</td>';
 	}

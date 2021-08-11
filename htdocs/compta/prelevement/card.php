@@ -200,7 +200,8 @@ if ($id > 0 || $ref) {
 
 	//print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
 	print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
-	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
+
+	print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($object->amount).'</span></td></tr>';
 
 	// Status
 	/*
@@ -325,19 +326,19 @@ if ($id > 0 || $ref) {
 
 	// Actions
 	if ($action != 'settransmitted' && $action != 'setcredited') {
-		print "\n<div class=\"tabsAction\">\n";
+		print "\n".'<div class="tabsAction">'."\n";
 
 		if (empty($object->date_trans) && $user->rights->prelevement->bons->send) {
-			print "<a class=\"butAction\" href=\"card.php?action=settransmitted&token='.newToken().'&id=".$object->id."\">".$langs->trans("SetToStatusSent")."</a>";
+			print '<a class="butAction" href="card.php?action=settransmitted&token='.newToken().'&id='.$object->id.'">'.$langs->trans("SetToStatusSent").'</a>';
 		}
 
 		if (!empty($object->date_trans) && $object->date_credit == 0) {
-			print "<a class=\"butAction\" href=\"card.php?action=setcredited&token='.newToken().'&id=".$object->id."\">".$langs->trans("ClassCredited")."</a>";
+			print '<a class="butAction" href="card.php?action=setcredited&token='.newToken().'&id='.$object->id.'">'.$langs->trans("ClassCredited").'</a>';
 		}
 
-		print "<a class=\"butActionDelete\" href=\"card.php?action=delete&token='.newToken().'&id=".$object->id."\">".$langs->trans("Delete")."</a>";
+		print '<a class="butActionDelete" href="card.php?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
 
-		print "</div>";
+		print '</div>';
 	}
 
 
@@ -413,7 +414,7 @@ if ($id > 0 || $ref) {
 			print "<td>";
 			print $ligne->LibStatut($obj->statut, 2);
 			print "&nbsp;";
-			print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'&type='.$object->type.'">';
+			print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'&type='.$object->type.'&token='.newtoken().'">';
 			print sprintf("%06s", $obj->rowid);
 			print '</a></td>';
 
@@ -434,7 +435,7 @@ if ($id > 0 || $ref) {
 					if ($obj->statut == 2) {
 						if ($user->rights->prelevement->bons->credit) {
 							//print '<a class="butActionDelete" href="line.php?action=rejet&id='.$obj->rowid.'">'.$langs->trans("StandingOrderReject").'</a>';
-							print '<a href="line.php?action=rejet&type='.$object->type.'&id='.$obj->rowid.'">'.$langs->trans("StandingOrderReject").'</a>';
+							print '<a href="line.php?action=rejet&type='.$object->type.'&id='.$obj->rowid.'&token='.newtoken().'">'.$langs->trans("StandingOrderReject").'</a>';
 						} else {
 							//print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("StandingOrderReject").'</a>';
 						}

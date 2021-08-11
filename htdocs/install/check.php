@@ -100,7 +100,7 @@ print "<br>\n";
 // Check PHP support for $_GET and $_POST
 if (!isset($_GET["testget"]) && !isset($_POST["testpost"])) {	// We must keep $_GET and $_POST here
 	print '<img src="../theme/eldy/img/warning.png" alt="Warning"> '.$langs->trans("PHPSupportPOSTGETKo");
-	print ' (<a href="'.$_SERVER["PHP_SELF"].'?testget=ok">'.$langs->trans("Recheck").'</a>)';
+	print ' (<a href="'.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?testget=ok">'.$langs->trans("Recheck").'</a>)';
 	print "<br>\n";
 	$checksok = 0;
 } else {
@@ -411,26 +411,28 @@ if (!file_exists($conffile)) {
 		if (GETPOST('allowupgrade')) {
 			$allowupgrade = true;
 		}
-		$migrationscript = array(array('from'=>'3.0.0', 'to'=>'3.1.0'),
-								array('from'=>'3.1.0', 'to'=>'3.2.0'),
-								array('from'=>'3.2.0', 'to'=>'3.3.0'),
-								array('from'=>'3.3.0', 'to'=>'3.4.0'),
-								array('from'=>'3.4.0', 'to'=>'3.5.0'),
-								array('from'=>'3.5.0', 'to'=>'3.6.0'),
-								array('from'=>'3.6.0', 'to'=>'3.7.0'),
-								array('from'=>'3.7.0', 'to'=>'3.8.0'),
-								array('from'=>'3.8.0', 'to'=>'3.9.0'),
-								array('from'=>'3.9.0', 'to'=>'4.0.0'),
-								array('from'=>'4.0.0', 'to'=>'5.0.0'),
-								array('from'=>'5.0.0', 'to'=>'6.0.0'),
-								array('from'=>'6.0.0', 'to'=>'7.0.0'),
-								array('from'=>'7.0.0', 'to'=>'8.0.0'),
-								array('from'=>'8.0.0', 'to'=>'9.0.0'),
-								array('from'=>'9.0.0', 'to'=>'10.0.0'),
-								array('from'=>'10.0.0', 'to'=>'11.0.0'),
-								array('from'=>'11.0.0', 'to'=>'12.0.0'),
-								array('from'=>'12.0.0', 'to'=>'13.0.0'),
-								array('from'=>'13.0.0', 'to'=>'14.0.0')
+		$migrationscript = array(
+			array('from'=>'3.0.0', 'to'=>'3.1.0'),
+			array('from'=>'3.1.0', 'to'=>'3.2.0'),
+			array('from'=>'3.2.0', 'to'=>'3.3.0'),
+			array('from'=>'3.3.0', 'to'=>'3.4.0'),
+			array('from'=>'3.4.0', 'to'=>'3.5.0'),
+			array('from'=>'3.5.0', 'to'=>'3.6.0'),
+			array('from'=>'3.6.0', 'to'=>'3.7.0'),
+			array('from'=>'3.7.0', 'to'=>'3.8.0'),
+			array('from'=>'3.8.0', 'to'=>'3.9.0'),
+			array('from'=>'3.9.0', 'to'=>'4.0.0'),
+			array('from'=>'4.0.0', 'to'=>'5.0.0'),
+			array('from'=>'5.0.0', 'to'=>'6.0.0'),
+			array('from'=>'6.0.0', 'to'=>'7.0.0'),
+			array('from'=>'7.0.0', 'to'=>'8.0.0'),
+			array('from'=>'8.0.0', 'to'=>'9.0.0'),
+			array('from'=>'9.0.0', 'to'=>'10.0.0'),
+			array('from'=>'10.0.0', 'to'=>'11.0.0'),
+			array('from'=>'11.0.0', 'to'=>'12.0.0'),
+			array('from'=>'12.0.0', 'to'=>'13.0.0'),
+			array('from'=>'13.0.0', 'to'=>'14.0.0'),
+			array('from'=>'14.0.0', 'to'=>'15.0.0'),
 		);
 
 		$count = 0;

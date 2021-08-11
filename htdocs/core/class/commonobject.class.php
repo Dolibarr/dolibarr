@@ -123,6 +123,12 @@ abstract class CommonObject
 	 */
 	protected $table_ref_field = '';
 
+	/**
+	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
+	 * @var integer
+	 */
+	public $restrictiononfksoc = 0;
+
 
 
 	// Following vars are used by some objects only. We keep this property here in CommonObject to be able to provide common method using them.
@@ -940,7 +946,7 @@ abstract class CommonObject
 				$ecmfile->fullpath_orig = '';
 				$ecmfile->gen_or_uploaded = 'generated';
 				$ecmfile->description = '';    // indexed content
-				$ecmfile->keyword = '';        // keyword content
+				$ecmfile->keywords = '';        // keyword content
 				$ecmfile->share = getRandomPassword(true);
 				$result = $ecmfile->create($user);
 				if ($result < 0)
@@ -3791,7 +3797,6 @@ abstract class CommonObject
 					} elseif ($objecttype == 'contact') {
 						 $module = 'societe';
 					}
-
 					// Set classfile
 					$classfile = strtolower($subelement);
 					$classname = ucfirst($subelement);
@@ -3822,6 +3827,11 @@ abstract class CommonObject
 						$classpath = 'eventorganization/class';
 						$classfile = 'conferenceorboothattendee';
 						$classname = 'ConferenceOrBoothAttendee';
+						$module = 'eventorganization';
+					} elseif ($objecttype == 'conferenceorbooth') {
+						$classpath = 'eventorganization/class';
+						$classfile = 'conferenceorbooth';
+						$classname = 'ConferenceOrBooth';
 						$module = 'eventorganization';
 					}
 
@@ -4107,7 +4117,7 @@ abstract class CommonObject
 		$sql .= " SET ".$fieldstatus." = ".((int) $status);
 		// If status = 1 = validated, update also fk_user_valid
 		if ($status == 1 && $elementTable == 'expensereport') {
-			$sql .= ", fk_user_valid = ".$user->id;
+			$sql .= ", fk_user_valid = ".((int) $user->id);
 		}
 		$sql .= " WHERE rowid=".((int) $elementId);
 
@@ -4801,13 +4811,18 @@ abstract class CommonObject
 
 		if (!empty($this->lines)) {
 			foreach ($this->lines as $line) {
-				if (is_object($hookmanager) && (($line->product_type == 9 && !empty($line->special_code)) || !empty($line->fk_parent_line))) {
+				$reshook = 0;
+				//if (is_object($hookmanager) && (($line->product_type == 9 && !empty($line->special_code)) || !empty($line->fk_parent_line))) {
+				if (is_object($hookmanager)) {   // Old code is commented on preceding line.
 					if (empty($line->fk_parent_line)) {
-						$parameters = array('line'=>$line, 'i'=>$i);
-						$action = '';
-						$hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+						$parameters = array('line'=>$line, 'i'=>$i, 'restrictlist'=>$restrictlist, 'selectedLines'=> $selectedLines);
+						$reshook = $hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+					} else {
+						$parameters = array('line'=>$line, 'i'=>$i, 'restrictlist'=>$restrictlist, 'selectedLines'=> $selectedLines, 'fk_parent_line'=>$line->fk_parent_line);
+						$reshook = $hookmanager->executeHooks('printOriginObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 					}
-				} else {
+				}
+				if (empty($reshook)) {
 					$this->printOriginLine($line, '', $restrictlist, '/core/tpl', $selectedLines);
 				}
 
@@ -5261,7 +5276,7 @@ abstract class CommonObject
 								$ecmfile->fullpath_orig = '';
 								$ecmfile->gen_or_uploaded = 'generated';
 								$ecmfile->description = ''; // indexed content
-								$ecmfile->keyword = ''; // keyword content
+								$ecmfile->keywords = ''; // keyword content
 								$result = $ecmfile->update($user);
 								if ($result < 0) {
 									setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
@@ -5274,7 +5289,7 @@ abstract class CommonObject
 								$ecmfile->fullpath_orig = '';
 								$ecmfile->gen_or_uploaded = 'generated';
 								$ecmfile->description = ''; // indexed content
-								$ecmfile->keyword = ''; // keyword content
+								$ecmfile->keywords = ''; // keyword content
 								$ecmfile->src_object_type = $this->table_element;
 								$ecmfile->src_object_id   = $this->id;
 
@@ -6254,10 +6269,12 @@ abstract class CommonObject
 					$this->array_options["options_".$key] = price2num($this->array_options["options_".$key]);
 					break;
 				case 'date':
-					$this->array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key]);
-					break;
 				case 'datetime':
-					$this->array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key]);
+					if (empty($this->array_options["options_".$key])) {
+						$this->array_options["options_".$key] = null;
+					} else {
+						$this->array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key]);
+					}
 					break;
 				/*
 				case 'link':
@@ -6305,7 +6322,11 @@ abstract class CommonObject
 			}
 
 			if ($linealreadyfound) {
-				$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element."_extrafields SET ".$key." = '".$this->db->escape($this->array_options["options_".$key])."'";
+				if ($this->array_options["options_".$key] === null) {
+					$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element."_extrafields SET ".$key." = null";
+				} else {
+					$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element."_extrafields SET ".$key." = '".$this->db->escape($this->array_options["options_".$key])."'";
+				}
 				$sql .= " WHERE fk_object = ".$this->id;
 			} else {
 				$result = $this->insertExtraFields('', $user);
@@ -6515,11 +6536,11 @@ abstract class CommonObject
 		} elseif (in_array($type, array('int', 'integer'))) {
 			$tmp = explode(',', $size);
 			$newsize = $tmp[0];
-			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
+			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"'.($newsize > 0 ? ' maxlength="'.$newsize.'"' : '').' value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (in_array($type, array('real'))) {
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (preg_match('/varchar/', $type)) {
-			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
+			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"'.($size > 0 ? ' maxlength="'.$size.'"' : '').' value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (in_array($type, array('mail', 'phone', 'url'))) {
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (preg_match('/^text/', $type)) {
@@ -7486,6 +7507,9 @@ abstract class CommonObject
 
 						if ($display_type == 'card') {
 							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="valuefieldcreate '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
+							if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER) && $action == 'view') {
+								$out .= '<td></td>';
+							}
 							$out .= '<td class="wordbreak';
 						} elseif ($display_type == 'line') {
 							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="valuefieldlinecreate '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
@@ -7711,7 +7735,7 @@ abstract class CommonObject
 			$buyPrice = $unitPrice * (1 - $discountPercent / 100);
 		} else {
 			// Get cost price for margin calculation
-			if (!empty($fk_product)) {
+			if (!empty($fk_product) && $fk_product > 0) {
 				if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'costprice') {
 					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 					$product = new Product($this->db);
@@ -8167,15 +8191,6 @@ abstract class CommonObject
 				} else {
 					$queryarray[$field] = $this->db->idate($this->{$field});
 				}
-			} elseif ($this->isArray($info)) {
-				if (!empty($this->{$field})) {
-					if (!is_array($this->{$field})) {
-						$this->{$field} = array($this->{$field});
-					}
-					$queryarray[$field] = serialize($this->{$field});
-				} else {
-					$queryarray[$field] = null;
-				}
 			} elseif ($this->isDuration($info)) {
 				// $this->{$field} may be null, '', 0, '0', 123, '123'
 				if ((isset($this->{$field}) && $this->{$field} != '') || !empty($info['notnull'])) {
@@ -8235,16 +8250,6 @@ abstract class CommonObject
 					$this->{$field} = '';
 				} else {
 					$this->{$field} = $db->jdate($obj->{$field});
-				}
-			} elseif ($this->isArray($info)) {
-				if (!empty($obj->{$field})) {
-					$this->{$field} = @unserialize($obj->{$field});
-					// Hack for data not in UTF8
-					if ($this->{$field } === false) {
-						@unserialize(utf8_decode($obj->{$field}));
-					}
-				} else {
-					$this->{$field} = array();
 				}
 			} elseif ($this->isInt($info)) {
 				if ($field == 'rowid') {
@@ -8430,7 +8435,7 @@ abstract class CommonObject
 
 		// If we have a field ref with a default value of (PROV)
 		if (!$error) {
-			if (key_exists('ref', $this->fields) && $this->fields['ref']['notnull'] > 0 && !is_null($this->fields['ref']['default']) && $this->fields['ref']['default'] == '(PROV)') {
+			if (key_exists('ref', $this->fields) && $this->fields['ref']['notnull'] > 0 && key_exists('default', $this->fields['ref']) && $this->fields['ref']['default'] == '(PROV)') {
 				$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ref = '(PROV".$this->id.")' WHERE (ref = '(PROV)' OR ref = '') AND rowid = ".((int) $this->id);
 				$resqlupdate = $this->db->query($sql);
 

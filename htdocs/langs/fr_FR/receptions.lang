@@ -44,4 +44,4 @@ ValidateOrderFirstBeforeReception=Vous devez d'abord valider la commande avant d
 ReceptionsNumberingModules=Module de numérotation pour les réceptions
 ReceptionsReceiptModel=Modèles de document pour les réceptions
 NoMorePredefinedProductToDispatch=Plus de produits prédéfinis à expédier
-
+ReceptionExist=Une réception existe

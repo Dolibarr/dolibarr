@@ -177,7 +177,7 @@ $accountingjournalstatic->fetch($id_journal);
 $journal = $accountingjournalstatic->code;
 $journal_label = $accountingjournalstatic->label;
 
-
+//print $sql;
 dol_syslog("accountancy/journal/bankjournal.php", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
@@ -252,6 +252,7 @@ if ($result) {
 		);
 
 		// Set accountancy code for user
+		// $obj->accountancy_code is the accountancy_code of table u=user but it is defined only if a link with type 'user' exists)
 		$compta_user = (!empty($obj->accountancy_code) ? $obj->accountancy_code : '');
 
 		$tabuser[$obj->rowid] = array(
@@ -277,7 +278,7 @@ if ($result) {
 			$tabpay[$obj->rowid]["lib"] = dol_trunc($obj->label, 60);
 		}
 
-		// Load of url links to the line into llx_bank
+		// Load of url links to the line into llx_bank (so load llx_bank_url)
 		$links = $object->get_url($obj->rowid); // Get an array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> )
 
 		// By default
@@ -287,7 +288,7 @@ if ($result) {
 
 		// get_url may return -1 which is not traversable
 		if (is_array($links) && count($links) > 0) {
-			// Now loop on each link of record in bank.
+			// Now loop on each link of record in bank (code similar to bankentries_list.php)
 			foreach ($links as $key => $val) {
 				if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation', 'member', 'payment_loan', 'payment_salary', 'payment_various'))) {
 					// So we excluded 'company' and 'user' here. We want only payment lines
@@ -302,6 +303,7 @@ if ($result) {
 					}
 				}
 
+				// Special case to ask later to add more request to get information for old links without company link.
 				if ($links[$key]['type'] == 'withdraw') {
 					$tabmoreinfo[$obj->rowid]['withdraw'] = 1;
 				}
@@ -401,6 +403,44 @@ if ($result) {
 					$paymentsalstatic->label = $links[$key]['label'];
 					$tabpay[$obj->rowid]["lib"] .= ' '.$paymentsalstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentsalid"] = $paymentsalstatic->id;
+
+					// This part of code is no more required. it is here to solve case where a link were missing (ith v14.0.0) and keep writing in accountancy complete.
+					// Note: A better way to fix this is to delete payement of salary and recreate it, or to fix the bookkeeping table manually after.
+					if (!empty($conf->global->ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USEr_ON_SALARY_BANK_PAYMENT)) {
+						$tmpsalary = new Salary($db);
+						$tmpsalary->fetch($paymentsalstatic->id);
+						$tmpsalary->fetch_user($tmpsalary->fk_user);
+
+						$userstatic->id = $tmpsalary->user->id;
+						$userstatic->name = $tmpsalary->user->name;
+						$userstatic->email = $tmpsalary->user->email;
+						$userstatic->firstname = $tmpsalary->user->firstname;
+						$userstatic->lastname = $tmpsalary->user->lastname;
+						$userstatic->statut = $tmpsalary->user->statut;
+						$userstatic->accountancy_code = $tmpsalary->user->accountancy_code;
+
+						if ($userstatic->id > 0) {
+							$tabpay[$obj->rowid]["soclib"] = $userstatic->getNomUrl(1, 'accountancy', 0);
+						} else {
+							$tabpay[$obj->rowid]["soclib"] = '???'; // Should not happen
+						}
+
+						if (empty($obj->typeop_user)) {	// Add test to avoid to add amount twice if a link already exists also on user.
+							$compta_user = $userstatic->accountancy_code;
+							if ($compta_user) {
+								$tabtp[$obj->rowid][$compta_user] += $obj->amount;
+								$tabuser[$obj->rowid] = array(
+								'id' => $userstatic->id,
+								'name' => dolGetFirstLastname($userstatic->firstname, $userstatic->lastname),
+								'lastname' => $userstatic->lastname,
+								'firstname' => $userstatic->firstname,
+								'email' => $userstatic->email,
+								'accountancy_code' => $compta_user,
+								'status' => $userstatic->statut
+								);
+							}
+						}
+					}
 				} elseif ($links[$key]['type'] == 'payment_expensereport') {
 					$paymentexpensereportstatic->id = $links[$key]['url_id'];
 					$tabpay[$obj->rowid]["lib"] .= $paymentexpensereportstatic->getNomUrl(2);
@@ -468,7 +508,7 @@ if ($result) {
 			}
 		}
 
-		// If no links were found to know the amount on thirdparty, we init it to account 'NotDefined'.
+		// If no links were found to know the amount on thirdparty/user, we init it to account 'NotDefined'.
 		if (empty($tabtp[$obj->rowid])) {
 			$tabtp[$obj->rowid]['NotDefined'] = $tabbq[$obj->rowid][$compta_bank];
 		}
@@ -1162,9 +1202,9 @@ if (empty($action) || $action == 'view') {
 						if ($tabtype[$key] == 'unknown') {
 							// We will accept writing, but into a waiting account
 							if (empty($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) || $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE == '-1') {
-								print '<span class="error">'.$langs->trans('UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking').'</span>';
+								print '<span class="error small">'.$langs->trans('UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking').'</span>';
 							} else {
-								print '<span class="warning">'.$langs->trans('UnknownAccountForThirdparty', length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE)).'</span>'; // We will use a waiting account
+								print '<span class="warning small">'.$langs->trans('UnknownAccountForThirdparty', length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE)).'</span>'; // We will use a waiting account
 							}
 						} else {
 							// We will refuse writing
@@ -1187,7 +1227,7 @@ if (empty($action) || $action == 'view') {
 							if ($tabtype[$key] == 'member') {
 								$errorstring = 'MainAccountForSubscriptionPaymentNotDefined';
 							}
-							print '<span class="error">'.$langs->trans($errorstring).'</span>';
+							print '<span class="error small">'.$langs->trans($errorstring).'</span>';
 						}
 					} else {
 						print $accounttoshow;
@@ -1196,7 +1236,7 @@ if (empty($action) || $action == 'view') {
 
 					// Subledger account
 					print "<td>";
-					if (in_array($tabtype[$key], array('payment', 'payment_supplier', 'payment_expensereport', 'payment_salary', 'payment_various'))) {	// Type of payment with subledger
+					if (in_array($tabtype[$key], array('payment', 'payment_supplier', 'payment_expensereport', 'payment_salary', 'payment_various'))) {	// Type of payments that uses a subledger
 						$accounttoshowsubledger = length_accounta($k);
 						if ($accounttoshow != $accounttoshowsubledger) {
 							if (empty($accounttoshowsubledger) || $accounttoshowsubledger == 'NotDefined') {
@@ -1205,14 +1245,14 @@ if (empty($action) || $action == 'view') {
 								var_dump($tabbq[$key]);*/
 								//print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
 								if (!empty($tabcompany[$key]['code_compta'])) {
-									if (in_array($tabtype[$key], array('payment_various'))) {
+									if (in_array($tabtype[$key], array('payment_various', 'payment_salary'))) {
 										// For such case, if subledger is not defined, we won't use subledger accounts.
-										print '<span class="warning">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored").'</span>';
+										print '<span class="warning small">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored").'</span>';
 									} else {
-										print '<span class="warning">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknown", $tabcompany[$key]['code_compta']).'</span>';
+										print '<span class="warning small">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknown", $tabcompany[$key]['code_compta']).'</span>';
 									}
 								} else {
-									print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking").'</span>';
+									print '<span class="error small">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking").'</span>';
 								}
 							} else {
 								print $accounttoshowsubledger;
@@ -1220,10 +1260,15 @@ if (empty($action) || $action == 'view') {
 						}
 					}
 					print "</td>";
+
 					print "<td>".$reflabel."</td>";
+
 					print '<td class="center">'.$val["type_payment"]."</td>";
+
 					print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
+
 					print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
+
 					print "</tr>";
 				}
 			}

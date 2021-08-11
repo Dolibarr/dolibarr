@@ -775,18 +775,48 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 			}
 			break;
 		case 'restricthtml':		// Recommended for most html textarea
+		case 'restricthtmlallowunvalid':
 			do {
 				$oldstringtoclean = $out;
 
-				// We replace chars encoded with numeric HTML entities with real char (to avoid to have numeric entities used for obfuscation of injections)
-				$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+);/i', 'realCharForNumericEntities', $out);
+				if (!empty($out) && !empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML) && $check != 'restricthtmlallowunvalid') {
+					try {
+						$dom = new DOMDocument;
+						// Add a trick to solve pb with text without parent tag
+						// like '<h1>Foo</h1><p>bar</p>' that ends up with '<h1>Foo<p>bar</p></h1>'
+						// like 'abc' that ends up with '<p>abc</p>'
+						$out = '<div class="tricktoremove">'.$out.'</div>';
+
+						$dom->loadHTML($out, LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_HTML_NODEFDTD|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
+						$out = trim($dom->saveHTML());
+
+						// Remove the trick added to solve pb with text without parent tag
+						$out = preg_replace('/^<div class="tricktoremove">/', '', $out);
+						$out = preg_replace('/<\/div>$/', '', $out);
+					} catch (Exception $e) {
+						//print $e->getMessage();
+						return 'InvalidHTMLString';
+					}
+				}
+
+				// Ckeditor use the numeric entitic for apostrophe so we force it to text entity (all other special chars are correctly
+				// encoded using text entities). This is a fix for CKeditor (CKeditor still encode in HTML4 instead of HTML5).
+				$out = preg_replace('/&#39;/i', '&apos;', $out);
+
+				// We replace chars from a/A to z/Z encoded with numeric HTML entities with the real char so we won't loose the chars at the next step.
+				// No need to use a loop here, this step is not to sanitize (this is done at next step, this is to try to save chars, even if they are
+				// using a non coventionnel way to be encoded, to not have them sanitized just after)
+				$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', 'realCharForNumericEntities', $out);
+
+				// Now we remove all remaining HTML entities starting with a number. We don't want such entities.
 				$out = preg_replace('/&#x?[0-9]+/i', '', $out);	// For example if we have j&#x61vascript with an entities without the ; to hide the 'a' of 'javascript'.
 
 				$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
 
 				// We should also exclude non expected attributes
 				if (!empty($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)) {
-					$out = dol_string_onlythesehtmlattributes($out);
+					// Warning, the function may add a LF so we are forced to trim to compare with old $out without having always a difference and an infinit loop.
+					$out = trim(dol_string_onlythesehtmlattributes($out));
 				}
 			} while ($oldstringtoclean != $out);
 			break;
@@ -989,7 +1019,7 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 function dol_clone($object, $native = 0)
 {
 	if (empty($native)) {
-		$myclone = unserialize(serialize($object));
+		$myclone = unserialize(serialize($object));	// serialize then unserialize is hack to be sure to have a new object for all fields
 	} else {
 		$myclone = clone $object; // PHP clone is a shallow copy only, not a real clone, so properties of references will keep the reference (refering to the same target/variable)
 	}
@@ -1021,10 +1051,11 @@ function dol_size($size, $type = '')
 
 
 /**
- *	Clean a string to use it as a file name
+ *	Clean a string to use it as a file name.
+ *  Replace also '--' and ' -' strings, they are used for parameters separation.
  *
  *	@param	string	$str            String to clean
- * 	@param	string	$newstr			String to replace bad chars with
+ * 	@param	string	$newstr			String to replace bad chars with.
  *  @param	int	    $unaccent		1=Remove also accent (default), 0 do not remove them
  *	@return string          		String cleaned (a-zA-Z_)
  *
@@ -1036,12 +1067,16 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 	// Char '>' '<' '|' '$' and ';' are special chars for shells.
 	// Char '/' and '\' are file delimiters.
 	// -- car can be used into filename to inject special paramaters like --use-compress-program to make command with file as parameter making remote execution of command
-	$filesystem_forbidden_chars = array('<', '>', '/', '\\', '?', '*', '|', '"', ':', '°', '$', ';', '--');
-	return dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
+	$filesystem_forbidden_chars = array('<', '>', '/', '\\', '?', '*', '|', '"', ':', '°', '$', ';');
+	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
+	$tmp = preg_replace('/\-\-+/', '_', $tmp);
+	$tmp = preg_replace('/\s+\-/', ' _', $tmp);
+	return $tmp;
 }
 
 /**
- *	Clean a string to use it as a path name
+ *	Clean a string to use it as a path name.
+ *  Replace also '--' and ' -' strings, they are used for parameters separation.
  *
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with
@@ -1053,7 +1088,10 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 {
 	$filesystem_forbidden_chars = array('<', '>', '?', '*', '|', '"', '°');
-	return dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
+	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
+	$tmp = preg_replace('/\-\-+/', '_', $tmp);
+	$tmp = preg_replace('/\s+\-/', ' _', $tmp);
+	return $tmp;
 }
 
 /**
@@ -1149,21 +1187,26 @@ function dol_string_unaccent($str)
  *	Clean a string from all punctuation characters to use it as a ref or login.
  *  This is a more complete function than dol_sanitizeFileName.
  *
- *	@param	string	$str            	String to clean
- * 	@param	string	$newstr				String to replace forbidden chars with
- *  @param  array	$badcharstoreplace  List of forbidden characters
- * 	@return string          			Cleaned string
+ *	@param	string			$str            	String to clean
+ * 	@param	string			$newstr				String to replace forbidden chars with
+ *  @param  array|string	$badcharstoreplace  List of forbidden characters to replace
+ *  @param  array|string	$badcharstoremove   List of forbidden characters to remove
+ * 	@return string          					Cleaned string
  *
  * 	@see    		dol_sanitizeFilename(), dol_string_unaccent(), dol_string_nounprintableascii()
  */
-function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '')
+function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '', $badcharstoremove = '')
 {
 	$forbidden_chars_to_replace = array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ",", ";", "=", '°'); // more complete than dol_sanitizeFileName
 	$forbidden_chars_to_remove = array();
+	//$forbidden_chars_to_remove=array("(",")");
+
 	if (is_array($badcharstoreplace)) {
 		$forbidden_chars_to_replace = $badcharstoreplace;
 	}
-	//$forbidden_chars_to_remove=array("(",")");
+	if (is_array($badcharstoremove)) {
+		$forbidden_chars_to_remove = $badcharstoremove;
+	}
 
 	return str_replace($forbidden_chars_to_replace, $newstr, str_replace($forbidden_chars_to_remove, "", $str));
 }
@@ -1739,10 +1782,10 @@ function dol_get_fiche_end($notab = 0)
  *  @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
  *  @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field). Use 'none' for no prev/next search.
  *  @param	string	$fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
- *  @param	string	$morehtmlref  	More html to show after ref
+ *  @param	string	$morehtmlref  	More html to show after the ref (see $morehtmlleft for before)
  *  @param	string	$moreparam  	More param to add in nav link url.
  *	@param	int		$nodbprefix		Do not include DB prefix to forge table name
- *	@param	string	$morehtmlleft	More html code to show before ref
+ *	@param	string	$morehtmlleft	More html code to show before the ref (see $morehtmlref for after)
  *	@param	string	$morehtmlstatus	More html code to show under navigation arrows
  *  @param  int     $onlybanner     Put this to 1, if the card will contains only a banner (this add css 'arearefnobottom' on div)
  *	@param	string	$morehtmlright	More html code to show before navigation arrows
@@ -2788,7 +2831,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
  * 	@param 	int		$socid          Id of third party if known
  * 	@param 	string	$addlink	    ''=no link to create action, 'AC_TEL'=add link to clicktodial (if module enabled) and add link to create event (if conf->global->AGENDA_ADDACTIONFORPHONE set)
  * 	@param 	string	$separ 		    Separation between numbers for a better visibility example : xx.xx.xx.xx.xx
- *  @param	string  $withpicto      Show picto
+ *  @param	string  $withpicto      Show picto ('fax', 'phone', 'mobile')
  *  @param	string	$titlealt	    Text to show on alt
  *  @param  int     $adddivfloat    Add div float around phone.
  * 	@return string 				    Formated phone number
@@ -2826,7 +2869,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		} elseif (dol_strlen($phone) == 11) {
 			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 2).$separ.substr($newphone, 5, 2).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2);
 		} elseif (dol_strlen($phone) == 12) {
-			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 2);
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 1).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 2);
 		}
 	} elseif (strtoupper($countrycode) == "CA") {
 		if (dol_strlen($phone) == 10) {
@@ -3011,11 +3054,18 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 								'__PASS__'=>$clicktodial_password);
 			$url = make_substitutions($url, $substitarray);
 			$newphonesav = $newphone;
-			$newphone = '<a href="'.$url.'"';
-			if (!empty($conf->global->CLICKTODIAL_FORCENEWTARGET)) {
-				$newphone .= ' target="_blank"';
+			if (empty($conf->global->CLICKTODIAL_DO_NOT_USE_AJAX_CALL)) {
+				// Default and recommended: New method using ajax without submiting a page making a javascript history.go(-1) back
+				$newphone = '<a href="'.$url.'" class="cssforclicktodial"';	// Call of ajax is handled by the lib_foot.js.php on class 'cssforclicktodial'
+				$newphone .= '>'.$newphonesav.'</a>';
+			} else {
+				// Old method
+				$newphone = '<a href="'.$url.'"';
+				if (!empty($conf->global->CLICKTODIAL_FORCENEWTARGET)) {
+					$newphone .= ' target="_blank"';
+				}
+				$newphone .= '>'.$newphonesav.'</a>';
 			}
-			$newphone .= '>'.$newphonesav.'</a>';
 		}
 
 		//if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
@@ -3119,7 +3169,7 @@ function getUserRemoteIP()
 	if (empty($_SERVER['HTTP_X_FORWARDED_FOR']) || preg_match('/[^0-9\.\:,\[\]]/', $_SERVER['HTTP_X_FORWARDED_FOR'])) {
 		if (empty($_SERVER['HTTP_CLIENT_IP']) || preg_match('/[^0-9\.\:,\[\]]/', $_SERVER['HTTP_CLIENT_IP'])) {
 			if (empty($_SERVER["HTTP_CF_CONNECTING_IP"])) {
-				$ip = (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']);	// value may have been forged by client
+				$ip = (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']);	// value may have been the IP of the proxy and not the client
 			} else {
 				$ip = $_SERVER["HTTP_CF_CONNECTING_IP"];	// value here may have been forged by client
 			}
@@ -3517,8 +3567,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'github', 'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
-				'partnership', 'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'projecttask', 'question', 'refresh', 'salary', 'shipment',
-				'supplier_invoice', 'supplier_invoicea', 'supplier_invoicer', 'supplier_invoiced',
+				'partnership', 'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'projecttask', 'question', 'refresh', 'region',
+				'salary', 'shipment', 'state', 'supplier_invoice', 'supplier_invoicea', 'supplier_invoicer', 'supplier_invoiced',
 				'technic', 'ticket',
 				'error', 'warning',
 				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource',
@@ -3567,8 +3617,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'partnership'=>'handshake', 'payment'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
 				'recent' => 'question', 'reception'=>'dolly', 'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
 				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
-				'refresh'=>'redo', 'resource'=>'laptop-house',
-				'security'=>'key', 'salary'=>'wallet', 'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'stripe'=>'stripe-s',
+				'refresh'=>'redo', 'region'=>'map-marked', 'resource'=>'laptop-house',
+				'state'=>'map-marked-alt', 'security'=>'key', 'salary'=>'wallet', 'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'stripe'=>'stripe-s',
 				'supplier'=>'building', 'supplier_invoice'=>'file-invoice-dollar', 'technic'=>'cogs', 'ticket'=>'ticket-alt',
 				'timespent'=>'clock', 'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
 				'title_agenda'=>'calendar-alt',
@@ -3606,13 +3656,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			}
 
 			if (in_array($pictowithouttext, array('dollyrevert', 'member', 'members', 'contract', 'group', 'resource', 'shipment'))) {
-				$morecss = 'em092';
+				$morecss .= ' em092';
 			}
 			if (in_array($pictowithouttext, array('conferenceorbooth', 'collab', 'eventorganization', 'holiday', 'info', 'project', 'workstation'))) {
-				$morecss = 'em088';
+				$morecss .= ' em088';
 			}
 			if (in_array($pictowithouttext, array('asset', 'intervention', 'payment', 'loan', 'partnership', 'stock', 'technic'))) {
-				$morecss = 'em080';
+				$morecss .= ' em080';
 			}
 
 			// Define $marginleftonlyshort
@@ -3669,7 +3719,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'partnership'=>'#6c6aa8', 'playdisabled'=>'#ccc', 'printer'=>'#444', 'projectpub'=>'#986c6a', 'reception'=>'#a69944', 'resize'=>'#444', 'rss'=>'#cba',
 				//'shipment'=>'#a69944',
 				'security'=>'#999', 'stats'=>'#444', 'switch_off'=>'#999', 'technic'=>'#999', 'timespent'=>'#555',
-				'uncheck'=>'#800', 'uparrow'=>'#555', 'user-cog'=>'#999', 'country'=>'#aaa', 'globe-americas'=>'#aaa',
+				'uncheck'=>'#800', 'uparrow'=>'#555', 'user-cog'=>'#999', 'country'=>'#aaa', 'globe-americas'=>'#aaa', 'region'=>'#aaa', 'state'=>'#aaa',
 				'website'=>'#304', 'workstation'=>'#a69944'
 			);
 			if (isset($arrayconvpictotocolor[$pictowithouttext])) {
@@ -3740,7 +3790,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		return $fullpathpicto;
 	}
 		// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for blind people
-	return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.(($notitle || empty($titlealt)) ? '' : ' title="'.dol_escape_htmltag($titlealt).'"').($moreatt ? ' '.$moreatt.($morecss ? ' class="'.$morecss.'"' : '') : ' class="inline-block'.($morecss ? ' '.$morecss : '').'"').'>'; // Alt is used for accessibility, title for popup
+	return '<img src="'.$fullpathpicto.'"'.($notitle ? '' : ' alt="'.dol_escape_htmltag($alt).'"').(($notitle || empty($titlealt)) ? '' : ' title="'.dol_escape_htmltag($titlealt).'"').($moreatt ? ' '.$moreatt.($morecss ? ' class="'.$morecss.'"' : '') : ' class="inline-block'.($morecss ? ' '.$morecss : '').'"').'>'; // Alt is used for accessibility, title for popup
 }
 
 /**
@@ -3800,10 +3850,11 @@ function img_weather($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $mo
  *	@param      string		$picto       		Name of image file to show (If no extension provided, we use '.png'). Image must be stored into htdocs/theme/common directory.
  *	@param		string		$moreatt			Add more attribute on img tag
  *	@param		int			$pictoisfullpath	If 1, image path is a full path
+ *  @param		int			$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
  *	@return     string      					Return img tag
  *  @see        img_object(), img_picto()
  */
-function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0)
+function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $notitle = 0)
 {
 	global $conf;
 
@@ -3825,7 +3876,7 @@ function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0
 		}
 	}
 
-	return img_picto($titlealt, $path, $moreatt, 1);
+	return img_picto($titlealt, $path, $moreatt, 1, 0, $notitle);
 }
 
 /**
@@ -3952,7 +4003,7 @@ function img_edit($titlealt = 'default', $float = 0, $other = '')
  *	@param  string	$other		Add more attributes on img
  *	@return string      		Return tag img
  */
-function img_view($titlealt = 'default', $float = 0, $other = '')
+function img_view($titlealt = 'default', $float = 0, $other = 'class="valignmiddle"')
 {
 	global $langs;
 
@@ -5466,7 +5517,7 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = "", $thirdparty_sell
 	} else {
 		$sql .= " AND t.recuperableonly = '".$db->escape($vatnpr)."'";
 	}
-	dol_syslog("get_localtax", LOG_DEBUG);
+
 	$resql = $db->query($sql);
 
 	if ($resql) {
@@ -6294,7 +6345,7 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	$stringtoclean = preg_replace('/&#58;|&#0+58|&#x3A/i', '', $stringtoclean); // refused string ':' encoded (no reason to have a : encoded like this) to disable 'javascript:...'
 	$stringtoclean = preg_replace('/javascript\s*:/i', '', $stringtoclean);
 
-	$temp = strip_tags($stringtoclean, $allowed_tags_string);
+	$temp = strip_tags($stringtoclean, $allowed_tags_string);	// Warning: This remove also undesired </> changing string obfuscated with </> that pass injection detection into harmfull string
 
 	if ($cleanalsosomestyles) {	// Clean for remaining html tags
 		$temp = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/i', '', $temp); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
@@ -6344,8 +6395,8 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 		}
 
 		$return = $dom->saveHTML();
-
 		//$return = '<html><body>aaaa</p>bb<p>ssdd</p>'."\n<p>aaa</p>aa<p>bb</p>";
+
 		$return = preg_replace('/^<html><body>/', '', $return);
 		$return = preg_replace('/<\/body><\/html>$/', '', $return);
 		return $return;
@@ -6785,6 +6836,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$substitutionarray = array_merge($substitutionarray, array(
 			'__MYCOMPANY_NAME__'    => $mysoc->name,
 			'__MYCOMPANY_EMAIL__'   => $mysoc->email,
+			'__MYCOMPANY_PHONE__'   => $mysoc->phone,
+			'__MYCOMPANY_FAX__'     => $mysoc->fax,
 			'__MYCOMPANY_PROFID1__' => $mysoc->idprof1,
 			'__MYCOMPANY_PROFID2__' => $mysoc->idprof2,
 			'__MYCOMPANY_PROFID3__' => $mysoc->idprof3,
@@ -6873,6 +6926,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__DIRECTDOWNLOAD_URL_PROPOSAL__'] = 'Direct download url of a proposal';
 			$substitutionarray['__DIRECTDOWNLOAD_URL_ORDER__'] = 'Direct download url of an order';
 			$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = 'Direct download url of an invoice';
+			$substitutionarray['__DIRECTDOWNLOAD_URL_CONTRACT__'] = 'Direct download url of a contract';
+			$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_PROPOSAL__'] = 'Direct download url of a supplier proposal';
 
 			if (!empty($conf->expedition->enabled) && (!is_object($object) || $object->element == 'shipping')) {
 				$substitutionarray['__SHIPPINGTRACKNUM__'] = 'Shipping tracking number';
@@ -7429,7 +7484,7 @@ function print_date_range($date_start, $date_end, $format = '', $outputlangs = '
  *    @param    int			$date_end      		End date
  *    @param    string		$format        		Output format
  *    @param	Translate	$outputlangs   		Output language
- *    @param	integer		$withparenthesis	1=Add parenthesis, 0=non parenthesis
+ *    @param	integer		$withparenthesis	1=Add parenthesis, 0=no parenthesis
  *    @return	string							String
  */
 function get_date_range($date_start, $date_end, $format = '', $outputlangs = '', $withparenthesis = 1)
@@ -8072,16 +8127,17 @@ function dol_validElement($element)
  *
  * 	@param	string	$codelang	Language code ('en_IN', 'fr_CA', ...) or ISO Country code on 2 characters in uppercase ('IN', 'FR')
  *  @param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"' or 'class="saturatemedium"')
+ *  @param	int		$notitlealt	No title alt
  * 	@return	string				HTML img string with flag.
  */
-function picto_from_langcode($codelang, $moreatt = '')
+function picto_from_langcode($codelang, $moreatt = '', $notitlealt = 0)
 {
 	if (empty($codelang)) {
 		return '';
 	}
 
 	if ($codelang == 'auto') {
-		return '<span class="fa fa-globe"></span>';
+		return '<span class="fa fa-language"></span>';
 	}
 
 	$langtocountryflag = array(
@@ -8107,7 +8163,7 @@ function picto_from_langcode($codelang, $moreatt = '')
 		$flagImage = empty($tmparray[1]) ? $tmparray[0] : $tmparray[1];
 	}
 
-	return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png', $moreatt);
+	return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png', $moreatt, 0, $notitlealt);
 }
 
 /**
@@ -8442,8 +8498,10 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 	if (!empty($hookmanager)) {
 		$parameters = array('object' => $object, 'mode' => $mode, 'head' => &$head);
 		$reshook = $hookmanager->executeHooks('completeTabsHead', $parameters);
-		if ($reshook > 0) {
+		if ($reshook > 0) {		// Hook ask to replace completely the array
 			$head = $hookmanager->resArray;
+		} else {				// Hook
+			$head = array_merge($head, $hookmanager->resArray);
 		}
 		$h = count($head);
 	}
@@ -9723,11 +9781,29 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * @param string    $url        the url for link
  * @param string    $id         attribute id of button
  * @param int       $userRight  user action right
- * @param array     $params     various params for future : recommended rather than adding more function arguments
+ * // phpcs:disable
+ * @param array 	$params = [ // Various params for future : recommended rather than adding more function arguments
+ *                          	'attr' => [ // to add or override button attributes
+ *                          		'xxxxx' => '', // your xxxxx attribute you want
+ *                          		'class' => '', // to add more css class to the button class attribute
+ *                          		'classOverride' => '' // to replace class attribute of the button
+ *                          	],
+ *                          	'confirm' => [
+ *                          		'url' => 'http://', // Overide Url to go when user click on action btn, if empty default url is $url.?confirm=yes, for no js compatibility use $url for fallback confirm.
+ *                          		'title' => '', // Overide title of modal,  if empty default title use "ConfirmBtnCommonTitle" lang key
+ *                          		'action-btn-label' => '', // Overide label of action button,  if empty default label use "Confirm" lang key
+ *                          		'cancel-btn-label' => '', // Overide label of cancel button,  if empty default label use "CloseDialog" lang key
+ *                          		'content' => '', // Overide text of content,  if empty default content use "ConfirmBtnCommonContent" lang key
+ *                          		'modal' => true, // true|false to display dialog as a modal (with dark background)
+ *                      		],
+ *                          ]
+ * // phpcs:enable
  * @return string               html button
  */
 function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
 {
+	global $hookmanager, $action, $object, $langs;
+
 	$class = 'butAction';
 	if ($actionType == 'danger' || $actionType == 'delete') {
 		$class = 'butActionDelete';
@@ -9768,11 +9844,29 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 		}
 	}
 
+	// Js Confirm button
+	if ($userRight && !empty($params['confirm'])) {
+		if (!is_array($params['confirm'])) {
+			$params['confirm'] = array(
+				'url' => $url . (strpos($url, '?') > 0 ? '&' : '?') . 'confirm=yes'
+			);
+		}
+
+		// for js desabled compatibility set $url as call to confirm action and $params['confirm']['url'] to confirmed action
+		$attr['data-confirm-url'] = $params['confirm']['url'];
+		$attr['data-confirm-title'] = !empty($params['confirm']['title']) ? $params['confirm']['title'] : $langs->trans('ConfirmBtnCommonTitle', $label);
+		$attr['data-confirm-content'] = !empty($params['confirm']['content']) ? $params['confirm']['content'] : $langs->trans('ConfirmBtnCommonContent', $label);
+		$attr['data-confirm-content'] = preg_replace("/\r|\n/", "", $attr['data-confirm-content']);
+		$attr['data-confirm-action-btn-label'] = !empty($params['confirm']['action-btn-label']) ? $params['confirm']['action-btn-label'] : $langs->trans('Confirm');
+		$attr['data-confirm-cancel-btn-label'] = !empty($params['confirm']['cancel-btn-label']) ? $params['confirm']['cancel-btn-label'] : $langs->trans('CloseDialog');
+		$attr['data-confirm-modal'] = !empty($params['confirm']['modal']) ? $params['confirm']['modal'] : true;
+
+		$attr['class'].= ' butActionConfirm';
+	}
+
 	if (isset($attr['href']) && empty($attr['href'])) {
 		unset($attr['href']);
 	}
-
-	// TODO : add a hook
 
 	// escape all attribute
 	$attr = array_map('dol_escape_htmltag', $attr);
@@ -9786,7 +9880,29 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 
 	$tag = !empty($attr['href']) ? 'a' : 'span';
 
-	return '<'.$tag.' '.$compiledAttributes.'>'.$html.'</'.$tag.'>';
+
+	$parameters = array(
+		'TCompiledAttr' => $TCompiledAttr,
+		'compiledAttributes' => $compiledAttributes,
+		'attr' => $attr,
+		'tag' => $tag,
+		'label' => $label,
+		'html' => $html,
+		'actionType' => $actionType,
+		'url' => $url,
+		'id' => $id,
+		'userRight' => $userRight,
+		'params' => $params
+	);
+
+	$reshook = $hookmanager->executeHooks('dolGetButtonAction', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+	if (empty($reshook)) {
+		return '<' . $tag . ' ' . $compiledAttributes . '>' . $html . '</' . $tag . '>';
+	} else {
+		return $hookmanager->resPrint;
+	}
 }
 
 /**
@@ -10097,7 +10213,7 @@ function newToken()
  */
 function currentToken()
 {
-	return $_SESSION['token'];
+	return isset($_SESSION['token']) ? $_SESSION['token'] : '';
 }
 
 /**
@@ -10295,9 +10411,10 @@ function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
  */
 function showValueWithClipboardCPButton($valuetocopy, $showonlyonhover = 1, $texttoshow = '')
 {
+	/*
 	global $conf;
 
-	/*if (!empty($conf->dol_no_mouse_hover)) {
+	if (!empty($conf->dol_no_mouse_hover)) {
 		$showonlyonhover = 0;
 	}*/
 
@@ -10305,6 +10422,23 @@ function showValueWithClipboardCPButton($valuetocopy, $showonlyonhover = 1, $tex
 		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><span class="clipboardCPValue hidewithsize">'.$valuetocopy.'</span><span class="clipboardCPValueToPrint">'.$texttoshow.'</span><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText opacitymedium"></span></span>';
 	} else {
 		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><span class="clipboardCPValue">'.$valuetocopy.'</span><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText opacitymedium"></span></span>';
+	}
+
+	return $result;
+}
+
+
+/**
+ * Decode an encode string. The string can be encoded in json format (recommended) or with serialize (avoid this)
+ *
+ * @param 	string	$stringtodecode		String to decode (json or serialize coded)
+ * @return	mixed						The decoded object.
+ */
+function jsonOrUnserialize($stringtodecode)
+{
+	$result = json_decode($stringtodecode);
+	if ($result === null) {
+		$result = unserialize($stringtodecode);
 	}
 
 	return $result;

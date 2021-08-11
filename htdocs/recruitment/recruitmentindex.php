@@ -183,7 +183,7 @@ if ($conf->use_javascript_ajax) {
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder nohover centpercent">';
-		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Candidatures").'</th></tr>'."\n";
+		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("RecruitmentCandidatures").'</th></tr>'."\n";
 		$listofstatus = array(0, 1, 3, 5, 8, 9);
 		foreach ($listofstatus as $status) {
 			$dataseries[] = array(dol_html_entity_decode($staticrecruitmentcandidature->LibStatut($status, 1), ENT_QUOTES | ENT_HTML5), (isset($vals[$status]) ? (int) $vals[$status] : 0));

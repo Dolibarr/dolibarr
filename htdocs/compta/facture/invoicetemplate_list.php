@@ -565,7 +565,7 @@ if ($resql) {
 			1=>$langs->trans("Active"),
 			-1=>$langs->trans("Disabled"),
 		);
-		print $form->selectarray('search_status', $liststatus, $search_status, -2);
+		print $form->selectarray('search_status', $liststatus, $search_status, -2, 0, 0, '', 0, 0, 0, '', 'width100');
 		print '</td>';
 	}
 	// Action column

@@ -140,4 +140,5 @@ MassHolidayApprovalKO=Holiday %s not approved : %s
 HolidayApprovalBadStatus=Incorrect status
 HolidayNoRightForApproval=The user doesn't have the right to approve
 HolidayNotApprobator=The user is not the designated approbator
-
+HolidayBalanceMonthlyUpdate=Monthly update of holiday balance
+XIsAUsualNonWorkingDay=%s is usualy a NON working day

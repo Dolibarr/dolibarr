@@ -100,15 +100,15 @@ class Contact extends CommonObject
 		'firstname' =>array('type'=>'varchar(50)', 'label'=>'Firstname', 'enabled'=>1, 'visible'=>1, 'position'=>50, 'showoncombobox'=>1, 'searchall'=>1),
 		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
 		'zip' =>array('type'=>'varchar(25)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>1, 'position'=>60),
-		'town' =>array('type'=>'text', 'label'=>'Town', 'enabled'=>1, 'visible'=>1, 'position'=>65),
+		'town' =>array('type'=>'text', 'label'=>'Town', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
 		'fk_departement' =>array('type'=>'integer', 'label'=>'Fk departement', 'enabled'=>1, 'visible'=>3, 'position'=>70),
 		'fk_pays' =>array('type'=>'integer', 'label'=>'Fk pays', 'enabled'=>1, 'visible'=>3, 'position'=>75),
 		'birthday' =>array('type'=>'date', 'label'=>'Birthday', 'enabled'=>1, 'visible'=>3, 'position'=>80),
 		'poste' =>array('type'=>'varchar(80)', 'label'=>'PostOrFunction', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
 		'phone' =>array('type'=>'varchar(30)', 'label'=>'Phone', 'enabled'=>1, 'visible'=>1, 'position'=>90, 'searchall'=>1),
-		'phone_perso' =>array('type'=>'varchar(30)', 'label'=>'PhonePerso', 'enabled'=>1, 'visible'=>1, 'position'=>95, 'searchall'=>1),
+		'phone_perso' =>array('type'=>'varchar(30)', 'label'=>'PhonePerso', 'enabled'=>1, 'visible'=>-1, 'position'=>95, 'searchall'=>1),
 		'phone_mobile' =>array('type'=>'varchar(30)', 'label'=>'PhoneMobile', 'enabled'=>1, 'visible'=>1, 'position'=>100, 'searchall'=>1),
-		'fax' =>array('type'=>'varchar(30)', 'label'=>'Fax', 'enabled'=>1, 'visible'=>1, 'position'=>105, 'searchall'=>1),
+		'fax' =>array('type'=>'varchar(30)', 'label'=>'Fax', 'enabled'=>1, 'visible'=>-1, 'position'=>105, 'searchall'=>1),
 		'email' =>array('type'=>'varchar(255)', 'label'=>'Email', 'enabled'=>1, 'visible'=>1, 'position'=>110, 'searchall'=>1),
 		'socialnetworks' =>array('type'=>'text', 'label'=>'SocialNetworks', 'enabled'=>1, 'visible'=>3, 'position'=>115),
 		'photo' =>array('type'=>'varchar(255)', 'label'=>'Photo', 'enabled'=>1, 'visible'=>3, 'position'=>170),
@@ -885,30 +885,32 @@ class Contact extends CommonObject
 			$this->error = $this->db->lasterror();
 		}
 
-		// Mis a jour alerte birthday
-		if (!empty($this->birthday_alert)) {
-			//check existing
-			$sql_check = "SELECT rowid FROM ".MAIN_DB_PREFIX."user_alert WHERE type=1 AND fk_contact=".$this->db->escape($id)." AND fk_user=".$user->id;
-			$result_check = $this->db->query($sql_check);
-			if (!$result_check || ($this->db->num_rows($result_check) < 1)) {
-				//insert
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_alert(type,fk_contact,fk_user) ";
-				$sql .= "VALUES (1,".$this->db->escape($id).",".$user->id.")";
+		if ($user) {
+			// Update birthday alert
+			if (!empty($this->birthday_alert)) {
+				//check existing
+				$sql_check = "SELECT rowid FROM " . MAIN_DB_PREFIX . "user_alert WHERE type = 1 AND fk_contact = " . ((int) $id) . " AND fk_user = " . ((int) $user->id);
+				$result_check = $this->db->query($sql_check);
+				if (!$result_check || ($this->db->num_rows($result_check) < 1)) {
+					//insert
+					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "user_alert(type, fk_contact, fk_user) ";
+					$sql .= "VALUES (1," . ((int) $id) . "," . ((int) $user->id) . ")";
+					$result = $this->db->query($sql);
+					if (!$result) {
+						$error++;
+						$this->error = $this->db->lasterror();
+					}
+				} else {
+					$result = true;
+				}
+			} else {
+				$sql = "DELETE FROM " . MAIN_DB_PREFIX . "user_alert ";
+				$sql .= "WHERE type=1 AND fk_contact=" . ((int) $id) . " AND fk_user=" . ((int) $user->id);
 				$result = $this->db->query($sql);
 				if (!$result) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
-			} else {
-				$result = true;
-			}
-		} else {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_alert ";
-			$sql .= "WHERE type=1 AND fk_contact=".$this->db->escape($id)." AND fk_user=".$user->id;
-			$result = $this->db->query($sql);
-			if (!$result) {
-				$error++;
-				$this->error = $this->db->lasterror();
 			}
 		}
 

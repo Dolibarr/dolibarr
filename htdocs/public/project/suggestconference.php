@@ -409,7 +409,7 @@ if (empty($reshook) && $action == 'add') {
 
 					$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF;
 					if (!empty($labeltouse)) {
-						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'eventorganization_send', $user, $outputlangs, $labeltouse, 1, '');
+						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $labeltouse, 1, '');
 					}
 
 					if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
@@ -508,11 +508,11 @@ jQuery(document).ready(function () {
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 
 // Last Name
-print '<tr><td><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'<FONT COLOR="red">*</FONT></label></td>';
+print '<tr><td><label for="lastname">'.$langs->trans("Lastname").'<FONT COLOR="red">*</FONT></label></td>';
 print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname", 'alpha') ?GETPOST("lastname", 'alpha') : $object->lastname).'" autofocus="autofocus"></td>';
 print '</tr>';
 // First Name
-print '<tr><td><label for="firstname">'.$langs->trans("Firstname").' / '.$langs->trans("Label").'<FONT COLOR="red">*</FONT></label></td>';
+print '<tr><td><label for="firstname">'.$langs->trans("Firstname").'<FONT COLOR="red">*</FONT></label></td>';
 print '<td colspan="3"><input name="firstname" id="firstname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("firstname", 'alpha') ?GETPOST("firstname", 'alpha') : $object->firstname).'" autofocus="autofocus"></td>';
 print '</tr>';
 // Email
@@ -520,21 +520,6 @@ print '<tr><td>'.$langs->trans("Email").'<FONT COLOR="red">*</FONT></td><td><inp
 // Company
 print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'<FONT COLOR="red">*</FONT>';
 print ' </td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
-// Type of event
-print '<tr><td>'.$langs->trans("EventType").'<FONT COLOR="red">*</FONT></td>'."\n";
-print '<td>'.FORM::selectarray('eventtype', $arrayofeventtype, $eventtype).'</td>';
-// Label
-print '<tr><td>'.$langs->trans("Label").'<FONT COLOR="red">*</FONT></td>'."\n";
-print '</td><td><input type="text" name="label" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('label')).'"></td></tr>'."\n";
-// Note
-print '<tr><td>'.$langs->trans("Note").'<FONT COLOR="red">*</FONT></td>'."\n";
-print '<td><input type="text" name="note" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('note')).'"></td></tr>'."\n";
-// Start Date
-print '<tr><td>'.$langs->trans("DateStart").'</td>'."\n";
-print '<td><input type="date" name="datestart" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('datestart')).'"></td></tr>'."\n";
-// End Date
-print '<tr><td>'.$langs->trans("DateEnd").'</td>'."\n";
-print '<td><input type="date" name="dateend" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('dateend')).'"></td></tr>'."\n";
 // Address
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
 print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
@@ -574,6 +559,22 @@ if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
 	}
 	print '</td></tr>';
 }
+// Type of event
+print '<tr><td>'.$langs->trans("EventType").'<FONT COLOR="red">*</FONT></td>'."\n";
+print '<td>'.FORM::selectarray('eventtype', $arrayofeventtype, $eventtype).'</td>';
+// Label
+print '<tr><td>'.$langs->trans("LabelOfconference").'<FONT COLOR="red">*</FONT></td>'."\n";
+print '</td><td><input type="text" name="label" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('label')).'"></td></tr>'."\n";
+// Note
+print '<tr><td>'.$langs->trans("Description").'<FONT COLOR="red">*</FONT></td>'."\n";
+print '<td><textarea name="note" id="note" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('note', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
+// Start Date
+print '<tr><td>'.$langs->trans("DateStart").'</td>'."\n";
+print '<td><input type="date" name="datestart" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('datestart')).'"></td></tr>'."\n";
+// End Date
+print '<tr><td>'.$langs->trans("DateEnd").'</td>'."\n";
+print '<td><input type="date" name="dateend" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('dateend')).'"></td></tr>'."\n";
+
 
 print "</table>\n";
 

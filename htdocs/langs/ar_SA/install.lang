@@ -206,6 +206,7 @@ MigrationUserPhotoPath=Migration of photo paths for users
 MigrationFieldsSocialNetworks=Migration of users fields social networks (%s)
 MigrationReloadModule=إعادة تحديث الوحدات %s
 MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
+MigrationImportOrExportProfiles=Migration of import or export profiles (%s)
 ShowNotAvailableOptions=Show unavailable options
 HideNotAvailableOptions=Hide unavailable options
 ErrorFoundDuringMigration=Error(s) were reported during the migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but the application or some features may not work correctly until the errors are resolved.

@@ -50,7 +50,6 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'bills', 'companies', 'other'));
 
-$mesg = '';
 $error = 0;
 $errors = array();
 
@@ -718,8 +717,18 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 		$soc->id = $socid;
 		$soc->fetch($socid);
 
+		// Type
+		if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+			$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
+			print '<tr><td class="">';
+			print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
+			print '</td><td>';
+			print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, 0, $typeformat);
+			print '</td></tr>';
+		}
+
 		// Selling price
-		print '<tr><td class="titlefield">';
+		print '<tr><td class="titlefieldcreate">';
 		print $langs->trans("SellingPrice");
 		print '</td>';
 		print '<td colspan="2">';
@@ -792,13 +801,33 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 		}
 	} else {
 		if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {  // using this option is a bug. kept for backward compatibility
+			// Type
+			if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
+				print '<tr><td class="">';
+				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
+				print '</td><td>';
+				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, 0, $typeformat);
+				print '</td></tr>';
+			}
+
 			// We show only vat for level 1
-			print '<tr><td class="titlefield">'.$langs->trans("DefaultTaxRate").'</td>';
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("DefaultTaxRate").'</td>';
 			print '<td colspan="2">'.vatrate($object->multiprices_tva_tx[1], true).'</td>';
 			print '</tr>';
 		} else {
+			// Type
+			if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
+				print '<tr><td class="">';
+				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
+				print '</td><td>';
+				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, 0, $typeformat);
+				print '</td></tr>';
+			}
+
 			// TVA
-			print '<tr><td class="titlefield">'.$langs->trans("DefaultTaxRate").'</td><td>';
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("DefaultTaxRate").'</td><td>';
 
 			$positiverates = '';
 			if (price2num($object->tva_tx)) {
@@ -1109,34 +1138,41 @@ print dol_get_fiche_end();
 /*
  * Action bar
  */
+
+
 if (!$action || $action == 'delete' || $action == 'showlog_customer_price' || $action == 'showlog_default_price' || $action == 'add_customer_price'
 	|| $action == 'activate_price_by_qty' || $action == 'disable_price_by_qty') {
 	print "\n".'<div class="tabsAction">'."\n";
 
-	if ($object->isVariant()) {
-		if ($user->rights->produit->creer || $user->rights->service->creer) {
-			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEditVariants")).'">'.$langs->trans("UpdateDefaultPrice").'</a></div>';
-		}
-	} else {
-		if (empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
-			if ($user->rights->produit->creer || $user->rights->service->creer) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit_price&amp;id='.$object->id.'">'.$langs->trans("UpdateDefaultPrice").'</a></div>';
-			}
-		}
 
-		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+	if (empty($reshook)) {
+		if ($object->isVariant()) {
 			if ($user->rights->produit->creer || $user->rights->service->creer) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=add_customer_price&amp;id='.$object->id.'">'.$langs->trans("AddCustomerPrice").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("NoEditVariants")) . '">' . $langs->trans("UpdateDefaultPrice") . '</a></div>';
 			}
-		}
-
-		if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
-			if ($user->rights->produit->creer || $user->rights->service->creer) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit_vat&amp;id='.$object->id.'">'.$langs->trans("UpdateVAT").'</a></div>';
+		} else {
+			if (empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
+				if ($user->rights->produit->creer || $user->rights->service->creer) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_price&amp;id=' . $object->id . '">' . $langs->trans("UpdateDefaultPrice") . '</a></div>';
+				}
 			}
 
-			if ($user->rights->produit->creer || $user->rights->service->creer) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit_price&amp;id='.$object->id.'">'.$langs->trans("UpdateLevelPrices").'</a></div>';
+			if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+				if ($user->rights->produit->creer || $user->rights->service->creer) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=add_customer_price&amp;id=' . $object->id . '">' . $langs->trans("AddCustomerPrice") . '</a></div>';
+				}
+			}
+
+			if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
+				if ($user->rights->produit->creer || $user->rights->service->creer) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_vat&amp;id=' . $object->id . '">' . $langs->trans("UpdateVAT") . '</a></div>';
+				}
+
+				if ($user->rights->produit->creer || $user->rights->service->creer) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_price&amp;id=' . $object->id . '">' . $langs->trans("UpdateLevelPrices") . '</a></div>';
+				}
 			}
 		}
 	}
@@ -1212,15 +1248,17 @@ if ($action == 'edit_price' && $object->getRights()->creer) {
 		// Only show price mode and expression selector if module is enabled
 		if (!empty($conf->dynamicprices->enabled)) {
 			// Price mode selector
+			print '<!-- Show price mode of dynamicprices editor -->'."\n";
 			print '<tr><td>'.$langs->trans("PriceMode").'</td><td>';
+			print img_picto('', 'dynamicprice', 'class="pictofixedwidth"');
 			$price_expression = new PriceExpression($db);
-			$price_expression_list = array(0 => $langs->trans("PriceNumeric")); //Put the numeric mode as first option
+			$price_expression_list = array(0 => $langs->trans("Numeric").' <span class="opacitymedium">('.$langs->trans("NoDynamicPrice").')</span>'); //Put the numeric mode as first option
 			foreach ($price_expression->list_price_expression() as $entry) {
 				$price_expression_list[$entry->id] = $entry->title;
 			}
 			$price_expression_preselection = GETPOST('eid') ? GETPOST('eid') : ($object->fk_price_expression ? $object->fk_price_expression : '0');
 			print $form->selectarray('eid', $price_expression_list, $price_expression_preselection);
-			print '&nbsp; <div id="expression_editor" class="button">'.$langs->trans("PriceExpressionEditor").'</div>';
+			print '&nbsp; <a id="expression_editor" class="classlink">'.$langs->trans("PriceExpressionEditor").'</a>';
 			print '</td></tr>';
 
 			// This code hides the numeric price input if is not selected, loads the editor page if editor button is pressed

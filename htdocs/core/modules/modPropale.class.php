@@ -189,7 +189,7 @@ class modPropale extends DolibarrModules
 		$this->export_label[$r] = 'ProposalsAndProposalsLines'; // Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r] = array(array("propale", "export"));
 		$this->export_fields_array[$r] = array(
-			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'co.code'=>'CountryCode', 's.phone'=>'Phone',
+			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 'ps.nom'=>'ParentCompany', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'co.code'=>'CountryCode', 's.phone'=>'Phone',
 			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 'c.rowid'=>"Id", 'c.ref'=>"Ref", 'c.ref_client'=>"RefCustomer",
 			'c.fk_soc'=>"IdCompany", 'c.datec'=>"DateCreation", 'c.datep'=>"DatePropal", 'c.fin_validite'=>"DateEndPropal", 'c.remise_percent'=>"GlobalDiscount",
 			'c.total_ht'=>"TotalHT", 'c.total_ttc'=>"TotalTTC", 'c.fk_statut'=>'Status', 'c.note_public'=>"Note", 'c.date_livraison'=>'DeliveryDate',
@@ -213,14 +213,14 @@ class modPropale extends DolibarrModules
 		//	'cd.total_tva'=>"Numeric",'cd.total_ttc'=>"Numeric",'p.rowid'=>'List:product:label','p.ref'=>'Text','p.label'=>'Text'
 		//);
 		$this->export_TypeFields_array[$r] = array(
-			's.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'co.code'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text', 's.siret'=>'Text',
+			's.nom'=>'Text', 'ps.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'co.code'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text', 's.siret'=>'Text',
 			's.ape'=>'Text', 's.idprof4'=>'Text', 'c.ref'=>"Text", 'c.ref_client'=>"Text", 'c.datec'=>"Date", 'c.datep'=>"Date", 'c.fin_validite'=>"Date",
 			'c.remise_percent'=>"Numeric", 'c.total_ht'=>"Numeric", 'c.total_ttc'=>"Numeric", 'c.fk_statut'=>'Status', 'c.note_public'=>"Text", 'c.date_livraison'=>'Date',
 			'pj.ref'=>'Text', 'cd.description'=>"Text", 'cd.product_type'=>'Boolean', 'cd.tva_tx'=>"Numeric", 'cd.qty'=>"Numeric", 'cd.total_ht'=>"Numeric",
 			'cd.total_tva'=>"Numeric", 'cd.total_ttc'=>"Numeric", 'p.ref'=>'Text', 'p.label'=>'Text'
 		);
 		$this->export_entities_array[$r] = array(
-			's.rowid'=>"company", 's.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'co.code'=>'company', 's.phone'=>'company',
+			's.rowid'=>"company", 's.nom'=>'company', 'ps.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'co.code'=>'company', 's.phone'=>'company',
 			's.siren'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.siret'=>'company', 'c.rowid'=>"propal", 'c.ref'=>"propal", 'c.ref_client'=>"propal",
 			'c.fk_soc'=>"propal", 'c.datec'=>"propal", 'c.datep'=>"propal", 'c.fin_validite'=>"propal", 'c.remise_percent'=>"propal", 'c.total_ht'=>"propal",
 			'c.total_ttc'=>"propal", 'c.fk_statut'=>"propal", 'c.note_public'=>"propal", 'c.date_livraison'=>"propal", 'pj.ref'=>'project', 'cd.rowid'=>'propal_line',
@@ -241,14 +241,14 @@ class modPropale extends DolibarrModules
 		$keyforaliasextra = 'extra3';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$keyforselect = 'societe';
-		$keyforelement = 'societe';
+		$keyforelement = 'company';
 		$keyforaliasextra = 'extra4';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s ';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extra4 ON s.rowid = extra4.fk_object';
-
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as ps ON ps.rowid = s.parent';
 		if (empty($user->rights->societe->client->voir)) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		}

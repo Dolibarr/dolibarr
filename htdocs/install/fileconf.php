@@ -476,13 +476,13 @@ if (!empty($force_install_noedit)) {
 	<tr class="hidesqlite">
 		<td class="label"><label for="db_pass"><b><?php echo $langs->trans("Password"); ?></b></label></td>
 		<td class="label">
-			<input type="password"
+			<input type="password" class="text-security";
 				   id="db_pass" autocomplete="off"
 				   name="db_pass"
 				   value="<?php
 					// If $force_install_databasepass is on, we don't want to set password, we just show '***'. Real value will be extracted from the forced install file at step1.
 					$autofill = ((!empty($_SESSION['dol_save_pass'])) ? $_SESSION['dol_save_pass'] : str_pad('', strlen($force_install_databasepass), '*'));
-					if (!empty($dolibarr_main_prod)) {
+					if (!empty($dolibarr_main_prod) && empty($_SESSION['dol_save_pass'])) {    // So value can't be found if install page still accessible
 						$autofill = '';
 					}
 					print dol_escape_htmltag($autofill);
@@ -532,7 +532,7 @@ if (!empty($force_install_noedit)) {
 				   id="db_user_root"
 				   name="db_user_root"
 				   class="needroot"
-				   value="<?php print (!empty($force_install_databaserootlogin)) ? $force_install_databaserootlogin : @$db_user_root; ?>"
+				   value="<?php print (!empty($force_install_databaserootlogin)) ? $force_install_databaserootlogin : (isset($db_user_root) ? $db_user_root : ''); ?>"
 				<?php if ($force_install_noedit > 0 && !empty($force_install_databaserootlogin)) {
 					print ' disabled';
 				} ?>
@@ -556,10 +556,10 @@ if (!empty($force_install_noedit)) {
 				   autocomplete="off"
 				   id="db_pass_root"
 				   name="db_pass_root"
-				   class="needroot"
+				   class="needroot text-security"
 				   value="<?php
 					// If $force_install_databaserootpass is on, we don't want to set password here, we just show '***'. Real value will be extracted from the forced install file at step1.
-					$autofill = ((!empty($force_install_databaserootpass)) ? str_pad('', strlen($force_install_databaserootpass), '*') : @$db_pass_root);
+					$autofill = ((!empty($force_install_databaserootpass)) ? str_pad('', strlen($force_install_databaserootpass), '*') : (isset($db_pass_root) ? $db_pass_root : ''));
 					if (!empty($dolibarr_main_prod)) {
 						$autofill = '';
 					}

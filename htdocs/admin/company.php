@@ -384,21 +384,23 @@ print "<br>\n";
 /**
  * Edit parameters
  */
-print "\n".'<script type="text/javascript" language="javascript">';
-print '$(document).ready(function () {
+if (!empty($conf->use_javascript_ajax)) {
+	print "\n".'<script type="text/javascript" language="javascript">';
+	print '$(document).ready(function () {
 		  $("#selectcountry_id").change(function() {
 			document.form_index.action.value="updateedit";
 			document.form_index.submit();
 		  });
 	  });';
-print '</script>'."\n";
+	print '</script>'."\n";
+}
 
 print '<form enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'" name="form_index">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 print '<table class="noborder centpercent editmode">';
-print '<tr class="liste_titre"><th class="titlefield wordbreak">'.$langs->trans("CompanyInfo").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
+print '<tr class="liste_titre"><th class="titlefieldcreate wordbreak">'.$langs->trans("CompanyInfo").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
 
 // Name
 print '<tr class="oddeven"><td class="fieldrequired wordbreak"><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';
@@ -417,7 +419,7 @@ print '<input name="MAIN_INFO_SOCIETE_TOWN" class="minwidth200" id="MAIN_INFO_SO
 
 // Country
 print '<tr class="oddeven"><td class="fieldrequired"><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td class="maxwidthonsmartphone">';
-print img_picto('', 'globe-americas', 'class="paddingrightonly"');
+print img_picto('', 'globe-americas', 'class="pictofixedwidth"');
 print $form->select_country($mysoc->country_id, 'country_id', '', 0);
 if ($user->admin) {
 	print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
@@ -430,35 +432,37 @@ if (!empty($conf->global->MAIN_INFO_SOCIETE_STATE)) {
 	$tmp = explode(':', $conf->global->MAIN_INFO_SOCIETE_STATE);
 	$state_id = $tmp[0];
 }
-$formcompany->select_departement($state_id, $mysoc->country_code, 'state_id');
+print img_picto('', 'state', 'class="pictofixedwidth"');
+print $formcompany->select_state($state_id, $mysoc->country_code, 'state_id');
 print '</td></tr>'."\n";
 
 // Currency
 print '<tr class="oddeven"><td><label for="currency">'.$langs->trans("CompanyCurrency").'</label></td><td>';
+print img_picto('', 'multicurrency', 'class="pictofixedwidth"');
 print $form->selectCurrency($conf->currency, "currency");
 print '</td></tr>'."\n";
 
 // Phone
 print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("Phone").'</label></td><td>';
-print img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright');
+print img_picto('', 'object_phoning', '', false, 0, 0, '', 'pictofixedwidth');
 print '<input class="maxwidth150 widthcentpercentminusx" name="tel" id="phone" value="'.dol_escape_htmltag((GETPOSTISSET('tel') ? GETPOST('tel', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_TEL) ? $conf->global->MAIN_INFO_SOCIETE_TEL : ''))).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Fax
 print '<tr class="oddeven"><td><label for="fax">'.$langs->trans("Fax").'</label></td><td>';
-print img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright');
+print img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'pictofixedwidth');
 print '<input class="maxwidth150" name="fax" id="fax" value="'.dol_escape_htmltag((GETPOSTISSET('fax') ? GETPOST('fax', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_FAX) ? $conf->global->MAIN_INFO_SOCIETE_FAX : ''))).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Email
 print '<tr class="oddeven"><td><label for="email">'.$langs->trans("EMail").'</label></td><td>';
-print img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright');
+print img_picto('', 'object_email', '', false, 0, 0, '', 'pictofixedwidth');
 print '<input class="maxwidth150" name="mail" id="email" value="'.dol_escape_htmltag((GETPOSTISSET('mail') ? GETPOST('mail', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL) ? $conf->global->MAIN_INFO_SOCIETE_MAIL : ''))).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Web
 print '<tr class="oddeven"><td><label for="web">'.$langs->trans("Web").'</label></td><td>';
-print img_picto('', 'globe', '', false, 0, 0, '', 'paddingright');
+print img_picto('', 'globe', '', false, 0, 0, '', 'pictofixedwidth');
 print '<input class="maxwidth300 widthcentpercentminusx" name="web" id="web" value="'.dol_escape_htmltag((GETPOSTISSET('web') ? GETPOST('web', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_WEB) ? $conf->global->MAIN_INFO_SOCIETE_WEB : ''))).'"></td></tr>';
 print '</td></tr>'."\n";
 
@@ -466,7 +470,7 @@ print '</td></tr>'."\n";
 if (!empty($conf->barcode->enabled)) {
 	print '<tr class="oddeven"><td>';
 	print '<label for="barcode">'.$langs->trans("Gencod").'</label></td><td>';
-	print '<span class="fa paddingright fa-barcode"></span>';
+	print '<span class="fa fa-barcode pictofixedwidth"></span>';
 	print '<input name="barcode" id="barcode" class="minwidth150 widthcentpercentminusx maxwidth300" value="'.dol_escape_htmltag((GETPOSTISSET('barcode') ? GETPOST('barcode', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_GENCODE) ? $conf->global->MAIN_INFO_SOCIETE_GENCODE : ''))).'"></td></tr>';
 	print '</td></tr>';
 }
@@ -555,7 +559,7 @@ print '<br>';
 // IDs of the company (country-specific)
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent editmode">';
-print '<tr class="liste_titre"><td class="titlefield wordbreak">'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td class="titlefieldcreate wordbreak">'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 $langs->load("companies");
 
@@ -666,7 +670,7 @@ print '</div>';
 print '<br>';
 print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';
-print '<td class="titlefield">'.$langs->trans("FiscalYearInformation").'</td><td>'.$langs->trans("Value").'</td>';
+print '<td class="titlefieldcreate">'.$langs->trans("FiscalYearInformation").'</td><td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 print '<tr class="oddeven"><td><label for="SOCIETE_FISCAL_MONTH_START">'.$langs->trans("FiscalMonthStart").'</label></td><td>';
@@ -681,12 +685,12 @@ print load_fiche_titre($langs->trans("TypeOfSaleTaxes"), '', 'object_payment');
 
 print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';
-print '<td width="25%">'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
+print '<td class="titlefieldcreate">'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
 print '<td class="right">&nbsp;</td>';
 print "</tr>\n";
 
 // Main tax
-print '<tr class="oddeven"><td width="140"><label><input type="radio" name="optiontva" id="use_vat" value="1"'.(empty($conf->global->FACTURE_TVAOPTION) ? "" : " checked")."> ".$langs->trans("VATIsUsed")."</label></td>";
+print '<tr class="oddeven"><td><label><input type="radio" name="optiontva" id="use_vat" value="1"'.(empty($conf->global->FACTURE_TVAOPTION) ? "" : " checked")."> ".$langs->trans("VATIsUsed")."</label></td>";
 print '<td colspan="2">';
 $tooltiphelp = '';
 if ($mysoc->country_code == 'FR') {
@@ -711,7 +715,7 @@ print "</table>";
 print '<br>';
 print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';
-print '<td width="25%">'.$form->textwithpicto($langs->transcountry("LocalTax1Management", $mysoc->country_code), $langs->transcountry("LocalTax1IsUsedDesc", $mysoc->country_code)).'</td><td>'.$langs->trans("Description").'</td>';
+print '<td class="titlefieldcreate">'.$form->textwithpicto($langs->transcountry("LocalTax1Management", $mysoc->country_code), $langs->transcountry("LocalTax1IsUsedDesc", $mysoc->country_code)).'</td><td>'.$langs->trans("Description").'</td>';
 print '<td class="right">&nbsp;</td>';
 print "</tr>\n";
 
@@ -745,7 +749,7 @@ if ($mysoc->useLocalTax(1)) {
 	if (empty($mysoc->country_code)) {
 		print '<tr class="oddeven nohover"><td class="">'.$countrynotdefined.'</td><td></td><td></td></tr>';
 	} else {
-		print '<tr class="oddeven nohover"><td class="" colspan="3">'.$langs->trans("NoLocalTaxXForThisCountry", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryVAT"), $langs->transnoentitiesnoconv("LocalTax1Management")).'</td></tr>';
+		print '<tr class="oddeven nohover"><td class="" colspan="3"><span class="opacitymedium">'.$langs->trans("NoLocalTaxXForThisCountry", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryVAT"), $langs->transnoentitiesnoconv("LocalTax1Management")).'</span></td></tr>';
 	}
 }
 
@@ -755,7 +759,7 @@ print "</table>";
 print '<br>';
 print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';
-print '<td width="25%">'.$form->textwithpicto($langs->transcountry("LocalTax2Management", $mysoc->country_code), $langs->transcountry("LocalTax2IsUsedDesc", $mysoc->country_code)).'</td><td>'.$langs->trans("Description").'</td>';
+print '<td class="titlefieldcreate">'.$form->textwithpicto($langs->transcountry("LocalTax2Management", $mysoc->country_code), $langs->transcountry("LocalTax2IsUsedDesc", $mysoc->country_code)).'</td><td>'.$langs->trans("Description").'</td>';
 print '<td class="right">&nbsp;</td>';
 print "</tr>\n";
 
@@ -788,7 +792,7 @@ if ($mysoc->useLocalTax(2)) {
 	if (empty($mysoc->country_code)) {
 		print '<tr class="oddeven nohover"><td class="">'.$countrynotdefined.'</td><td></td><td></td></tr>';
 	} else {
-		print '<tr class="oddeven nohover"><td class="" colspan="3">'.$langs->trans("NoLocalTaxXForThisCountry", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryVAT"), $langs->transnoentitiesnoconv("LocalTax2Management")).'</td></tr>';
+		print '<tr class="oddeven nohover"><td class="" colspan="3"><span class="opacitymedium">'.$langs->trans("NoLocalTaxXForThisCountry", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryVAT"), $langs->transnoentitiesnoconv("LocalTax2Management")).'</span></td></tr>';
 	}
 }
 
@@ -814,7 +818,7 @@ if ($mysoc->useRevenueStamp()) {
 	if (empty($mysoc->country_code)) {
 		print '<tr class="oddeven nohover"><td class="">'.$countrynotdefined.'</td><td></td><td></td></tr>';
 	} else {
-		print '<tr class="oddeven nohover"><td class="" colspan="3">'.$langs->trans("NoLocalTaxXForThisCountry", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryRevenueStamp"), $langs->transnoentitiesnoconv("RevenueStamp")).'</td></tr>';
+		print '<tr class="oddeven nohover"><td class="" colspan="3"><span class="opacitymedium">'.$langs->trans("NoLocalTaxXForThisCountry", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryRevenueStamp"), $langs->transnoentitiesnoconv("RevenueStamp")).'</span></td></tr>';
 	}
 }
 
