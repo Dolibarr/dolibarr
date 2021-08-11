@@ -3634,10 +3634,10 @@ abstract class CommonObject
 		if (is_array($this->fields) && array_key_exists('status', $this->fields)) $fieldstatus = 'status';
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$elementTable;
-		$sql .= " SET ".$fieldstatus." = ".$status;
+		$sql .= " SET ".$fieldstatus." = ".((int) $status);
 		// If status = 1 = validated, update also fk_user_valid
-		if ($status == 1 && $elementTable == 'expensereport') $sql .= ", fk_user_valid = ".$user->id;
-		$sql .= " WHERE rowid=".$elementId;
+		if ($status == 1 && $elementTable == 'expensereport') $sql .= ", fk_user_valid = ".((int) $user->id);
+		$sql .= " WHERE rowid=".((int) $elementId);
 
 		dol_syslog(get_class($this)."::setStatut", LOG_DEBUG);
 		if ($this->db->query($sql))
