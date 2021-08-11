@@ -420,7 +420,9 @@ print '</td></tr>';
 
 // Show sales representative
 
-print '<tr class="oddeven"><td>'.$langs->trans("DOC_SHOW_FIRST_SALES_REP").'</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans("DOC_SHOW_FIRST_SALES_REP");
+print ' <span class="opacitymedium">('.$langs->trans("SalesRepresentativeInfo").')</span>';
+print '</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('DOC_SHOW_FIRST_SALES_REP');
 } else {
