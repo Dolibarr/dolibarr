@@ -53,7 +53,15 @@ if ($cancel) {
 }
 
 if ($action == 'update') {
-	if (GETPOSTISSET('MAIN_GENERATE_PROPOSALS_WITH_PICTURE')) dolibarr_set_const($db, "MAIN_GENERATE_PROPOSALS_WITH_PICTURE", GETPOST("MAIN_GENERATE_PROPOSALS_WITH_PICTURE"), 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('PROPOSAL_PDF_HIDE_PAYMENTTERM')) {
+		dolibarr_set_const($db, "PROPOSAL_PDF_HIDE_PAYMENTTERM", GETPOST("PROPOSAL_PDF_HIDE_PAYMENTTERM"), 'chaine', 0, '', $conf->entity);
+	}
+	if (GETPOSTISSET('PROPOSAL_PDF_HIDE_PAYMENTMODE')) {
+		dolibarr_set_const($db, "PROPOSAL_PDF_HIDE_PAYMENTMODE", GETPOST("PROPOSAL_PDF_HIDE_PAYMENTMODE"), 'chaine', 0, '', $conf->entity);
+	}
+	if (GETPOSTISSET('MAIN_GENERATE_PROPOSALS_WITH_PICTURE')) {
+		dolibarr_set_const($db, "MAIN_GENERATE_PROPOSALS_WITH_PICTURE", GETPOST("MAIN_GENERATE_PROPOSALS_WITH_PICTURE"), 'chaine', 0, '', $conf->entity);
+	}
 
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
@@ -102,6 +110,26 @@ if ($conf->use_javascript_ajax) {
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("MAIN_GENERATE_PROPOSALS_WITH_PICTURE", $arrval, $conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE);
+}
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>'.$langs->trans("PROPOSAL_PDF_HIDE_PAYMENTTERM");
+print '</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('PROPOSAL_PDF_HIDE_PAYMENTTERM');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("PROPOSAL_PDF_HIDE_PAYMENTTERM", $arrval, $conf->global->PROPOSAL_PDF_HIDE_PAYMENTTERM);
+}
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>'.$langs->trans("PROPOSAL_PDF_HIDE_PAYMENTMODE");
+print '</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('PROPOSAL_PDF_HIDE_PAYMENTMODE');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("PROPOSAL_PDF_HIDE_PAYMENTMODE", $arrval, $conf->global->PROPOSAL_PDF_HIDE_PAYMENTMODE);
 }
 print '</td></tr>';
 
