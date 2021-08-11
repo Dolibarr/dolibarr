@@ -693,7 +693,7 @@ class pdf_strato extends ModelePDFContract
 			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
 
 			// Show sender name
-			if (empty($conf->global->MAIN_PDF_NO_SENDER_NAME)) {
+			if (empty($conf->global->MAIN_PDF_HIDE_SENDER_NAME)) {
 				$pdf->SetXY($posx + 2, $posy + 3);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->SetFont('', 'B', $default_font_size);

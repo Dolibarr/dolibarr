@@ -65,7 +65,7 @@ if ($action == 'update') {
 	if (GETPOSTISSET('MAIN_PROFID5_IN_ADDRESS')) dolibarr_set_const($db, "MAIN_PROFID5_IN_ADDRESS", GETPOST("MAIN_PROFID5_IN_ADDRESS"), 'chaine', 0, '', $conf->entity);
 	if (GETPOSTISSET('MAIN_PROFID6_IN_ADDRESS')) dolibarr_set_const($db, "MAIN_PROFID6_IN_ADDRESS", GETPOST("MAIN_PROFID6_IN_ADDRESS"), 'chaine', 0, '', $conf->entity);
 
-	if (GETPOSTISSET('MAIN_PDF_NO_SENDER_NAME')) dolibarr_set_const($db, "MAIN_PDF_NO_SENDER_NAME", GETPOST("MAIN_PDF_NO_SENDER_NAME"), 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('MAIN_PDF_HIDE_SENDER_NAME')) dolibarr_set_const($db, "MAIN_PDF_HIDE_SENDER_NAME", GETPOST("MAIN_PDF_HIDE_SENDER_NAME"), 'chaine', 0, '', $conf->entity);
 
 	if (GETPOSTISSET('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT", GETPOST("MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT"), 'chaine', 0, '', $conf->entity);
 
@@ -257,11 +257,11 @@ for ($i = 1; $i <= 6; $i++) {
 
 // Show sender name
 
-print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_NO_SENDER_NAME").'</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_HIDE_SENDER_NAME").'</td><td>';
 if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('MAIN_PDF_NO_SENDER_NAME');
+	print ajax_constantonoff('MAIN_PDF_HIDE_SENDER_NAME');
 } else {
-	print $form->selectyesno('MAIN_PDF_NO_SENDER_NAME', (!empty($conf->global->MAIN_PDF_NO_SENDER_NAME)) ? $conf->global->MAIN_PDF_NO_SENDER_NAME : 0, 1);
+	print $form->selectyesno('MAIN_PDF_HIDE_SENDER_NAME', (!empty($conf->global->MAIN_PDF_HIDE_SENDER_NAME)) ? $conf->global->MAIN_PDF_HIDE_SENDER_NAME : 0, 1);
 }
 print '</td></tr>';
 print '</table>';
