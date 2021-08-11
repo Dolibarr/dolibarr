@@ -647,6 +647,9 @@ textarea.centpercent {
 .large {
 	font-size: 125%;
 }
+.double {
+	font-size: 2em;
+}
 
 .h1 .small, .h1 small, .h2 .small, .h2 small, .h3 .small, .h3 small, h1 .small, h1 small, h2 .small, h2 small, h3 .small, h3 small {
 	font-size: 65%;
