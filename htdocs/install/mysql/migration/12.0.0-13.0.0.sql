@@ -29,7 +29,6 @@
 
 
 -- Missing in v12 or lower
-ALTER TABLE llx_product ADD COLUMN fk_default_bom integer DEFAULT NULL;
 
 ALTER TABLE llx_payment_salary MODIFY COLUMN ref varchar(30) NULL;
 ALTER TABLE llx_payment_various MODIFY COLUMN ref varchar(30) NULL;
