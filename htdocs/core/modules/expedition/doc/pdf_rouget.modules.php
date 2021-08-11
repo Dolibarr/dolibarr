@@ -1026,7 +1026,11 @@ class pdf_rouget extends ModelePdfExpedition
 			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
-			$posy = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;
+			if (!empty($conf->global->MAIN_PDF_SENDER_UNDER_LOGO)) {
+				$posy = $this->marge_haute + $height + 5;
+			} else {
+				$posy = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;
+			}
 			$posx = $this->marge_gauche;
 			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
 				$posx = $this->page_largeur - $this->marge_droite - 80;

@@ -1568,10 +1568,11 @@ class pdf_azur extends ModelePDFPropales
 
 			// Show sender
 			if (!empty($conf->global->MAIN_PDF_SENDER_UNDER_LOGO)) {
-				$posy = $this->marge_haute + $height + 5 + $top_shift;
+				$posy = $this->marge_haute + $height + 5;
 			} else {
-				$posy = 42 + $top_shift;
+				$posy = 42;
 			}
+			$posy += $top_shift;
 			$posx = $this->marge_gauche;
 			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
 				$posx = $this->page_largeur - $this->marge_droite - 80;
