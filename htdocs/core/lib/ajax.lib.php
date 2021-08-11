@@ -411,10 +411,11 @@ function ajax_dialog($title, $message, $w = 350, $h = 150)
  * @param  	int		$minLengthToAutocomplete	Minimum length of input string to start autocomplete
  * @param	int		$forcefocus					Force focus on field
  * @param	string	$widthTypeOfAutocomplete	'resolve' or 'off'
+ * @param	string	$idforemptyvalue			'-1'
  * @return	string								Return html string to convert a select field into a combo, or '' if feature has been disabled for some reason.
  * @see selectArrayAjax() of html.form.class
  */
-function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 0, $forcefocus = 0, $widthTypeOfAutocomplete = 'resolve')
+function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 0, $forcefocus = 0, $widthTypeOfAutocomplete = 'resolve', $idforemptyvalue = '-1')
 {
 	global $conf;
 
@@ -454,15 +455,15 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 					templateResult: function (data, container) {	/* Format visible output into combo list */
 	 					/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
 						if (data.element) { $(container).addClass($(data.element).attr("class")); }
-					    console.log($(data.element).attr("data-html"));
-					    if (data.id == -1 && $(data.element).attr("data-html") == undefined) {
+					    //console.log($(data.element).attr("data-html"));
+					    if (data.id == '.((int) $idforemptyvalue).' && $(data.element).attr("data-html") == undefined) {
 							return \'&nbsp;\';
 						}
 						if ($(data.element).attr("data-html") != undefined) return htmlEntityDecodeJs($(data.element).attr("data-html"));		// If property html set, we decode html entities and use this
 						return data.text;
 					},
 					templateSelection: function (selection) {		/* Format visible output of selected value */
-						if (selection.id == -1) return \'<span class="placeholder">\'+selection.text+\'</span>\';
+						if (selection.id == '.((int) $idforemptyvalue).') return \'<span class="placeholder">\'+selection.text+\'</span>\';
 						return selection.text;
 					},
 					escapeMarkup: function(markup) {
@@ -539,14 +540,15 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
  * 	@param	string	$code					Name of constant
  * 	@param	array	$input					Array of complementary actions to do if success ("disabled"|"enabled'|'set'|'del') => CSS element to switch, 'alert' => message to show, ... Example: array('disabled'=>array(0=>'cssid'))
  * 	@param	int		$entity					Entity. Current entity is used if null.
- *  @param	int		$revertonoff			Revert on/off
+ *  @param	int		$revertonoff			1=Revert on/off
  *  @param	int		$strict					Use only "disabled" with delConstant and "enabled" with setConstant
  *  @param	int		$forcereload			Force to reload page if we click/change value (this is supported only when there is no 'alert' option in input)
  *  @param	string	$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No left margin. Works for fontawesome picto only.
  *  @param	int		$forcenoajax			1 = Force to use a ahref link instead of ajax code.
+ *  @param	int		$setzeroinsteadofdel	1 = Set constantto '0' instead of deleting it
  * 	@return	string
  */
-function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0)
+function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0, $setzeroinsteadofdel = 0)
 {
 	global $conf, $langs, $user;
 
@@ -592,9 +594,13 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 						if (input.alert.del.yesButton) yesButton = input.alert.del.yesButton;
 						if (input.alert.del.noButton)  noButton = input.alert.del.noButton;
 						confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton, strict, userid, token);
-					} else {
-						delConstant(url, code, input, entity, 0, '.$forcereload.', userid, token);
-					}
+					} else {';
+		if (empty($setzeroinsteadofdel)) {
+			$out .=' 	delConstant(url, code, input, entity, 0, '.$forcereload.', userid, token);';
+		} else {
+			$out .=' 	setConstant(url, code, input, entity, 0, '.$forcereload.', userid, token, 0);';
+		}
+		$out .= '	}
 				});
 			});
 		</script>'."\n";

@@ -609,10 +609,12 @@ if ($id) {
 		print '</tr>';
 
 		if ($num) {
+			$i = 0;
 			// Lines with values
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 				//print_r($obj);
+
 				print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
 				if ($action == 'edit' && ($rowid == (!empty($obj->rowid) ? $obj->rowid : $obj->code))) {
 					print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
@@ -708,6 +710,7 @@ if ($id) {
 
 					print "</tr>\n";
 				}
+
 				$i++;
 			}
 		}

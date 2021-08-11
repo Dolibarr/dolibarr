@@ -177,12 +177,12 @@ class LoanSchedule extends CommonObject
 			$sql .= " fk_typepayment, fk_user_creat, fk_bank)";
 			$sql .= " VALUES (".$this->fk_loan.", '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datep)."',";
-			$sql .= " ".$this->amount_capital.",";
-			$sql .= " ".$this->amount_insurance.",";
-			$sql .= " ".$this->amount_interest.",";
-			$sql .= " ".$this->fk_typepayment.", ";
-			$sql .= " ".$user->id.",";
-			$sql .= " ".$this->fk_bank.")";
+			$sql .= " ".price2num($this->amount_capital).",";
+			$sql .= " ".price2num($this->amount_insurance).",";
+			$sql .= " ".price2num($this->amount_interest).",";
+			$sql .= " ".price2num($this->fk_typepayment).", ";
+			$sql .= " ".((int) $user->id).",";
+			$sql .= " ".((int) $this->fk_bank).")";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);

@@ -53,7 +53,8 @@ TypeOfLineServiceOrProduct=Type of line (0=product, 1=service)
 FileWithDataToImport=File with data to import
 FileToImport=Source file to import
 FileMustHaveOneOfFollowingFormat=Το αρχείο για εισαγωγή πρέπει να έχει μία από τις ακόλουθες μορφές
-DownloadEmptyExample=Λήψη αρχείου προτύπου με πληροφορίες περιεχομένου πεδίου (* είναι υποχρεωτικά πεδία)
+DownloadEmptyExample=Download template file with field content information
+StarAreMandatory=* are mandatory fields
 ChooseFormatOfFileToImport=Επιλέξτε τη μορφή αρχείου που θα χρησιμοποιηθεί ως μορφή αρχείου εισαγωγής κάνοντας κλικ στο εικονίδιο %s για να το επιλέξετε ...
 ChooseFileToImport=Μεταφορτώστε το αρχείο και κάντε κλικ στο εικονίδιο %s για να επιλέξετε αρχείο ως αρχείο εισαγωγής πηγής ...
 SourceFileFormat=Source file format

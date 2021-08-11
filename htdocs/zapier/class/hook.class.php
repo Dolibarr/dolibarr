@@ -121,8 +121,7 @@ class Hook extends CommonObject
 			'position' => 30,
 			'searchall' => 1,
 			'css' => 'minwidth200',
-			'help' => 'Hook url',
-			'showoncombobox' => 1,
+			'help' => 'Hook url'
 		),
 		'module' => array(
 			'type' => 'varchar(128)',
@@ -132,8 +131,7 @@ class Hook extends CommonObject
 			'position' => 30,
 			'searchall' => 1,
 			'css' => 'minwidth200',
-			'help' => 'Hook module',
-			'showoncombobox' => 1,
+			'help' => 'Hook module'
 		),
 		'action' => array(
 			'type' => 'varchar(128)',
@@ -143,8 +141,7 @@ class Hook extends CommonObject
 			'position' => 30,
 			'searchall' => 1,
 			'css' => 'minwidth200',
-			'help' => 'Hook action trigger',
-			'showoncombobox' => 1,
+			'help' => 'Hook action trigger'
 		),
 		'event' => array(
 			'type' => 'varchar(255)',

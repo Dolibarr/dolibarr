@@ -251,7 +251,40 @@ if (GETPOSTISSET("ajoutercolonne") && $object->format == "D") {
 				header('Location: results.php?id='.$object->id_sondage);
 			}
 		}
-
+		if ($cleinsertion >= 0) {
+			$sql = 'SELECT s.reponses';
+			$sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_user_studs as s";
+			$sql .= " WHERE id_sondage = '".$db->escape($numsondage)."'";
+			$resql = $db->query($sql);
+			if (!$resql) {
+				dol_print_error($db);
+			} else {
+				$num = $db->num_rows($resql);
+				$compteur = 0;
+				while ($compteur < $num) {
+					$obj = $db->fetch_object($resql);
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."opensurvey_user_studs";
+					if ($cleinsertion == 0) {
+						$sql .= " SET reponses = '0".$db->escape($obj->reponses)."'";
+					} else {
+						$reponsesadd = str_split($obj->reponses);
+						$lengthresponses = count($reponsesadd);
+						for ($cpt = $lengthresponses; $cpt > $cleinsertion; $cpt--) {
+							$reponsesadd[$cpt] = $reponsesadd[$cpt-1];
+						}
+						$reponsesadd[$cleinsertion] = '0';
+						$reponsesadd = implode($reponsesadd);
+						$sql .= " SET reponses = '".$db->escape($reponsesadd)."'";
+					}
+					$sql .= " WHERE id_sondage = '".$db->escape($numsondage)."'";
+					$resql = $db->query($sql);
+					if (!$resql) {
+						dol_print_error($db);
+					}
+					$compteur++;
+				}
+			}
+		}
 		$adresseadmin = $object->mail_admin;
 	} else {
 		$erreur_ajout_date = "yes";
@@ -974,7 +1007,7 @@ if (empty($testligneamodifier)) {
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
 	print '<td class="nom">'."\n";
-	print '<input type="text" placeholder="'.dol_escape_htmltag($langs->trans("Name")).'" name="nom" maxlength="64" size="24">'."\n";
+	print '<input type="text" placeholder="'.dol_escape_htmltag($langs->trans("Name")).'" name="nom" maxlength="64">'."\n";
 	print '</td>'."\n";
 
 	for ($i = 0; $i < $nbcolonnes; $i++) {

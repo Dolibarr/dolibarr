@@ -345,7 +345,8 @@ if ($modecompta == 'CREANCES-DETTES') {
 	// Category filter
 	print '<tr class="liste_titre">';
 	print '<td>';
-	print $langs->trans("Category").': '.$formother->select_categories(Categorie::TYPE_PRODUCT, $selected_cat, 'search_categ', true);
+	print img_picto('', 'category', 'class="paddingrightonly"');
+	print $formother->select_categories(Categorie::TYPE_PRODUCT, $selected_cat, 'search_categ', 0, $langs->trans("Category"));
 	print ' ';
 	print $langs->trans("SubCats").'? ';
 	print '<input type="checkbox" name="subcat" value="yes"';
@@ -360,7 +361,8 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 	//select thirdparty
 	print '</br>';
-	print $langs->trans("ThirdParty").': '.$form->select_thirdparty_list($selected_soc, 'search_soc', '', 1);
+	print img_picto('', 'company', 'class="paddingrightonly"');
+	print $form->select_thirdparty_list($selected_soc, 'search_soc', '', $langs->trans("ThirdParty"));
 	print '</td>';
 
 	print '<td colspan="5" class="right">';

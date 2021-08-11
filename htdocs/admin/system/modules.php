@@ -65,6 +65,7 @@ $arrayfields = array(
 );
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
+$param = '';
 
 
 /*

@@ -58,8 +58,8 @@ if ($action == 'presend') {
 	// Define output language
 	$outputlangs = $langs;
 	$newlang = '';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && !empty($_REQUEST['lang_id'])) {
-		$newlang = $_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		$newlang = GETPOST('lang_id', 'aZ09');
 	}
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
 		$newlang = $object->thirdparty->default_lang;
@@ -76,7 +76,7 @@ if ($action == 'presend') {
 	if (empty($object->ref_client)) {
 		$topicmail = $outputlangs->trans($defaulttopic, '__REF__');
 	} elseif (!empty($object->ref_client)) {
-		$topicmail = $outputlangs->trans($defaulttopic, '__REF__ (__REFCLIENT__)');
+		$topicmail = $outputlangs->trans($defaulttopic, '__REF__ (__REF_CLIENT__)');
 	}
 
 	// Build document if it not exists
@@ -137,6 +137,13 @@ if ($action == 'presend') {
 		$formmail->fromname = '';
 		$formmail->fromtype = 'special';
 	}
+	if ($object->element === 'order_supplier' && !empty($conf->global->ORDER_SUPPLIER_EMAIL_SENDER)) {
+		$formmail->frommail = $conf->global->ORDER_SUPPLIER_EMAIL_SENDER;
+		$formmail->fromname = '';
+		$formmail->fromtype = 'special';
+	}
+
+
 
 	$formmail->trackid = $trackid;
 	if (!empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2)) {	// If bit 2 is set
@@ -194,7 +201,7 @@ if ($action == 'presend') {
 	$formmail->withto = $liste;
 	$formmail->withtofree = (GETPOSTISSET('sendto') ? (GETPOST('sendto', 'alphawithlgt') ? GETPOST('sendto', 'alphawithlgt') : '1') : '1');
 	$formmail->withtocc = $liste;
-	$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
+	$formmail->withtoccc = getDolGlobalString('MAIN_EMAIL_USECCC');
 	$formmail->withtopic = $topicmail;
 	$formmail->withfile = 2;
 	$formmail->withbody = 1;
@@ -208,7 +215,7 @@ if ($action == 'presend') {
 
 	// Make substitution in email content
 	$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
-	$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$object->thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
+	$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.urlencode($object->thirdparty->tag).'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
 	$substitutionarray['__PERSONALIZED__'] = ''; // deprecated
 	$substitutionarray['__CONTACTCIVNAME__'] = '';
 	$parameters = array(

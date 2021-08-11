@@ -27,5 +27,7 @@ Recipient=ผู้รับ
 ErrorStockIsNotEnough=มีไม่มากพอที่หุ้น
 Shippable=shippable
 NonShippable=ไม่ shippable
+ShowShippableStatus=Show shippable status
 ShowReceiving=Show delivery receipt
 NonExistentOrder=Nonexistent order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines

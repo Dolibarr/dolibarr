@@ -60,18 +60,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 // Init vars
 $errmsg = '';
-$num = 0;
 $error = 0;
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Load translation files
-$langs->loadLangs(array("main", "members", "companies", "install", "other"));
-
-// Security check
-if (empty($conf->projet->enabled)) {
-	accessforbidden('', 0, 0, 1);
-}
+$langs->loadLangs(array("members", "companies", "install", "other"));
 
 if (empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
 	print $langs->trans("Form for public lead registration has not been enabled");
@@ -86,6 +80,11 @@ $extrafields = new ExtraFields($db);
 $object = new Project($db);
 
 $user->loadDefaultValues();
+
+// Security check
+if (empty($conf->projet->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
 
 
 /**
@@ -119,6 +118,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 	}
 
 	print '<div class="center">';
+
 	// Output html code for logo
 	if ($urllogo) {
 		print '<div class="backgreypublicpayment">';
@@ -131,6 +131,13 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		}
 		print '</div>';
 	}
+
+	if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT)) {
+		print '<div class="backimagepublicorganizedevent">';
+		print '<img id="idPROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT" src="'.$conf->global->PROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT.'">';
+		print '</div>';
+	}
+
 	print '</div>';
 
 	print '<div class="divmainbodylarge">';

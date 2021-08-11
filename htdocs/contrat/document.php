@@ -192,7 +192,7 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'contract';
-	$permission = $user->rights->contrat->creer;
+	$permissiontoadd = $user->rights->contrat->creer;
 	$permtoedit = $user->rights->contrat->creer;
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

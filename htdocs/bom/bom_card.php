@@ -244,22 +244,6 @@ $title = $langs->trans('BOM');
 $help_url ='EN:Module_BOM';
 llxHeader('', $title, $help_url);
 
-// Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function() {
-		init_myfunc();
-	});
-});
-</script>';
-
-
 // Part to create
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewBOM"), '', 'bom');
@@ -548,10 +532,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 */
 
 	if (!empty($object->table_element_line)) {
-		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '').'" method="POST">
+		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '').'" method="POST">
     	<input type="hidden" name="token" value="' . newToken().'">
     	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
     	<input type="hidden" name="mode" value="">
+		<input type="hidden" name="page_y" value="">
     	<input type="hidden" name="id" value="' . $object->id.'">
     	';
 

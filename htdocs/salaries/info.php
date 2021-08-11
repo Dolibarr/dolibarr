@@ -53,7 +53,9 @@ restrictedArea($user, 'salaries', $object->id, 'salary', '');
  * View
  */
 
-llxHeader("", $langs->trans("SalaryPayment"));
+$title = $langs->trans('Salary')." - ".$langs->trans('Info');
+$help_url = "";
+llxHeader("", $title, $help_url);
 
 $object = new Salary($db);
 $object->fetch($id);

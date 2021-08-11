@@ -65,7 +65,7 @@ class Notify
 	// Les codes actions sont definis dans la table llx_notify_def
 
 	// codes actions supported are
-	// @todo defined also into interface_50_modNotificiation_Notificiation.class.php
+	// @todo defined also into interface_50_modNotification_Notification.class.php
 	public $arrayofnotifsupported = array(
 		'BILL_VALIDATE',
 		'BILL_PAYED',
@@ -80,8 +80,8 @@ class Notify
 		'SHIPPING_VALIDATE',
 		'EXPENSE_REPORT_VALIDATE',
 		'EXPENSE_REPORT_APPROVE',
-	'HOLIDAY_VALIDATE',
-	'HOLIDAY_APPROVE',
+		'HOLIDAY_VALIDATE',
+		'HOLIDAY_APPROVE',
 		'ACTION_CREATE'
 	);
 
@@ -176,7 +176,7 @@ class Notify
 		$sqlnotifcode = '';
 		if ($notifcode) {
 			if (is_numeric($notifcode)) {
-				$sqlnotifcode = " AND n.fk_action = ".$notifcode; // Old usage
+				$sqlnotifcode = " AND n.fk_action = ".((int) $notifcode); // Old usage
 			} else {
 				$sqlnotifcode = " AND a.code = '".$this->db->escape($notifcode)."'"; // New usage
 			}
@@ -195,7 +195,7 @@ class Notify
 				$sql .= $sqlnotifcode;
 				$sql .= " AND s.entity IN (".getEntity('societe').")";
 				if ($socid > 0) {
-					$sql .= " AND s.rowid = ".$socid;
+					$sql .= " AND s.rowid = ".((int) $socid);
 				}
 
 				dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);
@@ -233,7 +233,7 @@ class Notify
 				$sql .= $sqlnotifcode;
 				$sql .= " AND c.entity IN (".getEntity('user').")";
 				if ($userid > 0) {
-					$sql .= " AND c.rowid = ".$userid;
+					$sql .= " AND c.rowid = ".((int) $userid);
 				}
 
 				dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);
@@ -380,11 +380,11 @@ class Notify
 			$sql .= " AND n.fk_soc = s.rowid";
 			$sql .= " AND c.statut = 1";
 			if (is_numeric($notifcode)) {
-				$sql .= " AND n.fk_action = ".$notifcode; // Old usage
+				$sql .= " AND n.fk_action = ".((int) $notifcode); // Old usage
 			} else {
 				$sql .= " AND a.code = '".$this->db->escape($notifcode)."'"; // New usage
 			}
-			$sql .= " AND s.rowid = ".$object->socid;
+			$sql .= " AND s.rowid = ".((int) $object->socid);
 
 			$sql .= "\nUNION\n";
 		}
@@ -546,7 +546,7 @@ class Notify
 								$object_type = 'holiday';
 								$labeltouse = $conf->global->HOLIDAY_APPROVE_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextHolidayApproved", $link);
-				break;
+								break;
 							case 'ACTION_CREATE':
 								$link = '<a href="'.$urlwithroot.'/comm/action/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->agenda->dir_output;
@@ -567,10 +567,10 @@ class Notify
 							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
 							$message = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
 						} else {
-									$message = $outputlangs->transnoentities("YouReceiveMailBecauseOfNotification", $application, $mysoc->name)."\n";
-									$message .= $outputlangs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
-									$message .= "\n";
-									$message .= $mesg;
+							$message = $outputlangs->transnoentities("YouReceiveMailBecauseOfNotification", $application, $mysoc->name)."\n";
+							$message .= $outputlangs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
+							$message .= "\n";
+							$message .= $mesg;
 						}
 
 						$ref = dol_sanitizeFileName($newref);
@@ -687,7 +687,7 @@ class Notify
 						break;
 					case 'BILL_PAYED':
 						$link = '<a href="'.$urlwithroot.'/compta/facture/card.php?facid='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
-						$dir_output = $$conf->facture->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'invoice');
+						$dir_output = $conf->facture->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'invoice');
 						$object_type = 'facture';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInvoicePayed", $link);
 						break;
@@ -782,7 +782,7 @@ class Notify
 						$dir_output = $conf->holiday->dir_output;
 						$object_type = 'holiday';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextHolidayApproved", $link);
-			break;
+						break;
 					case 'ACTION_CREATE':
 						$link = '<a href="'.$urlwithroot.'/comm/action/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$dir_output = $conf->agenda->dir_output;

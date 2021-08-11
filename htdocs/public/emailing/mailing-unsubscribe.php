@@ -127,7 +127,7 @@ if (!empty($tag) && ($unsuscrib == '1')) {
 
 	// Update status of mail in recipient mailing list table
 	$statut = '3';
-	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE tag='".$db->escape($tag)."'";
+	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".((int) $statut)." WHERE tag = '".$db->escape($tag)."'";
 
 	$resql = $db->query($sql);
 	if (!$resql) {

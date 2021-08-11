@@ -605,7 +605,7 @@ class Propal extends CommonObject
 			$this->db->begin();
 
 			$product_type = $type;
-			if (!empty($fk_product)) {
+			if (!empty($fk_product) && $fk_product > 0) {
 				$product = new Product($this->db);
 				$result = $product->fetch($fk_product);
 				$product_type = $product->type;
@@ -2463,12 +2463,12 @@ class Propal extends CommonObject
 		$error = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-		$sql .= " SET fk_statut = ".$status.",";
+		$sql .= " SET fk_statut = ".((int) $status).",";
 		if (!empty($note)) {
 			$sql .= " note_private = '".$this->db->escape($note)."',";
 		}
 		$sql .= " date_cloture=NULL, fk_user_cloture=NULL";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -2535,12 +2535,12 @@ class Propal extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			// Status self::STATUS_REFUSED by default
-			$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED ? $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED : $this->model_pdf;
+			$modelpdf = !empty($conf->global->PROPALE_ADDON_PDF_ODT_CLOSED) ? $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED : $this->model_pdf;
 			$trigger_name = 'PROPAL_CLOSE_REFUSED';
 
 			if ($status == self::STATUS_SIGNED) {	// Status self::STATUS_SIGNED
 				$trigger_name = 'PROPAL_CLOSE_SIGNED';
-				$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL ? $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL:$this->model_pdf;
+				$modelpdf = !empty($conf->global->PROPALE_ADDON_PDF_ODT_TOBILL) ? $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL : $this->model_pdf;
 
 				// The connected company is classified as a client
 				$soc=new Societe($this->db);
@@ -4305,7 +4305,7 @@ class PropaleLigne extends CommonObjectLine
 		}
 		$sql .= ", fk_parent_line=".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null");
 		if (!empty($this->rang)) {
-			$sql .= ", rang=".$this->rang;
+			$sql .= ", rang=".((int) $this->rang);
 		}
 		$sql .= ", date_start=".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null");
 		$sql .= ", date_end=".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null");
@@ -4317,7 +4317,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ", multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
 		$sql .= ", multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
 
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -4365,7 +4365,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= " total_ht=".price2num($this->total_ht, 'MT')."";
 		$sql .= ",total_tva=".price2num($this->total_tva, 'MT')."";
 		$sql .= ",total_ttc=".price2num($this->total_ttc, 'MT')."";
-		$sql .= " WHERE rowid = ".$this->rowid;
+		$sql .= " WHERE rowid = ".((int) $this->rowid);
 
 		dol_syslog("PropaleLigne::update_total", LOG_DEBUG);
 

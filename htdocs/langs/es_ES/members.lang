@@ -213,3 +213,5 @@ SendReminderForExpiredSubscription=Enviar recordatorio por e-mail a los miembros
 MembershipPaid=Membresía pagada por el período actual (hasta %s)
 YouMayFindYourInvoiceInThisEmail=Puede encontrar su factura adjunta a este e-mai
 XMembersClosed=%s miembro(s) cerrado(s)
+XExternalUserCreated=%s usuarios externos creados
+ForceMemberNature=Naturaleza del miembro de la fuerza (individual o corporativo)

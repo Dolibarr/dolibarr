@@ -211,7 +211,7 @@ class DoliDBPgsql extends DoliDB
 				$line = preg_replace('/tinyint/i', 'smallint', $line);
 
 				// nuke unsigned
-				$line = preg_replace('/(int\w+|smallint)\s+unsigned/i', '\\1', $line);
+				$line = preg_replace('/(int\w+|smallint|bigint)\s+unsigned/i', '\\1', $line);
 
 				// blob -> text
 				$line = preg_replace('/\w*blob/i', 'text', $line);
@@ -498,7 +498,7 @@ class DoliDBPgsql extends DoliDB
 	 */
 	public function query($query, $usesavepoint = 0, $type = 'auto')
 	{
-		global $conf;
+		global $conf, $dolibarr_main_db_readonly;
 
 		$query = trim($query);
 
@@ -526,6 +526,18 @@ class DoliDBPgsql extends DoliDB
 		if (!in_array($query, array('BEGIN', 'COMMIT', 'ROLLBACK'))) {
 			$SYSLOG_SQL_LIMIT = 10000; // limit log to 10kb per line to limit DOS attacks
 			dol_syslog('sql='.substr($query, 0, $SYSLOG_SQL_LIMIT), LOG_DEBUG);
+		}
+		if (empty($query)) {
+			return false; // Return false = error if empty request
+		}
+
+		if (!empty($dolibarr_main_db_readonly)) {
+			if (preg_match('/^(INSERT|UPDATE|REPLACE|DELETE|CREATE|ALTER|TRUNCATE|DROP)/i', $query)) {
+				$this->lasterror = 'Application in read-only mode';
+				$this->lasterrno = 'APPREADONLY';
+				$this->lastquery = $query;
+				return false;
+			}
 		}
 
 		$ret = @pg_query($this->db, $query);
@@ -757,6 +769,7 @@ class DoliDBPgsql extends DoliDB
 
 			$errorlabel = pg_last_error($this->db);
 			$errorcode = '';
+			$reg = array();
 			if (preg_match('/: *([0-9P]+):/', $errorlabel, $reg)) {
 				$errorcode = $reg[1];
 				if (isset($errorcode_map[$errorcode])) {

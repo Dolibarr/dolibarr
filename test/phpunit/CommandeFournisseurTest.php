@@ -145,9 +145,9 @@ class CommandeFournisseurTest extends PHPUnit\Framework\TestCase
 		$societe=new Societe($db);
 		$societe->fetch($socid);
 		$product=new ProductFournisseur($db);
-		$product->fetch(0, 'PIDRESS');
+		$product->fetch(0, 'PINKDRESS');
 		if ($product->id <= 0) {
-			print "\n".__METHOD__." A product with ref PIDRESS must exists into database"; die();
+			print "\n".__METHOD__." A product with ref PINKDRESS must exists into database"; die(1);
 		}
 
 		$quantity=10;

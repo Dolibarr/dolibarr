@@ -440,15 +440,13 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $act
 				continue; // If condition to show is ok
 			}
 
-			$var = false;
-
 			print '<li class="directory collapsed">';
 			if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
-				print '<a class="fmdirlia jqft ecmjqft" href="'.$_SERVER["PHP_SELF"].'?module='.$val['module'].'">';
+				print '<a class="fmdirlia jqft ecmjqft" href="'.$_SERVER["PHP_SELF"].'?module='.urlencode($val['module']).'">';
 				print $val['label'];
 				print '</a>';
 			} else {
-				print '<a class="fmdirlia jqft ecmjqft" href="'.$_SERVER["PHP_SELF"].'?module='.$val['module'].'">';
+				print '<a class="fmdirlia jqft ecmjqft" href="'.$_SERVER["PHP_SELF"].'?module='.urlencode($val['module']).'">';
 				print $val['label'];
 				print '</a>';
 			}
@@ -456,7 +454,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $act
 			print '<div class="ecmjqft">';
 			// Info
 			$htmltooltip = '<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
-			$htmltooltip = '<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionAuto").'<br>';
+			$htmltooltip .= '<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionAuto").'<br>';
 			$htmltooltip .= '<b>'.$langs->trans("ECMCreationUser").'</b>: '.$langs->trans("ECMTypeAuto").'<br>';
 			$htmltooltip .= '<b>'.$langs->trans("Description").'</b>: '.$val['desc'];
 			print $form->textwithpicto('', $htmltooltip, 1, 'info');

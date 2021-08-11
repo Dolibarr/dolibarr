@@ -470,9 +470,9 @@ class FactureRec extends CommonInvoice
 		$error = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_rec SET";
-		$sql .= " fk_soc = ".$this->fk_soc;
+		$sql .= " fk_soc = ".((int) $this->fk_soc);
 		// TODO Add missing fields
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -613,7 +613,7 @@ class FactureRec extends CommonInvoice
 				}
 				return 1;
 			} else {
-				$this->error = 'Bill with id '.$rowid.' or ref '.$ref.' not found sql='.$sql;
+				$this->error = 'Bill with id '.$rowid.' or ref '.$ref.' not found';
 				dol_syslog('Facture::Fetch Error '.$this->error, LOG_ERR);
 				return -2;
 			}
@@ -772,10 +772,10 @@ class FactureRec extends CommonInvoice
 
 		$main = MAIN_DB_PREFIX.'facturedet_rec';
 		$ef = $main."_extrafields";
-		$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_facture = ".((int) $rowid);
-		dol_syslog($sqlef);
+
+		$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_facture = ".((int) $rowid).")";
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = ".((int) $rowid);
-		dol_syslog($sql);
+
 		if ($this->db->query($sqlef) && $this->db->query($sql)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_rec WHERE rowid = ".((int) $rowid);
 			dol_syslog($sql);
@@ -1136,12 +1136,12 @@ class FactureRec extends CommonInvoice
 			$sql .= ", qty=".price2num($qty);
 			$sql .= ", tva_tx=".price2num($txtva);
 			$sql .= ", vat_src_code='".$this->db->escape($vat_src_code)."'";
-			$sql .= ", localtax1_tx=".$txlocaltax1;
+			$sql .= ", localtax1_tx=".((float) $txlocaltax1);
 			$sql .= ", localtax1_type='".$this->db->escape($localtaxes_type[0])."'";
-			$sql .= ", localtax2_tx=".$txlocaltax2;
+			$sql .= ", localtax2_tx=".((float) $txlocaltax2);
 			$sql .= ", localtax2_type='".$this->db->escape($localtaxes_type[2])."'";
 			$sql .= ", fk_product=".(!empty($fk_product) ? "'".$this->db->escape($fk_product)."'" : "null");
-			$sql .= ", product_type=".$product_type;
+			$sql .= ", product_type=".((int) $product_type);
 			$sql .= ", remise_percent='".price2num($remise_percent)."'";
 			$sql .= ", subprice='".price2num($pu_ht)."'";
 			$sql .= ", total_ht='".price2num($total_ht)."'";
@@ -2124,11 +2124,11 @@ class FactureLigneRec extends CommonInvoiceLine
 			$sql .= ", total_localtax2=".price2num($this->total_localtax2);
 			$sql .= ", total_ttc=".price2num($this->total_ttc);
 		}
-		$sql .= ", rang=".$this->rang;
-		$sql .= ", special_code=".$this->special_code;
+		$sql .= ", rang=".((int) $this->rang);
+		$sql .= ", special_code=".((int) $this->special_code);
 		$sql .= ", fk_unit=".($this->fk_unit ? "'".$this->db->escape($this->fk_unit)."'" : "null");
 		$sql .= ", fk_contract_line=".($this->fk_contract_line ? $this->fk_contract_line : "null");
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 

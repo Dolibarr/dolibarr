@@ -155,6 +155,7 @@ NoOpenedElementToProcess=Ningún elemento abierto para procesar
 Categories=Etiquetas / categorías
 Category=Etiqueta / categoría
 ValidatedToProduce=Validado (Para producir)
+OpenAll=Abrir (todo)
 ClosedAll=Cerrado (todo)
 Topic=Tema
 LateDesc=Un elemento se define como Retrasado según la configuración del sistema en el menú Inicio - Configuración - Alertas.
