@@ -65,8 +65,9 @@ class Partnership extends CommonObject
 
 
 	const STATUS_DRAFT = 0;
-	const STATUS_ACCEPTED = 1;
-	const STATUS_REFUSED = 2;
+	const STATUS_VALIDATED = 1;		// Validate (no more draft)
+	const STATUS_ACCEPTED = 2;		// Approved
+	const STATUS_REFUSED = 3;		// Refused
 	const STATUS_CANCELED = 9;
 
 
@@ -590,7 +591,7 @@ class Partnership extends CommonObject
 		$error = 0;
 
 		// Protection
-		if ($this->status == self::STATUS_ACCEPTED) {
+		if ($this->status == self::STATUS_VALIDATED) {
 			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
 			return 0;
 		}
@@ -619,7 +620,7 @@ class Partnership extends CommonObject
 			// Validate
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET ref = '".$this->db->escape($num)."',";
-			$sql .= " status = ".self::STATUS_ACCEPTED;
+			$sql .= " status = ".self::STATUS_VALIDATED;
 			if (!empty($this->fields['date_validation'])) {
 				$sql .= ", date_validation = '".$this->db->idate($now)."'";
 			}
@@ -686,7 +687,7 @@ class Partnership extends CommonObject
 		// Set new ref and current status
 		if (!$error) {
 			$this->ref = $num;
-			$this->status = self::STATUS_ACCEPTED;
+			$this->status = self::STATUS_VALIDATED;
 		}
 
 		if (!$error) {
@@ -1064,17 +1065,24 @@ class Partnership extends CommonObject
 			global $langs;
 			//$langs->load("partnership");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated');
 			$this->labelStatus[self::STATUS_ACCEPTED] = $langs->trans('Accepted');
 			$this->labelStatus[self::STATUS_REFUSED] = $langs->trans('Refused');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Validated');
 			$this->labelStatusShort[self::STATUS_ACCEPTED] = $langs->trans('Accepted');
 			$this->labelStatusShort[self::STATUS_REFUSED] = $langs->trans('Refused');
 			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
 		}
 
 		$statusType = 'status'.$status;
-		//if ($status == self::STATUS_ACCEPTED) $statusType = 'status1';
+		if ($status == self::STATUS_ACCEPTED) {
+			$statusType = 'status4';
+		}
+		if ($status == self::STATUS_REFUSED) {
+			$statusType = 'status9';
+		}
 		if ($status == self::STATUS_CANCELED) {
 			$statusType = 'status6';
 		}
