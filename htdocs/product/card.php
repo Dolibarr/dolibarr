@@ -17,7 +17,7 @@
  * Copyright (C) 2016		Meziane Sof		     <virtualsof@yahoo.fr>
  * Copyright (C) 2017		Josep Lluís Amador	 <joseplluis@lliuretic.cat>
  * Copyright (C) 2019       Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2019-2020  Thibault FOUCART     <support@ptibo gxiv.net>
+ * Copyright (C) 2019-2020  Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2020  		Pierre Ardoin     	 <mapiolca@me.com>
  *
  * This program is free software; you can redistribute it and/or modify
