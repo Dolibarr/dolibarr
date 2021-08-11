@@ -53,7 +53,6 @@ if ($cancel) {
 }
 
 if ($action == 'update') {
-
 	if (GETPOSTISSET('PROPOSAL_PDF_HIDE_PAYMENTTERM')) dolibarr_set_const($db, "PROPOSAL_PDF_HIDE_PAYMENTTERM", GETPOST("PROPOSAL_PDF_HIDE_PAYMENTTERM"), 'chaine', 0, '', $conf->entity);
 	if (GETPOSTISSET('PROPOSAL_PDF_HIDE_PAYMENTMODE')) dolibarr_set_const($db, "PROPOSAL_PDF_HIDE_PAYMENTMODE", GETPOST("PROPOSAL_PDF_HIDE_PAYMENTMODE"), 'chaine', 0, '', $conf->entity);
 
