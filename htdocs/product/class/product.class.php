@@ -2115,7 +2115,7 @@ class Product extends CommonObject
 				$this->localtax2_tx                    = $obj->localtax2_tx;
 				$this->localtax1_type                = $obj->localtax1_type;
 				$this->localtax2_type                = $obj->localtax2_type;
-				
+
 				$this->finished                        = $obj->finished;
 				$this->fk_default_bom                  = $obj->fk_default_bom;
 
