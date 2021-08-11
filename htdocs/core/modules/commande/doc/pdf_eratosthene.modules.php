@@ -1582,7 +1582,11 @@ class pdf_eratosthene extends ModelePDFCommandes
 			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
-			$posy = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;
+			if (!empty($conf->global->MAIN_PDF_SENDER_UNDER_LOGO)) {
+				$posy = $this->marge_haute + $height + 5;
+			} else {
+				$posy = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;
+			}
 			$posy += $top_shift;
 			$posx = $this->marge_gauche;
 			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
@@ -1597,7 +1601,9 @@ class pdf_eratosthene extends ModelePDFCommandes
 			$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posx, $posy - 5);
-			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillFrom"), 0, $ltrdirection);
+			if (empty($conf->global->MAIN_PDF_SENDER_UNDER_LOGO)) {
+				$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillFrom"), 0, $ltrdirection);
+			}
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetFillColor(230, 230, 230);
 			$pdf->MultiCell($widthrecbox, $hautcadre, "", 0, 'R', 1);

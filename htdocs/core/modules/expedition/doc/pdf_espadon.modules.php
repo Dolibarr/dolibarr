@@ -1076,7 +1076,11 @@ class pdf_espadon extends ModelePdfExpedition
 			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
-			$posy = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;
+			if (!empty($conf->global->MAIN_PDF_SENDER_UNDER_LOGO)) {
+				$posy = $this->marge_haute + $height + 5;
+			} else {
+				$posy = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;
+			}
 			$posx = $this->marge_gauche;
 			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
 				$posx = $this->page_largeur - $this->marge_droite - 80;
@@ -1089,7 +1093,9 @@ class pdf_espadon extends ModelePdfExpedition
 			$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posx, $posy - 5);
-			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("Sender"), 0, 'L');
+			if (empty($conf->global->MAIN_PDF_SENDER_UNDER_LOGO)) {
+				$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("Sender"), 0, 'L');
+			}
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetFillColor(230, 230, 230);
 			$pdf->MultiCell($widthrecbox, $hautcadre, "", 0, 'R', 1);
