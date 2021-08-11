@@ -137,9 +137,10 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		// for conf PRODUIT_MULTIPRICES
 		if ($conf->global->PRODUIT_MULTIPRICES) {
 			$level_price_impact = array_map('price2num', $level_price_impact);
+			$level_price_impact_percent = array(1 => $price_impact_percent);
 		} else {
 			$level_price_impact = array(1 => $price_impact);
-			$level_price_impact_percent = array(1 => $price_impact_percent);
+			$level_price_impact_percent = $price_impact_percent;
 		}
 
 		$sanit_features = array();
