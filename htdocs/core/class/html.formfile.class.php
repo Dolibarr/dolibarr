@@ -1290,7 +1290,7 @@ class FormFile
 				if ($file['name'] != '.'
 						&& $file['name'] != '..'
 						&& !preg_match('/\.meta$/i', $file['name'])) {
-					if ($filearray[$key]['rowid'] > 0) {
+					if (!empty($filearray[$key]['rowid'])) {
 						$lastrowid = $filearray[$key]['rowid'];
 					}
 					$filepath = $relativepath.$file['name'];
@@ -1300,7 +1300,7 @@ class FormFile
 					print '<!-- Line list_of_documents '.$key.' relativepath = '.$relativepath.' -->'."\n";
 					// Do we have entry into database ?
 					print '<!-- In database: position='.$filearray[$key]['position'].' -->'."\n";
-					print '<tr class="oddeven" id="row-'.($filearray[$key]['rowid'] > 0 ? $filearray[$key]['rowid'] : 'AFTER'.$lastrowid.'POS'.($i + 1)).'">';
+					print '<tr class="oddeven" id="row-'.(!empty($filearray[$key]['rowid']) ? $filearray[$key]['rowid'] : 'AFTER'.$lastrowid.'POS'.($i + 1)).'">';
 
 					// File name
 					print '<td class="minwith200">';
@@ -1389,7 +1389,7 @@ class FormFile
 
 					// Shared or not - Hash of file
 					print '<td class="center">';
-					if ($relativedir && $filearray[$key]['rowid'] > 0) {	// only if we are in a mode where a scan of dir were done and we have id of file in ECM table
+					if ($relativedir && !empty($filearray[$key]['rowid'])) {	// only if we are in a mode where a scan of dir were done and we have id of file in ECM table
 						if ($editline) {
 							print '<label for="idshareenabled'.$key.'">'.$langs->trans("FileSharedViaALink").'</label> ';
 							print '<input class="inline-block" type="checkbox" id="idshareenabled'.$key.'" name="shareenabled"'.($file['share'] ? ' checked="checked"' : '').' /> ';
