@@ -2156,3 +2156,4 @@ DatabasePasswordNotObfuscated=Database password is NOT obfuscated in conf file
 APIsAreNotEnabled=APIs modules are not enabled
 YouShouldSetThisToOff=You should set this to 0 or off
 InstallAndUpgradeLockedBy=Install and upgrades are locked by the file <b>%s</b>
+OldImplementation=Old implementation
