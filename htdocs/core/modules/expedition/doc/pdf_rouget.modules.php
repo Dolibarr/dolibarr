@@ -127,7 +127,7 @@ class pdf_rouget extends ModelePdfExpedition
 
 		$this->db = $db;
 		$this->name = "rouget";
-		$this->description = $langs->trans("DocumentModelStandardPDF");
+		$this->description = $langs->trans("DocumentModelStandardPDF").' ('.$langs->trans("OldImplementation").')';
 		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		$this->type = 'pdf';

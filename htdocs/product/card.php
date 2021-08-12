@@ -64,12 +64,11 @@ if (!empty($conf->commande->enabled)) {
 }
 if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-}
-if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-}
-if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+}
+if (!empty($conf->bom->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 }
 
 // Load translation files required by the page
@@ -521,6 +520,13 @@ if (empty($reshook)) {
 					$object->finished = $finished;
 				} else {
 					$object->finished = null;
+				}
+
+				$fk_default_bom = GETPOST('fk_default_bom', 'int');
+				if ($fk_default_bom >= 0) {
+					$object->fk_default_bom = $fk_default_bom;
+				} else {
+					$object->fk_default_bom = null;
 				}
 
 				$units = GETPOST('units', 'int');
@@ -1919,6 +1925,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			print '<table class="border centpercent">';
 
+			if (!$object->isService() && !empty($conf->bom->enabled)) {
+					print '<tr><td>'.$form->textwithpicto($langs->trans("DefaultBOM"), $langs->trans("DefaultBOMDesc")).'</td><td>';
+					$bomkey = "Bom:bom/class/bom.class.php:0:t.status=1 AND t.fk_product=".$object->id;
+					print $form->selectForForms($bomkey, 'fk_default_bom', $object->fk_default_bom, 1);
+					print '</td></tr>';
+			}
+
 			if (empty($conf->global->PRODUCT_DISABLE_ACCOUNTING)) {
 				if (!empty($conf->accounting->enabled)) {
 					// Accountancy_code_sell
@@ -2385,6 +2398,17 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td>'.$langs->trans("QCFrequency").'</td><td>'.$object->qc_frequency.'</td></tr>';
 			}
 
+			if (!$object->isService() && !empty($conf->bom->enabled)) {
+				print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("DefaultBOM"), $langs->trans("DefaultBOMDesc")).'</td><td>';
+				if ($object->fk_default_bom) {
+					$bom_static = new BOM($db);
+					$bom_static->fetch($object->fk_default_bom);
+					print $bom_static->getNomUrl(1);
+				}
+				print '</td></tr>';
+			}
+
+
 			// Other attributes
 			$parameters = array();
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -2445,7 +2469,7 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->d
 	// Define confirmation messages
 	$formquestionclone = array(
 		'text' => $langs->trans("ConfirmClone"),
-		array('type' => 'text', 'name' => 'clone_ref', 'label' => $langs->trans("NewRefForClone"), 'value' => empty($tmpcode) ? $langs->trans("CopyOf").' '.$object->ref : $tmpcode, 'size'=>24),
+		array('type' => 'text', 'name' => 'clone_ref', 'label' => $langs->trans("NewRefForClone"), 'value' => empty($tmpcode) ? $langs->trans("CopyOf").' '.$object->ref : $tmpcode, 'morecss'=>'width150'),
 		array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneContentProduct"), 'value' => 1),
 		array('type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans("CloneCategoriesProduct"), 'value' => 1),
 	);

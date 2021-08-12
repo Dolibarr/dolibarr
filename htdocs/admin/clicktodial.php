@@ -101,8 +101,8 @@ print '<br>';
 print $langs->trans("ClickToDialUrlDesc").'<br>';
 print '<br>';
 print '<span class="opacitymedium">';
-print $langs->trans("Example").':<br>';
-print 'http://myphoneserver/mypage?login=__LOGIN__&password=__PASS__&caller=__PHONEFROM__&called=__PHONETO__<br>';
+print $langs->trans("Examples").':<br>';
+print 'https://myphoneserver/mypage?login=__LOGIN__&password=__PASS__&caller=__PHONEFROM__&called=__PHONETO__<br>';
 print 'sip:__PHONETO__@my.sip.server';
 print '</span>';
 

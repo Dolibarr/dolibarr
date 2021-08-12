@@ -32,6 +32,9 @@
 
 -- Missing in v14 or lower
 
+-- VMYSQL4.3 ALTER TABLE llx_partnership MODIFY COLUMN date_partnership_end date NULL;
+-- VPGSQL8.2 ALTER TABLE llx_partnership ALTER COLUMN date_partnership_end DROP NOT NULL;
+
 
 -- v15
 ALTER TABLE llx_product ADD COLUMN mandatory_period tinyint NULL DEFAULT 0;
@@ -58,3 +61,5 @@ ALTER TABLE llx_product_customer_price MODIFY COLUMN ref_customer varchar(128);
 
 -- -- add action trigger
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('ORDER_SUPPLIER_CANCEL','Supplier order request canceled','Executed when a supplier order is canceled','order_supplier',13);
+
+ALTER TABLE llx_product ADD COLUMN fk_default_bom integer DEFAULT NULL;
