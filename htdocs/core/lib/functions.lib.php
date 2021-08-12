@@ -555,6 +555,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			if (!is_numeric($out)) { $out = ''; }
 			break;
 		case 'intcomma':
+			if (is_array($out)) break;
 			if (preg_match('/[^0-9,-]+/i', $out)) $out = '';
 			break;
 		case 'alpha':
