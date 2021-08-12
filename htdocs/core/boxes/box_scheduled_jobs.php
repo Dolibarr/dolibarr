@@ -85,7 +85,7 @@ class box_scheduled_jobs extends ModeleBoxes
 			$resultarray = array();
 
 			$result = 0;
-			$sql = "SELECT t.rowid, t.datelastrun, t.datenextrun,";
+			$sql = "SELECT t.rowid, t.datelastrun, t.datenextrun, t.datestart,";
 			$sql .= " t.label, t.status, t.test, t.lastresult";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "cronjob as t";
 			$sql .= " WHERE status <> ".$cronstatic::STATUS_DISABLED;
@@ -156,7 +156,7 @@ class box_scheduled_jobs extends ModeleBoxes
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'textnoformat' => (empty($resultarray[$line][2]) ? '' : $form->textwithpicto(dol_print_date($resultarray[$line][2], "dayhoursec"), $langs->trans("CurrentTimeZone")))
+						'textnoformat' => (empty($resultarray[$line][2]) ? '' : $form->textwithpicto(dol_print_date($resultarray[$line][2], "dayhoursec", 'tzserver'), $langs->trans("CurrentTimeZone")))
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="center" ',

@@ -38,6 +38,7 @@ ActionsEvents=Dolibarrが自動的に議題でアクションを作成する対�
 EventRemindersByEmailNotEnabled=電子メールによるイベントリマインダーは、%sモジュールセットアップで有効になっていなかった。
 ##### Agenda event labels #####
 NewCompanyToDolibarr=取引先%sが作成されました
+COMPANY_MODIFYInDolibarr=取引先%s変更
 COMPANY_DELETEInDolibarr=取引先%sが削除されました
 ContractValidatedInDolibarr=契約%sが承認されました
 CONTRACT_DELETEInDolibarr=契約%sが削除されました
@@ -87,6 +88,7 @@ OrderDeleted=注文は削除済
 InvoiceDeleted=請求書は削除済
 DraftInvoiceDeleted=ドラフト請求書は削除済
 CONTACT_CREATEInDolibarr=作成された連絡先%s
+CONTACT_MODIFYInDolibarr=連絡先%s変更
 CONTACT_DELETEInDolibarr=連絡先%sは削除済
 PRODUCT_CREATEInDolibarr=製品%sは作成済
 PRODUCT_MODIFYInDolibarr=製品%sは変更済

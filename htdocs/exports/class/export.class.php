@@ -54,11 +54,12 @@ class Export
 	public $array_export_examplevalues = array(); // array with examples for fields
 	public $array_export_help = array(); // array with tooltip help for fields
 
-	// To store export modules
+	// To store export templates
 	public $hexa; // List of fields in the export profile
 	public $hexafiltervalue; // List of search criteria in the export profile
 	public $datatoexport;
 	public $model_name; // Name of export profile
+	public $fk_user;
 
 	public $sqlusedforexport;
 
@@ -720,8 +721,6 @@ class Export
 
 		$this->db->begin();
 
-		$filter = '';
-
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'export_model (';
 		$sql .= 'label,';
 		$sql .= 'type,';
@@ -732,11 +731,10 @@ class Export
 		$sql .= "'".$this->db->escape($this->model_name)."',";
 		$sql .= " '".$this->db->escape($this->datatoexport)."',";
 		$sql .= " '".$this->db->escape($this->hexa)."',";
-		$sql .= ' '.($user->id > 0 ? $user->id : 'null').",";
+		$sql .= ' '.(isset($this->fk_user) ? (int) $this->fk_user : 'null').",";
 		$sql .= " '".$this->db->escape($this->hexafiltervalue)."'";
 		$sql .= ")";
 
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->db->commit();

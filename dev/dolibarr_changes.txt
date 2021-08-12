@@ -245,6 +245,14 @@ RESTLER:
     	// @CHANGE LDR
         if (!is_string($haystack)) return false;
 
+* Replace  
+
+	$loaders = array_unique(static::$rogueLoaders);
+	
+	with 
+	
+	$loaders = array_unique(static::$rogueLoaders, SORT_REGULAR);
+
 
 +With swagger 2 provided into /explorer:
 ----------------------------------------

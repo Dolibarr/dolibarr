@@ -79,7 +79,7 @@ class mod_knowledgerecord_advanced extends ModeleNumRefKnowledgeRecord
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskKnowledgeRecord" value="'.$conf->global->KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskKnowledgeRecord" value="'.$conf->global->KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 

@@ -36,6 +36,7 @@ VAT=VAT
 VATRate=VAT Rate
 Favorite=Favourite
 GeneratedOn=Built on %s
+OpenAll=Open for all actions
 Canceled=Cancelled
 Color=Colour
 NoPhotoYet=No picture available yet

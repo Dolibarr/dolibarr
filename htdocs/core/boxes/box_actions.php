@@ -148,21 +148,21 @@ class box_actions extends ModeleBoxes
 					$label = empty($objp->label) ? $objp->type_label : $objp->label;
 
 					$this->info_box_contents[$line][0] = array(
-						'td' => '',
+						'td' => 'class="tdoverflowmax200"',
 						'text' => $actionstatic->getNomUrl(1),
 						'text2'=> $late,
 						'asis' => 1
 					);
 
 					$this->info_box_contents[$line][1] = array(
-						'td' => '',
+						'td' => 'class="tdoverflowmax100"',
 						'text' => ($societestatic->id > 0 ? $societestatic->getNomUrl(1) : ''),
 						'asis' => 1
 					);
 
 					$this->info_box_contents[$line][2] = array(
-						'td' => 'class="nowrap left"',
-						'text' => dol_print_date($datelimite, "dayhour"),
+						'td' => 'class="center nowraponall"',
+						'text' => dol_print_date($datelimite, "dayhour", 'tzuserrel'),
 						'asis' => 1
 					);
 

@@ -129,6 +129,7 @@ ClosedByLogin=Bruger login som lukket
 FileWasRemoved=Fil blev slettet
 DirWasRemoved=Directory blev fjernet
 FeatureNotYetAvailable=Funktionen er endnu ikke tilgængelig i den aktuelle version
+FeatureNotAvailableOnDevicesWithoutMouse=Funktionen er ikke tilgængelig på enheder uden mus
 FeaturesSupported=Understøttede funktioner
 Width=Bredde
 Height=Højde
@@ -263,7 +264,7 @@ ContactCreatedByEmailCollector=Kontakt / adresse skabt via e-mail indsamler fra 
 ProjectCreatedByEmailCollector=Projekt skabt via e-mail indsamler fra mail MSGID %s
 TicketCreatedByEmailCollector=Billet skabt via e-mail indsamler fra mail MSGID %s
 OpeningHoursFormatDesc=Brug et - til separat åbning og lukning timer. <br> brug en mellemrum"Space" til at indtaste forskellige område. <br> Eksempel: 8-12 14-18
-PrefixSession=Præfiks til session-id
+SuffixSessionName=Suffiks til sessionens navn
 
 ##### Export #####
 ExportsArea=Eksport område

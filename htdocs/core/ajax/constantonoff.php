@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2011-2015 Regis Houssin  <regis.houssin@inodbox.com>
+/* Copyright (C) 2011-2015 Regis Houssin <regis.houssin@inodbox.com>
+ * Copyright (C) 2021      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +48,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $action = GETPOST('action', 'aZ09'); // set or del
 $name = GETPOST('name', 'alpha');
+$entity = GETPOST('entity', 'int');
+$value = ((GETPOST('value', 'int') || GETPOST('value', 'int') == '0') ? GETPOST('value', 'int') : 1);
 
 
 /*
@@ -64,9 +67,6 @@ top_httphead();
 
 // Registering the new value of constant
 if (!empty($action) && !empty($name)) {
-	$entity = GETPOST('entity', 'int');
-	$value = (GETPOST('value') ?GETPOST('value') : 1);
-
 	if ($user->admin) {
 		if ($action == 'set') {
 			dolibarr_set_const($db, $name, $value, 'chaine', 0, '', $entity);

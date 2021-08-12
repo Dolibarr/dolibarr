@@ -142,6 +142,10 @@ class box_factures_fourn extends ModeleBoxes
 					$facturestatic->status = $objp->status;
 					$facturestatic->ref_supplier = $objp->ref_supplier;
 
+					$alreadypaid = $facturestatic->getSommePaiement();
+
+					$facturestatic->alreadypaid = $alreadypaid ? $alreadypaid : 0;
+
 					$thirdpartystatic->id = $objp->socid;
 					$thirdpartystatic->name = $objp->name;
 					$thirdpartystatic->name_alias = $objp->name_alias;
@@ -155,7 +159,7 @@ class box_factures_fourn extends ModeleBoxes
 					$late = '';
 
 					if ($facturestatic->hasDelay()) {
-						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day')));
+						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day', 'tzuserrel')));
 					}
 
 					$this->info_box_contents[$line][] = array(
@@ -185,12 +189,9 @@ class box_factures_fourn extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($date, 'day'),
+						'text' => dol_print_date($date, 'day', 'tzuserrel'),
 					);
 
-					$fac = new FactureFournisseur($this->db);
-					$fac->fetch($objp->facid);
-					$alreadypaid = $fac->getSommePaiement();
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
 						'text' => $facturestatic->LibStatut($objp->paye, $objp->status, 3, $alreadypaid, $objp->type),

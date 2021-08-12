@@ -434,13 +434,12 @@ class pdf_cyan extends ModelePDFPropales
 				if (!empty($conf->global->MAIN_ADD_CREATOR_IN_NOTE) && $object->user_author_id > 0) {
 					$tmpuser = new User($this->db);
 					$tmpuser->fetch($object->user_author_id);
-					$notetoshow .= $langs->trans("CaseFollowedBy").' '.$tmpuser->getFullName($langs);
-					if ($tmpuser->email) {
-						$notetoshow .= ',  Mail: '.$tmpuser->email;
-					}
-					if ($tmpuser->office_phone) {
-						$notetoshow .= ', Tel: '.$tmpuser->office_phone;
-					}
+
+					$creator_info = $langs->trans("CaseFollowedBy").' '.$tmpuser->getFullName($langs);
+					if ($tmpuser->email) $creator_info .= ',  '.$langs->trans("EMail").': '.$tmpuser->email;
+					if ($tmpuser->office_phone) $creator_info .= ', '.$langs->trans("Phone").': '.$tmpuser->office_phone;
+
+					$notetoshow = dol_concatdesc($notetoshow, $creator_info);
 				}
 
 				$tab_height = $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforsignature - $heightforfooter;
@@ -1519,6 +1518,9 @@ class pdf_cyan extends ModelePDFPropales
 	{
 		global $conf, $langs;
 
+		$ltrdirection = 'L';
+		if ($outputlangs->trans("DIRECTION") == 'rtl') $ltrdirection = 'R';
+
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "propal", "companies", "bills"));
 
@@ -1564,7 +1566,7 @@ class pdf_cyan extends ModelePDFPropales
 				}
 			} else {
 				$text = $this->emetteur->name;
-				$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
+				$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
 			}
 		}
 
@@ -1690,7 +1692,7 @@ class pdf_cyan extends ModelePDFPropales
 			$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posx, $posy - 5);
-			$pdf->MultiCell(66, 5, $outputlangs->transnoentities("BillFrom").":", 0, 'L');
+			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillFrom"), 0, $ltrdirection);
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetFillColor(230, 230, 230);
 			$pdf->MultiCell($widthrecbox, $hautcadre, "", 0, 'R', 1);
@@ -1699,13 +1701,13 @@ class pdf_cyan extends ModelePDFPropales
 			// Show sender name
 			$pdf->SetXY($posx + 2, $posy + 3);
 			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->MultiCell($widthrecbox - 2, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+			$pdf->MultiCell($widthrecbox - 2, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, $ltrdirection);
 			$posy = $pdf->getY();
 
 			// Show sender information
 			$pdf->SetXY($posx + 2, $posy);
 			$pdf->SetFont('', '', $default_font_size - 1);
-			$pdf->MultiCell($widthrecbox - 2, 4, $carac_emetteur, 0, 'L');
+			$pdf->MultiCell($widthrecbox - 2, 4, $carac_emetteur, 0, $ltrdirection);
 
 
 			// If CUSTOMER contact defined, we use it
@@ -1744,20 +1746,20 @@ class pdf_cyan extends ModelePDFPropales
 			$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posx + 2, $posy - 5);
-			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillTo").":", 0, 'L');
+			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillTo"), 0, $ltrdirection);
 			$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
 
 			// Show recipient name
 			$pdf->SetXY($posx + 2, $posy + 3);
 			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->MultiCell($widthrecbox, 2, $carac_client_name, 0, 'L');
+			$pdf->MultiCell($widthrecbox, 2, $carac_client_name, 0, $ltrdirection);
 
 			$posy = $pdf->getY();
 
 			// Show recipient information
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->SetXY($posx + 2, $posy);
-			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
+			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, $ltrdirection);
 		}
 
 		$pdf->SetTextColor(0, 0, 0);

@@ -48,7 +48,20 @@ $action = GETPOST('action', 'aZ09');
  */
 
 if ($action == 'update') {
-	dolibarr_set_const($db, "MAIN_DOCUMENTS_WITH_PICTURE_WIDTH", GETPOST("MAIN_DOCUMENTS_WITH_PICTURE_WIDTH", 'int'), 'chaine', 0, '', $conf->entity);
+
+	if (GETPOSTISSET('PROPOSAL_PDF_HIDE_PAYMENTTERM')) {
+		dolibarr_set_const($db, "PROPOSAL_PDF_HIDE_PAYMENTTERM", GETPOST("PROPOSAL_PDF_HIDE_PAYMENTTERM"), 'chaine', 0, '', $conf->entity);
+	}
+	if (GETPOSTISSET('PROPOSAL_PDF_HIDE_PAYMENTMODE')) {
+		dolibarr_set_const($db, "PROPOSAL_PDF_HIDE_PAYMENTMODE", GETPOST("PROPOSAL_PDF_HIDE_PAYMENTMODE"), 'chaine', 0, '', $conf->entity);
+	}
+	if (GETPOSTISSET('MAIN_GENERATE_PROPOSALS_WITH_PICTURE')) {
+		dolibarr_set_const($db, "MAIN_GENERATE_PROPOSALS_WITH_PICTURE", GETPOST("MAIN_GENERATE_PROPOSALS_WITH_PICTURE"), 'chaine', 0, '', $conf->entity);
+	}
+	if (GETPOSTISSET('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH')) {
+		dolibarr_set_const($db, "MAIN_DOCUMENTS_WITH_PICTURE_WIDTH", GETPOST("MAIN_DOCUMENTS_WITH_PICTURE_WIDTH", 'int'), 'chaine', 0, '', $conf->entity);
+	}
+
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
@@ -74,44 +87,70 @@ $head = pdf_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'other', $langs->trans("other"), -1, 'pdf');
 
-print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("PDFOtherDesc"), $s)."</span><br>\n";
+$tooltiptext = '';
+print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("PDFOtherDesc"), $tooltiptext)."</span><br>\n";
 print "<br>\n";
+
 if (!empty($conf->propal->enabled)) {
-	print load_fiche_titre($langs->trans("Proposal"), '', '');
+	  print load_fiche_titre($langs->trans("Proposal"), '', '');
 
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="update">';
+	  print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+	  print '<input type="hidden" name="token" value="'.newToken().'">';
+	  print '<input type="hidden" name="action" value="update">';
 
-	print '<div class="div-table-responsive-no-min">';
-	print '<table summary="more" class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+	  print '<div class="div-table-responsive-no-min">';
+	  print '<table summary="more" class="noborder centpercent">';
+	  print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_GENERATE_PROPOSALS_WITH_PICTURE").'</td><td>';
+	  print '<tr class="oddeven"><td>'.$langs->trans("MAIN_GENERATE_PROPOSALS_WITH_PICTURE");
+	  print ' <span class="opacitymedium">('.$langs->trans("RandomlySelectedIfSeveral").')</span>';
+	  print '</td><td>';
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('MAIN_GENERATE_PROPOSALS_WITH_PICTURE');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 		print $form->selectarray("MAIN_GENERATE_PROPOSALS_WITH_PICTURE", $arrval, $conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE);
 	}
-	print '</td></tr>';
+	  print '</td></tr>';
 
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING").'</td><td>';
+	  print '<tr class="oddeven"><td>'.$langs->trans("PROPOSAL_PDF_HIDE_PAYMENTTERM");
+	  print '</td><td>';
 	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING');
+		print ajax_constantonoff('PROPOSAL_PDF_HIDE_PAYMENTTERM');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING", $arrval, $conf->global->MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING);
+		print $form->selectarray("PROPOSAL_PDF_HIDE_PAYMENTTERM", $arrval, $conf->global->PROPOSAL_PDF_HIDE_PAYMENTTERM);
 	}
-	print '</td></tr>';
+	  print '</td></tr>';
 
-	// Width of picture product lign
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DOCUMENTS_WITH_PICTURE_WIDTH").'</td><td>';
-	print '<input type="text" class="maxwidth50" name="MAIN_DOCUMENTS_WITH_PICTURE_WIDTH" value="'.(!empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH) ? $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH : 20).'">';
-	print '</td></tr>';
+	  print '<tr class="oddeven"><td>'.$langs->trans("PROPOSAL_PDF_HIDE_PAYMENTMODE");
+	  print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('PROPOSAL_PDF_HIDE_PAYMENTMODE');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("PROPOSAL_PDF_HIDE_PAYMENTMODE", $arrval, $conf->global->PROPOSAL_PDF_HIDE_PAYMENTMODE);
+	}
+	  print '</td></tr>';
 
-	print '</table>';
-	print '</div>';
+	  // Width of picture product lign
+		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DOCUMENTS_WITH_PICTURE_WIDTH").'</td><td>';
+		print '<input type="text" class="maxwidth50" name="MAIN_DOCUMENTS_WITH_PICTURE_WIDTH" value="'.(!empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH) ? $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH : 20).'">';
+		print '</td></tr>';
+
+	  /*
+	  print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING").'</td><td>';
+	  if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING');
+	  } else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING", $arrval, $conf->global->MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING);
+	  }
+	  print '</td></tr>';
+	  */
+
+	  print '</table>';
+	  print '</div>';
 }
 
 print '<br><div class="center">';

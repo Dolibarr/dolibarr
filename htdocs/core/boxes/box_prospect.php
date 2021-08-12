@@ -129,14 +129,14 @@ class box_prospect extends ModeleBoxes
 					$thirdpartystatic->entity = $objp->entity;
 
 					$this->info_box_contents[$line][] = array(
-						'td' => '',
+						'td' => 'class="tdoverflowmax150"',
 						'text' => $thirdpartystatic->getNomUrl(1),
 						'asis' => 1,
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => dol_print_date($datem, "day"),
+						'td' => 'class="center nowraponall"',
+						'text' => dol_print_date($datem, "day", 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(

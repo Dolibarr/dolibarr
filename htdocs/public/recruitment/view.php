@@ -39,6 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "recruitment"));
@@ -73,6 +74,11 @@ if (!$action) {
 //$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 //$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
+
+// Security check
+if (empty($conf->recruitment->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
 
 
 /*
@@ -184,7 +190,7 @@ print '<input type="hidden" name="suffix" value="'.GETPOST("suffix", 'alpha').'"
 print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print "\n";
-print '<!-- Form to sign -->'."\n";
+print '<!-- Form to view job -->'."\n";
 
 print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 
@@ -219,6 +225,12 @@ if ($urllogo) {
 	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
 		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 	}
+	print '</div>';
+}
+
+if (!empty($conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE)) {
+	print '<div class="backimagepublicrecruitment">';
+	print '<img id="idPROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH" src="'.$conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE.'">';
 	print '</div>';
 }
 
