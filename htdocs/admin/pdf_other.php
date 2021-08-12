@@ -41,19 +41,14 @@ if (!$user->admin) {
 }
 
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'alpha');
 
 
 /*
  * Actions
  */
 
-if ($cancel) {
-	$action = '';
-}
-
 if ($action == 'update') {
-	dolibarr_set_const($db, "MAIN_DOCUMENTS_LOGO_HEIGHT", GETPOST("MAIN_DOCUMENTS_LOGO_HEIGHT", 'int'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_DOCUMENTS_WITH_PICTURE_WIDTH", GETPOST("MAIN_DOCUMENTS_WITH_PICTURE_WIDTH", 'int'), 'chaine', 0, '', $conf->entity);
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");

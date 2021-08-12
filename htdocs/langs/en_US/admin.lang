@@ -1984,6 +1984,7 @@ MAIN_PDF_MARGIN_RIGHT=Right margin on PDF
 MAIN_PDF_MARGIN_TOP=Top margin on PDF
 MAIN_PDF_MARGIN_BOTTOM=Bottom margin on PDF
 MAIN_DOCUMENTS_LOGO_HEIGHT=Height for logo on PDF
+MAIN_DOCUMENTS_WITH_PICTURE_WIDTH=Width the picture in the line
 MAIN_GENERATE_PROPOSALS_WITH_PICTURE=Add picture on proposal ligne
 MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING=Add electronic sign in PDF
 NothingToSetup=There is no specific setup required for this module.
