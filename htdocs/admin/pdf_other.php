@@ -80,38 +80,43 @@ print dol_get_fiche_head($head, 'other', $langs->trans("other"), -1, 'pdf');
 
 print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("PDFOtherDesc"), $s)."</span><br>\n";
 print "<br>\n";
+if (!empty($conf->propal->enabled)) {
+	print load_fiche_titre($langs->trans("Proposal"), '', '');
 
-print load_fiche_titre($langs->trans("Proposal"), '', '');
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="update">';
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="update">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="more" class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
-print '<div class="div-table-responsive-no-min">';
-print '<table summary="more" class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_GENERATE_PROPOSALS_WITH_PICTURE").'</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('MAIN_GENERATE_PROPOSALS_WITH_PICTURE');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("MAIN_GENERATE_PROPOSALS_WITH_PICTURE", $arrval, $conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE);
+	}
+	print '</td></tr>';
 
-print '<tr class="oddeven"><td>'.$langs->trans("MAIN_GENERATE_PROPOSALS_WITH_PICTURE").'</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('MAIN_GENERATE_PROPOSALS_WITH_PICTURE');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("MAIN_GENERATE_PROPOSALS_WITH_PICTURE", $arrval, $conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE);
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING").'</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING", $arrval, $conf->global->MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING);
+	}
+	print '</td></tr>';
+
+	// Width of picture product lign
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DOCUMENTS_WITH_PICTURE_WIDTH").'</td><td>';
+	print '<input type="text" class="maxwidth50" name="MAIN_DOCUMENTS_WITH_PICTURE_WIDTH" value="'.(!empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH) ? $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH : 20).'">';
+	print '</td></tr>';
+
+	print '</table>';
+	print '</div>';
 }
-print '</td></tr>';
-
-print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING").'</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING", $arrval, $conf->global->MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING);
-}
-print '</td></tr>';
-
-print '</table>';
-print '</div>';
-
 
 print '<br><div class="center">';
 print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';

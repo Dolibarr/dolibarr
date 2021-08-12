@@ -330,11 +330,6 @@ print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DOCUMENTS_LOGO_HEIGHT").'</
 print '<input type="text" class="maxwidth50" name="MAIN_DOCUMENTS_LOGO_HEIGHT" value="'.(!empty($conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT) ? $conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT : 20).'">';
 print '</td></tr>';
 
-// Width of picture product lign
-print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DOCUMENTS_WITH_PICTURE_WIDTH").'</td><td>';
-print '<input type="text" class="maxwidth50" name="MAIN_DOCUMENTS_WITH_PICTURE_WIDTH" value="'.(!empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH) ? $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH : 20).'">';
-print '</td></tr>';
-
 // Show project
 
 if (!empty($conf->projet->enabled)) {
