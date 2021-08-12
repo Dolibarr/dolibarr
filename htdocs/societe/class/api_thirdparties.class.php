@@ -124,8 +124,8 @@ class Thirdparties extends DolibarrApi
 	 *                              Set to 2 to show only prospects
 	 *                              Set to 3 to show only those are not customer neither prospect
 	 *								Set to 4 to show only suppliers
-	 * @param  int    $category   Use this param to filter list by category
-	 * @param   string  $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.nom:like:'TheCompany%') and (t.date_creation:<:'20160101')"
+	 * @param  	int    	$category   Use this param to filter list by category
+	 * @param   string  $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "((t.nom:like:'TheCompany%') or (t.name_alias:like:'TheCompany%')) and (t.datec:<:'20160101')"
 	 * @return  array               Array of thirdparty objects
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '')
@@ -178,11 +178,11 @@ class Thirdparties extends DolibarrApi
 		// Select thirdparties of given category
 		if ($category > 0) {
 			if (!empty($mode) && $mode != 4) {
-				$sql .= " AND c.fk_categorie = ".$this->db->escape($category)." AND c.fk_soc = t.rowid";
+				$sql .= " AND c.fk_categorie = ".((int) $category)." AND c.fk_soc = t.rowid";
 			} elseif (!empty($mode) && $mode == 4) {
-				$sql .= " AND cc.fk_categorie = ".$this->db->escape($category)." AND cc.fk_soc = t.rowid";
+				$sql .= " AND cc.fk_categorie = ".((int) $category)." AND cc.fk_soc = t.rowid";
 			} else {
-				$sql .= " AND ((c.fk_categorie = ".$this->db->escape($category)." AND c.fk_soc = t.rowid) OR (cc.fk_categorie = ".$this->db->escape($category)." AND cc.fk_soc = t.rowid))";
+				$sql .= " AND ((c.fk_categorie = ".((int) $category)." AND c.fk_soc = t.rowid) OR (cc.fk_categorie = ".((int) $category)." AND cc.fk_soc = t.rowid))";
 			}
 		}
 

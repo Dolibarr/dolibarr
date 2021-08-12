@@ -86,6 +86,7 @@ $search_user = trim(GETPOST("search_user"));
 $search_batch = trim(GETPOST("search_batch"));
 $search_qty = trim(GETPOST("search_qty"));
 $search_type_mouvement = GETPOST('search_type_mouvement', 'int');
+$search_fk_projet=GETPOST("search_fk_projet", 'int');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -198,6 +199,7 @@ if (empty($reshook)) {
 		$search_user = "";
 		$search_batch = "";
 		$search_qty = '';
+		$search_fk_projet=0;
 		$sall = "";
 		$toselect = '';
 		$search_array_options = array();
@@ -549,6 +551,9 @@ if (!empty($search_batch)) {
 if (!empty($product_id)) {
 	$sql .= natural_search('p.rowid', $product_id);
 }
+if (!empty($search_fk_projet) && $search_fk_projet != '-1') {
+	$sql .= natural_search('m.fk_projet', $search_fk_projet);
+}
 if ($search_qty != '') {
 	$sql .= natural_search('m.value', $search_qty, 1);
 }
@@ -889,7 +894,7 @@ if ($resql) {
 
 	$moreforfilter = '';
 
-	$parameters = array();
+	$parameters = array('arrayfields'=>&$arrayfields);
 	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		$moreforfilter .= $hookmanager->resPrint;
@@ -1255,6 +1260,14 @@ if ($resql) {
 			}
 			print '</td>';
 		}
+
+		// Extra fields
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+		// Fields from hook
+		$parameters = array('arrayfields'=>$arrayfields, 'objp'=>$objp, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+
 		// Action column
 		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined

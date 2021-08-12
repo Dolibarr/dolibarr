@@ -140,7 +140,7 @@ class Shipments extends DolibarrApi
 		}
 		// Insert sale filter
 		if ($search_sale > 0) {
-			$sql .= " AND sc.fk_user = ".$search_sale;
+			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 		// Add sql filters
 		if ($sqlfilters) {
@@ -530,14 +530,9 @@ class Shipments extends DolibarrApi
 		if ($result < 0) {
 			throw new RestException(500, 'Error when validating Shipment: '.$this->shipment->error);
 		}
-		$result = $this->shipment->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'Shipment not found');
-		}
 
-		if (!DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+		// Reload shipment
+		$result = $this->shipment->fetch($id);
 
 		$this->shipment->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->shipment);
@@ -625,6 +620,47 @@ class Shipments extends DolibarrApi
 		return $this->_cleanObjectDatas($this->shipment);
 	}
 	*/
+
+	/**
+	* Close a shipment (Classify it as "Delivered")
+	*
+	* @param   int     $id             Expedition ID
+	* @param   int     $notrigger      Disabled triggers
+	*
+	* @url POST    {id}/close
+	*
+	* @return  int
+	*/
+	public function close($id, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->rights->expedition->creer) {
+			throw new RestException(401);
+		}
+
+		$result = $this->shipment->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Shipment not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('expedition', $this->commande->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->shipment->setClosed();
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already closed');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when closing Order: '.$this->commande->error);
+		}
+
+		// Reload shipment
+		$result = $this->shipment->fetch($id);
+
+		$this->shipment->fetchObjectLinked();
+
+		return $this->_cleanObjectDatas($this->shipment);
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**

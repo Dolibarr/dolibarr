@@ -184,6 +184,15 @@ if (empty($reshook)) {
 		}
 	}
 
+	// transport mode
+	if ($action == 'settransportmode' && $user->rights->societe->creer) {
+		$object->fetch($id);
+		$result = $object->setTransportMode(GETPOST('transport_mode_id', 'alpha'));
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
 	// Bank account
 	if ($action == 'setbankaccount' && $user->rights->societe->creer) {
 		$object->fetch($id);
@@ -298,9 +307,9 @@ $userstatic = new User($db);
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 
-$title = $langs->trans("CustomerCard");
+$title = $langs->trans("ThirdParty")." - ".$langs->trans('Customer');
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
-	$title = $object->name;
+	$title = $object->name." - ".$langs->trans('Customer');
 }
 
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas|DE:Modul_Geschäftspartner';
@@ -531,6 +540,7 @@ if ($object->id > 0) {
 		print "</td>";
 		print '</tr>';
 	}
+
 	// Warehouse
 	if (!empty($conf->stock->enabled) && !empty($conf->global->SOCIETE_ASK_FOR_WAREHOUSE)) {
 		$langs->load('stocks');
@@ -543,11 +553,15 @@ if ($object->id > 0) {
 		if ($action == 'editwarehouse') {
 			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'fk_warehouse', 1);
 		} else {
+			if ($object->fk_warehouse > 0) {
+				print img_picto('', 'stock', 'class="paddingrightonly"');
+			}
 			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'none');
 		}
 		print '</td>';
 		print '</tr>';
 	}
+
 	// Preferred shipping Method
 	if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD)) {
 		print '<tr><td class="nowrap">';
@@ -580,9 +594,9 @@ if ($object->id > 0) {
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'edittransportmode') {
-			$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->fk_transport_mode, 'fk_transport_mode', 1);
+			$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, (!empty($object->transport_mode_id) ? $object->transport_mode_id : ''), 'transport_mode_id', 1);
 		} else {
-			$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->fk_transport_mode, 'none');
+			$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, (!empty($object->transport_mode_id) ? $object->transport_mode_id : ''), 'none');
 		}
 		print "</td>";
 		print '</tr>';
@@ -874,6 +888,7 @@ if ($object->id > 0) {
 		$sql .= ", c.total_ttc";
 		$sql .= ", c.ref, c.ref_client, c.fk_statut, c.facture";
 		$sql .= ", c.date_commande as dc";
+		$sql .= ", c.facture as billed";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 		$sql .= " WHERE c.fk_soc = s.rowid ";
 		$sql .= " AND s.rowid = ".$object->id;

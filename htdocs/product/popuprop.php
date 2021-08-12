@@ -60,9 +60,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$staticproduct = new Product($db);
-
-$result = restrictedArea($user, 'produit|service', 0, 'product&product');
+restrictedArea($user, 'produit|service', 0, 'product&product', '', '');
 
 
 /*
@@ -213,7 +211,7 @@ if ($mode && $mode != '-1') {
 		if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
 			$sql = "SELECT label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
-			$sql .= " WHERE fk_product=".$prodid;
+			$sql .= " WHERE fk_product = ".((int) $prodid);
 			$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
 			$sql .= " LIMIT 1";
 

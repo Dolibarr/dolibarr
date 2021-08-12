@@ -69,6 +69,8 @@ $permissionnote = $user->rights->expedition->creer; // Used by the include of ac
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+$hookmanager->initHooks(array('expeditionnote'));
 $result = restrictedArea($user, 'expedition', $object->id, '');
 
 
@@ -76,7 +78,13 @@ $result = restrictedArea($user, 'expedition', $object->id, '');
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
+$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+}
 
 
 /*
@@ -89,7 +97,7 @@ $form = new Form($db);
 
 if ($id > 0 || !empty($ref)) {
 	$head = shipping_prepare_head($object);
-	print dol_get_fiche_head($head, 'note', $langs->trans("Shipment"), -1, 'sending');
+	print dol_get_fiche_head($head, 'note', $langs->trans("Shipment"), -1, $object->picto);
 
 
 	// Shipment card

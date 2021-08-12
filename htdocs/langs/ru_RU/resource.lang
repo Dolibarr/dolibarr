@@ -34,3 +34,6 @@ IdResource=Ресурс Id
 AssetNumber=Серийный номер
 ResourceTypeCode=Код типа ресурса
 ImportDataset_resource_1=Ресурсы
+
+ErrorResourcesAlreadyInUse=Некоторые ресурсы уже используются
+ErrorResourceUseInEvent=%s используется в событии %s

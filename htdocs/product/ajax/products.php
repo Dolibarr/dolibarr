@@ -122,8 +122,8 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 		// Price by qty
 		if (!empty($price_by_qty_rowid) && $price_by_qty_rowid >= 1 && (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))) { // If we need a particular price related to qty
 			$sql = "SELECT price, unitprice, quantity, remise_percent";
-			$sql .= " FROM ".MAIN_DB_PREFIX."product_price_by_qty ";
-			$sql .= " WHERE rowid=".$price_by_qty_rowid."";
+			$sql .= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
+			$sql .= " WHERE rowid = ".((int) $price_by_qty_rowid);
 
 			$result = $db->query($sql);
 			if ($result) {
@@ -235,7 +235,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 	// When used from jQuery, the search term is added as GET param "term".
 	$searchkey = (($idprod && GETPOST($idprod, 'alpha')) ? GETPOST($idprod, 'alpha') : (GETPOST($htmlname, 'alpha') ? GETPOST($htmlname, 'alpha') : ''));
 
-	if (!is_object($form)) {
+	if (!isset($form) || !is_object($form)) {
 		$form = new Form($db);
 	}
 

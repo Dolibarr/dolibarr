@@ -83,7 +83,7 @@ class CSMSFile
 			return -1;
 		}
 
-		dol_syslog("CSMSFile::CSMSFile: MAIN_SMS_SENDMODE=".$conf->global->MAIN_SMS_SENDMODE." charset=".$conf->file->character_set_client." from=".$from.", to=".$to.", msg length=".count($msg), LOG_DEBUG);
+		dol_syslog("CSMSFile::CSMSFile: MAIN_SMS_SENDMODE=".$conf->global->MAIN_SMS_SENDMODE." charset=".$conf->file->character_set_client." from=".$from.", to=".$to.", msg length=".strlen($msg), LOG_DEBUG);
 		dol_syslog("CSMSFile::CSMSFile: deferred=".$deferred." priority=".$priority." class=".$class, LOG_DEBUG);
 
 		// Action according to choosed sending method

@@ -16,7 +16,7 @@
  */
 
 /**
- * \file    knowledgemanagement/lib/knowledgemanagement.lib.php
+ * \file    htdocs/knowledgemanagement/lib/knowledgemanagement.lib.php
  * \ingroup knowledgemanagement
  * \brief   Library files with common functions for KnowledgeManagement
  */
@@ -35,18 +35,18 @@ function knowledgemanagementAdminPrepareHead()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/admin/knowledgemanagement.php", 1);
+	$head[$h][0] = DOL_URL_ROOT.'/admin/knowledgemanagement.php';
 	$head[$h][1] = $langs->trans("Setup");
 	$head[$h][2] = 'setup';
 	$h++;
 
 
-	$head[$h][0] = dol_buildpath("admin/knowledgerecord_extrafields.php", 1);
+	$head[$h][0] = DOL_URL_ROOT.'/admin/knowledgerecord_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$head[$h][2] = 'extra';
 	$h++;
 
-	/*$head[$h][0] = dol_buildpath("/knowledgemanagement/admin/about.php", 1);
+	/*$head[$h][0] = DOL_URL_ROOT.'/knowledgemanagement/admin/about.php';
 	$head[$h][1] = $langs->trans("About");
 	$head[$h][2] = 'about';
 	$h++;*/

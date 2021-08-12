@@ -59,8 +59,8 @@ print load_fiche_titre($langs->trans("CustomersInvoicesArea"), '', 'bill');
 print '<div class="fichecenter">';
 
 print '<div class="fichethirdleft">';
-
-print getCustomerInvoicePieChart($socid);
+print getNumberInvoicesPieChart('customers');
+//print getCustomerInvoicePieChart($socid);
 print '<br>';
 print getCustomerInvoiceDraftTable($max, $socid);
 

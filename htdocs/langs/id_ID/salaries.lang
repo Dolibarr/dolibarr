@@ -2,20 +2,23 @@
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Akun akuntansi digunakan untuk pihak ketiga pengguna
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Akun akuntansi khusus yang ditentukan pada kartu pengguna akan digunakan hanya untuk akuntansi Subledger. Yang ini akan digunakan untuk Buku Besar Umum dan sebagai nilai default dari akuntansi Subledger jika akun akuntansi pengguna khusus pada pengguna tidak didefinisikan.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Akun akuntansi secara default untuk pembayaran upah
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=By default, leave empty the option "Automatically create a total payment" when creating a Salary
 Salary=Gaji
 Salaries=Gaji
-NewSalaryPayment=Pembayaran Gaji Baru
+NewSalary=New salary
+NewSalaryPayment=New salary card
 AddSalaryPayment=Tambahkan pembayaran gaji
 SalaryPayment=Pembayaran Gaji
 SalariesPayments=Pembayaran Gaji
+SalariesPaymentsOf=Salaries payments of %s
 ShowSalaryPayment=Menampilkan Pembayaran Gaji
 THM=Tarif rata-rata per jam
 TJM=Tarif harian rata-rata
 CurrentSalary=Gaji saat ini
 THMDescription=Nilai ini dapat digunakan untuk menghitung biaya waktu yang dihabiskan pada proyek yang dimasukkan oleh pengguna jika proyek modul digunakan
 TJMDescription=Nilai ini saat ini hanya untuk informasi dan tidak digunakan untuk perhitungan apa pun
-LastSalaries=Pembayaran gaji %s terbaru
-AllSalaries=Semua pembayaran gaji
+LastSalaries=Latest %s salaries
+AllSalaries=All salaries
 SalariesStatistics=Statistik gaji
-# Export
 SalariesAndPayments=Gaji dan pembayaran
+ConfirmDeleteSalaryPayment=Do you want to delete this salary payment ?
