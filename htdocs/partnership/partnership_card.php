@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+/* Copyright (C) 2017-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2021      NextGestion			<contact@nextgestion.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,7 +120,39 @@ if (empty($reshook)) {
 	$triggermodname = 'PARTNERSHIP_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Action accept object
-	if ($action == 'confirm_accept' && $confirm == 'yes' && $permissiontoadd) {
+	if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd) {
+		$result = $object->validate($user);
+		if ($result >= 0) {
+			// Define output language
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				if (method_exists($object, 'generateDocument')) {
+					$outputlangs = $langs;
+					$newlang = '';
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+						$newlang = GETPOST('lang_id', 'aZ09');
+					}
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+						$newlang = $object->thirdparty->default_lang;
+					}
+					if (!empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+					}
+
+					$ret = $object->fetch($id); // Reload to get new records
+
+					$model = $object->model_pdf;
+
+					$retgen = $object->generateDocument($model, $outputlangs, 0, 0, 0);
+					if ($retgen < 0) {
+						setEventMessages($object->error, $object->errors, 'warnings');
+					}
+				}
+			}
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	} elseif ($action == 'confirm_accept' && $confirm == 'yes' && $permissiontoadd) {
 		$result = $object->accept($user);
 		if ($result >= 0) {
 			// Define output language
@@ -143,7 +175,7 @@ if (empty($reshook)) {
 
 					$model = $object->model_pdf;
 
-					$retgen = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					$retgen = $object->generateDocument($model, $outputlangs, 0, 0, 0);
 					if ($retgen < 0) {
 						setEventMessages($object->error, $object->errors, 'warnings');
 					}
@@ -339,7 +371,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToReopon'), $langs->trans('ConfirmReoponAsk', $object->ref), 'confirm_reopen', $formquestion, 'yes', 1);
 	}
 
-	// Refuse confirmatio
+	// Refuse confirmation
 	if ($action == 'refuse') {
 		//Form to close proposal (signed or not)
 		$formquestion = array(
@@ -533,20 +565,32 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init&token='.newToken().'#formmailbeforetitle');
 			}
 
+			if ($object->status == $object::STATUS_DRAFT) {
+				print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
+			}
+
 			// Back to draft
 			if ($object->status != $object::STATUS_DRAFT) {
 				print dolGetButtonAction($langs->trans('SetToDraft'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes&token='.newToken(), '', $permissiontoadd);
 			}
 
-			print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
-
-			// Accept
+			// Validate
 			if ($object->status == $object::STATUS_DRAFT) {
 				if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) {
-					print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_accept&confirm=yes&token='.newToken(), '', $permissiontoadd);
+					print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken(), '', $permissiontoadd);
 				} else {
 					$langs->load("errors");
 					print dolGetButtonAction($langs->trans("ErrorAddAtLeastOneLineFirst"), $langs->trans("Validate"), 'default', '#', '', 0);
+				}
+			}
+
+			// Approve
+			if ($object->status == $object::STATUS_VALIDATED) {
+				if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) {
+					print dolGetButtonAction($langs->trans('Approved'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_accept&confirm=yes&token='.newToken(), '', $permissiontoadd);
+				} else {
+					$langs->load("errors");
+					print dolGetButtonAction($langs->trans("ErrorAddAtLeastOneLineFirst"), $langs->trans("Approved"), 'default', '#', '', 0);
 				}
 			}
 
@@ -562,7 +606,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Refuse
 			if ($permissiontoadd) {
-				if ($object->status != $object::STATUS_ACCEPTED && $object->status != $object::STATUS_CANCELED && $object->status != $object::STATUS_REFUSED) {
+				if ($object->status != $object::STATUS_DRAFT && $object->status != $object::STATUS_ACCEPTED && $object->status != $object::STATUS_CANCELED && $object->status != $object::STATUS_REFUSED) {
 					print dolGetButtonAction($langs->trans('Refuse'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=refuse&token='.newToken(), '', $permissiontoadd);
 				}
 			}
