@@ -741,7 +741,7 @@ class pdf_jdc extends ModelePDFSuppliersOrders
 
 		$posxval = 48;
 
-		$object->fetch_optionals($rowid,$extralabels);
+		$object->fetch_optionals($rowid, $extralabels);
 		$delivery_address = $outputlangs->convToOutputCharset($object->array_options['options_delivery_address']);
 		$delivery_address_line_count = count(preg_split('/\n/', $delivery_address));
 
@@ -843,7 +843,7 @@ class pdf_jdc extends ModelePDFSuppliersOrders
                         $pdf->MultiCell(80, 5, $delivery_contact, 0, 'L');
 
                         $posy = $pdf->GetY() + 2;
-                }
+		}
 
 		$pdf->setTextColor(0, 0, 0);
 
