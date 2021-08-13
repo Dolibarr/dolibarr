@@ -129,7 +129,15 @@ class mod_codeproduct_jdc extends ModeleProductCode
 
                 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-                $familyRef = "ECL-300";
+                //$familyRef = "ECL-300";
+
+                $familyRef = $objproduct->array_options['options_family'];
+
+                dol_syslog('PRODUCT : '.$objproduct->table_element.' '.var_export($objproduct, true), LOG_DEBUG);
+                dol_syslog('id : '.$objproduct->id, LOG_DEBUG);
+                dol_syslog('extra_labels : '.print_r($extralabels, 1), LOG_DEBUG);
+                dol_syslog('family : '.$familyRef, LOG_DEBUG);
+                dol_syslog('options : '.print_r($objproduct->array_options, 1), LOG_DEBUG);
 
                 $start = 9;
                 $sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$start.") AS SIGNED)) as max";
@@ -147,7 +155,7 @@ class mod_codeproduct_jdc extends ModeleProductCode
                 if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
                 else $num = sprintf("%04s", $max + 1);
 
-                return $familiyRef."-".$num;
+                return $familyRef."-".$num;
         }
 
 
@@ -161,12 +169,6 @@ class mod_codeproduct_jdc extends ModeleProductCode
         {
                 // phpcs:enable
                 global $conf;
-
-                $mask = $conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT;
-                if (preg_match('/\{pre\}/i', $mask)) return 1;
-
-                $mask = $conf->global->PRODUCT_ELEPHANT_MASK_SERVICE;
-                if (preg_match('/\{pre\}/i', $mask)) return 1;
 
                 return 0;
         }
@@ -195,32 +197,7 @@ class mod_codeproduct_jdc extends ModeleProductCode
                 $result = 0;
                 $code = strtoupper(trim($code));
 
-                if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))
-                {
-                        $result = 0;
-                } elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)))
-                {
-                        $result = -2;
-                } else {
-                        // Get Mask value
-                        $mask = '';
-                        if ($type == 0) $mask = empty($conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT) ? '' : $conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT;
-                        if ($type == 1) $mask = empty($conf->global->PRODUCT_ELEPHANT_MASK_SERVICE) ? '' : $conf->global->PRODUCT_ELEPHANT_MASK_SERVICE;
-                        if (!$mask)
-                        {
-                                $this->error = 'NotConfigured';
-                                return -5;
-                        }
-
-                        $result = check_value($mask, $code);
-                        if (is_string($result))
-                        {
-                                $this->error = $result;
-                                return -5;
-                        }
-                }
-
-                dol_syslog("mod_codeclient_elephant::verif type=".$type." result=".$result);
+                dol_syslog("mod_codeclient_jdc::verif type=".$type." result=".$result);
                 return $result;
         }
 
