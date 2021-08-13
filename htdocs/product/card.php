@@ -88,7 +88,7 @@ $mesg = ''; $error = 0; $errors = array();
 $refalreadyexists = 0;
 
 $id = GETPOST('id', 'int');
-$ref = GETPOST('ref', 'alpha');
+$ref = (GETPOST('ref', 'alpha') !== '') ? GETPOST('ref', 'alpha') : null;
 $type = (GETPOST('type', 'int') !== '') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT;
 $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $cancel = GETPOST('cancel', 'alpha');
@@ -110,6 +110,18 @@ $label_security_check = empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_LABEL
 
 if (!empty($user->socid)) {
 	$socid = $user->socid;
+}
+
+// Load object modCodeProduct
+$module = (!empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) ? $conf->global->PRODUCT_CODEPRODUCT_ADDON : 'mod_codeproduct_leopard');
+if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php')
+{
+    $module = substr($module, 0, dol_strlen($module) - 4);
+}
+$result = dol_include_once('/core/modules/product/'.$module.'.php');
+if ($result > 0)
+{
+    $modCodeProduct = new $module();
 }
 
 $object = new Product($db);
@@ -242,9 +254,11 @@ if (empty($reshook)) {
 		$error = 0;
 
 		if (!GETPOST('label', $label_security_check)) {
-			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Label')), null, 'errors');
-			$action = "create";
-			$error++;
+			if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
+				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Label')), null, 'errors');
+				$action = "create";
+				$error++;
+			}
 		}
 		if (empty($ref)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Ref')), null, 'errors');
@@ -431,6 +445,11 @@ if (empty($reshook)) {
 				$error++;
 			}
 
+			if (!$ref && !empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
+				// Generate ref...
+				$ref = $modCodeProduct->getNextValue($object, $type);
+			}
+
 			if (!$error) {
 				$id = $object->create($user);
 			}
@@ -470,7 +489,9 @@ if (empty($reshook)) {
 			if ($object->id > 0) {
 				$object->oldcopy = clone $object;
 
-				$object->ref                    = $ref;
+				if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
+					$object->ref                = $ref;
+				}
 				$object->label                  = GETPOST('label', $label_security_check);
 
 				$desc = dol_htmlcleanlastbr(preg_replace('/&nbsp;$/', '', GETPOST('desc', 'restricthtml')));
@@ -1079,16 +1100,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		print '<table class="border centpercent">';
 
-		print '<tr>';
-		$tmpcode = '';
-		if (!empty($modCodeProduct->code_auto)) {
-			$tmpcode = $modCodeProduct->getNextValue($object, $type);
+		if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
+			print '<tr>';
+			$tmpcode = '';
+			if (!empty($modCodeProduct->code_auto)) {
+				$tmpcode = $modCodeProduct->getNextValue($object, $type);
+			}
+			print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
+			if ($refalreadyexists) {
+				print $langs->trans("RefAlreadyExists");
+			}
+			print '</td></tr>';
 		}
-		print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
-		if ($refalreadyexists) {
-			print $langs->trans("RefAlreadyExists");
-		}
-		print '</td></tr>';
 
 		// Label
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth300 maxwidth400onsmartphone" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label', $label_security_check)).'"></td></tr>';
@@ -2414,16 +2437,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	} elseif ($action != 'create') {
 		exit;
 	}
-}
-
-// Load object modCodeProduct
-$module = (!empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) ? $conf->global->PRODUCT_CODEPRODUCT_ADDON : 'mod_codeproduct_leopard');
-if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php') {
-	$module = substr($module, 0, dol_strlen($module) - 4);
-}
-$result = dol_include_once('/core/modules/product/'.$module.'.php');
-if ($result > 0) {
-	$modCodeProduct = new $module();
 }
 
 $tmpcode = '';
