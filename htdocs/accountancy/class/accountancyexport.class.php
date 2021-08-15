@@ -1296,7 +1296,9 @@ class AccountancyExport
 
 	/**
 	 * Export format : LD Compta version 10 & higher
-	 * http://www.ldsysteme.fr/fileadmin/telechargement/np/ldcompta/Documentation/IntCptW10.pdf
+	 * Last review for this format : 08-15-2021 Alexandre Spangaro (aspangaro@open-dsi.fr)
+	 *
+	 * Help : http://www.ldsysteme.fr/fileadmin/telechargement/np/ldcompta/Documentation/IntCptW10.pdf
 	 *
 	 * @param array $objectLines data
 	 *
@@ -1460,7 +1462,7 @@ class AccountancyExport
 			print $date_lim_reglement.$separator;
 			// CNPI
 			if ($line->doc_type == 'supplier_invoice') {
-				if (($line->debit - $line->credit) > 0) {
+				if (($line->debit - $line->credit) < 0) {
 					$nature_piece = 'AF';
 				} else {
 					$nature_piece = 'FF';
