@@ -5077,6 +5077,16 @@ if ($action == 'create') {
 		print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td>';
 		print '<td class="nowrap">&nbsp;</td></tr>';
 
+		// Remainder to pay Multicurrency
+        if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
+            print '<tr><td colspan="'.$nbcols.'" class="right">';
+            print '<span class="opacitymedium">';
+            print $langs->trans('MulticurrencyRemainderToPay');
+            print '</span>';
+            print '</td>';
+            print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.(!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency).' '.price(price2num($object->multicurrency_tx*$resteapayeraffiche, 'MT')).'</td>';
+        }
+		
 		// Retained warranty : usualy use on construction industry
 		if (!empty($object->situation_final) && !empty($object->retained_warranty) && $displayWarranty) {
 			// Billed - retained warranty
