@@ -519,19 +519,40 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
 
-$nbtotalofrecords = '';
+$nbtotalofrecords = '';			// TODO We can set and use an optimized request in $sqlforcount with no fields and no useless join to calculate nb of records
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	// TODO Set and use an optimized request in $sqlforcount with no fields and no useless join to caluclate nb of records
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	/* This old method to get and count full list returns all record so use a high amount of memory.
+	 $resql = $db->query($sql);
+	 $nbtotalofrecords = $db->num_rows($resql);
+	 */
+	/* The new method does not consume memory on mysql (not tested on pgsql) */
+	$resql = $db->query($sql, 0, 'auto', 1);
+	while ($db->fetch_object($resql)) {
+		$nbtotalofrecords++;
+	}
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
-//print $sql;
+// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
+if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit))) {
+	$num = $nbtotalofrecords;
+} else {
+	if ($limit) {
+		$sql .= $db->plimit($limit + 1, $offset);
+	}
+
+	$resql = $db->query($sql);
+	if (!$resql) {
+		dol_print_error($db);
+		exit;
+	}
+
+	$num = $db->num_rows($resql);
+}
 
 dol_syslog("comm/action/list.php", LOG_DEBUG);
 $resql = $db->query($sql);
