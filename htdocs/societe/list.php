@@ -672,6 +672,8 @@ if (empty($reshook)) {
 }
 $sql .= $hookmanager->resPrint;
 // Add GroupBy from hooks
+//removing PHP8 warnings
+$all, = isset($all,) ? $all, : '';
 $parameters = array('all' => $all, 'fieldstosearchall' => $fieldstosearchall);
 $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
