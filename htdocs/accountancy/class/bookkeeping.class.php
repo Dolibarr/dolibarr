@@ -1025,7 +1025,11 @@ class BookKeeping extends CommonObject
 				} elseif ($key == 't.credit' || $key == 't.debit') {
 					$sqlwhere[] = natural_search($key, $value, 1, 1);
 				} elseif ($key == 't.code_journal' && !empty($value)) {
-					$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
+					if (is_array($value)) {
+						$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
+					} else {
+						$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
+					}
 				} else {
 					$sqlwhere[] = natural_search($key, $value, 0, 1);
 				}
