@@ -412,18 +412,28 @@ if (!empty($filter_op2) && $filter_op2 != -1) {
 if (!empty($filter_opcloture) && $filter_opcloture != -1) {
 	$param .= '&amp;filter_opcloture='.urlencode($filter_opcloture);
 }
+//removing PHP warnings
+$filter_dateouvertureprevue = isset($filter_dateouvertureprevue) ? $filter_dateouvertureprevue : '' ;
 if ($filter_dateouvertureprevue != '') {
 	$param .= '&amp;opouvertureprevueday='.$opouvertureprevueday.'&amp;opouvertureprevuemonth='.$opouvertureprevuemonth.'&amp;opouvertureprevueyear='.$opouvertureprevueyear;
 }
+//removing PHP warnings
+$filter_date1 = isset($filter_date1) ? $filter_date1 : '';
 if ($filter_date1 != '') {
 	$param .= '&amp;op1day='.$op1day.'&amp;op1month='.$op1month.'&amp;op1year='.$op1year;
 }
+//removing PHP8 warnings
+$filter_date2 = isset($filter_date2) ? $filter_date2 : '';
 if ($filter_date2 != '') {
 	$param .= '&amp;op2day='.$op2day.'&amp;op2month='.$op2month.'&amp;op2year='.$op2year;
 }
+//removing PHP8 warnings
+$filter_datecloture = isset($filter_datecloture) ? $filter_datecloture : '';
 if ($filter_datecloture != '') {
 	$param .= '&amp;opclotureday='.$op2day.'&amp;opcloturemonth='.$op2month.'&amp;opclotureyear='.$op2year;
 }
+//removing PHP8 warnings
+$optioncss = isset($optioncss) ? $optioncss : '';
 if ($optioncss != '') {
 	$param .= '&optioncss='.$optioncss;
 }
@@ -467,7 +477,8 @@ if ($mode == "5") {
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'contract', 0, '', '', $limit);
 
-if ($sall) {
+//adding isset to remove PHP8 warnings
+if (isset($sall)) {
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
@@ -475,6 +486,8 @@ if ($sall) {
 }
 
 $morefilter = '';
+//removing PHP8 warnings
+$moreforfilter = '';
 
 // If the user can view categories of products
 if ($conf->categorie->enabled && ($user->rights->produit->lire || $user->rights->service->lire)) {
