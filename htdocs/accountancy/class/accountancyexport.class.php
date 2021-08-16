@@ -1462,14 +1462,14 @@ class AccountancyExport
 			print $date_lim_reglement.$separator;
 			// CNPI
 			if ($line->doc_type == 'supplier_invoice') {
-				if (($line->amount) < 0) {		// Currently, only the sign of amount allows to know the type of invoice (standard or credit note). Other solution is to analyse debit/credit/role of account. TODO Add column doc_type_long
+				if (($line->amount) < 0) {		// Currently, only the sign of amount allows to know the type of invoice (standard or credit note). Other solution is to analyse debit/credit/role of account. TODO Add column doc_type_long or make amount mandatory with rule on sign.
 					$nature_piece = 'AF';
 				} else {
 					$nature_piece = 'FF';
 				}
 			} elseif ($line->doc_type == 'customer_invoice') {
 				if (($line->amount) < 0) {
-					$nature_piece = 'AC';		// Currently, only the sign of amount allows to know the type of invoice (standard or credit note). Other solution is to analyse debit/credit/role of account. TODO Add column doc_type_long
+					$nature_piece = 'AC';		// Currently, only the sign of amount allows to know the type of invoice (standard or credit note). Other solution is to analyse debit/credit/role of account. TODO Add column doc_type_long or make amount mandatory with rule on sign.
 				} else {
 					$nature_piece = 'FC';
 				}
