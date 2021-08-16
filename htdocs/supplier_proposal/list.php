@@ -202,6 +202,9 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+//to remove PHP8 warnings down the line
+$search_product_category = 0;
+
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Do we click on purge search criteria ?
