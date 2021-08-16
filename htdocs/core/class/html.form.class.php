@@ -1511,8 +1511,8 @@ class Form
 		global $langs, $conf;
 
 		// On recherche les remises
-		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
-		$sql .= " re.description, re.fk_facture_source";
+		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.multicurrency_amount_ttc,";
+		$sql .= " re.description, re.fk_facture_sourcere, re.fk_invoice_supplier_source";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
 		$sql .= " WHERE re.fk_soc = ".(int) $socid;
 		$sql .= " AND re.entity = ".$conf->entity;
@@ -1563,10 +1563,21 @@ class Form
 						$tmpfac = new Facture($this->db);
 						if ($tmpfac->fetch($obj->fk_facture_source) > 0) {
 							$desc = $desc.' - '.$tmpfac->ref;
+							$multicurrency_code = $tmpfac->multicurrency_code;
 						}
 					}
+					// show Source Supplier Invoice Ref
+					else {
+        				if (!empty($conf->global->MAIN_SHOW_FACNUMBER_IN_DISCOUNT_LIST) && !empty($obj->fk_invoice_supplier_source)) {
+							$tmpfac = new FactureFournisseur($this->db);
+    						if ($tmpfac->fetch($obj->fk_invoice_supplier_source) > 0) {
+    							$desc = $desc.' - '.$tmpfac->ref;
+    							$multicurrency_code = $tmpfac->multicurrency_code;
+    						} 
+    					}
+					}
 
-					print '<option value="'.$obj->rowid.'"'.$selectstring.$disabled.'>'.$desc.' ('.price($obj->amount_ht).' '.$langs->trans("HT").' - '.price($obj->amount_ttc).' '.$langs->trans("TTC").')</option>';
+					print '<option value="'.$obj->rowid.'"'.$selectstring.$disabled.'>'.$desc.' ('.$conf->currency.' '.price($obj->amount_ttc).' - '.$multicurrency_code.' '.price($obj->multicurrency_amount_ttc).')</option>'; //Added currency code, and replaced amount_HT by multicurrency_amount_ttc;
 					$i++;
 				}
 			}
