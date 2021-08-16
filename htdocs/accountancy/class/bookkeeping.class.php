@@ -730,7 +730,7 @@ class BookKeeping extends CommonObject
 		$sql .= " t.piece_num,";
 		$sql .= " t.date_creation,";
 		// In llx_accounting_bookkeeping_tmp, field date_export doesn't exist
-		if ($mode <> "_tmp") {
+		if ($mode != "_tmp") {
 			$sql .= " t.date_export,";
 		}
 		$sql .= " t.date_validated as date_validation";
@@ -1627,7 +1627,7 @@ class BookKeeping extends CommonObject
 		$sql = "SELECT piece_num, doc_date,code_journal, journal_label, doc_ref, doc_type,";
 		$sql .= " date_creation, tms as date_modification, date_validated as date_validation";
 		// In llx_accounting_bookkeeping_tmp, field date_export doesn't exist
-		if ($mode <> "_tmp") {
+		if ($mode != "_tmp") {
 			$sql .= ", date_export";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
@@ -1708,7 +1708,7 @@ class BookKeeping extends CommonObject
 		$sql .= " montant as amount, sens, fk_user_author, import_key, code_journal, journal_label, piece_num,";
 		$sql .= " date_creation, tms as date_modification, date_validated as date_validation";
 		// In llx_accounting_bookkeeping_tmp, field date_export doesn't exist
-		if ($mode <> "_tmp") {
+		if ($mode != "_tmp") {
 			$sql .= ", date_export";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
