@@ -1462,14 +1462,14 @@ class AccountancyExport
 			print $date_lim_reglement.$separator;
 			// CNPI
 			if ($line->doc_type == 'supplier_invoice') {
-				if (($line->amount) < 0) {
+				if (($line->amount) < 0) {		// Currently, only the sign of amount allows to know the type of invoice (warning: not reliable). TODO Add column doc_type_long
 					$nature_piece = 'AF';
 				} else {
 					$nature_piece = 'FF';
 				}
 			} elseif ($line->doc_type == 'customer_invoice') {
 				if (($line->amount) < 0) {
-					$nature_piece = 'AC';
+					$nature_piece = 'AC';		// Currently, only the sign of amount allows to know the type of invoice (warning: not reliable). TODO Add column doc_type_long
 				} else {
 					$nature_piece = 'FC';
 				}
