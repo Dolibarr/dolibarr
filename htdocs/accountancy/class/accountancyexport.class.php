@@ -1462,13 +1462,13 @@ class AccountancyExport
 			print $date_lim_reglement.$separator;
 			// CNPI
 			if ($line->doc_type == 'supplier_invoice') {
-				if (($line->debit - $line->credit) < 0) {
+				if (($line->amount) < 0) {
 					$nature_piece = 'AF';
 				} else {
 					$nature_piece = 'FF';
 				}
 			} elseif ($line->doc_type == 'customer_invoice') {
-				if (($line->debit - $line->credit) < 0) {
+				if (($line->amount) < 0) {
 					$nature_piece = 'AC';
 				} else {
 					$nature_piece = 'FC';
