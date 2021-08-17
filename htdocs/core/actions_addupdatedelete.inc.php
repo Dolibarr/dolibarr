@@ -57,7 +57,9 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			}
 		} else {
 			if (!GETPOSTISSET($key)) {
-				continue; // The field was not submited to be edited
+				if ($key != 'lang' || !GETPOSTISSET($key.'object')) {
+					continue; // The field was not submited to be edited
+				}
 			}
 		}
 		// Ignore special fields
@@ -87,7 +89,11 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			$tmparraykey = array_keys($object->param_list);
 			$value = $tmparraykey[GETPOST($key)].','.GETPOST($key.'2');
 		} else {
-			$value = GETPOST($key, 'alphanohtml');
+			if ($key == 'lang') {
+				$value = GETPOST($key.'object', 'aZ09');
+			} else {
+				$value = GETPOST($key, 'alphanohtml');
+			}
 		}
 		if (preg_match('/^integer:/i', $object->fields[$key]['type']) && $value == '-1') {
 			$value = ''; // This is an implicit foreign key field
@@ -161,7 +167,9 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 			}
 		} else {
 			if (!GETPOSTISSET($key)) {
-				continue; // The field was not submited to be edited
+				if ($key != 'lang' || !GETPOSTISSET($key.'object')) {
+					continue; // The field was not submited to be edited
+				}
 			}
 		}
 		// Ignore special fields
@@ -199,7 +207,11 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		} elseif ($object->fields[$key]['type'] == 'reference') {
 			$value = array_keys($object->param_list)[GETPOST($key)].','.GETPOST($key.'2');
 		} else {
-			$value = GETPOST($key, 'alpha');
+			if ($key == 'lang') {
+				$value = GETPOST($key.'object', 'aZ09');
+			} else {
+				$value = GETPOST($key, 'alphanohtml');
+			}
 		}
 		if (preg_match('/^integer:/i', $object->fields[$key]['type']) && $value == '-1') {
 			$value = ''; // This is an implicit foreign key field
