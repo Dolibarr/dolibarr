@@ -389,10 +389,10 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_HIDE_CUSTOMER_CODE");
 print '</td><td>';
 if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('DOC_SHOW_CUSTOMER_CODE');
+	print ajax_constantonoff('MAIN_PDF_HIDE_CUSTOMER_CODE');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("DOC_SHOW_CUSTOMER_CODE", $arrval, $conf->global->DOC_SHOW_CUSTOMER_CODE);
+	print $form->selectarray("MAIN_PDF_HIDE_CUSTOMER_CODE", $arrval, $conf->global->MAIN_PDF_HIDE_CUSTOMER_CODE);
 }
 print '</td></tr>';
 
