@@ -1341,7 +1341,7 @@ abstract class CommonDocGenerator
 
 				$field = new stdClass();
 				$field->rank = intval($extrafields->attributes[$object->table_element]['pos'][$key]);
-				$field->content = $this->getExtrafieldContent($object, $key);
+				$field->content = $outputlangs->transnoentities($this->getExtrafieldContent($object, $key));
 				$field->label = $outputlangs->transnoentities($label);
 				$field->type = $extrafields->attributes[$object->table_element]['type'][$key];
 
