@@ -127,4 +127,4 @@ AllowDelayedPayment=Tillåt försenad betalning
 PrintPaymentMethodOnReceipts=Skriv ut betalningsmetod på biljetter | kvitton
 WeighingScale=Våg
 ShowPriceHT = Visa kolumnen med priset exklusive moms (på skärmen)
-ShowPriceHTOnReceipt = Visa kolumnen med pris exklusive moms (vid mottagande)
+ShowPriceHTOnReceipt = Display the column with the price excluding tax (on the receipt)

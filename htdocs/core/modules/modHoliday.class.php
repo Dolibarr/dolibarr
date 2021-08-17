@@ -135,6 +135,28 @@ class modHoliday extends DolibarrModules
 		//$r++;
 
 
+		// Cronjobs
+		$arraydate = dol_getdate(dol_now());
+		$datestart = dol_mktime(4, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
+		$this->cronjobs = array(
+			0 => array(
+				'label' => 'HolidayBalanceMonthlyUpdate',
+				'jobtype' => 'method',
+				'class' => 'holiday/class/holiday.class.php',
+				'objectname' => 'Holiday',
+				'method' => 'updateBalance',
+				'parameters' => '',
+				'comment' => 'Update holiday balance every month',
+				'frequency' => 1,
+				'unitfrequency' => 3600 * 24,
+				'priority' => 50,
+				'status' => 1,
+				'test' => '$conf->holiday->enabled',
+				'datestart' => $datestart
+			)
+		);
+
+
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
 		$r = 0;

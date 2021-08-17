@@ -530,7 +530,8 @@ class FactureFournisseur extends CommonInvoice
 							$this->lines[$i]->date_end,
 							$this->lines[$i]->array_options,
 							$this->lines[$i]->fk_unit,
-							$this->lines[$i]->multicurrency_subprice
+							$this->lines[$i]->multicurrency_subprice,
+							$this->lines[$i]->ref_supplier
 						);
 					} else {
 						$this->error = $this->db->lasterror();
@@ -568,7 +569,15 @@ class FactureFournisseur extends CommonInvoice
 							$line->fk_product,
 							'HT',
 							(!empty($line->info_bits) ? $line->info_bits : ''),
-							$line->product_type
+							$line->product_type,
+							$line->remise_percent,
+							0,
+							$line->date_start,
+							$line->date_end,
+							$line->array_options,
+							$line->fk_unit,
+							$line->multicurrency_subprice,
+							$line->ref_supplier
 						);
 					} else {
 						$this->error = $this->db->lasterror();
@@ -3550,7 +3559,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 			$this->error = 'ErrorProductTypeMustBe0orMore';
 			return -1;
 		}
-		if (!empty($this->fk_product)) {
+		if (!empty($this->fk_product) && $this->fk_product > 0) {
 			// Check product exists
 			$result = Product::isExistingObject('product', $this->fk_product);
 			if ($result <= 0) {
@@ -3583,7 +3592,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= " ".price2num($this->localtax2_tx).",";
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql .= ' '.(!empty($this->fk_product) ? $this->fk_product : "null").',';
+		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? $this->fk_product : "null").',';
 		$sql .= " ".((int) $this->product_type).",";
 		$sql .= " ".price2num($this->remise_percent).",";
 		$sql .= ' '.(! empty($this->fk_remise_except) ? ((int) $this->fk_remise_except) : "null").',';

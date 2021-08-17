@@ -53,7 +53,8 @@ TypeOfLineServiceOrProduct=Тип линии (0= продукт, услуга 1=
 FileWithDataToImport=Файл с данными для импорта
 FileToImport=Исходный файл для импорта
 FileMustHaveOneOfFollowingFormat=Файл для импорта должен иметь один из следующих форматов
-DownloadEmptyExample=Скачать файл шаблона с информацией о содержимом поля (* обязательные поля)
+DownloadEmptyExample=Скачать файл шаблона с информацией о содержимом поля
+StarAreMandatory=* обязательные поля
 ChooseFormatOfFileToImport=Выберите формат файла для использования в качестве формата файла импорта, щелкнув значок %s, чтобы выбрать его ...
 ChooseFileToImport=Загрузите файл, затем щелкните значок %s, чтобы выбрать файл в качестве исходного файла импорта ...
 SourceFileFormat=Формат исходного файла

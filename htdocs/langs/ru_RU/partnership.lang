@@ -20,9 +20,9 @@ ModulePartnershipName=Управление партнерством
 PartnershipDescription=Модуль Управление партнерством
 PartnershipDescriptionLong= Модуль Управление партнерством
 
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
+AddPartnership=Добавить партнерство
+CancelPartnershipForExpiredMembers=Партнерство: отмените партнерство участников с истекшими подписками
+PartnershipCheckBacklink=Партнерство: проверьте ссылающуюся обратную ссылку
 
 #
 # Menu
@@ -57,7 +57,7 @@ PartnershipAlreadyExist=Партнерство уже существует
 ManagePartnership=Управление партнерством
 BacklinkNotFoundOnPartnerWebsite=Обратная ссылка не найдена на партнерском сайте
 ConfirmClosePartnershipAsk=Вы уверены, что хотите отменить это партнерство?
-PartnershipType=Partnership type
+PartnershipType=Тип партнерства
 
 #
 # Template Mail

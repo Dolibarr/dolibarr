@@ -90,7 +90,7 @@ $hookmanager->initHooks(array('usercard', 'userperms', 'globalcard'));
  * Actions
  */
 
-$parameters = array('id'=>$socid);
+$parameters = array('socid'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -193,7 +193,7 @@ $permsuser = array();
 
 $sql = "SELECT DISTINCT ur.fk_id";
 $sql .= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
-$sql .= " WHERE ur.entity = ".$entity;
+$sql .= " WHERE ur.entity = ".((int) $entity);
 $sql .= " AND ur.fk_user = ".((int) $object->id);
 
 dol_syslog("get user perms", LOG_DEBUG);
@@ -386,7 +386,7 @@ if ($result) {
 
 		// Picto and label of module
 		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
-		//print img_object('', $picto, 'class="pictoobjectwidth"').' '.$objMod->getName();
+		//print img_object('', $picto, 'class="inline-block pictoobjectwidth"').' '.$objMod->getName();
 		print '</td>';
 
 		// Permission and tick
@@ -407,7 +407,7 @@ if ($result) {
 			print '<td class="center nowrap">';
 			print img_picto($langs->trans("Active"), 'tick');
 			print '</td>';
-		} elseif (is_array($permsgroupbyentity[$entity])) {
+		} elseif (isset($permsgroupbyentity[$entity]) && is_array($permsgroupbyentity[$entity])) {
 			if (in_array($obj->id, $permsgroupbyentity[$entity])) {	// Permission granted by group
 				if ($caneditperms) {
 					print '<td class="center">';

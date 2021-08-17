@@ -20,13 +20,13 @@
 /**
  *	\file       htdocs/core/modules/mailings/pomme.modules.php
  *	\ingroup    mailing
- *	\brief      File of class to offer a selector of emailing targets with Rule 'Pomme'.
+ *	\brief      File of class to offer a selector of emailing targets of users.
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 
 
 /**
- *	Class to offer a selector of emailing targets with Rule 'Peche'.
+ *	Class to offer a selector of emailing targets with Rule 'Pomme'.
  */
 class mailing_pomme extends MailingTargets
 {
@@ -119,16 +119,16 @@ class mailing_pomme extends MailingTargets
 		$langs->load("users");
 
 		$s = '';
-		$s .= $langs->trans("Status").': ';
-		$s .= '<select name="filter" class="flat">';
+		$s .= $langs->trans("Status").' ';
+		$s .= '<select name="filter" class="flat marginrightonly">';
 		$s .= '<option value="-1">&nbsp;</option>';
 		$s .= '<option value="1">'.$langs->trans("Enabled").'</option>';
 		$s .= '<option value="0">'.$langs->trans("Disabled").'</option>';
 		$s .= '</select>';
 
 		$s .= ' ';
-		$s .= $langs->trans("Employee").': ';
-		$s .= '<select name="filteremployee" class="flat">';
+		$s .= $langs->trans("Employee").' ';
+		$s .= '<select name="filteremployee" class="flat marginrightonly">';
 		$s .= '<option value="-1">&nbsp;</option>';
 		$s .= '<option value="1">'.$langs->trans("Yes").'</option>';
 		$s .= '<option value="0">'.$langs->trans("No").'</option>';

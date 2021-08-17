@@ -51,6 +51,9 @@ if (!empty($user->socid)) {
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('productcompositioncard', 'globalcard'));
+
 $object = new Product($db);
 $objectid = 0;
 if ($id > 0 || !empty($ref)) {

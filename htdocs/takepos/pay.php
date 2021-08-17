@@ -255,6 +255,20 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 			});
 		}, 2500);
 	}
+	
+<?php
+if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
+	echo "var line1='".$langs->trans('TotalTTC')."'.substring(0,20);";
+	echo "line1=line1.padEnd(20);";
+	echo "var line2='".price($invoice->total_ttc, 1, '', 1, -1, -1)."'.substring(0,20);";
+	echo "line2=line2.padEnd(20);";
+	echo "$.ajax({
+		type: 'GET',
+		data: { text: line1+line2 },
+		url: '".getDolGlobalString('TAKEPOS_PRINT_SERVER')."/display/index.php',
+	});";
+}
+?>
 </script>
 
 <div style="position:relative; padding-top: 20px; left:5%; height:150px; width:90%;">

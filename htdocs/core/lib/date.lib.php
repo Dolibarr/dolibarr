@@ -668,15 +668,16 @@ function getGMTEasterDatetime($year)
  *
  *  @param	int			$timestampStart		Timestamp start (UTC with hour, min, sec = 0)
  *  @param	int			$timestampEnd		Timestamp end (UTC with hour, min, sec = 0)
- *  @param	string			$country_code		Country code
- *  @param	int			$lastday		Last day is included, 0: no, 1:yes
+ *  @param	string		$country_code		Country code
+ *  @param	int			$lastday			Last day is included, 0: no, 1:yes
  *  @param	int			$includesaturday	Include saturday as non working day (-1=use setup, 0=no, 1=yes)
  *  @param	int			$includesunday		Include sunday as non working day (-1=use setup, 0=no, 1=yes)
  *  @param	int			$includefriday		Include friday as non working day (-1=use setup, 0=no, 1=yes)
- *  @return	int|string					Number of non working days or error message string if error
+ *  @param	int			$includemonday		Include monday as non working day (-1=use setup, 0=no, 1=yes)
+ *  @return	int|string						Number of non working days or error message string if error
  *  @see num_between_day(), num_open_day()
  */
-function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', $lastday = 0, $includesaturday = -1, $includesunday = -1, $includefriday = -1)
+function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', $lastday = 0, $includesaturday = -1, $includesunday = -1, $includefriday = -1, $includemonday = -1)
 {
 	global $db, $conf, $mysoc;
 
@@ -689,6 +690,9 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 
 	if (empty($country_code)) {
 		$country_code = $mysoc->country_code;
+	}
+	if ($includemonday < 0) {
+		$includemonday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY : 0);
 	}
 	if ($includefriday < 0) {
 		$includefriday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY : 0);

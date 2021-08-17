@@ -100,7 +100,7 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *
 	 *	@param	   string	    $code		      Value to encode
 	 *	@param	   string	    $encoding	      Mode of encoding
-	 *	@param	   string	    $readable	      Code can be read
+	 *	@param	   string	    $readable	      Code can be read (What is this ? is this used ?)
 	 *	@param	   integer		$scale			  Scale (not used with this engine)
 	 *  @param     integer      $nooutputiferror  No output if error (not used with this engine)
 	 *	@return	   int			                  <0 if KO, >0 if OK

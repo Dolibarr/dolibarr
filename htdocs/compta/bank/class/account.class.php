@@ -399,9 +399,9 @@ class Account extends CommonObject
 	/**
 	 *      Add a link between bank line record and its source
 	 *
-	 *      @param	int		$line_id    Id ecriture bancaire
-	 *      @param  int		$url_id     Id parametre url
-	 *      @param  string	$url        Url
+	 *      @param	int		$line_id    Id of bank entry
+	 *      @param  int		$url_id     Id of object related to link
+	 *      @param  string	$url        Url (deprecated, we use now 'url_id' and 'type' instead)
 	 *      @param  string	$label      Link label
 	 *      @param  string	$type       Type of link ('payment', 'company', 'member', ...)
 	 *      @return int         		<0 if KO, id line if OK
@@ -412,13 +412,13 @@ class Account extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_url (";
 		$sql .= "fk_bank";
 		$sql .= ", url_id";
-		$sql .= ", url";
+		$sql .= ", url";		// deprecated
 		$sql .= ", label";
 		$sql .= ", type";
 		$sql .= ") VALUES (";
 		$sql .= " ".((int) $line_id);
-		$sql .= ", '".$this->db->escape($url_id)."'";
-		$sql .= ", '".$this->db->escape($url)."'";
+		$sql .= ", ".((int) $url_id);
+		$sql .= ", '".$this->db->escape($url)."'";		// dperecated
 		$sql .= ", '".$this->db->escape($label)."'";
 		$sql .= ", '".$this->db->escape($type)."'";
 		$sql .= ")";
@@ -829,8 +829,8 @@ class Account extends CommonObject
 		$sql .= ",min_desired = ".($this->min_desired != '' ? price2num($this->min_desired) : "null");
 		$sql .= ",comment     = '".$this->db->escape($this->comment)."'";
 
-		$sql .= ",state_id = ".($this->state_id > 0 ? $this->state_id : "null");
-		$sql .= ",fk_pays = ".($this->country_id > 0 ? $this->country_id : "null");
+		$sql .= ",state_id = ".($this->state_id > 0 ? ((int) $this->state_id) : "null");
+		$sql .= ",fk_pays = ".($this->country_id > 0 ? ((int) $this->country_id) : "null");
 		$sql .= ",ics = '".$this->db->escape($this->ics)."'";
 		$sql .= ",ics_transfer = '".$this->db->escape($this->ics_transfer)."'";
 
@@ -1519,6 +1519,12 @@ class Account extends CommonObject
 	 */
 	public function needIBAN()
 	{
+		global $conf;
+
+		if (!empty($conf->global->MAIN_IBAN_IS_NEVER_MANDATORY)) {
+			return 0;
+		}
+
 		$country_code = $this->getCountryCode();
 
 		$country_code_in_EEC = array(

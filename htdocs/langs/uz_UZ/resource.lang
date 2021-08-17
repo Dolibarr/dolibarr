@@ -5,7 +5,7 @@ DeleteResource=Resursni o'chirish
 ConfirmDeleteResourceElement=Ushbu element uchun manbani o'chirishni tasdiqlang
 NoResourceInDatabase=Ma'lumotlar bazasida manba yo'q.
 NoResourceLinked=Hech qanday manbaga ulanmagan
-ActionsOnResource=Events about this resource
+ActionsOnResource=Ushbu manbaga oid tadbirlar
 ResourcePageIndex=Resurslar ro'yxati
 ResourceSingular=Manba
 ResourceCard=Resurs kartasi
@@ -30,10 +30,10 @@ DictionaryResourceType=Resurslar turi
 
 SelectResource=Resursni tanlang
 
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
-ImportDataset_resource_1=Resources
+IdResource=Id resursi
+AssetNumber=Ishlab chiqarish raqami
+ResourceTypeCode=Resurs turi kodi
+ImportDataset_resource_1=Resurslar
 
-ErrorResourcesAlreadyInUse=Some resources are in use
-ErrorResourceUseInEvent=%s used in %s event
+ErrorResourcesAlreadyInUse=Ba'zi manbalardan foydalanilmoqda
+ErrorResourceUseInEvent=%s tadbirida ishlatiladigan %s

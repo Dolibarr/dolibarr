@@ -127,4 +127,4 @@ AllowDelayedPayment=Tillat forsinket betaling
 PrintPaymentMethodOnReceipts=Skriv ut betalingsmåte på billetter/kvitteringer
 WeighingScale=Vektskala
 ShowPriceHT = Display the column with the price excluding tax (on screen)
-ShowPriceHTOnReceipt = Display the column with the price excluding tax (on receipt)
+ShowPriceHTOnReceipt = Display the column with the price excluding tax (on the receipt)

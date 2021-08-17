@@ -428,6 +428,10 @@ create table llx_eventorganization_conferenceorboothattendee_extrafields
 ALTER TABLE llx_eventorganization_conferenceorboothattendee_extrafields ADD INDEX idx_conferenceorboothattendee_fk_object(fk_object);
 
 ALTER TABLE llx_c_ticket_category ADD COLUMN public integer DEFAULT 0;
+
+-- VPGSQL8.2 ALTER TABLE llx_c_ticket_category ALTER COLUMN pos TYPE INTEGER USING pos::INTEGER;
+-- VPGSQL8.2 ALTER TABLE llx_c_ticket_category ALTER COLUMN pos SET NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_c_ticket_category ALTER COLUMN pos SET DEFAULT 0;
 ALTER TABLE llx_c_ticket_category MODIFY COLUMN pos	integer DEFAULT 0 NOT NULL;
 
 
@@ -565,3 +569,32 @@ create table llx_c_partnership_type
 )ENGINE=innodb;
 
 DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
+
+
+CREATE TABLE llx_ecm_directories_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                             -- import key
+) ENGINE=innodb;
+
+DROP TABLE llx_categorie_association;
+DROP TABLE llx_cond_reglement;
+DROP TABLE llx_zapier_hook_extrafields;
+
+create table llx_onlinesignature
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  entity                    integer DEFAULT 1 NOT NULL,
+  object_type               varchar(32) NOT NULL,
+  object_id					integer NOT NULL,
+  datec                     datetime NOT NULL,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  name						varchar(255) NOT NULL,
+  ip						varchar(128),
+  pathoffile				varchar(255)
+)ENGINE=innodb;
+
+-- VMYSQL4.3 ALTER TABLE llx_partnership MODIFY COLUMN date_partnership_end date NULL;
+-- VPGSQL8.2 ALTER TABLE llx_partnership ALTER COLUMN date_partnership_end DROP NOT NULL;
