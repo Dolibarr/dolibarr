@@ -112,7 +112,7 @@ $usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->
 
 // Additional area permissions
 $usercanclose = $user->rights->supplier_proposal->cloturer;
-$usercancreateorder = $user->rights->fournisseur->commande->creer;
+$usercancreateorder = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
 
 // Permissions for includes
 $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
@@ -552,16 +552,16 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($prod_entry_mode == 'free' && empty($idprod) && GETPOST('type') < 0) {
+		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && GETPOST('type') < 0) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 			$error++;
 		}
 
-		if ($prod_entry_mode == 'free' && empty($idprod) && GETPOST('price_ht') === '' && GETPOST('price_ttc') === '' && $price_ht_devise === '') { 	// Unit price can be 0 but not ''. Also price can be negative for proposal.
+		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && GETPOST('price_ht') === '' && GETPOST('price_ttc') === '' && $price_ht_devise === '') { 	// Unit price can be 0 but not ''. Also price can be negative for proposal.
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPrice")), null, 'errors');
 			$error++;
 		}
-		if ($prod_entry_mode == 'free' && empty($idprod) && empty($product_desc)) {
+		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && empty($product_desc)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")), null, 'errors');
 			$error++;
 		}
@@ -1035,10 +1035,9 @@ if (empty($reshook)) {
 /*
  * View
  */
-
+$title = $langs->trans('CommRequest')." - ".$langs->trans('Card');
 $help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
-
-llxHeader('', $langs->trans('CommRequests'), $help_url);
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -1743,7 +1742,7 @@ if ($action == 'create') {
 	// Show object lines
 	$result = $object->getLinesArray();
 
-	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid')).'" method="POST">
+	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
 	<input type="hidden" name="token" value="' . newToken().'">
 	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 	<input type="hidden" name="mode" value="">
@@ -1773,10 +1772,12 @@ if ($action == 'create') {
 	if ($object->statut == SupplierProposal::STATUS_DRAFT && $usercancreate) {
 		if ($action != 'editline') {
 			// Add products/services form
-			$object->formAddObjectLine($dateSelector, $soc, $mysoc);
 
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			if (empty($reshook))
+				$object->formAddObjectLine($dateSelector, $soc, $mysoc);
 		}
 	}
 
@@ -1859,9 +1860,9 @@ if ($action == 'create') {
 				}
 
 				// Create an order
-				if (!empty($conf->fournisseur->enabled) && $object->statut == SupplierProposal::STATUS_SIGNED) {
+				if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) && $object->statut == SupplierProposal::STATUS_SIGNED) {
 					if ($usercancreateorder) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddOrder").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddSupplierOrderShort").'</a></div>';
 					}
 				}
 

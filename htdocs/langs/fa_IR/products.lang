@@ -43,7 +43,7 @@ ServicesOnSaleOnly=خدمات فقط برای فروش
 ServicesOnPurchaseOnly=خدمات فقط برای خرید
 ServicesNotOnSell=خدمات نه برای خرید و نه برای فروش
 ServicesOnSellAndOnBuy=خدمات هم برای خرید و هم برای فروش
-LastModifiedProductsAndServices=Latest %s modified products/services
+LastModifiedProductsAndServices=Latest %s products/services which were modified
 LastRecordedProducts=آخرین %s محصول ثبت شده
 LastRecordedServices=آخرین %s خدمات ثبت شده
 CardProduct0=محصول
@@ -73,12 +73,12 @@ SellingPrice=قیمت فروش
 SellingPriceHT=قیمت فروش (منهای مالیات)
 SellingPriceTTC=قیمت فروش (با مالیات)
 SellingMinPriceTTC=حداقل قیمت فروش (با مالیات)
-CostPriceDescription=این بخش قیمت(بدون مالیات) است که می‌تواند برای ذخیرۀ مبلغ متوسطی که این محصول برای شرکت شما هزینه وارد می‌کند استفاده شود. این می‌تواند هر قیمتی که شما محاسبه‌کنید باشد، برای مثال از جمع متوسط قیمت خرید و هزینه تولید و توزیع.
+CostPriceDescription=This price field (excl. tax) can be used to capture the average amount this product costs to your company. It may be any price you calculate yourself, for example, from the average buying price plus average production and distribution cost.
 CostPriceUsage=این مقدار برای محاسبۀ حاشیه قابل استفاده است.
 SoldAmount=مبلغ فروخته‌شده
 PurchasedAmount=مبلغ خریده شده
 NewPrice=قیمت جدید
-MinPrice=حداقل قیمت فروش
+MinPrice=Min. selling price
 EditSellingPriceLabel=ویرایش برچسب قیمت فروش
 CantBeLessThanMinPrice=قیمت فروش نمی تواند کمتر از حداقل مجاز برای این محصول (%s بدون مالیات) باشد. این پیام همچنین در موقعی ظاهر می‌شود که شما یک تخفیف بسیار جدی داده باشید.
 ContractStatusClosed=بسته
@@ -141,6 +141,7 @@ VATRateForSupplierProduct=نرخ م.ب.ا.ا. (برای این فروشنده/م
 DiscountQtyMin=تخفیف برای این مقدار
 NoPriceDefinedForThisSupplier=قیمت/مقدار برای این فروشنده/محصول تعریف نشده است
 NoSupplierPriceDefinedForThisProduct=قیمت/مقدار برای این محصول تعریف نشده است
+PredefinedItem=Predefined item
 PredefinedProductsToSell=محصول ازپیش‌تعریف‌شده
 PredefinedServicesToSell=خدمات از پیش‌تعریف‌شده
 PredefinedProductsAndServicesToSell=محصول/خدمات از پیش‌تعریف‌شده برای فروش
@@ -156,11 +157,11 @@ ListServiceByPopularity=فهرست خدمات بر حسب محبوبیت
 Finished=محصول تولیدشده
 RowMaterial=مواد اولیه
 ConfirmCloneProduct=آیا مطمئنید می‌خواهید از خدمات یا محصولات <b>%s</b> نسخه‌برداری کنید؟
-CloneContentProduct=نسخه‌برداری از از همۀ اطلاعات اصلی محصول/خدما
+CloneContentProduct=Clone all main information of the product/service
 ClonePricesProduct=نسخه‌برداری از قیمت‌ها
-CloneCategoriesProduct=Clone tags/categories linked
-CloneCompositionProduct=نسخه‌برداری از محصول/خدمات مجازی
-CloneCombinationsProduct=نسخه‌برداری از انواع مختلف محصول
+CloneCategoriesProduct=Clone linked tags/categories
+CloneCompositionProduct=Clone virtual products/services
+CloneCombinationsProduct=Clone the product variants
 ProductIsUsed=این محصول، دست‌دوم است
 NewRefForClone=ارجاع محصول/خدمات جدید
 SellingPrices=قیمت‌های فروش
@@ -169,12 +170,12 @@ CustomerPrices=قیمت‌های مشتری
 SuppliersPrices=قیمت‌های فروشنده
 SuppliersPricesOfProductsOrServices=قیمت‌های فروشنده (مربوط به محصولات و خدمات)
 CustomCode=Customs|Commodity|HS code
-CountryOrigin=کشور مبدا
-RegionStateOrigin=Region origin
-StateOrigin=State|Province origin
-Nature=Nature of product (material/finished)
+CountryOrigin=Country of origin
+RegionStateOrigin=Region of origin
+StateOrigin=State|Province of origin
+Nature=Nature of product (raw/manufactured)
 NatureOfProductShort=Nature of product
-NatureOfProductDesc=Raw material or finished product
+NatureOfProductDesc=Raw material or manufactured product
 ShortLabel=برچسب کوتاه
 Unit=واحد
 p=واحد
@@ -276,7 +277,7 @@ PriceByCustomer=قیمت متفاوت برای هر مشتری
 PriceCatalogue=یک قیمت واحد برای هر محصول/خدمات
 PricingRule=مقررات قیمت‌های فروش
 AddCustomerPrice=افزودن قیمت برحسب مشتری
-ForceUpdateChildPriceSoc=تنظیم قیمت تعیین شده برای مشتری برای زیرمجموعه‌های آن
+ForceUpdateChildPriceSoc=Set same price on customer's subsidiaries
 PriceByCustomerLog=ثبت‌گزارش همۀ قیمت‌های قبلی مربوط به مشتری
 MinimumPriceLimit=حداقل قیمت نمی‌تواند کمتر از %s باشد
 MinimumRecommendedPrice=حداقل قیمت پیشنهادی برابر است با: %s
@@ -295,6 +296,7 @@ ComposedProductIncDecStock=کم/زیاد کردن موجودی در هنگام �
 ComposedProduct=محصولات فرزند
 MinSupplierPrice=حداقل قیمت خرید
 MinCustomerPrice=حداقل قیمت فروش
+NoDynamicPrice=No dynamic price
 DynamicPriceConfiguration=پیکربندی قیمت پویا
 DynamicPriceDesc=شما می‌توانید فرمول ریاضی برای محاسبۀ قیمت‌های مشتری یا فروشنده تعریف کنید. چنین فرمول‌هائی امکان استفاده از عمل‌گرهای ریاضی را بعلاوۀ تعداد مقدارثابت و متغیر دارند. شما می‌توانید در اینجا متغیرهائی که برای استفاده نیاز دارید تعریف کنید. در صورتی که متغیر نیازمند به‌روز‌رسانی خودکار باشد، شما باید نشانی خارجی متعلق به آن را برای به‌روز‌رسانی خودکار مقدار آن به Dolibarr بدهید
 AddVariable=افزودن متغیر
@@ -313,7 +315,7 @@ LastUpdated=آخرین به‌روزرسانی
 CorrectlyUpdated=به‌درستی به‌روز‌شد
 PropalMergePdfProductActualFile=فایل‌های قابل استفاده برای اضافه کردن به PDF Azur
 PropalMergePdfProductChooseFile=انتخاب فایل‌های PDF
-IncludingProductWithTag=شامل‌کردن محصولات/خدمات به‌واسطۀ کلیدواژه
+IncludingProductWithTag=Include products/services with tag
 DefaultPriceRealPriceMayDependOnCustomer=قیمت پیش‌فرض، قیمت واقعی ممکن است به مشتری وابسته باشد.
 WarningSelectOneDocument=لطفا حداقل یک سند انتخاب کنید
 DefaultUnitToShow=واحد
@@ -395,3 +397,5 @@ ActionAvailableOnVariantProductOnly=این کنش تنها بر روی یک نو
 ProductsPricePerCustomer=قیمت محصول وابسته به مشتریان
 ProductSupplierExtraFields=Additional Attributes (Supplier Prices)
 DeleteLinkedProduct=Delete the child product linked to the combination
+PMPValue=قیمت میانگین متوازن
+PMPValueShort=قیمت میانگین وزنی

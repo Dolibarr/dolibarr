@@ -60,6 +60,9 @@ if ($id) {
 	|| (($user->id != $id) && $user->rights->user->user->password));
 }
 
+$permissiontoadd = $caneditfield;
+$permtoedit = $caneditfield;
+
 // Security check
 $socid = 0;
 if ($user->socid > 0) {
@@ -174,12 +177,9 @@ if ($object->id) {
 
 	print dol_get_fiche_end();
 
-
 	$modulepart = 'user';
-	$permission = $user->rights->user->user->creer;
-	$permtoedit = $user->rights->user->user->creer;
 	$param = '&id='.$object->id;
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	accessforbidden('', 0, 1);
 }

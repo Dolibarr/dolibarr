@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@uers.sourceforge.net>
+ * Copyright (C) 2005-2021 Laurent Destailleur  <eldy@uers.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014	   Florian Henry        <florian.henry@open-concept.pro>
  *
@@ -68,6 +68,8 @@ $modulesdir = dolGetModulesDirs('/mailings');
 $object = new Mailing($db);
 $result = $object->fetch($id);
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('ciblescard', 'globalcard'));
 
 // Security check
 if (!$user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
@@ -104,9 +106,7 @@ if ($action == 'add') {
 	}
 	if ($result > 0) {
 		setEventMessages($langs->trans("XTargetsAdded", $result), null, 'mesgs');
-
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-		exit;
+		$action = '';
 	}
 	if ($result == 0) {
 		setEventMessages($langs->trans("WarningNoEMailsAdded"), null, 'warnings');
@@ -167,7 +167,7 @@ if (GETPOST('exportcsv', 'int')) {
 
 if ($action == 'delete') {
 	// Ici, rowid indique le destinataire et id le mailing
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid=".$rowid;
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid = ".((int) $rowid);
 	$resql = $db->query($sql);
 	if ($resql) {
 		if (!empty($id)) {
@@ -337,6 +337,7 @@ if ($object->fetch($id) >= 0) {
 			if (is_resource($handle)) {
 				while (($file = readdir($handle)) !== false) {
 					if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS') {
+						$reg = array();
 						if (preg_match("/(.*)\.modules\.php$/i", $file, $reg)) {
 							if ($reg[1] == 'example') {
 								continue;
@@ -440,6 +441,10 @@ if ($object->fetch($id) >= 0) {
 			}
 		}	// End foreach dir
 
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+
 		print '</div>';
 
 		print '<br><br>';
@@ -530,9 +535,9 @@ if ($object->fetch($id) >= 0) {
 
 		$morehtmlcenter = '';
 		if ($allowaddtarget) {
-			$morehtmlcenter = '<span class="opacitymedium">'.$langs->trans("ToClearAllRecipientsClickHere").'</span> <a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition">'.$langs->trans("TargetsReset").'</a>';
+			$morehtmlcenter = '<span class="opacitymedium">'.$langs->trans("ToClearAllRecipientsClickHere").'</span> <a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition smallpaddingimp">'.$langs->trans("TargetsReset").'</a>';
 		}
-		$morehtmlcenter .= ' <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?exportcsv=1&id='.$object->id.'">'.$langs->trans("Download").'</a>';
+		$morehtmlcenter .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?exportcsv=1&id='.$object->id.'">'.$langs->trans("Download").'</a>';
 
 		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit);
 
@@ -655,21 +660,21 @@ if ($object->fetch($id) >= 0) {
 				print '</td>';
 
 				// Date last update
-				print '<td class="center">';
+				print '<td class="center nowraponall">';
 				print dol_print_date($obj->tms, 'dayhour');
 				print '</td>';
 
 				// Status of recipient sending email (Warning != status of emailing)
 				if ($obj->statut == 0) {
 					// Date sent
-					print '<td align="center">&nbsp;</td>';
+					print '<td align="center"></td>';
 
 					print '<td class="nowrap right">';
 					print $object::libStatutDest($obj->statut, 2, '');
 					print '</td>';
 				} else {
 					// Date sent
-					print '<td class="center">'.$obj->date_envoi.'</td>';
+					print '<td class="center nowraponall">'.$obj->date_envoi.'</td>';
 
 					print '<td class="nowrap right">';
 					print $object::libStatutDest($obj->statut, 2, $obj->error_text);
@@ -678,8 +683,9 @@ if ($object->fetch($id) >= 0) {
 
 				// Search Icon
 				print '<td class="right">';
+				print '<!-- ID mailing_cibles = '.$obj->rowid.' -->';
 				if ($obj->statut == 0) {	// Not sent yet
-					if ($user->rights->mailing->creer && $allowaddtarget) {
+					if (!empty($user->rights->mailing->creer) && $allowaddtarget) {
 						print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.$obj->rowid.$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';
 					}
 				}

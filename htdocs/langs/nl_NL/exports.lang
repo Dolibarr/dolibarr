@@ -53,7 +53,8 @@ TypeOfLineServiceOrProduct=Type van de regel (0=product, 1=dienst)
 FileWithDataToImport=Bestand met te importeren gegevens
 FileToImport=Te importeren bronbestand
 FileMustHaveOneOfFollowingFormat=Het te importeren bestand moet een van de volgende indelingen hebben
-DownloadEmptyExample=Sjabloonbestand downloaden met veldinhoudsinformatie (* zijn verplichte velden)
+DownloadEmptyExample=Download template file with field content information
+StarAreMandatory=* are mandatory fields
 ChooseFormatOfFileToImport=Kies de bestandsindeling die u als importbestandsindeling wilt gebruiken door op het pictogram %s te klikken om deze te selecteren ...
 ChooseFileToImport=Upload het bestand en klik vervolgens op het pictogram %s om het bestand te selecteren als bronimportbestand ...
 SourceFileFormat=Bestandsformaat van het bronbestand

@@ -61,7 +61,7 @@ $modules = array(
 $conditions = array(
 	'SOCIETE' => 1,
 	'PRODUCTDESC' => (!empty($conf->product->enabled) || !empty($conf->service->enabled)),
-	'DETAILS' => (!empty($conf->facture->enabled) || !empty($conf->propal->enabled) || !empty($conf->commande->enabled) || !empty($conf->supplier_proposal->enabled) || !empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)),
+	'DETAILS' => (!empty($conf->facture->enabled) || !empty($conf->propal->enabled) || !empty($conf->commande->enabled) || !empty($conf->supplier_proposal->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)),
 	'USERSIGN' => 1,
 	'MAILING' => !empty($conf->mailing->enabled),
 	'MAIL' => (!empty($conf->facture->enabled) || !empty($conf->propal->enabled) || !empty($conf->commande->enabled)),
@@ -117,7 +117,7 @@ if (GETPOST('save', 'alpha')) {
 		$error++;
 	}
 
-	$fckeditor_test = GETPOST('formtestfield');
+	$fckeditor_test = GETPOST('formtestfield', 'restricthtml');
 	if (!empty($fckeditor_test)) {
 		if (!dolibarr_set_const($db, 'FCKEDITOR_TEST', $fckeditor_test, 'chaine', 0, '', $conf->entity)) {
 			$error++;

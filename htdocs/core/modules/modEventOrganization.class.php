@@ -224,7 +224,8 @@ class modEventOrganization extends DolibarrModules
 
 		// Permissions provided by this module
 		$this->rights = array();
-		$r = 0;
+		$r = 1;
+
 		// Add here entries to declare new permissions
 		/* BEGIN MODULEBUILDER PERMISSIONS */
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
@@ -267,7 +268,7 @@ class modEventOrganization extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=project,fk_leftmenu=eventorganization',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',			                // This is a Left menu entry
 			'titre'=>'List',
-			'url'=>'/projet/list.php?search_usage_event_organization=1&mainmenu=project&contextpage=organizedevents',
+			'url'=>'/projet/list.php?search_usage_event_organization=1&search_status=99&mainmenu=project&contextpage=organizedevents',
 			'langs'=>'eventorganization@eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000+$r,
 			'enabled'=>'$conf->eventorganization->enabled',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.

@@ -109,6 +109,11 @@ class Entrepot extends CommonObject
 	public $fk_parent;
 
 	/**
+	 * @var int ID of project
+	 */
+	public $fk_project;
+
+	/**
 	 * @var array List of short language codes for status
 	 */
 	public $statuts = array();
@@ -122,8 +127,9 @@ class Entrepot extends CommonObject
 		'ref' =>array('type'=>'varchar(255)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'showoncombobox'=>1, 'position'=>25, 'searchall'=>1),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>30),
 		'description' =>array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-2, 'position'=>35, 'searchall'=>1),
-		'lieu' =>array('type'=>'varchar(64)', 'label'=>'LocationSummary', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'showoncombobox'=>1, 'searchall'=>1),
+		'lieu' =>array('type'=>'varchar(64)', 'label'=>'LocationSummary', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'showoncombobox'=>2, 'searchall'=>1),
 		'fk_parent' =>array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:1:statut=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ParentWarehouse', 'enabled'=>1, 'visible'=>-2, 'position'=>41),
+		'fk_project' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
 		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-2, 'position'=>45, 'searchall'=>1),
 		'zip' =>array('type'=>'varchar(10)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>-2, 'position'=>50, 'searchall'=>1),
 		'town' =>array('type'=>'varchar(50)', 'label'=>'Town', 'enabled'=>1, 'visible'=>-2, 'position'=>55, 'searchall'=>1),
@@ -167,7 +173,7 @@ class Entrepot extends CommonObject
 
 		$this->statuts[self::STATUS_CLOSED] = 'Closed2';
 		if (!empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
-			$this->statuts[self::STATUS_OPEN_ALL] = 'OpenAll';
+			$this->statuts[self::STATUS_OPEN_ALL] = 'OpenAnyMovement';
 			$this->statuts[self::STATUS_OPEN_INTERNAL] = 'OpenInternal';
 		} else {
 			$this->statuts[self::STATUS_OPEN_ALL] = 'Opened';
@@ -198,8 +204,8 @@ class Entrepot extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (ref, entity, datec, fk_user_author, fk_parent)";
-		$sql .= " VALUES ('".$this->db->escape($this->label)."', ".$conf->entity.", '".$this->db->idate($now)."', ".$user->id.", ".($this->fk_parent > 0 ? $this->fk_parent : "NULL").")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (ref, entity, datec, fk_user_author, fk_parent, fk_project)";
+		$sql .= " VALUES ('".$this->db->escape($this->label)."', ".$conf->entity.", '".$this->db->idate($now)."', ".$user->id.", ".($this->fk_parent > 0 ? $this->fk_parent : "NULL").", ".($this->fk_project > 0 ? $this->fk_project : "NULL").")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -287,16 +293,17 @@ class Entrepot extends CommonObject
 		$this->town = trim($this->town);
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : 0);
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot";
 		$sql .= " SET ref = '".$this->db->escape($this->label)."'";
 		$sql .= ", fk_parent = ".(($this->fk_parent > 0) ? $this->fk_parent : "NULL");
+		$sql .= ", fk_project = ".(($this->fk_project > 0) ? $this->fk_project : "NULL");
 		$sql .= ", description = '".$this->db->escape($this->description)."'";
-		$sql .= ", statut = ".$this->statut;
+		$sql .= ", statut = ".((int) $this->statut);
 		$sql .= ", lieu = '".$this->db->escape($this->lieu)."'";
 		$sql .= ", address = '".$this->db->escape($this->address)."'";
 		$sql .= ", zip = '".$this->db->escape($this->zip)."'";
 		$sql .= ", town = '".$this->db->escape($this->town)."'";
-		$sql .= ", fk_pays = ".$this->country_id;
+		$sql .= ", fk_pays = ".((int) $this->country_id);
 		$sql .= ", phone = '".$this->db->escape($this->phone)."'";
 		$sql .= ", fax = '".$this->db->escape($this->fax)."'";
 		$sql .= " WHERE rowid = ".((int) $id);
@@ -432,7 +439,7 @@ class Entrepot extends CommonObject
 			return -1;
 		}
 
-		$sql  = "SELECT rowid, entity, fk_parent, ref as label, description, statut, lieu, address, zip, town, fk_pays as country_id, phone, fax,";
+		$sql  = "SELECT rowid, entity, fk_parent, fk_project, ref as label, description, statut, lieu, address, zip, town, fk_pays as country_id, phone, fax,";
 		$sql .= " model_pdf, import_key";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
 		if ($id) {
@@ -452,6 +459,7 @@ class Entrepot extends CommonObject
 				$this->id             = $obj->rowid;
 				$this->entity         = $obj->entity;
 				$this->fk_parent      = $obj->fk_parent;
+				$this->fk_project     = $obj->fk_project;
 				$this->ref            = $obj->label;
 				$this->label          = $obj->label;
 				$this->libelle        = $obj->label; // deprecated
@@ -602,15 +610,31 @@ class Entrepot extends CommonObject
 	 */
 	public function nb_products()
 	{
+		global $conf;
 		// phpcs:enable
 		$ret = array();
 
-		$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * p.pmp) as value";
+		//For MultiCompany PMP per entity
+		$separatedPMP = false;
+		if (!empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED) && !empty($conf->global->MULTICOMPANY_PMP_PER_ENTITY_ENABLED)) {
+			$separatedPMP = true;
+		}
+
+		if ($separatedPMP) {
+			$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * pa.pmp) as value";
+		} else {
+			$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * p.pmp) as value";
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
 		$sql .= ", ".MAIN_DB_PREFIX."product as p";
+		if ($separatedPMP) {
+			$sql .= ", ".MAIN_DB_PREFIX."product_perentity as pa";
+		}
 		$sql .= " WHERE ps.fk_entrepot = ".$this->id;
+		if ($separatedPMP) {
+			$sql .= " AND pa.fk_product = p.rowid AND pa.entity = ". (int) $conf->entity;
+		}
 		$sql .= " AND ps.fk_product = p.rowid";
-
 		//print $sql;
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -666,13 +690,15 @@ class Entrepot extends CommonObject
 	/**
 	 *	Return clickable name (possibility with the pictogram)
 	 *
-	 *	@param		int		$withpicto		with pictogram
-	 *	@param		string	$option			Where the link point to
-	 *  @param      int     $showfullpath   0=Show ref only. 1=Show full path instead of Ref (this->fk_parent must be defined)
-	 *  @param	    int   	$notooltip		1=Disable tooltip
-	 *	@return		string					String with URL
+	 *	@param		int		$withpicto				with pictogram
+	 *	@param		string	$option					Where the link point to
+	 *  @param      int     $showfullpath   		0=Show ref only. 1=Show full path instead of Ref (this->fk_parent must be defined)
+	 *  @param	    int   	$notooltip				1=Disable tooltip
+	 *  @param  	string  $morecss            	Add more css on link
+	 *  @param  	int     $save_lastsearch_value  -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return		string							String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $showfullpath = 0, $notooltip = 0)
+	public function getNomUrl($withpicto = 0, $option = '', $showfullpath = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $conf, $langs, $hookmanager;
 		$langs->load("stocks");
@@ -697,6 +723,17 @@ class Entrepot extends CommonObject
 		}
 
 		$url = DOL_URL_ROOT.'/product/stock/card.php?id='.$this->id;
+
+		if ($option != 'nolink') {
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
+		}
 
 		$linkclose = '';
 		if (empty($notooltip)) {

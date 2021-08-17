@@ -211,14 +211,14 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'recruitment';
-	$permission = $user->rights->recruitment->recruitmentjobposition->write;
+	$permissiontoadd = $user->rights->recruitment->recruitmentjobposition->write;
 	$permtoedit = $user->rights->recruitment->recruitmentjobposition->write;
 	$param = '&id='.$object->id;
 
 	//$relativepathwithnofile='recruitmentjobposition/' . dol_sanitizeFileName($object->id).'/';
 	$relativepathwithnofile = 'recruitmentjobposition/'.dol_sanitizeFileName($object->ref).'/';
 
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	accessforbidden('', 0, 1);
 }

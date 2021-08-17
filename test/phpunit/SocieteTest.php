@@ -84,15 +84,15 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		global $conf,$user,$langs,$db;
 
 		if ($conf->global->SOCIETE_CODECLIENT_ADDON != 'mod_codeclient_monkey') {
-			print "\n".__METHOD__." third party ref checker must be setup to 'mod_codeclient_monkey' not to '".$conf->global->SOCIETE_CODECLIENT_ADDON."'.\n"; die();
+			print "\n".__METHOD__." third party ref checker must be setup to 'mod_codeclient_monkey' not to '".$conf->global->SOCIETE_CODECLIENT_ADDON."'.\n"; die(1);
 		}
 
 		if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) {
-			print "\n".__METHOD__." constant MAIN_DISABLEPROFIDRULES must be empty (if a module set it, disable module).\n"; die();
+			print "\n".__METHOD__." constant MAIN_DISABLEPROFIDRULES must be empty (if a module set it, disable module).\n"; die(1);
 		}
 
 		if ($langs->defaultlang != 'en_US') {
-			print "\n".__METHOD__." default language of company must be set to autodetect.\n"; die();
+			print "\n".__METHOD__." default language of company must be set to autodetect.\n"; die(1);
 		}
 
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -379,12 +379,41 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 
 
 	/**
-	 * testSocieteDelete
+	 * testGetOutstandingBills
 	 *
 	 * @param   int     $id     Id of company
 	 * @return  int
 	 *
 	 * @depends testSocieteOther
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testGetOutstandingBills($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$localobject=new Societe($this->savdb);
+		$localobject->fetch($id);
+
+		$result=$localobject->getOutstandingBills();
+
+		print __METHOD__." id=".$id." result=".var_export($result, true)."\n";
+		$this->assertTrue(array_key_exists('opened', $result), 'Result of getOutstandingBills failed');
+
+		return $id;
+	}
+
+
+	/**
+	 * testSocieteDelete
+	 *
+	 * @param   int     $id     Id of company
+	 * @return  int
+	 *
+	 * @depends testGetOutstandingBills
 	 * The depends says test is run only if previous is ok
 	 */
 	public function testSocieteDelete($id)

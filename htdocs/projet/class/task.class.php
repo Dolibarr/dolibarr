@@ -116,6 +116,7 @@ class Task extends CommonObject
 	public $timespent_datehour; // More accurate start date (same than timespent_date but includes hours, minutes and seconds)
 	public $timespent_withhour; // 1 = we entered also start hours for timesheet line
 	public $timespent_fk_user;
+	public $timespent_thm;
 	public $timespent_note;
 
 	public $comments = array();
@@ -274,7 +275,8 @@ class Task extends CommonObject
 		}
 		$sql .= " WHERE ";
 		if (!empty($ref)) {
-			$sql .= "t.ref = '".$this->db->escape($ref)."'";
+			$sql .= "entity IN (".getEntity('project').")";
+			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
 		} else {
 			$sql .= "t.rowid = ".((int) $id);
 		}
@@ -402,18 +404,20 @@ class Task extends CommonObject
 		if (!$error && !empty($conf->global->PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE)) {
 			// Close the parent project if it is open (validated) and its tasks are 100% completed
 			$project = new Project($this->db);
-			if ($project->fetch($this->fk_project) > 0 && $project->statut == Project::STATUS_VALIDATED) {
-				$project->getLinesArray(null); // this method does not return <= 0 if fails
-				$projectCompleted = array_reduce(
-					$project->lines,
-					function ($allTasksCompleted, $task) {
-						return $allTasksCompleted && $task->progress >= 100;
-					},
+			if ($project->fetch($this->fk_project) > 0) {
+				if ($project->statut == Project::STATUS_VALIDATED) {
+					$project->getLinesArray(null); // this method does not return <= 0 if fails
+					$projectCompleted = array_reduce(
+						$project->lines,
+						function ($allTasksCompleted, $task) {
+							return $allTasksCompleted && $task->progress >= 100;
+						},
 					1
-				);
-				if ($projectCompleted) {
-					if ($project->setClose($user) <= 0) {
-						$error++;
+					);
+					if ($projectCompleted) {
+						if ($project->setClose($user) <= 0) {
+							$error++;
+						}
 					}
 				}
 			} else {
@@ -851,7 +855,7 @@ class Task extends CommonObject
 			$sql .= " AND p.rowid = ec.element_id";
 			$sql .= " AND ctc.rowid = ec.fk_c_type_contact";
 			$sql .= " AND ctc.element = 'project'";
-			$sql .= " AND ec.fk_socpeople = ".$filteronprojuser;
+			$sql .= " AND ec.fk_socpeople = ".((int) $filteronprojuser);
 			$sql .= " AND ec.statut = 4";
 			$sql .= " AND ctc.source = 'internal'";
 		}
@@ -860,12 +864,12 @@ class Task extends CommonObject
 			$sql .= " AND p.rowid = ec2.element_id";
 			$sql .= " AND ctc2.rowid = ec2.fk_c_type_contact";
 			$sql .= " AND ctc2.element = 'project_task'";
-			$sql .= " AND ec2.fk_socpeople = ".$filterontaskuser;
+			$sql .= " AND ec2.fk_socpeople = ".((int) $filterontaskuser);
 			$sql .= " AND ec2.statut = 4";
 			$sql .= " AND ctc2.source = 'internal'";
 		}
 		if ($socid) {
-			$sql .= " AND p.fk_soc = ".$socid;
+			$sql .= " AND p.fk_soc = ".((int) $socid);
 		}
 		if ($projectid) {
 			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectid).")";
@@ -1155,6 +1159,18 @@ class Task extends CommonObject
 			$this->timespent_datehour = $this->timespent_date;
 		}
 
+		if (! empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
+
+			if ($this->timespent_date < $restrictBefore) {
+				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS);
+				$this->errors[] = $this->error;
+				return -1;
+			}
+		}
+
+
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task_time (";
@@ -1209,6 +1225,7 @@ class Task extends CommonObject
 				$ret = -2;
 			}
 
+			// Update hourly rate of this time spent entry
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time";
 			$sql .= " SET thm = (SELECT thm FROM ".MAIN_DB_PREFIX."user WHERE rowid = ".((int) $this->timespent_fk_user).")"; // set average hour rate of user
 			$sql .= " WHERE rowid = ".((int) $tasktime_id);
@@ -1349,9 +1366,9 @@ class Task extends CommonObject
 	}
 
 	/**
-	 *  Load one record of time spent
+	 *  Load properties of timespent of a task from the time spent ID.
 	 *
-	 *  @param	int		$id 	Id object
+	 *  @param	int		$id 	Id in time spent table
 	 *  @return int		        <0 if KO, >0 if OK
 	 */
 	public function fetchTimeSpent($id)
@@ -1422,6 +1439,7 @@ class Task extends CommonObject
 		$sql .= " ptt.task_duration,";
 		$sql .= " ptt.fk_user,";
 		$sql .= " ptt.note,";
+		$sql .= " ptt.thm,";
 		$sql .= " pt.rowid as task_id,";
 		$sql .= " pt.ref as task_ref,";
 		$sql .= " pt.label as task_label,";
@@ -1432,7 +1450,7 @@ class Task extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as ptt, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
 		$sql .= " WHERE ptt.fk_task = pt.rowid AND pt.fk_projet = p.rowid";
-		$sql .= " AND ptt.fk_user = ".$userobj->id;
+		$sql .= " AND ptt.fk_user = ".((int) $userobj->id);
 		$sql .= " AND pt.entity IN (".getEntity('project').")";
 		if ($morewherefilter) {
 			$sql .= $morewherefilter;
@@ -1468,6 +1486,7 @@ class Task extends CommonObject
 				$newobj->timespent_withhour = $obj->task_date_withhour;
 				$newobj->timespent_duration = $obj->task_duration;
 				$newobj->timespent_fk_user = $obj->fk_user;
+				$newobj->timespent_thm = $obj->thm;	// hourly rate
 				$newobj->timespent_note = $obj->note;
 
 				$arrayres[] = $newobj;
@@ -1516,16 +1535,27 @@ class Task extends CommonObject
 			$this->timespent_note = trim($this->timespent_note);
 		}
 
+		if (! empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
+
+			if ($this->timespent_date < $restrictBefore) {
+				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS);
+				$this->errors[] = $this->error;
+				return -1;
+			}
+		}
+
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time SET";
 		$sql .= " task_date = '".$this->db->idate($this->timespent_date)."',";
 		$sql .= " task_datehour = '".$this->db->idate($this->timespent_datehour)."',";
 		$sql .= " task_date_withhour = ".(empty($this->timespent_withhour) ? 0 : 1).",";
-		$sql .= " task_duration = ".$this->timespent_duration.",";
-		$sql .= " fk_user = ".$this->timespent_fk_user.",";
+		$sql .= " task_duration = ".((int) $this->timespent_duration).",";
+		$sql .= " fk_user = ".((int) $this->timespent_fk_user).",";
 		$sql .= " note = ".(isset($this->timespent_note) ? "'".$this->db->escape($this->timespent_note)."'" : "null");
-		$sql .= " WHERE rowid = ".$this->timespent_id;
+		$sql .= " WHERE rowid = ".((int) $this->timespent_id);
 
 		dol_syslog(get_class($this)."::updateTimeSpent", LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -1549,16 +1579,29 @@ class Task extends CommonObject
 		}
 
 		if ($ret == 1 && ($this->timespent_old_duration != $this->timespent_duration)) {
-			$newDuration = $this->timespent_duration - $this->timespent_old_duration;
-
+			// Recalculate amount of time spent for task and update denormalized field
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
 			$sql .= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".((int) $this->id).")";
+			if (isset($this->progress)) {
+				$sql .= ", progress = ".((float) $this->progress); // Do not overwrite value if not provided
+			}
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::updateTimeSpent", LOG_DEBUG);
 			if (!$this->db->query($sql)) {
 				$this->error = $this->db->lasterror();
 				$this->db->rollback();
+				$ret = -2;
+			}
+
+			// Update hourly rate of this time spent entry, but only if it was not set initialy
+			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time";
+			$sql .= " SET thm = (SELECT thm FROM ".MAIN_DB_PREFIX."user WHERE rowid = ".((int) $this->timespent_fk_user).")"; // set average hour rate of user
+			$sql .= " WHERE (thm IS NULL OR thm = 0) AND rowid = ".((int) $this->timespent_id);
+
+			dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->lasterror();
 				$ret = -2;
 			}
 		}
@@ -1581,6 +1624,17 @@ class Task extends CommonObject
 		global $conf, $langs;
 
 		$error = 0;
+
+		if (! empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
+
+			if ($this->timespent_date < $restrictBefore) {
+				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS);
+				$this->errors[] = $this->error;
+				return -1;
+			}
+		}
 
 		$this->db->begin();
 
@@ -1984,7 +2038,8 @@ class Task extends CommonObject
 		global $conf, $langs;
 
 		// For external user, no check is done on company because readability is managed by public status of project and assignement.
-		//$socid=$user->socid;
+		//$socid = $user->socid;
+		$socid = 0;
 
 		$projectstatic = new Project($this->db);
 		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
@@ -2005,10 +2060,7 @@ class Task extends CommonObject
 			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		}
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
-		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
-		if ($socid) {
-			$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
-		}
+		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 		// if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
 
@@ -2081,7 +2133,7 @@ class Task extends CommonObject
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 		if ($socid) {
-			$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+			$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 		}
 		if (!$user->rights->societe->client->voir && !$socid) {
 			$sql .= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id.") OR (s.rowid IS NULL))";
@@ -2117,7 +2169,7 @@ class Task extends CommonObject
 
 		$now = dol_now();
 
-		$datetouse = ($this->date_end > 0) ? $this->date_end : ($this->datee > 0 ? $this->datee : 0);
+		$datetouse = ($this->date_end > 0) ? $this->date_end : ((isset($this->datee) && $this->datee > 0) ? $this->datee : 0);
 
 		return ($datetouse > 0 && ($datetouse < ($now - $conf->projet->task->warning_delay)));
 	}

@@ -34,6 +34,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
@@ -56,6 +57,7 @@ class Categorie extends CommonObject
 	const TYPE_WAREHOUSE = 'warehouse';
 	const TYPE_ACTIONCOMM = 'actioncomm';
 	const TYPE_WEBSITE_PAGE = 'website_page';
+	const TYPE_TICKET = 'ticket';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -78,7 +80,8 @@ class Categorie extends CommonObject
 		'bank_line'    => 8,
 		'warehouse'    => 9,
 		'actioncomm'   => 10,
-		'website_page' => 11
+		'website_page' => 11,
+		'ticket'       => 12
 	);
 
 	/**
@@ -98,7 +101,8 @@ class Categorie extends CommonObject
 		8 => 'bank_line',
 		9 => 'warehouse',
 		10 => 'actioncomm',
-		11 => 'website_page'
+		11 => 'website_page',
+		12 => 'ticket'
 	);
 
 	/**
@@ -141,7 +145,8 @@ class Categorie extends CommonObject
 		'project'  => 'Project',
 		'warehouse'=> 'Entrepot',
 		'actioncomm' => 'ActionComm',
-		'website_page' => 'WebsitePage'
+		'website_page' => 'WebsitePage',
+		'ticket' => 'Ticket'
 	);
 
 	/**
@@ -234,6 +239,8 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_WAREHOUSE
 	 * @see Categorie::TYPE_ACTIONCOMM
 	 * @see Categorie::TYPE_WEBSITE_PAGE
+	 * @see Categorie::TYPE_TICKET
+
 	 */
 	public $type;
 
@@ -263,15 +270,16 @@ class Categorie extends CommonObject
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('constructCategory', $parameters, $this); // Note that $action and $object may have been modified by some hooks
 			if ($reshook >= 0 && !empty($hookmanager->resArray)) {
-				$mapList = $hookmanager->resArray;
-				$mapId   = $mapList['id'];
-				$mapCode = $mapList['code'];
-				self::$MAP_ID_TO_CODE[$mapId] = $mapCode;
-				$this->MAP_ID[$mapCode] = $mapId;
-				$this->MAP_CAT_FK[$mapCode] = $mapList['cat_fk'];
-				$this->MAP_CAT_TABLE[$mapCode] = $mapList['cat_table'];
-				$this->MAP_OBJ_CLASS[$mapCode] = $mapList['obj_class'];
-				$this->MAP_OBJ_TABLE[$mapCode] = $mapList['obj_table'];
+				foreach ($hookmanager->resArray as $mapList) {
+					$mapId = $mapList['id'];
+					$mapCode = $mapList['code'];
+					self::$MAP_ID_TO_CODE[$mapId] = $mapCode;
+					$this->MAP_ID[$mapCode] = $mapId;
+					$this->MAP_CAT_FK[$mapCode] = $mapList['cat_fk'];
+					$this->MAP_CAT_TABLE[$mapCode] = $mapList['cat_table'];
+					$this->MAP_OBJ_CLASS[$mapCode] = $mapList['obj_class'];
+					$this->MAP_OBJ_TABLE[$mapCode] = $mapList['obj_table'];
+				}
 			}
 		}
 	}
@@ -774,7 +782,7 @@ class Categorie extends CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type]);
 		$sql .= " WHERE fk_categorie = ".$this->id;
-		$sql .= " AND fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = ".$obj->id;
+		$sql .= " AND fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = ".((int) $obj->id);
 
 		dol_syslog(get_class($this).'::del_type', LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -897,6 +905,8 @@ class Categorie extends CommonObject
 
 		$categories = array();
 
+		$type = checkVal($type, 'aZ09');
+
 		$sub_type = $type;
 		$subcol_name = "fk_".$type;
 		if ($type == "customer") {
@@ -917,9 +927,9 @@ class Categorie extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as s";
 		$sql .= " , ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub ";
 		$sql .= ' WHERE s.entity IN ('.getEntity('category').')';
-		$sql .= ' AND s.type='.$idoftype;
+		$sql .= ' AND s.type='.((int) $idoftype);
 		$sql .= ' AND s.rowid = sub.fk_categorie';
-		$sql .= ' AND sub.'.$subcol_name.' = '.$id;
+		$sql .= ' AND sub.'.$subcol_name.' = '.((int) $id);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 
@@ -1301,7 +1311,7 @@ class Categorie extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as c ";
 		$sql .= " WHERE c.entity IN (".getEntity('category').")";
 		$sql .= " AND c.type = ".((int) $type);
-		$sql .= " AND c.fk_parent = ".$this->fk_parent;
+		$sql .= " AND c.fk_parent = ".((int) $this->fk_parent);
 		$sql .= " AND c.label = '".$this->db->escape($this->label)."'";
 
 		dol_syslog(get_class($this)."::already_exists", LOG_DEBUG);
@@ -1470,7 +1480,7 @@ class Categorie extends CommonObject
 			// Load bank categories
 			$sql = "SELECT c.label, c.rowid";
 			$sql .= " FROM ".MAIN_DB_PREFIX."bank_class as a, ".MAIN_DB_PREFIX."bank_categ as c";
-			$sql .= " WHERE a.lineid=".$id." AND a.fk_categ = c.rowid";
+			$sql .= " WHERE a.lineid=".((int) $id)." AND a.fk_categ = c.rowid";
 			$sql .= " AND c.entity IN (".getEntity('category').")";
 			$sql .= " ORDER BY c.label";
 
@@ -1495,7 +1505,10 @@ class Categorie extends CommonObject
 		} else {
 			$sql = "SELECT ct.fk_categorie, c.label, c.rowid";
 			$sql .= " FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type])." as ct, ".MAIN_DB_PREFIX."categorie as c";
-			$sql .= " WHERE ct.fk_categorie = c.rowid AND ct.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = ".(int) $id." AND c.type = ".$this->MAP_ID[$type];
+			$sql .= " WHERE ct.fk_categorie = c.rowid AND ct.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = ".(int) $id;
+			// This seems useless because the table already contains id of category of 1 unique type. So commented.
+			// So now it works also with external added categories.
+			//$sql .= " AND c.type = ".$this->MAP_ID[$type];
 			$sql .= " AND c.entity IN (".getEntity('category').")";
 
 			$res = $this->db->query($sql);
@@ -1550,7 +1563,7 @@ class Categorie extends CommonObject
 
 		// Generation requete recherche
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
-		$sql .= " WHERE type = ".$this->MAP_ID[$type];
+		$sql .= " WHERE type = ".((int) $this->MAP_ID[$type]);
 		$sql .= " AND entity IN (".getEntity('category').")";
 		if ($nom) {
 			if (!$exact) {

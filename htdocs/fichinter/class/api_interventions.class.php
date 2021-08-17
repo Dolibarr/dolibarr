@@ -110,6 +110,10 @@ class Interventions extends DolibarrApi
 	{
 		global $db, $conf;
 
+		if (!DolibarrApiAccess::$user->rights->ficheinter->lire) {
+			throw new RestException(401);
+		}
+
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
@@ -150,7 +154,7 @@ class Interventions extends DolibarrApi
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 

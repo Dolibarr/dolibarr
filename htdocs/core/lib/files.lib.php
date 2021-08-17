@@ -50,7 +50,7 @@ function dol_basename($pathfile)
  *  @param	array		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). Exclude is checked both into fullpath and into basename (So '^xxx' may exclude 'xxx/dirscanned/...' and dirscanned/xxx').
  *  @param	string		$sortcriteria	Sort criteria ('','fullname','relativename','name','date','size')
  *  @param	string		$sortorder		Sort order (SORT_ASC, SORT_DESC)
- *	@param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
+ *	@param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only, 4=Force load of perm
  *  @param	int			$nohook			Disable all hooks
  *  @param	string		$relativename	For recursive purpose only. Must be "" at first call.
  *  @param	string		$donotfollowsymlinks	Do not follow symbolic links
@@ -62,11 +62,14 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 	global $db, $hookmanager;
 	global $object;
 
-	dol_syslog("files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter));
-	//print 'xxx'."files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter);
+	if ($recursive <= 1) {	// Avoid too verbose log
+		dol_syslog("files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter));
+		//print 'xxx'."files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter);
+	}
 
 	$loaddate = ($mode == 1 || $mode == 2) ?true:false;
 	$loadsize = ($mode == 1 || $mode == 3) ?true:false;
+	$loadperm = ($mode == 1 || $mode == 4) ?true:false;
 
 	// Clean parameters
 	$path = preg_replace('/([\\/]+)$/i', '', $path);
@@ -132,7 +135,7 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 				if ($qualified) {
 					$isdir = is_dir(dol_osencode($path."/".$file));
 					// Check whether this is a file or directory and whether we're interested in that type
-					if ($isdir && (($types == "directories") || ($types == "all") || $recursive)) {
+					if ($isdir && (($types == "directories") || ($types == "all") || $recursive > 0)) {
 						// Add entry into file_list array
 						if (($types == "directories") || ($types == "all")) {
 							if ($loaddate || $sortcriteria == 'date') {
@@ -140,6 +143,9 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 							}
 							if ($loadsize || $sortcriteria == 'size') {
 								$filesize = dol_filesize($path."/".$file);
+							}
+							if ($loadperm || $sortcriteria == 'perm') {
+								$fileperm = dol_fileperm($path."/".$file);
 							}
 
 							if (!$filter || preg_match('/'.$filter.'/i', $file)) {	// We do not search key $filter into all $path, only into $file part
@@ -154,16 +160,17 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 									"fullname" => $path.'/'.$file,
 									"date" => $filedate,
 									"size" => $filesize,
+									"perm" => $fileperm,
 									"type" => 'dir'
 								);
 							}
 						}
 
 						// if we're in a directory and we want recursive behavior, call this function again
-						if ($recursive) {
+						if ($recursive > 0) {
 							if (empty($donotfollowsymlinks) || !is_link($path."/".$file)) {
 								//var_dump('eee '. $path."/".$file. ' '.is_dir($path."/".$file).' '.is_link($path."/".$file));
-								$file_list = array_merge($file_list, dol_dir_list($path."/".$file, $types, $recursive, $filter, $excludefilter, $sortcriteria, $sortorder, $mode, $nohook, ($relativename != '' ? $relativename.'/' : '').$file, $donotfollowsymlinks));
+								$file_list = array_merge($file_list, dol_dir_list($path."/".$file, $types, $recursive + 1, $filter, $excludefilter, $sortcriteria, $sortorder, $mode, $nohook, ($relativename != '' ? $relativename.'/' : '').$file, $donotfollowsymlinks));
 							}
 						}
 					} elseif (!$isdir && (($types == "files") || ($types == "all"))) {
@@ -370,7 +377,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 				$ecmfile->fullpath_orig = $filearray[$key]['fullname'];
 				$ecmfile->gen_or_uploaded = 'unknown';
 				$ecmfile->description = ''; // indexed content
-				$ecmfile->keyword = ''; // keyword content
+				$ecmfile->keywords = ''; // keyword content
 				$result = $ecmfile->create($user);
 				if ($result < 0) {
 					setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
@@ -585,6 +592,18 @@ function dol_filemtime($pathoffile)
 {
 	$newpathoffile = dol_osencode($pathoffile);
 	return @filemtime($newpathoffile); // @Is to avoid errors if files does not exists
+}
+
+/**
+ * Return permissions of a file
+ *
+ * @param 	string		$pathoffile		Path of file
+ * @return 	integer						File permissions
+ */
+function dol_fileperm($pathoffile)
+{
+	$newpathoffile = dol_osencode($pathoffile);
+	return fileperms($newpathoffile);
 }
 
 /**
@@ -914,7 +933,7 @@ function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
 					$ecmfile->fullpath_orig = $srcfile;
 					$ecmfile->gen_or_uploaded = 'unknown';
 					$ecmfile->description = ''; // indexed content
-					$ecmfile->keyword = ''; // keyword content
+					$ecmfile->keywords = ''; // keyword content
 					$resultecm = $ecmfile->create($user);
 					if ($resultecm < 0) {
 						setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
@@ -1544,7 +1563,9 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 	if (!empty($_FILES[$varfiles])) { // For view $_FILES[$varfiles]['error']
 		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' donotupdatesession='.$donotupdatesession.' savingdocmask='.$savingdocmask, LOG_DEBUG);
 
-		if (dol_mkdir($upload_dir) >= 0) {
+		$result = dol_mkdir($upload_dir);
+		//      var_dump($result);exit;
+		if ($result >= 0) {
 			$TFile = $_FILES[$varfiles];
 			if (!is_array($TFile['name'])) {
 				foreach ($TFile as $key => &$val) {
@@ -1647,6 +1668,8 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 				$res = 1;
 				setEventMessages($langs->trans("FileTransferComplete"), null, 'mesgs');
 			}
+		} else {
+			setEventMessages($langs->trans("ErrorFailedToCreateDir", $upload_dir), null, 'errors');
 		}
 	} elseif ($link) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
@@ -1762,11 +1785,18 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 		$ecmfile->fullpath_orig = $fullpathorig;
 		$ecmfile->gen_or_uploaded = $mode;
 		$ecmfile->description = ''; // indexed content
-		$ecmfile->keyword = ''; // keyword content
+		$ecmfile->keywords = ''; // keyword content
 
 		if (is_object($object) && $object->id > 0) {
 			$ecmfile->src_object_id = $object->id;
-			$ecmfile->src_object_type = $object->table_element;
+			if (isset($object->table_element)) {
+				$ecmfile->src_object_type = $object->table_element;
+			} else {
+				dol_syslog('Error: object ' . get_class($object) . ' has no table_element attribute.');
+				return -1;
+			}
+			if (isset($object->src_object_description)) $ecmfile->description = $object->src_object_description;
+			if (isset($object->src_object_keywords)) $ecmfile->keywords = $object->src_object_keywords;
 		}
 
 		if ($setsharekey) {
@@ -2209,9 +2239,10 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
 }
 
 /**
- * Security check when accessing to a document (used by document.php, viewimage.php and webservices)
+ * Security check when accessing to a document (used by document.php, viewimage.php and webservices to get documents).
+ * TODO Replace code that set $accesallowed by a call to restrictedArea()
  *
- * @param	string	$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp')
+ * @param	string	$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Exemple: 'medias', 'invoice', 'logs', 'tax-vat', ...
  * @param	string	$original_file		Relative path with filename, relative to modulepart.
  * @param	string	$entity				Restrict onto entity (0=no restriction)
  * @param  	User	$fuser				User object (forced)
@@ -2239,9 +2270,12 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$entity = 0;
 		}
 	}
-	// Fix modulepart
+	// Fix modulepart for backward compatibility
 	if ($modulepart == 'users') {
 		$modulepart = 'user';
+	}
+	if ($modulepart == 'tva') {
+		$modulepart = 'tax-vat';
 	}
 
 	//print 'dol_check_secure_access_document modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity;
@@ -2412,7 +2446,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = (!empty($conf->product->multidir_temp[$entity]) ? $conf->product->multidir_temp[$entity] : $conf->service->multidir_temp[$entity]).'/'.$original_file;
-	} elseif (in_array($modulepart, array('tax', 'tax-vat')) && !empty($conf->tax->dir_output)) {
+	} elseif (in_array($modulepart, array('tax', 'tax-vat', 'tva')) && !empty($conf->tax->dir_output)) {
 		// Wrapping for taxes
 		if ($fuser->rights->tax->charges->{$lire}) {
 			$accessallowed = 1;
@@ -2423,6 +2457,16 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		// Wrapping for events
 		if ($fuser->rights->agenda->myactions->{$read}) {
 			$accessallowed = 1;
+			// If we known $id of project, call checkUserAccessToObject to check permission on the given agenda event on properties and assigned users
+			if ($refname && !preg_match('/^specimen/i', $original_file)) {
+				include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+				$tmpobject = new ActionComm($db);
+				$tmpobject->fetch((int) $refname);
+				$accessallowed = checkUserAccessToObject($user, array('agenda'), $tmpobject->id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id', '');
+				if ($user->socid && $tmpobject->socid) {
+					$accessallowed = checkUserAccessToObject($user, array('societe'), $tmpobject->socid);
+				}
+			}
 		}
 		$original_file = $conf->agenda->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'category' && !empty($conf->categorie->multidir_output[$entity])) {
@@ -2589,12 +2633,26 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		// Wrapping pour les projets
 		if ($fuser->rights->projet->{$lire} || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
+			// If we known $id of project, call checkUserAccessToObject to check permission on properties and contact of project
+			if ($refname && !preg_match('/^specimen/i', $original_file)) {
+				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+				$tmpproject = new Project($db);
+				$tmpproject->fetch('', $refname);
+				$accessallowed = checkUserAccessToObject($user, array('projet'), $tmpproject->id, 'projet&project', '', '', 'rowid', '');
+			}
 		}
 		$original_file = $conf->projet->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('project').")";
 	} elseif ($modulepart == 'project_task' && !empty($conf->projet->dir_output)) {
 		if ($fuser->rights->projet->{$lire} || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
+			// If we known $id of project, call checkUserAccessToObject to check permission on properties and contact of project
+			if ($refname && !preg_match('/^specimen/i', $original_file)) {
+				include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+				$tmptask = new Task($db);
+				$tmptask->fetch('', $refname);
+				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet&project', '', '', 'rowid', '');
+			}
 		}
 		$original_file = $conf->projet->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('project').")";

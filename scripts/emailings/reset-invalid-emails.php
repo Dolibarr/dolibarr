@@ -57,6 +57,7 @@ require_once DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php";
 $version = DOL_VERSION;
 $error = 0;
 
+
 /*
  * Main
  */
@@ -68,6 +69,11 @@ print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 
 if (!in_array($type, array('all', 'thirdparties', 'contacts', 'users', 'members'))) {
 	print "Bad value for parameter type.\n";
+	exit(-1);
+}
+
+if (!empty($dolibarr_main_db_readonly)) {
+	print "Error: instance in read-onyl mode\n";
 	exit(-1);
 }
 
@@ -111,7 +117,7 @@ while ($tmp != null) {
 
 	if ($type == 'all' || $type == 'users') {
 		// Loop on each record and update the email to null if email into $groupofemails
-		$sql = $sql_base."user as u SET u.email = NULL WHERE u.email IN (".$emailsin.");";
+		$sql = $sql_base."user as u SET u.email = NULL WHERE u.email IN (".$db->sanitize($emailsin, 1).");";
 		print "Try to update users, ";
 		$resql = $db->query($sql);
 		if (!$resql) {
@@ -122,7 +128,7 @@ while ($tmp != null) {
 
 	if ($type == 'all' || $type == 'thirdparties') {
 		// Loop on each record and update the email to null if email into $groupofemails
-		$sql = $sql_base."societe as s SET s.email = NULL WHERE s.email IN (".$emailsin.");";
+		$sql = $sql_base."societe as s SET s.email = NULL WHERE s.email IN (".$db->sanitize($emailsin, 1).");";
 		print "Try to update thirdparties, ";
 		$resql = $db->query($sql);
 		if (!$resql) {
@@ -134,7 +140,7 @@ while ($tmp != null) {
 	if ($type == 'all' || $type == 'contacts') {
 		// Loop on each record and update the email to null if email into $groupofemails
 
-		$sql = $sql_base."socpeople as s SET s.email = NULL WHERE s.email IN (".$emailsin.");";
+		$sql = $sql_base."socpeople as s SET s.email = NULL WHERE s.email IN (".$db->sanitize($emailsin, 1).");";
 		print "Try to update contacts, ";
 		$resql = $db->query($sql);
 		if (!$resql) {
@@ -146,7 +152,7 @@ while ($tmp != null) {
 	if ($type == 'all' || $type == 'members') {
 		// Loop on each record and update the email to null if email into $groupofemails
 
-		$sql = $sql_base."adherent as a SET a.email = NULL WHERE a.email IN (".$emailsin.");";
+		$sql = $sql_base."adherent as a SET a.email = NULL WHERE a.email IN (".$db->sanitize($emailsin, 1).");";
 		print "Try to update members, ";
 		$resql = $db->query($sql);
 		if (!$resql) {

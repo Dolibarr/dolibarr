@@ -34,7 +34,7 @@ if (!defined('DOL_APPLICATION_TITLE')) {
 	define('DOL_APPLICATION_TITLE', 'Dolibarr');
 }
 if (!defined('DOL_VERSION')) {
-	define('DOL_VERSION', '14.0.0-alpha'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+	define('DOL_VERSION', '15.0.0-alpha'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 }
 
 if (!defined('EURO')) {
@@ -298,7 +298,7 @@ if (!defined('NUSOAP_PATH')) {
 	define('NUSOAP_PATH', (!isset($dolibarr_lib_NUSOAP_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/nusoap/lib/' : (empty($dolibarr_lib_NUSOAP_PATH) ? '' : $dolibarr_lib_NUSOAP_PATH.'/'));
 }
 if (!defined('PHPEXCELNEW_PATH')) {
-	define('PHPEXCELNEW_PATH', (!isset($dolibarr_lib_PHPEXCELNEW_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/phpoffice/PhpSpreadsheet/' : (empty($dolibarr_lib_PHPEXCELNEW_PATH) ? '' : $dolibarr_lib_PHPEXCELNEW_PATH.'/'));
+	define('PHPEXCELNEW_PATH', (!isset($dolibarr_lib_PHPEXCELNEW_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/phpoffice/phpspreadsheet/src/PhpSpreadsheet/' : (empty($dolibarr_lib_PHPEXCELNEW_PATH) ? '' : $dolibarr_lib_PHPEXCELNEW_PATH.'/'));
 }
 if (!defined('ODTPHP_PATH')) {
 	define('ODTPHP_PATH', (!isset($dolibarr_lib_ODTPHP_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/odtphp/' : (empty($dolibarr_lib_ODTPHP_PATH) ? '' : $dolibarr_lib_ODTPHP_PATH.'/'));
@@ -349,7 +349,7 @@ if ((!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_
 	if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 		$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
 		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
-		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially crypted
+		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this so we can use it later to know the password was initially crypted
 	} else {
 		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 	}

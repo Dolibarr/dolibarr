@@ -71,7 +71,7 @@ class FactureStats extends Stats
 			$object = new Facture($this->db);
 			$this->from = MAIN_DB_PREFIX.$object->table_element." as f";
 			$this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
-			$this->field = 'total';
+			$this->field = 'total_ht';
 			$this->field_line = 'total_ht';
 		}
 		if ($mode == 'supplier') {

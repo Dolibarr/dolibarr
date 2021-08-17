@@ -60,13 +60,21 @@ if ($id > 0 || !empty($ref)) {
 $permissionnote = $user->rights->workstation->workstation->write; // Used by the include of actions_setnotes.inc.php
 $permissiontoadd = $user->rights->workstation->workstation->write; // Used by the include of actions_addupdatedelete.inc.php
 
+// Security check
+$isdraft = 0;
+restrictedArea($user, $object->element, $object->id, $object->table_element, 'workstation', 'fk_soc', 'rowid', $isdraft);
 
 
 /*
  * Actions
  */
-
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+}
 
 
 /*

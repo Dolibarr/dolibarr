@@ -2,7 +2,7 @@
 /* Copyright (C) 2012       Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concpt.pro>
  * Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,10 +36,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'cron', 'members'));
 
-if (!$user->rights->cron->create) {
-	accessforbidden();
-}
-
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -48,6 +44,12 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $securitykey = GETPOST('securitykey', 'alpha');
+
+$permissiontoadd = $user->rights->cron->create;
+
+if (!$user->rights->cron->create) {
+	accessforbidden();
+}
 
 
 /*
@@ -219,6 +221,30 @@ if ($action == 'inactive') {
 	}
 }
 
+// Action clone object
+if ($action == 'confirm_clone' && $confirm == 'yes' && !empty($permissiontoadd)) {
+	if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
+		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
+	} else {
+		$objectutil = dol_clone($object, 1); // To avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object. We use native clone to keep this->db valid.
+
+		$result = $objectutil->createFromClone($user, (($object->id > 0) ? $object->id : $id));
+		if (is_object($result) || $result > 0) {
+			$newid = 0;
+			if (is_object($result)) {
+				$newid = $result->id;
+			} else {
+				$newid = $result;
+			}
+			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$newid); // Open record of new object
+			exit;
+		} else {
+			setEventMessages($objectutil->error, $objectutil->errors, 'errors');
+			$action = '';
+		}
+	}
+}
+
 
 
 /*
@@ -230,9 +256,9 @@ $formCron = new FormCron($db);
 
 llxHeader('', $langs->trans("CronTask"));
 
-if ($action == 'edit' || empty($action) || $action == 'delete' || $action == 'execute') {
-	$head = cron_prepare_head($object);
-} elseif ($action == 'create') {
+$head = cron_prepare_head($object);
+
+if ($action == 'create') {
 	print load_fiche_titre($langs->trans("CronTask"), '', 'title_setup');
 }
 
@@ -258,18 +284,28 @@ if ($conf->use_javascript_ajax) {
 	print '</script>'."\n";
 }
 
+$formconfirm = '';
 if ($action == 'delete') {
-	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("CronDelete"), $langs->trans("CronConfirmDelete"), "confirm_delete", '', '', 1);
+	$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("CronDelete"), $langs->trans("CronConfirmDelete"), "confirm_delete", '', '', 1);
 
 	$action = '';
 }
 
 if ($action == 'execute') {
-	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id.'&securitykey='.$securitykey, $langs->trans("CronExecute"), $langs->trans("CronConfirmExecute"), "confirm_execute", '', '', 1);
+	$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id.'&securitykey='.$securitykey, $langs->trans("CronExecute"), $langs->trans("CronConfirmExecute"), "confirm_execute", '', '', 1);
 
 	$action = '';
 }
 
+// Clone confirmation
+if ($action == 'clone') {
+	// Create an array for form
+	$formquestion = array();
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+}
+
+// Print form confirm
+print $formconfirm;
 
 
 /*
@@ -317,7 +353,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronModule')."</td><td>";
-	print "<input type=\"text\" size=\"20\" name=\"module_name\" value=\"".$object->module_name."\" /> ";
+	print "<input type=\"text\" class=\"width200\" name=\"module_name\" value=\"".$object->module_name."\" /> ";
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronModuleHelp"), 1, 'help');
@@ -335,7 +371,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronObject')."</td><td>";
-	print "<input type=\"text\" size=\"20\" name=\"objectname\" value=\"".$object->objectname."\" /> ";
+	print "<input type=\"text\" class=\"width200\" name=\"objectname\" value=\"".$object->objectname."\" /> ";
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronObjectHelp"), 1, 'help');
@@ -727,8 +763,10 @@ if (($action == "create") || ($action == "edit")) {
 	if (!$user->rights->cron->create) {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronStatusActiveBtn").'/'.$langs->trans("CronStatusInactiveBtn").'</a>';
 	} else {
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=clone&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Clone").'</a>';
+
 		if (empty($object->status)) {
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=activate&id='.$object->id.'">'.$langs->trans("CronStatusActiveBtn").'</a>';
+			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=activate&token='.newToken().'&id='.$object->id.'">'.$langs->trans("CronStatusActiveBtn").'</a>';
 		} else {
 			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=inactive&id='.$object->id.'">'.$langs->trans("CronStatusInactiveBtn").'</a>';
 		}

@@ -88,6 +88,8 @@ if ($id > 0) {
 $upload_dir = $conf->societe->multidir_output[$object->entity].'/contact/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'contact';
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('contactdocument'));
 
 /*
  * Actions
@@ -180,7 +182,7 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'contact';
-	$permission = $user->rights->societe->contact->creer;
+	$permissiontoadd = $user->rights->societe->contact->creer;
 	$permtoedit = $user->rights->societe->contact->creer;
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

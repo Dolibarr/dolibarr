@@ -37,7 +37,7 @@ if (!empty($conf->projet->enabled)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('compta', 'other', 'companies'));
+$langs->loadLangs(array('propal', 'compta', 'other', 'companies'));
 
 $action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
@@ -80,6 +80,8 @@ if (!$sortfield) {
 $object = new Propal($db);
 $object->fetch($id, $ref);
 
+$permissiontoadd = $user->rights->propale->creer;
+
 // Security check
 if (!empty($user->socid)) {
 	$socid = $user->socid;
@@ -102,8 +104,9 @@ if ($object->id > 0) {
 /*
  * View
  */
-
-llxHeader('', $langs->trans('Proposal'), 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
+$title = $langs->trans('Proposal')." - ".$langs->trans('Documents');
+$help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 
@@ -186,10 +189,10 @@ if ($object->id > 0) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'propal';
-	$permission = $user->rights->propal->creer;
+	$permissiontoadd = $user->rights->propal->creer;
 	$permtoedit = $user->rights->propal->creer;
 	$param = '&id='.$object->id;
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	print $langs->trans("ErrorUnknown");
 }

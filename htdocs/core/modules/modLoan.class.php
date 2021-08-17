@@ -97,7 +97,7 @@ class modLoan extends DolibarrModules
 		$r = 0;
 
 		$r++;
-		$this->rights[$r][0] = 520;
+		$this->rights[$r][0] = 521;
 		$this->rights[$r][1] = 'Read loans';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;

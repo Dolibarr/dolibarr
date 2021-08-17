@@ -3,6 +3,7 @@
  * Copyright (C) 2013	    Marcos García	        <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Abbes Bahfir            <bafbes@gmail.com>
+ * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,6 @@
  */
 function payment_prepare_head(Paiement $object)
 {
-
 	global $langs, $conf;
 
 	$h = 0;
@@ -156,9 +156,9 @@ function getValidOnlinePaymentMethods($paymentmethod = '')
 }
 
 /**
- * Return string with full Url
+ * Return string with full online payment Url
  *
- * @param   string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'membersubscription' ...)
+ * @param   string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'member' ...)
  * @param	string	$ref		Ref of object
  * @return	string				Url string
  */
@@ -173,16 +173,33 @@ function showOnlinePaymentUrl($type, $ref)
 
 	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'</span><br>';
 	$url = getOnlinePaymentUrl(0, $type, $ref);
-	$out .= '<div class="urllink"><input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$url.'"></div>';
+	$out .= '<div class="urllink"><input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$url.'">';
+	$out .= '<a href="'.$url.'" target="_blank">'.img_picto('', 'globe', 'class="paddingleft"').'</a></div>';
 	$out .= ajax_autoselect("onlinepaymenturl", 0);
 	return $out;
 }
 
 /**
+ * Return string with HTML link for online payment
+ *
+ * @param	string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'member' ...)
+ * @param	string	$ref		Ref of object
+ * @param	string	$label		Text or HTML tag to display, if empty it display the URL
+ * @return	string			Url string
+ */
+function getHtmlOnlinePaymentLink($type, $ref, $label = '')
+{
+	$url = getOnlinePaymentUrl(0, $type, $ref);
+	$label = $label ? $label : $url;
+	return'<a href="'.$url.'" target="_blank">'.$label.'</a>';
+}
+
+
+/**
  * Return string with full Url
  *
  * @param   int		$mode		      0=True url, 1=Url formated with colors
- * @param   string	$type		      Type of URL ('free', 'order', 'invoice', 'contractline', 'membersubscription' ...)
+ * @param   string	$type		      Type of URL ('free', 'order', 'invoice', 'contractline', 'member' ...)
  * @param	string	$ref		      Ref of object
  * @param	int		$amount		      Amount (required for $type='free' only)
  * @param	string	$freetag	      Free tag
@@ -210,9 +227,9 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 		$out = $urltouse.'/public/payment/newpayment.php?amount='.($mode ? '<font color="#666666">' : '').$amount.($mode ? '</font>' : '').'&tag='.($mode ? '<font color="#666666">' : '').$freetag.($mode ? '</font>' : '');
 		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-				$out .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 			} else {
-				$out .= '&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
+				$out .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2));
 			}
 		}
 		//if ($mode) $out.='&noidempotency=1';
@@ -227,7 +244,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 		$out .= ($mode ? '</font>' : '');
 		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-				$out .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 			} else {
 				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
 				if ($mode == 1) {
@@ -250,7 +267,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 		$out .= ($mode ? '</font>' : '');
 		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-				$out .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 			} else {
 				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
 				if ($mode == 1) {
@@ -273,7 +290,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 		$out .= ($mode ? '</font>' : '');
 		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-				$out .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 			} else {
 				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
 				if ($mode == 1) {
@@ -286,7 +303,8 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 			}
 		}
 	} elseif ($type == 'member' || $type == 'membersubscription') {
-		$out = $urltouse.'/public/payment/newpayment.php?source=membersubscription&ref='.($mode ? '<font color="#666666">' : '');
+		$newtype = 'member';
+		$out = $urltouse.'/public/payment/newpayment.php?source=member&ref='.($mode ? '<font color="#666666">' : '');
 		if ($mode == 1) {
 			$out .= 'member_ref';
 		}
@@ -296,14 +314,14 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 		$out .= ($mode ? '</font>' : '');
 		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-				$out .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 			} else {
 				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
 				if ($mode == 1) {
-					$out .= "hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + member_ref)";
+					$out .= "hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$newtype."' + member_ref)";
 				}
 				if ($mode == 0) {
-					$out .= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$type.$ref, 2);
+					$out .= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$newtype.$ref, 2);
 				}
 				$out .= ($mode ? '</font>' : '');
 			}
@@ -320,7 +338,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 		$out .= ($mode ? '</font>' : '');
 		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-				$out .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 			} else {
 				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
 				if ($mode == 1) {

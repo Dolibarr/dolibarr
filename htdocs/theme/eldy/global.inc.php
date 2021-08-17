@@ -48,6 +48,7 @@
 	--amountremaintopaybackcolor:none;
 	--productlinestockod: #002200;
 	--productlinestocktoolow: #884400;
+	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
 }
 
 <?php
@@ -93,6 +94,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --amountremaintopaycolor:rgb(252,84,91);
 	            --amountpaymentcomplete:rgb(101,184,77);
 	            --amountremaintopaybackcolor:rbg(245,130,46);
+				--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #000, #000, #000, #274231);
 	      }
 
 		body, button {
@@ -116,6 +118,7 @@ body {
 	margin-right: 0;
 	margin-left: 0;
 	font-weight: 400;
+	background-color: var(--colorbackbody);
 	<?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
@@ -142,6 +145,7 @@ input {
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	background-color: var(--inputbackgroundcolor);
 	color: var(--colortext);
+	border-radius: 2px;
 }
 select.vmenusearchselectcombo {
 	background-color: unset;
@@ -205,7 +209,7 @@ input, select {
 	margin-bottom: 1px;
 	margin-top: 1px;
 }
-#mainbody input.button:not(.buttongen):not(.bordertransp) {
+#mainbody input.button:not(.buttongen):not(.bordertransp), #mainbody a.button:not(.buttongen):not(.bordertransp) {
 	background: var(--butactionbg);
 	color: #FFF !important;
 	border-radius: 3px;
@@ -344,7 +348,7 @@ a.butStatus {
 	padding-right: 5px;
 	background-color: transparent;
 	color: var(--colortext) !important;
-	border: 2px solid var( --butactionbg);
+	border: 2px solid var( --butactionbg) !important;
 	margin: 0 0.45em !important;
 }
 
@@ -421,7 +425,9 @@ input.pageplusone {
 .colorblack {
 	color: #000;
 }
-
+.fontsizeunset {
+	font-size: unset !important;
+}
 .vmirror {
 	transform: scale(1, -1);
 }
@@ -629,11 +635,20 @@ th .button {
 .quatrevingtquinzepercent {
 	width: 95%;
 }
+.quatrevingtpercentminusx {
+	width: calc(80% - 52px);
+}
 textarea.centpercent {
 	width: 96%;
 }
 .small, small {
 	font-size: 85%;
+}
+.large {
+	font-size: 125%;
+}
+.double {
+	font-size: 2em;
 }
 
 .h1 .small, .h1 small, .h2 .small, .h2 small, .h3 .small, .h3 small, h1 .small, h1 small, h2 .small, h2 small, h3 .small, h3 small {
@@ -647,6 +662,9 @@ textarea.centpercent {
 
 .flip {
 	transform: scaleX(-1) translate(2px, 0);
+}
+.rotate90 {
+	transform: rotate(90deg) translate(0, 2px);
 }
 .center {
 	text-align: center;
@@ -720,6 +738,9 @@ textarea.centpercent {
 }
 .paddingleft2 {
 	padding-<?php print $left; ?>: 2px;
+}
+.paddingleft2imp {
+	padding-<?php print $left; ?>: 2px !important;
 }
 .paddingright {
 	padding-<?php print $right; ?>: 4px;
@@ -861,7 +882,7 @@ span.fa.fa-plus-circle.paddingleft {
 
 /* Themes for badges */
 
-	<?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
+<?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
 
 .borderrightlight
 {
@@ -895,8 +916,8 @@ span.fa.fa-plus-circle.paddingleft {
 	height: 28px;
 	vertical-align: middle;
 }
-.divsocialnetwork:not(:first-child) {
-	padding-left: 20px;
+.divsocialnetwork:not(:last-child) {
+	padding-<?php print $right; ?>: 20px;
 }
 div.divsearchfield {
 	float: <?php print $left; ?>;
@@ -985,6 +1006,19 @@ div.div-for-modal {
 	z-index: 100;
 }
 
+div.div-for-modal-topright {
+	/* display: none; */
+	position: fixed;
+	top: 0;
+	right: 0;
+	width:50%;  /* adjust as per your needs */
+	height:250px;   /* adjust as per your needs */
+	background: #fff;
+	border: 1px solid #bbb;
+	box-shadow: 2px 2px 20px #ddd;
+	z-index: 1100;
+}
+
 <?php
 // Add a nowrap on smartphone, so long list of field used for filter are overflowed with clip
 if ($conf->browser->layout == 'phone') {
@@ -1007,6 +1041,7 @@ ul.attendees li {
 	list-style-type: none;
 	padding-top:1px;
 	padding-bottom:1px;
+	line-height: 1.6em;
 }
 .googlerefreshcal {
 	padding-top: 4px;
@@ -1108,6 +1143,12 @@ select.flat.selectlimit {
 }
 .tdoverflowmax200 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 200px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax250 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 250px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -1340,6 +1381,9 @@ table[summary="list_of_modules"] .fa-cog {
 .width125 { width: 125px; }
 .width150 { width: 150px; }
 .width200 { width: 200px; }
+.width300 { width: 300px; }
+.width400 { width: 400px; }
+.width500 { width: 500px; }
 .maxwidth25  { max-width: 25px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
@@ -1449,6 +1493,14 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		width: calc(100% - 40px) !important;
 		display: inline-block;
 	}
+	select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
+		width: calc(100% - 70px) !important;
+		display: inline-block;
+	}
+
+	input.maxwidthinputfileonsmartphone {
+		width: 175px;
+	}
 
 	.logopublicpayment #dolpaymentlogo {
 		max-width: 260px;
@@ -1467,6 +1519,10 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	}
 	input.buttonpayment, button.buttonpayment, div.buttonpayment {
 		min-width: 270px;
+	}
+
+	.smallonsmartphone {
+		font-size: 0.8em;
 	}
 }
 
@@ -1613,7 +1669,7 @@ table.tableforfield tr>td:first-of-type, tr.trforfield>td:first-of-type, div.tab
 }
 
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
-.hideonprint { display: none; }
+.hideonprint { display: none !important; }
 <?php } ?>
 
 
@@ -1683,6 +1739,11 @@ td.showDragHandle {
 	z-index: 1001;
 }
 <?php } ?>
+<?php if (!empty($conf->global->THEME_DARKMODEENABLED)) {  ?>
+.side-nav-vert {
+	border-bottom: 1px solid #888;
+}
+<?php } ?>
 
 .side-nav {
 	/*display: block;
@@ -1707,13 +1768,13 @@ div.blockvmenulogo
 	margin-left: 11px;
 	margin-right: 9px;
 	padding: 0;
-	height: <?php echo $disableimages ? '20' : '32'; ?>px;
+	height: <?php echo $disableimages ? '20' : '35'; ?>px;
 	/* width: 100px; */
 	max-width: 100px;
 	vertical-align: middle;
 }
 .backgroundforcompanylogo {
-	background-color: rgba(255,255,255,0.7);
+	background-color: rgba(255,255,255,0.2);
 	border-radius: 4px;
 }
 .menulogocontainer img.mycompany {
@@ -2058,7 +2119,7 @@ span.widthpictotitle.pictotitle {
 	opacity: 0.4;
 }
 .pictofixedwidth {
-	text-align: left;
+	text-align: <?php echo $left; ?>;
 	width: 20px;
 	padding-right: 0;
 }
@@ -2588,7 +2649,7 @@ table.login_table_securitycode tr td {
 }
 
 div.backgroundsemitransparent {
-	background:rgba(255,255,255,0.6);
+	background:rgba(255, 255, 255, 0.7);
 	padding-left: 10px;
 	padding-right: 10px;
 }
@@ -2797,7 +2858,7 @@ a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { text-align
 .helppresentcircle {
 	color: var(--colorbackhmenu1);
 	filter: invert(0.8);
-	margin-left: -7px;
+	margin-<?php echo $left ?>: -7px;
 	display: inline-block;
 	margin-top: -10px;
 	font-size: x-small;
@@ -3092,16 +3153,9 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	text-decoration: none;
 	white-space: nowrap;
 
-	/*border-right: 1px solid #ddd;
-	border-left: 1px solid #ddd;
-	border-top: 1px solid #ddd; */
-	border-right: 1px solid transparent;
-	border-left: 1px solid transparent;
-	border-top: 1px solid transparent;
-	border-bottom: 0px !important;
-
 	background-image: none !important;
 }
+
 .tabactive, a.tab#active {
 	color: var(--colortextbacktab); !important;
 	background: var(--colorbacktabcard1) !important;
@@ -3110,6 +3164,12 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	border-right: 1px solid #CCC !important;
 	border-left: 1px solid #CCC !important;
 	border-top: 3px solid var(--colorbackhmenu1) !important;
+}
+.tabunactive, a.tab#unactive {
+	border-right: 1px solid transparent;
+	border-left: 1px solid transparent;
+	border-top: 1px solid transparent;
+	border-bottom: 0px !important;*/
 }
 a.tab:hover
 {
@@ -3192,6 +3252,12 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 .smallpaddingimp {
 	padding: 4px !important;
+	padding-left: 7px !important;
+	padding-right: 7px !important;
+}
+input.button[name="upload"] {
+	padding: 4px !important;
+	font-size: 0.9em;
 }
 input.button.smallpaddingimp {
 	font-size: 0.8em;
@@ -3801,7 +3867,7 @@ tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre
 	font-family: <?php print $fontlist ?>;
 	font-weight: normal;
 	border-bottom: 1px solid #FDFFFF;
-	text-decoration: underline;
+	/* text-decoration: underline; */
 }
 input.liste_titre {
 	background: transparent;
@@ -3849,7 +3915,7 @@ table.noborder.paymenttable {
 }
 .paymenttable tr td:first-child, .margintable tr td:first-child
 {
-	padding-left: 2px;
+	//padding-left: 2px;
 }
 .paymenttable, .margintable tr td {
 	height: 22px;
@@ -3863,6 +3929,11 @@ table.noborder.paymenttable {
 .shadow {
 	-webkit-box-shadow: 1px 1px 7px #CCC !important;
 	box-shadow: 1px 1px 7px #CCC !important;
+}
+
+.boxshadow {
+	-webkit-box-shadow: 0px 0px 5px #888;
+	box-shadow: 0px 0px 5px #888;
 }
 
 div.tabBar .noborder {
@@ -4391,8 +4462,13 @@ div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bot
 	color: #222;
 	opacity: 0.3;
 }
-#dolpaymenttable { min-width: 290px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
-#tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
+#dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
+#tablepublicpayment {
+	border: 1px solid #CCCCCC !important;
+	width: 100%;
+	padding: 20px;
+	margin-bottom: 25px;
+}
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
 #tablepublicpayment tr.liste_total td { border-top: none; }
@@ -4463,6 +4539,9 @@ div#card-errors {
 .ui-dialog-content {
 }
 
+.ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-dialog-buttons.ui-draggable {
+	z-index: 1002 !important;		/* Default 101 with jquery, top menu have a z-index of 1000 */
+}
 
 /* ============================================================================== */
 /* For content of image preview                                                   */
@@ -4636,7 +4715,7 @@ table.dp {
 
 
 /* ============================================================================== */
-/*  Afficher/cacher                                                               */
+/*  Show/Hide                                                                     */
 /* ============================================================================== */
 
 div.visible {
@@ -4646,7 +4725,9 @@ div.visible {
 div.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
 }
-
+.unvisible {
+	visibility: hidden;
+}
 tr.visible {
 	display: block;
 }
@@ -4752,7 +4833,6 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 #divbodywebsite section p {
 	margin: unset;
 }
-
 
 
 /* ============================================================================== */
@@ -4892,8 +4972,8 @@ td.cal_other_month {
 /* ============================================================================== */
 
 /* CSS for treeview */
-.treeview ul { background-color: transparent !important; margin-bottom: 4px !important; margin-top: 0 !important; padding-top: 4px !important; }
-.treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 26px; }
+.treeview ul { background-color: transparent !important; margin-bottom: 4px !important; margin-top: 0 !important; padding-top: 8px !important; }
+.treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 30px; }
 .treeview .hover { color: var(--colortextlink) !important; text-decoration: underline !important; }
 .treeview .hitarea { margin-top: 3px; }
 
@@ -5697,7 +5777,7 @@ input.select2-input {
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
 	border-radius: 0 !important;
-	color: black;
+	/* color: black; */
 }
 .select2-container-active .select2-choice, .select2-container-active .select2-choices
 {
@@ -6010,6 +6090,9 @@ dl.dropdown {
 	cursor:pointer;
 	display:inline-block;
 	padding: 0 3px 2px 0;
+}
+.maxwidthsearch .dropdown dt a span, .multiSel span {
+	padding: 0 3px 2px 3px;
 }
 .dropdown span.value {
 	display:none;
@@ -6381,12 +6464,13 @@ div.tabsElem a.tab {
 .ticketlargemargin {
 	padding-left: 50px;
 	padding-right: 50px;
-	padding-top: 10px;
+	padding-top: 30px;
 }
 @media only screen and (max-width: 767px)
 {
 	.ticketlargemargin {
 		padding-left: 5px; padding-right: 5px;
+		padding-top: 10px;
 	}
 	.ticketpublicarea {
 		margin-left: 10px;
@@ -6706,6 +6790,13 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 }
 
 /* ============================================================================== */
+/* CSS style used for jCrop                                                       */
+/* ============================================================================== */
+
+.jcrop-holder { background: unset !important; }
+
+
+/* ============================================================================== */
 /* CSS style used for jFlot                                                       */
 /* ============================================================================== */
 
@@ -6718,8 +6809,18 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 
 
 /* ============================================================================== */
-/* For copypaste feature                                                          */
+/* For copy-paste feature                                                         */
 /* ============================================================================== */
+
+span.clipboardCPValueToPrint {
+	display: inline-block;
+}
+span.clipboardCPValue.hidewithsize {
+	width: 0 !important;
+	display: inline-block;
+	color: transparent;
+	white-space: nowrap;
+}
 
 .clipboardCPShowOnHover .clipboardCPButton {
 	display: none;
@@ -6755,6 +6856,8 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 		border-right: none;
 		border-left: none;
 	}
+
+	td.widthpictotitle { width: 30px; }
 }
 
 @media only screen and (max-width: 1024px)
@@ -6946,6 +7049,10 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 
 	input#addedfile {
 		width: 95%;
+	}
+
+	#divbodywebsite {
+		word-break: break-all;
 	}
 }
 

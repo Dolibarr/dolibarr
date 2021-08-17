@@ -190,7 +190,7 @@ if ($fourn_id > 0) {
 }
 // Insert categ filter
 if ($search_categ) {
-	$sql .= " AND cp.fk_categorie = ".$db->escape($search_categ);
+	$sql .= " AND cp.fk_categorie = ".((int) $search_categ);
 }
 $sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,";
 $sql .= " p.fk_product_type, p.tms, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock";

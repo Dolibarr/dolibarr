@@ -78,6 +78,7 @@ if (!$user->rights->fournisseur->commande->lire) {
 	accessforbidden();
 }
 
+$hookmanager->initHooks(array('ordersuppliercardinfo'));
 
 
 
@@ -112,7 +113,7 @@ if ($id > 0 || !empty($ref)) {
 	$object->info($object->id);
 }
 
-$title = $langs->trans("SupplierOrder").' - '.$object->ref.' '.$object->name;
+$title = $langs->trans("SupplierOrder").' - '.$langs->trans('Info').' - '.$object->ref.' '.$object->name;
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Info");
 }
@@ -141,7 +142,7 @@ $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->ge
 if (!empty($conf->projet->enabled)) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-	if ($user->rights->fournisseur->commande->creer) {
+	if ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer) {
 		if ($action != 'classify') {
 			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			$morehtmlref .= ' : ';

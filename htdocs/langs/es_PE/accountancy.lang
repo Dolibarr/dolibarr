@@ -12,6 +12,7 @@ DefaultForProduct=Producto por defecto
 Journals=Revistas
 JournalFinancial=Revistas financieras
 BackToChartofaccounts=Retornar gráfico de cuentas
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
 Selectchartofaccounts=Seleccione el plan de cuentas activo
 Addanaccount=Agregar una cuenta contable
 Binding=Vinculación a cuentas
@@ -27,7 +28,6 @@ EndProcessing=Proceso finalizado.
 Lineofinvoice=Línea de factura
 VentilatedinAccount=Vinculado con éxito a la cuenta contable
 NotVentilatedinAccount=No vinculado a la cuenta contable
-ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Comienza la clasificación de la página "Vinculación a hacer" por los elementos más recientes
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Comienza la clasificación de la página "Encuadernación realizada" por los elementos más recientes
 ACCOUNTING_LENGTH_DESCRIPTION=Truncar la descripción de los productos y servicios en los listados después de los caracteres x (mejor = 50)

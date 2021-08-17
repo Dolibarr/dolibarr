@@ -70,6 +70,7 @@ if (!$sortfield) {
 	$sortfield = "name";
 }
 
+$hookmanager->initHooks(array('ordersuppliercarddocument'));
 
 $object = new CommandeFournisseur($db);
 if ($object->fetch($id, $ref) < 0) {
@@ -94,10 +95,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 $form = new	Form($db);
 
-if ($object->id > 0) {
-	$help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-	llxHeader('', $langs->trans("Order"), $help_url);
+$title = $langs->trans('SupplierOrder')." - ".$langs->trans('Documents');
+$help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
+llxHeader('', $title, $help_url);
 
+if ($object->id > 0) {
 	$object->fetch_thirdparty();
 
 	$author = new User($db);
@@ -129,7 +131,7 @@ if ($object->id > 0) {
 	if (!empty($conf->projet->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-		if ($user->rights->fournisseur->commande->creer) {
+		if ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer) {
 			if ($action != 'classify') {
 				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				$morehtmlref .= ' : ';
@@ -176,10 +178,10 @@ if ($object->id > 0) {
 
 
 	$modulepart = 'commande_fournisseur';
-	$permission = $user->rights->fournisseur->commande->creer;
-	$permtoedit = $user->rights->fournisseur->commande->creer;
+	$permissiontoadd = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
+	$permtoedit = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
 	$param = '&id='.$object->id;
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	header('Location: index.php');
 	exit;

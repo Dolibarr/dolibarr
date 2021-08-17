@@ -89,6 +89,8 @@ $socid = GETPOST('socid', 'int');
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 restrictedArea($user, 'projet', $object->id, 'projet&project');
 
+$permissiondellink = $user->rights->projet->creer;	// Used by the include of actions_dellink.inc.php
+
 
 /*
  * Actions
@@ -121,6 +123,8 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
+
 	if ($action == 'add' && $user->rights->projet->creer) {
 		$error = 0;
 		if (!GETPOST('ref')) {
@@ -132,9 +136,11 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (GETPOST('opp_amount') != '' && !(GETPOST('opp_status') > 0)) {
-			$error++;
-			setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			if (GETPOST('opp_amount') != '' && !(GETPOST('opp_status') > 0)) {
+				$error++;
+				setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+			}
 		}
 
 		// Create with status validated immediatly
@@ -270,9 +276,11 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($object->opp_amount && ($object->opp_status <= 0)) {
-			$error++;
-			setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			if ($object->opp_amount && ($object->opp_status <= 0)) {
+				$error++;
+				setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+			}
 		}
 
 		if (!$error) {
@@ -511,7 +519,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 	// Ref
 	$suggestedref = (GETPOST("ref") ? GETPOST("ref") : $defaultref);
-	print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.dol_escape_htmltag($suggestedref).'">';
+	print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="25" type="text" name="ref" value="'.dol_escape_htmltag($suggestedref).'">';
 	print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
 	print '</td></tr>';
 
@@ -605,7 +613,18 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	if (empty($conf->global->PROJECT_DISABLE_PUBLIC_PROJECT)) {
 		$array[1] = $langs->trans("SharedProject");
 	}
-	print $form->selectarray('public', $array, GETPOST('public') ?GETPOST('public') : $object->public, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+
+	if (count($array) > 0) {
+		print $form->selectarray('public', $array, GETPOSTISSET('public') ? GETPOST('public') : $object->public, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+	} else {
+		print '<input type="hidden" name="public" id="public" value="'.(GETPOSTISSET('public') ? GETPOST('public') : $object->public).'">';
+
+		if ( (GETPOSTISSET('public') ? GETPOST('public') : $object->public)==0) {
+			print $langs->trans("PrivateProject");
+		} else {
+			print $langs->trans("SharedProject");
+		}
+	}
 	print '</td></tr>';
 
 	// Date start
@@ -785,7 +804,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		// Ref
 		$suggestedref = $object->ref;
 		print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Ref").'</td>';
-		print '<td><input size="12" name="ref" value="'.$suggestedref.'">';
+		print '<td><input size="25" name="ref" value="'.$suggestedref.'">';
 		print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
 		print '</td></tr>';
 
@@ -878,7 +897,18 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		if (empty($conf->global->PROJECT_DISABLE_PUBLIC_PROJECT)) {
 			$array[1] = $langs->trans("SharedProject");
 		}
-		print $form->selectarray('public', $array, $object->public, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+
+		if (count($array) > 0) {
+			print $form->selectarray('public', $array, $object->public, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+		} else {
+			print '<input type="hidden" id="public" name="public" value="'.$object->public.'">';
+
+			if ($object->public == 0) {
+				print $langs->trans("PrivateProject");
+			} else {
+				print $langs->trans("SharedProject");
+			}
+		}
 		print '</td></tr>';
 
 		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
@@ -1270,11 +1300,11 @@ if ($action == 'create' && $user->rights->projet->creer) {
 					$langs->load("supplier_proposal");
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddSupplierProposal").'</a>';
 				}
-				if (!empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->creer) {
+				if (!empty($conf->supplier_order->enabled) && ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer)) {
 					$langs->load("suppliers");
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddSupplierOrder").'</a>';
 				}
-				if (!empty($conf->supplier_invoice->enabled) && $user->rights->fournisseur->facture->creer) {
+				if (!empty($conf->supplier_invoice->enabled) && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
 					$langs->load("suppliers");
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddSupplierInvoice").'</a>';
 				}

@@ -96,8 +96,11 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 		$date_start = dol_get_first_day($year_start, 10, false);
 		$date_end = dol_get_last_day($year_start, 12, false);
 	}
-} else {
 }
+
+/*
+ * Main
+ */
 
 llxHeader();
 
@@ -138,8 +141,8 @@ if (!empty($date_start) && !empty($date_end)) {
 	$sql .= " AND f.datec >= '".$db->idate($date_start)."' AND f.datec <= '".$db->idate($date_end)."'";
 }
 $sql .= " AND f.entity IN (".getEntity('invoice', 0).")";
-if ($socid) {
-	$sql .= " AND f.fk_soc = ".$socid;
+if ($socid > 0) {
+	$sql .= " AND f.fk_soc = ".((int) $socid);
 }
 $sql .= " GROUP BY name";
 $sql .= ")";
@@ -154,8 +157,8 @@ if (!empty($date_start) && !empty($date_end)) {
 	$sql .= " AND ff.datec >= '".$db->idate($date_start)."' AND ff.datec <= '".$db->idate($date_end)."'";
 }
 $sql .= " AND ff.entity = ".$conf->entity;
-if ($socid) {
-	$sql .= " AND f.fk_soc = ".$socid;
+if ($socid > 0) {
+	$sql .= " AND f.fk_soc = ".((int) $socid);
 }
 $sql .= " GROUP BY name";
 $sql .= ")";
@@ -186,9 +189,6 @@ if ($resql) {
 		$i++;
 	}
 
-	/*
-	 * View
-	 */
 
 	$thirdpartystatic = new Societe($db);
 

@@ -736,10 +736,10 @@ if ($resql) {
 
 	// List of mass actions available
 	$arrayofmassactions = array(
-		//'presend'=>$langs->trans("SendByMail"),
-		//'builddoc'=>$langs->trans("PDFMerge"),
+		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+		//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	);
-	//if ($user->rights->bank->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+	//if ($user->rights->bank->supprimer) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	if (in_array($massaction, array('presend', 'predelete'))) {
 		$arrayofmassactions = array();
 	}
@@ -791,7 +791,7 @@ if ($resql) {
 		$nbmax = 12; // We show last 12 receipts (so we can have more than one year)
 		$liste = "";
 		$sql = "SELECT DISTINCT num_releve FROM ".MAIN_DB_PREFIX."bank";
-		$sql .= " WHERE fk_account=".$object->id." AND num_releve IS NOT NULL";
+		$sql .= " WHERE fk_account = ".((int) $object->id)." AND num_releve IS NOT NULL";
 		$sql .= $db->order("num_releve", "DESC");
 		$sql .= $db->plimit($nbmax + 1);
 		print '<br>';
@@ -967,7 +967,7 @@ if ($resql) {
 	$moreforfilter = '';
 
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('DateOperationShort').' :';
+	$moreforfilter .= $langs->trans('DateOperationShort').' ';
 	$moreforfilter .= ($conf->browser->layout == 'phone' ? '<br>' : ' ');
 	$moreforfilter .= '<div class="nowrap inline-block">';
 	$moreforfilter .= $form->selectDate($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From')).'</div>';
@@ -976,7 +976,7 @@ if ($resql) {
 	$moreforfilter .= '</div>';
 
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('DateValueShort').' : ';
+	$moreforfilter .= $langs->trans('DateValueShort').' ';
 	$moreforfilter .= ($conf->browser->layout == 'phone' ? '<br>' : ' ');
 	$moreforfilter .= '<div class="nowrap inline-block">';
 	$moreforfilter .= $form->selectDate($search_dv_start, 'search_start_dv', 0, 0, 1, "search_form", 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From')).'</div>';
@@ -1181,7 +1181,7 @@ if ($resql) {
 			$sqlforbalance .= " ".MAIN_DB_PREFIX."bank as b";
 			$sqlforbalance .= " WHERE b.fk_account = ba.rowid";
 			$sqlforbalance .= " AND ba.entity IN (".getEntity('bank_account').")";
-			$sqlforbalance .= " AND b.fk_account = ".$search_account;
+			$sqlforbalance .= " AND b.fk_account = ".((int) $search_account);
 			$sqlforbalance .= " AND (b.datev < '".$db->idate($db->jdate($objp->dv))."' OR (b.datev = '".$db->idate($db->jdate($objp->dv))."' AND (b.dateo < '".$db->idate($db->jdate($objp->do))."' OR (b.dateo = '".$db->idate($db->jdate($objp->do))."' AND b.rowid < ".$objp->rowid."))))";
 			$resqlforbalance = $db->query($sqlforbalance);
 			//print $sqlforbalance;
@@ -1329,23 +1329,24 @@ if ($resql) {
 
 		// Description
 		if (!empty($arrayfields['b.label']['checked'])) {
-			print "<td>";
-
-			//print "<a href=\"line.php?rowid=".$objp->rowid."&amp;account=".$objp->fk_account."\">";
+			$labeltoshow = '';
+			$titletoshow = '';
 			$reg = array();
 			preg_match('/\((.+)\)/i', $objp->label, $reg); // Si texte entoure de parenthee on tente recherche de traduction
 			if ($reg[1] && $langs->trans($reg[1]) != $reg[1]) {
-				print $langs->trans($reg[1]);
+				$labeltoshow = $langs->trans($reg[1]);
 			} else {
 				if ($objp->label == '(payment_salary)') {
-					print dol_trunc($langs->trans("SalaryPayment", 40));
+					$labeltoshow = dol_trunc($langs->trans("SalaryPayment", 40));
 				} else {
-					print dol_trunc($objp->label, 40);
+					$labeltoshow = dol_escape_htmltag($objp->label);
+					$titletoshow = $objp->label;
 				}
 			}
-			//print "</a>&nbsp;";
+			print '<td class="tdoverflowmax300"'.($titletoshow ? ' title="'.dol_escape_htmltag($titletoshow).'"' : '').'>';
+			print $labeltoshow;	// Already escaped
 
-			// Add links after description
+			// Add info about links after description
 			$cachebankaccount = array();
 			foreach ($links as $key => $val) {
 				print '<!-- '.$links[$key]['type'].' -->';
@@ -1423,6 +1424,7 @@ if ($resql) {
 				} elseif ($links[$key]['type'] == 'sc') {
 				} elseif ($links[$key]['type'] == 'vat') {
 				} elseif ($links[$key]['type'] == 'salary') {
+					// Information is already shown using the payment_salary link. No need of this link.
 				} else {
 					// Show link with label $links[$key]['label']
 					if (!empty($objp->label) && !empty($links[$key]['label'])) {
@@ -1498,7 +1500,7 @@ if ($resql) {
 
 		// Num cheque
 		if (!empty($arrayfields['b.num_chq']['checked'])) {
-			print '<td class="nowrap" align="center">'.($objp->num_chq ? $objp->num_chq : "")."</td>\n";
+			print '<td class="nowrap" align="center">'.($objp->num_chq ? dol_escape_htmltag($objp->num_chq) : "")."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1529,15 +1531,21 @@ if ($resql) {
 			}
 
 			if ($companylinked_id) {
-				// TODO Add a cache of loaded companies here
+				// TODO Add a cache of loaded companies here ?
 				$companystatic->fetch($companylinked_id);
 				print $companystatic->getNomUrl(1);
 			} elseif ($userlinked_id &&
 					(($type_link == 'payment_salary' && !empty($user->rights->salaries->read))
 						|| ($type_link == 'payment_sc' && !empty($user->rights->tax->charges->lire)))) {
-				// TODO Add a cache of loaded users here
-				$userstatic->fetch($userlinked_id);
-				print $userstatic->getNomUrl(1);
+				// Get object user from cache or load it
+				if (!empty($conf->cache['user'][$userlinked_id])) {
+					$tmpuser = $conf->cache['user'][$userlinked_id];
+				} else {
+					$tmpuser = new User($db);
+					$tmpuser->fetch($userlinked_id);
+					$conf->cache['user'][$userlinked_id] = $tmpuser;
+				}
+				print $tmpuser->getNomUrl(1);
 			} else {
 				print '&nbsp;';
 			}
@@ -1605,7 +1613,8 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Balance
+
+		// Balance after
 		if (!empty($arrayfields['balance']['checked'])) {
 			if ($mode_balance_ok) {
 				if ($balance >= 0) {
@@ -1626,7 +1635,7 @@ if ($resql) {
 			// Transaction reconciliated or edit link
 			if ($bankaccount->canBeConciliated() > 0) {
 				if ($objp->num_releve) {
-					print '<a href="releve.php?num='.$objp->num_releve.'&account='.$objp->bankid.'&save_lastsearch_values=1">'.$objp->num_releve.'</a>';
+					print '<a href="releve.php?num='.urlencode($objp->num_releve).'&account='.urlencode($objp->bankid).'&save_lastsearch_values=1">'.dol_escape_htmltag($objp->num_releve).'</a>';
 				}
 				if (!$objp->conciliated && $action == 'reconcile') {
 					if ($objp->num_releve) {
@@ -1644,7 +1653,7 @@ if ($resql) {
 
 		if (!empty($arrayfields['b.conciliated']['checked'])) {
 			print '<td class="nowraponall" align="center">';
-			print $objp->conciliated ? $langs->trans("Yes") : $langs->trans("No");
+			print yn($objp->conciliated);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

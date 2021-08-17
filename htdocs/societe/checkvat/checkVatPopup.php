@@ -21,6 +21,8 @@
  *		\brief      Popup screen to validate VAT
  */
 
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');		// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
+
 require "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once NUSOAP_PATH.'/nusoap.php';
@@ -39,7 +41,7 @@ $conf->dol_hide_leftmenu = 1;
 
 llxHeader('', $langs->trans("VATIntraCheckableOnEUSite"));
 
-print '<div class="vatcheckarea" style="margin-bottom: 10px">';
+print '<div class="vatcheckarea margintoponly marginbottomonly">';
 
 print load_fiche_titre($langs->trans("VATIntraCheckableOnEUSite"), '', 'title_setup');
 

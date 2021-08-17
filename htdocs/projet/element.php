@@ -7,6 +7,7 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2016      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021      Noé Cendrier         <noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +41,6 @@ if (!empty($conf->propal->enabled)) {
 }
 if (!empty($conf->facture->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-}
-if (!empty($conf->facture->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 }
 if (!empty($conf->commande->enabled)) {
@@ -50,10 +49,10 @@ if (!empty($conf->commande->enabled)) {
 if (!empty($conf->supplier_proposal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 }
-if (!empty($conf->fournisseur->enabled)) {
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 }
-if (!empty($conf->fournisseur->enabled)) {
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 }
 if (!empty($conf->contrat->enabled)) {
@@ -79,8 +78,6 @@ if (!empty($conf->don->enabled)) {
 }
 if (!empty($conf->loan->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
-}
-if (!empty($conf->loan->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
 }
 if (!empty($conf->stock->enabled)) {
@@ -186,12 +183,14 @@ $hookmanager->initHooks(array('projectOverview'));
  *	View
  */
 
-$title = $langs->trans("ProjectReferers").' - '.$object->ref.' '.$object->name;
+$title = $langs->trans('ProjectReferers').' - '.$object->ref.' '.$object->name;
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
-	$title = $object->ref.' '.$object->name.' - '.$langs->trans("ProjectReferers");
+	$title = $object->ref.' '.$object->name.' - '.$langs->trans('ProjectReferers');
 }
-$help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
-llxHeader("", $langs->trans("Referers"), $help_url);
+
+$help_url = 'EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte';
+
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formproject = new FormProjets($db);
@@ -360,6 +359,18 @@ print '<br>';
  */
 
 $listofreferent = array(
+'entrepot'=>array(
+	'name'=>"Warehouse",
+	'title'=>"ListWarehouseAssociatedProject",
+	'class'=>'Entrepot',
+	'table'=>'entrepot',
+	'datefieldname'=>'date_entrepot',
+	'urlnew'=>DOL_URL_ROOT.'/product/stock/card.php?action=create&projectid='.$id,
+	'lang'=>'entrepot',
+	'buttonnew'=>'AddWarehouse',
+	'project_field'=>'fk_project',
+	'testnew'=>$user->rights->stock->creer,
+	'test'=>$conf->stock->enabled && $user->rights->stock->lire),
 'propal'=>array(
 	'name'=>"Proposals",
 	'title'=>"ListProposalsAssociatedProject",
@@ -425,8 +436,8 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/fourn/commande/card.php?action=create&projectid='.$id, // No socid parameter here, the socid is often the customer and we create a supplier object
 	'lang'=>'suppliers',
 	'buttonnew'=>'AddSupplierOrder',
-	'testnew'=>$user->rights->fournisseur->commande->creer,
-	'test'=>$conf->supplier_order->enabled && $user->rights->fournisseur->commande->lire),
+	'testnew'=>($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer),
+	'test'=>$conf->supplier_order->enabled && ($user->rights->fournisseur->commande->lire || $user->rights->supplier_order->lire)),
 'invoice_supplier'=>array(
 	'name'=>"BillsSuppliers",
 	'title'=>"ListSupplierInvoicesAssociatedProject",
@@ -437,8 +448,8 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/fourn/facture/card.php?action=create&projectid='.$id, // No socid parameter here, the socid is often the customer and we create a supplier object
 	'lang'=>'suppliers',
 	'buttonnew'=>'AddSupplierInvoice',
-	'testnew'=>$user->rights->fournisseur->facture->creer,
-	'test'=>$conf->supplier_invoice->enabled && $user->rights->fournisseur->facture->lire),
+	'testnew'=>($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer),
+	'test'=>$conf->supplier_invoice->enabled && ($user->rights->fournisseur->facture->lire || $user->rights->supplier_invoice->lire)),
 'contract'=>array(
 	'name'=>"Contracts",
 	'title'=>"ListContractAssociatedProject",
@@ -1019,7 +1030,7 @@ foreach ($listofreferent as $key => $value) {
 				$addform .= '<input type="hidden" name="dateerfc" value="'.dol_print_date($datee, 'dayhourrfc').'">';
 				$addform .= '<table><tr><td><span class="hideonsmartphone opacitymedium">'.$langs->trans("SelectElement").'</span></td>';
 				$addform .= '<td>'.$selectList.'</td>';
-				$addform .= '<td><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("LinkToElementShort")).'"></td>';
+				$addform .= '<td><input type="submit" class="button smallpaddingimp" value="'.dol_escape_htmltag($langs->trans("LinkToElementShort")).'"></td>';
 				$addform .= '</tr></table>';
 				$addform .= '</form>';
 				$addform .= '</div>';
@@ -1028,7 +1039,7 @@ foreach ($listofreferent as $key => $value) {
 		if (empty($conf->global->PROJECT_CREATE_ON_OVERVIEW_DISABLED) && $urlnew) {
 			$addform .= '<div class="inline-block valignmiddle">';
 			if ($testnew) {
-				$addform .= '<a class="buttonxxx" href="'.$urlnew.'"><span class="valignmiddle text-plus-circle hideonsmartphone">'.($buttonnew ? $langs->trans($buttonnew) : $langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+				$addform .= '<a class="buttonxxx marginleftonly" href="'.$urlnew.'"><span class="valignmiddle text-plus-circle hideonsmartphone">'.($buttonnew ? $langs->trans($buttonnew) : $langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			} elseif (empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
 				$addform .= '<a class="buttonxxx buttonRefused" disabled="disabled" href="#"><span class="valignmiddle text-plus-circle hideonsmartphone">'.($buttonnew ? $langs->trans($buttonnew) : $langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			}

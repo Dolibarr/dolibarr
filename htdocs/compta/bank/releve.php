@@ -179,8 +179,8 @@ $sqlrequestforbankline = $sql;
 
 if ($action == 'confirm_editbankreceipt' && !empty($oldbankreceipt) && !empty($newbankreceipt)) {
 	// TODO Add a test to check newbankreceipt does not exists yet
-	$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX.'bank';
-	$sqlupdate .= ' SET num_releve = "'.$db->escape($newbankreceipt).'" WHERE num_releve = "'.$db->escape($oldbankreceipt).'" AND fk_account = '.((int) $id);
+	$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."bank SET num_releve = '".$db->escape($newbankreceipt)."'";
+	$sqlupdate .= " WHERE num_releve = '".$db->escape($oldbankreceipt)."' AND fk_account = ".((int) $id);
 	$result = $db->query($sqlupdate);
 	if ($result < 0) {
 		dol_print_error($db);
@@ -606,7 +606,7 @@ if (empty($numref)) {
 				$sql .= ", ".MAIN_DB_PREFIX."bank_class as cl";
 				$sql .= " WHERE ct.rowid = cl.fk_categ";
 				$sql .= " AND ct.entity = ".$conf->entity;
-				$sql .= " AND cl.lineid = ".$objp->rowid;
+				$sql .= " AND cl.lineid = ".((int) $objp->rowid);
 
 				$resc = $db->query($sql);
 				if ($resc) {

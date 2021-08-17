@@ -4,7 +4,7 @@
  * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Charlie Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2018-2019  Thibault Foucart		<support@ptibogxiv.net>
- * Copyright (C) 2021           Waël Almoman            <info@almoman.com>
+ * Copyright (C) 2021     	Waël Almoman            <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,6 +88,11 @@ class AdherentType extends CommonObject
 	 * @var int Subsription required (0 or 1)
 	 */
 	public $subscription;
+
+	/**
+	 * @var float amount for subscription
+	 */
+	public $amount;
 
 	/** @var string 	Public note */
 	public $note;
@@ -357,15 +362,16 @@ class AdherentType extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent_type ";
 		$sql .= "SET ";
-		$sql .= "statut = ".$this->status.",";
+		$sql .= "statut = ".((int) $this->status).",";
 		$sql .= "libelle = '".$this->db->escape($this->label)."',";
 		$sql .= "morphy = '".$this->db->escape($this->morphy)."',";
 		$sql .= "subscription = '".$this->db->escape($this->subscription)."',";
+		$sql .= "amount = ".((empty($this->amount) && $this->amount == '') ? 'null' : ((float) $this->amount)).",";
 		$sql .= "duration = '".$this->db->escape($this->duration_value.$this->duration_unit)."',";
 		$sql .= "note = '".$this->db->escape($this->note)."',";
 		$sql .= "vote = ".(integer) $this->db->escape($this->vote).",";
 		$sql .= "mail_valid = '".$this->db->escape($this->mail_valid)."'";
-		$sql .= " WHERE rowid =".$this->id;
+		$sql .= " WHERE rowid =".((int) $this->id);
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -455,7 +461,7 @@ class AdherentType extends CommonObject
 	{
 		global $langs, $conf;
 
-		$sql = "SELECT d.rowid, d.libelle as label, d.morphy, d.statut as status, d.duration, d.subscription, d.mail_valid, d.note, d.vote";
+		$sql = "SELECT d.rowid, d.libelle as label, d.morphy, d.statut as status, d.duration, d.subscription, d.amount, d.mail_valid, d.note, d.vote";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 		$sql .= " WHERE d.rowid = ".(int) $rowid;
 
@@ -475,6 +481,7 @@ class AdherentType extends CommonObject
 				$this->duration_value = substr($obj->duration, 0, dol_strlen($obj->duration) - 1);
 				$this->duration_unit  = substr($obj->duration, -1);
 				$this->subscription   = $obj->subscription;
+				$this->amount         = $obj->amount;
 				$this->mail_valid     = $obj->mail_valid;
 				$this->note           = $obj->note;
 				$this->vote           = $obj->vote;
@@ -533,6 +540,45 @@ class AdherentType extends CommonObject
 			print $this->db->error();
 		}
 		return $adherenttypes;
+	}
+
+	/**
+	 *  Return list of amount by type id
+	 *
+	 *  @param	int		$status			Filter on status of type
+	 *  @return array					List of types of members
+	 */
+	public function amountByType($status = null)
+	{
+
+		global $conf, $langs;
+
+		$amountbytype = array();
+
+		$sql = "SELECT rowid, amount";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type";
+		$sql .= " WHERE entity IN (".getEntity('member_type').")";
+		if ($status !== null) {
+			$sql .= " AND statut = ".((int) $status);
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$nump = $this->db->num_rows($resql);
+
+			if ($nump) {
+				$i = 0;
+				while ($i < $nump) {
+					$obj = $this->db->fetch_object($resql);
+
+					$amountbytype[$obj->rowid] = $obj->amount;
+					$i++;
+				}
+			}
+		} else {
+			print $this->db->error();
+		}
+		return $amountbytype;
 	}
 
 	/**
@@ -610,18 +656,18 @@ class AdherentType extends CommonObject
 	/**
 	 *  Return clicable name (with picto eventually)
 	 *
-	 *  @param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *  @param		int		$maxlen			length max label
-	 *  @param		int  	$notooltip		1=Disable tooltip
-	 *  @return		string					String with URL
+	 *  @param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+	 *  @param		int		$maxlen						length max label
+	 *  @param		int  	$notooltip					1=Disable tooltip
+	 *  @param  	string  $morecss                    Add more css on link
+	 *  @param  	int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @return		string								String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0)
+	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $langs;
 
 		$result = '';
-
-		$label = '';
 
 		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("MemberType").'</u>';
 		$label .= ' '.$this->getLibStatut(4);
@@ -630,7 +676,22 @@ class AdherentType extends CommonObject
 			$label .= '<br>'.$langs->trans("SubscriptionRequired").': '.yn($this->subscription);
 		}
 
-		$linkstart = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?rowid='.((int) $this->id).'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$option = '';
+
+		$url = DOL_URL_ROOT.'/adherents/type.php?rowid='.((int) $this->id);
+
+		if ($option != 'nolink') {
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
+		}
+
+		$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';
 
 		$result .= $linkstart;

@@ -95,7 +95,7 @@ class StockMovements extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
 	{
-		global $db, $conf;
+		global $conf;
 
 		$obj_ret = array();
 
@@ -112,7 +112,7 @@ class StockMovements extends DolibarrApi
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -176,7 +176,7 @@ class StockMovements extends DolibarrApi
 		}
 
 		if ($qty == 0) {
-			throw new RestException(503, "Making a stock movement with a quentity of 0 is not possible");
+			throw new RestException(503, "Making a stock movement with a quantity of 0 is not possible");
 		}
 
 		// Type increase or decrease

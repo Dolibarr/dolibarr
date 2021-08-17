@@ -33,8 +33,6 @@ $socid = GETPOST('socid', 'int');
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'societe', '', '');
-
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -60,6 +58,12 @@ if ($socid > 0) {
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartymargins', 'globalcard'));
+
+$result = restrictedArea($user, 'societe', $object->id, '');
+
+if (empty($user->rights->margins->liretous)) {
+	accessforbidden();
+}
 
 
 /*
@@ -109,6 +113,11 @@ if ($socid > 0) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border tableforfield" width="100%">';
 
+	// Type Prospect/Customer/Supplier
+	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+	print $object->getTypeUrl(1);
+	print '</td></tr>';
+
 	if ($object->client) {
 		print '<tr><td class="titlefield">';
 		print $langs->trans('CustomerCode').'</td><td colspan="3">';
@@ -120,7 +129,7 @@ if ($socid > 0) {
 		print '</td></tr>';
 	}
 
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $object->fournisseur && !empty($user->rights->fournisseur->lire)) {
+	if (((!empty($conf->fournisseur->enabled) && !empty($user->rights->fournisseur->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_order->enabled) && !empty($user->rights->supplier_order->lire)) || (!empty($conf->supplier_invoice->enabled) && !empty($user->rights->supplier_invoice->lire))) && $object->fournisseur) {
 		print '<tr><td class="titlefield">';
 		print $langs->trans('SupplierCode').'</td><td colspan="3">';
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
@@ -133,7 +142,7 @@ if ($socid > 0) {
 
 	// Total Margin
 	print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td colspan="3">';
-	print '<span id="totalMargin"></span>'; // set by jquery (see below)
+	print '<span id="totalMargin" class="amount"></span>'; // set by jquery (see below)
 	print '</td></tr>';
 
 	// Margin Rate
@@ -160,7 +169,7 @@ if ($socid > 0) {
 	print '<br>';
 
 	$sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client,";
-	$sql .= " f.rowid as facid, f.ref, f.total as total_ht,";
+	$sql .= " f.rowid as facid, f.ref, f.total_ht,";
 	$sql .= " f.datef, f.paye, f.fk_statut as statut, f.type,";
 	$sql .= " sum(d.total_ht) as selling_price,"; // may be negative or positive
 	$sql .= " sum(d.qty * d.buy_price_ht * (d.situation_percent / 100)) as buying_price,"; // always positive
@@ -179,7 +188,7 @@ if ($socid > 0) {
 	if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 2) {
 		$sql .= " AND d.buy_price_ht <> 0";
 	}
-	$sql .= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total, f.datef, f.paye, f.fk_statut, f.type";
+	$sql .= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut, f.type";
 	$sql .= $db->order($sortfield, $sortorder);
 	// TODO: calculate total to display then restore pagination
 	//$sql.= $db->plimit($conf->liste_limit +1, $offset);
@@ -233,9 +242,9 @@ if ($socid > 0) {
 				print "</td>\n";
 				print "<td class=\"center\">";
 				print dol_print_date($db->jdate($objp->datef), 'day')."</td>";
-				print "<td class=\"right\">".price(price2num($objp->selling_price, 'MT'))."</td>\n";
-				print "<td class=\"right\">".price(price2num(($objp->type == 2 ? -1 : 1) * $objp->buying_price, 'MT'))."</td>\n";
-				print "<td class=\"right\">".$sign.price(price2num($objp->marge, 'MT'))."</td>\n";
+				print "<td class=\"right amount\">".price(price2num($objp->selling_price, 'MT'))."</td>\n";
+				print "<td class=\"right amount\">".price(price2num(($objp->type == 2 ? -1 : 1) * $objp->buying_price, 'MT'))."</td>\n";
+				print "<td class=\"right amount\">".$sign.price(price2num($objp->marge, 'MT'))."</td>\n";
 				if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
 					print "<td class=\"right\">".(($marginRate === '') ? 'n/a' : $sign.price(price2num($marginRate, 'MT'))."%")."</td>\n";
 				}

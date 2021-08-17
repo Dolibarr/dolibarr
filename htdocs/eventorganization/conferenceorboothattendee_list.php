@@ -112,7 +112,7 @@ foreach ($object->fields as $key => $val) {
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
 foreach ($object->fields as $key => $val) {
-	if ($val['searchall']) {
+	if (!empty($val['searchall'])) {
 		$fieldstosearchall['t.'.$key] = $val['label'];
 	}
 }
@@ -128,7 +128,7 @@ foreach ($object->fields as $key => $val) {
 			'checked'=>(($visible < 0) ? 0 : 1),
 			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
 			'position'=>$val['position'],
-			'help'=>$val['help']
+			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
 	}
 }
@@ -234,7 +234,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $obje
 $sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
-$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as a on a.id=t.fk_actioncomm AND a.id=".$confOrBooth->id;
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as a on a.id=t.fk_actioncomm AND a.id=".((int) $confOrBooth->id);
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
@@ -253,8 +253,8 @@ foreach ($search as $key => $val) {
 			continue;
 		}
 		$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
-		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0)) {
-			if ($search[$key] == '-1' || $search[$key] === '0') {
+		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0) || !empty($object->fields[$key]['arrayofkeyval'])) {
+			if ($search[$key] == '-1' || ($search[$key] === '0' && (empty($object->fields[$key]['arrayofkeyval']) || !array_key_exists('0', $object->fields[$key]['arrayofkeyval'])))) {
 				$search[$key] = '';
 			}
 			$mode_search = 2;
@@ -264,10 +264,10 @@ foreach ($search as $key => $val) {
 		}
 	} else {
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
-			$columnName=preg_replace('/(_dtstart|_dtend)$/', '', $key);
+			$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
 				if (preg_match('/_dtstart$/', $key)) {
-					$sql .= " AND t." . $columnName . " >= '" . $db->idate($search[$key]) . "'";
+					$sql .= " AND t.".$columnName." >= '".$db->idate($search[$key])."'";
 				}
 				if (preg_match('/_dtend$/', $key)) {
 					$sql .= " AND t." . $columnName . " <= '" . $db->idate($search[$key]) . "'";
@@ -499,7 +499,15 @@ if ($confOrBooth->id > 0) {
 		print "</td></tr>";
 
 		print '<tr><td valign="middle">'.$langs->trans("EventOrganizationICSLink").'</td><td>';
-		print '';
+		// Define $urlwithroot
+		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
+
+		// Show message
+		$message = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
+		$message .= '&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...');
+		$message .= "&project=".$projectstatic->id.'&module='.urlencode('@eventorganization').'&status='.ConferenceOrBooth::STATUS_CONFIRMED.'">'.$langs->trans('DownloadICSLink').'</a>';
+		print $message;
 		print "</td></tr>";
 
 		print '</table>';
@@ -580,13 +588,13 @@ $param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
-	//'validate'=>$langs->trans("Validate"),
-	//'generate_doc'=>$langs->trans("ReGeneratePDF"),
-	//'builddoc'=>$langs->trans("PDFMerge"),
-	//'presend'=>$langs->trans("SendByMail"),
+	//'validate'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
+	//'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 if ($permissiontodelete) {
-	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
@@ -787,6 +795,12 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if (!empty($val['isameasure'])) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
+				}
+				if (!isset($totalarray['val'])) {
+					$totalarray['val'] = array();
+				}
+				if (!isset($totalarray['val']['t.'.$key])) {
+					$totalarray['val']['t.'.$key] = 0;
 				}
 				$totalarray['val']['t.'.$key] += $object->$key;
 			}

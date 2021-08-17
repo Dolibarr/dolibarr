@@ -193,7 +193,7 @@ class ExportExcel2007 extends ModeleExports
 
 		$outputlangs->load("exports");
 
-		require_once DOL_DOCUMENT_ROOT.'/includes/phpoffice/autoloader.php';
+		require_once DOL_DOCUMENT_ROOT.'/includes/phpoffice/phpspreadsheet/src/autoloader.php';
 		require_once DOL_DOCUMENT_ROOT.'/includes/Psr/autoloader.php';
 		require_once PHPEXCELNEW_PATH.'Spreadsheet.php';
 
@@ -315,8 +315,8 @@ class ExportExcel2007 extends ModeleExports
 			$newvalue = $this->excel_clean($newvalue);
 			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';
 
-			if (preg_match('/^Select:/i', $typefield, $reg) && $typefield = substr($typefield, 7)) {
-				$array = unserialize($typefield);
+			if (preg_match('/^Select:/i', $typefield) && $typefield = substr($typefield, 7)) {
+				$array = json_decode($typefield, true);
 				$array = $array['options'];
 				$newvalue = $array[$newvalue];
 			}

@@ -926,7 +926,7 @@ class CMailFile
 				}
 				// send mail
 				try {
-					$result = $this->mailer->send($this->message);
+					$result = $this->mailer->send($this->message, $failedRecipients);
 				} catch (Exception $e) {
 					$this->error = $e->getMessage();
 				}
@@ -936,6 +936,9 @@ class CMailFile
 
 				$res = true;
 				if (!empty($this->error) || !$result) {
+					if (!empty($failedRecipients)) {
+						$this->error = 'Transport failed for the following addresses: "' . join('", "', $failedRecipients) . '".';
+					}
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res = false;
 				} else {
@@ -1625,7 +1628,7 @@ class CMailFile
 	 * @return  array                       array of email => name
 	 * @see getValidAddress()
 	 */
-	public function getArrayAddress($address)
+	public static function getArrayAddress($address)
 	{
 		global $conf;
 

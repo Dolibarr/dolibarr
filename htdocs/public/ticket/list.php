@@ -55,7 +55,7 @@ $langs->loadLangs(array("companies", "other", "ticket"));
 // Get parameters
 $track_id = GETPOST('track_id', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$email = GETPOST('email', 'alpha');
+$email = strtolower(GETPOST('email', 'alpha'));
 
 if (GETPOST('btn_view_ticket_list')) {
 	unset($_SESSION['track_id_customer']);
@@ -65,7 +65,7 @@ if (isset($_SESSION['track_id_customer'])) {
 	$track_id = $_SESSION['track_id_customer'];
 }
 if (isset($_SESSION['email_customer'])) {
-	$email = $_SESSION['email_customer'];
+	$email = strtolower($_SESSION['email_customer']);
 }
 
 $object = new Ticket($db);
@@ -105,7 +105,7 @@ if ($action == "view_ticketlist") {
 			// vérifie si l'adresse email est bien dans les contacts du ticket
 			$contacts = $object->liste_contact(-1, 'external');
 			foreach ($contacts as $contact) {
-				if ($contact['email'] == $email) {
+				if (strtolower($contact['email']) == $email) {
 					$display_ticket_list = true;
 					$_SESSION['email_customer'] = $email;
 					$_SESSION['track_id_customer'] = $track_id;
@@ -116,7 +116,7 @@ if ($action == "view_ticketlist") {
 			}
 			if ($object->fk_soc > 0) {
 				$object->fetch_thirdparty();
-				if ($email == $object->thirdparty->email) {
+				if ($email == strtolower($object->thirdparty->email)) {
 					$display_ticket_list = true;
 					$_SESSION['email_customer'] = $email;
 					$_SESSION['track_id_customer'] = $track_id;
@@ -125,14 +125,14 @@ if ($action == "view_ticketlist") {
 			if ($object->fk_user_create > 0) {
 				$tmpuser = new User($db);
 				$tmpuser->fetch($object->fk_user_create);
-				if ($email == $tmpuser->email) {
+				if ($email == strtolower($tmpuser->email)) {
 					$display_ticket_list = true;
 					$_SESSION['email_customer'] = $email;
 					$_SESSION['track_id_customer'] = $track_id;
 				}
 			}
 
-			$emailorigin = CMailFile::getValidAddress($object->origin_email, 2);
+			$emailorigin = strtolower(CMailFile::getValidAddress($object->origin_email, 2));
 			if ($email == $emailorigin) {
 				$display_ticket_list = true;
 				$_SESSION['email_customer'] = $email;
@@ -359,17 +359,17 @@ if ($action == "view_ticketlist") {
 		if (!empty($filter)) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) { // To allow $filter['YEAR(s.dated)']=>$year
-					$sql .= ' AND '.$key.' = \''.$value.'\'';
+					$sql .= ' AND '.$key.' = \''.$db->escape($value).'\'';
 				} elseif (($key == 't.fk_user_assign') || ($key == 't.type_code') || ($key == 't.category_code') || ($key == 't.severity_code')) {
 					$sql .= " AND ".$key." = '".$db->escape($value)."'";
 				} elseif ($key == 't.fk_statut') {
 					if (is_array($value) && count($value) > 0) {
 						$sql .= 'AND '.$key.' IN ('.$db->sanitize(implode(',', $value)).')';
 					} else {
-						$sql .= ' AND '.$key.' = '.$db->escape($value);
+						$sql .= ' AND '.$key.' = '.((int) $value);
 					}
 				} else {
-					$sql .= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+					$sql .= ' AND '.$key.' LIKE \'%'.$db->escape($value).'%\'';
 				}
 			}
 		}
@@ -561,14 +561,19 @@ if ($action == "view_ticketlist") {
 					// Ref
 					if (!empty($arrayfields['t.ref']['checked'])) {
 						print '<td class="nowraponall">';
+						print '<a rel="nofollow" href="javascript:viewticket(\''.dol_escape_js($obj->track_id).'\',\''.dol_escape_js($_SESSION['email_customer']).'\');">';
+						print img_picto('', 'ticket', 'class="paddingrightonly"');
 						print $obj->ref;
+						print '</a>';
 						print '</td>';
 					}
 
 					// Subject
 					if (!empty($arrayfields['t.subject']['checked'])) {
 						print '<td>';
-						print '<a rel="nofollow" href="javascript:viewticket(\''.$obj->track_id.'\',\''.$_SESSION['email_customer'].'\');">'.$obj->subject.'</a>';
+						print '<a rel="nofollow" href="javascript:viewticket(\''.dol_escape_js($obj->track_id).'\',\''.dol_escape_js($_SESSION['email_customer']).'\');">';
+						print $obj->subject;
+						print '</a>';
 						print '</td>';
 					}
 
@@ -602,13 +607,14 @@ if ($action == "view_ticketlist") {
 
 					// Message author
 					if (!empty($arrayfields['t.fk_user_create']['checked'])) {
-						print '<td>';
+						print '<td title="'.dol_escape_htmltag($obj->origin_email).'">';
 						if ($obj->fk_user_create > 0) {
 							$user_create->firstname = (!empty($obj->user_create_firstname) ? $obj->user_create_firstname : '');
 							$user_create->name = (!empty($obj->user_create_lastname) ? $obj->user_create_lastname : '');
 							$user_create->id = (!empty($obj->fk_user_create) ? $obj->fk_user_create : '');
 							print $user_create->getFullName($langs);
 						} else {
+							print img_picto('', 'email', 'class="paddingrightonly"');
 							print $langs->trans('Email');
 						}
 						print '</td>';
@@ -617,10 +623,11 @@ if ($action == "view_ticketlist") {
 					// Assigned author
 					if (!empty($arrayfields['t.fk_user_assign']['checked'])) {
 						print '<td>';
-						if ($obj->fk_user_assig > 0) {
+						if ($obj->fk_user_assign > 0) {
 							$user_assign->firstname = (!empty($obj->user_assign_firstname) ? $obj->user_assign_firstname : '');
 							$user_assign->lastname = (!empty($obj->user_assign_lastname) ? $obj->user_assign_lastname : '');
 							$user_assign->id = (!empty($obj->fk_user_assign) ? $obj->fk_user_assign : '');
+							print img_picto('', 'user', 'class="paddingrightonly"');
 							print $user_assign->getFullName($langs);
 						}
 						print '</td>';

@@ -1179,7 +1179,7 @@ if ($resql) {
 $modulepart = 'movement';
 
 if ($action != 'create' && $action != 'edit' && $action != 'delete' && $id > 0) {
-	print '<br/>';
+	print '<br>';
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 	print '<a name="builddoc"></a>'; // ancre
 

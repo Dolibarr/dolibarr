@@ -2,6 +2,7 @@
 /* Copyright (C) 2012      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2016 Charlie BENKE 	<charlie@patas-monkey.com>
+ * Copyright (C) 2021       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,9 +45,17 @@ if ($module == 'propal') {
 } elseif ($module == 'fichinter') {
 	$permission = $user->rights->ficheinter->creer;
 } elseif ($module == 'order_supplier') {
-	$permission = $user->rights->fournisseur->commande->creer;
-} elseif ($module == 'invoice_supplier') {
-	$permission = $user->rights->fournisseur->facture->creer;
+	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+		$permission = $user->rights->fournisseur->commande->creer;
+	} else {
+		$permission = $user->rights->supplier_order->creer;
+	}
+} elseif ($module == 'invoice_supplier' && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+		$permission = $user->rights->fournisseur->facture->creer;
+	} else {
+		$permission = $user->rights->supplier_invoice->creer;
+	}
 } elseif ($module == 'project') {
 	$permission = $user->rights->projet->creer;
 } elseif ($module == 'action') {
@@ -92,11 +101,11 @@ if ($permission) {
 	if (empty($hideaddcontactforuser)) {
 		?>
 	<form class="tagtr impair nohover" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
-		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
+		<input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 		<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
 		<input type="hidden" name="action" value="addcontact" />
 		<input type="hidden" name="source" value="internal" />
-		<?php if ($withproject) {
+		<?php if (!empty($withproject)) {
 			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 		} ?>
 
@@ -122,23 +131,21 @@ if ($permission) {
 		?>
 
 	<form class="tagtr pair nohover" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
-		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
+		<input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 		<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
 		<input type="hidden" name="action" value="addcontact" />
 		<input type="hidden" name="source" value="external" />
-		<?php if ($withproject) {
+		<?php if (!empty($withproject)) {
 			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 		} ?>
 
 		<div class="tagtd nowrap maxwidthonsmartphone noborderbottom">
-			<?php $selectedCompany = isset($_GET["newcompany"]) ? $_GET["newcompany"] : $object->socid; ?>
-			<?php
+			<?php $selectedCompany = isset($_GET["newcompany"]) ? $_GET["newcompany"] : (empty($object->socid) ?  0 : $object->socid);
 			// add company icon before select list
 			if ($selectedCompany) {
 				echo img_object('', 'company', 'class="hideonsmartphone"');
 			}
-			?>
-			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp'); ?>
+			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp'); ?>
 		</div>
 		<!--  <div class="tagtd nowrap noborderbottom"><?php echo img_object('', 'contact').' '.$langs->trans("ThirdPartyContacts"); ?></div>-->
 		<div class="tagtd maxwidthonsmartphone noborderbottom">

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016-2017  Jamal Elbaz             <jamelbaz@gmail.com>
  * Copyright (C) 2016       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Laurent Destailleur     <eldy@destailleur.fr>
+ * Copyright (C) 2018-2020  Laurent Destailleur     <eldy@destailleur.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -318,9 +318,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 				// Year NP
 				print '<td class="liste_total width200">';
-				print $cat['code'];
+				print dol_escape_htmltag($cat['code']);
 				print '</td><td>';
-				print $cat['label'];
+				print dol_escape_htmltag($cat['label']);
 				print '</td>';
 
 				$vars = array();
@@ -337,7 +337,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 				$r = dol_eval($result, 1);
 				//var_dump($r);
 
-				print '<td class="liste_total right">'.price($r).'</td>';
+				print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
 
 				// Year N
 				$code = $cat['code']; // code of categorie ('VTE', 'MAR', ...)
@@ -355,7 +355,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 				//$r = $AccCat->calculate($result);
 				$r = dol_eval($result, 1);
 
-				print '<td class="liste_total right">'.price($r).'</td>';
+				print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
 				$sommes[$code]['N'] += $r;
 
 				// Detail by month
@@ -369,7 +369,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 						//$r = $AccCat->calculate($result);
 						$r = dol_eval($result, 1);
 
-						print '<td class="liste_total right">'.price($r).'</td>';
+						print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
 						$sommes[$code]['M'][$k] += $r;
 					}
 				}
@@ -383,7 +383,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 						//$r = $AccCat->calculate($result);
 						$r = dol_eval($result, 1);
 
-						print '<td class="liste_total right">'.price($r).'</td>';
+						print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
 						$sommes[$code]['M'][$k] += $r;
 					}
 				}
@@ -471,12 +471,12 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 				// Column group
 				print '<td class="width200">';
-				print $cat['code'];
+				print dol_escape_htmltag($cat['code']);
 				print '</td>';
 
 				// Label of group
 				print '<td>';
-				print $cat['label'];
+				print dol_escape_htmltag($cat['label']);
 				if (count($cpts) > 0) {    // Show example of 5 first accounting accounts
 					$i = 0;
 					foreach ($cpts as $cpt) {
@@ -489,7 +489,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 						} else {
 							print ' (';
 						}
-						print $cpt['account_number'];
+						print dol_escape_htmltag($cpt['account_number']);
 						$i++;
 					}
 					if ($i <= 5) {
@@ -506,12 +506,12 @@ if ($modecompta == 'CREANCES-DETTES') {
 				// Each month
 				foreach ($totCat['M'] as $k => $v) {
 					if (($k + 1) >= $date_startmonth) {
-						print '<td class="right"><span class="amount">'.price($v).'</span></td>';
+						print '<td class="right nowraponall"><span class="amount">'.price($v).'</span></td>';
 					}
 				}
 				foreach ($totCat['M'] as $k => $v) {
 					if (($k + 1) < $date_startmonth) {
-						print '<td class="right"><span class="amount">'.price($v).'</span></td>';
+						print '<td class="right nowraponall"><span class="amount">'.price($v).'</span></td>';
 					}
 				}
 
@@ -538,7 +538,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 							foreach ($months as $k => $v) {
 								if (($k + 1) >= $date_startmonth) {
 									$resultM = $totPerAccount[$cpt['account_number']]['M'][$k];
-									print '<td class="right"><span class="amount">'.price($resultM).'</span>/td>';
+									print '<td class="right"><span class="amount">'.price($resultM).'</span></td>';
 								}
 							}
 							foreach ($months as $k => $v) {

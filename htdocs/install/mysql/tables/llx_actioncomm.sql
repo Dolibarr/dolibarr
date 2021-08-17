@@ -55,7 +55,7 @@ create table llx_actioncomm
   durationp			real,							-- planed duration
 
   label				varchar(255) NOT NULL,			-- label/title of event or topic of email
-  note				text,							-- note of event or content of email
+  note				text,							-- private note of event or content of email
   
   calling_duration  integer,                        -- when event is a phone call, duration of phone call
   

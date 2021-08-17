@@ -37,15 +37,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 $langs->loadLangs(array("companies", "other", "ticket", "mails"));
 
 $id       = GETPOST('id', 'int');
+$socid = GETPOST('socid', 'int');
 $ref      = GETPOST('ref', 'alpha');
 $track_id = GETPOST('track_id', 'alpha');
 $action   = GETPOST('action', 'alpha');
 $confirm  = GETPOST('confirm', 'alpha');
-
-// Security check
-if (!$user->rights->ticket->read) {
-	accessforbidden();
-}
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -73,6 +69,21 @@ if ($result < 0) {
 } else {
 	$upload_dir = $conf->ticket->dir_output."/".dol_sanitizeFileName($object->ref);
 }
+
+$permissiontoadd = $user->rights->ticket->write;
+
+// Security check - Protection if external user
+$result = restrictedArea($user, 'ticket', $object->id);
+
+// restrict access for externals users
+if ($user->socid > 0 && ($object->fk_soc != $user->socid)) {
+	accessforbidden();
+}
+// or for unauthorized internals users
+if (!$user->socid && ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
+	accessforbidden();
+}
+
 
 
 /*
@@ -104,7 +115,7 @@ if ($object->id) {
 		print dol_get_fiche_end();
 	}
 
-	if (!$user->socid && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
+	if (!$user->socid && !empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) {
 		$object->next_prev_filter = "te.fk_user_assign = '".$user->id."'";
 	} elseif ($user->socid > 0) {
 		$object->next_prev_filter = "te.fk_soc = '".$user->socid."'";
@@ -192,11 +203,11 @@ if ($object->id) {
 
 	//$object->ref = $object->track_id;	// For compatibility we use track ID for directory
 	$modulepart = 'ticket';
-	$permission = $user->rights->ticket->write;
+	$permissiontoadd = $user->rights->ticket->write;
 	$permtoedit = $user->rights->ticket->write;
 	$param = '&id='.$object->id;
 
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	accessforbidden('', 0, 1);
 }

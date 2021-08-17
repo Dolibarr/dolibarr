@@ -342,7 +342,11 @@ class pdf_crabe extends ModelePDFFactures
 
 				// Set path to the background PDF File
 				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
-					$pagecount = $pdf->setSourceFile($conf->mycompany->multidir_output[$object->entity].'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+					$logodir = $conf->mycompany->dir_output;
+					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
+						$logodir = $conf->mycompany->multidir_output[$object->entity];
+					}
+					$pagecount = $pdf->setSourceFile($logodir.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
 					$tplidx = $pdf->importPage(1);
 				}
 
@@ -1025,7 +1029,11 @@ class pdf_crabe extends ModelePDFFactures
 		if ($this->emetteur->country_code == 'FR' && empty($mysoc->tva_assuj)) {
 			$pdf->SetFont('', 'B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
+			if ($mysoc->forme_juridique_code == 92) {
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoiceAsso"), 0, 'L', 0);
+			} else {
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
+			}
 
 			$posy = $pdf->GetY() + 4;
 		}
@@ -1599,11 +1607,15 @@ class pdf_crabe extends ModelePDFFactures
 	 *  @param  Facture		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
+	 *  @param  Translate	$outputlangsbis	Object lang for output bis
 	 *  @return	void
 	 */
-	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
 		global $conf, $langs;
+
+		$ltrdirection = 'L';
+		if ($outputlangs->trans("DIRECTION") == 'rtl') $ltrdirection = 'R';
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "bills", "propal", "companies"));
@@ -1613,7 +1625,7 @@ class pdf_crabe extends ModelePDFFactures
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if ($object->statut == Facture::STATUS_DRAFT && (!empty($conf->global->FACTURE_DRAFT_WATERMARK))) {
+		if ($object->statut == $object::STATUS_DRAFT && (!empty($conf->global->FACTURE_DRAFT_WATERMARK))) {
 			  pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->FACTURE_DRAFT_WATERMARK);
 		}
 
@@ -1650,7 +1662,7 @@ class pdf_crabe extends ModelePDFFactures
 				}
 			} else {
 				$text = $this->emetteur->name;
-				$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
+				$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
 			}
 		}
 
@@ -1673,6 +1685,23 @@ class pdf_crabe extends ModelePDFFactures
 		if ($this->situationinvoice) {
 			$title = $outputlangs->transnoentities("PDFInvoiceSituation");
 		}
+		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {
+			$title .= ' - ';
+			if ($object->type == 0) {
+				if ($this->situationinvoice) {
+					$title .= $outputlangsbis->transnoentities("PDFInvoiceSituation");
+				}
+				$title .= $outputlangsbis->transnoentities("PdfInvoiceTitle");
+			} elseif ($object->type == 1) {
+				$title .= $outputlangsbis->transnoentities("InvoiceReplacement");
+			} elseif ($object->type == 2) {
+				$title .= $outputlangsbis->transnoentities("InvoiceAvoir");
+			} elseif ($object->type == 3) {
+				$title .= $outputlangsbis->transnoentities("InvoiceDeposit");
+			} elseif ($object->type == 4) {
+				$title .= $outputlangsbis->transnoentities("InvoiceProForma");
+			}
+		}
 		$pdf->MultiCell($w, 3, $title, '', 'R');
 
 		$pdf->SetFont('', 'B', $default_font_size);
@@ -1681,7 +1710,7 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$textref = $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref);
-		if ($object->statut == Facture::STATUS_DRAFT) {
+		if ($object->statut == $object::STATUS_DRAFT) {
 			$pdf->SetTextColor(128, 0, 0);
 			$textref .= ' - '.$outputlangs->transnoentities("NotValidated");
 		}
@@ -1750,7 +1779,11 @@ class pdf_crabe extends ModelePDFFactures
 		$posy += 4;
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DateInvoice")." : ".dol_print_date($object->date, "day", false, $outputlangs), '', 'R');
+		$title = $outputlangs->transnoentities("DateInvoice");
+		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {
+			$title .= ' - '.$outputlangsbis->transnoentities("DateInvoice");
+		}
+		$pdf->MultiCell($w, 3, $title." : ".dol_print_date($object->date, "day", false, $outputlangs, true), '', 'R');
 
 		if (!empty($conf->global->INVOICE_POINTOFTAX_DATE)) {
 			$posy += 4;
@@ -1763,10 +1796,14 @@ class pdf_crabe extends ModelePDFFactures
 			$posy += 3;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DateDue")." : ".dol_print_date($object->date_lim_reglement, "day", false, $outputlangs, true), '', 'R');
+			$title = $outputlangs->transnoentities("DateDue");
+			if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {
+				$title .= ' - '.$outputlangsbis->transnoentities("DateDue");
+			}
+			$pdf->MultiCell($w, 3, $title." : ".dol_print_date($object->date_lim_reglement, "day", false, $outputlangs, true), '', 'R');
 		}
 
-		if ($object->thirdparty->code_client) {
+		if (empty($conf->global->MAIN_PDF_HIDE_CUSTOMER_CODE) && $object->thirdparty->code_client) {
 			$posy += 3;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
@@ -1813,26 +1850,29 @@ class pdf_crabe extends ModelePDFFactures
 
 
 			// Show sender frame
-			$pdf->SetTextColor(0, 0, 0);
-			$pdf->SetFont('', '', $default_font_size - 2);
-			$pdf->SetXY($posx, $posy - 5);
-			$pdf->MultiCell(66, 5, $outputlangs->transnoentities("BillFrom").":", 0, 'L');
-			$pdf->SetXY($posx, $posy);
-			$pdf->SetFillColor(230, 230, 230);
-			$pdf->MultiCell($widthrecbox, $hautcadre, "", 0, 'R', 1);
-			$pdf->SetTextColor(0, 0, 60);
+			if (empty($conf->global->MAIN_PDF_NO_SENDER_FRAME)) {
+				$pdf->SetTextColor(0, 0, 0);
+				$pdf->SetFont('', '', $default_font_size - 2);
+				$pdf->SetXY($posx, $posy - 5);
+				$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillFrom"), 0, $ltrdirection);
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetFillColor(230, 230, 230);
+				$pdf->MultiCell($widthrecbox, $hautcadre, "", 0, 'R', 1);
+				$pdf->SetTextColor(0, 0, 60);
+			}
 
 			// Show sender name
-			$pdf->SetXY($posx + 2, $posy + 3);
-			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->MultiCell($widthrecbox - 2, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
-			$posy = $pdf->getY();
+			if (empty($conf->global->MAIN_PDF_HIDE_SENDER_NAME)) {
+				$pdf->SetXY($posx + 2, $posy + 3);
+				$pdf->SetFont('', 'B', $default_font_size);
+				$pdf->MultiCell($widthrecbox - 2, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, $ltrdirection);
+				$posy = $pdf->getY();
+			}
 
 			// Show sender information
 			$pdf->SetXY($posx + 2, $posy);
 			$pdf->SetFont('', '', $default_font_size - 1);
-			$pdf->MultiCell($widthrecbox - 2, 4, $carac_emetteur, 0, 'L');
-
+			$pdf->MultiCell($widthrecbox - 2, 4, $carac_emetteur, 0, $ltrdirection);
 
 
 			// If BILLING contact defined on invoice, we use it
@@ -1868,23 +1908,25 @@ class pdf_crabe extends ModelePDFFactures
 			}
 
 			// Show recipient frame
-			$pdf->SetTextColor(0, 0, 0);
-			$pdf->SetFont('', '', $default_font_size - 2);
-			$pdf->SetXY($posx + 2, $posy - 5);
-			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillTo").":", 0, 'L');
-			$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+			if (empty($conf->global->MAIN_PDF_NO_RECIPENT_FRAME)) {
+				$pdf->SetTextColor(0, 0, 0);
+				$pdf->SetFont('', '', $default_font_size - 2);
+				$pdf->SetXY($posx + 2, $posy - 5);
+				$pdf->MultiCell($widthrecbox - 2, 5, $outputlangs->transnoentities("BillTo"), 0, $ltrdirection);
+				$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+			}
 
 			// Show recipient name
 			$pdf->SetXY($posx + 2, $posy + 3);
 			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->MultiCell($widthrecbox, 2, $carac_client_name, 0, 'L');
+			$pdf->MultiCell($widthrecbox - 2, 2, $carac_client_name, 0, $ltrdirection);
 
 			$posy = $pdf->getY();
 
 			// Show recipient information
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->SetXY($posx + 2, $posy);
-			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
+			$pdf->MultiCell($widthrecbox - 2, 4, $carac_client, 0, $ltrdirection);
 		}
 
 		$pdf->SetTextColor(0, 0, 0);

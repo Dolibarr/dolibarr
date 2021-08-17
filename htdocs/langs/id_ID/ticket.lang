@@ -34,7 +34,8 @@ TicketDictResolution=Tiket - Resolusi
 
 TicketTypeShortCOM=Pertanyaan komersial
 TicketTypeShortHELP=Permintaan bantuan fungsional
-TicketTypeShortISSUE=Masalah, bug, atau masalah
+TicketTypeShortISSUE=Issue or bug
+TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Ubah atau tingkatkan permintaan
 TicketTypeShortPROJET=Proyek
 TicketTypeShortOTHER=Lainnya
@@ -54,14 +55,15 @@ TypeContact_ticket_internal_SUPPORTTEC=Pengguna yang ditugaskan
 TypeContact_ticket_external_SUPPORTCLI=Kontak pelanggan/pelacakan kejadian
 TypeContact_ticket_external_CONTRIBUTOR=Kontributor eksternal
 
-OriginEmail=Sumber email
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Kirim pesan tiket melalui email
 
 # Status
 Read=Baca
 Assigned=Ditugaskan
 InProgress=Sedang berlangsung
-NeedMoreInformation=Menunggu informasi
+NeedMoreInformation=Waiting for reporter feedback
+NeedMoreInformationShort=Waiting for feedback
 Answered=Dijawab
 Waiting=Menunggu
 Closed=Ditutup
@@ -70,6 +72,8 @@ Deleted=Dihapus
 # Dict
 Type=Tipe
 Severity=Kerasnya
+TicketGroupIsPublic=Group is public
+TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
 
 # Email templates
 MailToSendTicketMessage=Untuk mengirim email dari pesan tiket
@@ -114,8 +118,8 @@ TicketsShowModuleLogo=Tampilkan logo modul di antarmuka publik
 TicketsShowModuleLogoHelp=Aktifkan opsi ini untuk menyembunyikan modul logo di halaman-halaman antarmuka publik
 TicketsShowCompanyLogo=Tampilkan logo perusahaan di antarmuka publik
 TicketsShowCompanyLogoHelp=Aktifkan opsi ini untuk menyembunyikan logo perusahaan utama di halaman-halaman antarmuka publik
-TicketsEmailAlsoSendToMainAddress=Juga kirim pemberitahuan ke alamat email utama
-TicketsEmailAlsoSendToMainAddressHelp=Aktifkan opsi ini untuk mengirim email ke alamat "Email pemberitahuan dari" (lihat penyiapan di bawah)
+TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=Batasi tampilan untuk tiket yang ditetapkan untuk pengguna saat ini (tidak berlaku untuk pengguna eksternal, selalu terbatas pada pihak ketiga tempat mereka bergantung)
 TicketsLimitViewAssignedOnlyHelp=Hanya tiket yang ditetapkan untuk pengguna saat ini yang akan terlihat. Tidak berlaku untuk pengguna dengan hak pengelolaan tiket.
 TicketsActivatePublicInterface=Aktifkan antarmuka publik
@@ -126,10 +130,10 @@ TicketNumberingModules=Modul penomoran tiket
 TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Beri tahu pihak ketiga saat membuat
 TicketsDisableCustomerEmail=Selalu nonaktifkan email saat tiket dibuat dari antarmuka publik
-TicketsPublicNotificationNewMessage=Kirim email saat pesan baru ditambahkan
+TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
 TicketsPublicNotificationNewMessageHelp=Kirim email ketika pesan baru ditambahkan dari antarmuka publik (ke pengguna yang ditetapkan atau email notifikasi ke (pembaruan) dan/atau email notifikasi ke)
 TicketPublicNotificationNewMessageDefaultEmail=Email pemberitahuan ke (perbarui)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Kirim email pemberitahuan pesan baru ke alamat ini jika tiket tidak memiliki pengguna yang ditugaskan atau pengguna tidak memiliki email.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
 #
 # Index & list page
 #
@@ -158,7 +162,7 @@ CreatedBy=Dibuat oleh
 NewTicket=Tiket Baru
 SubjectAnswerToTicket=Jawaban tiket
 TicketTypeRequest=Jenis permintaan
-TicketCategory=Group
+TicketCategory=Ticket categorization
 SeeTicket=Lihat tiket
 TicketMarkedAsRead=Tiket telah ditandai sebagai sudah dibaca
 TicketReadOn=Baca terus
@@ -209,6 +213,7 @@ TicketMessageHelp=Hanya teks ini yang akan disimpan dalam daftar pesan di kartu 
 TicketMessageSubstitutionReplacedByGenericValues=Variabel substitusi digantikan oleh nilai generik.
 TimeElapsedSince=Waktu berlalu sejak itu
 TicketTimeToRead=Waktu berlalu sebelum membaca
+TicketTimeElapsedBeforeSince=Time elapsed before / since
 TicketContacts=Tiket kontak
 TicketDocumentsLinked=Dokumen terkait dengan tiket
 ConfirmReOpenTicket=Konfirmasikan kembali tiket ini?
@@ -302,3 +307,13 @@ BoxLastModifiedTicket=Tiket modifikasi terbaru
 BoxLastModifiedTicketDescription=Tiket termodifikasi %s terbaru
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Tidak ada tiket yang dimodifikasi baru-baru ini
+BoxTicketType=Distribution of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=No tickets opened
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
+BoxNoTicketLastXDays=No new tickets the last %s days
+BoxNumberOfTicketByDay=Number of new tickets by day
+BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+TicketCreatedToday=Ticket created today
+TicketClosedToday=Ticket closed today

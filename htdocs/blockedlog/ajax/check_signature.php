@@ -55,8 +55,10 @@ $blocks = $block_static->getLog('just_certified', 0, 0, 'rowid', 'ASC');
 
 $auth->signature = $block_static->getSignature();
 
-foreach ($blocks as &$b) {
-	$auth->blockchain .= $b->signature;
+if (is_array($bocks)) {
+	foreach ($blocks as &$b) {
+		$auth->blockchain .= $b->signature;
+	}
 }
 
 $hash = $auth->getBlockchainHash();

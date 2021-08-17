@@ -1,8 +1,10 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Brug parti serie / serienummer
-ProductStatusOnBatch=Ja (parti serie/serienr. påkrævet)
+ProductStatusOnBatch=Ja (krævet parti)
+ProductStatusOnSerial=Ja (unikt serienummer krævet)
 ProductStatusNotOnBatch=Nej (parti serie/serienr. ikke brugt)
-ProductStatusOnBatchShort=Ja
+ProductStatusOnBatchShort=Batch
+ProductStatusOnSerialShort=Seriel
 ProductStatusNotOnBatchShort=Nej
 Batch=Parti serie / Serienr.
 atleast1batchfield=Pluk dato eller Salgs dato eller Parti serie / Serienummer
@@ -22,3 +24,20 @@ ProductLotSetup=Opsætning af modul partiSerie / serieNr
 ShowCurrentStockOfLot=Vis nuværende lager for par produkt / partiSerie
 ShowLogOfMovementIfLot=Vis log af bevægelser for par produkt / partiSerie
 StockDetailPerBatch=Lager detaljer pr. Parti Serie
+SerialNumberAlreadyInUse=Serienummer %s bruges allerede til produkt %s
+TooManyQtyForSerialNumber=Du kan kun have et produkt %s til serienummer %s
+ManageLotMask=Brugerdefineret maske
+CustomMasks=Option to define a different numbering mask for each product
+BatchLotNumberingModules=Numbering rule for automatic generation of lot number
+BatchSerialNumberingModules=Numbering rule for automatic generation of serial number (for products with property 1 unique lot/serial for each product)
+QtyToAddAfterBarcodeScan=Mængde, der skal tilføjes for hver stregkode / parti / seriel scannet
+LifeTime=Levetid (i dage)
+EndOfLife=udløbet på dato
+ManufacturingDate=produktionsdato
+DestructionDate=Destruktionsdato
+FirstUseDate=Dato for første brug
+QCFrequency=Kvalitetskontrolfrekvens (i dage)
+
+#Traceability - qc status
+OutOfOrder=Virker ikke
+InWorkingOrder=I funktionsdygtig stand

@@ -91,15 +91,21 @@ $workflowcodes = array(
 	),
 
 	// Automatic classification of order
-	'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING'=>array(
+	'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING'=>array(  // when shipping validated
 		'family'=>'classify_order',
 		'position'=>40,
 		'enabled'=>(!empty($conf->expedition->enabled) && !empty($conf->commande->enabled)),
 		'picto'=>'order'
 	),
-	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER'=>array(
+	'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED'=>array( // when shipping closed
 		'family'=>'classify_order',
 		'position'=>41,
+		'enabled'=>(!empty($conf->expedition->enabled) && !empty($conf->commande->enabled)),
+		'picto'=>'order'
+	),
+	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER'=>array(
+		'family'=>'classify_order',
+		'position'=>42,
 		'enabled'=>(!empty($conf->facture->enabled) && !empty($conf->commande->enabled)),
 		'picto'=>'order',
 		'warning'=>''
@@ -111,8 +117,8 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL'=>array(
 		'family'=>'classify_supplier_proposal',
 		'position'=>60,
-		'enabled'=>(!empty($conf->supplier_proposal->enabled) && (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))),
-		'picto'=>'propal',
+		'enabled'=>(!empty($conf->supplier_proposal->enabled) && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))),
+		'picto'=>'supplier_proposal',
 		'warning'=>''
 	),
 
@@ -120,8 +126,8 @@ $workflowcodes = array(
 	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER'=>array(
 		'family'=>'classify_supplier_order',
 		'position'=>62,
-		'enabled'=>(!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)),
-		'picto'=>'order',
+		'enabled'=>((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)),
+		'picto'=>'supplier_order',
 		'warning'=>''
 	),
 
@@ -129,8 +135,8 @@ $workflowcodes = array(
 	'WORKFLOW_BILL_ON_RECEPTION'=>array(
 		'family'=>'classify_reception',
 		'position'=>64,
-		'enabled'=>(!empty($conf->reception->enabled) && (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))),
-		'picto'=>'bill'
+		'enabled'=>(!empty($conf->reception->enabled) && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))),
+		'picto'=>'reception'
 	),
 
 	// Automatic classification shipping
@@ -229,7 +235,7 @@ foreach ($workflowcodes as $key => $params) {
 
 	print '<tr class="oddeven">';
 	print '<td>';
-	print img_object('', $params['picto']);
+	print img_object('', $params['picto'], 'class="pictofixedwidth"');
 	print ' '.$langs->trans('desc'.$key);
 
 	if (!empty($params['warning'])) {

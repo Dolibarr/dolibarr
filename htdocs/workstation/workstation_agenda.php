@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php
 
 
 // Load translation files required by the page
-$langs->loadLangs(array("workstation@workstation", "other"));
+$langs->loadLangs(array("workstation", "other"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -82,12 +82,11 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->workstation->multidir_output[$object->entity]."/".$object->id;
 }
 
-// Security check - Protection if external user
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'workstation', $object->id);
-
 $permissiontoadd = $user->rights->workstation->workstation->write; // Used by the include of actions_addupdatedelete.inc.php
+
+// Security check
+$isdraft = 0;
+restrictedArea($user, $object->element, $object->id, $object->table_element, 'workstation', 'fk_soc', 'rowid', $isdraft);
 
 
 /*
@@ -134,7 +133,7 @@ if ($object->id > 0) {
 	$head = workstationPrepareHead($object);
 
 
-	print dol_get_fiche_head($head, 'agenda', $langs->trans("Workstation"), -1, 'mrp');
+	print dol_get_fiche_head($head, 'agenda', $langs->trans("Workstation"), -1, 'workstation');
 
 	// Object card
 	// ------------------------------------------------------------

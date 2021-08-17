@@ -91,7 +91,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
-llxHeader("", $langs->trans("SalaryPayment"));
+$title = $langs->trans('Salary')." - ".$langs->trans('Documents');
+$help_url = "";
+llxHeader("", $title, $help_url);
 
 if ($object->id) {
 	$object->fetch_thirdparty();
@@ -123,8 +125,23 @@ if ($object->id) {
 	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border tableforfield centpercent">';
-	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+
+	print "<tr>";
+	print '<td class="titlefield">' . $langs->trans("DateStartPeriod") . '</td><td>';
+	print dol_print_date($object->datesp, 'day');
+	print '</td></tr>';
+
+	print "<tr>";
+	print '<td>' . $langs->trans("DateEndPeriod") . '</td><td>';
+	print dol_print_date($object->dateep, 'day');
+	print '</td></tr>';
+
+	print '<tr><td>' . $langs->trans("Amount") . '</td><td>' . price($object->amount, 0, $langs, 1, -1, -1, $conf->currency) . '</td></tr>';
+
+	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
+
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+
 	print '</table>';
 
 	print '</div>';
@@ -132,9 +149,9 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'salaries';
-	$permission = $user->rights->salaries->write;
+	$permissiontoadd = $user->rights->salaries->write;
 	$param = '&id='.$object->id;
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	print $langs->trans("ErrorUnknown");
 }

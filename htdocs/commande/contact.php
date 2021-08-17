@@ -88,7 +88,7 @@ if ($action == 'addcontact' && $user->rights->commande->creer) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
-		dol_print_error($db);
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 /*
@@ -103,8 +103,9 @@ elseif ($action == 'setaddress' && $user->rights->commande->creer)
 /*
  * View
  */
-
-llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
+$title = $langs->trans('Order')." - ".$langs->trans('ContactsAddresses');
+$help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge';
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);

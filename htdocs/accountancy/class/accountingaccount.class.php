@@ -347,10 +347,10 @@ class AccountingAccount extends CommonObject
 		$sql .= " , label = ".($this->label ? "'".$this->db->escape($this->label)."'" : "''");
 		$sql .= " , labelshort = ".($this->labelshort ? "'".$this->db->escape($this->labelshort)."'" : "''");
 		$sql .= " , fk_accounting_category = ".(empty($this->account_category) ? 0 : (int) $this->account_category);
-		$sql .= " , fk_user_modif = ".$user->id;
+		$sql .= " , fk_user_modif = ".((int) $user->id);
 		$sql .= " , active = ".(int) $this->active;
 		$sql .= " , reconcilable = ".(int) $this->reconcilable;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -602,7 +602,7 @@ class AccountingAccount extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account ";
 			$sql .= "SET ".$fieldtouse." = '0'";
-			$sql .= " WHERE rowid = ".$this->db->escape($id);
+			$sql .= " WHERE rowid = ".((int) $id);
 
 			dol_syslog(get_class($this)."::accountDeactivate ".$fieldtouse." sql=".$sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
@@ -640,7 +640,7 @@ class AccountingAccount extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account";
 		$sql .= " SET ".$fieldtouse." = '1'";
-		$sql .= " WHERE rowid = ".$this->db->escape($id);
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::account_activate ".$fieldtouse." sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);

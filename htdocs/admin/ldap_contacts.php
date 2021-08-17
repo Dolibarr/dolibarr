@@ -155,14 +155,16 @@ print '<td colspan="4">'.$langs->trans("LDAPSynchronizeContacts").'</td>';
 print "</tr>\n";
 
 // DN Pour les contacts
-print '<tr class="oddeven"><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPContactDn").'</span></td><td>';
+print '<!-- LDAP_CONTACT_DN -->';
+print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPContactDn").'</span></td><td>';
 print '<input size="48" type="text" name="contactdn" value="'.$conf->global->LDAP_CONTACT_DN.'">';
 print '</td><td>'.$langs->trans("LDAPContactDnExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
 
 // List of object class used to define attributes in structure
-print '<tr class="oddeven"><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPContactObjectClassList").'</span></td><td>';
+print '<!-- LDAP_CONTACT_OBJECT_CLASS -->';
+print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPContactObjectClassList").'</span></td><td>';
 print '<input size="48" type="text" name="objectclass" value="'.$conf->global->LDAP_CONTACT_OBJECT_CLASS.'">';
 print '</td><td>'.$langs->trans("LDAPContactObjectClassListExample").'</td>';
 print '<td>&nbsp;</td>';
@@ -173,7 +175,7 @@ print '<br>';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print '<td width="25%">'.$langs->trans("LDAPDolibarrMapping").'</td>';
+print '<td>'.$langs->trans("LDAPDolibarrMapping").'</td>';
 print '<td colspan="2">'.$langs->trans("LDAPLdapMapping").'</td>';
 print '<td class="right">'.$langs->trans("LDAPNamingAttribute").'</td>';
 print "</tr>\n";

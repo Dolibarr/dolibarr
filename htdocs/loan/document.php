@@ -160,10 +160,10 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'loan';
-	$permission = $user->rights->loan->write;
+	$permissiontoadd = $user->rights->loan->write;
 	$permtoedit = $user->rights->loan->write;
 	$param = '&id='.$object->id;
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	print $langs->trans("ErrorUnknown");
 }

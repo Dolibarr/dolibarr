@@ -213,10 +213,11 @@ if ($action == 'add' && empty($cancel)) {
 	}
 
 	if (!$error) {
+		$db->begin();
+
 		$ret = $object->create($user);
 		if ($ret < 0) $error++;
 		if (!empty($auto_create_paiement) && !$error) {
-			$db->begin();
 			// Create a line of payments
 			$paiement = new PaymentSalary($db);
 			$paiement->chid         = $object->id;
@@ -243,15 +244,11 @@ if ($action == 'add' && empty($cancel)) {
 					setEventMessages($paiement->error, null, 'errors');
 				}
 			}
-
-			if (!$error) {
-				$db->commit();
-			} else {
-				$db->rollback();
-			}
 		}
 
 		if (empty($error)) {
+			$db->commit();
+
 			if (GETPOST('saveandnew', 'alpha')) {
 				setEventMessages($langs->trans("RecordSaved"), '', 'mesgs');
 				header("Location: card.php?action=create&fk_project=" . urlencode($projectid) . "&accountid=" . urlencode($accountid) . '&paymenttype=' . urlencode(GETPOST('paymenttype', 'az09')) . '&datepday=' . GETPOST("datepday", 'int') . '&datepmonth=' . GETPOST("datepmonth", 'int') . '&datepyear=' . GETPOST("datepyear", 'int'));
@@ -260,6 +257,8 @@ if ($action == 'add' && empty($cancel)) {
 				header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $object->id);
 				exit;
 			}
+		} else {
+			$db->rollback();
 		}
 	}
 
@@ -360,7 +359,9 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries-
  *	View
  */
 
-llxHeader("", $langs->trans("Salary"));
+$title = $langs->trans('Salary')." - ".$langs->trans('Card');
+$help_url = "";
+llxHeader("", $title, $help_url);
 
 $form = new Form($db);
 if (!empty($conf->projet->enabled)) $formproject = new FormProjets($db);
@@ -526,9 +527,11 @@ if ($action == 'create') {
 	}
 
 	// Bouton Save payment
+	/*
 	print '<tr class="hide_if_no_auto_create_payment"><td>';
 	print $langs->trans("ClosePaidSalaryAutomatically");
 	print '</td><td><input type="checkbox" checked value="1" name="closepaidsalary"></td></tr>';
+	*/
 
 	// Other attributes
 	$parameters = array();
@@ -543,6 +546,12 @@ if ($action == 'create') {
 	print dol_get_fiche_end();
 
 	print '<div class="center">';
+
+	print '<div class="hide_if_no_auto_create_payment paddingbottom">';
+	print '<input type="checkbox" checked value="1" name="closepaidsalary">'.$langs->trans("ClosePaidSalaryAutomatically");
+	print '<br>';
+	print '</div>';
+
 	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp; &nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="saveandnew" value="'.$langs->trans("SaveAndNew").'">';
@@ -687,12 +696,12 @@ if ($id) {
 	print '<table class="border centpercent tableforfield">';
 
 	if ($action == 'edit') {
-		print '<tr><td>'.$langs->trans("DateStartPeriod")."</td><td>";
+		print '<tr><td class="titlefield">'.$langs->trans("DateStartPeriod")."</td><td>";
 		print $form->selectDate($object->datesp, 'datesp', 0, 0, 0, 'datesp', 1);
 		print "</td></tr>";
 	} else {
 		print "<tr>";
-		print '<td>' . $langs->trans("DateStartPeriod") . '</td><td>';
+		print '<td class="titlefield">' . $langs->trans("DateStartPeriod") . '</td><td>';
 		print dol_print_date($object->datesp, 'day');
 		print '</td></tr>';
 	}
@@ -720,13 +729,13 @@ if ($id) {
 	if ($action == 'edit') {
 		print '<tr><td class="fieldrequired">' . $langs->trans("Amount") . '</td><td><input name="amount" size="10" value="' . price($object->amount) . '"></td></tr>';
 	} else {
-		print '<tr><td>' . $langs->trans("Amount") . '</td><td>' . price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency) . '</td></tr>';
+		print '<tr><td>' . $langs->trans("Amount") . '</td><td><span class="amount">' . price($object->amount, 0, $langs, 1, -1, -1, $conf->currency) . '</span></td></tr>';
 	}
 
-	// Mode of payment
+	// Default mode of payment
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('PaymentMode');
+	print $langs->trans('DefaultPaymentMode');
 	print '</td>';
 	if ($action != 'editmode')
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
@@ -740,11 +749,11 @@ if ($id) {
 	}
 	print '</td></tr>';
 
-	// Bank Account
+	// Default Bank Account
 	if (!empty($conf->banque->enabled)) {
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-		print $langs->trans('BankAccount');
+		print $langs->trans('DefaultBankAccount');
 		print '<td>';
 		if ($action != 'editbankaccount' && $user->rights->salaries->write) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';

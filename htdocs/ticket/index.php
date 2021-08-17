@@ -56,8 +56,7 @@ $result = restrictedArea($user, 'ticket', 0, '', '', '', '');
 
 $nowyear = strftime("%Y", dol_now());
 $year = GETPOST('year') > 0 ? GETPOST('year') : $nowyear;
-//$startyear=$year-2;
-$startyear = $year - 1;
+$startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;
 
 $object = new Ticket($db);
@@ -113,8 +112,14 @@ if (empty($endyear)) {
 }
 
 $startyear = $endyear - 1;
+
+// Change default WIDHT and HEIGHT (we need a smaller than default for both desktop and smartphone)
 $WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '100%' : '80%';
-$HEIGHT = '200';
+if (empty($conf->dol_optimize_smallscreen)) {
+	$HEIGHT = '200';
+} else {
+	$HEIGHT = '160';
+}
 
 print '<div class="clearboth"></div>';
 print '<div class="fichecenter fichecenterbis">';
@@ -299,7 +304,7 @@ print '</div>'."\n";
 print '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
 /*
- * Latest tickets
+ * Latest unread tickets
  */
 
 $max = 10;
@@ -410,9 +415,12 @@ if ($result) {
 
 	print "</table>";
 	print '</div>';
+
+	print '<br>';
 } else {
 	dol_print_error($db);
 }
+
 
 print $resultboxes['boxlistb'];
 

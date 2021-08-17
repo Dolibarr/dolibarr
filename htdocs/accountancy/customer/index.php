@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "bills", "other", "main", "accountancy"));
+$langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 
 // Security check
 if (empty($conf->accounting->enabled)) {
@@ -110,13 +110,13 @@ if ($action == 'validatehistory') {
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet";
 		$sql1 .= " SET fk_code_ventilation = accnt.rowid";
 		$sql1 .= " FROM " . MAIN_DB_PREFIX . "product as p, " . MAIN_DB_PREFIX . "accounting_account as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
-		$sql1 .= " WHERE " . MAIN_DB_PREFIX . "facturedet.fk_product = p.rowid  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . $conf->global->CHARTOFACCOUNTS.' AND accnt.entity = '.$conf->entity;
+		$sql1 .= " WHERE " . MAIN_DB_PREFIX . "facturedet.fk_product = p.rowid  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . ((int) $conf->global->CHARTOFACCOUNTS).' AND accnt.entity = '.$conf->entity;
 		$sql1 .= " AND accnt.active = 1 AND p.accountancy_code_sell=accnt.account_number";
 		$sql1 .= " AND " . MAIN_DB_PREFIX . "facturedet.fk_code_ventilation = 0";
 	} else {
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd, " . MAIN_DB_PREFIX . "product as p, " . MAIN_DB_PREFIX . "accounting_account as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
 		$sql1 .= " SET fk_code_ventilation = accnt.rowid";
-		$sql1 .= " WHERE fd.fk_product = p.rowid  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . $conf->global->CHARTOFACCOUNTS.' AND accnt.entity = '.$conf->entity;
+		$sql1 .= " WHERE fd.fk_product = p.rowid  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . ((int) $conf->global->CHARTOFACCOUNTS).' AND accnt.entity = '.$conf->entity;
 		$sql1 .= " AND accnt.active = 1 AND p.accountancy_code_sell=accnt.account_number";
 		$sql1 .= " AND fd.fk_code_ventilation = 0";
 	}*/
@@ -126,35 +126,41 @@ if ($action == 'validatehistory') {
 	$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
 	$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.tva_tx as tva_tx_prod,";
 	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-		$sql .= " pa.accountancy_code_sell as code_sell, pa.accountancy_code_sell_intra as code_sell_intra, pa.accountancy_code_sell_export as code_sell_export,";
+		$sql .= " ppe.accountancy_code_sell as code_sell, ppe.accountancy_code_sell_intra as code_sell_intra, ppe.accountancy_code_sell_export as code_sell_export,";
 	} else {
 		$sql .= " p.accountancy_code_sell as code_sell, p.accountancy_code_sell_intra as code_sell_intra, p.accountancy_code_sell_export as code_sell_export,";
 	}
 	$sql .= " aa.rowid as aarowid, aa2.rowid as aarowid_intra, aa3.rowid as aarowid_export, aa4.rowid as aarowid_thirdparty,";
 	$sql .= " co.code as country_code, co.label as country_label,";
 	$sql .= " s.tva_intra,";
-	if (!empty($conf->global->ACCOUNTANCY_COMPANY_SHARED)) {
-		$sql .= " sa.accountancy_code_sell as company_code_sell";
+	if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+		$sql .= " spe.accountancy_code_sell as company_code_sell";
 	} else {
 		$sql .= " s.accountancy_code_sell as company_code_sell";
 	}
 
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
+	if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
+	}
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = s.fk_pays ";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."facturedet as l ON f.rowid = l.fk_facture";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
 	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 	}
-	$alias_societe_perentity = empty($conf->global->ACCOUNTANCY_COMPANY_SHARED) ? "s" : "sa";
-	$alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "pa";
+	$alias_societe_perentity = empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED) ? "s" : "spe";
+	$alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "ppe";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa  ON " . $alias_product_perentity . ".accountancy_code_sell = aa.account_number         AND aa.active = 1  AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".$conf->entity;
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa2 ON " . $alias_product_perentity . ".accountancy_code_sell_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa2.entity = ".$conf->entity;
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa3 ON " . $alias_product_perentity . ".accountancy_code_sell_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa3.entity = ".$conf->entity;
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa4 ON " . $alias_societe_perentity . ".accountancy_code_sell = aa4.account_number        AND aa4.active = 1 AND aa4.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa4.entity = ".$conf->entity;
 	$sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 	$sql .= " AND l.product_type <= 2";
+	if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
+		$sql .= " AND f.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
+	}
 
 	dol_syslog('htdocs/accountancy/customer/index.php');
 	$result = $db->query($sql);
@@ -170,7 +176,7 @@ if ($action == 'validatehistory') {
 		while ($i < min($num_lines, 10000)) {	// No more than 10000 at once
 			$objp = $db->fetch_object($result);
 
-			$isBuyerInEEC = isInEEC($objp);
+			$isBuyerInEEC = isInEEC($objp);	// This make a database request but there is a cache into $conf->cache['country_code_in_EEC']
 
 			// Level 2: Search suggested account for product/service (similar code exists in page list.php to make manual binding)
 			$suggestedaccountingaccountfor = '';
@@ -198,11 +204,13 @@ if ($action == 'validatehistory') {
 				}
 			}
 
-			// Level 3: Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
-			if (!empty($objp->company_code_sell)) {
-				$objp->code_sell_t = $objp->company_code_sell;
-				$objp->aarowid_suggest = $objp->aarowid_thirdparty;
-				$suggestedaccountingaccountfor = '';
+			if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
+				// Level 3: Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
+				if (!empty($objp->company_code_sell)) {
+					$objp->code_sell_t = $objp->company_code_sell;
+					$objp->aarowid_suggest = $objp->aarowid_thirdparty;
+					$suggestedaccountingaccountfor = '';
+				}
 			}
 
 			if ($objp->aarowid_suggest > 0) {
@@ -319,10 +327,10 @@ if ($resql) {
 		}
 		print '</td>';
 		for ($i = 2; $i <= 12; $i++) {
-			print '<td class="nowrap right">'.price($row[$i]).'</td>';
+			print '<td class="right nowraponall amount">'.price($row[$i]).'</td>';
 		}
-		print '<td class="nowrap right">'.price($row[13]).'</td>';
-		print '<td class="nowrap right"><b>'.price($row[14]).'</b></td>';
+		print '<td class="right nowraponall amount">'.price($row[13]).'</td>';
+		print '<td class="right nowraponall amount"><b>'.price($row[14]).'</b></td>';
 		print '</tr>';
 	}
 	$db->free($resql);
@@ -405,10 +413,10 @@ if ($resql) {
 		print '</td>';
 
 		for ($i = 2; $i <= 12; $i++) {
-			print '<td class="nowrap right">'.price($row[$i]).'</td>';
+			print '<td class="right nowraponall amount">'.price($row[$i]).'</td>';
 		}
-		print '<td class="nowrap right">'.price($row[13]).'</td>';
-		print '<td class="nowrap right"><b>'.price($row[14]).'</b></td>';
+		print '<td class="right nowraponall amount">'.price($row[13]).'</td>';
+		print '<td class="right nowraponall amount"><b>'.price($row[14]).'</b></td>';
 		print '</tr>';
 	}
 	$db->free($resql);
@@ -472,9 +480,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 		while ($row = $db->fetch_row($resql)) {
 			print '<tr><td>'.$row[0].'</td>';
 			for ($i = 1; $i <= 12; $i++) {
-				print '<td class="nowrap right">'.price($row[$i]).'</td>';
+				print '<td class="right nowraponall amount">'.price($row[$i]).'</td>';
 			}
-			print '<td class="nowrap right"><b>'.price($row[13]).'</b></td>';
+			print '<td class="right nowraponall amount"><b>'.price($row[13]).'</b></td>';
 			print '</tr>';
 		}
 		$db->free($resql);
@@ -533,9 +541,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 			while ($row = $db->fetch_row($resql)) {
 				print '<tr><td>'.$row[0].'</td>';
 				for ($i = 1; $i <= 12; $i++) {
-					print '<td class="nowrap right">'.price(price2num($row[$i])).'</td>';
+					print '<td class="right nowraponall amount">'.price(price2num($row[$i])).'</td>';
 				}
-				print '<td class="nowrap right"><b>'.price(price2num($row[13])).'</b></td>';
+				print '<td class="right nowraponall amount"><b>'.price(price2num($row[13])).'</b></td>';
 				print '</tr>';
 			}
 			$db->free($resql);

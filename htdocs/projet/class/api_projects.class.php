@@ -103,6 +103,10 @@ class Projects extends DolibarrApi
 	{
 		global $db, $conf;
 
+		if (!DolibarrApiAccess::$user->rights->projet->lire) {
+			throw new RestException(401);
+		}
+
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
@@ -142,14 +146,14 @@ class Projects extends DolibarrApi
 		}
 		// Select projects of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".$this->db->escape($category)." AND c.fk_project = t.rowid ";
+			$sql .= " AND c.fk_categorie = ".((int) $category)." AND c.fk_project = t.rowid ";
 		}
 		// Add sql filters
 		if ($sqlfilters) {
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -326,7 +330,11 @@ class Projects extends DolibarrApi
 		if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
 		$request_data = (object) $request_data;
+
+		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+
 		$updateRes = $this->project->addline(
 						$request_data->desc,
 						$request_data->subprice,
@@ -389,7 +397,11 @@ class Projects extends DolibarrApi
 		if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
 		$request_data = (object) $request_data;
+
+		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+
 		$updateRes = $this->project->updateline(
 						$lineid,
 						$request_data->desc,

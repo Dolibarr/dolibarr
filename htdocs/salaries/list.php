@@ -124,7 +124,7 @@ foreach ($object->fields as $key => $val) {
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
 foreach ($object->fields as $key => $val) {
-	if ($val['searchall']) {
+	if (!empty($val['searchall'])) {
 		$fieldstosearchall['t.'.$key] = $val['label'];
 	}
 }
@@ -140,7 +140,7 @@ foreach ($object->fields as $key => $val) {
 			'checked'=>(($visible < 0) ? 0 : 1),
 			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
 			'position'=>$val['position'],
-			'help'=>$val['help']
+			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
 	}
 }
@@ -273,10 +273,10 @@ if ($search_account > 0) {
 	$sql .= " AND s.fk_account=".((int) $search_account);
 }
 if ($search_status != '' && $search_status >= 0) {
-	$sql .= " AND s.paye = ".$db->escape($search_status);
+	$sql .= " AND s.paye = ".((int) $search_status);
 }
 if ($search_type_id) {
-	$sql .= " AND s.fk_typepayment=".$search_type_id;
+	$sql .= " AND s.fk_typepayment=".((int) $search_type_id);
 }
 $sql .= " GROUP BY u.rowid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary, u.fk_soc, u.statut,";
 $sql .= " s.rowid, s.fk_account, s.paye, s.fk_user, s.amount, s.salary, s.label, s.datesp, s.dateep, s.fk_typepayment, s.fk_bank,";
@@ -364,10 +364,10 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions = array(
-	//'presend'=>$langs->trans("SendByMail"),
-	//'buildsepa'=>$langs->trans("BuildSepa"),	// TODO
+	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+	//'buildsepa'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("BuildSepa"),	// TODO
 );
-//if ($permissiontodelete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+//if ($permissiontodelete) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }
@@ -532,6 +532,10 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	$salstatic->id = $obj->rowid;
 	$salstatic->ref = $obj->rowid;
+	$salstatic->label = $obj->label;
+	$salstatic->paye = $obj->paye;
+	$salstatic->datesp = $db->jdate($obj->datesp);
+	$salstatic->dateep = $db->jdate($obj->dateep);
 
 	// Show here line of result
 	print '<tr class="oddeven">';

@@ -225,9 +225,6 @@ JQUERYFILETREE:
 
 RESTLER:
 --------
-Change content of file htdocs/includes/restler/framework/Luracast/Restler/explorer/index.html
-
-+With swagger 2:
 
 * Add line into Util.php to complete function
 
@@ -247,6 +244,21 @@ Change content of file htdocs/includes/restler/framework/Luracast/Restler/explor
         }
     	// @CHANGE LDR
         if (!is_string($haystack)) return false;
+
+* Replace  
+
+	$loaders = array_unique(static::$rogueLoaders);
+	
+	with 
+	
+	$loaders = array_unique(static::$rogueLoaders, SORT_REGULAR);
+
+
++With swagger 2 provided into /explorer:
+----------------------------------------
+
+Change content of file htdocs/includes/restler/framework/Luracast/Restler/explorer/index.html
+
 
 
 PARSEDOWN

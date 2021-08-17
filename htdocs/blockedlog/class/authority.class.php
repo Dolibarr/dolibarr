@@ -71,8 +71,10 @@ class BlockedLogAuthority
 
 		$this->blockchain = '';
 
-		foreach ($blocks as &$b) {
-			$this->blockchain .= $b->signature;
+		if (is_array($blocks)) {
+			foreach ($blocks as &$b) {
+				$this->blockchain .= $b->signature;
+			}
 		}
 
 		return $this->blockchain;
@@ -148,7 +150,7 @@ class BlockedLogAuthority
 
 		global $langs;
 
-		dol_syslog(get_class($this)."::fetch id=".$id, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch id=".((int) $id), LOG_DEBUG);
 
 		if (empty($id) && empty($signature)) {
 			$this->error = 'BadParameter';
@@ -297,16 +299,18 @@ class BlockedLogAuthority
 
 		$signature = $block_static->getSignature();
 
-		foreach ($blocks as &$block) {
-			$url = $conf->global->BLOCKEDLOG_AUTHORITY_URL.'/blockedlog/ajax/authority.php?s='.$signature.'&b='.$block->signature;
+		if (is_array($blocks)) {
+			foreach ($blocks as &$block) {
+				$url = $conf->global->BLOCKEDLOG_AUTHORITY_URL.'/blockedlog/ajax/authority.php?s='.$signature.'&b='.$block->signature;
 
-			$res = file_get_contents($url);
-			echo $block->signature.' '.$url.' '.$res.'<br>';
-			if ($res === 'blockalreadyadded' || $res === 'blockadded') {
-				$block->setCertified();
-			} else {
-				$this->error = $langs->trans('ImpossibleToContactAuthority ', $url);
-				return -1;
+				$res = getURLContent($url);
+				echo $block->signature.' '.$url.' '.$res.'<br>';
+				if ($res === 'blockalreadyadded' || $res === 'blockadded') {
+					$block->setCertified();
+				} else {
+					$this->error = $langs->trans('ImpossibleToContactAuthority ', $url);
+					return -1;
+				}
 			}
 		}
 

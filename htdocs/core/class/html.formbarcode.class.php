@@ -209,11 +209,11 @@ class FormBarCode
 			$out .= '<form method="post" action="'.$page.'">';
 			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$out .= '<input type="hidden" name="action" value="set'.$htmlname.'">';
-			$out .= '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+			$out .= '<table class="nobordernopadding">';
 			$out .= '<tr><td>';
 			$out .= $this->selectBarcodeType($selected, $htmlname, 1);
 			$out .= '</td>';
-			$out .= '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+			$out .= '<td class="left"><input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'">';
 			$out .= '</td></tr></table></form>';
 		}
 		return $out;

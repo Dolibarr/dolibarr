@@ -34,8 +34,8 @@ $langs->loadLangs(array("companies", "mails", "admin", "other", "errors"));
 
 $socid     = GETPOST("socid", 'int');
 $action    = GETPOST('action', 'aZ09');
-$contactid = GETPOST('contactid'); // May be an int or 'thirdparty'
-$actionid  = GETPOST('actionid');
+$contactid = GETPOST('contactid', 'alpha'); // May be an int or 'thirdparty'
+$actionid  = GETPOST('actionid', 'int');
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 // Security check
@@ -98,10 +98,10 @@ if (empty($reshook)) {
 			$db->begin();
 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
-			$sql .= " WHERE fk_soc=".$socid." AND fk_contact=".$contactid." AND fk_action=".$actionid;
+			$sql .= " WHERE fk_soc=".((int) $socid)." AND fk_contact=".((int) $contactid)." AND fk_action=".((int) $actionid);
 			if ($db->query($sql)) {
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_soc, fk_contact, fk_action)";
-				$sql .= " VALUES ('".$db->idate($now)."',".$socid.",".$contactid.",".$actionid.")";
+				$sql .= " VALUES ('".$db->idate($now)."',".((int) $socid).",".((int) $contactid).",".((int) $actionid).")";
 
 				if (!$db->query($sql)) {
 					$error++;
@@ -162,6 +162,11 @@ if ($result > 0) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
+	// Type Prospect/Customer/Supplier
+	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+	print $object->getTypeUrl(1);
+	print '</td></tr>';
+
 	// Prefix
 	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
 		print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
@@ -178,7 +183,7 @@ if ($result > 0) {
 		print '</td></tr>';
 	}
 
-	if (!empty($conf->fournisseur->enabled) && $object->fournisseur && !empty($user->rights->fournisseur->lire)) {
+	if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $object->fournisseur && !empty($user->rights->fournisseur->lire)) {
 		print '<tr><td class="titlefield">';
 		print $langs->trans('SupplierCode').'</td><td colspan="3">';
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
@@ -230,7 +235,7 @@ if ($result > 0) {
 	$sql .= " ".MAIN_DB_PREFIX."socpeople c";
 	$sql .= " WHERE a.rowid = n.fk_action";
 	$sql .= " AND c.rowid = n.fk_contact";
-	$sql .= " AND c.fk_soc = ".$object->id;
+	$sql .= " AND c.fk_soc = ".((int) $object->id);
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -399,7 +404,7 @@ if ($result > 0) {
 	$sql .= " ".MAIN_DB_PREFIX."notify as n ";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as c ON n.fk_contact = c.rowid";
 	$sql .= " WHERE a.rowid = n.fk_action";
-	$sql .= " AND n.fk_soc = ".$object->id;
+	$sql .= " AND n.fk_soc = ".((int) $object->id);
 	$sql .= $db->order($sortfield, $sortorder);
 
 	// Count total nb of records

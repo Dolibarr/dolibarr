@@ -40,9 +40,9 @@ $track_id = GETPOST('track_id', 'alpha', 3);
 $socid    = GETPOST('socid', 'int');
 $action   = GETPOST('action', 'aZ09');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", "aZ09comma");
-$sortorder = GETPOST("sortorder", 'aZ09comma');
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
@@ -81,12 +81,9 @@ if (!$action) {
 // Security check
 $id = GETPOST("id", 'int');
 $socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+if ($user->socid > 0) $socid = $user->socid;
 $result = restrictedArea($user, 'ticket', $id, '');
 
-if (!$user->rights->ticket->read) {
-	accessforbidden();
-}
 // restrict access for externals users
 if ($user->socid > 0 && ($object->fk_soc != $user->socid)) {
 	accessforbidden();
@@ -133,7 +130,8 @@ $title = $langs->trans("Ticket").' - '.$object->ref.' '.$object->name;
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/ticketnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Info");
 }
-$help_url = 'FR:DocumentationModuleTicket';
+$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda';
+
 llxHeader('', $title, $help_url);
 
 if ($socid > 0) {

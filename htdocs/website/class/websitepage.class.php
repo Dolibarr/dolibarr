@@ -138,7 +138,7 @@ class WebsitePage extends CommonObject
 	 *  'help' is a string visible as a tooltip on field
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
-	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
@@ -232,6 +232,10 @@ class WebsitePage extends CommonObject
 		if ($this->aliasalt) {
 			$this->aliasalt = ','.preg_replace('/,+$/', '', preg_replace('/^,+/', '', $this->aliasalt)).','; // content in database must be ',xxx,...,yyy,'
 		}
+
+		$this->pageurl = preg_replace('/[^a-z0-9\-\_]/i', '', $this->pageurl);
+		$this->pageurl = preg_replace('/\-\-+/', '-', $this->pageurl);
+		$this->pageurl = preg_replace('/^\-/', '', $this->pageurl);
 
 		// Remove spaces and be sure we have main language only
 		$this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en
@@ -413,7 +417,7 @@ class WebsitePage extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid' || $key == 't.fk_website' || $key == 'status') {
-					$sqlwhere[] = $key.' = '.$value;
+					$sqlwhere[] = $key.' = '.((int) $value);
 				} elseif ($key == 'type_container') {
 					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 'lang' || $key == 't.lang') {
@@ -426,7 +430,7 @@ class WebsitePage extends CommonObject
 						}
 						$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 					}
-					$stringtouse = $key." IN (".$this->db->sanitize(join(',', $listoflang)).")";
+					$stringtouse = $key." IN (".$this->db->sanitize(join(',', $listoflang), 1).")";
 					if ($foundnull) {
 						$stringtouse = '('.$stringtouse.' OR '.$key.' IS NULL)';
 					}
@@ -515,7 +519,7 @@ class WebsitePage extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid' || $key == 't.fk_website' || $key == 'status') {
-					$sqlwhere[] = $key.' = '.$value;
+					$sqlwhere[] = $key.' = '.((int) $value);
 				} elseif ($key == 'type_container') {
 					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 'lang' || $key == 't.lang') {
@@ -528,7 +532,7 @@ class WebsitePage extends CommonObject
 						}
 						$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 					}
-					$stringtouse = $key." IN (".$this->db->sanitize(join(',', $listoflang)).")";
+					$stringtouse = $key." IN (".$this->db->sanitize(join(',', $listoflang), 1).")";
 					if ($foundnull) {
 						$stringtouse = '('.$stringtouse.' OR '.$key.' IS NULL)';
 					}
@@ -575,6 +579,10 @@ class WebsitePage extends CommonObject
 		if ($this->aliasalt) {
 			$this->aliasalt = ','.preg_replace('/,+$/', '', preg_replace('/^,+/', '', $this->aliasalt)).','; // content in database must be ',xxx,...,yyy,'
 		}
+
+		$this->pageurl = preg_replace('/[^a-z0-9\-\_]/i', '', $this->pageurl);
+		$this->pageurl = preg_replace('/\-\-+/', '-', $this->pageurl);
+		$this->pageurl = preg_replace('/^\-/', '', $this->pageurl);
 
 		// Remove spaces and be sure we have main language only
 		$this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en

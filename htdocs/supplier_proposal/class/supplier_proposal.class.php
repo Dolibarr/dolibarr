@@ -290,7 +290,9 @@ class SupplierProposal extends CommonObject
 			$line->tva_tx = $tva_tx;
 
 			$this->lines[] = $line;
+			return 1;
 		}
+		return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -585,7 +587,7 @@ class SupplierProposal extends CommonObject
 			$this->line->date_end = $date_end;
 
 			// infos marge
-			if (!empty($fk_product) && empty($fk_fournprice) && empty($pa_ht)) {
+			if (!empty($fk_product) && $fk_product > 0 && empty($fk_fournprice) && empty($pa_ht)) {
 				// When fk_fournprice is 0, we take the lowest buying price
 				include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 				$productFournisseur = new ProductFournisseur($this->db);
@@ -775,7 +777,7 @@ class SupplierProposal extends CommonObject
 			$this->line->fk_unit = $fk_unit;
 
 			// infos marge
-			if (!empty($fk_product) && empty($fk_fournprice) && empty($pa_ht)) {
+			if (!empty($fk_product) && $fk_product > 0 && empty($fk_fournprice) && empty($pa_ht)) {
 				// by external module, take lowest buying price
 				include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 				$productFournisseur = new ProductFournisseur($this->db);
@@ -1401,10 +1403,12 @@ class SupplierProposal extends CommonObject
 
 			// Numbering module definition
 			$soc = new Societe($this->db);
-			$soc->fetch($this->socid);
+			$result = $soc->fetch($this->socid);
+
+			if ($result < 0) return -1;
 
 			// Define new ref
-			if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+			if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 				$num = $this->getNextNumRef($soc);
 			} else {
 				$num = $this->ref;
@@ -1525,6 +1529,7 @@ class SupplierProposal extends CommonObject
 				return -1;
 			}
 		}
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1555,6 +1560,7 @@ class SupplierProposal extends CommonObject
 				return -1;
 			}
 		}
+		return 0;
 	}
 
 
@@ -1589,6 +1595,7 @@ class SupplierProposal extends CommonObject
 				return -1;
 			}
 		}
+		return 0;
 	}
 
 
@@ -1663,7 +1670,9 @@ class SupplierProposal extends CommonObject
 	public function cloture($user, $status, $note)
 	{
 		global $langs, $conf;
-
+		$hidedetails = 0;
+		$hidedesc = 0;
+		$hideref = 0;
 		$this->statut = $status;
 		$error = 0;
 		$now = dol_now();
@@ -1785,6 +1794,7 @@ class SupplierProposal extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+		return 1;
 	}
 
 	 /**
@@ -1847,6 +1857,7 @@ class SupplierProposal extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1938,7 +1949,7 @@ class SupplierProposal extends CommonObject
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($socid) {
-			$sql .= " AND s.rowid = ".$socid;
+			$sql .= " AND s.rowid = ".((int) $socid);
 		}
 		if ($draft) {
 			$sql .= " AND p.fk_statut = 0";
@@ -2205,7 +2216,7 @@ class SupplierProposal extends CommonObject
 		$this->nbtodo = $this->nbtodolate = 0;
 		$clause = " WHERE";
 
-		$sql = "SELECT p.rowid, p.ref, p.datec as datec";
+		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.date_cloture as datefin";
 		$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p";
 		if (!$user->rights->societe->client->voir && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
@@ -2228,13 +2239,13 @@ class SupplierProposal extends CommonObject
 			$label = $labelShort = '';
 			$status = '';
 			if ($mode == 'opened') {
-				$delay_warning = $conf->supplier_proposal->cloture->warning_delay;
+				$delay_warning = !empty($conf->supplier_proposal->cloture->warning_delay) ? $conf->supplier_proposal->cloture->warning_delay : 0;
 				$status = self::STATUS_VALIDATED;
 				$label = $langs->trans("SupplierProposalsToClose");
 				$labelShort = $langs->trans("ToAcceptRefuse");
 			}
 			if ($mode == 'signed') {
-				$delay_warning = $conf->supplier_proposal->facturation->warning_delay;
+				$delay_warning = !empty($conf->supplier_proposal->facturation->warning_delay) ? $conf->supplier_proposal->facturation->warning_delay : 0;
 				$status = self::STATUS_SIGNED;
 				$label = $langs->trans("SupplierProposalsToProcess"); // May be billed or ordered
 				$labelShort = $langs->trans("ToClose");
@@ -2908,8 +2919,10 @@ class SupplierProposalLine extends CommonObjectLine
 			$this->fk_unit = $objp->fk_unit;
 
 			$this->db->free($result);
+			return 1;
 		} else {
 			dol_print_error($this->db);
+			return -1;
 		}
 	}
 
@@ -3198,7 +3211,7 @@ class SupplierProposalLine extends CommonObjectLine
 		$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposaldet SET";
 		$sql .= " description='".$this->db->escape($this->desc)."'";
 		$sql .= " , label=".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
-		$sql .= " , product_type=".$this->product_type;
+		$sql .= " , product_type=".((int) $this->product_type);
 		$sql .= " , date_start=".($this->date_start ? "'".$this->db->idate($this->date_start)."'" : "null");
 		$sql .= " , date_end=".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null");
 		$sql .= " , tva_tx='".price2num($this->tva_tx)."'";
@@ -3220,11 +3233,11 @@ class SupplierProposalLine extends CommonObjectLine
 		$sql .= " , fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape($this->fk_fournprice)."'" : "null");
 		$sql .= " , buy_price_ht=".price2num($this->pa_ht);
 		if (strlen($this->special_code)) {
-			$sql .= " , special_code=".$this->special_code;
+			$sql .= " , special_code=".((int) $this->special_code);
 		}
 		$sql .= " , fk_parent_line=".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null");
 		if (!empty($this->rang)) {
-			$sql .= ", rang=".$this->rang;
+			$sql .= ", rang=".((int) $this->rang);
 		}
 		$sql .= " , ref_fourn=".(!empty($this->ref_fourn) ? "'".$this->db->escape($this->ref_fourn)."'" : "null");
 		$sql .= " , fk_unit=".($this->fk_unit ? $this->fk_unit : 'null');

@@ -251,7 +251,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 					$pdir[0] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/";
 					$pdir[1] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/';
 				} else {
-					$pdir[0] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/'; // default
+					$pdir[0] = get_exdir(0, 0, 0, 0, $objphoto, 'product'); // default
 					$pdir[1] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/"; // alternative
 				}
 
@@ -342,7 +342,11 @@ class pdf_eratosthene extends ModelePDFCommandes
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
 				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
-					$pagecount = $pdf->setSourceFile($conf->mycompany->multidir_output[$object->entity].'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+					$logodir = $conf->mycompany->dir_output;
+					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
+						$logodir = $conf->mycompany->multidir_output[$object->entity];
+					}
+					$pagecount = $pdf->setSourceFile($logodir.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
 					$tplidx = $pdf->importPage(1);
 				}
 
@@ -722,7 +726,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 					if (!empty($object->lines[$i]->array_options)) {
 						foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue) {
 							if ($this->getColumnStatus($extrafieldColKey)) {
-								$extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey);
+								$extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey, $outputlangs);
 								$this->printStdColumnContent($pdf, $curY, $extrafieldColKey, $extrafieldValue);
 								$nexY = max($pdf->GetY(), $nexY);
 							}
@@ -1418,6 +1422,9 @@ class pdf_eratosthene extends ModelePDFCommandes
 		// phpcs:enable
 		global $conf, $langs, $hookmanager;
 
+		$ltrdirection = 'L';
+		if ($outputlangs->trans("DIRECTION") == 'rtl') $ltrdirection = 'R';
+
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "bills", "propal", "orders", "companies"));
 
@@ -1531,7 +1538,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		}
 		$pdf->MultiCell($w, 3, $title." : ".dol_print_date($object->date, "day", false, $outputlangs, true), '', 'R');
 
-		if (!empty($conf->global->DOC_SHOW_CUSTOMER_CODE) && !empty($object->thirdparty->code_client)) {
+		if (empty($conf->global->MAIN_PDF_HIDE_CUSTOMER_CODE) && !empty($object->thirdparty->code_client)) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
@@ -1587,25 +1594,29 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 
 			// Show sender frame
-			$pdf->SetTextColor(0, 0, 0);
-			$pdf->SetFont('', '', $default_font_size - 2);
-			$pdf->SetXY($posx, $posy - 5);
-			$pdf->MultiCell(66, 5, $outputlangs->transnoentities("BillFrom").":", 0, 'L');
-			$pdf->SetXY($posx, $posy);
-			$pdf->SetFillColor(230, 230, 230);
-			$pdf->MultiCell($widthrecbox, $hautcadre, "", 0, 'R', 1);
-			$pdf->SetTextColor(0, 0, 60);
+			if (empty($conf->global->MAIN_PDF_NO_SENDER_FRAME)) {
+				$pdf->SetTextColor(0, 0, 0);
+				$pdf->SetFont('', '', $default_font_size - 2);
+				$pdf->SetXY($posx, $posy - 5);
+				$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillFrom"), 0, $ltrdirection);
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetFillColor(230, 230, 230);
+				$pdf->MultiCell($widthrecbox, $hautcadre, "", 0, 'R', 1);
+				$pdf->SetTextColor(0, 0, 60);
+			}
 
 			// Show sender name
-			$pdf->SetXY($posx + 2, $posy + 3);
-			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->MultiCell($widthrecbox - 2, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
-			$posy = $pdf->getY();
+			if (empty($conf->global->MAIN_PDF_HIDE_SENDER_NAME)) {
+				$pdf->SetXY($posx + 2, $posy + 3);
+				$pdf->SetFont('', 'B', $default_font_size);
+				$pdf->MultiCell($widthrecbox - 2, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, $ltrdirection);
+				$posy = $pdf->getY();
+			}
 
 			// Show sender information
 			$pdf->SetXY($posx + 2, $posy);
 			$pdf->SetFont('', '', $default_font_size - 1);
-			$pdf->MultiCell($widthrecbox - 2, 4, $carac_emetteur, 0, 'L');
+			$pdf->MultiCell($widthrecbox - 2, 4, $carac_emetteur, 0, $ltrdirection);
 
 			// If CUSTOMER contact defined, we use it
 			$usecontact = false;
@@ -1640,23 +1651,25 @@ class pdf_eratosthene extends ModelePDFCommandes
 			}
 
 			// Show recipient frame
-			$pdf->SetTextColor(0, 0, 0);
-			$pdf->SetFont('', '', $default_font_size - 2);
-			$pdf->SetXY($posx + 2, $posy - 5);
-			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillTo").":", 0, 'L');
-			$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+			if (empty($conf->global->MAIN_PDF_NO_RECIPENT_FRAME)) {
+				$pdf->SetTextColor(0, 0, 0);
+				$pdf->SetFont('', '', $default_font_size - 2);
+				$pdf->SetXY($posx + 2, $posy - 5);
+				$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillTo"), 0, $ltrdirection);
+				$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+			}
 
 			// Show recipient name
 			$pdf->SetXY($posx + 2, $posy + 3);
 			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->MultiCell($widthrecbox, 2, $carac_client_name, 0, 'L');
+			$pdf->MultiCell($widthrecbox, 2, $carac_client_name, 0, $ltrdirection);
 
 			$posy = $pdf->getY();
 
 			// Show recipient information
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->SetXY($posx + 2, $posy);
-			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
+			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, $ltrdirection);
 		}
 
 		$pdf->SetTextColor(0, 0, 0);

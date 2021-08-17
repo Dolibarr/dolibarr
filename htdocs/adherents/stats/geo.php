@@ -42,7 +42,7 @@ if ($user->socid > 0) {
 $result = restrictedArea($user, 'adherent', '', '', 'cotisation');
 
 $year = strftime("%Y", time());
-$startyear = $year - 2;
+$startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;
 
 // Load translation files required by the page
@@ -92,7 +92,7 @@ if ($mode) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
 		$sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-		$sql .= " AND d.statut != -1";
+		$sql .= " AND d.statut <> ".Adherent::STATUS_DRAFT;
 		$sql .= " GROUP BY c.label, c.code";
 		//print $sql;
 	}
@@ -110,7 +110,7 @@ if ($mode) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co on d.country = co.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
 		$sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-		$sql .= " AND d.statut != -1";
+		$sql .= " AND d.statut <> ".Adherent::STATUS_DRAFT;
 		$sql .= " GROUP BY co.label, co.code, c.nom";
 		//print $sql;
 	}
@@ -127,7 +127,7 @@ if ($mode) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co on d.country = co.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
 		$sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-		$sql .= " AND d.statut != -1";
+		$sql .= " AND d.statut <> ".Adherent::STATUS_DRAFT;
 		$sql .= " GROUP BY co.label, co.code, r.nom"; //+
 		//print $sql;
 	}
@@ -142,7 +142,7 @@ if ($mode) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
 		$sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-		$sql .= " AND d.statut != -1";
+		$sql .= " AND d.statut <> ".Adherent::STATUS_DRAFT;
 		$sql .= " GROUP BY c.label, c.code, d.town";
 		//print $sql;
 	}
@@ -244,7 +244,7 @@ if ($mode && !count($data)) {
 if (count($arrayjs) && $mode == 'memberbycountry') {
 	$color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 	if (is_readable($color_file)) {
-		include_once $color_file;
+		include $color_file;
 	}
 
 	// Assume we've already included the proper headers so just call our script inline

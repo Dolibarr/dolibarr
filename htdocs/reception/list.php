@@ -384,7 +384,7 @@ if (empty($reshook)) {
 				// Fac builddoc
 				$donotredirect = 1;
 				$upload_dir = $conf->fournisseur->facture->dir_output;
-				$permissiontoadd = $user->rights->fournisseur->facture->creer;
+				$permissiontoadd = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
 				include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 			}
 
@@ -454,13 +454,13 @@ if (!$user->rights->societe->client->voir && !$socid) {	// Internal user with no
 	$sql .= " AND sc.fk_user = ".$user->id;
 }
 if ($socid) {
-	$sql .= " AND e.fk_soc = ".$socid;
+	$sql .= " AND e.fk_soc = ".((int) $socid);
 }
 if ($search_status <> '' && $search_status >= 0) {
-	$sql .= " AND e.fk_statut = ".$search_status;
+	$sql .= " AND e.fk_statut = ".((int) $search_status);
 }
 if ($search_billed != '' && $search_billed >= 0) {
-	$sql .= ' AND e.billed = '.$search_billed;
+	$sql .= ' AND e.billed = '.((int) $search_billed);
 }
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
@@ -593,10 +593,10 @@ foreach ($search_array_options as $key => $val) {
 
 
 $arrayofmassactions = array(
-	// 'presend'=>$langs->trans("SendByMail"),
+	// 'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 
-if ($user->rights->fournisseur->facture->creer) {
+if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
 	$arrayofmassactions['createbills'] = $langs->trans("CreateInvoiceForThisSupplier");
 }
 if ($massaction == 'createbills') {

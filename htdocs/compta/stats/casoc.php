@@ -247,7 +247,7 @@ $name = array();
 $catotal = 0;
 if ($modecompta == 'CREANCES-DETTES') {
 	$sql = "SELECT DISTINCT s.rowid as socid, s.nom as name, s.zip, s.town, s.fk_pays,";
-	$sql .= " sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
+	$sql .= " sum(f.total_ht) as amount, sum(f.total_ttc) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
 	if ($selected_cat === -2) {	// Without any category
 		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
@@ -405,7 +405,8 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 // Category filter
 print '<tr class="liste_titre">';
 print '<td>';
-print $langs->trans("Category").': '.$formother->select_categories(Categorie::TYPE_CUSTOMER, $selected_cat, 'search_categ', true);
+print img_picto('', 'category', 'class="paddingrightonly"');
+print $formother->select_categories(Categorie::TYPE_CUSTOMER, $selected_cat, 'search_categ', 0, $langs->trans("Category"));
 print ' ';
 print $langs->trans("SubCats").'? ';
 print '<input type="checkbox" name="subcat" value="yes"';
@@ -420,13 +421,13 @@ print '</tr>';
 
 print '<tr class="liste_titre">';
 print '<td class="liste_titre left">';
-print '<input class="flat" size="6" type="text" name="search_societe" value="'.$search_societe.'">';
+print '<input class="flat" size="6" type="text" name="search_societe" value="'.dol_escape_htmltag($search_societe).'">';
 print '</td>';
 print '<td class="liste_titre left">';
-print '<input class="flat" size="6" type="text" name="search_zip" value="'.$search_zip.'">';
+print '<input class="flat" size="6" type="text" name="search_zip" value="'.dol_escape_htmltag($search_zip).'">';
 print '</td>';
 print '<td class="liste_titre left">';
-print '<input class="flat" size="6" type="text" name="search_town" value="'.$search_town.'">';
+print '<input class="flat" size="6" type="text" name="search_town" value="'.dol_escape_htmltag($search_town).'">';
 print '</td>';
 print '<td class="liste_titre left">';
 print $form->select_country($search_country, 'search_country');

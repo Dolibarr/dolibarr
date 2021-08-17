@@ -173,7 +173,7 @@ if ($user->rights->banque->modifier && $action == "update") {
 				$sql .= " datev = '".$db->idate($dateval)."',";
 			}
 		}
-		$sql .= " fk_account = ".$actarget->id;
+		$sql .= " fk_account = ".((int) $actarget->id);
 		$sql .= " WHERE rowid = ".((int) $acline->id);
 
 		$result = $db->query($sql);
@@ -268,7 +268,7 @@ $sql = "SELECT b.rowid,b.dateo as do,b.datev as dv, b.amount, b.label, b.rappro,
 $sql .= " b.num_releve, b.fk_user_author, b.num_chq, b.fk_type, b.fk_account, b.fk_bordereau as receiptid,";
 $sql .= " b.emetteur,b.banque";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
-$sql .= " WHERE rowid=".$rowid;
+$sql .= " WHERE rowid=".((int) $rowid);
 $sql .= " ORDER BY dateo ASC";
 $result = $db->query($sql);
 if ($result) {
@@ -291,7 +291,7 @@ if ($result) {
 
 		// Confirmations
 		if ($action == 'delete_categ') {
-			print $form->formconfirm($_SERVER['PHP_SELF']."?rowid=".$rowid."&cat1=".GETPOST("fk_categ")."&orig_account=".$orig_account, $langs->trans("RemoveFromRubrique"), $langs->trans("RemoveFromRubriqueConfirm"), "confirm_delete_categ", '', 'yes', 1);
+			print $form->formconfirm($_SERVER['PHP_SELF']."?rowid=".urlencode($rowid)."&cat1=".urlencode(GETPOST("fk_categ", 'int'))."&orig_account=".urlencode($orig_account), $langs->trans("RemoveFromRubrique"), $langs->trans("RemoveFromRubriqueConfirm"), "confirm_delete_categ", '', 'yes', 1);
 		}
 
 		print '<form name="update" method="POST" action="'.$_SERVER['PHP_SELF'].'?rowid='.$rowid.'">';
@@ -452,7 +452,7 @@ if ($result) {
 			}
 			print '</td>';
 		} else {
-			print '<td>'.$objp->fk_type.' '.$objp->num_chq.'</td>';
+			print '<td>'.$objp->fk_type.' '.dol_escape_htmltag($objp->num_chq).'</td>';
 		}
 		print "</tr>";
 
@@ -462,7 +462,7 @@ if ($result) {
 		print "</td>";
 		if ($user->rights->banque->modifier || $user->rights->banque->consolidate) {
 			print '<td>';
-			print '<input type="text" class="flat minwidth200" name="emetteur" value="'.(empty($objp->emetteur) ? '' : stripslashes($objp->emetteur)).'">';
+			print '<input type="text" class="flat minwidth200" name="emetteur" value="'.(empty($objp->emetteur) ? '' : dol_escape_htmltag($objp->emetteur)).'">';
 			print '</td>';
 		} else {
 			print '<td>'.$objp->emetteur.'</td>';
@@ -475,10 +475,10 @@ if ($result) {
 		print "</td>";
 		if ($user->rights->banque->modifier || $user->rights->banque->consolidate) {
 			print '<td>';
-			print '<input type="text" class="flat minwidth200" name="banque" value="'.(empty($objp->banque) ? '' : $objp->banque).'">';
+			print '<input type="text" class="flat minwidth200" name="banque" value="'.(empty($objp->banque) ? '' : dol_escape_htmltag($objp->banque)).'">';
 			print '</td>';
 		} else {
-			print '<td>'.$objp->banque.'</td>';
+			print '<td>'.dol_escape_htmltag($objp->banque).'</td>';
 		}
 		print "</tr>";
 
@@ -523,6 +523,7 @@ if ($result) {
 		print "</tr>";
 
 		// Description
+		$reg = array();
 		print "<tr><td>".$langs->trans("Label")."</td>";
 		if ($user->rights->banque->modifier || $user->rights->banque->consolidate) {
 			print '<td>';
@@ -531,7 +532,7 @@ if ($result) {
 				// Label generique car entre parentheses. On l'affiche en le traduisant
 				print $langs->trans($reg[1]);
 			} else {
-				print $objp->label;
+				print dol_escape_htmltag($objp->label);
 			}
 			print '">';
 			print '</td>';
@@ -541,7 +542,7 @@ if ($result) {
 				// Label generique car entre parentheses. On l'affiche en le traduisant
 				print $langs->trans($reg[1]);
 			} else {
-				print $objp->label;
+				print dol_escape_htmltag($objp->label);
 			}
 			print '</td>';
 		}
@@ -623,21 +624,21 @@ if ($result) {
 
 			print '<table class="border centpercent">';
 
-			print '<tr><td class="titlefield">'.$langs->trans("Conciliation")."</td>";
+			print '<tr><td class="titlefieldcreate">'.$form->textwithpicto($langs->trans("AccountStatement"), $langs->trans("InputReceiptNumber"))."</td>";
 			if ($user->rights->banque->consolidate) {
 				print '<td>';
 				if ($objp->rappro) {
-					print $langs->trans("AccountStatement").' <input name="num_rel_bis" class="flat" value="'.$objp->num_releve.'"'.($objp->rappro ? ' disabled' : '').'>';
+					print '<input name="num_rel_bis" class="flat" value="'.$objp->num_releve.'"'.($objp->rappro ? ' disabled' : '').'>';
 					print '<input name="num_rel" type="hidden" value="'.$objp->num_releve.'">';
 				} else {
-					print $langs->trans("AccountStatement").' <input name="num_rel" class="flat" value="'.$objp->num_releve.'"'.($objp->rappro ? ' disabled' : '').'>';
+					print '<input name="num_rel" class="flat" value="'.$objp->num_releve.'"'.($objp->rappro ? ' disabled' : '').'>';
 				}
 				if ($objp->num_releve) {
 					print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?num='.$objp->num_releve.'&account='.$acct->id.'">'.$langs->trans("AccountStatement").' '.$objp->num_releve.')</a>';
 				}
 				print '</td>';
 			} else {
-				print '<td>'.$objp->num_releve.'&nbsp;</td>';
+				print '<td>'.$objp->num_releve.'</td>';
 			}
 			print '</tr>';
 

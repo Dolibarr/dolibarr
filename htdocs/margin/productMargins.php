@@ -179,7 +179,7 @@ if ($id > 0) {
 	$sql .= " d.fk_product,";
 }
 if ($id > 0) {
-	$sql .= " f.rowid as facid, f.ref, f.total as total_ht, f.datef, f.paye, f.fk_statut as statut,";
+	$sql .= " f.rowid as facid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut as statut,";
 }
 $sql .= " SUM(d.total_ht) as selling_price,";
 // Note: qty and buy_price_ht is always positive (if not your database may be corrupted, you can update this)
@@ -198,7 +198,7 @@ $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
 $sql .= " AND f.fk_statut NOT IN (".$db->sanitize(implode(', ', $invoice_status_except_list)).")";
 $sql .= " AND d.fk_facture = f.rowid";
 if ($id > 0) {
-	$sql .= " AND d.fk_product =".$id;
+	$sql .= " AND d.fk_product =".((int) $id);
 }
 if (!empty($TSelectedCats)) {
 	$sql .= ' AND cp.fk_categorie IN ('.$db->sanitize(implode(',', $TSelectedCats)).')';
@@ -216,7 +216,7 @@ if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPr
 	$sql .= " AND d.buy_price_ht <> 0";
 }
 if ($id > 0) {
-	$sql .= " GROUP BY p.label, p.rowid, p.fk_product_type, p.ref, p.entity, d.fk_product, f.rowid, f.ref, f.total, f.datef, f.paye, f.fk_statut";
+	$sql .= " GROUP BY p.label, p.rowid, p.fk_product_type, p.ref, p.entity, d.fk_product, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut";
 } else {
 	$sql .= " GROUP BY p.label, p.rowid, p.fk_product_type, p.ref, p.entity";
 }

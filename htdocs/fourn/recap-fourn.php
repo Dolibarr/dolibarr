@@ -63,7 +63,7 @@ if ($socid > 0) {
 	dol_banner_tab($societe, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 	print dol_get_fiche_end();
 
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->facture->lire) {
+	if ((!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)) {
 		// Invoice list
 		print load_fiche_titre($langs->trans("SupplierPreview"));
 
@@ -134,7 +134,7 @@ if ($socid > 0) {
 				$sql .= " ".MAIN_DB_PREFIX."paiementfourn as p";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON p.fk_user_author = u.rowid";
 				$sql .= " WHERE pf.fk_paiementfourn = p.rowid";
-				$sql .= " AND pf.fk_facturefourn = ".$fac->id;
+				$sql .= " AND pf.fk_facturefourn = ".((int) $fac->id);
 
 				$resqlp = $db->query($sql);
 				if ($resqlp) {
