@@ -267,6 +267,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $always_enabled;
 
 	/**
+	 * @var bool Module is disabled
+	 */
+	public $disabled;
+
+	/**
 	 * @var int Module is enabled globally (Multicompany support)
 	 */
 	public $core_enabled;
