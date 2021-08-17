@@ -65,7 +65,7 @@ class Notify
 	// Les codes actions sont definis dans la table llx_notify_def
 
 	// codes actions supported are
-	// @todo defined also into interface_50_modNotificiation_Notificiation.class.php
+	// @todo defined also into interface_50_modNotification_Notification.class.php
 	public $arrayofnotifsupported = array(
 		'BILL_VALIDATE',
 		'BILL_PAYED',
@@ -80,8 +80,8 @@ class Notify
 		'SHIPPING_VALIDATE',
 		'EXPENSE_REPORT_VALIDATE',
 		'EXPENSE_REPORT_APPROVE',
-	'HOLIDAY_VALIDATE',
-	'HOLIDAY_APPROVE',
+		'HOLIDAY_VALIDATE',
+		'HOLIDAY_APPROVE',
 		'ACTION_CREATE'
 	);
 
@@ -515,7 +515,7 @@ class Notify
 							case 'SHIPPING_VALIDATE':
 								$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
-								$object_type = 'expedition';
+								$object_type = 'shipping';
 								$labeltouse = $conf->global->SHIPPING_VALIDATE_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpeditionValidated", $link);
 								break;
@@ -546,7 +546,7 @@ class Notify
 								$object_type = 'holiday';
 								$labeltouse = $conf->global->HOLIDAY_APPROVE_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextHolidayApproved", $link);
-				break;
+								break;
 							case 'ACTION_CREATE':
 								$link = '<a href="'.$urlwithroot.'/comm/action/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->agenda->dir_output;
@@ -567,10 +567,10 @@ class Notify
 							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
 							$message = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
 						} else {
-									$message = $outputlangs->transnoentities("YouReceiveMailBecauseOfNotification", $application, $mysoc->name)."\n";
-									$message .= $outputlangs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
-									$message .= "\n";
-									$message .= $mesg;
+							$message = $outputlangs->transnoentities("YouReceiveMailBecauseOfNotification", $application, $mysoc->name)."\n";
+							$message .= $outputlangs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
+							$message .= "\n";
+							$message .= $mesg;
 						}
 
 						$ref = dol_sanitizeFileName($newref);
@@ -687,7 +687,7 @@ class Notify
 						break;
 					case 'BILL_PAYED':
 						$link = '<a href="'.$urlwithroot.'/compta/facture/card.php?facid='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
-						$dir_output = $$conf->facture->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'invoice');
+						$dir_output = $conf->facture->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'invoice');
 						$object_type = 'facture';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInvoicePayed", $link);
 						break;
@@ -782,7 +782,7 @@ class Notify
 						$dir_output = $conf->holiday->dir_output;
 						$object_type = 'holiday';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextHolidayApproved", $link);
-			break;
+						break;
 					case 'ACTION_CREATE':
 						$link = '<a href="'.$urlwithroot.'/comm/action/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$dir_output = $conf->agenda->dir_output;

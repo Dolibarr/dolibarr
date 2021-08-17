@@ -187,6 +187,7 @@ $arrayfields = array(
 	'c.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>105),
 	'c.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>110),
 	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>115),
+	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>0, 'position'=>116),
 	'c.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>120),
 	'c.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>125),
 	'c.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>130),
@@ -1180,6 +1181,9 @@ if ($resql) {
 		print '<input class="flat" size="4" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'">';
 		print '</td>';
 	}
+	if (!empty($arrayfields['sale_representative']['checked'])) {
+		print '<td class="liste_titre"></td>';
+	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 	// Fields from hook
@@ -1337,6 +1341,9 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['u.login']['checked'])) {
 		print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, 'align="center"', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['sale_representative']['checked'])) {
+		print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "", "", "$param", '', $sortfield, $sortorder);
 	}
 
 	// Extra fields
@@ -1710,6 +1717,53 @@ if ($resql) {
 				print '&nbsp;';
 			}
 			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		if (!empty($arrayfields['sale_representative']['checked'])) {
+			// Sales representatives
+			print '<td>';
+			if ($obj->socid > 0) {
+				$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
+				if ($listsalesrepresentatives < 0) {
+					dol_print_error($db);
+				}
+				$nbofsalesrepresentative = count($listsalesrepresentatives);
+				if ($nbofsalesrepresentative > 6) {
+					// We print only number
+					print $nbofsalesrepresentative;
+				} elseif ($nbofsalesrepresentative > 0) {
+					$j = 0;
+					foreach ($listsalesrepresentatives as $val) {
+						$userstatic->id = $val['id'];
+						$userstatic->lastname = $val['lastname'];
+						$userstatic->firstname = $val['firstname'];
+						$userstatic->email = $val['email'];
+						$userstatic->statut = $val['statut'];
+						$userstatic->entity = $val['entity'];
+						$userstatic->photo = $val['photo'];
+						$userstatic->login = $val['login'];
+						$userstatic->office_phone = $val['office_phone'];
+						$userstatic->office_fax = $val['office_fax'];
+						$userstatic->user_mobile = $val['user_mobile'];
+						$userstatic->job = $val['job'];
+						$userstatic->gender = $val['gender'];
+						//print '<div class="float">':
+						print ($nbofsalesrepresentative < 2) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
+						$j++;
+						if ($j < $nbofsalesrepresentative) {
+							print ' ';
+						}
+						//print '</div>';
+					}
+				}
+				//else print $langs->trans("NoSalesRepresentativeAffected");
+			} else {
+				print '&nbsp;';
+			}
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

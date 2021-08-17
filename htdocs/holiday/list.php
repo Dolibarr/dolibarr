@@ -636,7 +636,7 @@ if ($resql) {
 
 	// Create date
 	if (!empty($arrayfields['cp.date_create']['checked'])) {
-		print '<td class="liste_titre center nowraponall">';
+		print '<td class="liste_titre center width200">';
 		print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month_create" value="'.dol_escape_htmltag($search_month_create).'">';
 		$formother->select_year($search_year_create, 'search_year_create', 1, $min_year, 0);
 		print '</td>';
@@ -644,7 +644,7 @@ if ($resql) {
 
 	// Create date
 	if (!empty($arrayfields['cp.tms']['checked'])) {
-		print '<td class="liste_titre center nowraponall">';
+		print '<td class="liste_titre center width200">';
 		print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month_update" value="'.dol_escape_htmltag($search_month_update).'">';
 		$formother->select_year($search_year_update, 'search_year_update', 1, $min_year, 0);
 		print '</td>';
@@ -652,8 +652,8 @@ if ($resql) {
 
 	// Status
 	if (!empty($arrayfields['cp.statut']['checked'])) {
-		print '<td class="liste_titre maxwidthonsmartphone maxwidth200 right">';
-		$object->selectStatutCP($search_status, 'search_status');
+		print '<td class="liste_titre right">';
+		$object->selectStatutCP($search_status, 'search_status', 'minwidth125');
 		print '</td>';
 	}
 
@@ -730,6 +730,7 @@ if ($resql) {
 			$holidaystatic->id = $obj->rowid;
 			$holidaystatic->ref = ($obj->ref ? $obj->ref : $obj->rowid);
 			$holidaystatic->statut = $obj->status;
+			$holidaystatic->date_debut = $db->jdate($obj->date_debut);
 
 			// User
 			$userstatic->id = $obj->fk_user;
@@ -780,7 +781,7 @@ if ($resql) {
 				}
 			}
 			if (!empty($arrayfields['cp.fk_type']['checked'])) {
-				print '<td>';
+				print '<td class="minwidth100">';
 				$labeltypeleavetoshow = ($langs->trans($typeleaves[$obj->fk_type]['code']) != $typeleaves[$obj->fk_type]['code'] ? $langs->trans($typeleaves[$obj->fk_type]['code']) : $typeleaves[$obj->fk_type]['label']);
 				print empty($typeleaves[$obj->fk_type]['label']) ? $langs->trans("TypeWasDisabledOrRemoved", $obj->fk_type) : $labeltypeleavetoshow;
 				print '</td>';
@@ -790,7 +791,7 @@ if ($resql) {
 			}
 			if (!empty($arrayfields['duration']['checked'])) {
 				print '<td class="right">';
-				$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday);
+				$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday);	// user jdate(..., 1) because num_open_day need UTC dates
 				print $nbopenedday.' '.$langs->trans('DurationDays');
 				print '</td>';
 				if (!$i) {

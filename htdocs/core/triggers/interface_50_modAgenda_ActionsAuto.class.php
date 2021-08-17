@@ -557,6 +557,21 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = 0;
+		} elseif ($action == 'ORDER_SUPPLIER_CANCEL') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "orders", "main"));
+
+			if (empty($object->actionmsg2)) {
+				$object->actionmsg2 = $langs->transnoentities("OrderCanceledInDolibarr", $object->ref);
+			}
+			$object->actionmsg = $langs->transnoentities("OrderCanceledInDolibarr", $object->ref);
+
+			if (!empty($object->cancel_note)) {
+				$object->actionmsg .= '<br>';
+				$object->actionmsg .= $langs->trans("Reason") . ': '.$object->cancel_note;
+			}
+
+			$object->sendtoid = 0;
 		} elseif ($action == 'ORDER_SUPPLIER_SUBMIT') {
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "orders"));
@@ -565,6 +580,11 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				$object->actionmsg2 = $langs->transnoentities("SupplierOrderSubmitedInDolibarr", ($object->newref ? $object->newref : $object->ref));
 			}
 			$object->actionmsg = $langs->transnoentities("SupplierOrderSubmitedInDolibarr", ($object->newref ? $object->newref : $object->ref));
+
+			if (!empty($object->context['comments'])) {
+				$object->actionmsg .= '<br>';
+				$object->actionmsg .= $langs->trans("Comment") . ': '.$object->context['comments'];
+			}
 
 			$object->sendtoid = 0;
 		} elseif ($action == 'ORDER_SUPPLIER_RECEIVE') {
@@ -936,7 +956,11 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 		}
 
-		$object->actionmsg = dol_concatdesc($langs->transnoentities("Author").': '.$user->login, $object->actionmsg);
+		if (!empty($user->login)) {
+			$object->actionmsg = dol_concatdesc($langs->transnoentities("Author").': '.$user->login, $object->actionmsg);
+		} elseif (isset($object->origin_email)) {
+			$object->actionmsg = dol_concatdesc($langs->transnoentities("Author").': '.$object->origin_email, $object->actionmsg);
+		}
 
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 

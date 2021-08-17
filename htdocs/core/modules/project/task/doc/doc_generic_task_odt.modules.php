@@ -524,8 +524,8 @@ class doc_generic_task_odt extends ModelePDFTask
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
 				dol_mkdir($conf->projet->dir_temp);
-				if (!is_writable($conf->task->dir_temp)) {
-					$this->error = "Failed to write in temp directory ".$conf->task->dir_temp;
+				if (!is_writable($conf->projet->dir_temp)) {
+					$this->error = "Failed to write in temp directory ".$conf->projet->dir_temp;
 					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
 					return -1;
 				}

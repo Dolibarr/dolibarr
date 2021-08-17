@@ -77,6 +77,7 @@ $batchnumber = GETPOST('batch_number', 'san_alpha');
 if (!empty($batchnumber)) {
 	$batchnumber = trim($batchnumber);
 }
+$cost_price = GETPOST('cost_price', 'alpha');
 
 // Security check
 if ($user->socid) {
@@ -113,6 +114,9 @@ $hookmanager->initHooks(array('stockproductcard', 'globalcard'));
 
 $error = 0;
 
+$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
+
 if ($object->id > 0) {
 	if ($object->type == $object::TYPE_PRODUCT) {
 		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
@@ -137,6 +141,21 @@ $parameters = array('id'=>$id, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
+if ($action == 'setcost_price') {
+	if ($id) {
+		$result = $object->fetch($id);
+		$object->cost_price = price2num($cost_price);
+		$result = $object->update($object->id, $user);
+		if ($result > 0) {
+			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+			$action = '';
+		} else {
+			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
 }
 
 if ($action == 'addlimitstockwarehouse' && !empty($user->rights->produit->creer)) {
@@ -600,9 +619,9 @@ if ($id > 0 || $ref) {
 			if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="">';
-				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
+				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
 				print '</td><td>';
-				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
+				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, 0, $typeformat);
 				print '</td></tr>';
 			}
 
@@ -618,7 +637,7 @@ if ($id > 0 || $ref) {
 			$textdesc .= "<br>".$langs->trans("CostPriceUsage");
 			$text = $form->textwithpicto($langs->trans("CostPrice"), $textdesc, 1, 'help', '');
 			print $form->editfieldkey($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
-			print '</td><td colspan="2">';
+			print '</td><td>';
 			print $form->editfieldval($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
 			print '</td></tr>';
 
