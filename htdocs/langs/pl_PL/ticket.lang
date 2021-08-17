@@ -55,7 +55,7 @@ TypeContact_ticket_internal_SUPPORTTEC=Przypisany użytkownik
 TypeContact_ticket_external_SUPPORTCLI=Kontakt z klientem / śledzenie incydentów
 TypeContact_ticket_external_CONTRIBUTOR=Współpracownik zewnętrzny
 
-OriginEmail=Reporter Email
+OriginEmail=E-mail reportera
 Notify_TICKET_SENTBYMAIL=Wyślij wiadomość e-mail z biletem
 
 # Status
@@ -66,7 +66,7 @@ NeedMoreInformation=Czekam na opinię reportera
 NeedMoreInformationShort=Czekam na informację zwrotną
 Answered=Odpowiedział
 Waiting=Czekanie
-Closed=Zamknięte
+SolvedClosed=Solved
 Deleted=Usunięto
 
 # Dict
@@ -186,9 +186,11 @@ TicketSeverity=Priorytet
 ShowTicket=Zobacz bilet
 RelatedTickets=Powiązane bilety
 TicketAddIntervention=Tworzenie interwencji
-CloseTicket=Zamknij bilet
-CloseATicket=Zamknij bilet
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Potwierdź zamknięcie biletu
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Potwierdź usunięcie biletu
 TicketDeletedSuccess=Bilet został usunięty z powodzeniem
 TicketMarkedAsClosed=Bilet oznaczony jako zamknięty

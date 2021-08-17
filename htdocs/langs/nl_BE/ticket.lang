@@ -14,7 +14,6 @@ TypeContact_ticket_external_CONTRIBUTOR=Externe bijdrager
 Read=Lezen
 Assigned=Toegewezen
 InProgress=Bezig
-Closed=Afgesloten
 Severity=Strengheid
 TicketSetup=Installatie van ticketmodule
 TicketPublicAccess=Een openbare interface die geen identificatie vereist, is beschikbaar op de volgende URL

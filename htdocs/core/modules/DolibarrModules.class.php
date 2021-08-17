@@ -1268,7 +1268,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				} else {
 					$file = $this->boxes[$key]['file'];
 				}
-				
+
 				//$note  = $this->boxes[$key][2];
 
 				// TODO If the box is also included by another module and the other module is still on, we should not remove it.

@@ -128,7 +128,7 @@ abstract class CommonObject
 	 */
 	protected $table_ref_field = '';
 
-  /**
+	/**
 	 * @var integer   0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 */
 	public $restrictiononfksoc = 0;

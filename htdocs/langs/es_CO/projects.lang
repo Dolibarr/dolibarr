@@ -155,4 +155,5 @@ AllowCommentOnProject=Permitir comentarios de usuarios en proyectos
 DontHavePermissionForCloseProject=No tiene permisos para cerrar el proyecto %s
 RecordsClosed=%s proyecto (s) cerrado (s)
 SendProjectRef=Proyecto de información %s
+TimeSpentForIntervention=Tiempo usado
 TimeSpentForInvoice=Tiempo usado

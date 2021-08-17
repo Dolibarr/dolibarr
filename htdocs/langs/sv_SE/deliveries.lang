@@ -30,3 +30,4 @@ NonShippable=Inte sändbara
 ShowShippableStatus=Visa leveransstatus
 ShowReceiving=Visa orderbekräftelse
 NonExistentOrder=Icke-existerande ordning
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Lagerkvantiteter som redan tilldelats på tidigare rader

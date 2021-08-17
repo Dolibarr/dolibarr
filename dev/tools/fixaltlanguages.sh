@@ -57,6 +57,9 @@ then
     	if [ "$aa" != "$bblower" -a "$dirshort" != "en_US" ]
     	then
     	    reflang="htdocs/langs/"$aa"_"$aaupper
+    	    echo $reflang" "$aa"_"$bb != $aa"_"$aaupper
+    	    
+    	    # If $reflang is a main language to use to sanitize the alternative file 
     	    if [ -d $reflang -a $aa"_"$bb != $aa"_"$aaupper ]
     	    then
 		    	echo "***** Search original into "$reflang

@@ -86,7 +86,7 @@ DownloadICSLink = ICS リンクをダウンロード
 EVENTORGANIZATION_SECUREKEY = 会議への公開登録リンクのセキュアキー
 SERVICE_BOOTH_LOCATION = ブースの場所に関する請求書の行に使用されるサービス
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = 会議への参加者のサブスクリプションに関する請求書の行に使用されるサービス
-NbVotes=Number of votes
+NbVotes=投票数
 #
 # Status
 #
@@ -116,9 +116,11 @@ EvntOrgDuration = この会議は%sで始まり、%sで終わる。
 ConferenceAttendeeFee = イベント:「 '%s' 開催は%sから%sまで」への会議参加料金。
 BoothLocationFee = イベントのブース位置: '%s' で %s から %s まで
 EventType = イベント種別
-LabelOfBooth=Booth label
-LabelOfconference=Conference label
-ConferenceIsNotConfirmed=Subcription not available, conference is not confirmed yet
+LabelOfBooth=ブースラベル
+LabelOfconference=会議ラベル
+ConferenceIsNotConfirmed=サブスクリプションは利用不可、会議はまだ確定されていない
+DateMustBeBeforeThan=%sは必ず%sの前
+DateMustBeAfterThan=%sは必ず%sの後
 
 #
 # Vote page
