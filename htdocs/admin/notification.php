@@ -47,7 +47,7 @@ $error = 0;
  */
 
 // Action to update or add a constant
-if ($action == 'settemplates') {
+if ($action == 'settemplates' && $user->admin) {
 	$db->begin();
 
 	if (!$error && is_array($_POST)) {
@@ -169,14 +169,14 @@ llxHeader('', $langs->trans("NotificationSetup"));
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("NotificationSetup"), $linkback, 'title_setup');
 
-print '<span class="opacitymedium">';
+print '<div class="info">';
 print $langs->trans("NotificationsDesc").'<br>';
 print $langs->trans("NotificationsDescUser").'<br>';
 if (!empty($conf->societe->enabled)) {
 	print $langs->trans("NotificationsDescContact").'<br>';
 }
 print $langs->trans("NotificationsDescGlobal").'<br>';
-print '</span>';
+print '</div>';
 print '<br>';
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
@@ -192,7 +192,8 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>';
 print $langs->trans("NotificationEMailFrom").'</td>';
 print '<td>';
-print '<input size="32" type="email" name="email_from" value="'.$conf->global->NOTIFICATION_EMAIL_FROM.'">';
+print img_picto('', 'email', 'class="pictofixedwidth"');
+print '<input class="width300" type="email" name="email_from" value="'.$conf->global->NOTIFICATION_EMAIL_FROM.'">';
 if (!empty($conf->global->NOTIFICATION_EMAIL_FROM) && !isValidEmail($conf->global->NOTIFICATION_EMAIL_FROM)) {
 	print ' '.img_warning($langs->trans("ErrorBadEMail"));
 }
@@ -390,6 +391,7 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 	print '<td>'.$notifiedevent['code'].'</td>';
 	print '<td><span class="opacitymedium">'.$label.'</span></td>';
 	print '<td>';
+	$inputfieldalreadyshown = 0;
 	// Notification with threshold
 	foreach ($conf->global as $key => $val) {
 		if ($val == '' || !preg_match('/^NOTIFICATION_FIXEDEMAIL_'.$notifiedevent['code'].'_THRESHOLD_HIGHER_(.*)/', $key, $reg)) {
@@ -413,24 +415,36 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 		}
 		print $form->textwithpicto($s, $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword"), 1, 'help', '', 0, 2);
 		print '<br>';
+
+		$inputfieldalreadyshown++;
 	}
 	// New entry input fields
-	$s = '<input type="text" size="32" name="NOTIF_'.$notifiedevent['code'].'_new_key" value="">'; // Do not use type="email" here, we must be able to enter a list of email with , separator.
-	print $form->textwithpicto($s, $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword"), 1, 'help', '', 0, 2);
+	if (empty($inputfieldalreadyshown) || !preg_match('/^HOLIDAY/', $notifiedevent['code'])) {
+		$s = '<input type="text" size="32" name="NOTIF_'.$notifiedevent['code'].'_new_key" value="">'; // Do not use type="email" here, we must be able to enter a list of email with , separator.
+		print $form->textwithpicto($s, $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword"), 1, 'help', '', 0, 2);
+	}
 	print '</td>';
 
 	print '<td>';
+	$labelfortrigger = 'AmountHT';
 	// Notification with threshold
+	$inputfieldalreadyshown = 0;
 	foreach ($conf->global as $key => $val) {
 		if ($val == '' || !preg_match('/^NOTIFICATION_FIXEDEMAIL_'.$notifiedevent['code'].'_THRESHOLD_HIGHER_(.*)/', $key, $reg)) {
 			continue;
 		}
 
-		print $langs->trans("AmountHT").' >= <input type="text" size="4" name="NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_amount" value="'.dol_escape_htmltag($reg[1]).'">';
-		print '<br>';
+		if (!preg_match('/^HOLIDAY/', $notifiedevent['code'])) {
+			print $langs->trans($labelfortrigger).' >= <input type="text" size="4" name="NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_amount" value="'.dol_escape_htmltag($reg[1]).'">';
+			print '<br>';
+
+			$inputfieldalreadyshown++;
+		}
 	}
 	// New entry input fields
-	print $langs->trans("AmountHT").' >= <input type="text" size="4" name="NOTIF_'.$notifiedevent['code'].'_new_amount" value="">';
+	if (!preg_match('/^HOLIDAY/', $notifiedevent['code'])) {
+		print $langs->trans($labelfortrigger).' >= <input type="text" size="4" name="NOTIF_'.$notifiedevent['code'].'_new_amount" value="">';
+	}
 	print '</td>';
 
 	print '<td>';
