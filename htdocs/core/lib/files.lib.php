@@ -1792,9 +1792,10 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 			$ecmfile->src_object_type = $object->table_element;
 		}
 
-		if (!empty($conf->global->MAIN_FORCE_SHARING_ON_ANY_UPLOADED_FILE) && $conf->global->MAIN_FORCE_SHARING_ON_ANY_UPLOADED_FILE=='1') {
+		if (!empty($conf->global->MAIN_FORCE_SHARING_ON_ANY_UPLOADED_FILE)) {
 			$setsharekey = 1;
 		}
+		
 		if ($setsharekey) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 			$ecmfile->share = getRandomPassword(true);
