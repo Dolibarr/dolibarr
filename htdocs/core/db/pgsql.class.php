@@ -494,9 +494,10 @@ class DoliDBPgsql extends DoliDB
 	 * @param	string	$query			SQL query string
 	 * @param	int		$usesavepoint	0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
 	 * @param   string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
+	 * @param	int		$result_mode	Result mode (not used with pgsql)
 	 * @return	false|resource			Resultset of answer
 	 */
-	public function query($query, $usesavepoint = 0, $type = 'auto')
+	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0)
 	{
 		global $conf, $dolibarr_main_db_readonly;
 
@@ -570,7 +571,7 @@ class DoliDBPgsql extends DoliDB
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Renvoie la ligne courante (comme un objet) pour le curseur resultset
+	 * 	Returns the current line (as an object) for the resultset cursor
 	 *
 	 *	@param	resource	$resultset  Curseur de la requete voulue
 	 *	@return	false|object			Object result line or false if KO or end of cursor

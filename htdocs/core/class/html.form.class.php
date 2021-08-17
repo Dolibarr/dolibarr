@@ -4724,7 +4724,7 @@ class Form
 			$more .= '<div class="tagtable paddingtopbottomonly centpercent noborderspacing">'."\n";
 			foreach ($formquestion as $key => $input) {
 				if (is_array($input) && !empty($input)) {
-					$size = (!empty($input['size']) ? ' size="'.$input['size'].'"' : '');
+					$size = (!empty($input['size']) ? ' size="'.$input['size'].'"' : '');	// deprecated. Use morecss instead.
 					$moreattr = (!empty($input['moreattr']) ? ' '.$input['moreattr'] : '');
 					$morecss = (!empty($input['morecss']) ? ' '.$input['morecss'] : '');
 

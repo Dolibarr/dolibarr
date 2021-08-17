@@ -726,7 +726,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 					if (!empty($object->lines[$i]->array_options)) {
 						foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue) {
 							if ($this->getColumnStatus($extrafieldColKey)) {
-								$extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey);
+								$extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey, $outputlangs);
 								$this->printStdColumnContent($pdf, $curY, $extrafieldColKey, $extrafieldValue);
 								$nexY = max($pdf->GetY(), $nexY);
 							}
@@ -1538,7 +1538,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		}
 		$pdf->MultiCell($w, 3, $title." : ".dol_print_date($object->date, "day", false, $outputlangs, true), '', 'R');
 
-		if (!empty($conf->global->DOC_SHOW_CUSTOMER_CODE) && !empty($object->thirdparty->code_client)) {
+		if (empty($conf->global->MAIN_PDF_HIDE_CUSTOMER_CODE) && !empty($object->thirdparty->code_client)) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
@@ -1606,10 +1606,12 @@ class pdf_eratosthene extends ModelePDFCommandes
 			}
 
 			// Show sender name
-			$pdf->SetXY($posx + 2, $posy + 3);
-			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->MultiCell($widthrecbox - 2, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, $ltrdirection);
-			$posy = $pdf->getY();
+			if (empty($conf->global->MAIN_PDF_HIDE_SENDER_NAME)) {
+				$pdf->SetXY($posx + 2, $posy + 3);
+				$pdf->SetFont('', 'B', $default_font_size);
+				$pdf->MultiCell($widthrecbox - 2, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, $ltrdirection);
+				$posy = $pdf->getY();
+			}
 
 			// Show sender information
 			$pdf->SetXY($posx + 2, $posy);

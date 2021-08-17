@@ -3022,6 +3022,7 @@ abstract class CommonObject
 	 */
 	public function updateRangOfLine($rowid, $rang)
 	{
+		global $hookmanager;
 		$fieldposition = 'rang'; // @todo Rename 'rang' into 'position'
 		if (in_array($this->table_element_line, array('bom_bomline', 'ecm_files', 'emailcollector_emailcollectoraction'))) {
 			$fieldposition = 'position';
@@ -3034,6 +3035,9 @@ abstract class CommonObject
 		if (!$this->db->query($sql)) {
 			dol_print_error($this->db);
 		}
+		$parameters=array('rowid'=>$rowid, 'rang'=>$rang, 'fieldposition' => $fieldposition);
+		$action='';
+		$reshook = $hookmanager->executeHooks('afterRankOfLineUpdate', $parameters, $this, $action);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -4117,7 +4121,7 @@ abstract class CommonObject
 		$sql .= " SET ".$fieldstatus." = ".((int) $status);
 		// If status = 1 = validated, update also fk_user_valid
 		if ($status == 1 && $elementTable == 'expensereport') {
-			$sql .= ", fk_user_valid = ".$user->id;
+			$sql .= ", fk_user_valid = ".((int) $user->id);
 		}
 		$sql .= " WHERE rowid=".((int) $elementId);
 

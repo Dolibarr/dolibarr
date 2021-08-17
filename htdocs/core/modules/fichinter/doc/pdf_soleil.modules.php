@@ -613,7 +613,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->datec, "day", false, $outputlangs, true), '', 'R');
 
-		if ($object->thirdparty->code_client) {
+		if (empty($conf->global->MAIN_PDF_HIDE_CUSTOMER_CODE) && $object->thirdparty->code_client) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
@@ -651,11 +651,13 @@ class pdf_soleil extends ModelePDFFicheinter
 			}
 
 			// Show sender name
-			$pdf->SetXY($posx + 2, $posy + 3);
-			$pdf->SetTextColor(0, 0, 60);
-			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
-			$posy = $pdf->getY();
+			if (empty($conf->global->MAIN_PDF_HIDE_SENDER_NAME)) {
+				$pdf->SetXY($posx + 2, $posy + 3);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->SetFont('', 'B', $default_font_size);
+				$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+				$posy = $pdf->getY();
+			}
 
 			// Show sender information
 			$pdf->SetFont('', '', $default_font_size - 1);
