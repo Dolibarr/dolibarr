@@ -260,8 +260,9 @@ for ($i = 1; $i <= 6; $i++) {
 	}
 }
 
-// Frame address
+// Borders on address frame
 
+print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_NO_SENDER_FRAME").'</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_PDF_NO_SENDER_FRAME');
 } else {
@@ -270,8 +271,7 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
-print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_NO_RECIPENT_FRAME");
-print '</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_NO_RECIPENT_FRAME").'</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_PDF_NO_RECIPENT_FRAME');
 } else {
@@ -395,8 +395,6 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DOCUMENTS_LOGO_HEIGHT").'</td><td>';
 print '<input type="text" class="maxwidth50" name="MAIN_DOCUMENTS_LOGO_HEIGHT" value="'.(!empty($conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT) ? $conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT : 20).'">';
 print '</td></tr>';
-print '<tr class="oddeven"><td>'.$langs->trans("PDF_NO_SENDER_FRAME");
-print '</td><td>';
 
 // Show project
 if (!empty($conf->projet->enabled)) {
