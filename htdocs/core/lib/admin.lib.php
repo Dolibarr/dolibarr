@@ -1526,7 +1526,8 @@ function complete_elementList_with_modules(&$elementList)
  *	@param	array	$tableau		Array of constants array('key'=>array('type'=>type, 'label'=>label)
  *									where type can be 'string', 'text', 'textarea', 'html', 'yesno', 'emailtemplate:xxx', ...
  *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (deprecated), 2=No form nor button at all, 3=No form nor button at all and each field has a unique name (form is output by caller, recommended)
- *  @param  string  $helptext       Help
+ *  @param  string  $helptext       Tooltip help to use for the column name of values
+ *  @param	string	$text			Text to use for the column name of values
  *	@return	void
  */
 function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Value')
