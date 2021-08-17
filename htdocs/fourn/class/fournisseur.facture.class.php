@@ -500,7 +500,8 @@ class FactureFournisseur extends CommonInvoice
 							$this->lines[$i]->date_end,
 							$this->lines[$i]->array_options,
 							$this->lines[$i]->fk_unit,
-							$this->lines[$i]->multicurrency_subprice
+							$this->lines[$i]->multicurrency_subprice,
+							$this->lines[$i]->ref_supplier
 						);
 					} else {
 						$this->error = $this->db->lasterror();
@@ -538,8 +539,16 @@ class FactureFournisseur extends CommonInvoice
 							$line->fk_product,
 							'HT',
 							(!empty($line->info_bits) ? $line->info_bits : ''),
-							$line->product_type
-							);
+							$line->product_type,
+							$line->remise_percent,
+							0,
+							$line->date_start,
+							$line->date_end,
+							$line->array_options,
+							$line->fk_unit,
+							$line->multicurrency_subprice,
+							$line->ref_supplier
+						);
 					} else {
 						$this->error = $this->db->lasterror();
 						$this->db->rollback();
