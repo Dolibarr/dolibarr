@@ -7186,7 +7186,6 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				if (is_object($object) && $object->element == 'shipping') {
 					$substitutionarray['__URL_SHIPMENT__'] = DOL_MAIN_URL_ROOT."/expedition/card.php?id=".$object->id;
 				}
-
 			}
 
 			if (is_object($object) && $object->element == 'action') {
