@@ -1529,7 +1529,7 @@ function complete_elementList_with_modules(&$elementList)
  *  @param  string  $helptext       Help
  *	@return	void
  */
-function form_constantes($tableau, $strictw3c = 0, $helptext = '')
+function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Value')
 {
 	global $db, $langs, $conf, $user;
 	global $_Avery_Labels;
@@ -1550,7 +1550,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 	print '<tr class="liste_titre">';
 	print '<td class="">'.$langs->trans("Description").'</td>';
 	print '<td>';
-	$text = $langs->trans("Value");
+	$text = $langs->trans($text);
 	print $form->textwithpicto($text, $helptext, 1, 'help', '', 0, 2, 'idhelptext');
 	print '</td>';
 	if (empty($strictw3c)) {

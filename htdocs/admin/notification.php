@@ -270,7 +270,14 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	}
 
 	$helptext = '';
-	form_constantes($constantes, 3, $helptext);
+	form_constantes($constantes, 3, $helptext, 'EmailTemplate');
+
+	print '<div class="opacitymedium">';
+	print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
+	if (!empty($conf->societe->enabled)) {
+		print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
+	}
+	print '</div>';
 
 	print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
 } else {
@@ -316,15 +323,14 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 
 	print '</td></tr>';
 	print '</table>';
-}
 
-
-print '<div class="opacitymedium">';
-print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
-if (!empty($conf->societe->enabled)) {
-	print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
+	print '<div class="opacitymedium">';
+	print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
+	if (!empty($conf->societe->enabled)) {
+		print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
+	}
+	print '</div>';
 }
-print '</div>';
 
 print '</form>';
 
