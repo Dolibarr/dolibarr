@@ -515,7 +515,7 @@ class Notify
 							case 'SHIPPING_VALIDATE':
 								$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
-								$object_type = 'expedition';
+								$object_type = 'shipping';
 								$labeltouse = $conf->global->SHIPPING_VALIDATE_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpeditionValidated", $link);
 								break;
