@@ -169,14 +169,14 @@ llxHeader('', $langs->trans("NotificationSetup"));
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("NotificationSetup"), $linkback, 'title_setup');
 
-print '<div class="info">';
+print '<span class="opacitymedium">';
 print $langs->trans("NotificationsDesc").'<br>';
 print $langs->trans("NotificationsDescUser").'<br>';
 if (!empty($conf->societe->enabled)) {
 	print $langs->trans("NotificationsDescContact").'<br>';
 }
 print $langs->trans("NotificationsDescGlobal").'<br>';
-print '</div>';
+print '</span>';
 print '<br>';
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
@@ -342,6 +342,7 @@ print '<br><br>';
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setfixednotif">';
+print '<input type="hidden" name="page_y" value="">';
 
 print load_fiche_titre($langs->trans("ListOfFixedNotifications"), '', '');
 
@@ -383,6 +384,12 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 		$elementLabel = $langs->trans('ExpenseReport');
 	}
 
+	$labelfortrigger = 'AmountHT';
+	$codehasnotrigger = 0;
+	if (preg_match('/^HOLIDAY/', $notifiedevent['code'])) {
+		$codehasnotrigger++;
+	}
+
 	print '<tr class="oddeven">';
 	print '<td>';
 	print img_picto('', $elementPicto, 'class="pictofixedwidth"');
@@ -419,14 +426,13 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 		$inputfieldalreadyshown++;
 	}
 	// New entry input fields
-	if (empty($inputfieldalreadyshown) || !preg_match('/^HOLIDAY/', $notifiedevent['code'])) {
+	if (empty($inputfieldalreadyshown) || !$codehasnotrigger) {
 		$s = '<input type="text" size="32" name="NOTIF_'.$notifiedevent['code'].'_new_key" value="">'; // Do not use type="email" here, we must be able to enter a list of email with , separator.
 		print $form->textwithpicto($s, $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword"), 1, 'help', '', 0, 2);
 	}
 	print '</td>';
 
 	print '<td>';
-	$labelfortrigger = 'AmountHT';
 	// Notification with threshold
 	$inputfieldalreadyshown = 0;
 	foreach ($conf->global as $key => $val) {
@@ -434,7 +440,7 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 			continue;
 		}
 
-		if (!preg_match('/^HOLIDAY/', $notifiedevent['code'])) {
+		if (!$codehasnotrigger) {
 			print $langs->trans($labelfortrigger).' >= <input type="text" size="4" name="NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_amount" value="'.dol_escape_htmltag($reg[1]).'">';
 			print '<br>';
 
@@ -442,7 +448,7 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 		}
 	}
 	// New entry input fields
-	if (!preg_match('/^HOLIDAY/', $notifiedevent['code'])) {
+	if (!$codehasnotrigger) {
 		print $langs->trans($labelfortrigger).' >= <input type="text" size="4" name="NOTIF_'.$notifiedevent['code'].'_new_amount" value="">';
 	}
 	print '</td>';
@@ -457,7 +463,7 @@ print '</table>';
 
 print '<br>';
 
-print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+print '<div class="center"><input type="submit" class="button button-save reposition" value="'.$langs->trans("Save").'"></div>';
 
 print '</form>';
 
