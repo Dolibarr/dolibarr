@@ -1060,7 +1060,7 @@ if ($resql) {
 			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
 			array('type' => 'date', 'name' => 'datepaiment', 'label' => $langs->trans("Date")),
 			array('type' => 'other', 'name' => 'paiementid', 'label' => $langs->trans("PaymentMode"), 'value' => $form->select_types_paiements(GETPOST('search_paymentmode'), 'paiementid', '', 0, 0, 1, 0, 1, '', 1)),
-			array('type' => 'other', 'name' => 'bankid', 'label' => $langs->trans("Date"), 'value'=>$form->select_comptes('', 'bankid', 0, '', 0, '', 0, '', 1)),
+			array('type' => 'other', 'name' => 'bankid', 'label' => $langs->trans("BankAccount"), 'value'=>$form->select_comptes('', 'bankid', 0, '', 0, '', 0, '', 1)),
 			//array('type' => 'other', 'name' => 'invoicesid', 'label' => '', 'value'=>'<input type="hidden" id="invoicesid" name="invoicesid" value="'.implode('#',GETPOST('toselect','array')).'">'),
 		);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('RegisterPaymentAndClasiffiedPayed'), $langs->trans('RegisterPaymentAndClasiffiedPayed', $object->ref), 'makepayment_confirm', $formquestion, 1, 0, 200, 500, 1);
