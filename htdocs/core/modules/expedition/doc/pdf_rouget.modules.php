@@ -127,7 +127,7 @@ class pdf_rouget extends ModelePdfExpedition
 
 		$this->db = $db;
 		$this->name = "rouget";
-		$this->description = $langs->trans("DocumentModelStandardPDF");
+		$this->description = $langs->trans("DocumentModelStandardPDF").' ('.$langs->trans("OldImplementation").')';
 		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		$this->type = 'pdf';
@@ -1047,10 +1047,12 @@ class pdf_rouget extends ModelePdfExpedition
 			$pdf->SetFillColor(255, 255, 255);
 
 			// Show sender name
-			$pdf->SetXY($posx + 2, $posy + 3);
-			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->MultiCell($widthrecbox - 2, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
-			$posy = $pdf->getY();
+			if (empty($conf->global->MAIN_PDF_HIDE_SENDER_NAME)) {
+				$pdf->SetXY($posx + 2, $posy + 3);
+				$pdf->SetFont('', 'B', $default_font_size);
+				$pdf->MultiCell($widthrecbox - 2, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+				$posy = $pdf->getY();
+			}
 
 			// Show sender information
 			$pdf->SetXY($posx + 2, $posy);
