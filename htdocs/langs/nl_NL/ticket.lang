@@ -34,8 +34,8 @@ TicketDictResolution=Ticket - resolutie
 
 TicketTypeShortCOM=Commerciële vraag
 TicketTypeShortHELP=Verzoek om functionele hulp
-TicketTypeShortISSUE=Issue or bug
-TicketTypeShortPROBLEM=Problem
+TicketTypeShortISSUE=Probleem of bug
+TicketTypeShortPROBLEM=Probleem
 TicketTypeShortREQUEST=Verander-  of verbeteringsverzoek
 TicketTypeShortPROJET=Project
 TicketTypeShortOTHER=Overig
@@ -55,18 +55,18 @@ TypeContact_ticket_internal_SUPPORTTEC=Toegewezen gebruiker
 TypeContact_ticket_external_SUPPORTCLI=Klanten contact / opvolging
 TypeContact_ticket_external_CONTRIBUTOR=Externe bijdrage
 
-OriginEmail=Reporter Email
+OriginEmail=E-mail van de verslaggever
 Notify_TICKET_SENTBYMAIL=Verzend ticketbericht per e-mail
 
 # Status
 Read=Gelezen
 Assigned=Toegekend
 InProgress=Reeds bezig
-NeedMoreInformation=Waiting for reporter feedback
-NeedMoreInformationShort=Waiting for feedback
+NeedMoreInformation=Wachten op feedback van verslaggevers
+NeedMoreInformationShort=Wachten op feedback
 Answered=Beantwoord
 Waiting=Wachtend
-Closed=Gesloten
+SolvedClosed=Solved
 Deleted=Verwijderd
 
 # Dict
@@ -162,7 +162,7 @@ CreatedBy=Aangemaakt door
 NewTicket=Nieuw Ticket
 SubjectAnswerToTicket=Ticket antwoord
 TicketTypeRequest=Aanvraag type
-TicketCategory=Ticket categorization
+TicketCategory=Ticketcategorisatie
 SeeTicket=Bekijk ticket
 TicketMarkedAsRead=Ticket is gemarkeerd als gelezen
 TicketReadOn=Lees verder
@@ -186,9 +186,11 @@ TicketSeverity=Prioriteit
 ShowTicket=Bekijk ticket
 RelatedTickets=Gerelateerde tickets
 TicketAddIntervention=Nieuwe interventie
-CloseTicket=Sluit ticket
-CloseATicket=Sluit een ticket
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Bevestig sluiten ticket
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Bevestig het verwijderen van het ticket
 TicketDeletedSuccess=Ticket succesvol verwijderd 
 TicketMarkedAsClosed=Ticket gemarkeerd als gesloten
@@ -213,7 +215,7 @@ TicketMessageHelp=Alleen deze tekst zal worden bewaard in de berichtenlijst op d
 TicketMessageSubstitutionReplacedByGenericValues=Vervangingsvariabelen worden vervangen door generieke waarden.
 TimeElapsedSince=Verstreken tijd sinds
 TicketTimeToRead=Tijd verstreken voordat gelezen
-TicketTimeElapsedBeforeSince=Time elapsed before / since
+TicketTimeElapsedBeforeSince=Verstreken tijd voor / sinds
 TicketContacts=Contact ticket
 TicketDocumentsLinked=Documenten gekoppeld aan ticket
 ConfirmReOpenTicket=Ticket heropenen?

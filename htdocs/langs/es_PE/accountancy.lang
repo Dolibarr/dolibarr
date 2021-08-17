@@ -12,7 +12,6 @@ DefaultForProduct=Producto por defecto
 Journals=Revistas
 JournalFinancial=Revistas financieras
 BackToChartofaccounts=Retornar gráfico de cuentas
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
 Selectchartofaccounts=Seleccione el plan de cuentas activo
 Addanaccount=Agregar una cuenta contable
 Binding=Vinculación a cuentas

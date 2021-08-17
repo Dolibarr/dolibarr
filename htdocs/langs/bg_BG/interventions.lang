@@ -64,5 +64,5 @@ InterLineDuration=Продължителност на реда в интерве
 InterLineDesc=Описание на реда в интервенцията
 RepeatableIntervention=Шаблон на интервенция
 ToCreateAPredefinedIntervention=За да създадете предварително определена или повтаряща се интервенция, създайте интервенция и я превърнете в шаблон за интервенция.
-Reopen=Повторно отваряне
 ConfirmReopenIntervention=Are you sure you want to open back the intervention <b>%s</b>?
+GenerateInter=Generate intervention

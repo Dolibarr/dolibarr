@@ -90,7 +90,6 @@ DATE_REFUS=Date refus
 DATE_SAVE=Date validation
 DATE_CANCEL=Date annulation
 DATE_PAIEMENT=Date de paiement
-BROUILLONNER=Réouvrir
 ExpenseReportRef=Réf. note de frais
 ValidateAndSubmit=Valider et envoyer pour approbation
 ValidatedWaitingApproval=Validé (en attente d'approbation)

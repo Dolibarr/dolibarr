@@ -65,7 +65,7 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 			if (is_array($crit)) {
 				$crit = implode(' ', $crit); // natural_search() expects a string
 			} elseif ($typ === 'select' and is_string($crit) and strpos($crit, ' ') === false) {
-				$sql .= ' AND ('.$extrafieldsobjectprefix.$tmpkey.' = "'.$db->escape($crit).'")';
+				$sql .= " AND (".$extrafieldsobjectprefix.$tmpkey." = '".$db->escape($crit)."')";
 				continue;
 			}
 			$sql .= natural_search($extrafieldsobjectprefix.$tmpkey, $crit, $mode_search);

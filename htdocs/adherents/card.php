@@ -535,7 +535,7 @@ if (empty($reshook)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 		}
-		if ($conf->global->ADHERENT_MAIL_REQUIRED && !isValidEMail($email)) {
+		if (!empty($conf->global->ADHERENT_MAIL_REQUIRED) && !isValidEMail($email)) {
 			$error++;
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorBadEMail", $email), null, 'errors');
@@ -1032,7 +1032,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// EMail
-		print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED ? '<span class="fieldrequired">' : '').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED ? '</span>' : '').'</td>';
+		print '<tr><td>'.(!empty($conf->global->ADHERENT_MAIL_REQUIRED) ? '<span class="fieldrequired">' : '').$langs->trans("EMail").(!empty($conf->global->ADHERENT_MAIL_REQUIRED) ? '</span>' : '').'</td>';
 		print '<td>'.img_picto('', 'object_email').' <input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOSTISSET('member_email') ? GETPOST('member_email', 'alpha') : $object->email).'"></td></tr>';
 
 		// Website

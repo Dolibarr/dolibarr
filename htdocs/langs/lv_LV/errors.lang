@@ -264,6 +264,7 @@ ErrorAnAmountWithoutTaxIsRequired=Kļūda, summa ir obligāta
 ErrorAPercentIsRequired=Kļūda, lūdzu, pareizi aizpildiet procentuālo daudzumu
 ErrorYouMustFirstSetupYourChartOfAccount=Vispirms jums ir jāiestata konta plāns
 ErrorFailedToFindEmailTemplate=Neizdevās atrast veidni ar koda nosaukumu %s
+ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Duration not defined on service. No way to calculate the hourly price.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Jūsu PHP parametrs upload_max_filesize (%s) ir augstāks nekā PHP parametrs post_max_size (%s). Šī nav konsekventa iestatīšana.
