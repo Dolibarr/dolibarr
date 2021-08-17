@@ -1827,12 +1827,12 @@ if ($action == 'create')
 						{
 							print '<td>  <input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"> </br>';
 							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
-								print $langs->trans('EatByDate').' : ';
-								print $form->selectDate($lines[$i]->eatby, 'dlc'.$line_id, '', '', 1, "").'</br>';
+								print $langs->trans('SellByDate').' : ';
+								print $form->selectDate($lines[$i]->sellby, 'dlc'.$line_id, '', '', 1, "").'</br>';
 							}
 							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-								print $langs->trans('SellByDate').' : ';
-								print $form->selectDate($lines[$i]->sellby, 'dluo'.$line_id, '', '', 1, "");
+								print $langs->trans('EatByDate').' : ';
+								print $form->selectDate($lines[$i]->eatby, 'dluo'.$line_id, '', '', 1, "");
 							}
 							print '</td>';
 						}
