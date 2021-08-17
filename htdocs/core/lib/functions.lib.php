@@ -9922,6 +9922,24 @@ function dolGetButtonTitleSeparator($moreClass = "")
 }
 
 /**
+ * get field error icon
+ *
+ * @param  string  $fieldValidationErrorMsg message to add in tooltip
+ * @return string html output
+ */
+function getFieldErrorIcon($fieldValidationErrorMsg)
+{
+	$out = '';
+	if (!empty($fieldValidationErrorMsg)) {
+		$out.= '<span class="field-error-icon classfortooltip" title="'.dol_escape_htmltag($fieldValidationErrorMsg, 1).'"  role="alert" >'; // role alert is used for accessibility
+		$out.= '<span class="fa fa-exclamation-circle" aria-hidden="true" ></span>'; // For accessibility icon is separated and aria-hidden
+		$out.= '</span>';
+	}
+
+	return $out;
+}
+
+/**
  * Function dolGetButtonTitle : this kind of buttons are used in title in list
  *
  * @param string    $label      label of button
