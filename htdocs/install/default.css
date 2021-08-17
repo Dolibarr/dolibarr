@@ -17,11 +17,11 @@
 
 
 .center {
-	text-align: center;
+	text-align: center;	
 }
 
 .centpercent {
-	width: 100%;
+	width: 100%;	
 }
 
 .paddingright {
@@ -41,7 +41,7 @@
 }
 
 .small {
-	font-size: 0.9em;
+	font-size: 0.9em;	
 }
 
 body {
@@ -466,11 +466,11 @@ table.tablesupport {
 	.blocksupport {
 		width: 90%;
 	}
-
+	
 	.tablesupport {
 		padding: 6px;
 		width: 100%;
 	}
 }
-
+	
 }
