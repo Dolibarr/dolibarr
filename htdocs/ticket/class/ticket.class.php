@@ -218,8 +218,8 @@ class Ticket extends CommonObject
 	const STATUS_IN_PROGRESS = 3;
 	const STATUS_NEED_MORE_INFO = 5;
 	const STATUS_WAITING = 7;			// on hold
-	const STATUS_CLOSED = 8;
-	const STATUS_CANCELED = 9;
+	const STATUS_CLOSED = 8;			// Closed - Solved
+	const STATUS_CANCELED = 9;			// Closed - Not solved
 
 
 	/**
@@ -272,8 +272,8 @@ class Ticket extends CommonObject
 		'message' => array('type'=>'text', 'label'=>'Message', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1,),
 		'email_msgid' => array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'help'=>'EmailMsgIDDesc'),
 		'progress' => array('type'=>'varchar(100)', 'label'=>'Progression', 'visible'=>-1, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'css'=>'right', 'help'=>"", 'isameasure'=>1),
-		'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-1, 'enabled'=>1, 'position'=>550, 'notnull'=>1),
-		'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted')),
+		'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-1, 'enabled'=>'$conf->global->TICKET_ENABLE_RESOLUTION', 'position'=>550, 'notnull'=>1),
+		'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'SolvedClosed', 9 => 'Deleted')),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
 	);
 	// END MODULEBUILDER PROPERTIES
@@ -286,6 +286,8 @@ class Ticket extends CommonObject
 	 */
 	public function __construct($db)
 	{
+		global $conf;
+
 		$this->db = $db;
 
 		$this->statuts_short = array(
@@ -295,7 +297,7 @@ class Ticket extends CommonObject
 			self::STATUS_IN_PROGRESS => 'InProgress',
 			self::STATUS_WAITING => 'OnHold',
 			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformationShort',
-			self::STATUS_CLOSED => 'Closed',
+			self::STATUS_CLOSED => 'SolvedClosed',
 			self::STATUS_CANCELED => 'Canceled'
 		);
 		$this->statuts = array(
@@ -305,7 +307,7 @@ class Ticket extends CommonObject
 			self::STATUS_IN_PROGRESS => 'InProgress',
 			self::STATUS_WAITING => 'OnHold',
 			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation',
-			self::STATUS_CLOSED => 'Closed',
+			self::STATUS_CLOSED => 'SolvedClosed',
 			self::STATUS_CANCELED => 'Canceled'
 		);
 	}
@@ -459,7 +461,7 @@ class Ticket extends CommonObject
 			$sql .= " ".(!isset($this->progress) ? '0' : "'".$this->db->escape($this->progress)."'").",";
 			$sql .= " ".(!isset($this->timing) ? 'NULL' : "'".$this->db->escape($this->timing)."'").",";
 			$sql .= " ".(!isset($this->type_code) ? 'NULL' : "'".$this->db->escape($this->type_code)."'").",";
-			$sql .= " ".(!isset($this->category_code) ? 'NULL' : "'".$this->db->escape($this->category_code)."'").",";
+			$sql .= " ".(empty($this->category_code) || $this->category_code == '-1' ? 'NULL' : "'".$this->db->escape($this->category_code)."'").",";
 			$sql .= " ".(!isset($this->severity_code) ? 'NULL' : "'".$this->db->escape($this->severity_code)."'").",";
 			$sql .= " ".(!isset($this->datec) || dol_strlen($this->datec) == 0 ? 'NULL' : "'".$this->db->idate($this->datec)."'").",";
 			$sql .= " ".(!isset($this->date_read) || dol_strlen($this->date_read) == 0 ? 'NULL' : "'".$this->db->idate($this->date_read)."'").",";
@@ -1177,7 +1179,7 @@ class Ticket extends CommonObject
 		}
 		// Cache deja charge
 
-		$sql = "SELECT rowid, code, label, use_default, pos, description, public, active";
+		$sql = "SELECT rowid, code, label, use_default, pos, description, public, active, force_severity, fk_parent";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category";
 		$sql .= " WHERE active > 0";
 		$sql .= " ORDER BY pos";
@@ -1196,6 +1198,8 @@ class Ticket extends CommonObject
 				$this->cache_category_tickets[$obj->rowid]['pos'] = $obj->pos;
 				$this->cache_category_tickets[$obj->rowid]['public'] = $obj->public;
 				$this->cache_category_tickets[$obj->rowid]['active'] = $obj->active;
+				$this->cache_category_tickets[$obj->rowid]['force_severity'] = $obj->force_severity;
+				$this->cache_category_tickets[$obj->rowid]['fk_parent'] = $obj->fk_parent;
 				$i++;
 			}
 			return $num;
@@ -1747,21 +1751,22 @@ class Ticket extends CommonObject
 	/**
 	 *    Close a ticket
 	 *
-	 *    @param    User    $user      User that close
-	 *    @return   int		           <0 if KO, >0 if OK
+	 *    @param    User    $user      	User that close
+	 *    @param	int		$mode		0=Close solved, 1=Close abandonned
+	 *    @return   int		           	<0 if KO, >0 if OK
 	 */
-	public function close(User $user)
+	public function close(User $user, $mode = 0)
 	{
 		global $conf, $langs;
 
-		if ($this->fk_statut != Ticket::STATUS_CLOSED) { // not closed
+		if ($this->fk_statut != Ticket::STATUS_CLOSED && $this->fk_statut != Ticket::STATUS_CANCELED) { // not closed
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
-			$sql .= " SET fk_statut=".Ticket::STATUS_CLOSED.", progress=100, date_close='".$this->db->idate(dol_now())."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " SET fk_statut=".($mode ? Ticket::STATUS_CANCELED : Ticket::STATUS_CLOSED).", progress=100, date_close='".$this->db->idate(dol_now())."'";
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
-			dol_syslog(get_class($this)."::close sql=".$sql);
+			dol_syslog(get_class($this)."::close mode=".$mode);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$error = 0;
@@ -2497,6 +2502,51 @@ class Ticket extends CommonObject
 		return array('listofpaths'=>$listofpaths, 'listofnames'=>$listofnames, 'listofmimes'=>$mimetype);
 	}
 
+	/**
+	 * Sets object to supplied categories.
+	 *
+	 * Deletes object from existing categories not supplied.
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param  int[]|int $categories Category or categories IDs
+	 * @return void
+	 */
+	public function setCategories($categories)
+	{
+		// Handle single category
+		if (!is_array($categories)) {
+			$categories = array($categories);
+		}
+
+		// Get current categories
+		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		$c = new Categorie($this->db);
+		$existing = $c->containing($this->id, Categorie::TYPE_TICKET, 'id');
+
+		// Diff
+		if (is_array($existing)) {
+			$to_del = array_diff($existing, $categories);
+			$to_add = array_diff($categories, $existing);
+		} else {
+			$to_del = array(); // Nothing to delete
+			$to_add = $categories;
+		}
+
+		// Process
+		foreach ($to_del as $del) {
+			if ($c->fetch($del) > 0) {
+				$c->del_type($this, Categorie::TYPE_TICKET);
+			}
+		}
+		foreach ($to_add as $add) {
+			if ($c->fetch($add) > 0) {
+				$c->add_type($this, Categorie::TYPE_TICKET);
+			}
+		}
+
+		return;
+	}
 
 	/**
 	 * Add new message on a ticket (private/public area). Can also send it be email if GETPOST('send_email', 'int') is set.

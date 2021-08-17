@@ -80,7 +80,7 @@ function realCharForNumericEntities($matches)
  * Warning: Such a protection can't be enough. It is not reliable as it will always be possible to bypass this. Good protection can
  * only be guaranted by escaping data during output.
  *
- * @param		string		$val		Value brut found int $_GET, $_POST or PHP_SELF
+ * @param		string		$val		Brut value found into $_GET, $_POST or PHP_SELF
  * @param		string		$type		0=POST, 1=GET, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
  * @return		int						>0 if there is an injection, 0 if none
  */
@@ -265,7 +265,7 @@ if (!empty($_POST["DOL_AUTOSET_COOKIE"])) {
 	$cookiename = $tmpautoset[0];
 	$cookievalue = json_encode($cookiearrayvalue);
 	//var_dump('setcookie cookiename='.$cookiename.' cookievalue='.$cookievalue);
-	setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', null, false, true); // keep cookie 1 year and add tag httponly
+	setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // keep cookie 1 year and add tag httponly
 	if (empty($cookievalue)) {
 		unset($_COOKIE[$cookiename]);
 	}
@@ -460,11 +460,15 @@ if (!defined('NOTOKENRENEWAL')) {
 if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN)) || defined('CSRFCHECK_WITH_TOKEN')) {
 	// Array of action code where CSRFCHECK with token will be forced (so token must be provided on url request)
 	$arrayofactiontoforcetokencheck = array(
-		'activate', 'add', 'addtimespent', 'update', 'install',
-		'confirm_create_user', 'confirm_create_thirdparty', 'confirm_purge', 'confirm_reject_check',
-		'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'disable',
+		'activate', 'add', 'addrights', 'addtimespent',
+		'confirm_create_user', 'confirm_create_thirdparty', 'confirm_delete', 'confirm_deletedir', 'confirm_deletefile', 'confirm_purge', 'confirm_reject_check',
+		'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'delrights',
+		'disable',
 		'doprev', 'donext', 'dvprev', 'dvnext',
-		'enable', 'setpricelevel'
+		'enable',
+		'install',
+		'setpricelevel',
+		'update'
 	);
 	$sensitiveget = false;
 	if (in_array(GETPOST('action', 'aZ09'), $arrayofactiontoforcetokencheck)) {
@@ -2011,27 +2015,25 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$dropdownBody .= '<span id="topmenulogincompanyinfo-btn"><i class="fa fa-caret-right"></i> '.$langs->trans("ShowCompanyInfos").'</span>';
 	$dropdownBody .= '<div id="topmenulogincompanyinfo" >';
 
-	if (!empty($conf->global->MAIN_INFO_SIREN)) {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId1Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIREN).'</span>';
+	if ($langs->transcountry("ProfId1", $mysoc->country_code) != '-') {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId1", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIREN).'</span>';
 	}
-	if (!empty($conf->global->MAIN_INFO_SIRET)) {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId2Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIRET).'</span>';
+	if ($langs->transcountry("ProfId2", $mysoc->country_code) != '-') {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId2", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIRET).'</span>';
 	}
-	if (!empty($conf->global->MAIN_INFO_APE)) {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId3Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_APE).'</span>';
+	if ($langs->transcountry("ProfId3", $mysoc->country_code) != '-') {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId3", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_APE).'</span>';
 	}
-	if (!empty($conf->global->MAIN_INFO_RCS)) {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId4Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_RCS).'</span>';
+	if ($langs->transcountry("ProfId4", $mysoc->country_code) != '-') {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId4", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_RCS).'</span>';
 	}
-	if (!empty($conf->global->MAIN_INFO_PROFID5)) {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId5Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID5).'</span>';
+	if ($langs->transcountry("ProfId5", $mysoc->country_code) != '-') {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId5", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID5).'</span>';
 	}
-	if (!empty($conf->global->MAIN_INFO_PROFID6)) {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId6Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID6).'</span>';
+	if ($langs->transcountry("ProfId6", $mysoc->country_code) != '-') {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId6", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID6).'</span>';
 	}
-	if (!empty($conf->global->MAIN_INFO_TVAINTRA)) {
-		$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_TVAINTRA).'</span>';
-	}
+	$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_TVAINTRA).'</span>';
 
 	$dropdownBody .= '</div>';
 

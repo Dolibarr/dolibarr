@@ -624,21 +624,21 @@ if ($result) {
 
 			print '<table class="border centpercent">';
 
-			print '<tr><td class="titlefield">'.$langs->trans("Conciliation")."</td>";
+			print '<tr><td class="titlefieldcreate">'.$form->textwithpicto($langs->trans("AccountStatement"), $langs->trans("InputReceiptNumber"))."</td>";
 			if ($user->rights->banque->consolidate) {
 				print '<td>';
 				if ($objp->rappro) {
-					print $langs->trans("AccountStatement").' <input name="num_rel_bis" class="flat" value="'.$objp->num_releve.'"'.($objp->rappro ? ' disabled' : '').'>';
+					print '<input name="num_rel_bis" class="flat" value="'.$objp->num_releve.'"'.($objp->rappro ? ' disabled' : '').'>';
 					print '<input name="num_rel" type="hidden" value="'.$objp->num_releve.'">';
 				} else {
-					print $langs->trans("AccountStatement").' <input name="num_rel" class="flat" value="'.$objp->num_releve.'"'.($objp->rappro ? ' disabled' : '').'>';
+					print '<input name="num_rel" class="flat" value="'.$objp->num_releve.'"'.($objp->rappro ? ' disabled' : '').'>';
 				}
 				if ($objp->num_releve) {
 					print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?num='.$objp->num_releve.'&account='.$acct->id.'">'.$langs->trans("AccountStatement").' '.$objp->num_releve.')</a>';
 				}
 				print '</td>';
 			} else {
-				print '<td>'.$objp->num_releve.'&nbsp;</td>';
+				print '<td>'.$objp->num_releve.'</td>';
 			}
 			print '</tr>';
 

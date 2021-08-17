@@ -494,11 +494,12 @@ class DoliDBPgsql extends DoliDB
 	 * @param	string	$query			SQL query string
 	 * @param	int		$usesavepoint	0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
 	 * @param   string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
+	 * @param	int		$result_mode	Result mode (not used with pgsql)
 	 * @return	false|resource			Resultset of answer
 	 */
-	public function query($query, $usesavepoint = 0, $type = 'auto')
+	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0)
 	{
-		global $conf;
+		global $conf, $dolibarr_main_db_readonly;
 
 		$query = trim($query);
 
@@ -526,6 +527,18 @@ class DoliDBPgsql extends DoliDB
 		if (!in_array($query, array('BEGIN', 'COMMIT', 'ROLLBACK'))) {
 			$SYSLOG_SQL_LIMIT = 10000; // limit log to 10kb per line to limit DOS attacks
 			dol_syslog('sql='.substr($query, 0, $SYSLOG_SQL_LIMIT), LOG_DEBUG);
+		}
+		if (empty($query)) {
+			return false; // Return false = error if empty request
+		}
+
+		if (!empty($dolibarr_main_db_readonly)) {
+			if (preg_match('/^(INSERT|UPDATE|REPLACE|DELETE|CREATE|ALTER|TRUNCATE|DROP)/i', $query)) {
+				$this->lasterror = 'Application in read-only mode';
+				$this->lasterrno = 'APPREADONLY';
+				$this->lastquery = $query;
+				return false;
+			}
 		}
 
 		$ret = @pg_query($this->db, $query);
@@ -558,7 +571,7 @@ class DoliDBPgsql extends DoliDB
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Renvoie la ligne courante (comme un objet) pour le curseur resultset
+	 * 	Returns the current line (as an object) for the resultset cursor
 	 *
 	 *	@param	resource	$resultset  Curseur de la requete voulue
 	 *	@return	false|object			Object result line or false if KO or end of cursor

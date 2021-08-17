@@ -408,7 +408,7 @@ class ActionsTicket
 				if ($status == 1) {
 					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=mark_ticket_read'; // To set as read, we use a dedicated action
 				} else {
-					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=set_status&token='.newToken().'&new_status='.$status;
+					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=confirm_set_status&token='.newToken().'&new_status='.$status;
 				}
 
 				print '<a class="butAction butStatus marginbottomonly" href="'.$urlforbutton.'">';

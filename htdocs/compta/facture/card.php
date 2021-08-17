@@ -5077,6 +5077,16 @@ if ($action == 'create') {
 		print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td>';
 		print '<td class="nowrap">&nbsp;</td></tr>';
 
+		// Remainder to pay Multicurrency
+		if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
+			print '<tr><td colspan="'.$nbcols.'" class="right">';
+			print '<span class="opacitymedium">';
+			print $langs->trans('MulticurrencyRemainderToPay');
+			print '</span>';
+			print '</td>';
+			print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.(!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency).' '.price(price2num($object->multicurrency_tx*$resteapayeraffiche, 'MT')).'</td>';
+		}
+
 		// Retained warranty : usualy use on construction industry
 		if (!empty($object->situation_final) && !empty($object->retained_warranty) && $displayWarranty) {
 			// Billed - retained warranty
@@ -5274,7 +5284,8 @@ if ($action == 'create') {
 			// Reopen a standard paid invoice
 			if ((($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT)
 				|| ($object->type == Facture::TYPE_CREDIT_NOTE && empty($discount->id))
-				|| ($object->type == Facture::TYPE_DEPOSIT && empty($discount->id)))
+				|| ($object->type == Facture::TYPE_DEPOSIT && empty($discount->id))
+				|| ($object->type == Facture::TYPE_SITUATION && empty($discount->id)))
 				&& ($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED || ($object->statut == 1 && $object->paye == 1))   // Condition ($object->statut == 1 && $object->paye == 1) should not happened but can be found due to corrupted data
 				&& ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || $usercanreopen)) {				// A paid invoice (partially or completely)
 				if ($object->close_code != 'replaced' || (!$objectidnext)) { 				// Not replaced by another invoice or replaced but the replacement invoice has been deleted

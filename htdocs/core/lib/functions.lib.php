@@ -800,7 +800,7 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 				}
 
 				// Ckeditor use the numeric entitic for apostrophe so we force it to text entity (all other special chars are correctly
-				// encoded using text entities). This is a fix for CKeditor.
+				// encoded using text entities). This is a fix for CKeditor (CKeditor still encode in HTML4 instead of HTML5).
 				$out = preg_replace('/&#39;/i', '&apos;', $out);
 
 				// We replace chars from a/A to z/Z encoded with numeric HTML entities with the real char so we won't loose the chars at the next step.
@@ -2831,7 +2831,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
  * 	@param 	int		$socid          Id of third party if known
  * 	@param 	string	$addlink	    ''=no link to create action, 'AC_TEL'=add link to clicktodial (if module enabled) and add link to create event (if conf->global->AGENDA_ADDACTIONFORPHONE set)
  * 	@param 	string	$separ 		    Separation between numbers for a better visibility example : xx.xx.xx.xx.xx
- *  @param	string  $withpicto      Show picto
+ *  @param	string  $withpicto      Show picto ('fax', 'phone', 'mobile')
  *  @param	string	$titlealt	    Text to show on alt
  *  @param  int     $adddivfloat    Add div float around phone.
  * 	@return string 				    Formated phone number
@@ -3054,11 +3054,18 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 								'__PASS__'=>$clicktodial_password);
 			$url = make_substitutions($url, $substitarray);
 			$newphonesav = $newphone;
-			$newphone = '<a href="'.$url.'"';
-			if (!empty($conf->global->CLICKTODIAL_FORCENEWTARGET)) {
-				$newphone .= ' target="_blank"';
+			if (empty($conf->global->CLICKTODIAL_DO_NOT_USE_AJAX_CALL)) {
+				// Default and recommended: New method using ajax without submiting a page making a javascript history.go(-1) back
+				$newphone = '<a href="'.$url.'" class="cssforclicktodial"';	// Call of ajax is handled by the lib_foot.js.php on class 'cssforclicktodial'
+				$newphone .= '>'.$newphonesav.'</a>';
+			} else {
+				// Old method
+				$newphone = '<a href="'.$url.'"';
+				if (!empty($conf->global->CLICKTODIAL_FORCENEWTARGET)) {
+					$newphone .= ' target="_blank"';
+				}
+				$newphone .= '>'.$newphonesav.'</a>';
 			}
-			$newphone .= '>'.$newphonesav.'</a>';
 		}
 
 		//if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
@@ -3783,7 +3790,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		return $fullpathpicto;
 	}
 		// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for blind people
-	return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.(($notitle || empty($titlealt)) ? '' : ' title="'.dol_escape_htmltag($titlealt).'"').($moreatt ? ' '.$moreatt.($morecss ? ' class="'.$morecss.'"' : '') : ' class="inline-block'.($morecss ? ' '.$morecss : '').'"').'>'; // Alt is used for accessibility, title for popup
+	return '<img src="'.$fullpathpicto.'"'.($notitle ? '' : ' alt="'.dol_escape_htmltag($alt).'"').(($notitle || empty($titlealt)) ? '' : ' title="'.dol_escape_htmltag($titlealt).'"').($moreatt ? ' '.$moreatt.($morecss ? ' class="'.$morecss.'"' : '') : ' class="inline-block'.($morecss ? ' '.$morecss : '').'"').'>'; // Alt is used for accessibility, title for popup
 }
 
 /**
@@ -3843,10 +3850,11 @@ function img_weather($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $mo
  *	@param      string		$picto       		Name of image file to show (If no extension provided, we use '.png'). Image must be stored into htdocs/theme/common directory.
  *	@param		string		$moreatt			Add more attribute on img tag
  *	@param		int			$pictoisfullpath	If 1, image path is a full path
+ *  @param		int			$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
  *	@return     string      					Return img tag
  *  @see        img_object(), img_picto()
  */
-function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0)
+function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $notitle = 0)
 {
 	global $conf;
 
@@ -3868,7 +3876,7 @@ function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0
 		}
 	}
 
-	return img_picto($titlealt, $path, $moreatt, 1);
+	return img_picto($titlealt, $path, $moreatt, 1, 0, $notitle);
 }
 
 /**
@@ -6852,6 +6860,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		if ($onlykey) {
 			$substitutionarray['__ID__'] = '__ID__';
 			$substitutionarray['__REF__'] = '__REF__';
+			$substitutionarray['__NEWREF__'] = '__NEWREF__';
 			$substitutionarray['__REF_CLIENT__'] = '__REF_CLIENT__';
 			$substitutionarray['__REF_SUPPLIER__'] = '__REF_SUPPLIER__';
 			$substitutionarray['__NOTE_PUBLIC__'] = '__NOTE_PUBLIC__';
@@ -6932,6 +6941,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		} else {
 			$substitutionarray['__ID__'] = $object->id;
 			$substitutionarray['__REF__'] = $object->ref;
+			$substitutionarray['__NEWREF__'] = $object->newref;
 			$substitutionarray['__REF_CLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REF_SUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
 			$substitutionarray['__NOTE_PUBLIC__'] = (isset($object->note_public) ? $object->note_public : null);
@@ -7174,6 +7184,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				if (is_object($object) && $object->element == 'supplier_proposal') {
 					$substitutionarray['__URL_SUPPLIER_PROPOSAL__'] = DOL_MAIN_URL_ROOT."/supplier_proposal/card.php?id=".$object->id;
+				}
+				if (is_object($object) && $object->element == 'shipping') {
+					$substitutionarray['__URL_SHIPMENT__'] = DOL_MAIN_URL_ROOT."/expedition/card.php?id=".$object->id;
 				}
 			}
 
@@ -8119,9 +8132,10 @@ function dol_validElement($element)
  *
  * 	@param	string	$codelang	Language code ('en_IN', 'fr_CA', ...) or ISO Country code on 2 characters in uppercase ('IN', 'FR')
  *  @param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"' or 'class="saturatemedium"')
+ *  @param	int		$notitlealt	No title alt
  * 	@return	string				HTML img string with flag.
  */
-function picto_from_langcode($codelang, $moreatt = '')
+function picto_from_langcode($codelang, $moreatt = '', $notitlealt = 0)
 {
 	if (empty($codelang)) {
 		return '';
@@ -8154,7 +8168,7 @@ function picto_from_langcode($codelang, $moreatt = '')
 		$flagImage = empty($tmparray[1]) ? $tmparray[0] : $tmparray[1];
 	}
 
-	return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png', $moreatt);
+	return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png', $moreatt, 0, $notitlealt);
 }
 
 /**
@@ -9772,11 +9786,29 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * @param string    $url        the url for link
  * @param string    $id         attribute id of button
  * @param int       $userRight  user action right
- * @param array     $params     various params for future : recommended rather than adding more function arguments
+ * // phpcs:disable
+ * @param array 	$params = [ // Various params for future : recommended rather than adding more function arguments
+ *                          	'attr' => [ // to add or override button attributes
+ *                          		'xxxxx' => '', // your xxxxx attribute you want
+ *                          		'class' => '', // to add more css class to the button class attribute
+ *                          		'classOverride' => '' // to replace class attribute of the button
+ *                          	],
+ *                          	'confirm' => [
+ *                          		'url' => 'http://', // Overide Url to go when user click on action btn, if empty default url is $url.?confirm=yes, for no js compatibility use $url for fallback confirm.
+ *                          		'title' => '', // Overide title of modal,  if empty default title use "ConfirmBtnCommonTitle" lang key
+ *                          		'action-btn-label' => '', // Overide label of action button,  if empty default label use "Confirm" lang key
+ *                          		'cancel-btn-label' => '', // Overide label of cancel button,  if empty default label use "CloseDialog" lang key
+ *                          		'content' => '', // Overide text of content,  if empty default content use "ConfirmBtnCommonContent" lang key
+ *                          		'modal' => true, // true|false to display dialog as a modal (with dark background)
+ *                      		],
+ *                          ]
+ * // phpcs:enable
  * @return string               html button
  */
 function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
 {
+	global $hookmanager, $action, $object, $langs;
+
 	$class = 'butAction';
 	if ($actionType == 'danger' || $actionType == 'delete') {
 		$class = 'butActionDelete';
@@ -9817,11 +9849,29 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 		}
 	}
 
+	// Js Confirm button
+	if ($userRight && !empty($params['confirm'])) {
+		if (!is_array($params['confirm'])) {
+			$params['confirm'] = array(
+				'url' => $url . (strpos($url, '?') > 0 ? '&' : '?') . 'confirm=yes'
+			);
+		}
+
+		// for js desabled compatibility set $url as call to confirm action and $params['confirm']['url'] to confirmed action
+		$attr['data-confirm-url'] = $params['confirm']['url'];
+		$attr['data-confirm-title'] = !empty($params['confirm']['title']) ? $params['confirm']['title'] : $langs->trans('ConfirmBtnCommonTitle', $label);
+		$attr['data-confirm-content'] = !empty($params['confirm']['content']) ? $params['confirm']['content'] : $langs->trans('ConfirmBtnCommonContent', $label);
+		$attr['data-confirm-content'] = preg_replace("/\r|\n/", "", $attr['data-confirm-content']);
+		$attr['data-confirm-action-btn-label'] = !empty($params['confirm']['action-btn-label']) ? $params['confirm']['action-btn-label'] : $langs->trans('Confirm');
+		$attr['data-confirm-cancel-btn-label'] = !empty($params['confirm']['cancel-btn-label']) ? $params['confirm']['cancel-btn-label'] : $langs->trans('CloseDialog');
+		$attr['data-confirm-modal'] = !empty($params['confirm']['modal']) ? $params['confirm']['modal'] : true;
+
+		$attr['class'].= ' butActionConfirm';
+	}
+
 	if (isset($attr['href']) && empty($attr['href'])) {
 		unset($attr['href']);
 	}
-
-	// TODO : add a hook
 
 	// escape all attribute
 	$attr = array_map('dol_escape_htmltag', $attr);
@@ -9835,7 +9885,29 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 
 	$tag = !empty($attr['href']) ? 'a' : 'span';
 
-	return '<'.$tag.' '.$compiledAttributes.'>'.$html.'</'.$tag.'>';
+
+	$parameters = array(
+		'TCompiledAttr' => $TCompiledAttr,
+		'compiledAttributes' => $compiledAttributes,
+		'attr' => $attr,
+		'tag' => $tag,
+		'label' => $label,
+		'html' => $html,
+		'actionType' => $actionType,
+		'url' => $url,
+		'id' => $id,
+		'userRight' => $userRight,
+		'params' => $params
+	);
+
+	$reshook = $hookmanager->executeHooks('dolGetButtonAction', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+	if (empty($reshook)) {
+		return '<' . $tag . ' ' . $compiledAttributes . '>' . $html . '</' . $tag . '>';
+	} else {
+		return $hookmanager->resPrint;
+	}
 }
 
 /**
@@ -10146,7 +10218,7 @@ function newToken()
  */
 function currentToken()
 {
-	return $_SESSION['token'];
+	return isset($_SESSION['token']) ? $_SESSION['token'] : '';
 }
 
 /**

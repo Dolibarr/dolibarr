@@ -227,7 +227,7 @@ class Holiday extends CommonObject
 
 		if ($result >= 0) {
 			$this->db->commit();
-			return 1;
+			return 0; // for cronjob use (0 is OK, any other value is an error code)
 		} else {
 			$this->db->rollback();
 			return -1;
@@ -1296,11 +1296,11 @@ class Holiday extends CommonObject
 	 *
 	 *   @param 	int		$selected   	Id of preselected status
 	 *   @param		string	$htmlname		Name of HTML select field
+	 *   @param		string	$morecss		More CSS on select component
 	 *   @return    string					Show select of status
 	 */
-	public function selectStatutCP($selected = '', $htmlname = 'select_statut')
+	public function selectStatutCP($selected = '', $htmlname = 'select_statut', $morecss = 'minwidth125')
 	{
-
 		global $langs;
 
 		// Liste des statuts
@@ -1308,7 +1308,7 @@ class Holiday extends CommonObject
 		$nb = count($name) + 1;
 
 		// Select HTML
-		$out = '<select name="'.$htmlname.'" id="'.$htmlname.'" class="flat">'."\n";
+		$out = '<select name="'.$htmlname.'" id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">'."\n";
 		$out .= '<option value="-1">&nbsp;</option>'."\n";
 
 		// Boucle des statuts
