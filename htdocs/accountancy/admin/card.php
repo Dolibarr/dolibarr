@@ -262,9 +262,13 @@ if ($action == 'create') {
 	print '<datalist id="pcg_type_datalist">';
 	$sql = 'SELECT DISTINCT pcg_type FROM ' . MAIN_DB_PREFIX . 'accounting_account';
 	$sql .= ' WHERE fk_pcg_version = "' . $db->escape($accountsystem->ref) . '"';
+	$sql .= ' AND entity in ('.getEntity('accounting_account', 0).')';		// Always limit to current entity. No sharing in accountancy.
 	$sql .= ' LIMIT 50000'; // just as a sanity check
-	foreach ($db->getRows($sql) as $obj) {
-		print '<option value="' . dol_escape_htmltag($obj->pcg_type) . '">';
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			print '<option value="' . dol_escape_htmltag($obj->pcg_type) . '">';
+		}
 	}
 	print '</datalist>';
 	print '</td></tr>';
@@ -329,7 +333,20 @@ if ($action == 'create') {
 			print $form->textwithpicto($langs->trans("Pcgtype"), $langs->transnoentitiesnoconv("PcgtypeDesc"));
 			print '</td>';
 			print '<td>';
-			print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(GETPOSTISSET('pcg_type') ? GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
+			print '<input type="text" name="pcg_type" list="pcg_type_datalist" value="'.dol_escape_htmltag(GETPOSTISSET('pcg_type') ? GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
+			// autosuggest from existing account types if found
+			print '<datalist id="pcg_type_datalist">';
+			$sql = 'SELECT DISTINCT pcg_type FROM ' . MAIN_DB_PREFIX . 'accounting_account';
+			$sql .= ' WHERE fk_pcg_version = "' . $db->escape($accountsystem->ref) . '"';
+			$sql .= ' AND entity in ('.getEntity('accounting_account', 0).')';		// Always limit to current entity. No sharing in accountancy.
+			$sql .= ' LIMIT 50000'; // just as a sanity check
+			$resql = $db->query($sql);
+			if ($resql) {
+				while ($obj = $db->fetch_object($resql)) {
+					print '<option value="' . dol_escape_htmltag($obj->pcg_type) . '">';
+				}
+			}
+			print '</datalist>';
 			print '</td></tr>';
 
 			// Category
