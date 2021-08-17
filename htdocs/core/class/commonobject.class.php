@@ -3037,7 +3037,7 @@ abstract class CommonObject
 		}
 		$parameters=array('rowid'=>$rowid, 'rang'=>$rang, 'fieldposition' => $fieldposition);
 	    $action='';
-	    $reshook = $hookmanager->executeHooks('afterRankUpdate', $parameters, $this, $action);
+	    $reshook = $hookmanager->executeHooks('afterRankOfLineUpdate', $parameters, $this, $action);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
