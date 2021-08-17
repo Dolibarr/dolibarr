@@ -264,6 +264,7 @@ if (empty($reshook)) {
 			$nuser->birth = $object->date_birth;
 			$nuser->salary = $object->remuneration_proposed;
 			$nuser->fk_user = $jobposition->fk_user_supervisor; // Supervisor
+			$nuser->email = $object->email;
 
 			$result = $nuser->create($user);
 

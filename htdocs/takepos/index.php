@@ -434,7 +434,7 @@ function ClickProduct(position) {
 		if (idproduct=="") return;
 		// Call page invoice.php to generate the section with product lines
 		$("#poslines").load("invoice.php?action=addline&place="+place+"&idproduct="+idproduct+"&selectedline="+selectedline, function() {
-			//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+			<?php if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) echo "CustomerDisplay();";?>
 		});
 	}
 
