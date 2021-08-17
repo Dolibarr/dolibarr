@@ -123,11 +123,11 @@ $arrayfields = array(
 	//'m.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	//'m.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500)
 );
-if (!empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-	unset($arrayfields['pl.eatby']);
-}
 if (!empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 	unset($arrayfields['pl.sellby']);
+}
+if (!empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+	unset($arrayfields['pl.eatby']);
 }
 $objectlist->fields = dol_sort_array($objectlist->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
