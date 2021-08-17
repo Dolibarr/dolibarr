@@ -213,6 +213,7 @@ if (empty($reshook)) {
 	$objectlabel = 'Holiday';
 	$permissiontoread = $user->rights->holiday->read;
 	$permissiontodelete = $user->rights->holiday->delete;
+	$permissiontoapprove = $user->rights->holiday->approve;
 	$uploaddir = $conf->holiday->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -440,6 +441,9 @@ if ($resql) {
 	);
 	if (!empty($user->rights->holiday->delete)) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
+	}
+	if (!empty($user->rights->holiday->approve)) {
+		$arrayofmassactions['preapproveleave'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Approve");
 	}
 	if (in_array($massaction, array('presend', 'predelete'))) {
 		$arrayofmassactions = array();
