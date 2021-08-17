@@ -28,7 +28,7 @@ create table llx_product_customer_price
   tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_product			integer NOT NULL,
   fk_soc				integer NOT NULL,
-  ref_customer			varchar(30),
+  ref_customer			varchar(128),
   price						double(24,8) DEFAULT 0,
   price_ttc					double(24,8) DEFAULT 0,
   price_min					double(24,8) DEFAULT 0,

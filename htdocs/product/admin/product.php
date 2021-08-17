@@ -295,13 +295,14 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 print load_fiche_titre($langs->trans("ProductCodeChecker"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '  <td>'.$langs->trans("Name").'</td>';
 print '  <td>'.$langs->trans("Description").'</td>';
 print '  <td>'.$langs->trans("Example").'</td>';
 print '  <td class="center" width="80">'.$langs->trans("Status").'</td>';
-print '  <td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
+print '  <td class="center"></td>';
 print "</tr>\n";
 
 foreach ($dirproduct as $dirroot) {
@@ -333,7 +334,7 @@ foreach ($dirproduct as $dirroot) {
 				print '<tr class="oddeven">'."\n";
 				print '<td width="140">'.$modCodeProduct->name.'</td>'."\n";
 				print '<td>'.$modCodeProduct->info($langs).'</td>'."\n";
-				print '<td class="nowrap">'.$modCodeProduct->getExample($langs).'</td>'."\n";
+				print '<td class="nowrap"><span class="opacitymedium">'.$modCodeProduct->getExample($langs).'</span></td>'."\n";
 
 				if (!empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) && $conf->global->PRODUCT_CODEPRODUCT_ADDON == $file) {
 					print '<td class="center">'."\n";
@@ -366,6 +367,7 @@ foreach ($dirproduct as $dirroot) {
 	}
 }
 print '</table>';
+print '</div>';
 
 // Module to build doc
 $def = array();
@@ -390,13 +392,14 @@ print '<br>';
 
 print load_fiche_titre($langs->trans("ProductDocumentTemplates"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";
 print '<td class="center" width="60">'.$langs->trans("Default")."</td>\n";
-print '<td class="center" width="80">'.$langs->trans("ShortInfo").'</td>';
+print '<td class="center"></td>';
 print '<td class="center" width="80">'.$langs->trans("Preview").'</td>';
 print "</tr>\n";
 
@@ -499,6 +502,8 @@ foreach ($dirmodels as $reldir) {
 }
 
 print '</table>';
+print '</div>';
+
 print "<br>";
 
 /*
@@ -517,6 +522,7 @@ print '<input type="hidden" name="page_y" value="">';
 print load_fiche_titre($langs->trans("ProductOtherConf"), '', '');
 
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
@@ -611,6 +617,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 }
 
 print '</table>';
+print '</div>';
 
 print '<div class="center">';
 print '<input type="submit" class="button reposition" value="'.$langs->trans("Modify").'">';
@@ -620,6 +627,7 @@ print '</div>';
 print load_fiche_titre($langs->trans("UserInterface"), '', '');
 
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
@@ -671,7 +679,7 @@ print $form->selectarray(
 	0,
 	0,
 	'',
-	'maxwidth400',
+	'minwidth100imp maxwidth400',
 	1
 );
 print '</td>';
@@ -772,6 +780,7 @@ if (!empty($conf->global->PRODUCT_CANVAS_ABILITY)) {
 }
 
 print '</table>';
+print '</div>';
 
 print '<div class="center">';
 print '<input type="submit" class="button reposition" value="'.$langs->trans("Modify").'">';

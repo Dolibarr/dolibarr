@@ -43,6 +43,8 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
+$sall = GETPOST("sall", "alpha");
+$filter = GETPOST("filter", 'alpha');
 $search_lastname = GETPOST('search_lastname', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
 $search_email = GETPOST('search_email', 'alpha');

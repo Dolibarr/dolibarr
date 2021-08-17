@@ -91,7 +91,6 @@ if ($action == 'update') {
 	if (!$error) {
 		foreach ($list as $constname) {
 			$constvalue = GETPOST($constname, 'alpha');
-			var_dump($constname);
 			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
 				$error++;
 			}

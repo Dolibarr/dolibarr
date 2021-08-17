@@ -549,20 +549,27 @@ function hideMessage(fieldId,message) {
  * @param	int		strict		Strict
  * @param   int     forcereload Force reload
  * @param   int     userid      User id
+ * @param	int		value       Value to set
  * @param   string  token       Token
  */
-function setConstant(url, code, input, entity, strict, forcereload, userid, token) {
+function setConstant(url, code, input, entity, strict, forcereload, userid, token, value) {
 	var saved_url = url; /* avoid undefined url */
 	$.post( url, {
 		action: "set",
 		name: code,
 		entity: entity,
-		token: token
+		token: token,
+		value: value
 	},
 	function() {	/* handler for success of post */
-		console.log("url request success forcereload="+forcereload);
-		$("#set_" + code).hide();
-		$("#del_" + code).show();
+		console.log("url request success forcereload="+forcereload+" value="+value);
+		if (value == 0) {
+			$("#set_" + code).show();
+			$("#del_" + code).hide();
+		} else {
+			$("#set_" + code).hide();
+			$("#del_" + code).show();
+		}
 		$.each(input, function(type, data) {
 			// Enable another element
 			if (type == "disabled" && strict != 1) {
@@ -610,7 +617,7 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 		if (forcereload) {
 			location.reload();
 		}
-	}).fail(function(error) { location.reload(); });	/* When it fails, we always force reload to have setEventErrorMEssage in session visible */
+	}).fail(function(error) { location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
 }
 
 /*
@@ -681,7 +688,7 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 		if (forcereload) {
 			location.reload();
 		}
-	}).fail(function(error) { location.reload(); });	/* When it fails, we always force reload to have setEventErrorMEssage in session visible */
+	}).fail(function(error) { location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
 }
 
 /*
@@ -716,7 +723,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 						text : yesButton,
 						click : function() {
 							if (action == "set") {
-								setConstant(url, code, input, entity, strict, 0, userid, token);
+								setConstant(url, code, input, entity, strict, 0, userid, token, 1);
 							} else if (action == "del") {
 								delConstant(url, code, input, entity, strict, 0, userid, token);
 							}

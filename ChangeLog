@@ -2,33 +2,25 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
-***** ChangeLog for 13.0.4 compared to 13.0.2 *****
 
-FIX: Allow disabling of a module (not a dangerous action) even if there is problem with token (due to bugged modules).
-FIX: 13.0 - fatal - missing inclusion of ajax.lib.php for calling `ajax_autocompleter()`
-FIX: #17919 pictures in docs.
-FIX: #18006
-FIX: Accountancy - if we define a date start, automatic binding try to continue to solve old binding
-FIX: Accoutancy Limit date payment not registered on purchases operations
-FIX: Can't edit replacement invoice
-FIX: deposit can create credit note in payment conf
-FIX: division by zero on create
-FIX: holiday: balances not updated correctly with pgsql because of case sensitivity field
-FIX: holiday: status filter parameter has been renamed but not in links it was used
-FIX: List and Create Companies Left Menus
-FIX: method exists
-FIX: need to add payment sum to getlibstatus function in object linked block
-FIX: permission to close a proposal when using advanced permissions
-FIX: Problem of z-index with popup and top menu
-FIX: same thing on supplier orders
-FIX: Status of invoice when making a replacement invoice
-FIX: update contact birthday alert
+***** ChangeLog for 15.0.0 compared to 14.0.0 *****
+
+For developers:
+---------------
+
+WARNING:
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* Update hook 'printOriginObjectLine', removed check on product type and special code. Need now reshook.
+* Old deprecated module "SimplePOS" has been completely removed. Use module "TakePOS" is you need a Point Of Sale.
+
+
 
 ***** ChangeLog for 14.0.0 compared to 13.0.0 *****
 
 For users:
 ----------
-NEW: Module Recruitement to follow application to job positions is now stable.
+NEW: Module Recruitment to follow application to job positions is now stable.
 NEW: Feature to make Stock Inventories
 NEW: Several security issues after a second private bug hunting campaign. 
 NEW: A lot of fix into english text after a small proofreading campaign (still not perfect, but really better)
@@ -71,7 +63,7 @@ NEW: Make public bookmarks editable by admin users only
 NEW: If main logo not defined, can use the squarred logo on login page
 NEW: The manifest file can use the squared image if available
 NEW: Enhance the multicurrency rate editor
-NEW: Normalyse Type company field with ajax combobox
+NEW: Normalise Type company field with ajax combobox
 NEW: preload product description on selection for customer propal/order/invoice
 NEW: Search usergroups & resources
 NEW: Setup Page for module creation with module builder enhancement #FoundationFunding
@@ -88,14 +80,15 @@ NEW: #16378 more E-Mail Contact substitution Values for better salutation
 NEW: option to keep the "Automatically create the payment" checkbox empty on the tax creation page
 
  Accountancy
-NEW: Accountancy - Add FEC import
-NEW: Accountancy - Add a confirmation form with options on export
-NEW: Accountancy - Add select date from/to in already bind customer and supplier list
-NEW: Accountancy - Format FEC - Add new field DateLimitReglmt
-NEW: Accountancy - In ledger & journals, show link on bank transaction
-NEW: Accountancy - Possibility to filter on journals in balance
-NEW: Accountancy - Add a page to list subledger accounts
-NEW: Multiselect ledger account code filter on book keeping list
+NEW: Add FEC import
+NEW: Add a confirmation form with options on export (for notified export and validate operations)
+NEW: Add select date from/to in already bind customer and supplier list
+NEW: FEC / FEC2 export - Add new field DateLimitReglmt
+NEW: In ledger & journals, show link on bank transaction
+NEW: Possibility to filter on journals in balance
+NEW: Add a page to list subledger accounts
+NEW: Multiselect journal code filter on journal / balance / ledger
+NEW: Add first step to close fiscal year
 
  Agenda
 NEW: add support for Friday as a non working day
@@ -114,7 +107,7 @@ NEW: can filter files in ECM/GED on status Shared / Not shared
 NEW: add a check to avoid an invoice date in the future
 NEW: add the total of margin in invoice list
 NEW: can set a percentage when creating an invoice from another object
-NEW: Support down payment on supplier invoice (& somes ajustments)
+NEW: Support down payment on supplier invoice (& some adjustments)
 
  Margin
 NEW: add the total of margin in invoice list
@@ -183,7 +176,7 @@ NEW: Add a security center page with all information and advices related to the 
 NEW: Add a performance center page with all information and advices related to the performance of your instance 
 
  Modules
-NEW: Module Recruitement is now stable
+NEW: Module Recruitment is now stable
 NEW: start new experimental module Event Organization Management
 NEW: start new experimental module Partnership Management
 NEW: start new experimental module Knowledge Management
@@ -192,11 +185,14 @@ NEW: Check update availability for externals modules using a button on module pa
 Module SimplePOS is deprecated - TakePOS is recommended for the future
 
  new Options
-NEW: add option  CONTRACT_ALLOW_EXTERNAL_DOWNLOAD            to make generated doc automatically shared
-NEW: add option  SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD   to make generated doc automatically shared
-NEW: add option  MAIN_SECURITY_ANTI_SSRF_SERVER_IP           to define list of IPs that are local IPs
-NEW: add option  SOCIETE_DISABLE_WORKFORCE                   to hide staff field
-NEW: add constant  MAIN_BUGTRACK_URL                         to set a custom url to redirect to when clicking on link "declare a bug"
+NEW: add option  CONTRACT_ALLOW_EXTERNAL_DOWNLOAD                   to make generated doc automatically shared
+NEW: add option  SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD          to make generated doc automatically shared
+NEW: add option  MAIN_SECURITY_ANTI_SSRF_SERVER_IP                  to define list of IPs that are local IPs
+NEW: add option  SOCIETE_DISABLE_WORKFORCE                          to hide staff field
+NEW: add constant  MAIN_BUGTRACK_URL                                to set a custom url to redirect to when clicking on link "declare a bug"
+NEW: add constant  ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY    to manage binding with accountancy account declared on thirdparty card
+NEW: add constant  MAIN_PRODUCT_PERENTITY_SHARED                    to manage some informations (Accounting account) when product is shared on several entities
+NEW: add constant  MAIN_COMPANY_PERENTITY_SHARED                    to manage some informations (Accounting account) when company is shared on several entities
 
 
 For developers:
@@ -230,7 +226,7 @@ NEW: hook printFieldListTitle for cabyprodserv.php
 NEW: hook to allow external modules to add their own shortlist of recent objects
 NEW: SQL-altering hooks in the turnover by product report
 NEW: add form confirm hook on company card
-NEW: add hook addSectionECMAuto method to add custom diretory into ECM auto files
+NEW: add hook addSectionECMAuto method to add custom directory into ECM auto files
 
 
 WARNING:
@@ -240,13 +236,37 @@ Following changes may create regressions for some external modules, but were nec
 * The ICS value for direct debit or credit transfer is now stored on each bank account instead of into the global setup.
 * API /setup/shipment_methods has been replaced with API /setup/shipping_methods
 * Field "total" renamed into "total_ht"  for table llx_facture, llx_facture_rec for better field name consistency
-* Field "tva"   renamed into "total_tva" for table llx_propal, llx_supplier_proposal, llx_commande, llx_commande_fournisseur for better field name consistency
+* Field "tva"   renamed into "total_tva" for llx_facture, table llx_propal, llx_supplier_proposal, llx_commande, llx_commande_fournisseur for better field name consistency
 * Field "total" renamed into "total_ttc" for table llx_propal, llx_supplier_proposal for better field name consistency
 * If your database is PostgreSQL, you must use version 9.1.0 or more (Dolibarr need the SQL function CONCAT)
 * If your database is MySQL or MariaDB, you need at least version 5.1
 * Function set_price_level() has been renamed into setPriceLevel() to follow camelcase rules
-* removed deprecated subtituion key  __REFCLIENT__  (replaced with __REF_CLIENT__)
+* Removed deprecated substitution key  __REFCLIENT__  (replaced with __REF_CLIENT__)
 * Removed constant MAIN_COUNTRIES_IN_EEC. You can now set if country is in Europe or not from the dictionary of countries.
+* v14 seems to work correctly on PHP v8 but it generates a lot of verbose warnings. Currently, v14 i snot yet officialy supported with PHP 8.
+
+
+***** ChangeLog for 13.0.4 compared to 13.0.3 *****
+
+FIX: Allow disabling of a module (not a dangerous action) even if there is problem with token (due to bugged modules).
+FIX: 13.0 - fatal - missing inclusion of ajax.lib.php for calling 'ajax_autocompleter()'
+FIX: #17919 pictures in docs
+FIX: #18006
+FIX: Accountancy - if we define a date start, automatic binding try to continue to solve old binding
+FIX: Accountancy - Limit date payment not registered on purchases operations
+FIX: Can't edit replacement invoice
+FIX: deposit can create credit note in payment conf
+FIX: division by zero on create
+FIX: holiday: balances not updated correctly with pgsql because of case sensitivity field
+FIX: holiday: status filter parameter has been renamed but not in links it was used
+FIX: List and Create Companies Left Menus
+FIX: method exists
+FIX: need to add payment sum to getlibstatus function in object linked block
+FIX: permission to close a proposal when using advanced permissions
+FIX: Problem of z-index with popup and top menu
+FIX: same thing on supplier orders
+FIX: Status of invoice when making a replacement invoice
+FIX: update contact birthday alert
 
 
 ***** ChangeLog for 13.0.3 compared to 13.0.2 *****
@@ -337,7 +357,7 @@ FIX: File attachment on lots/batches
 FIX: handling $heightforinfotot when he's superior to a page height on Supplier Invoice
 FIX: hourglass and hide button to pay
 FIX: massaction validate invoice do not regenerate PDF
-FIX: missing mp4 video mime
+FIX: #16627 fix missing mp4 video mime
 FIX: picto on shipment to reset qty to 0. Some quantities were not reset.
 FIX: Protection to avoid #16504
 FIX: rounding amount on card updating
