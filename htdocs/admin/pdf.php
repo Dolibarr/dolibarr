@@ -65,6 +65,9 @@ if ($action == 'update') {
 	if (GETPOSTISSET('MAIN_PROFID5_IN_ADDRESS')) dolibarr_set_const($db, "MAIN_PROFID5_IN_ADDRESS", GETPOST("MAIN_PROFID5_IN_ADDRESS"), 'chaine', 0, '', $conf->entity);
 	if (GETPOSTISSET('MAIN_PROFID6_IN_ADDRESS')) dolibarr_set_const($db, "MAIN_PROFID6_IN_ADDRESS", GETPOST("MAIN_PROFID6_IN_ADDRESS"), 'chaine', 0, '', $conf->entity);
 
+	if (GETPOSTISSET('MAIN_PDF_NO_SENDER_FRAME')) dolibarr_set_const($db, "MAIN_PDF_NO_SENDER_FRAME", GETPOST("MAIN_PDF_NO_SENDER_FRAME"), 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('MAIN_PDF_NO_RECIPENT_FRAME')) dolibarr_set_const($db, "MAIN_PDF_NO_RECIPENT_FRAME", GETPOST("MAIN_PDF_NO_RECIPENT_FRAME"), 'chaine', 0, '', $conf->entity);
+
 	if (GETPOSTISSET('MAIN_PDF_HIDE_SENDER_NAME')) dolibarr_set_const($db, "MAIN_PDF_HIDE_SENDER_NAME", GETPOST("MAIN_PDF_HIDE_SENDER_NAME"), 'chaine', 0, '', $conf->entity);
 
 	if (GETPOSTISSET('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT", GETPOST("MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT"), 'chaine', 0, '', $conf->entity);
@@ -257,6 +260,25 @@ for ($i = 1; $i <= 6; $i++) {
 	}
 }
 
+// Borders on address frame
+
+print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_NO_SENDER_FRAME").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_PDF_NO_SENDER_FRAME');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("MAIN_PDF_NO_SENDER_FRAME", $arrval, $conf->global->MAIN_PDF_NO_SENDER_FRAME);
+}
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_NO_RECIPENT_FRAME").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_PDF_NO_RECIPENT_FRAME');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("MAIN_PDF_NO_RECIPENT_FRAME", $arrval, $conf->global->MAIN_PDF_NO_RECIPENT_FRAME);
+}
+
 // Show sender name
 
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_HIDE_SENDER_NAME").'</td><td>';
@@ -370,13 +392,11 @@ print $formadmin->select_language($selected, 'PDF_USE_ALSO_LANGUAGE_CODE', 0, nu
 print '</td></tr>';
 
 // Height of logo
-
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DOCUMENTS_LOGO_HEIGHT").'</td><td>';
 print '<input type="text" class="maxwidth50" name="MAIN_DOCUMENTS_LOGO_HEIGHT" value="'.(!empty($conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT) ? $conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT : 20).'">';
 print '</td></tr>';
 
 // Show project
-
 if (!empty($conf->projet->enabled)) {
 	print '<tr class="oddeven"><td>'.$langs->trans("PDF_SHOW_PROJECT").'</td><td>';
 	$tmparray = array('no' => 'No', 'showprojectref' => 'RefProject', 'showprojectlabel' => 'ShowProjectLabel');
