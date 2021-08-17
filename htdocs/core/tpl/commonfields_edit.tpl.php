@@ -19,6 +19,7 @@
  * $action
  * $conf
  * $langs
+ * $form
  */
 
 // Protection to avoid direct call of template
@@ -80,7 +81,7 @@ foreach ($object->fields as $key => $val) {
 	} elseif ($val['type'] == 'price') {
 		$value = GETPOSTISSET($key) ? price2num(GETPOST($key)) : price2num($object->$key);
 	} elseif ($key == 'lang') {
-		$value = GETPOSTISSET($key.'object', 'aZ09')?GETPOST($key.'object', 'aZ09'):$object->lang;
+		$value = GETPOSTISSET($key, 'aZ09') ? GETPOST($key, 'aZ09') : $object->lang;
 	} else {
 		$value = GETPOSTISSET($key) ? GETPOST($key, 'alpha') : $object->$key;
 	}
@@ -90,7 +91,7 @@ foreach ($object->fields as $key => $val) {
 	} else {
 		if ($key == 'lang') {
 			print img_picto('', 'language', 'class="pictofixedwidth"');
-			print $formadmin->select_language($value, $key.'object', 0, null, 1, 0, 0, 'minwidth300', 2);
+			print $formadmin->select_language($value, $key, 0, null, 1, 0, 0, 'minwidth300', 2);
 		} else {
 			print $object->showInputField($val, $key, $value, '', '', '', 0);
 		}

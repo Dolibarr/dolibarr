@@ -462,7 +462,7 @@ foreach ($object->fields as $key => $val) {
 			print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth125', 1);
 		} elseif (!preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 			if ($key == 'lang') {
-				print $formadmin->select_language($search[$key], 'search_lang', 0, null, 1, 0, 0, 'minwidth300', 2);
+				print $formadmin->select_language($search[$key], 'search_lang', 0, null, 1, 0, 0, 'minwidth150 maxwidth200', 2);
 			} else {
 				print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
 			}

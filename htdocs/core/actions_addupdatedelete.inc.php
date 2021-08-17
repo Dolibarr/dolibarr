@@ -53,13 +53,11 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 	foreach ($object->fields as $key => $val) {
 		if ($object->fields[$key]['type'] == 'duration') {
 			if (GETPOST($key.'hour') == '' && GETPOST($key.'min') == '') {
-				continue; // The field was not submited to be edited
+				continue; // The field was not submited to be saved
 			}
 		} else {
 			if (!GETPOSTISSET($key)) {
-				if ($key != 'lang' || !GETPOSTISSET($key.'object')) {
-					continue; // The field was not submited to be edited
-				}
+				continue; // The field was not submited to be saved
 			}
 		}
 		// Ignore special fields
@@ -90,7 +88,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			$value = $tmparraykey[GETPOST($key)].','.GETPOST($key.'2');
 		} else {
 			if ($key == 'lang') {
-				$value = GETPOST($key.'object', 'aZ09');
+				$value = GETPOST($key, 'aZ09');
 			} else {
 				$value = GETPOST($key, 'alphanohtml');
 			}
@@ -158,7 +156,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		// Check if field was submited to be edited
 		if ($object->fields[$key]['type'] == 'duration') {
 			if (!GETPOSTISSET($key.'hour') || !GETPOSTISSET($key.'min')) {
-				continue; // The field was not submited to be edited
+				continue; // The field was not submited to be saved
 			}
 		} elseif ($object->fields[$key]['type'] == 'boolean') {
 			if (!GETPOSTISSET($key)) {
@@ -167,9 +165,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 			}
 		} else {
 			if (!GETPOSTISSET($key)) {
-				if ($key != 'lang' || !GETPOSTISSET($key.'object')) {
-					continue; // The field was not submited to be edited
-				}
+				continue; // The field was not submited to be saved
 			}
 		}
 		// Ignore special fields
@@ -178,7 +174,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		}
 		if (in_array($key, array('date_creation', 'tms', 'fk_user_creat', 'fk_user_modif'))) {
 			if (!in_array(abs($val['visible']), array(1, 3, 4))) {
-				continue; // Only 1 and 3 and 4 that are case to update
+				continue; // Only 1 and 3 and 4, that are cases to update
 			}
 		}
 
@@ -208,7 +204,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 			$value = array_keys($object->param_list)[GETPOST($key)].','.GETPOST($key.'2');
 		} else {
 			if ($key == 'lang') {
-				$value = GETPOST($key.'object', 'aZ09');
+				$value = GETPOST($key, 'aZ09');
 			} else {
 				$value = GETPOST($key, 'alphanohtml');
 			}
@@ -303,6 +299,8 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 			setEventMessages($object->error, null, 'errors');
 		}
 	}
+
+	$action = '';
 }
 
 // Remove a line
@@ -334,11 +332,13 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 		}
 
 		setEventMessages($langs->trans('RecordDeleted'), null, 'mesgs');
+
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
+	$action = '';
 }
 
 // Action validate object
@@ -374,6 +374,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd) {
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
+	$action = '';
 }
 
 // Action close object
@@ -404,6 +405,7 @@ if ($action == 'confirm_close' && $confirm == 'yes' && $permissiontoadd) {
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
+	$action = '';
 }
 
 // Action setdraft object
@@ -414,6 +416,7 @@ if ($action == 'confirm_setdraft' && $confirm == 'yes' && $permissiontoadd) {
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
+	$action = '';
 }
 
 // Action reopen object
@@ -444,6 +447,7 @@ if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd) {
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
+	$action = '';
 }
 
 // Action clone object
@@ -462,6 +466,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && !empty($permissiontoadd))
 			} else {
 				$newid = $result;
 			}
+
 			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$newid); // Open record of new object
 			exit;
 		} else {
