@@ -446,7 +446,8 @@ if ($search_id) {
 	$sql .= natural_search('p.rowid', $search_id, 1);
 }
 if ($search_ref) {
-	$sql .= natural_search('p.ref', $search_ref);
+	//$sql .= natural_search('p.ref', $search_ref);
+	$sql .= " AND (".natural_search('p.ref', $search_ref, 0, 1)." OR ".natural_search('pfp.ref_fourn', $search_ref, 0, 1).")";
 }
 if ($search_label) {
 	$sql .= natural_search('p.label', $search_label);
@@ -475,6 +476,7 @@ if ($catid > 0) {
 if ($catid == -2) {
 	$sql .= " AND cp.fk_categorie IS NULL";
 }
+
 $searchCategoryProductSqlList = array();
 if ($searchCategoryProductOperator == 1) {
 	foreach ($searchCategoryProductList as $searchCategoryProduct) {
