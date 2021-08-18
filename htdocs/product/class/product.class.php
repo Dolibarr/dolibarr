@@ -2228,7 +2228,7 @@ class Product extends CommonObject
 	 * @param  string $ref               Ref of product/service to load
 	 * @param  string $ref_ext           Ref ext of product/service to load
 	 * @param  string $barcode           Barcode of product/service to load
-	 * @param  int    $ignore_expression Ignores the math expression for calculating price and uses the db value instead
+	 * @param  int    $ignore_expression When module dynamicprices is on, ignores the math expression for calculating price and uses the db value instead
 	 * @param  int    $ignore_price_load Load product without loading prices arrays (when we are sure we don't need them)
 	 * @param  int    $ignore_lang_load  Load product without loading language arrays (when we are sure we don't need them)
 	 * @return int                       <0 if KO, 0 if not found, >0 if OK
@@ -2446,8 +2446,8 @@ class Product extends CommonObject
 						$sql .= " WHERE entity IN (".getEntity('productprice').")";
 						$sql .= " AND price_level=".((int) $i);
 						$sql .= " AND fk_product = ".((int) $this->id);
-						$sql .= " ORDER BY date_price DESC, rowid DESC";
-						$sql .= " LIMIT 1";
+						$sql .= " ORDER BY date_price DESC, rowid DESC";	// Get the most recent line
+						$sql .= " LIMIT 1";									// Only the first one
 						$resql = $this->db->query($sql);
 						if ($resql) {
 							$result = $this->db->fetch_array($resql);
