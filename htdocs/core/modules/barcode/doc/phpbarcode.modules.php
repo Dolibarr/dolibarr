@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/core/modules/barcode/doc/phpbarcode.modules.php
  *	\ingroup    barcode
- *	\brief      File with class to generate barcode images using php barcode generator
+ *	\brief      File with class to generate barcode images using php internal lib barcode generator
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/modules_barcode.class.php';
@@ -126,7 +126,7 @@ class modPhpbarcode extends ModeleBarCode
 	 *
 	 *	@param	string   	$code			  Value to encode
 	 *	@param  string	 	$encoding		  Mode of encoding
-	 *	@param  string	 	$readable		  Code can be read
+	 *	@param  string	 	$readable		  Code can be read (What is this ? is this used ?)
 	 *	@param	integer		$scale			  Scale
 	 *  @param  integer     $nooutputiferror  No output if error
 	 *	@return	int							  <0 if KO, >0 if OK
@@ -163,7 +163,7 @@ class modPhpbarcode extends ModeleBarCode
 		if (!is_array($result)) {
 			$this->error = $result;
 			if (empty($nooutputiferror)) {
-				print $this->error;
+				print dol_escape_htmltag($this->error);
 			}
 			return -1;
 		}
