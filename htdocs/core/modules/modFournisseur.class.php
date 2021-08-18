@@ -732,7 +732,8 @@ class modFournisseur extends DolibarrModules
 
 		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'commande_fournisseur'];
 		$this->import_regex_array[$r] = [
-			'c.ref' => '(PO\d{4}-\d{4}|PORDER.{1,32}$|PROV.{1,32}$)',
+			//'c.ref' => '(PO\d{4}-\d{4}|PORDER.{1,32}$|PROV.{1,32}$)',
+			'c.ref' => '(P\d{5}-ACN\d{3,5}$)',
 			'c.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency'
 		];
 
