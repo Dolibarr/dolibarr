@@ -2176,7 +2176,6 @@ class Holiday extends CommonObject
 						$auser = new User($this->db);
 						$auser->fetch($obj->fk_user_approve_expected);
 						$this->user_approve = $auser;
-
 					}
 				}
 			}
