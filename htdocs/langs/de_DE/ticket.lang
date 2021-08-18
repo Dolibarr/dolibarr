@@ -34,7 +34,7 @@ TicketDictResolution=Ticket-Auflösung
 
 TicketTypeShortCOM=Anfrage an Verkauf
 TicketTypeShortHELP=Erbitte funktionale Hilfestellung
-TicketTypeShortISSUE=Issue or bug
+TicketTypeShortISSUE=Problem oder Fehler
 TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Änderungs- oder Erweiterungsanforderung
 TicketTypeShortPROJET=Projekt
@@ -55,18 +55,18 @@ TypeContact_ticket_internal_SUPPORTTEC=Zugewiesener Benutzer
 TypeContact_ticket_external_SUPPORTCLI=Kundenkontakt / Tracking
 TypeContact_ticket_external_CONTRIBUTOR=Externer Mitarbeiter
 
-OriginEmail=Reporter Email
+OriginEmail=Ersteller E-Mail
 Notify_TICKET_SENTBYMAIL=Ticket Nachricht per E-Mail versenden
 
 # Status
 Read=Lesen
 Assigned=Zugewiesen
 InProgress=in Bearbeitung
-NeedMoreInformation=Waiting for reporter feedback
-NeedMoreInformationShort=Waiting for feedback
+NeedMoreInformation=Warten auf Feedback des Erstellers
+NeedMoreInformationShort=Warten auf Feedback
 Answered=Beantwortet
 Waiting=Wartend
-Closed=Geschlossen
+SolvedClosed=Gelöst
 Deleted=Gelöscht
 
 # Dict
@@ -119,7 +119,7 @@ TicketsShowModuleLogoHelp=Aktiviere diese Option um das Logo des Moduls im öffe
 TicketsShowCompanyLogo=Unternehmenslogo im öffentlichen Interface anzeigen
 TicketsShowCompanyLogoHelp=Aktiviere diese Option um das Firmenlogo nicht im öffentlichen Interface anzuzeigen
 TicketsEmailAlsoSendToMainAddress=Sende Benachrichtungen auch an die Hauptemailadresse
-TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
+TicketsEmailAlsoSendToMainAddressHelp=Aktivieren Sie diese Option, um auch eine E-Mail an die im Setup definierte Adresse "%s" zu senden (siehe Reiter "%s")
 TicketsLimitViewAssignedOnly=Zeige nur dem Benutzer zugewiesene Tickets an (nicht gültig für externe Benutzer, diese sehen nur die Tickets des eigenen Partners)
 TicketsLimitViewAssignedOnlyHelp=Nur dem aktuellen Benutzer zugewiesene Tickets werden angezeigt. Trifft nicht auf Benutzer zu, die das Recht haben Tickets zu verwalten.
 TicketsActivatePublicInterface=Öffentliches Interface aktivieren
@@ -133,7 +133,7 @@ TicketsDisableCustomerEmail=E-Mails immer deaktivieren, wenn ein Ticket über di
 TicketsPublicNotificationNewMessage=Sende E-Mails, wenn neue Nachrichten oder Kommentare zum Ticket hinzugefügt wurden
 TicketsPublicNotificationNewMessageHelp=E-Mail (s) senden, wenn eine neue Nachricht von der öffentlichen Oberfläche hinzugefügt wird (an den zugewiesenen Benutzer oder die Benachrichtigungs-E-Mail an (Update) und / oder die Benachrichtigungs-E-Mail an)
 TicketPublicNotificationNewMessageDefaultEmail=Benachrichtigungen per E-Mail an (Update)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Sende E-Mail-Benachrichtigungen über neue Nachrichten an diese Adresse, wenn dem Ticket kein Benutzer zugewiesen ist oder der Benutzer keine E-Mail hat.
 #
 # Index & list page
 #
@@ -162,7 +162,7 @@ CreatedBy=Erstellt durch
 NewTicket=Ticket erstellen
 SubjectAnswerToTicket=Ticketantwort
 TicketTypeRequest=Anfrageart
-TicketCategory=Ticket categorization
+TicketCategory=Ticket-Kategorisierung
 SeeTicket=Ticket zeigen
 TicketMarkedAsRead=Ticket als gelesen markiert
 TicketReadOn=Gelesen um
@@ -186,9 +186,11 @@ TicketSeverity=Dringlichkeit
 ShowTicket=Ticket zeigen
 RelatedTickets=Verknüpfte Tickets
 TicketAddIntervention=Serviceauftrag erstellen
-CloseTicket=Ticket schliessen
-CloseATicket=Ein Ticket schliessen
+CloseTicket=Ticket als gelöst markieren | schließen
+AbandonTicket=Ticket verwerfen
+CloseATicket=ein Ticket als gelöst markieren | schließen
 ConfirmCloseAticket=Tichek schliessen bestätigen
+ConfirmAbandonTicket=Bestätigen Sie das Schließen des Tickets mit dem Status 'verworfen'
 ConfirmDeleteTicket=Soll dieses Ticket wirklich gelöscht werden?
 TicketDeletedSuccess=Ticket wurde gelöscht
 TicketMarkedAsClosed=Ticket als geschlossen markiert
@@ -213,7 +215,7 @@ TicketMessageHelp=Nur dieser Text wird in der Mitteilungsliste auf der Ticketkar
 TicketMessageSubstitutionReplacedByGenericValues=Ersetzungsvariablen werden durch generische Werte ersetzt.
 TimeElapsedSince=Seit
 TicketTimeToRead=Zeit bis das Ticket gelesen wurde
-TicketTimeElapsedBeforeSince=Time elapsed before / since
+TicketTimeElapsedBeforeSince=Verstrichene Zeit vor / seit
 TicketContacts=Kontakte zum Ticket
 TicketDocumentsLinked=Dokumente zum Ticket
 ConfirmReOpenTicket=Dieses Ticket wirklich wieder öffnen?
@@ -307,7 +309,7 @@ BoxLastModifiedTicket=Zuletzt bearbeitete TIckets
 BoxLastModifiedTicketDescription=Zuletzt bearbeitete Tickets (maximal %s)
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Keine zuletzt bearbeiteten Tickets
-BoxTicketType=Distribution of open tickets by type
+BoxTicketType=Verteilung der offenen Tickets nach Typ
 BoxTicketSeverity=Anzahl der offenen Tickets nach Schwere
 BoxNoTicketSeverity=Keine Tickets geöffnet
 BoxTicketLastXDays=Anzahl der neuen Tickets nach Tagen innerhalb der letzten %s Tage

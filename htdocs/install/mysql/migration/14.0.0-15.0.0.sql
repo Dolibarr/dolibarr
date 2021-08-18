@@ -66,3 +66,6 @@ ALTER TABLE llx_product ADD COLUMN fk_default_bom integer DEFAULT NULL;
 
 DELETE FROM llx_menu WHERE type = 'top' AND module = 'cashdesk' AND mainmenu = 'cashdesk';
 
+
+INSERT INTO llx_c_action_trigger (code, label, description, elementtype, rang) values ('MEMBER_EXCLUDE', 'Member excluded', 'Executed when a member is excluded', 'member', 27);
+

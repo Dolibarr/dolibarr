@@ -55,7 +55,7 @@ TypeContact_ticket_internal_SUPPORTTEC=割り当てられたユーザー
 TypeContact_ticket_external_SUPPORTCLI=顧客連絡/インシデント追跡
 TypeContact_ticket_external_CONTRIBUTOR=外部寄稿者
 
-OriginEmail=Reporter Email
+OriginEmail=レポーターのメール
 Notify_TICKET_SENTBYMAIL=メールでチケットメッセージを送信する
 
 # Status
@@ -66,7 +66,7 @@ NeedMoreInformation=記者のフィードバック待機中
 NeedMoreInformationShort=フィードバック待機中
 Answered=答えた
 Waiting=待っている
-Closed=閉じた
+SolvedClosed=解決した
 Deleted=削除
 
 # Dict
@@ -186,9 +186,11 @@ TicketSeverity=重大度
 ShowTicket=チケットを見る
 RelatedTickets=関連チケット
 TicketAddIntervention=介入を作成する
-CloseTicket=チケットを閉じる
-CloseATicket=チケットを閉じる
+CloseTicket=チケットを 閉じる|解決 する
+AbandonTicket=チケットを放棄する
+CloseATicket=チケット１つを 閉じる|解決 する
 ConfirmCloseAticket=チケットの終了を確認する
+ConfirmAbandonTicket=チケットを終了し、ステータスを「放棄」に確定するか
 ConfirmDeleteTicket=チケットの削除を確認すること
 TicketDeletedSuccess=チケットは正常に削除された
 TicketMarkedAsClosed=チケットはクローズとしてマークされている

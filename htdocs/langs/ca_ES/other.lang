@@ -291,3 +291,7 @@ PopuCom=Productes / Serveis per popularitat a les comandes
 ProductStatistics=Productes / Serveis Estadístiques
 NbOfQtyInOrders=Quantitat en comandes
 SelectTheTypeOfObjectToAnalyze=Seleccioneu un objecte per veure'n les estadístiques ...
+
+ConfirmBtnCommonContent = Esteu segur que voleu "%s"?
+ConfirmBtnCommonTitle = Confirmeu la vostra acció
+CloseDialog = Tancar

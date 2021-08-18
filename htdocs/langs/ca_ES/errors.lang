@@ -11,7 +11,7 @@ ErrorBadValueForParamNotAString=Valor incorrecte del paràmetre. Acostuma a pass
 ErrorRefAlreadyExists=La referència <b> %s </b> ja existeix.
 ErrorLoginAlreadyExists=El nom d'usuari %s ja existeix.
 ErrorGroupAlreadyExists=El grup %s ja existeix.
-ErrorEmailAlreadyExists=Email %s already exists.
+ErrorEmailAlreadyExists=El correu electrònic %s ja existeix.
 ErrorRecordNotFound=Registre no trobat
 ErrorFailToCopyFile=No s'ha pogut copiar el fitxer "<b> %s </b>" a "<b> %s </b>".
 ErrorFailToCopyDir=No s'ha pogut copiar el directori '<b> %s </b>' a '<b> %s </b>'.
@@ -264,6 +264,7 @@ ErrorAnAmountWithoutTaxIsRequired=Error, l'import és obligatori
 ErrorAPercentIsRequired=Error, empleneu el percentatge correctament
 ErrorYouMustFirstSetupYourChartOfAccount=Primer heu de configurar el vostre pla de comptes
 ErrorFailedToFindEmailTemplate=No s'ha pogut trobar la plantilla amb el nom de codi %s
+ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Durada no definida al servei. No hi ha manera de calcular el preu per hora.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=El paràmetre PHP upload_max_filesize (%s) és superior al paràmetre PHP post_max_size (%s). No es tracta d’una configuració consistent.
@@ -301,4 +302,4 @@ ErrorActionCommPropertyUserowneridNotDefined=El propietari de l'usuari és oblig
 ErrorActionCommBadType=El tipus d'esdeveniment seleccionat (identificador: %n, codi: %s) no existeix al diccionari del tipus d'esdeveniment
 CheckVersionFail=Error de comprovació de versió
 ErrorWrongFileName=El nom del fitxer no pot contenir __COSA__
-ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.
+ErrorNotInDictionaryPaymentConditions=No es troba al Diccionari de condicions de pagament, modifiqueu-lo.
