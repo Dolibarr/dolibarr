@@ -88,8 +88,8 @@ $mesg = ''; $error = 0; $errors = array();
 $refalreadyexists = 0;
 
 $id = GETPOST('id', 'int');
-$ref = (GETPOSTISSET('ref', 'alpha') ? GETPOST('ref', 'alpha') : null);
-$type = (GETPOSTISSET('type', 'int') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT);
+$ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : null);
+$type = (GETPOSTISSET('type') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT);
 $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
