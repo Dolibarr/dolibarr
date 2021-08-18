@@ -474,14 +474,14 @@ class StockTransferLine extends CommonObjectLine
 				$this->fk_stocktransfer
 			);*/
 
-			$result = $movementstock->_create($user
-											, $p->id
-											, $fk_entrepot
-											, $op[$direction]
-											, $direction
-											, empty($direction) ? $this->pmp : 0
-											, $label
-											, $code_inv);
+			$result = $movementstock->_create($user,
+											 $p->id,
+											 $fk_entrepot,
+											 $op[$direction],
+											 $direction,
+											 empty($direction) ? $this->pmp : 0,
+											 $label,
+											 $code_inv);
 
 			if ($result < 0) {
 				setEventMessages($p->errors, $p->errorss, 'errors');
@@ -513,18 +513,18 @@ class StockTransferLine extends CommonObjectLine
 					GETPOST("codemove")
 				);*/
 
-				$result = $movementstock->_create($user
-												, $p->id
-												, $fk_entrepot
-												, $op[$direction]
-												, $direction
-												, empty($direction) ? $this->pmp : 0
-												, $label
-												, $code_inv
-												, ''
-												, $dlc
-												, $dluo
-												, $this->batch);
+				$result = $movementstock->_create($user,
+												 $p->id,
+												 $fk_entrepot,
+												 $op[$direction],
+												 $direction,
+												 empty($direction) ? $this->pmp : 0,
+												 $label,
+												 $code_inv,
+												 '',
+												 $dlc,
+												 $dluo,
+												 $this->batch);
 
 				if ($result < 0) {
 					setEventMessages($p->errors, $p->errorss, 'errors');
