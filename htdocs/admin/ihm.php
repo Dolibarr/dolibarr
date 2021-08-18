@@ -45,16 +45,9 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'adm
 
 $mode = GETPOST('mode', 'aZ09') ? GETPOST('mode', 'aZ09') : 'language'; // 'language', 'template', 'login', 'other'
 
-$defaultlanguage = GETPOST('defaultlanguage', 'alphanohtml');
-$defaulttemplate = GETPOST('defaulttemplate', 'alphanohtml');
-$defaultlogin = GETPOST('defaultlogin', 'alphanohtml');
-$defaultother = GETPOST('defaultother', 'alphanohtml');
-
 if (!defined("MAIN_MOTD")) {
 	define("MAIN_MOTD", "");
 }
-
-
 
 /*
  * Action
@@ -101,168 +94,178 @@ if ($action == 'removebackgroundlogin' && !empty($conf->global->MAIN_LOGIN_BACKG
 }
 
 if ($action == 'update') {
-	dolibarr_set_const($db, "MAIN_LANG_DEFAULT", GETPOST("MAIN_LANG_DEFAULT", 'aZ09'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
-	//dolibarr_set_const($db, "MAIN_MULTILANGS", GETPOST("MAIN_MULTILANGS"), 'chaine', 0, '', $conf->entity);
+	$error = 0;
 
-	dolibarr_set_const($db, "MAIN_THEME", GETPOST("main_theme", 'aZ09'), 'chaine', 0, '', $conf->entity);
-
-	/*$val=GETPOST('THEME_TOPMENU_DISABLE_IMAGE');
-	if (! $val) dolibarr_del_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', $conf->entity);
-	else dolibarr_set_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', GETPOST('THEME_TOPMENU_DISABLE_IMAGE'), 'chaine', 0, '', $conf->entity);*/
-
-	$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_BACKBODY'), array()))));
-	if ($val == '') {
-		dolibarr_del_const($db, 'THEME_ELDY_BACKBODY', $conf->entity);
-	} else {
-		dolibarr_set_const($db, 'THEME_ELDY_BACKBODY', $val, 'chaine', 0, '', $conf->entity);
+	if ($mode == 'language') {
+		dolibarr_set_const($db, "MAIN_LANG_DEFAULT", GETPOST("MAIN_LANG_DEFAULT", 'aZ09'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int)$conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+		//dolibarr_set_const($db, "MAIN_MULTILANGS", GETPOST("MAIN_MULTILANGS"), 'chaine', 0, '', $conf->entity);
 	}
 
-	$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'), array()))));
-	if ($val == '') {
-		dolibarr_del_const($db, 'THEME_ELDY_TOPMENU_BACK1', $conf->entity);
-	} else {
-		dolibarr_set_const($db, 'THEME_ELDY_TOPMENU_BACK1', $val, 'chaine', 0, '', $conf->entity);
+	if ($mode == 'template') {
+		dolibarr_set_const($db, "MAIN_THEME", GETPOST("main_theme", 'aZ09'), 'chaine', 0, '', $conf->entity);
+
+		/*$val=GETPOST('THEME_TOPMENU_DISABLE_IMAGE');
+		if (! $val) dolibarr_del_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', $conf->entity);
+		else dolibarr_set_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', GETPOST('THEME_TOPMENU_DISABLE_IMAGE'), 'chaine', 0, '', $conf->entity);*/
+
+		$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_BACKBODY'), array()))));
+		if ($val == '') {
+			dolibarr_del_const($db, 'THEME_ELDY_BACKBODY', $conf->entity);
+		} else {
+			dolibarr_set_const($db, 'THEME_ELDY_BACKBODY', $val, 'chaine', 0, '', $conf->entity);
+		}
+
+		$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'), array()))));
+		if ($val == '') {
+			dolibarr_del_const($db, 'THEME_ELDY_TOPMENU_BACK1', $conf->entity);
+		} else {
+			dolibarr_set_const($db, 'THEME_ELDY_TOPMENU_BACK1', $val, 'chaine', 0, '', $conf->entity);
+		}
+
+		$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_VERMENU_BACK1'), array()))));
+		if ($val == '') {
+			dolibarr_del_const($db, 'THEME_ELDY_VERMENU_BACK1', $conf->entity);
+		} else {
+			dolibarr_set_const($db, 'THEME_ELDY_VERMENU_BACK1', $val, 'chaine', 0, '', $conf->entity);
+		}
+
+		$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLENOTAB'), array()))));
+		if ($val == '') {
+			dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLENOTAB', $conf->entity);
+		} else {
+			dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLENOTAB', $val, 'chaine', 0, '', $conf->entity);
+		}
+
+		$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'), array()))));
+		if ($val == '') {
+			dolibarr_del_const($db, 'THEME_ELDY_BACKTITLE1', $conf->entity);
+		} else {
+			dolibarr_set_const($db, 'THEME_ELDY_BACKTITLE1', $val, 'chaine', 0, '', $conf->entity);
+		}
+
+		$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLE'), array()))));
+		if ($val == '') {
+			dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLE', $conf->entity);
+		} else {
+			dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLE', $val, 'chaine', 0, '', $conf->entity);
+		}
+
+		$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLELINK'), array()))));
+		if ($val == '') {
+			dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLELINK', $conf->entity);
+		} else {
+			dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLELINK', $val, 'chaine', 0, '', $conf->entity);
+		}
+
+		$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_LINEIMPAIR1'), array()))));
+		if ($val == '') {
+			dolibarr_del_const($db, 'THEME_ELDY_LINEIMPAIR1', $conf->entity);
+		} else {
+			dolibarr_set_const($db, 'THEME_ELDY_LINEIMPAIR1', $val, 'chaine', 0, '', $conf->entity);
+		}
+		$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_LINEIMPAIR1'), array()))));
+		if ($val == '') {
+			dolibarr_del_const($db, 'THEME_ELDY_LINEIMPAIR2', $conf->entity);
+		} else {
+			dolibarr_set_const($db, 'THEME_ELDY_LINEIMPAIR2', $val, 'chaine', 0, '', $conf->entity);
+		}
+
+		$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_LINEPAIR1'), array()))));
+		if ($val == '') {
+			dolibarr_del_const($db, 'THEME_ELDY_LINEPAIR1', $conf->entity);
+		} else {
+			dolibarr_set_const($db, 'THEME_ELDY_LINEPAIR1', $val, 'chaine', 0, '', $conf->entity);
+		}
+		$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_LINEPAIR1'), array()))));
+		if ($val == '') {
+			dolibarr_del_const($db, 'THEME_ELDY_LINEPAIR2', $conf->entity);
+		} else {
+			dolibarr_set_const($db, 'THEME_ELDY_LINEPAIR2', $val, 'chaine', 0, '', $conf->entity);
+		}
+
+		$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TEXTLINK'), array()))));
+		if ($val == '') {
+			dolibarr_del_const($db, 'THEME_ELDY_TEXTLINK', $conf->entity);
+		} else {
+			dolibarr_set_const($db, 'THEME_ELDY_TEXTLINK', $val, 'chaine', 0, '', $conf->entity);
+		}
+
+		$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_USE_HOVER'), array()))));
+		if ($val == '') {
+			dolibarr_del_const($db, 'THEME_ELDY_USE_HOVER', $conf->entity);
+		} else {
+			dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", $val, 'chaine', 0, '', $conf->entity);
+		}
+
+		$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_USE_CHECKED'), array()))));
+		if ($val == '') {
+			dolibarr_del_const($db, 'THEME_ELDY_USE_CHECKED', $conf->entity);
+		} else {
+			dolibarr_set_const($db, "THEME_ELDY_USE_CHECKED", $val, 'chaine', 0, '', $conf->entity);
+		}
 	}
 
-	$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_VERMENU_BACK1'), array()))));
-	if ($val == '') {
-		dolibarr_del_const($db, 'THEME_ELDY_VERMENU_BACK1', $conf->entity);
-	} else {
-		dolibarr_set_const($db, 'THEME_ELDY_VERMENU_BACK1', $val, 'chaine', 0, '', $conf->entity);
+	if ($mode == 'other') {
+		dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT", GETPOST("main_size_liste_limit", 'int'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT", GETPOST("main_size_shortliste_limit", 'int'), 'chaine', 0, '', $conf->entity);
+
+		//dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", GETPOST("MAIN_DISABLE_JAVASCRIPT", 'aZ09'), 'chaine', 0, '', $conf->entity);
+		//dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED", GETPOST("MAIN_BUTTON_HIDE_UNAUTHORIZED", 'aZ09'), 'chaine', 0, '', $conf->entity);
+		//dolibarr_set_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED", GETPOST("MAIN_MENU_HIDE_UNAUTHORIZED", 'aZ09'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_START_WEEK", GETPOST("MAIN_START_WEEK", 'int'), 'chaine', 0, '', $conf->entity);
+
+		dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS", GETPOST("MAIN_DEFAULT_WORKING_DAYS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS", GETPOST("MAIN_DEFAULT_WORKING_HOURS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+
+		dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK", GETPOST("MAIN_BUGTRACK_ENABLELINK", 'alpha'), 'chaine', 0, '', $conf->entity);
+
+		dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION", GETPOST("MAIN_FIRSTNAME_NAME_POSITION", 'aZ09'), 'chaine', 0, '', $conf->entity);
+
+		dolibarr_set_const($db, "MAIN_MOTD", dol_htmlcleanlastbr(GETPOST("main_motd", 'restricthtml')), 'chaine', 0, '', $conf->entity);
 	}
 
-	$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLENOTAB'), array()))));
-	if ($val == '') {
-		dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLENOTAB', $conf->entity);
-	} else {
-		dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLENOTAB', $val, 'chaine', 0, '', $conf->entity);
-	}
+	if ($mode == 'login') {
+		dolibarr_set_const($db, "MAIN_HOME", dol_htmlcleanlastbr(GETPOST("main_home", 'restricthtml')), 'chaine', 0, '', $conf->entity);
+		//dolibarr_set_const($db, "MAIN_HELP_DISABLELINK", GETPOST("MAIN_HELP_DISABLELINK", 'aZ09'), 'chaine', 0, '', 0); // Param for all entities
 
-	$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'), array()))));
-	if ($val == '') {
-		dolibarr_del_const($db, 'THEME_ELDY_BACKTITLE1', $conf->entity);
-	} else {
-		dolibarr_set_const($db, 'THEME_ELDY_BACKTITLE1', $val, 'chaine', 0, '', $conf->entity);
-	}
+		$varforimage = 'imagebackground';
+		$dirforimage = $conf->mycompany->dir_output . '/logos/';
+		if ($_FILES[$varforimage]["tmp_name"]) {
+			$reg = array();
+			if (preg_match('/([^\\/:]+)$/i', $_FILES[$varforimage]["name"], $reg)) {
+				$original_file = $reg[1];
 
-	$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLE'), array()))));
-	if ($val == '') {
-		dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLE', $conf->entity);
-	} else {
-		dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLE', $val, 'chaine', 0, '', $conf->entity);
-	}
-
-	$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLELINK'), array()))));
-	if ($val == '') {
-		dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLELINK', $conf->entity);
-	} else {
-		dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLELINK', $val, 'chaine', 0, '', $conf->entity);
-	}
-
-	$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_LINEIMPAIR1'), array()))));
-	if ($val == '') {
-		dolibarr_del_const($db, 'THEME_ELDY_LINEIMPAIR1', $conf->entity);
-	} else {
-		dolibarr_set_const($db, 'THEME_ELDY_LINEIMPAIR1', $val, 'chaine', 0, '', $conf->entity);
-	}
-	$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_LINEIMPAIR1'), array()))));
-	if ($val == '') {
-		dolibarr_del_const($db, 'THEME_ELDY_LINEIMPAIR2', $conf->entity);
-	} else {
-		dolibarr_set_const($db, 'THEME_ELDY_LINEIMPAIR2', $val, 'chaine', 0, '', $conf->entity);
-	}
-
-	$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_LINEPAIR1'), array()))));
-	if ($val == '') {
-		dolibarr_del_const($db, 'THEME_ELDY_LINEPAIR1', $conf->entity);
-	} else {
-		dolibarr_set_const($db, 'THEME_ELDY_LINEPAIR1', $val, 'chaine', 0, '', $conf->entity);
-	}
-	$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_LINEPAIR1'), array()))));
-	if ($val == '') {
-		dolibarr_del_const($db, 'THEME_ELDY_LINEPAIR2', $conf->entity);
-	} else {
-		dolibarr_set_const($db, 'THEME_ELDY_LINEPAIR2', $val, 'chaine', 0, '', $conf->entity);
-	}
-
-	$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TEXTLINK'), array()))));
-	if ($val == '') {
-		dolibarr_del_const($db, 'THEME_ELDY_TEXTLINK', $conf->entity);
-	} else {
-		dolibarr_set_const($db, 'THEME_ELDY_TEXTLINK', $val, 'chaine', 0, '', $conf->entity);
-	}
-
-	$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_USE_HOVER'), array()))));
-	if ($val == '') {
-		dolibarr_del_const($db, 'THEME_ELDY_USE_HOVER', $conf->entity);
-	} else {
-		dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", $val, 'chaine', 0, '', $conf->entity);
-	}
-
-	$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_USE_CHECKED'), array()))));
-	if ($val == '') {
-		dolibarr_del_const($db, 'THEME_ELDY_USE_CHECKED', $conf->entity);
-	} else {
-		dolibarr_set_const($db, "THEME_ELDY_USE_CHECKED", $val, 'chaine', 0, '', $conf->entity);
-	}
-
-	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT", GETPOST("main_size_liste_limit", 'int'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT", GETPOST("main_size_shortliste_limit", 'int'), 'chaine', 0, '', $conf->entity);
-
-	//dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", GETPOST("MAIN_DISABLE_JAVASCRIPT", 'aZ09'), 'chaine', 0, '', $conf->entity);
-	//dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED", GETPOST("MAIN_BUTTON_HIDE_UNAUTHORIZED", 'aZ09'), 'chaine', 0, '', $conf->entity);
-	//dolibarr_set_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED", GETPOST("MAIN_MENU_HIDE_UNAUTHORIZED", 'aZ09'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_START_WEEK", GETPOST("MAIN_START_WEEK", 'int'), 'chaine', 0, '', $conf->entity);
-
-	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS", GETPOST("MAIN_DEFAULT_WORKING_DAYS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS", GETPOST("MAIN_DEFAULT_WORKING_HOURS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-
-	dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK", GETPOST("MAIN_BUGTRACK_ENABLELINK", 'alpha'), 'chaine', 0, '', $conf->entity);
-
-	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION", GETPOST("MAIN_FIRSTNAME_NAME_POSITION", 'aZ09'), 'chaine', 0, '', $conf->entity);
-
-	dolibarr_set_const($db, "MAIN_MOTD", dol_htmlcleanlastbr(GETPOST("main_motd", 'restricthtml')), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_HOME", dol_htmlcleanlastbr(GETPOST("main_home", 'restricthtml')), 'chaine', 0, '', $conf->entity);
-	//dolibarr_set_const($db, "MAIN_HELP_DISABLELINK", GETPOST("MAIN_HELP_DISABLELINK", 'aZ09'), 'chaine', 0, '', 0); // Param for all entities
-
-	$varforimage = 'imagebackground'; $dirforimage = $conf->mycompany->dir_output.'/logos/';
-	if ($_FILES[$varforimage]["tmp_name"]) {
-		$reg = array();
-		if (preg_match('/([^\\/:]+)$/i', $_FILES[$varforimage]["name"], $reg)) {
-			$original_file = $reg[1];
-
-			$isimage = image_format_supported($original_file);
-			if ($isimage >= 0) {
-				dol_syslog("Move file ".$_FILES[$varforimage]["tmp_name"]." to ".$dirforimage.$original_file);
-				if (!is_dir($dirforimage)) {
-					dol_mkdir($dirforimage);
-				}
-				$result = dol_move_uploaded_file($_FILES[$varforimage]["tmp_name"], $dirforimage.$original_file, 1, 0, $_FILES[$varforimage]['error']);
-				if ($result > 0) {
-					dolibarr_set_const($db, "MAIN_LOGIN_BACKGROUND", $original_file, 'chaine', 0, '', $conf->entity);
-				} elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/', $result)) {
-					$error++;
-					$langs->load("errors");
-					$tmparray = explode(':', $result);
-					setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus', $tmparray[1]), null, 'errors');
+				$isimage = image_format_supported($original_file);
+				if ($isimage >= 0) {
+					dol_syslog("Move file " . $_FILES[$varforimage]["tmp_name"] . " to " . $dirforimage . $original_file);
+					if (!is_dir($dirforimage)) {
+						dol_mkdir($dirforimage);
+					}
+					$result = dol_move_uploaded_file($_FILES[$varforimage]["tmp_name"], $dirforimage . $original_file, 1, 0, $_FILES[$varforimage]['error']);
+					if ($result > 0) {
+						dolibarr_set_const($db, "MAIN_LOGIN_BACKGROUND", $original_file, 'chaine', 0, '', $conf->entity);
+					} elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/', $result)) {
+						$error++;
+						$langs->load("errors");
+						$tmparray = explode(':', $result);
+						setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus', $tmparray[1]), null, 'errors');
+					} else {
+						$error++;
+						setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
+					}
 				} else {
 					$error++;
-					setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
 				}
-			} else {
-				$error++;
-				$langs->load("errors");
-				setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
 			}
 		}
 	}
 
+	$_SESSION["mainmenu"] = ""; // The menu manager may have changed
 
-
-	$_SESSION["mainmenu"] = ""; // Le gestionnaire de menu a pu changer
-
-	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup".(GETPOSTISSET('page_y', 'int') ? '&page_y='.GETPOST('page_y', 'int') : ''));
+	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup".'&mode='.$mode.(GETPOSTISSET('page_y', 'int') ? '&page_y='.GETPOST('page_y', 'int') : ''));
 	exit;
 }
 
@@ -274,8 +277,6 @@ if ($action == 'update') {
 $wikihelp = 'EN:First_setup|FR:Premiers_param&eacute;trages|ES:Primeras_configuraciones';
 llxHeader('', $langs->trans("Setup"), $wikihelp);
 
-$param = '&mode='.$mode;
-
 $form = new Form($db);
 $formother = new FormOther($db);
 $formadmin = new FormAdmin($db);
@@ -285,34 +286,20 @@ print load_fiche_titre($langs->trans("GUISetup"), '', 'title_setup');
 print '<span class="opacitymedium">'.$langs->trans("DisplayDesc")."</span><br>\n";
 print "<br>\n";
 
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-	$param .= '&contextpage='.urlencode($contextpage);
-}
-if ($defaultlanguage) {
-	$param .= '&defaultlanguage='.urlencode($defaultlanguage);
-}
-if ($defaulttemplate) {
-	$param .= '&defaulttemplate='.urlencode($defaulttemplate);
-}
-if ($defaultlogin) {
-	$param .= '&defaultlogin='.urlencode($defaultlogin);
-}
-if ($defaultother) {
-	$param .= '&defaultother='.urlencode($defaultother);
-}
-
 //WYSIWYG Editor
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-print '<form enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'?mode='.$mode.'">';
+print '<form enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
-
-clearstatcache();
+print '<input type="hidden" name="page_y" value="">';
+print '<input type="hidden" id="mode" name="mode" value="'.dol_escape_htmltag($mode).'">';
 
 $head = ihm_prepare_head();
 
 print dol_get_fiche_head($head, $mode, '', -1, '');
+
+clearstatcache();
 
 if ($mode == 'language') {
 	print '<div class="div-table-responsive-no-min">';
