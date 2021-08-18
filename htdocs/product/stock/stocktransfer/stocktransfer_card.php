@@ -87,6 +87,7 @@ $fk_warehouse_destination = GETPOST('fk_warehouse_destination', 'int');
 $lineid   = GETPOST('lineid', 'int');
 $label = GETPOST('label', 'alpha');
 $batch = GETPOST('batch', 'alpha');
+$code_inv = GETPOST('inventorycode', 'alphanohtml');
 
 // Initialize technical objects
 $object = new StockTransfer($db);
@@ -283,7 +284,7 @@ if (empty($reshook)) {
 		if (!empty($lines)) {
 			$db->begin();
 			foreach ($lines as $line) {
-				$res = $line->doStockMovement($label, $line->fk_warehouse_source);
+				$res = $line->doStockMovement($label, $code_inv, $line->fk_warehouse_source);
 				if ($res <= 0) $error++;
 			}
 			if (empty($error)) $db->commit();
@@ -304,7 +305,7 @@ if (empty($reshook)) {
 		if (!empty($lines)) {
 			$db->begin();
 			foreach ($lines as $line) {
-				$res = $line->doStockMovement($label, $line->fk_warehouse_source, 0);
+				$res = $line->doStockMovement($label, $code_inv, $line->fk_warehouse_source, 0);
 				if ($res <= 0) $error++;
 			}
 			if (empty($error)) $db->commit();
@@ -325,7 +326,7 @@ if (empty($reshook)) {
 		if (!empty($lines)) {
 			$db->begin();
 			foreach ($lines as $line) {
-				$res = $line->doStockMovement($label, $line->fk_warehouse_destination, 0);
+				$res = $line->doStockMovement($label, $code_inv, $line->fk_warehouse_destination, 0);
 				if ($res <= 0) $error++;
 			}
 			if (empty($error)) $db->commit();
@@ -346,7 +347,7 @@ if (empty($reshook)) {
 		if (!empty($lines)) {
 			$db->begin();
 			foreach ($lines as $line) {
-				$res = $line->doStockMovement($label, $line->fk_warehouse_destination);
+				$res = $line->doStockMovement($label, $code_inv, $line->fk_warehouse_destination);
 				if ($res <= 0) $error++;
 			}
 			if (empty($error)) $db->commit();
@@ -508,22 +509,30 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	} elseif ($action == 'destock') { // Destock confirmation
 		// Create an array for form
 		$formquestion = array(	'text' => '',
-			array('type' => 'text', 'name' => 'label', 'label' => $langs->trans("Label"), 'value' => $langs->trans('ConfirmDestock', $object->ref), 'size'=>40));
+			array('type' => 'text', 'name' => 'label', 'label' => $langs->trans("Label"), 'value' => $langs->trans('ConfirmDestock', $object->ref), 'size'=>40),
+			array('type' => 'text', 'name' => 'inventorycode', 'label' => $langs->trans("InventoryCode"), 'value' => $object->ref.'_'.dol_print_date(dol_now(), '%y%m%d%H%M%S'), 'size'=>25)
+		);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DestockAllProduct'), '', 'confirm_destock', $formquestion, 'yes', 1);
 	} elseif ($action == 'destockcancel') { // Destock confirmation cancel
 		// Create an array for form
 		$formquestion = array(	'text' => '',
-			array('type' => 'text', 'name' => 'label', 'label' => $langs->trans("Label"), 'value' => $langs->trans('ConfirmDestockCancel', $object->ref), 'size'=>40));
+			array('type' => 'text', 'name' => 'label', 'label' => $langs->trans("Label"), 'value' => $langs->trans('ConfirmDestockCancel', $object->ref), 'size'=>40),
+			array('type' => 'text', 'name' => 'inventorycode', 'label' => $langs->trans("InventoryCode"), 'value' => $object->ref.'_'.dol_print_date(dol_now(), '%y%m%d%H%M%S'), 'size'=>25)
+		);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DestockAllProductCancel'), '', 'confirm_destockcancel', $formquestion, 'yes', 1);
 	} elseif ($action == 'addstock') { // Addstock confirmation
 		// Create an array for form
 		$formquestion = array(	'text' => '',
-			array('type' => 'text', 'name' => 'label', 'label' => $langs->trans("Label").'&nbsp;:', 'value' => $langs->trans('ConfirmAddStock', $object->ref), 'size'=>40));
+			array('type' => 'text', 'name' => 'label', 'label' => $langs->trans("Label").'&nbsp;:', 'value' => $langs->trans('ConfirmAddStock', $object->ref), 'size'=>40),
+			array('type' => 'text', 'name' => 'inventorycode', 'label' => $langs->trans("InventoryCode"), 'value' => $object->ref.'_'.dol_print_date(dol_now(), '%y%m%d%H%M%S'), 'size'=>25)
+		);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('AddStockAllProduct'), '', 'confirm_addstock', $formquestion, 'yes', 1);
 	} elseif ($action == 'addstockcancel') { // Addstock confirmation cancel
 		// Create an array for form
 		$formquestion = array(	'text' => '',
-			array('type' => 'text', 'name' => 'label', 'label' => $langs->trans("Label").'&nbsp;:', 'value' => $langs->trans('ConfirmAddStockCancel', $object->ref), 'size'=>40));
+			array('type' => 'text', 'name' => 'label', 'label' => $langs->trans("Label").'&nbsp;:', 'value' => $langs->trans('ConfirmAddStockCancel', $object->ref), 'size'=>40),
+			array('type' => 'text', 'name' => 'inventorycode', 'label' => $langs->trans("InventoryCode"), 'value' => $object->ref.'_'.dol_print_date(dol_now(), '%y%m%d%H%M%S'), 'size'=>25)
+		);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('AddStockAllProductCancel'), '', 'confirm_addstockcancel', $formquestion, 'yes', 1);
 	}
 

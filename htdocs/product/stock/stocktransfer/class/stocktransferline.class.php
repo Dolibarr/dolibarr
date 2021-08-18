@@ -439,11 +439,12 @@ class StockTransferLine extends CommonObjectLine
 	 * Makes all stock movements (add quantity, remove quantity or cancel all actions)
 	 *
 	 * @param string $label			label of stock movement
+	 * @param string $code_inv		label of stock movement
 	 * @param int 	 $fk_entrepot	Warehouse concerned by stock movement
 	 * @param int 	 $direction		add or remove qty
 	 * @return int	 1 if ok, <= 0 if ko
 	 */
-	public function doStockMovement($label, $fk_entrepot, $direction = 1)
+	public function doStockMovement($label, $code_inv, $fk_entrepot, $direction = 1)
 	{
 
 		global $db, $conf, $user, $langs;
@@ -473,7 +474,14 @@ class StockTransferLine extends CommonObjectLine
 				$this->fk_stocktransfer
 			);*/
 
-			$result = $movementstock->_create($user, $p->id, $fk_entrepot, $op[$direction], $direction, empty($direction) ? $this->pmp : 0, $label);
+			$result = $movementstock->_create($user
+											, $p->id
+											, $fk_entrepot
+											, $op[$direction]
+											, $direction
+											, empty($direction) ? $this->pmp : 0
+											, $label
+											, $code_inv);
 
 			if ($result < 0) {
 				setEventMessages($p->errors, $p->errorss, 'errors');
@@ -505,7 +513,18 @@ class StockTransferLine extends CommonObjectLine
 					GETPOST("codemove")
 				);*/
 
-				$result = $movementstock->_create($user, $p->id, $fk_entrepot, $op[$direction], $direction, empty($direction) ? $this->pmp : 0, $label, '', '', $dlc, $dluo, $this->batch);
+				$result = $movementstock->_create($user
+												, $p->id
+												, $fk_entrepot
+												, $op[$direction]
+												, $direction
+												, empty($direction) ? $this->pmp : 0
+												, $label
+												, $code_inv
+												, ''
+												, $dlc
+												, $dluo
+												, $this->batch);
 
 				if ($result < 0) {
 					setEventMessages($p->errors, $p->errorss, 'errors');
