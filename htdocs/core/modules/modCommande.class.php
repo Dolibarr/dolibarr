@@ -27,7 +27,7 @@
  *		\brief      Module pour gerer le suivi des commandes
  *		\file       htdocs/core/modules/modCommande.class.php
  *		\ingroup    commande
- *		\brief      Fichier de description et activation du module Commande
+ *		\brief      Description and activation file for the module command
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -193,7 +193,7 @@ class modCommande extends DolibarrModules
 		$this->export_label[$r] = 'CustomersOrdersAndOrdersLines'; // Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r] = array(array("commande", "commande", "export"));
 		$this->export_fields_array[$r] = array(
-			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'd.nom'=>'State', 'co.label'=>'Country',
+			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 'ps.nom'=>'ParentCompany', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'd.nom'=>'State', 'co.label'=>'Country',
 			'co.code'=>"CountryCode", 's.phone'=>'Phone', 's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 'c.rowid'=>"Id",
 			'c.ref'=>"Ref", 'c.ref_client'=>"RefCustomer", 'c.fk_soc'=>"IdCompany", 'c.date_creation'=>"DateCreation", 'c.date_commande'=>"OrderDate",
 			'c.date_livraison'=>"DateDeliveryPlanned", 'c.amount_ht'=>"Amount", 'c.remise_percent'=>"GlobalDiscount", 'c.total_ht'=>"TotalHT",
@@ -203,8 +203,7 @@ class modCommande extends DolibarrModules
 			'cd.tva_tx'=>"LineVATRate", 'cd.qty'=>"LineQty", 'cd.total_ht'=>"LineTotalHT", 'cd.total_tva'=>"LineTotalVAT", 'cd.total_ttc'=>"LineTotalTTC",
 			'p.rowid'=>'ProductId', 'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel'
 		);
-		if (!empty($conf->multicurrency->enabled))
-		{
+		if (!empty($conf->multicurrency->enabled)) {
 			$this->export_fields_array[$r]['c.multicurrency_code'] = 'Currency';
 			$this->export_fields_array[$r]['c.multicurrency_tx'] = 'CurrencyRate';
 			$this->export_fields_array[$r]['c.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
@@ -220,7 +219,7 @@ class modCommande extends DolibarrModules
 		//	'p.rowid'=>'List:product:ref','p.ref'=>'Text','p.label'=>'Text'
 		//);
 		$this->export_TypeFields_array[$r] = array(
-			's.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'co.label'=>'List:c_country:label:label', 'co.code'=>'Text', 's.phone'=>'Text',
+			's.nom'=>'Text', 'ps.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'co.label'=>'List:c_country:label:label', 'co.code'=>'Text', 's.phone'=>'Text',
 			's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 'c.ref'=>"Text", 'c.ref_client'=>"Text", 'c.date_creation'=>"Date",
 			'c.date_commande'=>"Date", 'c.date_livraison'=>"Date", 'c.amount_ht'=>"Numeric", 'c.remise_percent'=>"Numeric", 'c.total_ht'=>"Numeric",
 			'c.total_ttc'=>"Numeric", 'c.facture'=>"Boolean", 'c.fk_statut'=>'Status', 'c.note_public'=>"Text", 'c.date_livraison'=>'Date', 'pj.ref'=>'Text',
@@ -228,7 +227,7 @@ class modCommande extends DolibarrModules
 			'cd.total_ttc'=>"Numeric", 'p.rowid'=>'List:product:ref::product', 'p.ref'=>'Text', 'p.label'=>'Text', 'd.nom'=>'Text'
 		);
 		$this->export_entities_array[$r] = array(
-			's.rowid'=>"company", 's.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'd.nom'=>'company', 'co.label'=>'company',
+			's.rowid'=>"company", 's.nom'=>'company', 'ps.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'd.nom'=>'company', 'co.label'=>'company',
 			'co.code'=>'company', 's.phone'=>'company', 's.siren'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.siret'=>'company', 'c.rowid'=>"order",
 			'c.ref'=>"order", 'c.ref_client'=>"order", 'c.fk_soc'=>"order", 'c.date_creation'=>"order", 'c.date_commande'=>"order", 'c.amount_ht'=>"order",
 			'c.remise_percent'=>"order", 'c.total_ht'=>"order", 'c.total_ttc'=>"order", 'c.facture'=>"order", 'c.fk_statut'=>"order", 'c.note'=>"order",
@@ -237,18 +236,29 @@ class modCommande extends DolibarrModules
 			'cd.total_ttc'=>"order_line", 'p.rowid'=>'product', 'p.ref'=>'product', 'p.label'=>'product'
 		);
 		$this->export_dependencies_array[$r] = array('order_line'=>'cd.rowid', 'product'=>'cd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
-		$keyforselect = 'commande'; $keyforelement = 'order'; $keyforaliasextra = 'extra';
+		$keyforselect = 'commande';
+		$keyforelement = 'order';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$keyforselect = 'commandedet'; $keyforelement = 'order_line'; $keyforaliasextra = 'extra2';
+		$keyforselect = 'commandedet';
+		$keyforelement = 'order_line';
+		$keyforaliasextra = 'extra2';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$keyforselect = 'product'; $keyforelement = 'product'; $keyforaliasextra = 'extra3';
+		$keyforselect = 'product';
+		$keyforelement = 'product';
+		$keyforaliasextra = 'extra3';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$keyforselect = 'societe'; $keyforelement = 'company'; $keyforaliasextra = 'extra4';
+		$keyforselect = 'societe';
+		$keyforelement = 'company';
+		$keyforaliasextra = 'extra4';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
-		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extra4 ON s.rowid = extra4.fk_object';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as ps ON ps.rowid = s.parent';
+		if (empty($user->rights->societe->client->voir)) {
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON s.fk_pays = co.rowid,';
 		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'commande as c';
@@ -262,7 +272,9 @@ class modCommande extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra3 on p.rowid = extra3.fk_object';
 		$this->export_sql_end[$r] .= ' WHERE c.fk_soc = s.rowid AND c.rowid = cd.fk_commande';
 		$this->export_sql_end[$r] .= ' AND c.entity IN ('.getEntity('commande').')';
-		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
+		if (empty($user->rights->societe->client->voir)) {
+			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
+		}
 
 		// Imports
 		//--------
@@ -288,7 +300,7 @@ class modCommande extends DolibarrModules
 			'c.fk_user_valid'     => 'ValidatedById',
 			'c.fk_statut'         => 'Status*',
 			'c.remise_percent'    => 'GlobalDiscount',
-			'c.tva'               => 'TotalTVA',
+			'c.total_tva'         => 'TotalTVA',
 			'c.total_ht'          => 'TotalHT',
 			'c.total_ttc'         => 'TotalTTC',
 			'c.note_private'      => 'NotePrivate',
@@ -357,7 +369,7 @@ class modCommande extends DolibarrModules
 		//Import CPV Lines
 		$r++;
 		$this->import_code[$r] = 'commande_lines_'.$r;
-		$this->import_label[$r] = 'OrderLine';
+		$this->import_label[$r] = 'SaleOrderLines';
 		$this->import_icon[$r] = $this->picto;
 		$this->import_entities_array[$r] = [];
 		$this->import_tables_array[$r] = ['cd' => MAIN_DB_PREFIX.'commandedet', 'extra' => MAIN_DB_PREFIX.'commandedet_extrafields'];
@@ -442,13 +454,11 @@ class modCommande extends DolibarrModules
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/orders';
 		$dest = $dirodt.'/template_order.odt';
 
-		if (file_exists($src) && !file_exists($dest))
-		{
+		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
 			$result = dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;

@@ -7,6 +7,5 @@ THM=Durchschnittlicher Stundenlohn
 TJM=Durchschnittlicher Tageslohn
 THMDescription=Wenn das Modul Projektmanagement aktiv ist, dient dieser Wert zum Berechnen der aktuellen Projektzeitkosten.
 TJMDescription=Dieser Wert ist im Moment rein informativ und fliesst in keinerlei Berechnungen ein.
-LastSalaries=Die neuesten %s Lohnzahlungen
 SalariesStatistics=Lohnstatistik
 SalariesAndPayments=Löhne und Lohnzahlungen

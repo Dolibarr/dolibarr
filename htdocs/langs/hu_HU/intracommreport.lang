@@ -15,26 +15,26 @@ INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
 
 # Menu
 MenuIntracommReport=Intracomm report
-MenuIntracommReportNew=New declaration
+MenuIntracommReportNew=Új bevallás
 MenuIntracommReportList=Lista
 
 # View
-NewDeclaration=New declaration
-Declaration=Declaration
-AnalysisPeriod=Analysis period
-TypeOfDeclaration=Type of declaration
-DEB=Goods exchange declaration (DEB)
-DES=Services exchange declaration (DES)
+NewDeclaration=Új bevallás
+Declaration=Bevallás
+AnalysisPeriod=Vizsgált időszak
+TypeOfDeclaration=Bevallás típusa
+DEB=Termékek forgalmának bevallása (DEB)
+DES=Szolgáltatások forgalmának bevallása (DES)
 
 # Export page
-IntracommReportTitle=Preparation of an XML file in ProDouane format
+IntracommReportTitle=XML fájl készítése ProDouane formátumban
 
 # List
-IntracommReportList=List of generated declarations
-IntracommReportNumber=Numero of declaration
-IntracommReportPeriod=Period of nalysis
-IntracommReportTypeDeclaration=Type of declaration
-IntracommReportDownload=download XML file
+IntracommReportList=A generált bevallások listája
+IntracommReportNumber=Bevallás azonosítója
+IntracommReportPeriod=Vizsgálat időszaka
+IntracommReportTypeDeclaration=Bevallás típusa
+IntracommReportDownload=XML fájl letöltése
 
 # Invoice
-IntracommReportTransportMode=Transport mode
+IntracommReportTransportMode=Szállítás módja

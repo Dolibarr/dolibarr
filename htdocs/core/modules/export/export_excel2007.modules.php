@@ -89,8 +89,7 @@ class ExportExcel2007 extends ModeleExports
 
 		$this->disabled = 0;
 
-		if (empty($this->disabled))
-		{
+		if (empty($this->disabled)) {
 			require_once PHPEXCELNEW_PATH.'Spreadsheet.php';
 			$this->label_lib = 'PhpSpreadSheet';
 			$this->version_lib = '1.6.0'; // No way to get info from library
@@ -183,8 +182,7 @@ class ExportExcel2007 extends ModeleExports
 		// phpcs:enable
 		global $user, $conf, $langs;
 
-		if (!empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
-		{
+		if (!empty($conf->global->MAIN_USE_PHP_WRITEEXCEL)) {
 			$outputlangs->charset_output = 'ISO-8859-1'; // Because Excel 5 format is ISO
 		}
 
@@ -195,14 +193,12 @@ class ExportExcel2007 extends ModeleExports
 
 		$outputlangs->load("exports");
 
-		require_once DOL_DOCUMENT_ROOT.'/includes/phpoffice/autoloader.php';
+		require_once DOL_DOCUMENT_ROOT.'/includes/phpoffice/phpspreadsheet/src/autoloader.php';
 		require_once DOL_DOCUMENT_ROOT.'/includes/Psr/autoloader.php';
 		require_once PHPEXCELNEW_PATH.'Spreadsheet.php';
 
-		if ($this->id == 'excel2007')
-		{
-			if (!class_exists('ZipArchive'))	// For Excel2007, PHPSpreadSheet may need ZipArchive
-			{
+		if ($this->id == 'excel2007') {
+			if (!class_exists('ZipArchive')) {	// For Excel2007, PHPSpreadSheet may need ZipArchive
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorPHPNeedModule', 'zip');
 				return -1;
@@ -262,18 +258,17 @@ class ExportExcel2007 extends ModeleExports
 		if (!empty($conf->global->MAIN_USE_PHP_WRITEEXCEL)) {
 			$this->col = 0;
 		}
-		foreach ($array_selected_sorted as $code => $value)
-		{
+		foreach ($array_selected_sorted as $code => $value) {
 			$alias = $array_export_fields_label[$code];
 			//print "dd".$alias;
-			if (empty($alias)) dol_print_error('', 'Bad value for field with code='.$code.'. Try to redefine export.');
-			if (!empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
-			{
+			if (empty($alias)) {
+				dol_print_error('', 'Bad value for field with code='.$code.'. Try to redefine export.');
+			}
+			if (!empty($conf->global->MAIN_USE_PHP_WRITEEXCEL)) {
 				$this->worksheet->write($this->row, $this->col, $outputlangs->transnoentities($alias), $formatheader);
 			} else {
 				$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $outputlangs->transnoentities($alias));
-				if (!empty($array_types[$code]) && in_array($array_types[$code], array('Date', 'Numeric', 'TextAuto')))		// Set autowidth for some types
-				{
+				if (!empty($array_types[$code]) && in_array($array_types[$code], array('Date', 'Numeric', 'TextAuto'))) {		// Set autowidth for some types
 					$this->workbook->getActiveSheet()->getColumnDimension($this->column2Letter($this->col + 1))->setAutoSize(true);
 				}
 			}
@@ -306,46 +301,45 @@ class ExportExcel2007 extends ModeleExports
 
 		$reg = array();
 
-		foreach ($array_selected_sorted as $code => $value)
-		{
-			if (strpos($code, ' as ') == 0) $alias = str_replace(array('.', '-', '(', ')'), '_', $code);
-			else $alias = substr($code, strpos($code, ' as ') + 4);
-			if (empty($alias)) dol_print_error('', 'Bad value for field with code='.$code.'. Try to redefine export.');
+		foreach ($array_selected_sorted as $code => $value) {
+			if (strpos($code, ' as ') == 0) {
+				$alias = str_replace(array('.', '-', '(', ')'), '_', $code);
+			} else {
+				$alias = substr($code, strpos($code, ' as ') + 4);
+			}
+			if (empty($alias)) {
+				dol_print_error('', 'Bad value for field with code='.$code.'. Try to redefine export.');
+			}
 			$newvalue = $objp->$alias;
 
 			$newvalue = $this->excel_clean($newvalue);
 			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';
 
-			if (preg_match('/^Select:/i', $typefield, $reg) && $typefield = substr($typefield, 7))
-			{
-				$array = unserialize($typefield);
+			if (preg_match('/^Select:/i', $typefield) && $typefield = substr($typefield, 7)) {
+				$array = json_decode($typefield, true);
 				$array = $array['options'];
 				$newvalue = $array[$newvalue];
 			}
 
 			// Traduction newvalue
-			if (preg_match('/^\((.*)\)$/i', $newvalue, $reg))
-			{
+			if (preg_match('/^\((.*)\)$/i', $newvalue, $reg)) {
 				$newvalue = $outputlangs->transnoentities($reg[1]);
 			} else {
 				$newvalue = $outputlangs->convToOutputCharset($newvalue);
 			}
 
-			if (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/i', $newvalue))
-			{
+			if (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/i', $newvalue)) {
 				$newvalue = dol_stringtotime($newvalue);
 				$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($newvalue));
 				$coord = $this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row + 1)->getCoordinate();
 				$this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('yyyy-mm-dd');
-			} elseif (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]$/i', $newvalue))
-			{
+			} elseif (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]$/i', $newvalue)) {
 				$newvalue = dol_stringtotime($newvalue);
 				$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($newvalue));
 				$coord = $this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row + 1)->getCoordinate();
 				$this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('yyyy-mm-dd h:mm:ss');
 			} else {
-				if ($typefield == 'Text' || $typefield == 'TextAuto')
-				{
+				if ($typefield == 'Text' || $typefield == 'TextAuto') {
 					$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, (string) $newvalue);
 					$coord = $this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row + 1)->getCoordinate();
 					$this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('@');
@@ -422,7 +416,9 @@ class ExportExcel2007 extends ModeleExports
 	{
 
 		$c = intval($c);
-		if ($c <= 0) return '';
+		if ($c <= 0) {
+			return '';
+		}
 
 		while ($c != 0) {
 			$p = ($c - 1) % 26;
@@ -449,11 +445,13 @@ class ExportExcel2007 extends ModeleExports
 			if (!empty($endCell)) {
 				$cellRange = $startCell.':'.$endCell;
 				$this->workbook->getActiveSheet()->mergeCells($startCell.':'.$endCell);
+			} else {
+				$cellRange = $startCell;
 			}
-			else $cellRange = $startCell;
-			if (!empty($this->styleArray)) $this->workbook->getActiveSheet()->getStyle($cellRange)->applyFromArray($this->styleArray);
-		}
-		catch (Exception $e) {
+			if (!empty($this->styleArray)) {
+				$this->workbook->getActiveSheet()->getStyle($cellRange)->applyFromArray($this->styleArray);
+			}
+		} catch (Exception $e) {
 			$this->error = $e->getMessage();
 			return -1;
 		}
@@ -532,11 +530,15 @@ class ExportExcel2007 extends ModeleExports
 				$startColumn = Coordinate::columnIndexFromString($startCell->getColumn());
 				$startRow = $startCell->getRow();
 				foreach ($TDatas as $column => $TRows) {
-					if ($boldTitle) $this->setFontStyle(true, $this->styleArray['font']['color']['argb']);
+					if ($boldTitle) {
+						$this->setFontStyle(true, $this->styleArray['font']['color']['argb']);
+					}
 					$cell = $this->workbook->getActiveSheet()->getCellByColumnAndRow($startColumn, $startRow);
 					$this->setCellValue($column, $cell->getCoordinate());
 					$rowPos = $startRow;
-					if ($boldTitle) $this->setFontStyle(false, $this->styleArray['font']['color']['argb']);
+					if ($boldTitle) {
+						$this->setFontStyle(false, $this->styleArray['font']['color']['argb']);
+					}
 					foreach ($TRows as $row) {
 						$rowPos++;
 						$cell = $this->workbook->getActiveSheet()->getCellByColumnAndRow($startColumn, $rowPos);
@@ -545,8 +547,7 @@ class ExportExcel2007 extends ModeleExports
 					$startColumn++;
 				}
 			}
-		}
-		catch (Exception $e) {
+		} catch (Exception $e) {
 			$this->error = $e->getMessage();
 			return -1;
 		}
@@ -570,16 +571,19 @@ class ExportExcel2007 extends ModeleExports
 				$startRow = $startCell->getRow();
 				foreach ($TDatas as $title => $val) {
 					$cell = $this->workbook->getActiveSheet()->getCellByColumnAndRow($startColumn, $startRow);
-					if ($boldTitle) $this->setFontStyle(true, $this->styleArray['font']['color']['argb']);
+					if ($boldTitle) {
+						$this->setFontStyle(true, $this->styleArray['font']['color']['argb']);
+					}
 					$this->setCellValue($title, $cell->getCoordinate());
-					if ($boldTitle) $this->setFontStyle(false, $this->styleArray['font']['color']['argb']);
+					if ($boldTitle) {
+						$this->setFontStyle(false, $this->styleArray['font']['color']['argb']);
+					}
 					$cell2 = $this->workbook->getActiveSheet()->getCellByColumnAndRow($startColumn + 1, $startRow);
 					$this->setCellValue($val, $cell2->getCoordinate());
 					$startRow++;
 				}
 			}
-		}
-		catch (Exception $e) {
+		} catch (Exception $e) {
 			$this->error = $e->getMessage();
 			return -1;
 		}
@@ -615,7 +619,9 @@ class ExportExcel2007 extends ModeleExports
 		try {
 			$startCell = $this->workbook->getActiveSheet()->getCell($startCell);
 			$startColumn = Coordinate::columnIndexFromString($startCell->getColumn());
-			if (!empty($offset)) $startColumn += $offset;
+			if (!empty($offset)) {
+				$startColumn += $offset;
+			}
 
 			$startRow = $startCell->getRow();
 			$startCell = $this->workbook->getActiveSheet()->getCellByColumnAndRow($startColumn, $startRow);
@@ -625,8 +631,7 @@ class ExportExcel2007 extends ModeleExports
 			$endCell = $this->workbook->getActiveSheet()->getCellByColumnAndRow($startColumn + ($length - 1), $startRow);
 			$endCoordinate = $endCell->getCoordinate();
 			$this->workbook->getActiveSheet()->mergeCells($startCoordinate.':'.$endCoordinate);
-		}
-		catch (Exception $e) {
+		} catch (Exception $e) {
 			$this->error = $e->getMessage();
 			return -1;
 		}

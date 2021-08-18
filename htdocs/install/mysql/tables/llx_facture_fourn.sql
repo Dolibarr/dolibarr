@@ -1,8 +1,9 @@
 -- ===========================================================================
--- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@inodbox.com>
--- Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+-- Copyright (C) 2007-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+-- Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
+-- Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
+-- Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -32,10 +33,11 @@ create table llx_facture_fourn
   fk_soc				integer NOT NULL,
   
   datec					datetime,                      -- date de creation de la facture
-  datef					date,                          -- date de la facture
+  datef					date,                          -- date invoice
   date_pointoftax		date DEFAULT NULL,			   -- date point of tax (for GB)
   date_valid			date,						   -- date validation
   tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,                     -- last modification date
+  date_closing			datetime,                      -- date closing
   libelle				varchar(255),
   paye					smallint         DEFAULT 0 NOT NULL,
   amount				double(24,8)     DEFAULT 0 NOT NULL,
@@ -57,14 +59,15 @@ create table llx_facture_fourn
   fk_user_author		integer,                       -- user making creation
   fk_user_modif         integer,                       -- user making last change
   fk_user_valid			integer,                       -- user validating
+  fk_user_closing		integer,					   -- user closing
 
   fk_facture_source		integer,                       -- facture origine si facture avoir
   fk_projet				integer,                       -- projet auquel est associee la facture
 
   fk_account            integer,                       -- bank account
-  fk_cond_reglement		integer,   	                   	-- condition de reglement (30 jours, fin de mois ...)
-  fk_mode_reglement		integer,                	   	-- mode de reglement (CHQ, VIR, ...)
-  date_lim_reglement 	date,                          	-- date limite de reglement
+  fk_cond_reglement		integer,   	                   -- condition de reglement (30 jours, fin de mois ...)
+  fk_mode_reglement		integer,                	   -- mode de reglement (CHQ, VIR, ...)
+  date_lim_reglement 	date,                          -- date limite de reglement
 
   note_private			text,
   note_public			text,

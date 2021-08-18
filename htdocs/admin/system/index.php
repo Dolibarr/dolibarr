@@ -28,7 +28,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "user", "install"));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*
@@ -90,8 +92,7 @@ $dbversion = $db->getVersion();
 print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>".$dblabel." ".$dbversion."</td></tr>\n";
 print '</table>';
 // Add checks on database options
-if ($db->type == 'pgsql')
-{
+if ($db->type == 'pgsql') {
 	// Check option standard_conforming_strings is on
 	$paramarray = $db->getServerParametersValues('standard_conforming_strings');
 	//	if ($paramarray['standard_conforming_strings'] != 'on' && $paramarray['standard_conforming_strings'] != 1)

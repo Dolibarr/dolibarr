@@ -109,10 +109,18 @@ abstract class ModeleNumRefChequeReceipts
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		}
+		if ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		}
+		if ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		}
+		if ($this->version) {
+			return $this->version;
+		}
 		return $langs->trans("NotAvailable");
 	}
 }
@@ -142,14 +150,14 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 		global $conf;
 
 		$type = 'chequereceipt';
-		$liste = array();
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste = getListOfModels($db, $type, $maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 		// TODO Remove this to use getListOfModels only
-		$liste = array('blochet'=>'blochet');
+		$list = array('blochet'=>'blochet');
 
-		return $liste;
+		return $list;
 	}
 }
 
@@ -173,10 +181,8 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 	$dir = DOL_DOCUMENT_ROOT."/core/modules/cheque/doc/";
 
 	// Positionne modele sur le nom du modele a utiliser
-	if (!dol_strlen($modele))
-	{
-		if (!empty($conf->global->CHEQUERECEIPT_ADDON_PDF))
-		{
+	if (!dol_strlen($modele)) {
+		if (!empty($conf->global->CHEQUERECEIPT_ADDON_PDF)) {
 			$modele = $conf->global->CHEQUERECEIPT_ADDON_PDF;
 		} else {
 			//print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_PDF_NotDefined");
@@ -187,8 +193,7 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 
 	// Charge le modele
 	$file = "pdf_".$modele.".modules.php";
-	if (file_exists($dir.$file))
-	{
+	if (file_exists($dir.$file)) {
 		$classname = "pdf_".$modele;
 		require_once $dir.$file;
 
@@ -197,8 +202,7 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output = $outputlangs->charset_output;
-		if ($obj->write_file($id, $outputlangs) > 0)
-		{
+		if ($obj->write_file($id, $outputlangs) > 0) {
 			$outputlangs->charset_output = $sav_charset_output;
 			return 1;
 		} else {

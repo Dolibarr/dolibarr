@@ -53,7 +53,8 @@ TypeOfLineServiceOrProduct=Vonal típusa (0 = a termék, 1 = szolgáltatás)
 FileWithDataToImport=File adatokat importálni
 FileToImport=Forrás fájlt importálni
 FileMustHaveOneOfFollowingFormat=File to import must have one of following formats
-DownloadEmptyExample=Download template file with field content information (* are mandatory fields)
+DownloadEmptyExample=Download template file with field content information
+StarAreMandatory=* are mandatory fields
 ChooseFormatOfFileToImport=Choose the file format to use as import file format by clicking on the %s icon to select it...
 ChooseFileToImport=Upload file then click on the %s icon to select file as source import file...
 SourceFileFormat=Forrás fájlformátum

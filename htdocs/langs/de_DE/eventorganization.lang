@@ -1,0 +1,149 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModuleEventOrganizationName = Organisation von Veranstaltungen
+EventOrganizationDescription = Organisation von Veranstaltungen mittels Projekt-Modul
+EventOrganizationDescriptionLong= Verwalten Sie die Veranstaltungsorganisation für Konferenzen (Teilnehmer, Redner) mit einer öffentlichen Buchungsseite.
+#
+# Menu
+#
+EventOrganizationMenuLeft = Organisierte Veranstaltungen
+EventOrganizationConferenceOrBoothMenuLeft = Konferenz oder Stand
+
+#
+# Admin page
+#
+EventOrganizationSetup = Einstellungen für die Organisation von Veranstaltungen
+Settings = Einstellungen
+EventOrganizationSetupPage = Einstellungs-Seite für die Organisation von Veranstaltungen
+EVENTORGANIZATION_TASK_LABEL = Bezeichnung der Aufgaben, die automatisch erstellt werden sollen, wenn das Projekt bestätigt wird
+EVENTORGANIZATION_TASK_LABELTooltip = Wenn Sie eine organisierte Veranstaltung bestätigen, können einige Aufgaben automatisch im Projekt erstellt werden <br> <br> Zum Beispiel: <br> Aufruf für Konferenz senden <br> Aufruf für Standbuchungen senden <br> Anfragen für Konferenzen empfangen <br>Anfragen für Stände empfangen <br>Veranstaltungsbuchung für Teilnehmer freigeben<br>Veranstaltungserinnerung an Referenten senden <br>Veranstaltungserinnerung an Standinhaber senden <br>  Veranstaltungserinnerung an Teilnehmer senden
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kategorie, die Drittanbietern hinzugefügt werden soll, wird automatisch erstellt, wenn jemand eine Konferenz vorschlägt
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Kategorie, die Drittanbietern hinzugefügt werden soll, wird automatisch erstellt, wenn sie einen Stand vorschlagen
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Vorlage einer E-Mail, die nach Erhalt eines Konferenzvorschlags gesendet werden soll.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Vorlage einer E-Mail, die nach Erhalt eines Standvorschlags gesendet werden soll.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Vorlage einer E-Mail, die gesendet werden soll, nachdem ein Abonnement für einen Stand bezahlt wurde.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = E-Mail-Vorlage, die gesendet werden soll, nachdem ein Abonnement für eine Veranstaltung bezahlt wurde.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Vorlage der E-Mail bei Massenaktion an Teilnehmer
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Vorlage der Massenaktion-E-Mail an die Redner
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Filtern Sie die Auswahlliste des Drittanbieters in der Erstellungskarte / dem Formular des Teilnehmers nach Kategorie
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filtern Sie die Auswahlliste des Drittanbieters in der Teilnehmererstellungskarte / dem Formular nach Kundentyp
+
+#
+# Object
+#
+EventOrganizationConfOrBooth= Konferenz oder Stand
+ManageOrganizeEvent = Organisation von Veranstaltungen verwalten
+ConferenceOrBooth = Konferenz oder Stand
+ConferenceOrBoothTab = Konferenz oder Stand
+AmountOfSubscriptionPaid = Betrag des bezahlten Abonnements
+DateSubscription = Datum Teilnahme
+ConferenceOrBoothAttendee = Konferenz- oder Standteilnehmer
+
+#
+# Template Mail
+#
+YourOrganizationEventConfRequestWasReceived = Ihre Anfrage für die Konferenz wurde empfangen
+YourOrganizationEventBoothRequestWasReceived = Ihre Anfrage für Stand wurde empfangen
+EventOrganizationEmailAskConf = Anfrage für eine Konferenz
+EventOrganizationEmailAskBooth = Anfrage für Stand
+EventOrganizationEmailSubsBooth = Abonnement für Stand
+EventOrganizationEmailSubsEvent = Buchung für eine Veranstaltung
+EventOrganizationMassEmailAttendees = Kommunikation mit den Teilnehmern
+EventOrganizationMassEmailSpeakers = Kommunikation mit den Sprechern
+
+#
+# Event
+#
+AllowUnknownPeopleSuggestConf=Erlauben Sie unbekannten Personen, Konferenzen vorzuschlagen
+AllowUnknownPeopleSuggestConfHelp=Erlauben Sie unbekannten Personen, Konferenzen vorzuschlagen
+AllowUnknownPeopleSuggestBooth=Erlauben Sie unbekannten Personen, einen Stand vorzuschlagen
+AllowUnknownPeopleSuggestBoothHelp=Erlauben Sie unbekannten Personen, einen Stand vorzuschlagen
+PriceOfRegistration=Preis der Registrierung
+PriceOfRegistrationHelp=Preis der Registrierung
+PriceOfBooth=Abonnementpreis für einen Stand
+PriceOfBoothHelp=Abonnementpreis für einen Stand
+EventOrganizationICSLink=Verknüpfe ICS für Ereignisse
+ConferenceOrBoothInformation=Konferenz- oder Standinformationen
+Attendees = Teilnehmer
+DownloadICSLink = ICS-Link herunterladen
+EVENTORGANIZATION_SECUREKEY = Sicherer Schlüssel des öffentlichen Registrierungslinks zu einer Konferenz
+SERVICE_BOOTH_LOCATION = Service, der für die Rechnungszeile über einen Stand verwendet wird
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service, der für die Rechnungszeile über eine Teilnahmebuchung einer Konferenz verwendet wird
+NbVotes=Anzahl der Stimmen
+#
+# Status
+#
+EvntOrgDraft = Entwurf
+EvntOrgSuggested = Empfohlen
+EvntOrgConfirmed = Bestätigt
+EvntOrgNotQualified = Nicht qualifiziert
+EvntOrgDone = Erledigt
+EvntOrgCancelled = Abgesagt
+#
+# Public page
+#
+SuggestForm = Vorschlagsseite
+RegisterPage = Seite für Konferenzen oder Stände
+EvntOrgRegistrationHelpMessage = Hier können Sie für eine Veranstaltung abstimmen, eine neue Konferenz oder einen neuen Stand für das Projekt vorschlagen
+EvntOrgRegistrationConfHelpMessage = Hier können Sie eine neue Konferenz für das Projekt vorschlagen
+EvntOrgRegistrationBoothHelpMessage = Hier können Sie einen neuen Stand für das Projekt vorschlagen
+ListOfSuggestedConferences = Liste der vorgeschlagenen Konferenzen
+ListOfSuggestedBooths = Liste der vorgeschlagenen Stände
+SuggestConference = Eine neue Konferenz vorschlagen
+SuggestBooth = Einen Stand vorschlagen
+ViewAndVote = Vorgeschlagene Veranstaltungen ansehen und abstimmen
+PublicAttendeeSubscriptionPage = Öffentlicher Link zur Registrierung zu einer Konferenz
+MissingOrBadSecureKey = Der Sicherheitsschlüssel ist ungültig oder fehlt
+EvntOrgWelcomeMessage = Mit diesem Formular können Sie sich als neuer Teilnehmer zur Konferenz anmelden: '%s'
+EvntOrgDuration = Diese Konferenz beginnt am %s und endet am %s.
+ConferenceAttendeeFee = Konferenzteilnehmergebühr für die Veranstaltung: '%s' vom %s bis %s.
+BoothLocationFee = Stand für die Veranstaltung: '%s' vom %s bis %s
+EventType = Ereignistyp
+LabelOfBooth=Stand-Label
+LabelOfconference=Konferenz-Label
+ConferenceIsNotConfirmed=Abonnement nicht verfügbar, Konferenz ist noch nicht bestätigt
+DateMustBeBeforeThan=%s muss vor %s sein
+DateMustBeAfterThan=%s muss nach %s sein
+
+#
+# Vote page
+#
+EvntOrgRegistrationWelcomeMessage = Willkommen auf der Vorschlagseite für Konferenzen und Stände.
+EvntOrgRegistrationConfWelcomeMessage = Willkommen auf der Vorschlagsseite für Konferenzen.
+EvntOrgRegistrationBoothWelcomeMessage = Willkommen auf der Vorschlagsseite für Stände.
+EvntOrgVoteHelpMessage = Hier können Sie die vorgeschlagenen Veranstaltungen für das Projekt einsehen und für sie abstimmen
+VoteOk = Ihre Stimme wurde angenommen.
+AlreadyVoted = Sie haben bereits für diese Veranstaltung abgestimmt.
+VoteError = Bei der Abstimmung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.
+
+#
+# SubscriptionOk page
+#
+SubscriptionOk = Ihre Buchung für diese Konferenz wurde bestätigt
+#
+# Subscription validation mail
+#
+ConfAttendeeSubscriptionConfirmation = Bestätigung Ihrer Buchung für eine Konferenz
+#
+# Payment page
+#
+Attendee = Teilnehmer
+PaymentConferenceAttendee = Zahlung für Konferenzteilnehmer
+PaymentBoothLocation = Zahlung für einen Stand

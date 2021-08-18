@@ -75,10 +75,10 @@ class BOMTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
 	public static function setUpBeforeClass()
 	{
 		global $conf,$user,$langs,$db;
@@ -87,11 +87,11 @@ class BOMTest extends PHPUnit\Framework\TestCase
 		print __METHOD__."\n";
 	}
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
 	public static function tearDownAfterClass()
 	{
 		global $conf,$user,$langs,$db;
@@ -129,7 +129,7 @@ class BOMTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testBOMCreate
 	 *
-     * @return int
+	 * @return int
 	 */
 	public function testBOMCreate()
 	{

@@ -116,7 +116,7 @@ class CProductNature // extends CommonObject
 
 		$this->db->begin();
 
-	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		// Commit or rollback
 		if (!$resql) {
@@ -150,17 +150,19 @@ class CProductNature // extends CommonObject
 		$sql .= " t.active";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		$sql_where = array();
-		if ($id)   $sql_where[] = " t.rowid = ".$id;
-		if ($code >= 0) $sql_where[] = " t.code = ".((int) $code);
+		if ($id) {
+			$sql_where[] = " t.rowid = ".((int) $id);
+		}
+		if ($code >= 0) {
+			$sql_where[] = " t.code = ".((int) $code);
+		}
 		if (count($sql_where) > 0) {
 			$sql .= ' WHERE '.implode(' AND ', $sql_where);
 		}
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
@@ -172,7 +174,7 @@ class CProductNature // extends CommonObject
 
 			return 1;
 		} else {
-	  		$this->error = "Error ".$this->db->lasterror();
+			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -232,8 +234,7 @@ class CProductNature // extends CommonObject
 			$this->records = array();
 			$num = $this->db->num_rows($resql);
 			if ($num > 0) {
-				while ($obj = $this->db->fetch_object($resql))
-				{
+				while ($obj = $this->db->fetch_object($resql)) {
 					$record = new self($this->db);
 
 					$record->id    = $obj->rowid;
@@ -289,13 +290,13 @@ class CProductNature // extends CommonObject
 	}
 
 
- 	/**
- 	 *  Delete object in database
- 	 *
- 	 *	@param  User	$user        User that delete
- 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
- 	 *  @return	int					 <0 if KO, >0 if OK
- 	 */
+	/**
+	 *  Delete object in database
+	 *
+	 *	@param  User	$user        User that delete
+	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
+	 *  @return	int					 <0 if KO, >0 if OK
+	 */
 	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;

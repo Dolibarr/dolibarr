@@ -30,14 +30,30 @@
  *		\brief      Wrapper to output pages when website is powered by Dolibarr instead of a native web server
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
-if (!defined('NOLOGIN'))        define("NOLOGIN", 1);
-if (!defined('NOCSRFCHECK'))    define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1); // Disables token renewal
+}
+if (!defined('NOLOGIN')) {
+	define("NOLOGIN", 1);
+}
+if (!defined('NOCSRFCHECK')) {
+	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', '1');
+}
 
 /**
  * Header empty
@@ -69,18 +85,15 @@ $accessallowed = 1;
 $type = '';
 
 
-if (empty($pageid))
-{
+if (empty($pageid)) {
 	require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
 	$object = new Website($db);
 	$object->fetch(0, $websitekey);
 
-	if (empty($object->id))
-	{
-		if (empty($pageid))
-		{
+	if (empty($object->id)) {
+		if (empty($pageid)) {
 			// Return header 404
 			header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
 
@@ -91,57 +104,52 @@ if (empty($pageid))
 
 	$objectpage = new WebsitePage($db);
 
-	if ($pageref)
-	{
+	if ($pageref) {
 		$result = $objectpage->fetch(0, $object->id, $pageref);
-		if ($result > 0)
-		{
+		if ($result > 0) {
 			$pageid = $objectpage->id;
-		} elseif ($result == 0)
-		{
+		} elseif ($result == 0) {
 			// Page not found from ref=pageurl, we try using alternative alias
 			$result = $objectpage->fetch(0, $object->id, null, $pageref);
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				$pageid = $objectpage->id;
 			}
 		}
 	} else {
-		if ($object->fk_default_home > 0)
-		{
+		if ($object->fk_default_home > 0) {
 			$result = $objectpage->fetch($object->fk_default_home);
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				$pageid = $objectpage->id;
 			}
 		}
 
-		if (empty($pageid))
-		{
+		if (empty($pageid)) {
 			$array = $objectpage->fetchAll($object->id); // TODO Can filter on container of type pages only ?
-			if (is_array($array) && count($array) > 0)
-			{
+			if (is_array($array) && count($array) > 0) {
 				$firstrep = reset($array);
 				$pageid = $firstrep->id;
 			}
 		}
 	}
 }
-if (empty($pageid))
-{
+if (empty($pageid)) {
 	// Return header 404
 	header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
 
 	$langs->load("website");
 
-	if (!GETPOSTISSET('pageref')) print $langs->trans("PreviewOfSiteNotYetAvailable", $websitekey);
+	if (!GETPOSTISSET('pageref')) {
+		print $langs->trans("PreviewOfSiteNotYetAvailable", $websitekey);
+	}
 
 	include DOL_DOCUMENT_ROOT.'/public/error-404.php';
 	exit;
 }
 
 $appli = constant('DOL_APPLICATION_TITLE');
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli = $conf->global->MAIN_APPLICATION_TITLE;
+if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+	$appli = $conf->global->MAIN_APPLICATION_TITLE;
+}
 
 
 
@@ -155,8 +163,7 @@ if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli = $conf->global->MAIN_
 // Security: Delete string ../ into $original_file
 global $dolibarr_main_data_root;
 
-if ($pageid == 'css')   // No more used ?
-{
+if ($pageid == 'css') {   // No more used ?
 	header('Content-type: text/css');
 	// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
 	//if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
@@ -172,16 +179,14 @@ $refname = basename(dirname($original_file)."/");
 
 // Security:
 // Limite acces si droits non corrects
-if (!$accessallowed)
-{
+if (!$accessallowed) {
 	accessforbidden();
 }
 
 // Security:
 // On interdit les remontees de repertoire ainsi que les pipe dans
 // les noms de fichiers.
-if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file))
-{
+if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file)) {
 	dol_syslog("Refused to deliver file ".$original_file);
 	$file = basename($original_file); // Do no show plain path of original_file in shown error message
 	dol_print_error(0, $langs->trans("ErrorFileNameInvalid", $file));
@@ -197,8 +202,7 @@ dol_syslog("index.php include $original_file $filename content-type=$type");
 $original_file_osencoded = dol_osencode($original_file); // New file name encoded in OS encoding charset
 
 // This test if file exists should be useless. We keep it to find bug more easily
-if (!file_exists($original_file_osencoded))
-{
+if (!file_exists($original_file_osencoded)) {
 	// Return header 404
 	header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
 
@@ -215,4 +219,6 @@ define('USEDOLIBARRSERVER', 1);
 print '<!-- Page content '.$original_file.' rendered with DOLIBARR SERVER : Html with CSS link and html header + Body that was saved into tpl dir -->'."\n";
 include_once $original_file_osencoded; // Note: The pageXXX.tpl.php showed here contains a formatage with dolWebsiteOutput() at end of page.
 
-if (is_object($db)) $db->close();
+if (is_object($db)) {
+	$db->close();
+}

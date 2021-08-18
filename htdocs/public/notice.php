@@ -18,17 +18,27 @@
 /**
  *	\file       htdocs/public/notice.php
  *	\brief      Dolibarr page to show a notice.
- *              Default notice is a message to say network connection is off.
+ *              Default notice is a message to say network connection is off or show another message.
  *              You can also call this page with URL:
  *                /public/notice.php?lang=xx_XX&transkey=translation_key  (key must be inside file main.lang, error.lang or other.lang)
  *                /public/notice.php?transphrase=url_encoded_sentence_to_show
  */
 
-if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
-if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-if (!defined('NOSESSION'))		define('NOSESSION', '1');
-if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
+if (!defined('NOLOGIN')) {
+	define("NOLOGIN", 1); // This means this output page does not require to be logged.
+}
+if (!defined('NOCSRFCHECK')) {
+	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', '1');
+}
 
 require '../main.inc.php';
 
@@ -37,13 +47,15 @@ require '../main.inc.php';
  * View
  */
 
-if (!GETPOST('transkey', 'alphanohtml') && !GETPOST('transphrase', 'alphanohtml'))
-{
+if (!GETPOST('transkey', 'alphanohtml') && !GETPOST('transphrase', 'alphanohtml')) {
 	print 'Sorry, it seems your internet connexion is off.<br>';
 	print 'You need to be connected to network to use this software.<br>';
 } else {
 	$langs->loadLangs(array("error", "other"));
 
-	if (GETPOST('transphrase', 'alphanohtml')) print dol_escape_htmltag(GETPOST('transphrase', 'alphanohtml'));
-	elseif (GETPOST('transkey', 'alphanohtml')) print dol_escape_htmltag($langs->trans(GETPOST('transkey', 'alphanohtml')));
+	if (GETPOST('transphrase', 'alphanohtml')) {
+		print dol_escape_htmltag(GETPOST('transphrase', 'alphanohtml'));
+	} elseif (GETPOST('transkey', 'alphanohtml')) {
+		print dol_escape_htmltag($langs->trans(GETPOST('transkey', 'alphanohtml')));
+	}
 }

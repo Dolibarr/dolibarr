@@ -41,10 +41,14 @@ $langs->loadLangs(array("loan"));
 
 // Security check
 $id = GETPOST('id', 'int');
+
+$hookmanager->initHooks(array('loannote'));
 $result = restrictedArea($user, 'loan', $id, '&loan');
 
 $object = new Loan($db);
-if ($id > 0) $object->fetch($id);
+if ($id > 0) {
+	$object->fetch($id);
+}
 
 $permissionnote = $user->rights->loan->write; // Used by the include of actions_setnotes.inc.php
 
@@ -53,7 +57,14 @@ $permissionnote = $user->rights->loan->write; // Used by the include of actions_
  *  Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+
+$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+}
 
 
 /*
@@ -66,11 +77,10 @@ $title = $langs->trans("Loan").' - '.$langs->trans("Notes");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
 llxHeader("", $title, $help_url);
 
-if ($id > 0)
-{
+if ($id > 0) {
 	/*
-     * Affichage onglets
-     */
+	 * Affichage onglets
+	 */
 	$totalpaid = $object->getSumPayment();
 
 	$head = loan_prepare_head($object);

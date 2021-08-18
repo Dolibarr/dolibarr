@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - agenda
 IdAgenda=ID Veranstaltung
 Agenda=Terminplanung
+Agendas=Tagesordnungen
 EventReports=Ereignisberichte
 MenuDoneActions=Alle abgeschl. Termine
 MenuDoneMyActions=Meine abgeschl. Termine
@@ -10,6 +11,7 @@ ViewPerUser=Benutzeransicht
 ViewPerType=Ansicht pro Typ
 AgendaAutoActionDesc=Gib hier an, welche Ereignisse automatisch in den Kalender eingetragen werden sollen.\nWenn du nichts anwählst, werden keine Geschäftsvorgänge, wie Freigaben oder Statusänderungen, eingetragen.
 AgendaSetupOtherDesc=Hier gibst Du die Exportoptionen zu externen Kalendern, wie Google Calendar oder Thunderbird an.
+AgendaExtSitesDesc=Diese Seite erlaubt Ihnen externe Kalender zu konfigurieren.
 EventRemindersByEmailNotEnabled=Benachrichtigungen sind in den Moduleinstellungen deaktiviert (%s).
 NewCompanyToDolibarr=Partner %s erzeugt
 COMPANY_DELETEInDolibarr=Partner %s gelöscht.

@@ -34,8 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 $langs->loadLangs(array("admin", "resource"));
 
 // Security check
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 
@@ -44,12 +45,9 @@ $action = GETPOST('action', 'aZ09');
  * Actions
  */
 
-if ($action == 'updateoptions')
-{
-	if (GETPOST('activate_RESOURCE_USE_SEARCH_TO_SELECT') != '')
-	{
-		if (dolibarr_set_const($db, "RESOURCE_USE_SEARCH_TO_SELECT", GETPOST('activate_RESOURCE_USE_SEARCH_TO_SELECT'), 'chaine', 0, '', $conf->entity))
-		{
+if ($action == 'updateoptions') {
+	if (GETPOST('activate_RESOURCE_USE_SEARCH_TO_SELECT') != '') {
+		if (dolibarr_set_const($db, "RESOURCE_USE_SEARCH_TO_SELECT", GETPOST('activate_RESOURCE_USE_SEARCH_TO_SELECT'), 'chaine', 0, '', $conf->entity)) {
 			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 		} else {
 			setEventMessages($langs->trans("Error"), null, 'errors');
@@ -76,6 +74,7 @@ print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateoptions">';
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
@@ -86,8 +85,7 @@ print '<td></td>';
 // Utilisation formulaire Ajax sur choix produit
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("UseSearchToSelectResource").'</td>';
-if (empty($conf->use_javascript_ajax))
-{
+if (empty($conf->use_javascript_ajax)) {
 	print '<td class="nowrap right" colspan="2">';
 	print $langs->trans("NotAvailableWhenAjaxDisabled");
 	print '</td>';
@@ -135,6 +133,7 @@ print '<td></td>';
 print '</tr>';
 
 print '</table>';
+print '</div>';
 
 print '</form>';
 

@@ -538,22 +538,18 @@ class RssParser
 
 		if ($el == 'channel') {
 			$this->inchannel = true;
-		} elseif ($el == 'item' or $el == 'entry') {
+		} elseif ($el == 'item' || $el == 'entry') {
 			$this->initem = true;
 			if (isset($attrs['rdf:about'])) {
 				$this->current_item['about'] = $attrs['rdf:about'];
 			}
-		} elseif ($this->_format == 'rss' and
-			$this->current_namespace == '' and
-			$el == 'textinput') {
-				// if we're in the default namespace of an RSS feed,
-				//  record textinput or image fields
-				$this->intextinput = true;
-		} elseif ($this->_format == 'rss' and
-			$this->current_namespace == '' and
-			$el == 'image') {
-				$this->inimage = true;
-		} elseif ($this->_format == 'atom' and in_array($el, $this->_CONTENT_CONSTRUCTS)) {
+		} elseif ($this->_format == 'rss' && $this->current_namespace == '' && $el == 'textinput') {
+			// if we're in the default namespace of an RSS feed,
+			//  record textinput or image fields
+			$this->intextinput = true;
+		} elseif ($this->_format == 'rss' && $this->current_namespace == '' && $el == 'image') {
+			$this->inimage = true;
+		} elseif ($this->_format == 'atom' && in_array($el, $this->_CONTENT_CONSTRUCTS)) {
 			// handle atom content constructs
 			// avoid clashing w/ RSS mod_content
 			if ($el == 'content') {
@@ -561,7 +557,7 @@ class RssParser
 			}
 
 			$this->incontent = $el;
-		} elseif ($this->_format == 'atom' and $this->incontent) {
+		} elseif ($this->_format == 'atom' && $this->incontent) {
 			// if inside an Atom content construct (e.g. content or summary) field treat tags as text
 			// if tags are inlined, then flatten
 			$attrs_str = join(' ', array_map('map_attrs', array_keys($attrs), array_values($attrs)));
@@ -569,7 +565,7 @@ class RssParser
 			$this->append_content("<$element $attrs_str>");
 
 			array_unshift($this->stack, $el);
-		} elseif ($this->_format == 'atom' and $el == 'link') {
+		} elseif ($this->_format == 'atom' && $el == 'link') {
 			// Atom support many links per containging element.
 			// Magpie treats link elements of type rel='alternate'
 			// as being equivalent to RSS's simple link element.

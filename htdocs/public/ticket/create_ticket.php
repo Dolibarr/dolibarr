@@ -22,14 +22,30 @@
  *       \brief      Display public form to add new ticket
  */
 
-if (!defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOLOGIN'))        define("NOLOGIN", 1); // This means this output page does not require to be logged.
-if (!defined('NOCSRFCHECK'))    define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
+if (!defined('NOREQUIREUSER')) {
+	define('NOREQUIREUSER', '1');
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1');
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOLOGIN')) {
+	define("NOLOGIN", 1); // This means this output page does not require to be logged.
+}
+if (!defined('NOCSRFCHECK')) {
+	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', '1');
+}
 
 
 require '../../main.inc.php';
@@ -63,6 +79,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 /*
  * Actions
  */
+
 $parameters = array(
 	'id' => $id,
 );
@@ -141,6 +158,17 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('add', 'alpha')) {
 		$error++;
 		array_push($object->errors, $langs->trans("ErrorBadEmailAddress", $langs->transnoentities("email")));
 		$action = '';
+	}
+
+	// Check Captcha code if is enabled
+	if (!empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
+		$sessionkey = 'dol_antispam_value';
+		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'none'))));
+		if (!$ok) {
+			$error++;
+			array_push($object->errors, $langs->trans("ErrorBadValueForCode"));
+			$action = '';
+		}
 	}
 
 	if (!$error) {
@@ -230,7 +258,7 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('add', 'alpha')) {
 
 				$sendto = GETPOST('email', 'alpha');
 
-				$from = $conf->global->MAIN_INFO_SOCIETE_NOM.'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
+				$from = $conf->global->MAIN_INFO_SOCIETE_NOM.' <'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
 				$replyto = $from;
 				$sendtocc = '';
 				$deliveryreceipt = 0;
@@ -270,7 +298,6 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('add', 'alpha')) {
 					}
 					$message_admin .= '</ul>';
 
-					$message_admin .= '</ul>';
 					$message_admin .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
 					$message_admin .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'" rel="nofollow noopener">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
 
@@ -362,10 +389,10 @@ if ($action != "infos_success") {
 		print '<div class="error">';
 		print $langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketEmailNotificationFrom")).'<br>';
 		print $langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentities("Ticket"));
-		print '<div>';
+		print '</div>';
 	} else {
 		print '<div class="info marginleftonly marginrightonly">'.$langs->trans('TicketPublicInfoCreateTicket').'</div>';
-		$formticket->showForm();
+		$formticket->showForm(0, 'edit', 1);
 	}
 }
 

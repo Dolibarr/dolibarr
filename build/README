@@ -7,6 +7,9 @@ Building packages
 ##################################################
 
 All sub-directories of "build" directory contains files (setup or binary tools) required to build automatically Dolibarr packages.
+The build directory and all its contents is absolutely not required to make Dolibarr working. 
+It is here only to build Dolibarr packages, and those generated packages will not contains this "build" directory.
+
 
 There are several tools:
 
@@ -17,8 +20,7 @@ There are several tools:
 --------------------------------------------------------------------------------------------------
 
 
-Prerequisites to build tgz, debian, rpm package:
-
+Prerequisites to build tgz, debian and rpm packages:
 > apt-get install tar dpkg dpatch p7zip-full rpm zip
 
 
@@ -57,10 +59,6 @@ Prerequisites to build autoexe DoliWamp package:
 
 
 --------------------------------------------------------------------------------------------------
-
-Note: 
-The build directory and all its contents is absolutely not required to make Dolibarr working. 
-It is here only to build Dolibarr packages, and those generated packages will not contains this "build" directory.
 
 
 You can find in "build", following sub-directories:
