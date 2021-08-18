@@ -528,10 +528,9 @@ $newcardbutton = '';
 if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create) {
 	$tmpforcreatebutton = dol_getdate(dol_now(), true);
 
-	if(isset($newparam)) {
+	if (isset($newparam)) {
 		$newparam .= '&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
-	} 
-	else {
+	} else {
 		$newparam = 'month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
 	}
 
