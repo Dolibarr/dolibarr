@@ -160,9 +160,10 @@ function versiondolibarrarray()
  *  @param		int		$linelengthlimit	Limit for length of each line (Use 0 if unknown, may be faster if defined)
  *  @param		int		$nocommentremoval	Do no try to remove comments (in such a case, we consider that each line is a request, so use also $linelengthlimit=0)
  *  @param		int		$offsetforchartofaccount	Offset to use to load chart of account table to update sql on the fly to add offset to rowid and account_parent value
+ *  @param		int		$colspan			2=Add a colspan=2 on td
  * 	@return		int							<=0 if KO, >0 if OK
  */
-function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handler = '', $okerror = 'default', $linelengthlimit = 32768, $nocommentremoval = 0, $offsetforchartofaccount = 0)
+function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handler = '', $okerror = 'default', $linelengthlimit = 32768, $nocommentremoval = 0, $offsetforchartofaccount = 0, $colspan = 0)
 {
 	global $db, $conf, $langs, $user;
 
@@ -282,13 +283,9 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 					}
 				} else {
 					if (!$silent) {
-						print '<tr><td class="tdtop" colspan="2">';
-					}
-					if (!$silent) {
-						print '<div class="error">'.$langs->trans("Failed to get max rowid for ".$table)."</div></td>";
-					}
-					if (!$silent) {
-						print '</tr>';
+						print '<tr><td class="tdtop"'.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
+						print '<div class="error">'.$langs->trans("Failed to get max rowid for ".$table)."</div>";
+						print '</td></tr>';
 					}
 					$error++;
 					break;
@@ -337,7 +334,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 
 			// Add log of request
 			if (!$silent) {
-				print '<tr class="trforrunsql"><td class="tdtop opacitymedium">'.$langs->trans("Request").' '.($i + 1)." sql='".dol_htmlentities($newsql, ENT_NOQUOTES)."'</td></tr>\n";
+				print '<tr class="trforrunsql"><td class="tdtop opacitymedium"'.($colspan ? ' colspan="'.$colspan.'"' : '').'>'.$langs->trans("Request").' '.($i + 1)." sql='".dol_htmlentities($newsql, ENT_NOQUOTES)."'</td></tr>\n";
 			}
 			dol_syslog('Admin.lib::run_sql Request '.($i + 1), LOG_DEBUG);
 			$sqlmodified = 0;
@@ -371,13 +368,9 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 				$cursor = $reg[1];
 				if (empty($listofinsertedrowid[$cursor])) {
 					if (!$silent) {
-						print '<tr><td class="tdtop" colspan="2">';
-					}
-					if (!$silent) {
-						print '<div class="error">'.$langs->trans("FileIsNotCorrect")."</div></td>";
-					}
-					if (!$silent) {
-						print '</tr>';
+						print '<tr><td class="tdtop"'.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
+						print '<div class="error">'.$langs->trans("FileIsNotCorrect")."</div>";
+						print '</td></tr>';
 					}
 					$error++;
 					break;
@@ -437,21 +430,13 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 				// Is it an error we accept
 				if (!in_array($errno, $okerrors)) {
 					if (!$silent) {
-						print '<tr><td class="tdtop" colspan="2">';
-					}
-					if (!$silent) {
-						print '<div class="error">'.$langs->trans("Error")." ".$db->errno().": ".$newsql."<br>".$db->error()."</div></td>";
-					}
-					if (!$silent) {
-						print '</tr>'."\n";
+						print '<tr><td class="tdtop"'.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
+						print '<div class="error">'.$langs->trans("Error")." ".$db->errno().": ".$newsql."<br>".$db->error()."</div>";
+						print '</td></tr>'."\n";
 					}
 					dol_syslog('Admin.lib::run_sql Request '.($i + 1)." Error ".$db->errno()." ".$newsql."<br>".$db->error(), LOG_ERR);
 					$error++;
 				}
-			}
-
-			if (!$silent) {
-				print '</tr>'."\n";
 			}
 		}
 	}
