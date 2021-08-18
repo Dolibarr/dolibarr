@@ -264,6 +264,7 @@ ErrorAnAmountWithoutTaxIsRequired=Feil, beløp er obligatorisk
 ErrorAPercentIsRequired=Feil, fyll ut prosentandelen riktig
 ErrorYouMustFirstSetupYourChartOfAccount=Du må først konfigurere kontoplanen din
 ErrorFailedToFindEmailTemplate=Failed to find template with code name %s
+ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Duration not defined on service. No way to calculate the hourly price.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHP-parameteren upload_max_filesize (%s) er høyere enn PHP-parameteren post_max_size (%s). Dette er ikke et konsistent oppsett.

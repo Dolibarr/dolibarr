@@ -376,13 +376,64 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
-if ($massaction == 'makepayment_confirm') {
+if ($action == 'makepayment_confirm' && $user->rights->facture->paiement) {
+	require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 	$arrayofselected = is_array($toselect) ? $toselect : array();
-
-	$loc = dol_buildpath('/compta/paiement.php', 2).'?action=create&facids='.implode(',', $arrayofselected);
-
-	header('Location: '.$loc);
-	exit;
+	if (!empty($arrayofselected)) {
+		$bankid=GETPOST('bankid', 'int');
+		$paiementid=GETPOST('paiementid', 'int');
+		$paiementdate=dol_mktime(12, 0, 0, GETPOST('datepaimentmonth', 'int'), GETPOST('datepaimentday', 'int'), GETPOST('datepaimentyear', 'year'));
+		foreach ($arrayofselected as $toselectid) {
+			$errorpayment=0;
+			$facture = new Facture($db);
+			$result = $facture->fetch($toselectid);
+			if ($result < 0) {
+				setEventMessage($facture->error, 'errors');
+				$errorpayment++;
+			} else {
+				if ($facture->type != Facture::TYPE_CREDIT_NOTE && $facture->statut == 1 && $facture->paye == 0) {
+					$paiementAmount = $facture->getSommePaiement();
+					$totalcreditnotes = $facture->getSumCreditNotesUsed();
+					$totaldeposits = $facture->getSumDepositsUsed();
+					$totalpay = $paiementAmount + $totalcreditnotes + $totaldeposits;
+					$remaintopay = price2num($facture->total_ttc - $totalpay);
+					if ($remaintopay!=0) {
+						$resultBank = $facture->setBankAccount($bankid);
+						if ($resultBank < 0) {
+							setEventMessage($facture->error, 'errors');
+							$errorpayment++;
+						} else {
+							$paiement = new Paiement($db);
+							$paiement->datepaye = $paiementdate;
+							$paiement->amounts[$facture->id] = $remaintopay; // Array with all payments dispatching with invoice id
+							$paiement->multicurrency_amounts[$facture->id] = $remaintopay;
+							$paiement->paiementid = $paiementid;
+							$paiement_id = $paiement->create($user, 1, $facture->thirdparty);
+							if ($paiement_id < 0) {
+								setEventMessage($facture->ref . ' ' . $paiement->error, 'errors');
+								$errorpayment++;
+							} else {
+								$result = $paiement->addPaymentToBank($user, 'payment', '', $bankid, '', '');
+								if ($result < 0) {
+									setEventMessages($facture->ref . ' ' . $paiement->error, $paiement->errors, 'errors');
+									$errorpayment++;
+								}
+							}
+						}
+					} else {
+						setEventMessage($langs->trans('NoPaymentAvailable', $facture->ref), 'warnings');
+						$errorpayment++;
+					}
+				} else {
+					setEventMessage($langs->trans('NoPaymentAvailable', $facture->ref), 'warnings');
+					$errorpayment++;
+				}
+			}
+			if (empty($errorpayment)) {
+				setEventMessage($langs->trans('RegisterPaymentAndClasiffiedPayedDone', $facture->ref));
+			}
+		}
+	}
 } elseif ($massaction == 'withdrawrequest') {
 	$langs->load("withdrawals");
 
@@ -972,8 +1023,10 @@ if ($resql) {
 		'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 		'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 		'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
-		//'makepayment'=>$langs->trans("InvoicePaymentsLimits"),
 	);
+	if ($user->rights->facture->paiement) {
+		$arrayofmassactions['makepayment'] = $langs->trans("RegisterPaymentAndClasiffiedPayed");
+	}
 	if ($conf->prelevement->enabled && !empty($user->rights->prelevement->bons->creer)) {
 			$langs->load("withdrawals");
 			$arrayofmassactions['withdrawrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeWithdrawRequest");
@@ -985,7 +1038,7 @@ if ($resql) {
 			$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 		}
 	}
-	if (in_array($massaction, array('presend', 'predelete'))) {
+	if (in_array($massaction, array('presend', 'predelete' ,'makepayment'))) {
 		$arrayofmassactions = array();
 	}
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -1007,7 +1060,9 @@ if ($resql) {
 	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-	print '<input type="hidden" name="action" value="list">';
+	if (!in_array($massaction, array('makepayment'))) {
+		print '<input type="hidden" name="action" value="list">';
+	}
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="search_status" value="'.$search_status.'">';
@@ -1020,6 +1075,21 @@ if ($resql) {
 	$objecttmp = new Facture($db);
 	$trackid = 'inv'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
+	if ($massaction=='makepayment') {
+		$formconfirm = '';
+		$formquestion = array(
+			// 'text' => $langs->trans("ConfirmClone"),
+			// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
+			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+			array('type' => 'date', 'name' => 'datepaiment', 'label' => $langs->trans("Date")),
+			array('type' => 'other', 'name' => 'paiementid', 'label' => $langs->trans("PaymentMode"), 'value' => $form->select_types_paiements(GETPOST('search_paymentmode'), 'paiementid', '', 0, 0, 1, 0, 1, '', 1)),
+			array('type' => 'other', 'name' => 'bankid', 'label' => $langs->trans("BankAccount"), 'value'=>$form->select_comptes('', 'bankid', 0, '', 0, '', 0, '', 1)),
+			//array('type' => 'other', 'name' => 'invoicesid', 'label' => '', 'value'=>'<input type="hidden" id="invoicesid" name="invoicesid" value="'.implode('#',GETPOST('toselect','array')).'">'),
+		);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('RegisterPaymentAndClasiffiedPayed'), $langs->trans('RegisterPaymentAndClasiffiedPayed', $object->ref), 'makepayment_confirm', $formquestion, 1, 0, 200, 500, 1);
+		print $formconfirm;
+	}
 
 	if ($sall) {
 		foreach ($fieldstosearchall as $key => $val) {
