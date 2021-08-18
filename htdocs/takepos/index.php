@@ -67,7 +67,7 @@ if ($_SESSION["takeposterminal"] == "") {
 
 if ($setterminal > 0) {
 	$_SESSION["takeposterminal"] = $setterminal;
-	setcookie("takeposterminal", $setterminal, (time() + (86400 * 354)), '/', null, false, true); // Permanent takeposterminal var in a cookie
+	setcookie("takeposterminal", $setterminal, (time() + (86400 * 354)), '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Permanent takeposterminal var in a cookie
 }
 
 if ($setcurrency != "") {
@@ -434,7 +434,7 @@ function ClickProduct(position) {
 		if (idproduct=="") return;
 		// Call page invoice.php to generate the section with product lines
 		$("#poslines").load("invoice.php?action=addline&place="+place+"&idproduct="+idproduct+"&selectedline="+selectedline, function() {
-			//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+			<?php if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) echo "CustomerDisplay();";?>
 		});
 	}
 

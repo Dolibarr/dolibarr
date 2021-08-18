@@ -77,6 +77,10 @@ YourPartnershipRefusedContent=我們通知您，您的合作請求已被拒絕�
 YourPartnershipAcceptedContent=我們通知您，您的合作請求已被接受。
 YourPartnershipCanceledContent=我們通知您，您的合作夥伴關係已被取消。
 
+CountLastUrlCheckError=Number of errors for last URL check
+LastCheckBacklink=Date of last URL check
+ReasonDeclineOrCancel=拒絕原因
+
 #
 # Status
 #

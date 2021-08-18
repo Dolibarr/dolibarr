@@ -188,6 +188,11 @@ if (empty($reshook)) {
 			$object->email_from = $user->email;
 			$notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
 			$object->notify_tiers_at_create = empty($notifyTiers) ? 0 : 1;
+			$fk_user_assign = GETPOST("fk_user_assign", 'int');
+			if ($fk_user_assign > 0) {
+				$object->fk_user_assign = $fk_user_assign;
+				$object->fk_statut = $object::STATUS_ASSIGNED;
+			}
 
 			$object->fk_project = $projectid;
 
@@ -482,7 +487,7 @@ if (empty($reshook)) {
 	}
 
 	// Set parent company
-	if ($action == 'set_thirdparty' && $user->rights->societe->creer) {
+	if ($action == 'set_thirdparty' && $user->rights->ticket->write) {
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$result = $object->setCustomer(GETPOST('editcustomer', 'int'));
 			$url = 'card.php?action=view&track_id='.GETPOST('track_id', 'alpha');

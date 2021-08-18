@@ -958,7 +958,7 @@ class Form
 					if ($row['code_iso']) {
 						$labeltoshow .= ' <span class="opacitymedium">('.$row['code_iso'].')</span>';
 						if (empty($hideflags)) {
-							$tmpflag = picto_from_langcode($row['code_iso'], 'class="saturatemedium paddingrightonly"');
+							$tmpflag = picto_from_langcode($row['code_iso'], 'class="saturatemedium paddingrightonly"', 1);
 							$labeltoshow = $tmpflag.' '.$labeltoshow;
 						}
 					}
@@ -969,7 +969,7 @@ class Form
 						$out .= '<option value="'.($usecodeaskey ? ($usecodeaskey == 'code2' ? $row['code_iso'] : $row['code_iso3']) : $row['rowid']).'" data-html="'.dol_escape_htmltag($labeltoshow).'" data-eec="'.((int) $row['eec']).'">';
 					}
 					$out .= $labeltoshow;
-					$out .= '</option>';
+					$out .= '</option>'."\n";
 				}
 			}
 			$out .= '</select>';
@@ -1267,16 +1267,17 @@ class Form
 			// mode 1
 			$urloption = 'htmlname='.urlencode($htmlname).'&outjson=1&filter='.urlencode($filter).(empty($excludeids) ? '' : '&excludeids='.join(',', $excludeids)).($showtype ? '&showtype='.urlencode($showtype) : '');
 			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
-			$out .= '<style type="text/css">.ui-autocomplete { z-index: 250; }</style>';
+
+			$out .= '<style type="text/css">.ui-autocomplete { z-index: 1003; }</style>';
 			if (empty($hidelabel)) {
 				print $langs->trans("RefOrLabel").' : ';
 			} elseif ($hidelabel > 1) {
-				$placeholder = ' placeholder="'.$langs->trans("RefOrLabel").'"';
+				$placeholder = $langs->trans("RefOrLabel");
 				if ($hidelabel == 2) {
 					$out .= img_picto($langs->trans("Search"), 'search');
 				}
 			}
-			$out .= '<input type="text" class="'.$morecss.'" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty($conf->global->THIRDPARTY_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
+			$out .= '<input type="text" class="'.$morecss.'" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.($placeholder ? ' placeholder="'.dol_escape_htmltag($placeholder).'"' : '').' '.(!empty($conf->global->THIRDPARTY_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
 			if ($hidelabel == 3) {
 				$out .= img_picto($langs->trans("Search"), 'search');
 			}
@@ -1952,15 +1953,12 @@ class Form
 		}
 
 		dol_syslog(get_class($this)."::select_dolusers", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num) {
-				// Enhance with select2
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlname);
-
 				// do not use maxwidthonsmartphone by default. Set it by caller so auto size to 100% will work when not defined
 				$out .= '<select class="flat'.($morecss ? ' '.$morecss : ' minwidth200').'" id="'.$htmlname.'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.($disabled ? ' disabled' : '').'>';
 				if ($show_empty && !$multiple) {
@@ -2068,6 +2066,12 @@ class Form
 				$out .= '<option value="">'.$langs->trans("None").'</option>';
 			}
 			$out .= '</select>';
+
+			if ($num) {
+				// Enhance with select2
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+				$out .= ajax_combobox($htmlname);
+			}
 		} else {
 			dol_print_error($this->db);
 		}
@@ -3924,12 +3928,15 @@ class Form
 	 *      @param  int		$maxlength      Max length of label
 	 *      @param  int     $active         Active or not, -1 = all
 	 *      @param  string  $morecss        Add more CSS on select tag
+	 *      @param	int		$nooutput		1=Return string, do not send to output
 	 * 		@return	void
 	 */
-	public function select_types_paiements($selected = '', $htmlname = 'paiementtype', $filtertype = '', $format = 0, $empty = 1, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '')
+	public function select_types_paiements($selected = '', $htmlname = 'paiementtype', $filtertype = '', $format = 0, $empty = 1, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '', $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs, $user, $conf;
+
+		$out = '';
 
 		dol_syslog(__METHOD__." ".$selected.", ".$htmlname.", ".$filtertype.", ".$format, LOG_DEBUG);
 
@@ -3949,9 +3956,9 @@ class Form
 			$selected = $conf->global->MAIN_DEFAULT_PAYMENT_TYPE_ID;
 		}
 
-		print '<select id="select'.$htmlname.'" class="flat selectpaymenttypes'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
+		$out .= '<select id="select'.$htmlname.'" class="flat selectpaymenttypes'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
 		if ($empty) {
-			print '<option value="">&nbsp;</option>';
+			$out .= '<option value="">&nbsp;</option>';
 		}
 		foreach ($this->cache_types_paiements as $id => $arraytypes) {
 			// If not good status
@@ -3970,25 +3977,25 @@ class Form
 			}
 
 			if ($format == 0) {
-				print '<option value="'.$id.'"';
+				$out .= '<option value="'.$id.'"';
 			} elseif ($format == 1) {
-				print '<option value="'.$arraytypes['code'].'"';
+				$out .= '<option value="'.$arraytypes['code'].'"';
 			} elseif ($format == 2) {
-				print '<option value="'.$arraytypes['code'].'"';
+				$out .= '<option value="'.$arraytypes['code'].'"';
 			} elseif ($format == 3) {
-				print '<option value="'.$id.'"';
+				$out .= '<option value="'.$id.'"';
 			}
 			// Print attribute selected or not
 			if ($format == 1 || $format == 2) {
 				if ($selected == $arraytypes['code']) {
-					print ' selected';
+					$out .= ' selected';
 				}
 			} else {
 				if ($selected == $id) {
-					print ' selected';
+					$out .= ' selected';
 				}
 			}
-			print '>';
+			$out .= '>';
 			if ($format == 0) {
 				$value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
 			} elseif ($format == 1) {
@@ -3998,14 +4005,20 @@ class Form
 			} elseif ($format == 3) {
 				$value = $arraytypes['code'];
 			}
-			print $value ? $value : '&nbsp;';
-			print '</option>';
+			$out .= $value ? $value : '&nbsp;';
+			$out .= '</option>';
 		}
-		print '</select>';
+		$out .= '</select>';
 		if ($user->admin && !$noadmininfo) {
-			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			$out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
-		print ajax_combobox('select'.$htmlname);
+		$out .= ajax_combobox('select'.$htmlname);
+
+		if (empty($nooutput)) {
+			print $out;
+		} else {
+			return $out;
+		}
 	}
 
 
@@ -4720,7 +4733,7 @@ class Form
 			$more .= '<div class="tagtable paddingtopbottomonly centpercent noborderspacing">'."\n";
 			foreach ($formquestion as $key => $input) {
 				if (is_array($input) && !empty($input)) {
-					$size = (!empty($input['size']) ? ' size="'.$input['size'].'"' : '');
+					$size = (!empty($input['size']) ? ' size="'.$input['size'].'"' : '');	// deprecated. Use morecss instead.
 					$moreattr = (!empty($input['moreattr']) ? ' '.$input['moreattr'] : '');
 					$morecss = (!empty($input['morecss']) ? ' '.$input['morecss'] : '');
 
@@ -6868,11 +6881,8 @@ class Form
 			$urloption = 'htmlname='.$htmlname.'&outjson=1&objectdesc='.$objectdesc.'&filter='.urlencode($objecttmp->filter);
 			// Activate the auto complete using ajax call.
 			$out .= ajax_autocompleter($preselectedvalue, $htmlname, $urlforajaxcall, $urloption, $conf->global->$confkeyforautocompletemode, 0, array());
-			$out .= '<style type="text/css">.ui-autocomplete { z-index: 250; }</style>';
-			if ($placeholder) {
-				$placeholder = ' placeholder="'.$placeholder.'"';
-			}
-			$out .= '<input type="text" class="'.$morecss.'"'.($disabled ? ' disabled="disabled"' : '').' name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
+			$out .= '<style type="text/css">.ui-autocomplete { z-index: 1003; }</style>';
+			$out .= '<input type="text" class="'.$morecss.'"'.($disabled ? ' disabled="disabled"' : '').' name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.($placeholder ? ' placeholder="'.dol_escape_htmltag($placeholder).'"' : '') .' />';
 		} else {
 			// Immediate load of table record. Note: filter is inside $objecttmp->filter
 			$out .= $this->selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty, $searchkey, $placeholder, $morecss, $moreparams, $forcecombo, 0, $disabled);

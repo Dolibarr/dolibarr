@@ -291,3 +291,7 @@ PopuCom=Προϊόντα / Υπηρεσίες κατά δημοτικότητα 
 ProductStatistics=Στατιστικά Προϊόντων / Υπηρεσιών
 NbOfQtyInOrders=Ποσότητα σε παραγγελίες
 SelectTheTypeOfObjectToAnalyze=Select an object to view its statistics...
+
+ConfirmBtnCommonContent = Are you sure you want to "%s" ?
+ConfirmBtnCommonTitle = Confirm your action
+CloseDialog = Κλείσιμο
