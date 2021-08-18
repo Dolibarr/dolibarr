@@ -291,3 +291,7 @@ PopuCom=Buyurtmalardagi mashhurligi bo'yicha mahsulotlar / xizmatlar
 ProductStatistics=Mahsulotlar / xizmatlar statistikasi
 NbOfQtyInOrders=Buyurtmalar soni
 SelectTheTypeOfObjectToAnalyze=Uning statistikasini ko'rish uchun ob'ektni tanlang ...
+
+ConfirmBtnCommonContent = Are you sure you want to "%s" ?
+ConfirmBtnCommonTitle = Confirm your action
+CloseDialog = Close

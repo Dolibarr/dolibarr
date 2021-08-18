@@ -28,3 +28,4 @@ WebsiteSetup=Einstellungen des Webseitenmoduls
 WEBSITE_PAGEURL=URL für Seite
 WEBSITE_TITLE=Titel
 WEBSITE_KEYWORDS=Stichworte
+CloseDialog =Schliessen

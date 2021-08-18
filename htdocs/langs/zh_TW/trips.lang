@@ -90,7 +90,6 @@ DATE_REFUS=拒絕日期
 DATE_SAVE=驗證日期
 DATE_CANCEL=刪除日期
 DATE_PAIEMENT=付款日期
-BROUILLONNER=重新打開
 ExpenseReportRef=費用報表參考
 ValidateAndSubmit=驗證並提交批准
 ValidatedWaitingApproval=已驗證（等待批准）

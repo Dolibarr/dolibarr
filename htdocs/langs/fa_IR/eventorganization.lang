@@ -119,6 +119,8 @@ EventType = نوع روی‌دا
 LabelOfBooth=Booth label
 LabelOfconference=Conference label
 ConferenceIsNotConfirmed=Subcription not available, conference is not confirmed yet
+DateMustBeBeforeThan=%s must be before %s
+DateMustBeAfterThan=%s must be after %s
 
 #
 # Vote page

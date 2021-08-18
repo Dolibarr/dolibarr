@@ -77,6 +77,10 @@ YourPartnershipRefusedContent=Le informamos que su solicitud de asociación ha s
 YourPartnershipAcceptedContent=Le informamos que su solicitud de asociación ha sido aceptada.
 YourPartnershipCanceledContent=Le informamos que su asociación ha sido cancelada.
 
+CountLastUrlCheckError=Number of errors for last URL check
+LastCheckBacklink=Date of last URL check
+ReasonDeclineOrCancel=Razón de rechazo
+
 #
 # Status
 #

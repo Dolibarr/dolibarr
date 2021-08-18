@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - stocks
-WarehouseAskWarehouseOnThirparty=Set a warehouse on third-party
 QtyToDispatchShort=Aantal te verzenden
-OpenInternal=Open only for internal actions
 inventoryDraft=Actief
 inventoryConfirmCreate=Aanmaken
 inventoryDeleteLine=Verwijder lijn
