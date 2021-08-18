@@ -114,14 +114,12 @@ if (!empty($user->socid)) {
 
 // Load object modCodeProduct
 $module = (!empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) ? $conf->global->PRODUCT_CODEPRODUCT_ADDON : 'mod_codeproduct_leopard');
-if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php')
-{
-    $module = substr($module, 0, dol_strlen($module) - 4);
+if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php') {
+	$module = substr($module, 0, dol_strlen($module) - 4);
 }
 $result = dol_include_once('/core/modules/product/'.$module.'.php');
-if ($result > 0)
-{
-    $modCodeProduct = new $module();
+if ($result > 0) {
+	$modCodeProduct = new $module();
 }
 
 $object = new Product($db);
@@ -259,11 +257,11 @@ if (empty($reshook)) {
 			$error++;
 		}
 		if (empty($ref)) {
-      if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
-			  setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Ref')), null, 'errors');
-			  $action = "create";
-			  $error++;
-      }
+			if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
+					setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Ref')), null, 'errors');
+					$action = "create";
+					$error++;
+			}
 		}
 		if (!empty($duration_value) && empty($duration_unit)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Unit')), null, 'errors');
@@ -1099,18 +1097,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print dol_get_fiche_head('');
 
 		print '<table class="border centpercent">';
-    
-    if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
-      print '<tr>';
-      $tmpcode = '';
-      if (!empty($modCodeProduct->code_auto)) {
-        $tmpcode = $modCodeProduct->getNextValue($object, $type);
-      }
-      print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
-      if ($refalreadyexists) {
-        print $langs->trans("RefAlreadyExists");
-      }
-      print '</td></tr>';
+
+		if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
+			print '<tr>';
+			$tmpcode = '';
+			if (!empty($modCodeProduct->code_auto)) {
+				$tmpcode = $modCodeProduct->getNextValue($object, $type);
+			}
+			print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
+			if ($refalreadyexists) {
+				print $langs->trans("RefAlreadyExists");
+			}
+			print '</td></tr>';
 		}
 
 		// Label
