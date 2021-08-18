@@ -78,7 +78,3 @@ create table llx_product_lang_extrafields
 ) ENGINE=innodb;
 
 ALTER TABLE llx_product_lang_extrafields ADD INDEX idx_product_lang_extrafields (fk_object);
-
--- -- add action trigger
-INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('ORDER_SUPPLIER_CANCEL','Supplier order request canceled','Executed when a supplier order is canceled','order_supplier',13);
-
