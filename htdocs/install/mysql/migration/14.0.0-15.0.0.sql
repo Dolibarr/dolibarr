@@ -69,7 +69,7 @@ DELETE FROM llx_menu WHERE type = 'top' AND module = 'cashdesk' AND mainmenu = '
 
 INSERT INTO llx_c_action_trigger (code, label, description, elementtype, rang) values ('MEMBER_EXCLUDE', 'Member excluded', 'Executed when a member is excluded', 'member', 27);
 
-create table llx_product_lang_extrafields
+CREATE TABLE llx_product_lang_extrafields
 (
     rowid                     integer AUTO_INCREMENT PRIMARY KEY,
     tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
