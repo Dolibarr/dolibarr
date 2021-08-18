@@ -938,7 +938,7 @@ if (!$variants) {
 
 	if ((!empty($conf->productbatch->enabled)) && $object->hasbatch()) {
 		$colspan = 3;
- 		print '<tr class="liste_titre"><td width="14%">';
+		print '<tr class="liste_titre"><td width="14%">';
 		if (!empty($conf->use_javascript_ajax)) {
 			print '<a id="show_all" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a> &nbsp; ';
 			print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>';
