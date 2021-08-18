@@ -1628,7 +1628,7 @@ class CMailFile
 	 * @return  array                       array of email => name
 	 * @see getValidAddress()
 	 */
-	public function getArrayAddress($address)
+	public static function getArrayAddress($address)
 	{
 		global $conf;
 

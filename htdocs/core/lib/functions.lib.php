@@ -2130,7 +2130,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	global $conf, $langs;
 
 	$ret = '';
-	$countriesusingstate = array('AU', 'CA', 'US', 'IN', 'GB', 'ES', 'UK', 'TR'); // See also MAIN_FORCE_STATE_INTO_ADDRESS
+	$countriesusingstate = array('AU', 'CA', 'US', 'IN', 'GB', 'ES', 'UK', 'TR', 'CN'); // See also MAIN_FORCE_STATE_INTO_ADDRESS
 
 	// See format of addresses on https://en.wikipedia.org/wiki/Address
 	// Address
@@ -2138,7 +2138,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 		$ret .= ($extralangcode ? $object->array_languages['address'][$extralangcode] : (empty($object->address) ? '' : $object->address));
 	}
 	// Zip/Town/State
-	if (isset($object->country_code) && in_array($object->country_code, array('AU', 'CA', 'US')) || !empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)) {
+	if (isset($object->country_code) && in_array($object->country_code, array('AU', 'CA', 'US', 'CN')) || !empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)) {
 		// US: title firstname name \n address lines \n town, state, zip \n country
 		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
 		$ret .= ($ret ? $sep : '').$town;
@@ -2831,7 +2831,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
  * 	@param 	int		$socid          Id of third party if known
  * 	@param 	string	$addlink	    ''=no link to create action, 'AC_TEL'=add link to clicktodial (if module enabled) and add link to create event (if conf->global->AGENDA_ADDACTIONFORPHONE set)
  * 	@param 	string	$separ 		    Separation between numbers for a better visibility example : xx.xx.xx.xx.xx
- *  @param	string  $withpicto      Show picto
+ *  @param	string  $withpicto      Show picto ('fax', 'phone', 'mobile')
  *  @param	string	$titlealt	    Text to show on alt
  *  @param  int     $adddivfloat    Add div float around phone.
  * 	@return string 				    Formated phone number
@@ -3054,11 +3054,18 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 								'__PASS__'=>$clicktodial_password);
 			$url = make_substitutions($url, $substitarray);
 			$newphonesav = $newphone;
-			$newphone = '<a href="'.$url.'"';
-			if (!empty($conf->global->CLICKTODIAL_FORCENEWTARGET)) {
-				$newphone .= ' target="_blank"';
+			if (empty($conf->global->CLICKTODIAL_DO_NOT_USE_AJAX_CALL)) {
+				// Default and recommended: New method using ajax without submiting a page making a javascript history.go(-1) back
+				$newphone = '<a href="'.$url.'" class="cssforclicktodial"';	// Call of ajax is handled by the lib_foot.js.php on class 'cssforclicktodial'
+				$newphone .= '>'.$newphonesav.'</a>';
+			} else {
+				// Old method
+				$newphone = '<a href="'.$url.'"';
+				if (!empty($conf->global->CLICKTODIAL_FORCENEWTARGET)) {
+					$newphone .= ' target="_blank"';
+				}
+				$newphone .= '>'.$newphonesav.'</a>';
 			}
-			$newphone .= '>'.$newphonesav.'</a>';
 		}
 
 		//if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
@@ -3783,7 +3790,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		return $fullpathpicto;
 	}
 		// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for blind people
-	return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.(($notitle || empty($titlealt)) ? '' : ' title="'.dol_escape_htmltag($titlealt).'"').($moreatt ? ' '.$moreatt.($morecss ? ' class="'.$morecss.'"' : '') : ' class="inline-block'.($morecss ? ' '.$morecss : '').'"').'>'; // Alt is used for accessibility, title for popup
+	return '<img src="'.$fullpathpicto.'"'.($notitle ? '' : ' alt="'.dol_escape_htmltag($alt).'"').(($notitle || empty($titlealt)) ? '' : ' title="'.dol_escape_htmltag($titlealt).'"').($moreatt ? ' '.$moreatt.($morecss ? ' class="'.$morecss.'"' : '') : ' class="inline-block'.($morecss ? ' '.$morecss : '').'"').'>'; // Alt is used for accessibility, title for popup
 }
 
 /**
@@ -3843,10 +3850,11 @@ function img_weather($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $mo
  *	@param      string		$picto       		Name of image file to show (If no extension provided, we use '.png'). Image must be stored into htdocs/theme/common directory.
  *	@param		string		$moreatt			Add more attribute on img tag
  *	@param		int			$pictoisfullpath	If 1, image path is a full path
+ *  @param		int			$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
  *	@return     string      					Return img tag
  *  @see        img_object(), img_picto()
  */
-function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0)
+function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $notitle = 0)
 {
 	global $conf;
 
@@ -3868,7 +3876,7 @@ function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0
 		}
 	}
 
-	return img_picto($titlealt, $path, $moreatt, 1);
+	return img_picto($titlealt, $path, $moreatt, 1, 0, $notitle);
 }
 
 /**
@@ -6852,6 +6860,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		if ($onlykey) {
 			$substitutionarray['__ID__'] = '__ID__';
 			$substitutionarray['__REF__'] = '__REF__';
+			$substitutionarray['__NEWREF__'] = '__NEWREF__';
 			$substitutionarray['__REF_CLIENT__'] = '__REF_CLIENT__';
 			$substitutionarray['__REF_SUPPLIER__'] = '__REF_SUPPLIER__';
 			$substitutionarray['__NOTE_PUBLIC__'] = '__NOTE_PUBLIC__';
@@ -6932,6 +6941,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		} else {
 			$substitutionarray['__ID__'] = $object->id;
 			$substitutionarray['__REF__'] = $object->ref;
+			$substitutionarray['__NEWREF__'] = $object->newref;
 			$substitutionarray['__REF_CLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REF_SUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
 			$substitutionarray['__NOTE_PUBLIC__'] = (isset($object->note_public) ? $object->note_public : null);
@@ -7174,6 +7184,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				if (is_object($object) && $object->element == 'supplier_proposal') {
 					$substitutionarray['__URL_SUPPLIER_PROPOSAL__'] = DOL_MAIN_URL_ROOT."/supplier_proposal/card.php?id=".$object->id;
+				}
+				if (is_object($object) && $object->element == 'shipping') {
+					$substitutionarray['__URL_SHIPMENT__'] = DOL_MAIN_URL_ROOT."/expedition/card.php?id=".$object->id;
 				}
 			}
 
@@ -8119,9 +8132,10 @@ function dol_validElement($element)
  *
  * 	@param	string	$codelang	Language code ('en_IN', 'fr_CA', ...) or ISO Country code on 2 characters in uppercase ('IN', 'FR')
  *  @param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"' or 'class="saturatemedium"')
+ *  @param	int		$notitlealt	No title alt
  * 	@return	string				HTML img string with flag.
  */
-function picto_from_langcode($codelang, $moreatt = '')
+function picto_from_langcode($codelang, $moreatt = '', $notitlealt = 0)
 {
 	if (empty($codelang)) {
 		return '';
@@ -8154,7 +8168,7 @@ function picto_from_langcode($codelang, $moreatt = '')
 		$flagImage = empty($tmparray[1]) ? $tmparray[0] : $tmparray[1];
 	}
 
-	return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png', $moreatt);
+	return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png', $moreatt, 0, $notitlealt);
 }
 
 /**
@@ -9905,6 +9919,24 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 function dolGetButtonTitleSeparator($moreClass = "")
 {
 	return '<span class="button-title-separator '.$moreClass.'" ></span>';
+}
+
+/**
+ * get field error icon
+ *
+ * @param  string  $fieldValidationErrorMsg message to add in tooltip
+ * @return string html output
+ */
+function getFieldErrorIcon($fieldValidationErrorMsg)
+{
+	$out = '';
+	if (!empty($fieldValidationErrorMsg)) {
+		$out.= '<span class="field-error-icon classfortooltip" title="'.dol_escape_htmltag($fieldValidationErrorMsg, 1).'"  role="alert" >'; // role alert is used for accessibility
+		$out.= '<span class="fa fa-exclamation-circle" aria-hidden="true" ></span>'; // For accessibility icon is separated and aria-hidden
+		$out.= '</span>';
+	}
+
+	return $out;
 }
 
 /**

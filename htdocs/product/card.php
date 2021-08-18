@@ -64,12 +64,11 @@ if (!empty($conf->commande->enabled)) {
 }
 if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-}
-if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-}
-if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+}
+if (!empty($conf->bom->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 }
 
 // Load translation files required by the page
@@ -89,8 +88,8 @@ $mesg = ''; $error = 0; $errors = array();
 $refalreadyexists = 0;
 
 $id = GETPOST('id', 'int');
-$ref = GETPOST('ref', 'alpha');
-$type = (GETPOST('type', 'int') !== '') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT;
+$ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : null);
+$type = (GETPOSTISSET('type') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT);
 $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -111,6 +110,16 @@ $label_security_check = empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_LABEL
 
 if (!empty($user->socid)) {
 	$socid = $user->socid;
+}
+
+// Load object modCodeProduct
+$module = (!empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) ? $conf->global->PRODUCT_CODEPRODUCT_ADDON : 'mod_codeproduct_leopard');
+if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php') {
+	$module = substr($module, 0, dol_strlen($module) - 4);
+}
+$result = dol_include_once('/core/modules/product/'.$module.'.php');
+if ($result > 0) {
+	$modCodeProduct = new $module();
 }
 
 $object = new Product($db);
@@ -248,9 +257,11 @@ if (empty($reshook)) {
 			$error++;
 		}
 		if (empty($ref)) {
-			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Ref')), null, 'errors');
-			$action = "create";
-			$error++;
+			if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
+					setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Ref')), null, 'errors');
+					$action = "create";
+					$error++;
+			}
 		}
 		if (!empty($duration_value) && empty($duration_unit)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Unit')), null, 'errors');
@@ -432,6 +443,11 @@ if (empty($reshook)) {
 				$error++;
 			}
 
+			if (!$ref && !empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
+				// Generate ref...
+				$ref = $modCodeProduct->getNextValue($object, $type);
+			}
+
 			if (!$error) {
 				$id = $object->create($user);
 			}
@@ -471,7 +487,9 @@ if (empty($reshook)) {
 			if ($object->id > 0) {
 				$object->oldcopy = clone $object;
 
-				$object->ref                    = $ref;
+				if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
+					$object->ref                = $ref;
+				}
 				$object->label                  = GETPOST('label', $label_security_check);
 
 				$desc = dol_htmlcleanlastbr(preg_replace('/&nbsp;$/', '', GETPOST('desc', 'restricthtml')));
@@ -520,6 +538,13 @@ if (empty($reshook)) {
 					$object->finished = $finished;
 				} else {
 					$object->finished = null;
+				}
+
+				$fk_default_bom = GETPOST('fk_default_bom', 'int');
+				if ($fk_default_bom >= 0) {
+					$object->fk_default_bom = $fk_default_bom;
+				} else {
+					$object->fk_default_bom = null;
 				}
 
 				$units = GETPOST('units', 'int');
@@ -1073,16 +1098,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		print '<table class="border centpercent">';
 
-		print '<tr>';
-		$tmpcode = '';
-		if (!empty($modCodeProduct->code_auto)) {
-			$tmpcode = $modCodeProduct->getNextValue($object, $type);
+		if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
+			print '<tr>';
+			$tmpcode = '';
+			if (!empty($modCodeProduct->code_auto)) {
+				$tmpcode = $modCodeProduct->getNextValue($object, $type);
+			}
+			print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
+			if ($refalreadyexists) {
+				print $langs->trans("RefAlreadyExists");
+			}
+			print '</td></tr>';
 		}
-		print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
-		if ($refalreadyexists) {
-			print $langs->trans("RefAlreadyExists");
-		}
-		print '</td></tr>';
 
 		// Label
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth300 maxwidth400onsmartphone" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label', $label_security_check)).'"></td></tr>';
@@ -1215,8 +1242,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td>'.$form->textwithpicto($langs->trans("StockLimit"), $langs->trans("StockLimitDesc"), 1).'</td><td>';
 				print '<input name="seuil_stock_alerte" class="maxwidth50" value="'.GETPOST('seuil_stock_alerte').'">';
 				print '</td>';
-
-				print '</tr><tr>';
+				print '</tr>';
 
 				// Stock desired level
 				print '<tr><td>'.$form->textwithpicto($langs->trans("DesiredStock"), $langs->trans("DesiredStockDesc"), 1).'</td><td>';
@@ -1246,7 +1272,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print $form->selectarray('finished', $statutarray, GETPOST('finished', 'alpha'), 1);
 				print '</td></tr>';
 			}
+		}
 
+		if ($type != 1) {
 			if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
 				// Brut Weight
 				print '<tr><td>'.$langs->trans("Weight").'</td><td>';
@@ -1782,7 +1810,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print $formproduct->selectProductNature('finished', $object->finished);
 					print '</td></tr>';
 				}
+			}
 
+			if (!$object->isService() && !empty($conf->bom->enabled)) {
+				print '<tr><td>'.$form->textwithpicto($langs->trans("DefaultBOM"), $langs->trans("DefaultBOMDesc", $langs->transnoentitiesnoconv("Finished"))).'</td><td>';
+				$bomkey = "Bom:bom/class/bom.class.php:0:t.status=1 AND t.fk_product=".$object->id;
+				print $form->selectForForms($bomkey, 'fk_default_bom', $object->fk_default_bom, 1);
+				print '</td></tr>';
+			}
+
+			if (!$object->isService()) {
 				if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
 					// Brut Weight
 					print '<tr><td>'.$langs->trans("Weight").'</td><td>';
@@ -2266,7 +2303,19 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print $object->getLibFinished();
 					print '</td></tr>';
 				}
+			}
 
+			if (!$object->isService() && !empty($conf->bom->enabled) && $object->finished) {
+				print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("DefaultBOM"), $langs->trans("DefaultBOMDesc", $langs->transnoentitiesnoconv("Finished"))).'</td><td>';
+				if ($object->fk_default_bom) {
+					$bom_static = new BOM($db);
+					$bom_static->fetch($object->fk_default_bom);
+					print $bom_static->getNomUrl(1);
+				}
+				print '</td></tr>';
+			}
+
+			if (!$object->isService()) {
 				// Brut Weight
 				if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
 					print '<tr><td class="titlefield">'.$langs->trans("Weight").'</td><td>';
@@ -2388,16 +2437,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	}
 }
 
-// Load object modCodeProduct
-$module = (!empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) ? $conf->global->PRODUCT_CODEPRODUCT_ADDON : 'mod_codeproduct_leopard');
-if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php') {
-	$module = substr($module, 0, dol_strlen($module) - 4);
-}
-$result = dol_include_once('/core/modules/product/'.$module.'.php');
-if ($result > 0) {
-	$modCodeProduct = new $module();
-}
-
 $tmpcode = '';
 if (!empty($modCodeProduct->code_auto)) {
 	$tmpcode = $modCodeProduct->getNextValue($object, $object->type);
@@ -2417,7 +2456,7 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->d
 	// Define confirmation messages
 	$formquestionclone = array(
 		'text' => $langs->trans("ConfirmClone"),
-		array('type' => 'text', 'name' => 'clone_ref', 'label' => $langs->trans("NewRefForClone"), 'value' => empty($tmpcode) ? $langs->trans("CopyOf").' '.$object->ref : $tmpcode, 'size'=>24),
+		array('type' => 'text', 'name' => 'clone_ref', 'label' => $langs->trans("NewRefForClone"), 'value' => empty($tmpcode) ? $langs->trans("CopyOf").' '.$object->ref : $tmpcode, 'morecss'=>'width150'),
 		array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneContentProduct"), 'value' => 1),
 		array('type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans("CloneCategoriesProduct"), 'value' => 1),
 	);

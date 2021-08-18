@@ -272,7 +272,7 @@ class FormTicket
 			print '</td></tr>';
 		}
 
-		//Categories
+		// Categories
 		if ($conf->categorie->enabled) {
 			// Categories
 			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
@@ -436,6 +436,15 @@ class FormTicket
 				print '<input type="checkbox" id="notify_tiers_at_create" name="notify_tiers_at_create"'.($this->withnotifytiersatcreate ? ' checked="checked"' : '').'>';
 				print '</td></tr>';
 			}
+
+			// User assigned
+			print '<tr><td>';
+			print $langs->trans("AssignedTo");
+			print '</td><td>';
+			print img_picto('', 'user', 'class="pictofixedwidth"');
+			print $form->select_dolusers(GETPOST('fk_user_assign', 'int'), 'fk_user_assign', 1);
+			print '</td>';
+			print '</tr>';
 		}
 
 		if (!empty($conf->projet->enabled) && !$this->ispublic) {

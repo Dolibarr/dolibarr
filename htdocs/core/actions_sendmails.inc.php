@@ -182,8 +182,13 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 
 		$tmparray = array();
 		if (trim($_POST['sendto'])) {
-			// Recipients are provided into free text
+			// Recipients are provided into free text field
 			$tmparray[] = trim($_POST['sendto']);
+		}
+
+		if (trim($_POST['tomail'])) {
+			// Recipients are provided into free hidden text field
+			$tmparray[] = trim($_POST['tomail']);
 		}
 
 		if (count($receiver) > 0) {
@@ -311,7 +316,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 			$deliveryreceipt = $_POST['deliveryreceipt'];
 
 			if ($action == 'send' || $action == 'relance') {
-				$actionmsg2 = $langs->transnoentities('MailSentBy').' '.CMailFile::getValidAddress($from, 4, 0, 1).' '.$langs->transnoentities('at').' '.CMailFile::getValidAddress($sendto, 4, 0, 1);
+				$actionmsg2 = $langs->transnoentities('MailSentBy').' '.CMailFile::getValidAddress($from, 4, 0, 1).' '.$langs->transnoentities('To').' '.CMailFile::getValidAddress($sendto, 4, 0, 1);
 				if ($message) {
 					$actionmsg = $langs->transnoentities('MailFrom').': '.dol_escape_htmltag($from);
 					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTo').': '.dol_escape_htmltag($sendto));
