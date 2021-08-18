@@ -144,3 +144,5 @@ create table llx_stocktransfer_stocktransferline_extrafields
 ) ENGINE=innodb;
 
 ALTER TABLE llx_stocktransfer_stocktransferline_extrafields ADD INDEX idx_fk_object(fk_object);
+
+ALTER TABLE `llx_stock_mouvement` CHANGE `origintype` `origintype` VARCHAR(64)
