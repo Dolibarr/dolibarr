@@ -16,7 +16,7 @@
 --
 -- ============================================================================
 
-create table llx_product_lang_extrafields
+CREATE TABLE llx_product_lang_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
   tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
