@@ -1473,9 +1473,9 @@ class pdf_azur extends ModelePDFPropales
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$title = $outputlangs->transnoentities("PdfCommercialProposalTitle");
-		if (!empty($conf->global->MAIN_PDF_REF_IN_TITLE)) {
-			$title .= " " . $outputlangs->convToOutputCharset($object->ref);
-		}
+
+		$title .= " " . $outputlangs->convToOutputCharset($object->ref);
+
 		$pdf->MultiCell(100, 4, $title, '', 'R');
 
 		$pdf->SetFont('', 'B', $default_font_size);

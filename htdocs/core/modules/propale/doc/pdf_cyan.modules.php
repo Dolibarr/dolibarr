@@ -1573,10 +1573,8 @@ class pdf_cyan extends ModelePDFPropales
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$title = $outputlangs->transnoentities("PdfCommercialProposalTitle");
-		if (!empty($conf->global->MAIN_PDF_REF_IN_TITLE)) {
-			$title .= " " . $outputlangs->convToOutputCharset($object->ref);
-		}
+		$title = $outputlangs->transnoentities("PdfCommercialProposalTitle") . " " . $outputlangs->convToOutputCharset($object->ref);
+		
 		$pdf->MultiCell($w, 4, $title, '', 'R');
 
 		$pdf->SetFont('', 'B', $default_font_size);

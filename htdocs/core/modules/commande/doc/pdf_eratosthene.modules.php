@@ -1482,9 +1482,8 @@ class pdf_eratosthene extends ModelePDFCommandes
 			$title .= ' - ';
 			$title .= $outputlangsbis->transnoentities($titlekey);
 		}
-		if (!empty($conf->global->MAIN_PDF_REF_IN_TITLE)) {
-			$title .= " " . $outputlangs->convToOutputCharset($object->ref);
-		}
+
+		$title .= " " . $outputlangs->convToOutputCharset($object->ref);
 
 		$pdf->MultiCell($w, 3, $title, '', 'R');
 
