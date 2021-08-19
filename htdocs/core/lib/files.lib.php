@@ -1766,7 +1766,7 @@ function dol_remove_file_process($filenb, $donotupdatesession = 0, $donotdeletef
  */
 function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uploaded', $setsharekey = 0, $object = null)
 {
-	global $db, $user;
+	global $db, $user, $conf;
 
 	$result = 0;
 
@@ -1797,6 +1797,10 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 			}
 			if (isset($object->src_object_description)) $ecmfile->description = $object->src_object_description;
 			if (isset($object->src_object_keywords)) $ecmfile->keywords = $object->src_object_keywords;
+		}
+
+		if (!empty($conf->global->MAIN_FORCE_SHARING_ON_ANY_UPLOADED_FILE)) {
+			$setsharekey = 1;
 		}
 
 		if ($setsharekey) {

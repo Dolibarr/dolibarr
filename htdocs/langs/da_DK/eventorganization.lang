@@ -86,7 +86,7 @@ DownloadICSLink = Download ICS-link
 EVENTORGANIZATION_SECUREKEY = Sikker nøgle til linket til offentlig registrering til en konference
 SERVICE_BOOTH_LOCATION = Service, der bruges til fakturarække om en standplacering
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service, der bruges til fakturarække om et deltagerabonnement på en konference
-NbVotes=Number of votes
+NbVotes=Antal stemmer
 #
 # Status
 #
@@ -116,9 +116,11 @@ EvntOrgDuration = Denne konference starter på %s og slutter på %s.
 ConferenceAttendeeFee = Konferencedeltagergebyr for begivenheden: '%s', der forekommer fra %s til %s.
 BoothLocationFee = Standplacering for begivenheden: '%s' der forekommer fra %s til %s
 EventType = Begivenhedstype
-LabelOfBooth=Booth label
-LabelOfconference=Conference label
-ConferenceIsNotConfirmed=Subcription not available, conference is not confirmed yet
+LabelOfBooth=Båsetiket
+LabelOfconference=Konference label
+ConferenceIsNotConfirmed=Abonnement ikke tilgængeligt, konference er endnu ikke bekræftet
+DateMustBeBeforeThan=%s skal være før %s
+DateMustBeAfterThan=%s skal være efter %s
 
 #
 # Vote page

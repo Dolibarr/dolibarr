@@ -17,9 +17,9 @@
 #
 # Generic
 #
-ModuleEventOrganizationName = Organisation von Ereignissen
-EventOrganizationDescription = Organisatio von Ereignissenn durch Projekt-Modul
-EventOrganizationDescriptionLong= Verwalten Sie die Ereignisorganisation für Konferenzen, Teilnehmer, Redner und Teilnehmer mit einer öffentlichen Abonnementseite
+ModuleEventOrganizationName = Organisation von Veranstaltungen
+EventOrganizationDescription = Organisation von Veranstaltungen mittels Projekt-Modul
+EventOrganizationDescriptionLong= Verwalten Sie die Veranstaltungsorganisation für Konferenzen (Teilnehmer, Redner) mit einer öffentlichen Buchungsseite.
 #
 # Menu
 #
@@ -29,11 +29,11 @@ EventOrganizationConferenceOrBoothMenuLeft = Konferenz oder Stand
 #
 # Admin page
 #
-EventOrganizationSetup = Einstellungen der Ereignisorganisation
+EventOrganizationSetup = Einstellungen für die Organisation von Veranstaltungen
 Settings = Einstellungen
-EventOrganizationSetupPage = Einstellungs-Seite für die Ereignisorganisation
+EventOrganizationSetupPage = Einstellungs-Seite für die Organisation von Veranstaltungen
 EVENTORGANIZATION_TASK_LABEL = Bezeichnung der Aufgaben, die automatisch erstellt werden sollen, wenn das Projekt bestätigt wird
-EVENTORGANIZATION_TASK_LABELTooltip = When you validate an organized event, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conference<br>Send Call for Booth<br>Receive call for conferences<br>Receive call for Booth<br>Open subscriptions to events for attendees<br>Send remind of event to speakers<br>Send remind of event to Booth hoster<br>Send remind of event to attendees
+EVENTORGANIZATION_TASK_LABELTooltip = Wenn Sie eine organisierte Veranstaltung bestätigen, können einige Aufgaben automatisch im Projekt erstellt werden <br> <br> Zum Beispiel: <br> Aufruf für Konferenz senden <br> Aufruf für Standbuchungen senden <br> Anfragen für Konferenzen empfangen <br>Anfragen für Stände empfangen <br>Veranstaltungsbuchung für Teilnehmer freigeben<br>Veranstaltungserinnerung an Referenten senden <br>Veranstaltungserinnerung an Standinhaber senden <br>  Veranstaltungserinnerung an Teilnehmer senden
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kategorie, die Drittanbietern hinzugefügt werden soll, wird automatisch erstellt, wenn jemand eine Konferenz vorschlägt
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Kategorie, die Drittanbietern hinzugefügt werden soll, wird automatisch erstellt, wenn sie einen Stand vorschlagen
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Vorlage einer E-Mail, die nach Erhalt eines Konferenzvorschlags gesendet werden soll.
@@ -49,7 +49,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filtern Sie die Auswahlliste des Dritta
 # Object
 #
 EventOrganizationConfOrBooth= Konferenz oder Stand
-ManageOrganizeEvent = Ereignis-Organisation verwalten
+ManageOrganizeEvent = Organisation von Veranstaltungen verwalten
 ConferenceOrBooth = Konferenz oder Stand
 ConferenceOrBoothTab = Konferenz oder Stand
 AmountOfSubscriptionPaid = Betrag des bezahlten Abonnements
@@ -64,7 +64,7 @@ YourOrganizationEventBoothRequestWasReceived = Ihre Anfrage für Stand wurde emp
 EventOrganizationEmailAskConf = Anfrage für eine Konferenz
 EventOrganizationEmailAskBooth = Anfrage für Stand
 EventOrganizationEmailSubsBooth = Abonnement für Stand
-EventOrganizationEmailSubsEvent = Abonnement für eine Veranstaltung
+EventOrganizationEmailSubsEvent = Buchung für eine Veranstaltung
 EventOrganizationMassEmailAttendees = Kommunikation mit den Teilnehmern
 EventOrganizationMassEmailSpeakers = Kommunikation mit den Sprechern
 
@@ -82,11 +82,11 @@ PriceOfBoothHelp=Abonnementpreis für einen Stand
 EventOrganizationICSLink=Verknüpfe ICS für Ereignisse
 ConferenceOrBoothInformation=Konferenz- oder Standinformationen
 Attendees = Teilnehmer
-DownloadICSLink = Download ICS link
+DownloadICSLink = ICS-Link herunterladen
 EVENTORGANIZATION_SECUREKEY = Sicherer Schlüssel des öffentlichen Registrierungslinks zu einer Konferenz
-SERVICE_BOOTH_LOCATION = Service used for the invoice row about a booth location
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to a conference
-NbVotes=Number of votes
+SERVICE_BOOTH_LOCATION = Service, der für die Rechnungszeile über einen Stand verwendet wird
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service, der für die Rechnungszeile über eine Teilnahmebuchung einer Konferenz verwendet wird
+NbVotes=Anzahl der Stimmen
 #
 # Status
 #
@@ -99,49 +99,51 @@ EvntOrgCancelled = Abgesagt
 #
 # Public page
 #
-SuggestForm = Suggestion page
-RegisterPage = Page for conferences or booth
-EvntOrgRegistrationHelpMessage = Here, you can vote for an event, or suggest a new conference or booth for the project
-EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference for the project
-EvntOrgRegistrationBoothHelpMessage = Here, you can suggest a new booth for the project
-ListOfSuggestedConferences = List of suggested conferences
-ListOfSuggestedBooths = List of suggested booths
-SuggestConference = Suggest a new conference
-SuggestBooth = Suggest a booth
-ViewAndVote = View and vote for suggested events
+SuggestForm = Vorschlagsseite
+RegisterPage = Seite für Konferenzen oder Stände
+EvntOrgRegistrationHelpMessage = Hier können Sie für eine Veranstaltung abstimmen, eine neue Konferenz oder einen neuen Stand für das Projekt vorschlagen
+EvntOrgRegistrationConfHelpMessage = Hier können Sie eine neue Konferenz für das Projekt vorschlagen
+EvntOrgRegistrationBoothHelpMessage = Hier können Sie einen neuen Stand für das Projekt vorschlagen
+ListOfSuggestedConferences = Liste der vorgeschlagenen Konferenzen
+ListOfSuggestedBooths = Liste der vorgeschlagenen Stände
+SuggestConference = Eine neue Konferenz vorschlagen
+SuggestBooth = Einen Stand vorschlagen
+ViewAndVote = Vorgeschlagene Veranstaltungen ansehen und abstimmen
 PublicAttendeeSubscriptionPage = Öffentlicher Link zur Registrierung zu einer Konferenz
 MissingOrBadSecureKey = Der Sicherheitsschlüssel ist ungültig oder fehlt
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the conference : '%s'
-EvntOrgDuration = This conference starts on %s and ends on %s.
-ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
-BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
+EvntOrgWelcomeMessage = Mit diesem Formular können Sie sich als neuer Teilnehmer zur Konferenz anmelden: '%s'
+EvntOrgDuration = Diese Konferenz beginnt am %s und endet am %s.
+ConferenceAttendeeFee = Konferenzteilnehmergebühr für die Veranstaltung: '%s' vom %s bis %s.
+BoothLocationFee = Stand für die Veranstaltung: '%s' vom %s bis %s
 EventType = Ereignistyp
-LabelOfBooth=Booth label
-LabelOfconference=Conference label
-ConferenceIsNotConfirmed=Subcription not available, conference is not confirmed yet
+LabelOfBooth=Stand-Label
+LabelOfconference=Konferenz-Label
+ConferenceIsNotConfirmed=Abonnement nicht verfügbar, Konferenz ist noch nicht bestätigt
+DateMustBeBeforeThan=%s muss vor %s sein
+DateMustBeAfterThan=%s muss nach %s sein
 
 #
 # Vote page
 #
-EvntOrgRegistrationWelcomeMessage = Welcome on the conference or booth suggestion page.
-EvntOrgRegistrationConfWelcomeMessage = Welcome on the conference suggestion page.
-EvntOrgRegistrationBoothWelcomeMessage = Welcome on the booth suggestion page.
-EvntOrgVoteHelpMessage = Here, you can view and vote for the suggested events for the project
-VoteOk = Your vote has been accepted.
-AlreadyVoted = You have already voted for this event.
-VoteError = An error has occurred during the vote, please try again.
+EvntOrgRegistrationWelcomeMessage = Willkommen auf der Vorschlagseite für Konferenzen und Stände.
+EvntOrgRegistrationConfWelcomeMessage = Willkommen auf der Vorschlagsseite für Konferenzen.
+EvntOrgRegistrationBoothWelcomeMessage = Willkommen auf der Vorschlagsseite für Stände.
+EvntOrgVoteHelpMessage = Hier können Sie die vorgeschlagenen Veranstaltungen für das Projekt einsehen und für sie abstimmen
+VoteOk = Ihre Stimme wurde angenommen.
+AlreadyVoted = Sie haben bereits für diese Veranstaltung abgestimmt.
+VoteError = Bei der Abstimmung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.
 
 #
 # SubscriptionOk page
 #
-SubscriptionOk = Your subscription to this conference has been validated
+SubscriptionOk = Ihre Buchung für diese Konferenz wurde bestätigt
 #
 # Subscription validation mail
 #
-ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to a conference
+ConfAttendeeSubscriptionConfirmation = Bestätigung Ihrer Buchung für eine Konferenz
 #
 # Payment page
 #
-Attendee = Attendee
-PaymentConferenceAttendee = Conference attendee payment
-PaymentBoothLocation = Booth location payment
+Attendee = Teilnehmer
+PaymentConferenceAttendee = Zahlung für Konferenzteilnehmer
+PaymentBoothLocation = Zahlung für einen Stand
