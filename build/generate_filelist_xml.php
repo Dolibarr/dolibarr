@@ -48,17 +48,16 @@ $includecustom=0;
 $includeconstants=array();
 
 if (empty($argv[1])) {
-	print "Usage:   ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
+	print "Usage:   ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value] [buildzip=1]\n";
 	print "Example: ".$script_file." release=6.0.0 includecustom=1 includeconstant=FR:INVOICE_CAN_ALWAYS_BE_REMOVED:0 includeconstant=all:MAILING_NO_USING_PHPMAIL:1\n";
 	exit -1;
 }
 
-parse_str($argv[1]);
 
 $i=0;
 while ($i < $argc) {
 	if (! empty($argv[$i])) {
-		parse_str($argv[$i]);
+		parse_str($argv[$i]);	// set all params $release, $includecustom, $includeconstant, $buildzip ...
 	}
 	if (preg_match('/includeconstant=/', $argv[$i])) {
 		$tmp=explode(':', $includeconstant, 3);			// $includeconstant has been set with previous parse_str()
@@ -237,6 +236,11 @@ fputs($fp, '</dolibarr_script_dir_checksum>'."\n");
 fputs($fp, '</checksum_list>'."\n");
 fclose($fp);
 
-print "File ".$outputfile." generated\n";
+if (empty($buildzip)) {
+	print "File ".$outputfile." generated\n";
+} else {
+	dol_compress_file($outputfile, $outputfile.'.zip');
+	print "File ".$outputfile.".zip generated\n";
+}
 
 exit(0);
