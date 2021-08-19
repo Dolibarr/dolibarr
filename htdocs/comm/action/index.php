@@ -529,9 +529,9 @@ $viewmode .= '<span class="marginrightonly"></span>';	// To add a space before t
 $newcardbutton = '';
 if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create) {
 	$tmpforcreatebutton = dol_getdate(dol_now(), true);
-		
+
 	$newparam .= '&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
-	
+
 	//$param='month='.$monthshown.'&year='.$year;
 	$hourminsec = '100000';
 	$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : '')));
