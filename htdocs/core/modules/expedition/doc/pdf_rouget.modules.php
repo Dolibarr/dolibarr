@@ -959,10 +959,11 @@ class pdf_rouget extends ModelePdfExpedition
 		$pdf->MultiCell($w, 4, $title, '', 'R');
 
 		$pdf->SetFont('', '', $default_font_size + 1);
+		$posy += 1;
 
 		// Date planned delivery
 		if (!empty($object->date_delivery)) {
-				$posy += 5;
+				$posy += 4;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery, "day", false, $outputlangs, true), '', 'R');
