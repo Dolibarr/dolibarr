@@ -107,6 +107,10 @@ if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
 
 	echo '</span>';
 }
+$coldisplay++;
+print '<td class="bordertop nobottom linecolbom">';
+print '<select id="bom_select" name="bom_select"><options value="-1"></options></select>';
+print '</td>';
 
 $coldisplay++;
 print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : 1).'">';

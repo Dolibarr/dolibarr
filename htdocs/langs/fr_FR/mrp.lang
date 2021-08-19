@@ -101,3 +101,4 @@ HumanMachine=Humain/machine
 WorkstationArea=Espace Poste de travail
 Machines=Machines
 THMEstimatedHelp=Ce taux permet de définir un coût prévisionnel de l'article
+BOM=Nomenclature

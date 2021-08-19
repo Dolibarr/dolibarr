@@ -52,6 +52,9 @@ if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 // Description
 print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
 
+// Linked BOM
+print '<td class="linecolBOM">'.$langs->trans('BOM').'</td>';
+
 // Qty
 print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('Qty'), $langs->trans("QtyRequiredIfNoLoss")).'</td>';
 

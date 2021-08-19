@@ -570,6 +570,31 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
 			print '</table>';
 		}
+		?>
+		<script>
+			let select_product_val;
+			let current_bom_id = <?php echo $object->id?>;
+			$('#idprod').on('change', function () {
+				select_product_val = $('#idprod').select2().val();
+				$.ajax({
+					url: 'script/interface.php'
+					, method: 'POST'
+					, dataType: 'text'
+					, data: {
+						action: 'select_BOM'
+						, select_product_val: ""+select_product_val
+						, current_bom_id: current_bom_id
+					}
+				}).done(function (data) {
+					let options = JSON.parse(data)
+					for (let key in options) {
+						let opt = new Option(options[key], key);
+						$('#bom_select').append(opt)
+					}
+				})
+			})
+		</script>
+		<?php
 		print '</div>';
 
 		print "</form>\n";

@@ -83,6 +83,8 @@ $tmpproduct->fetch($line->fk_product);
 print $tmpproduct->getNomUrl(1);
 print ' - '.$tmpproduct->label;
 print '</td>';
+
+print '<td id="bom_id"></td>';
 print '<td class="linecolqty nowrap right">';
 $coldisplay++;
 echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formating role of function price
