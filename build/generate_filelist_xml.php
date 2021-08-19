@@ -124,8 +124,8 @@ print "\n";
 
 //$outputfile=dirname(__FILE__).'/../htdocs/install/filelist-'.$release.'.xml';
 $outputdir=dirname(dirname(__FILE__)).'/htdocs/install';
-print 'Delete current files '.$outputdir.'/filelist*.xml'."\n";
-dol_delete_file($outputdir.'/filelist*.xml', 0, 1, 1);
+print 'Delete current files '.$outputdir.'/filelist*.xml*'."\n";
+dol_delete_file($outputdir.'/filelist*.xml*', 0, 1, 1);
 
 $checksumconcat=array();
 
@@ -239,8 +239,11 @@ fclose($fp);
 if (empty($buildzip)) {
 	print "File ".$outputfile." generated\n";
 } else {
-	dol_compress_file($outputfile, $outputfile.'.zip');
-	print "File ".$outputfile.".zip generated\n";
+	$result = dol_compress_file($outputfile, $outputfile.'.zip');
+	if ($result > 0) {
+		dol_delete_file($outputfile);
+		print "File ".$outputfile.".zip generated\n";
+	}
 }
 
 exit(0);
