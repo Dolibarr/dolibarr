@@ -1221,7 +1221,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 			print '</td>';
 
 			// Duration - Time spent
-			print '<td>';
+			print '<td class="nowraponall">';
 			$durationtouse = ($_POST['timespent_duration'] ? $_POST['timespent_duration'] : '');
 			if (GETPOSTISSET('timespent_durationhour') || GETPOSTISSET('timespent_durationmin')) {
 				$durationtouse = (GETPOST('timespent_durationhour') * 3600 + GETPOST('timespent_durationmin') * 60);
@@ -1488,7 +1488,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 
 			// Time spent
 			if (!empty($arrayfields['t.task_duration']['checked'])) {
-				print '<td class="right">';
+				print '<td class="right nowraponall">';
 				if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid) {
 					print '<input type="hidden" name="old_duration" value="'.$task_time->task_duration.'">';
 					print $form->select_duration('new_duration', $task_time->task_duration, 0, 'text');
