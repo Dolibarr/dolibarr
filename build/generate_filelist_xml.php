@@ -239,8 +239,11 @@ fclose($fp);
 if (empty($buildzip)) {
 	print "File ".$outputfile." generated\n";
 } else {
-	dol_compress_file($outputfile, $outputfile.'.zip');
-	print "File ".$outputfile.".zip generated\n";
+	$result = dol_compress_file($outputfile, $outputfile.'.zip');
+	if ($result > 0) {
+		dol_delete_file($outputfile);
+		print "File ".$outputfile.".zip generated\n";
+	}
 }
 
 exit(0);
