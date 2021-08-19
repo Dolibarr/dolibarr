@@ -275,8 +275,9 @@ if (GETPOST('withtab', 'alpha')) {
 } else {
 	$title = $langs->trans("BrowseBlockedLog");
 }
+$help_url="EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
 
-llxHeader('', $langs->trans("BrowseBlockedLog"));
+llxHeader('', $title, $help_url);
 
 $MAXLINES = 10000;
 

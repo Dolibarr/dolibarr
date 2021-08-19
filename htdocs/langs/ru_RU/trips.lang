@@ -90,7 +90,6 @@ DATE_REFUS=Дата отклонения
 DATE_SAVE=Дата проверки
 DATE_CANCEL=Дата отмены
 DATE_PAIEMENT=Дата платежа
-BROUILLONNER=Открыть заново
 ExpenseReportRef=Ref. отчет о затратах
 ValidateAndSubmit=Проверить и отправить запрос на утверждение
 ValidatedWaitingApproval=Подтверждено (ожидает утверждения)

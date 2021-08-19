@@ -127,4 +127,5 @@ AllowDelayedPayment=Tillad forsinket betaling
 PrintPaymentMethodOnReceipts=Udskriv betalingsmetode på billetter | kvitteringer
 WeighingScale=Vægt skala 
 ShowPriceHT = Vis kolonnen med prisen ekskl. Moms (på skærmen)
-ShowPriceHTOnReceipt = Display the column with the price excluding tax (on the receipt)
+ShowPriceHTOnReceipt = Vis kolonnen med prisen ekskl. Moms (på kvitteringen)
+CustomerDisplay=Kundevisning

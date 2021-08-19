@@ -527,6 +527,7 @@ $viewmode .= '<span class="marginrightonly"></span>';	// To add a space before t
 
 
 $newcardbutton = '';
+$newparam = '';
 if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create) {
 	$tmpforcreatebutton = dol_getdate(dol_now(), true);
 

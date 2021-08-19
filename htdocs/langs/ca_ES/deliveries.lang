@@ -30,4 +30,4 @@ NonShippable=No es pot enviar
 ShowShippableStatus=Mostra l'estat d'enviament
 ShowReceiving=Mostra el rebut d'entrega
 NonExistentOrder=Comanda inexistent
-StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Quantitats d’estoc ja assignades en línies anteriors

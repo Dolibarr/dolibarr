@@ -264,6 +264,7 @@ ErrorAnAmountWithoutTaxIsRequired=Error, amount is mandatory
 ErrorAPercentIsRequired=Error, please fill in the percentage correctly
 ErrorYouMustFirstSetupYourChartOfAccount=You must first setup your chart of account
 ErrorFailedToFindEmailTemplate=Failed to find template with code name %s
+ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Duration not defined on service. No way to calculate the hourly price.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHP'nizdeki upload_max_filesize (%s) parametresi, post_max_size (%s) PHP parametresinden daha yüksek. Bu tutarlı bir kurulum değil.
