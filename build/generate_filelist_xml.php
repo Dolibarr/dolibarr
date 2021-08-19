@@ -124,8 +124,8 @@ print "\n";
 
 //$outputfile=dirname(__FILE__).'/../htdocs/install/filelist-'.$release.'.xml';
 $outputdir=dirname(dirname(__FILE__)).'/htdocs/install';
-print 'Delete current files '.$outputdir.'/filelist*.xml'."\n";
-dol_delete_file($outputdir.'/filelist*.xml', 0, 1, 1);
+print 'Delete current files '.$outputdir.'/filelist*.xml*'."\n";
+dol_delete_file($outputdir.'/filelist*.xml*', 0, 1, 1);
 
 $checksumconcat=array();
 
