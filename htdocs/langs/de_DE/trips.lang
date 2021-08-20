@@ -90,7 +90,6 @@ DATE_REFUS=Datum Ablehnung
 DATE_SAVE=Freigabedatum
 DATE_CANCEL=Stornodatum
 DATE_PAIEMENT=Zahlungsdatum
-BROUILLONNER=wiedereröffnen
 ExpenseReportRef=Belegnummer Spesenabrechnung
 ValidateAndSubmit=Validieren und zur Genehmigung einreichen
 ValidatedWaitingApproval=Validiert (Wartet auf Genehmigung)

@@ -66,7 +66,7 @@ NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
 Answered=Odpovězeno
 Waiting=Čekání
-Closed=Zavřeno
+SolvedClosed=Solved
 Deleted=Smazáno
 
 # Dict
@@ -186,9 +186,11 @@ TicketSeverity=Vážnost
 ShowTicket=Viz lístek
 RelatedTickets=Související vstupenky
 TicketAddIntervention=Vytvořit intervenci
-CloseTicket=Zavřete lístek
-CloseATicket=Zavřete lístek
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Potvrďte uzavření lístku
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Potvrďte prosím vymazání lístku
 TicketDeletedSuccess=Lístek byl vymazán s úspěchem
 TicketMarkedAsClosed=Lístek označený jako zavřený

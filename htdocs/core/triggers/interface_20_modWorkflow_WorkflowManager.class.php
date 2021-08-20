@@ -256,15 +256,20 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			}
 		}
 
-		if ($action == 'SHIPPING_VALIDATE') {
+		if (($action == 'SHIPPING_VALIDATE') || ($action == 'SHIPPING_CLOSED')) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			if (!empty($conf->commande->enabled) && !empty($conf->expedition->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING)) {
+			if (!empty($conf->commande->enabled) && !empty($conf->expedition->enabled) && !empty($conf->workflow->enabled) &&
+				(
+					(!empty($conf->global->WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING) && ($action == 'SHIPPING_VALIDATE')) ||
+					(!empty($conf->global->WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED) && ($action == 'SHIPPING_CLOSED'))
+				)
+			) {
 				$qtyshipped = array();
 				$qtyordred = array();
 				require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
-				//find all shippement on order origin
+				// Find all shipments on order origin
 				$order = new Commande($this->db);
 				$ret = $order->fetch($object->origin_id);
 				if ($ret < 0) {
@@ -309,15 +314,16 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$diff_array = array_diff_assoc($qtyordred, $qtyshipped);
 				if (count($diff_array) == 0) {
 					//No diff => mean everythings is shipped
-					$ret = $object->setStatut(Commande::STATUS_CLOSED, $object->origin_id, $object->origin, 'ORDER_CLOSE');
+					$ret = $order->setStatut(Commande::STATUS_CLOSED, $object->origin_id, $object->origin, 'ORDER_CLOSE');
 					if ($ret < 0) {
-						$this->error = $object->error;
-						$this->errors = $object->errors;
+						$this->error = $order->error;
+						$this->errors = $order->errors;
 						return $ret;
 					}
 				}
 			}
 		}
+
 		 // classify billed reception
 		if ($action == 'BILL_SUPPLIER_VALIDATE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id, LOG_DEBUG);
