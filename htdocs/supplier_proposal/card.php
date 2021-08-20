@@ -1330,11 +1330,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("CreateDraft").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-	print '</div>';
+	print $form->buttonsSaveCancel("CreateDraft");
 
 	print "</form>";
 
@@ -1808,11 +1804,8 @@ if ($action == 'create') {
 		$form_close .= $object->note_private;
 		$form_close .= '</textarea></td></tr>';
 		$form_close .= '</table>';
-		$form_close .= '<center>';
-		$form_close .= '<input type="submit" class="button button-save" name="validate" value="'.$langs->trans("Save").'">';
-		$form_close .= ' &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-		$form_close .= '<a name="acceptedrefused">&nbsp;</a>';
-		$form_close .= '</center>';
+		$form_close .= $form->buttonsSaveCancel();;
+		$form_close .= '<a id="acceptedrefused">&nbsp;</a>';
 		$form_close .= '</form>';
 
 		print $form_close;

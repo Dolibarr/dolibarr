@@ -824,10 +824,7 @@ if ($mysoc->useRevenueStamp()) {
 
 print "</table>";
 
-
-print '<br><div class="center">';
-print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-print '</div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 

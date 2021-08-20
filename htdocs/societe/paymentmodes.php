@@ -1651,11 +1651,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer) {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
-	print '</div>';
+	print $form->buttonsSaveCancel("Modify");
 }
 
 // Edit Card
@@ -1697,11 +1693,7 @@ if ($socid && $action == 'editcard' && $user->rights->societe->creer) {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
-	print '</div>';
+	print $form->buttonsSaveCancel("Modify");
 }
 
 
@@ -1817,11 +1809,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer) {
 
 	dol_set_focus('#label');
 
-	print '<div class="center">';
-	print '<input class="button" value="'.$langs->trans("Add").'" type="submit">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'" type="submit">';
-	print '</div>';
+	print $form->buttonsSaveCancel("Add");
 }
 
 // Create Card
@@ -1866,11 +1854,7 @@ if ($socid && $action == 'createcard' && $user->rights->societe->creer) {
 
 	dol_set_focus('#label');
 
-	print '<div class="center">';
-	print '<input class="button" value="'.$langs->trans("Add").'" type="submit">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'" type="submit">';
-	print '</div>';
+	print $form->buttonsSaveCancel("Add");
 }
 
 if ($socid && ($action == 'edit' || $action == 'editcard') && $user->rights->societe->creer) {

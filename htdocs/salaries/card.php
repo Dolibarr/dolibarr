@@ -549,15 +549,15 @@ if ($action == 'create') {
 
 	print '<div class="hide_if_no_auto_create_payment paddingbottom">';
 	print '<input type="checkbox" checked value="1" name="closepaidsalary">'.$langs->trans("ClosePaidSalaryAutomatically");
-	print '<br>';
 	print '</div>';
 
-	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp; &nbsp;&nbsp;';
-	print '<input type="submit" class="button" name="saveandnew" value="'.$langs->trans("SaveAndNew").'">';
-	print '&nbsp;&nbsp; &nbsp;&nbsp;';
-	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
+
+	$addition_button = array(
+		'name' => 'saveandnew',
+		'label_key' => 'SaveAndNew',
+	);
+	print $form->buttonsSaveCancel("Save", "Cancel", $addition_button);
 
 	print '</form>';
 }
@@ -886,12 +886,8 @@ if ($id) {
 
 
 	if ($action == 'edit') {
-		print '<div align="center">';
-		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-		print ' &nbsp; ';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
-		print "</form>\n";
+		print $form->buttonsSaveCancel();
+		print "</form>";
 	}
 
 	print dol_get_fiche_end();
