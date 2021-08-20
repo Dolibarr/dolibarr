@@ -61,11 +61,11 @@ if ($user->socid > 0) {
 	accessforbidden();
 }
 
-if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) {
+if (empty(getDolGlobalString("MAIN_INFO_SOCIETE_NOM")) || empty(getDolGlobalString("MAIN_INFO_SOCIETE_COUNTRY"))) {
 	$setupcompanynotcomplete = 1;
 }
 
-$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+$max = getDolGlobalString("MAIN_SIZE_SHORTLIST_LIMIT");
 
 
 /*
@@ -105,7 +105,7 @@ if (!empty($setupcompanynotcomplete)) {
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
+if (!empty(getDolGlobalString("MAIN_SEARCH_FORM_ON_HOME_AREAS"))) {     // This is useless due to the global search combo
 	if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 		$langs->load("holiday");
 		$listofsearchfields['search_holiday'] = array('text'=>'TitreRequestCP');
@@ -145,7 +145,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is usel
 
 
 if (!empty($conf->holiday->enabled)) {
-	if (empty($conf->global->HOLIDAY_HIDE_BALANCE)) {
+	if (empty(getDolGlobalString("HOLIDAY_HIDE_BALANCE"))) {
 		$holidaystatic = new Holiday($db);
 		$user_id = $user->id;
 
@@ -169,8 +169,8 @@ if (!empty($conf->holiday->enabled)) {
 		print '</td>';
 		print '</tr>';
 		print '</table></div><br>';
-	} elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE)) {
-		print $langs->trans($conf->global->HOLIDAY_HIDE_BALANCE).'<br>';
+	} elseif (!is_numeric(getDolGlobalString("HOLIDAY_HIDE_BALANCE"))) {
+		print $langs->trans(getDolGlobalString("HOLIDAY_HIDE_BALANCE")).'<br>';
 	}
 }
 

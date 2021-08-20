@@ -225,7 +225,7 @@ if (empty($reshook)) {
 			$action = 'create';
 		}
 
-		if (!empty($conf->mailing->enabled) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == -1 && $object->no_email == -1 && !empty($object->email)) {
+		if (!empty($conf->mailing->enabled) && getDolGlobalString("MAILING_CONTACT_DEFAULT_BULK_STATUS") == -1 && $object->no_email == -1 && !empty($object->email)) {
 			$error++;
 			$errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("No_Email"));
 			$action = 'create';
@@ -317,7 +317,7 @@ if (empty($reshook)) {
 			$action = 'edit';
 		}
 
-		if (!empty($conf->mailing->enabled) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == -1 && GETPOST("no_email", "int") == -1 && !empty(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL))) {
+		if (!empty($conf->mailing->enabled) && getDolGlobalString("MAILING_CONTACT_DEFAULT_BULK_STATUS") == -1 && GETPOST("no_email", "int") == -1 && !empty(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL))) {
 			$error++;
 			$errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("No_Email"));
 			$action = 'edit';
@@ -516,8 +516,8 @@ if (empty($reshook)) {
  */
 
 
-$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) {
+$title = (!empty(getDolGlobalString("SOCIETE_ADDRESSES_MANAGEMENT")) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+if (!empty(getDolGlobalString("MAIN_HTML_TITLE")) && preg_match('/contactnameonly/', getDolGlobalString("MAIN_HTML_TITLE")) && $object->lastname) {
 	$title = $object->lastname;
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -575,7 +575,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Show tabs
 		$head = contact_prepare_head($object);
 
-		$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+		$title = (!empty(getDolGlobalString("SOCIETE_ADDRESSES_MANAGEMENT")) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 	}
 
 	if ($user->rights->societe->contact->creer) {
@@ -595,7 +595,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$object->country      = $tmparray['label'];
 			}
 
-			$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
+			$title = (!empty(getDolGlobalString("SOCIETE_ADDRESSES_MANAGEMENT")) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
 			$linkback = '';
 			print load_fiche_titre($title, $linkback, 'address');
 
@@ -648,7 +648,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</tr>';
 
 			// Company
-			if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+			if (empty(getDolGlobalString("SOCIETE_DISABLE_CONTACTS"))) {
 				if ($socid > 0) {
 					print '<tr><td><label for="socid">'.$langs->trans("ThirdParty").'</label></td>';
 					print '<td colspan="3" class="maxwidthonsmartphone">';
@@ -678,7 +678,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Address
-			if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->address)) == 0) {
+			if (($objsoc->typent_code == 'TE_PRIVATE' || !empty(getDolGlobalString("CONTACT_USE_COMPANY_ADDRESS"))) && dol_strlen(trim($object->address)) == 0) {
 				$object->address = $objsoc->address; // Predefined with third party
 			}
 			print '<tr><td><label for="address">'.$langs->trans("Address").'</label></td>';
@@ -686,7 +686,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			if ($conf->use_javascript_ajax && $socid > 0) {
 				$rowspan = 3;
-				if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
+				if (empty(getDolGlobalString("SOCIETE_DISABLE_STATE"))) {
 					$rowspan++;
 				}
 
@@ -697,10 +697,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</tr>';
 
 			// Zip / Town
-			if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->zip)) == 0) {
+			if (($objsoc->typent_code == 'TE_PRIVATE' || !empty(getDolGlobalString("CONTACT_USE_COMPANY_ADDRESS"))) && dol_strlen(trim($object->zip)) == 0) {
 				$object->zip = $objsoc->zip; // Predefined with third party
 			}
-			if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->town)) == 0) {
+			if (($objsoc->typent_code == 'TE_PRIVATE' || !empty(getDolGlobalString("CONTACT_USE_COMPANY_ADDRESS"))) && dol_strlen(trim($object->town)) == 0) {
 				$object->town = $objsoc->town; // Predefined with third party
 			}
 			print '<tr><td><label for="zipcode">'.$langs->trans("Zip").'</label> / <label for="town">'.$langs->trans("Town").'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
@@ -718,8 +718,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 
 			// State
-			if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
-				if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2)) {
+			if (empty(getDolGlobalString("SOCIETE_DISABLE_STATE"))) {
+				if (!empty(getDolGlobalString("MAIN_SHOW_REGION_IN_STATE_SELECT")) && (getDolGlobalString("MAIN_SHOW_REGION_IN_STATE_SELECT") == 1 || getDolGlobalString("MAIN_SHOW_REGION_IN_STATE_SELECT") == 2)) {
 					print '<tr><td><label for="state_id">'.$langs->trans('Region-State').'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
 				} else {
 					print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
@@ -734,10 +734,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>';
 			}
 
-			if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->phone_pro)) == 0) {
+			if (($objsoc->typent_code == 'TE_PRIVATE' || !empty(getDolGlobalString("CONTACT_USE_COMPANY_ADDRESS"))) && dol_strlen(trim($object->phone_pro)) == 0) {
 				$object->phone_pro = $objsoc->phone; // Predefined with third party
 			}
-			if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->fax)) == 0) {
+			if (($objsoc->typent_code == 'TE_PRIVATE' || !empty(getDolGlobalString("CONTACT_USE_COMPANY_ADDRESS"))) && dol_strlen(trim($object->fax)) == 0) {
 				$object->fax = $objsoc->fax; // Predefined with third party
 			}
 
@@ -767,7 +767,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<input type="text" name="fax" id="fax" class="maxwidth200" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax).'"></td>';
 			print '</tr>';
 
-			if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->email)) == 0) {
+			if (($objsoc->typent_code == 'TE_PRIVATE' || !empty(getDolGlobalString("CONTACT_USE_COMPANY_ADDRESS"))) && dol_strlen(trim($object->email)) == 0) {
 				$object->email = $objsoc->email; // Predefined with third party
 			}
 
@@ -780,7 +780,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Unsubscribe
 			if (!empty($conf->mailing->enabled)) {
-				if ($conf->use_javascript_ajax && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == -1) {
+				if ($conf->use_javascript_ajax && getDolGlobalString("MAILING_CONTACT_DEFAULT_BULK_STATUS") == -1) {
 					print "\n".'<script type="text/javascript" language="javascript">'."\n";
 					print '$(document).ready(function () {
 							$("#email").keyup(function() {
@@ -801,7 +801,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 				print '<tr>';
 				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
-				print '<td>'.$form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS), 1, false, ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == -1)).'</td>';
+				print '<td>'.$form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : getDolGlobalString("MAILING_CONTACT_DEFAULT_BULK_STATUS")), 1, false, (getDolGlobalString("MAILING_CONTACT_DEFAULT_BULK_STATUS") == -1)).'</td>';
 				print '</tr>';
 			}
 
@@ -951,7 +951,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<table class="border centpercent">';
 
 			// Ref/ID
-			if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
+			if (!empty(getDolGlobalString("MAIN_SHOW_TECHNICAL_ID"))) {
 				print '<tr><td>'.$langs->trans("ID").'</td><td colspan="3">';
 				print $object->ref;
 				print '</td></tr>';
@@ -968,7 +968,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</tr>';
 
 			// Company
-			if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+			if (empty(getDolGlobalString("SOCIETE_DISABLE_CONTACTS"))) {
 				print '<tr><td><label for="socid">'.$langs->trans("ThirdParty").'</label></td>';
 				print '<td colspan="3" class="maxwidthonsmartphone">';
 				print img_picto('', 'company').$form->select_company(GETPOST('socid', 'int') ?GETPOST('socid', 'int') : ($object->socid ? $object->socid : -1), 'socid', '', $langs->trans("SelectThirdParty"));
@@ -1013,8 +1013,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 
 			// State
-			if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
-				if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2)) {
+			if (empty(getDolGlobalString("SOCIETE_DISABLE_STATE"))) {
+				if (!empty(getDolGlobalString("MAIN_SHOW_REGION_IN_STATE_SELECT")) && (getDolGlobalString("MAIN_SHOW_REGION_IN_STATE_SELECT") == 1 || getDolGlobalString("MAIN_SHOW_REGION_IN_STATE_SELECT") == 2)) {
 					print '<tr><td><label for="state_id">'.$langs->trans('Region-State').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
 				} else {
 					print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
@@ -1045,7 +1045,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<input type="text" name="fax" id="fax" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_fax') ?GETPOST('phone_fax', 'alpha') : $object->fax).'"></td></tr>';
 
 			// EMail
-			print '<tr><td>'.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (!empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
+			print '<tr><td>'.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (!empty(getDolGlobalString("SOCIETE_EMAIL_MANDATORY")))).'</td>';
 			print '<td>';
 			print img_picto('', 'object_email');
 			print '<input type="text" name="email" id="email" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('email') ?GETPOST('email', 'alpha') : $object->email).'"></td>';
@@ -1060,7 +1060,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Unsubscribe
 			if (!empty($conf->mailing->enabled)) {
-				if ($conf->use_javascript_ajax && isset($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == -1) {
+				if ($conf->use_javascript_ajax && isset(getDolGlobalString("MAILING_CONTACT_DEFAULT_BULK_STATUS")) && getDolGlobalString("MAILING_CONTACT_DEFAULT_BULK_STATUS") == -1) {
 					print "\n".'<script type="text/javascript" language="javascript">'."\n";
 
 					print '
@@ -1087,7 +1087,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 				print '<tr>';
 				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
-				$useempty = (isset($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == -1));
+				$useempty = (isset(getDolGlobalString("MAILING_CONTACT_DEFAULT_BULK_STATUS")) && (getDolGlobalString("MAILING_CONTACT_DEFAULT_BULK_STATUS") == -1));
 				print '<td>'.$form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $object->no_email), 1, false, $useempty).'</td>';
 				print '</tr>';
 			}
@@ -1118,13 +1118,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Note Public
 			print '<tr><td class="tdtop"><label for="note_public">'.$langs->trans("NotePublic").'</label></td><td colspan="3">';
-			$doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty(getDolGlobalString("FCKEDITOR_ENABLE_NOTE_PUBLIC")) ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			print '</td></tr>';
 
 			// Note Private
 			print '<tr><td class="tdtop"><label for="note_private">'.$langs->trans("NotePrivate").'</label></td><td colspan="3">';
-			$doleditor = new DolEditor('note_private', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_private', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty(getDolGlobalString("FCKEDITOR_ENABLE_NOTE_PRIVATE")) ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			print '</td></tr>';
 
@@ -1277,7 +1277,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$morehtmlref = '<div class="refidno">';
-		if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+		if (empty(getDolGlobalString("SOCIETE_DISABLE_CONTACTS"))) {
 			$objsoc->fetch($object->socid);
 			// Thirdparty
 			$morehtmlref .= $langs->trans('ThirdParty').' : ';
@@ -1331,7 +1331,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		$object->fetch_thirdparty();
 
-		if (!empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {
+		if (!empty(getDolGlobalString("THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES"))) {
 			if ($object->thirdparty->client == 2 || $object->thirdparty->client == 3) {
 				print '<br>';
 

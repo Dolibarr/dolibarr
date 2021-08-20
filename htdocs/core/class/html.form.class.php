@@ -111,7 +111,7 @@ class Form
 		$ret = '';
 
 		// TODO change for compatibility
-		if (!empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && !preg_match('/^select;/', $typeofdata)) {
+		if (!empty(getDolGlobalString("MAIN_USE_JQUERY_JEDITABLE")) && !preg_match('/^select;/', $typeofdata)) {
 			if (!empty($perm)) {
 				$tmp = explode(':', $typeofdata);
 				$ret .= '<div class="editkey_'.$tmp[0].(!empty($tmp[1]) ? ' '.$tmp[1] : '').'" id="'.$htmlname.'">';
@@ -214,7 +214,7 @@ class Form
 		}
 
 		// When option to edit inline is activated
-		if (!empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && !preg_match('/^select;|datehourpicker/', $typeofdata)) { // TODO add jquery timepicker and support select
+		if (!empty(getDolGlobalString("MAIN_USE_JQUERY_JEDITABLE")) && !preg_match('/^select;|datehourpicker/', $typeofdata)) { // TODO add jquery timepicker and support select
 			$ret .= $this->editInPlace($object, $value, $htmlname, $perm, $typeofdata, $editvalue, $extObject, $custommsg);
 		} else {
 			$editmode = (GETPOST('action', 'aZ09') == 'edit'.$htmlname);
@@ -331,7 +331,7 @@ class Form
 					}
 				} elseif (preg_match('/^ckeditor/', $typeofdata)) {
 					$tmpcontent = dol_htmlentitiesbr($value);
-					if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+					if (!empty(getDolGlobalString("MAIN_DISABLE_NOTES_TAB"))) {
 						$firstline = preg_replace('/<br>.*/', '', $tmpcontent);
 						$firstline = preg_replace('/[\n\r].*/', '', $firstline);
 						$tmpcontent = $firstline.((strlen($firstline) != strlen($tmpcontent)) ? '...' : '');
@@ -370,8 +370,8 @@ class Form
 
 		// List of extra languages
 		$arrayoflangcode = array();
-		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) {
-			$arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+		if (!empty(getDolGlobalString("PDF_USE_ALSO_LANGUAGE_CODE"))) {
+			$arrayoflangcode[] = getDolGlobalString("PDF_USE_ALSO_LANGUAGE_CODE");
 		}
 
 		if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
@@ -1248,7 +1248,7 @@ class Form
 
 		$out = '';
 
-		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT) && !$forcecombo) {
+		if (!empty($conf->use_javascript_ajax) && !empty(getDolGlobalString("COMPANY_USE_SEARCH_TO_SELECT")) && !$forcecombo) {
 			if (is_null($ajaxoptions)) {
 				$ajaxoptions = array();
 			}
@@ -1266,7 +1266,7 @@ class Form
 			}
 			// mode 1
 			$urloption = 'htmlname='.urlencode($htmlname).'&outjson=1&filter='.urlencode($filter).(empty($excludeids) ? '' : '&excludeids='.join(',', $excludeids)).($showtype ? '&showtype='.urlencode($showtype) : '');
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, getDolGlobalString("COMPANY_USE_SEARCH_TO_SELECT"), 0, $ajaxoptions);
 
 			$out .= '<style type="text/css">.ui-autocomplete { z-index: 1003; }</style>';
 			if (empty($hidelabel)) {
@@ -1277,7 +1277,7 @@ class Form
 					$out .= img_picto($langs->trans("Search"), 'search');
 				}
 			}
-			$out .= '<input type="text" class="'.$morecss.'" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.($placeholder ? ' placeholder="'.dol_escape_htmltag($placeholder).'"' : '').' '.(!empty($conf->global->THIRDPARTY_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
+			$out .= '<input type="text" class="'.$morecss.'" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.($placeholder ? ' placeholder="'.dol_escape_htmltag($placeholder).'"' : '').' '.(!empty(getDolGlobalString("THIRDPARTY_SEARCH_AUTOFOCUS")) ? 'autofocus' : '').' />';
 			if ($hidelabel == 3) {
 				$out .= img_picto($langs->trans("Search"), 'search');
 			}
@@ -1334,12 +1334,12 @@ class Form
 
 		// We search companies
 		$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.tva_intra, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
-		if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+		if (!empty(getDolGlobalString("COMPANY_SHOW_ADDRESS_SELECTLIST"))) {
 			$sql .= ", s.address, s.zip, s.town";
 			$sql .= ", dictp.code as country_code";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-		if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+		if (!empty(getDolGlobalString("COMPANY_SHOW_ADDRESS_SELECTLIST"))) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as dictp ON dictp.rowid = s.fk_pays";
 		}
 		if (!$user->rights->societe->client->voir && !$user->socid) {
@@ -1355,7 +1355,7 @@ class Form
 		if (!$user->rights->societe->client->voir && !$user->socid) {
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
-		if (!empty($conf->global->COMPANY_HIDE_INACTIVE_IN_COMBOBOX)) {
+		if (!empty(getDolGlobalString("COMPANY_HIDE_INACTIVE_IN_COMBOBOX"))) {
 			$sql .= " AND s.status <> 0";
 		}
 		if (!empty($excludeids)) {
@@ -1364,7 +1364,7 @@ class Form
 		// Add criteria
 		if ($filterkey && $filterkey != '') {
 			$sql .= " AND (";
-			$prefix = empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE) ? '%' : ''; // Can use index if COMPANY_DONOTSEARCH_ANYWHERE is on
+			$prefix = empty(getDolGlobalString("COMPANY_DONOTSEARCH_ANYWHERE")) ? '%' : ''; // Can use index if COMPANY_DONOTSEARCH_ANYWHERE is on
 			// For natural search
 			$scrit = explode(' ', $filterkey);
 			$i = 0;
@@ -1397,14 +1397,14 @@ class Form
 		if ($resql) {
 			if (!$forcecombo) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlname, $events, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+				$out .= ajax_combobox($htmlname, $events, getDolGlobalString("COMPANY_USE_SEARCH_TO_SELECT"));
 			}
 
 			// Construct $out and $outarray
 			$out .= '<select id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'"'.($moreparam ? ' '.$moreparam : '').' name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').'>'."\n";
 
 			$textifempty = (($showempty && !is_numeric($showempty)) ? $langs->trans($showempty) : '');
-			if (!empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) {
+			if (!empty(getDolGlobalString("COMPANY_USE_SEARCH_TO_SELECT"))) {
 				// Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
 				//if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
 				if ($showempty && !is_numeric($showempty)) {
@@ -1423,7 +1423,7 @@ class Form
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 					$label = '';
-					if ($conf->global->SOCIETE_ADD_REF_IN_LIST) {
+					if (getDolGlobalString("SOCIETE_ADD_REF_IN_LIST")) {
 						if (($obj->client) && (!empty($obj->code_client))) {
 							$label = $obj->code_client.' - ';
 						}
@@ -1457,7 +1457,7 @@ class Form
 						}
 					}
 
-					if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+					if (!empty(getDolGlobalString("COMPANY_SHOW_ADDRESS_SELECTLIST"))) {
 						$label .= ($obj->address ? ' - '.$obj->address : '').($obj->zip ? ' - '.$obj->zip : '').($obj->town ? ' '.$obj->town : '');
 						if (!empty($obj->country_code)) {
 							$label .= ', '.$langs->trans('Country'.$obj->country_code);
@@ -1559,7 +1559,7 @@ class Form
 						$disabled = ' disabled';
 					}
 
-					if (!empty($conf->global->MAIN_SHOW_FACNUMBER_IN_DISCOUNT_LIST) && !empty($obj->fk_facture_source)) {
+					if (!empty(getDolGlobalString("MAIN_SHOW_FACNUMBER_IN_DISCOUNT_LIST")) && !empty($obj->fk_facture_source)) {
 						$tmpfac = new Facture($this->db);
 						if ($tmpfac->fetch($obj->fk_facture_source) > 0) {
 							$desc = $desc.' - '.$tmpfac->ref;
@@ -1655,18 +1655,18 @@ class Form
 
 		// We search third parties
 		$sql = "SELECT sp.rowid, sp.lastname, sp.statut, sp.firstname, sp.poste, sp.email, sp.phone, sp.phone_perso, sp.phone_mobile, sp.town AS contact_town";
-		if ($showsoc > 0 || !empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
+		if ($showsoc > 0 || !empty(getDolGlobalString("CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST"))) {
 			$sql .= ", s.nom as company, s.town AS company_town";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
-		if ($showsoc > 0 || !empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
+		if ($showsoc > 0 || !empty(getDolGlobalString("CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST"))) {
 			$sql .= " LEFT OUTER JOIN  ".MAIN_DB_PREFIX."societe as s ON s.rowid=sp.fk_soc";
 		}
 		$sql .= " WHERE sp.entity IN (".getEntity('socpeople').")";
 		if ($socid > 0 || $socid == -1) {
 			$sql .= " AND sp.fk_soc=".$socid;
 		}
-		if (!empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) {
+		if (!empty(getDolGlobalString("CONTACT_HIDE_INACTIVE_IN_COMBOBOX"))) {
 			$sql .= " AND sp.statut <> 0";
 		}
 		$sql .= " ORDER BY sp.lastname ASC";
@@ -1678,7 +1678,7 @@ class Form
 
 			if ($conf->use_javascript_ajax && !$forcecombo && !$options_only) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlid, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+				$out .= ajax_combobox($htmlid, $events, getDolGlobalString("CONTACT_USE_SEARCH_TO_SELECT"));
 			}
 
 			if ($htmlname != 'none' && !$options_only) {
@@ -1702,7 +1702,7 @@ class Form
 
 					// Set email (or phones) and town extended infos
 					$extendedInfos = '';
-					if (!empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
+					if (!empty(getDolGlobalString("CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST"))) {
 						$extendedInfos = array();
 						$email = trim($obj->email);
 						if (!empty($email)) {
@@ -1871,7 +1871,7 @@ class Form
 		global $conf, $user, $langs, $hookmanager;
 
 		// If no preselected user defined, we take current user
-		if ((is_numeric($selected) && ($selected < -2 || empty($selected))) && empty($conf->global->SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE)) {
+		if ((is_numeric($selected) && ($selected < -2 || empty($selected))) && empty(getDolGlobalString("SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE"))) {
 			$selected = $user->id;
 		}
 
@@ -1916,7 +1916,7 @@ class Form
 				$sql .= " WHERE u.entity IS NOT NULL";
 			}
 		} else {
-			if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+			if (!empty(getDolGlobalString("MULTICOMPANY_TRANSVERSE_MODE"))) {
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug";
 				$sql .= " ON ug.fk_user = u.rowid";
 				$sql .= " WHERE ug.entity = ".$conf->entity;
@@ -1933,7 +1933,7 @@ class Form
 		if ($includeUsers) {
 			$sql .= " AND u.rowid IN (".$this->db->sanitize($includeUsers).")";
 		}
-		if (!empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX) || $noactive) {
+		if (!empty(getDolGlobalString("USER_HIDE_INACTIVE_IN_COMBOBOX")) || $noactive) {
 			$sql .= " AND u.statut <> 0";
 		}
 		if (!empty($morefilter)) {
@@ -1946,7 +1946,7 @@ class Form
 			$sql .= $hookmanager->resPrint;
 		}
 
-		if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)) {	// MAIN_FIRSTNAME_NAME_POSITION is 0 means firstname+lastname
+		if (empty(getDolGlobalString("MAIN_FIRSTNAME_NAME_POSITION"))) {	// MAIN_FIRSTNAME_NAME_POSITION is 0 means firstname+lastname
 			$sql .= " ORDER BY u.statut DESC, u.firstname ASC, u.lastname ASC";
 		} else {
 			$sql .= " ORDER BY u.statut DESC, u.lastname ASC, u.firstname ASC";
@@ -1997,7 +1997,7 @@ class Form
 
 					// $fullNameMode is 0=Lastname+Firstname (MAIN_FIRSTNAME_NAME_POSITION=1), 1=Firstname+Lastname (MAIN_FIRSTNAME_NAME_POSITION=0)
 					$fullNameMode = 0;
-					if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)) {
+					if (empty(getDolGlobalString("MAIN_FIRSTNAME_NAME_POSITION"))) {
 						$fullNameMode = 1; //Firstname+lastname
 					}
 					$labeltoshow .= $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength);
@@ -2007,7 +2007,7 @@ class Form
 
 					// Complete name with more info
 					$moreinfo = '';
-					if (!empty($conf->global->MAIN_SHOW_LOGIN)) {
+					if (!empty(getDolGlobalString("MAIN_SHOW_LOGIN"))) {
 						$moreinfo .= ($moreinfo ? ' - ' : ' (').$obj->login;
 					}
 					if ($showstatus >= 0) {
@@ -2018,7 +2018,7 @@ class Form
 							$moreinfo .= ($moreinfo ? ' - ' : ' (').$langs->trans('Disabled');
 						}
 					}
-					if (!empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
+					if (!empty($conf->multicompany->enabled) && empty(getDolGlobalString("MULTICOMPANY_TRANSVERSE_MODE")) && $conf->entity == 1 && $user->admin && !$user->entity) {
 						if (!$obj->entity) {
 							$moreinfo .= ($moreinfo ? ' - ' : ' (').$langs->trans("AllEntities");
 						} else {
@@ -2227,7 +2227,7 @@ class Form
 			}
 		}
 
-		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) {
+		if (!empty($conf->use_javascript_ajax) && !empty(getDolGlobalString("PRODUIT_USE_SEARCH_TO_SELECT"))) {
 			$placeholder = '';
 
 			if ($selected && empty($selected_input_value)) {
@@ -2248,10 +2248,10 @@ class Form
 			// mode=1 means customers products
 			$urloption = 'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished.'&hidepriceinlabel='.$hidepriceinlabel.'&warehousestatus='.$warehouseStatus;
 			//Price by customer
-			if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
+			if (!empty(getDolGlobalString("PRODUIT_CUSTOMER_PRICES")) && !empty($socid)) {
 				$urloption .= '&socid='.$socid;
 			}
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, getDolGlobalString("PRODUIT_USE_SEARCH_TO_SELECT"), 1, $ajaxoptions);
 
 			if (!empty($conf->variants->enabled) && is_array($selected_combinations)) {
 				// Code to automatically insert with javascript the select of attributes under the select of product
@@ -2337,7 +2337,7 @@ class Form
 					$out .= img_picto($langs->trans("Search"), 'search');
 				}
 			}
-			$out .= '<input type="text" class="minwidth100" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty($conf->global->PRODUCT_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
+			$out .= '<input type="text" class="minwidth100" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty(getDolGlobalString("PRODUCT_SEARCH_AUTOFOCUS")) ? 'autofocus' : '').' />';
 			if ($hidelabel == 3) {
 				$out .= img_picto($langs->trans("Search"), 'search');
 			}
@@ -2386,7 +2386,7 @@ class Form
 		$outarray = array();
 
 		// Units
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (!empty(getDolGlobalString("PRODUCT_USE_UNITS"))) {
 			$langs->load('other');
 		}
 
@@ -2414,7 +2414,7 @@ class Form
 		$sql = "SELECT ";
 		$sql .= $selectFields.$selectFieldsGrouped;
 
-		if (!empty($conf->global->PRODUCT_SORT_BY_CATEGORY)) {
+		if (!empty(getDolGlobalString("PRODUCT_SORT_BY_CATEGORY"))) {
 			//Product category
 			$sql .= ", (SELECT ".MAIN_DB_PREFIX."categorie_product.fk_categorie
 						FROM ".MAIN_DB_PREFIX."categorie_product
@@ -2424,34 +2424,34 @@ class Form
 		}
 
 		//Price by customer
-		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
+		if (!empty(getDolGlobalString("PRODUIT_CUSTOMER_PRICES")) && !empty($socid)) {
 			$sql .= ', pcp.rowid as idprodcustprice, pcp.price as custprice, pcp.price_ttc as custprice_ttc,';
 			$sql .= ' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx, pcp.ref_customer as custref';
 			$selectFields .= ", idprodcustprice, custprice, custprice_ttc, custprice_base_type, custtva_tx, custref";
 		}
 		// Units
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (!empty(getDolGlobalString("PRODUCT_USE_UNITS"))) {
 			$sql .= ", u.label as unit_long, u.short_label as unit_short, p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units";
 			$selectFields .= ', unit_long, unit_short, p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units';
 		}
 
 		// Multilang : we add translation
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (!empty(getDolGlobalString("MAIN_MULTILANGS"))) {
 			$sql .= ", pl.label as label_translated";
 			$sql .= ", pl.description as description_translated";
 			$selectFields .= ", label_translated";
 			$selectFields .= ", description_translated";
 		}
 		// Price by quantity
-		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
+		if (!empty(getDolGlobalString("PRODUIT_CUSTOMER_PRICES_BY_QTY")) || !empty(getDolGlobalString("PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES"))) {
 			$sql .= ", (SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = p.rowid";
-			if ($price_level >= 1 && !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
+			if ($price_level >= 1 && !empty(getDolGlobalString("PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES"))) {
 				$sql .= " AND price_level=".$price_level;
 			}
 			$sql .= " ORDER BY date_price";
 			$sql .= " DESC LIMIT 1) as price_rowid";
 			$sql .= ", (SELECT pp.price_by_qty FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = p.rowid"; // price_by_qty is 1 if some prices by qty exists in subtable
-			if ($price_level >= 1 && !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
+			if ($price_level >= 1 && !empty(getDolGlobalString("PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES"))) {
 				$sql .= " AND price_level=".$price_level;
 			}
 			$sql .= " ORDER BY date_price";
@@ -2466,22 +2466,22 @@ class Form
 		}
 
 		// include search in supplier ref
-		if (!empty($conf->global->MAIN_SEARCH_PRODUCT_BY_FOURN_REF)) {
+		if (!empty(getDolGlobalString("MAIN_SEARCH_PRODUCT_BY_FOURN_REF"))) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 		}
 
 		//Price by customer
-		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
+		if (!empty(getDolGlobalString("PRODUIT_CUSTOMER_PRICES")) && !empty($socid)) {
 			$sql .= " LEFT JOIN  ".MAIN_DB_PREFIX."product_customer_price as pcp ON pcp.fk_soc=".$socid." AND pcp.fk_product=p.rowid";
 		}
 		// Units
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (!empty(getDolGlobalString("PRODUCT_USE_UNITS"))) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_units u ON u.rowid = p.fk_unit";
 		}
 		// Multilang : we add translation
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (!empty(getDolGlobalString("MAIN_MULTILANGS"))) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid ";
-			if (!empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) && !empty($socid)) {
+			if (!empty(getDolGlobalString("PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE")) && !empty($socid)) {
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 				$soc = new Societe($db);
 				$result = $soc->fetch($socid);
@@ -2495,13 +2495,13 @@ class Form
 			}
 		}
 
-		if (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
+		if (!empty(getDolGlobalString("PRODUIT_ATTRIBUTES_HIDECHILD"))) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac.fk_product_child = p.rowid";
 		}
 
 		$sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 
-		if (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
+		if (!empty(getDolGlobalString("PRODUIT_ATTRIBUTES_HIDECHILD"))) {
 			$sql .= " AND pac.rowid IS NULL";
 		}
 
@@ -2526,7 +2526,7 @@ class Form
 		// Add criteria on ref/label
 		if ($filterkey != '') {
 			$sql .= ' AND (';
-			$prefix = empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE) ? '%' : ''; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
+			$prefix = empty(getDolGlobalString("PRODUCT_DONOTSEARCH_ANYWHERE")) ? '%' : ''; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
 			// For natural search
 			$scrit = explode(' ', $filterkey);
 			$i = 0;
@@ -2538,19 +2538,19 @@ class Form
 					$sql .= " AND ";
 				}
 				$sql .= "(p.ref LIKE '".$this->db->escape($prefix.$crit)."%' OR p.label LIKE '".$this->db->escape($prefix.$crit)."%'";
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (!empty(getDolGlobalString("MAIN_MULTILANGS"))) {
 					$sql .= " OR pl.label LIKE '".$this->db->escape($prefix.$crit)."%'";
 				}
-				if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && ! empty($socid)) {
+				if (!empty(getDolGlobalString("PRODUIT_CUSTOMER_PRICES")) && ! empty($socid)) {
 					$sql .= " OR pcp.ref_customer LIKE '".$this->db->escape($prefix.$crit)."%'";
 				}
-				if (!empty($conf->global->PRODUCT_AJAX_SEARCH_ON_DESCRIPTION)) {
+				if (!empty(getDolGlobalString("PRODUCT_AJAX_SEARCH_ON_DESCRIPTION"))) {
 					$sql .= " OR p.description LIKE '".$this->db->escape($prefix.$crit)."%'";
-					if (!empty($conf->global->MAIN_MULTILANGS)) {
+					if (!empty(getDolGlobalString("MAIN_MULTILANGS"))) {
 						$sql .= " OR pl.description LIKE '".$this->db->escape($prefix.$crit)."%'";
 					}
 				}
-				if (!empty($conf->global->MAIN_SEARCH_PRODUCT_BY_FOURN_REF)) {
+				if (!empty(getDolGlobalString("MAIN_SEARCH_PRODUCT_BY_FOURN_REF"))) {
 					$sql .= " OR pfp.ref_fourn LIKE '".$this->db->escape($prefix.$crit)."%'";
 				}
 				$sql .= ")";
@@ -2569,10 +2569,10 @@ class Form
 		}
 
 		//Sort by category
-		if (!empty($conf->global->PRODUCT_SORT_BY_CATEGORY)) {
+		if (!empty(getDolGlobalString("PRODUCT_SORT_BY_CATEGORY"))) {
 			$sql .= " ORDER BY categorie_product_id ";
 			//ASC OR DESC order
-			($conf->global->PRODUCT_SORT_BY_CATEGORY == 1) ? $sql .= "ASC" : $sql .= "DESC";
+			(getDolGlobalString("PRODUCT_SORT_BY_CATEGORY") == 1) ? $sql .= "ASC" : $sql .= "DESC";
 		} else {
 			$sql .= $this->db->order("p.ref");
 		}
@@ -2593,7 +2593,7 @@ class Form
 
 			if (!$forcecombo) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlname, $events, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
+				$out .= ajax_combobox($htmlname, $events, getDolGlobalString("PRODUIT_USE_SEARCH_TO_SELECT"));
 			}
 
 			$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
@@ -2601,7 +2601,7 @@ class Form
 			$textifempty = '';
 			// Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
 			//if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
-			if (!empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) {
+			if (!empty(getDolGlobalString("PRODUIT_USE_SEARCH_TO_SELECT"))) {
 				if ($showempty && !is_numeric($showempty)) {
 					$textifempty = $langs->trans($showempty);
 				} else {
@@ -2622,7 +2622,7 @@ class Form
 				$optJson = array();
 				$objp = $this->db->fetch_object($result);
 
-				if ((!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) && !empty($objp->price_by_qty) && $objp->price_by_qty == 1) { // Price by quantity will return many prices for the same product
+				if ((!empty(getDolGlobalString("PRODUIT_CUSTOMER_PRICES_BY_QTY")) || !empty(getDolGlobalString("PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES"))) && !empty($objp->price_by_qty) && $objp->price_by_qty == 1) { // Price by quantity will return many prices for the same product
 					$sql = "SELECT rowid, quantity, price, unitprice, remise_percent, remise, price_base_type";
 					$sql .= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 					$sql .= " WHERE fk_product_price=".$objp->price_rowid;
@@ -2733,7 +2733,7 @@ class Form
 		$outqty = 1;
 		$outdiscount = 0;
 
-		$maxlengtharticle = (empty($conf->global->PRODUCT_MAX_LENGTH_COMBO) ? 48 : $conf->global->PRODUCT_MAX_LENGTH_COMBO);
+		$maxlengtharticle = (empty(getDolGlobalString("PRODUCT_MAX_LENGTH_COMBO")) ? 48 : getDolGlobalString("PRODUCT_MAX_LENGTH_COMBO"));
 
 		$label = $objp->label;
 		if (!empty($objp->label_translated)) {
@@ -2748,7 +2748,7 @@ class Form
 		$outrefcust = empty($objp->custref) ? '' : $objp->custref;
 		$outlabel = $objp->label;
 		$outdesc = $objp->description;
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (!empty(getDolGlobalString("MAIN_MULTILANGS"))) {
 			$outlabel_translated = $objp->label_translated;
 			$outdesc_translated = $objp->description_translated;
 		}
@@ -2760,18 +2760,18 @@ class Form
 		$outdurationvalue = $outtype == Product::TYPE_SERVICE ?substr($objp->duration, 0, dol_strlen($objp->duration) - 1) : '';
 		$outdurationunit = $outtype == Product::TYPE_SERVICE ?substr($objp->duration, -1) : '';
 
-		if ($outorigin && !empty($conf->global->PRODUCT_SHOW_ORIGIN_IN_COMBO)) {
+		if ($outorigin && !empty(getDolGlobalString("PRODUCT_SHOW_ORIGIN_IN_COMBO"))) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 		}
 
 		// Units
 		$outvalUnits = '';
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (!empty(getDolGlobalString("PRODUCT_USE_UNITS"))) {
 			if (!empty($objp->unit_short)) {
 				$outvalUnits .= ' - '.$objp->unit_short;
 			}
 		}
-		if (!empty($conf->global->PRODUCT_SHOW_DIMENSIONS_IN_COMBO)) {
+		if (!empty(getDolGlobalString("PRODUCT_SHOW_DIMENSIONS_IN_COMBO"))) {
 			if (!empty($objp->weight) && $objp->weight_units !== null) {
 				$unitToShow = showDimensionInBestUnit($objp->weight, $objp->weight_units, 'weight', $langs);
 				$outvalUnits .= ' - '.$unitToShow;
@@ -2807,7 +2807,7 @@ class Form
 		if (!empty($objp->price_by_qty_rowid) && $objp->price_by_qty_rowid > 0) {
 			$opt .= ' pbq="'.$objp->price_by_qty_rowid.'" data-pbq="'.$objp->price_by_qty_rowid.'" data-pbqup="'.$objp->price_by_qty_unitprice.'" data-pbqbase="'.$objp->price_by_qty_price_base_type.'" data-pbqqty="'.$objp->price_by_qty_quantity.'" data-pbqpercent="'.$objp->price_by_qty_remise_percent.'"';
 		}
-		if (!empty($conf->stock->enabled) && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
+		if (!empty($conf->stock->enabled) && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty(getDolGlobalString("STOCK_SUPPORTS_SERVICES")))) {
 			if (!empty($user->rights->stock->lire)) {
 				if ($objp->stock > 0) {
 					$opt .= ' class="product_line_stock_ok"';
@@ -2816,7 +2816,7 @@ class Form
 				}
 			}
 		}
-		if (!empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+		if (!empty(getDolGlobalString("PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE"))) {
 			$opt .= ' data-labeltrans="'.$outlabel_translated.'"';
 			$opt .= ' data-desctrans="'.dol_escape_htmltag($outdesc_translated).'"';
 		}
@@ -2829,7 +2829,7 @@ class Form
 			$opt .= ' ('.$outbarcode.')';
 		}
 		$opt .= ' - '.dol_trunc($label, $maxlengtharticle);
-		if ($outorigin && !empty($conf->global->PRODUCT_SHOW_ORIGIN_IN_COMBO)) {
+		if ($outorigin && !empty(getDolGlobalString("PRODUCT_SHOW_ORIGIN_IN_COMBO"))) {
 			$opt .= ' ('.getCountry($outorigin, 1).')';
 		}
 
@@ -2845,7 +2845,7 @@ class Form
 			$outval .= ' ('.$outbarcode.')';
 		}
 		$outval .= ' - '.dol_trunc($label, $maxlengtharticle);
-		if ($outorigin && !empty($conf->global->PRODUCT_SHOW_ORIGIN_IN_COMBO)) {
+		if ($outorigin && !empty(getDolGlobalString("PRODUCT_SHOW_ORIGIN_IN_COMBO"))) {
 			$outval .= ' ('.getCountry($outorigin, 1).')';
 		}
 
@@ -2857,7 +2857,7 @@ class Form
 
 		// Multiprice
 		// If we need a particular price level (from 1 to 6)
-		if (empty($hidepriceinlabel) && $price_level >= 1 && (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))) {
+		if (empty($hidepriceinlabel) && $price_level >= 1 && (!empty(getDolGlobalString("PRODUIT_MULTIPRICES")) || !empty(getDolGlobalString("PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES")))) {
 			$sql = "SELECT price, price_ttc, price_base_type, tva_tx";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_price";
 			$sql .= " WHERE fk_product = ".((int) $objp->rowid);
@@ -2890,7 +2890,7 @@ class Form
 		}
 
 		// Price by quantity
-		if (empty($hidepriceinlabel) && !empty($objp->quantity) && $objp->quantity >= 1 && (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))) {
+		if (empty($hidepriceinlabel) && !empty($objp->quantity) && $objp->quantity >= 1 && (!empty(getDolGlobalString("PRODUIT_CUSTOMER_PRICES_BY_QTY")) || !empty(getDolGlobalString("PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES")))) {
 			$found = 1;
 			$outqty = $objp->quantity;
 			$outdiscount = $objp->remise_percent;
@@ -2921,7 +2921,7 @@ class Form
 		}
 
 		// Price by customer
-		if (empty($hidepriceinlabel) && !empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+		if (empty($hidepriceinlabel) && !empty(getDolGlobalString("PRODUIT_CUSTOMER_PRICES"))) {
 			if (!empty($objp->idprodcustprice)) {
 				$found = 1;
 
@@ -2955,7 +2955,7 @@ class Form
 			$outtva_tx = $objp->tva_tx;
 		}
 
-		if (!empty($conf->stock->enabled) && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
+		if (!empty($conf->stock->enabled) && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty(getDolGlobalString("STOCK_SUPPORTS_SERVICES")))) {
 			if (!empty($user->rights->stock->lire)) {
 				$opt .= ' - '.$langs->trans("Stock").': '.price(price2num($objp->stock, 'MS'));
 
@@ -2966,7 +2966,7 @@ class Form
 				}
 				$outval .= $langs->transnoentities("Stock").': '.price(price2num($objp->stock, 'MS'));
 				$outval .= '</span>';
-				if (empty($novirtualstock) && !empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO)) {  // Warning, this option may slow down combo list generation
+				if (empty($novirtualstock) && !empty(getDolGlobalString("STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO"))) {  // Warning, this option may slow down combo list generation
 					$langs->load("stocks");
 
 					$tmpproduct = new Product($this->db);
@@ -3039,7 +3039,7 @@ class Form
 		}
 
 		$selected_input_value = '';
-		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) {
+		if (!empty($conf->use_javascript_ajax) && !empty(getDolGlobalString("PRODUIT_USE_SEARCH_TO_SELECT"))) {
 			if ($selected > 0) {
 				require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 				$producttmpselect = new Product($this->db);
@@ -3050,7 +3050,7 @@ class Form
 
 			// mode=2 means suppliers products
 			$urloption = ($socid > 0 ? 'socid='.$socid.'&' : '').'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished.'&alsoproductwithnosupplierprice='.$alsoproductwithnosupplierprice;
-			print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
+			print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, getDolGlobalString("PRODUIT_USE_SEARCH_TO_SELECT"), 0, $ajaxoptions);
 			print ($hidelabel ? '' : $langs->trans("RefOrLabel").' : ').'<input type="text" class="minwidth300" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.($placeholder ? ' placeholder="'.$placeholder.'"' : '').'>';
 		} else {
 			print $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', $status, 0, 0, $alsoproductwithnosupplierprice, $morecss, 0, $placeholder);
@@ -3084,11 +3084,11 @@ class Form
 		$out = '';
 		$outarray = array();
 
-		$maxlengtharticle = (empty($conf->global->PRODUCT_MAX_LENGTH_COMBO) ? 48 : $conf->global->PRODUCT_MAX_LENGTH_COMBO);
+		$maxlengtharticle = (empty(getDolGlobalString("PRODUCT_MAX_LENGTH_COMBO")) ? 48 : getDolGlobalString("PRODUCT_MAX_LENGTH_COMBO"));
 
 		$langs->load('stocks');
 		// Units
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (!empty(getDolGlobalString("PRODUCT_USE_UNITS"))) {
 			$langs->load('other');
 		}
 
@@ -3097,13 +3097,13 @@ class Form
 		$sql .= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, pfp.fk_soc, s.nom as name,";
 		$sql .= " pfp.supplier_reputation";
 		// if we use supplier description of the products
-		if (!empty($conf->global->PRODUIT_FOURN_TEXTS)) {
+		if (!empty(getDolGlobalString("PRODUIT_FOURN_TEXTS"))) {
 			$sql .= " ,pfp.desc_fourn as description";
 		} else {
 			$sql .= " ,p.description";
 		}
 		// Units
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (!empty(getDolGlobalString("PRODUCT_USE_UNITS"))) {
 			$sql .= ", u.label as unit_long, u.short_label as unit_short, p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units";
 		}
 		if (!empty($conf->barcode->enabled)) {
@@ -3116,7 +3116,7 @@ class Form
 		}
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
 		// Units
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (!empty(getDolGlobalString("PRODUCT_USE_UNITS"))) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_units u ON u.rowid = p.fk_unit";
 		}
 		$sql .= " WHERE p.entity IN (".getEntity('product').")";
@@ -3132,7 +3132,7 @@ class Form
 		// Add criteria on ref/label
 		if ($filterkey != '') {
 			$sql .= ' AND (';
-			$prefix = empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE) ? '%' : ''; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
+			$prefix = empty(getDolGlobalString("PRODUCT_DONOTSEARCH_ANYWHERE")) ? '%' : ''; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
 			// For natural search
 			$scrit = explode(' ', $filterkey);
 			$i = 0;
@@ -3144,7 +3144,7 @@ class Form
 					$sql .= " AND ";
 				}
 				$sql .= "(pfp.ref_fourn LIKE '".$this->db->escape($prefix.$crit)."%' OR p.ref LIKE '".$this->db->escape($prefix.$crit)."%' OR p.label LIKE '".$this->db->escape($prefix.$crit)."%'";
-				if (!empty($conf->global->PRODUIT_FOURN_TEXTS)) {
+				if (!empty(getDolGlobalString("PRODUIT_FOURN_TEXTS"))) {
 					$sql .= " OR pfp.desc_fourn LIKE '".$this->db->escape($prefix.$crit)."%'";
 				}
 				$sql .= ")";
@@ -3200,7 +3200,7 @@ class Form
 
 				// Units
 				$outvalUnits = '';
-				if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+				if (!empty(getDolGlobalString("PRODUCT_USE_UNITS"))) {
 					if (!empty($objp->unit_short)) {
 						$outvalUnits .= ' - '.$objp->unit_short;
 					}
@@ -3289,20 +3289,20 @@ class Form
 						}
 					}
 					if ($objp->quantity == 1) {
-						$optlabel .= ' - '.price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE) ? (1 - $objp->remise_percent / 100) : 1), 1, $langs, 0, 0, -1, $conf->currency)."/";
-						$outvallabel .= ' - '.price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE) ? (1 - $objp->remise_percent / 100) : 1), 0, $langs, 0, 0, -1, $conf->currency)."/";
+						$optlabel .= ' - '.price($objp->fprice * (!empty(getDolGlobalString("DISPLAY_DISCOUNTED_SUPPLIER_PRICE")) ? (1 - $objp->remise_percent / 100) : 1), 1, $langs, 0, 0, -1, $conf->currency)."/";
+						$outvallabel .= ' - '.price($objp->fprice * (!empty(getDolGlobalString("DISPLAY_DISCOUNTED_SUPPLIER_PRICE")) ? (1 - $objp->remise_percent / 100) : 1), 0, $langs, 0, 0, -1, $conf->currency)."/";
 						$optlabel .= $langs->trans("Unit"); // Do not use strtolower because it breaks utf8 encoding
 						$outvallabel .= $langs->transnoentities("Unit");
 					} else {
-						$optlabel .= ' - '.price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE) ? (1 - $objp->remise_percent / 100) : 1), 1, $langs, 0, 0, -1, $conf->currency)."/".$objp->quantity;
-						$outvallabel .= ' - '.price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE) ? (1 - $objp->remise_percent / 100) : 1), 0, $langs, 0, 0, -1, $conf->currency)."/".$objp->quantity;
+						$optlabel .= ' - '.price($objp->fprice * (!empty(getDolGlobalString("DISPLAY_DISCOUNTED_SUPPLIER_PRICE")) ? (1 - $objp->remise_percent / 100) : 1), 1, $langs, 0, 0, -1, $conf->currency)."/".$objp->quantity;
+						$outvallabel .= ' - '.price($objp->fprice * (!empty(getDolGlobalString("DISPLAY_DISCOUNTED_SUPPLIER_PRICE")) ? (1 - $objp->remise_percent / 100) : 1), 0, $langs, 0, 0, -1, $conf->currency)."/".$objp->quantity;
 						$optlabel .= ' '.$langs->trans("Units"); // Do not use strtolower because it breaks utf8 encoding
 						$outvallabel .= ' '.$langs->transnoentities("Units");
 					}
 
 					if ($objp->quantity > 1) {
-						$optlabel .= " (".price($objp->unitprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE) ? (1 - $objp->remise_percent / 100) : 1), 1, $langs, 0, 0, -1, $conf->currency)."/".$langs->trans("Unit").")"; // Do not use strtolower because it breaks utf8 encoding
-						$outvallabel .= " (".price($objp->unitprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE) ? (1 - $objp->remise_percent / 100) : 1), 0, $langs, 0, 0, -1, $conf->currency)."/".$langs->transnoentities("Unit").")"; // Do not use strtolower because it breaks utf8 encoding
+						$optlabel .= " (".price($objp->unitprice * (!empty(getDolGlobalString("DISPLAY_DISCOUNTED_SUPPLIER_PRICE")) ? (1 - $objp->remise_percent / 100) : 1), 1, $langs, 0, 0, -1, $conf->currency)."/".$langs->trans("Unit").")"; // Do not use strtolower because it breaks utf8 encoding
+						$outvallabel .= " (".price($objp->unitprice * (!empty(getDolGlobalString("DISPLAY_DISCOUNTED_SUPPLIER_PRICE")) ? (1 - $objp->remise_percent / 100) : 1), 0, $langs, 0, 0, -1, $conf->currency)."/".$langs->transnoentities("Unit").")"; // Do not use strtolower because it breaks utf8 encoding
 					}
 					if ($objp->remise_percent >= 1) {
 						$optlabel .= " - ".$langs->trans("Discount")." : ".vatrate($objp->remise_percent).' %';
@@ -3334,7 +3334,7 @@ class Form
 					}
 				}
 
-				if (!empty($conf->stock->enabled) && $showstockinlist && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
+				if (!empty($conf->stock->enabled) && $showstockinlist && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty(getDolGlobalString("STOCK_SUPPORTS_SERVICES")))) {
 					$novirtualstock = ($showstockinlist == 2);
 
 					if (!empty($user->rights->stock->lire)) {
@@ -3347,7 +3347,7 @@ class Form
 						}
 						$optlabel .= $langs->transnoentities("Stock").':'.price(price2num($objp->stock, 'MS'));
 						$optlabel .= '</span>';
-						if (empty($novirtualstock) && !empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO)) {  // Warning, this option may slow down combo list generation
+						if (empty($novirtualstock) && !empty(getDolGlobalString("STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO"))) {  // Warning, this option may slow down combo list generation
 							$langs->load("stocks");
 
 							$tmpproduct = new Product($this->db);
@@ -3507,7 +3507,7 @@ class Form
 						}
 					}
 					if ($objp->quantity == 1) {
-						$opt .= price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE) ? (1 - $objp->remise_percent / 100) : 1), 1, $langs, 0, 0, -1, $conf->currency)."/";
+						$opt .= price($objp->fprice * (!empty(getDolGlobalString("DISPLAY_DISCOUNTED_SUPPLIER_PRICE")) ? (1 - $objp->remise_percent / 100) : 1), 1, $langs, 0, 0, -1, $conf->currency)."/";
 					}
 
 					$opt .= $objp->quantity.' ';
@@ -3519,7 +3519,7 @@ class Form
 					}
 					if ($objp->quantity > 1) {
 						$opt .= " - ";
-						$opt .= price($objp->unitprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE) ? (1 - $objp->remise_percent / 100) : 1), 1, $langs, 0, 0, -1, $conf->currency)."/".$langs->trans("Unit");
+						$opt .= price($objp->unitprice * (!empty(getDolGlobalString("DISPLAY_DISCOUNTED_SUPPLIER_PRICE")) ? (1 - $objp->remise_percent / 100) : 1), 1, $langs, 0, 0, -1, $conf->currency)."/".$langs->trans("Unit");
 					}
 					if ($objp->duration) {
 						$opt .= " - ".$objp->duration;
@@ -3889,8 +3889,8 @@ class Form
 		$this->load_cache_conditions_paiements();
 
 		// Set default value if not already set by caller
-		if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID)) {
-			$selected = $conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID;
+		if (empty($selected) && !empty(getDolGlobalString("MAIN_DEFAULT_PAYMENT_TERM_ID"))) {
+			$selected = getDolGlobalString("MAIN_DEFAULT_PAYMENT_TERM_ID");
 		}
 
 		print '<select id="'.$htmlname.'" class="flat selectpaymentterms'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
@@ -3952,8 +3952,8 @@ class Form
 		$this->load_cache_types_paiements();
 
 		// Set default value if not already set by caller
-		if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_PAYMENT_TYPE_ID)) {
-			$selected = $conf->global->MAIN_DEFAULT_PAYMENT_TYPE_ID;
+		if (empty($selected) && !empty(getDolGlobalString("MAIN_DEFAULT_PAYMENT_TYPE_ID"))) {
+			$selected = getDolGlobalString("MAIN_DEFAULT_PAYMENT_TYPE_ID");
 		}
 
 		$out .= '<select id="select'.$htmlname.'" class="flat selectpaymenttypes'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
@@ -5415,7 +5415,7 @@ class Form
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<div class="inline-block">';
 			if (!empty($discount_type)) {
-				if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+				if (!empty(getDolGlobalString("FACTURE_DEPOSITS_ARE_JUST_PAYMENTS"))) {
 					if (!$filter || $filter == "fk_invoice_supplier_source IS NULL") {
 						$translationKey = 'HasAbsoluteDiscountFromSupplier'; // If we want deposit to be substracted to payments only and not to total of final invoice
 					} else {
@@ -5429,7 +5429,7 @@ class Form
 					}
 				}
 			} else {
-				if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+				if (!empty(getDolGlobalString("FACTURE_DEPOSITS_ARE_JUST_PAYMENTS"))) {
 					if (!$filter || $filter == "fk_facture_source IS NULL") {
 						$translationKey = 'CompanyHasAbsoluteDiscount'; // If we want deposit to be substracted to payments only and not to total of final invoice
 					} else {
@@ -5513,7 +5513,7 @@ class Form
 			print $this->selectcontacts($societe->id, $selected, $htmlname);
 			$num = $this->num;
 			if ($num == 0) {
-				$addcontact = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
+				$addcontact = (!empty(getDolGlobalString("SOCIETE_ADDRESSES_MANAGEMENT")) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
 				print '<a href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$societe->id.'&amp;action=create&amp;backtoreferer=1">'.$addcontact.'</a>';
 			}
 			print '</td>';
@@ -5839,7 +5839,7 @@ class Form
 		} else {
 			$code_country = "'".$mysoc->country_code."'"; // Pour compatibilite ascendente
 		}
-		if (!empty($conf->global->SERVICE_ARE_ECOMMERCE_200238EC)) {    // If option to have vat for end customer for services is on
+		if (!empty(getDolGlobalString("SERVICE_ARE_ECOMMERCE_")200238EC)) {    // If option to have vat for end customer for services is on
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 			if (!isInEEC($societe_vendeuse) && (!is_object($societe_acheteuse) || (isInEEC($societe_acheteuse) && !$societe_acheteuse->isACompany()))) {
 				// We also add the buyer
@@ -5880,10 +5880,10 @@ class Form
 			// Si taux par defaut n'a pu etre determine, on prend dernier de la liste.
 			// Comme ils sont tries par ordre croissant, dernier = plus eleve = taux courant
 			if ($defaulttx < 0 || dol_strlen($defaulttx) == 0) {
-				if (empty($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS)) {
+				if (empty(getDolGlobalString("MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS"))) {
 					$defaulttx = $this->cache_vatrates[$num - 1]['txtva'];
 				} else {
-					$defaulttx = ($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS == 'none' ? '' : $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS);
+					$defaulttx = (getDolGlobalString("MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS") == 'none' ? '' : getDolGlobalString("MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS"));
 				}
 			}
 
@@ -5893,7 +5893,7 @@ class Form
 			if (is_object($societe_vendeuse) && $societe_vendeuse->id == $mysoc->id && $societe_vendeuse->tva_assuj == "0") {
 				// Override/enable VAT for expense report regardless of global setting - needed if expense report used for business expenses instead
 				// of using supplier invoices (this is a very bad idea !)
-				if (empty($conf->global->EXPENSEREPORT_OVERRIDE_VAT)) {
+				if (empty(getDolGlobalString("EXPENSEREPORT_OVERRIDE_VAT"))) {
 					$title = ' title="'.$langs->trans('VATIsNotUsed').'"';
 					$disabled = true;
 				}
@@ -5933,8 +5933,8 @@ class Form
 					}
 				}
 				$return .= '>';
-				//if (! empty($conf->global->MAIN_VAT_SHOW_POSITIVE_RATES))
-				if ($mysoc->country_code == 'IN' || !empty($conf->global->MAIN_VAT_LABEL_IS_POSITIVE_RATES)) {
+				//if (! empty(getDolGlobalString("MAIN_VAT_SHOW_POSITIVE_RATES")))
+				if ($mysoc->country_code == 'IN' || !empty(getDolGlobalString("MAIN_VAT_LABEL_IS_POSITIVE_RATES"))) {
 					$return .= $rate['labelpositiverates'];
 				} else {
 					$return .= vatrate($rate['label']);
@@ -6115,9 +6115,9 @@ class Form
 			$syear = '';
 			$smonth = '';
 			$sday = '';
-			$shour = !isset($conf->global->MAIN_DEFAULT_DATE_HOUR) ? ($h == -1 ? '23' : '') : $conf->global->MAIN_DEFAULT_DATE_HOUR;
-			$smin = !isset($conf->global->MAIN_DEFAULT_DATE_MIN) ? ($h == -1 ? '59' : '') : $conf->global->MAIN_DEFAULT_DATE_MIN;
-			$ssec = !isset($conf->global->MAIN_DEFAULT_DATE_SEC) ? ($h == -1 ? '59' : '') : $conf->global->MAIN_DEFAULT_DATE_SEC;
+			$shour = !isset(getDolGlobalString("MAIN_DEFAULT_DATE_HOUR")) ? ($h == -1 ? '23' : '') : getDolGlobalString("MAIN_DEFAULT_DATE_HOUR");
+			$smin = !isset(getDolGlobalString("MAIN_DEFAULT_DATE_MIN")) ? ($h == -1 ? '59' : '') : getDolGlobalString("MAIN_DEFAULT_DATE_MIN");
+			$ssec = !isset(getDolGlobalString("MAIN_DEFAULT_DATE_SEC")) ? ($h == -1 ? '59' : '') : getDolGlobalString("MAIN_DEFAULT_DATE_SEC");
 		}
 		if ($h == 3) {
 			$shour = '';
@@ -6131,8 +6131,8 @@ class Form
 
 		// You can set MAIN_POPUP_CALENDAR to 'eldy' or 'jquery'
 		$usecalendar = 'combo';
-		if (!empty($conf->use_javascript_ajax) && (empty($conf->global->MAIN_POPUP_CALENDAR) || $conf->global->MAIN_POPUP_CALENDAR != "none")) {
-			$usecalendar = ((empty($conf->global->MAIN_POPUP_CALENDAR) || $conf->global->MAIN_POPUP_CALENDAR == 'eldy') ? 'jquery' : $conf->global->MAIN_POPUP_CALENDAR);
+		if (!empty($conf->use_javascript_ajax) && (empty(getDolGlobalString("MAIN_POPUP_CALENDAR")) || getDolGlobalString("MAIN_POPUP_CALENDAR") != "none")) {
+			$usecalendar = ((empty(getDolGlobalString("MAIN_POPUP_CALENDAR")) || getDolGlobalString("MAIN_POPUP_CALENDAR") == 'eldy') ? 'jquery' : getDolGlobalString("MAIN_POPUP_CALENDAR"));
 		}
 
 		if ($d) {
@@ -6187,7 +6187,7 @@ class Form
 								";
 						}
 						// Note: We don't need monthNames, monthNamesShort, dayNames, dayNamesShort, dayNamesMin, they are set globally on datepicker component in lib_head.js.php
-						if (empty($conf->global->MAIN_POPUP_CALENDAR_ON_FOCUS)) {
+						if (empty(getDolGlobalString("MAIN_POPUP_CALENDAR_ON_FOCUS"))) {
 							$retstring .= "
 								showOn: 'button',	/* both has problem with autocompletion */
 								buttonImage: '".DOL_URL_ROOT."/theme/".$conf->theme."/img/object_calendarday.png',
@@ -6623,7 +6623,7 @@ class Form
 		// check parameters
 		if (is_null($ajaxoptions)) $ajaxoptions = array();
 
-		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->TICKET_USE_SEARCH_TO_SELECT)) {
+		if (!empty($conf->use_javascript_ajax) && !empty(getDolGlobalString("TICKET_USE_SEARCH_TO_SELECT"))) {
 			$placeholder = '';
 
 			if ($selected && empty($selected_input_value)) {
@@ -6634,7 +6634,7 @@ class Form
 				unset($tickettmpselect);
 			}
 
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/ticket/ajax/tickets.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/ticket/ajax/tickets.php', $urloption, getDolGlobalString("PRODUIT_USE_SEARCH_TO_SELECT"), 1, $ajaxoptions);
 
 			if (empty($hidelabel)) $out .= $langs->trans("RefOrLabel").' : ';
 			elseif ($hidelabel > 1) {
@@ -6643,7 +6643,7 @@ class Form
 					$out .= img_picto($langs->trans("Search"), 'search');
 				}
 			}
-			$out .= '<input type="text" class="minwidth100" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty($conf->global->PRODUCT_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
+			$out .= '<input type="text" class="minwidth100" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty(getDolGlobalString("PRODUCT_SEARCH_AUTOFOCUS")) ? 'autofocus' : '').' />';
 			if ($hidelabel == 3) {
 				$out .= img_picto($langs->trans("Search"), 'search');
 			}
@@ -6689,7 +6689,7 @@ class Form
 		// Add criteria on ref/label
 		if ($filterkey != '') {
 			$sql .= ' AND (';
-			$prefix = empty($conf->global->TICKET_DONOTSEARCH_ANYWHERE) ? '%' : ''; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
+			$prefix = empty(getDolGlobalString("TICKET_DONOTSEARCH_ANYWHERE")) ? '%' : ''; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
 			// For natural search
 			$scrit = explode(' ', $filterkey);
 			$i = 0;
@@ -6719,7 +6719,7 @@ class Form
 
 			if (!$forcecombo) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlname, $events, $conf->global->TICKET_USE_SEARCH_TO_SELECT);
+				$out .= ajax_combobox($htmlname, $events, getDolGlobalString("TICKET_USE_SEARCH_TO_SELECT"));
 			}
 
 			$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
@@ -6727,7 +6727,7 @@ class Form
 			$textifempty = '';
 			// Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
 			//if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
-			if (!empty($conf->global->TICKET_USE_SEARCH_TO_SELECT)) {
+			if (!empty(getDolGlobalString("TICKET_USE_SEARCH_TO_SELECT"))) {
 				if ($showempty && !is_numeric($showempty)) $textifempty = $langs->trans($showempty);
 				else $textifempty .= $langs->trans("All");
 			} else {
@@ -7150,7 +7150,7 @@ class Form
 		$out = '';
 
 		if ($addjscombo < 0) {
-			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (empty(getDolGlobalString("MAIN_OPTIMIZEFORTEXTBROWSER"))) {
 				$addjscombo = 1;
 			} else {
 				$addjscombo = 0;
@@ -7291,7 +7291,7 @@ class Form
 		global $delayedhtmlcontent;	// Will be used later outside of this function
 
 		// TODO Use an internal dolibarr component instead of select2
-		if (empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && !defined('REQUIRE_JQUERY_MULTISELECT')) {
+		if (empty(getDolGlobalString("MAIN_USE_JQUERY_MULTISELECT")) && !defined('REQUIRE_JQUERY_MULTISELECT')) {
 			return '';
 		}
 
@@ -7395,7 +7395,7 @@ class Form
 		global $delayedhtmlcontent;	// Will be used later outside of this function
 
 		// TODO Use an internal dolibarr component instead of select2
-		if (empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && !defined('REQUIRE_JQUERY_MULTISELECT')) {
+		if (empty(getDolGlobalString("MAIN_USE_JQUERY_MULTISELECT")) && !defined('REQUIRE_JQUERY_MULTISELECT')) {
 			return '';
 		}
 
@@ -7516,7 +7516,7 @@ class Form
 		$out = '';
 
 		if ($addjscombo < 0) {
-			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (empty(getDolGlobalString("MAIN_OPTIMIZEFORTEXTBROWSER"))) {
 				$addjscombo = 1;
 			} else {
 				$addjscombo = 0;
@@ -7524,11 +7524,11 @@ class Form
 		}
 
 		// Add code for jquery to use multiselect
-		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT')) {
+		if (!empty($conf->use_javascript_ajax) && !empty(getDolGlobalString("MAIN_USE_JQUERY_MULTISELECT")) || defined('REQUIRE_JQUERY_MULTISELECT')) {
 			$out .= "\n".'<!-- JS CODE TO ENABLE select for id '.$htmlname.', addjscombo='.$addjscombo.' -->';
 			$out .= "\n".'<script>'."\n";
 			if ($addjscombo == 1) {
-				$tmpplugin = empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) ?constant('REQUIRE_JQUERY_MULTISELECT') : $conf->global->MAIN_USE_JQUERY_MULTISELECT;
+				$tmpplugin = empty(getDolGlobalString("MAIN_USE_JQUERY_MULTISELECT")) ?constant('REQUIRE_JQUERY_MULTISELECT') : getDolGlobalString("MAIN_USE_JQUERY_MULTISELECT");
 				$out .= 'function formatResult(record) {'."\n";
 				if ($elemtype == 'category') {
 					$out .= 'return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png"> \'+record.text+\'</span>\';';
@@ -7619,7 +7619,7 @@ class Form
 	{
 		global $conf, $langs, $user, $extrafields;
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+		if (!empty(getDolGlobalString("MAIN_OPTIMIZEFORTEXTBROWSER"))) {
 			return '';
 		}
 
@@ -7930,10 +7930,10 @@ class Form
 		$possiblelinks = array();
 		if (is_object($object->thirdparty) && !empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 			$listofidcompanytoscan = $object->thirdparty->id;
-			if (($object->thirdparty->parent > 0) && !empty($conf->global->THIRDPARTY_INCLUDE_PARENT_IN_LINKTO)) {
+			if (($object->thirdparty->parent > 0) && !empty(getDolGlobalString("THIRDPARTY_INCLUDE_PARENT_IN_LINKTO"))) {
 				$listofidcompanytoscan .= ','.$object->thirdparty->parent;
 			}
-			if (($object->fk_project > 0) && !empty($conf->global->THIRDPARTY_INCLUDE_PROJECT_THIRDPARY_IN_LINKTO)) {
+			if (($object->fk_project > 0) && !empty(getDolGlobalString("THIRDPARTY_INCLUDE_PROJECT_THIRDPARY_IN_LINKTO"))) {
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$tmpproject = new Project($this->db);
 				$tmpproject->fetch($object->fk_project);
@@ -7990,7 +7990,7 @@ class Form
 			if (!empty($possiblelink['perms']) && (empty($restrictlinksto) || in_array($key, $restrictlinksto)) && (empty($excludelinksto) || !in_array($key, $excludelinksto))) {
 				print '<div id="'.$key.'list"'.(empty($conf->use_javascript_ajax) ? '' : ' style="display:none"').'>';
 
-				if (!empty($conf->global->MAIN_LINK_BY_REF_IN_LINKTO)) {
+				if (!empty(getDolGlobalString("MAIN_LINK_BY_REF_IN_LINKTO"))) {
 					print '<br><form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinkedbyref' . $key . '">';
 					print '<input type="hidden" name="id" value="' . $object->id . '">';
 					print '<input type="hidden" name="action" value="addlinkbyref">';
@@ -8061,7 +8061,7 @@ class Form
 				print '</div>';
 
 				//$linktoelem.=($linktoelem?' &nbsp; ':'');
-				if ($num > 0 || !empty($conf->global->MAIN_LINK_BY_REF_IN_LINKTO)) {
+				if ($num > 0 || !empty(getDolGlobalString("MAIN_LINK_BY_REF_IN_LINKTO"))) {
 					$linktoelemlist .= '<li><a href="#linkto'.$key.'" class="linkto dropdowncloseonclick" rel="'.$key.'">'.$langs->trans($possiblelink['label']).' ('.$num.')</a></li>';
 					// } else $linktoelem.=$langs->trans($possiblelink['label']);
 				} else {
@@ -8334,8 +8334,8 @@ class Form
 
 			// List of extra languages
 			$arrayoflangcode = array();
-			if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) {
-				$arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+			if (!empty(getDolGlobalString("PDF_USE_ALSO_LANGUAGE_CODE"))) {
+				$arrayoflangcode[] = getDolGlobalString("PDF_USE_ALSO_LANGUAGE_CODE");
 			}
 
 			if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
@@ -8507,7 +8507,7 @@ class Form
 					$originalfile = get_exdir(0, 0, 0, 0, $object, 'user').$object->photo;
 				}
 			}
-			if (!empty($conf->global->MAIN_OLD_IMAGE_LINKS)) {
+			if (!empty(getDolGlobalString("MAIN_OLD_IMAGE_LINKS"))) {
 				$altfile = $object->id.".jpg"; // For backward compatibility
 			}
 			$email = $object->email;
@@ -8526,7 +8526,7 @@ class Form
 					$originalfile = get_exdir(0, 0, 0, 0, $object, 'member').'photos/'.$object->photo;
 				}
 			}
-			if (!empty($conf->global->MAIN_OLD_IMAGE_LINKS)) {
+			if (!empty(getDolGlobalString("MAIN_OLD_IMAGE_LINKS"))) {
 				$altfile = $object->id.".jpg"; // For backward compatibility
 			}
 			$email = $object->email;
@@ -8546,7 +8546,7 @@ class Form
 					$originalfile = get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.$object->photo;
 				}
 			}
-			if (!empty($conf->global->MAIN_OLD_IMAGE_LINKS)) {
+			if (!empty(getDolGlobalString("MAIN_OLD_IMAGE_LINKS"))) {
 				$altfile = $object->id.".jpg"; // For backward compatibility
 			}
 			$email = $object->email;
@@ -8725,7 +8725,7 @@ class Form
 					$out .= '>';
 
 					$out .= $obj->name;
-					if (!empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1) {
+					if (!empty($conf->multicompany->enabled) && empty(getDolGlobalString("MULTICOMPANY_TRANSVERSE_MODE")) && $conf->entity == 1) {
 						$out .= " (".$obj->label.")";
 					}
 
@@ -9027,7 +9027,7 @@ class Form
 		$out = '';
 
 		$hideunselectables = false;
-		if (!empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) {
+		if (!empty(getDolGlobalString("PROJECT_HIDE_UNSELECTABLES"))) {
 			$hideunselectables = true;
 		}
 

@@ -58,7 +58,7 @@ $setterminal = GETPOST('setterminal', 'int');
 $setcurrency = GETPOST('setcurrency', 'aZ09');
 
 if ($_SESSION["takeposterminal"] == "") {
-	if ($conf->global->TAKEPOS_NUM_TERMINALS == "1") {
+	if (getDolGlobalString("TAKEPOS_NUM_TERMINALS") == "1") {
 		$_SESSION["takeposterminal"] = 1; // Use terminal 1 if there is only 1 terminal
 	} elseif (!empty($_COOKIE["takeposterminal"])) {
 		$_SESSION["takeposterminal"] = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE["takeposterminal"]); // Restore takeposterminal from previous session
@@ -87,14 +87,14 @@ if ($conf->browser->layout == 'phone') {
 	$maxcategbydefaultforthisdevice = 8;
 	$maxproductbydefaultforthisdevice = 16;
 	//REDIRECT TO BASIC LAYOUT IF TERMINAL SELECTED AND BASIC MOBILE LAYOUT ENABLED
-	if ($_SESSION["takeposterminal"] != "" && $conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1) {
+	if ($_SESSION["takeposterminal"] != "" && getDolGlobalString("TAKEPOS_PHONE_BASIC_LAYOUT") == 1) {
 		$_SESSION["basiclayout"] = 1;
 		header("Location: phone.php?mobilepage=invoice");
 		exit;
 	}
 }
-$MAXCATEG = (empty($conf->global->TAKEPOS_NB_MAXCATEG) ? $maxcategbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXCATEG);
-$MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT) ? $maxproductbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXPRODUCT);
+$MAXCATEG = (empty(getDolGlobalString("TAKEPOS_NB_MAXCATEG")) ? $maxcategbydefaultforthisdevice : getDolGlobalString("TAKEPOS_NB_MAXCATEG"));
+$MAXPRODUCT = (empty(getDolGlobalString("TAKEPOS_NB_MAXPRODUCT")) ? $maxproductbydefaultforthisdevice : getDolGlobalString("TAKEPOS_NB_MAXPRODUCT"));
 
 /*
 $constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
@@ -116,8 +116,8 @@ $form = new Form($db);
 
 // Title
 $title = 'TakePOS - Dolibarr '.DOL_VERSION;
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-	$title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
+if (!empty(getDolGlobalString("MAIN_APPLICATION_TITLE"))) {
+	$title = 'TakePOS - '.getDolGlobalString("MAIN_APPLICATION_TITLE");
 }
 $head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -129,22 +129,22 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 <link rel="stylesheet" href="css/pos.css.php">
 <link rel="stylesheet" href="css/colorbox.css" type="text/css" media="screen" />
 <?php
-if ($conf->global->TAKEPOS_COLOR_THEME == 1) {
+if (getDolGlobalString("TAKEPOS_COLOR_THEME") == 1) {
 	print '<link rel="stylesheet" href="css/colorful.css">';
 }
 ?>
 <script type="text/javascript" src="js/jquery.colorbox-min.js"></script>	<!-- TODO It seems we don't need this -->
 <script language="javascript">
 <?php
-$categories = $categorie->get_full_arbo('product', (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
+$categories = $categorie->get_full_arbo('product', ((getDolGlobalString("TAKEPOS_ROOT_CATEGORY_ID") > 0) ? getDolGlobalString("TAKEPOS_ROOT_CATEGORY_ID") : 0), 1);
 
 
 // Search root category to know its level
-//$conf->global->TAKEPOS_ROOT_CATEGORY_ID=0;
+//getDolGlobalString("TAKEPOS_ROOT_CATEGORY_ID")=0;
 $levelofrootcategory = 0;
-if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {
+if (getDolGlobalString("TAKEPOS_ROOT_CATEGORY_ID") > 0) {
 	foreach ($categories as $key => $categorycursor) {
-		if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID) {
+		if ($categorycursor['id'] == getDolGlobalString("TAKEPOS_ROOT_CATEGORY_ID")) {
 			$levelofrootcategory = $categorycursor['level'];
 			break;
 		}
@@ -310,7 +310,7 @@ function LoadProducts(position, issubcat) {
 			//console.log("ishow"+ishow+" idata="+idata);
 			console.log(data[idata]);
 			if (typeof (data[idata]) == "undefined") {
-				<?php if (!$conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES) {
+				<?php if (!getDolGlobalString("TAKEPOS_HIDE_PRODUCT_IMAGES")) {
 					echo '$("#prodivdesc"+ishow).hide();';
 					echo '$("#prodesc"+ishow).text("");';
 					echo '$("#proimg"+ishow).attr("title","");';
@@ -332,7 +332,7 @@ function LoadProducts(position, issubcat) {
 					$titlestring .= " + ' - ".dol_escape_js($langs->trans("Barcode").': ')."' + data[idata]['barcode']";
 				?>
 				var titlestring = <?php echo $titlestring; ?>;
-				<?php if (!$conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES) {
+				<?php if (!getDolGlobalString("TAKEPOS_HIDE_PRODUCT_IMAGES")) {
 					echo '$("#prodivdesc"+ishow).show();';
 					echo '$("#prodesc"+ishow).text(data[parseInt(idata)][\'label\']);';
 					echo '$("#proimg"+ishow).attr("title", titlestring);';
@@ -434,7 +434,7 @@ function ClickProduct(position) {
 		if (idproduct=="") return;
 		// Call page invoice.php to generate the section with product lines
 		$("#poslines").load("invoice.php?action=addline&place="+place+"&idproduct="+idproduct+"&selectedline="+selectedline, function() {
-			<?php if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) echo "CustomerDisplay();";?>
+			<?php if (!empty(getDolGlobalString("TAKEPOS_CUSTOMER_DISPLAY"))) echo "CustomerDisplay();";?>
 		});
 	}
 
@@ -505,7 +505,7 @@ function Refresh() {
 }
 
 function New() {
-	// If we go here,it means $conf->global->TAKEPOS_BAR_RESTAURANT is not defined
+	// If we go here,it means getDolGlobalString("TAKEPOS_BAR_RESTAURANT") is not defined
 	invoiceid = $("#invoiceid").val();
 
 	console.log("New with place = <?php echo $place; ?>, js place="+place+", invoiceid="+invoiceid);
@@ -708,10 +708,10 @@ function OpenDrawer(){
 		type: "POST",
 		data: { token: 'notrequired' },
 		<?php
-		if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
-			echo "url: '".$conf->global->TAKEPOS_PRINT_SERVER."/printer/drawer.php',";
+		if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var(getDolGlobalString("TAKEPOS_PRINT_SERVER"), FILTER_VALIDATE_URL) == true) {
+			echo "url: '".getDolGlobalString("TAKEPOS_PRINT_SERVER")."/printer/drawer.php',";
 		} else {
-			echo "url: 'http://".$conf->global->TAKEPOS_PRINT_SERVER.":8111/print',";
+			echo "url: 'http://".getDolGlobalString("TAKEPOS_PRINT_SERVER").":8111/print',";
 		}
 		?>
 		data: "opendrawer"
@@ -823,7 +823,7 @@ $keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION
 <div class="container">
 
 <?php
-if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
+if (empty(getDolGlobalString("TAKEPOS_HIDE_HEAD_BAR"))) {
 	?>
 	<div class="header">
 		<div class="topnav">
@@ -889,7 +889,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	<div class="modal-body">
 		<button type="button" class="block" onclick="location.href='index.php?setterminal=1'"><?php print $langs->trans("Terminal"); ?> 1</button>
 		<?php
-		for ($i = 2; $i <= $conf->global->TAKEPOS_NUM_TERMINALS; $i++) {
+		for ($i = 2; $i <= getDolGlobalString("TAKEPOS_NUM_TERMINALS"); $i++) {
 			print '<button type="button" class="block" onclick="location.href=\'index.php?setterminal='.$i.'\'">'.$langs->trans("Terminal").' '.$i.'</button>';
 		}
 		?>
@@ -949,7 +949,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 </div>
 </div>
 
-	<div class="row1<?php if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
+	<div class="row1<?php if (empty(getDolGlobalString("TAKEPOS_HIDE_HEAD_BAR"))) {
 		print 'withhead';
 					} ?>">
 
@@ -1009,9 +1009,9 @@ if (empty($paiementsModes)) {
 	setEventMessages($langs->trans("ProblemIsInSetupOfTerminal", $_SESSION["takeposterminal"]), null, 'errors');
 }
 if (count($maincategories) == 0) {
-	if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {
+	if (getDolGlobalString("TAKEPOS_ROOT_CATEGORY_ID") > 0) {
 		$tmpcategory = new Categorie($db);
-		$tmpcategory->fetch($conf->global->TAKEPOS_ROOT_CATEGORY_ID);
+		$tmpcategory->fetch(getDolGlobalString("TAKEPOS_ROOT_CATEGORY_ID"));
 		setEventMessages($langs->trans("TakeposNeedsAtLeastOnSubCategoryIntoParentCategory", $tmpcategory->label), null, 'errors');
 	} else {
 		setEventMessages($langs->trans("TakeposNeedsCategories"), null, 'errors');
@@ -1021,14 +1021,14 @@ if (count($maincategories) == 0) {
 $menus = array();
 $r = 0;
 
-if (empty($conf->global->TAKEPOS_BAR_RESTAURANT)) {
+if (empty(getDolGlobalString("TAKEPOS_BAR_RESTAURANT"))) {
 	$menus[$r++] = array('title'=>'<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("New").'</div>', 'action'=>'New();');
 } else {
 	// BAR RESTAURANT specific menu
 	$menus[$r++] = array('title'=>'<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("Place").'</div>', 'action'=>'Floors();');
 }
 
-if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
+if (!empty(getDolGlobalString("TAKEPOS_HIDE_HEAD_BAR"))) {
 	$menus[$r++] = array('title'=>'<span class="far fa-building paddingrightonly"></span><div class="trunc">'.$langs->trans("Customer").'</div>', 'action'=>'Customer();');
 }
 $menus[$r++] = array('title'=>'<span class="fa fa-history paddingrightonly"></span><div class="trunc">'.$langs->trans("History").'</div>', 'action'=>'History();');
@@ -1042,13 +1042,13 @@ if (getDolGlobalString('TAKEPOS_DIRECT_PAYMENT')) {
 
 // BAR RESTAURANT specific menu
 if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
-	if ($conf->global->TAKEPOS_ORDER_PRINTERS) {
+	if (getDolGlobalString("TAKEPOS_ORDER_PRINTERS")) {
 		$menus[$r++] = array('title'=>'<span class="fa fa-blender-phone paddingrightonly"></span><div class="trunc">'.$langs->trans("Order").'</span>', 'action'=>'TakeposPrintingOrder();');
 	}
 	//Button to print receipt before payment
 	if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 		if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
-			if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
+			if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var(getDolGlobalString("TAKEPOS_PRINT_SERVER"), FILTER_VALIDATE_URL) == true) {
 				$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'TakeposConnector(placeid);');
 			} else {
 				$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'TakeposPrinting(placeid);');
@@ -1108,11 +1108,11 @@ if ($r % 3 == 2) {
 	$menus[$r++] = array('title'=>'', 'style'=>'visibility: hidden;');
 }
 
-if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
+if (!empty(getDolGlobalString("TAKEPOS_HIDE_HEAD_BAR"))) {
 	$menus[$r++] = array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');
 }
 
-if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
+if (!empty(getDolGlobalString("TAKEPOS_WEIGHING_SCALE"))) {
 	$menus[$r++] = array('title'=>'<span class="fa fa-balance-scale paddingrightonly"></span><div class="trunc">'.$langs->trans("WeighingScale").'</div>', 'action'=>'WeighingScale();');
 }
 
@@ -1133,7 +1133,7 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 			}
 		}
 
-		if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
+		if (!empty(getDolGlobalString("TAKEPOS_HIDE_HEAD_BAR"))) {
 			print '<!-- Show the search input text -->'."\n";
 			print '<div class="margintoponly">';
 			print '<input type="text" id="search" name="search" onkeyup="Search2('.$keyCodeForEnter.');" style="width:80%;width:calc(100% - 51px);font-size: 150%;" placeholder="'.$langs->trans("Search").'" autofocus> ';
@@ -1144,7 +1144,7 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 		</div>
 	</div>
 
-	<div class="row2<?php if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
+	<div class="row2<?php if (empty(getDolGlobalString("TAKEPOS_HIDE_HEAD_BAR"))) {
 		print 'withhead';
 					} ?>">
 

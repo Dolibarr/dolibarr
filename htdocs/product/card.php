@@ -106,14 +106,14 @@ $accountancy_code_buy_intra = GETPOST('accountancy_code_buy_intra', 'alpha');
 $accountancy_code_buy_export = GETPOST('accountancy_code_buy_export', 'alpha');
 
 // by default 'alphanohtml' (better security); hidden conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML allows basic html
-$label_security_check = empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML) ? 'alphanohtml' : 'restricthtml';
+$label_security_check = empty(getDolGlobalString("MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML")) ? 'alphanohtml' : 'restricthtml';
 
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 
 // Load object modCodeProduct
-$module = (!empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) ? $conf->global->PRODUCT_CODEPRODUCT_ADDON : 'mod_codeproduct_leopard');
+$module = (!empty(getDolGlobalString("PRODUCT_CODEPRODUCT_ADDON")) ? getDolGlobalString("PRODUCT_CODEPRODUCT_ADDON") : 'mod_codeproduct_leopard');
 if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php') {
 	$module = substr($module, 0, dol_strlen($module) - 4);
 }
@@ -138,7 +138,7 @@ if ($id > 0 || !empty($ref)) {
 		$upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
 	}
 
-	if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {    // For backward compatiblity, we scan also old dirs
+	if (!empty(getDolGlobalString("PRODUCT_USE_OLD_PATH_FOR_PHOTO"))) {    // For backward compatiblity, we scan also old dirs
 		if (!empty($conf->product->enabled)) {
 			$upload_dirold = $conf->product->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
 		} else {
@@ -190,7 +190,7 @@ $usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produi
 $usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
 $usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer));
 $createbarcode = empty($conf->barcode->enabled) ? 0 : 1;
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->creer_advance)) {
+if (!empty(getDolGlobalString("MAIN_USE_ADVANCED_PERMS")) && empty($user->rights->barcode->creer_advance)) {
 	$createbarcode = 0;
 }
 
@@ -257,7 +257,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 		if (empty($ref)) {
-			if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
+			if (empty(getDolGlobalString("PRODUCT_GENERATE_REF_AFTER_FORM"))) {
 					setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Ref')), null, 'errors');
 					$action = "create";
 					$error++;
@@ -426,8 +426,8 @@ if (empty($reshook)) {
 			}
 
 			// MultiPrix
-			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
-				for ($i = 2; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+			if (!empty(getDolGlobalString("PRODUIT_MULTIPRICES"))) {
+				for ($i = 2; $i <= getDolGlobalString("PRODUIT_MULTIPRICES_LIMIT"); $i++) {
 					if (GETPOSTISSET("price_".$i)) {
 						$object->multiprices["$i"] = price2num(GETPOST("price_".$i), 'MU');
 						$object->multiprices_base_type["$i"] = GETPOST("multiprices_base_type_".$i);
@@ -443,7 +443,7 @@ if (empty($reshook)) {
 				$error++;
 			}
 
-			if (!$ref && !empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
+			if (!$ref && !empty(getDolGlobalString("PRODUCT_GENERATE_REF_AFTER_FORM"))) {
 				// Generate ref...
 				$ref = $modCodeProduct->getNextValue($object, $type);
 			}
@@ -487,7 +487,7 @@ if (empty($reshook)) {
 			if ($object->id > 0) {
 				$object->oldcopy = clone $object;
 
-				if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
+				if (empty(getDolGlobalString("PRODUCT_GENERATE_REF_AFTER_FORM"))) {
 					$object->ref                = $ref;
 				}
 				$object->label                  = GETPOST('label', $label_security_check);
@@ -496,7 +496,7 @@ if (empty($reshook)) {
 				$object->description            = $desc;
 
 				$object->url = GETPOST('url');
-				if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+				if (!empty(getDolGlobalString("MAIN_DISABLE_NOTES_TAB"))) {
 					$object->note_private = dol_htmlcleanlastbr(GETPOST('note_private', 'restricthtml'));
 					$object->note = $object->note_private;
 				}
@@ -807,11 +807,11 @@ if (empty($reshook)) {
 			$price_base_type = $object->price_base_type;
 
 			// If multiprice
-			if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level) {
+			if (getDolGlobalString("PRODUIT_MULTIPRICES") && $soc->price_level) {
 				$pu_ht = $object->multiprices[$soc->price_level];
 				$pu_ttc = $object->multiprices_ttc[$soc->price_level];
 				$price_base_type = $object->multiprices_base_type[$soc->price_level];
-			} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+			} elseif (!empty(getDolGlobalString("PRODUIT_CUSTOMER_PRICES"))) {
 				require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
 				$prodcustprice = new Productcustomerprice($db);
@@ -1006,8 +1006,8 @@ llxHeader('', $title, $help_url);
 
 // Load object modBarCodeProduct
 $res = 0;
-if (!empty($conf->barcode->enabled) && !empty($conf->global->BARCODE_PRODUCT_ADDON_NUM)) {
-	$module = strtolower($conf->global->BARCODE_PRODUCT_ADDON_NUM);
+if (!empty($conf->barcode->enabled) && !empty(getDolGlobalString("BARCODE_PRODUCT_ADDON_NUM"))) {
+	$module = strtolower(getDolGlobalString("BARCODE_PRODUCT_ADDON_NUM"));
 	$dirbarcode = array_merge(array('/core/modules/barcode/'), $conf->modules_parts['barcode']);
 	foreach ($dirbarcode as $dirroot) {
 		$res = dol_include_once($dirroot.$module.'.php');
@@ -1053,7 +1053,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Load object modCodeProduct
-		$module = (!empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) ? $conf->global->PRODUCT_CODEPRODUCT_ADDON : 'mod_codeproduct_leopard');
+		$module = (!empty(getDolGlobalString("PRODUCT_CODEPRODUCT_ADDON")) ? getDolGlobalString("PRODUCT_CODEPRODUCT_ADDON") : 'mod_codeproduct_leopard');
 		if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php') {
 			$module = substr($module, 0, dol_strlen($module) - 4);
 		}
@@ -1098,7 +1098,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		print '<table class="border centpercent">';
 
-		if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
+		if (empty(getDolGlobalString("PRODUCT_GENERATE_REF_AFTER_FORM"))) {
 			print '<tr>';
 			$tmpcode = '';
 			if (!empty($modCodeProduct->code_auto)) {
@@ -1141,11 +1141,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$tooltip .= '<br>'.$langs->trans("GenericMaskCodes3");
 				$tooltip .= '<br>'.$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
 				$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5");
-				if (($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced')
-					|| ($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced')) {
+				if ((getDolGlobalString("PRODUCTBATCH_LOT_USE_PRODUCT_MASKS") && getDolGlobalString("PRODUCTBATCH_LOT_ADDON") == 'mod_lot_advanced')
+					|| (getDolGlobalString("PRODUCTBATCH_SN_USE_PRODUCT_MASKS") && getDolGlobalString("PRODUCTBATCH_SN_ADDON") == 'mod_sn_advanced')) {
 					print '<tr><td id="mask_option">'.$langs->trans("ManageLotMask").'</td>';
-					$inherited_mask_lot = $conf->global->LOT_ADVANCED_MASK;
-					$inherited_mask_sn = $conf->global->SN_ADVANCED_MASK;
+					$inherited_mask_lot = getDolGlobalString("LOT_ADVANCED_MASK");
+					$inherited_mask_sn = getDolGlobalString("SN_ADVANCED_MASK");
 					print '<td id="field_mask">';
 					print $form->textwithpicto('<input type="text" class="flat minwidth175" name="batch_mask" id="batch_mask_input">', $tooltip, 1, 1);
 					print '<script type="text/javascript">
@@ -1157,7 +1157,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 										var valueSelected = this.value;
 										$("#field_mask, #mask_option").addClass("hideobject");
 					';
-					if ($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced') {
+					if (getDolGlobalString("PRODUCTBATCH_LOT_USE_PRODUCT_MASKS") && getDolGlobalString("PRODUCTBATCH_LOT_ADDON") == 'mod_lot_advanced') {
 						print '
 										if (this.value == 1) {
 											$("#field_mask, #mask_option").toggleClass("hideobject");
@@ -1165,7 +1165,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 										}
 						';
 					}
-					if ($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced') {
+					if (getDolGlobalString("PRODUCTBATCH_SN_USE_PRODUCT_MASKS") && getDolGlobalString("PRODUCTBATCH_SN_ADDON") == 'mod_sn_advanced') {
 						print '
 										if (this.value == 2) {
 											$("#field_mask, #mask_option").toggleClass("hideobject");
@@ -1183,7 +1183,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		$showbarcode = empty($conf->barcode->enabled) ? 0 : 1;
-		if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
+		if (!empty(getDolGlobalString("MAIN_USE_ADVANCED_PERMS")) && empty($user->rights->barcode->lire_advance)) {
 			$showbarcode = 0;
 		}
 
@@ -1192,8 +1192,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (GETPOSTISSET('fk_barcode_type')) {
 				$fk_barcode_type = GETPOST('fk_barcode_type');
 			} else {
-				if (empty($fk_barcode_type) && !empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) {
-					$fk_barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
+				if (empty($fk_barcode_type) && !empty(getDolGlobalString("PRODUIT_DEFAULT_BARCODE_TYPE"))) {
+					$fk_barcode_type = getDolGlobalString("PRODUIT_DEFAULT_BARCODE_TYPE");
 				}
 			}
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
@@ -1213,12 +1213,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Description (used in invoice, propal...)
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 
-		$doleditor = new DolEditor('desc', GETPOST('desc', 'restricthtml'), '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_4, '90%');
+		$doleditor = new DolEditor('desc', GETPOST('desc', 'restricthtml'), '', 160, 'dolibarr_details', '', false, true, getDolGlobalString("FCKEDITOR_ENABLE_PRODUCTDESC"), ROWS_4, '90%');
 		$doleditor->Create();
 
 		print "</td></tr>";
 
-		if (empty($conf->global->PRODUCT_DISABLE_PUBLIC_URL)) {
+		if (empty(getDolGlobalString("PRODUCT_DISABLE_PUBLIC_URL"))) {
 			// Public URL
 			print '<tr><td>'.$langs->trans("PublicUrl").'</td><td>';
 			print img_picto('', 'globe', 'class="pictofixedwidth"');
@@ -1237,7 +1237,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td>';
 			print '</tr>';
 
-			if (empty($conf->global->PRODUCT_DISABLE_STOCK_LEVELS)) {
+			if (empty(getDolGlobalString("PRODUCT_DISABLE_STOCK_LEVELS"))) {
 				// Stock min level
 				print '<tr><td>'.$form->textwithpicto($langs->trans("StockLimit"), $langs->trans("StockLimitDesc"), 1).'</td><td>';
 				print '<input name="seuil_stock_alerte" class="maxwidth50" value="'.GETPOST('seuil_stock_alerte').'">';
@@ -1250,7 +1250,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>';
 			}
 		} else {
-			if (empty($conf->global->PRODUCT_DISABLE_STOCK_LEVELS)) {
+			if (empty(getDolGlobalString("PRODUCT_DISABLE_STOCK_LEVELS"))) {
 				print '<input name="seuil_stock_alerte" type="hidden" value="0">';
 				print '<input name="desiredstock" type="hidden" value="0">';
 			}
@@ -1265,7 +1265,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		if ($type != 1) {	// Nature, Weight and volume only applies to products and not to services
-			if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
+			if (empty(getDolGlobalString("PRODUCT_DISABLE_NATURE"))) {
 				// Nature
 				print '<tr><td>'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
 				$statutarray = array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
@@ -1275,16 +1275,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		if ($type != 1) {
-			if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
+			if (empty(getDolGlobalString("PRODUCT_DISABLE_WEIGHT"))) {
 				// Brut Weight
 				print '<tr><td>'.$langs->trans("Weight").'</td><td>';
 				print '<input name="weight" size="4" value="'.GETPOST('weight').'">';
-				print $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOSTISSET('weight_units') ?GETPOST('weight_units', 'alpha') : (empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? 0 : $conf->global->MAIN_WEIGHT_DEFAULT_UNIT), 0, 2);
+				print $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOSTISSET('weight_units') ?GETPOST('weight_units', 'alpha') : (empty(getDolGlobalString("MAIN_WEIGHT_DEFAULT_UNIT")) ? 0 : getDolGlobalString("MAIN_WEIGHT_DEFAULT_UNIT")), 0, 2);
 				print '</td></tr>';
 			}
 
 			// Brut Length
-			if (empty($conf->global->PRODUCT_DISABLE_SIZE)) {
+			if (empty(getDolGlobalString("PRODUCT_DISABLE_SIZE"))) {
 				print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td>';
 				print '<input name="size" class="width50" value="'.GETPOST('size').'"> x ';
 				print '<input name="sizewidth" class="width50" value="'.GETPOST('sizewidth').'"> x ';
@@ -1292,14 +1292,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print $formproduct->selectMeasuringUnits("size_units", "size", GETPOSTISSET('size_units') ?GETPOST('size_units', 'alpha') : '0', 0, 2);
 				print '</td></tr>';
 			}
-			if (empty($conf->global->PRODUCT_DISABLE_SURFACE)) {
+			if (empty(getDolGlobalString("PRODUCT_DISABLE_SURFACE"))) {
 				// Brut Surface
 				print '<tr><td>'.$langs->trans("Surface").'</td><td>';
 				print '<input name="surface" size="4" value="'.GETPOST('surface').'">';
 				print $formproduct->selectMeasuringUnits("surface_units", "surface", GETPOSTISSET('surface_units') ?GETPOST('surface_units', 'alpha') : '0', 0, 2);
 				print '</td></tr>';
 			}
-			if (empty($conf->global->PRODUCT_DISABLE_VOLUME)) {
+			if (empty(getDolGlobalString("PRODUCT_DISABLE_VOLUME"))) {
 				// Brut Volume
 				print '<tr><td>'.$langs->trans("Volume").'</td><td>';
 				print '<input name="volume" size="4" value="'.GETPOST('volume').'">';
@@ -1307,25 +1307,25 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>';
 			}
 
-			if (!empty($conf->global->PRODUCT_ADD_NET_MEASURE)) {
+			if (!empty(getDolGlobalString("PRODUCT_ADD_NET_MEASURE"))) {
 				// Net Measure
 				print '<tr><td>'.$langs->trans("NetMeasure").'</td><td>';
 				print '<input name="net_measure" size="4" value="'.GETPOST('net_measure').'">';
-				print $formproduct->selectMeasuringUnits("net_measure_units", '', GETPOSTISSET('net_measure_units') ?GETPOST('net_measure_units', 'alpha') : (empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? 0 : $conf->global->MAIN_WEIGHT_DEFAULT_UNIT), 0, 0);
+				print $formproduct->selectMeasuringUnits("net_measure_units", '', GETPOSTISSET('net_measure_units') ?GETPOST('net_measure_units', 'alpha') : (empty(getDolGlobalString("MAIN_WEIGHT_DEFAULT_UNIT")) ? 0 : getDolGlobalString("MAIN_WEIGHT_DEFAULT_UNIT")), 0, 0);
 				print '</td></tr>';
 			}
 		}
 
 		// Units
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (!empty(getDolGlobalString("PRODUCT_USE_UNITS"))) {
 			print '<tr><td>'.$langs->trans('DefaultUnitToShow').'</td>';
 			print '<td>';
-			print $form->selectUnits(empty($line->fk_unit) ? $conf->global->PRODUCT_USE_UNITS : $line->fk_unit, 'units');
+			print $form->selectUnits(empty($line->fk_unit) ? getDolGlobalString("PRODUCT_USE_UNITS") : $line->fk_unit, 'units');
 			print '</td></tr>';
 		}
 
 		// Custom code
-		if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO) && empty($type)) {
+		if (empty(getDolGlobalString("PRODUCT_DISABLE_CUSTOM_INFO")) && empty($type)) {
 			print '<tr><td class="wordbreak">'.$langs->trans("CustomCode").'</td><td><input name="customcode" class="maxwidth100onsmartphone" value="'.GETPOST('customcode').'"></td></tr>';
 
 			// Origin country
@@ -1339,9 +1339,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 
 			// State
-			if (empty($conf->global->PRODUCT_DISABLE_STATE)) {
+			if (empty(getDolGlobalString("PRODUCT_DISABLE_STATE"))) {
 				print '<tr>';
-				if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2)) {
+				if (!empty(getDolGlobalString("MAIN_SHOW_REGION_IN_STATE_SELECT")) && (getDolGlobalString("MAIN_SHOW_REGION_IN_STATE_SELECT") == 1 || getDolGlobalString("MAIN_SHOW_REGION_IN_STATE_SELECT") == 2)) {
 					print '<td>'.$form->editfieldkey('RegionStateOrigin', 'state_id', '', $object, 0).'</td><td>';
 				} else {
 					print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td>';
@@ -1354,7 +1354,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Quality control
-		if (!empty($conf->global->PRODUCT_LOT_ENABLE_QUALITY_CONTROL)) {
+		if (!empty(getDolGlobalString("PRODUCT_LOT_ENABLE_QUALITY_CONTROL"))) {
 			print '<tr><td>'.$langs->trans("LifeTime").'</td><td><input name="lifetime" class="maxwidth100onsmartphone" value="'.GETPOST('lifetime').'"></td></tr>';
 			print '<tr><td>'.$langs->trans("QCFrequency").'</td><td><input name="qc_frequency" class="maxwidth100onsmartphone" value="'.GETPOST('qc_frequency').'"></td></tr>';
 		}
@@ -1368,12 +1368,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Note (private, no output on invoices, propales...)
-		//if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))       available in create mode
+		//if (! empty(getDolGlobalString("MAIN_DISABLE_NOTES_TAB")))       available in create mode
 		//{
 			print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
 
 			// We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
-			$doleditor = new DolEditor('note_private', GETPOST('note_private', 'restricthtml'), '', 140, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_8, '90%');
+			$doleditor = new DolEditor('note_private', GETPOST('note_private', 'restricthtml'), '', 140, 'dolibarr_details', '', false, true, getDolGlobalString("FCKEDITOR_ENABLE_PRODUCTDESC"), ROWS_8, '90%');
 			$doleditor->Create();
 
 			print "</td></tr>";
@@ -1391,8 +1391,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		print '<hr>';
 
-		if (empty($conf->global->PRODUCT_DISABLE_PRICES)) {
-			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if (empty(getDolGlobalString("PRODUCT_DISABLE_PRICES"))) {
+			if (!empty(getDolGlobalString("PRODUIT_MULTIPRICES"))) {
 				// We do no show price array on create when multiprices enabled.
 				// We must set them on prices tab.
 				print '<table class="border centpercent">';
@@ -1410,7 +1410,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				// Price
 				print '<tr><td class="titlefieldcreate">'.$langs->trans("SellingPrice").'</td>';
 				print '<td><input name="price" class="maxwidth50" value="'.$object->price.'">';
-				print $form->selectPriceBaseType($conf->global->PRODUCT_PRICE_BASE_TYPE, "price_base_type");
+				print $form->selectPriceBaseType(getDolGlobalString("PRODUCT_PRICE_BASE_TYPE"), "price_base_type");
 				print '</td></tr>';
 
 				// Min price
@@ -1434,15 +1434,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<!-- accountancy codes -->'."\n";
 		print '<table class="border centpercent">';
 
-		if (empty($conf->global->PRODUCT_DISABLE_ACCOUNTING)) {
+		if (empty(getDolGlobalString("PRODUCT_DISABLE_ACCOUNTING"))) {
 			if (!empty($conf->accounting->enabled)) {
 				// Accountancy_code_sell
 				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 				print '<td>';
 				if ($type == 0) {
-					$accountancy_code_sell = (GETPOSTISSET('accountancy_code_sell') ? GETPOST('accountancy_code_sell', 'alpha') : $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT);
+					$accountancy_code_sell = (GETPOSTISSET('accountancy_code_sell') ? GETPOST('accountancy_code_sell', 'alpha') : getDolGlobalString("ACCOUNTING_PRODUCT_SOLD_ACCOUNT"));
 				} else {
-					$accountancy_code_sell = (GETPOSTISSET('accountancy_code_sell') ? GETPOST('accountancy_code_sell', 'alpha') : $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT);
+					$accountancy_code_sell = (GETPOSTISSET('accountancy_code_sell') ? GETPOST('accountancy_code_sell', 'alpha') : getDolGlobalString("ACCOUNTING_SERVICE_SOLD_ACCOUNT"));
 				}
 				print $formaccounting->select_account($accountancy_code_sell, 'accountancy_code_sell', 1, null, 1, 1, 'minwidth150 maxwidth300', 1);
 				print '</td></tr>';
@@ -1452,9 +1452,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
 					print '<td>';
 					if ($type == 0) {
-						$accountancy_code_sell_intra = (GETPOSTISSET('accountancy_code_sell_intra') ? GETPOST('accountancy_code_sell_intra', 'alpha') : $conf->global->ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT);
+						$accountancy_code_sell_intra = (GETPOSTISSET('accountancy_code_sell_intra') ? GETPOST('accountancy_code_sell_intra', 'alpha') : getDolGlobalString("ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT"));
 					} else {
-						$accountancy_code_sell_intra = (GETPOSTISSET('accountancy_code_sell_intra') ? GETPOST('accountancy_code_sell_intra', 'alpha') : $conf->global->ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT);
+						$accountancy_code_sell_intra = (GETPOSTISSET('accountancy_code_sell_intra') ? GETPOST('accountancy_code_sell_intra', 'alpha') : getDolGlobalString("ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT"));
 					}
 					print $formaccounting->select_account($accountancy_code_sell_intra, 'accountancy_code_sell_intra', 1, null, 1, 1, 'minwidth150 maxwidth300', 1);
 					print '</td></tr>';
@@ -1464,9 +1464,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
 				print '<td>';
 				if ($type == 0) {
-					$accountancy_code_sell_export = (GETPOST('accountancy_code_sell_export') ? GETPOST('accountancy_code_sell_export', 'alpha') : $conf->global->ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT);
+					$accountancy_code_sell_export = (GETPOST('accountancy_code_sell_export') ? GETPOST('accountancy_code_sell_export', 'alpha') : getDolGlobalString("ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT"));
 				} else {
-					$accountancy_code_sell_export = (GETPOST('accountancy_code_sell_export') ? GETPOST('accountancy_code_sell_export', 'alpha') : $conf->global->ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT);
+					$accountancy_code_sell_export = (GETPOST('accountancy_code_sell_export') ? GETPOST('accountancy_code_sell_export', 'alpha') : getDolGlobalString("ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT"));
 				}
 				print $formaccounting->select_account($accountancy_code_sell_export, 'accountancy_code_sell_export', 1, null, 1, 1, 'minwidth150 maxwidth300', 1);
 				print '</td></tr>';
@@ -1475,9 +1475,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
 				print '<td>';
 				if ($type == 0) {
-					$accountancy_code_buy = (GETPOST('accountancy_code_buy', 'alpha') ? (GETPOST('accountancy_code_buy', 'alpha')) : $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT);
+					$accountancy_code_buy = (GETPOST('accountancy_code_buy', 'alpha') ? (GETPOST('accountancy_code_buy', 'alpha')) : getDolGlobalString("ACCOUNTING_PRODUCT_BUY_ACCOUNT"));
 				} else {
-					$accountancy_code_buy = (GETPOST('accountancy_code_buy', 'alpha') ? (GETPOST('accountancy_code_buy', 'alpha')) : $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT);
+					$accountancy_code_buy = (GETPOST('accountancy_code_buy', 'alpha') ? (GETPOST('accountancy_code_buy', 'alpha')) : getDolGlobalString("ACCOUNTING_SERVICE_BUY_ACCOUNT"));
 				}
 				print $formaccounting->select_account($accountancy_code_buy, 'accountancy_code_buy', 1, null, 1, 1, 'minwidth150 maxwidth300', 1);
 				print '</td></tr>';
@@ -1487,9 +1487,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyIntraCode").'</td>';
 					print '<td>';
 					if ($type == 0) {
-						$accountancy_code_buy_intra = (GETPOSTISSET('accountancy_code_buy_intra') ? GETPOST('accountancy_code_buy_intra', 'alpha') : $conf->global->ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT);
+						$accountancy_code_buy_intra = (GETPOSTISSET('accountancy_code_buy_intra') ? GETPOST('accountancy_code_buy_intra', 'alpha') : getDolGlobalString("ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT"));
 					} else {
-						$accountancy_code_buy_intra = (GETPOSTISSET('accountancy_code_buy_intra') ? GETPOST('accountancy_code_buy_intra', 'alpha') : $conf->global->ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT);
+						$accountancy_code_buy_intra = (GETPOSTISSET('accountancy_code_buy_intra') ? GETPOST('accountancy_code_buy_intra', 'alpha') : getDolGlobalString("ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT"));
 					}
 					print $formaccounting->select_account($accountancy_code_buy_intra, 'accountancy_code_buy_intra', 1, null, 1, 1, 'minwidth150 maxwidth300', 1);
 					print '</td></tr>';
@@ -1499,9 +1499,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyExportCode").'</td>';
 				print '<td>';
 				if ($type == 0) {
-					$accountancy_code_buy_export = (GETPOST('accountancy_code_buy_export') ? GETPOST('accountancy_code_buy_export', 'alpha') : $conf->global->ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT);
+					$accountancy_code_buy_export = (GETPOST('accountancy_code_buy_export') ? GETPOST('accountancy_code_buy_export', 'alpha') : getDolGlobalString("ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT"));
 				} else {
-					$accountancy_code_buy_export = (GETPOST('accountancy_code_buy_export') ? GETPOST('accountancy_code_buy_export', 'alpha') : $conf->global->ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT);
+					$accountancy_code_buy_export = (GETPOST('accountancy_code_buy_export') ? GETPOST('accountancy_code_buy_export', 'alpha') : getDolGlobalString("ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT"));
 				}
 				print $formaccounting->select_account($accountancy_code_buy_export, 'accountancy_code_buy_export', 1, null, 1, 1, 'minwidth150 maxwidth300', 1);
 				print '</td></tr>';
@@ -1655,7 +1655,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Batch number managment
 			if ($conf->productbatch->enabled) {
-				if ($object->isProduct() || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+				if ($object->isProduct() || !empty(getDolGlobalString("STOCK_SUPPORTS_SERVICES"))) {
 					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 					$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
 					print $form->selectarray('status_batch', $statutarray, $object->status_batch);
@@ -1727,7 +1727,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Barcode
 			$showbarcode = empty($conf->barcode->enabled) ? 0 : 1;
-			if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
+			if (!empty(getDolGlobalString("MAIN_USE_ADVANCED_PERMS")) && empty($user->rights->barcode->lire_advance)) {
 				$showbarcode = 0;
 			}
 
@@ -1737,8 +1737,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					$fk_barcode_type = GETPOST('fk_barcode_type');
 				} else {
 					$fk_barcode_type = $object->barcode_type;
-					if (empty($fk_barcode_type) && !empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) {
-						$fk_barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
+					if (empty($fk_barcode_type) && !empty(getDolGlobalString("PRODUIT_DEFAULT_BARCODE_TYPE"))) {
+						$fk_barcode_type = getDolGlobalString("PRODUIT_DEFAULT_BARCODE_TYPE");
 					}
 				}
 				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
@@ -1758,14 +1758,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 
 			// We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
-			$doleditor = new DolEditor('desc', $object->description, '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_4, '90%');
+			$doleditor = new DolEditor('desc', $object->description, '', 160, 'dolibarr_details', '', false, true, getDolGlobalString("FCKEDITOR_ENABLE_PRODUCTDESC"), ROWS_4, '90%');
 			$doleditor->Create();
 
 			print "</td></tr>";
 			print "\n";
 
 			// Public Url
-			if (empty($conf->global->PRODUCT_DISABLE_PUBLIC_URL)) {
+			if (empty(getDolGlobalString("PRODUCT_DISABLE_PUBLIC_URL"))) {
 				print '<tr><td>'.$langs->trans("PublicUrl").'</td><td>';
 				print img_picto('', 'globe', 'class="pictofixedwidth"');
 				print '<input type="text" name="url" class="quatrevingtpercent" value="'.$object->url.'">';
@@ -1804,7 +1804,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print $formproduct->selectMeasuringUnits("duration_unit", "time", $object->duration_unit, 0, 1);
 				print '</td></tr>';
 			} else {
-				if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
+				if (empty(getDolGlobalString("PRODUCT_DISABLE_NATURE"))) {
 					// Nature
 					print '<tr><td>'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
 					print $formproduct->selectProductNature('finished', $object->finished);
@@ -1820,7 +1820,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			if (!$object->isService()) {
-				if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
+				if (empty(getDolGlobalString("PRODUCT_DISABLE_WEIGHT"))) {
 					// Brut Weight
 					print '<tr><td>'.$langs->trans("Weight").'</td><td>';
 					print '<input name="weight" size="5" value="'.$object->weight.'"> ';
@@ -1828,7 +1828,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '</td></tr>';
 				}
 
-				if (empty($conf->global->PRODUCT_DISABLE_SIZE)) {
+				if (empty(getDolGlobalString("PRODUCT_DISABLE_SIZE"))) {
 					// Brut Length
 					print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td>';
 					print '<input name="size" size="5" value="'.$object->length.'">x';
@@ -1837,14 +1837,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print $formproduct->selectMeasuringUnits("size_units", "size", $object->length_units, 0, 2);
 					print '</td></tr>';
 				}
-				if (empty($conf->global->PRODUCT_DISABLE_SURFACE)) {
+				if (empty(getDolGlobalString("PRODUCT_DISABLE_SURFACE"))) {
 					// Brut Surface
 					print '<tr><td>'.$langs->trans("Surface").'</td><td>';
 					print '<input name="surface" size="5" value="'.$object->surface.'"> ';
 					print $formproduct->selectMeasuringUnits("surface_units", "surface", $object->surface_units, 0, 2);
 					print '</td></tr>';
 				}
-				if (empty($conf->global->PRODUCT_DISABLE_VOLUME)) {
+				if (empty(getDolGlobalString("PRODUCT_DISABLE_VOLUME"))) {
 					// Brut Volume
 					print '<tr><td>'.$langs->trans("Volume").'</td><td>';
 					print '<input name="volume" size="5" value="'.$object->volume.'"> ';
@@ -1852,7 +1852,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '</td></tr>';
 				}
 
-				if (!empty($conf->global->PRODUCT_ADD_NET_MEASURE)) {
+				if (!empty(getDolGlobalString("PRODUCT_ADD_NET_MEASURE"))) {
 					// Net Measure
 					print '<tr><td>'.$langs->trans("NetMeasure").'</td><td>';
 					print '<input name="net_measure" size="5" value="'.$object->net_measure.'"> ';
@@ -1861,7 +1861,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 			}
 			// Units
-			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+			if (!empty(getDolGlobalString("PRODUCT_USE_UNITS"))) {
 				print '<tr><td>'.$langs->trans('DefaultUnitToShow').'</td>';
 				print '<td>';
 				print $form->selectUnits($object->fk_unit, 'units');
@@ -1869,7 +1869,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Custom code
-			if (!$object->isService() && empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO)) {
+			if (!$object->isService() && empty(getDolGlobalString("PRODUCT_DISABLE_CUSTOM_INFO"))) {
 				print '<tr><td class="wordbreak">'.$langs->trans("CustomCode").'</td><td><input name="customcode" class="maxwidth100onsmartphone" value="'.$object->customcode.'"></td></tr>';
 				// Origin country
 				print '<tr><td>'.$langs->trans("CountryOrigin").'</td>';
@@ -1881,9 +1881,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 				print '</td></tr>';
 				// State
-				if (empty($conf->global->PRODUCT_DISABLE_STATE)) {
+				if (empty(getDolGlobalString("PRODUCT_DISABLE_STATE"))) {
 					print '<tr>';
-					if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2)) {
+					if (!empty(getDolGlobalString("MAIN_SHOW_REGION_IN_STATE_SELECT")) && (getDolGlobalString("MAIN_SHOW_REGION_IN_STATE_SELECT") == 1 || getDolGlobalString("MAIN_SHOW_REGION_IN_STATE_SELECT") == 2)) {
 						print '<td>'.$form->editfieldkey('RegionStateOrigin', 'state_id', '', $object, 0).'</td><td>';
 					} else {
 						print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td>';
@@ -1897,7 +1897,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Quality control
-			if (!empty($conf->global->PRODUCT_LOT_ENABLE_QUALITY_CONTROL)) {
+			if (!empty(getDolGlobalString("PRODUCT_LOT_ENABLE_QUALITY_CONTROL"))) {
 				print '<tr><td>'.$langs->trans("LifeTime").'</td><td><input name="lifetime" class="maxwidth100onsmartphone" value="'.$object->lifetime.'"></td></tr>';
 				print '<tr><td>'.$langs->trans("QCFrequency").'</td><td><input name="qc_frequency" class="maxwidth100onsmartphone" value="'.$object->qc_frequency.'"></td></tr>';
 			}
@@ -1927,10 +1927,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Note private
-			if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+			if (!empty(getDolGlobalString("MAIN_DISABLE_NOTES_TAB"))) {
 				print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
 
-				$doleditor = new DolEditor('note_private', $object->note_private, '', 140, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_4, '90%');
+				$doleditor = new DolEditor('note_private', $object->note_private, '', 140, 'dolibarr_notes', '', false, true, getDolGlobalString("FCKEDITOR_ENABLE_PRODUCTDESC"), ROWS_4, '90%');
 				$doleditor->Create();
 
 				print "</td></tr>";
@@ -1942,7 +1942,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			print '<table class="border centpercent">';
 
-			if (empty($conf->global->PRODUCT_DISABLE_ACCOUNTING)) {
+			if (empty(getDolGlobalString("PRODUCT_DISABLE_ACCOUNTING"))) {
 				if (!empty($conf->accounting->enabled)) {
 					// Accountancy_code_sell
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
@@ -2035,7 +2035,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Fiche en mode visu
 
 			$showbarcode = empty($conf->barcode->enabled) ? 0 : 1;
-			if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
+			if (!empty(getDolGlobalString("MAIN_USE_ADVANCED_PERMS")) && empty($user->rights->barcode->lire_advance)) {
 				$showbarcode = 0;
 			}
 
@@ -2049,7 +2049,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$object->next_prev_filter = " fk_product_type = ".$object->type;
 
 			$shownav = 1;
-			if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+			if ($user->socid && !in_array('product', explode(',', getDolGlobalString("MAIN_MODULES_FOR_EXTERNAL")))) {
 				$shownav = 0;
 			}
 
@@ -2066,7 +2066,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="titlefield">';
-				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
+				print (empty(getDolGlobalString("PRODUCT_DENY_CHANGE_PRODUCT_TYPE"))) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
 				print '</td><td>';
 				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
 				print '</td></tr>';
@@ -2130,12 +2130,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Batch number management (to batch)
 			if (!empty($conf->productbatch->enabled)) {
-				if ($object->isProduct() || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+				if ($object->isProduct() || !empty(getDolGlobalString("STOCK_SUPPORTS_SERVICES"))) {
 					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 					print $object->getLibStatut(0, 2);
 					print '</td></tr>';
-					if ((($object->status_batch == '1' && $conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced')
-						|| ($object->status_batch == '2' && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced' && $conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS))) {
+					if ((($object->status_batch == '1' && getDolGlobalString("PRODUCTBATCH_LOT_USE_PRODUCT_MASKS") && getDolGlobalString("PRODUCTBATCH_LOT_ADDON") == 'mod_lot_advanced')
+						|| ($object->status_batch == '2' && getDolGlobalString("PRODUCTBATCH_SN_ADDON") == 'mod_sn_advanced' && getDolGlobalString("PRODUCTBATCH_SN_USE_PRODUCT_MASKS")))) {
 						print '<tr><td>'.$langs->trans("ManageLotMask").'</td><td>';
 						print $object->batch_mask;
 						print '</td></tr>';
@@ -2247,7 +2247,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>'.(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true)).'</td></tr>';
 
 			// Public URL
-			if (empty($conf->global->PRODUCT_DISABLE_PUBLIC_URL)) {
+			if (empty(getDolGlobalString("PRODUCT_DISABLE_PUBLIC_URL"))) {
 				print '<tr><td>'.$langs->trans("PublicUrl").'</td><td>';
 				print dol_print_url($object->url);
 				print '</td></tr>';
@@ -2297,7 +2297,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				print '</td></tr>';
 			} else {
-				if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
+				if (empty(getDolGlobalString("PRODUCT_DISABLE_NATURE"))) {
 					// Nature
 					print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
 					print $object->getLibFinished();
@@ -2317,7 +2317,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			if (!$object->isService()) {
 				// Brut Weight
-				if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
+				if (empty(getDolGlobalString("PRODUCT_DISABLE_WEIGHT"))) {
 					print '<tr><td class="titlefield">'.$langs->trans("Weight").'</td><td>';
 					if ($object->weight != '') {
 						print $object->weight." ".measuringUnitString(0, "weight", $object->weight_units);
@@ -2327,7 +2327,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print "</td></tr>\n";
 				}
 
-				if (empty($conf->global->PRODUCT_DISABLE_SIZE)) {
+				if (empty(getDolGlobalString("PRODUCT_DISABLE_SIZE"))) {
 					// Brut Length
 					print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td>';
 					if ($object->length != '' || $object->width != '' || $object->height != '') {
@@ -2344,7 +2344,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					}
 					print "</td></tr>\n";
 				}
-				if (empty($conf->global->PRODUCT_DISABLE_SURFACE)) {
+				if (empty(getDolGlobalString("PRODUCT_DISABLE_SURFACE"))) {
 					// Brut Surface
 					print '<tr><td>'.$langs->trans("Surface").'</td><td>';
 					if ($object->surface != '') {
@@ -2354,7 +2354,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					}
 					print "</td></tr>\n";
 				}
-				if (empty($conf->global->PRODUCT_DISABLE_VOLUME)) {
+				if (empty(getDolGlobalString("PRODUCT_DISABLE_VOLUME"))) {
 					// Brut Volume
 					print '<tr><td>'.$langs->trans("Volume").'</td><td>';
 					if ($object->volume != '') {
@@ -2365,7 +2365,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print "</td></tr>\n";
 				}
 
-				if (!empty($conf->global->PRODUCT_ADD_NET_MEASURE)) {
+				if (!empty(getDolGlobalString("PRODUCT_ADD_NET_MEASURE"))) {
 					// Net Measure
 					print '<tr><td class="titlefield">'.$langs->trans("NetMeasure").'</td><td>';
 					if ($object->net_measure != '') {
@@ -2378,7 +2378,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Unit
-			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+			if (!empty(getDolGlobalString("PRODUCT_USE_UNITS"))) {
 				$unit = $object->getLabelOfUnit();
 
 				print '<tr><td>'.$langs->trans('DefaultUnitToShow').'</td><td>';
@@ -2389,7 +2389,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Custom code
-			if (!$object->isService() && empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO)) {
+			if (!$object->isService() && empty(getDolGlobalString("PRODUCT_DISABLE_CUSTOM_INFO"))) {
 				print '<tr><td>'.$langs->trans("CustomCode").'</td><td>'.$object->customcode.'</td>';
 
 				// Origin country code
@@ -2401,7 +2401,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Quality Control
-			if (!empty($conf->global->PRODUCT_LOT_ENABLE_QUALITY_CONTROL)) {
+			if (!empty(getDolGlobalString("PRODUCT_LOT_ENABLE_QUALITY_CONTROL"))) {
 				print '<tr><td>'.$langs->trans("LifeTime").'</td><td">'.$object->lifetime.'</td></tr>';
 				print '<tr><td>'.$langs->trans("QCFrequency").'</td><td>'.$object->qc_frequency.'</td></tr>';
 			}
@@ -2418,7 +2418,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Note private
-			if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+			if (!empty(getDolGlobalString("MAIN_DISABLE_NOTES_TAB"))) {
 				print '<!-- show Note --> '."\n";
 				print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td><td>'.(dol_textishtml($object->note_private) ? $object->note_private : dol_nl2br($object->note_private, 1, true)).'</td></tr>'."\n";
 				print '<!-- End show Note --> '."\n";
@@ -2460,10 +2460,10 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->d
 		array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneContentProduct"), 'value' => 1),
 		array('type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans("CloneCategoriesProduct"), 'value' => 1),
 	);
-	if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+	if (!empty(getDolGlobalString("PRODUIT_MULTIPRICES"))) {
 		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("CustomerPrices").')', 'value' => 0);
 	}
-	if (!empty($conf->global->PRODUIT_SOUSPRODUITS)) {
+	if (!empty(getDolGlobalString("PRODUIT_SOUSPRODUITS"))) {
 		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_composition', 'label' => $langs->trans('CloneCompositionProduct'), 'value' => 1);
 	}
 
@@ -2528,7 +2528,7 @@ if ($action != 'create' && $action != 'edit') {
  * All the "Add to" areas
  */
 
-if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action == '' || $action == 'view') && $object->status) {
+if (!empty(getDolGlobalString("PRODUCT_ADD_FORM_ADD_TO")) && $object->id && ($action == '' || $action == 'view') && $object->status) {
 	//Variable used to check if any text is going to be printed
 	$html = '';
 	//print '<div class="fichecenter"><div class="fichehalfleft">';

@@ -116,7 +116,7 @@ if (!empty($conf->multicompany->enabled) && is_object($mc)) {
 
 $entity = (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : (GETPOSTISSET('search_entity') ? GETPOST('search_entity', 'int') : $conf->entity));
 if (!empty($conf->multicompany->enabled) && is_object($mc)) {
-	if (empty($entity) && !empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES)) {
+	if (empty($entity) && !empty(getDolGlobalString("MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES"))) {
 		$entity = '0,'.join(',', array_keys($arrayofentities));
 	}
 }
@@ -563,9 +563,9 @@ print "\n";
 // Export is for current company only
 if (!empty($conf->multicompany->enabled) && is_object($mc)) {
 	$mc->getInfo($conf->entity);
-	print '<span class="marginleftonly marginrightonly'.(empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES) ? ' opacitymedium' : '').'">('.$langs->trans("Entity").' : ';
+	print '<span class="marginleftonly marginrightonly'.(empty(getDolGlobalString("MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES")) ? ' opacitymedium' : '').'">('.$langs->trans("Entity").' : ';
 	print "<td>";
-	if (!empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES)) {
+	if (!empty(getDolGlobalString("MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES"))) {
 		print $mc->select_entities(GETPOSTISSET('search_entity') ? GETPOST('search_entity', 'int') : $mc->id, 'search_entity', '', false, false, false, false, true);
 	} else {
 		print $mc->label;

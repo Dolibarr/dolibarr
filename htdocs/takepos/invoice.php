@@ -82,8 +82,8 @@ if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->la
 	}
 	$mobilepage = GETPOST('mobilepage', 'alpha');
 	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
-	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-		$title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
+	if (!empty(getDolGlobalString("MAIN_APPLICATION_TITLE"))) {
+		$title = 'TakePOS - '.getDolGlobalString("MAIN_APPLICATION_TITLE");
 	}
 	$head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
 	<meta name="apple-mobile-web-app-capable" content="yes">
@@ -185,7 +185,7 @@ if ($action == 'valid' && $user->rights->facture->creer) {
 	$bankaccount = 0;
 	$error = 0;
 
-	if (!empty($conf->global->TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT)) {
+	if (!empty(getDolGlobalString("TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT"))) {
 		$bankaccount = GETPOST('accountid', 'int');
 	} else {
 		if ($pay == "cash") {
@@ -235,10 +235,10 @@ if ($action == 'valid' && $user->rights->facture->creer) {
 	}
 
 	//$sav_FACTURE_ADDON = '';
-	//if (!empty($conf->global->TAKEPOS_ADDON)) {
-	//	$sav_FACTURE_ADDON = $conf->global->FACTURE_ADDON;
-	//	if ($conf->global->TAKEPOS_ADDON == "terminal") $conf->global->FACTURE_ADDON = $conf->global->{'TAKEPOS_ADDON'.$_SESSION["takeposterminal"]};
-	//	else $conf->global->FACTURE_ADDON = $conf->global->TAKEPOS_ADDON;
+	//if (!empty(getDolGlobalString("TAKEPOS_ADDON"))) {
+	//	$sav_FACTURE_ADDON = getDolGlobalString("FACTURE_ADDON");
+	//	if (getDolGlobalString("TAKEPOS_ADDON") == "terminal") getDolGlobalString("FACTURE_ADDON") = $conf->global->{'TAKEPOS_ADDON'.$_SESSION["takeposterminal"]};
+	//	else getDolGlobalString("FACTURE_ADDON") = getDolGlobalString("TAKEPOS_ADDON");
 	//}
 
 	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
@@ -257,19 +257,19 @@ if ($action == 'valid' && $user->rights->facture->creer) {
 		dol_syslog('Sale without lines');
 		dol_htmloutput_errors($langs->trans("NoLinesToBill", "TakePos"), null, 1);
 	} elseif (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1") {
-		$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
-		$conf->global->STOCK_CALCULATE_ON_BILL = 1;
+		$savconst = getDolGlobalString("STOCK_CALCULATE_ON_BILL");
+		getDolGlobalString("STOCK_CALCULATE_ON_BILL") = 1;
 
 		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 		dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".$conf->global->$constantforkey);
 		$batch_rule = 0;
-		if (!empty($conf->productbatch->enabled) && !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK)) {
+		if (!empty($conf->productbatch->enabled) && !empty(getDolGlobalString("CASHDESK_FORCE_DECREASE_STOCK"))) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 			$batch_rule = Productbatch::BATCH_RULE_SELLBY_EATBY_DATES_FIRST;
 		}
 		$res = $invoice->validate($user, '', $conf->global->$constantforkey, 0, $batch_rule);
 
-		$conf->global->STOCK_CALCULATE_ON_BILL = $savconst;
+		getDolGlobalString("STOCK_CALCULATE_ON_BILL") = $savconst;
 	} else {
 		$res = $invoice->validate($user);
 		if ($res < 0) {
@@ -281,7 +281,7 @@ if ($action == 'valid' && $user->rights->facture->creer) {
 	// Restore save values
 	//if (!empty($sav_FACTURE_ADDON))
 	//{
-	//	$conf->global->FACTURE_ADDON = $sav_FACTURE_ADDON;
+	//	getDolGlobalString("FACTURE_ADDON") = $sav_FACTURE_ADDON;
 	//}
 
 	// Add the payment
@@ -450,17 +450,17 @@ if ($action == 'creditnote' && $user->rights->facture->creer) {
 
 	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
 	if (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1") {
-		$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
-		$conf->global->STOCK_CALCULATE_ON_BILL = 1;
+		$savconst = getDolGlobalString("STOCK_CALCULATE_ON_BILL");
+		getDolGlobalString("STOCK_CALCULATE_ON_BILL") = 1;
 		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 		dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".$conf->global->$constantforkey);
 		$batch_rule = 0;
-		if (!empty($conf->productbatch->enabled) && !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK)) {
+		if (!empty($conf->productbatch->enabled) && !empty(getDolGlobalString("CASHDESK_FORCE_DECREASE_STOCK"))) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 			$batch_rule = Productbatch::BATCH_RULE_SELLBY_EATBY_DATES_FIRST;
 		}
 		$res = $creditnote->validate($user, '', $conf->global->$constantforkey, 0, $batch_rule);
-		$conf->global->STOCK_CALCULATE_ON_BILL = $savconst;
+		getDolGlobalString("STOCK_CALCULATE_ON_BILL") = $savconst;
 	} else {
 		$res = $creditnote->validate($user);
 	}
@@ -516,11 +516,11 @@ if ($action == "addline") {
 	$localtax1_tx = get_localtax($tva_tx, 1, $customer, $mysoc, $tva_npr);
 	$localtax2_tx = get_localtax($tva_tx, 2, $customer, $mysoc, $tva_npr);
 
-	if (!empty($conf->global->TAKEPOS_SUPPLEMENTS)) {
+	if (!empty(getDolGlobalString("TAKEPOS_SUPPLEMENTS"))) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$cat = new Categorie($db);
 		$categories = $cat->containing($idproduct, 'product');
-		$found = (array_search($conf->global->TAKEPOS_SUPPLEMENTS_CATEGORY, array_column($categories, 'id')));
+		$found = (array_search(getDolGlobalString("TAKEPOS_SUPPLEMENTS_CATEGORY"), array_column($categories, 'id')));
 		if ($found !== false) { // If this product is a supplement
 			$sql = "SELECT fk_parent_line FROM ".MAIN_DB_PREFIX."facturedet where rowid=$selectedline";
 			$resql = $db->query($sql);
@@ -534,7 +534,7 @@ if ($action == "addline") {
 	}
 
 	$idoflineadded = 0;
-	if (!empty($conf->global->TAKEPOS_GROUP_SAME_PRODUCT)) {
+	if (!empty(getDolGlobalString("TAKEPOS_GROUP_SAME_PRODUCT"))) {
 		foreach ($invoice->lines as $line) {
 			if ($line->product_ref == $prod->ref) {
 				$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty + 1, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
@@ -550,7 +550,7 @@ if ($action == "addline") {
 	if ($idoflineadded <= 0) {
 		$invoice->fetch_thirdparty();
 		$idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, $parent_line, null, '', '', 0, 100, '', null, 0);
-		if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
+		if (!empty(getDolGlobalString("TAKEPOS_CUSTOMER_DISPLAY"))) {
 			$CUSTOMER_DISPLAY_line1 = $prod->label;
 			$CUSTOMER_DISPLAY_line2 = price($price_ttc);
 		}
@@ -669,7 +669,7 @@ if ($action == "updateprice") {
 			$prod->fetch($line->fk_product);
 			$datapriceofproduct = $prod->getSellPrice($mysoc, $customer, 0);
 			$price_min = $datapriceofproduct['price_min'];
-			$usercanproductignorepricemin = ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS));
+			$usercanproductignorepricemin = ((!empty(getDolGlobalString("MAIN_USE_ADVANCED_PERMS")) && empty($user->rights->produit->ignore_price_min_advance)) || empty(getDolGlobalString("MAIN_USE_ADVANCED_PERMS")));
 			$pu_ht = price2num($number / (1 + ($line->tva_tx / 100)), 'MU');
 			//Check min price
 			if ($usercanproductignorepricemin && (!empty($price_min) && (price2num($pu_ht) * (1 - price2num($line->remise_percent) / 100) < price2num($price_min)))) {
@@ -701,7 +701,7 @@ if ($action == "updatereduction") {
 
 			$datapriceofproduct = $prod->getSellPrice($mysoc, $customer, 0);
 			$price_min = $datapriceofproduct['price_min'];
-			$usercanproductignorepricemin = ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS));
+			$usercanproductignorepricemin = ((!empty(getDolGlobalString("MAIN_USE_ADVANCED_PERMS")) && empty($user->rights->produit->ignore_price_min_advance)) || empty(getDolGlobalString("MAIN_USE_ADVANCED_PERMS")));
 
 			$pu_ht = price2num($line->subprice / (1 + ($line->tva_tx / 100)), 'MU');
 
@@ -730,7 +730,7 @@ if ($action == "updatereduction") {
 
 if ($action == "order" and $placeid != 0) {
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
+	if (getDolGlobalString("TAKEPOS_PRINT_METHOD") == "receiptprinter" || getDolGlobalString("TAKEPOS_PRINT_METHOD") == "takeposconnector") {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 		$printer = new dolReceiptPrinter($db);
 	}
@@ -743,9 +743,9 @@ if ($action == "order" and $placeid != 0) {
 	$order_receipt_printer1 = "";
 	$order_receipt_printer2 = "";
 	$order_receipt_printer3 = "";
-	$catsprinter1 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_1);
-	$catsprinter2 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_2);
-	$catsprinter3 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_3);
+	$catsprinter1 = explode(';', getDolGlobalString("TAKEPOS_PRINTED_CATEGORIES_")1);
+	$catsprinter2 = explode(';', getDolGlobalString("TAKEPOS_PRINTED_CATEGORIES_")2);
+	$catsprinter3 = explode(';', getDolGlobalString("TAKEPOS_PRINTED_CATEGORIES_")3);
 	$linestoprint = 0;
 	foreach ($invoice->lines as $line) {
 		if ($line->special_code == "4") {
@@ -775,7 +775,7 @@ if ($action == "order" and $placeid != 0) {
 			$order_receipt_printer1 .= '</td></tr>';
 		}
 	}
-	if (($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") && $linestoprint > 0) {
+	if ((getDolGlobalString("TAKEPOS_PRINT_METHOD") == "receiptprinter" || getDolGlobalString("TAKEPOS_PRINT_METHOD") == "takeposconnector") && $linestoprint > 0) {
 		$invoice->fetch($placeid); //Reload object before send to printer
 		$printer->orderprinter = 1;
 		echo "<script>";
@@ -807,7 +807,7 @@ if ($action == "order" and $placeid != 0) {
 			$order_receipt_printer2 .= '</td></tr>';
 		}
 	}
-	if (($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") && $linestoprint > 0) {
+	if ((getDolGlobalString("TAKEPOS_PRINT_METHOD") == "receiptprinter" || getDolGlobalString("TAKEPOS_PRINT_METHOD") == "takeposconnector") && $linestoprint > 0) {
 		$invoice->fetch($placeid); //Reload object before send to printer
 		$printer->orderprinter = 2;
 		echo "<script>";
@@ -839,7 +839,7 @@ if ($action == "order" and $placeid != 0) {
 			$order_receipt_printer3 .= '</td></tr>';
 		}
 	}
-	if (($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") && $linestoprint > 0) {
+	if ((getDolGlobalString("TAKEPOS_PRINT_METHOD") == "receiptprinter" || getDolGlobalString("TAKEPOS_PRINT_METHOD") == "takeposconnector") && $linestoprint > 0) {
 		$invoice->fetch($placeid); //Reload object before send to printer
 		$printer->orderprinter = 3;
 		echo "<script>";
@@ -869,7 +869,7 @@ if ($action == "valid" || $action == "history" || $action == 'creditnote') {
 	}
 	$sectionwithinvoicelink .= '</span><br>';
 	if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
-		if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
+		if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var(getDolGlobalString("TAKEPOS_PRINT_SERVER"), FILTER_VALIDATE_URL) == true) {
 			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposConnector('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
 		} else {
 			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
@@ -882,7 +882,7 @@ if ($action == "valid" || $action == "history" || $action == 'creditnote') {
 			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.', 1);">'.$langs->trans('GiftReceipt').'</button>';
 		}
 	}
-	if (getDolGlobalString('TAKEPOS_EMAIL_TEMPLATE_INVOICE') && $conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE > 0) {
+	if (getDolGlobalString('TAKEPOS_EMAIL_TEMPLATE_INVOICE') && getDolGlobalString("TAKEPOS_EMAIL_TEMPLATE_INVOICE") > 0) {
 		$sectionwithinvoicelink .= ' <button id="buttonsend" type="button" onclick="SendTicket('.$placeid.');">'.$langs->trans('SendTicket').'</button>';
 	}
 
@@ -930,11 +930,11 @@ $(document).ready(function() {
 <?php
 
 if ($action == "order" and $order_receipt_printer1 != "") {
-	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
+	if (filter_var(getDolGlobalString("TAKEPOS_PRINT_SERVER"), FILTER_VALIDATE_URL) == true) {
 		?>
 		$.ajax({
 			type: "POST",
-			url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/printer/index.php',
+			url: '<?php print getDolGlobalString("TAKEPOS_PRINT_SERVER"); ?>/printer/index.php',
 			data: 'invoice='+orderprinter1esc
 		});
 		<?php
@@ -942,7 +942,7 @@ if ($action == "order" and $order_receipt_printer1 != "") {
 		?>
 		$.ajax({
 			type: "POST",
-			url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
+			url: 'http://<?php print getDolGlobalString("TAKEPOS_PRINT_SERVER"); ?>:8111/print',
 			data: '<?php
 			print $headerorder.$order_receipt_printer1.$footerorder; ?>'
 		});
@@ -951,11 +951,11 @@ if ($action == "order" and $order_receipt_printer1 != "") {
 }
 
 if ($action == "order" and $order_receipt_printer2 != "") {
-	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
+	if (filter_var(getDolGlobalString("TAKEPOS_PRINT_SERVER"), FILTER_VALIDATE_URL) == true) {
 		?>
 		$.ajax({
 			type: "POST",
-			url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/printer/index.php?printer=2',
+			url: '<?php print getDolGlobalString("TAKEPOS_PRINT_SERVER"); ?>/printer/index.php?printer=2',
 			data: 'invoice='+orderprinter2esc
 		});
 		<?php
@@ -963,7 +963,7 @@ if ($action == "order" and $order_receipt_printer2 != "") {
 		?>
 		$.ajax({
 			type: "POST",
-			url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print2',
+			url: 'http://<?php print getDolGlobalString("TAKEPOS_PRINT_SERVER"); ?>:8111/print2',
 			data: '<?php
 			print $headerorder.$order_receipt_printer2.$footerorder; ?>'
 		});
@@ -972,11 +972,11 @@ if ($action == "order" and $order_receipt_printer2 != "") {
 }
 
 if ($action == "order" and $order_receipt_printer3 != "") {
-	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
+	if (filter_var(getDolGlobalString("TAKEPOS_PRINT_SERVER"), FILTER_VALIDATE_URL) == true) {
 		?>
 		$.ajax({
 			type: "POST",
-			url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/printer/index.php?printer=3',
+			url: '<?php print getDolGlobalString("TAKEPOS_PRINT_SERVER"); ?>/printer/index.php?printer=3',
 			data: 'invoice='+orderprinter3esc
 		});
 		<?php
@@ -995,7 +995,7 @@ if ($action == "temp" and $ticket_printer1 != "") {
 	?>
 	$.ajax({
 		type: "POST",
-		url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
+		url: 'http://<?php print getDolGlobalString("TAKEPOS_PRINT_SERVER"); ?>:8111/print',
 		data: '<?php
 		print $header_soc.$header_ticket.$body_ticket.$ticket_printer1.$ticket_total.$footer_ticket; ?>'
 	});
@@ -1083,7 +1083,7 @@ $( document ).ready(function() {
 
 	<?php
 	$sql = "SELECT rowid, datec, ref FROM ".MAIN_DB_PREFIX."facture";
-	if (empty($conf->global->TAKEPOS_CAN_EDIT_IF_ALREADY_VALIDATED)) {
+	if (empty(getDolGlobalString("TAKEPOS_CAN_EDIT_IF_ALREADY_VALIDATED"))) {
 		// By default, only invoices with a ref not already defined can in list of open invoice we can edit.
 		$sql .= " WHERE ref LIKE '(PROV-POS".$db->escape($_SESSION["takeposterminal"])."-0%' AND entity IN (".getEntity('invoice').")";
 	} else {
@@ -1182,7 +1182,7 @@ $( document ).ready(function() {
 
 
 <?php
-if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
+if (!empty(getDolGlobalString("TAKEPOS_CUSTOMER_DISPLAY"))) {
 	echo "function CustomerDisplay(){";
 	echo "var line1='".$CUSTOMER_DISPLAY_line1."'.substring(0,20);";
 	echo "line1=line1.padEnd(20);";
@@ -1211,7 +1211,7 @@ print '<!-- invoice.php place='.(int) $place.' invoice='.$invoice->ref.' mobilep
 print '<div class="div-table-responsive-no-min invoice">';
 print '<table id="tablelines" class="noborder noshadow postablelines" width="100%">';
 if ($sectionwithinvoicelink && ($mobilepage == "invoice" || $mobilepage == "")) {
-	if (!empty($conf->global->TAKEPOS_SHOW_HT)) {
+	if (!empty(getDolGlobalString("TAKEPOS_SHOW_HT"))) {
 		print '<tr><td colspan="5">'.$sectionwithinvoicelink.'</td></tr>';
 	} else {
 		print '<tr><td colspan="4">'.$sectionwithinvoicelink.'</td></tr>';
@@ -1425,7 +1425,7 @@ if ($placeid > 0) {
 					$htmlforlines .= img_object('', 'service').' ';
 				}
 			}
-			if (empty($conf->global->TAKEPOS_SHOW_N_FIRST_LINES)) {
+			if (empty(getDolGlobalString("TAKEPOS_SHOW_N_FIRST_LINES"))) {
 				$tooltiptext = '';
 				if ($line->product_ref) {
 					$tooltiptext .= '<b>'.$langs->trans("Ref").'</b> : '.$line->product_ref.'<br>';
@@ -1446,7 +1446,7 @@ if ($placeid > 0) {
 					if ($line->product_label && $line->desc) {
 						$htmlforlines .= '<br>';
 					}
-					$firstline = dolGetFirstLineOfText($line->desc, $conf->global->TAKEPOS_SHOW_N_FIRST_LINES);
+					$firstline = dolGetFirstLineOfText($line->desc, getDolGlobalString("TAKEPOS_SHOW_N_FIRST_LINES"));
 					if ($firstline != $line->desc) {
 						$htmlforlines .= $form->textwithpicto(dolGetFirstLineOfText($line->desc), $line->desc);
 					} else {
@@ -1541,7 +1541,7 @@ if ($placeid > 0) {
 		}
 	} else {
 		print '<tr class="drag drop oddeven"><td class="left"><span class="opacitymedium">'.$langs->trans("Empty").'</span></td><td></td><td></td><td></td>';
-		if (!empty($conf->global->TAKEPOS_SHOW_HT)) {
+		if (!empty(getDolGlobalString("TAKEPOS_SHOW_HT"))) {
 			print '<td></td>';
 		}
 		print '</tr>';
@@ -1549,7 +1549,7 @@ if ($placeid > 0) {
 } else {      // No invoice generated yet
 	print '<tr class="drag drop oddeven"><td class="left"><span class="opacitymedium">'.$langs->trans("Empty").'</span></td><td></td><td></td><td></td>';
 
-	if (!empty($conf->global->TAKEPOS_SHOW_HT)) {
+	if (!empty(getDolGlobalString("TAKEPOS_SHOW_HT"))) {
 		print '<td></td>';
 	}
 	print '</tr>';

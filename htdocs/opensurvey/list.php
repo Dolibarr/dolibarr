@@ -196,7 +196,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (empty(getDolGlobalString("MAIN_DISABLE_FULL_SCANLIST"))) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
@@ -220,7 +220,7 @@ if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords) {
 }
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all) {
+if ($num == 1 && !empty(getDolGlobalString("MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE")) && $search_all) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".dol_buildpath('/opensurvey/card.php', 1).'?id='.$id);
@@ -242,7 +242,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
-$fieldtosortuser = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION) ? 'firstname' : 'lastname';
+$fieldtosortuser = empty(getDolGlobalString("MAIN_FIRSTNAME_NAME_POSITION")) ? 'firstname' : 'lastname';
 
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);

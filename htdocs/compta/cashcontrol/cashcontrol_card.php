@@ -112,7 +112,7 @@ if (empty($backtopage)) {
 $backurlforlist = dol_buildpath('/compta/cashcontrol/cashcontrol_list.php', 1);
 $triggermodname = 'CACHCONTROL_MODIFY'; // Name of trigger action code to execute when we modify record
 
-if (empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH) && empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH1)) {
+if (empty(getDolGlobalString("CASHDESK_ID_BANKACCOUNT_CASH")) && empty(getDolGlobalString("CASHDESK_ID_BANKACCOUNT_CASH")1)) {
 	setEventMessages($langs->trans("CashDesk")." - ".$langs->trans("NotConfigured"), null, 'errors');
 }
 
@@ -413,13 +413,13 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		print '<td>';
 
 		$array = array();
-		$numterminals = max(1, $conf->global->TAKEPOS_NUM_TERMINALS);
+		$numterminals = max(1, getDolGlobalString("TAKEPOS_NUM_TERMINALS"));
 		for ($i = 1; $i <= $numterminals; $i++) {
 			$array[$i] = $i;
 		}
 		$selectedposnumber = 0;
 		$showempty = 1;
-		if ($conf->global->TAKEPOS_NUM_TERMINALS == '1') {
+		if (getDolGlobalString("TAKEPOS_NUM_TERMINALS") == '1') {
 			$selectedposnumber = 1;
 			$showempty = 0;
 		}
@@ -727,7 +727,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 			print '<td>';
 
 			$array = array();
-			$numterminals = max(1, $conf->global->TAKEPOS_NUM_TERMINALS);
+			$numterminals = max(1, getDolGlobalString("TAKEPOS_NUM_TERMINALS"));
 			for($i = 1; $i <= $numterminals; $i++) {
 				$array[$i] = $i;
 			}

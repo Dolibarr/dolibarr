@@ -68,9 +68,9 @@ $lineid = GETPOST('lineid', 'int');
 $contactid = GETPOST('contactid', 'int');
 
 // PDF
-$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
-$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
-$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty(getDolGlobalString("MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS")) ? 1 : 0));
+$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty(getDolGlobalString("MAIN_GENERATE_DOCUMENTS_HIDE_DESC")) ? 1 : 0));
+$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty(getDolGlobalString("MAIN_GENERATE_DOCUMENTS_HIDE_REF")) ? 1 : 0));
 
 // Nombre de ligne pour choix de produit/service predefinis
 $NBLINES = 4;
@@ -107,8 +107,8 @@ $usercancreate		= $user->rights->supplier_proposal->creer;
 $usercandelete		= $user->rights->supplier_proposal->supprimer;
 
 // Advanced permissions
-$usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->supplier_proposal->validate_advance)));
-$usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->supplier_proposal->send_advance);
+$usercanvalidate = ((empty(getDolGlobalString("MAIN_USE_ADVANCED_PERMS")) && !empty($usercancreate)) || (!empty(getDolGlobalString("MAIN_USE_ADVANCED_PERMS")) && !empty($user->rights->supplier_proposal->validate_advance)));
+$usercansend = (empty(getDolGlobalString("MAIN_USE_ADVANCED_PERMS")) || $user->rights->supplier_proposal->send_advance);
 
 // Additional area permissions
 $usercanclose = $user->rights->supplier_proposal->cloturer;
@@ -180,10 +180,10 @@ if (empty($reshook)) {
 			$object->line_order(true);
 		}
 
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if (empty(getDolGlobalString("MAIN_DISABLE_PDF_AUTOUPDATE"))) {
 			// Define output language
 			$outputlangs = $langs;
-			if (!empty($conf->global->MAIN_MULTILANGS)) {
+			if (!empty(getDolGlobalString("MAIN_MULTILANGS"))) {
 				$outputlangs = new Translate("", $conf);
 				$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $object->thirdparty->default_lang);
 				$outputlangs->setDefaultLang($newlang);
@@ -198,15 +198,15 @@ if (empty($reshook)) {
 		// Validation
 		$result = $object->valid($user);
 		if ($result >= 0) {
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (empty(getDolGlobalString("MAIN_DISABLE_PDF_AUTOUPDATE"))) {
 						// Define output language
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				if (empty(getDolGlobalString("MAIN_DISABLE_PDF_AUTOUPDATE"))) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalString("MAIN_MULTILANGS") && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+					if (getDolGlobalString("MAIN_MULTILANGS") && empty($newlang)) {
 						$newlang = $object->thirdparty->default_lang;
 					}
 					if (!empty($newlang)) {
@@ -415,13 +415,13 @@ if (empty($reshook)) {
 						$db->commit();
 
 						// Define output language
-						if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+						if (empty(getDolGlobalString("MAIN_DISABLE_PDF_AUTOUPDATE"))) {
 							$outputlangs = $langs;
 							$newlang = '';
-							if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+							if (getDolGlobalString("MAIN_MULTILANGS") && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 								$newlang = GETPOST('lang_id', 'aZ09');
 							}
-							if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+							if (getDolGlobalString("MAIN_MULTILANGS") && empty($newlang)) {
 								$newlang = $object->thirdparty->default_lang;
 							}
 							if (!empty($newlang)) {
@@ -493,10 +493,10 @@ if (empty($reshook)) {
 	if ($action == 'modif' && $usercancreate) {
 		$object->setDraft($user);
 
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if (empty(getDolGlobalString("MAIN_DISABLE_PDF_AUTOUPDATE"))) {
 			// Define output language
 			$outputlangs = $langs;
-			if (!empty($conf->global->MAIN_MULTILANGS)) {
+			if (!empty(getDolGlobalString("MAIN_MULTILANGS"))) {
 				$outputlangs = new Translate("", $conf);
 				$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $object->thirdparty->default_lang);
 				$outputlangs->setDefaultLang($newlang);
@@ -590,7 +590,7 @@ if (empty($reshook)) {
 					$res = $productsupplier->fetch($idprod); // Load product from its ID
 					// Call to init some price properties of $productsupplier
 					// So if a supplier price already exists for another thirdparty (first one found), we use it as reference price
-					if (!empty($conf->global->SUPPLIER_TAKE_FIRST_PRICE_IF_NO_PRICE_FOR_CURRENT_SUPPLIER)) {
+					if (!empty(getDolGlobalString("SUPPLIER_TAKE_FIRST_PRICE_IF_NO_PRICE_FOR_CURRENT_SUPPLIER"))) {
 						$fksoctosearch = 0;
 						$productsupplier->get_buyprice(0, -1, $idprod, 'none', $fksoctosearch); // We force qty to -1 to be sure to find if a supplier price exist
 						if ($productsupplier->fourn_socid != $socid) {	// The price we found is for another supplier, so we clear supplier price
@@ -611,14 +611,14 @@ if (empty($reshook)) {
 					$label = $productsupplier->label;
 
 					// if we use supplier description of the products
-					if (!empty($productsupplier->desc_supplier) && !empty($conf->global->PRODUIT_FOURN_TEXTS)) {
+					if (!empty($productsupplier->desc_supplier) && !empty(getDolGlobalString("PRODUIT_FOURN_TEXTS"))) {
 						$desc = $productsupplier->desc_supplier;
 					} else {
 						$desc = $productsupplier->description;
 					}
 
 					if (trim($product_desc) != trim($desc)) {
-						$desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
+						$desc = dol_concatdesc($desc, $product_desc, '', !empty(getDolGlobalString("MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION")));
 					}
 
 					$type = $productsupplier->type;
@@ -753,13 +753,13 @@ if (empty($reshook)) {
 				$ret = $object->fetch($object->id); // Reload to get new records
 
 				// Define output language
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				if (empty(getDolGlobalString("MAIN_DISABLE_PDF_AUTOUPDATE"))) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalString("MAIN_MULTILANGS") && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+					if (getDolGlobalString("MAIN_MULTILANGS") && empty($newlang)) {
 						$newlang = $object->thirdparty->default_lang;
 					}
 					if (!empty($newlang)) {
@@ -878,7 +878,7 @@ if (empty($reshook)) {
 		$productid = GETPOST('productid', 'int');
 		if (!empty($productid)) {
 			$productsupplier = new ProductFournisseur($db);
-			if (!empty($conf->global->SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY)) {
+			if (!empty(getDolGlobalString("SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY"))) {
 				if ($productid > 0 && $productsupplier->get_buyprice(0, price2num($_POST['qty']), $productid, 'none', GETPOST('socid', 'int')) < 0) {
 					setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
 				}
@@ -890,7 +890,7 @@ if (empty($reshook)) {
 			$type = $product->type;
 
 			$price_min = $product->price_min;
-			if (!empty($conf->global->PRODUIT_MULTIPRICES) && !empty($object->thirdparty->price_level)) {
+			if (!empty(getDolGlobalString("PRODUIT_MULTIPRICES")) && !empty($object->thirdparty->price_level)) {
 				$price_min = $product->multiprices_min [$object->thirdparty->price_level];
 			}
 
@@ -939,10 +939,10 @@ if (empty($reshook)) {
 			if ($result >= 0) {
 				$db->commit();
 
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				if (empty(getDolGlobalString("MAIN_DISABLE_PDF_AUTOUPDATE"))) {
 					// Define output language
 					$outputlangs = $langs;
-					if (!empty($conf->global->MAIN_MULTILANGS)) {
+					if (!empty(getDolGlobalString("MAIN_MULTILANGS"))) {
 						$outputlangs = new Translate("", $conf);
 						$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $object->thirdparty->default_lang);
 						$outputlangs->setDefaultLang($newlang);
@@ -1092,7 +1092,7 @@ if ($action == 'create') {
 			if (!empty($objectsrc->multicurrency_code)) {
 				$currency_code = $objectsrc->multicurrency_code;
 			}
-			if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx)) {
+			if (!empty(getDolGlobalString("MULTICURRENCY_USE_ORIGIN_TX")) && !empty($objectsrc->multicurrency_tx)) {
 				$currency_tx = $objectsrc->multicurrency_tx;
 			}
 		}
@@ -1162,7 +1162,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Bank Account
-	if (!empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && !empty($conf->banque->enabled)) {
+	if (!empty(getDolGlobalString("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL")) && !empty($conf->banque->enabled)) {
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
 		$form->select_comptes(GETPOST('fk_account') > 0 ? GETPOST('fk_account', 'int') : $fk_account, 'fk_account', 0, '', 1);
 		print '</td></tr>';
@@ -1179,8 +1179,8 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans("DeliveryDate").'</td>';
 	print '<td colspan="2">';
 	$datedelivery = dol_mktime(0, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
-	if ($conf->global->DATE_LIVRAISON_WEEK_DELAY != "") {
-		$tmpdte = time() + ((7 * $conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
+	if (getDolGlobalString("DATE_LIVRAISON_WEEK_DELAY") != "") {
+		$tmpdte = time() + ((7 * getDolGlobalString("DATE_LIVRAISON_WEEK_DELAY")) * 24 * 60 * 60);
 		$syear = date("Y", $tmpdte);
 		$smonth = date("m", $tmpdte);
 		$sday = date("d", $tmpdte);
@@ -1196,7 +1196,7 @@ if ($action == 'create') {
 	print '<td>'.$langs->trans("DefaultModel").'</td>';
 	print '<td colspan="2">';
 	$list = ModelePDFSupplierProposal::liste_modeles($db);
-	$preselected = ($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT : $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF);
+	$preselected = (getDolGlobalString("SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT") ? getDolGlobalString("SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT") : getDolGlobalString("SUPPLIER_PROPOSAL_ADDON_PDF"));
 	print $form->selectarray('model', $list, $preselected, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 	print "</td></tr>";
 
@@ -1281,11 +1281,11 @@ if ($action == 'create') {
 	 * Combobox pour la fonction de copie
 	  */
 
-	if (empty($conf->global->SUPPLIER_PROPOSAL_CLONE_ON_CREATE_PAGE)) {
+	if (empty(getDolGlobalString("SUPPLIER_PROPOSAL_CLONE_ON_CREATE_PAGE"))) {
 		print '<input type="hidden" name="createmode" value="empty">';
 	}
 
-	if (!empty($conf->global->SUPPLIER_PROPOSAL_CLONE_ON_CREATE_PAGE)) {
+	if (!empty(getDolGlobalString("SUPPLIER_PROPOSAL_CLONE_ON_CREATE_PAGE"))) {
 		print '<br><table>';
 
 		// For backward compatibility
@@ -1324,7 +1324,7 @@ if ($action == 'create') {
 		print '<td valign="top" colspan="2">'.$langs->trans("CreateEmptyAsk").'</td></tr>';
 	}
 
-	if (!empty($conf->global->SUPPLIER_PROPOSAL_CLONE_ON_CREATE_PAGE)) {
+	if (!empty(getDolGlobalString("SUPPLIER_PROPOSAL_CLONE_ON_CREATE_PAGE"))) {
 		print '</table>';
 	}
 
@@ -1442,7 +1442,7 @@ if ($action == 'create') {
 	//$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreateorder, 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
-	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
+	if (empty(getDolGlobalString("MAIN_DISABLE_OTHER_LINK")) && $object->thirdparty->id > 0) {
 		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherProposals").'</a>)';
 	}
 	// Project
@@ -1458,7 +1458,7 @@ if ($action == 'create') {
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$morehtmlref .= $formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+				$morehtmlref .= $formproject->select_projects((empty(getDolGlobalString("PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS")) ? $object->socid : -1), $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
@@ -1489,7 +1489,7 @@ if ($action == 'create') {
 	print '<table class="border tableforfield" width="100%">';
 
 	// Relative and absolute discounts
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (!empty(getDolGlobalString("FACTURE_DEPOSITS_ARE_JUST_PAYMENTS"))) {
 		$filterabsolutediscount = "fk_invoice_supplier_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 		$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 	} else {
@@ -1634,7 +1634,7 @@ if ($action == 'create') {
 		print '</tr>';
 	}*/
 
-	if (!empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && !empty($conf->banque->enabled)) {
+	if (!empty(getDolGlobalString("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL")) && !empty($conf->banque->enabled)) {
 		// Bank Account
 		print '<tr><td>';
 		print '<table width="100%" class="nobordernopadding"><tr><td>';
@@ -1723,13 +1723,13 @@ if ($action == 'create') {
 
 	print '<div class="clearboth"></div><br>';
 
-	if (!empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
+	if (!empty(getDolGlobalString("MAIN_DISABLE_CONTACTS_TAB"))) {
 		$blocname = 'contacts';
 		$title = $langs->trans('ContactsAddresses');
 		include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
 	}
 
-	if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+	if (!empty(getDolGlobalString("MAIN_DISABLE_NOTES_TAB"))) {
 		$blocname = 'notes';
 		$title = $langs->trans('Notes');
 		include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
@@ -1760,7 +1760,7 @@ if ($action == 'create') {
 	global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
 	$forceall = 1; $dateSelector = 0; $inputalsopricewithtax = 1;
 	$senderissupplier = 2; // $senderissupplier=2 is same than 1 but disable test on minimum qty.
-	if (!empty($conf->global->SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY)) {
+	if (!empty(getDolGlobalString("SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY"))) {
 		$senderissupplier = 1;
 	}
 
@@ -1793,7 +1793,7 @@ if ($action == 'create') {
 		$form_close .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$form_close .= '<input type="hidden" name="action" value="setstatut">';
 
-		if (!empty($conf->global->SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL)) {
+		if (!empty(getDolGlobalString("SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPP")lIER_PROPOSAL)) {
 			$form_close .= '<p class="notice">'.$langs->trans('SupplierProposalRefFournNotice').'</p>'; // TODO Suggest a permanent checkbox instead of option
 		}
 		$form_close .= '<table class="border centpercent marginleftonly marginrightonly">';
@@ -1844,7 +1844,7 @@ if ($action == 'create') {
 
 				// ReOpen
 				if (($object->statut == SupplierProposal::STATUS_SIGNED || $object->statut == SupplierProposal::STATUS_NOTSIGNED || $object->statut == SupplierProposal::STATUS_CLOSE) && $usercanclose) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen'.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#reopen').'"';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen'.(empty(getDolGlobalString("MAIN_JUMP_TAG")) ? '' : '#reopen').'"';
 					print '>'.$langs->trans('ReOpen').'</a></div>';
 				}
 
@@ -1860,7 +1860,7 @@ if ($action == 'create') {
 				}
 
 				// Create an order
-				if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) && $object->statut == SupplierProposal::STATUS_SIGNED) {
+				if (((!empty($conf->fournisseur->enabled) && empty(getDolGlobalString("MAIN_USE_NEW_SUPPLIERMOD"))) || !empty($conf->supplier_order->enabled)) && $object->statut == SupplierProposal::STATUS_SIGNED) {
 					if ($usercancreateorder) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddSupplierOrderShort").'</a></div>';
 					}
@@ -1868,13 +1868,13 @@ if ($action == 'create') {
 
 				// Set accepted/refused
 				if ($object->statut == SupplierProposal::STATUS_VALIDATED && $usercanclose) {
-					print '<div class="inline-block divButAction"><a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=statut'.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#acceptedrefused').'"';
+					print '<div class="inline-block divButAction"><a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=statut'.(empty(getDolGlobalString("MAIN_JUMP_TAG")) ? '' : '#acceptedrefused').'"';
 					print '>'.$langs->trans('SetAcceptedRefused').'</a></div>';
 				}
 
 				// Close
 				if ($object->statut == SupplierProposal::STATUS_SIGNED && $usercanclose) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close'.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close').'"';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close'.(empty(getDolGlobalString("MAIN_JUMP_TAG")) ? '' : '#close').'"';
 					print '>'.$langs->trans('Close').'</a></div>';
 				}
 

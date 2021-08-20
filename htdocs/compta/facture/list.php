@@ -154,8 +154,8 @@ if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('b
 	$page = 0;
 }     // If $page is not defined, or '' or -1 or if we click on clear filters
 $offset = $limit * $page;
-if (!$sortorder && !empty($conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER) && $search_status == '1') {
-	$sortorder = $conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER;
+if (!$sortorder && !empty(getDolGlobalString("INVOICE_DEFAULT_UNPAYED_SORT_ORDER")) && $search_status == '1') {
+	$sortorder = getDolGlobalString("INVOICE_DEFAULT_UNPAYED_SORT_ORDER");
 }
 if (!$sortorder) {
 	$sortorder = 'DESC';
@@ -224,8 +224,8 @@ $arrayfields = array(
 	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers, 'position'=>75),
 	'f.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>1, 'position'=>80),
 	'f.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>1, 'position'=>85),
-	'f.module_source'=>array('label'=>"POSModule", 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>((empty($conf->cashdesk->enabled) && empty($conf->takepos->enabled) && empty($conf->global->INVOICE_SHOW_POS)) ? 0 : 1), 'position'=>90),
-	'f.pos_source'=>array('label'=>"POSTerminal", 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>((empty($conf->cashdesk->enabled) && empty($conf->takepos->enabled) && empty($conf->global->INVOICE_SHOW_POS)) ? 0 : 1), 'position'=>91),
+	'f.module_source'=>array('label'=>"POSModule", 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>((empty($conf->cashdesk->enabled) && empty($conf->takepos->enabled) && empty(getDolGlobalString("INVOICE_SHOW_POS"))) ? 0 : 1), 'position'=>90),
+	'f.pos_source'=>array('label'=>"POSTerminal", 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>((empty($conf->cashdesk->enabled) && empty($conf->takepos->enabled) && empty(getDolGlobalString("INVOICE_SHOW_POS"))) ? 0 : 1), 'position'=>91),
 	'f.total_ht'=>array('label'=>"AmountHT", 'checked'=>1, 'position'=>95),
 	'f.total_tva'=>array('label'=>"AmountVAT", 'checked'=>0, 'position'=>100),
 	'f.total_localtax1'=>array('label'=>$langs->transcountry("AmountLT1", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax1_assuj == "1"), 'position'=>110),
@@ -242,18 +242,18 @@ $arrayfields = array(
 	'f.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>200),
 	'multicurrency_dynamount_payed'=>array('label'=>'MulticurrencyAlreadyPaid', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>210),
 	'multicurrency_rtp'=>array('label'=>'MulticurrencyRemainderToPay', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>220), // Not enabled by default because slow
-	'total_pa' => array('label' => ($conf->global->MARGIN_TYPE == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous ? 0 : 1)),
+	'total_pa' => array('label' => (getDolGlobalString("MARGIN_TYPE") == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous ? 0 : 1)),
 	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous ? 0 : 1)),
-	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARGIN_RATES) ? 0 : 1)),
-	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARK_RATES) ? 0 : 1)),
+	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty(getDolGlobalString("DISPLAY_MARGIN_RATES")) ? 0 : 1)),
+	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty(getDolGlobalString("DISPLAY_MARK_RATES")) ? 0 : 1)),
 	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>502),
-	'f.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'position'=>510, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES))),
-	'f.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'position'=>511, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES))),
+	'f.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'position'=>510, 'enabled'=>(empty(getDolGlobalString("MAIN_LIST_ALLOW_PUBLIC_NOTES")))),
+	'f.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'position'=>511, 'enabled'=>(empty(getDolGlobalString("MAIN_LIST_ALLOW_PRIVATE_NOTES")))),
 	'f.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 
-if ($conf->global->INVOICE_USE_SITUATION && $conf->global->INVOICE_USE_RETAINED_WARRANTY) {
+if (getDolGlobalString("INVOICE_USE_SITUATION") && getDolGlobalString("INVOICE_USE_RETAINED_WARRANTY")) {
 	$arrayfields['f.retained_warranty'] = array('label'=>$langs->trans("RetainedWarranty"), 'checked'=>0, 'position'=>86);
 }
 // Overwrite $arrayfields from columns into ->fields (transition before removal of $arrayoffields)
@@ -814,7 +814,7 @@ foreach ($listfield as $key => $value) {
 $sql .= ' f.rowid DESC ';
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (empty(getDolGlobalString("MAIN_DISABLE_FULL_SCANLIST"))) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -832,7 +832,7 @@ if ($resql) {
 
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
-	if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall) {
+	if ($num == 1 && !empty(getDolGlobalString("MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE")) && $sall) {
 		$obj = $db->fetch_object($resql);
 		$id = $obj->id;
 
@@ -1032,9 +1032,9 @@ if ($resql) {
 			$arrayofmassactions['withdrawrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeWithdrawRequest");
 	}
 	if ($user->rights->facture->supprimer) {
-		if (!empty($conf->global->INVOICE_CAN_REMOVE_DRAFT_ONLY)) {
+		if (!empty(getDolGlobalString("INVOICE_CAN_REMOVE_DRAFT_ONLY"))) {
 			$arrayofmassactions['predeletedraft'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Deletedraft");
-		} elseif (!empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED)) {	// mass deletion never possible on invoices on such situation
+		} elseif (!empty(getDolGlobalString("INVOICE_CAN_ALWAYS_BE_REMOVED"))) {	// mass deletion never possible on invoices on such situation
 			$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 		}
 	}
@@ -1157,7 +1157,7 @@ if ($resql) {
 
 	// Filters lines
 	print '<tr class="liste_titre_filter">';
-	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+	if (!empty(getDolGlobalString("MAIN_VIEW_LINE_NUMBER_IN_LIST"))) {
 		print '<td class="liste_titre">';
 		print '</td>';
 	}
@@ -1182,7 +1182,7 @@ if ($resql) {
 			Facture::TYPE_CREDIT_NOTE=>$langs->trans("InvoiceAvoir"),
 			Facture::TYPE_DEPOSIT=>$langs->trans("InvoiceDeposit"),
 		);
-		if (!empty($conf->global->INVOICE_USE_SITUATION)) {
+		if (!empty(getDolGlobalString("INVOICE_USE_SITUATION"))) {
 			$listtype[Facture::TYPE_SITUATION] = $langs->trans("InvoiceSituation");
 		}
 		//$listtype[Facture::TYPE_PROFORMA]=$langs->trans("InvoiceProForma");     // A proformat invoice is not an invoice but must be an order.
@@ -1265,7 +1265,7 @@ if ($resql) {
 	// Company type
 	if (!empty($arrayfields['typent.code']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone" align="center">';
-		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), 'maxwidth100', 1);
+		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty(getDolGlobalString("SOCIETE_SORT_ON_TYPEENT")) ? 'ASC' : getDolGlobalString("SOCIETE_SORT_ON_TYPEENT")), 'maxwidth100', 1);
 		print '</td>';
 	}
 	// Payment mode
@@ -1445,7 +1445,7 @@ if ($resql) {
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+	if (!empty(getDolGlobalString("MAIN_VIEW_LINE_NUMBER_IN_LIST"))) {
 		print_liste_field_titre('#', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['f.ref']['checked'])) {
@@ -1635,7 +1635,7 @@ if ($resql) {
 
 			$facturestatic->note_public = $obj->note_public;
 			$facturestatic->note_private = $obj->note_private;
-			if ($conf->global->INVOICE_USE_SITUATION && $conf->global->INVOICE_USE_RETAINED_WARRANTY) {
+			if (getDolGlobalString("INVOICE_USE_SITUATION") && getDolGlobalString("INVOICE_USE_RETAINED_WARRANTY")) {
 				 $facturestatic->retained_warranty = $obj->retained_warranty;
 				 $facturestatic->retained_warranty_date_limit = $obj->retained_warranty_date_limit;
 				 $facturestatic->situation_final = $obj->retained_warranty_date_limit;
@@ -1703,7 +1703,7 @@ if ($resql) {
 			print '>';
 
 			// No
-			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+			if (!empty(getDolGlobalString("MAIN_VIEW_LINE_NUMBER_IN_LIST"))) {
 				print '<td>'.(($offset * $limit) + $i).'</td>';
 			}
 

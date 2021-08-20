@@ -85,7 +85,7 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $type = GETPOST("type", "int");
 
 //Show/hide child products
-if (!empty($conf->variants->enabled) && !empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
+if (!empty($conf->variants->enabled) && !empty(getDolGlobalString("PRODUIT_ATTRIBUTES_HIDECHILD"))) {
 	$show_childproducts = GETPOST('search_show_childproducts');
 } else {
 	$show_childproducts = '';
@@ -150,11 +150,11 @@ if (!empty($canvas)) {
 
 // Define virtualdiffersfromphysical
 $virtualdiffersfromphysical = 0;
-if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
-	|| !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
-	|| !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)
-	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)
-	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)
+if (!empty(getDolGlobalString("STOCK_CALCULATE_ON_SHIPMENT"))
+	|| !empty(getDolGlobalString("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER"))
+	|| !empty(getDolGlobalString("STOCK_CALCULATE_ON_SHIPMENT_CLOSE"))
+	|| !empty(getDolGlobalString("STOCK_CALCULATE_ON_RECEPTION"))
+	|| !empty(getDolGlobalString("STOCK_CALCULATE_ON_RECEPTION_CLOSE"))
 	|| !empty($conf->mrp->enabled)) {
 	$virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
 }
@@ -169,7 +169,7 @@ $fieldstosearchall = array(
 
 );
 // multilang
-if (!empty($conf->global->MAIN_MULTILANGS)) {
+if (!empty(getDolGlobalString("MAIN_MULTILANGS"))) {
 	$fieldstosearchall['pl.label'] = 'ProductLabelTranslated';
 	$fieldstosearchall['pl.description'] = 'ProductDescriptionTranslated';
 	$fieldstosearchall['pl.note'] = 'ProductNoteTranslated';
@@ -178,21 +178,21 @@ if (!empty($conf->barcode->enabled)) {
 	$fieldstosearchall['p.barcode'] = 'Gencod';
 	$fieldstosearchall['pfp.barcode'] = 'GencodBuyPrice';
 }
-// Personalized search criterias. Example: $conf->global->PRODUCT_QUICKSEARCH_ON_FIELDS = 'p.ref=ProductRef;p.label=ProductLabel'
-if (!empty($conf->global->PRODUCT_QUICKSEARCH_ON_FIELDS)) {
-	$fieldstosearchall = dolExplodeIntoArray($conf->global->PRODUCT_QUICKSEARCH_ON_FIELDS);
+// Personalized search criterias. Example: getDolGlobalString("PRODUCT_QUICKSEARCH_ON_FIELDS") = 'p.ref=ProductRef;p.label=ProductLabel'
+if (!empty(getDolGlobalString("PRODUCT_QUICKSEARCH_ON_FIELDS"))) {
+	$fieldstosearchall = dolExplodeIntoArray(getDolGlobalString("PRODUCT_QUICKSEARCH_ON_FIELDS"));
 }
 
-if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+if (empty(getDolGlobalString("PRODUIT_MULTIPRICES"))) {
 	$titlesellprice = $langs->trans("SellingPrice");
-	if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+	if (!empty(getDolGlobalString("PRODUIT_CUSTOMER_PRICES"))) {
 		$titlesellprice = $form->textwithpicto($langs->trans("SellingPrice"), $langs->trans("DefaultPriceRealPriceMayDependOnCustomer"));
 	}
 }
 
 $isInEEC = isInEEC($mysoc);
 
-$alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "ppe";
+$alias_product_perentity = empty(getDolGlobalString("MAIN_PRODUCT_PERENTITY_SHARED")) ? "p" : "ppe";
 
 // Definition of array of fields for columns
 $arrayfields = array(
@@ -206,19 +206,19 @@ $arrayfields = array(
 	'p.finished'=>array('label'=>"Nature", 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && $type != '1'), 'position'=>19),
 	'p.weight'=>array('label'=>'Weight', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && $type != '1'), 'position'=>20),
 	'p.weight_units'=>array('label'=>'WeightUnits', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && $type != '1'), 'position'=>21),
-	'p.length'=>array('label'=>'Length', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>22),
-	'p.length_units'=>array('label'=>'LengthUnits', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>23),
-	'p.width'=>array('label'=>'Width', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>24),
-	'p.width_units'=>array('label'=>'WidthUnits', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>25),
-	'p.height'=>array('label'=>'Height', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>26),
-	'p.height_units'=>array('label'=>'HeightUnits', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>27),
-	'p.surface'=>array('label'=>'Surface', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SURFACE) && $type != '1'), 'position'=>28),
-	'p.surface_units'=>array('label'=>'SurfaceUnits', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SURFACE) && $type != '1'), 'position'=>29),
-	'p.volume'=>array('label'=>'Volume', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_VOLUME) && $type != '1'), 'position'=>30),
-	'p.volume_units'=>array('label'=>'VolumeUnits', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_VOLUME) && $type != '1'), 'position'=>31),
-	'cu.label'=>array('label'=>"DefaultUnitToShow", 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && !empty($conf->global->PRODUCT_USE_UNITS)), 'position'=>32),
-	'p.sellprice'=>array('label'=>"SellingPrice", 'checked'=>1, 'enabled'=>empty($conf->global->PRODUIT_MULTIPRICES), 'position'=>40),
-	'p.tva_tx'=>array('label'=>"VATRate", 'checked'=>0, 'enabled'=>empty($conf->global->PRODUIT_MULTIPRICES), 'position'=>41),
+	'p.length'=>array('label'=>'Length', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty(getDolGlobalString("PRODUCT_DISABLE_SIZE")) && $type != '1'), 'position'=>22),
+	'p.length_units'=>array('label'=>'LengthUnits', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty(getDolGlobalString("PRODUCT_DISABLE_SIZE")) && $type != '1'), 'position'=>23),
+	'p.width'=>array('label'=>'Width', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty(getDolGlobalString("PRODUCT_DISABLE_SIZE")) && $type != '1'), 'position'=>24),
+	'p.width_units'=>array('label'=>'WidthUnits', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty(getDolGlobalString("PRODUCT_DISABLE_SIZE")) && $type != '1'), 'position'=>25),
+	'p.height'=>array('label'=>'Height', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty(getDolGlobalString("PRODUCT_DISABLE_SIZE")) && $type != '1'), 'position'=>26),
+	'p.height_units'=>array('label'=>'HeightUnits', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty(getDolGlobalString("PRODUCT_DISABLE_SIZE")) && $type != '1'), 'position'=>27),
+	'p.surface'=>array('label'=>'Surface', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty(getDolGlobalString("PRODUCT_DISABLE_SURFACE")) && $type != '1'), 'position'=>28),
+	'p.surface_units'=>array('label'=>'SurfaceUnits', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty(getDolGlobalString("PRODUCT_DISABLE_SURFACE")) && $type != '1'), 'position'=>29),
+	'p.volume'=>array('label'=>'Volume', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty(getDolGlobalString("PRODUCT_DISABLE_VOLUME")) && $type != '1'), 'position'=>30),
+	'p.volume_units'=>array('label'=>'VolumeUnits', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty(getDolGlobalString("PRODUCT_DISABLE_VOLUME")) && $type != '1'), 'position'=>31),
+	'cu.label'=>array('label'=>"DefaultUnitToShow", 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && !empty(getDolGlobalString("PRODUCT_USE_UNITS"))), 'position'=>32),
+	'p.sellprice'=>array('label'=>"SellingPrice", 'checked'=>1, 'enabled'=>empty(getDolGlobalString("PRODUIT_MULTIPRICES")), 'position'=>40),
+	'p.tva_tx'=>array('label'=>"VATRate", 'checked'=>0, 'enabled'=>empty(getDolGlobalString("PRODUIT_MULTIPRICES")), 'position'=>41),
 	'p.minbuyprice'=>array('label'=>"BuyingPriceMinShort", 'checked'=>1, 'enabled'=>(!empty($user->rights->fournisseur->lire)), 'position'=>42),
 	'p.numbuyprice'=>array('label'=>"BuyingPriceNumShort", 'checked'=>0, 'enabled'=>(!empty($user->rights->fournisseur->lire)), 'position'=>43),
 	'p.pmp'=>array('label'=>"PMPValueShort", 'checked'=>0, 'enabled'=>(!empty($user->rights->fournisseur->lire)), 'position'=>44),
@@ -256,15 +256,15 @@ $arrayfields = array(
 
 
 // MultiPrices
-if ($conf->global->PRODUIT_MULTIPRICES) {
-	for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+if (getDolGlobalString("PRODUIT_MULTIPRICES")) {
+	for ($i = 1; $i <= getDolGlobalString("PRODUIT_MULTIPRICES_LIMIT"); $i++) {
 		$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
 		if (!empty($conf->global->$keyforlabel)) {
 			$labelp = $i.' - '.$langs->transnoentitiesnoconv($conf->global->$keyforlabel);
 		} else {
 			$labelp = $langs->transnoentitiesnoconv("SellingPrice")." ".$i;
 		}
-		$arrayfields['p.sellprice'.$i] = array('label'=>$labelp, 'checked'=>($i == 1 ? 1 : 0), 'enabled'=>$conf->global->PRODUIT_MULTIPRICES, 'position'=>floatval('40.'.sprintf('%03s', $i)));
+		$arrayfields['p.sellprice'.$i] = array('label'=>$labelp, 'checked'=>($i == 1 ? 1 : 0), 'enabled'=>getDolGlobalString("PRODUIT_MULTIPRICES"), 'position'=>floatval('40.'.sprintf('%03s', $i)));
 		$arraypricelevel[$i] = array($i);
 	}
 }
@@ -377,18 +377,18 @@ if ($search_type != '' && $search_type != '-1') {
 $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.fk_product_type, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type, p.entity,';
 $sql .= ' p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
 $sql .= ' p.tobatch,';
-if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+if (empty(getDolGlobalString("MAIN_PRODUCT_PERENTITY_SHARED"))) {
 	$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
 } else {
 	$sql .= " ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export, ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export,";
 }
 $sql .= ' p.datec as date_creation, p.tms as date_update, p.pmp, p.stock, p.cost_price,';
 $sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, fk_country, fk_state,';
-if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+if (!empty(getDolGlobalString("PRODUCT_USE_UNITS"))) {
 	$sql .= ' p.fk_unit, cu.label as cu_label,';
 }
 $sql .= ' MIN(pfp.unitprice) as minsellprice';
-if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
+if (!empty($conf->variants->enabled) && (!empty(getDolGlobalString("PRODUIT_ATTRIBUTES_HIDECHILD")) && !$show_childproducts)) {
 	$sql .= ', pac.rowid prod_comb_id';
 }
 // Add fields from extrafields
@@ -402,7 +402,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
-if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+if (!empty(getDolGlobalString("MAIN_PRODUCT_PERENTITY_SHARED"))) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 }
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
@@ -413,14 +413,14 @@ if (!empty($searchCategoryProductList) || !empty($catid)) {
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 // multilang
-if (!empty($conf->global->MAIN_MULTILANGS)) {
+if (!empty(getDolGlobalString("MAIN_MULTILANGS"))) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang = '".$db->escape($langs->getDefaultLang())."'";
 }
 
-if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
+if (!empty($conf->variants->enabled) && (!empty(getDolGlobalString("PRODUIT_ATTRIBUTES_HIDECHILD")) && !$show_childproducts)) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac.fk_product_child = p.rowid";
 }
-if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+if (!empty(getDolGlobalString("PRODUCT_USE_UNITS"))) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_units cu ON cu.rowid = p.fk_unit";
 }
 
@@ -438,7 +438,7 @@ if (dol_strlen($search_type) && $search_type != '-1') {
 	}
 }
 
-if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
+if (!empty($conf->variants->enabled) && (!empty(getDolGlobalString("PRODUIT_ATTRIBUTES_HIDECHILD")) && !$show_childproducts)) {
 	$sql .= " AND pac.rowid IS NULL";
 }
 
@@ -539,17 +539,17 @@ $sql .= $hookmanager->resPrint;
 $sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type,";
 $sql .= " p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,";
 $sql .= ' p.datec, p.tms, p.entity, p.tobatch, p.pmp, p.cost_price, p.stock,';
-if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+if (empty(getDolGlobalString("MAIN_PRODUCT_PERENTITY_SHARED"))) {
 	$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
 } else {
 	$sql .= " ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export, ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export,";
 }
 $sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, p.fk_country, p.fk_state';
-if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+if (!empty(getDolGlobalString("PRODUCT_USE_UNITS"))) {
 	$sql .= ', p.fk_unit, cu.label';
 }
 
-if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
+if (!empty($conf->variants->enabled) && (!empty(getDolGlobalString("PRODUIT_ATTRIBUTES_HIDECHILD")) && !$show_childproducts)) {
 	$sql .= ', pac.rowid';
 }
 // Add fields from extrafields
@@ -566,7 +566,7 @@ $sql .= $hookmanager->resPrint;
 $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (empty(getDolGlobalString("MAIN_DISABLE_FULL_SCANLIST"))) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -584,7 +584,7 @@ if ($resql) {
 
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
-	if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall) {
+	if ($num == 1 && !empty(getDolGlobalString("MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE")) && $sall) {
 		$obj = $db->fetch_object($resql);
 		$id = $obj->rowid;
 		header("Location: ".DOL_URL_ROOT.'/product/card.php?id='.$id);
@@ -798,7 +798,7 @@ if ($resql) {
 	}
 
 	//Show/hide child products. Hidden by default
-	if (!empty($conf->variants->enabled) && !empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
+	if (!empty($conf->variants->enabled) && !empty(getDolGlobalString("PRODUIT_ATTRIBUTES_HIDECHILD"))) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$moreforfilter .= '<input type="checkbox" id="search_show_childproducts" name="search_show_childproducts"'.($show_childproducts ? 'checked="checked"' : '').'>';
 		$moreforfilter .= ' <label for="search_show_childproducts">'.$langs->trans('ShowChildProducts').'</label>';
@@ -950,7 +950,7 @@ if ($resql) {
 	}
 
 	// Multiprice
-	if ($conf->global->PRODUIT_MULTIPRICES) {
+	if (getDolGlobalString("PRODUIT_MULTIPRICES")) {
 		foreach ($arraypricelevel as $key => $value) {
 			if (!empty($arrayfields['p.sellprice'.$key]['checked'])) {
 				print '<td class="liste_titre right">';
@@ -1156,7 +1156,7 @@ if ($resql) {
 	}
 
 	// Multiprices
-	if ($conf->global->PRODUIT_MULTIPRICES) {
+	if (getDolGlobalString("PRODUIT_MULTIPRICES")) {
 		foreach ($arraypricelevel as $key => $value) {
 			if (!empty($arrayfields['p.sellprice'.$key]['checked'])) {
 				print_liste_field_titre($arrayfields['p.sellprice'.$key]['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
@@ -1250,7 +1250,7 @@ if ($resql) {
 		$obj = $db->fetch_object($resql);
 
 		// Multilangs
-		if (!empty($conf->global->MAIN_MULTILANGS)) {  // If multilang is enabled
+		if (!empty(getDolGlobalString("MAIN_MULTILANGS"))) {  // If multilang is enabled
 			$sql = "SELECT label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 			$sql .= " WHERE fk_product=".$obj->rowid;
@@ -1296,13 +1296,13 @@ if ($resql) {
 		$product_static->volume_units = $obj->volume_units;
 		$product_static->surface = $obj->surface;
 		$product_static->surface_units = $obj->surface_units;
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (!empty(getDolGlobalString("PRODUCT_USE_UNITS"))) {
 			$product_static->fk_unit = $obj->fk_unit;
 		}
 
 		// STOCK_DISABLE_OPTIM_LOAD can be set to force load_stock whatever is permissions on stock.
-		if ((!empty($conf->stock->enabled) && $user->rights->stock->lire && $search_type != 1) || !empty($conf->global->STOCK_DISABLE_OPTIM_LOAD)) {	// To optimize call of load_stock
-			if ($obj->fk_product_type != 1 || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {    // Not a service
+		if ((!empty($conf->stock->enabled) && $user->rights->stock->lire && $search_type != 1) || !empty(getDolGlobalString("STOCK_DISABLE_OPTIM_LOAD"))) {	// To optimize call of load_stock
+			if ($obj->fk_product_type != 1 || !empty(getDolGlobalString("STOCK_SUPPORTS_SERVICES"))) {    // Not a service
 				$option = 'nobatch';
 				if (empty($arrayfields['stock_virtual']['checked'])) {
 					$option .= ',novirtual';
@@ -1560,7 +1560,7 @@ if ($resql) {
 
 
 		// Multiprices
-		if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if (! empty(getDolGlobalString("PRODUIT_MULTIPRICES"))) {
 			if (! isset($productpricescache)) {
 				$productpricescache=array();
 			}
@@ -1622,7 +1622,7 @@ if ($resql) {
 				//print price($obj->minsellprice).' '.$langs->trans("HT");
 				if ($product_fourn->find_min_price_product_fournisseur($obj->rowid) > 0) {
 					if ($product_fourn->product_fourn_price_id > 0) {
-						if ((!empty($conf->fournisseur->enabled) && !empty($user->rights->fournisseur->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_order->enabled) && !empty($user->rights->supplier_order->lire)) || (!empty($conf->supplier_invoice->enabled) && !empty($user->rights->supplier_invoice->lire))) {
+						if ((!empty($conf->fournisseur->enabled) && !empty($user->rights->fournisseur->lire) && empty(getDolGlobalString("MAIN_USE_NEW_SUPPLIERMOD"))) || (!empty($conf->supplier_order->enabled) && !empty($user->rights->supplier_order->lire)) || (!empty($conf->supplier_invoice->enabled) && !empty($user->rights->supplier_invoice->lire))) {
 							$htmltext = $product_fourn->display_price_product_fournisseur(1, 1, 0, 1);
 							print '<span class="amount">'.$form->textwithpicto(price($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent / 100) - $product_fourn->fourn_remise).' '.$langs->trans("HT"), $htmltext).'</span>';
 						} else {
@@ -1816,7 +1816,7 @@ if ($resql) {
 		// Status (to sell)
 		if (!empty($arrayfields['p.tosell']['checked'])) {
 			print '<td class="center nowrap">';
-			if (!empty($conf->use_javascript_ajax) && $user->rights->produit->creer && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+			if (!empty($conf->use_javascript_ajax) && $user->rights->produit->creer && !empty(getDolGlobalString("MAIN_DIRECT_STATUS_UPDATE"))) {
 				print ajax_object_onoff($product_static, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
 			} else {
 				print $product_static->LibStatut($obj->tosell, 5, 0);
@@ -1829,7 +1829,7 @@ if ($resql) {
 		// Status (to buy)
 		if (!empty($arrayfields['p.tobuy']['checked'])) {
 			print '<td class="center nowrap">';
-			if (!empty($conf->use_javascript_ajax) && $user->rights->produit->creer && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+			if (!empty($conf->use_javascript_ajax) && $user->rights->produit->creer && !empty(getDolGlobalString("MAIN_DIRECT_STATUS_UPDATE"))) {
 				print ajax_object_onoff($product_static, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
 			} else {
 				print $product_static->LibStatut($obj->tobuy, 5, 1);

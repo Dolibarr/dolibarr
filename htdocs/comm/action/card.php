@@ -119,11 +119,11 @@ if ($reshook < 0) {
 }
 
 $TRemindTypes = array();
-if (!empty($conf->global->AGENDA_REMINDER_BROWSER)) {
-	$TRemindTypes['browser'] = array('label'=>$langs->trans('BrowserPush'), 'disabled'=>(empty($conf->global->AGENDA_REMINDER_BROWSER) ? 1 : 0));
+if (!empty(getDolGlobalString("AGENDA_REMINDER_BROWSER"))) {
+	$TRemindTypes['browser'] = array('label'=>$langs->trans('BrowserPush'), 'disabled'=>(empty(getDolGlobalString("AGENDA_REMINDER_BROWSER")) ? 1 : 0));
 }
-if (!empty($conf->global->AGENDA_REMINDER_EMAIL)) {
-	$TRemindTypes['email'] = array('label'=>$langs->trans('EMail'), 'disabled'=>(empty($conf->global->AGENDA_REMINDER_EMAIL) ? 1 : 0));
+if (!empty(getDolGlobalString("AGENDA_REMINDER_EMAIL"))) {
+	$TRemindTypes['email'] = array('label'=>$langs->trans('EMail'), 'disabled'=>(empty(getDolGlobalString("AGENDA_REMINDER_EMAIL")) ? 1 : 0));
 }
 
 $TDurationTypes = array('y'=>$langs->trans('Years'), 'm'=>$langs->trans('Month'), 'w'=>$langs->trans('Weeks'), 'd'=>$langs->trans('Days'), 'h'=>$langs->trans('Hours'), 'i'=>$langs->trans('Minutes'));
@@ -253,7 +253,7 @@ if (empty($reshook) && $action == 'add') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd")), null, 'errors');
 	}
 
-	if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && !GETPOST('label')) {
+	if (empty(getDolGlobalString("AGENDA_USE_EVENT_TYPE")) && !GETPOST('label')) {
 		$error++; $donotclearsession = 1;
 		$action = 'create';
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Title")), null, 'errors');
@@ -327,7 +327,7 @@ if (empty($reshook) && $action == 'add') {
 		}
 	}
 
-	if (!$error && !empty($conf->global->AGENDA_ENABLE_DONEBY)) {
+	if (!$error && !empty(getDolGlobalString("AGENDA_ENABLE_DONEBY"))) {
 		if (GETPOST("doneby") > 0) {
 			$object->userdoneid = GETPOST("doneby", "int");
 		}
@@ -555,7 +555,7 @@ if (empty($reshook) && $action == 'update') {
 		$object->transparency = $transparency; // We set transparency on event (even if we can also store it on each user, standard says this property is for event)
 		// TODO store also transparency on owner user
 
-		if (!empty($conf->global->AGENDA_ENABLE_DONEBY)) {
+		if (!empty(getDolGlobalString("AGENDA_ENABLE_DONEBY"))) {
 			if (GETPOST("doneby")) {
 				$object->userdoneid = GETPOST("doneby", "int");
 			}
@@ -583,7 +583,7 @@ if (empty($reshook) && $action == 'update') {
 
 		if (!$error) {
 			// check if an event resource is already in use
-			if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $object->element == 'action') {
+			if (!empty(getDolGlobalString("RESOURCE_USED_IN_EVENT_CHECK")) && $object->element == 'action') {
 				$eventDateStart = $object->datep;
 				$eventDateEnd = $object->datef;
 
@@ -762,7 +762,7 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate') {
 
 		if (!$error) {
 			// check if an event resource is already in use
-			if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $object->element == 'action') {
+			if (!empty(getDolGlobalString("RESOURCE_USED_IN_EVENT_CHECK")) && $object->element == 'action') {
 				$eventDateStart = $object->datep;
 				$eventDateEnd = $object->datef;
 
@@ -941,7 +941,7 @@ if ($action == 'create') {
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : htmlentities($_SERVER["HTTP_REFERER"])).'">';
 	}
-	if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+	if (empty(getDolGlobalString("AGENDA_USE_EVENT_TYPE"))) {
 		print '<input type="hidden" name="actioncode" value="'.dol_getIdFromCode($db, 'AC_OTH', 'c_actioncomm').'">';
 	}
 
@@ -956,15 +956,15 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 
 	// Type of event
-	if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+	if (!empty(getDolGlobalString("AGENDA_USE_EVENT_TYPE"))) {
 		print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
-		$default = (empty($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT) ? 'AC_RDV' : $conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT);
+		$default = (empty(getDolGlobalString("AGENDA_USE_EVENT_TYPE_DEFAULT")) ? 'AC_RDV' : getDolGlobalString("AGENDA_USE_EVENT_TYPE_DEFAULT"));
 		$formactions->select_type_actions(GETPOSTISSET("actioncode") ? GETPOST("actioncode", 'aZ09') : ($object->type_code ? $object->type_code : $default), "actioncode", "systemauto", 0, -1);
 		print '</td></tr>';
 	}
 
 	// Title
-	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE) ? ' class="fieldrequired titlefieldcreate"' : '').'>'.$langs->trans("Label").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
+	print '<tr><td'.(empty(getDolGlobalString("AGENDA_USE_EVENT_TYPE")) ? ' class="fieldrequired titlefieldcreate"' : '').'>'.$langs->trans("Label").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
 
 	// Full day
 	print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday') ? ' checked' : '').'></td></tr>';
@@ -978,8 +978,8 @@ if ($action == 'create') {
 		$datef = dol_stringtotime(GETPOST('datef', 'int', 1), 0);
 	}
 	if (empty($datef) && !empty($datep)) {
-		if (GETPOST("actioncode", 'aZ09') == 'AC_RDV' || empty($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT)) {
-			$datef = dol_time_plus_duree($datep, (empty($conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS) ? 1 : $conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS), 'h');
+		if (GETPOST("actioncode", 'aZ09') == 'AC_RDV' || empty(getDolGlobalString("AGENDA_USE_EVENT_TYPE_DEFAULT"))) {
+			$datef = dol_time_plus_duree($datep, (empty(getDolGlobalString("AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS")) ? 1 : getDolGlobalString("AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS")), 'h');
 		}
 	}
 
@@ -1016,7 +1016,7 @@ if ($action == 'create') {
 	print '</td></tr>';*/
 
 	// Dev in progress
-	$userepeatevent = ($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);
+	$userepeatevent = (getDolGlobalString("MAIN_FEATURES_LEVEL") == 2 ? 1 : 0);
 	if ($userepeatevent) {
 		// Repeat
 		print '<tr><td></td><td colspan="3">';
@@ -1090,7 +1090,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Location
-	if (empty($conf->global->AGENDA_DISABLE_LOCATION)) {
+	if (empty(getDolGlobalString("AGENDA_DISABLE_LOCATION"))) {
 		print '<tr><td>'.$langs->trans("Location").'</td><td><input type="text" name="location" class="minwidth300 maxwidth150onsmartphone" value="'.(GETPOST('location') ? GETPOST('location') : $object->location).'"></td></tr>';
 	}
 
@@ -1123,7 +1123,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Done by
-	if (!empty($conf->global->AGENDA_ENABLE_DONEBY)) {
+	if (!empty(getDolGlobalString("AGENDA_ENABLE_DONEBY"))) {
 		print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td>';
 		print $form->select_dolusers(GETPOSTISSET("doneby") ? GETPOST("doneby", 'int') : (!empty($object->userdoneid) && $percent == 100 ? $object->userdoneid : 0), 'doneby', 1);
 		print '</td></tr>';
@@ -1236,7 +1236,7 @@ if ($action == 'create') {
 	}
 
 	// Priority
-	if (!empty($conf->global->AGENDA_SUPPORT_PRIORITY_IN_EVENTS)) {
+	if (!empty(getDolGlobalString("AGENDA_SUPPORT_PRIORITY_IN_EVENTS"))) {
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td colspan="3">';
 		print '<input type="text" name="priority" value="'.(GETPOSTISSET('priority') ? GETPOST('priority', 'int') : ($object->priority ? $object->priority : '')).'" size="5">';
 		print '</td></tr>';
@@ -1260,7 +1260,7 @@ if ($action == 'create') {
 	print '</table>';
 
 
-	if ($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER) {
+	if (getDolGlobalString("AGENDA_REMINDER_EMAIL") || getDolGlobalString("AGENDA_REMINDER_BROWSER")) {
 		//checkbox create reminder
 		print '<hr>';
 		print '<br>';
@@ -1392,7 +1392,7 @@ if ($id > 0) {
 	$head = actions_prepare_head($object);
 
 	$now = dol_now();
-	$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
+	$delay_warning = getDolGlobalString("MAIN_DELAY_ACTIONS_TODO") * 24 * 60 * 60;
 
 
 	// Confirmation suppression action
@@ -1435,7 +1435,7 @@ if ($id > 0) {
 		if ($backtopage) {
 			print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : htmlentities($_SERVER["HTTP_REFERER"])).'">';
 		}
-		if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+		if (empty(getDolGlobalString("AGENDA_USE_EVENT_TYPE"))) {
 			print '<input type="hidden" name="actioncode" value="'.$object->type_code.'">';
 		}
 
@@ -1447,7 +1447,7 @@ if ($id > 0) {
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td colspan="3">'.$object->id.'</td></tr>';
 
 		// Type of event
-		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+		if (!empty(getDolGlobalString("AGENDA_USE_EVENT_TYPE"))) {
 			print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td colspan="3">';
 			if ($object->type_code != 'AC_OTH_AUTO') {
 				print $formactions->select_type_actions(GETPOST("actioncode", 'aZ09') ? GETPOST("actioncode", 'aZ09') : $object->type_code, "actioncode", "systemauto", 0, 0, 0, 1);
@@ -1485,7 +1485,7 @@ if ($id > 0) {
 		print '</td></tr>';
 
 		// Dev in progress
-		$userepeatevent = ($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);
+		$userepeatevent = (getDolGlobalString("MAIN_FEATURES_LEVEL") == 2 ? 1 : 0);
 		if ($userepeatevent) {
 			// Repeat
 			print '<tr><td></td><td colspan="3">';
@@ -1547,7 +1547,7 @@ if ($id > 0) {
 		print '</td></tr>';
 
 		// Location
-		if (empty($conf->global->AGENDA_DISABLE_LOCATION)) {
+		if (empty(getDolGlobalString("AGENDA_DISABLE_LOCATION"))) {
 			print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" class="width500" value="'.$object->location.'"></td></tr>';
 		}
 
@@ -1595,7 +1595,7 @@ if ($id > 0) {
 		print '</td></tr>';
 
 		// Realised by
-		if (!empty($conf->global->AGENDA_ENABLE_DONEBY)) {
+		if (!empty(getDolGlobalString("AGENDA_ENABLE_DONEBY"))) {
 			print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
 			print $form->select_dolusers($object->userdoneid > 0 ? $object->userdoneid : -1, 'doneby', 1);
 			print '</td></tr>';
@@ -1629,7 +1629,7 @@ if ($id > 0) {
 			print '<div class="maxwidth200onsmartphone">';
 			$events = array(); // 'method'=parameter action of url, 'url'=url to call that return new list of contacts
 			$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
-			// TODO Refresh also list of project if $conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY not defined with list linked to socid ?
+			// TODO Refresh also list of project if getDolGlobalString("PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY") not defined with list linked to socid ?
 			// FIXME If we change company, we may get a project that does not match
 			print img_picto('', 'company', 'class="paddingrightonly"').$form->select_company($object->socid, 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth200');
 			print '</div>';
@@ -1658,7 +1658,7 @@ if ($id > 0) {
 		}
 
 		// Priority
-		if (!empty($conf->global->AGENDA_SUPPORT_PRIORITY_IN_EVENTS)) {
+		if (!empty(getDolGlobalString("AGENDA_SUPPORT_PRIORITY_IN_EVENTS"))) {
 			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td>';
 			print '<input type="text" name="priority" value="'.($object->priority ? $object->priority : '').'" size="5">';
 			print '</td></tr>';
@@ -1723,7 +1723,7 @@ if ($id > 0) {
 		print '</table>';
 
 		// Reminders
-		if ($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER) {
+		if (getDolGlobalString("AGENDA_REMINDER_EMAIL") || getDolGlobalString("AGENDA_REMINDER_BROWSER")) {
 			$filteruserid = $user->id;
 			if ($user->rights->agenda->allactions->read) {
 				$filteruserid = 0;
@@ -1897,7 +1897,7 @@ if ($id > 0) {
 		print '<table class="border tableforfield" width="100%">';
 
 		// Type
-		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+		if (!empty(getDolGlobalString("AGENDA_USE_EVENT_TYPE"))) {
 			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
 			print $object->getTypePicto();
 			print $langs->trans("Action".$object->type_code);
@@ -1908,7 +1908,7 @@ if ($id > 0) {
 		print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td>'.yn($object->fulldayevent, 3).'</td></tr>';
 
 		$rowspan = 4;
-		if (empty($conf->global->AGENDA_DISABLE_LOCATION)) {
+		if (empty(getDolGlobalString("AGENDA_DISABLE_LOCATION"))) {
 			$rowspan++;
 		}
 
@@ -1938,7 +1938,7 @@ if ($id > 0) {
 		print '</td></tr>';
 
 		// Location
-		if (empty($conf->global->AGENDA_DISABLE_LOCATION)) {
+		if (empty(getDolGlobalString("AGENDA_DISABLE_LOCATION"))) {
 			print '<tr><td>'.$langs->trans("Location").'</td><td>'.$object->location.'</td></tr>';
 		}
 
@@ -1986,7 +1986,7 @@ if ($id > 0) {
 		print '	</td></tr>';
 
 		// Done by
-		if (!empty($conf->global->AGENDA_ENABLE_DONEBY)) {
+		if (!empty(getDolGlobalString("AGENDA_ENABLE_DONEBY"))) {
 			print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td>';
 			if ($object->userdoneid > 0) {
 				$tmpuser = new User($db);
@@ -2080,7 +2080,7 @@ if ($id > 0) {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		// Reminders
-		if (!empty($conf->global->AGENDA_REMINDER_EMAIL) || !empty($conf->global->AGENDA_REMINDER_BROWSER)) {
+		if (!empty(getDolGlobalString("AGENDA_REMINDER_EMAIL")) || !empty(getDolGlobalString("AGENDA_REMINDER_BROWSER"))) {
 			$filteruserid = $user->id;
 			if ($user->rights->agenda->allactions->read) {
 				$filteruserid = 0;
@@ -2160,7 +2160,7 @@ if ($id > 0) {
 	print '</div>';
 
 	if ($action != 'edit') {
-		if (empty($conf->global->AGENDA_DISABLE_BUILDDOC)) {
+		if (empty(getDolGlobalString("AGENDA_DISABLE_BUILDDOC"))) {
 			print '<div style="clear:both;"></div><div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre
 

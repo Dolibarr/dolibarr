@@ -177,7 +177,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 // Add non object fields to fields for list
 $arrayfields['s.nom'] = array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'position'=>21, 'enabled'=>(empty($conf->societe->enabled) ? 0 : 1));
 $arrayfields['commercial'] = array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>0, 'position'=>23);
-$arrayfields['opp_weighted_amount'] = array('label'=>$langs->trans('OpportunityWeightedAmountShort'), 'checked'=>0, 'position'=> 116, 'enabled'=>(empty($conf->global->PROJECT_USE_OPPORTUNITIES) ? 0 : 1), 'position'=>106);
+$arrayfields['opp_weighted_amount'] = array('label'=>$langs->trans('OpportunityWeightedAmountShort'), 'checked'=>0, 'position'=> 116, 'enabled'=>(empty(getDolGlobalString("PROJECT_USE_OPPORTUNITIES")) ? 0 : 1), 'position'=>106);
 // Force some fields according to search_usage filter...
 if (GETPOST('search_usage_opportunity')) {
 	//$arrayfields['p.usage_opportunity']['visible'] = 1;	// Not require, filter on search_opp_status is enough
@@ -488,7 +488,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (empty(getDolGlobalString("MAIN_DISABLE_FULL_SCANLIST"))) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
@@ -514,7 +514,7 @@ if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit
 }
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all) {
+if ($num == 1 && !empty(getDolGlobalString("MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE")) && $search_all) {
 	$obj = $db->fetch_object($resql);
 	header("Location: ".DOL_URL_ROOT.'/projet/card.php?id='.$obj->id);
 	exit;
@@ -769,7 +769,7 @@ if (!empty($arrayfields['commercial']['checked'])) {
 // Start date
 if (!empty($arrayfields['p.dateo']['checked'])) {
 	print '<td class="liste_titre center nowraponall">';
-	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
+	if (!empty(getDolGlobalString("MAIN_LIST_FILTER_ON_DAY"))) {
 		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_sday" value="'.dol_escape_htmltag($search_sday).'">';
 	}
 	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_smonth" value="'.dol_escape_htmltag($search_smonth).'">';
@@ -779,7 +779,7 @@ if (!empty($arrayfields['p.dateo']['checked'])) {
 // End date
 if (!empty($arrayfields['p.datee']['checked'])) {
 	print '<td class="liste_titre center nowraponall">';
-	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
+	if (!empty(getDolGlobalString("MAIN_LIST_FILTER_ON_DAY"))) {
 		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_eday" value="'.dol_escape_htmltag($search_eday).'">';
 	}
 	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_emonth" value="'.dol_escape_htmltag($search_emonth).'">';

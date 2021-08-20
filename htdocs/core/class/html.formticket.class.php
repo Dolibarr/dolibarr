@@ -251,15 +251,15 @@ class FormTicket
 		$toolbarname = 'dolibarr_notes';
 		if ($this->ispublic) {
 			$toolbarname = 'dolibarr_details';
-			print '<div class="warning">'.($conf->global->TICKET_PUBLIC_TEXT_HELP_MESSAGE ? $conf->global->TICKET_PUBLIC_TEXT_HELP_MESSAGE : $langs->trans('TicketPublicPleaseBeAccuratelyDescribe')).'</div>';
+			print '<div class="warning">'.(getDolGlobalString("TICKET_PUBLIC_TEXT_HELP_MESSAGE") ? getDolGlobalString("TICKET_PUBLIC_TEXT_HELP_MESSAGE") : $langs->trans('TicketPublicPleaseBeAccuratelyDescribe')).'</div>';
 		}
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$uselocalbrowser = true;
-		$doleditor = new DolEditor('message', $msg, '100%', 230, $toolbarname, 'In', true, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_TICKET, ROWS_8, '90%');
+		$doleditor = new DolEditor('message', $msg, '100%', 230, $toolbarname, 'In', true, $uselocalbrowser, getDolGlobalString("FCKEDITOR_ENABLE_TICKET"), ROWS_8, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 
-		if ($public && !empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
+		if ($public && !empty(getDolGlobalString("MAIN_SECURITY_ENABLECAPTCHA"))) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 			print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td>';
 			print '<span class="span-icon-security inline-block">';
@@ -359,7 +359,7 @@ class FormTicket
 				print img_picto('', 'company', 'class="paddingright"');
 				print $form->select_company($this->withfromsocid, 'socid', '', 1, 1, '', $events, 0, 'minwidth200');
 				print '</td></tr>';
-				if (!empty($conf->use_javascript_ajax) && !empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) {
+				if (!empty($conf->use_javascript_ajax) && !empty(getDolGlobalString("COMPANY_USE_SEARCH_TO_SELECT"))) {
 					$htmlname = 'socid';
 					print '<script type="text/javascript">
                     $(document).ready(function () {
@@ -1009,7 +1009,7 @@ class FormTicket
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+		if (getDolGlobalString("MAIN_MULTILANGS") && empty($newlang)) {
 			$newlang = $this->param['langsmodels'];
 		}
 		if (!empty($newlang)) {
@@ -1056,7 +1056,7 @@ class FormTicket
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+		if (getDolGlobalString("MAIN_MULTILANGS") && empty($newlang)) {
 			$newlang = $this->param['langsmodels'];
 		}
 		if (!empty($newlang)) {
@@ -1148,7 +1148,7 @@ class FormTicket
 
 			// Subject
 			print '<tr class="email_line"><td class="titlefieldcreate">'.$langs->trans('Subject').'</td>';
-			print '<td><input type="text" class="text minwidth500" name="subject" value="['.$conf->global->MAIN_INFO_SOCIETE_NOM.' - '.$langs->trans("Ticket").' '.$this->ref.'] '.$langs->trans('TicketNewMessage').'" />';
+			print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString("MAIN_INFO_SOCIETE_NOM").' - '.$langs->trans("Ticket").' '.$this->ref.'] '.$langs->trans('TicketNewMessage').'" />';
 			print '</td></tr>';
 
 			// Destinataires
@@ -1182,8 +1182,8 @@ class FormTicket
 					}
 				}
 
-				if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS) {
-					$sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO.' <small class="opacitymedium">(generic email)</small>';
+				if (getDolGlobalString("TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS")) {
+					$sendto[] = getDolGlobalString("TICKET_NOTIFICATION_EMAIL_TO").' <small class="opacitymedium">(generic email)</small>';
 				}
 
 				// Print recipient list
@@ -1201,7 +1201,7 @@ class FormTicket
 		// Intro
 		// External users can't send message email
 		if ($user->rights->ticket->write && !$user->socid) {
-			$mail_intro = GETPOST('mail_intro') ? GETPOST('mail_intro') : $conf->global->TICKET_MESSAGE_MAIL_INTRO;
+			$mail_intro = GETPOST('mail_intro') ? GETPOST('mail_intro') : getDolGlobalString("TICKET_MESSAGE_MAIL_INTRO");
 			print '<tr class="email_line"><td><label for="mail_intro">';
 			print $form->textwithpicto($langs->trans("TicketMessageMailIntro"), $langs->trans("TicketMessageMailIntroHelp"), 1, 'help');
 			print '</label>';
@@ -1209,7 +1209,7 @@ class FormTicket
 			print '</td><td>';
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-			$doleditor = new DolEditor('mail_intro', $mail_intro, '100%', 90, 'dolibarr_details', '', false, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
+			$doleditor = new DolEditor('mail_intro', $mail_intro, '100%', 90, 'dolibarr_details', '', false, $uselocalbrowser, getDolGlobalString("FCKEDITOR_ENABLE_SOCIETE"), ROWS_2, 70);
 
 			$doleditor->Create();
 			print '</td></tr>';
@@ -1246,19 +1246,19 @@ class FormTicket
 		//$toolbarname = 'dolibarr_details';
 		$toolbarname = 'dolibarr_notes';
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_5, 70);
+		$doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, $uselocalbrowser, getDolGlobalString("FCKEDITOR_ENABLE_SOCIETE"), ROWS_5, 70);
 		$doleditor->Create();
 		print '</td></tr>';
 
 		// Signature
 		// External users can't send message email
 		if ($user->rights->ticket->write && !$user->socid) {
-			$mail_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
+			$mail_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : getDolGlobalString("TICKET_MESSAGE_MAIL_SIGNATURE");
 			print '<tr class="email_line"><td><label for="mail_intro">'.$langs->trans("TicketMessageMailSignature").'</label>';
 			print $form->textwithpicto('', $langs->trans("TicketMessageMailSignatureHelp"), 1, 'help');
 			print '</td><td>';
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$doleditor = new DolEditor('mail_signature', $mail_signature, '100%', 150, 'dolibarr_details', '', false, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
+			$doleditor = new DolEditor('mail_signature', $mail_signature, '100%', 150, 'dolibarr_details', '', false, $uselocalbrowser, getDolGlobalString("FCKEDITOR_ENABLE_SOCIETE"), ROWS_2, 70);
 			$doleditor->Create();
 			print '</td></tr>';
 		}
