@@ -207,6 +207,10 @@ if ($action == 'addtimespent' && $user->rights->projet->lire) {
 					$error++;
 				}
 			}
+			$page = DOL_URL_ROOT . '/projet/tasks/time.php?withproject=1&projectid='.$projectid;
+			header( "Location: ".$page );
+			exit;
+
 		}
 	} else {
 		if (empty($id)) {

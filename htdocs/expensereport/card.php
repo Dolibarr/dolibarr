@@ -1279,8 +1279,8 @@ if (empty($reshook)) {
 
 				$result = $object->recalculer($id);
 
-				//header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-				//exit;
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+				exit;
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}

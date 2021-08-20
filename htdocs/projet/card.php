@@ -334,6 +334,11 @@ if (empty($reshook)) {
 			} else {
 				unset($object->thirdparty);
 			}
+			if (!empty($id)) {
+				$page = DOL_URL_ROOT . '/projet/card.php?id=' . $id;
+				header( "Location: " . $page );
+				exit;
+			}
 		}
 	}
 

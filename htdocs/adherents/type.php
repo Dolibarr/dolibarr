@@ -153,7 +153,7 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 	if (!$error) {
 		$id = $object->create($user);
 		if ($id > 0) {
-			header("Location: ".$_SERVER["PHP_SELF"]);
+			header("Location: ".$_SERVER["PHP_SELF"]."?rowid=".$object->id);
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');

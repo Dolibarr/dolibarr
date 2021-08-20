@@ -603,6 +603,9 @@ if (empty($reshook)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
+			$page = DOL_URL_ROOT.'/adherents/card.php?rowid='.$object->id;
+			header("Location: ".$page);
+			exit;
 		}
 		$action = ($result < 0 || !$error) ?  '' : 'create';
 	}

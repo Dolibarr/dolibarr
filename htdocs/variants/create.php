@@ -55,7 +55,7 @@ if ($action == 'add') {
 			if ($backtopage) {
 				header('Location: '.$backtopage);
 			} else {
-				header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$resid.'&backtopage='.urlencode($backtopage));
+				header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$resid);
 			}
 			exit;
 		} else {
