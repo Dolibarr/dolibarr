@@ -1055,7 +1055,7 @@ class Form
 				}
 			}
 			$out .= '</select>';
-
+			
 			$out .= '<input id="location_incoterms" class="maxwidth100onsmartphone nomargintop nomarginbottom" name="location_incoterms" value="'.$location_incoterms.'">';
 
 			if (!empty($page)) {
