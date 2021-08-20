@@ -1056,7 +1056,7 @@ class Form
 			}
 			$out .= '</select>';
 			
-			if ($conf->use_javascript_ajax && empty($disableautocomplete = 0)) {
+			if ($conf->use_javascript_ajax && empty($disableautocomplete)) {
 		    	$out .= ajax_multiautocompleter('location_incoterms', '', DOL_URL_ROOT.'/core/ajax/locationincoterms.php')."\n";
 		    	$moreattrib .= ' autocomplete="off"';
 	    	}			
