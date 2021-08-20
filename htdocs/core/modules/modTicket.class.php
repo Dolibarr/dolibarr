@@ -122,8 +122,18 @@ class modTicket extends DolibarrModules
 		}
 		$this->dictionaries = array(
 			'langs' => 'ticket',
-			'tabname' => array(MAIN_DB_PREFIX."c_ticket_type", MAIN_DB_PREFIX."c_ticket_severity", MAIN_DB_PREFIX."c_ticket_category", MAIN_DB_PREFIX."c_ticket_resolution"),
-			'tablib' => array("TicketDictType", "TicketDictSeverity", "TicketDictCategory", "TicketDictResolution"),
+			'tabname' => array(
+				MAIN_DB_PREFIX."c_ticket_type",
+				MAIN_DB_PREFIX."c_ticket_severity",
+				MAIN_DB_PREFIX."c_ticket_category",
+				MAIN_DB_PREFIX."c_ticket_resolution"
+			),
+			'tablib' => array(
+				"TicketDictType",
+				"TicketDictSeverity",
+				"TicketDictCategory",
+				"TicketDictResolution"
+			),
 			'tabsql' => array(
 				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_type as f',
 				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_severity as f',
@@ -135,7 +145,7 @@ class modTicket extends DolibarrModules
 			'tabfieldvalue' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public", "code,label,pos,use_default"),
 			'tabfieldinsert' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public", "code,label,pos,use_default"),
 			'tabrowid' => array("rowid", "rowid", "rowid", "rowid"),
-			'tabcond' => array($conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled),
+			'tabcond' => array($conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled && !empty($conf->global->TICKET_ENABLE_RESOLUTION)),
 			'tabhelp' => array(
 				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")),
 				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")),

@@ -150,42 +150,44 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print '<td class="titlefieldcreate">'.$langs->trans("Parameter").'</td>';
+print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>";
 
 // Bank account (from Banks module)
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("BankToPayCreditTransfer").'</td>';
-print '<td class="left">';
-$form->select_comptes($conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT, 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT', 0, "courant=1", 1);
+print '<td>';
+print img_picto('', 'bank_account', 'class="pictofixedwidth"');
+print $form->select_comptes($conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT, 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT', 0, "courant=1", 1, '', 0, 'minwidth200', 1);
 print '</td></tr>';
 
 /* Moved to bank account data
 // ICS
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("ICS").'</td>';
-print '<td class="left">';
+print '<td>';
 print '<input type="text" name="PAYMENTBYBANKTRANSFER_ICS" value="'.$conf->global->PAYMENTBYBANKTRANSFER_ICS.'" size="15" ></td>';
 print '</td></tr>';
 */
 
 //User
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("ResponsibleUser").'</td>';
-print '<td class="left">';
-print $form->select_dolusers($conf->global->PAYMENTBYBANKTRANSFER_USER, 'PAYMENTBYBANKTRANSFER_USER', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+print '<td>';
+print img_picto('', 'user', 'class="pictofixedwidth"');
+print $form->select_dolusers($conf->global->PAYMENTBYBANKTRANSFER_USER, 'PAYMENTBYBANKTRANSFER_USER', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'minwidth200 maxwidth500');
 print '</td>';
 print '</tr>';
 
 /*
 //EntToEnd
 print '<tr class="oddeven"><td>'.$langs->trans("END_TO_END").'</td>';
-print '<td class="left">';
-print '<input type="text" name="PRELEVEMENT_END_TO_END" value="'.$conf->global->PRELEVEMENT_END_TO_END.'" size="15" ></td>';
+print '<td>';
+print '<input type="text" name="PRELEVEMENT_END_TO_END" value="'.$conf->global->PRELEVEMENT_END_TO_END.'" class="width100"></td>';
 print '</td></tr>';
 
 //USTRD
 print '<tr class="oddeven"><td>'.$langs->trans("USTRD").'</td>';
-print '<td class="left">';
-print '<input type="text" name="PRELEVEMENT_USTRD" value="'.$conf->global->PRELEVEMENT_USTRD.'" size="15" ></td>';
+print '<td>';
+print '<input type="text" name="PRELEVEMENT_USTRD" value="'.$conf->global->PRELEVEMENT_USTRD.'" class="width100"></td>';
 print '</td></tr>';
 */
 
@@ -195,7 +197,7 @@ print '<td class="left">';
 if (!$conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS) {
 	$conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS = 0;
 }
-print '<input type="text" name="PAYMENTBYBANKTRANSFER_ADDDAYS" value="'.$conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS.'" size="15" ></td>';
+print '<input type="text" name="PAYMENTBYBANKTRANSFER_ADDDAYS" value="'.$conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS.'" class="width50"></td>';
 print '</td></tr>';
 print '</table>';
 print '<br>';

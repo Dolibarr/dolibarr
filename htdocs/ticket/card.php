@@ -426,10 +426,10 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == "confirm_close" && GETPOST('confirm', 'alpha') == 'yes' && $user->rights->ticket->write) {
+	if (($action == "confirm_close" || $action == "confirm_abandon") && GETPOST('confirm', 'alpha') == 'yes' && $user->rights->ticket->write) {
 		$object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
 
-		if ($object->close($user)) {
+		if ($object->close($user, ($action == "confirm_abandon" ? 1 : 0))) {
 			setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
 
 			$url = 'card.php?action=view&track_id='.GETPOST('track_id', 'alpha');
@@ -473,7 +473,7 @@ if (empty($reshook)) {
 	}
 
 	// Set parent company
-	if ($action == 'set_thirdparty' && $user->rights->societe->creer) {
+	if ($action == 'set_thirdparty' && $user->rights->ticket->write) {
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$result = $object->setCustomer(GETPOST('editcustomer', 'int'));
 			$url = 'card.php?action=view&track_id='.GETPOST('track_id', 'alpha');
@@ -749,7 +749,7 @@ if ($action == 'create' || $action == 'presend') {
 	print '</div>';
 
 	print '</form>'; */
-} elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'presend' || $action == 'presend_addmessage' || $action == 'close' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'reopen'
+} elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'presend' || $action == 'presend_addmessage' || $action == 'close' || $action == 'abandon' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'reopen'
 	|| $action == 'editsubject' || $action == 'edit_extras' || $action == 'update_extras' || $action == 'edit_extrafields' || $action == 'set_extrafields' || $action == 'classify' || $action == 'sel_contract' || $action == 'edit_message_init' || $action == 'set_status' || $action == 'dellink') {
 	if ($res > 0) {
 		// or for unauthorized internals users
@@ -760,6 +760,13 @@ if ($action == 'create' || $action == 'presend') {
 		// Confirmation close
 		if ($action == 'close') {
 			print $form->formconfirm($url_page_current."?track_id=".$object->track_id, $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_close", '', '', 1);
+			if ($ret == 'html') {
+				print '<br>';
+			}
+		}
+		// Confirmation abandon
+		if ($action == 'abandon') {
+			print $form->formconfirm($url_page_current."?track_id=".$object->track_id, $langs->trans("AbandonTicket"), $langs->trans("ConfirmAbandonTicket"), "confirm_abandon", '', '', 1);
 			if ($ret == 'html') {
 				print '<br>';
 			}
@@ -1119,15 +1126,21 @@ if ($action == 'create' || $action == 'presend') {
 		} else {
 			// Type
 			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
-			print $langs->getLabelFromKey($db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code);
+			if (!empty($object->type_code)) {
+				print $langs->getLabelFromKey($db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code);
+			}
 			print '</td></tr>';
 			// Group
 			print '<tr><td>'.$langs->trans("TicketCategory").'</td><td>';
-			print $langs->getLabelFromKey($db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code);
+			if (!empty($object->category_code)) {
+				print $langs->getLabelFromKey($db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code);
+			}
 			print '</td></tr>';
 			// Severity
 			print '<tr><td>'.$langs->trans("TicketSeverity").'</td><td>';
-			print $langs->getLabelFromKey($db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code);
+			if (!empty($object->severity_code)) {
+				print $langs->getLabelFromKey($db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code);
+			}
 			print '</td></tr>';
 		}
 		print '</table>'; // End table actions
@@ -1296,8 +1309,13 @@ if ($action == 'create' || $action == 'presend') {
 					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?track_id='.$object->track_id.'&action=close">'.$langs->trans('CloseTicket').'</a></div>';
 				}
 
+				// Abadon ticket if statut is read
+				if ($object->fk_statut > 0 && $object->fk_statut < Ticket::STATUS_CLOSED && $user->rights->ticket->write) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?track_id='.$object->track_id.'&action=abandon">'.$langs->trans('AbandonTicket').'</a></div>';
+				}
+
 				// Re-open ticket
-				if (!$user->socid && $object->fk_statut == Ticket::STATUS_CLOSED && !$user->socid) {
+				if (!$user->socid && ($object->fk_statut == Ticket::STATUS_CLOSED || $object->fk_statut == Ticket::STATUS_CANCELED) && !$user->socid) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?track_id='.$object->track_id.'&action=reopen">'.$langs->trans('ReOpen').'</a></div>';
 				}
 

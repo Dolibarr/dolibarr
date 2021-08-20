@@ -58,7 +58,8 @@ foreach ($result as $driver) {
 	$classname = 'printing_'.$driver;
 	$langs->load($driver);
 	$printer = new $classname($db);
-	if ($conf->global->{$printer->active}) {
+	$keyforprinteractive = $printer->active;
+	if ($keyforprinteractive && $conf->global->$keyforprinteractive) {
 		//$printer->listJobs('commande');
 		$result = $printer->listJobs();
 		print $printer->resprint;

@@ -230,6 +230,9 @@ if (!empty($conf->agenda->enabled)) {
 if (!empty($conf->eventorganization->enabled) && !empty($user->rights->eventorganization->read)) {
 	$elementList['eventorganization_send'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventOrganization'));
 }
+if (!empty($conf->partnership->enabled) && !empty($user->rights->partnership->read)) {
+	$elementList['partnership_send'] = img_picto('', 'partnership', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToPartnership'));
+}
 
 $parameters = array('elementList'=>$elementList);
 $reshook = $hookmanager->executeHooks('emailElementlist', $parameters); // Note that $action and $object may have been modified by some hooks

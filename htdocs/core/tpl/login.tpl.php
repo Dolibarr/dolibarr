@@ -332,7 +332,7 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->fil
 if (!empty($_SESSION['dol_loginmesg'])) {
 	?>
 	<div class="center login_main_message"><div class="error">
-	<?php echo $_SESSION['dol_loginmesg']; ?>
+	<?php echo dol_escape_htmltag($_SESSION['dol_loginmesg']); ?>
 	</div></div>
 	<?php
 }
