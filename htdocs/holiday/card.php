@@ -86,6 +86,9 @@ if (($id > 0) || $ref) {
 	}
 }
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('holidaycard', 'globalcard'));
+
 $cancreate = 0;
 
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance)) {
@@ -159,23 +162,27 @@ if (empty($reshook)) {
 				$halfday = 1;
 			}
 
-			$valideur = GETPOST('valideur', 'int');
+			$approverid = GETPOST('valideur', 'int');
 			$description = trim(GETPOST('description', 'restricthtml'));
 
 			// Check that leave is for a user inside the hierarchy or advanced permission for all is set
-			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->holiday->write))
-				|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->id == $fuserid && empty($user->rights->holiday->write))
-				|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->id != $fuserid && empty($user->rights->holiday->writeall_advance))
-				) {
-				$error++;
-				setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+			if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+				if (empty($user->rights->holiday->write)) {
+					$error++;
+					setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+				} elseif (!in_array($fuserid, $childids)) {
+					$error++;
+					setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
+					$action = 'create';
+				}
 			} else {
-				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->holiday->writeall_advance)) {
-					if (!in_array($fuserid, $childids)) {
-						$error++;
-						setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
-						$action = 'create';
-					}
+				if (empty($user->rights->holiday->write) && empty($user->rights->holiday->writeall_advance)) {
+					$error++;
+					setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+				} elseif (empty($user->rights->holiday->writeall_advance) && !in_array($fuserid, $childids)) {
+					$error++;
+					setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
+					$action = 'create';
 				}
 			}
 
@@ -222,7 +229,7 @@ if (empty($reshook)) {
 			}
 
 			// If no validator designated
-			if ($valideur < 1) {
+			if ($approverid < 1) {
 				setEventMessages($langs->transnoentitiesnoconv('InvalidValidatorCP'), null, 'errors');
 				$error++;
 			}
@@ -232,7 +239,7 @@ if (empty($reshook)) {
 			if (!$error) {
 				$object->fk_user = $fuserid;
 				$object->description = $description;
-				$object->fk_validator = $valideur;
+				$object->fk_validator = $approverid;
 				$object->fk_type = $type;
 				$object->date_debut = $date_debut;
 				$object->date_fin = $date_fin;
@@ -308,7 +315,7 @@ if (empty($reshook)) {
 		if ($object->statut == Holiday::STATUS_DRAFT) {
 			// If this is the requestor or has read/write rights
 			if ($cancreate) {
-				$valideur = GETPOST('valideur', 'int');
+				$approverid = GETPOST('valideur', 'int');
 				$description = trim(GETPOST('description', 'restricthtml'));
 
 				// If no start date
@@ -330,7 +337,7 @@ if (empty($reshook)) {
 				}
 
 				// If no validator designated
-				if ($valideur < 1) {
+				if ($approverid < 1) {
 					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&error=Valideur');
 					exit;
 				}
@@ -345,7 +352,7 @@ if (empty($reshook)) {
 				$object->description = $description;
 				$object->date_debut = $date_debut;
 				$object->date_fin = $date_fin;
-				$object->fk_validator = $valideur;
+				$object->fk_validator = $approverid;
 				$object->halfday = $halfday;
 
 				// Update
@@ -854,9 +861,10 @@ $object = new Holiday($db);
 
 $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
 
+$title = $langs->trans('CPTitreMenu');
 $help_url = 'EN:Module_Holiday';
 
-llxHeader('', $langs->trans('CPTitreMenu'), $help_url);
+llxHeader('', $title, $help_url);
 
 if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 	// If user has no permission to create a leave
@@ -1092,8 +1100,8 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		if (($id > 0) || $ref) {
 			$result = $object->fetch($id, $ref);
 
-			$valideur = new User($db);
-			$valideur->fetch($object->fk_validator);
+			$approverexpected = new User($db);
+			$approverexpected->fetch($object->fk_validator);
 
 			$userRequest = new User($db);
 			$userRequest->fetch($object->fk_user);
@@ -1136,7 +1144,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			}
 
 			// On vérifie si l'utilisateur à le droit de lire cette demande
-			if ($cancreate) {
+			if ($canread) {
 				$head = holiday_prepare_head($object);
 
 				if (($action == 'edit' && $object->statut == Holiday::STATUS_DRAFT) || ($action == 'editvalidator')) {
@@ -1306,7 +1314,14 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 						print $langs->trans('ReviewedByCP');
 					}
 					print '</td>';
-					print '<td>'.$valideur->getNomUrl(-1);
+					print '<td>';
+					if ($object->statut == Holiday::STATUS_APPROVED || $object->statut == Holiday::STATUS_CANCELED) {
+						$approverdone = new User($db);
+						$approverdone->fetch($object->fk_user_valid);
+						print $approverdone->getNomUrl(-1);
+					} else {
+						print $approverexpected->getNomUrl(-1);
+					}
 					$include_users = $object->fetch_users_approver_holiday();
 					if (is_array($include_users) && in_array($user->id, $include_users) && $object->statut == Holiday::STATUS_VALIDATED) {
 						print '<a class="editfielda paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editvalidator">'.img_edit($langs->trans("Edit")).'</a>';

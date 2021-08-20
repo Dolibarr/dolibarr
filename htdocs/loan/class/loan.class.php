@@ -356,12 +356,12 @@ class Loan extends CommonObject
 		$sql .= " capital='".price2num($this->db->escape($this->capital))."',";
 		$sql .= " datestart='".$this->db->idate($this->datestart)."',";
 		$sql .= " dateend='".$this->db->idate($this->dateend)."',";
-		$sql .= " nbterm=".$this->nbterm.",";
-		$sql .= " rate=".$this->db->escape($this->rate).",";
+		$sql .= " nbterm=".((float) $this->nbterm).",";
+		$sql .= " rate=".((float) $this->rate).",";
 		$sql .= " accountancy_account_capital = '".$this->db->escape($this->account_capital)."',";
 		$sql .= " accountancy_account_insurance = '".$this->db->escape($this->account_insurance)."',";
 		$sql .= " accountancy_account_interest = '".$this->db->escape($this->account_interest)."',";
-		$sql .= " fk_projet=".(empty($this->fk_project) ? 'NULL' : $this->fk_project).",";
+		$sql .= " fk_projet=".(empty($this->fk_project) ? 'NULL' : ((int) $this->fk_project)).",";
 		$sql .= " fk_user_modif = ".$user->id.",";
 		$sql .= " insurance_amount = '".price2num($this->db->escape($this->insurance_amount))."'";
 		$sql .= " WHERE rowid=".((int) $this->id);

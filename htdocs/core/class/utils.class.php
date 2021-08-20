@@ -319,9 +319,9 @@ class Utils
 			}
 			if ($dolibarr_main_db_character_set == 'utf8mb4') {
 				// We save output into utf8mb4 charset
-				$param .= " --default-character-set=utf8mb4";
+				$param .= " --default-character-set=utf8mb4 --no-tablespaces";
 			} else {
-				$param .= " --default-character-set=utf8"; // We always save output into utf8 charset
+				$param .= " --default-character-set=utf8 --no-tablespaces"; // We always save output into utf8 charset
 			}
 			$paramcrypted = $param;
 			$paramclear = $param;
@@ -594,7 +594,7 @@ class Utils
 	 * Execute a CLI command.
 	 *
 	 * @param 	string	$command		Command line to execute.
-	 * @param 	string	$outputfile		Output file (used only when method is 2). For exemple $conf->admin->dir_temp.'/out.tmp';
+	 * @param 	string	$outputfile		A path for an output file (used only when method is 2). For example: $conf->admin->dir_temp.'/out.tmp';
 	 * @param	int		$execmethod		0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
 	 * @return	array					array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
 	 */

@@ -258,7 +258,6 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 		}
 	}
 
-
 	// Add code to manage list depending on others
 	// TODO Test/enhance this with a more generic solution
 	if (!empty($conf->use_javascript_ajax)) {

@@ -1546,11 +1546,11 @@ class Contrat extends CommonObject
 			$sql .= ") VALUES (";
 			$sql .= $this->id.", '', '".$this->db->escape($desc)."',";
 			$sql .= ($fk_product > 0 ? $fk_product : "null").",";
-			$sql .= " ".$qty.",";
-			$sql .= " ".$txtva.",";
+			$sql .= " ".((float) $qty).",";
+			$sql .= " ".((float) $txtva).",";
 			$sql .= " ".($vat_src_code ? "'".$this->db->escape($vat_src_code)."'" : "null").",";
-			$sql .= " ".$txlocaltax1.",";
-			$sql .= " ".$txlocaltax2.",";
+			$sql .= " ".((float) $txlocaltax1).",";
+			$sql .= " ".((float) $txlocaltax2).",";
 			$sql .= " '".$this->db->escape($localtax1_type)."',";
 			$sql .= " '".$this->db->escape($localtax2_type)."',";
 			$sql .= " ".price2num($remise_percent).",";
@@ -1559,7 +1559,7 @@ class Contrat extends CommonObject
 			$sql .= " '".$this->db->escape($info_bits)."',";
 			$sql .= " ".price2num($price).",".price2num($remise).",";
 			if (isset($fk_fournprice)) {
-				$sql .= ' '.$fk_fournprice.',';
+				$sql .= ' '.((int) $fk_fournprice).',';
 			} else {
 				$sql .= ' null,';
 			}
@@ -3066,9 +3066,9 @@ class ContratLigne extends CommonObjectLine
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";
-		$sql .= " fk_contrat=".$this->fk_contrat.",";
+		$sql .= " fk_contrat=".((int) $this->fk_contrat).",";
 		$sql .= " fk_product=".($this->fk_product ? "'".$this->db->escape($this->fk_product)."'" : 'null').",";
-		$sql .= " statut=".$this->statut.",";
+		$sql .= " statut=".((int) $this->statut).",";
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " description='".$this->db->escape($this->description)."',";
 		$sql .= " date_commande=".($this->date_commande != '' ? "'".$this->db->idate($this->date_commande)."'" : "null").",";
@@ -3373,11 +3373,11 @@ class ContratLigne extends CommonObjectLine
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = ".ContratLigne::STATUS_CLOSED.",";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = ".((int) ContratLigne::STATUS_CLOSED).",";
 		$sql .= " date_cloture = '".$this->db->idate($date_end)."',";
 		$sql .= " fk_user_cloture = ".$user->id.",";
 		$sql .= " commentaire = '".$this->db->escape($comment)."'";
-		$sql .= " WHERE rowid = ".$this->id." AND statut = ".ContratLigne::STATUS_OPEN;
+		$sql .= " WHERE rowid = ".$this->id." AND statut = ".((int) ContratLigne::STATUS_OPEN);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

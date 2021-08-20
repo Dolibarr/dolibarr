@@ -64,3 +64,5 @@ InterLineDuration=Linje varighed indgreb
 InterLineDesc=Line beskrivelse af ingreb
 RepeatableIntervention=Skabelon for intervention
 ToCreateAPredefinedIntervention=For at oprette en foruddefineret eller tilbagevendende intervention skal du oprette en fælles intervention og konvertere den til interventionsskabelon
+ConfirmReopenIntervention=Er du sikker på, at du vil åbne interventionen <b> %s </b>?
+GenerateInter=Generer intervention

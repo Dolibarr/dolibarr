@@ -264,6 +264,7 @@ if (empty($reshook)) {
 			$nuser->birth = $object->date_birth;
 			$nuser->salary = $object->remuneration_proposed;
 			$nuser->fk_user = $jobposition->fk_user_supervisor; // Supervisor
+			$nuser->email = $object->email;
 
 			$result = $nuser->create($user);
 
@@ -304,21 +305,6 @@ $formproject = new FormProjets($db);
 $title = $langs->trans("RecruitmentCandidature");
 $help_url = '';
 llxHeader('', $title, $help_url);
-
-// Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function() {
-		init_myfunc();
-	});
-});
-</script>';
 
 
 // Part to create

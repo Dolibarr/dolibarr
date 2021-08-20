@@ -38,6 +38,7 @@ ActionsEvents=Events for which Dolibarr will create an action in agenda automati
 EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Third party %s created
+COMPANY_MODIFYInDolibarr=Third party %s modified
 COMPANY_DELETEInDolibarr=Third party %s deleted
 ContractValidatedInDolibarr=Contract %s validated
 CONTRACT_DELETEInDolibarr=Contract %s deleted
@@ -87,6 +88,7 @@ OrderDeleted=Order deleted
 InvoiceDeleted=Invoice deleted
 DraftInvoiceDeleted=Draft invoice deleted
 CONTACT_CREATEInDolibarr=Contact %s created
+CONTACT_MODIFYInDolibarr=Contact %s modified
 CONTACT_DELETEInDolibarr=Contact %s deleted
 PRODUCT_CREATEInDolibarr=Product %s created
 PRODUCT_MODIFYInDolibarr=Product %s modified

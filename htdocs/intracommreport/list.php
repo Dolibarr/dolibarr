@@ -237,8 +237,8 @@ if (dol_strlen($search_type) && $search_type != '-1') {
 if ($search_ref)     $sql .= natural_search('i.ref', $search_ref);
 if ($search_label)   $sql .= natural_search('i.label', $search_label);
 if ($search_barcode) $sql .= natural_search('i.barcode', $search_barcode);
-if (isset($search_tosell) && dol_strlen($search_tosell) > 0  && $search_tosell!=-1) $sql.= " AND i.tosell = ".$db->escape($search_tosell);
-if (isset($search_tobuy) && dol_strlen($search_tobuy) > 0  && $search_tobuy!=-1)   $sql.= " AND i.tobuy = ".$db->escape($search_tobuy);
+if (isset($search_tosell) && dol_strlen($search_tosell) > 0  && $search_tosell!=-1) $sql.= " AND i.tosell = ".((int) $search_tosell);
+if (isset($search_tobuy) && dol_strlen($search_tobuy) > 0  && $search_tobuy!=-1)   $sql.= " AND i.tobuy = ".((int) $search_tobuy);
 if (dol_strlen($canvas) > 0)                    $sql.= " AND i.canvas = '".$db->escape($canvas)."'";
 */
 

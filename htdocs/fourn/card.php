@@ -592,7 +592,7 @@ if ($object->id > 0) {
 		$sql .= " WHERE p.fk_soc =".$object->id;
 		$sql .= " AND p.entity IN (".getEntity('supplier_proposal').")";
 		$sql .= " ORDER BY p.date_valid DESC";
-		$sql .= " ".$db->plimit($MAXLIST);
+		$sql .= $db->plimit($MAXLIST);
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -694,7 +694,8 @@ if ($object->id > 0) {
 		$sql .= " WHERE p.fk_soc =".$object->id;
 		$sql .= " AND p.entity IN (".getEntity('commande_fournisseur').")";
 		$sql .= " ORDER BY p.date_commande DESC";
-		$sql .= " ".$db->plimit($MAXLIST);
+		$sql .= $db->plimit($MAXLIST);
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			$i = 0;
@@ -842,9 +843,9 @@ if ($object->id > 0) {
 		if ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer) {
 			$langs->load("orders");
 			if ($object->status == 1) {
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddOrder").'</a>';
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddSupplierOrderShort").'</a>';
 			} else {
-				print '<a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddOrder").'</a>';
+				print '<a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddSupplierOrderShort").'</a>';
 			}
 		}
 

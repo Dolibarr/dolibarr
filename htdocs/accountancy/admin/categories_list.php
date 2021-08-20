@@ -444,7 +444,7 @@ if ($search_country_id > 0) {
 	} else {
 		$sql .= " WHERE ";
 	}
-	$sql .= " (a.fk_country = ".$search_country_id." OR a.fk_country = 0)";
+	$sql .= " (a.fk_country = ".((int) $search_country_id)." OR a.fk_country = 0)";
 }
 
 // If sort order is "country", we use country_code instead

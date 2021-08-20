@@ -17,8 +17,8 @@ TJM=Durchschnittlicher Tagessatz
 CurrentSalary=aktueller  Lohn
 THMDescription=Dieser Wert kann verwendet werden, um die Kosten für die verwendete Zeit eines Anwender zu berechnen, wenn das Modul Projektverwaltung verwendet wird,
 TJMDescription=Dieser Wert ist aktuell nur zu Informationszwecken und wird nicht für eine Berechnung verwendet
-LastSalaries=Letzte %s Lohnzahlungen
-AllSalaries=Alle Gehaltszahlungen
+LastSalaries=Letzte %s Gehälter
+AllSalaries=Alle Gehälter
 SalariesStatistics=Statistik Gehälter
-# Export
 SalariesAndPayments=Gehälter und Gehaltszahlungen
+ConfirmDeleteSalaryPayment=Möchten Sie diese Gehaltszahlung löschen? 

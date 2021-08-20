@@ -133,7 +133,9 @@ $holidaystatic = new Holiday($db);
 
 $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
 
-llxHeader('', $langs->trans('CPTitreMenu'));
+$title = $langs->trans('CPTitreMenu');
+
+llxHeader('', $title);
 
 $search_month = GETPOST("remonth", 'int') ?GETPOST("remonth", 'int') : date("m", time());
 $search_year = GETPOST("reyear", 'int') ?GETPOST("reyear", 'int') : date("Y", time());
@@ -144,16 +146,16 @@ $sql .= " FROM ".MAIN_DB_PREFIX."holiday cp";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON cp.fk_user = u.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_holiday_types ct ON cp.fk_type = ct.rowid";
 $sql .= " WHERE cp.rowid > 0";
-$sql .= " AND cp.statut = 3"; // 3 = Approved
+$sql .= " AND cp.statut = ".Holiday::STATUS_APPROVED;
 $sql .= " AND (date_format(cp.date_debut, '%Y-%m') = '".$db->escape($year_month)."' OR date_format(cp.date_fin, '%Y-%m') = '".$db->escape($year_month)."')";
 
 if (!empty($search_ref)) {
 	$sql .= natural_search('cp.ref', $search_ref);
 }
-if (!empty($search_employee)) {
-	$sql .= " AND cp.fk_user = '".$db->escape($search_employee)."'";
+if (!empty($search_employee) && $search_employee > 0) {
+	$sql .= " AND cp.fk_user = ".((int) $search_employee);
 }
-if (!empty($search_type)) {
+if (!empty($search_type) && $search_type != '-1') {
 	$sql .= ' AND cp.fk_type IN ('.$db->sanitize($search_type).')';
 }
 if (!empty($search_description)) {
@@ -413,7 +415,7 @@ if ($num == 0) {
 			print '<td class="right">'.num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth).'</td>';
 		}
 		if (!empty($arrayfields['cp.description']['checked'])) {
-			print '<td class="maxwidth300">'.dol_escape_htmltag(dolGetFirstLineOfText($obj->description)).'</td>';
+			print '<td class="maxwidth300 small">'.dol_escape_htmltag(dolGetFirstLineOfText($obj->description)).'</td>';
 		}
 
 		print '<td></td>';

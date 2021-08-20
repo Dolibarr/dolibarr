@@ -321,7 +321,6 @@ abstract class CommonDocGenerator
 			$array_key.'_statut' => $object->statut,
 			$array_key.'_code' => $object->code,
 			$array_key.'_email' => $object->email,
-			$array_key.'_jabberid' => $object->jabberid, // deprecated
 			$array_key.'_phone_pro' => $object->phone_pro,
 			$array_key.'_phone_perso' => $object->phone_perso,
 			$array_key.'_phone_mobile' => $object->phone_mobile,
@@ -490,7 +489,7 @@ abstract class CommonDocGenerator
 		$array_key.'_remain_to_pay'=>price2num($object->total_ttc - $remain_to_pay, 'MT')
 		);
 
-		if (method_exists($object, 'getTotalDiscount')) {
+		if (method_exists($object, 'getTotalDiscount') && in_array(get_class($object), array('Proposal', 'Commande', 'Facture', 'SupplierProposal', 'CommandeFournisseur', 'FactureFournisseur'))) {
 			$resarray[$array_key.'_total_discount_ht_locale'] = price($object->getTotalDiscount(), 0, $outputlangs);
 			$resarray[$array_key.'_total_discount_ht'] = price2num($object->getTotalDiscount());
 		} else {
@@ -532,11 +531,11 @@ abstract class CommonDocGenerator
 				$totalUp += $line->subprice * $line->qty;
 			}
 
-			// @GS: Calculate total up and total discount percentage
-			// Note that this added fields correspond to nothing in Dolibarr (Dolibarr manage discount on lines not globally)
+			// Calculate total up and total discount percentage
+			// Note that this added fields does not match a field into database in Dolibarr (Dolibarr manage discount on lines not as a global property of object)
 			$resarray['object_total_up'] = $totalUp;
 			$resarray['object_total_up_locale'] = price($resarray['object_total_up'], 0, $outputlangs);
-			if (method_exists($object, 'getTotalDiscount')) {
+			if (method_exists($object, 'getTotalDiscount') && in_array(get_class($object), array('Proposal', 'Commande', 'Facture', 'SupplierProposal', 'CommandeFournisseur', 'FactureFournisseur'))) {
 				$totalDiscount = $object->getTotalDiscount();
 			} else {
 				$totalDiscount = 0;
@@ -1202,11 +1201,12 @@ abstract class CommonDocGenerator
 	 *  get extrafield content for pdf writeHtmlCell compatibility
 	 *  usage for PDF line columns and object note block
 	 *
-	 *  @param	object		$object     common object
-	 *  @param	string		$extrafieldKey    	the extrafield key
+	 *  @param	object		$object     		Common object
+	 *  @param	string		$extrafieldKey    	The extrafield key
+	 *  @param	Translate	$outputlangs		The output langs (if value is __(XXX)__ we use it to translate it).
 	 *  @return	string
 	 */
-	public function getExtrafieldContent($object, $extrafieldKey)
+	public function getExtrafieldContent($object, $extrafieldKey, $outputlangs = null)
 	{
 		global $hookmanager;
 
@@ -1342,7 +1342,7 @@ abstract class CommonDocGenerator
 
 				$field = new stdClass();
 				$field->rank = intval($extrafields->attributes[$object->table_element]['pos'][$key]);
-				$field->content = $this->getExtrafieldContent($object, $key);
+				$field->content = $this->getExtrafieldContent($object, $key, $outputlangs);
 				$field->label = $outputlangs->transnoentities($label);
 				$field->type = $extrafields->attributes[$object->table_element]['type'][$key];
 

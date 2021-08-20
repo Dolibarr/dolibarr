@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "bills", "other", "main", "accountancy"));
+$langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 
 $month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
 if (GETPOST("year", 'int')) {
@@ -210,10 +210,10 @@ if ($resql) {
 		}
 		print '</td>';
 		for ($i = 2; $i <= 12; $i++) {
-			print '<td class="nowrap right">'.price($row[$i]).'</td>';
+			print '<td class="right nowraponall amount">'.price($row[$i]).'</td>';
 		}
-		print '<td class="nowrap right">'.price($row[13]).'</td>';
-		print '<td class="nowrap right"><b>'.price($row[14]).'</b></td>';
+		print '<td class="right nowraponall amount">'.price($row[13]).'</td>';
+		print '<td class="right nowraponall amount"><b>'.price($row[14]).'</b></td>';
 		print '</tr>';
 	}
 	$db->free($resql);
@@ -290,10 +290,10 @@ if ($resql) {
 		}
 		print '</td>';
 		for ($i = 2; $i <= 12; $i++) {
-			print '<td class="nowrap right">'.price($row[$i]).'</td>';
+			print '<td class="right nowraponall amount">'.price($row[$i]).'</td>';
 		}
-		print '<td class="nowrap right">'.price($row[13]).'</td>';
-		print '<td class="nowrap right"><b>'.price($row[14]).'</b></td>';
+		print '<td class="right nowraponall amount">'.price($row[13]).'</td>';
+		print '<td class="right nowraponall amount"><b>'.price($row[14]).'</b></td>';
 		print '</tr>';
 	}
 	$db->free($resql);
@@ -352,9 +352,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 		while ($row = $db->fetch_row($resql)) {
 			print '<tr><td>'.$row[0].'</td>';
 			for ($i = 1; $i <= 12; $i++) {
-				print '<td class="nowrap right">'.price($row[$i]).'</td>';
+				print '<td class="right nowraponall amount">'.price($row[$i]).'</td>';
 			}
-			print '<td class="nowrap right"><b>'.price($row[13]).'</b></td>';
+			print '<td class="right nowraponall amount"><b>'.price($row[13]).'</b></td>';
 			print '</tr>';
 		}
 

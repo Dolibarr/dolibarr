@@ -161,9 +161,6 @@ if (empty($reshook)) {
 			if (empty($companybankaccount->rum)) {
 				$companybankaccount->rum = $prelevement->buildRumNumber($object->code_client, $companybankaccount->datec, $companybankaccount->id);
 			}
-			if (empty($companybankaccount->date_rum)) {
-				$companybankaccount->date_rum = dol_now();
-			}
 
 			$result = $companybankaccount->update($user);
 			if (!$result) {
@@ -268,9 +265,9 @@ if (empty($reshook)) {
 			$companybankaccount->domiciliation   = GETPOST('domiciliation', 'alpha');
 			$companybankaccount->proprio         = GETPOST('proprio', 'alpha');
 			$companybankaccount->owner_address   = GETPOST('owner_address', 'alpha');
-			$companybankaccount->frstrecur       = GETPOST('frstrecur');
+			$companybankaccount->frstrecur       = GETPOST('frstrecur', 'alpha');
 			$companybankaccount->rum             = GETPOST('rum', 'alpha');
-			$companybankaccount->date_rum        = dol_mktime(0, 0, 0, GETPOST('date_rummonth'), GETPOST('date_rumday'), GETPOST('date_rumyear'));
+			$companybankaccount->date_rum        = dol_mktime(0, 0, 0, GETPOST('date_rummonth', 'int'), GETPOST('date_rumday', 'int'), GETPOST('date_rumyear', 'int'));
 			$companybankaccount->datec = dol_now();
 			$companybankaccount->status          = 1;
 
@@ -300,7 +297,6 @@ if (empty($reshook)) {
 
 				if (empty($companybankaccount->rum)) {
 					$companybankaccount->rum = $prelevement->buildRumNumber($object->code_client, $companybankaccount->datec, $companybankaccount->id);
-					$companybankaccount->date_rum = dol_now();
 				}
 			}
 
@@ -745,17 +741,19 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
-
-	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
-		print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
-	}
-
-	//if ($conf->agenda->enabled && $user->rights->agenda->myactions->read) $elementTypeArray['action']=$langs->transnoentitiesnoconv('Events');
-
 	print '<div class="fichecenter">';
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border tableforfield centpercent">';
+
+	// Type Prospect/Customer/Supplier
+	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+	print $object->getTypeUrl(1);
+	print '</td></tr>';
+
+	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
+		print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
+	}
 
 	if ($object->client) {
 		print '<tr><td class="titlefield">';
@@ -977,8 +975,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX."societe_rib";
 			$sql .= " WHERE type in ('card')";
-			$sql .= " AND fk_soc = ".$object->id;
-			$sql .= " AND status = ".$servicestatus;
+			$sql .= " AND fk_soc = ".((int) $object->id);
+			$sql .= " AND status = ".((int) $servicestatus);
 
 			$resql = $db->query($sql);
 			if ($resql) {
@@ -1636,8 +1634,10 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer) {
 		print '<tr><td class="titlefield">'.$langs->trans("RUM").'</td>';
 		print '<td><input class="minwidth300" type="text" name="rum" value="'.dol_escape_htmltag($companybankaccount->rum).'"></td></tr>';
 
+		$date_rum = dol_mktime(0, 0, 0, GETPOST('date_rummonth'), GETPOST('date_rumday'), GETPOST('date_rumyear'));
+
 		print '<tr><td class="titlefield">'.$langs->trans("DateRUM").'</td>';
-		print '<td>'.$form->selectDate(GETPOST('date_rum') ?GETPOST('date_rum') : $companybankaccount->date_rum, 'date_rum', 0, 0, 1, 'date_rum').'</td></tr>';
+		print '<td>'.$form->selectDate($date_rum ? $date_rum : $companybankaccount->date_rum, 'date_rum', 0, 0, 1, 'date_rum', 1, 1).'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("WithdrawMode").'</td><td>';
 		$tblArraychoice = array("FRST" => $langs->trans("FRST"), "RECUR" => $langs->trans("RECUR"));
@@ -1798,8 +1798,10 @@ if ($socid && $action == 'create' && $user->rights->societe->creer) {
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("RUM").'</td>';
 		print '<td colspan="4"><input type="text" class="minwidth300" name="rum" value="'.GETPOST('rum', 'alpha').'"> <div class="opacitymedium">'.$langs->trans("RUMWillBeGenerated").'</div></td></tr>';
 
+		$date_rum = dol_mktime(0, 0, 0, GETPOST('date_rummonth'), GETPOST('date_rumday'), GETPOST('date_rumyear'));
+
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("DateRUM").'</td>';
-		print '<td colspan="4">'.$form->selectDate(GETPOST('date_rum'), 'date_rum', 0, 0, 1, 'date_rum').'</td></tr>';
+		print '<td colspan="4">'.$form->selectDate($date_rum, 'date_rum', 0, 0, 1, 'date_rum', 1, 1).'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("WithdrawMode").'</td><td>';
 		$tblArraychoice = array("FRST" => $langs->trans("FRST"), "RECUR" => $langs->trans("RECUR"));

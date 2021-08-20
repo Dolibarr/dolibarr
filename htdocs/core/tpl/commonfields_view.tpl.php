@@ -74,14 +74,21 @@ foreach ($object->fields as $key => $val) {
 	if ($val['type'] == 'text') {
 		print ' wordbreak';
 	}
-	if ($val['cssview']) {
+	if (!empty($val['cssview'])) {
 		print ' '.$val['cssview'];
 	}
 	print '">';
 	if (in_array($val['type'], array('text', 'html'))) {
 		print '<div class="longmessagecut">';
 	}
-	print $object->showOutputField($val, $key, $value, '', '', '', 0);
+	if ($key == 'lang') {
+		$langs->load("languages");
+		$labellang = ($value ? $langs->trans('Language_'.$value) : '');
+		print picto_from_langcode($value, 'class="paddingrightonly saturatemedium opacitylow"');
+		print $labellang;
+	} else {
+		print $object->showOutputField($val, $key, $value, '', '', '', 0);
+	}
 	//print dol_escape_htmltag($object->$key, 1, 1);
 	if (in_array($val['type'], array('text', 'html'))) {
 		print '</div>';

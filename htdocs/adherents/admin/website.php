@@ -172,6 +172,7 @@ print '<br>';
 if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print '<br>';
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre">';
@@ -234,6 +235,7 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print "</td></tr>\n";
 
 	print '</table>';
+	print '</div>';
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
@@ -262,7 +264,7 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 	print '<div class="urllink">';
-	print '<input type="text" id="publicurlmember" class="quatrevingtpercent" value="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">';
+	print '<input type="text" id="publicurlmember" class="quatrevingtpercentminusx" value="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">';
 	print '<a target="_blank" href="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
 	print '</div>';
 	print ajax_autoselect('publicurlmember');

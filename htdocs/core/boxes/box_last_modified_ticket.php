@@ -145,7 +145,7 @@ class box_last_modified_ticket extends ModeleBoxes
 
 					// Subject
 					$this->info_box_contents[$i][$r] = array(
-						'td' => 'class="nowrap"',
+						'td' => 'class="nowrap tdoverflowmax150"',
 						'text' => $objp->subject, // Some event have no ref
 						'url' => DOL_URL_ROOT."/ticket/card.php?track_id=".$objp->track_id,
 					);
@@ -153,7 +153,7 @@ class box_last_modified_ticket extends ModeleBoxes
 
 					// Customer
 					$this->info_box_contents[$i][$r] = array(
-						'td' => 'class="tdoverflowmax150 maxwidth300onsmartphone"',
+						'td' => 'class="tdoverflowmax150"',
 						'text' => $link,
 						'asis' => 1,
 					);
@@ -162,7 +162,7 @@ class box_last_modified_ticket extends ModeleBoxes
 					// Date creation
 					$this->info_box_contents[$i][$r] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($datec, 'dayhour')
+						'text' => dol_print_date($datec, 'dayhour', 'tzuserrel')
 					);
 					$r++;
 

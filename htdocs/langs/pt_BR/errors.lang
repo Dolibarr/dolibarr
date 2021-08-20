@@ -86,7 +86,6 @@ ErrorCantReadFile=Houve uma falha ao ler o arquivo '%s'
 ErrorCantReadDir=Houve uma falha ao ler o diretório '%s'
 ErrorBadLoginPassword=Identificadores de usuário o senha incorretos
 ErrorLoginDisabled=A sua conta foi desativada
-ErrorFailedToRunExternalCommand=Error ao tentar o comando externo. verifique que está disponível e ejecutable por a sua servidor PHP. sim o PHP <b>Safe Mode</b> está ativo, verifique que o comando encontra-se em uma pasta definida ao parâmetro <b>safe_mode_exec_dir</b>.
 ErrorFailedToChangePassword=Error na modificação da senha
 ErrorLoginDoesNotExists=Não existe um usuário com login <b>%s</b>.
 ErrorLoginHasNoEmail=Este usuário não tem endereço de e-mail. Processo abortado.

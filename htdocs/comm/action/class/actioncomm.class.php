@@ -261,7 +261,7 @@ class ActionComm extends CommonObject
 	/**
 	 * @var int socpeople id linked to action
 	 */
-	public $contactid;
+	public $contact_id;
 
 	/**
 	 * @var Societe|null Company linked to action (optional)
@@ -273,7 +273,7 @@ class ActionComm extends CommonObject
 	/**
 	 * @var Contact|null Contact linked to action (optional)
 	 * @deprecated
-	 * @see $contactid
+	 * @see $contact_id
 	 */
 	public $contact;
 
@@ -381,6 +381,7 @@ class ActionComm extends CommonObject
 	 * Typical value for a event that is in a finished state
 	 */
 	const EVENT_FINISHED = 100;
+
 
 	/**
 	 *      Constructor
@@ -738,6 +739,11 @@ class ActionComm extends CommonObject
 	{
 		global $langs;
 
+		if (empty($id) && empty($ref) && empty($ref_ext) && empty($email_msgid)) {
+			dol_syslog(get_class($this)."::fetch Bad parameters", LOG_WARNING);
+			return -1;
+		}
+
 		$sql = "SELECT a.id,";
 		$sql .= " a.ref as ref,";
 		$sql .= " a.entity,";
@@ -747,7 +753,7 @@ class ActionComm extends CommonObject
 		$sql .= " a.durationp,"; // deprecated
 		$sql .= " a.datec,";
 		$sql .= " a.tms as datem,";
-		$sql .= " a.code, a.label, a.note,";
+		$sql .= " a.code, a.label, a.note as note_private,";
 		$sql .= " a.fk_soc,";
 		$sql .= " a.fk_project,";
 		$sql .= " a.fk_user_author, a.fk_user_mod,";
@@ -806,8 +812,8 @@ class ActionComm extends CommonObject
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->datem = $this->db->jdate($obj->datem);
 
-				$this->note = $obj->note; // deprecated
-				$this->note_private = $obj->note;
+				$this->note = $obj->note_private; // deprecated
+				$this->note_private = $obj->note_private;
 				$this->percentage = $obj->percentage;
 
 				$this->authorid = $obj->fk_user_author;
@@ -1817,7 +1823,7 @@ class ActionComm extends CommonObject
 			$sql .= " a.datep2,"; // End
 			$sql .= " a.durationp,"; // deprecated
 			$sql .= " a.datec, a.tms as datem,";
-			$sql .= " a.label, a.code, a.note, a.fk_action as type_id,";
+			$sql .= " a.label, a.code, a.note as note_private, a.fk_action as type_id,";
 			$sql .= " a.fk_soc,";
 			$sql .= " a.fk_user_author, a.fk_user_mod,";
 			$sql .= " a.fk_user_action,";
@@ -1896,10 +1902,16 @@ class ActionComm extends CommonObject
 					$userforfilter = new User($this->db);
 					$result = $userforfilter->fetch('', $logint);
 					if ($result > 0) {
-						$sql .= " AND ar.fk_element = ".$userforfilter->id;
+						$sql .= " AND ar.fk_element = ".((int) $userforfilter->id);
 					} elseif ($result < 0 || $condition == '=') {
 						$sql .= " AND ar.fk_element = 0";
 					}
+				}
+				if ($key == 'module') {
+					$sql .= " AND c.module LIKE '%".$this->db->escape($value)."'";
+				}
+				if ($key == 'status') {
+					$sql .= " AND a.status =".((int) $value);
 				}
 			}
 
@@ -1938,7 +1950,8 @@ class ActionComm extends CommonObject
 
 					$duration = ($datestart && $dateend) ? ($dateend - $datestart) : 0;
 					$event['summary'] = $obj->label.($obj->socname ? " (".$obj->socname.")" : "");
-					$event['desc'] = $obj->note;
+
+					$event['desc'] = $obj->note_private;
 					$event['startdate'] = $datestart;
 					$event['enddate'] = $dateend; // Not required with type 'journal'
 					$event['duration'] = $duration; // Not required with type 'journal'
@@ -2327,7 +2340,7 @@ class ActionComm extends CommonObject
 						$sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
 
 						//Topic
-						$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->trans('EventReminder'));
+						$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->transnoentities('EventReminder'));
 
 						// Recipient
 						$recipient = new User($this->db);
@@ -2403,7 +2416,7 @@ class ActionComm extends CommonObject
 			// Delete also very old past events (we do not keep more than 1 month record in past)
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
 			$sql .= " WHERE dateremind < '".$this->db->idate($now - (3600 * 24 * 32))."'";
-			$sql .= " AND status = ".$actionCommReminder::STATUS_DONE;
+			$sql .= " AND status = ".((int) $actionCommReminder::STATUS_DONE);
 			$resql = $this->db->query($sql);
 
 			if (!$resql) {
