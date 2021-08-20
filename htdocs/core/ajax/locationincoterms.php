@@ -72,18 +72,18 @@ if (GETPOST('location_incoterms')) {
 	if (!empty($conf->global->MAIN_USE_LOCATION_INCOTERMS_DICTIONNARY)) {   // Use location_incoterms
 		$sql = "SELECT z.location as location_incoterms, z.label as label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_location_incoterms as z";
-		$sql .= " WHERE z.active = 1  AND UPPER(z.location) LIKE UPPER('".$db->escape($location_incoterms)."%')";
+		$sql .= " WHERE z.active = 1  AND UPPER(z.location) LIKE UPPER('%".$db->escape($location_incoterms)."%')";
 		$sql .= " ORDER BY z.location";
 		$sql .= $db->plimit(100); // Avoid pb with bad criteria
 	} else // Use table of commande
 	{
 		$sql = "SELECT DISTINCT s.location_incoterms FROM ".MAIN_DB_PREFIX.'commande as s';
-		$sql .= " WHERE UPPER(s.location_incoterms) LIKE UPPER('".$db->escape($location_incoterms)."%')";
+		$sql .= " WHERE UPPER(s.location_incoterms) LIKE UPPER('%".$db->escape($location_incoterms)."%')";
 
 		//Todo: merge with data from table of supplier order
 		/*	$sql .=" UNION";
 		$sql .= " SELECT DISTINCT p.location_incoterms FROM ".MAIN_DB_PREFIX.'commande_fournisseur as p';
-		$sql .= " WHERE UPPER(p.location_incoterms) LIKE UPPER('".$db->escape($location_incoterms)."%')";
+		$sql .= " WHERE UPPER(p.location_incoterms) LIKE UPPER('%".$db->escape($location_incoterms)."%')";
 		*/
 		$sql .= " ORDER BY s.location_incoterms";
 		$sql .= $db->plimit(100); // Avoid pb with bad criteria
