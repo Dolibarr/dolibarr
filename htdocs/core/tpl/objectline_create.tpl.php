@@ -753,7 +753,6 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 						if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
 						{
 							var editor = CKEDITOR.instances['dp_desc'];
-							var editor = CKEDITOR.instances['dp_desc'];
 							if (editor) {
 								editor.setData(proddesc);
 							}
