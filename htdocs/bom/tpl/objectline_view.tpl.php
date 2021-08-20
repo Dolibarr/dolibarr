@@ -80,11 +80,21 @@ print '<div id="line_'.$line->id.'"></div>';
 $coldisplay++;
 $tmpproduct = new Product($object->db);
 $tmpproduct->fetch($line->fk_product);
+$tmpbom = new BOM($object->db);
+$res = $tmpbom->fetch($line->fk_bom_child);
+if (!empty($tmpbom->id)){
+	print '<a class="collapse_bom" id="bom' . $tmpbom->id . '" href="#">' . (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT) ? '(+)' : '(-)') . '&nbsp;</a>';
+}
 print $tmpproduct->getNomUrl(1);
 print ' - '.$tmpproduct->label;
 print '</td>';
 
-print '<td id="bom_id"></td>';
+if ($res > 0) {
+	print '<td id="bom_id">'.$tmpbom->getNomUrl(1).'</td>';
+} else {
+		print '<td id="bom_id">&nbsp;</td>';
+}
+
 print '<td class="linecolqty nowrap right">';
 $coldisplay++;
 echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formating role of function price
@@ -167,6 +177,50 @@ if ($action == 'selectlines') {
 }
 
 print '</tr>';
+
+$sql = 'SELECT rowid, fk_bom_child, fk_product FROM '.MAIN_DB_PREFIX.'bom_bomline AS bl';
+$sql.= ' WHERE fk_bom = '.$tmpbom->id;
+$resql = $object->db->query($sql);
+
+if ($resql){
+	while ($obj = $object->db->fetch_object($resql)){
+		$sub_bom_product = new Product($object->db);
+		$sub_bom_product->fetch($obj->fk_product);
+
+		$sub_bom = new BOM($object->db);
+		$sub_bom->fetch($obj->fk_bom_child);
+
+		$sub_bom_line = new BOMLine($object->db);
+		$sub_bom_line->fetch($obj->rowid);
+
+		print '<tr id="sub_bom_'.$sub_bom_line->id.'">';
+
+		print '<td id="sub_bom_product_'.$sub_bom_line->id.'">'.$sub_bom_product->getNomUrl(1).'</td>';
+		if ($sub_bom_line->fk_bom_child > 0) {
+			print '<td id="sub_bom_bom_'.$sub_bom_line->id.'">'.$sub_bom->getNomUrl(1).'</td>';
+		} else {
+			print '<td id="sub_bom_bom_'.$sub_bom_line->id.'">&nbsp;</td>';
+		}
+		print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty, 0, '', 0, 0).'</td>';
+		if ($sub_bom_line->qty_frozen > 0) {
+			print '<td class="linecolqtyfrozen nowrap right" id="sub_bom_qty_frozen_'.$sub_bom_line->id.'">'.$sub_bom_line->qty_frozen.'</td>';
+		} else {
+			print '<td class="linecolqtyfrozen nowrap right" id="sub_bom_qty_frozen_'.$sub_bom_line->id.'">&nbsp;</td>';
+		}
+
+		if ($sub_bom_line->disable_stock_change > 0) {
+			print '<td class="linecoldisablestockchange nowrap right" id="sub_bom_stock_change_'.$sub_bom_line->id.'">'.$sub_bom_line->disable_stock_change.'</td>';
+		} else {
+			print '<td class="linecoldisablestockchange nowrap right" id="sub_bom_stock_change_'.$sub_bom_line->id.'">&nbsp;</td>';
+		}
+
+		print '<td class="linecolefficiency nowrap right" id="sub_bom_efficiency_'.$sub_bom_line->id.'">'.$sub_bom_line->efficiency.'</td>';
+		print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_line->total_cost).'</td>';
+		print '<td></td>';
+		print '<td></td>';
+		print '<td></td>';
+	}
+}
 
 //Line extrafield
 if (!empty($extrafields)) {
