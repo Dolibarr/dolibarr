@@ -336,7 +336,7 @@ if (empty($reshook)) {
 			}
 			if (!empty($id)) {
 				$page = DOL_URL_ROOT . '/projet/card.php?id=' . $id;
-				header( "Location: " . $page );
+				header("Location: " . $page);
 				exit;
 			}
 		}
