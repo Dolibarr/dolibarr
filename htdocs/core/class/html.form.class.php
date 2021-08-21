@@ -9261,14 +9261,6 @@ class Form
 	 *
 	 * @return string
 	 */
-	/**
-	 * @param string $save_label
-	 * @param string $cancel_label
-	 * @param array $morefields
-	 * @param false $withoutdiv
-	 *
-	 * @return string
-	 */
 	public function buttonsSaveCancel( $save_label = 'Save', $cancel_label = 'Cancel', $morefields = array(), $withoutdiv = 0 )
 	{
 		global $langs;
@@ -9317,7 +9309,8 @@ class Form
 	 *
 	 * @return string
 	 */
-	public function button($name, $label, $addclass = '') {
+	public function button($name, $label, $addclass = '')
+	{
 		return '<input type="submit" class="button button-'.$name.' '.$addclass.'" name="'.$name.'" value="'.$label.'">';
 	}
 }
