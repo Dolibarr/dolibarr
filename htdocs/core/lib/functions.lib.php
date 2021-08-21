@@ -799,11 +799,11 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 					}
 				}
 
-				// Ckeditor use the numeric entitic for apostrophe so we force it to text entity (all other special chars are correctly
-				// encoded using text entities). This is a fix for CKeditor.
+				// Ckeditor use the numeric entitic for apostrophe so we force it to text entity (all other special chars are
+				// encoded using text entities) so we can then exclude all numeric entities.
 				$out = preg_replace('/&#39;/i', '&apos;', $out);
 
-				// We replace chars from a/A to z/Z encoded with numeric HTML entities with the real char so we won't loose the chars at the next step.
+				// We replace chars from a/A to z/Z encoded with numeric HTML entities with the real char so we won't loose the chars at the next step (preg_replace).
 				// No need to use a loop here, this step is not to sanitize (this is done at next step, this is to try to save chars, even if they are
 				// using a non coventionnel way to be encoded, to not have them sanitized just after)
 				$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', 'realCharForNumericEntities', $out);
@@ -818,6 +818,9 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 					// Warning, the function may add a LF so we are forced to trim to compare with old $out without having always a difference and an infinit loop.
 					$out = trim(dol_string_onlythesehtmlattributes($out));
 				}
+
+				// Restore entity &apos; into &#39; (restricthtml is for html content so we can use html entity)
+				$out = preg_replace('/&apos;/i', "&#39;", $out);
 			} while ($oldstringtoclean != $out);
 			break;
 		case 'custom':
