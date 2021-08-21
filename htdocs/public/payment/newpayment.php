@@ -335,7 +335,6 @@ $mesg = '';
 
 // Action dopayment is called after clicking/choosing the payment mode
 if ($action == 'dopayment') {
-
 	if ($paymentmethod == 'paypal') {
 		$PAYPAL_API_PRICE = price2num(GETPOST("newamount", 'alpha'), 'MT');
 		$PAYPAL_PAYMENT_TYPE = 'Sale';
