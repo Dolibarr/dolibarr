@@ -757,3 +757,36 @@ div#moreinfo, div#infowarehouse {
   text-align: center;
   margin: 2px;
 }
+
+.splitsale {
+	float: left;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+}
+
+.rowsplit {
+	width: 100%;
+	height: 40%;
+}
+
+.headersplit {
+	height: 10%;
+	width: 100%;
+	padding: 10px;
+}
+
+.headercontent {
+	margin: auto;
+	width: 50%;
+	border: 3px solid black;
+	text-align: center;
+	font-size: 150%;
+	background-color: rgb(233,234,237);
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
