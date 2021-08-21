@@ -506,7 +506,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$result=GETPOST("param14", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals("Text with ' encoded with the numeric html entity converted into text entity &apos; (like when submited by CKEditor)", $result, 'Test 14');
+		$this->assertEquals("Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submited by CKEditor)", $result, 'Test 14');
 
 		$result=GETPOST("param15", 'restricthtml');		// <img onerror<=alert(document.domain)> src=>0xbeefed
 		print __METHOD__." result=".$result."\n";
