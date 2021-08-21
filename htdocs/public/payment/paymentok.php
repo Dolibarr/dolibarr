@@ -298,10 +298,20 @@ if (!empty($conf->paypal->enabled)) {
 					$ErrorSeverityCode = urldecode($resArray2["L_SEVERITYCODE0"]);
 				}
 			} else {
+				$ErrorCode = "SESSIONEXPIRED";
+				$ErrorLongMsg = "Session expired. Can't retreive PaymentType. Payment has not been validated.";
+				$ErrorShortMsg = "Session expired";
+
+				dol_syslog($ErrorLongMsg, LOG_WARNING, 0, '_payment');
 				dol_print_error('', 'Session expired');
 			}
 		} else {
-			dol_print_error('', '$PAYPALTOKEN not defined');
+			$ErrorCode = "PAYPALTOKENNOTDEFINED";
+			$ErrorLongMsg = "The parameter PAYPALTOKEN was not defined. Payment has not been validated.";
+			$ErrorShortMsg = "Parameter PAYPALTOKEN not defined";
+
+			dol_syslog($ErrorLongMsg, LOG_WARNING, 0, '_payment');
+			dol_print_error('', 'PAYPALTOKEN not defined');
 		}
 	}
 }
