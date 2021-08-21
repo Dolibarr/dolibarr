@@ -1283,19 +1283,18 @@ function dol_escape_json($stringtoescape)
  *  Returns text escaped for inclusion in HTML alt or title tags, or into values of HTML input fields.
  *
  *  @param      string		$stringtoescape			String to escape
- *  @param		int			$keepb					1=Keep b tags and escape them, 0=remove them
+ *  @param		int			$keepb					1=Keep b tags, 0=remove them completeley
  *  @param      int         $keepn              	1=Preserve \r\n strings (otherwise, replace them with escaped value). Set to 1 when escaping for a <textarea>.
- *  @param		string		$keepmoretags			'' or 'common' or list of tags
+ *  @param		string		$noescapetags			'' or 'common' or list of tags to not escape
  *  @param		int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
  *  @return     string     				 			Escaped string
  *  @see		dol_string_nohtmltag(), dol_string_nospecial(), dol_string_unaccent()
  */
-function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $keepmoretags = '', $escapeonlyhtmltags = 0)
+function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapetags = '', $escapeonlyhtmltags = 0)
 {
-	if ($keepmoretags == 'common') {
-		$keepmoretags = 'html,body,a,b,em,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody';
+	if ($noescapetags == 'common') {
+		$noescapetags = 'html,body,a,b,em,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody';
 	}
-	// TODO Implement $keepmoretags
 
 	// escape quotes and backslashes, newlines, etc.
 	if ($escapeonlyhtmltags) {
@@ -1309,10 +1308,33 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $keepmoreta
 	if (!$keepn) {
 		$tmp = strtr($tmp, array("\r"=>'\\r', "\n"=>'\\n'));
 	}
+
 	if ($escapeonlyhtmltags) {
 		return htmlspecialchars($tmp, ENT_COMPAT, 'UTF-8');
 	} else {
-		return htmlentities($tmp, ENT_COMPAT, 'UTF-8');
+		// Escape tags to keep
+		$tmparrayoftags = array();
+		if ($noescapetags) {
+			$tmparrayoftags = explode(',', $noescapetags);
+		}
+
+		if (count($tmparrayoftags)) {
+			foreach ($tmparrayoftags as $tagtoreplace) {
+				$tmp = str_replace('<'.$tagtoreplace.'>', '__BEGINTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
+				$tmp = str_replace('</'.$tagtoreplace.'>', '__ENDTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
+			}
+		}
+
+		$result = htmlentities($tmp, ENT_COMPAT, 'UTF-8');
+
+		if (count($tmparrayoftags)) {
+			foreach ($tmparrayoftags as $tagtoreplace) {
+				$result = str_replace('__BEGINTAGTOREPLACE'.$tagtoreplace.'__', '<'.$tagtoreplace.'>', $result);
+				$result = str_replace('__ENDTAGTOREPLACE'.$tagtoreplace.'__', '</'.$tagtoreplace.'>', $result);
+			}
+		}
+
+		return $result;
 	}
 }
 
