@@ -9261,7 +9261,7 @@ class Form
 	 *
 	 * @return string
 	 */
-	public function buttonsSaveCancel( $save_label = 'Save', $cancel_label = 'Cancel', $morefields = array(), $withoutdiv = 0 )
+	public function buttonsSaveCancel($save_label = 'Save', $cancel_label = 'Cancel', $morefields = array(), $withoutdiv = 0)
 	{
 		global $langs;
 
@@ -9303,9 +9303,9 @@ class Form
 	/**
 	 * Return a button (input submit)
 	 *
-	 * @param   string  $name
-	 * @param   string  $label
-	 * @param   string  $addclass
+	 * @param   string  $name       Name
+	 * @param   string  $label      Label of the button
+	 * @param   string  $addclass   Additional css classes
 	 *
 	 * @return string
 	 */
