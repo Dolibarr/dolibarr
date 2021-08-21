@@ -82,10 +82,11 @@ PriceOfBoothHelp=Prix d’inscription pour un stand
 EventOrganizationICSLink=Lien ICS des événements
 ConferenceOrBoothInformation=Renseignements sur la conférence ou le stand
 Attendees = Participants
-DownloadICSLink = Download ICS link
+DownloadICSLink = Télécharger le lien ICS
 EVENTORGANIZATION_SECUREKEY = Clé sécurisée pour le lien d’inscription public à une conférence
-SERVICE_BOOTH_LOCATION = Service used for the invoice row about a booth location
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to a conference
+SERVICE_BOOTH_LOCATION = Service utilisé pour la ligne de facture concernant l'emplacement d'un stand
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service utilisé pour la ligne de facture concernant l'abonnement d'un participant à une conférence
+NbVotes=Nombre de votes
 #
 # Status
 #
@@ -98,39 +99,44 @@ EvntOrgCancelled = Annulé
 #
 # Public page
 #
-SuggestForm = Suggestion page
-RegisterPage = Page for conferences or booth
-EvntOrgRegistrationHelpMessage = Here, you can vote for an event, or suggest a new conference or booth for the project
-EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference for the project
-EvntOrgRegistrationBoothHelpMessage = Here, you can suggest a new booth for the project
-ListOfSuggestedConferences = List of suggested conferences
-ListOfSuggestedBooths = List of suggested booths
-SuggestConference = Suggest a new conference
-SuggestBooth = Suggest a booth
-ViewAndVote = View and vote for suggested events
+SuggestForm = Page de suggestions
+RegisterPage = Page pour conférences ou stands
+EvntOrgRegistrationHelpMessage = Ici, vous pouvez voter pour un événement, ou suggérer une nouvelle conférence ou un nouveau stand pour le projet
+EvntOrgRegistrationConfHelpMessage = Ici, vous pouvez suggérer une nouvelle conférence pour le projet
+EvntOrgRegistrationBoothHelpMessage = Ici, vous pouvez suggérer un nouveau stand pour le projet
+ListOfSuggestedConferences = Liste des conférences suggérées
+ListOfSuggestedBooths = Liste des stands suggérés
+SuggestConference = Proposer une nouvelle conférence
+SuggestBooth = Proposer un stand
+ViewAndVote = Voir et voter pour les événements suggérés
 PublicAttendeeSubscriptionPage = Lien d’inscription public à une conférence
 MissingOrBadSecureKey = La clé de sécurité est invalide ou manquante
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the conference : '%s'
-EvntOrgDuration = This conference starts on %s and ends on %s.
-ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
-BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
+EvntOrgWelcomeMessage = Ce formulaire vous permet de vous inscrire en tant que nouveau participant à la conférence : '%s'
+EvntOrgDuration = Cette conférence commence le %s et se termine le %s.
+ConferenceAttendeeFee = Frais de participation à la conférence pour l'événement : '%s' se produisant du %s au %s.
+BoothLocationFee = Frais de participation à l'événement : '%s' se produisant du %s au %s.
 EventType = Type événement
+LabelOfBooth=Libellé du stand
+LabelOfconference=Libellé de la conférence
+ConferenceIsNotConfirmed=Inscription non disponible, la conférence n'est pas encore confirmée
+DateMustBeBeforeThan=%s must be before %s
+DateMustBeAfterThan=%s must be after %s
 
 #
 # Vote page
 #
-EvntOrgRegistrationWelcomeMessage = Welcome on the conference or booth suggestion page.
-EvntOrgRegistrationConfWelcomeMessage = Welcome on the conference suggestion page.
-EvntOrgRegistrationBoothWelcomeMessage = Welcome on the booth suggestion page.
-EvntOrgVoteHelpMessage = Here, you can view and vote for the suggested events for the project
-VoteOk = Your vote has been accepted.
-AlreadyVoted = You have already voted for this event.
-VoteError = An error has occurred during the vote, please try again.
+EvntOrgRegistrationWelcomeMessage = Bienvenue sur la page de suggestion de conférence ou de stand.
+EvntOrgRegistrationConfWelcomeMessage = Bienvenue sur la page de suggestions de conférences.
+EvntOrgRegistrationBoothWelcomeMessage = Bienvenue sur la page de suggestion de stand.
+EvntOrgVoteHelpMessage = Ici, vous pouvez voir et voter pour les événements suggérés pour le projet
+VoteOk = Votre vote a été accepté.
+AlreadyVoted = Vous avez déjà voté pour cet événement.
+VoteError = Une erreur s'est produite lors du vote, veuillez réessayer.
 
 #
 # SubscriptionOk page
 #
-SubscriptionOk = Your subscription to this conference has been validated
+SubscriptionOk = Votre inscription à cette conférence a été validée
 #
 # Subscription validation mail
 #
@@ -139,5 +145,5 @@ ConfAttendeeSubscriptionConfirmation = Confirmation de votre inscription à une 
 # Payment page
 #
 Attendee = Participant
-PaymentConferenceAttendee = Conference attendee payment
-PaymentBoothLocation = Booth location payment
+PaymentConferenceAttendee = Paiement de participation à la conférence
+PaymentBoothLocation = Paiement de l'emplacement du stand

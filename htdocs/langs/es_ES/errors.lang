@@ -11,7 +11,7 @@ ErrorBadValueForParamNotAString=Valor incorrecto para su parámetro. Generalment
 ErrorRefAlreadyExists=La referencia <b>%s</b> ya existe.
 ErrorLoginAlreadyExists=El login %s ya existe.
 ErrorGroupAlreadyExists=El grupo %s ya existe.
-ErrorEmailAlreadyExists=Email %s already exists.
+ErrorEmailAlreadyExists=El correo electrónico %s ya existe.
 ErrorRecordNotFound=Registro no encontrado
 ErrorFailToCopyFile=Error al copiar el archivo '<b>%s</b>' en '<b>%s</b>'.
 ErrorFailToCopyDir=Error al copiar el directorio  '<b>%s</b>' en '<b>%s</b>'.
@@ -264,6 +264,7 @@ ErrorAnAmountWithoutTaxIsRequired=Error, la cantidad es obligatoria
 ErrorAPercentIsRequired=Error, ingrese el porcentaje correctamente
 ErrorYouMustFirstSetupYourChartOfAccount=Primero debe configurar su plan de cuentas
 ErrorFailedToFindEmailTemplate=No se pudo encontrar la plantilla con el nombre de código %s
+ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Duración no definida en el servicio. No hay forma de calcular el precio por hora.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=El parámetro PHP upload_max_filesize (%s) es más alto que el parámetro PHP post_max_size (%s). Esta no es una configuración consistente.
@@ -301,3 +302,4 @@ ErrorActionCommPropertyUserowneridNotDefined=Se requiere el propietario del usua
 ErrorActionCommBadType=El tipo de evento seleccionado (id: %n, código: %s) no existe en el diccionario de tipo de evento
 CheckVersionFail=Error de verificación de versión
 ErrorWrongFileName=El nombre del archivo no puede contener __SOMETHING__
+ErrorNotInDictionaryPaymentConditions=No está en el Diccionario de términos de pago, modifíquelo.

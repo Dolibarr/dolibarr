@@ -264,6 +264,7 @@ ErrorAnAmountWithoutTaxIsRequired=Feil, beløp er obligatorisk
 ErrorAPercentIsRequired=Feil, fyll ut prosentandelen riktig
 ErrorYouMustFirstSetupYourChartOfAccount=Du må først konfigurere kontoplanen din
 ErrorFailedToFindEmailTemplate=Failed to find template with code name %s
+ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Duration not defined on service. No way to calculate the hourly price.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHP-parameteren upload_max_filesize (%s) er høyere enn PHP-parameteren post_max_size (%s). Dette er ikke et konsistent oppsett.
@@ -301,3 +302,4 @@ ErrorActionCommPropertyUserowneridNotDefined=Brukerens eier kreves
 ErrorActionCommBadType=Selected event type (id: %n, code: %s) do not exist in Event Type dictionary
 CheckVersionFail=Versjonskontroll mislyktes
 ErrorWrongFileName=Name of the file cannot have __SOMETHING__ in it
+ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.

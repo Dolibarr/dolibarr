@@ -596,7 +596,7 @@ class DolGraph
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Get max value
+	 * Get max value among all values of all series
 	 *
 	 * @return	int		Max value
 	 */
@@ -607,25 +607,26 @@ class DolGraph
 			return 0;
 		}
 
-		$k = 0;
-		$vals = array();
+		$max = null;
 
-		$nblines = count($this->data);
-		$nbvalues = (empty($this->data[0]) ? 0 : count($this->data[0]) - 1);
+		$nbseries = (empty($this->data[0]) ? 0 : count($this->data[0]) - 1);
 
-		for ($j = 0; $j < $nblines; $j++) {
-			for ($i = 0; $i < $nbvalues; $i++) {
-				$vals[$k] = $this->data[$j][$i + 1];
-				$k++;
+		foreach ($this->data as $x) {	// Loop on each x
+			for ($i = 0; $i < $nbseries; $i++) {	// Loop on each serie
+				if (is_null($max)) {
+					$max = $x[$i + 1];		// $i+1 because the index 0 is the legend
+				} elseif ($max < $x[$i + 1]) {
+					$max = $x[$i + 1];
+				}
 			}
 		}
-		rsort($vals);
-		return $vals[0];
+
+		return $max;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return min value of all data
+	 * Return min value of all values of all series
 	 *
 	 * @return	int		Min value of all data
 	 */
@@ -636,20 +637,21 @@ class DolGraph
 			return 0;
 		}
 
-		$k = 0;
-		$vals = array();
+		$min = null;
 
-		$nblines = count($this->data);
-		$nbvalues = (empty($this->data[0]) ? 0 : count($this->data[0]) - 1);
+		$nbseries = (empty($this->data[0]) ? 0 : count($this->data[0]) - 1);
 
-		for ($j = 0; $j < $nblines; $j++) {
-			for ($i = 0; $i < $nbvalues; $i++) {
-				$vals[$k] = $this->data[$j][$i + 1];
-				$k++;
+		foreach ($this->data as $x) {	// Loop on each x
+			for ($i = 0; $i < $nbseries; $i++) {	// Loop on each serie
+				if (is_null($min)) {
+					$min = $x[$i + 1];		// $i+1 because the index 0 is the legend
+				} elseif ($min > $x[$i + 1]) {
+					$min = $x[$i + 1];
+				}
 			}
 		}
-		sort($vals);
-		return $vals[0];
+
+		return $min;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

@@ -261,7 +261,7 @@ class ActionComm extends CommonObject
 	/**
 	 * @var int socpeople id linked to action
 	 */
-	public $contactid;
+	public $contact_id;
 
 	/**
 	 * @var Societe|null Company linked to action (optional)
@@ -273,7 +273,7 @@ class ActionComm extends CommonObject
 	/**
 	 * @var Contact|null Contact linked to action (optional)
 	 * @deprecated
-	 * @see $contactid
+	 * @see $contact_id
 	 */
 	public $contact;
 
@@ -2340,7 +2340,7 @@ class ActionComm extends CommonObject
 						$sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
 
 						//Topic
-						$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->trans('EventReminder'));
+						$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->transnoentities('EventReminder'));
 
 						// Recipient
 						$recipient = new User($this->db);

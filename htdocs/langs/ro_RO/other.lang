@@ -291,3 +291,7 @@ PopuCom=Produse/servicii după popularitate pe comenzile de vânzare
 ProductStatistics=Statistici produse/servicii
 NbOfQtyInOrders=Cantitate în comenzi 
 SelectTheTypeOfObjectToAnalyze=Selectează un obiect pentru a-i vedea statisticile...
+
+ConfirmBtnCommonContent = Eşti sigur că vrei să  "%s" ?
+ConfirmBtnCommonTitle = Confirmare acţiune
+CloseDialog = Închide

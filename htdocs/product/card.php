@@ -64,12 +64,11 @@ if (!empty($conf->commande->enabled)) {
 }
 if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-}
-if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-}
-if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+}
+if (!empty($conf->bom->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 }
 
 // Load translation files required by the page
@@ -89,8 +88,8 @@ $mesg = ''; $error = 0; $errors = array();
 $refalreadyexists = 0;
 
 $id = GETPOST('id', 'int');
-$ref = GETPOST('ref', 'alpha');
-$type = (GETPOST('type', 'int') !== '') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT;
+$ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : null);
+$type = (GETPOSTISSET('type') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT);
 $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -111,6 +110,16 @@ $label_security_check = empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_LABEL
 
 if (!empty($user->socid)) {
 	$socid = $user->socid;
+}
+
+// Load object modCodeProduct
+$module = (!empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) ? $conf->global->PRODUCT_CODEPRODUCT_ADDON : 'mod_codeproduct_leopard');
+if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php') {
+	$module = substr($module, 0, dol_strlen($module) - 4);
+}
+$result = dol_include_once('/core/modules/product/'.$module.'.php');
+if ($result > 0) {
+	$modCodeProduct = new $module();
 }
 
 $object = new Product($db);
@@ -248,9 +257,11 @@ if (empty($reshook)) {
 			$error++;
 		}
 		if (empty($ref)) {
-			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Ref')), null, 'errors');
-			$action = "create";
-			$error++;
+			if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
+					setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Ref')), null, 'errors');
+					$action = "create";
+					$error++;
+			}
 		}
 		if (!empty($duration_value) && empty($duration_unit)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Unit')), null, 'errors');
@@ -383,32 +394,32 @@ if (empty($reshook)) {
 			$accountancy_code_buy_intra = GETPOST('accountancy_code_buy_intra', 'alpha');
 			$accountancy_code_buy_export = GETPOST('accountancy_code_buy_export', 'alpha');
 
-			if ($accountancy_code_sell <= 0) {
+			if (empty($accountancy_code_sell) || $accountancy_code_sell == '-1') {
 				$object->accountancy_code_sell = '';
 			} else {
 				$object->accountancy_code_sell = $accountancy_code_sell;
 			}
-			if ($accountancy_code_sell_intra <= 0) {
+			if (empty($accountancy_code_sell_intra) || $accountancy_code_sell_intra == '-1') {
 				$object->accountancy_code_sell_intra = '';
 			} else {
 				$object->accountancy_code_sell_intra = $accountancy_code_sell_intra;
 			}
-			if ($accountancy_code_sell_export <= 0) {
+			if (empty($accountancy_code_sell_export) || $accountancy_code_sell_export == '-1') {
 				$object->accountancy_code_sell_export = '';
 			} else {
 				$object->accountancy_code_sell_export = $accountancy_code_sell_export;
 			}
-			if ($accountancy_code_buy <= 0) {
+			if (empty($accountancy_code_buy) || $accountancy_code_buy == '-1') {
 				$object->accountancy_code_buy = '';
 			} else {
 				$object->accountancy_code_buy = $accountancy_code_buy;
 			}
-			if ($accountancy_code_buy_intra <= 0) {
+			if (empty($accountancy_code_buy_intra) || $accountancy_code_buy_intra == '-1') {
 				$object->accountancy_code_buy_intra = '';
 			} else {
 				$object->accountancy_code_buy_intra = $accountancy_code_buy_intra;
 			}
-			if ($accountancy_code_buy_export <= 0) {
+			if (empty($accountancy_code_buy_export) || $accountancy_code_buy_export == '-1') {
 				$object->accountancy_code_buy_export = '';
 			} else {
 				$object->accountancy_code_buy_export = $accountancy_code_buy_export;
@@ -430,6 +441,11 @@ if (empty($reshook)) {
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
 			if ($ret < 0) {
 				$error++;
+			}
+
+			if (!$ref && !empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
+				// Generate ref...
+				$ref = $modCodeProduct->getNextValue($object, $type);
 			}
 
 			if (!$error) {
@@ -471,7 +487,9 @@ if (empty($reshook)) {
 			if ($object->id > 0) {
 				$object->oldcopy = clone $object;
 
-				$object->ref                    = $ref;
+				if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
+					$object->ref                = $ref;
+				}
 				$object->label                  = GETPOST('label', $label_security_check);
 
 				$desc = dol_htmlcleanlastbr(preg_replace('/&nbsp;$/', '', GETPOST('desc', 'restricthtml')));
@@ -522,6 +540,13 @@ if (empty($reshook)) {
 					$object->finished = null;
 				}
 
+				$fk_default_bom = GETPOST('fk_default_bom', 'int');
+				if ($fk_default_bom >= 0) {
+					$object->fk_default_bom = $fk_default_bom;
+				} else {
+					$object->fk_default_bom = null;
+				}
+
 				$units = GETPOST('units', 'int');
 				if ($units > 0) {
 					$object->fk_unit = $units;
@@ -552,32 +577,32 @@ if (empty($reshook)) {
 				$accountancy_code_buy_intra = GETPOST('accountancy_code_buy_intra', 'alpha');
 				$accountancy_code_buy_export = GETPOST('accountancy_code_buy_export', 'alpha');
 
-				if ($accountancy_code_sell <= 0) {
+				if (empty($accountancy_code_sell) || $accountancy_code_sell == '-1') {
 					$object->accountancy_code_sell = '';
 				} else {
 					$object->accountancy_code_sell = $accountancy_code_sell;
 				}
-				if ($accountancy_code_sell_intra <= 0) {
+				if (empty($accountancy_code_sell_intra) || $accountancy_code_sell_intra == '-1') {
 					$object->accountancy_code_sell_intra = '';
 				} else {
 					$object->accountancy_code_sell_intra = $accountancy_code_sell_intra;
 				}
-				if ($accountancy_code_sell_export <= 0) {
+				if (empty($accountancy_code_sell_export) || $accountancy_code_sell_export == '-1') {
 					$object->accountancy_code_sell_export = '';
 				} else {
 					$object->accountancy_code_sell_export = $accountancy_code_sell_export;
 				}
-				if ($accountancy_code_buy <= 0) {
+				if (empty($accountancy_code_buy) || $accountancy_code_buy == '-1') {
 					$object->accountancy_code_buy = '';
 				} else {
 					$object->accountancy_code_buy = $accountancy_code_buy;
 				}
-				if ($accountancy_code_buy_intra <= 0) {
+				if (empty($accountancy_code_buy_intra) || $accountancy_code_buy_intra == '-1') {
 					$object->accountancy_code_buy_intra = '';
 				} else {
 					$object->accountancy_code_buy_intra = $accountancy_code_buy_intra;
 				}
-				if ($accountancy_code_buy_export <= 0) {
+				if (empty($accountancy_code_buy_export) || $accountancy_code_buy_export == '-1') {
 					$object->accountancy_code_buy_export = '';
 				} else {
 					$object->accountancy_code_buy_export = $accountancy_code_buy_export;
@@ -1016,14 +1041,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		//WYSIWYG Editor
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-		print '<script type="text/javascript">';
-				print '$(document).ready(function () {
+		if (!empty($conf->use_javascript_ajax)) {
+			print '<script type="text/javascript">';
+			print '$(document).ready(function () {
                         $("#selectcountry_id").change(function() {
                         	document.formprod.action.value="create";
                         	document.formprod.submit();
                         });
                      });';
-				print '</script>'."\n";
+			print '</script>'."\n";
+		}
 
 		// Load object modCodeProduct
 		$module = (!empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) ? $conf->global->PRODUCT_CODEPRODUCT_ADDON : 'mod_codeproduct_leopard');
@@ -1071,16 +1098,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		print '<table class="border centpercent">';
 
-		print '<tr>';
-		$tmpcode = '';
-		if (!empty($modCodeProduct->code_auto)) {
-			$tmpcode = $modCodeProduct->getNextValue($object, $type);
+		if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
+			print '<tr>';
+			$tmpcode = '';
+			if (!empty($modCodeProduct->code_auto)) {
+				$tmpcode = $modCodeProduct->getNextValue($object, $type);
+			}
+			print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
+			if ($refalreadyexists) {
+				print $langs->trans("RefAlreadyExists");
+			}
+			print '</td></tr>';
 		}
-		print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
-		if ($refalreadyexists) {
-			print $langs->trans("RefAlreadyExists");
-		}
-		print '</td></tr>';
 
 		// Label
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth300 maxwidth400onsmartphone" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label', $label_security_check)).'"></td></tr>';
@@ -1106,11 +1135,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Product specific batch number management
 			$status_batch = GETPOST('status_batch');
 			if ($status_batch !== '0') {
+				$langs->load("admin");
 				$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
-				$tooltip .= $langs->trans("GenericMaskCodes2");
-				$tooltip .= $langs->trans("GenericMaskCodes3");
-				$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
-				$tooltip .= $langs->trans("GenericMaskCodes5");
+				$tooltip .= '<br>'.$langs->trans("GenericMaskCodes2");
+				$tooltip .= '<br>'.$langs->trans("GenericMaskCodes3");
+				$tooltip .= '<br>'.$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
+				$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5");
 				if (($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced')
 					|| ($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced')) {
 					print '<tr><td id="mask_option">'.$langs->trans("ManageLotMask").'</td>';
@@ -1212,8 +1242,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td>'.$form->textwithpicto($langs->trans("StockLimit"), $langs->trans("StockLimitDesc"), 1).'</td><td>';
 				print '<input name="seuil_stock_alerte" class="maxwidth50" value="'.GETPOST('seuil_stock_alerte').'">';
 				print '</td>';
-
-				print '</tr><tr>';
+				print '</tr>';
 
 				// Stock desired level
 				print '<tr><td>'.$form->textwithpicto($langs->trans("DesiredStock"), $langs->trans("DesiredStockDesc"), 1).'</td><td>';
@@ -1231,7 +1260,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if ($type == 1) {
 			print '<tr><td>'.$langs->trans("Duration").'</td><td>';
 			print '<input name="duration_value" size="4" value="'.GETPOST('duration_value', 'int').'">';
-			print $formproduct->selectMeasuringUnits("duration_unit", "time", GETPOST('duration_value', 'alpha'), 0, 1);
+			print $formproduct->selectMeasuringUnits("duration_unit", "time", (GETPOSTISSET('duration_value') ? GETPOSTISSET('duration_value', 'alpha') : 'h'), 0, 1);
 			print '</td></tr>';
 		}
 
@@ -1243,7 +1272,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print $form->selectarray('finished', $statutarray, GETPOST('finished', 'alpha'), 1);
 				print '</td></tr>';
 			}
+		}
 
+		if ($type != 1) {
 			if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
 				// Brut Weight
 				print '<tr><td>'.$langs->trans("Weight").'</td><td>';
@@ -1301,7 +1332,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td>'.$langs->trans("CountryOrigin").'</td>';
 			print '<td>';
 			print img_picto('', 'globe-americas', 'class="paddingrightonly"');
-			print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 widthcentpercentminusx');
+			print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 widthcentpercentminusx maxwidth500');
 			if ($user->admin) {
 				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			}
@@ -1316,6 +1347,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td>';
 				}
 
+				print img_picto('', 'state', 'class="pictofixedwidth"');
 				print $formcompany->select_state($object->state_id, $object->country_code);
 				print '</tr>';
 			}
@@ -1549,14 +1581,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			//WYSIWYG Editor
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-			print '<script type="text/javascript">';
+			if (!empty($conf->use_javascript_ajax)) {
+				print '<script type="text/javascript">';
 				print '$(document).ready(function () {
                         $("#selectcountry_id").change(function () {
                         	document.formprod.action.value="edit";
                         	document.formprod.submit();
                         });
-		});';
+				});';
 				print '</script>'."\n";
+			}
 
 			// We set country_id, country_code and country for the selected country
 			$object->country_id = GETPOST('country_id') ? GETPOST('country_id') : $object->country_id;
@@ -1626,57 +1660,66 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
 					print $form->selectarray('status_batch', $statutarray, $object->status_batch);
 					print '</td></tr>';
-					if ($object->status_batch !== '0') {
+					if (!empty($object->status_batch) || !empty($conf->use_javascript_ajax)) {
+						$langs->load("admin");
 						$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
-						$tooltip .= $langs->trans("GenericMaskCodes2");
-						$tooltip .= $langs->trans("GenericMaskCodes3");
-						$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
-						$tooltip .= $langs->trans("GenericMaskCodes5");
+						$tooltip .= '<br>'.$langs->trans("GenericMaskCodes2");
+						$tooltip .= '<br>'.$langs->trans("GenericMaskCodes3");
+						$tooltip .= '<br>'.$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
+						$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5");
 						print '<tr><td id="mask_option">'.$langs->trans("ManageLotMask").'</td>';
-						if ($object->status_batch == '1' && $conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced') {
-							$mask = !empty($object->batch_mask) ? $object->batch_mask : $conf->global->LOT_ADVANCED_MASK;
+						if ($object->status_batch == '1' && getDolGlobalString('PRODUCTBATCH_LOT_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced') {
+							$mask = !empty($object->batch_mask) ? $object->batch_mask : getDolGlobalString('LOT_ADVANCED_MASK');
 						}
-						if ($object->status_batch == '2' && $conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced') {
-							$mask = !empty($object->batch_mask) ? $object->batch_mask : $conf->global->SN_ADVANCED_MASK;
+						if ($object->status_batch == '2' && getDolGlobalString('PRODUCTBATCH_SN_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced') {
+							$mask = !empty($object->batch_mask) ? $object->batch_mask : getDolGlobalString('SN_ADVANCED_MASK');
 						}
-						$inherited_mask_lot = $conf->global->LOT_ADVANCED_MASK;
-						$inherited_mask_sn = $conf->global->SN_ADVANCED_MASK;
+						$inherited_mask_lot = getDolGlobalString('LOT_ADVANCED_MASK');
+						$inherited_mask_sn = getDolGlobalString('SN_ADVANCED_MASK');
 						print '<td id="field_mask">';
 						print $form->textwithpicto('<input type="text" class="flat minwidth175" name="batch_mask" id="batch_mask_input" value="'.$mask.'">', $tooltip, 1, 1);
-
-						print '<script type="text/javascript">
-						$(document).ready(function() {
-							$("#field_mask, #mask_option").addClass("hideobject");
-							var preselect = $("#status_batch option:selected");
-							if (preselect !== "0") {
-								$("#field_mask, #mask_option").toggleClass("hideobject");
+						// Add javascript to sho/hide field for custom mask
+						if (!empty($conf->use_javascript_ajax)) {
+							print '<script type="text/javascript">
+							$(document).ready(function() {
+								$("#field_mask").parent().addClass("hideobject");
+								var preselect = document.getElementById("status_batch");';
+							if (getDolGlobalString('PRODUCTBATCH_SN_USE_PRODUCT_MASKS')) {
+								print 'if (preselect.value == "2") {
+										$("#field_mask").parent().removeClass("hideobject");
+									}';
 							}
-							$("#status_batch").on("change", function () {
-								console.log("We change batch status");
-								var optionSelected = $("option:selected", this);
-								var valueSelected = this.value;
-								$("#field_mask, #mask_option").addClass("hideobject");
-						';
-						if ($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced') {
-							print '
-								if (this.value == 1) {
-									$("#field_mask, #mask_option").toggleClass("hideobject");
-									$("#batch_mask_input").val("'.$inherited_mask_lot.'");
-								}
+							if (getDolGlobalString('PRODUCTBATCH_LOT_USE_PRODUCT_MASKS')) {
+								print 'if (preselect.value == "1") {
+										$("#field_mask").parent().removeClass("hideobject");
+									}';
+							}
+							print '$("#status_batch").on("change", function () {
+									var optionSelected = $("option:selected", this);
+									var valueSelected = this.value;
+									$("#field_mask").parent().addClass("hideobject");
 							';
-						}
-						if ($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced') {
+							if (getDolGlobalString('PRODUCTBATCH_LOT_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced') {
+								print '
+									if (this.value == 1) {
+										$("#field_mask").parent().removeClass("hideobject");
+										$("#batch_mask_input").val("'.$inherited_mask_lot.'");
+									}
+								';
+							}
+							if (getDolGlobalString('PRODUCTBATCH_SN_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced') {
+								print '
+									if (this.value == 2) {
+										$("#field_mask").parent().removeClass("hideobject");
+										$("#batch_mask_input").val("'.$inherited_mask_sn.'");
+									}
+								';
+							}
 							print '
-								if (this.value == 2) {
-									$("#field_mask, #mask_option").toggleClass("hideobject");
-									$("#batch_mask_input").val("'.$inherited_mask_sn.'");
-								}
-							';
-						}
-						print '
+								})
 							})
-						})
-					</script>';
+						</script>';
+						}
 						print '</td></tr>';
 					}
 				}
@@ -1724,6 +1767,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Public Url
 			if (empty($conf->global->PRODUCT_DISABLE_PUBLIC_URL)) {
 				print '<tr><td>'.$langs->trans("PublicUrl").'</td><td>';
+				print img_picto('', 'globe', 'class="pictofixedwidth"');
 				print '<input type="text" name="url" class="quatrevingtpercent" value="'.$object->url.'">';
 				print '</td></tr>';
 			}
@@ -1732,6 +1776,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if ($object->isProduct() && !empty($conf->stock->enabled)) {
 				// Default warehouse
 				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+				print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
 				print $formproduct->selectWarehouses($object->fk_default_warehouse, 'fk_default_warehouse', 'warehouseopen', 1);
 				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?action=create&type='.GETPOST('type', 'int')).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span></a>';
 				print '</td></tr>';
@@ -1765,7 +1810,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print $formproduct->selectProductNature('finished', $object->finished);
 					print '</td></tr>';
 				}
+			}
 
+			if (!$object->isService() && !empty($conf->bom->enabled)) {
+				print '<tr><td>'.$form->textwithpicto($langs->trans("DefaultBOM"), $langs->trans("DefaultBOMDesc", $langs->transnoentitiesnoconv("Finished"))).'</td><td>';
+				$bomkey = "Bom:bom/class/bom.class.php:0:t.status=1 AND t.fk_product=".$object->id;
+				print $form->selectForForms($bomkey, 'fk_default_bom', $object->fk_default_bom, 1);
+				print '</td></tr>';
+			}
+
+			if (!$object->isService()) {
 				if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
 					// Brut Weight
 					print '<tr><td>'.$langs->trans("Weight").'</td><td>';
@@ -1835,6 +1889,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td>';
 					}
 
+					print img_picto('', 'state', 'class="pictofixedwidth"');
 					print $formcompany->select_state($object->state_id, $object->country_code);
 					print '</td>';
 					print '</tr>';
@@ -2248,7 +2303,19 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print $object->getLibFinished();
 					print '</td></tr>';
 				}
+			}
 
+			if (!$object->isService() && !empty($conf->bom->enabled) && $object->finished) {
+				print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("DefaultBOM"), $langs->trans("DefaultBOMDesc", $langs->transnoentitiesnoconv("Finished"))).'</td><td>';
+				if ($object->fk_default_bom) {
+					$bom_static = new BOM($db);
+					$bom_static->fetch($object->fk_default_bom);
+					print $bom_static->getNomUrl(1);
+				}
+				print '</td></tr>';
+			}
+
+			if (!$object->isService()) {
 				// Brut Weight
 				if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
 					print '<tr><td class="titlefield">'.$langs->trans("Weight").'</td><td>';
@@ -2370,16 +2437,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	}
 }
 
-// Load object modCodeProduct
-$module = (!empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) ? $conf->global->PRODUCT_CODEPRODUCT_ADDON : 'mod_codeproduct_leopard');
-if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php') {
-	$module = substr($module, 0, dol_strlen($module) - 4);
-}
-$result = dol_include_once('/core/modules/product/'.$module.'.php');
-if ($result > 0) {
-	$modCodeProduct = new $module();
-}
-
 $tmpcode = '';
 if (!empty($modCodeProduct->code_auto)) {
 	$tmpcode = $modCodeProduct->getNextValue($object, $object->type);
@@ -2399,7 +2456,7 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->d
 	// Define confirmation messages
 	$formquestionclone = array(
 		'text' => $langs->trans("ConfirmClone"),
-		array('type' => 'text', 'name' => 'clone_ref', 'label' => $langs->trans("NewRefForClone"), 'value' => empty($tmpcode) ? $langs->trans("CopyOf").' '.$object->ref : $tmpcode, 'size'=>24),
+		array('type' => 'text', 'name' => 'clone_ref', 'label' => $langs->trans("NewRefForClone"), 'value' => empty($tmpcode) ? $langs->trans("CopyOf").' '.$object->ref : $tmpcode, 'morecss'=>'width150'),
 		array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneContentProduct"), 'value' => 1),
 		array('type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans("CloneCategoriesProduct"), 'value' => 1),
 	);

@@ -55,7 +55,7 @@ TypeContact_ticket_internal_SUPPORTTEC=Assigned user
 TypeContact_ticket_external_SUPPORTCLI=Customer contact / incident tracking
 TypeContact_ticket_external_CONTRIBUTOR=External contributor
 
-OriginEmail=Email reporter
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Send ticket message by email
 
 # Status
@@ -66,7 +66,7 @@ NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
 Answered=Answered
 Waiting=Waiting
-Closed=Closed
+SolvedClosed=Solved
 Deleted=Deleted
 
 # Dict
@@ -186,9 +186,11 @@ TicketSeverity=Severity
 ShowTicket=See ticket
 RelatedTickets=Related tickets
 TicketAddIntervention=Create intervention
-CloseTicket=Close ticket
-CloseATicket=Close a ticket
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Confirm ticket closing
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Please confirm ticket deleting
 TicketDeletedSuccess=Ticket deleted with success
 TicketMarkedAsClosed=Ticket marked as closed

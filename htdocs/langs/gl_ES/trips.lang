@@ -90,7 +90,6 @@ DATE_REFUS=Data de denegación
 DATE_SAVE=Data de validación
 DATE_CANCEL=Data de cancelación
 DATE_PAIEMENT=Data de pagamento
-BROUILLONNER=Abrir de novo
 ExpenseReportRef=Ref. informe de gasto
 ValidateAndSubmit=Validar e enviar para aprobar
 ValidatedWaitingApproval=Validado (agardando aprobación)

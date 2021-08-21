@@ -902,7 +902,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	}
 	*/
 	if (!empty($arrayfields['c.assigned']['checked'])) {
-		print_liste_field_titre($arrayfields['c.assigned']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ', '');
+		print_liste_field_titre($arrayfields['c.assigned']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ', '');
 	}
 	// Extra fields
 	$disablesortlink = 1;

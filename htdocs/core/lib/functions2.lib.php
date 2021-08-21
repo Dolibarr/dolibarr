@@ -1876,7 +1876,7 @@ function version_os($option = '')
  * 	Return PHP version
  *
  * 	@return		string			PHP version
- *  @see		versionphparray()
+ *  @see		versionphparray(), versioncompare()
  */
 function version_php()
 {
@@ -1887,7 +1887,7 @@ function version_php()
  * 	Return Dolibarr version
  *
  * 	@return		string			Dolibarr version
- *  @see		versiondolibarrarray()
+ *  @see		versiondolibarrarray(), versioncompare()
  */
 function version_dolibarr()
 {
@@ -2700,7 +2700,7 @@ function convertBackOfficeMediasLinksToPublicLinks($notetoshow)
  *		Function to format a value into a defined format for French administration (no thousand separator & decimal separator force to ',' with two decimals)
  *		Function used into accountancy FEC export
  *
- *		@param	float		$amount			Amount to format
+ *		@param	float		$amount		Amount to format
  *		@return	string					Chain with formatted upright
  *		@see	price2num()				Format a numeric into a price for FEC files
  */

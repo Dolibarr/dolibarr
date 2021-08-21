@@ -169,7 +169,7 @@ class PaymentExpenseReport extends CommonObject
 			$sql .= " VALUES ($this->fk_expensereport, '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datepaid)."',";
 			$sql .= " ".price2num($totalamount).",";
-			$sql .= " ".$this->fk_typepayment.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ".$user->id.",";
+			$sql .= " ".((int) $this->fk_typepayment).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ".((int) $user->id).",";
 			$sql .= " 0)";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);

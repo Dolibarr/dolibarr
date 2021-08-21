@@ -122,24 +122,34 @@ class modTicket extends DolibarrModules
 		}
 		$this->dictionaries = array(
 			'langs' => 'ticket',
-			'tabname' => array(MAIN_DB_PREFIX."c_ticket_type", MAIN_DB_PREFIX."c_ticket_severity", MAIN_DB_PREFIX."c_ticket_category", MAIN_DB_PREFIX."c_ticket_resolution"),
-			'tablib' => array("TicketDictType", "TicketDictSeverity", "TicketDictCategory", "TicketDictResolution"),
+			'tabname' => array(
+				MAIN_DB_PREFIX."c_ticket_type",
+				MAIN_DB_PREFIX."c_ticket_severity",
+				MAIN_DB_PREFIX."c_ticket_category",
+				MAIN_DB_PREFIX."c_ticket_resolution"
+			),
+			'tablib' => array(
+				"TicketDictType",
+				"TicketDictSeverity",
+				"TicketDictCategory",
+				"TicketDictResolution"
+			),
 			'tabsql' => array(
 				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_type as f',
 				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_severity as f',
-				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.public FROM '.MAIN_DB_PREFIX.'c_ticket_category as f',
+				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.public, f.fk_parent FROM '.MAIN_DB_PREFIX.'c_ticket_category as f',
 				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_resolution as f'
 			),
 			'tabsqlsort' => array("pos ASC", "pos ASC", "pos ASC", "pos ASC"),
-			'tabfield' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public", "code,label,pos,use_default"),
-			'tabfieldvalue' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public", "code,label,pos,use_default"),
-			'tabfieldinsert' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public", "code,label,pos,use_default"),
+			'tabfield' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public,fk_parent", "code,label,pos,use_default"),
+			'tabfieldvalue' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public,fk_parent", "code,label,pos,use_default"),
+			'tabfieldinsert' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public,fk_parent", "code,label,pos,use_default"),
 			'tabrowid' => array("rowid", "rowid", "rowid", "rowid"),
-			'tabcond' => array($conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled),
+			'tabcond' => array($conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled && !empty($conf->global->TICKET_ENABLE_RESOLUTION)),
 			'tabhelp' => array(
 				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")),
 				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")),
-				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1"), 'public'=>$langs->trans("Enter0or1").'<br>'.$langs->trans("TicketGroupIsPublicDesc")),
+				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1"), 'public'=>$langs->trans("Enter0or1").'<br>'.$langs->trans("TicketGroupIsPublicDesc"), 'fk_parent'=>$langs->trans("IfThisCategoryIsChildOfAnother")),
 				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1"))
 			),
 		);
@@ -279,6 +289,19 @@ class modTicket extends DolibarrModules
 			'langs' => 'ticket',
 			'position' => 107,
 			'enabled' => '$conf->ticket->enabled',
+			'perms' => '$user->rights->ticket->read',
+			'target' => '',
+			'user' => 0);
+		$r++;
+
+		$this->menu[$r] = array('fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=ticket',
+			'type' => 'left',
+			'titre' => 'Categories',
+			'mainmenu' => 'ticket',
+			'url' => '/categories/index.php?type=12',
+			'langs' => 'ticket',
+			'position' => 107,
+			'enabled' => '$conf->categorie->enabled',
 			'perms' => '$user->rights->ticket->read',
 			'target' => '',
 			'user' => 0);

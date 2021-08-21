@@ -74,6 +74,11 @@ abstract class CommonObject
 	public $errors = array();
 
 	/**
+	 * @var array   To store error results of ->validateField()
+	 */
+	public $validateFieldsErrors = array();
+
+	/**
 	 * @var string ID to identify managed object
 	 */
 	public $element;
@@ -123,6 +128,10 @@ abstract class CommonObject
 	 */
 	protected $table_ref_field = '';
 
+	/**
+	 * @var integer   0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
+	 */
+	public $restrictiononfksoc = 0;
 
 
 	// Following vars are used by some objects only. We keep this property here in CommonObject to be able to provide common method using them.
@@ -940,7 +949,7 @@ abstract class CommonObject
 				$ecmfile->fullpath_orig = '';
 				$ecmfile->gen_or_uploaded = 'generated';
 				$ecmfile->description = '';    // indexed content
-				$ecmfile->keyword = '';        // keyword content
+				$ecmfile->keywords = '';        // keyword content
 				$ecmfile->share = getRandomPassword(true);
 				$result = $ecmfile->create($user);
 				if ($result < 0)
@@ -3016,6 +3025,7 @@ abstract class CommonObject
 	 */
 	public function updateRangOfLine($rowid, $rang)
 	{
+		global $hookmanager;
 		$fieldposition = 'rang'; // @todo Rename 'rang' into 'position'
 		if (in_array($this->table_element_line, array('bom_bomline', 'ecm_files', 'emailcollector_emailcollectoraction'))) {
 			$fieldposition = 'position';
@@ -3028,6 +3038,9 @@ abstract class CommonObject
 		if (!$this->db->query($sql)) {
 			dol_print_error($this->db);
 		}
+		$parameters=array('rowid'=>$rowid, 'rang'=>$rang, 'fieldposition' => $fieldposition);
+		$action='';
+		$reshook = $hookmanager->executeHooks('afterRankOfLineUpdate', $parameters, $this, $action);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -3791,7 +3804,6 @@ abstract class CommonObject
 					} elseif ($objecttype == 'contact') {
 						 $module = 'societe';
 					}
-
 					// Set classfile
 					$classfile = strtolower($subelement);
 					$classname = ucfirst($subelement);
@@ -3822,6 +3834,11 @@ abstract class CommonObject
 						$classpath = 'eventorganization/class';
 						$classfile = 'conferenceorboothattendee';
 						$classname = 'ConferenceOrBoothAttendee';
+						$module = 'eventorganization';
+					} elseif ($objecttype == 'conferenceorbooth') {
+						$classpath = 'eventorganization/class';
+						$classfile = 'conferenceorbooth';
+						$classname = 'ConferenceOrBooth';
 						$module = 'eventorganization';
 					}
 
@@ -4107,7 +4124,7 @@ abstract class CommonObject
 		$sql .= " SET ".$fieldstatus." = ".((int) $status);
 		// If status = 1 = validated, update also fk_user_valid
 		if ($status == 1 && $elementTable == 'expensereport') {
-			$sql .= ", fk_user_valid = ".$user->id;
+			$sql .= ", fk_user_valid = ".((int) $user->id);
 		}
 		$sql .= " WHERE rowid=".((int) $elementId);
 
@@ -4801,13 +4818,18 @@ abstract class CommonObject
 
 		if (!empty($this->lines)) {
 			foreach ($this->lines as $line) {
-				if (is_object($hookmanager) && (($line->product_type == 9 && !empty($line->special_code)) || !empty($line->fk_parent_line))) {
+				$reshook = 0;
+				//if (is_object($hookmanager) && (($line->product_type == 9 && !empty($line->special_code)) || !empty($line->fk_parent_line))) {
+				if (is_object($hookmanager)) {   // Old code is commented on preceding line.
 					if (empty($line->fk_parent_line)) {
-						$parameters = array('line'=>$line, 'i'=>$i);
-						$action = '';
-						$hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+						$parameters = array('line'=>$line, 'i'=>$i, 'restrictlist'=>$restrictlist, 'selectedLines'=> $selectedLines);
+						$reshook = $hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+					} else {
+						$parameters = array('line'=>$line, 'i'=>$i, 'restrictlist'=>$restrictlist, 'selectedLines'=> $selectedLines, 'fk_parent_line'=>$line->fk_parent_line);
+						$reshook = $hookmanager->executeHooks('printOriginObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 					}
-				} else {
+				}
+				if (empty($reshook)) {
 					$this->printOriginLine($line, '', $restrictlist, '/core/tpl', $selectedLines);
 				}
 
@@ -5261,7 +5283,7 @@ abstract class CommonObject
 								$ecmfile->fullpath_orig = '';
 								$ecmfile->gen_or_uploaded = 'generated';
 								$ecmfile->description = ''; // indexed content
-								$ecmfile->keyword = ''; // keyword content
+								$ecmfile->keywords = ''; // keyword content
 								$result = $ecmfile->update($user);
 								if ($result < 0) {
 									setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
@@ -5274,7 +5296,7 @@ abstract class CommonObject
 								$ecmfile->fullpath_orig = '';
 								$ecmfile->gen_or_uploaded = 'generated';
 								$ecmfile->description = ''; // indexed content
-								$ecmfile->keyword = ''; // keyword content
+								$ecmfile->keywords = ''; // keyword content
 								$ecmfile->src_object_type = $this->table_element;
 								$ecmfile->src_object_id   = $this->id;
 
@@ -6254,10 +6276,12 @@ abstract class CommonObject
 					$this->array_options["options_".$key] = price2num($this->array_options["options_".$key]);
 					break;
 				case 'date':
-					$this->array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key]);
-					break;
 				case 'datetime':
-					$this->array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key]);
+					if (empty($this->array_options["options_".$key])) {
+						$this->array_options["options_".$key] = null;
+					} else {
+						$this->array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key]);
+					}
 					break;
 				/*
 				case 'link':
@@ -6305,7 +6329,11 @@ abstract class CommonObject
 			}
 
 			if ($linealreadyfound) {
-				$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element."_extrafields SET ".$key." = '".$this->db->escape($this->array_options["options_".$key])."'";
+				if ($this->array_options["options_".$key] === null) {
+					$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element."_extrafields SET ".$key." = null";
+				} else {
+					$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element."_extrafields SET ".$key." = '".$this->db->escape($this->array_options["options_".$key])."'";
+				}
 				$sql .= " WHERE fk_object = ".$this->id;
 			} else {
 				$result = $this->insertExtraFields('', $user);
@@ -6395,6 +6423,16 @@ abstract class CommonObject
 
 		if (!empty($this->fields)) {
 			$val = $this->fields[$key];
+		}
+
+		// Validation tests and output
+		$fieldValidationErrorMsg = '';
+		$validationClass = '';
+		$fieldValidationErrorMsg = $this->getFieldError($key);
+		if (!empty($fieldValidationErrorMsg)) {
+			$validationClass = ' --error'; // the -- is use as class state in css :  .--error can't be be defined alone it must be define with another class like .my-class.--error or input.--error
+		} else {
+			$validationClass = ' --success'; // the -- is use as class state in css :  .--success can't be be defined alone it must be define with another class like .my-class.--success or input.--success
 		}
 
 		$out = '';
@@ -6488,6 +6526,11 @@ abstract class CommonObject
 			}
 		}
 
+		// Add validation state class
+		if (!empty($validationClass)) {
+			$morecss.= ' '.$validationClass;
+		}
+
 		if (in_array($type, array('date'))) {
 			$tmp = explode(',', $size);
 			$newsize = $tmp[0];
@@ -6515,11 +6558,11 @@ abstract class CommonObject
 		} elseif (in_array($type, array('int', 'integer'))) {
 			$tmp = explode(',', $size);
 			$newsize = $tmp[0];
-			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
+			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"'.($newsize > 0 ? ' maxlength="'.$newsize.'"' : '').' value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (in_array($type, array('real'))) {
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (preg_match('/varchar/', $type)) {
-			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
+			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"'.($size > 0 ? ' maxlength="'.$size.'"' : '').' value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (in_array($type, array('mail', 'phone', 'url'))) {
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (preg_match('/^text/', $type)) {
@@ -6954,6 +6997,12 @@ abstract class CommonObject
 		 if ($type == 'date') $out.=' (YYYY-MM-DD)';
 		 elseif ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
 		 */
+
+		// Display error message for field
+		if (!empty($fieldValidationErrorMsg) && function_exists('getFieldErrorIcon')) {
+			$out .= ' '.getFieldErrorIcon($fieldValidationErrorMsg);
+		}
+
 		return $out;
 	}
 
@@ -7293,6 +7342,228 @@ abstract class CommonObject
 		return $out;
 	}
 
+	/**
+	 * clear validation message result for a field
+	 *
+	 * @param string $fieldKey Key of attribute to clear
+	 * @return null
+	 */
+	public function clearFieldError($fieldKey)
+	{
+		$this->error = '';
+		unset($this->validateFieldsErrors[$fieldKey]);
+	}
+
+	/**
+	 * set validation error message a field
+	 *
+	 * @param string $fieldKey Key of attribute
+	 * @param string $msg the field error message
+	 * @return null
+	 */
+	public function setFieldError($fieldKey, $msg = '')
+	{
+		global $langs;
+		if (empty($msg)) { $msg = $langs->trans("UnknowError"); }
+
+		$this->error = $this->validateFieldsErrors[$fieldKey] = $msg;
+	}
+
+	/**
+	 * get field error message
+	 *
+	 * @param  string  $fieldKey            Key of attribute
+	 * @return string
+	 */
+	public function getFieldError($fieldKey)
+	{
+		if (!empty($this->validateFieldsErrors[$fieldKey])) {
+			return $this->validateFieldsErrors[$fieldKey];
+		}
+		return '';
+	}
+
+	/**
+	 * Return validation test result for a field
+	 *
+	 * @param  array   $val		       		Array of properties of field to show
+	 * @param  string  $fieldKey            Key of attribute
+	 * @param  string  $fieldValue          value of attribute
+	 * @return bool return false if fail true on success, see $this->error for error message
+	 */
+	public function validateField($val, $fieldKey, $fieldValue)
+	{
+		global $langs;
+
+		if (!class_exists('Validate')) { require_once DOL_DOCUMENT_ROOT . '/core/class/validate.class.php'; }
+
+		$this->clearFieldError($fieldKey);
+
+		if (!isset($val[$fieldKey])) {
+			$this->setFieldError($fieldKey, $langs->trans('FieldNotFoundInObject'));
+			return false;
+		}
+
+		$param = array();
+		$param['options'] = array();
+		$type  = $val[$fieldKey]['type'];
+
+		$required = false;
+		if (isset($val[$fieldKey]['notnull']) && $val[$fieldKey]['notnull'] === 1) {
+			// 'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+			$required = true;
+		}
+
+		$maxSize = 0;
+		$minSize = 0;
+
+		//
+		// PREPARE Elements
+		//
+
+		// Convert var to be able to share same code than showOutputField of extrafields
+		if (preg_match('/varchar\((\d+)\)/', $type, $reg)) {
+			$type = 'varchar'; // convert varchar(xx) int varchar
+			$maxSize = $reg[1];
+		} elseif (preg_match('/varchar/', $type)) {
+			$type = 'varchar'; // convert varchar(xx) int varchar
+		}
+
+		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+			$type = 'select';
+		}
+
+		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
+			$type = 'link';
+		}
+
+		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+			$param['options'] = $val['arrayofkeyval'];
+		}
+
+		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
+			$type = 'link';
+			$param['options'] = array($reg[1].':'.$reg[2]=>$reg[1].':'.$reg[2]);
+		} elseif (preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
+			$param['options'] = array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4] => 'N');
+			$type = 'sellist';
+		} elseif (preg_match('/^sellist:(.*):(.*):(.*)/i', $val['type'], $reg)) {
+			$param['options'] = array($reg[1].':'.$reg[2].':'.$reg[3] => 'N');
+			$type = 'sellist';
+		} elseif (preg_match('/^sellist:(.*):(.*)/i', $val['type'], $reg)) {
+			$param['options'] = array($reg[1].':'.$reg[2] => 'N');
+			$type = 'sellist';
+		}
+
+		//
+		// TEST Value
+		//
+
+		// Use Validate class to allow external Modules to use data validation part instead of concentrate all test here (factoring) or just for reuse
+		$validate = new Validate($this->db, $langs);
+
+
+		// little trick : to perform tests with good performances sort tests by quick to low
+
+		//
+		// COMMON TESTS
+		//
+
+		// Required test and empty value
+		if ($required && !$validate->isNotEmptyString($fieldValue)) {
+			$this->setFieldError($fieldKey, $validate->error);
+			return false;
+		} elseif (!$required && !$validate->isNotEmptyString($fieldValue)) {
+			// if no value sent and the field is not mandatory, no need to perform tests
+			return true;
+		}
+
+		// MAX Size test
+		if (!empty($maxSize) && !$validate->isMaxLength($fieldValue, $maxSize)) {
+			$this->setFieldError($fieldKey, $validate->error);
+			return false;
+		}
+
+		// MIN Size test
+		if (!empty($minSize) && !$validate->isMinLength($fieldValue, $minSize)) {
+			$this->setFieldError($fieldKey, $validate->error);
+			return false;
+		}
+
+		//
+		// TESTS for TYPE
+		//
+
+		if (in_array($type, array('date', 'datetime', 'timestamp'))) {
+			if (!$validate->isTimestamp($fieldValue)) {
+				$this->setFieldError($fieldKey, $validate->error);
+				return false;
+			} else { return true; }
+		} elseif ($type == 'duration') {
+			if (!$validate->isDuration($fieldValue)) {
+				$this->setFieldError($fieldKey, $validate->error);
+				return false;
+			} else { return true; }
+		} elseif (in_array($type, array('double', 'real', 'price'))) {
+			// is numeric
+			if (!$validate->isDuration($fieldValue)) {
+				$this->setFieldError($fieldKey, $validate->error);
+				return false;
+			} else { return true; }
+		} elseif ($type == 'boolean') {
+			if (!$validate->isBool($fieldValue)) {
+				$this->setFieldError($fieldKey, $validate->error);
+				return false;
+			} else { return true; }
+		} elseif ($type == 'mail') {
+			if (!$validate->isEmail($fieldValue)) {
+				$this->setFieldError($fieldKey, $validate->error);
+				return false;
+			}
+		} elseif ($type == 'url') {
+			if (!$validate->isUrl($fieldValue)) {
+				$this->setFieldError($fieldKey, $validate->error);
+				return false;
+			} else { return true; }
+		} elseif ($type == 'phone') {
+			if (!$validate->isPhone($fieldValue)) {
+				$this->setFieldError($fieldKey, $validate->error);
+				return false;
+			} else { return true; }
+		} elseif ($type == 'select' || $type == 'radio') {
+			if (!isset($param['options'][$fieldValue])) {
+				$this->error = $langs->trans('RequireValidValue');
+				return false;
+			} else { return true; }
+		} elseif ($type == 'sellist' || $type == 'chkbxlst') {
+			$param_list = array_keys($param['options']);
+			$InfoFieldList = explode(":", $param_list[0]);
+			$value_arr = explode(',', $fieldValue);
+			$value_arr = array_map(array($this->db, 'escape'), $value_arr);
+
+			$selectkey = "rowid";
+			if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
+				$selectkey = $InfoFieldList[2];
+			}
+
+			if (!isInDb($value_arr, $InfoFieldList[0], $selectkey)) {
+				$this->setFieldError($fieldKey, $validate->error);
+				return false;
+			} else { return true; }
+		} elseif ($type == 'link') {
+			$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath'
+			$InfoFieldList = explode(":", $param_list[0]);
+			$classname = $InfoFieldList[0];
+			$classpath = $InfoFieldList[1];
+			if (!$validate->isFetchable($fieldValue, $classname, $classpath)) {
+				$this->setFieldError($fieldKey, $validate->error);
+				return false;
+			} else { return true; }
+		}
+
+		// if no test failled all is ok
+		return true;
+	}
 
 	/**
 	 * Function to show lines of extrafields with output datas.
@@ -7486,6 +7757,9 @@ abstract class CommonObject
 
 						if ($display_type == 'card') {
 							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="valuefieldcreate '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
+							if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER) && $action == 'view') {
+								$out .= '<td></td>';
+							}
 							$out .= '<td class="wordbreak';
 						} elseif ($display_type == 'line') {
 							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="valuefieldlinecreate '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
@@ -7711,7 +7985,7 @@ abstract class CommonObject
 			$buyPrice = $unitPrice * (1 - $discountPercent / 100);
 		} else {
 			// Get cost price for margin calculation
-			if (!empty($fk_product)) {
+			if (!empty($fk_product) && $fk_product > 0) {
 				if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'costprice') {
 					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 					$product = new Product($this->db);
@@ -7896,7 +8170,7 @@ abstract class CommonObject
 						} else {
 							if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight) {
 								$return .= '<!-- Show thumb -->';
-								$return .= '<img class="photo photowithmargin maxwidth150onsmartphone" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
+								$return .= '<img class="photo photowithmargin maxwidth150onsmartphone maxwidth200" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
 							} else {
 								$return .= '<!-- Show original file -->';
 								$return .= '<img class="photo photowithmargin" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
@@ -8167,15 +8441,6 @@ abstract class CommonObject
 				} else {
 					$queryarray[$field] = $this->db->idate($this->{$field});
 				}
-			} elseif ($this->isArray($info)) {
-				if (!empty($this->{$field})) {
-					if (!is_array($this->{$field})) {
-						$this->{$field} = array($this->{$field});
-					}
-					$queryarray[$field] = serialize($this->{$field});
-				} else {
-					$queryarray[$field] = null;
-				}
 			} elseif ($this->isDuration($info)) {
 				// $this->{$field} may be null, '', 0, '0', 123, '123'
 				if ((isset($this->{$field}) && $this->{$field} != '') || !empty($info['notnull'])) {
@@ -8235,16 +8500,6 @@ abstract class CommonObject
 					$this->{$field} = '';
 				} else {
 					$this->{$field} = $db->jdate($obj->{$field});
-				}
-			} elseif ($this->isArray($info)) {
-				if (!empty($obj->{$field})) {
-					$this->{$field} = @unserialize($obj->{$field});
-					// Hack for data not in UTF8
-					if ($this->{$field } === false) {
-						@unserialize(utf8_decode($obj->{$field}));
-					}
-				} else {
-					$this->{$field} = array();
 				}
 			} elseif ($this->isInt($info)) {
 				if ($field == 'rowid') {
@@ -8542,7 +8797,6 @@ abstract class CommonObject
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
-				dol_syslog("aaa=".$this->id);
 
 				return $this->id;
 			} else {

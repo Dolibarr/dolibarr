@@ -209,7 +209,7 @@ input, select {
 	margin-bottom: 1px;
 	margin-top: 1px;
 }
-#mainbody input.button:not(.buttongen):not(.bordertransp) {
+#mainbody input.button:not(.buttongen):not(.bordertransp), #mainbody a.button:not(.buttongen):not(.bordertransp) {
 	background: var(--butactionbg);
 	color: #FFF !important;
 	border-radius: 3px;
@@ -234,9 +234,11 @@ input.button.massactionconfirmed {
 	margin: 4px;
 }
 
-input:invalid, select:invalid {
+input:invalid, select:invalid, input.--error , select.--error {
 	border-color: #ea1212;
 }
+
+.field-error-icon { color: #ea1212; !important; }
 
 /* Focus definitions must be after standard definition */
 textarea:focus {
@@ -435,7 +437,7 @@ input.pageplusone {
 	transform: scale(-1, 1);
 }
 
-select:invalid {
+select:invalid, select.--error {
 	color: gray;
 }
 input:disabled, textarea:disabled, select[disabled='disabled']
@@ -644,6 +646,12 @@ textarea.centpercent {
 .small, small {
 	font-size: 85%;
 }
+.large {
+	font-size: 125%;
+}
+.double {
+	font-size: 2em;
+}
 
 .h1 .small, .h1 small, .h2 .small, .h2 small, .h3 .small, .h3 small, h1 .small, h1 small, h2 .small, h2 small, h3 .small, h3 small {
 	font-size: 65%;
@@ -732,6 +740,9 @@ textarea.centpercent {
 }
 .paddingleft2 {
 	padding-<?php print $left; ?>: 2px;
+}
+.paddingleft2imp {
+	padding-<?php print $left; ?>: 2px !important;
 }
 .paddingright {
 	padding-<?php print $right; ?>: 4px;
@@ -1376,6 +1387,7 @@ table[summary="list_of_modules"] .fa-cog {
 .width400 { width: 400px; }
 .width500 { width: 500px; }
 .maxwidth25  { max-width: 25px; }
+.maxwidth40  { max-width: 40px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
 .maxwidthdate  { max-width: 80px; }
@@ -2088,7 +2100,7 @@ span.widthpictotitle.pictotitle {
 	vertical-align: middle;
 	margin-top: -3px
 }
-.pictowarning, .pictoerror, .pictopreview {
+.pictowarning, .pictoerror, .pictopreview, .picto.error {
 	padding-<?php echo $left; ?>: 3px;
 }
 .pictowarning {
@@ -2640,7 +2652,7 @@ table.login_table_securitycode tr td {
 }
 
 div.backgroundsemitransparent {
-	background:rgba(255,255,255,0.68);
+	background:rgba(255, 255, 255, 0.7);
 	padding-left: 10px;
 	padding-right: 10px;
 }
@@ -3922,6 +3934,11 @@ table.noborder.paymenttable {
 	box-shadow: 1px 1px 7px #CCC !important;
 }
 
+.boxshadow {
+	-webkit-box-shadow: 0px 0px 5px #888;
+	box-shadow: 0px 0px 5px #888;
+}
+
 div.tabBar .noborder {
 	-webkit-box-shadow: 0px 0px 0px #DDD !important;
 	box-shadow: 0px 0px 0px #DDD !important;
@@ -4525,6 +4542,9 @@ div#card-errors {
 .ui-dialog-content {
 }
 
+.ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-dialog-buttons.ui-draggable {
+	z-index: 1002 !important;		/* Default 101 with jquery, top menu have a z-index of 1000 */
+}
 
 /* ============================================================================== */
 /* For content of image preview                                                   */

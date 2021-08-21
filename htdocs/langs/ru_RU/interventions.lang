@@ -64,5 +64,5 @@ InterLineDuration=Вмешательство продолжительности 
 InterLineDesc=Вмешательство описания линии
 RepeatableIntervention=Шаблон вмешательства
 ToCreateAPredefinedIntervention=Чтобы создать предопределенное или повторяющееся вмешательство, создайте общее вмешательство и преобразуйте его в шаблон вмешательства.
-Reopen=Открыть заново
 ConfirmReopenIntervention=Вы уверены, что хотите снова открыть интервенцию <b> %s </b>?
+GenerateInter=Generate intervention

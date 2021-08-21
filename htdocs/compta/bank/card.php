@@ -212,7 +212,7 @@ if (empty($reshook)) {
 		$object->ics = trim(GETPOST("ics", 'alpha'));
 		$object->ics_transfer = trim(GETPOST("ics_transfer", 'alpha'));
 
-		$account_number = GETPOST('account_number', 'alpha');
+		$account_number = GETPOST('account_number', 'alphanohtml');
 		if (empty($account_number) || $account_number == '-1') {
 			$object->account_number = '';
 		} else {
@@ -399,7 +399,8 @@ if ($action == 'create') {
 	// State
 	print '<tr><td>'.$langs->trans('State').'</td><td>';
 	if ($selectedcode) {
-		$formcompany->select_departement(GETPOSTISSET("account_state_id") ? GETPOST("account_state_id") : '', $selectedcode, 'account_state_id');
+		print img_picto('', 'state', 'class="pictofixedwidth"');
+		print $formcompany->select_state(GETPOSTISSET("account_state_id") ? GETPOST("account_state_id") : '', $selectedcode, 'account_state_id');
 	} else {
 		print $countrynotdefined;
 	}
@@ -407,7 +408,10 @@ if ($action == 'create') {
 
 	// Web
 	print '<tr><td>'.$langs->trans("Web").'</td>';
-	print '<td><input class="minwidth300" type="text" class="flat" name="url" value="'.GETPOST("url").'"></td></tr>';
+	print '<td>';
+	print img_picto('', 'globe', 'class="pictofixedwidth"');
+	print '<input class="minwidth300" type="text" class="flat" name="url" value="'.GETPOST("url").'">';
+	print '</td></tr>';
 
 	// Tags-Categories
 	if ($conf->categorie->enabled) {
@@ -750,13 +754,13 @@ if ($action == 'create') {
 			print '</td></tr>';
 
 			if ($conf->prelevement->enabled) {
-				print '<tr><td>'.$langs->trans("ICS").'</td>';
+				print '<tr><td>'.$langs->trans("ICS").' ('.$langs->trans("StandingOrder").')</td>';
 				print '<td>'.$object->ics.'</td>';
 				print '</tr>';
 			}
 
 			if ($conf->paymentbybanktransfer->enabled) {
-				print '<tr><td>'.$langs->trans("ICSTransfer").'</td>';
+				print '<tr><td>'.$langs->trans("ICS").' ('.$langs->trans("BankTransfer").')</td>';
 				print '<td>'.$object->ics_transfer.'</td>';
 				print '</tr>';
 			}
@@ -865,6 +869,7 @@ if ($action == 'create') {
 		if (!$selectedcode) {
 			$selectedcode = $conf->currency;
 		}
+		print img_picto('', 'multicurrency', 'class="pictofixedwidth"');
 		print $form->selectCurrency((GETPOSTISSET("account_currency_code") ? GETPOST("account_currency_code") : $selectedcode), 'account_currency_code');
 		//print $langs->trans("Currency".$conf->currency);
 		//print '<input type="hidden" name="account_currency_code" value="'.$conf->currency.'">';
@@ -897,6 +902,7 @@ if ($action == 'create') {
 		// State
 		print '<tr><td>'.$langs->trans('State').'</td><td class="maxwidth200onsmartphone">';
 		if ($selectedcode) {
+			print img_picto('', 'state', 'class="pictofixedwidth"');
 			print $formcompany->select_state(GETPOSTISSET("account_state_id") ? GETPOST("account_state_id") : $object->state_id, $selectedcode, 'account_state_id');
 		} else {
 			print $countrynotdefined;
@@ -925,7 +931,9 @@ if ($action == 'create') {
 
 		// Web
 		print '<tr><td>'.$langs->trans("Web").'</td>';
-		print '<td><input class="maxwidth200onsmartphone" type="text" class="flat" name="url" value="'.(GETPOSTISSET("url") ? GETPOST("url") : $object->url).'">';
+		print '<td>';
+		print img_picto('', 'globe', 'class="pictofixedwidth"');
+		print '<input class="maxwidth200onsmartphone" type="text" class="flat" name="url" value="'.(GETPOSTISSET("url") ? GETPOST("url") : $object->url).'">';
 		print '</td></tr>';
 
 		// Tags-Categories
@@ -1045,12 +1053,12 @@ if ($action == 'create') {
 			print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="11" type="text" class="flat" name="bic" value="'.$object->bic.'"></td></tr>';
 
 			if ($conf->prelevement->enabled) {
-				print '<tr><td>'.$langs->trans("ICS").'</td>';
+				print '<tr><td>'.$langs->trans("ICS").' ('.$langs->trans("StandingOrder").')</td>';
 				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics" value="'.$object->ics.'"></td></tr>';
 			}
 
 			if ($conf->paymentbybanktransfer->enabled) {
-				print '<tr><td>'.$langs->trans("ICSTransfer").'</td>';
+				print '<tr><td>'.$langs->trans("ICS").' ('.$langs->trans("BankTransfer").')</td>';
 				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics_transfer" value="'.$object->ics_transfer.'"></td></tr>';
 			}
 

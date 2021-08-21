@@ -128,3 +128,4 @@ PrintPaymentMethodOnReceipts=Wydrukuj metodę płatności na biletach | paragona
 WeighingScale=Skalę ważenia
 ShowPriceHT = Wyświetl kolumnę z ceną bez podatku (na ekranie)
 ShowPriceHTOnReceipt = Wyświetl kolumnę z ceną bez podatku (na paragonie)
+CustomerDisplay=Customer display

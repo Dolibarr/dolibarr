@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013-2014 Cedric GROSS         <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,8 +44,8 @@ class Productbatch extends CommonObject
 
 	public $tms = '';
 	public $fk_product_stock;
-	public $sellby = '';
-	public $eatby = '';
+	public $sellby = '';	// dlc
+	public $eatby = '';		// dmd/dluo
 	public $batch = '';
 	public $qty;
 	public $warehouseid;

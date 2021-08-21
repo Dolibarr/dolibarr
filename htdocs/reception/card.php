@@ -999,11 +999,11 @@ if ($action == 'create') {
 				}
 				if (!empty($conf->productbatch->enabled)) {
 					print '<td class="left">'.$langs->trans("batch_number").'</td>';
-					if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-						print '<td class="left">'.$langs->trans("EatByDate").'</td>';
-					}
 					if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 						print '<td class="left">'.$langs->trans("SellByDate").'</td>';
+					}
+					if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+						print '<td class="left">'.$langs->trans("EatByDate").'</td>';
 					}
 				}
 				print "</tr>\n";
@@ -1153,12 +1153,12 @@ if ($action == 'create') {
 					if (!empty($conf->productbatch->enabled)) {
 						if (!empty($product->status_batch)) {
 							print '<td><input name="batch'.$indiceAsked.'" value="'.$dispatchLines[$indiceAsked]['lot'].'"></td>';
-							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 								print '<td class="nowraponall">';
 								print $form->selectDate($dispatchLines[$indiceAsked]['DLC'], 'dlc'.$indiceAsked, '', '', 1, "");
 								print '</td>';
 							}
-							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 								print '<td class="nowraponall">';
 								print $form->selectDate($dispatchLines[$indiceAsked]['DLUO'], 'dluo'.$indiceAsked, '', '', 1, "");
 								print '</td>';
@@ -1829,14 +1829,14 @@ if ($action == 'create') {
 						print '<td>'.$formproduct->selectWarehouses($lines[$i]->fk_entrepot, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1).'</td>';
 						// Batch number managment
 						if ($conf->productbatch->enabled && !empty($lines[$i]->product->status_batch)) {
-							print '<td class="nowraponall"><input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"></br>';
-							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-								print $langs->trans('EatByDate').' : ';
-								print $form->selectDate($lines[$i]->eatby, 'dlc'.$line_id, '', '', 1, "").'</br>';
-							}
+							print '<td class="nowraponall"><input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"><br>';
 							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 								print $langs->trans('SellByDate').' : ';
-								print $form->selectDate($lines[$i]->sellby, 'dluo'.$line_id, '', '', 1, "");
+								print $form->selectDate($lines[$i]->sellby, 'dlc'.$line_id, '', '', 1, "").'</br>';
+							}
+							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+								print $langs->trans('EatByDate').' : ';
+								print $form->selectDate($lines[$i]->eatby, 'dluo'.$line_id, '', '', 1, "");
 							}
 							print '</td>';
 						}

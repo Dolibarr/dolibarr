@@ -11,7 +11,7 @@ ErrorBadValueForParamNotAString=Плохое значение для вашег�
 ErrorRefAlreadyExists=Ссылка <b> %s </b> уже существует.
 ErrorLoginAlreadyExists=Логин %s уже существует.
 ErrorGroupAlreadyExists=Группа %s уже существует.
-ErrorEmailAlreadyExists=Email %s already exists.
+ErrorEmailAlreadyExists=Электронная почта %s уже существует.
 ErrorRecordNotFound=Запись не найдена.
 ErrorFailToCopyFile=Не удалось скопировать файл '<b>%s</b>' в '<b>%s</b>'.
 ErrorFailToCopyDir=Не удалось скопировать каталог <b> %s </b> в <b> %s </b>.
@@ -264,6 +264,7 @@ ErrorAnAmountWithoutTaxIsRequired=Ошибка, сумма обязательн�
 ErrorAPercentIsRequired=Ошибка, введите процентное значение правильно
 ErrorYouMustFirstSetupYourChartOfAccount=Вы должны сначала настроить свой план счета
 ErrorFailedToFindEmailTemplate=Не удалось найти шаблон с кодовым названием %s
+ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Duration not defined on service. No way to calculate the hourly price.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Ваш параметр PHP upload_max_filesize (%s) выше, чем параметр PHP post_max_size (%s). Это непоследовательная установка.
@@ -301,3 +302,4 @@ ErrorActionCommPropertyUserowneridNotDefined=Требуется владелец
 ErrorActionCommBadType=Выбранный тип события (идентификатор: %n, код: %s) не существует в словаре типов событий
 CheckVersionFail=Ошибка проверки версии
 ErrorWrongFileName=Имя файла не может содержать __SOMETHING__
+ErrorNotInDictionaryPaymentConditions=Нет в Словаре условий оплаты, пожалуйста, измените.

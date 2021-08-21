@@ -1077,7 +1077,7 @@ class FormCompany extends Form
 			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			$out .= '</form>';
 		} else {
-			if ($selected) {
+			if ($selected > 0) {
 				$arr = $this->typent_array(0);
 				$typent = $arr[$selected];
 				$out .= $typent;
