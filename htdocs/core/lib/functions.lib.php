@@ -1320,8 +1320,8 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 
 		if (count($tmparrayoftags)) {
 			foreach ($tmparrayoftags as $tagtoreplace) {
-				$tmp = str_replace('<'.$tagtoreplace.'>', '__BEGINTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
-				$tmp = str_replace('</'.$tagtoreplace.'>', '__ENDTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
+				$tmp = str_ireplace('<'.$tagtoreplace.'>', '__BEGINTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
+				$tmp = str_ireplace('</'.$tagtoreplace.'>', '__ENDTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
 			}
 		}
 
@@ -1329,8 +1329,8 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 
 		if (count($tmparrayoftags)) {
 			foreach ($tmparrayoftags as $tagtoreplace) {
-				$result = str_replace('__BEGINTAGTOREPLACE'.$tagtoreplace.'__', '<'.$tagtoreplace.'>', $result);
-				$result = str_replace('__ENDTAGTOREPLACE'.$tagtoreplace.'__', '</'.$tagtoreplace.'>', $result);
+				$result = str_ireplace('__BEGINTAGTOREPLACE'.$tagtoreplace.'__', '<'.$tagtoreplace.'>', $result);
+				$result = str_ireplace('__ENDTAGTOREPLACE'.$tagtoreplace.'__', '</'.$tagtoreplace.'>', $result);
 			}
 		}
 
