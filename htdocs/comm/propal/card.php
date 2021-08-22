@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010-2016 Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2010-2018 Philippe Grand        <philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2021 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
@@ -121,7 +121,9 @@ $usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->
 $usercancreateorder = $user->rights->commande->creer;
 $usercancreateinvoice = $user->rights->facture->creer;
 $usercancreatecontract = $user->rights->contrat->creer;
-$usercancreateintervention = $user->rights->ficheinter->creer;
+if (!empty($conf->ficheinter->enabled)) {
+	$usercancreateintervention = $user->rights->ficheinter->creer;
+}
 $usercancreatepurchaseorder = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
 
 $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
