@@ -2038,8 +2038,8 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId6", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID6).'</span>';
 	}
 	if (!empty($conf->global->MAIN_INFO_TVAINTRA)) {
-	  $dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_TVAINTRA).'</span>';
-  }
+		$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_TVAINTRA).'</span>';
+	}
 	$dropdownBody .= '</div>';
 
 	$dropdownBody .= '<br>';
