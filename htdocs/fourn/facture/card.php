@@ -861,7 +861,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		// Standard invoice or Deposit invoice, created from a Predefined template invoice
+		// Standard invoice or Deposit invoice, not from a Predefined template invoice
 		if (GETPOST('type') == FactureFournisseur::TYPE_STANDARD || GETPOST('type') == FactureFournisseur::TYPE_DEPOSIT) {
 			if (GETPOST('socid', 'int') < 1) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Supplier')), null, 'errors');
@@ -1085,12 +1085,12 @@ if (empty($reshook)) {
 									1,
 									0,
 									0,
-									0,
 									null,
 									$object->origin,
 									0,
 									'',
 									$lines[$i]->special_code,
+									0,
 									0
 									//,$langs->trans('Deposit') //Deprecated
 								);
