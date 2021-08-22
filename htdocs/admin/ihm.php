@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,7 @@ if (!$user->admin) {
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'adminihm'; // To manage different context of search
 
-$mode = GETPOST('mode', 'aZ09') ? GETPOST('mode', 'aZ09') : 'language'; // 'language', 'template', 'login', 'other'
+$mode = GETPOST('mode', 'aZ09') ? GETPOST('mode', 'aZ09') : 'language'; // 'language', 'template', 'dashboard', 'login', 'other'
 
 if (!defined("MAIN_MOTD")) {
 	define("MAIN_MOTD", "");
@@ -206,6 +207,10 @@ if ($action == 'update') {
 		}
 	}
 
+	if ($mode == 'dashboard') {
+
+	}
+
 	if ($mode == 'other') {
 		dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT", GETPOST("main_size_liste_limit", 'int'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT", GETPOST("main_size_shortliste_limit", 'int'), 'chaine', 0, '', $conf->entity);
@@ -326,6 +331,84 @@ if ($mode == 'language') {
 if ($mode == 'template') {
 	// Themes and themes options
 	showSkins(null, 1);
+}
+
+if ($mode == 'dashboard') {
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="blockdashboard" class="noborder centpercent editmode tableforfield">';
+
+	print '<tr class="liste_titre"><th class="titlefieldmiddle" colspan="2">';
+	print $langs->trans("DashboardEnableBlockToShow");
+	print '</th></tr>';
+
+	// Block meteo
+	print '<tr class="oddeven"><td>' . $langs->trans('MAIN_DISABLE_METEO') . '</td><td>';
+	print ajax_constantonoff("MAIN_DISABLE_METEO", array(), $conf->entity, 0, 0, 1, 0);
+	print '</td>';
+	print '</tr>';
+
+	// Block agenda
+	print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockAgenda') . '</td><td>';
+	print ajax_constantonoff("MAIN_DISABLE_BLOCK_AGENDA", array(), $conf->entity, 0, 0, 1, 0);
+	print '</td>';
+	print '</tr>';
+
+	// Block agenda
+	print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockProject') . '</td><td>';
+	print ajax_constantonoff("MAIN_DISABLE_BLOCK_PROJECT", array(), $conf->entity, 0, 0, 1, 0);
+	print '</td>';
+	print '</tr>';
+
+	// Block customer
+	print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockCustomer') . '</td><td>';
+	print ajax_constantonoff("MAIN_DISABLE_BLOCK_CUSTOMER", array(), $conf->entity, 0, 0, 1, 0);
+	print '</td>';
+	print '</tr>';
+
+	// Block supplier
+	print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockSupplier') . '</td><td>';
+	print ajax_constantonoff("MAIN_DISABLE_BLOCK_SUPPLIER", array(), $conf->entity, 0, 0, 1, 0);
+	print '</td>';
+	print '</tr>';
+
+	// Block contract
+	print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockContract') . '</td><td>';
+	print ajax_constantonoff("MAIN_DISABLE_BLOCK_CONTRACT", array(), $conf->entity, 0, 0, 1, 0);
+	print '</td>';
+	print '</tr>';
+
+	// Block ticket
+	print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockTicket') . '</td><td>';
+	print ajax_constantonoff("MAIN_DISABLE_BLOCK_TICKET", array(), $conf->entity, 0, 0, 1, 0);
+	print '</td>';
+	print '</tr>';
+
+	// Block bank
+	print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockBank') . '</td><td>';
+	print ajax_constantonoff("MAIN_DISABLE_BLOCK_BANK", array(), $conf->entity, 0, 0, 1, 0);
+	print '</td>';
+	print '</tr>';
+
+	// Block adherent
+	print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockAdherent') . '</td><td>';
+	print ajax_constantonoff("MAIN_DISABLE_BLOCK_ADHERENT", array(), $conf->entity, 0, 0, 1, 0);
+	print '</td>';
+	print '</tr>';
+
+	// Block expense report
+	print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockExpenseReport') . '</td><td>';
+	print ajax_constantonoff("MAIN_DISABLE_BLOCK_EXPENSEREPORT", array(), $conf->entity, 0, 0, 1, 0);
+	print '</td>';
+	print '</tr>';
+
+	// Block holiday
+	print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockHoliday') . '</td><td>';
+	print ajax_constantonoff("MAIN_DISABLE_BLOCK_HOLIDAY", array(), $conf->entity, 0, 0, 1, 0);
+	print '</td>';
+	print '</tr>';
+
+	print '</table>' . "\n";
+	print '</div>';
 }
 
 if ($mode == 'other') {

@@ -685,6 +685,11 @@ function ihm_prepare_head()
 	$head[$h][2] = 'template';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=dashboard";
+	$head[$h][1] = $langs->trans("Dashboard");
+	$head[$h][2] = 'dashboard';
+	$h++;
+
 	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=login";
 	$head[$h][1] = $langs->trans("LoginPage");
 	$head[$h][2] = 'login';
