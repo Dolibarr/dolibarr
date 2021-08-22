@@ -258,7 +258,7 @@ class Propalmergepdfproduct extends CommonObject
 					$line->import_key = $obj->import_key;
 
 
-					if ($conf->global->MAIN_MULTILANGS) {
+					if (!empty($conf->global->MAIN_MULTILANGS)) {
 						$this->lines[$obj->file_name.'_'.$obj->lang] = $line;
 					} else {
 						$this->lines[$obj->file_name] = $line;
