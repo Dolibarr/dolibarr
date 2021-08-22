@@ -248,7 +248,7 @@ class Propalmergepdfproduct extends CommonObject
 
 					$line->fk_product = $obj->fk_product;
 					$line->file_name = $obj->file_name;
-					if ($conf->global->MAIN_MULTILANGS) {
+					if (!empty($conf->global->MAIN_MULTILANGS)) {
 						$line->lang = $obj->lang;
 					}
 					$line->fk_user_author = $obj->fk_user_author;
