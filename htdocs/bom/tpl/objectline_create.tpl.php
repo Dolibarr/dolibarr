@@ -61,6 +61,8 @@ if ($nolinesbefore) {
 	print '<td class="linecoldescription minwidth500imp">';
 	print '<div id="add"></div><span class="hideonsmartphone">'.$langs->trans('AddNewLine').'</span>';
 	print '</td>';
+	// Linked BOM
+	print '<td class="linecolBOM">'.$langs->trans('BOM').'</td>';
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 		print '<td class="linecoluseunit left">';
