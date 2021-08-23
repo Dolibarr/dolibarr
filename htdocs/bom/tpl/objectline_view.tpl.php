@@ -81,7 +81,7 @@ $coldisplay++;
 $tmpproduct = new Product($object->db);
 $tmpproduct->fetch($line->fk_product);
 $tmpbom = new BOM($object->db);
-$tmpbom->fetch($line->fk_bom_child);
+$res = $tmpbom->fetch($line->fk_bom_child);
 if (!empty($tmpbom->id)){
 	print '<a class="collapse_bom" id="collapse-'.$line->id.'" href="#">' . (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT) ? '(+)' : '(-)') . '&nbsp;</a>';
 }
@@ -193,7 +193,11 @@ if ($resql){
 		$sub_bom_line = new BOMLine($object->db);
 		$sub_bom_line->fetch($obj->rowid);
 
-		print '<tr style="display:none" class="sub_bom_lines" parentid="'.$line->id.'">';
+		if (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT)){
+			print '<tr style="display:none" class="sub_bom_lines" parentid="'.$line->id.'">';
+		} else {
+			print '<tr class="sub_bom_lines" parentid="'.$line->id.'">';
+		}
 
 		print '<td id="sub_bom_product_'.$sub_bom_line->id.'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$sub_bom_product->getNomUrl(1).'</td>';
 		if ($sub_bom_line->fk_bom_child > 0) {
