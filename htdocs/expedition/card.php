@@ -718,8 +718,9 @@ if (empty($reshook)) {
 								}
 							}
 						}
-					} else {
-						// Product no predefined
+					}
+				} else {
+						// Product Qty no predefined
 						$qty = "qtyl".$line_id;
 						$line->id = $line_id;
 						$line->qty = GETPOST($qty, 'int');
@@ -728,8 +729,7 @@ if (empty($reshook)) {
 							setEventMessages($line->error, $line->errors, 'errors');
 							$error++;
 						}
-						unset($_POST[$qty]);
-					}
+						unset($_POST[$qty]);					
 				}
 			}
 		}
@@ -2330,7 +2330,7 @@ if ($action == 'create') {
 				// Size
 				//print '<td class="center">'.$lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuringUnitString(0, "volume", $lines[$i]->volume_units).'</td>';
 
-				if ($action == 'editline' && $lines[$i]->id == $line_id) {
+				if ($action == 'editline' && $lines[$i]->id == $line_id) { //The two action buttons do not work. There is a defition of $action editline at code line 1948 - 1954 and the action updateline between lines 568 - 761. The save buttons looks not calling any action.
 					print '<td class="center" colspan="2" valign="middle">';
 					print '<input type="submit" class="button button-save" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'"><br>';
 					print '<input type="submit" class="button button-cancel" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'"><br>';
