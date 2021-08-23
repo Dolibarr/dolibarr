@@ -1229,7 +1229,9 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 					}
 
 					if ($ok) {
-						dol_syslog("Removed file ".$filename, LOG_DEBUG);
+						if (empty($nolog)) {
+							dol_syslog("Removed file ".$filename, LOG_DEBUG);
+						}
 
 						// Delete entry into ecm database
 						$rel_filetodelete = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filename);
@@ -1267,7 +1269,9 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 				$ok = unlink($file_osencoded);
 			}
 			if ($ok) {
-				dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
+				if (empty($nolog)) {
+					dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
+				}
 			} else {
 				dol_syslog("Failed to remove file ".$file_osencoded, LOG_WARNING);
 			}
