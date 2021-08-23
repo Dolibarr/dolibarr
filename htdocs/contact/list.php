@@ -389,7 +389,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
 }
 $sql .= ' WHERE p.entity IN ('.getEntity('socpeople').')';
 if (!$user->rights->societe->client->voir && !$socid) { //restriction
-	$sql .= " AND (sc.fk_user = ".$user->id." OR p.fk_soc IS NULL)";
+	$sql .= " AND (sc.fk_user = ".((int) $user->id)." OR p.fk_soc IS NULL)";
 }
 if (!empty($userid)) {    // propre au commercial
 	$sql .= " AND p.fk_user_creat=".((int) $userid);
@@ -403,13 +403,13 @@ if ($search_stcomm != '' && $search_stcomm != -2) {
 
 // Filter to exclude not owned private contacts
 if ($search_priv != '0' && $search_priv != '1') {
-	$sql .= " AND (p.priv='0' OR (p.priv='1' AND p.fk_user_creat=".$user->id."))";
+	$sql .= " AND (p.priv='0' OR (p.priv='1' AND p.fk_user_creat=".((int) $user->id)."))";
 } else {
 	if ($search_priv == '0') {
 		$sql .= " AND p.priv='0'";
 	}
 	if ($search_priv == '1') {
-		$sql .= " AND (p.priv='1' AND p.fk_user_creat=".$user->id.")";
+		$sql .= " AND (p.priv='1' AND p.fk_user_creat=".((int) $user->id).")";
 	}
 }
 

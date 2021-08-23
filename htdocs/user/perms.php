@@ -217,9 +217,9 @@ $permsgroupbyentity = array();
 $sql = "SELECT DISTINCT gr.fk_id, gu.entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 $sql .= " ".MAIN_DB_PREFIX."usergroup_user as gu";
-$sql .= " WHERE gr.entity = ".$entity;
+$sql .= " WHERE gr.entity = ".((int) $entity);
 $sql .= " AND gr.fk_usergroup = gu.fk_usergroup";
-$sql .= " AND gu.fk_user = ".$object->id;
+$sql .= " AND gu.fk_user = ".((int) $object->id);
 
 dol_syslog("get user perms", LOG_DEBUG);
 $result = $db->query($sql);
