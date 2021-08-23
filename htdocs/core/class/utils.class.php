@@ -597,10 +597,12 @@ class Utils
 	 * 										Warning: The command line is sanitize so can't contains any redirection char '>'. Use param $redirectionfile if you need it.
 	 * @param 	string	$outputfile			A path for an output file (used only when method is 2). For example: $conf->admin->dir_temp.'/out.tmp';
 	 * @param	int		$execmethod			0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
-	 * @param	string	$redirectionfile	If defined, file to redirect output to.
+	 * @param	string	$redirectionfile	If defined, a redirection of output to this files is added.
+	 * @param	int		$noescapecommand	1=Do not escape command. Warning: Using this parameter need you alreay sanitized the command. if not, it will lead to security vulnerability.
+	 * 										This parameter is provided for backward compatibility with external modules. Always use 0 in core.
 	 * @return	array						array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
 	 */
-	public function executeCLI($command, $outputfile, $execmethod = 0, $redirectionfile = null)
+	public function executeCLI($command, $outputfile, $execmethod = 0, $redirectionfile = null, $noescapecommand = 0)
 	{
 		global $conf, $langs;
 
@@ -608,7 +610,9 @@ class Utils
 		$output = '';
 		$error = '';
 
-		$command = escapeshellcmd($command);
+		if (empty($noescapecommand)) {
+			$command = escapeshellcmd($command);
+		}
 		if ($redirectionfile) {
 			$command .= " > ".dol_sanitizePathName($redirectionfile);
 		}
