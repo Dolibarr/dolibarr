@@ -194,7 +194,7 @@ if (!in_array($type, array('text/x-javascript')) && !dolIsAllowedForPreview($ori
 	$type = 'application/octet-stream';
 }
 
-// Security: Delete string ../ into $original_file
+// Security: Delete string ../ or ..\ into $original_file
 $original_file = str_replace('../', '/', $original_file);
 $original_file = str_replace('..\\', '/', $original_file);
 
