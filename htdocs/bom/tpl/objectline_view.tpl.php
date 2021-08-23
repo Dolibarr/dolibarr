@@ -193,7 +193,7 @@ if ($resql){
 		$sub_bom_line = new BOMLine($object->db);
 		$sub_bom_line->fetch($obj->rowid);
 
-		print '<tr style="display:none" parentid="'.$line->id.'">';
+		print '<tr style="display:none" class="sub_bom_lines" parentid="'.$line->id.'">';
 
 		print '<td id="sub_bom_product_'.$sub_bom_line->id.'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$sub_bom_product->getNomUrl(1).'</td>';
 		if ($sub_bom_line->fk_bom_child > 0) {

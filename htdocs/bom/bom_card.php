@@ -615,7 +615,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$(".collapse_bom").click(function() {
 
 					var id_bom_line = $(this).attr('id').replace('collapse-', '');
-					console.log('tr [parentid="'+ id_bom_line +'"]')
 					if($(this).text().indexOf('+') > 0) {
 						$('[parentid="'+ id_bom_line +'"]').show();
 						$(this).html('(-)&nbsp;');
@@ -630,14 +629,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 				//TODO : SHOW ALL / COLLAPSE ALL
 				$("#show_all").click(function() {
-					$("[class^=batch_warehouse]").show();
-					$("[class^=collapse_batch]").html('(-)&nbsp;');
+					$("[class^=sub_bom_lines]").show();
+					$("[class^=collapse_bom]").html('(-)&nbsp;');
 					return false;
 				});
 
 				$("#hide_all").click(function() {
-					$("[class^=batch_warehouse]").hide();
-					$("[class^=collapse_batch]").html('(+)&nbsp;');
+					$("[class^=sub_bom_lines]").hide();
+					$("[class^=collapse_bom]").html('(+)&nbsp;');
 					return false;
 				});
 
