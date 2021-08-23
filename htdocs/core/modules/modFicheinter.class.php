@@ -77,6 +77,11 @@ class modFicheinter extends DolibarrModules
 		$this->const = array();
 		$r = 0;
 
+		if (!isset($conf->ficheinter) || !isset($conf->ficheinter->enabled)) {
+			$conf->ficheinter = new stdClass();
+			$conf->ficheinter->enabled = 0;
+		}
+
 		$this->const[$r][0] = "FICHEINTER_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "soleil";
