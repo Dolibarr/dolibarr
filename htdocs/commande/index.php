@@ -77,8 +77,11 @@ print load_fiche_titre($langs->trans("OrdersArea"), '', 'order');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-print getCustomerOrderPieChart($socid);
-print '<br>';
+$tmp = getCustomerOrderPieChart($socid);
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
 
 
 /*

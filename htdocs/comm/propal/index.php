@@ -67,8 +67,11 @@ print load_fiche_titre($langs->trans("ProspectionArea"), '', 'propal');
 print '<div class="fichecenter">';
 print '<div class="fichethirdleft">';
 
-print getCustomerProposalPieChart($socid);
-print '<br>';
+$tmp = getCustomerProposalPieChart($socid);
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
 
 /*
  * Draft proposals
