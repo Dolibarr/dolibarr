@@ -260,7 +260,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 	}
 
 	// Check if a payment is mandatory or not
-	if (!$error && $adht->subscription) {	// Member type need subscriptions
+	if ($adht->subscription) {	// Member type need subscriptions
 		if (!is_numeric($amount)) {
 			// If field is '' or not a numeric value
 			$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
@@ -273,23 +273,29 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 				if (GETPOST("subscription")) {
 					if (!GETPOST("label")) {
 						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Label"));
+						setEventMessages($errmsg, null, 'errors');
+						$error++;
+						$action = 'addsubscription';
 					}
 					if (GETPOST("paymentsave") != 'invoiceonly' && !GETPOST("operation")) {
 						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
+						setEventMessages($errmsg, null, 'errors');
+						$error++;
+						$action = 'addsubscription';
 					}
 					if (GETPOST("paymentsave") != 'invoiceonly' && !(GETPOST("accountid", 'int') > 0)) {
 						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("FinancialAccount"));
+						setEventMessages($errmsg, null, 'errors');
+						$error++;
+						$action = 'addsubscription';
 					}
 				} else {
 					if (GETPOST("accountid", 'int')) {
 						$errmsg = $langs->trans("ErrorDoNotProvideAccountsIfNullAmount");
+						setEventMessages($errmsg, null, 'errors');
+						$error++;
+						$action = 'addsubscription';
 					}
-				}
-				if ($errmsg) {
-					$error++;
-					setEventMessages($errmsg, null, 'errors');
-					$error++;
-					$action = 'addsubscription';
 				}
 			}
 		}
@@ -602,6 +608,14 @@ if ($rowid > 0) {
 				$company = new Societe($db);
 				$result = $company->fetch($object->fk_soc);
 				print $company->getNomUrl(1);
+
+				// Show link to invoices
+				$tmparray = $company->getOutstandingBills('customer');
+				if (!empty($tmparray['refs'])) {
+					print ' - '.img_picto($langs->trans("Invoices"), 'bill', 'class="paddingright"').'<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->socid.'">'.$langs->trans("Invoices").': '.count($tmparray['refs']);
+					// TODO Add alert if warning on at least one invoice late
+					print '</a>';
+				}
 			} else {
 				print '<span class="opacitymedium">'.$langs->trans("NoThirdPartyAssociatedToMember").'</span>';
 			}
