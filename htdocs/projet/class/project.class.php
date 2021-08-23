@@ -947,7 +947,7 @@ class Project extends CommonObject
 		} elseif ($type == 'expensereport') {
 			$sql = "SELECT COUNT(ed.rowid) as nb FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND e.entity IN (".getEntity('expensereport').") AND ed.fk_projet = ".((int) $this->id);
 		} elseif ($type == 'project_task') {
-			$sql = "SELECT DISTINCT COUNT(pt.rowid) as nb FROM ".MAIN_DB_PREFIX."projet_task as pt WHERE pt.fk_projet = ".$this->id;
+			$sql = "SELECT DISTINCT COUNT(pt.rowid) as nb FROM ".MAIN_DB_PREFIX."projet_task as pt WHERE pt.fk_projet = ".((int) $this->id);
 		} elseif ($type == 'project_task_time') {	// Case we want to duplicate line foreach user
 			$sql = "SELECT DISTINCT COUNT(pt.rowid) as nb FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet_task_time as ptt WHERE pt.rowid = ptt.fk_task AND pt.fk_projet = ".((int) $this->id);
 		} elseif ($type == 'stock_mouvement') {
@@ -1027,8 +1027,8 @@ class Project extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
 			$sql .= " SET fk_statut = 1";
-			$sql .= " WHERE rowid = ".$this->id;
-			$sql .= " AND entity = ".$conf->entity;
+			$sql .= " WHERE rowid = ".((int) $this->id);
+			$sql .= " AND entity = ".((int) $conf->entity);
 
 			dol_syslog(get_class($this)."::setValid", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1432,13 +1432,13 @@ class Project extends CommonObject
 		if ($mode == 0) {
 			$sql .= " AND ( p.public = 1";
 			$sql .= " OR ( ec.fk_c_type_contact IN (".$this->db->sanitize(join(',', array_keys($listofprojectcontacttype))).")";
-			$sql .= " AND ec.fk_socpeople = ".$user->id.")";
+			$sql .= " AND ec.fk_socpeople = ".((int) $user->id).")";
 			$sql .= " )";
 		} elseif ($mode == 1) {
 			$sql .= " AND ec.element_id = p.rowid";
 			$sql .= " AND (";
 			$sql .= "  ( ec.fk_c_type_contact IN (".$this->db->sanitize(join(',', array_keys($listofprojectcontacttype))).")";
-			$sql .= " AND ec.fk_socpeople = ".$user->id.")";
+			$sql .= " AND ec.fk_socpeople = ".((int) $user->id).")";
 			$sql .= " )";
 		} elseif ($mode == 2) {
 			// No filter. Use this if user has permission to see all project
@@ -1886,7 +1886,7 @@ class Project extends CommonObject
 		$sql = "SELECT ptt.rowid as taskid, ptt.task_duration, ptt.task_date, ptt.task_datehour, ptt.fk_task";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt, ".MAIN_DB_PREFIX."projet_task as pt";
 		$sql .= " WHERE ptt.fk_task = pt.rowid";
-		$sql .= " AND pt.fk_projet = ".$this->id;
+		$sql .= " AND pt.fk_projet = ".((int) $this->id);
 		$sql .= " AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
 		$sql .= " AND ptt.task_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'w') - 1)."')";
 		if ($taskid) {
@@ -1949,7 +1949,7 @@ class Project extends CommonObject
 		$sql = "SELECT ptt.rowid as taskid, ptt.task_duration, ptt.task_date, ptt.task_datehour, ptt.fk_task";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt, ".MAIN_DB_PREFIX."projet_task as pt";
 		$sql .= " WHERE ptt.fk_task = pt.rowid";
-		$sql .= " AND pt.fk_projet = ".$this->id;
+		$sql .= " AND pt.fk_projet = ".((int) $this->id);
 		$sql .= " AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
 		$sql .= " AND ptt.task_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'm') - 1)."')";
 		if ($task_id) {
@@ -2027,7 +2027,7 @@ class Project extends CommonObject
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 		// For external user, no check is done on company permission because readability is managed by public status of project and assignement.
-		//if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
+		//if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id).") OR (s.rowid IS NULL))";
 
 		//print $sql;
 		$resql = $this->db->query($sql);

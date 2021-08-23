@@ -2236,7 +2236,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " WHERE cfd.fk_commande = ".$this->id;
 		$sql .= " AND cfd.fk_product = p.rowid";
 		if ($status >= 0) {
-			$sql .= " AND cfd.status = ".$status;
+			$sql .= " AND cfd.status = ".((int) $status);
 		}
 		$sql .= " ORDER BY cfd.rowid ASC";
 
@@ -2961,7 +2961,7 @@ class CommandeFournisseur extends CommonOrder
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
 		}
-		$sql .= " ".$clause." co.entity = ".$conf->entity;
+		$sql .= " ".$clause." co.entity IN (".getEntity('supplier_order').")";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

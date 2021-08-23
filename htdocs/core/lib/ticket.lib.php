@@ -351,7 +351,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_resources as er";
 			$sql .= " ON er.resource_type = 'dolresource'";
 			$sql .= " AND er.element_id = a.id";
-			$sql .= " AND er.resource_id = ".$filterobj->id;
+			$sql .= " AND er.resource_id = ".((int) $filterobj->id);
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') {
 			$sql .= ", ".MAIN_DB_PREFIX."adherent as m";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') {

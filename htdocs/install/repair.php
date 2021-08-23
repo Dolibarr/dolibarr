@@ -366,20 +366,20 @@ if ($ok && GETPOST('standard', 'alpha')) {
 					$sql2 = "SELECT COUNT(*) as nb";
 					$sql2 .= " FROM ".MAIN_DB_PREFIX."const as c";
 					$sql2 .= " WHERE name = 'MAIN_MODULE_".$name."'";
-					$sql2 .= " AND entity = ".$obj->entity;
+					$sql2 .= " AND entity = ".((int) $obj->entity);
 					$resql2 = $db->query($sql2);
 					if ($resql2) {
 						$obj2 = $db->fetch_object($resql2);
 						if ($obj2 && $obj2->nb == 0) {
 							// Module not found, so we can remove entry
-							$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$db->escape($obj->name)."' AND entity = ".$obj->entity;
+							$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$db->escape($obj->name)."' AND entity = ".((int) $obj->entity);
 
 							if (GETPOST('standard', 'alpha') == 'confirmed') {
 								$db->query($sqldelete);
 
-								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module '.$name.' not enabled in entity '.$obj->entity.', we delete record</td></tr>';
+								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module '.$name.' not enabled in entity '.((int) $obj->entity).', we delete record</td></tr>';
 							} else {
-								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module '.$name.' not enabled in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
+								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module '.$name.' not enabled in entity '.((int) $obj->entity).', we should delete record (not done, mode test)</td></tr>';
 							}
 						} else {
 							//print '<tr><td>Constant '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module found in entity '.$obj->entity.', we keep record</td></tr>';
@@ -424,23 +424,23 @@ if ($ok && GETPOST('standard', 'alpha')) {
 					$sql2 = "SELECT COUNT(*) as nb";
 					$sql2 .= " FROM ".MAIN_DB_PREFIX."const as c";
 					$sql2 .= " WHERE name = 'MAIN_MODULE_".strtoupper($module)."'";
-					$sql2 .= " AND entity = ".$obj->entity;
+					$sql2 .= " AND entity = ".((int) $obj->entity);
 					$sql2 .= " AND value <> 0";
 					$resql2 = $db->query($sql2);
 					if ($resql2) {
 						$obj2 = $db->fetch_object($resql2);
 						if ($obj2 && $obj2->nb == 0) {
 							// Module not found, so we canremove entry
-							$sqldeletea = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE entity = ".$obj->entity." AND box_id IN (SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$db->escape($obj->file)."' AND entity = ".$obj->entity.")";
-							$sqldeleteb = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$db->escape($obj->file)."' AND entity = ".$obj->entity;
+							$sqldeletea = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE entity = ".((int) $obj->entity)." AND box_id IN (SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$db->escape($obj->file)."' AND entity = ".((int) $obj->entity).")";
+							$sqldeleteb = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$db->escape($obj->file)."' AND entity = ".((int) $obj->entity);
 
 							if (GETPOST('standard', 'alpha') == 'confirmed') {
 								$db->query($sqldeletea);
 								$db->query($sqldeleteb);
 
-								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.$obj->entity.', we delete record</td></tr>';
+								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.((int) $obj->entity).', we delete record</td></tr>';
 							} else {
-								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
+								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.((int) $obj->entity).', we should delete record (not done, mode test)</td></tr>';
 							}
 						} else {
 							//print '<tr><td>Constant '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module found in entity '.$obj->entity.', we keep record</td></tr>';

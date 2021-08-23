@@ -293,11 +293,12 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 				if ($val[1] == 'ity' && $val[2] == 'con') {
 					continue;
 				}
-//				$ok=false;
+				var_dump($matches);
+				$ok=false;
 				break;
 			}
 			//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-//			$this->assertTrue($ok, 'Found non quoted or not casted var into sql request '.$file['relativename'].' - Bad.');
+			$this->assertTrue($ok, 'Found non quoted or not casted var into sql request '.$file['relativename'].' - Bad.');
 			//exit;
 
 

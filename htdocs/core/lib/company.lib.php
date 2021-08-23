@@ -1085,7 +1085,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
 	$sql .= " WHERE t.fk_soc = ".$object->id;
 	if ($search_status != '' && $search_status != '-1') {
-		$sql .= " AND t.statut = ".$db->escape($search_status);
+		$sql .= " AND t.statut = ".((int) $search_status);
 	}
 	if ($search_name) {
 		$sql .= natural_search(array('t.lastname', 't.firstname'), $search_name);
