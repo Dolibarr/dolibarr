@@ -81,9 +81,9 @@ $coldisplay++;
 $tmpproduct = new Product($object->db);
 $tmpproduct->fetch($line->fk_product);
 $tmpbom = new BOM($object->db);
-$res = $tmpbom->fetch($line->fk_bom_child);
+$tmpbom->fetch($line->fk_bom_child);
 if (!empty($tmpbom->id)){
-	print '<a class="collapse_bom" id="bom' . $tmpbom->id . '" href="#">' . (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT) ? '(+)' : '(-)') . '&nbsp;</a>';
+	print '<a class="collapse_bom" id="collapse-'.$line->id.'" href="#">' . (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT) ? '(+)' : '(-)') . '&nbsp;</a>';
 }
 print $tmpproduct->getNomUrl(1);
 print ' - '.$tmpproduct->label;
@@ -193,15 +193,15 @@ if ($resql){
 		$sub_bom_line = new BOMLine($object->db);
 		$sub_bom_line->fetch($obj->rowid);
 
-		print '<tr id="sub_bom_'.$sub_bom_line->id.'">';
+		print '<tr style="display:none" parentid="'.$line->id.'">';
 
-		print '<td id="sub_bom_product_'.$sub_bom_line->id.'">'.$sub_bom_product->getNomUrl(1).'</td>';
+		print '<td id="sub_bom_product_'.$sub_bom_line->id.'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$sub_bom_product->getNomUrl(1).'</td>';
 		if ($sub_bom_line->fk_bom_child > 0) {
 			print '<td id="sub_bom_bom_'.$sub_bom_line->id.'">'.$sub_bom->getNomUrl(1).'</td>';
 		} else {
 			print '<td id="sub_bom_bom_'.$sub_bom_line->id.'">&nbsp;</td>';
 		}
-		print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty, 0, '', 0, 0).'</td>';
+		print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty * $line->qty, 0, '', 0, 0).'</td>';
 		if ($sub_bom_line->qty_frozen > 0) {
 			print '<td class="linecolqtyfrozen nowrap right" id="sub_bom_qty_frozen_'.$sub_bom_line->id.'">'.$sub_bom_line->qty_frozen.'</td>';
 		} else {
@@ -215,7 +215,7 @@ if ($resql){
 		}
 
 		print '<td class="linecolefficiency nowrap right" id="sub_bom_efficiency_'.$sub_bom_line->id.'">'.$sub_bom_line->efficiency.'</td>';
-		print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_line->total_cost).'</td>';
+		print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_line->total_cost * $line->qty).'</td>';
 		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';

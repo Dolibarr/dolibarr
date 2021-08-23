@@ -97,6 +97,8 @@ print '</td>';
 */
 
 $coldisplay++;
+// For BOM
+print '<td></td>';
 
 print '<td class="nobottom linecolqty right">';
 if (($line->info_bits & 2) != 2) {
