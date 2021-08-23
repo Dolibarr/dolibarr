@@ -725,11 +725,11 @@ if (empty($reshook)) {
 						$line->id = $line_id;
 						$line->qty = GETPOST($qty, 'int');
 						$line->entrepot_id = 0;
-						if ($line->update($user) < 0) {
-							setEventMessages($line->error, $line->errors, 'errors');
-							$error++;
-						}
-						unset($_POST[$qty]);					
+					if ($line->update($user) < 0) {
+						setEventMessages($line->error, $line->errors, 'errors');
+						$error++;
+					}
+						unset($_POST[$qty]);
 				}
 			}
 		}
