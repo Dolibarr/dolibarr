@@ -344,7 +344,7 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 	}
 	$sql .= " WHERE rc.entity IN (".getEntity($staticrecruitmentcandidature->element).")";
 	if ($conf->societe->enabled && !$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND rp.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND rp.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND rp.fk_soc = $socid";

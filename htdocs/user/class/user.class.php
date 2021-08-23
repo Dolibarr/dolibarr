@@ -1030,7 +1030,7 @@ class User extends CommonObject
 			$sql .= " AND r.entity = ".$conf->entity;
 		}
 		$sql .= " AND gr.fk_usergroup = gu.fk_usergroup";
-		$sql .= " AND gu.fk_user = ".$this->id;
+		$sql .= " AND gu.fk_user = ".((int) $this->id);
 		$sql .= " AND r.perms IS NOT NULL";
 		if ($moduletag) {
 			$sql .= " AND r.module = '".$this->db->escape($moduletag)."'";

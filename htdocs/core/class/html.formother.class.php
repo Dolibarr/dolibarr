@@ -497,7 +497,7 @@ class FormOther
 			$sql_usr .= " AND u.rowid = ".$user->id;
 		}
 		if (!empty($user->socid)) {
-			$sql_usr .= " AND u.fk_soc = ".$user->socid;
+			$sql_usr .= " AND u.fk_soc = ".((int) $user->socid);
 		}
 
 		//Add hook to filter on user (for exemple on usergroup define in custom modules)

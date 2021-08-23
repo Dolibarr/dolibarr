@@ -919,7 +919,7 @@ class ActionComm extends CommonObject
 		// phpcs:enable
 		$sql = "SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm_resources";
-		$sql .= " WHERE element_type = 'user' AND fk_actioncomm = ".$this->id;
+		$sql .= " WHERE element_type = 'user' AND fk_actioncomm = ".((int) $this->id);
 
 		$resql2 = $this->db->query($sql);
 		if ($resql2) {
@@ -1320,7 +1320,7 @@ class ActionComm extends CommonObject
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 		}
 		if (!$user->rights->agenda->allactions->read) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_resources AS ar ON a.id = ar.fk_actioncomm AND ar.element_type ='user' AND ar.fk_element = ".$user->id;
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_resources AS ar ON a.id = ar.fk_actioncomm AND ar.element_type ='user' AND ar.fk_element = ".((int) $user->id);
 		}
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 		$sql .= " WHERE 1 = 1";
@@ -1329,13 +1329,13 @@ class ActionComm extends CommonObject
 		}
 		$sql .= " AND a.entity IN (".getEntity('agenda').")";
 		if (!$user->rights->societe->client->voir && !$user->socid) {
-			$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".$user->id.")";
+			$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
 		}
 		if ($user->socid) {
-			$sql .= " AND a.fk_soc = ".$user->socid;
+			$sql .= " AND a.fk_soc = ".((int) $user->socid);
 		}
 		if (!$user->rights->agenda->allactions->read) {
-			$sql .= " AND (a.fk_user_author = ".$user->id." OR a.fk_user_action = ".$user->id." OR a.fk_user_done = ".$user->id;
+			$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id)." OR a.fk_user_done = ".((int) $user->id);
 			$sql .= " OR ar.fk_element = ".$user->id; // Added by PV
 			$sql .= ")";
 		}

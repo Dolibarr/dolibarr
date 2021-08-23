@@ -646,7 +646,7 @@ class BonPrelevement extends CommonObject
 		$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
 		$sql .= " WHERE pf.fk_prelevement_lignes = pl.rowid";
 		$sql .= " AND pl.fk_prelevement_bons = p.rowid";
-		$sql .= " AND p.rowid = ".$this->id;
+		$sql .= " AND p.rowid = ".((int) $this->id);
 		$sql .= " AND p.entity = ".$conf->entity;
 		if ($amounts) {
 			if ($this->type == 'bank-transfer') {

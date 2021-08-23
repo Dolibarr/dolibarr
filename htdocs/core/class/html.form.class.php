@@ -1347,13 +1347,13 @@ class Form
 		}
 		$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 		if (!empty($user->socid)) {
-			$sql .= " AND s.rowid = ".$user->socid;
+			$sql .= " AND s.rowid = ".((int) $user->socid);
 		}
 		if ($filter) {
 			$sql .= " AND (".$filter.")";
 		}
 		if (!$user->rights->societe->client->voir && !$user->socid) {
-			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if (!empty($conf->global->COMPANY_HIDE_INACTIVE_IN_COMBOBOX)) {
 			$sql .= " AND s.status <> 0";
@@ -6794,9 +6794,9 @@ class Form
 			}
 			if ($objecttmp->ismultientitymanaged == 1 && !empty($user->socid)) {
 				if ($objecttmp->element == 'societe') {
-					$sql .= " AND t.rowid = ".$user->socid;
+					$sql .= " AND t.rowid = ".((int) $user->socid);
 				} else {
-					$sql .= " AND t.fk_soc = ".$user->socid;
+					$sql .= " AND t.fk_soc = ".((int) $user->socid);
 				}
 			}
 			if ($searchkey != '') {
@@ -6804,7 +6804,7 @@ class Form
 			}
 			if ($objecttmp->ismultientitymanaged == 'fk_soc@societe') {
 				if (!$user->rights->societe->client->voir && !$user->socid) {
-					$sql .= " AND t.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+					$sql .= " AND t.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}
 			}
 			if ($objecttmp->filter) {	 // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
