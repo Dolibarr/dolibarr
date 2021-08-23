@@ -268,6 +268,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 			$error++;
 			$action = 'addsubscription';
 		} else {
+			// If an amount has been provided, we check also fields that becomes mandatory when amount is not null.
 			if (!empty($conf->banque->enabled) && GETPOST("paymentsave") != 'none') {
 				if (GETPOST("subscription")) {
 					if (!GETPOST("label")) {
@@ -280,7 +281,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("FinancialAccount"));
 					}
 				} else {
-					if (GETPOST("accountid")) {
+					if (GETPOST("accountid", 'int')) {
 						$errmsg = $langs->trans("ErrorDoNotProvideAccountsIfNullAmount");
 					}
 				}
