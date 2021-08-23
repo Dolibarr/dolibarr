@@ -288,9 +288,9 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 
 			// Check sql string AND ... yyy = ".$xxx
 			//  with xxx that is not 'thi' (for $this->db->sanitize) and 'db-' (for $db->sanitize). It means we forget a ' if string or an (int) if int when forging sql request.
-			preg_match_all('/AND.*([^\s][^\s][^\s])\s*=\s*"\s*\.\s*\$(...)/', $filecontent, $matches, PREG_SET_ORDER);
+			preg_match_all('/(DELETE|OR|AND)\s.*([^\s][^\s][^\s])\s*=\s*"\s*\.\s*\$(...)/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
-				if ($val[1] == 'ity' && $val[2] == 'con') {
+				if ($val[2] == 'ity' && $val[3] == 'con') {
 					continue;
 				}
 				var_dump($matches);

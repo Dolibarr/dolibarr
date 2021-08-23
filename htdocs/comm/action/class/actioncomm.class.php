@@ -875,7 +875,7 @@ class ActionComm extends CommonObject
 
 		$sql = 'SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm_resources';
-		$sql .= ' WHERE fk_actioncomm = '.$this->id;
+		$sql .= ' WHERE fk_actioncomm = '.((int) $this->id);
 		$sql .= " AND element_type IN ('user', 'socpeople')";
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -996,7 +996,7 @@ class ActionComm extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
-			$sql .= " WHERE fk_actioncomm = ".$this->id;
+			$sql .= " WHERE fk_actioncomm = ".((int) $this->id);
 
 			$res = $this->db->query($sql);
 			if (!$res) {
@@ -1159,7 +1159,7 @@ class ActionComm extends CommonObject
 
 			// Now insert assignedusers
 			if (!$error) {
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources where fk_actioncomm = ".$this->id." AND element_type = 'user'";
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources where fk_actioncomm = ".((int) $this->id)." AND element_type = 'user'";
 				$resql = $this->db->query($sql);
 
 				$already_inserted = array();
@@ -1184,7 +1184,7 @@ class ActionComm extends CommonObject
 			}
 
 			if (!$error) {
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources where fk_actioncomm = ".$this->id." AND element_type = 'socpeople'";
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources where fk_actioncomm = ".((int) $this->id)." AND element_type = 'socpeople'";
 				$resql = $this->db->query($sql);
 
 				if (!empty($this->socpeopleassigned)) {
@@ -1336,7 +1336,7 @@ class ActionComm extends CommonObject
 		}
 		if (!$user->rights->agenda->allactions->read) {
 			$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id)." OR a.fk_user_done = ".((int) $user->id);
-			$sql .= " OR ar.fk_element = ".$user->id; // Added by PV
+			$sql .= " OR ar.fk_element = ".((int) $user->id);
 			$sql .= ")";
 		}
 
@@ -2226,7 +2226,7 @@ class ActionComm extends CommonObject
 		//Select all action comm reminders for event
 		$sql = "SELECT rowid as id, typeremind, dateremind, status, offsetvalue, offsetunit, fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
-		$sql .= " WHERE fk_actioncomm = ".$this->id;
+		$sql .= " WHERE fk_actioncomm = ".((int) $this->id);
 		if ($onlypast) {
 			$sql .= " AND dateremind <= '".$this->db->idate(dol_now())."'";
 		}

@@ -232,7 +232,7 @@ if ($result > 0) {
 	$sql .= " ".MAIN_DB_PREFIX."user c";
 	$sql .= " WHERE a.rowid = n.fk_action";
 	$sql .= " AND c.rowid = n.fk_user";
-	$sql .= " AND c.rowid = ".$object->id;
+	$sql .= " AND c.rowid = ".((int) $object->id);
 	$sql .= " AND c.entity IN (".getEntity('user').')';
 
 	$resql = $db->query($sql);
