@@ -272,6 +272,19 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
+	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'thirdparty') {
+		if (!empty($user->rights->partnership->read)) {
+			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;
+			$head[$h][0] = DOL_URL_ROOT.'/societe/partnership.php?socid='.$object->id;
+			$head[$h][1] = $langs->trans("Partnership");
+			$head[$h][2] = 'partnership';
+			if ($nbPartnership > 0) {
+				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbPartnership.'</span>';
+			}
+			$h++;
+		}
+	}
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab

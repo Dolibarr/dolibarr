@@ -1822,7 +1822,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					$result = $company->fetch($object->socid);
 					print $company->getNomUrl(1);
 				} else {
-					print $langs->trans("NoThirdPartyAssociatedToMember");
+					print '<span class="opacitymedium">'.$langs->trans("NoThirdPartyAssociatedToMember").'</span>';
 				}
 			}
 			print '</td></tr>';
@@ -1846,7 +1846,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 		print '</td></tr>';
 
-		//VCard
+		// VCard
 		print '<tr><td>';
 		print $langs->trans("VCard").'</td><td colspan="3">';
 		print '<a href="'.DOL_URL_ROOT.'/adherents/vcard.php?id='.$object->id.'">';
