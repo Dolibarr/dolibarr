@@ -102,3 +102,4 @@ WorkstationArea=Espace Poste de travail
 Machines=Machines
 THMEstimatedHelp=Ce taux permet de définir un coût prévisionnel de l'article
 BOM=Nomenclature
+CollapseBOMHelp=Vous pouvez définir l'affichage par défaut du détail des nomenclature dans la configuration du module "Nomenclature Produits"

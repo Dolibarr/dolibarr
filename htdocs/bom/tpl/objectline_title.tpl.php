@@ -45,6 +45,8 @@ print "<thead>\n";
 print '<tr class="liste_titre nodrag nodrop">';
 print '<a id="show_all" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a>&nbsp;&nbsp;';
 print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>&nbsp;';
+$form = new Form($object->db);
+print $form->textwithpicto('', $langs->trans('CollapseBOMHelp'), 1, 'help', '');
 
 // Adds a line numbering column
 if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {

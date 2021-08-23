@@ -627,13 +627,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					return false;
 				});
 
-				//TODO : SHOW ALL / COLLAPSE ALL
+				//To Show all the sub bom lines
 				$("#show_all").click(function() {
 					$("[class^=sub_bom_lines]").show();
 					$("[class^=collapse_bom]").html('(-)&nbsp;');
 					return false;
 				});
-
+				//To Hide all the sub bom lines
 				$("#hide_all").click(function() {
 					$("[class^=sub_bom_lines]").hide();
 					$("[class^=collapse_bom]").html('(+)&nbsp;');
