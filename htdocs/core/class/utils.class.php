@@ -593,12 +593,14 @@ class Utils
 	/**
 	 * Execute a CLI command.
 	 *
-	 * @param 	string	$command		Command line to execute.
-	 * @param 	string	$outputfile		A path for an output file (used only when method is 2). For example: $conf->admin->dir_temp.'/out.tmp';
-	 * @param	int		$execmethod		0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
-	 * @return	array					array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
+	 * @param 	string	$command			Command line to execute.
+	 * 										Warning: The command line is sanitize so can't contains any redirection char '>'. Use param $redirectionfile if you need it.
+	 * @param 	string	$outputfile			A path for an output file (used only when method is 2). For example: $conf->admin->dir_temp.'/out.tmp';
+	 * @param	int		$execmethod			0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
+	 * @param	string	$redirectionfile	If defined, file to redirect output to.
+	 * @return	array						array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
 	 */
-	public function executeCLI($command, $outputfile, $execmethod = 0)
+	public function executeCLI($command, $outputfile, $execmethod = 0, $redirectionfile = null)
 	{
 		global $conf, $langs;
 
@@ -607,6 +609,9 @@ class Utils
 		$error = '';
 
 		$command = escapeshellcmd($command);
+		if ($redirectionfile) {
+			$command .= " > ".dol_sanitizePathName($redirectionfile);
+		}
 		$command .= " 2>&1";
 
 		if (!empty($conf->global->MAIN_EXEC_USE_POPEN)) {
