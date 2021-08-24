@@ -1649,12 +1649,12 @@ if ($action == 'create')
 		{
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('CancelSending'), $langs->trans("ConfirmCancelSending", $object->ref), 'confirm_cancel', '', 0, 1);
 		}
-		
+
 		// Confirm modification (back to draft status)
 		if ($action == 'modif') {
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('UnvalidateShipment'), $langs->trans("ConfirmUnvalidateShipment", $object->ref), 'confirm_modif', '', 0, 1);
 		}
-		
+
 		// Call Hook formConfirm
 		$parameters = array('formConfirm' => $formconfirm);
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -2286,7 +2286,7 @@ if ($action == 'create')
 							print '<td></td>';
 							print '</tr>';
 						}
-					} else { // both product batch and stock are not activated. 
+					} else { // both product batch and stock are not activated.
 						print '<!-- case edit 6 -->';
 						print '<tr>';
 						// Qty to ship or shipped
@@ -2478,7 +2478,7 @@ if ($action == 'create')
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=modif">'.$langs->trans("Modify").'</a>';
 			}
 
-			
+
 			// Send
 			if (empty($user->socid)) {
 				if ($object->statut > 0)
