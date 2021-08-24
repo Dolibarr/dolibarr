@@ -94,10 +94,10 @@ class PropaleStats extends Stats
 		//$this->where.= " AND p.fk_soc = s.rowid AND p.entity = ".$conf->entity;
 		$this->where .= ($this->where ? ' AND ' : '')."p.entity IN (".getEntity('propal').")";
 		if (!$user->rights->societe->client->voir && !$this->socid) {
-			$this->where .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+			$this->where .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($this->socid) {
-			$this->where .= " AND p.fk_soc = ".$this->socid;
+			$this->where .= " AND p.fk_soc = ".((int) $this->socid);
 		}
 		if ($this->userid > 0) {
 			$this->where .= ' AND fk_user_author = '.((int) $this->userid);

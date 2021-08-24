@@ -1487,7 +1487,7 @@ if ($placeid > 0) {
 						$sql .= " WHERE ps.reel != 0";
 						$sql .= " AND ps.fk_entrepot = ".((int) $conf->global->$constantforkey);
 						$sql .= " AND e.entity IN (".getEntity('stock').")";
-						$sql .= " AND ps.fk_product = ".$line->fk_product;
+						$sql .= " AND ps.fk_product = ".((int) $line->fk_product);
 						$resql = $db->query($sql);
 						if ($resql) {
 							$obj = $db->fetch_object($resql);

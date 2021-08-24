@@ -232,7 +232,7 @@ if ($result > 0) {
 	$sql .= " ".MAIN_DB_PREFIX."user c";
 	$sql .= " WHERE a.rowid = n.fk_action";
 	$sql .= " AND c.rowid = n.fk_user";
-	$sql .= " AND c.rowid = ".$object->id;
+	$sql .= " AND c.rowid = ".((int) $object->id);
 	$sql .= " AND c.entity IN (".getEntity('user').')';
 
 	$resql = $db->query($sql);
@@ -409,7 +409,7 @@ if ($result > 0) {
 	$sql .= " ".MAIN_DB_PREFIX."notify as n";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as c ON n.fk_user = c.rowid";
 	$sql .= " WHERE a.rowid = n.fk_action";
-	$sql .= " AND n.fk_user = ".$object->id;
+	$sql .= " AND n.fk_user = ".((int) $object->id);
 	$sql .= $db->order($sortfield, $sortorder);
 
 	// Count total nb of records

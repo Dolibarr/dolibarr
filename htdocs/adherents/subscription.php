@@ -209,7 +209,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 	// Subscription informations
 	$datesubscription = 0;
 	$datesubend = 0;
-	$paymentdate = 0;
+	$paymentdate = '';	// Do not use 0 here, default value is '' that means not filled where 0 means 1970-01-01
 	if (GETPOST("reyear", "int") && GETPOST("remonth", "int") && GETPOST("reday", "int")) {
 		$datesubscription = dol_mktime(0, 0, 0, GETPOST("remonth", "int"), GETPOST("reday", "int"), GETPOST("reyear", "int"));
 	}
@@ -260,7 +260,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 	}
 
 	// Check if a payment is mandatory or not
-	if (!$error && $adht->subscription) {	// Member type need subscriptions
+	if ($adht->subscription) {	// Member type need subscriptions
 		if (!is_numeric($amount)) {
 			// If field is '' or not a numeric value
 			$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
@@ -268,27 +268,34 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 			$error++;
 			$action = 'addsubscription';
 		} else {
+			// If an amount has been provided, we check also fields that becomes mandatory when amount is not null.
 			if (!empty($conf->banque->enabled) && GETPOST("paymentsave") != 'none') {
 				if (GETPOST("subscription")) {
 					if (!GETPOST("label")) {
 						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Label"));
+						setEventMessages($errmsg, null, 'errors');
+						$error++;
+						$action = 'addsubscription';
 					}
 					if (GETPOST("paymentsave") != 'invoiceonly' && !GETPOST("operation")) {
 						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
+						setEventMessages($errmsg, null, 'errors');
+						$error++;
+						$action = 'addsubscription';
 					}
 					if (GETPOST("paymentsave") != 'invoiceonly' && !(GETPOST("accountid", 'int') > 0)) {
 						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("FinancialAccount"));
+						setEventMessages($errmsg, null, 'errors');
+						$error++;
+						$action = 'addsubscription';
 					}
 				} else {
-					if (GETPOST("accountid")) {
+					if (GETPOST("accountid", 'int')) {
 						$errmsg = $langs->trans("ErrorDoNotProvideAccountsIfNullAmount");
+						setEventMessages($errmsg, null, 'errors');
+						$error++;
+						$action = 'addsubscription';
 					}
-				}
-				if ($errmsg) {
-					$error++;
-					setEventMessages($errmsg, null, 'errors');
-					$error++;
-					$action = 'addsubscription';
 				}
 			}
 		}
@@ -601,8 +608,16 @@ if ($rowid > 0) {
 				$company = new Societe($db);
 				$result = $company->fetch($object->fk_soc);
 				print $company->getNomUrl(1);
+
+				// Show link to invoices
+				$tmparray = $company->getOutstandingBills('customer');
+				if (!empty($tmparray['refs'])) {
+					print ' - '.img_picto($langs->trans("Invoices"), 'bill', 'class="paddingright"').'<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->socid.'">'.$langs->trans("Invoices").': '.count($tmparray['refs']);
+					// TODO Add alert if warning on at least one invoice late
+					print '</a>';
+				}
 			} else {
-				print $langs->trans("NoThirdPartyAssociatedToMember");
+				print '<span class="opacitymedium">'.$langs->trans("NoThirdPartyAssociatedToMember").'</span>';
 			}
 		}
 		print '</td></tr>';
@@ -628,7 +643,7 @@ if ($rowid > 0) {
 		if ($object->user_id) {
 			$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'none');
 		} else {
-			print $langs->trans("NoDolibarrAccess");
+			print '<span class="opacitymedium">'.$langs->trans("NoDolibarrAccess").'</span>';
 		}
 	}
 	print '</td></tr>';
@@ -970,17 +985,18 @@ if ($rowid > 0) {
 				print '<tr><td class="tdtop fieldrequired">'.$langs->trans('MoreActions');
 				print '</td>';
 				print '<td>';
-				print '<input type="radio" class="moreaction" id="none" name="paymentsave" value="none"'.(empty($bankdirect) && empty($invoiceonly) && empty($bankviainvoice) ? ' checked' : '').'> '.$langs->trans("None").'<br>';
+				print '<input type="radio" class="moreaction" id="none" name="paymentsave" value="none"'.(empty($bankdirect) && empty($invoiceonly) && empty($bankviainvoice) ? ' checked' : '').'>';
+				print '<label for="none"> '.$langs->trans("None").'</label><br>';
 				// Add entry into bank accoun
 				if (!empty($conf->banque->enabled)) {
 					print '<input type="radio" class="moreaction" id="bankdirect" name="paymentsave" value="bankdirect"'.(!empty($bankdirect) ? ' checked' : '');
-					print '> '.$langs->trans("MoreActionBankDirect").'<br>';
+					print '><label for="bankdirect">  '.$langs->trans("MoreActionBankDirect").'</label><br>';
 				}
 				// Add invoice with no payments
 				if (!empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
 					print '<input type="radio" class="moreaction" id="invoiceonly" name="paymentsave" value="invoiceonly"'.(!empty($invoiceonly) ? ' checked' : '');
 					//if (empty($object->fk_soc)) print ' disabled';
-					print '> '.$langs->trans("MoreActionInvoiceOnly");
+					print '><label for="invoiceonly"> '.$langs->trans("MoreActionInvoiceOnly");
 					if ($object->fk_soc) {
 						print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
 					} else {
@@ -1004,13 +1020,13 @@ if ($rowid > 0) {
 						}
 						print '. '.$langs->transnoentitiesnoconv("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS", $prodtmp->getNomUrl(1)); // must use noentitiesnoconv to avoid to encode html into getNomUrl of product
 					}
-					print '<br>';
+					print '</label><br>';
 				}
 				// Add invoice with payments
 				if (!empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
 					print '<input type="radio" class="moreaction" id="bankviainvoice" name="paymentsave" value="bankviainvoice"'.(!empty($bankviainvoice) ? ' checked' : '');
 					//if (empty($object->fk_soc)) print ' disabled';
-					print '> '.$langs->trans("MoreActionBankViaInvoice");
+					print '><label for="bankviainvoice">  '.$langs->trans("MoreActionBankViaInvoice");
 					if ($object->fk_soc) {
 						print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
 					} else {
@@ -1034,7 +1050,7 @@ if ($rowid > 0) {
 						}
 						print '. '.$langs->transnoentitiesnoconv("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS", $prodtmp->getNomUrl(1)); // must use noentitiesnoconv to avoid to encode html into getNomUrl of product
 					}
-					print '<br>';
+					print '</label><br>';
 				}
 				print '</td></tr>';
 

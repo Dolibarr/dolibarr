@@ -208,7 +208,7 @@ function getCustomerOrderPieChart($socid = 0)
 		$sql .= ' AND c.fk_soc = '.$user->socid;
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " GROUP BY c.fk_statut";
 

@@ -297,7 +297,7 @@ class BookKeeping extends CommonObject
 		$sql .= " AND fk_doc = ".((int) $this->fk_doc);
 		if (!empty($conf->global->ACCOUNTANCY_ENABLE_FKDOCDET)) {
 			// DO NOT USE THIS IN PRODUCTION. This will generate a lot of trouble into reports and will corrupt database (by generating duplicate entries.
-			$sql .= " AND fk_docdet = ".$this->fk_docdet; // This field can be 0 if record is for several lines
+			$sql .= " AND fk_docdet = ".((int) $this->fk_docdet); // This field can be 0 if record is for several lines
 		}
 		$sql .= " AND numero_compte = '".$this->db->escape($this->numero_compte)."'";
 		$sql .= " AND label_operation = '".$this->db->escape($this->label_operation)."'";

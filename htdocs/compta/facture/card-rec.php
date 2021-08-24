@@ -1144,10 +1144,8 @@ if ($action == 'create') {
 		}
 		print "</table>\n";
 
-		print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-		print '</div>';
+		print $form->buttonsSaveCancel("Create");
+
 		print "</form>\n";
 	} else {
 		dol_print_error('', "Error, no invoice ".$object->id);

@@ -214,9 +214,8 @@ print '<input type="text" name="PRELEVEMENT_ADDDAYS" value="'.$conf->global->PRE
 print '</td></tr>';
 
 print '</table>';
-print '<br>';
 
-print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 
