@@ -398,7 +398,7 @@ class Notify
 		$sql .= " WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action";
 		$sql .= " AND c.statut = 1";
 		if (is_numeric($notifcode)) {
-			$sql .= " AND n.fk_action = ".$notifcode; // Old usage
+			$sql .= " AND n.fk_action = ".((int) $notifcode); // Old usage
 		} else {
 			$sql .= " AND a.code = '".$this->db->escape($notifcode)."'"; // New usage
 		}

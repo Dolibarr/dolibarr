@@ -77,8 +77,11 @@ print load_fiche_titre($langs->trans("OrdersArea"), '', 'order');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-print getCustomerOrderPieChart($socid);
-print '<br>';
+$tmp = getCustomerOrderPieChart($socid);
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
 
 
 /*
@@ -101,7 +104,7 @@ if (!empty($conf->commande->enabled)) {
 		$sql .= " AND c.fk_soc = ".((int) $socid);
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 
 	$resql = $db->query($sql);
@@ -169,7 +172,7 @@ if ($socid) {
 	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " ORDER BY c.tms DESC";
 $sql .= $db->plimit($max, 0);
@@ -253,7 +256,7 @@ if (!empty($conf->commande->enabled)) {
 		$sql .= " AND c.fk_soc = ".((int) $socid);
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " ORDER BY c.rowid DESC";
 
@@ -342,7 +345,7 @@ if (!empty($conf->commande->enabled)) {
 		$sql .= " AND c.fk_soc = ".((int) $socid);
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " ORDER BY c.rowid DESC";
 
