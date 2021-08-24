@@ -662,7 +662,7 @@ if (count($listofdata)) {
 	print '<input type="text" name="label" class="minwidth300" value="'.dol_escape_htmltag($labelmovement).'"><br>';
 	print '<br>';
 
-	print '<div class="center"><input class="button" type="submit" name="valid" value="'.dol_escape_htmltag($buttonrecord).'"></div>';
+	print '<div class="center"><input type="submit" class="button" name="valid" value="'.dol_escape_htmltag($buttonrecord).'"></div>';
 
 	print '<br>';
 	print '</div>';

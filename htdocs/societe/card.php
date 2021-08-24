@@ -2580,7 +2580,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					if ($action == 'editRE') {
 						print '<td class="left">';
 						$formcompany->select_localtax(1, $object->localtax1_value, "lt1");
-						print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+						print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 					} else {
 						print '<td>'.$object->localtax1_value.'</td>';
 					}
@@ -2594,7 +2594,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					if ($action == 'editIRPF') {
 						print '<td class="left">';
 						$formcompany->select_localtax(2, $object->localtax2_value, "lt2");
-						print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+						print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 					} else {
 						print '<td>'.$object->localtax2_value.'</td>';
 					}
@@ -2612,7 +2612,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					if ($action == 'editRE') {
 						print '<td class="left">';
 						$formcompany->select_localtax(1, $object->localtax1_value, "lt1");
-						print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+						print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 					} else {
 						print '<td>'.$object->localtax1_value.'</td>';
 					}
@@ -2630,7 +2630,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					if ($action == 'editIRPF') {
 						print '<td class="left">';
 						$formcompany->select_localtax(2, $object->localtax2_value, "lt2");
-						print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+						print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 					} else {
 						print '<td>'.$object->localtax2_value.'</td>';
 					}

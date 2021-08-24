@@ -623,7 +623,7 @@ if (empty($reshook)) {
 }
 
 print '<div class="inline-block valignmiddle">';
-print '<input class="button" type="submit" name="valid" value="'.$langs->trans('ToFilter').'">';
+print '<input type="submit" class="button" name="valid" value="'.$langs->trans('ToFilter').'">';
 print '</div>';
 
 print '</form>';
@@ -958,7 +958,7 @@ print dol_get_fiche_end();
 
 
 $value = $langs->trans("CreateOrders");
-print '<div class="center"><input class="button" type="submit" name="valid" value="'.$value.'"></div>';
+print '<div class="center"><input type="submit" class="button" name="valid" value="'.$value.'"></div>';
 
 
 print '</form>';

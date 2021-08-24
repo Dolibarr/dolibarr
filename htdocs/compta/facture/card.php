@@ -5190,7 +5190,7 @@ if ($action == 'create') {
 			}
 			print '<td>&nbsp;</td>';
 			print '<td class="nowrap right"><input type="text" size="1" value="" name="all_progress">%</td>';
-			print '<td class="right"><input class="button" type="submit" name="all_percent" value="Modifier" /></td>';
+			print '<td class="right"><input type="submit" class="button" name="all_percent" value="Modifier" /></td>';
 			print '</tr>';
 
 			print '</table>';

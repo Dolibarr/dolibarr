@@ -9274,7 +9274,8 @@ class Form
 
 		if ($save_label == 'Create' || $save_label == 'Add' ) {
 			$save['name'] = 'add';
-			$save['label_key'] = $save_label;
+		} elseif ($save_label == 'Modify') {
+			$save['name'] = 'edit';
 		}
 
 		$cancel = array(
