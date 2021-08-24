@@ -2466,7 +2466,7 @@ if ($action == 'create') {
 				$labelofbutton = $langs->trans('ReceiveProducts');
 				if ($conf->reception->enabled) {
 					$labelofbutton = $langs->trans("CreateReception");
-					if (!empty($object->linkedObjects)) {
+					if (!empty($object->linkedObjects['reception'])) {
 						foreach ($object->linkedObjects['reception'] as $element) {
 							if ($element->statut >= 0) {
 								$hasreception = 1;
