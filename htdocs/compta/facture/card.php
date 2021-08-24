@@ -311,8 +311,8 @@ if (empty($reshook))
 			//var_dump($array_of_total_ht_per_vat_rate);exit;
 			foreach ($array_of_total_ht_per_vat_rate as $vatrate => $tmpvalue)
 			{
-				$tmp_total_ht = $array_of_total_ht_per_vat_rate[$vatrate];
-				$tmp_total_ht_devise = $array_of_total_ht_devise_per_vat_rate[$vatrate];
+				$tmp_total_ht = price2num($array_of_total_ht_per_vat_rate[$vatrate]);
+				$tmp_total_ht_devise = price2num($array_of_total_ht_devise_per_vat_rate[$vatrate]);
 
 				if (($tmp_total_ht < 0 || $tmp_total_ht_devise < 0) && empty($conf->global->FACTURE_ENABLE_NEGATIVE_LINES))
 				{
