@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $servicename = 'PayPal';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'other', 'paypal', 'paybox'));
+$langs->loadLangs(array('admin', 'other', 'paypal', 'paybox', 'stripe'));
 
 if (!$user->admin) {
 	accessforbidden();

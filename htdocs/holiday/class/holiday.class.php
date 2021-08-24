@@ -1665,6 +1665,7 @@ class Holiday extends CommonObject
 					$sql .= " WHERE u.entity IN (".getEntity('user').")";
 				}
 				$sql .= " AND u.statut > 0";
+				$sql .= " AND u.employee = 1"; // We only want employee users for holidays
 				if ($filters) {
 					$sql .= $filters;
 				}
@@ -1755,6 +1756,7 @@ class Holiday extends CommonObject
 				}
 
 				$sql .= " AND u.statut > 0";
+				$sql .= " AND u.employee = 1"; // We only want employee users for holidays
 				if ($filters) {
 					$sql .= $filters;
 				}

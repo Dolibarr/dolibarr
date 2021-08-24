@@ -45,7 +45,6 @@ $id = GETPOST('id', 'int');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_categ = GETPOST("search_categ", 'alpha');
-$search_project = GETPOST('search_project');
 
 $search_projectstatus = GETPOST('search_projectstatus');
 if (!isset($search_projectstatus) || $search_projectstatus === '') {
@@ -62,8 +61,8 @@ $search_task_ref = GETPOST('search_task_ref');
 $search_task_label = GETPOST('search_task_label');
 $search_task_description = GETPOST('search_task_description');
 $search_task_ref_parent = GETPOST('search_task_ref_parent');
-$search_project_user = GETPOST('search_project_user');
-$search_task_user = GETPOST('search_task_user');
+$search_project_user = GETPOST('search_project_user', 'int');
+$search_task_user = GETPOST('search_task_user', 'int');
 $search_task_progress = GETPOST('search_task_progress');
 $search_societe = GETPOST('search_societe');
 
@@ -182,7 +181,6 @@ if (empty($reshook)) {
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_all = "";
 		$search_categ = "";
-		$search_project = "";
 		$search_projectstatus = -1;
 		$search_project_ref = "";
 		$search_project_title = "";
@@ -387,10 +385,10 @@ if ($search_projectstatus >= 0) {
 	}
 }
 if ($search_project_user > 0) {
-	$sql .= " AND ecp.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listofprojectcontacttype))).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_project_user;
+	$sql .= " AND ecp.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listofprojectcontacttype))).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".((int) $search_project_user);
 }
 if ($search_task_user > 0) {
-	$sql .= " AND ect.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listoftaskcontacttype))).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".$search_task_user;
+	$sql .= " AND ect.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listoftaskcontacttype))).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".((int) $search_task_user);
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -487,13 +485,13 @@ if ($search_project_title != '') {
 	$param .= '&search_project_title='.urlencode($search_project_title);
 }
 if ($search_task_ref != '') {
-	$param .= '&search_task_ref='.urlencode($search_ref);
+	$param .= '&search_task_ref='.urlencode($search_task_ref);
 }
 if ($search_task_label != '') {
-	$param .= '&search_task_label='.urlencode($search_label);
+	$param .= '&search_task_label='.urlencode($search_task_label);
 }
 if ($search_task_description != '') {
-	$param .= '&search_task_description='.urlencode($search_description);
+	$param .= '&search_task_description='.urlencode($search_task_description);
 }
 if ($search_task_ref_parent != '') {
 	$param .= '&search_task_ref_parent='.urlencode($search_task_ref_parent);

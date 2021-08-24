@@ -60,7 +60,7 @@ $search_lastname = GETPOST("search_lastname", 'alphanohtml');
 $search_firstname = GETPOST("search_firstname", 'alphanohtml');
 $search_email = GETPOST("search_email", 'alphanohtml');
 $search_other = GETPOST("search_other", 'alphanohtml');
-$search_dest_status = GETPOST('search_dest_status', 'alphanohtml');
+$search_dest_status = GETPOST('search_dest_status', 'int');
 
 // Search modules dirs
 $modulesdir = dolGetModulesDirs('/mailings');
@@ -473,7 +473,7 @@ if ($object->fetch($id) >= 0) {
 		$asearchcriteriahasbeenset++;
 	}
 	if ($search_dest_status != '' && $search_dest_status >= -1) {
-		$sql .= " AND mc.statut=".$db->escape($search_dest_status)." ";
+		$sql .= " AND mc.statut = ".((int) $search_dest_status);
 		$asearchcriteriahasbeenset++;
 	}
 	$sql .= $db->order($sortfield, $sortorder);
@@ -538,6 +538,8 @@ if ($object->fetch($id) >= 0) {
 			$morehtmlcenter = '<span class="opacitymedium">'.$langs->trans("ToClearAllRecipientsClickHere").'</span> <a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition smallpaddingimp">'.$langs->trans("TargetsReset").'</a>';
 		}
 		$morehtmlcenter .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?exportcsv=1&id='.$object->id.'">'.$langs->trans("Download").'</a>';
+
+		$massactionbutton = '';
 
 		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit);
 

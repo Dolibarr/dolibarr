@@ -753,9 +753,9 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 					$out = dol_string_nohtmltag($out, 0);
 					// Remove also other dangerous string sequences
 					// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
-					// '../' is dangerous because it allows dir transversals
+					// '../' or '..\' is dangerous because it allows dir transversals
 					// Note &#38, '&#0000038', '&#x26'... is a simple char like '&' alone but there is no reason to accept such way to encode input data.
-					$out = str_ireplace(array('&#38', '&#0000038', '&#x26', '&quot', '&#34', '&#0000034', '&#x22', '"', '&#47', '&#0000047', '&#x2F', '../'), '', $out);
+					$out = str_ireplace(array('&#38', '&#0000038', '&#x26', '&quot', '&#34', '&#0000034', '&#x22', '"', '&#47', '&#0000047', '&#92', '&#0000092', '&#x2F', '../', '..\\'), '', $out);
 				} while ($oldstringtoclean != $out);
 				// keep lines feed
 			}
@@ -768,9 +768,9 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 					// Remove html tags
 					$out = dol_html_entity_decode($out, ENT_COMPAT | ENT_HTML5, 'UTF-8');
 					// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
-					// '../' is dangerous because it allows dir transversals
+					// '../' or '..\' is dangerous because it allows dir transversals
 					// Note &#38, '&#0000038', '&#x26'... is a simple char like '&' alone but there is no reason to accept such way to encode input data.
-					$out = str_ireplace(array('&#38', '&#0000038', '&#x26', '&quot', '&#34', '&#0000034', '&#x22', '"', '&#47', '&#0000047', '&#x2F', '../'), '', $out);
+					$out = str_ireplace(array('&#38', '&#0000038', '&#x26', '&quot', '&#34', '&#0000034', '&#x22', '"', '&#47', '&#0000047', '&#92', '&#0000092', '&#x2F', '../', '..\\'), '', $out);
 				} while ($oldstringtoclean != $out);
 			}
 			break;
@@ -799,11 +799,11 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 					}
 				}
 
-				// Ckeditor use the numeric entitic for apostrophe so we force it to text entity (all other special chars are correctly
-				// encoded using text entities). This is a fix for CKeditor.
+				// Ckeditor use the numeric entitic for apostrophe so we force it to text entity (all other special chars are
+				// encoded using text entities) so we can then exclude all numeric entities.
 				$out = preg_replace('/&#39;/i', '&apos;', $out);
 
-				// We replace chars from a/A to z/Z encoded with numeric HTML entities with the real char so we won't loose the chars at the next step.
+				// We replace chars from a/A to z/Z encoded with numeric HTML entities with the real char so we won't loose the chars at the next step (preg_replace).
 				// No need to use a loop here, this step is not to sanitize (this is done at next step, this is to try to save chars, even if they are
 				// using a non coventionnel way to be encoded, to not have them sanitized just after)
 				$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', 'realCharForNumericEntities', $out);
@@ -818,6 +818,9 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 					// Warning, the function may add a LF so we are forced to trim to compare with old $out without having always a difference and an infinit loop.
 					$out = trim(dol_string_onlythesehtmlattributes($out));
 				}
+
+				// Restore entity &apos; into &#39; (restricthtml is for html content so we can use html entity)
+				$out = preg_replace('/&apos;/i', "&#39;", $out);
 			} while ($oldstringtoclean != $out);
 			break;
 		case 'custom':
@@ -1280,19 +1283,18 @@ function dol_escape_json($stringtoescape)
  *  Returns text escaped for inclusion in HTML alt or title tags, or into values of HTML input fields.
  *
  *  @param      string		$stringtoescape			String to escape
- *  @param		int			$keepb					1=Keep b tags and escape them, 0=remove them
+ *  @param		int			$keepb					1=Keep b tags, 0=remove them completeley
  *  @param      int         $keepn              	1=Preserve \r\n strings (otherwise, replace them with escaped value). Set to 1 when escaping for a <textarea>.
- *  @param		string		$keepmoretags			'' or 'common' or list of tags
+ *  @param		string		$noescapetags			'' or 'common' or list of tags to not escape
  *  @param		int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
  *  @return     string     				 			Escaped string
  *  @see		dol_string_nohtmltag(), dol_string_nospecial(), dol_string_unaccent()
  */
-function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $keepmoretags = '', $escapeonlyhtmltags = 0)
+function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapetags = '', $escapeonlyhtmltags = 0)
 {
-	if ($keepmoretags == 'common') {
-		$keepmoretags = 'html,body,a,b,em,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody';
+	if ($noescapetags == 'common') {
+		$noescapetags = 'html,body,a,b,em,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody';
 	}
-	// TODO Implement $keepmoretags
 
 	// escape quotes and backslashes, newlines, etc.
 	if ($escapeonlyhtmltags) {
@@ -1306,10 +1308,33 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $keepmoreta
 	if (!$keepn) {
 		$tmp = strtr($tmp, array("\r"=>'\\r', "\n"=>'\\n'));
 	}
+
 	if ($escapeonlyhtmltags) {
 		return htmlspecialchars($tmp, ENT_COMPAT, 'UTF-8');
 	} else {
-		return htmlentities($tmp, ENT_COMPAT, 'UTF-8');
+		// Escape tags to keep
+		$tmparrayoftags = array();
+		if ($noescapetags) {
+			$tmparrayoftags = explode(',', $noescapetags);
+		}
+
+		if (count($tmparrayoftags)) {
+			foreach ($tmparrayoftags as $tagtoreplace) {
+				$tmp = str_ireplace('<'.$tagtoreplace.'>', '__BEGINTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
+				$tmp = str_ireplace('</'.$tagtoreplace.'>', '__ENDTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
+			}
+		}
+
+		$result = htmlentities($tmp, ENT_COMPAT, 'UTF-8');
+
+		if (count($tmparrayoftags)) {
+			foreach ($tmparrayoftags as $tagtoreplace) {
+				$result = str_ireplace('__BEGINTAGTOREPLACE'.$tagtoreplace.'__', '<'.$tagtoreplace.'>', $result);
+				$result = str_ireplace('__ENDTAGTOREPLACE'.$tagtoreplace.'__', '</'.$tagtoreplace.'>', $result);
+			}
+		}
+
+		return $result;
 	}
 }
 
