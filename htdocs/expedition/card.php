@@ -469,7 +469,12 @@ if (empty($reshook))
 	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}*/
-
+	elseif ($action == 'confirm_modif' && $confirm == 'yes' && $user->rights->expedition->creer) {
+		$result = $object->setStatut(0);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
 	elseif ($action == 'setdate_livraison' && $user->rights->expedition->creer)
 	{
 		//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
@@ -761,6 +766,16 @@ if (empty($reshook))
 									unset($_POST[$qty]);
 								}
 							}
+						} else { // both product inventory and batch are not activated.
+							$qty = "qtyl".$line_id;
+							$line->id = $line_id;
+							$line->qty = GETPOST($qty, 'int');
+							$line->entrepot_id = 0;
+							if ($line->update($user) < 0) {
+								setEventMessages($line->error, $line->errors, 'errors');
+								$error++;
+							}
+							unset($_POST[$qty]);
 						}
 					} else {
 						// Product no predefined
@@ -1634,7 +1649,12 @@ if ($action == 'create')
 		{
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('CancelSending'), $langs->trans("ConfirmCancelSending", $object->ref), 'confirm_cancel', '', 0, 1);
 		}
-
+		
+		// Confirm modification (back to draft status)
+		if ($action == 'modif') {
+			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('UnvalidateShipment'), $langs->trans("ConfirmUnvalidateShipment", $object->ref), 'confirm_modif', '', 0, 1);
+		}
+		
 		// Call Hook formConfirm
 		$parameters = array('formConfirm' => $formconfirm);
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -2266,6 +2286,16 @@ if ($action == 'create')
 							print '<td></td>';
 							print '</tr>';
 						}
+					} else { // both product batch and stock are not activated. 
+						print '<!-- case edit 6 -->';
+						print '<tr>';
+						// Qty to ship or shipped
+						print '<td><input class="qtyl" name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'"></td>';
+						// Warehouse source
+						print '<td></td>';
+						// Batch number managment
+						print '<td></td>';
+						print '</tr>';
 					}
 
 					print '</table></td>';
@@ -2443,6 +2473,12 @@ if ($action == 'create')
 				}
 			}
 
+			// Modify
+			if ($object->statut == Expedition::STATUS_VALIDATED && $user->rights->expedition->creer) {
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=modif">'.$langs->trans("Modify").'</a>';
+			}
+
+			
 			// Send
 			if (empty($user->socid)) {
 				if ($object->statut > 0)
