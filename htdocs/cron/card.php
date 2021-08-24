@@ -532,11 +532,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print dol_get_fiche_end();
 
-	print '<div align="center">';
-	print '<input type="submit" name="save" class="button button-save" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
-	print "</div>";
+	print $form->buttonsSaveCancel();
 
 	print "</form>\n";
 } else {

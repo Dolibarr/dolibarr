@@ -341,7 +341,7 @@ if ($mode == 'config' && $user->admin) {
 				print '<td>'.$printer->profileresprint.'</td>';
 				print '<td><input size="60" type="text" name="parameter" value="'.$printer->listprinters[$line]['parameter'].'"></td>';
 				print '<td>';
-				print '<div class="center"><input type="submit" class="button button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
+				print $form->buttonsSaveCancel("Save", '');
 				print '</td>';
 				print '</tr>';
 			} else {
@@ -432,7 +432,7 @@ if ($mode == 'template' && $user->admin) {
 				print '<textarea name="template" wrap="soft" cols="120" rows="12">'.$printer->listprinterstemplates[$line]['template'].'</textarea>';
 				print '</td>';
 				print '<td>';
-				print '<div class="center"><input type="submit" class="button button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
+				print $form->buttonsSaveCancel("Save", '');
 				print '</td>';
 			} else {
 				print '<td>'.$printer->listprinterstemplates[$line]['name'].'</td>';
