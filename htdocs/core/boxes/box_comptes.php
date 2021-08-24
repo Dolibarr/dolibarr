@@ -122,7 +122,12 @@ class box_comptes extends ModeleBoxes
 					$account_static->accountancy_journal = $objp->accountancy_journal;
 					$solde = $account_static->solde(0);
 
-					$solde_total[$objp->currency_code] += $solde;
+					if (!array_key_exists($objp->currency_code, $solde_total)) {
+						$solde_total[$objp->currency_code] = $solde;
+					} else {
+						$solde_total[$objp->currency_code] += $solde;
+					}
+
 
 					$this->info_box_contents[$line][] = array(
 						'td' => '',
