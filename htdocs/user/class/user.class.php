@@ -660,7 +660,7 @@ class User extends CommonObject
 	 * 	@param	int		$module			Id of permission to add or 0 to add several permissions
 	 *  @param  string	$permlevel1		Permission level1
 	 *  @param  string	$permlevel2		Permission level2
-	 *  @return boolean					1 if user has permission, 0 if not.
+	 *  @return int					1 if user has permission, 0 if not.
 	 *  @see	clearrights(), delrights(), getrights(), hasRight()
 	 */
 	public function hasRight($module, $permlevel1, $permlevel2 = '')
