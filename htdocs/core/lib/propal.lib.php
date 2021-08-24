@@ -187,7 +187,7 @@ function getCustomerProposalPieChart($socid = 0)
 		$sql .= ' AND p.fk_soc = '.$user->socid;
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " AND p.fk_statut IN (".$db->sanitize(implode(" ,", $listofstatus)).")";
 	$sql .= " GROUP BY p.fk_statut";

@@ -774,7 +774,7 @@ if ($action == 'create') {
 			$sql .= " AND s.rowid = ".((int) $socid);
 		}
 		if (!$user->rights->societe->client->voir && !$socid) {
-			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($search_ref) {
 			$sql .= natural_search('f.titre', $search_ref);
