@@ -242,7 +242,7 @@ function getCustomerInvoicePieChart($socid = 0)
 		$sql .= ' AND f.fk_soc = '.$user->socid;
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " GROUP BY f.fk_statut";
 
@@ -362,7 +362,7 @@ function getPurchaseInvoicePieChart($socid = 0)
 		$sql .= ' AND f.fk_soc = '.$user->socid;
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " GROUP BY f.fk_statut";
 
@@ -600,7 +600,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 	$sql .= " WHERE s.rowid = f.fk_soc AND f.fk_statut = ".Facture::STATUS_DRAFT;
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 
 	if ($socid) {
@@ -743,7 +743,7 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 	$sql .= " WHERE s.rowid = f.fk_soc AND f.fk_statut = ".FactureFournisseur::STATUS_DRAFT;
 	$sql .= " AND f.entity IN (".getEntity('invoice').')';
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
@@ -867,7 +867,7 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " ORDER BY f.tms DESC";
 	$sql .= $db->plimit($maxCount, 0);
@@ -969,7 +969,7 @@ function getPurchaseInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " ORDER BY f.tms DESC";
 	$sql .= $db->plimit($maxCount, 0);
@@ -1079,7 +1079,7 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 		$sql .= " WHERE s.rowid = f.fk_soc AND f.paye = 0 AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 		$sql .= " AND f.entity IN (".getEntity('invoice').')';
 		if (!$user->rights->societe->client->voir && !$socid) {
-			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid) {
 			$sql .= " AND f.fk_soc = ".((int) $socid);
@@ -1267,7 +1267,7 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 		$sql .= " AND ff.paye = 0";
 		$sql .= " AND ff.fk_statut = ".FactureFournisseur::STATUS_VALIDATED;
 		if (!$user->rights->societe->client->voir && !$socid) {
-			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid) {
 			$sql .= " AND ff.fk_soc = ".((int) $socid);

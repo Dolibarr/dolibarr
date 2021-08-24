@@ -75,7 +75,7 @@ if ($user->socid) {
 	$sql .= ' AND p.fk_soc = '.$user->socid;
 }
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " AND p.fk_statut IN (0,1,2,3,4)";
 $sql .= " GROUP BY p.fk_statut";
@@ -176,7 +176,7 @@ if (!empty($conf->supplier_proposal->enabled)) {
 		$sql .= " AND c.fk_soc = ".((int) $socid);
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 
 	$resql = $db->query($sql);
@@ -234,7 +234,7 @@ if ($socid) {
 	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " ORDER BY c.tms DESC";
 $sql .= $db->plimit($max, 0);
@@ -312,7 +312,7 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 	$sql .= " AND p.entity IN (".getEntity('supplier_proposal').")";
 	$sql .= " AND p.fk_statut = 1";
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND s.rowid = ".((int) $socid);

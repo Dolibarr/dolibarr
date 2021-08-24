@@ -88,8 +88,8 @@ $mesg = ''; $error = 0; $errors = array();
 $refalreadyexists = 0;
 
 $id = GETPOST('id', 'int');
-$ref = (GETPOST('ref', 'alpha') !== '') ? GETPOST('ref', 'alpha') : null;
-$type = (GETPOST('type', 'int') !== '') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT;
+$ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : null);
+$type = (GETPOSTISSET('type') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT);
 $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -114,14 +114,12 @@ if (!empty($user->socid)) {
 
 // Load object modCodeProduct
 $module = (!empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) ? $conf->global->PRODUCT_CODEPRODUCT_ADDON : 'mod_codeproduct_leopard');
-if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php')
-{
-    $module = substr($module, 0, dol_strlen($module) - 4);
+if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php') {
+	$module = substr($module, 0, dol_strlen($module) - 4);
 }
 $result = dol_include_once('/core/modules/product/'.$module.'.php');
-if ($result > 0)
-{
-    $modCodeProduct = new $module();
+if ($result > 0) {
+	$modCodeProduct = new $module();
 }
 
 $object = new Product($db);
@@ -261,9 +259,11 @@ if (empty($reshook)) {
 			}
 		}
 		if (empty($ref)) {
-			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Ref')), null, 'errors');
-			$action = "create";
-			$error++;
+			if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
+					setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Ref')), null, 'errors');
+					$action = "create";
+					$error++;
+			}
 		}
 		if (!empty($duration_value) && empty($duration_unit)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Unit')), null, 'errors');
@@ -1816,7 +1816,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			if (!$object->isService() && !empty($conf->bom->enabled)) {
 				print '<tr><td>'.$form->textwithpicto($langs->trans("DefaultBOM"), $langs->trans("DefaultBOMDesc", $langs->transnoentitiesnoconv("Finished"))).'</td><td>';
-				$bomkey = "Bom:bom/class/bom.class.php:0:t.status=1 AND t.fk_product=".$object->id;
+				$bomkey = "Bom:bom/class/bom.class.php:0:t.status=1 AND t.fk_product=".((int) $object->id);
 				print $form->selectForForms($bomkey, 'fk_default_bom', $object->fk_default_bom, 1);
 				print '</td></tr>';
 			}

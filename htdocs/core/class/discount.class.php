@@ -144,7 +144,7 @@ class DiscountAbsolute
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as fsup ON sr.fk_invoice_supplier_source = fsup.rowid";
 		$sql .= " WHERE sr.entity IN (".getEntity('invoice').")";
 		if ($rowid) {
-			$sql .= " AND sr.rowid=".((int) $rowid);
+			$sql .= " AND sr.rowid = ".((int) $rowid);
 		}
 		if ($fk_facture_source) {
 			$sql .= " AND sr.fk_facture_source = ".((int) $fk_facture_source);
@@ -315,7 +315,7 @@ class DiscountAbsolute
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except";
 			$sql .= " WHERE (fk_invoice_supplier_line IS NOT NULL"; // Not used as absolute simple discount
 			$sql .= " OR fk_invoice_supplier IS NOT NULL)"; // Not used as credit note and not used as deposit
-			$sql .= " AND fk_invoice_supplier_source = ".$this->fk_invoice_supplier_source;
+			$sql .= " AND fk_invoice_supplier_source = ".((int) $this->fk_invoice_supplier_source);
 			//$sql.=" AND rowid != ".$this->id;
 
 			dol_syslog(get_class($this)."::delete Check if we can remove discount", LOG_DEBUG);
@@ -355,7 +355,7 @@ class DiscountAbsolute
 			if ($this->fk_facture_source) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
 				$sql .= " set paye=0, fk_statut=1";
-				$sql .= " WHERE (type = 2 or type = 3) AND rowid=".$this->fk_facture_source;
+				$sql .= " WHERE (type = 2 or type = 3) AND rowid = ".((int) $this->fk_facture_source);
 
 				dol_syslog(get_class($this)."::delete Update credit note or deposit invoice statut", LOG_DEBUG);
 				$result = $this->db->query($sql);
@@ -370,7 +370,7 @@ class DiscountAbsolute
 			} elseif ($this->fk_invoice_supplier_source) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
 				$sql .= " set paye=0, fk_statut=1";
-				$sql .= " WHERE (type = 2 or type = 3) AND rowid=".$this->fk_invoice_supplier_source;
+				$sql .= " WHERE (type = 2 or type = 3) AND rowid = ".((int) $this->fk_invoice_supplier_source);
 
 				dol_syslog(get_class($this)."::delete Update credit note or deposit invoice statut", LOG_DEBUG);
 				$result = $this->db->query($sql);
@@ -488,7 +488,7 @@ class DiscountAbsolute
 	 *
 	 *	@param		Societe		$company		Object third party for filter
 	 *	@param		User		$user			Filtre sur un user auteur des remises
-	 * 	@param		string		$filter			Filtre autre
+	 * 	@param		string		$filter			Filter other. Warning: Do not use a user input value here.
 	 * 	@param		int			$maxvalue		Filter on max value for discount
 	 *  @param      int			$discount_type  0 => customer discount, 1 => supplier discount
 	 *  @param      int			$multicurrency  Return multicurrency_amount instead of amount
@@ -503,17 +503,17 @@ class DiscountAbsolute
 		$sql = "SELECT SUM(rc.amount_ttc) as amount, SUM(rc.multicurrency_amount_ttc) as multicurrency_amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
 		$sql .= " WHERE rc.entity = ".$conf->entity;
-		$sql .= " AND rc.discount_type=".intval($discount_type);
+		$sql .= " AND rc.discount_type=".((int) $discount_type);
 		if (!empty($discount_type)) {
 			$sql .= " AND (rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_line IS NULL)"; // Available from supplier
 		} else {
 			$sql .= " AND (rc.fk_facture IS NULL AND rc.fk_facture_line IS NULL)"; // Available to customer
 		}
 		if (is_object($company)) {
-			$sql .= " AND rc.fk_soc = ".$company->id;
+			$sql .= " AND rc.fk_soc = ".((int) $company->id);
 		}
 		if (is_object($user)) {
-			$sql .= " AND rc.fk_user = ".$user->id;
+			$sql .= " AND rc.fk_user = ".((int) $user->id);
 		}
 		if ($filter) {
 			$sql .= ' AND ('.$filter.')';
