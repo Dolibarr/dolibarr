@@ -150,7 +150,7 @@ print '</div>';
 
 print dol_get_fiche_end();
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
+print $form->buttonsSaveCancel("Modify", '');
 
 print '</form>';
 

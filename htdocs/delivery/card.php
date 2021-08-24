@@ -630,7 +630,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 			print dol_get_fiche_end();
 
 			//if ($object->statut == 0)	// only if draft
-			//	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+			// print $form->buttonsSaveCancel("Save", '');
 
 			print '</form>';
 
