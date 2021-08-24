@@ -54,12 +54,13 @@ $langs->loadLangs(array("trips", "bills", "mails"));
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-
+$backtopage = GETPOST('backtopage', 'alpha');
 $id = GETPOST('id', 'int');
 $date_start = dol_mktime(0, 0, 0, GETPOST('date_debutmonth', 'int'), GETPOST('date_debutday', 'int'), GETPOST('date_debutyear', 'int'));
 $date_end = dol_mktime(0, 0, 0, GETPOST('date_finmonth', 'int'), GETPOST('date_finday', 'int'), GETPOST('date_finyear', 'int'));
 $date = dol_mktime(0, 0, 0, GETPOST('datemonth', 'int'), GETPOST('dateday', 'int'), GETPOST('dateyear', 'int'));
 $fk_project = GETPOST('fk_project', 'int');
+$projectid = GETPOST('projectid', 'int');
 $vatrate = GETPOST('vatrate', 'alpha');
 $ref = GETPOST("ref", 'alpha');
 $comments = GETPOST('comments', 'restricthtml');
@@ -139,10 +140,22 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($cancel) {
-		if (!empty($backtopage)) {
-			header("Location: ".$backtopage);
-			exit;
-		}
+        if (!empty($backtopage)) {
+            header("Location: ".$backtopage);
+            exit;
+        } elseif ($action == 'create' || $action == 'add') {
+            if (!empty($projectid)) {
+                $page = DOL_URL_ROOT.'/projet/element.php?id='.$projectid;
+            } else {
+                $page = DOL_URL_ROOT.'/expensereport/list.php?leftmenu=expensereport&mainmenu=hrm';
+            }
+            header("Location: ".$page);
+            exit;
+        } elseif ($action == 'edit' || $action == 'update' || $action == 'updateline') {
+            $page = DOL_URL_ROOT.'/expensereport/card.php?id='.$id;
+            header("Location: ".$page);
+            exit;
+        }
 		$action = '';
 
 		$fk_project = '';
@@ -1328,6 +1341,8 @@ if ($action == 'create') {
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="post" name="create">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	print '<input type="hidden" name="projectid" value="'.$projectid.'">';
 
 	print dol_get_fiche_head('');
 

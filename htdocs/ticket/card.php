@@ -54,7 +54,9 @@ $ref       = GETPOST('ref', 'alpha');
 $projectid = GETPOST('projectid', 'int');
 $cancel    = GETPOST('cancel', 'alpha');
 $action    = GETPOST('action', 'aZ09');
-$backtopage = GETPOST('$backtopage', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+$origin     = GETPOST('origin', 'alpha');
+$originid   = GETPOST('originid', 'int');
 
 $notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
 
@@ -148,6 +150,18 @@ if (empty($reshook)) {
 		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
+		} elseif ($action == 'create' || $action == 'add') {
+            $page = DOL_URL_ROOT.'/ticket/list.php?search_fk_status=non_closed&mainmenu=ticket';
+            header("Location: ".$page);
+            exit;
+        } elseif (!empty($origin)) {
+			if ($origin == 'projet_project') {
+				$page = DOL_URL_ROOT.'/ticket/list.php?projectid='.$originid;
+			} else {
+				$page = DOL_URL_ROOT.'/ticket/list.php?search_fk_status=non_closed&mainmenu=ticket';
+			}
+            header("Location: ".$page);
+            exit;
 		}
 
 		$action = 'view';
@@ -704,6 +718,7 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->withref = 1;
 	$formticket->fk_user_create = $user->id;
 	$formticket->withfile = 2;
+	$formticket->withcancel = 1;
 	$formticket->withextrafields = 1;
 	$formticket->param = array('origin' => GETPOST('origin'), 'originid' => GETPOST('originid'));
 

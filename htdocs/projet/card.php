@@ -51,6 +51,7 @@ $confirm = GETPOST('confirm', 'aZ09');
 $status = GETPOST('status', 'int');
 $opp_status = GETPOST('opp_status', 'int');
 $opp_percent = price2num(GETPOST('opp_percent', 'alpha'));
+$usage_organize_event = GETPOST('usage_organize_event', 'alpha');
 
 if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $action != "update" && !GETPOST("cancel"))) {
 	accessforbidden();
@@ -114,13 +115,22 @@ if (empty($reshook)) {
 				dol_syslog($object->error, LOG_DEBUG);
 				setEventMessages($langs->trans("CantRemoveProject", $langs->transnoentitiesnoconv("ProjectOverview")), null, 'errors');
 			}
-		}
-		if ($backtopage) {
-			header("Location: ".$backtopage);
-			exit;
-		}
-
-		$action = '';
+        } elseif (!empty($backtopage)) {
+            header("Location: ".$backtopage);
+            exit;
+        } elseif ($action == 'add') {
+            if ($usage_organize_event) {
+                $page = DOL_URL_ROOT.'/projet/list.php?search_usage_event_organization=1&search_status=99&mainmenu=project&contextpage=organizedevents';
+            } else {
+                $page = DOL_URL_ROOT.'/projet/list.php?leftmenu=projets&search_status=99';
+            }
+            header("Location: ".$page);
+            exit;
+        } elseif ($action == 'update') {
+            $page = DOL_URL_ROOT.'/projet/card.php?id='.$id;
+            header("Location: ".$page);
+            exit;
+        }
 	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
@@ -225,7 +235,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && empty(GETPOST('cancel')) && $user->rights->projet->creer) {
+	if ($action == 'update' && $user->rights->projet->creer) {
 		$error = 0;
 
 		if (empty($ref)) {

@@ -79,6 +79,18 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook)) {
 	if ($cancel) {
+		if (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		} elseif ($action == 'update') {
+			$page = DOL_URL_ROOT.'/compta/bank/card.php?id='.$id;
+			header("Location: ".$page);
+			exit;
+		} elseif ($action == 'add') {
+			$page = DOL_URL_ROOT.'/compta/bank/list.php?leftmenu=bank&mainmenu=bank';
+			header("Location: ".$page);
+			exit;
+		}
 		$action = '';
 	}
 
@@ -287,7 +299,7 @@ if (empty($reshook)) {
 
 		if ($result > 0) {
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-			header("Location: " . DOL_URL_ROOT . "/compta/bank/list.php");
+			header("Location: ".DOL_URL_ROOT."/compta/bank/list.php?leftmenu=bank&mainmenu=bank");
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');

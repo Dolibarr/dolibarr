@@ -137,6 +137,16 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($cancel) {
+		if (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		} elseif ($action == 'create' || $action == 'add') {
+			if ($origin == 'commande' && $origin_id) {
+				$page = DOL_URL_ROOT.'/expedition/shipment.php?id='.$origin_id;
+				header("Location: ".$page);
+				exit;
+			}
+		}
 		$action = '';
 		$object->fetch($id); // show shipment also after canceling modification
 	}

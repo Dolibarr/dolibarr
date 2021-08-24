@@ -176,16 +176,6 @@ if ($object->id > 0) {
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productcard', 'globalcard'));
 
-
-
-/*
- * Actions
- */
-
-if ($cancel) {
-	$action = '';
-}
-
 $usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
 $usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
 $usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer));
@@ -194,6 +184,9 @@ if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barco
 	$createbarcode = 0;
 }
 
+/*
+ * Actions
+ */
 $parameters = array('id'=>$id, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -201,6 +194,28 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	if ($cancel) {
+		if (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		} elseif ($action == 'create' || $action == 'add') {
+			if ($type == 0) {
+				$page = DOL_URL_ROOT.'/product/list.php?leftmenu=product&type=0';
+				header("Location: ".$page);
+				exit;
+			} elseif ($type == 1) {
+				$page = DOL_URL_ROOT.'/product/list.php?leftmenu=service&type=1';
+				header("Location: ".$page);
+				exit;
+			}
+		} elseif ($action == 'update') {
+			$page = DOL_URL_ROOT.'/product/card.php?id='.$id;
+			header("Location: ".$page);
+			exit;
+		}
+		$action = '';
+	}
+
 	// Type
 	if ($action == 'setfk_product_type' && $usercancreate) {
 		$result = $object->setValueFrom('fk_product_type', GETPOST('fk_product_type'), '', null, 'text', '', $user, 'PRODUCT_MODIFY');
@@ -481,9 +496,6 @@ if (empty($reshook)) {
 
 	// Update a product or service
 	if ($action == 'update' && $usercancreate) {
-		if (GETPOST('cancel', 'alpha')) {
-			$action = '';
-		} else {
 			if ($object->id > 0) {
 				$object->oldcopy = clone $object;
 
@@ -638,7 +650,6 @@ if (empty($reshook)) {
 					$action = 'edit';
 				}
 			}
-		}
 	}
 
 	// Action clone object

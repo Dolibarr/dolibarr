@@ -39,6 +39,7 @@ $id = GETPOST('id', 'int');
 if ($user->socid) {
 	$id = $user->socid;
 }
+$cancel = GETPOST('cancel', 'alpha');
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 $object = new Contact($db);

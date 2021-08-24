@@ -108,7 +108,6 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "nom";
 }
-$cancelbutton = GETPOST('cancel', 'alpha');
 
 $object = new Client($db);
 $extrafields = new ExtraFields($db);
@@ -152,9 +151,6 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($cancelbutton) {
-		$action = "";
-	}
 
 	// set accountancy code
 	if ($action == 'setcustomeraccountancycode') {

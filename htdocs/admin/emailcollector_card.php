@@ -109,13 +109,22 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	if ($cancel) {
+		if (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		} else {
+			$page = DOL_URL_ROOT.'/admin/emailcollector_list.php';
+			header("Location: ".$page);
+			exit;
+		}
+		$action = '';
+	}
+
 	$error = 0;
 
 	$permissiontoadd = 1;
 	$permissiontodelete = 1;
-	if (empty($backtopage)) {
-		$backtopage = DOL_URL_ROOT.'/admin/emailcollector_card.php?id='.($id > 0 ? $id : '__ID__');
-	}
 	$backurlforlist = DOL_URL_ROOT.'/admin/emailcollector_list.php';
 
 	// Actions cancel, add, update, delete or clone

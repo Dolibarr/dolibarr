@@ -108,10 +108,16 @@ $hookmanager->initHooks(array('membertypecard', 'globalcard'));
  */
 
 if ($cancel) {
-	$action = '';
-
 	if (!empty($backtopage)) {
 		header("Location: ".$backtopage);
+		exit;
+	} elseif ($action == 'add') {
+		$page = DOL_URL_ROOT.'/adherents/type.php?leftmenu=setup&mainmenu=members';
+		header("Location: ".$page);
+		exit;
+	} elseif ($action == 'update') {
+		$page = DOL_URL_ROOT.'/adherents/type.php?rowid='.$rowid;
+		header("Location: ".$page);
 		exit;
 	}
 }
@@ -153,7 +159,7 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 	if (!$error) {
 		$id = $object->create($user);
 		if ($id > 0) {
-			header("Location: ".$_SERVER["PHP_SELF"]);
+			header("Location: ".$_SERVER["PHP_SELF"]."?rowid=".$object->id);
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');

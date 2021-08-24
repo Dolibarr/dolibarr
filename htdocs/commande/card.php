@@ -142,8 +142,15 @@ if (empty($reshook)) {
 		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
+		} elseif ($action == 'add') {
+			if ($socid > 1) {
+				$page = DOL_URL_ROOT.'/comm/card.php?socid='.$socid;
+			} else {
+				$page = DOL_URL_ROOT.'/commande/list.php?leftmenu=orders';
+			}
+			header( "Location: ".$page);
+			exit;
 		}
-		$action = '';
 	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once

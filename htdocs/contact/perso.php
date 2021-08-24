@@ -31,8 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other'));
 
-$id = GETPOST('id', 'int');
+$id     = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 
 // Security check
 if ($user->socid) {
@@ -44,8 +45,13 @@ $object = new Contact($db);
 /*
  * Action
  */
+if ($cancel) {
+	$page = DOL_URL_ROOT.'/contact/perso.php?id='.$id;
+	header("Location: ".$page);
+	exit;
+}
 
-if ($action == 'update' && !GETPOST("cancel") && $user->rights->societe->contact->creer) {
+if ($action == 'update' && $user->rights->societe->contact->creer) {
 	$ret = $object->fetch($id);
 
 	// Note: Correct date should be completed with location to have exact GM time of birth.

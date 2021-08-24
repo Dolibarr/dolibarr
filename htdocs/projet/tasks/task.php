@@ -42,6 +42,7 @@ $ref = GETPOST("ref", 'alpha', 1); // task ref
 $taskref = GETPOST("taskref", 'alpha'); // task ref
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
 $withproject = GETPOST('withproject', 'int');
 $project_ref = GETPOST('project_ref', 'alpha');
 $planned_workload = ((GETPOST('planned_workloadhour', 'int') != '' || GETPOST('planned_workloadmin', 'int') != '') ? (GETPOST('planned_workloadhour', 'int') > 0 ?GETPOST('planned_workloadhour', 'int') * 3600 : 0) + (GETPOST('planned_workloadmin', 'int') > 0 ?GETPOST('planned_workloadmin', 'int') * 60 : 0) : '');
@@ -73,7 +74,23 @@ if ($reshook < 0) {
  * Actions
  */
 
-if ($action == 'update' && !GETPOST("cancel") && $user->rights->projet->creer) {
+if ($cancel) {
+	if (!empty($backtopage)) {
+		header("Location: ".$backtopage);
+		exit;
+	} elseif (!empty($withproject)) {
+		$page = DOL_URL_ROOT.'/projet/tasks/task.php?id='.$id.'&withproject=1';
+		header("Location: ".$page);
+		exit;
+	} else {
+		$page = DOL_URL_ROOT.'/projet/tasks/list.php?leftmenu=tasks';
+		header("Location: ".$page);
+		exit;
+	}
+	$action = '';
+}
+
+if ($action == 'update' && $user->rights->projet->creer) {
 	$error = 0;
 
 	if (empty($taskref)) {

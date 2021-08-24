@@ -23,6 +23,7 @@ $ref = GETPOST('ref', 'alpha');
 $label = GETPOST('label', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
 
 $permissiontoread = $user->rights->produit->lire || $user->rights->service->lire;
 
@@ -40,6 +41,18 @@ if (!$permissiontoread) accessforbidden();
 /*
  * Actions
  */
+if ($cancel) {
+	if (!empty($backtopage)) {
+		header("Location: ".$backtopage);
+		exit;
+	}
+	if ($action == 'add') {
+		$page = DOL_URL_ROOT . '/variants/list.php';
+		header( "Location: " . $page );
+		exit;
+	}
+}
+
 
 if ($action == 'add') {
 	if (empty($ref) || empty($label)) {
@@ -55,7 +68,7 @@ if ($action == 'add') {
 			if ($backtopage) {
 				header('Location: '.$backtopage);
 			} else {
-				header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$resid.'&backtopage='.urlencode($backtopage));
+				header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$resid);
 			}
 			exit;
 		} else {

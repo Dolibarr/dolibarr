@@ -48,6 +48,7 @@ $langs->loadLangs(array('compta', 'bills', 'banks', 'hrm'));
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
+$cancel     = GETPOST('cancel', 'alpha');
 $fk_project = (GETPOST('fk_project') ? GETPOST('fk_project', 'int') : 0);
 
 $dateech = dol_mktime(GETPOST('echhour'), GETPOST('echmin'), GETPOST('echsec'), GETPOST('echmonth'), GETPOST('echday'), GETPOST('echyear'));
@@ -55,6 +56,9 @@ $dateperiod = dol_mktime(GETPOST('periodhour'), GETPOST('periodmin'), GETPOST('p
 $label = GETPOST('label', 'alpha');
 $actioncode = GETPOST('actioncode');
 $fk_user = GETPOST('userid', 'int');
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('socialescard', 'globalcard'));
 
 $object = new ChargeSociales($db);
 if ($id > 0) {
@@ -73,6 +77,25 @@ $result = restrictedArea($user, 'tax', $object->id, 'chargesociales', 'charges')
 /*
  * Actions
  */
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
+if (empty($reshook)) {
+	if ($cancel) {
+		if (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		} elseif ($action == 'create' || $action == 'add') {
+			$page = DOL_URL_ROOT.'/compta/sociales/list.php?leftmenu=tax_social';
+			header("Location: ".$page);
+			exit;
+		}
+		$action = '';
+	}
+}
 
 // Classify paid
 if ($action == 'confirm_paid' && $user->rights->tax->charges->creer && $confirm == 'yes') {

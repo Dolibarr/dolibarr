@@ -55,6 +55,7 @@ $langs->loadLangs(array("contracts", "orders", "companies", "bills", "products",
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 $socid = GETPOST('socid', 'int');
 $id = GETPOST('id', 'int');
@@ -110,6 +111,21 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
+	if ($cancel) {
+		if (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		} elseif ($action == 'add') {
+			if ($socid > 0) {
+				$page = DOL_URL_ROOT.'/comm/card.php?socid='.$socid;
+			} else {
+				$page = DOL_URL_ROOT.'/contrat/list.php?leftmenu=contracts';
+			}
+			header("Location: ".$page);
+			exit;
+		}
+	}
+
 	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once

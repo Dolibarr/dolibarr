@@ -117,6 +117,10 @@ if (empty($reshook)) {
 		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
+		} elseif ($action == 'create' || $action == 'add') {
+			$page = DOL_URL_ROOT . '/fichinter/list.php?leftmenu=ficheinter';
+			header( "Location: " . $page );
+			exit;
 		}
 		$action = '';
 	}

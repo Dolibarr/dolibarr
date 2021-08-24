@@ -128,8 +128,19 @@ if (empty($reshook)) {
 		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
+		} elseif ($action == 'add') {
+			$page = DOL_URL_ROOT.'/adherents/list.php?leftmenu=members';
+			header("Location: ".$page);
+			exit;
+		} elseif ($action == 'update' && !empty($rowid)) {
+			$page = DOL_URL_ROOT.'/adherents/card.php?rowid='.$rowid;
+			header("Location: ".$page);
+			exit;
+		} elseif ($action == 'edit') {
+			$page = DOL_URL_ROOT.'/contrat/index.php?leftmenu=contracts';
+			header("Location: ".$page);
+			exit;
 		}
-		$action = '';
 	}
 
 	if ($action == 'setuserid' && ($user->rights->user->self->creer || $user->rights->user->user->creer)) {

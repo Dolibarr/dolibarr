@@ -315,6 +315,9 @@ if ($action == 'createtask' && $user->rights->projet->creer) {
 			if (!empty($backtopage)) {
 				header("Location: ".$backtopage);
 				exit;
+			} elseif (!empty($projectid)) {
+				header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectid);
+				exit;
 			} elseif (empty($projectid)) {
 				header("Location: ".DOL_URL_ROOT.'/projet/tasks/list.php'.(empty($mode) ? '' : '?mode='.$mode));
 				exit;
@@ -327,7 +330,7 @@ if ($action == 'createtask' && $user->rights->projet->creer) {
 			exit;
 		} elseif (empty($id)) {
 			// We go back on task list
-			header("Location: ".DOL_URL_ROOT.'/projet/tasks/list.php'.(empty($mode) ? '' : '?mode='.$mode));
+			header("Location: ".DOL_URL_ROOT.'/projet/tasks/list.php?leftmenu=tasks'.(empty($mode) ? '' : '&mode='.$mode));
 			exit;
 		}
 	}

@@ -27,6 +27,7 @@ $label = GETPOST('label', 'alpha');
 $ref = GETPOST('ref', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 $object = new ProductAttribute($db);
 $objectval = new ProductAttributeValue($db);
@@ -35,6 +36,9 @@ if ($object->fetch($id) < 1) {
 	dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
 	exit();
 }
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('variantscard', 'globalcard'));
 
 $permissiontoread = $user->rights->produit->lire || $user->rights->service->lire;
 
@@ -53,11 +57,29 @@ if (!$permissiontoread) accessforbidden();
  * Actions
  */
 
-if ($cancel) {
-	$action = '';
+
+/*
+ * Actions
+ */
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
-if ($action) {
+if (empty($reshook)) {
+    if ($cancel) {
+        if (!empty($backtopage)) {
+            header("Location: ".$backtopage);
+            exit;
+        } elseif ($action == 'update') {
+            $page = DOL_URL_ROOT . '/variants/card.php?id='.$id;
+            header( "Location: " . $page );
+            exit;
+        }
+    }
+
 	if ($action == 'update') {
 		$object->ref = $ref;
 		$object->label = $label;
@@ -236,8 +258,8 @@ if ($action == 'edit') {
 
 	<div class="tabsAction">
 		<div class="inline-block divButAction">
-			<a href="card.php?id=<?php echo $object->id ?>&action=edit&token=<?php echo newToken(); ?>" class="butAction"><?php echo $langs->trans('Modify') ?></a>
-			<a href="card.php?id=<?php echo $object->id ?>&action=delete&token=<?php echo newToken(); ?>" class="butAction"><?php echo $langs->trans('Delete') ?></a>
+			<a href="card.php?id=<?php echo $object->id ?>&action=edit" class="butAction"><?php echo $langs->trans('Modify') ?></a>
+			<a href="card.php?id=<?php echo $object->id ?>&action=delete" class="butAction"><?php echo $langs->trans('Delete') ?></a>
 		</div>
 	</div>
 
@@ -294,7 +316,7 @@ if ($action == 'edit') {
 
 	print '<div class="tabsAction">';
 	print '<div class="inline-block divButAction">';
-	print '<a href="create_val.php?id='.$object->id.'" class="butAction">'.$langs->trans('Create').'</a>';
+	print '<a href="create_val.php?id='.$object->id.'" class="butAction">'.$langs->trans('Add').'</a>';
 	print '</div>';
 	print '</div>';
 }

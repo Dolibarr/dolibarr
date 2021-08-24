@@ -84,6 +84,22 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+if (empty($reshook)) {
+    if ($cancel) {
+        if (!empty($backtopage)) {
+            header("Location: ".$backtopage);
+            exit;
+        } elseif ($action == 'create' || $action == 'add') {
+            $page = DOL_URL_ROOT.'/don/index.php?leftmenu=donations&mainmenu=billing';
+            header("Location: ".$page);
+            exit;
+        } elseif ($action == 'update') {
+            header("Location: ".$_SERVER['PHP_SELF']."?id=".urlencode($id));
+            exit;
+        }
+    }
+}
+
 // Action reopen object
 if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd) {
 	$object->fetch($id);
@@ -122,11 +138,6 @@ if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd) {
 
 // Action update object
 if ($action == 'update') {
-	if (!empty($cancel)) {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".urlencode($id));
-		exit;
-	}
-
 	$error = 0;
 
 	if (empty($donation_date)) {
@@ -176,11 +187,6 @@ if ($action == 'update') {
 
 // Action add/create object
 if ($action == 'add') {
-	if (!empty($cancel)) {
-		header("Location: index.php");
-		exit;
-	}
-
 	$error = 0;
 
 	if (!empty($conf->societe->enabled) && !empty($conf->global->DONATION_USE_THIRDPARTIES) && !(GETPOST("socid", 'int') > 0)) {

@@ -49,6 +49,7 @@ $langs->loadLangs(array('bills', 'companies', 'compta', 'admin', 'other', 'produ
 $action     = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
+$facid      = GETPOST('facid', 'int');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'alpha');
 $toselect   = GETPOST('toselect', 'array');
@@ -132,11 +133,6 @@ $result = restrictedArea($user, 'facture', $object->id, $objecttype);
 /*
  * Actions
  */
-
-if (GETPOST('cancel', 'alpha')) {
-	$action = 'list';
-	$massaction = '';
-}
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
 }
@@ -148,8 +144,17 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if (GETPOST('cancel', 'alpha')) {
-		$action = '';
+	if ($cancel) {
+		if (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		} elseif ($facid) {
+			$page = DOL_URL_ROOT.'/compta/facture/card.php?facid='.$facid;
+			header("Location: ".$page);
+			exit;
+		}
+        $action = 'list';
+        $massaction = '';
 	}
 
 	// Selection of new fields
@@ -708,7 +713,7 @@ if (empty($reshook)) {
 				$action = '';
 			}
 		}
-	} elseif ($action == 'updateline' && $usercancreate && !GETPOST('cancel', 'alpha')) {
+	} elseif ($action == 'updateline' && $usercancreate) {
 		if (!$object->fetch($id) > 0) {
 			dol_print_error($db);
 		}

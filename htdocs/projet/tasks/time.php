@@ -113,9 +113,6 @@ $extrafields->fetch_name_optionals_label($object->table_element);
  * Actions
  */
 
-if (GETPOST('cancel', 'alpha')) {
-	$action = '';
-}
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_generateinvoice' && $massaction != 'confirm_generateinter') {
 	$massaction = '';
 }
@@ -124,6 +121,16 @@ $parameters = array('socid'=>$socid, 'projectid'=>$projectid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
+if (empty($reshook)) {
+	if ($cancel) {
+		if (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		}
+		$action = '';
+	}
 }
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';

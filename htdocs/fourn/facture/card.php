@@ -144,6 +144,14 @@ if (empty($reshook)) {
 		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
+		} elseif ($origin == 'order_supplier' && $originid) {
+			$page = DOL_URL_ROOT.'/fourn/commande/card.php?id='.$originid;
+			header("Location: ".$page);
+			exit;
+		} elseif ($action == 'create' || $action == 'add') {
+			$page = DOL_URL_ROOT.'/fourn/facture/index.php?leftmenu=suppliers_bills';
+			header("Location: ".$page);
+			exit;
 		}
 		$action = '';
 	}

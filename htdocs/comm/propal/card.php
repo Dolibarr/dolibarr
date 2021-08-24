@@ -151,8 +151,15 @@ if (empty($reshook)) {
 		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
+		} elseif ($action == 'add') {
+			if ($socid) {
+				$page = DOL_URL_ROOT.'/comm/card.php?socid='.$socid;
+			} else {
+				$page = DOL_URL_ROOT.'/comm/propal/list.php?leftmenu=propals';
+			}
+			header("Location: ".$page);
+			exit;
 		}
-		$action = '';
 	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
@@ -338,6 +345,18 @@ if (empty($reshook)) {
 		// Set incoterm
 		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 	} elseif ($action == 'add' && $usercancreate) {
+		if ($cancel) {
+			if ($socid) {
+				$page = DOL_URL_ROOT . '/comm/card.php?socid='.$socid;
+				header( "Location: " . $page );
+				exit;
+			} else {
+				$page = DOL_URL_ROOT . '/comm/propal/list.php?leftmenu=propals';
+				header( "Location: " . $page );
+				exit;
+			}
+		}
+
 		// Create proposal
 		$object->socid = $socid;
 		$object->fetch_thirdparty();

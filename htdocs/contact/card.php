@@ -111,10 +111,19 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	// Cancel
-	if (GETPOST('cancel', 'alpha') && !empty($backtopage)) {
-		header("Location: ".$backtopage);
-		exit;
+	if ($cancel) {
+		if (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		} elseif ($action == 'add' || !$id) {
+			$page = DOL_URL_ROOT.'/contact/list.php?leftmenu=contacts';
+			header("Location: ".$page);
+			exit;
+		} elseif ($action == 'update') {
+			$page = DOL_URL_ROOT.'/contact/card.php?id='.$id;
+			header("Location: ".$page);
+			exit;
+		}
 	}
 
 	// Creation utilisateur depuis contact
@@ -311,7 +320,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && empty($cancel) && !empty($permissiontoadd)) {
+	if ($action == 'update' && !empty($permissiontoadd)) {
 		if (!GETPOST("lastname", 'alpha')) {
 			$error++; $errors = array($langs->trans("ErrorFieldRequired", $langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
 			$action = 'edit';

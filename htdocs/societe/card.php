@@ -83,6 +83,7 @@ $cancel		= GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
 
+$type = GETPOST('type', 'aZ09');
 $socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('id', 'int');
 if ($user->socid) {
 	$socid = $user->socid;
@@ -155,9 +156,24 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($cancel) {
-		$action = '';
 		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
+			exit;
+		} elseif ($action == 'create' || $action == 'add') {
+            if ($type == 'c') {
+                $page = DOL_URL_ROOT.'/societe/list.php?type=c&leftmenu=customers';
+            } else { // ($type == 'f')
+                $page = DOL_URL_ROOT.'/societe/list.php?type=f&leftmenu=suppliers';
+            }
+            header("Location: ".$page);
+            exit;
+        } elseif ($action == 'update') {
+			if (!$socid) {
+				$page = DOL_URL_ROOT.'/societe/index.php?leftmenu=thirdparties';
+			} else {
+				$page = DOL_URL_ROOT.'/societe/card.php?socid='.$socid;
+			}
+			header("Location: ".$page);
 			exit;
 		}
 	}

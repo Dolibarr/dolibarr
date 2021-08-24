@@ -138,6 +138,27 @@ if ($user->socid && $socid) {
  * Actions
  */
 
+if (empty($reshook)) {
+	if ($cancel) {
+		if (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		} elseif ($action == 'update') {
+			$page = DOL_URL_ROOT.'/comm/action/card.php?id='.$id;
+			header( "Location: ".$page );
+			exit;
+		} elseif ($action == 'add') {
+			if ($socid > 0) {
+				$page = DOL_URL_ROOT.'/societe/agenda.php?socid='.$socid;
+			} else {
+				$page = DOL_URL_ROOT.'/comm/action/index.php?mainmenu=agenda&leftmenu=agenda';
+			}
+			header( "Location: ".$page );
+			exit;
+		}
+	}
+}
+
 $listUserAssignedUpdated = false;
 // Remove user to assigned list
 if (empty($reshook) && (GETPOST('removedassigned') || GETPOST('removedassigned') == '0')) {
@@ -223,21 +244,8 @@ if (empty($reshook) && $action == 'confirm_clone' && $confirm == 'yes') {
 if (empty($reshook) && $action == 'add') {
 	$error = 0;
 
-	if (empty($backtopage)) {
-		if ($socid > 0) {
-			$backtopage = DOL_URL_ROOT.'/societe/agenda.php?socid='.$socid;
-		} else {
-			$backtopage = DOL_URL_ROOT.'/comm/action/index.php';
-		}
-	}
-
 	if (!empty($socpeopleassigned[0])) {
 		$result = $contact->fetch($socpeopleassigned[0]);
-	}
-
-	if ($cancel) {
-		header("Location: ".$backtopage);
-		exit;
 	}
 
 	$percentage = in_array(GETPOST('status'), array(-1, 100)) ?GETPOST('status') : (in_array(GETPOST('complete'), array(-1, 100)) ?GETPOST('complete') : GETPOST("percentage")); // If status is -1 or 100, percentage is not defined and we must use status

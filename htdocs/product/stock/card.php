@@ -103,6 +103,22 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
+	if ($cancel) {
+		if ($backtopage) {
+			header("Location: ".$backtopage);
+			exit;
+		} elseif ($action == 'add') {
+			$page = DOL_URL_ROOT . '/product/stock/list.php?restore_lastsearch_values=1';
+			header("Location: ".$page);
+			exit;
+		} elseif ($action == 'update') {
+			$page = DOL_URL_ROOT . '/product/stock/card.php?id='.$id;
+			header("Location: ".$page);
+			exit;
+		}
+		$action = '';
+	}
+
 	// Ajout entrepot
 	if ($action == 'add' && $user->rights->stock->creer) {
 		$object->ref = (string) GETPOST("ref", "alpha");
@@ -167,7 +183,7 @@ if (empty($reshook)) {
 	}
 
 	// Modification entrepot
-	if ($action == 'update' && !$cancel) {
+	if ($action == 'update') {
 		if ($object->fetch($id)) {
 			$object->label = GETPOST("libelle");
 			$object->fk_parent   = GETPOST("fk_parent");

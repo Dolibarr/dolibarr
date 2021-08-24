@@ -176,6 +176,14 @@ if (empty($reshook)) {
 		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
+		} elseif ($action == 'create' || $action == 'add') {
+			if ($socid > 0) {
+				$page = DOL_URL_ROOT.'/comm/card.php?socid='.$socid;
+			} else {
+				$page = DOL_URL_ROOT.'/compta/facture/list.php?leftmenu=customers_bills';
+			}
+			header( "Location: ".$page );
+			exit;
 		}
 		$action = '';
 	}
@@ -2315,7 +2323,7 @@ if (empty($reshook)) {
 				$action = '';
 			}
 		}
-	} elseif ($action == 'updateline' && $usercancreate && !GETPOST('cancel', 'alpha')) {
+	} elseif ($action == 'updateline' && $usercancreate) {
 		if (!$object->fetch($id) > 0) {
 			dol_print_error($db);
 		}

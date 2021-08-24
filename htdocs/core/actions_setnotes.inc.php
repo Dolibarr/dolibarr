@@ -27,8 +27,16 @@
 // $object must be defined (object is loaded in this file with fetch)
 // $id must be defined (object is loaded in this file with fetch)
 
+if ($cancel) {
+    if (!empty($backtopage)) {
+        header("Location: ".$backtopage);
+        exit;
+    }
+}
+
 // Set public note
-if ($action == 'setnote_public' && !empty($permissionnote) && !GETPOST('cancel', 'alpha')) {
+if ($action == 'setnote_public' && !empty($permissionnote)) {
+
 	if (empty($action) || !is_object($object) || empty($id)) {
 		dol_print_error('', 'Include of actions_setnotes.inc.php was done but required variable was not set before');
 	}

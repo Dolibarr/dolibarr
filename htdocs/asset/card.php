@@ -93,7 +93,20 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	$error = 0;
+	if ($cancel) {
+		if (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		} elseif (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} else {
+			$page = DOL_URL_ROOT.'/asset/list.php?leftmenu=asset&mainmenu=accountancy';
+			header("Location: ".$page);
+			exit;
+		}
+	}
+	$error = '';
 
 	$backurlforlist = dol_buildpath('/asset/list.php', 1);
 
