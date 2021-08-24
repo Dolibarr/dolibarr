@@ -679,7 +679,8 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 				$companystatic->code_compta = $obj->code_compta;
 				$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
-				$result .= '<tr class="oddeven"><td class="nowrap tdoverflowmax100">';
+				$result .= '<tr class="oddeven">';
+				$result .= '<td class="nowrap tdoverflowmax100">';
 				$result .= $tmpinvoice->getNomUrl(1, '');
 				$result .= '</td>';
 				$result .= '<td class="nowrap tdoverflowmax100">';
@@ -807,7 +808,8 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 				$companystatic->code_compta = $obj->code_compta;
 				$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
-				$result .= '<tr class="oddeven"><td class="nowrap tdoverflowmax100">';
+				$result .= '<tr class="oddeven">';
+				$result .= '<td class="nowrap tdoverflowmax100">';
 				$result .= $facturesupplierstatic->getNomUrl(1, '');
 				$result .= '</td>';
 				$result .= '<td class="nowrap tdoverflowmax100">';
@@ -883,7 +885,9 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 	$result .= '<table class="noborder centpercent">';
 
 	$result .= '<tr class="liste_titre">';
-	$result .= '<td colspan="4">'.$langs->trans("LastCustomersBills", $maxCount).'</td>';
+	$result .= '<th colspan="3">'.$langs->trans("LastCustomersBills", $maxCount).'</th>';
+	$result .= '<th class="right">'.$langs->trans("AmountTTC").'</th>';
+	$result .= '<th class="right"></th>';
 	$result .= '</tr>';
 
 	if ($num < 1) {
@@ -917,7 +921,7 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$filename = dol_sanitizeFileName($obj->ref);
 		$filedir = $conf->propal->multidir_output[$obj->entity].'/'.$filename;
 
-		$result .= '<tr width="20%" class="nowrap">';
+		$result .= '<tr class="nowrap">';
 
 		$result .= '<td class="oddeven">';
 		$result .= '<table class="nobordernopadding">';
@@ -931,8 +935,9 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$result .= '</table>';
 		$result .= '</td>';
 
-		$result .= '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
+		$result .= '<td class="tdoverflowmax150">'.$companystatic->getNomUrl(1, 'customer').'</td>';
 		$result .= '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
+		$result .= '<td class="right amount">'.price($obj->total_ttc).'</td>';
 		$result .= '<td class="right">'.$objectstatic->getLibStatut(5).'</td>';
 
 		$result .= '</tr>';
@@ -985,7 +990,9 @@ function getPurchaseInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 	$result = '<div class="div-table-responsive-no-min">';
 	$result .= '<table class="noborder centpercent">';
 	$result .= '<tr class="liste_titre">';
-	$result .= '<td colspan="4">'.$langs->trans("BoxTitleLastSupplierBills", $maxCount).'</td>';
+	$result .= '<th colspan="3">'.$langs->trans("BoxTitleLastSupplierBills", $maxCount).'</th>';
+	$result .= '<th class="right">'.$langs->trans("AmountTTC").'</th>';
+	$result .= '<th class="right"></th>';
 	$result .= '</tr>';
 
 	if ($num < 1) {
@@ -1019,7 +1026,7 @@ function getPurchaseInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$filename = dol_sanitizeFileName($obj->ref);
 		$filedir = $conf->propal->multidir_output[$obj->entity].'/'.$filename;
 
-		$result .= '<tr width="20%" class="nowrap">';
+		$result .= '<tr class="nowrap">';
 
 		$result .= '<td class="oddeven">';
 		$result .= '<table class="nobordernopadding">';
@@ -1033,8 +1040,12 @@ function getPurchaseInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$result .= '</table>';
 		$result .= '</td>';
 
-		$result .= '<td>'.$companystatic->getNomUrl(1, 'supplier').'</td>';
+		$result .= '<td class="tdoverflowmax150">'.$companystatic->getNomUrl(1, 'supplier').'</td>';
+
 		$result .= '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
+
+		$result .= '<td class="amount right">'.price($obj->total_ttc).'</td>';
+
 		$result .= '<td class="right">'.$objectstatic->getLibStatut(5).'</td>';
 
 		$result .= '</tr>';
@@ -1341,7 +1352,8 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 					$societestatic->code_compta = $obj->code_compta;
 					$societestatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
-					print '<tr class="oddeven"><td class="nowrap tdoverflowmax100">';
+					print '<tr class="oddeven">';
+					print '<td class="nowrap tdoverflowmax100">';
 					print $facstatic->getNomUrl(1, '');
 					print '</td>';
 					print '<td class="nowrap tdoverflowmax100">'.$societestatic->getNomUrl(1, 'supplier').'</td>';
