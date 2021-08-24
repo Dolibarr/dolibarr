@@ -158,7 +158,7 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " AND d.fk_facture = f.rowid";
 			$sql .= " AND d.fk_product = ".((int) $object->id);
 			if (!$user->rights->societe->client->voir && !$socid) {
-				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if (!empty($socid)) {
 				$sql .= " AND f.fk_soc = $socid";

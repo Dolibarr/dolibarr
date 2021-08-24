@@ -494,10 +494,10 @@ class FormOther
 		}
 
 		if (empty($user->rights->user->user->lire)) {
-			$sql_usr .= " AND u.rowid = ".$user->id;
+			$sql_usr .= " AND u.rowid = ".((int) $user->id);
 		}
 		if (!empty($user->socid)) {
-			$sql_usr .= " AND u.fk_soc = ".$user->socid;
+			$sql_usr .= " AND u.fk_soc = ".((int) $user->socid);
 		}
 
 		//Add hook to filter on user (for exemple on usergroup define in custom modules)
@@ -521,7 +521,7 @@ class FormOther
 				$sql_usr .= " WHERE u2.entity IN (".getEntity('user').")";
 			}
 
-			$sql_usr .= " AND u2.rowid = sc.fk_user AND sc.fk_soc=".$user->socid;
+			$sql_usr .= " AND u2.rowid = sc.fk_user AND sc.fk_soc = ".((int) $user->socid);
 
 			//Add hook to filter on user (for exemple on usergroup define in custom modules)
 			if (!empty($reshook)) {

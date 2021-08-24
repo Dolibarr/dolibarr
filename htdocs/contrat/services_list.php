@@ -35,6 +35,8 @@ require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'contracts', 'companies'));
 
+$optioncss = GETPOST('optioncss', 'aZ09');
+
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
@@ -58,7 +60,6 @@ $search_name = GETPOST("search_name", 'alpha');
 $search_contract = GETPOST("search_contract", 'alpha');
 $search_service = GETPOST("search_service", 'alpha');
 $search_status = GETPOST("search_status", 'alpha');
-$statut = GETPOST('statut', 'int') ?GETPOST('statut', 'int') : 1;
 $search_product_category = GETPOST('search_product_category', 'int');
 $socid = GETPOST('socid', 'int');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'contractservicelist'.$mode;
@@ -261,7 +262,7 @@ if ($search_product_category > 0) {
 }
 $sql .= " AND c.fk_soc = s.rowid";
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($mode == "0") {
 	$sql .= " AND cd.statut = 0";
@@ -412,16 +413,16 @@ if (!empty($filter_op2) && $filter_op2 != -1) {
 if (!empty($filter_opcloture) && $filter_opcloture != -1) {
 	$param .= '&amp;filter_opcloture='.urlencode($filter_opcloture);
 }
-if ($filter_dateouvertureprevue != '') {
+if ($filter_dateouvertureprevue_start != '') {
 	$param .= '&amp;opouvertureprevueday='.$opouvertureprevueday.'&amp;opouvertureprevuemonth='.$opouvertureprevuemonth.'&amp;opouvertureprevueyear='.$opouvertureprevueyear;
 }
-if ($filter_date1 != '') {
+if ($filter_date1_start != '') {
 	$param .= '&amp;op1day='.$op1day.'&amp;op1month='.$op1month.'&amp;op1year='.$op1year;
 }
-if ($filter_date2 != '') {
+if ($filter_date2_start != '') {
 	$param .= '&amp;op2day='.$op2day.'&amp;op2month='.$op2month.'&amp;op2year='.$op2year;
 }
-if ($filter_datecloture != '') {
+if ($filter_datecloture_start != '') {
 	$param .= '&amp;opclotureday='.$op2day.'&amp;opcloturemonth='.$op2month.'&amp;opclotureyear='.$op2year;
 }
 if ($optioncss != '') {

@@ -176,7 +176,7 @@ if ($id > 0 || !empty($ref)) {
 				$sql .= ' AND YEAR(f.datef) IN ('.$db->sanitize($search_year).')';
 			}
 			if (!$user->rights->societe->client->voir && !$socid) {
-				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($socid) {
 				$sql .= " AND f.fk_soc = ".((int) $socid);

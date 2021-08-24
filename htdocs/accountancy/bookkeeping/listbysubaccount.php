@@ -511,10 +511,9 @@ $moreforfilter = '';
 $moreforfilter .= '<div class="divsearchfield">';
 $moreforfilter .= $langs->trans('AccountAccounting').': ';
 $moreforfilter .= '<div class="nowrap inline-block">';
-$moreforfilter .= $langs->trans('From').' ';
-$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_start, 'search_accountancy_code_start', 1, 'maxwidth200');
-$moreforfilter .= ' '.$langs->trans('to').' ';
-$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_end, 'search_accountancy_code_end', 1, 'maxwidth200');
+$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), 'maxwidth200');
+$moreforfilter .= ' ';
+$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), 'maxwidth200');
 $moreforfilter .= '</div>';
 $moreforfilter .= '</div>';
 
@@ -673,23 +672,19 @@ while ($i < min($num, $limit)) {
 	$accountg = length_accounta($line->subledger_account);
 	//if (empty($accountg)) $accountg = '-';
 
+	$colspan = 0;			// colspan before field 'label of operation'
+	$colspanend = 3;		// colspan after debit/credit
+	if (!empty($arrayfields['t.piece_num']['checked'])) { $colspan++; }
+	if (!empty($arrayfields['t.code_journal']['checked'])) { $colspan++; }
+	if (!empty($arrayfields['t.doc_date']['checked'])) { $colspan++; }
+	if (!empty($arrayfields['t.doc_ref']['checked'])) { $colspan++; }
+	if (!empty($arrayfields['t.label_operation']['checked'])) { $colspan++; }
+	if (!empty($arrayfields['t.date_export']['checked'])) { $colspanend++; }
+	if (!empty($arrayfields['t.date_validating']['checked'])) { $colspanend++; }
+	if (!empty($arrayfields['t.lettering_code']['checked'])) { $colspanend++; }
+
 	// Is it a break ?
 	if ($accountg != $displayed_account_number || !isset($displayed_account_number)) {
-		$colnumber = 5;
-		$colnumberend = 8;
-
-		if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING) || empty($arrayfields['t.lettering_code']['checked'])) {
-			$colnumber--;
-		}
-		if (empty($arrayfields['t.date_export']['checked'])) {
-			$colnumber--;
-		}
-		if (empty($arrayfields['t.date_validated']['checked'])) {
-			$colnumber--;
-		}
-
-		$colspan = $totalarray['nbfield'] - $colnumber;
-		$colspanend = $totalarray['nbfield'] - $colnumberend;
 		// Show a subtotal by accounting account
 		if (isset($displayed_account_number)) {
 			print '<tr class="liste_total">';
@@ -937,9 +932,7 @@ while ($i < min($num, $limit)) {
 	$i++;
 }
 
-if ($num > 0) {
-	$colspan = $totalarray['nbfield'] - $colnumber;
-	$colspanend = $totalarray['nbfield'] - $colnumberend;
+if ($num > 0 && $colspan > 0) {
 	print '<tr class="liste_total">';
 	print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("TotalForAccount").' '.$accountg.':</td>';
 	print '<td class="nowrap right">'.price($sous_total_debit).'</td>';

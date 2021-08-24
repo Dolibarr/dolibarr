@@ -324,7 +324,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
 $sql .= ' WHERE t.entity IN ('.getEntity('ticket').')';
 $sql .= " AND t.fk_statut=0";
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 
 if ($user->socid > 0) {
@@ -332,7 +332,7 @@ if ($user->socid > 0) {
 } else {
 	// Restricted to assigned user only
 	if (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && !$user->rights->ticket->manage) {
-		$sql .= " AND t.fk_user_assign=".$user->id;
+		$sql .= " AND t.fk_user_assign = ".((int) $user->id);
 	}
 }
 $sql .= $db->order("t.datec", "DESC");

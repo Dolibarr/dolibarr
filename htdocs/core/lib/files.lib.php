@@ -1159,10 +1159,11 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  *  @param	object	$object			Current object in use
  *  @param	boolean	$allowdotdot	Allow to delete file path with .. inside. Never use this, it is reserved for migration purpose.
  *  @param	int		$indexdatabase	Try to remove also index entries.
+ *  @param	int		$nolog			Disable log file
  *  @return boolean         		True if no error (file is deleted or if glob is used and there's nothing to delete), False if error
  *  @see dol_delete_dir()
  */
-function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0, $object = null, $allowdotdot = false, $indexdatabase = 1)
+function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0, $object = null, $allowdotdot = false, $indexdatabase = 1, $nolog = 0)
 {
 	global $db, $conf, $user, $langs;
 	global $hookmanager;
@@ -1170,7 +1171,9 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 	// Load translation files required by the page
 	$langs->loadLangs(array('other', 'errors'));
 
-	dol_syslog("dol_delete_file file=".$file." disableglob=".$disableglob." nophperrors=".$nophperrors." nohook=".$nohook);
+	if (empty($nolog)) {
+		dol_syslog("dol_delete_file file=".$file." disableglob=".$disableglob." nophperrors=".$nophperrors." nohook=".$nohook);
+	}
 
 	// Security:
 	// We refuse transversal using .. and pipes into filenames.
@@ -1226,7 +1229,9 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 					}
 
 					if ($ok) {
-						dol_syslog("Removed file ".$filename, LOG_DEBUG);
+						if (empty($nolog)) {
+							dol_syslog("Removed file ".$filename, LOG_DEBUG);
+						}
 
 						// Delete entry into ecm database
 						$rel_filetodelete = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filename);
@@ -1264,7 +1269,9 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 				$ok = unlink($file_osencoded);
 			}
 			if ($ok) {
-				dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
+				if (empty($nolog)) {
+					dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
+				}
 			} else {
 				dol_syslog("Failed to remove file ".$file_osencoded, LOG_WARNING);
 			}
@@ -1304,11 +1311,15 @@ function dol_delete_dir($dir, $nophperrors = 0)
  *  @param  int		$nophperrors    Disable all PHP output errors
  *  @param	int		$onlysub		Delete only files and subdir, not main directory
  *  @param  int		$countdeleted   Counter to count nb of elements found really deleted
+ *  @param	int		$indexdatabase	Try to remove also index entries.
+ *  @param	int		$nolog			Disable log files (too verbose when making recursive directories)
  *  @return int             		Number of files and directory we try to remove. NB really removed is returned into var by reference $countdeleted.
  */
-function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub = 0, &$countdeleted = 0)
+function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub = 0, &$countdeleted = 0, $indexdatabase = 1, $nolog = 0)
 {
-	dol_syslog("functions.lib:dol_delete_dir_recursive ".$dir, LOG_DEBUG);
+	if (empty($nolog)) {
+		dol_syslog("functions.lib:dol_delete_dir_recursive ".$dir, LOG_DEBUG);
+	}
 	if (dol_is_dir($dir)) {
 		$dir_osencoded = dol_osencode($dir);
 		if ($handle = opendir("$dir_osencoded")) {
@@ -1319,9 +1330,9 @@ function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub =
 
 				if ($item != "." && $item != "..") {
 					if (is_dir(dol_osencode("$dir/$item")) && !is_link(dol_osencode("$dir/$item"))) {
-						$count = dol_delete_dir_recursive("$dir/$item", $count, $nophperrors, 0, $countdeleted);
+						$count = dol_delete_dir_recursive("$dir/$item", $count, $nophperrors, 0, $countdeleted, $indexdatabase, $nolog);
 					} else {
-						$result = dol_delete_file("$dir/$item", 1, $nophperrors);
+						$result = dol_delete_file("$dir/$item", 1, $nophperrors, 0, null, false, $indexdatabase, $nolog);
 						$count++;
 						if ($result) {
 							$countdeleted++;
@@ -1332,6 +1343,7 @@ function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub =
 			}
 			closedir($handle);
 
+			// Delete also the main directory
 			if (empty($onlysub)) {
 				$result = dol_delete_dir($dir, $nophperrors);
 				$count++;
@@ -2235,7 +2247,7 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
  * Security check when accessing to a document (used by document.php, viewimage.php and webservices to get documents).
  * TODO Replace code that set $accesallowed by a call to restrictedArea()
  *
- * @param	string	$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp')
+ * @param	string	$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Exemple: 'medias', 'invoice', 'logs', 'tax-vat', ...
  * @param	string	$original_file		Relative path with filename, relative to modulepart.
  * @param	string	$entity				Restrict onto entity (0=no restriction)
  * @param  	User	$fuser				User object (forced)
@@ -2263,9 +2275,12 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$entity = 0;
 		}
 	}
-	// Fix modulepart
+	// Fix modulepart for backward compatibility
 	if ($modulepart == 'users') {
 		$modulepart = 'user';
+	}
+	if ($modulepart == 'tva') {
+		$modulepart = 'tax-vat';
 	}
 
 	//print 'dol_check_secure_access_document modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity;
@@ -2436,7 +2451,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = (!empty($conf->product->multidir_temp[$entity]) ? $conf->product->multidir_temp[$entity] : $conf->service->multidir_temp[$entity]).'/'.$original_file;
-	} elseif (in_array($modulepart, array('tax', 'tax-vat')) && !empty($conf->tax->dir_output)) {
+	} elseif (in_array($modulepart, array('tax', 'tax-vat', 'tva')) && !empty($conf->tax->dir_output)) {
 		// Wrapping for taxes
 		if ($fuser->rights->tax->charges->{$lire}) {
 			$accessallowed = 1;

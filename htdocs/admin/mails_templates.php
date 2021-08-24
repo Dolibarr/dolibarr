@@ -230,6 +230,9 @@ if (!empty($conf->agenda->enabled)) {
 if (!empty($conf->eventorganization->enabled) && !empty($user->rights->eventorganization->read)) {
 	$elementList['eventorganization_send'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventOrganization'));
 }
+if (!empty($conf->partnership->enabled) && !empty($user->rights->partnership->read)) {
+	$elementList['partnership_send'] = img_picto('', 'partnership', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToPartnership'));
+}
 
 $parameters = array('elementList'=>$elementList);
 $reshook = $hookmanager->executeHooks('emailElementlist', $parameters); // Note that $action and $object may have been modified by some hooks
@@ -561,8 +564,8 @@ $sql = "SELECT rowid as rowid, module, label, type_template, lang, fk_user, priv
 $sql .= " FROM ".MAIN_DB_PREFIX."c_email_templates";
 $sql .= " WHERE entity IN (".getEntity('email_template').")";
 if (!$user->admin) {
-	$sql .= " AND (private = 0 OR (private = 1 AND fk_user = ".$user->id."))"; // Show only public and private to me
-	$sql .= " AND (active = 1 OR fk_user = ".$user->id.")"; // Show only active or owned by me
+	$sql .= " AND (private = 0 OR (private = 1 AND fk_user = ".((int) $user->id)."))"; // Show only public and private to me
+	$sql .= " AND (active = 1 OR fk_user = ".((int) $user->id).")"; // Show only active or owned by me
 }
 if (empty($conf->global->MAIN_MULTILANGS)) {
 	$sql .= " AND (lang = '".$db->escape($langs->defaultlang)."' OR lang IS NULL OR lang = '')";
