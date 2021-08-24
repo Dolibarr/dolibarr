@@ -2241,7 +2241,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Public URL
 			if (empty($conf->global->PRODUCT_DISABLE_PUBLIC_URL)) {
 				print '<tr><td>'.$langs->trans("PublicUrl").'</td><td>';
-				print dol_print_url($object->url);
+				print dol_print_url($object->url, '_blank', 128);
 				print '</td></tr>';
 			}
 
