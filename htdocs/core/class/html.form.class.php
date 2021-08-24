@@ -9258,8 +9258,7 @@ class Form
 	 * @param   string  $cancel_label   Alternative label for cancel button
 	 * @param   array   $morefields     Add additional buttons between save and cancel
 	 * @param   bool    $withoutdiv     Option to remove enclosing centered div
-	 *
-	 * @return string
+	 * @return 	string					Html code with the buttons
 	 */
 	public function buttonsSaveCancel($save_label = 'Save', $cancel_label = 'Cancel', $morefields = array(), $withoutdiv = 0)
 	{
@@ -9293,24 +9292,10 @@ class Form
 		$retstring = $withoutdiv ? '': '<div class="center">';
 
 		foreach ($buttons as $button) {
-			$retstring .= $this->button($button['name'], $langs->trans($button['label_key']), $button['addclass']);
+			$retstring .= '<input type="submit" class="button button-'.$button['name'].' '.$button['addclass'].'" name="'.$button['name'].'" value="'.dol_escape_htmltag($langs->trans($button['label_key'])).'">';
 		}
 		$retstring .= $withoutdiv ? '': '</div>';
 
 		return $retstring;
-	}
-
-	/**
-	 * Return a button (input submit)
-	 *
-	 * @param   string  $name       Name
-	 * @param   string  $label      Label of the button
-	 * @param   string  $addclass   Additional css classes
-	 *
-	 * @return string
-	 */
-	public function button($name, $label, $addclass = '')
-	{
-		return '<input type="submit" class="button button-'.$name.' '.$addclass.'" name="'.$name.'" value="'.$label.'">';
 	}
 }
