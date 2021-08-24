@@ -100,7 +100,7 @@ function project_prepare_head(Project $project)
 			//$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt";
 			$sql .= " WHERE t.fk_task = pt.rowid";
-			$sql .= " AND pt.fk_projet =".$project->id;
+			$sql .= " AND pt.fk_projet =".((int) $project->id);
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -113,7 +113,7 @@ function project_prepare_head(Project $project)
 			}
 		}
 
-		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&projectid='.$project->id;
+		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&projectid='.urlencode($project->id);
 		$head[$h][1] = $langs->trans("TimeSpent");
 		if ($nbTimeSpent > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">...</span>';
@@ -2407,7 +2407,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	if ($mytasks) {
 		$sql .= " AND p.rowid = t.fk_projet";
 		$sql .= " AND ec.element_id = t.rowid";
-		$sql .= " AND ec.fk_socpeople = ".$user->id;
+		$sql .= " AND ec.fk_socpeople = ".((int) $user->id);
 		$sql .= " AND ec.fk_c_type_contact = ctc.rowid"; // Replace the 2 lines with ec.fk_c_type_contact in $arrayidtypeofcontact
 		$sql .= " AND ctc.element = 'project_task'";
 	}

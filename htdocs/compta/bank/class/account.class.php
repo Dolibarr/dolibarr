@@ -1992,7 +1992,7 @@ class AccountLine extends CommonObject
 
 		// Protection to avoid any delete of accounted lines. Protection on by default
 		if (empty($conf->global->BANK_ALLOW_TRANSACTION_DELETION_EVEN_IF_IN_ACCOUNTING)) {
-			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping WHERE doc_type = 'bank' AND fk_doc = ".$this->id;
+			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping WHERE doc_type = 'bank' AND fk_doc = ".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
@@ -2379,7 +2379,7 @@ class AccountLine extends CommonObject
 			$result .= yn($this->rappro);
 		}
 		if ($option == 'showall' || $option == 'showconciliatedandaccounted') {
-			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping WHERE doc_type = 'bank' AND fk_doc = ".$this->id;
+			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping WHERE doc_type = 'bank' AND fk_doc = ".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);

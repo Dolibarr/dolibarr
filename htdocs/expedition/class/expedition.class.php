@@ -733,7 +733,7 @@ class Expedition extends CommonObject
 			$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
 			$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
-			$sql .= " WHERE ed.fk_expedition = ".$this->id;
+			$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
 			$sql .= " AND cd.rowid = ed.fk_origin_line";
 
 			dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
@@ -811,7 +811,7 @@ class Expedition extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'expedition/sending/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expedition/sending/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expedition/sending/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
@@ -1224,7 +1224,7 @@ class Expedition extends CommonObject
 			$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot, ed.rowid as expeditiondet_id";
 			$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
 			$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
-			$sql .= " WHERE ed.fk_expedition = ".$this->id;
+			$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
 			$sql .= " AND cd.rowid = ed.fk_origin_line";
 
 			dol_syslog(get_class($this)."::delete select details", LOG_DEBUG);
@@ -1285,7 +1285,7 @@ class Expedition extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
-			$sql .= " WHERE fk_expedition = ".$this->id;
+			$sql .= " WHERE fk_expedition = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {
 				// Delete linked object
@@ -1408,7 +1408,7 @@ class Expedition extends CommonObject
 			$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot, ed.rowid as expeditiondet_id";
 			$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
 			$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
-			$sql .= " WHERE ed.fk_expedition = ".$this->id;
+			$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
 			$sql .= " AND cd.rowid = ed.fk_origin_line";
 
 			dol_syslog(get_class($this)."::delete select details", LOG_DEBUG);
@@ -1469,10 +1469,10 @@ class Expedition extends CommonObject
 		if (!$error) {
 					$main = MAIN_DB_PREFIX.'expeditiondet';
 					$ef = $main."_extrafields";
-					$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_expedition = ".$this->id.")";
+					$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_expedition = ".((int) $this->id).")";
 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
-			$sql .= " WHERE fk_expedition = ".$this->id;
+			$sql .= " WHERE fk_expedition = ".((int) $this->id);
 
 			if ($this->db->query($sqlef) && $this->db->query($sql)) {
 				// Delete linked object
@@ -1577,7 +1577,7 @@ class Expedition extends CommonObject
 		$sql .= ", p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
-		$sql .= " WHERE ed.fk_expedition = ".$this->id;
+		$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
 		$sql .= " AND ed.fk_origin_line = cd.rowid";
 		$sql .= " ORDER BY cd.rang, ed.fk_origin_line";
 
@@ -2207,7 +2207,7 @@ class Expedition extends CommonObject
 				$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
 				$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
-				$sql .= " WHERE ed.fk_expedition = ".$this->id;
+				$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
 				$sql .= " AND cd.rowid = ed.fk_origin_line";
 
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
@@ -2377,7 +2377,7 @@ class Expedition extends CommonObject
 				$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
 				$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
-				$sql .= " WHERE ed.fk_expedition = ".$this->id;
+				$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
 				$sql .= " AND cd.rowid = ed.fk_origin_line";
 
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);

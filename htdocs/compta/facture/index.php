@@ -59,19 +59,33 @@ print load_fiche_titre($langs->trans("CustomersInvoicesArea"), '', 'bill');
 print '<div class="fichecenter">';
 
 print '<div class="fichethirdleft">';
-print getNumberInvoicesPieChart('customers');
-//print getCustomerInvoicePieChart($socid);
-print '<br>';
-print getCustomerInvoiceDraftTable($max, $socid);
+$tmp = getNumberInvoicesPieChart('customers');
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
+$tmp = getCustomerInvoiceDraftTable($max, $socid);
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
 
 print '</div>';
 
 print '<div class="fichetwothirdright">';
 print '<div class="ficheaddleft">';
 
-print getCustomerInvoiceLatestEditTable($maxLatestEditCount, $socid);
-print '<br>';
-print getCustomerInvoiceUnpaidOpenTable($max, $socid);
+$tmp = getCustomerInvoiceLatestEditTable($maxLatestEditCount, $socid);
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
+
+$tmp = getCustomerInvoiceUnpaidOpenTable($max, $socid);
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
 
 print '</div>';
 print '</div>';
