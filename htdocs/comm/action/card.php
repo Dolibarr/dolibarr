@@ -145,7 +145,7 @@ if (empty($reshook)) {
 			exit;
 		} elseif ($action == 'update') {
 			$page = DOL_URL_ROOT.'/comm/action/card.php?id='.$id;
-			header( "Location: ".$page );
+			header("Location: ".$page);
 			exit;
 		} elseif ($action == 'add') {
 			if ($socid > 0) {
@@ -153,7 +153,7 @@ if (empty($reshook)) {
 			} else {
 				$page = DOL_URL_ROOT.'/comm/action/index.php?mainmenu=agenda&leftmenu=agenda';
 			}
-			header( "Location: ".$page );
+			header("Location: ".$page);
 			exit;
 		}
 	}

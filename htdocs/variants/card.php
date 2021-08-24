@@ -65,20 +65,20 @@ if (!$permissiontoread) accessforbidden();
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
-    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
 if (empty($reshook)) {
-    if ($cancel) {
-        if (!empty($backtopage)) {
-            header("Location: ".$backtopage);
-            exit;
-        } elseif ($action == 'update') {
-            $page = DOL_URL_ROOT . '/variants/card.php?id='.$id;
-            header( "Location: " . $page );
-            exit;
-        }
-    }
+	if ($cancel) {
+		if (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		} elseif ($action == 'update') {
+			$page = DOL_URL_ROOT . '/variants/card.php?id='.$id;
+			header("Location: " . $page);
+			exit;
+		}
+	}
 
 	if ($action == 'update') {
 		$object->ref = $ref;

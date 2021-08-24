@@ -153,8 +153,8 @@ if (empty($reshook)) {
 			header("Location: ".$page);
 			exit;
 		}
-        $action = 'list';
-        $massaction = '';
+		$action = 'list';
+		$massaction = '';
 	}
 
 	// Selection of new fields

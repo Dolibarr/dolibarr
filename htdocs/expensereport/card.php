@@ -140,22 +140,22 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($cancel) {
-        if (!empty($backtopage)) {
-            header("Location: ".$backtopage);
-            exit;
-        } elseif ($action == 'create' || $action == 'add') {
-            if (!empty($projectid)) {
-                $page = DOL_URL_ROOT.'/projet/element.php?id='.$projectid;
-            } else {
-                $page = DOL_URL_ROOT.'/expensereport/list.php?leftmenu=expensereport&mainmenu=hrm';
-            }
-            header("Location: ".$page);
-            exit;
-        } elseif ($action == 'edit' || $action == 'update' || $action == 'updateline') {
-            $page = DOL_URL_ROOT.'/expensereport/card.php?id='.$id;
-            header("Location: ".$page);
-            exit;
-        }
+		if (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		} elseif ($action == 'create' || $action == 'add') {
+			if (!empty($projectid)) {
+				$page = DOL_URL_ROOT.'/projet/element.php?id='.$projectid;
+			} else {
+				$page = DOL_URL_ROOT.'/expensereport/list.php?leftmenu=expensereport&mainmenu=hrm';
+			}
+			header("Location: ".$page);
+			exit;
+		} elseif ($action == 'edit' || $action == 'update' || $action == 'updateline') {
+			$page = DOL_URL_ROOT.'/expensereport/card.php?id='.$id;
+			header("Location: ".$page);
+			exit;
+		}
 		$action = '';
 
 		$fk_project = '';

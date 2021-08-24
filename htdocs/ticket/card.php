@@ -151,17 +151,17 @@ if (empty($reshook)) {
 			header("Location: ".$backtopage);
 			exit;
 		} elseif ($action == 'create' || $action == 'add') {
-            $page = DOL_URL_ROOT.'/ticket/list.php?search_fk_status=non_closed&mainmenu=ticket';
-            header("Location: ".$page);
-            exit;
-        } elseif (!empty($origin)) {
+			$page = DOL_URL_ROOT.'/ticket/list.php?search_fk_status=non_closed&mainmenu=ticket';
+			header("Location: ".$page);
+			exit;
+		} elseif (!empty($origin)) {
 			if ($origin == 'projet_project') {
 				$page = DOL_URL_ROOT.'/ticket/list.php?projectid='.$originid;
 			} else {
 				$page = DOL_URL_ROOT.'/ticket/list.php?search_fk_status=non_closed&mainmenu=ticket';
 			}
-            header("Location: ".$page);
-            exit;
+			header("Location: ".$page);
+			exit;
 		}
 
 		$action = 'view';

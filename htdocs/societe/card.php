@@ -160,14 +160,14 @@ if (empty($reshook)) {
 			header("Location: ".$backtopage);
 			exit;
 		} elseif ($action == 'create' || $action == 'add') {
-            if ($type == 'c') {
-                $page = DOL_URL_ROOT.'/societe/list.php?type=c&leftmenu=customers';
-            } else { // ($type == 'f')
-                $page = DOL_URL_ROOT.'/societe/list.php?type=f&leftmenu=suppliers';
-            }
-            header("Location: ".$page);
-            exit;
-        } elseif ($action == 'update') {
+			if ($type == 'c') {
+				$page = DOL_URL_ROOT.'/societe/list.php?type=c&leftmenu=customers';
+			} else { // ($type == 'f')
+				$page = DOL_URL_ROOT.'/societe/list.php?type=f&leftmenu=suppliers';
+			}
+			header("Location: ".$page);
+			exit;
+		} elseif ($action == 'update') {
 			if (!$socid) {
 				$page = DOL_URL_ROOT.'/societe/index.php?leftmenu=thirdparties';
 			} else {

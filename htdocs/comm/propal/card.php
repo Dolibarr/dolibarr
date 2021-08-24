@@ -348,11 +348,11 @@ if (empty($reshook)) {
 		if ($cancel) {
 			if ($socid) {
 				$page = DOL_URL_ROOT . '/comm/card.php?socid='.$socid;
-				header( "Location: " . $page );
+				header("Location: " . $page);
 				exit;
 			} else {
 				$page = DOL_URL_ROOT . '/comm/propal/list.php?leftmenu=propals';
-				header( "Location: " . $page );
+				header("Location: " . $page);
 				exit;
 			}
 		}

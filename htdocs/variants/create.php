@@ -48,7 +48,7 @@ if ($cancel) {
 	}
 	if ($action == 'add') {
 		$page = DOL_URL_ROOT . '/variants/list.php';
-		header( "Location: " . $page );
+		header("Location: " . $page);
 		exit;
 	}
 }

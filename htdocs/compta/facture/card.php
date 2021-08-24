@@ -182,7 +182,7 @@ if (empty($reshook)) {
 			} else {
 				$page = DOL_URL_ROOT.'/compta/facture/list.php?leftmenu=customers_bills';
 			}
-			header( "Location: ".$page );
+			header("Location: ".$page);
 			exit;
 		}
 		$action = '';

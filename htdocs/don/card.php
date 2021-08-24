@@ -85,19 +85,19 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-    if ($cancel) {
-        if (!empty($backtopage)) {
-            header("Location: ".$backtopage);
-            exit;
-        } elseif ($action == 'create' || $action == 'add') {
-            $page = DOL_URL_ROOT.'/don/index.php?leftmenu=donations&mainmenu=billing';
-            header("Location: ".$page);
-            exit;
-        } elseif ($action == 'update') {
-            header("Location: ".$_SERVER['PHP_SELF']."?id=".urlencode($id));
-            exit;
-        }
-    }
+	if ($cancel) {
+		if (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		} elseif ($action == 'create' || $action == 'add') {
+			$page = DOL_URL_ROOT.'/don/index.php?leftmenu=donations&mainmenu=billing';
+			header("Location: ".$page);
+			exit;
+		} elseif ($action == 'update') {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".urlencode($id));
+			exit;
+		}
+	}
 }
 
 // Action reopen object

@@ -148,7 +148,7 @@ if (empty($reshook)) {
 			} else {
 				$page = DOL_URL_ROOT.'/commande/list.php?leftmenu=orders';
 			}
-			header( "Location: ".$page);
+			header("Location: ".$page);
 			exit;
 		}
 	}

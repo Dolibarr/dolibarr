@@ -119,7 +119,7 @@ if (empty($reshook)) {
 			exit;
 		} elseif ($action == 'create' || $action == 'add') {
 			$page = DOL_URL_ROOT . '/fichinter/list.php?leftmenu=ficheinter';
-			header( "Location: " . $page );
+			header("Location: " . $page);
 			exit;
 		}
 		$action = '';
