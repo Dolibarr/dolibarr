@@ -1647,7 +1647,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
 					}
 
 					print '<td class="right">';
-					if ($candelete) {
+    				if ($candelete || ($db->jdate($objp->dp) >= dol_now())) {		// Test on date is to be able to delete a corrupted record with a date in future
 						print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;token='.newToken().'&amp;id='.$object->id.'&amp;lineid='.$objp->rowid.'">';
 						print img_delete();
 						print '</a>';
