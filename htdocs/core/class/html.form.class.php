@@ -1632,7 +1632,7 @@ class Form
 	 */
 	public function selectcontacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $moreclass = '', $options_only = false, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0)
 	{
-		global $conf, $langs, $hookmanager, $action;
+		global $conf, $langs, $hookmanager, $action, $db;
 
 		$langs->load('companies');
 
@@ -1666,6 +1666,15 @@ class Form
 		if ($socid > 0 || $socid == -1) {
 			$sql .= " AND sp.fk_soc = ".((int) $socid);
 		}
+		// Show contact of parent
+    	if (!empty($conf->global->CONTACT_ON_DIFFERENT_THIRDPARTIES)) {
+    		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+			$soc = new Societe($db);
+			$result = $soc->fetch($socid);
+			if ($result > 0 && !empty($soc->parent)) {
+				$sql .= ' OR sp.fk_soc = '.$soc->parent;
+			}
+    	}
 		if (!empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) {
 			$sql .= " AND sp.statut <> 0";
 		}
