@@ -236,6 +236,7 @@ Label=Label
 RefOrLabel=Ref. or label
 Info=Log
 Family=Family
+LineRank=Position
 Description=Description
 Designation=Description
 DescriptionOfLine=Description of line
