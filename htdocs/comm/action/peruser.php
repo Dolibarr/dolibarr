@@ -470,9 +470,9 @@ $newcardbutton = '';
 if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create) {
 	$tmpforcreatebutton = dol_getdate(dol_now(), true);
 
-        if(empty($newparam)) {
-            $newparam = '';
-        }
+	if (empty($newparam)) {
+		$newparam = '';
+	}
 	$newparam .= '&month='.urlencode(str_pad($month, 2, "0", STR_PAD_LEFT)).'&year='.urlencode($tmpforcreatebutton['year']);
 	if ($begin_h !== '') {
 		$newparam .= '&begin_h='.urlencode($begin_h);
@@ -492,8 +492,8 @@ if ($user->rights->agenda->myactions->create || $user->rights->agenda->allaction
 	$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : '')));
 }
 
-if(empty($num)) {
-    $num = '';
+if (empty($num)) {
+	$num = '';
 }
 print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
 
@@ -511,8 +511,8 @@ $s = $newtitle;
 print $s;
 
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
-if(empty($search_status)) {
-    $search_status = '';
+if (empty($search_status)) {
+	$search_status = '';
 }
 print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
 print '</div>';
