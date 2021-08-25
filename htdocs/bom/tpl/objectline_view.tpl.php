@@ -82,7 +82,7 @@ $tmpproduct = new Product($object->db);
 $tmpproduct->fetch($line->fk_product);
 $tmpbom = new BOM($object->db);
 $res = $tmpbom->fetch($line->fk_bom_child);
-if (!empty($tmpbom->id)){
+if (!empty($tmpbom->id)) {
 	print '<a class="collapse_bom" id="collapse-'.$line->id.'" href="#">' . (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT) ? '(+)' : '(-)') . '&nbsp;</a>';
 }
 print $tmpproduct->getNomUrl(1);
@@ -185,9 +185,9 @@ $sql = 'SELECT rowid, fk_bom_child, fk_product FROM '.MAIN_DB_PREFIX.'bom_bomlin
 $sql.= ' WHERE fk_bom = '.$tmpbom->id;
 $resql = $object->db->query($sql);
 
-if ($resql){
+if ($resql) {
 	// Loop on all the sub-BOM lines if they exist
-	while ($obj = $object->db->fetch_object($resql)){
+	while ($obj = $object->db->fetch_object($resql)) {
 		$sub_bom_product = new Product($object->db);
 		$sub_bom_product->fetch($obj->fk_product);
 
@@ -198,7 +198,7 @@ if ($resql){
 		$sub_bom_line->fetch($obj->rowid);
 
 		//If hidden conf is set, we show directly all the sub-BOM lines
-		if (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT)){
+		if (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT)) {
 			print '<tr style="display:none" class="sub_bom_lines" parentid="'.$line->id.'">';
 		} else {
 			print '<tr class="sub_bom_lines" parentid="'.$line->id.'">';
@@ -238,7 +238,7 @@ if ($resql){
 			$total_cost.= $sub_bom_product->cost_price * $line->qty;
 		}
 		// PMP if cost price isn't defined
-		else if ($sub_bom_product->pmp > 0) {
+		elseif ($sub_bom_product->pmp > 0) {
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_product->pmp * $line->qty).'</td>';
 			$total_cost.= $sub_bom_product->pmp * $line->qty;
 		}
