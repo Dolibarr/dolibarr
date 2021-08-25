@@ -65,7 +65,7 @@ dol_syslog('location_incoterms call with MAIN_USE_LOCATION_INCOTERMS_DICTIONNARY
 // Generation of list of zip-town
 if (GETPOST('location_incoterms')) {
 	$return_arr = array();
-	
+
 	// Define filter on text typed
 	$location_incoterms = GETPOST('location_incoterms');
 
@@ -79,13 +79,13 @@ if (GETPOST('location_incoterms')) {
 	{
 		$sql = "SELECT DISTINCT s.location_incoterms FROM ".MAIN_DB_PREFIX.'commande as s';
 		$sql .= " WHERE UPPER(s.location_incoterms) LIKE UPPER('%".$db->escape($location_incoterms)."%')";
-	
-	//Todo: merge with data from table of supplier order
-	/*	$sql .=" UNION";
+
+		//Todo: merge with data from table of supplier order
+		/*	$sql .=" UNION";
 		$sql .= " SELECT DISTINCT p.location_incoterms FROM ".MAIN_DB_PREFIX.'commande_fournisseur as p';
 		$sql .= " WHERE UPPER(p.location_incoterms) LIKE UPPER('%".$db->escape($location_incoterms)."%')";
-	*/
-	    $sql .= " ORDER BY s.location_incoterms";
+		*/
+		$sql .= " ORDER BY s.location_incoterms";
 		$sql .= $db->plimit(100); // Avoid pb with bad criteria
 	}
 
@@ -94,7 +94,7 @@ if (GETPOST('location_incoterms')) {
 	//var_dump($db);
 	if ($resql) {
 		while ($row = $db->fetch_array($resql)) {
-		    $row_array['label'] = $row['location_incoterms'].($row['label']?' - '.$row['label'] : '');
+			$row_array['label'] = $row['location_incoterms'].($row['label']?' - '.$row['label'] : '');
 			if ($location_incoterms) {
 				$row_array['value'] = $row['location_incoterms'];
 			}
