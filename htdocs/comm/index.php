@@ -106,10 +106,16 @@ print load_fiche_titre($langs->trans("CommercialArea"), '', 'commercial');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-print getCustomerProposalPieChart($socid);
-print '<br>';
-print getCustomerOrderPieChart($socid);
-print '<br>';
+$tmp = getCustomerProposalPieChart($socid);
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
+$tmp = getCustomerOrderPieChart($socid);
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
 
 /*
  * Draft customer proposals

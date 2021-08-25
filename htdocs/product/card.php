@@ -1566,11 +1566,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		print dol_get_fiche_end();
 
-		print '<div class="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
-		print ' &nbsp; &nbsp; ';
-		print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-		print '</div>';
+		print $form->buttonsSaveCancel("Create");
 
 		print '</form>';
 	} elseif ($object->id > 0) {
@@ -2026,11 +2022,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			print dol_get_fiche_end();
 
-			print '<div class="center">';
-			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-			print '</div>';
+			print $form->buttonsSaveCancel();
 
 			print '</form>';
 		} else {
@@ -2251,7 +2243,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Public URL
 			if (empty($conf->global->PRODUCT_DISABLE_PUBLIC_URL)) {
 				print '<tr><td>'.$langs->trans("PublicUrl").'</td><td>';
-				print dol_print_url($object->url);
+				print dol_print_url($object->url, '_blank', 128);
 				print '</td></tr>';
 			}
 

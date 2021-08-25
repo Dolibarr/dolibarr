@@ -1777,13 +1777,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-	print '</div>';
-
-
+	print $form->buttonsSaveCancel("CreateDraft");
 
 	// Show origin lines
 	if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
@@ -2484,7 +2478,7 @@ if ($action == 'create') {
 				$labelofbutton = $langs->trans('ReceiveProducts');
 				if ($conf->reception->enabled) {
 					$labelofbutton = $langs->trans("CreateReception");
-					if (!empty($object->linkedObjects)) {
+					if (!empty($object->linkedObjects['reception'])) {
 						foreach ($object->linkedObjects['reception'] as $element) {
 							if ($element->statut >= 0) {
 								$hasreception = 1;

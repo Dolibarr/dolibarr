@@ -9250,4 +9250,52 @@ class Form
 
 		return $retstring;
 	}
+
+	/**
+	 * Output the buttons to submit a creation/edit form
+	 *
+	 * @param   string  $save_label     Alternative label for save button
+	 * @param   string  $cancel_label   Alternative label for cancel button
+	 * @param   array   $morefields     Add additional buttons between save and cancel
+	 * @param   bool    $withoutdiv     Option to remove enclosing centered div
+	 * @return 	string					Html code with the buttons
+	 */
+	public function buttonsSaveCancel($save_label = 'Save', $cancel_label = 'Cancel', $morefields = array(), $withoutdiv = 0)
+	{
+		global $langs;
+
+		$buttons = array();
+
+		$save = array(
+			'name' => 'save',
+			'label_key' => $save_label,
+		);
+
+		if ($save_label == 'Create' || $save_label == 'Add' ) {
+			$save['name'] = 'add';
+			$save['label_key'] = $save_label;
+		}
+
+		$cancel = array(
+				'name' => 'cancel',
+				'label_key' => 'Cancel',
+		);
+
+		!empty($save_label) ? $buttons[] = $save : '';
+
+		if (!empty($morefields)) {
+			$buttons[] = $morefields;
+		}
+
+		!empty($cancel_label) ? $buttons[] = $cancel : '';
+
+		$retstring = $withoutdiv ? '': '<div class="center">';
+
+		foreach ($buttons as $button) {
+			$retstring .= '<input type="submit" class="button button-'.$button['name'].' '.$button['addclass'].'" name="'.$button['name'].'" value="'.dol_escape_htmltag($langs->trans($button['label_key'])).'">';
+		}
+		$retstring .= $withoutdiv ? '': '</div>';
+
+		return $retstring;
+	}
 }

@@ -700,11 +700,7 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->rights->user->us
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
-	print '</div>';
+	print $form->buttonsSaveCancel("Modify");
 }
 
 if ($id && $action == 'edit' && $user->rights->user->user->creer) {

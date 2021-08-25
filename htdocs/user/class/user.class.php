@@ -653,6 +653,36 @@ class User extends CommonObject
 	}
 
 	/**
+	 *  Return if a user has a permission.
+	 *  You can use it like this: if ($user->hasRight('module', 'level11')).
+	 *  It replaces old syntax: if ($user->rights->module->level1)
+	 *
+	 * 	@param	int		$module			Id of permission to add or 0 to add several permissions
+	 *  @param  string	$permlevel1		Permission level1
+	 *  @param  string	$permlevel2		Permission level2
+	 *  @return int						1 if user has permission, 0 if not.
+	 *  @see	clearrights(), delrights(), getrights(), hasRight()
+	 */
+	public function hasRight($module, $permlevel1, $permlevel2 = '')
+	{
+		if (empty($module) || empty($this->rights) || empty($this->rights->$module) || empty($permlevel1)) {
+			return 0;
+		}
+
+		if ($permlevel2) {
+			if (!empty($this->rights->$module->$permlevel1) && !empty($this->rights->$module->$permlevel1->$permlevel2)) {
+				return $this->rights->$module->$permlevel1->$permlevel2;
+			}
+		} else {
+			if (!empty($this->rights->$module->$permlevel1)) {
+				return $this->rights->$module->$permlevel1;
+			}
+		}
+
+		return 0;
+	}
+
+	/**
 	 *  Add a right to the user
 	 *
 	 * 	@param	int		$rid			Id of permission to add or 0 to add several permissions
@@ -661,7 +691,7 @@ class User extends CommonObject
 	 *  @param	int		$entity			Entity to use
 	 *  @param  int	    $notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *  @return int						> 0 if OK, < 0 if KO
-	 *  @see	clearrights(), delrights(), getrights()
+	 *  @see	clearrights(), delrights(), getrights(), hasRight()
 	 */
 	public function addrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
 	{
@@ -788,7 +818,7 @@ class User extends CommonObject
 	 *  @param	int		$entity		Entity to use
 	 *  @param  int	    $notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *  @return int         		> 0 if OK, < 0 if OK
-	 *  @see	clearrights(), addrights(), getrights()
+	 *  @see	clearrights(), addrights(), getrights(), hasRight()
 	 */
 	public function delrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
 	{
@@ -915,7 +945,7 @@ class User extends CommonObject
 	 *  Clear all permissions array of user
 	 *
 	 *  @return	void
-	 *  @see	getrights()
+	 *  @see	getrights(), hasRight()
 	 */
 	public function clearrights()
 	{
@@ -933,7 +963,7 @@ class User extends CommonObject
 	 *	@param  string	$moduletag		Limit permission for a particular module ('' by default means load all permissions)
 	 *  @param	int		$forcereload	Force reload of permissions even if they were already loaded (ignore cache)
 	 *	@return	void
-	 *  @see	clearrights(), delrights(), addrights()
+	 *  @see	clearrights(), delrights(), addrights(), hasRight()
 	 */
 	public function getrights($moduletag = '', $forcereload = 0)
 	{
