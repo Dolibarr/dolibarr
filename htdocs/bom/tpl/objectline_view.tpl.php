@@ -89,6 +89,7 @@ print $tmpproduct->getNomUrl(1);
 print ' - '.$tmpproduct->label;
 print '</td>';
 
+// To show BOM links in the list
 if ($res > 0) {
 	print '<td id="bom_id">'.$tmpbom->getNomUrl(1).'</td>';
 } else {
@@ -179,11 +180,13 @@ if ($action == 'selectlines') {
 
 print '</tr>';
 
+// Select of all the sub-BOM lines
 $sql = 'SELECT rowid, fk_bom_child, fk_product FROM '.MAIN_DB_PREFIX.'bom_bomline AS bl';
 $sql.= ' WHERE fk_bom = '.$tmpbom->id;
 $resql = $object->db->query($sql);
 
 if ($resql){
+	// Loop on all the sub-BOM lines if they exist
 	while ($obj = $object->db->fetch_object($resql)){
 		$sub_bom_product = new Product($object->db);
 		$sub_bom_product->fetch($obj->fk_product);
@@ -194,18 +197,24 @@ if ($resql){
 		$sub_bom_line = new BOMLine($object->db);
 		$sub_bom_line->fetch($obj->rowid);
 
+		//If hidden conf is set, we show directly all the sub-BOM lines
 		if (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT)){
 			print '<tr style="display:none" class="sub_bom_lines" parentid="'.$line->id.'">';
 		} else {
 			print '<tr class="sub_bom_lines" parentid="'.$line->id.'">';
 		}
 
+		// Product
 		print '<td style="padding-left: 5%" id="sub_bom_product_'.$sub_bom_line->id.'">'.$sub_bom_product->getNomUrl(1).'</td>';
+
+		// Sub-BOM
 		if ($sub_bom_line->fk_bom_child > 0) {
 			print '<td id="sub_bom_bom_'.$sub_bom_line->id.'">'.$sub_bom->getNomUrl(1).'</td>';
 		} else {
 			print '<td id="sub_bom_bom_'.$sub_bom_line->id.'">&nbsp;</td>';
 		}
+
+		// Qty
 		print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty * $line->qty, 0, '', 0, 0).'</td>';
 		if ($sub_bom_line->qty_frozen > 0) {
 			print '<td class="linecolqtyfrozen nowrap right" id="sub_bom_qty_frozen_'.$sub_bom_line->id.'">'.$sub_bom_line->qty_frozen.'</td>';
@@ -213,20 +222,28 @@ if ($resql){
 			print '<td class="linecolqtyfrozen nowrap right" id="sub_bom_qty_frozen_'.$sub_bom_line->id.'">&nbsp;</td>';
 		}
 
+		// Disable stock change
 		if ($sub_bom_line->disable_stock_change > 0) {
 			print '<td class="linecoldisablestockchange nowrap right" id="sub_bom_stock_change_'.$sub_bom_line->id.'">'.$sub_bom_line->disable_stock_change.'</td>';
 		} else {
 			print '<td class="linecoldisablestockchange nowrap right" id="sub_bom_stock_change_'.$sub_bom_line->id.'">&nbsp;</td>';
 		}
 
+		// Efficiency
 		print '<td class="linecolefficiency nowrap right" id="sub_bom_efficiency_'.$sub_bom_line->id.'">'.$sub_bom_line->efficiency.'</td>';
+
+		// Cost price if it's defined
 		if ($sub_bom_product->cost_price > 0) {
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_product->cost_price * $line->qty).'</td>';
 			$total_cost.= $sub_bom_product->cost_price * $line->qty;
-		} else if ($sub_bom_product->pmp > 0) {
+		}
+		// PMP if cost price isn't defined
+		else if ($sub_bom_product->pmp > 0) {
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_product->pmp * $line->qty).'</td>';
 			$total_cost.= $sub_bom_product->pmp * $line->qty;
-		} else {
+		}
+		// Minimum purchase price if cost price and PMP aren't defined
+		else {
 			$sql_supplier_price = 'SELECT MIN(price) AS min_price FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
 			$sql_supplier_price.= ' WHERE fk_product = '.$sub_bom_product->id;
 			$resql_supplier_price = $object->db->query($sql_supplier_price);
@@ -243,6 +260,7 @@ if ($resql){
 	}
 }
 
+// Replace of the total_cost value by the sum of all sub-BOM lines total_cost
 if ($total_cost > 0) {
 	$line->total_cost = price($total_cost);
 	?>
