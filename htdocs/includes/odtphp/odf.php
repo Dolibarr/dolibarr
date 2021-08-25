@@ -820,11 +820,17 @@ IMG;
 		// Export to PDF using LibreOffice
 		if ($conf->global->MAIN_ODT_AS_PDF == 'libreoffice')
 		{
+			dol_mkdir($conf->user->dir_temp);	// We must be sure the directory exists and is writable
+
+			// We delete and recreate a subdir because the soffice may have change pemrissions on it
+			dol_delete_dir_recursive($conf->user->dir_temp.'/odtaspdf');
+			dol_mkdir($conf->user->dir_temp.'/odtaspdf');
+
 			// Install prerequisites: apt install soffice libreoffice-common libreoffice-writer
 			// using windows libreoffice that must be in path
 			// using linux/mac libreoffice that must be in path
 			// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
-			$command ='soffice --headless -env:UserInstallation=file:"//'.$conf->user->dir_temp.'" --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
+			$command ='soffice --headless -env:UserInstallation=file:\''.$conf->user->dir_temp.'/odtaspdf\' --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
 		}
 		elseif (preg_match('/unoconv/', $conf->global->MAIN_ODT_AS_PDF))
 		{
@@ -875,6 +881,11 @@ IMG;
 		//$command = DOL_DOCUMENT_ROOT.'/includes/odtphp/odt2pdf.sh '.$name.' '.$dirname;
 
 		dol_syslog(get_class($this).'::exportAsAttachedPDF $execmethod='.$execmethod.' Run command='.$command,LOG_DEBUG);
+		// TODO Use:
+		// $outputfile = DOL_DATA_ROOT.'/odt2pdf.log';
+		// $result = $utils->executeCLI($command, $outputfile);  and replace test on $execmethod.
+		// $retval will be $result['result']
+		// $errorstring will be $result['output']
 		$retval=0; $output_arr=array();
 		if ($execmethod == 1)
 		{
@@ -903,29 +914,31 @@ IMG;
 			if (! empty($conf->global->MAIN_UMASK)) @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
 		}
 
-		if ($retval == 0)
-		{
+		if ($retval == 0) {
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
 			$filename=''; $linenum=0;
-			if (headers_sent($filename, $linenum)) {
-				throw new OdfException("headers already sent ($filename at $linenum)");
+
+			if (php_sapi_name() != 'cli') {	// If we are in a web context (not into CLI context)
+				if (headers_sent($filename, $linenum)) {
+					throw new OdfException("headers already sent ($filename at $linenum)");
+				}
+
+				if (!empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+					$name=preg_replace('/\.od(x|t)/i', '', $name);
+					header('Content-type: application/pdf');
+					header('Content-Disposition: attachment; filename="'.$name.'.pdf"');
+					readfile($name.".pdf");
+				}
 			}
 
-			if (!empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-				$name=preg_replace('/\.od(x|t)/i', '', $name);
-				header('Content-type: application/pdf');
-				header('Content-Disposition: attachment; filename="'.$name.'.pdf"');
-				readfile($name.".pdf");
-			}
-			if (!empty($conf->global->MAIN_ODT_AS_PDF_DEL_SOURCE))
-			{
+			if (!empty($conf->global->MAIN_ODT_AS_PDF_DEL_SOURCE)) {
 				unlink($name);
 			}
 		} else {
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.var_export($output_arr, true), LOG_DEBUG);
 
-			if ($retval==126) {
+			if ($retval == 126) {
 				throw new OdfException('Permission execute convert script : ' . $command);
 			}
 			else {

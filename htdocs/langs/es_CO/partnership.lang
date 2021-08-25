@@ -1,0 +1,12 @@
+# Dolibarr language file - Source file is en_US - partnership
+ModulePartnershipName=Gestión de alianzas
+PartnershipDescription=Módulo de gestión de asociaciones
+PartnershipDescriptionLong=Módulo de gestión de asociaciones
+NewPartnership=Nueva sociedad
+ListOfPartnerships=Lista de asociación
+PartnershipSetup=Configuración de la asociación
+PartnershipAbout=Acerca de la asociación
+PartnershipAboutPage=Página "acerca de" la asociación
+DatePartnershipEnd=Fecha final
+PartnershipCanceled=Cancelado
+PartnershipManagedFor=Socios son

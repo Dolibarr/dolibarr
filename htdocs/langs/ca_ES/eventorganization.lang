@@ -1,0 +1,147 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModuleEventOrganizationName = Organització d'esdeveniments
+EventOrganizationDescription = Organització d’esdeveniments mitjançant Projecte de mòduls
+EventOrganizationDescriptionLong= Gestioneu l’organització d’esdeveniments per a conferències, assistents, ponents i assistents, amb una pàgina de subscripció pública
+#
+# Menu
+#
+EventOrganizationMenuLeft = Esdeveniments organitzats
+EventOrganizationConferenceOrBoothMenuLeft = Conferència o estand
+
+#
+# Admin page
+#
+EventOrganizationSetup = Configuració de l'organització d'esdeveniments
+Settings = Configuració
+EventOrganizationSetupPage = Pàgina de configuració de l'organització d'esdeveniments
+EVENTORGANIZATION_TASK_LABEL = Etiqueta de tasques per a crear automàticament quan es validi el projecte
+EVENTORGANIZATION_TASK_LABELTooltip = Quan es valida un esdeveniment organitzat, es poden crear automàticament algunes tasques al projecte <br> <br> Per exemple: <br> Enviar trucada per a conferències <br> Enviar trucades per a Booth <br> Rebre trucades per a conferències a034 recordatori de l'esdeveniment als altaveus <br> Enviar recordatori de l'esdeveniment a l'allotjament de l'estand <br> Enviar recordatori de l'esdeveniment als assistents
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Categoria per afegir a tercers creada automàticament quan algú suggereix una conferència
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Categoria per a afegir a tercers creada automàticament quan suggereixen un estand
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Plantilla de correu electrònic per enviar després de rebre un suggeriment d'una conferència.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Plantilla de correu electrònic per enviar després de rebre un suggeriment d'un estand.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Plantilla de correu electrònic per enviar després de pagar una subscripció a un estand.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Plantilla de correu electrònic per enviar després de pagar una subscripció a un esdeveniment.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Plantilla de correu electrònic d'acció massiva als assistents
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Plantilla de correu electrònic d'acció massiva als ponents
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Filtra la llista de selecció de tercers a la targeta / formulari de creació d'assistents amb categoria
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filtra la llista de selecció de tercers a la targeta / formulari de creació d'assistents amb el tipus de client
+
+#
+# Object
+#
+EventOrganizationConfOrBooth= Conferència o estand
+ManageOrganizeEvent = Gestiona l'organització d'esdeveniments
+ConferenceOrBooth = Conferència o estand
+ConferenceOrBoothTab = Conferència o estand
+AmountOfSubscriptionPaid = Import de la subscripció pagada
+DateSubscription = Data de subscripció
+ConferenceOrBoothAttendee = Assistent a conferències o estands
+
+#
+# Template Mail
+#
+YourOrganizationEventConfRequestWasReceived = S'ha rebut la vostra sol·licitud de conferència
+YourOrganizationEventBoothRequestWasReceived = La vostra sol·licitud d’estand s’ha rebut
+EventOrganizationEmailAskConf = Sol·licitud de conferència
+EventOrganizationEmailAskBooth = Sol·licitud d’estand
+EventOrganizationEmailSubsBooth = Subscripció a estand
+EventOrganizationEmailSubsEvent = Subscripció a un esdeveniment
+EventOrganizationMassEmailAttendees = Comunicació als assistents
+EventOrganizationMassEmailSpeakers = Comunicació als altaveus
+
+#
+# Event
+#
+AllowUnknownPeopleSuggestConf=Permetre que persones desconegudes suggereixin conferències
+AllowUnknownPeopleSuggestConfHelp=Permetre que persones desconegudes suggereixin conferències
+AllowUnknownPeopleSuggestBooth=Permetre que persones desconegudes suggereixin estand
+AllowUnknownPeopleSuggestBoothHelp=Permetre que persones desconegudes suggereixin estand
+PriceOfRegistration=Preu de la inscripció
+PriceOfRegistrationHelp=Preu de la inscripció
+PriceOfBooth=Preu de la subscripció per a estand
+PriceOfBoothHelp=Preu de la subscripció per a estand
+EventOrganizationICSLink=Enllaç ICS per a esdeveniments
+ConferenceOrBoothInformation=Informació sobre conferències o estands
+Attendees = Assistents
+DownloadICSLink = Download ICS link
+EVENTORGANIZATION_SECUREKEY = Clau segura de l'enllaç de registre públic a una conferència
+SERVICE_BOOTH_LOCATION = Servei que s'utilitza per a la fila de factures sobre una ubicació de l'estand
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Servei que s'utilitza per a la fila de factures sobre una subscripció d'assistent a una conferència
+NbVotes=Number of votes
+#
+# Status
+#
+EvntOrgDraft = Esborrany
+EvntOrgSuggested = Suggerit
+EvntOrgConfirmed = Confirmat
+EvntOrgNotQualified = No qualificat
+EvntOrgDone = Realitzades
+EvntOrgCancelled = Cancel·lat
+#
+# Public page
+#
+SuggestForm = Suggestion page
+RegisterPage = Pàgina per a conferències o estand
+EvntOrgRegistrationHelpMessage = Here, you can vote for an event, or suggest a new conference or booth for the project
+EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference for the project
+EvntOrgRegistrationBoothHelpMessage = Here, you can suggest a new booth for the project
+ListOfSuggestedConferences = List of suggested conferences
+ListOfSuggestedBooths = List of suggested booths
+SuggestConference = Suggereixi una conferència nova
+SuggestBooth = Suggereixi un estand
+ViewAndVote = Consulteu i voteu els esdeveniments suggerits
+PublicAttendeeSubscriptionPage = Enllaç públic de registre a una conferència
+MissingOrBadSecureKey = Falta la clau de seguretat o no és vàlida
+EvntOrgWelcomeMessage = Aquest formulari us permet registrar-vos com a nou participant a la conferència: '%s'
+EvntOrgDuration = Aquesta conferència comença el dia %s i finalitza el dia %s.
+ConferenceAttendeeFee = Tarifa de l'assistent a la conferència per a l'esdeveniment: "%s" que passa de %s a %s.
+BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
+EventType = Tipus d'esdeveniment
+LabelOfBooth=Booth label
+LabelOfconference=Conference label
+ConferenceIsNotConfirmed=Subcription not available, conference is not confirmed yet
+
+#
+# Vote page
+#
+EvntOrgRegistrationWelcomeMessage = Benvingut a la pàgina de suggeriments de conferències o estands.
+EvntOrgRegistrationConfWelcomeMessage = Welcome on the conference suggestion page.
+EvntOrgRegistrationBoothWelcomeMessage = Welcome on the booth suggestion page.
+EvntOrgVoteHelpMessage = Here, you can view and vote for the suggested events for the project
+VoteOk = Your vote has been accepted.
+AlreadyVoted = You have already voted for this event.
+VoteError = An error has occurred during the vote, please try again.
+
+#
+# SubscriptionOk page
+#
+SubscriptionOk = La vostra subscripció a aquesta conferència s'ha validat
+#
+# Subscription validation mail
+#
+ConfAttendeeSubscriptionConfirmation = Confirmació de la subscripció a una conferència
+#
+# Payment page
+#
+Attendee = Attendee
+PaymentConferenceAttendee = Conference attendee payment
+PaymentBoothLocation = Booth location payment

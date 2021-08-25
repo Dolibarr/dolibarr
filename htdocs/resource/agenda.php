@@ -44,10 +44,11 @@ $action = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-if (GETPOST('actioncode', 'array'))
-{
+if (GETPOST('actioncode', 'array')) {
 	$actioncode = GETPOST('actioncode', 'array', 3);
-	if (!count($actioncode)) $actioncode = '0';
+	if (!count($actioncode)) {
+		$actioncode = '0';
+	}
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
@@ -57,12 +58,18 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortfield) $sortfield = 'a.datep,a.id';
-if (!$sortorder) $sortorder = 'DESC,DESC';
+if (!$sortfield) {
+	$sortfield = 'a.datep,a.id';
+}
+if (!$sortorder) {
+	$sortorder = 'DESC,DESC';
+}
 
 $object = new DolResource($db);
 $object->fetch($id, $ref);
@@ -73,8 +80,7 @@ $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('agendaresource'));
 
 // Security check
-if (!$user->rights->resource->read)
-{
+if (!$user->rights->resource->read) {
 	accessforbidden();
 }
 
@@ -85,20 +91,19 @@ if (!$user->rights->resource->read)
 
 $parameters = array('id'=>$id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (empty($reshook))
-{
+if (empty($reshook)) {
 	// Cancel
-	if (GETPOST('cancel', 'alpha') && !empty($backtopage))
-	{
+	if (GETPOST('cancel', 'alpha') && !empty($backtopage)) {
 		header("Location: ".$backtopage);
 		exit;
 	}
 
 	// Purge search criteria
-	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
-	{
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$actioncode = '';
 		$search_agenda_label = '';
 	}
@@ -113,8 +118,7 @@ if (empty($reshook))
 $contactstatic = new Contact($db);
 $form = new Form($db);
 
-if ($object->id > 0)
-{
+if ($object->id > 0) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
@@ -122,10 +126,14 @@ if ($object->id > 0)
 	$picto = 'resource';
 
 	$title = $langs->trans("Agenda");
-	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/productnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->ref." - ".$title;
+	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/productnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+		$title = $object->ref." - ".$title;
+	}
 	llxHeader('', $title);
 
-	if (!empty($conf->notification->enabled)) $langs->load("mails");
+	if (!empty($conf->notification->enabled)) {
+		$langs->load("mails");
+	}
 	$type = $langs->trans('ResourceSingular');
 
 	$head = resource_prepare_head($object);
@@ -139,7 +147,9 @@ if ($object->id > 0)
 	$morehtmlref .= '</div>';
 
 	$shownav = 1;
-	if ($user->socid && !in_array('resource', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
+	if ($user->socid && !in_array('resource', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+		$shownav = 0;
+	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
@@ -150,11 +160,14 @@ if ($object->id > 0)
 
 	print dol_get_fiche_end();
 
-	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read)))
-	{
+	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$param = '&id='.$object->id.'&socid='.$socid;
-		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-		if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+			$param .= '&contextpage='.urlencode($contextpage);
+		}
+		if ($limit > 0 && $limit != $conf->liste_limit) {
+			$param .= '&limit='.urlencode($limit);
+		}
 
 		print_barre_liste($langs->trans("ActionsOnResource"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlcenter, '', 0, 1, 1);
 

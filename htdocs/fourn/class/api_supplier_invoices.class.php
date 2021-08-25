@@ -34,7 +34,7 @@ class SupplierInvoices extends DolibarrApi
 	 *
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'socid',
 	);
 
@@ -102,6 +102,10 @@ class SupplierInvoices extends DolibarrApi
 	{
 		global $db;
 
+		if (!DolibarrApiAccess::$user->rights->fournisseur->facture->lire) {
+			throw new RestException(401);
+		}
+
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
@@ -109,20 +113,32 @@ class SupplierInvoices extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir) $search_sale = DolibarrApiAccess::$user->id;
+		if (!DolibarrApiAccess::$user->rights->societe->client->voir) {
+			$search_sale = DolibarrApiAccess::$user->id;
+		}
 
 		$sql = "SELECT t.rowid";
 		// We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user";
+		if (!DolibarrApiAccess::$user->rights->societe->client->voir || $search_sale > 0) {
+			$sql .= ", sc.fk_soc, sc.fk_user";
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as t";
 
 		// We need this table joined to the select in order to filter by sale
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!DolibarrApiAccess::$user->rights->societe->client->voir || $search_sale > 0) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
 
 		$sql .= ' WHERE t.entity IN ('.getEntity('supplier_invoice').')';
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir || $search_sale > 0) $sql .= " AND t.fk_soc = sc.fk_soc";
-		if ($socids) $sql .= " AND t.fk_soc IN (".$socids.")";
-		if ($search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
+		if (!DolibarrApiAccess::$user->rights->societe->client->voir || $search_sale > 0) {
+			$sql .= " AND t.fk_soc = sc.fk_soc";
+		}
+		if ($socids) {
+			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
+		}
+		if ($search_sale > 0) {
+			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
+		}
 
 		// Filter by status
 		if ($status == 'draft') {
@@ -139,23 +155,20 @@ class SupplierInvoices extends DolibarrApi
 		}
 		// Insert sale filter
 		if ($search_sale > 0) {
-			$sql .= " AND sc.fk_user = ".$search_sale;
+			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 		// Add sql filters
-		if ($sqlfilters)
-		{
-			if (!DolibarrApi::_checkFilters($sqlfilters))
-			{
+		if ($sqlfilters) {
+			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
-			if ($page < 0)
-			{
+			if ($page < 0) {
 				$page = 0;
 			}
 			$offset = $limit * $page;
@@ -168,8 +181,7 @@ class SupplierInvoices extends DolibarrApi
 			$i = 0;
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
-			while ($i < $min)
-			{
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$invoice_static = new FactureFournisseur($this->db);
 				if ($invoice_static->fetch($obj->rowid)) {
@@ -244,12 +256,15 @@ class SupplierInvoices extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			if ($field == 'id') continue;
+			if ($field == 'id') {
+				continue;
+			}
 			$this->invoice->$field = $value;
 		}
 
-		if ($this->invoice->update($id, DolibarrApiAccess::$user))
+		if ($this->invoice->update($id, DolibarrApiAccess::$user)) {
 			return $this->get($id);
+		}
 
 		return false;
 	}
@@ -279,8 +294,7 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if ($this->invoice->delete(DolibarrApiAccess::$user) < 0)
-		{
+		if ($this->invoice->delete(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500);
 		}
 
@@ -459,16 +473,14 @@ class SupplierInvoices extends DolibarrApi
 		$paiement->note_public = $comment;
 
 		$paiement_id = $paiement->create(DolibarrApiAccess::$user, ($closepaidinvoices == 'yes' ? 1 : 0)); // This include closing invoices
-		if ($paiement_id < 0)
-		{
+		if ($paiement_id < 0) {
 			$this->db->rollback();
 			throw new RestException(400, 'Payment error : '.$paiement->error);
 		}
 
 		if (!empty($conf->banque->enabled)) {
 			$result = $paiement->addPaymentToBank(DolibarrApiAccess::$user, 'payment_supplier', '(SupplierInvoicePayment)', $accountid, $chqemetteur, $chqbank);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$this->db->rollback();
 				throw new RestException(400, 'Add payment to bank error : '.$paiement->error);
 			}
@@ -534,7 +546,11 @@ class SupplierInvoices extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
 		$request_data = (object) $request_data;
+
+		$request_data->description = checkVal($request_data->description, 'restricthtml');
+		$request_data->ref_supplier = checkVal($request_data->ref_supplier);
 
 		$updateRes = $this->invoice->addline(
 			$request_data->description,
@@ -549,7 +565,7 @@ class SupplierInvoices extends DolibarrApi
 			$request_data->date_end,
 			$request_data->ventil,
 			$request_data->info_bits,
-			'HT',
+			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
 			$request_data->product_type,
 			$request_data->rang,
 			false,
@@ -597,7 +613,12 @@ class SupplierInvoices extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
 		$request_data = (object) $request_data;
+
+		$request_data->description = checkVal($request_data->description, 'restricthtml');
+		$request_data->ref_supplier = checkVal($request_data->ref_supplier);
+
 		$updateRes = $this->invoice->updateline(
 			$lineid,
 			$request_data->description,
@@ -607,7 +628,7 @@ class SupplierInvoices extends DolibarrApi
 			$request_data->localtax2_tx,
 			$request_data->qty,
 			$request_data->fk_product,
-			'HT',
+			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
 			$request_data->info_bits,
 			$request_data->product_type,
 			$request_data->remise_percent,
@@ -706,8 +727,9 @@ class SupplierInvoices extends DolibarrApi
 	{
 		$invoice = array();
 		foreach (SupplierInvoices::$FIELDS as $field) {
-			if (!isset($data[$field]))
+			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
+			}
 			$invoice[$field] = $data[$field];
 		}
 		return $invoice;

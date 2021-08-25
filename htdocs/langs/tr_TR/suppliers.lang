@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - vendors
 Suppliers=Tedarikçiler
 SuppliersInvoice=Tedarikçi faturası
+SupplierInvoices=Tedarikçi faturaları
 ShowSupplierInvoice=Tedarikçi Faturası Göster
 NewSupplier=Yeni tedarikçi
 History=Geçmiş

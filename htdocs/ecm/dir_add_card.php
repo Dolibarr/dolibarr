@@ -23,6 +23,8 @@
  *	\brief		Main page for ECM section area
  */
 
+if (! defined('DISABLE_JS_GRAHP')) define('DISABLE_JS_GRAPH', 1);
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/htmlecm.form.class.php';
@@ -124,7 +126,7 @@ if ($action == 'add' && $permtoadd) {
 	}
 
 	$ref = (string) GETPOST("ref", 'alpha');
-	$label = (string) GETPOST("label", 'alpha');
+	$label = dol_sanitizeFileName(GETPOST("label", 'alpha'));
 	$desc = (string) GETPOST("desc", 'alpha');
 	$catParent = GETPOST("catParent", 'alpha'); // Can be an int (with ECM) or a string (with generic filemanager)
 	if ($catParent == '-1') {
@@ -153,8 +155,7 @@ if ($action == 'add' && $permtoadd) {
 				setEventMessages($ecmdir->error, $ecmdir->errors, 'errors');
 				$action = 'create';
 			}
-		} else // For example $module == 'medias'
-		{
+		} else { // For example $module == 'medias'
 			$dirfornewdir = '';
 			if ($module == 'medias') {
 				$dirfornewdir = $conf->medias->multidir_output[$conf->entity];
@@ -168,6 +169,7 @@ if ($action == 'add' && $permtoadd) {
 				$fullpathofdir = $dirfornewdir.'/'.($catParent ? $catParent.'/' : '').$label;
 				$result = dol_mkdir($fullpathofdir, DOL_DATA_ROOT);
 				if ($result < 0) {
+					$langs->load("errors");
 					setEventMessages($langs->trans('ErrorFailToCreateDir', $label), null, 'errors');
 					$error++;
 				} else {
@@ -186,10 +188,8 @@ if ($action == 'add' && $permtoadd) {
 			exit;
 		}
 	}
-}
-
-// Deleting file
-elseif ($action == 'confirm_deletesection' && $confirm == 'yes') {
+} elseif ($action == 'confirm_deletesection' && $confirm == 'yes' && $permtoadd) {
+	// Deleting file
 	$result = $ecmdir->delete($user);
 	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
 }

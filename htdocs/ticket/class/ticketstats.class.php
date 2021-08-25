@@ -64,10 +64,10 @@ class TicketStats extends Stats
 		$this->where = " fk_statut > 0";
 		$this->where .= " AND entity = ".$conf->entity;
 		if ($this->socid > 0) {
-			$this->where .= " AND fk_soc = ".$this->socid;
+			$this->where .= " AND fk_soc = ".((int) $this->socid);
 		}
 		if (is_array($this->userid) && count($this->userid) > 0) {
-			$this->where .= ' AND fk_user_create IN ('.join(',', $this->userid).')';
+			$this->where .= ' AND fk_user_create IN ('.$this->db->sanitize(join(',', $this->userid)).')';
 		} elseif ($this->userid > 0) {
 			$this->where .= ' AND fk_user_create = '.$this->userid;
 		}
@@ -98,7 +98,7 @@ class TicketStats extends Stats
 	{
 		$sql = "SELECT MONTH(datec) as dm, count(*)";
 		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE YEAR(datec) = ".$year;
+		$sql .= " WHERE YEAR(datec) = ".((int) $year);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');

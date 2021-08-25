@@ -100,7 +100,7 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *
 	 *	@param	   string	    $code		      Value to encode
 	 *	@param	   string	    $encoding	      Mode of encoding
-	 *	@param	   string	    $readable	      Code can be read
+	 *	@param	   string	    $readable	      Code can be read (What is this ? is this used ?)
 	 *	@param	   integer		$scale			  Scale (not used with this engine)
 	 *  @param     integer      $nooutputiferror  No output if error (not used with this engine)
 	 *	@return	   int			                  <0 if KO, >0 if OK
@@ -110,7 +110,9 @@ class modTcpdfbarcode extends ModeleBarCode
 		global $_GET;
 
 		$tcpdfEncoding = $this->getTcpdfEncodingType($encoding);
-		if (empty($tcpdfEncoding)) return -1;
+		if (empty($tcpdfEncoding)) {
+			return -1;
+		}
 
 		$color = array(0, 0, 0);
 
@@ -156,10 +158,18 @@ class modTcpdfbarcode extends ModeleBarCode
 		global $conf, $_GET;
 
 		dol_mkdir($conf->barcode->dir_temp);
+		if (!is_writable($conf->barcode->dir_temp)) {
+			$this->error = "Failed to write in temp directory ".$conf->barcode->dir_temp;
+			dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+			return -1;
+		}
+
 		$file = $conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
 
 		$tcpdfEncoding = $this->getTcpdfEncodingType($encoding);
-		if (empty($tcpdfEncoding)) return -1;
+		if (empty($tcpdfEncoding)) {
+			return -1;
+		}
 
 		$color = array(0, 0, 0);
 

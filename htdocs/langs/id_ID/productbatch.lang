@@ -1,8 +1,10 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Gunakan lot / nomor seri
-ProductStatusOnBatch=Ya (diperlukan banyak seri)
+ProductStatusOnBatch=Yes (lot required)
+ProductStatusOnSerial=Yes (unique serial number required)
 ProductStatusNotOnBatch=Tidak (banyak / serial tidak digunakan)
-ProductStatusOnBatchShort=Ya
+ProductStatusOnBatchShort=Lot
+ProductStatusOnSerialShort=Serial
 ProductStatusNotOnBatchShort=Tidak
 Batch=Lot / Serial
 atleast1batchfield=Makan-menurut tanggal atau Jual-menurut tanggal atau Lot / nomor seri
@@ -22,3 +24,20 @@ ProductLotSetup=Pengaturan lot modul / serial
 ShowCurrentStockOfLot=Tampilkan stok saat ini untuk produk / lot pasangan
 ShowLogOfMovementIfLot=Tampilkan log pergerakan untuk produk / lot pasangan
 StockDetailPerBatch=Detail stok per lot
+SerialNumberAlreadyInUse=Serial number %s is already used for product %s
+TooManyQtyForSerialNumber=You can only have one product %s for serial number %s
+ManageLotMask=Custom mask
+CustomMasks=Option to define a different numbering mask for each product
+BatchLotNumberingModules=Numbering rule for automatic generation of lot number
+BatchSerialNumberingModules=Numbering rule for automatic generation of serial number (for products with property 1 unique lot/serial for each product)
+QtyToAddAfterBarcodeScan=Qty to add for each barcode/lot/serial scanned
+LifeTime=Life span (in days)
+EndOfLife=End of life
+ManufacturingDate=Manufacturing date
+DestructionDate=Destruction date
+FirstUseDate=First use date
+QCFrequency=Quality control frequency (in days)
+
+#Traceability - qc status
+OutOfOrder=Out of order
+InWorkingOrder=In working order

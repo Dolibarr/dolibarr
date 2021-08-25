@@ -27,5 +27,7 @@ Recipient=Người nhận
 ErrorStockIsNotEnough=Không có đủ tồn kho
 Shippable=Vận chuyển được
 NonShippable=Không vận chuyển được
+ShowShippableStatus=Show shippable status
 ShowReceiving=Hiển thị biên nhận giao hàng
 NonExistentOrder=Đơn hàng không tồn tại
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines

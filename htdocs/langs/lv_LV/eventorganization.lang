@@ -1,0 +1,147 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModuleEventOrganizationName = Pasākuma organizēšana
+EventOrganizationDescription = Pasākuma organizēšana, izmantojot moduļu projektu
+EventOrganizationDescriptionLong= Pārvaldiet konferences, dalībnieku, runātāju un dalībnieku pasākuma organizēšanu ar publisku abonēšanas lapu
+#
+# Menu
+#
+EventOrganizationMenuLeft = Organizēja pasākumus
+EventOrganizationConferenceOrBoothMenuLeft = Konference vai stends
+
+#
+# Admin page
+#
+EventOrganizationSetup = Pasākuma organizācijas iestatīšana
+Settings = Iestatījumi
+EventOrganizationSetupPage = Pasākuma organizācijas iestatīšanas lapa
+EVENTORGANIZATION_TASK_LABEL = Uzdevumu iezīme, kas jāizveido automātiski, kad projekts ir apstiprināts
+EVENTORGANIZATION_TASK_LABELTooltip = Apstiprinot organizētu notikumu, dažus uzdevumus var automātiski izveidot projektā <br> <br> Piemēram: <br> Sūtīt konferences zvanu <br> Sūtīt zvanu stendam <br> A032fccfz19bz0 A032fccfz19bz002 Saņemt konferences zvanu03 atgādināt par notikumu runātājiem <br> Nosūtīt atgādinājumu par notikumu Booth hoster <br> Nosūtīt atgādinājumu par pasākumu dalībniekiem
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kategorija, ko pievienot trešajām pusēm, tiek automātiski izveidota, kad kāds iesaka konferenci
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Kategorija, ko pievienot trešajām pusēm, tiek automātiski izveidota, kad viņi iesaka stendu
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = E-pasta ziņojuma veidne, kas jānosūta pēc konferences ieteikuma saņemšanas.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = E-pasta ziņojuma veidne, kas jānosūta pēc stenda ieteikuma saņemšanas.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = E-pasta ziņojuma veidne, kas jānosūta pēc tam, kad ir samaksāts abonēšanas stends.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = E-pasta ziņojuma veidne, kas jānosūta pēc pasākuma abonēšanas apmaksas.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Masveida dalībnieku e-pasta veidne
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Masu sarunu e-pasta ziņojuma veidne
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Filtrējiet trešās puses atlasīto sarakstu dalībnieku izveides kartītē / veidlapā ar kategoriju
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filtrējiet trešās puses atlasīto sarakstu dalībnieku izveidošanas kartītē / veidlapā ar klienta tipu
+
+#
+# Object
+#
+EventOrganizationConfOrBooth= Konference vai stends
+ManageOrganizeEvent = Pārvaldīt pasākumu organizēšanu
+ConferenceOrBooth = Konference vai stends
+ConferenceOrBoothTab = Konference vai stends
+AmountOfSubscriptionPaid = Apmaksātā abonēšanas summa
+DateSubscription = Abonēšanas datums
+ConferenceOrBoothAttendee = Konferences vai stenda apmeklētājs
+
+#
+# Template Mail
+#
+YourOrganizationEventConfRequestWasReceived = Jūsu konferences pieprasījums tika saņemts
+YourOrganizationEventBoothRequestWasReceived = Jūsu pieprasījums pēc stenda tika saņemts
+EventOrganizationEmailAskConf = Pieprasījums pēc konferences
+EventOrganizationEmailAskBooth = Pieprasījums pēc stenda
+EventOrganizationEmailSubsBooth = Stenda abonēšana
+EventOrganizationEmailSubsEvent = Pasākuma abonēšana
+EventOrganizationMassEmailAttendees = Saziņa ar apmeklētājiem
+EventOrganizationMassEmailSpeakers = Saziņa ar runātājiem
+
+#
+# Event
+#
+AllowUnknownPeopleSuggestConf=Ļaujiet nezināmiem cilvēkiem ieteikt konferences
+AllowUnknownPeopleSuggestConfHelp=Ļaujiet nezināmiem cilvēkiem ieteikt konferences
+AllowUnknownPeopleSuggestBooth=Ļaujiet nezināmiem cilvēkiem ieteikt kabīni
+AllowUnknownPeopleSuggestBoothHelp=Ļaujiet nezināmiem cilvēkiem ieteikt kabīni
+PriceOfRegistration=Reģistrācijas cena
+PriceOfRegistrationHelp=Reģistrācijas cena
+PriceOfBooth=Abonēšanas cena, lai stāvētu kabīnē
+PriceOfBoothHelp=Abonēšanas cena, lai stāvētu kabīnē
+EventOrganizationICSLink=Saistiet notikumu ICS
+ConferenceOrBoothInformation=Konferences vai stenda informācija
+Attendees = Dalībnieki
+DownloadICSLink = Lejupielādēt ICS saiti
+EVENTORGANIZATION_SECUREKEY = Konferences publiskās reģistrācijas saites drošā atslēga
+SERVICE_BOOTH_LOCATION = Pakalpojums, kas izmantots rēķinu rindai par kabīnes atrašanās vietu
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Pakalpojums, kas tiek izmantots rēķina rindā par konferences dalībnieka abonementu
+NbVotes=Number of votes
+#
+# Status
+#
+EvntOrgDraft = Melnraksts
+EvntOrgSuggested = Ieteikts
+EvntOrgConfirmed = Apstiprināts
+EvntOrgNotQualified = Nav kvalificēts
+EvntOrgDone = Darīts
+EvntOrgCancelled = Atcelts
+#
+# Public page
+#
+SuggestForm = Ieteikumu lapa
+RegisterPage = Konferenču vai stenda lapa
+EvntOrgRegistrationHelpMessage = Šeit jūs varat balsot par pasākumu vai ieteikt jaunu konferenci vai stendu projektam
+EvntOrgRegistrationConfHelpMessage = Šeit jūs varat ieteikt jaunu projekta konferenci
+EvntOrgRegistrationBoothHelpMessage = Šeit jūs varat ieteikt jaunu stendu projektam
+ListOfSuggestedConferences = Ieteicamo konferenču saraksts
+ListOfSuggestedBooths = Ieteicamo kabīņu saraksts
+SuggestConference = Ieteikt jaunu konferenci
+SuggestBooth = Ieteikt stendu
+ViewAndVote = Skatiet ierosinātos pasākumus un balsojiet par tiem
+PublicAttendeeSubscriptionPage = Publiska reģistrācijas saite ar konferenci
+MissingOrBadSecureKey = Drošības atslēga nav derīga vai tās nav
+EvntOrgWelcomeMessage = Šī veidlapa ļauj reģistrēties kā jaunam konferences dalībniekam: '%s'
+EvntOrgDuration = Šī konference sākas ar %s un beidzas ar %s.
+ConferenceAttendeeFee = Konferences dalībnieka maksa par pasākumu: '%s', kas notiek no %s līdz %s.
+BoothLocationFee = Pasākuma stenda atrašanās vieta: '%s', kas notiek no %s līdz %s
+EventType = Pasākuma veids
+LabelOfBooth=Booth label
+LabelOfconference=Conference label
+ConferenceIsNotConfirmed=Subcription not available, conference is not confirmed yet
+
+#
+# Vote page
+#
+EvntOrgRegistrationWelcomeMessage = Laipni lūdzam konferences vai stenda ieteikumu lapā.
+EvntOrgRegistrationConfWelcomeMessage = Laipni lūdzam konferences ieteikumu lapā.
+EvntOrgRegistrationBoothWelcomeMessage = Laipni lūdzam stenda ieteikumu lapā.
+EvntOrgVoteHelpMessage = Šeit jūs varat apskatīt ierosinātos projekta pasākumus un balsot par tiem
+VoteOk = Jūsu balsojums ir pieņemts.
+AlreadyVoted = Jūs jau esat balsojis par šo notikumu.
+VoteError = Balsojuma laikā radās kļūda. Lūdzu, mēģiniet vēlreiz.
+
+#
+# SubscriptionOk page
+#
+SubscriptionOk = Jūsu abonements šai konferencei ir apstiprināts
+#
+# Subscription validation mail
+#
+ConfAttendeeSubscriptionConfirmation = Konferences abonēšanas apstiprinājums
+#
+# Payment page
+#
+Attendee = Dalībnieks
+PaymentConferenceAttendee = Konferences dalībnieka samaksa
+PaymentBoothLocation = Kabīnes atrašanās vietas maksājums

@@ -131,7 +131,7 @@ InvoiceLinesDone=Свързани редове на фактури
 ExpenseReportLines=Редове на разходни отчети за свързване
 ExpenseReportLinesDone=Свързани редове на разходни отчети
 IntoAccount=Свързване на ред със счетоводна сметка
-TotalForAccount=Общо за счетоводна сметка
+TotalForAccount=Total accounting account
 
 
 Ventilate=Свързване
@@ -158,7 +158,7 @@ ACCOUNTING_LENGTH_AACCOUNT=Дължина на счетоводните смет
 ACCOUNTING_MANAGE_ZERO=Разрешава управление на различен брой нули в края на счетоводна сметка. Необходимо е в някои страни като Швейцария. Ако е изключено (по подразбиране) може да зададете следните два параметъра, за да поискате от системата да добави виртуални нули.
 BANK_DISABLE_DIRECT_INPUT=Деактивиране на директно добавяне на транзакция в банкова сметка
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Активиране на експортиране на журнали в състояние на чернова
-ACCOUNTANCY_COMBO_FOR_AUX=Активиране на комбиниран списък за дъщерна сметка (може да създаде забавяне, ако имате много контрагенти)
+ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
 ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, select period show by default
 
@@ -202,14 +202,14 @@ Docref=Референция
 LabelAccount=Име на сметка
 LabelOperation=Име на операция
 Sens=Direction
-AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you received<br>For an accounting account of a supplier, use Debit to record a payment you make
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you have received<br>For an accounting account of a supplier, use Debit to record a payment you made
 LetteringCode=Буквен код
 Lettering=Означение
 Codejournal=Журнал
 JournalLabel=Име на журнал
 NumPiece=Пореден номер
 TransactionNumShort=Транзакция №
-AccountingCategory=Персонализирани групи
+AccountingCategory=Custom group
 GroupByAccountAccounting=Group by general ledger account
 GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=Тук може да определите някои групи счетоводни сметки. Те ще бъдат използвани за персонализирани счетоводни отчети.
@@ -297,7 +297,7 @@ NoNewRecordSaved=Няма повече записи за осчетоводяв�
 ListOfProductsWithoutAccountingAccount=Списък на продукти, които не са свързани с нито една счетоводна сметка
 ChangeBinding=Промяна на свързване
 Accounted=Осчетоводено в книгата
-NotYetAccounted=Все още не е осчетоводено в книгата
+NotYetAccounted=Not yet accounted in the ledger
 ShowTutorial=Показване на урок
 NotReconciled=Не е съгласувано
 WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
@@ -328,6 +328,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountanc
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
+NotifiedExportDate=Notified export date (modification of the entries will not be possible)
+NotifiedValidationDate=Validation of the entries (modification or deletion of the entries will not be possible)
+ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=Експортиране на журнал в чернова
 Modelcsv=Модел на експортиране
 Selectmodelcsv=Изберете модел на експортиране
@@ -402,7 +405,29 @@ UseMenuToSetBindindManualy=Редовете все още не са свърза
 
 ## Import
 ImportAccountingEntries=Счетоводни записи
+ImportAccountingEntriesFECFormat=Accounting entries - FEC format
+FECFormatJournalCode=Code journal (JournalCode)
+FECFormatJournalLabel=Label journal (JournalLib)
+FECFormatEntryNum=Piece number (EcritureNum)
+FECFormatEntryDate=Piece date (EcritureDate)
+FECFormatGeneralAccountNumber=General account number (CompteNum)
+FECFormatGeneralAccountLabel=General account label (CompteLib)
+FECFormatSubledgerAccountNumber=Subledger account number (CompAuxNum)
+FECFormatSubledgerAccountLabel=Subledger account number (CompAuxLib)
+FECFormatPieceRef=Piece ref (PieceRef)
+FECFormatPieceDate=Piece date creation (PieceDate)
+FECFormatLabelOperation=Label operation (EcritureLib)
+FECFormatDebit=Debit (Debit)
+FECFormatCredit=Credit (Credit)
+FECFormatReconcilableCode=Reconcilable code (EcritureLet)
+FECFormatReconcilableDate=Reconcilable date (DateLet)
+FECFormatValidateDate=Piece date validated (ValidDate)
+FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
+FECFormatMulticurrencyCode=Multicurrency code (Idevise)
+
 DateExport=Дата на експортиране
 WarningReportNotReliable=Внимание, тази справка не се основава на главната счетоводна книга, така че не съдържа транзакция, ръчно променена в книгата. Ако осчетоводяването ви е актуално, то прегледът на счетоводството е по-точен.
 ExpenseReportJournal=Журнал за разходни отчети
 InventoryJournal=Журнал за инвентар
+
+NAccounts=%s accounts

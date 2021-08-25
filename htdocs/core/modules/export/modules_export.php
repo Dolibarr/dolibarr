@@ -62,12 +62,9 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 
 		// Recherche des fichiers drivers exports disponibles
 		$i = 0;
-		if (is_resource($handle))
-		{
-			while (($file = readdir($handle)) !== false)
-			{
-				if (preg_match("/^export_(.*)\.modules\.php$/i", $file, $reg))
-				{
+		if (is_resource($handle)) {
+			while (($file = readdir($handle)) !== false) {
+				if (preg_match("/^export_(.*)\.modules\.php$/i", $file, $reg)) {
 					$moduleid = $reg[1];
 
 					// Loading Class
@@ -75,8 +72,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 					$classname = "Export".ucfirst($moduleid);
 
 					require_once $file;
-					if (class_exists($classname))
-					{
+					if (class_exists($classname)) {
 						$module = new $classname($db);
 
 						// Picto

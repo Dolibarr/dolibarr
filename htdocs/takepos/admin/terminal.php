@@ -31,15 +31,16 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
 
 $terminal = GETPOST('terminal', 'int');
 // If socid provided by ajax company selector
-if (!empty($_REQUEST['CASHDESK_ID_THIRDPARTY'.$terminal.'_id']))
-{
+if (!empty($_REQUEST['CASHDESK_ID_THIRDPARTY'.$terminal.'_id'])) {
 	$_GET['CASHDESK_ID_THIRDPARTY'.$terminal] = GETPOST('CASHDESK_ID_THIRDPARTY'.$terminal.'_id', 'alpha');
 	$_POST['CASHDESK_ID_THIRDPARTY'.$terminal] = GETPOST('CASHDESK_ID_THIRDPARTY'.$terminal.'_id', 'alpha');
 	$_REQUEST['CASHDESK_ID_THIRDPARTY'.$terminal] = GETPOST('CASHDESK_ID_THIRDPARTY'.$terminal.'_id', 'alpha');
 }
 
 // Security check
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $langs->loadLangs(array("admin", "cashdesk", "printing", "receiptprinter"));
 
@@ -64,10 +65,8 @@ $terminaltouse = $terminal;
  * Actions
  */
 
-if (GETPOST('action', 'alpha') == 'set')
-{
+if (GETPOST('action', 'alpha') == 'set') {
 	$db->begin();
-	if (GETPOST('socid', 'int') < 0) $_POST["socid"] = '';
 
 	$res = dolibarr_set_const($db, "CASHDESK_ID_THIRDPARTY".$terminaltouse, (GETPOST('socid', 'int') > 0 ? GETPOST('socid', 'int') : ''), 'chaine', 0, '', $conf->entity);
 
@@ -78,7 +77,9 @@ if (GETPOST('action', 'alpha') == 'set')
 		$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_SUMUP".$terminaltouse, (GETPOST('CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse, 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
 	}
 	foreach ($paiements as $modep) {
-		if (in_array($modep->code, array('LIQ', 'CB', 'CHQ'))) continue;
+		if (in_array($modep->code, array('LIQ', 'CB', 'CHQ'))) {
+			continue;
+		}
 		$name = "CASHDESK_ID_BANKACCOUNT_".$modep->code.$terminaltouse;
 		$res = dolibarr_set_const($db, $name, (GETPOST($name, 'alpha') > 0 ? GETPOST($name, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
 	}
@@ -101,10 +102,11 @@ if (GETPOST('action', 'alpha') == 'set')
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
-	if (!($res > 0)) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
- 	if (!$error)
-	{
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -147,45 +149,60 @@ print $form->select_company($conf->global->{'CASHDESK_ID_THIRDPARTY'.$terminalto
 print '</td></tr>';
 
 $atleastonefound = 0;
-if (!empty($conf->banque->enabled))
-{
+if (!empty($conf->banque->enabled)) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
 	print '<td>';
+	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 	$form->select_comptes($conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse}, 'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse, 0, "courant=2", 1);
-	if (!empty($conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse})) $atleastonefound++;
+	if (!empty($conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse})) {
+		$atleastonefound++;
+	}
 	print '</td></tr>';
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCheque").'</td>';
 	print '<td>';
+	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 	$form->select_comptes($conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse}, 'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse, 0, "courant=1", 1);
-	if (!empty($conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse})) $atleastonefound++;
+	if (!empty($conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse})) {
+		$atleastonefound++;
+	}
 	print '</td></tr>';
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCB").'</td>';
 	print '<td>';
+	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 	$form->select_comptes($conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse}, 'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse, 0, "courant=1", 1);
-	if (!empty($conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse})) $atleastonefound++;
+	if (!empty($conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse})) {
+		$atleastonefound++;
+	}
 	print '</td></tr>';
 	if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
 		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSumup").'</td>';
 		print '<td>';
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 		$form->select_comptes($conf->global->{'CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse}, 'CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse, 0, "courant=1", 1);
-		if (!empty($conf->global->{'CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse})) $atleastonefound++;
+		if (!empty($conf->global->{'CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse})) {
+			$atleastonefound++;
+		}
 		print '</td></tr>';
 	}
 
 	foreach ($paiements as $modep) {
-		if (in_array($modep->code, array('LIQ', 'CB', 'CHQ'))) continue; // Already managed before
+		if (in_array($modep->code, array('LIQ', 'CB', 'CHQ'))) {
+			continue; // Already managed before
+		}
 		$name = "CASHDESK_ID_BANKACCOUNT_".$modep->code.$terminaltouse;
 		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountFor").' '.$langs->trans($modep->label).'</td>';
 		print '<td>';
-		if (!empty($conf->global->$name)) $atleastonefound++;
+		if (!empty($conf->global->$name)) {
+			$atleastonefound++;
+		}
 		$cour = preg_match('/^LIQ.*/', $modep->code) ? 2 : 1;
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 		$form->select_comptes($conf->global->$name, $name, 0, "courant=".$cour, 1);
 		print '</td></tr>';
 	}
 }
 
-if (!empty($conf->stock->enabled))
-{
+if (!empty($conf->stock->enabled)) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>'; // Force warehouse (this is not a default value)
 	print '<td>';
 	if (empty($conf->productbatch->enabled) || !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK)) {
@@ -204,8 +221,8 @@ if (!empty($conf->stock->enabled))
 
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskIdWareHouse").'</td>'; // Force warehouse (this is not a default value)
 	print '<td class="minwidth300">';
-	if (!$disabled)
-	{
+	if (!$disabled) {
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 		print $formproduct->selectWarehouses($conf->global->{'CASHDESK_ID_WAREHOUSE'.$terminal}, 'CASHDESK_ID_WAREHOUSE'.$terminal, '', 1, $disabled, 0, '', 0, 0, array(), 'maxwidth250');
 		print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?&terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
 	} else {
@@ -279,44 +296,42 @@ if ($conf->global->TAKEPOS_ADDON == "terminal") {
 	print '<td colspan="2">';
 	$array = array(0=>$langs->trans("Default"));
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-	foreach ($dirmodels as $reldir)
-	{
+	foreach ($dirmodels as $reldir) {
 		$dir = dol_buildpath($reldir."core/modules/facture/");
-		if (is_dir($dir))
-		{
+		if (is_dir($dir)) {
 			$handle = opendir($dir);
-			if (is_resource($handle))
-			{
-				while (($file = readdir($handle)) !== false)
-				{
-					if (!is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS'))
-					{
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
+					if (!is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')) {
 						$filebis = $file;
 						$classname = preg_replace('/\.php$/', '', $file);
 						// For compatibility
-						if (!is_file($dir.$filebis))
-						{
+						if (!is_file($dir.$filebis)) {
 							$filebis = $file."/".$file.".modules.php";
 							$classname = "mod_facture_".$file;
 						}
 						// Check if there is a filter on country
 						preg_match('/\-(.*)_(.*)$/', $classname, $reg);
-						if (!empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) continue;
+						if (!empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) {
+							continue;
+						}
 
 						$classname = preg_replace('/\-.*$/', '', $classname);
-						if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && substr($filebis, dol_strlen($filebis) - 3, 3) == 'php')
-						{
+						if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && substr($filebis, dol_strlen($filebis) - 3, 3) == 'php') {
 							// Charging the numbering class
 							require_once $dir.$filebis;
 
 							$module = new $classname($db);
 
 							// Show modules according to features level
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+								continue;
+							}
+							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+								continue;
+							}
 
-							if ($module->isEnabled())
-							{
+							if ($module->isEnabled()) {
 								$array[preg_replace('/\-.*$/', '', preg_replace('/\.php$/', '', $file))] = preg_replace('/\-.*$/', '', preg_replace('/mod_facture_/', '', preg_replace('/\.php$/', '', $file)));
 							}
 						}
@@ -339,7 +354,9 @@ print '</div>';
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans('Translation');
 $htmltext = '<i>'.$langs->trans('AvailableVariables').':<br>';
-foreach ($substitutionarray as $key => $val)	$htmltext .= $key.'<br>';
+foreach ($substitutionarray as $key => $val) {
+	$htmltext .= $key.'<br>';
+}
 $htmltext .= '</i>';
 
 print '<br>';
@@ -386,8 +403,7 @@ print '</td></tr>';
 print '</table>';
 print '</div>';
 
-if ($atleastonefound == 0 && !empty($conf->banque->enabled))
-{
+if ($atleastonefound == 0 && !empty($conf->banque->enabled)) {
 	print info_admin($langs->trans("AtLeastOneDefaultBankAccountMandatory"), 0, 0, 'error');
 }
 
