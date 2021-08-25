@@ -3383,13 +3383,13 @@ class SupplierInvoiceLine extends CommonObjectLine
 		if (empty($this->fk_product)) {
 			$fk_product = "null";
 		} else {
-			$fk_product = $this->fk_product;
+			$fk_product = (int) $this->fk_product;
 		}
 
 		if (empty($this->fk_unit)) {
 			$fk_unit = "null";
 		} else {
-			$fk_unit = "'".$this->db->escape($this->fk_unit)."'";
+			$fk_unit = (int) $this->fk_unit;
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det SET";
@@ -3414,10 +3414,10 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= ", total_localtax1= ".price2num($this->total_localtax1);
 		$sql .= ", total_localtax2= ".price2num($this->total_localtax2);
 		$sql .= ", total_ttc = ".price2num($this->total_ttc);
-		$sql .= ", fk_product = ".((int) $fk_product);
+		$sql .= ", fk_product = ".$fk_product;
 		$sql .= ", product_type = ".((int) $this->product_type);
 		$sql .= ", info_bits = ".((int) $this->info_bits);
-		$sql .= ", fk_unit = ".($fk_unit > 0 ? (int) $fk_unit : 'null');
+		$sql .= ", fk_unit = ".$fk_unit;
 
 		// Multicurrency
 		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
