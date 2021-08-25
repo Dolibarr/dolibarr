@@ -1080,10 +1080,14 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 	$sql = "SELECT t.rowid, t.lastname, t.firstname, t.fk_pays as country_id, t.civility, t.poste, t.phone as phone_pro, t.phone_mobile, t.phone_perso, t.fax, t.email, t.socialnetworks, t.statut, t.photo,";
-	$sql .= " t.civility as civility_id, t.address, t.zip, t.town";
+	$sql .= " t.civility as civility_id, t.address, t.zip, t.town, t.fk_soc as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
 	$sql .= " WHERE t.fk_soc = ".$object->id;
+	//Show contacts of parent
+	if (!empty($conf->global->CONTACT_ON_DIFFERENT_THIRDPARTIES) && !empty($object->parent)) {
+		$sql .= ' OR t.fk_soc = '.$object->parent;
+	}
 	if ($search_status != '' && $search_status != '-1') {
 		$sql .= " AND t.statut = ".((int) $search_status);
 	}
@@ -1242,12 +1246,18 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 				print $contactstatic->id;
 				print '</td>';
 			}
-
+			
+			$soc = new Societe($db);
+			$soc->fetch($obj->socid);
+			
 			// Photo - Name
 			if (!empty($arrayfields['t.name']['checked'])) {
 				print '<td>';
 				print $form->showphoto('contact', $contactstatic, 0, 0, 0, 'photorefnoborder valignmiddle marginrightonly', 'small', 1, 0, 1);
 				print $contactstatic->getNomUrl(0, '', 0, '&backtopage='.urlencode($backtopage));
+				if ($object->id != $obj->socid) {
+					print ' - '.$soc->getNomUrl(1).' ';
+				}
 				print '</td>';
 			}
 
