@@ -282,9 +282,66 @@ class modMrp extends DolibarrModules
 		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('mo').')';
 		$r++; */
 		/* END MODULEBUILDER EXPORT MO */
+        $this->export_code[$r]=$this->rights_class.'_'.$r;
+        $this->export_label[$r]='MoLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
+        $this->export_icon[$r]='mo@mrp';
+        $this->export_fields_array[$r] = array(
+			'm.rowid'=>"Id", 
+            'm.ref'=>"Ref", 
+            'm.label'=>"Label",
+			'm.fk_project'=>'Project', 
+            'm.fk_bom'=>"Bom", 
+            'm.date_end_planned'=>"date_end_planned",
+			'm.date_start_planned'=>"date_start_planned", 
+            'm.fk_product'=>"Product",
+            'm.status'=>'Status',
+            'm.model_pdf'=>'Model',
+            'm.fk_user_valid'=>'ValidatedById',
+            'm.fk_user_modif'=>'ModifiedById',
+            'm.fk_user_creat'=>'CreatedById',
+            'm.date_valid'=>'DateValid',
+            'm.note_private'=>'NotePrivate',
+            'm.note_public'=>'Note',
+            'm.fk_soc'=>'Tiers',
+            'm.fk_warehouse'=>'WarehouseRef',
+            'm.qty'=>'Qty',
+			'm.date_creation'=>'DateCreation',
+            'm.tms'=>'DateModification'
+		);
+        $keyforselect = 'mrp_mo';
+		$keyforelement = 'mrp_mo';
+		$keyforaliasextra = 'extra';
+        include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+        $this->export_TypeFields_array[$r] = array(
+			'm.ref'=>"Text", 
+            'm.label'=>"Text",
+            'm.fk_project'=>'Numeric', 
+            'm.fk_bom'=>"Numeric", 
+            'm.date_end_planned'=>"Date",
+			'm.date_start_planned'=>"Date", 
+            'm.fk_product'=>"Numeric",
+            'm.status'=>'Numeric',
+            'm.model_pdf'=>'Text',
+            'm.fk_user_valid'=>'Numeric',
+            'm.fk_user_modif'=>'Numeric',
+            'm.fk_user_creat'=>'Numeric',
+            'm.date_valid'=>'Date',
+            'm.note_private'=>'Text',
+            'm.note_public'=>'Text',
+            'm.fk_soc'=>'Numeric',
+            'm.fk_warehouse'=>'Numeric',
+            'm.qty'=>'Numeric',
+			'm.date_creation'=>'Date',
+            'm.tms'=>'Date'
 
+		);
+        $this->export_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+        $this->export_sql_start[$r] = 'SELECT DISTINCT ';
+        $this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'mrp_mo as m';
+        $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'mrp_mo_extrafields as extra ON m.rowid = extra.fk_object,';
+        $this->export_sql_end[$r] .= ' WHERE m.entity IN ('.getEntity('mrp_mo').')'; // For product and service profile
 		// Imports profiles provided by this module
-		$r = 1;
+		$r = 0;
 		/* BEGIN MODULEBUILDER IMPORT MO */
 		/*
 		 $langs->load("mrp");
@@ -302,6 +359,90 @@ class modMrp extends DolibarrModules
 		 $this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('mo').')';
 		 $r++; */
 		/* END MODULEBUILDER IMPORT MO */
+        $r++;
+        $this->import_code[$r]=$this->rights_class.'_'.$r;
+        $this->import_label[$r]='MoLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
+        $this->import_icon[$r]='mo@mrp';
+        $this->import_entities_array[$r] = array(); // We define here only fields that use a different icon from the one defined in import_icon
+		$this->import_tables_array[$r] = array('m'=>MAIN_DB_PREFIX.'mrp_mo', 'extra'=>MAIN_DB_PREFIX.'mrp_mo_extrafields');
+		$this->import_tables_creator_array[$r] = array('m'=>'fk_user_creat'); // Fields to store import user id
+		$this->import_fields_array[$r] = array(
+	        'm.ref' => "Ref*",
+            'm.label' => "Label*",
+			'm.fk_project'=>'Project', 
+            'm.fk_bom'=>"Bom", 
+            'm.date_end_planned'=>"date_end_planned",
+			'm.date_start_planned'=>"date_start_planned", 
+            'm.fk_product'=>"Product*",
+            'm.status'=>'Status',
+            'm.model_pdf'=>'Model',
+            'm.fk_user_valid'=>'ValidatedById',
+            'm.fk_user_modif'=>'ModifiedById',
+            'm.fk_user_creat'=>'CreatedById',
+            'm.date_valid'=>'DateValid',
+            'm.note_private'=>'NotePrivate',
+            'm.note_public'=>'Note',
+            'm.fk_soc'=>'Tiers',
+            'm.fk_warehouse'=>'WarehouseRef*',
+            'm.qty'=>'Qty*',
+			'm.date_creation'=>'DateCreation',
+            'm.tms'=>'DateModification',
+		);
+        
+		// Add extra fields
+		$import_extrafield_sample = [];
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'mrp_mo' AND entity IN (0, ".$conf->entity.")";
+		$resql = $this->db->query($sql);
+
+		if ($resql) 
+        {
+			while ($obj = $this->db->fetch_object($resql)) 
+            {
+				$fieldname = 'extra.'.$obj->name;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+				$import_extrafield_sample[$fieldname] = $fieldlabel;
+			}
+		}
+		// End add extra fields
+
+		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'mrp_mo'];
+		$this->import_regex_array[$r] = [
+			'm.ref' => '(CPV\d{4}-\d{4}|MO\d{4}-\d{4}|PROV.{1,32}$)'
+		];
+
+		$this->import_updatekeys_array[$r] = ['m.ref' => 'Ref'];
+		$this->import_convertvalue_array[$r] = [
+			'm.fk_product' => [
+				'rule'    => 'fetchidfromref',
+				'file'    => '/product/class/product.class.php',
+				'class'   => 'Product',
+				'method'  => 'fetch',
+				'element' => 'Product'
+			],
+			'm.fk_warehouse' => [
+				'rule'    => 'fetchidfromref',
+				'file'    => '/product/stock/class/entrepot.class.php',
+				'class'   => 'Entrepot',
+				'method'  => 'fetch',
+				'element' => 'Warehouse'
+			],
+			'm.fk_user_valid' => [
+				'rule'    => 'fetchidfromref',
+				'file'    => '/user/class/user.class.php',
+				'class'   => 'User',
+				'method'  => 'fetch',
+				'element' => 'user'
+			],
+			'm.fk_user_modif' => [
+				'rule'    => 'fetchidfromref',
+				'file'    => '/user/class/user.class.php',
+				'class'   => 'User',
+				'method'  => 'fetch',
+				'element' => 'user'
+			],
+		];
+
 	}
 
 	/**
