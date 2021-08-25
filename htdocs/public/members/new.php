@@ -566,10 +566,16 @@ print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."
 if (empty($conf->global->MEMBER_NEWFORM_FORCETYPE)) {
 	$listoftype = $adht->liste_array();
 	$tmp = array_keys($listoftype);
-	$defaulttype = '';
-	$isempty = 1;
-	if (count($listoftype) == 1) {
+	switch (count($listoftype)) {
+	    case 0 :
+	    $defaulttype = '';
+	    $isempty = 1;
+	    break;
+	  
+	  	case 1 :
 		$defaulttype = $tmp[0];
+	    
+	    default :
 		$isempty = 0;
 	}
 	print '<tr><td class="titlefield">'.$langs->trans("Type").' <FONT COLOR="red">*</FONT></td><td>';
