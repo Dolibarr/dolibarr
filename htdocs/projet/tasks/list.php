@@ -78,6 +78,24 @@ $search_eday	= GETPOST('search_eday', 'int');
 $search_emonth	= GETPOST('search_emonth', 'int');
 $search_eyear	= GETPOST('search_eyear', 'int');
 
+$search_date_start_startmonth = GETPOST('search_date_start_startmonth', 'int');
+$search_date_start_startyear = GETPOST('search_date_start_startyear', 'int');
+$search_date_start_startday = GETPOST('search_date_start_startday', 'int');
+$search_date_start_start = dol_mktime(0, 0, 0, $search_date_start_startmonth, $search_date_start_startday, $search_date_start_startyear);	// Use tzserver
+$search_date_start_endmonth = GETPOST('search_date_start_endmonth', 'int');
+$search_date_start_endyear = GETPOST('search_date_start_endyear', 'int');
+$search_date_start_endday = GETPOST('search_date_start_endday', 'int');
+$search_date_start_end = dol_mktime(23, 59, 59, $search_date_start_endmonth, $search_date_start_endday, $search_date_start_endyear);	// Use tzserver
+
+$search_date_end_startmonth = GETPOST('search_date_end_startmonth', 'int');
+$search_date_end_startyear = GETPOST('search_date_end_startyear', 'int');
+$search_date_end_startday = GETPOST('search_date_end_startday', 'int');
+$search_date_end_start = dol_mktime(0, 0, 0, $search_date_end_startmonth, $search_date_end_startday, $search_date_end_startyear);	// Use tzserver
+$search_date_end_endmonth = GETPOST('search_date_end_endmonth', 'int');
+$search_date_end_endyear = GETPOST('search_date_end_endyear', 'int');
+$search_date_end_endday = GETPOST('search_date_end_endday', 'int');
+$search_date_end_end = dol_mktime(23, 59, 59, $search_date_end_endmonth, $search_date_end_endday, $search_date_end_endyear);	// Use tzserver
+
 // Initialize context for list
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'tasklist';
 
@@ -197,6 +215,22 @@ if (empty($reshook)) {
 		$search_eday = '';
 		$search_emonth = '';
 		$search_eyear = '';
+		$search_date_start_startmonth = "";
+		$search_date_start_startyear = "";
+		$search_date_start_startday = "";
+		$search_date_start_start = "";
+		$search_date_start_endmonth = "";
+		$search_date_start_endyear = "";
+		$search_date_start_endday = "";
+		$search_date_start_end = "";
+		$search_date_end_startmonth = "";
+		$search_date_end_startyear = "";
+		$search_date_end_startday = "";
+		$search_date_end_start = "";
+		$search_date_end_endmonth = "";
+		$search_date_end_endyear = "";
+		$search_date_end_endday = "";
+		$search_date_end_end = "";
 		$toselect = '';
 		$search_array_options = array();
 	}
@@ -372,8 +406,24 @@ if ($search_task_progress) {
 if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);
 }
+
 $sql .= dolSqlDateFilter('t.dateo', $search_sday, $search_smonth, $search_syear);
 $sql .= dolSqlDateFilter('t.datee', $search_eday, $search_emonth, $search_eyear);
+
+if ($search_date_start_start) {
+	$sql .= " AND t.dateo >= '".$db->idate($search_date_start_start)."'";
+}
+if ($search_date_start_end) {
+	$sql .= " AND t.dateo <= '".$db->idate($search_date_start_end)."'";
+}
+
+if ($search_date_end_start) {
+	$sql .= " AND t.datee >= '".$db->idate($search_date_end_start)."'";
+}
+if ($search_date_end_end) {
+	$sql .= " AND t.datee <= '".$db->idate($search_date_end_end)."'";
+}
+
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
@@ -647,21 +697,33 @@ if (!empty($arrayfields['t.description']['checked'])) {
 // Start date
 if (!empty($arrayfields['t.dateo']['checked'])) {
 	print '<td class="liste_titre center minwidth150">';
-	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
+	/*if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
 		print '<input class="flat" type="text" size="1" maxlength="2" name="search_sday" value="'.$search_sday.'">';
 	}
 	print '<input class="flat" type="text" size="1" maxlength="2" name="search_smonth" value="'.$search_smonth.'">';
-	print $formother->selectyear($search_syear ? $search_syear : -1, 'search_syear', 1, 20, 5, 0, 0, '', 'valignmiddle width75', 1);
+	print $formother->selectyear($search_syear ? $search_syear : -1, 'search_syear', 1, 20, 5, 0, 0, '', 'valignmiddle width75', 1);*/
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_start_start ? $search_date_start_start : -1, 'search_date_start_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_start_end ? $search_date_start_end : -1, 'search_date_start_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 // End date
 if (!empty($arrayfields['t.datee']['checked'])) {
 	print '<td class="liste_titre center minwidth150">';
-	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
+	/*if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
 		print '<input class="flat" type="text" size="1" maxlength="2" name="search_eday" value="'.$search_eday.'">';
 	}
 	print '<input class="flat" type="text" size="1" maxlength="2" name="search_emonth" value="'.$search_emonth.'">';
-	print $formother->selectyear($search_eyear ? $search_eyear : -1, 'search_eyear', 1, 20, 5, 0, 0, '', 'valignmiddle width75', 1);
+	print $formother->selectyear($search_eyear ? $search_eyear : -1, 'search_eyear', 1, 20, 5, 0, 0, '', 'valignmiddle width75', 1);*/
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_end_start ? $search_date_end_start : -1, 'search_date_end_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_end_end ? $search_date_end_end : -1, 'search_date_end_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 if (!empty($arrayfields['p.ref']['checked'])) {
