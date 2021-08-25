@@ -4429,37 +4429,49 @@ abstract class CommonObject
 	{
 		global $langs, $hookmanager, $conf, $form;
 
-		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans('Ref').'</td>';
-		print '<td>'.$langs->trans('Description').'</td>';
-		print '<td class="right">'.$langs->trans('VATRate').'</td>';
-		print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
-		if (!empty($conf->multicurrency->enabled)) print '<td class="right">'.$langs->trans('PriceUHTCurrency').'</td>';
-		print '<td class="right">'.$langs->trans('Qty').'</td>';
-		if ($conf->global->PRODUCT_USE_UNITS)
-		{
-			print '<td class="left">'.$langs->trans('Unit').'</td>';
+		if (! is_object($hookmanager)) {
+			require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($this->db);
 		}
-		print '<td class="right">'.$langs->trans('ReductionShort').'</td>';
-        print '<td class="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
-        print '</tr>';
+
+		$action = '';
+		$num = count($this->lines);
+		$parameters = array('num' => $num, 'restrictlist' => $restrictlist, 'selectedLines' => $selectedLines);
+		$reshook = $hookmanager->executeHooks('printOriginObjectLineTitle', $parameters, $this, $action);
+
+		if (empty($reshook)) {
+			print '<tr class="liste_titre">';
+			print '<td>'.$langs->trans('Ref').'</td>';
+			print '<td>'.$langs->trans('Description').'</td>';
+			print '<td class="right">'.$langs->trans('VATRate').'</td>';
+			print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
+			if (!empty($conf->multicurrency->enabled)) print '<td class="right">'.$langs->trans('PriceUHTCurrency').'</td>';
+			print '<td class="right">'.$langs->trans('Qty').'</td>';
+			if ($conf->global->PRODUCT_USE_UNITS)
+			{
+				print '<td class="left">'.$langs->trans('Unit').'</td>';
+			}
+			print '<td class="right">'.$langs->trans('ReductionShort').'</td>';
+			print '<td class="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
+			print '</tr>';
+		}
+
 		$i = 0;
 
-		if (!empty($this->lines))
-		{
-			foreach ($this->lines as $line)
-			{
-				if (is_object($hookmanager) && (($line->product_type == 9 && !empty($line->special_code)) || !empty($line->fk_parent_line)))
-				{
-					if (empty($line->fk_parent_line))
-					{
-						$parameters = array('line'=>$line, 'i'=>$i);
-						$action = '';
-						$hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-					}
-				}
-				else
-				{
+		if (!empty($this->lines)) {
+
+			foreach ($this->lines as $line) {
+				$reshook = null;
+
+                if (empty($line->fk_parent_line)) {
+                    $parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'restrictlist' => $restrictlist, 'selectedLines' => $selectedLines);
+                    $reshook = $hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+                } else {
+                    $parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'restrictlist' => $restrictlist, 'selectedLines' => $selectedLines, 'fk_parent_line' => $line->fk_parent_line);
+                    $reshook = $hookmanager->executeHooks('printOriginObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+                }
+
+				if (empty($reshook)) {
 					$this->printOriginLine($line, '', $restrictlist, '/core/tpl', $selectedLines);
 				}
 
