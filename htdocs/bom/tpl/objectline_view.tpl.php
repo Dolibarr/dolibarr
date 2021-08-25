@@ -123,7 +123,8 @@ $coldisplay++;
 echo $line->efficiency;
 print '</td>';
 
-print '<td class="linecolcost nowrap right">';
+$total_cost = 0;
+print '<td id="costline_'.$line->id.'" class="linecolcost nowrap right">';
 $coldisplay++;
 echo price($line->total_cost);
 print '</td>';
@@ -199,7 +200,7 @@ if ($resql){
 			print '<tr class="sub_bom_lines" parentid="'.$line->id.'">';
 		}
 
-		print '<td id="sub_bom_product_'.$sub_bom_line->id.'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$sub_bom_product->getNomUrl(1).'</td>';
+		print '<td style="padding-left: 5%" id="sub_bom_product_'.$sub_bom_line->id.'">'.$sub_bom_product->getNomUrl(1).'</td>';
 		if ($sub_bom_line->fk_bom_child > 0) {
 			print '<td id="sub_bom_bom_'.$sub_bom_line->id.'">'.$sub_bom->getNomUrl(1).'</td>';
 		} else {
@@ -219,12 +220,38 @@ if ($resql){
 		}
 
 		print '<td class="linecolefficiency nowrap right" id="sub_bom_efficiency_'.$sub_bom_line->id.'">'.$sub_bom_line->efficiency.'</td>';
-		print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_line->total_cost * $line->qty).'</td>';
+		if ($sub_bom_product->cost_price > 0) {
+			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_product->cost_price * $line->qty).'</td>';
+			$total_cost.= $sub_bom_product->cost_price * $line->qty;
+		} else if ($sub_bom_product->pmp > 0) {
+			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_product->pmp * $line->qty).'</td>';
+			$total_cost.= $sub_bom_product->pmp * $line->qty;
+		} else {
+			$sql_supplier_price = 'SELECT MIN(price) AS min_price FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
+			$sql_supplier_price.= ' WHERE fk_product = '.$sub_bom_product->id;
+			$resql_supplier_price = $object->db->query($sql_supplier_price);
+			if ($resql_supplier_price) {
+				$obj = $object->db->fetch_object($resql_supplier_price);
+				print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($obj->min_price * $line->qty).'</td>';
+				$total_cost+= $obj->min_price * $line->qty;
+			}
+		}
+
 		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
 	}
 }
+
+if ($total_cost > 0) {
+	$line->total_cost = price($total_cost);
+	?>
+	<script>
+		$('#costline_<?php echo $line->id?>').html("<?php echo "".price($total_cost)?>");
+	</script>
+	<?php
+}
+
 
 //Line extrafield
 if (!empty($extrafields)) {
