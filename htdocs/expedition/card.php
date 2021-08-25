@@ -451,8 +451,8 @@ if (empty($reshook)) {
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
-		} 
-  } elseif ($action == 'confirm_modif' && $confirm == 'yes' && $user->rights->expedition->creer) {
+		}
+	} elseif ($action == 'confirm_modif' && $confirm == 'yes' && $user->rights->expedition->creer) {
 		$result = $object->setStatut(0);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -468,7 +468,6 @@ if (empty($reshook)) {
 		//	}
 		//}
 	} elseif ($action == 'setdate_livraison' && $user->rights->expedition->creer) {
-
 		//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
 		$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
