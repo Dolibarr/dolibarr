@@ -4459,7 +4459,6 @@ abstract class CommonObject
 		$i = 0;
 
 		if (!empty($this->lines)) {
-
 			foreach ($this->lines as $line) {
 				$reshook = null;
 
