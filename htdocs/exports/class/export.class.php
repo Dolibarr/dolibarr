@@ -297,20 +297,23 @@ class Export
 	 *      @param		string	$TypeField		Type of Field to filter
 	 *      @param		string	$NameField		Name of the field to filter
 	 *      @param		string	$ValueField		Value of the field for filter. Must not be ''
-	 *      @return		string					sql string of then field ex : "field='xxx'>"
+	 *      @return		string					SQL string of then field ex : "field='xxx'"
 	 */
 	public function build_filterQuery($TypeField, $NameField, $ValueField)
 	{
 		// phpcs:enable
+		$NameField = checkVal($NameField, 'aZ09');
+		$szFilterQuery = '';
+
 		//print $TypeField." ".$NameField." ".$ValueField;
 		$InfoFieldList = explode(":", $TypeField);
 		// build the input field on depend of the type of file
 		switch ($InfoFieldList[0]) {
 			case 'Text':
 				if (!(strpos($ValueField, '%') === false)) {
-					$szFilterQuery .= " ".$NameField." LIKE '".$ValueField."'";
+					$szFilterQuery = " ".$NameField." LIKE '".$this->db->escape($ValueField)."'";
 				} else {
-					$szFilterQuery .= " ".$NameField." = '".$ValueField."'";
+					$szFilterQuery = " ".$NameField." = '".$this->db->escape($ValueField)."'";
 				}
 				break;
 			case 'Date':
@@ -330,17 +333,17 @@ class Export
 			case 'Duree':
 				break;
 			case 'Numeric':
-				// si le signe -
+				// if there is a signe +
 				if (strpos($ValueField, "+") > 0) {
 					// mode plage
 					$ValueArray = explode("+", $ValueField);
-					$szFilterQuery = "(".$NameField.">=".$ValueArray[0];
-					$szFilterQuery .= " AND ".$NameField."<=".$ValueArray[1].")";
+					$szFilterQuery = "(".$NameField." >= ".((float) $ValueArray[0]);
+					$szFilterQuery .= " AND ".$NameField." <= ".((float) $ValueArray[1]).")";
 				} else {
 					if (is_numeric(substr($ValueField, 0, 1))) {
-						$szFilterQuery = " ".$NameField."=".$ValueField;
+						$szFilterQuery = " ".$NameField." = ".((float) $ValueField);
 					} else {
-						$szFilterQuery = " ".$NameField.substr($ValueField, 0, 1).substr($ValueField, 1);
+						$szFilterQuery = " ".$NameField.substr($ValueField, 0, 1).((float) substr($ValueField, 1));
 					}
 				}
 				break;
@@ -350,12 +353,12 @@ class Export
 			case 'Status':
 			case 'List':
 				if (is_numeric($ValueField)) {
-					$szFilterQuery = " ".$NameField."=".$ValueField;
+					$szFilterQuery = " ".$NameField." = ".((float) $ValueField);
 				} else {
 					if (!(strpos($ValueField, '%') === false)) {
-						$szFilterQuery = " ".$NameField." LIKE '".$ValueField."'";
+						$szFilterQuery = " ".$NameField." LIKE '".$this->db->escape($ValueField)."'";
 					} else {
-						$szFilterQuery = " ".$NameField." = '".$ValueField."'";
+						$szFilterQuery = " ".$NameField." = '".$this->db->escape($ValueField)."'";
 					}
 				}
 				break;

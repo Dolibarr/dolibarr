@@ -2306,7 +2306,7 @@ class Societe extends CommonObject
 			$sql .= " WHERE entity in (0, ".$conf->entity.")";
 		}
 
-		$sql .= " AND u.rowid = sc.fk_user AND sc.fk_soc = ".$this->id;
+		$sql .= " AND u.rowid = sc.fk_user AND sc.fk_soc = ".((int) $this->id);
 		if (empty($sortfield) && empty($sortorder)) {
 			$sortfield = 'u.lastname,u.firstname';
 			$sortorder = 'ASC,ASC';
@@ -3034,7 +3034,7 @@ class Societe extends CommonObject
 	{
 		// phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE type='ban' AND fk_soc = ".$this->id;
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE type='ban' AND fk_soc = ".((int) $this->id);
 		$result = $this->db->query($sql);
 		if (!$result) {
 			$this->error++;
