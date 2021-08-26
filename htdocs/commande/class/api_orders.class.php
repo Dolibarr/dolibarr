@@ -966,7 +966,55 @@ class Orders extends DolibarrApi
 
 		return $this->_cleanObjectDatas($this->commande);
 	}
+	/**
+	 * Get the shipments of an order
+	 *
+	 *
+	 * @param int   $id       Id of the order
+	 *
+	 * @url     GET {id}/shipment
+	 *
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500
+	 *
+	 * @return array
+	 */
+	public function getOrderShipements($id)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+		if (!DolibarrApiAccess::$user->rights->expedition->lire) {
+			throw new RestException(401);
+		}
 
+		$sql = "SELECT t.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."expedition as t";
+		$sql .= " JOIN ".MAIN_DB_PREFIX."expeditiondet as tdet";
+		$sql .= " ON t.rowid = tdet.rowid";
+		$sql .= " WHERE tdet.fk_origin_line = ".$id;
+		$sql .= $this->db->order("t.rowid", "ASC");
+		dol_syslog("API Rest request");
+		$result = $this->db->query($sql);
+
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			if ($num <= 0) {
+				throw new RestException(404, 'Shipments not found ');
+			}
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($result);
+				$shipment_static = new Expedition($this->db);
+				if ($shipment_static->fetch($obj->rowid)) {
+					$obj_ret[] = $this->_cleanObjectDatas($shipment_static);
+				}
+				$i++;
+			}
+		} else {
+			throw new RestException(500, 'Error when retrieve shipment list : '.$this->db->lasterror());
+		}
+		return $obj_ret;
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
