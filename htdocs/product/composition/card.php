@@ -51,6 +51,9 @@ if (!empty($user->socid)) {
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('productcompositioncard', 'globalcard'));
+
 $object = new Product($db);
 $objectid = 0;
 if ($id > 0 || !empty($ref)) {
@@ -647,9 +650,8 @@ if ($id > 0 || !empty($ref)) {
 			print '<input type="hidden" name="max_prod" value="'.$i.'">';
 
 			if ($num > 0) {
-				print '<br><div class="center">';
-				print '<input type="submit" class="button" name="save" value="'.$langs->trans("Add").'/'.$langs->trans("Update").'">';
-				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+				print '<div class="center">';
+				print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Add").'/'.$langs->trans("Update").'">';
 				print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</div>';
 			}

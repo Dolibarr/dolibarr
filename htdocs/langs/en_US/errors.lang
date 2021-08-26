@@ -305,3 +305,22 @@ WarningAvailableOnlyForHTTPSServers=Available only if using HTTPS secured connec
 WarningModuleXDisabledSoYouMayMissEventHere=Module %s has not been enabled. So you may miss a lot of event here.
 WarningPaypalPaymentNotCompatibleWithStrict=The value 'Strict' makes the online payment features not working correctly. Use 'Lax' instead.
 
+# Validate
+RequireValidValue = Value not valid
+RequireAtLeastXString = Requires at least % character(s)
+RequireXStringMax = Requires % character(s) max
+RequireAtLeastXDigits = Requires at least % digit(s)
+RequireXDigitsMax = Requires % digit(s) max
+RequireValidEmail = Email address is not valid
+RequireMaxLength = Length must be less than %s chars
+RequireMinLength = Length must be more than %s char(s)
+RequireValidUrl = Require valid URL
+RequireValidDate = Require a valid date
+RequireANotEmptyValue = Is required
+RequireValidDuration = Require a valid duration
+RequireValidExistingElement = Require an existing value
+RequireValidBool = Require a valid boolean
+BadSetupOfField = Error bad setup of field
+BadSetupOfFieldClassNotFoundForValidation = Error bad setup of field : Class not found for validation
+BadSetupOfFieldFileNotFound = Error bad setup of field : File not found for inclusion
+BadSetupOfFieldFetchNotCallable = Error bad setup of field : Fetch not callable on class

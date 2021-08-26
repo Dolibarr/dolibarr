@@ -50,6 +50,7 @@ $socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
+$userid = $user->id;
 
 // Security check
 $result = restrictedArea($user, 'ticket', 0, '', '', '', '');
@@ -96,7 +97,7 @@ if (in_array('DOLUSERCOOKIE_ticket_by_status', $autosetarray)) {
 	$endyear = GETPOST($param_year, 'int');
 	$shownb = GETPOST($param_shownb, 'alpha');
 	$showtot = GETPOST($param_showtot, 'alpha');
-} else {
+} elseif (!empty($_COOKIE['DOLUSERCOOKIE_ticket_by_status'])) {
 	$tmparray = json_decode($_COOKIE['DOLUSERCOOKIE_ticket_by_status'], true);
 	$endyear = $tmparray['year'];
 	$shownb = $tmparray['shownb'];
@@ -104,6 +105,7 @@ if (in_array('DOLUSERCOOKIE_ticket_by_status', $autosetarray)) {
 }
 if (empty($shownb) && empty($showtot)) {
 	$showtot = 1;
+	$shownb = 0;
 }
 
 $nowarray = dol_getdate(dol_now(), true);

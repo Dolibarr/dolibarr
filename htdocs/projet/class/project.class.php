@@ -744,7 +744,8 @@ class Project extends CommonObject
 			'datefieldname'  => $datefieldname,
 			'dates' => $dates,
 			'datee' => $datee,
-			'fk_projet' => $projectkey
+			'fk_projet' => $projectkey,
+			'ids' => $ids,
 		);
 		$reshook = $hookmanager->executeHooks('getElementList', $parameters, $object, $action);
 		if ($reshook > 0) {

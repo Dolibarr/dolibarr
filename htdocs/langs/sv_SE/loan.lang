@@ -23,9 +23,9 @@ AddLoan=Skapa lån
 FinancialCommitment=Finansiellt engagemang
 InterestAmount=Ränta
 CapitalRemain=Kapital kvarstår
-TermPaidAllreadyPaid = This term is allready paid
-CantUseScheduleWithLoanStartedToPaid = Can't use scheduler for a loan with payment started
-CantModifyInterestIfScheduleIsUsed = You can't modify interest if you use schedule
+TermPaidAllreadyPaid = Denna period är redan betald
+CantUseScheduleWithLoanStartedToPaid = Kan inte använda schemaläggaren för ett lån när betalningen har startat
+CantModifyInterestIfScheduleIsUsed = Du kan inte ändra intresse om du använder schema
 # Admin
 ConfigLoan=Modullånets konfiguration
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Redovisningskontokapital som standard

@@ -291,3 +291,7 @@ PopuCom=Produkti / pakalpojumi pēc popularitātes pasūtījumos
 ProductStatistics=Produktu/pakalpojumu statistika
 NbOfQtyInOrders=Daudzums pasūtījumos
 SelectTheTypeOfObjectToAnalyze=Atlasiet objektu, lai skatītu tā statistiku ...
+
+ConfirmBtnCommonContent = Are you sure you want to "%s" ?
+ConfirmBtnCommonTitle = Confirm your action
+CloseDialog = Aizvērt

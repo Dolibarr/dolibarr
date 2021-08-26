@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2014      Charles-Fr Benke	<charles.fr@benke.fr>
+ * Copyright (C) 2014-2021 Charlene Benke		<charlene.r@benke.fr>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2019	   Nicolas ZABOURI	<info@inovea-conseil.com>
@@ -185,6 +185,7 @@ $thirdpartygraph .= '</td></tr>';
 $thirdpartygraph .= '</table>';
 $thirdpartygraph .= '</div>';
 
+$thirdpartycateggraph = '';
 if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$elementtype = 'societe';
@@ -285,6 +286,7 @@ $sql .= $db->order("s.tms", "DESC");
 $sql .= $db->plimit($max, 0);
 
 //print $sql;
+$lastmodified="";
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);

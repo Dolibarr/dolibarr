@@ -1876,7 +1876,7 @@ function version_os($option = '')
  * 	Return PHP version
  *
  * 	@return		string			PHP version
- *  @see		versionphparray()
+ *  @see		versionphparray(), versioncompare()
  */
 function version_php()
 {
@@ -1887,7 +1887,7 @@ function version_php()
  * 	Return Dolibarr version
  *
  * 	@return		string			Dolibarr version
- *  @see		versiondolibarrarray()
+ *  @see		versiondolibarrarray(), versioncompare()
  */
 function version_dolibarr()
 {

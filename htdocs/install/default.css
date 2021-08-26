@@ -59,10 +59,12 @@ table.main-inside {
 	margin-top: 10px;
 	color: #000000;
 	border-top: 1px solid #ccc;
-	/* border-bottom: 1px solid #ccc; */
 	line-height: 22px;
 }
-
+table.main-inside-borderbottom {
+	border-bottom: 1px solid #ccc;
+}
+	
 table.main {
 	padding-left: 6px;
 	padding-right: 6px;

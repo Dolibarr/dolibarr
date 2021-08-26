@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 if (!empty($conf->projet->enabled)) {
 	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -187,6 +188,11 @@ if (empty($reshook)) {
 			$object->email_from = $user->email;
 			$notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
 			$object->notify_tiers_at_create = empty($notifyTiers) ? 0 : 1;
+			$fk_user_assign = GETPOST("fk_user_assign", 'int');
+			if ($fk_user_assign > 0) {
+				$object->fk_user_assign = $fk_user_assign;
+				$object->fk_statut = $object::STATUS_ASSIGNED;
+			}
 
 			$object->fk_project = $projectid;
 
@@ -201,6 +207,10 @@ if (empty($reshook)) {
 				// Add contact
 				$contactid = GETPOST('contactid', 'int');
 				$type_contact = GETPOST("type", 'alpha');
+
+				// Category association
+				$categories = GETPOST('categories', 'array');
+				$object->setCategories($categories);
 
 				if ($contactid > 0 && $type_contact) {
 					$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
@@ -312,7 +322,11 @@ if (empty($reshook)) {
 			$object->severity_code = GETPOST('severity_code', 'alpha');
 
 			$ret = $object->update($user);
-			if ($ret <= 0) {
+			if ($ret > 0) {
+				// Category association
+				$categories = GETPOST('categories', 'array');
+				$object->setCategories($categories);
+			} else {
 				$error++;
 			}
 
@@ -742,11 +756,7 @@ if ($action == 'create' || $action == 'presend') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; &nbsp; ';
-	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print '</form>'; */
 } elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'presend' || $action == 'presend_addmessage' || $action == 'close' || $action == 'abandon' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'reopen'
@@ -1059,6 +1069,13 @@ if ($action == 'create' || $action == 'presend') {
 			print '</td><td>';
 			print convertSecondToTime($timing, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
 			print '</td></tr>';
+		}
+
+		// Categories
+		if ($conf->categorie->enabled) {
+			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td colspan="3">';
+			print $form->showCategories($object->id, Categorie::TYPE_TICKET, 1);
+			print "</td></tr>";
 		}
 
 		// Other attributes

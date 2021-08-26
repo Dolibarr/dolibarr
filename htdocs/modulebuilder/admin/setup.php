@@ -193,7 +193,7 @@ print '</tr>';
 
 print '</table>';
 
-print '<center><input type="submit" class="button button-save" value="'.$langs->trans("Save").'" name="Button"></center>';
+print $form->buttonsSaveCancel("Save", '');
 
 if (GETPOST('withtab', 'alpha')) {
 	print dol_get_fiche_end();

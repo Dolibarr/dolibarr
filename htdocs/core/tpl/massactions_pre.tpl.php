@@ -194,6 +194,18 @@ if ($massaction == 'presend') {
 
 	print dol_get_fiche_end();
 }
+
+if ($massaction == 'preenable') {
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassEnabling"), $langs->trans("ConfirmMassEnablingQuestion", count($toselect)), "enable", null, '', 0, 200, 500, 1);
+}
+if ($massaction == 'predisable') {
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDisabling"), $langs->trans("ConfirmMassDisablingQuestion", count($toselect)), "disable", null, '', 0, 200, 500, 1);
+}
+
+if ($massaction == 'preapproveleave') {
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassLeaveApproval"), $langs->trans("ConfirmMassLeaveApprovalQuestion", count($toselect)), "approveleave", null, '', 0, 200, 500, 1);
+}
+
 // Allow Pre-Mass-Action hook (eg for confirmation dialog)
 $parameters = array(
 	'toselect' => $toselect,

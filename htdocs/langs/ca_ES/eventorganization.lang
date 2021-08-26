@@ -82,11 +82,11 @@ PriceOfBoothHelp=Preu de la subscripció per a estand
 EventOrganizationICSLink=Enllaç ICS per a esdeveniments
 ConferenceOrBoothInformation=Informació sobre conferències o estands
 Attendees = Assistents
-DownloadICSLink = Download ICS link
+DownloadICSLink = Descarregueu l’enllaç ICS
 EVENTORGANIZATION_SECUREKEY = Clau segura de l'enllaç de registre públic a una conferència
 SERVICE_BOOTH_LOCATION = Servei que s'utilitza per a la fila de factures sobre una ubicació de l'estand
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Servei que s'utilitza per a la fila de factures sobre una subscripció d'assistent a una conferència
-NbVotes=Number of votes
+NbVotes=Nombre de vots
 #
 # Status
 #
@@ -99,13 +99,13 @@ EvntOrgCancelled = Cancel·lat
 #
 # Public page
 #
-SuggestForm = Suggestion page
+SuggestForm = Pàgina de suggeriments
 RegisterPage = Pàgina per a conferències o estand
-EvntOrgRegistrationHelpMessage = Here, you can vote for an event, or suggest a new conference or booth for the project
-EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference for the project
-EvntOrgRegistrationBoothHelpMessage = Here, you can suggest a new booth for the project
-ListOfSuggestedConferences = List of suggested conferences
-ListOfSuggestedBooths = List of suggested booths
+EvntOrgRegistrationHelpMessage = Aquí podeu votar per un esdeveniment o suggerir una nova conferència o estand per al projecte
+EvntOrgRegistrationConfHelpMessage = Aquí podeu suggerir una nova conferència per al projecte
+EvntOrgRegistrationBoothHelpMessage = Aquí podeu suggerir un nou estand per al projecte
+ListOfSuggestedConferences = Llista de conferències suggerides
+ListOfSuggestedBooths = Llista de casetes suggerides
 SuggestConference = Suggereixi una conferència nova
 SuggestBooth = Suggereixi un estand
 ViewAndVote = Consulteu i voteu els esdeveniments suggerits
@@ -114,22 +114,24 @@ MissingOrBadSecureKey = Falta la clau de seguretat o no és vàlida
 EvntOrgWelcomeMessage = Aquest formulari us permet registrar-vos com a nou participant a la conferència: '%s'
 EvntOrgDuration = Aquesta conferència comença el dia %s i finalitza el dia %s.
 ConferenceAttendeeFee = Tarifa de l'assistent a la conferència per a l'esdeveniment: "%s" que passa de %s a %s.
-BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
+BoothLocationFee = Ubicació de l'estand per a l'esdeveniment: "%s" que passa de %s a %s
 EventType = Tipus d'esdeveniment
-LabelOfBooth=Booth label
-LabelOfconference=Conference label
-ConferenceIsNotConfirmed=Subcription not available, conference is not confirmed yet
+LabelOfBooth=Etiqueta de l'estand
+LabelOfconference=Etiqueta de conferència
+ConferenceIsNotConfirmed=La subscripció no està disponible, la conferència encara no està confirmada
+DateMustBeBeforeThan=%s must be before %s
+DateMustBeAfterThan=%s must be after %s
 
 #
 # Vote page
 #
 EvntOrgRegistrationWelcomeMessage = Benvingut a la pàgina de suggeriments de conferències o estands.
-EvntOrgRegistrationConfWelcomeMessage = Welcome on the conference suggestion page.
-EvntOrgRegistrationBoothWelcomeMessage = Welcome on the booth suggestion page.
-EvntOrgVoteHelpMessage = Here, you can view and vote for the suggested events for the project
-VoteOk = Your vote has been accepted.
-AlreadyVoted = You have already voted for this event.
-VoteError = An error has occurred during the vote, please try again.
+EvntOrgRegistrationConfWelcomeMessage = Benvingut a la pàgina de suggeriments de conferències.
+EvntOrgRegistrationBoothWelcomeMessage = Benvingut a la pàgina de suggeriments de l'estand.
+EvntOrgVoteHelpMessage = Aquí podeu veure i votar els esdeveniments suggerits per al projecte
+VoteOk = El vostre vot s’ha acceptat.
+AlreadyVoted = Ja heu votat per aquest esdeveniment.
+VoteError = S'ha produït un error durant la votació. Torneu-ho a provar.
 
 #
 # SubscriptionOk page
@@ -142,6 +144,6 @@ ConfAttendeeSubscriptionConfirmation = Confirmació de la subscripció a una con
 #
 # Payment page
 #
-Attendee = Attendee
-PaymentConferenceAttendee = Conference attendee payment
-PaymentBoothLocation = Booth location payment
+Attendee = Assistent
+PaymentConferenceAttendee = Pagament dels assistents a la conferència
+PaymentBoothLocation = Pagament de la ubicació de l’estand
