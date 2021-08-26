@@ -201,7 +201,7 @@ print '</td>';
 print '</tr>';
 print '</table>';
 
-print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 
@@ -280,7 +280,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	}
 	print '</div>';
 
-	print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+	print $form->buttonsSaveCancel("Save", '');
 } else {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -463,7 +463,7 @@ print '</table>';
 
 print '<br>';
 
-print '<div class="center"><input type="submit" class="button button-save reposition" value="'.$langs->trans("Save").'"></div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 

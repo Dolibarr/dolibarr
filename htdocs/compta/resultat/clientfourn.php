@@ -614,9 +614,9 @@ if ($modecompta == 'BOOKKEEPING') {
 		}
 	}
 
-	$sql .= " AND f.entity = ".$conf->entity;
+	$sql .= " AND f.entity = ".((int) $conf->entity);
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	$sql .= " GROUP BY name, socid";
 	$sql .= $db->order($sortfield, $sortorder);
