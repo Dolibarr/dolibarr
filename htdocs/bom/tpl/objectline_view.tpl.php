@@ -237,11 +237,13 @@ if ($resql){
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_product->cost_price * $line->qty).'</td>';
 			$total_cost.= $sub_bom_product->cost_price * $line->qty;
 		}
+
 		// PMP if cost price isn't defined
 		else if ($sub_bom_product->pmp > 0) {
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_product->pmp * $line->qty).'</td>';
 			$total_cost.= $sub_bom_product->pmp * $line->qty;
 		}
+		
 		// Minimum purchase price if cost price and PMP aren't defined
 		else {
 			$sql_supplier_price = 'SELECT MIN(price) AS min_price FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
