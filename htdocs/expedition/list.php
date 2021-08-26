@@ -320,7 +320,7 @@ if ($search_country) {
 	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
 }
 if ($search_shipping_method_id > 0) {
-	$sql .= " AND e.fk_shipping_method = ".$search_shipping_method_id;
+	$sql .= " AND e.fk_shipping_method = ".((int) $search_shipping_method_id);
 }
 if ($search_tracking) {
 	$sql .= natural_search("e.tracking_number", $search_tracking);
