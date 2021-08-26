@@ -5064,24 +5064,30 @@ if ($action == 'create') {
 		// Remainder to pay
 		print '<tr><td colspan="'.$nbcols.'" class="right">';
 		print '<span class="opacitymedium">';
-		print $langs->trans('RemainderToPay');
-		if ($resteapayeraffiche < 0) {
-			print ' ('.$langs->trans('ExcessReceived').')';
+		if ($resteapayeraffiche >= 0) {
+			print $langs->trans('RemainderToPay');
+		} else {
+			print $langs->trans('ExcessReceived');
 		}
 		print '</span>';
 		print '</td>';
 		print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td>';
-		print '<td class="nowrap">&nbsp;</td></tr>';
-
+		
 		// Remainder to pay Multicurrency
 		if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
 			print '<tr><td colspan="'.$nbcols.'" class="right">';
 			print '<span class="opacitymedium">';
-			print $langs->trans('MulticurrencyRemainderToPay');
+			if ($resteapayeraffiche >= 0) {
+				print $langs->trans('RemainderToPayMulticurrency');
+			} else {
+				print $langs->trans('ExcessReceivedMulticurrency');
+			}
 			print '</span>';
 			print '</td>';
 			print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.(!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency).' '.price(price2num($object->multicurrency_tx*$resteapayeraffiche, 'MT')).'</td>';
 		}
+		
+		print '<td class="nowrap">&nbsp;</td></tr>';
 
 		// Retained warranty : usualy use on construction industry
 		if (!empty($object->situation_final) && !empty($object->retained_warranty) && $displayWarranty) {
@@ -5122,6 +5128,21 @@ if ($action == 'create') {
 		}
 		print ' :</td>';
 		print '<td class="right'.($resteapayeraffiche ? ' amountremaintopayback' : (' '.$cssforamountpaymentcomplete)).'">'.price($sign * $resteapayeraffiche).'</td>';
+		
+		// Remainder to pay back Multicurrency
+		if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
+			print '<tr><td colspan="'.$nbcols.'" class="right">';
+			print '<span class="opacitymedium">';
+			if ($resteapayeraffiche <= 0) {
+				print $langs->trans('RemainderToPayBackMulticurrency');
+			} else {
+				print $langs->trans('ExcessPaidMulticurrency');
+			}
+			print '</span>';
+			print '</td>';
+			print '<td class="right'.($resteapayeraffiche ? ' amountremaintopayback' : (' '.$cssforamountpaymentcomplete)).'">'.(!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency).' '.price(price2num($sign * $object->multicurrency_tx * $resteapayeraffiche, 'MT')).'</td>';
+		}
+		
 		print '<td class="nowrap">&nbsp;</td></tr>';
 
 		// Sold credit note
