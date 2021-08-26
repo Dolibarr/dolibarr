@@ -236,7 +236,7 @@ if ($resql) {
 		if ($sub_bom_product->cost_price > 0) {
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_product->cost_price * $line->qty).'</td>';
 			$total_cost.= $sub_bom_product->cost_price * $line->qty;
-		} 
+		}
 
 		// PMP if cost price isn't defined
 		elseif ($sub_bom_product->pmp > 0) {
