@@ -966,6 +966,7 @@ class Orders extends DolibarrApi
 
 		return $this->_cleanObjectDatas($this->commande);
 	}
+
 	/**
 	 * Get the shipments of an order
 	 *
@@ -1014,6 +1015,47 @@ class Orders extends DolibarrApi
 			throw new RestException(500, 'Error when retrieve shipment list : '.$this->db->lasterror());
 		}
 		return $obj_ret;
+	}
+
+	/**
+	 * Create the shipments of an order
+	 *
+	 *
+	 * @param int   $id       Id of the order
+	 * @param int	$warehouse_id Id of a warehouse
+	 *
+	 * @url     POST {id}/shipment/{warehouse_id}
+	 *
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500
+	 *
+	 * @return int
+	 */
+	public function createOrderShipement($id, $warehouse_id)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+		if (!DolibarrApiAccess::$user->rights->expedition->creer) {
+			throw new RestException(401);
+		}
+		$result = $this->commande->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Order not found');
+		}
+		$shipment = new Expedition($this->db);
+		$shipment->socid = $this->commande->socid;
+		$result = $shipment->create(DolibarrApiAccess::$user);
+		if ($result <= 0) {
+			throw new RestException(500, 'Error on creating expedition :'.$this->db->lasterror());
+		}
+		foreach ($this->commande->lines as $line) {
+			$result = $shipment->create_line($warehouse_id, $line->id, $line->qty);
+			if ($result <= 0) {
+				throw new RestException(500, 'Error on creating expedition lines:'.$this->db->lasterror());
+			}
+			$i++;
+		}
+		return $shipment->id;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
