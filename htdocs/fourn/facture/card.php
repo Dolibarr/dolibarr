@@ -1443,7 +1443,7 @@ if (empty($reshook)) {
 				if ($price_ht != '' || $price_ht_devise != '') {
 					$price_base_type = 'HT';
 					$pu = price2num($price_ht, 'MU');
-					$pu_ht_devise = price2num($price_ht_devise, 'MSupplier Invoice - add product line - fails to input multicurrency priceU');
+					$pu_ht_devise = price2num($price_ht_devise, 'MU');
 				} else {
 					$price_base_type = ($productsupplier->fourn_price_base_type ? $productsupplier->fourn_price_base_type : 'HT');
 					if (empty($object->multicurrency_code) || ($productsupplier->fourn_multicurrency_code != $object->multicurrency_code)) {	// If object is in a different currency and price not in this currency
