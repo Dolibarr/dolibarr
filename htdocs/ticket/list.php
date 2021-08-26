@@ -425,9 +425,9 @@ if ($search_dateclose_end) {
 
 
 if (!$user->socid && ($mode == "mine" || (!$user->admin && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY))) {
-	$sql .= " AND (t.fk_user_assign = ".$user->id;
+	$sql .= " AND (t.fk_user_assign = ".((int) $user->id);
 	if (empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) {
-		$sql .= " OR t.fk_user_create = ".$user->id;
+		$sql .= " OR t.fk_user_create = ".((int) $user->id);
 	}
 	$sql .= ")";
 }

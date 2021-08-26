@@ -229,7 +229,7 @@ if ($action == 'order' && GETPOST('valid')) {
 			// Check if an order for the supplier exists
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur";
 			$sql .= " WHERE fk_soc = ".((int) $suppliersid[$i]);
-			$sql .= " AND source = ".((int) $order::SOURCE_ID_REPLENISHMENT)." AND fk_statut = ".$order::STATUS_DRAFT;
+			$sql .= " AND source = ".((int) $order::SOURCE_ID_REPLENISHMENT)." AND fk_statut = ".((int) $order::STATUS_DRAFT);
 			$sql .= " AND entity IN (".getEntity('commande_fournisseur').")";
 			$sql .= " ORDER BY date_creation DESC";
 			$resql = $db->query($sql);
@@ -789,7 +789,12 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	$objp = $db->fetch_object($resql);
 
 	if (!empty($conf->global->STOCK_SUPPORTS_SERVICES) || $objp->fk_product_type == 0) {
-		$prod->fetch($objp->rowid);
+		$result = $prod->fetch($objp->rowid);
+		if ($result < 0) {
+			dol_print_error($db);
+			exit;
+		}
+
 		$prod->load_stock('warehouseopen, warehouseinternal'.(!$usevirtualstock?', novirtual':''), $draftchecked);
 
 		// Multilangs

@@ -550,6 +550,10 @@ if ($action == "addline") {
 	if ($idoflineadded <= 0) {
 		$invoice->fetch_thirdparty();
 		$idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, $parent_line, null, '', '', 0, 100, '', null, 0);
+		if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
+			$CUSTOMER_DISPLAY_line1 = $prod->label;
+			$CUSTOMER_DISPLAY_line2 = price($price_ttc);
+		}
 	}
 
 	$invoice->fetch($placeid);
@@ -1176,6 +1180,23 @@ $( document ).ready(function() {
 
 });
 
+
+<?php
+if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
+	echo "function CustomerDisplay(){";
+	echo "var line1='".$CUSTOMER_DISPLAY_line1."'.substring(0,20);";
+	echo "line1=line1.padEnd(20);";
+	echo "var line2='".$CUSTOMER_DISPLAY_line2."'.substring(0,20);";
+	echo "line2=line2.padEnd(20);";
+	echo "$.ajax({
+		type: 'GET',
+		data: { text: line1+line2 },
+		url: '".getDolGlobalString('TAKEPOS_PRINT_SERVER')."/display/index.php',
+	});";
+	echo "}";
+}
+?>
+
 </script>
 
 <?php
@@ -1466,7 +1487,7 @@ if ($placeid > 0) {
 						$sql .= " WHERE ps.reel != 0";
 						$sql .= " AND ps.fk_entrepot = ".((int) $conf->global->$constantforkey);
 						$sql .= " AND e.entity IN (".getEntity('stock').")";
-						$sql .= " AND ps.fk_product = ".$line->fk_product;
+						$sql .= " AND ps.fk_product = ".((int) $line->fk_product);
 						$resql = $db->query($sql);
 						if ($resql) {
 							$obj = $db->fetch_object($resql);

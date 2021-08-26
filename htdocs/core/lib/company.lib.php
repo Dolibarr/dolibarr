@@ -272,6 +272,19 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
+	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'thirdparty') {
+		if (!empty($user->rights->partnership->read)) {
+			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;
+			$head[$h][0] = DOL_URL_ROOT.'/societe/partnership.php?socid='.$object->id;
+			$head[$h][1] = $langs->trans("Partnership");
+			$head[$h][2] = 'partnership';
+			if ($nbPartnership > 0) {
+				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbPartnership.'</span>';
+			}
+			$h++;
+		}
+	}
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
@@ -1072,7 +1085,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
 	$sql .= " WHERE t.fk_soc = ".$object->id;
 	if ($search_status != '' && $search_status != '-1') {
-		$sql .= " AND t.statut = ".$db->escape($search_status);
+		$sql .= " AND t.statut = ".((int) $search_status);
 	}
 	if ($search_name) {
 		$sql .= natural_search(array('t.lastname', 't.firstname'), $search_name);
@@ -1476,46 +1489,46 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 		if ($force_filter_contact === false) {
 			if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) {
-				$sql .= " AND a.fk_soc = ".$filterobj->id;
+				$sql .= " AND a.fk_soc = ".((int) $filterobj->id);
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') {
 				/* Nothing */
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) {
-				$sql .= " AND a.fk_project = ".$filterobj->id;
+				$sql .= " AND a.fk_project = ".((int) $filterobj->id);
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') {
 				$sql .= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".$filterobj->id;
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".$filterobj->id;
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Product') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'product'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".$filterobj->id;
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'ticket'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".$filterobj->id;
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'BOM') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'bom'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".$filterobj->id;
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'contract'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".$filterobj->id;
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && is_array($filterobj->fields['ref']) && $filterobj->table_element && $filterobj->element) {
 				// Generic case
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '".$db->escape($filterobj->element).($module ? '@'.$module : '')."'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".$filterobj->id;
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
 			}
 		}

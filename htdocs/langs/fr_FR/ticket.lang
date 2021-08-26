@@ -55,18 +55,18 @@ TypeContact_ticket_internal_SUPPORTTEC=Utilisateur assigné
 TypeContact_ticket_external_SUPPORTCLI=Contact client / suivi des tickets
 TypeContact_ticket_external_CONTRIBUTOR=Contributeur externe
 
-OriginEmail=Reporter Email
+OriginEmail=Email demandeur
 Notify_TICKET_SENTBYMAIL=Envoi d'un message du ticket par e-mail
 
 # Status
 Read=Lu
 Assigned=Assigné
 InProgress=En cours
-NeedMoreInformation=Waiting for reporter feedback
+NeedMoreInformation=Attente retour demandeur
 NeedMoreInformationShort=En attente de retour
 Answered=Répondu
 Waiting=En attente
-Closed=Fermé
+SolvedClosed=Solved
 Deleted=Supprimé
 
 # Dict
@@ -186,9 +186,11 @@ TicketSeverity=Sévérité
 ShowTicket=Voir le ticket
 RelatedTickets=Tickets liés
 TicketAddIntervention=Créer intervention
-CloseTicket=Fermer le ticket
-CloseATicket=Fermer un ticket
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Confirmer la fermeture du ticket
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Confirmez la suppression du ticket
 TicketDeletedSuccess=Ticket supprimé avec succès
 TicketMarkedAsClosed=Ticket indiqué fermé

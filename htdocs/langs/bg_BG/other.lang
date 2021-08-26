@@ -291,3 +291,7 @@ PopuCom=Продукти / Услуги по популярност в поръ�
 ProductStatistics=Статистика за продукти / услуги
 NbOfQtyInOrders=Количество в поръчки
 SelectTheTypeOfObjectToAnalyze=Select an object to view its statistics...
+
+ConfirmBtnCommonContent = Are you sure you want to "%s" ?
+ConfirmBtnCommonTitle = Confirm your action
+CloseDialog = Приключване

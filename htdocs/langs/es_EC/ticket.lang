@@ -63,7 +63,6 @@ TicketMessagesList=Lista de mensajes
 NoMsgForThisTicket=No hay mensaje para este ticket
 LatestNewTickets=Últimos tickets %s nuevos (no leídos)
 RelatedTickets=Tickets relacionadas
-CloseTicket=Ticket cerrado
 ConfirmDeleteTicket=Confirma la eliminación del ticket
 TicketDurationAutoInfos=Duración calculada automáticamente a partir de intervenciones relacionadas
 SendMessageByEmail=Enviar mensaje por correo electrónico

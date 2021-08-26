@@ -77,6 +77,10 @@ YourPartnershipRefusedContent=Informujemy, że Twoja prośba o partnerstwo zosta
 YourPartnershipAcceptedContent=Informujemy, że Twoja prośba o partnerstwo została zaakceptowana.
 YourPartnershipCanceledContent=Informujemy, że Twoje partnerstwo zostało anulowane.
 
+CountLastUrlCheckError=Number of errors for last URL check
+LastCheckBacklink=Date of last URL check
+ReasonDeclineOrCancel=Odrzuć powód
+
 #
 # Status
 #

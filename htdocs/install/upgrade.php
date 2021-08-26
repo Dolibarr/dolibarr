@@ -102,7 +102,7 @@ if (!$versionfrom && !$versionto) {
 }
 
 
-pHeader('', "upgrade2", GETPOST('action', 'aZ09'), 'versionfrom='.$versionfrom.'&versionto='.$versionto);
+pHeader('', "upgrade2", GETPOST('action', 'aZ09'), 'versionfrom='.$versionfrom.'&versionto='.$versionto, '', 'main-inside main-inside-borderbottom');
 
 $actiondone = 0;
 
@@ -348,8 +348,9 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").'</td><td class="right">'.$file.'</td></tr>'."\n";
 
 				// Run sql script
-				$ok = run_sql($dir.$file, 0, '', 1);
+				$ok = run_sql($dir.$file, 0, '', 1, '', 'default', 32768, 0, 0, 2);
 				$listoffileprocessed[$dir.$file] = $dir.$file;
+
 
 				// Scan if there is migration scripts that depends of Dolibarr version
 				// for modules htdocs/module/sql or htdocs/custom/module/sql (files called "dolibarr_x.y.z-a.b.c.sql")
@@ -369,17 +370,20 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 					}
 				}
 
-				foreach ($modulesfile as $modulefilelong => $modulefileshort) {
-					if (in_array($modulefilelong, $listoffileprocessed)) {
-						continue;
+				if (count($modulesfile)) {
+					print '<tr><td colspan="2"><hr style="border-color: #ccc; border-top-style: none;"></td></tr>';
+
+					foreach ($modulesfile as $modulefilelong => $modulefileshort) {
+						if (in_array($modulefilelong, $listoffileprocessed)) {
+							continue;
+						}
+
+						print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").' (external modules)</td><td class="right">'.$modulefileshort.'</td></tr>'."\n";
+
+						// Run sql script
+						$okmodule = run_sql($modulefilelong, 0, '', 1); // Note: Result of migration of external module should not decide if we continue migration of Dolibarr or not.
+						$listoffileprocessed[$modulefilelong] = $modulefilelong;
 					}
-
-					print '<tr><td colspan="2"><hr></td></tr>';
-					print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").' (external modules)</td><td class="right">'.$modulefileshort.'</td></tr>'."\n";
-
-					// Run sql script
-					$okmodule = run_sql($modulefilelong, 0, '', 1); // Note: Result of migration of external module should not decide if we continue migration of Dolibarr or not.
-					$listoffileprocessed[$modulefilelong] = $modulefilelong;
 				}
 			}
 		}

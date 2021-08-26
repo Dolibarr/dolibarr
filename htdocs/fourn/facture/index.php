@@ -58,19 +58,34 @@ print load_fiche_titre($langs->trans("SupplierInvoicesArea"), '', 'supplier_invo
 print '<div class="fichecenter">';
 
 print '<div class="fichethirdleft">';
-print getNumberInvoicesPieChart('suppliers');
-//print getPurchaseInvoicePieChart($socid);
-print '<br>';
-print getDraftSupplierTable($maxDraftCount, $socid);
+$tmp = getNumberInvoicesPieChart('suppliers');
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
+
+$tmp = getDraftSupplierTable($maxDraftCount, $socid);
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
 
 print '</div>';
 
 print '<div class="fichetwothirdright">';
 print '<div class="ficheaddleft">';
 
-print getPurchaseInvoiceLatestEditTable($maxLatestEditCount, $socid);
-print '<br>';
-print getPurchaseInvoiceUnpaidOpenTable($max, $socid);
+$tmp = getPurchaseInvoiceLatestEditTable($maxLatestEditCount, $socid);
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
+
+$tmp = getPurchaseInvoiceUnpaidOpenTable($max, $socid);
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
 
 print '</div>';
 print '</div>';

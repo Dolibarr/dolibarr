@@ -114,7 +114,7 @@ if ($action == "set") {
 
 $morehtml = '';
 
-pHeader($langs->trans("SetupEnd"), "step5");
+pHeader($langs->trans("SetupEnd"), "step5", 'set', '', '', 'main-inside main-inside-borderbottom');
 print '<br>';
 
 // Test if we can run a first install process

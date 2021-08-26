@@ -297,7 +297,7 @@ class BookKeeping extends CommonObject
 		$sql .= " AND fk_doc = ".((int) $this->fk_doc);
 		if (!empty($conf->global->ACCOUNTANCY_ENABLE_FKDOCDET)) {
 			// DO NOT USE THIS IN PRODUCTION. This will generate a lot of trouble into reports and will corrupt database (by generating duplicate entries.
-			$sql .= " AND fk_docdet = ".$this->fk_docdet; // This field can be 0 if record is for several lines
+			$sql .= " AND fk_docdet = ".((int) $this->fk_docdet); // This field can be 0 if record is for several lines
 		}
 		$sql .= " AND numero_compte = '".$this->db->escape($this->numero_compte)."'";
 		$sql .= " AND label_operation = '".$this->db->escape($this->label_operation)."'";
@@ -729,7 +729,10 @@ class BookKeeping extends CommonObject
 		$sql .= " t.journal_label,";
 		$sql .= " t.piece_num,";
 		$sql .= " t.date_creation,";
-		$sql .= " t.date_export,";
+		// In llx_accounting_bookkeeping_tmp, field date_export doesn't exist
+		if ($mode != "_tmp") {
+			$sql .= " t.date_export,";
+		}
 		$sql .= " t.date_validated as date_validation";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.$mode.' as t';
 		$sql .= ' WHERE 1 = 1';
@@ -1024,6 +1027,12 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = $key.'\''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.credit' || $key == 't.debit') {
 					$sqlwhere[] = natural_search($key, $value, 1, 1);
+				} elseif ($key == 't.code_journal' && !empty($value)) {
+					if (is_array($value)) {
+						$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
+					} else {
+						$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
+					}
 				} else {
 					$sqlwhere[] = natural_search($key, $value, 0, 1);
 				}
@@ -1622,7 +1631,11 @@ class BookKeeping extends CommonObject
 		global $conf;
 
 		$sql = "SELECT piece_num, doc_date,code_journal, journal_label, doc_ref, doc_type,";
-		$sql .= " date_creation, tms as date_modification, date_export, date_validated as date_validation";
+		$sql .= " date_creation, tms as date_modification, date_validated as date_validation";
+		// In llx_accounting_bookkeeping_tmp, field date_export doesn't exist
+		if ($mode != "_tmp") {
+			$sql .= ", date_export";
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
 		$sql .= " WHERE piece_num = ".$piecenum;
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
@@ -1699,7 +1712,11 @@ class BookKeeping extends CommonObject
 		$sql .= " doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,";
 		$sql .= " numero_compte, label_compte, label_operation, debit, credit,";
 		$sql .= " montant as amount, sens, fk_user_author, import_key, code_journal, journal_label, piece_num,";
-		$sql .= " date_creation, tms as date_modification, date_export, date_validated as date_validation";
+		$sql .= " date_creation, tms as date_modification, date_validated as date_validation";
+		// In llx_accounting_bookkeeping_tmp, field date_export doesn't exist
+		if ($mode != "_tmp") {
+			$sql .= ", date_export";
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
 		$sql .= " WHERE piece_num = ".$piecenum;
 		$sql .= " AND entity IN (".getEntity('accountancy').")";

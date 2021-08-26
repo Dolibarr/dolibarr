@@ -1822,12 +1822,7 @@ if ($action == 'create' && $usercancreate) {
 
 	print dol_get_fiche_end();
 
-	// Button "Create Draft"
-	print '<div class="center">';
-	print '<input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" onclick="javascript:history.go(-1)">';
-	print '</div>';
+	print $form->buttonsSaveCancel("CreateDraft");
 
 	// Show origin lines
 	if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {

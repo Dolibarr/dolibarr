@@ -127,4 +127,5 @@ AllowDelayedPayment=Laat uitgestelde betaling toe
 PrintPaymentMethodOnReceipts=Betaalmethode afdrukken op tickets | bonnen
 WeighingScale=Weegschaal
 ShowPriceHT = Toon de kolom met de prijs exclusief btw (op het scherm)
-ShowPriceHTOnReceipt = Display the column with the price excluding tax (on the receipt)
+ShowPriceHTOnReceipt = Toon kolom met prijs exclusief btw (bon)
+CustomerDisplay=Customer display

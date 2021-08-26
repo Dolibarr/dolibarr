@@ -395,7 +395,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = sp.email) = 0";
 		// Exclude unsubscribed email adresses
 		$sql .= " AND sp.statut = 1";
-		$sql .= " AND sp.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
+		$sql .= " AND sp.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 		// Filter on category
 		if ($filter_category <> 'all') {
 			$sql .= " AND cs.fk_categorie = c.rowid AND cs.fk_socpeople = sp.rowid";

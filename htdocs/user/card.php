@@ -1267,11 +1267,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input class="button" value="'.$langs->trans("CreateUser").'" name="create" type="submit">';
-	//print '&nbsp; &nbsp; &nbsp;';
-	//print '<input value="'.$langs->trans("Cancel").'" class="button button-cancel" type="submit" name="cancel">';
-	print '</div>';
+	print $form->buttonsSaveCancel("CreateUser");
 
 	print "</form>";
 } else {

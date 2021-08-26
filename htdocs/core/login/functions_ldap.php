@@ -59,7 +59,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 		// Load translation files required by the page
 		$langs->loadLangs(array('main', 'other'));
 
-		$_SESSION["dol_loginmesg"] = $langs->trans("ErrorLDAPFunctionsAreDisabledOnThisPHP").' '.$langs->trans("TryAnotherConnectionMode");
+		$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLDAPFunctionsAreDisabledOnThisPHP").' '.$langs->transnoentitiesnoconv("TryAnotherConnectionMode");
 		return;
 	}
 
@@ -123,7 +123,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					$ldap->close();
 					sleep(1);
 					$langs->load('ldap');
-					$_SESSION["dol_loginmesg"] = $langs->trans("YouMustChangePassNextLogon", $usertotest, $ldap->domainFQDN);
+					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("YouMustChangePassNextLogon", $usertotest, $ldap->domainFQDN);
 					return '';
 				}
 			} else {
@@ -169,14 +169,14 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					$ldap->close();
 					// Load translation files required by the page
 					$langs->loadLangs(array('main', 'errors'));
-					$_SESSION["dol_loginmesg"] = $langs->trans("ErrorLoginDateValidity");
+					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
 					return '--bad-login-validity--';
 				}
 				if ($tmpuser->dateendvalidity && $db->jdate($tmpuser->dateendvalidity) <= dol_get_first_hour($now)) {
 					$ldap->close();
 					// Load translation files required by the page
 					$langs->loadLangs(array('main', 'errors'));
-					$_SESSION["dol_loginmesg"] = $langs->trans("ErrorLoginDateValidity");
+					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
 					return '--bad-login-validity--';
 				}
 
@@ -247,7 +247,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 				// Load translation files required by the page
 				$langs->loadLangs(array('main', 'other'));
 
-				$_SESSION["dol_loginmesg"] = $langs->trans("ErrorBadLoginPassword");
+				$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorBadLoginPassword");
 			}
 		} else {
 			/* Login failed. Return false, together with the error code and text from
@@ -268,7 +268,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 			// Load translation files required by the page
 			$langs->loadLangs(array('main', 'other', 'errors'));
-			$_SESSION["dol_loginmesg"] = ($ldap->error ? $ldap->error : $langs->trans("ErrorBadLoginPassword"));
+			$_SESSION["dol_loginmesg"] = ($ldap->error ? $ldap->error : $langs->transnoentitiesnoconv("ErrorBadLoginPassword"));
 		}
 
 		$ldap->close();

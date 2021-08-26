@@ -1427,6 +1427,7 @@ table[summary="list_of_modules"] .fa-cog {
 .width400 { width: 400px; }
 .width500 { width: 500px; }
 .maxwidth25  { max-width: 25px; }
+.maxwidth40  { max-width: 40px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
 .maxwidth100 { max-width: 100px; }
@@ -6689,12 +6690,18 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 /* For copy-paste feature                                                         */
 /* ============================================================================== */
 
-span.clipboardCPValueToPrint {
+span.clipboardCPValueToPrint, div.clipboardCPValueToPrint {
 	display: inline-block;
 }
 span.clipboardCPValue.hidewithsize {
 	width: 0 !important;
 	display: inline-block;
+	color: transparent;
+	white-space: nowrap;
+}
+div.clipboardCPValue.hidewithsize {
+	width: 0 !important;
+	display: none;
 	color: transparent;
 	white-space: nowrap;
 }

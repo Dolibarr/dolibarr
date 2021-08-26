@@ -77,6 +77,10 @@ YourPartnershipRefusedContent=Vi informerer dig om, at din partnerskabsanmodning
 YourPartnershipAcceptedContent=Vi informerer dig om, at din partnerskabsanmodning er accepteret.
 YourPartnershipCanceledContent=Vi informerer dig om, at dit partnerskab er annulleret.
 
+CountLastUrlCheckError=Antal fejl ved sidste URL -kontrol
+LastCheckBacklink=Dato for sidste URL -kontrol
+ReasonDeclineOrCancel=Afvis grund
+
 #
 # Status
 #
