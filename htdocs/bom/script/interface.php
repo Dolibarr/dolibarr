@@ -7,7 +7,7 @@ $current_bom_id = GETPOST('current_bom_id', 'alphanohtml');
 
 global $db;
 
-switch ($action){
+switch ($action) {
 	case 'select_BOM':
 		//Selection of nomenclatures corresponding to the selected product
 		$sql = 'SELECT b.rowid, b.ref, b.label, b.fk_product, p.label AS product_label FROM '.MAIN_DB_PREFIX.'bom_bom AS b ';
@@ -17,8 +17,7 @@ switch ($action){
 		if ($resql && $db->num_rows($resql) > 0) {
 			$options = array();
 			$cpt=0;
-			while ($obj = $db->fetch_object($resql)){
-
+			while ($obj = $db->fetch_object($resql)) {
 				$options[$obj->rowid] = $obj->ref.' - '.$obj->label;
 				$cpt++;
 			}
