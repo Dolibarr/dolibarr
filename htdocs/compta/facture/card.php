@@ -321,8 +321,8 @@ if (empty($reshook)) {
 
 			//var_dump($array_of_total_ht_per_vat_rate);exit;
 			foreach ($array_of_total_ht_per_vat_rate as $vatrate => $tmpvalue) {
-				$tmp_total_ht = $array_of_total_ht_per_vat_rate[$vatrate];
-				$tmp_total_ht_devise = $array_of_total_ht_devise_per_vat_rate[$vatrate];
+				$tmp_total_ht = price2num($array_of_total_ht_per_vat_rate[$vatrate]);
+				$tmp_total_ht_devise = price2num($array_of_total_ht_devise_per_vat_rate[$vatrate]);
 
 				if (($tmp_total_ht < 0 || $tmp_total_ht_devise < 0) && empty($conf->global->FACTURE_ENABLE_NEGATIVE_LINES)) {
 					if ($object->type == $object::TYPE_DEPOSIT) {
@@ -3785,11 +3785,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	// Button "Create Draft"
-	print '<div class="center">';
-	print '<input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'">';
-	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-	print '</div>';
+	print $form->buttonsSaveCancel("CreateDraft");
 
 	// Show origin lines
 	if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {

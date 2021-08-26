@@ -1044,10 +1044,10 @@ class Task extends CommonObject
 		$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
 		$sql .= " WHERE pt.rowid = ec.element_id";
 		if ($userp && $filteronprojstatus > -1) {
-			$sql .= " AND pt.fk_statut = ".$filteronprojstatus;
+			$sql .= " AND pt.fk_statut = ".((int) $filteronprojstatus);
 		}
 		if ($usert && $filteronprojstatus > -1) {
-			$sql .= " AND pt.fk_projet = p.rowid AND p.fk_statut = ".$filteronprojstatus;
+			$sql .= " AND pt.fk_projet = p.rowid AND p.fk_statut = ".((int) $filteronprojstatus);
 		}
 		if ($userp) {
 			$sql .= " AND ctc.element = 'project'";
@@ -1057,10 +1057,10 @@ class Task extends CommonObject
 		}
 		$sql .= " AND ctc.rowid = ec.fk_c_type_contact";
 		if ($userp) {
-			$sql .= " AND ec.fk_socpeople = ".$userp->id;
+			$sql .= " AND ec.fk_socpeople = ".((int) $userp->id);
 		}
 		if ($usert) {
-			$sql .= " AND ec.fk_socpeople = ".$usert->id;
+			$sql .= " AND ec.fk_socpeople = ".((int) $usert->id);
 		}
 		$sql .= " AND ec.statut = 4";
 		$sql .= " AND ctc.source = 'internal'";
@@ -2062,7 +2062,7 @@ class Task extends CommonObject
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
-		// if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
+		// if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id).") OR (s.rowid IS NULL))";
 
 		//print $sql;
 		$resql = $this->db->query($sql);
@@ -2131,12 +2131,12 @@ class Task extends CommonObject
 			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		}
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
-		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 		if ($socid) {
 			$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 		}
 		if (!$user->rights->societe->client->voir && !$socid) {
-			$sql .= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id.") OR (s.rowid IS NULL))";
+			$sql .= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id).") OR (s.rowid IS NULL))";
 		}
 
 		$resql = $this->db->query($sql);
