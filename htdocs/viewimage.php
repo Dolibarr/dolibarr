@@ -221,8 +221,9 @@ if (preg_match('/\.noexe$/i', $original_file)) {
 	accessforbidden('Error: Using the image wrapper to output a file ending with .noexe is not allowed.', 0, 0, 1);
 }
 
-// Security: Delete string ../ into $original_file
-$original_file = str_replace("../", "/", $original_file);
+// Security: Delete string ../ or ..\ into $original_file
+$original_file = str_replace('../', '/', $original_file);
+$original_file = str_replace('..\\', '/', $original_file);
 
 // Find the subdirectory name as the reference
 $refname = basename(dirname($original_file)."/");
@@ -282,10 +283,14 @@ if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $full
 
 
 if ($modulepart == 'barcode') {
-	$generator = GETPOST("generator", "alpha");
-	$code = GETPOST("code", 'none'); // This can be rich content (qrcode, datamatrix, ...)
-	$encoding = GETPOST("encoding", "alpha");
-	$readable = GETPOST("readable", 'alpha') ?GETPOST("readable", "alpha") : "Y";
+	$generator = GETPOST("generator", "aZ09");
+	$encoding = GETPOST("encoding", "aZ09");
+	$readable = GETPOST("readable", 'aZ09') ? GETPOST("readable", "aZ09") : "Y";
+	if (in_array($encoding, array('EAN8', 'EAN13'))) {
+		$code = GETPOST("code", 'alphanohtml');
+	} else {
+		$code = GETPOST("code", 'none'); // This can be rich content (qrcode, datamatrix, ...)
+	}
 
 	if (empty($generator) || empty($encoding)) {
 		print 'Error: Parameter "generator" or "encoding" not defined';

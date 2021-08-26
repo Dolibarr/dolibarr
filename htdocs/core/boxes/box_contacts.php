@@ -98,10 +98,10 @@ class box_contacts extends ModeleBoxes
 			}
 			$sql .= " WHERE sp.entity IN (".getEntity('socpeople').")";
 			if (!$user->rights->societe->client->voir && !$user->socid) {
-				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
-				$sql .= " AND sp.fk_soc = ".$user->socid;
+				$sql .= " AND sp.fk_soc = ".((int) $user->socid);
 			}
 			$sql .= " ORDER BY sp.tms DESC";
 			$sql .= $this->db->plimit($max, 0);
@@ -161,7 +161,7 @@ class box_contacts extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($datem, "day"),
+						'text' => dol_print_date($datem, "day", 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(

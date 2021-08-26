@@ -30,3 +30,4 @@ NonShippable=Nicht versandfertig
 ShowShippableStatus=Versandstatus anzeigen
 ShowReceiving=Zustellbestätigung anzeigen
 NonExistentOrder=Auftrag existiert nicht
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Bestandsmengen, die bereits in den vorangegangenen Zeilen zugeteilt wurden

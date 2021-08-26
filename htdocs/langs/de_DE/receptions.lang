@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - receptions
-ReceptionsSetup=Produktempfang einrichten
+ReceptionsSetup=Wareneingang einrichten
 RefReception=Wareneingangs Nummer
 Reception=Wareneingang
 Receptions=Wareneingänge
@@ -44,4 +44,4 @@ ValidateOrderFirstBeforeReception=Sie müssen zunächst die order validate valid
 ReceptionsNumberingModules=Nummerierungsmodul für Empfänge
 ReceptionsReceiptModel=Dokumentvorlagen für Empfänge
 NoMorePredefinedProductToDispatch=Keine vordefinierten Produkte mehr zum Versand
-
+ReceptionExist=Ein Wareneingang ist vorhanden

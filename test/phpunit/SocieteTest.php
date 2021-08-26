@@ -84,15 +84,15 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		global $conf,$user,$langs,$db;
 
 		if ($conf->global->SOCIETE_CODECLIENT_ADDON != 'mod_codeclient_monkey') {
-			print "\n".__METHOD__." third party ref checker must be setup to 'mod_codeclient_monkey' not to '".$conf->global->SOCIETE_CODECLIENT_ADDON."'.\n"; die();
+			print "\n".__METHOD__." third party ref checker must be setup to 'mod_codeclient_monkey' not to '".$conf->global->SOCIETE_CODECLIENT_ADDON."'.\n"; die(1);
 		}
 
 		if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) {
-			print "\n".__METHOD__." constant MAIN_DISABLEPROFIDRULES must be empty (if a module set it, disable module).\n"; die();
+			print "\n".__METHOD__." constant MAIN_DISABLEPROFIDRULES must be empty (if a module set it, disable module).\n"; die(1);
 		}
 
 		if ($langs->defaultlang != 'en_US') {
-			print "\n".__METHOD__." default language of company must be set to autodetect.\n"; die();
+			print "\n".__METHOD__." default language of company must be set to autodetect.\n"; die(1);
 		}
 
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.

@@ -267,6 +267,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $always_enabled;
 
 	/**
+	 * @var bool Module is disabled
+	 */
+	public $disabled;
+
+	/**
 	 * @var int Module is enabled globally (Multicompany support)
 	 */
 	public $core_enabled;
@@ -1263,7 +1268,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		if (is_array($this->boxes)) {
 			foreach ($this->boxes as $key => $value) {
 				//$titre = $this->boxes[$key][0];
-				$file = $this->boxes[$key]['file'];
+				if (empty($this->boxes[$key]['file'])) {
+					$file = isset($this->boxes[$key][1]) ? $this->boxes[$key][1] : ''; // For backward compatibility
+				} else {
+					$file = $this->boxes[$key]['file'];
+				}
+
 				//$note  = $this->boxes[$key][2];
 
 				// TODO If the box is also included by another module and the other module is still on, we should not remove it.
@@ -1274,10 +1284,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						dol_syslog("We discard deleting module ".$file." because another module still active requires it.");
 						continue;
 					}
-				}
-
-				if (empty($file)) {
-					$file = isset($this->boxes[$key][1]) ? $this->boxes[$key][1] : ''; // For backward compatibility
 				}
 
 				if ($this->db->type == 'sqlite3') {
@@ -1371,7 +1377,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				if ($command) {
 					$sql .= " AND command = '".$this->db->escape($command)."'";
 				}
-				$sql .= " AND entity = ".$entity; // Must be exact entity
+				$sql .= " AND entity = ".((int) $entity); // Must be exact entity
 
 				$now = dol_now();
 
@@ -1612,7 +1618,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$sql = "SELECT count(*)";
 			$sql .= " FROM ".MAIN_DB_PREFIX."const";
 			$sql .= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($name)."'";
-			$sql .= " AND entity = ".$entity;
+			$sql .= " AND entity = ".((int) $entity);
 
 			$result = $this->db->query($sql);
 			if ($result) {
@@ -2197,7 +2203,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 				$sql .= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->db->escape($this->const_name)."_".strtoupper($key)."'";
-				$sql .= " AND entity = ".$entity;
+				$sql .= " AND entity = ".((int) $entity);
 
 				dol_syslog(get_class($this)."::delete_const_".$key."", LOG_DEBUG);
 				if (!$this->db->query($sql)) {

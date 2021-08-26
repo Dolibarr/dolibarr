@@ -937,6 +937,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="donotclearsession" value="1">';
+	print '<input type="hidden" name="page_y" value="">';
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : htmlentities($_SERVER["HTTP_REFERER"])).'">';
 	}
@@ -1183,10 +1184,10 @@ if ($action == 'create') {
 		$projectid = GETPOST('projectid', 'int');
 
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td id="project-input-container">';
-		print img_picto('', 'project', 'class="paddingrightonly"');
-		print $formproject->select_projects((!empty($societe->id) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
+		print img_picto('', 'project', 'class="pictofixedwidth"');
+		print $formproject->select_projects((empty($societe->id) ? '' : $societe->id), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
 
-		print '&nbsp;<a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$societe->id.'&action=create&amp;backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">';
+		print '&nbsp;<a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.(empty($societe->id) ? '' : $societe->id).'&action=create&amp;backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">';
 		print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
 		$urloption = '?action=create&donotclearsession=1';
 		$url = dol_buildpath('comm/action/card.php', 2).$urloption;
@@ -1316,15 +1317,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Add").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	if (empty($backtopage)) {
-		print '<input type="button" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-	} else {
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	}
-	print '</div>';
+	print $form->buttonsSaveCancel("Add");
 
 	print "</form>";
 }
@@ -1430,6 +1423,7 @@ if ($id > 0) {
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="ref_ext" value="'.$object->ref_ext.'">';
+		print '<input type="hidden" name="page_y" value="">';
 		if ($backtopage) {
 			print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : htmlentities($_SERVER["HTTP_REFERER"])).'">';
 		}
@@ -1802,11 +1796,7 @@ if ($id > 0) {
 
 		print dol_get_fiche_end();
 
-		print '<div class="center">';
-		print '<input type="submit" class="button button-save" name="edit" value="'.$langs->trans("Save").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
+		print $form->buttonsSaveCancel();
 
 		print '</form>';
 	} else {
@@ -1821,7 +1811,7 @@ if ($id > 0) {
 
 		$linkback = '';
 		// Link to other agenda views
-		$linkback .= img_picto($langs->trans("BackToList"), 'object_list-alt', 'class="hideonsmartphone pictoactionview"');
+		$linkback .= img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
 		$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 		$linkback .= '</li>';
 		$linkback .= '<li class="noborder litext">';
@@ -1984,7 +1974,7 @@ if ($id > 0) {
 		print '	</td></tr>';
 
 		// Done by
-		if ($conf->global->AGENDA_ENABLE_DONEBY) {
+		if (!empty($conf->global->AGENDA_ENABLE_DONEBY)) {
 			print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td>';
 			if ($object->userdoneid > 0) {
 				$tmpuser = new User($db);
@@ -2078,10 +2068,10 @@ if ($id > 0) {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		// Reminders
-		if ($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER) {
-			$filtreuserid = $user->id;
+		if (!empty($conf->global->AGENDA_REMINDER_EMAIL) || !empty($conf->global->AGENDA_REMINDER_BROWSER)) {
+			$filteruserid = $user->id;
 			if ($user->rights->agenda->allactions->read) {
-				$filtreuserid = 0;
+				$filteruserid = 0;
 			}
 			$object->loadReminders('', $filteruserid, false);
 

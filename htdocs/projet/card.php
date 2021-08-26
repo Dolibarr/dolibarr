@@ -89,6 +89,8 @@ $socid = GETPOST('socid', 'int');
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 restrictedArea($user, 'projet', $object->id, 'projet&project');
 
+$permissiondellink = $user->rights->projet->creer;	// Used by the include of actions_dellink.inc.php
+
 
 /*
  * Actions
@@ -121,6 +123,8 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
+
 	if ($action == 'add' && $user->rights->projet->creer) {
 		$error = 0;
 		if (!GETPOST('ref')) {
@@ -132,9 +136,11 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (GETPOST('opp_amount') != '' && !(GETPOST('opp_status') > 0)) {
-			$error++;
-			setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			if (GETPOST('opp_amount') != '' && !(GETPOST('opp_status') > 0)) {
+				$error++;
+				setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+			}
 		}
 
 		// Create with status validated immediatly
@@ -270,9 +276,11 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($object->opp_amount && ($object->opp_status <= 0)) {
-			$error++;
-			setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			if ($object->opp_amount && ($object->opp_status <= 0)) {
+				$error++;
+				setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+			}
 		}
 
 		if (!$error) {
@@ -511,7 +519,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 	// Ref
 	$suggestedref = (GETPOST("ref") ? GETPOST("ref") : $defaultref);
-	print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.dol_escape_htmltag($suggestedref).'">';
+	print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="25" type="text" name="ref" value="'.dol_escape_htmltag($suggestedref).'">';
 	print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
 	print '</td></tr>';
 
@@ -682,16 +690,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("CreateDraft").'">';
-	if (!empty($backtopage)) {
-		print ' &nbsp; &nbsp; ';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	} else {
-		print ' &nbsp; &nbsp; ';
-		print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-	}
-	print '</div>';
+	print $form->buttonsSaveCancel('CreateDraft');
 
 	print '</form>';
 
@@ -796,7 +795,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		// Ref
 		$suggestedref = $object->ref;
 		print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Ref").'</td>';
-		print '<td><input size="12" name="ref" value="'.$suggestedref.'">';
+		print '<td><input size="25" name="ref" value="'.$suggestedref.'">';
 		print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
 		print '</td></tr>';
 
@@ -1142,10 +1141,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	print dol_get_fiche_end();
 
 	if ($action == 'edit' && $userWrite > 0) {
-		print '<div class="center">';
-		print '<input name="update" class="button" type="submit" value="'.$langs->trans("Save").'">&nbsp; &nbsp; &nbsp;';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
+		print $form->buttonsSaveCancel();
 	}
 
 	print '</form>';

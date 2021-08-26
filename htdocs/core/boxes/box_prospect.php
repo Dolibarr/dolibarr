@@ -99,10 +99,10 @@ class box_prospect extends ModeleBoxes
 			$sql .= " WHERE s.client IN (2, 3)";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
 			if (!$user->rights->societe->client->voir && !$user->socid) {
-				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
-				$sql .= " AND s.rowid = ".$user->socid;
+				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
 			$sql .= " ORDER BY s.tms DESC";
 			$sql .= $this->db->plimit($max, 0);
@@ -129,14 +129,14 @@ class box_prospect extends ModeleBoxes
 					$thirdpartystatic->entity = $objp->entity;
 
 					$this->info_box_contents[$line][] = array(
-						'td' => '',
+						'td' => 'class="tdoverflowmax150"',
 						'text' => $thirdpartystatic->getNomUrl(1),
 						'asis' => 1,
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => dol_print_date($datem, "day"),
+						'td' => 'class="center nowraponall"',
+						'text' => dol_print_date($datem, "day", 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(

@@ -451,13 +451,13 @@ if (!$user->rights->societe->client->voir && !$socid) {	// Internal user with no
 $sql .= " WHERE e.entity IN (".getEntity('reception').")";
 if (!$user->rights->societe->client->voir && !$socid) {	// Internal user with no permission to see all
 	$sql .= " AND e.fk_soc = sc.fk_soc";
-	$sql .= " AND sc.fk_user = ".$user->id;
+	$sql .= " AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
-	$sql .= " AND e.fk_soc = ".$socid;
+	$sql .= " AND e.fk_soc = ".((int) $socid);
 }
 if ($search_status <> '' && $search_status >= 0) {
-	$sql .= " AND e.fk_statut = ".$search_status;
+	$sql .= " AND e.fk_statut = ".((int) $search_status);
 }
 if ($search_billed != '' && $search_billed >= 0) {
 	$sql .= ' AND e.billed = '.((int) $search_billed);

@@ -281,7 +281,7 @@ if ($resql) {
 		$journaltoshow = (($result > 0) ? $accountingjournal->getNomUrl(0, 0, 0, '', 0) : $obj->code_journal);
 		print '<td class="center">'.$journaltoshow.'</td>';
 
-		if (empty($obj->lettering_code)) {
+		if (empty($obj->lettering_code) && empty($obj->date_validated)) {
 			print '<td class="nowrap center"><input type="checkbox" class="flat checkforselect" name="toselect[]" id="toselect[]" value="'.$obj->rowid.'" /></td>';
 			print '<td><a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num='.$obj->piece_num.'">';
 			print img_edit();
@@ -296,15 +296,15 @@ if ($resql) {
 
 	print '<tr class="oddeven">';
 	print '<td class="right" colspan="3">'.$langs->trans("Total").':</td>'."\n";
-	print '<td class="nowrap right"><strong>'.price($debit).'</strong></td>';
-	print '<td class="nowrap right"><strong>'.price($credit).'</strong></td>';
+	print '<td class="right nowraponall amount"><strong>'.price($debit).'</strong></td>';
+	print '<td class="right nowraponall amount"><strong>'.price($credit).'</strong></td>';
 	print '<td colspan="4"></td>';
 	print "</tr>\n";
 
 	print '<tr class="oddeven">';
 	print '<td class="right" colspan="3">'.$langs->trans("Balancing").':</td>'."\n";
 	print '<td colspan="2">&nbsp;</td>';
-	print '<td class="nowrap right"><strong>'.price($credit - $debit).'</strong></td>';
+	print '<td class="right nowraponall amount"><strong>'.price($credit - $debit).'</strong></td>';
 	print '<td colspan="6"></td>';
 	print "</tr>\n";
 

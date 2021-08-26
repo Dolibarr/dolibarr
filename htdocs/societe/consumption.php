@@ -131,6 +131,11 @@ print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent tableforfield">';
 
+// Type Prospect/Customer/Supplier
+print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+print $object->getTypeUrl(1);
+print '</td></tr>';
+
 if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
 	print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 }
@@ -254,7 +259,7 @@ if ($type_element == 'propal') {
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_propal = c.rowid";
 	$where .= " AND c.entity = ".$conf->entity;
-	$datePrint = 'c.datep';
+	$dateprint = 'c.datep';
 	$doc_number = 'c.ref';
 	$thirdTypeSelect = 'customer';
 }
@@ -379,7 +384,7 @@ if (empty($elementTypeArray) && !$object->client && !$object->fournisseur) {
 
 // Define type of elements
 $typeElementString = $form->selectarray("type_element", $elementTypeArray, GETPOST('type_element'), $showempty, 0, 0, '', 0, 0, $disabled, '', 'maxwidth150onsmartphone');
-$button = '<input type="submit" class="button buttonform" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+$button = '<input type="submit" class="button buttonform small" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 
 $param = '';
 $param .= "&sref=".urlencode($sref);

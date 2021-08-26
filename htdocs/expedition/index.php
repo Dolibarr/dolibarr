@@ -68,13 +68,13 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
-	$sql .= $clause." sc.fk_user = ".$user->id;
+	$sql .= $clause." sc.fk_user = ".((int) $user->id);
 	$clause = " AND ";
 }
 $sql .= $clause." e.fk_statut = ".Expedition::STATUS_DRAFT;
 $sql .= " AND e.entity IN (".getEntity('expedition').")";
 if ($socid) {
-	$sql .= " AND c.fk_soc = ".$socid;
+	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
 
 $resql = $db->query($sql);
@@ -143,11 +143,11 @@ if (!$user->rights->societe->client->voir && !$socid) {
 }
 $sql .= " WHERE e.entity IN (".getEntity('expedition').")";
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND sc.fk_user = ".$user->id;
+	$sql .= " AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " AND e.fk_statut = ".Expedition::STATUS_VALIDATED;
 if ($socid) {
-	$sql .= " AND c.fk_soc = ".$socid;
+	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
 $sql .= " ORDER BY e.date_delivery DESC";
 $sql .= $db->plimit($max, 0);
@@ -215,10 +215,10 @@ $sql .= " WHERE c.fk_soc = s.rowid";
 $sql .= " AND c.entity IN (".getEntity('order').")";
 $sql .= " AND c.fk_statut IN (".Commande::STATUS_VALIDATED.", ".Commande::STATUS_ACCEPTED.")";
 if ($socid > 0) {
-	$sql .= " AND c.fk_soc = ".$socid;
+	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " ORDER BY c.rowid ASC";
 

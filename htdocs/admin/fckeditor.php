@@ -117,7 +117,7 @@ if (GETPOST('save', 'alpha')) {
 		$error++;
 	}
 
-	$fckeditor_test = GETPOST('formtestfield');
+	$fckeditor_test = GETPOST('formtestfield', 'restricthtml');
 	if (!empty($fckeditor_test)) {
 		if (!dolibarr_set_const($db, 'FCKEDITOR_TEST', $fckeditor_test, 'chaine', 0, '', $conf->entity)) {
 			$error++;
@@ -215,7 +215,7 @@ if (empty($conf->use_javascript_ajax)) {
 		print $conf->global->FCKEDITOR_TEST;
 		print '</div>';
 	}
-	print '<br><div class="center"><input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'"></div>'."\n";
+	print $form->buttonsSaveCancel("Save", '');
 	print '<div id="divforlog"></div>';
 	print '</form>'."\n";
 

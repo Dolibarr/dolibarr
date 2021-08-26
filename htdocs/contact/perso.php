@@ -60,8 +60,8 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->societe->contact
 
 	$result = $object->update_perso($id, $user);
 	if ($result > 0) {
-		$object->old_name = '';
-		$object->old_firstname = '';
+		$object->oldcopy = clone $object;
+
 		// Logo/Photo save
 		$dir = $conf->societe->dir_output.'/contact/'.get_exdir($object->id, 0, 0, 1, $object, 'contact').'/photos';
 
@@ -205,11 +205,7 @@ if ($action == 'edit') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print "</form>";
 } else {

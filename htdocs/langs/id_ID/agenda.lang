@@ -38,6 +38,7 @@ ActionsEvents=Perihal yang Dolibarr akan membuat tindakan dalam agenda otomatis
 EventRemindersByEmailNotEnabled=Pengingat agenda melalui email tidak diaktifkan ke pengaturan modul %s.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Pihak ketiga %s dibuat
+COMPANY_MODIFYInDolibarr=Third party %s modified
 COMPANY_DELETEInDolibarr=Pihak ketiga %s dihapus
 ContractValidatedInDolibarr=Kontrak %s divalidasi
 CONTRACT_DELETEInDolibarr=Kontrak %s dihapus
@@ -87,6 +88,7 @@ OrderDeleted=Pesanan dihapus
 InvoiceDeleted=Faktur dihapus
 DraftInvoiceDeleted=Faktur konsep dihapus
 CONTACT_CREATEInDolibarr=Contact %s created
+CONTACT_MODIFYInDolibarr=Contact %s modified
 CONTACT_DELETEInDolibarr=Contact %s deleted
 PRODUCT_CREATEInDolibarr=Produk %s dibuat
 PRODUCT_MODIFYInDolibarr=Produk %s dimodifikasi

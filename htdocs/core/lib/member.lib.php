@@ -63,6 +63,19 @@ function member_prepare_head(Adherent $object)
 		$h++;
 	}
 
+	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
+		if (!empty($user->rights->partnership->read)) {
+			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;
+			$head[$h][0] = DOL_URL_ROOT.'/adherents/partnership.php?rowid='.$object->id;
+			$head[$h][1] = $langs->trans("Partnership");
+			$head[$h][2] = 'partnership';
+			if ($nbPartnership > 0) {
+				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbPartnership.'</span>';
+			}
+			$h++;
+		}
+	}
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
@@ -70,9 +83,6 @@ function member_prepare_head(Adherent $object)
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'member');
 
 	$nbNote = 0;
-	if (!empty($object->note)) {
-		$nbNote++;
-	}
 	if (!empty($object->note_private)) {
 		$nbNote++;
 	}

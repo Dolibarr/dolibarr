@@ -262,7 +262,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 }
 $sql .= " AND f.entity IN (".getEntity('invoice').")";
 if ($socid) {
-	$sql .= " AND f.fk_soc = ".$socid;
+	$sql .= " AND f.fk_soc = ".((int) $socid);
 }
 $sql .= " GROUP BY u.rowid, u.lastname, u.firstname";
 $sql .= " ORDER BY u.rowid";

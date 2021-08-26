@@ -64,6 +64,7 @@ $result = restrictedArea($user, 'don', $id);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('doncard', 'globalcard'));
@@ -118,6 +119,8 @@ if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd) {
 	}
 }
 
+
+// Action update object
 if ($action == 'update') {
 	if (!empty($cancel)) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".urlencode($id));
@@ -170,6 +173,8 @@ if ($action == 'update') {
 	}
 }
 
+
+// Action add/create object
 if ($action == 'add') {
 	if (!empty($cancel)) {
 		header("Location: index.php");
@@ -228,6 +233,8 @@ if ($action == 'add') {
 		}
 	}
 }
+
+// Action delete object
 if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights->don->supprimer) {
 	$object->fetch($id);
 	$result = $object->delete($user);
@@ -239,6 +246,8 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights-
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
+
+// Action validation
 if ($action == 'valid_promesse') {
 	$object->fetch($id);
 	if ($object->valid_promesse($id, $user->id) >= 0) {
@@ -248,6 +257,8 @@ if ($action == 'valid_promesse') {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
+
+// Action cancel
 if ($action == 'set_cancel') {
 	$object->fetch($id);
 	if ($object->set_cancel($id) >= 0) {
@@ -256,6 +267,8 @@ if ($action == 'set_cancel') {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
+
+// Action set paid
 if ($action == 'set_paid') {
 	$object->fetch($id);
 	if ($object->setPaid($id, $modepayment) >= 0) {
@@ -267,6 +280,7 @@ if ($action == 'set_paid') {
 	$object->fetch($id);
 	$object->setProject($projectid);
 }
+
 
 // Actions to build doc
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
@@ -329,9 +343,11 @@ if ($action == 'builddoc')
  * View
  */
 
+$title = $langs->trans("Donation");
+
 $help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:Modul_Spenden';
 
-llxHeader('', $langs->trans("Donation"), $help_url);
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -484,11 +500,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button button-save" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button button-cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" onClick="javascript:history.go(-1)">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print "</form>\n";
 }
@@ -618,7 +630,7 @@ if (!empty($id) && $action == 'edit') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+	print $form->buttonsSaveCancel();
 
 	print "</form>\n";
 }

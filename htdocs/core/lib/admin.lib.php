@@ -123,6 +123,7 @@ function versioncompare($versionarray1, $versionarray2)
  *	Return version PHP
  *
  *	@return     array               Tableau de version (vermajeur,vermineur,autre)
+ *  @see versioncompare()
  */
 function versionphparray()
 {
@@ -133,6 +134,7 @@ function versionphparray()
  *	Return version Dolibarr
  *
  *	@return     array               Tableau de version (vermajeur,vermineur,autre)
+ *  @see versioncompare()
  */
 function versiondolibarrarray()
 {
@@ -158,9 +160,10 @@ function versiondolibarrarray()
  *  @param		int		$linelengthlimit	Limit for length of each line (Use 0 if unknown, may be faster if defined)
  *  @param		int		$nocommentremoval	Do no try to remove comments (in such a case, we consider that each line is a request, so use also $linelengthlimit=0)
  *  @param		int		$offsetforchartofaccount	Offset to use to load chart of account table to update sql on the fly to add offset to rowid and account_parent value
+ *  @param		int		$colspan			2=Add a colspan=2 on td
  * 	@return		int							<=0 if KO, >0 if OK
  */
-function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handler = '', $okerror = 'default', $linelengthlimit = 32768, $nocommentremoval = 0, $offsetforchartofaccount = 0)
+function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handler = '', $okerror = 'default', $linelengthlimit = 32768, $nocommentremoval = 0, $offsetforchartofaccount = 0, $colspan = 0)
 {
 	global $db, $conf, $langs, $user;
 
@@ -280,13 +283,9 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 					}
 				} else {
 					if (!$silent) {
-						print '<tr><td class="tdtop" colspan="2">';
-					}
-					if (!$silent) {
-						print '<div class="error">'.$langs->trans("Failed to get max rowid for ".$table)."</div></td>";
-					}
-					if (!$silent) {
-						print '</tr>';
+						print '<tr><td class="tdtop"'.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
+						print '<div class="error">'.$langs->trans("Failed to get max rowid for ".$table)."</div>";
+						print '</td></tr>';
 					}
 					$error++;
 					break;
@@ -335,7 +334,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 
 			// Add log of request
 			if (!$silent) {
-				print '<tr class="trforrunsql"><td class="tdtop opacitymedium">'.$langs->trans("Request").' '.($i + 1)." sql='".dol_htmlentities($newsql, ENT_NOQUOTES)."'</td></tr>\n";
+				print '<tr class="trforrunsql"><td class="tdtop opacitymedium"'.($colspan ? ' colspan="'.$colspan.'"' : '').'>'.$langs->trans("Request").' '.($i + 1)." sql='".dol_htmlentities($newsql, ENT_NOQUOTES)."'</td></tr>\n";
 			}
 			dol_syslog('Admin.lib::run_sql Request '.($i + 1), LOG_DEBUG);
 			$sqlmodified = 0;
@@ -369,13 +368,9 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 				$cursor = $reg[1];
 				if (empty($listofinsertedrowid[$cursor])) {
 					if (!$silent) {
-						print '<tr><td class="tdtop" colspan="2">';
-					}
-					if (!$silent) {
-						print '<div class="error">'.$langs->trans("FileIsNotCorrect")."</div></td>";
-					}
-					if (!$silent) {
-						print '</tr>';
+						print '<tr><td class="tdtop"'.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
+						print '<div class="error">'.$langs->trans("FileIsNotCorrect")."</div>";
+						print '</td></tr>';
 					}
 					$error++;
 					break;
@@ -435,21 +430,13 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 				// Is it an error we accept
 				if (!in_array($errno, $okerrors)) {
 					if (!$silent) {
-						print '<tr><td class="tdtop" colspan="2">';
-					}
-					if (!$silent) {
-						print '<div class="error">'.$langs->trans("Error")." ".$db->errno().": ".$newsql."<br>".$db->error()."</div></td>";
-					}
-					if (!$silent) {
-						print '</tr>'."\n";
+						print '<tr><td class="tdtop"'.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
+						print '<div class="error">'.$langs->trans("Error")." ".$db->errno().": ".$newsql."<br>".$db->error()."</div>";
+						print '</td></tr>'."\n";
 					}
 					dol_syslog('Admin.lib::run_sql Request '.($i + 1)." Error ".$db->errno()." ".$newsql."<br>".$db->error(), LOG_ERR);
 					$error++;
 				}
-			}
-
-			if (!$silent) {
-				print '</tr>'."\n";
 			}
 		}
 	}
@@ -634,7 +621,7 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 /**
  * Prepare array with list of tabs
  *
- * @param	int		$nbofactivatedmodules	Number f oactivated modules
+ * @param	int		$nbofactivatedmodules	Number if activated modules
  * @param	int		$nboftotalmodules		Nb of total modules
  * @return  array							Array of tabs to show
  */
@@ -673,6 +660,45 @@ function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules)
 	$head[$h][1] = $langs->trans("ModulesDevelopYourModule");
 	$head[$h][2] = 'develop';
 	$h++;
+
+	return $head;
+}
+
+/**
+ * Prepare array with list of tabs
+ *
+ * @return  array				Array of tabs to show
+ */
+function ihm_prepare_head()
+{
+	global $langs, $conf, $user;
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=language";
+	$head[$h][1] = $langs->trans("DefaultLanguage");
+	$head[$h][2] = 'language';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=template";
+	$head[$h][1] = $langs->trans("DefaultSkin");
+	$head[$h][2] = 'template';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=login";
+	$head[$h][1] = $langs->trans("LoginPage");
+	$head[$h][2] = 'login';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=other";
+	$head[$h][1] = $langs->trans("Miscellaneous");
+	$head[$h][2] = 'other';
+	$h++;
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'ihm_admin');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'ihm_admin', 'remove');
+
 
 	return $head;
 }
@@ -906,7 +932,7 @@ function listOfSessions()
 
 					if (preg_match('/dol_login/i', $sessValues) && // limit to dolibarr session
 						(preg_match('/dol_entity\|i:'.$conf->entity.';/i', $sessValues) || preg_match('/dol_entity\|s:([0-9]+):"'.$conf->entity.'"/i', $sessValues)) && // limit to current entity
-					preg_match('/dol_company\|s:([0-9]+):"('.$conf->global->MAIN_INFO_SOCIETE_NOM.')"/i', $sessValues)) { // limit to company name
+					preg_match('/dol_company\|s:([0-9]+):"('.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').')"/i', $sessValues)) { // limit to company name
 						$tmp = explode('_', $file);
 						$idsess = $tmp[1];
 						$regs = array();
@@ -1526,10 +1552,11 @@ function complete_elementList_with_modules(&$elementList)
  *	@param	array	$tableau		Array of constants array('key'=>array('type'=>type, 'label'=>label)
  *									where type can be 'string', 'text', 'textarea', 'html', 'yesno', 'emailtemplate:xxx', ...
  *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (deprecated), 2=No form nor button at all, 3=No form nor button at all and each field has a unique name (form is output by caller, recommended)
- *  @param  string  $helptext       Help
+ *  @param  string  $helptext       Tooltip help to use for the column name of values
+ *  @param	string	$text			Text to use for the column name of values
  *	@return	void
  */
-function form_constantes($tableau, $strictw3c = 0, $helptext = '')
+function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Value')
 {
 	global $db, $langs, $conf, $user;
 	global $_Avery_Labels;
@@ -1545,11 +1572,12 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 		print '<input type="hidden" name="action" value="updateall">';
 	}
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td class="">'.$langs->trans("Description").'</td>';
 	print '<td>';
-	$text = $langs->trans("Value");
+	$text = $langs->trans($text);
 	print $form->textwithpicto($text, $helptext, 1, 'help', '', 0, 2, 'idhelptext');
 	print '</td>';
 	if (empty($strictw3c)) {
@@ -1715,6 +1743,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 		}
 	}
 	print '</table>';
+	print '</div>';
 
 	if (!empty($strictw3c) && $strictw3c == 1) {
 		print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';

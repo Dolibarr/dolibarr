@@ -379,6 +379,23 @@ div.pagination .btnTitle:hover .btnTitle-label{
 	}
 }
 
+/* rule to reduce top menu - 3rd reduction: The menu for user is on left */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
+{
+	.butAction, .butActionRefused, .butActionDelete {
+		font-size: 0.9em;
+	}
+}
+
+/* smartphone */
+@media only screen and (max-width: 767px)
+{
+	.butAction, .butActionRefused, .butActionDelete {
+		font-size: 0.85em;
+	}
+}
+
+
 <?php if (!empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (!$user->admin)) { ?>
 .butActionRefused, .butActionNewRefused, .btnTitle.refused {
 	display: none !important;

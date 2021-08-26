@@ -262,11 +262,12 @@ class DoliDBMysqli extends DoliDB
 	 * 	@param	int		$usesavepoint	0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
 	 * 									Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
 	 *  @param  string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
+	 * 	@param	int		$result_mode	Result mode
 	 *	@return	bool|mysqli_result		Resultset of answer
 	 */
-	public function query($query, $usesavepoint = 0, $type = 'auto')
+	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0)
 	{
-		global $conf;
+		global $conf, $dolibarr_main_db_readonly;
 
 		$query = trim($query);
 
@@ -278,11 +279,20 @@ class DoliDBMysqli extends DoliDB
 			return false; // Return false = error if empty request
 		}
 
+		if (!empty($dolibarr_main_db_readonly)) {
+			if (preg_match('/^(INSERT|UPDATE|REPLACE|DELETE|CREATE|ALTER|TRUNCATE|DROP)/i', $query)) {
+				$this->lasterror = 'Application in read-only mode';
+				$this->lasterrno = 'APPREADONLY';
+				$this->lastquery = $query;
+				return false;
+			}
+		}
+
 		if (!$this->database_name) {
 			// Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
-			$ret = $this->db->query($query);
+			$ret = $this->db->query($query, $result_mode);
 		} else {
-			$ret = $this->db->query($query);
+			$ret = $this->db->query($query, $result_mode);
 		}
 
 		if (!preg_match("/^COMMIT/i", $query) && !preg_match("/^ROLLBACK/i", $query)) {
@@ -307,7 +317,7 @@ class DoliDBMysqli extends DoliDB
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Renvoie la ligne courante (comme un objet) pour le curseur resultset
+	 * 	Returns the current line (as an object) for the resultset cursor
 	 *
 	 *	@param	mysqli_result	$resultset	Curseur de la requete voulue
 	 *	@return	object|null					Object result line or null if KO or end of cursor

@@ -96,10 +96,10 @@ class box_ficheinter extends ModeleBoxes
 			$sql .= " WHERE f.fk_soc = s.rowid ";
 			$sql .= " AND f.entity = ".$conf->entity;
 			if (!$user->rights->societe->client->voir && !$user->socid) {
-				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
-				$sql .= " AND s.rowid = ".$user->socid;
+				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
 			$sql .= " ORDER BY f.tms DESC";
 			$sql .= $this->db->plimit($max, 0);
@@ -138,14 +138,14 @@ class box_ficheinter extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$i][] = array(
-						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+						'td' => 'class="tdoverflowmax150"',
 						'text' => $thirdpartystatic->getNomUrl(1),
 						'asis' => 1,
 					);
 
 					$this->info_box_contents[$i][] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($datec, 'day'),
+						'text' => dol_print_date($datec, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$i][] = array(

@@ -48,7 +48,7 @@ if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('orders', "companies", "bills", 'propal', 'deliveries', 'stocks', "productbatch", 'incoterm', 'other'));
+$langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'deliveries', 'stocks', 'productbatch', 'incoterm', 'other'));
 
 $id     = GETPOST('id', 'int'); // id of order
 $ref    = GETPOST('ref', 'alpha');
@@ -232,7 +232,9 @@ if (!empty($conf->projet->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
-llxHeader('', $langs->trans('OrderCard'), '');
+$title = $langs->trans('Order')." - ".$langs->trans('Shipments');
+$help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge';
+llxHeader('', $title, $help_url);
 
 
 if ($id > 0 || !empty($ref)) {
@@ -624,7 +626,7 @@ if ($id > 0 || !empty($ref)) {
 		$sql .= ' p.surface, p.surface_units, p.volume, p.volume_units';
 		$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
-		$sql .= " WHERE cd.fk_commande = ".$object->id;
+		$sql .= " WHERE cd.fk_commande = ".((int) $object->id);
 		$sql .= " ORDER BY cd.rang, cd.rowid";
 
 		//print $sql;
@@ -685,8 +687,8 @@ if ($id > 0 || !empty($ref)) {
 
 							$outputlangs = $langs;
 							$newlang = '';
-							if (empty($newlang) && !empty($_REQUEST['lang_id'])) {
-								$newlang = $_REQUEST['lang_id'];
+							if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+								$newlang = GETPOST('lang_id', 'aZ09');
 							}
 							if (empty($newlang)) {
 								$newlang = $object->thirdparty->default_lang;
