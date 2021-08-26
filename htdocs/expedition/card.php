@@ -461,6 +461,11 @@ if (empty($reshook)) {
 		//		setEventMessages($object->error, $object->errors, 'errors');
 		//	}
 		//}
+	} elseif ($action == 'confirm_modif' && $confirm == 'yes' && $user->rights->expedition->creer &&$user->rights->expedition->shipping_advance->validate) {
+		$result = $object->setStatut(0);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} elseif ($action == 'setdate_livraison' && $user->rights->expedition->creer) {
 		//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
 		$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
@@ -1628,6 +1633,11 @@ if ($action == 'create') {
 		if ($action == 'cancel') {
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('CancelSending'), $langs->trans("ConfirmCancelSending", $object->ref), 'confirm_cancel', '', 0, 1);
 		}
+		
+		// Confirm modification (back to draft status)
+		if ($action == 'modif') {
+			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('UnvalidateShipment'), $langs->trans("ConfirmUnvalidateShipment", $object->ref), 'confirm_modif', '', 0, 1);
+		}
 
 		// Call Hook formConfirm
 		$parameters = array('formConfirm' => $formconfirm);
@@ -2416,6 +2426,11 @@ if ($action == 'create') {
 				} else {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
 				}
+			}
+			
+			// Modify
+			if ($object->statut == Expedition::STATUS_VALIDATED && $user->rights->expedition->creer && $user->rights->expedition->shipping_advance->validate) {
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=modif">'.$langs->trans("Modify").'</a>';
 			}
 
 			// Send
