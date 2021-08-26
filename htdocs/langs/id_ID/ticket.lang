@@ -66,7 +66,7 @@ NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
 Answered=Dijawab
 Waiting=Menunggu
-Closed=Ditutup
+SolvedClosed=Solved
 Deleted=Dihapus
 
 # Dict
@@ -186,9 +186,11 @@ TicketSeverity=Kerasnya
 ShowTicket=Lihat tiket
 RelatedTickets=Tiket terkait
 TicketAddIntervention=Buat intervensi
-CloseTicket=Tutup tiket
-CloseATicket=Tutup tiket
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Konfirmasikan penutupan tiket
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Harap konfirmasi penghapusan tiket
 TicketDeletedSuccess=Tiket dihapus dengan sukses
 TicketMarkedAsClosed=Tiket ditandai sebagai ditutup

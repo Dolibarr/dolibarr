@@ -726,12 +726,9 @@ if ($id) {
 	print dol_get_fiche_end();
 
 	if ($action == 'edit') {
-		print '<div align="center">';
-		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-		print ' &nbsp; ';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
-		print "</form>\n";
+		print $form->buttonsSaveCancel();
+
+		print "</form>";
 	}
 
 	/*

@@ -40,8 +40,8 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Modèle de courriel à envoyer aprè
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Modèle de courriel à envoyer après avoir reçu une suggestion d'un stand.
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Modèle de courriel à envoyer après paiement d'une inscription à un stand.
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Modèle de courriel à envoyer après paiement d'une inscription à un événement.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Modèle de courriel pour action de masse aux intervenants
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Modèle de courriel pour action de masse aux participants
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Modèle de courriel pour action de masse aux participants
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Modèle de courriel pour action de masse aux intervenants
 EVENTORGANIZATION_FILTERATTENDEES_CAT = Filtrer la liste de sélection des tiers dans la fiche/le formulaire de création des participants avec/selon la catégorie
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filtrer la liste de sélection des tiers dans la fiche/le formulaire de création des participants avec le type de client
 
@@ -85,8 +85,8 @@ Attendees = Participants
 DownloadICSLink = Télécharger le lien ICS
 EVENTORGANIZATION_SECUREKEY = Clé sécurisée pour le lien d’inscription public à une conférence
 SERVICE_BOOTH_LOCATION = Service utilisé pour la ligne de facture concernant l'emplacement d'un stand
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to a conference
-NbVotes=Number of votes
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service utilisé pour la ligne de facture concernant l'abonnement d'un participant à une conférence
+NbVotes=Nombre de votes
 #
 # Status
 #
@@ -103,7 +103,7 @@ SuggestForm = Page de suggestions
 RegisterPage = Page pour conférences ou stands
 EvntOrgRegistrationHelpMessage = Ici, vous pouvez voter pour un événement, ou suggérer une nouvelle conférence ou un nouveau stand pour le projet
 EvntOrgRegistrationConfHelpMessage = Ici, vous pouvez suggérer une nouvelle conférence pour le projet
-EvntOrgRegistrationBoothHelpMessage = Here, you can suggest a new booth for the project
+EvntOrgRegistrationBoothHelpMessage = Ici, vous pouvez suggérer un nouveau stand pour le projet
 ListOfSuggestedConferences = Liste des conférences suggérées
 ListOfSuggestedBooths = Liste des stands suggérés
 SuggestConference = Proposer une nouvelle conférence
@@ -116,9 +116,11 @@ EvntOrgDuration = Cette conférence commence le %s et se termine le %s.
 ConferenceAttendeeFee = Frais de participation à la conférence pour l'événement : '%s' se produisant du %s au %s.
 BoothLocationFee = Frais de participation à l'événement : '%s' se produisant du %s au %s.
 EventType = Type événement
-LabelOfBooth=Booth label
-LabelOfconference=Conference label
-ConferenceIsNotConfirmed=Subcription not available, conference is not confirmed yet
+LabelOfBooth=Libellé du stand
+LabelOfconference=Libellé de la conférence
+ConferenceIsNotConfirmed=Inscription non disponible, la conférence n'est pas encore confirmée
+DateMustBeBeforeThan=%s must be before %s
+DateMustBeAfterThan=%s must be after %s
 
 #
 # Vote page
@@ -126,7 +128,7 @@ ConferenceIsNotConfirmed=Subcription not available, conference is not confirmed 
 EvntOrgRegistrationWelcomeMessage = Bienvenue sur la page de suggestion de conférence ou de stand.
 EvntOrgRegistrationConfWelcomeMessage = Bienvenue sur la page de suggestions de conférences.
 EvntOrgRegistrationBoothWelcomeMessage = Bienvenue sur la page de suggestion de stand.
-EvntOrgVoteHelpMessage = Here, you can view and vote for the suggested events for the project
+EvntOrgVoteHelpMessage = Ici, vous pouvez voir et voter pour les événements suggérés pour le projet
 VoteOk = Votre vote a été accepté.
 AlreadyVoted = Vous avez déjà voté pour cet événement.
 VoteError = Une erreur s'est produite lors du vote, veuillez réessayer.

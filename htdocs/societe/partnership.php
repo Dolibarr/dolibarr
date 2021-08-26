@@ -50,6 +50,9 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $socid = GETPOST('socid', 'int');
 if (!empty($user->socid)) {
 	$socid = $user->socid;
+}
+
+if (empty($id) && $socid && (empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) || $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'thirdparty')) {
 	$id = $socid;
 }
 

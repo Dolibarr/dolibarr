@@ -50,6 +50,7 @@ $socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
+$userid = $user->id;
 
 // Security check
 $result = restrictedArea($user, 'ticket', 0, '', '', '', '');
@@ -96,7 +97,7 @@ if (in_array('DOLUSERCOOKIE_ticket_by_status', $autosetarray)) {
 	$endyear = GETPOST($param_year, 'int');
 	$shownb = GETPOST($param_shownb, 'alpha');
 	$showtot = GETPOST($param_showtot, 'alpha');
-} else {
+} elseif (!empty($_COOKIE['DOLUSERCOOKIE_ticket_by_status'])) {
 	$tmparray = json_decode($_COOKIE['DOLUSERCOOKIE_ticket_by_status'], true);
 	$endyear = $tmparray['year'];
 	$shownb = $tmparray['shownb'];
@@ -104,6 +105,7 @@ if (in_array('DOLUSERCOOKIE_ticket_by_status', $autosetarray)) {
 }
 if (empty($shownb) && empty($showtot)) {
 	$showtot = 1;
+	$shownb = 0;
 }
 
 $nowarray = dol_getdate(dol_now(), true);
@@ -324,7 +326,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
 $sql .= ' WHERE t.entity IN ('.getEntity('ticket').')';
 $sql .= " AND t.fk_statut=0";
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 
 if ($user->socid > 0) {
@@ -332,7 +334,7 @@ if ($user->socid > 0) {
 } else {
 	// Restricted to assigned user only
 	if (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && !$user->rights->ticket->manage) {
-		$sql .= " AND t.fk_user_assign=".$user->id;
+		$sql .= " AND t.fk_user_assign = ".((int) $user->id);
 	}
 }
 $sql .= $db->order("t.datec", "DESC");

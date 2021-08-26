@@ -66,7 +66,7 @@ NeedMoreInformation=În aşteptare feedback de la raportor
 NeedMoreInformationShort=În aşteptare feedback
 Answered=S-a răspuns
 Waiting=În aşteptare
-Closed=Închis
+SolvedClosed=Rezolvat
 Deleted=Șters
 
 # Dict
@@ -186,9 +186,11 @@ TicketSeverity=Gravitate
 ShowTicket=Vedeți tichetul
 RelatedTickets=Tichete conexe
 TicketAddIntervention=Crează intervenţie
-CloseTicket=Închide tichet
-CloseATicket=Închide un tichet
+CloseTicket=Închidere/Rezolvare tichet
+AbandonTicket=Abandonare tichet
+CloseATicket=Închidere/Rezolvare un tichet
 ConfirmCloseAticket=Confirmați închiderea tichetului
+ConfirmAbandonTicket=Confirmați închiderea tichetului cu statusul 'Abandonat'
 ConfirmDeleteTicket=Confirmați ștergerea tichetului
 TicketDeletedSuccess=Tichet a fost șters cu succes
 TicketMarkedAsClosed=Tichet marcat ca închis

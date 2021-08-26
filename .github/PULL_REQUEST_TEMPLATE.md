@@ -3,7 +3,7 @@
 *Please:*
 - *only keep the "Fix", "Close" or "New" section*
 - *follow the project [contributing guidelines](/.github/CONTRIBUTING.md)*
-- *replace the bracket enclosed textswith meaningful informations*
+- *replace the bracket enclosed texts with meaningful information*
 
 
 # Fix #[*issue_number Short description*]

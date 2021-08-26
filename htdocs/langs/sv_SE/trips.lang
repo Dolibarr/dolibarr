@@ -90,7 +90,6 @@ DATE_REFUS=Neka datum
 DATE_SAVE=Bekräftelsesdatum
 DATE_CANCEL=Avbokningsdatum
 DATE_PAIEMENT=Betalningsdag
-BROUILLONNER=öppna
 ExpenseReportRef=Ref. kostnads rapport
 ValidateAndSubmit=Bekräfta och lämna in för godkännande
 ValidatedWaitingApproval=Bekräftat (väntar på godkännande)

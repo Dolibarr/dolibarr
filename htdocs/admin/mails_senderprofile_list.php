@@ -395,12 +395,8 @@ if ($action != 'create') {
 		print $form->selectarray('active', $object->fields['active']['arrayofkeyval'], (GETPOSTISSET('active') ? GETPOST('active', 'int') : $object->active), 0, 0, 0, '', 1);
 		print '</td></tr>';
 		print '</table>';
-		print '<br>';
-		print '<div class="center">';
-		print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
-		print ' &nbsp; ';
-		print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
+
+		print $form->buttonsSaveCancel();
 	}
 } else {
 	/*print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -428,12 +424,8 @@ if ($action != 'create') {
 	print $form->selectarray('active', $object->fields['active']['arrayofkeyval'], GETPOST('active', 'int'), 0);
 	print '</td></tr>';
 	print '</table>';
-	print '<br>';
-	print '<div class="center">';
-	print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; ';
-	print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+
+	print $form->buttonsSaveCancel();
 	//print '</form>';
 }
 

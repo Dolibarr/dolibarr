@@ -109,10 +109,10 @@ class box_shipments extends ModeleBoxes
 				$sql .= " AND e.fk_statut = 1";
 			}
 			if ($user->socid > 0) {
-				$sql.= " AND s.rowid = ".$user->socid;
+				$sql.= " AND s.rowid = ".((int) $user->socid);
 			}
 			if (!$user->rights->societe->client->voir && !$user->socid) {
-				$sql .= " AND sc.fk_user = ".$user->id;
+				$sql .= " AND sc.fk_user = ".((int) $user->id);
 			} else {
 				$sql .= " ORDER BY e.date_delivery, e.ref DESC ";
 			}

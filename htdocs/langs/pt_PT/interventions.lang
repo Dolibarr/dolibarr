@@ -64,5 +64,5 @@ InterLineDuration=Duração da intervenção na linha
 InterLineDesc=Descrição da intervenção na linha
 RepeatableIntervention=Template of intervention
 ToCreateAPredefinedIntervention=To create a predefined or recurring intervention, create a common intervention and convert it into intervention template
-Reopen=Reabrir
 ConfirmReopenIntervention=Are you sure you want to open back the intervention <b>%s</b>?
+GenerateInter=Generate intervention

@@ -121,7 +121,7 @@ if ($_socid > 0) {
 
 	print dol_get_fiche_end();
 
-	print '<div align="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+	print $form->buttonsSaveCancel("Save", '');
 
 	print "</form>";
 
