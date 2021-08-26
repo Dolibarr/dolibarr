@@ -104,7 +104,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  */
 function getEntity($element, $shared = 1, $currentobject = null)
 {
-	global $conf, $mc;
+	global $conf, $mc, $hookmanager, $object;
 
 	// fix different element names (France to English)
 	switch ($element) {
@@ -117,7 +117,7 @@ function getEntity($element, $shared = 1, $currentobject = null)
 	}
 
 	if (is_object($mc)) {
-		return $mc->getEntity($element, $shared, $currentobject);
+		$out = $mc->getEntity($element, $shared, $currentobject);
 	} else {
 		$out = '';
 		$addzero = array('user', 'usergroup', 'c_email_templates', 'email_template', 'default_values');
@@ -125,8 +125,26 @@ function getEntity($element, $shared = 1, $currentobject = null)
 			$out .= '0,';
 		}
 		$out .= ((int) $conf->entity);
-		return $out;
 	}
+
+	// Manipulate entities to query on the fly
+	$parameters = array(
+		'object' => $object,
+		'currentobject' => $currentobject,
+		'element' => $element,
+		'shared' => $shared,
+	);
+	$reshook = $hookmanager->executeHooks('functionGetEntity', $parameters, $out, $element); // Note that $action and $object may have been modified by some hooks
+
+	if (is_numeric($reshook)) {
+		if ($reshook == 0 && !empty($hookmanager->resprints)) {
+			$out .= ','.$hookmanager->resprints; // add
+		} elseif ($reshook == 1) {
+			$out = $hookmanager->resprints; // replace
+		}
+	}
+
+	return $out;
 }
 
 /**
