@@ -62,6 +62,8 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open purchase
 NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
 WeightVolShort=Weight/Vol.
 ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
+UnvalidateShipment=Mofidy Shipment
+ConfirmUnvalidateShipment=Are you sure you want to modify this shipment (back to <b>draft</b> status)?
 
 # Sending methods
 # ModelDocument
