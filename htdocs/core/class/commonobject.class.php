@@ -2782,7 +2782,7 @@ abstract class CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET model_pdf = '".$this->db->escape($newmodelpdf)."'";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::setDocModel", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -4500,7 +4500,7 @@ abstract class CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET extraparams = ".(!empty($extraparams) ? "'".$this->db->escape($extraparams)."'" : "null");
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::setExtraParameters", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -9223,7 +9223,7 @@ abstract class CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET ".$statusfield." = ".((int) $status);
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		if ($this->db->query($sql)) {
 			if (!$error) {

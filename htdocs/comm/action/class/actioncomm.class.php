@@ -973,7 +973,7 @@ class ActionComm extends CommonObject
 		// remove categorie association
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_actioncomm";
-			$sql .= " WHERE fk_actioncomm=".$this->id;
+			$sql .= " WHERE fk_actioncomm=".((int) $this->id);
 
 			$res = $this->db->query($sql);
 			if (!$res) {
@@ -985,7 +985,7 @@ class ActionComm extends CommonObject
 		// remove actioncomm_resources
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources";
-			$sql .= " WHERE fk_actioncomm=".$this->id;
+			$sql .= " WHERE fk_actioncomm=".((int) $this->id);
 
 			$res = $this->db->query($sql);
 			if (!$res) {
@@ -1017,7 +1017,7 @@ class ActionComm extends CommonObject
 		// remove actioncomm
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm";
-			$sql .= " WHERE id=".$this->id;
+			$sql .= " WHERE id=".((int) $this->id);
 
 			$res = $this->db->query($sql);
 			if (!$res) {

@@ -1080,7 +1080,7 @@ class Project extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
 			$sql .= " SET fk_statut = ".self::STATUS_CLOSED.", fk_user_close = ".((int) $user->id).", date_close = '".$this->db->idate($now)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$sql .= " AND fk_statut = ".self::STATUS_VALIDATED;
 
 			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {

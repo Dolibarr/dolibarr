@@ -1402,7 +1402,7 @@ class Ticket extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
 			$sql .= " SET fk_statut = ".Ticket::STATUS_READ.", date_read='".$this->db->idate(dol_now())."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::markAsRead");
 			$resql = $this->db->query($sql);
@@ -1460,7 +1460,7 @@ class Ticket extends CommonObject
 		} else {
 			$sql .= " SET fk_user_assign=null, fk_statut = ".Ticket::STATUS_READ;
 		}
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::assignUser sql=".$sql);
 		$resql = $this->db->query($sql);
@@ -1944,7 +1944,7 @@ class Ticket extends CommonObject
 		if ($this->id) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
 			$sql .= " SET fk_soc = ".($id > 0 ? $id : "null");
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this).'::setCustomer sql='.$sql);
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -1968,7 +1968,7 @@ class Ticket extends CommonObject
 		if ($this->id) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
 			$sql .= " SET progress = ".($percent > 0 ? $percent : "null");
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this).'::set_progression sql='.$sql);
 			$resql = $this->db->query($sql);
 			if ($resql) {

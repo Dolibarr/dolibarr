@@ -374,10 +374,10 @@ class AccountingAccount extends CommonObject
 		global $langs;
 
 		$sql = "(SELECT fk_code_ventilation FROM ".MAIN_DB_PREFIX."facturedet";
-		$sql .= " WHERE fk_code_ventilation=".$this->id.")";
+		$sql .= " WHERE fk_code_ventilation=".((int) $this->id).")";
 		$sql .= "UNION";
 		$sql .= " (SELECT fk_code_ventilation FROM ".MAIN_DB_PREFIX."facture_fourn_det";
-		$sql .= " WHERE fk_code_ventilation=".$this->id.")";
+		$sql .= " WHERE fk_code_ventilation=".((int) $this->id).")";
 
 		dol_syslog(get_class($this)."::checkUsage sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);

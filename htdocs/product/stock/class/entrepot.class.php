@@ -389,7 +389,7 @@ class Entrepot extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."entrepot";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$resql1 = $this->db->query($sql);
 			if (!$resql1) {
 				$error++;

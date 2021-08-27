@@ -135,7 +135,7 @@ if (GETPOST('exportcsv', 'int')) {
 	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut as status, mc.date_envoi, mc.tms,";
 	$sql .= " mc.source_id, mc.source_type, mc.error_text";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
-	$sql .= " WHERE mc.fk_mailing=".$object->id;
+	$sql .= " WHERE mc.fk_mailing=".((int) $object->id);
 	$sql .= $db->order($sortfield, $sortorder);
 
 	$resql = $db->query($sql);
@@ -454,7 +454,7 @@ if ($object->fetch($id) >= 0) {
 	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut, mc.date_envoi, mc.tms,";
 	$sql .= " mc.source_url, mc.source_id, mc.source_type, mc.error_text";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
-	$sql .= " WHERE mc.fk_mailing=".$object->id;
+	$sql .= " WHERE mc.fk_mailing=".((int) $object->id);
 	$asearchcriteriahasbeenset = 0;
 	if ($search_lastname) {
 		$sql .= natural_search("mc.lastname", $search_lastname);

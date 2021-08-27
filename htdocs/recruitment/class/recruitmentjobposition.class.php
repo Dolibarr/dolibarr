@@ -528,7 +528,7 @@ class RecruitmentJobPosition extends CommonObject
 			if (!empty($this->fields['fk_user_valid'])) {
 				$sql .= ", fk_user_valid = ".$user->id;
 			}
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -672,7 +672,7 @@ class RecruitmentJobPosition extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET status = ".((int) $status).", note_private = '".$this->db->escape($newprivatenote)."'";
 		//$sql .= ", date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

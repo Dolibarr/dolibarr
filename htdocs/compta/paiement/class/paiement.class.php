@@ -788,7 +788,7 @@ class Paiement extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET datep = '".$this->db->idate($date)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			$result = $this->db->query($sql);
 			if (!$result) {
@@ -839,7 +839,7 @@ class Paiement extends CommonObject
 		if (!empty($num) && $this->statut != 1) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET num_paiement = '".$this->db->escape($num)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::update_num", LOG_DEBUG);
 			$result = $this->db->query($sql);

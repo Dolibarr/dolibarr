@@ -591,10 +591,10 @@ if (empty($reshook) && $action == 'update') {
 				$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = 'dolresource'";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($object->element)."'";
-				$sql .= " WHERE ac.id != ".$object->id;
+				$sql .= " WHERE ac.id <> ".((int) $object->id);
 				$sql .= " AND er.resource_id IN (";
 				$sql .= " SELECT resource_id FROM ".MAIN_DB_PREFIX."element_resources";
-				$sql .= " WHERE element_id = ".$object->id;
+				$sql .= " WHERE element_id = ".((int) $object->id);
 				$sql .= " AND element_type = '".$db->escape($object->element)."'";
 				$sql .= " AND busy = 1";
 				$sql .= ")";
@@ -770,10 +770,10 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate') {
 				$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = 'dolresource'";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($object->element)."'";
-				$sql .= " WHERE ac.id != ".$object->id;
+				$sql .= " WHERE ac.id <> ".((int) $object->id);
 				$sql .= " AND er.resource_id IN (";
 				$sql .= " SELECT resource_id FROM ".MAIN_DB_PREFIX."element_resources";
-				$sql .= " WHERE element_id = ".$object->id;
+				$sql .= " WHERE element_id = ".((int) $object->id);
 				$sql .= " AND element_type = '".$db->escape($object->element)."'";
 				$sql .= " AND busy = 1";
 				$sql .= ")";

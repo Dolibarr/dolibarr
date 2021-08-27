@@ -1661,7 +1661,7 @@ class Task extends CommonObject
 		if (!$error) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
 			$sql .= " SET duration_effective = duration_effective - ".$this->db->escape($this->timespent_duration ? $this->timespent_duration : 0);
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delTimeSpent", LOG_DEBUG);
 			if ($this->db->query($sql)) {

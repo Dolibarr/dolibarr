@@ -3202,7 +3202,7 @@ class ContratLigne extends CommonObjectLine
 		$sql .= ",total_localtax1=".price2num($this->total_localtax1, 'MT')."";
 		$sql .= ",total_localtax2=".price2num($this->total_localtax2, 'MT')."";
 		$sql .= ",total_ttc=".price2num($this->total_ttc, 'MT')."";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update_total", LOG_DEBUG);
 

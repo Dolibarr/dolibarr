@@ -247,7 +247,7 @@ class Tva extends CommonObject
 		// phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."tva SET";
 		$sql .= " paye = 1";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			return 1;
@@ -267,7 +267,7 @@ class Tva extends CommonObject
 		// phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."tva SET";
 		$sql .= " paye = 0";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			return 1;

@@ -2058,7 +2058,7 @@ class Societe extends CommonObject
 			}
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
 			$sql .= " SET client = ".((int) $newclient);
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -2102,7 +2102,7 @@ class Societe extends CommonObject
 			// Position current discount
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
 			$sql .= " SET remise_client = '".$this->db->escape($remise)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->db->rollback();
@@ -2161,7 +2161,7 @@ class Societe extends CommonObject
 			// Position current discount
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
 			$sql .= " SET remise_supplier = '".$this->db->escape($remise)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->db->rollback();
@@ -4685,7 +4685,7 @@ class Societe extends CommonObject
 		if ($this->id) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
 			$sql .= " SET fk_typent = ".($typent_id > 0 ? $typent_id : "null");
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this).'::setThirdpartyType', LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {

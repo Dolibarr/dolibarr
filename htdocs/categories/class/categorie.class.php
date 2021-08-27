@@ -613,7 +613,7 @@ class Categorie extends CommonObject
 		if (!$error) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
 			$sql .= " SET fk_parent = ".((int) $this->fk_parent);
-			$sql .= " WHERE fk_parent = ".$this->id;
+			$sql .= " WHERE fk_parent = ".((int) $this->id);
 
 			if (!$this->db->query($sql)) {
 				$this->error = $this->db->lasterror();
@@ -634,7 +634,7 @@ class Categorie extends CommonObject
 		);
 		foreach ($arraydelete as $key => $value) {
 			$sql  = "DELETE FROM ".MAIN_DB_PREFIX.$key;
-			$sql .= " WHERE ".$value." = ".$this->id;
+			$sql .= " WHERE ".$value." = ".((int) $this->id);
 			if (!$this->db->query($sql)) {
 				$this->errors[] = $this->db->lasterror();
 				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
@@ -1002,7 +1002,7 @@ class Categorie extends CommonObject
 	{
 		// phpcs:enable
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
-		$sql .= " WHERE fk_parent = ".$this->id;
+		$sql .= " WHERE fk_parent = ".((int) $this->id);
 		$sql .= " AND entity IN (".getEntity('category').")";
 
 		$res = $this->db->query($sql);
@@ -1408,7 +1408,7 @@ class Categorie extends CommonObject
 		$parents = array();
 
 		$sql = "SELECT fk_parent FROM ".MAIN_DB_PREFIX."categorie";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$res = $this->db->query($sql);
 

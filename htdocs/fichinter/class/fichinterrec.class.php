@@ -599,7 +599,7 @@ class FichinterRec extends Fichinter
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter_rec ";
 			$sql .= " SET frequency='".$this->db->escape($freq)."'";
 			$sql .= ", date_last_gen='".$this->db->escape($courant)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 

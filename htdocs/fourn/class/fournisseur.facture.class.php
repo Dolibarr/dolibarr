@@ -1579,7 +1579,7 @@ class FactureFournisseur extends CommonInvoice
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
 		$sql .= " SET ref='".$this->db->escape($num)."', fk_statut = 1, fk_user_valid = ".((int) $user->id).", date_valid = '".$this->db->idate($now)."'";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::validate", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1706,7 +1706,7 @@ class FactureFournisseur extends CommonInvoice
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
 		$sql .= " SET fk_statut = ".self::STATUS_DRAFT;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
 		if ($result) {

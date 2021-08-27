@@ -114,7 +114,7 @@ if ($action == "set") {
 
 if ($action == "addnotif") {
 	$bon = new BonPrelevement($db);
-	$bon->AddNotification($db, GETPOST('user', 'int'), $action);
+	$bon->addNotification($db, GETPOST('user', 'int'), $action);
 
 	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
@@ -122,7 +122,7 @@ if ($action == "addnotif") {
 
 if ($action == "deletenotif") {
 	$bon = new BonPrelevement($db);
-	$bon->DeleteNotificationById(GETPOST('notif', 'int'));
+	$bon->deleteNotificationById(GETPOST('notif', 'int'));
 
 	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;

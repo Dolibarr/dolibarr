@@ -363,7 +363,7 @@ class Expedition extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
 			$sql .= " SET ref = '(PROV".$this->id.")'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			if ($this->db->query($sql)) {
@@ -711,7 +711,7 @@ class Expedition extends CommonObject
 		$sql .= ", fk_statut = 1";
 		$sql .= ", date_valid = '".$this->db->idate($now)."'";
 		$sql .= ", fk_user_valid = ".$user->id;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::valid update expedition", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1297,7 +1297,7 @@ class Expedition extends CommonObject
 				// No delete expedition
 				if (!$error) {
 					$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."expedition";
-					$sql .= " WHERE rowid = ".$this->id;
+					$sql .= " WHERE rowid = ".((int) $this->id);
 
 					if ($this->db->query($sql)) {
 						if (!empty($this->origin) && $this->origin_id > 0) {
@@ -1489,7 +1489,7 @@ class Expedition extends CommonObject
 
 				if (!$error) {
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition";
-					$sql .= " WHERE rowid = ".$this->id;
+					$sql .= " WHERE rowid = ".((int) $this->id);
 
 					if ($this->db->query($sql)) {
 						if (!empty($this->origin) && $this->origin_id > 0) {
@@ -1973,7 +1973,7 @@ class Expedition extends CommonObject
 		if ($user->rights->expedition->creer) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
 			$sql .= " SET date_delivery = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::setDeliveryDate", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2814,7 +2814,7 @@ class ExpeditionLigne extends CommonObjectLine
 		}
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		if (!$error && $this->db->query($sql)) {
 			// Remove extrafields

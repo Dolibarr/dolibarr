@@ -231,7 +231,7 @@ class Establishment extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'establishment');
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."establishment SET ref = '".$this->db->escape($this->id)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$this->db->query($sql);
 
 			$this->db->commit();

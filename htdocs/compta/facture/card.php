@@ -889,7 +889,7 @@ if (empty($reshook)) {
 				$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 				$sql .= " re.description, re.fk_facture_source";
 				$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
-				$sql .= " WHERE fk_facture = ".$object->id;
+				$sql .= " WHERE fk_facture = ".((int) $object->id);
 				$resql = $db->query($sql);
 				if (!empty($resql)) {
 					while ($obj = $db->fetch_object($resql)) {
@@ -4975,7 +4975,7 @@ if ($action == 'create') {
 		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 		$sql .= " re.description, re.fk_facture_source";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
-		$sql .= " WHERE fk_facture = ".$object->id;
+		$sql .= " WHERE fk_facture = ".((int) $object->id);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);

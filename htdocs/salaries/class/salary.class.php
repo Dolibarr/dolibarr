@@ -639,7 +639,7 @@ class Salary extends CommonObject
 		// phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."salary SET";
 		$sql .= " paye = 1";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$return = $this->db->query($sql);
 		if ($return) return 1;
 		else return -1;
@@ -657,7 +657,7 @@ class Salary extends CommonObject
 		// phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."salary SET";
 		$sql .= " paye = 0";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$return = $this->db->query($sql);
 		if ($return) return 1;
 		else return -1;

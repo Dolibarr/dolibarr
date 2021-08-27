@@ -495,7 +495,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " , note_public = ".(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "''");
 		$sql .= " , note_private = ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "''");
 		$sql .= " , detail_refuse = ".(!empty($this->detail_refuse) ? "'".$this->db->escape($this->detail_refuse)."'" : "''");
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1252,7 +1252,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " fk_statut = ".self::STATUS_VALIDATED.",";
 		$sql .= " date_valid='".$this->db->idate($this->date_valid)."',";
 		$sql .= " fk_user_valid = ".$user->id;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1746,7 +1746,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " total_ht = ".$this->total_ht;
 		$sql .= " , total_ttc = ".$this->total_ttc;
 		$sql .= " , total_tva = ".$this->total_tva;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
 		if ($result) :
@@ -1776,7 +1776,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " total_ht = ".$this->total_ht;
 		$sql .= " , total_ttc = ".$this->total_ttc;
 		$sql .= " , total_tva = ".$this->total_tva;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
 		if ($result) :

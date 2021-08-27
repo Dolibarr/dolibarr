@@ -390,7 +390,7 @@ class BookKeeping extends CommonObject
 				$sql .= ", '".$this->db->idate($now)."'";
 				$sql .= ", '".$this->db->escape($this->code_journal)."'";
 				$sql .= ", ".(!empty($this->journal_label) ? ("'".$this->db->escape($this->journal_label)."'") : "NULL");
-				$sql .= ", ".$this->db->escape($this->piece_num);
+				$sql .= ", ".((int) $this->piece_num);
 				$sql .= ", ".(!isset($this->entity) ? $conf->entity : $this->entity);
 				$sql .= ")";
 
@@ -1348,7 +1348,7 @@ class BookKeeping extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element.$mode;
 		$sql .= ' SET '.$field.'='.(is_numeric($value) ? $value : "'".$this->db->escape($value)."'");
-		$sql .= " WHERE piece_num = '".$this->db->escape($piece_num)."'";
+		$sql .= " WHERE piece_num = ".((int) $piece_num);
 		$resql = $this->db->query($sql);
 
 		if (!$resql) {
@@ -1637,7 +1637,7 @@ class BookKeeping extends CommonObject
 			$sql .= ", date_export";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
-		$sql .= " WHERE piece_num = ".$piecenum;
+		$sql .= " WHERE piece_num = ".((int) $piecenum);
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -1718,7 +1718,7 @@ class BookKeeping extends CommonObject
 			$sql .= ", date_export";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
-		$sql .= " WHERE piece_num = ".$piecenum;
+		$sql .= " WHERE piece_num = ".((int) $piecenum);
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);

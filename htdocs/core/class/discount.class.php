@@ -434,7 +434,7 @@ class DiscountAbsolute
 				$sql .= " SET fk_facture = ".((int) $rowidinvoice);
 			}
 		}
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::link_to_invoice", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -470,7 +470,7 @@ class DiscountAbsolute
 		} else {
 			$sql .= " SET fk_facture_line = NULL, fk_facture = NULL";
 		}
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::unlink_invoice", LOG_DEBUG);
 		$resql = $this->db->query($sql);

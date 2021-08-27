@@ -1603,7 +1603,7 @@ class Product extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ";
 		$sql .= "$field = '".$this->db->escape($value)."'";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(__METHOD__." sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);

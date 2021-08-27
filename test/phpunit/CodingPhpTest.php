@@ -286,9 +286,9 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			$ok=true;
 			$matches=array();
 
-			// Check sql string AND ... yyy = ".$xxx
+			// Check sql string DELETE|OR|AND|WHERE|INSERT ... yyy = ".$xxx
 			//  with xxx that is not 'thi' (for $this->db->sanitize) and 'db-' (for $db->sanitize). It means we forget a ' if string or an (int) if int when forging sql request.
-			preg_match_all('/(DELETE|OR|AND)\s.*([^\s][^\s][^\s])\s*=\s*"\s*\.\s*\$(...)/', $filecontent, $matches, PREG_SET_ORDER);
+			preg_match_all('/(DELETE|OR|AND|WHERE|INSERT)\s.*([^\s][^\s][^\s])\s*=\s*"\s*\.\s*\$(...)/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
 				if ($val[2] == 'ity' && $val[3] == 'con') {
 					continue;
@@ -314,7 +314,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			$this->assertTrue($ok, 'Found non escaped string in building of a sql request '.$file['relativename'].' - Bad.');
 
 			// Check string sql|set...'".$yyy->xxx   with xxx that is not 'escape', 'idate', .... It means we forget a db->escape when forging sql request.
-			preg_match_all('/(sql|SET).+\s*\'"\s*\.\s*\$(.........)/', $filecontent, $matches, PREG_SET_ORDER);
+			preg_match_all('/(sql|SET|WHERE).+\s*\'"\s*\.\s*\$(.........)/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
 				if (! in_array($val[2], array('this->db-', 'this->esc', 'db->escap', 'dbsession', 'db->idate', 'excludeGr', 'includeGr'))) {
 					$ok=false;

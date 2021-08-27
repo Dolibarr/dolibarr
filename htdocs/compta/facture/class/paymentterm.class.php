@@ -311,7 +311,7 @@ class PaymentTerm // extends CommonObject
 		$sql .= " type_cdr=".(isset($this->type_cdr) ? $this->type_cdr : "null").",";
 		$sql .= " nbjour=".(isset($this->nbjour) ? $this->nbjour : "null").",";
 		$sql .= " decalage=".(isset($this->decalage) ? $this->decalage : "null")."";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -350,7 +350,7 @@ class PaymentTerm // extends CommonObject
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_payment_term";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
