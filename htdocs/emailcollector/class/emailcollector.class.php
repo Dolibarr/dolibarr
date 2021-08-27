@@ -1466,7 +1466,7 @@ class EmailCollector extends CommonObject
 							}
 							if ($reg[1] == 'inv') { // customer invoices
 								$objectemail = new Facture($this->db);
-							} 
+							}
 							if ($reg[1] == 'sinv') { // supplier invoices
 								$objectemail = new FactureFournisseur($this->db);
 							}
