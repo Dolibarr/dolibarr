@@ -555,7 +555,7 @@ class Don extends CommonObject
 		// Delete donation
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."don_extrafields";
-			$sql .= " WHERE fk_object=".$this->id;
+			$sql .= " WHERE fk_object = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {

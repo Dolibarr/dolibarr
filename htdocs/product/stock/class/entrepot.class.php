@@ -366,7 +366,7 @@ class Entrepot extends CommonObject
 		foreach ($elements as $table) {
 			if (!$error) {
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
-				$sql .= " WHERE fk_entrepot = ".$this->id;
+				$sql .= " WHERE fk_entrepot = ".((int) $this->id);
 
 				$result = $this->db->query($sql);
 				if (!$result) {
@@ -585,7 +585,7 @@ class Entrepot extends CommonObject
 		$sql = "SELECT count(distinct p.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
 		$sql .= ", ".MAIN_DB_PREFIX."product as p";
-		$sql .= " WHERE ps.fk_entrepot = ".$this->id;
+		$sql .= " WHERE ps.fk_entrepot = ".((int) $this->id);
 		$sql .= " AND ps.fk_product = p.rowid";
 
 		//print $sql;
@@ -630,7 +630,7 @@ class Entrepot extends CommonObject
 		if ($separatedPMP) {
 			$sql .= ", ".MAIN_DB_PREFIX."product_perentity as pa";
 		}
-		$sql .= " WHERE ps.fk_entrepot = ".$this->id;
+		$sql .= " WHERE ps.fk_entrepot = ".((int) $this->id);
 		if ($separatedPMP) {
 			$sql .= " AND pa.fk_product = p.rowid AND pa.entity = ". (int) $conf->entity;
 		}

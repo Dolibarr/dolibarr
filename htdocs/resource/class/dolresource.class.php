@@ -360,7 +360,7 @@ class Dolresource extends CommonObject
 		$sql .= " t.fk_user_create,";
 		$sql .= " t.tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as t";
-		$sql .= " WHERE t.rowid = ".$this->db->escape($id);
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);

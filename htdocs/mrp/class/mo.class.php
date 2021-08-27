@@ -546,7 +546,7 @@ class Mo extends CommonObject
 		$result = 0;
 
 		$sql = 'SELECT COUNT(rowid) as nb FROM '.MAIN_DB_PREFIX.'stock_mouvement as sm';
-		$sql .= " WHERE sm.origintype = 'mo' and sm.fk_origin = ".$this->id;
+		$sql .= " WHERE sm.origintype = 'mo' and sm.fk_origin = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

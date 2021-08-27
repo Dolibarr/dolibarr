@@ -2805,7 +2805,7 @@ class ExpeditionLigne extends CommonObjectLine
 		// delete batch expedition line
 		if ($conf->productbatch->enabled) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet_batch";
-			$sql .= " WHERE fk_expeditiondet = ".$this->id;
+			$sql .= " WHERE fk_expeditiondet = ".((int) $this->id);
 
 			if (!$this->db->query($sql)) {
 				$this->errors[] = $this->db->lasterror()." - sql=$sql";
@@ -2951,7 +2951,7 @@ class ExpeditionLigne extends CommonObjectLine
 				if (!$error && !empty($expedition_batch_id)) {
 					// delete lot expedition line
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet_batch";
-					$sql .= " WHERE fk_expeditiondet = ".$this->id;
+					$sql .= " WHERE fk_expeditiondet = ".((int) $this->id);
 					$sql .= " AND rowid = ".((int) $expedition_batch_id);
 
 					if (!$this->db->query($sql)) {

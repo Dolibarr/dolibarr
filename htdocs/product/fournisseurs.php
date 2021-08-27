@@ -272,7 +272,7 @@ if (empty($reshook)) {
 				$extralabels = $extrafields->fetch_name_optionals_label("product_fournisseur_price");
 				$extrafield_values = $extrafields->getOptionalsFromPost("product_fournisseur_price");
 				if (!empty($extrafield_values)) {
-					$resql = $db->query("SELECT fk_object FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields WHERE fk_object = ".$object->product_fourn_price_id);
+					$resql = $db->query("SELECT fk_object FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields WHERE fk_object = ".((int) $object->product_fourn_price_id));
 					// Insert a new extrafields row, if none exists
 					if ($db->num_rows($resql) != 1) {
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields (fk_object, ";

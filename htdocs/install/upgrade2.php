@@ -2097,7 +2097,7 @@ function migrate_commande_livraison($db, $langs, $conf)
 						$sqlu = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
 						$sqlu .= " ref_client='".$db->escape($obj->ref_client)."'";
 						$sqlu .= ", date_livraison='".$db->idate($delivery_date)."'";
-						$sqlu .= " WHERE rowid = ".$obj->rowid;
+						$sqlu .= " WHERE rowid = ".((int) $obj->rowid);
 						$resql3 = $db->query($sqlu);
 						if (!$resql3) {
 							$error++;
@@ -2170,11 +2170,11 @@ function migrate_detail_livraison($db, $langs, $conf)
 					$obj = $db->fetch_object($resql);
 
 					$sql = "UPDATE ".MAIN_DB_PREFIX."livraisondet SET";
-					$sql .= " fk_product=".$obj->fk_product;
-					$sql .= ",description='".$db->escape($obj->description)."'";
-					$sql .= ",subprice='".$db->escape($obj->subprice)."'";
-					$sql .= ",total_ht='".$db->escape($obj->total_ht)."'";
-					$sql .= " WHERE fk_commande_ligne = ".$obj->rowid;
+					$sql .= " fk_product = ".((int) $obj->fk_product);
+					$sql .= ",description = '".$db->escape($obj->description)."'";
+					$sql .= ",subprice = ".price2num($obj->subprice);
+					$sql .= ",total_ht = ".price2num($obj->total_ht);
+					$sql .= " WHERE fk_commande_ligne = ".((int) $obj->rowid);
 					$resql2 = $db->query($sql);
 
 					if ($resql2) {
@@ -2188,8 +2188,8 @@ function migrate_detail_livraison($db, $langs, $conf)
 							$total_ht = $obju->total_ht + $obj->total_ht;
 
 							$sqlu = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
-							$sqlu .= " total_ht='".$db->escape($total_ht)."'";
-							$sqlu .= " WHERE rowid=".$obj->fk_livraison;
+							$sqlu .= " total_ht = ".price2num($total_ht, 'MT');
+							$sqlu .= " WHERE rowid = ".((int) $obj->fk_livraison);
 							$resql4 = $db->query($sqlu);
 							if (!$resql4) {
 								$error++;
@@ -2266,8 +2266,8 @@ function migrate_stocks($db, $langs, $conf)
 				$obj = $db->fetch_object($resql);
 
 				$sql = "UPDATE ".MAIN_DB_PREFIX."product SET";
-				$sql .= " stock = '".$db->escape($obj->total)."'";
-				$sql .= " WHERE rowid=".$obj->fk_product;
+				$sql .= " stock = ".price2num($obj->total, 'MS');
+				$sql .= " WHERE rowid = ".((int) $obj->fk_product);
 
 				$resql2 = $db->query($sql);
 				if ($resql2) {
@@ -2330,7 +2330,7 @@ function migrate_menus($db, $langs, $conf)
 
 					$sql = "UPDATE ".MAIN_DB_PREFIX."menu SET";
 					$sql .= " enabled = '".$db->escape($obj->action)."'";
-					$sql .= " WHERE rowid=".$obj->rowid;
+					$sql .= " WHERE rowid = ".((int) $obj->rowid);
 					$sql .= " AND enabled = '1'";
 
 					$resql2 = $db->query($sql);
@@ -2400,7 +2400,7 @@ function migrate_commande_deliveryaddress($db, $langs, $conf)
 
 					$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
 					$sql .= " fk_adresse_livraison = '".$db->escape($obj->fk_adresse_livraison)."'";
-					$sql .= " WHERE rowid=".$obj->fk_expedition;
+					$sql .= " WHERE rowid = ".((int) $obj->fk_expedition);
 
 					$resql2 = $db->query($sql);
 					if (!$resql2) {
@@ -3049,7 +3049,7 @@ function migrate_shipping_delivery($db, $langs, $conf)
 					$result = $db->query($sqlInsert);
 					if ($result) {
 						$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."livraison SET fk_expedition = NULL";
-						$sqlUpdate .= " WHERE rowid = ".$obj->rowid;
+						$sqlUpdate .= " WHERE rowid = ".((int) $obj->rowid);
 
 						$result = $db->query($sqlUpdate);
 						if (!$result) {
@@ -3137,7 +3137,7 @@ function migrate_shipping_delivery2($db, $langs, $conf)
 				$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
 				$sqlUpdate .= " ref_customer = '".$db->escape($obj->ref_customer)."',";
 				$sqlUpdate .= " date_delivery = ".($obj->date_delivery ? "'".$db->escape($obj->date_delivery)."'" : 'null');
-				$sqlUpdate .= " WHERE rowid = ".$obj->delivery_id;
+				$sqlUpdate .= " WHERE rowid = ".((int) $obj->delivery_id);
 
 				$result = $db->query($sqlUpdate);
 				if (!$result) {
@@ -3629,7 +3629,7 @@ function migrate_reset_blocked_log($db, $langs, $conf)
 
 				print 'Process entity '.$obj->entity;
 
-				$sqlSearch = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."blockedlog WHERE action = 'MODULE_SET' and entity = ".$obj->entity;
+				$sqlSearch = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."blockedlog WHERE action = 'MODULE_SET' and entity = ".((int) $obj->entity);
 				$resqlSearch = $db->query($sqlSearch);
 				if ($resqlSearch) {
 					$objSearch = $db->fetch_object($resqlSearch);
@@ -3638,7 +3638,7 @@ function migrate_reset_blocked_log($db, $langs, $conf)
 						print ' - Record for entity must be reset...';
 
 						$sqlUpdate = "DELETE FROM ".MAIN_DB_PREFIX."blockedlog";
-						$sqlUpdate .= " WHERE entity = ".$obj->entity;
+						$sqlUpdate .= " WHERE entity = ".((int) $obj->entity);
 						$resqlUpdate = $db->query($sqlUpdate);
 						if (!$resqlUpdate) {
 							$error++;
@@ -3725,7 +3725,7 @@ function migrate_remise_entity($db, $langs, $conf)
 
 				$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."societe_remise SET";
 				$sqlUpdate .= " entity = ".$obj->entity;
-				$sqlUpdate .= " WHERE rowid = ".$obj->rowid;
+				$sqlUpdate .= " WHERE rowid = ".((int) $obj->rowid);
 
 				$result = $db->query($sqlUpdate);
 				if (!$result) {
@@ -3810,8 +3810,8 @@ function migrate_remise_except_entity($db, $langs, $conf)
 						$obj2 = $db->fetch_object($resql2);
 
 						$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."societe_remise_except SET";
-						$sqlUpdate .= " entity = ".$obj2->entity;
-						$sqlUpdate .= " WHERE rowid = ".$obj->rowid;
+						$sqlUpdate .= " entity = ".((int) $obj2->entity);
+						$sqlUpdate .= " WHERE rowid = ".((int) $obj->rowid);
 
 						$result = $db->query($sqlUpdate);
 						if (!$result) {
@@ -3880,8 +3880,8 @@ function migrate_user_rights_entity($db, $langs, $conf)
 				$obj = $db->fetch_object($resql);
 
 				$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."user_rights SET";
-				$sqlUpdate .= " entity = ".$obj->entity;
-				$sqlUpdate .= " WHERE fk_user = ".$obj->rowid;
+				$sqlUpdate .= " entity = ".((int) $obj->entity);
+				$sqlUpdate .= " WHERE fk_user = ".((int) $obj->rowid);
 
 				$result = $db->query($sqlUpdate);
 				if (!$result) {
@@ -3945,8 +3945,8 @@ function migrate_usergroup_rights_entity($db, $langs, $conf)
 				$obj = $db->fetch_object($resql);
 
 				$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."usergroup_rights SET";
-				$sqlUpdate .= " entity = ".$obj->entity;
-				$sqlUpdate .= " WHERE fk_usergroup = ".$obj->rowid;
+				$sqlUpdate .= " entity = ".((int) $obj->entity);
+				$sqlUpdate .= " WHERE fk_usergroup = ".((int) $obj->rowid);
 
 				$result = $db->query($sqlUpdate);
 				if (!$result) {

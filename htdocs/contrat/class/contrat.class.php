@@ -507,7 +507,7 @@ class Contrat extends CommonObject
 		if ($num) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET ref = '".$this->db->escape($num)."', statut = 1";
 			//$sql.= ", fk_user_valid = ".$user->id.", date_valid = '".$this->db->idate($now)."'";
-			$sql .= " WHERE rowid = ".$this->id." AND statut = 0";
+			$sql .= " WHERE rowid = ".((int) $this->id)." AND statut = 0";
 
 			dol_syslog(get_class($this)."::validate", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -607,7 +607,7 @@ class Contrat extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 0";
 		//$sql.= ", fk_user_valid = null, date_valid = null";
-		$sql .= " WHERE rowid = ".$this->id." AND statut = 1";
+		$sql .= " WHERE rowid = ".((int) $this->id)." AND statut = 1";
 
 		dol_syslog(get_class($this)."::validate", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1197,7 +1197,7 @@ class Contrat extends CommonObject
 				// Delete contratdet extrafields
 				$main = MAIN_DB_PREFIX.'contratdet';
 				$ef = $main."_extrafields";
-				$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_contrat = ".((int) $this->id).")";
+				$sql = "DELETE FROM ".$ef." WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_contrat = ".((int) $this->id).")";
 
 				dol_syslog(get_class($this)."::delete contratdet_extrafields", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -2112,7 +2112,7 @@ class Contrat extends CommonObject
 
 		$sql = "SELECT cd.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
-		$sql .= " WHERE fk_contrat =".$this->id;
+		$sql .= " WHERE fk_contrat =".((int) $this->id);
 		if ($status >= 0) {
 			$sql .= " AND statut = ".((int) $status);
 		}
@@ -2146,9 +2146,9 @@ class Contrat extends CommonObject
 
 		$sql = "SELECT c.rowid, c.ref";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
-		$sql .= " WHERE fk_soc =".$this->socid;
+		$sql .= " WHERE fk_soc =".((int) $this->socid);
 		if ($option == 'others') {
-			$sql .= " AND c.rowid != ".$this->id;
+			$sql .= " AND c.rowid <> ".((int) $this->id);
 		}
 
 		dol_syslog(get_class($this)."::getOtherContracts()", LOG_DEBUG);
@@ -3332,10 +3332,10 @@ class ContratLigne extends CommonObjectLine
 		if ($date_end >= 0) {
 			$sql .= " date_fin_validite = ".(dol_strlen($date_end) != 0 ? "'".$this->db->idate($date_end)."'" : "null").",";
 		}
-		$sql .= " fk_user_ouverture = ".$user->id.",";
+		$sql .= " fk_user_ouverture = ".((int) $user->id).",";
 		$sql .= " date_cloture = null,";
 		$sql .= " commentaire = '".$this->db->escape($comment)."'";
-		$sql .= " WHERE rowid = ".$this->id." AND (statut = ".ContratLigne::STATUS_INITIAL." OR statut = ".ContratLigne::STATUS_CLOSED.")";
+		$sql .= " WHERE rowid = ".((int) $this->id)." AND (statut = ".ContratLigne::STATUS_INITIAL." OR statut = ".ContratLigne::STATUS_CLOSED.")";
 
 		dol_syslog(get_class($this)."::active_line", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -3396,9 +3396,9 @@ class ContratLigne extends CommonObjectLine
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = ".((int) ContratLigne::STATUS_CLOSED).",";
 		$sql .= " date_cloture = '".$this->db->idate($date_end)."',";
-		$sql .= " fk_user_cloture = ".$user->id.",";
+		$sql .= " fk_user_cloture = ".((int) $user->id).",";
 		$sql .= " commentaire = '".$this->db->escape($comment)."'";
-		$sql .= " WHERE rowid = ".$this->id." AND statut = ".((int) ContratLigne::STATUS_OPEN);
+		$sql .= " WHERE rowid = ".((int) $this->id)." AND statut = ".((int) ContratLigne::STATUS_OPEN);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

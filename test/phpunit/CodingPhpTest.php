@@ -143,7 +143,6 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
-
 		print __METHOD__."\n";
 	}
 
@@ -290,7 +289,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			//  with xxx that is not 'thi' (for $this->db->sanitize) and 'db-' (for $db->sanitize). It means we forget a ' if string or an (int) if int when forging sql request.
 			preg_match_all('/(DELETE|OR|AND|WHERE|INSERT)\s.*([^\s][^\s][^\s])\s*=\s*"\s*\.\s*\$(...)/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
-				if ($val[2] == 'ity' && $val[3] == 'con') {
+				if ($val[2] == 'ity' && $val[3] == 'con') {		// exclude entity = $conf->entity
 					continue;
 				}
 				var_dump($matches);
@@ -316,7 +315,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			// Check string sql|set...'".$yyy->xxx   with xxx that is not 'escape', 'idate', .... It means we forget a db->escape when forging sql request.
 			preg_match_all('/(sql|SET|WHERE).+\s*\'"\s*\.\s*\$(.........)/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
-				if (! in_array($val[2], array('this->db-', 'this->esc', 'db->escap', 'dbsession', 'db->idate', 'excludeGr', 'includeGr'))) {
+				if (! in_array($val[2], array('this->db-', 'this->esc', 'db->escap', 'mydb->esc', 'dbsession', 'db->idate', 'escapedli', 'excludeGr', 'includeGr'))) {
 					$ok=false;
 					break;
 				}

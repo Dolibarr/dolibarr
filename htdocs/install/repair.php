@@ -929,7 +929,7 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha')) {
 								// TODO If it fails, we must make update
 								//$sql2 ="UPDATE ".MAIN_DB_PREFIX."product_batch";
 								//$sql2.=" SET ".$obj->psrowid.", '000000', ".($obj->reel - $obj->reelbatch).")";
-								//$sql2.=" WHERE fk_product_stock = ".$obj->psrowid"
+								//$sql2.=" WHERE fk_product_stock = ".((int) $obj->psrowid)
 							}
 						}
 					}

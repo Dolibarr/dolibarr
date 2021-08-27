@@ -47,7 +47,7 @@ function facture_prepare_head($object)
 
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
-		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/contact.php?facid='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/contact.php?facid='.urlencode($object->id);
 		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
@@ -60,7 +60,7 @@ function facture_prepare_head($object)
 		$nbStandingOrders = 0;
 		$sql = "SELECT COUNT(pfd.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-		$sql .= " WHERE pfd.fk_facture = ".$object->id;
+		$sql .= " WHERE pfd.fk_facture = ".((int) $object->id);
 		$sql .= " AND pfd.ext_payment_id IS NULL";
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -71,7 +71,7 @@ function facture_prepare_head($object)
 		} else {
 			dol_print_error($db);
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.urlencode($object->id);
 		$head[$h][1] = $langs->trans('StandingOrders');
 		if ($nbStandingOrders > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbStandingOrders.'</span>';

@@ -2946,7 +2946,7 @@ class FactureFournisseur extends CommonInvoice
 	{
 		$isUsed = false;
 
-		$sql = "SELECT fk_invoice_supplier FROM ".MAIN_DB_PREFIX."societe_remise_except WHERE fk_invoice_supplier_source=".$this->id;
+		$sql = "SELECT fk_invoice_supplier FROM ".MAIN_DB_PREFIX."societe_remise_except WHERE fk_invoice_supplier_source = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if (!empty($resql)) {
 			$obj = $this->db->fetch_object($resql);
@@ -3701,12 +3701,12 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det SET";
-		$sql .= "  total_ht='".price2num($this->total_ht)."'";
-		$sql .= ", tva='".price2num($this->total_tva)."'";
-		$sql .= ", total_localtax1='".price2num($this->total_localtax1)."'";
-		$sql .= ", total_localtax2='".price2num($this->total_localtax2)."'";
-		$sql .= ", total_ttc='".price2num($this->total_ttc)."'";
-		$sql .= " WHERE rowid = ".$this->rowid;
+		$sql .= "  total_ht = ".price2num($this->total_ht);
+		$sql .= ", tva= ".price2num($this->total_tva);
+		$sql .= ", total_localtax1 = ".price2num($this->total_localtax1);
+		$sql .= ", total_localtax2 = ".price2num($this->total_localtax2);
+		$sql .= ", total_ttc = ".price2num($this->total_ttc);
+		$sql .= " WHERE rowid = ".((int) $this->rowid);
 
 		dol_syslog("FactureFournisseurLigne.class.php::update_total", LOG_DEBUG);
 

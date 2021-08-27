@@ -721,7 +721,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= " t.import_key";
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_customer_price as t";
-		$sql .= " WHERE t.rowid = ".$this->id;
+		$sql .= " WHERE t.rowid = ".((int) $this->id);
 
 		$this->db->begin();
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);

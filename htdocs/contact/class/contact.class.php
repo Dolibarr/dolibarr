@@ -595,7 +595,7 @@ class Contact extends CommonObject
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape($user->id)."'" : "NULL");
 		$sql .= ", default_lang=".($this->default_lang ? "'".$this->db->escape($this->default_lang)."'" : "NULL");
 		$sql .= ", entity = ".((int) $this->entity);
-		$sql .= " WHERE rowid=".((int) $id);
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -871,12 +871,12 @@ class Contact extends CommonObject
 
 		// Mis a jour contact
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET";
-		$sql .= " birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
+		$sql .= " birthday = ".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
 		$sql .= ", photo = ".($this->photo ? "'".$this->db->escape($this->photo)."'" : "null");
 		if ($user) {
-			$sql .= ", fk_user_modif=".$user->id;
+			$sql .= ", fk_user_modif = ".((int) $user->id);
 		}
-		$sql .= " WHERE rowid=".$this->db->escape($id);
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::update_perso this->birthday=".$this->birthday." -", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1278,7 +1278,7 @@ class Contact extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
-			$sql .= " WHERE rowid=".((int) $this->id);
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if (!$result) {

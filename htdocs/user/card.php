@@ -512,15 +512,15 @@ if (empty($reshook)) {
 						if (!empty($contact->socid)) {
 							$sql .= ", fk_soc=".((int) $contact->socid);
 						}
-						$sql .= " WHERE rowid=".$object->id;
+						$sql .= " WHERE rowid = ".((int) $object->id);
 					} elseif ($socid > 0) {
 						$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 						$sql .= " SET fk_socpeople=NULL, fk_soc=".((int) $socid);
-						$sql .= " WHERE rowid=".$object->id;
+						$sql .= " WHERE rowid = ".((int) $object->id);
 					} else {
 						$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 						$sql .= " SET fk_socpeople=NULL, fk_soc=NULL";
-						$sql .= " WHERE rowid=".$object->id;
+						$sql .= " WHERE rowid = ".((int) $object->id);
 					}
 					dol_syslog("usercard::update", LOG_DEBUG);
 					$resql = $db->query($sql);

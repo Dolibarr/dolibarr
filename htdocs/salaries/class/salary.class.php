@@ -286,7 +286,7 @@ class Salary extends CommonObject
 		/*if (!$error)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."salary_extrafields";
-			$sql .= " WHERE fk_object=".$this->id;
+			$sql .= " WHERE fk_object = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql)

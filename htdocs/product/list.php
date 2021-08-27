@@ -1253,8 +1253,8 @@ if ($resql) {
 		if (!empty($conf->global->MAIN_MULTILANGS)) {  // If multilang is enabled
 			$sql = "SELECT label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
-			$sql .= " WHERE fk_product=".$obj->rowid;
-			$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
+			$sql .= " WHERE fk_product = ".((int) $obj->rowid);
+			$sql .= " AND lang = '".$db->escape($langs->getDefaultLang())."'";
 			$sql .= " LIMIT 1";
 
 			$result = $db->query($sql);

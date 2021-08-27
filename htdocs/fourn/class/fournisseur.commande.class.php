@@ -473,7 +473,7 @@ class CommandeFournisseur extends CommonOrder
 		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON l.fk_product = pfp.fk_product and l.ref = pfp.ref_fourn AND pfp.fk_soc = ".((int) $this->socid);
 		}
-		$sql .= " WHERE l.fk_commande = ".$this->id;
+		$sql .= " WHERE l.fk_commande = ".((int) $this->id);
 		if ($only_product) {
 			$sql .= ' AND p.fk_product_type = 0';
 		}
@@ -627,7 +627,7 @@ class CommandeFournisseur extends CommonOrder
 				if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 					// Now we rename also files into index
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'fournisseur/commande/".$this->db->escape($this->newref)."'";
-					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'fournisseur/commande/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'fournisseur/commande/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++; $this->error = $this->db->lasterror();
@@ -2236,7 +2236,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " FROM ".MAIN_DB_PREFIX."product as p,";
 		$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e ON cfd.fk_entrepot = e.rowid";
-		$sql .= " WHERE cfd.fk_commande = ".$this->id;
+		$sql .= " WHERE cfd.fk_commande = ".((int) $this->id);
 		$sql .= " AND cfd.fk_product = p.rowid";
 		if ($status >= 0) {
 			$sql .= " AND cfd.status = ".((int) $status);

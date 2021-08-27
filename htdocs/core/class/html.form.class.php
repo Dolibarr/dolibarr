@@ -2625,7 +2625,7 @@ class Form
 				if ((!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) && !empty($objp->price_by_qty) && $objp->price_by_qty == 1) { // Price by quantity will return many prices for the same product
 					$sql = "SELECT rowid, quantity, price, unitprice, remise_percent, remise, price_base_type";
 					$sql .= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
-					$sql .= " WHERE fk_product_price=".$objp->price_rowid;
+					$sql .= " WHERE fk_product_price = ".((int) $objp->price_rowid);
 					$sql .= " ORDER BY quantity ASC";
 
 					dol_syslog(get_class($this)."::select_produits_list search prices by qty", LOG_DEBUG);

@@ -341,11 +341,11 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 							if (GETPOSTISSET($saveprice)) {
 								// TODO Use class
 								$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
-								$sql .= " SET unitprice='".GETPOST($pu)."'";
-								$sql .= ", price=".GETPOST($pu)."*quantity";
-								$sql .= ", remise_percent='".(!empty($dto) ? $dto : 0)."'";
-								$sql .= " WHERE fk_soc=".$object->socid;
-								$sql .= " AND fk_product=".GETPOST($prod, 'int');
+								$sql .= " SET unitprice = ".price2num(GETPOST($pu), 'MU', 2);
+								$sql .= ", price = ".price2num(GETPOST($pu), 'MU', 2)." * quantity";
+								$sql .= ", remise_percent = ".price2num((empty($dto) ? 0 : $dto), 3, 2)."'";
+								$sql .= " WHERE fk_soc = ".((int) $object->socid);
+								$sql .= " AND fk_product=".((int) GETPOST($prod, 'int'));
 
 								$resql = $db->query($sql);
 							}
@@ -653,7 +653,7 @@ if ($id > 0 || !empty($ref)) {
 		$sql = "SELECT l.rowid, cfd.fk_product, sum(cfd.qty) as qty";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as l on l.rowid = cfd.fk_commandefourndet";
-		$sql .= " WHERE cfd.fk_commande = ".$object->id;
+		$sql .= " WHERE cfd.fk_commande = ".((int) $object->id);
 		$sql .= " GROUP BY l.rowid, cfd.fk_product";
 
 		$resql = $db->query($sql);
@@ -689,7 +689,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product=p.rowid";
-		$sql .= " WHERE l.fk_commande = ".$object->id;
+		$sql .= " WHERE l.fk_commande = ".((int) $object->id);
 		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 			$sql .= " AND l.product_type = 0";
 		}
@@ -1113,7 +1113,7 @@ if ($id > 0 || !empty($ref)) {
 	if ($conf->reception->enabled) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."reception as r ON cfd.fk_reception = r.rowid";
 	}
-	$sql .= " WHERE cfd.fk_commande = ".$object->id;
+	$sql .= " WHERE cfd.fk_commande = ".((int) $object->id);
 	$sql .= " AND cfd.fk_product = p.rowid";
 	$sql .= " ORDER BY cfd.rowid ASC";
 

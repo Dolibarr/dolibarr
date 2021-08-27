@@ -536,7 +536,7 @@ function dolibarr_get_const($db, $name, $entity = 1)
 
 	$sql = "SELECT ".$db->decrypt('value')." as value";
 	$sql .= " FROM ".MAIN_DB_PREFIX."const";
-	$sql .= " WHERE name = ".$db->encrypt($name, 1);
+	$sql .= " WHERE name = '".$db->escape($db->encrypt($name))."'";
 	$sql .= " AND entity = ".((int) $entity);
 
 	dol_syslog("admin.lib::dolibarr_get_const", LOG_DEBUG);
@@ -583,7 +583,7 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 	$db->begin();
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-	$sql .= " WHERE name = ".$db->encrypt($name, 1);
+	$sql .= " WHERE name = '".$db->escape($db->encrypt($name))."'";
 	if ($entity >= 0) {
 		$sql .= " AND entity = ".((int) $entity);
 	}

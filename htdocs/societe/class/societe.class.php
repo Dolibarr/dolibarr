@@ -917,7 +917,7 @@ class Societe extends CommonObject
 
 				// update accountancy for this entity
 				if (!$error && !empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-					$this->db->query("DELETE FROM " . MAIN_DB_PREFIX . "societe_perentity WHERE fk_soc = " . $this->id . " AND entity = " . $conf->entity);
+					$this->db->query("DELETE FROM " . MAIN_DB_PREFIX . "societe_perentity WHERE fk_soc = " . ((int) $this->id) . " AND entity = " . ((int) $conf->entity));
 
 					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_perentity (";
 					$sql .= " fk_soc";
@@ -1535,7 +1535,7 @@ class Societe extends CommonObject
 
 				// update accountancy for this entity
 				if (!$error && !empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-					$this->db->query("DELETE FROM " . MAIN_DB_PREFIX . "societe_perentity WHERE fk_soc = " . $this->id . " AND entity = " . $conf->entity);
+					$this->db->query("DELETE FROM " . MAIN_DB_PREFIX . "societe_perentity WHERE fk_soc = " . ((int) $this->id) . " AND entity = " . ((int) $conf->entity));
 
 					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_perentity (";
 					$sql .= " fk_soc";
@@ -2401,7 +2401,7 @@ class Societe extends CommonObject
 
 			if (!$error) {
 				$sql = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux";
-				$sql .= " WHERE fk_soc = ".$this->id." AND fk_user = ".((int) $commid);
+				$sql .= " WHERE fk_soc = ".((int) $this->id)." AND fk_user = ".((int) $commid);
 
 				$resql = $this->db->query($sql);
 				if (!$resql) {
@@ -2413,7 +2413,7 @@ class Societe extends CommonObject
 			if (!$error) {
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_commerciaux";
 				$sql .= " (fk_soc, fk_user)";
-				$sql .= " VALUES (".$this->id.", ".$commid.")";
+				$sql .= " VALUES (".((int) $this->id).", ".((int) $commid).")";
 
 				$resql = $this->db->query($sql);
 				if (!$resql) {
@@ -2423,7 +2423,7 @@ class Societe extends CommonObject
 			}
 
 			if (!$error) {
-				$this->context = array('commercial_modified'=>$commid);
+				$this->context = array('commercial_modified' => $commid);
 
 				$result = $this->call_trigger('COMPANY_LINK_SALE_REPRESENTATIVE', $user);
 				if ($result < 0) {
@@ -2464,7 +2464,7 @@ class Societe extends CommonObject
 
 		if ($this->id > 0 && $commid > 0) {
 			$sql  = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux ";
-			$sql .= " WHERE fk_soc = ".$this->id." AND fk_user = ".((int) $commid);
+			$sql .= " WHERE fk_soc = ".((int) $this->id)." AND fk_user = ".((int) $commid);
 
 			if (!$this->db->query($sql)) {
 				dol_syslog(get_class($this)."::del_commercial Erreur");
@@ -2837,7 +2837,7 @@ class Societe extends CommonObject
 
 		$sql = "SELECT rowid, email, statut as status, phone_mobile, lastname, poste, firstname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople";
-		$sql .= " WHERE fk_soc = ".$this->id;
+		$sql .= " WHERE fk_soc = ".((int) $this->id);
 		$sql .= " ORDER BY lastname, firstname";
 
 		$resql = $this->db->query($sql);
@@ -2897,7 +2897,7 @@ class Societe extends CommonObject
 		// phpcs:enable
 		$contacts = array();
 
-		$sql = "SELECT rowid, lastname, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".$this->id;
+		$sql = "SELECT rowid, lastname, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$nump = $this->db->num_rows($resql);
@@ -2927,7 +2927,7 @@ class Societe extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 		$contacts = array();
 
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".$this->id;
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$nump = $this->db->num_rows($resql);
@@ -3743,7 +3743,7 @@ class Societe extends CommonObject
 	public function has_projects()
 	{
 		// phpcs:enable
-		$sql = 'SELECT COUNT(*) as numproj FROM '.MAIN_DB_PREFIX.'projet WHERE fk_soc = '.$this->id;
+		$sql = 'SELECT COUNT(*) as numproj FROM '.MAIN_DB_PREFIX.'projet WHERE fk_soc = '.((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -4761,6 +4761,7 @@ class Societe extends CommonObject
 
 		$this->db->begin();
 
+		$field = 'accountancy_code_sell';
 		if ($type == 'buy') {
 			$field = 'accountancy_code_buy';
 		} elseif ($type == 'sell') {
@@ -4770,8 +4771,8 @@ class Societe extends CommonObject
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ";
-		$sql.= "$field = '".$this->db->escape($value)."'";
-		$sql.= " WHERE rowid = ".$this->id;
+		$sql.= $field." = '".$this->db->escape($value)."'";
+		$sql.= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::".__FUNCTION__." sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
