@@ -1043,6 +1043,9 @@ class Orders extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->expedition->creer) {
 			throw new RestException(401);
 		}
+		if ($warehouse_id <= 0) {
+			throw new RestException(404, 'Warehouse not found');
+		}
 		$result = $this->commande->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Order not found');
