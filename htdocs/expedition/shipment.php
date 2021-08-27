@@ -617,15 +617,17 @@ if ($id > 0 || !empty($ref)) {
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.product_type as type, cd.label, cd.description,";
 		$sql .= " cd.price, cd.tva_tx, cd.subprice,";
-		$sql .= " cd.qty,";
+		$sql .= " cd.qty, cd.fk_unit,";
 		$sql .= ' cd.date_start,';
 		$sql .= ' cd.date_end,';
 		$sql .= ' cd.special_code,';
 		$sql .= ' p.rowid as prodid, p.label as product_label, p.entity, p.ref, p.fk_product_type as product_type, p.description as product_desc,';
 		$sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units,';
 		$sql .= ' p.surface, p.surface_units, p.volume, p.volume_units';
+		$sql .= ', u.short_label as unit_order';
 		$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_units as u ON cd.fk_unit = u.rowid";
 		$sql .= " WHERE cd.fk_commande = ".((int) $object->id);
 		$sql .= " ORDER BY cd.rang, cd.rowid";
 
@@ -761,7 +763,7 @@ if ($id > 0 || !empty($ref)) {
 					}
 
 					// Qty ordered
-					print '<td class="center">'.$objp->qty.'</td>';
+					print '<td class="center">'.$objp->qty.' '.$objp->unit_order.'</td>';
 
 					// Qty already shipped
 					$qtyProdCom = $objp->qty;
@@ -769,7 +771,7 @@ if ($id > 0 || !empty($ref)) {
 					// Nb of sending products for this line of order
 					$qtyAlreadyShipped = (!empty($object->expeditions[$objp->rowid]) ? $object->expeditions[$objp->rowid] : 0);
 					print $qtyAlreadyShipped;
-					print '</td>';
+					print ' '.$objp->unit_order.'</td>';
 
 					// Qty remains to ship
 					print '<td class="center">';
@@ -780,7 +782,7 @@ if ($id > 0 || !empty($ref)) {
 					} else {
 						print '0 ('.$langs->trans("Service").')';
 					}
-					print '</td>';
+					print ' '.$objp->unit_order.'</td>';
 
 					if ($objp->fk_product > 0) {
 						$product = new Product($db);
