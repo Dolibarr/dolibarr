@@ -95,7 +95,7 @@ if ($action == 'validate_movements_confirm' && !empty($user->rights->accounting-
 				$sql .= " AND doc_date >= '" . $db->idate($date_start) . "'";
 				$sql .= " AND doc_date <= '" . $db->idate($date_end) . "'";
 
-				dol_syslog("/accountancy/closure/index.php :: Function validate_movement_confirm Specify movements as validated sql=".$sql, LOG_DEBUG);
+				dol_syslog("/accountancy/closure/index.php :: Function validate_movement_confirm Specify movements as validated", LOG_DEBUG);
 				$result = $db->query($sql);
 				if (!$result) {
 					$error++;
@@ -189,7 +189,7 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= "  SUM(".$db->ifsql('MONTH(b.doc_date)='.$j, '1', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(b.doc_date)=".$j, "1", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= " COUNT(b.rowid) as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
@@ -198,7 +198,7 @@ $sql .= " AND b.doc_date <= '".$db->idate($search_date_end)."'";
 $sql .= " AND b.entity IN (".getEntity('bookkeeping', 0).")"; // We don't share object for accountancy
 $sql .= " AND date_validated IS NULL";
 
-dol_syslog('htdocs/accountancy/closure/index.php sql='.$sql, LOG_DEBUG);
+dol_syslog('htdocs/accountancy/closure/index.php', LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);

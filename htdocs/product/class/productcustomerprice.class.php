@@ -418,7 +418,7 @@ class Productcustomerprice extends CommonObject
 		}
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit + 1, $offset);
+			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 
 		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
@@ -531,7 +531,7 @@ class Productcustomerprice extends CommonObject
 		}
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit + 1, $offset);
+			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 
 		dol_syslog(get_class($this)."::fetch_all_log", LOG_DEBUG);

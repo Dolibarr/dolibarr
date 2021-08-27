@@ -497,7 +497,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " , detail_refuse = ".(!empty($this->detail_refuse) ? "'".$this->db->escape($this->detail_refuse)."'" : "''");
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if (!$notrigger) {
@@ -552,7 +552,7 @@ class ExpenseReport extends CommonObject
 		}
 		//$sql.= $restrict;
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -665,7 +665,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " SET fk_statut = ".self::STATUS_CLOSED.", paid=1";
 		$sql .= " WHERE rowid = ".((int) $id)." AND fk_statut = ".self::STATUS_APPROVED;
 
-		dol_syslog(get_class($this)."::set_paid sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::set_paid", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->affected_rows($resql)) {
@@ -882,7 +882,7 @@ class ExpenseReport extends CommonObject
 			$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as de";
 			$sql .= " WHERE de.fk_projet = ".((int) $projectid);
 
-			dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result) {
 				$num = $this->db->num_rows($result);
@@ -1353,7 +1353,7 @@ class ExpenseReport extends CommonObject
 			$sql .= " SET fk_statut = ".self::STATUS_VALIDATED;
 			$sql .= ' WHERE rowid = '.$this->id;
 
-			dol_syslog(get_class($this)."::set_save_from_refuse sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::set_save_from_refuse", LOG_DEBUG);
 
 			if ($this->db->query($sql)) {
 				return 1;
@@ -1509,7 +1509,7 @@ class ExpenseReport extends CommonObject
 			$sql .= " SET paid = 0, fk_statut = ".self::STATUS_APPROVED;
 			$sql .= ' WHERE rowid = '.$this->id;
 
-			dol_syslog(get_class($this)."::set_unpaid sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::set_unpaid", LOG_DEBUG);
 
 			if ($this->db->query($sql)) {
 				if (!$notrigger) {
@@ -1563,7 +1563,7 @@ class ExpenseReport extends CommonObject
 			$sql .= " ,detail_cancel='".$this->db->escape($detail)."'";
 			$sql .= ' WHERE rowid = '.$this->id;
 
-			dol_syslog(get_class($this)."::set_cancel sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::set_cancel", LOG_DEBUG);
 
 			if ($this->db->query($sql)) {
 				if (!$notrigger) {

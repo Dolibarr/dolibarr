@@ -325,7 +325,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " GROUP BY fd.tva_tx,fd.product_type, cc.label, cc.code ";
 	$sql .= " ORDER BY country, product_type, vatrate";
 
-	dol_syslog("htdocs/compta/tva/index.php sql=".$sql, LOG_DEBUG);
+	dol_syslog("htdocs/compta/tva/index.php", LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -413,7 +413,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql2 .= " ORDER BY country, product_type, vatrate";
 
 	//print $sql2;
-	dol_syslog("htdocs/compta/tva/index.php sql=".$sql, LOG_DEBUG);
+	dol_syslog("htdocs/compta/tva/index.php", LOG_DEBUG);
 	$resql2 = $db->query($sql2);
 	if ($resql2) {
 		$num = $db->num_rows($resql2);

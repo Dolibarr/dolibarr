@@ -1831,8 +1831,8 @@ class Adherent extends CommonObject
 
 				if (!$error && !empty($bank_line_id)) {
 					// Update fk_bank into subscription table
-					$sql = 'UPDATE '.MAIN_DB_PREFIX.'subscription SET fk_bank='.$bank_line_id;
-					$sql .= ' WHERE rowid='.$subscriptionid;
+					$sql = 'UPDATE '.MAIN_DB_PREFIX.'subscription SET fk_bank='.((int) $bank_line_id);
+					$sql .= ' WHERE rowid='.((int) $subscriptionid);
 
 					$result = $this->db->query($sql);
 					if (!$result) {

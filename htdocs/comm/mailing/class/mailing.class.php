@@ -228,7 +228,7 @@ class Mailing extends CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing";
 		$sql .= " (date_creat, fk_user_creat, entity)";
-		$sql .= " VALUES ('".$this->db->idate($now)."', ".$user->id.", ".$conf->entity.")";
+		$sql .= " VALUES ('".$this->db->idate($now)."', ".((int) $user->id).", ".((int) $conf->entity).")";
 
 		if (!$this->title) {
 			$this->title = $langs->trans("NoTitle");
@@ -647,7 +647,7 @@ class Mailing extends CommonObject
 				$nbforupdate = $obj->nb;
 
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.'mailing SET nbemail = '.((int) $nbforupdate);
-				$sql .= ' WHERE rowid = '.$this->id;
+				$sql .= ' WHERE rowid = '.((int) $this->id);
 
 				$resqlupdate = $this->db->query($sql);
 				if (! $resqlupdate) {
