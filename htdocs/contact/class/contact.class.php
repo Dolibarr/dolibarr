@@ -388,8 +388,8 @@ class Contact extends CommonObject
 			$sql .= " WHERE sp.fk_soc = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
 		}
-		$sql .= ' '.$clause.' sp.entity IN ('.getEntity($this->element).')';
-		$sql .= " AND (sp.priv='0' OR (sp.priv='1' AND sp.fk_user_creat=".((int) $user->id)."))";
+		$sql .= " ".$clause." sp.entity IN (".getEntity($this->element).")";
+		$sql .= " AND (sp.priv='0' OR (sp.priv='1' AND sp.fk_user_creat = ".((int) $user->id)."))";
 		if ($user->socid > 0) {
 			$sql .= " AND sp.fk_soc = ".((int) $user->socid);
 		}

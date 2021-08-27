@@ -172,6 +172,7 @@ class HookManager
 				'addSearchEntry',
 				'addStatisticLine',
 				'addSectionECMAuto',
+				'checkSecureAccess',
 				'createDictionaryFieldlist',
 				'editDictionaryFieldlist',
 				'getFormMail',

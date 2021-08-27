@@ -905,7 +905,7 @@ class DoliDBPgsql extends DoliDB
 		// Test charset match LC_TYPE (pgsql error otherwise)
 		//print $charset.' '.setlocale(LC_CTYPE,'0'); exit;
 
-		$sql = 'CREATE DATABASE "'.$database.'" OWNER "'.$owner.'" ENCODING \''.$charset.'\'';
+		$sql = "CREATE DATABASE '".$this->escape($database)."' OWNER '".$this->escape($owner)."' ENCODING '".$this->escape($charset)."'";
 		dol_syslog($sql, LOG_DEBUG);
 		$ret = $this->query($sql);
 		return $ret;

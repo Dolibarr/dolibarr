@@ -239,7 +239,7 @@ function getCustomerInvoicePieChart($socid = 0)
 	$sql .= " WHERE f.fk_soc = s.rowid";
 	$sql .= " AND f.entity IN (".getEntity('facture').")";
 	if ($user->socid) {
-		$sql .= ' AND f.fk_soc = '.$user->socid;
+		$sql .= ' AND f.fk_soc = '.((int) $user->socid);
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -359,7 +359,7 @@ function getPurchaseInvoicePieChart($socid = 0)
 	$sql .= " WHERE f.fk_soc = s.rowid";
 	$sql .= " AND f.entity IN (".getEntity('facture_fourn').")";
 	if ($user->socid) {
-		$sql .= ' AND f.fk_soc = '.$user->socid;
+		$sql .= ' AND f.fk_soc = '.((int) $user->socid);
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);

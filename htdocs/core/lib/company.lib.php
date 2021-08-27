@@ -1526,7 +1526,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 				}
 			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && is_array($filterobj->fields['ref']) && $filterobj->table_element && $filterobj->element) {
 				// Generic case
-				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '".$db->escape($filterobj->element).($module ? '@'.$module : '')."'";
+				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '".$db->escape($filterobj->element).($module ? "@".$module : "")."'";
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}

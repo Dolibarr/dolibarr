@@ -93,7 +93,7 @@ class box_services_expired extends ModeleBoxes
 			$sql .= " AND c.entity = ".$conf->entity;
 			$sql .= " AND c.fk_soc=s.rowid AND cd.fk_contrat=c.rowid AND c.statut > 0";
 			if ($user->socid) {
-				$sql .= ' AND c.fk_soc = '.$user->socid;
+				$sql .= ' AND c.fk_soc = '.((int) $user->socid);
 			}
 			if (!$user->rights->societe->client->voir && !$user->socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);

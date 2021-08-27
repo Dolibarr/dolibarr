@@ -651,7 +651,7 @@ class Loan extends CommonObject
 
 		$sql = 'SELECT sum(amount_capital) as amount';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql .= ' WHERE '.$field.' = '.((int) $this->id);
+		$sql .= " WHERE ".$field." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSumPayment", LOG_DEBUG);
 		$resql = $this->db->query($sql);

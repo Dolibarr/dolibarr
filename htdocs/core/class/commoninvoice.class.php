@@ -132,7 +132,7 @@ abstract class CommonInvoice extends CommonObject
 
 		$sql = 'SELECT sum(amount) as amount, sum(multicurrency_amount) as multicurrency_amount';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql .= ' WHERE '.$field.' = '.((int) $this->id);
+		$sql .= " WHERE ".$field." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -308,9 +308,8 @@ abstract class CommonInvoice extends CommonObject
 
 		$sql = 'SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code'.$field3;
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$table.' as pf, '.MAIN_DB_PREFIX.$table2.' as p, '.MAIN_DB_PREFIX.'c_paiement as t';
-		$sql .= ' WHERE pf.'.$field.' = '.((int) $this->id);
-		//$sql.= ' WHERE pf.'.$field.' = 1';
-		$sql .= ' AND pf.'.$field2.' = p.rowid';
+		$sql .= " WHERE pf.".$field." = ".((int) $this->id);
+		$sql .= " AND pf.".$field2." = p.rowid";
 		$sql .= ' AND p.fk_paiement = t.id';
 		$sql .= ' AND p.entity IN ('.getEntity($sharedentity).')';
 		if ($filtertype) {

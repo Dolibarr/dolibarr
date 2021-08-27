@@ -4890,8 +4890,8 @@ class Facture extends CommonInvoice
 		if ($this->statut >= 0) {
 			$fieldname = 'retained_warranty_date_limit';
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' SET '.$fieldname.' = '.(strval($timestamp) != '' ? '\''.$this->db->idate($timestamp).'\'' : 'null');
-			$sql .= ' WHERE rowid='.((int) $this->id);
+			$sql .= " SET ".$fieldname." = ".(strval($timestamp) != '' ? "'".$this->db->idate($timestamp)."'" : 'null');
+			$sql .= ' WHERE rowid = '.((int) $this->id);
 
 			if ($this->db->query($sql)) {
 				$this->retained_warranty_date_limit = $timestamp;

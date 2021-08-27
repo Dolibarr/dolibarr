@@ -2945,25 +2945,6 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 				$sqlprotectagainstexternals = $hookmanager->resArray['sqlprotectagainstexternals'];
 			}
 		}
-
-		/*
-		// For modules who wants to manage different levels of permissions for documents
-		$subPermCategoryConstName = strtoupper($modulepart).'_SUBPERMCATEGORY_FOR_DOCUMENTS';
-		if (!empty($conf->global->$subPermCategoryConstName)) {
-			$subPermCategory = $conf->global->$subPermCategoryConstName;
-			if (!empty($subPermCategory) && (($fuser->rights->$modulepart->$subPermCategory->{$lire}) || ($fuser->rights->$modulepart->$subPermCategory->{$read}) || ($fuser->rights->$modulepart->$subPermCategory->{$download}))) {
-				$accessallowed = 1;
-			}
-		}
-
-		// Define $sqlprotectagainstexternals for modules who want to protect access using a SQL query.
-		$sqlProtectConstName = strtoupper($modulepart).'_SQLPROTECTAGAINSTEXTERNALS_FOR_DOCUMENTS';
-		if (!empty($conf->global->$sqlProtectConstName)) {	// If module want to define its own $sqlprotectagainstexternals
-			// Example: mymodule_SQLPROTECTAGAINSTEXTERNALS_FOR_DOCUMENTS = "SELECT fk_soc FROM ".MAIN_DB_PREFIX.$modulepart." WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
-			// TODO Replace this with a hook
-			eval('$sqlprotectagainstexternals = "'.$conf->global->$sqlProtectConstName.'";');
-		}
-		*/
 	}
 
 	$ret = array(

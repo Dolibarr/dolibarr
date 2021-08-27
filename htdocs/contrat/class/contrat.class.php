@@ -1222,7 +1222,7 @@ class Contrat extends CommonObject
 
 		// Delete llx_ecm_files
 		if (!$error) {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."ecm_files WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? '' : '@'.$this->module))."' AND src_object_id = ".((int) $this->id);
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."ecm_files WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? "" : "@".$this->module))."' AND src_object_id = ".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->error = $this->db->lasterror();
@@ -3257,12 +3257,12 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " '".$this->db->escape($this->info_bits)."',";
 		$sql .= " ".price2num($this->price_ht).",".price2num($this->remise).",";
 		if ($this->fk_fournprice > 0) {
-			$sql .= ' '.$this->fk_fournprice.',';
+			$sql .= ' '.((int) $this->fk_fournprice).',';
 		} else {
 			$sql .= ' null,';
 		}
 		if ($this->pa_ht > 0) {
-			$sql .= ' '.price2num($this->pa_ht);
+			$sql .= ' '.((float) price2num($this->pa_ht));
 		} else {
 			$sql .= ' null';
 		}

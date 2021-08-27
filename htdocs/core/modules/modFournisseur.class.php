@@ -353,7 +353,7 @@ class modFournisseur extends DolibarrModules
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture_fourn';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('supplier_invoice').')';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) {
-			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.$user->id;
+			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.((int) $user->id);
 		}
 
 		$r++;
@@ -417,7 +417,7 @@ class modFournisseur extends DolibarrModules
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('supplier_invoice').')';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) {
-			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.$user->id;
+			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.((int) $user->id);
 		}
 
 		// Order
@@ -493,7 +493,7 @@ class modFournisseur extends DolibarrModules
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_commande';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('supplier_order').')';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) {
-			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.$user->id;
+			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.((int) $user->id);
 		}
 
 		//Import Supplier Invoice
