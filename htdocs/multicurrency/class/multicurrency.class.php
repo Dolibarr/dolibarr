@@ -245,7 +245,7 @@ class MultiCurrency extends CommonObject
 	{
 		$sql = 'SELECT cr.rowid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as cr';
-		$sql .= ' WHERE cr.fk_multicurrency = '.$this->id;
+		$sql .= ' WHERE cr.fk_multicurrency = '.((int) $this->id);
 		$sql .= ' ORDER BY cr.date_sync DESC';
 
 		$this->rates = array();
@@ -479,8 +479,8 @@ class MultiCurrency extends CommonObject
 	{
 		$sql = 'SELECT cr.rowid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as cr';
-		$sql .= ' WHERE cr.fk_multicurrency = '.$this->id;
-		$sql .= ' AND cr.date_sync = (SELECT MAX(cr2.date_sync) FROM '.MAIN_DB_PREFIX.$this->table_element_line.' AS cr2 WHERE cr2.fk_multicurrency = '.$this->id.')';
+		$sql .= ' WHERE cr.fk_multicurrency = '.((int) $this->id);
+		$sql .= ' AND cr.date_sync = (SELECT MAX(cr2.date_sync) FROM '.MAIN_DB_PREFIX.$this->table_element_line.' AS cr2 WHERE cr2.fk_multicurrency = '.((int) $this->id).')';
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);

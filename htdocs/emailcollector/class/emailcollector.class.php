@@ -675,7 +675,7 @@ class EmailCollector extends CommonObject
 
 		$sql = 'SELECT rowid, type, rulevalue, status';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'emailcollector_emailcollectorfilter';
-		$sql .= ' WHERE fk_emailcollector = '.$this->id;
+		$sql .= ' WHERE fk_emailcollector = '.((int) $this->id);
 		//$sql.= ' ORDER BY position';
 
 		$resql = $this->db->query($sql);
@@ -707,7 +707,7 @@ class EmailCollector extends CommonObject
 
 		$sql = 'SELECT rowid, type, actionparam, status';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'emailcollector_emailcollectoraction';
-		$sql .= ' WHERE fk_emailcollector = '.$this->id;
+		$sql .= ' WHERE fk_emailcollector = '.((int) $this->id);
 		$sql .= ' ORDER BY position';
 
 		$resql = $this->db->query($sql);

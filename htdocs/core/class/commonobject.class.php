@@ -2228,7 +2228,7 @@ abstract class CommonObject
 			} else {
 				$sql .= ' SET fk_projet = NULL';
 			}
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 		}
 
 		dol_syslog(get_class($this)."::setProject", LOG_DEBUG);
@@ -2884,7 +2884,7 @@ abstract class CommonObject
 		// Count number of lines to reorder (according to choice $renum)
 		$nl = 0;
 		$sql = 'SELECT count(rowid) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql .= ' WHERE '.$this->fk_element.'='.$this->id;
+		$sql .= ' WHERE '.$this->fk_element.'='.((int) $this->id);
 		if (!$renum) {
 			$sql .= ' AND rang = 0';
 		}
@@ -2906,11 +2906,11 @@ abstract class CommonObject
 
 			// We first search all lines that are parent lines (for multilevel details lines)
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-			$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
+			$sql .= ' WHERE '.$this->fk_element.' = '.((int) $this->id);
 			if ($fk_parent_line) {
 				$sql .= ' AND fk_parent_line IS NULL';
 			}
-			$sql .= ' ORDER BY rang ASC, rowid '.$rowidorder;
+			$sql .= " ORDER BY rang ASC, rowid ".$rowidorder;
 
 			dol_syslog(get_class($this)."::line_order search all parent lines", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2954,11 +2954,11 @@ abstract class CommonObject
 		$rows = array();
 
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
-		$sql .= ' AND fk_parent_line = '.$id;
+		$sql .= ' WHERE '.$this->fk_element.' = '.((int) $this->id);
+		$sql .= ' AND fk_parent_line = '.((int) $id);
 		$sql .= ' ORDER BY rang ASC';
 
-		dol_syslog(get_class($this)."::getChildrenOfLine search children lines for line ".$id."", LOG_DEBUG);
+		dol_syslog(get_class($this)."::getChildrenOfLine search children lines for line ".$id, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql) > 0) {
@@ -3075,8 +3075,8 @@ abstract class CommonObject
 			}
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.((int) $rang);
-			$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
-			$sql .= ' AND rang = '.($rang - 1);
+			$sql .= ' WHERE '.$this->fk_element.' = '.((int) $this->id);
+			$sql .= ' AND rang = '.((int) ($rang - 1));
 			if ($this->db->query($sql)) {
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.((int) ($rang - 1));
 				$sql .= ' WHERE rowid = '.((int) $rowid);
@@ -3106,7 +3106,7 @@ abstract class CommonObject
 			}
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.((int) $rang);
-			$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
+			$sql .= ' WHERE '.$this->fk_element.' = '.((int) $this->id);
 			$sql .= ' AND rang = '.((int) ($rang + 1));
 			if ($this->db->query($sql)) {
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.((int) ($rang + 1));
@@ -3148,7 +3148,7 @@ abstract class CommonObject
 	public function getIdOfLine($rang)
 	{
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
+		$sql .= ' WHERE '.$this->fk_element.' = '.((int) $this->id);
 		$sql .= ' AND rang = '.((int) $rang);
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -3175,8 +3175,8 @@ abstract class CommonObject
 		// Search the last rang with fk_parent_line
 		if ($fk_parent_line) {
 			$sql = 'SELECT max('.$positionfield.') FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-			$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
-			$sql .= ' AND fk_parent_line = '.$fk_parent_line;
+			$sql .= ' WHERE '.$this->fk_element.' = '.((int) $this->id);
+			$sql .= ' AND fk_parent_line = '.((int) $fk_parent_line);
 
 			dol_syslog(get_class($this)."::line_max", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -3393,7 +3393,7 @@ abstract class CommonObject
 		}
 		$sql .= ', multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
+		$sql .= ' WHERE '.$this->fk_element.' = '.((int) $this->id);
 		if ($exclspec) {
 			$product_field = 'product_type';
 			if ($this->table_element_line == 'contratdet') {
@@ -3561,7 +3561,7 @@ abstract class CommonObject
 				$sql .= ", multicurrency_total_ht = ".price2num($this->multicurrency_total_ht, 'MT', 1);
 				$sql .= ", multicurrency_total_tva = ".price2num($this->multicurrency_total_tva, 'MT', 1);
 				$sql .= ", multicurrency_total_ttc = ".price2num($this->multicurrency_total_ttc, 'MT', 1);
-				$sql .= ' WHERE rowid = '.$this->id;
+				$sql .= " WHERE rowid = ".((int) $this->id);
 
 				dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -5318,7 +5318,7 @@ abstract class CommonObject
 							}
 							if ($update_main_doc_field && !empty($this->table_element)) {
 								$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET last_main_doc = '".$this->db->escape($ecmfile->filepath.'/'.$ecmfile->filename)."'";
-								$sql .= ' WHERE rowid = '.$this->id;
+								$sql .= " WHERE rowid = ".((int) $this->id);
 
 								$resql = $this->db->query($sql);
 								if (!$resql) {
@@ -8827,7 +8827,7 @@ abstract class CommonObject
 
 		$sql = 'SELECT '.$objectline->getFieldList('l');
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$objectline->table_element.' as l';
-		$sql .= ' WHERE l.fk_'.$this->element.' = '.$this->id;
+		$sql .= ' WHERE l.fk_'.$this->element.' = '.((int) $this->id);
 		if ($morewhere) {
 			$sql .= $morewhere;
 		}
@@ -8973,7 +8973,7 @@ abstract class CommonObject
 
 		if ($forcechilddeletion) {	// Force also delete of childtables that should lock deletion in standard case when option force is off
 			foreach ($this->childtables as $table) {
-				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table.' WHERE '.$this->fk_element.' = '.$this->id;
+				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table.' WHERE '.$this->fk_element.' = '.((int) $this->id);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$this->error = $this->db->lasterror();
@@ -9022,7 +9022,7 @@ abstract class CommonObject
 					}
 				} else {
 					// Delete record in child table
-					$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table.' WHERE '.$this->fk_element.' = '.$this->id;
+					$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table.' WHERE '.$this->fk_element.' = '.((int) $this->id);
 
 					$resql = $this->db->query($sql);
 					if (!$resql) {

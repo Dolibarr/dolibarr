@@ -502,7 +502,7 @@ class Mo extends CommonObject
 		if ($lineid > 0) {
 			$sql .= ' AND t.fk_mrp_production = '.((int) $lineid);
 		} else {
-			$sql .= 'AND t.fk_mo = '.$this->id;
+			$sql .= 'AND t.fk_mo = '.((int) $this->id);
 		}
 
 		$resql = $this->db->query($sql);
@@ -627,7 +627,7 @@ class Mo extends CommonObject
 		if (!$error) {
 			// TODO Check that production has not started. If yes, we stop here.
 
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'mrp_production WHERE fk_mo = '.$this->id;
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'mrp_production WHERE fk_mo = '.((int) $this->id);
 			$this->db->query($sql);
 
 			$moline = new MoLine($this->db);

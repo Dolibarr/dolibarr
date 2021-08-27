@@ -581,7 +581,7 @@ if ($search_warehouse != '' && $search_warehouse > 0) {
 	$sql .= natural_search("p.fk_warehouse", $search_warehouse, 1);
 }
 if ($search_multicurrency_code != '') {
-	$sql .= ' AND p.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
+	$sql .= " AND p.multicurrency_code = '".$db->escape($search_multicurrency_code)."'";
 }
 if ($search_multicurrency_tx != '') {
 	$sql .= natural_search('p.multicurrency_tx', $search_multicurrency_tx, 1);

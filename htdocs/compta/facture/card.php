@@ -708,7 +708,7 @@ if (empty($reshook)) {
 			// On verifie si la facture a des paiements
 			$sql = 'SELECT pf.amount';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
-			$sql .= ' WHERE pf.fk_facture = '.$object->id;
+			$sql .= ' WHERE pf.fk_facture = '.((int) $object->id);
 
 			$result = $db->query($sql);
 			if ($result) {
@@ -873,7 +873,7 @@ if (empty($reshook)) {
 				$sql = 'SELECT SUM(pf.amount) as total_paiements';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'paiement as p';
 				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
-				$sql .= ' WHERE pf.fk_facture = '.$object->id;
+				$sql .= ' WHERE pf.fk_facture = '.((int) $object->id);
 				$sql .= ' AND pf.fk_paiement = p.rowid';
 				$sql .= ' AND p.entity IN ('.getEntity('invoice').')';
 				$resql = $db->query($sql);
@@ -2596,10 +2596,10 @@ if (empty($reshook)) {
 					$errors = 0;
 					if (count($linkedCreditNotesList) > 0) {
 						// now, credit note must follow
-						$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture ';
-						$sql .= ' SET situation_cycle_ref='.$newCycle;
+						$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
+						$sql .= ' SET situation_cycle_ref = '.((int) $newCycle);
 						$sql .= ' , situation_final=0';
-						$sql .= ' , situation_counter='.$object->situation_counter;
+						$sql .= ' , situation_counter='.((int) $object->situation_counter);
 						$sql .= ' WHERE rowid IN ('.$db->sanitize(implode(',', $linkedCreditNotesList)).')';
 
 						$resql = $db->query($sql);
@@ -4884,7 +4884,7 @@ if ($action == 'create') {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-	$sql .= ' WHERE pf.fk_facture = '.$object->id.' AND pf.fk_paiement = p.rowid';
+	$sql .= ' WHERE pf.fk_facture = '.((int) $object->id).' AND pf.fk_paiement = p.rowid';
 	$sql .= ' AND p.entity IN ('.getEntity('invoice').')';
 	$sql .= ' ORDER BY p.datep, p.tms';
 

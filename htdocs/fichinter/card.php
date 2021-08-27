@@ -1279,7 +1279,7 @@ if ($action == 'create') {
 		$sql = 'SELECT ft.rowid, ft.description, ft.fk_fichinter, ft.duree, ft.rang,';
 		$sql .= ' ft.date as date_intervention';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
-		$sql .= ' WHERE ft.fk_fichinter = '.$object->id;
+		$sql .= ' WHERE ft.fk_fichinter = '.((int) $object->id);
 		if (!empty($conf->global->FICHINTER_HIDE_EMPTY_DURATION)) {
 			$sql .= ' AND ft.duree <> 0';
 		}

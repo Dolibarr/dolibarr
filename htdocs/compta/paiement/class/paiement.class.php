@@ -533,12 +533,12 @@ class Paiement extends CommonObject
 
 		// Delete payment (into paiement_facture and paiement)
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiement_facture';
-		$sql .= ' WHERE fk_paiement = '.$this->id;
+		$sql .= ' WHERE fk_paiement = '.((int) $this->id);
 		dol_syslog($sql);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiement';
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog($sql);
 			$result = $this->db->query($sql);
 			if (!$result) {
@@ -756,7 +756,7 @@ class Paiement extends CommonObject
 	{
 		// phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' set fk_bank = '.((int) $id_bank);
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this).'::update_fk_bank', LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -956,7 +956,7 @@ class Paiement extends CommonObject
 	{
 		$sql = 'SELECT pf.fk_facture';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'facture as f'; // We keep link on invoice to allow use of some filters on invoice
-		$sql .= ' WHERE pf.fk_facture = f.rowid AND pf.fk_paiement = '.$this->id;
+		$sql .= ' WHERE pf.fk_facture = f.rowid AND pf.fk_paiement = '.((int) $this->id);
 		if ($filter) {
 			$sql .= ' AND '.$filter;
 		}
@@ -989,7 +989,7 @@ class Paiement extends CommonObject
 	{
 		$sql = 'SELECT pf.fk_facture, pf.amount';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
-		$sql .= ' WHERE pf.fk_paiement = '.$this->id;
+		$sql .= ' WHERE pf.fk_paiement = '.((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$i = 0;

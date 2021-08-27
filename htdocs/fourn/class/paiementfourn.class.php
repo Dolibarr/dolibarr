@@ -398,11 +398,11 @@ class PaiementFourn extends Paiement
 
 		// Efface la ligne de paiement (dans paiement_facture et paiement)
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn';
-		$sql .= ' WHERE fk_paiementfourn = '.$this->id;
+		$sql .= ' WHERE fk_paiementfourn = '.((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiementfourn';
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$result = $this->db->query($sql);
 			if (!$result) {
 				$this->error = $this->db->error();
@@ -484,16 +484,16 @@ class PaiementFourn extends Paiement
 	/**
 	 *	Return list of supplier invoices the payment point to
 	 *
-	 *	@param      string	$filter         SQL filter
+	 *	@param      string	$filter         SQL filter. Warning: This value must not come from a user input.
 	 *	@return     array           		Array of supplier invoice id
 	 */
 	public function getBillsArray($filter = '')
 	{
 		$sql = 'SELECT fk_facturefourn';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf, '.MAIN_DB_PREFIX.'facture_fourn as f';
-		$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND fk_paiementfourn = '.$this->id;
+		$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND fk_paiementfourn = '.((int) $this->id);
 		if ($filter) {
-			$sql .= ' AND '.$filter;
+			$sql .= " AND ".$filter;
 		}
 
 		dol_syslog(get_class($this).'::getBillsArray', LOG_DEBUG);

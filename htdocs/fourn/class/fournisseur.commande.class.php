@@ -930,7 +930,7 @@ class CommandeFournisseur extends CommonOrder
 		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur SET billed = 1';
-		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;
+		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > '.self::STATUS_DRAFT;
 
 		if ($this->db->query($sql)) {
 			if (!$error) {
@@ -3399,12 +3399,12 @@ class CommandeFournisseur extends CommonOrder
 			$sql .= ' cfd.fk_reception = e.rowid AND';
 		}
 		$sql .= ' cfd.fk_commandefourndet = cd.rowid';
-		$sql .= ' AND cd.fk_commande ='.$this->id;
+		$sql .= ' AND cd.fk_commande ='.((int) $this->id);
 		if ($this->fk_product > 0) {
-			$sql .= ' AND cd.fk_product = '.$this->fk_product;
+			$sql .= ' AND cd.fk_product = '.((int) $this->fk_product);
 		}
 		if ($filtre_statut >= 0) {
-			$sql .= ' AND e.fk_statut >= '.$filtre_statut;
+			$sql .= ' AND e.fk_statut >= '.((int) $filtre_statut);
 		}
 		$sql .= ' GROUP BY cd.rowid, cd.fk_product';
 

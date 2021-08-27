@@ -1031,7 +1031,7 @@ class ExpenseReport extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as de';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON de.fk_c_type_fees = ctf.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as p ON de.fk_projet = p.rowid';
-		$sql .= ' WHERE de.'.$this->fk_element.' = '.$this->id;
+		$sql .= ' WHERE de.'.$this->fk_element.' = '.((int) $this->id);
 		if (!empty($conf->global->EXPENSEREPORT_LINES_SORTED_BY_ROWID)) {
 			$sql .= ' ORDER BY de.rang ASC, de.rowid ASC';
 		} else {
@@ -1340,7 +1340,7 @@ class ExpenseReport extends CommonObject
 		// Sélection de la date de début de la NDF
 		$sql = 'SELECT date_debut';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
 
@@ -1351,7 +1351,7 @@ class ExpenseReport extends CommonObject
 		if ($this->status != self::STATUS_VALIDATED) {
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET fk_statut = ".self::STATUS_VALIDATED;
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::set_save_from_refuse", LOG_DEBUG);
 
@@ -1386,7 +1386,7 @@ class ExpenseReport extends CommonObject
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = ".self::STATUS_APPROVED.", fk_user_approve = ".((int) $fuser->id).",";
 			$sql .= " date_approve='".$this->db->idate($this->date_approve)."'";
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			if ($this->db->query($sql)) {
 				if (!$notrigger) {
 					// Call trigger
@@ -1438,7 +1438,7 @@ class ExpenseReport extends CommonObject
 			$sql .= " date_refuse='".$this->db->idate($now)."',";
 			$sql .= " detail_refuse='".$this->db->escape($details)."',";
 			$sql .= " fk_user_approve = NULL";
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			if ($this->db->query($sql)) {
 				$this->fk_statut = 99; // deprecated
 				$this->status = 99;
@@ -1507,7 +1507,7 @@ class ExpenseReport extends CommonObject
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET paid = 0, fk_statut = ".self::STATUS_APPROVED;
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::set_unpaid", LOG_DEBUG);
 
@@ -1561,7 +1561,7 @@ class ExpenseReport extends CommonObject
 			$sql .= " SET fk_statut = ".self::STATUS_CANCELED.", fk_user_cancel = ".((int) $fuser->id);
 			$sql .= ", date_cancel='".$this->db->idate($this->date_cancel)."'";
 			$sql .= " ,detail_cancel='".$this->db->escape($detail)."'";
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::set_cancel", LOG_DEBUG);
 
@@ -2525,7 +2525,7 @@ class ExpenseReport extends CommonObject
 
 		$sql = 'SELECT sum(amount) as amount';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql .= ' WHERE '.$field.' = '.$this->id;
+		$sql .= ' WHERE '.$field.' = '.((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSumPayments", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2759,15 +2759,15 @@ class ExpenseReportLine
 		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'expensereport e ON (d.fk_expensereport = e.rowid)';
 		$sql .= ' WHERE e.fk_user_author = '.((int) $fk_user);
 		if (!empty($this->id)) {
-			$sql .= ' AND d.rowid <> '.$this->id;
+			$sql .= ' AND d.rowid <> '.((int) $this->id);
 		}
 		$sql .= ' AND d.fk_c_type_fees = '.((int) $rule->fk_c_type_fees);
 		if ($mode == 'day' || $mode == 'EX_DAY') {
 			$sql .= " AND d.date = '".dol_print_date($this->date, '%Y-%m-%d')."'";
 		} elseif ($mode == 'mon' || $mode == 'EX_MON') {
-			$sql .= ' AND DATE_FORMAT(d.date, \'%Y-%m\') = \''.dol_print_date($this->date, '%Y-%m').'\''; // @todo DATE_FORMAT is forbidden
+			$sql .= " AND DATE_FORMAT(d.date, '%Y-%m') = '".dol_print_date($this->date, '%Y-%m')."'"; // @todo DATE_FORMAT is forbidden
 		} elseif ($mode == 'year' || $mode == 'EX_YEA') {
-			$sql .= ' AND DATE_FORMAT(d.date, \'%Y\') = \''.dol_print_date($this->date, '%Y').'\''; // @todo DATE_FORMAT is forbidden
+			$sql .= " AND DATE_FORMAT(d.date, '%Y') = '".dol_print_date($this->date, '%Y')."'"; 	// @todo DATE_FORMAT is forbidden
 		}
 
 		dol_syslog('ExpenseReportLine::getExpAmount');

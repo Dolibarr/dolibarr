@@ -170,7 +170,7 @@ $sql = 'SELECT f.rowid as scid, f.libelle as label, f.paye, f.amount as sc_amoun
 $sql .= ' FROM '.MAIN_DB_PREFIX.'paiementcharge as pf,'.MAIN_DB_PREFIX.'chargesociales as f, '.MAIN_DB_PREFIX.'c_chargesociales as pc';
 $sql .= ' WHERE pf.fk_charge = f.rowid AND f.fk_type = pc.id';
 $sql .= ' AND f.entity = '.$conf->entity;
-$sql .= ' AND pf.rowid = '.$object->id;
+$sql .= ' AND pf.rowid = '.((int) $object->id);
 
 dol_syslog("compta/payment_sc/card.php", LOG_DEBUG);
 $resql = $db->query($sql);

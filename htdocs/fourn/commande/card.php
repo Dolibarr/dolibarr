@@ -337,14 +337,14 @@ if (empty($reshook)) {
 				// Currently the "Re-open" also remove the billed flag because there is no button "Set unpaid" yet.
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
 				$sql .= ' SET billed = 0';
-				$sql .= ' WHERE rowid = '.$object->id;
+				$sql .= ' WHERE rowid = '.((int) $object->id);
 
 				$resql = $db->query($sql);
 
 				if ($newstatus == 0) {
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
 					$sql .= ' SET fk_user_approve = null, fk_user_approve2 = null, date_approve = null, date_approve2 = null';
-					$sql .= ' WHERE rowid = '.$object->id;
+					$sql .= ' WHERE rowid = '.((int) $object->id);
 
 					$resql = $db->query($sql);
 				}

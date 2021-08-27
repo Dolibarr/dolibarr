@@ -266,7 +266,7 @@ class Inventory extends CommonObject
 
 		if ($this->status == self::STATUS_DRAFT) {
 			// Delete inventory
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'inventorydet WHERE fk_inventory = '.$this->id;
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'inventorydet WHERE fk_inventory = '.((int) $this->id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->error = $this->db->lasterror();
@@ -349,7 +349,7 @@ class Inventory extends CommonObject
 		$this->db->begin();
 
 		// Delete inventory
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'inventorydet WHERE fk_inventory = '.$this->id;
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'inventorydet WHERE fk_inventory = '.((int) $this->id);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$this->error = $this->db->lasterror();

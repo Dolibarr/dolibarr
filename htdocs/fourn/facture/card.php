@@ -578,7 +578,7 @@ if (empty($reshook)) {
 				$sql = 'SELECT SUM(pf.amount) as total_paiements';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf, '.MAIN_DB_PREFIX.'paiementfourn as p';
 				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id AND c.entity IN ('.getEntity('c_paiement').')';
-				$sql .= ' WHERE pf.fk_facturefourn = '.$object->id;
+				$sql .= ' WHERE pf.fk_facturefourn = '.((int) $object->id);
 				$sql .= ' AND pf.fk_paiementfourn = p.rowid';
 				$sql .= ' AND p.entity IN ('.getEntity('invoice').')';
 
@@ -3018,7 +3018,7 @@ if ($action == 'create') {
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_paiementfourn = p.rowid';
-		$sql .= ' WHERE pf.fk_facturefourn = '.$object->id;
+		$sql .= ' WHERE pf.fk_facturefourn = '.((int) $object->id);
 		$sql .= ' ORDER BY p.datep, p.tms';
 
 		$result = $db->query($sql);

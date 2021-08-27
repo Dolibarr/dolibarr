@@ -166,7 +166,7 @@ if ($result > 0) {
 			$result = show_ldap_content($records, 0, $records['count'], true);
 		}
 	} else {
-		print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
+		print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.dol_escape_htmltag($dn).' - search='.dol_escape_htmltag($search).')</td></tr>';
 	}
 
 	$ldap->unbind();

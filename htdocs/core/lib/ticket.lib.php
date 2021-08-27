@@ -959,7 +959,7 @@ function getTicketActionCommEcmList($object)
 	$sql = 'SELECT ecm.rowid as id, ecm.src_object_type, ecm.src_object_id, ecm.filepath, ecm.filename';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'ecm_files ecm';
 	$sql .= ' WHERE ecm.filepath = \'agenda/'.$object->id.'\'';
-	//$sql.= ' ecm.src_object_type = \''.$object->element.'\' AND ecm.src_object_id = '.$object->id; // Actually upload file doesn't add type
+	//$sql.= ' ecm.src_object_type = \''.$object->element.'\' AND ecm.src_object_id = '.((int) $object->id); // Actually upload file doesn't add type
 	$sql .= ' ORDER BY ecm.position ASC';
 
 	$resql = $db->query($sql);
