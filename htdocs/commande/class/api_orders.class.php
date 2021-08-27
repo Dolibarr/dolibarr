@@ -987,13 +987,18 @@ class Orders extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->expedition->lire) {
 			throw new RestException(401);
 		}
+		$sql = "SELECT e.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
+		$sql .= " JOIN ".MAIN_DB_PREFIX."expeditiondet as edet";
+		$sql .= " ON e.rowid = edet.fk_expedition";
+		$sql .= " JOIN ".MAIN_DB_PREFIX."commandedet as cdet";
+		$sql .= " ON edet.fk_origin_line = cdet.rowid";
+		$sql .= " JOIN ".MAIN_DB_PREFIX."commande as c";
+		$sql .= " ON cdet.fk_commande = c.rowid";
+		$sql .= " WHERE c.rowid = ".$this->db->escape($id);
+		$sql .= " GROUP BY e.rowid";
+		$sql .= $this->db->order("e.rowid", "ASC");
 
-		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."expedition as t";
-		$sql .= " JOIN ".MAIN_DB_PREFIX."expeditiondet as tdet";
-		$sql .= " ON t.rowid = tdet.rowid";
-		$sql .= " WHERE tdet.fk_origin_line = ".$id;
-		$sql .= $this->db->order("t.rowid", "ASC");
 		dol_syslog("API Rest request");
 		$result = $this->db->query($sql);
 
