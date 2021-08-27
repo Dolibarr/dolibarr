@@ -74,8 +74,10 @@ $cancel		= GETPOST('cancel', 'alpha');
 $lineid		= GETPOST('lineid', 'int');
 $projectid = GETPOST('projectid', 'int');
 $origin		= GETPOST('origin', 'alpha');
-$originid = GETPOST('originid', 'int');
+$originid = GETPOST('originid', 'alpha');
 $fac_rec = GETPOST('fac_rec', 'int');
+
+$origin_ids = explode(',', $originid);
 
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -861,7 +863,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		// Standard invoice or Deposit invoice, not from a Predefined template invoice
+		// Standard invoice or Deposit invoice, created from a Predefined template invoice
 		if (GETPOST('type') == FactureFournisseur::TYPE_STANDARD || GETPOST('type') == FactureFournisseur::TYPE_DEPOSIT) {
 			if (GETPOST('socid', 'int') < 1) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Supplier')), null, 'errors');
@@ -945,8 +947,7 @@ if (empty($reshook)) {
 					if ($element == 'project') {
 						$element = 'projet';
 					}
-					$object->origin    = GETPOST('origin', 'alpha');
-					$object->origin_id = GETPOST('originid', 'int');
+
 
 
 					require_once DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php';
@@ -954,241 +955,271 @@ if (empty($reshook)) {
 					if ($classname == 'Fournisseur.commande') {
 						$classname = 'CommandeFournisseur';
 					}
-					$objectsrc = new $classname($db);
-					$objectsrc->fetch($originid);
-					$objectsrc->fetch_thirdparty();
 
-					if (!empty($object->origin) && !empty($object->origin_id)) {
-						$object->linkedObjectsIds[$object->origin] = $object->origin_id;
+					// Fetch each related object, add to linked object and add his lines
+					$origin_ids = array_map(function($_id) {
+						return intval($_id);
+					}, preg_split('/,/', GETPOST('originid')));
+
+					$only_one_id = count($origin_ids) == 1;
+
+					$origin = $object->origin    = GETPOST('origin', 'alpha');
+					if ($only_one_id) {
+						$object->origin    =  $origin;
 					}
 
-					// Add also link with order if object is reception
-					if ($object->origin == 'reception') {
-						$objectsrc->fetchObjectLinked();
+					$socId = null;
 
-						if (count($objectsrc->linkedObjectsIds['order_supplier']) > 0) {
-							foreach ($objectsrc->linkedObjectsIds['order_supplier'] as $key => $value) {
-								$object->linkedObjectsIds['order_supplier'] = $value;
-							}
-						}
-					}
+					//$object->linkedObjectsIds[$object->origin] = [];
 
+					// Create the object only one, at the first origin
 					$id = $object->create($user);
 
-					// Add lines
-					if ($id > 0) {
-						require_once DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php';
-						$classname = ucfirst($subelement);
-						if ($classname == 'Fournisseur.commande') {
-							$classname = 'CommandeFournisseur';
+					foreach($origin_ids as $i => $origin_id) {
+						if ($only_one_id) {
+							$object->origin_id = GETPOST('originid', 'int');
 						}
-						$srcobject = new $classname($db);
 
-						$result = $srcobject->fetch(GETPOST('originid', 'int'));
+						$objectsrc = new $classname($db);
+						$result = $objectsrc->fetch($origin_id);
+						$objectsrc->fetch_thirdparty();
 
-						// If deposit invoice - down payment with 1 line (fixed amount or percent)
-						$typeamount = GETPOST('typedeposit', 'alpha');
-						if (GETPOST('type') == FactureFournisseur::TYPE_DEPOSIT && in_array($typeamount, array('amount', 'variable'))) {
-							$valuedeposit = price2num(GETPOST('valuedeposit', 'alpha'), 'MU');
+						$object->linkedObjectsIds[$object->origin][] = $object->origin_id;
+						$object->add_object_linked($object->origin, $origin_id);
+						//print('==>'.$object->origin.' : '.$origin_id."<br>");
 
-							// Define the array $amountdeposit
-							$amountdeposit = array();
-							if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA)) {
-								if ($typeamount == 'amount') {
-									$amount = $valuedeposit;
+						// Add also link with order if object is reception
+						if ($origin == 'reception') {
+							$objectsrc->fetchObjectLinked();
+
+							if (count($objectsrc->linkedObjectsIds['order_supplier']) > 0) {
+								foreach ($objectsrc->linkedObjectsIds['order_supplier'] as $key => $value) {
+									//$object->linkedObjectsIds['order_supplier'] = $value;
+									//print('==>order_supplier : '.$value."<br>");
+									$object->add_object_linked('order_supplier', $value);
+								}
+							}
+						}
+
+						// Add lines
+						if ($id > 0) {
+							require_once DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php';
+							$classname = ucfirst($subelement);
+							if ($classname == 'Fournisseur.commande') {
+								$classname = 'CommandeFournisseur';
+							}
+							//$srcobject = new $classname($db);
+
+							//$result = $srcobject->fetch(GETPOST('originid', 'int'));
+
+							// If deposit invoice - down payment with 1 line (fixed amount or percent)
+							$typeamount = GETPOST('typedeposit', 'alpha');
+							if (GETPOST('type') == FactureFournisseur::TYPE_DEPOSIT && in_array($typeamount, array('amount', 'variable'))) {
+								$valuedeposit = price2num(GETPOST('valuedeposit', 'alpha'), 'MU');
+
+								// Define the array $amountdeposit
+								$amountdeposit = array();
+								if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA)) {
+									if ($typeamount == 'amount') {
+										$amount = $valuedeposit;
+									} else {
+										$amount = $objectsrc->total_ttc * ($valuedeposit / 100);
+									}
+
+									$TTotalByTva = array();
+									foreach ($objectsrc->lines as &$line) {
+										if (!empty($line->special_code)) {
+											continue;
+										}
+										$TTotalByTva[$line->tva_tx] += $line->total_ttc;
+									}
+
+									foreach ($TTotalByTva as $tva => &$total) {
+										$coef = $total / $objectsrc->total_ttc; // Calc coef
+										$am = $amount * $coef;
+										$amount_ttc_diff += $am;
+										$amountdeposit[$tva] += $am / (1 + $tva / 100); // Convert into HT for the addline
+									}
 								} else {
-									$amount = $srcobject->total_ttc * ($valuedeposit / 100);
+									if ($typeamount == 'amount') {
+										$amountdeposit[0] = $valuedeposit;
+									} elseif ($typeamount == 'variable') {
+										if ($result > 0) {
+											$totalamount = 0;
+											$lines = $objectsrc->lines;
+											$numlines = count($lines);
+											for ($i = 0; $i < $numlines; $i++) {
+												$qualified = 1;
+												if (empty($lines[$i]->qty)) {
+													$qualified = 0; // We discard qty=0, it is an option
+												}
+												if (!empty($lines[$i]->special_code)) {
+													$qualified = 0; // We discard special_code (frais port, ecotaxe, option, ...)
+												}
+												if ($qualified) {
+													$totalamount += $lines[$i]->total_ht; // Fixme : is it not for the customer ? Shouldn't we take total_ttc ?
+													$tva_tx = $lines[$i]->tva_tx;
+													$amountdeposit[$tva_tx] += ($lines[$i]->total_ht * $valuedeposit) / 100;
+												}
+											}
+
+											if ($totalamount == 0) {
+												$amountdeposit[0] = 0;
+											}
+										} else {
+											setEventMessages($objectsrc->error, $objectsrc->errors, 'errors');
+											$error++;
+										}
+									}
+
+									$amount_ttc_diff = $amountdeposit[0];
 								}
 
-								$TTotalByTva = array();
-								foreach ($srcobject->lines as &$line) {
-									if (!empty($line->special_code)) {
+								foreach ($amountdeposit as $tva => $amount) {
+									if (empty($amount)) {
 										continue;
 									}
-									$TTotalByTva[$line->tva_tx] += $line->total_ttc;
+
+									$arraylist = array(
+										'amount' => 'FixAmount',
+										'variable' => 'VarAmount'
+									);
+									$descline = '(DEPOSIT)';
+									//$descline.= ' - '.$langs->trans($arraylist[$typeamount]);
+									if ($typeamount == 'amount') {
+										$descline .= ' ('.price($valuedeposit, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).')';
+									} elseif ($typeamount == 'variable') {
+										$descline .= ' ('.$valuedeposit.'%)';
+									}
+
+									$descline .= ' - '.$srcobject->ref;
+									$result = $object->addline(
+										$descline,
+										$amount, // subprice
+										$tva, // vat rate
+										0, // localtax1_tx
+										0, // localtax2_tx
+										1, // quantity
+										(empty($conf->global->INVOICE_PRODUCTID_DEPOSIT) ? 0 : $conf->global->INVOICE_PRODUCTID_DEPOSIT), // fk_product
+										0, // remise_percent
+										0, // date_start
+										0, // date_end
+										0,
+										$lines[$i]->info_bits, // info_bits
+										'HT',
+										0, // product_type
+										1,
+										0,
+										0,
+										0,
+										null,
+										$object->origin,
+										0,
+										'',
+										$lines[$i]->special_code,
+										0
+										//,$langs->trans('Deposit') //Deprecated
+									);
 								}
 
-								foreach ($TTotalByTva as $tva => &$total) {
-									$coef = $total / $srcobject->total_ttc; // Calc coef
-									$am = $amount * $coef;
-									$amount_ttc_diff += $am;
-									$amountdeposit[$tva] += $am / (1 + $tva / 100); // Convert into HT for the addline
-								}
-							} else {
-								if ($typeamount == 'amount') {
-									$amountdeposit[0] = $valuedeposit;
-								} elseif ($typeamount == 'variable') {
-									if ($result > 0) {
-										$totalamount = 0;
-										$lines = $srcobject->lines;
-										$numlines = count($lines);
-										for ($i = 0; $i < $numlines; $i++) {
-											$qualified = 1;
-											if (empty($lines[$i]->qty)) {
-												$qualified = 0; // We discard qty=0, it is an option
-											}
-											if (!empty($lines[$i]->special_code)) {
-												$qualified = 0; // We discard special_code (frais port, ecotaxe, option, ...)
-											}
-											if ($qualified) {
-												$totalamount += $lines[$i]->total_ht; // Fixme : is it not for the customer ? Shouldn't we take total_ttc ?
-												$tva_tx = $lines[$i]->tva_tx;
-												$amountdeposit[$tva_tx] += ($lines[$i]->total_ht * $valuedeposit) / 100;
-											}
-										}
+								$diff = $object->total_ttc - $amount_ttc_diff;
 
-										if ($totalamount == 0) {
-											$amountdeposit[0] = 0;
-										}
+								if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA) && $diff != 0) {
+									$object->fetch_lines();
+									$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx / 100);
+									$object->updateline($object->lines[0]->id, $object->lines[0]->desc, $subprice_diff, $object->lines[0]->qty, $object->lines[0]->remise_percent, $object->lines[0]->date_start, $object->lines[0]->date_end, $object->lines[0]->tva_tx, 0, 0, 'HT', $object->lines[0]->info_bits, $object->lines[0]->product_type, 0, 0, 0, $object->lines[0]->pa_ht, $object->lines[0]->label, 0, array(), 100);
+								}
+							} elseif ($result > 0) {
+								$lines = $objectsrc->lines;
+								if (empty($lines) && method_exists($objectsrc, 'fetch_lines')) {
+									$objectsrc->fetch_lines();
+									$lines = $objectsrc->lines;
+								}
+
+								$num = count($lines);
+								for ($i = 0; $i < $num; $i++) { // TODO handle subprice < 0
+									$desc = ($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
+									$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
+
+									// Extrafields
+									if (method_exists($lines[$i], 'fetch_optionals')) {
+										$lines[$i]->fetch_optionals();
+									}
+
+									// Dates
+									// TODO mutualiser
+									$date_start = $lines[$i]->date_debut_prevue;
+									if ($lines[$i]->date_debut_reel) {
+										$date_start = $lines[$i]->date_debut_reel;
+									}
+									if ($lines[$i]->date_start) {
+										$date_start = $lines[$i]->date_start;
+									}
+									$date_end = $lines[$i]->date_fin_prevue;
+									if ($lines[$i]->date_fin_reel) {
+										$date_end = $lines[$i]->date_fin_reel;
+									}
+									if ($lines[$i]->date_end) {
+										$date_end = $lines[$i]->date_end;
+									}
+
+									// FIXME Missing special_code  into addline and updateline methods
+									$object->special_code = $lines[$i]->special_code;
+
+									// FIXME If currency different from main currency, take multicurrency price
+									if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
+										$pu = 0;
+										$pu_currency = $lines[$i]->multicurrency_subprice;
 									} else {
-										setEventMessages($srcobject->error, $srcobject->errors, 'errors');
+										$pu = $lines[$i]->subprice;
+										$pu_currency = 0;
+									}
+
+									// FIXME Missing $lines[$i]->ref_supplier and $lines[$i]->label into addline and updateline methods. They are filled when coming from order for example.
+									$result = $object->addline(
+										$desc,
+										$pu,
+										$lines[$i]->tva_tx,
+										$lines[$i]->localtax1_tx,
+										$lines[$i]->localtax2_tx,
+										$lines[$i]->qty,
+										$lines[$i]->fk_product,
+										$lines[$i]->remise_percent,
+										$date_start,
+										$date_end,
+										0,
+										$lines[$i]->info_bits,
+										'HT',
+										$product_type,
+										$lines[$i]->rang,
+										0,
+										$lines[$i]->array_options,
+										$lines[$i]->fk_unit,
+										$lines[$i]->id,
+										$pu_currency,
+										$lines[$i]->ref_supplier,
+										$lines[$i]->special_code
+									);
+
+									if ($result < 0) {
 										$error++;
+										break;
 									}
 								}
 
-								$amount_ttc_diff = $amountdeposit[0];
-							}
-
-							foreach ($amountdeposit as $tva => $amount) {
-								if (empty($amount)) {
-									continue;
-								}
-
-								$arraylist = array(
-									'amount' => 'FixAmount',
-									'variable' => 'VarAmount'
-								);
-								$descline = '(DEPOSIT)';
-								//$descline.= ' - '.$langs->trans($arraylist[$typeamount]);
-								if ($typeamount == 'amount') {
-									$descline .= ' ('.price($valuedeposit, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).')';
-								} elseif ($typeamount == 'variable') {
-									$descline .= ' ('.$valuedeposit.'%)';
-								}
-
-								$descline .= ' - '.$srcobject->ref;
-								$result = $object->addline(
-									$descline,
-									$amount, // subprice
-									$tva, // vat rate
-									0, // localtax1_tx
-									0, // localtax2_tx
-									1, // quantity
-									(empty($conf->global->INVOICE_PRODUCTID_DEPOSIT) ? 0 : $conf->global->INVOICE_PRODUCTID_DEPOSIT), // fk_product
-									0, // remise_percent
-									0, // date_start
-									0, // date_end
-									0,
-									$lines[$i]->info_bits, // info_bits
-									'HT',
-									0, // product_type
-									1,
-									0,
-									0,
-									null,
-									$object->origin,
-									0,
-									'',
-									$lines[$i]->special_code,
-									0,
-									0
-									//,$langs->trans('Deposit') //Deprecated
-								);
-							}
-
-							$diff = $object->total_ttc - $amount_ttc_diff;
-
-							if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA) && $diff != 0) {
+								// Now reload line
 								$object->fetch_lines();
-								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx / 100);
-								$object->updateline($object->lines[0]->id, $object->lines[0]->desc, $subprice_diff, $object->lines[0]->qty, $object->lines[0]->remise_percent, $object->lines[0]->date_start, $object->lines[0]->date_end, $object->lines[0]->tva_tx, 0, 0, 'HT', $object->lines[0]->info_bits, $object->lines[0]->product_type, 0, 0, 0, $object->lines[0]->pa_ht, $object->lines[0]->label, 0, array(), 100);
+							} else {
+								$error++;
 							}
-						} elseif ($result > 0) {
-							$lines = $srcobject->lines;
-							if (empty($lines) && method_exists($srcobject, 'fetch_lines')) {
-								$srcobject->fetch_lines();
-								$lines = $srcobject->lines;
-							}
-
-							$num = count($lines);
-							for ($i = 0; $i < $num; $i++) { // TODO handle subprice < 0
-								$desc = ($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
-								$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
-
-								// Extrafields
-								if (method_exists($lines[$i], 'fetch_optionals')) {
-									$lines[$i]->fetch_optionals();
-								}
-
-								// Dates
-								// TODO mutualiser
-								$date_start = $lines[$i]->date_debut_prevue;
-								if ($lines[$i]->date_debut_reel) {
-									$date_start = $lines[$i]->date_debut_reel;
-								}
-								if ($lines[$i]->date_start) {
-									$date_start = $lines[$i]->date_start;
-								}
-								$date_end = $lines[$i]->date_fin_prevue;
-								if ($lines[$i]->date_fin_reel) {
-									$date_end = $lines[$i]->date_fin_reel;
-								}
-								if ($lines[$i]->date_end) {
-									$date_end = $lines[$i]->date_end;
-								}
-
-								// FIXME Missing special_code  into addline and updateline methods
-								$object->special_code = $lines[$i]->special_code;
-
-								// FIXME If currency different from main currency, take multicurrency price
-								if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
-									$pu = 0;
-									$pu_currency = $lines[$i]->multicurrency_subprice;
-								} else {
-									$pu = $lines[$i]->subprice;
-									$pu_currency = 0;
-								}
-
-								// FIXME Missing $lines[$i]->ref_supplier and $lines[$i]->label into addline and updateline methods. They are filled when coming from order for example.
-								$result = $object->addline(
-									$desc,
-									$pu,
-									$lines[$i]->tva_tx,
-									$lines[$i]->localtax1_tx,
-									$lines[$i]->localtax2_tx,
-									$lines[$i]->qty,
-									$lines[$i]->fk_product,
-									$lines[$i]->remise_percent,
-									$date_start,
-									$date_end,
-									0,
-									$lines[$i]->info_bits,
-									'HT',
-									$product_type,
-									$lines[$i]->rang,
-									0,
-									$lines[$i]->array_options,
-									$lines[$i]->fk_unit,
-									$lines[$i]->id,
-									$pu_currency,
-									$lines[$i]->ref_supplier,
-									$lines[$i]->special_code
-								);
-
-								if ($result < 0) {
-									$error++;
-									break;
-								}
-							}
-
-							// Now reload line
-							$object->fetch_lines();
 						} else {
 							$error++;
 						}
-					} else {
-						$error++;
 					}
+
+
+
+
 				} elseif (!$error) {
 					$id = $object->create($user);
 					if ($id < 0) {
@@ -1813,7 +1844,7 @@ if ($action == 'create') {
 		}
 	}
 
-	if (!empty($origin) && !empty($originid)) {
+	if (!empty($origin) && count($origin_ids) > 0) {
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
 
@@ -1841,39 +1872,71 @@ if ($action == 'create') {
 		if ($classname == 'Fournisseur.commande') {
 			$classname = 'CommandeFournisseur';
 		}
-		$objectsrc = new $classname($db);
-		$objectsrc->fetch($originid);
-		$objectsrc->fetch_thirdparty();
 
-		$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
-		//$ref_client			= (!empty($objectsrc->ref_client)?$object->ref_client:'');
+		$data_per_origin = [];
+		$objectsrc_list = [];
+		$total_ht = 0;
+		$total_ttc = 0;
+		$total_tva = 0;
 
-		$soc = $objectsrc->thirdparty;
-		$cond_reglement_id 	= (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_supplier_id) ? $soc->cond_reglement_supplier_id : 0)); // TODO maybe add default value option
-		$mode_reglement_id 	= (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_supplier_id) ? $soc->mode_reglement_supplier_id : 0));
-		$fk_account         = (!empty($objectsrc->fk_account) ? $objectsrc->fk_account : (!empty($soc->fk_account) ? $soc->fk_account : 0));
-		$remise_percent 	= (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_supplier_percent) ? $soc->remise_supplier_percent : 0));
-		$remise_absolue 	= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
-		$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '';
-		$transport_mode_id = (!empty($objectsrc->transport_mode_id) ? $objectsrc->transport_mode_id : (!empty($soc->transport_mode_id) ? $soc->transport_mode_id : 0));
+		foreach($origin_ids as $current_origin_id) {
+			$objectsrc = new $classname($db);
+			$objectsrc->fetch($current_origin_id);
+			$objectsrc->fetch_thirdparty();
 
-		if (!empty($conf->multicurrency->enabled)) {
-			if (!empty($objectsrc->multicurrency_code)) {
-				$currency_code = $objectsrc->multicurrency_code;
+			$objectsrc_list[] = $objectsrc;
+
+			$data_per_origin['project_id'][] = $objectsrc->fk_project;
+			$data_per_origin['soc'][] = $objectsrc->thirdparty;
+			$data_per_origin['cond_reglement_id'][] 	= $objectsrc->cond_reglement_id;
+			$data_per_origin['mode_reglement_id'][] 	= $objectsrc->mode_reglement_id;
+			$data_per_origin['fk_account'][]         = $objectsrc->fk_account;
+			$data_per_origin['remise_percent'][] 	= $objectsrc->remise_percent;
+			$data_per_origin['remise_absolue'][] 	= $objectsrc->remise_absolue;
+			$data_per_origin['transport_mode_id'][] = $objectsrc->transport_mode_id;
+
+			$total_ht += $objectsrc->total_ht;
+			$total_ttc += $objectsrc->total_ttc;
+			$total_tva += $objectsrc->total_tva;
+
+			if (count($origin_ids) === 1) {
+				// Replicate extrafields
+				$objectsrc->fetch_optionals();
+				$object->array_options = $objectsrc->array_options;
 			}
-			if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx)) {
-				$currency_tx = $objectsrc->multicurrency_tx;
+
+			if (!empty($conf->multicurrency->enabled)) {
+				if (!empty($objectsrc->multicurrency_code)) {
+					$data_per_origin['currency_code'][] = $objectsrc->multicurrency_code;
+				}
+				if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx)) {
+					$data_per_origin['currency_tx'][] = $objectsrc->multicurrency_tx;
+				}
 			}
 		}
 
+
+
+		// use count(array_unique(...)) === 1 to know if all values are the same
+		$projectid = (count(array_unique($data_per_origin['project_id'])) === 1) ? $data_per_origin['project_id'] : '';
+
+		$soc = (count(array_unique(array_map(function($_soc) {
+			return $_soc->socid;
+		}, $data_per_origin['soc']))) === 1) ? $data_per_origin['soc'] : '';
+
+		$cond_reglement_id = (count(array_unique($data_per_origin['cond_reglement_id'])) === 1) ? $data_per_origin['cond_reglement_id'] : (!empty($soc->cond_reglement_supplier_id) ? $soc->cond_reglement_supplier_id : 0); // TODO maybe add default value option;
+		$mode_reglement_id = (count(array_unique($data_per_origin['mode_reglement_id'])) === 1) ? $data_per_origin['mode_reglement_id'] : (!empty($soc->mode_reglement_supplier_id) ? $soc->mode_reglement_supplier_id : 0);
+		$fk_account = (count(array_unique($data_per_origin['fk_account'])) === 1) ? $data_per_origin['fk_account'] : (!empty($soc->fk_account) ? $soc->fk_account : 0);
+		$remise_percent = (count(array_unique($data_per_origin['remise_percent'])) === 1) ? $data_per_origin['remise_percent'] : (!empty($soc->remise_supplier_percent) ? $soc->remise_supplier_percent : 0);
+		$remise_absolue = (count(array_unique($data_per_origin['remise_absolue'])) === 1) ? $data_per_origin['remise_absolue'] : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0);
+		$transport_mode_id = (count(array_unique($data_per_origin['transport_mode_id'])) === 1) ? $data_per_origin['transport_mode_id'] : (!empty($soc->transport_mode_id) ? $soc->transport_mode_id : 0);
+		$currency_code = (count(array_unique($data_per_origin['currency_code'])) === 1) ? $data_per_origin['currency_code'] : null;
+		$currency_tx = (count(array_unique($data_per_origin['currency_tx'])) === 1) ? $data_per_origin['currency_tx'] : null;
+		$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '';
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 		$dateinvoice = ($datetmp == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datetmp);
 		$datetmp = dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']);
 		$datedue = ($datetmp == '' ?-1 : $datetmp);
-
-		// Replicate extrafields
-		$objectsrc->fetch_optionals();
-		$object->array_options = $objectsrc->array_options;
 	} else {
 		$cond_reglement_id = $societe->cond_reglement_supplier_id;
 		$mode_reglement_id = $societe->mode_reglement_supplier_id;
@@ -2282,53 +2345,57 @@ if ($action == 'create') {
 	// print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
 	print '</tr>';
 
-
-	if (is_object($objectsrc)) {
+	if (count($objectsrc_list) > 0) {
 		print "\n<!-- ".$classname." info -->";
 		print "\n";
-		print '<input type="hidden" name="amount"         value="'.$objectsrc->total_ht.'">'."\n";
-		print '<input type="hidden" name="total"          value="'.$objectsrc->total_ttc.'">'."\n";
-		print '<input type="hidden" name="tva"            value="'.$objectsrc->total_tva.'">'."\n";
-		print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
-		print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
+		print '<input type="hidden" name="amount"         value="'.$total_ht.'">'."\n";
+		print '<input type="hidden" name="total"          value="'.$total_ttc.'">'."\n";
+		print '<input type="hidden" name="tva"            value="'.$total_tva.'">'."\n";
+
+		print '<input type="hidden" name="origin"         value="'.$origin.'">';
+		print '<input type="hidden" name="originid"       value="'.$originid.'">';
 
 		$txt = $langs->trans($classname);
 		if ($classname == 'CommandeFournisseur') {
 			$langs->load('orders');
 			$txt = $langs->trans("SupplierOrder");
 		}
-		print '<tr><td>'.$txt.'</td><td>'.$objectsrc->getNomUrl(1);
-		// We check if Origin document (id and type is known) has already at least one invoice attached to it
-		$objectsrc->fetchObjectLinked($originid, $origin, '', 'invoice_supplier');
 
-		$invoice_supplier = $objectsrc->linkedObjects['invoice_supplier'];
+		foreach($objectsrc_list as $objectsrc) {
+			print '<tr><td>'.$txt.'</td><td>'.$objectsrc->getNomUrl(1);
 
-		// count function need a array as argument (Note: the array must implement Countable too)
-		if (is_array($invoice_supplier)) {
-			$cntinvoice = count($invoice_supplier);
+			// We check if Origin document (id and type is known) has already at least one invoice attached to it
+			$objectsrc->fetchObjectLinked($originid, $origin, '', 'invoice_supplier');
 
-			if ($cntinvoice >= 1) {
-				setEventMessages('WarningBillExist', null, 'warnings');
-				echo ' ('.$langs->trans('LatestRelatedBill').end($invoice_supplier)->getNomUrl(1).')';
+			$invoice_supplier = $objectsrc->linkedObjects['invoice_supplier'];
+			// count function need a array as argument (Note: the array must implement Countable too)
+			if (is_array($invoice_supplier)) {
+				$cntinvoice = count($invoice_supplier);
+
+				if ($cntinvoice >= 1) {
+					setEventMessages('WarningBillExist', null, 'warnings');
+					echo ' ('.$langs->trans('LatestRelatedBill').end($invoice_supplier)->getNomUrl(1).')';
+				}
 			}
-		}
 
-		print '</td></tr>';
-		print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($objectsrc->total_ht).'</td></tr>';
-		print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($objectsrc->total_tva)."</td></tr>";
-		if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) { //Localtax1
-			print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td><td>'.price($objectsrc->total_localtax1)."</td></tr>";
-		}
+			print '</td></tr>';
+			print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($objectsrc->total_ht).'</td></tr>';
+			print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($objectsrc->total_tva)."</td></tr>";
 
-		if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) { //Localtax2
-			print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td><td>'.price($objectsrc->total_localtax2)."</td></tr>";
-		}
-		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($objectsrc->total_ttc)."</td></tr>";
+			if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) { //Localtax1
+				print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td><td>'.price($objectsrc->total_localtax1)."</td></tr>";
+			}
 
-		if (!empty($conf->multicurrency->enabled)) {
-			print '<tr><td>'.$langs->trans('MulticurrencyAmountHT').'</td><td>'.price($objectsrc->multicurrency_total_ht).'</td></tr>';
-			print '<tr><td>'.$langs->trans('MulticurrencyAmountVAT').'</td><td>'.price($objectsrc->multicurrency_total_tva)."</td></tr>";
-			print '<tr><td>'.$langs->trans('MulticurrencyAmountTTC').'</td><td>'.price($objectsrc->multicurrency_total_ttc)."</td></tr>";
+			if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) { //Localtax2
+				print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td><td>'.price($objectsrc->total_localtax2)."</td></tr>";
+			}
+			print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($objectsrc->total_ttc)."</td></tr>";
+
+			if (!empty($conf->multicurrency->enabled)) {
+				print '<tr><td>'.$langs->trans('MulticurrencyAmountHT').'</td><td>'.price($objectsrc->multicurrency_total_ht).'</td></tr>';
+				print '<tr><td>'.$langs->trans('MulticurrencyAmountVAT').'</td><td>'.price($objectsrc->multicurrency_total_tva)."</td></tr>";
+				print '<tr><td>'.$langs->trans('MulticurrencyAmountTTC').'</td><td>'.price($objectsrc->multicurrency_total_ttc)."</td></tr>";
+			}
 		}
 	}
 
@@ -2337,29 +2404,34 @@ if ($action == 'create') {
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
-
+	// Bouton "Create Draft"
 	print "</table>\n";
 
 	print dol_get_fiche_end();
 
-	print $form->buttonsSaveCancel("CreateDraft");
+	print '<div class="center">';
+	print '<input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+	print '</div>';
 
 	print "</form>\n";
 
 
 	// Show origin lines
-	if (is_object($objectsrc)) {
+	if (count($objectsrc_list) > 0) {
 		print '<br>';
 
 		$title = $langs->trans('ProductsAndServices');
 		print load_fiche_titre($title);
 
-		print '<table class="noborder centpercent">';
-
-		$objectsrc->printOriginLinesList();
-
-		print '</table>';
+		foreach($objectsrc_list as $objectsrc) {
+			print '<table class="noborder centpercent">';
+			$objectsrc->printOriginLinesList();
+			print '</table>';
+		}
 	}
+
 } else {
 	if ($id > 0 || !empty($ref)) {
 		//
