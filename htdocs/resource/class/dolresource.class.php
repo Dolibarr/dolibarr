@@ -511,11 +511,11 @@ class Dolresource extends CommonObject
 		if (!empty($filter)) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) {
-					$sql .= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
+					$sql .= " AND ".$key." = '".$this->db->idate($value)."'";
 				} elseif (strpos($key, 'ef.') !== false) {
 					$sql .= $value;
 				} else {
-					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}
@@ -591,9 +591,9 @@ class Dolresource extends CommonObject
 		if (!empty($filter)) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) {
-					$sql .= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
+					$sql .= " AND ".$key." = '".$this->db->idate($value)."'";
 				} else {
-					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}
@@ -675,9 +675,9 @@ class Dolresource extends CommonObject
 		if (!empty($filter)) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) {
-					$sql .= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
+					$sql .= " AND ".$key." = '".$this->db->idate($value)."'";
 				} else {
-					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}

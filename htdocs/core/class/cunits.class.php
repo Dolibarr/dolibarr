@@ -251,13 +251,13 @@ class CUnits // extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid' || $key == 't.active' || $key == 't.scale') {
-					$sqlwhere[] = $key.'='.(int) $value;
+					$sqlwhere[] = $key." = ".((int) $value);
 				} elseif (strpos($key, 'date') !== false) {
-					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
+					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 't.unit_type' || $key == 't.code' || $key == 't.short_label') {
-					$sqlwhere[] = $key.' = \''.$this->db->escape($value).'\'';
+					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
 				} else {
-					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}

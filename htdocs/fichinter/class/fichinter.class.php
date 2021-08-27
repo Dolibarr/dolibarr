@@ -1481,7 +1481,7 @@ class FichinterLigne extends CommonObjectLine
 		if ($rangToUse == -1) {
 			// Recupere rang max de la ligne d'intervention dans $rangmax
 			$sql = 'SELECT max(rang) as max FROM '.MAIN_DB_PREFIX.'fichinterdet';
-			$sql .= ' WHERE fk_fichinter ='.$this->fk_fichinter;
+			$sql .= ' WHERE fk_fichinter = '.((int) $this->fk_fichinter);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
@@ -1496,7 +1496,7 @@ class FichinterLigne extends CommonObjectLine
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'fichinterdet';
 		$sql .= ' (fk_fichinter, description, date, duree, rang)';
-		$sql .= " VALUES (".$this->fk_fichinter.",";
+		$sql .= " VALUES (".((int) $this->fk_fichinter).",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
 		$sql .= " '".$this->db->idate($this->datei)."',";
 		$sql .= " ".((int) $this->duration).",";

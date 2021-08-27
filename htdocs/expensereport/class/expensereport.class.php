@@ -973,7 +973,7 @@ class ExpenseReport extends CommonObject
 	{
 		$sql = 'SELECT tt.total_ht, tt.total_ttc, tt.total_tva';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as tt';
-		$sql .= ' WHERE tt.'.$this->fk_element.' = '.((int) $id);
+		$sql .= " WHERE tt.".$this->fk_element.' = '.((int) $id);
 
 		$total_ht = 0; $total_tva = 0; $total_ttc = 0;
 
@@ -981,18 +981,18 @@ class ExpenseReport extends CommonObject
 		if ($result) {
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			while ($i < $num) :
+			while ($i < $num) {
 				$objp = $this->db->fetch_object($result);
 				$total_ht += $objp->total_ht;
 				$total_tva += $objp->total_tva;
 				$i++;
-			endwhile;
+			}
 
 			$total_ttc = $total_ht + $total_tva;
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-			$sql .= " total_ht = ".price2num($total_ht, 'MT');
-			$sql .= " , total_ttc = ".price2num($total_ttc, 'MT');
-			$sql .= " , total_tva = ".price2num($total_tva, 'MT');
+			$sql .= " total_ht = ".((float) price2num($total_ht, 'MT'));
+			$sql .= " , total_ttc = ".((float) price2num($total_ttc, 'MT'));
+			$sql .= " , total_tva = ".((float) price2num($total_tva, 'MT'));
 			$sql .= " WHERE rowid = ".((int) $id);
 			$result = $this->db->query($sql);
 			if ($result) :
@@ -1024,14 +1024,14 @@ class ExpenseReport extends CommonObject
 		$this->lines = array();
 
 		$sql = ' SELECT de.rowid, de.comments, de.qty, de.value_unit, de.date, de.rang,';
-		$sql .= ' de.'.$this->fk_element.', de.fk_c_type_fees, de.fk_c_exp_tax_cat, de.fk_projet as fk_project, de.tva_tx, de.fk_ecm_files,';
+		$sql .= " de.".$this->fk_element.", de.fk_c_type_fees, de.fk_c_exp_tax_cat, de.fk_projet as fk_project, de.tva_tx, de.fk_ecm_files,";
 		$sql .= ' de.total_ht, de.total_tva, de.total_ttc,';
 		$sql .= ' ctf.code as code_type_fees, ctf.label as libelle_type_fees,';
 		$sql .= ' p.ref as ref_projet, p.title as title_projet';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as de';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON de.fk_c_type_fees = ctf.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as p ON de.fk_projet = p.rowid';
-		$sql .= ' WHERE de.'.$this->fk_element.' = '.((int) $this->id);
+		$sql .= " WHERE de.".$this->fk_element." = ".((int) $this->id);
 		if (!empty($conf->global->EXPENSEREPORT_LINES_SORTED_BY_ROWID)) {
 			$sql .= ' ORDER BY de.rang ASC, de.rowid ASC';
 		} else {
@@ -2025,12 +2025,12 @@ class ExpenseReport extends CommonObject
 	public function offsetAlreadyGiven()
 	{
 		$sql = 'SELECT e.rowid FROM '.MAIN_DB_PREFIX.'expensereport e';
-		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'expensereport_det d ON (e.rowid = d.fk_expensereport)';
-		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees f ON (d.fk_c_type_fees = f.id AND f.code = "EX_KME")';
-		$sql .= ' WHERE e.fk_user_author = '.(int) $this->fk_user_author;
-		$sql .= ' AND YEAR(d.date) = "'.dol_print_date($this->line->date, '%Y').'" AND MONTH(d.date) = "'.dol_print_date($this->line->date, '%m').'"';
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport_det d ON (e.rowid = d.fk_expensereport)";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_type_fees f ON (d.fk_c_type_fees = f.id AND f.code = 'EX_KME')";
+		$sql .= " WHERE e.fk_user_author = ".(int) $this->fk_user_author;
+		$sql .= " AND YEAR(d.date) = '".dol_print_date($this->line->date, '%Y')."' AND MONTH(d.date) = '".dol_print_date($this->line->date, '%m')."'";
 		if (!empty($this->line->id)) {
-			$sql .= ' AND d.rowid <> '.$this->line->id;
+			$sql .= ' AND d.rowid <> '.((int) $this->line->id);
 		}
 
 		dol_syslog(get_class($this)."::offsetAlreadyGiven sql=".$sql);

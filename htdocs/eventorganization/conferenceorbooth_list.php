@@ -472,7 +472,7 @@ if ($object->ismultientitymanaged == 1) {
 	$sql .= " WHERE 1 = 1";
 }
 if ($projectid > 0) {
-	$sql .= ' AND t.fk_project='.$project->id;
+	$sql .= " AND t.fk_project = ".((int) $project->id);
 }
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {

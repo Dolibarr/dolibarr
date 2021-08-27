@@ -1137,17 +1137,17 @@ class BookKeeping extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.doc_date') {
-					$sqlwhere[] = $key.'=\''.$this->db->idate($value).'\'';
+					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=') {
-					$sqlwhere[] = $key.'\''.$this->db->idate($value).'\'';
+					$sqlwhere[] = $key."'".$this->db->idate($value)."'";
 				} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=' || $key == 't.subledger_account>=' || $key == 't.subledger_account<=') {
-					$sqlwhere[] = $key.'\''.$this->db->escape($value).'\'';
+					$sqlwhere[] = $key."'".$this->db->escape($value)."'";
 				} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
-					$sqlwhere[] = $key.'='.$value;
+					$sqlwhere[] = $key." = ".((int) $value);
 				} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
-					$sqlwhere[] = $key.' LIKE \''.$this->db->escape($value).'%\'';
+					$sqlwhere[] = $key." LIKE '".$this->db->escape($value)."%'";
 				} elseif ($key == 't.subledger_label') {
-					$sqlwhere[] = $key.' LIKE \''.$this->db->escape($value).'%\'';
+					$sqlwhere[] = $key." LIKE '".$this->db->escape($value)."%'";
 				} elseif ($key == 't.code_journal' && !empty($value)) {
 					if (is_array($value)) {
 						$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
@@ -1155,7 +1155,7 @@ class BookKeeping extends CommonObject
 						$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
 					}
 				} else {
-					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}
