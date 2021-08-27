@@ -69,7 +69,7 @@ class KnowledgeManagement extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->knowledgemanagement->read) {
+		if (!DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->read) {
 			throw new RestException(401);
 		}
 
@@ -205,7 +205,7 @@ class KnowledgeManagement extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->knowledgemanagement->write) {
+		if (!DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->write) {
 			throw new RestException(401);
 		}
 
@@ -238,7 +238,7 @@ class KnowledgeManagement extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->knowledgemanagement->write) {
+		if (!DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->write) {
 			throw new RestException(401);
 		}
 
@@ -280,7 +280,7 @@ class KnowledgeManagement extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->knowledgemanagement->delete) {
+		if (!DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->delete) {
 			throw new RestException(401);
 		}
 		$result = $this->knowledgerecord->fetch($id);
