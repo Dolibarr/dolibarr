@@ -34,201 +34,198 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php'
  */
 class mod_codeproduct_jdc extends ModeleProductCode
 {
-        /**
-         * @var string Nom du modele
-         * @deprecated
-         * @see $name
-         */
-        public $nom = 'Jdc';
+		/**
+		 * @var string Nom du modele
+		 * @deprecated
+		 * @see $name
+		 */
+		public $nom = 'Jdc';
 
-        /**
-         * @var string model name
-         */
-        public $name = 'Jdc';
+		/**
+		 * @var string model name
+		 */
+		public $name = 'Jdc';
 
-        public $code_modifiable; // Code modifiable
+		public $code_modifiable; // Code modifiable
 
-        public $code_modifiable_invalide; // Code modifiable si il est invalide
+		public $code_modifiable_invalide; // Code modifiable si il est invalide
 
-        public $code_modifiable_null; // Code modifiables si il est null
+		public $code_modifiable_null; // Code modifiables si il est null
 
-        public $code_null; // Code facultatif
+		public $code_null; // Code facultatif
 
-        /**
-         * Dolibarr version of the loaded document
-         * @var string
-         */
-        public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
+		/**
+		 * Dolibarr version of the loaded document
+		 * @var string
+		 */
+		public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-        /**
-         * @var int Automatic numbering
-         */
-        public $code_auto;
+		/**
+		 * @var int Automatic numbering
+		 */
+		public $code_auto;
 
-        public $searchcode; // String de recherche
+		public $searchcode; // String de recherche
 
-        public $numbitcounter; // Nombre de chiffres du compteur
+		public $numbitcounter; // Nombre de chiffres du compteur
 
-        public $prefixIsRequired; // Le champ prefix du tiers doit etre renseigne quand on utilise {pre}
-
-
-        /**
-         *      Constructor
-         */
-        public function __construct()
-        {
-                $this->code_null = 0;
-                $this->code_modifiable = 0;
-                $this->code_modifiable_invalide = 0;
-                $this->code_modifiable_null = 0;
-                $this->code_auto = 1;
-                $this->prefixIsRequired = 0;
-        }
+		public $prefixIsRequired; // Le champ prefix du tiers doit etre renseigne quand on utilise {pre}
 
 
-        /**
-         *  Return description of module
-         *
-         *  @param      Translate       $langs          Object langs
-         *  @return string                              Description of module
-         */
-        public function info($langs)
-        {
-                global $conf, $mc;
-                global $form;
-
-                $langs->load("products");
-
-                return '';
-        }
+		/**
+		 *      Constructor
+		 */
+	public function __construct()
+	{
+			$this->code_null = 0;
+			$this->code_modifiable = 0;
+			$this->code_modifiable_invalide = 0;
+			$this->code_modifiable_null = 0;
+			$this->code_auto = 1;
+			$this->prefixIsRequired = 0;
+	}
 
 
-        /**
-         * Return an example of result returned by getNextValue
-         *
-         * @param       Translate       $langs          Object langs
-         * @param       product         $objproduct             Object product
-         * @param       int                     $type           Type of third party (1:customer, 2:supplier, -1:autodetect)
-         * @return      string                                  Return string example
-         */
-        public function getExample($langs, $objproduct = 0, $type = -1)
-        {
-                return 'ECL-300-0157';
-        }
+		/**
+		 *  Return description of module
+		 *
+		 *  @param      Translate       $langs          Object langs
+		 *  @return string                              Description of module
+		 */
+	public function info($langs)
+	{
+			global $conf, $mc;
+			global $form;
 
-        /**
-         * Return next value
-         *
-         * @param       Product         $objproduct     Object product
-         * @param       int                 $type       Produit ou service (0:product, 1:service)
-         * @return      string                          Value if OK, '' if module not configured, <0 if KO
-         */
-        public function getNextValue($objproduct = 0, $type = -1)
-        {
-                global $db, $conf;
+			$langs->load("products");
 
-                require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
-                //$familyRef = "ECL-300";
-
-                $familyRef = $objproduct->array_options['options_family'];
-
-                dol_syslog('PRODUCT : '.$objproduct->table_element.' '.var_export($objproduct, true), LOG_DEBUG);
-                dol_syslog('id : '.$objproduct->id, LOG_DEBUG);
-                dol_syslog('extra_labels : '.print_r($extralabels, 1), LOG_DEBUG);
-                dol_syslog('family : '.$familyRef, LOG_DEBUG);
-                dol_syslog('options : '.print_r($objproduct->array_options, 1), LOG_DEBUG);
-
-                $start = 9;
-                $sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$start.") AS SIGNED)) as max";
-                $sql .= " FROM ".MAIN_DB_PREFIX."product";
-                $sql .= " WHERE ref LIKE '".$db->escape($familyRef)."-%'";
-
-                $resql = $db->query($sql);
-                if ($resql)
-                {
-                        $obj = $db->fetch_object($resql);
-                        if ($obj) $max = intval($obj->max);
-                        else $max = 0;
-                }
-
-                if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
-                else $num = sprintf("%04s", $max + 1);
-
-                return $familyRef."-".$num;
-        }
+			return '';
+	}
 
 
-        // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-        /**
-         *   Check if mask/numbering use prefix
-         *
-         *   @return    int                     0 or 1
-         */
-        public function verif_prefixIsUsed()
-        {
-                // phpcs:enable
-                global $conf;
+		/**
+		 * Return an example of result returned by getNextValue
+		 *
+		 * @param       Translate       $langs          Object langs
+		 * @param       product         $objproduct             Object product
+		 * @param       int                     $type           Type of third party (1:customer, 2:supplier, -1:autodetect)
+		 * @return      string                                  Return string example
+		 */
+	public function getExample($langs, $objproduct = 0, $type = -1)
+	{
+			return 'ECL-300-0157';
+	}
 
-                return 0;
-        }
+		/**
+		 * Return next value
+		 *
+		 * @param       Product         $objproduct     Object product
+		 * @param       int                 $type       Produit ou service (0:product, 1:service)
+		 * @return      string                          Value if OK, '' if module not configured, <0 if KO
+		 */
+	public function getNextValue($objproduct = 0, $type = -1)
+	{
+			global $db, $conf;
 
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-        /**
-         *      Check validity of code according to its rules
-         *
-         *      @param  DoliDB          $db                     Database handler
-         *      @param  string          $code           Code to check/correct
-         *      @param  Product         $product        Object product
-         *  @param  int                 $type           0 = product , 1 = service
-         *  @return int                                         0 if OK
-         *                                                                      -1 ErrorBadCustomerCodeSyntax
-         *                                                                      -2 ErrorCustomerCodeRequired
-         *                                                                      -3 ErrorCustomerCodeAlreadyUsed
-         *                                                                      -4 ErrorPrefixRequired
-         *                                                                      -5 Other (see this->error)
-         */
-        public function verif($db, &$code, $product, $type)
-        {
-                global $conf;
+			//$familyRef = "ECL-300";
 
-                require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$familyRef = $objproduct->array_options['options_family'];
 
-                $result = 0;
-                $code = strtoupper(trim($code));
+			dol_syslog('PRODUCT : '.$objproduct->table_element.' '.var_export($objproduct, true), LOG_DEBUG);
+			dol_syslog('id : '.$objproduct->id, LOG_DEBUG);
+			dol_syslog('extra_labels : '.print_r($extralabels, 1), LOG_DEBUG);
+			dol_syslog('family : '.$familyRef, LOG_DEBUG);
+			dol_syslog('options : '.print_r($objproduct->array_options, 1), LOG_DEBUG);
 
-                dol_syslog("mod_codeclient_jdc::verif type=".$type." result=".$result);
-                return $result;
-        }
+			$start = 9;
+			$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$start.") AS SIGNED)) as max";
+			$sql .= " FROM ".MAIN_DB_PREFIX."product";
+			$sql .= " WHERE ref LIKE '".$db->escape($familyRef)."-%'";
+
+			$resql = $db->query($sql);
+		if ($resql) {
+				$obj = $db->fetch_object($resql);
+				if ($obj) $max = intval($obj->max);
+			else $max = 0;
+		}
+
+			if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
+		else $num = sprintf("%04s", $max + 1);
+
+			return $familyRef."-".$num;
+	}
 
 
         // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-        /**
-         *  Renvoi si un code est pris ou non (par autre tiers)
-         *
-         *  @param      DoliDB          $db                     Handler acces base
-         *  @param      string          $code           Code a verifier
-         *  @param      Product         $product                Objet product
-         *  @return     int                                             0 if available, <0 if KO
-         */
-        public function verif_dispo($db, $code, $product)
-        {
-                // phpcs:enable
-                $sql = "SELECT ref FROM ".MAIN_DB_PREFIX."product";
-                $sql .= " WHERE ref = '".$db->escape($code)."'";
-                if ($product->id > 0) $sql .= " AND rowid <> ".$product->id;
+		/**
+		 *   Check if mask/numbering use prefix
+		 *
+		 *   @return    int                     0 or 1
+		 */
+	public function verif_prefixIsUsed()
+	{
+		// phpcs:enable
+			global $conf;
 
-                $resql = $db->query($sql);
-                if ($resql)
-                {
-                        if ($db->num_rows($resql) == 0)
-                        {
-                                return 0;
-                        } else {
-                                return -1;
-                        }
-                } else {
-                        return -2;
-                }
-        }
+			return 0;
+	}
+
+
+		/**
+		 *      Check validity of code according to its rules
+		 *
+		 *      @param  DoliDB          $db                     Database handler
+		 *      @param  string          $code           Code to check/correct
+		 *      @param  Product         $product        Object product
+		 *  @param  int                 $type           0 = product , 1 = service
+		 *  @return int                                         0 if OK
+		 *                                                                      -1 ErrorBadCustomerCodeSyntax
+		 *                                                                      -2 ErrorCustomerCodeRequired
+		 *                                                                      -3 ErrorCustomerCodeAlreadyUsed
+		 *                                                                      -4 ErrorPrefixRequired
+		 *                                                                      -5 Other (see this->error)
+		 */
+	public function verif($db, &$code, $product, $type)
+	{
+			global $conf;
+
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+			$result = 0;
+			$code = strtoupper(trim($code));
+
+			dol_syslog("mod_codeclient_jdc::verif type=".$type." result=".$result);
+			return $result;
+	}
+
+
+        // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+		/**
+		 *  Renvoi si un code est pris ou non (par autre tiers)
+		 *
+		 *  @param      DoliDB          $db                     Handler acces base
+		 *  @param      string          $code           Code a verifier
+		 *  @param      Product         $product                Objet product
+		 *  @return     int                                             0 if available, <0 if KO
+		 */
+	public function verif_dispo($db, $code, $product)
+	{
+		// phpcs:enable
+			$sql = "SELECT ref FROM ".MAIN_DB_PREFIX."product";
+			$sql .= " WHERE ref = '".$db->escape($code)."'";
+			if ($product->id > 0) $sql .= " AND rowid <> ".$product->id;
+
+			$resql = $db->query($sql);
+		if ($resql) {
+			if ($db->num_rows($resql) == 0) {
+				return 0;
+			} else {
+					return -1;
+			}
+		} else {
+				return -2;
+		}
+	}
 }

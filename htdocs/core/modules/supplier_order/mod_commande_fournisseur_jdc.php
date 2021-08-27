@@ -75,7 +75,7 @@ class mod_commande_fournisseur_jdc extends ModeleNumRefSuppliersOrders
 	public function info()
 	{
 		global $langs;
-	  	return $langs->trans("JDCSupplierOrderRefModelDesc", $this->prefix);
+		return $langs->trans("JDCSupplierOrderRefModelDesc", $this->prefix);
 	}
 
 
@@ -105,12 +105,12 @@ class mod_commande_fournisseur_jdc extends ModeleNumRefSuppliersOrders
 
 		$object->fetch_projet();
 
-                $projectRef = $object->project->ref;
+				$projectRef = $object->project->ref;
 
-                $start = 9;
-                $sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$start.") AS SIGNED)) as max";
-                $sql .= " FROM ".MAIN_DB_PREFIX."command_fournisseur";
-                $sql .= " WHERE ref LIKE '".$db->escape($projectRef)."-%'";
+				$start = 9;
+				$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$start.") AS SIGNED)) as max";
+				$sql .= " FROM ".MAIN_DB_PREFIX."command_fournisseur";
+				$sql .= " WHERE ref LIKE '".$db->escape($projectRef)."-%'";
 
 		//$posindice = strlen($this->prefix) + 6;
 		//$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
@@ -119,14 +119,12 @@ class mod_commande_fournisseur_jdc extends ModeleNumRefSuppliersOrders
 		//$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$row = $db->fetch_row($resql);
 			if ($row) { $coyymm = substr($row[0], 0, 6); $max = $row[0]; }
 		}
 
-		if (!$coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
-		{
+		if (!$coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm)) {
 			return true;
 		} else {
 			$langs->load("errors");
@@ -163,15 +161,14 @@ class mod_commande_fournisseur_jdc extends ModeleNumRefSuppliersOrders
 		//$sql .= " AND entity = ".$conf->entity;
 
 		//$date = $object->date_commande; // Not always defined
-                //if (empty($date)) {
-                //      $date = $object->date; // Creation date is order date for suppliers orders
-                //}
-                //$yymm = strftime("%y%m", $date);
+				//if (empty($date)) {
+				//      $date = $object->date; // Creation date is order date for suppliers orders
+				//}
+				//$yymm = strftime("%y%m", $date);
 
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $db->fetch_object($resql);
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;

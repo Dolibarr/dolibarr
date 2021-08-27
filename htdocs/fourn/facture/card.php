@@ -957,7 +957,7 @@ if (empty($reshook)) {
 					}
 
 					// Fetch each related object, add to linked object and add his lines
-					$origin_ids = array_map(function($_id) {
+					$origin_ids = array_map(function ($_id) {
 						return intval($_id);
 					}, preg_split('/,/', GETPOST('originid')));
 
@@ -975,7 +975,7 @@ if (empty($reshook)) {
 					// Create the object only one, at the first origin
 					$id = $object->create($user);
 
-					foreach($origin_ids as $i => $origin_id) {
+					foreach ($origin_ids as $i => $origin_id) {
 						if ($only_one_id) {
 							$object->origin_id = GETPOST('originid', 'int');
 						}
@@ -1216,10 +1216,6 @@ if (empty($reshook)) {
 							$error++;
 						}
 					}
-
-
-
-
 				} elseif (!$error) {
 					$id = $object->create($user);
 					if ($id < 0) {
@@ -1879,7 +1875,7 @@ if ($action == 'create') {
 		$total_ttc = 0;
 		$total_tva = 0;
 
-		foreach($origin_ids as $current_origin_id) {
+		foreach ($origin_ids as $current_origin_id) {
 			$objectsrc = new $classname($db);
 			$objectsrc->fetch($current_origin_id);
 			$objectsrc->fetch_thirdparty();
@@ -1920,7 +1916,7 @@ if ($action == 'create') {
 		// use count(array_unique(...)) === 1 to know if all values are the same
 		$projectid = (count(array_unique($data_per_origin['project_id'])) === 1) ? $data_per_origin['project_id'] : '';
 
-		$soc = (count(array_unique(array_map(function($_soc) {
+		$soc = (count(array_unique(array_map(function ($_soc) {
 			return $_soc->socid;
 		}, $data_per_origin['soc']))) === 1) ? $data_per_origin['soc'] : '';
 
@@ -2361,7 +2357,7 @@ if ($action == 'create') {
 			$txt = $langs->trans("SupplierOrder");
 		}
 
-		foreach($objectsrc_list as $objectsrc) {
+		foreach ($objectsrc_list as $objectsrc) {
 			print '<tr><td>'.$txt.'</td><td>'.$objectsrc->getNomUrl(1);
 
 			// We check if Origin document (id and type is known) has already at least one invoice attached to it
@@ -2425,13 +2421,12 @@ if ($action == 'create') {
 		$title = $langs->trans('ProductsAndServices');
 		print load_fiche_titre($title);
 
-		foreach($objectsrc_list as $objectsrc) {
+		foreach ($objectsrc_list as $objectsrc) {
 			print '<table class="noborder centpercent">';
 			$objectsrc->printOriginLinesList();
 			print '</table>';
 		}
 	}
-
 } else {
 	if ($id > 0 || !empty($ref)) {
 		//
