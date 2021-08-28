@@ -90,7 +90,7 @@ if ($permission) {
 	?>
 	<form class="tagtr liste_titre">
 		<div class="tagtd liste_titre"><?php echo $langs->trans("ThirdParty"); ?></div>
-		<div class="tagtd liste_titre"><?php echo $langs->trans("Users").' | '.$langs->trans("Contacts"); ?></div>
+		<div class="tagtd liste_titre"><?php echo img_picto($langs->trans("Users"), 'user', 'class="optiongrey paddingright"').$langs->trans("Users").' | '.img_picto($langs->trans("Contacts"), 'contact', 'class="optiongrey paddingright"').$langs->trans("Contacts"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("ContactType"); ?></div>
 		<div class="tagtd liste_titre">&nbsp;</div>
 		<div class="tagtd liste_titre">&nbsp;</div>

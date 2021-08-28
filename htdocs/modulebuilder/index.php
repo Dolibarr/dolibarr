@@ -2219,7 +2219,8 @@ if ($module == 'initmodule') {
 
 			if ($action != 'editfile' || empty($file)) {
 				print '<span class="opacitymedium">';
-				$htmlhelp = $langs->trans("DictionariesDefDescTooltip", '<a href="'.DOL_URL_ROOT.'/admin/dict.php">'.$langs->trans('Setup').' - '.$langs->trans('Dictionaries').'</a>');
+				$htmlhelp = $langs->trans("DictionariesDefDescTooltip", '{s1}');
+				$htmlhelp = str_replace('{s1}', '<a target="adminbis" class="nofocusvisible" href="'.DOL_URL_ROOT.'/admin/dict.php">'.$langs->trans('Setup').' - '.$langs->trans('Dictionaries').'</a>', $htmlhelp);
 				print $form->textwithpicto($langs->trans("DictionariesDefDesc"), $htmlhelp, 1, 'help', '', 0, 2, 'helpondesc').'<br>';
 				print '</span>';
 				print '<br>';
@@ -3012,7 +3013,8 @@ if ($module == 'initmodule') {
 
 			if ($action != 'editfile' || empty($file)) {
 				print '<span class="opacitymedium">';
-				$htmlhelp = $langs->trans("MenusDefDescTooltip", '<a href="'.DOL_URL_ROOT.'/admin/menus/index.php">'.$langs->trans('Setup').' - '.$langs->trans('Menus').'</a>');
+				$htmlhelp = $langs->trans("MenusDefDescTooltip", '{s1}');
+				$htmlhelp = str_replace('{s1}', '<a target="adminbis" class="nofocusvisible" href="'.DOL_URL_ROOT.'/admin/menus/index.php">'.$langs->trans('Setup').' - '.$langs->trans('Menus').'</a>', $htmlhelp);
 				print $form->textwithpicto($langs->trans("MenusDefDesc"), $htmlhelp, 1, 'help', '', 0, 2, 'helpondesc').'<br>';
 				print '</span>';
 				print '<br>';
@@ -3144,7 +3146,8 @@ if ($module == 'initmodule') {
 
 			if ($action != 'editfile' || empty($file)) {
 				print '<span class="opacitymedium">';
-				$htmlhelp = $langs->trans("PermissionsDefDescTooltip", '<a href="'.DOL_URL_ROOT.'/admin/perms.php">'.$langs->trans('DefaultPermissions').'</a>');
+				$htmlhelp = $langs->trans("PermissionsDefDescTooltip", '{s1}');
+				$htmlhelp = str_replace('{s1}', '<a target="adminbis" class="nofocusvisible" href="'.DOL_URL_ROOT.'/admin/perms.php">'.$langs->trans('DefaultRights').'</a>', $htmlhelp);
 				print $form->textwithpicto($langs->trans("PermissionsDefDesc"), $htmlhelp, 1, 'help', '', 0, 2, 'helpondesc').'<br>';
 				print '</span>';
 				print '<br>';
@@ -3611,7 +3614,7 @@ if ($module == 'initmodule') {
 			$cronjobs = $moduleobj->cronjobs;
 
 			if ($action != 'editfile' || empty($file)) {
-				print '<span class="opacitymedium">'.str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/cron/list.php">'.$langs->transnoentities('CronList').'</a>', $langs->trans("CronJobDefDesc", '{s1}')).'</span><br>';
+				print '<span class="opacitymedium">'.str_replace('{s1}', '<a target="adminbis" class="nofocusvisible" href="'.DOL_URL_ROOT.'/cron/list.php">'.$langs->transnoentities('CronList').'</a>', $langs->trans("CronJobDefDesc", '{s1}')).'</span><br>';
 				print '<br>';
 
 				print '<span class="fa fa-file-o"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
