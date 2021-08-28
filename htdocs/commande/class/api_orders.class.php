@@ -1030,11 +1030,11 @@ class Orders extends DolibarrApi
 	 *
 	 * @url     POST {id}/shipment/{warehouse_id}
 	 *
+	 * @return int
+	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 * @throws RestException 500
-	 *
-	 * @return int
 	 */
 	public function createOrderShipment($id, $warehouse_id)
 	{
