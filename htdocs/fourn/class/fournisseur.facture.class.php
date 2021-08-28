@@ -3392,13 +3392,13 @@ class SupplierInvoiceLine extends CommonObjectLine
 		if (empty($this->fk_product)) {
 			$fk_product = "null";
 		} else {
-			$fk_product = $this->fk_product;
+			$fk_product = (int) $this->fk_product;
 		}
 
 		if (empty($this->fk_unit)) {
 			$fk_unit = "null";
 		} else {
-			$fk_unit = "'".$this->db->escape($this->fk_unit)."'";
+			$fk_unit = (int) $this->fk_unit;
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det SET";
