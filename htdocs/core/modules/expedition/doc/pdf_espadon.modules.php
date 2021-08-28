@@ -650,11 +650,11 @@ class pdf_espadon extends ModelePdfExpedition
 						$this->printStdColumnContent($pdf, $curY, 'qty_asked', $object->lines[$i]->qty_asked);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
-					
+
 					if ($this->getColumnStatus('unit_order')) {
-                        $this->printStdColumnContent($pdf, $curY, 'unit_order', measuringUnitString($object->lines[$i]->fk_unit));
-                        $nexY = max($pdf->GetY(), $nexY);
-                    }
+						$this->printStdColumnContent($pdf, $curY, 'unit_order', measuringUnitString($object->lines[$i]->fk_unit));
+						$nexY = max($pdf->GetY(), $nexY);
+					}
 
 					if ($this->getColumnStatus('qty_shipped')) {
 						$this->printStdColumnContent($pdf, $curY, 'qty_shipped', $object->lines[$i]->qty_shipped);
@@ -1316,7 +1316,7 @@ class pdf_espadon extends ModelePdfExpedition
 				'align' => 'C',
 			),
 		);
-		
+
 		$rank = $rank + 10;
 		$this->cols['unit_order'] = array(
 			'rank' => $rank,
