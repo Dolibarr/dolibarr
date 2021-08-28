@@ -189,6 +189,7 @@ class HookManager
 				'formConfirm',
 				'getAccessForbiddenMessage',
 				'getDirList',
+				'functionGetEntity',
 				'getFormMail',
 				'getFormatedCustomerRef',
 				'getFormatedSupplierRef',
