@@ -463,7 +463,7 @@ if ($action == 'confirm_generateinvoice') {
 					$arrayoftasks[$object->timespent_id]['totalvaluetodivideby3600'] = $object->timespent_duration * $object->timespent_thm;
 					$arrayoftasks[$object->timespent_id]['note'] = $ftask->ref.' - '.$ftask->label.' - '.$username.($object->timespent_note ? ' - '.$object->timespent_note : '');		// TODO Add user name in note
 					if (!empty($conf->global->PROJECT_TIME_SPENT_INTO_INVOICE_ADD_TIME_DT)) {
-						$arrayoftasks[$object->timespent_id]['note'] = "\n";
+						$arrayoftasks[$object->timespent_id]['note'] .= "\n";
 						if (!empty($object->timespent_withhour)) {
 							$arrayoftasks[$object->timespent_id]['note'] .= $langs->trans("Date") . ': ' . dol_print_date($object->timespent_datehour);
 						} else {
