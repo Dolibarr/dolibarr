@@ -994,7 +994,7 @@ class Orders extends DolibarrApi
 		$sql .= " ON edet.fk_origin_line = cdet.rowid";
 		$sql .= " JOIN ".MAIN_DB_PREFIX."commande as c";
 		$sql .= " ON cdet.fk_commande = c.rowid";
-		$sql .= " WHERE c.rowid = ".$this->db->escape($id);
+		$sql .= " WHERE c.rowid = ".((int) $id);
 		$sql .= " GROUP BY e.rowid";
 		$sql .= $this->db->order("e.rowid", "ASC");
 
@@ -1022,8 +1022,7 @@ class Orders extends DolibarrApi
 	}
 
 	/**
-	 * Create the shipments of an order
-	 *
+	 * Create the shipment of an order
 	 *
 	 * @param int   $id       Id of the order
 	 * @param int	$warehouse_id Id of a warehouse
