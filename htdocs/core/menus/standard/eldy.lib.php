@@ -1733,11 +1733,11 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 				$titleboth = $langs->trans("LeadsOrProjects");
 				$titlenew = $langs->trans("NewLeadOrProject"); // Leads and opportunities by default
-				if (isset(getDolGlobalString("PROJECT_USE_OPPORTUNITIES")) && getDolGlobalString("PROJECT_USE_OPPORTUNITIES") == 0) {
+				if (getDolGlobalString("PROJECT_USE_OPPORTUNITIES") !== null && getDolGlobalString("PROJECT_USE_OPPORTUNITIES") == 0) {
 					$titleboth = $langs->trans("Projects");
 					$titlenew = $langs->trans("NewProject");
 				}
-				if (isset(getDolGlobalString("PROJECT_USE_OPPORTUNITIES")) && getDolGlobalString("PROJECT_USE_OPPORTUNITIES") == 2) {	// 2 = leads only
+				if (getDolGlobalString("PROJECT_USE_OPPORTUNITIES") !== null && getDolGlobalString("PROJECT_USE_OPPORTUNITIES") == 2) {	// 2 = leads only
 					$titleboth = $langs->trans("Leads");
 					$titlenew = $langs->trans("NewLead");
 				}
@@ -1746,13 +1746,13 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$newmenu->add("/projet/index.php?leftmenu=projects".($search_project_user ? '&search_project_user='.$search_project_user : ''), $titleboth, 0, $user->rights->projet->lire, '', $mainmenu, 'projects', 0, '', '', '', img_picto('', 'project', 'class="pictofixedwidth"'));
 				$newmenu->add("/projet/card.php?leftmenu=projects&action=create".($search_project_user ? '&search_project_user='.$search_project_user : ''), $titlenew, 1, $user->rights->projet->creer);
 
-				if (isset(getDolGlobalString("PROJECT_USE_OPPORTUNITIES")) && getDolGlobalString("PROJECT_USE_OPPORTUNITIES") == 0) {
+				if (getDolGlobalString("PROJECT_USE_OPPORTUNITIES") !== null && getDolGlobalString("PROJECT_USE_OPPORTUNITIES") == 0) {
 					$newmenu->add("/projet/list.php?leftmenu=projets".($search_project_user ? '&search_project_user='.$search_project_user : '').'&search_status=99', $langs->trans("List"), 1, $showmode, '', 'project', 'list');
-				} elseif (isset(getDolGlobalString("PROJECT_USE_OPPORTUNITIES")) && getDolGlobalString("PROJECT_USE_OPPORTUNITIES") == 1) {
+				} elseif (getDolGlobalString("PROJECT_USE_OPPORTUNITIES") !== null && getDolGlobalString("PROJECT_USE_OPPORTUNITIES") == 1) {
 					$newmenu->add("/projet/list.php?leftmenu=projets".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("List"), 1, $showmode, '', 'project', 'list');
 					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_usage_opportunity=1&search_status=99&search_opp_status=openedopp&contextpage=lead', $langs->trans("ListOpenLeads"), 2, $showmode);
 					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_opp_status=notopenedopp&search_status=99&contextpage=project', $langs->trans("ListOpenProjects"), 2, $showmode);
-				} elseif (isset(getDolGlobalString("PROJECT_USE_OPPORTUNITIES")) && getDolGlobalString("PROJECT_USE_OPPORTUNITIES") == 2) {	// 2 = leads only
+				} elseif (getDolGlobalString("PROJECT_USE_OPPORTUNITIES") !== null && getDolGlobalString("PROJECT_USE_OPPORTUNITIES") == 2) {	// 2 = leads only
 					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_usage_opportunity=1&search_status=99', $langs->trans("List"), 2, $showmode);
 				}
 
