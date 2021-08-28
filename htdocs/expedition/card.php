@@ -1133,7 +1133,7 @@ if ($action == 'create') {
 						print_date_range($db->jdate($line->date_start), $db->jdate($line->date_end));
 						print "</td>\n";
 					}
-					
+
 					// unit of order
 					$unit_order = ''
 					if ($conf->global->PRODUCT_USE_UNITS) {
@@ -2155,7 +2155,7 @@ if ($action == 'create') {
 					print_date_range($lines[$i]->date_start, $lines[$i]->date_end);
 					print "</td>\n";
 				}
-				
+
 				$unit_order = ''
 				if ($conf->global->PRODUCT_USE_UNITS) {
 					$unit_order = measuringUnitString($lines[$i]->fk_unit);
