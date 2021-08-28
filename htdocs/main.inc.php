@@ -1799,22 +1799,6 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 
 		// Define link to login card
 		$appli = constant('DOL_APPLICATION_TITLE');
-		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-			$appli = $conf->global->MAIN_APPLICATION_TITLE;
-			if (preg_match('/\d\.\d/', $appli)) {
-				if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
-					$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
-				}
-			} else {
-				$appli .= " ".DOL_VERSION;
-			}
-		} else {
-			$appli .= " ".DOL_VERSION;
-		}
-
-		if (!empty($conf->global->MAIN_FEATURES_LEVEL)) {
-			$appli .= "<br>".$langs->trans("LevelOfFeature").': '.$conf->global->MAIN_FEATURES_LEVEL;
-		}
 
 		$logouttext = '';
 		$logouthtmltext = '';
@@ -1922,17 +1906,6 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				$text .= '</a>';
 				$toprightmenu .= $form->textwithtooltip('', $title, 2, 1, $text, 'login_block_elem', 2);
 			}
-
-			// Version
-			if (!empty($conf->global->MAIN_SHOWDATABASENAMEINHELPPAGESLINK)) {
-				$langs->load('admin');
-				$appli .= '<br>'.$langs->trans("Database").': '.$db->database_name;
-			}
-		}
-
-		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-			$text = '<span class="aversion"><span class="hideonsmartphone small">'.DOL_VERSION.'</span></span>';
-			$toprightmenu .= $form->textwithtooltip('', $appli, 2, 1, $text, 'login_block_elem', 2);
 		}
 
 		// Logout link
@@ -2058,6 +2031,26 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$type = ($user->socid ? $langs->trans("External").$company : $langs->trans("Internal"));
 	$dropdownBody .= '<br><b>'.$langs->trans("Type").':</b> '.$type;
 	$dropdownBody .= '<br><b>'.$langs->trans("Status").'</b>: '.$user->getLibStatut(0);
+	$dropdownBody .= '<br>';
+
+	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+		$dol_title = $conf->global->MAIN_APPLICATION_TITLE;
+		if (preg_match('/\d\.\d/', $dol_title)) {
+			if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $dol_title)) {
+				$dol_title .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
+			}
+		}
+	}
+	$dropdownBody .= '<br><u>'.$langs->trans("Dolibarr").'</u>';
+	$dropdownBody .= '<br><b>'.$langs->trans("App-Title").':</b> '.$dol_title;
+	$dropdownBody .= '<br><b>'.$langs->trans("Version").':</b> '.DOL_VERSION;
+	if (!empty($conf->global->MAIN_FEATURES_LEVEL)) {
+		$dropdownBody .= '<br><b>'.$langs->trans("LevelOfFeature").':</b> '.$conf->global->MAIN_FEATURES_LEVEL;
+	}
+	if (!empty($conf->global->MAIN_SHOWDATABASENAMEINHELPPAGESLINK)) {
+		$langs->load('admin');
+		$dropdownBody .= '<br><b>'.$langs->trans("Database").':</b> '.$db->database_name;
+	}
 	$dropdownBody .= '<br>';
 
 	$dropdownBody .= '<br><u>'.$langs->trans("Session").'</u>';
