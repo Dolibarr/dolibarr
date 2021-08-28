@@ -87,7 +87,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'idsel' => 'home',
 		'classname' =>  $classname = (!isset($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "home") ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => '<span class="fa fa-home fa-fw paddingright"></span>',
-		'session' => ((!isset($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "home") ? 0 : 1),
+		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "home") ? 0 : 1),
 		'loadLangs' => array(),
 		'submenus' => array(),
 	);
