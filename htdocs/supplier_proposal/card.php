@@ -1793,7 +1793,7 @@ if ($action == 'create') {
 		$form_close .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$form_close .= '<input type="hidden" name="action" value="setstatut">';
 
-		if (!empty(getDolGlobalString("SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPP")lIER_PROPOSAL)) {
+		if (!empty(getDolGlobalString("SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL"))) {
 			$form_close .= '<p class="notice">'.$langs->trans('SupplierProposalRefFournNotice').'</p>'; // TODO Suggest a permanent checkbox instead of option
 		}
 		$form_close .= '<table class="border centpercent marginleftonly marginrightonly">';
