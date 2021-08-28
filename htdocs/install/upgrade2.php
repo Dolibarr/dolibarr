@@ -692,7 +692,7 @@ function migrate_paiements($db, $langs, $conf)
 				$num = count($row);
 				for ($i = 0; $i < $num; $i++) {
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount)";
-					$sql .= " VALUES (".$row[$i][1].",".$row[$i][0].",".$row[$i][2].")";
+					$sql .= " VALUES (".((int) $row[$i][1]).",".((int) $row[$i][0]).",".((float) $row[$i][2]).")";
 
 					$res += $db->query($sql);
 
@@ -803,7 +803,7 @@ function migrate_paiements_orphelins_1($db, $langs, $conf)
 						$facid = $obj->rowid;
 
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount)";
-						$sql .= " VALUES (".((int) $facid).",".((int) $row[$i]['paymentid']).",".$row[$i]['pamount'].")";
+						$sql .= " VALUES (".((int) $facid).",".((int) $row[$i]['paymentid']).", ".((float) $row[$i]['pamount']).")";
 
 						$res += $db->query($sql);
 
@@ -914,7 +914,7 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
 						$facid = $obj->rowid;
 
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount)";
-						$sql .= " VALUES (".((int) $facid).",".((int) $row[$i]['paymentid']).",".$row[$i]['pamount'].")";
+						$sql .= " VALUES (".((int) $facid).",".((int) $row[$i]['paymentid']).", ".((float) $row[$i]['pamount']).")";
 
 						$res += $db->query($sql);
 
@@ -1002,14 +1002,14 @@ function migrate_contracts_det($db, $langs, $conf)
 				$sql .= "date_ouverture_prevue, date_ouverture, date_fin_validite, tva_tx, qty,";
 				$sql .= "subprice, price_ht, fk_user_author, fk_user_ouverture)";
 				$sql .= " VALUES (";
-				$sql .= $obj->cref.", ".($obj->fk_product ? $obj->fk_product : 0).", ";
+				$sql .= ((int) $obj->cref).", ".($obj->fk_product ? ((int) $obj->fk_product) : 0).", ";
 				$sql .= "0, ";
 				$sql .= "'".$db->escape($obj->label)."', null, ";
-				$sql .= ($obj->date_contrat ? "'".$db->escape($obj->date_contrat)."'" : "null").", ";
+				$sql .= ($obj->date_contrat ? "'".$db->idate($db->jdate($obj->date_contrat))."'" : "null").", ";
 				$sql .= "null, ";
 				$sql .= "null, ";
-				$sql .= "'".$db->escape($obj->tva_tx)."' , 1, ";
-				$sql .= "'".$db->escape($obj->price)."', '".$db->escape($obj->price)."', ".$obj->fk_user_author.",";
+				$sql .= ((float) $obj->tva_tx).", 1, ";
+				$sql .= ((float) $obj->price).", ".((float) $obj->price).", ".((int) $obj->fk_user_author).",";
 				$sql .= "null";
 				$sql .= ")";
 
@@ -2020,7 +2020,7 @@ function migrate_commande_expedition($db, $langs, $conf)
 					$obj = $db->fetch_object($resql);
 
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."co_exp (fk_expedition,fk_commande)";
-					$sql .= " VALUES (".$obj->rowid.",".$obj->fk_commande.")";
+					$sql .= " VALUES (".((int) $obj->rowid).", ".((int) $obj->fk_commande).")";
 					$resql2 = $db->query($sql);
 
 					if (!$resql2) {
@@ -2088,15 +2088,15 @@ function migrate_commande_livraison($db, $langs, $conf)
 					$obj = $db->fetch_object($resql);
 
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."co_liv (fk_livraison,fk_commande)";
-					$sql .= " VALUES (".$obj->rowid.",".$obj->fk_commande.")";
+					$sql .= " VALUES (".((int) $obj->rowid).", ".((int) $obj->fk_commande).")";
 					$resql2 = $db->query($sql);
 
 					if ($resql2) {
 						$delivery_date = $db->jdate($obj->delivery_date);
 
 						$sqlu = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
-						$sqlu .= " ref_client='".$db->escape($obj->ref_client)."'";
-						$sqlu .= ", date_livraison='".$db->idate($delivery_date)."'";
+						$sqlu .= " ref_client = '".$db->escape($obj->ref_client)."'";
+						$sqlu .= ", date_livraison = '".$db->idate($delivery_date)."'";
 						$sqlu .= " WHERE rowid = ".((int) $obj->rowid);
 						$resql3 = $db->query($sqlu);
 						if (!$resql3) {
@@ -3361,7 +3361,7 @@ function migrate_clean_association($db, $langs, $conf)
 						// And we insert only each record once
 						foreach ($couples as $key => $val) {
 							$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_association(fk_categorie_mere,fk_categorie_fille)";
-							$sql .= " VALUES(".$val['mere'].", ".$val['fille'].")";
+							$sql .= " VALUES(".((int) $val['mere']).", ".((int) $val['fille']).")";
 							dolibarr_install_syslog("upgrade: insert association");
 							$resqli = $db->query($sql);
 							if (!$resqli) {
@@ -3493,7 +3493,7 @@ function migrate_event_assignement($db, $langs, $conf)
 				$obj = $db->fetch_object($resql);
 
 				$sqlUpdate = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element) ";
-				$sqlUpdate .= "VALUES(".$obj->id.", 'user', ".$obj->fk_user_action.")";
+				$sqlUpdate .= "VALUES(".((int) $obj->id).", 'user', ".((int) $obj->fk_user_action).")";
 
 				$result = $db->query($sqlUpdate);
 				if (!$result) {
@@ -3559,7 +3559,7 @@ function migrate_event_assignement_contact($db, $langs, $conf)
 				$obj = $db->fetch_object($resql);
 
 				$sqlUpdate = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element) ";
-				$sqlUpdate .= "VALUES(".$obj->id.", 'socpeople', ".$obj->fk_contact.")";
+				$sqlUpdate .= "VALUES(".((int) $obj->id).", 'socpeople', ".((int) $obj->fk_contact).")";
 
 				$result = $db->query($sqlUpdate);
 				if (!$result) {
@@ -4605,7 +4605,7 @@ function migrate_users_socialnetworks()
 			$sqlupd .= ', googleplus=null';
 			$sqlupd .= ', youtube=null';
 			$sqlupd .= ', whatsapp=null';
-			$sqlupd .= ' WHERE rowid='.$obj->rowid;
+			$sqlupd .= ' WHERE rowid = '.((int) $obj->rowid);
 			//print $sqlupd."<br>";
 			$resqlupd = $db->query($sqlupd);
 			if (!$resqlupd) {
@@ -4696,7 +4696,7 @@ function migrate_members_socialnetworks()
 			$sqlupd .= ', googleplus=null';
 			$sqlupd .= ', youtube=null';
 			$sqlupd .= ', whatsapp=null';
-			$sqlupd .= ' WHERE rowid='.$obj->rowid;
+			$sqlupd .= ' WHERE rowid = '.((int) $obj->rowid);
 			//print $sqlupd."<br>";
 			$resqlupd = $db->query($sqlupd);
 			if (!$resqlupd) {
@@ -4791,7 +4791,7 @@ function migrate_contacts_socialnetworks()
 			$sqlupd .= ', googleplus=null';
 			$sqlupd .= ', youtube=null';
 			$sqlupd .= ', whatsapp=null';
-			$sqlupd .= ' WHERE rowid='.$obj->rowid;
+			$sqlupd .= ' WHERE rowid = '.((int) $obj->rowid);
 			//print $sqlupd."<br>";
 			$resqlupd = $db->query($sqlupd);
 			if (!$resqlupd) {
@@ -4881,7 +4881,7 @@ function migrate_thirdparties_socialnetworks()
 			$sqlupd .= ', googleplus=null';
 			$sqlupd .= ', youtube=null';
 			$sqlupd .= ', whatsapp=null';
-			$sqlupd .= ' WHERE rowid='.$obj->rowid;
+			$sqlupd .= ' WHERE rowid = '.((int) $obj->rowid);
 			//print $sqlupd."<br>";
 			$resqlupd = $db->query($sqlupd);
 			if (!$resqlupd) {
@@ -4945,7 +4945,7 @@ function migrate_export_import_profiles($mode = 'export')
 				if ($mode == 'export') {
 					$sqlupd .= ", filter = '".$db->escape($newfilter)."'";
 				}
-				$sqlupd .= ' WHERE rowid='.$obj->rowid;
+				$sqlupd .= ' WHERE rowid = '.((int) $obj->rowid);
 				$resultstring .= '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$sqlupd."</td></tr>\n";
 				$resqlupd = $db->query($sqlupd);
 				if (!$resqlupd) {

@@ -1355,7 +1355,7 @@ class User extends CommonObject
 
 		// Insert into database
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec, login, ldap_sid, entity)";
-		$sql .= " VALUES('".$this->db->idate($this->datec)."','".$this->db->escape($this->login)."','".$this->db->escape($this->ldap_sid)."',".$this->db->escape($this->entity).")";
+		$sql .= " VALUES('".$this->db->idate($this->datec)."', '".$this->db->escape($this->login)."', '".$this->db->escape($this->ldap_sid)."', ".((int) $this->entity).")";
 		$result = $this->db->query($sql);
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -3587,13 +3587,11 @@ class User extends CommonObject
 
 		$sql = 'SELECT rowid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'user';
-
 		if (!empty($conf->global->AGENDA_DISABLE_EXACT_USER_EMAIL_COMPARE_FOR_EXTERNAL_CALENDAR)) {
-			$sql .= ' WHERE email LIKE "%'.$email.'%"';
+			$sql .= " WHERE email LIKE '%".$this->db->escape($email)."%'";
 		} else {
-			$sql .= ' WHERE email = "'.$email.'"';
+			$sql .= " WHERE email = '".$this->db->escape($email)."'";
 		}
-
 		$sql .= ' LIMIT 1';
 
 		$resql = $this->db->query($sql);

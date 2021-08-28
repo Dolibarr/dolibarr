@@ -243,9 +243,9 @@ if (empty($reshook)) {
 
 			// Update supplier
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
-			$sql .= ' SET fk_soc='.$new_socid;
-			$sql .= ' WHERE fk_soc='.$object->thirdparty->id;
-			$sql .= ' AND rowid='.$object->id;
+			$sql .= ' SET fk_soc = '.((int) $new_socid);
+			$sql .= ' WHERE fk_soc = '.((int) $object->thirdparty->id);
+			$sql .= ' AND rowid = '.((int) $object->id);
 
 			$res = $db->query($sql);
 
@@ -258,8 +258,8 @@ if (empty($reshook)) {
 				foreach ($object->lines as $l) {
 					$sql = 'SELECT price, unitprice, tva_tx, ref_fourn';
 					$sql .= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
-					$sql .= ' WHERE fk_product='.$l->fk_product;
-					$sql .= ' AND fk_soc='.$new_socid;
+					$sql .= ' WHERE fk_product = '.((int) $l->fk_product);
+					$sql .= ' AND fk_soc = '.((int) $new_socid);
 					$sql .= ' ORDER BY unitprice ASC';
 
 					$resql = $db->query($sql);

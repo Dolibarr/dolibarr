@@ -521,7 +521,7 @@ class Productcustomerprice extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) { 				// To allow $filter['YEAR(s.dated)']=>$year
-					$sql .= " AND ".$key." = '".$db->escape($value)."'";
+					$sql .= " AND ".$key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 'soc.nom') {
 					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
 				} else {

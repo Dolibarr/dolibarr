@@ -286,10 +286,10 @@ class Inventory extends CommonObject
 				$sql .= " AND p.fk_product_type = 0";
 			}
 			if ($this->fk_product > 0) {
-				$sql .= ' AND ps.fk_product = '.$this->fk_product;
+				$sql .= ' AND ps.fk_product = '.((int) $this->fk_product);
 			}
 			if ($this->fk_warehouse > 0) {
-				$sql .= ' AND ps.fk_entrepot = '.$this->fk_warehouse;
+				$sql .= ' AND ps.fk_entrepot = '.((int) $this->fk_warehouse);
 			}
 
 			$inventoryline = new InventoryLine($this->db);

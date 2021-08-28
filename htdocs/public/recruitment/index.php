@@ -273,13 +273,13 @@ if ($display_ticket_list) {
 			}
 		}
 	}
-	$sql .= " ORDER BY ".$sortfield.' '.$sortorder;
+	$sql .= $db->order($sortfield, $sortorder);
 
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num_total = $db->num_rows($resql);
 		if (!empty($limit)) {
-			$sql .= ' '.$db->plimit($limit + 1, $offset);
+			$sql .= $db->plimit($limit + 1, $offset);
 		}
 
 		$resql = $db->query($sql);

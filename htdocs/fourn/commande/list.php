@@ -769,7 +769,7 @@ if ($search_total_ttc != '') {
 	$sql .= natural_search('cf.total_ttc', $search_total_ttc, 1);
 }
 if ($search_multicurrency_code != '') {
-	$sql .= ' AND cf.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
+	$sql .= " AND cf.multicurrency_code = '".$db->escape($search_multicurrency_code)."'";
 }
 if ($search_multicurrency_tx != '') {
 	$sql .= natural_search('cf.multicurrency_tx', $search_multicurrency_tx, 1);

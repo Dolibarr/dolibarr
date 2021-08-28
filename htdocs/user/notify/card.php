@@ -100,7 +100,7 @@ if ($action == 'add') {
 		$sql .= " WHERE fk_user=".((int) $id)." AND fk_action=".((int) $actionid);
 		if ($db->query($sql)) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec, fk_user, fk_action)";
-			$sql .= " VALUES ('".$db->idate($now)."', ".((int) $id).", ".$actionid.")";
+			$sql .= " VALUES ('".$db->idate($now)."', ".((int) $id).", ".((int) $actionid).")";
 
 			if (!$db->query($sql)) {
 				$error++;

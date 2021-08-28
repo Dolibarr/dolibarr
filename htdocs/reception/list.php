@@ -506,7 +506,7 @@ foreach ($search_array_options as $key => $val) {
 		$mode = 2; // Search on a foreign key int
 	}
 	if ($crit != '' && (!in_array($typ, array('select', 'sellist')) || $crit != '0')) {
-		$sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
+		$sql .= natural_search("ef.".$tmpkey, $crit, $mode);
 	}
 }
 // Add where from hooks

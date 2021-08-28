@@ -734,7 +734,7 @@ class Ticket extends CommonObject
 			$sql .= " AND t.fk_soc = ".((int) $user->socid);
 		}
 
-		$sql .= " ORDER BY ".$sortfield.' '.$sortorder;
+		$sql .= $this->db->order($sortfield, $sortorder);
 		if (!empty($limit)) {
 			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
@@ -2132,124 +2132,6 @@ class Ticket extends CommonObject
 		return $array_contact;
 	}
 
-	/**
-	 * Send message
-	 *
-	 *  @param  string $subject	  Subject
-	 *  @param  string $texte      Message to send
-	 *  @return int                <0 if KO, or number of changes if OK
-	 */
-	public function messageSend($subject, $texte)
-	{
-		global $conf, $langs, $mysoc, $dolibarr_main_url_root;
-
-		$langs->load("other");
-
-		dol_syslog(get_class($this)."::message_send action=$action, socid=$socid, texte=$texte, objet_type=$objet_type, objet_id=$objet_id, file=$file");
-
-		$internal_contacts = $this->getIdContact('internal', 'SUPPORTTEC');
-		$external_contacts = $this->getIdContact('external', 'SUPPORTTEC');
-
-		if ($result) {
-			$num = $this->db->num_rows($result);
-			$i = 0;
-			while ($i < $num) { // For each notification couple defined (third party/actioncode)
-				$obj = $this->db->fetch_object($result);
-
-				$sendto = $obj->firstname." ".$obj->lastname." <".$obj->email.">";
-				$actiondefid = $obj->adid;
-
-				if (dol_strlen($sendto)) {
-					include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-					$application = ($conf->global->MAIN_APPLICATION_TITLE ? $conf->global->MAIN_APPLICATION_TITLE : 'Dolibarr ERP/CRM');
-
-					$subject = '['.$application.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
-
-					$message = $langs->transnoentities("YouReceiveMailBecauseOfNotification", $application, $mysoc->name)."\n";
-					$message .= $langs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
-					$message .= "\n";
-					$message .= $texte;
-					// Add link
-					$link = '';
-					switch ($objet_type) {
-						case 'ficheinter':
-							$link = '/fichinter/card.php?id='.$objet_id;
-							break;
-						case 'propal':
-							$link = '/comm/propal.php?id='.$objet_id;
-							break;
-						case 'facture':
-							$link = '/compta/facture/card.php?facid='.$objet_id;
-							break;
-						case 'order':
-							$link = '/commande/card.php?facid='.$objet_id;
-							break;
-						case 'order_supplier':
-							$link = '/fourn/commande/card.php?facid='.$objet_id;
-							break;
-					}
-					// Define $urlwithroot
-					$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-					$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
-					//$urlwithroot=DOL_MAIN_URL_ROOT;                        // This is to use same domain name than current
-					if ($link) {
-						$message .= "\n".$urlwithroot.$link;
-					}
-
-					$filename = basename($file);
-
-					$mimefile = dol_mimetype($file);
-
-					$msgishtml = 0;
-
-					$replyto = $conf->notification->email_from;
-
-					$message = dol_nl2br($message);
-
-					if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
-						$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
-						$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
-					}
-					$mailfile = new CMailFile(
-						$subject,
-						$sendto,
-						$replyto,
-						$message,
-						array($file),
-						array($mimefile),
-						array($filename[count($filename) - 1]),
-						'',
-						'',
-						0,
-						$msgishtml
-					);
-
-					if ($mailfile->sendfile()) {
-						$now = dol_now();
-						$sendto = htmlentities($sendto);
-
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_contact, objet_type, objet_id, email)";
-						$sql .= " VALUES ('".$this->db->idate($now)."', ".$actiondefid.", ".$obj->cid.", '".$this->db->escape($objet_type)."', ".$objet_id.", '".$this->db->escape($obj->email)."')";
-						dol_syslog("Notify::send sql=".$sql);
-						if (!$this->db->query($sql)) {
-							dol_print_error($this->db);
-						}
-					} else {
-						$this->error = $mailfile->error;
-						//dol_syslog("Notify::send ".$this->error, LOG_ERR);
-					}
-					if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
-						$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
-					}
-				}
-				$i++;
-			}
-			return $i;
-		} else {
-			$this->error = $this->db->error();
-			return -1;
-		}
-	}
 
 	/**
 	 *    Get array of all contacts for a ticket

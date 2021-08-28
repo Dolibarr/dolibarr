@@ -376,7 +376,7 @@ if ($search_montant_ttc != '') {
 	$sql .= natural_search("sp.total_ttc", $search_montant_ttc, 1);
 }
 if ($search_multicurrency_code != '') {
-	$sql .= ' AND sp.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
+	$sql .= " AND sp.multicurrency_code = '".$db->escape($search_multicurrency_code)."'";
 }
 if ($search_multicurrency_tx != '') {
 	$sql .= natural_search('sp.multicurrency_tx', $search_multicurrency_tx, 1);
