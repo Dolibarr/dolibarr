@@ -1016,8 +1016,8 @@ if ($action == 'create') {
 			$numAsked = count($object->lines);
 
 			print '<script type="text/javascript" language="javascript">'."\n";
-            print 'jQuery(document).ready(function() {'."\n";
-	        print 'jQuery("#autofill").click(function() {';
+			print 'jQuery(document).ready(function() {'."\n";
+			print 'jQuery("#autofill").click(function() {';
 			$i = 0;
 			while ($i < $numAsked) {
 				print 'jQuery("#qtyl'.$i.'").val(jQuery("#qtyasked'.$i.'").val() - jQuery("#qtydelivered'.$i.'").val());'."\n";
@@ -1028,9 +1028,9 @@ if ($action == 'create') {
 			}
 			print 'return false; });'."\n";
 			print 'jQuery("#autoreset").click(function() { console.log("Reset values to 0"); jQuery(".qtyl").val(0);'."\n";
-        	print 'return false; });'."\n";
-        	print '});'."\n";
-        	print '</script>'."\n";
+			print 'return false; });'."\n";
+			print '});'."\n";
+			print '</script>'."\n";
 
 			print '<br>';
 
