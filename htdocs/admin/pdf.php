@@ -419,28 +419,6 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
-// Place customer adress to the ISO location
-
-print '<tr class="oddeven"><td>'.$langs->trans("PlaceCustomerAddressToIsoLocation").'</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('MAIN_PDF_USE_ISO_LOCATION');
-} else {
-	print $form->selectyesno('MAIN_PDF_USE_ISO_LOCATION', (!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION)) ? $conf->global->MAIN_PDF_USE_ISO_LOCATION : 0, 1);
-}
-print '</td></tr>';
-
-// Use 2 languages into PDF
-
-print '<tr class="oddeven"><td>'.$langs->trans("PDF_USE_ALSO_LANGUAGE_CODE").'</td><td>';
-//if (! empty($conf->global->MAIN_MULTILANGS))
-//{
-$selected = GETPOSTISSET('PDF_USE_ALSO_LANGUAGE_CODE') ? GETPOST('PDF_USE_ALSO_LANGUAGE_CODE') : (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) ? $conf->global->PDF_USE_ALSO_LANGUAGE_CODE : 0);
-print $formadmin->select_language($selected, 'PDF_USE_ALSO_LANGUAGE_CODE', 0, null, 1);
-//} else {
-//	print '<span class="opacitymedium">'.$langs->trans("MultiLangNotEnabled").'</span>';
-//}
-print '</td></tr>';
-
 // Ref
 
 print '<tr class="oddeven"><td>'.$langs->trans("HideRefOnPDF").'</td><td>';
