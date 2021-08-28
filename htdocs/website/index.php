@@ -2602,7 +2602,7 @@ if (!GETPOST('hide_websitemenu')) {
 		print $langs->trans("Website").' : ';
 		print '</span>';
 
-		$urltocreatenewwebsite = $_SERVER["PHP_SEFL"].'?action=createsite';
+		$urltocreatenewwebsite = $_SERVER["PHP_SELF"].'?action=createsite';
 		if (empty($conf->use_javascript_ajax)) {
 			print '<span class="websiteselection hideonsmartphoneimp">';
 			print '<a href="'.$urltocreatenewwebsite.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("AddWebsite")).'"><span class="fa fa-plus-circle valignmiddle btnTitle-icon"><span></a>';
@@ -2652,7 +2652,7 @@ if (!GETPOST('hide_websitemenu')) {
 			$out .= '   	if (jQuery("#website option:selected").val() == \'-2\') {';
 			$out .= '  			window.location.href = "'.dol_escape_js($urltocreatenewwebsite).'";';
 			$out .= '		} else {';
-			$out .= '  			window.location.href = "'.$_SERVER["PHP_SEFL"].'?website="+jQuery("#website option:selected").val();';
+			$out .= '  			window.location.href = "'.$_SERVER["PHP_SELF"].'?website="+jQuery("#website option:selected").val();';
 			$out .= '       }';
 			$out .= '   });';
 			$out .= '});';
