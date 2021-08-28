@@ -1036,7 +1036,7 @@ class Orders extends DolibarrApi
 	 *
 	 * @return int
 	 */
-	public function createOrderShipement($id, $warehouse_id)
+	public function createOrderShipment($id, $warehouse_id)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 		if (!DolibarrApiAccess::$user->rights->expedition->creer) {
