@@ -430,7 +430,7 @@ if ($action == 'makepayment_confirm' && $user->rights->facture->paiement) {
 				}
 			}
 			if (empty($errorpayment)) {
-				setEventMessage($langs->trans('RegisterPaymentAndClasiffiedPayedDone', $facture->ref));
+				setEventMessage($langs->trans('PaymentRegisteredAndInvoiceSetToPaid', $facture->ref));
 			}
 		}
 	}
