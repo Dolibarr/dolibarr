@@ -5839,7 +5839,7 @@ class Form
 		} else {
 			$code_country = "'".$mysoc->country_code."'"; // Pour compatibilite ascendente
 		}
-		if (!empty(getDolGlobalString("SERVICE_ARE_ECOMMERCE_")200238EC)) {    // If option to have vat for end customer for services is on
+		if (!empty(getDolGlobalString("SERVICE_ARE_ECOMMERCE_200238EC"))) {    // If option to have vat for end customer for services is on
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 			if (!isInEEC($societe_vendeuse) && (!is_object($societe_acheteuse) || (isInEEC($societe_acheteuse) && !$societe_acheteuse->isACompany()))) {
 				// We also add the buyer
