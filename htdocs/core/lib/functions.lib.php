@@ -104,7 +104,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  */
 function getEntity($element, $shared = 1, $currentobject = null)
 {
-	global $conf, $mc, $hookmanager, $object;
+	global $conf, $mc, $hookmanager, $object, $action;
 
 	// fix different element names (France to English)
 	switch ($element) {
@@ -129,12 +129,13 @@ function getEntity($element, $shared = 1, $currentobject = null)
 
 	// Manipulate entities to query on the fly
 	$parameters = array(
-		'object' => $object,
-		'currentobject' => $currentobject,
 		'element' => $element,
 		'shared' => $shared,
+		'object' => $object,
+		'currentobject' => $currentobject,
+		'out' => $out
 	);
-	$reshook = $hookmanager->executeHooks('functionGetEntity', $parameters, $out, $element); // Note that $action and $object may have been modified by some hooks
+	$reshook = $hookmanager->executeHooks('hookGetEntity', $parameters, $currentobject, $action); // Note that $action and $object may have been modified by some hooks
 
 	if (is_numeric($reshook)) {
 		if ($reshook == 0 && !empty($hookmanager->resprints)) {
