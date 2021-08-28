@@ -953,13 +953,15 @@ class pdf_rouget extends ModelePdfExpedition
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$title = $outputlangs->transnoentities("SendingSheet");
-
-		$title .= " " . $outputlangs->convToOutputCharset($object->ref);
-
 		$pdf->MultiCell($w, 4, $title, '', 'R');
 
 		$pdf->SetFont('', '', $default_font_size + 1);
-		$posy += 1;
+
+		$posy += 5;
+
+		$pdf->SetXY($posx, $posy);
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->MultiCell($w, 4, $outputlangs->transnoentities("RefSending")." : ".$object->ref, '', 'R');
 
 		// Date planned delivery
 		if (!empty($object->date_delivery)) {

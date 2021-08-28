@@ -1311,16 +1311,20 @@ class pdf_einstein extends ModelePDFCommandes
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$title = $outputlangs->transnoentities($titlekey);
-
-		$title .= " " . $outputlangs->convToOutputCharset($object->ref);
-
 		$pdf->MultiCell($w, 3, $title, '', 'R');
 
+		$pdf->SetFont('', 'B', $default_font_size);
+
+		$posy += 5;
+		$pdf->SetXY($posx, $posy);
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref), '', 'R');
+
+		$posy += 1;
 		$pdf->SetFont('', '', $default_font_size - 1);
-		$posy += 2;
 
 		if ($object->ref_client) {
-			$posy += 3;
+			$posy += 5;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".$outputlangs->convToOutputCharset($object->ref_client), '', 'R');
