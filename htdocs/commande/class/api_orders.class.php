@@ -970,18 +970,17 @@ class Orders extends DolibarrApi
 	/**
 	 * Get the shipments of an order
 	 *
-	 *
 	 * @param int   $id       Id of the order
 	 *
 	 * @url     GET {id}/shipment
 	 *
+	 * @return array
+	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 * @throws RestException 500
-	 *
-	 * @return array
 	 */
-	public function getOrderShipements($id)
+	public function getOrderShipments($id)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 		if (!DolibarrApiAccess::$user->rights->expedition->lire) {
