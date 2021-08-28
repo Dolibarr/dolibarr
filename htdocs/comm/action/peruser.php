@@ -466,13 +466,11 @@ if (empty($reshook)) {
 }
 
 
+$newparam = '';
 $newcardbutton = '';
 if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create) {
 	$tmpforcreatebutton = dol_getdate(dol_now(), true);
 
-	if (empty($newparam)) {
-		$newparam = '';
-	}
 	$newparam .= '&month='.urlencode(str_pad($month, 2, "0", STR_PAD_LEFT)).'&year='.urlencode($tmpforcreatebutton['year']);
 	if ($begin_h !== '') {
 		$newparam .= '&begin_h='.urlencode($begin_h);
