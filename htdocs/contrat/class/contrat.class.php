@@ -181,6 +181,13 @@ class Contrat extends CommonObject
 	 */
 	public $lines = array();
 
+	public $nbofservices;
+	public $nbofserviceswait;
+	public $nbofservicesopened;
+	public $nbofservicesexpired;
+	//public $lower_planned_end_date;
+	//public $higher_planner_end_date;
+
 	/**
 	 * Maps ContratLigne IDs to $this->lines indexes
 	 * @var int[]
@@ -429,7 +436,8 @@ class Contrat extends CommonObject
 		foreach ($this->lines as $contratline) {
 			// Close lines not already closed
 			if ($contratline->statut != ContratLigne::STATUS_CLOSED) {
-				$contratline->date_cloture = $now;
+				$contratline->date_end_real = $now;
+				$contratline->date_cloture = $now;	// For backward compatibility
 				$contratline->fk_user_cloture = $user->id;
 				$contratline->statut = ContratLigne::STATUS_CLOSED;
 				$result = $contratline->close_line($user, $now, $comment, $notrigger);
@@ -753,6 +761,7 @@ class Contrat extends CommonObject
 		// phpcs:enable
 		global $langs, $conf, $extrafields;
 
+		$this->nbofservices = 0;
 		$this->nbofserviceswait = 0;
 		$this->nbofservicesopened = 0;
 		$this->nbofservicesexpired = 0;
@@ -2642,10 +2651,23 @@ class ContratLigne extends CommonObjectLine
 	public $date_end; // date end planned
 	public $date_end_real; // date end real
 	// For backward compatibility
+	/**
+	 * @deprecated	Use date_start
+	 */
 	public $date_ouverture_prevue; // date start planned
+	/**
+	 * @deprecated	Use date_start_real
+	 */
 	public $date_ouverture; // date start real
+	/**
+	 * @deprecated	Use date_end
+	 */
 	public $date_fin_validite; // date end planned
+	/**
+	 * @deprecated	Use date_end_real
+	 */
 	public $date_cloture; // date end real
+
 	public $tva_tx;
 	public $localtax1_tx;
 	public $localtax2_tx;
@@ -3062,7 +3084,6 @@ class ContratLigne extends CommonObjectLine
 
 		$this->oldcopy = new ContratLigne($this->db);
 		$this->oldcopy->fetch($this->id);
-		$this->oldcopy->fetch_optionals();
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";
