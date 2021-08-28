@@ -826,7 +826,7 @@ if ($action == 'create') {
 					}
 
 					$text = '';
-					if (!isset(getDolGlobalString("MAILING_LIMIT_SENDBYCLI")) || getDolGlobalString("MAILING_LIMIT_SENDBYCLI") >= 0) {
+					if (getDolGlobalString("MAILING_LIMIT_SENDBYCLI") === null || getDolGlobalString("MAILING_LIMIT_SENDBYCLI") >= 0) {
 						$text .= $langs->trans("MailingNeedCommand");
 						$text .= '<br><textarea cols="60" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.' '.$user->login.'</textarea>';
 						$text .= '<br><br>';
