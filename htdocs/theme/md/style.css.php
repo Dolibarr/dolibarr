@@ -474,7 +474,7 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	color: #888 !important;
 }
 .nofocusvisible:focus-visible {
-    outline: none;
+	outline: none;
 }
 
 div.buttonpayment input {

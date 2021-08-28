@@ -296,7 +296,7 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	max-width: 350px;
 }
 .nofocusvisible:focus-visible {
-    outline: none;
+	outline: none;
 }
 
 div.buttonpayment input:focus {
