@@ -1296,17 +1296,17 @@ if ($resql) {
 			$backgroundcolor = "class='oddeven'";
 		} else {
 			if ($objp->amount < 0) {
-				if (empty(getDolGlobalString("BANK_COLORIZE_MOVEMENT_COLOR")1)) {
+				if (empty(getDolGlobalString("BANK_COLORIZE_MOVEMENT_COLOR1"))) {
 					$color = '#fca955';
 				} else {
-					$color = '#'.getDolGlobalString("BANK_COLORIZE_MOVEMENT_COLOR")1;
+					$color = '#'.getDolGlobalString("BANK_COLORIZE_MOVEMENT_COLOR1");
 				}
 				$backgroundcolor = 'style="background: '.$color.';"';
 			} else {
-				if (empty(getDolGlobalString("BANK_COLORIZE_MOVEMENT_COLOR")2)) {
+				if (empty(getDolGlobalString("BANK_COLORIZE_MOVEMENT_COLOR2"))) {
 					$color = '#7fdb86';
 				} else {
-					$color = '#'.getDolGlobalString("BANK_COLORIZE_MOVEMENT_COLOR")2;
+					$color = '#'.getDolGlobalString("BANK_COLORIZE_MOVEMENT_COLOR2");
 				}
 				$backgroundcolor = 'style="background: '.$color.';"';
 			}
