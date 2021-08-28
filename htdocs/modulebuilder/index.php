@@ -383,7 +383,7 @@ if ($dirins && $action == 'initphpunit' && !empty($module)) {
 	$modulename = ucfirst($module); // Force first letter in uppercase
 	$objectname = $tabobj;
 
-	dol_mkdir($dirins.'/'.strtolower($module).'/class');
+	dol_mkdir($dirins.'/'.strtolower($module).'/test/phpunit');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$srcfile = $srcdir.'/test/phpunit/MyObjectTest.php';
 	$destfile = $dirins.'/'.strtolower($module).'/test/phpunit/'.strtolower($objectname).'Test.php';
