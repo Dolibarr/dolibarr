@@ -1089,7 +1089,7 @@ if ($action == 'create') {
 	print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
 	if ($socid > 0) {
 		print '<td>';
-		print $soc->getNomUrl(1, 'customer');
+		print $soc->getNomUrl(1);
 		print '<input type="hidden" name="socid" value="'.$soc->id.'">';
 		print '</td>';
 	} else {
