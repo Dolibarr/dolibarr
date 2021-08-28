@@ -2070,7 +2070,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setdate">';
 		print $form->selectDate($object->date, 're', '', '', 0, "editdate");
-		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+		print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	} else {
 		if ($object->date) {
@@ -2097,7 +2097,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setecheance">';
 		print $form->selectDate($object->fin_validite, 'ech', '', '', '', "editecheance");
-		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+		print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	} else {
 		if (!empty($object->fin_validite)) {

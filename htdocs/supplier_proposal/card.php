@@ -1541,7 +1541,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setdate_livraison">';
 		print $form->selectDate($object->delivery_date, 'liv_', '', '', '', "editdate_livraison");
-		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+		print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	} else {
 		print dol_print_date($object->delivery_date, 'daytext');

@@ -238,7 +238,7 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print '</div>';
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 	print '</div>';
 }
 

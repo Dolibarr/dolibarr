@@ -125,7 +125,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 			$texte .= $langs->trans('COMPANY_DIGITARIA_UNIQUE_CODE').' = '.yn(1)."<br>\n";
 		}
 		$texte .= '</td>';
-		$texte .= '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td class="right"><input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 		$texte .= '</tr></table>';
 		$texte .= '</form>';
 

@@ -395,7 +395,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 	print '</p>';
 
 	print '<p style="text-align: center; margin-top: 1.5em;">';
-	print '<input class="button" type="submit" name="btn_view_ticket" value="'.$langs->trans('ViewTicket').'" />';
+	print '<input type="submit" class="button" name="btn_view_ticket" value="'.$langs->trans('ViewTicket').'" />';
 	print "</p>\n";
 
 	print "</form>\n";

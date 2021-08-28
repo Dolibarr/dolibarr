@@ -2189,7 +2189,7 @@ if ($action == 'create') {
 			$usehourmin = 1;
 		}
 		print $form->selectDate($object->delivery_date ? $object->delivery_date : -1, 'liv_', $usehourmin, $usehourmin, '', "setdate_livraison");
-		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+		print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	} else {
 		$usehourmin = 'day';
@@ -2724,7 +2724,7 @@ if ($action == 'create') {
 					print '<tr><td>'.$langs->trans("Password").'</td><td><input size="'.$textinput_size.'" type="text" name="ws_password"></td></tr>';
 					//Submit button
 					print '<tr><td class="center" colspan="2">';
-					print '<input class="button" type="submit" id="ws_submit" name="ws_submit" value="'.$langs->trans("CreateRemoteOrder").'">';
+					print '<input type="submit" class="button" id="ws_submit" name="ws_submit" value="'.$langs->trans("CreateRemoteOrder").'">';
 					print ' &nbsp; &nbsp; ';
 					//Cancel button
 					print '<input class="button button-cancel" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -2843,7 +2843,7 @@ if ($action == 'create') {
 				if ($error_occurred) {
 					print "<br>".$langs->trans("ErrorOccurredReviseAndRetry")."<br>";
 				} else {
-					print '<input class="button" type="submit" id="ws_submit" name="ws_submit" value="'.$langs->trans("Confirm").'">';
+					print '<input type="submit" class="button" id="ws_submit" name="ws_submit" value="'.$langs->trans("Confirm").'">';
 					print ' &nbsp; &nbsp; ';
 				}
 				print '<input class="button button-cancel" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
