@@ -1516,7 +1516,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 		$oldtypeid = $member->typeid;
 		$newtypeid = (int) (GETPOSTISSET("typeid") ? GETPOST("typeid", 'int') : $member->typeid);
 
-		if ($oldtypeid != $newtypeid && !empty($conf->global->MEMBER_ALLOW_CHANGE_OF_TYPE)) {
+		if (!empty($conf->global->MEMBER_ALLOW_CHANGE_OF_TYPE)) {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 			$adht = new AdherentType($db);
 			// Amount by member type
