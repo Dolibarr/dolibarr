@@ -151,6 +151,7 @@ PDFEdisonDescription=A simple order model
 PDFProformaDescription=A complete Proforma invoice template
 CreateInvoiceForThisCustomer=Bill orders
 CreateInvoiceForThisSupplier=Bill orders
+CreateInvoiceForThisReceptions=Bill receptions
 NoOrdersToInvoice=No orders billable
 CloseProcessedOrdersAutomatically=Classify "Processed" all selected orders.
 OrderCreation=Order creation

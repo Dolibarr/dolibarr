@@ -3590,7 +3590,7 @@ abstract class CommonObject
 	 *	@param		string	$origin		Linked element type
 	 *	@param		int		$origin_id	Linked element id
 	 * 	@param		User	$f_user		User that create
-	 * 	@param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
+	 * 	@param		int		$notrigger	1=Does not execute triggers, 0=execute triggers
 	 *	@return		int					<=0 if KO, >0 if OK
 	 *	@see		fetchObjectLinked(), updateObjectLinked(), deleteObjectLinked()
 	 */
@@ -3624,9 +3624,9 @@ abstract class CommonObject
 		$sql .= ", fk_target";
 		$sql .= ", targettype";
 		$sql .= ") VALUES (";
-		$sql .= $origin_id;
+		$sql .= ((int) $origin_id);
 		$sql .= ", '" . $this->db->escape($origin) . "'";
-		$sql .= ", " . $this->id;
+		$sql .= ", " . ((int) $this->id);
 		$sql .= ", '" . $this->db->escape($this->element) . "'";
 		$sql .= ")";
 
