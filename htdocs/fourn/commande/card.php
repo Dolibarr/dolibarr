@@ -2412,7 +2412,7 @@ if ($action == 'create') {
 			// Approve
 			if ($object->statut == CommandeFournisseur::STATUS_VALIDATED) {
 				if ($usercanapprove) {
-					if (!empty(getDolGlobalString("SUPPLIER_ORDER_")3_STEPS_TO_BE_APPROVED) && $object->total_ht >= getDolGlobalString("SUPPLIER_ORDER_")3_STEPS_TO_BE_APPROVED && !empty($object->user_approve_id)) {
+					if (!empty(getDolGlobalString("SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED")) && $object->total_ht >= getDolGlobalString("SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED") && !empty($object->user_approve_id)) {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("FirstApprovalAlreadyDone")).'">'.$langs->trans("ApproveOrder").'</a>';
 					} else {
 						print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
