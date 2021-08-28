@@ -640,19 +640,14 @@ class pdf_strato extends ModelePDFContract
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$title = $outputlangs->transnoentities("ContractCard");
+
+		$title .= " " . $outputlangs->convToOutputCharset($object->ref);
+
 		$pdf->MultiCell(100, 4, $title, '', 'R');
 
-		$pdf->SetFont('', 'B', $default_font_size + 2);
-
-		$posy += 5;
-		$pdf->SetXY($posx, $posy);
-		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref), '', 'R');
-
-		$posy += 1;
 		$pdf->SetFont('', '', $default_font_size);
 
-		$posy += 4;
+		$posy += 5;
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date_contrat, "day", false, $outputlangs, true), '', 'R');

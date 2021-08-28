@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2107 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2019	   Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2021	   Anthony Berton		<bertonanthony@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,6 +94,7 @@ if ($action == 'update') {
 
 	if (GETPOSTISSET('MAIN_DOCUMENTS_LOGO_HEIGHT')) dolibarr_set_const($db, "MAIN_DOCUMENTS_LOGO_HEIGHT", GETPOST("MAIN_DOCUMENTS_LOGO_HEIGHT", 'int'), 'chaine', 0, '', $conf->entity);
 	if (GETPOSTISSET('MAIN_INVERT_SENDER_RECIPIENT')) dolibarr_set_const($db, "MAIN_INVERT_SENDER_RECIPIENT", GETPOST("MAIN_INVERT_SENDER_RECIPIENT"), 'chaine', 0, '', $conf->entity);
+
 	if (GETPOSTISSET('MAIN_PDF_USE_ISO_LOCATION')) dolibarr_set_const($db, "MAIN_PDF_USE_ISO_LOCATION", GETPOST("MAIN_PDF_USE_ISO_LOCATION"), 'chaine', 0, '', $conf->entity);
 	if (GETPOSTISSET('MAIN_PDF_NO_CUSTOMER_CODE')) dolibarr_set_const($db, "MAIN_PDF_NO_CUSTOMER_CODE", GETPOST("MAIN_PDF_NO_CUSTOMER_CODE"), 'chaine', 0, '', $conf->entity);
 
