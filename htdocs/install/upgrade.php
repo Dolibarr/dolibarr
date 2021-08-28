@@ -270,7 +270,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 						$values = $db->fetch_array($resql);
 						$i = 0;
 						$createsql = $values[1];
-						$reg = aray();
+						$reg = array();
 						while (preg_match('/CONSTRAINT `(0_[0-9a-zA-Z]+|[_0-9a-zA-Z]+_ibfk_[0-9]+)`/i', $createsql, $reg) && $i < 100) {
 							$sqldrop = "ALTER TABLE ".$val." DROP FOREIGN KEY ".$reg[1];
 							$resqldrop = $db->query($sqldrop);
