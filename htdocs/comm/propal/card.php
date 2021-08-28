@@ -2327,13 +2327,13 @@ if ($action == 'create') {
 	if ($totalWeight) {
 		print '<tr><td>'.$langs->trans("CalculatedWeight").'</td>';
 		print '<td class="valuefield">';
-		print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset(getDolGlobalString("MAIN_WEIGHT_DEFAULT_ROUND")) ? getDolGlobalString("MAIN_WEIGHT_DEFAULT_ROUND") : -1, isset(getDolGlobalString("MAIN_WEIGHT_DEFAULT_UNIT")) ? getDolGlobalString("MAIN_WEIGHT_DEFAULT_UNIT") : 'no');
+		print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, getDolGlobalString("MAIN_WEIGHT_DEFAULT_ROUND") !== null ? getDolGlobalString("MAIN_WEIGHT_DEFAULT_ROUND") : -1, getDolGlobalString("MAIN_WEIGHT_DEFAULT_UNIT") !== null ? getDolGlobalString("MAIN_WEIGHT_DEFAULT_UNIT") : 'no');
 		print '</td></tr>';
 	}
 	if ($totalVolume) {
 		print '<tr><td>'.$langs->trans("CalculatedVolume").'</td>';
 		print '<td class="valuefield">';
-		print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset(getDolGlobalString("MAIN_VOLUME_DEFAULT_ROUND")) ? getDolGlobalString("MAIN_VOLUME_DEFAULT_ROUND") : -1, isset(getDolGlobalString("MAIN_VOLUME_DEFAULT_UNIT")) ? getDolGlobalString("MAIN_VOLUME_DEFAULT_UNIT") : 'no');
+		print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, getDolGlobalString("MAIN_VOLUME_DEFAULT_ROUND") !== null ? getDolGlobalString("MAIN_VOLUME_DEFAULT_ROUND") : -1, getDolGlobalString("MAIN_VOLUME_DEFAULT_UNIT") ? getDolGlobalString("MAIN_VOLUME_DEFAULT_UNIT") : 'no');
 		print '</td></tr>';
 	}
 
