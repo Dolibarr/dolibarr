@@ -1735,7 +1735,9 @@ class Facture extends CommonInvoice
 
 				return 1;
 			} else {
-				dol_syslog(__METHOD__ . ' Invoice with id=' . $rowid . ' or ref=' . $ref . ' or ref_ext=' . $ref_ext . ' not found', LOG_WARNING);
+				$this->error = 'Invoice with id='.$rowid.' or ref='.$ref.' or ref_ext='.$ref_ext.' not found';
+
+				dol_syslog(__METHOD__ . $this->error, LOG_WARNING);
 				return 0;
 			}
 		} else {
