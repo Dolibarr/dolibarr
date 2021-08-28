@@ -35,32 +35,10 @@ require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php'; // customer
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php'; // Shipment
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php'; // supplier invoice
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php'; // supplier order
-include_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php'; // supplier proposal
+require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php'; // supplier proposal
 require_once DOL_DOCUMENT_ROOT."/reception/class/reception.class.php"; // reception
 //require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php'; // Holidays (leave request)
 //require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php'; // expernse report
-/*
-if (!empty($conf->propal->enabled)) {
-}
-if (!empty($conf->commande->enabled)) {
-}
-if (!empty($conf->expedition->enabled)) {
-}
-if (!empty($conf->facture->enabled)) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-}
-if (!empty($conf->facture->enabled)) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
-}
-if (!empty($conf->contrat->enabled)) {
-	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-}
-if (!empty($conf->adherent->enabled)) {
-	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-}
-if (!empty($conf->ficheinter->enabled)) { //files
-	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-}*/
 
 
 /**
