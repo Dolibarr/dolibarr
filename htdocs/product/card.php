@@ -1268,8 +1268,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
 				// Nature
 				print '<tr><td>'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
-				$statutarray = array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-				print $form->selectarray('finished', $statutarray, GETPOST('finished', 'alpha'), 1);
+				print $formproduct->selectProductNature('finished', $object->finished);
 				print '</td></tr>';
 			}
 		}
