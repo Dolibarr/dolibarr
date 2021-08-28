@@ -379,7 +379,11 @@ if (empty($reshook)) {
 				}
 			}
 		} else {
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("QtyToShip").'/'.$langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
+			$labelfieldmissing = $langs->transnoentitiesnoconv("QtyToShip");
+			if (!empty($conf->stock->enabled)) {
+				$labelfieldmissing .= '/'.$langs->transnoentitiesnoconv("Warehouse");
+			}
+			setEventMessages($langs->trans("ErrorFieldRequired", $labelfieldmissing), null, 'errors');
 			$error++;
 		}
 
@@ -796,6 +800,10 @@ $help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expedic
 
 llxHeader('', $langs->trans('Shipment'), 'Expedition', $help_url);
 
+if (empty($action)) {
+	$action = 'view';
+}
+
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
@@ -1007,9 +1015,9 @@ if ($action == 'create') {
 
 			$numAsked = count($object->lines);
 
-			print '<script type="text/javascript" language="javascript">
-            jQuery(document).ready(function() {
-	            jQuery("#autofill").click(function() {';
+			print '<script type="text/javascript" language="javascript">'."\n";
+            print 'jQuery(document).ready(function() {'."\n";
+	        print 'jQuery("#autofill").click(function() {';
 			$i = 0;
 			while ($i < $numAsked) {
 				print 'jQuery("#qtyl'.$i.'").val(jQuery("#qtyasked'.$i.'").val() - jQuery("#qtydelivered'.$i.'").val());'."\n";
@@ -1018,10 +1026,11 @@ if ($action == 'create') {
 				}
 				$i++;
 			}
-			print '});
-	            jQuery("#autoreset").click(function() { console.log("Reset values to 0"); jQuery(".qtyl").val(0); });
-        	});
-            </script>';
+			print 'return false; });'."\n";
+			print 'jQuery("#autoreset").click(function() { console.log("Reset values to 0"); jQuery(".qtyl").val(0);'."\n";
+        	print 'return false; });'."\n";
+        	print '});'."\n";
+        	print '</script>'."\n";
 
 			print '<br>';
 
@@ -1182,7 +1191,7 @@ if ($action == 'create') {
 									$deliverableQty = GETPOST('qtyl'.$indiceAsked, 'int');
 								}
 								print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-								print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
+								print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" class="qtyl center" type="text" size="4" value="'.$deliverableQty.'">';
 							} else {
 								print $langs->trans("NA");
 							}
@@ -2199,7 +2208,7 @@ if ($action == 'create') {
 
 				if ($action == 'editline' && $lines[$i]->id == $line_id) {
 					// edit mode
-					print '<td colspan="'.$editColspan.'" class="center"><table class="nobordernopadding">';
+					print '<td colspan="'.$editColspan.'" class="center"><table class="nobordernopadding centpercent">';
 					if (is_array($lines[$i]->detail_batch) && count($lines[$i]->detail_batch) > 0) {
 						print '<!-- case edit 1 -->';
 						$line = new ExpeditionLigne($db);
@@ -2389,10 +2398,11 @@ if ($action == 'create') {
 					$line = $lines[$i];
 					$line->fetch_optionals();
 
+					// TODO Show all in same line by setting $display_type = 'line'
 					if ($action == 'editline' && $line->id == $line_id) {
-						print $lines[$i]->showOptionals($extrafields, 'edit', array('colspan'=>$colspan), $indiceAsked);
+						print $lines[$i]->showOptionals($extrafields, 'edit', array('colspan'=>$colspan), $indiceAsked, '', 0, 'card');
 					} else {
-						print $lines[$i]->showOptionals($extrafields, 'view', array('colspan'=>$colspan), $indiceAsked);
+						print $lines[$i]->showOptionals($extrafields, 'view', array('colspan'=>$colspan), $indiceAsked, '', 0, 'card');
 					}
 				}
 			}
