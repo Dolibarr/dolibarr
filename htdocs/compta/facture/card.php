@@ -1620,7 +1620,7 @@ if (empty($reshook)) {
 										continue;
 									}
 									// Don't add closed lines when coming from a contract (Set constant to '0,5' to exclude also inactive lines)
-									if (!isset(getDolGlobalString("CONTRACT_EXCLUDE_SERVICES_STATUS_FOR_INVOICE"))) {
+									if (getDolGlobalString("CONTRACT_EXCLUDE_SERVICES_STATUS_FOR_INVOICE") !== null) {
 										getDolGlobalString("CONTRACT_EXCLUDE_SERVICES_STATUS_FOR_INVOICE") = '5';
 									}
 									if ($srcobject->element == 'contrat' && in_array($lines[$i]->statut, explode(',', getDolGlobalString("CONTRACT_EXCLUDE_SERVICES_STATUS_FOR_INVOICE")))) {
