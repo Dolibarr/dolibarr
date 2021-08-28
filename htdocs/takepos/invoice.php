@@ -743,9 +743,9 @@ if ($action == "order" and $placeid != 0) {
 	$order_receipt_printer1 = "";
 	$order_receipt_printer2 = "";
 	$order_receipt_printer3 = "";
-	$catsprinter1 = explode(';', getDolGlobalString("TAKEPOS_PRINTED_CATEGORIES_")1);
-	$catsprinter2 = explode(';', getDolGlobalString("TAKEPOS_PRINTED_CATEGORIES_")2);
-	$catsprinter3 = explode(';', getDolGlobalString("TAKEPOS_PRINTED_CATEGORIES_")3);
+	$catsprinter1 = explode(';', getDolGlobalString("TAKEPOS_PRINTED_CATEGORIES_1"));
+	$catsprinter2 = explode(';', getDolGlobalString("TAKEPOS_PRINTED_CATEGORIES_2"));
+	$catsprinter3 = explode(';', getDolGlobalString("TAKEPOS_PRINTED_CATEGORIES_3"));
 	$linestoprint = 0;
 	foreach ($invoice->lines as $line) {
 		if ($line->special_code == "4") {
