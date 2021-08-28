@@ -112,7 +112,7 @@ if (empty($backtopage)) {
 $backurlforlist = dol_buildpath('/compta/cashcontrol/cashcontrol_list.php', 1);
 $triggermodname = 'CACHCONTROL_MODIFY'; // Name of trigger action code to execute when we modify record
 
-if (empty(getDolGlobalString("CASHDESK_ID_BANKACCOUNT_CASH")) && empty(getDolGlobalString("CASHDESK_ID_BANKACCOUNT_CASH")1)) {
+if (empty(getDolGlobalString("CASHDESK_ID_BANKACCOUNT_CASH")) && empty(getDolGlobalString("CASHDESK_ID_BANKACCOUNT_CASH1"))) {
 	setEventMessages($langs->trans("CashDesk")." - ".$langs->trans("NotConfigured"), null, 'errors');
 }
 
