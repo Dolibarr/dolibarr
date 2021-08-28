@@ -175,7 +175,7 @@ class WebservicesOrdersTest extends PHPUnit\Framework\TestCase
 		}
 		if (! $result || ! empty($result['faultstring'])) {
 			//var_dump($soapclient);
-			print $soapclient->error_str;
+			print 'Error: '.$soapclient->error_str;
 			print "\n<br>\n";
 			print $soapclient->request;
 			print "\n<br>\n";
@@ -183,7 +183,7 @@ class WebservicesOrdersTest extends PHPUnit\Framework\TestCase
 			print "\n";
 		}
 
-		print __METHOD__." count(result)=".count($result)."\n";
+		print __METHOD__." count(result)=".(is_array($result) ? count($result) : 0)."\n";
 		$this->assertEquals('OK', $result['result']['result_code']);
 
 		return $result;
