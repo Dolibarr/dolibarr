@@ -328,7 +328,7 @@ if ($type == 'directory') {
 		if ($section) {
 			$param .= '&section='.$section;
 			if (isset($search_doc_ref) && $search_doc_ref != '') {
-				$param .= '&search_doc_ref='.$search_doc_ref;
+				$param .= '&search_doc_ref='.urlencode($search_doc_ref);
 			}
 
 			$textifempty = $langs->trans('NoFileFound');

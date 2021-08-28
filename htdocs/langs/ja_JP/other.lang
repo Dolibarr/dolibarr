@@ -291,3 +291,7 @@ PopuCom=注文の人気別の製品/サービス
 ProductStatistics=製品/サービス統計
 NbOfQtyInOrders=注文数量
 SelectTheTypeOfObjectToAnalyze=オブジェクトを選択してその統計を表示する...
+
+ConfirmBtnCommonContent = 「%s」を実行してもよいか？
+ConfirmBtnCommonTitle = アクションを確認する
+CloseDialog = 閉じる

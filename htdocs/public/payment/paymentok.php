@@ -298,10 +298,20 @@ if (!empty($conf->paypal->enabled)) {
 					$ErrorSeverityCode = urldecode($resArray2["L_SEVERITYCODE0"]);
 				}
 			} else {
+				$ErrorCode = "SESSIONEXPIRED";
+				$ErrorLongMsg = "Session expired. Can't retreive PaymentType. Payment has not been validated.";
+				$ErrorShortMsg = "Session expired";
+
+				dol_syslog($ErrorLongMsg, LOG_WARNING, 0, '_payment');
 				dol_print_error('', 'Session expired');
 			}
 		} else {
-			dol_print_error('', '$PAYPALTOKEN not defined');
+			$ErrorCode = "PAYPALTOKENNOTDEFINED";
+			$ErrorLongMsg = "The parameter PAYPALTOKEN was not defined. Payment has not been validated.";
+			$ErrorShortMsg = "Parameter PAYPALTOKEN not defined";
+
+			dol_syslog($ErrorLongMsg, LOG_WARNING, 0, '_payment');
+			dol_print_error('', 'PAYPALTOKEN not defined');
 		}
 	}
 }
@@ -575,7 +585,7 @@ if ($ispaymentok) {
 										}
 									} else {
 										$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_account (fk_soc, login, key_account, site, site_account, status, entity, date_creation, fk_user_creat)";
-										$sql .= " VALUES (".$object->fk_soc.", '', '".$db->escape($stripecu)."', 'stripe', '".$db->escape($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])."', ".$servicestatus.", ".$conf->entity.", '".$db->idate(dol_now())."', 0)";
+										$sql .= " VALUES (".((int) $object->fk_soc).", '', '".$db->escape($stripecu)."', 'stripe', '".$db->escape($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])."', ".((int) $servicestatus).", ".((int) $conf->entity).", '".$db->idate(dol_now())."', 0)";
 										$resql = $db->query($sql);
 										if (!$resql) {	// should not happen
 											$error++;

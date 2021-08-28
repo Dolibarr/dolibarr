@@ -77,6 +77,10 @@ YourPartnershipRefusedContent=パートナーシップのリクエストが拒�
 YourPartnershipAcceptedContent=パートナーシップのリクエストが受理されたことをお知らせする。
 YourPartnershipCanceledContent=パートナーシップがキャンセルされたことをお知らせする。
 
+CountLastUrlCheckError=最後のURLチェックのエラー数
+LastCheckBacklink=最後のURLチェックの日付
+ReasonDeclineOrCancel=断りの理由
+
 #
 # Status
 #

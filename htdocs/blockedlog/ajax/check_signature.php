@@ -17,9 +17,9 @@
  */
 
 /**
- *      \file       htdocs/blockedlog/ajax/block-info.php
+ *      \file       htdocs/blockedlog/ajax/check_signature.php
  *      \ingroup    blockedlog
- *      \brief      block-info
+ *      \brief      This page is not used yet.
  */
 
 
@@ -38,13 +38,15 @@ if (!defined('NOREQUIREHTML')) {
 
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/authority.class.php';
+
 
 if (empty($conf->global->BLOCKEDLOG_AUTHORITY_URL)) {
 	exit('BLOCKEDLOG_AUTHORITY_URL not set');
 }
 
-require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
-require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/authority.class.php';
 
 $auth = new BlockedLogAuthority($db);
 $auth->syncSignatureWithAuthority();
@@ -63,8 +65,11 @@ if (is_array($bocks)) {
 
 $hash = $auth->getBlockchainHash();
 
-$url = $conf->global->BLOCKEDLOG_AUTHORITY_URL.'/blockedlog/ajax/authority.php?s='.$auth->signature.'&h='.$hash;
+// Call external authority
+$url = $conf->global->BLOCKEDLOG_AUTHORITY_URL.'/blockedlog/ajax/authority.php?s='.urlencode($auth->signature).'&h='.urlencode($hash);
 
-$res = file_get_contents($url);
+$resarray = getURLContent($url, 'GET', '', 1, array(), array(), 2);
+$res = $resarray['content'];
+
 //echo $url;
-echo $res;
+echo dol_escape_htmltag($res);

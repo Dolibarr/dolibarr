@@ -114,7 +114,7 @@ if ($action == "set") {
 
 if ($action == "addnotif") {
 	$bon = new BonPrelevement($db);
-	$bon->AddNotification($db, GETPOST('user', 'int'), $action);
+	$bon->addNotification($db, GETPOST('user', 'int'), $action);
 
 	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
@@ -122,7 +122,7 @@ if ($action == "addnotif") {
 
 if ($action == "deletenotif") {
 	$bon = new BonPrelevement($db);
-	$bon->DeleteNotificationById(GETPOST('notif', 'int'));
+	$bon->deleteNotificationById(GETPOST('notif', 'int'));
 
 	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
@@ -200,9 +200,8 @@ if (!$conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS) {
 print '<input type="text" name="PAYMENTBYBANKTRANSFER_ADDDAYS" value="'.$conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS.'" class="width50"></td>';
 print '</td></tr>';
 print '</table>';
-print '<br>';
 
-print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 

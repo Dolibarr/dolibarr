@@ -512,7 +512,7 @@ if ($id) {
 
 		$param = '&id='.$id;
 		if ($search_country_id > 0) {
-			$param .= '&search_country_id='.$search_country_id;
+			$param .= '&search_country_id='.urlencode($search_country_id);
 		}
 		$paramwithsearch = $param;
 		if ($sortorder) {

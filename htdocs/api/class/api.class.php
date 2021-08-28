@@ -327,7 +327,7 @@ class DolibarrApi
 	 * Function to forge a SQL criteria
 	 *
 	 * @param  array    $matches    Array of found string by regex search.
-	 * 								Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.date_creation:<:'2016-01-01 12:30:00'" or "t.nature:is:NULL"
+	 * 								Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.date_creation:<:'2016-01-01 12:30:00'" or "t.nature:is:NULL" or "t.nature:isnot:NULL"
 	 * @return string               Forged criteria. Example: "t.field like 'abc%'"
 	 */
 	protected static function _forge_criteria_callback($matches)
@@ -345,18 +345,36 @@ class DolibarrApi
 			return '';
 		}
 
+		// Sanitize operand
 		$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
 
+		// Sanitize operator
 		$operator = strtoupper(preg_replace('/[^a-z<>=]/i', '', trim($tmp[1])));
+		// Only some operators are allowed.
+		if (! in_array($operator, array('LIKE', 'ULIKE', '<', '>', '<=', '>=', '=', '<>', 'IS', 'ISNOT', 'IN'))) {
+			return '';
+		}
+		if ($operator == 'ISNOT') {
+			$operator = 'IS NOT';
+		}
 
+		// Sanitize value
 		$tmpescaped = trim($tmp[2]);
 		$regbis = array();
 		if ($operator == 'IN') {
 			$tmpescaped = "(".$db->sanitize($tmpescaped, 1).")";
-		} elseif (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
-			$tmpescaped = "'".$db->escape($regbis[1])."'";
+		} elseif (in_array($operator, array('<', '>', '<=', '>=', '=', '<>'))) {
+			if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {	// If 'YYYY-MM-DD HH:MM:SS+X'
+				$tmpescaped = "'".$db->escape($regbis[1])."'";
+			} else {
+				$tmpescaped = ((float) $tmpescaped);
+			}
 		} else {
-			$tmpescaped = $db->sanitize($db->escape($tmpescaped));
+			if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
+				$tmpescaped = "'".$db->escape($regbis[1])."'";
+			} else {
+				$tmpescaped = "'".$db->escape($tmpescaped)."'";
+			}
 		}
 
 		return $db->escape($operand).' '.$db->escape($operator)." ".$tmpescaped;

@@ -180,7 +180,7 @@ $sql = 'SELECT f.rowid as scid, f.label, f.paye, f.amount as sc_amount, ps.amoun
 $sql .= ' FROM '.MAIN_DB_PREFIX.'payment_salary as ps,'.MAIN_DB_PREFIX.'salary as f';
 $sql .= ' WHERE ps.fk_salary = f.rowid';
 $sql .= ' AND f.entity = '.$conf->entity;
-$sql .= ' AND ps.rowid = '.$object->id;
+$sql .= ' AND ps.rowid = '.((int) $object->id);
 
 dol_syslog("payment_salary/card.php", LOG_DEBUG);
 $resql = $db->query($sql);

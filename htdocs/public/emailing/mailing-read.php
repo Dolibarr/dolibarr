@@ -128,13 +128,13 @@ if (!empty($tag)) {
 
 	//Update status communication of thirdparty prospect
 	if ($obj->source_id > 0 && $obj->source_type == 'thirdparty' && $obj->entity) {
-		$sql = "UPDATE ".MAIN_DB_PREFIX.'societe SET fk_stcomm = 3 WHERE fk_stcomm <> -1 AND entity = '.$obj->entity.' AND rowid = '.((int) $obj->source_id);
+		$sql = "UPDATE ".MAIN_DB_PREFIX.'societe SET fk_stcomm = 3 WHERE fk_stcomm <> -1 AND entity = '.((int) $obj->entity).' AND rowid = '.((int) $obj->source_id);
 		$resql = $db->query($sql);
 	}
 
 	//Update status communication of contact prospect
 	if ($obj->source_id > 0 && $obj->source_type == 'contact' && $obj->entity) {
-		$sql = "UPDATE ".MAIN_DB_PREFIX.'societe SET fk_stcomm = 3 WHERE fk_stcomm <> -1 AND entity = '.$obj->entity.' AND rowid IN (SELECT sc.fk_soc FROM '.MAIN_DB_PREFIX.'socpeople AS sc WHERE sc.rowid = '.((int) $obj->source_id).')';
+		$sql = "UPDATE ".MAIN_DB_PREFIX.'societe SET fk_stcomm = 3 WHERE fk_stcomm <> -1 AND entity = '.((int) $obj->entity).' AND rowid IN (SELECT sc.fk_soc FROM '.MAIN_DB_PREFIX.'socpeople AS sc WHERE sc.rowid = '.((int) $obj->source_id).')';
 		$resql = $db->query($sql);
 	}
 }

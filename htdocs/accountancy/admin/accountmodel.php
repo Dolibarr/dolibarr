@@ -553,16 +553,16 @@ if ($id) {
 		$num = $db->num_rows($resql);
 		$i = 0;
 
-		$param = '&id='.$id;
+		$param = '&id='.urlencode($id);
 		if ($search_country_id > 0) {
-			$param .= '&search_country_id='.$search_country_id;
+			$param .= '&search_country_id='.urlencode($search_country_id);
 		}
 		$paramwithsearch = $param;
 		if ($sortorder) {
-			$paramwithsearch .= '&sortorder='.$sortorder;
+			$paramwithsearch .= '&sortorder='.urlencode($sortorder);
 		}
 		if ($sortfield) {
-			$paramwithsearch .= '&sortfield='.$sortfield;
+			$paramwithsearch .= '&sortfield='.urlencode($sortfield);
 		}
 
 		// There is several pages

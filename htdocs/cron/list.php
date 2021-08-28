@@ -278,12 +278,12 @@ if ($search_lastresult != '') {
 //Manage filter
 if (is_array($filter) && count($filter) > 0) {
 	foreach ($filter as $key => $value) {
-		$sql .= ' AND '.$key.' LIKE \'%'.$db->escape($value).'%\'';
+		$sql .= " AND ".$key." LIKE '%".$db->escape($value)."%'";
 	}
 }
 $sqlwhere = array();
 if (!empty($search_module_name)) {
-	$sqlwhere[] = '(t.module_name='.$db->escape($search_module_name).')';
+	$sqlwhere[] = "(t.module_name = '".$db->escape($search_module_name)."')";
 }
 if (count($sqlwhere) > 0) {
 	$sql .= " WHERE ".implode(' AND ', $sqlwhere);

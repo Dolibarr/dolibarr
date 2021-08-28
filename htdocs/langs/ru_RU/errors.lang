@@ -264,6 +264,7 @@ ErrorAnAmountWithoutTaxIsRequired=Ошибка, сумма обязательн�
 ErrorAPercentIsRequired=Ошибка, введите процентное значение правильно
 ErrorYouMustFirstSetupYourChartOfAccount=Вы должны сначала настроить свой план счета
 ErrorFailedToFindEmailTemplate=Не удалось найти шаблон с кодовым названием %s
+ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Duration not defined on service. No way to calculate the hourly price.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Ваш параметр PHP upload_max_filesize (%s) выше, чем параметр PHP post_max_size (%s). Это непоследовательная установка.

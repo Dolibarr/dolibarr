@@ -288,17 +288,18 @@ class TraceableDB extends DoliDB
 	/**
 	 * Execute a SQL request and return the resultset
 	 *
-	 * @param   string $query          SQL query string
-	 * @param   int    $usesavepoint   0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
-	 *                                 Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
-	 * @param   string $type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
-	 * @return  resource               Resultset of answer
+	 * @param   string 	$query          SQL query string
+	 * @param   int    	$usesavepoint   0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
+	 *                                 	Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
+	 * @param   string 	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
+	 * @param	int		$result_mode	Result mode
+	 * @return  resource               	Resultset of answer
 	 */
-	public function query($query, $usesavepoint = 0, $type = 'auto')
+	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0)
 	{
 		$this->startTracing();
 
-		$resql = $this->db->query($query, $usesavepoint, $type);
+		$resql = $this->db->query($query, $usesavepoint, $type, $result_mode);
 
 		$this->endTracing($query, $resql);
 

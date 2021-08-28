@@ -113,26 +113,6 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
-print '<tr class="oddeven"><td>'.$langs->trans("PROPOSAL_PDF_HIDE_PAYMENTTERM");
-print '</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('PROPOSAL_PDF_HIDE_PAYMENTTERM');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("PROPOSAL_PDF_HIDE_PAYMENTTERM", $arrval, $conf->global->PROPOSAL_PDF_HIDE_PAYMENTTERM);
-}
-print '</td></tr>';
-
-print '<tr class="oddeven"><td>'.$langs->trans("PROPOSAL_PDF_HIDE_PAYMENTMODE");
-print '</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('PROPOSAL_PDF_HIDE_PAYMENTMODE');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("PROPOSAL_PDF_HIDE_PAYMENTMODE", $arrval, $conf->global->PROPOSAL_PDF_HIDE_PAYMENTMODE);
-}
-print '</td></tr>';
-
 /*
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING").'</td><td>';
 if ($conf->use_javascript_ajax) {
@@ -148,9 +128,7 @@ print '</table>';
 print '</div>';
 
 /*
-print '<br><div class="center">';
-print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
-print '</div>';
+	print $form->buttonsSaveCancel();
 */
 
 print '</form>';

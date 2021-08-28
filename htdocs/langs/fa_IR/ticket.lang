@@ -66,7 +66,7 @@ NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
 Answered=پاسخ داده شده
 Waiting=در انتظار
-Closed=بسته
+SolvedClosed=Solved
 Deleted=حذف شده
 
 # Dict
@@ -186,9 +186,11 @@ TicketSeverity=درجۀ اهمیت
 ShowTicket=نمایش برگه
 RelatedTickets=برگه‌های مرتبط
 TicketAddIntervention=ایجاد پادرمیانی
-CloseTicket=بستن برگه
-CloseATicket=بستن یک برگۀ پشتیبانی
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=توقف پشتیبانی را تائید کنید
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=لطفا حذف برگۀ‌پشتیبانی را تائید کنید
 TicketDeletedSuccess=حذف برگه با موفقیت انجام شد
 TicketMarkedAsClosed=برگۀ‌پشتیبانی به حالت بسته درآمد

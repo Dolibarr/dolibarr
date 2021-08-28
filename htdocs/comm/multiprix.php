@@ -121,7 +121,7 @@ if ($_socid > 0) {
 
 	print dol_get_fiche_end();
 
-	print '<div align="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+	print $form->buttonsSaveCancel("Save", '');
 
 	print "</form>";
 
@@ -134,7 +134,7 @@ if ($_socid > 0) {
 	 */
 	$sql  = "SELECT rc.rowid,rc.price_level, rc.datec as dc, u.rowid as uid, u.login";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe_prices as rc, ".MAIN_DB_PREFIX."user as u";
-	$sql .= " WHERE rc.fk_soc =".$objsoc->id;
+	$sql .= " WHERE rc.fk_soc = ".((int) $objsoc->id);
 	$sql .= " AND u.rowid = rc.fk_user_author";
 	$sql .= " ORDER BY rc.datec DESC";
 

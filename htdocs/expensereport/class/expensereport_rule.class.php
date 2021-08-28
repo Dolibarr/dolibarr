@@ -157,7 +157,7 @@ class ExpenseReportRule extends CoreObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'expensereport_rules er';
 		$sql .= ' WHERE er.entity IN (0,'.getEntity('').')';
 		if (!empty($fk_c_type_fees)) {
-			$sql .= ' AND er.fk_c_type_fees IN (-1, '.$fk_c_type_fees.')';
+			$sql .= ' AND er.fk_c_type_fees IN (-1, '.((int) $fk_c_type_fees).')';
 		}
 		if (!empty($date)) {
 			$sql .= " AND er.dates <= '".dol_print_date($date, '%Y-%m-%d')."'";
@@ -170,7 +170,7 @@ class ExpenseReportRule extends CoreObject
 		}
 		$sql .= ' ORDER BY er.is_for_all, er.fk_usergroup, er.fk_user';
 
-		dol_syslog("ExpenseReportRule::getAllRule sql=".$sql);
+		dol_syslog("ExpenseReportRule::getAllRule");
 
 		$resql = $db->query($sql);
 		if ($resql) {

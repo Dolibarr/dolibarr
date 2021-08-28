@@ -161,16 +161,16 @@ if (!empty($search_label)) {
 	$sql .= natural_search('t.label', $search_label);
 }
 if (!empty($search_dateend_start)) {
-	$sql .= ' AND t.datev >= "'.$db->idate($search_dateend_start).'"';
+	$sql .= " AND t.datev >= '".$db->idate($search_dateend_start)."'";
 }
 if (!empty($search_dateend_end)) {
-	$sql .= ' AND t.datev <= "'.$db->idate($search_dateend_end).'"';
+	$sql .= " AND t.datev <= '".$db->idate($search_dateend_end)."'";
 }
 if (!empty($search_datepayment_start)) {
-	$sql .= ' AND t.datep >= "'.$db->idate($search_datepayment_start).'"';
+	$sql .= " AND t.datep >= '".$db->idate($search_datepayment_start)."'";
 }
 if (!empty($search_datepayment_end)) {
-	$sql .= ' AND t.datep <= "'.$db->idate($search_datepayment_end).'"';
+	$sql .= " AND t.datep <= '".$db->idate($search_datepayment_end)."'";
 }
 if (!empty($search_type) && $search_type > 0) {
 	$sql .= ' AND t.fk_typepayment = '.((int) $search_type);

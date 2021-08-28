@@ -629,9 +629,10 @@ if ($action == "delete") {
 			}
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
-			$sql .= " SET fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]}.", ";
+			$varforconst = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
+			$sql .= " SET fk_soc = ".((int) $conf->global->$varforconst).", ";
 			$sql .= " datec = '".$db->idate(dol_now())."'";
-			$sql .= " WHERE ref='(PROV-POS".$db->escape($_SESSION["takeposterminal"]."-".$place).")'";
+			$sql .= " WHERE ref = '(PROV-POS".$db->escape($_SESSION["takeposterminal"]."-".$place).")'";
 			$resql1 = $db->query($sql);
 
 			if ($resdeletelines && $resql1) {
@@ -1487,7 +1488,7 @@ if ($placeid > 0) {
 						$sql .= " WHERE ps.reel != 0";
 						$sql .= " AND ps.fk_entrepot = ".((int) $conf->global->$constantforkey);
 						$sql .= " AND e.entity IN (".getEntity('stock').")";
-						$sql .= " AND ps.fk_product = ".$line->fk_product;
+						$sql .= " AND ps.fk_product = ".((int) $line->fk_product);
 						$resql = $db->query($sql);
 						if ($resql) {
 							$obj = $db->fetch_object($resql);

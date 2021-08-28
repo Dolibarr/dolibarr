@@ -942,7 +942,7 @@ class ProductCombination
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'product_attribute_combination pac';
 		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_attribute_combination2val pac2v ON pac2v.fk_prod_combination=pac.rowid';
 		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_attribute_value pav ON pav.rowid=pac2v.fk_prod_attr_val';
-		$sql .= ' WHERE pac.fk_product_child='.$prod_child;
+		$sql .= ' WHERE pac.fk_product_child='.((int) $prod_child);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

@@ -445,7 +445,7 @@ class Propalmergepdfproduct extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product";
-			$sql .= " WHERE fk_product=".$this->fk_product." AND file_name='".$this->db->escape($this->file_name)."'";
+			$sql .= " WHERE fk_product = ".((int) $this->fk_product)." AND file_name = '".$this->db->escape($this->file_name)."'";
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);

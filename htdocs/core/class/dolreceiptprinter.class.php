@@ -867,7 +867,7 @@ class dolReceiptPrinter extends Printer
 		$error = 0;
 		$sql = 'SELECT template';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'printer_receipt_template';
-		$sql .= ' WHERE rowid='.$templateid;
+		$sql .= ' WHERE rowid = '.((int) $templateid);
 		$sql .= ' AND entity = '.$conf->entity;
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -905,7 +905,7 @@ class dolReceiptPrinter extends Printer
 		$sql = 'SELECT rowid, name, fk_type, fk_profile, parameter';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'printer_receipt';
 		$sql .= ' WHERE rowid = '.((int) $printerid);
-		$sql .= ' AND entity = '.$conf->entity;
+		$sql .= ' AND entity = '.((int) $conf->entity);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_array($resql);

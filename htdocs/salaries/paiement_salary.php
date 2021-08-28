@@ -313,13 +313,12 @@ if ($action == 'create') {
 	}
 
 	print "</table>";
-
 	// Bouton Save payment
-	print '<br><div class="center"><input type="checkbox" checked name="closepaidsalary"> '.$langs->trans("ClosePaidSalaryAutomatically");
-	print '<br><input type="submit" class="button" name="save" value="'.$langs->trans('ToMakePayment').'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<div class="center">';
+	print '<input type="checkbox" checked name="closepaidsalary"> '.$langs->trans("ClosePaidSalaryAutomatically");
+	print $form->buttonsSaveCancel("Save", "Cancel", '', true);
 	print '</div>';
+
 
 	print "</form>\n";
 }

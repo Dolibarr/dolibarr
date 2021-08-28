@@ -188,7 +188,7 @@ if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
 				$accountventilated = new AccountingAccount($db);
 				$accountventilated->fetch($monCompte, '', 1);
 
-				dol_syslog("accountancy/customer/list.php sql=".$sql, LOG_DEBUG);
+				dol_syslog("accountancy/customer/list.php", LOG_DEBUG);
 				if ($db->query($sql)) {
 					$msg .= '<div><span style="color:green">'.$langs->trans("Lineofinvoice", $monId).' - '.$langs->trans("VentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'</span></div>';
 					$ok++;
