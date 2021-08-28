@@ -1133,11 +1133,17 @@ if ($action == 'create') {
 						print_date_range($db->jdate($line->date_start), $db->jdate($line->date_end));
 						print "</td>\n";
 					}
+					
+					// unit of order
+					$unit_order = ''
+					if ($conf->global->PRODUCT_USE_UNITS) {
+						$unit_order = measuringUnitString($line->fk_unit);
+					}
 
 					// Qty
 					print '<td class="center">'.$line->qty;
 					print '<input name="qtyasked'.$indiceAsked.'" id="qtyasked'.$indiceAsked.'" type="hidden" value="'.$line->qty.'">';
-					print '</td>';
+					print ''.$unit_order.'</td>';
 					$qtyProdCom = $line->qty;
 
 					// Qty already shipped
@@ -1145,7 +1151,7 @@ if ($action == 'create') {
 					$quantityDelivered = $object->expeditions[$line->id];
 					print $quantityDelivered;
 					print '<input name="qtydelivered'.$indiceAsked.'" id="qtydelivered'.$indiceAsked.'" type="hidden" value="'.$quantityDelivered.'">';
-					print '</td>';
+					print ''.$unit_order.'</td>';
 
 					// Qty to ship
 					$quantityAsked = $line->qty;
@@ -2030,7 +2036,7 @@ if ($action == 'create') {
 		// Get list of products already sent for same source object into $alreadysent
 		$alreadysent = array();
 		if ($origin && $origin_id > 0) {
-			$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end";
+			$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.fk_unit, obj.date_start, obj.date_end";
 			$sql .= ", ed.rowid as shipmentline_id, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_origin_line, ed.fk_entrepot";
 			$sql .= ", e.rowid as shipment_id, e.ref as shipment_ref, e.date_creation, e.date_valid, e.date_delivery, e.date_expedition";
 			//if ($conf->delivery_note->enabled) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received";
@@ -2149,9 +2155,14 @@ if ($action == 'create') {
 					print_date_range($lines[$i]->date_start, $lines[$i]->date_end);
 					print "</td>\n";
 				}
+				
+				$unit_order = ''
+				if ($conf->global->PRODUCT_USE_UNITS) {
+					$unit_order = measuringUnitString($lines[$i]->fk_unit);
+				}
 
 				// Qty ordered
-				print '<td class="center linecolqty">'.$lines[$i]->qty_asked.'</td>';
+				print '<td class="center linecolqty">'.$lines[$i]->qty_asked.' '.$unit_order.'</td>';
 
 				// Qty in other shipments (with shipment and warehouse used)
 				if ($origin && $origin_id > 0) {
@@ -2215,7 +2226,7 @@ if ($action == 'create') {
 								print '<!-- case edit 2 -->';
 								print '<tr>';
 								// Qty to ship or shipped
-								print '<td><input class="qtyl" name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'"></td>';
+								print '<td><input class="qtyl" name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'">'.$unit_order.'</td>';
 								// Warehouse source
 								print '<td>'.$formproduct->selectWarehouses($lines[$i]->entrepot_id, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1).'</td>';
 								// Batch number managment
@@ -2226,7 +2237,7 @@ if ($action == 'create') {
 								foreach ($lines[$i]->details_entrepot as $detail_entrepot) {
 									print '<tr>';
 									// Qty to ship or shipped
-									print '<td><input class="qtyl" name="qtyl'.$detail_entrepot->line_id.'" id="qtyl'.$detail_entrepot->line_id.'" type="text" size="4" value="'.$detail_entrepot->qty_shipped.'"></td>';
+									print '<td><input class="qtyl" name="qtyl'.$detail_entrepot->line_id.'" id="qtyl'.$detail_entrepot->line_id.'" type="text" size="4" value="'.$detail_entrepot->qty_shipped.'">'.$unit_order.'</td>';
 									// Warehouse source
 									print '<td>'.$formproduct->selectWarehouses($detail_entrepot->entrepot_id, 'entl'.$detail_entrepot->line_id, '', 1, 0, $lines[$i]->fk_product, '', 1).'</td>';
 									// Batch number managment
@@ -2241,7 +2252,7 @@ if ($action == 'create') {
 							print '<!-- case edit 5 -->';
 							print '<tr>';
 							// Qty to ship or shipped
-							print '<td><input class="qtyl" name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'"></td>';
+							print '<td><input class="qtyl" name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'">'.$unit_order.'</td>';
 							// Warehouse source
 							print '<td></td>';
 							// Batch number managment
@@ -2253,7 +2264,7 @@ if ($action == 'create') {
 					print '</table></td>';
 				} else {
 					// Qty to ship or shipped
-					print '<td class="linecolqtytoship center">'.$lines[$i]->qty_shipped.'</td>';
+					print '<td class="linecolqtytoship center">'.$lines[$i]->qty_shipped.' '.$unit_order.'</td>';
 
 					// Warehouse source
 					if (!empty($conf->stock->enabled)) {
