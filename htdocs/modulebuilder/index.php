@@ -2718,7 +2718,7 @@ if ($module == 'initmodule') {
 								print '<td><input type="number" step="1" min="0" max="1" class="text maxwidth100" name="propvalidate" value="'.dol_escape_htmltag(GETPOST('propvalidate', 'alpha')).'"></td>';
 								print '<td><input class="text maxwidth100" name="propcomment" value="'.dol_escape_htmltag(GETPOST('propcomment', 'alpha')).'"></td>';
 								print '<td class="center">';
-								print '<input class="button" type="submit" name="add" value="'.$langs->trans("Add").'">';
+								print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
 								print '</td></tr>';
 
 								// List of existing properties

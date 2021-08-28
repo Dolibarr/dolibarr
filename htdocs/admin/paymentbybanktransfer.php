@@ -446,7 +446,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 	print $form->selectarray('action',$actions);//  select_dolusers(0,'user',0);
 	print '</td>';
 
-	print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
+	print '<td class="right"><input type="submit" class="button button-add" value="'.$langs->trans("Add").'"></td></tr>';
 
 	// List of current notifications for objet_type='withdraw'
 	$sql = "SELECT u.lastname, u.firstname,";

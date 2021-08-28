@@ -2607,7 +2607,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
 		print '</table>';
 
 		print '<div class="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+		print '<input type="submit" class="button button-add" value="'.$langs->trans("Add").'">';
 		print '</div>';
 
 		print dol_get_fiche_end();

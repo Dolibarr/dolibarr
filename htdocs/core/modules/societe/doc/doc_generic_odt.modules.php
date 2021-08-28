@@ -141,7 +141,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$texte .= '</textarea>';
 		$texte .= '</td>';
 		$texte .= '<td class="center">&nbsp; ';
-		$texte .= '<input type="submit" class="button small" value="'.$langs->trans("Modify").'" name="Button">';
+		$texte .= '<input type="submit" class="button small" name="Button"value="'.$langs->trans("Modify").'">';
 		$texte .= '</td>';
 		$texte .= '</tr>';
 		$texte .= '</table>';

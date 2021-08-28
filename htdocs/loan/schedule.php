@@ -335,7 +335,7 @@ if (count($echeances->lines) == 0) {
 } else {
 	$label = $langs->trans("Save");
 }
-print '<div class="center"><input class="button" type="submit" value="'.$label.'" '.(($pay_without_schedule == 1) ? 'disabled title="'.$langs->trans('CantUseScheduleWithLoanStartedToPaid').'"' : '').'title=""></div>';
+print '<div class="center"><input type="submit" class="button button-add" value="'.$label.'" '.(($pay_without_schedule == 1) ? 'disabled title="'.$langs->trans('CantUseScheduleWithLoanStartedToPaid').'"' : '').'title=""></div>';
 print '</form>';
 
 // End of page
