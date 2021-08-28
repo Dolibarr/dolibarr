@@ -717,7 +717,7 @@ if (empty($reshook)) {
 									unset($_POST[$qty]);
 								}
 							}
-						} elsif(empty($conf->stock->enabled) && empty($conf->productbatch->enabled)) { // both product batch and stock are not activated.
+						} elseif (empty($conf->stock->enabled) && empty($conf->productbatch->enabled)) { // both product batch and stock are not activated.
 							$qty = "qtyl".$line_id;
 							$line->id = $line_id;
 							$line->qty = GETPOST($qty, 'int');
@@ -2262,7 +2262,7 @@ if ($action == 'create') {
 							print '<td></td>';
 							print '</tr>';
 						}
-					} else { // both product batch and stock are not activated.
+					} elseif (empty($conf->stock->enabled) && empty($conf->productbatch->enabled)) { // both product batch and stock are not activated.
 						print '<!-- case edit 6 -->';
 						print '<tr>';
 						// Qty to ship or shipped
