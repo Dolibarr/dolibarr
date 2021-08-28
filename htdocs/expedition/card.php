@@ -717,6 +717,16 @@ if (empty($reshook)) {
 									unset($_POST[$qty]);
 								}
 							}
+						} elseif (empty($conf->stock->enabled) && empty($conf->productbatch->enabled)) { // both product batch and stock are not activated.
+							$qty = "qtyl".$line_id;
+							$line->id = $line_id;
+							$line->qty = GETPOST($qty, 'int');
+							$line->entrepot_id = 0;
+							if ($line->update($user) < 0) {
+								setEventMessages($line->error, $line->errors, 'errors');
+								$error++;
+							}
+							unset($_POST[$qty]);
 						}
 					} else {
 						// Product no predefined
@@ -2252,6 +2262,16 @@ if ($action == 'create') {
 							print '<td></td>';
 							print '</tr>';
 						}
+					} elseif (empty($conf->stock->enabled) && empty($conf->productbatch->enabled)) { // both product batch and stock are not activated.
+						print '<!-- case edit 6 -->';
+						print '<tr>';
+						// Qty to ship or shipped
+						print '<td><input class="qtyl" name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'"></td>';
+						// Warehouse source
+						print '<td></td>';
+						// Batch number managment
+						print '<td></td>';
+						print '</tr>';
 					}
 
 					print '</table></td>';
