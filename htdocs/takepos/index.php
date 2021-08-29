@@ -126,7 +126,7 @@ $head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
 if(empty($disablejs)) { $disablejs = ''; }
 if(empty($disablehead)) { $disablejs = ''; }
 if(empty($arrayofjs)) { $disablejs = ''; }
-if(empty($arrayofcss))) { $disablejs = ''; }
+if(empty($arrayofcss)) { $disablejs = ''; }
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
 ?>
