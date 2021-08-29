@@ -760,6 +760,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		$codetoconfig = '';
 
 		// Force disable of module disabled into session (for demo for example)
+		$disabled_modules = array();
 		if (in_array($modulenameshort, $disabled_modules)) {
 			$objMod->disabled = true;
 		}
