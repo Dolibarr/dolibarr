@@ -123,10 +123,10 @@ $head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
-if(empty($disablejs)) { $disablejs = ''; }
-if(empty($disablehead)) { $disablejs = ''; }
-if(empty($arrayofjs)) { $disablejs = ''; }
-if(empty($arrayofcss)) { $disablejs = ''; }
+if (empty($disablejs)) { $disablejs = ''; }
+if (empty($disablehead)) { $disablejs = ''; }
+if (empty($arrayofjs)) { $disablejs = ''; }
+if (empty($arrayofcss)) { $disablejs = ''; }
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
 ?>
@@ -729,11 +729,11 @@ function OpenDrawer(){
 }
 
 function DolibarrOpenDrawer() {
-	console.log("DolibarrOpenDrawer call ajax url /takepos/ajax/ajax.php?action=opendrawer&term=<?php print urlencode( isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : ''); ?>");
+	console.log("DolibarrOpenDrawer call ajax url /takepos/ajax/ajax.php?action=opendrawer&term=<?php print urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : ''); ?>");
 	$.ajax({
 		type: "GET",
 		data: { token: '<?php echo currentToken(); ?>' },
-		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=opendrawer&term='.urlencode( isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : ''); ?>",
+		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=opendrawer&term='.urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : ''); ?>",
 	});
 }
 
@@ -828,7 +828,7 @@ $( document ).ready(function() {
 
 <body class="bodytakepos" style="overflow: hidden;">
 <?php
-$keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'. isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '') > 0 ? getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'. isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '' ) : '';
+$keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'. isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '') > 0 ? getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'. isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '') : '';
 ?>
 <div class="container">
 
