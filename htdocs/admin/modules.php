@@ -588,6 +588,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
 
+	$disabled_modules = array();
 	if (!empty($_SESSION["disablemodules"])) {
 		$disabled_modules = explode(',', $_SESSION["disablemodules"]);
 	}
@@ -760,7 +761,6 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		$codetoconfig = '';
 
 		// Force disable of module disabled into session (for demo for example)
-		$disabled_modules = array();
 		if (in_array($modulenameshort, $disabled_modules)) {
 			$objMod->disabled = true;
 		}
