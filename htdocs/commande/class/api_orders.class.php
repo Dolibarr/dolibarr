@@ -716,9 +716,9 @@ class Orders extends DolibarrApi
 		if (!$result) {
 			throw new RestException(404, 'Order not found');
 		}
-		
+
 		$result = $this->commande->fetch_thirdparty(); // do not check result, as failure is not fatal (used only for mail notification substitutes)
-		
+
 		if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
