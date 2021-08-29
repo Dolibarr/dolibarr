@@ -4033,7 +4033,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 
 
 // Print formconfirm
-if ($action == 'preview') {
+if ($action == 'preview' && !empty($formconfirm)) {
 	print $formconfirm;
 }
 
