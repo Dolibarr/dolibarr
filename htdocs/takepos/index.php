@@ -57,8 +57,8 @@ $action = GETPOST('action', 'aZ09');
 $setterminal = GETPOST('setterminal', 'int');
 $setcurrency = GETPOST('setcurrency', 'aZ09');
 
-if ($_SESSION["takeposterminal"] == "") {
-	if ($conf->global->TAKEPOS_NUM_TERMINALS == "1") {
+if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"] == "") {
+	if (getDolGlobalString("TAKEPOS_NUM_TERMINALS") == "1") {
 		$_SESSION["takeposterminal"] = 1; // Use terminal 1 if there is only 1 terminal
 	} elseif (!empty($_COOKIE["takeposterminal"])) {
 		$_SESSION["takeposterminal"] = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE["takeposterminal"]); // Restore takeposterminal from previous session
@@ -123,26 +123,30 @@ $head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
+if(empty($disablejs)) { $disablejs = ''; }
+if(empty($disablehead)) { $disablejs = ''; }
+if(empty($arrayofjs)) { $disablejs = ''; }
+if(empty($arrayofcss))) { $disablejs = ''; }
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
 ?>
 <link rel="stylesheet" href="css/pos.css.php">
 <link rel="stylesheet" href="css/colorbox.css" type="text/css" media="screen" />
 <?php
-if ($conf->global->TAKEPOS_COLOR_THEME == 1) {
+if (getDolGlobalInt("TAKEPOS_COLOR_THEME") == 1) {
 	print '<link rel="stylesheet" href="css/colorful.css">';
 }
 ?>
 <script type="text/javascript" src="js/jquery.colorbox-min.js"></script>	<!-- TODO It seems we don't need this -->
 <script language="javascript">
 <?php
-$categories = $categorie->get_full_arbo('product', (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
+$categories = $categorie->get_full_arbo('product', ((getDolGlobalString("TAKEPOS_ROOT_CATEGORY_ID") > 0) ? getDolGlobalString("TAKEPOS_ROOT_CATEGORY_ID") : 0), 1);
 
 
 // Search root category to know its level
 //$conf->global->TAKEPOS_ROOT_CATEGORY_ID=0;
 $levelofrootcategory = 0;
-if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {
+if (getDolGlobalInt("TAKEPOS_ROOT_CATEGORY_ID") > 0) {
 	foreach ($categories as $key => $categorycursor) {
 		if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID) {
 			$levelofrootcategory = $categorycursor['level'];
@@ -310,7 +314,7 @@ function LoadProducts(position, issubcat) {
 			//console.log("ishow"+ishow+" idata="+idata);
 			console.log(data[idata]);
 			if (typeof (data[idata]) == "undefined") {
-				<?php if (!$conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES) {
+				<?php if (! getDolGlobalString("TAKEPOS_HIDE_PRODUCT_IMAGES")) {
 					echo '$("#prodivdesc"+ishow).hide();';
 					echo '$("#prodesc"+ishow).text("");';
 					echo '$("#proimg"+ishow).attr("title","");';
@@ -332,7 +336,7 @@ function LoadProducts(position, issubcat) {
 					$titlestring .= " + ' - ".dol_escape_js($langs->trans("Barcode").': ')."' + data[idata]['barcode']";
 				?>
 				var titlestring = <?php echo $titlestring; ?>;
-				<?php if (!$conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES) {
+				<?php if (! getDolGlobalString("TAKEPOS_HIDE_PRODUCT_IMAGES")) {
 					echo '$("#prodivdesc"+ishow).show();';
 					echo '$("#prodesc"+ishow).text(data[parseInt(idata)][\'label\']);';
 					echo '$("#proimg"+ishow).attr("title", titlestring);';
@@ -717,7 +721,7 @@ function OpenDrawer(){
 		if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
 			echo "url: '".$conf->global->TAKEPOS_PRINT_SERVER."/printer/drawer.php',";
 		} else {
-			echo "url: 'http://".$conf->global->TAKEPOS_PRINT_SERVER.":8111/print',";
+			echo "url: 'http://". getDolGlobalString("TAKEPOS_PRINT_SERVER") .":8111/print',";
 		}
 		?>
 		data: "opendrawer"
@@ -725,11 +729,11 @@ function OpenDrawer(){
 }
 
 function DolibarrOpenDrawer() {
-	console.log("DolibarrOpenDrawer call ajax url /takepos/ajax/ajax.php?action=opendrawer&term=<?php print urlencode($_SESSION["takeposterminal"]); ?>");
+	console.log("DolibarrOpenDrawer call ajax url /takepos/ajax/ajax.php?action=opendrawer&term=<?php print urlencode( isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : ''); ?>");
 	$.ajax({
 		type: "GET",
 		data: { token: '<?php echo currentToken(); ?>' },
-		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=opendrawer&term='.urlencode($_SESSION["takeposterminal"]); ?>",
+		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=opendrawer&term='.urlencode( isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : ''); ?>",
 	});
 }
 
@@ -802,7 +806,7 @@ $( document ).ready(function() {
 	Refresh();
 	<?php
 	//IF NO TERMINAL SELECTED
-	if ($_SESSION["takeposterminal"] == "") {
+	if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"] == "") {
 		print "ModalBox('ModalTerminal');";
 	}
 	if (getDolGlobalString('TAKEPOS_CONTROL_CASH_OPENING')) {
@@ -824,7 +828,7 @@ $( document ).ready(function() {
 
 <body class="bodytakepos" style="overflow: hidden;">
 <?php
-$keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) > 0 ? getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) : '';
+$keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'. isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '') > 0 ? getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'. isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '' ) : '';
 ?>
 <div class="container">
 
@@ -841,7 +845,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			<?php echo $langs->trans("Terminal"); ?>
 			</span>
 			<?php echo " ";
-			if ($_SESSION["takeposterminal"] == "") {
+			if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"] == "") {
 				echo "1";
 			} else {
 				echo $_SESSION["takeposterminal"];
@@ -895,7 +899,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	<div class="modal-body">
 		<button type="button" class="block" onclick="location.href='index.php?setterminal=1'"><?php print $langs->trans("Terminal"); ?> 1</button>
 		<?php
-		for ($i = 2; $i <= $conf->global->TAKEPOS_NUM_TERMINALS; $i++) {
+		for ($i = 2; $i <= getDolGlobalInt("TAKEPOS_NUM_TERMINALS"); $i++) {
 			print '<button type="button" class="block" onclick="location.href=\'index.php?setterminal='.$i.'\'">'.$langs->trans("Terminal").' '.$i.'</button>';
 		}
 		?>
@@ -1001,7 +1005,7 @@ if ($resql) {
 			$paycode = 'CHEQUE';
 		}
 
-		$constantforkey = "CASHDESK_ID_BANKACCOUNT_".$paycode.$_SESSION["takeposterminal"];
+		$constantforkey = "CASHDESK_ID_BANKACCOUNT_".$paycode. isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '';
 		//var_dump($constantforkey.' '.$conf->global->$constantforkey);
 		if (!empty($conf->global->$constantforkey) && $conf->global->$constantforkey > 0) {
 			array_push($paiementsModes, $obj);
@@ -1012,10 +1016,10 @@ if ($resql) {
 if (empty($paiementsModes)) {
 	$langs->load('errors');
 	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("TakePOS")), null, 'errors');
-	setEventMessages($langs->trans("ProblemIsInSetupOfTerminal", $_SESSION["takeposterminal"]), null, 'errors');
+	setEventMessages($langs->trans("ProblemIsInSetupOfTerminal", isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : ''), null, 'errors');
 }
 if (count($maincategories) == 0) {
-	if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {
+	if (getDolGlobalInt("TAKEPOS_ROOT_CATEGORY_ID") > 0) {
 		$tmpcategory = new Categorie($db);
 		$tmpcategory->fetch($conf->global->TAKEPOS_ROOT_CATEGORY_ID);
 		setEventMessages($langs->trans("TakeposNeedsAtLeastOnSubCategoryIntoParentCategory", $tmpcategory->label), null, 'errors');
