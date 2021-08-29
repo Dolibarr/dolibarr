@@ -335,8 +335,7 @@ if (empty($reshook)) {
 				unset($object->thirdparty);
 			}
 			if (!empty($id)) {
-				$page = DOL_URL_ROOT . '/projet/card.php?id=' . $id;
-				header("Location: " . $page);
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 				exit;
 			}
 		}

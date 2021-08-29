@@ -196,16 +196,16 @@ if (empty($reshook)) {
 			}
 
 			if ($error) {
-				$action = 'edit';
 				setEventMessages($object->error, $object->errors, 'errors');
+				$action = 'edit';
 			} else {
 				$categories = GETPOST('categories', 'array');
 				$object->setCategories($categories);
-				$action = '';
-			}
+				$action = 'view';
 
-			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-			exit;
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+				exit;
+			}
 		} else {
 			$action = 'edit';
 			setEventMessages($object->error, $object->errors, 'errors');

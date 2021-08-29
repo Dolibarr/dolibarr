@@ -86,14 +86,16 @@ if ($action) {
 			if (!$error) {
 				if ($objectval->update($user) > 0) {
 					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+
+					header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
+					exit;
 				} else {
 					setEventMessage($langs->trans('CoreErrorMessage'), $objectval->errors, 'errors');
 				}
 			}
 		}
 
-		header('Location: '.dol_buildpath('/variants/card.php?id='.$object->id, 2));
-		exit();
+
 	}
 }
 

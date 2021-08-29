@@ -257,9 +257,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
-		}
 
-		if (!$error) {
 			$result = $object->update($user);
 			if ($result >= 0) {
 				// Category association

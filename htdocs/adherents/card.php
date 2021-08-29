@@ -603,11 +603,14 @@ if (empty($reshook)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
-			$page = DOL_URL_ROOT.'/adherents/card.php?rowid='.$object->id;
-			header("Location: ".$page);
-			exit;
 		}
-		$action = ($result < 0 || !$error) ?  '' : 'create';
+
+		if ($result > 0 && !$error) {
+			header("Location: ".$_SERVER["PHP_SELF"].'?rowid='.$object->id);
+			exit;
+		} else {
+			$action = 'create';
+		}
 	}
 
 	if ($user->rights->adherent->supprimer && $action == 'confirm_delete' && $confirm == 'yes') {
