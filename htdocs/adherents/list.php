@@ -919,9 +919,13 @@ while ($i < min($num, $limit)) {
 
 	if (!empty($obj->fk_soc)) {
 		$memberstatic->fetch_thirdparty();
-		$companyname = $memberstatic->thirdparty->name;
+		if ($memberstatic->thirdparty->id > 0) {
+			$companyname = $memberstatic->thirdparty->name;
+			$companynametoshow = $memberstatic->thirdparty->getNomUrl(1);
+		}
 	} else {
 		$companyname = $obj->company;
+		$companynametoshow = $obj->company;
 	}
 	$memberstatic->company = $companyname;
 
@@ -984,7 +988,7 @@ while ($i < min($num, $limit)) {
 	// Company
 	if (!empty($arrayfields['d.company']['checked'])) {
 		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companyname).'">';
-		print $companyname;
+		print $companynametoshow;
 		print "</td>\n";
 	}
 	// Login
