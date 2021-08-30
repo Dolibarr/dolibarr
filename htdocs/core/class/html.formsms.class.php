@@ -322,7 +322,7 @@ function limitChars(textarea, limit, infodiv)
 
 		if ($showform) {
 			print '<div class="center">';
-			print '<input class="button" type="submit" name="sendmail" value="'.dol_escape_htmltag($langs->trans("SendSms")).'">';
+			print '<input type="submit" class="button" name="sendmail" value="'.dol_escape_htmltag($langs->trans("SendSms")).'">';
 			if ($this->withcancel) {
 				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 				print '<input class="button button-cancel" type="submit" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';

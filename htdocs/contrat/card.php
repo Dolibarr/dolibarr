@@ -1433,7 +1433,7 @@ if ($action == 'create') {
 			$sql .= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity, p.tosell, p.tobuy, p.tobatch";
 			$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
-			$sql .= " WHERE cd.rowid = ".$object->lines[$cursorline - 1]->id;
+			$sql .= " WHERE cd.rowid = ".((int) $object->lines[$cursorline - 1]->id);
 
 			$result = $db->query($sql);
 			if ($result) {

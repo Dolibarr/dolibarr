@@ -2565,7 +2565,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ' pt.fk_multicurrency, pt.multicurrency_code, pt.multicurrency_subprice, pt.multicurrency_total_ht, pt.multicurrency_total_tva, pt.multicurrency_total_ttc, pt.fk_unit';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'supplier_proposaldet as pt';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
-		$sql .= ' WHERE pt.fk_supplier_proposal = '.$this->id;
+		$sql .= ' WHERE pt.fk_supplier_proposal = '.((int) $this->id);
 		$sql .= ' ORDER BY pt.rang ASC, pt.rowid';
 
 		dol_syslog(get_class($this).'::getLinesArray', LOG_DEBUG);
@@ -3045,8 +3045,8 @@ class SupplierProposalLine extends CommonObjectLine
 		$sql .= " ".price2num($this->total_ttc).",";
 		$sql .= " ".(!empty($this->fk_fournprice) ? "'".$this->db->escape($this->fk_fournprice)."'" : "null").",";
 		$sql .= " ".(isset($this->pa_ht) ? "'".price2num($this->pa_ht)."'" : "null").",";
-		$sql .= ' '.$this->special_code.',';
-		$sql .= ' '.$this->rang.',';
+		$sql .= ' '.((int) $this->special_code).',';
+		$sql .= ' '.((int) $this->rang).',';
 		$sql .= " '".$this->db->escape($this->ref_fourn)."'";
 		$sql .= ", ".($this->fk_multicurrency > 0 ? $this->fk_multicurrency : 'null');
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";

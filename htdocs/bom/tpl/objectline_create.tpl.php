@@ -138,7 +138,7 @@ print '</td>';
 
 $coldisplay += $colspan;
 print '<td class="bordertop nobottom linecoledit center valignmiddle" colspan="'.$colspan.'">';
-print '<input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline" id="addline">';
+print '<input type="submit" class="button button-add" name="addline" id="addline" value="'.$langs->trans('Add').'">';
 print '</td>';
 print '</tr>';
 

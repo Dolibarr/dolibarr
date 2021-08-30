@@ -1235,7 +1235,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$sqlwhere .= "(SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$db->escape($yearcomp)."'";
 			$sqlwhere .= " AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") = '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."')";
 		} else { // reset is done on january
-			$sqlwhere .= '(SUBSTRING('.$field.', '.$yearpos.', '.$yearlen.") = '".$db->escape($yearcomp)."')";
+			$sqlwhere .= "(SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$db->escape($yearcomp)."')";
 		}
 	}
 	//print "sqlwhere=".$sqlwhere." yearcomp=".$yearcomp."<br>\n";	// sqlwhere and yearcomp defined only if we ask a reset
@@ -1250,7 +1250,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	if ($posnumstart < 0) {
 		return 'ErrorBadMaskFailedToLocatePosOfSequence';
 	}
-	$sqlstring = 'SUBSTRING('.$field.', '.($posnumstart + 1).', '.dol_strlen($maskcounter).')';
+	$sqlstring = "SUBSTRING(".$field.", ".($posnumstart + 1).", ".dol_strlen($maskcounter).")";
 
 	// Define $maskLike
 	$maskLike = dol_string_nospecial($mask);
@@ -1291,7 +1291,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$sql .= $where;
 	}
 	if ($sqlwhere) {
-		$sql .= ' AND '.$sqlwhere;
+		$sql .= " AND ".$sqlwhere;
 	}
 
 	//print $sql.'<br>';
@@ -1351,7 +1351,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$sql .= $where;
 		}
 		if ($sqlwhere) {
-			$sql .= ' AND '.$sqlwhere;
+			$sql .= " AND ".$sqlwhere;
 		}
 
 		dol_syslog("functions2::get_next_value mode=".$mode."", LOG_DEBUG);
@@ -1414,7 +1414,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			if ($sqlwhere) {
 				$maskrefclient_sql .= ' AND '.$sqlwhere; //use the same sqlwhere as general mask
 			}
-			$maskrefclient_sql .= ' AND (SUBSTRING('.$field.', '.(strpos($maskwithnocode, $maskrefclient) + 1).', '.dol_strlen($maskrefclient_maskclientcode).")='".$db->escape($maskrefclient_clientcode)."')";
+			$maskrefclient_sql .= " AND (SUBSTRING(".$field.", ".(strpos($maskwithnocode, $maskrefclient) + 1).", ".dol_strlen($maskrefclient_maskclientcode).") = '".$db->escape($maskrefclient_clientcode)."')";
 
 			dol_syslog("functions2::get_next_value maskrefclient", LOG_DEBUG);
 			$maskrefclient_resql = $db->query($maskrefclient_sql);
@@ -1790,8 +1790,8 @@ function dol_set_user_param($db, $conf, &$user, $tab)
 
 	// We remove old parameters for all keys in $tab
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
-	$sql .= " WHERE fk_user = ".$user->id;
-	$sql .= " AND entity = ".$conf->entity;
+	$sql .= " WHERE fk_user = ".((int) $user->id);
+	$sql .= " AND entity = ".((int) $conf->entity);
 	$sql .= " AND param in (";
 	$i = 0;
 	foreach ($tab as $key => $value) {
@@ -1815,7 +1815,7 @@ function dol_set_user_param($db, $conf, &$user, $tab)
 		// Set new parameters
 		if ($value) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,entity,param,value)";
-			$sql .= " VALUES (".$user->id.",".$conf->entity.",";
+			$sql .= " VALUES (".((int) $user->id).",".((int) $conf->entity).",";
 			$sql .= " '".$db->escape($key)."','".$db->escape($value)."')";
 
 			dol_syslog("functions2.lib::dol_set_user_param", LOG_DEBUG);
@@ -2250,7 +2250,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 	$listofparentid = array();
 
 	// Get list of all id in array listofid and all parents in array listofparentid
-	$sql = 'SELECT rowid, '.$fieldfkparent.' as parent_id FROM '.MAIN_DB_PREFIX.$tabletocleantree;
+	$sql = "SELECT rowid, ".$fieldfkparent." as parent_id FROM ".MAIN_DB_PREFIX.$tabletocleantree;
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);

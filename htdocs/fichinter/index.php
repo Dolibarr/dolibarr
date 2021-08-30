@@ -80,7 +80,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
 $sql .= " WHERE f.entity IN (".getEntity('intervention').")";
 $sql .= " AND f.fk_soc = s.rowid";
 if ($user->socid) {
-	$sql .= ' AND f.fk_soc = '.$user->socid;
+	$sql .= ' AND f.fk_soc = '.((int) $user->socid);
 }
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);

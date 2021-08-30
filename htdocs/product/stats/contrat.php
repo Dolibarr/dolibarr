@@ -127,10 +127,10 @@ if ($id > 0 || !empty($ref)) {
 		$now = dol_now();
 
 		$sql = "SELECT";
-		$sql .= ' sum('.$db->ifsql("cd.statut=0", 1, 0).') as nb_initial,';
-		$sql .= ' sum('.$db->ifsql("cd.statut=4 AND cd.date_fin_validite > '".$db->idate($now)."'", 1, 0).") as nb_running,";
-		$sql .= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite <= '".$db->idate($now)."')", 1, 0).') as nb_late,';
-		$sql .= ' sum('.$db->ifsql("cd.statut=5", 1, 0).') as nb_closed,';
+		$sql .= " sum(".$db->ifsql("cd.statut=0", 1, 0).') as nb_initial,';
+		$sql .= " sum(".$db->ifsql("cd.statut=4 AND cd.date_fin_validite > '".$db->idate($now)."'", 1, 0).") as nb_running,";
+		$sql .= " sum(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite <= '".$db->idate($now)."')", 1, 0).') as nb_late,';
+		$sql .= " sum(".$db->ifsql("cd.statut=5", 1, 0).') as nb_closed,';
 		$sql .= " c.rowid as rowid, c.ref, c.ref_customer, c.ref_supplier, c.date_contrat, c.statut as statut,";
 		$sql .= " s.nom as name, s.rowid as socid, s.code_client";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";

@@ -558,7 +558,7 @@ if ($tabname[$id]) {
 	}
 
 	print '<td colspan="4" class="right">';
-	print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
+	print '<input type="submit" class="button button-add" name="actionadd" value="'.$langs->trans("Add").'">';
 	print '</td>';
 	print "</tr>";
 
@@ -580,7 +580,7 @@ if ($resql) {
 
 	$param = '&id='.$id;
 	if ($search_country_id > 0) {
-		$param .= '&search_country_id='.$search_country_id;
+		$param .= '&search_country_id='.urlencode($search_country_id);
 	}
 	$paramwithsearch = $param;
 	if ($sortorder) {
@@ -734,7 +734,7 @@ if ($resql) {
 				print '<td class="center">';
 				print '<input type="hidden" name="page" value="'.$page.'">';
 				print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-				print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+				print '<input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
 				print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
 				print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 				print '</td>';

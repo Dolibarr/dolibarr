@@ -1004,7 +1004,7 @@ class Fichinter extends CommonObject
 		if (!$error) {
 			// Delete object
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinter";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog("Fichinter::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1066,7 +1066,7 @@ class Fichinter extends CommonObject
 		if ($user->rights->ficheinter->creer) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql .= " SET datei = '".$this->db->idate($date_delivery)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$sql .= " AND fk_statut = 0";
 
 			if ($this->db->query($sql)) {
@@ -1097,7 +1097,7 @@ class Fichinter extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql .= " SET description = '".$this->db->escape($description)."',";
 			$sql .= " fk_user_modif = ".$user->id;
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {
 				$this->description = $description;
@@ -1127,7 +1127,7 @@ class Fichinter extends CommonObject
 		if ($user->rights->ficheinter->creer) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql .= " SET fk_contrat = ".((int) $contractid);
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {
 				$this->fk_contrat = $contractid;
@@ -1481,7 +1481,7 @@ class FichinterLigne extends CommonObjectLine
 		if ($rangToUse == -1) {
 			// Recupere rang max de la ligne d'intervention dans $rangmax
 			$sql = 'SELECT max(rang) as max FROM '.MAIN_DB_PREFIX.'fichinterdet';
-			$sql .= ' WHERE fk_fichinter ='.$this->fk_fichinter;
+			$sql .= ' WHERE fk_fichinter = '.((int) $this->fk_fichinter);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
@@ -1496,7 +1496,7 @@ class FichinterLigne extends CommonObjectLine
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'fichinterdet';
 		$sql .= ' (fk_fichinter, description, date, duree, rang)';
-		$sql .= " VALUES (".$this->fk_fichinter.",";
+		$sql .= " VALUES (".((int) $this->fk_fichinter).",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
 		$sql .= " '".$this->db->idate($this->datei)."',";
 		$sql .= " ".((int) $this->duration).",";

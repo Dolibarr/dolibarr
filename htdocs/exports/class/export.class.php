@@ -455,14 +455,14 @@ class Export
 				} else {
 					$keyList = 'rowid';
 				}
-				$sql = 'SELECT '.$keyList.' as rowid, '.$InfoFieldList[2].' as label'.(empty($InfoFieldList[3]) ? '' : ', '.$InfoFieldList[3].' as code');
+				$sql = "SELECT ".$keyList." as rowid, ".$InfoFieldList[2]." as label".(empty($InfoFieldList[3]) ? "" : ", ".$InfoFieldList[3]." as code");
 				if ($InfoFieldList[1] == 'c_stcomm') {
-					$sql = 'SELECT id as id, '.$keyList.' as rowid, '.$InfoFieldList[2].' as label'.(empty($InfoFieldList[3]) ? '' : ', '.$InfoFieldList[3].' as code');
+					$sql = "SELECT id as id, ".$keyList." as rowid, ".$InfoFieldList[2]." as label".(empty($InfoFieldList[3]) ? "" : ", ".$InfoFieldList[3].' as code');
 				}
 				if ($InfoFieldList[1] == 'c_country') {
-					$sql = 'SELECT '.$keyList.' as rowid, '.$InfoFieldList[2].' as label, code as code';
+					$sql = "SELECT ".$keyList." as rowid, ".$InfoFieldList[2]." as label, code as code";
 				}
-				$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[1];
+				$sql .= " FROM ".MAIN_DB_PREFIX.$InfoFieldList[1];
 				if (!empty($InfoFieldList[4])) {
 					$sql .= ' WHERE entity IN ('.getEntity($InfoFieldList[4]).')';
 				}

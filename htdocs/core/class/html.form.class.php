@@ -10,7 +10,7 @@
  * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
  * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2010-2019  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2021  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2011       Herve Prot              <herve.prot@symeos.com>
  * Copyright (C) 2012-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
@@ -2565,7 +2565,7 @@ class Form
 			$sql .= ')';
 		}
 		if (count($warehouseStatusArray)) {
-			$sql .= ' GROUP BY'.$selectFields;
+			$sql .= " GROUP BY ".$selectFields;
 		}
 
 		//Sort by category
@@ -2625,7 +2625,7 @@ class Form
 				if ((!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) && !empty($objp->price_by_qty) && $objp->price_by_qty == 1) { // Price by quantity will return many prices for the same product
 					$sql = "SELECT rowid, quantity, price, unitprice, remise_percent, remise, price_base_type";
 					$sql .= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
-					$sql .= " WHERE fk_product_price=".$objp->price_rowid;
+					$sql .= " WHERE fk_product_price = ".((int) $objp->price_rowid);
 					$sql .= " ORDER BY quantity ASC";
 
 					dol_syslog(get_class($this)."::select_produits_list search prices by qty", LOG_DEBUG);
@@ -6988,7 +6988,7 @@ class Form
 		if (isset($objecttmp->ismultientitymanaged)) {
 			if (!is_numeric($objecttmp->ismultientitymanaged)) {
 				$tmparray = explode('@', $objecttmp->ismultientitymanaged);
-				$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.$tmparray[1].' as parenttable ON parenttable.rowid = t.'.$tmparray[0];
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$tmparray[1]." as parenttable ON parenttable.rowid = t.".$tmparray[0];
 			}
 			if ($objecttmp->ismultientitymanaged == 'fk_soc@societe') {
 				if (!$user->rights->societe->client->voir && !$user->socid) {
@@ -7009,7 +7009,7 @@ class Form
 					$sql .= " AND t.entity IN (".getEntity($objecttmp->table_element).")";
 				}
 				if (!is_numeric($objecttmp->ismultientitymanaged)) {
-					$sql .= ' AND parenttable.entity = t.'.$tmparray[0];
+					$sql .= " AND parenttable.entity = t.".$tmparray[0];
 				}
 				if ($objecttmp->ismultientitymanaged == 1 && !empty($user->socid)) {
 					if ($objecttmp->element == 'societe') {
@@ -7853,6 +7853,11 @@ class Form
 				} elseif ($objecttype == 'delivery') {
 					$tplpath = 'delivery';
 					if (empty($conf->expedition->enabled)) {
+						continue; // Do not show if module disabled
+					}
+				} elseif ($objecttype == 'ficheinter') {
+					$tplpath = 'fichinter';
+					if (empty($conf->ficheinter->enabled)) {
 						continue; // Do not show if module disabled
 					}
 				} elseif ($objecttype == 'invoice_supplier') {
@@ -9273,7 +9278,8 @@ class Form
 
 		if ($save_label == 'Create' || $save_label == 'Add' ) {
 			$save['name'] = 'add';
-			$save['label_key'] = $save_label;
+		} elseif ($save_label == 'Modify') {
+			$save['name'] = 'edit';
 		}
 
 		$cancel = array(

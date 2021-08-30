@@ -1421,7 +1421,7 @@ WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER=Ask for Warehouse Source for order
 ##### Suppliers Orders #####
 BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER=Ask for bank account destination of purchase order
 ##### Orders #####
-SuggestedPaymentModesIfNotDefinedInOrder=Suggested payments mode on sale order by default if not defined on the order
+SuggestedPaymentModesIfNotDefinedInOrder=Suggested payments mode on sales order by default if not defined on the order
 OrdersSetup=Sales Orders management setup
 OrdersNumberingModules=Orders numbering models
 OrdersModelModule=Order documents models

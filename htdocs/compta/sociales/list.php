@@ -209,10 +209,10 @@ if (!empty($search_users)) {
 	$sql .= ' AND cs.fk_user IN('.implode(', ', $search_users).')';
 }
 if (!empty($search_type) && $search_type > 0) {
-	$sql .= ' AND cs.fk_mode_reglement='.$search_type;
+	$sql .= ' AND cs.fk_mode_reglement='.((int) $search_type);
 }
 if (!empty($search_account) && $search_account > 0) {
-	$sql .= ' AND cs.fk_account='.$search_account;
+	$sql .= ' AND cs.fk_account='.((int) $search_account);
 }
 if ($search_amount) {
 	$sql .= natural_search("cs.amount", $search_amount, 1);

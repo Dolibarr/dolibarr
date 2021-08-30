@@ -38,7 +38,7 @@ $id = GETPOST("id", 'int');
 $ref = GETPOST('ref', 'alpha');
 
 $action = GETPOST('action', 'aZ09');
-$actionid = GETPOST('actionid');
+$actionid = GETPOST('actionid', 'int');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -99,8 +99,8 @@ if ($action == 'add') {
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
 		$sql .= " WHERE fk_user=".((int) $id)." AND fk_action=".((int) $actionid);
 		if ($db->query($sql)) {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_user, fk_action)";
-			$sql .= " VALUES ('".$db->idate($now)."',".$id.",".$actionid.")";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec, fk_user, fk_action)";
+			$sql .= " VALUES ('".$db->idate($now)."', ".((int) $id).", ".((int) $actionid).")";
 
 			if (!$db->query($sql)) {
 				$error++;
@@ -290,7 +290,7 @@ if ($result > 0) {
 			print $form->selectarray("typeid", $type);
 			print '</td>';
 			print '<td class="nowraponall">';
-			print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+			print '<input type="submit" class="button button-add" value="'.$langs->trans("Add").'">';
 			print '&nbsp;';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</td>';

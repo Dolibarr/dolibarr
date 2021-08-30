@@ -258,8 +258,8 @@ print '<div class="underbanner clearboth"></div>';
 if ($user->admin) {
 	print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
 }
-// Show warning about external users
-if (empty($user->socid)) {
+// If edited user is an extern user, we show warning for external users
+if (! empty($object->socid)) {
 	print info_admin(showModulesExludedForExternal($modules))."\n";
 }
 

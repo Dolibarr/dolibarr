@@ -519,7 +519,7 @@ class Task extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task_time";
-			$sql .= " WHERE fk_task=".$this->id;
+			$sql .= " WHERE fk_task = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -529,7 +529,7 @@ class Task extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task_extrafields";
-			$sql .= " WHERE fk_object=".$this->id;
+			$sql .= " WHERE fk_object = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -603,7 +603,7 @@ class Task extends CommonObject
 
 		$sql = "SELECT COUNT(*) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task";
-		$sql .= " WHERE fk_task_parent=".$this->id;
+		$sql .= " WHERE fk_task_parent = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::hasChildren", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -636,7 +636,7 @@ class Task extends CommonObject
 
 		$sql = "SELECT COUNT(*) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time";
-		$sql .= " WHERE fk_task=".$this->id;
+		$sql .= " WHERE fk_task = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::hasTimeSpent", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -795,12 +795,12 @@ class Task extends CommonObject
 		$sql .= " p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount";
 		if (!empty($extrafields->attributes['projet']['label'])) {
 			foreach ($extrafields->attributes['projet']['label'] as $key => $val) {
-				$sql .= ($extrafields->attributes['projet']['type'][$key] != 'separate' ? ",efp.".$key.' as options_'.$key : '');
+				$sql .= ($extrafields->attributes['projet']['type'][$key] != 'separate' ? ",efp.".$key." as options_".$key : '');
 			}
 		}
 		if (!empty($extrafields->attributes['projet_task']['label'])) {
 			foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
-				$sql .= ($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key.' as options_'.$key : '');
+				$sql .= ($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key." as options_".$key : '');
 			}
 		}
 		if ($includebilltime) {
@@ -1639,7 +1639,7 @@ class Task extends CommonObject
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task_time";
-		$sql .= " WHERE rowid = ".$this->timespent_id;
+		$sql .= " WHERE rowid = ".((int) $this->timespent_id);
 
 		dol_syslog(get_class($this)."::delTimeSpent", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1661,7 +1661,7 @@ class Task extends CommonObject
 		if (!$error) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
 			$sql .= " SET duration_effective = duration_effective - ".$this->db->escape($this->timespent_duration ? $this->timespent_duration : 0);
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delTimeSpent", LOG_DEBUG);
 			if ($this->db->query($sql)) {

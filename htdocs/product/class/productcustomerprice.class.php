@@ -404,21 +404,21 @@ class Productcustomerprice extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) {				// To allow $filter['YEAR(s.dated)']=>$year
-					$sql .= ' AND '.$key.' = \''.$this->db->escape($value).'\'';
+					$sql .= " AND ".$key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 'soc.nom') {
-					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
 				} elseif ($key == 'prod.ref' || $key == 'prod.label') {
-					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
 				} elseif ($key == 't.price' || $key == 't.price_ttc') {
-					$sql .= ' AND '.$key.' LIKE \'%'.price2num($value).'%\'';
+					$sql .= " AND ".$key." LIKE '%".price2num($value)."%'";
 				} else {
-					$sql .= ' AND '.$key.' = '.((int) $value);
+					$sql .= " AND ".$key." = ".((int) $value);
 				}
 			}
 		}
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit + 1, $offset);
+			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 
 		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
@@ -521,17 +521,17 @@ class Productcustomerprice extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) { 				// To allow $filter['YEAR(s.dated)']=>$year
-					$sql .= ' AND '.$key.' = \''.$value.'\'';
+					$sql .= " AND ".$key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 'soc.nom') {
-					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
 				} else {
-					$sql .= ' AND '.$key.' = '.((int) $value);
+					$sql .= " AND ".$key." = ".((int) $value);
 				}
 			}
 		}
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit + 1, $offset);
+			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 
 		dol_syslog(get_class($this)."::fetch_all_log", LOG_DEBUG);
@@ -721,7 +721,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= " t.import_key";
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_customer_price as t";
-		$sql .= " WHERE t.rowid = ".$this->id;
+		$sql .= " WHERE t.rowid = ".((int) $this->id);
 
 		$this->db->begin();
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);

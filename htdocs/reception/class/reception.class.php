@@ -288,7 +288,7 @@ class Reception extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."reception";
 			$sql .= " SET ref = '(PROV".$this->id.")'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			if ($this->db->query($sql)) {
@@ -543,7 +543,7 @@ class Reception extends CommonObject
 		$sql .= ", fk_statut = 1";
 		$sql .= ", date_valid = '".$this->db->idate($now)."'";
 		$sql .= ", fk_user_valid = ".$user->id;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		dol_syslog(get_class($this)."::valid update reception", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
@@ -954,7 +954,7 @@ class Reception extends CommonObject
 
 				if (!$error) {
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."reception";
-					$sql .= " WHERE rowid = ".$this->id;
+					$sql .= " WHERE rowid = ".((int) $this->id);
 
 					if ($this->db->query($sql)) {
 						// Call trigger
@@ -1034,7 +1034,7 @@ class Reception extends CommonObject
 	{
 		// phpcs:enable
 		dol_include_once('/fourn/class/fournisseur.commande.dispatch.class.php');
-		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch WHERE fk_reception='.$this->id;
+		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch WHERE fk_reception='.((int) $this->id);
 		$resql = $this->db->query($sql);
 
 		if (!empty($resql)) {
@@ -1260,7 +1260,7 @@ class Reception extends CommonObject
 		if ($user->rights->reception->creer) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."reception";
 			$sql .= " SET date_delivery = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::setDeliveryDate", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1445,7 +1445,7 @@ class Reception extends CommonObject
 		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'reception SET fk_statut='.self::STATUS_CLOSED;
-		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
+		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > 0';
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1590,7 +1590,7 @@ class Reception extends CommonObject
 		$this->setClosed();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'reception SET  billed=1';
-		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
+		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > 0';
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1630,7 +1630,7 @@ class Reception extends CommonObject
 		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'reception SET fk_statut=1, billed=0';
-		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
+		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > 0';
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1755,7 +1755,7 @@ class Reception extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."reception";
 		$sql .= " SET fk_statut = ".self::STATUS_DRAFT;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		if ($this->db->query($sql)) {

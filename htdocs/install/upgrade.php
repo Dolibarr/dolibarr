@@ -270,6 +270,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 						$values = $db->fetch_array($resql);
 						$i = 0;
 						$createsql = $values[1];
+						$reg = array();
 						while (preg_match('/CONSTRAINT `(0_[0-9a-zA-Z]+|[_0-9a-zA-Z]+_ibfk_[0-9]+)`/i', $createsql, $reg) && $i < 100) {
 							$sqldrop = "ALTER TABLE ".$val." DROP FOREIGN KEY ".$reg[1];
 							$resqldrop = $db->query($sqldrop);
@@ -282,7 +283,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 						$db->free($resql);
 					} else {
 						if ($db->lasterrno() != 'DB_ERROR_NOSUCHTABLE') {
-							print '<tr><td colspan="2"><span class="error">'.$sql.' : '.$db->lasterror()."</font></td></tr>\n";
+							print '<tr><td colspan="2"><span class="error">'.dol_escape_htmltag($sql).' : '.dol_escape_htmltag($db->lasterror())."</font></td></tr>\n";
 						}
 					}
 				}

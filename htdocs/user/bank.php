@@ -369,7 +369,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		$sql = "SELECT s.rowid as sid, s.ref as sref, s.label, s.datesp, s.dateep, s.paye, s.amount, SUM(ps.amount) as alreadypaid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_salary as ps ON (s.rowid = ps.fk_salary)";
-		$sql .= " WHERE s.fk_user = ".$object->id;
+		$sql .= " WHERE s.fk_user = ".((int) $object->id);
 		$sql .= " AND s.entity IN (".getEntity('salary').")";
 		$sql .= " GROUP BY s.rowid, s.ref, s.label, s.datesp, s.dateep, s.paye, s.amount";
 		$sql .= " ORDER BY s.dateep DESC";
@@ -433,7 +433,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 		$sql = "SELECT h.rowid, h.statut as status, h.fk_type, h.date_debut, h.date_fin, h.halfday";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as h";
-		$sql .= " WHERE h.fk_user = ".$object->id;
+		$sql .= " WHERE h.fk_user = ".((int) $object->id);
 		$sql .= " AND h.entity IN (".getEntity('holiday').")";
 		$sql .= " ORDER BY h.date_debut DESC";
 
@@ -485,8 +485,8 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 		$sql = "SELECT e.rowid, e.ref, e.fk_statut as status, e.date_debut, e.total_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e";
-		$sql .= " WHERE e.fk_user_author = ".$object->id;
-		$sql .= " AND e.entity = ".$conf->entity;
+		$sql .= " WHERE e.fk_user_author = ".((int) $object->id);
+		$sql .= " AND e.entity = ".((int) $conf->entity);
 		$sql .= " ORDER BY e.date_debut DESC";
 
 		$resql = $db->query($sql);

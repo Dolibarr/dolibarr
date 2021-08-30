@@ -310,14 +310,23 @@ class DolibarrApi
 			}
 			if ($tmp[$i] == ')') {
 				$counter--;
+
+				// TODO: After a closing ), only a " or " or " and " or end of string is allowed.
 			}
 			if ($counter < 0) {
-				$error = "Bad sqlfilters=".$sqlfilters;
+				$error = "Bad sqlfilters (too many closing parenthesis) = ".$sqlfilters;
 				dol_syslog($error, LOG_WARNING);
 				return false;
 			}
 			$i++;
 		}
+
+		if ($counter > 0) {
+			$error = "Bad sqlfilters (too many opening parenthesis) = ".$sqlfilters;
+			dol_syslog($error, LOG_WARNING);
+			return false;
+		}
+
 		return true;
 	}
 
@@ -327,7 +336,8 @@ class DolibarrApi
 	 * Function to forge a SQL criteria
 	 *
 	 * @param  array    $matches    Array of found string by regex search.
-	 * 								Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.date_creation:<:'2016-01-01 12:30:00'" or "t.nature:is:NULL"
+	 * 								Each entry is 1 and only 1 criteria.
+	 * 								Example: "t.ref:like:'SO-%'", "t.date_creation:<:'20160101'", "t.date_creation:<:'2016-01-01 12:30:00'", "t.nature:is:NULL", "t.field2:isnot:NULL"
 	 * @return string               Forged criteria. Example: "t.field like 'abc%'"
 	 */
 	protected static function _forge_criteria_callback($matches)
@@ -345,18 +355,36 @@ class DolibarrApi
 			return '';
 		}
 
+		// Sanitize operand
 		$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
 
+		// Sanitize operator
 		$operator = strtoupper(preg_replace('/[^a-z<>=]/i', '', trim($tmp[1])));
+		// Only some operators are allowed.
+		if (! in_array($operator, array('LIKE', 'ULIKE', '<', '>', '<=', '>=', '=', '<>', 'IS', 'ISNOT', 'IN'))) {
+			return '';
+		}
+		if ($operator == 'ISNOT') {
+			$operator = 'IS NOT';
+		}
 
+		// Sanitize value
 		$tmpescaped = trim($tmp[2]);
 		$regbis = array();
 		if ($operator == 'IN') {
 			$tmpescaped = "(".$db->sanitize($tmpescaped, 1).")";
-		} elseif (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
-			$tmpescaped = "'".$db->escape($regbis[1])."'";
+		} elseif (in_array($operator, array('<', '>', '<=', '>=', '=', '<>'))) {
+			if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {	// If 'YYYY-MM-DD HH:MM:SS+X'
+				$tmpescaped = "'".$db->escape($regbis[1])."'";
+			} else {
+				$tmpescaped = ((float) $tmpescaped);
+			}
 		} else {
-			$tmpescaped = $db->sanitize($db->escape($tmpescaped));
+			if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
+				$tmpescaped = "'".$db->escape($regbis[1])."'";
+			} else {
+				$tmpescaped = "'".$db->escape($tmpescaped)."'";
+			}
 		}
 
 		return $db->escape($operand).' '.$db->escape($operator)." ".$tmpescaped;

@@ -275,7 +275,7 @@ class Subscription extends CommonObject
 		$sql .= " datef='".$this->db->idate($this->datef)."',";
 		$sql .= " datec='".$this->db->idate($this->datec)."',";
 		$sql .= " fk_bank = ".($this->fk_bank ? ((int) $this->fk_bank) : 'null');
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);

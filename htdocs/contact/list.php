@@ -89,6 +89,7 @@ $search_categ_thirdparty = GETPOST("search_categ_thirdparty", 'int');
 $search_categ_supplier = GETPOST("search_categ_supplier", 'int');
 $search_status = GETPOST("search_status", 'int');
 $search_type = GETPOST('search_type', 'alpha');
+$search_address = GETPOST('search_address', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_import_key = GETPOST("search_import_key", "alpha");
@@ -260,6 +261,7 @@ if (empty($reshook)) {
 		$search_firstname = "";
 		$search_societe = "";
 		$search_town = "";
+		$search_address = "";
 		$search_zip = "";
 		$search_country = "";
 		$search_poste = "";
@@ -353,7 +355,7 @@ if ($resql) {
 }
 
 $sql = "SELECT s.rowid as socid, s.nom as name,";
-$sql .= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.zip, p.town, p.poste, p.email, p.no_email,";
+$sql .= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.address, p.zip, p.town, p.poste, p.email, p.no_email,";
 $sql .= " p.socialnetworks, p.photo,";
 $sql .= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.datec as date_creation, p.tms as date_update,";
 $sql .= " st.libelle as stcomm, st.picto as stcomm_picto, p.fk_stcommcontact as stcomm_id, p.fk_prospectcontactlevel,";
@@ -361,7 +363,7 @@ $sql .= " co.label as country, co.code as country_code";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -478,12 +480,15 @@ if (strlen($search_fax)) {
 if (!empty($conf->socialnetworks->enabled)) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active'] && strlen($search_[$key])) {
-			$sql .= ' AND p.socialnetworks LIKE \'%"'.$key.'":"'.$search_[$key].'%\'';
+			$sql .= " AND p.socialnetworks LIKE '%\"".$key."\":\"".$search_[$key]."%'";
 		}
 	}
 }
 if (strlen($search_email)) {
 	$sql .= natural_search('p.email', $search_email);
+}
+if (strlen($search_address)) {
+	$sql .= natural_search("p.address", $search_address);
 }
 if (strlen($search_zip)) {
 	$sql .= natural_search("p.zip", $search_zip);
@@ -593,6 +598,9 @@ if ($search_firstname != '') {
 }
 if ($search_societe != '') {
 	$param .= '&amp;search_societe='.urlencode($search_societe);
+}
+if ($search_address != '') {
+	$param .= '&amp;search_address='.urlencode($search_address);
 }
 if ($search_zip != '') {
 	$param .= '&amp;search_zip='.urlencode($search_zip);
@@ -775,6 +783,11 @@ if (!empty($arrayfields['p.poste']['checked'])) {
 	print '<input class="flat" type="text" name="search_poste" size="5" value="'.dol_escape_htmltag($search_poste).'">';
 	print '</td>';
 }
+if (!empty($arrayfields['p.address']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat" type="text" name="search_address" size="6" value="'.dol_escape_htmltag($search_address).'">';
+	print '</td>';
+}
 if (!empty($arrayfields['p.zip']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="search_zip" size="3" value="'.dol_escape_htmltag($search_zip).'">';
@@ -923,6 +936,9 @@ if (!empty($arrayfields['p.firstname']['checked'])) {
 if (!empty($arrayfields['p.poste']['checked'])) {
 	print_liste_field_titre($arrayfields['p.poste']['label'], $_SERVER["PHP_SELF"], "p.poste", $begin, $param, '', $sortfield, $sortorder);
 }
+if (!empty($arrayfields['p.address']['checked'])) {
+	print_liste_field_titre($arrayfields['p.address']['label'], $_SERVER["PHP_SELF"], "p.address", $begin, $param, '', $sortfield, $sortorder);
+}
 if (!empty($arrayfields['p.zip']['checked'])) {
 	print_liste_field_titre($arrayfields['p.zip']['label'], $_SERVER["PHP_SELF"], "p.zip", $begin, $param, '', $sortfield, $sortorder);
 }
@@ -1016,6 +1032,7 @@ while ($i < min($num, $limit)) {
 	$contactstatic->phone_pro = $obj->phone_pro;
 	$contactstatic->phone_perso = $obj->phone_perso;
 	$contactstatic->phone_mobile = $obj->phone_mobile;
+	$contactstatic->address = $obj->address;
 	$contactstatic->zip = $obj->zip;
 	$contactstatic->town = $obj->town;
 	$contactstatic->socialnetworks = $arraysocialnetworks;
@@ -1055,6 +1072,13 @@ while ($i < min($num, $limit)) {
 	// Job position
 	if (!empty($arrayfields['p.poste']['checked'])) {
 		print '<td class="tdoverflowmax100">'.$obj->poste.'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+	// Address
+	if (!empty($arrayfields['p.address']['checked'])) {
+		print '<td>'.$obj->address.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

@@ -1769,7 +1769,7 @@ class Facture extends CommonInvoice
 		$sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
-		$sql .= ' WHERE l.fk_facture = '.$this->id;
+		$sql .= ' WHERE l.fk_facture = '.((int) $this->id);
 		$sql .= ' ORDER BY l.rang, l.rowid';
 
 		dol_syslog(get_class($this).'::fetch_lines', LOG_DEBUG);
@@ -1876,8 +1876,8 @@ class Facture extends CommonInvoice
 		$this->tab_next_situation_invoice = array();
 
 		$sql = 'SELECT rowid, type, situation_cycle_ref, situation_counter FROM '.MAIN_DB_PREFIX.'facture';
-		$sql .= ' WHERE rowid <> '.$this->id;
-		$sql .= ' AND entity = '.$this->entity;
+		$sql .= " WHERE rowid <> ".((int) $this->id);
+		$sql .= ' AND entity = '.((int) $this->entity);
 		$sql .= ' AND situation_cycle_ref = '.(int) $this->situation_cycle_ref;
 		$sql .= ' ORDER BY situation_counter ASC';
 
@@ -2152,7 +2152,7 @@ class Facture extends CommonInvoice
 		} else {
 			$sql .= ' SET ref_client = \''.$this->db->escape($ref_client).'\'';
 		}
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(__METHOD__.' this->id='.$this->id.', ref_client='.$ref_client, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2408,9 +2408,9 @@ class Facture extends CommonInvoice
 			if ($close_note) {
 				$sql .= ", close_note='".$this->db->escape($close_note)."'";
 			}
-			$sql .= ', fk_user_closing = '.$user->id;
+			$sql .= ', fk_user_closing = '.((int) $user->id);
 			$sql .= ", date_closing = '".$this->db->idate($now)."'";
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -2474,7 +2474,7 @@ class Facture extends CommonInvoice
 		$sql .= ' SET paye=0, fk_statut='.self::STATUS_VALIDATED.', close_code=null, close_note=null,';
 		$sql .= ' date_closing=null,';
 		$sql .= ' fk_user_closing=null';
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::set_unpaid", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2545,7 +2545,7 @@ class Facture extends CommonInvoice
 		if ($close_note) {
 			$sql .= ", close_note='".$this->db->escape($close_note)."'";
 		}
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -2553,7 +2553,7 @@ class Facture extends CommonInvoice
 			// as they have not been used since the invoice is abandoned.
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 			$sql .= ' SET fk_facture = NULL';
-			$sql .= ' WHERE fk_facture = '.$this->id;
+			$sql .= ' WHERE fk_facture = '.((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -2693,7 +2693,7 @@ class Facture extends CommonInvoice
 				$sql .= ", datef='".$this->db->idate($this->date)."'";
 				$sql .= ", date_lim_reglement='".$this->db->idate($this->date_lim_reglement)."'";
 			}
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::validate", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -3755,7 +3755,7 @@ class Facture extends CommonInvoice
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 			$sql .= ' SET remise_percent = '.((float) $remise);
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$sql .= ' AND fk_statut = '.self::STATUS_DRAFT;
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -3817,7 +3817,7 @@ class Facture extends CommonInvoice
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 			$sql .= ' SET remise_absolue = '.((float) $remise);
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$sql .= ' AND fk_statut = '.self::STATUS_DRAFT;
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -4598,7 +4598,7 @@ class Facture extends CommonInvoice
 
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'facture';
 		$sql .= ' WHERE situation_cycle_ref = '.((int) $this->situation_cycle_ref);
-		$sql .= ' AND situation_counter < '.$this->situation_counter;
+		$sql .= ' AND situation_counter < '.((int) $this->situation_counter);
 		$sql .= ' AND entity = '.($this->entity > 0 ? $this->entity : $conf->entity);
 		$resql = $this->db->query($sql);
 		$res = array();
@@ -4631,7 +4631,7 @@ class Facture extends CommonInvoice
 
 		$this->db->begin();
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET situation_final = '.$this->situation_final.' where rowid = '.((int) $this->id);
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET situation_final = '.((int) $this->situation_final).' WHERE rowid = '.((int) $this->id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -4849,10 +4849,11 @@ class Facture extends CommonInvoice
 	public function setRetainedWarranty($value)
 	{
 		dol_syslog(get_class($this).'::setRetainedWarranty('.$value.')');
+
 		if ($this->statut >= 0) {
 			$fieldname = 'retained_warranty';
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' SET '.$fieldname.' = '.floatval($value);
+			$sql .= " SET ".$fieldname." = ".((float) $value);
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
@@ -4889,8 +4890,8 @@ class Facture extends CommonInvoice
 		if ($this->statut >= 0) {
 			$fieldname = 'retained_warranty_date_limit';
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' SET '.$fieldname.' = '.(strval($timestamp) != '' ? '\''.$this->db->idate($timestamp).'\'' : 'null');
-			$sql .= ' WHERE rowid='.((int) $this->id);
+			$sql .= " SET ".$fieldname." = ".(strval($timestamp) != '' ? "'".$this->db->idate($timestamp)."'" : 'null');
+			$sql .= ' WHERE rowid = '.((int) $this->id);
 
 			if ($this->db->query($sql)) {
 				$this->retained_warranty_date_limit = $timestamp;
@@ -5385,9 +5386,9 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ' '.(!empty($this->fk_remise_except) ? $this->fk_remise_except : "null").',';
 		$sql .= " ".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null").",";
 		$sql .= " ".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null").",";
-		$sql .= ' '.$this->fk_code_ventilation.',';
-		$sql .= ' '.$this->rang.',';
-		$sql .= ' '.$this->special_code.',';
+		$sql .= ' '.((int) $this->fk_code_ventilation).',';
+		$sql .= ' '.((int) $this->rang).',';
+		$sql .= ' '.((int) $this->special_code).',';
 		$sql .= ' '.(!empty($this->fk_fournprice) ? $this->fk_fournprice : "null").',';
 		$sql .= ' '.price2num($this->pa_ht).',';
 		$sql .= " '".$this->db->escape($this->info_bits)."',";
@@ -5396,11 +5397,11 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= " ".price2num($this->total_ttc).",";
 		$sql .= " ".price2num($this->total_localtax1).",";
 		$sql .= " ".price2num($this->total_localtax2);
-		$sql .= ", ".$this->situation_percent;
+		$sql .= ", ".((float) $this->situation_percent);
 		$sql .= ", ".(!empty($this->fk_prev_id) ? $this->fk_prev_id : "null");
 		$sql .= ", ".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
-		$sql .= ", ".$user->id;
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $user->id);
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".(int) $this->fk_multicurrency;
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".price2num($this->multicurrency_subprice);
@@ -5759,7 +5760,7 @@ class FactureLigne extends CommonInvoiceLine
 				return 0;
 			}
 
-			$sql = 'SELECT situation_percent FROM '.MAIN_DB_PREFIX.'facturedet WHERE rowid='.$this->fk_prev_id;
+			$sql = 'SELECT situation_percent FROM '.MAIN_DB_PREFIX.'facturedet WHERE rowid='.((int) $this->fk_prev_id);
 			$resql = $this->db->query($sql);
 			if ($resql && $resql->num_rows > 0) {
 				$res = $this->db->fetch_array($resql);
