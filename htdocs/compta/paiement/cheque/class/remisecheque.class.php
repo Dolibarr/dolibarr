@@ -305,7 +305,7 @@ class RemiseCheque extends CommonObject
 			if ($this->errno === 0) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
 				$sql .= " SET fk_bordereau = 0";
-				$sql .= " WHERE fk_bordereau = ".$this->id;
+				$sql .= " WHERE fk_bordereau = ".((int) $this->id);
 
 				$resql = $this->db->query($sql);
 				if (!$resql) {
@@ -647,7 +647,7 @@ class RemiseCheque extends CommonObject
 		$nb = 0;
 		$sql = "SELECT amount ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-		$sql .= " WHERE fk_bordereau = ".$this->id;
+		$sql .= " WHERE fk_bordereau = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

@@ -332,7 +332,7 @@ if ($action == "view_ticketlist") {
 		// Add fields for extrafields
 		if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-				$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+				$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 			}
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
@@ -359,28 +359,28 @@ if ($action == "view_ticketlist") {
 		if (!empty($filter)) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) { // To allow $filter['YEAR(s.dated)']=>$year
-					$sql .= ' AND '.$key.' = \''.$db->escape($value).'\'';
+					$sql .= " AND ".$key." = '".$db->escape($value)."'";
 				} elseif (($key == 't.fk_user_assign') || ($key == 't.type_code') || ($key == 't.category_code') || ($key == 't.severity_code')) {
 					$sql .= " AND ".$key." = '".$db->escape($value)."'";
 				} elseif ($key == 't.fk_statut') {
 					if (is_array($value) && count($value) > 0) {
-						$sql .= 'AND '.$key.' IN ('.$db->sanitize(implode(',', $value)).')';
+						$sql .= " AND ".$key." IN (".$db->sanitize(implode(',', $value)).")";
 					} else {
-						$sql .= ' AND '.$key.' = '.((int) $value);
+						$sql .= " AND ".$key." = ".((int) $value);
 					}
 				} else {
-					$sql .= ' AND '.$key.' LIKE \'%'.$db->escape($value).'%\'';
+					$sql .= " AND ".$key." LIKE '%".$db->escape($value)."%'";
 				}
 			}
 		}
 		//$sql .= " GROUP BY t.track_id";
-		$sql .= " ORDER BY ".$sortfield.' '.$sortorder;
+		$sql .= $db->order($sortfield, $sortorder);
 
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num_total = $db->num_rows($resql);
 			if (!empty($limit)) {
-				$sql .= ' '.$db->plimit($limit + 1, $offset);
+				$sql .= $db->plimit($limit + 1, $offset);
 			}
 
 			$resql = $db->query($sql);
@@ -710,7 +710,7 @@ if ($action == "view_ticketlist") {
 	print '</p>';
 
 	print '<p style="text-align: center; margin-top: 1.5em;">';
-	print '<input class="button" type="submit" name="btn_view_ticket_list" value="'.$langs->trans('ViewMyTicketList').'" />';
+	print '<input type="submit" class="button" name="btn_view_ticket_list" value="'.$langs->trans('ViewMyTicketList').'" />';
 	print "</p>\n";
 
 	print "</form>\n";

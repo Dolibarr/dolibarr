@@ -698,7 +698,7 @@ class Commande extends CommonOrder
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
 		$sql .= ' SET fk_statut='.self::STATUS_VALIDATED.', facture=0';
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::set_reopen", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -757,9 +757,9 @@ class Commande extends CommonOrder
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' SET fk_statut = '.self::STATUS_CLOSED.',';
-			$sql .= ' fk_user_cloture = '.$user->id.',';
+			$sql .= ' fk_user_cloture = '.((int) $user->id).',';
 			$sql .= " date_cloture = '".$this->db->idate($now)."'";
-			$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;
+			$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > '.self::STATUS_DRAFT;
 
 			if ($this->db->query($sql)) {
 				if (!$notrigger) {
@@ -934,8 +934,8 @@ class Commande extends CommonOrder
 		$sql .= ", multicurrency_code";
 		$sql .= ", multicurrency_tx";
 		$sql .= ")";
-		$sql .= " VALUES ('(PROV)', ".$this->socid.", '".$this->db->idate($now)."', ".$user->id;
-		$sql .= ", ".($this->fk_project > 0 ? $this->fk_project : "null");
+		$sql .= " VALUES ('(PROV)', ".((int) $this->socid).", '".$this->db->idate($now)."', ".((int) $user->id);
+		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
 		$sql .= ", '".$this->db->idate($date)."'";
 		$sql .= ", ".($this->source >= 0 && $this->source != '' ? $this->db->escape($this->source) : 'null');
 		$sql .= ", '".$this->db->escape($this->note_private)."'";
@@ -944,15 +944,15 @@ class Commande extends CommonOrder
 		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
 		$sql .= ", ".($this->ref_int ? "'".$this->db->escape($this->ref_int)."'" : "null");
 		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
-		$sql .= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : "null");
-		$sql .= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : "null");
-		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
-		$sql .= ", ".($this->availability_id > 0 ? $this->availability_id : "null");
-		$sql .= ", ".($this->demand_reason_id > 0 ? $this->demand_reason_id : "null");
+		$sql .= ", ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : "null");
+		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : "null");
+		$sql .= ", ".($this->fk_account > 0 ? ((int) $this->fk_account) : 'NULL');
+		$sql .= ", ".($this->availability_id > 0 ? ((int) $this->availability_id) : "null");
+		$sql .= ", ".($this->demand_reason_id > 0 ? ((int) $this->demand_reason_id) : "null");
 		$sql .= ", ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : "null");
-		$sql .= ", ".($this->fk_delivery_address > 0 ? $this->fk_delivery_address : 'NULL');
-		$sql .= ", ".(!empty($this->shipping_method_id) && $this->shipping_method_id > 0 ? $this->shipping_method_id : 'NULL');
-		$sql .= ", ".(!empty($this->warehouse_id) && $this->warehouse_id > 0 ? $this->warehouse_id : 'NULL');
+		$sql .= ", ".($this->fk_delivery_address > 0 ? ((int) $this->fk_delivery_address) : 'NULL');
+		$sql .= ", ".(!empty($this->shipping_method_id) && $this->shipping_method_id > 0 ? ((int) $this->shipping_method_id) : 'NULL');
+		$sql .= ", ".(!empty($this->warehouse_id) && $this->warehouse_id > 0 ? ((int) $this->warehouse_id) : 'NULL');
 		$sql .= ", ".($this->remise_absolue > 0 ? $this->db->escape($this->remise_absolue) : 'NULL');
 		$sql .= ", ".($this->remise_percent > 0 ? $this->db->escape($this->remise_percent) : 0);
 		$sql .= ", ".(int) $this->fk_incoterms;
@@ -962,7 +962,7 @@ class Commande extends CommonOrder
 		$sql .= ", ".($this->pos_source != '' ? "'".$this->db->escape($this->pos_source)."'" : "null");
 		$sql .= ", ".(int) $this->fk_multicurrency;
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
-		$sql .= ", ".(double) $this->multicurrency_tx;
+		$sql .= ", ".(float) $this->multicurrency_tx;
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -2026,7 +2026,7 @@ class Commande extends CommonOrder
 		$sql .= ' p.weight, p.weight_units, p.volume, p.volume_units';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
-		$sql .= ' WHERE l.fk_commande = '.$this->id;
+		$sql .= ' WHERE l.fk_commande = '.((int) $this->id);
 		if ($only_product) {
 			$sql .= ' AND p.fk_product_type = 0';
 		}
@@ -2180,7 +2180,7 @@ class Commande extends CommonOrder
 		$sql .= ' '.MAIN_DB_PREFIX.'commandedet as cd';
 		$sql .= ' WHERE';
 		$sql .= ' ed.fk_origin_line = cd.rowid';
-		$sql .= ' AND cd.fk_commande ='.$this->id;
+		$sql .= ' AND cd.fk_commande = '.((int) $this->id);
 		//print $sql;
 
 		dol_syslog(get_class($this)."::getNbOfShipments", LOG_DEBUG);
@@ -2222,12 +2222,12 @@ class Commande extends CommonOrder
 			$sql .= ' ed.fk_expedition = e.rowid AND';
 		}
 		$sql .= ' ed.fk_origin_line = cd.rowid';
-		$sql .= ' AND cd.fk_commande ='.$this->id;
+		$sql .= ' AND cd.fk_commande = '.((int) $this->id);
 		if ($this->fk_product > 0) {
-			$sql .= ' AND cd.fk_product = '.$this->fk_product;
+			$sql .= ' AND cd.fk_product = '.((int) $this->fk_product);
 		}
 		if ($filtre_statut >= 0) {
-			$sql .= ' AND e.fk_statut >= '.$filtre_statut;
+			$sql .= ' AND e.fk_statut >= '.((int) $filtre_statut);
 		}
 		$sql .= ' GROUP BY cd.rowid, cd.fk_product';
 		//print $sql;
@@ -2264,7 +2264,7 @@ class Commande extends CommonOrder
 		$sql = 'SELECT count(*)';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'expedition as e';
 		$sql .= ', '.MAIN_DB_PREFIX.'element_element as el';
-		$sql .= ' WHERE el.fk_source = '.$this->id;
+		$sql .= ' WHERE el.fk_source = '.((int) $this->id);
 		$sql .= " AND el.sourcetype = 'commande'";
 		$sql .= " AND el.fk_target = e.rowid";
 		$sql .= " AND el.targettype = 'shipping'";
@@ -2421,7 +2421,7 @@ class Commande extends CommonOrder
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
 			$sql .= ' SET remise_percent = '.((float) $remise);
-			$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_DRAFT;
+			$sql .= ' WHERE rowid = '.((int) $this->id).' AND fk_statut = '.((int) self::STATUS_DRAFT);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2485,7 +2485,7 @@ class Commande extends CommonOrder
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
 			$sql .= ' SET remise_absolue = '.((float) $remise);
-			$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_DRAFT;
+			$sql .= ' WHERE rowid = '.((int) $this->id).' AND fk_statut = '.self::STATUS_DRAFT;
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2874,7 +2874,7 @@ class Commande extends CommonOrder
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET';
 			$sql .= ' ref_client = '.(empty($ref_client) ? 'NULL' : "'".$this->db->escape($ref_client)."'");
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= ' WHERE rowid = '.((int) $this->id);
 
 			dol_syslog(__METHOD__.' this->id='.$this->id.', ref_client='.$ref_client, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2930,7 +2930,7 @@ class Commande extends CommonOrder
 		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET facture = 1';
-		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;
+		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > '.self::STATUS_DRAFT;
 
 		dol_syslog(get_class($this)."::classifyBilled", LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -2980,7 +2980,7 @@ class Commande extends CommonOrder
 		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET facture = 0';
-		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;
+		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > '.self::STATUS_DRAFT;
 
 		dol_syslog(get_class($this)."::classifyUnBilled", LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -4396,8 +4396,8 @@ class OrderLine extends CommonOrderLine
 		$sql .= " ".($this->price != '' ? "'".price2num($this->price)."'" : "null").",";
 		$sql .= " '".price2num($this->remise)."',";
 		$sql .= ' '.(!empty($this->fk_remise_except) ? $this->fk_remise_except : "null").',';
-		$sql .= ' '.$this->special_code.',';
-		$sql .= ' '.$this->rang.',';
+		$sql .= ' '.((int) $this->special_code).',';
+		$sql .= ' '.((int) $this->rang).',';
 		$sql .= ' '.(!empty($this->fk_fournprice) ? $this->fk_fournprice : "null").',';
 		$sql .= ' '.price2num($this->pa_ht).',';
 		$sql .= " '".$this->db->escape($this->info_bits)."',";

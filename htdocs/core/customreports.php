@@ -239,13 +239,14 @@ if (is_array($search_groupby) && count($search_groupby)) {
 			$fieldtocount = $search_groupby[$gkey];
 		}
 
-		$sql = 'SELECT DISTINCT '.$fieldtocount.' as val';
+		$sql = "SELECT DISTINCT ".$fieldtocount." as val";
 		if (strpos($fieldtocount, 'te.') === 0) {
 			$sql .= ' FROM '.MAIN_DB_PREFIX.$object->table_element.'_extrafields as te';
 		} else {
 			$sql .= ' FROM '.MAIN_DB_PREFIX.$object->table_element.' as t';
 		}
 		// TODO Add the where here
+		// ...
 
 		$sql .= ' LIMIT '.($MAXUNIQUEVALFORGROUP + 1);
 
@@ -469,60 +470,60 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 	foreach ($search_xaxis as $key => $val) {
 		if (preg_match('/\-year$/', $val)) {
 			$tmpval = preg_replace('/\-year$/', '', $val);
-			$sql .= 'DATE_FORMAT('.$tmpval.", '%Y') as x_".$key.', ';
+			$sql .= "DATE_FORMAT(".$tmpval.", '%Y') as x_".$key.', ';
 		} elseif (preg_match('/\-month$/', $val)) {
 			$tmpval = preg_replace('/\-month$/', '', $val);
-			$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m') as x_".$key.', ';
+			$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m') as x_".$key.', ';
 		} elseif (preg_match('/\-day$/', $val)) {
 			$tmpval = preg_replace('/\-day$/', '', $val);
-			$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d') as x_".$key.', ';
+			$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m-%d') as x_".$key.', ';
 		} else {
-			$sql .= $val.' as x_'.$key.', ';
+			$sql .= $val." as x_".$key.", ";
 		}
 	}
 	foreach ($search_groupby as $key => $val) {
 		if (preg_match('/\-year$/', $val)) {
 			$tmpval = preg_replace('/\-year$/', '', $val);
-			$sql .= 'DATE_FORMAT('.$tmpval.", '%Y') as g_".$key.', ';
+			$sql .= "DATE_FORMAT(".$tmpval.", '%Y') as g_".$key.', ';
 		} elseif (preg_match('/\-month$/', $val)) {
 			$tmpval = preg_replace('/\-month$/', '', $val);
-			$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m') as g_".$key.', ';
+			$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m') as g_".$key.', ';
 		} elseif (preg_match('/\-day$/', $val)) {
 			$tmpval = preg_replace('/\-day$/', '', $val);
-			$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d') as g_".$key.', ';
+			$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m-%d') as g_".$key.', ';
 		} else {
-			$sql .= $val.' as g_'.$key.', ';
+			$sql .= $val." as g_".$key.", ";
 		}
 	}
 	foreach ($search_measures as $key => $val) {
 		if ($val == 't.count') {
-			$sql .= 'COUNT(t.'.$fieldid.') as y_'.$key.', ';
+			$sql .= "COUNT(t.".$fieldid.") as y_".$key.', ';
 		} elseif (preg_match('/\-sum$/', $val)) {
 			$tmpval = preg_replace('/\-sum$/', '', $val);
-			$sql .= 'SUM('.$db->ifsql($tmpval.' IS NULL', '0', $tmpval).') as y_'.$key.', ';
+			$sql .= "SUM(".$db->ifsql($tmpval.' IS NULL', '0', $tmpval).") as y_".$key.", ";
 		} elseif (preg_match('/\-average$/', $val)) {
 			$tmpval = preg_replace('/\-average$/', '', $val);
-			$sql .= 'AVG('.$db->ifsql($tmpval.' IS NULL', '0', $tmpval).') as y_'.$key.', ';
+			$sql .= "AVG(".$db->ifsql($tmpval.' IS NULL', '0', $tmpval).") as y_".$key.", ";
 		} elseif (preg_match('/\-min$/', $val)) {
 			$tmpval = preg_replace('/\-min$/', '', $val);
-			$sql .= 'MIN('.$db->ifsql($tmpval.' IS NULL', '0', $tmpval).') as y_'.$key.', ';
+			$sql .= "MIN(".$db->ifsql($tmpval.' IS NULL', '0', $tmpval).") as y_".$key.", ";
 		} elseif (preg_match('/\-max$/', $val)) {
 			$tmpval = preg_replace('/\-max$/', '', $val);
-			$sql .= 'MAX('.$db->ifsql($tmpval.' IS NULL', '0', $tmpval).') as y_'.$key.', ';
+			$sql .= "MAX(".$db->ifsql($tmpval.' IS NULL', '0', $tmpval).") as y_".$key.", ";
 		}
 	}
 	$sql = preg_replace('/,\s*$/', '', $sql);
 	$sql .= ' FROM '.MAIN_DB_PREFIX.$object->table_element.' as t';
 	// Add measure from extrafields
 	if ($object->isextrafieldmanaged) {
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.$object->table_element.'_extrafields as te ON te.fk_object = t.'.$fieldid;
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as te ON te.fk_object = t.".$fieldid;
 	}
 	if ($object->ismultientitymanaged) {
 		if ($object->ismultientitymanaged == 1) {
 			// Nothing here
 		} else {
 			$tmparray = explode('@', $object->ismultientitymanaged);
-			$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.$tmparray[1].' as parenttable ON t.'.$tmparray[0].' = parenttable.rowid';
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$tmparray[1]." as parenttable ON t.".$tmparray[0]." = parenttable.rowid";
 			$sql .= ' AND parenttable.entity IN ('.getEntity($tmparray[1]).')';
 		}
 	}
@@ -537,27 +538,27 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 	foreach ($search_xaxis as $key => $val) {
 		if (preg_match('/\-year$/', $val)) {
 			$tmpval = preg_replace('/\-year$/', '', $val);
-			$sql .= 'DATE_FORMAT('.$tmpval.", '%Y'), ";
+			$sql .= "DATE_FORMAT(".$tmpval.", '%Y'), ";
 		} elseif (preg_match('/\-month$/', $val)) {
 			$tmpval = preg_replace('/\-month$/', '', $val);
-			$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m'), ";
+			$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m'), ";
 		} elseif (preg_match('/\-day$/', $val)) {
 			$tmpval = preg_replace('/\-day$/', '', $val);
-			$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d'), ";
+			$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m-%d'), ";
 		} else {
-			$sql .= $val.', ';
+			$sql .= $val.", ";
 		}
 	}
 	foreach ($search_groupby as $key => $val) {
 		if (preg_match('/\-year$/', $val)) {
 			$tmpval = preg_replace('/\-year$/', '', $val);
-			$sql .= 'DATE_FORMAT('.$tmpval.", '%Y'), ";
+			$sql .= "DATE_FORMAT(".$tmpval.", '%Y'), ";
 		} elseif (preg_match('/\-month$/', $val)) {
 			$tmpval = preg_replace('/\-month$/', '', $val);
-			$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m'), ";
+			$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m'), ";
 		} elseif (preg_match('/\-day$/', $val)) {
 			$tmpval = preg_replace('/\-day$/', '', $val);
-			$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d'), ";
+			$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m-%d'), ";
 		} else {
 			$sql .= $val.', ';
 		}
@@ -567,13 +568,13 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 	foreach ($search_xaxis as $key => $val) {
 		if (preg_match('/\-year$/', $val)) {
 			$tmpval = preg_replace('/\-year$/', '', $val);
-			$sql .= 'DATE_FORMAT('.$tmpval.", '%Y'), ";
+			$sql .= "DATE_FORMAT(".$tmpval.", '%Y'), ";
 		} elseif (preg_match('/\-month$/', $val)) {
 			$tmpval = preg_replace('/\-month$/', '', $val);
-			$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m'), ";
+			$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m'), ";
 		} elseif (preg_match('/\-day$/', $val)) {
 			$tmpval = preg_replace('/\-day$/', '', $val);
-			$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d'), ";
+			$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m-%d'), ";
 		} else {
 			$sql .= $val.', ';
 		}
@@ -581,13 +582,13 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 	foreach ($search_groupby as $key => $val) {
 		if (preg_match('/\-year$/', $val)) {
 			$tmpval = preg_replace('/\-year$/', '', $val);
-			$sql .= 'DATE_FORMAT('.$tmpval.", '%Y'), ";
+			$sql .= "DATE_FORMAT(".$tmpval.", '%Y'), ";
 		} elseif (preg_match('/\-month$/', $val)) {
 			$tmpval = preg_replace('/\-month$/', '', $val);
-			$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m'), ";
+			$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m'), ";
 		} elseif (preg_match('/\-day$/', $val)) {
 			$tmpval = preg_replace('/\-day$/', '', $val);
-			$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d'), ";
+			$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m-%d'), ";
 		} else {
 			$sql .= $val.', ';
 		}

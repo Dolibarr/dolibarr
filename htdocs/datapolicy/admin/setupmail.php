@@ -151,7 +151,7 @@ $doleditor->Create();
 print '</td><tr>';
 print '</table>';
 
-print '<br><center><input type="submit" class="button" value="'.$langs->trans("Modify").'"></center>';
+print '<br><center><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></center>';
 
 print '</form>';
 

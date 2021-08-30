@@ -165,15 +165,15 @@ class ProjectStats extends Stats
 		$sqlwhere[] = ' t.entity IN ('.getEntity('project').')';
 
 		if (!empty($this->userid)) {
-			$sqlwhere[] = ' t.fk_user_resp='.$this->userid;
+			$sqlwhere[] = ' t.fk_user_resp = '.((int) $this->userid);
 		}
 
 		// Forced filter on socid is similar to forced filter on project. TODO Use project assignement to allow to not use filter on project
 		if (!empty($this->socid)) {
-			$sqlwhere[] = ' t.fk_soc='.$this->socid;
+			$sqlwhere[] = ' t.fk_soc = '.((int) $this->socid);
 		}
 		if (!empty($this->year) && empty($this->yearmonth)) {
-			$sqlwhere[] = " date_format(t.datec,'%Y')='".$this->db->escape($this->year)."'";
+			$sqlwhere[] = " date_format(t.datec,'%Y') = '".$this->db->escape($this->year)."'";
 		}
 		if (!empty($this->yearmonth)) {
 			$sqlwhere[] = " t.datec BETWEEN '".$this->db->idate(dol_get_first_day($this->yearmonth))."' AND '".$this->db->idate(dol_get_last_day($this->yearmonth))."'";

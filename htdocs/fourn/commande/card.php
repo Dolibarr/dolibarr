@@ -243,9 +243,9 @@ if (empty($reshook)) {
 
 			// Update supplier
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
-			$sql .= ' SET fk_soc='.$new_socid;
-			$sql .= ' WHERE fk_soc='.$object->thirdparty->id;
-			$sql .= ' AND rowid='.$object->id;
+			$sql .= ' SET fk_soc = '.((int) $new_socid);
+			$sql .= ' WHERE fk_soc = '.((int) $object->thirdparty->id);
+			$sql .= ' AND rowid = '.((int) $object->id);
 
 			$res = $db->query($sql);
 
@@ -258,8 +258,8 @@ if (empty($reshook)) {
 				foreach ($object->lines as $l) {
 					$sql = 'SELECT price, unitprice, tva_tx, ref_fourn';
 					$sql .= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
-					$sql .= ' WHERE fk_product='.$l->fk_product;
-					$sql .= ' AND fk_soc='.$new_socid;
+					$sql .= ' WHERE fk_product = '.((int) $l->fk_product);
+					$sql .= ' AND fk_soc = '.((int) $new_socid);
 					$sql .= ' ORDER BY unitprice ASC';
 
 					$resql = $db->query($sql);
@@ -337,14 +337,14 @@ if (empty($reshook)) {
 				// Currently the "Re-open" also remove the billed flag because there is no button "Set unpaid" yet.
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
 				$sql .= ' SET billed = 0';
-				$sql .= ' WHERE rowid = '.$object->id;
+				$sql .= ' WHERE rowid = '.((int) $object->id);
 
 				$resql = $db->query($sql);
 
 				if ($newstatus == 0) {
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
 					$sql .= ' SET fk_user_approve = null, fk_user_approve2 = null, date_approve = null, date_approve2 = null';
-					$sql .= ' WHERE rowid = '.$object->id;
+					$sql .= ' WHERE rowid = '.((int) $object->id);
 
 					$resql = $db->query($sql);
 				}
@@ -1617,7 +1617,7 @@ if ($action == 'create') {
 	print '<td>';
 
 	if ($societe->id > 0) {
-		print $societe->getNomUrl(1);
+		print $societe->getNomUrl(1, 'supplier');
 		print '<input type="hidden" name="socid" value="'.$societe->id.'">';
 	} else {
 		print img_picto('', 'company').$form->select_company((empty($socid) ? '' : $socid), 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
@@ -1743,7 +1743,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 
 		$newclassname = $classname;
-		print '<tr><td>'.$langs->trans($newclassname).'</td><td>'.$objectsrc->getNomUrl(1).'</td></tr>';
+		print '<tr><td>'.$langs->trans($newclassname).'</td><td>'.$objectsrc->getNomUrl(1, 'supplier').'</td></tr>';
 		print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($objectsrc->total_ht).'</td></tr>';
 		print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($objectsrc->total_tva)."</td></tr>";
 		if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0) { 		// Localtax1 RE
@@ -1966,7 +1966,7 @@ if ($action == 'create') {
 		if (!empty($conf->global->MAIN_CAN_EDIT_SUPPLIER_ON_SUPPLIER_ORDER) && $object->statut == CommandeFournisseur::STATUS_DRAFT) {
 			$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_thirdparty&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetThirdParty')).'</a>';
 		}
-		$morehtmlref .= ' : '.$object->thirdparty->getNomUrl(1);
+		$morehtmlref .= ' : '.$object->thirdparty->getNomUrl(1, 'supplier');
 		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
 			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
 		}
@@ -2189,7 +2189,7 @@ if ($action == 'create') {
 			$usehourmin = 1;
 		}
 		print $form->selectDate($object->delivery_date ? $object->delivery_date : -1, 'liv_', $usehourmin, $usehourmin, '', "setdate_livraison");
-		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+		print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	} else {
 		$usehourmin = 'day';
@@ -2724,7 +2724,7 @@ if ($action == 'create') {
 					print '<tr><td>'.$langs->trans("Password").'</td><td><input size="'.$textinput_size.'" type="text" name="ws_password"></td></tr>';
 					//Submit button
 					print '<tr><td class="center" colspan="2">';
-					print '<input class="button" type="submit" id="ws_submit" name="ws_submit" value="'.$langs->trans("CreateRemoteOrder").'">';
+					print '<input type="submit" class="button" id="ws_submit" name="ws_submit" value="'.$langs->trans("CreateRemoteOrder").'">';
 					print ' &nbsp; &nbsp; ';
 					//Cancel button
 					print '<input class="button button-cancel" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -2843,7 +2843,7 @@ if ($action == 'create') {
 				if ($error_occurred) {
 					print "<br>".$langs->trans("ErrorOccurredReviseAndRetry")."<br>";
 				} else {
-					print '<input class="button" type="submit" id="ws_submit" name="ws_submit" value="'.$langs->trans("Confirm").'">';
+					print '<input type="submit" class="button" id="ws_submit" name="ws_submit" value="'.$langs->trans("Confirm").'">';
 					print ' &nbsp; &nbsp; ';
 				}
 				print '<input class="button button-cancel" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';

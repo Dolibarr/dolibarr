@@ -1088,11 +1088,11 @@ class Utils
 					fwrite($handle, "/*!40000 ALTER TABLE `".$table."` DISABLE KEYS */;\n");
 				}
 
-				$sql = 'SELECT * FROM '.$table; // Here SELECT * is allowed because we don't have definition of columns to take
+				$sql = "SELECT * FROM ".$table; // Here SELECT * is allowed because we don't have definition of columns to take
 				$result = $db->query($sql);
 				while ($row = $db->fetch_row($result)) {
 					// For each row of data we print a line of INSERT
-					fwrite($handle, 'INSERT '.$delayed.$ignore.'INTO `'.$table.'` VALUES (');
+					fwrite($handle, "INSERT ".$delayed.$ignore."INTO ".$table." VALUES (");
 					$columns = count($row);
 					for ($j = 0; $j < $columns; $j++) {
 						// Processing each columns of the row to ensure that we correctly save the value (eg: add quotes for string - in fact we add quotes for everything, it's easier)

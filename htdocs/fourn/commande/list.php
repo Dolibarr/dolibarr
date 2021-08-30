@@ -653,7 +653,7 @@ $sql .= " u.firstname, u.lastname, u.photo, u.login, u.email as user_email, u.st
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -769,7 +769,7 @@ if ($search_total_ttc != '') {
 	$sql .= natural_search('cf.total_ttc', $search_total_ttc, 1);
 }
 if ($search_multicurrency_code != '') {
-	$sql .= ' AND cf.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
+	$sql .= " AND cf.multicurrency_code = '".$db->escape($search_multicurrency_code)."'";
 }
 if ($search_multicurrency_tx != '') {
 	$sql .= natural_search('cf.multicurrency_tx', $search_multicurrency_tx, 1);

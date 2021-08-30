@@ -189,13 +189,7 @@ if ($socid > 0) {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-	if (!empty($backtopage)) {
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	}
-	print '</div>';
+	print $form->buttonsSaveCancel("Modify");
 
 	print "</form>";
 
@@ -214,7 +208,7 @@ if ($socid > 0) {
 		$sql = "SELECT rc.rowid, rc.remise_client as remise_percent, rc.note, rc.datec as dc,";
 		$sql .= " u.login, u.rowid as user_id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise as rc, ".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE rc.fk_soc = ".$object->id;
+		$sql .= " WHERE rc.fk_soc = ".((int) $object->id);
 		$sql .= " AND rc.entity IN (".getEntity('discount').")";
 		$sql .= " AND u.rowid = rc.fk_user_author";
 		$sql .= " ORDER BY rc.datec DESC";
@@ -266,7 +260,7 @@ if ($socid > 0) {
 		$sql = "SELECT rc.rowid, rc.remise_supplier as remise_percent, rc.note, rc.datec as dc,";
 		$sql .= " u.login, u.rowid as user_id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_supplier as rc, ".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE rc.fk_soc = ".$object->id;
+		$sql .= " WHERE rc.fk_soc = ".((int) $object->id);
 		$sql .= " AND rc.entity IN (".getEntity('discount').")";
 		$sql .= " AND u.rowid = rc.fk_user_author";
 		$sql .= " ORDER BY rc.datec DESC";

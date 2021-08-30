@@ -390,7 +390,7 @@ class BookKeeping extends CommonObject
 				$sql .= ", '".$this->db->idate($now)."'";
 				$sql .= ", '".$this->db->escape($this->code_journal)."'";
 				$sql .= ", ".(!empty($this->journal_label) ? ("'".$this->db->escape($this->journal_label)."'") : "NULL");
-				$sql .= ", ".$this->db->escape($this->piece_num);
+				$sql .= ", ".((int) $this->piece_num);
 				$sql .= ", ".(!isset($this->entity) ? $conf->entity : $this->entity);
 				$sql .= ")";
 
@@ -647,7 +647,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' '.(!isset($this->credit) ? 'NULL' : $this->credit).',';
 		$sql .= ' '.(!isset($this->montant) ? 'NULL' : $this->montant).',';
 		$sql .= ' '.(!isset($this->sens) ? 'NULL' : "'".$this->db->escape($this->sens)."'").',';
-		$sql .= ' '.$user->id.',';
+		$sql .= ' '.((int) $user->id).',';
 		$sql .= ' '."'".$this->db->idate($now)."',";
 		$sql .= ' '.(empty($this->code_journal) ? 'NULL' : "'".$this->db->escape($this->code_journal)."'").',';
 		$sql .= ' '.(empty($this->journal_label) ? 'NULL' : "'".$this->db->escape($this->journal_label)."'").',';
@@ -883,7 +883,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' WHERE 1 = 1';
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND '.implode(' '.$filtermode.' ', $sqlwhere);
+			$sql .= " AND ".implode(" ".$filtermode." ", $sqlwhere);
 		}
 		// Affichage par compte comptable
 		if (!empty($option)) {
@@ -894,10 +894,10 @@ class BookKeeping extends CommonObject
 		}
 
 		if (!empty($sortfield)) {
-			$sql .= ', '.$sortfield.' '.$sortorder;
+			$sql .= ", ".$sortfield." ".$sortorder;
 		}
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit + 1, $offset);
+			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 
 		$resql = $this->db->query($sql);
@@ -1043,13 +1043,13 @@ class BookKeeping extends CommonObject
 			$sql .= " AND t.date_export IS NULL";
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND '.implode(' '.$filtermode.' ', $sqlwhere);
+			$sql .= ' AND '.implode(" ".$filtermode." ", $sqlwhere);
 		}
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit + 1, $offset);
+			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 		$this->lines = array();
 
@@ -1137,17 +1137,17 @@ class BookKeeping extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.doc_date') {
-					$sqlwhere[] = $key.'=\''.$this->db->idate($value).'\'';
+					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=') {
-					$sqlwhere[] = $key.'\''.$this->db->idate($value).'\'';
+					$sqlwhere[] = $key."'".$this->db->idate($value)."'";
 				} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=' || $key == 't.subledger_account>=' || $key == 't.subledger_account<=') {
-					$sqlwhere[] = $key.'\''.$this->db->escape($value).'\'';
+					$sqlwhere[] = $key."'".$this->db->escape($value)."'";
 				} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
-					$sqlwhere[] = $key.'='.$value;
+					$sqlwhere[] = $key." = ".((int) $value);
 				} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
-					$sqlwhere[] = $key.' LIKE \''.$this->db->escape($value).'%\'';
+					$sqlwhere[] = $key." LIKE '".$this->db->escape($value)."%'";
 				} elseif ($key == 't.subledger_label') {
-					$sqlwhere[] = $key.' LIKE \''.$this->db->escape($value).'%\'';
+					$sqlwhere[] = $key." LIKE '".$this->db->escape($value)."%'";
 				} elseif ($key == 't.code_journal' && !empty($value)) {
 					if (is_array($value)) {
 						$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
@@ -1155,13 +1155,13 @@ class BookKeeping extends CommonObject
 						$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
 					}
 				} else {
-					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}
 		$sql .= ' WHERE entity IN ('.getEntity('accountancy').')';
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND '.implode(' '.$filtermode.' ', $sqlwhere);
+			$sql .= " AND ".implode(" ".$filtermode." ", $sqlwhere);
 		}
 
 		$sql .= ' GROUP BY t.numero_compte';
@@ -1170,7 +1170,7 @@ class BookKeeping extends CommonObject
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit + 1, $offset);
+			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 
 		$resql = $this->db->query($sql);
@@ -1347,8 +1347,9 @@ class BookKeeping extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element.$mode;
-		$sql .= ' SET '.$field.'='.(is_numeric($value) ? $value : "'".$this->db->escape($value)."'");
-		$sql .= " WHERE piece_num = '".$this->db->escape($piece_num)."'";
+		$sql .= " SET ".$field." = ".(is_numeric($value) ? ((float) $value) : "'".$this->db->escape($value)."'");
+		$sql .= " WHERE piece_num = ".((int) $piece_num);
+
 		$resql = $this->db->query($sql);
 
 		if (!$resql) {
@@ -1637,7 +1638,7 @@ class BookKeeping extends CommonObject
 			$sql .= ", date_export";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
-		$sql .= " WHERE piece_num = ".$piecenum;
+		$sql .= " WHERE piece_num = ".((int) $piecenum);
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -1678,7 +1679,7 @@ class BookKeeping extends CommonObject
 		$sql = "SELECT MAX(piece_num)+1 as max FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
 		$sql .= " WHERE entity IN (".getEntity('accountancy').")";
 
-		dol_syslog(get_class($this)."getNextNumMvt sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."getNextNumMvt", LOG_DEBUG);
 		$result = $this->db->query($sql);
 
 		if ($result) {
@@ -1718,7 +1719,7 @@ class BookKeeping extends CommonObject
 			$sql .= ", date_export";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
-		$sql .= " WHERE piece_num = ".$piecenum;
+		$sql .= " WHERE piece_num = ".((int) $piecenum);
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -1858,7 +1859,7 @@ class BookKeeping extends CommonObject
 			$sql .= ' SELECT doc_date, doc_type,';
 			$sql .= ' doc_ref, fk_doc, fk_docdet, entity, thirdparty_code, subledger_account, subledger_label,';
 			$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
-			$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, '.$next_piecenum.", '".$this->db->idate($now)."'";
+			$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, '.((int) $next_piecenum).", '".$this->db->idate($now)."'";
 			$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -2017,7 +2018,7 @@ class BookKeeping extends CommonObject
 		$sql .= " WHERE aa.account_number = '".$this->db->escape($account)."'";
 		$sql .= " AND aa.entity IN (".getEntity('accountancy').")";
 
-		dol_syslog(get_class($this)."::select_account sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::select_account", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = '';
@@ -2057,7 +2058,7 @@ class BookKeeping extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_accounting_category as cat ON aa.fk_accounting_category = cat.rowid";
 		$sql .= " WHERE aa.entity IN (".getEntity('accountancy').")";
 
-		dol_syslog(get_class($this)."::select_account sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::select_account", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = '';

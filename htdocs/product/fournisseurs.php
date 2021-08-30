@@ -272,23 +272,23 @@ if (empty($reshook)) {
 				$extralabels = $extrafields->fetch_name_optionals_label("product_fournisseur_price");
 				$extrafield_values = $extrafields->getOptionalsFromPost("product_fournisseur_price");
 				if (!empty($extrafield_values)) {
-					$resql = $db->query("SELECT fk_object FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields WHERE fk_object = ".$object->product_fourn_price_id);
+					$resql = $db->query("SELECT fk_object FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields WHERE fk_object = ".((int) $object->product_fourn_price_id));
 					// Insert a new extrafields row, if none exists
 					if ($db->num_rows($resql) != 1) {
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields (fk_object, ";
 						foreach ($extrafield_values as $key => $value) {
 							$sql .= str_replace('options_', '', $key).', ';
 						}
-						$sql = substr($sql, 0, strlen($sql) - 2).") VALUES (".$object->product_fourn_price_id.", ";
+						$sql = substr($sql, 0, strlen($sql) - 2).") VALUES (".((int) $object->product_fourn_price_id).", ";
 						foreach ($extrafield_values as $key => $value) {
-							$sql .= '"'.$value.'", ';
+							$sql .= "'".$db->escape($value)."', ";
 						}
 						$sql = substr($sql, 0, strlen($sql) - 2).')';
 					} else {
 						// update the existing one
 						$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields SET ";
 						foreach ($extrafield_values as $key => $value) {
-							$sql .= str_replace('options_', '', $key).' = "'.$value.'", ';
+							$sql .= str_replace('options_', '', $key)." = '".$db->escape($value)."', ";
 						}
 						$sql = substr($sql, 0, strlen($sql) - 2).' WHERE fk_object = '.((int) $object->product_fourn_price_id);
 					}

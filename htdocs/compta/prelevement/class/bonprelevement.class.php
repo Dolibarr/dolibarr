@@ -868,7 +868,7 @@ class BonPrelevement extends CommonObject
 			$sql .= " AND f.total_ttc > 0";
 			$sql .= " AND pfd.ext_payment_id IS NULL";
 
-			dol_syslog(__METHOD__."::Read invoices, sql=".$sql, LOG_DEBUG);
+			dol_syslog(__METHOD__."::Read invoices,", LOG_DEBUG);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -992,7 +992,7 @@ class BonPrelevement extends CommonObject
 				$sql .= " AND entity = ".((int) $conf->entity);
 				$sql .= " ORDER BY ref DESC LIMIT 1";
 
-				dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+				dol_syslog(get_class($this)."::create", LOG_DEBUG);
 				$resql = $this->db->query($sql);
 
 				if ($resql) {
@@ -1341,18 +1341,14 @@ class BonPrelevement extends CommonObject
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Delete a notification def by id
 	 *
 	 *	@param	int		$rowid		id of notification
 	 *	@return	int					0 if OK, <0 if KO
 	 */
-	public function DeleteNotificationById($rowid)
+	public function deleteNotificationById($rowid)
 	{
-		// phpcs:enable
-		$result = 0;
-
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
 		$sql .= " WHERE rowid = ".((int) $rowid);
 
@@ -1363,21 +1359,23 @@ class BonPrelevement extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Delete a notification
 	 *
-	 *	@param	int	$user		notification user
-	 *	@param	string	$action		notification action
-	 *	@return	int					>0 if OK, <0 if KO
+	 *	@param	int|User	$user		notification user
+	 *	@param	string		$action		notification action
+	 *	@return	int						>0 if OK, <0 if KO
 	 */
-	public function DeleteNotification($user, $action)
+	public function deleteNotification($user, $action)
 	{
-		// phpcs:enable
-		$result = 0;
+		if (is_object($user)) {
+			$userid = $user->id;
+		} else {	// If user is an id
+			$userid = $user;
+		}
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
-		$sql .= " WHERE fk_user=".$user." AND fk_action='".$this->db->escape($action)."'";
+		$sql .= " WHERE fk_user=".((int) $userid)." AND fk_action='".$this->db->escape($action)."'";
 
 		if ($this->db->query($sql)) {
 			return 0;
@@ -1390,28 +1388,34 @@ class BonPrelevement extends CommonObject
 	/**
 	 *	Add a notification
 	 *
-	 *	@param	DoliDB	$db			database handler
-	 *	@param	int	$user		notification user
-	 *	@param	string	$action		notification action
-	 *	@return	int					0 if OK, <0 if KO
+	 *	@param	DoliDB		$db			database handler
+	 *	@param	int|User	$user		notification user
+	 *	@param	string		$action		notification action
+	 *	@return	int						0 if OK, <0 if KO
 	 */
-	public function AddNotification($db, $user, $action)
+	public function addNotification($db, $user, $action)
 	{
 		// phpcs:enable
 		$result = 0;
 
-		if ($this->DeleteNotification($user, $action) == 0) {
+		if (is_object($user)) {
+			$userid = $user->id;
+		} else {	// If user is an id
+			$userid = $user;
+		}
+
+		if ($this->deleteNotification($user, $action) == 0) {
 			$now = dol_now();
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_user, fk_soc, fk_contact, fk_action)";
-			$sql .= " VALUES ('".$this->db->idate($now)."', ".$user.", 'NULL', 'NULL', '".$this->db->escape($action)."')";
+			$sql .= " VALUES ('".$this->db->idate($now)."', ".((int) $userid).", 'NULL', 'NULL', '".$this->db->escape($action)."')";
 
 			dol_syslog("adnotiff: ".$sql);
 			if ($this->db->query($sql)) {
 				$result = 0;
 			} else {
 				$result = -1;
-				dol_syslog(get_class($this)."::AddNotification Error $result");
+				dol_syslog(get_class($this)."::addNotification Error $result");
 			}
 		}
 

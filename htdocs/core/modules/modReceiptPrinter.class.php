@@ -133,6 +133,7 @@ class modReceiptPrinter extends DolibarrModules
 	public function init($options = '')
 	{
 		global $conf, $langs;
+
 		// Clean before activation
 		$this->remove($options);
 
@@ -140,8 +141,8 @@ class modReceiptPrinter extends DolibarrModules
 		$sql = array(
 			"CREATE TABLE IF NOT EXISTS ".MAIN_DB_PREFIX."printer_receipt (rowid integer AUTO_INCREMENT PRIMARY KEY, name varchar(128), fk_type integer, fk_profile integer, parameter varchar(128), entity integer) ENGINE=innodb;",
 			"CREATE TABLE IF NOT EXISTS ".MAIN_DB_PREFIX."printer_receipt_template (rowid integer AUTO_INCREMENT PRIMARY KEY, name varchar(128), template text, entity integer) ENGINE=innodb;",
-			"DELETE FROM ".MAIN_DB_PREFIX."printer_receipt_template WHERE name = '".$langs->trans('Example')."';",
-			"INSERT INTO ".MAIN_DB_PREFIX."printer_receipt_template (name,template,entity) VALUES ('".$langs->trans('Example')."', '".$templateexample."', 1);",
+			"DELETE FROM ".MAIN_DB_PREFIX."printer_receipt_template WHERE name = '".$this->db->escape($langs->trans('Example'))."';",
+			"INSERT INTO ".MAIN_DB_PREFIX."printer_receipt_template (name,template,entity) VALUES ('".$this->db->escape($langs->trans('Example'))."', '".$this->db->escape($templateexample)."', 1);",
 		);
 		return $this->_init($sql, $options);
 	}

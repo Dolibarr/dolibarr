@@ -1273,16 +1273,16 @@ class ExtraFields
 						//We have to join on extrafield table
 						if (strpos($InfoFieldList[4], 'extra') !== false) {
 							$sql .= ' as main, '.MAIN_DB_PREFIX.$InfoFieldList[0].'_extrafields as extra';
-							$sqlwhere .= ' WHERE extra.fk_object=main.'.$InfoFieldList[2].' AND '.$InfoFieldList[4];
+							$sqlwhere .= " WHERE extra.fk_object=main.".$InfoFieldList[2]." AND ".$InfoFieldList[4];
 						} else {
-							$sqlwhere .= ' WHERE '.$InfoFieldList[4];
+							$sqlwhere .= " WHERE ".$InfoFieldList[4];
 						}
 					} else {
 						$sqlwhere .= ' WHERE 1=1';
 					}
 					// Some tables may have field, some other not. For the moment we disable it.
 					if (in_array($InfoFieldList[0], array('tablewithentity'))) {
-						$sqlwhere .= ' AND entity = '.$conf->entity;
+						$sqlwhere .= ' AND entity = '.((int) $conf->entity);
 					}
 					$sql .= $sqlwhere;
 					//print $sql;
@@ -1485,16 +1485,16 @@ class ExtraFields
 						// We have to join on extrafield table
 						if (strpos($InfoFieldList[4], 'extra.') !== false) {
 							$sql .= ' as main, '.MAIN_DB_PREFIX.$InfoFieldList[0].'_extrafields as extra';
-							$sqlwhere .= ' WHERE extra.fk_object=main.'.$InfoFieldList[2].' AND '.$InfoFieldList[4];
+							$sqlwhere .= " WHERE extra.fk_object=main.".$InfoFieldList[2]." AND ".$InfoFieldList[4];
 						} else {
-							$sqlwhere .= ' WHERE '.$InfoFieldList[4];
+							$sqlwhere .= " WHERE ".$InfoFieldList[4];
 						}
 					} else {
 						$sqlwhere .= ' WHERE 1=1';
 					}
 					// Some tables may have field, some other not. For the moment we disable it.
 					if (in_array($InfoFieldList[0], array('tablewithentity'))) {
-						$sqlwhere .= ' AND entity = '.$conf->entity;
+						$sqlwhere .= " AND entity = ".((int) $conf->entity);
 					}
 					// $sql.=preg_replace('/^ AND /','',$sqlwhere);
 					// print $sql;
@@ -1718,7 +1718,7 @@ class ExtraFields
 
 			$sql = 'SELECT '.$keyList;
 			$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
-			if (strpos($InfoFieldList[4], 'extra') !== false) {
+			if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
 			if ($selectkey == 'rowid' && empty($value)) {

@@ -907,8 +907,8 @@ class Account extends CommonObject
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",state_id = ".($this->state_id > 0 ? $this->state_id : "null");
 		$sql .= ",fk_pays = ".($this->country_id > 0 ? $this->country_id : "null");
-		$sql .= " WHERE rowid = ".$this->id;
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " WHERE rowid = ".((int) $this->id);
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		dol_syslog(get_class($this)."::update_bban", LOG_DEBUG);
 
@@ -1059,7 +1059,7 @@ class Account extends CommonObject
 		// Delete link between tag and bank account
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_account";
-			$sql .= " WHERE fk_account = ".$this->id;
+			$sql .= " WHERE fk_account = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -1151,7 +1151,7 @@ class Account extends CommonObject
 
 		$sql = "SELECT COUNT(rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-		$sql .= " WHERE fk_account=".$this->id;
+		$sql .= " WHERE fk_account = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1188,7 +1188,7 @@ class Account extends CommonObject
 
 		$sql = "SELECT sum(amount) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-		$sql .= " WHERE fk_account = ".$this->id;
+		$sql .= " WHERE fk_account = ".((int) $this->id);
 		if ($option == 1) {
 			$sql .= " AND dateo <= '".$this->db->idate(dol_now())."'";
 		}

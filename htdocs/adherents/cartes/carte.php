@@ -73,7 +73,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 	// Add fields from extrafields
 	if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-			$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+			$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 		}
 	}
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
@@ -276,7 +276,7 @@ foreach (array_keys($_Avery_Labels) as $codecards) {
 }
 asort($arrayoflabels);
 print $form->selectarray('model', $arrayoflabels, (GETPOST('model') ? GETPOST('model') : (empty($conf->global->ADHERENT_CARD_TYPE) ? '' : $conf->global->ADHERENT_CARD_TYPE)), 1, 0, 0, '', 0, 0, 0, '', '', 1);
-print '<br><input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
+print '<br><input type="submit" class="button" value="'.$langs->trans("BuildDoc").'">';
 print '</form>';
 
 print '<br><br>';
@@ -295,7 +295,7 @@ foreach (array_keys($_Avery_Labels) as $codecards) {
 asort($arrayoflabels);
 print $form->selectarray('model', $arrayoflabels, (GETPOST('model') ?GETPOST('model') : (empty($conf->global->ADHERENT_CARD_TYPE) ? '' : $conf->global->ADHERENT_CARD_TYPE)), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 print '<br>'.$langs->trans("Login").': <input size="10" type="text" name="foruserlogin" value="'.GETPOST('foruserlogin').'">';
-print '<br><input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
+print '<br><input type="submit" class="button" value="'.$langs->trans("BuildDoc").'">';
 print '</form>';
 
 print '<br><br>';
@@ -313,7 +313,7 @@ foreach (array_keys($_Avery_Labels) as $codecards) {
 }
 asort($arrayoflabels);
 print $form->selectarray('modellabel', $arrayoflabels, (GETPOST('modellabel') ? GETPOST('modellabel') : (empty($conf->global->ADHERENT_ETIQUETTE_TYPE) ? '' : $conf->global->ADHERENT_ETIQUETTE_TYPE)), 1, 0, 0, '', 0, 0, 0, '', '', 1);
-print '<br><input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
+print '<br><input type="submit" class="button" value="'.$langs->trans("BuildDoc").'">';
 print '</form>';
 
 // End of page

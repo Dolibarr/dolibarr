@@ -283,7 +283,7 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= "  SUM(".$db->ifsql('MONTH(ff.datef)='.$j, 'ffd.total_ht', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(ff.datef)=".$j, "ffd.total_ht", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= "  SUM(ffd.total_ht) as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as ffd";
@@ -362,7 +362,7 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= "  SUM(".$db->ifsql('MONTH(ff.datef)='.$j, 'ffd.total_ht', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(ff.datef)=".$j, "ffd.total_ht", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= "  SUM(ffd.total_ht) as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as ffd";
@@ -441,7 +441,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 		if ($j > 12) {
 			$j -= 12;
 		}
-		$sql .= "  SUM(".$db->ifsql('MONTH(ff.datef)='.$j, 'ffd.total_ht', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+		$sql .= "  SUM(".$db->ifsql("MONTH(ff.datef)=".$j, "ffd.total_ht", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
 	}
 	$sql .= "  SUM(ffd.total_ht) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as ffd";

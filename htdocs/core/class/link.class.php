@@ -182,7 +182,7 @@ class Link extends CommonObject
 		$sql .= ", label = '".$this->db->escape($this->label)."'";
 		$sql .= ", objecttype = '".$this->db->escape($this->objecttype)."'";
 		$sql .= ", objectid = ".$this->objectid;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update sql = ".$sql);
 		$resql = $this->db->query($sql);
@@ -365,7 +365,7 @@ class Link extends CommonObject
 
 		// Remove link
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."links";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		if (!$this->db->query($sql)) {

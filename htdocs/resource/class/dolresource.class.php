@@ -360,7 +360,7 @@ class Dolresource extends CommonObject
 		$sql .= " t.fk_user_create,";
 		$sql .= " t.tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as t";
-		$sql .= " WHERE t.rowid = ".$this->db->escape($id);
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -499,7 +499,7 @@ class Dolresource extends CommonObject
 		// Add fields from extrafields
 		if (!empty($extrafields->attributes[$this->table_element]['label'])) {
 			foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
-				$sql .= ($extrafields->attributes[$this->table_element]['type'][$key] != 'separate' ? "ef.".$key.' as options_'.$key.', ' : '');
+				$sql .= ($extrafields->attributes[$this->table_element]['type'][$key] != 'separate' ? "ef.".$key." as options_".$key.', ' : '');
 			}
 		}
 		$sql .= " ty.label as type_label";
@@ -511,11 +511,11 @@ class Dolresource extends CommonObject
 		if (!empty($filter)) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) {
-					$sql .= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
+					$sql .= " AND ".$key." = '".$this->db->idate($value)."'";
 				} elseif (strpos($key, 'ef.') !== false) {
 					$sql .= $value;
 				} else {
-					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}
@@ -591,9 +591,9 @@ class Dolresource extends CommonObject
 		if (!empty($filter)) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) {
-					$sql .= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
+					$sql .= " AND ".$key." = '".$this->db->idate($value)."'";
 				} else {
-					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}
@@ -675,9 +675,9 @@ class Dolresource extends CommonObject
 		if (!empty($filter)) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) {
-					$sql .= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
+					$sql .= " AND ".$key." = '".$this->db->idate($value)."'";
 				} else {
-					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}

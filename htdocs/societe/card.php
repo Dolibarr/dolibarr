@@ -155,8 +155,23 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	$backurlforlist = DOL_URL_ROOT.'/societe/list.php';
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/societe/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			}
+		}
+	}
+
 	if ($cancel) {
-		if (!empty($backtopage)) {
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
 		} elseif ($action == 'create' || $action == 'add') {
@@ -176,6 +191,7 @@ if (empty($reshook)) {
 			header("Location: ".$page);
 			exit;
 		}
+		$action = '';
 	}
 
 	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->rights->societe->creer) {
@@ -2596,7 +2612,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					if ($action == 'editRE') {
 						print '<td class="left">';
 						$formcompany->select_localtax(1, $object->localtax1_value, "lt1");
-						print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+						print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 					} else {
 						print '<td>'.$object->localtax1_value.'</td>';
 					}
@@ -2610,7 +2626,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					if ($action == 'editIRPF') {
 						print '<td class="left">';
 						$formcompany->select_localtax(2, $object->localtax2_value, "lt2");
-						print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+						print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 					} else {
 						print '<td>'.$object->localtax2_value.'</td>';
 					}
@@ -2628,7 +2644,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					if ($action == 'editRE') {
 						print '<td class="left">';
 						$formcompany->select_localtax(1, $object->localtax1_value, "lt1");
-						print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+						print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 					} else {
 						print '<td>'.$object->localtax1_value.'</td>';
 					}
@@ -2646,7 +2662,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					if ($action == 'editIRPF') {
 						print '<td class="left">';
 						$formcompany->select_localtax(2, $object->localtax2_value, "lt2");
-						print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+						print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 					} else {
 						print '<td>'.$object->localtax2_value.'</td>';
 					}

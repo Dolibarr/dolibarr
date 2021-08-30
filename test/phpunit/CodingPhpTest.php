@@ -286,11 +286,11 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			$ok=true;
 			$matches=array();
 
-			// Check sql string AND ... yyy = ".$xxx
-			//  with xxx that is not 'thi' (for $this->db->sanitize) and 'db-' (for $db->sanitize). It means we forget a ' if string or an (int) if int when forging sql request.
-			preg_match_all('/(DELETE|OR|AND)\s.*([^\s][^\s][^\s])\s*=\s*"\s*\.\s*\$(...)/', $filecontent, $matches, PREG_SET_ORDER);
+			// Check sql string DELETE|OR|AND|WHERE|INSERT ... yyy = ".$xxx
+			//  with xxx that is not 'thi' (for $this->db->sanitize) and 'db-' (for $db->sanitize). It means we forget a ' if string, or an (int) if int, when forging sql request.
+			preg_match_all('/(DELETE|OR|AND|WHERE|INSERT)\s.*([^\s][^\s][^\s])\s*=\s*"\s*\.\s*\$(...)/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
-				if ($val[2] == 'ity' && $val[3] == 'con') {
+				if ($val[2] == 'ity' && $val[3] == 'con') {		// exclude entity = $conf->entity
 					continue;
 				}
 				var_dump($matches);
@@ -301,6 +301,22 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			$this->assertTrue($ok, 'Found non quoted or not casted var into sql request '.$file['relativename'].' - Bad.');
 			//exit;
 
+			// Check sql string VALUES ... , ".$xxx
+			//  with xxx that is not 'db-' (for $db->escape). It means we forget a ' if string, or an (int) if int, when forging sql request.
+			preg_match_all('/(VALUES).*,\s*"\s*\.\s*\$(...)/', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				if ($val[2] == 'VALUES' && $val[3] == 'db-') {		// exclude $db->escape(
+					continue;
+				}
+				var_dump($matches);
+				$ok=false;
+				break;
+			}
+			//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+			$this->assertTrue($ok, 'Found non quoted or not casted var into sql request '.$file['relativename'].' - Bad.');
+			//exit;
+
+			// Check '".$xxx non escaped
 
 			// Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
 			preg_match_all('/=\s*\'"\s*\.\s*\$this->(....)/', $filecontent, $matches, PREG_SET_ORDER);
@@ -311,20 +327,36 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 				}
 			}
 			//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-			$this->assertTrue($ok, 'Found non escaped string in building of a sql request '.$file['relativename'].' - Bad.');
+			$this->assertTrue($ok, 'Found non escaped string in building of a sql request (case 1) in '.$file['relativename'].' - Bad.');
 
 			// Check string sql|set...'".$yyy->xxx   with xxx that is not 'escape', 'idate', .... It means we forget a db->escape when forging sql request.
-			preg_match_all('/(sql|SET).+\s*\'"\s*\.\s*\$(.........)/', $filecontent, $matches, PREG_SET_ORDER);
+			preg_match_all('/(sql|SET|WHERE|INSERT|VALUES).+\s*\'"\s*\.\s*\$(.........)/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
-				if (! in_array($val[2], array('this->db-', 'this->esc', 'db->escap', 'dbsession', 'db->idate', 'excludeGr', 'includeGr'))) {
+				if (! in_array($val[2], array('this->db-', 'this->esc', 'db->escap', 'mydb->esc', 'dbsession', 'db->idate', 'escapedli', 'excludeGr', 'includeGr'))) {
 					$ok=false;
 					break;
 				}
 				//if ($reg[0] != 'db') $ok=false;
 			}
 			//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-			$this->assertTrue($ok, 'Found non escaped string in building of a sql request '.$file['relativename'].': '.$val[0].' - Bad.');
+			$this->assertTrue($ok, 'Found non escaped string in building of a sql request (case 2) in '.$file['relativename'].': '.$val[0].' - Bad.');
 			//exit;
+
+			// Check string sql|set...'.$yyy->xxx   with xxx that is not 'escape', 'idate', .... It means we forget a db->escape when forging sql request.
+			preg_match_all('/(\$sql|SET\s|WHERE\s|INSERT\s|VALUES\s|VALUES\().+\s*\'\s*\.\s*\$(.........)/', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				if (! in_array($val[2], array('this->db-', 'db->sanit', 'conf->ent', 'key : \'\')', 'key])."\')', 'excludefi', 'regexstri', 'filtermod'))) {
+					$ok=false;
+					var_dump($matches);
+					break;
+				}
+				//if ($reg[0] != 'db') $ok=false;
+			}
+			//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+			$this->assertTrue($ok, 'Found non escaped string in building of a sql request (case 3) in '.$file['relativename'].': '.$val[0].' - Bad.');
+			//exit;
+
+			// Checks with IN
 
 			// Check string 'IN (".xxx' or 'IN (\'.xxx'  with xxx that is not '$this->db->sanitize' and not '$db->sanitize'. It means we forget a db->sanitize when forging sql request.
 			preg_match_all('/ IN \([\'"]\s*\.\s*(.........)/i', $filecontent, $matches, PREG_SET_ORDER);

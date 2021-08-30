@@ -404,7 +404,7 @@ class Loan extends CommonObject
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
 		$sql .= " paid = ".$this::STATUS_PAID;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$return = $this->db->query($sql);
 		if ($return) {
 			return 1;
@@ -440,7 +440,7 @@ class Loan extends CommonObject
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
 		$sql .= " paid = ".$this::STATUS_STARTED;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$return = $this->db->query($sql);
 		if ($return) {
 			return 1;
@@ -475,7 +475,7 @@ class Loan extends CommonObject
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
 		$sql .= " paid = ".$this::STATUS_UNPAID;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$return = $this->db->query($sql);
 		if ($return) {
 			return 1;
@@ -651,7 +651,7 @@ class Loan extends CommonObject
 
 		$sql = 'SELECT sum(amount_capital) as amount';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql .= ' WHERE '.$field.' = '.$this->id;
+		$sql .= " WHERE ".$field." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSumPayment", LOG_DEBUG);
 		$resql = $this->db->query($sql);
