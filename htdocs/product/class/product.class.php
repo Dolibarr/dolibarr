@@ -4027,9 +4027,7 @@ class Product extends CommonObject
 				if (! $this->db->query($sql)) {
 					dol_print_error($this->db);
 					return -1;
-				}
-				else
-				{
+				} else {
 					return 1;
 				}
 			} else {
