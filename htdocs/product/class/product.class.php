@@ -4114,7 +4114,7 @@ class Product extends CommonObject
 		$resqlrank = $this->db->query($sqlrank);
 		if ($resqlrank) {
 			$cpt = 0;
-			while ($objrank = $this->db->fetch_object($resqlrank)){
+			while ($objrank = $this->db->fetch_object($resqlrank)) {
 				$cpt++;
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_association';
 				$sql.= ' SET rang ='.$cpt;
