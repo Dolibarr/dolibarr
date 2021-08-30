@@ -4116,7 +4116,7 @@ class Product extends CommonObject
 				$cpt++;
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_association';
 				$sql.= ' SET rang ='.$cpt;
-				$sql.= ' WHERE rowid ='.$objrank->rowid;
+				$sql.= ' WHERE rowid ='.$this->db->escape($objrank->rowid);
 				if (! $this->db->query($sql)) {
 					dol_print_error($this->db);
 					return -1;
