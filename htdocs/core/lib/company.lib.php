@@ -1085,7 +1085,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
 	$sql .= " WHERE t.fk_soc = ".$object->id;
 	//Show contacts of parent
-	if (!empty($conf->global->CONTACT_ON_DIFFERENT_THIRDPARTIES) && !empty($object->parent)) {
+	if (!empty($conf->global->CONTACT_SHOW_ALSO_PARENT_COMPANY_CONTACTS) && !empty($object->parent)) {
 		$sql .= ' OR t.fk_soc = '.$object->parent;
 	}
 	if ($search_status != '' && $search_status != '-1') {
