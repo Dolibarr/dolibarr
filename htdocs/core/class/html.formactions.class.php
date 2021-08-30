@@ -70,7 +70,7 @@ class FormActions
 		global $langs, $conf;
 
 		$listofstatus = array(
-			'na' => $langs->trans("ActionNotApplicable"),
+			'-2' => $langs->trans("ActionNotApplicable"),
 			'0' => $langs->trans("ActionsToDoShort"),
 			'50' => $langs->trans("ActionRunningShort"),
 			'100' => $langs->trans("ActionDoneShort")

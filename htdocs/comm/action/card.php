@@ -471,7 +471,7 @@ if (empty($reshook) && $action == 'update') {
 		$apmin = GETPOST('apmin', 'int');
 		$p2hour = GETPOST('p2hour', 'int');
 		$p2min = GETPOST('p2min', 'int');
-		$percentage = in_array(GETPOST('status'), array(-1, 100)) ?GETPOST('status') : (in_array(GETPOST('complete'), array(-1, 100)) ?GETPOST('complete') : GETPOST("percentage")); // If status is -1 or 100, percentage is not defined and we must use status
+		$percentage = in_array(GETPOST('status'), array(-2, 100)) ?GETPOST('status') : (in_array(GETPOST('complete'), array(-2, 100)) ?GETPOST('complete') : GETPOST("percentage")); // If status is -1 or 100, percentage is not defined and we must use status
 
 		// Clean parameters
 		if ($aphour == -1) {
