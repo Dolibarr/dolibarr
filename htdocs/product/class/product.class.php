@@ -4107,7 +4107,7 @@ class Product extends CommonObject
 
 		//Updated ranks so that none are missing
 		$sqlrank = 'SELECT rowid, rang FROM '.MAIN_DB_PREFIX.'product_association';
-		$sqlrank.= ' WHERE fk_product_pere  = '.$fk_parent;
+		$sqlrank.= ' WHERE fk_product_pere  = '.$this->db->escape($fk_parent);
 		$sqlrank.= ' ORDER BY rang';
 		$resqlrank = $this->db->query($sqlrank);
 		if ($resqlrank) {
