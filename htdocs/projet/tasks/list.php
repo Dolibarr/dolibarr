@@ -521,54 +521,6 @@ if ($search_datelimit_endmonth) {
 if ($search_datelimit_endyear) {
 	$param .= '&search_datelimit_endyear='.urlencode($search_datelimit_endyear);
 }
-if ($search_date_start_startmonth) {
-	$param .= '&search_date_start_startmonth='.urlencode($search_date_start_startmonth);
-}
-if ($search_date_start_startyear) {
-	$param .= '&search_date_start_startyear='.urlencode($search_date_start_startyear);
-}
-if ($search_date_start_startday) {
-	$param .= '&search_date_start_startday='.urlencode($search_date_start_startday);
-}
-if ($search_date_start_start) {
-	$param .= '&search_date_start_start='.urlencode($search_date_start_start);
-}
-if ($search_date_start_endmonth) {
-	$param .= '&search_date_start_endmonth='.urlencode($search_date_start_endmonth);
-}
-if ($search_date_start_endyear) {
-	$param .= '&search_date_start_endyear='.urlencode($search_date_start_endyear);
-}
-if ($search_date_start_endday) {
-	$param .= '&search_date_start_endday='.urlencode($search_date_start_endday);
-}
-if ($search_date_start_end) {
-	$param .= '&search_date_start_end='.urlencode($search_date_start_end);
-}
-if ($search_date_end_startmonth) {
-	$param .= '&search_date_end_startmonth='.urlencode($search_date_end_startmonth);
-}
-if ($search_date_end_startyear) {
-	$param .= '&search_date_end_startyear='.urlencode($search_date_end_startyear);
-}
-if ($search_date_end_startday) {
-	$param .= '&search_date_end_startday='.urlencode($search_date_end_startday);
-}
-if ($search_date_end_start) {
-	$param .= '&search_date_end_start='.urlencode($search_date_end_start);
-}
-if ($search_date_end_endmonth) {
-	$param .= '&search_date_end_endmonth='.urlencode($search_date_end_endmonth);
-}
-if ($search_date_end_endyear) {
-	$param .= '&search_date_end_endyear='.urlencode($search_date_end_endyear);
-}
-if ($search_date_end_endday) {
-	$param .= '&search_date_end_endday='.urlencode($search_date_end_endday);
-}
-if ($search_date_end_end) {
-	$param .= '&search_date_end_end=' . urlencode($search_date_end_end);
-}
 if ($socid) {
 	$param .= '&socid='.urlencode($socid);
 }
