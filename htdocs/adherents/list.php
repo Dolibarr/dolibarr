@@ -317,6 +317,7 @@ $sql .= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.skype, d.birth, d.p
 $sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut, d.datec as date_creation, d.tms as date_update,";
 $sql .= " d.note_private, d.note_public,";
 $sql .= " s.nom,";
+$sql .= " ".$db->ifsql("d.societe IS NULL", "s.nom", "d.societe")." as companyname,";
 $sql .= " t.libelle as type, t.subscription,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 // Add fields from extrafields
@@ -832,7 +833,7 @@ if (!empty($arrayfields['d.gender']['checked'])) {
 	print_liste_field_titre($arrayfields['d.gender']['label'], $_SERVER['PHP_SELF'], 'd.gender', $param, "", "", $sortfield, $sortorder);
 }
 if (!empty($arrayfields['d.company']['checked'])) {
-	print_liste_field_titre($arrayfields['d.company']['label'], $_SERVER["PHP_SELF"], 'd.societe', '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['d.company']['label'], $_SERVER["PHP_SELF"], 'companyname', '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['d.login']['checked'])) {
 	print_liste_field_titre($arrayfields['d.login']['label'], $_SERVER["PHP_SELF"], 'd.login', '', $param, '', $sortfield, $sortorder);
