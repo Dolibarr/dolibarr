@@ -906,6 +906,7 @@ while ($i < min($num, $limit)) {
 	$memberstatic->id = $obj->rowid;
 	$memberstatic->ref = $obj->ref;
 	$memberstatic->civility_id = $obj->civility;
+	$memberstatic->login = $obj->login;
 	$memberstatic->lastname = $obj->lastname;
 	$memberstatic->firstname = $obj->firstname;
 	$memberstatic->gender = $obj->gender;
