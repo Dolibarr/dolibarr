@@ -18,9 +18,14 @@
 #
 Assets = Assets
 NewAsset = New asset
-AccountancyCodeAsset = Accounting code (asset)
-AccountancyCodeDepreciationAsset = Accounting code (depreciation asset account)
-AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
+AccountancyAccountAsset=Asset
+AccountancyAccountDepreciationAsset=Depreciation asset
+AccountancyAccountDepreciationExpense=Depreciation expense
+AccountancyAccountValueAssetSold=Accounting value of assets sold
+AccountancyAccountReceivableOnAssignment=Receivable on assignment
+AccountancyAccountProceedsFromSales=Proceeds from sales
+AccountancyAccountCollectedVAT=Collected VAT on assets
+AccountancyAccountDeductibleVAT=Deductible VAT on assets
 NewAssetType=New asset type
 AssetsTypeSetup=Asset type setup
 AssetTypeModified=Asset type modified

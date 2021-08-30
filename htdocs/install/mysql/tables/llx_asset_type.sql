@@ -1,4 +1,4 @@
--- Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+-- Copyright (C) 2018-2021 Alexandre Spangaro   <aspangaro@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,12 +15,17 @@
 
 create table llx_asset_type
 (
-  rowid                                 integer AUTO_INCREMENT PRIMARY KEY,
-  entity                                integer DEFAULT 1 NOT NULL,	-- multi company id
-  tms                                   timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  label                                 varchar(50) NOT NULL,
-  accountancy_code_asset                varchar(32),
-  accountancy_code_depreciation_asset   varchar(32),
-  accountancy_code_depreciation_expense varchar(32),
-  note                                  text
+  rowid                                     integer AUTO_INCREMENT PRIMARY KEY,
+  entity                                    integer DEFAULT 1 NOT NULL,	-- multi company id
+  tms                                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  label                                     varchar(50) NOT NULL,
+  accountancy_code_asset                    varchar(32),
+  accountancy_code_depreciation_asset       varchar(32),
+  accountancy_code_depreciation_expense     varchar(32),
+  accountancy_code_value_asset_sold         varchar(32),
+  accountancy_code_receivable_on_assignment varchar(32),
+  accountancy_code_proceeds_from_sales      varchar(32),
+  accountancy_code_vat_collected            varchar(32),
+  accountancy_code_vat_deductible           varchar(32),
+  note                                      text
 )ENGINE=innodb;

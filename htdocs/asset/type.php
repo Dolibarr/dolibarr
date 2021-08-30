@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+/* Copyright (C) 2018-2021 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,11 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/asset/class/asset_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-}
-if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-}
-if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
 
@@ -345,42 +341,6 @@ if ($action == 'create') {
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40"></td></tr>';
 
-	if (!empty($conf->accounting->enabled)) {
-		// Accountancy_code_asset
-		print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeAsset").'</td>';
-		print '<td>';
-		print $formaccounting->select_account($object->accountancy_code_asset, 'accountancy_code_asset', 1, '', 1, 1);
-		print '</td></tr>';
-
-		// Accountancy_code_depreciation_expense
-		print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeDepreciationAsset").'</td>';
-		print '<td>';
-		print $formaccounting->select_account($object->accountancy_code_depreciation_asset, 'accountancy_code_depreciation_asset', 1, '', 1, 1);
-		print '</td></tr>';
-
-		// Accountancy_code_depreciation_expense
-		print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeDepreciationExpense").'</td>';
-		print '<td>';
-		print $formaccounting->select_account($object->accountancy_code_depreciation_expense, 'accountancy_code_depreciation_expense', 1, '', 1, 1);
-		print '</td></tr>';
-	} else // For external software
-	{
-		// Accountancy_code_asset
-		print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeAsset").'</td>';
-		print '<td><input name="accountancy_code_asset" class="maxwidth200" value="'.$object->accountancy_code_asset.'">';
-		print '</td></tr>';
-
-		// Accountancy_code_depreciation_asset
-		print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeDepreciationAsset").'</td>';
-		print '<td><input name="accountancy_code_depreciation_asset" class="maxwidth200" value="'.$object->accountancy_code_depreciation_asset.'">';
-		print '</td></tr>';
-
-		// Accountancy_code_depreciation_expense
-		print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeDepreciationExpense").'</td>';
-		print '<td><input name="accountancy_code_depreciation_expense" class="maxwidth200" value="'.$object->accountancy_code_depreciation_expense.'">';
-		print '</td></tr>';
-	}
-
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	print '<textarea name="comment" wrap="soft" class="centpercent" rows="3"></textarea></td></tr>';
 
@@ -391,6 +351,94 @@ if ($action == 'create') {
 	if (empty($reshook)) {
 		print $object->showOptionals($extrafields, 'edit', $parameters);
 	}
+
+	print '<tbody>';
+	print "</table>\n";
+	print '<br>';
+
+	print '<hr style="margin-bottom: 20px">';
+
+	// Accounting accounts
+	print load_fiche_titre('<div class="comboperso">'.$langs->trans("ListOfAccounts").'</div>', '', '');
+
+	print '<table class="border centpercent">';
+	print '<tbody>';
+
+	if (!empty($conf->accounting->enabled)) {
+		print '<tr><td class="titlefield">'.$langs->trans("AccountancyAccountAsset").'</td>';
+		print '<td>';
+		print $formaccounting->select_account($object->accountancy_code_asset, 'accountancy_code_asset', 1, '', 1, 1);
+		print '</td></tr>';
+
+		print '<tr><td class="titlefield">'.$langs->trans("AccountancyAccountDepreciationAsset").'</td>';
+		print '<td>';
+		print $formaccounting->select_account($object->accountancy_code_depreciation_asset, 'accountancy_code_depreciation_asset', 1, '', 1, 1);
+		print '</td></tr>';
+
+		print '<tr><td class="titlefield">'.$langs->trans("AccountancyAccountDepreciationExpense").'</td>';
+		print '<td>';
+		print $formaccounting->select_account($object->accountancy_code_depreciation_expense, 'accountancy_code_depreciation_expense', 1, '', 1, 1);
+		print '</td></tr>';
+
+		print '<tr><td class="titlefield">'.$langs->trans("AccountancyAccountValueAssetSold").'</td>';
+		print '<td>';
+		print $formaccounting->select_account($object->accountancy_code_value_asset_sold, 'accountancy_code_value_asset_sold', 1, '', 1, 1);
+		print '</td></tr>';
+
+		print '<tr><td class="titlefield">'.$langs->trans("AccountancyAccountReceivableOnAssignment").'</td>';
+		print '<td>';
+		print $formaccounting->select_account($object->accountancy_code_receivable_on_assignment, 'accountancy_code_receivable_on_assignment', 1, '', 1, 1);
+		print '</td></tr>';
+
+		print '<tr><td class="titlefield">'.$langs->trans("AccountancyAccountProceedsFromSales").'</td>';
+		print '<td>';
+		print $formaccounting->select_account($object->accountancy_code_proceeds_from_sales, 'accountancy_code_proceeds_from_sales', 1, '', 1, 1);
+		print '</td></tr>';
+
+		print '<tr><td class="titlefield">'.$langs->trans("AccountancyAccountCollectedVAT").'</td>';
+		print '<td>';
+		print $formaccounting->select_account($object->accountancy_code_vat_collected, 'accountancy_code_vat_collected', 1, '', 1, 1);
+		print '</td></tr>';
+
+		print '<tr><td class="titlefield">'.$langs->trans("AccountancyAccountDeductibleVAT").'</td>';
+		print '<td>';
+		print $formaccounting->select_account($object->accountancy_code_vat_deductible, 'accountancy_code_vat_deductible', 1, '', 1, 1);
+		print '</td></tr>';
+	} else // For external software
+	{
+		print '<tr><td class="titlefield">'.$langs->trans("AccountancyAccountAsset").'</td>';
+		print '<td><input name="accountancy_code_asset" class="maxwidth200" value="'.$object->accountancy_code_asset.'">';
+		print '</td></tr>';
+
+		print '<tr><td class="titlefield">'.$langs->trans("AccountancyAccountDepreciationAsset").'</td>';
+		print '<td><input name="accountancy_code_depreciation_asset" class="maxwidth200" value="'.$object->accountancy_code_depreciation_asset.'">';
+		print '</td></tr>';
+
+		print '<tr><td class="titlefield">'.$langs->trans("AccountancyAccountDepreciationExpense").'</td>';
+		print '<td><input name="accountancy_code_depreciation_expense" class="maxwidth200" value="'.$object->accountancy_code_depreciation_expense.'">';
+		print '</td></tr>';
+
+		print '<tr><td class="titlefield">'.$langs->trans("AccountancyAccountValueAssetSold").'</td>';
+		print '<td><input name="accountancy_code_value_asset_sold" class="maxwidth200" value="'.$object->accountancy_code_value_asset_sold.'">';
+		print '</td></tr>';
+
+		print '<tr><td class="titlefield">'.$langs->trans("AccountancyAccountReceivableOnAssignment").'</td>';
+		print '<td><input name="accountancy_code_receivable_on_assignment" class="maxwidth200" value="'.$object->accountancy_code_receivable_on_assignment.'">';
+		print '</td></tr>';
+
+		print '<tr><td class="titlefield">'.$langs->trans("AccountancyAccountProceedsFromSales").'</td>';
+		print '<td><input name="accountancy_code_proceeds_from_sales" class="maxwidth200" value="'.$object->accountancy_code_proceeds_from_sales.'">';
+		print '</td></tr>';
+
+		print '<tr><td class="titlefield">'.$langs->trans("AccountancyAccountCollectedVAT").'</td>';
+		print '<td><input name="accountancy_code_vat_collected" class="maxwidth200" value="'.$object->accountancy_code_vat_collected.'">';
+		print '</td></tr>';
+
+		print '<tr><td class="titlefield">'.$langs->trans("AccountancyAccountDeductibleVAT").'</td>';
+		print '<td><input name="accountancy_code_vat_deductible" class="maxwidth200" value="'.$object->accountancy_code_vat_deductible.'">';
+		print '</td></tr>';
+	}
+
 	print '<tbody>';
 	print "</table>\n";
 

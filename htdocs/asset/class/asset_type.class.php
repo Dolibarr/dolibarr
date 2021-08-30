@@ -45,6 +45,42 @@ class AssetType extends CommonObject
 	public $picto = 'asset';
 
 	/**
+	 *  'type' if the field format.
+	 *  'label' the translation key.
+	 *  'enabled' is a condition when the field must be managed.
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only. Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 *  'index' if we want an index in database.
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'position' is the sort order of field.
+	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
+	 *  'help' is a string visible as a tooltip on field
+	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 *  'default' is a default value for creation (can still be replaced by the global setup of default values)
+	 *  'showoncombobox' if field must be shown into the label of combobox
+	 */
+
+	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields = array(
+		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>15, 'index'=>1),
+		'label' =>array('type'=>'varchar(50)', 'label'=>'Label', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25, 'showoncombobox'=>1),
+		'accountancy_code_asset' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountAsset', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
+		'accountancy_code_depreciation_asset' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountDepreciationAsset', 'enabled'=>0, 'visible'=>-1, 'position'=>35),
+		'accountancy_code_depreciation_expense' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountDepreciationExpense', 'enabled'=>0, 'visible'=>-1, 'position'=>40),
+		'accountancy_code_value_asset_sold' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountValueAssetSold', 'enabled'=>0, 'visible'=>-1, 'position'=>40),
+		'accountancy_code_receivable_on_assignment' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountReceivableOnAssignment', 'enabled'=>0, 'visible'=>-1, 'position'=>40),
+		'accountancy_code_proceeds_from_sales' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountProceedsFromSales', 'enabled'=>0, 'visible'=>-1, 'position'=>40),
+		'accountancy_code_vat_collected' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountCollectedVAT', 'enabled'=>0, 'visible'=>-1, 'position'=>40),
+		'accountancy_code_vat_deductible' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountDeductibleVAT', 'enabled'=>0, 'visible'=>-1, 'position'=>40),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
+		'note' =>array('type'=>'mediumtext', 'label'=>'Note', 'enabled'=>0, 'visible'=>-1, 'position'=>45),
+	);
+
+	/**
 	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 * @var int
 	 */
@@ -55,32 +91,35 @@ class AssetType extends CommonObject
 	 */
 	public $label;
 
-	/** @var string Accountancy code asset */
+	/** @var string Accountancy account asset */
 	public $accountancy_code_asset;
 
-	/** @var string Accountancy code depreciation asset */
+	/** @var string Accountancy account depreciation asset */
 	public $accountancy_code_depreciation_asset;
 
-	/** @var string Accountancy code depreciation expense */
+	/** @var string Accountancy account depreciation expense */
 	public $accountancy_code_depreciation_expense;
+
+	/** @var string Accounting account value of assets sold */
+	public $accountancy_code_value_asset_sold;
+
+	/** @var string Accounting account receivable on assignment */
+	public $accountancy_code_receivable_on_assignment;
+
+	/** @var string Accounting account proceeds from sales */
+	public $accountancy_code_proceeds_from_sales;
+
+	/** @var string Accounting account collected VAT on assets */
+	public $accountancy_code_vat_collected;
+
+	/** @var string Accounting account deductible VAT on assets */
+	public $accountancy_code_vat_deductible;
 
 	/** @var string 	Public note */
 	public $note;
 
 	/** @var array Array of asset */
 	public $asset = array();
-
-	public $fields = array(
-		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
-		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>15, 'index'=>1),
-		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
-		'label' =>array('type'=>'varchar(50)', 'label'=>'Label', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25, 'showoncombobox'=>1),
-		'accountancy_code_asset' =>array('type'=>'varchar(32)', 'label'=>'Accountancy code asset', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
-		'accountancy_code_depreciation_asset' =>array('type'=>'varchar(32)', 'label'=>'Accountancy code depreciation asset', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
-		'accountancy_code_depreciation_expense' =>array('type'=>'varchar(32)', 'label'=>'Accountancy code depreciation expense', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
-		'note' =>array('type'=>'mediumtext', 'label'=>'Note', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
-	);
-
 
 	/**
 	 *	Constructor
@@ -89,7 +128,16 @@ class AssetType extends CommonObject
 	 */
 	public function __construct($db)
 	{
+		global $conf;
+
 		$this->db = $db;
+
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
+			$this->fields['rowid']['visible'] = 0;
+		}
+		if (empty($conf->multicompany->enabled)) {
+			$this->fields['entity']['enabled'] = 0;
+		}
 	}
 
 
@@ -110,6 +158,11 @@ class AssetType extends CommonObject
 		$this->accountancy_code_asset = trim($this->accountancy_code_asset);
 		$this->accountancy_code_depreciation_asset = trim($this->accountancy_code_depreciation_asset);
 		$this->accountancy_code_depreciation_expense = trim($this->accountancy_code_depreciation_expense);
+		$this->accountancy_code_value_asset_sold = trim($this->accountancy_code_value_asset_sold);
+		$this->accountancy_code_receivable_on_assignment = trim($this->accountancy_code_receivable_on_assignment);
+		$this->accountancy_code_proceeds_from_sales = trim($this->accountancy_code_proceeds_from_sales);
+		$this->accountancy_code_vat_collected = trim($this->accountancy_code_vat_collected);
+		$this->accountancy_code_vat_deductible = trim($this->accountancy_code_vat_deductible);
 
 		$this->db->begin();
 
@@ -118,6 +171,11 @@ class AssetType extends CommonObject
 		$sql .= ", accountancy_code_asset";
 		$sql .= ", accountancy_code_depreciation_asset";
 		$sql .= ", accountancy_code_depreciation_expense";
+		$sql .= ", accountancy_code_value_asset_sold";
+		$sql .= ", accountancy_code_receivable_on_assignment";
+		$sql .= ", accountancy_code_proceeds_from_sales";
+		$sql .= ", accountancy_code_vat_collected";
+		$sql .= ", accountancy_code_vat_deductible";
 		$sql .= ", note";
 		$sql .= ", entity";
 		$sql .= ") VALUES (";
@@ -125,8 +183,14 @@ class AssetType extends CommonObject
 		$sql .= ", '".$this->db->escape($this->accountancy_code_asset)."'";
 		$sql .= ", '".$this->db->escape($this->accountancy_code_depreciation_asset)."'";
 		$sql .= ", '".$this->db->escape($this->accountancy_code_depreciation_expense)."'";
+		$sql .= ", '".$this->db->escape($this->accountancy_code_value_asset_sold)."'";
+		$sql .= ", '".$this->db->escape($this->accountancy_code_receivable_on_assignment)."'";
+		$sql .= ", '".$this->db->escape($this->accountancy_code_proceeds_from_sales)."'";
+		$sql .= ", '".$this->db->escape($this->accountancy_code_vat_collected)."'";
+		$sql .= ", '".$this->db->escape($this->accountancy_code_vat_deductible)."'";
 		$sql .= ", '".$this->db->escape($this->note)."'";
 		$sql .= ", ".$conf->entity;
+		$sql .= ")";
 		$sql .= ")";
 
 		dol_syslog("Asset_type::create", LOG_DEBUG);
@@ -181,13 +245,18 @@ class AssetType extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."asset_type ";
-		$sql .= "SET ";
-		$sql .= "label = '".$this->db->escape($this->label)."',";
-		$sql .= "accountancy_code_asset = '".$this->db->escape($this->accountancy_code_asset)."',";
-		$sql .= "accountancy_code_depreciation_asset = '".$this->db->escape($this->accountancy_code_depreciation_asset)."',";
-		$sql .= "accountancy_code_depreciation_expense = '".$this->db->escape($this->accountancy_code_depreciation_expense)."',";
-		$sql .= "note = '".$this->db->escape($this->note)."'";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."asset_type";
+		$sql .= " SET";
+		$sql .= " label = '".$this->db->escape($this->label)."'";
+		$sql .= ", accountancy_code_asset = '".$this->db->escape($this->accountancy_code_asset)."'";
+		$sql .= ", accountancy_code_depreciation_asset = '".$this->db->escape($this->accountancy_code_depreciation_asset)."'";
+		$sql .= ", accountancy_code_depreciation_expense = '".$this->db->escape($this->accountancy_code_depreciation_expense)."'";
+		$sql .= ", accountancy_code_value_asset_sold = '".$this->db->escape($this->accountancy_code_value_asset_sold)."'";
+		$sql .= ", accountancy_code_receivable_on_assignment = '".$this->db->escape($this->accountancy_code_receivable_on_assignment)."'";
+		$sql .= ", accountancy_code_proceeds_from_sales = '".$this->db->escape($this->accountancy_code_proceeds_from_sales)."'";
+		$sql .= ", accountancy_code_vat_collected = '".$this->db->escape($this->accountancy_code_vat_collected)."'";
+		$sql .= ", accountancy_code_vat_deductible = '".$this->db->escape($this->accountancy_code_vat_deductible)."'";
+		$sql .= ", note = '".$this->db->escape($this->note)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
@@ -266,7 +335,8 @@ class AssetType extends CommonObject
 	 */
 	public function fetch($rowid)
 	{
-		$sql = "SELECT d.rowid, d.label as label, d.accountancy_code_asset, d.accountancy_code_depreciation_asset, d.accountancy_code_depreciation_expense, d.note";
+		$sql = "SELECT d.rowid, d.label as label, d.accountancy_code_asset, d.accountancy_code_depreciation_asset, d.accountancy_code_depreciation_expense,";
+		$sql .= " accountancy_code_value_asset_sold, accountancy_code_receivable_on_assignment, accountancy_code_proceeds_from_sales, accountancy_code_vat_collected, accountancy_code_vat_deductible, d.note";
 		$sql .= " FROM ".MAIN_DB_PREFIX."asset_type as d";
 		$sql .= " WHERE d.rowid = ".(int) $rowid;
 
@@ -283,6 +353,11 @@ class AssetType extends CommonObject
 				$this->accountancy_code_asset = $obj->accountancy_code_asset;
 				$this->accountancy_code_depreciation_asset = $obj->accountancy_code_depreciation_asset;
 				$this->accountancy_code_depreciation_expense = $obj->accountancy_code_depreciation_expense;
+				$this->accountancy_code_value_asset_sold = $obj->accountancy_code_value_asset_sold;
+				$this->accountancy_code_receivable_on_assignment = $obj->accountancy_code_receivable_on_assignment;
+				$this->accountancy_code_proceeds_from_sales = $obj->accountancy_code_proceeds_from_sales;
+				$this->accountancy_code_vat_collected = $obj->accountancy_code_vat_collected;
+				$this->accountancy_code_vat_deductible = $obj->accountancy_code_vat_deductible;
 				$this->note = $obj->note;
 			}
 

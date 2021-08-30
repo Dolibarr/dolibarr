@@ -69,3 +69,9 @@ DELETE FROM llx_menu WHERE type = 'top' AND module = 'cashdesk' AND mainmenu = '
 
 INSERT INTO llx_c_action_trigger (code, label, description, elementtype, rang) values ('MEMBER_EXCLUDE', 'Member excluded', 'Executed when a member is excluded', 'member', 27);
 
+-- Update module asset
+ALTER TABLE llx_asset_type ADD COLUMN accountancy_code_value_asset_sold varchar(32) AFTER accountancy_code_depreciation_expense;
+ALTER TABLE llx_asset_type ADD COLUMN accountancy_code_receivable_on_assignment varchar(32) AFTER accountancy_code_value_asset_sold;
+ALTER TABLE llx_asset_type ADD COLUMN accountancy_code_proceeds_from_sales varchar(32) AFTER accountancy_code_receivable_on_assignment;
+ALTER TABLE llx_asset_type ADD COLUMN accountancy_code_vat_collected varchar(32) AFTER accountancy_code_proceeds_from_sales;
+ALTER TABLE llx_asset_type ADD COLUMN accountancy_code_vat_deductible varchar(32) AFTER accountancy_code_vat_collected;
