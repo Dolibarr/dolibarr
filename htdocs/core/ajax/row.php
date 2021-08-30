@@ -99,6 +99,8 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		$perm = 1;
 	} elseif ($table_element_line == 'ecm_files' && $fk_element == 'fk_ticket' && !empty($user->rights->ticket->write)) {
 		$perm = 1;
+	} elseif ($table_element_line == 'product_association' && $fk_element == 'fk_product' && !empty($user->rights->produit->creer)) {
+		$perm = 1;
 	} else {
 		$tmparray = explode('_', $table_element_line);
 		$tmpmodule = $tmparray[0]; $tmpobject = preg_replace('/line$/', '', $tmparray[1]);

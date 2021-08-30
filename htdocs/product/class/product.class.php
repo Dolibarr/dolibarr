@@ -4014,22 +4014,27 @@ class Product extends CommonObject
 			dol_print_error($this->db);
 			return -1;
 		} else {
-			$result = $this->db->query($sql);
-			if ($result) {
-				$num = $this->db->num_rows($result);
-				if ($num > 0) {
-					$this->error = "isFatherOfThis";
+			//Selection of the highest row
+			$sql = 'SELECT MAX(rang) as max_rank FROM '.MAIN_DB_PREFIX.'product_association';
+			$sql .= ' WHERE fk_product_pere  = '.$id_pere;
+			$resql = $this->db->query($sql);
+			if ($resql > 0) {
+				$obj = $this->db->fetch_object($resql);
+				$rank = $obj->max_rank + 1;
+				//Addition of a product with the highest rank +1
+				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty,incdec,rang)';
+				$sql .= ' VALUES ('.$id_pere.', '.$id_fils.', '.$qty.', '.$incdec.', '.$rank.')';
+				if (! $this->db->query($sql)) {
+					dol_print_error($this->db);
 					return -1;
-				} else {
-					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty,incdec)';
-					$sql .= ' VALUES ('.((int) $id_pere).', '.((int) $id_fils).', '.((float) $qty).', '.((int) $incdec).')';
-					if (!$this->db->query($sql)) {
-						dol_print_error($this->db);
-						return -1;
-					} else {
-						return 1;
-					}
 				}
+				else
+				{
+					return 1;
+				}
+			} else {
+				dol_print_error($this->db);
+				return -1;
 			}
 		}
 	}
@@ -4102,6 +4107,24 @@ class Product extends CommonObject
 			return -1;
 		}
 
+		//Updated ranks so that none are missing
+		$sqlrank = 'SELECT rowid, rang FROM '.MAIN_DB_PREFIX.'product_association';
+		$sqlrank.= ' WHERE fk_product_pere  = '.$fk_parent;
+		$sqlrank.= ' ORDER BY rang';
+		$resqlrank = $this->db->query($sqlrank);
+		if ($resqlrank) {
+			$cpt = 0;
+			while ($objrank = $this->db->fetch_object($resqlrank)){
+				$cpt++;
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_association';
+				$sql.= ' SET rang ='.$cpt;
+				$sql.= ' WHERE rowid ='.$objrank->rowid;
+				if (! $this->db->query($sql)) {
+					dol_print_error($this->db);
+					return -1;
+				}
+			}
+		}
 		return 1;
 	}
 
@@ -4666,12 +4689,14 @@ class Product extends CommonObject
 		}
 
 		$sql = "SELECT p.rowid, p.ref, p.label as label, p.fk_product_type,";
-		$sql .= " pa.qty as qty, pa.fk_product_fils as id, pa.incdec";
+		$sql .= " pa.qty as qty, pa.fk_product_fils as id, pa.incdec,";
+		$sql .= " pa.rowid as fk_association, pa.rang";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product as p,";
 		$sql .= " ".MAIN_DB_PREFIX."product_association as pa";
 		$sql .= " WHERE p.rowid = pa.fk_product_fils";
 		$sql .= " AND pa.fk_product_pere = ".((int) $id);
 		$sql .= " AND pa.fk_product_fils <> ".((int) $id); // This should not happens, it is to avoid infinite loop if it happens
+		$sql.= " ORDER BY pa.rang";
 
 		dol_syslog(get_class($this).'::getChildsArbo id='.$id.' level='.$level, LOG_DEBUG);
 
@@ -4698,7 +4723,9 @@ class Product extends CommonObject
 					2=>$rec['fk_product_type'],
 					3=>$this->db->escape($rec['label']),
 					4=>$rec['incdec'],
-					5=>$rec['ref']
+					5=>$rec['ref'],
+					6=>$rec['fk_association'],
+					7=>$rec['rang']
 				);
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type']);
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
