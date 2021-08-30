@@ -1258,8 +1258,8 @@ if ($resql) {
 	}
 	// Country
 	if (!empty($arrayfields['country.code_iso']['checked'])) {
-		print '<td class="liste_titre" align="center">';
-		print $form->select_country($search_country, 'search_country', '', 0, 'minwidth100imp maxwidth100');
+		print '<td class="liste_titre center">';
+		print $form->select_country($search_country, 'search_country', '', 0, 'minwidth200imp maxwidth200');
 		print '</td>';
 	}
 	// Company type
