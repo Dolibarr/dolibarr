@@ -4023,7 +4023,7 @@ class Product extends CommonObject
 				$rank = $obj->max_rank + 1;
 				//Addition of a product with the highest rank +1
 				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty,incdec,rang)';
-				$sql .= ' VALUES ('.$id_pere.', '.$id_fils.', '.$this->db->escape($qty).', '.$incdec.', '.$rank.')';
+				$sql .= ' VALUES ('.$id_pere.', '.$id_fils.', '.$qty.', '.$incdec.', '.$this->db->escape($rank).')';
 				if (! $this->db->query($sql)) {
 					dol_print_error($this->db);
 					return -1;
