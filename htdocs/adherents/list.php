@@ -1098,7 +1098,7 @@ while ($i < min($num, $limit)) {
 	}
 	// EMail
 	if (!empty($arrayfields['d.email']['checked'])) {
-		print "<td>".dol_print_email($obj->email, 0, 0, 1)."</td>\n";
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->email).'">'.dol_print_email($obj->email, 0, 0, 1)."</td>\n";
 	}
 	// End of subscription date
 	$datefin = $db->jdate($obj->datefin);
