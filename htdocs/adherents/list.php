@@ -492,7 +492,7 @@ if (GETPOSTISSET("search_status")) {
 	if ($search_status == Adherent::STATUS_VALIDATED && $filter == 'outofdate') {
 		$titre = $langs->trans("MembersListNotUpToDate");
 	}
-	if ($search_status == Adherent::STATUS_RESILIATED) {
+	if ((string) $search_status == (string) Adherent::STATUS_RESILIATED) {	// The cast to string is required to have test false when search_status is ''
 		$titre = $langs->trans("MembersListResiliated");
 	}
 	if ($search_status == Adherent::STATUS_EXCLUDED) {
