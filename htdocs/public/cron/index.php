@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +16,12 @@
  */
 
 /**
- *     	\file       htdocs/public/index.php
+ *     	\file       htdocs/public/cron/index.php
  *		\ingroup    core
- *		\brief      A redirect page to an error page
+ *		\brief      A redirect page to an error
  */
 
-require '../master.inc.php';
+require '../../master.inc.php';
 
 header("Location: ".DOL_URL_ROOT.'/public/error-404.php');
+exit;

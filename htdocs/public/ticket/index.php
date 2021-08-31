@@ -61,6 +61,10 @@ $langs->loadLangs(array('companies', 'other', 'ticket', 'errors'));
 $track_id = GETPOST('track_id', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
+if (empty($conf->ticket->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
+
 
 /*
  * View
