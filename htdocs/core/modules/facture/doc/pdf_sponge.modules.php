@@ -1143,7 +1143,7 @@ class pdf_sponge extends ModelePDFFactures
 			$lib_condition_paiement = str_replace('\n', "\n", $lib_condition_paiement);
 			$pdf->MultiCell(67, 4, $lib_condition_paiement, 0, 'L');
 
-			$posy = $pdf->GetY() + 3;	// We need spaces for 2 lines payment conditions
+			$posy = $pdf->GetY() + 3; // We need spaces for 2 lines payment conditions
 		}
 
 		if ($object->type != 2) {
@@ -2151,7 +2151,7 @@ class pdf_sponge extends ModelePDFFactures
 
 			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$mode =  'target';
+			$mode = 'target';
 			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, $mode, $object);
 
 			// Show recipient
