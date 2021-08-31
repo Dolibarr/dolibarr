@@ -104,6 +104,8 @@ if ($action == 'update') {
 	if (GETPOSTISSET('PDF_USE_ALSO_LANGUAGE_CODE')) dolibarr_set_const($db, "PDF_USE_ALSO_LANGUAGE_CODE", GETPOST('PDF_USE_ALSO_LANGUAGE_CODE', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (GETPOSTISSET('SHOW_SUBPRODUCT_REF_IN_PDF')) dolibarr_set_const($db, "SHOW_SUBPRODUCT_REF_IN_PDF", GETPOST('SHOW_SUBPRODUCT_REF_IN_PDF', 'alpha'), 'chaine', 0, '', $conf->entity);
 
+	if (GETPOSTISSET('PDF_SHOW_LINK_TO_ONLINE_PAYMENT')) dolibarr_set_const($db, "PDF_SHOW_LINK_TO_ONLINE_PAYMENT", GETPOST('PDF_SHOW_LINK_TO_ONLINE_PAYMENT', 'alpha'), 'chaine', 0, '', $conf->entity);
+
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
@@ -461,6 +463,16 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("ShowDetailsInPDFPageFoot").'</td><td>';
 print $form->selectarray('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', $arraydetailsforpdffoot, (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS : 0));
+print '</td></tr>';
+
+// Show online payment link on invoices
+
+print '<tr class="oddeven"><td>'.$langs->trans("PDF_SHOW_LINK_TO_ONLINE_PAYMENT").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('PDF_SHOW_LINK_TO_ONLINE_PAYMENT');
+} else {
+	print $form->selectyesno('PDF_SHOW_LINK_TO_ONLINE_PAYMENT', (!empty($conf->global->PDF_SHOW_LINK_TO_ONLINE_PAYMENT)) ? $conf->global->PDF_SHOW_LINK_TO_ONLINE_PAYMENT : 0, 1);
+}
 print '</td></tr>';
 
 print '</table>';

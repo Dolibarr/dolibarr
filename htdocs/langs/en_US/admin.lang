@@ -2163,3 +2163,4 @@ APIsAreNotEnabled=APIs modules are not enabled
 YouShouldSetThisToOff=You should set this to 0 or off
 InstallAndUpgradeLockedBy=Install and upgrades are locked by the file <b>%s</b>
 OldImplementation=Old implementation
+PDF_SHOW_LINK_TO_ONLINE_PAYMENT=If some online payment modules are enabled (Paypal, Stripe, ...), add a link on the PDF to make the online payment
