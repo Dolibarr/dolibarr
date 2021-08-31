@@ -60,46 +60,46 @@ $error = 0;
 $errors = array();
 
 if (preg_match('/set_(.*)/', $action,$reg)) {
-    $db->begin();
+	$db->begin();
 
-    $code=$reg[1];
-    $value=(GETPOST($code) ? GETPOST($code) : 1);
+	$code = $reg[1];
+	$value = (GETPOST($code) ? GETPOST($code) : 1);
 
-    $res = dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity);
-    if (!$res > 0) {
-        $error++;
-        $errors[] = $db->lasterror();
-    }
+	$res = dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity);
+	if (!$res > 0) {
+		$error++;
+		$errors[] = $db->lasterror();
+	}
 
-    if ($error) {
-        $db->rollback();
-        setEventMessages('', $errors, 'errors');
-    } else {
-        $db->commit();
-        setEventMessage($langs->trans('SetupSaved'));
-        header('Location: ' . $_SERVER["PHP_SELF"]);
-        exit();
-    }
+	if ($error) {
+		$db->rollback();
+		setEventMessages('', $errors, 'errors');
+	} else {
+		$db->commit();
+		setEventMessage($langs->trans('SetupSaved'));
+		header('Location: ' . $_SERVER["PHP_SELF"]);
+		exit();
+	}
 } elseif (preg_match('/del_(.*)/', $action,$reg)) {
-    $db->begin();
+	$db->begin();
 
-    $code = $reg[1];
+	$code = $reg[1];
 
-    $res = dolibarr_del_const($db, $code, $conf->entity);
-    if (!$res > 0) {
-        $error++;
-        $errors[] = $db->lasterror();
-    }
+	$res = dolibarr_del_const($db, $code, $conf->entity);
+	if (!$res > 0) {
+		$error++;
+		$errors[] = $db->lasterror();
+	}
 
-    if ($error) {
-        $db->rollback();
-        setEventMessages('', $errors, 'errors');
-    } else {
-        $db->commit();
-        setEventMessage($langs->trans('SetupSaved'));
-        header('Location: ' . $_SERVER["PHP_SELF"]);
-        exit();
-    }
+	if ($error) {
+		$db->rollback();
+		setEventMessages('', $errors, 'errors');
+	} else {
+		$db->commit();
+		setEventMessage($langs->trans('SetupSaved'));
+		header('Location: ' . $_SERVER["PHP_SELF"]);
+		exit();
+	}
 } elseif ($action == 'save') {
 	$db->begin();
 
