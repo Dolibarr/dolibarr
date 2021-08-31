@@ -209,7 +209,6 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						}
 					}
 				}
-				return $ret;
 			}
 
 			// Second classify billed the proposal.
