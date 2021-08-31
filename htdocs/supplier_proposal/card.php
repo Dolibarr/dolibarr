@@ -1804,7 +1804,7 @@ if ($action == 'create') {
 		$form_close .= $object->note_private;
 		$form_close .= '</textarea></td></tr>';
 		$form_close .= '</table>';
-		$form_close .= $form->buttonsSaveCancel();;
+		$form_close .= $form->buttonsSaveCancel();
 		$form_close .= '<a id="acceptedrefused">&nbsp;</a>';
 		$form_close .= '</form>';
 

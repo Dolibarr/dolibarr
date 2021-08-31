@@ -308,7 +308,7 @@ if ($mode) {
 	print '</tr>';
 
 	foreach ($data as $val) {
-		$year = isset($val['year']) ? $val['year'] : '';;
+		$year = isset($val['year']) ? $val['year'] : '';
 		print '<tr class="oddeven">';
 		print '<td>'.$val['label'].'</td>';
 		if (isset($label2)) {
