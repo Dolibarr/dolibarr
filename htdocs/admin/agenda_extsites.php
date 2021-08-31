@@ -59,7 +59,7 @@ $colorlist = array('BECEDD', 'DDBECE', 'BFDDBE', 'F598B4', 'F68654', 'CBF654', '
 $error = 0;
 $errors = array();
 
-if (preg_match('/set_(.*)/', $action,$reg)) {
+if (preg_match('/set_(.*)/', $action, $reg)) {
 	$db->begin();
 
 	$code = $reg[1];
@@ -80,7 +80,7 @@ if (preg_match('/set_(.*)/', $action,$reg)) {
 		header('Location: ' . $_SERVER["PHP_SELF"]);
 		exit();
 	}
-} elseif (preg_match('/del_(.*)/', $action,$reg)) {
+} elseif (preg_match('/del_(.*)/', $action, $reg)) {
 	$db->begin();
 
 	$code = $reg[1];
@@ -260,7 +260,7 @@ while ($i <= $MAXAGENDA) {
 	$offsettz = 'AGENDA_EXT_OFFSETTZ'.$key;
 	$color = 'AGENDA_EXT_COLOR'.$key;
 	$enabled = 'AGENDA_EXT_ENABLED'.$key;
-    $default = 'AGENDA_EXT_ACTIVEBYDEFAULT'.$key;
+	$default = 'AGENDA_EXT_ACTIVEBYDEFAULT'.$key;
 
 	print '<tr class="oddeven">';
 	// Nb
@@ -279,12 +279,12 @@ while ($i <= $MAXAGENDA) {
 	// Calendar active by default
 	print '<td class="nowrap right">';
 	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('AGENDA_EXT_ACTIVEBYDEFAULT'.$key);
+		print ajax_constantonoff('AGENDA_EXT_ACTIVEBYDEFAULT' . $key);
 	} else {
 		if (empty($conf->global->{$default})) {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_EXT_ACTIVEBYDEFAULT'.$key.'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_AGENDA_EXT_ACTIVEBYDEFAULT' . $key . '">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
 		} else {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_EXT_ACTIVEBYDEFAULT'.$key.'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_AGENDA_EXT_ACTIVEBYDEFAULT' . $key . '">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
 		}
 	}
 	print '</td>';
