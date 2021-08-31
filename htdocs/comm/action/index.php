@@ -265,7 +265,7 @@ if (empty($conf->global->AGENDA_DISABLE_EXT)) {
 		$name = 'AGENDA_EXT_NAME'.$i;
 		$offsettz = 'AGENDA_EXT_OFFSETTZ'.$i;
 		$color = 'AGENDA_EXT_COLOR'.$i;
-        $default = 'AGENDA_EXT_ACTIVEBYDEFAULT'.$i;
+		$default = 'AGENDA_EXT_ACTIVEBYDEFAULT'.$i;
 		$buggedfile = 'AGENDA_EXT_BUGGEDFILE'.$i;
 		if (!empty($conf->global->$source) && !empty($conf->global->$name)) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
@@ -290,7 +290,7 @@ if (empty($user->conf->AGENDA_DISABLE_EXT)) {
 		$offsettz = 'AGENDA_EXT_OFFSETTZ_'.$user->id.'_'.$i;
 		$color = 'AGENDA_EXT_COLOR_'.$user->id.'_'.$i;
 		$enabled = 'AGENDA_EXT_ENABLED_'.$user->id.'_'.$i;
-        $default = 'AGENDA_EXT_ACTIVEBYDEFAULT_'.$user->id.'_'.$i;
+		$default = 'AGENDA_EXT_ACTIVEBYDEFAULT_'.$user->id.'_'.$i;
 		$buggedfile = 'AGENDA_EXT_BUGGEDFILE_'.$user->id.'_'.$i;
 		if (!empty($user->conf->$source) && !empty($user->conf->$name)) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
