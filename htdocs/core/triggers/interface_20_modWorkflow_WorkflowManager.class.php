@@ -206,6 +206,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
 						foreach ($object->linkedObjects['order_supplier'] as $element) {
 							$ret = $element->classifyBilled($user);
+							if ($ret < 0) {
+								return $ret;
+							}
 						}
 					}
 				}
@@ -225,11 +228,34 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
 						foreach ($object->linkedObjects['supplier_proposal'] as $element) {
 							$ret = $element->classifyBilled($user);
+							if ($ret < 0) {
+								return $ret;
+							}
 						}
 					}
 				}
-				return $ret;
 			}
+
+			 // classify billed reception
+			if (!empty($conf->reception->enabled) && !empty($conf->global->WORKFLOW_BILL_ON_RECEPTION)) {
+				$object->fetchObjectLinked('', 'reception', $object->id, $object->element);
+				if (!empty($object->linkedObjects)) {
+					$totalonlinkedelements = 0;
+					foreach ($object->linkedObjects['reception'] as $element) {
+						if ($element->statut == Reception::STATUS_VALIDATED) $totalonlinkedelements += $element->total_ht;
+					}
+					dol_syslog("Amount of linked proposals = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
+					if ($totalonlinkedelements == $object->total_ht) {
+						foreach ($object->linkedObjects['reception'] as $element) {
+							$ret = $element->set_billed();
+							if ($ret < 0) {
+								return $ret;
+							}
+						}
+					}
+				}
+			}
+			return $ret;
 		}
 
 		// Invoice classify billed order
@@ -321,30 +347,6 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						return $ret;
 					}
 				}
-			}
-		}
-
-		 // classify billed reception
-		if ($action == 'BILL_SUPPLIER_VALIDATE') {
-			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id, LOG_DEBUG);
-
-			if (!empty($conf->reception->enabled) && !empty($conf->global->WORKFLOW_BILL_ON_RECEPTION)) {
-				$object->fetchObjectLinked('', 'reception', $object->id, $object->element);
-				if (!empty($object->linkedObjects)) {
-					$totalonlinkedelements = 0;
-					foreach ($object->linkedObjects['reception'] as $element) {
-						if ($element->statut == Reception::STATUS_VALIDATED) {
-							$totalonlinkedelements += $element->total_ht;
-						}
-					}
-					dol_syslog("Amount of linked proposals = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
-					if ($totalonlinkedelements == $object->total_ht) {
-						foreach ($object->linkedObjects['reception'] as $element) {
-							$ret = $element->setBilled();
-						}
-					}
-				}
-				return $ret;
 			}
 		}
 
