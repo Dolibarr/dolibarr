@@ -100,7 +100,7 @@ class RejetPrelevement
 		$facs = $this->getListInvoices(1);
 
 		require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
-		$lipre = new LignePrelevement($this->db, $user);
+		$lipre = new LignePrelevement($this->db);
 		$lipre->fetch($id);
 
 		$this->db->begin();
