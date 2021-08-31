@@ -255,26 +255,26 @@ print "</tr>";
 $i = 1;
 while ($i <= $MAXAGENDA) {
 	$key = $i;
-	$name = 'AGENDA_EXT_NAME'.$key;
-	$src = 'AGENDA_EXT_SRC'.$key;
-	$offsettz = 'AGENDA_EXT_OFFSETTZ'.$key;
-	$color = 'AGENDA_EXT_COLOR'.$key;
-	$enabled = 'AGENDA_EXT_ENABLED'.$key;
-	$default = 'AGENDA_EXT_ACTIVEBYDEFAULT'.$key;
+	$name = 'AGENDA_EXT_NAME' . $key;
+	$src = 'AGENDA_EXT_SRC' . $key;
+	$offsettz = 'AGENDA_EXT_OFFSETTZ' . $key;
+	$color = 'AGENDA_EXT_COLOR' . $key;
+	$enabled = 'AGENDA_EXT_ENABLED' . $key;
+	$default = 'AGENDA_EXT_ACTIVEBYDEFAULT' . $key;
 
 	print '<tr class="oddeven">';
 	// Nb
-	print '<td width="180" class="nowrap">'.$langs->trans("AgendaExtNb", $key)."</td>";
+	print '<td width="180" class="nowrap">' . $langs->trans("AgendaExtNb", $key) . "</td>";
 	// Name
-	print '<td><input type="text" class="flat hideifnotset" name="AGENDA_EXT_NAME'.$key.'" value="'.(GETPOST('AGENDA_EXT_NAME'.$key) ?GETPOST('AGENDA_EXT_NAME'.$key, 'alpha') : getDolGlobalString($name)).'" size="28"></td>';
+	print '<td><input type="text" class="flat hideifnotset" name="AGENDA_EXT_NAME' . $key . '" value="' . (GETPOST('AGENDA_EXT_NAME' . $key) ? GETPOST('AGENDA_EXT_NAME' . $key, 'alpha') : getDolGlobalString($name)) . '" size="28"></td>';
 	// URL
-	print '<td><input type="url" class="flat hideifnotset" name="AGENDA_EXT_SRC'.$key.'" value="'.(GETPOST('AGENDA_EXT_SRC'.$key) ?GETPOST('AGENDA_EXT_SRC'.$key, 'alpha') : getDolGlobalString($src)).'" size="60"></td>';
+	print '<td><input type="url" class="flat hideifnotset" name="AGENDA_EXT_SRC' . $key . '" value="' . (GETPOST('AGENDA_EXT_SRC' . $key) ? GETPOST('AGENDA_EXT_SRC' . $key, 'alpha') : getDolGlobalString($src)) . '" size="60"></td>';
 	// Offset TZ
-	print '<td><input type="text" class="flat hideifnotset" name="AGENDA_EXT_OFFSETTZ'.$key.'" value="'.(GETPOST('AGENDA_EXT_OFFSETTZ'.$key) ? GETPOST('AGENDA_EXT_OFFSETTZ'.$key) : getDolGlobalString($offsettz)).'" size="2"></td>';
+	print '<td><input type="text" class="flat hideifnotset" name="AGENDA_EXT_OFFSETTZ' . $key . '" value="' . (GETPOST('AGENDA_EXT_OFFSETTZ' . $key) ? GETPOST('AGENDA_EXT_OFFSETTZ' . $key) : getDolGlobalString($offsettz)) . '" size="2"></td>';
 	// Color (Possible colors are limited by Google)
 	print '<td class="nowrap right">';
 	//print $formadmin->selectColor($conf->global->$color, "google_agenda_color".$key, $colorlist);
-	print $formother->selectColor((GETPOST("AGENDA_EXT_COLOR".$key) ?GETPOST("AGENDA_EXT_COLOR".$key) : getDolGlobalString($color)), "AGENDA_EXT_COLOR".$key, 'extsitesconfig', 1, '', 'hideifnotset');
+	print $formother->selectColor((GETPOST("AGENDA_EXT_COLOR" . $key) ? GETPOST("AGENDA_EXT_COLOR" . $key) : getDolGlobalString($color)), "AGENDA_EXT_COLOR" . $key, 'extsitesconfig', 1, '', 'hideifnotset');
 	print '</td>';
 	// Calendar active by default
 	print '<td class="nowrap right">';
