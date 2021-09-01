@@ -54,7 +54,7 @@ $langs->loadLangs(array(
 ));
 
 $action = GETPOST('action', 'aZ09');
-$cancelbutton = GETPOST('cancel', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
 
 // Security check
 $id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
@@ -93,7 +93,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($cancelbutton) {
+	if ($cancel) {
 		$action = "";
 	}
 

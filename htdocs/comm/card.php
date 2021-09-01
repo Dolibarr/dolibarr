@@ -108,7 +108,7 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "nom";
 }
-$cancelbutton = GETPOST('cancel', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
 
 $object = new Client($db);
 $extrafields = new ExtraFields($db);
@@ -152,7 +152,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($cancelbutton) {
+	if ($cancel) {
 		$action = "";
 	}
 
