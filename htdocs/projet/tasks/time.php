@@ -449,6 +449,7 @@ if ($action == 'confirm_generateinvoice') {
 				}
 			} elseif ($generateinvoicemode == 'onelineperperiod') {	// One line for each time spent line
 				$arrayoftasks = array();
+				$withdetail=GETPOST('detail_time_duration', 'alpha');
 				foreach ($toselect as $key => $value) {
 					// Get userid, timepent
 					$object->fetchTimeSpent($value);
@@ -462,8 +463,13 @@ if ($action == 'confirm_generateinvoice') {
 					$arrayoftasks[$object->timespent_id]['timespent'] = $object->timespent_duration;
 					$arrayoftasks[$object->timespent_id]['totalvaluetodivideby3600'] = $object->timespent_duration * $object->timespent_thm;
 					$arrayoftasks[$object->timespent_id]['note'] = $ftask->ref.' - '.$ftask->label.' - '.$username.($object->timespent_note ? ' - '.$object->timespent_note : '');		// TODO Add user name in note
-					if (!empty($conf->global->PROJECT_TIME_SPENT_INTO_INVOICE_ADD_TIME_DT)) {
-						$arrayoftasks[$object->timespent_id]['note'] .= "\n";
+					if (!empty($withdetail)) {
+						if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) {
+							$arrayoftasks[$object->timespent_id]['note'] .= "<br/>";
+						} else {
+							$arrayoftasks[$object->timespent_id]['note'] .= "\n";
+						}
+
 						if (!empty($object->timespent_withhour)) {
 							$arrayoftasks[$object->timespent_id]['note'] .= $langs->trans("Date") . ': ' . dol_print_date($object->timespent_datehour);
 						} else {
@@ -1103,6 +1109,25 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 					'onelineperperiod'=>'OneLinePerTimeSpentLine',
 				);
 				print $form->selectarray('generateinvoicemode', $tmparray, 'onelineperuser', 0, 0, 0, '', 1);
+				print "\n".'<script type="text/javascript">';
+				print '
+				$(document).ready(function () {
+					setDetailVisibility();
+					$("#generateinvoicemode").change(function() {
+            			setDetailVisibility();
+            		});
+            		function setDetailVisibility() {
+            			generateinvoicemode = $("#generateinvoicemode option:selected").val();
+            			if (generateinvoicemode=="onelineperperiod") {
+            				$("#detail_time_duration").show();
+            			} else {
+            				$("#detail_time_duration").hide();
+            			}
+            		}
+            	});
+            			';
+				print '</script>'."\n";
+				print '<span style="display:none" id="detail_time_duration"><input type="checkbox" value="detail" name="detail_time_duration"/>'.$langs->trans('AddDetailDateAndDuration').'</span>';
 				print '</td>';
 				print '</tr>';
 
