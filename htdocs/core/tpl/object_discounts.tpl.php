@@ -78,7 +78,7 @@ if ($absolute_discount > 0) {
 }
 
 // Is there credit notes availables ?
-if ($absolute_creditnote > 0) {
+if (isset($absolute_creditnote) && $absolute_creditnote > 0) {
 	// If validated, we show link "add credit note to payment"
 	if ($cannotApplyDiscount || !$isInvoice || $isNewObject || $object->statut != $objclassname::STATUS_VALIDATED || $object->type == $objclassname::TYPE_CREDIT_NOTE) {
 		$translationKey = !empty($discount_type) ? 'HasCreditNoteFromSupplier' : 'CompanyHasCreditNote';
@@ -104,7 +104,7 @@ if ($absolute_creditnote > 0) {
 	}
 }
 
-if ($absolute_discount <= 0 && $absolute_creditnote <= 0) {
+if (!empty($absolute_creditnote) && $absolute_discount <= 0 && $absolute_creditnote <= 0) {
 	$translationKey = !empty($discount_type) ? 'HasNoAbsoluteDiscountFromSupplier' : 'CompanyHasNoAbsoluteDiscount';
 	print '<br><span class="opacitymedium">'.$langs->trans($translationKey).'.</span>';
 
