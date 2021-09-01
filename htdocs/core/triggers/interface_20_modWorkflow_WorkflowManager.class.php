@@ -244,7 +244,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					foreach ($object->linkedObjects['reception'] as $element) {
 						if ($element->statut == Reception::STATUS_VALIDATED) $totalonlinkedelements += $element->total_ht;
 					}
-					dol_syslog("Amount of linked proposals = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
+					dol_syslog("Amount of linked reception = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
 					if ($totalonlinkedelements == $object->total_ht) {
 						foreach ($object->linkedObjects['reception'] as $element) {
 							$ret = $element->set_billed();
