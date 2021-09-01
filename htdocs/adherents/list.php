@@ -602,7 +602,7 @@ if ($user->rights->societe->creer) {
 if ($user->rights->adherent->creer && $user->rights->user->user->creer) {
 	$arrayofmassactions['createexternaluser'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("CreateExternalUser");
 }
-if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
+if (in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
