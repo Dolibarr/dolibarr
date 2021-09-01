@@ -42,7 +42,7 @@ if (!empty($conf->categorie->enabled)) {
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'commercial'));
-if ($conf->eventorganization->enabled) {
+if (!empty($conf->eventorganization->enabled) && $conf->eventorganization->enabled) {
 	$langs->loadLangs(array('eventorganization'));
 }
 
@@ -56,7 +56,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'pro
 $title = $langs->trans("Projects");
 
 // Security check
-$socid = (is_numeric($_GET["socid"]) ? $_GET["socid"] : 0);
+$socid = (!empty($_GET["socid"]) && is_numeric($_GET["socid"]) ? $_GET["socid"] : 0);
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 if ($socid > 0) {
 	$soc = new Societe($db);
@@ -108,7 +108,7 @@ $search_price_registration = GETPOST("search_price_registration", 'alpha');
 $search_price_booth = GETPOST("search_price_booth", 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 
-$mine = $_REQUEST['mode'] == 'mine' ? 1 : 0;
+$mine = (!empty($_REQUEST['mode']) && $_REQUEST['mode'] == 'mine') ? 1 : 0;
 if ($mine) {
 	$search_project_user = $user->id; $mine = 0;
 }
@@ -365,7 +365,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as p";
 if (!empty($conf->categorie->enabled)) {
 	$sql .= Categorie::getFilterJoinQuery(Categorie::TYPE_PROJECT, "p.rowid");
 }
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) &&is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
@@ -561,7 +561,7 @@ if ($search_eyear) {
 if ($socid) {
 	$param .= '&socid='.urlencode($socid);
 }
-if ($search_categ) {
+if (!empty($search_categ)) {
 	$param .= '&search_categ='.urlencode($search_categ);
 }
 if ($search_ref != '') {
