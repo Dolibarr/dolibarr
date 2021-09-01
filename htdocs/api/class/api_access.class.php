@@ -149,6 +149,8 @@ class DolibarrApiAccess implements iAuthenticate
 			}
 			$fuser->getrights();
 			static::$user = $fuser;
+			
+			// Set the global variable $user to the $user of API
 			$user = $fuser;
 
 			if ($fuser->socid) {
