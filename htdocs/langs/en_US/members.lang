@@ -88,6 +88,7 @@ Moral=Corporation
 MorAndPhy=Corporation and Individual
 Reenable=Re-Enable
 ExcludeMember=Exclude a member
+Exclude=Exclude
 ConfirmExcludeMember=Are you sure you want to exclude this member ? 
 ResiliateMember=Terminate a member
 ConfirmResiliateMember=Are you sure you want to terminate this member?
