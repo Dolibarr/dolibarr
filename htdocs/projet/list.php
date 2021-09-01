@@ -121,6 +121,26 @@ $search_eday	= GETPOST('search_eday', 'int');
 $search_emonth	= GETPOST('search_emonth', 'int');
 $search_eyear	= GETPOST('search_eyear', 'int');
 
+
+$search_date_start_startmonth = GETPOST('search_date_start_startmonth', 'int');
+$search_date_start_startyear = GETPOST('search_date_start_startyear', 'int');
+$search_date_start_startday = GETPOST('search_date_start_startday', 'int');
+$search_date_start_start = dol_mktime(0, 0, 0, $search_date_start_startmonth, $search_date_start_startday, $search_date_start_startyear);	// Use tzserver
+$search_date_start_endmonth = GETPOST('search_date_start_endmonth', 'int');
+$search_date_start_endyear = GETPOST('search_date_start_endyear', 'int');
+$search_date_start_endday = GETPOST('search_date_start_endday', 'int');
+$search_date_start_end = dol_mktime(23, 59, 59, $search_date_start_endmonth, $search_date_start_endday, $search_date_start_endyear);	// Use tzserver
+
+$search_date_end_startmonth = GETPOST('search_date_end_startmonth', 'int');
+$search_date_end_startyear = GETPOST('search_date_end_startyear', 'int');
+$search_date_end_startday = GETPOST('search_date_end_startday', 'int');
+$search_date_end_start = dol_mktime(0, 0, 0, $search_date_end_startmonth, $search_date_end_startday, $search_date_end_startyear);	// Use tzserver
+$search_date_end_endmonth = GETPOST('search_date_end_endmonth', 'int');
+$search_date_end_endyear = GETPOST('search_date_end_endyear', 'int');
+$search_date_end_endday = GETPOST('search_date_end_endday', 'int');
+$search_date_end_end = dol_mktime(23, 59, 59, $search_date_end_endmonth, $search_date_end_endday, $search_date_end_endyear);	// Use tzserver
+
+
 if ($search_status == '') {
 	$search_status = -1; // -1 or 1
 }
@@ -238,6 +258,22 @@ if (empty($reshook)) {
 		$search_eday = "";
 		$search_emonth = "";
 		$search_eyear = "";
+		$search_date_start_startmonth = "";
+		$search_date_start_startyear = "";
+		$search_date_start_startday = "";
+		$search_date_start_start = "";
+		$search_date_start_endmonth = "";
+		$search_date_start_endyear = "";
+		$search_date_start_endday = "";
+		$search_date_start_end = "";
+		$search_date_end_startmonth = "";
+		$search_date_end_startyear = "";
+		$search_date_end_startday = "";
+		$search_date_end_start = "";
+		$search_date_end_endmonth = "";
+		$search_date_end_endyear = "";
+		$search_date_end_endday = "";
+		$search_date_end_end = "";
 		$search_usage_opportunity = '';
 		$search_usage_task = '';
 		$search_usage_bill_time = '';
@@ -409,6 +445,22 @@ if ($search_opp_percent) {
 }
 $sql .= dolSqlDateFilter('p.dateo', $search_sday, $search_smonth, $search_syear);
 $sql .= dolSqlDateFilter('p.datee', $search_eday, $search_emonth, $search_eyear);
+
+
+if ($search_date_start_start) {
+	$sql .= " AND p.dateo >= '".$db->idate($search_date_start_start)."'";
+}
+if ($search_date_start_end) {
+	$sql .= " AND p.dateo <= '".$db->idate($search_date_start_end)."'";
+}
+
+if ($search_date_end_start) {
+	$sql .= " AND p.datee >= '".$db->idate($search_date_end_start)."'";
+}
+if ($search_date_end_end) {
+	$sql .= " AND p.datee <= '".$db->idate($search_date_end_end)."'";
+}
+
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
@@ -558,6 +610,54 @@ if ($search_emonth) {
 }
 if ($search_eyear) {
 	$param .= '&search_eyear='.urlencode($search_eyear);
+}
+if ($search_date_start_startmonth) {
+	$param .= '&search_date_start_startmonth='.urlencode($search_date_start_startmonth);
+}
+if ($search_date_start_startyear) {
+	$param .= '&search_date_start_startyear='.urlencode($search_date_start_startyear);
+}
+if ($search_date_start_startday) {
+	$param .= '&search_date_start_startday='.urlencode($search_date_start_startday);
+}
+if ($search_date_start_start) {
+	$param .= '&search_date_start_start='.urlencode($search_date_start_start);
+}
+if ($search_date_start_endmonth) {
+	$param .= '&search_date_start_endmonth='.urlencode($search_date_start_endmonth);
+}
+if ($search_date_start_endyear) {
+	$param .= '&search_date_start_endyear='.urlencode($search_date_start_endyear);
+}
+if ($search_date_start_endday) {
+	$param .= '&search_date_start_endday='.urlencode($search_date_start_endday);
+}
+if ($search_date_start_end) {
+	$param .= '&search_date_start_end='.urlencode($search_date_start_end);
+}
+if ($search_date_end_startmonth) {
+	$param .= '&search_date_end_startmonth='.urlencode($search_date_end_startmonth);
+}
+if ($search_date_end_startyear) {
+	$param .= '&search_date_end_startyear='.urlencode($search_date_end_startyear);
+}
+if ($search_date_end_startday) {
+	$param .= '&search_date_end_startday='.urlencode($search_date_end_startday);
+}
+if ($search_date_end_start) {
+	$param .= '&search_date_end_start='.urlencode($search_date_end_start);
+}
+if ($search_date_end_endmonth) {
+	$param .= '&search_date_end_endmonth='.urlencode($search_date_end_endmonth);
+}
+if ($search_date_end_endyear) {
+	$param .= '&search_date_end_endyear='.urlencode($search_date_end_endyear);
+}
+if ($search_date_end_endday) {
+	$param .= '&search_date_end_endday='.urlencode($search_date_end_endday);
+}
+if ($search_date_end_end) {
+	$param .= '&search_date_end_end=' . urlencode($search_date_end_end);
 }
 if ($socid) {
 	$param .= '&socid='.urlencode($socid);
@@ -770,21 +870,33 @@ if (!empty($arrayfields['commercial']['checked'])) {
 // Start date
 if (!empty($arrayfields['p.dateo']['checked'])) {
 	print '<td class="liste_titre center nowraponall">';
-	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
+	/*if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
 		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_sday" value="'.dol_escape_htmltag($search_sday).'">';
 	}
 	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_smonth" value="'.dol_escape_htmltag($search_smonth).'">';
-	$formother->select_year($search_syear ? $search_syear : -1, 'search_syear', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
+	$formother->select_year($search_syear ? $search_syear : -1, 'search_syear', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');*/
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_start_start ? $search_date_start_start : -1, 'search_date_start_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_start_end ? $search_date_start_end : -1, 'search_date_start_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 // End date
 if (!empty($arrayfields['p.datee']['checked'])) {
 	print '<td class="liste_titre center nowraponall">';
-	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
+	/*if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
 		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_eday" value="'.dol_escape_htmltag($search_eday).'">';
 	}
 	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_emonth" value="'.dol_escape_htmltag($search_emonth).'">';
-	$formother->select_year($search_eyear ? $search_eyear : -1, 'search_eyear', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
+	$formother->select_year($search_eyear ? $search_eyear : -1, 'search_eyear', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');*/
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_end_start ? $search_date_end_start : -1, 'search_date_end_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_end_end ? $search_date_end_end : -1, 'search_date_end_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 if (!empty($arrayfields['p.public']['checked'])) {
