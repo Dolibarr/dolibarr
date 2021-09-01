@@ -3021,7 +3021,7 @@ abstract class CommonObject
 	 *
 	 * 	@param	int		$rowid		Id of line
 	 * 	@param	int		$rang		Position
-	 * 	@return	int
+	 * 	@return	int					<0 if KO, >0 if OK
 	 */
 	public function updateRangOfLine($rowid, $rang)
 	{
