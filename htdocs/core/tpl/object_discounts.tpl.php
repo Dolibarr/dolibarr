@@ -30,6 +30,14 @@ $objclassname = get_class($object);
 $isInvoice = in_array($object->element, array('facture', 'invoice', 'facture_fourn', 'invoice_supplier'));
 $isNewObject = empty($object->id) && empty($object->rowid);
 
+// Clean variables not defined
+if (!isset($absolute_discount)) {
+	$absolute_discount = 0;
+}
+if (!isset($absolute_creditnote)) {
+	$absolute_creditnote = 0;
+}
+	
 // Relative and absolute discounts
 $addrelativediscount = '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$thirdparty->id.'&backtopage='.$backtopage.'">'.$langs->trans("EditRelativeDiscount").'</a>';
 $addabsolutediscount = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$thirdparty->id.'&backtopage='.$backtopage.'">'.$langs->trans("EditGlobalDiscounts").'</a>';
@@ -78,7 +86,7 @@ if ($absolute_discount > 0) {
 }
 
 // Is there credit notes availables ?
-if (isset($absolute_creditnote) && $absolute_creditnote > 0) {
+if ($absolute_creditnote > 0) {
 	// If validated, we show link "add credit note to payment"
 	if ($cannotApplyDiscount || !$isInvoice || $isNewObject || $object->statut != $objclassname::STATUS_VALIDATED || $object->type == $objclassname::TYPE_CREDIT_NOTE) {
 		$translationKey = !empty($discount_type) ? 'HasCreditNoteFromSupplier' : 'CompanyHasCreditNote';
@@ -104,7 +112,7 @@ if (isset($absolute_creditnote) && $absolute_creditnote > 0) {
 	}
 }
 
-if (!empty($absolute_creditnote) && $absolute_discount <= 0 && $absolute_creditnote <= 0) {
+if ($absolute_discount <= 0 && $absolute_creditnote <= 0) {
 	$translationKey = !empty($discount_type) ? 'HasNoAbsoluteDiscountFromSupplier' : 'CompanyHasNoAbsoluteDiscount';
 	print '<br><span class="opacitymedium">'.$langs->trans($translationKey).'.</span>';
 
