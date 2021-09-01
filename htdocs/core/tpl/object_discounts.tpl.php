@@ -37,7 +37,7 @@ if (!isset($absolute_discount)) {
 if (!isset($absolute_creditnote)) {
 	$absolute_creditnote = 0;
 }
-	
+
 // Relative and absolute discounts
 $addrelativediscount = '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$thirdparty->id.'&backtopage='.$backtopage.'">'.$langs->trans("EditRelativeDiscount").'</a>';
 $addabsolutediscount = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$thirdparty->id.'&backtopage='.$backtopage.'">'.$langs->trans("EditGlobalDiscounts").'</a>';
