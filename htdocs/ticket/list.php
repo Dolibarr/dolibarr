@@ -390,7 +390,7 @@ foreach ($search as $key => $val) {
 		}
 		continue;
 	}
-	$mode_search = ((!empty($object->fields[$key]) && $object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
+	$mode_search = ($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
 	if ($search[$key] != '') {
 		$sql .= natural_search($key, $search[$key], $mode_search);
 	}
