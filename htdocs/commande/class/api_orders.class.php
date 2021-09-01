@@ -717,6 +717,8 @@ class Orders extends DolibarrApi
 			throw new RestException(404, 'Order not found');
 		}
 
+		$result = $this->commande->fetch_thirdparty(); // do not check result, as failure is not fatal (used only for mail notification substitutes)
+
 		if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
@@ -729,13 +731,6 @@ class Orders extends DolibarrApi
 			throw new RestException(500, 'Error when validating Order: '.$this->commande->error);
 		}
 		$result = $this->commande->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'Order not found');
-		}
-
-		if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
 
 		$this->commande->fetchObjectLinked();
 
