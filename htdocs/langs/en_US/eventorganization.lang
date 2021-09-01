@@ -123,8 +123,6 @@ ConferenceIsNotConfirmed=Subcription not available, conference is not confirmed 
 DateMustBeBeforeThan=%s must be before %s
 DateMustBeAfterThan=%s must be after %s
 
-NewSubscription=Registration
-
 #
 # Vote page
 #
