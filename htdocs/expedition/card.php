@@ -379,7 +379,11 @@ if (empty($reshook)) {
 				}
 			}
 		} else {
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("QtyToShip").'/'.$langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
+			$labelfieldmissing = $langs->transnoentitiesnoconv("QtyToShip");
+			if (!empty($conf->stock->enabled)) {
+				$labelfieldmissing .= '/'.$langs->transnoentitiesnoconv("Warehouse");
+			}
+			setEventMessages($langs->trans("ErrorFieldRequired", $labelfieldmissing), null, 'errors');
 			$error++;
 		}
 
@@ -717,6 +721,16 @@ if (empty($reshook)) {
 									unset($_POST[$qty]);
 								}
 							}
+						} elseif (empty($conf->stock->enabled) && empty($conf->productbatch->enabled)) { // both product batch and stock are not activated.
+							$qty = "qtyl".$line_id;
+							$line->id = $line_id;
+							$line->qty = GETPOST($qty, 'int');
+							$line->entrepot_id = 0;
+							if ($line->update($user) < 0) {
+								setEventMessages($line->error, $line->errors, 'errors');
+								$error++;
+							}
+							unset($_POST[$qty]);
 						}
 					} else {
 						// Product no predefined
@@ -785,6 +799,10 @@ if (empty($reshook)) {
 $help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
 
 llxHeader('', $langs->trans('Shipment'), 'Expedition', $help_url);
+
+if (empty($action)) {
+	$action = 'view';
+}
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -997,9 +1015,9 @@ if ($action == 'create') {
 
 			$numAsked = count($object->lines);
 
-			print '<script type="text/javascript" language="javascript">
-            jQuery(document).ready(function() {
-	            jQuery("#autofill").click(function() {';
+			print '<script type="text/javascript" language="javascript">'."\n";
+			print 'jQuery(document).ready(function() {'."\n";
+			print 'jQuery("#autofill").click(function() {';
 			$i = 0;
 			while ($i < $numAsked) {
 				print 'jQuery("#qtyl'.$i.'").val(jQuery("#qtyasked'.$i.'").val() - jQuery("#qtydelivered'.$i.'").val());'."\n";
@@ -1008,10 +1026,11 @@ if ($action == 'create') {
 				}
 				$i++;
 			}
-			print '});
-	            jQuery("#autoreset").click(function() { console.log("Reset values to 0"); jQuery(".qtyl").val(0); });
-        	});
-            </script>';
+			print 'return false; });'."\n";
+			print 'jQuery("#autoreset").click(function() { console.log("Reset values to 0"); jQuery(".qtyl").val(0);'."\n";
+			print 'return false; });'."\n";
+			print '});'."\n";
+			print '</script>'."\n";
 
 			print '<br>';
 
@@ -1172,7 +1191,7 @@ if ($action == 'create') {
 									$deliverableQty = GETPOST('qtyl'.$indiceAsked, 'int');
 								}
 								print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-								print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
+								print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" class="qtyl center" type="text" size="4" value="'.$deliverableQty.'">';
 							} else {
 								print $langs->trans("NA");
 							}
@@ -2189,7 +2208,7 @@ if ($action == 'create') {
 
 				if ($action == 'editline' && $lines[$i]->id == $line_id) {
 					// edit mode
-					print '<td colspan="'.$editColspan.'" class="center"><table class="nobordernopadding">';
+					print '<td colspan="'.$editColspan.'" class="center"><table class="nobordernopadding centpercent">';
 					if (is_array($lines[$i]->detail_batch) && count($lines[$i]->detail_batch) > 0) {
 						print '<!-- case edit 1 -->';
 						$line = new ExpeditionLigne($db);
@@ -2252,6 +2271,16 @@ if ($action == 'create') {
 							print '<td></td>';
 							print '</tr>';
 						}
+					} elseif (empty($conf->stock->enabled) && empty($conf->productbatch->enabled)) { // both product batch and stock are not activated.
+						print '<!-- case edit 6 -->';
+						print '<tr>';
+						// Qty to ship or shipped
+						print '<td><input class="qtyl" name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'"></td>';
+						// Warehouse source
+						print '<td></td>';
+						// Batch number managment
+						print '<td></td>';
+						print '</tr>';
 					}
 
 					print '</table></td>';
@@ -2369,10 +2398,11 @@ if ($action == 'create') {
 					$line = $lines[$i];
 					$line->fetch_optionals();
 
+					// TODO Show all in same line by setting $display_type = 'line'
 					if ($action == 'editline' && $line->id == $line_id) {
-						print $lines[$i]->showOptionals($extrafields, 'edit', array('colspan'=>$colspan), $indiceAsked);
+						print $lines[$i]->showOptionals($extrafields, 'edit', array('colspan'=>$colspan), $indiceAsked, '', 0, 'card');
 					} else {
-						print $lines[$i]->showOptionals($extrafields, 'view', array('colspan'=>$colspan), $indiceAsked);
+						print $lines[$i]->showOptionals($extrafields, 'view', array('colspan'=>$colspan), $indiceAsked, '', 0, 'card');
 					}
 				}
 			}

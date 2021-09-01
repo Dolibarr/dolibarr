@@ -585,12 +585,15 @@ class ActionComm extends CommonObject
 				//dol_syslog(var_export($this->userassigned, true));
 				$already_inserted = array();
 				foreach ($this->userassigned as $key => $val) {
-					if (!is_array($val)) {	// For backward compatibility when val=id
+					// Common value with new behavior is to have $val = array('id'=>iduser, 'transparency'=>0|1) and $this->userassigned is an array of iduser => $val.
+					if (!is_array($val)) {	// For backward compatibility when $val='id'.
 						$val = array('id'=>$val);
 					}
 
 					if ($val['id'] > 0) {
-						if (!empty($already_inserted[$val['id']])) continue;
+						if (!empty($already_inserted[$val['id']])) {
+							continue;
+						}
 
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
 						$sql .= " VALUES(".$this->id.", 'user', ".$val['id'].", ".(empty($val['mandatory']) ? '0' : $val['mandatory']).", ".(empty($val['transparency']) ? '0' : $val['transparency']).", ".(empty($val['answer_status']) ? '0' : $val['answer_status']).")";
@@ -612,7 +615,10 @@ class ActionComm extends CommonObject
 				if (!empty($this->socpeopleassigned)) {
 					$already_inserted = array();
 					foreach ($this->socpeopleassigned as $id => $val) {
-						if (!empty($already_inserted[$val['id']])) continue;
+						// Common value with new behavior is to have $val = iduser and $this->socpeopleassigned is an array of iduser => $val.
+						if (!empty($already_inserted[$id])) {
+							continue;
+						}
 
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
 						$sql .= " VALUES(".$this->id.", 'socpeople', ".$id.", 0, 0, 0)";
@@ -623,7 +629,7 @@ class ActionComm extends CommonObject
 							dol_syslog('Error to process socpeopleassigned: ' . $this->db->lasterror(), LOG_ERR);
 							$this->errors[] = $this->db->lasterror();
 						} else {
-							$already_inserted[$val['id']] = true;
+							$already_inserted[$id] = true;
 						}
 					}
 				}

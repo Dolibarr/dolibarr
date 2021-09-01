@@ -612,7 +612,7 @@ if ($rowid > 0) {
 				// Show link to invoices
 				$tmparray = $company->getOutstandingBills('customer');
 				if (!empty($tmparray['refs'])) {
-					print ' - '.img_picto($langs->trans("Invoices"), 'bill', 'class="paddingright"').'<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->socid.'">'.$langs->trans("Invoices").': '.count($tmparray['refs']);
+					print ' - '.img_picto($langs->trans("Invoices"), 'bill', 'class="paddingright"').'<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->socid.'">'.$langs->trans("Invoices").' ('.count($tmparray['refs']).')';
 					// TODO Add alert if warning on at least one invoice late
 					print '</a>';
 				}
