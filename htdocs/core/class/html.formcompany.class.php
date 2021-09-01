@@ -183,7 +183,7 @@ class FormCompany extends Form
 		if (!empty($htmlname) && $user->admin) {
 			print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
-		print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		print '<input type="submit" class="button button-save valignmiddle" value="'.$langs->trans("Modify").'">';
 		print '</form>';
 	}
 
@@ -234,7 +234,7 @@ class FormCompany extends Form
 		if (!empty($htmlname) && $user->admin) {
 			print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
-		print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		print '<input type="submit" class="button button-save valignmiddle" value="'.$langs->trans("Modify").'">';
 		print '</form>';
 	}
 
@@ -1077,7 +1077,7 @@ class FormCompany extends Form
 			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			$out .= '</form>';
 		} else {
-			if ($selected) {
+			if ($selected > 0) {
 				$arr = $this->typent_array(0);
 				$typent = $arr[$selected];
 				$out .= $typent;

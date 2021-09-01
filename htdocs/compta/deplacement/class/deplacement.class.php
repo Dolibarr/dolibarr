@@ -249,7 +249,7 @@ class Deplacement extends CommonObject
 		$sql .= " , note_private = ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= " , note_public = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= " , fk_projet = ".($this->fk_project > 0 ? $this->fk_project : 0);
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);

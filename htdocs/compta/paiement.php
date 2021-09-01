@@ -529,14 +529,14 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		$sql .= ' f.datef as df, f.fk_soc as socid, f.date_lim_reglement as dlr';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 		$sql .= ' WHERE f.entity IN ('.getEntity('facture').')';
-		$sql .= ' AND (f.fk_soc = '.$facture->socid;
+		$sql .= ' AND (f.fk_soc = '.((int) $facture->socid);
 		// Can pay invoices of all child of parent company
 		if (!empty($conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS) && !empty($facture->thirdparty->parent)) {
-			$sql .= ' OR f.fk_soc IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'societe WHERE parent = '.$facture->thirdparty->parent.')';
+			$sql .= ' OR f.fk_soc IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'societe WHERE parent = '.((int) $facture->thirdparty->parent).')';
 		}
 		// Can pay invoices of all child of myself
 		if (!empty($conf->global->FACTURE_PAYMENTS_ON_SUBSIDIARY_COMPANIES)) {
-			$sql .= ' OR f.fk_soc IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'societe WHERE parent = '.$facture->thirdparty->id.')';
+			$sql .= ' OR f.fk_soc IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'societe WHERE parent = '.((int) $facture->thirdparty->id).')';
 		}
 		$sql .= ') AND f.paye = 0';
 		$sql .= ' AND f.fk_statut = 1'; // Statut=0 => not validated, Statut=2 => canceled
@@ -875,7 +875,7 @@ if (!GETPOST('action', 'aZ09')) {
 		$sql .= ' AND f.fk_soc = '.((int) $socid);
 	}
 
-	$sql .= ' ORDER BY '.$sortfield.' '.$sortorder;
+	$sql .= $db->order($sortfield, $sortorder);
 	$sql .= $db->plimit($limit + 1, $offset);
 	$resql = $db->query($sql);
 

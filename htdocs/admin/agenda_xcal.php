@@ -139,9 +139,7 @@ print '</table>';
 
 print dol_get_fiche_end();
 
-print '<div class="center">';
-print '<input type="submit" name="save" class="button button-save" value="'.$langs->trans("Save").'">';
-print "</div>";
+print $form->buttonsSaveCancel("Save", '');
 
 print "</form>\n";
 
@@ -165,24 +163,27 @@ $urlvcal = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=vcal
 $urlvcal .= $urlwithroot.'/public/agenda/agendaexport.php?format=vcal'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : 'KEYNOTDEFINED').'</a>';
 $message .= img_picto('', 'globe').' '.str_replace('{url}', $urlvcal, '<span class="opacitymedium">'.$langs->trans("WebCalUrlForVCalExport", 'vcal', '').'</span>');
 $message .= '<div class="urllink">';
-$message .= '<input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$urlwithroot.'/public/agenda/agendaexport.php?format=vcal'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'">';
+$message .= '<input type="text" id="onlinepaymenturl1" class="quatrevingtpercent" value="'.$urlwithroot.'/public/agenda/agendaexport.php?format=vcal'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'">';
 $message .= '</div>';
+$message .= ajax_autoselect('onlinepaymenturl1');
 $message .= '<br>';
 
 $urlical = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical&type=event'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank">';
 $urlical .= $urlwithroot.'/public/agenda/agendaexport.php?format=ical&type=event'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : 'KEYNOTDEFINED').'</a>';
 $message .= img_picto('', 'globe').' '.str_replace('{url}', $urlical, '<span class="opacitymedium">'.$langs->trans("WebCalUrlForVCalExport", 'ical/ics', '').'</span>');
 $message .= '<div class="urllink">';
-$message .= '<input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'">';
+$message .= '<input type="text" id="onlinepaymenturl2" class="quatrevingtpercent" value="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'">';
 $message .= '</div>';
+$message .= ajax_autoselect('onlinepaymenturl2');
 $message .= '<br>';
 
 $urlrss = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=rss'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank">';
 $urlrss .= $urlwithroot.'/public/agenda/agendaexport.php?format=rss'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : 'KEYNOTDEFINED').'</a>';
 $message .= img_picto('', 'globe').' '.str_replace('{url}', $urlrss, '<span class="opacitymedium">'.$langs->trans("WebCalUrlForVCalExport", 'rss', '').'</span>');
 $message .= '<div class="urllink">';
-$message .= '<input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$urlwithroot.'/public/agenda/agendaexport.php?format=rss'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'">';
+$message .= '<input type="text" id="onlinepaymenturl3" class="quatrevingtpercent" value="'.$urlwithroot.'/public/agenda/agendaexport.php?format=rss'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'">';
 $message .= '</div>';
+$message .= ajax_autoselect('onlinepaymenturl3');
 $message .= '<br>';
 
 print $message;

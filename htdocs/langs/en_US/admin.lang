@@ -1218,7 +1218,7 @@ SystemAreaForAdminOnly=This area is available to administrator users only. Dolib
 CompanyFundationDesc=Edit the information of your company/organization. Click on "%s" button at the bottom of the page when done.
 AccountantDesc=If you have an external accountant/bookkeeper, you can edit here its information.
 AccountantFileNumber=Accountant code
-DisplayDesc=Parameters affecting the look and behaviour of Dolibarr can be modified here.
+DisplayDesc=Parameters affecting the look and behaviour of the application can be modified here.
 AvailableModules=Available app/modules
 ToActivateModule=To activate modules, go on setup Area (Home->Setup->Modules).
 SessionTimeOut=Time out for session
@@ -1421,7 +1421,7 @@ WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER=Ask for Warehouse Source for order
 ##### Suppliers Orders #####
 BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER=Ask for bank account destination of purchase order
 ##### Orders #####
-SuggestedPaymentModesIfNotDefinedInOrder=Suggested payments mode on sale order by default if not defined on the order
+SuggestedPaymentModesIfNotDefinedInOrder=Suggested payments mode on sales order by default if not defined on the order
 OrdersSetup=Sales Orders management setup
 OrdersNumberingModules=Orders numbering models
 OrdersModelModule=Order documents models
@@ -2163,3 +2163,4 @@ APIsAreNotEnabled=APIs modules are not enabled
 YouShouldSetThisToOff=You should set this to 0 or off
 InstallAndUpgradeLockedBy=Install and upgrades are locked by the file <b>%s</b>
 OldImplementation=Old implementation
+PDF_SHOW_LINK_TO_ONLINE_PAYMENT=If some online payment modules are enabled (Paypal, Stripe, ...), add a link on the PDF to make the online payment

@@ -264,6 +264,7 @@ ErrorAnAmountWithoutTaxIsRequired=錯誤，金額為必填項目
 ErrorAPercentIsRequired=錯誤，請正確填寫百分比
 ErrorYouMustFirstSetupYourChartOfAccount=您必須先設定會計項目表
 ErrorFailedToFindEmailTemplate=無法找到代號為 %s 的模板
+ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=未在服務中定義時間範圍.無法計算時薪.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=您的PHP參數upload_max_filesize（%s）高於PHP參數post_max_size（%s）。這不是相同的設定。

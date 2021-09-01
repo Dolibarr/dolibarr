@@ -21,6 +21,7 @@ CREATE TABLE llx_knowledgemanagement_knowledgerecord(
 	date_creation datetime NOT NULL, 
 	tms timestamp, 
 	last_main_doc varchar(255), 
+	lang varchar(6),
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
 	fk_user_valid integer, 

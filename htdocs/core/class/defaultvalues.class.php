@@ -264,17 +264,17 @@ class DefaultValues extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid' || ($key == 't.entity' && !is_array($value)) || ($key == 't.user_id' && !is_array($value))) {
-					$sqlwhere[] = $key.'='.$value;
+					$sqlwhere[] = $key." = ".((int) $value);
 				} elseif (isset($this->fields[$key]) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
+					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 't.page' || $key == 't.param' || $key == 't.type') {
-					$sqlwhere[] = $key.' = \''.$this->db->escape($value).'\'';
+					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
 				} elseif (is_array($value)) {
-					$sqlwhere[] = $key.' IN ('.$this->db->sanitize(implode(',', $value)).')';
+					$sqlwhere[] = $key." IN (".$this->db->sanitize(implode(',', $value)).")";
 				} else {
-					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}
@@ -286,7 +286,7 @@ class DefaultValues extends CommonObject
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit, $offset);
+			$sql .= $this->db->plimit($limit, $offset);
 		}
 
 		$resql = $this->db->query($sql);

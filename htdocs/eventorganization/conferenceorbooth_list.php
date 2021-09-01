@@ -449,7 +449,7 @@ $sql .= $object->getFieldList('t');
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key.', ' : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key.', ' : '');
 	}
 }
 // Add fields from hooks
@@ -472,7 +472,7 @@ if ($object->ismultientitymanaged == 1) {
 	$sql .= " WHERE 1 = 1";
 }
 if ($projectid > 0) {
-	$sql .= ' AND t.fk_project='.$project->id;
+	$sql .= " AND t.fk_project = ".((int) $project->id);
 }
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
@@ -612,7 +612,7 @@ $newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle'
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 // Add code for pre mass action (confirmation or email presend form)
-$topicmail = "SendConferenceOrBoothRef";
+$topicmail = $object->ref;
 $modelmail = "conferenceorbooth";
 $objecttmp = new ConferenceOrBooth($db);
 $trackid = 'conferenceorbooth_'.$object->id;

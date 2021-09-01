@@ -1149,3 +1149,7 @@ RecordEnabled=Record enabled
 RecordDisabled=Record disabled
 Forthcoming=Forthcoming
 Currently=Currently
+ConfirmMassLeaveApprovalQuestion=Are you sure you want to approve the %s selected record(s)?
+ConfirmMassLeaveApproval=Mass leave approval confirmation
+RecordAproved=Record approved
+RecordsApproved=%s Record(s) approved

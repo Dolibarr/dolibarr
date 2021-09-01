@@ -231,7 +231,7 @@ class Establishment extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'establishment');
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."establishment SET ref = '".$this->db->escape($this->id)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$this->db->query($sql);
 
 			$this->db->commit();
@@ -269,7 +269,7 @@ class Establishment extends CommonObject
 		$sql .= ", entity = ".((int) $this->entity);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$this->db->commit();

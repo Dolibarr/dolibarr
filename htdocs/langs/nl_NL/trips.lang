@@ -90,7 +90,6 @@ DATE_REFUS=Weiger datum
 DATE_SAVE=Validatiedatum
 DATE_CANCEL=Annuleringsdatum
 DATE_PAIEMENT=Betaaldatum
-BROUILLONNER=Heropenen
 ExpenseReportRef=Ref. onkostennota
 ValidateAndSubmit=Valideren en indienen voor goedkeuring
 ValidatedWaitingApproval=Gevalideerd (wachten op goedkeuring)

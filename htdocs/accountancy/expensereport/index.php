@@ -79,8 +79,8 @@ if (($action == 'clean' || $action == 'validatehistory') && $user->rights->accou
 	$sql1 .= '	(SELECT accnt.rowid ';
 	$sql1 .= '	FROM '.MAIN_DB_PREFIX.'accounting_account as accnt';
 	$sql1 .= '	INNER JOIN '.MAIN_DB_PREFIX.'accounting_system as syst';
-	$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid='.$conf->global->CHARTOFACCOUNTS.' AND accnt.entity = '.$conf->entity.')';
-	$sql1 .= ' AND erd.fk_expensereport IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'expensereport WHERE entity = '.$conf->entity.')';
+	$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid='.((int) $conf->global->CHARTOFACCOUNTS).' AND accnt.entity = '.((int) $conf->entity).')';
+	$sql1 .= ' AND erd.fk_expensereport IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'expensereport WHERE entity = '.((int) $conf->entity).')';
 	$sql1 .= ' AND fk_code_ventilation <> 0';
 	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
 	$resql1 = $db->query($sql1);
@@ -103,13 +103,13 @@ if ($action == 'validatehistory') {
 		$sql1 = "UPDATE ".MAIN_DB_PREFIX."expensereport_det";
 		$sql1 .= " SET fk_code_ventilation = accnt.rowid";
 		$sql1 .= " FROM ".MAIN_DB_PREFIX."c_type_fees as t, ".MAIN_DB_PREFIX."accounting_account as accnt , ".MAIN_DB_PREFIX."accounting_system as syst";
-		$sql1 .= " WHERE ".MAIN_DB_PREFIX."expensereport_det.fk_c_type_fees = t.id  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid = ".((int) $conf->global->CHARTOFACCOUNTS).' AND accnt.entity = '.$conf->entity;
+		$sql1 .= " WHERE ".MAIN_DB_PREFIX."expensereport_det.fk_c_type_fees = t.id  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid = ".((int) $conf->global->CHARTOFACCOUNTS).' AND accnt.entity = '.((int) $conf->entity);
 		$sql1 .= " AND accnt.active = 1 AND t.accountancy_code = accnt.account_number";
 		$sql1 .= " AND ".MAIN_DB_PREFIX."expensereport_det.fk_code_ventilation = 0";
 	} else {
 		$sql1 = "UPDATE ".MAIN_DB_PREFIX."expensereport_det as erd, ".MAIN_DB_PREFIX."c_type_fees as t, ".MAIN_DB_PREFIX."accounting_account as accnt , ".MAIN_DB_PREFIX."accounting_system as syst";
 		$sql1 .= " SET erd.fk_code_ventilation = accnt.rowid";
-		$sql1 .= " WHERE erd.fk_c_type_fees = t.id AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid = ".((int) $conf->global->CHARTOFACCOUNTS).' AND accnt.entity = '.$conf->entity;
+		$sql1 .= " WHERE erd.fk_c_type_fees = t.id AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid = ".((int) $conf->global->CHARTOFACCOUNTS).' AND accnt.entity = '.((int) $conf->entity);
 		$sql1 .= " AND accnt.active = 1 AND t.accountancy_code=accnt.account_number";
 		$sql1 .= " AND erd.fk_code_ventilation = 0";
 	}
@@ -166,13 +166,13 @@ for ($i = 1; $i <= 12; $i++) {
 print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
 $sql = "SELECT ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number')." AS codecomptable,";
-$sql .= "  ".$db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label')." AS intitule,";
+$sql .= " ".$db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label')." AS intitule,";
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= "  SUM(".$db->ifsql('MONTH(er.date_debut)='.$j, 'erd.total_ht', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(er.date_debut)=".$j, "erd.total_ht", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= " SUM(erd.total_ht) as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";
@@ -251,7 +251,7 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= "  SUM(".$db->ifsql('MONTH(er.date_debut)='.$j, 'erd.total_ht', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+	$sql .= " SUM(".$db->ifsql("MONTH(er.date_debut)=".$j, "erd.total_ht", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= " ROUND(SUM(erd.total_ht),2) as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";
@@ -330,7 +330,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 		if ($j > 12) {
 			$j -= 12;
 		}
-		$sql .= " SUM(".$db->ifsql('MONTH(er.date_create)='.$j, 'erd.total_ht', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+		$sql .= " SUM(".$db->ifsql("MONTH(er.date_create)=".$j, "erd.total_ht", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
 	}
 	$sql .= " SUM(erd.total_ht) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";

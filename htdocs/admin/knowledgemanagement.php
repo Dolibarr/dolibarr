@@ -258,9 +258,7 @@ if ($action == 'edit') {
 	}
 	print '</table>';
 
-	print '<br><div class="center">';
-	print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel("Save", '');
 
 	print '</form>';
 	print '<br>';

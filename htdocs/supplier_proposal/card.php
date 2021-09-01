@@ -1126,7 +1126,7 @@ if ($action == 'create') {
 	print '<td class="fieldrequired">'.$langs->trans('Supplier').'</td>';
 	if ($socid > 0) {
 		print '<td colspan="2">';
-		print $soc->getNomUrl(1);
+		print $soc->getNomUrl(1, 'supplier');
 		print '<input type="hidden" name="socid" value="'.$soc->id.'">';
 		print '</td>';
 	} else {
@@ -1330,11 +1330,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("CreateDraft").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-	print '</div>';
+	print $form->buttonsSaveCancel("CreateDraft");
 
 	print "</form>";
 
@@ -1441,7 +1437,7 @@ if ($action == 'create') {
 	//$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreateorder, 'string', '', 0, 1);
 	//$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreateorder, 'string', '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
+	$morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'supplier');
 	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
 		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherProposals").'</a>)';
 	}
@@ -1545,7 +1541,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setdate_livraison">';
 		print $form->selectDate($object->delivery_date, 'liv_', '', '', '', "editdate_livraison");
-		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+		print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	} else {
 		print dol_print_date($object->delivery_date, 'daytext');
@@ -1808,11 +1804,8 @@ if ($action == 'create') {
 		$form_close .= $object->note_private;
 		$form_close .= '</textarea></td></tr>';
 		$form_close .= '</table>';
-		$form_close .= '<center>';
-		$form_close .= '<input type="submit" class="button button-save" name="validate" value="'.$langs->trans("Save").'">';
-		$form_close .= ' &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-		$form_close .= '<a name="acceptedrefused">&nbsp;</a>';
-		$form_close .= '</center>';
+		$form_close .= $form->buttonsSaveCancel();
+		$form_close .= '<a id="acceptedrefused">&nbsp;</a>';
 		$form_close .= '</form>';
 
 		print $form_close;

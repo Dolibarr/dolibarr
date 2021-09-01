@@ -127,10 +127,10 @@ if ($id > 0 || !empty($ref)) {
 		$now = dol_now();
 
 		$sql = "SELECT";
-		$sql .= ' sum('.$db->ifsql("cd.role='toconsume'", "cd.qty", 0).') as nb_toconsume,';
-		$sql .= ' sum('.$db->ifsql("cd.role='consumed'", "cd.qty", 0).') as nb_consumed,';
-		$sql .= ' sum('.$db->ifsql("cd.role='toproduce'", "cd.qty", 0).') as nb_toproduce,';
-		$sql .= ' sum('.$db->ifsql("cd.role='produced'", "cd.qty", 0).') as nb_produced,';
+		$sql .= " sum(".$db->ifsql("cd.role='toconsume'", "cd.qty", 0).') as nb_toconsume,';
+		$sql .= " sum(".$db->ifsql("cd.role='consumed'", "cd.qty", 0).') as nb_consumed,';
+		$sql .= " sum(".$db->ifsql("cd.role='toproduce'", "cd.qty", 0).') as nb_toproduce,';
+		$sql .= " sum(".$db->ifsql("cd.role='produced'", "cd.qty", 0).') as nb_produced,';
 		$sql .= " c.rowid as rowid, c.ref, c.date_valid, c.status";
 		//$sql .= " s.nom as name, s.rowid as socid, s.code_client";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as c";

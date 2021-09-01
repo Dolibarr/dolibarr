@@ -905,7 +905,7 @@ class DoliDBPgsql extends DoliDB
 		// Test charset match LC_TYPE (pgsql error otherwise)
 		//print $charset.' '.setlocale(LC_CTYPE,'0'); exit;
 
-		$sql = 'CREATE DATABASE "'.$database.'" OWNER "'.$owner.'" ENCODING \''.$charset.'\'';
+		$sql = "CREATE DATABASE '".$this->escape($database)."' OWNER '".$this->escape($owner)."' ENCODING '".$this->escape($charset)."'";
 		dol_syslog($sql, LOG_DEBUG);
 		$ret = $this->query($sql);
 		return $ret;
@@ -924,11 +924,11 @@ class DoliDBPgsql extends DoliDB
 		// phpcs:enable
 		$listtables = array();
 
-		$like = '';
+		$escapedlike = '';
 		if ($table) {
-			$like = " AND table_name LIKE '".$this->escape($table)."'";
+			$escapedlike = " AND table_name LIKE '".$this->escape($table)."'";
 		}
-		$result = pg_query($this->db, "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'".$like." ORDER BY table_name");
+		$result = pg_query($this->db, "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'".$escapedlike." ORDER BY table_name");
 		if ($result) {
 			while ($row = $this->fetch_row($result)) {
 				$listtables[] = $row[0];

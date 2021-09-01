@@ -591,10 +591,10 @@ if (empty($reshook) && $action == 'update') {
 				$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = 'dolresource'";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($object->element)."'";
-				$sql .= " WHERE ac.id != ".$object->id;
+				$sql .= " WHERE ac.id <> ".((int) $object->id);
 				$sql .= " AND er.resource_id IN (";
 				$sql .= " SELECT resource_id FROM ".MAIN_DB_PREFIX."element_resources";
-				$sql .= " WHERE element_id = ".$object->id;
+				$sql .= " WHERE element_id = ".((int) $object->id);
 				$sql .= " AND element_type = '".$db->escape($object->element)."'";
 				$sql .= " AND busy = 1";
 				$sql .= ")";
@@ -770,10 +770,10 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate') {
 				$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = 'dolresource'";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($object->element)."'";
-				$sql .= " WHERE ac.id != ".$object->id;
+				$sql .= " WHERE ac.id <> ".((int) $object->id);
 				$sql .= " AND er.resource_id IN (";
 				$sql .= " SELECT resource_id FROM ".MAIN_DB_PREFIX."element_resources";
-				$sql .= " WHERE element_id = ".$object->id;
+				$sql .= " WHERE element_id = ".((int) $object->id);
 				$sql .= " AND element_type = '".$db->escape($object->element)."'";
 				$sql .= " AND busy = 1";
 				$sql .= ")";
@@ -1185,9 +1185,9 @@ if ($action == 'create') {
 
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td id="project-input-container">';
 		print img_picto('', 'project', 'class="pictofixedwidth"');
-		print $formproject->select_projects((!empty($societe->id) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
+		print $formproject->select_projects((empty($societe->id) ? '' : $societe->id), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
 
-		print '&nbsp;<a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$societe->id.'&action=create&amp;backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">';
+		print '&nbsp;<a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.(empty($societe->id) ? '' : $societe->id).'&action=create&amp;backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">';
 		print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
 		$urloption = '?action=create&donotclearsession=1';
 		$url = dol_buildpath('comm/action/card.php', 2).$urloption;
@@ -1317,15 +1317,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Add").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	if (empty($backtopage)) {
-		print '<input type="button" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-	} else {
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	}
-	print '</div>';
+	print $form->buttonsSaveCancel("Add");
 
 	print "</form>";
 }
@@ -1804,11 +1796,7 @@ if ($id > 0) {
 
 		print dol_get_fiche_end();
 
-		print '<div class="center">';
-		print '<input type="submit" class="button button-save" name="edit" value="'.$langs->trans("Save").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
+		print $form->buttonsSaveCancel();
 
 		print '</form>';
 	} else {
@@ -1863,7 +1851,7 @@ if ($id > 0) {
 					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 					$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+					$morehtmlref .= '<input type="submit" class="button button-save valignmiddle" value="'.$langs->trans("Modify").'">';
 					$morehtmlref .= '</form>';
 				} else {
 					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);

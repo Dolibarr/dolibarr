@@ -436,7 +436,7 @@ if ($search_categ_cus) {
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -486,7 +486,7 @@ if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
 }
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_ref) {
 	$sql .= natural_search('c.ref', $search_ref);
@@ -505,7 +505,7 @@ if ($search_status <> '') {
 		if ($search_status == 1 && empty($conf->expedition->enabled)) {
 			$sql .= ' AND c.fk_statut IN (1,2)'; // If module expedition disabled, we include order with status 'sending in process' into 'validated'
 		} else {
-			$sql .= ' AND c.fk_statut = '.$search_status; // brouillon, validee, en cours, annulee
+			$sql .= ' AND c.fk_statut = '.((int) $search_status); // brouillon, validee, en cours, annulee
 		}
 	}
 	if ($search_status == 4) {
@@ -570,7 +570,7 @@ if ($search_sale > 0) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
 }
 if ($search_user > 0) {
-	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
+	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".((int) $search_user);
 }
 if ($search_total_ht != '') {
 	$sql .= natural_search('c.total_ht', $search_total_ht, 1);
@@ -585,7 +585,7 @@ if ($search_warehouse != '' && $search_warehouse > 0) {
 	$sql .= natural_search('c.fk_warehouse', $search_warehouse, 1);
 }
 if ($search_multicurrency_code != '') {
-	$sql .= ' AND c.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
+	$sql .= " AND c.multicurrency_code = '".$db->escape($search_multicurrency_code)."'";
 }
 if ($search_multicurrency_tx != '') {
 	$sql .= natural_search('c.multicurrency_tx', $search_multicurrency_tx, 1);

@@ -556,10 +556,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 print '</table>';
 print '</div>';
 
-
-print '<div class="center">';
-print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-print '</div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 

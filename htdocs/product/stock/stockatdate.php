@@ -272,7 +272,7 @@ if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 	$sql .= " AND p.fk_product_type = 0";
 }
 if (!empty($canvas)) {
-	$sql .= ' AND p.canvas = "'.$db->escape($canvas).'"';
+	$sql .= " AND p.canvas = '".$db->escape($canvas)."'";
 }
 if ($fk_warehouse > 0) {
 	$sql .= ' GROUP BY p.rowid, p.ref, p.label, p.description, p.price, p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
@@ -373,7 +373,7 @@ if (empty($reshook)) {
 }
 
 print '<div class="inline-block valignmiddle">';
-print '<input class="button" type="submit" name="valid" value="'.$langs->trans('Refresh').'">';
+print '<input type="submit" class="button" name="valid" value="'.$langs->trans('Refresh').'">';
 print '</div>';
 
 //print '</form>';
@@ -488,7 +488,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$sql = 'SELECT label,description';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'product_lang';
 			$sql .= ' WHERE fk_product = '.((int) $objp->rowid);
-			$sql .= ' AND lang = "'.$langs->getDefaultLang().'"';
+			$sql .= " AND lang = '".$db->escape($langs->getDefaultLang())."'";
 			$sql .= ' LIMIT 1';
 
 			$resqlm = $db->query($sql);

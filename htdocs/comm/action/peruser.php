@@ -579,7 +579,7 @@ if ($pid) {
 	$sql .= " AND a.fk_project = ".((int) $pid);
 }
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".$user->id.")";
+	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
 }
 if ($socid > 0) {
 	$sql .= ' AND a.fk_soc = '.((int) $socid);

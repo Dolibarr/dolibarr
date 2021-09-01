@@ -495,9 +495,9 @@ class ExpenseReport extends CommonObject
 		$sql .= " , note_public = ".(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "''");
 		$sql .= " , note_private = ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "''");
 		$sql .= " , detail_refuse = ".(!empty($this->detail_refuse) ? "'".$this->db->escape($this->detail_refuse)."'" : "''");
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if (!$notrigger) {
@@ -552,7 +552,7 @@ class ExpenseReport extends CommonObject
 		}
 		//$sql.= $restrict;
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -665,7 +665,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " SET fk_statut = ".self::STATUS_CLOSED.", paid=1";
 		$sql .= " WHERE rowid = ".((int) $id)." AND fk_statut = ".self::STATUS_APPROVED;
 
-		dol_syslog(get_class($this)."::set_paid sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::set_paid", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->affected_rows($resql)) {
@@ -882,7 +882,7 @@ class ExpenseReport extends CommonObject
 			$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as de";
 			$sql .= " WHERE de.fk_projet = ".((int) $projectid);
 
-			dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result) {
 				$num = $this->db->num_rows($result);
@@ -973,7 +973,7 @@ class ExpenseReport extends CommonObject
 	{
 		$sql = 'SELECT tt.total_ht, tt.total_ttc, tt.total_tva';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as tt';
-		$sql .= ' WHERE tt.'.$this->fk_element.' = '.((int) $id);
+		$sql .= " WHERE tt.".$this->fk_element.' = '.((int) $id);
 
 		$total_ht = 0; $total_tva = 0; $total_ttc = 0;
 
@@ -981,18 +981,18 @@ class ExpenseReport extends CommonObject
 		if ($result) {
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			while ($i < $num) :
+			while ($i < $num) {
 				$objp = $this->db->fetch_object($result);
 				$total_ht += $objp->total_ht;
 				$total_tva += $objp->total_tva;
 				$i++;
-			endwhile;
+			}
 
 			$total_ttc = $total_ht + $total_tva;
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-			$sql .= " total_ht = ".price2num($total_ht, 'MT');
-			$sql .= " , total_ttc = ".price2num($total_ttc, 'MT');
-			$sql .= " , total_tva = ".price2num($total_tva, 'MT');
+			$sql .= " total_ht = ".((float) price2num($total_ht, 'MT'));
+			$sql .= " , total_ttc = ".((float) price2num($total_ttc, 'MT'));
+			$sql .= " , total_tva = ".((float) price2num($total_tva, 'MT'));
 			$sql .= " WHERE rowid = ".((int) $id);
 			$result = $this->db->query($sql);
 			if ($result) :
@@ -1024,14 +1024,14 @@ class ExpenseReport extends CommonObject
 		$this->lines = array();
 
 		$sql = ' SELECT de.rowid, de.comments, de.qty, de.value_unit, de.date, de.rang,';
-		$sql .= ' de.'.$this->fk_element.', de.fk_c_type_fees, de.fk_c_exp_tax_cat, de.fk_projet as fk_project, de.tva_tx, de.fk_ecm_files,';
+		$sql .= " de.".$this->fk_element.", de.fk_c_type_fees, de.fk_c_exp_tax_cat, de.fk_projet as fk_project, de.tva_tx, de.fk_ecm_files,";
 		$sql .= ' de.total_ht, de.total_tva, de.total_ttc,';
 		$sql .= ' ctf.code as code_type_fees, ctf.label as libelle_type_fees,';
 		$sql .= ' p.ref as ref_projet, p.title as title_projet';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as de';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON de.fk_c_type_fees = ctf.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as p ON de.fk_projet = p.rowid';
-		$sql .= ' WHERE de.'.$this->fk_element.' = '.$this->id;
+		$sql .= " WHERE de.".$this->fk_element." = ".((int) $this->id);
 		if (!empty($conf->global->EXPENSEREPORT_LINES_SORTED_BY_ROWID)) {
 			$sql .= ' ORDER BY de.rang ASC, de.rowid ASC';
 		} else {
@@ -1252,7 +1252,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " fk_statut = ".self::STATUS_VALIDATED.",";
 		$sql .= " date_valid='".$this->db->idate($this->date_valid)."',";
 		$sql .= " fk_user_valid = ".$user->id;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1340,7 +1340,7 @@ class ExpenseReport extends CommonObject
 		// Sélection de la date de début de la NDF
 		$sql = 'SELECT date_debut';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
 
@@ -1351,9 +1351,9 @@ class ExpenseReport extends CommonObject
 		if ($this->status != self::STATUS_VALIDATED) {
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET fk_statut = ".self::STATUS_VALIDATED;
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
-			dol_syslog(get_class($this)."::set_save_from_refuse sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::set_save_from_refuse", LOG_DEBUG);
 
 			if ($this->db->query($sql)) {
 				return 1;
@@ -1386,7 +1386,7 @@ class ExpenseReport extends CommonObject
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = ".self::STATUS_APPROVED.", fk_user_approve = ".((int) $fuser->id).",";
 			$sql .= " date_approve='".$this->db->idate($this->date_approve)."'";
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			if ($this->db->query($sql)) {
 				if (!$notrigger) {
 					// Call trigger
@@ -1438,7 +1438,7 @@ class ExpenseReport extends CommonObject
 			$sql .= " date_refuse='".$this->db->idate($now)."',";
 			$sql .= " detail_refuse='".$this->db->escape($details)."',";
 			$sql .= " fk_user_approve = NULL";
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			if ($this->db->query($sql)) {
 				$this->fk_statut = 99; // deprecated
 				$this->status = 99;
@@ -1507,9 +1507,9 @@ class ExpenseReport extends CommonObject
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET paid = 0, fk_statut = ".self::STATUS_APPROVED;
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
-			dol_syslog(get_class($this)."::set_unpaid sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::set_unpaid", LOG_DEBUG);
 
 			if ($this->db->query($sql)) {
 				if (!$notrigger) {
@@ -1561,9 +1561,9 @@ class ExpenseReport extends CommonObject
 			$sql .= " SET fk_statut = ".self::STATUS_CANCELED.", fk_user_cancel = ".((int) $fuser->id);
 			$sql .= ", date_cancel='".$this->db->idate($this->date_cancel)."'";
 			$sql .= " ,detail_cancel='".$this->db->escape($detail)."'";
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
-			dol_syslog(get_class($this)."::set_cancel sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::set_cancel", LOG_DEBUG);
 
 			if ($this->db->query($sql)) {
 				if (!$notrigger) {
@@ -1746,7 +1746,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " total_ht = ".$this->total_ht;
 		$sql .= " , total_ttc = ".$this->total_ttc;
 		$sql .= " , total_tva = ".$this->total_tva;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
 		if ($result) :
@@ -1776,7 +1776,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " total_ht = ".$this->total_ht;
 		$sql .= " , total_ttc = ".$this->total_ttc;
 		$sql .= " , total_tva = ".$this->total_tva;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
 		if ($result) :
@@ -2025,12 +2025,12 @@ class ExpenseReport extends CommonObject
 	public function offsetAlreadyGiven()
 	{
 		$sql = 'SELECT e.rowid FROM '.MAIN_DB_PREFIX.'expensereport e';
-		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'expensereport_det d ON (e.rowid = d.fk_expensereport)';
-		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees f ON (d.fk_c_type_fees = f.id AND f.code = "EX_KME")';
-		$sql .= ' WHERE e.fk_user_author = '.(int) $this->fk_user_author;
-		$sql .= ' AND YEAR(d.date) = "'.dol_print_date($this->line->date, '%Y').'" AND MONTH(d.date) = "'.dol_print_date($this->line->date, '%m').'"';
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport_det d ON (e.rowid = d.fk_expensereport)";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_type_fees f ON (d.fk_c_type_fees = f.id AND f.code = 'EX_KME')";
+		$sql .= " WHERE e.fk_user_author = ".(int) $this->fk_user_author;
+		$sql .= " AND YEAR(d.date) = '".dol_print_date($this->line->date, '%Y')."' AND MONTH(d.date) = '".dol_print_date($this->line->date, '%m')."'";
 		if (!empty($this->line->id)) {
-			$sql .= ' AND d.rowid <> '.$this->line->id;
+			$sql .= ' AND d.rowid <> '.((int) $this->line->id);
 		}
 
 		dol_syslog(get_class($this)."::offsetAlreadyGiven sql=".$sql);
@@ -2525,7 +2525,7 @@ class ExpenseReport extends CommonObject
 
 		$sql = 'SELECT sum(amount) as amount';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql .= ' WHERE '.$field.' = '.$this->id;
+		$sql .= " WHERE ".$field." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSumPayments", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2759,15 +2759,15 @@ class ExpenseReportLine
 		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'expensereport e ON (d.fk_expensereport = e.rowid)';
 		$sql .= ' WHERE e.fk_user_author = '.((int) $fk_user);
 		if (!empty($this->id)) {
-			$sql .= ' AND d.rowid <> '.$this->id;
+			$sql .= ' AND d.rowid <> '.((int) $this->id);
 		}
 		$sql .= ' AND d.fk_c_type_fees = '.((int) $rule->fk_c_type_fees);
 		if ($mode == 'day' || $mode == 'EX_DAY') {
 			$sql .= " AND d.date = '".dol_print_date($this->date, '%Y-%m-%d')."'";
 		} elseif ($mode == 'mon' || $mode == 'EX_MON') {
-			$sql .= ' AND DATE_FORMAT(d.date, \'%Y-%m\') = \''.dol_print_date($this->date, '%Y-%m').'\''; // @todo DATE_FORMAT is forbidden
+			$sql .= " AND DATE_FORMAT(d.date, '%Y-%m') = '".dol_print_date($this->date, '%Y-%m')."'"; // @todo DATE_FORMAT is forbidden
 		} elseif ($mode == 'year' || $mode == 'EX_YEA') {
-			$sql .= ' AND DATE_FORMAT(d.date, \'%Y\') = \''.dol_print_date($this->date, '%Y').'\''; // @todo DATE_FORMAT is forbidden
+			$sql .= " AND DATE_FORMAT(d.date, '%Y') = '".dol_print_date($this->date, '%Y')."'"; 	// @todo DATE_FORMAT is forbidden
 		}
 
 		dol_syslog('ExpenseReportLine::getExpAmount');

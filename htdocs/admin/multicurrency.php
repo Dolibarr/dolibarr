@@ -221,7 +221,7 @@ print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_MULTICURRENCY_BUY_PRICE_IN_CURRENCY">';
 print $form->selectyesno("MULTICURRENCY_BUY_PRICE_IN_CURRENCY",$conf->global->MULTICURRENCY_BUY_PRICE_IN_CURRENCY,1);
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print '</form>';
 print '</td></tr>';
 */
@@ -235,7 +235,7 @@ print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_MULTICURRENCY_MODIFY_RATE_APPLICATION">';
 print $form->selectarray('MULTICURRENCY_MODIFY_RATE_APPLICATION', array('PU_DOLIBARR' => 'PU_DOLIBARR', 'PU_CURRENCY' => 'PU_CURRENCY'), $conf->global->MULTICURRENCY_MODIFY_RATE_APPLICATION);
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print '</form>';
 print '</td></tr>';
 
@@ -305,7 +305,7 @@ print '<tr class="oddeven">';
 print '<td>'.$form->selectCurrency('', 'code', 1).'</td>';
 print '<td class="right">';
 print '<input type="text" name="rate" value="" class="width75 right" placeholder="'.$langs->trans('Rate').'" />&nbsp;';
-print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+print '<input type="submit" class="button button-add" value="'.$langs->trans("Add").'">';
 print '</td>';
 print '</tr>';
 
@@ -330,7 +330,7 @@ foreach ($TCurrency as &$currency) {
 	print '<input type="hidden" name="fk_multicurrency" value="'.$currency->id.'">';
 	print '1 '.$conf->currency.' = ';
 	print '<input type="text" name="rate" class="width75 right" value="'.($currency->rate->rate ? $currency->rate->rate : '').'" size="13">&nbsp;'.$currency->code.'&nbsp;';
-	print '<input type="submit" name="updatecurrency" class="button" value="'.$langs->trans("Modify").'">&nbsp;';
+	print '<input type="submit" name="updatecurrency" class="button button-edit" value="'.$langs->trans("Modify").'">&nbsp;';
 	print '<input type="submit" name="deletecurrency" class="button" value="'.$langs->trans("Delete").'">';
 	print '</form>';
 	print '</td></tr>';

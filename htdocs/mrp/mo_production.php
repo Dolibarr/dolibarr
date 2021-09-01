@@ -661,7 +661,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<span class="clearbothonsmartphone"></span>';
 			print $langs->trans("MovementLabel").': <input type="text" class="minwidth300" name="inventorylabel" value="'.$defaultstockmovementlabel.'"><br><br>';
 			print '<input type="checkbox" id="autoclose" name="autoclose" value="1"'.(GETPOSTISSET('inventorylabel') ? (GETPOST('autoclose') ? ' checked="checked"' : '') : ' checked="checked"').'> <label for="autoclose">'.$langs->trans("AutoCloseMO").'</label><br>';
-			print '<input class="button" type="submit" value="'.$langs->trans("Confirm").'" name="confirm">';
+			print '<input type="submit" class="button" value="'.$langs->trans("Confirm").'" name="confirm">';
 			print ' &nbsp; ';
 			print '<input class="button button-cancel" type="submit" value="'.$langs->trans("Cancel").'" name="cancel">';
 			print '<br><br>';

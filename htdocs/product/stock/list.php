@@ -200,12 +200,12 @@ $title = $langs->trans("ListOfWarehouses");
 // --------------------------------------------------------------------
 $sql = 'SELECT ';
 foreach ($object->fields as $key => $val) {
-	$sql .= 't.'.$key.', ';
+	$sql .= "t.".$key.", ";
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.' as options_'.$key.', ' : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key." as options_".$key.', ' : '');
 	}
 }
 
@@ -259,7 +259,7 @@ foreach ($search as $key => $val) {
 		$mode_search = 2;
 	}
 	if ($search[$key] != '') {
-		$sql .= natural_search((($key == 'ref') ? 't.ref' : 't.'.$class_key), $search[$key], (($key == 'status') ? 2 : $mode_search));
+		$sql .= natural_search((($key == "ref") ? "t.ref" : "t.".$class_key), $search[$key], (($key == 'status') ? 2 : $mode_search));
 	}
 }
 if ($search_all) {
@@ -273,7 +273,7 @@ $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $objec
 $sql .= $hookmanager->resPrint;
 $sql .= " GROUP BY ";
 foreach ($object->fields as $key => $val) {
-	$sql .= 't.'.$key.', ';
+	$sql .= "t.".$key.", ";
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
