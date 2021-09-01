@@ -205,14 +205,14 @@ print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
-// Login/Pass required for members
-print '<tr class="oddeven"><td>'.$langs->trans("AdherentLoginRequired").'</td><td>';
-print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED', (!empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED) ? 0 : 1), 1);
-print "</td></tr>\n";
-
 // Mail required for members
 print '<tr class="oddeven"><td>'.$langs->trans("AdherentMailRequired").'</td><td>';
 print $form->selectyesno('ADHERENT_MAIL_REQUIRED', (!empty($conf->global->ADHERENT_MAIL_REQUIRED) ? $conf->global->ADHERENT_MAIL_REQUIRED : 0), 1);
+print "</td></tr>\n";
+
+// Login/Pass required for members
+print '<tr class="oddeven"><td>'.$langs->trans("AdherentLoginRequired").'</td><td>';
+print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED', (!empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED) ? 0 : 1), 1);
 print "</td></tr>\n";
 
 // Send mail information is on by default
