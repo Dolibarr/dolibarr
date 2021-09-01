@@ -104,7 +104,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  */
 function getEntity($element, $shared = 1, $currentobject = null)
 {
-	global $conf, $mc;
+	global $conf, $mc, $hookmanager, $object, $action;
 
 	// fix different element names (France to English)
 	switch ($element) {
@@ -117,7 +117,7 @@ function getEntity($element, $shared = 1, $currentobject = null)
 	}
 
 	if (is_object($mc)) {
-		return $mc->getEntity($element, $shared, $currentobject);
+		$out = $mc->getEntity($element, $shared, $currentobject);
 	} else {
 		$out = '';
 		$addzero = array('user', 'usergroup', 'c_email_templates', 'email_template', 'default_values');
@@ -125,8 +125,27 @@ function getEntity($element, $shared = 1, $currentobject = null)
 			$out .= '0,';
 		}
 		$out .= ((int) $conf->entity);
-		return $out;
 	}
+
+	// Manipulate entities to query on the fly
+	$parameters = array(
+		'element' => $element,
+		'shared' => $shared,
+		'object' => $object,
+		'currentobject' => $currentobject,
+		'out' => $out
+	);
+	$reshook = $hookmanager->executeHooks('hookGetEntity', $parameters, $currentobject, $action); // Note that $action and $object may have been modified by some hooks
+
+	if (is_numeric($reshook)) {
+		if ($reshook == 0 && !empty($hookmanager->resprints)) {
+			$out .= ','.$hookmanager->resprints; // add
+		} elseif ($reshook == 1) {
+			$out = $hookmanager->resprints; // replace
+		}
+	}
+
+	return $out;
 }
 
 /**
@@ -753,9 +772,9 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 					$out = dol_string_nohtmltag($out, 0);
 					// Remove also other dangerous string sequences
 					// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
-					// '../' is dangerous because it allows dir transversals
+					// '../' or '..\' is dangerous because it allows dir transversals
 					// Note &#38, '&#0000038', '&#x26'... is a simple char like '&' alone but there is no reason to accept such way to encode input data.
-					$out = str_ireplace(array('&#38', '&#0000038', '&#x26', '&quot', '&#34', '&#0000034', '&#x22', '"', '&#47', '&#0000047', '&#x2F', '../'), '', $out);
+					$out = str_ireplace(array('&#38', '&#0000038', '&#x26', '&quot', '&#34', '&#0000034', '&#x22', '"', '&#47', '&#0000047', '&#92', '&#0000092', '&#x2F', '../', '..\\'), '', $out);
 				} while ($oldstringtoclean != $out);
 				// keep lines feed
 			}
@@ -768,9 +787,9 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 					// Remove html tags
 					$out = dol_html_entity_decode($out, ENT_COMPAT | ENT_HTML5, 'UTF-8');
 					// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
-					// '../' is dangerous because it allows dir transversals
+					// '../' or '..\' is dangerous because it allows dir transversals
 					// Note &#38, '&#0000038', '&#x26'... is a simple char like '&' alone but there is no reason to accept such way to encode input data.
-					$out = str_ireplace(array('&#38', '&#0000038', '&#x26', '&quot', '&#34', '&#0000034', '&#x22', '"', '&#47', '&#0000047', '&#x2F', '../'), '', $out);
+					$out = str_ireplace(array('&#38', '&#0000038', '&#x26', '&quot', '&#34', '&#0000034', '&#x22', '"', '&#47', '&#0000047', '&#92', '&#0000092', '&#x2F', '../', '..\\'), '', $out);
 				} while ($oldstringtoclean != $out);
 			}
 			break;
@@ -1069,7 +1088,7 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 	// List of special chars for filenames in windows are defined on page https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
 	// Char '>' '<' '|' '$' and ';' are special chars for shells.
 	// Char '/' and '\' are file delimiters.
-	// -- car can be used into filename to inject special paramaters like --use-compress-program to make command with file as parameter making remote execution of command
+	// Chars '--' can be used into filename to inject special paramaters like --use-compress-program to make command with file as parameter making remote execution of command
 	$filesystem_forbidden_chars = array('<', '>', '/', '\\', '?', '*', '|', '"', ':', '°', '$', ';');
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
@@ -1090,7 +1109,10 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
  */
 function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 {
-	$filesystem_forbidden_chars = array('<', '>', '?', '*', '|', '"', '°');
+	// List of special chars for filenames in windows are defined on page https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
+	// Char '>' '<' '|' '$' and ';' are special chars for shells.
+	// Chars '--' can be used into filename to inject special paramaters like --use-compress-program to make command with file as parameter making remote execution of command
+	$filesystem_forbidden_chars = array('<', '>', '?', '*', '|', '"', '°', '$', ';');
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
 	$tmp = preg_replace('/\s+\-/', ' _', $tmp);
@@ -1283,9 +1305,9 @@ function dol_escape_json($stringtoescape)
  *  Returns text escaped for inclusion in HTML alt or title tags, or into values of HTML input fields.
  *
  *  @param      string		$stringtoescape			String to escape
- *  @param		int			$keepb					1=Keep b tags, 0=remove them completeley
+ *  @param		int			$keepb					1=Keep b tags, 0=remove them completely
  *  @param      int         $keepn              	1=Preserve \r\n strings (otherwise, replace them with escaped value). Set to 1 when escaping for a <textarea>.
- *  @param		string		$noescapetags			'' or 'common' or list of tags to not escape
+ *  @param		string		$noescapetags			'' or 'common' or list of tags to not escape. TODO Does not works yet when there is attributes to tag.
  *  @param		int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
  *  @return     string     				 			Escaped string
  *  @see		dol_string_nohtmltag(), dol_string_nospecial(), dol_string_unaccent()
@@ -1293,7 +1315,7 @@ function dol_escape_json($stringtoescape)
 function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapetags = '', $escapeonlyhtmltags = 0)
 {
 	if ($noescapetags == 'common') {
-		$noescapetags = 'html,body,a,b,em,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody';
+		$noescapetags = 'html,body,a,b,em,hr,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody';
 	}
 
 	// escape quotes and backslashes, newlines, etc.
@@ -1313,15 +1335,16 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 		return htmlspecialchars($tmp, ENT_COMPAT, 'UTF-8');
 	} else {
 		// Escape tags to keep
+		// TODO Does not works yet when there is attributes to tag
 		$tmparrayoftags = array();
 		if ($noescapetags) {
 			$tmparrayoftags = explode(',', $noescapetags);
 		}
-
 		if (count($tmparrayoftags)) {
 			foreach ($tmparrayoftags as $tagtoreplace) {
-				$tmp = str_replace('<'.$tagtoreplace.'>', '__BEGINTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
-				$tmp = str_replace('</'.$tagtoreplace.'>', '__ENDTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
+				$tmp = str_ireplace('<'.$tagtoreplace.'>', '__BEGINTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
+				$tmp = str_ireplace('</'.$tagtoreplace.'>', '__ENDTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
+				$tmp = str_ireplace('<'.$tagtoreplace.' />', '__BEGINENDTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
 			}
 		}
 
@@ -1329,8 +1352,9 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 
 		if (count($tmparrayoftags)) {
 			foreach ($tmparrayoftags as $tagtoreplace) {
-				$result = str_replace('__BEGINTAGTOREPLACE'.$tagtoreplace.'__', '<'.$tagtoreplace.'>', $result);
-				$result = str_replace('__ENDTAGTOREPLACE'.$tagtoreplace.'__', '</'.$tagtoreplace.'>', $result);
+				$result = str_ireplace('__BEGINTAGTOREPLACE'.$tagtoreplace.'__', '<'.$tagtoreplace.'>', $result);
+				$result = str_ireplace('__ENDTAGTOREPLACE'.$tagtoreplace.'__', '</'.$tagtoreplace.'>', $result);
+				$result = str_ireplace('__BEGINENDTAGTOREPLACE'.$tagtoreplace.'__', '<'.$tagtoreplace.' />', $result);
 			}
 		}
 
@@ -5268,8 +5292,11 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  * 	@param	int				$option			Put 1 if you know that content is already universal format number (so no correction on decimal will be done)
  * 											Put 2 if you know that number is a user input (so we know we don't have to fix decimal separator).
  *	@return	string							Amount with universal numeric format (Example: '99.99999').
- *											If conversion fails, it return text unchanged if ($rounding = '' and $option = 1) or '0' if ($rounding is defined and $option = 1).
- *											If amount is null or '', it returns '' if $rounding = '' or '0' if $rounding is defined..
+ *											If conversion fails to return a numeric, it returns:
+ *											- text unchanged or partial if ($rounding = ''): price2num('W9ç', '', 0)   => '9ç', price2num('W9ç', '', 1)   => 'W9ç', price2num('W9ç', '', 2)   => '9ç'
+ *											- '0' if ($rounding is defined):                 price2num('W9ç', 'MT', 0) => '9',  price2num('W9ç', 'MT', 1) => '0',   price2num('W9ç', 'MT', 2) => '9'
+ *											Note: The best way to guarantee a numeric value is to add a cast (float) before the price2num().
+ *											If amount is null or '', it returns '' if $rounding = '' or '0' if $rounding is defined.
  *
  *	@see    price()							Opposite function of price2num
  */
@@ -8892,10 +8919,10 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 					foreach ($tmparray as $val) {
 						$val = trim($val);
 						if ($val) {
-							$newres .= ($i2 > 0 ? ' OR (' : '(').$field.' LIKE \''.$db->escape($val).',%\'';
-							$newres .= ' OR '.$field.' = \''.$db->escape($val).'\'';
-							$newres .= ' OR '.$field.' LIKE \'%,'.$db->escape($val).'\'';
-							$newres .= ' OR '.$field.' LIKE \'%,'.$db->escape($val).',%\'';
+							$newres .= ($i2 > 0 ? " OR (" : "(").$field." LIKE '".$db->escape($val).",%'";
+							$newres .= ' OR '.$field." = '".$db->escape($val)."'";
+							$newres .= ' OR '.$field." LIKE '%,".$db->escape($val)."'";
+							$newres .= ' OR '.$field." LIKE '%,".$db->escape($val).",%'";
 							$newres .= ')';
 							$i2++;
 						}
@@ -8934,7 +8961,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 						$newres .= $tmpafter;
 						$newres .= "'";
 						if ($tmpcrit2 == '') {
-							$newres .= ' OR '.$field." IS NULL";
+							$newres .= " OR ".$field." IS NULL";
 						}
 					}
 
@@ -9530,7 +9557,7 @@ function getDictvalue($tablename, $field, $id, $checkentity = false, $rowidfield
 	if (!isset($dictvalues[$tablename])) {
 		$dictvalues[$tablename] = array();
 
-		$sql = 'SELECT * FROM '.$tablename.' WHERE 1 = 1'; // Here select * is allowed as it is generic code and we don't have list of fields
+		$sql = "SELECT * FROM ".$tablename." WHERE 1 = 1"; // Here select * is allowed as it is generic code and we don't have list of fields
 		if ($checkentity) {
 			$sql .= ' AND entity IN (0,'.getEntity($tablename).')';
 		}
@@ -10450,7 +10477,7 @@ function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
 
 /**
  * Create a button to copy $valuetocopy in the clipboard.
- * Code that handle the click is inside lib_foot.jsp.php
+ * Code that handle the click is inside lib_foot.jsp.php.
  *
  * @param 	string 	$valuetocopy 		The value to print
  * @param	int		$showonlyonhover	Show the copy-paste button only on hover
@@ -10466,10 +10493,11 @@ function showValueWithClipboardCPButton($valuetocopy, $showonlyonhover = 1, $tex
 		$showonlyonhover = 0;
 	}*/
 
+	$tag = 'span'; 	// Using div does not work when using the js copy code.
 	if ($texttoshow) {
-		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><span class="clipboardCPValue hidewithsize">'.$valuetocopy.'</span><span class="clipboardCPValueToPrint">'.$texttoshow.'</span><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText opacitymedium"></span></span>';
+		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><'.$tag.' class="clipboardCPValue hidewithsize">'.dol_escape_htmltag($valuetocopy, 1, 1).'</'.$tag.'><span class="clipboardCPValueToPrint">'.dol_escape_htmltag($texttoshow, 1, 1).'</span><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText opacitymedium"></span></span>';
 	} else {
-		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><span class="clipboardCPValue">'.$valuetocopy.'</span><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText opacitymedium"></span></span>';
+		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><'.$tag.' class="clipboardCPValue">'.dol_escape_htmltag($valuetocopy, 1, 1).'</'.$tag.'><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText opacitymedium"></span></span>';
 	}
 
 	return $result;

@@ -260,13 +260,13 @@ if ($nb) {
 				print '<option value="RCUR"'.(GETPOST('format', 'aZ09') == 'RCUR' ? ' selected="selected"' : '').'>'.$langs->trans('SEPARCUR').'</option>';
 				print '</select>';
 			}
-			print '<input class="butAction" type="submit" value="'.$title.'"/>';
+			print '<input type="submit" class="butAction" value="'.$title.'"/>';
 		} else {
 			$title = $langs->trans("CreateAll");
 			if ($type == 'bank-transfer') {
 				$title = $langs->trans("CreateFileForPaymentByBankTransfer");
 			}
-			print '<a class="butAction" type="submit" href="create.php?action=create&format=ALL&type='.$type.'">'.$title."</a>\n";
+			print '<a type="submit" class="butAction" href="create.php?action=create&format=ALL&type='.$type.'">'.$title."</a>\n";
 		}
 	} else {
 		if ($mysoc->isInEEC()) {

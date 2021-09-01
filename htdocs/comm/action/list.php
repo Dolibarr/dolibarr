@@ -381,7 +381,7 @@ $sql .= " sp.lastname, sp.firstname, sp.email, sp.phone, sp.address, sp.phone as
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 
@@ -447,7 +447,7 @@ if ($pid) {
 	$sql .= " AND a.fk_project=".((int) $pid);
 }
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".$user->id.")";
+	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
 }
 if ($socid > 0) {
 	$sql .= " AND s.rowid = ".((int) $socid);

@@ -66,6 +66,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			return 0; // Module not active, we do nothing
 		}
 
+		$ret = 0;
+
 		// Proposals to order
 		if ($action == 'PROPAL_CLOSE_SIGNED') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -132,7 +134,6 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		// classify billed order & billed propososal
 		if ($action == 'BILL_VALIDATE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			$ret = 0;
 
 			// First classify billed the order to allow the proposal classify process
 			if (!empty($conf->commande->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER)) {

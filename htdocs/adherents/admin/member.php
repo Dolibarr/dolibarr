@@ -225,6 +225,13 @@ print '<tr class="oddeven"><td>'.$langs->trans("MemberCreateAnExternalUserForSub
 print $form->selectyesno('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', (!empty($conf->global->ADHERENT_CREATE_EXTERNAL_USER_LOGIN) ? $conf->global->ADHERENT_CREATE_EXTERNAL_USER_LOGIN : 0), 1);
 print "</td></tr>\n";
 
+// Allow members to change type on renewal forms
+/* To test during next beta
+print '<tr class="oddeven"><td>'.$langs->trans("MemberAllowchangeOfType").'</td><td>';
+print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED', (!empty($conf->global->MEMBER_ALLOW_CHANGE_OF_TYPE) ? 0 : 1), 1);
+print "</td></tr>\n";
+*/
+
 // Insert subscription into bank account
 print '<tr class="oddeven"><td>'.$langs->trans("MoreActionsOnSubscription").'</td>';
 $arraychoices = array('0'=>$langs->trans("None"));

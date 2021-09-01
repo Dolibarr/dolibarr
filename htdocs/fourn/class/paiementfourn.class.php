@@ -201,8 +201,8 @@ class PaiementFourn extends Paiement
 
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn (';
 			$sql .= 'ref, entity, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, fk_user_author, fk_bank)';
-			$sql .= " VALUES ('".$this->db->escape($ref)."', ".$conf->entity.", '".$this->db->idate($now)."',";
-			$sql .= " '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_private)."', ".$user->id.", 0)";
+			$sql .= " VALUES ('".$this->db->escape($ref)."', ".((int) $conf->entity).", '".$this->db->idate($now)."',";
+			$sql .= " '".$this->db->idate($this->datepaye)."', ".((float) $total).", ".((float) $mtotal).", ".((int) $this->paiementid).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_private)."', ".((int) $user->id).", 0)";
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -214,7 +214,7 @@ class PaiementFourn extends Paiement
 					if (is_numeric($amount) && $amount <> 0) {
 						$amount = price2num($amount);
 						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn (fk_facturefourn, fk_paiementfourn, amount, multicurrency_amount)';
-						$sql .= ' VALUES ('.$facid.','.$this->id.',\''.$amount.'\', \''.$this->multicurrency_amounts[$key].'\')';
+						$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).', '.((float) $this->multicurrency_amounts[$key]).')';
 						$resql = $this->db->query($sql);
 						if ($resql) {
 							$invoice = new FactureFournisseur($this->db);
@@ -223,10 +223,10 @@ class PaiementFourn extends Paiement
 							// If we want to closed paid invoices
 							if ($closepaidinvoices) {
 								$paiement = $invoice->getSommePaiement();
-								//$creditnotes=$invoice->getSumCreditNotesUsed();
-								$creditnotes = 0;
-								//$deposits=$invoice->getSumDepositsUsed();
-								$deposits = 0;
+								$creditnotes=$invoice->getSumCreditNotesUsed();
+								//$creditnotes = 0;
+								$deposits=$invoice->getSumDepositsUsed();
+								//$deposits = 0;
 								$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
 								$remaintopay = price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
 								if ($remaintopay == 0) {
@@ -238,7 +238,7 @@ class PaiementFourn extends Paiement
 										// Insert one discount by VAT rate category
 										require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
 										$discount = new DiscountAbsolute($this->db);
-										$discount->fetch('', $invoice->id);
+										$discount->fetch('', 0, $invoice->id);
 										if (empty($discount->id)) {    // If the invoice was not yet converted into a discount (this may have been done manually before we come here)
 											$discount->discount_type = 1; // Supplier discount
 											$discount->description = '(DEPOSIT)';
@@ -398,11 +398,11 @@ class PaiementFourn extends Paiement
 
 		// Efface la ligne de paiement (dans paiement_facture et paiement)
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn';
-		$sql .= ' WHERE fk_paiementfourn = '.$this->id;
+		$sql .= ' WHERE fk_paiementfourn = '.((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiementfourn';
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$result = $this->db->query($sql);
 			if (!$result) {
 				$this->error = $this->db->error();
@@ -484,16 +484,16 @@ class PaiementFourn extends Paiement
 	/**
 	 *	Return list of supplier invoices the payment point to
 	 *
-	 *	@param      string	$filter         SQL filter
+	 *	@param      string	$filter         SQL filter. Warning: This value must not come from a user input.
 	 *	@return     array           		Array of supplier invoice id
 	 */
 	public function getBillsArray($filter = '')
 	{
 		$sql = 'SELECT fk_facturefourn';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf, '.MAIN_DB_PREFIX.'facture_fourn as f';
-		$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND fk_paiementfourn = '.$this->id;
+		$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND fk_paiementfourn = '.((int) $this->id);
 		if ($filter) {
-			$sql .= ' AND '.$filter;
+			$sql .= " AND ".$filter;
 		}
 
 		dol_syslog(get_class($this).'::getBillsArray', LOG_DEBUG);

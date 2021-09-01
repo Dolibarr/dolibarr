@@ -674,11 +674,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
-	print ' &nbsp; &nbsp; ';
-	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel("Add");
 
 	print '</form>';
 } elseif ($id > 0 || !empty($ref)) {

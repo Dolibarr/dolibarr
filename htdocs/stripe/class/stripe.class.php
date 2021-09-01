@@ -170,7 +170,7 @@ class Stripe extends CommonObject
 
 		$sql = "SELECT sa.key_account as key_account, sa.entity"; // key_account is cus_....
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_account as sa";
-		$sql .= " WHERE sa.fk_soc = ".$object->id;
+		$sql .= " WHERE sa.fk_soc = ".((int) $object->id);
 		$sql .= " AND sa.entity IN (".getEntity('societe').")";
 		$sql .= " AND sa.site = 'stripe' AND sa.status = ".((int) $status);
 		$sql .= " AND (sa.site_account IS NULL OR sa.site_account = '' OR sa.site_account = '".$this->db->escape($stripearrayofkeysbyenv[$status]['publishable_key'])."')";
@@ -246,7 +246,7 @@ class Stripe extends CommonObject
 
 					// Create customer in Dolibarr
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_account (fk_soc, login, key_account, site, site_account, status, entity, date_creation, fk_user_creat)";
-					$sql .= " VALUES (".$object->id.", '', '".$this->db->escape($customer->id)."', 'stripe', '".$this->db->escape($stripearrayofkeysbyenv[$status]['publishable_key'])."', ".$status.", ".$conf->entity.", '".$this->db->idate(dol_now())."', ".$user->id.")";
+					$sql .= " VALUES (".((int) $object->id).", '', '".$this->db->escape($customer->id)."', 'stripe', '".$this->db->escape($stripearrayofkeysbyenv[$status]['publishable_key'])."', ".((int) $status).", ".((int) $conf->entity).", '".$this->db->idate(dol_now())."', ".((int) $user->id).")";
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$this->error = $this->db->lasterror();
@@ -359,7 +359,7 @@ class Stripe extends CommonObject
 
 			$sql = "SELECT pi.ext_payment_id, pi.entity, pi.fk_facture, pi.sourcetype, pi.ext_payment_site";
 			$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pi";
-			$sql .= " WHERE pi.fk_facture = ".$object->id;
+			$sql .= " WHERE pi.fk_facture = ".((int) $object->id);
 			$sql .= " AND pi.sourcetype = '".$this->db->escape($object->element)."'";
 			$sql .= " AND pi.entity IN (".getEntity('societe').")";
 			$sql .= " AND pi.ext_payment_site = '".$this->db->escape($service)."'";
@@ -509,7 +509,7 @@ class Stripe extends CommonObject
 					if (!$paymentintentalreadyexists) {
 						$now = dol_now();
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_facture_demande (date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site, amount)";
-						$sql .= " VALUES ('".$this->db->idate($now)."', ".$user->id.", '".$this->db->escape($paymentintent->id)."', ".$object->id.", '".$this->db->escape($object->element)."', ".$conf->entity.", '".$this->db->escape($service)."', ".$amount.")";
+						$sql .= " VALUES ('".$this->db->idate($now)."', ".((int) $user->id).", '".$this->db->escape($paymentintent->id)."', ".((int) $object->id).", '".$this->db->escape($object->element)."', ".((int) $conf->entity).", '".$this->db->escape($service)."', ".((float) $amount).")";
 						$resql = $this->db->query($sql);
 						if (!$resql) {
 							$error++;
@@ -675,7 +675,7 @@ class Stripe extends CommonObject
 					{
 						$now=dol_now();
 						$sql = "INSERT INTO " . MAIN_DB_PREFIX . "prelevement_facture_demande (date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site)";
-						$sql .= " VALUES ('".$this->db->idate($now)."', ".$user->id.", '".$this->db->escape($setupintent->id)."', ".$object->id.", '".$this->db->escape($object->element)."', " . $conf->entity . ", '" . $this->db->escape($service) . "', ".$amount.")";
+						$sql .= " VALUES ('".$this->db->idate($now)."', ".((int) $user->id).", '".$this->db->escape($setupintent->id)."', ".((int) $object->id).", '".$this->db->escape($object->element)."', " . ((int) $conf->entity) . ", '" . $this->db->escape($service) . "', ".((float) $amount).")";
 						$resql = $this->db->query($sql);
 						if (! $resql)
 						{
@@ -728,7 +728,7 @@ class Stripe extends CommonObject
 
 		$sql = "SELECT sa.stripe_card_ref, sa.proprio, sa.exp_date_month, sa.exp_date_year, sa.number, sa.cvn"; // stripe_card_ref is card_....
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as sa";
-		$sql .= " WHERE sa.rowid = ".$object->id; // We get record from ID, no need for filter on entity
+		$sql .= " WHERE sa.rowid = ".((int) $object->id); // We get record from ID, no need for filter on entity
 		$sql .= " AND sa.type = 'card'";
 
 		dol_syslog(get_class($this)."::fetch search stripe card id for paymentmode id=".$object->id.", stripeacc=".$stripeacc.", status=".$status.", createifnotlinkedtostripe=".$createifnotlinkedtostripe, LOG_DEBUG);
@@ -826,7 +826,7 @@ class Stripe extends CommonObject
 							$sql .= " SET stripe_card_ref = '".$this->db->escape($card->id)."', card_type = '".$this->db->escape($card->brand)."',";
 							$sql .= " country_code = '".$this->db->escape($card->country)."',";
 							$sql .= " approved = ".($card->cvc_check == 'pass' ? 1 : 0);
-							$sql .= " WHERE rowid = ".$object->id;
+							$sql .= " WHERE rowid = ".((int) $object->id);
 							$sql .= " AND type = 'card'";
 							$resql = $this->db->query($sql);
 							if (!$resql) {

@@ -462,6 +462,15 @@ if ($action == 'confirm_generateinvoice') {
 					$arrayoftasks[$object->timespent_id]['timespent'] = $object->timespent_duration;
 					$arrayoftasks[$object->timespent_id]['totalvaluetodivideby3600'] = $object->timespent_duration * $object->timespent_thm;
 					$arrayoftasks[$object->timespent_id]['note'] = $ftask->ref.' - '.$ftask->label.' - '.$username.($object->timespent_note ? ' - '.$object->timespent_note : '');		// TODO Add user name in note
+					if (!empty($conf->global->PROJECT_TIME_SPENT_INTO_INVOICE_ADD_TIME_DT)) {
+						$arrayoftasks[$object->timespent_id]['note'] .= "\n";
+						if (!empty($object->timespent_withhour)) {
+							$arrayoftasks[$object->timespent_id]['note'] .= $langs->trans("Date") . ': ' . dol_print_date($object->timespent_datehour);
+						} else {
+							$arrayoftasks[$object->timespent_id]['note'] .= $langs->trans("Date") . ': ' . dol_print_date($object->timespent_date);
+						}
+						$arrayoftasks[$object->timespent_id]['note'] .= ' - '.$langs->trans("Duration").': '.convertSecondToTime($object->timespent_duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
+					}
 					$arrayoftasks[$object->timespent_id]['user'] = $object->timespent_fk_user;
 				}
 
@@ -471,7 +480,6 @@ if ($action == 'confirm_generateinvoice') {
 
 					// Define qty per hour
 					$qtyhour = $value['timespent'] / 3600;
-					$qtyhourtext = convertSecondToTime($value['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
 
 					// If no unit price known
 					if (empty($pu_ht)) {
@@ -851,6 +859,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 	}
 
 	$massactionbutton = '';
+	$arrayofmassactions = array();
 	if ($projectstatic->usage_bill_time) {
 		$arrayofmassactions = array(
 			'generateinvoice'=>$langs->trans("GenerateBill"),

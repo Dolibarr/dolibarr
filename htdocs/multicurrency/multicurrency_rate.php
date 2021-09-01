@@ -264,7 +264,7 @@ if (!in_array($action, array("updateRate", "deleteRate"))) {
 	print '</td>';
 
 	print '<td> '.$langs->trans('Currency').'</td>';
-	print '<td>'.$form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code', 'alpha') : $multicurrency_code), 'multicurrency_code', 1, " code != '".$conf->currency."'", true).'</td>';
+	print '<td>'.$form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code', 'alpha') : $multicurrency_code), 'multicurrency_code', 1, " code != '".$db->escape($conf->currency)."'", true).'</td>';
 
 	print ' <td>'.$langs->trans('Rate').'</td>';
 	print ' <td><input type="text" min="0" step="any" class="maxwidth75" name="rateinput" value="'.dol_escape_htmltag($rateinput).'"></td>';

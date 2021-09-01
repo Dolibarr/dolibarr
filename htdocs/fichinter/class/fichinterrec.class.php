@@ -356,7 +356,7 @@ class FichinterRec extends Fichinter
 		$sql .= ' p.label as product_label, p.description as product_desc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinterdet_rec as l';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
-		$sql .= ' WHERE l.fk_fichinter = '.$this->id;
+		$sql .= ' WHERE l.fk_fichinter = '.((int) $this->id);
 
 		dol_syslog('FichInter-rec::fetch_lines', LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -599,7 +599,7 @@ class FichinterRec extends Fichinter
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter_rec ";
 			$sql .= " SET frequency='".$this->db->escape($freq)."'";
 			$sql .= ", date_last_gen='".$this->db->escape($courant)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 
@@ -718,7 +718,7 @@ class FichinterRec extends Fichinter
 		if (!empty($unit)) {
 			$sql .= ', unit_frequency = "'.$this->db->escape($unit).'"';
 		}
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::setFrequencyAndUnit", LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -751,7 +751,7 @@ class FichinterRec extends Fichinter
 		if ($increment_nb_gen_done > 0) {
 			$sql .= ', nb_gen_done = nb_gen_done + 1';
 		}
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::setNextDate", LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -844,7 +844,7 @@ class FichinterRec extends Fichinter
 			$sql .= ' , statut = 1';
 		}
 
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::setAutoValidate", LOG_DEBUG);
 		if ($this->db->query($sql)) {

@@ -297,6 +297,10 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	cursor: pointer;
 	max-width: 350px;
 }
+.nofocusvisible:focus-visible {
+	outline: none;
+}
+
 div.buttonpayment input:focus {
 	color: #008;
 }
@@ -6815,12 +6819,18 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 /* For copy-paste feature                                                         */
 /* ============================================================================== */
 
-span.clipboardCPValueToPrint {
+span.clipboardCPValueToPrint, div.clipboardCPValueToPrint  {
 	display: inline-block;
 }
 span.clipboardCPValue.hidewithsize {
 	width: 0 !important;
 	display: inline-block;
+	color: transparent;
+	white-space: nowrap;
+}
+div.clipboardCPValue.hidewithsize {
+	width: 0 !important;
+	display: none;
 	color: transparent;
 	white-space: nowrap;
 }

@@ -301,7 +301,8 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	print dol_get_fiche_end();
 
 	if ($action == 'edit') {
-		print '<div align="center"><input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+		print $form->buttonsSaveCancel();
+
 		print '</form>';
 	}
 

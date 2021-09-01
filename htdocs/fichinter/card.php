@@ -977,11 +977,7 @@ if ($action == 'create') {
 
 		print dol_get_fiche_end();
 
-		print '<div class="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-		print '</div>';
+		print $form->buttonsSaveCancel("CreateDraftIntervention");
 
 		// Show origin lines
 		if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
@@ -1017,12 +1013,7 @@ if ($action == 'create') {
 
 		print dol_get_fiche_end();
 
-		print '<div class="center">';
-		print '<input type="hidden" name="action" value="create">';
-		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-		print '</div>';
+		print $form->buttonsSaveCancel("CreateDraftIntervention");
 
 		print '</form>';
 	}
@@ -1288,7 +1279,7 @@ if ($action == 'create') {
 		$sql = 'SELECT ft.rowid, ft.description, ft.fk_fichinter, ft.duree, ft.rang,';
 		$sql .= ' ft.date as date_intervention';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
-		$sql .= ' WHERE ft.fk_fichinter = '.$object->id;
+		$sql .= ' WHERE ft.fk_fichinter = '.((int) $object->id);
 		if (!empty($conf->global->FICHINTER_HIDE_EMPTY_DURATION)) {
 			$sql .= ' AND ft.duree <> 0';
 		}
@@ -1500,7 +1491,7 @@ if ($action == 'create') {
 				}
 				print '</td>';
 
-				print '<td class="center" valign="middle" colspan="3"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline"></td>';
+				print '<td class="center" valign="middle" colspan="3"><input type="submit" class="button button-add" value="'.$langs->trans('Add').'" name="addline"></td>';
 				print '</tr>';
 
 				//Line extrafield

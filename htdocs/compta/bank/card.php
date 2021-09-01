@@ -565,11 +565,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("CreateAccount").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-	print '</div>';
+	print $form->buttonsSaveCancel("CreateAccount");
 
 	print '</form>';
 } else {
@@ -1081,11 +1077,7 @@ if ($action == 'create') {
 
 		print dol_get_fiche_end();
 
-		print '<div class="center">';
-		print '<input value="'.$langs->trans("Modify").'" type="submit" class="button">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input name="cancel" value="'.$langs->trans("Cancel").'" type="submit" class="button button-cancel">';
-		print '</div>';
+		print $form->buttonsSaveCancel("Modify");
 
 		print '</form>';
 	}

@@ -421,7 +421,7 @@ class DoliDBSqlite3 extends DoliDB
 			$descTable = $this->db->querySingle("SELECT sql FROM sqlite_master WHERE name='".$this->escape($tablename)."'");
 
 			// 1- Renommer la table avec un nom temporaire
-			$this->query('ALTER TABLE '.$tablename.' RENAME TO tmp_'.$tablename);
+			$this->query("ALTER TABLE ".$tablename." RENAME TO tmp_".$tablename);
 
 			// 2- Recréer la table avec la contrainte ajoutée
 
@@ -436,10 +436,10 @@ class DoliDBSqlite3 extends DoliDB
 			$this->query($descTable);
 
 			// 3- Transférer les données
-			$this->query('INSERT INTO '.$tablename.' SELECT * FROM tmp_'.$tablename);
+			$this->query("INSERT INTO ".$tablename." SELECT * FROM tmp_".$tablename);
 
 			// 4- Supprimer la table temporaire
-			$this->query('DROP TABLE tmp_'.$tablename);
+			$this->query("DROP TABLE tmp_".$tablename);
 
 			// dummy statement
 			$query = "SELECT 0";
@@ -840,17 +840,12 @@ class DoliDBSqlite3 extends DoliDB
 		}
 
 		// ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
-		$sql = 'CREATE DATABASE '.$database;
-		$sql .= ' DEFAULT CHARACTER SET '.$charset.' DEFAULT COLLATE '.$collation;
+		$sql = "CREATE DATABASE ".$this->escape($database);
+		$sql .= " DEFAULT CHARACTER SET ".$this->escape($charset)." DEFAULT COLLATE ".$this->escape($collation);
 
 		dol_syslog($sql, LOG_DEBUG);
 		$ret = $this->query($sql);
-		if (!$ret) {
-			// We try again for compatibility with Mysql < 4.1.1
-			$sql = 'CREATE DATABASE '.$database;
-			$ret = $this->query($sql);
-			dol_syslog($sql, LOG_DEBUG);
-		}
+
 		return $ret;
 	}
 

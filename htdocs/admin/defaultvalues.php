@@ -399,7 +399,7 @@ if (!is_array($result) && $result<0) {
 			print '<input type="hidden" name="page" value="'.$page.'">';
 			print '<input type="hidden" name="rowid" value="'.$id.'">';
 			print '<div name="'.(!empty($defaultvalue->id) ? $defaultvalue->id : 'none').'"></div>';
-			print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+			print '<input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
 			print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 		}
 		print '</td>';

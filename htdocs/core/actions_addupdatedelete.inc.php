@@ -35,8 +35,7 @@ if (!empty($permissionedit) && empty($permissiontoadd)) {
 }
 
 if ($cancel) {
-	/*var_dump($cancel);
-	var_dump($backtopage);exit;*/
+	/*var_dump($cancel);var_dump($backtopage);var_dump($backtopageforcancel);exit;*/
 	if (!empty($backtopageforcancel)) {
 		header("Location: ".$backtopageforcancel);
 		exit;

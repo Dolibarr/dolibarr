@@ -665,7 +665,7 @@ class FactureRec extends CommonInvoice
 		$sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet_rec as l';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
-		$sql .= ' WHERE l.fk_facture = '.$this->id;
+		$sql .= ' WHERE l.fk_facture = '.((int) $this->id);
 		$sql .= ' ORDER BY l.rang';
 
 		dol_syslog('FactureRec::fetch_lines', LOG_DEBUG);
@@ -1752,7 +1752,7 @@ class FactureRec extends CommonInvoice
 		if (!empty($unit)) {
 			$sql .= ', unit_frequency = \''.$this->db->escape($unit).'\'';
 		}
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::setFrequencyAndUnit", LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -1785,7 +1785,7 @@ class FactureRec extends CommonInvoice
 		if ($increment_nb_gen_done > 0) {
 			$sql .= ', nb_gen_done = nb_gen_done + 1';
 		}
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::setNextDate", LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -1819,7 +1819,7 @@ class FactureRec extends CommonInvoice
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 		$sql .= ' SET nb_gen_max = '.((int) $nb);
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::setMaxPeriod", LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -1846,7 +1846,7 @@ class FactureRec extends CommonInvoice
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 		$sql .= ' SET auto_validate = '.((int) $validate);
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::setAutoValidate", LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -1873,7 +1873,7 @@ class FactureRec extends CommonInvoice
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 		$sql .= ' SET generate_pdf = '.((int) $validate);
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::setGeneratePdf", LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -1899,8 +1899,8 @@ class FactureRec extends CommonInvoice
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' SET modelpdf = "'.$model.'"';
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " SET modelpdf = '".$this->db->escape($model)."'";
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::setModelPdf", LOG_DEBUG);
 		if ($this->db->query($sql)) {

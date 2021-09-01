@@ -447,7 +447,7 @@ print dol_get_fiche_end();
 
 print '<br>';
 print '<div class="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" />';
 print '</div>';
 print '<br>';
 
