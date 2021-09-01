@@ -4043,7 +4043,7 @@ if ($action == 'create') {
 
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('UnvalidateBill'), $text, 'confirm_modif', $formquestion, "yes", 1);
 	}
-	
+
 	$sign = 1;
 	if ($object->type == Facture::TYPE_CREDIT_NOTE) {
 		$sign = - 1;
