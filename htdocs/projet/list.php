@@ -56,7 +56,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'pro
 $title = $langs->trans("Projects");
 
 // Security check
-$socid = (!empty($_GET["socid"]) && is_numeric($_GET["socid"]) ? $_GET["socid"] : 0);
+$socid = GETPOST('socid', 'int');
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 if ($socid > 0) {
 	$soc = new Societe($db);
@@ -74,8 +74,9 @@ $sortfield = GETPOST("sortfield", "aZ09comma");
 $sortorder = GETPOST("sortorder", 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1 or if we click on clear filters
+}
 if (!$sortfield) {
 	$sortfield = "p.ref";
 }
@@ -108,7 +109,7 @@ $search_price_registration = GETPOST("search_price_registration", 'alpha');
 $search_price_booth = GETPOST("search_price_booth", 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 
-$mine = (!empty($_REQUEST['mode']) && $_REQUEST['mode'] == 'mine') ? 1 : 0;
+$mine = ((GETPOST('mode') == 'mine') ? 1 : 0);
 if ($mine) {
 	$search_project_user = $user->id; $mine = 0;
 }
