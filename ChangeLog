@@ -8,11 +8,12 @@ FIX: $conf->task used but it does not exist, use $conf->projet instead
 FIX: #18181
 FIX: #18212 : Add url field
 FIX: #18267
+FIX: #18271  ECM display bug
 FIX: #18289 #18294
 FIX: #18341 lang not loaded
 FIX: #18389 Accountancy - Bug on LDcompta10 export for supplier invoice
 FIX: #18399 Fix shipment validation email template override.
-FIX: Accountancy - Debug Export Sage50 / CIEL Compta / CIEL Compta Evo (Format XIMPORT)
+FIX: Accountancy - Debug Export Sage50 / CIEL Compta / CIEL Compta Evo (Format XIMPORT)  #18273
 FIX: Accountancy - Rules to delete & modify transaction not applied in ledger & subledger
 FIX: Accountancy - Search date on journal
 FIX: Accountancy - SQL error on select journal on journal
@@ -27,9 +28,9 @@ FIX: Can't set cost price when product is not on purchase
 FIX: compatibility postgresql
 FIX: filter on status Draft in modulebuilder
 FIX: holiday card: hooks uninitialized
-FIX: Invoice - Missing button to reopen an abandoned situation invoice
-FIX: Link of download main doc on vat list
-FIX: look and field v14
+FIX: Invoice - Missing button to reopen an abandoned situation invoice  #18278
+FIX: Link of download main doc on VAT list
+FIX: look and feel v14
 FIX: Missing column Date validation in ledger & subledger
 FIX: on admin/pdf.php (with javascript enabled) if you set some boolean confs then click on "save", all boolean values are reset
 FIX: on supplier order, JOIN with product fourn price table must be done with fk_soc too to avoid display several times a same line (because of same supplier product ref)
@@ -40,6 +41,7 @@ FIX: totalDayAll hours in tasks
 FIX: update product lot
 FIX: using Tulip, deposit mask was not saved
 FIX: #yogosha6907
+FIX: Website Modul: fix error in website module when generating sitemap on url line   #18299
 
 
 ***** ChangeLog for 15.0.0 compared to 14.0.0 *****
@@ -51,7 +53,7 @@ WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * Update hook 'printOriginObjectLine', removed check on product type and special code. Need now reshook.
-* Old deprecated module "SimplePOS" has been completely removed. Use module "TakePOS" is you need a Point Of Sale.
+* Old deprecated module "SimplePOS" has been completely removed. Use module "TakePOS" if you need a Point Of Sale.
 
 
 
