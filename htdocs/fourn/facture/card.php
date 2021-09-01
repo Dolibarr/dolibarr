@@ -3235,6 +3235,11 @@ if ($action == 'create') {
 
 			// Remainder to pay Multicurrency
 			if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
+				$multicurrency_payment = $invoice->getSommePaiement(1);
+				$multicurrency_creditnotes = $invoice->getSumCreditNotesUsed(1);
+				$multicurrency_deposits = $invoice->getSumDepositsUsed(1);
+				$multicurrency_alreadypayed = price2num($multicurrency_payment + $multicurrency_creditnotes + $multicurrency_deposits, 'MT');
+				$multicurrency_remaintopay = price2num($invoice->multicurrency_total_ttc - $multicurrency_payment - $multicurrency_creditnotes - $multicurrency_deposits, 'MT');
 				print '<tr><td colspan="'.$nbcols.'" class="right">';
 				print '<span class="opacitymedium">';
 				if ($resteapayeraffiche <= 0) {
@@ -3244,7 +3249,7 @@ if ($action == 'create') {
 				}
 				print '</span>';
 				print '</td>';
-				print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.(!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency).' '.price(price2num($object->multicurrency_tx*$resteapayeraffiche, 'MT')).'</td><td>&nbsp;</td></tr>';
+				print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.(!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency).' '.price($multicurrency_remaintopay).'</td><td>&nbsp;</td></tr>';
 			}
 		} else // Credit note
 		{
@@ -3272,6 +3277,11 @@ if ($action == 'create') {
 
 			// Remainder to pay back Multicurrency
 			if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
+				$multicurrency_payment = $invoice->getSommePaiement(1);
+				$multicurrency_creditnotes = $invoice->getSumCreditNotesUsed(1);
+				$multicurrency_deposits = $invoice->getSumDepositsUsed(1);
+				$multicurrency_alreadypayed = price2num($multicurrency_payment + $multicurrency_creditnotes + $multicurrency_deposits, 'MT');
+				$multicurrency_remaintopay = price2num($invoice->multicurrency_total_ttc - $multicurrency_payment - $multicurrency_creditnotes - $multicurrency_deposits, 'MT');
 				print '<tr><td colspan="'.$nbcols.'" class="right">';
 				print '<span class="opacitymedium">';
 				if ($resteapayeraffiche <= 0) {
@@ -3281,7 +3291,7 @@ if ($action == 'create') {
 				}
 				print '</span>';
 				print '</td>';
-				print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.(!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency).' '.price(price2num($sign * $object->multicurrency_tx * $resteapayeraffiche, 'MT')).'</td><td>&nbsp;</td></tr>';
+				print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.(!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency).' '.price($multicurrency_remaintopay).'</td><td>&nbsp;</td></tr>';
 			}
 
 			// Sold credit note
