@@ -9298,7 +9298,8 @@ class Form
 		$retstring = $withoutdiv ? '': '<div class="center">';
 
 		foreach ($buttons as $button) {
-			$retstring .= '<input type="submit" class="button button-'.$button['name'].' '.$button['addclass'].'" name="'.$button['name'].'" value="'.dol_escape_htmltag($langs->trans($button['label_key'])).'">';
+			$addclass = empty($button['addclass']) ? '' : $button['addclass'];
+			$retstring .= '<input type="submit" class="button button-'.$button['name'].' '.$addclass.'" name="'.$button['name'].'" value="'.dol_escape_htmltag($langs->trans($button['label_key'])).'">';
 		}
 		$retstring .= $withoutdiv ? '': '</div>';
 
