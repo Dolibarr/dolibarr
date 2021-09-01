@@ -2533,13 +2533,18 @@ if ($action == 'create') {
 			}
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('UnvalidateBill'), $langs->trans('ConfirmUnvalidateBill', $object->ref), 'confirm_edit', $formquestion, 1, 1);
 		}
+		
+		$sign = 1;
+		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
+			$sign = - 1;
+		}
 
 		// Confirmation set paid
-		if ($action == 'paid' && $resteapayer <= 0) {
+		if ($action == 'paid' && ($sign * $resteapayer) <= 0) {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $object->ref), 'confirm_paid', '', 0, 1);
 		}
 
-		if ($action == 'paid' && $resteapayer > 0) {
+		if ($action == 'paid' && ($sign * $resteapayer) > 0) {
 			$close = array();
 			// Code
 			$i = 0;
@@ -2559,9 +2564,9 @@ if ($action == 'create') {
 			$i++;
 			// Text
 			$i = 0;
-			$close[$i]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonDiscount", $resteapayer, $langs->trans("Currency".$conf->currency)), $close[$i]['label'], 1);
+			$close[$i]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonDiscount", ($sign * $resteapayer), $langs->trans("Currency".$conf->currency)), $close[$i]['label'], 1);
 			$i++;
-			$close[$i]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonBadCustomer", $resteapayer, $langs->trans("Currency".$conf->currency)), $close[$i]['label'], 1);
+			$close[$i]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonBadCustomer", ($sign * $resteapayer), $langs->trans("Currency".$conf->currency)), $close[$i]['label'], 1);
 			$i++;
 			$close[$i]['reason'] = $form->textwithpicto($langs->transnoentities("Other"), $close[$i]['label'], 1);
 			$i++;
@@ -2985,11 +2990,6 @@ if ($action == 'create') {
 		// List of payments
 
 		$totalpaye = 0;
-
-		$sign = 1;
-		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
-			$sign = - 1;
-		}
 
 		$nbrows = 9; $nbcols = 3;
 		if (!empty($conf->projet->enabled)) {
@@ -3451,8 +3451,8 @@ if ($action == 'create') {
 				}
 
 				// Classify 'closed not completely paid' (possible if validated and not yet filed paid)
-				if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0 && $resteapayer > 0) {
-					if ($totalpaye > 0 || $totalcreditnotes > 0) {
+				if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0 && ($sign * $resteapayer) > 0) {
+					if (($sign * $totalpaye) > 0 || $totalcreditnotes > 0) {
 						// If one payment or one credit note was linked to this invoice
 						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaidPartially').'</a>';
 					} else {
