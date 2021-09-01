@@ -492,7 +492,7 @@ if (GETPOSTISSET("search_status")) {
 	if ($search_status == Adherent::STATUS_VALIDATED && $filter == 'outofdate') {
 		$titre = $langs->trans("MembersListNotUpToDate");
 	}
-	if ($search_status == Adherent::STATUS_RESILIATED) {
+	if ((string) $search_status == (string) Adherent::STATUS_RESILIATED) {	// The cast to string is required to have test false when search_status is ''
 		$titre = $langs->trans("MembersListResiliated");
 	}
 	if ($search_status == Adherent::STATUS_EXCLUDED) {
@@ -833,7 +833,7 @@ if (!empty($arrayfields['d.gender']['checked'])) {
 	print_liste_field_titre($arrayfields['d.gender']['label'], $_SERVER['PHP_SELF'], 'd.gender', $param, "", "", $sortfield, $sortorder);
 }
 if (!empty($arrayfields['d.company']['checked'])) {
-	print_liste_field_titre($arrayfields['d.company']['label'], $_SERVER["PHP_SELF"], 'd.societe', '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['d.company']['label'], $_SERVER["PHP_SELF"], 'companyname', '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['d.login']['checked'])) {
 	print_liste_field_titre($arrayfields['d.login']['label'], $_SERVER["PHP_SELF"], 'd.login', '', $param, '', $sortfield, $sortorder);
@@ -906,6 +906,7 @@ while ($i < min($num, $limit)) {
 	$memberstatic->id = $obj->rowid;
 	$memberstatic->ref = $obj->ref;
 	$memberstatic->civility_id = $obj->civility;
+	$memberstatic->login = $obj->login;
 	$memberstatic->lastname = $obj->lastname;
 	$memberstatic->firstname = $obj->firstname;
 	$memberstatic->gender = $obj->gender;
@@ -920,9 +921,13 @@ while ($i < min($num, $limit)) {
 
 	if (!empty($obj->fk_soc)) {
 		$memberstatic->fetch_thirdparty();
-		$companyname = $memberstatic->thirdparty->name;
+		if ($memberstatic->thirdparty->id > 0) {
+			$companyname = $memberstatic->thirdparty->name;
+			$companynametoshow = $memberstatic->thirdparty->getNomUrl(1);
+		}
 	} else {
 		$companyname = $obj->company;
+		$companynametoshow = $obj->company;
 	}
 	$memberstatic->company = $companyname;
 
@@ -985,7 +990,7 @@ while ($i < min($num, $limit)) {
 	// Company
 	if (!empty($arrayfields['d.company']['checked'])) {
 		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companyname).'">';
-		print $companyname;
+		print $companynametoshow;
 		print "</td>\n";
 	}
 	// Login
@@ -1095,7 +1100,7 @@ while ($i < min($num, $limit)) {
 	}
 	// EMail
 	if (!empty($arrayfields['d.email']['checked'])) {
-		print "<td>".dol_print_email($obj->email, 0, 0, 1)."</td>\n";
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->email).'">'.dol_print_email($obj->email, 0, 0, 1)."</td>\n";
 	}
 	// End of subscription date
 	$datefin = $db->jdate($obj->datefin);
