@@ -261,3 +261,5 @@ ProductDoesNotExist=Product does not exist
 ErrorSameBatchNumber=Same batch number found in inventory list
 ProductBatchDoesNotExist=Product with batch/serial does not exist
 ProductBarcodeDoesNotExist=Product with barcode does not exist
+WarehouseId=Warehouse ID
+WarehouseRef=Warehouse Ref
