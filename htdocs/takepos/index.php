@@ -57,7 +57,7 @@ $action = GETPOST('action', 'aZ09');
 $setterminal = GETPOST('setterminal', 'int');
 $setcurrency = GETPOST('setcurrency', 'aZ09');
 
-if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"] == "") {
+if (!isset($_SESSION["takeposterminal"]) || $_SESSION["takeposterminal"] == "") {
 	if (getDolGlobalString("TAKEPOS_NUM_TERMINALS") == "1") {
 		$_SESSION["takeposterminal"] = 1; // Use terminal 1 if there is only 1 terminal
 	} elseif (!empty($_COOKIE["takeposterminal"])) {
@@ -806,7 +806,7 @@ $( document ).ready(function() {
 	Refresh();
 	<?php
 	//IF NO TERMINAL SELECTED
-	if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"] == "") {
+	if (!isset($_SESSION["takeposterminal"]) || $_SESSION["takeposterminal"] == "") {
 		print "ModalBox('ModalTerminal');";
 	}
 	if (getDolGlobalString('TAKEPOS_CONTROL_CASH_OPENING')) {
@@ -828,7 +828,7 @@ $( document ).ready(function() {
 
 <body class="bodytakepos" style="overflow: hidden;">
 <?php
-$keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'. isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '') > 0 ? getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'. isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '') : '';
+$keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'. (isset($_SESSION["takeposterminal"])) ? $_SESSION["takeposterminal"] : '') > 0 ? getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'. (isset($_SESSION["takeposterminal"])) ? $_SESSION["takeposterminal"] : '') : '';
 ?>
 <div class="container">
 
@@ -845,7 +845,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			<?php echo $langs->trans("Terminal"); ?>
 			</span>
 			<?php echo " ";
-			if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"] == "") {
+			if (!isset($_SESSION["takeposterminal"]) || $_SESSION["takeposterminal"] == "") {
 				echo "1";
 			} else {
 				echo $_SESSION["takeposterminal"];
@@ -899,7 +899,8 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	<div class="modal-body">
 		<button type="button" class="block" onclick="location.href='index.php?setterminal=1'"><?php print $langs->trans("Terminal"); ?> 1</button>
 		<?php
-		for ($i = 2; $i <= getDolGlobalInt("TAKEPOS_NUM_TERMINALS"); $i++) {
+		$iendofloop = getDolGlobalInt("TAKEPOS_NUM_TERMINALS");
+		for ($i = 2; $i <= $iendofloop; $i++) {
 			print '<button type="button" class="block" onclick="location.href=\'index.php?setterminal='.$i.'\'">'.$langs->trans("Terminal").' '.$i.'</button>';
 		}
 		?>
@@ -1005,7 +1006,7 @@ if ($resql) {
 			$paycode = 'CHEQUE';
 		}
 
-		$constantforkey = "CASHDESK_ID_BANKACCOUNT_".$paycode. isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '';
+		$constantforkey = "CASHDESK_ID_BANKACCOUNT_".$paycode. (isset($_SESSION["takeposterminal"])) ? $_SESSION["takeposterminal"] : '';
 		//var_dump($constantforkey.' '.$conf->global->$constantforkey);
 		if (!empty($conf->global->$constantforkey) && $conf->global->$constantforkey > 0) {
 			array_push($paiementsModes, $obj);
@@ -1016,7 +1017,7 @@ if ($resql) {
 if (empty($paiementsModes)) {
 	$langs->load('errors');
 	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("TakePOS")), null, 'errors');
-	setEventMessages($langs->trans("ProblemIsInSetupOfTerminal", isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : ''), null, 'errors');
+	setEventMessages($langs->trans("ProblemIsInSetupOfTerminal", (isset($_SESSION["takeposterminal"])) ? $_SESSION["takeposterminal"] : ''), null, 'errors');
 }
 if (count($maincategories) == 0) {
 	if (getDolGlobalInt("TAKEPOS_ROOT_CATEGORY_ID") > 0) {
