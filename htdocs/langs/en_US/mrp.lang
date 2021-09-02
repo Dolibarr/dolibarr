@@ -55,6 +55,7 @@ WarehouseForProduction=Warehouse for production
 CreateMO=Create MO
 ToConsume=To consume
 ToProduce=To produce
+ToObtain=To obtain
 QtyAlreadyConsumed=Qty already consumed
 QtyAlreadyProduced=Qty already produced
 QtyRequiredIfNoLoss=Qty required if there is no loss (Manufacturing efficiency is 100%%)
