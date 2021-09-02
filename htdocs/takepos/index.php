@@ -830,7 +830,7 @@ $( document ).ready(function() {
 
 <body class="bodytakepos" style="overflow: hidden;">
 <?php
-$keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'. (isset($_SESSION["takeposterminal"])) ? $_SESSION["takeposterminal"] : '') > 0 ? getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'. (isset($_SESSION["takeposterminal"])) ? $_SESSION["takeposterminal"] : '') : '';
+$keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '')) > 0 ? getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '') : '');
 ?>
 <div class="container">
 
@@ -1008,7 +1008,7 @@ if ($resql) {
 			$paycode = 'CHEQUE';
 		}
 
-		$constantforkey = "CASHDESK_ID_BANKACCOUNT_".$paycode. (isset($_SESSION["takeposterminal"])) ? $_SESSION["takeposterminal"] : '';
+		$constantforkey = "CASHDESK_ID_BANKACCOUNT_".$paycode. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
 		//var_dump($constantforkey.' '.$conf->global->$constantforkey);
 		if (!empty($conf->global->$constantforkey) && $conf->global->$constantforkey > 0) {
 			array_push($paiementsModes, $obj);
@@ -1019,7 +1019,7 @@ if ($resql) {
 if (empty($paiementsModes)) {
 	$langs->load('errors');
 	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("TakePOS")), null, 'errors');
-	setEventMessages($langs->trans("ProblemIsInSetupOfTerminal", (isset($_SESSION["takeposterminal"])) ? $_SESSION["takeposterminal"] : ''), null, 'errors');
+	setEventMessages($langs->trans("ProblemIsInSetupOfTerminal", (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '')), null, 'errors');
 }
 if (count($maincategories) == 0) {
 	if (getDolGlobalInt("TAKEPOS_ROOT_CATEGORY_ID") > 0) {
