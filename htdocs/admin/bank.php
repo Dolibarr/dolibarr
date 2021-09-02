@@ -499,7 +499,7 @@ print "</tr>\n";
 print '</table>';
 print dol_get_fiche_end();
 
-$form->buttonsSaveCancel("Save", '');
+print $form->buttonsSaveCancel("Save", '');
 
 print "</form>\n";
 
