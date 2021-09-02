@@ -2191,13 +2191,19 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 		if (!empty($object->state)) {
 			$ret .= "\n".$object->state;
 		}
+	} elseif (isset($object->country_code) && in_array($object->country_code, array('JP'))) {
+		// JP: In romaji, title firstname name\n address lines \n [state,] town zip \n country
+		// See https://www.sljfaq.org/afaq/addresses.html
+		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
+		$ret .= ($ret ? $sep : '').($object->state ? $object->state.', ' : '').$town.($object->zip ? ' ' : '').$object->zip;
 	} elseif (isset($object->country_code) && in_array($object->country_code, array('IT'))) {
-		// IT: tile firstname name\n address lines \n zip (Code Departement) \n country
+		// IT: title firstname name\n address lines \n zip town state_code \n country
 		$ret .= ($ret ? $sep : '').$object->zip;
 		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
 		$ret .= ($town ? (($object->zip ? ' ' : '').$town) : '');
 		$ret .= (empty($object->state_code) ? '' : (' '.$object->state_code));
-	} else { // Other: title firstname name \n address lines \n zip town \n country
+	} else {
+		// Other: title firstname name \n address lines \n zip town[, state] \n country
 		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
 		$ret .= !empty($object->zip) ? (($ret ? $sep : '').$object->zip) : '';
 		$ret .= ($town ? (($object->zip ? ' ' : ($ret ? $sep : '')).$town) : '');
