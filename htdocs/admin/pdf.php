@@ -55,7 +55,8 @@ if ($action == 'update') {
 	if (GETPOSTISSET('MAIN_PDF_FORMAT')) dolibarr_set_const($db, "MAIN_PDF_FORMAT", GETPOST("MAIN_PDF_FORMAT"), 'chaine', 0, '', $conf->entity);
 
 	if (GETPOSTISSET('MAIN_PDF_MARGIN_LEFT')) dolibarr_set_const($db, "MAIN_PDF_MARGIN_LEFT", GETPOST("MAIN_PDF_MARGIN_LEFT"), 'chaine', 0, '', $conf->entity);
-	if (GETPOSTISSET('MAIN_PDF_MARGIN_RIGHT')) dolibarr_set_const($db, "MAIN_PDF_MARGIN_RIGHT", GETPOST("MAIN_PDF_MARGIN_TOP"), 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('MAIN_PDF_MARGIN_RIGHT')) dolibarr_set_const($db, "MAIN_PDF_MARGIN_RIGHT", GETPOST("MAIN_PDF_MARGIN_RIGHT"), 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('MAIN_PDF_MARGIN_TOP')) dolibarr_set_const($db, "MAIN_PDF_MARGIN_TOP", GETPOST("MAIN_PDF_MARGIN_TOP"), 'chaine', 0, '', $conf->entity);
 	if (GETPOSTISSET('MAIN_PDF_MARGIN_BOTTOM')) dolibarr_set_const($db, "MAIN_PDF_MARGIN_BOTTOM", GETPOST("MAIN_PDF_MARGIN_BOTTOM"), 'chaine', 0, '', $conf->entity);
 
 	if (GETPOSTISSET('MAIN_PROFID1_IN_ADDRESS')) dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS", GETPOST("MAIN_PROFID1_IN_ADDRESS"), 'chaine', 0, '', $conf->entity);
