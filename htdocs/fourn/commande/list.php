@@ -87,7 +87,6 @@ $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 
 $status = GETPOST('statut', 'alpha');
-$search_status = GETPOST('search_status');
 
 // Security check
 $orderid = GETPOST('orderid', 'int');
@@ -107,7 +106,7 @@ $pagenext = $page + 1;
 if (!$sortfield) $sortfield = 'cf.ref';
 if (!$sortorder) $sortorder = 'DESC';
 
-if ($search_status == '') $search_status = -1;
+if ($search_status == '') $search_status = -5;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new CommandeFournisseur($db);
@@ -202,7 +201,7 @@ if (empty($reshook))
 		$search_total_vat = '';
 		$search_total_ttc = '';
 		$search_project_ref = '';
-		$search_status = -1;
+		$search_status = '';
 		$search_orderyear = '';
 		$search_ordermonth = '';
 		$search_orderday = '';
@@ -225,224 +224,268 @@ if (empty($reshook))
 	$objectlabel = 'SupplierOrders';
 	$permissiontoread = $user->rights->fournisseur->commande->lire;
 	$permissiontodelete = $user->rights->fournisseur->commande->supprimer;
+	$permissiontovalidate = $user->rights->fournisseur->commande->creer;
 	$uploaddir = $conf->fournisseur->commande->dir_output;
+
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
-
-	// TODO Move this into mass action include
-	if ($massaction == 'confirm_createbills')
+}
+if ($action == 'validate' && $permissiontovalidate)
+{
+	if (GETPOST('confirm') == 'yes')
 	{
-		$orders = GETPOST('toselect', 'array');
-		$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
-		$validate_invoices = GETPOST('validate_invoices', 'int');
-
-		$TFact = array();
-		$TFactThird = array();
-
-		$nb_bills_created = 0;
-
+		$objecttmp = new CommandeFournisseur($db);
 		$db->begin();
+		$error = 0;
 
-		foreach ($orders as $id_order) {
-			$cmd = new Commande($db);
-			if ($cmd->fetch($id_order) <= 0) continue;
-
-			$object = new Facture($db);
-			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) $object = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
-			else {
-				$object->socid = $cmd->socid;
-				$object->type = Facture::TYPE_STANDARD;
-				$object->cond_reglement_id	= $cmd->cond_reglement_id;
-				$object->mode_reglement_id	= $cmd->mode_reglement_id;
-				$object->fk_project = $cmd->fk_project;
-
-				$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-				if (empty($datefacture))
+		foreach ($toselect as $checked)
+		{
+			if ($objecttmp->fetch($checked))
+			{
+				if ($objecttmp->statut == 0)
 				{
-					$datefacture = dol_mktime(date("h"), date("M"), 0, date("m"), date("d"), date("Y"));
+					$objecttmp->date_commande = dol_now();
+					$result = $objecttmp->valid($user);
+					if ($result >= 0)
+					{
+						// If we have permission, and if we don't need to provide the idwarehouse, we go directly on approved step
+						if (empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE) && $user->rights->fournisseur->commande->approuver && !(!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $objecttmp->hasProductsOrServices(1)))
+						{
+							$result = $objecttmp->approve($user);
+							setEventMessages($langs->trans("SupplierOrderValidatedAndApproved"), array($objecttmp->ref));
+						} else {
+							setEventMessages($langs->trans("SupplierOrderValidated"), array($objecttmp->ref));
+						}
+					}
+					else
+					{
+						setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+						$error++;
+					}
 				}
+			}
+		}
 
-				$object->date = $datefacture;
-				$object->origin    = 'commande';
-				$object->origin_id = $id_order;
+		if (!$error) $db->commit();
+		else $db->rollback();
+	}
+}
 
-				$res = $object->create($user);
 
-				if ($res > 0) $nb_bills_created++;
+// TODO Move this into mass action include
+if ($massaction == 'confirm_createbills')
+{
+	$orders = GETPOST('toselect', 'array');
+	$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
+	$validate_invoices = GETPOST('validate_invoices', 'int');
+
+	$TFact = array();
+	$TFactThird = array();
+
+	$nb_bills_created = 0;
+
+	$db->begin();
+
+	foreach ($orders as $id_order) {
+		$cmd = new Commande($db);
+		if ($cmd->fetch($id_order) <= 0) continue;
+
+		$object = new Facture($db);
+		if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) $object = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
+		else {
+			$object->socid = $cmd->socid;
+			$object->type = Facture::TYPE_STANDARD;
+			$object->cond_reglement_id	= $cmd->cond_reglement_id;
+			$object->mode_reglement_id	= $cmd->mode_reglement_id;
+			$object->fk_project = $cmd->fk_project;
+
+			$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+			if (empty($datefacture))
+			{
+				$datefacture = dol_mktime(date("h"), date("M"), 0, date("m"), date("d"), date("Y"));
 			}
 
-			if ($object->id > 0)
-			{
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
-				$sql .= "fk_source";
-				$sql .= ", sourcetype";
-				$sql .= ", fk_target";
-				$sql .= ", targettype";
-				$sql .= ") VALUES (";
-				$sql .= $id_order;
-				$sql .= ", '".$object->origin."'";
-				$sql .= ", ".$object->id;
-				$sql .= ", '".$object->element."'";
-				$sql .= ")";
+			$object->date = $datefacture;
+			$object->origin    = 'commande';
+			$object->origin_id = $id_order;
 
-				if (!$db->query($sql))
+			$res = $object->create($user);
+
+			if ($res > 0) $nb_bills_created++;
+		}
+
+		if ($object->id > 0)
+		{
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
+			$sql .= "fk_source";
+			$sql .= ", sourcetype";
+			$sql .= ", fk_target";
+			$sql .= ", targettype";
+			$sql .= ") VALUES (";
+			$sql .= $id_order;
+			$sql .= ", '".$object->origin."'";
+			$sql .= ", ".$object->id;
+			$sql .= ", '".$object->element."'";
+			$sql .= ")";
+
+			if (!$db->query($sql))
+			{
+				$erorr++;
+			}
+
+			if (!$error)
+			{
+				$lines = $cmd->lines;
+				if (empty($lines) && method_exists($cmd, 'fetch_lines'))
 				{
-					$erorr++;
+					$cmd->fetch_lines();
+					$lines = $cmd->lines;
 				}
 
-				if (!$error)
+				$fk_parent_line = 0;
+				$num = count($lines);
+
+				for ($i = 0; $i < $num; $i++)
 				{
-					$lines = $cmd->lines;
-					if (empty($lines) && method_exists($cmd, 'fetch_lines'))
+					$desc = ($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
+					if ($lines[$i]->subprice < 0)
 					{
-						$cmd->fetch_lines();
-						$lines = $cmd->lines;
-					}
-
-					$fk_parent_line = 0;
-					$num = count($lines);
-
-					for ($i = 0; $i < $num; $i++)
-					{
-						$desc = ($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
-						if ($lines[$i]->subprice < 0)
+						// Negative line, we create a discount line
+						$discount = new DiscountAbsolute($db);
+						$discount->fk_soc = $object->socid;
+						$discount->amount_ht = abs($lines[$i]->total_ht);
+						$discount->amount_tva = abs($lines[$i]->total_tva);
+						$discount->amount_ttc = abs($lines[$i]->total_ttc);
+						$discount->tva_tx = $lines[$i]->tva_tx;
+						$discount->fk_user = $user->id;
+						$discount->description = $desc;
+						$discountid = $discount->create($user);
+						if ($discountid > 0)
 						{
-							// Negative line, we create a discount line
-							$discount = new DiscountAbsolute($db);
-							$discount->fk_soc = $object->socid;
-							$discount->amount_ht = abs($lines[$i]->total_ht);
-							$discount->amount_tva = abs($lines[$i]->total_tva);
-							$discount->amount_ttc = abs($lines[$i]->total_ttc);
-							$discount->tva_tx = $lines[$i]->tva_tx;
-							$discount->fk_user = $user->id;
-							$discount->description = $desc;
-							$discountid = $discount->create($user);
-							if ($discountid > 0)
-							{
-								$result = $object->insert_discount($discountid);
-								//$result=$discount->link_to_invoice($lineid,$id);
-							}
-							else
-							{
-								setEventMessages($discount->error, $discount->errors, 'errors');
-								$error++;
-								break;
-							}
+							$result = $object->insert_discount($discountid);
+							//$result=$discount->link_to_invoice($lineid,$id);
 						}
 						else
 						{
-							// Positive line
-							$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
-							// Date start
-							$date_start = false;
-							if ($lines[$i]->date_debut_prevue) $date_start = $lines[$i]->date_debut_prevue;
-							if ($lines[$i]->date_debut_reel) $date_start = $lines[$i]->date_debut_reel;
-							if ($lines[$i]->date_start) $date_start = $lines[$i]->date_start;
-							//Date end
-							$date_end = false;
-							if ($lines[$i]->date_fin_prevue) $date_end = $lines[$i]->date_fin_prevue;
-							if ($lines[$i]->date_fin_reel) $date_end = $lines[$i]->date_fin_reel;
-							if ($lines[$i]->date_end) $date_end = $lines[$i]->date_end;
-							// Reset fk_parent_line for no child products and special product
-							if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9)
-							{
-								$fk_parent_line = 0;
-							}
-                            $result = $object->addline(
-								$desc,
-								$lines[$i]->subprice,
-								$lines[$i]->qty,
-								$lines[$i]->tva_tx,
-								$lines[$i]->localtax1_tx,
-								$lines[$i]->localtax2_tx,
-								$lines[$i]->fk_product,
-								$lines[$i]->remise_percent,
-								$date_start,
-								$date_end,
-								0,
-								$lines[$i]->info_bits,
-								$lines[$i]->fk_remise_except,
-								'HT',
-								0,
-								$product_type,
-								$ii,
-								$lines[$i]->special_code,
-								$object->origin,
-								$lines[$i]->rowid,
-								$fk_parent_line,
-								$lines[$i]->fk_fournprice,
-								$lines[$i]->pa_ht,
-								$lines[$i]->label
-								);
-							if ($result > 0)
-							{
-								$lineid = $result;
-							}
-							else
-							{
-								$lineid = 0;
-								$error++;
-								break;
-							}
-							// Defined the new fk_parent_line
-							if ($result > 0 && $lines[$i]->product_type == 9)
-							{
-								$fk_parent_line = $result;
-							}
+							setEventMessages($discount->error, $discount->errors, 'errors');
+							$error++;
+							break;
+						}
+					}
+					else
+					{
+						// Positive line
+						$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
+						// Date start
+						$date_start = false;
+						if ($lines[$i]->date_debut_prevue) $date_start = $lines[$i]->date_debut_prevue;
+						if ($lines[$i]->date_debut_reel) $date_start = $lines[$i]->date_debut_reel;
+						if ($lines[$i]->date_start) $date_start = $lines[$i]->date_start;
+						//Date end
+						$date_end = false;
+						if ($lines[$i]->date_fin_prevue) $date_end = $lines[$i]->date_fin_prevue;
+						if ($lines[$i]->date_fin_reel) $date_end = $lines[$i]->date_fin_reel;
+						if ($lines[$i]->date_end) $date_end = $lines[$i]->date_end;
+						// Reset fk_parent_line for no child products and special product
+						if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9)
+						{
+							$fk_parent_line = 0;
+						}
+						$result = $object->addline(
+							$desc,
+							$lines[$i]->subprice,
+							$lines[$i]->qty,
+							$lines[$i]->tva_tx,
+							$lines[$i]->localtax1_tx,
+							$lines[$i]->localtax2_tx,
+							$lines[$i]->fk_product,
+							$lines[$i]->remise_percent,
+							$date_start,
+							$date_end,
+							0,
+							$lines[$i]->info_bits,
+							$lines[$i]->fk_remise_except,
+							'HT',
+							0,
+							$product_type,
+							$ii,
+							$lines[$i]->special_code,
+							$object->origin,
+							$lines[$i]->rowid,
+							$fk_parent_line,
+							$lines[$i]->fk_fournprice,
+							$lines[$i]->pa_ht,
+							$lines[$i]->label
+							);
+						if ($result > 0)
+						{
+							$lineid = $result;
+						}
+						else
+						{
+							$lineid = 0;
+							$error++;
+							break;
+						}
+						// Defined the new fk_parent_line
+						if ($result > 0 && $lines[$i]->product_type == 9)
+						{
+							$fk_parent_line = $result;
 						}
 					}
 				}
 			}
-
-			$cmd->classifyBilled($user); // TODO Move this in workflow like done for customer orders
-
-			if (!empty($createbills_onebythird) && empty($TFactThird[$cmd->socid])) $TFactThird[$cmd->socid] = $object;
-			else $TFact[$object->id] = $object;
 		}
 
-		// Build doc with all invoices
-		$TAllFact = empty($createbills_onebythird) ? $TFact : $TFactThird;
-		$toselect = array();
+		$cmd->classifyBilled($user); // TODO Move this in workflow like done for customer orders
 
-		if (!$error && $validate_invoices) {
-			$massaction = $action = 'builddoc';
+		if (!empty($createbills_onebythird) && empty($TFactThird[$cmd->socid])) $TFactThird[$cmd->socid] = $object;
+		else $TFact[$object->id] = $object;
+	}
 
-			foreach ($TAllFact as &$object)
+	// Build doc with all invoices
+	$TAllFact = empty($createbills_onebythird) ? $TFact : $TFactThird;
+	$toselect = array();
+
+	if (!$error && $validate_invoices) {
+		$massaction = $action = 'builddoc';
+
+		foreach ($TAllFact as &$object)
+		{
+			$object->validate($user);
+			if ($result <= 0)
 			{
-				$object->validate($user);
-				if ($result <= 0)
-				{
-					$error++;
-					setEventMessages($object->error, $object->errors, 'errors');
-					break;
-				}
-
-				$id = $object->id; // For builddoc action
-
-				// Fac builddoc
-				$donotredirect = 1;
-				$upload_dir = $conf->facture->dir_output;
-				$permissiontoadd=$user->rights->facture->creer;
-				include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+				break;
 			}
 
-			$massaction = $action = 'confirm_createbills';
+			$id = $object->id; // For builddoc action
+
+			// Fac builddoc
+			$donotredirect = 1;
+			$upload_dir = $conf->facture->dir_output;
+			$permissiontoadd=$user->rights->facture->creer;
+			include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 		}
 
-		if (! $error)
-		{
-			$db->commit();
-			setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
-		}
-		else
-		{
-			$db->rollback();
-			$action = 'create';
-			$_GET["origin"] = $_POST["origin"];
-			$_GET["originid"] = $_POST["originid"];
-			setEventMessages($object->error, $object->errors, 'errors');
-			$error++;
-		}
+		$massaction = $action = 'confirm_createbills';
 	}
+
+	if (! $error)
+	{
+		$db->commit();
+		setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
+	}
+	else
+	{
+		$db->rollback();
+		$action = 'create';
+		$_GET["origin"] = $_POST["origin"];
+		$_GET["originid"] = $_POST["originid"];
+		setEventMessages($object->error, $object->errors, 'errors');
+		$error++;
+	}
+
 }
 
 
@@ -514,6 +557,9 @@ if ($search_user > 0)
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= ' WHERE cf.fk_soc = s.rowid';
 $sql .= ' AND cf.entity IN ('.getEntity('supplier_order').')';
 if ($socid > 0) $sql .= " AND s.rowid = ".$socid;
@@ -524,6 +570,7 @@ if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_request_author) $sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_request_author);
 if ($search_billed != '' && $search_billed >= 0) $sql .= " AND cf.billed = ".$db->escape($search_billed);
+
 if ($search_product_category > 0) $sql .= " AND cp.fk_categorie = ".$search_product_category;
 //Required triple check because statut=0 means draft filter
 if (GETPOST('statut', 'intcomma') !== '')
@@ -628,6 +675,17 @@ if ($resql)
 		'builddoc'=>$langs->trans("PDFMerge"),
 	    'presend'=>$langs->trans("SendByMail"),
 	);
+	if ($permissiontovalidate) {
+		if ($user->rights->fournisseur->commande->approuver && empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE))
+		{
+			$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ValidateAndApprove");
+		}
+		else
+		{
+			$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate");
+		}
+	}
+
 	//if($user->rights->fournisseur->facture->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 	if ($user->rights->fournisseur->commande->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	if (in_array($massaction, array('presend', 'predelete', 'createbills'))) $arrayofmassactions = array();
@@ -657,6 +715,10 @@ if ($resql)
 	$objecttmp = new CommandeFournisseur($db);
 	$trackid = 'sord'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
+	if ($massaction == 'prevalidate') {
+		print $form->formconfirm($_SERVER["PHP_SELF"].$fieldstosearchall, $langs->trans("ConfirmMassValidation"), $langs->trans("ConfirmMassValidationQuestion"), "validate", null, '', 0, 200, 500, 1);
+	}
 
 	if ($massaction == 'createbills')
 	{
@@ -870,6 +932,7 @@ if ($resql)
 		$formorder->selectSupplierOrderStatus((strstr($search_status, ',') ?-1 : $search_status), 1, 'search_status');
 		print '</td>';
 	}
+
 	// Status billed
 	if (!empty($arrayfields['cf.billed']['checked']))
 	{
