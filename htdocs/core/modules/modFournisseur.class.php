@@ -681,7 +681,7 @@ class modFournisseur extends DolibarrModules
 		$this->import_tables_array[$r] = array('c' => MAIN_DB_PREFIX.'commande_fournisseur', 'extra' => MAIN_DB_PREFIX.'commande_fournisseur_extrafields');
 		$this->import_tables_creator_array[$r] = array('c' => 'fk_user_author'); // Fields to store import user id
 		$this->import_fields_array[$r] = array(
-			'c.ref'               => 'Document Ref*',
+			'c.ref'               => 'Ref*',
 			'c.ref_supplier'      => 'RefSupplier',
 			'c.fk_soc'            => 'ThirdPartyName*',
 			'c.fk_projet'         => 'ProjectId',
@@ -762,7 +762,7 @@ class modFournisseur extends DolibarrModules
 		$this->import_entities_array[$r] = array();
 		$this->import_tables_array[$r] = array('cd' => MAIN_DB_PREFIX.'commande_fournisseurdet', 'extra' => MAIN_DB_PREFIX.'commande_fournisseurdet_extrafields');
 		$this->import_fields_array[$r] = array(
-			'cd.fk_commande'    => 'Document Ref*',
+			'cd.fk_commande'    => 'PurchaseOrder*',
 			'cd.fk_parent_line' => 'PrParentLine',
 			'cd.fk_product'     => 'IdProduct',
 			'cd.label'          => 'Label',

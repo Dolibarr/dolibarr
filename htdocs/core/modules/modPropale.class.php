@@ -280,7 +280,7 @@ class modPropale extends DolibarrModules
 		$this->import_tables_array[$r] = array('c' => MAIN_DB_PREFIX.'propal', 'extra' => MAIN_DB_PREFIX.'propal_extrafields');
 		$this->import_tables_creator_array[$r] = array('c'=>'fk_user_author'); // Fields to store import user id
 		$this->import_fields_array[$r] = array(
-			'c.ref' => 'Document Ref*',
+			'c.ref' => 'Ref*',
 			'c.ref_client' => 'RefCustomer',
 			'c.fk_soc' => 'ThirdPartyName*',
 			'c.datec' => 'DateCreation',
@@ -359,7 +359,7 @@ class modPropale extends DolibarrModules
 			'extra' => MAIN_DB_PREFIX.'propaldet_extrafields'
 		);
 		$this->import_fields_array[$r] = array(
-			'cd.fk_propal' => 'Document Ref*',
+			'cd.fk_propal' => 'Proposal*',
 			'cd.fk_parent_line' => 'PrParentLine',
 			'cd.fk_product' => 'IdProduct',
 			'cd.label' => 'Label',
