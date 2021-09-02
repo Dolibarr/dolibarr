@@ -684,7 +684,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= ' s.nom as socnom, s.rowid as socid,';
 		$sql .= ' t.fk_incoterms, t.location_incoterms,';
 		$sql .= " i.libelle as label_incoterms,";
-		$sql .= ' t.fk_transport_mode,';
+		$sql .= ' t.fk_mode_transport,';
 		$sql .= ' t.fk_multicurrency, t.multicurrency_code, t.multicurrency_tx, t.multicurrency_total_ht, t.multicurrency_total_tva, t.multicurrency_total_ttc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as t';
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (t.fk_soc = s.rowid)";
@@ -757,7 +757,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->fk_incoterms = $obj->fk_incoterms;
 				$this->location_incoterms = $obj->location_incoterms;
 				$this->label_incoterms = $obj->label_incoterms;
-				$this->transport_mode_id = $obj->fk_transport_mode;
+				$this->transport_mode_id = $obj->fk_mode_transport;
 
 				// Multicurrency
 				$this->fk_multicurrency = $obj->fk_multicurrency;
