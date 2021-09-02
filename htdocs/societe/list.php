@@ -1396,7 +1396,7 @@ while ($i < min($num, $limit)) {
 		print '<td class="tdoverflowmax50">';
 		print $obj->rowid;
 		print "</td>\n";
-		if (!$i) {
+		if (empty($i)) {
 			$totalarray['nbfield']++;
 		}
 	}
@@ -1413,7 +1413,7 @@ while ($i < min($num, $limit)) {
 		}
 		print "</td>\n";
 		$companystatic->name_alias = $savalias;
-		if (!$i) {
+		if (empty($i)) {
 			$totalarray['nbfield']++;
 		}
 	}
@@ -1508,12 +1508,12 @@ while ($i < min($num, $limit)) {
 	// Type ent
 	if (!empty($arrayfields['typent.code']['checked'])) {
 		print '<td class="center">';
-		if (!is_array($typenArray) || count($typenArray) == 0) {
+		if (!isset($typenArray) || !is_array($typenArray) || count($typenArray) == 0) {
 			$typenArray = $formcompany->typent_array(1);
 		}
-		print $typenArray[$obj->typent_code];
+		print empty($typenArray[$obj->typent_code]) ? '' : $typenArray[$obj->typent_code];
 		print '</td>';
-		if (!$i) {
+		if (empty($i)) {
 			$totalarray['nbfield']++;
 		}
 	}
@@ -1532,19 +1532,19 @@ while ($i < min($num, $limit)) {
 		}
 		print $staffArray[$obj->staff_code];
 		print '</td>';
-		if (!$i) {
+		if (empty($i)) {
 			$totalarray['nbfield']++;
 		}
 	}
 	if (!empty($arrayfields['s.email']['checked'])) {
 		print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 0, 0, 1)."</td>\n";
-		if (!$i) {
+		if (empty($i)) {
 			$totalarray['nbfield']++;
 		}
 	}
 	if (!empty($arrayfields['s.phone']['checked'])) {
 		print '<td class="nowraponall">'.dol_print_phone($obj->phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
-		if (!$i) {
+		if (empty($i)) {
 			$totalarray['nbfield']++;
 		}
 	}
