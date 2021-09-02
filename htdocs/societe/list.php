@@ -1396,7 +1396,7 @@ while ($i < min($num, $limit)) {
 		print '<td class="tdoverflowmax50">';
 		print $obj->rowid;
 		print "</td>\n";
-		if (empty($i)) {
+		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
@@ -1413,7 +1413,7 @@ while ($i < min($num, $limit)) {
 		}
 		print "</td>\n";
 		$companystatic->name_alias = $savalias;
-		if (empty($i)) {
+		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
