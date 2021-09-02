@@ -553,7 +553,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit))) {
 	$num = $nbtotalofrecords;
 } else {
-	if ($limit) {
+	if (!empty($limit)) {
 		$sql .= $db->plimit($limit + 1, $offset);
 	}
 
