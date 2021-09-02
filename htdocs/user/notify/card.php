@@ -290,7 +290,7 @@ if ($result > 0) {
 			print $form->selectarray("typeid", $type);
 			print '</td>';
 			print '<td class="nowraponall">';
-			print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+			print '<input type="submit" class="button button-add" value="'.$langs->trans("Add").'">';
 			print '&nbsp;';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</td>';

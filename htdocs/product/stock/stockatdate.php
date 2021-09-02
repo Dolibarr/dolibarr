@@ -373,7 +373,7 @@ if (empty($reshook)) {
 }
 
 print '<div class="inline-block valignmiddle">';
-print '<input class="button" type="submit" name="valid" value="'.$langs->trans('Refresh').'">';
+print '<input type="submit" class="button" name="valid" value="'.$langs->trans('Refresh').'">';
 print '</div>';
 
 //print '</form>';

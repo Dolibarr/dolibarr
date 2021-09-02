@@ -806,8 +806,7 @@ if (empty($reshook)) {
 			$action = 'edit_extras';
 		}
 	} elseif ($action == 'setref_supplier') {
-		$cancelbutton = GETPOST('cancel', 'alpha');
-		if (!$cancelbutton) {
+		if (!$cancel) {
 			$object->oldcopy = dol_clone($object);
 
 			$result = $object->setValueFrom('ref_supplier', GETPOST('ref_supplier', 'alpha'), '', null, 'text', '', $user, 'CONTRACT_MODIFY');
@@ -823,9 +822,7 @@ if (empty($reshook)) {
 			exit;
 		}
 	} elseif ($action == 'setref_customer') {
-		$cancelbutton = GETPOST('cancel', 'alpha');
-
-		if (!$cancelbutton) {
+		if (!$cancel) {
 			$object->oldcopy = dol_clone($object);
 
 			$result = $object->setValueFrom('ref_customer', GETPOST('ref_customer', 'alpha'), '', null, 'text', '', $user, 'CONTRACT_MODIFY');
@@ -841,9 +838,7 @@ if (empty($reshook)) {
 			exit;
 		}
 	} elseif ($action == 'setref') {
-		$cancelbutton = GETPOST('cancel', 'alpha');
-
-		if (!$cancelbutton) {
+		if (!$cancel) {
 			$result = $object->fetch($id);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -878,9 +873,7 @@ if (empty($reshook)) {
 			exit;
 		}
 	} elseif ($action == 'setdate_contrat') {
-		$cancelbutton = GETPOST('cancel', 'alpha');
-
-		if (!$cancelbutton) {
+		if (!$cancel) {
 			$result = $object->fetch($id);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');

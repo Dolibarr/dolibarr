@@ -75,6 +75,10 @@ $extrafields = new ExtraFields($db);
 
 $extrafields->fetch_name_optionals_label($object->table_element);
 
+if (empty($conf->ticket->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
+
 
 /*
  * Actions

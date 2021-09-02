@@ -1701,7 +1701,7 @@ abstract class CommonObject
 
 		$idtype = $this->barcode_type;
 		if (empty($idtype) && $idtype != '0') {	// If type of barcode no set, we try to guess. If set to '0' it means we forced to have type remain not defined
-			if ($this->element == 'product') {
+			if ($this->element == 'product' && !empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) {
 				$idtype = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
 			} elseif ($this->element == 'societe') {
 				$idtype = $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY;
@@ -7757,7 +7757,7 @@ abstract class CommonObject
 
 						if ($display_type == 'card') {
 							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="valuefieldcreate '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
-							if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER) && $action == 'view') {
+							if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER) && ($action == 'view' || $action == 'editline')) {
 								$out .= '<td></td>';
 							}
 							$out .= '<td class="wordbreak';

@@ -473,6 +473,10 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	white-space: normal;
 	color: #888 !important;
 }
+.nofocusvisible:focus-visible {
+	outline: none;
+}
+
 div.buttonpayment input {
 	background-color: unset;
 	border-bottom: unset;

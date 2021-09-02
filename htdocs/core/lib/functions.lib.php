@@ -104,7 +104,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  */
 function getEntity($element, $shared = 1, $currentobject = null)
 {
-	global $conf, $mc;
+	global $conf, $mc, $hookmanager, $object, $action;
 
 	// fix different element names (France to English)
 	switch ($element) {
@@ -117,7 +117,7 @@ function getEntity($element, $shared = 1, $currentobject = null)
 	}
 
 	if (is_object($mc)) {
-		return $mc->getEntity($element, $shared, $currentobject);
+		$out = $mc->getEntity($element, $shared, $currentobject);
 	} else {
 		$out = '';
 		$addzero = array('user', 'usergroup', 'c_email_templates', 'email_template', 'default_values');
@@ -125,8 +125,27 @@ function getEntity($element, $shared = 1, $currentobject = null)
 			$out .= '0,';
 		}
 		$out .= ((int) $conf->entity);
-		return $out;
 	}
+
+	// Manipulate entities to query on the fly
+	$parameters = array(
+		'element' => $element,
+		'shared' => $shared,
+		'object' => $object,
+		'currentobject' => $currentobject,
+		'out' => $out
+	);
+	$reshook = $hookmanager->executeHooks('hookGetEntity', $parameters, $currentobject, $action); // Note that $action and $object may have been modified by some hooks
+
+	if (is_numeric($reshook)) {
+		if ($reshook == 0 && !empty($hookmanager->resprints)) {
+			$out .= ','.$hookmanager->resprints; // add
+		} elseif ($reshook == 1) {
+			$out = $hookmanager->resprints; // replace
+		}
+	}
+
+	return $out;
 }
 
 /**
@@ -673,14 +692,11 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
  *
  *  @param  string  $paramname   Name of parameter to found
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
- *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
- *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'
- *  @param	string	$noreplace   Force disable of replacement of __xxx__ strings.
  *  @return int                  Value found (int)
  */
-function GETPOSTINT($paramname, $method = 0, $filter = null, $options = null, $noreplace = 0)
+function GETPOSTINT($paramname, $method = 0)
 {
-	return (int) GETPOST($paramname, 'int', $method, $filter, $options, $noreplace);
+	return (int) GETPOST($paramname, 'int', $method, null, null, 0);
 }
 
 /**

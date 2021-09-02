@@ -33,13 +33,13 @@ if ($conf->categorie->enabled) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
+global $dolibarr_main_url_root;
+
 // for other modules
 //dol_include_once('/othermodule/class/otherobject.class.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array("eventorganization", "other"));
-
-global $dolibarr_main_url_root, $dolibarr_main_instance_unique_id;
+$langs->loadLangs(array("eventorganization", "other", "projects"));
 
 $action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
@@ -228,7 +228,7 @@ $now = dol_now();
 
 //$help_url="EN:Module_ConferenceOrBooth|FR:Module_ConferenceOrBooth_FR|ES:Módulo_ConferenceOrBooth";
 $help_url = '';
-$title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("ConferenceOrBooths"));
+$title = $langs->trans('ListOfConferencesOrBooths');
 
 if ($projectid > 0) {
 	$project = new Project($db);
@@ -246,9 +246,9 @@ if ($projectid > 0) {
 	}
 
 	$help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
-	$title = $langs->trans("Project") . ' - ' . $langs->trans("ConferenceOrBooths") . ' - ' . $project->ref . ' ' . $project->name;
+	$title = $langs->trans("Project") . ' - ' . $langs->trans("ListOfConferencesOrBooths") . ' - ' . $project->ref . ' ' . $project->name;
 	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $project->name) {
-		$title = $project->ref . ' ' . $project->name . ' - ' . $langs->trans("ConferenceOrBooths");
+		$title = $project->ref . ' ' . $project->name . ' - ' . $langs->trans("ListOfConferencesOrBooths");
 	}
 }
 
@@ -352,14 +352,6 @@ if ($projectid > 0) {
 	}
 	print '</td></tr>';
 
-	// Link to the vote/register page
-	print '<tr><td>'.$langs->trans("RegisterPage").'</td><td>';
-	$linkregister = $dolibarr_main_url_root.'/public/project/index.php?id='.$project->id;
-	$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$project->id, 2);
-	$linkregister .= '&securekey='.urlencode($encodedsecurekey);
-	print '<a target="_blank" href="'.$linkregister.'">'.$linkregister.'</a>';
-	print '</td></tr>';
-
 	// Other attributes
 	$cols = 2;
 	$objectconf=$object;
@@ -422,12 +414,45 @@ if ($projectid > 0) {
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
 
 	// Show message
-	$message = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
+	$message = '<a target="blank" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
 	$message .= '&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...');
-	$message .= "&project=".$projectid.'&module='.urlencode('@eventorganization').'&status='.ConferenceOrBooth::STATUS_CONFIRMED.'">'.$langs->trans('DownloadICSLink').'</a>';
+	$message .= "&project=".$projectid.'&module='.urlencode('@eventorganization').'&status='.ConferenceOrBooth::STATUS_CONFIRMED.'">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
 	print $message;
 	print "</td></tr>";
 
+	// Link to the submit vote/register page
+	print '<tr><td>';
+	//print '<span class="opacitymedium">';
+	print $form->textwithpicto($langs->trans("SuggestOrVoteForConfOrBooth"), $langs->trans("EvntOrgRegistrationHelpMessage"));
+	//print '</span>';
+	print '</td><td>';
+	$linksuggest = $dolibarr_main_url_root.'/public/project/index.php?id='.$project->id;
+	$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$project->id, 2);
+	$linksuggest .= '&securekey='.urlencode($encodedsecurekey);
+	//print '<div class="urllink">';
+	//print '<input type="text" value="'.$linksuggest.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
+	print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" href="'.$linksuggest.'" class="quatrevingtpercent">'.$linksuggest.'</a></div>';
+	print '<a target="_blank" href="'.$linksuggest.'">'.img_picto('', 'globe').'</a>';
+	//print '</div>';
+	//print ajax_autoselect("linkregister");
+	print '</td></tr>';
+
+	// Link to the subscribe
+	print '<tr><td>';
+	//print '<span class="opacitymedium">';
+	print $langs->trans("PublicAttendeeSubscriptionPage");
+	//print '</span>';
+	print '</td><td>';
+	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_subscription.php?id='.$project->id;
+	$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$project->id, 2);
+	$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
+	//print '<div class="urllink">';
+	//print '<input type="text" value="'.$linkregister.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
+	print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" href="'.$link_subscription.'" class="quatrevingtpercent">'.$link_subscription.'</a></div>';
+	print '<a target="_blank" href="'.$link_subscription.'">'.img_picto('', 'globe').'</a>';
+	//print '</div>';
+	//print ajax_autoselect("linkregister");
+	print '</td></tr>';
 
 	print '</table>';
 
@@ -436,7 +461,6 @@ if ($projectid > 0) {
 	print '</div>';
 
 	print '<div class="clearboth"></div>';
-
 
 	print dol_get_fiche_end();
 }
@@ -612,7 +636,7 @@ $newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle'
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 // Add code for pre mass action (confirmation or email presend form)
-$topicmail = "SendConferenceOrBoothRef";
+$topicmail = $object->ref;
 $modelmail = "conferenceorbooth";
 $objecttmp = new ConferenceOrBooth($db);
 $trackid = 'conferenceorbooth_'.$object->id;
@@ -665,7 +689,7 @@ foreach ($object->fields as $key => $val) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('timestamp'))) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $val['label'] != 'TechnicalID') {
+	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('rowid', 'ref')) && $val['label'] != 'TechnicalID') {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
@@ -713,7 +737,7 @@ foreach ($object->fields as $key => $val) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('timestamp'))) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $val['label'] != 'TechnicalID') {
+	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('rowid', 'ref')) && $val['label'] != 'TechnicalID') {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
@@ -768,10 +792,10 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		if (in_array($val['type'], array('timestamp'))) {
 			$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
 		} elseif ($key == 'ref') {
-			$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
+			$cssforfield .= ($cssforfield ? ' ' : '').'nowrap left';
 		}
 
-		if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('rowid', 'status'))) {
+		if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('rowid', 'ref', 'status'))) {
 			$cssforfield .= ($cssforfield ? ' ' : '').'right';
 		}
 		//if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';

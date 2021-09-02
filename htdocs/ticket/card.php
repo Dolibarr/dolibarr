@@ -1020,7 +1020,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '<input type="hidden" name="track_id" value="'.$object->track_id.'">';
 			print '<label for="fk_user_assign">'.$langs->trans("AssignUser").'</label> ';
 			print $form->select_dolusers($user->id, 'fk_user_assign', 1);
-			print ' <input class="button" type="submit" name="btn_assign_user" value="'.$langs->trans("Validate").'" />';
+			print ' <input type="submit" class="button" name="btn_assign_user" value="'.$langs->trans("Validate").'" />';
 			print '</form>';
 		}
 		print '</td></tr>';
@@ -1041,7 +1041,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '<input type="hidden" name="track_id" value="'.$track_id.'">';
 			print '<input type="hidden" name="action" value="set_progression">';
 			print '<input type="text" class="flat" size="20" name="progress" value="'.$object->progress.'">';
-			print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+			print ' <input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
 			print($object->progress > 0 ? $object->progress : '0').'%';
@@ -1105,7 +1105,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '</td>';
 		print '<td>';
 		if (GETPOST('set', 'alpha') == 'properties' && $user->rights->ticket->write) {
-			print '<input class="button" type="submit" name="btn_update_ticket_prop" value="'.$langs->trans("Modify").'" />';
+			print '<input type="submit" class="button" name="btn_update_ticket_prop" value="'.$langs->trans("Modify").'" />';
 		} else {
 			//    Button to edit Properties
 			if ($object->fk_statut < $object::STATUS_NEED_MORE_INFO && $user->rights->ticket->write) {

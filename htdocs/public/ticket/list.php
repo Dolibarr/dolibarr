@@ -70,6 +70,9 @@ if (isset($_SESSION['email_customer'])) {
 
 $object = new Ticket($db);
 
+if (empty($conf->ticket->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
 
 
 
@@ -710,7 +713,7 @@ if ($action == "view_ticketlist") {
 	print '</p>';
 
 	print '<p style="text-align: center; margin-top: 1.5em;">';
-	print '<input class="button" type="submit" name="btn_view_ticket_list" value="'.$langs->trans('ViewMyTicketList').'" />';
+	print '<input type="submit" class="button" name="btn_view_ticket_list" value="'.$langs->trans('ViewMyTicketList').'" />';
 	print "</p>\n";
 
 	print "</form>\n";
