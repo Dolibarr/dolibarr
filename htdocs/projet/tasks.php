@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-if ($conf->categorie->enabled) {
+if (!empty($conf->categorie->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -718,7 +718,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	// Project
 	print '<tr><td class="fieldrequired">'.$langs->trans("ChildOfProjectTask").'</td><td>';
 	print img_picto('', 'project');
-	$formother->selectProjectTasks(GETPOST('task_parent'), $projectid ? $projectid : $object->id, 'task_parent', 0, 0, 1, 1, 0, '0,1', 'maxwidth500');
+	$formother->selectProjectTasks(GETPOST('task_parent'), !empty($projectid) ? $projectid : $object->id, 'task_parent', 0, 0, 1, 1, 0, '0,1', 'maxwidth500');
 	print '</td></tr>';
 
 	// Assigned to
@@ -733,17 +733,17 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Date start
 	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-	print $form->selectDate(($date_start ? $date_start : ''), 'dateo', 1, 1, 0, '', 1, 1);
+	print $form->selectDate((!empty($date_start) ? $date_start : ''), 'dateo', 1, 1, 0, '', 1, 1);
 	print '</td></tr>';
 
 	// Date end
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-	print $form->selectDate(($date_end ? $date_end : -1), 'datee', -1, 1, 0, '', 1, 1);
+	print $form->selectDate((!empty($date_end) ? $date_end : -1), 'datee', -1, 1, 0, '', 1, 1);
 	print '</td></tr>';
 
 	// Planned workload
 	print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td>';
-	print $form->select_duration('planned_workload', $planned_workload ? $planned_workload : 0, 0, 'text');
+	print $form->select_duration('planned_workload', !empty($planned_workload) ? $planned_workload : 0, 0, 'text');
 	print '</td></tr>';
 
 	// Progress
