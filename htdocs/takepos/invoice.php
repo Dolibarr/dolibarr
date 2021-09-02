@@ -930,7 +930,7 @@ $(document).ready(function() {
 	}
 <?php
 
-if ($action == "order" and !empty($order_receipt_printer1)) {
+if ($action == "order" && !empty($order_receipt_printer1)) {
 	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
 		?>
 		$.ajax({
@@ -951,7 +951,7 @@ if ($action == "order" and !empty($order_receipt_printer1)) {
 	}
 }
 
-if ($action == "order" and !empty($order_receipt_printer2)) {
+if ($action == "order" && !empty($order_receipt_printer2)) {
 	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
 		?>
 		$.ajax({
@@ -972,7 +972,7 @@ if ($action == "order" and !empty($order_receipt_printer2)) {
 	}
 }
 
-if ($action == "order" and !empty($order_receipt_printer3)) {
+if ($action == "order" && !empty($order_receipt_printer3)) {
 	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
 		?>
 		$.ajax({
@@ -992,7 +992,7 @@ if ($action == "search" || $action == "valid") {
 }
 
 
-if ($action == "temp" and !empty($ticket_printer1)) {
+if ($action == "temp" && !empty($ticket_printer1)) {
 	?>
 	$.ajax({
 		type: "POST",
@@ -1127,10 +1127,10 @@ $( document ).ready(function() {
 
 	$s = '';
 
-	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'. isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '';
+	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
 	if (!empty($conf->stock->enabled) && getDolGlobalString("$constantforkey") != "1") {
 		$s = '<span class="small">';
-		$constantforkey = 'CASHDESK_ID_WAREHOUSE'. isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '';
+		$constantforkey = 'CASHDESK_ID_WAREHOUSE'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
 		$warehouse = new Entrepot($db);
 		$warehouse->fetch(getDolGlobalString("$constantforkey"));
 		$s .= $langs->trans("Warehouse").'<br>'.$warehouse->ref;
