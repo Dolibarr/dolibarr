@@ -152,7 +152,7 @@ $invoice = new Facture($db);
 if ($invoiceid > 0) {
 	$ret = $invoice->fetch($invoiceid);
 } else {
-	$ret = $invoice->fetch('', '(PROV-POS'. isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '' .'-'.$place.')');
+	$ret = $invoice->fetch('', '(PROV-POS'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '') .'-'.$place.')');
 }
 if ($ret > 0) {
 	$placeid = $invoice->id;
