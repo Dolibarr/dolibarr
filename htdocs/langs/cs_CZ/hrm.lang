@@ -9,10 +9,11 @@ ConfirmDeleteEstablishment=Opravdu chcete toto zařízení smazat?
 OpenEtablishment=Otevřít zařízení
 CloseEtablishment=Zavřít zařízení
 # Dictionary
-DictionaryPublicHolidays=HRM - státní svátky
+DictionaryPublicHolidays=Leave - Public holidays
 DictionaryDepartment=HRM - Seznam oddělení
 DictionaryFunction=HRM - Pracovní pozice
 # Module
 Employees=Zaměstnanci
 Employee=Zaměstnanec
 NewEmployee=Nový zaměstnanec
+ListOfEmployees=List of employees

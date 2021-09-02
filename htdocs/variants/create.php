@@ -22,13 +22,26 @@ require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 $ref = GETPOST('ref', 'alpha');
 $label = GETPOST('label', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$action = GETPOST('action', 'alpha');
+
+$permissiontoread = $user->rights->produit->lire || $user->rights->service->lire;
+
+// Security check
+if (empty($conf->variants->enabled)) {
+	accessforbidden('Module not enabled');
+}
+if ($user->socid > 0) { // Protection if external user
+	accessforbidden();
+}
+//$result = restrictedArea($user, 'variant');
+if (!$permissiontoread) accessforbidden();
 
 
 /*
  * Actions
  */
 
-if ($_POST) {
+if ($action == 'add') {
 	if (empty($ref) || empty($label)) {
 		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 	} else {
@@ -39,8 +52,7 @@ if ($_POST) {
 		$resid = $prodattr->create($user);
 		if ($resid > 0) {
 			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-			if ($backtopage)
-			{
+			if ($backtopage) {
 				header('Location: '.$backtopage);
 			} else {
 				header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$resid.'&backtopage='.urlencode($backtopage));
@@ -59,13 +71,16 @@ $langs->load('products');
  * View
  */
 
+$help_url = 'EN:Module_Products#Variants';
+
 $title = $langs->trans('NewProductAttribute');
 
-llxHeader('', $title);
+llxHeader('', $title, $help_url);
+
 
 print load_fiche_titre($title);
 
-dol_fiche_head();
+print dol_get_fiche_head();
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -89,7 +104,7 @@ print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	</table>
 
 <?php
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
 

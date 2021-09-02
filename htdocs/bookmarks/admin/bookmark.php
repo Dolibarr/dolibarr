@@ -28,20 +28,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by the page
 $langs->load("admin");
 
-if (!$user->admin)
-accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 
-if ($action == 'setvalue')
-{
+if ($action == 'setvalue') {
 	$showmenu = GETPOST('BOOKMARKS_SHOW_IN_MENU', 'alpha');
 	$res = dolibarr_set_const($db, "BOOKMARKS_SHOW_IN_MENU", $showmenu, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -77,7 +78,7 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("NbOfBoomarkToShow").'</td><td>';
 print '<input size="3" type="text" name="BOOKMARKS_SHOW_IN_MENU" value="'.$conf->global->BOOKMARKS_SHOW_IN_MENU.'">';
 print '</td></tr>';
-print '</table><br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div></form>';
+print '</table><br><div class="center"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></div></form>';
 
 // End of page
 llxFooter();

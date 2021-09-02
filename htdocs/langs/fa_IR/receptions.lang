@@ -44,4 +44,4 @@ ValidateOrderFirstBeforeReception=ابتدا باید سفارش را تائید
 ReceptionsNumberingModules=واحد شماره‌گذاری برای دریافت‌ها
 ReceptionsReceiptModel=قالب اسناد دریافت‌کالا
 NoMorePredefinedProductToDispatch=No more predefined products to dispatch
-
+ReceptionExist=A reception exists

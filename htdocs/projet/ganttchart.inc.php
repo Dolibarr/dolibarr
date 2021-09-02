@@ -116,27 +116,29 @@ if (g.getDivId() != null)
 	$level = 0;
 	$tnums = count($tasks);
 	$old_project_id = 0;
-	for ($tcursor = 0; $tcursor < $tnums; $tcursor++)
-	{
+	for ($tcursor = 0; $tcursor < $tnums; $tcursor++) {
 		$t = $tasks[$tcursor];
 
-		if (empty($old_project_id) || $old_project_id != $t['task_project_id'])
-		{
+		if (empty($old_project_id) || $old_project_id != $t['task_project_id']) {
 			// Break on project, create a fictive task for project id $t['task_project_id']
 			$projecttmp = new Project($db);
 			$projecttmp->fetch($t['task_project_id']);
 			$tmpt = array(
-				'task_id'=> '-'.$t['task_project_id'], 'task_alternate_id'=> '-'.$t['task_project_id'], 'task_name'=>$projecttmp->ref.' '.$projecttmp->title, 'task_resources'=>'',
-				'task_start_date'=>'', 'task_end_date'=>'',
-				'task_is_group'=>1, 'task_position'=>0, 'task_css'=>'ggroupblack', 'task_milestone'=> 0, 'task_parent'=>0, 'task_parent_alternate_id'=>0, 'task_notes'=>'',
+				'task_id'=> '-'.$t['task_project_id'],
+				'task_alternate_id'=> '-'.$t['task_project_id'],
+				'task_name'=>$projecttmp->ref.' '.$projecttmp->title,
+				'task_resources'=>'',
+				'task_start_date'=>'',
+				'task_end_date'=>'',
+				'task_is_group'=>1, 'task_position'=>0, 'task_css'=>'ggroupblack', 'task_milestone'=> 0, 'task_parent'=>0, 'task_parent_alternate_id'=>0,
+				'task_notes'=>'',
 				'task_planned_workload'=>0
 			);
 			constructGanttLine($tasks, $tmpt, array(), 0, $t['task_project_id']);
 			$old_project_id = $t['task_project_id'];
 		}
 
-		if ($t["task_parent"] <= 0)
-		{
+		if ($t["task_parent"] <= 0) {
 			constructGanttLine($tasks, $t, $task_dependencies, $level, $t['task_project_id']);
 			findChildGanttLine($tasks, $t["task_id"], $task_dependencies, $level + 1);
 		}
@@ -175,11 +177,14 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level = 0, $proje
 
 	$start_date = $task["task_start_date"];
 	$end_date = $task["task_end_date"];
-	if (!$end_date) $end_date = $start_date;
+	if (!$end_date) {
+		$end_date = $start_date;
+	}
 	$start_date = dol_print_date($start_date, $dateformatinput2);
 	$end_date = dol_print_date($end_date, $dateformatinput2);
 	// Resources
 	$resources = $task["task_resources"];
+
 	// Define depend (ex: "", "4,13", ...)
 	$depend = '';
 	$count = 0;
@@ -192,8 +197,7 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level = 0, $proje
 	}
 	// $depend .= "\"";
 	// Define parent
-	if ($project_id && $level < 0)
-	{
+	if ($project_id && $level < 0) {
 		$parent = '-'.$project_id;
 	} else {
 		$parent = $task["task_parent_alternate_id"];
@@ -202,8 +206,7 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level = 0, $proje
 	// Define percent
 	$percent = $task['task_percent_complete'] ? $task['task_percent_complete'] : 0;
 	// Link (more information)
-	if ($task["task_id"] < 0)
-	{
+	if ($task["task_id"] < 0) {
 		//$link=DOL_URL_ROOT.'/projet/tasks.php?withproject=1&id='.abs($task["task_id"]);
 		$link = '';
 	} else {
@@ -215,8 +218,8 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level = 0, $proje
 	$name = $task['task_name'];
 
 	/*for($i=0; $i < $level; $i++) {
-        $name=' - '.$name;
-    }*/
+		$name=' - '.$name;
+	}*/
 	// Add line to gantt
 	/*
 	g.AddTaskItem(new JSGantt.TaskItem(1, 'Define Chart API','',          '',          'ggroupblack','', 0, 'Brian', 0,  1,0,1,'','','Some Notes text',g));
@@ -241,7 +244,7 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level = 0, $proje
 	<dt>pCaption</dt><dd>(optional) caption that will be added after task bar if CaptionType set to "Caption"</dd>
 	<dt>pNotes</dt><dd>(optional) Detailed task information that will be displayed in tool tip for this task</dd>
 	<dt>pGantt</dt><dd>(required) javascript JSGantt.GanttChart object from which to take settings.  Defaults to &quot;g&quot; for backwards compatibility</dd>
-    */
+	*/
 
 	//$note="";
 
@@ -283,18 +286,16 @@ function findChildGanttLine($tarr, $parent, $task_dependencies, $level)
 	$n = count($tarr);
 
 	$old_parent_id = 0;
-	for ($x = 0; $x < $n; $x++)
-	{
-		if ($tarr[$x]["task_parent"] == $parent && $tarr[$x]["task_parent"] != $tarr[$x]["task_id"])
-		{
+	for ($x = 0; $x < $n; $x++) {
+		if ($tarr[$x]["task_parent"] == $parent && $tarr[$x]["task_parent"] != $tarr[$x]["task_id"]) {
 			// Create a grouping parent task for the new level
 			/*if (empty($old_parent_id) || $old_parent_id != $tarr[$x]['task_project_id'])
 			{
 				$tmpt = array(
-	        	'task_id'=> -98, 'task_name'=>'Level '.$level, 'task_resources'=>'', 'task_start_date'=>'', 'task_end_date'=>'',
-    	    	'task_is_group'=>1, 'task_css'=>'ggroupblack', 'task_milestone'=> 0, 'task_parent'=>$tarr[$x]["task_parent"], 'task_notes'=>'');
-        		constructGanttLine($tasks, $tmpt, array(), 0, $tarr[$x]['task_project_id']);
-        		$old_parent_id = $tarr[$x]['task_project_id'];
+				'task_id'=> -98, 'task_name'=>'Level '.$level, 'task_resources'=>'', 'task_start_date'=>'', 'task_end_date'=>'',
+				'task_is_group'=>1, 'task_css'=>'ggroupblack', 'task_milestone'=> 0, 'task_parent'=>$tarr[$x]["task_parent"], 'task_notes'=>'');
+				constructGanttLine($tasks, $tmpt, array(), 0, $tarr[$x]['task_project_id']);
+				$old_parent_id = $tarr[$x]['task_project_id'];
 			}*/
 
 			constructGanttLine($tarr, $tarr[$x], $task_dependencies, $level, null);

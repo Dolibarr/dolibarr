@@ -35,7 +35,11 @@ $langs->loadLangs(array("admin", "members"));
 
 $action = GETPOST('action', 'aZ09');
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
+
+$error = 0;
 
 
 /*
@@ -43,8 +47,11 @@ if (!$user->admin) accessforbidden();
  */
 
 if ($action == 'setMEMBER_ENABLE_PUBLIC') {
-	if (GETPOST('value')) dolibarr_set_const($db, 'MEMBER_ENABLE_PUBLIC', 1, 'chaine', 0, '', $conf->entity);
-	else dolibarr_set_const($db, 'MEMBER_ENABLE_PUBLIC', 0, 'chaine', 0, '', $conf->entity);
+	if (GETPOST('value')) {
+		dolibarr_set_const($db, 'MEMBER_ENABLE_PUBLIC', 1, 'chaine', 0, '', $conf->entity);
+	} else {
+		dolibarr_set_const($db, 'MEMBER_ENABLE_PUBLIC', 0, 'chaine', 0, '', $conf->entity);
+	}
 }
 
 if ($action == 'update') {
@@ -52,24 +59,33 @@ if ($action == 'update') {
 	$amount = GETPOST('MEMBER_NEWFORM_AMOUNT');
 	$editamount = GETPOST('MEMBER_NEWFORM_EDITAMOUNT');
 	$payonline = GETPOST('MEMBER_NEWFORM_PAYONLINE');
-	$forcetype = GETPOST('MEMBER_NEWFORM_FORCETYPE');
+	$forcetype = GETPOST('MEMBER_NEWFORM_FORCETYPE', 'int');
+	$forcemorphy = GETPOST('MEMBER_NEWFORM_FORCEMORPHY', 'aZ09');
 
-    $res = dolibarr_set_const($db, "MEMBER_ENABLE_PUBLIC", $public, 'chaine', 0, '', $conf->entity);
-    $res = dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT", $amount, 'chaine', 0, '', $conf->entity);
-    $res = dolibarr_set_const($db, "MEMBER_NEWFORM_EDITAMOUNT", $editamount, 'chaine', 0, '', $conf->entity);
-    $res = dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE", $payonline, 'chaine', 0, '', $conf->entity);
-    if ($forcetype < 0) $res = dolibarr_del_const($db, "MEMBER_NEWFORM_FORCETYPE", $conf->entity);
-    else {
-        $res = dolibarr_set_const($db, "MEMBER_NEWFORM_FORCETYPE", $forcetype, 'chaine', 0, '', $conf->entity);
-    }
+	$res = dolibarr_set_const($db, "MEMBER_ENABLE_PUBLIC", $public, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT", $amount, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_EDITAMOUNT", $editamount, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE", $payonline, 'chaine', 0, '', $conf->entity);
+	if ($forcetype < 0) {
+		$res = dolibarr_del_const($db, "MEMBER_NEWFORM_FORCETYPE", $conf->entity);
+	} else {
+		$res = dolibarr_set_const($db, "MEMBER_NEWFORM_FORCETYPE", $forcetype, 'chaine', 0, '', $conf->entity);
+	}
+	if ($forcemorphy == '-1') {
+		$res = dolibarr_del_const($db, "MEMBER_NEWFORM_FORCEMORPHY", $conf->entity);
+	} else {
+		$res = dolibarr_set_const($db, "MEMBER_NEWFORM_FORCEMORPHY", $forcemorphy, 'chaine', 0, '', $conf->entity);
+	}
 
-    if (!$res > 0) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
- 	if (!$error) {
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-	    setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 
@@ -94,11 +110,11 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-dol_fiche_head($head, 'website', $langs->trans("Members"), -1, 'user');
+print dol_get_fiche_head($head, 'website', $langs->trans("Members"), -1, 'user');
 
 if ($conf->use_javascript_ajax) {
-    print "\n".'<script type="text/javascript" language="javascript">';
-    print 'jQuery(document).ready(function () {
+	print "\n".'<script type="text/javascript" language="javascript">';
+	print 'jQuery(document).ready(function () {
                 function initemail()
                 {
                     if (jQuery("#MEMBER_NEWFORM_PAYONLINE").val()==\'-1\')
@@ -127,12 +143,13 @@ if ($conf->use_javascript_ajax) {
                 jQuery("#MEMBER_ENABLE_PUBLIC").change(function() { initfields(); });
                 jQuery("#MEMBER_NEWFORM_PAYONLINE").change(function() { initemail(); });
 			})';
-    print '</script>'."\n";
+	print '</script>'."\n";
 }
 
 
 print '<span class="opacitymedium">'.$langs->trans("BlankSubscriptionFormDesc").'</span><br><br>';
 
+$param = '';
 
 $enabledisablehtml = $langs->trans("EnablePublicSubscriptionForm").' ';
 if (empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
@@ -155,6 +172,7 @@ print '<br>';
 if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print '<br>';
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre">';
@@ -168,9 +186,19 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print $langs->trans("ForceMemberType");
 	print '</td><td class="right">';
 	$listofval = array();
-	$listofval += $adht->liste_array();
-	$forcetype = $conf->global->MEMBER_NEWFORM_FORCETYPE ?: -1;
+	$listofval += $adht->liste_array(1);
+	$forcetype = empty($conf->global->MEMBER_NEWFORM_FORCETYPE) ? -1 : $conf->global->MEMBER_NEWFORM_FORCETYPE;
 	print $form->selectarray("MEMBER_NEWFORM_FORCETYPE", $listofval, $forcetype, count($listofval) > 1 ? 1 : 0);
+	print "</td></tr>\n";
+
+	// Force nature of member (mor/phy)
+	$morphys["phy"] = $langs->trans("Physical");
+	$morphys["mor"] = $langs->trans("Moral");
+	print '<tr class="oddeven drag" id="trforcenature"><td>';
+	print $langs->trans("ForceMemberNature");
+	print '</td><td class="right">';
+	$forcenature = empty($conf->global->MEMBER_NEWFORM_FORCEMORPHY) ? 0 : $conf->global->MEMBER_NEWFORM_FORCEMORPHY;
+	print $form->selectarray("MEMBER_NEWFORM_FORCEMORPHY", $morphys, $forcenature, 1);
 	print "</td></tr>\n";
 
 	// Amount
@@ -194,21 +222,28 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	$listofval = array();
 	$listofval['-1'] = $langs->trans('No');
 	$listofval['all'] = $langs->trans('Yes').' ('.$langs->trans("VisitorCanChooseItsPaymentMode").')';
-	if (!empty($conf->paybox->enabled)) $listofval['paybox'] = 'Paybox';
-	if (!empty($conf->paypal->enabled)) $listofval['paypal'] = 'PayPal';
-	if (!empty($conf->stripe->enabled)) $listofval['stripe'] = 'Stripe';
+	if (!empty($conf->paybox->enabled)) {
+		$listofval['paybox'] = 'Paybox';
+	}
+	if (!empty($conf->paypal->enabled)) {
+		$listofval['paypal'] = 'PayPal';
+	}
+	if (!empty($conf->stripe->enabled)) {
+		$listofval['stripe'] = 'Stripe';
+	}
 	print $form->selectarray("MEMBER_NEWFORM_PAYONLINE", $listofval, (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) ? $conf->global->MEMBER_NEWFORM_PAYONLINE : ''), 0);
 	print "</td></tr>\n";
 
 	print '</table>';
+	print '</div>';
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 	print '</div>';
 }
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '</form>';
 
@@ -216,8 +251,8 @@ print '</form>';
 if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print '<br>';
 	//print $langs->trans('FollowingLinksArePublic').'<br>';
-	print img_picto('', 'globe').' '.$langs->trans('BlankSubscriptionForm').':<br>';
-	if ($conf->multicompany->enabled) {
+	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('BlankSubscriptionForm').'</span><br>';
+	if (!empty($conf->multicompany->enabled)) {
 		$entity_qr = '?entity='.$conf->entity;
 	} else {
 		$entity_qr = '';
@@ -228,7 +263,11 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-	print '<a target="_blank" href="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">'.$urlwithroot.'/public/members/new.php'.$entity_qr.'</a>';
+	print '<div class="urllink">';
+	print '<input type="text" id="publicurlmember" class="quatrevingtpercentminusx" value="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">';
+	print '<a target="_blank" href="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
+	print '</div>';
+	print ajax_autoselect('publicurlmember');
 }
 
 // End of page

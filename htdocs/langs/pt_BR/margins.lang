@@ -8,10 +8,11 @@ margesSetup=Configuração das margens de lucro
 ProductMargins=Margens de produtos
 CustomerMargins=Margems de clientes
 SalesRepresentativeMargins=Tolerância aos representante de vendas
+ContactOfInvoice=Contato da fatura
 UserMargins=Margens do usuário
 ProductService=Produto ou serviço
 ForceBuyingPriceIfNull=Compra Força preço / custo para o preço de venda se não definido
-ForceBuyingPriceIfNullDetails=Se o preço de compra / custo não definido, e essa opção "ON", a margem será zero em linha (compra / preço = custo preço de venda), caso contrário ("OFF"), marge será igual ao padrão sugerido.
+ForceBuyingPriceIfNullDetails=Se o preço de compra / custo não for fornecido quando adicionar uma nova linha, e esta opção estiver "ON", a margem será 0 na nova linha (preço de compra / custo = preço de venda). Se esta opção estiver "OFF" (recomendado), a margem será igual ao valor sugerido por padrão (e pode ser 100% se nenhum valor padrão for encontrado).
 MARGIN_METHODE_FOR_DISCOUNT=Metodologia de margem para descontos globais
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Define se um desconto global e tratado como o produto, serviço, ou somente sob o sub-total na margem.
 MARGIN_TYPE=Compra / Preço de custo sugerido por padrão para cálculo da margem de

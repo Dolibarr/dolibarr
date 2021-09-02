@@ -30,14 +30,20 @@ require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
 
 $action = GETPOST('action', 'aZ09');
 $numsondage = '';
-if (GETPOST('id'))
-{
+if (GETPOST('id')) {
 	$numsondage = GETPOST("id", 'alpha');
 }
 
 $object = new Opensurveysondage($db);
 $result = $object->fetch(0, $numsondage);
-if ($result <= 0) dol_print_error('', 'Failed to get survey id '.$numsondage);
+if ($result <= 0) {
+	dol_print_error('', 'Failed to get survey id '.$numsondage);
+}
+
+// Security check
+if (empty($user->rights->opensurvey->read)) {
+	accessforbidden();
+}
 
 
 /*
@@ -57,10 +63,8 @@ $toutsujet = explode(",", $object->sujet);
 
 // affichage des sujets du sondage
 $input .= $langs->trans("Name").";";
-for ($i = 0; $toutsujet[$i]; $i++)
-{
-	if ($object->format == "D")
-	{
+for ($i = 0; $toutsujet[$i]; $i++) {
+	if ($object->format == "D") {
 		$input .= ''.dol_print_date($toutsujet[$i], 'dayhour').';';
 	} else {
 		$input .= ''.$toutsujet[$i].';';
@@ -69,11 +73,9 @@ for ($i = 0; $toutsujet[$i]; $i++)
 
 $input .= "\r\n";
 
-if (strpos($object->sujet, '@') !== false)
-{
+if (strpos($object->sujet, '@') !== false) {
 	$input .= ";";
-	for ($i = 0; $toutsujet[$i]; $i++)
-	{
+	for ($i = 0; $toutsujet[$i]; $i++) {
 		$heures = explode("@", $toutsujet[$i]);
 		$input .= ''.$heures[1].';';
 	}
@@ -87,12 +89,10 @@ $sql .= ' FROM '.MAIN_DB_PREFIX."opensurvey_user_studs";
 $sql .= " WHERE id_sondage='".$db->escape($numsondage)."'";
 $sql .= " ORDER BY id_users";
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
 
 		// Le name de l'utilisateur
@@ -101,15 +101,12 @@ if ($resql)
 
 		//affichage des resultats
 		$ensemblereponses = $obj->reponses;
-		for ($k = 0; $k < $nbcolonnes; $k++)
-		{
+		for ($k = 0; $k < $nbcolonnes; $k++) {
 			$car = substr($ensemblereponses, $k, 1);
-			if ($car == "1")
-			{
+			if ($car == "1") {
 				$input .= 'OK;';
 				$somme[$k]++;
-			} elseif ($car == "2")
-			{
+			} elseif ($car == "2") {
 				$input .= 'KO;';
 				$somme[$k]++;
 			} else {
@@ -120,7 +117,9 @@ if ($resql)
 		$input .= "\r\n";
 		$i++;
 	}
-} else dol_print_error($db);
+} else {
+	dol_print_error($db);
+}
 
 
 $filesize = strlen($input);

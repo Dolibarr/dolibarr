@@ -28,6 +28,7 @@ MenuOrdersSupplierToBill=Pedidos de compra para fatura
 NbDaysToDelivery=Tempo de entrega (dias)
 DescNbDaysToDelivery=O maior atraso de entrega de produtos deste pedido
 SupplierReputation=Reputação do fornecedores
+ReferenceReputation=Reputação de referência
 DoNotOrderThisProductToThisSupplier=Não pedir
 NotTheGoodQualitySupplier=Baixa qualidade
 AllProductServicePrices=Todos os preços dos produtos / serviços

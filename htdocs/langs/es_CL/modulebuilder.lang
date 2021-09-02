@@ -88,7 +88,6 @@ UseSpecificEditorName =Usa un nombre de editor específico
 UseSpecificEditorURL =Usa un editor URL específico
 UseSpecificFamily =Usa una familia específica
 UseSpecificVersion =Usa una versión inicial específica
-ModuleMustBeEnabled=El módulo / aplicación debe ser habilitado primero
 IncludeDocGenerationHelp=Si marca esto, se generará algún código para agregar un cuadro "Generar documento" en el registro.
 ShowOnCombobox=Mostrar valor en el cuadro combinado
 KeyForTooltip=Clave para información sobre herramientas

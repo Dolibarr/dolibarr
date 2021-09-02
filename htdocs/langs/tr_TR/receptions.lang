@@ -2,10 +2,10 @@
 ReceptionsSetup=Product Reception setup
 RefReception=Ref. reception
 Reception=Kabul
-Receptions=Receptions
+Receptions=Resepsiyonlar
 AllReceptions=All Receptions
 Reception=Kabul
-Receptions=Receptions
+Receptions=Resepsiyonlar
 ShowReception=Show Receptions
 ReceptionsArea=Receptions area
 ListOfReceptions=List of receptions
@@ -44,4 +44,4 @@ ValidateOrderFirstBeforeReception=You must first validate the order before being
 ReceptionsNumberingModules=Numbering module for receptions
 ReceptionsReceiptModel=Document templates for receptions
 NoMorePredefinedProductToDispatch=No more predefined products to dispatch
-
+ReceptionExist=A reception exists

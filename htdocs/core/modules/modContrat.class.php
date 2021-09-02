@@ -22,7 +22,7 @@
  *	\brief      Module pour gerer la tenue de contrat de services
  *	\file       htdocs/core/modules/modContrat.class.php
  *	\ingroup    contrat
- *	\brief      Fichier de description et activation du module Contrat
+ *	\brief      Description and activation file for the module contract
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -33,7 +33,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modContrat extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -193,9 +192,13 @@ class modContrat extends DolibarrModules
 		'p.rowid'=>'List:product:label', 'p.ref'=>'Text', 'p.label'=>'Text');
 
 
-		$keyforselect = 'contrat'; $keyforelement = 'contract'; $keyforaliasextra = 'coextra';
+		$keyforselect = 'contrat';
+		$keyforelement = 'contract';
+		$keyforaliasextra = 'coextra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$keyforselect = 'contratdet'; $keyforelement = 'contract_line'; $keyforaliasextra = 'codextra';
+		$keyforselect = 'contratdet';
+		$keyforelement = 'contract_line';
+		$keyforaliasextra = 'codextra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -215,7 +218,7 @@ class modContrat extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')
@@ -230,22 +233,20 @@ class modContrat extends DolibarrModules
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/contracts';
 		$dest = $dirodt.'/template_contract.odt';
 
-		if (file_exists($src) && !file_exists($dest))
-		{
-		    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		    dol_mkdir($dirodt);
-		    $result = dol_copy($src, $dest, 0, 0);
-		    if ($result < 0)
-		    {
-		        $langs->load("errors");
-		        $this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
-		        return 0;
-		    }
+		if (file_exists($src) && !file_exists($dest)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			dol_mkdir($dirodt);
+			$result = dol_copy($src, $dest, 0, 0);
+			if ($result < 0) {
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
+				return 0;
+			}
 		}
 
 		$sql = array(
-		    "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[1][2])."' AND type = 'contract' AND entity = ".$conf->entity,
-		    "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[1][2])."','contract',".$conf->entity.")"
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[1][2])."' AND type = 'contract' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[1][2])."', 'contract', ".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);

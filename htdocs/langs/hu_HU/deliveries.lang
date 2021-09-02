@@ -27,5 +27,7 @@ Recipient=Címzett
 ErrorStockIsNotEnough=Nincs elég raktáron
 Shippable=Szállítható
 NonShippable=Nem szállítható
+ShowShippableStatus=Show shippable status
 ShowReceiving=Mutassa az átvételi elismervényt
 NonExistentOrder=Nem létező megrendelés
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines

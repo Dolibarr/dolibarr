@@ -41,7 +41,7 @@ parameters:
 		- %currentWorkingDirectory%/htdocs/core/modules/facture
 		- %currentWorkingDirectory%/htdocs/core/modules/fichinter
 		- %currentWorkingDirectory%/htdocs/core/modules/holiday
-		- %currentWorkingDirectory%/htdocs/core/modules/livraison
+		- %currentWorkingDirectory%/htdocs/core/modules/delivery
 		#- %currentWorkingDirectory%/htdocs/core/modules/member
 		- %currentWorkingDirectory%/htdocs/core/modules/payment
 		- %currentWorkingDirectory%/htdocs/core/modules/product

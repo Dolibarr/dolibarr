@@ -44,4 +44,4 @@ ValidateOrderFirstBeforeReception=Je moet eerst de bestelling valideren voordat 
 ReceptionsNumberingModules=Nummeringsmodule voor ontvangsten
 ReceptionsReceiptModel=Documentsjablonen voor ontvangsten
 NoMorePredefinedProductToDispatch=Geen voorgedefinieerde producten meer om te verzenden
-
+ReceptionExist=Ontvangst bestaat reeds

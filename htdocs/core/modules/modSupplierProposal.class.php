@@ -26,7 +26,7 @@
  *
  *	\file       htdocs/core/modules/modSupplierProposal.class.php
  *	\ingroup    supplier_proposal
- *	\brief      File to describe and activate module SupplierProposal
+ *	\brief      Description and activation file for the module supplier proposal
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -63,14 +63,14 @@ class modSupplierProposal extends DolibarrModules
 		$this->dirs = array();
 
 		 // Config pages. Put here list of php page names stored in admin directory used to setup module.
-        $this->config_page_url = array("supplier_proposal.php");
+		$this->config_page_url = array("supplier_proposal.php");
 
 		// Dependencies
 		$this->hidden = false; // A condition to hide module
 		$this->depends = array('modFournisseur'); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->langfiles = array("supplier_proposal");
 
 		// Constants
@@ -127,7 +127,7 @@ class modSupplierProposal extends DolibarrModules
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
 		$this->rights[$r][1] = 'Envoyer les demandes fournisseurs'; // libelle de la permission
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
-        $this->rights[$r][4] = 'send_advance';
+		$this->rights[$r][4] = 'send_advance';
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
@@ -141,7 +141,7 @@ class modSupplierProposal extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'cloturer';
 
- 		// Main menu entries
+		// Main menu entries
 		$this->menu = array(); // List of menus to add
 		$r = 0;
 	}
@@ -152,10 +152,10 @@ class modSupplierProposal extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-    public function init($options = '')
+	public function init($options = '')
 	{
 		global $conf, $langs;
 
@@ -167,13 +167,11 @@ class modSupplierProposal extends DolibarrModules
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/supplier_proposals';
 		$dest = $dirodt.'/template_supplier_proposal.odt';
 
-		if (file_exists($src) && !file_exists($dest))
-		{
+		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
 			$result = dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;
@@ -181,8 +179,8 @@ class modSupplierProposal extends DolibarrModules
 		}
 
 		$sql = array(
-				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'supplier_proposal' AND entity = ".$conf->entity,
-				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','supplier_proposal',".$conf->entity.")",
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'supplier_proposal' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','supplier_proposal',".((int) $conf->entity).")",
 		);
 
 		return $this->_init($sql, $options);
@@ -200,10 +198,10 @@ class modSupplierProposal extends DolibarrModules
 	 */
 	public function remove($options = '')
 	{
-	    $sql = array(
-	        "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'askpricesupplier'"		// To delete/clean deprecated entries
-	    );
+		$sql = array(
+			"DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'askpricesupplier'"		// To delete/clean deprecated entries
+		);
 
-	    return $this->_remove($sql, $options);
+		return $this->_remove($sql, $options);
 	}
 }

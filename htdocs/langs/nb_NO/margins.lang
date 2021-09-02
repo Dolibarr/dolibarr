@@ -22,7 +22,7 @@ ProductService=Vare eller tjeneste
 AllProducts=Alle varer og tjenester
 ChooseProduct/Service=Velg vare eller tjenester
 ForceBuyingPriceIfNull=Tving innkjøps-/kostpris til utsalgspris hvis udefinert
-ForceBuyingPriceIfNullDetails=Hvis innkjøps-/kostpris ikke er definert, og denne opsjonen er "PÅ", vil margin bli satt til null på linjen (innkjøps-/kostpris = utsalgspris). Ellers ("AV") vil margin bli satt til foreslått standard.
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0 on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100% if no default value can be found).
 MARGIN_METHODE_FOR_DISCOUNT=Margin-metode for globale rabatter
 UseDiscountAsProduct=Som vare
 UseDiscountAsService=Som tjeneste
@@ -37,7 +37,7 @@ CostPrice=Kostpris
 UnitCharges=Enhets-avgifter
 Charges=Avgifter
 AgentContactType=Kommersiell agent kontakttype
-AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per contact/address. Note that reading statistics on a contact is not reliable since in most cases the contact may not be defined explicitely on the invoices.
+AgentContactTypeDetails=Definer hvilken kontakttype (lenket på fakturaer) som skal brukes til marginrapport per kontakt/adresse. Vær oppmerksom på at det ikke er pålitelig å lese statistikk for en kontakt siden kontakten i de fleste tilfeller ikke er definert eksplisitt på fakturaene.
 rateMustBeNumeric=Sats må ha en numerisk verdi
 markRateShouldBeLesserThan100=Dekningsbidrag skal være lavere enn 100
 ShowMarginInfos=Vis info om marginer

@@ -30,14 +30,12 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/contact/class/contact.class.php';
 $langs->load("dict");
 
-if ($langs->defaultlang != 'en_US')
-{
+if ($langs->defaultlang != 'en_US') {
 	print "Error: Default language for company to run tests must be set to en_US or auto. Current is ".$langs->defaultlang."\n";
 	exit(1);
 }
 
-if (empty($user->id))
-{
+if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
@@ -82,118 +80,118 @@ class ContactTest extends PHPUnit\Framework\TestCase
 		print "\n";
 	}
 
-    /**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-        global $conf,$user,$langs,$db;
+	/**
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass()
+	{
+		global $conf,$user,$langs,$db;
 
-        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-        print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass()
+	{
+		global $conf,$user,$langs,$db;
 		$db->rollback();
 
 		print __METHOD__."\n";
-    }
+	}
 
 	/**
 	 * Init phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function setUp()
-    {
-    	global $conf,$user,$langs,$db;
+	protected function setUp()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		print __METHOD__."\n";
-    }
+	}
 	/**
 	 * End phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function tearDown()
-    {
-    	print __METHOD__."\n";
-    }
+	protected function tearDown()
+	{
+		print __METHOD__."\n";
+	}
 
-    /**
-     * testContactCreate
-     *
-     * @return	int
-     */
-    public function testContactCreate()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * testContactCreate
+	 *
+	 * @return	int
+	 */
+	public function testContactCreate()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		$localobject=new Contact($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$result=$localobject->create($user);
+		$localobject->initAsSpecimen();
+		$result=$localobject->create($user);
 
-        print __METHOD__." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+		print __METHOD__." result=".$result."\n";
+		$this->assertLessThan($result, 0);
 
-    	return $result;
-    }
+		return $result;
+	}
 
-    /**
-     * testContactFetch
-     *
-     * @param	int		$id		Id of contact
-     * @return	int
-     * @depends	testContactCreate
-     * The depends says test is run only if previous is ok
-     */
-    public function testContactFetch($id)
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * testContactFetch
+	 *
+	 * @param	int		$id		Id of contact
+	 * @return	int
+	 * @depends	testContactCreate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testContactFetch($id)
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		$localobject=new Contact($this->savdb);
-    	$result=$localobject->fetch($id);
+		$result=$localobject->fetch($id);
 
-        print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+		print __METHOD__." id=".$id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
 
-    	return $localobject;
-    }
+		return $localobject;
+	}
 
-    /**
-     * testContactUpdate
-     *
-     * @param	Contact		$localobject	Contact
-     * @return	int
-     *
-     * @depends	testContactFetch
-     * The depends says test is run only if previous is ok
-     */
-    public function testContactUpdate($localobject)
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * testContactUpdate
+	 *
+	 * @param	Contact		$localobject	Contact
+	 * @return	int
+	 *
+	 * @depends	testContactFetch
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testContactUpdate($localobject)
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
@@ -208,8 +206,8 @@ class ContactTest extends PHPUnit\Framework\TestCase
 		$localobject->address='New address';
 		$localobject->zip='New zip';
 		$localobject->town='New town';
-    	$localobject->country_id=2;
-    	//$localobject->status=0;
+		$localobject->country_id=2;
+		//$localobject->status=0;
 		$localobject->phone_pro='New tel pro';
 		$localobject->phone_perso='New tel perso';
 		$localobject->phone_mobile='New tel mobile';
@@ -219,8 +217,8 @@ class ContactTest extends PHPUnit\Framework\TestCase
 		$localobject->default_lang='es_ES';
 
 		$result=$localobject->update($localobject->id, $user);
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0, 'Contact::update error');
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0, 'Contact::update error');
 
 		$result=$localobject->update_note($localobject->note_private, '_private');
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
@@ -231,60 +229,60 @@ class ContactTest extends PHPUnit\Framework\TestCase
 		$this->assertLessThan($result, 0, 'Contact::update_note (public) error');
 
 		$newobject=new Contact($this->savdb);
-    	$result=$newobject->fetch($localobject->id);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0, 'Contact::fetch error');
+		$result=$newobject->fetch($localobject->id);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0, 'Contact::fetch error');
 
-    	print __METHOD__." old=".$localobject->note_private." new=".$newobject->note_private."\n";
-    	$this->assertEquals($localobject->note_private, $newobject->note_private);
-    	//print __METHOD__." old=".$localobject->note_public." new=".$newobject->note_public."\n";
-    	//$this->assertEquals($localobject->note_public, $newobject->note_public);
-    	print __METHOD__." old=".$localobject->lastname." new=".$newobject->lastname."\n";
-    	$this->assertEquals($localobject->lastname, $newobject->lastname);
-    	print __METHOD__." old=".$localobject->firstname." new=".$newobject->firstname."\n";
-    	$this->assertEquals($localobject->firstname, $newobject->firstname);
-    	print __METHOD__." old=".$localobject->address." new=".$newobject->address."\n";
-    	$this->assertEquals($localobject->address, $newobject->address);
-    	print __METHOD__." old=".$localobject->zip." new=".$newobject->zip."\n";
-    	$this->assertEquals($localobject->zip, $newobject->zip);
-    	print __METHOD__." old=".$localobject->town." new=".$newobject->town."\n";
-    	$this->assertEquals($localobject->town, $newobject->town);
-    	print __METHOD__." old=".$localobject->country_id." new=".$newobject->country_id."\n";
-    	$this->assertEquals($localobject->country_id, $newobject->country_id);
-    	print __METHOD__." old=BE new=".$newobject->country_code."\n";
-    	$this->assertEquals('BE', $newobject->country_code);
-    	//print __METHOD__." old=".$localobject->status." new=".$newobject->status."\n";
-    	//$this->assertEquals($localobject->status, $newobject->status);
-    	print __METHOD__." old=".$localobject->phone_pro." new=".$newobject->phone_pro."\n";
-    	$this->assertEquals($localobject->phone_pro, $newobject->phone_pro);
-    	print __METHOD__." old=".$localobject->phone_pro." new=".$newobject->phone_pro."\n";
-    	$this->assertEquals($localobject->phone_perso, $newobject->phone_perso);
-    	print __METHOD__." old=".$localobject->phone_mobile." new=".$newobject->phone_mobile."\n";
-    	$this->assertEquals($localobject->phone_mobile, $newobject->phone_mobile);
-    	print __METHOD__." old=".$localobject->fax." new=".$newobject->fax."\n";
-    	$this->assertEquals($localobject->fax, $newobject->fax);
-    	print __METHOD__." old=".$localobject->email." new=".$newobject->email."\n";
-    	$this->assertEquals($localobject->email, $newobject->email);
-    	print __METHOD__." old=".$localobject->socialnetworks['jabber']." new=".$newobject->socialnetworks['jabber']."\n";
-    	$this->assertEquals($localobject->socialnetworks['jabber'], $newobject->socialnetworks['jabber']);
-    	print __METHOD__." old=".$localobject->default_lang." new=".$newobject->default_lang."\n";
-    	$this->assertEquals($localobject->default_lang, $newobject->default_lang);
+		print __METHOD__." old=".$localobject->note_private." new=".$newobject->note_private."\n";
+		$this->assertEquals($localobject->note_private, $newobject->note_private);
+		//print __METHOD__." old=".$localobject->note_public." new=".$newobject->note_public."\n";
+		//$this->assertEquals($localobject->note_public, $newobject->note_public);
+		print __METHOD__." old=".$localobject->lastname." new=".$newobject->lastname."\n";
+		$this->assertEquals($localobject->lastname, $newobject->lastname);
+		print __METHOD__." old=".$localobject->firstname." new=".$newobject->firstname."\n";
+		$this->assertEquals($localobject->firstname, $newobject->firstname);
+		print __METHOD__." old=".$localobject->address." new=".$newobject->address."\n";
+		$this->assertEquals($localobject->address, $newobject->address);
+		print __METHOD__." old=".$localobject->zip." new=".$newobject->zip."\n";
+		$this->assertEquals($localobject->zip, $newobject->zip);
+		print __METHOD__." old=".$localobject->town." new=".$newobject->town."\n";
+		$this->assertEquals($localobject->town, $newobject->town);
+		print __METHOD__." old=".$localobject->country_id." new=".$newobject->country_id."\n";
+		$this->assertEquals($localobject->country_id, $newobject->country_id);
+		print __METHOD__." old=BE new=".$newobject->country_code."\n";
+		$this->assertEquals('BE', $newobject->country_code);
+		//print __METHOD__." old=".$localobject->status." new=".$newobject->status."\n";
+		//$this->assertEquals($localobject->status, $newobject->status);
+		print __METHOD__." old=".$localobject->phone_pro." new=".$newobject->phone_pro."\n";
+		$this->assertEquals($localobject->phone_pro, $newobject->phone_pro);
+		print __METHOD__." old=".$localobject->phone_pro." new=".$newobject->phone_pro."\n";
+		$this->assertEquals($localobject->phone_perso, $newobject->phone_perso);
+		print __METHOD__." old=".$localobject->phone_mobile." new=".$newobject->phone_mobile."\n";
+		$this->assertEquals($localobject->phone_mobile, $newobject->phone_mobile);
+		print __METHOD__." old=".$localobject->fax." new=".$newobject->fax."\n";
+		$this->assertEquals($localobject->fax, $newobject->fax);
+		print __METHOD__." old=".$localobject->email." new=".$newobject->email."\n";
+		$this->assertEquals($localobject->email, $newobject->email);
+		print __METHOD__." old=".$localobject->socialnetworks['jabber']." new=".$newobject->socialnetworks['jabber']."\n";
+		$this->assertEquals($localobject->socialnetworks['jabber'], $newobject->socialnetworks['jabber']);
+		print __METHOD__." old=".$localobject->default_lang." new=".$newobject->default_lang."\n";
+		$this->assertEquals($localobject->default_lang, $newobject->default_lang);
 
-    	return $localobject;
-    }
+		return $localobject;
+	}
 
-    /**
-     * testContactOther
-     *
-     * @param	Contact		$localobject		Contact
-     * @return	void
-     *
-     * @depends	testContactUpdate
-     * The depends says test is run only if previous is ok
-     */
-    public function testContactOther($localobject)
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * testContactOther
+	 *
+	 * @param	Contact		$localobject		Contact
+	 * @return	void
+	 *
+	 * @depends	testContactUpdate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testContactOther($localobject)
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
@@ -292,127 +290,108 @@ class ContactTest extends PHPUnit\Framework\TestCase
 
 		//$localobject->fetch($localobject->id);
 
-        $result=$localobject->getNomUrl(1);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertNotEquals($result, '');
+		$result=$localobject->getNomUrl(1);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertNotEquals($result, '');
 
-        $result=$localobject->getFullAddress(1);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertContains("New address\nNew zip New town\nBelgium", $result);
+		$result=$localobject->getFullAddress(1);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertContains("New address\nNew zip New town\nBelgium", $result);
 
-        $localobject->info($localobject->id);
-        print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
-        $this->assertNotEquals($localobject->date_creation, '');
+		$localobject->info($localobject->id);
+		print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
+		$this->assertNotEquals($localobject->date_creation, '');
 
-        return $localobject->id;
-    }
+		return $localobject->id;
+	}
 
-    /**
-     * testContactDelete
-     *
-     * @param	int		$id		Id of contact
-     * @return	void
-     *
-     * @depends	testContactOther
-     * The depends says test is run only if previous is ok
-     */
-    public function testContactDelete($id)
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * testContactDelete
+	 *
+	 * @param	int		$id		Id of contact
+	 * @return	void
+	 *
+	 * @depends	testContactOther
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testContactDelete($id)
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		$localobject=new Contact($this->savdb);
-    	$result=$localobject->fetch($id);
+		$result=$localobject->fetch($id);
 
-    	$result=$localobject->delete(0);
+		$result=$localobject->delete(0);
 		print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0);
 
-    	return $result;
-    }
+		return $result;
+	}
 
-    /**
-	 *	testContactStatic
+	/**
+	 * testContactGetFullAddress
 	 *
-	 *	@return	void
-     */
-    public function testContactStatic()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	 * @return	int		$id				Id of company
+	 */
+	public function testContactGetFullAddress()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        $localobject=new Contact($db);
+		$localobjectadd=new Contact($db);
+		$localobjectadd->initAsSpecimen();
 
+		// France
+		unset($localobjectadd->country_code);
+		$localobjectadd->country_id=1;
+		$localobjectadd->name='New name';
+		$localobjectadd->address='New address';
+		$localobjectadd->zip='New zip';
+		$localobjectadd->town='New town';
+		$result=$localobjectadd->getFullAddress(1);
+		print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
+		$this->assertContains("New address\nNew zip New town\nFrance", $result);
 
-        return;
-    }
+		// Belgium
+		unset($localobjectadd->country_code);
+		$localobjectadd->country_id=2;
+		$localobjectadd->name='New name';
+		$localobjectadd->address='New address';
+		$localobjectadd->zip='New zip';
+		$localobjectadd->town='New town';
+		$result=$localobjectadd->getFullAddress(1);
+		print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
+		$this->assertContains("New address\nNew zip New town\nBelgium", $result);
 
-    /**
-     * testContactGetFullAddress
-     *
-     * @return	int		$id				Id of company
-     */
-    public function testContactGetFullAddress()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		// Switzerland
+		unset($localobjectadd->country_code);
+		$localobjectadd->country_id=6;
+		$localobjectadd->name='New name';
+		$localobjectadd->address='New address';
+		$localobjectadd->zip='New zip';
+		$localobjectadd->town='New town';
+		$result=$localobjectadd->getFullAddress(1);
+		print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
+		$this->assertContains("New address\nNew zip New town\nSwitzerland", $result);
 
-        $localobjectadd=new Contact($db);
-        $localobjectadd->initAsSpecimen();
+		// USA
+		unset($localobjectadd->country_code);
+		$localobjectadd->country_id=11;
+		$localobjectadd->name='New name';
+		$localobjectadd->address='New address';
+		$localobjectadd->zip='New zip';
+		$localobjectadd->town='New town';
+		$result=$localobjectadd->getFullAddress(1);
+		print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
+		$this->assertContains("New address\nNew town, New zip\nUnited States", $result);
 
-        // France
-        unset($localobjectadd->country_code);
-        $localobjectadd->country_id=1;
-        $localobjectadd->name='New name';
-        $localobjectadd->address='New address';
-        $localobjectadd->zip='New zip';
-        $localobjectadd->town='New town';
-        $result=$localobjectadd->getFullAddress(1);
-        print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
-        $this->assertContains("New address\nNew zip New town\nFrance", $result);
-
-        // Belgium
-        unset($localobjectadd->country_code);
-        $localobjectadd->country_id=2;
-        $localobjectadd->name='New name';
-        $localobjectadd->address='New address';
-        $localobjectadd->zip='New zip';
-        $localobjectadd->town='New town';
-        $result=$localobjectadd->getFullAddress(1);
-        print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
-        $this->assertContains("New address\nNew zip New town\nBelgium", $result);
-
-        // Switzerland
-        unset($localobjectadd->country_code);
-        $localobjectadd->country_id=6;
-        $localobjectadd->name='New name';
-        $localobjectadd->address='New address';
-        $localobjectadd->zip='New zip';
-        $localobjectadd->town='New town';
-        $result=$localobjectadd->getFullAddress(1);
-        print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
-        $this->assertContains("New address\nNew zip New town\nSwitzerland", $result);
-
-        // USA
-        unset($localobjectadd->country_code);
-        $localobjectadd->country_id=11;
-        $localobjectadd->name='New name';
-        $localobjectadd->address='New address';
-        $localobjectadd->zip='New zip';
-        $localobjectadd->town='New town';
-        $result=$localobjectadd->getFullAddress(1);
-        print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
-        $this->assertContains("New address\nNew town, New zip\nUnited States", $result);
-
-        return $localobjectadd->id;
-    }
+		return $localobjectadd->id;
+	}
 }

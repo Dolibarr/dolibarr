@@ -22,21 +22,48 @@
  *       \brief      File to return Ajax response on thirdparty list request
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 $htmlname = GETPOST('htmlname', 'alpha');
 $filter = GETPOST('filter', 'alpha');
 $outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
+$excludeids = GETPOST('excludeids', 'intcomma');
 $showtype = GETPOST('showtype', 'int');
+
+$object = new Societe($db);
+if ($id > 0) {
+	$object->fetch($id);
+}
+
+// Security check
+if ($user->socid > 0) {
+	unset($action);
+	$socid = $user->socid;
+	$object->id = $socid;
+}
+restrictedArea($user, 'societe', $object->id, '&societe');
 
 
 /*
@@ -44,20 +71,14 @@ $showtype = GETPOST('showtype', 'int');
  */
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
-
-dol_syslog(join(',', $_GET));
 //print_r($_GET);
 
-if (!empty($action) && $action == 'fetch' && !empty($id))
-{
+if (!empty($action) && $action == 'fetch' && !empty($id)) {
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 	$outjson = array();
 
-	$object = new Societe($db);
-	$ret = $object->fetch($id);
-	if ($ret > 0)
-	{
+	if ($object->id > 0) {
 		$outref = $object->ref;
 		$outname = $object->name;
 		$outdesc = '';
@@ -74,21 +95,38 @@ if (!empty($action) && $action == 'fetch' && !empty($id))
 
 	top_httphead();
 
-	if (empty($htmlname)) return;
+	if (empty($htmlname)) {
+		return;
+	}
 
+	// Filter on the company to search can be:
+	// Into an array with key $htmlname123 (we take first one found). Which page use this ?
+	// Into a var with name $htmlname can be 'prodid', 'productid', ...
 	$match = preg_grep('/('.$htmlname.'[0-9]+)/', array_keys($_GET));
 	sort($match);
-	$id = (!empty($match[0]) ? $match[0] : '');
+
+	$id = (!empty($match[0]) ? $match[0] : '');		// Take first key found into GET array with matching $htmlname123
 
 	// When used from jQuery, the search term is added as GET param "term".
-	$searchkey = (($id && GETPOST($id, 'alpha')) ?GETPOST($id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ?GETPOST($htmlname, 'alpha') : ''));
+	$searchkey = (($id && GETPOST($id, 'alpha')) ? GETPOST($id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ?GETPOST($htmlname, 'alpha') : ''));
 
-	if (!$searchkey) return;
+	if (!$searchkey) {
+		return;
+	}
 
-	if (!is_object($form)) $form = new Form($db);
+	if (!is_object($form)) {
+		$form = new Form($db);
+	}
+
+	if (!empty($excludeids)) {
+		$filter .= 'rowid NOT IN ('.$db->sanitize($excludeids).')';
+	}
+
 	$arrayresult = $form->select_thirdparty_list(0, $htmlname, $filter, 1, $showtype, 0, null, $searchkey, $outjson);
 
 	$db->close();
 
-	if ($outjson) print json_encode($arrayresult);
+	if ($outjson) {
+		print json_encode($arrayresult);
+	}
 }

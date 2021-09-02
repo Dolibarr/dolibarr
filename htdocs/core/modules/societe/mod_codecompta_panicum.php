@@ -36,9 +36,9 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 	public $name = 'Panicum';
 
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	public $position = 10;
@@ -76,7 +76,7 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 		return '';
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Set accountancy account code for a third party into this->code
 	 *
@@ -87,12 +87,15 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 	 */
 	public function get_code($db, $societe, $type = '')
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$this->code = '';
 
 		if (is_object($societe)) {
-			if ($type == 'supplier') $this->code = (($societe->code_compta_fournisseur != "") ? $societe->code_compta_fournisseur : '');
-			else $this->code = (($societe->code_compta != "") ? $societe->code_compta : '');
+			if ($type == 'supplier') {
+				$this->code = (($societe->code_compta_fournisseur != "") ? $societe->code_compta_fournisseur : '');
+			} else {
+				$this->code = (($societe->code_compta != "") ? $societe->code_compta : '');
+			}
 		}
 
 		return 0; // return ok

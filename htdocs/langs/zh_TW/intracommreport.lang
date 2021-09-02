@@ -1,0 +1,40 @@
+Module68000Name = 內部通訊報告
+Module68000Desc = 內部通訊報告管理（支援法國 DEB/DES 格式）
+IntracommReportSetup = 內部通訊報告模組設定
+IntracommReportAbout = 關於內部通訊報告
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=批准文號（由CISD附件簽發）
+INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
+INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
+
+INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+
+# Menu
+MenuIntracommReport=內部通訊報告
+MenuIntracommReportNew=新報單
+MenuIntracommReportList=清單
+
+# View
+NewDeclaration=新報單
+Declaration=報單
+AnalysisPeriod=分析期間
+TypeOfDeclaration=報單類型
+DEB=貨物交換報關單（DEB）
+DES=服務交換報單(DES)
+
+# Export page
+IntracommReportTitle=Preparation of an XML file in ProDouane format
+
+# List
+IntracommReportList=List of generated declarations
+IntracommReportNumber=Numero of declaration
+IntracommReportPeriod=Period of analysis
+IntracommReportTypeDeclaration=報單類型
+IntracommReportDownload=download XML file
+
+# Invoice
+IntracommReportTransportMode=Transport mode

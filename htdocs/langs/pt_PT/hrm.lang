@@ -9,10 +9,11 @@ ConfirmDeleteEstablishment=Are you sure you wish to delete this establishment?
 OpenEtablishment=Abrir estabelecimento
 CloseEtablishment=Fechar estabelecimento
 # Dictionary
-DictionaryPublicHolidays=HRM - Public holidays
+DictionaryPublicHolidays=Leave - Public holidays
 DictionaryDepartment=GRH - Lista departamentos
 DictionaryFunction=HRM - Job positions
 # Module
 Employees=Funcionários
 Employee=Funcionário
 NewEmployee=Novo funcionário
+ListOfEmployees=Lista de funcionários

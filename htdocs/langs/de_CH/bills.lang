@@ -1,7 +1,9 @@
 # Dolibarr language file - Source file is en_US - bills
 BillsCustomersUnpaid=Offene Kundenrechnungen
 BillsCustomersUnpaidForCompany=Unbezahlte Rechnungen von %s
+BillsSuppliersUnpaid=Unbezahlte Lieferantenrechnungen
 BillsSuppliersUnpaidForCompany=Unbezahlte Rechnungen für %s
+BillsLate=Verspätete Zahlungen
 BillsStatistics=Zahlungsstatistik - Kundenrechnungen
 BillsStatisticsSuppliers=Zahlungsstatistik  - Lieferantenrechnungen
 DisabledBecauseDispatchedInBookkeeping=Das ist inaktiv, weil die Rechnung schon verbucht ist.
@@ -173,10 +175,12 @@ ChequesArea=Schecks
 ChequeDeposits=Scheckeinlagen
 NoteListOfYourUnpaidInvoices=Bitte beachten: Diese Liste enthält nur Rechnungen für Geschäftspartner, bei denen Sie als Vertreter angegeben sind.
 YouMustCreateStandardInvoiceFirstDesc=Sie müssen zuerst eine Standardrechnung Erstellen und diese dann in eine Rechnungsvorlage umwandeln
+TypeContact_facture_external_BILLING=Kundenrechnung Kontakt
 TypeContact_invoice_supplier_external_BILLING=Lieferanten - Rechnungskontakt
 TypeContact_invoice_supplier_external_SHIPPING=Lieferanten - Versandkontakt
 InvoiceFirstSituationAsk=Erste Situation Rechnung
 InvoiceSituation=Situation Rechnung
+PDFInvoiceSituation=Situation Rechnung
 SituationAmount=Situation Rechnungsbetrag (ohne MwSt.)
 CreateNextSituationInvoice=Erstelle nächsten Position
 DisabledBecauseNotLastInCycle=Der folgende Situation ist bereits vorhanden.

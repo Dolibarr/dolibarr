@@ -9,10 +9,11 @@ ConfirmDeleteEstablishment=Are you sure you wish to delete this establishment?
 OpenEtablishment=Otvori ustanovu
 CloseEtablishment=Zatvori ustanovu
 # Dictionary
-DictionaryPublicHolidays=HRM - Public holidays
+DictionaryPublicHolidays=Leave - Public holidays
 DictionaryDepartment=HRM - popis odjela
 DictionaryFunction=HRM - Job positions
 # Module
 Employees=Zaposlenici
 Employee=Zaposlenik
 NewEmployee=Novi zaposlenik
+ListOfEmployees=List of employees

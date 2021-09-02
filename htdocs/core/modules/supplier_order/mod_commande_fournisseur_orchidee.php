@@ -33,15 +33,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_order/modules_commandefou
 class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
-     * @var string Error code (or message)
-     */
-    public $error = '';
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
 
 	/**
 	 * @var string Nom du modele
@@ -56,17 +56,17 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	public $name = 'Orchidee';
 
 
-    /**
-     *  Returns the description of the numbering model
-     *
-     * 	@return     string      Texte descripif
-     */
-    public function info()
-    {
-    	global $db, $conf, $langs;
+	/**
+	 *  Returns the description of the numbering model
+	 *
+	 * 	@return     string      Texte descripif
+	 */
+	public function info()
+	{
+		global $db, $conf, $langs;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("bills", "admin"));
+		$langs->loadLangs(array("bills", "admin"));
 
 		$form = new Form($db);
 
@@ -85,9 +85,9 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskorder" value="'.$conf->global->COMMANDE_FOURNISSEUR_ORCHIDEE_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskorder" value="'.$conf->global->COMMANDE_FOURNISSEUR_ORCHIDEE_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -95,38 +95,37 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
-    /**
-     *  Return an example of numbering
-     *
-     *  @return     string      Example
-     */
-    public function getExample()
-    {
-    	global $conf, $langs, $mysoc;
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	public function getExample()
+	{
+		global $conf, $langs, $mysoc;
 
-    	$old_code_client = $mysoc->code_client;
-    	$mysoc->code_client = 'CCCCCCCCCC';
-    	$numExample = $this->getNextValue($mysoc, '');
+		$old_code_client = $mysoc->code_client;
+		$mysoc->code_client = 'CCCCCCCCCC';
+		$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client = $old_code_client;
 
-		if (!$numExample)
-		{
+		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
-    }
+	}
 
 	/**
 	 *  Return next value
 	 *
 	 *  @param	Societe		$objsoc     Object third party
 	 *  @param  Object	    $object		Object
-     *  @return string      			Value if OK, 0 if KO
-	*/
-    public function getNextValue($objsoc = 0, $object = '')
-    {
+	 *  @return string      			Value if OK, 0 if KO
+	 */
+	public function getNextValue($objsoc = 0, $object = '')
+	{
 		global $db, $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -134,8 +133,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 		// On defini critere recherche compteur
 		$mask = $conf->global->COMMANDE_FOURNISSEUR_ORCHIDEE_MASK;
 
-		if (!$mask)
-		{
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}
@@ -146,17 +144,17 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Renvoie la reference de commande suivante non utilisee
-     *
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Renvoie la reference de commande suivante non utilisee
+	 *
 	 *  @param	Societe		$objsoc     Object third party
 	 *  @param  Object	    $object		Object
-     *  @return string      			Texte descripif
-     */
-    public function commande_get_num($objsoc = 0, $object = '')
-    {
-        // phpcs:enable
-        return $this->getNextValue($objsoc, $object);
-    }
+	 *  @return string      			Texte descripif
+	 */
+	public function commande_get_num($objsoc = 0, $object = '')
+	{
+		// phpcs:enable
+		return $this->getNextValue($objsoc, $object);
+	}
 }

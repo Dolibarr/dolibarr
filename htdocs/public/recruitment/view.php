@@ -21,15 +21,25 @@
  *       \brief      Public file to show on job
  */
 
-if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
-if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOLOGIN')) {
+	define("NOLOGIN", 1); // This means this output page does not require to be logged.
+}
+if (!defined('NOCSRFCHECK')) {
+	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', '1');
+}
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "recruitment"));
@@ -51,10 +61,8 @@ if (isset($_SESSION['email_customer'])) {
 
 $object = new RecruitmentJobPosition($db);
 
-if (!$action)
-{
-	if (!$ref)
-	{
+if (!$action) {
+	if (!$ref) {
 		print $langs->trans('ErrorBadParameters')." - ref missing";
 		exit;
 	} else {
@@ -67,15 +75,18 @@ if (!$action)
 //$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
 
+// Security check
+if (empty($conf->recruitment->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
+
 
 /*
  * Actions
  */
 
-if ($cancel)
-{
-	if (!empty($backtopage))
-	{
+if ($cancel) {
+	if (!empty($backtopage)) {
 		header("Location: ".$backtopage);
 		exit;
 	}
@@ -124,8 +135,7 @@ if ($action == "view" || $action == "presend" || $action == "close" || $action =
 
 	if ($error || $errors) {
 		setEventMessages($object->error, $object->errors, 'errors');
-		if ($action == "add_message")
-		{
+		if ($action == "add_message") {
 			$action = 'presend';
 		} else {
 			$action = '';
@@ -139,7 +149,7 @@ if ($action == "view" || $action == "presend" || $action == "close" || $action =
 $triggersendname = 'CANDIDATURE_SENTBYMAIL';
 $paramname = 'id';
 $autocopy = 'MAIN_MAIL_AUTOCOPY_CANDIDATURE_TO'; // used to know the automatic BCC to add
-$trackid = 'can'.$object->id;
+$trackid = 'recruitmentcandidature'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
@@ -149,13 +159,16 @@ include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
  */
 
 $head = '';
-if (!empty($conf->global->MAIN_RECRUITMENT_CSS_URL)) $head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MAIN_RECRUITMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+if (!empty($conf->global->MAIN_RECRUITMENT_CSS_URL)) {
+	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MAIN_RECRUITMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+}
 
 $conf->dol_hide_topmenu = 1;
 $conf->dol_hide_leftmenu = 1;
 
 if (!$conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE) {
-	print '<div class="error">'.$langs->trans('PublicInterfaceForbidden').'</div>';
+	$langs->load("errors");
+	print '<div class="error">'.$langs->trans('ErrorPublicInterfaceNotEnabled').'</div>';
 	$db->close();
 	exit();
 }
@@ -164,7 +177,7 @@ $arrayofjs = array();
 $arrayofcss = array();
 
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
-llxHeader($head, $langs->trans("PositionToBeFilled"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
+llxHeader($head, $langs->trans("PositionToBeFilled"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1);
 
 
 print '<span id="dolpaymentspan"></span>'."\n";
@@ -177,7 +190,7 @@ print '<input type="hidden" name="suffix" value="'.GETPOST("suffix", 'alpha').'"
 print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print "\n";
-print '<!-- Form to sign -->'."\n";
+print '<!-- Form to view job -->'."\n";
 
 print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 
@@ -186,46 +199,53 @@ print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
 $paramlogo = 'ONLINE_RECRUITMENT_LOGO_'.$suffix;
-if (!empty($conf->global->$paramlogo)) $logosmall = $conf->global->$paramlogo;
-elseif (!empty($conf->global->ONLINE_RECRUITMENT_LOGO)) $logosmall = $conf->global->ONLINE_RECRUITMENT_LOGO_;
+if (!empty($conf->global->$paramlogo)) {
+	$logosmall = $conf->global->$paramlogo;
+} elseif (!empty($conf->global->ONLINE_RECRUITMENT_LOGO)) {
+	$logosmall = $conf->global->ONLINE_RECRUITMENT_LOGO_;
+}
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
 $urllogo = '';
 $urllogofull = '';
-if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
-{
+if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall)) {
 	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
 	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
-} elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
-{
+} elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo)) {
 	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
 	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
 }
 // Output html code for logo
-if ($urllogo)
-{
+if ($urllogo) {
 	print '<div class="backgreypublicpayment">';
 	print '<div class="logopublicpayment">';
 	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
 	print '>';
 	print '</div>';
 	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-		print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 	}
+	print '</div>';
+}
+
+if (!empty($conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE)) {
+	print '<div class="backimagepublicrecruitment">';
+	print '<img id="idPROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH" src="'.$conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE.'">';
 	print '</div>';
 }
 
 // Output introduction text
 $text = '';
-if (!empty($conf->global->RECRUITMENT_NEWFORM_TEXT))
-{
+if (!empty($conf->global->RECRUITMENT_NEWFORM_TEXT)) {
 	$langs->load("recruitment");
-	if (preg_match('/^\((.*)\)$/', $conf->global->RECRUITMENT_NEWFORM_TEXT, $reg)) $text .= $langs->trans($reg[1])."<br>\n";
-	else $text .= $conf->global->RECRUITMENT_NEWFORM_TEXT."<br>\n";
+	if (preg_match('/^\((.*)\)$/', $conf->global->RECRUITMENT_NEWFORM_TEXT, $reg)) {
+		$text .= $langs->trans($reg[1])."<br>\n";
+	} else {
+		$text .= $conf->global->RECRUITMENT_NEWFORM_TEXT."<br>\n";
+	}
 	$text = '<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
 }
-if (empty($text))
-{
+if (empty($text)) {
 	$text .= '<tr><td class="textpublicpayment"><br>'.$langs->trans("JobOfferToBeFilled", $mysoc->name);
 	$text .= ' &nbsp; - &nbsp; <strong>'.$mysoc->name.'</strong>';
 	$text .= ' &nbsp; - &nbsp; <span class="fa fa-calendar secondary"></span> '.dol_print_date($object->date_creation);
@@ -277,7 +297,7 @@ if (empty($emailforcontact)) {
 		$emailforcontact = $mysoc->email;
 	}
 }
-print '<b>';
+print '<b class="wordbreak">';
 print $tmpuser->getFullName(-1);
 print ' - '.dol_print_email($emailforcontact, 0, 0, 1, 0, 0, 1);
 print '</b>';
@@ -302,10 +322,8 @@ print '</div>'."\n";
 print "\n";
 
 
-if ($action != 'dosubmit')
-{
-	if ($found && !$error)	// We are in a management option and no error
-	{
+if ($action != 'dosubmit') {
+	if ($found && !$error) {	// We are in a management option and no error
 	} else {
 		dol_print_error_email('ERRORNEWONLINESIGN');
 	}

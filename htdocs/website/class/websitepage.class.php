@@ -81,6 +81,7 @@ class WebsitePage extends CommonObject
 	 */
 	public $lang;
 
+	public $allowed_in_frames;
 	public $htmlheader;
 	public $content;
 	public $grabbed_from;
@@ -105,9 +106,9 @@ class WebsitePage extends CommonObject
 	 */
 	public $author_alias;
 
-   	/**
-   	 * @var string path of external object
-   	 */
+	/**
+	 * @var string path of external object
+	 */
 	public $object_type;
 
 	/**
@@ -137,7 +138,7 @@ class WebsitePage extends CommonObject
 	 *  'help' is a string visible as a tooltip on field
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
-	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
@@ -160,6 +161,7 @@ class WebsitePage extends CommonObject
 		//'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'index'=>true,   'position'=>1000),
 		'fk_website'     =>array('type'=>'integer', 'label'=>'WebsiteId', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>40, 'searchall'=>0, 'foreignkey'=>'websitepage.rowid'),
 		'fk_page'        =>array('type'=>'integer', 'label'=>'ParentPageId', 'enabled'=>1, 'visible'=>1, 'notnull'=>-1, 'position'=>45, 'searchall'=>0, 'foreignkey'=>'website.rowid'),
+		'allowed_in_frames'   =>array('type'=>'integer', 'label'=>'AllowedInFrames', 'enabled'=>1, 'visible'=>-1, 'position'=>48, 'searchall'=>0, 'default'=>0),
 		'htmlheader'     =>array('type'=>'text', 'label'=>'HtmlHeader', 'enabled'=>1, 'visible'=>0, 'position'=>50, 'searchall'=>0),
 		'content'        =>array('type'=>'mediumtext', 'label'=>'Content', 'enabled'=>1, 'visible'=>0, 'position'=>51, 'searchall'=>0),
 		'grabbed_from'   =>array('type'=>'varchar(255)', 'label'=>'GrabbedFrom', 'enabled'=>1, 'visible'=>1, 'index'=>1, 'position'=>400, 'comment'=>'URL page content was grabbed from'),
@@ -171,27 +173,27 @@ class WebsitePage extends CommonObject
 		'fk_user_modif'  =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'import_key'     =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'index'=>1, 'position'=>1000, 'notnull'=>-1),
-		'object_type' => array('type' => 'varchar(255)','label' => 'ObjectType', 'enabled'=>1, 'visible'=>1, 'position'=>46, 'searchall'=>0, 'help'=>''),
-		'fk_object' => array('type' => 'varchar(255)','label' => 'ObjectId', 'enabled'=>1, 'visible'=>1, 'position'=>47, 'searchall'=>0, 'help'=>'')
+		'object_type' => array('type' => 'varchar(255)', 'label' => 'ObjectType', 'enabled'=>1, 'visible'=>0, 'position'=>46, 'searchall'=>0, 'help'=>''),
+		'fk_object' => array('type' => 'varchar(255)', 'label' => 'ObjectId', 'enabled'=>1, 'visible'=>0, 'position'=>47, 'searchall'=>0, 'help'=>'')
 	);
 	// END MODULEBUILDER PROPERTIES
 
 
 	// If this object has a subtable with lines
 
-	/**
-	 * @var int    Name of subtable line
-	 */
+	// /**
+	//  * @var string    Name of subtable line
+	//  */
 	//public $table_element_line = 'mymodule_myobjectline';
 
 	/**
-	 * @var int 	Field with ID of parent key if this field has a parent or for child tables
+	 * @var string 	Field with ID of parent key if this field has a parent or for child tables
 	 */
 	public $fk_element = 'fk_website_page';
 
-	/**
-	 * @var int    Name of subtable class that manage subtable lines
-	 */
+	// /**
+	//  * @var string    Name of subtable class that manage subtable lines
+	//  */
 	//public $class_element_line = 'MyObjectline';
 
 	/**
@@ -227,7 +229,13 @@ class WebsitePage extends CommonObject
 	{
 		$this->description = dol_trunc($this->description, 255, 'right', 'utf-8', 1);
 		$this->keywords = dol_trunc($this->keywords, 255, 'right', 'utf-8', 1);
-		if ($this->aliasalt) $this->aliasalt = ','.preg_replace('/,+$/', '', preg_replace('/^,+/', '', $this->aliasalt)).','; // content in database must be ',xxx,...,yyy,'
+		if ($this->aliasalt) {
+			$this->aliasalt = ','.preg_replace('/,+$/', '', preg_replace('/^,+/', '', $this->aliasalt)).','; // content in database must be ',xxx,...,yyy,'
+		}
+
+		$this->pageurl = preg_replace('/[^a-z0-9\-\_]/i', '', $this->pageurl);
+		$this->pageurl = preg_replace('/\-\-+/', '-', $this->pageurl);
+		$this->pageurl = preg_replace('/^\-/', '', $this->pageurl);
 
 		// Remove spaces and be sure we have main language only
 		$this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en
@@ -265,6 +273,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.content,";
 		$sql .= " t.lang,";
 		$sql .= " t.fk_page,";
+		$sql .= " t.allowed_in_frames,";
 		$sql .= " t.status,";
 		$sql .= " t.grabbed_from,";
 		$sql .= " t.date_creation,";
@@ -278,12 +287,12 @@ class WebsitePage extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		//$sql .= ' WHERE entity IN ('.getEntity('website').')';       // entity is on website level
 		$sql .= ' WHERE 1 = 1';
-		if ($id > 0)
-		{
-			$sql .= ' AND t.rowid = '.$id;
-		}
-		else {
-			if ($id < 0) $sql .= ' AND t.rowid <> '.abs($id);
+		if ($id > 0) {
+			$sql .= ' AND t.rowid = '.((int) $id);
+		} else {
+			if ($id < 0) {
+				$sql .= ' AND t.rowid <> '.abs($id);
+			}
 			if (null !== $website_id) {
 				$sql .= " AND t.fk_website = '".$this->db->escape($website_id)."'";
 				if ($page) {
@@ -292,12 +301,18 @@ class WebsitePage extends CommonObject
 					$tmppage = explode('/', $page);
 					if (!empty($tmppage[1])) {
 						$pagetouse = $tmppage[1];
-						if (strlen($tmppage[0])) $langtouse = $tmppage[0];
+						if (strlen($tmppage[0])) {
+							$langtouse = $tmppage[0];
+						}
 					}
 					$sql .= " AND t.pageurl = '".$this->db->escape($pagetouse)."'";
-					if ($langtouse) $sql .= " AND t.lang = '".$this->db->escape($langtouse)."'";
+					if ($langtouse) {
+						$sql .= " AND t.lang = '".$this->db->escape($langtouse)."'";
+					}
 				}
-				if ($aliasalt)	$sql .= " AND (t.aliasalt LIKE '%,".$this->db->escape($aliasalt).",%' OR t.aliasalt LIKE '%, ".$this->db->escape($aliasalt).",%')";
+				if ($aliasalt) {
+					$sql .= " AND (t.aliasalt LIKE '%,".$this->db->escape($aliasalt).",%' OR t.aliasalt LIKE '%, ".$this->db->escape($aliasalt).",%')";
+				}
 			}
 		}
 		$sql .= $this->db->plimit(1);
@@ -325,6 +340,7 @@ class WebsitePage extends CommonObject
 				$this->content = $obj->content;
 				$this->lang = $obj->lang;
 				$this->fk_page = $obj->fk_page;
+				$this->allowed_in_frames = $obj->allowed_in_frames;
 				$this->status = $obj->status;
 				$this->grabbed_from = $obj->grabbed_from;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
@@ -383,6 +399,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.content,";
 		$sql .= " t.lang,";
 		$sql .= " t.fk_page,";
+		$sql .= " t.allowed_in_frames,";
 		$sql .= " t.status,";
 		$sql .= " t.grabbed_from,";
 		$sql .= " t.date_creation,";
@@ -394,13 +411,13 @@ class WebsitePage extends CommonObject
 		$sql .= " t.object_type,";
 		$sql .= " t.fk_object";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.fk_website = '.$websiteid;
-		// Manage filter
+		$sql .= ' WHERE t.fk_website = '.((int) $websiteid);
+		// Manage filter (same than into countAll)
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid' || $key == 't.fk_website' || $key == 'status') {
-					$sqlwhere[] = $key.' = '.$value;
+					$sqlwhere[] = $key." = ".((int) $value);
 				} elseif ($key == 'type_container') {
 					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 'lang' || $key == 't.lang') {
@@ -413,31 +430,32 @@ class WebsitePage extends CommonObject
 						}
 						$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 					}
-					$stringtouse = $key." IN (".join(',', $listoflang).")";
-					if ($foundnull) $stringtouse = '('.$stringtouse.' OR '.$key.' IS NULL)';
+					$stringtouse = $key." IN (".$this->db->sanitize(join(',', $listoflang), 1).")";
+					if ($foundnull) {
+						$stringtouse = "(".$stringtouse." OR ".$key." IS NULL)";
+					}
 					$sqlwhere[] = $stringtouse;
 				} else {
-					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+			$sql .= " AND (".implode(' '.$filtermode.' ', $sqlwhere).')';
 		}
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit, $offset);
+			$sql .= $this->db->plimit($limit, $offset);
 		}
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			while ($obj = $this->db->fetch_object($resql))
-			{
+			while ($obj = $this->db->fetch_object($resql)) {
 				$record = new self($this->db);
 
 				$record->id = $obj->rowid;
@@ -453,6 +471,7 @@ class WebsitePage extends CommonObject
 				$record->content = $obj->content;
 				$record->lang = $obj->lang;
 				$record->fk_page = $obj->fk_page;
+				$record->allowed_in_frames = $obj->allowed_in_frames;
 				$record->status = $obj->status;
 				$record->grabbed_from = $obj->grabbed_from;
 				$record->date_creation = $this->db->jdate($obj->date_creation);
@@ -494,17 +513,32 @@ class WebsitePage extends CommonObject
 
 		$sql = 'SELECT COUNT(t.rowid) as nb';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.fk_website = '.$websiteid;
-		// Manage filter
+		$sql .= ' WHERE t.fk_website = '.((int) $websiteid);
+		// Manage filter (same than into fetchAll)
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid' || $key == 't.fk_website') {
-					$sqlwhere[] = $key.'='.$value;
+				if ($key == 't.rowid' || $key == 't.fk_website' || $key == 'status') {
+					$sqlwhere[] = $key." = ".((int) $value);
+				} elseif ($key == 'type_container') {
+					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 'lang' || $key == 't.lang') {
-					$sqlwhere[] = $key." = '".$this->db->escape(substr($value, 0, 2))."'";
+					$listoflang = array();
+					$foundnull = 0;
+					foreach (explode(',', $value) as $tmpvalue) {
+						if ($tmpvalue == 'null') {
+							$foundnull++;
+							continue;
+						}
+						$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
+					}
+					$stringtouse = $key." IN (".$this->db->sanitize(join(',', $listoflang), 1).")";
+					if ($foundnull) {
+						$stringtouse = "(".$stringtouse." OR ".$key." IS NULL)";
+					}
+					$sqlwhere[] = $stringtouse;
 				} else {
-					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}
@@ -542,7 +576,13 @@ class WebsitePage extends CommonObject
 	{
 		$this->description = dol_trunc($this->description, 255, 'right', 'utf-8', 1);
 		$this->keywords = dol_trunc($this->keywords, 255, 'right', 'utf-8', 1);
-		if ($this->aliasalt) $this->aliasalt = ','.preg_replace('/,+$/', '', preg_replace('/^,+/', '', $this->aliasalt)).','; // content in database must be ',xxx,...,yyy,'
+		if ($this->aliasalt) {
+			$this->aliasalt = ','.preg_replace('/,+$/', '', preg_replace('/^,+/', '', $this->aliasalt)).','; // content in database must be ',xxx,...,yyy,'
+		}
+
+		$this->pageurl = preg_replace('/[^a-z0-9\-\_]/i', '', $this->pageurl);
+		$this->pageurl = preg_replace('/\-\-+/', '-', $this->pageurl);
+		$this->pageurl = preg_replace('/^\-/', '', $this->pageurl);
 
 		// Remove spaces and be sure we have main language only
 		$this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en
@@ -576,8 +616,7 @@ class WebsitePage extends CommonObject
 
 		// Delete all child tables
 		if (!$error) {
-			foreach ($this->childtablesoncascade as $table)
-			{
+			foreach ($this->childtablesoncascade as $table) {
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
 				$sql .= " WHERE fk_website_page = ".(int) $this->id;
 
@@ -592,19 +631,16 @@ class WebsitePage extends CommonObject
 
 		if (!$error) {
 			$result = $this->deleteCommon($user, $trigger);
-			if ($result <= 0)
-			{
+			if ($result <= 0) {
 				$error++;
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$websiteobj = new Website($this->db);
 			$result = $websiteobj->fetch($this->fk_website);
 
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				global $dolibarr_main_data_root;
 				$pathofwebsite = $dolibarr_main_data_root.'/website/'.$websiteobj->ref;
 
@@ -676,10 +712,18 @@ class WebsitePage extends CommonObject
 		$object->author_alias = '';
 		$object->date_creation = $now;
 		$object->title = ($newtitle == '1' ? $object->title : ($newtitle ? $newtitle : $object->title));
-		if (!empty($newlang)) $object->lang = $newlang;
-		if ($istranslation) $object->fk_page = $fromid;
-		else $object->fk_page = 0;
-		if (!empty($newwebsite)) $object->fk_website = $newwebsite;
+		$object->description = $object->title;
+		if (!empty($newlang)) {
+			$object->lang = $newlang;
+		}
+		if ($istranslation) {
+			$object->fk_page = $fromid;
+		} else {
+			$object->fk_page = 0;
+		}
+		if (!empty($newwebsite)) {
+			$object->fk_website = $newwebsite;
+		}
 		$object->import_key = '';
 
 		// Create clone
@@ -735,17 +779,16 @@ class WebsitePage extends CommonObject
 		$url = DOL_URL_ROOT.'/website/index.php?websiteid='.$this->fk_website.'&pageid='.$this->id;
 
 		$linkclose = '';
-		if (empty($notooltip))
-		{
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-			{
+		if (empty($notooltip)) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
-		else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -754,8 +797,12 @@ class WebsitePage extends CommonObject
 		//$linkstart = $linkend = '';
 
 		$result .= $linkstart;
-		if ($withpicto) $result .= img_picto(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= $this->ref;
+		if ($withpicto) {
+			$result .= img_picto(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		}
+		if ($withpicto != 2) {
+			$result .= $this->ref;
+		}
 		$result .= $linkend;
 
 		return $result;
@@ -785,8 +832,7 @@ class WebsitePage extends CommonObject
 		// phpcs:enable
 		global $langs;
 
-		if (empty($this->labelStatus) || empty($this->labelStatusShort))
-		{
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Disabled');
@@ -796,7 +842,9 @@ class WebsitePage extends CommonObject
 		}
 
 		$statusType = 'status5';
-		if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
+		if ($status == self::STATUS_VALIDATED) {
+			$statusType = 'status4';
+		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
@@ -839,6 +887,7 @@ class WebsitePage extends CommonObject
 		$this->description = 'This is my page';
 		$this->image = '';
 		$this->keywords = 'keyword1, keyword2';
+		$this->allowed_in_frames = 1;
 		$this->htmlheader = '';
 		$this->content = '<html><body>This is a html content</body></html>';
 		$this->status = '';

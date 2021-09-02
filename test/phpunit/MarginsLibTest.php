@@ -29,8 +29,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/margin/lib/margins.lib.php';
 
-if (empty($user->id))
-{
+if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
@@ -74,65 +73,65 @@ class MarginsLibTest extends PHPUnit\Framework\TestCase
 		print "\n";
 	}
 
-    /**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->begin();   // This is to have all actions inside a transaction even if test launched without suite.
+	/**
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass()
+	{
+		global $conf,$user,$langs,$db;
+		$db->begin();   // This is to have all actions inside a transaction even if test launched without suite.
 
-        print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass()
+	{
+		global $conf,$user,$langs,$db;
 		$db->rollback();
 
 		print __METHOD__."\n";
-    }
+	}
 
 	/**
 	 * Init phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function setUp()
-    {
-    	global $conf,$user,$langs,$db;
+	protected function setUp()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		print __METHOD__."\n";
-    }
+	}
 	/**
 	 * End phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function tearDown()
-    {
-    	print __METHOD__."\n";
-    }
+	protected function tearDown()
+	{
+		print __METHOD__."\n";
+	}
 
-    /**
-     * testGetMarginInfos
-     *
-     * @return	void
-     */
-    public function testGetMarginInfos()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * testGetMarginInfos
+	 *
+	 * @return	void
+	 */
+	public function testGetMarginInfos()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
@@ -156,5 +155,5 @@ class MarginsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals(1/9*100, $result[2]);
 
 		return 0;
-    }
+	}
 }

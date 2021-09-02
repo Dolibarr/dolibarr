@@ -1,4 +1,5 @@
 -- Copyright (C) 2013-2018  Jean-François FERRY <hello@librethic.io>
+-- Copyright (C) 2020-2021  Laurent Destailleur <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -12,19 +13,22 @@
 --
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
+
 --
---
+-- Table with the custom category tree for the category of a ticket
+-- 
 
 create table llx_c_ticket_category
 (
   rowid			 integer AUTO_INCREMENT PRIMARY KEY,
   entity		 integer DEFAULT 1,
-  code			 varchar(32) NOT NULL,
-  pos			 varchar(32) NOT NULL,
+  code			 varchar(32) NOT NULL,			-- Example: TIGRP-COMMERCIAL, TIGRP-TECHNICALISSUE, ...
   label			 varchar(128) NOT NULL,
-  active		 integer DEFAULT 1,
+  public         integer DEFAULT 0,
   use_default	 integer DEFAULT 1,
   fk_parent      integer DEFAULT 0 NOT NULL,	-- Parent group
   force_severity varchar(32) NULL,				-- To force the severity if we choosed this category
-  description	  varchar(255)
+  description	 varchar(255),					-- A long description of ticket
+  pos			 integer DEFAULT 0 NOT NULL,
+  active		 integer DEFAULT 1
 )ENGINE=innodb;

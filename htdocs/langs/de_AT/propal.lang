@@ -7,6 +7,7 @@ DateEndPropal=Ablauf der Bindefrist
 ValidityDuration=Bindefrist
 CopyPropalFrom=Erstelle neues Angebot durch Duplikation
 DefaultProposalDurationValidity=Standardmäßige Bindefrist (Tage)
+AvailabilityPeriod=Lieferzeit
 AvailabilityTypeAV_NOW=Prompt nach Rechnungserhalt
 TypeContact_propal_internal_SALESREPFOLL=Angebotsnachverfolgung durch Vertreter
 TypeContact_propal_external_BILLING=Debitorenrechnung Kontakt

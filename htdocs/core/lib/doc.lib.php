@@ -48,18 +48,25 @@ function doc_getlinedesc($line, $outputlangs, $hideref = 0, $hidedesc = 0, $issu
 	$ref_supplier = (!empty($line->ref_supplier) ? $line->ref_supplier : (!empty($line->ref_fourn) ? $line->ref_fourn : '')); // TODO Not yet saved for supplier invoices, only supplier orders
 	$note = (!empty($line->note) ? $line->note : '');
 
-	if ($issupplierline) $prodser = new ProductFournisseur($db);
-	else $prodser = new Product($db);
+	if ($issupplierline) {
+		$prodser = new ProductFournisseur($db);
+	} else {
+		$prodser = new Product($db);
+	}
 
-	if ($idprod)
-	{
+	if ($idprod) {
 		$prodser->fetch($idprod);
 		// If a predefined product and multilang and on other lang, we renamed label with label translated
-		if (!empty($conf->global->MAIN_MULTILANGS) && ($outputlangs->defaultlang != $langs->defaultlang))
-		{
-			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["label"]) && $label == $prodser->label)     $label = $prodser->multilangs[$outputlangs->defaultlang]["label"];
-			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["description"]) && $desc == $prodser->description) $desc = $prodser->multilangs[$outputlangs->defaultlang]["description"];
-			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["note"]) && $note == $prodser->note)        $note = $prodser->multilangs[$outputlangs->defaultlang]["note"];
+		if (!empty($conf->global->MAIN_MULTILANGS) && ($outputlangs->defaultlang != $langs->defaultlang)) {
+			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["label"]) && $label == $prodser->label) {
+				$label = $prodser->multilangs[$outputlangs->defaultlang]["label"];
+			}
+			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["description"]) && $desc == $prodser->description) {
+				$desc = $prodser->multilangs[$outputlangs->defaultlang]["description"];
+			}
+			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["note"]) && $note == $prodser->note) {
+				$note = $prodser->multilangs[$outputlangs->defaultlang]["note"];
+			}
 		}
 	}
 
@@ -67,36 +74,34 @@ function doc_getlinedesc($line, $outputlangs, $hideref = 0, $hidedesc = 0, $issu
 	$libelleproduitservice = $label;
 
 	// Description long of product line
-	if ($desc && ($desc != $label))
-	{
-		if ($desc == '(CREDIT_NOTE)' && $line->fk_remise_except)
-		{
+	if ($desc && ($desc != $label)) {
+		if ($desc == '(CREDIT_NOTE)' && $line->fk_remise_except) {
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($line->fk_remise_except);
 			$sourceref = !empty($discount->discount_type) ? $discount->ref_invoive_supplier_source : $discount->ref_facture_source;
 			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromCreditNote", $sourceref);
-		} elseif ($desc == '(DEPOSIT)' && $line->fk_remise_except)
-		{
+		} elseif ($desc == '(DEPOSIT)' && $line->fk_remise_except) {
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($line->fk_remise_except);
 			$sourceref = !empty($discount->discount_type) ? $discount->ref_invoive_supplier_source : $discount->ref_facture_source;
 			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromDeposit", $sourceref);
 			// Add date of deposit
-			if (!empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) $libelleproduitservice .= ' ('.dol_print_date($discount->datec, 'day', '', $outputlangs).')';
-		} elseif ($desc == '(EXCESS RECEIVED)' && $line->fk_remise_except)
-		{
+			if (!empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) {
+				$libelleproduitservice .= ' ('.dol_print_date($discount->datec, 'day', '', $outputlangs).')';
+			}
+		} elseif ($desc == '(EXCESS RECEIVED)' && $line->fk_remise_except) {
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($line->fk_remise_except);
 			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromExcessReceived", $discount->ref_facture_source);
-		} elseif ($desc == '(EXCESS PAID)' && $line->fk_remise_except)
-		{
+		} elseif ($desc == '(EXCESS PAID)' && $line->fk_remise_except) {
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($line->fk_remise_except);
 			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromExcessPaid", $discount->ref_invoice_supplier_source);
 		} else {
-			if ($idprod)
-			{
-				if (empty($hidedesc)) $libelleproduitservice = dol_concatdesc($libelleproduitservice, $desc);
+			if ($idprod) {
+				if (empty($hidedesc)) {
+					$libelleproduitservice = dol_concatdesc($libelleproduitservice, $desc);
+				}
 			} else {
 				$libelleproduitservice = dol_concatdesc($libelleproduitservice, $desc);
 			}
@@ -104,27 +109,25 @@ function doc_getlinedesc($line, $outputlangs, $hideref = 0, $hidedesc = 0, $issu
 	}
 
 	// If line linked to a product
-	if ($idprod)
-	{
+	if ($idprod) {
 		// On ajoute la ref
-		if ($prodser->ref)
-		{
+		if ($prodser->ref) {
 			$prefix_prodserv = "";
 			$ref_prodserv = "";
-			if (!empty($conf->global->PRODUCT_ADD_TYPE_IN_DOCUMENTS))   // In standard mode, we do not show this
-			{
-				if ($prodser->isService())
-				{
+			if (!empty($conf->global->PRODUCT_ADD_TYPE_IN_DOCUMENTS)) {   // In standard mode, we do not show this
+				if ($prodser->isService()) {
 					$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Service")." ";
 				} else {
 					$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Product")." ";
 				}
 			}
 
-			if (empty($hideref))
-			{
-				if ($issupplierline) $ref_prodserv = $prodser->ref.' ('.$outputlangs->trans("SupplierRef").' '.$ref_supplier.')'; // Show local ref and supplier ref
-				else $ref_prodserv = $prodser->ref; // Show local ref only
+			if (empty($hideref)) {
+				if ($issupplierline) {
+					$ref_prodserv = $prodser->ref.' ('.$outputlangs->trans("SupplierRef").' '.$ref_supplier.')'; // Show local ref and supplier ref
+				} else {
+					$ref_prodserv = $prodser->ref; // Show local ref only
+				}
 
 				$ref_prodserv .= " - ";
 			}
@@ -133,20 +136,16 @@ function doc_getlinedesc($line, $outputlangs, $hideref = 0, $hidedesc = 0, $issu
 		}
 	}
 
-	if (!empty($line->date_start) || !empty($line->date_end))
-	{
+	if (!empty($line->date_start) || !empty($line->date_end)) {
 		$format = 'day';
 		// Show duration if exists
-		if ($line->date_start && $line->date_end)
-		{
+		if ($line->date_start && $line->date_end) {
 			$period = '('.$outputlangs->transnoentitiesnoconv('DateFromTo', dol_print_date($line->date_start, $format, false, $outputlangs), dol_print_date($line->date_end, $format, false, $outputlangs)).')';
 		}
-		if ($line->date_start && !$line->date_end)
-		{
+		if ($line->date_start && !$line->date_end) {
 			$period = '('.$outputlangs->transnoentitiesnoconv('DateFrom', dol_print_date($line->date_start, $format, false, $outputlangs)).')';
 		}
-		if (!$line->date_start && $line->date_end)
-		{
+		if (!$line->date_start && $line->date_end) {
 			$period = '('.$outputlangs->transnoentitiesnoconv('DateUntil', dol_print_date($line->date_end, $format, false, $outputlangs)).')';
 		}
 		//print '>'.$outputlangs->charset_output.','.$period;

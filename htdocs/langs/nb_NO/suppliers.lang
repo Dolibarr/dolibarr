@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - vendors
 Suppliers=Leverandører
 SuppliersInvoice=Leverandørfaktura
+SupplierInvoices=Leverandørfakturaer
 ShowSupplierInvoice=Vis leverandørfaktura
 NewSupplier=Ny leverandør
 History=Historikk
@@ -38,10 +39,11 @@ MenuOrdersSupplierToBill=Innkjøpsordre til faktura
 NbDaysToDelivery=Leveringsforsinkelse (dager)
 DescNbDaysToDelivery=Den lengste leveringsforsinkelsen til produktene i denne ordre
 SupplierReputation=Leverandørens rykte
+ReferenceReputation=Referanse omdømme
 DoNotOrderThisProductToThisSupplier=Ikke bestill
 NotTheGoodQualitySupplier=Lav kvalitet
 ReputationForThisProduct=Rykte
 BuyerName=Kjøpernavn
 AllProductServicePrices=Alle vare-/tjenestepriser
-AllProductReferencesOfSupplier=All references of vendor
+AllProductReferencesOfSupplier=Alle referanser fra leverandøren
 BuyingPriceNumShort=Leverandørpriser

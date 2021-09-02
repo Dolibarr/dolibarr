@@ -29,13 +29,19 @@ function showOnlineSignatureUrl($type, $ref)
 	global $conf, $langs;
 
 	// Load translation files required by the page
-    $langs->loadLangs(array("payment", "paybox"));
+	$langs->loadLangs(array("payment", "paybox"));
 
 	$servicename = 'Online';
 
-	$out = img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlineSignature", $servicename).'<br>';
+	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlineSignature", $servicename).'</span><br>';
 	$url = getOnlineSignatureUrl(0, $type, $ref);
-	$out .= '<input type="text" id="onlinesignatureurl" class="quatrevingtpercent" value="'.$url.'">';
+	$out .= '<div class="urllink">';
+	if ($url == $langs->trans("FeatureOnlineSignDisabled")) {
+		$out .= $url;
+	} else {
+		$out .= '<input type="text" id="onlinesignatureurl" class="quatrevingtpercent" value="'.$url.'">';
+	}
+	$out .= '</div>';
 	$out .= ajax_autoselect("onlinesignatureurl", 0);
 	return $out;
 }
@@ -56,18 +62,24 @@ function getOnlineSignatureUrl($mode, $type, $ref = '')
 	$ref = str_replace(' ', '', $ref);
 	$out = '';
 
-	if ($type == 'proposal')
-	{
+	if ($type == 'proposal') {
 		$out = DOL_MAIN_URL_ROOT.'/public/onlinesign/newonlinesign.php?source=proposal&ref='.($mode ? '<font color="#666666">' : '');
-		if ($mode == 1) $out .= 'proposal_ref';
-		if ($mode == 0) $out .= urlencode($ref);
+		if ($mode == 1) {
+			$out .= 'proposal_ref';
+		}
+		if ($mode == 0) {
+			$out .= urlencode($ref);
+		}
 		$out .= ($mode ? '</font>' : '');
-		if ($mode == 1) $out .= '&hashp=<font color="#666666">hash_of_file</font>';
-		else {
+		if ($mode == 1) {
+			$out .= '&hashp=<font color="#666666">hash_of_file</font>';
+		} else {
 			include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 			$propaltmp = new Propal($db);
 			$res = $propaltmp->fetch(0, $ref);
-			if ($res <= 0) return 'FailedToGetProposal';
+			if ($res <= 0) {
+				return 'FailedToGetProposal';
+			}
 
 			include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 			$ecmfile = new EcmFiles($db);
@@ -75,8 +87,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '')
 			$ecmfile->fetch(0, '', $propaltmp->last_main_doc);
 
 			$hashp = $ecmfile->share;
-			if (empty($hashp))
-			{
+			if (empty($hashp)) {
 				$out = $langs->trans("FeatureOnlineSignDisabled");
 				return $out;
 			} else {
@@ -86,7 +97,9 @@ function getOnlineSignatureUrl($mode, $type, $ref = '')
 	}
 
 	// For multicompany
-	if (!empty($out)) $out .= "&entity=".$conf->entity; // Check the entity because He may be the same reference in several entities
+	if (!empty($out)) {
+		$out .= "&entity=".$conf->entity; // Check the entity because He may be the same reference in several entities
+	}
 
 	return $out;
 }

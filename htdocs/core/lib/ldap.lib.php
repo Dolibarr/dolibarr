@@ -43,40 +43,35 @@ function ldap_prepare_head()
 	$head[$h][2] = 'ldap';
 	$h++;
 
-	if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE))
-	{
+	if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE)) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_users.php";
 		$head[$h][1] = $langs->trans("LDAPUsersSynchro");
 		$head[$h][2] = 'users';
 		$h++;
 	}
 
-	if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE))
-	{
+	if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE)) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_groups.php";
 		$head[$h][1] = $langs->trans("LDAPGroupsSynchro");
 		$head[$h][2] = 'groups';
 		$h++;
 	}
 
-	if (!empty($conf->societe->enabled) && !empty($conf->global->LDAP_CONTACT_ACTIVE))
-	{
+	if (!empty($conf->societe->enabled) && !empty($conf->global->LDAP_CONTACT_ACTIVE)) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_contacts.php";
 		$head[$h][1] = $langs->trans("LDAPContactsSynchro");
 		$head[$h][2] = 'contacts';
 		$h++;
 	}
 
-	if (!empty($conf->adherent->enabled) && !empty($conf->global->LDAP_MEMBER_ACTIVE))
-	{
+	if (!empty($conf->adherent->enabled) && !empty($conf->global->LDAP_MEMBER_ACTIVE)) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_members.php";
 		$head[$h][1] = $langs->trans("LDAPMembersSynchro");
 		$head[$h][2] = 'members';
 		$h++;
 	}
 
-	if (!empty($conf->adherent->enabled) && !empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE))
-	{
+	if (!empty($conf->adherent->enabled) && !empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE)) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_members_types.php";
 		$head[$h][1] = $langs->trans("LDAPMembersTypesSynchro");
 		$head[$h][2] = 'memberstypes';
@@ -111,14 +106,11 @@ function show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass)
 	//print 'key='.$key.' dn='.$dn.' objectclass='.$objectclass;
 
 	print '<br>';
-	if (!function_exists("ldap_connect"))
-	{
+	if (!function_exists("ldap_connect")) {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('LDAPFunctionsNotAvailableOnPHP').'">'.$butlabel.'</a>';
-	} elseif (empty($conf->global->LDAP_SERVER_HOST))
-	{
+	} elseif (empty($conf->global->LDAP_SERVER_HOST)) {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('LDAPSetupNotComplete').'">'.$butlabel.'</a>';
-	} elseif (empty($key) || empty($dn) || empty($objectclass))
-	{
+	} elseif (empty($key) || empty($dn) || empty($objectclass)) {
 		$langs->load("errors");
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('ErrorLDAPSetupNotComplete').'">'.$butlabel.'</a>';
 	} else {
@@ -144,39 +136,54 @@ function show_ldap_content($result, $level, $count, $var, $hide = 0, $subcount =
 	global $bc, $conf;
 
 	$count--;
-	if ($count == 0) return -1; // To stop loop
-	if (!is_array($result)) return -1;
+	if ($count == 0) {
+		return -1; // To stop loop
+	}
+	if (!is_array($result)) {
+		return -1;
+	}
 
-	foreach ($result as $key => $val)
-	{
-		if ("$key" == "objectclass") continue;
-		if ("$key" == "count") continue;
-		if ("$key" == "dn") continue;
-		if ("$val" == "objectclass") continue;
+	foreach ($result as $key => $val) {
+		if ("$key" == "objectclass") {
+			continue;
+		}
+		if ("$key" == "count") {
+			continue;
+		}
+		if ("$key" == "dn") {
+			continue;
+		}
+		if ("$val" == "objectclass") {
+			continue;
+		}
 
 		$lastkey[$level] = $key;
 
-		if (is_array($val))
-		{
+		if (is_array($val)) {
 			$hide = 0;
-			if (!is_numeric($key))
-			{
+			if (!is_numeric($key)) {
 				print '<tr class="oddeven">';
 				print '<td>';
 				print $key;
 				print '</td><td>';
-				if (strtolower($key) == 'userpassword') $hide = 1;
+				if (strtolower($key) == 'userpassword') {
+					$hide = 1;
+				}
 			}
 			show_ldap_content($val, $level + 1, $count, $var, $hide, $val["count"]);
-		} elseif ($subcount)
-		{
+		} elseif ($subcount) {
 			$subcount--;
 			$newstring = dol_htmlentitiesbr($val);
-			if ($hide) print preg_replace('/./i', '*', $newstring);
-			else print $newstring;
+			if ($hide) {
+				print preg_replace('/./i', '*', $newstring);
+			} else {
+				print $newstring;
+			}
 			print '<br>';
 		}
-		if ("$val" != $lastkey[$level] && !$subcount) print '</td></tr>';
+		if ("$val" != $lastkey[$level] && !$subcount) {
+			print '</td></tr>';
+		}
 	}
 	return 1;
 }

@@ -38,7 +38,9 @@ $action = GETPOST('action', 'aZ09');
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'loan', $id, '', '');
 
 
@@ -58,7 +60,7 @@ $object->info($id);
 
 $head = loan_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("Loan"), -1, 'bill');
+print dol_get_fiche_head($head, 'info', $langs->trans("Loan"), -1, 'bill');
 
 $morehtmlref = '<div class="refidno">';
 // Ref loan

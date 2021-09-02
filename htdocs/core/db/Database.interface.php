@@ -122,7 +122,7 @@ interface Database
 	 *  List tables into a database
 	 *
 	 *  @param	string		$database	Name of database
-	 *  @param	string		$table		Nmae of table filter ('xxx%')
+	 *  @param	string		$table		Name of table filter ('xxx%')
 	 *  @return	array					List of tables in an array
 	 */
 	public function DDLListTables($database, $table = '');
@@ -189,7 +189,7 @@ interface Database
 	/**
 	 * Get last ID after an insert INSERT
 	 *
-	 * @param	string 	$tab 		Table name concerned by insert. Ne sert pas sous MySql mais requis pour compatibilite avec Postgresql
+	 * @param	string 	$tab 		Table name concerned by insert. Not used under MySql but required for compatibility with Postgresql
 	 * @param   string 	$fieldid 	Field name
 	 * @return  int                	Id of row
 	 */
@@ -214,13 +214,14 @@ interface Database
 	/**
 	 * Execute a SQL request and return the resultset
 	 *
-	 * @param   string $query SQL query string
-	 * @param   int $usesavepoint 0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
-	 *                            Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
-	 * @param   string $type Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
+	 * @param   string 	$query 			SQL query string
+	 * @param   int		$usesavepoint 	0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
+	 *                            		Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
+	 * @param   string 	$type 			Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
+	 * @param	int		$result_mode	Result mode
 	 * @return  resource                Resultset of answer
 	 */
-	public function query($query, $usesavepoint = 0, $type = 'auto');
+	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0);
 
 	/**
 	 *    Connexion to server
@@ -493,8 +494,8 @@ interface Database
 	/**
 	 * Returns the current line (as an object) for the resultset cursor
 	 *
-	 * @param   resource $resultset Cursor of the desired request
-	 * @return  Object                    Object result line or false if KO or end of cursor
+	 * @param   resource $resultset 	Cursor of the desired request
+	 * @return  Object                  Object result line or false if KO or end of cursor
 	 */
 	public function fetch_object($resultset);
 	// phpcs:enable
