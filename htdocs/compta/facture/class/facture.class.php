@@ -526,7 +526,11 @@ class Facture extends CommonInvoice
 			$this->cond_reglement_id = GETPOST('cond_reglement_id', 'int') > 0 ? ((int) GETPOST('cond_reglement_id', 'int')) : $_facrec->cond_reglement_id;
 			$this->mode_reglement_id = GETPOST('mode_reglement_id', 'int') > 0 ? ((int) GETPOST('mode_reglement_id', 'int')) : $_facrec->mode_reglement_id;
 			$this->fk_account        = GETPOST('fk_account') > 0 ? ((int) GETPOST('fk_account')) : $_facrec->fk_account;
-
+			
+			// if ref_client was not set by caller, use the facref title
+			if (empty($this->ref_client)) {
+				$this->ref_client =  trim($_facrec->title);
+			}
 
 			// Set here to have this defined for substitution into notes, should be recalculated after adding lines to get same result
 			$this->total_ht          = $_facrec->total_ht;
@@ -614,6 +618,7 @@ class Facture extends CommonInvoice
 
 			$this->note_public = make_substitutions($this->note_public, $substitutionarray);
 			$this->note_private = make_substitutions($this->note_private, $substitutionarray);
+			$this->ref_client = make_substitutions($this->ref_client, $substitutionarray);
 		}
 
 		// Define due date if not already defined
