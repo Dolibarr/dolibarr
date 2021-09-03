@@ -85,7 +85,7 @@ class Lettering extends BookKeeping
 		// echo $sql;
 		//
 		$resql = $this->db->query($sql);
-		if (!empty($resql)) {
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -114,7 +114,7 @@ class Lettering extends BookKeeping
 					$sql .= " )  ";
 
 					$resql2 = $this->db->query($sql);
-					if (!empty($resql2)) {
+					if ($resql2) {
 						while ($obj2 = $this->db->fetch_object($resql2)) {
 							$ids[$obj2->rowid] = $obj2->rowid;
 							$ids_fact[] = $obj2->fact_id;
