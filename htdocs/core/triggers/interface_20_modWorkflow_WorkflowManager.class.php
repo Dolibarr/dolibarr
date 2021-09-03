@@ -66,6 +66,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			return 0; // Module not active, we do nothing
 		}
 
+		$ret = 0;
+
 		// Proposals to order
 		if ($action == 'PROPAL_CLOSE_SIGNED') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
