@@ -1666,8 +1666,8 @@ class Form
 		if ($socid > 0 || $socid == -1) {
 			$sql .= " AND (sp.fk_soc = ".((int) $socid);
 		}
-		// Show contact of parent
-    	if (!empty($conf->global->CONTACT_SHOW_ALSO_PARENT_COMPANY_CONTACTS)) {
+		//Show contact of parent
+    	if (($socid > 0 || $socid == -1) && !empty($conf->global->CONTACT_SHOW_ALSO_PARENT_COMPANY_CONTACTS)) {
     		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 			$soc = new Societe($db);
 			$result = $soc->fetch($socid);
@@ -1675,16 +1675,16 @@ class Form
 				$sql .= ' OR sp.fk_soc = '.$soc->parent;
 			}
     	}
-		// Show contacts of thirdparties with same parent
-    	if (!empty($conf->global->CONTACT_SHOW_ALSO_COMPANY_CONTACTS_WITH_SAME_PARENT)) {
+    	//Show contacts of thirdparties with same parent
+    	if (($socid > 0 || $socid == -1) && !empty($conf->global->CONTACT_SHOW_ALSO_COMPANY_CONTACTS_WITH_SAME_PARENT)) {
     		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 			$soc = new Societe($db);
 			$result = $soc->fetch($socid);
 			if ($result > 0 && !empty($soc->parent)) {
 				$sql .= ' OR sp.fk_soc IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'societe WHERE parent = '.$soc->parent.')';
-			}
-    	}
-		$sql .= ')';
+            }
+        }
+    	if ($socid > 0 || $socid == -1) $sql .= ')';
 		if (!empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) {
 			$sql .= " AND sp.statut <> 0";
 		}
