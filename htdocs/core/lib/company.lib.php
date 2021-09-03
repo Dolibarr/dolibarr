@@ -1249,7 +1249,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 			
 			$soc = new Societe($db);
 			$soc->fetch($obj->socid);
-			
+
 			// Photo - Name
 			if (!empty($arrayfields['t.name']['checked'])) {
 				print '<td>';
