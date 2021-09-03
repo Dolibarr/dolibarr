@@ -60,7 +60,10 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "MAIN_PDF_MARGIN_LEFT", GETPOST("MAIN_PDF_MARGIN_LEFT"), 'chaine', 0, '', $conf->entity);
 	}
 	if (GETPOSTISSET('MAIN_PDF_MARGIN_RIGHT')) {
-		dolibarr_set_const($db, "MAIN_PDF_MARGIN_RIGHT", GETPOST("MAIN_PDF_MARGIN_TOP"), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_PDF_MARGIN_RIGHT", GETPOST("MAIN_PDF_MARGIN_RIGHT"), 'chaine', 0, '', $conf->entity);
+	}
+	if (GETPOSTISSET('MAIN_PDF_MARGIN_TOP')) {
+		dolibarr_set_const($db, "MAIN_PDF_MARGIN_TOP", GETPOST("MAIN_PDF_MARGIN_TOP"), 'chaine', 0, '', $conf->entity);
 	}
 	if (GETPOSTISSET('MAIN_PDF_MARGIN_BOTTOM')) {
 		dolibarr_set_const($db, "MAIN_PDF_MARGIN_BOTTOM", GETPOST("MAIN_PDF_MARGIN_BOTTOM"), 'chaine', 0, '', $conf->entity);
