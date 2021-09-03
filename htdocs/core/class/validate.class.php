@@ -46,13 +46,12 @@ class Validate
 
 
 	/**
-	 *    Constructor
+	 * Constructor
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param Translate   $outputLang output lang for error
-	 * @return null
+	 * @param DoliDB 		$db 			Database handler
+	 * @param Translate   	$outputLang 	Output lang for error
 	 */
-	public function __construct($db, $outputLang = false)
+	public function __construct($db, $outputLang = null)
 	{
 		global $langs;
 

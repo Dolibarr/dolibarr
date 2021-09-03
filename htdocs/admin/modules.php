@@ -588,6 +588,11 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
 
+	$disabled_modules = array();
+	if (!empty($_SESSION["disablemodules"])) {
+		$disabled_modules = explode(',', $_SESSION["disablemodules"]);
+	}
+
 	// Show list of modules
 	$oldfamily = '';
 	$foundoneexternalmodulewithupdate = 0;
@@ -613,6 +618,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			continue;
 		}
 
+		$modulenameshort = strtolower(preg_replace('/^mod/i', '', get_class($objMod)));
 		$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
 
 		// Check filters
@@ -754,6 +760,11 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		$codeenabledisable = '';
 		$codetoconfig = '';
 
+		// Force disable of module disabled into session (for demo for example)
+		if (in_array($modulenameshort, $disabled_modules)) {
+			$objMod->disabled = true;
+		}
+
 		// Activate/Disable and Setup (2 columns)
 		if (!empty($conf->global->$const_name)) {	// If module is already activated
 			// Set $codeenabledisable
@@ -761,6 +772,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			if (!empty($arrayofwarnings[$modName])) {
 				$codeenabledisable .= '<!-- This module has a warning to show when we activate it (note: your country is '.$mysoc->country_code.') -->'."\n";
 			}
+
 			if (!empty($objMod->disabled)) {
 				$codeenabledisable .= $langs->trans("Disabled");
 			} elseif (!empty($objMod->always_enabled) || ((!empty($conf->multicompany->enabled) && $objMod->core_enabled) && ($user->entity || $conf->entity != 1))) {

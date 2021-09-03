@@ -994,9 +994,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		$note = json_encode(array('authorid'=>(is_object($user) ? $user->id : 0), 'ip'=>(empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR'])));
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name, value, visible, entity, note) VALUES";
-		$sql .= " (".$this->db->encrypt($this->const_name, 1);
-		$sql .= ", ".$this->db->encrypt('1', 1);
-		$sql .= ", 0, ".$entity;
+		$sql .= " (".$this->db->encrypt($this->const_name);
+		$sql .= ", ".$this->db->encrypt('1');
+		$sql .= ", 0, ".((int) $entity);
 		$sql .= ", '".$this->db->escape($note)."')";
 
 		dol_syslog(get_class($this)."::_active insert activation constant", LOG_DEBUG);
@@ -1555,9 +1555,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$sql .= ", entity";
 					$sql .= ")";
 					$sql .= " VALUES (";
-					$sql .= $this->db->encrypt($this->const_name."_TABS_".$i, 1);
+					$sql .= $this->db->encrypt($this->const_name."_TABS_".$i);
 					$sql .= ", 'chaine'";
-					$sql .= ", ".$this->db->encrypt($newvalue, 1);
+					$sql .= ", ".$this->db->encrypt($newvalue);
 					$sql .= ", null";
 					$sql .= ", '0'";
 					$sql .= ", ".$entity;
@@ -1627,9 +1627,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				if ($row[0] == 0) {   // If not found
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible,entity)";
 					$sql .= " VALUES (";
-					$sql .= $this->db->encrypt($name, 1);
+					$sql .= $this->db->encrypt($name);
 					$sql .= ",'".$this->db->escape($type)."'";
-					$sql .= ",".(($val != '') ? $this->db->encrypt($val, 1) : "''");
+					$sql .= ",".(($val != '') ? $this->db->encrypt($val) : "''");
 					$sql .= ",".($note ? "'".$this->db->escape($note)."'" : "null");
 					$sql .= ",'".$this->db->escape($visible)."'";
 					$sql .= ",".$entity;
@@ -2064,8 +2064,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$row = $this->db->fetch_row($result);
 
 			if ($row[0] == 0) {
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible,entity)";
-				$sql .= " VALUES ('".$this->db->escape($this->db->encrypt($name))."', 'chaine', '".$this->db->escape($this->db->encrypt($dir))."', 'Directory for module ".$this->name."', '0', ".((int) $conf->entity).")";
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name, type, value, note, visible, entity)";
+				$sql .= " VALUES (".$this->db->encrypt($name).", 'chaine', ".$this->db->encrypt($dir).", '".$this->db->escape("Directory for module ".$this->name)."', '0', ".((int) $conf->entity).")";
 
 				dol_syslog(get_class($this)."::insert_dirs", LOG_DEBUG);
 				$this->db->query($sql);
@@ -2126,7 +2126,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 				$entity = $conf->entity; // Reset the current entity
 				$newvalue = $value;
-
+				var_dump($newvalue);
 				// Serialize array parameters
 				if (is_array($value)) {
 					// Can defined other parameters
@@ -2141,11 +2141,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						if (isset($value['entity'])) {
 							$entity = $value['entity'];
 						}
-					} else // when hook is declared with syntax 'hook'=>array('hookcontext1','hookcontext2',...)
-					{
+					} else { // when hook is declared with syntax 'hook'=>array('hookcontext1','hookcontext2',...)
 						$newvalue = json_encode($value);
 					}
 				}
+				var_dump($newvalue);
+				var_dump($this->db->escape($newvalue));
 
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
 				$sql .= "name";
@@ -2156,14 +2157,14 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$sql .= ", entity";
 				$sql .= ")";
 				$sql .= " VALUES (";
-				$sql .= "'".$this->db->escape($this->db->encrypt($this->const_name."_".strtoupper($key)))."'";
+				$sql .= " ".$this->db->encrypt($this->const_name."_".strtoupper($key));
 				$sql .= ", 'chaine'";
-				$sql .= ", '".$this->db->escape($this->db->encrypt($newvalue))."'";
+				$sql .= ", ".$this->db->encrypt($newvalue);
 				$sql .= ", null";
 				$sql .= ", '0'";
 				$sql .= ", ".((int) $entity);
 				$sql .= ")";
-
+				print $sql;
 				dol_syslog(get_class($this)."::insert_module_parts for key=".$this->const_name."_".strtoupper($key), LOG_DEBUG);
 
 				$resql = $this->db->query($sql, 1);

@@ -858,7 +858,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$canreadhrmdata = 1;
 	}
 	$canreadsecretapi = 0;
-	if ($user->id = $obj->rowid || !empty($user->admin)) {	// Current user or admin
+	if ($user->id == $obj->rowid || !empty($user->admin)) {	// Current user or admin
 		$canreadsecretapi = 1;
 	}
 

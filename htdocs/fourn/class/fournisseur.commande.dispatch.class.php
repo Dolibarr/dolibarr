@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT."/reception/class/reception.class.php";
 /**
  *  Class to manage table commandefournisseurdispatch
  */
-class CommandeFournisseurDispatch extends CommonObject
+class CommandeFournisseurDispatch extends CommonObjectLine
 {
 	/**
 	 * @var DoliDB Database handler.
@@ -677,7 +677,7 @@ class CommandeFournisseurDispatch extends CommonObject
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE '.implode(' '.$filtermode.' ', $sqlwhere);
+			$sql .= ' WHERE '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
 		}
 
 		if (!empty($sortfield)) {

@@ -2185,6 +2185,9 @@ class Adherent extends CommonObject
 		if (!empty($this->ref)) {
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		}
+		if (!empty($this->login)) {
+			$label .= '<br><b>'.$langs->trans('Login').':</b> '.$this->login;
+		}
 		if (!empty($this->firstname) || !empty($this->lastname)) {
 			$label .= '<br><b>'.$langs->trans('Name').':</b> '.$this->getFullName($langs);
 		}

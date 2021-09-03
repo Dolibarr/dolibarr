@@ -485,7 +485,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s2 ON s.parent = s2.rowid";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (s.rowid = ef.fk_object)";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
@@ -1508,10 +1508,10 @@ while ($i < min($num, $limit)) {
 	// Type ent
 	if (!empty($arrayfields['typent.code']['checked'])) {
 		print '<td class="center">';
-		if (!is_array($typenArray) || count($typenArray) == 0) {
+		if (!isset($typenArray) || !is_array($typenArray) || count($typenArray) == 0) {
 			$typenArray = $formcompany->typent_array(1);
 		}
-		print $typenArray[$obj->typent_code];
+		print empty($typenArray[$obj->typent_code]) ? '' : $typenArray[$obj->typent_code];
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

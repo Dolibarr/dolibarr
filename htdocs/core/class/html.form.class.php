@@ -1056,7 +1056,11 @@ class Form
 			}
 			$out .= '</select>';
 
-			$out .= '<input id="location_incoterms" class="maxwidth100onsmartphone nomargintop nomarginbottom" name="location_incoterms" value="'.$location_incoterms.'">';
+			if ($conf->use_javascript_ajax && empty($disableautocomplete)) {
+				$out .= ajax_multiautocompleter('location_incoterms', '', DOL_URL_ROOT.'/core/ajax/locationincoterms.php')."\n";
+				$moreattrib .= ' autocomplete="off"';
+			}
+			$out .= '<input id="location_incoterms" class="maxwidthonsmartphone type="text" name="location_incoterms" value="'.$location_incoterms.'">'."\n";
 
 			if (!empty($page)) {
 				$out .= '<input type="submit" class="button valignmiddle smallpaddingimp nomargintop nomarginbottom" value="'.$langs->trans("Modify").'"></form>';
@@ -1397,7 +1401,7 @@ class Form
 		if ($resql) {
 			if (!$forcecombo) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlname, $events, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+				$out .= ajax_combobox($htmlname, $events, getDolGlobalString("COMPANY_USE_SEARCH_TO_SELECT"));
 			}
 
 			// Construct $out and $outarray
@@ -1414,7 +1418,7 @@ class Form
 				}
 			}
 			if ($showempty) {
-				$out .= '<option value="-1" data-html="'.dol_escape_htmltag('<span class="opacitymedium">'.$textifempty.'</span>').'">'.$textifempty.'</option>'."\n";
+				$out .= '<option value="-1" data-html="'.dol_escape_htmltag('<span class="opacitymedium">'.($textifempty ? $textifempty : '&nbsp;').'</span>').'">'.$textifempty.'</option>'."\n";
 			}
 
 			$num = $this->db->num_rows($resql);
@@ -1678,7 +1682,7 @@ class Form
 
 			if ($conf->use_javascript_ajax && !$forcecombo && !$options_only) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlid, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+				$out .= ajax_combobox($htmlid, $events, getDolGlobalString("CONTACT_USE_SEARCH_TO_SELECT"));
 			}
 
 			if ($htmlname != 'none' && !$options_only) {
@@ -4799,7 +4803,8 @@ class Form
 					} elseif ($input['type'] == 'date') {
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div>';
 						$more .= '<div class="tagtd">';
-						$more .= $this->selectDate($input['value'], $input['name'], 0, 0, 0, '', 1, 0);
+						$addnowlink = (empty($input['datenow']) ? 0 : 1);
+						$more .= $this->selectDate($input['value'], $input['name'], 0, 0, 0, '', 1, $addnowlink);
 						$more .= '</div></div>'."\n";
 						$formquestion[] = array('name'=>$input['name'].'day');
 						$formquestion[] = array('name'=>$input['name'].'month');
@@ -6664,7 +6669,7 @@ class Form
 	 *	@param      string	$htmlname           Name of select html
 	 *  @param		string	$filtertype         Filter on ticket type
 	 *	@param      int		$limit              Limit on number of returned lines
-	 * 	@param      string	$filterkey          Filter on product
+	 * 	@param      string	$filterkey          Filter on ticket ref or subject
 	 *	@param		int		$status             Ticket status
 	 *  @param      int		$outputmode         0=HTML select string, 1=Array
 	 *  @param		string	$showempty		    '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
@@ -6696,7 +6701,7 @@ class Form
 			if (count($scrit) > 1) $sql .= "(";
 			foreach ($scrit as $crit) {
 				if ($i > 0) $sql .= " AND ";
-				$sql .= "(p.ref LIKE '".$this->db->escape($prefix.$crit)."%' OR p.label LIKE '".$this->db->escape($prefix.$crit)."%'";
+				$sql .= "(p.ref LIKE '".$this->db->escape($prefix.$crit)."%' OR p.subject LIKE '".$this->db->escape($prefix.$crit)."%'";
 				$sql .= ")";
 				$i++;
 			}
@@ -9298,7 +9303,8 @@ class Form
 		$retstring = $withoutdiv ? '': '<div class="center">';
 
 		foreach ($buttons as $button) {
-			$retstring .= '<input type="submit" class="button button-'.$button['name'].' '.$button['addclass'].'" name="'.$button['name'].'" value="'.dol_escape_htmltag($langs->trans($button['label_key'])).'">';
+			$addclass = empty($button['addclass']) ? '' : $button['addclass'];
+			$retstring .= '<input type="submit" class="button button-'.$button['name'].' '.$addclass.'" name="'.$button['name'].'" value="'.dol_escape_htmltag($langs->trans($button['label_key'])).'">';
 		}
 		$retstring .= $withoutdiv ? '': '</div>';
 

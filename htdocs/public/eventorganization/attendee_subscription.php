@@ -16,9 +16,9 @@
  */
 
 /**
- *	\file       htdocs/public/members/new.php
- *	\ingroup    member
- *	\brief      Example of form to add a new member
+ *	\file       htdocs/public/eventorganization/attendee_subscription.php
+ *	\ingroup    project
+ *	\brief      Example of form to subscribe to an event
  *
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for auto-subscribe form
@@ -79,12 +79,13 @@ $email = GETPOST("email");
 $societe = GETPOST("societe");
 
 // Getting id from Post and decoding it
-$id = GETPOST('id');
+$id = GETPOST('id', 'int');
 
 $conference = new ConferenceOrBooth($db);
 $resultconf = $conference->fetch($id);
 if ($resultconf < 0) {
-	setEventMessages(null, $conference->errors, "errors");
+	print 'Bad value for parameter id';
+	exit;
 }
 
 $project = new Project($db);
@@ -196,7 +197,7 @@ function llxFooterVierge()
 /*
  * Actions
  */
-global $mysoc;
+
 $parameters = array();
 // Note that $action and $object may have been modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
@@ -205,7 +206,7 @@ if ($reshook < 0) {
 }
 
 // Action called when page is submitted
-if (empty($reshook) && $action == 'add' && $conference->status==2) {
+if (empty($reshook) && $action == 'add' && $conference->status == 2) {
 	$error = 0;
 
 	$urlback = '';
@@ -460,7 +461,7 @@ $formcompany = new FormCompany($db);
 
 llxHeaderVierge($langs->trans("NewSubscription"));
 
-
+print '<br>';
 print load_fiche_titre($langs->trans("NewSubscription"), '', '', 0, 0, 'center');
 
 
@@ -473,6 +474,9 @@ print $langs->trans("EvntOrgWelcomeMessage", $conference->label);
 print '<br>';
 print $langs->trans("EvntOrgDuration", dol_print_date($conference->datep), dol_print_date($conference->datef));
 print '</div>';
+
+print '<br>';
+
 dol_htmloutput_errors($errmsg);
 
 if ($conference->status!=2) {

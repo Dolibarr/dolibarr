@@ -132,6 +132,7 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
+print '<td>'.$langs->trans("Example").'</td>';
 print "</tr>\n";
 
 print '<tr class="oddeven"><td>';
@@ -140,7 +141,8 @@ print '<input size="32" type="text" name="MAILING_EMAIL_FROM" value="'.$conf->gl
 if (!empty($conf->global->MAILING_EMAIL_FROM) && !isValidEmail($conf->global->MAILING_EMAIL_FROM)) {
 	print ' '.img_warning($langs->trans("BadEMail"));
 }
-print '</td></tr>';
+print '</td><td><span class="opacitymedium">'.dol_escape_htmltag(($mysoc->name ? $mysoc->name : 'MyName').' <noreply@example.com>').'</span></td>';
+print '</tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MailingEMailError").'</td><td>';
@@ -148,12 +150,14 @@ print '<input size="32" type="text" name="MAILING_EMAIL_ERRORSTO" value="'.$conf
 if (!empty($conf->global->MAILING_EMAIL_ERRORSTO) && !isValidEmail($conf->global->MAILING_EMAIL_ERRORSTO)) {
 	print ' '.img_warning($langs->trans("BadEMail"));
 }
-print '</td></tr>';
+print '</td><td><span class="opacitymedium">webmaster@example.com></span></td>';
+print '</tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MailingDelay").'</td><td>';
 print '<input class="width75" type="text" name="MAILING_DELAY" value="'.$conf->global->MAILING_DELAY.'">';
-print '</td></tr>';
+print '</td><td></td>';
+print '</tr>';
 
 
 // Constant to add salt into the unsubscribe and check read tag.
@@ -165,15 +169,17 @@ print '<input size="32" type="text" name="MAILING_EMAIL_UNSUBSCRIBE_KEY" id="MAI
 if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 }
-print '</td></tr>';
+print '</td><td></td>';
+print '</tr>';
 
 // default blacklist from mailing
 print '<tr class="oddeven">';
-print '<td>' . $langs->trans("DefaultBlacklistMailingStatus") . '</td>';
+print '<td>' . $langs->trans("DefaultBlacklistMailingStatus", $langs->transnoentitiesnoconv("No_Email")) . '</td>';
 print '<td>';
-$blacklist_setting=array(0=>$langs->trans('No'),1=>$langs->trans('Yes'),-1=>$langs->trans('DefaultStatusEmptyMandatory'));
+$blacklist_setting=array(0=>$langs->trans('No'), 1=>$langs->trans('Yes'), 2=>$langs->trans('DefaultStatusEmptyMandatory'));
 print $form->selectarray("MAILING_CONTACT_DEFAULT_BULK_STATUS", $blacklist_setting, $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS);
 print '</td>';
+print '<td></td>';
 print '</tr>';
 
 
@@ -181,7 +187,8 @@ if (!empty($conf->use_javascript_ajax) && $conf->global->MAIN_FEATURES_LEVEL >= 
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("MailAdvTargetRecipients").'</td><td>';
 	print ajax_constantonoff('EMAILING_USE_ADVANCED_SELECTOR');
-	print '</td></tr>';
+	print '</td><td></td>';
+	print '</tr>';
 }
 
 print '</table>';

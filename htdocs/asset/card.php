@@ -81,6 +81,8 @@ $permissionnote = $user->rights->asset->write; // Used by the include of actions
 $permissiondellink = $user->rights->asset->write; // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->asset->multidir_output[isset($object->entity) ? $object->entity : 1];
 
+$error = 0;
+
 
 /*
  * Actions
@@ -93,12 +95,17 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	$error = 0;
+	$backurlforlist = DOL_URL_ROOT.'/asset/list.php';
 
-	$backurlforlist = dol_buildpath('/asset/list.php', 1);
-
-	// Actions cancel, add, update or delete
-	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/compta/bank/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			}
+		}
+	}
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';

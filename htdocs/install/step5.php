@@ -234,7 +234,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 				// Insert MAIN_VERSION_FIRST_INSTALL in a dedicated transaction. So if it fails (when first install was already done), we can do other following requests.
 				$db->begin();
 				dolibarr_install_syslog('step5: set MAIN_VERSION_FIRST_INSTALL const to '.$targetversion, LOG_DEBUG);
-				$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name, value, type, visible, note, entity) values('".$db->escape($db->encrypt('MAIN_VERSION_FIRST_INSTALL'))."', '".$db->escape($db->encrypt($targetversion))."', 'chaine', 0, 'Dolibarr version when first install', 0)");
+				$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name, value, type, visible, note, entity) values(".$db->encrypt('MAIN_VERSION_FIRST_INSTALL').", ".$db->encrypt($targetversion).", 'chaine', 0, 'Dolibarr version when first install', 0)");
 				if ($resql) {
 					$conf->global->MAIN_VERSION_FIRST_INSTALL = $targetversion;
 					$db->commit();
@@ -250,7 +250,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 				if (!$resql) {
 					dol_print_error($db, 'Error in setup program');
 				}
-				$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) values('".$db->escape($db->encrypt('MAIN_VERSION_LAST_INSTALL'))."', '".$db->escape($db->encrypt($targetversion))."', 'chaine', 0, 'Dolibarr version when last install', 0)");
+				$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_VERSION_LAST_INSTALL').", ".$db->encrypt($targetversion).", 'chaine', 0, 'Dolibarr version when last install', 0)");
 				if (!$resql) {
 					dol_print_error($db, 'Error in setup program');
 				}
@@ -262,7 +262,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					if (!$resql) {
 						dol_print_error($db, 'Error in setup program');
 					}
-					$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) values('".$db->escape($db->encrypt('MAIN_REMOVE_INSTALL_WARNING'))."', '".$db->escape($db->encrypt(1))."', 'chaine', 1, 'Disable install warnings', 0)");
+					$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_REMOVE_INSTALL_WARNING').", ".$db->encrypt(1).", 'chaine', 1, 'Disable install warnings', 0)");
 					if (!$resql) {
 						dol_print_error($db, 'Error in setup program');
 					}
@@ -330,7 +330,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 				if (!$resql) {
 					dol_print_error($db, 'Error in setup program');
 				}
-				$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name, value, type, visible, note, entity) VALUES ('".$db->escape($db->encrypt('MAIN_VERSION_LAST_UPGRADE'))."', '".$db->escape($db->encrypt($targetversion))."', 'chaine', 0, 'Dolibarr version for last upgrade', 0)");
+				$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name, value, type, visible, note, entity) VALUES (".$db->encrypt('MAIN_VERSION_LAST_UPGRADE').", ".$db->encrypt($targetversion).", 'chaine', 0, 'Dolibarr version for last upgrade', 0)");
 				if (!$resql) {
 					dol_print_error($db, 'Error in setup program');
 				}
@@ -346,7 +346,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 	}
 
 	// May fail if parameter already defined
-	$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) VALUES ('".$db->escape($db->encrypt('MAIN_LANG_DEFAULT'))."', '".$db->escape($db->encrypt($setuplang))."', 'chaine', 0, 'Default language', 1)");
+	$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) VALUES (".$db->encrypt('MAIN_LANG_DEFAULT').", ".$db->encrypt($setuplang).", 'chaine', 0, 'Default language', 1)");
 	//if (! $resql) dol_print_error($db,'Error in setup program');
 
 	$db->close();
