@@ -508,9 +508,7 @@ print '<br>';
 
 dol_htmloutput_errors($errmsg);
 
-if (!empty($conference->id) && $conference->status!=2  || !empty($project->id) && $project->status==Project::STATUS_VALIDATED) {
-	print $langs->trans("ConferenceIsNotConfirmed");
-} else {
+if (!empty($conference->id) && $conference->status==ConferenceOrBooth::STATUS_CONFIRMED  || (!empty($project->id) && $project->status==Project::STATUS_VALIDATED)) {
 	// Print form
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="newmember">' . "\n";
 	print '<input type="hidden" name="token" value="' . newToken() . '" / >';
@@ -529,15 +527,15 @@ if (!empty($conference->id) && $conference->status!=2  || !empty($project->id) &
 	print dol_get_fiche_head('');
 
 	print '<script type="text/javascript">
-jQuery(document).ready(function () {
-    jQuery(document).ready(function () {
-        jQuery("#selectcountry_id").change(function() {
-           document.newmember.action.value="create";
-           document.newmember.submit();
-        });
-    });
-});
-</script>';
+	jQuery(document).ready(function () {
+		jQuery(document).ready(function () {
+			jQuery("#selectcountry_id").change(function() {
+			   document.newmember.action.value="create";
+			   document.newmember.submit();
+			});
+		});
+	});
+	</script>';
 
 	print '<table class="border" summary="form to subscribe" id="tablesubscribe">' . "\n";
 
@@ -605,6 +603,8 @@ jQuery(document).ready(function () {
 	print "</form>\n";
 	print "<br>";
 	print '</div></div>';
+} else {
+	print $langs->trans("ConferenceIsNotConfirmed");
 }
 
 llxFooterVierge();
