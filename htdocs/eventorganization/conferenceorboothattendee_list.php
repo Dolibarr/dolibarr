@@ -571,7 +571,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 
 		print dol_get_fiche_end();
 
-		if (!empty($fk_project)) {
+		if (empty($confOrBooth->id)) {
 			$head = conferenceorboothProjectPrepareHead($projectstatic);
 			$tab = 'attendees';
 			print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($project->public ? 'projectpub' : 'project'), 0, '', '');
@@ -631,6 +631,9 @@ foreach ($search as $key => $val) {
 }
 if ($confOrBooth->id > 0) {
 	$param .= '&conforboothid='.urlencode($confOrBooth->id).$withProjectUrl;
+}
+if ($projectstatic->id > 0) {
+	$param .= '&fk_project='.urlencode($projectstatic->id).$withProjectUrl;
 }
 
 if ($optioncss != '') {
@@ -841,7 +844,11 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if ($key == 'status') {
 				print $object->getLibStatut(5);
 			} elseif ($key == 'ref') {
-				print $object->getNomUrl(1, (!empty($withproject)?'conforboothidproject':'conforboothid'));
+				$optionLink = (!empty($withproject)?'conforboothidproject':'conforboothid');
+				if (empty($confOrBooth->id)) {
+					$optionLink='projectid';
+				}
+				print $object->getNomUrl(1, $optionLink);
 			} else {
 				print $object->showOutputField($val, $key, $object->$key, '');
 			}

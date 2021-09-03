@@ -747,6 +747,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 				$url .= '&conforboothid='.$this->fk_actioncomm;
 			}
 
+			if ($option == 'projectid') {
+				$url .= '&fk_project='.$this->fk_project.'&withproject=1';
+			}
+
 			if ($option == 'conforboothidproject') {
 				$url .= '&conforboothid='.$this->fk_actioncomm.'&withproject=1' ;
 			}
