@@ -370,6 +370,7 @@ if ($action == 'create') {
 	if ($confOrBooth->id > 0) {
 		print '<input type="hidden" name="conforboothid" value="'.$confOrBooth->id.'">';
 	}
+	print '<input type="hidden" name="fk_project" value="'.GETPOST('fk_project', 'int').'">';
 
 	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) {
