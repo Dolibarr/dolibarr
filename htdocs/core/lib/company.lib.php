@@ -1083,7 +1083,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	$sql .= " t.civility as civility_id, t.address, t.zip, t.town, t.fk_soc as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
-	$sql .= " WHERE t.fk_soc = ".$object->id;
+    $sql .= " WHERE t.fk_soc = ".((int) $object->id);
 	// LRR Show contact of parent
 	if (!empty($conf->global->CONTACT_SHOW_ALSO_PARENT_COMPANY_CONTACTS) && !empty($object->parent)) {
 		$sql .= ' OR t.fk_soc = '.$object->parent;
