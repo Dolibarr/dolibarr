@@ -697,6 +697,11 @@ class tcpdi_parser {
 	 * @since 1.0.000 (2011-06-20)
 	 */
 	protected function getRawObject($offset=0, $data=null) {
+		if (!is_numeric($offset)) {
+			dol_syslog("PDF " . $this->uniqueid . " corrupted", LOG_ERR);
+			print "PDF " . $this->uniqueid . " corrupted";
+			exit(-1);
+		}
 		if ($data == null) {
 			$data =& $this->pdfdata;
 		}
