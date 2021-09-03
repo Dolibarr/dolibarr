@@ -1087,7 +1087,7 @@ function migrate_links_transfert($db, $langs, $conf)
 				$sql .= $obj->barowid.",".$obj->bbrowid.", '/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert'";
 				$sql .= ")";
 
-				print $sql.'<br>';
+				//print $sql.'<br>';
 				dolibarr_install_syslog("migrate_links_transfert");
 
 				if (!$db->query($sql)) {
