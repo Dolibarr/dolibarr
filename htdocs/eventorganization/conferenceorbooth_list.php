@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
+require_once DOL_DOCUMENT_ROOT.'/eventorganization/lib/eventorganization_conferenceorbooth.lib.php';
 if ($conf->categorie->enabled) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
@@ -266,7 +267,7 @@ if ($projectid > 0) {
 	//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
 	$head = project_prepare_head($project);
-	print dol_get_fiche_head($head, 'eventorganisation', $langs->trans("Project"), -1, ($project->public ? 'projectpub' : 'project'));
+	print dol_get_fiche_head($head, 'eventorganisation', $langs->trans("ConferenceOrBoothTab"), -1, ($project->public ? 'projectpub' : 'project'));
 
 	// Project card
 	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -440,10 +441,10 @@ if ($projectid > 0) {
 	// Link to the subscribe
 	print '<tr><td>';
 	//print '<span class="opacitymedium">';
-	print $langs->trans("PublicAttendeeSubscriptionPage");
+	print $langs->trans("PublicAttendeeSubscriptionGlobalPage");
 	//print '</span>';
 	print '</td><td>';
-	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_subscription.php?id='.$project->id;
+	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_subscription.php?id='.$project->id.'&type=global';
 	$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$project->id, 2);
 	$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 	//print '<div class="urllink">';
@@ -463,6 +464,12 @@ if ($projectid > 0) {
 	print '<div class="clearboth"></div>';
 
 	print dol_get_fiche_end();
+}
+
+if (!empty($project->id)) {
+	$head = conferenceorboothProjectPrepareHead($project);
+	$tab = 'conferenceorbooth';
+	print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($project->public ? 'projectpub' : 'project'), 0, '', '');
 }
 
 // Build and execute select
