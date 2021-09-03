@@ -142,7 +142,7 @@ class Lettering extends BookKeeping
 						$sql .= ") ";
 
 						$resql2 = $this->db->query($sql);
-						if (!empty($resql2)) {
+						if ($resql2) {
 							while ($obj2 = $this->db->fetch_object($resql2)) {
 								$ids[$obj2->rowid] = $obj2->rowid;
 							}
@@ -173,7 +173,7 @@ class Lettering extends BookKeeping
 					$sql .= " )";
 
 					$resql2 = $this->db->query($sql);
-					if (!empty($resql2)) {
+					if ($resql2) {
 						while ($obj2 = $this->db->fetch_object($resql2)) {
 							$ids[$obj2->rowid] = $obj2->rowid;
 							$ids_fact[] = $obj2->fact_id;
@@ -201,7 +201,7 @@ class Lettering extends BookKeeping
 						$sql .= " )  ";
 
 						$resql2 = $this->db->query($sql);
-						if (!empty($resql2)) {
+						if ($resql2) {
 							while ($obj2 = $this->db->fetch_object($resql2)) {
 								$ids[$obj2->rowid] = $obj2->rowid;
 							}
