@@ -143,7 +143,7 @@ if (empty($reshook)) {
 			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_country as c, '.MAIN_DB_PREFIX.'accounting_system as a';
 			$sql .= ' WHERE c.rowid = a.fk_country AND a.rowid = '.(int) $chartofaccounts;
 			$resql = $db->query($sql);
-			if (!empty($resql)) {
+			if ($resql) {
 				$obj = $db->fetch_object($resql);
 				$country_code = $obj->code;
 			} else {
