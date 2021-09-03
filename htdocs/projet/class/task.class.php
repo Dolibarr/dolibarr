@@ -173,18 +173,18 @@ class Task extends CommonObject
 		$sql .= ", planned_workload";
 		$sql .= ", progress";
 		$sql .= ") VALUES (";
-		$sql .= $conf->entity;
-		$sql .= ", ".$this->fk_project;
+		$sql .= ((int) $conf->entity);
+		$sql .= ", ".((int) $this->fk_project);
 		$sql .= ", ".(!empty($this->ref) ? "'".$this->db->escape($this->ref)."'" : 'null');
-		$sql .= ", ".$this->fk_task_parent;
+		$sql .= ", ".((int) $this->fk_task_parent);
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->escape($this->description)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
 		$sql .= ", ".($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
-		$sql .= ", ".(($this->planned_workload != '' && $this->planned_workload >= 0) ? $this->planned_workload : 'null');
-		$sql .= ", ".(($this->progress != '' && $this->progress >= 0) ? $this->progress : 'null');
+		$sql .= ", ".(($this->planned_workload != '' && $this->planned_workload >= 0) ? ((int) $this->planned_workload) : 'null');
+		$sql .= ", ".(($this->progress != '' && $this->progress >= 0) ? ((int) $this->progress) : 'null');
 		$sql .= ")";
 
 		$this->db->begin();
@@ -1182,12 +1182,12 @@ class Task extends CommonObject
 		$sql .= ", fk_user";
 		$sql .= ", note";
 		$sql .= ") VALUES (";
-		$sql .= $this->id;
+		$sql .= ((int) $this->id);
 		$sql .= ", '".$this->db->idate($this->timespent_date)."'";
 		$sql .= ", '".$this->db->idate($this->timespent_datehour)."'";
 		$sql .= ", ".(empty($this->timespent_withhour) ? 0 : 1);
-		$sql .= ", ".$this->timespent_duration;
-		$sql .= ", ".$this->timespent_fk_user;
+		$sql .= ", ".((int) $this->timespent_duration);
+		$sql .= ", ".((int) $this->timespent_fk_user);
 		$sql .= ", ".(isset($this->timespent_note) ? "'".$this->db->escape($this->timespent_note)."'" : "null");
 		$sql .= ")";
 

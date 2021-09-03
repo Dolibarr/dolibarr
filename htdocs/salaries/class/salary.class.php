@@ -406,11 +406,11 @@ class Salary extends CommonObject
 		$sql .= "'".$this->db->escape($this->fk_user)."'";
 		//$sql .= ", '".$this->db->idate($this->datep)."'";
 		//$sql .= ", '".$this->db->idate($this->datev)."'";
-		$sql .= ", ".$this->amount;
-		$sql .= ", ".($this->fk_project > 0 ? $this->fk_project : 0);
-		$sql .= ", ".($this->salary > 0 ? $this->salary : "null");
-		$sql .= ", ".($this->type_payment > 0 ? $this->type_payment : 0);
-		$sql .= ", ".($this->accountid > 0 ? $this->accountid : "null");
+		$sql .= ", ".((double) $this->amount);
+		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : 0);
+		$sql .= ", ".($this->salary > 0 ? ((double) $this->salary) : "null");
+		$sql .= ", ".($this->type_payment > 0 ? ((int) $this->type_payment) : 0);
+		$sql .= ", ".($this->accountid > 0 ? ((int) $this->accountid) : "null");
 		if ($this->note) $sql .= ", '".$this->db->escape($this->note)."'";
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->idate($this->datesp)."'";
@@ -418,7 +418,7 @@ class Salary extends CommonObject
 		$sql .= ", '".$this->db->escape($user->id)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", NULL";
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);

@@ -1560,7 +1560,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$sql .= ", ".$this->db->encrypt($newvalue);
 					$sql .= ", null";
 					$sql .= ", '0'";
-					$sql .= ", ".$entity;
+					$sql .= ", ".((int) $entity);
 					$sql .= ")";
 
 					$resql = $this->db->query($sql);
