@@ -528,7 +528,7 @@ if (!empty($resql)) {
 				$accountparent->account_number = $obj->account_number2; // Sotre an account number for output
 				print $accountparent->getNomUrl(1);
 				print "</td>\n";
-				if (empty($i)) {
+				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			} else {
@@ -537,7 +537,7 @@ if (!empty($resql)) {
 					print '<!-- Bad value for obj->account_parent = '.$obj->account_parent.': is a rowid that does not exists -->';
 				}
 				print '</td>';
-				if (empty($i)) {
+				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
@@ -548,7 +548,7 @@ if (!empty($resql)) {
 			print "<td>";
 			print $obj->pcg_type;
 			print "</td>\n";
-			if (empty($i)) {
+			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
@@ -567,7 +567,7 @@ if (!empty($resql)) {
 					print '</a>';
 				}
 				print '</td>';
-				if (empty($i)) {
+				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
@@ -586,7 +586,7 @@ if (!empty($resql)) {
 				print '</a>';
 			}
 			print '</td>';
-			if (empty($i)) {
+			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
@@ -611,7 +611,7 @@ if (!empty($resql)) {
 			}
 		}
 		print '</td>'."\n";
-		if (empty($i)) {
+		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 
