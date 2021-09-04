@@ -110,6 +110,29 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
+	$backurlforlist = DOL_URL_ROOT.'/contrat/list.php';
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/contrat/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			}
+		}
+	}
+
+	if ($cancel) {
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		}
+		$action = '';
+	}
+
 	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
@@ -806,8 +829,7 @@ if (empty($reshook)) {
 			$action = 'edit_extras';
 		}
 	} elseif ($action == 'setref_supplier') {
-		$cancelbutton = GETPOST('cancel', 'alpha');
-		if (!$cancelbutton) {
+		if (!$cancel) {
 			$object->oldcopy = dol_clone($object);
 
 			$result = $object->setValueFrom('ref_supplier', GETPOST('ref_supplier', 'alpha'), '', null, 'text', '', $user, 'CONTRACT_MODIFY');
@@ -823,9 +845,7 @@ if (empty($reshook)) {
 			exit;
 		}
 	} elseif ($action == 'setref_customer') {
-		$cancelbutton = GETPOST('cancel', 'alpha');
-
-		if (!$cancelbutton) {
+		if (!$cancel) {
 			$object->oldcopy = dol_clone($object);
 
 			$result = $object->setValueFrom('ref_customer', GETPOST('ref_customer', 'alpha'), '', null, 'text', '', $user, 'CONTRACT_MODIFY');
@@ -841,9 +861,7 @@ if (empty($reshook)) {
 			exit;
 		}
 	} elseif ($action == 'setref') {
-		$cancelbutton = GETPOST('cancel', 'alpha');
-
-		if (!$cancelbutton) {
+		if (!$cancel) {
 			$result = $object->fetch($id);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -878,9 +896,7 @@ if (empty($reshook)) {
 			exit;
 		}
 	} elseif ($action == 'setdate_contrat') {
-		$cancelbutton = GETPOST('cancel', 'alpha');
-
-		if (!$cancelbutton) {
+		if (!$cancel) {
 			$result = $object->fetch($id);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -1433,7 +1449,7 @@ if ($action == 'create') {
 			$sql .= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity, p.tosell, p.tobuy, p.tobatch";
 			$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
-			$sql .= " WHERE cd.rowid = ".$object->lines[$cursorline - 1]->id;
+			$sql .= " WHERE cd.rowid = ".((int) $object->lines[$cursorline - 1]->id);
 
 			$result = $db->query($sql);
 			if ($result) {

@@ -451,7 +451,7 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
 	print $doleditor->Create();
 }
 print '</td><td class="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
 
@@ -465,7 +465,7 @@ print $form->textwithpicto($langs->trans("WatermarkOnDraftMOs"), $htmltext, 1, '
 print '</td><td>';
 print '<input class="flat minwidth200" type="text" name="MRP_MO_DRAFT_WATERMARK" value="'.$conf->global->MRP_MO_DRAFT_WATERMARK.'">';
 print '</td><td class="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
 

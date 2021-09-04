@@ -132,7 +132,7 @@ abstract class CommonInvoice extends CommonObject
 
 		$sql = 'SELECT sum(amount) as amount, sum(multicurrency_amount) as multicurrency_amount';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql .= ' WHERE '.$field.' = '.$this->id;
+		$sql .= " WHERE ".$field." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -227,7 +227,7 @@ abstract class CommonInvoice extends CommonObject
 
 		$sql = 'SELECT rowid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' WHERE fk_facture_source = '.$this->id;
+		$sql .= ' WHERE fk_facture_source = '.((int) $this->id);
 		$sql .= ' AND type = 2';
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -254,7 +254,7 @@ abstract class CommonInvoice extends CommonObject
 	{
 		$sql = 'SELECT rowid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' WHERE fk_facture_source = '.$this->id;
+		$sql .= ' WHERE fk_facture_source = '.((int) $this->id);
 		$sql .= ' AND type < 2';
 		if ($option == 'validated') {
 			$sql .= ' AND fk_statut = 1';
@@ -308,9 +308,8 @@ abstract class CommonInvoice extends CommonObject
 
 		$sql = 'SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code'.$field3;
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$table.' as pf, '.MAIN_DB_PREFIX.$table2.' as p, '.MAIN_DB_PREFIX.'c_paiement as t';
-		$sql .= ' WHERE pf.'.$field.' = '.$this->id;
-		//$sql.= ' WHERE pf.'.$field.' = 1';
-		$sql .= ' AND pf.'.$field2.' = p.rowid';
+		$sql .= " WHERE pf.".$field." = ".((int) $this->id);
+		$sql .= " AND pf.".$field2." = p.rowid";
 		$sql .= ' AND p.fk_paiement = t.id';
 		$sql .= ' AND p.entity IN ('.getEntity($sharedentity).')';
 		if ($filtertype) {
@@ -338,12 +337,12 @@ abstract class CommonInvoice extends CommonObject
 			if ($this->element == 'facture' || $this->element == 'invoice') {
 				$sql = 'SELECT rc.amount_ttc as amount, rc.multicurrency_amount_ttc as multicurrency_amount, rc.datec as date, f.ref as ref, rc.description as type';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
-				$sql .= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$this->id;
+				$sql .= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.((int) $this->id);
 				$sql .= ' AND (f.type = 2 OR f.type = 0 OR f.type = 3)'; // Find discount coming from credit note or excess received or deposits (payments from deposits are always null except if FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is set)
 			} elseif ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
 				$sql = 'SELECT rc.amount_ttc as amount, rc.multicurrency_amount_ttc as multicurrency_amount, rc.datec as date, f.ref as ref, rc.description as type';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture_fourn as f';
-				$sql .= ' WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = '.$this->id;
+				$sql .= ' WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = '.((int) $this->id);
 				$sql .= ' AND (f.type = 2 OR f.type = 0 OR f.type = 3)'; // Find discount coming from credit note or excess received or deposits (payments from deposits are always null except if FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is set)
 			}
 
@@ -700,9 +699,9 @@ abstract class CommonInvoice extends CommonObject
 			$sql = 'SELECT count(*)';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'prelevement_facture_demande';
 			if ($type == 'bank-transfer') {
-				$sql .= ' WHERE fk_facture_fourn = '.$this->id;
+				$sql .= ' WHERE fk_facture_fourn = '.((int) $this->id);
 			} else {
-				$sql .= ' WHERE fk_facture = '.$this->id;
+				$sql .= ' WHERE fk_facture = '.((int) $this->id);
 			}
 			$sql .= ' AND ext_payment_id IS NULL'; // To exclude record done for some online payments
 			$sql .= ' AND traite = 0';
@@ -735,16 +734,16 @@ abstract class CommonInvoice extends CommonObject
 							$sql .= 'fk_facture, ';
 						}
 						$sql .= ' amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib, sourcetype, entity)';
-						$sql .= ' VALUES ('.$this->id;
-						$sql .= ",'".price2num($amount)."'";
-						$sql .= ",'".$this->db->idate($now)."'";
-						$sql .= ",".$fuser->id;
-						$sql .= ",'".$this->db->escape($bac->code_banque)."'";
-						$sql .= ",'".$this->db->escape($bac->code_guichet)."'";
-						$sql .= ",'".$this->db->escape($bac->number)."'";
-						$sql .= ",'".$this->db->escape($bac->cle_rib)."'";
-						$sql .= ",'".$this->db->escape($sourcetype)."'";
-						$sql .= ",".$conf->entity;
+						$sql .= ' VALUES ('.((int) $this->id);
+						$sql .= ", ".((float) price2num($amount));
+						$sql .= ", '".$this->db->idate($now)."'";
+						$sql .= ", ".((int) $fuser->id);
+						$sql .= ", '".$this->db->escape($bac->code_banque)."'";
+						$sql .= ", '".$this->db->escape($bac->code_guichet)."'";
+						$sql .= ", '".$this->db->escape($bac->number)."'";
+						$sql .= ", '".$this->db->escape($bac->cle_rib)."'";
+						$sql .= ", '".$this->db->escape($sourcetype)."'";
+						$sql .= ", ".((int) $conf->entity);
 						$sql .= ")";
 
 						dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);

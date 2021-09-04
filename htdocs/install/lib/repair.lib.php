@@ -88,7 +88,7 @@ function checkLinkedElements($sourcetype, $targettype)
 	$out = $langs->trans('SourceType').': '.$sourcetype.' => '.$langs->trans('TargetType').': '.$targettype.' ';
 
 	$sql = 'SELECT rowid, fk_source, fk_target FROM '.MAIN_DB_PREFIX.'element_element';
-	$sql .= ' WHERE sourcetype="'.$sourcetype.'" AND targettype="'.$targettype.'"';
+	$sql .= " WHERE sourcetype='".$db->escape($sourcetype)."' AND targettype='".$db->escape($targettype)."'";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);

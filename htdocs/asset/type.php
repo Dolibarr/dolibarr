@@ -86,6 +86,7 @@ $hookmanager->initHooks(array('assettypecard', 'globalcard'));
 
 $permissiontoadd = $user->rights->asset->setup_advance;
 
+
 /*
  *	Actions
  */
@@ -444,7 +445,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	$form->buttonsSaveCancel("Add");
+	print $form->buttonsSaveCancel("Add");
 
 	print "</form>\n";
 }
@@ -550,12 +551,12 @@ if ($rowid > 0) {
 
 		// Edit
 		if ($user->rights->asset->write) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&amp;rowid='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&amp;rowid='.((int) $object->id).'">'.$langs->trans("Modify").'</a></div>';
 		}
 
 		// Delete
 		if ($user->rights->asset->write) {
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("DeleteType").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.((int) $object->id).'">'.$langs->trans("DeleteType").'</a></div>';
 		}
 
 		print "</div>";

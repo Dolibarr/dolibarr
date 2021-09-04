@@ -142,7 +142,7 @@ class AdherentType extends CommonObject
 
 		$sql = "SELECT lang, label, description, email";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type_lang";
-		$sql .= " WHERE fk_type=".$this->id;
+		$sql .= " WHERE fk_type = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -181,21 +181,21 @@ class AdherentType extends CommonObject
 			if ($key == $current_lang) {
 				$sql = "SELECT rowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type_lang";
-				$sql .= " WHERE fk_type=".$this->id;
+				$sql .= " WHERE fk_type = ".((int) $this->id);
 				$sql .= " AND lang = '".$this->db->escape($key)."'";
 
 				$result = $this->db->query($sql);
 
 				if ($this->db->num_rows($result)) { // if there is already a description line for this language
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."adherent_type_lang";
-					$sql2 .= " SET ";
-					$sql2 .= " label='".$this->db->escape($this->label)."',";
-					$sql2 .= " description='".$this->db->escape($this->description)."'";
-					$sql2 .= " WHERE fk_type=".$this->id." AND lang='".$this->db->escape($key)."'";
+					$sql2 .= " SET";
+					$sql2 .= " label = '".$this->db->escape($this->label)."',";
+					$sql2 .= " description = '".$this->db->escape($this->description)."'";
+					$sql2 .= " WHERE fk_type = ".((int) $this->id)." AND lang='".$this->db->escape($key)."'";
 				} else {
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type_lang (fk_type, lang, label, description";
 					$sql2 .= ")";
-					$sql2 .= " VALUES(".$this->id.",'".$this->db->escape($key)."','".$this->db->escape($this->label)."',";
+					$sql2 .= " VALUES(".((int) $this->id).",'".$this->db->escape($key)."','".$this->db->escape($this->label)."',";
 					$sql2 .= " '".$this->db->escape($this->description)."'";
 					$sql2 .= ")";
 				}
@@ -207,7 +207,7 @@ class AdherentType extends CommonObject
 			} elseif (isset($this->multilangs[$key])) {
 				$sql = "SELECT rowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type_lang";
-				$sql .= " WHERE fk_type=".$this->id;
+				$sql .= " WHERE fk_type = ".((int) $this->id);
 				$sql .= " AND lang = '".$this->db->escape($key)."'";
 
 				$result = $this->db->query($sql);
@@ -215,9 +215,9 @@ class AdherentType extends CommonObject
 				if ($this->db->num_rows($result)) { // if there is already a description line for this language
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."adherent_type_lang";
 					$sql2 .= " SET ";
-					$sql2 .= " label='".$this->db->escape($this->multilangs["$key"]["label"])."',";
-					$sql2 .= " description='".$this->db->escape($this->multilangs["$key"]["description"])."'";
-					$sql2 .= " WHERE fk_type=".$this->id." AND lang='".$this->db->escape($key)."'";
+					$sql2 .= " label = '".$this->db->escape($this->multilangs["$key"]["label"])."',";
+					$sql2 .= " description = '".$this->db->escape($this->multilangs["$key"]["description"])."'";
+					$sql2 .= " WHERE fk_type = ".((int) $this->id)." AND lang='".$this->db->escape($key)."'";
 				} else {
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type_lang (fk_type, lang, label, description";
 					$sql2 .= ")";
@@ -259,7 +259,7 @@ class AdherentType extends CommonObject
 	public function delMultiLangs($langtodelete, $user)
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type_lang";
-		$sql .= " WHERE fk_type=".$this->id." AND lang='".$this->db->escape($langtodelete)."'";
+		$sql .= " WHERE fk_type = ".((int) $this->id)." AND lang = '".$this->db->escape($langtodelete)."'";
 
 		dol_syslog(get_class($this).'::delMultiLangs', LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -584,7 +584,7 @@ class AdherentType extends CommonObject
 	/**
 	 * 	Return array of Member objects for member type this->id (or all if this->id not defined)
 	 *
-	 * 	@param	string	$excludefilter		Filter to exclude
+	 * 	@param	string	$excludefilter		Filter to exclude. This value must not come from a user input.
 	 *  @param	int		$mode				0=Return array of member instance
 	 *  									1=Return array of member instance without extra data
 	 *  									2=Return array of members id only

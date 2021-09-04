@@ -63,6 +63,7 @@ INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUE
 
 ALTER TABLE llx_product ADD COLUMN fk_default_bom integer DEFAULT NULL;
 
+ALTER TABLE llx_mrp_mo ADD COLUMN mrptype integer DEFAULT 0;
 
 DELETE FROM llx_menu WHERE type = 'top' AND module = 'cashdesk' AND mainmenu = 'cashdesk';
 

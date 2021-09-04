@@ -215,26 +215,33 @@ class Conf
 								// modules_parts['login'], modules_parts['menus'], modules_parts['substitutions'], modules_parts['triggers'], modules_parts['tpl'],
 								// modules_parts['models'], modules_parts['theme']
 								// modules_parts['sms'],
-								// modules_parts['css'], ...
+								// modules_parts['css'], modules_parts['js'],...
 
 								$modulename = strtolower($reg[1]);
 								$partname = strtolower($reg[2]);
 								if (!isset($this->modules_parts[$partname]) || !is_array($this->modules_parts[$partname])) {
 									$this->modules_parts[$partname] = array();
 								}
+
 								$arrValue = json_decode($value, true);
-								if (is_array($arrValue) && !empty($arrValue)) {
-									$value = $arrValue;
+
+								if (is_array($arrValue)) {
+									$newvalue = $arrValue;
 								} elseif (in_array($partname, array('login', 'menus', 'substitutions', 'triggers', 'tpl'))) {
-									$value = '/'.$modulename.'/core/'.$partname.'/';
+									$newvalue = '/'.$modulename.'/core/'.$partname.'/';
 								} elseif (in_array($partname, array('models', 'theme'))) {
-									$value = '/'.$modulename.'/';
+									$newvalue = '/'.$modulename.'/';
 								} elseif (in_array($partname, array('sms'))) {
-									$value = '/'.$modulename.'/';
+									$newvalue = '/'.$modulename.'/';
 								} elseif ($value == 1) {
-									$value = '/'.$modulename.'/core/modules/'.$partname.'/'; // ex: partname = societe
+									$newvalue = '/'.$modulename.'/core/modules/'.$partname.'/'; // ex: partname = societe
+								} else {
+									$newvalue = $value;
 								}
-								$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value)); // $value may be a string or an array
+
+								if (!empty($newvalue)) {
+									$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $newvalue)); // $value may be a string or an array
+								}
 							} elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)$/i', $key, $reg)) {
 								// If this is a module constant (must be at end)
 								$modulename = strtolower($reg[1]);
