@@ -16,7 +16,8 @@
 
 CREATE TABLE llx_knowledgemanagement_knowledgerecord(
 	-- BEGIN MODULEBUILDER FIELDS
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	entity integer DEFAULT 1 NOT NULL,  -- multi company id
 	ref varchar(128) NOT NULL, 
 	date_creation datetime NOT NULL, 
 	tms timestamp, 
