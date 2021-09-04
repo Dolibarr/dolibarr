@@ -1132,7 +1132,7 @@ $( document ).ready(function() {
 		$s = '<span class="small">';
 		$constantforkey = 'CASHDESK_ID_WAREHOUSE'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
 		$warehouse = new Entrepot($db);
-		$warehouse->fetch(getDolGlobalString("$constantforkey"));
+		$warehouse->fetch(getDolGlobalString($constantforkey));
 		$s .= $langs->trans("Warehouse").'<br>'.$warehouse->ref;
 		$s .= '</span>';
 	}
