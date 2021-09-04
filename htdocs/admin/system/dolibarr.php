@@ -505,7 +505,7 @@ if ($resql) {
 		$obj = $db->fetch_object($resql);
 
 		print '<tr class="oddeven">';
-		print '<td class="tdoverflowmax300">'.$obj->name.'</td>'."\n";
+		print '<td class="tdoverflowmax600">'.$obj->name.'</td>'."\n";
 		print '<td class="tdoverflowmax300">';
 		if (isASecretKey($obj->name)) {
 			if (empty($dolibarr_main_prod)) {
