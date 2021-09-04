@@ -70,3 +70,4 @@ DELETE FROM llx_menu WHERE type = 'top' AND module = 'cashdesk' AND mainmenu = '
 
 INSERT INTO llx_c_action_trigger (code, label, description, elementtype, rang) values ('MEMBER_EXCLUDE', 'Member excluded', 'Executed when a member is excluded', 'member', 27);
 
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN entity integer DEFAULT 1;
