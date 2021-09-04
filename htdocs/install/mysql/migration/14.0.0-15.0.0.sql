@@ -41,6 +41,7 @@
 ALTER TABLE llx_emailcollector_emailcollectoraction MODIFY COLUMN actionparam TEXT;
 
 ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD lang varchar(6);
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN entity integer DEFAULT 1;
 
 CREATE TABLE llx_categorie_ticket
 (
@@ -69,4 +70,3 @@ DELETE FROM llx_menu WHERE type = 'top' AND module = 'cashdesk' AND mainmenu = '
 
 
 INSERT INTO llx_c_action_trigger (code, label, description, elementtype, rang) values ('MEMBER_EXCLUDE', 'Member excluded', 'Executed when a member is excluded', 'member', 27);
-
