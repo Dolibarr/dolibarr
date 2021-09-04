@@ -1766,6 +1766,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
     global $dolibarr_main_authentication, $dolibarr_main_demo;
     global $menumanager;
 
+	$langs->load('companies');
     $userImage = $userDropDownImage = '';
     if (!empty($user->photo))
     {
