@@ -206,7 +206,7 @@ class pdf_testD extends ModelePDFMo
 		$nblines = count($object->lines);
 
 		//Change descriptionfield
-		$showsupplierSKU = False;
+		$showsupplierSKU = false;
 
 		$hidetop = 0;
 		if (!empty($conf->global->MAIN_PDF_DISABLE_COL_HEAD_TITLE)) {
@@ -449,20 +449,20 @@ class pdf_testD extends ModelePDFMo
 				// Loop on each lines
 				$pageposbeforeprintlines = $pdf->getPage();
 				$pagenb = $pageposbeforeprintlines;
-				
+
 				$bom = new BOM($this->db);
 				$bom -> fetch($object->fk_bom);
-				
+
 				$nblines = count($bom->lines);
-				
+
 				for ($i = 0; $i < $nblines; $i++) {
 					$curY = $nexY;
 					$pdf->SetFont('', '', $default_font_size - 1); // Into loop to work with multipage
 					$pdf->SetTextColor(0, 0, 0);
-					
+
 					$prod = new Product($this->db);
 					$prod->fetch($bom->lines[$i]->fk_product);
-				
+
 					// Define size of image if we need it
 					$imglinesize = array();
 					if (!empty($realpatharray[$i])) {
@@ -507,8 +507,8 @@ class pdf_testD extends ModelePDFMo
 					// Description of product line
 					$curX = $this->posxdesc - 1;
 					$showpricebeforepagebreak = 1;
-					
-										if ($this->getColumnStatus('code')) {
+
+					if ($this->getColumnStatus('code')) {
 						$pdf->startTransaction(); //description
 						//$this->printColDescContent($pdf, $curY, 'code', $object, $i, $outputlangs, $hideref, $hidedesc, $showsupplierSKU);
 						$this->printStdColumnContent($pdf, $curY, 'code', $prod->ref);
@@ -558,14 +558,14 @@ class pdf_testD extends ModelePDFMo
 						$pdf->setPage($pageposafter);
 						$curY = $tab_top_newpage;
 					}
-					
+
 					if ($this->getColumnStatus('desc')) {
 						$pdf->startTransaction(); //description
 						$des = $prod -> description;
 						$descr = $des;//implode("<br>", $des);
-						
+
 						$this->printStdColumnContent($pdf, $curY, 'desc', $descr);
-						
+
 						$pageposafter = $pdf->getPage();
 						$posyafter = $pdf->GetY();
 						if ($pageposafter > $pageposbefore) {	// There is a pagebreak
@@ -575,7 +575,7 @@ class pdf_testD extends ModelePDFMo
 
 							$pageposafter = $pdf->getPage();
 							$posyafter = $pdf->GetY();
-						} elseif  ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// There is no space left for total+free text
+						} elseif ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// There is no space left for total+free text
 							if ($i == ($nblines - 1)) {	// No more lines, and no space left to show total, so we create a new page
 								$pdf->AddPage('', '', true);
 								if (!empty($tplidx)) {
@@ -596,10 +596,10 @@ class pdf_testD extends ModelePDFMo
 						{
 							$pdf->commitTransaction();
 						}
-						$posYAfterDescription = max($posYAfterDescription,$pdf->GetY());
+						$posYAfterDescription = max($posYAfterDescription, $pdf->GetY());
 					}
 
-					$nexY = max($nexY,$pdf->GetY());
+					$nexY = max($nexY, $pdf->GetY());
 					$pageposafter = $pdf->getPage();
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
@@ -612,7 +612,7 @@ class pdf_testD extends ModelePDFMo
 					}
 
 					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
-				
+
 					// Quantity
 					// Enough for 6 chars
 					if ($this->getColumnStatus('qty')) {
@@ -620,7 +620,7 @@ class pdf_testD extends ModelePDFMo
 						$this->printStdColumnContent($pdf, $curY, 'qty', $qty);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
-					
+
 					// Quantity
 					// Enough for 6 chars
 					if ($this->getColumnStatus('qtytot')) {
@@ -628,7 +628,7 @@ class pdf_testD extends ModelePDFMo
 						$this->printStdColumnContent($pdf, $curY, 'qtytot', $qtytot);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
-					
+
 					// Dimensions
 					if ($this->getColumnStatus('dim')) {
 						$array = array_filter(array($prod->length, $prod->width, $prod->height));
@@ -638,8 +638,8 @@ class pdf_testD extends ModelePDFMo
 					}
 				}
 
-				
-				
+
+
 
 				// Show square
 				if ($pagenb == $pageposbeforeprintlines) {
@@ -1129,7 +1129,7 @@ class pdf_testD extends ModelePDFMo
 			$posy += 1;
 		}
 
-		$pdf->SetFont('', '', $default_font_size - 1);		
+		$pdf->SetFont('', '', $default_font_size - 1);
 		if (!empty($conf->global->PDF_SHOW_PROJECT_TITLE)) {
 			$object->fetch_projet();
 			if (!empty($object->project->ref)) {
@@ -1164,7 +1164,7 @@ class pdf_testD extends ModelePDFMo
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderToProcess"), '', 'R');
 		}
 
-// product info
+		// product info
 		$posy += 7;
 		$prodToMake = new Product($this->db);
 		$prodToMake->fetch($object->fk_product);
@@ -1172,7 +1172,7 @@ class pdf_testD extends ModelePDFMo
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->MultiCell($w, 3, $prodToMake->ref, '', 'R');
-		
+
 		$posy += 5;
 		$prodToMake = new Product($this->db);
 		$prodToMake->fetch($object->fk_product);
@@ -1180,17 +1180,17 @@ class pdf_testD extends ModelePDFMo
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->MultiCell($w, 3, $prodToMake->description, '', 'R');
-		
+
 		$array = array_filter(array($prodToMake->length, $prodToMake->width, $prodToMake->height));
 		$dim = implode("x", $array);
-		if (!empty($dim)){
+		if (!empty($dim)) {
 			$posy += 5;
 			$pdf->SetFont('', 'B', $default_font_size + 3);
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell($w, 3, $dim, '', 'R');
 		}
-		
+
 		$posy += 5;
 		$prodToMake = new Product($this->db);
 		$prodToMake->fetch($object->fk_product);
@@ -1198,8 +1198,8 @@ class pdf_testD extends ModelePDFMo
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->MultiCell($w, 3, $outputlangs->transnoentities("QtyToProduce").": " .$object->qty, '', 'R');
-		
-		
+
+
 		$pdf->SetTextColor(0, 0, 60);
 		$usehourmin = 'day';
 		if (!empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) {
@@ -1411,7 +1411,7 @@ class pdf_testD extends ModelePDFMo
 			'border-left' => true, // add left line separator
 		);
 		$this->cols['code']['status'] = true;
-		
+
 		$rank = 1; // do not use negative rank
 		$this->cols['desc'] = array(
 			'rank' => $rank,
@@ -1473,7 +1473,7 @@ class pdf_testD extends ModelePDFMo
 			'border-left' => true, // add left line separator
 		);
 		$this->cols['qty']['status'] = true;
-		
+
 		$rank = $rank + 10;
 		$this->cols['qtytot'] = array(
 			'rank' => $rank,
