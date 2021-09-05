@@ -455,6 +455,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
 			migrate_export_import_profiles('export');
 			migrate_export_import_profiles('import');
+			fix_facture_fourn_mode_transport();
 		}
 	}
 
@@ -4970,5 +4971,49 @@ function migrate_export_import_profiles($mode = 'export')
 		print $resultstring;
 	} else {
 		print '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$langs->trans("NothingToDo")."</td></tr>\n";
+	}
+}
+
+/**
+ * Fix transport mode field
+ * @return void
+ */
+function fix_facture_fourn_mode_transport()
+{
+	global $db;
+
+	print '<tr class="trforrunsql"><td colspan="4">';
+	print '<b>'.$langs->trans('MigrationFixFactureFournTransportMode')."</b><br>\n";
+	print '</td></tr>';
+
+	$sql = 'SHOW COLUMNS FROM ' . MAIN_DB_PREFIX .'facture_fourn LIKE "fk_mode_transport"';
+	$db->begin();
+	$resql = $db->query($sql);
+	if ($resql) {
+		if ($db->fetch_object($resql)) {
+			// Require change table name.
+			$sqlupd = 'ALTER TABLE ' . MAIN_DB_PREFIX . 'facture_fourn CHANGE fk_mode_transport fk_transport_mode INT(11) NULL DEFAULT NULL';
+			$update = $db->query($sqlupd);
+
+			print '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$sqlupd."</td></tr>\n";
+
+			if ($update) {
+				$db->commit();
+
+			} else {
+				dol_print_error($db);
+				$db->rollback();
+			}
+		} else {
+			// Skip rename field.
+			print '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$langs->trans("NothingToDo")."</td></tr>\n";
+		}
+	}
+
+	if (!$error) {
+		$db->commit();
+	} else {
+		dol_print_error($db);
+		$db->rollback();
 	}
 }
