@@ -76,7 +76,7 @@ if (!empty($conf->notification->enabled)) {
 	$langs->load("mails");
 }
 
-$mesg = ''; $error = 0; $errors = array();
+$error = 0; $errors = array();
 
 $action		= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
 $cancel		= GETPOST('cancel', 'alpha');
@@ -90,6 +90,7 @@ if ($user->socid) {
 if (empty($socid) && $action == 'view') {
 	$action = 'create';
 }
+$id = $socid;
 
 $object = new Societe($db);
 $extrafields = new ExtraFields($db);

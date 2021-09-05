@@ -1560,7 +1560,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$sql .= ", ".$this->db->encrypt($newvalue);
 					$sql .= ", null";
 					$sql .= ", '0'";
-					$sql .= ", ".$entity;
+					$sql .= ", ".((int) $entity);
 					$sql .= ")";
 
 					$resql = $this->db->query($sql);
@@ -2126,7 +2126,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 				$entity = $conf->entity; // Reset the current entity
 				$newvalue = $value;
-				var_dump($newvalue);
+
 				// Serialize array parameters
 				if (is_array($value)) {
 					// Can defined other parameters
@@ -2145,8 +2145,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						$newvalue = json_encode($value);
 					}
 				}
-				var_dump($newvalue);
-				var_dump($this->db->escape($newvalue));
 
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
 				$sql .= "name";
@@ -2164,7 +2162,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$sql .= ", '0'";
 				$sql .= ", ".((int) $entity);
 				$sql .= ")";
-				print $sql;
+
 				dol_syslog(get_class($this)."::insert_module_parts for key=".$this->const_name."_".strtoupper($key), LOG_DEBUG);
 
 				$resql = $this->db->query($sql, 1);

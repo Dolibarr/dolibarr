@@ -1941,9 +1941,9 @@ abstract class CommonObject
 
 		if ($fk_user_field) {
 			if (!empty($fuser) && is_object($fuser)) {
-				$sql .= ", ".$fk_user_field." = ".$fuser->id;
+				$sql .= ", ".$fk_user_field." = ".((int) $fuser->id);
 			} elseif (empty($fuser) || $fuser != 'none') {
-				$sql .= ", ".$fk_user_field." = ".$user->id;
+				$sql .= ", ".$fk_user_field." = ".((int) $user->id);
 			}
 		}
 

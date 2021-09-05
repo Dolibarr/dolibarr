@@ -274,7 +274,7 @@ class AccountingAccount extends CommonObject
 		$sql .= ", reconcilable";
 		$sql .= ") VALUES (";
 		$sql .= " '".$this->db->idate($now)."'";
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", ".(empty($this->fk_pcg_version) ? 'NULL' : "'".$this->db->escape($this->fk_pcg_version)."'");
 		$sql .= ", ".(empty($this->pcg_type) ? 'NULL' : "'".$this->db->escape($this->pcg_type)."'");
 		$sql .= ", ".(empty($this->account_number) ? 'NULL' : "'".$this->db->escape($this->account_number)."'");
@@ -282,7 +282,7 @@ class AccountingAccount extends CommonObject
 		$sql .= ", ".(empty($this->label) ? "''" : "'".$this->db->escape($this->label)."'");
 		$sql .= ", ".(empty($this->labelshort) ? "''" : "'".$this->db->escape($this->labelshort)."'");
 		$sql .= ", ".(empty($this->account_category) ? 0 : (int) $this->account_category);
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".(int) $this->active;
 		$sql .= ", ".(int) $this->reconcilable;
 		$sql .= ")";
