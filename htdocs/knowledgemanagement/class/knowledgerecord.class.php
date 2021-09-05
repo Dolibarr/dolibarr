@@ -103,7 +103,7 @@ class KnowledgeRecord extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'visible'=>5, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object"),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>20, 'index'=>1),
-    'question' => array('type'=>'text', 'label'=>'Question', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'csslist'=>'tdoverflow300', 'copytoclipboard'=>1),
+	'question' => array('type'=>'text', 'label'=>'Question', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'csslist'=>'tdoverflow300', 'copytoclipboard'=>1),
 		'lang' => array('type'=>'varchar(6)', 'label'=>'Language', 'enabled'=>'1', 'position'=>40, 'notnull'=>0, 'visible'=>1),
 		'answer' => array('type'=>'html', 'label'=>'Solution', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>3, 'csslist'=>'tdoverflow300', 'copytoclipboard'=>1),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
@@ -120,7 +120,7 @@ class KnowledgeRecord extends CommonObject
 	);
 	public $rowid;
 	public $ref;
-	public $entity;  
+	public $entity;
 	public $date_creation;
 	public $tms;
 	public $last_main_doc;
