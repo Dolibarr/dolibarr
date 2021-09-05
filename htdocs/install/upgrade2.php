@@ -4999,7 +4999,6 @@ function fix_facture_fourn_mode_transport()
 
 			if ($update) {
 				$db->commit();
-
 			} else {
 				dol_print_error($db);
 				$db->rollback();
