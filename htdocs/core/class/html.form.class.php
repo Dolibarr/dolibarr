@@ -4745,6 +4745,18 @@ class Form
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd"><input type="text" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></div></div>'."\n";
 					} elseif ($input['type'] == 'password')	{
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd"><input type="password" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></div></div>'."\n";
+					} elseif ($input['type'] == 'textarea') {
+						/*$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd">';
+						$more .= '<textarea name="'.$input['name'].'" class="'.$morecss.'"'.$moreattr.'>';
+						$more .= $input['value'];
+						$more .= '</textarea>';
+						$more .= '</div></div>'."\n";*/
+						$moreonecolumn .= '<div class="margintoponly">';
+						$moreonecolumn .= $input['label'].'<br>';
+						$moreonecolumn .= '<textarea name="'.$input['name'].'" class="'.$morecss.'"'.$moreattr.'>';
+						$moreonecolumn .= $input['value'];
+						$moreonecolumn .= '</textarea>';
+						$moreonecolumn .= '</div>';
 					} elseif ($input['type'] == 'select') {
 						if (empty($morecss)) {
 							$morecss = 'minwidth100';
