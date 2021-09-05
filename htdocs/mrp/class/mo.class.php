@@ -1186,6 +1186,8 @@ class Mo extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->initAsSpecimenCommon();
+
+		$this->lines = array();
 	}
 
 	/**
