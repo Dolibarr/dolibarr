@@ -16,7 +16,8 @@
  * Copyright (C) 2013      Florian Henry         <florian.henry@open-concept.pro>
  * Copyright (C) 2016      Ferran Marcet         <fmarcet@2byte.es>
  * Copyright (C) 2018      Alexandre Spangaro    <aspangaro@open-dsi.fr>
- * Copyright (C) 2018      Nicolas ZABOURI        <info@inovea-conseil.com>
+ * Copyright (C) 2018      Nicolas ZABOURI       <info@inovea-conseil.com>
+ * Copyright (C) 2021      Remi BONNET           <prog.bontiv@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2826,7 +2827,7 @@ class Facture extends CommonInvoice
 			}
 
 			// Trigger calls
-			if (!$error && !$notrigger) {
+			if (empty($conf->global->MAIN_POSTPONE_TRIGGER) && !$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('BILL_VALIDATE', $user);
 				if ($result < 0) {
@@ -2871,6 +2872,79 @@ class Facture extends CommonInvoice
 						}
 					}
 				}
+
+				// POSTPONED TRIGGER
+				// In case of postpone PDF and triggers
+				if (!empty($conf->global->MAIN_POSTPONE_TRIGGER)) {
+
+					$this->statut = self::STATUS_VALIDATED;
+					$this->status = self::STATUS_VALIDATED;
+					$this->brouillon = 0;
+					$this->date_validation = $now;	
+
+					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+						$outputlangs = $langs;
+						$newlang = '';
+						if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+							$newlang = GETPOST('lang_id', 'aZ09');
+						}
+						if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+							$newlang = $this->thirdparty->default_lang;
+						}
+						if (!empty($newlang)) {
+							$outputlangs = new Translate("", $conf);
+							$outputlangs->setDefaultLang($newlang);
+							$outputlangs->load('products');
+						}
+						$model = $this->model_pdf;
+
+						$ret = $this->fetch($id); // Reload to get new records
+
+						$result = $this->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+						print("PDF generation $result<br>\n");
+						if ($result < 0) {
+							setEventMessages($object->error, $object->errors, 'errors');
+						}
+					}
+
+					// Trigger calls
+					if (!$notrigger) {
+						// Call trigger
+						$result = $this->call_trigger('BILL_VALIDATE', $user);
+						if ($result < 0) {
+							$error++;
+						}
+						// End call triggers
+					}
+
+					// If an error is occured, rollback directory rename
+					if ($error) {
+						// Rollback document status
+						$this->statut = self::STATUS_DRAFT;
+						$this->status = self::STATUS_DRAFT;
+						$this->brouillon = 1;
+
+						if (preg_match('/^[\(]?PROV/i', $this->oldref) && file_exists($dirdest)) {
+							$dirsource = $conf->facture->dir_output.'/'.$newref;
+							$dirdest = $conf->facture->dir_output.'/'.$oldref;
+							dol_syslog(get_class($this)."::validate rollback, rename dir ".$dirdest." into ".$dirsource);
+
+							if (@rename($dirdest, $dirsource)) {
+								dol_syslog("Rename ok");
+								// Rename docs starting with $oldref with $newref
+								$listoffiles = dol_dir_list($conf->facture->dir_output.'/'.$oldref, 'files', 1, '^'.preg_quote($newref, '/'));
+								foreach ($listoffiles as $fileentry) {
+									$dirsource = $fileentry['name'];
+									$dirdest = preg_replace('/^'.preg_quote($newref, '/').'/', $oldref, $dirsource);
+									$dirsource = $fileentry['path'].'/'.$dirsource;
+									$dirdest = $fileentry['path'].'/'.$dirdest;
+									@rename($dirsource, $dirdest);
+								}
+							}
+						}
+					}
+				}
+				// END POSTPONED TRIGGER
 			}
 
 			if (!$error && !$this->is_last_in_cycle()) {
@@ -2881,7 +2955,6 @@ class Facture extends CommonInvoice
 
 			// Set new ref and define current status
 			if (!$error) {
-				$this->ref = $num;
 				$this->ref = $num;
 				$this->statut = self::STATUS_VALIDATED;
 				$this->status = self::STATUS_VALIDATED;
