@@ -4727,7 +4727,7 @@ class Form
 			foreach ($formquestion as $key => $input) {
 				if (is_array($input) && !empty($input)) {
 					if ($input['type'] == 'hidden') {
-						$more .= '<input type="hidden" id="'.$input['name'].'" name="'.$input['name'].'" value="'.dol_escape_htmltag($input['value']).'">'."\n";
+						$more .= '<input type="hidden" id="'.dol_escape_htmltag($input['name']).'" name="'.dol_escape_htmltag($input['name']).'" value="'.dol_escape_htmltag($input['value']).'">'."\n";
 					}
 				}
 			}
@@ -4742,9 +4742,9 @@ class Form
 					$morecss = (!empty($input['morecss']) ? ' '.$input['morecss'] : '');
 
 					if ($input['type'] == 'text') {
-						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd"><input type="text" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></div></div>'."\n";
+						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd"><input type="text" class="flat'.$morecss.'" id="'.dol_escape_htmltag($input['name']).'" name="'.dol_escape_htmltag($input['name']).'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></div></div>'."\n";
 					} elseif ($input['type'] == 'password')	{
-						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd"><input type="password" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></div></div>'."\n";
+						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd"><input type="password" class="flat'.$morecss.'" id="'.dol_escape_htmltag($input['name']).'" name="'.dol_escape_htmltag($input['name']).'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></div></div>'."\n";
 					} elseif ($input['type'] == 'textarea') {
 						/*$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd">';
 						$more .= '<textarea name="'.$input['name'].'" class="'.$morecss.'"'.$moreattr.'>';
@@ -4753,7 +4753,7 @@ class Form
 						$more .= '</div></div>'."\n";*/
 						$moreonecolumn .= '<div class="margintoponly">';
 						$moreonecolumn .= $input['label'].'<br>';
-						$moreonecolumn .= '<textarea name="'.$input['name'].'" class="'.$morecss.'"'.$moreattr.'>';
+						$moreonecolumn .= '<textarea name="'.dol_escape_htmltag($input['name']).'" id="'.dol_escape_htmltag($input['name']).'" class="'.$morecss.'"'.$moreattr.'>';
 						$moreonecolumn .= $input['value'];
 						$moreonecolumn .= '</textarea>';
 						$moreonecolumn .= '</div>';
@@ -4779,7 +4779,7 @@ class Form
 					} elseif ($input['type'] == 'checkbox') {
 						$more .= '<div class="tagtr">';
 						$more .= '<div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].' </div><div class="tagtd">';
-						$more .= '<input type="checkbox" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$moreattr;
+						$more .= '<input type="checkbox" class="flat'.$morecss.'" id="'.dol_escape_htmltag($input['name']).'" name="'.dol_escape_htmltag($input['name']).'"'.$moreattr;
 						if (!is_bool($input['value']) && $input['value'] != 'false' && $input['value'] != '0') {
 							$more .= ' checked';
 						}
@@ -4800,7 +4800,7 @@ class Form
 							} else {
 								$more .= '<div clas="tagtd'.(empty($input['tdclass']) ? '' : (' "'.$input['tdclass'])).'">&nbsp;</div>';
 							}
-							$more .= '<div class="tagtd'.($i == 0 ? ' tdtop' : '').'"><input type="radio" class="flat'.$morecss.'" id="'.$input['name'].$selkey.'" name="'.$input['name'].'" value="'.$selkey.'"'.$moreattr;
+							$more .= '<div class="tagtd'.($i == 0 ? ' tdtop' : '').'"><input type="radio" class="flat'.$morecss.'" id="'.dol_escape_htmltag($input['name'].$selkey).'" name="'.dol_escape_htmltag($input['name']).'" value="'.$selkey.'"'.$moreattr;
 							if ($input['disabled']) {
 								$more .= ' disabled';
 							}
@@ -4808,7 +4808,7 @@ class Form
 								$more .= ' checked="checked"';
 							}
 							$more .= ' /> ';
-							$more .= '<label for="'.$input['name'].$selkey.'">'.$selval.'</label>';
+							$more .= '<label for="'.dol_escape_htmltag($input['name'].$selkey).'">'.$selval.'</label>';
 							$more .= '</div></div>'."\n";
 							$i++;
 						}
@@ -4933,7 +4933,7 @@ class Form
                          				inputvalue = $("#" + inputname + more).val();
 									}
                          			if (typeof inputvalue == "undefined") { inputvalue=""; }
-									console.log("check inputname="+inputname+" inputvalue="+inputvalue);
+									console.log("formconfirm check inputname="+inputname+" inputvalue="+inputvalue);
                          			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
                          		});
                          	}
