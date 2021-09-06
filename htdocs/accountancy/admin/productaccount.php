@@ -189,9 +189,16 @@ if ($action == 'update') {
 					$db->begin();
 
 					if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_perentity (fk_product, entity, ".$db->escape($accountancy_field_name).")";
-						$sql .= " VALUES (".((int) $productid).", ".((int) $conf->entity).", '".$db->escape($accounting->account_number)."')";
-						$sql .= " ON DUPLICATE KEY UPDATE ".$accountancy_field_name." = '".$db->escape($accounting->account_number)."'";
+						if ($this->db->type == 'pgsql') {
+							$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_perentity (fk_product, entity, " . $db->escape($accountancy_field_name) . ")";
+							$sql .= " VALUES (" . ((int) $productid) . ", " . ((int) $conf->entity) . ", \"" . $db->escape($accounting->account_number) . "\")";
+							$sql .= " ON CONFLICT (fk_product, entity)";
+							$sql .= " DO UPDATE SET " . $db->escape($accountancy_field_name)." = \"" . $db->escape($accounting->account_number) . "\"";
+						} else {
+							$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_perentity (fk_product, entity, " . $db->escape($accountancy_field_name) . ")";
+							$sql .= " VALUES (" . ((int)$productid) . ", " . ((int)$conf->entity) . ", '" . $db->escape($accounting->account_number) . "')";
+							$sql .= " ON DUPLICATE KEY UPDATE " . $db->escape($accountancy_field_name) . " = '" . $db->escape($accounting->account_number) . "'";
+						}
 					} else {
 						$sql = " UPDATE ".MAIN_DB_PREFIX."product";
 						$sql .= " SET ".$accountancy_field_name." = '".$db->escape($accounting->account_number)."'";
