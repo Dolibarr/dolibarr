@@ -146,7 +146,7 @@ if (!empty($captcha)) {
 	?>
 	<!-- Captcha -->
 	<div class="trinputlogin">
-	<div class="tagtd tdinputlogin nowraponall none valignmiddle">
+	<div class="tagtd tdinputlogin nowrap none valignmiddle">
 
 	<span class="fa fa-unlock"></span>
 	<span class="nofa inline-block">
@@ -186,7 +186,7 @@ if (!empty($morelogincontent)) {
 <div id="login_line2" style="clear: both">
 
 <!-- Button "Regenerate and Send password" -->
-<br><input type="submit" <?php echo $disabled; ?> class="button" name="button_password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
+<br><input type="submit" <?php echo $disabled; ?> class="button small" name="button_password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
 
 <br>
 <div class="center" style="margin-top: 15px;">
