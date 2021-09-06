@@ -693,7 +693,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 	/* When changing predefined product, we reload list of supplier prices required for margin combo */
 	$("#idprod, #idprodfournprice").change(function()
 	{
-		console.log("Call method change() 1 after change on #idprod or #idprodfournprice (senderissupplier=<?php echo $senderissupplier; ?>). this.val = "+$(this).val());
+		console.log("Call method change() after change on #idprod or #idprodfournprice (senderissupplier=<?php echo $senderissupplier; ?>). this.val = "+$(this).val());
 
 		setforpredef();		// TODO Keep vat combo visible and set it to first entry into list that match result of get_default_tva
 		jQuery('#trlinefordates').show();
@@ -752,7 +752,6 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 							if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
 						if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
 						{
-							var editor = CKEDITOR.instances['dp_desc'];
 							var editor = CKEDITOR.instances['dp_desc'];
 							if (editor) {
 								editor.setData(proddesc);

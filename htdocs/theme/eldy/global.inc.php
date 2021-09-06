@@ -234,7 +234,7 @@ input.button.massactionconfirmed {
 	margin: 4px;
 }
 
-input:invalid, select:invalid, input.--error , select.--error,  input.error {
+input:invalid, select:invalid, input.--error , select.--error {
 	border-color: #ea1212;
 }
 
