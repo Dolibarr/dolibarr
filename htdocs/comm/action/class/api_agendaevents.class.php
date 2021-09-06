@@ -171,6 +171,7 @@ class AgendaEvents extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $actioncomm_static = new ActionComm($db);
                 if ($actioncomm_static->fetch($obj->rowid)) {
+                    $actioncomm_static->fetch_optionals();
                     $obj_ret[] = $this->_cleanObjectDatas($actioncomm_static);
                 }
                 $i++;
