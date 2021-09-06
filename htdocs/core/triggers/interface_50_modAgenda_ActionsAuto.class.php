@@ -544,12 +544,17 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->sendtoid = 0;
 		} elseif ($action == 'ORDER_SUPPLIER_REFUSE') {
 			// Load translation files required by the page
-			$langs->loadLangs(array("agenda", "other", "orders"));
+			$langs->loadLangs(array("agenda", "other", "orders", "main"));
 
 			if (empty($object->actionmsg2)) {
 				$object->actionmsg2 = $langs->transnoentities("OrderRefusedInDolibarr", $object->ref);
 			}
 			$object->actionmsg = $langs->transnoentities("OrderRefusedInDolibarr", $object->ref);
+
+			if (!empty($object->refuse_note)) {
+				$object->actionmsg .= '<br>';
+				$object->actionmsg .= $langs->trans("Reason") . ': '.$object->refuse_note;
+			}
 
 			$object->sendtoid = 0;
 		} elseif ($action == 'ORDER_SUPPLIER_SUBMIT') {
@@ -931,7 +936,11 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 		}
 
-		$object->actionmsg = dol_concatdesc($langs->transnoentities("Author").': '.$user->login, $object->actionmsg);
+		if (!empty($user->login)) {
+			$object->actionmsg = dol_concatdesc($langs->transnoentities("Author").': '.$user->login, $object->actionmsg);
+		} elseif (isset($object->origin_email)) {
+			$object->actionmsg = dol_concatdesc($langs->transnoentities("Author").': '.$object->origin_email, $object->actionmsg);
+		}
 
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 

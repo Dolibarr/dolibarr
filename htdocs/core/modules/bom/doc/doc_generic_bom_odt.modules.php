@@ -151,7 +151,7 @@ class doc_generic_bom_odt extends ModelePDFBom
 		$texte .= $conf->global->BOM_ADDON_PDF_ODT_PATH;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
+		$texte .= '<input type="submit" class="button small" value="'.$langs->trans("Modify").'" name="Button">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
@@ -278,7 +278,11 @@ class doc_generic_bom_odt extends ModelePDFBom
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
 				dol_mkdir($conf->bom->dir_temp);
-
+				if (!is_writable($conf->bom->dir_temp)) {
+					$this->error = "Failed to write in temp directory ".$conf->bom->dir_temp;
+					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					return -1;
+				}
 
 				// If CUSTOMER contact defined on order, we use it
 				$usecontact = false;

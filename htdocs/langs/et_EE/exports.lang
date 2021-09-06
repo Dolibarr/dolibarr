@@ -53,7 +53,8 @@ TypeOfLineServiceOrProduct=Rea liik (0=toode, 1=teenus)
 FileWithDataToImport=Imporditavate andmetega fai
 FileToImport=Imporditav lähtefai
 FileMustHaveOneOfFollowingFormat=File to import must have one of following formats
-DownloadEmptyExample=Download template file with field content information (* are mandatory fields)
+DownloadEmptyExample=Download template file with field content information
+StarAreMandatory=* are mandatory fields
 ChooseFormatOfFileToImport=Choose the file format to use as import file format by clicking on the %s icon to select it...
 ChooseFileToImport=Upload file then click on the %s icon to select file as source import file...
 SourceFileFormat=Lähtefaili formaat

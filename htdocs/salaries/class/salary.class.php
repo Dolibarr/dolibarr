@@ -88,6 +88,12 @@ class Salary extends CommonObject
 	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var user	User
+	 */
+	public $user;
+
+
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;
 
@@ -132,14 +138,13 @@ class Salary extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."salary SET";
-
 		$sql .= " tms='".$this->db->idate(dol_now())."',";
-		$sql .= " fk_user=".$this->fk_user.",";
+		$sql .= " fk_user=".((int) $this->fk_user).",";
 		/*$sql .= " datep='".$this->db->idate($this->datep)."',";
 		$sql .= " datev='".$this->db->idate($this->datev)."',";*/
 		$sql .= " amount=".price2num($this->amount).",";
 		$sql .= " fk_projet=".((int) $this->fk_project).",";
-		$sql .= " fk_typepayment=".$this->type_payment.",";
+		$sql .= " fk_typepayment=".((int) $this->type_payment).",";
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " datesp='".$this->db->idate($this->datesp)."',";
 		$sql .= " dateep='".$this->db->idate($this->dateep)."',";
@@ -147,7 +152,6 @@ class Salary extends CommonObject
 		$sql .= " fk_bank=".($this->fk_bank > 0 ? (int) $this->fk_bank : "null").",";
 		$sql .= " fk_user_author=".((int) $this->fk_user_author).",";
 		$sql .= " fk_user_modif=".($this->fk_user_modif > 0 ? (int) $this->fk_user_modif : (int) $user->id);
-
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -503,6 +507,9 @@ class Salary extends CommonObject
 		}
 		if ($this->datesp && $this->dateep) {
 			$label .= '<br><b>'.$langs->trans('Period').':</b> '.dol_print_date($this->datesp, 'day').' - '.dol_print_date($this->dateep, 'day');
+		}
+		if (isset($this->amount)) {
+			$label .= '<br><b>'.$langs->trans('Amount').':</b> '.price($this->amount);
 		}
 
 		$url = DOL_URL_ROOT.'/salaries/card.php?id='.$this->id;

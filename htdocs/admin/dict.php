@@ -100,7 +100,7 @@ $hookmanager->initHooks(array('admin'));
 // Put here declaration of dictionaries properties
 
 // Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-$taborder = array(9, 0, 4, 3, 2, 0, 1, 8, 19, 16, 39, 27, 40, 38, 0, 5, 11, 0, 6, 0, 29, 0, 33, 34, 32, 24, 28, 17, 35, 36, 0, 10, 23, 12, 13, 7, 0, 14, 0, 22, 20, 18, 21, 41, 0, 15, 30, 0, 37, 42, 0, 25, 0, 43, 0);
+$taborder = array(9, 15, 30, 0, 4, 3, 2, 0, 1, 8, 19, 16, 39, 27, 40, 38, 0, 5, 11, 0, 6, 24, 0, 29, 0, 33, 34, 32, 28, 17, 35, 36, 0, 10, 23, 12, 13, 7, 0, 14, 0, 22, 20, 18, 21, 41, 0, 37, 42, 0, 43, 0, 25, 0);
 
 // Name of SQL tables of dictionaries
 $tabname = array();
@@ -223,7 +223,7 @@ $tabsql[24] = "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFI
 $tabsql[25] = "SELECT rowid   as rowid, code, label, active, module FROM ".MAIN_DB_PREFIX."c_type_container as t WHERE t.entity IN (".getEntity('c_type_container').")";
 //$tabsql[26]= "SELECT rowid   as rowid, code, label, short_label, active FROM ".MAIN_DB_PREFIX."c_units";
 $tabsql[27] = "SELECT id      as rowid, code, libelle, picto, active FROM ".MAIN_DB_PREFIX."c_stcomm";
-$tabsql[28] = "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.newbymonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid";
+$tabsql[28] = "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.newByMonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid";
 $tabsql[29] = "SELECT rowid   as rowid, code, label, percent, position, active FROM ".MAIN_DB_PREFIX."c_lead_status";
 $tabsql[30] = "SELECT rowid, code, name, paper_size, orientation, metric, leftmargin, topmargin, nx, ny, spacex, spacey, width, height, font_size, custom_x, custom_y, active FROM ".MAIN_DB_PREFIX."c_format_cards";
 //$tabsql[31]= "SELECT s.rowid as rowid, pcg_version, s.label, s.active FROM ".MAIN_DB_PREFIX."accounting_system as s";
@@ -315,7 +315,7 @@ $tabfield[24] = "code,label";
 $tabfield[25] = "code,label";
 //$tabfield[26]= "code,label,short_label";
 $tabfield[27] = "code,libelle,picto";
-$tabfield[28] = "code,label,affect,delay,newbymonth,country_id,country";
+$tabfield[28] = "code,label,affect,delay,newByMonth,country_id,country";
 $tabfield[29] = "code,label,percent,position";
 $tabfield[30] = "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 //$tabfield[31]= "pcg_version,label";
@@ -361,7 +361,7 @@ $tabfieldvalue[24] = "code,label";
 $tabfieldvalue[25] = "code,label";
 //$tabfieldvalue[26]= "code,label,short_label";
 $tabfieldvalue[27] = "code,libelle,picto";
-$tabfieldvalue[28] = "code,label,affect,delay,newbymonth,country";
+$tabfieldvalue[28] = "code,label,affect,delay,newByMonth,country";
 $tabfieldvalue[29] = "code,label,percent,position";
 $tabfieldvalue[30] = "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 //$tabfieldvalue[31]= "pcg_version,label";
@@ -407,7 +407,7 @@ $tabfieldinsert[24] = "code,label";
 $tabfieldinsert[25] = "code,label";
 //$tabfieldinsert[26]= "code,label,short_label";
 $tabfieldinsert[27] = "code,libelle,picto";
-$tabfieldinsert[28] = "code,label,affect,delay,newbymonth,fk_country";
+$tabfieldinsert[28] = "code,label,affect,delay,newByMonth,fk_country";
 $tabfieldinsert[29] = "code,label,percent,position";
 $tabfieldinsert[30] = "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 //$tabfieldinsert[31]= "pcg_version,label";
@@ -548,7 +548,7 @@ $tabhelp[24] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[25] = array('code'=>$langs->trans('EnterAnyCode'));
 //$tabhelp[26] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[27] = array('code'=>$langs->trans("EnterAnyCode"), 'picto'=>$langs->trans("PictoHelp"));
-$tabhelp[28] = array('affect'=>$langs->trans("FollowedByACounter"), 'delay'=>$langs->trans("MinimumNoticePeriod"), 'newbymonth'=>$langs->trans("NbAddedAutomatically"));
+$tabhelp[28] = array('affect'=>$langs->trans("FollowedByACounter"), 'delay'=>$langs->trans("MinimumNoticePeriod"), 'newByMonth'=>$langs->trans("NbAddedAutomatically"));
 $tabhelp[29] = array('code'=>$langs->trans("EnterAnyCode"), 'percent'=>$langs->trans("OpportunityPercent"), 'position'=>$langs->trans("PositionIntoComboList"));
 $tabhelp[30] = array('code'=>$langs->trans("EnterAnyCode"), 'name'=>$langs->trans("LabelName"), 'paper_size'=>$langs->trans("LabelPaperSize"));
 //$tabhelp[31] = array('pcg_version'=>$langs->trans("EnterAnyCode"));
@@ -568,8 +568,8 @@ $tabhelp[43] = array('code'=>$langs->trans("EnterAnyCode"));
 // Table to store complete informations (will replace all other table). Key is table name.
 $tabcomplete = array(
 	'c_forme_juridique'=>array('picto'=>'company'),
-	'c_departements'=>array('picto'=>'country'),
-	'c_regions'=>array('picto'=>'country'),
+	'c_departements'=>array('picto'=>'state'),
+	'c_regions'=>array('picto'=>'region'),
 	'c_country'=>array('picto'=>'country'),
 	'c_civility'=>array('picto'=>'contact'),
 	'c_actioncomm'=>array('picto'=>'action'),
@@ -608,7 +608,7 @@ $tabcomplete = array(
 	'c_prospectcontactlevel'=>array('picto'=>'company'),
 	'c_stcommcontact'=>array('picto'=>'company'),
 	'c_product_nature'=>array('picto'=>'product'),
-	'c_productbatch_qcstatus'=>array('picto'=>'batch'),
+	'c_productbatch_qcstatus'=>array('picto'=>'lot'),
 
 );
 
@@ -871,8 +871,8 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 
 			if ($value == 'price' || preg_match('/^amount/i', $value)) {
 				$_POST[$keycode] = price2num(GETPOST($keycode), 'MU');
-			} elseif ($value == 'taux' || $value == 'localtax1' || $value == 'localtax2') {
-				$_POST[$keycode] = price2num(GETPOST($keycode), 8);
+			} elseif ($value == 'taux' || $value == 'localtax1') {
+				$_POST[$keycode] = price2num(GETPOST($keycode), 8);	// Note that localtax2 can be a list of rates separated by coma like X:Y:Z
 			} elseif ($value == 'entity') {
 				$_POST[$keycode] = getEntity($tabname[$id]);
 			}
@@ -882,12 +882,12 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 			}
 
 			if ($keycode == 'sortorder') {		// For column name 'sortorder', we use the field name 'position'
-				$sql .= "'".(int) GETPOST('position', 'int')."'";
+				$sql .= (int) GETPOST('position', 'int');
 			} elseif ($_POST[$keycode] == '' && !($keycode == 'code' && $id == 10)) {
 				$sql .= "null"; // For vat, we want/accept code = ''
 			} elseif ($keycode == 'content') {
 				$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
-			} elseif (in_array($keycode, array('joinfile', 'private', 'position', 'scale'))) {
+			} elseif (in_array($keycode, array('joinfile', 'private', 'pos', 'position', 'scale', 'use_default'))) {
 				$sql .= (int) GETPOST($keycode, 'int');
 			} else {
 				$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
@@ -898,8 +898,8 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 		$sql .= ",1)";
 
 		dol_syslog("actionadd", LOG_DEBUG);
-		$result = $db->query($sql);
-		if ($result) {	// Add is ok
+		$resql = $db->query($sql);
+		if ($resql) {	// Add is ok
 			setEventMessages($langs->transnoentities("RecordCreatedSuccessfully"), null, 'mesgs');
 
 			// Clean $_POST array, we keep only id of dictionary
@@ -940,8 +940,8 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 
 			if ($field == 'price' || preg_match('/^amount/i', $field)) {
 				$_POST[$keycode] = price2num(GETPOST($keycode), 'MU');
-			} elseif ($field == 'taux' || $field == 'localtax1' || $field == 'localtax2') {
-				$_POST[$keycode] = price2num(GETPOST($keycode), 8);
+			} elseif ($field == 'taux' || $field == 'localtax1') {
+				$_POST[$keycode] = price2num(GETPOST($keycode), 8);	// Note that localtax2 can be a list of rates separated by coma like X:Y:Z
 			} elseif ($field == 'entity') {
 				$_POST[$keycode] = getEntity($tabname[$id]);
 			}
@@ -956,7 +956,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 				$sql .= "null"; // For vat, we want/accept code = ''
 			} elseif ($keycode == 'content') {
 				$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
-			} elseif (in_array($keycode, array('private', 'position', 'scale'))) {
+			} elseif (in_array($keycode, array('joinfile', 'private', 'pos', 'position', 'scale', 'use_default'))) {
 				$sql .= (int) GETPOST($keycode, 'int');
 			} else {
 				$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
@@ -970,7 +970,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 			$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
 		}
 		if (in_array('entity', $listfieldmodify)) {
-			$sql .= " AND entity = '".getEntity($tabname[$id])."'";
+			$sql .= " AND entity = ".((int) getEntity($tabname[$id], 0));
 		}
 
 		dol_syslog("actionmodify", LOG_DEBUG);
@@ -1234,7 +1234,7 @@ if ($id) {
 			$class = '';
 
 			if ($value == 'pos') {
-				$valuetoshow = $langs->trans("Position"); $class = 'maxwidth100';
+				$valuetoshow = $langs->trans("Position"); $class = 'right';
 			}
 			if ($value == 'source') {
 				$valuetoshow = $langs->trans("Contact");
@@ -1254,13 +1254,13 @@ if ($id) {
 				$valuetoshow = $langs->trans("UseLocalTax")." 2"; $class = "center"; $sortable = 0;
 			}
 			if ($value == 'localtax1') {
-				$valuetoshow = $langs->trans("Rate")." 2"; $class = "center";
+				$valuetoshow = $langs->trans("RateOfTaxN", '2'); $class = "center";
 			}
 			if ($value == 'localtax2_type') {
 				$valuetoshow = $langs->trans("UseLocalTax")." 3"; $class = "center"; $sortable = 0;
 			}
 			if ($value == 'localtax2') {
-				$valuetoshow = $langs->trans("Rate")." 3"; $class = "center";
+				$valuetoshow = $langs->trans("RateOfTaxN", '3'); $class = "center";
 			}
 			if ($value == 'organization') {
 				$valuetoshow = $langs->trans("Organization");
@@ -1389,7 +1389,7 @@ if ($id) {
 			if ($value == 'delay') {
 				$valuetoshow = $langs->trans("NoticePeriod");
 			}
-			if ($value == 'newbymonth') {
+			if ($value == 'newByMonth') {
 				$valuetoshow = $langs->trans("NewByMonth");
 			}
 			if ($value == 'fk_tva') {
@@ -1598,17 +1598,18 @@ if ($id) {
 				}
 				$cssprefix = 'center ';
 			}
+
 			if ($value == 'localtax1_type') {
 				$valuetoshow = $langs->trans("UseLocalTax")." 2"; $cssprefix = "center "; $sortable = 0;
 			}
 			if ($value == 'localtax1') {
-				$valuetoshow = $langs->trans("Rate")." 2"; $cssprefix = "center "; $sortable = 0;
+				$valuetoshow = $langs->trans("RateOfTaxN", '2'); $cssprefix = "center "; $sortable = 0;
 			}
 			if ($value == 'localtax2_type') {
 				$valuetoshow = $langs->trans("UseLocalTax")." 3"; $cssprefix = "center "; $sortable = 0;
 			}
 			if ($value == 'localtax2') {
-				$valuetoshow = $langs->trans("Rate")." 3"; $cssprefix = "center "; $sortable = 0;
+				$valuetoshow = $langs->trans("RateOfTaxN", '3'); $cssprefix = "center "; $sortable = 0;
 			}
 			if ($value == 'organization') {
 				$valuetoshow = $langs->trans("Organization");
@@ -1622,11 +1623,8 @@ if ($id) {
 			if ($value == 'code') {
 				$valuetoshow = $langs->trans("Code");
 			}
-			if ($value == 'pos') {
-				$cssprefix = 'right '; $valuetoshow = $langs->trans("Position");
-			}
-			if ($value == 'position') {
-				$cssprefix = 'right '; $valuetoshow = $langs->trans("Position");
+			if (in_array($value, array('pos', 'position'))) {
+				$valuetoshow = $langs->trans("Position"); $cssprefix = 'right ';
 			}
 			if ($value == 'libelle' || $value == 'label') {
 				$valuetoshow = $langs->trans("Label");
@@ -1733,7 +1731,7 @@ if ($id) {
 			if ($value == 'delay') {
 				$valuetoshow = $langs->trans("NoticePeriod");
 			}
-			if ($value == 'newbymonth') {
+			if ($value == 'newByMonth') {
 				$valuetoshow = $langs->trans("NewByMonth");
 			}
 			if ($value == 'fk_tva') {
@@ -1991,7 +1989,7 @@ if ($id) {
 							if ($value == 'tracking') {
 								$class .= ' tdoverflowauto';
 							}
-							if ($value == 'position') {
+							if (in_array($value, array('pos', 'position'))) {
 								$class .= ' right';
 							}
 							if ($value == 'localtax1_type') {
@@ -2000,10 +1998,7 @@ if ($id) {
 							if ($value == 'localtax2_type') {
 								$class .= ' nowrap';
 							}
-							if ($value == 'pos') {
-								$class .= ' right';
-							}
-							if ($value == 'use_default') {
+							if (in_array($value, array('use_default', 'fk_parent'))) {
 								$class .= ' center';
 							}
 							if ($value == 'public') {
@@ -2376,7 +2371,10 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			if ($fieldlist[$field] == 'code') {
 				$class = 'maxwidth100';
 			}
-			if (in_array($fieldlist[$field], array('dayrule', 'day', 'month', 'year', 'pos', 'use_default', 'affect', 'delay', 'position', 'public', 'sortorder', 'sens', 'category_type'))) {
+			if (in_array($fieldlist[$field], array('pos', 'position'))) {
+				$classtd = 'right'; $class = 'maxwidth50 right';
+			}
+			if (in_array($fieldlist[$field], array('dayrule', 'day', 'month', 'year', 'use_default', 'affect', 'delay', 'public', 'sortorder', 'sens', 'category_type', 'fk_parent'))) {
 				$class = 'maxwidth50 center';
 			}
 			if (in_array($fieldlist[$field], array('use_default', 'public'))) {
@@ -2390,10 +2388,10 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			$transkey = '';
 			if (in_array($fieldlist[$field], array('label', 'libelle'))) {		// For label
 				// Special case for labels
-				if ($tabname == MAIN_DB_PREFIX.'c_civility') {
+				if ($tabname == MAIN_DB_PREFIX.'c_civility' && !empty($obj->code)) {
 					$transkey = "Civility".strtoupper($obj->code);
 				}
-				if ($tabname == MAIN_DB_PREFIX.'c_payment_term') {
+				if ($tabname == MAIN_DB_PREFIX.'c_payment_term' && !empty($obj->code)) {
 					$langs->load("bills");
 					$transkey = "PaymentConditionShort".strtoupper($obj->code);
 				}

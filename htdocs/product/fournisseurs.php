@@ -103,17 +103,19 @@ if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
 
-if (!$sortfield) {
-	$sortfield = "s.nom";
+if ($object->id > 0) {
+	if ($object->type == $object::TYPE_PRODUCT) {
+		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
+	}
+	if ($object->type == $object::TYPE_SERVICE) {
+		restrictedArea($user, 'service', $object->id, 'product&product', '', '');
+	}
+} else {
+	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
-if (!$sortorder) {
-	$sortorder = "ASC";
-}
-
-$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 
 /*
@@ -123,9 +125,6 @@ $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product
 if ($cancel) {
 	$action = '';
 }
-
-$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
-$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
 
 $parameters = array('socid'=>$socid, 'id_prod'=>$id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -383,7 +382,7 @@ if ($id > 0 || $ref) {
 			echo $formconfirm;
 		}
 
-		if ($action <> 'edit' && $action <> 're-edit') {
+		if ($action != 'edit' && $action != 're-edit') {
 			$head = product_prepare_head($object);
 			$titre = $langs->trans("CardProduct".$object->type);
 			$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
@@ -405,13 +404,23 @@ if ($id > 0 || $ref) {
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border tableforfield centpercent">';
 
+			// Type
+			if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
+				print '<tr><td class="">';
+				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
+				print '</td><td>';
+				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, 0, $typeformat);
+				print '</td></tr>';
+			}
+
 			// Cost price. Can be used for margin module for option "calculate margin on explicit cost price
 			print '<tr><td>';
 			$textdesc = $langs->trans("CostPriceDescription");
 			$textdesc .= "<br>".$langs->trans("CostPriceUsage");
 			$text = $form->textwithpicto($langs->trans("CostPrice"), $textdesc, 1, 'help', '');
 			print $form->editfieldkey($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
-			print '</td><td colspan="2">';
+			print '</td><td>';
 			print $form->editfieldval($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
 			print '</td></tr>';
 
@@ -426,7 +435,7 @@ if ($id > 0 || $ref) {
 
 			// Best buying Price
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("BuyingPriceMin").'</td>';
-			print '<td colspan="2">';
+			print '<td>';
 			$product_fourn = new ProductFournisseur($db);
 			if ($product_fourn->find_min_price_product_fournisseur($object->id) > 0) {
 				if ($product_fourn->product_fourn_price_id > 0) {
@@ -836,12 +845,13 @@ END;
 				print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</div>';
 
-				print '</form>';
+				print '</form>'."\n";
 			}
+
 
 			// Actions buttons
 
-			print "\n<div class=\"tabsAction\">\n";
+			print '<div class="tabsAction">'."\n";
 
 			if ($action != 'add_price' && $action != 'update_price') {
 				$parameters = array();
@@ -854,8 +864,7 @@ END;
 				}
 			}
 
-			print "\n</div>\n";
-			print '<br>';
+			print "</div>\n";
 
 			if ($user->rights->fournisseur->lire) { // Duplicate ? this check is already in the head of this file
 				$param = '';
@@ -1017,14 +1026,14 @@ END;
 
 						// Supplier
 						if (!empty($arrayfields['s.nom']['checked'])) {
-							print '<td class="tdoverflowmax200">'.$productfourn->getSocNomUrl(1, 'supplier').'</td>';
+							print '<td class="tdoverflowmax150">'.$productfourn->getSocNomUrl(1, 'supplier').'</td>';
 						}
 
 						// Supplier ref
 						if ($usercancreate) { // change required right here
-							print '<td class="left">'.$productfourn->getNomUrl().'</td>';
+							print '<td>'.$productfourn->getNomUrl().'</td>';
 						} else {
-							print '<td class="left">'.$productfourn->fourn_ref.'</td>';
+							print '<td>'.$productfourn->fourn_ref.'</td>';
 						}
 
 						// Availability

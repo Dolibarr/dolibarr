@@ -45,7 +45,7 @@ class FormCompany extends Form
 	 *    	Return list of labels (translated) of third parties type
 	 *
 	 *		@param	int		$mode		0=Return id+label, 1=Return code+label
-	 *      @param  string	$filter     Add a SQL filter to select
+	 *      @param  string	$filter     Add a SQL filter to select. Data must not come from user input.
 	 *    	@return array      			Array of types
 	 */
 	public function typent_array($mode = 0, $filter = '')
@@ -96,7 +96,7 @@ class FormCompany extends Form
 	 *	Renvoie la liste des types d'effectifs possibles (pas de traduction car nombre)
 	 *
 	 *	@param	int		$mode		0=renvoi id+libelle, 1=renvoi code+libelle
-	 *	@param  string	$filter     Add a SQL filter to select
+	 *	@param  string	$filter     Add a SQL filter to select. Data must not come from user input.
 	 *  @return array				Array of types d'effectifs
 	 */
 	public function effectif_array($mode = 0, $filter = '')
@@ -509,7 +509,7 @@ class FormCompany extends Form
 	 *
 	 *    @param	string		$selected        	Preselected code of juridical type
 	 *    @param    int			$country_codeid     0=list for all countries, otherwise list only country requested
-	 *    @param    string		$filter          	Add a SQL filter on list
+	 *    @param    string		$filter          	Add a SQL filter on list. Data must not come from user input.
 	 *    @param	string		$htmlname			HTML name of select
 	 *    @param	string		$morecss			More CSS
 	 *    @return	string							String with HTML select

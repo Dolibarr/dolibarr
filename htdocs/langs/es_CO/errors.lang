@@ -92,7 +92,6 @@ ErrorCantReadFile=Error al leer el archivo '%s'
 ErrorCantReadDir=No se pudo leer el directorio '%s'
 ErrorBadLoginPassword=Valor incorrecto para inicio de sesión o contraseña
 ErrorLoginDisabled=Tu cuenta ha sido inhabilitada
-ErrorFailedToRunExternalCommand=No se pudo ejecutar el comando externo. Compruebe que esté disponible y que su servidor PHP pueda ejecutar. Si PHP <b> Safe Mode </b> está habilitado, verifique que el comando esté dentro de un directorio definido por el parámetro <b> safe_mode_exec_dir </b>.
 ErrorFailedToChangePassword=No se pudo cambiar la contraseña
 ErrorLoginDoesNotExists=No se pudo encontrar el usuario con inicio de sesión <b> %s </b>.
 ErrorLoginHasNoEmail=Este usuario no tiene dirección de correo electrónico. Proceso abortado.

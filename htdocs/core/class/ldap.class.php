@@ -22,6 +22,10 @@
 /**
  *	\file 		htdocs/core/class/ldap.class.php
  *	\brief 		File of class to manage LDAP features
+ *
+ *  Note:
+ *  LDAP_ESCAPE_FILTER is to escape char  array('\\', '*', '(', ')', "\x00")
+ *  LDAP_ESCAPE_DN is to escape char  array('\\', ',', '=', '+', '<', '>', ';', '"', '#')
  */
 
 /**
@@ -132,6 +136,7 @@ class Ldap
 		$this->ldapProtocolVersion = $conf->global->LDAP_SERVER_PROTOCOLVERSION;
 		$this->dn                  = $conf->global->LDAP_SERVER_DN;
 		$this->serverType          = $conf->global->LDAP_SERVER_TYPE;
+
 		$this->domain              = $conf->global->LDAP_SERVER_DN;
 		$this->searchUser          = $conf->global->LDAP_ADMIN_DN;
 		$this->searchPassword      = $conf->global->LDAP_ADMIN_PASS;
@@ -932,7 +937,7 @@ class Ldap
 	 * 	Returns an array containing a details or list of LDAP record(s)
 	 * 	ldapsearch -LLLx -hlocalhost -Dcn=admin,dc=parinux,dc=org -w password -b "ou=adherents,ou=people,dc=parinux,dc=org" userPassword
 	 *
-	 *	@param	string	$search			 	Value of fiel to search, '*' for all. Not used if $activefilter is set.
+	 *	@param	string	$search			 	Value of field to search, '*' for all. Not used if $activefilter is set.
 	 *	@param	string	$userDn			 	DN (Ex: ou=adherents,ou=people,dc=parinux,dc=org)
 	 *	@param	string	$useridentifier 	Name of key field (Ex: uid)
 	 *	@param	array	$attributeArray 	Array of fields required. Note this array must also contains field $useridentifier (Ex: sn,userPassword)
@@ -953,7 +958,7 @@ class Ldap
 		}
 
 		// Define filter
-		if (!empty($activefilter)) {
+		if (!empty($activefilter)) {	// Use a predefined trusted filter (defined into setup by admin).
 			if (((string) $activefilter == '1' || (string) $activefilter == 'user') && $this->filter) {
 				$filter = '('.$this->filter.')';
 			} elseif (((string) $activefilter == 'group') && $this->filtergroup ) {
@@ -961,11 +966,11 @@ class Ldap
 			} elseif (((string) $activefilter == 'member') && $this->filter) {
 				$filter = '('.$this->filtermember.')';
 			} else {
-				// If this->filter is empty, make fiter on * (all)
-				$filter = '('.$useridentifier.'=*)';
+				// If this->filter/this->filtergroup is empty, make fiter on * (all)
+				$filter = '('.ldap_escape($useridentifier, '', LDAP_ESCAPE_FILTER).'=*)';
 			}
-		} else {
-			$filter = '('.$useridentifier.'='.$search.')';
+		} else {						// Use a filter forged using the $search value
+			$filter = '('.ldap_escape($useridentifier, '', LDAP_ESCAPE_FILTER).'='.ldap_escape($search, '', LDAP_ESCAPE_FILTER).')';
 		}
 
 		if (is_array($attributeArray)) {

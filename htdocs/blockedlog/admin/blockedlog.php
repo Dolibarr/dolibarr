@@ -79,7 +79,10 @@ $form = new Form($db);
 $block_static = new BlockedLog($db);
 $block_static->loadTrackedEvents();
 
-llxHeader('', $langs->trans("BlockedLogSetup"));
+$title = $langs->trans("BlockedLogSetup");
+$help_url="EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
+
+llxHeader('', $title, $help_url);
 
 $linkback = '';
 if ($withtab) {

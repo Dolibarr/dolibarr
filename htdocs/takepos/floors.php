@@ -70,7 +70,7 @@ if (empty($user->rights->takepos->run)) {
  */
 
 if ($action == "getTables") {
-	$sql = "SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables where floor=".$floor;
+	$sql = "SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables where floor = ".((int) $floor);
 	$resql = $db->query($sql);
 	$rows = array();
 	while ($row = $db->fetch_array($resql)) {
@@ -154,10 +154,10 @@ function updateplace(idplace, left, top) {
 	console.log("updateplace idplace="+idplace+" left="+left+" top="+top);
 	$.ajax({
 		type: "POST",
-		url: "floors.php",
-		data: { action: "update", left: left, top: top, place: idplace }
-		}).done(function( msg ) {
-		window.location.href='floors.php?mode=edit&floor=<?php echo $floor; ?>';
+		url: "<?php echo DOL_URL_ROOT.'/takepos/floors.php'; ?>",
+		data: { action: "update", left: left, top: top, place: idplace, token: '<?php echo currentToken(); ?>' }
+	}).done(function( msg ) {
+		window.location.href='floors.php?mode=edit&floor=<?php echo urlencode($floor); ?>';
 	});
 }
 
@@ -166,12 +166,12 @@ function updatename(rowid) {
 	console.log("updatename rowid="+rowid+" after="+after);
 	$.ajax({
 		type: "POST",
-		url: "floors.php",
-		data: { action: "updatename", place: rowid, newname: after }
-		}).done(function( msg ) {
-		window.location.href='floors.php?mode=edit&floor=<?php echo $floor; ?>';
-		});
-	}
+		url: "<?php echo DOL_URL_ROOT.'/takepos/floors.php'; ?>",
+		data: { action: "updatename", place: rowid, newname: after, token: '<?php echo currentToken(); ?>' }
+	}).done(function( msg ) {
+		window.location.href='floors.php?mode=edit&floor=<?php echo urlencode($floor); ?>';
+	});
+}
 
 function LoadPlace(place){
 	parent.location.href='index.php?place='+place;

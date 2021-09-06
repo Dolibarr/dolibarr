@@ -258,7 +258,7 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('add', 'alpha')) {
 
 				$sendto = GETPOST('email', 'alpha');
 
-				$from = $conf->global->MAIN_INFO_SOCIETE_NOM.'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
+				$from = $conf->global->MAIN_INFO_SOCIETE_NOM.' <'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
 				$replyto = $from;
 				$sendtocc = '';
 				$deliveryreceipt = 0;
@@ -298,7 +298,6 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('add', 'alpha')) {
 					}
 					$message_admin .= '</ul>';
 
-					$message_admin .= '</ul>';
 					$message_admin .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
 					$message_admin .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'" rel="nofollow noopener">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
 
@@ -390,7 +389,7 @@ if ($action != "infos_success") {
 		print '<div class="error">';
 		print $langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketEmailNotificationFrom")).'<br>';
 		print $langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentities("Ticket"));
-		print '<div>';
+		print '</div>';
 	} else {
 		print '<div class="info marginleftonly marginrightonly">'.$langs->trans('TicketPublicInfoCreateTicket').'</div>';
 		$formticket->showForm(0, 'edit', 1);

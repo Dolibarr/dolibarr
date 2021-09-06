@@ -129,6 +129,7 @@ ClosedByLogin=关闭的登陆账户
 FileWasRemoved=档案%s被删除
 DirWasRemoved=目录%s被删除
 FeatureNotYetAvailable=在当前版本中还没有可用的功能
+FeatureNotAvailableOnDevicesWithoutMouse=Feature not available on devices without mouse
 FeaturesSupported=支持的功能
 Width=宽
 Height=高
@@ -263,7 +264,7 @@ ContactCreatedByEmailCollector=Contact/address created by email collector from e
 ProjectCreatedByEmailCollector=Project created by email collector from email MSGID %s
 TicketCreatedByEmailCollector=Ticket created by email collector from email MSGID %s
 OpeningHoursFormatDesc=Use a - to separate opening and closing hours.<br>Use a space to enter different ranges.<br>Example: 8-12 14-18
-PrefixSession=Prefix for session ID
+SuffixSessionName=Suffix for session name
 
 ##### Export #####
 ExportsArea=导出区

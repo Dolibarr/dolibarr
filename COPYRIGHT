@@ -1,13 +1,24 @@
 
-License
--------
+Copyright and license
+----------------------
 
-Dolibarr is released under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 3 of the License,
-or (at your option) any later version (GPL-3+).
-More information: https://www.gnu.org/licenses/gpl-3.0.txt
+The Dolibarr software as a whole is distributed under the GNU General Public License as published by the Free Software Foundation;
+either version 3 of the License, or (at your option) any later version (GPL-3+). More information: https://www.gnu.org/licenses/gpl-3.0.txt.
+A copy of this license is available in the COPYING file.
+Dolibarr depends on third-party components and code snippets released under their own license (obviously, all compatible with the one of Dolibarr).
+These dependencies are listed in the bottom of this file.
 
-Dolibarr uses some external libraries released under different licenses. This is compatibility summary:
+
+The Dolibarr images resources (available in the doc directory) is distributed under the Creative Commons Attribution 4.0 International license (CC BY 4.0).
+
+
+The name Dolibarr is a trademark initially registered by Laurent Destailleur and ceased to the Dolibarr foundation. You can use the name Dolibarr
+for your own need as long as you follow the rules defined on the page https://wiki.dolibarr.org/index.php/Rules_to_use_the_brand_name_%22Dolibarr%22   
+The use of the name DoliStore is also restricted to the same rules defined on https://wiki.dolibarr.org/index.php/Rules_to_use_the_brand_name_%22Dolibarr%22
+
+
+
+Licence of dependencies of third-party components used by Dolibarr (all compatible with the Licence of Dolibarr):
 
 Component              Version       License                     GPL Compatible  Usage
 -------------------------------------------------------------------------------------
@@ -28,7 +39,7 @@ php-iban               1.4.7         LGPL-3+                     Yes            
 PHPoAuthLib            0.8.2         MIT License                 Yes             Library to provide oauth1 and oauth2 to different service
 PHPPrintIPP            1.3           GPL-2+                      Yes             Library to send print IPP requests
 PSR/Logs               1.0                                                       Library for logs (used by DebugBar)
-PSR/simple-cache        ?            MIT License                 Yes             Library for cache (used by PHPSpreadSheet)
+PSR/simple-cache       ?             MIT License                 Yes             Library for cache (used by PHPSpreadSheet)
 Restler                3.1.1         LGPL-3+                     Yes             Library to develop REST Web services (+ swagger-ui js lib into dir explorer)
 Sabre                  3.2.2         BSD                         Yes             DAV support
 Swift Mailer           5.4.2-DEV     MIT License                 Yes             Comprehensive mailing tools for PHP
@@ -63,11 +74,10 @@ Font libraries:
 Fontawesome            5.13          Font Awesome Free Licence   Yes
 
 
-For licenses compatibility informations:
-https://www.gnu.org/licenses/licenses.en.html
+For more licenses compatibility informations: https://www.gnu.org/licenses/licenses.en.html
 
 
-Copyright / Authors
+Authors
 -------------------
 
 See page https://github.com/Dolibarr/dolibarr/graphs/contributors

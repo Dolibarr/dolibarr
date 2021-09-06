@@ -149,7 +149,7 @@ if ($massaction == 'presend') {
 	$formmail->withtofree = empty($liste) ? 1 : 0;
 	$formmail->withtocc = 1;
 	$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
-	$formmail->withtopic = $langs->transnoentities($topicmail, '__REF__', '__REFCLIENT__');
+	$formmail->withtopic = $langs->transnoentities($topicmail, '__REF__', '__REF_CLIENT__');
 	$formmail->withfile = 1;
 	// $formmail->withfile = 2; Not yet supported in mass action
 	$formmail->withmaindocfile = 1; // Add a checkbox "Attach also main document"
@@ -165,7 +165,7 @@ if ($massaction == 'presend') {
 	$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $object);
 
 	$substitutionarray['__EMAIL__'] = $sendto;
-	$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$object->thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
+	$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.urlencode($object->thirdparty->tag).'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
 	$substitutionarray['__PERSONALIZED__'] = ''; // deprecated
 	$substitutionarray['__CONTACTCIVNAME__'] = '';
 
@@ -197,7 +197,7 @@ if ($massaction == 'presend') {
 // Allow Pre-Mass-Action hook (eg for confirmation dialog)
 $parameters = array(
 	'toselect' => $toselect,
-	'uploaddir' => $uploaddir
+	'uploaddir' => isset($uploaddir) ? $uploaddir : null
 );
 
 $reshook = $hookmanager->executeHooks('doPreMassActions', $parameters, $object, $action);

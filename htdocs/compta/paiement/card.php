@@ -392,7 +392,7 @@ if ($resql) {
 			print "</td>\n";
 
 			// Third party
-			print '<td>';
+			print '<td class="tdoverflowmax150">';
 			print $thirdpartystatic->getNomUrl(1);
 			print '</td>';
 

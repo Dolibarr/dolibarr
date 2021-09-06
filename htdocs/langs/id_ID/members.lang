@@ -213,3 +213,5 @@ SendReminderForExpiredSubscription=Kirim pengingat melalui email kepada anggota 
 MembershipPaid=Keanggotaan dibayar untuk periode saat ini (hingga %s)
 YouMayFindYourInvoiceInThisEmail=Anda dapat menemukan faktur Anda terlampir pada email ini
 XMembersClosed=%s anggota ditutup
+XExternalUserCreated=%s external user(s) created
+ForceMemberNature=Force member nature (Individual or Corporation)

@@ -89,6 +89,8 @@ $socid = GETPOST('socid', 'int');
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 restrictedArea($user, 'projet', $object->id, 'projet&project');
 
+$permissiondellink = $user->rights->projet->creer;	// Used by the include of actions_dellink.inc.php
+
 
 /*
  * Actions
@@ -121,6 +123,8 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
+
 	if ($action == 'add' && $user->rights->projet->creer) {
 		$error = 0;
 		if (!GETPOST('ref')) {
@@ -132,9 +136,11 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (GETPOST('opp_amount') != '' && !(GETPOST('opp_status') > 0)) {
-			$error++;
-			setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			if (GETPOST('opp_amount') != '' && !(GETPOST('opp_status') > 0)) {
+				$error++;
+				setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+			}
 		}
 
 		// Create with status validated immediatly
@@ -270,9 +276,11 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($object->opp_amount && ($object->opp_status <= 0)) {
-			$error++;
-			setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			if ($object->opp_amount && ($object->opp_status <= 0)) {
+				$error++;
+				setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+			}
 		}
 
 		if (!$error) {
@@ -453,7 +461,7 @@ llxHeader("", $title, $help_url);
 
 $titleboth = $langs->trans("LeadsOrProjects");
 $titlenew = $langs->trans("NewLeadOrProject"); // Leads and opportunities by default
-if ($conf->global->PROJECT_USE_OPPORTUNITIES == 0) {
+if (empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 	$titleboth = $langs->trans("Projects");
 	$titlenew = $langs->trans("NewProject");
 }
@@ -556,9 +564,9 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			print '<br>';
 		}
 		if (!empty($conf->eventorganization->enabled)) {
-			print '<input type="checkbox" name="usage_organize_event"'.(GETPOST('usage_organize_event', 'alpha')!=''?' checked="checked"':'').'"> ';
+			print '<input type="checkbox" id="usage_organize_event" name="usage_organize_event"'.(GETPOST('usage_organize_event', 'alpha')!=''?' checked="checked"':'').'"> ';
 			$htmltext = $langs->trans("EventOrganizationDescriptionLong");
-			print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
+			print '<label for="usage_organize_event">'.$form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext).'</label>';
 		}
 		print '</td>';
 		print '</tr>';
@@ -822,7 +830,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 				print '<input type="checkbox" id="usage_opportunity" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
 				$htmltext = $langs->trans("ProjectFollowOpportunity");
-				print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+				print '<label for="usage_opportunity">'.$form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext).'</label>';
 				print '<script>';
 				print '$( document ).ready(function() {
 				jQuery("#usage_opportunity").change(function() {
@@ -839,21 +847,21 @@ if ($action == 'create' && $user->rights->projet->creer) {
 				print '<br>';
 			}
 			if (empty($conf->global->PROJECT_HIDE_TASKS)) {
-				print '<input type="checkbox" name="usage_task"' . (GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')) . '"> ';
+				print '<input type="checkbox" id="usage_task" name="usage_task"' . (GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')) . '"> ';
 				$htmltext = $langs->trans("ProjectFollowTasks");
-				print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+				print '<label for="usage_task">'.$form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext).'</label>';
 				print '<br>';
 			}
 			if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
-				print '<input type="checkbox" name="usage_bill_time"' . (GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')) . '"> ';
+				print '<input type="checkbox" id="usage_bill_time" name="usage_bill_time"' . (GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')) . '"> ';
 				$htmltext = $langs->trans("ProjectBillTimeDescription");
-				print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+				print '<label for="usage_bill_time">'.$form->textwithpicto($langs->trans("BillTime"), $htmltext).'</label>';
 				print '<br>';
 			}
 			if (!empty($conf->eventorganization->enabled)) {
-				print '<input type="checkbox" name="usage_organize_event"'. (GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')) . '"> ';
+				print '<input type="checkbox" id="usage_organize_event" name="usage_organize_event"'. (GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')) . '"> ';
 				$htmltext = $langs->trans("EventOrganizationDescriptionLong");
-				print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
+				print '<label for="usage_organize_event">'.$form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext).'</label>';
 			}
 			print '</td></tr>';
 		}

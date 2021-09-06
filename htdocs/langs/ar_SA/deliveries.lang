@@ -2,7 +2,7 @@
 Delivery=توصيل
 DeliveryRef=معرف التسليم
 DeliveryCard=بطاقة استلام
-DeliveryOrder=Delivery receipt
+DeliveryOrder=إيصال التسليم
 DeliveryDate=تاريخ التسليم او الوصول
 CreateDeliveryOrder=إنشاء إيصال الاستلام
 DeliveryStateSaved=تم حفظ حالة التسليم
@@ -18,14 +18,15 @@ StatusDeliveryCanceled=ألغيت
 StatusDeliveryDraft=مسودة
 StatusDeliveryValidated=تم الاستلام
 # merou PDF model
-NameAndSignature=Name and Signature:
+NameAndSignature=الاسم والتوقيع :
 ToAndDate=إلى ___________________________________ في ____ / _____ / __________
 GoodStatusDeclaration=تلقيت البضائع أعلاه في حالة جيدة،
-Deliverer=Deliverer:
+Deliverer=الموصل:
 Sender=مرسل
 Recipient=مستلم
 ErrorStockIsNotEnough=ليس هناك مخزون كاف
 Shippable=قابل للشحن
 NonShippable=غير قابل للشحن
+ShowShippableStatus=إظهار علامة قابل للشحن
 ShowReceiving=عرض إيصال الاستلام
-NonExistentOrder=Nonexistent order
+NonExistentOrder=امر غير موجود

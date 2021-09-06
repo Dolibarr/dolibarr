@@ -195,7 +195,7 @@ class Commande extends CommonOrder
 
 	/**
 	 * @var int	Date expected for delivery
-	 * @see delivery_date
+	 * @see $delivery_date
 	 * @deprecated
 	 */
 	public $date_livraison;
@@ -344,8 +344,8 @@ class Commande extends CommonOrder
 		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'visible'=>-1, 'position'=>270),
 		'module_source' =>array('type'=>'varchar(32)', 'label'=>'POSModule', 'enabled'=>1, 'visible'=>-1, 'position'=>275),
 		'pos_source' =>array('type'=>'varchar(32)', 'label'=>'POSTerminal', 'enabled'=>1, 'visible'=>-1, 'position'=>280),
+		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>400),
 		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>-1, 'position'=>500),
-		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -493,8 +493,8 @@ class Commande extends CommonOrder
 		$sql .= " SET ref = '".$this->db->escape($num)."',";
 		$sql .= " fk_statut = ".self::STATUS_VALIDATED.",";
 		$sql .= " date_valid='".$this->db->idate($now)."',";
-		$sql .= " fk_user_valid = ".$user->id;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " fk_user_valid = ".((int) $user->id);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::valid", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -624,7 +624,7 @@ class Commande extends CommonOrder
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
 		$sql .= " SET fk_statut = ".self::STATUS_DRAFT;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		if ($this->db->query($sql)) {
 			if (!$error) {
@@ -807,7 +807,7 @@ class Commande extends CommonOrder
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
 		$sql .= " SET fk_statut = ".self::STATUS_CANCELED;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$sql .= " AND fk_statut = ".self::STATUS_VALIDATED;
 
 		dol_syslog(get_class($this)."::cancel", LOG_DEBUG);
@@ -1368,7 +1368,7 @@ class Commande extends CommonOrder
 		}
 		// Possibility to add external linked objects with hooks
 		$this->linked_objects[$this->origin] = $this->origin_id;
-		if (is_array($object->other_linked_objects) && !empty($object->other_linked_objects)) {
+		if (isset($object->other_linked_objects) && is_array($object->other_linked_objects) && !empty($object->other_linked_objects)) {
 			$this->linked_objects = array_merge($this->linked_objects, $object->other_linked_objects);
 		}
 
@@ -1518,7 +1518,7 @@ class Commande extends CommonOrder
 			$this->db->begin();
 
 			$product_type = $type;
-			if (!empty($fk_product)) {
+			if (!empty($fk_product) && $fk_product > 0) {
 				$product = new Product($this->db);
 				$result = $product->fetch($fk_product);
 				$product_type = $product->type;
@@ -2347,6 +2347,10 @@ class Commande extends CommonOrder
 					// For triggers
 					$line->fetch($lineid);
 
+					// Memorize previous line for triggers
+					$staticline = clone $line;
+					$line->oldline = $staticline;
+
 					if ($line->delete($user) > 0) {
 						$result = $this->update_price(1);
 
@@ -2539,7 +2543,7 @@ class Commande extends CommonOrder
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
 			$sql .= " SET date_commande = ".($date ? "'".$this->db->idate($date)."'" : 'null');
-			$sql .= " WHERE rowid = ".$this->id." AND fk_statut = ".self::STATUS_DRAFT;
+			$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut = ".((int) self::STATUS_DRAFT);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2611,7 +2615,7 @@ class Commande extends CommonOrder
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
 			$sql .= " SET date_livraison = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2684,7 +2688,7 @@ class Commande extends CommonOrder
 		$sql .= " WHERE c.entity IN (".getEntity('commande').")";
 		$sql .= " AND c.fk_soc = s.rowid";
 		if (!$user->rights->societe->client->voir && !$socid) { //restriction
-			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid) {
 			$sql .= " AND s.rowid = ".((int) $socid);
@@ -2693,7 +2697,7 @@ class Commande extends CommonOrder
 			$sql .= " AND c.fk_statut = ".self::STATUS_DRAFT;
 		}
 		if (is_object($excluser)) {
-			$sql .= " AND c.fk_user_author <> ".$excluser->id;
+			$sql .= " AND c.fk_user_author <> ".((int) $excluser->id);
 		}
 		$sql .= $this->db->order($sortfield, $sortorder);
 		$sql .= $this->db->plimit($limit, $offset);
@@ -3391,8 +3395,8 @@ class Commande extends CommonOrder
 		// Delete extrafields of lines and lines
 		if (!$error && !empty($this->table_element_line)) {
 			$tabletodelete = $this->table_element_line;
-			$sqlef = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete."_extrafields WHERE fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id.")";
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id;
+			$sqlef = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete."_extrafields WHERE fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".((int) $this->id).")";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".((int) $this->id);
 			if (!$this->db->query($sqlef) || !$this->db->query($sql)) {
 				$error++;
 				$this->error = $this->db->lasterror();
@@ -3428,7 +3432,7 @@ class Commande extends CommonOrder
 
 		// Delete main record
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid = ".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid = ".((int) $this->id);
 			$res = $this->db->query($sql);
 			if (!$res) {
 				$error++;
@@ -3503,14 +3507,14 @@ class Commande extends CommonOrder
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
 		if (!$user->rights->societe->client->voir && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc";
-			$sql .= " WHERE sc.fk_user = ".$user->id;
+			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = " AND";
 		}
 		$sql .= $clause." c.entity IN (".getEntity('commande').")";
 		//$sql.= " AND c.fk_statut IN (1,2,3) AND c.facture = 0";
 		$sql .= " AND ((c.fk_statut IN (".self::STATUS_VALIDATED.",".self::STATUS_SHIPMENTONPROCESS.")) OR (c.fk_statut = ".self::STATUS_CLOSED." AND c.facture = 0))"; // If status is 2 and facture=1, it must be selected
 		if ($user->socid) {
-			$sql .= " AND c.fk_soc = ".$user->socid;
+			$sql .= " AND c.fk_soc = ".((int) $user->socid);
 		}
 
 		$resql = $this->db->query($sql);
@@ -3913,7 +3917,7 @@ class Commande extends CommonOrder
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON co.fk_soc = s.rowid";
 		if (!$user->rights->societe->client->voir && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-			$sql .= " WHERE sc.fk_user = ".$user->id;
+			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
 		}
 		$sql .= " ".$clause." co.entity IN (".getEntity('commande').")";
@@ -4010,7 +4014,7 @@ class Commande extends CommonOrder
 
 		$now = dol_now();
 
-		return max($this->date_commande, $this->date_livraison) < ($now - $conf->commande->client->warning_delay);
+		return max($this->date, $this->date_livraison) < ($now - $conf->commande->client->warning_delay);
 	}
 
 	/**
@@ -4127,7 +4131,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= ' cd.fk_unit,';
 		$sql .= ' cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc, p.tobatch as product_tobatch,';
-		$sql .= ' cd.date_start, cd.date_end';
+		$sql .= ' cd.date_start, cd.date_end, cd.vat_src_code';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
 		$sql .= ' WHERE cd.rowid = '.((int) $rowid);
@@ -4348,7 +4352,8 @@ class OrderLine extends CommonOrderLine
 
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring) {
-			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0) {
+			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product);
+			if ($result < 0) {
 				return $result;
 			} else {
 				$this->pa_ht = $result;
@@ -4384,7 +4389,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= " '".price2num($this->localtax2_tx)."',";
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql .= ' '.(!empty($this->fk_product) ? $this->fk_product : "null").',';
+		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? $this->fk_product : "null").',';
 		$sql .= " '".$this->db->escape($this->product_type)."',";
 		$sql .= " '".price2num($this->remise_percent)."',";
 		$sql .= " ".(price2num($this->subprice) !== '' ?price2num($this->subprice) : "null").",";
@@ -4525,7 +4530,8 @@ class OrderLine extends CommonOrderLine
 
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring) {
-			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0) {
+			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product);
+			if ($result < 0) {
 				return $result;
 			} else {
 				$this->pa_ht = $result;
@@ -4559,14 +4565,14 @@ class OrderLine extends CommonOrderLine
 		}
 		$sql .= " , fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? $this->fk_fournprice : "null");
 		$sql .= " , buy_price_ht='".price2num($this->pa_ht)."'";
-		$sql .= " , info_bits=".$this->info_bits;
-		$sql .= " , special_code=".$this->special_code;
+		$sql .= " , info_bits=".((int) $this->info_bits);
+		$sql .= " , special_code=".((int) $this->special_code);
 		$sql .= " , date_start=".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null");
 		$sql .= " , date_end=".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null");
 		$sql .= " , product_type=".$this->product_type;
 		$sql .= " , fk_parent_line=".(!empty($this->fk_parent_line) ? $this->fk_parent_line : "null");
 		if (!empty($this->rang)) {
-			$sql .= ", rang=".$this->rang;
+			$sql .= ", rang=".((int) $this->rang);
 		}
 		$sql .= " , fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
 
@@ -4576,7 +4582,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
 		$sql .= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
 
-		$sql .= " WHERE rowid = ".$this->rowid;
+		$sql .= " WHERE rowid = ".((int) $this->rowid);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -4643,7 +4649,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= ",total_localtax1='".price2num($this->total_localtax1)."'";
 		$sql .= ",total_localtax2='".price2num($this->total_localtax2)."'";
 		$sql .= ",total_ttc='".price2num($this->total_ttc)."'";
-		$sql .= " WHERE rowid = ".$this->rowid;
+		$sql .= " WHERE rowid = ".((int) $this->rowid);
 
 		dol_syslog("OrderLine::update_total", LOG_DEBUG);
 

@@ -48,9 +48,7 @@ $hash_algo = GETPOST('hash_algo', 'alpha');
 
 
 // Security check
-if (!empty($user->socid)) {
-	$socid = $user->socid;
-}
+// None.
 
 $now = dol_now();
 

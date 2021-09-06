@@ -51,7 +51,9 @@ $result = restrictedArea($user, 'supplier_proposal', $id);
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans('CommRequest'), 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur');
+$title = $langs->trans('CommRequest')." - ".$langs->trans('Info');
+$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
+llxHeader('', $title, $help_url);
 
 $object = new SupplierProposal($db);
 $object->fetch($id);

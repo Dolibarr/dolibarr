@@ -211,7 +211,7 @@ class DoliDBPgsql extends DoliDB
 				$line = preg_replace('/tinyint/i', 'smallint', $line);
 
 				// nuke unsigned
-				$line = preg_replace('/(int\w+|smallint)\s+unsigned/i', '\\1', $line);
+				$line = preg_replace('/(int\w+|smallint|bigint)\s+unsigned/i', '\\1', $line);
 
 				// blob -> text
 				$line = preg_replace('/\w*blob/i', 'text', $line);
@@ -757,6 +757,7 @@ class DoliDBPgsql extends DoliDB
 
 			$errorlabel = pg_last_error($this->db);
 			$errorcode = '';
+			$reg = array();
 			if (preg_match('/: *([0-9P]+):/', $errorlabel, $reg)) {
 				$errorcode = $reg[1];
 				if (isset($errorcode_map[$errorcode])) {

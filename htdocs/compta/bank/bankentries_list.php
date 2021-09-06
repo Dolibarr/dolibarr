@@ -1181,7 +1181,7 @@ if ($resql) {
 			$sqlforbalance .= " ".MAIN_DB_PREFIX."bank as b";
 			$sqlforbalance .= " WHERE b.fk_account = ba.rowid";
 			$sqlforbalance .= " AND ba.entity IN (".getEntity('bank_account').")";
-			$sqlforbalance .= " AND b.fk_account = ".$search_account;
+			$sqlforbalance .= " AND b.fk_account = ".((int) $search_account);
 			$sqlforbalance .= " AND (b.datev < '".$db->idate($db->jdate($objp->dv))."' OR (b.datev = '".$db->idate($db->jdate($objp->dv))."' AND (b.dateo < '".$db->idate($db->jdate($objp->do))."' OR (b.dateo = '".$db->idate($db->jdate($objp->do))."' AND b.rowid < ".$objp->rowid."))))";
 			$resqlforbalance = $db->query($sqlforbalance);
 			//print $sqlforbalance;
@@ -1346,7 +1346,7 @@ if ($resql) {
 			print '<td class="tdoverflowmax300"'.($titletoshow ? ' title="'.dol_escape_htmltag($titletoshow).'"' : '').'>';
 			print $labeltoshow;	// Already escaped
 
-			// Add links after description
+			// Add info about links after description
 			$cachebankaccount = array();
 			foreach ($links as $key => $val) {
 				print '<!-- '.$links[$key]['type'].' -->';
@@ -1424,6 +1424,7 @@ if ($resql) {
 				} elseif ($links[$key]['type'] == 'sc') {
 				} elseif ($links[$key]['type'] == 'vat') {
 				} elseif ($links[$key]['type'] == 'salary') {
+					// Information is already shown using the payment_salary link. No need of this link.
 				} else {
 					// Show link with label $links[$key]['label']
 					if (!empty($objp->label) && !empty($links[$key]['label'])) {
@@ -1530,15 +1531,21 @@ if ($resql) {
 			}
 
 			if ($companylinked_id) {
-				// TODO Add a cache of loaded companies here
+				// TODO Add a cache of loaded companies here ?
 				$companystatic->fetch($companylinked_id);
 				print $companystatic->getNomUrl(1);
 			} elseif ($userlinked_id &&
 					(($type_link == 'payment_salary' && !empty($user->rights->salaries->read))
 						|| ($type_link == 'payment_sc' && !empty($user->rights->tax->charges->lire)))) {
-				// TODO Add a cache of loaded users here
-				$userstatic->fetch($userlinked_id);
-				print $userstatic->getNomUrl(1);
+				// Get object user from cache or load it
+				if (!empty($conf->cache['user'][$userlinked_id])) {
+					$tmpuser = $conf->cache['user'][$userlinked_id];
+				} else {
+					$tmpuser = new User($db);
+					$tmpuser->fetch($userlinked_id);
+					$conf->cache['user'][$userlinked_id] = $tmpuser;
+				}
+				print $tmpuser->getNomUrl(1);
 			} else {
 				print '&nbsp;';
 			}

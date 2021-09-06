@@ -137,7 +137,9 @@ $form = new Form($db);
 
 $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
 
-llxHeader("", "", $langs->trans("InterventionCard"));
+$title = $langs->trans('InterventionCard');
+
+llxHeader('', $title);
 
 
 if ($object->id) {
@@ -349,7 +351,7 @@ if ($object->id) {
 
 
 	$modulepart = 'holiday';
-	$permission = $user->rights->holiday->write;
+	$permissiontoadd = $user->rights->holiday->write;
 	$permtoedit = $user->rights->holiday->write;
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

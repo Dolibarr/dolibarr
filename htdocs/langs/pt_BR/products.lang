@@ -133,7 +133,6 @@ ResetBarcodeForAllRecords=Definir o valor do código de barras para todos os reg
 PriceByCustomer=Preços diferenteas para cada cliente
 PriceCatalogue=Um único preço de venda por produto/serviço
 AddCustomerPrice=Adicionar preço por cliente
-ForceUpdateChildPriceSoc=Situado mesmo preço em outros pedidos dos clientes
 PriceByCustomerLog=Registros de preços de cliente anteriores
 MinimumPriceLimit=Preço mínimo não pode ser inferior, em seguida %s
 MinimumRecommendedPrice=Preço minimo recomendado é : %s

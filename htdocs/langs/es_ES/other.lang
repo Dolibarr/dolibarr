@@ -129,6 +129,7 @@ ClosedByLogin=Login usuario que ha cerrado
 FileWasRemoved=El archivo %s ha sido eliminado
 DirWasRemoved=El directorio %s ha sido eliminado
 FeatureNotYetAvailable=Funcionalidad aún no disponible en esta versión
+FeatureNotAvailableOnDevicesWithoutMouse=Característica no disponible en dispositivos sin mouse
 FeaturesSupported=Funcionalidades disponibles
 Width=Largo
 Height=Alto
@@ -263,7 +264,7 @@ ContactCreatedByEmailCollector=Contacto/dirección creada por el recolector de e
 ProjectCreatedByEmailCollector=Proyecto creado por el recolector de e-mails del MSGID de e-mail %s
 TicketCreatedByEmailCollector=Ticket creado por el recolector de e-mails del MSGID de e-mail %s
 OpeningHoursFormatDesc=Use un - para separar las horas de apertura y cierre. <br> Use un espacio para ingresar diferentes rangos. <br> Ejemplo: 8-12 14-18
-PrefixSession=Prefijo para ID de sesión
+SuffixSessionName=Sufijo para el nombre de la sesión
 
 ##### Export #####
 ExportsArea=Área de exportaciones

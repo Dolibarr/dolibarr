@@ -44,4 +44,4 @@ ValidateOrderFirstBeforeReception=Първо трябва да валидира�
 ReceptionsNumberingModules=Модул за номериране на стокови разписки
 ReceptionsReceiptModel=Шаблони на документи за стокови разписки
 NoMorePredefinedProductToDispatch=No more predefined products to dispatch
-
+ReceptionExist=A reception exists

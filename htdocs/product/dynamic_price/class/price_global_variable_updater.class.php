@@ -103,12 +103,12 @@ class PriceGlobalVariableUpdater
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (";
 		$sql .= "type, description, parameters, fk_variable, update_interval, next_update, last_status";
 		$sql .= ") VALUES (";
-		$sql .= " ".$this->type.",";
+		$sql .= " ".((int) $this->type).",";
 		$sql .= " ".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "''").",";
 		$sql .= " ".(isset($this->parameters) ? "'".$this->db->escape($this->parameters)."'" : "''").",";
-		$sql .= " ".$this->fk_variable.",";
-		$sql .= " ".$this->update_interval.",";
-		$sql .= " ".$this->next_update.",";
+		$sql .= " ".((int) $this->fk_variable).",";
+		$sql .= " ".((int) $this->update_interval).",";
+		$sql .= " ".((int) $this->next_update).",";
 		$sql .= " ".(isset($this->last_status) ? "'".$this->db->escape($this->last_status)."'" : "''");
 		$sql .= ")";
 
@@ -200,12 +200,12 @@ class PriceGlobalVariableUpdater
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-		$sql .= " type = ".$this->type.",";
+		$sql .= " type = ".((int) $this->type).",";
 		$sql .= " description = ".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "''").",";
 		$sql .= " parameters = ".(isset($this->parameters) ? "'".$this->db->escape($this->parameters)."'" : "''").",";
-		$sql .= " fk_variable = ".$this->fk_variable.",";
-		$sql .= " update_interval = ".$this->update_interval.",";
-		$sql .= " next_update = ".$this->next_update.",";
+		$sql .= " fk_variable = ".((int) $this->fk_variable).",";
+		$sql .= " update_interval = ".((int) $this->update_interval).",";
+		$sql .= " next_update = ".((int) $this->next_update).",";
 		$sql .= " last_status = ".(isset($this->last_status) ? "'".$this->db->escape($this->last_status)."'" : "''");
 		$sql .= " WHERE rowid = ".$this->id;
 

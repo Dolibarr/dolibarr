@@ -55,7 +55,10 @@ $email = GETPOST('email', 'alpha');
 
 $object = new RecruitmentJobPosition($db);
 
-
+// Security check
+if (empty($conf->recruitment->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
 
 
 /*

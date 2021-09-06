@@ -132,7 +132,7 @@ print '<td colspan="2">';
 if ($conf->global->GEOIP_VERSION == 'php') {
 	print 'Using geoip PHP internal functions. Value must be '.geoip_db_filename(GEOIP_COUNTRY_EDITION).' or '.geoip_db_filename(GEOIP_CITY_EDITION_REV1).' or /pathtodatafile/GeoLite2-Country.mmdb<br>';
 }
-print '<input size="50" type="text" name="GEOIPMAXMIND_COUNTRY_DATAFILE" value="'.dol_escape_htmltag($conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE).'">';
+print '<input type="text" class="minwidth200" name="GEOIPMAXMIND_COUNTRY_DATAFILE" value="'.dol_escape_htmltag($conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE).'">';
 print '</td></tr>';
 
 print '</table>';

@@ -27,5 +27,7 @@ Recipient=دریافت کننده
 ErrorStockIsNotEnough=این سهام به اندازه کافی وجود ندارد
 Shippable=حمل و نقلی
 NonShippable=حمل و نقلی نیست
+ShowShippableStatus=Show shippable status
 ShowReceiving=نمایش رسید تحویل
 NonExistentOrder=سفارش ناقص
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines

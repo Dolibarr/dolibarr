@@ -96,7 +96,7 @@ class box_services_expired extends ModeleBoxes
 				$sql .= ' AND c.fk_soc = '.$user->socid;
 			}
 			if (!$user->rights->societe->client->voir && !$user->socid) {
-				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			$sql .= " GROUP BY c.rowid, c.ref, c.statut, c.date_contrat, c.ref_customer, c.ref_supplier, s.nom, s.rowid";
 			$sql .= ", s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
@@ -152,7 +152,7 @@ class box_services_expired extends ModeleBoxes
 
 					$this->info_box_contents[$i][] = array(
 						'td' => 'class="center nowraponall"',
-						'text' => dol_print_date($dateline, 'day'),
+						'text' => dol_print_date($dateline, 'day', 'tzuserrel'),
 						'text2'=> $late,
 					);
 

@@ -115,7 +115,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid'=>isset($socid) ? $socid : null);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -477,6 +477,7 @@ print "</tr>\n";
 
 
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($result);
 
@@ -495,7 +496,7 @@ while ($i < min($num, $limit)) {
 	$adherent->gender = $obj->gender;
 	$adherent->morphy = $obj->morphy;
 	$adherent->email = $obj->email;
-	$adherent->typeid = $obj->type;
+	$adherent->typeid = $obj->fk_type;
 	$adherent->datefin = $db->jdate($obj->datef);
 
 	$typeid = ($obj->fk_type > 0 ? $obj->fk_type : $adherent->typeid);
@@ -527,7 +528,7 @@ while ($i < min($num, $limit)) {
 
 	// Lastname
 	if (!empty($arrayfields['d.lastname']['checked'])) {
-		print '<td>'.$adherent->getNomUrl(-1, 0, 'card', 'lastname').'</td>';
+		print '<td class="tdoverflowmax150">'.$adherent->getNomUrl(-1, 0, 'card', 'lastname').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -550,7 +551,7 @@ while ($i < min($num, $limit)) {
 
 	// Label
 	if (!empty($arrayfields['t.libelle']['checked'])) {
-		print '<td class="tdoverflowmax500" title="'.dol_escape_htmltag($obj->note).'">';
+		print '<td class="tdoverflowmax400" title="'.dol_escape_htmltag($obj->note).'">';
 		print $obj->note;
 		print '</td>';
 		if (!$i) {

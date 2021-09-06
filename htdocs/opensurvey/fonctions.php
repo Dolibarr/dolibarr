@@ -116,6 +116,12 @@ function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '</div>';
 	}
 
+	if (!empty($conf->global->OPENSURVEY_IMAGE_PUBLIC_INTERFACE)) {
+		print '<div class="backimagepublicopensurvey">';
+		print '<img id="idOPENSURVEY_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->OPENSURVEY_IMAGE_PUBLIC_INTERFACE.'">';
+		print '</div>';
+	}
+
 	print '<div style="margin-left: 50px; margin-right: 50px; text-align: start;"><br>';
 }
 

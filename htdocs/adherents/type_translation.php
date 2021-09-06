@@ -157,7 +157,7 @@ $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
 $head = member_type_prepare_head($object);
-$titre = $langs->trans("MemberType".$object->type);
+$titre = $langs->trans("MemberType".$object->id);
 
 // Calculate $cnt_trans
 $cnt_trans = 0;

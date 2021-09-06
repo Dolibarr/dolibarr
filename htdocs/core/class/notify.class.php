@@ -176,7 +176,7 @@ class Notify
 		$sqlnotifcode = '';
 		if ($notifcode) {
 			if (is_numeric($notifcode)) {
-				$sqlnotifcode = " AND n.fk_action = ".$notifcode; // Old usage
+				$sqlnotifcode = " AND n.fk_action = ".((int) $notifcode); // Old usage
 			} else {
 				$sqlnotifcode = " AND a.code = '".$this->db->escape($notifcode)."'"; // New usage
 			}
@@ -195,7 +195,7 @@ class Notify
 				$sql .= $sqlnotifcode;
 				$sql .= " AND s.entity IN (".getEntity('societe').")";
 				if ($socid > 0) {
-					$sql .= " AND s.rowid = ".$socid;
+					$sql .= " AND s.rowid = ".((int) $socid);
 				}
 
 				dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);
@@ -233,7 +233,7 @@ class Notify
 				$sql .= $sqlnotifcode;
 				$sql .= " AND c.entity IN (".getEntity('user').")";
 				if ($userid > 0) {
-					$sql .= " AND c.rowid = ".$userid;
+					$sql .= " AND c.rowid = ".((int) $userid);
 				}
 
 				dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);
@@ -380,11 +380,11 @@ class Notify
 			$sql .= " AND n.fk_soc = s.rowid";
 			$sql .= " AND c.statut = 1";
 			if (is_numeric($notifcode)) {
-				$sql .= " AND n.fk_action = ".$notifcode; // Old usage
+				$sql .= " AND n.fk_action = ".((int) $notifcode); // Old usage
 			} else {
 				$sql .= " AND a.code = '".$this->db->escape($notifcode)."'"; // New usage
 			}
-			$sql .= " AND s.rowid = ".$object->socid;
+			$sql .= " AND s.rowid = ".((int) $object->socid);
 
 			$sql .= "\nUNION\n";
 		}
@@ -398,7 +398,7 @@ class Notify
 		$sql .= " WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action";
 		$sql .= " AND c.statut = 1";
 		if (is_numeric($notifcode)) {
-			$sql .= " AND n.fk_action = ".$notifcode; // Old usage
+			$sql .= " AND n.fk_action = ".((int) $notifcode); // Old usage
 		} else {
 			$sql .= " AND a.code = '".$this->db->escape($notifcode)."'"; // New usage
 		}
@@ -515,7 +515,7 @@ class Notify
 							case 'SHIPPING_VALIDATE':
 								$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
-								$object_type = 'expedition';
+								$object_type = 'shipping';
 								$labeltouse = $conf->global->SHIPPING_VALIDATE_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpeditionValidated", $link);
 								break;
@@ -687,7 +687,7 @@ class Notify
 						break;
 					case 'BILL_PAYED':
 						$link = '<a href="'.$urlwithroot.'/compta/facture/card.php?facid='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
-						$dir_output = $$conf->facture->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'invoice');
+						$dir_output = $conf->facture->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'invoice');
 						$object_type = 'facture';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInvoicePayed", $link);
 						break;

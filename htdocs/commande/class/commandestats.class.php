@@ -44,7 +44,10 @@ class CommandeStats extends Stats
 	public $userid;
 
 	public $from;
+	public $from_line;
 	public $field;
+	public $field_line;
+	public $categ_link;
 	public $where;
 	public $join;
 
@@ -77,6 +80,7 @@ class CommandeStats extends Stats
 			$this->field = 'total_ht';
 			$this->field_line = 'total_ht';
 			//$this->where .= " c.fk_statut > 0"; // Not draft and not cancelled
+			$this->categ_link = MAIN_DB_PREFIX.'categorie_societe';
 		} elseif ($mode == 'supplier') {
 			$object = new CommandeFournisseur($this->db);
 			$this->from = MAIN_DB_PREFIX.$object->table_element." as c";
@@ -84,18 +88,19 @@ class CommandeStats extends Stats
 			$this->field = 'total_ht';
 			$this->field_line = 'total_ht';
 			//$this->where .= " c.fk_statut > 2"; // Only approved & ordered
+			$this->categ_link = MAIN_DB_PREFIX.'categorie_fournisseur';
 		}
 		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
 		$this->where .= ($this->where ? ' AND ' : '').'c.entity IN ('.getEntity('commande').')';
 
 		if (!$user->rights->societe->client->voir && !$this->socid) {
-			$this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+			$this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($this->socid) {
-			$this->where .= " AND c.fk_soc = ".$this->socid;
+			$this->where .= " AND c.fk_soc = ".((int) $this->socid);
 		}
 		if ($this->userid > 0) {
-			$this->where .= ' AND c.fk_user_author = '.$this->userid;
+			$this->where .= ' AND c.fk_user_author = '.((int) $this->userid);
 		}
 
 		if ($typentid) {
@@ -104,7 +109,7 @@ class CommandeStats extends Stats
 		}
 
 		if ($categid) {
-			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cats ON cats.fk_soc = c.fk_soc';
+			$this->join .= ' LEFT JOIN '.$this->categ_link.' as cats ON cats.fk_soc = c.fk_soc';
 			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as cat ON cat.rowid = cats.fk_categorie';
 			$this->where .= ' AND cat.rowid = '.((int) $categid);
 		}

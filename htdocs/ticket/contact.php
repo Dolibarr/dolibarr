@@ -50,16 +50,29 @@ $source = GETPOST('source', 'alpha');
 $ligne = GETPOST('ligne', 'int');
 $lineid = GETPOST('lineid', 'int');
 
-// Protection if external user
-if ($user->socid > 0) {
-	$socid = $user->socid;
-	accessforbidden();
-}
 
 // Store current page url
 $url_page_current = dol_buildpath('/ticket/contact.php', 1);
 
 $object = new Ticket($db);
+
+
+$permissiontoadd = $user->rights->ticket->write;
+
+// Security check
+$id = GETPOST("id", 'int');
+$socid = 0;
+if ($user->socid > 0) $socid = $user->socid;
+$result = restrictedArea($user, 'ticket', $object->id, '');
+
+// restrict access for externals users
+if ($user->socid > 0 && ($object->fk_soc != $user->socid)) {
+	accessforbidden();
+}
+// or for unauthorized internals users
+if (!$user->socid && (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
+	accessforbidden();
+}
 
 
 /*

@@ -17,8 +17,8 @@ TJM=Tarif journalier moyen
 CurrentSalary=Salaire actuel
 THMDescription=Cette valeur peut être utilisé pour calculer le coût horaire consommé dans un projet suivi par utilisateurs si le module projet est utilisé
 TJMDescription=Cette valeur est actuellement seulement une information et n'est utilisé pour aucun calcul
-LastSalaries=Les %s derniers règlements de salaires
-AllSalaries=Tous les règlements de salaires
+LastSalaries=Les %s derniers salaires
+AllSalaries=Tous les salaires
 SalariesStatistics=Statistiques
-# Export
 SalariesAndPayments=Salaires et paiements
+ConfirmDeleteSalaryPayment=Voulez-vous supprimer ce paiement de salaire ?

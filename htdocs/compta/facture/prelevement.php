@@ -148,12 +148,6 @@ if ($type == 'bank-transfer') {
 llxHeader('', $title, $helpurl);
 
 
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode fiche                                                                  */
-/*                                                                             */
-/* *************************************************************************** */
-
 if ($object->id > 0) {
 	$selleruserevenustamp = $mysoc->useRevenueStamp();
 
@@ -315,23 +309,17 @@ if ($object->id > 0) {
 
 	$facidavoir = $object->getListIdAvoirFromInvoice();
 	if (count($facidavoir) > 0) {
-		print ' ('.$langs->transnoentities("InvoiceHasAvoir");
-		$i = 0;
-		foreach ($facidavoir as $id) {
-			if ($i == 0) {
-				print ' ';
-			} else {
-				print ',';
-			}
+		$invoicecredits = array();
+		foreach ($facidavoir as $facid) {
 			if ($type == 'bank-transfer') {
 				$facavoir = new FactureFournisseur($db);
 			} else {
 				$facavoir = new Facture($db);
 			}
-			$facavoir->fetch($id);
-			print $facavoir->getNomUrl(1);
+			$facavoir->fetch($facid);
+			$invoicecredits[] = $facavoir->getNomUrl(1);
 		}
-		print ')';
+		print ' ('.$langs->transnoentities("InvoiceHasAvoir") . (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits) . ')';
 	}
 	/*
 	if ($facidnext > 0)
@@ -477,6 +465,7 @@ if ($object->id > 0) {
 	print "</td>";
 	print '</tr>';
 
+	// IBAN of seller or supplier
 	$title = 'CustomerIBAN';
 	if ($type == 'bank-transfer') {
 		$title = 'SupplierIBAN';

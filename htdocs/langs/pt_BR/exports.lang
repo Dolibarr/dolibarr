@@ -68,3 +68,4 @@ ComputedField=Campo computado
 SelectFilterFields=Se você deseja filtrar alguns valores, apenas os valores de entrada aqui.
 FilteredFieldsValues=Valor para o filtro
 MultipleRecordFoundWithTheseFilters=Múltiplos registros foram encontrados com esses filtros: %s
+StocksWithBatch=Estoques e localização (armazém) de produtos com lote / número de série

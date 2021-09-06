@@ -344,6 +344,9 @@ class modAdherent extends DolibarrModules
 			'a.email'=>"Email", 'a.birth'=>"Birthday", 'a.statut'=>"Status*", 'a.photo'=>"Photo", 'a.note_public'=>"NotePublic", 'a.note_private'=>"NotePrivate",
 			'a.datec'=>'DateCreation', 'a.datefin'=>'DateEndSubscription'
 		);
+		if (!empty($conf->societe->enabled)) {
+			$this->import_fields_array[$r]['a.fk_soc'] = "ThirdParty";
+		}
 		// Add extra fields
 		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'adherent' AND entity IN (0,".$conf->entity.")";
 		$resql = $this->db->query($sql);
@@ -355,16 +358,23 @@ class modAdherent extends DolibarrModules
 			}
 		}
 		// End add extra fields
+		$this->import_convertvalue_array[$r] = array();
+		if (!empty($conf->societe->enabled)) {
+			$this->import_convertvalue_array[$r]['a.fk_soc'] = array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty');
+		}
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'adherent'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_regex_array[$r] = array(
 			'a.civility'=>'code@'.MAIN_DB_PREFIX.'c_civility', 'a.fk_adherent_type'=>'rowid@'.MAIN_DB_PREFIX.'adherent_type', 'a.morphy'=>'(phy|mor)',
 			'a.statut'=>'^[0|1]', 'a.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 'a.datefin'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
 		$this->import_examplevalues_array[$r] = array(
-			'a.civility'=>"MR", 'a.lastname'=>'Smith', 'a.firstname'=>'John', 'a.login'=>'jsmith', 'a.pass'=>'passofjsmith', 'a.fk_adherent_type'=>'1',
+			'a.civility'=>"MR", 'a.lastname'=>'Smith', 'a.firstname'=>'John', 'a.gender'=>'man or woman', 'a.login'=>'jsmith', 'a.pass'=>'passofjsmith', 'a.fk_adherent_type'=>'1',
 			'a.morphy'=>'"mor" or "phy"', 'a.societe'=>'JS company', 'a.address'=>'21 jump street', 'a.zip'=>'55000', 'a.town'=>'New York', 'a.country'=>'1',
 			'a.email'=>'jsmith@example.com', 'a.birth'=>'1972-10-10', 'a.statut'=>"0 or 1", 'a.note_public'=>"This is a public comment on member",
 			'a.note_private'=>"This is private comment on member", 'a.datec'=>dol_print_date($now, '%Y-%m__%d'), 'a.datefin'=>dol_print_date(dol_time_plus_duree($now, 1, 'y'), '%Y-%m-%d')
 		);
+		if (!empty($conf->societe->enabled)) {
+			$this->import_examplevalues_array[$r]['a.fk_soc'] = "rowid or name";
+		}
 
 		// Cronjobs
 		$arraydate = dol_getdate(dol_now());

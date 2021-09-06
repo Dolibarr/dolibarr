@@ -71,9 +71,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, 
 
 $form = new Form($db);
 
+$title = $langs->trans('Proposal')." - ".$langs->trans('Notes');
 $help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
-
-llxHeader('', $langs->trans('Proposal'), $help_url);
+llxHeader('', $title, $help_url);
 
 if ($object->id > 0) {
 	if ($object->fetch_thirdparty() > 0) {

@@ -602,7 +602,7 @@ class AccountingAccount extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account ";
 			$sql .= "SET ".$fieldtouse." = '0'";
-			$sql .= " WHERE rowid = ".$this->db->escape($id);
+			$sql .= " WHERE rowid = ".((int) $id);
 
 			dol_syslog(get_class($this)."::accountDeactivate ".$fieldtouse." sql=".$sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
@@ -640,7 +640,7 @@ class AccountingAccount extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account";
 		$sql .= " SET ".$fieldtouse." = '1'";
-		$sql .= " WHERE rowid = ".$this->db->escape($id);
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::account_activate ".$fieldtouse." sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);

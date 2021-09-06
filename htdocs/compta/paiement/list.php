@@ -197,7 +197,7 @@ if (GETPOST("orphelins", "alpha")) {
 	}
 	$sql .= " WHERE p.entity IN (".getEntity('invoice').")";
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND sc.fk_user = ".$user->id;
+		$sql .= " AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid > 0) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);

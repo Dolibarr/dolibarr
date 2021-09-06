@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2011 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015-2017 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015-2017 Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -584,7 +584,10 @@ class FormMail extends Form
 						$liste['company'] = $conf->global->MAIN_INFO_SOCIETE_NOM.' &lt;'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'&gt;';
 
 						// Add also email aliases if there is some
-						$listaliases = array('user_aliases'=>$user->email_aliases, 'global_aliases'=>$conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
+						$listaliases = array(
+							'user_aliases' => (empty($user->email_aliases) ? '' : $user->email_aliases),
+							'global_aliases' => getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'),
+						);
 
 						// Also add robot email
 						if (!empty($this->fromalsorobot)) {
@@ -1252,7 +1255,7 @@ class FormMail extends Form
 	 */
 	public function getEMailTemplate($db, $type_template, $user, $outputlangs, $id = 0, $active = 1, $label = '')
 	{
-		global $conf;
+		global $conf, $langs;
 
 		$ret = new ModelMail();
 
@@ -1273,12 +1276,12 @@ class FormMail extends Form
 		$sql .= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql .= " WHERE (type_template='".$db->escape($type_template)."' OR type_template='all')";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
-		$sql .= " AND (private = 0 OR fk_user = ".$user->id.")"; // Get all public or private owned
+		$sql .= " AND (private = 0 OR fk_user = ".((int) $user->id).")"; // Get all public or private owned
 		if ($active >= 0) {
-			$sql .= " AND active = ".$active;
+			$sql .= " AND active = ".((int) $active);
 		}
 		if ($label) {
-			$sql .= " AND label ='".$db->escape($label)."'";
+			$sql .= " AND label = '".$db->escape($label)."'";
 		}
 		if (!($id > 0) && $languagetosearch) {
 			$sql .= " AND (lang = '".$db->escape($languagetosearch)."'".($languagetosearchmain ? " OR lang = '".$db->escape($languagetosearchmain)."'" : "")." OR lang IS NULL OR lang = '')";
@@ -1396,7 +1399,7 @@ class FormMail extends Form
 		$sql .= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql .= " WHERE type_template='".$this->db->escape($type_template)."'";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
-		$sql .= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".$user->id.")";
+		$sql .= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".((int) $user->id).")";
 		if (is_object($outputlangs)) {
 			$sql .= " AND (lang = '".$this->db->escape($outputlangs->defaultlang)."' OR lang IS NULL OR lang = '')";
 		}
@@ -1432,9 +1435,9 @@ class FormMail extends Form
 		$sql .= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql .= " WHERE type_template IN ('".$this->db->escape($type_template)."', 'all')";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
-		$sql .= " AND (private = 0 OR fk_user = ".$user->id.")"; // See all public templates or templates I own.
+		$sql .= " AND (private = 0 OR fk_user = ".((int) $user->id).")"; // See all public templates or templates I own.
 		if ($active >= 0) {
-			$sql .= " AND active = ".$active;
+			$sql .= " AND active = ".((int) $active);
 		}
 		//if (is_object($outputlangs)) $sql.= " AND (lang = '".$this->db->escape($outputlangs->defaultlang)."' OR lang IS NULL OR lang = '')";	// Return all languages
 		$sql .= $this->db->order("position,lang,label", "ASC");
@@ -1632,6 +1635,9 @@ class FormMail extends Form
 				$vars['__SECUREKEYPAYMENT_ORDER__']='';
 				$vars['__SECUREKEYPAYMENT_CONTRACTLINE__']='';
 				*/
+			}
+			if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
+				$substitutionarray['__PUBLICLINK_NEWMEMBERFORM__'] = 'BlankSubscriptionForm';
 			}
 		}
 

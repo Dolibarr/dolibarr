@@ -139,7 +139,7 @@ if ($object->id > 0) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'dolresource';
-	$permission = $user->rights->resource->write;
+	$permissiontoadd = $user->rights->resource->write;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

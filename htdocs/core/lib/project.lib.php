@@ -100,7 +100,7 @@ function project_prepare_head(Project $project)
 			//$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt";
 			$sql .= " WHERE t.fk_task = pt.rowid";
-			$sql .= " AND pt.fk_projet =".$project->id;
+			$sql .= " AND pt.fk_projet =".((int) $project->id);
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -113,7 +113,7 @@ function project_prepare_head(Project $project)
 			}
 		}
 
-		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&projectid='.$project->id;
+		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&projectid='.urlencode($project->id);
 		$head[$h][1] = $langs->trans("TimeSpent");
 		if ($nbTimeSpent > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">...</span>';
@@ -681,7 +681,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				// Title of task
 				if (count($arrayfields) > 0 && !empty($arrayfields['t.label']['checked'])) {
-					print "<td>";
+					print '<td>';
 					if ($showlineingray) {
 						print '<i>';
 					}
@@ -849,7 +849,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				// Contacts of task
 				if (count($arrayfields) > 0 && !empty($arrayfields['c.assigned']['checked'])) {
-					print '<td>';
+					print '<td class="center">';
 					foreach (array('internal', 'external') as $source) {
 						$tab = $lines[$i]->liste_contact(-1, $source);
 						$num = count($tab);
@@ -2407,7 +2407,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	if ($mytasks) {
 		$sql .= " AND p.rowid = t.fk_projet";
 		$sql .= " AND ec.element_id = t.rowid";
-		$sql .= " AND ec.fk_socpeople = ".$user->id;
+		$sql .= " AND ec.fk_socpeople = ".((int) $user->id);
 		$sql .= " AND ec.fk_c_type_contact = ctc.rowid"; // Replace the 2 lines with ec.fk_c_type_contact in $arrayidtypeofcontact
 		$sql .= " AND ctc.element = 'project_task'";
 	}
@@ -2693,8 +2693,9 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 
 	// define progress color according to time spend vs workload
 	$progressBarClass = 'progress-bar-info';
+	$progressCalculated = 0;
 	if ($task->planned_workload) {
-		$progressCalculated = round(100 * doubleval($task->duration_effective) / doubleval($task->planned_workload), 2);
+		$progressCalculated = round(100 * floatval($task->duration_effective) / floatval($task->planned_workload), 2);
 
 		// this conf is actually hidden, by default we use 10% for "be carefull or warning"
 		$warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
@@ -2702,12 +2703,12 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 		$diffTitle = '<br>'.$langs->trans('ProgressDeclared').' : '.$task->progress.($task->progress ? '%' : '');
 		$diffTitle .= '<br>'.$langs->trans('ProgressCalculated').' : '.$progressCalculated.($progressCalculated ? '%' : '');
 
-		//var_dump($progressCalculated.' '.$warningRatio.' '.$task->progress.' '.doubleval($task->progress * $warningRatio));
-		if (doubleval($progressCalculated) > doubleval($task->progress * $warningRatio)) {
+		//var_dump($progressCalculated.' '.$warningRatio.' '.$task->progress.' '.floatval($task->progress * $warningRatio));
+		if (floatval($progressCalculated) > floatval($task->progress * $warningRatio)) {
 			$progressBarClass = 'progress-bar-danger';
 			$title = $langs->trans('TheReportedProgressIsLessThanTheCalculatedProgressionByX', abs($task->progress - $progressCalculated).' '.$langs->trans("point"));
 			$diff = '<span class="text-danger classfortooltip paddingrightonly" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-down"></i> '.($task->progress - $progressCalculated).'%</span>';
-		} elseif (doubleval($progressCalculated) > doubleval($task->progress)) { // warning if close at 10%
+		} elseif (floatval($progressCalculated) > floatval($task->progress)) { // warning if close at 10%
 			$progressBarClass = 'progress-bar-warning';
 			$title = $langs->trans('TheReportedProgressIsLessThanTheCalculatedProgressionByX', abs($task->progress - $progressCalculated).' '.$langs->trans("point"));
 			$diff = '<span class="text-warning classfortooltip paddingrightonly" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-left"></i> '.($task->progress - $progressCalculated).'%</span>';
@@ -2771,18 +2772,18 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 
 	$out .= '</span>';
 	$out .= '    <div class="progress sm '.$spaced.'">';
-	$diffval = doubleval($task->progress) - doubleval($progressCalculated);
+	$diffval = floatval($task->progress) - floatval($progressCalculated);
 	if ($diffval >= 0) {
 		// good
-		$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.doubleval($task->progress).'%" title="'.doubleval($task->progress).'%">';
+		$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.floatval($task->progress).'%" title="'.floatval($task->progress).'%">';
 		if (!empty($task->progress)) {
-			$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.doubleval($progressCalculated / $task->progress * 100).'%" title="'.doubleval($progressCalculated).'%"></div>';
+			$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.floatval($progressCalculated / $task->progress * 100).'%" title="'.floatval($progressCalculated).'%"></div>';
 		}
 		$out .= '        </div>';
 	} else {
 		// bad
-		$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.doubleval($progressCalculated).'%" title="'.doubleval($progressCalculated).'%">';
-		$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.($task->progress ? doubleval($task->progress / $progressCalculated * 100).'%' : '1px').'" title="'.doubleval($task->progress).'%"></div>';
+		$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.floatval($progressCalculated).'%" title="'.floatval($progressCalculated).'%">';
+		$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.($task->progress ? floatval($task->progress / $progressCalculated * 100).'%' : '1px').'" title="'.floatval($task->progress).'%"></div>';
 		$out .= '        </div>';
 	}
 	$out .= '    </div>';
@@ -2811,17 +2812,17 @@ function getTaskProgressBadge($task, $label = '', $tooltip = '')
 		// define color according to time spend vs workload
 		$badgeClass = 'badge ';
 		if ($task->planned_workload) {
-			$progressCalculated = round(100 * doubleval($task->duration_effective) / doubleval($task->planned_workload), 2);
+			$progressCalculated = round(100 * floatval($task->duration_effective) / floatval($task->planned_workload), 2);
 
 			// this conf is actually hidden, by default we use 10% for "be carefull or warning"
 			$warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
 
-			if (doubleval($progressCalculated) > doubleval($task->progress * $warningRatio)) {
+			if (floatval($progressCalculated) > floatval($task->progress * $warningRatio)) {
 				$badgeClass .= 'badge-danger';
 				if (empty($tooltip)) {
 					$tooltip = $task->progress.'% < '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
 				}
-			} elseif (doubleval($progressCalculated) > doubleval($task->progress)) { // warning if close at 10%
+			} elseif (floatval($progressCalculated) > floatval($task->progress)) { // warning if close at 10%
 				$badgeClass .= 'badge-warning';
 				if (empty($tooltip)) {
 					$tooltip = $task->progress.'% < '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';

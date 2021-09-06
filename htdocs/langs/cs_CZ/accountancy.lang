@@ -158,7 +158,7 @@ ACCOUNTING_LENGTH_AACCOUNT=Délka účtů účtů subjektů (Pokud zde nastavít
 ACCOUNTING_MANAGE_ZERO=Umožňuje spravovat různé počty nul na konci účetního účtu. Některé země potřebují (například Švýcarsko). Pokud je vypnuto (výchozí), můžete nastavit následující dva parametry a požádat aplikaci o přidání virtuálních nul.
 BANK_DISABLE_DIRECT_INPUT=Zakázat přímé nahrávání transakce v bankovním účtu
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Povolit návrh exportu v žurnálu
-ACCOUNTANCY_COMBO_FOR_AUX=Povolit seznam combo pro pomocný účet (může být pomalý, pokud máte spoustu třetích stran)
+ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
 ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, select period show by default
 
@@ -328,6 +328,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountanc
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
+NotifiedExportDate=Notified export date (modification of the entries will not be possible)
+NotifiedValidationDate=Validation of the entries (modification or deletion of the entries will not be possible)
+ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=Exportovat deník návrhu
 Modelcsv=Model exportu
 Selectmodelcsv=Vyberte způsob exportu

@@ -57,7 +57,7 @@ $resultboxes = FormOther::getBoxesArea($user, "3");
 if (GETPOST('addbox')) {
 	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOST('areacode', 'aZ09');
+	$zone = GETPOST('areacode', 'int');
 	$userid = GETPOST('userid', 'int');
 	$boxorder = GETPOST('boxorder', 'aZ09');
 	$boxorder .= GETPOST('boxcombo', 'aZ09');
@@ -99,7 +99,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
 }
 $sql .= ' WHERE s.entity IN ('.getEntity('societe').')';
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid > 0) {
 	$sql .= " AND s.rowid = ".((int) $socid);
@@ -250,6 +250,8 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 	$thirdpartycateggraph .= '</td></tr>';
 	$thirdpartycateggraph .= '</table>';
 	$thirdpartycateggraph .= '</div>';
+} else {
+	$thirdpartycateggraph = '';
 }
 
 
@@ -271,7 +273,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
 }
 $sql .= ' WHERE s.entity IN ('.getEntity('societe').')';
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
 	$sql .= " AND s.rowid = ".((int) $socid);

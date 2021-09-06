@@ -11,7 +11,7 @@
  * Copyright (C) 2011-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -175,6 +175,7 @@ $elementList = array();
 // We save list of template email Dolibarr can manage. This list can found by a grep into code on "->param['models']"
 $elementList = array();
 // Add all and none after the sort
+
 $elementList['all'] = '-- '.dol_escape_htmltag($langs->trans("All")).' --';
 $elementList['none'] = '-- '.dol_escape_htmltag($langs->trans("None")).' --';
 $elementList['user'] = img_picto('', 'user', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToUser'));
@@ -228,6 +229,9 @@ if (!empty($conf->agenda->enabled)) {
 }
 if (!empty($conf->eventorganization->enabled) && !empty($user->rights->eventorganization->read)) {
 	$elementList['eventorganization_send'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventOrganization'));
+}
+if (!empty($conf->partnership->enabled) && !empty($user->rights->partnership->read)) {
+	$elementList['partnership_send'] = img_picto('', 'partnership', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToPartnership'));
 }
 
 $parameters = array('elementList'=>$elementList);
@@ -339,7 +343,7 @@ if (empty($reshook)) {
 			$sql = "INSERT INTO ".$tabname[$id]." (";
 			// List of fields
 			$sql .= $tabfieldinsert[$id];
-            $sql .= ", active, enabled)";
+			$sql .= ", active, enabled)";
 			$sql .= " VALUES(";
 
 			// List of values
@@ -560,8 +564,8 @@ $sql = "SELECT rowid as rowid, module, label, type_template, lang, fk_user, priv
 $sql .= " FROM ".MAIN_DB_PREFIX."c_email_templates";
 $sql .= " WHERE entity IN (".getEntity('email_template').")";
 if (!$user->admin) {
-	$sql .= " AND (private = 0 OR (private = 1 AND fk_user = ".$user->id."))"; // Show only public and private to me
-	$sql .= " AND (active = 1 OR fk_user = ".$user->id.")"; // Show only active or owned by me
+	$sql .= " AND (private = 0 OR (private = 1 AND fk_user = ".((int) $user->id)."))"; // Show only public and private to me
+	$sql .= " AND (active = 1 OR fk_user = ".((int) $user->id).")"; // Show only active or owned by me
 }
 if (empty($conf->global->MAIN_MULTILANGS)) {
 	$sql .= " AND (lang = '".$db->escape($langs->defaultlang)."' OR lang IS NULL OR lang = '')";
@@ -824,7 +828,7 @@ if ($resql) {
 			print '<td class="liste_titre"><input type="text" name="search_topic" value="'.dol_escape_htmltag($search_topic).'"></td>';
 		} elseif ($value == 'type_template') {
 			print '<td class="liste_titre center">';
-			print $form->selectarray('search_type_template', $elementList, $search_type_template, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth200', 1, '', 0, 1);
+			print $form->selectarray('search_type_template', $elementList, $search_type_template, 1, 0, 0, '', 0, 0, 0, '', 'minwidth150', 1, '', 0, 1);
 			print '</td>';
 		} elseif (!in_array($value, array('content', 'content_lines'))) {
 			print '<td class="liste_titre"></td>';
@@ -1229,7 +1233,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 				print '<input type="hidden" name="type_template" value="'.$obj->{$value}.'">';
 				print $obj->{$value};
 			} else {
-				print $form->selectarray('type_template', $elementList, (!empty($obj->{$value}) ? $obj->{$value}:''), 1, 0, 0, '', 0, 0, 0, '', 'maxwidth200', 1, '', 0, 1);
+				print $form->selectarray('type_template', $elementList, (!empty($obj->{$value}) ? $obj->{$value}:''), 1, 0, 0, '', 0, 0, 0, '', 'minwidth150', 1, '', 0, 1);
 			}
 			print '</td>';
 		} elseif ($context == 'add' && in_array($value, array('topic', 'joinfiles', 'content', 'content_lines'))) {

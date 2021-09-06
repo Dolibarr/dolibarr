@@ -359,7 +359,9 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries-
  *	View
  */
 
-llxHeader("", $langs->trans("Salary"));
+$title = $langs->trans('Salary')." - ".$langs->trans('Card');
+$help_url = "";
+llxHeader("", $title, $help_url);
 
 $form = new Form($db);
 if (!empty($conf->projet->enabled)) $formproject = new FormProjets($db);
@@ -727,7 +729,7 @@ if ($id) {
 	if ($action == 'edit') {
 		print '<tr><td class="fieldrequired">' . $langs->trans("Amount") . '</td><td><input name="amount" size="10" value="' . price($object->amount) . '"></td></tr>';
 	} else {
-		print '<tr><td>' . $langs->trans("Amount") . '</td><td>' . price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency) . '</td></tr>';
+		print '<tr><td>' . $langs->trans("Amount") . '</td><td><span class="amount">' . price($object->amount, 0, $langs, 1, -1, -1, $conf->currency) . '</span></td></tr>';
 	}
 
 	// Default mode of payment

@@ -213,17 +213,17 @@ if ($action == 'create_variable' || $action == 'edit_variable') {
 	//Code
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans("Variable").'</td>';
-	print '<td class="valeur"><input type="text" name="code" size="20" value="'.(empty($price_globals->code) ? '' : $price_globals->code).'"></td>';
+	print '<td class="valeur"><input type="text" name="code" class="minwidth100" value="'.(empty($price_globals->code) ? '' : $price_globals->code).'"></td>';
 	print '</tr>';
 	//Description
 	print '<tr>';
 	print '<td>'.$langs->trans("Description").'</td>';
-	print '<td class="valeur"><input type="text" name="description" size="50" value="'.(empty($price_globals->description) ? '' : $price_globals->description).'"></td>';
+	print '<td class="valeur"><input type="text" name="description" class="minwidth200" value="'.(empty($price_globals->description) ? '' : $price_globals->description).'"></td>';
 	print '</tr>';
 	//Value
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans("Value").'</td>';
-	print '<td class="valeur"><input type="text" name="value" size="10" value="'.(empty($price_globals->value) ? '' : $price_globals->value).'"></td>';
+	print '<td class="valeur"><input type="text" name="value" class="minwidth100" value="'.(empty($price_globals->value) ? '' : $price_globals->value).'"></td>';
 	print '</tr>';
 	print '</table>';
 
@@ -310,7 +310,7 @@ if ($action == 'create_updater' || $action == 'edit_updater') {
 	//Description
 	print '<tr>';
 	print '<td>'.$langs->trans("Description").'</td>';
-	print '<td class="valeur"><input type="text" name="description" size="50" value="'.(empty($price_updaters->description) ? '' : $price_updaters->description).'"></td>';
+	print '<td class="valeur"><input type="text" name="description" class="minwidth200" value="'.(empty($price_updaters->description) ? '' : $price_updaters->description).'"></td>';
 	print '</tr>';
 	//Type
 	print '<tr>';

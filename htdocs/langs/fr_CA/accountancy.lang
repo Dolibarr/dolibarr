@@ -30,6 +30,7 @@ CountriesInEEC=Pays membres du CEE
 CountriesNotInEEC=Pays non membres du CEE
 CountriesInEECExceptMe=Pays membres du CEE sauf %s
 CountriesExceptMe=Tous le pays sauf %s
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
 MainAccountForCustomersNotDefined=Compte comptable principal pour les clients non défini dans la configuration
 MainAccountForSuppliersNotDefined=Compte comptable principal pour les vendeurs non défini dans la configuration
 MainAccountForUsersNotDefined=Compte comptable principal pour les utilisateurs non défini dans la configuration
@@ -93,7 +94,6 @@ ACCOUNTING_LENGTH_DESCRIPTION=Tronquer la description des produits et services d
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Tronquer le formulaire de description de compte de produits et services dans les listes après x chars (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Longueur des comptes comptables généraux (Si vous définissez la valeur à 6 ici, le compte '706' apparaîtra comme '706000' à l'écran)
 BANK_DISABLE_DIRECT_INPUT=Désactiver l'enregistrement direct de la transaction dans le compte bancaire
-ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties)
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Note de frais
 DONATION_ACCOUNTINGACCOUNT=Compte comptable pour enregistrer des dons
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Compte comptable par défaut pour les services achetés (utilisé si non défini dans la fiche de service)

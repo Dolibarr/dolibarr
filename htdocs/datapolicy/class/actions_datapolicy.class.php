@@ -121,7 +121,7 @@ class ActionsDatapolicy
 
 				if ($object->update($object->id, $user, 0)) {
 					// On supprime les contacts associé
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".$object->id;
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".((int) $object->id);
 					$this->db->query($sql);
 
 					setEventMessages($langs->trans('ANONYMISER_SUCCESS'), array());
@@ -196,7 +196,6 @@ class ActionsDatapolicy
 			echo $object->phone_pro.';';
 			echo $object->phone_perso.';';
 			echo $object->phone_mobile.';';
-			echo $object->jabberid.';';
 			echo dol_print_date($object->birth).';';
 			exit;
 		} elseif ($parameters['currentcontext'] == 'contactcard' && $action == 'send_datapolicy') {

@@ -358,7 +358,7 @@ function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 		//$sql.=" WHERE f.fk_soc = s.rowid AND nom = '".$db->escape($idthirdparty)."'";
 		$sql .= " WHERE f.entity = ".$conf->entity;
 		if ($idthirdparty != 'all') {
-			$sql .= " AND f.fk_soc = ".$db->escape($idthirdparty);
+			$sql .= " AND f.fk_soc = ".((int) $idthirdparty);
 		}
 
 		$resql = $db->query($sql);

@@ -246,7 +246,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
 	//TODO Add link to expeditiondet_batch
 	$sql .= " WHERE e.entity IN (".getEntity('expedition').")";
-	$sql .= " AND obj.fk_".$origin." = ".$origin_id;
+	$sql .= " AND obj.fk_".$origin." = ".((int) $origin_id);
 	$sql .= " AND obj.rowid = ed.fk_origin_line";
 	$sql .= " AND ed.fk_expedition = e.rowid";
 	if ($filter) {
@@ -316,8 +316,8 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 						$outputlangs = $langs;
 						$newlang = '';
-						if (empty($newlang) && !empty($_REQUEST['lang_id'])) {
-							$newlang = $_REQUEST['lang_id'];
+						if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+							$newlang = GETPOST('lang_id', 'aZ09');
 						}
 						if (empty($newlang)) {
 							$newlang = $object->thirdparty->default_lang;

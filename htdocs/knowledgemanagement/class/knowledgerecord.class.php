@@ -17,7 +17,7 @@
  */
 
 /**
- * \file        class/knowledgerecord.class.php
+ * \file        htdocs/knowledgemanagement/class/knowledgerecord.class.php
  * \ingroup     knowledgemanagement
  * \brief       This file is a CRUD class file for KnowledgeRecord (Create/Read/Update/Delete)
  */
@@ -110,9 +110,11 @@ class KnowledgeRecord extends CommonObject
 		'fk_user_valid' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>'1', 'position'=>512, 'notnull'=>0, 'visible'=>-2,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
-		'question' => array('type'=>'text', 'label'=>'Question', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1,),
-		'answer' => array('type'=>'html', 'label'=>'Solution', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>-1,),
-		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>1, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Valid'),),
+		'question' => array('type'=>'text', 'label'=>'Question', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'csslist'=>'tdoverflow300'),
+		'answer' => array('type'=>'html', 'label'=>'Solution', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>3, 'csslist'=>'tdoverflow300'),
+		//'url' => array('type'=>'varchar(255)', 'label'=>'URL', 'enabled'=>'1', 'position'=>55, 'notnull'=>0, 'visible'=>-1, 'csslist'=>'tdoverflow200', 'help'=>'UrlForInfoPage'),
+		'fk_c_ticket_category' => array('type'=>'integer:CTicketCategory:ticket/class/cticketcategory.class.php', 'label'=>'GroupOfTicket', 'enabled'=>'$conf->ticket->enabled', 'position'=>512, 'notnull'=>0, 'visible'=>-1, 'help'=>'YouCanLinkArticleToATicketCategory'),
+		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>1, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated'),),
 	);
 	public $rowid;
 	public $ref;
@@ -126,6 +128,7 @@ class KnowledgeRecord extends CommonObject
 	public $model_pdf;
 	public $question;
 	public $answer;
+	public $url;
 	public $status;
 	// END MODULEBUILDER PROPERTIES
 

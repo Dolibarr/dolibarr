@@ -158,7 +158,7 @@ ACCOUNTING_LENGTH_AACCOUNT=طول حساب‌های حساب‌داری شخص�
 ACCOUNTING_MANAGE_ZERO=امکان تغییر تعداد دیگری از صفر در انتخای حساب حساب‌داری. در برخی کشورها (مثل سوئیس) مورد احتیاج است. در صورتی که خاموش باشد (پیش‌فرض)، شما می‌توانید دو گزینۀ مقابل را تنظیم کنید تا از برنامه بخواهید صفرهای مجازی اضافه کند.
 BANK_DISABLE_DIRECT_INPUT=غیرفعال کردن ثبت مستقیم تراکنش در حساب بانکی
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=فعال کردن خروجی پیش‌نویس از دفتر
-ACCOUNTANCY_COMBO_FOR_AUX=فعال کردن فهرست ترکیبی برای حساب وابسته(ممکن است در صورتی که شخص‌سوم‌های زیادی داشته باشید، کند باشد)
+ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
 ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, select period show by default
 
@@ -328,6 +328,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountanc
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
+NotifiedExportDate=Notified export date (modification of the entries will not be possible)
+NotifiedValidationDate=Validation of the entries (modification or deletion of the entries will not be possible)
+ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=صادرکردن پیش‌نویس دفتر
 Modelcsv=نوع صادرات
 Selectmodelcsv=انتخاب مدل صادرات

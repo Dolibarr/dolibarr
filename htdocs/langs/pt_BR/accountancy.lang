@@ -100,7 +100,6 @@ ACCOUNTING_LENGTH_GACCOUNT=Comprimento das contas de contabilidade geral (se o v
 ACCOUNTING_LENGTH_AACCOUNT=Comprimento das contas de contabilidade de terceiros (se você definir o valor para 6 aqui, a conta "401" aparecerá como '401000' na tela)
 ACCOUNTING_MANAGE_ZERO=Permitir gerenciar diferentes números de zeros no final de uma conta contábil. Necessário para alguns países (como a Suíça). Se definido como desativado (padrão), você pode definir os dois parâmetros a seguir para solicitar que o aplicativo adicione zeros virtuais.
 BANK_DISABLE_DIRECT_INPUT=Desabilitar o registro direto da transação na conta bancária
-ACCOUNTANCY_COMBO_FOR_AUX=Ativar lista de combinação para conta subsidiária (pode ser lenta se você tiver muitos terceiros)
 ACCOUNTING_SELL_JOURNAL=Diário de Vendas
 ACCOUNTING_PURCHASE_JOURNAL=Diário de Compras
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Diário diversos

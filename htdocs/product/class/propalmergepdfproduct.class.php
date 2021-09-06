@@ -105,7 +105,6 @@ class Propalmergepdfproduct extends CommonObject
 
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."propal_merge_pdf_product(";
-
 		$sql .= "fk_product,";
 		$sql .= "file_name,";
 		if ($conf->global->MAIN_MULTILANGS) {
@@ -114,25 +113,19 @@ class Propalmergepdfproduct extends CommonObject
 		$sql .= "fk_user_author,";
 		$sql .= "fk_user_mod,";
 		$sql .= "datec";
-
-
 		$sql .= ") VALUES (";
-
-		$sql .= " ".(!isset($this->fk_product) ? 'NULL' : "'".$this->db->escape($this->fk_product)."'").",";
+		$sql .= " ".(!isset($this->fk_product) ? 'NULL' : ((int) $this->fk_product)).",";
 		$sql .= " ".(!isset($this->file_name) ? 'NULL' : "'".$this->db->escape($this->file_name)."'").",";
 		if ($conf->global->MAIN_MULTILANGS) {
 			$sql .= " ".(!isset($this->lang) ? 'NULL' : "'".$this->db->escape($this->lang)."'").",";
 		}
-		$sql .= " ".$user->id.",";
-		$sql .= " ".$user->id.",";
+		$sql .= " ".((int) $user->id).",";
+		$sql .= " ".((int) $user->id).",";
 		$sql .= " '".$this->db->idate(dol_now())."'";
-
-
 		$sql .= ")";
 
 		$this->db->begin();
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++; $this->errors[] = "Error ".$this->db->lasterror();
@@ -408,10 +401,10 @@ class Propalmergepdfproduct extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product";
-			$sql .= " WHERE fk_product=".$product_id;
+			$sql .= " WHERE fk_product = ".((int) $product_id);
 
 			if ($conf->global->MAIN_MULTILANGS && !empty($lang_id)) {
-				$sql .= " AND lang='".$this->db->escape($lang_id)."'";
+				$sql .= " AND lang = '".$this->db->escape($lang_id)."'";
 			}
 
 			dol_syslog(__METHOD__, LOG_DEBUG);

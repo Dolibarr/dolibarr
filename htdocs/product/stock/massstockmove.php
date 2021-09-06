@@ -209,7 +209,7 @@ if ($action == 'createmovements' && !empty($user->rights->stock->mouvement->cree
 					);
 					if ($result1 < 0) {
 						$error++;
-						setEventMessages($product->errors, $product->errorss, 'errors');
+						setEventMessages($product->error, $product->errors, 'errors');
 					}
 
 					// Add stock
@@ -224,7 +224,7 @@ if ($action == 'createmovements' && !empty($user->rights->stock->mouvement->cree
 					);
 					if ($result2 < 0) {
 						$error++;
-						setEventMessages($product->errors, $product->errorss, 'errors');
+						setEventMessages($product->error, $product->errors, 'errors');
 					}
 				} else {
 					$arraybatchinfo = $product->loadBatchInfo($batch);
@@ -253,7 +253,7 @@ if ($action == 'createmovements' && !empty($user->rights->stock->mouvement->cree
 					);
 					if ($result1 < 0) {
 						$error++;
-						setEventMessages($product->errors, $product->errorss, 'errors');
+						setEventMessages($product->error, $product->errors, 'errors');
 					}
 
 					// Add stock
@@ -271,7 +271,7 @@ if ($action == 'createmovements' && !empty($user->rights->stock->mouvement->cree
 					);
 					if ($result2 < 0) {
 						$error++;
-						setEventMessages($product->errors, $product->errorss, 'errors');
+						setEventMessages($product->error, $product->errors, 'errors');
 					}
 				}
 			} else {

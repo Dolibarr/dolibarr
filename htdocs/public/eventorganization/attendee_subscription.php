@@ -1,11 +1,5 @@
 <?php
-/* Copyright (C) 2001-2002  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2001-2002  Jean-Louis Bergamo      <jlb@j1b.org>
- * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+/* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +16,9 @@
  */
 
 /**
- *	\file       htdocs/public/members/new.php
- *	\ingroup    member
- *	\brief      Example of form to add a new member
+ *	\file       htdocs/public/eventorganization/attendee_subscription.php
+ *	\ingroup    project
+ *	\brief      Example of form to subscribe to an event
  *
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for auto-subscribe form
@@ -85,20 +79,36 @@ $email = GETPOST("email");
 $societe = GETPOST("societe");
 
 // Getting id from Post and decoding it
-$id = GETPOST('id');
+$id = GETPOST('id', 'int');
+$type = GETPOST('type', 'alpha');
 
 $conference = new ConferenceOrBooth($db);
-$resultconf = $conference->fetch($id);
-if ($resultconf < 0) {
-	setEventMessages(null, $conference->errors, "errors");
+$project = new Project($db);
+
+if ($type=='conf') {
+	$resultconf = $conference->fetch($id);
+	if ($resultconf < 0) {
+		print 'Bad value for parameter id';
+		exit;
+	}
+	$resultproject = $project->fetch($conference->fk_project);
+	if ($resultproject < 0) {
+		$error++;
+		$errmsg .= $project->error;
+	}
+}
+if ($type=='global') {
+	$project = new Project($db);
+	if (empty($id)) {
+		$id = GETPOST('fk_project', 'int');
+	}
+	$resultproject = $project->fetch($id);
+	if ($resultproject < 0) {
+		$error++;
+		$errmsg .= $project->error;
+	}
 }
 
-$project = new Project($db);
-$resultproject = $project->fetch($conference->fk_project);
-if ($resultproject < 0) {
-	$error++;
-	$errmsg .= $project->error;
-}
 
 
 // Security check
@@ -120,6 +130,11 @@ $hookmanager->initHooks(array('publicnewmembercard', 'globalcard'));
 $extrafields = new ExtraFields($db);
 
 $user->loadDefaultValues();
+
+// Security check
+if (empty($conf->eventorganization->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
 
 
 /**
@@ -165,6 +180,13 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		}
 		print '</div>';
 	}
+
+	if (!empty($conf->global->EVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE)) {
+		print '<div class="backimagepubliceventorganizationsubscription">';
+		print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->EVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE.'">';
+		print '</div>';
+	}
+
 	print '</div>';
 
 	print '<div class="divmainbodylarge">';
@@ -190,7 +212,7 @@ function llxFooterVierge()
 /*
  * Actions
  */
-global $mysoc;
+
 $parameters = array();
 // Note that $action and $object may have been modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
@@ -199,7 +221,7 @@ if ($reshook < 0) {
 }
 
 // Action called when page is submitted
-if (empty($reshook) && $action == 'add') {
+if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conference->status!=2  || !empty($project->id) && $project->status==Project::STATUS_VALIDATED)) {
 	$error = 0;
 
 	$urlback = '';
@@ -228,7 +250,15 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		// Check if attendee already exists (by email and for this event)
 		$confattendee = new ConferenceOrBoothAttendee($db);
-		$resultfetchconfattendee = $confattendee->fetchAll('', '', 0, 0, array('t.fk_actioncomm'=>$id, 'customsql'=>'t.email="'.$email.'"'));
+
+		if ($type=='global') {
+			$filter = array('t.fk_project'=>$id, 'customsql'=>'t.email="'.$email.'"');
+		}
+		if ($action='conf') {
+			$filter = array('t.fk_actioncomm'=>$id, 'customsql'=>'t.email="'.$email.'"');
+		}
+
+		$resultfetchconfattendee = $confattendee->fetchAll('', '', 0, 0, $filter);
 		if ($resultfetchconfattendee > 0 && count($resultfetchconfattendee)>0) {
 			// Found confattendee
 			$confattendee = array_shift($resultfetchconfattendee);
@@ -236,6 +266,7 @@ if (empty($reshook) && $action == 'add') {
 			// Need to create a confattendee
 			$confattendee->date_subscription = dol_now();
 			$confattendee->email = $email;
+			$confattendee->fk_project = $project->id;
 			$confattendee->fk_actioncomm = $id;
 			$resultconfattendee = $confattendee->create($user);
 			if ($resultconfattendee < 0) {
@@ -454,7 +485,7 @@ $formcompany = new FormCompany($db);
 
 llxHeaderVierge($langs->trans("NewSubscription"));
 
-
+print '<br>';
 print load_fiche_titre($langs->trans("NewSubscription"), '', '', 0, 0, 'center');
 
 
@@ -463,106 +494,118 @@ print '<div id="divsubscribe">';
 print '<div class="center subscriptionformhelptext justify">';
 
 // Welcome message
-print $langs->trans("EvntOrgWelcomeMessage", $conference->label);
+
+print $langs->trans("EvntOrgWelcomeMessage", $project->title . ' '. $conference->label);
 print '<br>';
-print $langs->trans("EvntOrgDuration", dol_print_date($conference->datep), dol_print_date($conference->datef));
+if ($conference->id) {
+	print $langs->trans("EvntOrgDuration", dol_print_date($conference->datep), dol_print_date($conference->datef));
+} else {
+	print $langs->trans("EvntOrgDuration", dol_print_date($project->date_start), dol_print_date($project->date_end));
+}
 print '</div>';
+
+print '<br>';
 
 dol_htmloutput_errors($errmsg);
 
-// Print form
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'."\n";
-print '<input type="hidden" name="token" value="'.newToken().'" / >';
-print '<input type="hidden" name="entity" value="'.$entity.'" />';
-print '<input type="hidden" name="action" value="add" />';
-print '<input type="hidden" name="id" value="'.$id.'" />';
-print '<input type="hidden" name="securekey" value="'.$securekeyreceived.'" />';
+if (!empty($conference->id) && $conference->status==ConferenceOrBooth::STATUS_CONFIRMED  || (!empty($project->id) && $project->status==Project::STATUS_VALIDATED)) {
+	// Print form
+	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="newmember">' . "\n";
+	print '<input type="hidden" name="token" value="' . newToken() . '" / >';
+	print '<input type="hidden" name="entity" value="' . $entity . '" />';
+	print '<input type="hidden" name="action" value="add" />';
+	print '<input type="hidden" name="id" value="' . $conference->id . '" />';
+	print '<input type="hidden" name="type" value="' . $type . '" />';
+	print '<input type="hidden" name="fk_project" value="' . $project->id . '" />';
+	print '<input type="hidden" name="securekey" value="' . $securekeyreceived . '" />';
 
-print '<br>';
+	print '<br>';
 
-print '<br><span class="opacitymedium">'.$langs->trans("FieldsWithAreMandatory", '*').'</span><br>';
-//print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
+	print '<br><span class="opacitymedium">' . $langs->trans("FieldsWithAreMandatory", '*') . '</span><br>';
+	//print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 
-print dol_get_fiche_head('');
+	print dol_get_fiche_head('');
 
-print '<script type="text/javascript">
-jQuery(document).ready(function () {
-    jQuery(document).ready(function () {
-        jQuery("#selectcountry_id").change(function() {
-           document.newmember.action.value="create";
-           document.newmember.submit();
-        });
-    });
-});
-</script>';
+	print '<script type="text/javascript">
+	jQuery(document).ready(function () {
+		jQuery(document).ready(function () {
+			jQuery("#selectcountry_id").change(function() {
+			   document.newmember.action.value="create";
+			   document.newmember.submit();
+			});
+		});
+	});
+	</script>';
 
-print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
+	print '<table class="border" summary="form to subscribe" id="tablesubscribe">' . "\n";
 
-// Email
-print '<tr><td>'.$langs->trans("Email").'<FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
-// Company
-print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company");
-if (!empty(floatval($project->price_registration))) {
-	print '<FONT COLOR="red">*</FONT>';
-}
-print ' </td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
-// Address
-print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
-print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
-// Zip / Town
-print '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td>';
-print $formcompany->select_ziptown(GETPOST('zipcode'), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6, 1);
-print ' / ';
-print $formcompany->select_ziptown(GETPOST('town'), 'town', array('zipcode', 'selectcountry_id', 'state_id'), 0, 1);
-print '</td></tr>';
-// Country
-print '<tr><td>'.$langs->trans('Country').'<FONT COLOR="red">*</FONT></td><td>';
-$country_id = GETPOST('country_id');
-if (!$country_id && !empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) {
-	$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
-}
-if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
-	$country_code = dol_user_country();
-	//print $country_code;
-	if ($country_code) {
-		$new_country_id = getCountry($country_code, 3, $db, $langs);
-		//print 'xxx'.$country_code.' - '.$new_country_id;
-		if ($new_country_id) {
-			$country_id = $new_country_id;
+	// Email
+	print '<tr><td>' . $langs->trans("Email") . '<FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="' . dol_escape_htmltag(GETPOST('email')) . '"></td></tr>' . "\n";
+	// Company
+	print '<tr id="trcompany" class="trcompany"><td>' . $langs->trans("Company");
+	if (!empty(floatval($project->price_registration))) {
+		print '<FONT COLOR="red">*</FONT>';
+	}
+	print ' </td><td><input type="text" name="societe" class="minwidth150" value="' . dol_escape_htmltag(GETPOST('societe')) . '"></td></tr>' . "\n";
+	// Address
+	print '<tr><td>' . $langs->trans("Address") . '</td><td>' . "\n";
+	print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="' . ROWS_3 . '">' . dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1) . '</textarea></td></tr>' . "\n";
+	// Zip / Town
+	print '<tr><td>' . $langs->trans('Zip') . ' / ' . $langs->trans('Town') . '</td><td>';
+	print $formcompany->select_ziptown(GETPOST('zipcode'), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6, 1);
+	print ' / ';
+	print $formcompany->select_ziptown(GETPOST('town'), 'town', array('zipcode', 'selectcountry_id', 'state_id'), 0, 1);
+	print '</td></tr>';
+	// Country
+	print '<tr><td>' . $langs->trans('Country') . '<FONT COLOR="red">*</FONT></td><td>';
+	$country_id = GETPOST('country_id');
+	if (!$country_id && !empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) {
+		$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
+	}
+	if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
+		$country_code = dol_user_country();
+		//print $country_code;
+		if ($country_code) {
+			$new_country_id = getCountry($country_code, 3, $db, $langs);
+			//print 'xxx'.$country_code.' - '.$new_country_id;
+			if ($new_country_id) {
+				$country_id = $new_country_id;
+			}
 		}
 	}
-}
-$country_code = getCountry($country_id, 2, $db, $langs);
-print $form->select_country($country_id, 'country_id');
-print '</td></tr>';
-// State
-if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
-	print '<tr><td>'.$langs->trans('State').'</td><td>';
-	if ($country_code) {
-		print $formcompany->select_state(GETPOST("state_id"), $country_code);
-	} else {
-		print '';
-	}
+	$country_code = getCountry($country_id, 2, $db, $langs);
+	print $form->select_country($country_id, 'country_id');
 	print '</td></tr>';
+	// State
+	if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
+		print '<tr><td>' . $langs->trans('State') . '</td><td>';
+		if ($country_code) {
+			print $formcompany->select_state(GETPOST("state_id"), $country_code);
+		} else {
+			print '';
+		}
+		print '</td></tr>';
+	}
+
+	print "</table>\n";
+
+	print dol_get_fiche_end();
+
+	// Save
+	print '<div class="center">';
+	print '<input type="submit" value="' . $langs->trans("Submit") . '" id="submitsave" class="button">';
+	if (!empty($backtopage)) {
+		print ' &nbsp; &nbsp; <input type="submit" value="' . $langs->trans("Cancel") . '" id="submitcancel" class="button button-cancel">';
+	}
+	print '</div>';
+
+
+	print "</form>\n";
+	print "<br>";
+	print '</div></div>';
+} else {
+	print $langs->trans("ConferenceIsNotConfirmed");
 }
-
-print "</table>\n";
-
-print dol_get_fiche_end();
-
-// Save
-print '<div class="center">';
-print '<input type="submit" value="'.$langs->trans("Submit").'" id="submitsave" class="button">';
-if (!empty($backtopage)) {
-	print ' &nbsp; &nbsp; <input type="submit" value="'.$langs->trans("Cancel").'" id="submitcancel" class="button button-cancel">';
-}
-print '</div>';
-
-
-print "</form>\n";
-print "<br>";
-print '</div></div>';
-
 
 llxFooterVierge();
 

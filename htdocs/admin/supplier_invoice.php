@@ -59,14 +59,19 @@ $specimenthirdparty->initAsSpecimen();
 if ($action == 'updateMask') {
 	$maskconstinvoice = GETPOST('maskconstinvoice', 'alpha');
 	$maskconstcredit = GETPOST('maskconstcredit', 'alpha');
+	$maskconstdeposit = GETPOST('maskconstdeposit', 'alpha');
 	$maskinvoice = GETPOST('maskinvoice', 'alpha');
 	$maskcredit = GETPOST('maskcredit', 'alpha');
+	$maskdeposit = GETPOST('maskdeposit', 'alpha');
 
 	if ($maskconstinvoice) {
 		$res = dolibarr_set_const($db, $maskconstinvoice, $maskinvoice, 'chaine', 0, '', $conf->entity);
 	}
 	if ($maskconstcredit) {
 		$res = dolibarr_set_const($db, $maskconstcredit, $maskcredit, 'chaine', 0, '', $conf->entity);
+	}
+	if ($maskconstdeposit) {
+		$res = dolibarr_set_const($db, $maskconstdeposit, $maskdeposit, 'chaine', 0, '', $conf->entity);
 	}
 
 	if (!($res > 0)) {

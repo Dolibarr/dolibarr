@@ -129,6 +129,7 @@ ClosedByLogin=Login pengguna yang ditutup
 FileWasRemoved=File %s dihapus
 DirWasRemoved=Direktori %s telah dihapus
 FeatureNotYetAvailable=Fitur belum tersedia di versi saat ini
+FeatureNotAvailableOnDevicesWithoutMouse=Feature not available on devices without mouse
 FeaturesSupported=Fitur yang didukung
 Width=Lebar
 Height=Tinggi
@@ -263,7 +264,7 @@ ContactCreatedByEmailCollector=Kontak / alamat yang dibuat oleh kolektor email d
 ProjectCreatedByEmailCollector=Proyek dibuat oleh kolektor email dari email MSGID %s
 TicketCreatedByEmailCollector=Tiket dibuat oleh kolektor email dari email MSGID %s
 OpeningHoursFormatDesc=Gunakan a - untuk memisahkan jam buka dan tutup. <br> Gunakan spasi untuk memasukkan rentang yang berbeda. <br> Contoh: 8-12 14-18
-PrefixSession=Prefix for session ID
+SuffixSessionName=Suffix for session name
 
 ##### Export #####
 ExportsArea=Area ekspor

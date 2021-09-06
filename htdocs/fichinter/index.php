@@ -83,7 +83,7 @@ if ($user->socid) {
 	$sql .= ' AND f.fk_soc = '.$user->socid;
 }
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " GROUP BY f.fk_statut";
 $resql = $db->query($sql);
@@ -199,10 +199,10 @@ if (!empty($conf->ficheinter->enabled)) {
 	$sql .= " AND f.fk_soc = s.rowid";
 	$sql .= " AND f.fk_statut = 0";
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 
 	$resql = $db->query($sql);
@@ -249,10 +249,10 @@ $sql .= " WHERE f.entity IN (".getEntity('intervention').")";
 $sql .= " AND f.fk_soc = s.rowid";
 //$sql.= " AND c.fk_statut > 2";
 if ($socid) {
-	$sql .= " AND f.fk_soc = ".$socid;
+	$sql .= " AND f.fk_soc = ".((int) $socid);
 }
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " ORDER BY f.tms DESC";
 $sql .= $db->plimit($max, 0);
@@ -322,10 +322,10 @@ if (!empty($conf->ficheinter->enabled)) {
 	$sql .= " AND f.fk_soc = s.rowid";
 	$sql .= " AND f.fk_statut = 1";
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " ORDER BY f.rowid DESC";
 

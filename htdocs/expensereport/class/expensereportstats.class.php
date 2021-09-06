@@ -71,7 +71,7 @@ class ExpenseReportStats extends Stats
 
 		//$this->where.= " AND entity = ".$conf->entity;
 		if ($this->socid) {
-			$this->where .= " AND e.fk_soc = ".$this->socid;
+			$this->where .= " AND e.fk_soc = ".((int) $this->socid);
 		}
 
 		// Only me and subordinates

@@ -99,7 +99,7 @@ if ($id > 0 || !empty($ref)) {
 		$upload_dir = $conf->expedition->dir_output.'/sending/'.dol_sanitizeFileName($object->ref);
 
 		$head = shipping_prepare_head($object);
-		print dol_get_fiche_head($head, 'documents', $langs->trans("Shipment"), -1, 'sending');
+		print dol_get_fiche_head($head, 'documents', $langs->trans("Shipment"), -1, $object->picto);
 
 
 		// Build file list
@@ -177,7 +177,7 @@ if ($id > 0 || !empty($ref)) {
 		print dol_get_fiche_end();
 
 		$modulepart = 'expedition';
-		$permission = $user->rights->expedition->creer;
+		$permissiontoadd = $user->rights->expedition->creer;
 		$permtoedit = $user->rights->expedition->creer;
 		$param = '&id='.$object->id;
 		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

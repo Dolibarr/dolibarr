@@ -906,7 +906,7 @@ function listOfSessions()
 
 					if (preg_match('/dol_login/i', $sessValues) && // limit to dolibarr session
 						(preg_match('/dol_entity\|i:'.$conf->entity.';/i', $sessValues) || preg_match('/dol_entity\|s:([0-9]+):"'.$conf->entity.'"/i', $sessValues)) && // limit to current entity
-					preg_match('/dol_company\|s:([0-9]+):"('.$conf->global->MAIN_INFO_SOCIETE_NOM.')"/i', $sessValues)) { // limit to company name
+					preg_match('/dol_company\|s:([0-9]+):"('.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').')"/i', $sessValues)) { // limit to company name
 						$tmp = explode('_', $file);
 						$idsess = $tmp[1];
 						$regs = array();
@@ -1526,10 +1526,11 @@ function complete_elementList_with_modules(&$elementList)
  *	@param	array	$tableau		Array of constants array('key'=>array('type'=>type, 'label'=>label)
  *									where type can be 'string', 'text', 'textarea', 'html', 'yesno', 'emailtemplate:xxx', ...
  *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (deprecated), 2=No form nor button at all, 3=No form nor button at all and each field has a unique name (form is output by caller, recommended)
- *  @param  string  $helptext       Help
+ *  @param  string  $helptext       Tooltip help to use for the column name of values
+ *  @param	string	$text			Text to use for the column name of values
  *	@return	void
  */
-function form_constantes($tableau, $strictw3c = 0, $helptext = '')
+function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Value')
 {
 	global $db, $langs, $conf, $user;
 	global $_Avery_Labels;
@@ -1545,11 +1546,12 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 		print '<input type="hidden" name="action" value="updateall">';
 	}
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td class="">'.$langs->trans("Description").'</td>';
 	print '<td>';
-	$text = $langs->trans("Value");
+	$text = $langs->trans($text);
 	print $form->textwithpicto($text, $helptext, 1, 'help', '', 0, 2, 'idhelptext');
 	print '</td>';
 	if (empty($strictw3c)) {
@@ -1715,6 +1717,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 		}
 	}
 	print '</table>';
+	print '</div>';
 
 	if (!empty($strictw3c) && $strictw3c == 1) {
 		print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';

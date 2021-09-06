@@ -6,7 +6,7 @@ const createThirdparty = async (z, bundle) => {
     const response = await z.request({
         method: 'POST',
         url: apiurl,
-        body: JSON.stringify({
+        body: {
             name: bundle.inputData.name,
             name_alias: bundle.inputData.name_alias,
             ref_ext: bundle.inputData.ref_ext,
@@ -24,7 +24,7 @@ const createThirdparty = async (z, bundle) => {
             code_client: bundle.inputData.code_client,
             code_fournisseur: bundle.inputData.code_fournisseur,
             sens: 'fromzapier'
-        })
+        }
     });
     const result = z.JSON.parse(response.content);
     // api returns an integer when ok, a json when ko

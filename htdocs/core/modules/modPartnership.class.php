@@ -180,10 +180,8 @@ class modPartnership extends DolibarrModules
 		$tabtoadd = (!empty(getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR')) && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') ? 'member' : 'thirdparty';
 
 		if ($tabtoadd == 'member') {
-			$this->tabs[] = array('data'=>'member:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/adherents/partnership.php?rowid=__ID__');
 			$fk_mainmenu = "members";
 		} else {
-			$this->tabs[] = array('data'=>'thirdparty:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/societe/partnership.php?socid=__ID__');
 			$fk_mainmenu = "companies";
 		}
 
@@ -214,30 +212,27 @@ class modPartnership extends DolibarrModules
 		// 'user'             to add a tab in user view
 
 		// Dictionaries
-		$this->dictionaries = array();
-		/* Example:
 		$this->dictionaries=array(
 			'langs'=>'partnership@partnership',
 			// List of tables we want to see into dictonnary editor
-			'tabname'=>array(MAIN_DB_PREFIX."table1", MAIN_DB_PREFIX."table2", MAIN_DB_PREFIX."table3"),
+			'tabname'=>array(MAIN_DB_PREFIX."c_partnership_type"),
 			// Label of tables
-			'tablib'=>array("Table1", "Table2", "Table3"),
+			'tablib'=>array("PartnershipType"),
 			// Request to select fields
-			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f', 'SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f', 'SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),
+			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'c_partnership_type as f WHERE f.entity = '.$conf->entity),
 			// Sort order
-			'tabsqlsort'=>array("label ASC", "label ASC", "label ASC"),
+			'tabsqlsort'=>array("label ASC"),
 			// List of fields (result of select to show dictionary)
-			'tabfield'=>array("code,label", "code,label", "code,label"),
+			'tabfield'=>array("code,label"),
 			// List of fields (list of fields to edit a record)
-			'tabfieldvalue'=>array("code,label", "code,label", "code,label"),
+			'tabfieldvalue'=>array("code,label"),
 			// List of fields (list of fields for insert)
-			'tabfieldinsert'=>array("code,label", "code,label", "code,label"),
+			'tabfieldinsert'=>array("code,label"),
 			// Name of columns with primary key (try to always name it 'rowid')
-			'tabrowid'=>array("rowid", "rowid", "rowid"),
+			'tabrowid'=>array("rowid"),
 			// Condition to show each dictionary
-			'tabcond'=>array($conf->partnership->enabled, $conf->partnership->enabled, $conf->partnership->enabled)
+			'tabcond'=>array($conf->partnership->enabled)
 		);
-		*/
 
 		// Boxes/Widgets
 		// Add here list of php file(s) stored in partnership/core/boxes that contains a class to show a widget.
@@ -258,7 +253,7 @@ class modPartnership extends DolibarrModules
 
 		$this->cronjobs = array(
 			0	=> array('priority'=>60, 'label'=>'CancelPartnershipForExpiredMembers', 'jobtype'=>'method', 'class'=>'/partnership/class/partnershiputils.class.php', 'objectname'=>'PartnershipUtils', 'method'=>'doCancelStatusOfMemberPartnership', 'parameters'=>'',      'comment'=>'Cancel status of partnership when subscription is expired + x days.', 'frequency'=>1, 'unitfrequency'=>86400, 'status'=>1, 'test'=>'$conf->partnership->enabled', 'datestart'=>$datestart),
-			1	=> array('priority'=>61, 'label'=>'CheckDolibarrBacklink', 'jobtype'=>'method', 'class'=>'/partnership/class/partnershiputils.class.php', 'objectname'=>'PartnershipUtils', 'method'=>'doWarningOfPartnershipIfDolibarrBacklinkNotfound', 'parameters'=>'',      'comment'=>'Warning of partnership if Dolibarr backlink not found on partner website.', 'frequency'=>1, 'unitfrequency'=>86400, 'status'=>0, 'test'=>'$conf->partnership->enabled', 'datestart'=>$datestart),
+			1	=> array('priority'=>61, 'label'=>'PartnershipCheckBacklink', 'jobtype'=>'method', 'class'=>'/partnership/class/partnershiputils.class.php', 'objectname'=>'PartnershipUtils', 'method'=>'doWarningOfPartnershipIfDolibarrBacklinkNotfound', 'parameters'=>'',      'comment'=>'Warning of partnership if Dolibarr backlink not found on partner website.', 'frequency'=>1, 'unitfrequency'=>86400, 'status'=>0, 'test'=>'$conf->partnership->enabled', 'datestart'=>$datestart),
 		);
 
 		// Permissions provided by this module

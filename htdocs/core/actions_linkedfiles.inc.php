@@ -21,13 +21,23 @@
 // Variable $upload_dir must be defined when entering here.
 // Variable $upload_dirold may also exists.
 // Variable $confirm must be defined.
+// If variable $permissiontoadd is defined, we check it is true. Note: A test on permission should already have been done into the restrictedArea() method called by parent page.
 
 //var_dump($upload_dir);
 //var_dump($upload_dirold);
 
 
+// Protection to understand what happen when submitting files larger than post_max_size
+if (GETPOST('uploadform', 'int') && empty($_POST) && empty($_FILES)) {
+	dol_syslog("The PHP parameter 'post_max_size' is too low. All POST parameters and FILES were set to empty.");
+	$langs->loadLangs(array("errors", "install"));
+	print $langs->trans("ErrorFileSizeTooLarge").' ';
+	print $langs->trans("ErrorGoBackAndCorrectParameters");
+	die;
+}
+
 // Submit file/link
-if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC)) {
+if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC) && (!isset($permissiontoadd) || $permissiontoadd)) {
 	if (!empty($_FILES)) {
 		if (is_array($_FILES['userfile']['tmp_name'])) {
 			$userfiles = $_FILES['userfile']['tmp_name'];
@@ -65,7 +75,7 @@ if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC)) {
 			}
 		}
 	}
-} elseif (GETPOST('linkit', 'restricthtml') && !empty($conf->global->MAIN_UPLOAD_DOC)) {
+} elseif (GETPOST('linkit', 'restricthtml') && !empty($conf->global->MAIN_UPLOAD_DOC) && (!isset($permissiontoadd) || $permissiontoadd)) {
 	$link = GETPOST('link', 'alpha');
 	if ($link) {
 		if (substr($link, 0, 7) != 'http://' && substr($link, 0, 8) != 'https://' && substr($link, 0, 7) != 'file://' && substr($link, 0, 7) != 'davs://') {
@@ -77,7 +87,7 @@ if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC)) {
 
 
 // Delete file/link
-if ($action == 'confirm_deletefile' && $confirm == 'yes') {
+if ($action == 'confirm_deletefile' && $confirm == 'yes' && (!isset($permissiontoadd) || $permissiontoadd)) {
 	$urlfile = GETPOST('urlfile', 'alpha', 0, null, null, 1); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 	if (GETPOST('section', 'alpha')) {
 		// For a delete from the ECM module, upload_dir is ECM root dir and urlfile contains relative path from upload_dir
@@ -149,7 +159,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes') {
 			exit;
 		}
 	}
-} elseif ($action == 'confirm_updateline' && GETPOST('save', 'alpha') && GETPOST('link', 'alpha')) {
+} elseif ($action == 'confirm_updateline' && GETPOST('save', 'alpha') && GETPOST('link', 'alpha') && (!isset($permissiontoadd) || $permissiontoadd)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$langs->load('link');
 	$link = new Link($db);
@@ -167,7 +177,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes') {
 	} else {
 		//error fetching
 	}
-} elseif ($action == 'renamefile' && GETPOST('renamefilesave', 'alpha')) {
+} elseif ($action == 'renamefile' && GETPOST('renamefilesave', 'alpha') && (!isset($permissiontoadd) || $permissiontoadd)) {
 	// For documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
 	if (!empty($upload_dir)) {
 		$filenamefrom = dol_sanitizeFileName(GETPOST('renamefilefrom', 'alpha'), '_', 0); // Do not remove accents

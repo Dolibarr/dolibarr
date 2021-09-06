@@ -211,7 +211,7 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'recruitment';
-	$permission = $user->rights->recruitment->recruitmentjobposition->write;
+	$permissiontoadd = $user->rights->recruitment->recruitmentjobposition->write;
 	$permtoedit = $user->rights->recruitment->recruitmentjobposition->write;
 	$param = '&id='.$object->id;
 

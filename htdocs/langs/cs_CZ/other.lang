@@ -129,6 +129,7 @@ ClosedByLogin=Přihlášený uživatel, který uzavřel
 FileWasRemoved=Soubor %s byl odstraněn
 DirWasRemoved=Adresář %s byl odstraněn
 FeatureNotYetAvailable=Funkce zatím není k dispozici v aktuální verzi
+FeatureNotAvailableOnDevicesWithoutMouse=Feature not available on devices without mouse
 FeaturesSupported=Podporované funkce
 Width=Šířka
 Height=Výška
@@ -263,7 +264,7 @@ ContactCreatedByEmailCollector=Kontakt/adresa vytvořená sběratelem e-mailů z
 ProjectCreatedByEmailCollector=Projekt vytvořený sběratelem e-mailů z e-mailu MSGID %s
 TicketCreatedByEmailCollector=Lístek vytvořený sběratelem e-mailů z e-mailu MSGID %s
 OpeningHoursFormatDesc=Pomocí a - oddělte otevírací a zavírací dobu. <br> Pomocí mezery zadejte různé rozsahy. <br> Příklad: 8-12 14-18
-PrefixSession=Prefix for session ID
+SuffixSessionName=Suffix for session name
 
 ##### Export #####
 ExportsArea=Exportní plocha

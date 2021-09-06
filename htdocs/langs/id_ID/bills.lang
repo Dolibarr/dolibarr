@@ -259,6 +259,7 @@ DateMaxPayment=Pembayaran jatuh tempo pada
 DateInvoice=Tanggal faktur
 DatePointOfTax=Titik pajak
 NoInvoice=Tidak ada faktur
+NoOpenInvoice=No open invoice
 ClassifyBill=Klasifikasi faktur
 SupplierBillsToPay=Faktur vendor yang belum dibayar
 CustomerBillsUnpaid=Faktur pelanggan yang belum dibayar
@@ -589,3 +590,4 @@ FacParentLine=Invoice Line Parent
 SituationTotalRayToRest=Remainder to pay without taxe
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=Total progress %d %%
+SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s

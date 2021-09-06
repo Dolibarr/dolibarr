@@ -44,4 +44,4 @@ ValidateOrderFirstBeforeReception=Du skal først validere ordren, før du kan la
 ReceptionsNumberingModules=Nummerering modul til receptioner
 ReceptionsReceiptModel=Dokumentskabeloner til modtagelser
 NoMorePredefinedProductToDispatch=Ikke flere foruddefinerede produkter, der skal sendes
-
+ReceptionExist=Der findes en reception

@@ -158,7 +158,7 @@ ACCOUNTING_LENGTH_AACCOUNT=Độ dài của tài khoản kế toán bên thứ b
 ACCOUNTING_MANAGE_ZERO=Cho phép quản lý các số không khác nhau ở cuối tài khoản kế toán. Nó cần thiết cho một số nước (như Thụy Sĩ). Nếu được đặt thành tắt (mặc định), bạn có thể đặt hai tham số sau để yêu cầu ứng dụng thêm số không ảo.
 BANK_DISABLE_DIRECT_INPUT=Vô hiệu hóa ghi trực tiếp giao dịch trong tài khoản ngân hàng
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Cho phép xuất dữ liệu bản nháp trong nhật ký
-ACCOUNTANCY_COMBO_FOR_AUX=Bật danh sách kết hợp cho tài khoản công ty con (có thể chậm nếu bạn có nhiều bên thứ ba)
+ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
 ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, select period show by default
 
@@ -328,6 +328,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountanc
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
+NotifiedExportDate=Notified export date (modification of the entries will not be possible)
+NotifiedValidationDate=Validation of the entries (modification or deletion of the entries will not be possible)
+ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=Xuất dữ liệu bản nháp nhật ký
 Modelcsv=Mô hình xuất dữ liệu
 Selectmodelcsv=Chọn một mô hình xuất dữ liệu

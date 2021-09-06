@@ -97,7 +97,7 @@ class box_boms extends ModeleBoxes
 			$sql .= " WHERE c.fk_product = p.rowid";
 			$sql .= " AND c.entity = ".$conf->entity;
 			$sql .= " ORDER BY c.tms DESC, c.ref DESC";
-			$sql .= " ".$this->db->plimit($max, 0);
+			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);
 			if ($result) {
@@ -143,7 +143,7 @@ class box_boms extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($datem, 'day'),
+						'text' => dol_print_date($datem, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(

@@ -43,6 +43,8 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
+$sall = GETPOST("sall", "alpha");
+$filter = GETPOST("filter", 'alpha');
 $search_lastname = GETPOST('search_lastname', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
 $search_email = GETPOST('search_email', 'alpha');
@@ -71,7 +73,7 @@ $label = GETPOST("label", "alpha");
 $morphy = GETPOST("morphy", "alpha");
 $status = GETPOST("status", "int");
 $subscription = GETPOST("subscription", "int");
-$amount = price2num(GETPOST('amount', 'alpha'), 'MT');
+$amount = GETPOST('amount', 'alpha');
 $duration_value = GETPOST('duration_value', 'int');
 $duration_unit = GETPOST('duration_unit', 'alpha');
 $vote = GETPOST("vote", "int");
@@ -119,7 +121,7 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 	$object->morphy = trim($morphy);
 	$object->status = (int) $status;
 	$object->subscription = (int) $subscription;
-	$object->amount = $amount;
+	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
 	$object->duration_value = $duration_value;
 	$object->duration_unit = $duration_unit;
 	$object->note = trim($comment);
@@ -166,12 +168,11 @@ if ($action == 'update' && $user->rights->adherent->configurer) {
 	$object->fetch($rowid);
 
 	$object->oldcopy = clone $object;
-
 	$object->label= trim($label);
 	$object->morphy	= trim($morphy);
 	$object->status	= (int) $status;
 	$object->subscription = (int) $subscription;
-	$object->amount = $amount;
+	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));;
 	$object->duration_value = $duration_value;
 	$object->duration_unit = $duration_unit;
 	$object->note = trim($comment);
@@ -306,7 +307,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			}
 			print '</td>';
 			print '<td class="center">'.yn($objp->subscription).'</td>';
-			print '<td class="center">'.price($objp->amount).'</td>';
+			print '<td class="center"><span class="amount">'.(is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount)).'</span></td>';
 			print '<td class="center">'.yn($objp->vote).'</td>';
 			print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
 			if ($user->rights->adherent->configurer) {
@@ -446,7 +447,7 @@ if ($rowid > 0) {
 		print '</tr>';
 
 		print '<tr><td class="titlefield">'.$langs->trans("Amount").'</td><td>';
-		print price($object->amount);
+		print ((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
 		print '</tr>';
 
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
@@ -594,24 +595,24 @@ if ($rowid > 0) {
 				$titre .= " (".$membertype->label.")";
 			}
 
-			$param = "&rowid=".$object->id;
+			$param = "&rowid=".urlencode($object->id);
 			if (!empty($status)) {
-				$param .= "&status=".$status;
+				$param .= "&status=".urlencode($status);
 			}
 			if (!empty($search_lastname)) {
-				$param .= "&search_lastname=".$search_lastname;
+				$param .= "&search_lastname=".urlencode($search_lastname);
 			}
 			if (!empty($search_firstname)) {
-				$param .= "&search_firstname=".$search_firstname;
+				$param .= "&search_firstname=".urlencode($search_firstname);
 			}
 			if (!empty($search_login)) {
-				$param .= "&search_login=".$search_login;
+				$param .= "&search_login=".urlencode($search_login);
 			}
 			if (!empty($search_email)) {
-				$param .= "&search_email=".$search_email;
+				$param .= "&search_email=".urlencode($search_email);
 			}
 			if (!empty($filter)) {
-				$param .= "&filter=".$filter;
+				$param .= "&filter=".urlencode($filter);
 			}
 
 			if ($sall) {
@@ -797,7 +798,9 @@ if ($rowid > 0) {
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Amount").'</td><td>';
-		print '<input name="amount" size="5" value="'.price($object->amount).'">';
+		print '<input name="amount" size="5" value="';
+		print ((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
+		print '">';
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';

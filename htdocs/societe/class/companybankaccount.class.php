@@ -83,7 +83,7 @@ class CompanyBankAccount extends Account
 		$now	= dol_now();
 		$error = 0;
 		// Correct default_rib to be sure to have always one default
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib where fk_soc = ".$this->socid." AND default_rib = 1 AND type = 'ban'";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib where fk_soc = ".((int) $this->socid)." AND default_rib = 1 AND type = 'ban'";
 		$result = $this->db->query($sql);
 		if ($result) {
 			$numrows = $this->db->num_rows($result);
@@ -96,7 +96,7 @@ class CompanyBankAccount extends Account
 		}
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, type, datec)";
-		$sql .= " VALUES (".$this->socid.", 'ban', '".$this->db->idate($now)."')";
+		$sql .= " VALUES (".((int) $this->socid).", 'ban', '".$this->db->idate($now)."')";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->affected_rows($resql)) {
@@ -135,6 +135,7 @@ class CompanyBankAccount extends Account
 	public function update(User $user = null, $notrigger = 0)
 	{
 		global $conf;
+
 		$error = 0;
 
 		if (!$this->id) {
@@ -156,11 +157,11 @@ class CompanyBankAccount extends Account
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
-		$sql .= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
+		$sql .= ",domiciliation = '".$this->db->escape($this->domiciliation)."'";
 		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
-		$sql .= ",default_rib = ".$this->default_rib;
-		if ($conf->prelevement->enabled) {
+		$sql .= ",default_rib = ".((int) $this->default_rib);
+		if (!empty($conf->prelevement->enabled)) {
 			$sql .= ",frstrecur = '".$this->db->escape($this->frstrecur)."'";
 			$sql .= ",rum = '".$this->db->escape($this->rum)."'";
 			$sql .= ",date_rum = ".($this->date_rum ? "'".$this->db->idate($this->date_rum)."'" : "null");

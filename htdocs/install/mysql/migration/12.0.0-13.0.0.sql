@@ -367,7 +367,7 @@ ALTER TABLE llx_actioncomm_reminder ADD UNIQUE uk_actioncomm_reminder_unique (fk
 
 ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_status (status);
 
-
+ALTER TABLE llx_inventorydet ADD COLUMN fk_warehouse integer DEFAULT 0;
 ALTER TABLE llx_inventorydet ADD UNIQUE uk_inventorydet(fk_inventory, fk_warehouse, fk_product, batch);
 
 ALTER TABLE llx_commandedet ADD COLUMN ref_ext varchar(255) AFTER label;
@@ -580,6 +580,11 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 
 -- Removed no more used function
 -- VPGSQL8.2 DROP FUNCTION IF EXISTS update_modified_column_date_m() CASCADE;
+-- VPGSQL8.2 DROP TRIGGER update_customer_modtime ON llx_ecm_directories;
+-- VPGSQL8.2 DROP TRIGGER update_customer_modtime ON llx_ecm_files;
+-- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_ecm_directories FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+-- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_ecm_files FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+
 
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 6,'AC_EMAIL_IN','system','reception Email',NULL, 1, 4);
 

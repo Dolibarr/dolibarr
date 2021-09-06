@@ -129,6 +129,7 @@ ClosedByLogin=geschlossen von User
 FileWasRemoved=Datei wurde entfernt
 DirWasRemoved=Verzeichnis wurde entfernt
 FeatureNotYetAvailable=Diese Funktion steht in dieser Version noch nicht zur Verfügung
+FeatureNotAvailableOnDevicesWithoutMouse=Feature not available on devices without mouse
 FeaturesSupported=Unterstützte Funktionalität
 Width=Breite
 Height=Höhe
@@ -263,7 +264,7 @@ ContactCreatedByEmailCollector=Kontakt / Adresse durch das Modul E-Mail-Sammler 
 ProjectCreatedByEmailCollector=Projekt durch das Modul E-Mail-Sammler aus der E-Mail erstellt. MSGID %s
 TicketCreatedByEmailCollector=Ticket durch das Modul E-Mail-Sammler aus der E-Mail erstellt. MSGID %s
 OpeningHoursFormatDesc=Benutze unterschiedliche von - bis Öffnungs- und Schließzeiten.<br>Leerzeichen trennt unterschiedliche Bereiche.<br>Beispiel: 8-12 14-18
-PrefixSession=Präfix für Sitzungs-ID
+SuffixSessionName=Suffix for session name
 
 ##### Export #####
 ExportsArea=Exportübersicht

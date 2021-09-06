@@ -9,7 +9,7 @@ ConfirmDeleteEstablishment=この事業所を削除したいのね、いいよ�
 OpenEtablishment=事業所を開く
 CloseEtablishment=事業所を閉じる
 # Dictionary
-DictionaryPublicHolidays=HRM - 祝祭日
+DictionaryPublicHolidays=休暇-祝日
 DictionaryDepartment=HRM - 部門一覧
 DictionaryFunction=HRM - 職位
 # Module

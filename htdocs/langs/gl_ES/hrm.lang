@@ -9,7 +9,7 @@ ConfirmDeleteEstablishment=Está certo de querer eliminar este establecemento?
 OpenEtablishment=Abrir establecemento
 CloseEtablishment=Pechar establecemento
 # Dictionary
-DictionaryPublicHolidays=RRHH - Festivos
+DictionaryPublicHolidays=Permisos- Días Festivos
 DictionaryDepartment=RRHH - Listaxe Departamentos
 DictionaryFunction=RRHH - Postos de traballo
 # Module

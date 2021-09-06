@@ -112,10 +112,12 @@ if ($user->socid) {
 // require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 // $object = new PaiementFourn($db);
 // restrictedArea($user, $object->element);
-if ((empty($conf->fournisseur->enabled) && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_invoice->enabled)) {
+if ((empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))
+	|| (empty($conf->supplier_invoice->enabled) && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))) {
 	accessforbidden();
 }
-if (!$user->rights->fournisseur->facture->lire || !$user->rights->supplier_invoice->lire) {
+if ((empty($user->rights->fournisseur->facture->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))
+	|| (empty($user->rights->supplier_invoice->lire) && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))) {
 	accessforbidden();
 }
 
@@ -254,10 +256,10 @@ if ($optioncss != '') {
 if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
-if ($saerch_day) {
+if ($search_day) {
 	$param .= '&search_day='.urlencode($search_day);
 }
-if ($saerch_month) {
+if ($search_month) {
 	$param .= '&search_month='.urlencode($search_month);
 }
 if ($search_year) {

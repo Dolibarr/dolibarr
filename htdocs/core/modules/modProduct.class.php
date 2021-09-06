@@ -572,7 +572,13 @@ class modProduct extends DolibarrModules
 					'class' => 'CProductNature',
 					'method' => 'fetch',
 					'dict' => 'DictionaryProductNature'
-					),
+				),
+				'p.accountancy_code_sell'=>array('rule'=>'accountingaccount'),
+				'p.accountancy_code_sell_intra'=>array('rule'=>'accountingaccount'),
+				'p.accountancy_code_sell_export'=>array('rule'=>'accountingaccount'),
+				'p.accountancy_code_buy'=>array('rule'=>'accountingaccount'),
+				'p.accountancy_code_buy_intra'=>array('rule'=>'accountingaccount'),
+				'p.accountancy_code_buy_export'=>array('rule'=>'accountingaccount'),
 		);
 
 		$this->import_regex_array[$r] = array(

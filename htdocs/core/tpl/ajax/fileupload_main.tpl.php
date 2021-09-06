@@ -63,8 +63,11 @@ $(function () {
 					"<?php echo $langs->trans('Ok'); ?>": function() {
 						$( "#confirm-delete" ).dialog( "close" );
 						if (data.url) {
-							$.ajax(data)
-								.success(function (data) {
+							$.ajax({
+								method: "POST",
+								data: { token: '<?php echo currentToken(); ?>' },
+								url: data.url
+							}).success(function (data) {
 									if (data) {
 										that._adjustMaxNumberOfFiles(1);
 										$(this).fadeOut(function () {

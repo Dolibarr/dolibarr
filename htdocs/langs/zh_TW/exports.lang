@@ -53,7 +53,8 @@ TypeOfLineServiceOrProduct=類型（0 =產品，1 =服務）
 FileWithDataToImport=匯入有資料的檔案
 FileToImport=欲匯入的來源檔案
 FileMustHaveOneOfFollowingFormat=要匯入的檔案必須是以下格式
-DownloadEmptyExample=下載帶有欄位內容資料的範本檔案（*為必填欄位）
+DownloadEmptyExample=Download template file with field content information
+StarAreMandatory=* are mandatory fields
 ChooseFormatOfFileToImport=通過點選%s圖示選擇要匯入的檔案格式...
 ChooseFileToImport=上傳檔案，然後點擊%s圖示以選擇要匯入的檔案...
 SourceFileFormat=來源檔案格式

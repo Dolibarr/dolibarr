@@ -47,7 +47,7 @@ KnowledgeManagementArea = Xestión do Coñecemento
 # Menu
 #
 MenuKnowledgeRecord = Base de Coñecemento
-ListOfArticles = Listaxe de artígos
+ListKnowledgeRecord = Listaxe de artígos
 NewKnowledgeRecord = Novo artigo
 ValidateReply = Validar a solución
 KnowledgeRecords = Artigos

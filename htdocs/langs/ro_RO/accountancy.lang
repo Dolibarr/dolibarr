@@ -158,7 +158,7 @@ ACCOUNTING_LENGTH_AACCOUNT=Lungimea contului contabil pentru terţ (Dacă setaț
 ACCOUNTING_MANAGE_ZERO=Permite gestionarea unui număr diferit de zerouri la sfârșitul unui cont contabil. Cerut de unele țări (precum Elveția). Dacă este setat la oprit (implicit), puteți seta următorii doi parametri pentru a cere aplicației să adauge zerouri virtuale.
 BANK_DISABLE_DIRECT_INPUT=Dezactivează înregistrarea directă a tranzacției în contul bancar
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Activați schița de export în jurnal
-ACCOUNTANCY_COMBO_FOR_AUX=Activați lista combo pentru cont auxiliar (poate fi lentă dacă aveți o mulțime de terți)
+ACCOUNTANCY_COMBO_FOR_AUX=Activare listă combinată pentru contul subsidiar (poate fi lent dacă aveți o mulțime de terți, întrerupe capacitatea de a căuta după o valoare parţială)
 ACCOUNTING_DATE_START_BINDING=Definiți o dată pentru a începe legarea și transferul în contabilitate. Înainte de această dată, tranzacțiile nu vor fi transferate în contabilitate.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=La transferul contabil, selectați perioada în mod implicit 
 
@@ -328,6 +328,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Dezactivați legarea și transferul în 
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Dezactivați legarea și transferul în contabilitate pentru rapoartele de cheltuieli (rapoartele de cheltuieli nu vor fi luate în considerare în contabilitate)
 
 ## Export
+NotifiedExportDate=Dată notificare export (modificarea înregistrărilor nu va fi posibilă)
+NotifiedValidationDate=Validare intrări (modificarea sau ștergerea intrărilor nu va fi posibilă)
+ConfirmExportFile=Confirmare generare fișier de export contabil?
 ExportDraftJournal=Export jurnal schiţă
 Modelcsv=Model export
 Selectmodelcsv=Selectează un model de export

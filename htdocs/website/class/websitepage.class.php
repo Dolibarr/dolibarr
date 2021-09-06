@@ -233,6 +233,10 @@ class WebsitePage extends CommonObject
 			$this->aliasalt = ','.preg_replace('/,+$/', '', preg_replace('/^,+/', '', $this->aliasalt)).','; // content in database must be ',xxx,...,yyy,'
 		}
 
+		$this->pageurl = preg_replace('/[^a-z0-9\-\_]/i', '', $this->pageurl);
+		$this->pageurl = preg_replace('/\-\-+/', '-', $this->pageurl);
+		$this->pageurl = preg_replace('/^\-/', '', $this->pageurl);
+
 		// Remove spaces and be sure we have main language only
 		$this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en
 
@@ -575,6 +579,10 @@ class WebsitePage extends CommonObject
 		if ($this->aliasalt) {
 			$this->aliasalt = ','.preg_replace('/,+$/', '', preg_replace('/^,+/', '', $this->aliasalt)).','; // content in database must be ',xxx,...,yyy,'
 		}
+
+		$this->pageurl = preg_replace('/[^a-z0-9\-\_]/i', '', $this->pageurl);
+		$this->pageurl = preg_replace('/\-\-+/', '-', $this->pageurl);
+		$this->pageurl = preg_replace('/^\-/', '', $this->pageurl);
 
 		// Remove spaces and be sure we have main language only
 		$this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en

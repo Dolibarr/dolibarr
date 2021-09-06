@@ -623,6 +623,12 @@ class ImportCsv extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric') {
 									$newval = price2num($newval);
+								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'accountingaccount') {
+									if (empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+										$newval = rtrim(trim($newval), "0");
+									} else {
+										$newval = trim($newval);
+									}
 								}
 
 								//print 'Val to use as insert is '.$newval.'<br>';

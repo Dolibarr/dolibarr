@@ -196,7 +196,7 @@ class EcmDirectory extends CommonObject
 			$sql .= " '".$this->db->escape($conf->entity)."',";
 			$sql .= " '".$this->db->escape($this->fk_parent)."',";
 			$sql .= " '".$this->db->escape($this->description)."',";
-			$sql .= " ".$this->cachenbofdoc.",";
+			$sql .= " ".((int) $this->cachenbofdoc).",";
 			$sql .= " '".$this->db->idate($this->date_c)."',";
 			$sql .= " '".$this->db->escape($this->fk_user_c)."'";
 			$sql .= ")";

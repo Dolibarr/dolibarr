@@ -47,6 +47,10 @@ session_cache_limiter('public');
 
 require_once '../../main.inc.php';
 
+/*
+ * View
+ */
+
 // Define javascript type
 top_httphead('text/javascript; charset=UTF-8');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.

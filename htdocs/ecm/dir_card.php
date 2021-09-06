@@ -88,17 +88,23 @@ if ($module == 'ecm') {
 }
 
 // Permissions
+$permtoread = 0;
 $permtoadd = 0;
 $permtoupload = 0;
 if ($module == 'ecm') {
+	$permtoread = $user->rights->ecm->read;
 	$permtoadd = $user->rights->ecm->setup;
 	$permtoupload = $user->rights->ecm->upload;
 }
 if ($module == 'medias') {
+	$permtoread = ($user->rights->mailing->lire || $user->rights->website->read);
 	$permtoadd = ($user->rights->mailing->creer || $user->rights->website->write);
 	$permtoupload = ($user->rights->mailing->creer || $user->rights->website->write);
 }
 
+if (!$permtoread) {
+	accessforbidden();
+}
 
 
 /*
@@ -106,7 +112,7 @@ if ($module == 'medias') {
  */
 
 // Upload file
-if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC)) {
+if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC) && $permtoupload) {
 	if (dol_mkdir($upload_dir) >= 0) {
 		$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir."/".dol_unescapefile($_FILES['userfile']['name']), 0, 0, $_FILES['userfile']['error']);
 		if (is_numeric($resupload) && $resupload > 0) {
@@ -131,7 +137,7 @@ if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC)) {
 }
 
 // Remove file
-if ($action == 'confirm_deletefile' && $confirm == 'yes') {
+if ($action == 'confirm_deletefile' && $confirm == 'yes' && $permtoupload) {
 	$langs->load("other");
 	$file = $upload_dir."/".GETPOST('urlfile'); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 	$ret = dol_delete_file($file);
@@ -145,7 +151,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes') {
 }
 
 // Remove dir
-if ($action == 'confirm_deletedir' && $confirm == 'yes') {
+if ($action == 'confirm_deletedir' && $confirm == 'yes' && $permtoupload) {
 	$backtourl = DOL_URL_ROOT."/ecm/index.php";
 	if ($module == 'medias') {
 		$backtourl = DOL_URL_ROOT."/website/index.php?file_manager=1";
@@ -181,7 +187,7 @@ if ($action == 'confirm_deletedir' && $confirm == 'yes') {
 }
 
 // Update dirname or description
-if ($action == 'update' && !GETPOST('cancel', 'alpha')) {
+if ($action == 'update' && !GETPOST('cancel', 'alpha') && $permtoadd) {
 	$error = 0;
 
 	if ($module == 'ecm') {

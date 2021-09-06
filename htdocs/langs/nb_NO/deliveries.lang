@@ -30,3 +30,4 @@ NonShippable=Kan ikke sendes
 ShowShippableStatus=Vis status sendingsklar
 ShowReceiving=Vis leveringskvittering
 NonExistentOrder=Ikkeeksisterende ordre
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines

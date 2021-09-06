@@ -514,7 +514,7 @@ class Stripe extends CommonObject
 						if (!$resql) {
 							$error++;
 							$this->error = $this->db->lasterror();
-							dol_syslog(get_class($this)."::PaymentIntent failed to insert paymentintent with id=".$paymentintent->id." into database.");
+							dol_syslog(get_class($this)."::PaymentIntent failed to insert paymentintent with id=".$paymentintent->id." into database.", LOG_ERR);
 						}
 					}
 				} else {

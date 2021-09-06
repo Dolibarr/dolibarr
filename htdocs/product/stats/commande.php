@@ -43,12 +43,9 @@ $socid = '';
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productstatsorder'));
-
-$mesg = '';
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -74,6 +71,9 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_month = '';
 	$search_year = '';
 }
+
+$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+
 
 /*
  * View
@@ -151,7 +151,7 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " WHERE c.fk_soc = s.rowid";
 			$sql .= " AND c.entity IN (".getEntity('commande').")";
 			$sql .= " AND d.fk_commande = c.rowid";
-			$sql .= " AND d.fk_product =".$product->id;
+			$sql .= " AND d.fk_product = ".((int) $product->id);
 			if (!empty($search_month)) {
 				$sql .= ' AND MONTH(c.date_commande) IN ('.$db->sanitize($search_month).')';
 			}
@@ -159,7 +159,7 @@ if ($id > 0 || !empty($ref)) {
 				$sql .= ' AND YEAR(c.date_commande) IN ('.$db->sanitize($search_year).')';
 			}
 			if (!$user->rights->societe->client->voir && !$socid) {
-				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($socid) {
 				$sql .= " AND c.fk_soc = ".((int) $socid);

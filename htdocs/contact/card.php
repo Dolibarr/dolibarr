@@ -77,12 +77,6 @@ if (!empty($canvas)) {
 	$objcanvas->getCanvas('contact', 'contactcard', $canvas);
 }
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('contactcard', 'globalcard'));
 
@@ -95,6 +89,16 @@ if (!($object->id > 0) && $action == 'view') {
 	print($langs->trans('ErrorRecordNotFound'));
 	exit;
 }
+
+$triggermodname = 'CONTACT_MODIFY';
+$permissiontoadd = $user->rights->societe->contact->creer;
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
+
 
 /*
  *	Actions
@@ -144,7 +148,7 @@ if (empty($reshook)) {
 
 
 	// Confirmation desactivation
-	if ($action == 'disable') {
+	if ($action == 'disable' && !empty($permissiontoadd)) {
 		$object->fetch($id);
 		if ($object->setstatus(0) < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -155,7 +159,7 @@ if (empty($reshook)) {
 	}
 
 	// Confirmation activation
-	if ($action == 'enable') {
+	if ($action == 'enable' && !empty($permissiontoadd)) {
 		$object->fetch($id);
 		if ($object->setstatus(1) < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -166,7 +170,7 @@ if (empty($reshook)) {
 	}
 
 	// Add contact
-	if ($action == 'add' && $user->rights->societe->contact->creer) {
+	if ($action == 'add' && !empty($permissiontoadd)) {
 		$db->begin();
 
 		if ($canvas) {
@@ -221,7 +225,7 @@ if (empty($reshook)) {
 			$action = 'create';
 		}
 
-		if (!empty($conf->mailing->enabled) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS==-1 && $object->no_email==-1 && !empty($object->email)) {
+		if (!empty($conf->mailing->enabled) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2 && $object->no_email == -1 && !empty($object->email)) {
 			$error++;
 			$errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("No_Email"));
 			$action = 'create';
@@ -252,7 +256,7 @@ if (empty($reshook)) {
 		if (empty($error)) {
 			// Categories association
 			$contcats = GETPOST('contcats', 'array');
-			if (count($contcats)>0) {
+			if (count($contcats) > 0) {
 				$result = $object->setCategories($contcats);
 				if ($result <= 0) {
 					$error++;
@@ -264,8 +268,8 @@ if (empty($reshook)) {
 
 		if (empty($error) && !empty($conf->mailing->enabled) && !empty($object->email)) {
 			// Add mass emailing flag into table mailing_unsubscribe
-			$result=$object->setNoEmail($object->no_email);
-			if ($result<0) {
+			$result = $object->setNoEmail($object->no_email);
+			if ($result < 0) {
 				$error++;
 				$errors = array_merge($errors, ($object->error ? array($object->error) : $object->errors));
 				$action = 'create';
@@ -293,7 +297,7 @@ if (empty($reshook)) {
 		$object->old_lastname = (string) GETPOST("old_lastname", 'alpha');
 		$object->old_firstname = (string) GETPOST("old_firstname", 'alpha');
 
-		$result = $object->delete();
+		$result = $object->delete(); // TODO Add $user as first param
 		if ($result > 0) {
 			if ($backtopage) {
 				header("Location: ".$backtopage);
@@ -307,13 +311,13 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && empty($cancel) && $user->rights->societe->contact->creer) {
+	if ($action == 'update' && empty($cancel) && !empty($permissiontoadd)) {
 		if (!GETPOST("lastname", 'alpha')) {
 			$error++; $errors = array($langs->trans("ErrorFieldRequired", $langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
 			$action = 'edit';
 		}
 
-		if (!empty($conf->mailing->enabled) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS==-1 && GETPOST("no_email", "int")==-1 && !empty(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL))) {
+		if (!empty($conf->mailing->enabled) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2 && GETPOST("no_email", "int") == -1 && !empty(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL))) {
 			$error++;
 			$errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("No_Email"));
 			$action = 'edit';
@@ -413,7 +417,7 @@ if (empty($reshook)) {
 			$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 			$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 
-			$object->roles = GETPOST("roles", 'array');		// Note GETPOSTISSET("role") is null when combo is empty
+			$object->roles = GETPOST("roles", 'array'); // Note GETPOSTISSET("role") is null when combo is empty
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -432,15 +436,13 @@ if (empty($reshook)) {
 					// Update mass emailing flag into table mailing_unsubscribe
 					if (GETPOSTISSET('no_email') && $object->email) {
 						$no_email = GETPOST('no_email', 'int');
-						$result=$object->setNoEmail($no_email);
-						if ($result<0) {
+						$result = $object->setNoEmail($no_email);
+						if ($result < 0) {
 							setEventMessages($object->error, $object->errors, 'errors');
 							$action = 'edit';
 						}
 					}
 
-					$object->old_lastname = '';
-					$object->old_firstname = '';
 					$action = 'view';
 				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -457,7 +459,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setprospectcontactlevel' && $user->rights->societe->contact->creer) {
+	if ($action == 'setprospectcontactlevel' && !empty($permissiontoadd)) {
 		$object->fetch($id);
 		$object->fk_prospectlevel = GETPOST('prospect_contact_level_id', 'alpha');
 		$result = $object->update($object->id, $user);
@@ -467,12 +469,37 @@ if (empty($reshook)) {
 	}
 
 	// set communication status
-	if ($action == 'setstcomm') {
+	if ($action == 'setstcomm' && !empty($permissiontoadd)) {
 		$object->fetch($id);
 		$object->stcomm_id = dol_getIdFromCode($db, GETPOST('stcomm', 'alpha'), 'c_stcommcontact');
 		$result = $object->update($object->id, $user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
+	// Update extrafields
+	if ($action == "update_extras" && !empty($permissiontoadd)) {
+		$object->fetch(GETPOST('id', 'int'));
+
+		$attributekey = GETPOST('attribute', 'alpha');
+		$attributekeylong = 'options_'.$attributekey;
+
+		if (GETPOSTISSET($attributekeylong.'day') && GETPOSTISSET($attributekeylong.'month') && GETPOSTISSET($attributekeylong.'year')) {
+			// This is properties of a date
+			$object->array_options['options_'.$attributekey] = dol_mktime(GETPOST($attributekeylong.'hour', 'int'), GETPOST($attributekeylong.'min', 'int'), GETPOST($attributekeylong.'sec', 'int'), GETPOST($attributekeylong.'month', 'int'), GETPOST($attributekeylong.'day', 'int'), GETPOST($attributekeylong.'year', 'int'));
+			//var_dump(dol_print_date($object->array_options['options_'.$attributekey]));exit;
+		} else {
+			$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, 'alpha');
+		}
+
+		$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
+		if ($result > 0) {
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+			$action = 'view';
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'edit_extras';
 		}
 	}
 
@@ -699,6 +726,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 
 				if ($object->country_id) {
+					print img_picto('', 'state', 'class="pictofixedwidth"');
 					print $formcompany->select_state(GETPOST("state_id", 'alpha') ? GETPOST("state_id", 'alpha') : $object->state_id, $object->country_code, 'state_id');
 				} else {
 					print $countrynotdefined;
@@ -752,7 +780,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Unsubscribe
 			if (!empty($conf->mailing->enabled)) {
-				if ($conf->use_javascript_ajax && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS==-1) {
+				if ($conf->use_javascript_ajax && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
 					print "\n".'<script type="text/javascript" language="javascript">'."\n";
 					print '$(document).ready(function () {
 							$("#email").keyup(function() {
@@ -766,14 +794,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '</script>'."\n";
 				}
 				if (!GETPOSTISSET("no_email") && !empty($object->email)) {
-					$result=$object->getNoEmail();
-					if ($result<0) {
+					$result = $object->getNoEmail();
+					if ($result < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
 					}
 				}
 				print '<tr>';
 				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
-				print '<td>'.$form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS), 1, false, ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS==-1)).'</td>';
+				print '<td>'.$form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS), 1, false, ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2)).'</td>';
 				print '</tr>';
 			}
 
@@ -821,11 +849,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Other attributes
 			$parameters = array('socid' => $socid, 'objsoc' => $objsoc, 'colspan' => ' colspan="3"', 'cols' => 3);
-			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			print $hookmanager->resPrint;
-			if (empty($reshook)) {
-				print $object->showOptionals($extrafields, 'edit', $parameters);
-			}
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 			print "</table><br>";
 
@@ -996,6 +1020,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
 				}
 
+				print img_picto('', 'state', 'class="pictofixedwidth"');
 				print $formcompany->select_state(GETPOSTISSET('state_id') ? GETPOST('state_id', 'alpha') : $object->state_id, $object->country_code, 'state_id');
 				print '</td></tr>';
 			}
@@ -1035,7 +1060,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Unsubscribe
 			if (!empty($conf->mailing->enabled)) {
-				if ($conf->use_javascript_ajax && isset($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == -1) {
+				if ($conf->use_javascript_ajax && isset($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
 					print "\n".'<script type="text/javascript" language="javascript">'."\n";
 
 					print '
@@ -1055,14 +1080,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '</script>'."\n";
 				}
 				if (!GETPOSTISSET("no_email") && !empty($object->email)) {
-					$result=$object->getNoEmail();
-					if ($result<0) {
+					$result = $object->getNoEmail();
+					if ($result < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
 					}
 				}
 				print '<tr>';
 				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
-				$useempty = (isset($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == -1));
+				$useempty = (isset($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2));
 				print '<td>'.$form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $object->no_email), 1, false, $useempty).'</td>';
 				print '</tr>';
 			}
@@ -1133,11 +1158,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Other attributes
 			$parameters = array('colspan' => ' colspan="3"', 'cols'=> '3');
-			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			print $hookmanager->resPrint;
-			if (empty($reshook)) {
-				print $object->showOptionals($extrafields, 'edit', $parameters);
-			}
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
 			$object->load_ref_elements();
 
@@ -1294,8 +1315,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Unsubscribe opt-out
 		if (!empty($conf->mailing->enabled)) {
-			$result=$object->getNoEmail();
-			if ($result<0) {
+			$result = $object->getNoEmail();
+			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 			print '<tr><td>'.$langs->trans("No_Email").'</td><td>'.yn($object->no_email).'</td></tr>';

@@ -206,6 +206,7 @@ MigrationUserPhotoPath=ユーザの写真パスの移行
 MigrationFieldsSocialNetworks=ユーザフィールドソーシャルネットワークの移行(%s)
 MigrationReloadModule=モジュール %s を再読み込み
 MigrationResetBlockedLog=v7アルゴリズムのモジュールBlockedLogをリセット
+MigrationImportOrExportProfiles=Migration of import or export profiles (%s)
 ShowNotAvailableOptions=利用できないオプションを表示する
 HideNotAvailableOptions=利用できないオプションを非表示にする
 ErrorFoundDuringMigration=移行プロセス中にエラーが報告されたため、次のステップは利用できない。エラーを無視するには、<a href="%s">ここをクリック</a>できるが、エラーが解決されるまで、アプリケーションまたは一部の機能が正しく動作しない場合がある。

@@ -881,6 +881,11 @@ IMG;
 		//$command = DOL_DOCUMENT_ROOT.'/includes/odtphp/odt2pdf.sh '.$name.' '.$dirname;
 
 		dol_syslog(get_class($this).'::exportAsAttachedPDF $execmethod='.$execmethod.' Run command='.$command,LOG_DEBUG);
+		// TODO Use:
+		// $outputfile = DOL_DATA_ROOT.'/odt2pdf.log';
+		// $result = $utils->executeCLI($command, $outputfile);  and replace test on $execmethod.
+		// $retval will be $result['result']
+		// $errorstring will be $result['output']
 		$retval=0; $output_arr=array();
 		if ($execmethod == 1)
 		{
@@ -909,8 +914,7 @@ IMG;
 			if (! empty($conf->global->MAIN_UMASK)) @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
 		}
 
-		if ($retval == 0)
-		{
+		if ($retval == 0) {
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
 			$filename=''; $linenum=0;
 
@@ -927,8 +931,7 @@ IMG;
 				}
 			}
 
-			if (!empty($conf->global->MAIN_ODT_AS_PDF_DEL_SOURCE))
-			{
+			if (!empty($conf->global->MAIN_ODT_AS_PDF_DEL_SOURCE)) {
 				unlink($name);
 			}
 		} else {

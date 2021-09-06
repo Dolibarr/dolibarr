@@ -9,7 +9,7 @@ ConfirmDeleteEstablishment=Дали сте сигурни дека саката 
 OpenEtablishment=Отвори компанија
 CloseEtablishment=Затвори компанија
 # Dictionary
-DictionaryPublicHolidays=HRM - државни празници
+DictionaryPublicHolidays=Leave - Public holidays
 DictionaryDepartment=HRM - Список на оддели
 DictionaryFunction=HRM - Job positions
 # Module

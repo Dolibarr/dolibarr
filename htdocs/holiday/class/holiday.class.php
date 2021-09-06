@@ -85,30 +85,41 @@ class Holiday extends CommonObject
 	public $statut = ''; // 1=draft, 2=validated, 3=approved
 
 	/**
-	 * @var int ID
+	 * @var int 	ID of user that must approve. TODO: there is no date for validation (date_valid is used for approval), add one.
 	 */
 	public $fk_validator;
 
+	/**
+	 * @var int 	Date of approval. TODO: Add a field for approval date and use date_valid instead for validation.
+	 */
 	public $date_valid = '';
 
 	/**
-	 * @var int ID
+	 * @var int 	ID of user that has approved (empty if not approved)
 	 */
 	public $fk_user_valid;
 
+
+	/**
+	 * @var int 	Date for refuse
+	 */
 	public $date_refuse = '';
 
 	/**
-	 * @var int ID
+	 * @var int 	ID for refuse
 	 */
 	public $fk_user_refuse;
 
+	/**
+	 * @var int 	Date for cancelation
+	 */
 	public $date_cancel = '';
 
 	/**
-	 * @var int ID
+	 * @var int 	ID for cancelation
 	 */
 	public $fk_user_cancel;
+
 
 	public $detail_refuse = '';
 
@@ -275,17 +286,17 @@ class Holiday extends CommonObject
 		$sql .= "entity";
 		$sql .= ") VALUES (";
 		$sql .= "'(PROV)',";
-		$sql .= "'".$this->db->escape($this->fk_user)."',";
+		$sql .= " ".((int) $this->fk_user).",";
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->escape($this->description)."',";
 		$sql .= " '".$this->db->idate($this->date_debut)."',";
 		$sql .= " '".$this->db->idate($this->date_fin)."',";
-		$sql .= " ".$this->halfday.",";
+		$sql .= " ".((int) $this->halfday).",";
 		$sql .= " '1',";
-		$sql .= " '".$this->db->escape($this->fk_validator)."',";
-		$sql .= " ".$this->fk_type.",";
-		$sql .= " ".$user->id.",";
-		$sql .= " ".$conf->entity;
+		$sql .= " ".((int) $this->fk_validator).",";
+		$sql .= " ".((int) $this->fk_type).",";
+		$sql .= " ".((int) $user->id).",";
+		$sql .= " ".((int) $conf->entity);
 		$sql .= ")";
 
 		$this->db->begin();
@@ -1251,6 +1262,8 @@ class Holiday extends CommonObject
 	public function LibStatut($status, $mode = 0, $startdate = '')
 	{
 		// phpcs:enable
+		global $langs;
+
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
@@ -1266,9 +1279,11 @@ class Holiday extends CommonObject
 			$this->labelStatusShort[self::STATUS_REFUSED] = $langs->trans('RefuseCP');
 		}
 
+		$params = array();
 		$statusType = 'status6';
-		if (!empty($startdate) && $startdate > dol_now()) {
+		if (!empty($startdate) && $startdate >= dol_now()) {		// If not yet passed, we use a green "in live" color
 			$statusType = 'status4';
+			$params = array('tooltip'=>$this->labelStatus[$status].' - '.$langs->trans("Forthcoming"));
 		}
 		if ($status == self::STATUS_DRAFT) {
 			$statusType = 'status0';
@@ -1283,7 +1298,7 @@ class Holiday extends CommonObject
 			$statusType = 'status5';
 		}
 
-		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode, '', $params);
 	}
 
 
@@ -1292,11 +1307,11 @@ class Holiday extends CommonObject
 	 *
 	 *   @param 	int		$selected   	Id of preselected status
 	 *   @param		string	$htmlname		Name of HTML select field
+	 *   @param		string	$morecss		More CSS on select component
 	 *   @return    string					Show select of status
 	 */
-	public function selectStatutCP($selected = '', $htmlname = 'select_statut')
+	public function selectStatutCP($selected = '', $htmlname = 'select_statut', $morecss = 'minwidth125')
 	{
-
 		global $langs;
 
 		// Liste des statuts
@@ -1304,7 +1319,7 @@ class Holiday extends CommonObject
 		$nb = count($name) + 1;
 
 		// Select HTML
-		$out = '<select name="'.$htmlname.'" id="'.$htmlname.'" class="flat">'."\n";
+		$out = '<select name="'.$htmlname.'" id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">'."\n";
 		$out .= '<option value="-1">&nbsp;</option>'."\n";
 
 		// Boucle des statuts
@@ -1393,7 +1408,7 @@ class Holiday extends CommonObject
 	 *	Met à jour le timestamp de la dernière mise à jour du solde des CP
 	 *
 	 *	@param		int		$userID		Id of user
-	 *	@param		int		$nbHoliday	Nb of days
+	 *	@param		float	$nbHoliday	Nb of days
 	 *  @param		int		$fk_type	Type of vacation
 	 *  @return     int					0=Nothing done, 1=OK, -1=KO
 	 */
@@ -1477,7 +1492,7 @@ class Holiday extends CommonObject
 				if ($num > 0) {
 					// Update for user
 					$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_users SET";
-					$sql .= " nb_holiday = ".$nbHoliday;
+					$sql .= " nb_holiday = ".((float) $nbHoliday);
 					$sql .= " WHERE fk_user = ".(int) $userID." AND fk_type = ".(int) $fk_type;
 					$result = $this->db->query($sql);
 					if (!$result) {
@@ -1487,7 +1502,7 @@ class Holiday extends CommonObject
 				} else {
 					// Insert for user
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_users(nb_holiday, fk_user, fk_type) VALUES (";
-					$sql .= $nbHoliday;
+					$sql .= ((float) $nbHoliday);
 					$sql .= ", ".(int) $userID.", ".(int) $fk_type.")";
 					$result = $this->db->query($sql);
 					if (!$result) {
@@ -1650,6 +1665,7 @@ class Holiday extends CommonObject
 					$sql .= " WHERE u.entity IN (".getEntity('user').")";
 				}
 				$sql .= " AND u.statut > 0";
+				$sql .= " AND u.employee = 1"; // We only want employee users for holidays
 				if ($filters) {
 					$sql .= $filters;
 				}
@@ -1740,6 +1756,7 @@ class Holiday extends CommonObject
 				}
 
 				$sql .= " AND u.statut > 0";
+				$sql .= " AND u.employee = 1"; // We only want employee users for holidays
 				if ($filters) {
 					$sql .= $filters;
 				}
@@ -1952,12 +1969,12 @@ class Holiday extends CommonObject
 		$sql .= "fk_type";
 		$sql .= ") VALUES (";
 		$sql .= " '".$this->db->idate(dol_now())."',";
-		$sql .= " '".$this->db->escape($fk_user_action)."',";
-		$sql .= " '".$this->db->escape($fk_user_update)."',";
+		$sql .= " ".((int) $fk_user_action).",";
+		$sql .= " ".((int) $fk_user_update).",";
 		$sql .= " '".$this->db->escape($label)."',";
-		$sql .= " '".$this->db->escape($prev_solde)."',";
-		$sql .= " '".$this->db->escape($new_solde)."',";
-		$sql .= " ".$fk_type;
+		$sql .= " ".((float) $prev_solde).",";
+		$sql .= " ".((float) $new_solde).",";
+		$sql .= " ".((int) $fk_type);
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);
@@ -1992,8 +2009,6 @@ class Holiday extends CommonObject
 	 */
 	public function fetchLog($order, $filter)
 	{
-		global $langs;
-
 		$sql = "SELECT";
 		$sql .= " cpl.rowid,";
 		$sql .= " cpl.date_action,";
@@ -2105,7 +2120,7 @@ class Holiday extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT f.rowid,";
+		$sql = "SELECT f.rowid, f.statut as status,";
 		$sql .= " f.date_create as datec,";
 		$sql .= " f.tms as date_modification,";
 		$sql .= " f.date_valid as datev,";
@@ -2113,8 +2128,8 @@ class Holiday extends CommonObject
 		$sql .= " f.date_refuse as dater,";
 		$sql .= " f.fk_user_create as fk_user_creation,";
 		$sql .= " f.fk_user_modif as fk_user_modification,";
-		$sql .= " f.fk_user_valid,";
-		$sql .= " f.fk_validator as fk_user_approve,";
+		$sql .= " f.fk_user_valid as fk_user_approve_done,";
+		$sql .= " f.fk_validator as fk_user_approve_expected,";
 		$sql .= " f.fk_user_refuse as fk_user_refuse";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as f";
 		$sql .= " WHERE f.rowid = ".((int) $id);
@@ -2151,10 +2166,19 @@ class Holiday extends CommonObject
 					$muser->fetch($obj->fk_user_modification);
 					$this->user_modification = $muser;
 				}
-				if ($obj->fk_user_approve) {
-					$auser = new User($this->db);
-					$auser->fetch($obj->fk_user_approve);
-					$this->user_approve = $auser;
+
+				if ($obj->status == Holiday::STATUS_APPROVED || $obj->status == Holiday::STATUS_CANCELED) {
+					if ($obj->fk_user_approve_done) {
+						$auser = new User($this->db);
+						$auser->fetch($obj->fk_user_approve_done);
+						$this->user_approve = $auser;
+					}
+				} else {
+					if ($obj->fk_user_approve_expected) {
+						$auser = new User($this->db);
+						$auser->fetch($obj->fk_user_approve_expected);
+						$this->user_approve = $auser;
+					}
 				}
 			}
 			$this->db->free($resql);
@@ -2263,7 +2287,7 @@ class Holiday extends CommonObject
 			$response->warning_delay = $conf->holiday->approve->warning_delay / 60 / 60 / 24;
 			$response->label = $langs->trans("HolidaysToApprove");
 			$response->labelShort = $langs->trans("ToApprove");
-			$response->url = DOL_URL_ROOT.'/holiday/list.php?search_statut=2&amp;mainmenu=hrm&amp;leftmenu=holiday';
+			$response->url = DOL_URL_ROOT.'/holiday/list.php?search_status=2&amp;mainmenu=hrm&amp;leftmenu=holiday';
 			$response->img = img_object('', "holiday");
 
 			while ($obj = $this->db->fetch_object($resql)) {

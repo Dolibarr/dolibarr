@@ -44,4 +44,4 @@ ValidateOrderFirstBeforeReception=Θα πρέπει πρώτα να επικυρ
 ReceptionsNumberingModules=Μονάδα αρίθμησης για δεξιώσεις
 ReceptionsReceiptModel=Πρότυπα εγγράφων για δεξιώσεις
 NoMorePredefinedProductToDispatch=No more predefined products to dispatch
-
+ReceptionExist=A reception exists

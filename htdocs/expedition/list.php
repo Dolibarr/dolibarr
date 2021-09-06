@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2016-2018 Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2016-2021 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2020      Thibault FOUCART     <support@ptibogxiv.net>
  *
@@ -282,17 +282,17 @@ if ($search_user > 0) {
 }
 $sql .= " WHERE e.entity IN (".getEntity('expedition').")";
 if ($search_product_category > 0) {
-	$sql .= " AND cp.fk_categorie = ".$search_product_category;
+	$sql .= " AND cp.fk_categorie = ".((int) $search_product_category);
 }
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.$socid;
 }
 if (!$user->rights->societe->client->voir && !$socid) {	// Internal user with no permission to see all
 	$sql .= " AND e.fk_soc = sc.fk_soc";
-	$sql .= " AND sc.fk_user = ".$user->id;
+	$sql .= " AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
-	$sql .= " AND e.fk_soc = ".$socid;
+	$sql .= " AND e.fk_soc = ".((int) $socid);
 }
 if ($search_status <> '' && $search_status >= 0) {
 	$sql .= " AND e.fk_statut = ".((int) $search_status);
@@ -322,11 +322,11 @@ if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 	$sql .= " AND s.fk_typent IN (".$db->sanitize($search_type_thirdparty).')';
 }
 if ($search_sale > 0) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$search_sale;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
 }
 if ($search_user > 0) {
 	// The contact on a shipment is also the contact of the order.
-	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = eesource.fk_source AND ec.fk_socpeople = ".$db->escape($search_user);
+	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = eesource.fk_source AND ec.fk_socpeople = ".((int) $search_user);
 }
 if ($search_ref_exp) {
 	$sql .= natural_search('e.ref', $search_ref_exp);
@@ -353,7 +353,7 @@ if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 if ($search_categ_cus > 0) {
-	$sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
+	$sql .= " AND cc.fk_categorie = ".((int) $search_categ_cus);
 }
 if ($search_categ_cus == -2) {
 	$sql .= " AND cc.fk_categorie IS NULL";
@@ -434,20 +434,18 @@ if ($search_zip) {
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 	$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 }
-
-if ($search_datedelivery_start) {
-	$param .= '&search_datedelivery_start='.urlencode($search_datedelivery_start);
+if ($search_datedelivery_start)	{
+	$param .= '&search_datedelivery_startday='.urlencode(dol_print_date($search_datedelivery_start, '%d')).'&search_datedelivery_startmonth='.urlencode(dol_print_date($search_datedelivery_start, '%m')).'&search_datedelivery_startyear='.urlencode(dol_print_date($search_datedelivery_start, '%Y'));
 }
 if ($search_datedelivery_end) {
-	$param .= '&search_datedelivery_end='.urlencode($search_datedelivery_end);
+	$param .= '&search_datedelivery_endday='.urlencode(dol_print_date($search_datedelivery_end, '%d')).'&search_datedelivery_endmonth='.urlencode(dol_print_date($search_datedelivery_end, '%m')).'&search_datedelivery_endyear='.urlencode(dol_print_date($search_datedelivery_end, '%Y'));
 }
 if ($search_datereceipt_start) {
-	$param .= '&search_datereceipt_start='.urlencode($search_datereceipt_start);
+	$param .= '&search_datereceipt_startday='.urlencode(dol_print_date($search_datereceipt_start, '%d')).'&search_datereceipt_startmonth='.urlencode(dol_print_date($search_datereceipt_start, '%m')).'&search_datereceipt_startyear='.urlencode(dol_print_date($search_datereceipt_start, '%Y'));
 }
 if ($search_datereceipt_end) {
-	$param .= '&search_datereceipt_end='.urlencode($search_datereceipt_end);
+	$param .= '&search_datereceipt_endday='.urlencode(dol_print_date($search_datereceipt_end, '%d')).'&search_datereceipt_endmonth='.urlencode(dol_print_date($search_datereceipt_end, '%m')).'&search_datereceipt_endyear='.urlencode(dol_print_date($search_datereceipt_end, '%Y'));
 }
-
 if ($search_product_category != '') {
 	$param .= '&search_product_category='.urlencode($search_product_category);
 }
@@ -863,10 +861,6 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['e.date_delivery']['checked'])) {
 		print '<td class="center">';
 		print dol_print_date($db->jdate($obj->delivery_date), "dayhour");
-		/*$now = time();
-		if ( ($now - $db->jdate($obj->date_expedition)) > $conf->warnings->lim && $obj->statutid == 1 )
-		{
-		}*/
 		print "</td>\n";
 	}
 	// Tracking number

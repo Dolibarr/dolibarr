@@ -49,7 +49,7 @@ if (empty($user->rights->accounting->mouvements->lire)) {
 if (empty($conf->comptabilite->enabled) && empty($conf->accounting->enabled) && empty($conf->asset->enabled) && empty($conf->intracommreport->enabled)) {
 	accessforbidden();
 }
-if (empty($user->rights->compta->resultat->lire) && empty($user->rights->accounting->mouvements->lire) && empty($user->rights->asset->read) && empty($user->rights->intracommreport->read)) {
+if (empty($user->rights->compta->resultat->lire) && empty($user->rights->accounting->comptarapport->lire) && empty($user->rights->accounting->mouvements->lire) && empty($user->rights->asset->read) && empty($user->rights->intracommreport->read)) {
 	accessforbidden();
 }
 
@@ -61,7 +61,7 @@ if (empty($user->rights->compta->resultat->lire) && empty($user->rights->account
 if (GETPOST('addbox')) {
 	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOST('areacode', 'aZ09');
+	$zone = GETPOST('areacode', 'int');
 	$userid = GETPOST('userid', 'int');
 	$boxorder = GETPOST('boxorder', 'aZ09');
 	$boxorder .= GETPOST('boxcombo', 'aZ09');

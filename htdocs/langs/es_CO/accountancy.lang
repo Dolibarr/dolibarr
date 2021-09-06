@@ -108,7 +108,6 @@ ACCOUNTING_LENGTH_AACCOUNT=Longitud de las cuentas de contabilidad de terceros (
 ACCOUNTING_MANAGE_ZERO=Permitir administrar diferentes números de ceros al final de una cuenta contable. Necesitado por algunos países (como Suiza). Si está desactivado (predeterminado), puede configurar los siguientes dos parámetros para pedirle a la aplicación que agregue ceros virtuales.
 BANK_DISABLE_DIRECT_INPUT=Deshabilitar el registro directo de la transacción en la cuenta bancaria
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Habilitar borrador de exportación en la revista
-ACCOUNTANCY_COMBO_FOR_AUX=Habilite la lista combinada para la cuenta subsidiaria (puede ser lento si tiene muchos terceros)
 ACCOUNTING_SELL_JOURNAL=Diario de venta
 ACCOUNTING_PURCHASE_JOURNAL=Diario de compra
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Revista miscelánea

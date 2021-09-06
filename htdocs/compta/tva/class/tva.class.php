@@ -207,7 +207,7 @@ class Tva extends CommonObject
 		$sql .= " amount=".price2num($this->amount).",";
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " note='".$this->db->escape($this->note)."',";
-		$sql .= " fk_user_creat=".$this->fk_user_creat.",";
+		$sql .= " fk_user_creat=".((int) $this->fk_user_creat).",";
 		$sql .= " fk_user_modif=".($this->fk_user_modif > 0 ? $this->fk_user_modif : $user->id)."";
 		$sql .= " WHERE rowid=".((int) $this->id);
 

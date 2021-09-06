@@ -41,7 +41,7 @@ $conf->dol_hide_leftmenu = 1;
 
 llxHeader('', $langs->trans("VATIntraCheckableOnEUSite"));
 
-print '<div class="vatcheckarea" style="margin-bottom: 10px">';
+print '<div class="vatcheckarea margintoponly marginbottomonly">';
 
 print load_fiche_titre($langs->trans("VATIntraCheckableOnEUSite"), '', 'title_setup');
 

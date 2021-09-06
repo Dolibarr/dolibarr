@@ -170,15 +170,15 @@ $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
-$sql .= " WHERE p.rowid=".$object->id;
+$sql .= " WHERE p.rowid=".((int) $object->id);
 $sql .= " AND pl.fk_prelevement_bons = p.rowid";
 $sql .= " AND p.entity = ".$conf->entity;
 $sql .= " AND pl.fk_soc = s.rowid";
 $sql .= " AND pl.statut = 3 ";
 $sql .= " AND pr.fk_prelevement_lignes = pl.rowid";
-if ($socid) {
+/*if ($socid) {
 	$sql .= " AND s.rowid = ".((int) $socid);
-}
+}*/
 $sql .= " ORDER BY pl.amount DESC";
 
 // Count total nb of records

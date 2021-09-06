@@ -31,7 +31,7 @@ AddWebsite=Ajouter site web
 Webpage=Page/container Web
 AddPage=Ajouter une page/container
 PageContainer=Page
-PreviewOfSiteNotYetAvailable=La prévisualisation de votre site web <strong>%s</strong> n'est pas disponible actuellement. Vous devez d'abord '<strong>Importer un modèle de site web complet</strong>' ou juste '<strong>Ajouter une page/container</strong>.
+PreviewOfSiteNotYetAvailable=The preview of your website <strong>%s</strong> is not yet available. You must first '<strong>Import a full website template</strong>' or just '<strong>Add a page/container</strong>'.
 RequestedPageHasNoContentYet=La page demandée avec l'id=%s ne présente encore aucun contenu ou le fichier cache .tpl.php a été supprimé. Ajoutez du contenu à la page pour résoudre cela.
 SiteDeleted=Site Web '%s' supprimé
 PageContent=Page/Container
@@ -140,7 +140,7 @@ DefineListOfAltLanguagesInWebsiteProperties=Définir la liste des langues dispon
 GenerateSitemaps=Générer un fichier de plan du site
 ConfirmGenerateSitemaps=Si vous confirmez, vous effacerez le fichier de plan du site existant...
 ConfirmSitemapsCreation=Confirmer la génération du plan du site
-SitemapGenerated=Sitemap file <b>%s</b> generated
+SitemapGenerated=Le plan du site <b>%s</b>a été généré
 ImportFavicon=Favicon
 ErrorFaviconType=Le Favicon doit être en png
 ErrorFaviconSize=Le Favicon doit être de taille 16x16, 32x32 ou 64x64
