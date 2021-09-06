@@ -973,15 +973,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$nblinetoproduce++;
 			}
 		}
-
-		if (empty($nblinetoproduce)) {
-			if ($object->status != $object::STATUS_PRODUCED && $object->status != $object::STATUS_CANCELED && $action != 'consumeorproduce' && $action != 'consumeandproduceall') {
-				$newlinetext = '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addproduceline">'.$langs->trans("AddNewProduceLines").'</a>';
-			}
-			print load_fiche_titre($langs->trans('Production'), '', '', 0, '', '', $newlinetext);
-		} else {
-			print load_fiche_titre($langs->trans('Production'), '', '', 0);
+		$newlinetext = '';
+		if ($object->status != $object::STATUS_PRODUCED && $object->status != $object::STATUS_CANCELED && $action != 'consumeorproduce' && $action != 'consumeandproduceall') {
+			$newlinetext = '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addproduceline">'.$langs->trans("AddNewProduceLines").'</a>';
 		}
+		print load_fiche_titre($langs->trans('Production'), '', '', 0, '', '', $newlinetext);
+
 		print '<div class="div-table-responsive-no-min">';
 		print '<table id="tablelinestoproduce" class="noborder noshadow nobottom centpercent">';
 

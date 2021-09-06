@@ -659,6 +659,12 @@ class Mo extends CommonObject
 					$role = 'toconsume';
 					$moline->role = 'toproduce';
 				}
+			} else {
+				if ($this->mrptype == 1) {
+					$moline->role = 'toconsume';
+				} else {
+					$moline->role = 'toproduce';
+				}
 			}
 
 			$resultline = $moline->create($user, false); // Never use triggers here
