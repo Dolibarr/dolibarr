@@ -96,8 +96,8 @@ if (empty($reshook)) {
 		$bank = new Account($db);
 		$bank->fetch($conf->global->{$default_account});
 		if ((empty($bank->ics) && $type !== 'bank-transfer')
-            || (empty($bank->ics_transfer) && $type === 'bank-transfer')
-        ) {
+			|| (empty($bank->ics_transfer) && $type === 'bank-transfer')
+		) {
 			$errormessage = str_replace('{url}', $bank->getNomUrl(1, '', '', -1, 1), $langs->trans("ErrorICSmissing", '{url}'));
 			setEventMessages($errormessage, null, 'errors');
 			header("Location: ".DOL_URL_ROOT.'/compta/prelevement/create.php');
