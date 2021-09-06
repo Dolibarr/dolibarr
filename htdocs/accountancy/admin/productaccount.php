@@ -196,7 +196,7 @@ if ($action == 'update') {
 							$sql .= " DO UPDATE SET " . $db->escape($accountancy_field_name)." = \"" . $db->escape($accounting->account_number) . "\"";
 						} else {
 							$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_perentity (fk_product, entity, " . $db->escape($accountancy_field_name) . ")";
-							$sql .= " VALUES (" . ((int)$productid) . ", " . ((int)$conf->entity) . ", '" . $db->escape($accounting->account_number) . "')";
+							$sql .= " VALUES (" . ((int) $productid) . ", " . ((int) $conf->entity) . ", '" . $db->escape($accounting->account_number) . "')";
 							$sql .= " ON DUPLICATE KEY UPDATE " . $db->escape($accountancy_field_name) . " = '" . $db->escape($accounting->account_number) . "'";
 						}
 					} else {
