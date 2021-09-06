@@ -349,6 +349,8 @@ UPDATE llx_payment_salary SET ref = rowid WHERE ref IS NULL;
 
 ALTER TABLE llx_salary ALTER COLUMN paye set default 0;
 
+ALTER TABLE llx_payment_salary_extrafields RENAME TO llx_salary_extrafields;
+
 DELETE FROM llx_boxes WHERE box_id IN (SELECT rowid FROM llx_boxes_def WHERE file IN ('box_graph_ticket_by_severity', 'box_ticket_by_severity.php', 'box_nb_ticket_last_x_days.php', 'box_nb_tickets_type.php', 'box_new_vs_close_ticket.php'));
 DELETE FROM llx_boxes_def WHERE file IN ('box_graph_ticket_by_severity', 'box_ticket_by_severity.php', 'box_nb_ticket_last_x_days.php', 'box_nb_tickets_type.php', 'box_new_vs_close_ticket.php');
 
