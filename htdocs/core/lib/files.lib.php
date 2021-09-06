@@ -1004,6 +1004,7 @@ function dolCheckVirus($src_file)
 }
 
 
+
 /**
  *	Make control on an uploaded file from an GUI page and move it to final destination.
  * 	If there is errors (virus found, antivir in error, bad filename), file is not moved.
@@ -1839,6 +1840,7 @@ function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded')
 
 	$db->begin();
 
+
 	$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $dir);
 
 	$filename = basename($file);
@@ -2293,7 +2295,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 
 	// Find the subdirectory name as the reference. For exemple original_file='10/myfile.pdf' -> refname='10'
 	if (empty($refname)) {
-		$refname = basename(dirname($original_file)."/");
+		$refname = basename(dirname($original_file, 2)."/");
 	}
 
 	// Define possible keys to use for permission check
@@ -2656,7 +2658,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 				$tmptask = new Task($db);
 				$tmptask->fetch('', $refname);
-				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet&project', '', '', 'rowid', '');
+				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet_task&project_task', '', '', 'rowid', '');
 			}
 		}
 		$original_file = $conf->projet->dir_output.'/'.$original_file;
