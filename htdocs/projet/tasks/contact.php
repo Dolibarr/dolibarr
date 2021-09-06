@@ -407,7 +407,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<td>';
 			$formcompany->selectTypeContact($object, '', 'type', 'internal', 'rowid');
 			print '</td>';
-			print '<td class="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'" name="addsourceinternal"></td>';
+			print '<td class="right" colspan="3" ><input type="submit" class="button button-add" value="'.$langs->trans("Add").'" name="addsourceinternal"></td>';
 			print '</tr>';
 
 			// Line to add an external contact. Only if project linked to a third party.

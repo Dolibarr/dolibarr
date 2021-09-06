@@ -459,7 +459,7 @@ CREATE TABLE llx_partnership(
 	fk_soc integer, 
 	fk_member integer, 
 	date_partnership_start date NOT NULL, 
-	date_partnership_end date NOT NULL, 
+	date_partnership_end date NULL, 
 	entity integer	DEFAULT 1 NOT NULL,	-- multi company id, 0 = all
 	reason_decline_or_cancel text NULL,
 	date_creation datetime NOT NULL, 

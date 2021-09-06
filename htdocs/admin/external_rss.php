@@ -180,6 +180,7 @@ if (GETPOST("delete")) {
 /*
  * View
  */
+$form = new Form($db);
 
 llxHeader('', $langs->trans("ExternalRSSSetup"));
 
@@ -209,11 +210,9 @@ print '<td>http://news.google.com/news?ned=us&topic=h&output=rss<br>http://www.d
 print '</tr>';
 print '</table>';
 
-print '<br><div class="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+print $form->buttonsSaveCancel("Add", '');
 print '<input type="hidden" name="action" value="add">';
 print '<input type="hidden" name="norss" value="'.($lastexternalrss + 1).'">';
-print '</div>';
 
 print '</form>';
 

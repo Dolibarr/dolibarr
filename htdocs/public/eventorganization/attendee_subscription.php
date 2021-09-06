@@ -16,9 +16,9 @@
  */
 
 /**
- *	\file       htdocs/public/members/new.php
- *	\ingroup    member
- *	\brief      Example of form to add a new member
+ *	\file       htdocs/public/eventorganization/attendee_subscription.php
+ *	\ingroup    project
+ *	\brief      Example of form to subscribe to an event
  *
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for auto-subscribe form
@@ -79,20 +79,36 @@ $email = GETPOST("email");
 $societe = GETPOST("societe");
 
 // Getting id from Post and decoding it
-$id = GETPOST('id');
+$id = GETPOST('id', 'int');
+$type = GETPOST('type', 'alpha');
 
 $conference = new ConferenceOrBooth($db);
-$resultconf = $conference->fetch($id);
-if ($resultconf < 0) {
-	setEventMessages(null, $conference->errors, "errors");
+$project = new Project($db);
+
+if ($type=='conf') {
+	$resultconf = $conference->fetch($id);
+	if ($resultconf < 0) {
+		print 'Bad value for parameter id';
+		exit;
+	}
+	$resultproject = $project->fetch($conference->fk_project);
+	if ($resultproject < 0) {
+		$error++;
+		$errmsg .= $project->error;
+	}
+}
+if ($type=='global') {
+	$project = new Project($db);
+	if (empty($id)) {
+		$id = GETPOST('fk_project', 'int');
+	}
+	$resultproject = $project->fetch($id);
+	if ($resultproject < 0) {
+		$error++;
+		$errmsg .= $project->error;
+	}
 }
 
-$project = new Project($db);
-$resultproject = $project->fetch($conference->fk_project);
-if ($resultproject < 0) {
-	$error++;
-	$errmsg .= $project->error;
-}
 
 
 // Security check
@@ -196,7 +212,7 @@ function llxFooterVierge()
 /*
  * Actions
  */
-global $mysoc;
+
 $parameters = array();
 // Note that $action and $object may have been modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
@@ -205,7 +221,7 @@ if ($reshook < 0) {
 }
 
 // Action called when page is submitted
-if (empty($reshook) && $action == 'add' && $conference->status==2) {
+if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conference->status!=2  || !empty($project->id) && $project->status==Project::STATUS_VALIDATED)) {
 	$error = 0;
 
 	$urlback = '';
@@ -234,7 +250,15 @@ if (empty($reshook) && $action == 'add' && $conference->status==2) {
 	if (!$error) {
 		// Check if attendee already exists (by email and for this event)
 		$confattendee = new ConferenceOrBoothAttendee($db);
-		$resultfetchconfattendee = $confattendee->fetchAll('', '', 0, 0, array('t.fk_actioncomm'=>$id, 'customsql'=>'t.email="'.$email.'"'));
+
+		if ($type=='global') {
+			$filter = array('t.fk_project'=>$id, 'customsql'=>'t.email="'.$email.'"');
+		}
+		if ($action='conf') {
+			$filter = array('t.fk_actioncomm'=>$id, 'customsql'=>'t.email="'.$email.'"');
+		}
+
+		$resultfetchconfattendee = $confattendee->fetchAll('', '', 0, 0, $filter);
 		if ($resultfetchconfattendee > 0 && count($resultfetchconfattendee)>0) {
 			// Found confattendee
 			$confattendee = array_shift($resultfetchconfattendee);
@@ -242,6 +266,7 @@ if (empty($reshook) && $action == 'add' && $conference->status==2) {
 			// Need to create a confattendee
 			$confattendee->date_subscription = dol_now();
 			$confattendee->email = $email;
+			$confattendee->fk_project = $project->id;
 			$confattendee->fk_actioncomm = $id;
 			$resultconfattendee = $confattendee->create($user);
 			if ($resultconfattendee < 0) {
@@ -460,7 +485,7 @@ $formcompany = new FormCompany($db);
 
 llxHeaderVierge($langs->trans("NewSubscription"));
 
-
+print '<br>';
 print load_fiche_titre($langs->trans("NewSubscription"), '', '', 0, 0, 'center');
 
 
@@ -469,21 +494,29 @@ print '<div id="divsubscribe">';
 print '<div class="center subscriptionformhelptext justify">';
 
 // Welcome message
-print $langs->trans("EvntOrgWelcomeMessage", $conference->label);
+
+print $langs->trans("EvntOrgWelcomeMessage", $project->title . ' '. $conference->label);
 print '<br>';
-print $langs->trans("EvntOrgDuration", dol_print_date($conference->datep), dol_print_date($conference->datef));
+if ($conference->id) {
+	print $langs->trans("EvntOrgDuration", dol_print_date($conference->datep), dol_print_date($conference->datef));
+} else {
+	print $langs->trans("EvntOrgDuration", dol_print_date($project->date_start), dol_print_date($project->date_end));
+}
 print '</div>';
+
+print '<br>';
+
 dol_htmloutput_errors($errmsg);
 
-if ($conference->status!=2) {
-	print $langs->trans("ConferenceIsNotConfirmed");
-} else {
+if (!empty($conference->id) && $conference->status==ConferenceOrBooth::STATUS_CONFIRMED  || (!empty($project->id) && $project->status==Project::STATUS_VALIDATED)) {
 	// Print form
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="newmember">' . "\n";
 	print '<input type="hidden" name="token" value="' . newToken() . '" / >';
 	print '<input type="hidden" name="entity" value="' . $entity . '" />';
 	print '<input type="hidden" name="action" value="add" />';
-	print '<input type="hidden" name="id" value="' . $id . '" />';
+	print '<input type="hidden" name="id" value="' . $conference->id . '" />';
+	print '<input type="hidden" name="type" value="' . $type . '" />';
+	print '<input type="hidden" name="fk_project" value="' . $project->id . '" />';
 	print '<input type="hidden" name="securekey" value="' . $securekeyreceived . '" />';
 
 	print '<br>';
@@ -494,15 +527,15 @@ if ($conference->status!=2) {
 	print dol_get_fiche_head('');
 
 	print '<script type="text/javascript">
-jQuery(document).ready(function () {
-    jQuery(document).ready(function () {
-        jQuery("#selectcountry_id").change(function() {
-           document.newmember.action.value="create";
-           document.newmember.submit();
-        });
-    });
-});
-</script>';
+	jQuery(document).ready(function () {
+		jQuery(document).ready(function () {
+			jQuery("#selectcountry_id").change(function() {
+			   document.newmember.action.value="create";
+			   document.newmember.submit();
+			});
+		});
+	});
+	</script>';
 
 	print '<table class="border" summary="form to subscribe" id="tablesubscribe">' . "\n";
 
@@ -570,6 +603,8 @@ jQuery(document).ready(function () {
 	print "</form>\n";
 	print "<br>";
 	print '</div></div>';
+} else {
+	print $langs->trans("ConferenceIsNotConfirmed");
 }
 
 llxFooterVierge();

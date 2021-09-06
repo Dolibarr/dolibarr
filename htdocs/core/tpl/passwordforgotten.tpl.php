@@ -146,11 +146,11 @@ if (!empty($captcha)) {
 	?>
 	<!-- Captcha -->
 	<div class="trinputlogin">
-	<div class="tagtd tdinputlogin nowraponall none valignmiddle">
+	<div class="tagtd tdinputlogin nowrap none valignmiddle">
 
 	<span class="fa fa-unlock"></span>
 	<span class="nofa inline-block">
-	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width150" type="text" maxlength="5" name="code" tabindex="3" autocomplete="off" />
+	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width125" type="text" maxlength="5" name="code" tabindex="3" autocomplete="off" />
 	</span>
 	<span class="nowrap inline-block">
 	<img class="inline-block valignmiddle" src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />
@@ -186,7 +186,7 @@ if (!empty($morelogincontent)) {
 <div id="login_line2" style="clear: both">
 
 <!-- Button "Regenerate and Send password" -->
-<br><input type="submit" <?php echo $disabled; ?> class="button" name="button_password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
+<br><input type="submit" <?php echo $disabled; ?> class="button small" name="button_password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
 
 <br>
 <div class="center" style="margin-top: 15px;">

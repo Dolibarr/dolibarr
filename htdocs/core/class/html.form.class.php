@@ -10,7 +10,7 @@
  * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
  * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2010-2019  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2021  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2011       Herve Prot              <herve.prot@symeos.com>
  * Copyright (C) 2012-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
@@ -1056,7 +1056,11 @@ class Form
 			}
 			$out .= '</select>';
 
-			$out .= '<input id="location_incoterms" class="maxwidth100onsmartphone nomargintop nomarginbottom" name="location_incoterms" value="'.$location_incoterms.'">';
+			if ($conf->use_javascript_ajax && empty($disableautocomplete)) {
+				$out .= ajax_multiautocompleter('location_incoterms', '', DOL_URL_ROOT.'/core/ajax/locationincoterms.php')."\n";
+				$moreattrib .= ' autocomplete="off"';
+			}
+			$out .= '<input id="location_incoterms" class="maxwidthonsmartphone type="text" name="location_incoterms" value="'.$location_incoterms.'">'."\n";
 
 			if (!empty($page)) {
 				$out .= '<input type="submit" class="button valignmiddle smallpaddingimp nomargintop nomarginbottom" value="'.$langs->trans("Modify").'"></form>';
@@ -1347,13 +1351,13 @@ class Form
 		}
 		$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 		if (!empty($user->socid)) {
-			$sql .= " AND s.rowid = ".$user->socid;
+			$sql .= " AND s.rowid = ".((int) $user->socid);
 		}
 		if ($filter) {
 			$sql .= " AND (".$filter.")";
 		}
 		if (!$user->rights->societe->client->voir && !$user->socid) {
-			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if (!empty($conf->global->COMPANY_HIDE_INACTIVE_IN_COMBOBOX)) {
 			$sql .= " AND s.status <> 0";
@@ -1397,7 +1401,7 @@ class Form
 		if ($resql) {
 			if (!$forcecombo) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlname, $events, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+				$out .= ajax_combobox($htmlname, $events, getDolGlobalString("COMPANY_USE_SEARCH_TO_SELECT"));
 			}
 
 			// Construct $out and $outarray
@@ -1414,7 +1418,7 @@ class Form
 				}
 			}
 			if ($showempty) {
-				$out .= '<option value="-1" data-html="'.dol_escape_htmltag('<span class="opacitymedium">'.$textifempty.'</span>').'">'.$textifempty.'</option>'."\n";
+				$out .= '<option value="-1" data-html="'.dol_escape_htmltag('<span class="opacitymedium">'.($textifempty ? $textifempty : '&nbsp;').'</span>').'">'.$textifempty.'</option>'."\n";
 			}
 
 			$num = $this->db->num_rows($resql);
@@ -1664,7 +1668,7 @@ class Form
 		}
 		$sql .= " WHERE sp.entity IN (".getEntity('socpeople').")";
 		if ($socid > 0 || $socid == -1) {
-			$sql .= " AND sp.fk_soc=".$socid;
+			$sql .= " AND sp.fk_soc = ".((int) $socid);
 		}
 		if (!empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) {
 			$sql .= " AND sp.statut <> 0";
@@ -1678,7 +1682,7 @@ class Form
 
 			if ($conf->use_javascript_ajax && !$forcecombo && !$options_only) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlid, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+				$out .= ajax_combobox($htmlid, $events, getDolGlobalString("CONTACT_USE_SEARCH_TO_SELECT"));
 			}
 
 			if ($htmlname != 'none' && !$options_only) {
@@ -2446,13 +2450,13 @@ class Form
 		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
 			$sql .= ", (SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = p.rowid";
 			if ($price_level >= 1 && !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
-				$sql .= " AND price_level=".$price_level;
+				$sql .= " AND price_level = ".((int) $price_level);
 			}
 			$sql .= " ORDER BY date_price";
 			$sql .= " DESC LIMIT 1) as price_rowid";
 			$sql .= ", (SELECT pp.price_by_qty FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = p.rowid"; // price_by_qty is 1 if some prices by qty exists in subtable
 			if ($price_level >= 1 && !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
-				$sql .= " AND price_level=".$price_level;
+				$sql .= " AND price_level = ".((int) $price_level);
 			}
 			$sql .= " ORDER BY date_price";
 			$sql .= " DESC LIMIT 1) as price_by_qty";
@@ -2472,7 +2476,7 @@ class Form
 
 		//Price by customer
 		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
-			$sql .= " LEFT JOIN  ".MAIN_DB_PREFIX."product_customer_price as pcp ON pcp.fk_soc=".$socid." AND pcp.fk_product=p.rowid";
+			$sql .= " LEFT JOIN  ".MAIN_DB_PREFIX."product_customer_price as pcp ON pcp.fk_soc=".((int) $socid)." AND pcp.fk_product=p.rowid";
 		}
 		// Units
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
@@ -2565,7 +2569,7 @@ class Form
 			$sql .= ')';
 		}
 		if (count($warehouseStatusArray)) {
-			$sql .= ' GROUP BY'.$selectFields;
+			$sql .= " GROUP BY ".$selectFields;
 		}
 
 		//Sort by category
@@ -2625,7 +2629,7 @@ class Form
 				if ((!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) && !empty($objp->price_by_qty) && $objp->price_by_qty == 1) { // Price by quantity will return many prices for the same product
 					$sql = "SELECT rowid, quantity, price, unitprice, remise_percent, remise, price_base_type";
 					$sql .= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
-					$sql .= " WHERE fk_product_price=".$objp->price_rowid;
+					$sql .= " WHERE fk_product_price = ".((int) $objp->price_rowid);
 					$sql .= " ORDER BY quantity ASC";
 
 					dol_syslog(get_class($this)."::select_produits_list search prices by qty", LOG_DEBUG);
@@ -3462,7 +3466,7 @@ class Form
 		$sql .= " WHERE pfp.entity IN (".getEntity('productsupplierprice').")";
 		$sql .= " AND p.tobuy = 1";
 		$sql .= " AND s.fournisseur = 1";
-		$sql .= " AND p.rowid = ".$productid;
+		$sql .= " AND p.rowid = ".((int) $productid);
 		$sql .= " ORDER BY s.nom, pfp.ref_fourn DESC";
 
 		dol_syslog(get_class($this)."::select_product_fourn_price", LOG_DEBUG);
@@ -4723,7 +4727,7 @@ class Form
 			foreach ($formquestion as $key => $input) {
 				if (is_array($input) && !empty($input)) {
 					if ($input['type'] == 'hidden') {
-						$more .= '<input type="hidden" id="'.$input['name'].'" name="'.$input['name'].'" value="'.dol_escape_htmltag($input['value']).'">'."\n";
+						$more .= '<input type="hidden" id="'.dol_escape_htmltag($input['name']).'" name="'.dol_escape_htmltag($input['name']).'" value="'.dol_escape_htmltag($input['value']).'">'."\n";
 					}
 				}
 			}
@@ -4738,9 +4742,21 @@ class Form
 					$morecss = (!empty($input['morecss']) ? ' '.$input['morecss'] : '');
 
 					if ($input['type'] == 'text') {
-						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd"><input type="text" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></div></div>'."\n";
+						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd"><input type="text" class="flat'.$morecss.'" id="'.dol_escape_htmltag($input['name']).'" name="'.dol_escape_htmltag($input['name']).'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></div></div>'."\n";
 					} elseif ($input['type'] == 'password')	{
-						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd"><input type="password" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></div></div>'."\n";
+						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd"><input type="password" class="flat'.$morecss.'" id="'.dol_escape_htmltag($input['name']).'" name="'.dol_escape_htmltag($input['name']).'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></div></div>'."\n";
+					} elseif ($input['type'] == 'textarea') {
+						/*$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd">';
+						$more .= '<textarea name="'.$input['name'].'" class="'.$morecss.'"'.$moreattr.'>';
+						$more .= $input['value'];
+						$more .= '</textarea>';
+						$more .= '</div></div>'."\n";*/
+						$moreonecolumn .= '<div class="margintoponly">';
+						$moreonecolumn .= $input['label'].'<br>';
+						$moreonecolumn .= '<textarea name="'.dol_escape_htmltag($input['name']).'" id="'.dol_escape_htmltag($input['name']).'" class="'.$morecss.'"'.$moreattr.'>';
+						$moreonecolumn .= $input['value'];
+						$moreonecolumn .= '</textarea>';
+						$moreonecolumn .= '</div>';
 					} elseif ($input['type'] == 'select') {
 						if (empty($morecss)) {
 							$morecss = 'minwidth100';
@@ -4763,7 +4779,7 @@ class Form
 					} elseif ($input['type'] == 'checkbox') {
 						$more .= '<div class="tagtr">';
 						$more .= '<div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].' </div><div class="tagtd">';
-						$more .= '<input type="checkbox" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$moreattr;
+						$more .= '<input type="checkbox" class="flat'.$morecss.'" id="'.dol_escape_htmltag($input['name']).'" name="'.dol_escape_htmltag($input['name']).'"'.$moreattr;
 						if (!is_bool($input['value']) && $input['value'] != 'false' && $input['value'] != '0') {
 							$more .= ' checked';
 						}
@@ -4784,7 +4800,7 @@ class Form
 							} else {
 								$more .= '<div clas="tagtd'.(empty($input['tdclass']) ? '' : (' "'.$input['tdclass'])).'">&nbsp;</div>';
 							}
-							$more .= '<div class="tagtd'.($i == 0 ? ' tdtop' : '').'"><input type="radio" class="flat'.$morecss.'" id="'.$input['name'].$selkey.'" name="'.$input['name'].'" value="'.$selkey.'"'.$moreattr;
+							$more .= '<div class="tagtd'.($i == 0 ? ' tdtop' : '').'"><input type="radio" class="flat'.$morecss.'" id="'.dol_escape_htmltag($input['name'].$selkey).'" name="'.dol_escape_htmltag($input['name']).'" value="'.$selkey.'"'.$moreattr;
 							if ($input['disabled']) {
 								$more .= ' disabled';
 							}
@@ -4792,14 +4808,15 @@ class Form
 								$more .= ' checked="checked"';
 							}
 							$more .= ' /> ';
-							$more .= '<label for="'.$input['name'].$selkey.'">'.$selval.'</label>';
+							$more .= '<label for="'.dol_escape_htmltag($input['name'].$selkey).'">'.$selval.'</label>';
 							$more .= '</div></div>'."\n";
 							$i++;
 						}
 					} elseif ($input['type'] == 'date') {
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div>';
 						$more .= '<div class="tagtd">';
-						$more .= $this->selectDate($input['value'], $input['name'], 0, 0, 0, '', 1, 0);
+						$addnowlink = (empty($input['datenow']) ? 0 : 1);
+						$more .= $this->selectDate($input['value'], $input['name'], 0, 0, 0, '', 1, $addnowlink);
 						$more .= '</div></div>'."\n";
 						$formquestion[] = array('name'=>$input['name'].'day');
 						$formquestion[] = array('name'=>$input['name'].'month');
@@ -4916,7 +4933,7 @@ class Form
                          				inputvalue = $("#" + inputname + more).val();
 									}
                          			if (typeof inputvalue == "undefined") { inputvalue=""; }
-									console.log("check inputname="+inputname+" inputvalue="+inputvalue);
+									console.log("formconfirm check inputname="+inputname+" inputvalue="+inputvalue);
                          			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
                          		});
                          	}
@@ -6664,7 +6681,7 @@ class Form
 	 *	@param      string	$htmlname           Name of select html
 	 *  @param		string	$filtertype         Filter on ticket type
 	 *	@param      int		$limit              Limit on number of returned lines
-	 * 	@param      string	$filterkey          Filter on product
+	 * 	@param      string	$filterkey          Filter on ticket ref or subject
 	 *	@param		int		$status             Ticket status
 	 *  @param      int		$outputmode         0=HTML select string, 1=Array
 	 *  @param		string	$showempty		    '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
@@ -6696,7 +6713,7 @@ class Form
 			if (count($scrit) > 1) $sql .= "(";
 			foreach ($scrit as $crit) {
 				if ($i > 0) $sql .= " AND ";
-				$sql .= "(p.ref LIKE '".$this->db->escape($prefix.$crit)."%' OR p.label LIKE '".$this->db->escape($prefix.$crit)."%'";
+				$sql .= "(p.ref LIKE '".$this->db->escape($prefix.$crit)."%' OR p.subject LIKE '".$this->db->escape($prefix.$crit)."%'";
 				$sql .= ")";
 				$i++;
 			}
@@ -6988,7 +7005,7 @@ class Form
 		if (isset($objecttmp->ismultientitymanaged)) {
 			if (!is_numeric($objecttmp->ismultientitymanaged)) {
 				$tmparray = explode('@', $objecttmp->ismultientitymanaged);
-				$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.$tmparray[1].' as parenttable ON parenttable.rowid = t.'.$tmparray[0];
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$tmparray[1]." as parenttable ON parenttable.rowid = t.".$tmparray[0];
 			}
 			if ($objecttmp->ismultientitymanaged == 'fk_soc@societe') {
 				if (!$user->rights->societe->client->voir && !$user->socid) {
@@ -7009,18 +7026,18 @@ class Form
 					$sql .= " AND t.entity IN (".getEntity($objecttmp->table_element).")";
 				}
 				if (!is_numeric($objecttmp->ismultientitymanaged)) {
-					$sql .= ' AND parenttable.entity = t.'.$tmparray[0];
+					$sql .= " AND parenttable.entity = t.".$tmparray[0];
 				}
 				if ($objecttmp->ismultientitymanaged == 1 && !empty($user->socid)) {
 					if ($objecttmp->element == 'societe') {
-						$sql .= " AND t.rowid = ".$user->socid;
+						$sql .= " AND t.rowid = ".((int) $user->socid);
 					} else {
-						$sql .= " AND t.fk_soc = ".$user->socid;
+						$sql .= " AND t.fk_soc = ".((int) $user->socid);
 					}
 				}
 				if ($objecttmp->ismultientitymanaged == 'fk_soc@societe') {
 					if (!$user->rights->societe->client->voir && !$user->socid) {
-						$sql .= " AND t.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+						$sql .= " AND t.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 					}
 				}
 			}
@@ -7853,6 +7870,11 @@ class Form
 				} elseif ($objecttype == 'delivery') {
 					$tplpath = 'delivery';
 					if (empty($conf->expedition->enabled)) {
+						continue; // Do not show if module disabled
+					}
+				} elseif ($objecttype == 'ficheinter') {
+					$tplpath = 'fichinter';
+					if (empty($conf->ficheinter->enabled)) {
 						continue; // Do not show if module disabled
 					}
 				} elseif ($objecttype == 'invoice_supplier') {
@@ -9049,7 +9071,7 @@ class Form
 		$sql .= " AND f.fk_projet = p.rowid AND f.fk_statut=0"; //Brouillons seulement
 		//if ($projectsListId) $sql.= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		//if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
-		//if ($socid > 0)  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
+		//if ($socid > 0)  $sql.= " AND (p.fk_soc=".((int) $socid)." OR p.fk_soc IS NULL)";
 		$sql .= " ORDER BY p.ref, f.ref ASC";
 
 		$resql = $this->db->query($sql);
@@ -9247,6 +9269,56 @@ class Form
 		if ($addjscombo) {
 			$retstring .= ajax_combobox('select_'.$prefix.'model_mail');
 		}
+
+		return $retstring;
+	}
+
+	/**
+	 * Output the buttons to submit a creation/edit form
+	 *
+	 * @param   string  $save_label     Alternative label for save button
+	 * @param   string  $cancel_label   Alternative label for cancel button
+	 * @param   array   $morefields     Add additional buttons between save and cancel
+	 * @param   bool    $withoutdiv     Option to remove enclosing centered div
+	 * @return 	string					Html code with the buttons
+	 */
+	public function buttonsSaveCancel($save_label = 'Save', $cancel_label = 'Cancel', $morefields = array(), $withoutdiv = 0)
+	{
+		global $langs;
+
+		$buttons = array();
+
+		$save = array(
+			'name' => 'save',
+			'label_key' => $save_label,
+		);
+
+		if ($save_label == 'Create' || $save_label == 'Add' ) {
+			$save['name'] = 'add';
+		} elseif ($save_label == 'Modify') {
+			$save['name'] = 'edit';
+		}
+
+		$cancel = array(
+				'name' => 'cancel',
+				'label_key' => 'Cancel',
+		);
+
+		!empty($save_label) ? $buttons[] = $save : '';
+
+		if (!empty($morefields)) {
+			$buttons[] = $morefields;
+		}
+
+		!empty($cancel_label) ? $buttons[] = $cancel : '';
+
+		$retstring = $withoutdiv ? '': '<div class="center">';
+
+		foreach ($buttons as $button) {
+			$addclass = empty($button['addclass']) ? '' : $button['addclass'];
+			$retstring .= '<input type="submit" class="button button-'.$button['name'].' '.$addclass.'" name="'.$button['name'].'" value="'.dol_escape_htmltag($langs->trans($button['label_key'])).'">';
+		}
+		$retstring .= $withoutdiv ? '': '</div>';
 
 		return $retstring;
 	}

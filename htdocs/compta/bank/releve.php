@@ -116,7 +116,7 @@ if ($_GET["rel"] == 'prev') {
 	$sql = "SELECT DISTINCT(b.num_releve) as num";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= " WHERE b.num_releve < '".$db->escape($numref)."'";
-	$sql .= " AND b.fk_account = ".$object->id;
+	$sql .= " AND b.fk_account = ".((int) $object->id);
 	$sql .= " ORDER BY b.num_releve DESC";
 
 	dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
@@ -134,7 +134,7 @@ if ($_GET["rel"] == 'prev') {
 	$sql = "SELECT DISTINCT(b.num_releve) as num";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= " WHERE b.num_releve > '".$db->escape($numref)."'";
-	$sql .= " AND b.fk_account = ".$object->id;
+	$sql .= " AND b.fk_account = ".((int) $object->id);
 	$sql .= " ORDER BY b.num_releve ASC";
 
 	dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
@@ -165,7 +165,7 @@ $sql .= " WHERE b.num_releve='".$db->escape($numref)."'";
 if (empty($numref)) {
 	$sql .= " OR b.num_releve is null";
 }
-$sql .= " AND b.fk_account = ".$object->id;
+$sql .= " AND b.fk_account = ".((int) $object->id);
 $sql .= " AND b.fk_account = ba.rowid";
 $sql .= $db->order("b.datev, b.datec", "ASC"); // We add date of creation to have correct order when everything is done the same day
 
@@ -340,7 +340,7 @@ if (empty($numref)) {
 				$sql = "SELECT sum(b.amount) as amount";
 				$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 				$sql .= " WHERE b.num_releve < '".$db->escape($objp->numr)."'";
-				$sql .= " AND b.fk_account = ".$object->id;
+				$sql .= " AND b.fk_account = ".((int) $object->id);
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
@@ -353,7 +353,7 @@ if (empty($numref)) {
 				$sql = "SELECT sum(b.amount) as amount";
 				$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 				$sql .= " WHERE b.num_releve = '".$db->escape($objp->numr)."'";
-				$sql .= " AND b.fk_account = ".$object->id;
+				$sql .= " AND b.fk_account = ".((int) $object->id);
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
@@ -421,7 +421,7 @@ if (empty($numref)) {
 	$sql = "SELECT sum(b.amount) as amount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= " WHERE b.num_releve < '".$db->escape($numref)."'";
-	$sql .= " AND b.fk_account = ".$object->id;
+	$sql .= " AND b.fk_account = ".((int) $object->id);
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -605,7 +605,7 @@ if (empty($numref)) {
 				$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ as ct";
 				$sql .= ", ".MAIN_DB_PREFIX."bank_class as cl";
 				$sql .= " WHERE ct.rowid = cl.fk_categ";
-				$sql .= " AND ct.entity = ".$conf->entity;
+				$sql .= " AND ct.entity = ".((int) $conf->entity);
 				$sql .= " AND cl.lineid = ".((int) $objp->rowid);
 
 				$resc = $db->query($sql);

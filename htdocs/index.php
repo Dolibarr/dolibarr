@@ -185,8 +185,9 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 		$dashboardlines[$board->element.'_signed'] = $board->load_board($user, "signed");
 	}
 
-	// Number of commercial proposals open (expired)
+	// Number of supplier proposals open (expired)
 	if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire) {
+		$langs->load("supplier_proposal");
 		include_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 		$board = new SupplierProposal($db);
 		$dashboardlines[$board->element.'_opened'] = $board->load_board($user, "opened");

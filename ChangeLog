@@ -2,6 +2,45 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 14.0.1 compared to 14.0.0 *****
+
+FIX: $conf->task used but it does not exist, use $conf->projet instead
+FIX: #18181
+FIX: #18212 : Add url field
+FIX: #18267
+FIX: #18289 #18294
+FIX: #18341 lang not loaded
+FIX: #18389 Accountancy - Bug on LDcompta10 export for supplier invoice
+FIX: #18399 Fix shipment validation email template override.
+FIX: Accountancy - Debug Export Sage50 / CIEL Compta / CIEL Compta Evo (Format XIMPORT)
+FIX: Accountancy - Rules to delete & modify transaction not applied in ledger & subledger
+FIX: Accountancy - Search date on journal
+FIX: Accountancy - SQL error on select journal on journal
+FIX: Accountancy - SQL error when insert a manuel transaction
+FIX: add include missing file '/core/actions_dellink.inc.php' in project card
+FIX: avoid to have link to create bookmark on page to create bookmark
+FIX: bad approver shown on holiday once approved
+FIX: bad closing div on error message
+FIX: cannot add time spentd when column ref is not displayed
+FIX: Can't remove a permission of a group
+FIX: Can't set cost price when product is not on purchase
+FIX: compatibility postgresql
+FIX: filter on status Draft in modulebuilder
+FIX: holiday card: hooks uninitialized
+FIX: Invoice - Missing button to reopen an abandoned situation invoice
+FIX: Link of download main doc on vat list
+FIX: look and field v14
+FIX: Missing column Date validation in ledger & subledger
+FIX: on admin/pdf.php (with javascript enabled) if you set some boolean confs then click on "save", all boolean values are reset
+FIX: on supplier order, JOIN with product fourn price table must be done with fk_soc too to avoid display several times a same line (because of same supplier product ref)
+FIX: postgresql filter select search extrafield
+FIX: shipping validation workflow: 'ORDER_NEW' trigger called from wrong object
+FIX: show info of company into user dropdown
+FIX: totalDayAll hours in tasks
+FIX: update product lot
+FIX: using Tulip, deposit mask was not saved
+FIX: #yogosha6907
+
 
 ***** ChangeLog for 15.0.0 compared to 14.0.0 *****
 

@@ -212,6 +212,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		if (!is_object($object->thirdparty)) {
 			$object->thirdparty = $mysoc; // If fetch_thirdparty fails, object has no socid (specimen)
 		}
+
 		$this->emetteur = $object->thirdparty;
 		if (!$this->emetteur->country_code) {
 			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if was not defined
@@ -231,8 +232,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$nblines = count($object->lines);
 
 		if ($conf->fournisseur->facture->dir_output) {
-			$object->fetch_thirdparty();
-
 			$deja_regle = $object->getSommePaiement((!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? 1 : 0);
 			$amount_credit_notes_included = $object->getSumCreditNotesUsed((!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? 1 : 0);
 			$amount_deposits_included = $object->getSumDepositsUsed((!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? 1 : 0);

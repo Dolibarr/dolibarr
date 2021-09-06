@@ -261,7 +261,7 @@ if ($action == 'create') {
 	// autosuggest from existing account types if found
 	print '<datalist id="pcg_type_datalist">';
 	$sql = 'SELECT DISTINCT pcg_type FROM ' . MAIN_DB_PREFIX . 'accounting_account';
-	$sql .= ' WHERE fk_pcg_version = "' . $db->escape($accountsystem->ref) . '"';
+	$sql .= " WHERE fk_pcg_version = '" . $db->escape($accountsystem->ref) . "'";
 	$sql .= ' AND entity in ('.getEntity('accounting_account', 0).')';		// Always limit to current entity. No sharing in accountancy.
 	$sql .= ' LIMIT 50000'; // just as a sanity check
 	$resql = $db->query($sql);
@@ -337,7 +337,7 @@ if ($action == 'create') {
 			// autosuggest from existing account types if found
 			print '<datalist id="pcg_type_datalist">';
 			$sql = 'SELECT DISTINCT pcg_type FROM ' . MAIN_DB_PREFIX . 'accounting_account';
-			$sql .= ' WHERE fk_pcg_version = "' . $db->escape($accountsystem->ref) . '"';
+			$sql .= " WHERE fk_pcg_version = '" . $db->escape($accountsystem->ref) . "'";
 			$sql .= ' AND entity in ('.getEntity('accounting_account', 0).')';		// Always limit to current entity. No sharing in accountancy.
 			$sql .= ' LIMIT 50000'; // just as a sanity check
 			$resql = $db->query($sql);
@@ -361,11 +361,7 @@ if ($action == 'create') {
 
 			print dol_get_fiche_end();
 
-			print '<div class="center">';
-			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
-			print '</div>';
+			print $form->buttonsSaveCancel();
 
 			print '</form>';
 		} else {
