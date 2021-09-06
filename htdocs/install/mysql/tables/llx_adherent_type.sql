@@ -33,6 +33,7 @@ create table llx_adherent_type
   duration         varchar(6) DEFAULT NULL,
   subscription     varchar(3) NOT NULL DEFAULT '1',
   amount           double(24,8) DEFAULT NULL,
+  price_level      integer NULL,
   vote             varchar(3) NOT NULL DEFAULT '1',
   note             text,
   mail_valid       text
