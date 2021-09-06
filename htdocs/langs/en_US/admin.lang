@@ -2151,3 +2151,5 @@ DatabasePasswordNotObfuscated=Database password is NOT obfuscated in conf file
 APIsAreNotEnabled=APIs modules are not enabled
 YouShouldSetThisToOff=You should set this to 0 or off
 InstallAndUpgradeLockedBy=Install and upgrades are locked by the file <b>%s</b>
+IfYouUseASecondTaxYouMustSetYouUseTheMainTax=If you want to use a second tax, you must enable also the first sale tax
+IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=If you want to use a third tax, you must enable also the first sale tax
