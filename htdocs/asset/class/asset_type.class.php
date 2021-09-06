@@ -191,7 +191,6 @@ class AssetType extends CommonObject
 		$sql .= ", '".$this->db->escape($this->note)."'";
 		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
-		$sql .= ")";
 
 		dol_syslog("Asset_type::create", LOG_DEBUG);
 		$result = $this->db->query($sql);
