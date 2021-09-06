@@ -291,3 +291,7 @@ PopuCom=Produk / Layanan berdasarkan popularitas dalam Pesanan
 ProductStatistics=Statistik Produk / Layanan
 NbOfQtyInOrders=Jumlah pesanan
 SelectTheTypeOfObjectToAnalyze=Select an object to view its statistics...
+
+ConfirmBtnCommonContent = Are you sure you want to "%s" ?
+ConfirmBtnCommonTitle = Confirm your action
+CloseDialog = Close

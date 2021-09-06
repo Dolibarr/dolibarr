@@ -245,8 +245,8 @@ class modApi extends DolibarrModules
 	{
 		// Remove old constants with entity fields different of 0
 		$sql = array(
-			"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->db->escape($this->db->encrypt('MAIN_MODULE_API'))."'",
-			"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->db->escape($this->db->encrypt('API_PRODUCTION_MODE'))."'"
+			"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = ".$this->db->encrypt('MAIN_MODULE_API'),		// API can't be enabled per environment. Why ?
+			"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = ".$this->db->encrypt('API_PRODUCTION_MODE')	// Not in production mode by default at activation
 		);
 
 		return $this->_remove($sql, $options);

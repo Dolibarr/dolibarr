@@ -103,7 +103,7 @@ class Categories extends DolibarrApi
 			if (!is_array($cats)) {
 				throw new RestException(500, 'Error when fetching child categories', array_merge(array($this->category->error), $this->category->errors));
 			}
-			$this->category->childs = [];
+			$this->category->childs = array();
 			foreach ($cats as $cat) {
 				$this->category->childs[] = $this->_cleanObjectDatas($cat);
 			}

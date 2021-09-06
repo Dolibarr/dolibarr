@@ -212,7 +212,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " ".(!isset($this->position) ? 'NULL' : ((int) $this->position)).",";
 		$sql .= " ".(!isset($this->fk_country) ? 'NULL' : ((int) $this->fk_country)).",";
 		$sql .= " ".(!isset($this->active) ? 'NULL' : ((int) $this->active));
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
 
 		$this->db->begin();
@@ -433,7 +433,7 @@ class AccountancyCategory // extends CommonObject
 
 		$this->lines_display = array();
 
-		dol_syslog(__METHOD__." sql=".$sql, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -632,7 +632,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " WHERE aa.rowid = ".((int) $cpt_id);
 		$this->db->begin();
 
-		dol_syslog(__METHOD__." sql=".$sql, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;

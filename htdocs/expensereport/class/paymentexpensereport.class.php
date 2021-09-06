@@ -359,7 +359,7 @@ class PaymentExpenseReport extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
-			$sql .= " WHERE type='payment_expensereport' AND url_id=".$this->id;
+			$sql .= " WHERE type='payment_expensereport' AND url_id=".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);

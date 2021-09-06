@@ -477,18 +477,13 @@ class FormProduct
 		$filter = array();
 		$filter['t.active'] = 1;
 
-		$result = $productNature->fetchAll(
-			'',
-			'',
-			0,
-			0,
-			$filter
-		);
+		$result = $productNature->fetchAll('', '', 0, 0, $filter);
+
 		if ($result < 0) {
 			dol_print_error($db);
 			return -1;
 		} else {
-			$return .= '<select class="flat" name="'.$name.'">';
+			$return .= '<select class="flat" name="'.$name.'" id="'.$name.'">';
 			if ($showempty || ($selected == '' || $selected == '-1')) {
 				$return .= '<option value="-1"';
 				if ($selected == '' || $selected == '-1') {
@@ -520,6 +515,8 @@ class FormProduct
 			}
 			$return .= '</select>';
 		}
+
+		$return .= ajax_combobox($name);
 
 		return $return;
 	}

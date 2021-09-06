@@ -277,7 +277,7 @@ $sql .= " u.rowid as id_user, u.firstname, u.lastname, u.login, u.email, u.statu
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -487,9 +487,7 @@ if ($resql) {
 
 			print '</div>';
 		} else {
-			print '<div class="center">';
-			print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-			print '</div><br>';
+			print $form->buttonsSaveCancel("Save", '');
 		}
 	} else {
 		$title = $langs->trans("ListTripsAndExpenses");

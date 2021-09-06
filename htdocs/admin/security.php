@@ -249,7 +249,7 @@ foreach ($arrayhandler as $key => $module) {
 			$langs->load("errors");
 			print '<div class="error">'.$langs->trans($tmp).'</div>';
 		} elseif ($tmp == 'NotConfigured') {
-			print $langs->trans($tmp);
+			print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
 		} else {
 			print '<span class="opacitymedium">'.$tmp.'</span>';
 		}

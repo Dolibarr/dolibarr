@@ -19,7 +19,7 @@
 #
 ModuleEventOrganizationName = Event Organization
 EventOrganizationDescription = Event Organization through Module Project
-EventOrganizationDescriptionLong= Manage Event organization for conference, attendees, speaker, and attendees, with public subcription page
+EventOrganizationDescriptionLong= Manage the organization of an events including conferences, speakers or attendees, with public submission and subscription page
 #
 # Menu
 #
@@ -100,16 +100,18 @@ EvntOrgCancelled = Cancelled
 # Public page
 #
 SuggestForm = Suggestion page
-RegisterPage = Page for conferences or booth
+SuggestOrVoteForConfOrBooth = Page for suggestion or vote
 EvntOrgRegistrationHelpMessage = Here, you can vote for an event, or suggest a new conference or booth for the project
 EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference for the project
 EvntOrgRegistrationBoothHelpMessage = Here, you can suggest a new booth for the project
 ListOfSuggestedConferences = List of suggested conferences
 ListOfSuggestedBooths = List of suggested booths
+ListOfConferencesOrBooths=List of conferences or booths
 SuggestConference = Suggest a new conference
 SuggestBooth = Suggest a booth
 ViewAndVote = View and vote for suggested events
-PublicAttendeeSubscriptionPage = Public link of registration to a conference
+PublicAttendeeSubscriptionGlobalPage = Public link for registration to the event
+PublicAttendeeSubscriptionPage = Public link for registration to this event only
 MissingOrBadSecureKey = The security key is invalid or missing
 EvntOrgWelcomeMessage = This form allows you to register as a new participant to the conference : '%s'
 EvntOrgDuration = This conference starts on %s and ends on %s.

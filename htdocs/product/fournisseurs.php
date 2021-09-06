@@ -103,6 +103,9 @@ if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
 
+$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
+
 if ($object->id > 0) {
 	if ($object->type == $object::TYPE_PRODUCT) {
 		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
@@ -122,9 +125,6 @@ if ($object->id > 0) {
 if ($cancel) {
 	$action = '';
 }
-
-$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
-$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
 
 $parameters = array('socid'=>$socid, 'id_prod'=>$id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -272,23 +272,23 @@ if (empty($reshook)) {
 				$extralabels = $extrafields->fetch_name_optionals_label("product_fournisseur_price");
 				$extrafield_values = $extrafields->getOptionalsFromPost("product_fournisseur_price");
 				if (!empty($extrafield_values)) {
-					$resql = $db->query("SELECT fk_object FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields WHERE fk_object = ".$object->product_fourn_price_id);
+					$resql = $db->query("SELECT fk_object FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields WHERE fk_object = ".((int) $object->product_fourn_price_id));
 					// Insert a new extrafields row, if none exists
 					if ($db->num_rows($resql) != 1) {
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields (fk_object, ";
 						foreach ($extrafield_values as $key => $value) {
 							$sql .= str_replace('options_', '', $key).', ';
 						}
-						$sql = substr($sql, 0, strlen($sql) - 2).") VALUES (".$object->product_fourn_price_id.", ";
+						$sql = substr($sql, 0, strlen($sql) - 2).") VALUES (".((int) $object->product_fourn_price_id).", ";
 						foreach ($extrafield_values as $key => $value) {
-							$sql .= '"'.$value.'", ';
+							$sql .= "'".$db->escape($value)."', ";
 						}
 						$sql = substr($sql, 0, strlen($sql) - 2).')';
 					} else {
 						// update the existing one
 						$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields SET ";
 						foreach ($extrafield_values as $key => $value) {
-							$sql .= str_replace('options_', '', $key).' = "'.$value.'", ';
+							$sql .= str_replace('options_', '', $key)." = '".$db->escape($value)."', ";
 						}
 						$sql = substr($sql, 0, strlen($sql) - 2).' WHERE fk_object = '.((int) $object->product_fourn_price_id);
 					}
@@ -404,13 +404,23 @@ if ($id > 0 || $ref) {
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border tableforfield centpercent">';
 
+			// Type
+			if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
+				print '<tr><td class="">';
+				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
+				print '</td><td>';
+				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, 0, $typeformat);
+				print '</td></tr>';
+			}
+
 			// Cost price. Can be used for margin module for option "calculate margin on explicit cost price
 			print '<tr><td>';
 			$textdesc = $langs->trans("CostPriceDescription");
 			$textdesc .= "<br>".$langs->trans("CostPriceUsage");
 			$text = $form->textwithpicto($langs->trans("CostPrice"), $textdesc, 1, 'help', '');
 			print $form->editfieldkey($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
-			print '</td><td colspan="2">';
+			print '</td><td>';
 			print $form->editfieldval($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
 			print '</td></tr>';
 
@@ -425,7 +435,7 @@ if ($id > 0 || $ref) {
 
 			// Best buying Price
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("BuyingPriceMin").'</td>';
-			print '<td colspan="2">';
+			print '<td>';
 			$product_fourn = new ProductFournisseur($db);
 			if ($product_fourn->find_min_price_product_fournisseur($object->id) > 0) {
 				if ($product_fourn->product_fourn_price_id > 0) {

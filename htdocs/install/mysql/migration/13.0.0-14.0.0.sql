@@ -459,7 +459,7 @@ CREATE TABLE llx_partnership(
 	fk_soc integer, 
 	fk_member integer, 
 	date_partnership_start date NOT NULL, 
-	date_partnership_end date NOT NULL, 
+	date_partnership_end date NULL, 
 	entity integer	DEFAULT 1 NOT NULL,	-- multi company id, 0 = all
 	reason_decline_or_cancel text NULL,
 	date_creation datetime NOT NULL, 
@@ -596,3 +596,5 @@ create table llx_onlinesignature
   pathoffile				varchar(255)
 )ENGINE=innodb;
 
+-- VMYSQL4.3 ALTER TABLE llx_partnership MODIFY COLUMN date_partnership_end date NULL;
+-- VPGSQL8.2 ALTER TABLE llx_partnership ALTER COLUMN date_partnership_end DROP NOT NULL;

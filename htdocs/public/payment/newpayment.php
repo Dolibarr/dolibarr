@@ -326,6 +326,7 @@ if (!empty($conf->global->$paramcreditorlong)) {
 	$creditor = $conf->global->$paramcreditor;
 }
 
+$mesg = '';
 
 
 /*
@@ -357,7 +358,6 @@ if ($action == 'dopayment') {
 			$shipToState = 'ID-'.$shipToState;
 		}
 
-		$mesg = '';
 		if (empty($PAYPAL_API_PRICE) || !is_numeric($PAYPAL_API_PRICE)) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount"));
 			$action = '';
@@ -421,7 +421,6 @@ if ($action == 'dopayment') {
 		$urlok = preg_replace('/securekey=[^&]+/', '', $urlok);
 		$urlko = preg_replace('/securekey=[^&]+/', '', $urlko);
 
-		$mesg = '';
 		if (empty($PRICE) || !is_numeric($PRICE)) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount"));
 		} elseif (empty($email)) {
@@ -1517,7 +1516,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 		$oldtypeid = $member->typeid;
 		$newtypeid = (int) (GETPOSTISSET("typeid") ? GETPOST("typeid", 'int') : $member->typeid);
 
-		if ($oldtypeid != $newtypeid && !empty($conf->global->MEMBER_ALLOW_CHANGE_OF_TYPE)) {
+		if (!empty($conf->global->MEMBER_ALLOW_CHANGE_OF_TYPE)) {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 			$adht = new AdherentType($db);
 			// Amount by member type
@@ -1984,7 +1983,7 @@ if (!$found && !$mesg) {
 }
 
 if ($mesg) {
-	print '<tr><td align="center" colspan="2"><br><div class="warning">'.dol_escape_htmltag($mesg).'</div></td></tr>'."\n";
+	print '<tr><td align="center" colspan="2"><br><div class="warning">'.dol_escape_htmltag($mesg, 1, 1, 'br').'</div></td></tr>'."\n";
 }
 
 print '</table>'."\n";

@@ -403,3 +403,5 @@ mandatoryperiod=Mandatory periods
 mandatoryPeriodNeedTobeSet=Attention periods not entered and mandatory
 mandatoryPeriodNeedTobeSetMsgValidate=A service requires a start and end period
 mandatoryHelper=Message to the user on the need to enter a start date and an end date on a service when creating / validating an invoice, commercial proposal, sales order. <br> This action is not blocking in the process of confirmation
+DefaultBOM=Default BOM
+DefaultBOMDesc=The default BOM recommended to use to manufacture this product. This field can be set only if nature of product is '%s'.

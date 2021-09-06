@@ -951,6 +951,10 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$object->country_code='AU';
 		$address=dol_format_address($object);
 		$this->assertEquals("21 jump street\nMyTown, MyState, 99999", $address);
+
+		$object->country_code='JP';
+		$address=dol_format_address($object);
+		$this->assertEquals("21 jump street\nMyState, MyTown 99999", $address);
 	}
 
 
