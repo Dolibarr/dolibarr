@@ -194,7 +194,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 			if ($object->element == 'contact') {
 				$permok = $user->rights->societe->contact->creer;
 			}
-			if($object->element == 'salary') {
+			if ($object->element == 'salary') {
 				$permok = $user->rights->salaries->read;
 			}
 
