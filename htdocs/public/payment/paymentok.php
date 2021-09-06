@@ -585,7 +585,7 @@ if ($ispaymentok) {
 										}
 									} else {
 										$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_account (fk_soc, login, key_account, site, site_account, status, entity, date_creation, fk_user_creat)";
-										$sql .= " VALUES (".$object->fk_soc.", '', '".$db->escape($stripecu)."', 'stripe', '".$db->escape($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])."', ".$servicestatus.", ".$conf->entity.", '".$db->idate(dol_now())."', 0)";
+										$sql .= " VALUES (".((int) $object->fk_soc).", '', '".$db->escape($stripecu)."', 'stripe', '".$db->escape($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])."', ".((int) $servicestatus).", ".((int) $conf->entity).", '".$db->idate(dol_now())."', 0)";
 										$resql = $db->query($sql);
 										if (!$resql) {	// should not happen
 											$error++;
@@ -821,6 +821,111 @@ if ($ispaymentok) {
 			}
 		} else {
 			$postactionmessages[] = 'Invoice paid '.$tmptag['INV'].' was not found';
+			$ispostactionok = -1;
+		}
+	} elseif (array_key_exists('ORD', $tmptag) && $tmptag['ORD'] > 0) {
+		include_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
+		$object = new Commande($db);
+		$result = $object->fetch($tmptag['ORD']);
+		if ($result) {
+			$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
+
+			$paymentTypeId = 0;
+			if ($paymentmethod == 'paybox') $paymentTypeId = $conf->global->PAYBOX_PAYMENT_MODE_FOR_PAYMENTS;
+			if ($paymentmethod == 'paypal') $paymentTypeId = $conf->global->PAYPAL_PAYMENT_MODE_FOR_PAYMENTS;
+			if ($paymentmethod == 'stripe') $paymentTypeId = $conf->global->STRIPE_PAYMENT_MODE_FOR_PAYMENTS;
+			if (empty($paymentTypeId)) {
+				$paymentType = $_SESSION["paymentType"];
+				if (empty($paymentType)) $paymentType = 'CB';
+				$paymentTypeId = dol_getIdFromCode($db, $paymentType, 'c_paiement', 'code', 'id', 1);
+			}
+
+			$currencyCodeType = $_SESSION['currencyCodeType'];
+
+			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
+			if (!empty($conf->facture->enabled)) {
+				if (!empty($FinalPaymentAmt) && $paymentTypeId > 0 ) {
+					include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+					$invoice = new Facture($db);
+					$result = $invoice->createFromOrder($object, $user);
+					if ($result > 0) {
+						$object->classifyBilled($user);
+						$invoice->validate($user);
+						// Creation of payment line
+						include_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
+						$paiement = new Paiement($db);
+						$paiement->datepaye = $now;
+						if ($currencyCodeType == $conf->currency) {
+							$paiement->amounts = array($invoice->id => $FinalPaymentAmt); // Array with all payments dispatching with invoice id
+						} else {
+							$paiement->multicurrency_amounts = array($invoice->id => $FinalPaymentAmt); // Array with all payments dispatching
+
+							$postactionmessages[] = 'Payment was done in a different currency that currency expected of company';
+							$ispostactionok = -1;
+							$error++;
+						}
+						$paiement->paiementid = $paymentTypeId;
+						$paiement->num_payment = '';
+						$paiement->note_public = 'Online payment ' . dol_print_date($now, 'standard') . ' from ' . $ipaddress;
+						$paiement->ext_payment_id = $TRANSACTIONID;
+						$paiement->ext_payment_site = '';
+
+						if (!$error) {
+							$paiement_id = $paiement->create($user, 1); // This include closing invoices and regenerating documents
+							if ($paiement_id < 0) {
+								$postactionmessages[] = $paiement->error . ' ' . join("<br>\n", $paiement->errors);
+								$ispostactionok = -1;
+								$error++;
+							} else {
+								$postactionmessages[] = 'Payment created';
+								$ispostactionok = 1;
+							}
+						}
+
+						if (!$error && !empty($conf->banque->enabled)) {
+							$bankaccountid = 0;
+							if ($paymentmethod == 'paybox') $bankaccountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
+							elseif ($paymentmethod == 'paypal') $bankaccountid = $conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS;
+							elseif ($paymentmethod == 'stripe') $bankaccountid = $conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS;
+
+							if ($bankaccountid > 0) {
+								$label = '(CustomerInvoicePayment)';
+								if ($object->type == Facture::TYPE_CREDIT_NOTE) $label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
+								$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
+								if ($result < 0) {
+									$postactionmessages[] = $paiement->error . ' ' . join("<br>\n", $paiement->errors);
+									$ispostactionok = -1;
+									$error++;
+								} else {
+									$postactionmessages[] = 'Bank transaction of payment created';
+									$ispostactionok = 1;
+								}
+							} else {
+								$postactionmessages[] = 'Setup of bank account to use in module ' . $paymentmethod . ' was not set. No way to record the payment.';
+								$ispostactionok = -1;
+								$error++;
+							}
+						}
+
+						if (!$error) {
+							$db->commit();
+						} else {
+							$db->rollback();
+						}
+					} else {
+						$postactionmessages[] = 'Failed to create invoice form order ' . $tmptag['ORD'] . '.';
+						$ispostactionok = -1;
+					}
+				} else {
+					$postactionmessages[] = 'Failed to get a valid value for "amount paid" (' . $FinalPaymentAmt . ') or "payment type" (' . $paymentType . ') to record the payment of order ' . $tmptag['ORD'] . '. May be payment was already recorded.';
+					$ispostactionok = -1;
+				}
+			} else {
+				$postactionmessages[] = 'Invoice module is not enable';
+				$ispostactionok = -1;
+			}
+		} else {
+			$postactionmessages[] = 'Order paid ' . $tmptag['ORD'] . ' was not found';
 			$ispostactionok = -1;
 		}
 	} elseif (array_key_exists('DON', $tmptag) && $tmptag['DON'] > 0) {

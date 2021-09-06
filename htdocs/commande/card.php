@@ -91,6 +91,10 @@ $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($con
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('ordercard', 'globalcard'));
+
 $result = restrictedArea($user, 'commande', $id);
 
 $object = new Commande($db);
@@ -101,9 +105,6 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('ordercard', 'globalcard'));
 
 $usercanread = $user->rights->commande->lire;
 $usercancreate = $user->rights->commande->creer;
@@ -137,8 +138,23 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	$backurlforlist = DOL_URL_ROOT.'/commande/list.php';
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/commande/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			}
+		}
+	}
+
 	if ($cancel) {
-		if (!empty($backtopage)) {
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
 		}
@@ -1567,7 +1583,7 @@ if ($action == 'create' && $usercancreate) {
 	print '<td class="fieldrequired">'.$langs->trans('Customer').'</td>';
 	if ($socid > 0) {
 		print '<td>';
-		print $soc->getNomUrl(1);
+		print $soc->getNomUrl(1, 'customer');
 		print '<input type="hidden" name="socid" value="'.$soc->id.'">';
 		print '</td>';
 	} else {
@@ -1821,12 +1837,7 @@ if ($action == 'create' && $usercancreate) {
 
 	print dol_get_fiche_end();
 
-	// Button "Create Draft"
-	print '<div class="center">';
-	print '<input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" onclick="javascript:history.go(-1)">';
-	print '</div>';
+	print $form->buttonsSaveCancel("CreateDraft");
 
 	// Show origin lines
 	if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
@@ -2018,7 +2029,7 @@ if ($action == 'create' && $usercancreate) {
 		$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string', '', 0, 1);
 		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string', '', null, null, '', 1);
 		// Thirdparty
-		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$soc->getNomUrl(1);
+		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$soc->getNomUrl(1, 'customer');
 		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
 			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
 		}
@@ -2114,7 +2125,7 @@ if ($action == 'create' && $usercancreate) {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate">';
 			print $form->selectDate($object->date, 'order_', '', '', '', "setdate");
-			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
 			print $object->date ? dol_print_date($object->date, 'day') : '&nbsp;';
@@ -2135,7 +2146,7 @@ if ($action == 'create' && $usercancreate) {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate_livraison">';
 			print $form->selectDate($object->delivery_date ? $object->delivery_date : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
-			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
 			print $object->delivery_date ? dol_print_date($object->delivery_date, 'dayhour') : '&nbsp;';

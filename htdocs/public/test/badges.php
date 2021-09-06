@@ -20,7 +20,9 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOSESSION')) {
 	define('NOSESSION', '1');
 }
-
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
 session_cache_limiter('public');
 
 require_once '../../main.inc.php';
@@ -30,19 +32,9 @@ if ($dolibarr_main_prod) {
 	accessforbidden();
 }
 
+
+llxHeader('', 'Documentation and examples for theme');
 ?>
-<!doctype html>
-<html lang="en">
-  <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<meta name="description" content="Documentation and examples for theme.">
-
-	<link href="<?php echo DOL_URL_ROOT ?>/theme/eldy/style.css.php" rel="stylesheet">
-  </head>
-  <body class="docpage" style="padding: 20px;">
-
-  <main  role="main"  >
 		  <h1 class="bd-title" id="content">Badges</h1>
 		  <p class="bd-lead">Documentation and examples for badges, our small count and labeling component.</p>
 
@@ -342,5 +334,4 @@ if ($dolibarr_main_prod) {
 
 		</main>
 
-  </body>
-</html>
+<?php llxFooter();

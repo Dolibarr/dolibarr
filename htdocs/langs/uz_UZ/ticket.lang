@@ -66,7 +66,7 @@ NeedMoreInformation=Muxbirlarning fikri kutilmoqda
 NeedMoreInformationShort=Fikr-mulohaza kutilmoqda
 Answered=Javob berdi
 Waiting=Kutish
-Closed=Yopiq
+SolvedClosed=Solved
 Deleted=O'chirildi
 
 # Dict
@@ -186,9 +186,11 @@ TicketSeverity=Jiddiylik
 ShowTicket=Chiptani ko'ring
 RelatedTickets=Tegishli chiptalar
 TicketAddIntervention=Aralashuvni yarating
-CloseTicket=Chiptani yoping
-CloseATicket=Chiptani yoping
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Chipta yopilishini tasdiqlang
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Iltimos, chipta o'chirilishini tasdiqlang
 TicketDeletedSuccess=Muvaffaqiyat bilan chipta o'chirildi
 TicketMarkedAsClosed=Chipta yopiq deb belgilangan

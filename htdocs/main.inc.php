@@ -266,7 +266,7 @@ if (!empty($_POST["DOL_AUTOSET_COOKIE"])) {
 	$cookiename = $tmpautoset[0];
 	$cookievalue = json_encode($cookiearrayvalue);
 	//var_dump('setcookie cookiename='.$cookiename.' cookievalue='.$cookievalue);
-	setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', null, false, true); // keep cookie 1 year and add tag httponly
+	setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // keep cookie 1 year and add tag httponly
 	if (empty($cookievalue)) {
 		unset($_COOKIE[$cookiename]);
 	}
@@ -442,7 +442,7 @@ if ((!empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VE
 }
 
 // Creation of a token against CSRF vulnerabilities
-if (!defined('NOTOKENRENEWAL')) {
+if (!defined('NOTOKENRENEWAL') && !defined('NOSESSION')) {
 	// No token renewal on .css.php, .js.php and .json.php
 	if (!preg_match('/\.(css|js|json)\.php$/', $_SERVER["PHP_SELF"])) {
 		// Rolling token at each call ($_SESSION['token'] contains token of previous page)
@@ -464,7 +464,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 	// Array of action code where CSRFCHECK with token will be forced (so token must be provided on url request)
 	$arrayofactiontoforcetokencheck = array(
 		'activate', 'add', 'addrights', 'addtimespent',
-		'confirm_create_user', 'confirm_create_thirdparty', 'confirm_purge', 'confirm_reject_check', 'confirm_deletedir', 'confirm_deletefile',
+		'confirm_create_user', 'confirm_create_thirdparty', 'confirm_delete', 'confirm_deletedir', 'confirm_deletefile', 'confirm_purge', 'confirm_reject_check',
 		'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'delrights',
 		'disable',
 		'doprev', 'donext', 'dvprev', 'dvnext',

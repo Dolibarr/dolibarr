@@ -156,8 +156,8 @@ $disable_delete = 0;
 $sql = 'SELECT l.rowid as id, l.label, l.paid, l.capital as capital, pl.amount_capital, pl.amount_insurance, pl.amount_interest';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'payment_loan as pl,'.MAIN_DB_PREFIX.'loan as l';
 $sql .= ' WHERE pl.fk_loan = l.rowid';
-$sql .= ' AND l.entity = '.$conf->entity;
-$sql .= ' AND pl.rowid = '.$payment->id;
+$sql .= ' AND l.entity = '.((int) $conf->entity);
+$sql .= ' AND pl.rowid = '.((int) $payment->id);
 
 dol_syslog("loan/payment/card.php", LOG_DEBUG);
 $resql = $db->query($sql);

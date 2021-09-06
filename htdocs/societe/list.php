@@ -476,7 +476,7 @@ if ($search_categ_sup && $search_categ_sup!=-1) {
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -485,7 +485,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s2 ON s.parent = s2.rowid";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (s.rowid = ef.fk_object)";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
@@ -672,7 +672,7 @@ if (empty($reshook)) {
 }
 $sql .= $hookmanager->resPrint;
 // Add GroupBy from hooks
-$parameters = array('all' => $all, 'fieldstosearchall' => $fieldstosearchall);
+$parameters = array('fieldstosearchall' => $fieldstosearchall);
 $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
@@ -865,7 +865,13 @@ if ($user->rights->societe->supprimer) {
 if ($user->rights->societe->creer) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
+if ($user->rights->societe->creer) {
+	$arrayofmassactions['preenable'] = img_picto('', '', 'class="pictofixedwidth"').$langs->trans("SetToEnabled");
+}
+if ($user->rights->societe->creer) {
+	$arrayofmassactions['predisable'] = img_picto('', '', 'class="pictofixedwidth"').$langs->trans("SetToDisabled");
+}
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -1502,10 +1508,10 @@ while ($i < min($num, $limit)) {
 	// Type ent
 	if (!empty($arrayfields['typent.code']['checked'])) {
 		print '<td class="center">';
-		if (!is_array($typenArray) || count($typenArray) == 0) {
+		if (!isset($typenArray) || !is_array($typenArray) || count($typenArray) == 0) {
 			$typenArray = $formcompany->typent_array(1);
 		}
-		print $typenArray[$obj->typent_code];
+		print empty($typenArray[$obj->typent_code]) ? '' : $typenArray[$obj->typent_code];
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

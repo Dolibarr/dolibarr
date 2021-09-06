@@ -103,6 +103,8 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	$backurlforlist = DOL_URL_ROOT.'/projet/list.php';
+
 	// Cancel
 	if ($cancel) {
 		if (GETPOST("comefromclone") == 1) {
@@ -115,11 +117,26 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans("CantRemoveProject", $langs->transnoentitiesnoconv("ProjectOverview")), null, 'errors');
 			}
 		}
-		if ($backtopage) {
+	}
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/projet/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			}
+		}
+	}
+
+	if ($cancel) {
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
 		}
-
 		$action = '';
 	}
 
@@ -451,9 +468,9 @@ $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 $userstatic = new User($db);
 
-$title = $langs->trans("Project").' - '.$object->ref.($object->thirdparty->name ? ' - '.$object->thirdparty->name : '').($object->title ? ' - '.$object->title : '');
+$title = $langs->trans("Project").' - '.$object->ref.(!empty($object->thirdparty->name) ? ' - '.$object->thirdparty->name : '').(!empty($object->title) ? ' - '.$object->title : '');
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE)) {
-	$title = $object->ref.($object->thirdparty->name ? ' - '.$object->thirdparty->name : '').($object->title ? ' - '.$object->title : '');
+	$title = $object->ref.(!empty($object->thirdparty->name) ? ' - '.$object->thirdparty->name : '').(!empty($object->title) ? ' - '.$object->title : '');
 }
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte";
 
@@ -519,7 +536,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 	// Ref
 	$suggestedref = (GETPOST("ref") ? GETPOST("ref") : $defaultref);
-	print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.dol_escape_htmltag($suggestedref).'">';
+	print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="25" type="text" name="ref" value="'.dol_escape_htmltag($suggestedref).'">';
 	print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
 	print '</td></tr>';
 
@@ -665,11 +682,11 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 	print '<td>';
-	$doleditor = new DolEditor('description', GETPOST("description", 'restricthtml'), '', 90, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_3, '90%');
+	$doleditor = new DolEditor('description', GETPOST("description", 'restricthtml'), '', 90, 'dolibarr_notes', '', false, true, getDolGlobalString('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
-	if ($conf->categorie->enabled) {
+	if (!empty($conf->categorie->enabled)) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 1);
@@ -690,16 +707,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("CreateDraft").'">';
-	if (!empty($backtopage)) {
-		print ' &nbsp; &nbsp; ';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	} else {
-		print ' &nbsp; &nbsp; ';
-		print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-	}
-	print '</div>';
+	print $form->buttonsSaveCancel('CreateDraft');
 
 	print '</form>';
 
@@ -804,7 +812,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		// Ref
 		$suggestedref = $object->ref;
 		print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Ref").'</td>';
-		print '<td><input size="12" name="ref" value="'.$suggestedref.'">';
+		print '<td><input size="25" name="ref" value="'.$suggestedref.'">';
 		print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
 		print '</td></tr>';
 
@@ -1150,10 +1158,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	print dol_get_fiche_end();
 
 	if ($action == 'edit' && $userWrite > 0) {
-		print '<div class="center">';
-		print '<input name="update" class="button" type="submit" value="'.$langs->trans("Save").'">&nbsp; &nbsp; &nbsp;';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
+		print $form->buttonsSaveCancel();
 	}
 
 	print '</form>';

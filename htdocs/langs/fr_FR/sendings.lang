@@ -59,7 +59,7 @@ ProductQtyInCustomersOrdersRunning=Quantité de produit en commandes client ouve
 ProductQtyInSuppliersOrdersRunning=Quantité de produit de commandes fournisseur ouvertes
 ProductQtyInShipmentAlreadySent=Quantité de produit en commande ouverte déjà expédiée
 ProductQtyInSuppliersShipmentAlreadyRecevied=Quantité de produit déjà reçu en commandes fournisseur ouvertes
-NoProductToShipFoundIntoStock=Aucun produit à expédier n'a été trouver dans l'entrepôt <b>%s</b>. Corrigez le stock ou choisir un autre entrepôt.
+NoProductToShipFoundIntoStock=Aucun produit à expédier n'a été trouvé dans l'entrepôt <b>%s</b>. Corrigez le stock ou choisissez un autre entrepôt.
 WeightVolShort=Poids/vol.
 ValidateOrderFirstBeforeShipment=Vous devez d'abord valider la commande pour pouvoir créer une expédition.
 

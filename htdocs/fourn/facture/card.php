@@ -140,8 +140,23 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	$backurlforlist = DOL_URL_ROOT.'/fourn/facture/list.php';
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/fourn/facture/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			}
+		}
+	}
+
 	if ($cancel) {
-		if (!empty($backtopage)) {
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
 		}
@@ -578,7 +593,7 @@ if (empty($reshook)) {
 				$sql = 'SELECT SUM(pf.amount) as total_paiements';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf, '.MAIN_DB_PREFIX.'paiementfourn as p';
 				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id AND c.entity IN ('.getEntity('c_paiement').')';
-				$sql .= ' WHERE pf.fk_facturefourn = '.$object->id;
+				$sql .= ' WHERE pf.fk_facturefourn = '.((int) $object->id);
 				$sql .= ' AND pf.fk_paiementfourn = p.rowid';
 				$sql .= ' AND p.entity IN ('.getEntity('invoice').')';
 
@@ -595,7 +610,7 @@ if (empty($reshook)) {
 				$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 				$sql .= " re.description, re.fk_invoice_supplier_source";
 				$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
-				$sql .= " WHERE fk_invoice_supplier = ".$object->id;
+				$sql .= " WHERE fk_invoice_supplier = ".((int) $object->id);
 				$resql = $db->query($sql);
 				if (!empty($resql)) {
 					while ($obj = $db->fetch_object($resql)) {
@@ -1927,7 +1942,7 @@ if ($action == 'create') {
 
 	if ($societe->id > 0) {
 		$absolute_discount = $societe->getAvailableDiscounts('', '', 0, 1);
-		print $societe->getNomUrl(1);
+		print $societe->getNomUrl(1, 'supplier');
 		print '<input type="hidden" name="socid" value="'.$societe->id.'">';
 	} else {
 		print img_picto('', 'company').$form->select_company($societe->id, 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 widthcentpercentminusxx');
@@ -2337,16 +2352,12 @@ if ($action == 'create') {
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
-	// Bouton "Create Draft"
+
 	print "</table>\n";
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-	print '</div>';
+	print $form->buttonsSaveCancel("CreateDraft");
 
 	print "</form>\n";
 
@@ -2633,7 +2644,7 @@ if ($action == 'create') {
 		$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', 0, 1);
 		$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', null, null, '', 1);
 		// Thirdparty
-		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
+		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'supplier');
 		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
 			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
 		}
@@ -3022,7 +3033,7 @@ if ($action == 'create') {
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_paiementfourn = p.rowid';
-		$sql .= ' WHERE pf.fk_facturefourn = '.$object->id;
+		$sql .= ' WHERE pf.fk_facturefourn = '.((int) $object->id);
 		$sql .= ' ORDER BY p.datep, p.tms';
 
 		$result = $db->query($sql);
@@ -3136,11 +3147,10 @@ if ($action == 'create') {
 			$creditnoteamount = 0;
 			$depositamount = 0;
 
-
 			$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 			$sql .= " re.description, re.fk_invoice_supplier_source";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
-			$sql .= " WHERE fk_invoice_supplier = ".$object->id;
+			$sql .= " WHERE fk_invoice_supplier = ".((int) $object->id);
 			$resql = $db->query($sql);
 			if ($resql) {
 				$num = $db->num_rows($resql);
@@ -3236,8 +3246,21 @@ if ($action == 'create') {
 			}
 			print '</span>';
 			print '</td>';
-			print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td>';
-			print '<td class="nowrap">&nbsp;</td></tr>';
+			print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td><td>&nbsp;</td></tr>';
+
+			// Remainder to pay Multicurrency
+			if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
+				print '<tr><td colspan="'.$nbcols.'" class="right">';
+				print '<span class="opacitymedium">';
+				if ($resteapayeraffiche <= 0) {
+					print $langs->trans('RemainderToPayBackMulticurrency');
+				} else {
+					print $langs->trans('ExcessPaidMulticurrency');
+				}
+				print '</span>';
+				print '</td>';
+				print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.(!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency).' '.price(price2num($object->multicurrency_tx*$resteapayeraffiche, 'MT')).'</td><td>&nbsp;</td></tr>';
+			}
 		} else // Credit note
 		{
 			$cssforamountpaymentcomplete = 'amountpaymentneutral';
@@ -3260,8 +3283,21 @@ if ($action == 'create') {
 			}
 			print '</td>';
 			print '</span>';
-			print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($sign * $resteapayeraffiche).'</td>';
-			print '<td class="nowrap">&nbsp;</td></tr>';
+			print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($sign * $resteapayeraffiche).'</td><td>&nbsp;</td></tr>';
+
+			// Remainder to pay back Multicurrency
+			if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
+				print '<tr><td colspan="'.$nbcols.'" class="right">';
+				print '<span class="opacitymedium">';
+				if ($resteapayeraffiche <= 0) {
+					print $langs->trans('RemainderToPayBackMulticurrency');
+				} else {
+					print $langs->trans('ExcessPaidMulticurrency');
+				}
+				print '</span>';
+				print '</td>';
+				print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.(!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency).' '.price(price2num($sign * $object->multicurrency_tx * $resteapayeraffiche, 'MT')).'</td><td>&nbsp;</td></tr>';
+			}
 
 			// Sold credit note
 			// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans('TotalTTC').' :</td>';

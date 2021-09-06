@@ -43,12 +43,12 @@ $action = GETPOST('action', 'aZ09');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+$hookmanager->initHooks(array('ordersuppliercardnote'));
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 $object = new CommandeFournisseur($db);
 $object->fetch($id, $ref);
-
-$hookmanager->initHooks(array('ordersuppliercardnote'));
 
 $permissionnote = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer); // Used by the include of actions_setnotes.inc.php
 
@@ -57,7 +57,13 @@ $permissionnote = ($user->rights->fournisseur->commande->creer || $user->rights-
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
+$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+}
 
 
 /*

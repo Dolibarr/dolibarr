@@ -1562,11 +1562,7 @@ if ($action == 'create') {
 
 			print '<br>';
 
-			print '<div class="center">';
-			print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
-			print '&nbsp; ';
-			print '<input type="'.($backtopage ? "submit" : "button").'" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
-			print '</div>';
+			print $form->buttonsSaveCancel("Create");
 
 			print '</form>';
 
@@ -1702,7 +1698,7 @@ if ($action == 'create') {
 					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 					$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-					$morehtmlref .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+					$morehtmlref .= '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 					$morehtmlref .= '</form>';
 				} else {
 					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
@@ -1773,7 +1769,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate_livraison">';
 			print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
-			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
 			print $object->date_delivery ? dol_print_date($object->date_delivery, 'dayhour') : '&nbsp;';
@@ -1909,7 +1905,7 @@ if ($action == 'create') {
 			if ($user->admin) {
 				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			}
-			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
 			if ($object->shipping_method_id > 0) {

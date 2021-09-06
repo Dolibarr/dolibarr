@@ -183,7 +183,7 @@ class PriceGlobalVariable
 		$sql .= " code = ".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "''").",";
 		$sql .= " description = ".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "''").",";
 		$sql .= " value = ".((float) $this->value);
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 

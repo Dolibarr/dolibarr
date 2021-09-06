@@ -55,7 +55,7 @@ TypeContact_ticket_internal_SUPPORTTEC=已分配用戶
 TypeContact_ticket_external_SUPPORTCLI=客戶聯絡人/事件追踪
 TypeContact_ticket_external_CONTRIBUTOR=外部合作者
 
-OriginEmail=Reporter Email
+OriginEmail=報告者Email
 Notify_TICKET_SENTBYMAIL=以電子郵件發送服務單訊息
 
 # Status
@@ -66,7 +66,7 @@ NeedMoreInformation=等待作者回覆
 NeedMoreInformationShort=等待回覆
 Answered=已回覆
 Waiting=等待中
-Closed=已關閉
+SolvedClosed=Solved
 Deleted=已刪除
 
 # Dict
@@ -186,9 +186,11 @@ TicketSeverity=嚴重程度
 ShowTicket=查閱服務單
 RelatedTickets=相關服務單
 TicketAddIntervention=建立干預
-CloseTicket=關閉服務單
-CloseATicket=關閉服務單
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=確認關閉服務單
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=請確認要刪除服務單
 TicketDeletedSuccess=服務單刪除成功
 TicketMarkedAsClosed=服務單標記為已關閉

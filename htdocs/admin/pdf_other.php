@@ -53,7 +53,15 @@ if ($cancel) {
 }
 
 if ($action == 'update') {
-	if (GETPOSTISSET('MAIN_GENERATE_PROPOSALS_WITH_PICTURE')) dolibarr_set_const($db, "MAIN_GENERATE_PROPOSALS_WITH_PICTURE", GETPOST("MAIN_GENERATE_PROPOSALS_WITH_PICTURE"), 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('PROPOSAL_PDF_HIDE_PAYMENTTERM')) {
+		dolibarr_set_const($db, "PROPOSAL_PDF_HIDE_PAYMENTTERM", GETPOST("PROPOSAL_PDF_HIDE_PAYMENTTERM"), 'chaine', 0, '', $conf->entity);
+	}
+	if (GETPOSTISSET('PROPOSAL_PDF_HIDE_PAYMENTMODE')) {
+		dolibarr_set_const($db, "PROPOSAL_PDF_HIDE_PAYMENTMODE", GETPOST("PROPOSAL_PDF_HIDE_PAYMENTMODE"), 'chaine', 0, '', $conf->entity);
+	}
+	if (GETPOSTISSET('MAIN_GENERATE_PROPOSALS_WITH_PICTURE')) {
+		dolibarr_set_const($db, "MAIN_GENERATE_PROPOSALS_WITH_PICTURE", GETPOST("MAIN_GENERATE_PROPOSALS_WITH_PICTURE"), 'chaine', 0, '', $conf->entity);
+	}
 
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
@@ -120,9 +128,7 @@ print '</table>';
 print '</div>';
 
 /*
-print '<br><div class="center">';
-print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
-print '</div>';
+	print $form->buttonsSaveCancel();
 */
 
 print '</form>';

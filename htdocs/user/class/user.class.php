@@ -653,6 +653,36 @@ class User extends CommonObject
 	}
 
 	/**
+	 *  Return if a user has a permission.
+	 *  You can use it like this: if ($user->hasRight('module', 'level11')).
+	 *  It replaces old syntax: if ($user->rights->module->level1)
+	 *
+	 * 	@param	int		$module			Id of permission to add or 0 to add several permissions
+	 *  @param  string	$permlevel1		Permission level1
+	 *  @param  string	$permlevel2		Permission level2
+	 *  @return int						1 if user has permission, 0 if not.
+	 *  @see	clearrights(), delrights(), getrights(), hasRight()
+	 */
+	public function hasRight($module, $permlevel1, $permlevel2 = '')
+	{
+		if (empty($module) || empty($this->rights) || empty($this->rights->$module) || empty($permlevel1)) {
+			return 0;
+		}
+
+		if ($permlevel2) {
+			if (!empty($this->rights->$module->$permlevel1) && !empty($this->rights->$module->$permlevel1->$permlevel2)) {
+				return $this->rights->$module->$permlevel1->$permlevel2;
+			}
+		} else {
+			if (!empty($this->rights->$module->$permlevel1)) {
+				return $this->rights->$module->$permlevel1;
+			}
+		}
+
+		return 0;
+	}
+
+	/**
 	 *  Add a right to the user
 	 *
 	 * 	@param	int		$rid			Id of permission to add or 0 to add several permissions
@@ -661,7 +691,7 @@ class User extends CommonObject
 	 *  @param	int		$entity			Entity to use
 	 *  @param  int	    $notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *  @return int						> 0 if OK, < 0 if KO
-	 *  @see	clearrights(), delrights(), getrights()
+	 *  @see	clearrights(), delrights(), getrights(), hasRight()
 	 */
 	public function addrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
 	{
@@ -788,7 +818,7 @@ class User extends CommonObject
 	 *  @param	int		$entity		Entity to use
 	 *  @param  int	    $notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *  @return int         		> 0 if OK, < 0 if OK
-	 *  @see	clearrights(), addrights(), getrights()
+	 *  @see	clearrights(), addrights(), getrights(), hasRight()
 	 */
 	public function delrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
 	{
@@ -915,7 +945,7 @@ class User extends CommonObject
 	 *  Clear all permissions array of user
 	 *
 	 *  @return	void
-	 *  @see	getrights()
+	 *  @see	getrights(), hasRight()
 	 */
 	public function clearrights()
 	{
@@ -933,7 +963,7 @@ class User extends CommonObject
 	 *	@param  string	$moduletag		Limit permission for a particular module ('' by default means load all permissions)
 	 *  @param	int		$forcereload	Force reload of permissions even if they were already loaded (ignore cache)
 	 *	@return	void
-	 *  @see	clearrights(), delrights(), addrights()
+	 *  @see	clearrights(), delrights(), addrights(), hasRight()
 	 */
 	public function getrights($moduletag = '', $forcereload = 0)
 	{
@@ -1325,7 +1355,7 @@ class User extends CommonObject
 
 		// Insert into database
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec, login, ldap_sid, entity)";
-		$sql .= " VALUES('".$this->db->idate($this->datec)."','".$this->db->escape($this->login)."','".$this->db->escape($this->ldap_sid)."',".$this->db->escape($this->entity).")";
+		$sql .= " VALUES('".$this->db->idate($this->datec)."', '".$this->db->escape($this->login)."', '".$this->db->escape($this->ldap_sid)."', ".((int) $this->entity).")";
 		$result = $this->db->query($sql);
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -3095,7 +3125,7 @@ class User extends CommonObject
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."user";
 		$sql .= " WHERE fk_user = ".((int) $this->id);
 
-		dol_syslog(get_class($this)."::get_children sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::get_children", LOG_DEBUG);
 		$res = $this->db->query($sql);
 		if ($res) {
 			$users = array();
@@ -3485,18 +3515,18 @@ class User extends CommonObject
 		if (!empty($filter)) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
-					$sqlwhere[] = $key.'='.$value;
-				} elseif (strpos($key, 'date') !== false) {
-					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
+					$sqlwhere[] = $key." = ".((int) $value);
+				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
 				} else {
-					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
 		}
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -3557,13 +3587,11 @@ class User extends CommonObject
 
 		$sql = 'SELECT rowid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'user';
-
 		if (!empty($conf->global->AGENDA_DISABLE_EXACT_USER_EMAIL_COMPARE_FOR_EXTERNAL_CALENDAR)) {
-			$sql .= ' WHERE email LIKE "%'.$email.'%"';
+			$sql .= " WHERE email LIKE '%".$this->db->escape($email)."%'";
 		} else {
-			$sql .= ' WHERE email = "'.$email.'"';
+			$sql .= " WHERE email = '".$this->db->escape($email)."'";
 		}
-
 		$sql .= ' LIMIT 1';
 
 		$resql = $this->db->query($sql);

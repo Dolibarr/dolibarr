@@ -90,7 +90,6 @@ DATE_REFUS=Aizliegšanas datums
 DATE_SAVE=Apstiprināšanas datums
 DATE_CANCEL=Atcelšanas datums
 DATE_PAIEMENT=Maksājuma datums
-BROUILLONNER=Atvērt pa jaunu
 ExpenseReportRef=Atsauces izdevumu pārskats
 ValidateAndSubmit=Validate and submit for approval
 ValidatedWaitingApproval=Apstiprināts (gaida apstiprinājumu)

@@ -66,7 +66,7 @@ NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
 Answered=Отговорен
 Waiting=В изчакване
-Closed=Приключен
+SolvedClosed=Solved
 Deleted=Изтрит
 
 # Dict
@@ -186,9 +186,11 @@ TicketSeverity=Приоритет
 ShowTicket=Преглед на тикет
 RelatedTickets=Свързани тикети
 TicketAddIntervention=Създаване на интервенция
-CloseTicket=Приключване на тикет
-CloseATicket=Приключване на тикет
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Потвърдете приключването на тикета
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Потвърдете изтриването на тикета
 TicketDeletedSuccess=Тикетът е успешно изтрит
 TicketMarkedAsClosed=Тикетът е маркиран като приключен

@@ -41,6 +41,8 @@ $langs->loadLangs(array("loan"));
 
 // Security check
 $id = GETPOST('id', 'int');
+
+$hookmanager->initHooks(array('loannote'));
 $result = restrictedArea($user, 'loan', $id, '&loan');
 
 $object = new Loan($db);
@@ -55,7 +57,14 @@ $permissionnote = $user->rights->loan->write; // Used by the include of actions_
  *  Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+
+$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+}
 
 
 /*

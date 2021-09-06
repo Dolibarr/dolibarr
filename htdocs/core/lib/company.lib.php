@@ -64,7 +64,7 @@ function societe_prepare_head(Societe $object)
 			} else {
 				$sql = "SELECT COUNT(p.rowid) as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
-				$sql .= " WHERE p.fk_soc = ".$object->id;
+				$sql .= " WHERE p.fk_soc = ".((int) $object->id);
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
@@ -140,7 +140,7 @@ function societe_prepare_head(Societe $object)
 		} else {
 			$sql = "SELECT COUNT(n.rowid) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet as n";
-			$sql .= " WHERE fk_soc = ".$object->id;
+			$sql .= " WHERE fk_soc = ".((int) $object->id);
 			$sql .= " AND entity IN (".getEntity('project').")";
 			$resql = $db->query($sql);
 			if ($resql) {
@@ -223,7 +223,7 @@ function societe_prepare_head(Societe $object)
 
 		$sql = "SELECT COUNT(n.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as n";
-		$sql .= " WHERE n.fk_soc = ".$object->id;
+		$sql .= " WHERE n.fk_soc = ".((int) $object->id);
 		if (empty($conf->stripe->enabled)) {
 			$sql .= " AND n.stripe_card_ref IS NULL";
 		} else {
@@ -240,7 +240,7 @@ function societe_prepare_head(Societe $object)
 
 		//if (! empty($conf->stripe->enabled) && $nbBankAccount > 0) $nbBankAccount = '...';	// No way to know exact number
 
-		$head[$h][0] = DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.urlencode($object->id);
 		$head[$h][1] = $title;
 		if ($foundonexternalonlinesystem) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">...</span>';
@@ -252,12 +252,12 @@ function societe_prepare_head(Societe $object)
 	}
 
 	if (!empty($conf->website->enabled) && (!empty($conf->global->WEBSITE_USE_WEBSITE_ACCOUNTS)) && (!empty($user->rights->societe->lire))) {
-		$head[$h][0] = DOL_URL_ROOT.'/societe/website.php?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/societe/website.php?id='.urlencode($object->id);
 		$head[$h][1] = $langs->trans("WebSiteAccounts");
 		$nbNote = 0;
 		$sql = "SELECT COUNT(n.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_account as n";
-		$sql .= " WHERE fk_soc = ".$object->id.' AND fk_website > 0';
+		$sql .= " WHERE fk_soc = ".((int) $object->id).' AND fk_website > 0';
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
@@ -304,7 +304,7 @@ function societe_prepare_head(Societe $object)
 			} else {
 				$sql = "SELECT COUNT(n.rowid) as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n";
-				$sql .= " WHERE fk_soc = ".$object->id;
+				$sql .= " WHERE fk_soc = ".((int) $object->id);
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
@@ -315,7 +315,7 @@ function societe_prepare_head(Societe $object)
 				dol_setcache($cachekey, $nbNotif, 120);		// If setting cache fails, this is not a problem, so we do not test result.
 			}
 
-			$head[$h][0] = DOL_URL_ROOT.'/societe/notify/card.php?socid='.$object->id;
+			$head[$h][0] = DOL_URL_ROOT.'/societe/notify/card.php?socid='.urlencode($object->id);
 			$head[$h][1] = $langs->trans("Notifications");
 			if ($nbNotif > 0) {
 				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNotif.'</span>';
@@ -332,7 +332,7 @@ function societe_prepare_head(Societe $object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/societe/note.php?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/societe/note.php?id='.urlencode($object->id);
 		$head[$h][1] = $langs->trans("Notes");
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -380,7 +380,7 @@ function societe_prepare_head(Societe $object)
 		} else {
 			$sql = "SELECT COUNT(id) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
-			$sql .= " WHERE fk_soc = ".$object->id;
+			$sql .= " WHERE fk_soc = ".((int) $object->id);
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -806,7 +806,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 		$sql .= ", cls.code as opp_status_code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
-		$sql .= " WHERE p.fk_soc = ".$object->id;
+		$sql .= " WHERE p.fk_soc = ".((int) $object->id);
 		$sql .= " AND p.entity IN (".getEntity('project').")";
 		$sql .= " ORDER BY p.dateo DESC";
 
@@ -1083,7 +1083,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	$sql .= " t.civility as civility_id, t.address, t.zip, t.town";
 	$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
-	$sql .= " WHERE t.fk_soc = ".$object->id;
+	$sql .= " WHERE t.fk_soc = ".((int) $object->id);
 	if ($search_status != '' && $search_status != '-1') {
 		$sql .= " AND t.statut = ".((int) $search_status);
 	}
@@ -1526,7 +1526,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 				}
 			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && is_array($filterobj->fields['ref']) && $filterobj->table_element && $filterobj->element) {
 				// Generic case
-				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '".$db->escape($filterobj->element).($module ? '@'.$module : '')."'";
+				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '".$db->escape($filterobj->element).($module ? "@".$module : "")."'";
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}

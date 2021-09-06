@@ -26,6 +26,7 @@
 require '../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
@@ -88,7 +89,11 @@ $search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alph
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
-		$search[$key] = GETPOST('search_'.$key, 'alpha');
+		if ($key == "lang") {
+			$search[$key] = GETPOST('search_'.$key, 'alpha')!='0' ? GETPOST('search_'.$key, 'alpha') : '';
+		} else {
+			$search[$key] = GETPOST('search_'.$key, 'alpha');
+		}
 	}
 	if (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 		$search[$key.'_dtstart'] = dol_mktime(0, 0, 0, GETPOST('search_'.$key.'_dtstartmonth', 'int'), GETPOST('search_'.$key.'_dtstartday', 'int'), GETPOST('search_'.$key.'_dtstartyear', 'int'));
@@ -197,12 +202,13 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $user_temp = new User($db);
+$formadmin = new FormAdmin($db);
 
 $now = dol_now();
 
 //$help_url="EN:Module_KnowledgeRecord|FR:Module_KnowledgeRecord_FR|ES:Módulo_KnowledgeRecord";
 $help_url = '';
-$title = $langs->trans('ListOfArticles');
+$title = $langs->trans('ListKnowledgeRecord');
 $morejs = array();
 $morecss = array();
 
@@ -214,7 +220,7 @@ $sql .= $object->getFieldList('t');
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ",ef.".$key.' as options_'.$key.', ' : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ",ef.".$key." as options_".$key.', ' : '');
 	}
 }
 // Add fields from hooks
@@ -278,7 +284,7 @@ $sql .= $hookmanager->resPrint;
 /* If a group by is required
 $sql.= " GROUP BY ";
 foreach($object->fields as $key => $val) {
-	$sql.='t.'.$key.', ';
+	$sql .= "t.".$key.", ";
 }
 // Add fields from extrafields
 if (! empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -455,7 +461,11 @@ foreach ($object->fields as $key => $val) {
 		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:')=== 0)) {
 			print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth125', 1);
 		} elseif (!preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
-			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
+			if ($key == 'lang') {
+				print $formadmin->select_language($search[$key], 'search_lang', 0, null, 1, 0, 0, 'minwidth150 maxwidth200', 2);
+			} else {
+				print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
+			}
 		} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 			print '<div class="nowrap">';
 			print $form->selectDate($search[$key.'_dtstart'] ? $search[$key.'_dtstart'] : '', "search_".$key."_dtstart", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
@@ -592,6 +602,10 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 					}
 					print $user_temp->getNomUrl(-1);
 				}
+			} elseif ($key == 'lang') {
+				$labellang = ($object->lang ? $langs->trans('Language_'.$object->lang) : '');
+				print picto_from_langcode($object->lang, 'class="paddingrightonly saturatemedium opacitylow"');
+				print $labellang;
 			} else {
 				print $object->showOutputField($val, $key, $object->$key, '');
 			}

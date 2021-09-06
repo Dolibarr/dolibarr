@@ -34,6 +34,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
@@ -56,6 +57,7 @@ class Categorie extends CommonObject
 	const TYPE_WAREHOUSE = 'warehouse';
 	const TYPE_ACTIONCOMM = 'actioncomm';
 	const TYPE_WEBSITE_PAGE = 'website_page';
+	const TYPE_TICKET = 'ticket';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -78,7 +80,8 @@ class Categorie extends CommonObject
 		'bank_line'    => 8,
 		'warehouse'    => 9,
 		'actioncomm'   => 10,
-		'website_page' => 11
+		'website_page' => 11,
+		'ticket'       => 12
 	);
 
 	/**
@@ -98,7 +101,8 @@ class Categorie extends CommonObject
 		8 => 'bank_line',
 		9 => 'warehouse',
 		10 => 'actioncomm',
-		11 => 'website_page'
+		11 => 'website_page',
+		12 => 'ticket'
 	);
 
 	/**
@@ -141,7 +145,8 @@ class Categorie extends CommonObject
 		'project'  => 'Project',
 		'warehouse'=> 'Entrepot',
 		'actioncomm' => 'ActionComm',
-		'website_page' => 'WebsitePage'
+		'website_page' => 'WebsitePage',
+		'ticket' => 'Ticket'
 	);
 
 	/**
@@ -234,6 +239,8 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_WAREHOUSE
 	 * @see Categorie::TYPE_ACTIONCOMM
 	 * @see Categorie::TYPE_WEBSITE_PAGE
+	 * @see Categorie::TYPE_TICKET
+
 	 */
 	public $type;
 
@@ -448,7 +455,7 @@ class Categorie extends CommonObject
 			$sql .= ($this->socid > 0 ? $this->socid : 'null').", ";
 		}
 		$sql .= "'".$this->db->escape($this->visible)."', ";
-		$sql .= $this->db->escape($type).", ";
+		$sql .= ((int) $type).", ";
 		$sql .= (!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : 'null').", ";
 		$sql .= (!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : 'null').", ";
 		$sql .= (int) $conf->entity.", ";
@@ -606,7 +613,7 @@ class Categorie extends CommonObject
 		if (!$error) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
 			$sql .= " SET fk_parent = ".((int) $this->fk_parent);
-			$sql .= " WHERE fk_parent = ".$this->id;
+			$sql .= " WHERE fk_parent = ".((int) $this->id);
 
 			if (!$this->db->query($sql)) {
 				$this->error = $this->db->lasterror();
@@ -627,7 +634,7 @@ class Categorie extends CommonObject
 		);
 		foreach ($arraydelete as $key => $value) {
 			$sql  = "DELETE FROM ".MAIN_DB_PREFIX.$key;
-			$sql .= " WHERE ".$value." = ".$this->id;
+			$sql .= " WHERE ".$value." = ".((int) $this->id);
 			if (!$this->db->query($sql)) {
 				$this->errors[] = $this->db->lasterror();
 				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
@@ -680,7 +687,7 @@ class Categorie extends CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type]);
 		$sql .= " (fk_categorie, fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type]).")";
-		$sql .= " VALUES (".$this->id.", ".$obj->id.")";
+		$sql .= " VALUES (".((int) $this->id).", ".((int) $obj->id).")";
 
 		dol_syslog(get_class($this).'::add_type', LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -917,12 +924,11 @@ class Categorie extends CommonObject
 		$idoftype = array_search($type, self::$MAP_ID_TO_CODE);
 
 		$sql = "SELECT s.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as s";
-		$sql .= " , ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub ";
+		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as s, ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub";
 		$sql .= ' WHERE s.entity IN ('.getEntity('category').')';
 		$sql .= ' AND s.type='.((int) $idoftype);
 		$sql .= ' AND s.rowid = sub.fk_categorie';
-		$sql .= ' AND sub.'.$subcol_name.' = '.((int) $id);
+		$sql .= " AND sub.".$subcol_name." = ".((int) $id);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 
@@ -995,7 +1001,7 @@ class Categorie extends CommonObject
 	{
 		// phpcs:enable
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
-		$sql .= " WHERE fk_parent = ".$this->id;
+		$sql .= " WHERE fk_parent = ".((int) $this->id);
 		$sql .= " AND entity IN (".getEntity('category').")";
 
 		$res = $this->db->query($sql);
@@ -1401,7 +1407,7 @@ class Categorie extends CommonObject
 		$parents = array();
 
 		$sql = "SELECT fk_parent FROM ".MAIN_DB_PREFIX."categorie";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$res = $this->db->query($sql);
 
@@ -1804,13 +1810,13 @@ class Categorie extends CommonObject
 			if ($key == $current_lang) {
 				if ($this->db->num_rows($result)) { // si aucune ligne dans la base
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."categorie_lang";
-					$sql2 .= " SET label='".$this->db->escape($this->label)."',";
-					$sql2 .= " description='".$this->db->escape($this->description)."'";
-					$sql2 .= " WHERE fk_category=".((int) $this->id)." AND lang='".$this->db->escape($key)."'";
+					$sql2 .= " SET label = '".$this->db->escape($this->label)."',";
+					$sql2 .= " description = '".$this->db->escape($this->description)."'";
+					$sql2 .= " WHERE fk_category = ".((int) $this->id)." AND lang = '".$this->db->escape($key)."'";
 				} else {
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."categorie_lang (fk_category, lang, label, description)";
-					$sql2 .= " VALUES(".$this->id.",'".$this->db->escape($key)."','".$this->db->escape($this->label);
-					$sql2 .= "','".$this->db->escape($this->multilangs["$key"]["description"])."')";
+					$sql2 .= " VALUES(".((int) $this->id).", '".$this->db->escape($key)."', '".$this->db->escape($this->label)."'";
+					$sql2 .= ", '".$this->db->escape($this->multilangs["$key"]["description"])."')";
 				}
 				dol_syslog(get_class($this).'::setMultiLangs', LOG_DEBUG);
 				if (!$this->db->query($sql2)) {
@@ -1825,8 +1831,8 @@ class Categorie extends CommonObject
 					$sql2 .= " WHERE fk_category=".((int) $this->id)." AND lang='".$this->db->escape($key)."'";
 				} else {
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."categorie_lang (fk_category, lang, label, description)";
-					$sql2 .= " VALUES(".$this->id.",'".$this->db->escape($key)."','".$this->db->escape($this->multilangs["$key"]["label"]);
-					$sql2 .= "','".$this->db->escape($this->multilangs["$key"]["description"])."')";
+					$sql2 .= " VALUES(".((int) $this->id).", '".$this->db->escape($key)."', '".$this->db->escape($this->multilangs["$key"]["label"])."'";
+					$sql2 .= ",'".$this->db->escape($this->multilangs["$key"]["description"])."')";
 				}
 
 				// on ne sauvegarde pas des champs vides

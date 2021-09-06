@@ -58,7 +58,17 @@ include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
 
+
+/*
+ * Main
+ */
+
 $langs->load('main');
+
+if (!empty($dolibarr_main_db_readonly)) {
+	print "Error: instance in read-onyl mode\n";
+	exit(-1);
+}
 
 $website = new Website($db);
 $result = $website->fetch(0, $websiteref);

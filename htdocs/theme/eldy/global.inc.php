@@ -234,9 +234,11 @@ input.button.massactionconfirmed {
 	margin: 4px;
 }
 
-input:invalid, select:invalid {
+input:invalid, select:invalid, input.--error , select.--error {
 	border-color: #ea1212;
 }
+
+.field-error-icon { color: #ea1212; !important; }
 
 /* Focus definitions must be after standard definition */
 textarea:focus {
@@ -439,7 +441,7 @@ input.pageplusone {
 	transform: scale(-1, 1);
 }
 
-select:invalid {
+select:invalid, select.--error {
 	color: gray;
 }
 input:disabled, textarea:disabled, select[disabled='disabled']
@@ -650,6 +652,9 @@ textarea.centpercent {
 }
 .large {
 	font-size: 125%;
+}
+.double {
+	font-size: 2em;
 }
 
 .h1 .small, .h1 small, .h2 .small, .h2 small, .h3 .small, .h3 small, h1 .small, h1 small, h2 .small, h2 small, h3 .small, h3 small {
@@ -2099,7 +2104,7 @@ span.widthpictotitle.pictotitle {
 	vertical-align: middle;
 	margin-top: -3px
 }
-.pictowarning, .pictoerror, .pictopreview {
+.pictowarning, .pictoerror, .pictopreview, .picto.error {
 	padding-<?php echo $left; ?>: 3px;
 }
 .pictowarning {
@@ -6814,12 +6819,18 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 /* For copy-paste feature                                                         */
 /* ============================================================================== */
 
-span.clipboardCPValueToPrint {
+span.clipboardCPValueToPrint, div.clipboardCPValueToPrint  {
 	display: inline-block;
 }
 span.clipboardCPValue.hidewithsize {
 	width: 0 !important;
 	display: inline-block;
+	color: transparent;
+	white-space: nowrap;
+}
+div.clipboardCPValue.hidewithsize {
+	width: 0 !important;
+	display: none;
 	color: transparent;
 	white-space: nowrap;
 }

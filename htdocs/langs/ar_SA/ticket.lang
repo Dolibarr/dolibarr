@@ -66,7 +66,7 @@ NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
 Answered=Answered
 Waiting=انتظار
-Closed=مغلق
+SolvedClosed=Solved
 Deleted=Deleted
 
 # Dict
@@ -186,9 +186,11 @@ TicketSeverity=Severity
 ShowTicket=See ticket
 RelatedTickets=Related tickets
 TicketAddIntervention=إنشاء التدخل
-CloseTicket=Close ticket
-CloseATicket=Close a ticket
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Confirm ticket closing
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Please confirm ticket deleting
 TicketDeletedSuccess=Ticket deleted with success
 TicketMarkedAsClosed=Ticket marked as closed

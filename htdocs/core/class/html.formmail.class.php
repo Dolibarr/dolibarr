@@ -501,7 +501,7 @@ class FormMail extends Form
 				}
 
 				$out .= ' &nbsp; ';
-				$out .= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
+				$out .= '<input type="submit" class="button" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				$out .= ' &nbsp; ';
 				$out .= '</div>';
 			} elseif (!empty($this->param['models']) && in_array($this->param['models'], array(
@@ -516,7 +516,7 @@ class FormMail extends Form
 					$out .= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')), 1);
 				}
 				$out .= ' &nbsp; ';
-				$out .= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" disabled="disabled" id="modelselected">';
+				$out .= '<input type="submit" class="button" value="'.$langs->trans('Apply').'" name="modelselected" disabled="disabled" id="modelselected">';
 				$out .= ' &nbsp; ';
 				$out .= '</div>';
 			} else {
@@ -601,7 +601,7 @@ class FormMail extends Form
 
 						// Add also email aliases from the c_email_senderprofile table
 						$sql = 'SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile';
-						$sql .= ' WHERE active = 1 AND (private = 0 OR private = '.$user->id.')';
+						$sql .= ' WHERE active = 1 AND (private = 0 OR private = '.((int) $user->id).')';
 						$sql .= ' ORDER BY position';
 						$resql = $this->db->query($sql);
 						if ($resql) {
@@ -821,7 +821,7 @@ class FormMail extends Form
 							$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
 						}
 						$out .= ' ';
-						$out .= '<input class="button" type="submit" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
+						$out .= '<input type="submit" class="button" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
 					}
 				} else {
 					$out .= $this->withfile;
@@ -957,7 +957,7 @@ class FormMail extends Form
 
 			if ($this->withform == 1 || $this->withform == -1) {
 				$out .= '<br><div class="center">';
-				$out .= '<input class="button" type="submit" id="sendmail" name="sendmail" value="'.$langs->trans("SendMail").'"';
+				$out .= '<input type="submit" class="button" id="sendmail" name="sendmail" value="'.$langs->trans("SendMail").'"';
 				// Add a javascript test to avoid to forget to submit file before sending email
 				if ($this->withfile == 2 && $conf->use_javascript_ajax) {
 					$out .= ' onClick="if (document.mailform.addedfile.value != \'\') { alert(\''.dol_escape_js($langs->trans("FileWasNotUploaded")).'\'); return false; } else { return true; }"';

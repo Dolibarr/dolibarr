@@ -85,8 +85,8 @@ if ($action == 'clean' || $action == 'validatehistory') {
 	$sql1 .= '	(SELECT accnt.rowid ';
 	$sql1 .= '	FROM '.MAIN_DB_PREFIX.'accounting_account as accnt';
 	$sql1 .= '	INNER JOIN '.MAIN_DB_PREFIX.'accounting_system as syst';
-	$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid='.$conf->global->CHARTOFACCOUNTS.' AND accnt.entity = '.$conf->entity.')';
-	$sql1 .= ' AND fd.fk_facture IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'facture WHERE entity = '.$conf->entity.')';
+	$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid='.((int) $conf->global->CHARTOFACCOUNTS).' AND accnt.entity = '.((int) $conf->entity).')';
+	$sql1 .= ' AND fd.fk_facture IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'facture WHERE entity = '.((int) $conf->entity).')';
 	$sql1 .= ' AND fk_code_ventilation <> 0';
 
 	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
@@ -110,13 +110,13 @@ if ($action == 'validatehistory') {
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet";
 		$sql1 .= " SET fk_code_ventilation = accnt.rowid";
 		$sql1 .= " FROM " . MAIN_DB_PREFIX . "product as p, " . MAIN_DB_PREFIX . "accounting_account as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
-		$sql1 .= " WHERE " . MAIN_DB_PREFIX . "facturedet.fk_product = p.rowid  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . ((int) $conf->global->CHARTOFACCOUNTS).' AND accnt.entity = '.$conf->entity;
+		$sql1 .= " WHERE " . MAIN_DB_PREFIX . "facturedet.fk_product = p.rowid  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . ((int) $conf->global->CHARTOFACCOUNTS).' AND accnt.entity = '.((int) $conf->entity);
 		$sql1 .= " AND accnt.active = 1 AND p.accountancy_code_sell=accnt.account_number";
 		$sql1 .= " AND " . MAIN_DB_PREFIX . "facturedet.fk_code_ventilation = 0";
 	} else {
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd, " . MAIN_DB_PREFIX . "product as p, " . MAIN_DB_PREFIX . "accounting_account as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
 		$sql1 .= " SET fk_code_ventilation = accnt.rowid";
-		$sql1 .= " WHERE fd.fk_product = p.rowid  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . ((int) $conf->global->CHARTOFACCOUNTS).' AND accnt.entity = '.$conf->entity;
+		$sql1 .= " WHERE fd.fk_product = p.rowid  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . ((int) $conf->global->CHARTOFACCOUNTS).' AND accnt.entity = '.((int) $conf->entity);
 		$sql1 .= " AND accnt.active = 1 AND p.accountancy_code_sell=accnt.account_number";
 		$sql1 .= " AND fd.fk_code_ventilation = 0";
 	}*/
@@ -283,7 +283,7 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= "  SUM(".$db->ifsql('MONTH(f.datef)='.$j, 'fd.total_ht', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(f.datef)=".$j, "fd.total_ht", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= "  SUM(fd.total_ht) as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
@@ -306,7 +306,7 @@ if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 }
 $sql .= " GROUP BY fd.fk_code_ventilation,aa.account_number,aa.label";
 
-dol_syslog('htdocs/accountancy/customer/index.php sql='.$sql, LOG_DEBUG);
+dol_syslog('htdocs/accountancy/customer/index.php', LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -367,7 +367,7 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= "  SUM(".$db->ifsql('MONTH(f.datef)='.$j, 'fd.total_ht', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(f.datef)=".$j, "fd.total_ht", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= "  SUM(fd.total_ht) as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
@@ -452,7 +452,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 		if ($j > 12) {
 			$j -= 12;
 		}
-		$sql .= "  SUM(".$db->ifsql('MONTH(f.datef)='.$j, 'fd.total_ht', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+		$sql .= "  SUM(".$db->ifsql("MONTH(f.datef)=".$j, "fd.total_ht", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
 	}
 	$sql .= "  SUM(fd.total_ht) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
@@ -513,7 +513,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 			if ($j > 12) {
 				$j -= 12;
 			}
-			$sql .= "  SUM(".$db->ifsql('MONTH(f.datef)='.$j, '(fd.total_ht-(fd.qty * fd.buy_price_ht))', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+			$sql .= "  SUM(".$db->ifsql("MONTH(f.datef)=".$j, "(fd.total_ht-(fd.qty * fd.buy_price_ht))", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
 		}
 		$sql .= "  SUM((fd.total_ht-(fd.qty * fd.buy_price_ht))) as total";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
