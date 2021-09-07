@@ -767,7 +767,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		}
 	} else {
 		/* Use this list to have for all users */
-	    $sql = "SELECT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
+	    $sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
 	    $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 	    if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 	        $sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
