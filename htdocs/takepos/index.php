@@ -549,7 +549,6 @@ function Search2(keyCodeForEnter) {
 
 		// temporization time to give time to type
 		if (search2_timer) {
-			console.log(search2_timer);
 			clearTimeout(search2_timer);
 		}
 
@@ -583,7 +582,12 @@ function Search2(keyCodeForEnter) {
 						$("#proprice" + i).html(data[i]['price_formated']);
 					}
 					$("#proimg" + i).attr("title", titlestring);
-					$("#proimg" + i).attr("src", "genimg/index.php?query=pro&id=" + data[i]['rowid']);
+					if( undefined !== data[i]['img']) {
+						$("#proimg" + i).attr("src", data[i]['img']);
+					}
+					else {
+						$("#proimg" + i).attr("src", "genimg/index.php?query=pro&id=" + data[i]['rowid']);
+					}
 					$("#prodiv" + i).data("rowid", data[i]['rowid']);
 					$("#prodiv" + i).data("iscat", 0);
 				}
