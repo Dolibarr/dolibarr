@@ -467,7 +467,10 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 
 		// Other attributes
 		$cols = 2;
-		//include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+		$objectconf = $object;
+		$object = $projectstatic;
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+		$object = $objectconf;
 
 		print '</table>';
 
@@ -554,7 +557,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		print $langs->trans("PublicAttendeeSubscriptionGlobalPage");
 		//print '</span>';
 		print '</td><td>';
-		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_subscription.php?id='.$projectstatic->id.'&type=global';
+		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_registration.php?id='.$projectstatic->id.'&type=global';
 		$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$projectstatic->id, 2);
 		$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 		//print '<div class="urllink">';

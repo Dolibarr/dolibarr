@@ -26,6 +26,8 @@ EventOrganizationDescriptionLong= Manage Event organization for conference, atte
 EventOrganizationMenuLeft = Organized events
 EventOrganizationConferenceOrBoothMenuLeft = Conference Or Booth
 
+PaymentEvent=Payment of event
+
 #
 # Admin page
 #
