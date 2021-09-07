@@ -1,13 +1,8 @@
-.github
 /_book
 /coverage
 /custom
 /dist
-/docs
-/samples
-/scripts
-/src
-/test
+/docs/index.md
 /gh-pages
 /jsdoc
 /node_modules

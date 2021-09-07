@@ -78,7 +78,6 @@ class CupsPrintConnector implements PrintConnector
         
         // Build command to work on data
         $tmpfname = tempnam(sys_get_temp_dir(), 'print-');
-        if ($tmpfname==false) dol_syslog("CupsPrintConnector.php::Permission denied to write into target directory ".sys_get_temp_dir(), LOG_WARNING);
         file_put_contents($tmpfname, $data);
         $cmd = sprintf(
             "lp -d %s %s",

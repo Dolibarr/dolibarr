@@ -1518,9 +1518,36 @@ if ($action == 'create')
 
 	print '<table class="border centpercent">';
 
+	//echo "<pre>";print_r($conf->global);exit;
 	// Reference
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td>'.$langs->trans("Draft").'</td></tr>';
+	if(isset($conf->global->MAIN_MODULE_NUMBERSERIES) and $conf->global->MAIN_MODULE_NUMBERSERIES == 1){
+		//si está activado el numberseries debe sobre escribir el REF y colocar el selector del número de series.
+		$allextrafields = $extrafields->attributes['propal']['list'];
+		$extrafields->attributes['propal']['list'] = array('serie'=>-1);
+		if($conf->global->PROPALE_ADDON == 'mod_propale_numberseries'){
 
+			require_once DOL_DOCUMENT_ROOT."/custom/numberseries/core/modules/propale/mod_propale_numberseries.php";
+			$serie = new mod_propale_numberseries();
+
+			echo "<pre>";print_r($tmp);//exit;
+
+			print $object->showOptionals($extrafields, 'create', $params);
+			print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td id="ref_numberseries">'.$serie->getNextValue($soc,$object).'</td></tr>';
+			print '<script type="text/javascript">
+			$(document).ready(function() {
+				$("#options_serie").change(function() {
+					var socid = $("#socid").val();
+					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&ref_client="+$("input[name=ref_client]").val();
+				});
+			});
+			</script>';
+		}
+		$extrafields->attributes['propal']['list'] = $allextrafields;
+		$extrafields->attributes['propal']['list']['serie'] = 0;
+		
+	}else
+		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td>'.$langs->trans("Draft").'</td></tr>';
+	
 	// Ref customer
 	print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
 	print '<input type="text" name="ref_client" value="'.GETPOST('ref_client').'"></td>';
@@ -1698,6 +1725,8 @@ if ($action == 'create')
 		// print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'.</textarea>
 		print '</td></tr>';
 	}
+
+	
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';

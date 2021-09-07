@@ -1805,28 +1805,21 @@ class TCPDF_STATIC {
 		return $ret;
 	}
 
-    /**
-     * Wrapper to use fopen only with local files
-     * @param  string $filename The full path to the file to open
-     * @param  string $mode     Acceses type for the file ('r', 'r+', 'w', 'w+', 'a', 'a+', 'x', 'x+', 'c', 'c+' or 'e')
-     * @return resource         Returns a file pointer resource on success, or FALSE on error.
-     * @public static
-     */
-    public static function fopenLocal($filename, $mode)
-    {
-        if (strpos($filename, '//') === 0) {
-            // Share folder on a (windows) server
-            // e.g.: "//[MyServerName]/[MySharedFolder]/"
-            //
-            // nothing to change
-        } elseif (strpos($filename, '://') === false) {
-            $filename = 'file://'.$filename;
-        } elseif (stream_is_local($filename) !== true) {
-            return false;
-        }
-
-        return fopen($filename, $mode);
-    }
+	/**
+	 * Wrapper to use fopen only with local files
+	 * @param filename (string) Name of the file to open
+	 * @param $mode (string) 
+	 * @return Returns a file pointer resource on success, or FALSE on error.  
+	 * @public static
+	 */
+	public static function fopenLocal($filename, $mode) {
+		if (strpos($filename, '://') === false) {
+			$filename = 'file://'.$filename;
+		} elseif (stream_is_local($filename) !== true) {
+			return false;
+		}
+		return fopen($filename, $mode);
+	}
 
 	/**
 	 * Check if the URL exist.
@@ -1857,8 +1850,8 @@ class TCPDF_STATIC {
 	 * Wrapper for file_exists.
 	 * Checks whether a file or directory exists.
 	 * Only allows some protocols and local files.
-	 * @param filename (string) Path to the file or directory.
-	 * @return Returns TRUE if the file or directory specified by filename exists; FALSE otherwise.
+	 * @param filename (string) Path to the file or directory. 
+	 * @return Returns TRUE if the file or directory specified by filename exists; FALSE otherwise.  
 	 * @public static
 	 */
 	public static function file_exists($filename) {
@@ -1875,7 +1868,7 @@ class TCPDF_STATIC {
 	 * Reads entire file into a string.
 	 * The file can be also an URL.
 	 * @param $file (string) Name of the file or URL to read.
-	 * @return The function returns the read data or FALSE on failure.
+	 * @return The function returns the read data or FALSE on failure. 
 	 * @author Nicola Asuni
 	 * @since 6.0.025
 	 * @public static
@@ -2105,7 +2098,7 @@ class TCPDF_STATIC {
 		return $a['i'];
 	}
 
-
+	
 	/**
 	 * Array of page formats
 	 * measures are calculated in this way: (inches * 72) or (millimeters * 72 / 25.4)

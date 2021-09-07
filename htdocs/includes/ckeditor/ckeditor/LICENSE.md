@@ -8,11 +8,11 @@ Licensed under the terms of any of the following licenses at your
 choice:
 
  - GNU General Public License Version 2 or later (the "GPL")
-   https://www.gnu.org/licenses/gpl.html
+   http://www.gnu.org/licenses/gpl.html
    (See Appendix A)
 
  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
-   https://www.gnu.org/licenses/lgpl.html
+   http://www.gnu.org/licenses/lgpl.html
    (See Appendix B)
 
  - Mozilla Public License Version 1.1 or later (the "MPL")

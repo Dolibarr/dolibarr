@@ -4,7 +4,9 @@
 .buildpath
 
 # doxygen files
-doc
+doc/html
+doc/latex
+doc/doxygen_sqlite3.db
 
 # composer files
 vendor/
