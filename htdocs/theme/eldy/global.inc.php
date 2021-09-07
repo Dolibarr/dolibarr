@@ -4775,8 +4775,11 @@ span[phptag] {
 	border-bottom: 1px solid #ccc;
 	background: #e6e6e6;
 	display: inline-block;
-	padding: 5px 0 5px 0;
+	padding: 5px 5px 5px 5px;
 	z-index: 1000;
+}
+.centpercent.websitebar {
+	width: calc(100% - 10px);
 }
 .websitebar .buttonDelete, .websitebar .button {
 	text-shadow: none;
@@ -4785,13 +4788,13 @@ span[phptag] {
 {
 	padding: 4px 5px 4px 5px !important;
 	margin: 2px 4px 2px 4px  !important;
-	line-height: normal;
+/*	line-height: normal; */
 	background: #f5f5f5 !important;
 	border: 1px solid #ccc !important;
 }
 .websiteselection {
 	/* display: inline-block; */
-	padding-left: 10px;
+	padding-<?php echo $right; ?>: 10px;
 	vertical-align: middle;
 	/* line-height: 28px; */
 }
@@ -4810,6 +4813,9 @@ span[phptag] {
 }
 .websiteiframenoborder {
 	border: 0px;
+}
+span.websiteselection span.select2.select2-container.select2-container--default {
+	margin: 0 0 0 4px;
 }
 span.websitebuttonsitepreview, a.websitebuttonsitepreview {
 	vertical-align: middle;
@@ -7066,6 +7072,12 @@ div.clipboardCPValue.hidewithsize {
 
 	#divbodywebsite {
 		word-break: break-all;
+	}
+
+	.websiteselectionsection {
+		border-left: unset;
+		boerder-right: unset;
+		padding-left: 5px;
 	}
 }
 

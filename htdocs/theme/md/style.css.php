@@ -6874,6 +6874,16 @@ div.clipboardCPValue.hidewithsize {
 	input#addedfile {
 		width: 95%;
 	}
+	
+	#divbodywebsite {
+		word-break: break-all;
+	}
+
+	.websiteselectionsection {
+		border-left: unset;
+		boerder-right: unset;
+		padding-left: 5px;
+	}	
 }
 
 
