@@ -133,7 +133,6 @@ if ($action == 'getProducts') {
 			} else {
 				if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 					$ig = $file.'&cache=1';
-
 				} else {
 					$ig = $file.'&cache=1&publictakepos=1&modulepart=product';
 				}
