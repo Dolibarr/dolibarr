@@ -200,7 +200,7 @@ $object->project = clone $projectstatic;
 if (!empty($withproject)) {
 	// Tabs for project
 	$tab = 'eventorganisation';
-	$withProjectUrl="&withproject=1";
+	$withProjectUrl = "&withproject=1";
 	$head = project_prepare_head($projectstatic);
 	print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'), 0, '', '');
 
@@ -418,6 +418,7 @@ if ($action == 'create') {
 	}
 	if ($projectstatic->id > 0) {
 		print '<input type="hidden" name="fk_project" value="'.$projectstatic->id.'">';
+		print '<input type="hidden" name="projectid" value="'.$projectstatic->id.'">';
 	}
 
 

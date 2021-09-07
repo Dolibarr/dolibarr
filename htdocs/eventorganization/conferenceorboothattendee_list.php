@@ -57,8 +57,7 @@ $id = GETPOST('id', 'int');
 $conf_or_booth_id = GETPOST('conforboothid', 'int');
 
 $withproject = GETPOST('withproject', 'int');
-$project_ref = GETPOST('project_ref', 'alpha');
-$fk_project = GETPOST('fk_project', 'int');
+$fk_project = GETPOST('fk_project', 'int') ? GETPOST('fk_project', 'int') : GETPOST('projectid', 'int') ;
 
 $withProjectUrl='';
 
@@ -372,8 +371,9 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 	if (!empty($withproject)) {
 		// Tabs for project
 		$tab = 'eventorganisation';
-		$withProjectUrl="&withproject=1";
+		$withProjectUrl = "&withproject=1";
 		$head = project_prepare_head($projectstatic);
+
 		print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'), 0, '', '');
 
 		$param = ($mode == 'mine' ? '&mode=mine' : '');
@@ -587,6 +587,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 
 	if ($confOrBooth->id > 0) {
 		$head = conferenceorboothPrepareHead($confOrBooth, $withproject);
+
 		print dol_get_fiche_head($head, 'attendees', $langs->trans("ConferenceOrBooth"), -1, $object->picto);
 
 		$object_evt = $object;
@@ -675,7 +676,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?action=create'.(!empty($confOrBooth->id)?'&conforboothid='.$confOrBooth->id:'').(!empty($projectstatic->id)?'&fk_project='.$projectstatic->id:'').$withProjectUrl.'&backtopage='.urlencode($_SERVER['PHP_SELF'].(!empty($confOrBooth->id)?'?conforboothid='.$confOrBooth->id:'').$withProjectUrl), '', $permissiontoadd);
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?action=create'.(!empty($confOrBooth->id)?'&conforboothid='.$confOrBooth->id:'').(!empty($projectstatic->id)?'&fk_project='.$projectstatic->id:'').$withProjectUrl.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?projectid='.$projectstatic->id.(empty($confOrBooth->id) ? '' : '&conforboothid='.$confOrBooth->id).$withProjectUrl), '', $permissiontoadd);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
