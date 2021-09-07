@@ -1316,7 +1316,6 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 			}
 
 			if ($result <= 0) {
-
 				$TMsg = array_merge($objecttmp->errors, $TMsg);
 				$error++;
 			} else {
@@ -1332,7 +1331,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 	// Message for elements well deleted
 	if ($nbok > 1) {
 		setEventMessages($langs->trans("RecordsDeleted", $nbok), null, 'mesgs');
-	} elseif(!empty($nbok)) {
+	} elseif (!empty($nbok)) {
 		setEventMessages($langs->trans("RecordsDeleted", '1'), null, 'mesgs');
 	}
 	$db->commit();
