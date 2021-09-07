@@ -483,10 +483,10 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 
-llxHeaderVierge($langs->trans("NewSubscription"));
+llxHeaderVierge($langs->trans("NewRegistration"));
 
 print '<br>';
-print load_fiche_titre($langs->trans("NewSubscription"), '', '', 0, 0, 'center');
+print load_fiche_titre($langs->trans("NewRegistration"), '', '', 0, 0, 'center');
 
 
 print '<div align="center">';
@@ -498,9 +498,19 @@ print '<div class="center subscriptionformhelptext justify">';
 print $langs->trans("EvntOrgWelcomeMessage", $project->title . ' '. $conference->label);
 print '<br>';
 if ($conference->id) {
-	print $langs->trans("EvntOrgDuration", dol_print_date($conference->datep), dol_print_date($conference->datef));
+	print $langs->trans("Date").': ';
+	print dol_print_date($conference->datep);
+	if ($conference->date_end) {
+		print ' - ';
+		print dol_print_date($conference->datef);
+	}
 } else {
-	print $langs->trans("EvntOrgDuration", dol_print_date($project->date_start), dol_print_date($project->date_end));
+	print $langs->trans("Date").': ';
+	print dol_print_date($project->date_start);
+	if ($project->date_end) {
+		print ' - ';
+		print dol_print_date($project->date_end);
+	}
 }
 print '</div>';
 
@@ -540,13 +550,13 @@ if (!empty($conference->id) && $conference->status==ConferenceOrBooth::STATUS_CO
 	print '<table class="border" summary="form to subscribe" id="tablesubscribe">' . "\n";
 
 	// Email
-	print '<tr><td>' . $langs->trans("Email") . '<FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="' . dol_escape_htmltag(GETPOST('email')) . '"></td></tr>' . "\n";
+	print '<tr><td>' . $langs->trans("Email") . '<FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('email')) . '"></td></tr>' . "\n";
 	// Company
 	print '<tr id="trcompany" class="trcompany"><td>' . $langs->trans("Company");
 	if (!empty(floatval($project->price_registration))) {
 		print '<FONT COLOR="red">*</FONT>';
 	}
-	print ' </td><td><input type="text" name="societe" class="minwidth150" value="' . dol_escape_htmltag(GETPOST('societe')) . '"></td></tr>' . "\n";
+	print ' </td><td><input type="text" name="societe" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('societe')) . '"></td></tr>' . "\n";
 	// Address
 	print '<tr><td>' . $langs->trans("Address") . '</td><td>' . "\n";
 	print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="' . ROWS_3 . '">' . dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1) . '</textarea></td></tr>' . "\n";
@@ -584,6 +594,12 @@ if (!empty($conference->id) && $conference->status==ConferenceOrBooth::STATUS_CO
 		} else {
 			print '';
 		}
+		print '</td></tr>';
+	}
+
+	if ($project->price_registration) {
+		print '<tr><td>' . $langs->trans('Price') . '</td><td>';
+		print price($project->price_registration, 1, $langs, 1, -1, -1, $conf->currency);
 		print '</td></tr>';
 	}
 
