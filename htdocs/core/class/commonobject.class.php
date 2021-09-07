@@ -4292,10 +4292,10 @@ abstract class CommonObject
 					//print 'Found into table '.$table.', type '.$langs->transnoentitiesnoconv($elementname).', haschild='.$haschild;
 					$haschild += $obj->nb;
 					if (is_numeric($elementname)) {	// old usage
-						$this->errors[] = $langs->trans("ErrorRecordHasAtLeastOneChildOfType", $table);
+						$this->errors[] = $langs->transnoentities("ErrorRecordHasAtLeastOneChildOfType", method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $table);
 					} else // new usage: $elementname=Translation key
 					{
-						$this->errors[] = $langs->trans("ErrorRecordHasAtLeastOneChildOfType", $langs->transnoentitiesnoconv($elementname));
+						$this->errors[] = $langs->transnoentities("ErrorRecordHasAtLeastOneChildOfType", method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $langs->transnoentitiesnoconv($elementname));
 					}
 					break; // We found at least one, we stop here
 				}
