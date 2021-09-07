@@ -598,3 +598,5 @@ create table llx_onlinesignature
 
 -- VMYSQL4.3 ALTER TABLE llx_partnership MODIFY COLUMN date_partnership_end date NULL;
 -- VPGSQL8.2 ALTER TABLE llx_partnership ALTER COLUMN date_partnership_end DROP NOT NULL;
+
+Alter TABLE llx_facture_fourn CHANGE fk_mode_transport fk_transport_mode integer
