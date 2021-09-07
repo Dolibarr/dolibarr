@@ -925,7 +925,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		}
 
 
-		$delayForRequest = $object->getConfCP('delayForRequest');
+		$delayForRequest = $object->getConfCP('delayForRequest', 1);
 		//$delayForRequest = $delayForRequest * (60*60*24);
 
 		$nextMonth = dol_time_plus_duree($now, $delayForRequest, 'd');
