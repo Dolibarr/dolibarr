@@ -6721,9 +6721,9 @@ abstract class CommonObject
 							foreach ($fields_label as $field_toshow) {
 								$translabel = $langs->trans($obj->$field_toshow);
 								if ($translabel != $obj->$field_toshow) {
-									$labeltoshow = dol_trunc($translabel, 18).' ';
+									$labeltoshow = dol_trunc($translabel).' ';
 								} else {
-									$labeltoshow = dol_trunc($obj->$field_toshow, 18).' ';
+									$labeltoshow = dol_trunc($obj->$field_toshow).' ';
 								}
 							}
 							$out .= '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
@@ -6733,7 +6733,7 @@ abstract class CommonObject
 								if ($translabel != $obj->{$InfoFieldList[1]}) {
 									$labeltoshow = dol_trunc($translabel, 18);
 								} else {
-									$labeltoshow = dol_trunc($obj->{$InfoFieldList[1]}, 18);
+									$labeltoshow = dol_trunc($obj->{$InfoFieldList[1]});
 								}
 							}
 							if (empty($labeltoshow)) {
