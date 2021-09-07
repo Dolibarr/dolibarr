@@ -978,36 +978,36 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 <?php
 
 // TakePOS setup check
-if ( isset( $_SESSION["takeposterminal"] ) && $_SESSION["takeposterminal"] ) {
+if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"]) {
 	$sql = "SELECT code, libelle FROM " . MAIN_DB_PREFIX . "c_paiement";
-	$sql .= " WHERE entity IN (" . getEntity( 'c_paiement' ) . ")";
+	$sql .= " WHERE entity IN (" . getEntity('c_paiement') . ")";
 	$sql .= " AND active = 1";
 	$sql .= " ORDER BY libelle";
 
-	$resql          = $db->query( $sql );
+	$resql          = $db->query($sql);
 	$paiementsModes = array();
-	if ( $resql ) {
-		while ( $obj = $db->fetch_object( $resql ) ) {
+	if ($resql) {
+		while ( $obj = $db->fetch_object($resql) ) {
 			$paycode = $obj->code;
-			if ( $paycode == 'LIQ' ) {
+			if ($paycode == 'LIQ') {
 				$paycode = 'CASH';
 			}
-			if ( $paycode == 'CHQ' ) {
+			if ($paycode == 'CHQ') {
 				$paycode = 'CHEQUE';
 			}
 
 			$constantforkey = "CASHDESK_ID_BANKACCOUNT_" . $paycode . $_SESSION["takeposterminal"];
 			//var_dump($constantforkey.' '.$conf->global->$constantforkey);
-			if ( ! empty( $conf->global->$constantforkey ) && $conf->global->$constantforkey > 0 ) {
-				array_push( $paiementsModes, $obj );
+			if ( ! empty($conf->global->$constantforkey) && $conf->global->$constantforkey > 0) {
+				array_push($paiementsModes, $obj);
 			}
 		}
 	}
 
-	if ( empty( $paiementsModes ) ) {
-		$langs->load( 'errors' );
-		setEventMessages( $langs->trans( "ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv( "TakePOS" ) ), null, 'errors' );
-		setEventMessages( $langs->trans( "ProblemIsInSetupOfTerminal", $_SESSION["takeposterminal"] ), null, 'errors' );
+	if (empty($paiementsModes)) {
+		$langs->load('errors');
+		setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("TakePOS")), null, 'errors');
+		setEventMessages($langs->trans("ProblemIsInSetupOfTerminal", $_SESSION["takeposterminal"]), null, 'errors');
 	}
 }
 
