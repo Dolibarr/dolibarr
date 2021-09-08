@@ -111,21 +111,32 @@ if (empty($reshook)) {
 	$error = 0;
 
 	if (!empty($withproject)) {
-		$backurlforlist = dol_buildpath('/eventorganization/conferenceorboothattendee_list.php?withproject=1', 1);
+		$backurlforlist = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php?withproject=1';
 	} else {
-		$backurlforlist = dol_buildpath('/eventorganization/conferenceorboothattendee_list.php', 1);
+		$backurlforlist = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php';
 	}
-
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = dol_buildpath('/eventorganization/conferenceorboothattendee_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+				$backtopage = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?id='.($id > 0 ? $id : '__ID__');
 			}
 		}
 	}
+
+	if ($cancel) {
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		}
+		$action = '';
+	}
+
 
 	$triggermodname = 'EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_MODIFY'; // Name of trigger action code to execute when we modify record
 
@@ -189,7 +200,7 @@ $object->project = clone $projectstatic;
 if (!empty($withproject)) {
 	// Tabs for project
 	$tab = 'eventorganisation';
-	$withProjectUrl="&withproject=1";
+	$withProjectUrl = "&withproject=1";
 	$head = project_prepare_head($projectstatic);
 	print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'), 0, '', '');
 
@@ -371,7 +382,7 @@ if (!empty($withproject)) {
 	print $langs->trans("PublicAttendeeSubscriptionGlobalPage");
 	//print '</span>';
 	print '</td><td>';
-	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_subscription.php?id='.$projectstatic->id.'&type=global';
+	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_registration.php?id='.$projectstatic->id.'&type=global';
 	$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$projectstatic->id, 2);
 	$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 	//print '<div class="urllink">';
@@ -407,6 +418,7 @@ if ($action == 'create') {
 	}
 	if ($projectstatic->id > 0) {
 		print '<input type="hidden" name="fk_project" value="'.$projectstatic->id.'">';
+		print '<input type="hidden" name="projectid" value="'.$projectstatic->id.'">';
 	}
 
 
