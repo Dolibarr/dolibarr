@@ -19,7 +19,7 @@
 #
 ModuleEventOrganizationName = Event Organization
 EventOrganizationDescription = Event Organization through Module Project
-EventOrganizationDescriptionLong= Manage Event organization for conference, attendees, speaker, and attendees, with public subcription page
+EventOrganizationDescriptionLong= Manage the organization of an event (conferences, attendees, speakers, with public suggestion, vote or registration pages)
 #
 # Menu
 #
@@ -32,8 +32,9 @@ PaymentEvent=Payment of event
 # Admin page
 #
 NewRegistration=Registration
-EventOrganizationSetup = Event Organization setup
-Settings = Settings
+EventOrganizationSetup=Event Organization setup
+EventOrganization=Event organization
+Settings=Settings
 EventOrganizationSetupPage = Event Organization setup page
 EVENTORGANIZATION_TASK_LABEL = Label of tasks to create automatically when project is validated
 EVENTORGANIZATION_TASK_LABELTooltip = When you validate an organized event, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conference<br>Send Call for Booth<br>Receive call for conferences<br>Receive call for Booth<br>Open subscriptions to events for attendees<br>Send remind of event to speakers<br>Send remind of event to Booth hoster<br>Send remind of event to attendees
@@ -52,7 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filter thirdpartie's select list in att
 # Object
 #
 EventOrganizationConfOrBooth= Conference Or Booth
-ManageOrganizeEvent = Manage event organisation
+ManageOrganizeEvent = Manage the organization of an event
 ConferenceOrBooth = Conference Or Booth
 ConferenceOrBoothTab = Conference Or Booth
 AmountPaid = Amount paid
