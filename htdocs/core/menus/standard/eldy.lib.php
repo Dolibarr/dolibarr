@@ -406,7 +406,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'loadLangs' => array("other"),
 		'submenus' => array(),
 	);
-
+	Var_dump($menu_arr);
+	exit;
 	// Tools
 	$tmpentry = array(
 		'enabled'=>1,
