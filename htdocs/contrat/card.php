@@ -204,7 +204,7 @@ if (empty($reshook)) {
 			$object->note_private = GETPOST('note_private', 'alpha');
 			$object->note_public				= GETPOST('note_public', 'alpha');
 			$object->fk_project					= GETPOST('projectid', 'int');
-			$object->remise_percent = price2num(GETPOST('remise_percent'), 2);
+			$object->remise_percent = price2num(GETPOST('remise_percent'), '', 2);
 			$object->ref = GETPOST('ref', 'alpha');
 			$object->ref_customer				= GETPOST('ref_customer', 'alpha');
 			$object->ref_supplier				= GETPOST('ref_supplier', 'alpha');
