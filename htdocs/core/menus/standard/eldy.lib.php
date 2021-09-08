@@ -383,12 +383,10 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 
 	// Tickets and knwoledge base
-	var_dump($user->rights);
-	exit();
 	$tmpentry = array(
 		'enabled'=>(!empty($conf->ticket->enabled) || !empty($conf->knowledgemanagement->enabled)),
-		'perms'=>(!empty($user->rights->ticket->read) || !empty($user->rights->knwoledgemanagement->read)),
-		'module'=>'ticket|knwoledgemanagement'
+		'perms'=>(!empty($user->rights->ticket->read) || !empty($user->rights->knowledgemanagement->read)),
+		'module'=>'ticket|knowledgemanagement'
 	);
 	$menu_arr[] = array(
 		'name' => 'Ticket',
