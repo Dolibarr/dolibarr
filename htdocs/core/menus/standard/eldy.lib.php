@@ -388,7 +388,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'perms'=>(!empty($user->rights->ticket->read) || !empty($user->rights->knowledgemanagement->knowledgerecord->read)),
 		'module'=>'ticket|knowledgemanagement'
 	);
-	Var_dump($user->rights);
+	//Var_dump($user->rights);
 	//exit;
 	$menu_arr[] = array(
 		'name' => 'Ticket',
