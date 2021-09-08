@@ -389,7 +389,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'module'=>'ticket|knowledgemanagement'
 	);
 	$link = '';
-	if(!empty($conf->ticket->enabled)){[
+	if(!empty($conf->ticket->enabled)){
 		$link = '/ticket/index.php?mainmenu=ticket&amp;leftmenu=';
 	}else{
 		$link = '/knowledgemanagement/knowledgerecord_list.php?mainmenu=ticket&amp;leftmenu=';
