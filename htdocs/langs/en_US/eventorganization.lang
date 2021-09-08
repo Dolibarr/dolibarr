@@ -29,6 +29,7 @@ EventOrganizationConferenceOrBoothMenuLeft = Conference Or Booth
 #
 # Admin page
 #
+NewRegistration=Registration
 EventOrganizationSetup = Event Organization setup
 Settings = Settings
 EventOrganizationSetupPage = Event Organization setup page
@@ -76,12 +77,13 @@ AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest conferences
 AllowUnknownPeopleSuggestBooth=Allow unknown people to suggest booth
 AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to suggest booth
 PriceOfRegistration=Price of registration
-PriceOfRegistrationHelp=Price of registration
+PriceOfRegistrationHelp=Price to pay to register or participate in the event
 PriceOfBooth=Subscription price to stand a booth
 PriceOfBoothHelp=Subscription price to stand a booth
 EventOrganizationICSLink=Link ICS for events
 ConferenceOrBoothInformation=Conference Or Booth informations
-Attendees = Attendees
+Attendees=Attendees
+ListOfAttendeesOfEvent=List of attendees of the event project
 DownloadICSLink = Download ICS link
 EVENTORGANIZATION_SECUREKEY = Secure Key of the public registration link to a conference
 SERVICE_BOOTH_LOCATION = Service used for the invoice row about a booth location
@@ -101,19 +103,19 @@ EvntOrgCancelled = Cancelled
 #
 SuggestForm = Suggestion page
 SuggestOrVoteForConfOrBooth = Page for suggestion or vote
-EvntOrgRegistrationHelpMessage = Here, you can vote for an event, or suggest a new conference or booth for the project
+EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or booth or suggest a new one for the event
 EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference for the project
 EvntOrgRegistrationBoothHelpMessage = Here, you can suggest a new booth for the project
 ListOfSuggestedConferences = List of suggested conferences
 ListOfSuggestedBooths = List of suggested booths
-ListOfConferencesOrBooths=List of conferences or booths
+ListOfConferencesOrBooths=List of conferences or booths of event project
 SuggestConference = Suggest a new conference
 SuggestBooth = Suggest a booth
 ViewAndVote = View and vote for suggested events
 PublicAttendeeSubscriptionGlobalPage = Public link for registration to the event
 PublicAttendeeSubscriptionPage = Public link for registration to this event only
 MissingOrBadSecureKey = The security key is invalid or missing
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the conference : '%s'
+EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event : <b>%s</b>
 EvntOrgDuration = This conference starts on %s and ends on %s.
 ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
 BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
