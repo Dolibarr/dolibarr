@@ -509,7 +509,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 			}
 		}
 	}
-	$_GET['token'] = $_SESSION['token']; // Tmp workaround for https://github.com/Dolibarr/dolibarr/issues/16096
+
 	$sessiontokenforthisurl = (empty($_SESSION['token']) ? '' : $_SESSION['token']);
 	// TODO Get the sessiontokenforthisurl into the array of session token
 	if (GETPOSTISSET('token') && GETPOST('token') != 'notrequired' && GETPOST('token', 'alpha') != $sessiontokenforthisurl) {

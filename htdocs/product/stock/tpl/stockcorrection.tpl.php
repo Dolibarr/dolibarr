@@ -24,25 +24,6 @@ if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
-/**
- * README : Montée de version Théoblad ;
- * les zones modifiés du fichier original sont bornées par
- * ----------===========   THEOBALD   ===========----------
- * ===========---------- END THEOBALD ----------===========
- */
-
-/**
- * ----------===========   THEOBALD   ===========----------
- */
-// Remplacement du fichier template
-$theobaldTpl = dol_buildpath('clitheobald/htdocs/product/stock/tpl/stockcorrection.tpl.php');
-if(file_exists($theobaldTpl)){
-	include $theobaldTpl;
-	return;
-}
-/**
- * ===========---------- END THEOBALD ----------===========
- */
 
 ?>
 
