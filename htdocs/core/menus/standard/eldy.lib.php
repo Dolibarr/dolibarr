@@ -388,6 +388,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'perms'=>(!empty($user->rights->ticket->read) || !empty($user->rights->knowledgemanagement->read)),
 		'module'=>'ticket|knowledgemanagement'
 	);
+	Var_dump($tmpentry);
+	exit;
 	$menu_arr[] = array(
 		'name' => 'Ticket',
 		'link' => '/ticket/index.php?mainmenu=ticket&amp;leftmenu=',
