@@ -208,7 +208,7 @@ if (empty($chartaccountcode))
 
 // Customer Invoice lines
 $sql = "SELECT f.rowid as facid, f.ref as ref, f.datef, f.type as ftype,";
-$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
+$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code, l.fk_prev_id,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.tva_tx as tva_tx_prod,";
 $sql .= " p.accountancy_code_sell as code_sell, p.accountancy_code_sell_intra as code_sell_intra, p.accountancy_code_sell_export as code_sell_export,";
 $sql .= " p.accountancy_code_buy as code_buy, p.accountancy_code_buy_intra as code_buy_intra, p.accountancy_code_buy_export as code_buy_export,";
@@ -567,6 +567,14 @@ if ($result) {
 		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->description);
 		print '</td>';
+
+		// Recalculation of the line amount in relation to the progress rate of the situation invoice
+		if (!empty($objp->fk_prev_id)) {
+			$prevLine = new FactureLigne($db);
+			$prevLine->fetch($objp->fk_prev_id);
+
+			$objp->total_ht = $objp->total_ht - $prevLine->total_ht;
+		}
 
 		print '<td class="nowrap right">';
 		print price($objp->total_ht);
