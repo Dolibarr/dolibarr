@@ -718,7 +718,7 @@ class FormCompany extends Form
 				}
 				print '>';
 				print '<option value="-1">&nbsp;</option>';
-
+				
 				$num = $this->db->num_rows($resql);
 				$i = 0;
 				if ($num) {
