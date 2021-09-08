@@ -67,8 +67,26 @@ $fk_user = GETPOSTINT('userid');
 $object = new Salary($db);
 $extrafields = new ExtraFields($db);
 
+$childids = $user->getAllChildIds(1);
+
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
+
+if (($id > 0) || $ref) {
+	$object->fetch($id, $ref);
+
+	// Check current user can read this leave request
+	$canread = 0;
+	if (!empty($user->rights->salaries->readall)) {
+		$canread = 1;
+	}
+	if (!empty($user->rights->salaries->read) && in_array($object->fk_user, $childids)) {
+		$canread = 1;
+	}
+	if (!$canread) {
+		accessforbidden();
+	}
+}
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('salarycard', 'globalcard'));
