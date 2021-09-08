@@ -388,11 +388,15 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'perms'=>(!empty($user->rights->ticket->read) || !empty($user->rights->knowledgemanagement->knowledgerecord->read)),
 		'module'=>'ticket|knowledgemanagement'
 	);
-	//Var_dump($user->rights);
-	//exit;
+	$link = '';
+	if(!empty($conf->ticket->enabled)){[
+		$link = '/ticket/index.php?mainmenu=ticket&amp;leftmenu=';
+	}else{
+		$link = '/knowledgemanagement/knowledgerecord_list.php?mainmenu=ticket&amp;leftmenu=';
+	}
 	$menu_arr[] = array(
 		'name' => 'Ticket',
-		'link' => '/ticket/index.php?mainmenu=ticket&amp;leftmenu=',
+		'link' => $link,
 		'title' =>  "Tickets",
 		'level' => 0,
 		'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
@@ -408,8 +412,6 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'loadLangs' => array("other"),
 		'submenus' => array(),
 	);
-	//Var_dump($menu_arr);
-	//exit;
 	// Tools
 	$tmpentry = array(
 		'enabled'=>1,
