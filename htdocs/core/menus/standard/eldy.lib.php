@@ -385,7 +385,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	// Tickets and knwoledge base
 	$tmpentry = array(
 		'enabled'=>(!empty($conf->ticket->enabled) || !empty($conf->knowledgemanagement->enabled)),
-		'perms'=>(!empty($user->rights->ticket->read) || !empty($user->rights->knowledgemanagement->read)),
+		'perms'=>(!empty($user->rights->ticket->read) || !empty($user->rights->knowledgemanagement->knowledgerecord->read)),
 		'module'=>'ticket|knowledgemanagement'
 	);
 	Var_dump($tmpentry);
