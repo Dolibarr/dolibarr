@@ -173,7 +173,7 @@ class ActionsStripeconnect
 			// On verifie si la facture a des paiements
 			$sql = 'SELECT pf.amount';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
-			$sql .= ' WHERE pf.fk_facture = '.$object->id;
+			$sql .= ' WHERE pf.fk_facture = '.((int) $object->id);
 
 			$result = $this->db->query($sql);
 			if ($result) {

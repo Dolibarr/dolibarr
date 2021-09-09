@@ -207,7 +207,7 @@ class PriceGlobalVariableUpdater
 		$sql .= " update_interval = ".((int) $this->update_interval).",";
 		$sql .= " next_update = ".((int) $this->next_update).",";
 		$sql .= " last_status = ".(isset($this->last_status) ? "'".$this->db->escape($this->last_status)."'" : "''");
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -570,7 +570,7 @@ class PriceGlobalVariableUpdater
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
 		$sql .= " next_update = ".$this->next_update;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -614,7 +614,7 @@ class PriceGlobalVariableUpdater
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
 		$sql .= " last_status = ".(isset($this->last_status) ? "'".$this->db->escape($this->last_status)."'" : "''");
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 

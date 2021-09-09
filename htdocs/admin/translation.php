@@ -146,7 +146,7 @@ if ($action == 'add') {
 	if (!$error) {
 		$db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."overwrite_trans(lang, transkey, transvalue, entity) VALUES ('".$db->escape($langcode)."','".$db->escape($transkey)."','".$db->escape($transvalue)."', ".$db->escape($conf->entity).")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."overwrite_trans(lang, transkey, transvalue, entity) VALUES ('".$db->escape($langcode)."','".$db->escape($transkey)."','".$db->escape($transvalue)."', ".((int) $conf->entity).")";
 		$result = $db->query($sql);
 		if ($result > 0) {
 			$db->commit();
@@ -541,7 +541,7 @@ if ($mode == 'searchkey') {
 				print $form->textwithpicto('', $htmltext, 1, 'info');
 			} elseif (!empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) {
 				//print $key.'-'.$val;
-				print '<a class="reposition paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=overwrite&langcode='.urlencode($langcode).'&transkey='.urlencode($key).'">'.img_edit_add($langs->trans("Overwrite")).'</a>';
+				print '<a class="reposition paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=overwrite&langcode='.urlencode($langcode).'&transkey='.urlencode($key).'">'.img_edit_add($langs->trans("TranslationOverwriteKey")).'</a>';
 			}
 
 			if (!empty($conf->global->MAIN_FEATURES_LEVEL)) {

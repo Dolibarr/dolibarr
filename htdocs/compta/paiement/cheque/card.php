@@ -538,7 +538,7 @@ if ($action == 'new') {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setdate">';
 		print $form->selectDate($object->date_bordereau, 'datecreate_', '', '', '', "setdate");
-		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+		print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	} else {
 		print $object->date_bordereau ? dol_print_date($object->date_bordereau, 'day') : '&nbsp;';
@@ -563,7 +563,7 @@ if ($action == 'new') {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setrefext">';
 		print '<input type="text" name="ref_ext" value="'.$object->ref_ext.'">';
-		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+		print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	}
 	else

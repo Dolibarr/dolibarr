@@ -309,7 +309,7 @@ class printing_printipp extends PrintingDriver
 			$ipp->setAuthentication($this->user, $this->password);
 		}
 		// select printer uri for module order, propal,...
-		$sql = 'SELECT rowid,printer_uri,printer_name FROM '.MAIN_DB_PREFIX.'printer_ipp WHERE module="'.$module.'"';
+		$sql = "SELECT rowid,printer_uri,printer_name FROM ".MAIN_DB_PREFIX."printer_ipp WHERE module = '".$this->db->escape($module)."'";
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);

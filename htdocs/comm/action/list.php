@@ -381,7 +381,7 @@ $sql .= " sp.lastname, sp.firstname, sp.email, sp.phone, sp.address, sp.phone as
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 
@@ -529,7 +529,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	while ($db->fetch_object($resql)) {
 		$nbtotalofrecords++;
 	}*/
-	/* This fast and low memory method to get and count full list converts the sql into a sql count */
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^SELECT[a-z0-9\._\s\(\),]+FROM/i', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
 	$resql = $db->query($sqlforcount);
 	$objforcount = $db->fetch_object($resql);

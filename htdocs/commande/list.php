@@ -33,7 +33,6 @@
  *	\brief      Page to list orders
  */
 
-
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -436,7 +435,7 @@ if ($search_categ_cus) {
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -501,15 +500,12 @@ if ($search_billed != '' && $search_billed >= 0) {
 	$sql .= ' AND c.facture = '.((int) $search_billed);
 }
 if ($search_status <> '') {
-	if ($search_status < 4 && $search_status > -4) {
+	if ($search_status <= 3 && $search_status >= -1) {	// status from -1 to 3 are real status (other are virtual combination)
 		if ($search_status == 1 && empty($conf->expedition->enabled)) {
 			$sql .= ' AND c.fk_statut IN (1,2)'; // If module expedition disabled, we include order with status 'sending in process' into 'validated'
 		} else {
-			$sql .= ' AND c.fk_statut = '.$search_status; // brouillon, validee, en cours, annulee
+			$sql .= ' AND c.fk_statut = '.((int) $search_status); // brouillon, validee, en cours, annulee
 		}
-	}
-	if ($search_status == 4) {
-		$sql .= ' AND c.facture = 1'; // invoice created
 	}
 	if ($search_status == -2) {	// To process
 		//$sql.= ' AND c.fk_statut IN (1,2,3) AND c.facture = 0';
@@ -520,8 +516,6 @@ if ($search_status <> '') {
 		//$sql.= ' AND c.facture = 0'; // invoice not created
 		$sql .= ' AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))'; // validated, in process or closed but not billed
 	}
-
-
 	if ($search_status == -4) {	//  "validate and in progress"
 		$sql .= ' AND (c.fk_statut IN (1,2))'; // validated, in process
 	}
@@ -585,7 +579,7 @@ if ($search_warehouse != '' && $search_warehouse > 0) {
 	$sql .= natural_search('c.fk_warehouse', $search_warehouse, 1);
 }
 if ($search_multicurrency_code != '') {
-	$sql .= ' AND c.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
+	$sql .= " AND c.multicurrency_code = '".$db->escape($search_multicurrency_code)."'";
 }
 if ($search_multicurrency_tx != '') {
 	$sql .= natural_search('c.multicurrency_tx', $search_multicurrency_tx, 1);
@@ -674,9 +668,6 @@ if ($resql) {
 	}
 	if ($search_status == 3) {
 		$title .= ' - '.$langs->trans('StatusOrderToBillShort');
-	}
-	if ($search_status == 4) {
-		$title .= ' - '.$langs->trans('StatusOrderProcessedShort');
 	}
 	if ($search_status == -1) {
 		$title .= ' - '.$langs->trans('StatusOrderCanceledShort');
@@ -1254,10 +1245,10 @@ if ($resql) {
 			Commande::STATUS_SHIPMENTONPROCESS=>$langs->trans("StatusOrderSentShort"),
 			Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
 			-3=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort").'+'.$langs->trans("StatusOrderDelivered"),
-			-4=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort"),
+			-2=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort"),
 			Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceledShort")
 		);
-		print $form->selectarray('search_status', $liststatus, $search_status, -4, 0, 0, '', 0, 0, 0, '', 'maxwidth100', 1);
+		print $form->selectarray('search_status', $liststatus, $search_status, -5, 0, 0, '', 0, 0, 0, '', 'maxwidth100', 1);
 		print '</td>';
 	}
 	// Action column

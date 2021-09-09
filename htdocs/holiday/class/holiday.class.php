@@ -719,7 +719,7 @@ class Holiday extends CommonObject
 			$error++;
 		}
 		$sql .= " ref = '".$this->db->escape($num)."'";
-		$sql .= " WHERE rowid= ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -828,7 +828,7 @@ class Holiday extends CommonObject
 		} else {
 			$sql .= " detail_refuse = NULL";
 		}
-		$sql .= " WHERE rowid= ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -937,7 +937,7 @@ class Holiday extends CommonObject
 			$sql .= " detail_refuse = NULL";
 		}
 
-		$sql .= " WHERE rowid= ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -1601,7 +1601,7 @@ class Holiday extends CommonObject
 
 
 	/**
-	 *  Retourne le solde de congés payés pour un utilisateur
+	 *  Return balance of holiday for one user
 	 *
 	 *  @param	int		$user_id    ID de l'utilisateur
 	 *  @param	int		$fk_type	Filter on type

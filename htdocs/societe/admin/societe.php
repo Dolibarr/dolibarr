@@ -115,7 +115,7 @@ if ($action == 'set') {
 
 	$type = 'company';
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-	$sql .= " VALUES ('".$db->escape($value)."','".$db->escape($type)."',".$conf->entity.", ";
+	$sql .= " VALUES ('".$db->escape($value)."', '".$db->escape($type)."', ".((int) $conf->entity).", ";
 	$sql .= ($label ? "'".$db->escape($label)."'" : 'null').", ";
 	$sql .= (!empty($scandir) ? "'".$db->escape($scandir)."'" : "null");
 	$sql .= ")";
@@ -130,7 +130,7 @@ if ($action == 'set') {
 if ($action == 'del') {
 	$type = 'company';
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql .= " WHERE nom='".$db->escape($value)."' AND type='".$db->escape($type)."' AND entity=".$conf->entity;
+	$sql .= " WHERE nom='".$db->escape($value)."' AND type='".$db->escape($type)."' AND entity=".((int) $conf->entity);
 	$resql = $db->query($sql);
 	if (!$resql) {
 		dol_print_error($db);
@@ -151,12 +151,12 @@ if ($action == 'setdoc') {
 	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
 	$sql_del .= " WHERE nom = '".$db->escape(GETPOST('value', 'alpha'))."'";
 	$sql_del .= " AND type = '".$db->escape($type)."'";
-	$sql_del .= " AND entity = ".$conf->entity;
+	$sql_del .= " AND entity = ".((int) $conf->entity);
 	dol_syslog("societe.php ".$sql);
 	$result1 = $db->query($sql_del);
 
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-	$sql .= " VALUES ('".$db->escape($value)."', '".$db->escape($type)."', ".$conf->entity.", ";
+	$sql .= " VALUES ('".$db->escape($value)."', '".$db->escape($type)."', ".((int) $conf->entity).", ";
 	$sql .= ($label ? "'".$db->escape($label)."'" : 'null').", ";
 	$sql .= (!empty($scandir) ? "'".$db->escape($scandir)."'" : "null");
 	$sql .= ")";

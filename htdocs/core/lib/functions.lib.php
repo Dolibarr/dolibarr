@@ -104,7 +104,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  */
 function getEntity($element, $shared = 1, $currentobject = null)
 {
-	global $conf, $mc;
+	global $conf, $mc, $hookmanager, $object, $action;
 
 	// fix different element names (France to English)
 	switch ($element) {
@@ -117,7 +117,7 @@ function getEntity($element, $shared = 1, $currentobject = null)
 	}
 
 	if (is_object($mc)) {
-		return $mc->getEntity($element, $shared, $currentobject);
+		$out = $mc->getEntity($element, $shared, $currentobject);
 	} else {
 		$out = '';
 		$addzero = array('user', 'usergroup', 'c_email_templates', 'email_template', 'default_values');
@@ -125,8 +125,27 @@ function getEntity($element, $shared = 1, $currentobject = null)
 			$out .= '0,';
 		}
 		$out .= ((int) $conf->entity);
-		return $out;
 	}
+
+	// Manipulate entities to query on the fly
+	$parameters = array(
+		'element' => $element,
+		'shared' => $shared,
+		'object' => $object,
+		'currentobject' => $currentobject,
+		'out' => $out
+	);
+	$reshook = $hookmanager->executeHooks('hookGetEntity', $parameters, $currentobject, $action); // Note that $action and $object may have been modified by some hooks
+
+	if (is_numeric($reshook)) {
+		if ($reshook == 0 && !empty($hookmanager->resprints)) {
+			$out .= ','.$hookmanager->resprints; // add
+		} elseif ($reshook == 1) {
+			$out = $hookmanager->resprints; // replace
+		}
+	}
+
+	return $out;
 }
 
 /**
@@ -673,14 +692,11 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
  *
  *  @param  string  $paramname   Name of parameter to found
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
- *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
- *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'
- *  @param	string	$noreplace   Force disable of replacement of __xxx__ strings.
  *  @return int                  Value found (int)
  */
-function GETPOSTINT($paramname, $method = 0, $filter = null, $options = null, $noreplace = 0)
+function GETPOSTINT($paramname, $method = 0)
 {
-	return (int) GETPOST($paramname, 'int', $method, $filter, $options, $noreplace);
+	return (int) GETPOST($paramname, 'int', $method, null, null, 0);
 }
 
 /**
@@ -2196,13 +2212,19 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 		if (!empty($object->state)) {
 			$ret .= "\n".$object->state;
 		}
+	} elseif (isset($object->country_code) && in_array($object->country_code, array('JP'))) {
+		// JP: In romaji, title firstname name\n address lines \n [state,] town zip \n country
+		// See https://www.sljfaq.org/afaq/addresses.html
+		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
+		$ret .= ($ret ? $sep : '').($object->state ? $object->state.', ' : '').$town.($object->zip ? ' ' : '').$object->zip;
 	} elseif (isset($object->country_code) && in_array($object->country_code, array('IT'))) {
-		// IT: tile firstname name\n address lines \n zip (Code Departement) \n country
+		// IT: title firstname name\n address lines \n zip town state_code \n country
 		$ret .= ($ret ? $sep : '').$object->zip;
 		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
 		$ret .= ($town ? (($object->zip ? ' ' : '').$town) : '');
 		$ret .= (empty($object->state_code) ? '' : (' '.$object->state_code));
-	} else { // Other: title firstname name \n address lines \n zip town \n country
+	} else {
+		// Other: title firstname name \n address lines \n zip town[, state] \n country
 		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
 		$ret .= !empty($object->zip) ? (($ret ? $sep : '').$object->zip) : '';
 		$ret .= ($town ? (($object->zip ? ' ' : ($ret ? $sep : '')).$town) : '');
@@ -5273,8 +5295,11 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  * 	@param	int				$option			Put 1 if you know that content is already universal format number (so no correction on decimal will be done)
  * 											Put 2 if you know that number is a user input (so we know we don't have to fix decimal separator).
  *	@return	string							Amount with universal numeric format (Example: '99.99999').
- *											If conversion fails, it return text unchanged if ($rounding = '' and $option = 1) or '0' if ($rounding is defined and $option = 1).
- *											If amount is null or '', it returns '' if $rounding = '' or '0' if $rounding is defined..
+ *											If conversion fails to return a numeric, it returns:
+ *											- text unchanged or partial if ($rounding = ''): price2num('W9ç', '', 0)   => '9ç', price2num('W9ç', '', 1)   => 'W9ç', price2num('W9ç', '', 2)   => '9ç'
+ *											- '0' if ($rounding is defined):                 price2num('W9ç', 'MT', 0) => '9',  price2num('W9ç', 'MT', 1) => '0',   price2num('W9ç', 'MT', 2) => '9'
+ *											Note: The best way to guarantee a numeric value is to add a cast (float) before the price2num().
+ *											If amount is null or '', it returns '' if $rounding = '' or '0' if $rounding is defined.
  *
  *	@see    price()							Opposite function of price2num
  */
@@ -8897,10 +8922,10 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 					foreach ($tmparray as $val) {
 						$val = trim($val);
 						if ($val) {
-							$newres .= ($i2 > 0 ? ' OR (' : '(').$field.' LIKE \''.$db->escape($val).',%\'';
-							$newres .= ' OR '.$field.' = \''.$db->escape($val).'\'';
-							$newres .= ' OR '.$field.' LIKE \'%,'.$db->escape($val).'\'';
-							$newres .= ' OR '.$field.' LIKE \'%,'.$db->escape($val).',%\'';
+							$newres .= ($i2 > 0 ? " OR (" : "(").$field." LIKE '".$db->escape($val).",%'";
+							$newres .= ' OR '.$field." = '".$db->escape($val)."'";
+							$newres .= ' OR '.$field." LIKE '%,".$db->escape($val)."'";
+							$newres .= ' OR '.$field." LIKE '%,".$db->escape($val).",%'";
 							$newres .= ')';
 							$i2++;
 						}
@@ -8939,7 +8964,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 						$newres .= $tmpafter;
 						$newres .= "'";
 						if ($tmpcrit2 == '') {
-							$newres .= ' OR '.$field." IS NULL";
+							$newres .= " OR ".$field." IS NULL";
 						}
 					}
 
@@ -9535,7 +9560,7 @@ function getDictvalue($tablename, $field, $id, $checkentity = false, $rowidfield
 	if (!isset($dictvalues[$tablename])) {
 		$dictvalues[$tablename] = array();
 
-		$sql = 'SELECT * FROM '.$tablename.' WHERE 1 = 1'; // Here select * is allowed as it is generic code and we don't have list of fields
+		$sql = "SELECT * FROM ".$tablename." WHERE 1 = 1"; // Here select * is allowed as it is generic code and we don't have list of fields
 		if ($checkentity) {
 			$sql .= ' AND entity IN (0,'.getEntity($tablename).')';
 		}

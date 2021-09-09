@@ -2269,8 +2269,9 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
  */
 function dol_check_secure_access_document($modulepart, $original_file, $entity, $fuser = '', $refname = '', $mode = 'read')
 {
-	global $conf, $db, $user;
+	global $conf, $db, $user, $hookmanager;
 	global $dolibarr_main_data_root, $dolibarr_main_document_root_alt;
+	global $object;
 
 	if (!is_object($fuser)) {
 		$fuser = $user;
@@ -2927,20 +2928,22 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			}
 		}
 
-		// For modules who wants to manage different levels of permissions for documents
-		$subPermCategoryConstName = strtoupper($modulepart).'_SUBPERMCATEGORY_FOR_DOCUMENTS';
-		if (!empty($conf->global->$subPermCategoryConstName)) {
-			$subPermCategory = $conf->global->$subPermCategoryConstName;
-			if (!empty($subPermCategory) && (($fuser->rights->$modulepart->$subPermCategory->{$lire}) || ($fuser->rights->$modulepart->$subPermCategory->{$read}) || ($fuser->rights->$modulepart->$subPermCategory->{$download}))) {
-				$accessallowed = 1;
+		$parameters = array(
+			'modulepart' => $modulepart,
+			'original_file' => $original_file,
+			'entity' => $entity,
+			'fuser' => $fuser,
+			'refname' => '',
+			'mode' => $mode
+		);
+		$reshook = $hookmanager->executeHooks('checkSecureAccess', $parameters, $object);
+		if ($reshook > 0) {
+			if (!empty($hookmanager->resArray['accessallowed'])) {
+				$accessallowed = $hookmanager->resArray['accessallowed'];
 			}
-		}
-
-		// Define $sqlprotectagainstexternals for modules who want to protect access using a SQL query.
-		$sqlProtectConstName = strtoupper($modulepart).'_SQLPROTECTAGAINSTEXTERNALS_FOR_DOCUMENTS';
-		if (!empty($conf->global->$sqlProtectConstName)) {	// If module want to define its own $sqlprotectagainstexternals
-			// Example: mymodule__SQLPROTECTAGAINSTEXTERNALS_FOR_DOCUMENTS = "SELECT fk_soc FROM ".MAIN_DB_PREFIX.$modulepart." WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
-			eval('$sqlprotectagainstexternals = "'.$conf->global->$sqlProtectConstName.'";');
+			if (!empty($hookmanager->resArray['sqlprotectagainstexternals'])) {
+				$sqlprotectagainstexternals = $hookmanager->resArray['sqlprotectagainstexternals'];
+			}
 		}
 	}
 

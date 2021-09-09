@@ -278,7 +278,7 @@ class pdf_stdandard extends ModelePDFMovement
 		// Add fields from extrafields
 		if (!empty($extrafields->attributes[$element]['label'])) {
 			foreach ($extrafields->attributes[$element]['label'] as $key => $val) {
-				$sql .= ($extrafields->attributes[$element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+				$sql .= ($extrafields->attributes[$element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 			}
 		}
 		// Add fields from hooks

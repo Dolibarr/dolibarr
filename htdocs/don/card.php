@@ -84,259 +84,284 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
-// Action reopen object
-if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd) {
-	$object->fetch($id);
+if (empty($reshook)) {
+	$backurlforlist = DOL_URL_ROOT.'/don/list.php';
 
-	$result = $object->reopen($user);
-	if ($result >= 0) {
-		// Define output language
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-			if (method_exists($object, 'generateDocument')) {
-				$outputlangs = $langs;
-				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
-					$newlang = GETPOST('lang_id', 'aZ09');
-				}
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
-				}
-				if (!empty($newlang)) {
-					$outputlangs = new Translate("", $conf);
-					$outputlangs->setDefaultLang($newlang);
-				}
-				$model = $object->model_pdf;
-				$ret = $object->fetch($id); // Reload to get new records
-
-				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/don/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
 			}
 		}
-
-		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
-		exit;
-	} else {
-		setEventMessages($object->error, $object->errors, 'errors');
-	}
-}
-
-
-// Action update object
-if ($action == 'update') {
-	if (!empty($cancel)) {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".urlencode($id));
-		exit;
 	}
 
-	$error = 0;
-
-	if (empty($donation_date)) {
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
-		$action = "create";
-		$error++;
-	}
-
-	if (empty($amount)) {
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
-		$action = "create";
-		$error++;
-	}
-
-	if (!$error) {
-		$object->fetch($id);
-
-		$object->firstname = (string) GETPOST("firstname", 'alpha');
-		$object->lastname = (string) GETPOST("lastname", 'alpha');
-		$object->societe = (string) GETPOST("societe", 'alpha');
-		$object->address = (string) GETPOST("address", 'alpha');
-		$object->amount = price2num(GETPOST("amount", 'alpha'));
-		$object->town = (string) GETPOST("town", 'alpha');
-		$object->zip = (string) GETPOST("zipcode", 'alpha');
-		$object->country_id = (int) GETPOST('country_id', 'int');
-		$object->email = (string) GETPOST("email", 'alpha');
-		$object->date = $donation_date;
-		$object->public = $public_donation;
-		$object->fk_project = (int) GETPOST("fk_project", 'int');
-		$object->note_private = (string) GETPOST("note_private", 'restricthtml');
-		$object->note_public = (string) GETPOST("note_public", 'restricthtml');
-		$object->modepaymentid = (int) GETPOST('modepayment', 'int');
-
-		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost(null, $object);
-		if ($ret < 0) {
-			$error++;
-		}
-
-		if ($object->update($user) > 0) {
-			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+	if ($cancel) {
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
+			header("Location: ".$backtopage);
 			exit;
 		}
-	}
-}
-
-
-// Action add/create object
-if ($action == 'add') {
-	if (!empty($cancel)) {
-		header("Location: index.php");
-		exit;
+		$action = '';
 	}
 
-	$error = 0;
+	// Action reopen object
+	if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd) {
+		$object->fetch($id);
 
-	if (!empty($conf->societe->enabled) && !empty($conf->global->DONATION_USE_THIRDPARTIES) && !(GETPOST("socid", 'int') > 0)) {
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")), null, 'errors');
-		$action = "create";
-		$error++;
-	}
-	if (empty($donation_date)) {
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
-		$action = "create";
-		$error++;
-	}
+		$result = $object->reopen($user);
+		if ($result >= 0) {
+			// Define output language
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				if (method_exists($object, 'generateDocument')) {
+					$outputlangs = $langs;
+					$newlang = '';
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+						$newlang = GETPOST('lang_id', 'aZ09');
+					}
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+						$newlang = $object->thirdparty->default_lang;
+					}
+					if (!empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+					}
+					$model = $object->model_pdf;
+					$ret = $object->fetch($id); // Reload to get new records
 
-	if (empty($amount)) {
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
-		$action = "create";
-		$error++;
-	}
+					$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				}
+			}
 
-	if (!$error) {
-		$object->socid = (int) GETPOST("socid", 'int');
-		$object->firstname = (string) GETPOST("firstname", 'alpha');
-		$object->lastname = (string) GETPOST("lastname", 'alpha');
-		$object->societe = (string) GETPOST("societe", 'alpha');
-		$object->address = (string) GETPOST("address", 'alpha');
-		$object->amount = price2num(GETPOST("amount", 'alpha'));
-		$object->zip = (string) GETPOST("zipcode", 'alpha');
-		$object->town = (string) GETPOST("town", 'alpha');
-		$object->country_id = (int) GETPOST('country_id', 'int');
-		$object->email = (string) GETPOST('email', 'alpha');
-		$object->date = $donation_date;
-		$object->note_private = (string) GETPOST("note_private", 'restricthtml');
-		$object->note_public = (string) GETPOST("note_public", 'restricthtml');
-		$object->public = $public_donation;
-		$object->fk_project = (int) GETPOST("fk_project", 'int');
-		$object->modepaymentid = (int) GETPOST('modepayment', 'int');
-
-		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost(null, $object);
-		if ($ret < 0) {
-			$error++;
-		}
-
-		$res = $object->create($user);
-		if ($res > 0) {
-			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$res);
+			header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-}
 
-// Action delete object
-if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights->don->supprimer) {
-	$object->fetch($id);
-	$result = $object->delete($user);
-	if ($result > 0) {
-		header("Location: index.php");
-		exit;
-	} else {
-		dol_syslog($object->error, LOG_DEBUG);
-		setEventMessages($object->error, $object->errors, 'errors');
+
+	// Action update object
+	if ($action == 'update') {
+		if (!empty($cancel)) {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".urlencode($id));
+			exit;
+		}
+
+		$error = 0;
+
+		if (empty($donation_date)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
+			$action = "create";
+			$error++;
+		}
+
+		if (empty($amount)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
+			$action = "create";
+			$error++;
+		}
+
+		if (!$error) {
+			$object->fetch($id);
+
+			$object->firstname = (string) GETPOST("firstname", 'alpha');
+			$object->lastname = (string) GETPOST("lastname", 'alpha');
+			$object->societe = (string) GETPOST("societe", 'alpha');
+			$object->address = (string) GETPOST("address", 'alpha');
+			$object->amount = price2num(GETPOST("amount", 'alpha'));
+			$object->town = (string) GETPOST("town", 'alpha');
+			$object->zip = (string) GETPOST("zipcode", 'alpha');
+			$object->country_id = (int) GETPOST('country_id', 'int');
+			$object->email = (string) GETPOST("email", 'alpha');
+			$object->date = $donation_date;
+			$object->public = $public_donation;
+			$object->fk_project = (int) GETPOST("fk_project", 'int');
+			$object->note_private = (string) GETPOST("note_private", 'restricthtml');
+			$object->note_public = (string) GETPOST("note_public", 'restricthtml');
+			$object->modepaymentid = (int) GETPOST('modepayment', 'int');
+
+			// Fill array 'array_options' with data from add form
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			if ($ret < 0) {
+				$error++;
+			}
+
+			if ($object->update($user) > 0) {
+				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+				exit;
+			}
+		}
 	}
-}
 
-// Action validation
-if ($action == 'valid_promesse') {
-	$object->fetch($id);
-	if ($object->valid_promesse($id, $user->id) >= 0) {
-		setEventMessages($langs->trans("DonationValidated", $object->ref), null);
-		$action = '';
-	} else {
-		setEventMessages($object->error, $object->errors, 'errors');
+
+	// Action add/create object
+	if ($action == 'add') {
+		if (!empty($cancel)) {
+			header("Location: index.php");
+			exit;
+		}
+
+		$error = 0;
+
+		if (!empty($conf->societe->enabled) && !empty($conf->global->DONATION_USE_THIRDPARTIES) && !(GETPOST("socid", 'int') > 0)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")), null, 'errors');
+			$action = "create";
+			$error++;
+		}
+		if (empty($donation_date)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
+			$action = "create";
+			$error++;
+		}
+
+		if (empty($amount)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
+			$action = "create";
+			$error++;
+		}
+
+		if (!$error) {
+			$object->socid = (int) GETPOST("socid", 'int');
+			$object->firstname = (string) GETPOST("firstname", 'alpha');
+			$object->lastname = (string) GETPOST("lastname", 'alpha');
+			$object->societe = (string) GETPOST("societe", 'alpha');
+			$object->address = (string) GETPOST("address", 'alpha');
+			$object->amount = price2num(GETPOST("amount", 'alpha'));
+			$object->zip = (string) GETPOST("zipcode", 'alpha');
+			$object->town = (string) GETPOST("town", 'alpha');
+			$object->country_id = (int) GETPOST('country_id', 'int');
+			$object->email = (string) GETPOST('email', 'alpha');
+			$object->date = $donation_date;
+			$object->note_private = (string) GETPOST("note_private", 'restricthtml');
+			$object->note_public = (string) GETPOST("note_public", 'restricthtml');
+			$object->public = $public_donation;
+			$object->fk_project = (int) GETPOST("fk_project", 'int');
+			$object->modepaymentid = (int) GETPOST('modepayment', 'int');
+
+			// Fill array 'array_options' with data from add form
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			if ($ret < 0) {
+				$error++;
+			}
+
+			$res = $object->create($user);
+			if ($res > 0) {
+				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$res);
+				exit;
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
 	}
-}
 
-// Action cancel
-if ($action == 'set_cancel') {
-	$object->fetch($id);
-	if ($object->set_cancel($id) >= 0) {
-		$action = '';
-	} else {
-		setEventMessages($object->error, $object->errors, 'errors');
+	// Action delete object
+	if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights->don->supprimer) {
+		$object->fetch($id);
+		$result = $object->delete($user);
+		if ($result > 0) {
+			header("Location: index.php");
+			exit;
+		} else {
+			dol_syslog($object->error, LOG_DEBUG);
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
-}
 
-// Action set paid
-if ($action == 'set_paid') {
-	$object->fetch($id);
-	if ($object->setPaid($id, $modepayment) >= 0) {
-		$action = '';
-	} else {
-		setEventMessages($object->error, $object->errors, 'errors');
+	// Action validation
+	if ($action == 'valid_promesse') {
+		$object->fetch($id);
+		if ($object->valid_promesse($id, $user->id) >= 0) {
+			setEventMessages($langs->trans("DonationValidated", $object->ref), null);
+			$action = '';
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
-} elseif ($action == 'classin' && $user->rights->don->creer) {
-	$object->fetch($id);
-	$object->setProject($projectid);
-}
+
+	// Action cancel
+	if ($action == 'set_cancel') {
+		$object->fetch($id);
+		if ($object->set_cancel($id) >= 0) {
+			$action = '';
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
+	// Action set paid
+	if ($action == 'set_paid') {
+		$object->fetch($id);
+		if ($object->setPaid($id, $modepayment) >= 0) {
+			$action = '';
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	} elseif ($action == 'classin' && $user->rights->don->creer) {
+		$object->fetch($id);
+		$object->setProject($projectid);
+	}
 
 
-// Actions to build doc
-include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+	// Actions to build doc
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
-// Remove file in doc form
-/*if ($action == 'remove_file')
-{
-	$object = new Don($db, 0, GETPOST('id', 'int'));
-	if ($object->fetch($id))
+	// Remove file in doc form
+	/*if ($action == 'remove_file')
 	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		$object = new Don($db, 0, GETPOST('id', 'int'));
+		if ($object->fetch($id))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		$object->fetch_thirdparty();
+			$object->fetch_thirdparty();
 
-		$langs->load("other");
-		$upload_dir = $conf->don->dir_output;
-		$file = $upload_dir . '/' . GETPOST('file');
-		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-		$action='';
+			$langs->load("other");
+			$upload_dir = $conf->don->dir_output;
+			$file = $upload_dir . '/' . GETPOST('file');
+			$ret=dol_delete_file($file,0,0,0,$object);
+			if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+			else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+			$action='';
+		}
 	}
-}
-*/
+	*/
 
-/*
- * Build doc
- */
-/*
-if ($action == 'builddoc')
-{
-	$object = new Don($db);
-	$result=$object->fetch($id);
-
-	// Save last template used to generate document
-	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
-	// Define output language
-	$outputlangs = $langs;
-	$newlang='';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
-	if (! empty($newlang))
+	/*
+	 * Build doc
+	 */
+	/*
+	if ($action == 'builddoc')
 	{
-		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($newlang);
+		$object = new Don($db);
+		$result=$object->fetch($id);
+
+		// Save last template used to generate document
+		if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
+
+		// Define output language
+		$outputlangs = $langs;
+		$newlang='';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
+		if (! empty($newlang))
+		{
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang($newlang);
+		}
+		$result=don_create($db, $object->id, '', $object->model_pdf, $outputlangs);
+		if ($result <= 0)
+		{
+			dol_print_error($db,$result);
+			exit;
+		}
 	}
-	$result=don_create($db, $object->id, '', $object->model_pdf, $outputlangs);
-	if ($result <= 0)
-	{
-		dol_print_error($db,$result);
-		exit;
-	}
+	*/
 }
-*/
 
 
 /*
