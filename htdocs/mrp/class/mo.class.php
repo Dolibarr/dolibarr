@@ -101,6 +101,7 @@ class Mo extends CommonObject
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'position'=>5, 'notnull'=>1, 'default'=>'1', 'index'=>1),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'showoncombobox'=>'1', 'noteditable'=>1),
 		'fk_bom' => array('type'=>'integer:Bom:bom/class/bom.class.php:0:t.status=1', 'filter'=>'active=1', 'label'=>'BOM', 'enabled'=>1, 'visible'=>1, 'position'=>33, 'notnull'=>-1, 'index'=>1, 'comment'=>"Original BOM", 'css'=>'minwidth100 maxwidth300', 'csslist'=>'nowraponall'),
+		'mrptype' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>1, 'visible'=>1, 'position'=>34, 'notnull'=>1, 'default'=>'0', 'arrayofkeyval'=>array(0=>'Manufacturing', 1=>'Disassemble'), 'css'=>'minwidth150', 'csslist'=>'minwidth150 center'),
 		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:0', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'comment'=>"Product to produce", 'css'=>'maxwidth300', 'csslist'=>'tdoverflowmax100', 'picto'=>'product'),
 		'qty' => array('type'=>'real', 'label'=>'QtyToProduce', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'notnull'=>1, 'comment'=>"Qty to produce", 'css'=>'width75', 'default'=>1, 'isameasure'=>1),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>42, 'notnull'=>-1, 'searchall'=>1, 'showoncombobox'=>'2', 'css'=>'maxwidth300', 'csslist'=>'tdoverflowmax200'),
@@ -121,8 +122,9 @@ class Mo extends CommonObject
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>1000, 'default'=>0, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '2'=>'InProgress', '3'=>'StatusMOProduced', '9'=>'Canceled')),
 	);
 	public $rowid;
-	public $ref;
 	public $entity;
+	public $ref;
+	public $mrptype;
 	public $label;
 	public $qty;
 	public $fk_warehouse;
@@ -253,7 +255,7 @@ class Mo extends CommonObject
 		$this->db->begin();
 
 		// Check that product is not a kit/virtual product
-		if (empty($conf->global->ALLOW_USE_KITS_INTO_BOM_AND_MO) and $this->fk_product > 0) {
+		if (empty($conf->global->ALLOW_USE_KITS_INTO_BOM_AND_MO) && $this->fk_product > 0) {
 			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$tmpproduct = new Product($this->db);
 			$tmpproduct->fetch($this->fk_product);
@@ -265,6 +267,14 @@ class Mo extends CommonObject
 			}
 		}
 
+		if ($this->fk_bom > 0) {
+			// If there is a nown BOM, we force the type of MO to the type of BOM
+			$tmpbom = new BOM($this->db);
+			$tmpbom->fetch($this->fk_bom);
+
+			$this->mrptype = $tmpbom->bomtype;
+		}
+
 		if (!$error) {
 			$idcreated = $this->createCommon($user, $notrigger);
 			if ($idcreated <= 0) {
@@ -273,7 +283,7 @@ class Mo extends CommonObject
 		}
 
 		if (!$error) {
-			$result = $this->updateProduction($user, $notrigger);
+			$result = $this->updateProduction($user, $notrigger);	// Insert lines from BOM
 			if ($result <= 0) {
 				$error++;
 			}
@@ -448,7 +458,7 @@ class Mo extends CommonObject
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
 		}
 
 		if (!empty($sortfield)) {
@@ -638,7 +648,7 @@ class Mo extends CommonObject
 			$moline->fk_product = $this->fk_product;
 			$moline->position = 1;
 
-			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to consume.
+			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to produce.
 				include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 				$bom = new Bom($this->db);
 				$bom->fetch($this->fk_bom);
@@ -647,6 +657,12 @@ class Mo extends CommonObject
 					$moline->role = 'toconsume';
 				} else {
 					$role = 'toconsume';
+					$moline->role = 'toproduce';
+				}
+			} else {
+				if ($this->mrptype == 1) {
+					$moline->role = 'toconsume';
+				} else {
 					$moline->role = 'toproduce';
 				}
 			}
@@ -1176,6 +1192,8 @@ class Mo extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->initAsSpecimenCommon();
+
+		$this->lines = array();
 	}
 
 	/**
@@ -1557,7 +1575,7 @@ class MoLine extends CommonObjectLine
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
 		}
 
 		if (!empty($sortfield)) {

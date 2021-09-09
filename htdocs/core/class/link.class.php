@@ -102,7 +102,7 @@ class Link extends CommonObject
 		$sql .= ", '".$this->db->escape($this->url)."'";
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->escape($this->objecttype)."'";
-		$sql .= ", ".$this->objectid.")";
+		$sql .= ", ".((int) $this->objectid).")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result = $this->db->query($sql);

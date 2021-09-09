@@ -175,6 +175,9 @@ class Product extends CommonObject
 	public $prices_by_qty_id = array();
 	public $prices_by_qty_list = array();
 
+	//! Array for multilangs
+	public $multilangs = array();
+
 	//! Default VAT code for product (link to code into llx_c_tva but without foreign keys)
 	public $default_vat_code;
 
@@ -349,8 +352,6 @@ class Product extends CommonObject
 	public $stats_reception = array();
 	public $stats_mrptoconsume = array();
 	public $stats_mrptoproduce = array();
-
-	public $multilangs = array();
 
 	//! Size of image
 	public $imgWidth;
@@ -718,19 +719,19 @@ class Product extends CommonObject
 					$sql .= ", fk_unit";
 					$sql .= ") VALUES (";
 					$sql .= "'".$this->db->idate($now)."'";
-					$sql .= ", ".$conf->entity;
+					$sql .= ", ".((int) $conf->entity);
 					$sql .= ", '".$this->db->escape($this->ref)."'";
 					$sql .= ", ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 					$sql .= ", ".price2num($price_min_ht);
 					$sql .= ", ".price2num($price_min_ttc);
 					$sql .= ", ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
-					$sql .= ", ".$user->id;
-					$sql .= ", ".$this->type;
-					$sql .= ", ".price2num($price_ht);
-					$sql .= ", ".price2num($price_ttc);
+					$sql .= ", ".((int) $user->id);
+					$sql .= ", ".((int) $this->type);
+					$sql .= ", ".price2num($price_ht, 'MT');
+					$sql .= ", ".price2num($price_ttc, 'MT');
 					$sql .= ", '".$this->db->escape($this->price_base_type)."'";
-					$sql .= ", ".$this->status;
-					$sql .= ", ".$this->status_buy;
+					$sql .= ", ".((int) $this->status);
+					$sql .= ", ".((int) $this->status_buy);
 					if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 						$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
 						$sql .= ", '".$this->db->escape($this->accountancy_code_buy_intra)."'";
@@ -740,10 +741,10 @@ class Product extends CommonObject
 						$sql .= ", '".$this->db->escape($this->accountancy_code_sell_export)."'";
 					}
 					$sql .= ", '".$this->db->escape($this->canvas)."'";
-					$sql .= ", ".((!isset($this->finished) || $this->finished < 0 || $this->finished == '') ? 'null' : (int) $this->finished);
-					$sql .= ", ".((empty($this->status_batch) || $this->status_batch < 0) ? '0' : $this->status_batch);
+					$sql .= ", ".((!isset($this->finished) || $this->finished < 0 || $this->finished == '') ? 'NULL' : (int) $this->finished);
+					$sql .= ", ".((empty($this->status_batch) || $this->status_batch < 0) ? '0' : ((int) $this->status_batch));
 					$sql .= ", '".$this->db->escape($this->batch_mask)."'";
-					$sql .= ", ".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+					$sql .= ", ".($this->fk_unit > 0 ? ((int) $this->fk_unit) : 'NULL');
 					$sql .= ")";
 
 					dol_syslog(get_class($this)."::Create", LOG_DEBUG);
@@ -2229,8 +2230,8 @@ class Product extends CommonObject
 	 * @param  string $ref_ext           Ref ext of product/service to load
 	 * @param  string $barcode           Barcode of product/service to load
 	 * @param  int    $ignore_expression When module dynamicprices is on, ignores the math expression for calculating price and uses the db value instead
-	 * @param  int    $ignore_price_load Load product without loading prices arrays (when we are sure we don't need them)
-	 * @param  int    $ignore_lang_load  Load product without loading language arrays (when we are sure we don't need them)
+	 * @param  int    $ignore_price_load Load product without loading $this->multiprices... array (when we are sure we don't need them)
+	 * @param  int    $ignore_lang_load  Load product without loading $this->multilangs language arrays (when we are sure we don't need them)
 	 * @return int                       <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id = '', $ref = '', $ref_ext = '', $barcode = '', $ignore_expression = 0, $ignore_price_load = 0, $ignore_lang_load = 0)

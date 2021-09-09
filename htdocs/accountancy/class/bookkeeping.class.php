@@ -382,9 +382,9 @@ class BookKeeping extends CommonObject
 				$sql .= ", '".$this->db->escape($this->numero_compte)."'";
 				$sql .= ", ".(!empty($this->label_compte) ? ("'".$this->db->escape($this->label_compte)."'") : "NULL");
 				$sql .= ", '".$this->db->escape($this->label_operation)."'";
-				$sql .= ", ".$this->debit;
-				$sql .= ", ".$this->credit;
-				$sql .= ", ".$this->montant;
+				$sql .= ", ".((float) $this->debit);
+				$sql .= ", ".((float) $this->credit);
+				$sql .= ", ".((float) $this->montant);
 				$sql .= ", ".(!empty($this->sens) ? ("'".$this->db->escape($this->sens)."'") : "NULL");
 				$sql .= ", '".$this->db->escape($this->fk_user_author)."'";
 				$sql .= ", '".$this->db->idate($now)."'";
@@ -893,9 +893,7 @@ class BookKeeping extends CommonObject
 			$sql .= ' ORDER BY t.numero_compte ASC';
 		}
 
-		if (!empty($sortfield)) {
-			$sql .= ", ".$sortfield." ".$sortorder;
-		}
+		$sql .= $this->db->order($sortfield, $sortorder);
 		if (!empty($limit)) {
 			$sql .= $this->db->plimit($limit + 1, $offset);
 		}

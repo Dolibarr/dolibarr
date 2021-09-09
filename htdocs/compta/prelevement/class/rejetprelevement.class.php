@@ -114,12 +114,12 @@ class RejetPrelevement
 		$sql .= ", date_creation";
 		$sql .= ", afacturer";
 		$sql .= ") VALUES (";
-		$sql .= $id;
+		$sql .= ((int) $id);
 		$sql .= ", '".$this->db->idate($date_rejet)."'";
-		$sql .= ", ".$motif;
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $motif);
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", '".$this->db->idate($now)."'";
-		$sql .= ", ".$facturation;
+		$sql .= ", ".((int) $facturation);
 		$sql .= ")";
 
 		$result = $this->db->query($sql);

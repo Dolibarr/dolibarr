@@ -687,7 +687,7 @@ class Account extends CommonObject
 		$sql .= "'".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->escape($this->ref)."'";
 		$sql .= ", '".$this->db->escape($this->label)."'";
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", '".$this->db->escape($this->account_number)."'";
 		$sql .= ", ".($this->fk_accountancy_journal > 0 ? $this->db->escape($this->fk_accountancy_journal) : "null");
 		$sql .= ", '".$this->db->escape($this->bank)."'";
@@ -702,8 +702,8 @@ class Account extends CommonObject
 		$sql .= ", '".$this->db->escape($this->owner_address)."'";
 		$sql .= ", '".$this->db->escape($this->currency_code)."'";
 		$sql .= ", ".((int) $this->rappro);
-		$sql .= ", ".price2num($this->min_allowed);
-		$sql .= ", ".price2num($this->min_desired);
+		$sql .= ", ".price2num($this->min_allowed, 'MT');
+		$sql .= ", ".price2num($this->min_desired, 'MT');
 		$sql .= ", '".$this->db->escape($this->comment)."'";
 		$sql .= ", ".($this->state_id > 0 ? ((int) $this->state_id) : "null");
 		$sql .= ", ".($this->country_id > 0 ? ((int) $this->country_id) : "null");
@@ -2152,7 +2152,7 @@ class AccountLine extends CommonObject
 				$sql .= ", fk_categ";
 				$sql .= ") VALUES (";
 				$sql .= $this->id;
-				$sql .= ", ".$cat;
+				$sql .= ", ".((int) $cat);
 				$sql .= ")";
 
 				dol_syslog(get_class($this)."::update_conciliation", LOG_DEBUG);

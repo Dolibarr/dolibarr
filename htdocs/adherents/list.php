@@ -602,7 +602,7 @@ if ($user->rights->societe->creer) {
 if ($user->rights->adherent->creer && $user->rights->user->user->creer) {
 	$arrayofmassactions['createexternaluser'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("CreateExternalUser");
 }
-if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
+if (in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -962,7 +962,8 @@ while ($i < min($num, $limit)) {
 	// Firstname
 	if (!empty($arrayfields['d.firstname']['checked'])) {
 		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->firstname).'">';
-		print $obj->firstname;
+		print $memberstatic->getNomUrl(0, 0, 'card', 'fistname');
+		//print $obj->firstname;
 		print "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -971,7 +972,8 @@ while ($i < min($num, $limit)) {
 	// Lastname
 	if (!empty($arrayfields['d.lastname']['checked'])) {
 		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">';
-		print $obj->lastname;
+		print $memberstatic->getNomUrl(0, 0, 'card', 'lastname');
+		//print $obj->lastname;
 		print "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1101,7 +1103,9 @@ while ($i < min($num, $limit)) {
 	}
 	// EMail
 	if (!empty($arrayfields['d.email']['checked'])) {
-		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->email).'">'.dol_print_email($obj->email, 0, 0, 1)."</td>\n";
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->email).'">';
+		print dol_print_email($obj->email, 0, 0, 1, 64, 1, 1);
+		print "</td>\n";
 	}
 	// End of subscription date
 	$datefin = $db->jdate($obj->datefin);

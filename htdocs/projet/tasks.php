@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-if ($conf->categorie->enabled) {
+if (!empty($conf->categorie->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -82,6 +82,24 @@ $search_planedworkload = GETPOST('search_planedworkload');
 $search_timespend = GETPOST('search_timespend');
 $search_progresscalc = GETPOST('search_progresscalc');
 $search_progressdeclare = GETPOST('search_progressdeclare');
+
+$search_date_start_startmonth = GETPOST('search_date_start_startmonth', 'int');
+$search_date_start_startyear = GETPOST('search_date_start_startyear', 'int');
+$search_date_start_startday = GETPOST('search_date_start_startday', 'int');
+$search_date_start_start = dol_mktime(0, 0, 0, $search_date_start_startmonth, $search_date_start_startday, $search_date_start_startyear);	// Use tzserver
+$search_date_start_endmonth = GETPOST('search_date_start_endmonth', 'int');
+$search_date_start_endyear = GETPOST('search_date_start_endyear', 'int');
+$search_date_start_endday = GETPOST('search_date_start_endday', 'int');
+$search_date_start_end = dol_mktime(23, 59, 59, $search_date_start_endmonth, $search_date_start_endday, $search_date_start_endyear);	// Use tzserver
+
+$search_date_end_startmonth = GETPOST('search_date_end_startmonth', 'int');
+$search_date_end_startyear = GETPOST('search_date_end_startyear', 'int');
+$search_date_end_startday = GETPOST('search_date_end_startday', 'int');
+$search_date_end_start = dol_mktime(0, 0, 0, $search_date_end_startmonth, $search_date_end_startday, $search_date_end_startyear);	// Use tzserver
+$search_date_end_endmonth = GETPOST('search_date_end_endmonth', 'int');
+$search_date_end_endyear = GETPOST('search_date_end_endyear', 'int');
+$search_date_end_endday = GETPOST('search_date_end_endday', 'int');
+$search_date_end_end = dol_mktime(23, 59, 59, $search_date_end_endmonth, $search_date_end_endday, $search_date_end_endyear);	// Use tzserver
 
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'projecttasklist';
 
@@ -188,6 +206,22 @@ if (empty($reshook)) {
 		$search_progressdeclare = '';
 		$toselect = '';
 		$search_array_options = array();
+		$search_date_start_startmonth = "";
+		$search_date_start_startyear = "";
+		$search_date_start_startday = "";
+		$search_date_start_start = "";
+		$search_date_start_endmonth = "";
+		$search_date_start_endyear = "";
+		$search_date_start_endday = "";
+		$search_date_start_end = "";
+		$search_date_end_startmonth = "";
+		$search_date_end_startyear = "";
+		$search_date_end_startday = "";
+		$search_date_end_start = "";
+		$search_date_end_endmonth = "";
+		$search_date_end_endyear = "";
+		$search_date_end_endday = "";
+		$search_date_end_end = "";
 	}
 
 	// Mass actions
@@ -217,6 +251,20 @@ if ($moresql) {
 $moresql = dolSqlDateFilter('t.datee', $search_dtendday, $search_dtendmonth, $search_dtendyear, 1);
 if ($moresql) {
 	$morewherefilterarray[] = $moresql;
+}
+
+if ($search_date_start_start) {
+	$morewherefilterarray[] = " t.dateo >= '".$db->idate($search_date_start_start)."'";
+}
+if ($search_date_start_end) {
+	$morewherefilterarray[] = " t.dateo <= '".$db->idate($search_date_start_end)."'";
+}
+
+if ($search_date_end_start) {
+	$morewherefilterarray[] = " t.datee >= '".$db->idate($search_date_end_start)."'";
+}
+if ($search_date_end_end) {
+	$morewherefilterarray[] = " t.datee <= '".$db->idate($search_date_end_end)."'";
 }
 
 if (!empty($search_planedworkload)) {
@@ -415,6 +463,54 @@ if ($id > 0 || !empty($ref)) {
 	}
 	if ($search_dtendyear) {
 		$param .= '&search_dtendyear='.urlencode($search_dtendyear);
+	}
+	if ($search_date_start_startmonth) {
+		$param .= '&search_date_start_startmonth='.urlencode($search_date_start_startmonth);
+	}
+	if ($search_date_start_startyear) {
+		$param .= '&search_date_start_startyear='.urlencode($search_date_start_startyear);
+	}
+	if ($search_date_start_startday) {
+		$param .= '&search_date_start_startday='.urlencode($search_date_start_startday);
+	}
+	if ($search_date_start_start) {
+		$param .= '&search_date_start_start='.urlencode($search_date_start_start);
+	}
+	if ($search_date_start_endmonth) {
+		$param .= '&search_date_start_endmonth='.urlencode($search_date_start_endmonth);
+	}
+	if ($search_date_start_endyear) {
+		$param .= '&search_date_start_endyear='.urlencode($search_date_start_endyear);
+	}
+	if ($search_date_start_endday) {
+		$param .= '&search_date_start_endday='.urlencode($search_date_start_endday);
+	}
+	if ($search_date_start_end) {
+		$param .= '&search_date_start_end='.urlencode($search_date_start_end);
+	}
+	if ($search_date_end_startmonth) {
+		$param .= '&search_date_end_startmonth='.urlencode($search_date_end_startmonth);
+	}
+	if ($search_date_end_startyear) {
+		$param .= '&search_date_end_startyear='.urlencode($search_date_end_startyear);
+	}
+	if ($search_date_end_startday) {
+		$param .= '&search_date_end_startday='.urlencode($search_date_end_startday);
+	}
+	if ($search_date_end_start) {
+		$param .= '&search_date_end_start='.urlencode($search_date_end_start);
+	}
+	if ($search_date_end_endmonth) {
+		$param .= '&search_date_end_endmonth='.urlencode($search_date_end_endmonth);
+	}
+	if ($search_date_end_endyear) {
+		$param .= '&search_date_end_endyear='.urlencode($search_date_end_endyear);
+	}
+	if ($search_date_end_endday) {
+		$param .= '&search_date_end_endday='.urlencode($search_date_end_endday);
+	}
+	if ($search_date_end_end) {
+		$param .= '&search_date_end_end=' . urlencode($search_date_end_end);
 	}
 	if ($search_planedworkload) {
 		$param .= '&search_planedworkload='.urlencode($search_planedworkload);
@@ -622,7 +718,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	// Project
 	print '<tr><td class="fieldrequired">'.$langs->trans("ChildOfProjectTask").'</td><td>';
 	print img_picto('', 'project');
-	$formother->selectProjectTasks(GETPOST('task_parent'), $projectid ? $projectid : $object->id, 'task_parent', 0, 0, 1, 1, 0, '0,1', 'maxwidth500');
+	$formother->selectProjectTasks(GETPOST('task_parent'), !empty($projectid) ? $projectid : $object->id, 'task_parent', 0, 0, 1, 1, 0, '0,1', 'maxwidth500');
 	print '</td></tr>';
 
 	// Assigned to
@@ -637,17 +733,17 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Date start
 	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-	print $form->selectDate(($date_start ? $date_start : ''), 'dateo', 1, 1, 0, '', 1, 1);
+	print $form->selectDate((!empty($date_start) ? $date_start : ''), 'dateo', 1, 1, 0, '', 1, 1);
 	print '</td></tr>';
 
 	// Date end
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-	print $form->selectDate(($date_end ? $date_end : -1), 'datee', -1, 1, 0, '', 1, 1);
+	print $form->selectDate((!empty($date_end) ? $date_end : -1), 'datee', -1, 1, 0, '', 1, 1);
 	print '</td></tr>';
 
 	// Planned workload
 	print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td>';
-	print $form->select_duration('planned_workload', $planned_workload ? $planned_workload : 0, 0, 'text');
+	print $form->select_duration('planned_workload', !empty($planned_workload) ? $planned_workload : 0, 0, 'text');
 	print '</td></tr>';
 
 	// Progress
@@ -777,17 +873,29 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	if (!empty($arrayfields['t.dateo']['checked'])) {
 		print '<td class="liste_titre center">';
-		print '<span class="nowraponall"><input class="flat valignmiddle width20" type="text" maxlength="2" name="search_dtstartday" value="'.$search_dtstartday.'">';
+		/*print '<span class="nowraponall"><input class="flat valignmiddle width20" type="text" maxlength="2" name="search_dtstartday" value="'.$search_dtstartday.'">';
 		print '<input class="flat valignmiddle width20" type="text" maxlength="2" name="search_dtstartmonth" value="'.$search_dtstartmonth.'"></span>';
-		$formother->select_year($search_dtstartyear ? $search_dtstartyear : -1, 'search_dtstartyear', 1, 20, 5);
+		$formother->select_year($search_dtstartyear ? $search_dtstartyear : -1, 'search_dtstartyear', 1, 20, 5);*/
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_start_start ? $search_date_start_start : -1, 'search_date_start_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+		print '</div>';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_start_end ? $search_date_start_end : -1, 'search_date_start_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+		print '</div>';
 		print '</td>';
 	}
 
 	if (!empty($arrayfields['t.datee']['checked'])) {
 		print '<td class="liste_titre center">';
-		print '<span class="nowraponall"><input class="flat valignmiddle width20" type="text" maxlength="2" name="search_dtendday" value="'.$search_dtendday.'">';
+		/*print '<span class="nowraponall"><input class="flat valignmiddle width20" type="text" maxlength="2" name="search_dtendday" value="'.$search_dtendday.'">';
 		print '<input class="flat valignmiddle width20" type="text" maxlength="2" name="search_dtendmonth" value="'.$search_dtendmonth.'"></span>';
-		$formother->select_year($search_dtendyear ? $search_dtendyear : -1, 'search_dtendyear', 1, 20, 5);
+		$formother->select_year($search_dtendyear ? $search_dtendyear : -1, 'search_dtendyear', 1, 20, 5);*/
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_end_start ? $search_date_end_start : -1, 'search_date_end_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+		print '</div>';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_end_end ? $search_date_end_end : -1, 'search_date_end_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+		print '</div>';
 		print '</td>';
 	}
 

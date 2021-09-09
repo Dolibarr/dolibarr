@@ -93,7 +93,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 // Add file in email form
-if (empty($reshook) && GETPOST('addfile', 'alpha') && !GETPOST('add', 'alpha')) {
+if (empty($reshook) && GETPOST('addfile', 'alpha') && !GETPOST('save', 'alpha')) {
 	////$res = $object->fetch('','',GETPOST('track_id'));
 	////if($res > 0)
 	////{
@@ -112,7 +112,7 @@ if (empty($reshook) && GETPOST('addfile', 'alpha') && !GETPOST('add', 'alpha')) 
 }
 
 // Remove file
-if (empty($reshook) && GETPOST('removedfile', 'alpha') && !GETPOST('add', 'alpha')) {
+if (empty($reshook) && GETPOST('removedfile', 'alpha') && !GETPOST('save', 'alpha')) {
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	// Set tmp directory
@@ -124,7 +124,7 @@ if (empty($reshook) && GETPOST('removedfile', 'alpha') && !GETPOST('add', 'alpha
 	$action = 'create_ticket';
 }
 
-if (empty($reshook) && $action == 'create_ticket' && GETPOST('add', 'alpha')) {
+if (empty($reshook) && $action == 'create_ticket' && GETPOST('save', 'alpha')) {
 	$error = 0;
 	$origin_email = GETPOST('email', 'alpha');
 	if (empty($origin_email)) {

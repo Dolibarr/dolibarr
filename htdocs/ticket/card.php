@@ -144,17 +144,31 @@ if (empty($reshook)) {
 		$search_agenda_label = '';
 	}
 
+	$backurlforlist = DOL_URL_ROOT.'/ticket/list.php';
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/ticket/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			}
+		}
+	}
+
 	if ($cancel) {
-		if (!empty($backtopage)) {
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
 		}
-
 		$action = 'view';
 	}
 
 	// Action to add an action (not a message)
-	if (GETPOST('add', 'alpha') && !empty($user->rights->ticket->write)) {
+	if (GETPOST('save', 'alpha') && !empty($user->rights->ticket->write)) {
 		$error = 0;
 
 		if (!GETPOST("subject", 'alphanohtml')) {
@@ -276,9 +290,13 @@ if (empty($reshook)) {
 				$db->commit();
 
 				if (!empty($backtopage)) {
-					$url = $backtopage;
+					if (empty($id)) {
+						$url = $backtopage;
+					} else {
+						$url = 'card.php?track_id='.urlencode($object->track_id);
+					}
 				} else {
-					$url = 'card.php?track_id='.$object->track_id;
+					$url = 'card.php?track_id='.urlencode($object->track_id);
 				}
 
 				header("Location: ".$url);
@@ -342,9 +360,13 @@ if (empty($reshook)) {
 			$action = 'edit';
 		} else {
 			if (!empty($backtopage)) {
-				$url = $backtopage;
+				if (empty($id)) {
+					$url = $backtopage;
+				} else {
+					$url = 'card.php?track_id='.urlencode($object->track_id);
+				}
 			} else {
-				$url = 'card.php?track_id='.$object->track_id;
+				$url = 'card.php?track_id='.urlencode($object->track_id);
 			}
 
 			header('Location: '.$url);
@@ -427,9 +449,13 @@ if (empty($reshook)) {
 
 		if ($ret > 0) {
 			if (!empty($backtopage)) {
-				$url = $backtopage;
+				if (empty($id)) {
+					$url = $backtopage;
+				} else {
+					$url = 'card.php?track_id='.urlencode($object->track_id);
+				}
 			} else {
-				$url = 'card.php?action=view&track_id='.$object->track_id;
+				$url = 'card.php?action=view&track_id='.urlencode($object->track_id);
 			}
 
 			header("Location: ".$url);
@@ -706,6 +732,8 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->withfile = 2;
 	$formticket->withextrafields = 1;
 	$formticket->param = array('origin' => GETPOST('origin'), 'originid' => GETPOST('originid'));
+
+	$formticket->withcancel = 1;
 
 	$formticket->showForm(1, 'create', 0);
 	/*} elseif ($action == 'edit' && $user->rights->ticket->write && $object->fk_statut < Ticket::STATUS_CLOSED) {
@@ -1101,7 +1129,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '<table class="noborder tableforfield centpercent margintable">';
 		print '<tr class="liste_titre">';
 		print '<td>';
-		print $langs->trans('Properties');
+		print $langs->trans('TicketProperties');
 		print '</td>';
 		print '<td>';
 		if (GETPOST('set', 'alpha') == 'properties' && $user->rights->ticket->write) {

@@ -290,7 +290,13 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			//  with xxx that is not 'thi' (for $this->db->sanitize) and 'db-' (for $db->sanitize). It means we forget a ' if string, or an (int) if int, when forging sql request.
 			preg_match_all('/(DELETE|OR|AND|WHERE|INSERT)\s.*([^\s][^\s][^\s])\s*=\s*"\s*\.\s*\$(...)/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
-				if ($val[2] == 'ity' && $val[3] == 'con') {		// exclude entity = $conf->entity
+				if ($val[2] == 'ity' && $val[3] == 'con') {		// exclude entity = ".$conf->entity
+					continue;
+				}
+				if ($val[2] == 'ame' && $val[3] == 'db-' && preg_match('/WHERE name/', $val[0])) {		// exclude name = ".$db->encrypt(
+					continue;
+				}
+				if ($val[2] == 'ame' && $val[3] == 'thi' && preg_match('/WHERE name/', $val[0])) {		// exclude name = ".$this->db->encrypt(
 					continue;
 				}
 				var_dump($matches);
@@ -305,7 +311,10 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			//  with xxx that is not 'db-' (for $db->escape). It means we forget a ' if string, or an (int) if int, when forging sql request.
 			preg_match_all('/(VALUES).*,\s*"\s*\.\s*\$(...)/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
-				if ($val[2] == 'VALUES' && $val[3] == 'db-') {		// exclude $db->escape(
+				if ($val[1] == 'VALUES' && $val[2] == 'db-') {		// exclude $db->escape(
+					continue;
+				}
+				if ($val[1] == 'VALUES' && $val[2] == 'thi' && preg_match('/this->db->encrypt/', $val[0])) {	// exclude ".$this->db->encrypt(
 					continue;
 				}
 				var_dump($matches);
@@ -345,7 +354,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			// Check string sql|set...'.$yyy->xxx   with xxx that is not 'escape', 'idate', .... It means we forget a db->escape when forging sql request.
 			preg_match_all('/(\$sql|SET\s|WHERE\s|INSERT\s|VALUES\s|VALUES\().+\s*\'\s*\.\s*\$(.........)/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
-				if (! in_array($val[2], array('this->db-', 'db->sanit', 'conf->ent', 'key : \'\')', 'key])."\')', 'excludefi', 'regexstri', 'filtermod'))) {
+				if (! in_array($val[2], array('this->db-', 'db->sanit', 'conf->ent', 'key : \'\')', 'key])."\')', 'excludefi', 'regexstri', ''))) {
 					$ok=false;
 					var_dump($matches);
 					break;

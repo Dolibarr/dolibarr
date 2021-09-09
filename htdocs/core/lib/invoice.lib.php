@@ -256,7 +256,7 @@ function getCustomerInvoicePieChart($socid = 0)
 	$i = 0;
 
 	$total = 0;
-	$vals = [];
+	$vals = array();
 
 	while ($i < $num) {
 		$row = $db->fetch_row($resql);
@@ -279,14 +279,14 @@ function getCustomerInvoicePieChart($socid = 0)
 	$result .= '</tr>';
 
 	$objectstatic = new Facture($db);
-	$array = [Facture::STATUS_DRAFT, Facture::STATUS_VALIDATED, Facture::STATUS_CLOSED, Facture::STATUS_ABANDONED];
-	$dataseries = [];
+	$array = array(Facture::STATUS_DRAFT, Facture::STATUS_VALIDATED, Facture::STATUS_CLOSED, Facture::STATUS_ABANDONED);
+	$dataseries = array();
 
 	foreach ($array as $status) {
 		$objectstatic->statut = $status;
 		$objectstatic->paye = $status == Facture::STATUS_CLOSED ? -1 : 0;
 
-		$dataseries[] = [$objectstatic->getLibStatut(1), (isset($vals[$status]) ? (int) $vals[$status] : 0)];
+		$dataseries[] = array($objectstatic->getLibStatut(1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
 		if ($status == Facture::STATUS_DRAFT) {
 			$colorseries[$status] = '-'.$badgeStatus0;
 		}
@@ -376,7 +376,7 @@ function getPurchaseInvoicePieChart($socid = 0)
 	$i = 0;
 
 	$total = 0;
-	$vals = [];
+	$vals = array();
 
 	while ($i < $num) {
 		$row = $db->fetch_row($resql);
@@ -400,14 +400,14 @@ function getPurchaseInvoicePieChart($socid = 0)
 	$result .= '</tr>';
 
 	$objectstatic = new FactureFournisseur($db);
-	$array = [FactureFournisseur::STATUS_DRAFT, FactureFournisseur::STATUS_VALIDATED, FactureFournisseur::STATUS_CLOSED, FactureFournisseur::STATUS_ABANDONED];
-	$dataseries = [];
+	$array = array(FactureFournisseur::STATUS_DRAFT, FactureFournisseur::STATUS_VALIDATED, FactureFournisseur::STATUS_CLOSED, FactureFournisseur::STATUS_ABANDONED);
+	$dataseries = array();
 
 	foreach ($array as $status) {
 		$objectstatic->statut = $status;
 		$objectstatic->paye = $status == FactureFournisseur::STATUS_CLOSED ? -1 : 0;
 
-		$dataseries[] = [$objectstatic->getLibStatut(1), (isset($vals[$status]) ? (int) $vals[$status] : 0)];
+		$dataseries[] = array($objectstatic->getLibStatut(1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
 		if ($status == FactureFournisseur::STATUS_DRAFT) {
 			$colorseries[$status] = '-'.$badgeStatus0;
 		}

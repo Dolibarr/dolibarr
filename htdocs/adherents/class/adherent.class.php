@@ -574,7 +574,7 @@ class Adherent extends CommonObject
 		$sql .= ", ".($this->login ? "'".$this->db->escape($this->login)."'" : "null");
 		$sql .= ", ".($user->id > 0 ? $user->id : "null"); // Can be null because member can be created by a guest or a script
 		$sql .= ", null, null, '".$this->db->escape($this->morphy)."'";
-		$sql .= ", ".$this->typeid;
+		$sql .= ", ".((int) $this->typeid);
 		$sql .= ", ".$conf->entity;
 		$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= ")";

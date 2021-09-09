@@ -204,12 +204,12 @@ class Establishment extends CommonObject
 		$sql .= ", '".$this->db->escape($this->address)."'";
 		$sql .= ", '".$this->db->escape($this->zip)."'";
 		$sql .= ", '".$this->db->escape($this->town)."'";
-		$sql .= ", ".$this->country_id;
-		$sql .= ", ".$this->status;
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $this->country_id);
+		$sql .= ", ".((int) $this->status);
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", '".$this->db->idate($now)."'";
-		$sql .= ", ".$user->id;
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $user->id);
+		$sql .= ", ".((int) $user->id);
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
