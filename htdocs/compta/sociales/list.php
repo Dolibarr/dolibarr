@@ -4,8 +4,9 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2020      Pierre Ardoin     	<mapiolca@me.com>
- * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
+ * Copyright (C) 2020	   Tobias Sekan		    <tobias.sekan@startmail.com>
  * Copyright (C) 2021      Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,9 +51,22 @@ $search_ref			= GETPOST('search_ref', 'int');
 $search_label = GETPOST('search_label', 'alpha');
 $search_amount		= GETPOST('search_amount', 'alpha');
 $search_status		= GETPOST('search_status', 'int');
-$search_day_lim		= GETPOST('search_day_lim', 'int');
-$search_month_lim = GETPOST('search_month_lim', 'int');
-$search_year_lim	= GETPOST('search_year_lim', 'int');
+$search_date_startday = GETPOST('search_date_startday', 'int');
+$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
+$search_date_startyear = GETPOST('search_date_startyear', 'int');
+$search_date_endday = GETPOST('search_date_endday', 'int');
+$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
+$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
+$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
+$search_date_limit_startday = GETPOST('search_date_limit_startday', 'int');
+$search_date_limit_startmonth = GETPOST('search_date_limit_startmonth', 'int');
+$search_date_limit_startyear = GETPOST('search_date_limit_startyear', 'int');
+$search_date_limit_endday = GETPOST('search_date_limit_endday', 'int');
+$search_date_limit_endmonth = GETPOST('search_date_limit_endmonth', 'int');
+$search_date_limit_endyear = GETPOST('search_date_limit_endyear', 'int');
+$search_date_limit_start = dol_mktime(0, 0, 0, $search_date_limit_startmonth, $search_date_limit_startday, $search_date_limit_startyear);
+$search_date_limit_end = dol_mktime(23, 59, 59, $search_date_limit_endmonth, $search_date_limit_endday, $search_date_limit_endyear);
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
 $search_users = GETPOST('search_users');
@@ -147,9 +161,22 @@ if (empty($reshook)) {
 		$search_status = '';
 		$search_typeid = '';
 		$year = '';
-		$search_day_lim = '';
-		$search_year_lim = '';
-		$search_month_lim = '';
+		$search_date_startday = '';
+		$search_date_startmonth = '';
+		$search_date_startyear = '';
+		$search_date_endday = '';
+		$search_date_endmonth = '';
+		$search_date_endyear = '';
+		$search_date_start = '';
+		$search_date_end = '';
+		$search_date_limit_startday = '';
+		$search_date_limit_startmonth = '';
+		$search_date_limit_startyear = '';
+		$search_date_limit_endday = '';
+		$search_date_limit_endmonth = '';
+		$search_date_limit_endyear = '';
+		$search_date_limit_start = '';
+		$search_date_limit_end = '';
 		$search_project_ref = '';
 		$search_project = '';
 		$search_users = '';
@@ -220,15 +247,17 @@ if ($search_amount) {
 if ($search_status != '' && $search_status >= 0) {
 	$sql .= " AND cs.paye = ".((int) $search_status);
 }
-$sql .= dolSqlDateFilter("cs.periode", $search_day_lim, $search_month_lim, $search_year_lim);
-//$sql.= dolSqlDateFilter("cs.periode", 0, 0, $year);
-if ($year > 0) {
-	$sql .= " AND (";
-	// Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
-	// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
-	$sql .= "   (cs.periode IS NOT NULL AND date_format(cs.periode, '%Y') = '".$db->escape($year)."') ";
-	$sql .= "OR (cs.periode IS NULL AND date_format(cs.date_ech, '%Y') = '".$db->escape($year)."')";
-	$sql .= ")";
+if ($search_date_start) {
+	$sql .= " AND cs.date_ech >= '".$db->idate($search_date_start)."'";
+}
+if ($search_date_end) {
+	$sql .= " AND cs.date_ech <= '".$db->idate($search_date_end)."'";
+}
+if ($search_date_limit_start) {
+	$sql .= " AND cs.periode >= '".$db->idate($search_date_limit_start)."'";
+}
+if ($search_date_limit_end) {
+	$sql .= " AND cs.periode <= '".$db->idate($search_date_limit_end)."'";
 }
 if ($search_typeid > 0) {
 	$sql .= " AND cs.fk_type = ".((int) $search_typeid);
@@ -293,8 +322,41 @@ if ($search_account) {
 if ($search_status != '' && $search_status != '-1') {
 	$param .= '&search_status='.urlencode($search_status);
 }
-if ($year) {
-	$param .= '&year='.urlencode($year);
+if ($search_date_startday) {
+	$param .= '&search_date_startday='.urlencode($search_date_startday);
+}
+if ($search_date_startmonth) {
+	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+}
+if ($search_date_startyear) {
+	$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+}
+if ($search_date_endday) {
+	$param .= '&search_date_endday='.urlencode($search_date_endday);
+}
+if ($search_date_endmonth) {
+	$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+}
+if ($search_date_endyear) {
+	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+}
+if ($search_date_limit_startday)	{
+	$param .= '&search_date_limit_startday='.urlencode($search_date_limit_startday);
+}
+if ($search_date_limit_startmonth) {
+	$param .= '&search_date_limit_startmonth='.urlencode($search_date_limit_startmonth);
+}
+if ($search_date_limit_startyear) {
+	$param .= '&search_date_limit_startyear='.urlencode($search_date_limit_startyear);
+}
+if ($search_date_limit_endday) {
+	$param .= '&search_date_limit_endday='.urlencode($search_date_limit_endday);
+}
+if ($search_date_limit_endmonth) {
+	$param .= '&search_date_limit_endmonth='.urlencode($search_date_limit_endmonth);
+}
+if ($search_date_limit_endyear) {
+	$param .= '&search_date_limit_endyear='.urlencode($search_date_limit_endyear);
 }
 
 $newcardbutton = '';
@@ -375,18 +437,25 @@ if (!empty($arrayfields['cs.fk_type']['checked'])) {
 
 // Filter: Date (placeholder)
 if (!empty($arrayfields['cs.date_ech']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 
 // Filter: Period end date
 if (!empty($arrayfields['cs.periode']['checked'])) {
 	print '<td class="liste_titre center">';
-	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day_lim" value="'.dol_escape_htmltag($search_day_lim).'">';
-	}
-	print '<input class="flat valignmiddle width25" type="text" size="1" maxlength="2" name="search_month_lim" value="'.dol_escape_htmltag($search_month_lim).'">';
-	$formother->select_year($search_year_lim ? $search_year_lim : -1, 'search_year_lim', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_limit_start ? $search_date_limit_start : -1, 'search_date_limit_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_limit_end ? $search_date_limit_end : -1, 'search_date_limit_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 
