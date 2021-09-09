@@ -583,7 +583,7 @@ DROP TABLE llx_categorie_association;
 DROP TABLE llx_cond_reglement;
 DROP TABLE llx_zapier_hook_extrafields;
 
-create table llx_onlinesignature
+CREATE TABLE llx_onlinesignature
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
   entity                    integer DEFAULT 1 NOT NULL,
@@ -599,4 +599,5 @@ create table llx_onlinesignature
 -- VMYSQL4.3 ALTER TABLE llx_partnership MODIFY COLUMN date_partnership_end date NULL;
 -- VPGSQL8.2 ALTER TABLE llx_partnership ALTER COLUMN date_partnership_end DROP NOT NULL;
 
-Alter TABLE llx_facture_fourn CHANGE fk_mode_transport fk_transport_mode integer
+ALTER TABLE llx_facture_fourn CHANGE COLUMN fk_mode_transport fk_transport_mode integer;
+
