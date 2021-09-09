@@ -108,9 +108,9 @@ $aCurrencies = array($conf->currency); // Default currency always first position
 if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/multicurrency.lib.php';
 
-	$sql = 'SELECT rowid, code FROM '.MAIN_DB_PREFIX.'multicurrency';
-	$sql .= ' WHERE entity = '.$conf->entity;
-	$sql .= ' AND code != "'.$conf->currency.'"'; // Default currency always first position
+	$sql = "SELECT rowid, code FROM ".MAIN_DB_PREFIX."multicurrency";
+	$sql .= " WHERE entity = ".((int) $conf->entity);
+	$sql .= " AND code <> '".$db->escape($conf->currency)."'"; // Default currency always first position
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {

@@ -128,7 +128,7 @@ class Comment extends CommonObject
 		$sql .= ", '".(isset($this->fk_element) ? $this->fk_element : "null")."'";
 		$sql .= ", '".$this->db->escape($this->element_type)."'";
 		$sql .= ", '".(isset($this->fk_user_author) ? $this->fk_user_author : "null")."'";
-		$sql .= ", ".$user->id."";
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".(!empty($this->entity) ? $this->entity : '1');
 		$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= ")";

@@ -279,7 +279,7 @@ class Lettering extends BookKeeping
 			$sql .= "  WHERE rowid IN (".$this->db->sanitize(implode(',', $ids)).") AND date_validated IS NULL ";
 			$this->db->begin();
 
-			dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::update", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$error++;

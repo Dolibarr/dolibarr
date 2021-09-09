@@ -114,7 +114,7 @@ if ($action == "set") {
 
 if ($action == "addnotif") {
 	$bon = new BonPrelevement($db);
-	$bon->AddNotification($db, GETPOST('user', 'int'), $action);
+	$bon->addNotification($db, GETPOST('user', 'int'), $action);
 
 	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
@@ -122,7 +122,7 @@ if ($action == "addnotif") {
 
 if ($action == "deletenotif") {
 	$bon = new BonPrelevement($db);
-	$bon->DeleteNotificationById(GETPOST('notif', 'int'));
+	$bon->deleteNotificationById(GETPOST('notif', 'int'));
 
 	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
@@ -446,7 +446,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 	print $form->selectarray('action',$actions);//  select_dolusers(0,'user',0);
 	print '</td>';
 
-	print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
+	print '<td class="right"><input type="submit" class="button button-add" value="'.$langs->trans("Add").'"></td></tr>';
 
 	// List of current notifications for objet_type='withdraw'
 	$sql = "SELECT u.lastname, u.firstname,";

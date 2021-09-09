@@ -421,7 +421,7 @@ class DoliDBSqlite3 extends DoliDB
 			$descTable = $this->db->querySingle("SELECT sql FROM sqlite_master WHERE name='".$this->escape($tablename)."'");
 
 			// 1- Renommer la table avec un nom temporaire
-			$this->query('ALTER TABLE '.$tablename.' RENAME TO tmp_'.$tablename);
+			$this->query("ALTER TABLE ".$tablename." RENAME TO tmp_".$tablename);
 
 			// 2- Recréer la table avec la contrainte ajoutée
 
@@ -436,10 +436,10 @@ class DoliDBSqlite3 extends DoliDB
 			$this->query($descTable);
 
 			// 3- Transférer les données
-			$this->query('INSERT INTO '.$tablename.' SELECT * FROM tmp_'.$tablename);
+			$this->query("INSERT INTO ".$tablename." SELECT * FROM tmp_".$tablename);
 
 			// 4- Supprimer la table temporaire
-			$this->query('DROP TABLE tmp_'.$tablename);
+			$this->query("DROP TABLE tmp_".$tablename);
 
 			// dummy statement
 			$query = "SELECT 0";
@@ -744,34 +744,34 @@ class DoliDBSqlite3 extends DoliDB
 	}
 
 	/**
-	 *  Encrypt sensitive data in database
-	 *  Warning: This function includes the escape, so it must use direct value
+	 * Encrypt sensitive data in database
+	 * Warning: This function includes the escape and add the SQL simple quotes on strings.
 	 *
-	 *  @param  string  $fieldorvalue   Field name or value to encrypt
-	 *  @param	int		$withQuotes     Return string with quotes
-	 *  @return string          		XXX(field) or XXX('value') or field or 'value'
+	 * @param	string	$fieldorvalue	Field name or value to encrypt
+	 * @param	int		$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
+	 * @return	string					XXX(field) or XXX('value') or field or 'value'
 	 */
-	public function encrypt($fieldorvalue, $withQuotes = 0)
+	public function encrypt($fieldorvalue, $withQuotes = 1)
 	{
 		global $conf;
 
 		// Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
-		$cryptType = ($conf->db->dolibarr_main_db_encryption ? $conf->db->dolibarr_main_db_encryption : 0);
+		$cryptType = (!empty($conf->db->dolibarr_main_db_encryption) ? $conf->db->dolibarr_main_db_encryption : 0);
 
 		//Encryption key
 		$cryptKey = (!empty($conf->db->dolibarr_main_db_cryptkey) ? $conf->db->dolibarr_main_db_cryptkey : '');
 
-		$return = ($withQuotes ? "'" : "").$this->escape($fieldorvalue).($withQuotes ? "'" : "");
+		$escapedstringwithquotes = ($withQuotes ? "'" : "").$this->escape($fieldorvalue).($withQuotes ? "'" : "");
 
 		if ($cryptType && !empty($cryptKey)) {
 			if ($cryptType == 2) {
-				$return = 'AES_ENCRYPT('.$return.',\''.$cryptKey.'\')';
+				$escapedstringwithquotes = "AES_ENCRYPT(".$escapedstringwithquotes.", '".$this->escape($cryptKey)."')";
 			} elseif ($cryptType == 1) {
-				$return = 'DES_ENCRYPT('.$return.',\''.$cryptKey.'\')';
+				$escapedstringwithquotes = "DES_ENCRYPT(".$escapedstringwithquotes.", '".$this->escape($cryptKey)."')";
 			}
 		}
 
-		return $return;
+		return $escapedstringwithquotes;
 	}
 
 	/**
@@ -840,17 +840,12 @@ class DoliDBSqlite3 extends DoliDB
 		}
 
 		// ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
-		$sql = 'CREATE DATABASE '.$database;
-		$sql .= ' DEFAULT CHARACTER SET '.$charset.' DEFAULT COLLATE '.$collation;
+		$sql = "CREATE DATABASE ".$this->escape($database);
+		$sql .= " DEFAULT CHARACTER SET ".$this->escape($charset)." DEFAULT COLLATE ".$this->escape($collation);
 
 		dol_syslog($sql, LOG_DEBUG);
 		$ret = $this->query($sql);
-		if (!$ret) {
-			// We try again for compatibility with Mysql < 4.1.1
-			$sql = 'CREATE DATABASE '.$database;
-			$ret = $this->query($sql);
-			dol_syslog($sql, LOG_DEBUG);
-		}
+
 		return $ret;
 	}
 

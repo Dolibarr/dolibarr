@@ -59,7 +59,7 @@ class Fournisseur extends Societe
 	{
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
-		$sql .= " WHERE cf.fk_soc = ".$this->id;
+		$sql .= " WHERE cf.fk_soc = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

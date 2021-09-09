@@ -79,6 +79,7 @@ if (!empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE_SCREEN) && in_array($obje
 	$sign = -1;
 }
 
+
 $coldisplay = 0;
 ?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
@@ -163,32 +164,33 @@ if (($line->info_bits & 2) == 2) {
 	// Show date range
 	if ($line->element == 'facturedetrec') {
 		if ($line->date_start_fill || $line->date_end_fill) {
-			print '<br><div class="clearboth nowraponall">';
+			print '<div class="clearboth nowraponall"><br>';
 		}
 		if ($line->date_start_fill) {
-			print $langs->trans('AutoFillDateFromShort').': '.yn($line->date_start_fill);
+			print '<span class="opacitymedium">'.$langs->trans('AutoFillDateFromShort').':</span> '.yn($line->date_start_fill);
 		}
 		if ($line->date_start_fill && $line->date_end_fill) {
 			print ' - ';
 		}
 		if ($line->date_end_fill) {
-			print $langs->trans('AutoFillDateToShort').': '.yn($line->date_end_fill);
+			print '<span class="opacitymedium">'.$langs->trans('AutoFillDateToShort').':</span> '.yn($line->date_end_fill);
 		}
 		if ($line->date_start_fill || $line->date_end_fill) {
 			print '</div>';
 		}
 	} else {
 		if ($line->date_start || $line->date_end) {
-			print '<br><div class="clearboth nowraponall opacitymedium">'.get_date_range($line->date_start, $line->date_end, $format).'</div>';
+			print '<div class="clearboth nowraponall opacitymedium">'.get_date_range($line->date_start, $line->date_end, $format).'</div>';
 		}
 		//print get_date_range($line->date_start, $line->date_end, $format);
 	}
 
 	// Add description in form
 	if ($line->fk_product > 0 && !empty($conf->global->PRODUIT_DESC_IN_FORM)) {
-		print (!empty($line->description) && $line->description != $line->product_label) ? '<br>'.dol_htmlentitiesbr($line->description) : '';
+		print (!empty($line->description) && $line->description != $line->product_label) ? (($line->date_start || $line->date_end) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
 	}
-	//Line extrafield
+
+	// Line extrafield
 	if (!empty($extrafields)) {
 		$temps = $line->showOptionals($extrafields, 'view', array(), '', '', 1, 'line');
 		if (!empty($temps)) {

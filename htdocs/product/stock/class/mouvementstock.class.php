@@ -428,7 +428,7 @@ class MouvementStock extends CommonObject
 			$sql .= " datem, fk_product, batch, eatby, sellby,";
 			$sql .= " fk_entrepot, value, type_mouvement, fk_user_author, label, inventorycode, price, fk_origin, origintype, fk_projet";
 			$sql .= ")";
-			$sql .= " VALUES ('".$this->db->idate($now)."', ".$this->product_id.", ";
+			$sql .= " VALUES ('".$this->db->idate($now)."', ".((int) $this->product_id).", ";
 			$sql .= " ".($batch ? "'".$this->db->escape($batch)."'" : "null").", ";
 			$sql .= " ".($eatby ? "'".$this->db->idate($eatby)."'" : "null").", ";
 			$sql .= " ".($sellby ? "'".$this->db->idate($sellby)."'" : "null").", ";
@@ -436,7 +436,7 @@ class MouvementStock extends CommonObject
 			$sql .= " ".((int) $user->id).",";
 			$sql .= " '".$this->db->escape($label)."',";
 			$sql .= " ".($inventorycode ? "'".$this->db->escape($inventorycode)."'" : "null").",";
-			$sql .= " ".price2num($price).",";
+			$sql .= " ".((float) price2num($price)).",";
 			$sql .= " ".((int) $fk_origin).",";
 			$sql .= " '".$this->db->escape($origintype)."',";
 			$sql .= " ".((int) $fk_project);
@@ -634,12 +634,7 @@ class MouvementStock extends CommonObject
 		$sql .= " t.sellby,";
 		$sql .= " t.fk_projet as fk_project";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE 1 = 1';
-		//if (null !== $ref) {
-			//$sql .= ' AND t.ref = ' . '\'' . $ref . '\'';
-		//} else {
-			$sql .= ' AND t.rowid = '.((int) $id);
-		//}
+		$sql .= ' WHERE t.rowid = '.((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

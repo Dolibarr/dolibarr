@@ -157,7 +157,7 @@ class box_validated_projects extends ModeleBoxes
 					);
 
 					if ($objp->fk_soc > 0) {
-						$sql = 'SELECT rowid, nom as name FROM '.MAIN_DB_PREFIX.'societe WHERE rowid ='.$objp->fk_soc;
+						$sql = 'SELECT rowid, nom as name FROM '.MAIN_DB_PREFIX.'societe WHERE rowid = '.((int) $objp->fk_soc);
 						$resql = $this->db->query($sql);
 						//$socstatic = new Societe($this->db);
 						$obj2 = $this->db->fetch_object($resql);
@@ -165,7 +165,7 @@ class box_validated_projects extends ModeleBoxes
 							'td' => 'class="tdoverflowmax150 maxwidth200onsmartphone"',
 							'text' => $obj2->name,
 							'asis' => 1,
-							'url' => DOL_URL_ROOT.'/societe/card.php?socid='.$obj2->rowid
+							'url' => DOL_URL_ROOT.'/societe/card.php?socid='.urlencode($obj2->rowid)
 						);
 					} else {
 						$this->info_box_contents[$i][] = array(

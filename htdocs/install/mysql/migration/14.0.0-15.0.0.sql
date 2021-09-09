@@ -35,12 +35,18 @@
 -- VMYSQL4.3 ALTER TABLE llx_partnership MODIFY COLUMN date_partnership_end date NULL;
 -- VPGSQL8.2 ALTER TABLE llx_partnership ALTER COLUMN date_partnership_end DROP NOT NULL;
 
+-- VMYSQL4.3 ALTER TABLE llx_eventorganization_conferenceorboothattendee MODIFY COLUMN fk_actioncomm integer NULL;
+-- VPGSQL8.2 ALTER TABLE llx_eventorganization_conferenceorboothattendee ALTER COLUMN fk_actioncomm DROP NOT NULL;
+
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_project integer NOT NULL;
+
 
 -- v15
 
 ALTER TABLE llx_emailcollector_emailcollectoraction MODIFY COLUMN actionparam TEXT;
 
-ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD lang varchar(6);
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN lang varchar(6);
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN entity integer DEFAULT 1;
 
 CREATE TABLE llx_categorie_ticket
 (
@@ -63,9 +69,9 @@ INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUE
 
 ALTER TABLE llx_product ADD COLUMN fk_default_bom integer DEFAULT NULL;
 
+ALTER TABLE llx_mrp_mo ADD COLUMN mrptype integer DEFAULT 0;
 
 DELETE FROM llx_menu WHERE type = 'top' AND module = 'cashdesk' AND mainmenu = 'cashdesk';
 
 
 INSERT INTO llx_c_action_trigger (code, label, description, elementtype, rang) values ('MEMBER_EXCLUDE', 'Member excluded', 'Executed when a member is excluded', 'member', 27);
-
