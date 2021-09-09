@@ -149,14 +149,19 @@ if (empty($reshook)) {
 		$result = $object->setStatut($object::STATUS_INPROGRESS, 0, '', 'MRP_REOPEN');
 	}
 
-	if ($action == 'confirm_addconsumeline' && GETPOST('addconsumelinebutton') && $permissiontoadd) {
+	if (($action == 'confirm_addconsumeline' && GETPOST('addconsumelinebutton') && $permissiontoadd)
+	|| ($action == 'confirm_addproduceline' && GETPOST('addproducelinebutton') && $permissiontoadd)) {
 		$moline = new MoLine($db);
 
 		// Line to produce
 		$moline->fk_mo = $object->id;
 		$moline->qty = GETPOST('qtytoadd', 'int'); ;
 		$moline->fk_product = GETPOST('productidtoadd', 'int');
-		$moline->role = 'toconsume';
+		if (GETPOST('addconsumelinebutton')) {
+			$moline->role = 'toconsume';
+		} else {
+			$moline->role = 'toproduce';
+		}
 		$moline->origin_type = 'free'; // free consume line
 		$moline->position = 0;
 
@@ -642,7 +647,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</div>';
 	}
 
-	if (in_array($action, array('consumeorproduce', 'consumeandproduceall', 'addconsumeline'))) {
+	if (in_array($action, array('consumeorproduce', 'consumeandproduceall', 'addconsumeline', 'addproduceline'))) {
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="confirm_'.$action.'">';
@@ -962,7 +967,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<div class="fichehalfright">';
 		print '<div class="clearboth"></div>';
 
-		print load_fiche_titre($langs->trans('Production'), '', '');
+		$nblinetoproduce = 0;
+		foreach ($object->lines as $line) {
+			if ($line->role == 'toproduce') {
+				$nblinetoproduce++;
+			}
+		}
+		$newlinetext = '';
+		if ($object->status != $object::STATUS_PRODUCED && $object->status != $object::STATUS_CANCELED && $action != 'consumeorproduce' && $action != 'consumeandproduceall') {
+			if ($nblinetoproduce == 0 || $object->mrptype == 1) {
+				$newlinetext = '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addproduceline">'.$langs->trans("AddNewProduceLines").'</a>';
+			}
+		}
+		print load_fiche_titre($langs->trans('Production'), '', '', 0, '', '', $newlinetext);
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table id="tablelinestoproduce" class="noborder noshadow nobottom centpercent">';
@@ -992,6 +1009,34 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<td></td>';
 		}
 		print '</tr>';
+
+		if ($action == 'addproduceline') {
+			print '<!-- Add line to produce -->'."\n";
+			print '<tr class="liste_titre">';
+			print '<td>';
+			print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'maxwidth300');
+			print '</td>';
+			// Qty
+			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
+			// Cost price
+			print '<td></td>';
+
+			// Qty already produced
+			print '<td></td>';
+			// Warehouse
+			print '<td>';
+			print '<input type="submit" class="button buttongen" name="addproducelinebutton" value="'.$langs->trans("Add").'">';
+			print '</td>';
+			// Lot - serial
+			if ($conf->productbatch->enabled) {
+				print '<td></td>';
+			}
+			// Action
+			if ($permissiontodelete) {
+				print '<td></td>';
+			}
+			print '</tr>';
+		}
 
 		if (!empty($object->lines)) {
 			$nblinetoproduce = 0;
@@ -1065,7 +1110,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '</td>';
 					if ($conf->productbatch->enabled) {
 						print '<td></td>'; // Lot
-						print '<td></td>';
+					}
+
+					if ($permissiontodelete && $line->origin_type == 'free') {
+						$href = $_SERVER["PHP_SELF"];
+						$href .= '?id='.$object->id;
+						$href .= '&action=deleteline';
+						$href .= '&lineid='.$line->id;
+						print '<td class="center">';
+						print '<a href="'.$href.'">';
+						print img_picto('', "delete");
+						print '</a>';
+						print '</td>';
 					}
 					print '</tr>';
 

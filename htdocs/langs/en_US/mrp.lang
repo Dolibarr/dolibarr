@@ -74,6 +74,7 @@ NoStockChangeOnServices=No stock change on services
 ProductQtyToConsumeByMO=Product quantity still to consume by open MO
 ProductQtyToProduceByMO=Product quantity still to produce by open MO
 AddNewConsumeLines=Add new line to consume
+AddNewProduceLines=Add new line to produce
 ProductsToConsume=Products to consume
 ProductsToProduce=Products to produce
 UnitCost=Unit cost
