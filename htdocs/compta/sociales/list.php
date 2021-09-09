@@ -92,7 +92,6 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-$year = GETPOST("year", 'int');
 $filtre = GETPOST("filtre", 'int');
 
 if (!GETPOSTISSET('search_typeid')) {
@@ -160,7 +159,6 @@ if (empty($reshook)) {
 		$search_amount = '';
 		$search_status = '';
 		$search_typeid = '';
-		$year = '';
 		$search_date_startday = '';
 		$search_date_startmonth = '';
 		$search_date_startyear = '';
@@ -377,11 +375,6 @@ print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $center = '';
-if ($year) {
-	$center = '<a href="list.php?year='.($year - 1).'">'.img_previous().'</a>';
-	$center .= ' '.$langs->trans("Year").' '.$year;
-	$center .= ' <a href="list.php?year='.($year + 1).'">'.img_next().'</a>';
-}
 
 print_barre_liste($langs->trans("SocialContributions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'bill', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -618,13 +611,7 @@ while ($i < min($num, $limit)) {
 
 	// Date end period
 	if (!empty($arrayfields['cs.periode']['checked'])) {
-		print '<td class="center">';
-		if ($obj->periode) {
-			print '<a href="list.php?search_year_lim='.dol_print_date($db->jdate($obj->periode), "%Y").'">';
-			print dol_print_date($db->jdate($obj->periode), 'day');
-			print '</a>';
-		}
-		print '</td>';
+		print '<td class="center">'.dol_print_date($db->jdate($obj->periode), 'day').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
