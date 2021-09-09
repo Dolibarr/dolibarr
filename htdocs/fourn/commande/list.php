@@ -281,35 +281,26 @@ if (empty($reshook)) {
 	$uploaddir = $conf->fournisseur->commande->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if ($action == 'validate' && $permissiontovalidate)
-	{
-		if (GETPOST('confirm') == 'yes')
-		{
+	if ($action == 'validate' && $permissiontovalidate) {
+		if (GETPOST('confirm') == 'yes') {
 			$objecttmp = new CommandeFournisseur($db);
 			$db->begin();
 			$error = 0;
 
-			foreach ($toselect as $checked)
-			{
-				if ($objecttmp->fetch($checked))
-				{
-					if ($objecttmp->statut == 0)
-					{
+			foreach ($toselect as $checked) {
+				if ($objecttmp->fetch($checked)) {
+					if ($objecttmp->statut == 0) {
 						$objecttmp->date_commande = dol_now();
 						$result = $objecttmp->valid($user);
-						if ($result >= 0)
-						{
+						if ($result >= 0) {
 							// If we have permission, and if we don't need to provide the idwarehouse, we go directly on approved step
-							if (empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE) && $user->rights->fournisseur->commande->approuver && !(!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $objecttmp->hasProductsOrServices(1)))
-							{
+							if (empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE) && $user->rights->fournisseur->commande->approuver && !(!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $objecttmp->hasProductsOrServices(1))) {
 								$result = $objecttmp->approve($user);
 								setEventMessages($langs->trans("SupplierOrderValidatedAndApproved"), array($objecttmp->ref));
 							} else {
 								setEventMessages($langs->trans("SupplierOrderValidated"), array($objecttmp->ref));
 							}
-						}
-						else
-						{
+						} else {
 							setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 							$error++;
 						}
@@ -991,12 +982,9 @@ if ($resql) {
 	);
 
 	if ($permissiontovalidate) {
-		if ($user->rights->fournisseur->commande->approuver && empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE))
-		{
+		if ($user->rights->fournisseur->commande->approuver && empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE)) {
 			$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ValidateAndApprove");
-		}
-		else
-		{
+		} else {
 			$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate");
 		}
 	}
