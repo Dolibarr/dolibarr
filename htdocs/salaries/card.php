@@ -564,34 +564,34 @@ if ($action == 'create') {
 	print '</form>';
 	print '<script>';
 	print '$( document ).ready(function() {';
-		print '$("#updateAmountWithLastSalary").on("click",function updateAmountWithLastSalary(){
+		print '$("#updateAmountWithLastSalary").on("click", function updateAmountWithLastSalary() {
+					console.log("We click on link to autofill salary amount");
 					var fk_user = $("#fk_user").val()
 					var url = "'.DOL_URL_ROOT.'/salaries/ajax/ajaxsalaries.php?fk_user="+fk_user;
-					if(fk_user != -1){
+					if (fk_user != -1) {
 						$.get(
 							url,
 							function( data ) {
-								if(data!=null){
+								if(data!=null) {
 									console.log("Data returned: "+data);
 									item = JSON.parse(data);
-									if(item[0].key == "Amount"){
+									if(item[0].key == "Amount") {
 										value = item[0].value;
-										if(value != null){
+										if (value != null) {
 											$("#amount").val(item[0].value);
-										}else{
+										} else {
 											console.error("Error: Ajax url "+url+" has returned a null value.");
 										}
-									}else{
+									} else {
 										console.error("Error: Ajax url "+url+" has returned the wrong key.");
 									}
-									
-								}else{
+								} else {
 									console.error("Error: Ajax url "+url+" has returned an empty page.");
 								}
 							}
 						);
 						
-					}else{
+					} else {
 						alert("'.$langs->trans("FillFieldFirst").'");
 					}
 		});
