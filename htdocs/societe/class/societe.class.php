@@ -4345,10 +4345,10 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *  Return amount of order not paid and total
+	 *  Return amount of proposal not yet paid and total an dlist of all proposals
 	 *
 	 *  @param     string      $mode    'customer' or 'supplier'
-	 *  @return    array				array('opened'=>Amount, 'total'=>Total amount)
+	 *  @return    array				array('opened'=>Amount including tax that remains to pay, 'total_ht'=>Total amount without tax of all objects paid or not, 'total_ttc'=>Total amunt including tax of all object paid or not)
 	 */
 	public function getOutstandingProposals($mode = 'customer')
 	{
@@ -4389,10 +4389,10 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *  Return amount of order not paid and total
+	 *  Return amount of order not yet paid and total and list of all orders
 	 *
 	 *  @param     string      $mode    'customer' or 'supplier'
-	 *  @return		array				array('opened'=>Amount, 'total'=>Total amount)
+	 *  @return    array				array('opened'=>Amount including tax that remains to pay, 'total_ht'=>Total amount without tax of all objects paid or not, 'total_ttc'=>Total amunt including tax of all object paid or not)
 	 */
 	public function getOutstandingOrders($mode = 'customer')
 	{
@@ -4432,11 +4432,11 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *  Return amount of bill not paid and total
+	 *  Return amount of bill not yet paid and total of all invoices
 	 *
-	 *  @param     string      $mode    'customer' or 'supplier'
+	 *  @param     string   $mode    	'customer' or 'supplier'
 	 *  @param     int      $late    	0 => all invoice, 1=> only late
-	 *  @return		array				array('opened'=>Amount, 'total'=>Total amount)
+	 *  @return    array				array('opened'=>Amount including tax that remains to pay, 'total_ht'=>Total amount without tax of all objects paid or not, 'total_ttc'=>Total amunt including tax of all object paid or not)
 	 */
 	public function getOutstandingBills($mode = 'customer', $late = 0)
 	{
@@ -4496,7 +4496,7 @@ class Societe extends CommonObject
 					$creditnotes = $tmpobject->getSumCreditNotesUsed();
 					$deposits = $tmpobject->getSumDepositsUsed();
 
-					$outstandingOpened += $obj->total_ttc - $paiement - $creditnotes - $deposits;
+					$outstandingOpened += ($obj->total_ttc - $paiement - $creditnotes - $deposits);
 				}
 
 				//if credit note is converted but not used
