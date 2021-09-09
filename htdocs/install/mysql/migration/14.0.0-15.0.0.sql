@@ -49,6 +49,9 @@ ALTER TABLE llx_salary_extrafields ADD INDEX idx_salary_extrafields (fk_object);
 
 -- v15
 
+ALTER TABLE llx_holiday ADD COLUMN date_approve   DATETIME DEFAULT NULL;
+ALTER TABLE llx_holiday ADD COLUMN fk_user_approve integer DEFAULT NULL;
+
 ALTER TABLE llx_emailcollector_emailcollectoraction MODIFY COLUMN actionparam TEXT;
 
 ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN lang varchar(6);
