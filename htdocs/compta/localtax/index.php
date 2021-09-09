@@ -584,7 +584,7 @@ $sql .= "SELECT SUM(amount) as mm, date_format(f.datev,'%Y-%m') as dm, 'claimed'
 $sql .= " FROM ".MAIN_DB_PREFIX."localtax as f";
 $sql .= " WHERE f.entity = ".$conf->entity;
 $sql .= " AND (f.datev >= '".$db->idate($date_start)."' AND f.datev <= '".$db->idate($date_end)."')";
-$sql .= " AND localtaxtype=".$localTaxType;
+$sql .= " AND localtaxtype=".((int) $localTaxType);
 $sql .= " GROUP BY dm";
 
 $sql .= " UNION ";
@@ -593,7 +593,7 @@ $sql .= "SELECT SUM(amount) as mm, date_format(f.datep,'%Y-%m') as dm, 'paid' as
 $sql .= " FROM ".MAIN_DB_PREFIX."localtax as f";
 $sql .= " WHERE f.entity = ".$conf->entity;
 $sql .= " AND (f.datep >= '".$db->idate($date_start)."' AND f.datep <= '".$db->idate($date_end)."')";
-$sql .= " AND localtaxtype=".$localTaxType;
+$sql .= " AND localtaxtype=".((int) $localTaxType);
 $sql .= " GROUP BY dm";
 
 $sql .= " ORDER BY dm ASC, mode ASC";

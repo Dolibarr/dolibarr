@@ -96,12 +96,12 @@ class box_services_contracts extends ModeleBoxes
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 			if (!$user->rights->societe->client->voir && !$user->socid) {
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			$sql .= ")";
 			$sql .= " WHERE c.entity = ".$conf->entity;
 			if ($user->socid) {
-				$sql .= " AND s.rowid = ".$user->socid;
+				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
 			$sql .= $this->db->order("c.tms", "DESC");
 			$sql .= $this->db->plimit($max, 0);
@@ -200,8 +200,8 @@ class box_services_contracts extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$i][] = array(
-						'td' => '',
-						'text' => dol_print_date($datem, 'day'),
+						'td' => 'class="center nowraponall"',
+						'text' => dol_print_date($datem, 'day', 'tzuserrel'),
 						'text2'=> $late,
 					);
 

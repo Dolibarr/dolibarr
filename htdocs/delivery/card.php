@@ -249,7 +249,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
  *	View
  */
 
-llxHeader('', $langs->trans('Delivery'), 'Livraison');
+$title = $langs->trans('Delivery');
+
+llxHeader('', $title, 'Livraison');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -336,7 +338,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 						$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 						$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 						$morehtmlref .= $formproject->select_projects($expedition->socid, $expedition->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-						$morehtmlref .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+						$morehtmlref .= '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 						$morehtmlref .= '</form>';
 					} else {
 						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$expedition->id, $expedition->socid, $expedition->fk_project, 'none', 0, 0, 0, 1);
@@ -434,7 +436,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="setdate_delivery">';
 				print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_delivery", 1, 1);
-				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+				print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			} else {
 				print $object->date_delivery ? dol_print_date($object->date_delivery, 'dayhour') : '&nbsp;';
@@ -542,8 +544,8 @@ if ($action == 'create') {    // Create. Seems to no be used
 						if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 							$outputlangs = $langs;
 							$newlang = '';
-							if (empty($newlang) && !empty($_REQUEST['lang_id'])) {
-								$newlang = $_REQUEST['lang_id'];
+							if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+								$newlang = GETPOST('lang_id', 'aZ09');
 							}
 							if (empty($newlang)) {
 								$newlang = $object->thirdparty->default_lang;
@@ -628,7 +630,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 			print dol_get_fiche_end();
 
 			//if ($object->statut == 0)	// only if draft
-			//	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+			// print $form->buttonsSaveCancel("Save", '');
 
 			print '</form>';
 

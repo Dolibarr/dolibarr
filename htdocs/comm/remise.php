@@ -167,10 +167,10 @@ if ($socid > 0) {
 		// Discount type
 		print '<tr><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td><td>';
 		if ($isCustomer) {
-			print '<input type="radio" name="discount_type" id="discount_type_0" checked value="0"/> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
+			print '<input type="radio" name="discount_type" id="discount_type_0" '.(GETPOSTISSET('discount_type') ? (GETPOST('discount_type', 'int') == 0 ? ' checked' : '') : ' checked').' value="0"> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
 		}
 		if ($isSupplier) {
-			print ' <input type="radio" name="discount_type" id="discount_type_1"'.($isCustomer ? '' : ' checked').' value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
+			print ' <input type="radio" name="discount_type" id="discount_type_1"'.(GETPOSTISSET('discount_type') ? (GETPOST('discount_type', 'int') ? ' checked' : '') : ($isCustomer ? '' : ' checked')).' value="1"> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
 		}
 		print '</td></tr>';
 	}
@@ -189,13 +189,7 @@ if ($socid > 0) {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-	if (!empty($backtopage)) {
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	}
-	print '</div>';
+	print $form->buttonsSaveCancel("Modify");
 
 	print "</form>";
 
@@ -214,7 +208,7 @@ if ($socid > 0) {
 		$sql = "SELECT rc.rowid, rc.remise_client as remise_percent, rc.note, rc.datec as dc,";
 		$sql .= " u.login, u.rowid as user_id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise as rc, ".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE rc.fk_soc = ".$object->id;
+		$sql .= " WHERE rc.fk_soc = ".((int) $object->id);
 		$sql .= " AND rc.entity IN (".getEntity('discount').")";
 		$sql .= " AND u.rowid = rc.fk_user_author";
 		$sql .= " ORDER BY rc.datec DESC";
@@ -266,7 +260,7 @@ if ($socid > 0) {
 		$sql = "SELECT rc.rowid, rc.remise_supplier as remise_percent, rc.note, rc.datec as dc,";
 		$sql .= " u.login, u.rowid as user_id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_supplier as rc, ".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE rc.fk_soc = ".$object->id;
+		$sql .= " WHERE rc.fk_soc = ".((int) $object->id);
 		$sql .= " AND rc.entity IN (".getEntity('discount').")";
 		$sql .= " AND u.rowid = rc.fk_user_author";
 		$sql .= " ORDER BY rc.datec DESC";

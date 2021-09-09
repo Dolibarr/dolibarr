@@ -143,3 +143,4 @@ AsciiToHtmlConverter=Ascii към HTML конвертор
 AsciiToPdfConverter=Ascii към PDF конвертор
 TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.
 ModuleBuilderNotAllowed=The module builder is available but not allowed to your user.
+ImportExportProfiles=Import and export profiles

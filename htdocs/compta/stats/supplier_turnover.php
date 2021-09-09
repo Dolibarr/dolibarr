@@ -128,23 +128,31 @@ llxHeader();
 
 $form = new Form($db);
 
+// TODO Report from bookkeeping not yet available, so we switch on report on business events
+if ($modecompta == "BOOKKEEPING") {
+	$modecompta = "CREANCES-DETTES";
+}
+if ($modecompta == "BOOKKEEPINGCOLLECTED") {
+	$modecompta = "RECETTES-DEPENSES";
+}
+
 // Affiche en-tete du rapport
 if ($modecompta == "CREANCES-DETTES") {
 	$name = $langs->trans("PurchaseTurnover");
 	$calcmode = $langs->trans("CalcModeDebt");
-	$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '{link1}', '{link2}').')';
-	$calcmode = str_replace('{link1}', '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">', $calcmode);
-	$calcmode = str_replace('{link2}', '</a>', $calcmode);
+	if (!empty($conf->accounting->enabled)) {
+		$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '{link1}', '{link2}').')';
+		$calcmode = str_replace('{link1}', '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">', $calcmode);
+		$calcmode = str_replace('{link2}', '</a>', $calcmode);
+	}
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesPurchaseTurnoverDue");
-	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	$name = $langs->trans("PurchaseTurnoverCollected");
 	$calcmode = $langs->trans("CalcModeEngagement");
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesPurchaseTurnoverIn");
-	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 } elseif ($modecompta == "BOOKKEEPING") {
 	$name = $langs->trans("PurchaseTurnover");
@@ -154,9 +162,19 @@ if ($modecompta == "CREANCES-DETTES") {
 	$calcmode = str_replace('{link2}', '</a>', $calcmode);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesPurchaseTurnoverOfExpenseAccounts");
-	$builddate = dol_now();
+	//$exportlink=$langs->trans("NotYetAvailable");
+} elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
+	$name = $langs->trans("PurchaseTurnoverCollected");
+	$calcmode = $langs->trans("CalcModeBookkeeping");
+	$calcmode .= '<br>('.$langs->trans("SeeReportInDueDebtMode", '{link1}', '{link2}').')';
+	$calcmode = str_replace('{link1}', '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">', $calcmode);
+	$calcmode = str_replace('{link2}', '</a>', $calcmode);
+	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
+	$description = $langs->trans("RulesPurchaseTurnoverCollectedOfExpenseAccounts");
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
+
+$builddate = dol_now();
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
 $period .= ' - ';
 $period .= $form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
@@ -179,7 +197,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " AND f.type IN (0,2)";
 	$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	$sql = "SELECT date_format(p.datep,'%Y-%m') as dm, sum(pf.amount) as amount_ttc";
@@ -190,7 +208,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " AND pf.fk_facturefourn = f.rowid";
 	$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 } elseif ($modecompta == "BOOKKEEPING") {
 	$pcgverid = $conf->global->CHARTOFACCOUNTS;

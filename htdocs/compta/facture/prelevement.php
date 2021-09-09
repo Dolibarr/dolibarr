@@ -148,12 +148,6 @@ if ($type == 'bank-transfer') {
 llxHeader('', $title, $helpurl);
 
 
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode fiche                                                                  */
-/*                                                                             */
-/* *************************************************************************** */
-
 if ($object->id > 0) {
 	$selleruserevenustamp = $mysoc->useRevenueStamp();
 
@@ -315,23 +309,17 @@ if ($object->id > 0) {
 
 	$facidavoir = $object->getListIdAvoirFromInvoice();
 	if (count($facidavoir) > 0) {
-		print ' ('.$langs->transnoentities("InvoiceHasAvoir");
-		$i = 0;
-		foreach ($facidavoir as $id) {
-			if ($i == 0) {
-				print ' ';
-			} else {
-				print ',';
-			}
+		$invoicecredits = array();
+		foreach ($facidavoir as $facid) {
 			if ($type == 'bank-transfer') {
 				$facavoir = new FactureFournisseur($db);
 			} else {
 				$facavoir = new Facture($db);
 			}
-			$facavoir->fetch($id);
-			print $facavoir->getNomUrl(1);
+			$facavoir->fetch($facid);
+			$invoicecredits[] = $facavoir->getNomUrl(1);
 		}
-		print ')';
+		print ' ('.$langs->transnoentities("InvoiceHasAvoir") . (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits) . ')';
 	}
 	/*
 	if ($facidnext > 0)
@@ -477,6 +465,7 @@ if ($object->id > 0) {
 	print "</td>";
 	print '</tr>';
 
+	// IBAN of seller or supplier
 	$title = 'CustomerIBAN';
 	if ($type == 'bank-transfer') {
 		$title = 'SupplierIBAN';
@@ -588,9 +577,9 @@ if ($object->id > 0) {
 	$sql .= " , pfd.amount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 	if ($type == 'bank-transfer') {
-		$sql .= " WHERE fk_facture_fourn = ".$object->id;
+		$sql .= " WHERE fk_facture_fourn = ".((int) $object->id);
 	} else {
-		$sql .= " WHERE fk_facture = ".$object->id;
+		$sql .= " WHERE fk_facture = ".((int) $object->id);
 	}
 	$sql .= " AND pfd.traite = 0";
 	$sql .= " AND pfd.ext_payment_id IS NULL";
@@ -609,9 +598,9 @@ if ($object->id > 0) {
 	$sql = "SELECT SUM(pfd.amount) as amount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 	if ($type == 'bank-transfer') {
-		$sql .= " WHERE fk_facture_fourn = ".$object->id;
+		$sql .= " WHERE fk_facture_fourn = ".((int) $object->id);
 	} else {
-		$sql .= " WHERE fk_facture = ".$object->id;
+		$sql .= " WHERE fk_facture = ".((int) $object->id);
 	}
 	$sql .= " AND pfd.traite = 0";
 	$sql .= " AND pfd.ext_payment_id IS NULL";
@@ -710,9 +699,9 @@ if ($object->id > 0) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
 	if ($type == 'bank-transfer') {
-		$sql .= " WHERE fk_facture_fourn = ".$object->id;
+		$sql .= " WHERE fk_facture_fourn = ".((int) $object->id);
 	} else {
-		$sql .= " WHERE fk_facture = ".$object->id;
+		$sql .= " WHERE fk_facture = ".((int) $object->id);
 	}
 	$sql .= " AND pfd.traite = 0";
 	$sql .= " AND pfd.ext_payment_id IS NULL";
@@ -776,9 +765,9 @@ if ($object->id > 0) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
 	if ($type == 'bank-transfer') {
-		$sql .= " WHERE fk_facture_fourn = ".$object->id;
+		$sql .= " WHERE fk_facture_fourn = ".((int) $object->id);
 	} else {
-		$sql .= " WHERE fk_facture = ".$object->id;
+		$sql .= " WHERE fk_facture = ".((int) $object->id);
 	}
 	$sql .= " AND pfd.traite = 1";
 	$sql .= " AND pfd.ext_payment_id IS NULL";

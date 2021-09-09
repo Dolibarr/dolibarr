@@ -204,7 +204,7 @@ class Members extends DolibarrApi
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
 	 * @param string    $typeid     ID of the type of member
-	 * @param  int    $category   Use this param to filter list by category
+	 * @param int    	$category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma.
 	 *                              Example: "(t.ref:like:'SO-%') and ((t.date_creation:<:'20160101') or (t.nature:is:NULL))"
 	 * @return array                Array of member objects
@@ -228,12 +228,12 @@ class Members extends DolibarrApi
 		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('adherent').')';
 		if (!empty($typeid)) {
-			$sql .= ' AND t.fk_adherent_type='.$typeid;
+			$sql .= ' AND t.fk_adherent_type='.((int) $typeid);
 		}
 		// Select members of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".$this->db->escape($category);
-			$sql .= " AND c.fk_member = t.rowid ";
+			$sql .= " AND c.fk_categorie = ".((int) $category);
+			$sql .= " AND c.fk_member = t.rowid";
 		}
 		// Add sql filters
 		if ($sqlfilters) {

@@ -260,9 +260,9 @@ class Adherent extends CommonObject
 
 	public $datefin;
 
-	// From member table
 
-	// Fields loaded by fetch_subscriptions()
+	// Fields loaded by fetch_subscriptions() from member table
+
 	public $first_subscription_date;
 
 	public $first_subscription_amount;
@@ -276,6 +276,12 @@ class Adherent extends CommonObject
 	public $last_subscription_amount;
 
 	public $subscriptions = array();
+
+
+	// Fields loaded by fetchPartnerships() from partnership table
+
+	public $partnerships = array();
+
 
 	/**
 	 * @var Adherent To contains a clone of this when we need to save old properties of object
@@ -296,15 +302,15 @@ class Adherent extends CommonObject
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 15, 'index' => 1),
 		'ref_ext' => array('type' => 'varchar(128)', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => 0, 'position' => 20),
 		'civility' => array('type' => 'varchar(6)', 'label' => 'Civility', 'enabled' => 1, 'visible' => -1, 'position' => 25),
-		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => -1, 'position' => 30),
-		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => -1, 'position' => 35),
+		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => -1, 'position' => 30, 'showoncombobox'=>1),
+		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => -1, 'position' => 35, 'showoncombobox'=>1),
 		'login' => array('type' => 'varchar(50)', 'label' => 'Login', 'enabled' => 1, 'visible' => -1, 'position' => 40),
 		'gender' => array('type' => 'varchar(10)', 'label' => 'Gender', 'enabled' => 1, 'visible' => -1, 'position' => 250),
 		'pass' => array('type' => 'varchar(50)', 'label' => 'Pass', 'enabled' => 1, 'visible' => -1, 'position' => 45),
 		'pass_crypted' => array('type' => 'varchar(128)', 'label' => 'Pass crypted', 'enabled' => 1, 'visible' => -1, 'position' => 50),
 		'fk_adherent_type' => array('type' => 'integer', 'label' => 'Fk adherent type', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 55),
 		'morphy' => array('type' => 'varchar(3)', 'label' => 'MorPhy', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 60),
-		'societe' => array('type' => 'varchar(128)', 'label' => 'Societe', 'enabled' => 1, 'visible' => -1, 'position' => 65),
+		'societe' => array('type' => 'varchar(128)', 'label' => 'Societe', 'enabled' => 1, 'visible' => -1, 'position' => 65, 'showoncombobox'=>2),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 1, 'visible' => -1, 'position' => 70),
 		'address' => array('type' => 'text', 'label' => 'Address', 'enabled' => 1, 'visible' => -1, 'position' => 75),
 		'zip' => array('type' => 'varchar(10)', 'label' => 'Zip', 'enabled' => 1, 'visible' => -1, 'position' => 80),
@@ -568,7 +574,7 @@ class Adherent extends CommonObject
 		$sql .= ", ".($this->login ? "'".$this->db->escape($this->login)."'" : "null");
 		$sql .= ", ".($user->id > 0 ? $user->id : "null"); // Can be null because member can be created by a guest or a script
 		$sql .= ", null, null, '".$this->db->escape($this->morphy)."'";
-		$sql .= ", ".$this->typeid;
+		$sql .= ", ".((int) $this->typeid);
 		$sql .= ", ".$conf->entity;
 		$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= ")";
@@ -592,8 +598,8 @@ class Adherent extends CommonObject
 				if ($this->user_id) {
 					// Add link to user
 					$sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
-					$sql .= " fk_member = ".$this->id;
-					$sql .= " WHERE rowid = ".$this->user_id;
+					$sql .= " fk_member = ".((int) $this->id);
+					$sql .= " WHERE rowid = ".((int) $this->user_id);
 					dol_syslog(get_class($this)."::create", LOG_DEBUG);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
@@ -722,7 +728,7 @@ class Adherent extends CommonObject
 		if (!empty($this->oldcopy) && $this->typeid != $this->oldcopy->typeid) {
 			$sql2 = "SELECT libelle as label";
 			$sql2 .= " FROM ".MAIN_DB_PREFIX."adherent_type";
-			$sql2 .= " WHERE rowid = ".$this->typeid;
+			$sql2 .= " WHERE rowid = ".((int) $this->typeid);
 			$resql2 = $this->db->query($sql2);
 			if ($resql2) {
 				while ($obj = $this->db->fetch_object($resql2)) {
@@ -768,7 +774,7 @@ class Adherent extends CommonObject
 			// Remove links to user and replace with new one
 			if (!$error) {
 				dol_syslog(get_class($this)."::update update link to user");
-				$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL WHERE fk_member = ".$this->id;
+				$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL WHERE fk_member = ".((int) $this->id);
 				dol_syslog(get_class($this)."::update", LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
@@ -778,7 +784,7 @@ class Adherent extends CommonObject
 				}
 				// If there is a user linked to this member
 				if ($this->user_id > 0) {
-					$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = ".$this->id." WHERE rowid = ".$this->user_id;
+					$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = ".((int) $this->id)." WHERE rowid = ".((int) $this->user_id);
 					dol_syslog(get_class($this)."::update", LOG_DEBUG);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
@@ -920,7 +926,7 @@ class Adherent extends CommonObject
 		// Search for last subscription id and end date
 		$sql = "SELECT rowid, datec as dateop, dateadh as datedeb, datef as datefin";
 		$sql .= " FROM ".MAIN_DB_PREFIX."subscription";
-		$sql .= " WHERE fk_adherent=".$this->id;
+		$sql .= " WHERE fk_adherent = ".((int) $this->id);
 		$sql .= " ORDER by dateadh DESC"; // Sort by start subscription date
 
 		dol_syslog(get_class($this)."::update_end_date", LOG_DEBUG);
@@ -933,7 +939,7 @@ class Adherent extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
 			$sql .= " datefin=".($datefin != '' ? "'".$this->db->idate($datefin)."'" : "null");
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::update_end_date", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1094,7 +1100,7 @@ class Adherent extends CommonObject
 		} else {
 			$sql .= ", pass = '".$this->db->escape($password_indatabase)."'";
 		}
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		//dol_syslog("Adherent::Password sql=hidden");
 		dol_syslog(get_class($this)."::setPassword", LOG_DEBUG);
@@ -1217,7 +1223,7 @@ class Adherent extends CommonObject
 
 		// Add link to third party for current member
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET fk_soc = ".($thirdpartyid > 0 ? $thirdpartyid : 'null');
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::setThirdPartyId", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1439,11 +1445,12 @@ class Adherent extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Function to get member subscriptions data
-	 *				first_subscription_date, first_subscription_date_start, first_subscription_date_end, first_subscription_amount
-	 *				last_subscription_date, last_subscription_date_start, last_subscription_date_end, last_subscription_amount
+	 *	Function to get member subscriptions data:
+	 *  subscriptions,
+	 *	first_subscription_date, first_subscription_date_start, first_subscription_date_end, first_subscription_amount
+	 *	last_subscription_date, last_subscription_date_start, last_subscription_date_end, last_subscription_amount
 	 *
-	 *	@return		int			<0 si KO, >0 si OK
+	 *	@return		int			<0 if KO, >0 if OK
 	 */
 	public function fetch_subscriptions()
 	{
@@ -1458,7 +1465,7 @@ class Adherent extends CommonObject
 		$sql .= " c.dateadh as dateh,";
 		$sql .= " c.datef as datef";
 		$sql .= " FROM ".MAIN_DB_PREFIX."subscription as c";
-		$sql .= " WHERE c.fk_adherent = ".$this->id;
+		$sql .= " WHERE c.fk_adherent = ".((int) $this->id);
 		$sql .= " ORDER BY c.dateadh";
 		dol_syslog(get_class($this)."::fetch_subscriptions", LOG_DEBUG);
 
@@ -1475,7 +1482,7 @@ class Adherent extends CommonObject
 					$this->first_subscription_amount = $obj->subscription;
 				}
 				$this->last_subscription_date = $this->db->jdate($obj->datec);
-				$this->last_subscription_date_start = $this->db->jdate($obj->datef);
+				$this->last_subscription_date_start = $this->db->jdate($obj->dateh);
 				$this->last_subscription_date_end = $this->db->jdate($obj->datef);
 				$this->last_subscription_amount = $obj->subscription;
 
@@ -1500,6 +1507,25 @@ class Adherent extends CommonObject
 			$this->error = $this->db->error().' sql='.$sql;
 			return -1;
 		}
+	}
+
+
+	/**
+	 *	Function to get partnerships array
+	 *
+	 *  @param		string		$mode		'member' or 'thirdparty'
+	 *	@return		int						<0 if KO, >0 if OK
+	 */
+	public function fetchPartnerships($mode)
+	{
+		global $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/parntership/class/partnership.class.php';
+
+
+		$this->partnerships[] = array();
+
+		return 1;
 	}
 
 
@@ -1712,7 +1738,8 @@ class Adherent extends CommonObject
 					}
 				}
 				$invoice->socid = $this->fk_soc;
-				$invoice->date = $datesubscription;
+				//$invoice->date = $datesubscription;
+				$invoice->date = dol_now();
 
 				// Possibility to add external linked objects with hooks
 				$invoice->linked_objects['subscription'] = $subscriptionid;
@@ -1804,8 +1831,8 @@ class Adherent extends CommonObject
 
 				if (!$error && !empty($bank_line_id)) {
 					// Update fk_bank into subscription table
-					$sql = 'UPDATE '.MAIN_DB_PREFIX.'subscription SET fk_bank='.$bank_line_id;
-					$sql .= ' WHERE rowid='.$subscriptionid;
+					$sql = 'UPDATE '.MAIN_DB_PREFIX.'subscription SET fk_bank='.((int) $bank_line_id);
+					$sql .= ' WHERE rowid='.((int) $subscriptionid);
 
 					$result = $this->db->query($sql);
 					if (!$result) {
@@ -1873,8 +1900,8 @@ class Adherent extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
 		$sql .= " statut = ".self::STATUS_VALIDATED;
 		$sql .= ", datevalid = '".$this->db->idate($now)."'";
-		$sql .= ", fk_user_valid=".$user->id;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= ", fk_user_valid = ".((int) $user->id);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::validate", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1925,7 +1952,7 @@ class Adherent extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
 		$sql .= " statut = ".self::STATUS_RESILIATED;
 		$sql .= ", fk_user_valid=".$user->id;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -1975,7 +2002,7 @@ class Adherent extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
 		$sql .= " statut = ".self::STATUS_EXCLUDED;
 		$sql .= ", fk_user_valid=".$user->id;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -2157,6 +2184,9 @@ class Adherent extends CommonObject
 		$label .= ' '.$this->getLibStatut(4);
 		if (!empty($this->ref)) {
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		}
+		if (!empty($this->login)) {
+			$label .= '<br><b>'.$langs->trans('Login').':</b> '.$this->login;
 		}
 		if (!empty($this->firstname) || !empty($this->lastname)) {
 			$label .= '<br><b>'.$langs->trans('Name').':</b> '.$this->getFullName($langs);

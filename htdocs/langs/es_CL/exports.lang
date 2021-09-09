@@ -36,7 +36,6 @@ TypeOfLineServiceOrProduct=Tipo de línea (0 = producto, 1 = servicio)
 FileWithDataToImport=Archivo con datos para importar
 FileToImport=Archivo fuente para importar
 FileMustHaveOneOfFollowingFormat=El archivo a importar debe tener uno de los siguientes formatos.
-DownloadEmptyExample=Descargar archivo de plantilla con información de contenido de campo (* son campos obligatorios)
 ChooseFormatOfFileToImport=Elija el formato de archivo que se usará como formato de archivo de importación haciendo clic en el icono %s para seleccionarlo ...
 SourceFileFormat=Formato de archivo fuente
 FieldsInSourceFile=Campos en el archivo fuente

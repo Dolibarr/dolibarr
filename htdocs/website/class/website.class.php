@@ -415,18 +415,18 @@ class Website extends CommonObject
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				$sqlwhere [] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+				$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND '.implode(' '.$filtermode.' ', $sqlwhere);
+			$sql .= ' AND '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
 		}
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit, $offset);
+			$sql .= $this->db->plimit($limit, $offset);
 		}
 		$this->records = array();
 
@@ -636,7 +636,7 @@ class Website extends CommonObject
 	}
 
 	/**
-	 * Load an object from its id and create a new one in database.
+	 * Load a website its id and create a new one in database.
 	 * This copy website directories, regenerate all the pages + alias pages and recreate the medias link.
 	 *
 	 * @param	User	$user		User making the clone
@@ -777,8 +777,8 @@ class Website extends CommonObject
 				$filetpl = $pathofwebsitenew.'/page'.$newidforhome.'.tpl.php';
 				$filewrapper = $pathofwebsitenew.'/wrapper.php';
 
-				// Generate the index.php page to be the home page
-				//-------------------------------------------------
+				// Re-generates the index.php page to be the home page, and re-generates the wrapper.php
+				//--------------------------------------------------------------------------------------
 				$result = dolSaveIndexPage($pathofwebsitenew, $fileindex, $filetpl, $filewrapper);
 			}
 		}
@@ -1091,8 +1091,8 @@ class Website extends CommonObject
 			}
 		}
 
-		$line .= "\n-- For Dolibarr v14+ --\n";
-		$line .= "UPDATE llx_website SET fk_default_lang = '".$this->db->escape($this->fk_default_lang)."' WHERE rowid = __WEBSITE_ID__;\n";
+		$line = "\n-- For Dolibarr v14+ --;\n";
+		$line .= "UPDATE llx_website SET lang = '".$this->db->escape($this->fk_default_lang)."' WHERE rowid = __WEBSITE_ID__;\n";
 		$line .= "UPDATE llx_website SET otherlang = '".$this->db->escape($this->otherlang)."' WHERE rowid = __WEBSITE_ID__;\n";
 		$line .= "\n";
 		fputs($fp, $line);
@@ -1138,7 +1138,7 @@ class Website extends CommonObject
 			return -1;
 		}
 
-		dol_delete_dir_recursive($conf->website->dir_temp.'/'.$object->ref);
+		dol_delete_dir_recursive($conf->website->dir_temp."/".$object->ref);
 		dol_mkdir($conf->website->dir_temp.'/'.$object->ref);
 
 		$filename = basename($pathtofile);
@@ -1183,7 +1183,7 @@ class Website extends CommonObject
 		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref, 0, 1); // Medias can be shared, do not overwrite if exists
 		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref, 0, 1); // Medias can be shared, do not overwrite if exists
 
-		$sqlfile = $conf->website->dir_temp.'/'.$object->ref.'/website_pages.sql';
+		$sqlfile = $conf->website->dir_temp."/".$object->ref.'/website_pages.sql';
 
 		$result = dolReplaceInFile($sqlfile, $arrayreplacement);
 
@@ -1252,7 +1252,7 @@ class Website extends CommonObject
 
 		// Read record of website that has been updated by the run_sql function previously called so we can get the
 		// value of fk_default_home that is ID of home page
-		$sql = 'SELECT fk_default_home FROM '.MAIN_DB_PREFIX.'website WHERE rowid = '.$object->id;
+		$sql = 'SELECT fk_default_home FROM '.MAIN_DB_PREFIX.'website WHERE rowid = '.((int) $object->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -1278,7 +1278,7 @@ class Website extends CommonObject
 	}
 
 	/**
-	 * Rebuild all files of a containers of a website. TODO Add other files too.
+	 * Rebuild all files of a containers of a website. Rebuild also the wrapper.php file. TODO Add other files too.
 	 * Note: Files are already regenerated during importWebSite so this function is useless when importing a website.
 	 *
 	 * @return 	int						<0 if KO, >=0 if OK
@@ -1345,6 +1345,13 @@ class Website extends CommonObject
 			}
 
 			$i++;
+		}
+
+		if (!$error) {
+			// Save wrapper.php
+			$pathofwebsite = $conf->website->dir_output.'/'.$object->ref;
+			$filewrapper = $pathofwebsite.'/wrapper.php';
+			dolSaveIndexPage($pathofwebsite, '', '', $filewrapper);
 		}
 
 		if ($error) {

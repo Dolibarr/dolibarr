@@ -106,10 +106,10 @@ class box_factures_fourn extends ModeleBoxes
 			$sql .= " WHERE f.fk_soc = s.rowid";
 			$sql .= " AND f.entity = ".$conf->entity;
 			if (!$user->rights->societe->client->voir && !$user->socid) {
-				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
-				$sql .= " AND s.rowid = ".$user->socid;
+				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
 			if (!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) {
 				$sql .= " ORDER BY f.datef DESC, f.ref DESC ";
@@ -142,6 +142,10 @@ class box_factures_fourn extends ModeleBoxes
 					$facturestatic->status = $objp->status;
 					$facturestatic->ref_supplier = $objp->ref_supplier;
 
+					$alreadypaid = $facturestatic->getSommePaiement();
+
+					$facturestatic->alreadypaid = $alreadypaid ? $alreadypaid : 0;
+
 					$thirdpartystatic->id = $objp->socid;
 					$thirdpartystatic->name = $objp->name;
 					$thirdpartystatic->name_alias = $objp->name_alias;
@@ -155,7 +159,7 @@ class box_factures_fourn extends ModeleBoxes
 					$late = '';
 
 					if ($facturestatic->hasDelay()) {
-						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day')));
+						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day', 'tzuserrel')));
 					}
 
 					$this->info_box_contents[$line][] = array(
@@ -185,12 +189,9 @@ class box_factures_fourn extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($date, 'day'),
+						'text' => dol_print_date($date, 'day', 'tzuserrel'),
 					);
 
-					$fac = new FactureFournisseur($this->db);
-					$fac->fetch($objp->facid);
-					$alreadypaid = $fac->getSommePaiement();
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
 						'text' => $facturestatic->LibStatut($objp->paye, $objp->status, 3, $alreadypaid, $objp->type),

@@ -48,6 +48,7 @@
 	--amountremaintopaybackcolor:none;
 	--productlinestockod: #002200;
 	--productlinestocktoolow: #884400;
+	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
 }
 
 <?php
@@ -93,6 +94,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --amountremaintopaycolor:rgb(252,84,91);
 	            --amountpaymentcomplete:rgb(101,184,77);
 	            --amountremaintopaybackcolor:rbg(245,130,46);
+				--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #000, #000, #000, #274231);
 	      }
 
 		body, button {
@@ -207,7 +209,7 @@ input, select {
 	margin-bottom: 1px;
 	margin-top: 1px;
 }
-#mainbody input.button:not(.buttongen):not(.bordertransp) {
+#mainbody input.button:not(.buttongen):not(.bordertransp), #mainbody a.button:not(.buttongen):not(.bordertransp) {
 	background: var(--butactionbg);
 	color: #FFF !important;
 	border-radius: 3px;
@@ -232,9 +234,11 @@ input.button.massactionconfirmed {
 	margin: 4px;
 }
 
-input:invalid, select:invalid {
+input:invalid, select:invalid, input.--error , select.--error {
 	border-color: #ea1212;
 }
+
+.field-error-icon { color: #ea1212; !important; }
 
 /* Focus definitions must be after standard definition */
 textarea:focus {
@@ -293,6 +297,10 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	cursor: pointer;
 	max-width: 350px;
 }
+.nofocusvisible:focus-visible {
+	outline: none;
+}
+
 div.buttonpayment input:focus {
 	color: #008;
 }
@@ -346,7 +354,7 @@ a.butStatus {
 	padding-right: 5px;
 	background-color: transparent;
 	color: var(--colortext) !important;
-	border: 2px solid var( --butactionbg);
+	border: 2px solid var( --butactionbg) !important;
 	margin: 0 0.45em !important;
 }
 
@@ -423,7 +431,9 @@ input.pageplusone {
 .colorblack {
 	color: #000;
 }
-
+.fontsizeunset {
+	font-size: unset !important;
+}
 .vmirror {
 	transform: scale(1, -1);
 }
@@ -431,7 +441,7 @@ input.pageplusone {
 	transform: scale(-1, 1);
 }
 
-select:invalid {
+select:invalid, select.--error {
 	color: gray;
 }
 input:disabled, textarea:disabled, select[disabled='disabled']
@@ -631,11 +641,20 @@ th .button {
 .quatrevingtquinzepercent {
 	width: 95%;
 }
+.quatrevingtpercentminusx {
+	width: calc(80% - 52px);
+}
 textarea.centpercent {
 	width: 96%;
 }
 .small, small {
 	font-size: 85%;
+}
+.large {
+	font-size: 125%;
+}
+.double {
+	font-size: 2em;
 }
 
 .h1 .small, .h1 small, .h2 .small, .h2 small, .h3 .small, .h3 small, h1 .small, h1 small, h2 .small, h2 small, h3 .small, h3 small {
@@ -725,6 +744,9 @@ textarea.centpercent {
 }
 .paddingleft2 {
 	padding-<?php print $left; ?>: 2px;
+}
+.paddingleft2imp {
+	padding-<?php print $left; ?>: 2px !important;
 }
 .paddingright {
 	padding-<?php print $right; ?>: 4px;
@@ -900,8 +922,8 @@ span.fa.fa-plus-circle.paddingleft {
 	height: 28px;
 	vertical-align: middle;
 }
-.divsocialnetwork:not(:first-child) {
-	padding-left: 20px;
+.divsocialnetwork:not(:last-child) {
+	padding-<?php print $right; ?>: 20px;
 }
 div.divsearchfield {
 	float: <?php print $left; ?>;
@@ -1025,6 +1047,7 @@ ul.attendees li {
 	list-style-type: none;
 	padding-top:1px;
 	padding-bottom:1px;
+	line-height: 1.6em;
 }
 .googlerefreshcal {
 	padding-top: 4px;
@@ -1126,6 +1149,12 @@ select.flat.selectlimit {
 }
 .tdoverflowmax200 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 200px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax250 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 250px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -1362,6 +1391,7 @@ table[summary="list_of_modules"] .fa-cog {
 .width400 { width: 400px; }
 .width500 { width: 500px; }
 .maxwidth25  { max-width: 25px; }
+.maxwidth40  { max-width: 40px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
 .maxwidthdate  { max-width: 80px; }
@@ -1470,6 +1500,14 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		width: calc(100% - 40px) !important;
 		display: inline-block;
 	}
+	select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
+		width: calc(100% - 70px) !important;
+		display: inline-block;
+	}
+
+	input.maxwidthinputfileonsmartphone {
+		width: 175px;
+	}
 
 	.logopublicpayment #dolpaymentlogo {
 		max-width: 260px;
@@ -1488,6 +1526,10 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	}
 	input.buttonpayment, button.buttonpayment, div.buttonpayment {
 		min-width: 270px;
+	}
+
+	.smallonsmartphone {
+		font-size: 0.8em;
 	}
 }
 
@@ -1634,7 +1676,7 @@ table.tableforfield tr>td:first-of-type, tr.trforfield>td:first-of-type, div.tab
 }
 
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
-.hideonprint { display: none; }
+.hideonprint { display: none !important; }
 <?php } ?>
 
 
@@ -2062,7 +2104,7 @@ span.widthpictotitle.pictotitle {
 	vertical-align: middle;
 	margin-top: -3px
 }
-.pictowarning, .pictoerror, .pictopreview {
+.pictowarning, .pictoerror, .pictopreview, .picto.error {
 	padding-<?php echo $left; ?>: 3px;
 }
 .pictowarning {
@@ -2614,7 +2656,7 @@ table.login_table_securitycode tr td {
 }
 
 div.backgroundsemitransparent {
-	background:rgba(255,255,255,0.68);
+	background:rgba(255, 255, 255, 0.7);
 	padding-left: 10px;
 	padding-right: 10px;
 }
@@ -3880,7 +3922,7 @@ table.noborder.paymenttable {
 }
 .paymenttable tr td:first-child, .margintable tr td:first-child
 {
-	padding-left: 2px;
+	//padding-left: 2px;
 }
 .paymenttable, .margintable tr td {
 	height: 22px;
@@ -3894,6 +3936,11 @@ table.noborder.paymenttable {
 .shadow {
 	-webkit-box-shadow: 1px 1px 7px #CCC !important;
 	box-shadow: 1px 1px 7px #CCC !important;
+}
+
+.boxshadow {
+	-webkit-box-shadow: 0px 0px 5px #888;
+	box-shadow: 0px 0px 5px #888;
 }
 
 div.tabBar .noborder {
@@ -4499,6 +4546,9 @@ div#card-errors {
 .ui-dialog-content {
 }
 
+.ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-dialog-buttons.ui-draggable {
+	z-index: 1002 !important;		/* Default 101 with jquery, top menu have a z-index of 1000 */
+}
 
 /* ============================================================================== */
 /* For content of image preview                                                   */
@@ -4672,7 +4722,7 @@ table.dp {
 
 
 /* ============================================================================== */
-/*  Afficher/cacher                                                               */
+/*  Show/Hide                                                                     */
 /* ============================================================================== */
 
 div.visible {
@@ -4682,7 +4732,9 @@ div.visible {
 div.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
 }
-
+.unvisible {
+	visibility: hidden;
+}
 tr.visible {
 	display: block;
 }
@@ -4723,8 +4775,11 @@ span[phptag] {
 	border-bottom: 1px solid #ccc;
 	background: #e6e6e6;
 	display: inline-block;
-	padding: 5px 0 5px 0;
+	padding: 5px 5px 5px 5px;
 	z-index: 1000;
+}
+.centpercent.websitebar {
+	width: calc(100% - 10px);
 }
 .websitebar .buttonDelete, .websitebar .button {
 	text-shadow: none;
@@ -4733,13 +4788,13 @@ span[phptag] {
 {
 	padding: 4px 5px 4px 5px !important;
 	margin: 2px 4px 2px 4px  !important;
-	line-height: normal;
+/*	line-height: normal; */
 	background: #f5f5f5 !important;
 	border: 1px solid #ccc !important;
 }
 .websiteselection {
 	/* display: inline-block; */
-	padding-left: 10px;
+	padding-<?php echo $right; ?>: 10px;
 	vertical-align: middle;
 	/* line-height: 28px; */
 }
@@ -4758,6 +4813,9 @@ span[phptag] {
 }
 .websiteiframenoborder {
 	border: 0px;
+}
+span.websiteselection span.select2.select2-container.select2-container--default {
+	margin: 0 0 0 4px;
 }
 span.websitebuttonsitepreview, a.websitebuttonsitepreview {
 	vertical-align: middle;
@@ -4788,7 +4846,6 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 #divbodywebsite section p {
 	margin: unset;
 }
-
 
 
 /* ============================================================================== */
@@ -4928,8 +4985,8 @@ td.cal_other_month {
 /* ============================================================================== */
 
 /* CSS for treeview */
-.treeview ul { background-color: transparent !important; margin-bottom: 4px !important; margin-top: 0 !important; padding-top: 4px !important; }
-.treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 26px; }
+.treeview ul { background-color: transparent !important; margin-bottom: 4px !important; margin-top: 0 !important; padding-top: 8px !important; }
+.treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 30px; }
 .treeview .hover { color: var(--colortextlink) !important; text-decoration: underline !important; }
 .treeview .hitarea { margin-top: 3px; }
 
@@ -6047,6 +6104,9 @@ dl.dropdown {
 	display:inline-block;
 	padding: 0 3px 2px 0;
 }
+.maxwidthsearch .dropdown dt a span, .multiSel span {
+	padding: 0 3px 2px 3px;
+}
 .dropdown span.value {
 	display:none;
 }
@@ -6762,8 +6822,24 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 
 
 /* ============================================================================== */
-/* For copypaste feature                                                          */
+/* For copy-paste feature                                                         */
 /* ============================================================================== */
+
+span.clipboardCPValueToPrint, div.clipboardCPValueToPrint  {
+	display: inline-block;
+}
+span.clipboardCPValue.hidewithsize {
+	width: 0 !important;
+	display: inline-block;
+	color: transparent;
+	white-space: nowrap;
+}
+div.clipboardCPValue.hidewithsize {
+	width: 0 !important;
+	display: none;
+	color: transparent;
+	white-space: nowrap;
+}
 
 .clipboardCPShowOnHover .clipboardCPButton {
 	display: none;
@@ -6799,6 +6875,8 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 		border-right: none;
 		border-left: none;
 	}
+
+	td.widthpictotitle { width: 30px; }
 }
 
 @media only screen and (max-width: 1024px)
@@ -6990,6 +7068,16 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 
 	input#addedfile {
 		width: 95%;
+	}
+
+	#divbodywebsite {
+		word-break: break-all;
+	}
+
+	.websiteselectionsection {
+		border-left: unset;
+		boerder-right: unset;
+		padding-left: 5px;
 	}
 }
 

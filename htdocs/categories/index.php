@@ -218,16 +218,27 @@ foreach ($fulltree as $key => $val) {
 }
 
 
-//print_barre_liste('', 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, 0, '', 0, $newcardbutton, '', 0, 1, 1);
+$nbofentries = (count($data) - 1);
 
-print '<table class="liste nohover" width="100%">';
+$morethan1level = 0;
+foreach ($data as $record) {
+	if (!empty($record['fk_menu']) && $record['fk_menu'] > 0) {
+		$morethan1level = 1;
+	}
+}
+
+
+print '<table class="liste nohover centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td></td><td class="right">';
-if (!empty($conf->use_javascript_ajax)) {
-	print '<div id="iddivjstreecontrol"><a class="notasortlink" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a> | <a class="notasortlink" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a></div>';
+if ($morethan1level && !empty($conf->use_javascript_ajax)) {
+	print '<div id="iddivjstreecontrol">';
+	print '<a class="notasortlink" href="#">'.img_picto('', 'folder', 'class="paddingright"').'<span class="hideonsmartphone">'.$langs->trans("UndoExpandAll").'</span></a>';
+	print ' | ';
+	print '<a class="notasortlink" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').'<span class="hideonsmartphone">'.$langs->trans("ExpandAll").'</span></a>';
+	print '</div>';
 }
 print '</td></tr>';
 
-$nbofentries = (count($data) - 1);
 if ($nbofentries > 0) {
 	print '<tr class="pair"><td colspan="3">';
 	tree_recur($data, $data[0], 0);

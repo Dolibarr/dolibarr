@@ -124,6 +124,16 @@ class DolibarrApi
 		unset($object->ref_previous);
 		unset($object->ref_next);
 		unset($object->ref_int);
+		unset($object->imgWidth);
+		unset($object->imgHeight);
+		unset($object->barcode_type_code);
+		unset($object->barcode_type_label);
+
+		unset($object->mode_reglement);		// We use mode_reglement_id now
+		unset($object->cond_reglement);		// We use cond_reglement_id now
+		unset($object->note);				// We use note_public or note_private now
+		unset($object->contact);			// We use contact_id now
+		unset($object->thirdparty);			// We use thirdparty_id or fk_soc or socid now
 
 		unset($object->projet); // Should be fk_project
 		unset($object->project); // Should be fk_project
@@ -137,6 +147,12 @@ class DolibarrApi
 		unset($object->timespent_fk_user);
 		unset($object->timespent_note);
 		unset($object->fk_delivery_address);
+		unset($object->modelpdf);
+		unset($object->sendtoid);
+		unset($object->name_bis);
+		unset($object->newref);
+		unset($object->alreadypaid);
+		unset($object->openid);
 
 		unset($object->statuts);
 		unset($object->statuts_short);
@@ -169,15 +185,16 @@ class DolibarrApi
 
 		unset($object->region);
 		unset($object->region_code);
+		unset($object->country);
+		unset($object->state);
+		unset($object->state_code);
+		unset($object->departement);
+		unset($object->departement_code);
 
 		unset($object->libelle_statut);
 		unset($object->libelle_paiement);
 
 		unset($object->prefix_comm);
-
-		unset($object->sendtoid);
-		unset($object->name_bis);
-		unset($object->newref);
 
 		if (!isset($object->table_element) || $object->table_element != 'ticket') {
 			unset($object->comments);
@@ -293,14 +310,23 @@ class DolibarrApi
 			}
 			if ($tmp[$i] == ')') {
 				$counter--;
+
+				// TODO: After a closing ), only a " or " or " and " or end of string is allowed.
 			}
 			if ($counter < 0) {
-				$error = "Bad sqlfilters=".$sqlfilters;
+				$error = "Bad sqlfilters (too many closing parenthesis) = ".$sqlfilters;
 				dol_syslog($error, LOG_WARNING);
 				return false;
 			}
 			$i++;
 		}
+
+		if ($counter > 0) {
+			$error = "Bad sqlfilters (too many opening parenthesis) = ".$sqlfilters;
+			dol_syslog($error, LOG_WARNING);
+			return false;
+		}
+
 		return true;
 	}
 
@@ -310,7 +336,8 @@ class DolibarrApi
 	 * Function to forge a SQL criteria
 	 *
 	 * @param  array    $matches    Array of found string by regex search.
-	 * 								Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.date_creation:<:'2016-01-01 12:30:00'" or "t.nature:is:NULL"
+	 * 								Each entry is 1 and only 1 criteria.
+	 * 								Example: "t.ref:like:'SO-%'", "t.date_creation:<:'20160101'", "t.date_creation:<:'2016-01-01 12:30:00'", "t.nature:is:NULL", "t.field2:isnot:NULL"
 	 * @return string               Forged criteria. Example: "t.field like 'abc%'"
 	 */
 	protected static function _forge_criteria_callback($matches)
@@ -328,18 +355,36 @@ class DolibarrApi
 			return '';
 		}
 
+		// Sanitize operand
 		$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
 
+		// Sanitize operator
 		$operator = strtoupper(preg_replace('/[^a-z<>=]/i', '', trim($tmp[1])));
+		// Only some operators are allowed.
+		if (! in_array($operator, array('LIKE', 'ULIKE', '<', '>', '<=', '>=', '=', '<>', 'IS', 'ISNOT', 'IN'))) {
+			return '';
+		}
+		if ($operator == 'ISNOT') {
+			$operator = 'IS NOT';
+		}
 
+		// Sanitize value
 		$tmpescaped = trim($tmp[2]);
 		$regbis = array();
 		if ($operator == 'IN') {
 			$tmpescaped = "(".$db->sanitize($tmpescaped, 1).")";
-		} elseif (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
-			$tmpescaped = "'".$db->escape($regbis[1])."'";
+		} elseif (in_array($operator, array('<', '>', '<=', '>=', '=', '<>'))) {
+			if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {	// If 'YYYY-MM-DD HH:MM:SS+X'
+				$tmpescaped = "'".$db->escape($regbis[1])."'";
+			} else {
+				$tmpescaped = ((float) $tmpescaped);
+			}
 		} else {
-			$tmpescaped = $db->sanitize($db->escape($tmpescaped));
+			if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
+				$tmpescaped = "'".$db->escape($regbis[1])."'";
+			} else {
+				$tmpescaped = "'".$db->escape($tmpescaped)."'";
+			}
 		}
 
 		return $db->escape($operand).' '.$db->escape($operator)." ".$tmpescaped;

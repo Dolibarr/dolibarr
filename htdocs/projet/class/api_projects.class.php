@@ -146,7 +146,7 @@ class Projects extends DolibarrApi
 		}
 		// Select projects of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".$this->db->escape($category)." AND c.fk_project = t.rowid ";
+			$sql .= " AND c.fk_categorie = ".((int) $category)." AND c.fk_project = t.rowid ";
 		}
 		// Add sql filters
 		if ($sqlfilters) {

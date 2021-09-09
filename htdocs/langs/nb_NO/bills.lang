@@ -259,6 +259,7 @@ DateMaxPayment=Betaling forfaller
 DateInvoice=Fakturadato
 DatePointOfTax=Skattepunkt
 NoInvoice=Ingen faktura
+NoOpenInvoice=No open invoice
 ClassifyBill=Klassifiser faktura
 SupplierBillsToPay=Ubetalte leverandørfakturaer
 CustomerBillsUnpaid=Ubetalte kundefakturaer
@@ -589,3 +590,4 @@ FacParentLine=Faktura forelderlinje
 SituationTotalRayToRest=Rest å betale eks. mva
 PDFSituationTitle=Delfaktura nr. %d
 SituationTotalProgress=Total progresjon%d %%
+SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s

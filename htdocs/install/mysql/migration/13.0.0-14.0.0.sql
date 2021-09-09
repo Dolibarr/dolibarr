@@ -32,6 +32,19 @@
 
 -- Missing in v13 or lower
 
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_propal set tms = datec where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_propal set tms = null where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+
+-- VPGSQL8.2 DROP TRIGGER update_customer_modtime ON llx_ecm_directories;
+-- VPGSQL8.2 DROP TRIGGER update_customer_modtime ON llx_ecm_files;
+-- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_ecm_directories FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+-- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_ecm_files FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+
+ALTER TABLE llx_ecm_files ADD COLUMN note_private text AFTER fk_user_m;
+ALTER TABLE llx_ecm_files ADD COLUMN note_public text AFTER note_private;
+
 ALTER TABLE llx_accounting_bookkeeping DROP INDEX idx_accounting_bookkeeping_numero_compte;
 ALTER TABLE llx_accounting_bookkeeping DROP INDEX idx_accounting_bookkeeping_code_journal;
 
@@ -59,10 +72,32 @@ insert into llx_c_actioncomm (id, code, type, libelle, module, active, position)
 
 UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','NL','HU','IE','IM','IT','LT','LU','LV','MC','MT','PL','PT','RO','SE','SK','SI');
 
-ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  11, 'US-BASE', 'USA basic chart of accounts', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 14, 'CA-ENG-BASE', 'Canadian basic chart of accounts - English', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 154, 'SAT/24-2019', 'Catalogo y codigo agrupador fiscal del 2019', 1);
+
+
+UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'auguria';
+UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'bureau2crea';
+UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'amarok';
+UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'cameleo';
+DELETE FROM llx_user_param where param = 'MAIN_THEME' and value in ('auguria', 'amarok', 'cameleo');
 
 
 -- For v14
+
+UPDATE llx_c_ticket_type set label = 'Issue or bug' WHERE code = 'ISSUE';
+INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('PROBLEM', '22', 'Problem', 0, 0, NULL);
+
+ALTER TABLE llx_import_model MODIFY COLUMN type varchar(64);
+ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
+
+ALTER TABLE llx_import_model ADD COLUMN entity integer DEFAULT 0 NOT NULL;
+ALTER TABLE llx_export_model ADD COLUMN entity integer DEFAULT 0 NOT NULL;
+
+ALTER TABLE llx_product_lot ADD COLUMN eol_date datetime NULL;
+ALTER TABLE llx_product_lot ADD COLUMN manufacturing_date datetime NULL;
+ALTER TABLE llx_product_lot ADD COLUMN scrapping_date datetime NULL;
 
 create table llx_accounting_groups_account
 (
@@ -157,7 +192,9 @@ CREATE TABLE llx_workstation_workstation_usergroup(
 	fk_workstation integer
 ) ENGINE=innodb;
 
-CREATE TABLE llx_c_producbatch_qcstatus(
+DROP TABLE llx_c_producbatch_qcstatus;		-- delete table with bad name
+
+CREATE TABLE llx_c_productbatch_qcstatus(
   rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
   entity   integer NOT NULL DEFAULT 1,
   code     varchar(16)        NOT NULL,
@@ -355,7 +392,8 @@ CREATE TABLE llx_eventorganization_conferenceorboothattendee(
     rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
     ref varchar(128) NOT NULL,
     fk_soc integer,
-    fk_actioncomm integer NOT NULL,
+    fk_actioncomm integer,
+    fk_project integer NOT NULL,
     email varchar(100),
     date_subscription datetime,
     amount double DEFAULT NULL,
@@ -370,6 +408,11 @@ CREATE TABLE llx_eventorganization_conferenceorboothattendee(
     model_pdf varchar(255),
     status smallint NOT NULL
 ) ENGINE=innodb;
+
+-- VMYSQL4.3 ALTER TABLE llx_eventorganization_conferenceorboothattendee MODIFY COLUMN fk_actioncomm integer NULL;
+-- VPGSQL8.2 ALTER TABLE llx_eventorganization_conferenceorboothattendee ALTER COLUMN fk_actioncomm DROP NOT NULL;
+
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_project integer NOT NULL;
 
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_rowid (rowid);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_ref (ref);
@@ -391,6 +434,10 @@ create table llx_eventorganization_conferenceorboothattendee_extrafields
 ALTER TABLE llx_eventorganization_conferenceorboothattendee_extrafields ADD INDEX idx_conferenceorboothattendee_fk_object(fk_object);
 
 ALTER TABLE llx_c_ticket_category ADD COLUMN public integer DEFAULT 0;
+
+-- VPGSQL8.2 ALTER TABLE llx_c_ticket_category ALTER COLUMN pos TYPE INTEGER USING pos::INTEGER;
+-- VPGSQL8.2 ALTER TABLE llx_c_ticket_category ALTER COLUMN pos SET NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_c_ticket_category ALTER COLUMN pos SET DEFAULT 0;
 ALTER TABLE llx_c_ticket_category MODIFY COLUMN pos	integer DEFAULT 0 NOT NULL;
 
 
@@ -402,7 +449,9 @@ UPDATE llx_propal SET fk_user_signature = fk_user_cloture WHERE fk_user_signatur
 UPDATE llx_propal SET date_signature = date_cloture WHERE date_signature IS NULL AND date_cloture IS NOT NULL;
 
 
-ALTER TABLE llx_product ADD COLUMN batch_mask VARCHAR(32) NULL;
+ALTER TABLE llx_product ADD COLUMN batch_mask VARCHAR(32) DEFAULT NULL;
+ALTER TABLE llx_product ADD COLUMN lifetime INTEGER NULL;
+ALTER TABLE llx_product ADD COLUMN qc_frequency INTEGER NULL;
 
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (210, 'conferenceorbooth', 'internal', 'MANAGER',  'Conference or Booth manager', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (211, 'conferenceorbooth', 'external', 'SPEAKER',   'Conference Speaker', 1);
@@ -416,7 +465,7 @@ CREATE TABLE llx_partnership(
 	fk_soc integer, 
 	fk_member integer, 
 	date_partnership_start date NOT NULL, 
-	date_partnership_end date NOT NULL, 
+	date_partnership_end date NULL, 
 	entity integer	DEFAULT 1 NOT NULL,	-- multi company id, 0 = all
 	reason_decline_or_cancel text NULL,
 	date_creation datetime NOT NULL, 
@@ -431,6 +480,8 @@ CREATE TABLE llx_partnership(
 	import_key varchar(14),
 	model_pdf varchar(255)
 ) ENGINE=innodb;
+
+ALTER TABLE llx_partnership ADD COLUMN last_check_backlink datetime NULL;
 
 ALTER TABLE llx_partnership ADD INDEX idx_partnership_rowid (rowid);
 ALTER TABLE llx_partnership ADD INDEX idx_partnership_ref (ref);
@@ -460,14 +511,14 @@ ALTER TABLE llx_facture_fourn ADD COLUMN fk_user_closing integer DEFAULT NULL af
 
 ALTER TABLE llx_entrepot ADD COLUMN fk_project INTEGER DEFAULT NULL AFTER entity; -- project associated to warehouse if any
 
--- Add external payement suport for donation
+-- Add external payment support for donation
 ALTER TABLE llx_payment_donation ADD COLUMN ext_payment_site  varchar(128) AFTER note;
 ALTER TABLE llx_payment_donation ADD COLUMN ext_payment_id  varchar(128) AFTER note;
 
 -- Rebuild sequence for postgres only after query INSERT INTO llx_salary(rowid, ...
 -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
-UPDATE llx_const SET value = 'github' WHERE __DECRYPT('name')__ = 'MAIN_BUGTRACK_ENABLELINK' AND __DECRYPT('value')__ = 1;
+UPDATE llx_const SET type = 'chaine', value = __ENCRYPT('github')__ WHERE __DECRYPT('name')__ = 'MAIN_BUGTRACK_ENABLELINK' AND __DECRYPT('value')__ = '1';
 
 ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_remise_except integer DEFAULT NULL after remise_percent;
 ALTER TABLE llx_facture_fourn_det ADD UNIQUE INDEX uk_fk_remise_except (fk_remise_except, fk_facture_fourn);
@@ -485,10 +536,18 @@ CREATE TABLE llx_knowledgemanagement_knowledgerecord(
 	import_key varchar(14), 
 	model_pdf varchar(255), 
 	question text NOT NULL, 
-	answer text, 
+	answer text,
+	url varchar(255),
+	fk_ticket integer,
+	fk_c_ticket_category integer,
 	status integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
+
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN fk_ticket integer;
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN fk_c_ticket_category integer;
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN url varchar(255);
+
 
 create table llx_knowledgemanagement_knowledgerecord_extrafields
 (
@@ -506,3 +565,42 @@ INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUE
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('CONTACT_MODIFY','Contact address update','Executed when a contact is updated','contact',51);
 
 
+create table llx_c_partnership_type
+(
+  rowid      	integer AUTO_INCREMENT PRIMARY KEY,
+  entity        integer DEFAULT 1 NOT NULL,
+  code          varchar(32) NOT NULL,
+  label 	    varchar(64)	NOT NULL,
+  active  	    tinyint DEFAULT 1  NOT NULL
+)ENGINE=innodb;
+
+DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
+
+
+CREATE TABLE llx_ecm_directories_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                             -- import key
+) ENGINE=innodb;
+
+DROP TABLE llx_categorie_association;
+DROP TABLE llx_cond_reglement;
+DROP TABLE llx_zapier_hook_extrafields;
+
+create table llx_onlinesignature
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  entity                    integer DEFAULT 1 NOT NULL,
+  object_type               varchar(32) NOT NULL,
+  object_id					integer NOT NULL,
+  datec                     datetime NOT NULL,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  name						varchar(255) NOT NULL,
+  ip						varchar(128),
+  pathoffile				varchar(255)
+)ENGINE=innodb;
+
+-- VMYSQL4.3 ALTER TABLE llx_partnership MODIFY COLUMN date_partnership_end date NULL;
+-- VPGSQL8.2 ALTER TABLE llx_partnership ALTER COLUMN date_partnership_end DROP NOT NULL;

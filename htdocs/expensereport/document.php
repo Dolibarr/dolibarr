@@ -154,7 +154,7 @@ if ($object->id) {
 
 
 	$modulepart = 'expensereport';
-	$permission = $user->rights->expensereport->creer;
+	$permissiontoadd = $user->rights->expensereport->creer;
 	$permtoedit = $user->rights->expensereport->creer;
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

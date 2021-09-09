@@ -81,12 +81,9 @@ if (!$action) {
 // Security check
 $id = GETPOST("id", 'int');
 $socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+if ($user->socid > 0) $socid = $user->socid;
 $result = restrictedArea($user, 'ticket', $id, '');
 
-if (!$user->rights->ticket->read) {
-	accessforbidden();
-}
 // restrict access for externals users
 if ($user->socid > 0 && ($object->fk_soc != $user->socid)) {
 	accessforbidden();

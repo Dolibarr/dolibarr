@@ -91,7 +91,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
-llxHeader("", $langs->trans("SalaryPayment"));
+$title = $langs->trans('Salary')." - ".$langs->trans('Documents');
+$help_url = "";
+llxHeader("", $title, $help_url);
 
 if ($object->id) {
 	$object->fetch_thirdparty();
@@ -147,7 +149,7 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'salaries';
-	$permission = $user->rights->salaries->write;
+	$permissiontoadd = $user->rights->salaries->write;
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

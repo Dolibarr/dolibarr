@@ -126,7 +126,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 			$sql .= ' WHERE pf.fk_facture = f.rowid';
 			$sql .= ' AND f.fk_soc = s.rowid';
 			$sql .= ' AND f.entity IN ('.getEntity('invoice').')';
-			$sql .= ' AND pf.fk_paiement = '.$object->id;
+			$sql .= ' AND pf.fk_paiement = '.((int) $object->id);
 			$resql = $db->query($sql);
 			if ($resql) {
 				$i = 0;
@@ -342,7 +342,7 @@ $sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'factur
 $sql .= ' WHERE pf.fk_facture = f.rowid';
 $sql .= ' AND f.fk_soc = s.rowid';
 $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
-$sql .= ' AND pf.fk_paiement = '.$object->id;
+$sql .= ' AND pf.fk_paiement = '.((int) $object->id);
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -392,7 +392,7 @@ if ($resql) {
 			print "</td>\n";
 
 			// Third party
-			print '<td>';
+			print '<td class="tdoverflowmax150">';
 			print $thirdpartystatic->getNomUrl(1);
 			print '</td>';
 

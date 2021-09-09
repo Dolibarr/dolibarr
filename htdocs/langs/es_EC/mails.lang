@@ -113,7 +113,5 @@ AdvTgtContactHelp=Úselo sólo si segmenta el contacto en "Tipo de correo electr
 ItemsCount=Artículo(s)
 AdvTgtAddContact=Añadir emails según criterio.
 AdvTgtLoadFilter=Filtro de carga
-NoContactWithCategoryFound=No hay contacto/dirección con una categoría encontrada
-NoContactLinkedToThirdpartieWithCategoryFound=No hay contacto/dirección con una categoría encontrada
 ContactsWithThirdpartyFilter=Contactos con filtro de terceros
 Answered=Contestada

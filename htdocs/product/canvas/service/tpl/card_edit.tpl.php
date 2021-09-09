@@ -38,7 +38,7 @@ dol_htmloutput_errors($object->error, $object->errors);
 ?>
 
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
-<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
+<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 <input type="hidden" name="action" value="update">
 <input type="hidden" name="id" value="<?php echo $object->id; ?>">
 <input type="hidden" name="canvas" value="<?php echo $object->canvas; ?>">

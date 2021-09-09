@@ -53,6 +53,16 @@ if ($cancel) {
 }
 
 if ($action == 'update') {
+	if (GETPOSTISSET('PROPOSAL_PDF_HIDE_PAYMENTTERM')) {
+		dolibarr_set_const($db, "PROPOSAL_PDF_HIDE_PAYMENTTERM", GETPOST("PROPOSAL_PDF_HIDE_PAYMENTTERM"), 'chaine', 0, '', $conf->entity);
+	}
+	if (GETPOSTISSET('PROPOSAL_PDF_HIDE_PAYMENTMODE')) {
+		dolibarr_set_const($db, "PROPOSAL_PDF_HIDE_PAYMENTMODE", GETPOST("PROPOSAL_PDF_HIDE_PAYMENTMODE"), 'chaine', 0, '', $conf->entity);
+	}
+	if (GETPOSTISSET('MAIN_GENERATE_PROPOSALS_WITH_PICTURE')) {
+		dolibarr_set_const($db, "MAIN_GENERATE_PROPOSALS_WITH_PICTURE", GETPOST("MAIN_GENERATE_PROPOSALS_WITH_PICTURE"), 'chaine', 0, '', $conf->entity);
+	}
+
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
@@ -78,7 +88,8 @@ $head = pdf_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'other', $langs->trans("other"), -1, 'pdf');
 
-print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("PDFOtherDesc"), $s)."</span><br>\n";
+$tooltiptext = '';
+print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("PDFOtherDesc"), $tooltiptext)."</span><br>\n";
 print "<br>\n";
 
 print load_fiche_titre($langs->trans("Proposal"), '', '');
@@ -91,7 +102,9 @@ print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
-print '<tr class="oddeven"><td>'.$langs->trans("MAIN_GENERATE_PROPOSALS_WITH_PICTURE").'</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans("MAIN_GENERATE_PROPOSALS_WITH_PICTURE");
+print ' <span class="opacitymedium">('.$langs->trans("RandomlySelectedIfSeveral").')</span>';
+print '</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_GENERATE_PROPOSALS_WITH_PICTURE');
 } else {
@@ -100,6 +113,7 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
+/*
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING").'</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING');
@@ -108,14 +122,14 @@ if ($conf->use_javascript_ajax) {
 	print $form->selectarray("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING", $arrval, $conf->global->MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING);
 }
 print '</td></tr>';
+*/
 
 print '</table>';
 print '</div>';
 
-
-print '<br><div class="center">';
-print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
-print '</div>';
+/*
+	print $form->buttonsSaveCancel();
+*/
 
 print '</form>';
 

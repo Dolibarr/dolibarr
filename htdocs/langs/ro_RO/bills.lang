@@ -259,6 +259,7 @@ DateMaxPayment=Dată scadenţă la
 DateInvoice=Data facturării
 DatePointOfTax=Impozitare taxare
 NoInvoice=Nicio  factură
+NoOpenInvoice=Nicio factură deschisă
 ClassifyBill=Clasează factura
 SupplierBillsToPay=Facturi furnizor neplătite
 CustomerBillsUnpaid=Facturi clienţi neîncasate
@@ -589,3 +590,4 @@ FacParentLine=Linie de facturare părinte
 SituationTotalRayToRest=Rest de plată fără taxe
 PDFSituationTitle=Situaţia nr. %d
 SituationTotalProgress=Progres total %d %%
+SearchUnpaidInvoicesWithDueDate=Căutare facturi neplătite cu o dată scadentă = %s

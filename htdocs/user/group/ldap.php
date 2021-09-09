@@ -67,8 +67,8 @@ if ($action == 'dolibarr2ldap') {
 	if ($result > 0) {
 		$info = $object->_load_ldap_info();
 
-		// Get a gid number for objectclass PosixGroup
-		if (in_array('posixGroup', $info['objectclass'])) {
+		// Get a gid number for objectclass PosixGroup if none was provided
+		if (empty($info[$conf->global->LDAP_GROUP_FIELD_GROUPID]) && in_array('posixGroup', $info['objectclass'])) {
 			$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
 		}
 
@@ -189,7 +189,7 @@ if ($result > 0) {
 			$result = show_ldap_content($records, 0, $records['count'], true);
 		}
 	} else {
-		print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
+		print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.dol_escape_htmltag($dn).' - search='.dol_escape_htmltag($search).')</td></tr>';
 	}
 	$ldap->unbind();
 	$ldap->close();

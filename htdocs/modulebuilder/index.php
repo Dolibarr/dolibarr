@@ -383,7 +383,7 @@ if ($dirins && $action == 'initphpunit' && !empty($module)) {
 	$modulename = ucfirst($module); // Force first letter in uppercase
 	$objectname = $tabobj;
 
-	dol_mkdir($dirins.'/'.strtolower($module).'/class');
+	dol_mkdir($dirins.'/'.strtolower($module).'/test/phpunit');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$srcfile = $srcdir.'/test/phpunit/MyObjectTest.php';
 	$destfile = $dirins.'/'.strtolower($module).'/test/phpunit/'.strtolower($objectname).'Test.php';
@@ -1303,7 +1303,8 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 				'visible'=>GETPOST('propvisible', 'int'), 'enabled'=>GETPOST('propenabled', 'int'),
 				'position'=>GETPOST('propposition', 'int'), 'notnull'=>GETPOST('propnotnull', 'int'), 'index'=>GETPOST('propindex', 'int'), 'searchall'=>GETPOST('propsearchall', 'int'),
 				'isameasure'=>GETPOST('propisameasure', 'int'), 'comment'=>GETPOST('propcomment', 'alpha'), 'help'=>GETPOST('prophelp', 'alpha'),
-				'css'=>GETPOST('propcss', 'aZ09'), 'cssview'=>GETPOST('propcssview', 'aZ09'), 'csslist'=>GETPOST('propcsslist', 'aZ09')
+				'css'=>GETPOST('propcss', 'aZ09'), 'cssview'=>GETPOST('propcssview', 'aZ09'), 'csslist'=>GETPOST('propcsslist', 'aZ09'),
+				'validate' => GETPOST('propvalidate', 'int')
 			);
 
 			if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval'])) {
@@ -1521,7 +1522,7 @@ if ($dirins && $action == 'generatepackage') {
 
 	$arrayversion = explode('.', $moduleobj->version, 3);
 	if (count($arrayversion)) {
-		$FILENAMEZIP = "module_".$modulelowercase.'-'.$arrayversion[0].($arrayversion[1] ? '.'.$arrayversion[1] : '').($arrayversion[2] ? '.'.$arrayversion[2] : '').'.zip';
+		$FILENAMEZIP = "module_".$modulelowercase.'-'.$arrayversion[0].(empty($arrayversion[1]) ? '.0' : '.'.$arrayversion[1]).($arrayversion[2] ? '.'.$arrayversion[2] : '').'.zip';
 
 		$dirofmodule = dol_buildpath($modulelowercase, 0).'/bin';
 		$outputfilezip = $dirofmodule.'/'.$FILENAMEZIP;
@@ -2218,7 +2219,8 @@ if ($module == 'initmodule') {
 
 			if ($action != 'editfile' || empty($file)) {
 				print '<span class="opacitymedium">';
-				$htmlhelp = $langs->trans("DictionariesDefDescTooltip", '<a href="'.DOL_URL_ROOT.'/admin/dict.php">'.$langs->trans('Setup').' - '.$langs->trans('Dictionaries').'</a>');
+				$htmlhelp = $langs->trans("DictionariesDefDescTooltip", '{s1}');
+				$htmlhelp = str_replace('{s1}', '<a target="adminbis" class="nofocusvisible" href="'.DOL_URL_ROOT.'/admin/dict.php">'.$langs->trans('Setup').' - '.$langs->trans('Dictionaries').'</a>', $htmlhelp);
 				print $form->textwithpicto($langs->trans("DictionariesDefDesc"), $htmlhelp, 1, 'help', '', 0, 2, 'helpondesc').'<br>';
 				print '</span>';
 				print '<br>';
@@ -2680,6 +2682,7 @@ if ($module == 'initmodule') {
 							print '<th>'.$langs->trans("KeyForTooltip").'</th>';
 							print '<th class="center">'.$langs->trans("ShowOnCombobox").'</th>';
 							//print '<th class="center">'.$langs->trans("Disabled").'</th>';
+							print '<th>'.$form->textwithpicto($langs->trans("Validate"), $langs->trans("ValidateModBuilderDesc")).'</th>';
 							print '<th>'.$langs->trans("Comment").'</th>';
 							print '<th></th>';
 							print '</tr>';
@@ -2712,9 +2715,10 @@ if ($module == 'initmodule') {
 								print '<td><input type="text" size="2" name="prophelp" value="'.dol_escape_htmltag(GETPOST('prophelp', 'alpha')).'"></td>';
 								print '<td class="center"><input type="text" class="center maxwidth50" name="propshowoncombobox" value="'.dol_escape_htmltag(GETPOST('propshowoncombobox', 'alpha')).'"></td>';
 								//print '<td class="center"><input type="text" size="2" name="propdisabled" value="'.dol_escape_htmltag(GETPOST('propdisabled', 'alpha')).'"></td>';
+								print '<td><input type="number" step="1" min="0" max="1" class="text maxwidth100" name="propvalidate" value="'.dol_escape_htmltag(GETPOST('propvalidate', 'alpha')).'"></td>';
 								print '<td><input class="text maxwidth100" name="propcomment" value="'.dol_escape_htmltag(GETPOST('propcomment', 'alpha')).'"></td>';
 								print '<td class="center">';
-								print '<input class="button" type="submit" name="add" value="'.$langs->trans("Add").'">';
+								print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
 								print '</td></tr>';
 
 								// List of existing properties
@@ -2753,6 +2757,7 @@ if ($module == 'initmodule') {
 									$prophelp = $propval['help'];
 									$propshowoncombobox = $propval['showoncombobox'];
 									//$propdisabled=$propval['disabled'];
+									$propvalidate = $propval['validate'];
 									$propcomment = $propval['comment'];
 
 									print '<tr class="oddeven">';
@@ -2823,6 +2828,9 @@ if ($module == 'initmodule') {
 										print '<input class="center maxwidth50" name="propshowoncombobox" value="'.dol_escape_htmltag($propshowoncombobox).'">';
 										print '</td>';
 										print '<td>';
+										print '<input type="number" step="1" min="0" max="1" class="text maxwidth100" name="propvalidate" value="'.dol_escape_htmltag($propvalidate).'">';
+										print '</td>';
+										print '<td>';
 										print '<input class="maxwidth100" name="propcomment" value="'.dol_escape_htmltag($propcomment).'">';
 										print '</td>';
 										print '<td class="center">';
@@ -2888,6 +2896,9 @@ if ($module == 'initmodule') {
 										/*print '<td class="center">';
 										print $propdisabled?$propdisabled:'';
 										print '</td>';*/
+										print '<td class="center">';
+										print $propvalidate ? dol_escape_htmltag($propvalidate) : '';
+										print '</td>';
 										print '<td class="tdoverflowmax200">';
 										print '<span title="'.dol_escape_htmltag($propcomment).'">';
 										print dol_escape_htmltag($propcomment);
@@ -3002,7 +3013,8 @@ if ($module == 'initmodule') {
 
 			if ($action != 'editfile' || empty($file)) {
 				print '<span class="opacitymedium">';
-				$htmlhelp = $langs->trans("MenusDefDescTooltip", '<a href="'.DOL_URL_ROOT.'/admin/menus/index.php">'.$langs->trans('Setup').' - '.$langs->trans('Menus').'</a>');
+				$htmlhelp = $langs->trans("MenusDefDescTooltip", '{s1}');
+				$htmlhelp = str_replace('{s1}', '<a target="adminbis" class="nofocusvisible" href="'.DOL_URL_ROOT.'/admin/menus/index.php">'.$langs->trans('Setup').' - '.$langs->trans('Menus').'</a>', $htmlhelp);
 				print $form->textwithpicto($langs->trans("MenusDefDesc"), $htmlhelp, 1, 'help', '', 0, 2, 'helpondesc').'<br>';
 				print '</span>';
 				print '<br>';
@@ -3022,7 +3034,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
 
 				print '<div class="div-table-responsive">';
-				print '<table class="noborder">';
+				print '<table class="noborder small">';
 
 				print '<tr class="liste_titre">';
 				print_liste_field_titre("Type", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
@@ -3044,51 +3056,51 @@ if ($module == 'initmodule') {
 						print '<tr class="oddeven">';
 
 						print '<td>';
-						print $menu['type'];
+						print dol_escape_htmltag($menu['type']);
 						print '</td>';
 
 						print '<td>';
-						print $menu['fk_menu'];
+						print dol_escape_htmltag($menu['fk_menu']);
 						print '</td>';
 
 						print '<td>';
-						print $menu['titre'];
+						print dol_escape_htmltag($menu['titre']);
 						print '</td>';
 
 						print '<td>';
-						print $menu['mainmenu'];
+						print dol_escape_htmltag($menu['mainmenu']);
 						print '</td>';
 
 						print '<td>';
-						print $menu['leftmenu'];
+						print dol_escape_htmltag($menu['leftmenu']);
+						print '</td>';
+
+						print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($menu['url']).'">';
+						print dol_escape_htmltag($menu['url']);
 						print '</td>';
 
 						print '<td>';
-						print $menu['url'];
+						print dol_escape_htmltag($menu['langs']);
 						print '</td>';
 
 						print '<td>';
-						print $menu['langs'];
+						print dol_escape_htmltag($menu['position']);
+						print '</td>';
+
+						print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($menu['enabled']).'">';
+						print dol_escape_htmltag($menu['enabled']);
+						print '</td>';
+
+						print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($menu['perms']).'">';
+						print dol_escape_htmltag($menu['perms']);
 						print '</td>';
 
 						print '<td>';
-						print $menu['position'];
-						print '</td>';
-
-						print '<td>';
-						print $menu['enabled'];
-						print '</td>';
-
-						print '<td>';
-						print $menu['perms'];
-						print '</td>';
-
-						print '<td>';
-						print $menu['target'];
+						print dol_escape_htmltag($menu['target']);
 						print '</td>';
 
 						print '<td class="right">';
-						print $menu['user'];
+						print dol_escape_htmltag($menu['user']);
 						print '</td>';
 
 						print '</tr>';
@@ -3134,7 +3146,8 @@ if ($module == 'initmodule') {
 
 			if ($action != 'editfile' || empty($file)) {
 				print '<span class="opacitymedium">';
-				$htmlhelp = $langs->trans("PermissionsDefDescTooltip", '<a href="'.DOL_URL_ROOT.'/admin/perms.php">'.$langs->trans('DefaultPermissions').'</a>');
+				$htmlhelp = $langs->trans("PermissionsDefDescTooltip", '{s1}');
+				$htmlhelp = str_replace('{s1}', '<a target="adminbis" class="nofocusvisible" href="'.DOL_URL_ROOT.'/admin/perms.php">'.$langs->trans('DefaultRights').'</a>', $htmlhelp);
 				print $form->textwithpicto($langs->trans("PermissionsDefDesc"), $htmlhelp, 1, 'help', '', 0, 2, 'helpondesc').'<br>';
 				print '</span>';
 				print '<br>';
@@ -3447,7 +3460,7 @@ if ($module == 'initmodule') {
 						print '</tr>';
 					}
 				} else {
-					print '<tr><td><span class="fa fa-file-o"></span> '.$langs->trans("NoWidget");
+					print '<tr><td><span class="fa fa-file-o"></span> '.$langs->trans("WidgetFile").' : <span class="opacitymedium">'.$langs->trans("NoWidget").'</span>';
 					print '</td><td><a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initwidget&format=php">'.img_picto('Generate', 'generate', 'class="paddingleft"').'</a>';
 					print '</td></tr>';
 				}
@@ -3601,7 +3614,7 @@ if ($module == 'initmodule') {
 			$cronjobs = $moduleobj->cronjobs;
 
 			if ($action != 'editfile' || empty($file)) {
-				print '<span class="opacitymedium">'.str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/cron/list.php">'.$langs->transnoentities('CronList').'</a>', $langs->trans("CronJobDefDesc", '{s1}')).'</span><br>';
+				print '<span class="opacitymedium">'.str_replace('{s1}', '<a target="adminbis" class="nofocusvisible" href="'.DOL_URL_ROOT.'/cron/list.php">'.$langs->transnoentities('CronList').'</a>', $langs->trans("CronJobDefDesc", '{s1}')).'</span><br>';
 				print '<br>';
 
 				print '<span class="fa fa-file-o"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
@@ -3792,7 +3805,7 @@ if ($module == 'initmodule') {
 				print $outputfiledoc;
 				print '</a>';
 				print '</strong>';
-				print ' ('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfiledoc), 'dayhour').')';
+				print ' <span class="opacitymedium">('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfiledoc), 'dayhour').')</span>';
 			}
 			print '</strong><br>';
 
@@ -3806,7 +3819,7 @@ if ($module == 'initmodule') {
 				print $outputfiledocpdf;
 				print '</a>';
 				print '</strong>';
-				print ' ('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfiledocpdf), 'dayhour').')';
+				print ' <span class="opacitymedium">('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfiledocpdf), 'dayhour').')</span>';
 			}
 			print '</strong><br>';
 
@@ -3860,7 +3873,7 @@ if ($module == 'initmodule') {
 
 			$arrayversion = explode('.', $moduleobj->version, 3);
 			if (count($arrayversion)) {
-				$FILENAMEZIP = "module_".$modulelowercase.'-'.$arrayversion[0].'.'.$arrayversion[1].($arrayversion[2] ? ".".$arrayversion[2] : "").".zip";
+				$FILENAMEZIP = "module_".$modulelowercase.'-'.$arrayversion[0].(empty($arrayversion[1]) ? '.0' : '.'.$arrayversion[1]).($arrayversion[2] ? ".".$arrayversion[2] : '').".zip";
 				$outputfilezip = dol_buildpath($modulelowercase, 0).'/bin/'.$FILENAMEZIP;
 			}
 
@@ -3872,7 +3885,7 @@ if ($module == 'initmodule') {
 			} else {
 				$relativepath = $modulelowercase.'/bin/'.$FILENAMEZIP;
 				print '<strong><a href="'.DOL_URL_ROOT.'/document.php?modulepart=packages&file='.urlencode($relativepath).'">'.$outputfilezip.'</a></strong>';
-				print ' ('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfilezip), 'dayhour').')';
+				print ' <span class="opacitymedium">('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfilezip), 'dayhour').')</span>';
 			}
 			print '</strong><br>';
 

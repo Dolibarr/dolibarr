@@ -70,6 +70,12 @@ dol_syslog($script_file." launched with arg ".join(',', $argv));
  * }
  */
 
+if (!empty($dolibarr_main_db_readonly)) {
+	print "Error: instance in read-onyl mode\n";
+	exit(-1);
+}
+
+
 $sql = "SELECT rowid";
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent_type";
 

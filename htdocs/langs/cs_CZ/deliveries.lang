@@ -27,5 +27,7 @@ Recipient=Příjemce
 ErrorStockIsNotEnough=Dostatečné množství není skladem
 Shippable=Doručitelné
 NonShippable=Nedoručitelné
+ShowShippableStatus=Show shippable status
 ShowReceiving=Zobrazit potvrzení o doručení
 NonExistentOrder=Neexistující objednávka
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines

@@ -108,13 +108,6 @@ if ($action == 'addcontact' && $user->rights->expedition->creer) {
 		dol_print_error($db);
 	}
 }
-/*
-elseif ($action == 'setaddress' && $user->rights->expedition->creer)
-{
-	$object->fetch($id);
-	$result=$object->setDeliveryAddress($_POST['fk_address']);
-	if ($result < 0) dol_print_error($db,$object->error);
-}*/
 
 
 /*
@@ -143,7 +136,7 @@ if ($id > 0 || !empty($ref)) {
 	$langs->trans("OrderCard");
 
 	$head = shipping_prepare_head($object);
-	print dol_get_fiche_head($head, 'contact', $langs->trans("Shipment"), -1, 'sending');
+	print dol_get_fiche_head($head, 'contact', $langs->trans("Shipment"), -1, $object->picto);
 
 
 	// Shipment card
@@ -169,7 +162,7 @@ if ($id > 0 || !empty($ref)) {
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-				$morehtmlref .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+				$morehtmlref .= '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
 				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);

@@ -227,7 +227,7 @@ $sql .= ' FROM '.MAIN_DB_PREFIX.'payment_vat as pf,'.MAIN_DB_PREFIX.'tva as f';
 $sql .= ' WHERE pf.fk_tva = f.rowid';
 //$sql .= ' AND f.fk_type = pc.id';
 $sql .= ' AND f.entity = '.$conf->entity;
-$sql .= ' AND pf.rowid = '.$object->id;
+$sql .= ' AND pf.rowid = '.((int) $object->id);
 
 dol_syslog("compta/payment_vat/card.php", LOG_DEBUG);
 $resql = $db->query($sql);

@@ -15,7 +15,7 @@
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 --
--- Table with the categories of a ticket
+-- Table with the custom category tree for the category of a ticket
 -- 
 
 create table llx_c_ticket_category

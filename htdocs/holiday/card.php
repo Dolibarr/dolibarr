@@ -50,7 +50,7 @@ $ref = GETPOST('ref', 'alpha');
 $fuserid = (GETPOST('fuserid', 'int') ?GETPOST('fuserid', 'int') : $user->id);
 
 // Load translation files required by the page
-$langs->loadLangs(array("other", "holiday", "mails"));
+$langs->loadLangs(array("other", "holiday", "mails", "trips"));
 
 $error = 0;
 
@@ -85,6 +85,9 @@ if (($id > 0) || $ref) {
 		accessforbidden();
 	}
 }
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('holidaycard', 'globalcard'));
 
 $cancreate = 0;
 
@@ -121,8 +124,23 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	$backurlforlist = DOL_URL_ROOT.'/holiday/list.php';
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/holiday/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			}
+		}
+	}
+
 	if ($cancel) {
-		if (!empty($backtopage)) {
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
 		}
@@ -159,23 +177,27 @@ if (empty($reshook)) {
 				$halfday = 1;
 			}
 
-			$valideur = GETPOST('valideur', 'int');
+			$approverid = GETPOST('valideur', 'int');
 			$description = trim(GETPOST('description', 'restricthtml'));
 
 			// Check that leave is for a user inside the hierarchy or advanced permission for all is set
-			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->holiday->write))
-				|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->id == $fuserid && empty($user->rights->holiday->write))
-				|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->id != $fuserid && empty($user->rights->holiday->writeall_advance))
-				) {
-				$error++;
-				setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+			if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+				if (empty($user->rights->holiday->write)) {
+					$error++;
+					setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+				} elseif (!in_array($fuserid, $childids)) {
+					$error++;
+					setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
+					$action = 'create';
+				}
 			} else {
-				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->holiday->writeall_advance)) {
-					if (!in_array($fuserid, $childids)) {
-						$error++;
-						setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
-						$action = 'create';
-					}
+				if (empty($user->rights->holiday->write) && empty($user->rights->holiday->writeall_advance)) {
+					$error++;
+					setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+				} elseif (empty($user->rights->holiday->writeall_advance) && !in_array($fuserid, $childids)) {
+					$error++;
+					setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
+					$action = 'create';
 				}
 			}
 
@@ -222,7 +244,7 @@ if (empty($reshook)) {
 			}
 
 			// If no validator designated
-			if ($valideur < 1) {
+			if ($approverid < 1) {
 				setEventMessages($langs->transnoentitiesnoconv('InvalidValidatorCP'), null, 'errors');
 				$error++;
 			}
@@ -232,7 +254,7 @@ if (empty($reshook)) {
 			if (!$error) {
 				$object->fk_user = $fuserid;
 				$object->description = $description;
-				$object->fk_validator = $valideur;
+				$object->fk_validator = $approverid;
 				$object->fk_type = $type;
 				$object->date_debut = $date_debut;
 				$object->date_fin = $date_fin;
@@ -257,6 +279,7 @@ if (empty($reshook)) {
 		}
 	}
 
+	// If update and we are an approver, we can update with another approver
 	if ($action == 'update' && GETPOSTISSET('savevalidator') && !empty($user->rights->holiday->approve)) {
 		$object->fetch($id);
 
@@ -308,7 +331,9 @@ if (empty($reshook)) {
 		if ($object->statut == Holiday::STATUS_DRAFT) {
 			// If this is the requestor or has read/write rights
 			if ($cancreate) {
-				$valideur = GETPOST('valideur', 'int');
+				$approverid = GETPOST('valideur', 'int');
+				// TODO Check this approver user id has the permission for approval
+
 				$description = trim(GETPOST('description', 'restricthtml'));
 
 				// If no start date
@@ -330,7 +355,7 @@ if (empty($reshook)) {
 				}
 
 				// If no validator designated
-				if ($valideur < 1) {
+				if ($approverid < 1) {
 					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&error=Valideur');
 					exit;
 				}
@@ -345,7 +370,7 @@ if (empty($reshook)) {
 				$object->description = $description;
 				$object->date_debut = $date_debut;
 				$object->date_fin = $date_fin;
-				$object->fk_validator = $valideur;
+				$object->fk_validator = $approverid;
 				$object->halfday = $halfday;
 
 				// Update
@@ -442,22 +467,24 @@ if (empty($reshook)) {
 
 				$message .= $langs->transnoentities("HolidaysToValidateBody")."\n";
 
-				$delayForRequest = $object->getConfCP('delayForRequest');
-				//$delayForRequest = $delayForRequest * (60*60*24);
-
-				$nextMonth = dol_time_plus_duree($now, $delayForRequest, 'd');
 
 				// option to warn the validator in case of too short delay
-				if ($object->getConfCP('AlertValidatorDelay')) {
-					if ($object->date_debut < $nextMonth) {
-						$message .= "\n";
-						$message .= $langs->transnoentities("HolidaysToValidateDelay", $object->getConfCP('delayForRequest'))."\n";
+				if (empty($conf->global->HOLIDAY_HIDE_APPROVER_ABOUT_TOO_LOW_DELAY)) {
+					$delayForRequest = 0;		// TODO Set delay depending of holiday leave type
+					if ($delayForRequest) {
+						$nowplusdelay = dol_time_plus_duree($now, $delayForRequest, 'd');
+
+						if ($object->date_debut < $nowplusdelay) {
+							$message .= "\n";
+							$message .= $langs->transnoentities("HolidaysToValidateDelay", $delayForRequest)."\n";
+						}
 					}
 				}
 
 				// option to notify the validator if the balance is less than the request
-				if ($object->getConfCP('AlertValidatorSolde')) {
+				if (empty($conf->global->HOLIDAY_HIDE_APPROVER_ABOUT_NEGATIVE_BALANCE)) {
 					$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
+
 					if ($nbopenedday > $object->getCPforUser($object->fk_user, $object->fk_type)) {
 						$message .= "\n";
 						$message .= $langs->transnoentities("HolidaysToValidateAlertSolde")."\n";
@@ -736,8 +763,8 @@ if (empty($reshook)) {
 		$object->fetch($id);
 
 		// If status pending validation and validator = validator or user, or rights to do for others
-		if (($object->statut == Holiday::STATUS_VALIDATED || $object->statut == Holiday::STATUS_APPROVED) && ($user->id == $object->fk_validator || in_array($object->fk_user, $childids)
-			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance)))) {
+		if (($object->statut == Holiday::STATUS_VALIDATED || $object->statut == Holiday::STATUS_APPROVED) &&
+			(!empty($user->admin) || $user->id == $object->fk_validator || in_array($object->fk_user, $childids) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance)))) {
 			$db->begin();
 
 			$oldstatus = $object->statut;
@@ -854,9 +881,10 @@ $object = new Holiday($db);
 
 $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
 
+$title = $langs->trans('CPTitreMenu');
 $help_url = 'EN:Module_Holiday';
 
-llxHeader('', $langs->trans('CPTitreMenu'), $help_url);
+llxHeader('', $title, $help_url);
 
 if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 	// If user has no permission to create a leave
@@ -899,42 +927,40 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		}
 
 
-		$delayForRequest = $object->getConfCP('delayForRequest');
-		//$delayForRequest = $delayForRequest * (60*60*24);
-
-		$nextMonth = dol_time_plus_duree($now, $delayForRequest, 'd');
-
 		print '<script type="text/javascript">
-	    function valider()
-	    {
-    	    if(document.demandeCP.date_debut_.value != "")
-    	    {
-	           	if(document.demandeCP.date_fin_.value != "")
-	           	{
-	               if(document.demandeCP.valideur.value != "-1") {
-	                 return true;
-	               }
-	               else {
-	                 alert("'.dol_escape_js($langs->transnoentities('InvalidValidatorCP')).'");
-	                 return false;
-	               }
-	            }
-	            else
-	            {
-	              alert("'.dol_escape_js($langs->transnoentities('NoDateFin')).'");
-	              return false;
-	            }
-	        }
-	        else
-	        {
-	           alert("'.dol_escape_js($langs->transnoentities('NoDateDebut')).'");
-	           return false;
-	        }
-       	}
+		$( document ).ready(function() {
+			$("input.button-save").click("submit", function(e) {
+				console.log("Call valider()");
+	    	    if (document.demandeCP.date_debut_.value != "")
+	    	    {
+		           	if(document.demandeCP.date_fin_.value != "")
+		           	{
+		               if(document.demandeCP.valideur.value != "-1") {
+		                 return true;
+		               }
+		               else {
+		                 alert("'.dol_escape_js($langs->transnoentities('InvalidValidatorCP')).'");
+		                 return false;
+		               }
+		            }
+		            else
+		            {
+		              alert("'.dol_escape_js($langs->transnoentities('NoDateFin')).'");
+		              return false;
+		            }
+		        }
+		        else
+		        {
+		           alert("'.dol_escape_js($langs->transnoentities('NoDateDebut')).'");
+		           return false;
+		        }
+	       	});
+		});
        </script>'."\n";
 
+
 		// Formulaire de demande
-		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" onsubmit="return valider()" name="demandeCP">'."\n";
+		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" name="demandeCP">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'" />'."\n";
 		print '<input type="hidden" name="action" value="add" />'."\n";
 
@@ -1073,11 +1099,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 		print dol_get_fiche_end();
 
-		print '<div class="center">';
-		print '<input type="submit" value="'.$langs->trans("SendRequestCP").'" name="bouton" class="button">';
-		print '&nbsp; &nbsp; ';
-		print '<input type="button" value="'.$langs->trans("Cancel").'" class="button button-cancel" onclick="history.go(-1)">';
-		print '</div>';
+		print $form->buttonsSaveCancel("SendRequestCP");
 
 		print '</from>'."\n";
 	}
@@ -1092,8 +1114,8 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		if (($id > 0) || $ref) {
 			$result = $object->fetch($id, $ref);
 
-			$valideur = new User($db);
-			$valideur->fetch($object->fk_validator);
+			$approverexpected = new User($db);
+			$approverexpected->fetch($object->fk_validator);
 
 			$userRequest = new User($db);
 			$userRequest->fetch($object->fk_user);
@@ -1136,7 +1158,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			}
 
 			// On vérifie si l'utilisateur à le droit de lire cette demande
-			if ($cancreate) {
+			if ($canread) {
 				$head = holiday_prepare_head($object);
 
 				if (($action == 'edit' && $object->statut == Holiday::STATUS_DRAFT) || ($action == 'editvalidator')) {
@@ -1306,7 +1328,14 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 						print $langs->trans('ReviewedByCP');
 					}
 					print '</td>';
-					print '<td>'.$valideur->getNomUrl(-1);
+					print '<td>';
+					if ($object->statut == Holiday::STATUS_APPROVED || $object->statut == Holiday::STATUS_CANCELED) {
+						$approverdone = new User($db);
+						$approverdone->fetch($object->fk_user_valid);
+						print $approverdone->getNomUrl(-1);
+					} else {
+						print $approverexpected->getNomUrl(-1);
+					}
 					$include_users = $object->fetch_users_approver_holiday();
 					if (is_array($include_users) && in_array($user->id, $include_users) && $object->statut == Holiday::STATUS_VALIDATED) {
 						print '<a class="editfielda paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editvalidator">'.img_edit($langs->trans("Edit")).'</a>';
@@ -1423,25 +1452,48 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					if ($cancreate && $object->statut == Holiday::STATUS_DRAFT) {
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit" class="butAction">'.$langs->trans("EditCP").'</a>';
 					}
+
 					if ($cancreate && $object->statut == Holiday::STATUS_DRAFT) {		// If draft
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=sendToValidate" class="butAction">'.$langs->trans("Validate").'</a>';
 					}
+
 					if ($object->statut == Holiday::STATUS_VALIDATED) {	// If validated
+						// Button Approve / Refuse
 						if ($user->id == $object->fk_validator) {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valid" class="butAction">'.$langs->trans("Approve").'</a>';
 							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=refuse" class="butAction">'.$langs->trans("ActionRefuseCP").'</a>';
 						} else {
 							print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("NotTheAssignedApprover").'">'.$langs->trans("Approve").'</a>';
 							print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("NotTheAssignedApprover").'">'.$langs->trans("ActionRefuseCP").'</a>';
+
+							// Button Cancel (because we can't approve)
+							if (in_array($object->fk_user, $childids) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance))) {
+								if (($object->date_debut > dol_now()) || !empty($user->admin)) {
+									print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
+								} else {
+									print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("HolidayStarted").'-'.$langs->trans("NotAllowed").'">'.$langs->trans("ActionCancelCP").'</a>';
+								}
+							}
 						}
 					}
-					if (($user->id == $object->fk_validator || in_array($object->fk_user, $childids) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance))) && ($object->statut == 2 || $object->statut == 3)) {	// Status validated or approved
-						if (($object->date_debut > dol_now()) || $user->admin) {
-							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
-						} else {
-							print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("HolidayStarted").'">'.$langs->trans("ActionCancelCP").'</a>';
+					if ($object->statut == Holiday::STATUS_APPROVED) { // If validated or approved
+						if ($user->id == $object->fk_validator
+							|| in_array($object->fk_user, $childids)
+							|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance))) {
+							if (($object->date_debut > dol_now()) || !empty($user->admin)) {
+								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
+							} else {
+								print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("HolidayStarted").'-'.$langs->trans("NotAllowed").'">'.$langs->trans("ActionCancelCP").'</a>';
+							}
+						} else { // I have no rights on the user of the holiday.
+							if (!empty($user->admin)) {	// If current validator can't cancel an approved leave, we allow admin user
+								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
+							} else {
+								print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("ActionCancelCP").'</a>';
+							}
 						}
 					}
+
 					if ($cancreate && $object->statut == Holiday::STATUS_CANCELED) {
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=backtodraft" class="butAction">'.$langs->trans("SetToDraft").'</a>';
 					}

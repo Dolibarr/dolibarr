@@ -82,7 +82,8 @@ class BonPrelevement extends CommonObject
 
 	const STATUS_DRAFT = 0;
 	const STATUS_TRANSFERED = 1;
-	const STATUS_CREDITED = 2;
+	const STATUS_CREDITED = 2;		// STATUS_CREDITED and STATUS_DEBITED is same. Difference is in ->type
+	const STATUS_DEBITED = 2;		// STATUS_CREDITED and STATUS_DEBITED is same. Difference is in ->type
 
 
 	/**
@@ -154,8 +155,8 @@ class BonPrelevement extends CommonObject
 				}
 				$sql .= ",fk_prelevement_lignes";
 				$sql .= ") VALUES (";
-				$sql .= $invoice_id;
-				$sql .= ", ".$line_id;
+				$sql .= ((int) $invoice_id);
+				$sql .= ", ".((int) $line_id);
 				$sql .= ")";
 
 				if ($this->db->query($sql)) {
@@ -202,8 +203,8 @@ class BonPrelevement extends CommonObject
 			 */
 			$sql = "SELECT rowid";
 			$sql .= " FROM  ".MAIN_DB_PREFIX."prelevement_lignes";
-			$sql .= " WHERE fk_prelevement_bons = ".$this->id;
-			$sql .= " AND fk_soc =".$client_id;
+			$sql .= " WHERE fk_prelevement_bons = ".((int) $this->id);
+			$sql .= " AND fk_soc =".((int) $client_id);
 			$sql .= " AND code_banque = '".$this->db->escape($code_banque)."'";
 			$sql .= " AND code_guichet = '".$this->db->escape($code_guichet)."'";
 			$sql .= " AND number = '".$this->db->escape($number)."'";
@@ -347,8 +348,8 @@ class BonPrelevement extends CommonObject
 		if ($this->db->begin()) {
 			$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
 			$sql .= " SET statut = ".self::STATUS_TRANSFERED;
-			$sql .= " WHERE rowid = ".$this->id;
-			$sql .= " AND entity = ".$conf->entity;
+			$sql .= " WHERE rowid = ".((int) $this->id);
+			$sql .= " AND entity = ".((int) $conf->entity);
 
 			$result = $this->db->query($sql);
 			if (!$result) {
@@ -373,7 +374,7 @@ class BonPrelevement extends CommonObject
 			if (!$error) {
 				$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes";
 				$sql .= " SET statut = 2";
-				$sql .= " WHERE fk_prelevement_bons = ".$this->id;
+				$sql .= " WHERE fk_prelevement_bons = ".((int) $this->id);
 
 				if (!$this->db->query($sql)) {
 					dol_syslog(get_class($this)."::set_credite Erreur 1");
@@ -428,7 +429,7 @@ class BonPrelevement extends CommonObject
 			$sql .= ", statut = ".self::STATUS_CREDITED;
 			$sql .= ", date_credit = '".$this->db->idate($date)."'";
 			$sql .= " WHERE rowid=".((int) $this->id);
-			$sql .= " AND entity = ".$conf->entity;
+			$sql .= " AND entity = ".((int) $conf->entity);
 			$sql .= " AND statut = ".self::STATUS_TRANSFERED;
 
 			$resql = $this->db->query($sql);
@@ -527,7 +528,7 @@ class BonPrelevement extends CommonObject
 				if (!$error) {
 					$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes";
 					$sql .= " SET statut = 2";
-					$sql .= " WHERE fk_prelevement_bons = ".$this->id;
+					$sql .= " WHERE fk_prelevement_bons = ".((int) $this->id);
 
 					if (!$this->db->query($sql)) {
 						dol_syslog(get_class($this)."::set_infocredit Update lines Error");
@@ -581,8 +582,8 @@ class BonPrelevement extends CommonObject
 			$sql .= " , date_trans = '".$this->db->idate($date)."'";
 			$sql .= " , method_trans = ".((int) $method);
 			$sql .= " , statut = ".self::STATUS_TRANSFERED;
-			$sql .= " WHERE rowid = ".$this->id;
-			$sql .= " AND entity = ".$conf->entity;
+			$sql .= " WHERE rowid = ".((int) $this->id);
+			$sql .= " AND entity = ".((int) $conf->entity);
 			$sql .= " AND statut = 0";
 
 			if ($this->db->query($sql)) {
@@ -645,8 +646,8 @@ class BonPrelevement extends CommonObject
 		$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
 		$sql .= " WHERE pf.fk_prelevement_lignes = pl.rowid";
 		$sql .= " AND pl.fk_prelevement_bons = p.rowid";
-		$sql .= " AND p.rowid = ".$this->id;
-		$sql .= " AND p.entity = ".$conf->entity;
+		$sql .= " AND p.rowid = ".((int) $this->id);
+		$sql .= " AND p.entity = ".((int) $conf->entity);
 		if ($amounts) {
 			if ($this->type == 'bank-transfer') {
 				$sql .= " GROUP BY fk_facture_fourn";
@@ -867,7 +868,7 @@ class BonPrelevement extends CommonObject
 			$sql .= " AND f.total_ttc > 0";
 			$sql .= " AND pfd.ext_payment_id IS NULL";
 
-			dol_syslog(__METHOD__."::Read invoices, sql=".$sql, LOG_DEBUG);
+			dol_syslog(__METHOD__."::Read invoices,", LOG_DEBUG);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -988,10 +989,10 @@ class BonPrelevement extends CommonObject
 				$sql = "SELECT substring(ref from char_length(ref) - 1)";
 				$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons";
 				$sql .= " WHERE ref LIKE '%".$this->db->escape($ref)."%'";
-				$sql .= " AND entity = ".$conf->entity;
+				$sql .= " AND entity = ".((int) $conf->entity);
 				$sql .= " ORDER BY ref DESC LIMIT 1";
 
-				dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+				dol_syslog(get_class($this)."::create", LOG_DEBUG);
 				$resql = $this->db->query($sql);
 
 				if ($resql) {
@@ -1075,7 +1076,7 @@ class BonPrelevement extends CommonObject
 						$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_facture_demande";
 						$sql .= " SET traite = 1";
 						$sql .= ", date_traite = '".$this->db->idate($now)."'";
-						$sql .= ", fk_prelevement_bons = ".$this->id;
+						$sql .= ", fk_prelevement_bons = ".((int) $this->id);
 						$sql .= " WHERE rowid = ".((int) $fac[1]);
 
 						$resql = $this->db->query($sql);
@@ -1140,7 +1141,7 @@ class BonPrelevement extends CommonObject
 				$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
 				$sql .= " SET amount = ".price2num($this->total);
 				$sql .= " WHERE rowid = ".((int) $this->id);
-				$sql .= " AND entity = ".$conf->entity;
+				$sql .= " AND entity = ".((int) $conf->entity);
 
 				$resql = $this->db->query($sql);
 				if (!$resql) {
@@ -1204,7 +1205,7 @@ class BonPrelevement extends CommonObject
 		}
 
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_facture WHERE fk_prelevement_lignes IN (SELECT rowid FROM ".MAIN_DB_PREFIX."prelevement_lignes WHERE fk_prelevement_bons = ".$this->id.")";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_facture WHERE fk_prelevement_lignes IN (SELECT rowid FROM ".MAIN_DB_PREFIX."prelevement_lignes WHERE fk_prelevement_bons = ".((int) $this->id).")";
 			$resql1 = $this->db->query($sql);
 			if (!$resql1) {
 				dol_print_error($this->db);
@@ -1212,7 +1213,7 @@ class BonPrelevement extends CommonObject
 		}
 
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_lignes WHERE fk_prelevement_bons = ".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_lignes WHERE fk_prelevement_bons = ".((int) $this->id);
 			$resql2 = $this->db->query($sql);
 			if (!$resql2) {
 				dol_print_error($this->db);
@@ -1220,7 +1221,7 @@ class BonPrelevement extends CommonObject
 		}
 
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_bons WHERE rowid = ".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_bons WHERE rowid = ".((int) $this->id);
 			$resql3 = $this->db->query($sql);
 			if (!$resql3) {
 				dol_print_error($this->db);
@@ -1228,7 +1229,7 @@ class BonPrelevement extends CommonObject
 		}
 
 		if (!$error) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_facture_demande SET fk_prelevement_bons = NULL, traite = 0 WHERE fk_prelevement_bons = ".$this->id;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_facture_demande SET fk_prelevement_bons = NULL, traite = 0 WHERE fk_prelevement_bons = ".((int) $this->id);
 			$resql4 = $this->db->query($sql);
 			if (!$resql4) {
 				dol_print_error($this->db);
@@ -1340,18 +1341,14 @@ class BonPrelevement extends CommonObject
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Delete a notification def by id
 	 *
 	 *	@param	int		$rowid		id of notification
 	 *	@return	int					0 if OK, <0 if KO
 	 */
-	public function DeleteNotificationById($rowid)
+	public function deleteNotificationById($rowid)
 	{
-		// phpcs:enable
-		$result = 0;
-
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
 		$sql .= " WHERE rowid = ".((int) $rowid);
 
@@ -1362,21 +1359,23 @@ class BonPrelevement extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Delete a notification
 	 *
-	 *	@param	int	$user		notification user
-	 *	@param	string	$action		notification action
-	 *	@return	int					>0 if OK, <0 if KO
+	 *	@param	int|User	$user		notification user
+	 *	@param	string		$action		notification action
+	 *	@return	int						>0 if OK, <0 if KO
 	 */
-	public function DeleteNotification($user, $action)
+	public function deleteNotification($user, $action)
 	{
-		// phpcs:enable
-		$result = 0;
+		if (is_object($user)) {
+			$userid = $user->id;
+		} else {	// If user is an id
+			$userid = $user;
+		}
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
-		$sql .= " WHERE fk_user=".$user." AND fk_action='".$this->db->escape($action)."'";
+		$sql .= " WHERE fk_user=".((int) $userid)." AND fk_action='".$this->db->escape($action)."'";
 
 		if ($this->db->query($sql)) {
 			return 0;
@@ -1389,28 +1388,34 @@ class BonPrelevement extends CommonObject
 	/**
 	 *	Add a notification
 	 *
-	 *	@param	DoliDB	$db			database handler
-	 *	@param	int	$user		notification user
-	 *	@param	string	$action		notification action
-	 *	@return	int					0 if OK, <0 if KO
+	 *	@param	DoliDB		$db			database handler
+	 *	@param	int|User	$user		notification user
+	 *	@param	string		$action		notification action
+	 *	@return	int						0 if OK, <0 if KO
 	 */
-	public function AddNotification($db, $user, $action)
+	public function addNotification($db, $user, $action)
 	{
 		// phpcs:enable
 		$result = 0;
 
-		if ($this->DeleteNotification($user, $action) == 0) {
+		if (is_object($user)) {
+			$userid = $user->id;
+		} else {	// If user is an id
+			$userid = $user;
+		}
+
+		if ($this->deleteNotification($user, $action) == 0) {
 			$now = dol_now();
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_user, fk_soc, fk_contact, fk_action)";
-			$sql .= " VALUES ('".$this->db->idate($now)."', ".$user.", 'NULL', 'NULL', '".$this->db->escape($action)."')";
+			$sql .= " VALUES ('".$this->db->idate($now)."', ".((int) $userid).", 'NULL', 'NULL', '".$this->db->escape($action)."')";
 
 			dol_syslog("adnotiff: ".$sql);
 			if ($this->db->query($sql)) {
 				$result = 0;
 			} else {
 				$result = -1;
-				dol_syslog(get_class($this)."::AddNotification Error $result");
+				dol_syslog(get_class($this)."::addNotification Error $result");
 			}
 		}
 
@@ -1490,7 +1495,7 @@ class BonPrelevement extends CommonObject
 				$sql .= " ".MAIN_DB_PREFIX."societe as soc,";
 				$sql .= " ".MAIN_DB_PREFIX."c_country as c,";
 				$sql .= " ".MAIN_DB_PREFIX."societe_rib as rib";
-				$sql .= " WHERE pl.fk_prelevement_bons = ".$this->id;
+				$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $this->id);
 				$sql .= " AND pl.rowid = pf.fk_prelevement_lignes";
 				$sql .= " AND pf.fk_facture = f.rowid";
 				$sql .= " AND f.fk_soc = soc.rowid";
@@ -1606,7 +1611,7 @@ class BonPrelevement extends CommonObject
 				$sql .= " ".MAIN_DB_PREFIX."societe as soc,";
 				$sql .= " ".MAIN_DB_PREFIX."c_country as c,";
 				$sql .= " ".MAIN_DB_PREFIX."societe_rib as rib";
-				$sql .= " WHERE pl.fk_prelevement_bons = ".$this->id;
+				$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $this->id);
 				$sql .= " AND pl.rowid = pf.fk_prelevement_lignes";
 				$sql .= " AND pf.fk_facture_fourn = f.rowid";
 				$sql .= " AND f.fk_soc = soc.rowid";
@@ -1696,7 +1701,7 @@ class BonPrelevement extends CommonObject
 				$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 				$sql .= " ".MAIN_DB_PREFIX."facture as f,";
 				$sql .= " ".MAIN_DB_PREFIX."prelevement_facture as pf";
-				$sql .= " WHERE pl.fk_prelevement_bons = ".$this->id;
+				$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $this->id);
 				$sql .= " AND pl.rowid = pf.fk_prelevement_lignes";
 				$sql .= " AND pf.fk_facture = f.rowid";
 
@@ -1722,7 +1727,7 @@ class BonPrelevement extends CommonObject
 				$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 				$sql .= " ".MAIN_DB_PREFIX."facture_fourn as f,";
 				$sql .= " ".MAIN_DB_PREFIX."prelevement_facture as pf";
-				$sql .= " WHERE pl.fk_prelevement_bons = ".$this->id;
+				$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $this->id);
 				$sql .= " AND pl.rowid = pf.fk_prelevement_lignes";
 				$sql .= " AND pf.fk_facture_fourn = f.rowid";
 
@@ -2343,17 +2348,22 @@ class BonPrelevement extends CommonObject
 			//$langs->load("mymodule");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('StatusWaiting');
 			$this->labelStatus[self::STATUS_TRANSFERED] = $langs->trans('StatusTrans');
-			$this->labelStatus[self::STATUS_CREDITED] = $langs->trans('StatusCredited');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('StatusWaiting');
 			$this->labelStatusShort[self::STATUS_TRANSFERED] = $langs->trans('StatusTrans');
-			$this->labelStatusShort[self::STATUS_CREDITED] = $langs->trans('StatusCredited');
+			if ($this->type == 'bank-transfer') {
+				$this->labelStatus[self::STATUS_DEBITED] = $langs->trans('StatusDebited');
+				$this->labelStatusShort[self::STATUS_DEBITED] = $langs->trans('StatusDebited');
+			} else {
+				$this->labelStatus[self::STATUS_CREDITED] = $langs->trans('StatusCredited');
+				$this->labelStatusShort[self::STATUS_CREDITED] = $langs->trans('StatusCredited');
+			}
 		}
 
 		$statusType = 'status1';
 		if ($status == self::STATUS_TRANSFERED) {
 			$statusType = 'status3';
 		}
-		if ($status == self::STATUS_CREDITED) {
+		if ($status == self::STATUS_CREDITED || $status == self::STATUS_DEBITED) {
 			$statusType = 'status6';
 		}
 

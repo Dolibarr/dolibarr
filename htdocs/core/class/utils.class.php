@@ -319,9 +319,9 @@ class Utils
 			}
 			if ($dolibarr_main_db_character_set == 'utf8mb4') {
 				// We save output into utf8mb4 charset
-				$param .= " --default-character-set=utf8mb4";
+				$param .= " --default-character-set=utf8mb4 --no-tablespaces";
 			} else {
-				$param .= " --default-character-set=utf8"; // We always save output into utf8 charset
+				$param .= " --default-character-set=utf8 --no-tablespaces"; // We always save output into utf8 charset
 			}
 			$paramcrypted = $param;
 			$paramclear = $param;
@@ -354,7 +354,7 @@ class Utils
 					$execmethod = 1;
 				}
 
-				dol_syslog("Utils::dumpDatabase execmethod=".$execmethod." command:".$fullcommandcrypted, LOG_DEBUG);
+				dol_syslog("Utils::dumpDatabase execmethod=".$execmethod." command:".$fullcommandcrypted, LOG_INFO);
 
 				// TODO Replace with executeCLI function
 				if ($execmethod == 1) {
@@ -593,12 +593,16 @@ class Utils
 	/**
 	 * Execute a CLI command.
 	 *
-	 * @param 	string	$command		Command line to execute.
-	 * @param 	string	$outputfile		Output file (used only when method is 2). For exemple $conf->admin->dir_temp.'/out.tmp';
-	 * @param	int		$execmethod		0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
-	 * @return	array					array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
+	 * @param 	string	$command			Command line to execute.
+	 * 										Warning: The command line is sanitize so can't contains any redirection char '>'. Use param $redirectionfile if you need it.
+	 * @param 	string	$outputfile			A path for an output file (used only when method is 2). For example: $conf->admin->dir_temp.'/out.tmp';
+	 * @param	int		$execmethod			0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
+	 * @param	string	$redirectionfile	If defined, a redirection of output to this files is added.
+	 * @param	int		$noescapecommand	1=Do not escape command. Warning: Using this parameter need you alreay sanitized the command. if not, it will lead to security vulnerability.
+	 * 										This parameter is provided for backward compatibility with external modules. Always use 0 in core.
+	 * @return	array						array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
 	 */
-	public function executeCLI($command, $outputfile, $execmethod = 0)
+	public function executeCLI($command, $outputfile, $execmethod = 0, $redirectionfile = null, $noescapecommand = 0)
 	{
 		global $conf, $langs;
 
@@ -606,7 +610,12 @@ class Utils
 		$output = '';
 		$error = '';
 
-		$command = escapeshellcmd($command);
+		if (empty($noescapecommand)) {
+			$command = escapeshellcmd($command);
+		}
+		if ($redirectionfile) {
+			$command .= " > ".dol_sanitizePathName($redirectionfile);
+		}
 		$command .= " 2>&1";
 
 		if (!empty($conf->global->MAIN_EXEC_USE_POPEN)) {
@@ -1079,11 +1088,11 @@ class Utils
 					fwrite($handle, "/*!40000 ALTER TABLE `".$table."` DISABLE KEYS */;\n");
 				}
 
-				$sql = 'SELECT * FROM '.$table; // Here SELECT * is allowed because we don't have definition of columns to take
+				$sql = "SELECT * FROM ".$table; // Here SELECT * is allowed because we don't have definition of columns to take
 				$result = $db->query($sql);
 				while ($row = $db->fetch_row($result)) {
 					// For each row of data we print a line of INSERT
-					fwrite($handle, 'INSERT '.$delayed.$ignore.'INTO `'.$table.'` VALUES (');
+					fwrite($handle, "INSERT ".$delayed.$ignore."INTO ".$table." VALUES (");
 					$columns = count($row);
 					for ($j = 0; $j < $columns; $j++) {
 						// Processing each columns of the row to ensure that we correctly save the value (eg: add quotes for string - in fact we add quotes for everything, it's easier)

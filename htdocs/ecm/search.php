@@ -84,6 +84,12 @@ if (!empty($section)) {
 	}
 }
 
+$permtoread = $user->rights->ecm->read;
+
+if (!$permtoread) {
+	accessforbidden();
+}
+
 
 /*
  * Actions

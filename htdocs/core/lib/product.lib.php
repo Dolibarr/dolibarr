@@ -360,7 +360,8 @@ function product_lot_admin_prepare_head()
  */
 function show_stats_for_company($product, $socid)
 {
-	global $conf, $langs, $user, $db;
+	global $conf, $langs, $user, $db, $hookmanager;
+
 	$form = new Form($db);
 
 	$nblines = 0;
@@ -558,6 +559,12 @@ function show_stats_for_company($product, $socid)
 		print '</td>';
 		print '</tr>';
 	}
+	$parameters = array('socid'=>$socid);
+	$reshook = $hookmanager->executeHooks('addMoreProductStat', $parameters, $product, $nblines); // Note that $action and $object may have been modified by some hooks
+	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+	print $hookmanager->resPrint;
+
 
 	return $nblines++;
 }

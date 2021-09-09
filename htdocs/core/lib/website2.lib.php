@@ -223,7 +223,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		}
 
 		// Add "has translation pages"
-		$sql = 'SELECT rowid as id, lang, pageurl from '.MAIN_DB_PREFIX.'website_page where fk_page IN ('.$db->sanitize($objectpage->id.($translationof ? ', '.$translationof : '')).")";
+		$sql = "SELECT rowid as id, lang, pageurl from ".MAIN_DB_PREFIX.'website_page where fk_page IN ('.$db->sanitize($objectpage->id.($translationof ? ", ".$translationof : '')).")";
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num_rows = $db->num_rows($resql);
@@ -283,11 +283,11 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 
 
 /**
- * Save content of the index.php and/or wrapper.php page
+ * Save content of the index.php and/or the wrapper.php page
  *
  * @param	string		$pathofwebsite			Path of website root
  * @param	string		$fileindex				Full path of file index.php
- * @param	string		$filetpl				File tpl the index.php page redirect to
+ * @param	string		$filetpl				File tpl the index.php page redirect to (used only if $fileindex is provided)
  * @param	string		$filewrapper			Full path of file wrapper.php
  * @return	boolean								True if OK
  */

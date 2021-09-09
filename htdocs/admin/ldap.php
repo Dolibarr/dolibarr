@@ -255,11 +255,13 @@ print '<td colspan="3">'.$langs->trans("ForANonAnonymousAccess").'</td>';
 print "</tr>\n";
 
 // DNAdmin
+print '<!-- LDAP_ADMIN_DN -->';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPAdminDn").'</td><td>';
 print '<input size="25" type="text" name="admin" value="'.$conf->global->LDAP_ADMIN_DN.'">';
 print '</td><td>'.$langs->trans("LDAPAdminDnExample").'</td></tr>';
 
 // Pass
+print '<!-- LDAP_ADMIN_PASS -->';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPPassword").'</td><td>';
 if (!empty($conf->global->LDAP_ADMIN_PASS)) {
 	print '<input size="25" type="password" name="pass" value="'.$conf->global->LDAP_ADMIN_PASS.'">'; // je le met en visible pour test
@@ -272,7 +274,7 @@ print '</table>';
 
 print dol_get_fiche_end();
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+print $form->buttonsSaveCancel("Modify", '');
 
 print '</form>';
 

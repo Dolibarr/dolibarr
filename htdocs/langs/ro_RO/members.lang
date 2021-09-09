@@ -213,3 +213,5 @@ SendReminderForExpiredSubscription=Trimite un remainder pe email membrilor când
 MembershipPaid=Adeziune plătită pentru perioada curentă (până la %s)
 YouMayFindYourInvoiceInThisEmail=Găseşti factura ta atașată acestui email
 XMembersClosed=%s membru(i) închis
+XExternalUserCreated=%s utilizator(i) externi creaţi
+ForceMemberNature=Impune natura membrului (Persoană fizică sau Presoană juridică)

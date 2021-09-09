@@ -172,12 +172,13 @@ print load_fiche_titre($langs->trans("ReceptionsSetup"), $linkback, 'title_setup
 print '<br>';
 $head = reception_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'reception', $langs->trans("Receptions"), -1, 'sending');
+print dol_get_fiche_head($head, 'reception', $langs->trans("Receptions"), -1, 'reception');
 
 // Reception numbering model
 
 print load_fiche_titre($langs->trans("ReceptionsNumberingModules"));
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
@@ -224,7 +225,7 @@ foreach ($dirmodels as $reldir) {
 							$langs->load("errors");
 							print '<div class="error">'.$langs->trans($tmp).'</div>';
 						} elseif ($tmp == 'NotConfigured') {
-							print $langs->trans($tmp);
+							print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
 						} else {
 							print $tmp;
 						}
@@ -272,8 +273,10 @@ foreach ($dirmodels as $reldir) {
 	}
 }
 
-print '</table><br>';
+print '</table>';
+print '</div>';
 
+print '<br>';
 
 /*
  *  Documents models for Receptions Receipt
@@ -302,6 +305,7 @@ if ($resql) {
 	dol_print_error($db);
 }
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
@@ -417,6 +421,8 @@ foreach ($dirmodels as $reldir) {
 }
 
 print '</table>';
+print '</div>';
+
 print '<br>';
 
 
@@ -459,12 +465,12 @@ print "</td></tr>\n";
 
 print '<tr><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftContractCards"), $htmltext).'<br>';
-print '<input size="50" class="flat" type="text" name="RECEPTION_DRAFT_WATERMARK" value="'.$conf->global->RECEPTION_DRAFT_WATERMARK.'">';
+print '<input class="flat minwidth200" type="text" name="RECEPTION_DRAFT_WATERMARK" value="'.$conf->global->RECEPTION_DRAFT_WATERMARK.'">';
 print "</td></tr>\n";
 */
 print '</table>';
 
-//print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+//print $form->buttonsSaveCancel("Modify", '');
 
 print '</form>';
 

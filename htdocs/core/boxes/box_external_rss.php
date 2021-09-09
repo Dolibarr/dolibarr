@@ -150,7 +150,7 @@ class box_external_rss extends ModeleBoxes
 				//$item['atom_content']
 			}
 			if (is_numeric($date)) {
-				$date = dol_print_date($date, "dayhour");
+				$date = dol_print_date($date, "dayhour", 'tzuserrel');
 			}
 
 			$isutf8 = utf8_check($title);

@@ -2,14 +2,15 @@
 /* Copyright (C) 2002-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
- * Copyright (C) 2012      Cédric Salvador       <csalvador@gpcsolutions.fr>
- * Copyright (C) 2014      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2014      Marcos García 		 <marcosgdf@gmail.com>
- * Copyright (C) 2015      Juanjo Menent		 <jmenent@2byte.es>
- * Copyright (C) 2018      Ferran Marcet		 <fmarcet@2byte.es>
- * Copyright (C) 2018      Thibault FOUCART		 <support@ptibogxiv.net>
+ * Copyright (C) 2012       Cédric Salvador       <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014       Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2014       Marcos García 		 <marcosgdf@gmail.com>
+ * Copyright (C) 2015       Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2018       Ferran Marcet		 <fmarcet@2byte.es>
+ * Copyright (C) 2018       Thibault FOUCART		 <support@ptibogxiv.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2020      Andreu Bisquerra Gaya <jove@bisquerra.com>
+ * Copyright (C) 2020       Andreu Bisquerra Gaya <jove@bisquerra.com>
+ * Copyright (C) 2021       OpenDsi					<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -291,8 +292,8 @@ class Paiement extends CommonObject
 		$note = ($this->note_private ? $this->note_private : $this->note);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, ref_ext, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, ext_payment_id, ext_payment_site, fk_user_creat, pos_change)";
-		$sql .= " VALUES (".$conf->entity.", '".$this->db->escape($this->ref)."', '".$this->db->escape($this->ref_ext)."', '".$this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', ".$total.", ".$mtotal.", ".$this->paiementid.", ";
-		$sql .= "'".$this->db->escape($num_payment)."', '".$this->db->escape($note)."', ".($this->ext_payment_id ? "'".$this->db->escape($this->ext_payment_id)."'" : "null").", ".($this->ext_payment_site ? "'".$this->db->escape($this->ext_payment_site)."'" : "null").", ".$user->id.", ".((float) $this->pos_change).")";
+		$sql .= " VALUES (".((int) $conf->entity).", '".$this->db->escape($this->ref)."', '".$this->db->escape($this->ref_ext)."', '".$this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', ".((float) $total).", ".((float) $mtotal).", ".((int) $this->paiementid).", ";
+		$sql .= "'".$this->db->escape($num_payment)."', '".$this->db->escape($note)."', ".($this->ext_payment_id ? "'".$this->db->escape($this->ext_payment_id)."'" : "null").", ".($this->ext_payment_site ? "'".$this->db->escape($this->ext_payment_site)."'" : "null").", ".((int) $user->id).", ".((float) $this->pos_change).")";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -304,7 +305,7 @@ class Paiement extends CommonObject
 				if (is_numeric($amount) && $amount <> 0) {
 					$amount = price2num($amount);
 					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiement_facture (fk_facture, fk_paiement, amount, multicurrency_amount)';
-					$sql .= ' VALUES ('.$facid.', '.$this->id.', \''.$amount.'\', \''.$this->multicurrency_amounts[$key].'\')';
+					$sql .= ' VALUES ('.((int) $facid).', '.((int) $this->id).", ".((float) $amount).", ".((float) $this->multicurrency_amounts[$key]).')';
 
 					dol_syslog(get_class($this).'::create Amount line '.$key.' insert paiement_facture', LOG_DEBUG);
 					$resql = $this->db->query($sql);
@@ -532,12 +533,12 @@ class Paiement extends CommonObject
 
 		// Delete payment (into paiement_facture and paiement)
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiement_facture';
-		$sql .= ' WHERE fk_paiement = '.$this->id;
+		$sql .= ' WHERE fk_paiement = '.((int) $this->id);
 		dol_syslog($sql);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiement';
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog($sql);
 			$result = $this->db->query($sql);
 			if (!$result) {
@@ -705,6 +706,17 @@ class Paiement extends CommonObject
 					);
 				}
 
+				// Add link 'InvoiceRefused' in bank_url
+				if (! $error && $label == '(InvoiceRefused)') {
+					$result=$acc->add_url_line(
+						$bank_line_id,
+						$this->id_prelevement,
+						DOL_URL_ROOT.'/compta/prelevement/card.php?id=',
+						$this->num_prelevement,
+						'withdraw'
+					);
+				}
+
 				if (!$error && !$notrigger) {
 					// Appel des triggers
 					$result = $this->call_trigger('PAYMENT_ADD_TO_BANK', $user);
@@ -744,7 +756,7 @@ class Paiement extends CommonObject
 	{
 		// phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' set fk_bank = '.((int) $id_bank);
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this).'::update_fk_bank', LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -776,7 +788,7 @@ class Paiement extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET datep = '".$this->db->idate($date)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			$result = $this->db->query($sql);
 			if (!$result) {
@@ -788,7 +800,7 @@ class Paiement extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX.'bank';
 			$sql .= " SET dateo = '".$this->db->idate($date)."', datev = '".$this->db->idate($date)."'";
-			$sql .= " WHERE rowid IN (SELECT fk_bank FROM ".MAIN_DB_PREFIX."bank_url WHERE type = '".$this->db->escape($type)."' AND url_id = ".$this->id.")";
+			$sql .= " WHERE rowid IN (SELECT fk_bank FROM ".MAIN_DB_PREFIX."bank_url WHERE type = '".$this->db->escape($type)."' AND url_id = ".((int) $this->id).")";
 			$sql .= " AND rappro = 0";
 
 			$result = $this->db->query($sql);
@@ -827,7 +839,7 @@ class Paiement extends CommonObject
 		if (!empty($num) && $this->statut != 1) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET num_paiement = '".$this->db->escape($num)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::update_num", LOG_DEBUG);
 			$result = $this->db->query($sql);
@@ -944,7 +956,7 @@ class Paiement extends CommonObject
 	{
 		$sql = 'SELECT pf.fk_facture';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'facture as f'; // We keep link on invoice to allow use of some filters on invoice
-		$sql .= ' WHERE pf.fk_facture = f.rowid AND pf.fk_paiement = '.$this->id;
+		$sql .= ' WHERE pf.fk_facture = f.rowid AND pf.fk_paiement = '.((int) $this->id);
 		if ($filter) {
 			$sql .= ' AND '.$filter;
 		}
@@ -977,7 +989,7 @@ class Paiement extends CommonObject
 	{
 		$sql = 'SELECT pf.fk_facture, pf.amount';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
-		$sql .= ' WHERE pf.fk_paiement = '.$this->id;
+		$sql .= ' WHERE pf.fk_paiement = '.((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$i = 0;

@@ -38,7 +38,7 @@ if (!empty($conf->projet->enabled)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('compta', 'banks', 'bills', 'hrm'));
+$langs->loadLangs(array('compta', 'banks', 'bills', 'hrm', 'projects'));
 
 $action				= GETPOST('action', 'aZ09');
 $massaction			= GETPOST('massaction', 'alpha');
@@ -192,7 +192,7 @@ if (!empty($conf->projet->enabled)) {
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (cs.fk_user = u.rowid)";
 $sql .= " WHERE cs.fk_type = c.id";
-$sql .= " AND cs.entity = ".$conf->entity;
+$sql .= " AND cs.entity = ".((int) $conf->entity);
 // Search criteria
 if ($search_ref) {
 	$sql .= " AND cs.ref = '".$db->escape($search_ref)."'";
@@ -209,16 +209,16 @@ if (!empty($search_users)) {
 	$sql .= ' AND cs.fk_user IN('.implode(', ', $search_users).')';
 }
 if (!empty($search_type) && $search_type > 0) {
-	$sql .= ' AND cs.fk_mode_reglement='.$search_type;
+	$sql .= ' AND cs.fk_mode_reglement='.((int) $search_type);
 }
 if (!empty($search_account) && $search_account > 0) {
-	$sql .= ' AND cs.fk_account='.$search_account;
+	$sql .= ' AND cs.fk_account='.((int) $search_account);
 }
 if ($search_amount) {
 	$sql .= natural_search("cs.amount", $search_amount, 1);
 }
 if ($search_status != '' && $search_status >= 0) {
-	$sql .= " AND cs.paye = ".$db->escape($search_status);
+	$sql .= " AND cs.paye = ".((int) $search_status);
 }
 $sql .= dolSqlDateFilter("cs.periode", $search_day_lim, $search_month_lim, $search_year_lim);
 //$sql.= dolSqlDateFilter("cs.periode", 0, 0, $year);
@@ -230,8 +230,8 @@ if ($year > 0) {
 	$sql .= "OR (cs.periode IS NULL AND date_format(cs.date_ech, '%Y') = '".$db->escape($year)."')";
 	$sql .= ")";
 }
-if ($search_typeid) {
-	$sql .= " AND cs.fk_type=".$db->escape($search_typeid);
+if ($search_typeid > 0) {
+	$sql .= " AND cs.fk_type = ".((int) $search_typeid);
 }
 $sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle, cs.fk_account, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, pay.code, u.lastname";
 if (!empty($conf->projet->enabled)) {
@@ -452,13 +452,13 @@ if (!empty($arrayfields['cs.rowid']['checked'])) {
 	print_liste_field_titre($arrayfields['cs.rowid']['label'], $_SERVER["PHP_SELF"], "cs.rowid", '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.libelle']['checked'])) {
-	print_liste_field_titre($arrayfields['cs.libelle']['label'], $_SERVER["PHP_SELF"], "cs.libelle", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.libelle']['label'], $_SERVER["PHP_SELF"], "cs.libelle,cs.periode", '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.fk_type']['checked'])) {
-	print_liste_field_titre($arrayfields['cs.fk_type']['label'], $_SERVER["PHP_SELF"], "cs.fk_type", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.fk_type']['label'], $_SERVER["PHP_SELF"], "cs.fk_type,cs.periode", '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.date_ech']['checked'])) {
-	print_liste_field_titre($arrayfields['cs.date_ech']['label'], $_SERVER["PHP_SELF"], "cs.date_ech", '', $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($arrayfields['cs.date_ech']['label'], $_SERVER["PHP_SELF"], "cs.date_ech,cs.periode", '', $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['cs.periode']['checked'])) {
 	print_liste_field_titre($arrayfields['cs.periode']['label'], $_SERVER["PHP_SELF"], "cs.periode", '', $param, '', $sortfield, $sortorder, 'center ');
@@ -467,19 +467,19 @@ if (!empty($arrayfields['p.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.fk_user']['checked'])) {
-	print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname", "", $param, 'class="left"', $sortfield, $sortorder);
+	print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname,cs.periode", "", $param, 'class="left"', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.fk_mode_reglement']['checked'])) {
-	print_liste_field_titre($arrayfields['cs.fk_mode_reglement']['label'], $_SERVER["PHP_SELF"], "cs.fk_mode_reglement", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.fk_mode_reglement']['label'], $_SERVER["PHP_SELF"], "cs.fk_mode_reglement,cs.periode", '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.fk_account']['checked'])) {
-	print_liste_field_titre($arrayfields['cs.fk_account']['label'], $_SERVER["PHP_SELF"], "cs.fk_account", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.fk_account']['label'], $_SERVER["PHP_SELF"], "cs.fk_account,cs.periode", '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.amount']['checked'])) {
-	print_liste_field_titre($arrayfields['cs.amount']['label'], $_SERVER["PHP_SELF"], "cs.amount", '', $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.amount']['label'], $_SERVER["PHP_SELF"], "cs.amount,cs.periode", '', $param, 'class="right"', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.paye']['checked'])) {
-	print_liste_field_titre($arrayfields['cs.paye']['label'], $_SERVER["PHP_SELF"], "cs.paye", '', $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.paye']['label'], $_SERVER["PHP_SELF"], "cs.paye,cs.periode", '', $param, 'class="right"', $sortfield, $sortorder);
 }
 
 // Hook fields

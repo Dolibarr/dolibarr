@@ -47,7 +47,7 @@ function facture_prepare_head($object)
 
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
-		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/contact.php?facid='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/contact.php?facid='.urlencode($object->id);
 		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
@@ -60,7 +60,7 @@ function facture_prepare_head($object)
 		$nbStandingOrders = 0;
 		$sql = "SELECT COUNT(pfd.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-		$sql .= " WHERE pfd.fk_facture = ".$object->id;
+		$sql .= " WHERE pfd.fk_facture = ".((int) $object->id);
 		$sql .= " AND pfd.ext_payment_id IS NULL";
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -71,7 +71,7 @@ function facture_prepare_head($object)
 		} else {
 			dol_print_error($db);
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.urlencode($object->id);
 		$head[$h][1] = $langs->trans('StandingOrders');
 		if ($nbStandingOrders > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbStandingOrders.'</span>';
@@ -239,10 +239,10 @@ function getCustomerInvoicePieChart($socid = 0)
 	$sql .= " WHERE f.fk_soc = s.rowid";
 	$sql .= " AND f.entity IN (".getEntity('facture').")";
 	if ($user->socid) {
-		$sql .= ' AND f.fk_soc = '.$user->socid;
+		$sql .= ' AND f.fk_soc = '.((int) $user->socid);
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " GROUP BY f.fk_statut";
 
@@ -256,7 +256,7 @@ function getCustomerInvoicePieChart($socid = 0)
 	$i = 0;
 
 	$total = 0;
-	$vals = [];
+	$vals = array();
 
 	while ($i < $num) {
 		$row = $db->fetch_row($resql);
@@ -279,14 +279,14 @@ function getCustomerInvoicePieChart($socid = 0)
 	$result .= '</tr>';
 
 	$objectstatic = new Facture($db);
-	$array = [Facture::STATUS_DRAFT, Facture::STATUS_VALIDATED, Facture::STATUS_CLOSED, Facture::STATUS_ABANDONED];
-	$dataseries = [];
+	$array = array(Facture::STATUS_DRAFT, Facture::STATUS_VALIDATED, Facture::STATUS_CLOSED, Facture::STATUS_ABANDONED);
+	$dataseries = array();
 
 	foreach ($array as $status) {
 		$objectstatic->statut = $status;
 		$objectstatic->paye = $status == Facture::STATUS_CLOSED ? -1 : 0;
 
-		$dataseries[] = [$objectstatic->getLibStatut(1), (isset($vals[$status]) ? (int) $vals[$status] : 0)];
+		$dataseries[] = array($objectstatic->getLibStatut(1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
 		if ($status == Facture::STATUS_DRAFT) {
 			$colorseries[$status] = '-'.$badgeStatus0;
 		}
@@ -359,10 +359,10 @@ function getPurchaseInvoicePieChart($socid = 0)
 	$sql .= " WHERE f.fk_soc = s.rowid";
 	$sql .= " AND f.entity IN (".getEntity('facture_fourn').")";
 	if ($user->socid) {
-		$sql .= ' AND f.fk_soc = '.$user->socid;
+		$sql .= ' AND f.fk_soc = '.((int) $user->socid);
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " GROUP BY f.fk_statut";
 
@@ -376,7 +376,7 @@ function getPurchaseInvoicePieChart($socid = 0)
 	$i = 0;
 
 	$total = 0;
-	$vals = [];
+	$vals = array();
 
 	while ($i < $num) {
 		$row = $db->fetch_row($resql);
@@ -400,14 +400,14 @@ function getPurchaseInvoicePieChart($socid = 0)
 	$result .= '</tr>';
 
 	$objectstatic = new FactureFournisseur($db);
-	$array = [FactureFournisseur::STATUS_DRAFT, FactureFournisseur::STATUS_VALIDATED, FactureFournisseur::STATUS_CLOSED, FactureFournisseur::STATUS_ABANDONED];
-	$dataseries = [];
+	$array = array(FactureFournisseur::STATUS_DRAFT, FactureFournisseur::STATUS_VALIDATED, FactureFournisseur::STATUS_CLOSED, FactureFournisseur::STATUS_ABANDONED);
+	$dataseries = array();
 
 	foreach ($array as $status) {
 		$objectstatic->statut = $status;
 		$objectstatic->paye = $status == FactureFournisseur::STATUS_CLOSED ? -1 : 0;
 
-		$dataseries[] = [$objectstatic->getLibStatut(1), (isset($vals[$status]) ? (int) $vals[$status] : 0)];
+		$dataseries[] = array($objectstatic->getLibStatut(1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
 		if ($status == FactureFournisseur::STATUS_DRAFT) {
 			$colorseries[$status] = '-'.$badgeStatus0;
 		}
@@ -458,8 +458,9 @@ function getPurchaseInvoicePieChart($socid = 0)
 
 /**
  * Return an HTML table that contains a pie chart of the number of customers or supplier invoices
- * @param string $mode Can be customer or fourn
- * @return string A HTML table that contains a pie chart of customers or supplier invoices
+ *
+ * @param 	string 	$mode 		Can be 'customers' or 'suppliers'
+ * @return 	string 				A HTML table that contains a pie chart of customers or supplier invoices
  */
 function getNumberInvoicesPieChart($mode)
 {
@@ -482,52 +483,60 @@ function getNumberInvoicesPieChart($mode)
 		$sql = "SELECT sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub30, 'Y-m-d')."'", 1, 0).") as nblate30";
 		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub15, 'Y-m-d')."'", 1, 0).") as nblate15";
 		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($now, 'Y-m-d')."'", 1, 0).") as nblatenow";
-		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement > '".date_format($datenowadd30, 'Y-m-d')."'", 1, 0).") as nbnotlate30";
-		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement > '".date_format($datenowadd15, 'Y-m-d')."'", 1, 0).") as nbnotlate15";
 		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement >= '".date_format($now, 'Y-m-d')."'", 1, 0).") as nbnotlatenow";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement > '".date_format($datenowadd15, 'Y-m-d')."'", 1, 0).") as nbnotlate15";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement > '".date_format($datenowadd30, 'Y-m-d')."'", 1, 0).") as nbnotlate30";
 		if ($mode == 'customers') {
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-		} elseif ($mode == 'fourn') {
+		} elseif ($mode == 'fourn' || $mode == 'suppliers') {
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		} else {
 			return '';
 		}
 		$sql .= " WHERE f.type <> 2";
 		$sql .= " AND f.fk_statut = 1";
+		if (isset($user->socid) && $user->socid > 0) {
+			$sql .= " AND f.fk_soc = ".((int) $user->socid);
+		}
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
 			$total = 0;
 			$dataseries = array();
+
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
-				$dataseries = array(array($langs->trans('InvoiceLate30Days'),$obj->nblate30)
-									,array($langs->trans('InvoiceLate15Days'),$obj->nblate15-$obj->nblate30)
-									,array($langs->trans('InvoiceLateMinus15Days'),$obj->nblatenow-$obj->nblate15)
-									,array($langs->trans('InvoiceNotLate'),$obj->nbnotlatenow-$obj->nbnotlate15)
-									,array($langs->trans('InvoiceNotLate15Days'),$obj->nbnotlate15-$obj->nbnotlate30)
-									,array($langs->trans('InvoiceNotLate30Days'),$obj->nbnotlate30));
+				$dataseries = array(array($langs->trans('InvoiceLate30Days'), $obj->nblate30)
+									,array($langs->trans('InvoiceLate15Days'), $obj->nblate15 - $obj->nblate30)
+									,array($langs->trans('InvoiceLateMinus15Days'), $obj->nblatenow - $obj->nblate15)
+									,array($langs->trans('InvoiceNotLate'), $obj->nbnotlatenow - $obj->nbnotlate15)
+									,array($langs->trans('InvoiceNotLate15Days'), $obj->nbnotlate15 - $obj->nbnotlate30)
+									,array($langs->trans('InvoiceNotLate30Days'), $obj->nbnotlate30));
 				$i++;
 			}
 			foreach ($dataseries as $key=>$value) {
-				$total+=$value[1];
+				$total += $value[1];
 			}
-			$colorseries = array($badgeStatus8, $badgeStatus1, $badgeStatus3, $badgeStatus2, $badgeStatus4, $badgeStatus11);
-			if ($conf->use_javascript_ajax) {
-				$result = '<div class="div-table-responsive-no-min">';
-				$result .= '<table class="noborder nohover centpercent">';
-				$result .= '<tr class="liste_titre">';
-				$result .= '<td colspan="2">'.$langs->trans("Statistics").' - ';
-				if ($mode == 'customers') {
-					$result .= $langs->trans("CustomerInvoice").'</td>';
-				} elseif ($mode == 'fourn') {
-					$result .= $langs->trans("SupplierInvoice").'</td>';
-				} else {
-					return '';
-				}
-				$result .= '</tr>';
 
+			$colorseries = array($badgeStatus8, $badgeStatus1, $badgeStatus3, $badgeStatus4, $badgeStatus11, '-'.$badgeStatus11);
+
+			$result = '<div class="div-table-responsive-no-min">';
+			$result .= '<table class="noborder nohover centpercent">';
+			$result .= '<tr class="liste_titre">';
+			$result .= '<td>'.$langs->trans("Statistics").' - ';
+			if ($mode == 'customers') {
+				$result .= $langs->trans("CustomerInvoice");
+			} elseif ($mode == 'fourn' || $mode == 'suppliers') {
+				$result .= $langs->trans("SupplierInvoice");
+			} else {
+				return '';
+			}
+			$result .= '</td>';
+			$result .= '</tr>';
+
+			if ($conf->use_javascript_ajax) {
 				$dolgraph = new DolGraph();
 				$dolgraph->SetData($dataseries);
 				$dolgraph->SetDataColor(array_values($colorseries));
@@ -538,17 +547,21 @@ function getNumberInvoicesPieChart($mode)
 				$dolgraph->setWidth('300');
 				if ($mode == 'customers') {
 					$dolgraph->draw('idgraphcustomerinvoices');
-				} elseif ($mode == 'fourn') {
+				} elseif ($mode == 'fourn' || $mode == 'suppliers') {
 					$dolgraph->draw('idgraphfourninvoices');
 				} else {
 					return '';
 				}
 				$result .= '<tr maxwidth="255">';
-				$result .= '<td align="center" colspan="2">'.$dolgraph->show($total ? 0 : 1).'</td>';
+				$result .= '<td class="center">'.$dolgraph->show($total ? 0 : $langs->trans("NoOpenInvoice")).'</td>';
 				$result .= '</tr>';
-				$result .= '</table>';
-				$result .= '</div>';
+			} else {
+				// Print text lines
 			}
+
+			$result .= '</table>';
+			$result .= '</div>';
+
 			return $result;
 		} else {
 			dol_print_error($db);
@@ -587,7 +600,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 	$sql .= " WHERE s.rowid = f.fk_soc AND f.fk_statut = ".Facture::STATUS_DRAFT;
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 
 	if ($socid) {
@@ -602,7 +615,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 	$sql .= " s.nom, s.rowid, s.email, s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur,";
 	$sql .= " cc.rowid, cc.code";
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql.= ", sc.fk_soc, sc.fk_user";
+		$sql .= ", sc.fk_soc, sc.fk_user";
 	}
 
 	// Add Group from hooks
@@ -666,7 +679,8 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 				$companystatic->code_compta = $obj->code_compta;
 				$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
-				$result .= '<tr class="oddeven"><td class="nowrap tdoverflowmax100">';
+				$result .= '<tr class="oddeven">';
+				$result .= '<td class="nowrap tdoverflowmax100">';
 				$result .= $tmpinvoice->getNomUrl(1, '');
 				$result .= '</td>';
 				$result .= '<td class="nowrap tdoverflowmax100">';
@@ -730,10 +744,10 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 	$sql .= " WHERE s.rowid = f.fk_soc AND f.fk_statut = ".FactureFournisseur::STATUS_DRAFT;
 	$sql .= " AND f.entity IN (".getEntity('invoice').')';
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	// Add where from hooks
 	$parameters = array();
@@ -794,7 +808,8 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 				$companystatic->code_compta = $obj->code_compta;
 				$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
-				$result .= '<tr class="oddeven"><td class="nowrap tdoverflowmax100">';
+				$result .= '<tr class="oddeven">';
+				$result .= '<td class="nowrap tdoverflowmax100">';
 				$result .= $facturesupplierstatic->getNomUrl(1, '');
 				$result .= '</td>';
 				$result .= '<td class="nowrap tdoverflowmax100">';
@@ -841,8 +856,8 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 {
 	global $conf, $db, $langs, $user;
 
-	$sql = "SELECT f.rowid, f.entity, f.ref, f.fk_statut as status, f.paye, s.nom as socname, s.rowid as socid, s.canvas, s.client,";
-	$sql .= " f.datec";
+	$sql = "SELECT f.rowid, f.entity, f.ref, f.fk_statut as status, f.paye, f.type, f.total_ht, f.total_tva, f.total_ttc, f.datec,";
+	$sql .= " s.nom as socname, s.rowid as socid, s.canvas, s.client";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) {
@@ -854,7 +869,7 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " ORDER BY f.tms DESC";
 	$sql .= $db->plimit($maxCount, 0);
@@ -870,7 +885,9 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 	$result .= '<table class="noborder centpercent">';
 
 	$result .= '<tr class="liste_titre">';
-	$result .= '<td colspan="4">'.$langs->trans("LastCustomersBills", $maxCount).'</td>';
+	$result .= '<th colspan="3">'.$langs->trans("LastCustomersBills", $maxCount).'</th>';
+	$result .= '<th class="right">'.$langs->trans("AmountTTC").'</th>';
+	$result .= '<th class="right"></th>';
 	$result .= '</tr>';
 
 	if ($num < 1) {
@@ -891,6 +908,10 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$objectstatic->ref = $obj->ref;
 		$objectstatic->paye = $obj->paye;
 		$objectstatic->statut = $obj->status;
+		$objectstatic->total_ht = $obj->total_ht;
+		$objectstatic->total_tva = $obj->total_tva;
+		$objectstatic->total_ttc = $obj->total_ttc;
+		$objectstatic->type = $obj->type;
 
 		$companystatic->id = $obj->socid;
 		$companystatic->name = $obj->socname;
@@ -900,7 +921,7 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$filename = dol_sanitizeFileName($obj->ref);
 		$filedir = $conf->propal->multidir_output[$obj->entity].'/'.$filename;
 
-		$result .= '<tr width="20%" class="nowrap">';
+		$result .= '<tr class="nowrap">';
 
 		$result .= '<td class="oddeven">';
 		$result .= '<table class="nobordernopadding">';
@@ -914,8 +935,9 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$result .= '</table>';
 		$result .= '</td>';
 
-		$result .= '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
+		$result .= '<td class="tdoverflowmax150">'.$companystatic->getNomUrl(1, 'customer').'</td>';
 		$result .= '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
+		$result .= '<td class="right amount">'.price($obj->total_ttc).'</td>';
 		$result .= '<td class="right">'.$objectstatic->getLibStatut(5).'</td>';
 
 		$result .= '</tr>';
@@ -939,8 +961,8 @@ function getPurchaseInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 {
 	global $conf, $db, $langs, $user;
 
-	$sql = "SELECT f.rowid, f.entity, f.ref, f.fk_statut as status, f.paye, s.nom as socname, s.rowid as socid, s.canvas, s.client,";
-	$sql .= " f.datec";
+	$sql = "SELECT f.rowid, f.entity, f.ref, f.fk_statut as status, f.paye, f.total_ht, f.total_tva, f.total_ttc, f.type, f.ref_supplier, f.datec,";
+	$sql .= " s.nom as socname, s.rowid as socid, s.canvas, s.client";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) {
@@ -949,10 +971,10 @@ function getPurchaseInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 	$sql .= " WHERE f.fk_soc = s.rowid";
 	$sql .= " AND f.entity IN (".getEntity('facture_fourn').")";
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " ORDER BY f.tms DESC";
 	$sql .= $db->plimit($maxCount, 0);
@@ -968,7 +990,9 @@ function getPurchaseInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 	$result = '<div class="div-table-responsive-no-min">';
 	$result .= '<table class="noborder centpercent">';
 	$result .= '<tr class="liste_titre">';
-	$result .= '<td colspan="4">'.$langs->trans("BoxTitleLastSupplierBills", $maxCount).'</td>';
+	$result .= '<th colspan="3">'.$langs->trans("BoxTitleLastSupplierBills", $maxCount).'</th>';
+	$result .= '<th class="right">'.$langs->trans("AmountTTC").'</th>';
+	$result .= '<th class="right"></th>';
 	$result .= '</tr>';
 
 	if ($num < 1) {
@@ -989,6 +1013,10 @@ function getPurchaseInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$objectstatic->ref = $obj->ref;
 		$objectstatic->paye = $obj->paye;
 		$objectstatic->statut = $obj->status;
+		$objectstatic->total_ht = $obj->total_ht;
+		$objectstatic->total_tva = $obj->total_tva;
+		$objectstatic->total_ttc = $obj->total_ttc;
+		$objectstatic->type = $obj->type;
 
 		$companystatic->id = $obj->socid;
 		$companystatic->name = $obj->socname;
@@ -998,7 +1026,7 @@ function getPurchaseInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$filename = dol_sanitizeFileName($obj->ref);
 		$filedir = $conf->propal->multidir_output[$obj->entity].'/'.$filename;
 
-		$result .= '<tr width="20%" class="nowrap">';
+		$result .= '<tr class="nowrap">';
 
 		$result .= '<td class="oddeven">';
 		$result .= '<table class="nobordernopadding">';
@@ -1012,8 +1040,12 @@ function getPurchaseInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$result .= '</table>';
 		$result .= '</td>';
 
-		$result .= '<td>'.$companystatic->getNomUrl(1, 'supplier').'</td>';
+		$result .= '<td class="tdoverflowmax150">'.$companystatic->getNomUrl(1, 'supplier').'</td>';
+
 		$result .= '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
+
+		$result .= '<td class="amount right">'.price($obj->total_ttc).'</td>';
+
 		$result .= '<td class="right">'.$objectstatic->getLibStatut(5).'</td>';
 
 		$result .= '</tr>';
@@ -1058,10 +1090,10 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 		$sql .= " WHERE s.rowid = f.fk_soc AND f.paye = 0 AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 		$sql .= " AND f.entity IN (".getEntity('invoice').')';
 		if (!$user->rights->societe->client->voir && !$socid) {
-			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid) {
-			$sql .= " AND f.fk_soc = ".$socid;
+			$sql .= " AND f.fk_soc = ".((int) $socid);
 		}
 		// Add where from hooks
 		$parameters = array();
@@ -1246,10 +1278,10 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 		$sql .= " AND ff.paye = 0";
 		$sql .= " AND ff.fk_statut = ".FactureFournisseur::STATUS_VALIDATED;
 		if (!$user->rights->societe->client->voir && !$socid) {
-			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid) {
-			$sql .= " AND ff.fk_soc = ".$socid;
+			$sql .= " AND ff.fk_soc = ".((int) $socid);
 		}
 		// Add where from hooks
 		$parameters = array();
@@ -1320,7 +1352,8 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 					$societestatic->code_compta = $obj->code_compta;
 					$societestatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
-					print '<tr class="oddeven"><td class="nowrap tdoverflowmax100">';
+					print '<tr class="oddeven">';
+					print '<td class="nowrap tdoverflowmax100">';
 					print $facstatic->getNomUrl(1, '');
 					print '</td>';
 					print '<td class="nowrap tdoverflowmax100">'.$societestatic->getNomUrl(1, 'supplier').'</td>';

@@ -206,10 +206,10 @@ class pdf_paiement
 				$sql .= " AND f.entity IN (".getEntity('invoice').")";
 				$sql .= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year, $month))."' AND '".$this->db->idate(dol_get_last_day($year, $month))."'";
 				if (!$user->rights->societe->client->voir && !$socid) {
-					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}
 				if (!empty($socid)) {
-					$sql .= " AND s.rowid = ".$socid;
+					$sql .= " AND s.rowid = ".((int) $socid);
 				}
 				// If global param PAYMENTS_REPORT_GROUP_BY_MOD is set, payement are ordered by paiement_code
 				if (!empty($conf->global->PAYMENTS_REPORT_GROUP_BY_MOD)) {
@@ -241,13 +241,13 @@ class pdf_paiement
 				if (!empty($conf->banque->enabled)) {
 					$sql .= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
 				}
-				$sql .= " AND f.entity = ".$conf->entity;
+				$sql .= " AND f.entity IN (".getEntity('invoice').")";
 				$sql .= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year, $month))."' AND '".$this->db->idate(dol_get_last_day($year, $month))."'";
 				if (!$user->rights->societe->client->voir && !$socid) {
-					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}
 				if (!empty($socid)) {
-					$sql .= " AND s.rowid = ".$socid;
+					$sql .= " AND s.rowid = ".((int) $socid);
 				}
 				// If global param PAYMENTS_FOURN_REPORT_GROUP_BY_MOD is set, payement fourn are ordered by paiement_code
 				if (!empty($conf->global->PAYMENTS_FOURN_REPORT_GROUP_BY_MOD)) {

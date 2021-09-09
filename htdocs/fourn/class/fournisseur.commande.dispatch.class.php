@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT."/reception/class/reception.class.php";
 /**
  *  Class to manage table commandefournisseurdispatch
  */
-class CommandeFournisseurDispatch extends CommonObject
+class CommandeFournisseurDispatch extends CommonObjectLine
 {
 	/**
 	 * @var DoliDB Database handler.
@@ -220,13 +220,12 @@ class CommandeFournisseurDispatch extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
 			if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
+				// Call triggers
+				$result=$this->call_trigger('LINERECEPTION_CREATE', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
 			}
 		}
 
@@ -333,7 +332,6 @@ class CommandeFournisseurDispatch extends CommonObject
 	 */
 	public function update($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -411,12 +409,12 @@ class CommandeFournisseurDispatch extends CommonObject
 			}
 
 			if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
+				// Call triggers
 				$result = $this->call_trigger('LINERECEPTION_UPDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
-				//// End call triggers
+				// End call triggers
 			}
 		}
 
@@ -444,24 +442,22 @@ class CommandeFournisseurDispatch extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$this->db->begin();
 
 		if (!$error) {
 			if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
+				// Call triggers
+				$result = $this->call_trigger('LINERECEPTION_DELETE', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
 			}
 		}
 
-				// Remove extrafields
+		// Remove extrafields
 		if (!$error) {
 			$result = $this->deleteExtraFields();
 			if ($result < 0) {
@@ -494,7 +490,6 @@ class CommandeFournisseurDispatch extends CommonObject
 			return 1;
 		}
 	}
-
 
 
 	/**
@@ -671,25 +666,25 @@ class CommandeFournisseurDispatch extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.comment') {
-					$sqlwhere [] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sqlwhere [] = $key." LIKE '%".$this->db->escape($value)."%'";
 				} elseif ($key == 't.datec' || $key == 't.tms' || $key == 't.eatby' || $key == 't.sellby' || $key == 't.batch') {
-					$sqlwhere [] = $key.' = \''.$this->db->escape($value).'\'';
+					$sqlwhere [] = $key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 'qty') {
-					$sqlwhere [] = $key.' = '.((float) $value);
+					$sqlwhere [] = $key." = ".((float) $value);
 				} else {
-					$sqlwhere [] = $key.' = '.((int) $value);
+					$sqlwhere [] = $key." = ".((int) $value);
 				}
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE '.implode(' '.$filtermode.' ', $sqlwhere);
+			$sql .= ' WHERE '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
 		}
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit, $offset);
+			$sql .= $this->db->plimit($limit, $offset);
 		}
 		$this->lines = array();
 

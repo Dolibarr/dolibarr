@@ -146,7 +146,7 @@ if ($action == 'add') {
 	if (!$error) {
 		$db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."overwrite_trans(lang, transkey, transvalue, entity) VALUES ('".$db->escape($langcode)."','".$db->escape($transkey)."','".$db->escape($transvalue)."', ".$db->escape($conf->entity).")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."overwrite_trans(lang, transkey, transvalue, entity) VALUES ('".$db->escape($langcode)."','".$db->escape($transkey)."','".$db->escape($transvalue)."', ".((int) $conf->entity).")";
 		$result = $db->query($sql);
 		if ($result > 0) {
 			$db->commit();
@@ -188,7 +188,7 @@ if ($action == 'delete') {
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
-$wikihelp = 'EN:Setup Translation|FR:Paramétrage traduction|ES:Configuración';
+$wikihelp = 'EN:Setup_Translation|FR:Paramétrage_Traduction|ES:Configuración_Traducción';
 llxHeader('', $langs->trans("Setup"), $wikihelp);
 
 $param = '&mode='.urlencode($mode);
@@ -296,19 +296,8 @@ if ($mode == 'overwrite') {
 	print '</td><td>';
 	print '<input type="text" class="quatrevingtpercent"'.$disablededit.' name="transvalue" id="transvalue" value="'.(!empty($transvalue) ? $transvalue : "").'">';
 	print '</td>';
-	// Limit to superadmin
-	/*if (! empty($conf->multicompany->enabled) && !$user->entity)
-	{
-		print '<td>';
-		print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
-		print '</td>';
-		print '<td class="center">';
-	}
-	else
-	{*/
-		print '<td class="center">';
-		print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
-	//}
+	print '<td class="center">';
+	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 	print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add" title="'.dol_escape_htmltag($langs->trans("YouMustEnabledTranslationOverwriteBefore")).'">';
 	print "</td>\n";
 	print '</tr>';
@@ -500,7 +489,7 @@ if ($mode == 'searchkey') {
 	//}
 	print '</td>';
 	// Action column
-	print '<td class="nowrap right">';
+	print '<td class="nowraponall">';
 	$searchpicto = $form->showFilterAndCheckAddButtons(!empty($massactionbutton) ? 1 : 0, 'checkforselect', 1);
 	print $searchpicto;
 	print '</td>';
@@ -552,7 +541,7 @@ if ($mode == 'searchkey') {
 				print $form->textwithpicto('', $htmltext, 1, 'info');
 			} elseif (!empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) {
 				//print $key.'-'.$val;
-				print '<a class="reposition paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=overwrite&langcode='.urlencode($langcode).'&transkey='.urlencode($key).'">'.img_edit_add($langs->trans("Overwrite")).'</a>';
+				print '<a class="reposition paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=overwrite&langcode='.urlencode($langcode).'&transkey='.urlencode($key).'">'.img_edit_add($langs->trans("TranslationOverwriteKey")).'</a>';
 			}
 
 			if (!empty($conf->global->MAIN_FEATURES_LEVEL)) {
@@ -563,6 +552,21 @@ if ($mode == 'searchkey') {
 				print ' &nbsp; <a href="'.$transifexurl.'" target="transifex">'.img_picto($langs->trans('FixOnTransifex'), 'globe').'</a>';
 			}
 		} else {
+			// retrieve rowid
+			$sql = "SELECT rowid";
+			$sql .= " FROM ".MAIN_DB_PREFIX."overwrite_trans";
+			$sql .= " WHERE entity IN (".getEntity('overwrite_trans').")";
+			$sql .= " AND transkey = '".$db->escape($key)."'";
+			dol_syslog("translation::select from table", LOG_DEBUG);
+			$result = $db->query($sql);
+			if ($result) {
+				$obj = $db->fetch_object($result);
+			}
+			print '<a class="editfielda reposition marginrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$conf->entity.'&mode=overwrite&action=edit">'.img_edit().'</a>';
+			print ' ';
+			print '<a class="marginleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$conf->entity.'&mode='.urlencode($mode).'&action=delete&mode='.urlencode($mode).'&token='.newToken().'">'.img_delete().'</a>';
+			print '&nbsp;&nbsp;';
+
 			$htmltext = $langs->trans("TransKeyWithoutOriginalValue", $key);
 			print $form->textwithpicto('', $htmltext, 1, 'warning');
 		}

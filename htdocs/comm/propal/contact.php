@@ -118,8 +118,9 @@ elseif ($action == 'setaddress' && $user->rights->propale->creer)
 /*
  * View
  */
-
-llxHeader('', $langs->trans('Proposal'), 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
+$title = $langs->trans('Proposal')." - ".$langs->trans('ContactsAddresses');
+$help_url = "EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos";
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);

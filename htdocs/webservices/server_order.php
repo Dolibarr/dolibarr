@@ -537,7 +537,7 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commande as c';
 		$sql .= " WHERE c.entity = ".$conf->entity;
 		if ($idthirdparty != 'all') {
-			$sql .= " AND c.fk_soc = ".$db->escape($idthirdparty);
+			$sql .= " AND c.fk_soc = ".((int) $idthirdparty);
 		}
 
 
