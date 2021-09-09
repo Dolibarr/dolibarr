@@ -1315,7 +1315,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 				$result = $objecttmp->delete($user);
 			}
 
-			if(empty($result)) { // if delete returns 0, there is at least one object linked
+			if (empty($result)) { // if delete returns 0, there is at least one object linked
 				$TMsg = array_merge($objecttmp->errors, $TMsg);
 			} elseif ($result < 0) { // if delete returns is < 0, there is an error, we break and rollback later
 				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
@@ -1346,7 +1346,6 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 		}
 
 		$db->commit();
-		
 	} else {
 		$db->rollback();
 	}
