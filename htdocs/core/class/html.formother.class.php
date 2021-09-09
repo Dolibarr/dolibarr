@@ -1206,7 +1206,7 @@ class FormOther
 	        			async: false
 	        		});
 	        		// We force reload to be sure to get all boxes into list
-	        		window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'&action=delbox\';
+	        		window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'&action=delbox&token='.newToken().'\';
 	        	}
 	        	else
 	        	{

@@ -2001,6 +2001,11 @@ abstract class CommonObject
 			return 1;
 		}
 
+		// For backward compatibility
+		if ($this->table_element == 'facture_rec' && $fieldid == 'title') {
+			$fieldid = 'titre';
+		}
+
 		// Security on socid
 		$socid = 0;
 		if ($user->socid > 0) {
