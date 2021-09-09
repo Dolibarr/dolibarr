@@ -975,7 +975,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 		$newlinetext = '';
 		if ($object->status != $object::STATUS_PRODUCED && $object->status != $object::STATUS_CANCELED && $action != 'consumeorproduce' && $action != 'consumeandproduceall') {
-			$newlinetext = '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addproduceline">'.$langs->trans("AddNewProduceLines").'</a>';
+			if ($nblinetoproduce == 0 || $object->mrptype == 1) {
+				$newlinetext = '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addproduceline">'.$langs->trans("AddNewProduceLines").'</a>';
+			}
 		}
 		print load_fiche_titre($langs->trans('Production'), '', '', 0, '', '', $newlinetext);
 
