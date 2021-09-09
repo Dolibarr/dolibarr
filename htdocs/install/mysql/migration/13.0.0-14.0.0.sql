@@ -12,8 +12,8 @@
 -- To change type of field: ALTER TABLE llx_table MODIFY COLUMN name varchar(60);
 -- To drop a foreign key:   ALTER TABLE llx_table DROP FOREIGN KEY fk_name;
 -- To create a unique index ALTER TABLE llx_table ADD UNIQUE INDEX uk_table_field (field);
--- To drop an index:        -- VMYSQL4.1 DROP INDEX nomindex on llx_table
--- To drop an index:        -- VPGSQL8.2 DROP INDEX nomindex
+-- To drop an index:        -- VMYSQL4.1 DROP INDEX nomindex on llx_table;
+-- To drop an index:        -- VPGSQL8.2 DROP INDEX nomindex;
 -- To make pk to be auto increment (mysql):    -- VMYSQL4.3 ALTER TABLE llx_table CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
 -- To make pk to be auto increment (postgres):
 -- -- VPGSQL8.2 CREATE SEQUENCE llx_table_rowid_seq OWNED BY llx_table.rowid;
@@ -349,6 +349,13 @@ UPDATE llx_payment_salary SET ref = rowid WHERE ref IS NULL;
 
 ALTER TABLE llx_salary ALTER COLUMN paye set default 0;
 
+UPDATE llx_extrafields SET elementtype = 'salary' WHERE elementtype = 'payment_salary';
+ALTER TABLE llx_payment_salary_extrafields RENAME TO llx_salary_extrafields;
+-- VMYSQL4.1 DROP INDEX idx_payment_salary_extrafields on llx_salary_extrafields;
+-- VPGSQL8.2 DROP INDEX idx_payment_salary_extrafields;
+ALTER TABLE llx_salary_extrafields ADD INDEX idx_salary_extrafields (fk_object);
+
+
 DELETE FROM llx_boxes WHERE box_id IN (SELECT rowid FROM llx_boxes_def WHERE file IN ('box_graph_ticket_by_severity', 'box_ticket_by_severity.php', 'box_nb_ticket_last_x_days.php', 'box_nb_tickets_type.php', 'box_new_vs_close_ticket.php'));
 DELETE FROM llx_boxes_def WHERE file IN ('box_graph_ticket_by_severity', 'box_ticket_by_severity.php', 'box_nb_ticket_last_x_days.php', 'box_nb_tickets_type.php', 'box_new_vs_close_ticket.php');
 
@@ -392,7 +399,8 @@ CREATE TABLE llx_eventorganization_conferenceorboothattendee(
     rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
     ref varchar(128) NOT NULL,
     fk_soc integer,
-    fk_actioncomm integer NOT NULL,
+    fk_actioncomm integer,
+    fk_project integer NOT NULL,
     email varchar(100),
     date_subscription datetime,
     amount double DEFAULT NULL,
@@ -407,6 +415,11 @@ CREATE TABLE llx_eventorganization_conferenceorboothattendee(
     model_pdf varchar(255),
     status smallint NOT NULL
 ) ENGINE=innodb;
+
+-- VMYSQL4.3 ALTER TABLE llx_eventorganization_conferenceorboothattendee MODIFY COLUMN fk_actioncomm integer NULL;
+-- VPGSQL8.2 ALTER TABLE llx_eventorganization_conferenceorboothattendee ALTER COLUMN fk_actioncomm DROP NOT NULL;
+
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_project integer NOT NULL;
 
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_rowid (rowid);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_ref (ref);
@@ -459,7 +472,7 @@ CREATE TABLE llx_partnership(
 	fk_soc integer, 
 	fk_member integer, 
 	date_partnership_start date NOT NULL, 
-	date_partnership_end date NOT NULL, 
+	date_partnership_end date NULL, 
 	entity integer	DEFAULT 1 NOT NULL,	-- multi company id, 0 = all
 	reason_decline_or_cancel text NULL,
 	date_creation datetime NOT NULL, 
@@ -583,7 +596,7 @@ DROP TABLE llx_categorie_association;
 DROP TABLE llx_cond_reglement;
 DROP TABLE llx_zapier_hook_extrafields;
 
-create table llx_onlinesignature
+CREATE TABLE llx_onlinesignature
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
   entity                    integer DEFAULT 1 NOT NULL,
@@ -598,3 +611,6 @@ create table llx_onlinesignature
 
 -- VMYSQL4.3 ALTER TABLE llx_partnership MODIFY COLUMN date_partnership_end date NULL;
 -- VPGSQL8.2 ALTER TABLE llx_partnership ALTER COLUMN date_partnership_end DROP NOT NULL;
+
+ALTER TABLE llx_facture_fourn CHANGE COLUMN fk_mode_transport fk_transport_mode integer;
+

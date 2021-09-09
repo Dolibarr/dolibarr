@@ -135,7 +135,7 @@ if (GETPOST('exportcsv', 'int')) {
 	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut as status, mc.date_envoi, mc.tms,";
 	$sql .= " mc.source_id, mc.source_type, mc.error_text";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
-	$sql .= " WHERE mc.fk_mailing=".$object->id;
+	$sql .= " WHERE mc.fk_mailing=".((int) $object->id);
 	$sql .= $db->order($sortfield, $sortorder);
 
 	$resql = $db->query($sql);
@@ -454,7 +454,7 @@ if ($object->fetch($id) >= 0) {
 	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut, mc.date_envoi, mc.tms,";
 	$sql .= " mc.source_url, mc.source_id, mc.source_type, mc.error_text";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
-	$sql .= " WHERE mc.fk_mailing=".$object->id;
+	$sql .= " WHERE mc.fk_mailing=".((int) $object->id);
 	$asearchcriteriahasbeenset = 0;
 	if ($search_lastname) {
 		$sql .= natural_search("mc.lastname", $search_lastname);
@@ -635,11 +635,11 @@ if ($object->fetch($id) >= 0) {
 				$obj = $db->fetch_object($resql);
 
 				print '<tr class="oddeven">';
-				print '<td>'.$obj->email.'</td>';
-				print '<td>'.$obj->lastname.'</td>';
-				print '<td>'.$obj->firstname.'</td>';
+				print '<td class="tdoverflowmax150">'.img_picto('$obj->email', 'email', 'class="paddingright"').$obj->email.'</td>';
+				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">'.$obj->lastname.'</td>';
+				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->firstname).'">'.$obj->firstname.'</td>';
 				print '<td>'.$obj->other.'</td>';
-				print '<td class="center">';
+				print '<td class="center tdoverflowmax150">';
 				if (empty($obj->source_id) || empty($obj->source_type)) {
 					print empty($obj->source_url) ? '' : $obj->source_url; // For backward compatibility
 				} else {

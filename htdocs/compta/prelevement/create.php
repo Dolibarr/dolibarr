@@ -95,7 +95,9 @@ if (empty($reshook)) {
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$bank = new Account($db);
 		$bank->fetch($conf->global->{$default_account});
-		if (empty($bank->ics) || empty($bank->ics_transfer)) {
+		if ((empty($bank->ics) && $type !== 'bank-transfer')
+			|| (empty($bank->ics_transfer) && $type === 'bank-transfer')
+		) {
 			$errormessage = str_replace('{url}', $bank->getNomUrl(1, '', '', -1, 1), $langs->trans("ErrorICSmissing", '{url}'));
 			setEventMessages($errormessage, null, 'errors');
 			header("Location: ".DOL_URL_ROOT.'/compta/prelevement/create.php');
@@ -260,13 +262,13 @@ if ($nb) {
 				print '<option value="RCUR"'.(GETPOST('format', 'aZ09') == 'RCUR' ? ' selected="selected"' : '').'>'.$langs->trans('SEPARCUR').'</option>';
 				print '</select>';
 			}
-			print '<input class="butAction" type="submit" value="'.$title.'"/>';
+			print '<input type="submit" class="butAction" value="'.$title.'"/>';
 		} else {
 			$title = $langs->trans("CreateAll");
 			if ($type == 'bank-transfer') {
 				$title = $langs->trans("CreateFileForPaymentByBankTransfer");
 			}
-			print '<a class="butAction" type="submit" href="create.php?action=create&format=ALL&type='.$type.'">'.$title."</a>\n";
+			print '<a type="submit" class="butAction" href="create.php?action=create&format=ALL&type='.$type.'">'.$title."</a>\n";
 		}
 	} else {
 		if ($mysoc->isInEEC()) {

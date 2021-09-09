@@ -113,11 +113,13 @@ if (!$action) {
 	}
 }
 
-if ($source == 'conferencesubscription') {
+if ($source == 'organizedeventregistration') {
 	// Finding the Attendee
-	$invoiceid = GETPOST('ref');
+	$invoiceid = GETPOST('ref', 'int');
 	$invoice = new Facture($db);
+
 	$resultinvoice = $invoice->fetch($invoiceid);
+
 	if ($resultinvoice <= 0) {
 		setEventMessages(null, $invoice->errors, "errors");
 	} else {
@@ -129,9 +131,12 @@ if ($source == 'conferencesubscription') {
 
 			$attendee = new ConferenceOrBoothAttendee($db);
 			$resultattendee = $attendee->fetch($linkedAttendees[0]);
+
 			if ($resultattendee <= 0) {
 				setEventMessages(null, $attendee->errors, "errors");
 			} else {
+				$attendee->fetch_projet();
+
 				$amount = price2num($invoice->total_ttc);
 				// Finding the associated thirdparty
 				$thirdparty = new Societe($db);
@@ -1516,7 +1521,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 		$oldtypeid = $member->typeid;
 		$newtypeid = (int) (GETPOSTISSET("typeid") ? GETPOST("typeid", 'int') : $member->typeid);
 
-		if ($oldtypeid != $newtypeid && !empty($conf->global->MEMBER_ALLOW_CHANGE_OF_TYPE)) {
+		if (!empty($conf->global->MEMBER_ALLOW_CHANGE_OF_TYPE)) {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 			$adht = new AdherentType($db);
 			// Amount by member type
@@ -1806,9 +1811,9 @@ if ($source == 'donation') {
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
 }
 
-if ($source == 'conferencesubscription') {
+if ($source == 'organizedeventregistration') {
 	$found = true;
-	$langs->load("members");
+	$langs->loadLangs(array("members", "eventorganization"));
 
 	if (GETPOST('fulltag', 'alpha')) {
 		$fulltag = GETPOST('fulltag', 'alpha');
@@ -1833,10 +1838,15 @@ if ($source == 'conferencesubscription') {
 	print '</b>';
 	print '</td></tr>'."\n";
 
+	if (! is_object($attendee->project)) {
+		$text = 'ErrorProjectotFound';
+	} else {
+		$text = $langs->trans("PaymentEvent").' - '.$attendee->project->title;
+	}
+
 	// Object
-	$text = '<b>'.$langs->trans("PaymentConferenceAttendee").'</b>';
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
-	print '</td><td class="CTableRow2">'.$text;
+	print '</td><td class="CTableRow2"><b>'.$text.'</b>';
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($invoice->id).'">';
 	print '</td></tr>'."\n";

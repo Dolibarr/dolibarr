@@ -1138,7 +1138,7 @@ class Invoices extends DolibarrApi
 				$sql = 'SELECT SUM(pf.amount) as total_payments';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'paiement as p';
 				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
-				$sql .= ' WHERE pf.fk_facture = '.$this->invoice->id;
+				$sql .= ' WHERE pf.fk_facture = '.((int) $this->invoice->id);
 				$sql .= ' AND pf.fk_paiement = p.rowid';
 				$sql .= ' AND p.entity IN ('.getEntity('invoice').')';
 				$resql = $this->db->query($sql);

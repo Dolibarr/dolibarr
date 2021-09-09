@@ -67,6 +67,8 @@ $fk_user = GETPOSTINT('userid');
 $object = new Salary($db);
 $extrafields = new ExtraFields($db);
 
+$childids = $user->getAllChildIds(1);
+
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -76,6 +78,18 @@ $hookmanager->initHooks(array('salarycard', 'globalcard'));
 $object = new Salary($db);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
+
+	// Check current user can read this salary
+	$canread = 0;
+	if (!empty($user->rights->salaries->readall)) {
+		$canread = 1;
+	}
+	if (!empty($user->rights->salaries->read) && $object->fk_user > 0 && in_array($object->fk_user, $childids)) {
+		$canread = 1;
+	}
+	if (!$canread) {
+		accessforbidden();
+	}
 }
 
 // Security check
@@ -354,6 +368,30 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries-
 	}
 }
 
+// Action to update one extrafield
+if ($action == "update_extras" && !empty($user->rights->salaries->read)) {
+	$object->fetch(GETPOST('id', 'int'));
+
+	$attributekey = GETPOST('attribute', 'alpha');
+	$attributekeylong = 'options_'.$attributekey;
+
+	if (GETPOSTISSET($attributekeylong.'day') && GETPOSTISSET($attributekeylong.'month') && GETPOSTISSET($attributekeylong.'year')) {
+		// This is properties of a date
+		$object->array_options['options_'.$attributekey] = dol_mktime(GETPOST($attributekeylong.'hour', 'int'), GETPOST($attributekeylong.'min', 'int'), GETPOST($attributekeylong.'sec', 'int'), GETPOST($attributekeylong.'month', 'int'), GETPOST($attributekeylong.'day', 'int'), GETPOST($attributekeylong.'year', 'int'));
+		//var_dump(dol_print_date($object->array_options['options_'.$attributekey]));exit;
+	} else {
+		$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, 'alpha');
+	}
+
+	$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
+	if ($result > 0) {
+		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+		$action = 'view';
+	} else {
+		setEventMessages($object->error, $object->errors, 'errors');
+		$action = 'edit_extras';
+	}
+}
 
 /*
  *	View
@@ -466,8 +504,10 @@ if ($action == 'create') {
 	// Amount
 	print '<tr><td>';
 	print $form->editfieldkey('Amount', 'amount', '', $object, 0, 'string', '', 1).'</td><td>';
-	print '<input name="amount" id="amount" class="minwidth75 maxwidth100" value="'.GETPOST("amount").'">';
-	print '</td></tr>';
+	print '<input name="amount" id="amount" class="minwidth75 maxwidth100" value="'.GETPOST("amount").'">&nbsp;';
+	print '<button class="dpInvisibleButtons" id="updateAmountWithLastSalary" name="_useless" type="button">'.$langs->trans('UpdateAmountWithLastSalary').'</a>';
+	print '</td>';
+	print '</tr>';
 
 	// Project
 	if (!empty($conf->projet->enabled)) {
@@ -560,6 +600,42 @@ if ($action == 'create') {
 	print $form->buttonsSaveCancel("Save", "Cancel", $addition_button);
 
 	print '</form>';
+	print '<script>';
+	print '$( document ).ready(function() {';
+		print '$("#updateAmountWithLastSalary").on("click", function updateAmountWithLastSalary() {
+					console.log("We click on link to autofill salary amount");
+					var fk_user = $("#fk_user").val()
+					var url = "'.DOL_URL_ROOT.'/salaries/ajax/ajaxsalaries.php?fk_user="+fk_user;
+					if (fk_user != -1) {
+						$.get(
+							url,
+							function( data ) {
+								if(data!=null) {
+									console.log("Data returned: "+data);
+									item = JSON.parse(data);
+									if(item[0].key == "Amount") {
+										value = item[0].value;
+										if (value != null) {
+											$("#amount").val(item[0].value);
+										} else {
+											console.error("Error: Ajax url "+url+" has returned a null value.");
+										}
+									} else {
+										console.error("Error: Ajax url "+url+" has returned the wrong key.");
+									}
+								} else {
+									console.error("Error: Ajax url "+url+" has returned an empty page.");
+								}
+							}
+						);
+						
+					} else {
+						alert("'.$langs->trans("FillFieldFirst").'");
+					}
+		});
+	
+	})';
+	print '</script>';
 }
 
 

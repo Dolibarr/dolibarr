@@ -192,7 +192,7 @@ if (!empty($conf->projet->enabled)) {
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (cs.fk_user = u.rowid)";
 $sql .= " WHERE cs.fk_type = c.id";
-$sql .= " AND cs.entity = ".$conf->entity;
+$sql .= " AND cs.entity = ".((int) $conf->entity);
 // Search criteria
 if ($search_ref) {
 	$sql .= " AND cs.ref = '".$db->escape($search_ref)."'";
@@ -209,10 +209,10 @@ if (!empty($search_users)) {
 	$sql .= ' AND cs.fk_user IN('.implode(', ', $search_users).')';
 }
 if (!empty($search_type) && $search_type > 0) {
-	$sql .= ' AND cs.fk_mode_reglement='.$search_type;
+	$sql .= ' AND cs.fk_mode_reglement='.((int) $search_type);
 }
 if (!empty($search_account) && $search_account > 0) {
-	$sql .= ' AND cs.fk_account='.$search_account;
+	$sql .= ' AND cs.fk_account='.((int) $search_account);
 }
 if ($search_amount) {
 	$sql .= natural_search("cs.amount", $search_amount, 1);
@@ -452,13 +452,13 @@ if (!empty($arrayfields['cs.rowid']['checked'])) {
 	print_liste_field_titre($arrayfields['cs.rowid']['label'], $_SERVER["PHP_SELF"], "cs.rowid", '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.libelle']['checked'])) {
-	print_liste_field_titre($arrayfields['cs.libelle']['label'], $_SERVER["PHP_SELF"], "cs.libelle", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.libelle']['label'], $_SERVER["PHP_SELF"], "cs.libelle,cs.periode", '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.fk_type']['checked'])) {
-	print_liste_field_titre($arrayfields['cs.fk_type']['label'], $_SERVER["PHP_SELF"], "cs.fk_type", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.fk_type']['label'], $_SERVER["PHP_SELF"], "cs.fk_type,cs.periode", '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.date_ech']['checked'])) {
-	print_liste_field_titre($arrayfields['cs.date_ech']['label'], $_SERVER["PHP_SELF"], "cs.date_ech", '', $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($arrayfields['cs.date_ech']['label'], $_SERVER["PHP_SELF"], "cs.date_ech,cs.periode", '', $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['cs.periode']['checked'])) {
 	print_liste_field_titre($arrayfields['cs.periode']['label'], $_SERVER["PHP_SELF"], "cs.periode", '', $param, '', $sortfield, $sortorder, 'center ');
@@ -467,19 +467,19 @@ if (!empty($arrayfields['p.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.fk_user']['checked'])) {
-	print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname", "", $param, 'class="left"', $sortfield, $sortorder);
+	print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname,cs.periode", "", $param, 'class="left"', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.fk_mode_reglement']['checked'])) {
-	print_liste_field_titre($arrayfields['cs.fk_mode_reglement']['label'], $_SERVER["PHP_SELF"], "cs.fk_mode_reglement", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.fk_mode_reglement']['label'], $_SERVER["PHP_SELF"], "cs.fk_mode_reglement,cs.periode", '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.fk_account']['checked'])) {
-	print_liste_field_titre($arrayfields['cs.fk_account']['label'], $_SERVER["PHP_SELF"], "cs.fk_account", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.fk_account']['label'], $_SERVER["PHP_SELF"], "cs.fk_account,cs.periode", '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.amount']['checked'])) {
-	print_liste_field_titre($arrayfields['cs.amount']['label'], $_SERVER["PHP_SELF"], "cs.amount", '', $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.amount']['label'], $_SERVER["PHP_SELF"], "cs.amount,cs.periode", '', $param, 'class="right"', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.paye']['checked'])) {
-	print_liste_field_titre($arrayfields['cs.paye']['label'], $_SERVER["PHP_SELF"], "cs.paye", '', $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.paye']['label'], $_SERVER["PHP_SELF"], "cs.paye,cs.periode", '', $param, 'class="right"', $sortfield, $sortorder);
 }
 
 // Hook fields

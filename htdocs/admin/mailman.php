@@ -218,7 +218,7 @@ if (!empty($conf->global->ADHERENT_USE_MAILMAN)) {
 	print '<input type="hidden" name="action" value="testsubscribe">';
 
 	print $langs->trans("TestSubscribe").'<br>';
-	print $langs->trans("EMail").' <input type="email" class="flat" name="testsubscribeemail" value="'.GETPOST('testsubscribeemail').'"> <input class="button" type="submit" value="'.$langs->trans("Test").'"><br>';
+	print $langs->trans("EMail").' <input type="email" class="flat" name="testsubscribeemail" value="'.GETPOST('testsubscribeemail').'"> <input type="submit" class="button" value="'.$langs->trans("Test").'"><br>';
 
 	print '</form>';
 
@@ -227,7 +227,7 @@ if (!empty($conf->global->ADHERENT_USE_MAILMAN)) {
 	print '<input type="hidden" name="action" value="testunsubscribe">';
 
 	print $langs->trans("TestUnSubscribe").'<br>';
-	print $langs->trans("EMail").' <input type="email" class="flat" name="testunsubscribeemail" value="'.GETPOST('testunsubscribeemail').'"> <input class="button" type="submit" value="'.$langs->trans("Test").'"><br>';
+	print $langs->trans("EMail").' <input type="email" class="flat" name="testunsubscribeemail" value="'.GETPOST('testunsubscribeemail').'"> <input type="submit" class="button" value="'.$langs->trans("Test").'"><br>';
 
 	print '</form>';
 }

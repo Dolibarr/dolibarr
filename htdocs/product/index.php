@@ -34,10 +34,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
 $type = GETPOST("type", 'int');
-if ($type == '' && !$user->rights->produit->lire) {
+if ($type == '' && empty($user->rights->produit->lire)) {
 	$type = '1'; // Force global page on service page only
 }
-if ($type == '' && !$user->rights->service->lire) {
+if ($type == '' && empty($user->rights->service->lire)) {
 	$type = '0'; // Force global page on product page only
 }
 
