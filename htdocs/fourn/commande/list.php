@@ -134,10 +134,6 @@ if (!$sortorder) {
 	$sortorder = 'DESC';
 }
 
-if ($search_status == '') {
-	$search_status = -5;
-}
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new CommandeFournisseur($db);
 $hookmanager->initHooks(array('supplierorderlist'));
