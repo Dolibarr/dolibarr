@@ -178,6 +178,7 @@ var place="<?php echo $place; ?>";
 var editaction="qty";
 var editnumber="";
 var invoiceid=0;
+var search2_timer=null;
 
 /*
 var app = this;
@@ -551,62 +552,76 @@ function Search2(keyCodeForEnter) {
 	}
 
 	if (search === true) {
-		pageproducts = 0;
-		jQuery(".wrapper2 .catwatermark").hide();
-		$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&term=' + $('#search').val(), function (data) {
-			for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
-				if (typeof (data[i]) == "undefined") {
-					$("#prodesc" + i).text("");
-					$("#probutton" + i).text("");
-					$("#probutton" + i).hide();
-					$("#proprice" + i).attr("class", "hidden");
-					$("#proprice" + i).html("");
-					$("#proimg" + i).attr("src", "genimg/empty.png");
-					$("#prodiv" + i).data("rowid", "");
-					continue;
+
+		// temporization time to give time to type
+		if (search2_timer) {
+			clearTimeout(search2_timer);
+		}
+
+		search2_timer = setTimeout(function(){
+
+			pageproducts = 0;
+			jQuery(".wrapper2 .catwatermark").hide();
+			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&term=' + $('#search').val(), function (data) {
+				for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
+					if (typeof (data[i]) == "undefined") {
+						$("#prodesc" + i).text("");
+						$("#probutton" + i).text("");
+						$("#probutton" + i).hide();
+						$("#proprice" + i).attr("class", "hidden");
+						$("#proprice" + i).html("");
+						$("#proimg" + i).attr("src", "genimg/empty.png");
+						$("#prodiv" + i).data("rowid", "");
+						continue;
+					}
+					<?php
+					$titlestring = "'".dol_escape_js($langs->transnoentities('Ref').': ')."' + data[i]['ref']";
+					$titlestring .= " + ' - ".dol_escape_js($langs->trans("Barcode").': ')."' + data[i]['barcode']";
+					?>
+					var titlestring = <?php echo $titlestring; ?>;
+					$("#prodesc" + i).text(data[i]['label']);
+					$("#prodivdesc" + i).show();
+					$("#probutton" + i).text(data[i]['label']);
+					$("#probutton" + i).show();
+					if (data[i]['price_formated']) {
+						$("#proprice" + i).attr("class", "productprice");
+						$("#proprice" + i).html(data[i]['price_formated']);
+					}
+					$("#proimg" + i).attr("title", titlestring);
+					if( undefined !== data[i]['img']) {
+						$("#proimg" + i).attr("src", data[i]['img']);
+					}
+					else {
+						$("#proimg" + i).attr("src", "genimg/index.php?query=pro&id=" + data[i]['rowid']);
+					}
+					$("#prodiv" + i).data("rowid", data[i]['rowid']);
+					$("#prodiv" + i).data("iscat", 0);
 				}
-				<?php
-				$titlestring = "'".dol_escape_js($langs->transnoentities('Ref').': ')."' + data[i]['ref']";
-				$titlestring .= " + ' - ".dol_escape_js($langs->trans("Barcode").': ')."' + data[i]['barcode']";
-				?>
-				var titlestring = <?php echo $titlestring; ?>;
-				$("#prodesc" + i).text(data[i]['label']);
-				$("#prodivdesc" + i).show();
-				$("#probutton" + i).text(data[i]['label']);
-				$("#probutton" + i).show();
-				if (data[i]['price_formated']) {
-					$("#proprice" + i).attr("class", "productprice");
-					$("#proprice" + i).html(data[i]['price_formated']);
+			}).always(function (data) {
+				// If there is only 1 answer
+				if ($('#search').val().length > 0 && data.length == 1) {
+					console.log($('#search').val()+' - '+data[0]['barcode']);
+					if ($('#search').val() == data[0]['barcode'] && 'thirdparty' == data[0]['object']) {
+						console.log("There is only 1 answer with barcode matching the search, so we change the thirdparty "+data[0]['rowid']);
+						ChangeThirdparty(data[0]['rowid']);
+					}
+					else if ($('#search').val() == data[0]['barcode'] && 'product' == data[0]['object']) {
+						console.log("There is only 1 answer with barcode matching the search, so we add the product in basket");
+						ClickProduct(0);
+					}
 				}
-				$("#proimg" + i).attr("title", titlestring);
-				$("#proimg" + i).attr("src", "genimg/index.php?query=pro&id=" + data[i]['rowid']);
-				$("#prodiv" + i).data("rowid", data[i]['rowid']);
-				$("#prodiv" + i).data("iscat", 0);
-			}
-		}).always(function (data) {
-			// If there is only 1 answer
-			if ($('#search').val().length > 0 && data.length == 1) {
-				console.log($('#search').val()+' - '+data[0]['barcode']);
-				if ($('#search').val() == data[0]['barcode'] && 'thirdparty' == data[0]['object']) {
-					console.log("There is only 1 answer with barcode matching the search, so we change the thirdparty "+data[0]['rowid']);
-					ChangeThirdparty(data[0]['rowid']);
+				if (eventKeyCode == keyCodeForEnter){
+					if (data.length == 0) {
+						$('#search').val('<?php
+						$langs->load('errors');
+						echo dol_escape_js($langs->trans("ErrorRecordNotFound"));
+						?>');
+						$('#search').select();
+					}
+					else ClearSearch();
 				}
-				else if ($('#search').val() == data[0]['barcode'] && 'product' == data[0]['object']) {
-					console.log("There is only 1 answer with barcode matching the search, so we add the product in basket");
-					ClickProduct(0);
-				}
-			}
-			if (eventKeyCode == keyCodeForEnter){
-				if (data.length == 0) {
-					$('#search').val('<?php
-					$langs->load('errors');
-					echo dol_escape_js($langs->trans("ErrorRecordNotFound"));
-					?>');
-					$('#search').select();
-				}
-				else ClearSearch();
-			}
-		});
+			});
+		}, 500); // 500ms delay
 	}
 
 }
