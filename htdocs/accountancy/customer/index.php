@@ -250,18 +250,19 @@ $sql .= "  ".$db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label')." AS intitul
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
 	if ($j > 12) $j -= 12;
-	$sql .= "  SUM(".$db->ifsql('MONTH(f.datef)='.$j, 'fd.total_ht', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql('MONTH(f.datef)='.$j, $db->ifsql('fd.fk_prev_id IS NOT NULL', 'fd.total_ht-fd2.total_ht', 'fd.total_ht'), '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
 }
-$sql .= "  SUM(fd.total_ht) as total";
+$sql .= "  SUM(".$db->ifsql('fd.fk_prev_id IS NOT NULL', 'fd.total_ht-fd2.total_ht', 'fd.total_ht').") as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
+$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facturedet as fd2 ON fd2.rowid = fd.fk_prev_id";
 $sql .= " WHERE f.datef >= '".$db->idate($search_date_start)."'";
 $sql .= "  AND f.datef <= '".$db->idate($search_date_end)."'";
-$sql .= " AND f.fk_statut > 0";
-$sql .= " AND fd.product_type <= 2";
-$sql .= " AND f.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
-$sql .= " AND aa.account_number IS NULL";
+$sql .= "  AND f.fk_statut > 0";
+$sql .= "  AND fd.product_type <= 2";
+$sql .= "  AND f.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
+$sql .= "  AND aa.account_number IS NULL";
 if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$sql .= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_REPLACEMENT.",".Facture::TYPE_CREDIT_NOTE.",".Facture::TYPE_SITUATION.")";
 } else {
@@ -326,12 +327,13 @@ $sql .= "  ".$db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label')." AS intitul
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
 	if ($j > 12) $j -= 12;
-	$sql .= "  SUM(".$db->ifsql('MONTH(f.datef)='.$j, 'fd.total_ht', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql('MONTH(f.datef)='.$j, $db->ifsql('fd.fk_prev_id IS NOT NULL', 'fd.total_ht-fd2.total_ht', 'fd.total_ht'), '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
 }
-$sql .= "  SUM(fd.total_ht) as total";
+$sql .= "  SUM(".$db->ifsql('fd.fk_prev_id IS NOT NULL', 'fd.total_ht-fd2.total_ht', 'fd.total_ht').") as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
+$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facturedet as fd2 ON fd2.rowid = fd.fk_prev_id";
 $sql .= " WHERE f.datef >= '".$db->idate($search_date_start)."'";
 $sql .= "  AND f.datef <= '".$db->idate($search_date_end)."'";
 $sql .= " AND f.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
@@ -404,11 +406,12 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 	for ($i = 1; $i <= 12; $i++) {
 		$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
 		if ($j > 12) $j -= 12;
-		$sql .= "  SUM(".$db->ifsql('MONTH(f.datef)='.$j, 'fd.total_ht', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+		$sql .= "  SUM(".$db->ifsql('MONTH(f.datef)='.$j, $db->ifsql('fd.fk_prev_id IS NOT NULL', 'fd.total_ht-fd2.total_ht', 'fd.total_ht'), '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
 	}
-	$sql .= "  SUM(fd.total_ht) as total";
+	$sql .= "  SUM(".$db->ifsql('fd.fk_prev_id IS NOT NULL', 'fd.total_ht-fd2.total_ht', 'fd.total_ht').") as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 	$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
+	$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facturedet as fd2 ON fd2.rowid = fd.fk_prev_id";
 	$sql .= " WHERE f.datef >= '".$db->idate($search_date_start)."'";
 	$sql .= "  AND f.datef <= '".$db->idate($search_date_end)."'";
 	$sql .= " AND f.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
@@ -457,7 +460,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 		for ($i = 1; $i <= 12; $i++) {
 			$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
 			if ($j > 12) $j -= 12;
-			$sql .= "  SUM(".$db->ifsql('MONTH(f.datef)='.$j, '(fd.total_ht-(fd.qty * fd.buy_price_ht))', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+			$sql .= "  SUM(".$db->ifsql('MONTH(f.datef)='.$j, $db->ifsql('fd.fk_prev_id IS NOT NULL', '(fd.total_ht-fd2.total_ht-(fd.qty * fd.buy_price_ht))', '(fd.total_ht-(fd.qty * fd.buy_price_ht))'), '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
 		}
 		$sql .= "  SUM((fd.total_ht-(fd.qty * fd.buy_price_ht))) as total";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
