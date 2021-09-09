@@ -338,7 +338,7 @@ if ($search_date_endmonth) {
 if ($search_date_endyear) {
 	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
 }
-if ($search_date_limit_startday)	{
+if ($search_date_limit_startday) {
 	$param .= '&search_date_limit_startday='.urlencode($search_date_limit_startday);
 }
 if ($search_date_limit_startmonth) {
