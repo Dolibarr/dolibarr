@@ -67,6 +67,8 @@ $fk_user = GETPOSTINT('userid');
 $object = new Salary($db);
 $extrafields = new ExtraFields($db);
 
+$childids = $user->getAllChildIds(1);
+
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -76,6 +78,18 @@ $hookmanager->initHooks(array('salarycard', 'globalcard'));
 $object = new Salary($db);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
+
+	// Check current user can read this salary
+	$canread = 0;
+	if (!empty($user->rights->salaries->readall)) {
+		$canread = 1;
+	}
+	if (!empty($user->rights->salaries->read) && $object->fk_user > 0 && in_array($object->fk_user, $childids)) {
+		$canread = 1;
+	}
+	if (!$canread) {
+		accessforbidden();
+	}
 }
 
 // Security check
@@ -354,6 +368,30 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries-
 	}
 }
 
+// Action to update one extrafield
+if ($action == "update_extras" && !empty($user->rights->salaries->read)) {
+	$object->fetch(GETPOST('id', 'int'));
+
+	$attributekey = GETPOST('attribute', 'alpha');
+	$attributekeylong = 'options_'.$attributekey;
+
+	if (GETPOSTISSET($attributekeylong.'day') && GETPOSTISSET($attributekeylong.'month') && GETPOSTISSET($attributekeylong.'year')) {
+		// This is properties of a date
+		$object->array_options['options_'.$attributekey] = dol_mktime(GETPOST($attributekeylong.'hour', 'int'), GETPOST($attributekeylong.'min', 'int'), GETPOST($attributekeylong.'sec', 'int'), GETPOST($attributekeylong.'month', 'int'), GETPOST($attributekeylong.'day', 'int'), GETPOST($attributekeylong.'year', 'int'));
+		//var_dump(dol_print_date($object->array_options['options_'.$attributekey]));exit;
+	} else {
+		$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, 'alpha');
+	}
+
+	$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
+	if ($result > 0) {
+		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+		$action = 'view';
+	} else {
+		setEventMessages($object->error, $object->errors, 'errors');
+		$action = 'edit_extras';
+	}
+}
 
 /*
  *	View
