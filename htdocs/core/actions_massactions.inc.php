@@ -1335,8 +1335,8 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 		// Message for elements well deleted
 		if ($nbok > 1) {
 			setEventMessages($langs->trans("RecordsDeleted", $nbok), null, 'mesgs');
-		} elseif (!empty($nbok)) {
-			setEventMessages($langs->trans("RecordsDeleted", '1'), null, 'mesgs');
+		} elseif ($nbok == 1) {
+			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		}
 
 		// Message for elements which can't be deleted
