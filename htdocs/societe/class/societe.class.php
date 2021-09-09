@@ -3709,7 +3709,7 @@ class Societe extends CommonObject
 			// TODO Move links to validate professional ID into a dictionary table "country" + "link"
 			$strippedIdProf1 = str_replace(' ', '', $thirdparty->idprof1);
 			if ($idprof == 1 && $thirdparty->country_code == 'FR') {
-				$url = 'https://annuaire-entreprises.data.gouv.fr/entrepri'.$strippedIdProf1; // See also http://avis-situation-sirene.insee.fr/
+				$url = 'https://annuaire-entreprises.data.gouv.fr/entreprise/'.$strippedIdProf1; // See also http://avis-situation-sirene.insee.fr/
 			}
 			if ($idprof == 1 && ($thirdparty->country_code == 'GB' || $thirdparty->country_code == 'UK')) {
 				$url = 'https://beta.companieshouse.gov.uk/company/'.$strippedIdProf1;
