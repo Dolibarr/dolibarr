@@ -830,7 +830,8 @@ $( document ).ready(function() {
 
 <body class="bodytakepos" style="overflow: hidden;">
 <?php
-$keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '')) > 0 ? getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '') : '');
+$keyCodeForEnterTPT = isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '';
+$keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'. ($keyCodeForEnterTPT > 0 ? getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'. $keyCodeForEnterTPT) : '');
 ?>
 <div class="container">
 
