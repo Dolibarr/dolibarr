@@ -429,7 +429,7 @@ $sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,
 $sql .= ' u.login, u.lastname, u.firstname, u.email, u.statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender,';
 $sql .= ' c.fk_cond_reglement,c.fk_mode_reglement,c.fk_shipping_method,';
 $sql .= ' c.fk_input_reason';
-if ($search_categ_cus) {
+if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
 }
 // Add fields from extrafields
@@ -446,7 +446,7 @@ $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
-if (!empty($search_categ_cus)) {
+if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 }
 $sql .= ', '.MAIN_DB_PREFIX.'commande as c';
@@ -793,7 +793,7 @@ if ($resql) {
 	if ($search_product_category != '') {
 		$param .= '&search_product_category='.urlencode($search_product_category);
 	}
-	if ($search_categ_cus > 0) {
+	if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 		$param .= '&search_categ_cus='.urlencode($search_categ_cus);
 	}
 	if ($show_files) {
