@@ -89,16 +89,16 @@ if ($action == 'update') {
 	}
 
 	if (GETPOSTISSET('MAIN_PDF_SENDER_UNDER_LOGO')) {
-    dolibarr_set_const($db, "MAIN_PDF_SENDER_UNDER_LOGO", GETPOST("MAIN_PDF_SENDER_UNDER_LOGO"), 'chaine', 0, '', $conf->entity);
-  }
-  
+		dolibarr_set_const($db, "MAIN_PDF_SENDER_UNDER_LOGO", GETPOST("MAIN_PDF_SENDER_UNDER_LOGO"), 'chaine', 0, '', $conf->entity);
+	}
+
 	if (GETPOSTISSET('MAIN_PDF_NO_SENDER_FRAME')) {
-    dolibarr_set_const($db, "MAIN_PDF_NO_SENDER_FRAME", GETPOST("MAIN_PDF_NO_SENDER_FRAME"), 'chaine', 0, '', $conf->entity);
-  }
-  
+		dolibarr_set_const($db, "MAIN_PDF_NO_SENDER_FRAME", GETPOST("MAIN_PDF_NO_SENDER_FRAME"), 'chaine', 0, '', $conf->entity);
+	}
+
 	if (GETPOSTISSET('MAIN_PDF_NO_RECIPENT_FRAME')) {
-    dolibarr_set_const($db, "MAIN_PDF_NO_RECIPENT_FRAME", GETPOST("MAIN_PDF_NO_RECIPENT_FRAME"), 'chaine', 0, '', $conf->entity);
-  }
+		dolibarr_set_const($db, "MAIN_PDF_NO_RECIPENT_FRAME", GETPOST("MAIN_PDF_NO_RECIPENT_FRAME"), 'chaine', 0, '', $conf->entity);
+	}
 
 	if (GETPOSTISSET('MAIN_PDF_NO_SENDER_FRAME')) {
 		dolibarr_set_const($db, "MAIN_PDF_NO_SENDER_FRAME", GETPOST("MAIN_PDF_NO_SENDER_FRAME"), 'chaine', 0, '', $conf->entity);
