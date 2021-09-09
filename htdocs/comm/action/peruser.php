@@ -767,11 +767,18 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		}
 	} else {
 		/* Use this list to have for all users */
-		$sql = "SELECT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
-		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-		if ($usergroup > 0)	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON u.rowid = ug.fk_user";
-		$sql .= " WHERE u.statut = 1 AND u.entity IN (".getEntity('user').")";
-		if ($usergroup > 0)	$sql .= " AND ug.fk_usergroup = ".$usergroup;
+	    $sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
+	    $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+	    if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+	        $sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+	        $sql .= " WHERE ug.entity IN (".getEntity('usergroup').")";
+	        $sql .= " AND ug.fk_user = u.rowid ";
+	    } else {
+	        if ($usergroup > 0)	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON u.rowid = ug.fk_user";
+	        $sql .= " WHERE u.entity IN (".getEntity('user').")";
+	    }
+	    $sql .= " AND u.statut = 1";
+	    if ($usergroup > 0)	$sql .= " AND ug.fk_usergroup = ".$usergroup;
 		//print $sql;
 		$resql = $db->query($sql);
 		if ($resql) {
