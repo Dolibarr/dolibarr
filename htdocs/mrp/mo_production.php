@@ -150,7 +150,7 @@ if (empty($reshook)) {
 	}
 
 	if (($action == 'confirm_addconsumeline' && GETPOST('addconsumelinebutton') && $permissiontoadd)
-	|| $action == 'confirm_addproduceline' && GETPOST('addproducelinebutton') && $permissiontoadd) {
+	|| ($action == 'confirm_addproduceline' && GETPOST('addproducelinebutton') && $permissiontoadd)) {
 		$moline = new MoLine($db);
 
 		// Line to produce
