@@ -382,12 +382,18 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'submenus' => array(),
 	);
 
-	// Tickets and knwoledge base
+	// Tickets and knowledge base
 	$tmpentry = array(
-		'enabled'=>(!empty($conf->ticket->enabled) || !empty($conf->knwoledgemanagement->enabled)),
-		'perms'=>(!empty($user->rights->ticket->read) || !empty($user->rights->knwoledgemanagement->read)),
-		'module'=>'ticket|knwoledgemanagement'
+		'enabled'=>(!empty($conf->ticket->enabled) || !empty($conf->knowledgemanagement->enabled)),
+		'perms'=>(!empty($user->rights->ticket->read) || !empty($user->rights->knowledgemanagement->knowledgerecord->read)),
+		'module'=>'ticket|knowledgemanagement'
 	);
+	$link = '';
+	if (!empty($conf->ticket->enabled)) {
+		$link = '/ticket/index.php?mainmenu=ticket&amp;leftmenu=';
+	} else {
+		$link = '/knowledgemanagement/knowledgerecord_list.php?mainmenu=ticket&amp;leftmenu=';
+	}
 	$menu_arr[] = array(
 		'name' => 'Ticket',
 		'link' => '/ticket/index.php?mainmenu=ticket&amp;leftmenu=',
