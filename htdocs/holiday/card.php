@@ -561,11 +561,11 @@ if (empty($reshook))
 				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
 				$newSolde = ($soldeActuel - $nbopenedday);
+				$label = $langs->transnoentitiesnoconv("Holidays").' - '.$object->ref;
 
-				// On ajoute la modification dans le LOG
-				$result = $object->addLogCP($user->id, $object->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $object->fk_type);
-				if ($result < 0)
-				{
+				// The modification is added to the LOG
+				$result = $object->addLogCP($user->id, $object->fk_user, $label, $newSolde, $object->fk_type);
+				if ($result < 0) {
 					$error++;
 					setEventMessages(null, $object->errors, 'errors');
 				}
