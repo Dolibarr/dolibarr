@@ -89,7 +89,7 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		$perm = 1;
 	} elseif ($table_element_line == 'mrp_production' && $user->rights->mrp->write) {
 		$perm = 1;
-	} elseif ($table_element_line == 'supplier_proposaldet' && $user->rights->supplier_proposal->write) {
+	} elseif ($table_element_line == 'supplier_proposaldet' && $user->rights->supplier_proposal->creer) {
 		$perm = 1;
 	} elseif ($table_element_line == 'commande_fournisseurdet' && $user->rights->fournisseur->commande->creer) {
 		$perm = 1;
