@@ -16,10 +16,5 @@
 --
 -- ===================================================================
 
-create table llx_payment_salary_extrafields
-(
-  rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  fk_object        integer NOT NULL,    -- salary payment id
-  import_key       varchar(14)      	-- import key
-)ENGINE=innodb;
+
+ALTER TABLE llx_salary_extrafields ADD INDEX idx_salary_extrafields (fk_object);
