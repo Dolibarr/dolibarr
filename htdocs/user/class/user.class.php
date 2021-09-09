@@ -3350,18 +3350,18 @@ class User extends CommonObject
 	public function load_state_board()
 	{
 		// phpcs:enable
-	    global $conf;
+		global $conf;
 
 		$this->nb = array();
 
 		$sql = "SELECT COUNT(DISTINCT u.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 		if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-		    $sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
-		    $sql .= " WHERE ug.entity IN (".getEntity('usergroup').")";
-		    $sql .= " AND ug.fk_user = u.rowid ";
+			$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+			$sql .= " WHERE ug.entity IN (".getEntity('usergroup').")";
+			$sql .= " AND ug.fk_user = u.rowid";
 		} else {
-		    $sql .= " WHERE u.entity IN (".getEntity('user').")";
+			$sql .= " WHERE u.entity IN (".getEntity('user').")";
 		}
 		$sql .= " AND u.statut > 0";
 		//$sql.= " AND employee != 0";
