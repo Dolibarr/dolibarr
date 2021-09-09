@@ -466,8 +466,10 @@ if ($action == 'create') {
 	// Amount
 	print '<tr><td>';
 	print $form->editfieldkey('Amount', 'amount', '', $object, 0, 'string', '', 1).'</td><td>';
-	print '<input name="amount" id="amount" class="minwidth75 maxwidth100" value="'.GETPOST("amount").'">';
-	print '</td></tr>';
+	print '<input name="amount" id="amount" class="minwidth75 maxwidth100" value="'.GETPOST("amount").'">&nbsp;';
+	print '<button class="dpInvisibleButtons" id="updateAmountWithLastSalary" name="_useless" type="button">'.$langs->trans('UpdateAmountWithLastSalary').'</a>';
+	print '</td>';
+	print '</tr>';
 
 	// Project
 	if (!empty($conf->projet->enabled)) {
@@ -560,6 +562,42 @@ if ($action == 'create') {
 	print $form->buttonsSaveCancel("Save", "Cancel", $addition_button);
 
 	print '</form>';
+	print '<script>';
+	print '$( document ).ready(function() {';
+		print '$("#updateAmountWithLastSalary").on("click", function updateAmountWithLastSalary() {
+					console.log("We click on link to autofill salary amount");
+					var fk_user = $("#fk_user").val()
+					var url = "'.DOL_URL_ROOT.'/salaries/ajax/ajaxsalaries.php?fk_user="+fk_user;
+					if (fk_user != -1) {
+						$.get(
+							url,
+							function( data ) {
+								if(data!=null) {
+									console.log("Data returned: "+data);
+									item = JSON.parse(data);
+									if(item[0].key == "Amount") {
+										value = item[0].value;
+										if (value != null) {
+											$("#amount").val(item[0].value);
+										} else {
+											console.error("Error: Ajax url "+url+" has returned a null value.");
+										}
+									} else {
+										console.error("Error: Ajax url "+url+" has returned the wrong key.");
+									}
+								} else {
+									console.error("Error: Ajax url "+url+" has returned an empty page.");
+								}
+							}
+						);
+						
+					} else {
+						alert("'.$langs->trans("FillFieldFirst").'");
+					}
+		});
+	
+	})';
+	print '</script>';
 }
 
 

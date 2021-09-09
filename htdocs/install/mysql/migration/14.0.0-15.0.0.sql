@@ -40,6 +40,12 @@
 
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_project integer NOT NULL;
 
+UPDATE llx_extrafields SET elementtype = 'salary' WHERE elementtype = 'payment_salary';
+ALTER TABLE llx_payment_salary_extrafields RENAME TO llx_salary_extrafields;
+-- VMYSQL4.1 DROP INDEX idx_payment_salary_extrafields on llx_salary_extrafields
+-- VPGSQL8.2 DROP INDEX idx_payment_salary_extrafields
+ALTER TABLE llx_salary_extrafields ADD INDEX idx_salary_extrafields (fk_object);
+
 
 -- v15
 
