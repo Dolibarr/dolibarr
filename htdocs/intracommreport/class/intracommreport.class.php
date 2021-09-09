@@ -437,7 +437,7 @@ class IntracommReport extends CommonObject
 	 */
 	public function getNextDeclarationNumber()
 	{
-		$resql = $this->db->query('SELECT MAX(numero_declaration) as max_declaration_number FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE exporttype="'.$this->exporttype.'"');
+		$resql = $this->db->query('SELECT MAX(numero_declaration) as max_declaration_number FROM '.MAIN_DB_PREFIX.$this->table_element." WHERE exporttype='".$this->db->escape($this->exporttype)."'");
 		if ($resql) {
 			$res = $this->db->fetch_object($resql);
 		}

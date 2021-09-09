@@ -79,7 +79,7 @@ class modMailing extends DolibarrModules
 		$this->const[$r][0] = "MAILING_CONTACT_DEFAULT_BULK_STATUS";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "0";
-		$this->const[$r][3] = 'Default black list mailing';
+		$this->const[$r][3] = 'Default value for field "Refuse bulk email" when creating a contact';
 		$this->const[$r][4] = 0;
 		$r++;
 

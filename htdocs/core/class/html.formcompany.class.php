@@ -183,7 +183,7 @@ class FormCompany extends Form
 		if (!empty($htmlname) && $user->admin) {
 			print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
-		print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		print '<input type="submit" class="button button-save valignmiddle" value="'.$langs->trans("Modify").'">';
 		print '</form>';
 	}
 
@@ -234,7 +234,7 @@ class FormCompany extends Form
 		if (!empty($htmlname) && $user->admin) {
 			print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
-		print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		print '<input type="submit" class="button button-save valignmiddle" value="'.$langs->trans("Modify").'">';
 		print '</form>';
 	}
 
@@ -717,6 +717,8 @@ class FormCompany extends Form
 					print ' onChange="'.$javaScript.'"';
 				}
 				print '>';
+				print '<option value="-1">&nbsp;</option>';
+
 				$num = $this->db->num_rows($resql);
 				$i = 0;
 				if ($num) {

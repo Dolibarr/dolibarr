@@ -89,8 +89,8 @@ if ($permission) {
 
 	?>
 	<form class="tagtr liste_titre">
-		<div class="tagtd liste_titre"><?php echo $langs->trans("ThirdParty"); ?></div>
-		<div class="tagtd liste_titre"><?php echo $langs->trans("Users").' | '.$langs->trans("Contacts"); ?></div>
+		<div class="tagtd liste_titre"><?php echo img_object('', 'company', 'class="optiongrey paddingright"').$langs->trans("ThirdParty"); ?></div>
+		<div class="tagtd liste_titre"><?php echo img_picto($langs->trans("Users"), 'user', 'class="optiongrey paddingright"').$langs->trans("Users").' | '.img_picto($langs->trans("Contacts"), 'contact', 'class="optiongrey paddingright"').$langs->trans("Contacts"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("ContactType"); ?></div>
 		<div class="tagtd liste_titre">&nbsp;</div>
 		<div class="tagtd liste_titre">&nbsp;</div>
@@ -140,11 +140,8 @@ if ($permission) {
 		} ?>
 
 		<div class="tagtd nowrap maxwidthonsmartphone noborderbottom">
-			<?php $selectedCompany = isset($_GET["newcompany"]) ? $_GET["newcompany"] : (empty($object->socid) ?  0 : $object->socid);
-			// add company icon before select list
-			if ($selectedCompany) {
-				echo img_object('', 'company', 'class="hideonsmartphone"');
-			}
+			<?php
+			$selectedCompany = GETPOSTISSET("newcompany") ? GETPOST("newcompany", 'int') : (empty($object->socid) ?  0 : $object->socid);
 			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp'); ?>
 		</div>
 		<!--  <div class="tagtd nowrap noborderbottom"><?php echo img_object('', 'contact').' '.$langs->trans("ThirdPartyContacts"); ?></div>-->

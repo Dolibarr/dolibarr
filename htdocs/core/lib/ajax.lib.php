@@ -34,7 +34,7 @@
  * @param string	$url 				Ajax Url to call for request: /path/page.php. Must return a json array ('key'=>id, 'value'=>String shown into input field once selected, 'label'=>String shown into combo list)
  * @param string	$urloption			More parameters on URL request
  * @param int		$minLength			Minimum number of chars to trigger that Ajax search
- * @param int		$autoselect			Automatic selection if just one value (trigger("change") on field is done is search return only 1 result)
+ * @param int		$autoselect			Automatic selection if just one value (trigger("change") on field is done if search return only 1 result)
  * @param array		$ajaxoptions		Multiple options array
  *                                      - Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
  *                                      - Ex: array('disabled'=> )
@@ -67,7 +67,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 	$script .= '<!-- Javascript code for autocomplete of field '.$htmlname.' -->'."\n";
 	$script .= '<script>'."\n";
 	$script .= '$(document).ready(function() {
-					var autoselect = '.$autoselect.';
+					var autoselect = '.((int) $autoselect).';
 					var options = '.json_encode($ajaxoptions).'; /* Option of actions to do after keyup, or after select */
 
 					/* Remove selected id as soon as we type or delete a char (it means old selection is wrong). Use keyup/down instead of change to avoid loosing the product id. This is needed only for select of predefined product */
@@ -624,9 +624,10 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
  *  @param  string  $text_on    Text if on
  *  @param  string  $text_off   Text if off
  *  @param  array   $input      Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
+ *  @param	string	$morecss	More CSS
  *  @return string              html for button on/off
  */
-function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input = array())
+function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input = array(), $morecss = '')
 {
 	global $langs;
 
@@ -697,8 +698,8 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
             });
         });
     </script>';
-	$out .= '<span id="set_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').'">'.img_picto($langs->trans($text_off), 'switch_off').'</span>';
-	$out .= '<span id="del_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').'">'.img_picto($langs->trans($text_on), 'switch_on').'</span>';
+	$out .= '<span id="set_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').($morecss ? ' '.$morecss : '').'">'.img_picto($langs->trans($text_off), 'switch_off').'</span>';
+	$out .= '<span id="del_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').($morecss ? ' '.$morecss : '').'">'.img_picto($langs->trans($text_on), 'switch_on').'</span>';
 
 	return $out;
 }

@@ -564,8 +564,8 @@ $sql = "SELECT rowid as rowid, module, label, type_template, lang, fk_user, priv
 $sql .= " FROM ".MAIN_DB_PREFIX."c_email_templates";
 $sql .= " WHERE entity IN (".getEntity('email_template').")";
 if (!$user->admin) {
-	$sql .= " AND (private = 0 OR (private = 1 AND fk_user = ".$user->id."))"; // Show only public and private to me
-	$sql .= " AND (active = 1 OR fk_user = ".$user->id.")"; // Show only active or owned by me
+	$sql .= " AND (private = 0 OR (private = 1 AND fk_user = ".((int) $user->id)."))"; // Show only public and private to me
+	$sql .= " AND (active = 1 OR fk_user = ".((int) $user->id).")"; // Show only active or owned by me
 }
 if (empty($conf->global->MAIN_MULTILANGS)) {
 	$sql .= " AND (lang = '".$db->escape($langs->defaultlang)."' OR lang IS NULL OR lang = '')";
@@ -746,7 +746,7 @@ if ($action == 'view') {
 		if ($tmpfieldlist == 'topic') {
 			print '<td class="center" rowspan="'.(count($fieldsforcontent)).'">';
 			if ($action != 'edit') {
-				print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
+				print '<input type="submit" class="button button-add" name="actionadd" value="'.$langs->trans("Add").'">';
 			}
 			print '</td>';
 		}

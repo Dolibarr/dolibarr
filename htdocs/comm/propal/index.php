@@ -67,8 +67,11 @@ print load_fiche_titre($langs->trans("ProspectionArea"), '', 'propal');
 print '<div class="fichecenter">';
 print '<div class="fichethirdleft">';
 
-print getCustomerProposalPieChart($socid);
-print '<br>';
+$tmp = getCustomerProposalPieChart($socid);
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
 
 /*
  * Draft proposals
@@ -85,7 +88,7 @@ if (!empty($conf->propal->enabled)) {
 	$sql .= " AND p.fk_soc = s.rowid";
 	$sql .= " AND p.fk_statut =".Propal::STATUS_DRAFT;
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND p.fk_soc = ".((int) $socid);
@@ -163,7 +166,7 @@ if ($socid) {
 	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " ORDER BY c.tms DESC";
 $sql .= $db->plimit($max, 0);
@@ -236,7 +239,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
 	$sql .= " AND p.entity IN (".getEntity($propalstatic->element).")";
 	$sql .= " AND p.fk_statut = ".Propal::STATUS_VALIDATED;
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND s.rowid = ".((int) $socid);
@@ -319,7 +322,7 @@ if (! empty($conf->propal->enabled))
 	$sql.= " AND c.entity = ".$conf->entity;
 	$sql.= " AND c.fk_statut = 1";
 	if ($socid) $sql.= " AND c.fk_soc = ".((int) $socid);
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .((int) $user->id);
 	$sql.= " ORDER BY c.rowid DESC";
 
 	$resql=$db->query($sql);
@@ -394,7 +397,7 @@ if (! empty($conf->propal->enabled))
 	$sql.= " AND c.entity = ".$conf->entity;
 	$sql.= " AND c.fk_statut = 2 ";
 	if ($socid) $sql.= " AND c.fk_soc = ".((int) $socid);
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .((int) $user->id);
 	$sql.= " ORDER BY c.rowid DESC";
 
 	$resql=$db->query($sql);

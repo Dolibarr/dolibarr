@@ -306,8 +306,8 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 			// with
 			// 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401 + 200100000, 'PCG99-ABREGE','CAPIT', '1234', 1400 + 200100000,...'
 			// Note: string with 'PCG99-ABREGE','CAPIT', 1234  instead of  'PCG99-ABREGE','CAPIT', '1234' is also supported
-			$newsql = preg_replace('/VALUES\s*\(__ENTITY__, \s*(\d+)\s*,(\s*\'[^\',]*\'\s*,\s*\'[^\',]*\'\s*,\s*\'?[^\',]*\'?\s*),\s*\'?([^\',]*)\'?/ims', 'VALUES (__ENTITY__, \1 + '.$offsetforchartofaccount.', \2, \3 + '.$offsetforchartofaccount, $newsql);
-			$newsql = preg_replace('/([,\s])0 \+ '.$offsetforchartofaccount.'/ims', '\1 0', $newsql);
+			$newsql = preg_replace('/VALUES\s*\(__ENTITY__, \s*(\d+)\s*,(\s*\'[^\',]*\'\s*,\s*\'[^\',]*\'\s*,\s*\'?[^\',]*\'?\s*),\s*\'?([^\',]*)\'?/ims', 'VALUES (__ENTITY__, \1 + '.((int) $offsetforchartofaccount).', \2, \3 + '.((int) $offsetforchartofaccount), $newsql);
+			$newsql = preg_replace('/([,\s])0 \+ '.((int) $offsetforchartofaccount).'/ims', '\1 0', $newsql);
 			//var_dump($newsql);
 			$arraysql[$i] = $newsql;
 
@@ -345,7 +345,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 
 				for ($j = 0; $j < $num; $j++) {
 					$from = $reg[0][$j];
-					$to = $db->encrypt($reg[1][$j], 1);
+					$to = $db->encrypt($reg[1][$j]);
 					$newsql = str_replace($from, $to, $newsql);
 				}
 				$sqlmodified++;
@@ -481,10 +481,10 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 
 
 /**
- *	Effacement d'une constante dans la base de donnees
+ *	Delete a constant
  *
  *	@param	    DoliDB		$db         Database handler
- *	@param	    string		$name		Name of constant or rowid of line
+ *	@param	    string|int	$name		Name of constant or rowid of line
  *	@param	    int			$entity		Multi company id, -1 for all entities
  *	@return     int         			<0 if KO, >0 if OK
  *
@@ -502,7 +502,7 @@ function dolibarr_del_const($db, $name, $entity = 1)
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 	$sql .= " WHERE (".$db->decrypt('name')." = '".$db->escape($name)."'";
 	if (is_numeric($name)) {
-		$sql .= " OR rowid = '".$db->escape($name)."'";
+		$sql .= " OR rowid = ".((int) $name);
 	}
 	$sql .= ")";
 	if ($entity >= 0) {
@@ -536,7 +536,7 @@ function dolibarr_get_const($db, $name, $entity = 1)
 
 	$sql = "SELECT ".$db->decrypt('value')." as value";
 	$sql .= " FROM ".MAIN_DB_PREFIX."const";
-	$sql .= " WHERE name = ".$db->encrypt($name, 1);
+	$sql .= " WHERE name = ".$db->encrypt($name);
 	$sql .= " AND entity = ".((int) $entity);
 
 	dol_syslog("admin.lib::dolibarr_get_const", LOG_DEBUG);
@@ -583,7 +583,7 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 	$db->begin();
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-	$sql .= " WHERE name = ".$db->encrypt($name, 1);
+	$sql .= " WHERE name = ".$db->encrypt($name);
 	if ($entity >= 0) {
 		$sql .= " AND entity = ".((int) $entity);
 	}
@@ -594,8 +594,8 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 	if (strcmp($value, '')) {	// true if different. Must work for $value='0' or $value=0
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity)";
 		$sql .= " VALUES (";
-		$sql .= $db->encrypt($name, 1);
-		$sql .= ", ".$db->encrypt($value, 1);
+		$sql .= $db->encrypt($name);
+		$sql .= ", ".$db->encrypt($value);
 		$sql .= ",'".$db->escape($type)."',".((int) $visible).",'".$db->escape($note)."',".((int) $entity).")";
 
 		//print "sql".$value."-".pg_escape_string($value)."-".$sql;exit;
@@ -753,7 +753,7 @@ function security_prepare_head()
 	$sql = "SELECT COUNT(r.id) as nb";
 	$sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 	$sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
-	$sql .= " AND entity = ".$conf->entity;
+	$sql .= " AND entity = ".((int) $conf->entity);
 	$sql .= " AND bydefault = 1";
 	if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 		$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
@@ -1806,7 +1806,7 @@ function addDocumentModel($name, $type, $label = '', $description = '')
 	$db->begin();
 
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-	$sql .= " VALUES ('".$db->escape($name)."','".$db->escape($type)."',".$conf->entity.", ";
+	$sql .= " VALUES ('".$db->escape($name)."','".$db->escape($type)."',".((int) $conf->entity).", ";
 	$sql .= ($label ? "'".$db->escape($label)."'" : 'null').", ";
 	$sql .= (!empty($description) ? "'".$db->escape($description)."'" : "null");
 	$sql .= ")";
@@ -1839,7 +1839,7 @@ function delDocumentModel($name, $type)
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
 	$sql .= " WHERE nom = '".$db->escape($name)."'";
 	$sql .= " AND type = '".$db->escape($type)."'";
-	$sql .= " AND entity = ".$conf->entity;
+	$sql .= " AND entity = ".((int) $conf->entity);
 
 	dol_syslog("admin.lib::delDocumentModel", LOG_DEBUG);
 	$resql = $db->query($sql);

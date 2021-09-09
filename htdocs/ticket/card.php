@@ -144,17 +144,31 @@ if (empty($reshook)) {
 		$search_agenda_label = '';
 	}
 
+	$backurlforlist = DOL_URL_ROOT.'/ticket/list.php';
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/ticket/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			}
+		}
+	}
+
 	if ($cancel) {
-		if (!empty($backtopage)) {
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
 		}
-
 		$action = 'view';
 	}
 
 	// Action to add an action (not a message)
-	if (GETPOST('add', 'alpha') && !empty($user->rights->ticket->write)) {
+	if (GETPOST('save', 'alpha') && !empty($user->rights->ticket->write)) {
 		$error = 0;
 
 		if (!GETPOST("subject", 'alphanohtml')) {
@@ -276,9 +290,13 @@ if (empty($reshook)) {
 				$db->commit();
 
 				if (!empty($backtopage)) {
-					$url = $backtopage;
+					if (empty($id)) {
+						$url = $backtopage;
+					} else {
+						$url = 'card.php?track_id='.urlencode($object->track_id);
+					}
 				} else {
-					$url = 'card.php?track_id='.$object->track_id;
+					$url = 'card.php?track_id='.urlencode($object->track_id);
 				}
 
 				header("Location: ".$url);
@@ -342,9 +360,13 @@ if (empty($reshook)) {
 			$action = 'edit';
 		} else {
 			if (!empty($backtopage)) {
-				$url = $backtopage;
+				if (empty($id)) {
+					$url = $backtopage;
+				} else {
+					$url = 'card.php?track_id='.urlencode($object->track_id);
+				}
 			} else {
-				$url = 'card.php?track_id='.$object->track_id;
+				$url = 'card.php?track_id='.urlencode($object->track_id);
 			}
 
 			header('Location: '.$url);
@@ -427,9 +449,13 @@ if (empty($reshook)) {
 
 		if ($ret > 0) {
 			if (!empty($backtopage)) {
-				$url = $backtopage;
+				if (empty($id)) {
+					$url = $backtopage;
+				} else {
+					$url = 'card.php?track_id='.urlencode($object->track_id);
+				}
 			} else {
-				$url = 'card.php?action=view&track_id='.$object->track_id;
+				$url = 'card.php?action=view&track_id='.urlencode($object->track_id);
 			}
 
 			header("Location: ".$url);
@@ -707,6 +733,8 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->withextrafields = 1;
 	$formticket->param = array('origin' => GETPOST('origin'), 'originid' => GETPOST('originid'));
 
+	$formticket->withcancel = 1;
+
 	$formticket->showForm(1, 'create', 0);
 	/*} elseif ($action == 'edit' && $user->rights->ticket->write && $object->fk_statut < Ticket::STATUS_CLOSED) {
 	$formticket = new FormTicket($db);
@@ -756,11 +784,7 @@ if ($action == 'create' || $action == 'presend') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; &nbsp; ';
-	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print '</form>'; */
 } elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'presend' || $action == 'presend_addmessage' || $action == 'close' || $action == 'abandon' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'reopen'
@@ -1024,7 +1048,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '<input type="hidden" name="track_id" value="'.$object->track_id.'">';
 			print '<label for="fk_user_assign">'.$langs->trans("AssignUser").'</label> ';
 			print $form->select_dolusers($user->id, 'fk_user_assign', 1);
-			print ' <input class="button" type="submit" name="btn_assign_user" value="'.$langs->trans("Validate").'" />';
+			print ' <input type="submit" class="button" name="btn_assign_user" value="'.$langs->trans("Validate").'" />';
 			print '</form>';
 		}
 		print '</td></tr>';
@@ -1045,7 +1069,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '<input type="hidden" name="track_id" value="'.$track_id.'">';
 			print '<input type="hidden" name="action" value="set_progression">';
 			print '<input type="text" class="flat" size="20" name="progress" value="'.$object->progress.'">';
-			print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+			print ' <input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
 			print($object->progress > 0 ? $object->progress : '0').'%';
@@ -1105,11 +1129,11 @@ if ($action == 'create' || $action == 'presend') {
 		print '<table class="noborder tableforfield centpercent margintable">';
 		print '<tr class="liste_titre">';
 		print '<td>';
-		print $langs->trans('Properties');
+		print $langs->trans('TicketProperties');
 		print '</td>';
 		print '<td>';
 		if (GETPOST('set', 'alpha') == 'properties' && $user->rights->ticket->write) {
-			print '<input class="button" type="submit" name="btn_update_ticket_prop" value="'.$langs->trans("Modify").'" />';
+			print '<input type="submit" class="button" name="btn_update_ticket_prop" value="'.$langs->trans("Modify").'" />';
 		} else {
 			//    Button to edit Properties
 			if ($object->fk_statut < $object::STATUS_NEED_MORE_INFO && $user->rights->ticket->write) {

@@ -1153,3 +1153,4 @@ ConfirmMassLeaveApprovalQuestion=Are you sure you want to approve the %s selecte
 ConfirmMassLeaveApproval=Mass leave approval confirmation
 RecordAproved=Record approved
 RecordsApproved=%s Record(s) approved
+Properties=Properties

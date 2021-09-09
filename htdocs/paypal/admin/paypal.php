@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $servicename = 'PayPal';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'other', 'paypal', 'paybox'));
+$langs->loadLangs(array('admin', 'other', 'paypal', 'paybox', 'stripe'));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -333,7 +333,7 @@ print '</div>';
 
 print dol_get_fiche_end();
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+print $form->buttonsSaveCancel("Modify", '');
 
 print '</form>';
 
