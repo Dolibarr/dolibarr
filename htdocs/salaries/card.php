@@ -67,6 +67,8 @@ $fk_user = GETPOSTINT('userid');
 $object = new Salary($db);
 $extrafields = new ExtraFields($db);
 
+$childids = $user->getAllChildIds(1);
+
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -76,6 +78,18 @@ $hookmanager->initHooks(array('salarycard', 'globalcard'));
 $object = new Salary($db);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
+
+	// Check current user can read this salary
+	$canread = 0;
+	if (!empty($user->rights->salaries->readall)) {
+		$canread = 1;
+	}
+	if (!empty($user->rights->salaries->read) && $object->fk_user > 0 && in_array($object->fk_user, $childids)) {
+		$canread = 1;
+	}
+	if (!$canread) {
+		accessforbidden();
+	}
 }
 
 // Security check
