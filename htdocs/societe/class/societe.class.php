@@ -4470,6 +4470,7 @@ class Societe extends CommonObject
 			$outstandingTotal = 0;
 			$outstandingTotalIncTax = 0;
 			$arrayofref = array();
+			$arrayofrefopened = array();
 			if ($mode == 'supplier') {
 				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 				$tmpobject = new FactureFournisseur($this->db);
@@ -4487,6 +4488,9 @@ class Societe extends CommonObject
 					$outstandingTotal += $obj->total_ht;
 					$outstandingTotalIncTax += $obj->total_ttc;
 				}
+
+				$remaintopay = 0;
+
 				if ($obj->paye == 0
 					&& $obj->status != $tmpobject::STATUS_DRAFT    		// Not a draft
 					&& $obj->status != $tmpobject::STATUS_ABANDONED	    // Not abandonned
@@ -4496,16 +4500,23 @@ class Societe extends CommonObject
 					$creditnotes = $tmpobject->getSumCreditNotesUsed();
 					$deposits = $tmpobject->getSumDepositsUsed();
 
-					$outstandingOpened += ($obj->total_ttc - $paiement - $creditnotes - $deposits);
+					$remaintopay = ($obj->total_ttc - $paiement - $creditnotes - $deposits);
+					$outstandingOpened += $remaintopay;
 				}
 
 				//if credit note is converted but not used
 				// TODO Do this also for customer ?
 				if ($mode == 'supplier' && $obj->type == FactureFournisseur::TYPE_CREDIT_NOTE && $tmpobject->isCreditNoteUsed()) {
-					$outstandingOpened -= $tmpobject->getSumFromThisCreditNotesNotUsed();
+					$remainingcreditnote = $tmpobject->getSumFromThisCreditNotesNotUsed();
+					$remaintopay -= $remainingcreditnote;
+					$outstandingOpened -= $remainingcreditnote;
+				}
+
+				if ($remaintopay) {
+					$arrayofrefopened[$obj->rowid] = $obj->ref;
 				}
 			}
-			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax, 'refs'=>$arrayofref); // 'opened' is 'incl taxes'
+			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax, 'refs'=>$arrayofref, 'refsopened'=>$arrayofrefopened); // 'opened' is 'incl taxes'
 		} else {
 			dol_syslog("Sql error ".$this->db->lasterror, LOG_ERR);
 			return array();
