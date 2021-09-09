@@ -3302,7 +3302,7 @@ class User extends CommonObject
 
 		$this->nb = array();
 
-		$sql = "SELECT DISTINCT count(u.rowid) as nb";
+		$sql = "SELECT COUNT(DISTINCT u.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 		if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 		    $sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
