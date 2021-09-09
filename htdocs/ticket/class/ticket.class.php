@@ -252,7 +252,7 @@ class Ticket extends CommonObject
 	public $fields = array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'position'=>1, 'visible'=>-2, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id"),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>5, 'notnull'=>1, 'index'=>1),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'css'=>''),
+		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'css'=>'', 'showoncombobox'=>1),
 		'track_id' => array('type'=>'varchar(255)', 'label'=>'TicketTrackId', 'visible'=>-2, 'enabled'=>1, 'position'=>11, 'notnull'=>-1, 'searchall'=>1, 'help'=>"Help text"),
 		'fk_user_create' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Author', 'visible'=>1, 'enabled'=>1, 'position'=>15, 'notnull'=>1, 'css'=>'tdoverflowmax125 maxwidth150onsmartphone'),
 		'origin_email' => array('type'=>'mail', 'label'=>'OriginEmail', 'visible'=>-2, 'enabled'=>1, 'position'=>16, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'css'=>'tdoverflowmax150'),
@@ -466,13 +466,13 @@ class Ticket extends CommonObject
 			$sql .= " ".(!isset($this->datec) || dol_strlen($this->datec) == 0 ? 'NULL' : "'".$this->db->idate($this->datec)."'").",";
 			$sql .= " ".(!isset($this->date_read) || dol_strlen($this->date_read) == 0 ? 'NULL' : "'".$this->db->idate($this->date_read)."'").",";
 			$sql .= " ".(!isset($this->date_close) || dol_strlen($this->date_close) == 0 ? 'NULL' : "'".$this->db->idate($this->date_close)."'")."";
-			$sql .= ", ".$conf->entity;
+			$sql .= ", ".((int) $conf->entity);
 			$sql .= ", ".(!isset($this->notify_tiers_at_create) ? '1' : "'".$this->db->escape($this->notify_tiers_at_create)."'");
 			$sql .= ")";
 
 			$this->db->begin();
 
-			dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$error++;
@@ -582,7 +582,7 @@ class Ticket extends CommonObject
 			}
 		}
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
@@ -692,7 +692,7 @@ class Ticket extends CommonObject
 		$sql .= ", type.label as type_label, category.label as category_label, severity.label as severity_label";
 		// Add fields for extrafields
 		foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
-			$sql .= ($extrafields->attributes[$this->table_element]['type'][$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+			$sql .= ($extrafields->attributes[$this->table_element]['type'][$key] != 'separate' ? ",ef.".$key." as options_".$key : '');
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
@@ -714,17 +714,17 @@ class Ticket extends CommonObject
 		if (!empty($filter)) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) { // To allow $filter['YEAR(s.dated)']=>$year
-					$sql .= ' AND '.$key." = '".$this->db->escape($value)."'";
+					$sql .= " AND ".$key." = '".$this->db->escape($value)."'";
 				} elseif (($key == 't.fk_user_assign') || ($key == 't.type_code') || ($key == 't.category_code') || ($key == 't.severity_code') || ($key == 't.fk_soc')) {
 					$sql .= " AND ".$key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 't.fk_statut') {
 					if (is_array($value) && count($value) > 0) {
-						$sql .= 'AND '.$key.' IN ('.$this->db->sanitize(implode(',', $value)).')';
+						$sql .= " AND ".$key." IN (".$this->db->sanitize(implode(',', $value)).")";
 					} else {
-						$sql .= ' AND '.$key.' = '.((int) $value);
+						$sql .= " AND ".$key.' = '.((int) $value);
 					}
 				} else {
-					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}
@@ -734,12 +734,12 @@ class Ticket extends CommonObject
 			$sql .= " AND t.fk_soc = ".((int) $user->socid);
 		}
 
-		$sql .= " ORDER BY ".$sortfield.' '.$sortorder;
+		$sql .= $this->db->order($sortfield, $sortorder);
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit + 1, $offset);
+			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 
-		dol_syslog(get_class($this)."::fetch_all sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
@@ -1143,7 +1143,7 @@ class Ticket extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_type";
 		$sql .= " WHERE active > 0";
 		$sql .= " ORDER BY pos";
-		dol_syslog(get_class($this)."::load_cache_type_tickets sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::load_cache_type_tickets", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -1179,11 +1179,11 @@ class Ticket extends CommonObject
 		}
 		// Cache deja charge
 
-		$sql = "SELECT rowid, code, label, use_default, pos, description, public, active";
+		$sql = "SELECT rowid, code, label, use_default, pos, description, public, active, force_severity, fk_parent";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category";
 		$sql .= " WHERE active > 0";
 		$sql .= " ORDER BY pos";
-		dol_syslog(get_class($this)."::load_cache_categories_tickets sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::load_cache_categories_tickets", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -1198,6 +1198,8 @@ class Ticket extends CommonObject
 				$this->cache_category_tickets[$obj->rowid]['pos'] = $obj->pos;
 				$this->cache_category_tickets[$obj->rowid]['public'] = $obj->public;
 				$this->cache_category_tickets[$obj->rowid]['active'] = $obj->active;
+				$this->cache_category_tickets[$obj->rowid]['force_severity'] = $obj->force_severity;
+				$this->cache_category_tickets[$obj->rowid]['fk_parent'] = $obj->fk_parent;
 				$i++;
 			}
 			return $num;
@@ -1225,7 +1227,7 @@ class Ticket extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_severity";
 		$sql .= " WHERE active > 0";
 		$sql .= " ORDER BY pos";
-		dol_syslog(get_class($this)."::loadCacheSeveritiesTickets sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::loadCacheSeveritiesTickets", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -1400,7 +1402,7 @@ class Ticket extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
 			$sql .= " SET fk_statut = ".Ticket::STATUS_READ.", date_read='".$this->db->idate(dol_now())."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::markAsRead");
 			$resql = $this->db->query($sql);
@@ -1458,7 +1460,7 @@ class Ticket extends CommonObject
 		} else {
 			$sql .= " SET fk_user_assign=null, fk_statut = ".Ticket::STATUS_READ;
 		}
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::assignUser sql=".$sql);
 		$resql = $this->db->query($sql);
@@ -1723,7 +1725,7 @@ class Ticket extends CommonObject
 		$sql .= " AND elementtype = 'ticket'";
 		$sql .= " ORDER BY datec DESC";
 
-		dol_syslog(get_class($this)."::load_cache_actions_ticket sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::load_cache_actions_ticket", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -1942,7 +1944,7 @@ class Ticket extends CommonObject
 		if ($this->id) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
 			$sql .= " SET fk_soc = ".($id > 0 ? $id : "null");
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this).'::setCustomer sql='.$sql);
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -1966,7 +1968,7 @@ class Ticket extends CommonObject
 		if ($this->id) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
 			$sql .= " SET progress = ".($percent > 0 ? $percent : "null");
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this).'::set_progression sql='.$sql);
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -2130,124 +2132,6 @@ class Ticket extends CommonObject
 		return $array_contact;
 	}
 
-	/**
-	 * Send message
-	 *
-	 *  @param  string $subject	  Subject
-	 *  @param  string $texte      Message to send
-	 *  @return int                <0 if KO, or number of changes if OK
-	 */
-	public function messageSend($subject, $texte)
-	{
-		global $conf, $langs, $mysoc, $dolibarr_main_url_root;
-
-		$langs->load("other");
-
-		dol_syslog(get_class($this)."::message_send action=$action, socid=$socid, texte=$texte, objet_type=$objet_type, objet_id=$objet_id, file=$file");
-
-		$internal_contacts = $this->getIdContact('internal', 'SUPPORTTEC');
-		$external_contacts = $this->getIdContact('external', 'SUPPORTTEC');
-
-		if ($result) {
-			$num = $this->db->num_rows($result);
-			$i = 0;
-			while ($i < $num) { // For each notification couple defined (third party/actioncode)
-				$obj = $this->db->fetch_object($result);
-
-				$sendto = $obj->firstname." ".$obj->lastname." <".$obj->email.">";
-				$actiondefid = $obj->adid;
-
-				if (dol_strlen($sendto)) {
-					include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-					$application = ($conf->global->MAIN_APPLICATION_TITLE ? $conf->global->MAIN_APPLICATION_TITLE : 'Dolibarr ERP/CRM');
-
-					$subject = '['.$application.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
-
-					$message = $langs->transnoentities("YouReceiveMailBecauseOfNotification", $application, $mysoc->name)."\n";
-					$message .= $langs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
-					$message .= "\n";
-					$message .= $texte;
-					// Add link
-					$link = '';
-					switch ($objet_type) {
-						case 'ficheinter':
-							$link = '/fichinter/card.php?id='.$objet_id;
-							break;
-						case 'propal':
-							$link = '/comm/propal.php?id='.$objet_id;
-							break;
-						case 'facture':
-							$link = '/compta/facture/card.php?facid='.$objet_id;
-							break;
-						case 'order':
-							$link = '/commande/card.php?facid='.$objet_id;
-							break;
-						case 'order_supplier':
-							$link = '/fourn/commande/card.php?facid='.$objet_id;
-							break;
-					}
-					// Define $urlwithroot
-					$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-					$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
-					//$urlwithroot=DOL_MAIN_URL_ROOT;                        // This is to use same domain name than current
-					if ($link) {
-						$message .= "\n".$urlwithroot.$link;
-					}
-
-					$filename = basename($file);
-
-					$mimefile = dol_mimetype($file);
-
-					$msgishtml = 0;
-
-					$replyto = $conf->notification->email_from;
-
-					$message = dol_nl2br($message);
-
-					if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
-						$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
-						$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
-					}
-					$mailfile = new CMailFile(
-						$subject,
-						$sendto,
-						$replyto,
-						$message,
-						array($file),
-						array($mimefile),
-						array($filename[count($filename) - 1]),
-						'',
-						'',
-						0,
-						$msgishtml
-					);
-
-					if ($mailfile->sendfile()) {
-						$now = dol_now();
-						$sendto = htmlentities($sendto);
-
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_contact, objet_type, objet_id, email)";
-						$sql .= " VALUES ('".$this->db->idate($now)."', ".$actiondefid.", ".$obj->cid.", '".$this->db->escape($objet_type)."', ".$objet_id.", '".$this->db->escape($obj->email)."')";
-						dol_syslog("Notify::send sql=".$sql);
-						if (!$this->db->query($sql)) {
-							dol_print_error($this->db);
-						}
-					} else {
-						$this->error = $mailfile->error;
-						//dol_syslog("Notify::send ".$this->error, LOG_ERR);
-					}
-					if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
-						$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
-					}
-				}
-				$i++;
-			}
-			return $i;
-		} else {
-			$this->error = $this->db->error();
-			return -1;
-		}
-	}
 
 	/**
 	 *    Get array of all contacts for a ticket
@@ -2294,7 +2178,7 @@ class Ticket extends CommonObject
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople t on ec.fk_socpeople = t.rowid";
 		}
 
-		$sql .= " WHERE ec.element_id =".$this->id;
+		$sql .= " WHERE ec.element_id = ".((int) $this->id);
 		$sql .= " AND ec.fk_c_type_contact=tc.rowid";
 		$sql .= " AND tc.element='".$this->db->escape($this->element)."'";
 		if ($source == 'internal') {
@@ -2500,6 +2384,51 @@ class Ticket extends CommonObject
 		return array('listofpaths'=>$listofpaths, 'listofnames'=>$listofnames, 'listofmimes'=>$mimetype);
 	}
 
+	/**
+	 * Sets object to supplied categories.
+	 *
+	 * Deletes object from existing categories not supplied.
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param  int[]|int $categories Category or categories IDs
+	 * @return void
+	 */
+	public function setCategories($categories)
+	{
+		// Handle single category
+		if (!is_array($categories)) {
+			$categories = array($categories);
+		}
+
+		// Get current categories
+		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		$c = new Categorie($this->db);
+		$existing = $c->containing($this->id, Categorie::TYPE_TICKET, 'id');
+
+		// Diff
+		if (is_array($existing)) {
+			$to_del = array_diff($existing, $categories);
+			$to_add = array_diff($categories, $existing);
+		} else {
+			$to_del = array(); // Nothing to delete
+			$to_add = $categories;
+		}
+
+		// Process
+		foreach ($to_del as $del) {
+			if ($c->fetch($del) > 0) {
+				$c->del_type($this, Categorie::TYPE_TICKET);
+			}
+		}
+		foreach ($to_add as $add) {
+			if ($c->fetch($add) > 0) {
+				$c->add_type($this, Categorie::TYPE_TICKET);
+			}
+		}
+
+		return;
+	}
 
 	/**
 	 * Add new message on a ticket (private/public area). Can also send it be email if GETPOST('send_email', 'int') is set.

@@ -220,13 +220,13 @@ $permissiontoread = $user->rights->propal->lire;
 $permissiontoadd = $user->rights->propal->creer;
 $permissiontodelete = $user->rights->propal->supprimer;
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	$permissiontovalidate = $user->rights->propale->propal_advance->validate;
-	$permissiontoclose = $user->rights->propale->propal_advance->close;
-	$permissiontosendbymail = $user->rights->propale->propal_advance->send;
+	$permissiontovalidate = $user->rights->propal->propal_advance->validate;
+	$permissiontoclose = $user->rights->propal->propal_advance->close;
+	$permissiontosendbymail = $user->rights->propal->propal_advance->send;
 } else {
 	$permissiontovalidate = $user->rights->propal->creer;
 	$permissiontoclose = $user->rights->propal->creer;
-	$permissiontosendbymail = $user->rights->propal->creer;
+	$permissiontosendbymail = $user->rights->propal->lire;
 }
 
 
@@ -346,7 +346,7 @@ if ($action == "sign" && $permissiontoclose) {
 		foreach ($toselect as $checked) {
 			if ($tmpproposal->fetch($checked)) {
 				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED) {
-					$tmpproposal->statut = $tmpproposal::STATUS_SIGNED;;
+					$tmpproposal->statut = $tmpproposal::STATUS_SIGNED;
 					if ($tmpproposal->closeProposal($user, $tmpproposal::STATUS_SIGNED)) {
 						setEventMessage($tmpproposal->ref." ".$langs->trans('Signed'), 'mesgs');
 					} else {
@@ -481,7 +481,7 @@ if ($search_categ_cus) {
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -517,6 +517,12 @@ if ($search_user > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as c";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
+
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 $sql .= ' WHERE p.fk_soc = s.rowid';
 $sql .= ' AND p.entity IN ('.getEntity('propal').')';
 if (!$user->rights->societe->client->voir && !$socid) { //restriction
@@ -575,7 +581,7 @@ if ($search_warehouse != '' && $search_warehouse > 0) {
 	$sql .= natural_search("p.fk_warehouse", $search_warehouse, 1);
 }
 if ($search_multicurrency_code != '') {
-	$sql .= ' AND p.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
+	$sql .= " AND p.multicurrency_code = '".$db->escape($search_multicurrency_code)."'";
 }
 if ($search_multicurrency_tx != '') {
 	$sql .= natural_search('p.multicurrency_tx', $search_multicurrency_tx, 1);

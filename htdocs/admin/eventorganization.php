@@ -298,11 +298,7 @@ if ($action == 'edit') {
 	}
 	print '</table>';
 
-	print '<br><div class="center">';
-	print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; ';
-	print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print '</form>';
 	print '<br>';
@@ -449,7 +445,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 									$langs->load("errors");
 									print '<div class="error">'.$langs->trans($tmp).'</div>';
 								} elseif ($tmp == 'NotConfigured') {
-									print $langs->trans($tmp);
+									print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
 								} else {
 									print $tmp;
 								}

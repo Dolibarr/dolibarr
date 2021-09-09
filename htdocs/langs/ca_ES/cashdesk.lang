@@ -127,4 +127,5 @@ AllowDelayedPayment=Permet un pagament retardat
 PrintPaymentMethodOnReceipts=Imprimeix el mètode de pagament en els tiquets/rebuts
 WeighingScale=Balança de pesatge
 ShowPriceHT = Mostra la columna amb el preu sense impostos (a la pantalla)
-ShowPriceHTOnReceipt = Display the column with the price excluding tax (on the receipt)
+ShowPriceHTOnReceipt = Mostra la columna amb el preu sense impostos (al rebut)
+CustomerDisplay=Customer display

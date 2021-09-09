@@ -412,10 +412,10 @@ if (empty($reshook)) {
 		// Récupération des variables
 		$rowid = GETPOST('rowid', 'int');
 		$priceid = GETPOST('priceid', 'int');
-		$newprice = price2num(GETPOST("price"), 'MU');
+		$newprice = price2num(GETPOST("price"), 'MU', 2);
 		// $newminprice=price2num(GETPOST("price_min"),'MU'); // TODO : Add min price management
-		$quantity = price2num(GETPOST('quantity'), 'MS');
-		$remise_percent = price2num(GETPOST('remise_percent'), 2);
+		$quantity = price2num(GETPOST('quantity'), 'MS', 2);
+		$remise_percent = price2num(GETPOST('remise_percent'), '', 2);
 		$remise = 0; // TODO : allow discount by amount when available on documents
 
 		if (empty($quantity)) {
@@ -1207,11 +1207,7 @@ if ($action == 'edit_vat' && ($user->rights->produit->creer || $user->rights->se
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print '<br></form><br>';
 }
@@ -1321,13 +1317,9 @@ if ($action == 'edit_price' && $object->getRights()->creer) {
 
 		print dol_get_fiche_end();
 
-		print '<div class="center">';
-		print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
+		print $form->buttonsSaveCancel();
 
-		print '<br></form>';
+		print '</form>';
 	} else {
 		print '<!-- Edit price per level -->'."\n";
 		?>
@@ -1444,10 +1436,8 @@ if ($action == 'edit_price' && $object->getRights()->creer) {
 
 		//print dol_get_fiche_end();
 
-		print '<div style="text-align: center">';
-		print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-		print '&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+		print $form->buttonsSaveCancel();
+
 		print '</form>';
 	}
 }
@@ -1776,10 +1766,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<label for="updatechildprice">'.$langs->trans('ForceUpdateChildPriceSoc').'</label>';
 		print '</div>';
 
-		print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
+		print $form->buttonsSaveCancel();
 
 		print '</form>';
 	} elseif ($action == 'edit_customer_price') {
@@ -1861,10 +1848,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<label for="updatechildprice">'.$langs->trans('ForceUpdateChildPriceSoc').'</label>';
 		print "</div>";
 
-		print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
+		print $form->buttonsSaveCancel();
 
 		print '<br></form>';
 	} elseif ($action == 'showlog_customer_price') {

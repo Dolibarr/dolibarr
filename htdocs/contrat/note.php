@@ -44,6 +44,10 @@ $ref = GETPOST('ref', 'alpha');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+//$hookmanager->initHooks(array('contractcard', 'globalcard'));  -> Conflict with contrat\card.php
+$hookmanager->initHooks(array('contractnote'));
+
 $result = restrictedArea($user, 'contrat', $id);
 
 $object = new Contrat($db);
@@ -51,16 +55,18 @@ $object->fetch($id, $ref);
 
 $permissionnote = $user->rights->contrat->creer; // Used by the include of actions_setnotes.inc.php
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('contractcard', 'globalcard'));
-
-
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
+$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+}
 
 
 

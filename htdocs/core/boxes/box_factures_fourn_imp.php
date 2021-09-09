@@ -92,6 +92,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 			$sql .= ", f.tva as total_tva";
 			$sql .= ", f.total_ttc";
 			$sql .= ", f.paye, f.fk_statut as status, f.type";
+			$sql .= ", f.tms";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ",".MAIN_DB_PREFIX."facture_fourn as f";
 			if (!$user->rights->societe->client->voir && !$user->socid) {

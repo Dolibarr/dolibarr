@@ -118,7 +118,7 @@ ErrorCantReadFile=Échec de lecture du fichier '%s'
 ErrorCantReadDir=Échec de lecture du répertoire '%s'
 ErrorBadLoginPassword=Identifiant ou mot de passe incorrect
 ErrorLoginDisabled=Votre compte est désactivé
-ErrorFailedToRunExternalCommand=Failed to run external command. Check it is available and runnable by your PHP server user. Check also the command is not protected on shell level by a security layer like apparmor.
+ErrorFailedToRunExternalCommand=Échec de l'exécution de commande externe. Vérifiez qu'elle est disponible et exécutable par l'utilisateur de votre serveur PHP. Vérifiez également que la commande n'est pas protégée au niveau du shell par une couche de sécurité comme apparmor.
 ErrorFailedToChangePassword=Échec de modification du mot de passe
 ErrorLoginDoesNotExists=Le compte utilisateur identifié par <b>%s</b> n'a pu être trouvé.
 ErrorLoginHasNoEmail=Cet utilisateur n'a pas d'email. Impossible de continuer.
@@ -264,6 +264,7 @@ ErrorAnAmountWithoutTaxIsRequired=Erreur, le montant est obligatoire
 ErrorAPercentIsRequired=Erreur, le pourcentage doit être indiqué correctement.
 ErrorYouMustFirstSetupYourChartOfAccount=Vous devez d’abord configurer votre plan comptable.
 ErrorFailedToFindEmailTemplate=Aucun gabarit trouvé avec le code %s
+ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Durée non définie sur le service. Pas moyen de calculer le prix horaire.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.

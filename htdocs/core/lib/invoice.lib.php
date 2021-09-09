@@ -47,7 +47,7 @@ function facture_prepare_head($object)
 
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
-		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/contact.php?facid='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/contact.php?facid='.urlencode($object->id);
 		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
@@ -60,7 +60,7 @@ function facture_prepare_head($object)
 		$nbStandingOrders = 0;
 		$sql = "SELECT COUNT(pfd.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-		$sql .= " WHERE pfd.fk_facture = ".$object->id;
+		$sql .= " WHERE pfd.fk_facture = ".((int) $object->id);
 		$sql .= " AND pfd.ext_payment_id IS NULL";
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -71,7 +71,7 @@ function facture_prepare_head($object)
 		} else {
 			dol_print_error($db);
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.urlencode($object->id);
 		$head[$h][1] = $langs->trans('StandingOrders');
 		if ($nbStandingOrders > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbStandingOrders.'</span>';
@@ -239,7 +239,7 @@ function getCustomerInvoicePieChart($socid = 0)
 	$sql .= " WHERE f.fk_soc = s.rowid";
 	$sql .= " AND f.entity IN (".getEntity('facture').")";
 	if ($user->socid) {
-		$sql .= ' AND f.fk_soc = '.$user->socid;
+		$sql .= ' AND f.fk_soc = '.((int) $user->socid);
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -256,7 +256,7 @@ function getCustomerInvoicePieChart($socid = 0)
 	$i = 0;
 
 	$total = 0;
-	$vals = [];
+	$vals = array();
 
 	while ($i < $num) {
 		$row = $db->fetch_row($resql);
@@ -279,14 +279,14 @@ function getCustomerInvoicePieChart($socid = 0)
 	$result .= '</tr>';
 
 	$objectstatic = new Facture($db);
-	$array = [Facture::STATUS_DRAFT, Facture::STATUS_VALIDATED, Facture::STATUS_CLOSED, Facture::STATUS_ABANDONED];
-	$dataseries = [];
+	$array = array(Facture::STATUS_DRAFT, Facture::STATUS_VALIDATED, Facture::STATUS_CLOSED, Facture::STATUS_ABANDONED);
+	$dataseries = array();
 
 	foreach ($array as $status) {
 		$objectstatic->statut = $status;
 		$objectstatic->paye = $status == Facture::STATUS_CLOSED ? -1 : 0;
 
-		$dataseries[] = [$objectstatic->getLibStatut(1), (isset($vals[$status]) ? (int) $vals[$status] : 0)];
+		$dataseries[] = array($objectstatic->getLibStatut(1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
 		if ($status == Facture::STATUS_DRAFT) {
 			$colorseries[$status] = '-'.$badgeStatus0;
 		}
@@ -359,7 +359,7 @@ function getPurchaseInvoicePieChart($socid = 0)
 	$sql .= " WHERE f.fk_soc = s.rowid";
 	$sql .= " AND f.entity IN (".getEntity('facture_fourn').")";
 	if ($user->socid) {
-		$sql .= ' AND f.fk_soc = '.$user->socid;
+		$sql .= ' AND f.fk_soc = '.((int) $user->socid);
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -376,7 +376,7 @@ function getPurchaseInvoicePieChart($socid = 0)
 	$i = 0;
 
 	$total = 0;
-	$vals = [];
+	$vals = array();
 
 	while ($i < $num) {
 		$row = $db->fetch_row($resql);
@@ -400,14 +400,14 @@ function getPurchaseInvoicePieChart($socid = 0)
 	$result .= '</tr>';
 
 	$objectstatic = new FactureFournisseur($db);
-	$array = [FactureFournisseur::STATUS_DRAFT, FactureFournisseur::STATUS_VALIDATED, FactureFournisseur::STATUS_CLOSED, FactureFournisseur::STATUS_ABANDONED];
-	$dataseries = [];
+	$array = array(FactureFournisseur::STATUS_DRAFT, FactureFournisseur::STATUS_VALIDATED, FactureFournisseur::STATUS_CLOSED, FactureFournisseur::STATUS_ABANDONED);
+	$dataseries = array();
 
 	foreach ($array as $status) {
 		$objectstatic->statut = $status;
 		$objectstatic->paye = $status == FactureFournisseur::STATUS_CLOSED ? -1 : 0;
 
-		$dataseries[] = [$objectstatic->getLibStatut(1), (isset($vals[$status]) ? (int) $vals[$status] : 0)];
+		$dataseries[] = array($objectstatic->getLibStatut(1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
 		if ($status == FactureFournisseur::STATUS_DRAFT) {
 			$colorseries[$status] = '-'.$badgeStatus0;
 		}

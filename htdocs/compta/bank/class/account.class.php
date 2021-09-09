@@ -687,7 +687,7 @@ class Account extends CommonObject
 		$sql .= "'".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->escape($this->ref)."'";
 		$sql .= ", '".$this->db->escape($this->label)."'";
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", '".$this->db->escape($this->account_number)."'";
 		$sql .= ", ".($this->fk_accountancy_journal > 0 ? $this->db->escape($this->fk_accountancy_journal) : "null");
 		$sql .= ", '".$this->db->escape($this->bank)."'";
@@ -702,8 +702,8 @@ class Account extends CommonObject
 		$sql .= ", '".$this->db->escape($this->owner_address)."'";
 		$sql .= ", '".$this->db->escape($this->currency_code)."'";
 		$sql .= ", ".((int) $this->rappro);
-		$sql .= ", ".price2num($this->min_allowed);
-		$sql .= ", ".price2num($this->min_desired);
+		$sql .= ", ".price2num($this->min_allowed, 'MT');
+		$sql .= ", ".price2num($this->min_desired, 'MT');
 		$sql .= ", '".$this->db->escape($this->comment)."'";
 		$sql .= ", ".($this->state_id > 0 ? ((int) $this->state_id) : "null");
 		$sql .= ", ".($this->country_id > 0 ? ((int) $this->country_id) : "null");
@@ -907,8 +907,8 @@ class Account extends CommonObject
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",state_id = ".($this->state_id > 0 ? $this->state_id : "null");
 		$sql .= ",fk_pays = ".($this->country_id > 0 ? $this->country_id : "null");
-		$sql .= " WHERE rowid = ".$this->id;
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " WHERE rowid = ".((int) $this->id);
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		dol_syslog(get_class($this)."::update_bban", LOG_DEBUG);
 
@@ -1059,7 +1059,7 @@ class Account extends CommonObject
 		// Delete link between tag and bank account
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_account";
-			$sql .= " WHERE fk_account = ".$this->id;
+			$sql .= " WHERE fk_account = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -1151,7 +1151,7 @@ class Account extends CommonObject
 
 		$sql = "SELECT COUNT(rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-		$sql .= " WHERE fk_account=".$this->id;
+		$sql .= " WHERE fk_account = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1188,7 +1188,7 @@ class Account extends CommonObject
 
 		$sql = "SELECT sum(amount) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-		$sql .= " WHERE fk_account = ".$this->id;
+		$sql .= " WHERE fk_account = ".((int) $this->id);
 		if ($option == 1) {
 			$sql .= " AND dateo <= '".$this->db->idate(dol_now())."'";
 		}
@@ -1519,6 +1519,12 @@ class Account extends CommonObject
 	 */
 	public function needIBAN()
 	{
+		global $conf;
+
+		if (!empty($conf->global->MAIN_IBAN_IS_NEVER_MANDATORY)) {
+			return 0;
+		}
+
 		$country_code = $this->getCountryCode();
 
 		$country_code_in_EEC = array(
@@ -2146,7 +2152,7 @@ class AccountLine extends CommonObject
 				$sql .= ", fk_categ";
 				$sql .= ") VALUES (";
 				$sql .= $this->id;
-				$sql .= ", ".$cat;
+				$sql .= ", ".((int) $cat);
 				$sql .= ")";
 
 				dol_syslog(get_class($this)."::update_conciliation", LOG_DEBUG);

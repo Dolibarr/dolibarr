@@ -272,6 +272,19 @@ class FormTicket
 			print '</td></tr>';
 		}
 
+		// Categories
+		if ($conf->categorie->enabled) {
+			include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_TICKET, '', 'parent', 64, 0, 1);
+
+			if (count($cate_arbo)) {
+				// Categories
+				print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
+				print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+				print "</td></tr>";
+			}
+		}
+
 		// Attached files
 		if (!empty($this->withfile)) {
 			// Define list of attached files
@@ -427,6 +440,15 @@ class FormTicket
 				print '<input type="checkbox" id="notify_tiers_at_create" name="notify_tiers_at_create"'.($this->withnotifytiersatcreate ? ' checked="checked"' : '').'>';
 				print '</td></tr>';
 			}
+
+			// User assigned
+			print '<tr><td>';
+			print $langs->trans("AssignedTo");
+			print '</td><td>';
+			print img_picto('', 'user', 'class="pictofixedwidth"');
+			print $form->select_dolusers(GETPOST('fk_user_assign', 'int'), 'fk_user_assign', 1);
+			print '</td>';
+			print '</tr>';
 		}
 
 		if (!empty($conf->projet->enabled) && !$this->ispublic) {
@@ -449,13 +471,19 @@ class FormTicket
 			print dol_get_fiche_end();
 		}
 
-		print '<br><div class="center">';
-		print '<input class="button" type="submit" name="add" value="'.$langs->trans(($this->withthreadid > 0 ? "SendResponse" : "CreateTicket")).'" />';
+		print '<br>';
+
+		print $form->buttonsSaveCancel((($this->withthreadid > 0) ? "SendResponse" : "CreateTicket"), ($this->withcancel ? "Cancel" : ""));
+
+		/*
+		print '<div class="center">';
+		print '<input type="submit" class="button" name="add" value="'.$langs->trans(($this->withthreadid > 0 ? "SendResponse" : "CreateTicket")).'" />';
 		if ($this->withcancel) {
 			print " &nbsp; &nbsp; &nbsp;";
 			print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 		}
 		print '</div>';
+		*/
 
 		print '<input type="hidden" name="page_y">'."\n";
 
@@ -561,28 +589,27 @@ class FormTicket
 	/**
 	 *      Return html list of ticket anaytic codes
 	 *
-	 *      @param  string $selected    Id categorie pre-selectionnée
-	 *      @param  string $htmlname    Nom de la zone select
-	 *      @param  string $filtertype  To filter on some properties in llx_c_ticket_category ('public = 1'). This parameter must not come from input of users.
-	 *      @param  int    $format      0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
-	 *      @param  int    $empty       1=peut etre vide, 0 sinon
-	 *      @param  int    $noadmininfo 0=Add admin info, 1=Disable admin info
-	 *      @param  int    $maxlength   Max length of label
-	 *      @param	string	$morecss	More CSS
-	 * 		@param	int 	$use_multilevel	if != 0 create a multilevel select ( Do not use any of the other params)
+	 *      @param  string 	$selected   		Id categorie pre-selectionnée
+	 *      @param  string 	$htmlname   		Name of select component
+	 *      @param  string 	$filtertype 		To filter on some properties in llx_c_ticket_category ('public = 1'). This parameter must not come from input of users.
+	 *      @param  int    	$format     		0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
+	 *      @param  int    	$empty      		1=peut etre vide, 0 sinon
+	 *      @param  int    	$noadmininfo		0=Add admin info, 1=Disable admin info
+	 *      @param  int    	$maxlength  		Max length of label
+	 *      @param	string	$morecss			More CSS
+	 * 		@param	int 	$use_multilevel		If > 0 create a multilevel select which use $htmlname example: $use_multilevel = 1 permit to have 2 select boxes.
 	 *      @return void
 	 */
 	public function selectGroupTickets($selected = '', $htmlname = 'ticketcategory', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '', $use_multilevel = 0)
 	{
 		global $langs, $user;
 
-		if ($use_multilevel == 0) {
-			$ticketstat = new Ticket($this->db);
+		dol_syslog(get_class($this)."::selectCategoryTickets ".$selected.", ".$htmlname.", ".$filtertype.", ".$format, LOG_DEBUG);
 
-			dol_syslog(get_class($this)."::selectCategoryTickets ".$selected.", ".$htmlname.", ".$filtertype.", ".$format, LOG_DEBUG);
+		$ticketstat = new Ticket($this->db);
+		$ticketstat->loadCacheCategoriesTickets();
 
-			$ticketstat->loadCacheCategoriesTickets();
-
+		if ($use_multilevel <= 0) {
 			print '<select id="select'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
 			if ($empty) {
 				print '<option value="">&nbsp;</option>';
@@ -655,26 +682,29 @@ class FormTicket
 			}
 
 			print ajax_combobox('select'.$htmlname);
-		} else {
-			$groupticket=GETPOST('groupticket', 'aZ09');
-			$groupticketchild=GETPOST('groupticket_child', 'aZ09');
+		} elseif ($htmlname!='') {
+			$groupticket=GETPOST($htmlname, 'aZ09');
+			$child_id=GETPOST($htmlname.'_child_id', 'aZ09')?GETPOST($htmlname.'_child_id', 'aZ09'):0;
 			$arraycodenotparent[] = "";
+			$arrayidused = array();
 			$stringtoprint = '<span class="supportemailfield bold">'.$langs->trans("GroupOfTicket").'</span> ';
-			$stringtoprint .= '<select name="groupticket" id ="groupticket" class="maxwidth500 minwidth400">';
+			$stringtoprint .= '<select id ="'.$htmlname.'" class="maxwidth500 minwidth400" child_id="0">';
 			$stringtoprint .= '<option value="">&nbsp;</option>';
 
 			$sql = "SELECT ctc.rowid, ctc.code, ctc.label, ctc.fk_parent, ";
 			$sql .= $this->db->ifsql("ctc.rowid NOT IN (SELECT ctcfather.rowid FROM llx_c_ticket_category as ctcfather JOIN llx_c_ticket_category as ctcjoin ON ctcfather.rowid = ctcjoin.fk_parent)", "'NOTPARENT'", "'PARENT'")." as isparent";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category as ctc";
-			$sql .= " WHERE ctc.public = 1";
-			$sql .= " AND ctc.active = 1";
+			$sql .= " WHERE ctc.active > 0";
+			if ($filtertype == 'public=1') {
+				$sql .= " AND ctc.public = 1";
+			}
 			$sql .= " AND ctc.fk_parent = 0";
 			$sql .= $this->db->order('ctc.pos', 'ASC');
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				$num_rows = $this->db->num_rows($resql);
+				$num_rows_level0 = $this->db->num_rows($resql);
 				$i = 0;
-				while ($i < $num_rows) {
+				while ($i < $num_rows_level0) {
 					$obj = $this->db->fetch_object($resql);
 					if ($obj) {
 						$grouprowid = $obj->rowid;
@@ -682,79 +712,156 @@ class FormTicket
 						$grouplabel = $obj->label;
 						$isparent = $obj->isparent;
 						$iselected = $groupticket == $obj->code ?'selected':'';
-						$stringtoprint .= '<option '.$iselected.' class="groupticket'.dol_escape_htmltag($grouprowid).'" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
+						$stringtoprint .= '<option '.$iselected.' class="'.$htmlname.dol_escape_htmltag($grouprowid).'" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
 						if ($isparent == 'NOTPARENT') {
 							$arraycodenotparent[] = $groupvalue;
 						}
+						$arrayidused[]=$grouprowid;
 					}
 					$i++;
 				}
 			} else {
 				dol_print_error($this->db);
 			}
-			if ($num_rows == 1) {
-				return '<input type="hidden" name="groupticket" id="groupticket" value="'.dol_escape_htmltag($groupvalue).'">';
-			}
-			$stringtoprint .= '</select>&nbsp';
-
-			$stringtoprint .= '<select name="groupticket_child" id ="groupticket_child" class="maxwidth500 minwidth400">';
-			$stringtoprint .= '<option value="">&nbsp;</option>';
-
-			$sql = "SELECT ctc.rowid, ctc.code, ctc.label, ctc.fk_parent, ctcjoin.code as codefather";
-			$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category as ctc";
-			$sql .= " JOIN ".MAIN_DB_PREFIX."c_ticket_category as ctcjoin ON ctc.fk_parent = ctcjoin.rowid";
-			$sql .= " WHERE ctc.public = 1";
-			$sql .= " AND ctc.active = 1";
-			$sql .= " AND ctc.fk_parent <> 0";
-			$sql .= $this->db->order('ctc.pos', 'ASC');
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				$num_rows = $this->db->num_rows($resql);
-				$i = 0;
-				while ($i < $num_rows) {
-					$obj = $this->db->fetch_object($resql);
-					if ($obj) {
-						$grouprowid = $obj->rowid;
-						$groupvalue = $obj->code;
-						$grouplabel = $obj->label;
-						$fatherid = $obj->fk_parent;
-						$groupcodefather = $obj->codefather;
-						$iselected = $groupticketchild == $obj->code ?'selected':'';
-						$stringtoprint .= '<option '.$iselected.' class="groupticket_'.dol_escape_htmltag($fatherid).'_child" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
-						$tabscript[] = 'if($("#groupticket")[0].value == "'.dol_escape_js($groupcodefather).'"){
-							$(".groupticket_'.dol_escape_htmltag($fatherid).'_child").show()
-						}else{
-							$(".groupticket_'.dol_escape_htmltag($fatherid).'_child").hide()
-						}';
-					}
-					$i++;
-				}
+			if ($num_rows_level0 == 1) {
+				return '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.dol_escape_htmltag($groupvalue).'">';
 			} else {
-				dol_print_error($this->db);
+				$stringtoprint .= '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'_select" class="maxwidth500 minwidth400">';
+				$stringtoprint .= '<input type="hidden" name="'.$htmlname.'_child_id" id="'.$htmlname.'_select_child_id" class="maxwidth500 minwidth400">';
 			}
-			$stringtoprint .='</select>';
+			$stringtoprint .= '</select>&nbsp;';
 
-			$stringtoprint .='<script>';
-			$stringtoprint .='var arraynotparents = '.json_encode($arraycodenotparent).';';
-			$stringtoprint .='if (arraynotparents.includes($("#groupticket")[0].value)){$("#groupticket_child").hide()}
-			else{';
-			foreach ($tabscript as $script) {
-				$stringtoprint .= $script;
-			};
-			$stringtoprint .='}
-			$("#groupticket").change(function() {
-				$("#groupticket_child")[0].value = ""
-				if (!arraynotparents.includes(this.value)) {
-				$("#groupticket_child").show()
+			$levelid = 1;
+			while ($levelid <= $use_multilevel) {
+				$tabscript = array();
+				$stringtoprint .= '<select id ="'.$htmlname.'_child_'.$levelid.'" class="maxwidth500 minwidth400 groupticketchild" child_id="'.$levelid.'">';
+				$stringtoprint .= '<option value="">&nbsp;</option>';
+
+				$sql = "SELECT ctc.rowid, ctc.code, ctc.label, ctc.fk_parent, ctcjoin.code as codefather, ";
+				$sql .= $this->db->ifsql("ctc.rowid NOT IN (SELECT ctcfather.rowid FROM llx_c_ticket_category as ctcfather JOIN llx_c_ticket_category as ctcjoin ON ctcfather.rowid = ctcjoin.fk_parent)", "'NOTPARENT'", "'PARENT'")." as isparent";
+				$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category as ctc";
+				$sql .= " JOIN ".MAIN_DB_PREFIX."c_ticket_category as ctcjoin ON ctc.fk_parent = ctcjoin.rowid";
+				$sql .= " WHERE ctc.active = 1";
+				if ($filtertype == 'public=1') {
+					$sql .= " AND ctc.public = 1";
+				}
+				if (!empty($arrayidused)) {
+					$sql .= " AND ctc.fk_parent IN ( ";
+					foreach ($arrayidused as $idused) {
+						$sql .= $idused.", ";
+					}
+					$sql = substr($sql, 0, -2);
+					$sql .= ")";
 				} else {
-				$("#groupticket_child").hide()
 				}
-			';
-			foreach ($tabscript as $script) {
-				$stringtoprint .= $script;
-			};
-			$stringtoprint .='})';
+				$sql .= $this->db->order('ctc.pos', 'ASC');
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					$num_rows = $this->db->num_rows($resql);
+					$i = 0;
+					$arrayidused=array();
+					while ($i < $num_rows) {
+						$obj = $this->db->fetch_object($resql);
+						if ($obj) {
+							$grouprowid = $obj->rowid;
+							$groupvalue = $obj->code;
+							$grouplabel = $obj->label;
+							$isparent = $obj->isparent;
+							$fatherid = $obj->fk_parent;
+							$arrayidused[] = $grouprowid;
+							$groupcodefather = $obj->codefather;
+							if ($isparent == 'NOTPARENT') {
+								$arraycodenotparent[] = $groupvalue;
+							}
+							$iselected = $groupticket == $obj->code ?'selected':'';
+							$stringtoprint .= '<option '.$iselected.' class="'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
+							if (empty($tabscript[$groupcodefather])) {
+								$tabscript[$groupcodefather] = 'if ($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'")[0].value == "'.dol_escape_js($groupcodefather).'"){
+									$(".'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'").show()
+									console.log("We show childs tickets of '.$groupcodefather.' group ticket")
+								}else{
+									$(".'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'").hide()
+									console.log("We hide childs tickets of '.$groupcodefather.' group ticket")
+								}';
+							}
+						}
+						$i++;
+					}
+				} else {
+					dol_print_error($this->db);
+				}
+				$stringtoprint .='</select>';
+
+				$stringtoprint .='<script>';
+				$stringtoprint .='arraynotparents = '.json_encode($arraycodenotparent).';';
+				$stringtoprint .='if (arraynotparents.includes($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'")[0].value)){
+					console.log("'.$htmlname.'_child_'.$levelid.'")
+					if($("#'.$htmlname.'_child_'.$levelid.'")[0].value == "" && ($("#'.$htmlname.'_child_'.$levelid.'").attr("child_id")>'.$child_id.')){
+						$("#'.$htmlname.'_child_'.$levelid.'").hide();
+						console.log("We hide '.$htmlname.'_child_'.$levelid.' input")
+					}else if(($("#'.$htmlname.'_child_'.$levelid.'").attr("child_id")!=0) && ($("#'.$htmlname.'_child_'.$levelid.'").attr("child_id")<'.$child_id.')){
+						$("#'.$htmlname.'_child_'.$levelid.'").attr("disabled",true);
+						console.log("We disable '.$htmlname.'_child_'.$levelid.' input");
+					}else{
+						$("#'.$htmlname.'_child_'.$levelid.'").attr("disabled",true);
+						$("#ticketcategory_select_child_id")[0].value = $("#'.$htmlname.'_child_'.$levelid.'").attr("child_id")
+						$("#ticketcategory_select")[0].value = $("#'.$htmlname.'_child_'.$levelid.'")[0].value;
+						console.log("We disable '.$htmlname.'_child_'.$levelid.' input and reload hidden input");
+					}
+					if(arraynotparents.includes("'.$groupticket.'") && '.$child_id.' == 0){
+						$("#ticketcategory_select_child_id")[0].value = $("#'.$htmlname.'").attr("child_id")
+						$("#ticketcategory_select")[0].value = $("#'.$htmlname.'")[0].value;
+						console.log("We choose '.$htmlname.' input and reload hidden input");
+					}
+				}
+				$("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'").change(function() {
+					child_id = $("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid:'').'").attr("child_id");
+
+					/* Change of value to select this value*/
+					if (arraynotparents.includes(this.value) || $(this).attr("child_id") == '.$use_multilevel.') {
+						$("#ticketcategory_select")[0].value = this.value;
+						$("#ticketcategory_select_child_id")[0].value = $(this).attr("child_id");
+						console.log("We choose to select "+ $("#ticketcategory_select")[0].value );
+					}else{
+						$("#ticketcategory_select")[0].value = "";
+						$("#ticketcategory_select_child_id")[0].value = "";
+					}
+
+					console.log("We select a new value into combo child_id="+child_id);
+
+					/* Hide all selected box that are child of the one modified */
+					$(".groupticketchild").each(function(){
+						if ($(this).attr("child_id") > child_id) {
+							console.log("hide child_id="+$(this).attr("child_id"));
+							$(this).val("");
+							$(this).hide();
+						}
+					})
+
+					/* Now we enable the next combo */
+					$("#'.$htmlname.'_child_'.$levelid.'").val("");
+					if (!arraynotparents.includes(this.value)) {
+						$("#'.$htmlname.'_child_'.$levelid.'").show()
+					} else {
+						$("#'.$htmlname.'_child_'.$levelid.'").hide()
+					}
+				';
+				$levelid++;
+				foreach ($tabscript as $script) {
+					$stringtoprint .= $script;
+				};
+				$stringtoprint .='})';
+				$stringtoprint .='</script>';
+			}
+			$stringtoprint .='<script>';
+			$stringtoprint .='$("#'.$htmlname.'_child_'.$use_multilevel.'").change(function() {
+				$("#ticketcategory_select")[0].value = this.value;
+				$("#ticketcategory_select_child_id")[0].value = $(this).attr("child_id");
+				console.log($("#ticketcategory_select")[0].value);
+			})';
 			$stringtoprint .='</script>';
+			$stringtoprint .= ajax_combobox($htmlname);
+
 			return $stringtoprint;
 		}
 	}
@@ -1035,7 +1142,7 @@ class FormTicket
 					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 				}
 				print ' &nbsp; ';
-				print '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
+				print '<input type="submit" class="button" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				print '</div></td>';
 			}
 
@@ -1205,7 +1312,7 @@ class FormTicket
 		print '</table>';
 
 		print '<center><br>';
-		print '<input class="button" type="submit" name="btn_add_message" value="'.$langs->trans("AddMessage").'" />';
+		print '<input type="submit" class="button" name="btn_add_message" value="'.$langs->trans("AddMessage").'" />';
 		if ($this->withcancel) {
 			print " &nbsp; &nbsp; ";
 			print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';

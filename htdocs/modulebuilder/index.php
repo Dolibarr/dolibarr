@@ -1303,7 +1303,8 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 				'visible'=>GETPOST('propvisible', 'int'), 'enabled'=>GETPOST('propenabled', 'int'),
 				'position'=>GETPOST('propposition', 'int'), 'notnull'=>GETPOST('propnotnull', 'int'), 'index'=>GETPOST('propindex', 'int'), 'searchall'=>GETPOST('propsearchall', 'int'),
 				'isameasure'=>GETPOST('propisameasure', 'int'), 'comment'=>GETPOST('propcomment', 'alpha'), 'help'=>GETPOST('prophelp', 'alpha'),
-				'css'=>GETPOST('propcss', 'aZ09'), 'cssview'=>GETPOST('propcssview', 'aZ09'), 'csslist'=>GETPOST('propcsslist', 'aZ09')
+				'css'=>GETPOST('propcss', 'aZ09'), 'cssview'=>GETPOST('propcssview', 'aZ09'), 'csslist'=>GETPOST('propcsslist', 'aZ09'),
+				'validate' => GETPOST('propvalidate', 'int')
 			);
 
 			if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval'])) {
@@ -2681,6 +2682,7 @@ if ($module == 'initmodule') {
 							print '<th>'.$langs->trans("KeyForTooltip").'</th>';
 							print '<th class="center">'.$langs->trans("ShowOnCombobox").'</th>';
 							//print '<th class="center">'.$langs->trans("Disabled").'</th>';
+							print '<th>'.$form->textwithpicto($langs->trans("Validate"), $langs->trans("ValidateModBuilderDesc")).'</th>';
 							print '<th>'.$langs->trans("Comment").'</th>';
 							print '<th></th>';
 							print '</tr>';
@@ -2713,9 +2715,10 @@ if ($module == 'initmodule') {
 								print '<td><input type="text" size="2" name="prophelp" value="'.dol_escape_htmltag(GETPOST('prophelp', 'alpha')).'"></td>';
 								print '<td class="center"><input type="text" class="center maxwidth50" name="propshowoncombobox" value="'.dol_escape_htmltag(GETPOST('propshowoncombobox', 'alpha')).'"></td>';
 								//print '<td class="center"><input type="text" size="2" name="propdisabled" value="'.dol_escape_htmltag(GETPOST('propdisabled', 'alpha')).'"></td>';
+								print '<td><input type="number" step="1" min="0" max="1" class="text maxwidth100" name="propvalidate" value="'.dol_escape_htmltag(GETPOST('propvalidate', 'alpha')).'"></td>';
 								print '<td><input class="text maxwidth100" name="propcomment" value="'.dol_escape_htmltag(GETPOST('propcomment', 'alpha')).'"></td>';
 								print '<td class="center">';
-								print '<input class="button" type="submit" name="add" value="'.$langs->trans("Add").'">';
+								print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
 								print '</td></tr>';
 
 								// List of existing properties
@@ -2754,6 +2757,7 @@ if ($module == 'initmodule') {
 									$prophelp = $propval['help'];
 									$propshowoncombobox = $propval['showoncombobox'];
 									//$propdisabled=$propval['disabled'];
+									$propvalidate = $propval['validate'];
 									$propcomment = $propval['comment'];
 
 									print '<tr class="oddeven">';
@@ -2824,6 +2828,9 @@ if ($module == 'initmodule') {
 										print '<input class="center maxwidth50" name="propshowoncombobox" value="'.dol_escape_htmltag($propshowoncombobox).'">';
 										print '</td>';
 										print '<td>';
+										print '<input type="number" step="1" min="0" max="1" class="text maxwidth100" name="propvalidate" value="'.dol_escape_htmltag($propvalidate).'">';
+										print '</td>';
+										print '<td>';
 										print '<input class="maxwidth100" name="propcomment" value="'.dol_escape_htmltag($propcomment).'">';
 										print '</td>';
 										print '<td class="center">';
@@ -2889,6 +2896,9 @@ if ($module == 'initmodule') {
 										/*print '<td class="center">';
 										print $propdisabled?$propdisabled:'';
 										print '</td>';*/
+										print '<td class="center">';
+										print $propvalidate ? dol_escape_htmltag($propvalidate) : '';
+										print '</td>';
 										print '<td class="tdoverflowmax200">';
 										print '<span title="'.dol_escape_htmltag($propcomment).'">';
 										print dol_escape_htmltag($propcomment);

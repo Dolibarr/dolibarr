@@ -746,7 +746,7 @@ if ($action == 'view') {
 		if ($tmpfieldlist == 'topic') {
 			print '<td class="center" rowspan="'.(count($fieldsforcontent)).'">';
 			if ($action != 'edit') {
-				print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
+				print '<input type="submit" class="button button-add" name="actionadd" value="'.$langs->trans("Add").'">';
 			}
 			print '</td>';
 		}

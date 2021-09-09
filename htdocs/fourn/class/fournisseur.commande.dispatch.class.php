@@ -666,25 +666,25 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.comment') {
-					$sqlwhere [] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sqlwhere [] = $key." LIKE '%".$this->db->escape($value)."%'";
 				} elseif ($key == 't.datec' || $key == 't.tms' || $key == 't.eatby' || $key == 't.sellby' || $key == 't.batch') {
-					$sqlwhere [] = $key.' = \''.$this->db->escape($value).'\'';
+					$sqlwhere [] = $key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 'qty') {
-					$sqlwhere [] = $key.' = '.((float) $value);
+					$sqlwhere [] = $key." = ".((float) $value);
 				} else {
-					$sqlwhere [] = $key.' = '.((int) $value);
+					$sqlwhere [] = $key." = ".((int) $value);
 				}
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE '.implode(' '.$filtermode.' ', $sqlwhere);
+			$sql .= ' WHERE '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
 		}
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit, $offset);
+			$sql .= $this->db->plimit($limit, $offset);
 		}
 		$this->lines = array();
 

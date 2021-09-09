@@ -192,18 +192,18 @@ class CashControl extends CommonObject
 		$sql .= ", card";
 		$sql .= ") VALUES (";
 		//$sql .= "'(PROV)', ";
-		$sql .= $conf->entity;
-		$sql .= ", ".(is_numeric($this->opening) ? $this->opening : 0);
+		$sql .= ((int) $conf->entity);
+		$sql .= ", ".(is_numeric($this->opening) ? price2num($this->opening, 'MT') : 0);
 		$sql .= ", 0"; // Draft by default
 		$sql .= ", '".$this->db->idate(dol_now())."'";
 		$sql .= ", '".$this->db->escape($this->posmodule)."'";
 		$sql .= ", '".$this->db->escape($this->posnumber)."'";
 		$sql .= ", ".($this->day_close > 0 ? $this->day_close : "null");
 		$sql .= ", ".($this->month_close > 0 ? $this->month_close : "null");
-		$sql .= ", ".$this->year_close;
-		$sql .= ", ".$this->cash;
-		$sql .= ", ".$this->cheque;
-		$sql .= ", ".$this->card;
+		$sql .= ", ".((int) $this->year_close);
+		$sql .= ", ".price2num($this->cash, 'MT');
+		$sql .= ", ".price2num($this->cheque, 'MT');
+		$sql .= ", ".price2num($this->card, 'MT');
 		$sql .= ")";
 
 		$this->db->begin();

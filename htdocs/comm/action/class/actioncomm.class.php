@@ -261,7 +261,7 @@ class ActionComm extends CommonObject
 	/**
 	 * @var int socpeople id linked to action
 	 */
-	public $contactid;
+	public $contact_id;
 
 	/**
 	 * @var Societe|null Company linked to action (optional)
@@ -273,7 +273,7 @@ class ActionComm extends CommonObject
 	/**
 	 * @var Contact|null Contact linked to action (optional)
 	 * @deprecated
-	 * @see $contactid
+	 * @see $contact_id
 	 */
 	public $contact;
 
@@ -542,18 +542,18 @@ class ActionComm extends CommonObject
 		$sql .= (isset($this->type_id) ? $this->type_id : "null").",";
 		$sql .= ($code ? ("'".$this->db->escape($code)."'") : "null").", ";
 		$sql .= (!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").", ";
-		$sql .= ((isset($this->socid) && $this->socid > 0) ? $this->socid : "null").", ";
-		$sql .= ((isset($this->fk_project) && $this->fk_project > 0) ? $this->fk_project : "null").", ";
+		$sql .= ((isset($this->socid) && $this->socid > 0) ? ((int) $this->socid) : "null").", ";
+		$sql .= ((isset($this->fk_project) && $this->fk_project > 0) ? ((int) $this->fk_project) : "null").", ";
 		$sql .= " '".$this->db->escape($this->note_private)."', ";
-		$sql .= ((isset($this->contact_id) && $this->contact_id > 0) ? $this->contact_id : "null").", "; // deprecated, use ->socpeopleassigned
+		$sql .= ((isset($this->contact_id) && $this->contact_id > 0) ? ((int) $this->contact_id) : "null").", "; // deprecated, use ->socpeopleassigned
 		$sql .= (isset($user->id) && $user->id > 0 ? $user->id : "null").", ";
 		$sql .= ($userownerid > 0 ? $userownerid : "null").", ";
 		$sql .= ($userdoneid > 0 ? $userdoneid : "null").", ";
 		$sql .= "'".$this->db->escape($this->label)."','".$this->db->escape($this->percentage)."','".$this->db->escape($this->priority)."','".$this->db->escape($this->fulldayevent)."','".$this->db->escape($this->location)."', ";
 		$sql .= "'".$this->db->escape($this->transparency)."', ";
-		$sql .= (!empty($this->fk_element) ? $this->fk_element : "null").", ";
+		$sql .= (!empty($this->fk_element) ? ((int) $this->fk_element) : "null").", ";
 		$sql .= (!empty($this->elementtype) ? "'".$this->db->escape($this->elementtype)."'" : "null").", ";
-		$sql .= $conf->entity.",";
+		$sql .= ((int) $conf->entity).",";
 		$sql .= (!empty($this->extraparams) ? "'".$this->db->escape($this->extraparams)."'" : "null").", ";
 		// Fields emails
 		$sql .= (!empty($this->email_msgid) ? "'".$this->db->escape($this->email_msgid)."'" : "null").", ";
@@ -596,7 +596,7 @@ class ActionComm extends CommonObject
 						}
 
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
-						$sql .= " VALUES(".$this->id.", 'user', ".$val['id'].", ".(empty($val['mandatory']) ? '0' : $val['mandatory']).", ".(empty($val['transparency']) ? '0' : $val['transparency']).", ".(empty($val['answer_status']) ? '0' : $val['answer_status']).")";
+						$sql .= " VALUES(".((int) $this->id).", 'user', ".((int) $val['id']).", ".(empty($val['mandatory']) ? '0' : ((int) $val['mandatory'])).", ".(empty($val['transparency']) ? '0' : ((int) $val['transparency'])).", ".(empty($val['answer_status']) ? '0' : ((int) $val['answer_status'])).")";
 
 						$resql = $this->db->query($sql);
 						if (!$resql) {
@@ -621,7 +621,7 @@ class ActionComm extends CommonObject
 						}
 
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
-						$sql .= " VALUES(".$this->id.", 'socpeople', ".$id.", 0, 0, 0)";
+						$sql .= " VALUES(".((int) $this->id).", 'socpeople', ".((int) $id).", 0, 0, 0)";
 
 						$resql = $this->db->query($sql);
 						if (!$resql) {
@@ -979,7 +979,7 @@ class ActionComm extends CommonObject
 		// remove categorie association
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_actioncomm";
-			$sql .= " WHERE fk_actioncomm=".$this->id;
+			$sql .= " WHERE fk_actioncomm=".((int) $this->id);
 
 			$res = $this->db->query($sql);
 			if (!$res) {
@@ -991,7 +991,7 @@ class ActionComm extends CommonObject
 		// remove actioncomm_resources
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources";
-			$sql .= " WHERE fk_actioncomm=".$this->id;
+			$sql .= " WHERE fk_actioncomm=".((int) $this->id);
 
 			$res = $this->db->query($sql);
 			if (!$res) {
@@ -1023,7 +1023,7 @@ class ActionComm extends CommonObject
 		// remove actioncomm
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm";
-			$sql .= " WHERE id=".$this->id;
+			$sql .= " WHERE id=".((int) $this->id);
 
 			$res = $this->db->query($sql);
 			if (!$res) {
@@ -1176,7 +1176,7 @@ class ActionComm extends CommonObject
 					if (!empty($already_inserted[$val['id']])) continue;
 
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
-					$sql .= " VALUES(".$this->id.", 'user', ".$val['id'].", ".(empty($val['mandatory']) ? '0' : $val['mandatory']).", ".(empty($val['transparency']) ? '0' : $val['transparency']).", ".(empty($val['answer_status']) ? '0' : $val['answer_status']).")";
+					$sql .= " VALUES(".((int) $this->id).", 'user', ".((int) $val['id']).", ".(empty($val['mandatory']) ? '0' : ((int) $val['mandatory'])).", ".(empty($val['transparency']) ? '0' : ((int) $val['transparency'])).", ".(empty($val['answer_status']) ? '0' : ((int) $val['answer_status'])).")";
 
 					$resql = $this->db->query($sql);
 					if (!$resql) {
@@ -1199,7 +1199,7 @@ class ActionComm extends CommonObject
 						if (!empty($already_inserted[$val['id']])) continue;
 
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
-						$sql .= " VALUES(".$this->id.", 'socpeople', ".$id.", 0, 0, 0)";
+						$sql .= " VALUES(".((int) $this->id).", 'socpeople', ".((int) $id).", 0, 0, 0)";
 
 						$resql = $this->db->query($sql);
 						if (!$resql) {

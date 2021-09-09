@@ -392,7 +392,8 @@ CREATE TABLE llx_eventorganization_conferenceorboothattendee(
     rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
     ref varchar(128) NOT NULL,
     fk_soc integer,
-    fk_actioncomm integer NOT NULL,
+    fk_actioncomm integer,
+    fk_project integer NOT NULL,
     email varchar(100),
     date_subscription datetime,
     amount double DEFAULT NULL,
@@ -407,6 +408,11 @@ CREATE TABLE llx_eventorganization_conferenceorboothattendee(
     model_pdf varchar(255),
     status smallint NOT NULL
 ) ENGINE=innodb;
+
+-- VMYSQL4.3 ALTER TABLE llx_eventorganization_conferenceorboothattendee MODIFY COLUMN fk_actioncomm integer NULL;
+-- VPGSQL8.2 ALTER TABLE llx_eventorganization_conferenceorboothattendee ALTER COLUMN fk_actioncomm DROP NOT NULL;
+
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_project integer NOT NULL;
 
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_rowid (rowid);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_ref (ref);

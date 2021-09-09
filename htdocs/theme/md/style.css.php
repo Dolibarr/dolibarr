@@ -6694,12 +6694,18 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 /* For copy-paste feature                                                         */
 /* ============================================================================== */
 
-span.clipboardCPValueToPrint {
+span.clipboardCPValueToPrint, div.clipboardCPValueToPrint {
 	display: inline-block;
 }
 span.clipboardCPValue.hidewithsize {
 	width: 0 !important;
 	display: inline-block;
+	color: transparent;
+	white-space: nowrap;
+}
+div.clipboardCPValue.hidewithsize {
+	width: 0 !important;
+	display: none;
 	color: transparent;
 	white-space: nowrap;
 }
@@ -6868,6 +6874,16 @@ span.clipboardCPValue.hidewithsize {
 	input#addedfile {
 		width: 95%;
 	}
+	
+	#divbodywebsite {
+		word-break: break-all;
+	}
+
+	.websiteselectionsection {
+		border-left: unset;
+		boerder-right: unset;
+		padding-left: 5px;
+	}	
 }
 
 

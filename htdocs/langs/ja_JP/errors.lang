@@ -112,7 +112,7 @@ ErrorForbidden=アクセスが拒否された。 <br>無効にされたモジュ
 ErrorForbidden2=このログインの許可は、メニュー%s  - &gt; %sからDolibarr管理者によって定義することができる。
 ErrorForbidden3=そのDolibarrが認証セッションを介して使用されていないようだ。認証を(htaccessファイルは、mod_authまたは他の...)を管理する方法を知ってDolibarrセットアップドキュメントを見てみよう。
 ErrorNoImagickReadimage=クラスImagickが、このPHPで発見さ​​れていない。なしプレビューは利用できない。管理者は、メニューのSetupから、このタブを無効にすることができる - 表示する。
-ErrorRecordAlreadyExists=レコードがすでに存在している
+ErrorRecordAlreadyExists=すでに登録されています
 ErrorLabelAlreadyExists=このラベルはすでに存在する
 ErrorCantReadFile=ファイル&quot;%s&quot;を読み取ることができなかった
 ErrorCantReadDir=ディレクトリ&quot;%s&quot;を読み取ることができなかった
@@ -264,6 +264,7 @@ ErrorAnAmountWithoutTaxIsRequired=エラー、数量は必須
 ErrorAPercentIsRequired=エラー、パーセンテージを正しく入力すること
 ErrorYouMustFirstSetupYourChartOfAccount=最初に勘定科目表を設定する必要がある
 ErrorFailedToFindEmailTemplate=コードネーム%sのテンプレートが見つかりませんでした
+ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=サービスで期間が定義されていない。時給計算する方法がない。
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHPパラメータ upload_max_filesize(%s)は、PHPパラメータ post_max_size(%s)よりも大きくなっている。これは一貫した設定ではない。

@@ -238,7 +238,7 @@ class Holiday extends CommonObject
 
 		if ($result >= 0) {
 			$this->db->commit();
-			return 1;
+			return 0; // for cronjob use (0 is OK, any other value is an error code)
 		} else {
 			$this->db->rollback();
 			return -1;
@@ -714,12 +714,12 @@ class Holiday extends CommonObject
 		// Update status
 		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";
 		if (!empty($this->statut) && is_numeric($this->statut)) {
-			$sql .= " statut = ".$this->statut.",";
+			$sql .= " statut = ".((int) $this->statut).",";
 		} else {
 			$error++;
 		}
 		$sql .= " ref = '".$this->db->escape($num)."'";
-		$sql .= " WHERE rowid= ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -782,9 +782,9 @@ class Holiday extends CommonObject
 		} else {
 			$error++;
 		}
-		$sql .= " halfday = ".$this->halfday.",";
+		$sql .= " halfday = ".((int) $this->halfday).",";
 		if (!empty($this->statut) && is_numeric($this->statut)) {
-			$sql .= " statut = ".$this->statut.",";
+			$sql .= " statut = ".((int) $this->statut).",";
 		} else {
 			$error++;
 		}
@@ -828,8 +828,7 @@ class Holiday extends CommonObject
 		} else {
 			$sql .= " detail_refuse = NULL";
 		}
-
-		$sql .= " WHERE rowid= ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -938,7 +937,7 @@ class Holiday extends CommonObject
 			$sql .= " detail_refuse = NULL";
 		}
 
-		$sql .= " WHERE rowid= ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -1602,7 +1601,7 @@ class Holiday extends CommonObject
 
 
 	/**
-	 *  Retourne le solde de congés payés pour un utilisateur
+	 *  Return balance of holiday for one user
 	 *
 	 *  @param	int		$user_id    ID de l'utilisateur
 	 *  @param	int		$fk_type	Filter on type
@@ -2203,12 +2202,12 @@ class Holiday extends CommonObject
 		$this->id = 0;
 		$this->specimen = 1;
 
-		$this->fk_user = 1;
+		$this->fk_user = $user->id;
 		$this->description = 'SPECIMEN description';
 		$this->date_debut = dol_now();
 		$this->date_fin = dol_now() + (24 * 3600);
 		$this->date_valid = dol_now();
-		$this->fk_validator = 1;
+		$this->fk_validator = $user->id;
 		$this->halfday = 0;
 		$this->fk_type = 1;
 		$this->statut = Holiday::STATUS_VALIDATED;
