@@ -189,7 +189,7 @@ if ($action == 'update') {
 					$db->begin();
 
 					if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-						if ($this->db->type == 'pgsql') {
+						if ($db->type == 'pgsql') {
 							$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_perentity (fk_product, entity, " . $db->escape($accountancy_field_name) . ")";
 							$sql .= " VALUES (" . ((int) $productid) . ", " . ((int) $conf->entity) . ", \"" . $db->escape($accounting->account_number) . "\")";
 							$sql .= " ON CONFLICT (fk_product, entity)";
