@@ -151,8 +151,8 @@ class Users extends DolibarrApi
 	 */
 	public function get($id, $includepermissions = 0)
 	{
-		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin) &&
-			!(!empty(DolibarrApiAccess::$user->rights->user->self->creer) && (DolibarrApiAccess::$user->id == $id))) {
+		$canread
+		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin) && DolibarrApiAccess::$user->id != $id) {
 			throw new RestException(401, 'Not allowed');
 		}
 
@@ -190,8 +190,7 @@ class Users extends DolibarrApi
 	 */
 	public function getByLogin($login, $includepermissions = 0)
 	{
-		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin) &&
-			!(!empty(DolibarrApiAccess::$user->rights->user->self->creer) && (DolibarrApiAccess::$user->login == $login))) {
+		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin) && DolibarrApiAccess::$user->login != $login) {
 			throw new RestException(401, 'Not allowed');
 		}
 
@@ -225,8 +224,7 @@ class Users extends DolibarrApi
 	 */
 	public function getByEmail($email, $includepermissions = 0)
 	{
-		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin) &&
-			!(!empty(DolibarrApiAccess::$user->rights->user->self->creer) && (DolibarrApiAccess::$user->email == $email))) {
+		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin) && DolibarrApiAccess::$user->email != $email) {
 			throw new RestException(401, 'Not allowed');
 		}
 
