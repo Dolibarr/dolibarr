@@ -620,10 +620,12 @@ if ($result) {
 		}
 
 		// Level 3: Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
-		if (!empty($objp->company_code_buy)) {
-			$objp->code_buy_t = $objp->company_code_buy;
-			$objp->aarowid_suggest = $objp->aarowid_thirdparty;
-			$suggestedaccountingaccountfor = '';
+		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
+			if (!empty($objp->company_code_buy)) {
+				$objp->code_buy_t = $objp->company_code_buy;
+				$objp->aarowid_suggest = $objp->aarowid_thirdparty;
+				$suggestedaccountingaccountfor = '';
+			}
 		}
 
 		if (!empty($objp->code_buy_p)) {
@@ -724,11 +726,13 @@ if ($result) {
 			$s .= $langs->trans("NotDefined");
 			print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 		}
-		print '<br>';
-		$s = '3. '.(($objp->type_l == 1) ? $langs->trans("ServiceForThisThirdparty") : $langs->trans("ProductForThisThirdparty")).': ';
-		$shelp = '';
-		$s .= ($objp->code_buy_t > 0 ? length_accountg($objp->code_buy_t) : '<span style="'.$code_buy_t_notset.'">'.$langs->trans("NotDefined").'</span>');
-		print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
+		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
+			print '<br>';
+			$s = '3. '.(($objp->type_l == 1) ? $langs->trans("ServiceForThisThirdparty") : $langs->trans("ProductForThisThirdparty")).': ';
+			$shelp = '';
+			$s .= ($objp->code_buy_t > 0 ? length_accountg($objp->code_buy_t) : '<span style="'.$code_buy_t_notset.'">'.$langs->trans("NotDefined").'</span>');
+			print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
+		}
 		print '</td>';
 
 		// Suggested accounting account
