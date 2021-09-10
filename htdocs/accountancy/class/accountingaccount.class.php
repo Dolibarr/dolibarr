@@ -450,38 +450,6 @@ class AccountingAccount extends CommonObject
 	}
 
 	/**
-	 * Check usage of accounting code
-	 *
-	 * @return int <0 if KO, >0 if OK
-	 */
-	public function checkUsage()
-	{
-		global $langs;
-
-		$sql = "(SELECT fk_code_ventilation FROM " . MAIN_DB_PREFIX . "facturedet";
-		$sql .= " WHERE fk_code_ventilation=" . $this->id . ")";
-		$sql .= "UNION";
-		$sql .= " (SELECT fk_code_ventilation FROM " . MAIN_DB_PREFIX . "facture_fourn_det";
-		$sql .= " WHERE fk_code_ventilation=" . $this->id . ")";
-
-		dol_syslog(get_class($this) . "::checkUsage sql=" . $sql, LOG_DEBUG);
-		$resql = $this->db->query($sql);
-
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-			if ($num > 0) {
-				$this->error = $langs->trans('ErrorAccountancyCodeIsAlreadyUse');
-				return 0;
-			} else {
-				return 1;
-			}
-		} else {
-			$this->error = $this->db->lasterror();
-			return -1;
-		}
-	}
-
-	/**
 	 * Return clicable name (with picto eventually)
 	 *
 	 * @param int $withpicto 0=No picto, 1=Include picto into link, 2=Only picto
@@ -914,74 +882,5 @@ class AccountingAccount extends CommonObject
 				return $hookmanager->resArray;
 			}
 		}
-	}
-
-	/**
-	 * Load record in memory
-	 *
-	 * @param int $rowid Id
-	 * @param string $account_number Account number
-	 * @param int|boolean $limittocurrentchart 1 or true=Load record only if it is into current active char of account
-	 * @param string $limittoachartaccount 'ABC'=Load record only if it is into chart account with code 'ABC' (better and faster than previous parameter if you have chart of account code).
-	 * @return    int                                     <0 if KO, 0 if not found, Id of record if OK and found
-	 */
-	public function fetch($rowid = null, $account_number = null, $limittocurrentchart = 0, $limittoachartaccount = '')
-	{
-		global $conf;
-
-		if ($rowid || $account_number) {
-			$sql = "SELECT a.rowid as rowid, a.datec, a.tms, a.fk_pcg_version, a.pcg_type, a.account_number, a.account_parent, a.label, a.labelshort, a.fk_accounting_category, a.fk_user_author, a.fk_user_modif, a.active, a.reconcilable";
-			$sql .= ", ca.label as category_label";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as a";
-			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_accounting_category as ca ON a.fk_accounting_category = ca.rowid";
-			$sql .= " WHERE";
-			if ($rowid) {
-				$sql .= " a.rowid = " . (int) $rowid;
-			} elseif ($account_number) {
-				$sql .= " a.account_number = '" . $this->db->escape($account_number) . "'";
-				$sql .= " AND a.entity = " . $conf->entity;
-			}
-			if (!empty($limittocurrentchart)) {
-				$sql .= ' AND a.fk_pcg_version IN (SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $this->db->escape($conf->global->CHARTOFACCOUNTS) . ')';
-			}
-			if (!empty($limittoachartaccount)) {
-				$sql .= " AND a.fk_pcg_version = '" . $this->db->escape($limittoachartaccount) . "'";
-			}
-
-			dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);
-			$result = $this->db->query($sql);
-			if ($result) {
-				$obj = $this->db->fetch_object($result);
-
-				if ($obj) {
-					$this->id = $obj->rowid;
-					$this->rowid = $obj->rowid;
-					$this->ref = $obj->account_number;
-					$this->datec = $obj->datec;
-					$this->tms = $obj->tms;
-					$this->fk_pcg_version = $obj->fk_pcg_version;
-					$this->pcg_type = $obj->pcg_type;
-					$this->account_number = $obj->account_number;
-					$this->account_parent = $obj->account_parent;
-					$this->label = $obj->label;
-					$this->labelshort = $obj->labelshort;
-					$this->account_category = $obj->fk_accounting_category;
-					$this->account_category_label = $obj->category_label;
-					$this->fk_user_author = $obj->fk_user_author;
-					$this->fk_user_modif = $obj->fk_user_modif;
-					$this->active = $obj->active;
-					$this->status = $obj->active;
-					$this->reconcilable = $obj->reconcilable;
-
-					return $this->id;
-				} else {
-					return 0;
-				}
-			} else {
-				$this->error = "Error " . $this->db->lasterror();
-				$this->errors[] = "Error " . $this->db->lasterror();
-			}
-		}
-		return -1;
 	}
 }
