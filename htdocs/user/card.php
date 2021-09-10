@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2018 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2005-2021 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2012-2018 Juanjo Menent        <jmenent@2byte.es>
@@ -138,6 +138,29 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	$backurlforlist = DOL_URL_ROOT.'/user/list.php';
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/user/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			}
+		}
+	}
+
+	if ($cancel) {
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		}
+		$action = '';
+	}
+
 	if ($action == 'confirm_disable' && $confirm == "yes" && $candisableuser) {
 		if ($id != $user->id) {		// A user can't disable itself
 			$object->fetch($id);
@@ -512,15 +535,15 @@ if (empty($reshook)) {
 						if (!empty($contact->socid)) {
 							$sql .= ", fk_soc=".((int) $contact->socid);
 						}
-						$sql .= " WHERE rowid=".$object->id;
+						$sql .= " WHERE rowid = ".((int) $object->id);
 					} elseif ($socid > 0) {
 						$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 						$sql .= " SET fk_socpeople=NULL, fk_soc=".((int) $socid);
-						$sql .= " WHERE rowid=".$object->id;
+						$sql .= " WHERE rowid = ".((int) $object->id);
 					} else {
 						$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 						$sql .= " SET fk_socpeople=NULL, fk_soc=NULL";
-						$sql .= " WHERE rowid=".$object->id;
+						$sql .= " WHERE rowid = ".((int) $object->id);
 					}
 					dol_syslog("usercard::update", LOG_DEBUG);
 					$resql = $db->query($sql);
@@ -1267,11 +1290,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input class="button" value="'.$langs->trans("CreateUser").'" name="create" type="submit">';
-	//print '&nbsp; &nbsp; &nbsp;';
-	//print '<input value="'.$langs->trans("Cancel").'" class="button button-cancel" type="submit" name="cancel">';
-	print '</div>';
+	print $form->buttonsSaveCancel("CreateUser");
 
 	print "</form>";
 } else {
@@ -2290,7 +2309,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 			if (preg_match('/dolibarr/', $dolibarr_main_authentication)) {
 				if ($caneditpassword) {
-					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<input maxlength="32" type="password" class="flat" name="password" value="'.$object->pass.'" autocomplete="new-password">';
+					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<input maxlength="128" type="password" class="flat" name="password" value="'.$object->pass.'" autocomplete="new-password">';
 				} else {
 					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').preg_replace('/./i', '*', $object->pass);
 				}

@@ -247,7 +247,7 @@ foreach ($dirmodels as $reldir) {
 								$langs->load("errors");
 								print '<div class="error">'.$langs->trans($tmp).'</div>';
 							} elseif ($tmp == 'NotConfigured') {
-								print $langs->trans($tmp);
+								print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
 							} else {
 								print $tmp;
 							}
@@ -447,7 +447,7 @@ print dol_get_fiche_end();
 
 print '<br>';
 print '<div class="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" />';
 print '</div>';
 print '<br>';
 

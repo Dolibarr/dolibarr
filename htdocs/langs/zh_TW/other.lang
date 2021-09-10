@@ -24,7 +24,7 @@ MessageOK=退貨頁面上有關已驗證付款的訊息
 MessageKO=退貨頁面上關於已取消付款的訊息
 ContentOfDirectoryIsNotEmpty=此資料夾的內容不是空的。
 DeleteAlsoContentRecursively=確認以遞歸方式刪除所有內容
-PoweredBy=供給者
+PoweredBy=技術提供
 YearOfInvoice=發票日期年份
 PreviousYearOfInvoice=發票日期的上一年
 NextYearOfInvoice=發票日期的下一年
@@ -291,3 +291,7 @@ PopuCom=依照在訂單中受歡迎程度列出的產品/服務
 ProductStatistics=產品/服務統計
 NbOfQtyInOrders=訂單數量
 SelectTheTypeOfObjectToAnalyze=選擇一個項目以查看其統計資訊...
+
+ConfirmBtnCommonContent = 您確定要“%s”嗎？
+ConfirmBtnCommonTitle = 確認您的操作
+CloseDialog = 關閉

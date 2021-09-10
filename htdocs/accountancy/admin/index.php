@@ -91,7 +91,6 @@ if ($action == 'update') {
 	if (!$error) {
 		foreach ($list as $constname) {
 			$constvalue = GETPOST($constname, 'alpha');
-			var_dump($constname);
 			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
 				$error++;
 			}
@@ -447,7 +446,7 @@ print '</tr>';
 
 print '</table>';
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
+print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Modify').'"></div>';
 
 print '</form>';
 

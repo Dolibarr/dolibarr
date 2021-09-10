@@ -138,8 +138,23 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	$backurlforlist = DOL_URL_ROOT.'/expensereport/list.php';
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/expensereport/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			}
+		}
+	}
+
 	if ($cancel) {
-		if (!empty($backtopage)) {
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
 		}
@@ -1432,10 +1447,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" value="'.$langs->trans("AddTrip").'" name="bouton" class="button" />';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="'.$langs->trans("Cancel").'" class="button button-cancel" onclick="history.go(-1)" />';
-	print '</div>';
+	print $form->buttonsSaveCancel("AddTrip");
 
 	print '</form>';
 } elseif ($id > 0 || $ref) {
@@ -1554,10 +1566,7 @@ if ($action == 'create') {
 
 			print dol_get_fiche_end();
 
-			print '<div class="center">';
-			print '<input type="submit" value="'.$langs->trans("Modify").'" name="bouton" class="button">';
-			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="'.$langs->trans("Cancel").'" class="button button-cancel" onclick="history.go(-1)" />';
-			print '</div>';
+			print $form->buttonsSaveCancel("Modify");
 
 			print '</form>';
 		} else {
@@ -2287,11 +2296,8 @@ if ($action == 'create') {
 						//print $line->fk_ecm_files;
 						print '</td>';
 
-						print '<td class="center">';
 						print '<input type="hidden" name="rowid" value="'.$line->rowid.'">';
-						print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-						print '<br><input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-						print '</td>';
+						print $form->buttonsSaveCancel();
 
 						print '</tr>';
 					}
@@ -2469,7 +2475,9 @@ if ($action == 'create') {
 					print '<td class="right"></td>';
 				}
 
-					print '<td class="center"><input type="submit" value="'.$langs->trans("Add").'" name="bouton" class="button"></td>';
+					print '<td class="center">';
+					print $form->buttonsSaveCancel("Add", '', '', 1);
+					print '</td>';
 
 					print '</tr>';
 			} // Fin si c'est payé/validé

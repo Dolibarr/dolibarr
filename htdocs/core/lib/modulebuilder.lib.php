@@ -176,6 +176,9 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 					}
 					$texttoinsert .= "),";
 				}
+				if ($val['validate']) {
+					$texttoinsert .= " 'validate'=>'".$val['validate']."',";
+				}
 				if ($val['comment']) {
 					$texttoinsert .= " 'comment'=>\"".preg_replace('/"/', '', $val['comment'])."\"";
 				}

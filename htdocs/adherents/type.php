@@ -43,6 +43,8 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
+$sall = GETPOST("sall", "alpha");
+$filter = GETPOST("filter", 'alpha');
 $search_lastname = GETPOST('search_lastname', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
 $search_email = GETPOST('search_email', 'alpha');
@@ -170,7 +172,7 @@ if ($action == 'update' && $user->rights->adherent->configurer) {
 	$object->morphy	= trim($morphy);
 	$object->status	= (int) $status;
 	$object->subscription = (int) $subscription;
-	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));;
+	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
 	$object->duration_value = $duration_value;
 	$object->duration_unit = $duration_unit;
 	$object->note = trim($comment);
@@ -379,12 +381,12 @@ if ($action == 'create') {
 
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('comment', $object->note, '', 200, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, 15, '90%');
+	$doleditor = new DolEditor('comment', $object->note, '', 200, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, 15, '90%');
 	$doleditor->Create();
 
 	print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('mail_valid', $object->mail_valid, '', 250, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, 15, '90%');
+	$doleditor = new DolEditor('mail_valid', $object->mail_valid, '', 250, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, 15, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -396,11 +398,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Add").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'" onclick="history.go(-1)" />';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print "</form>\n";
 }
@@ -812,12 +810,12 @@ if ($rowid > 0) {
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('comment', $object->note, '', 280, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, 15, '90%');
+		$doleditor = new DolEditor('comment', $object->note, '', 280, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, 15, '90%');
 		$doleditor->Create();
 		print "</td></tr>";
 
 		print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
-		$doleditor = new DolEditor('mail_valid', $object->mail_valid, '', 280, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, 15, '90%');
+		$doleditor = new DolEditor('mail_valid', $object->mail_valid, '', 280, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, 15, '90%');
 		$doleditor->Create();
 		print "</td></tr>";
 
@@ -828,11 +826,7 @@ if ($rowid > 0) {
 
 		print dol_get_fiche_end();
 
-		print '<div class="center">';
-		print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
+		print $form->buttonsSaveCancel();
 
 		print "</form>";
 	}

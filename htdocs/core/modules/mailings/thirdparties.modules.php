@@ -226,8 +226,8 @@ class mailing_thirdparties extends MailingTargets
 
 		$langs->load("companies");
 
-		$s = $langs->trans("Categories").': ';
-		$s .= '<select name="filter" class="flat">';
+		$s = $langs->trans("Categories").' ';
+		$s .= '<select name="filter" class="flat marginrightonly">';
 
 		// Show categories
 		$sql = "SELECT rowid, label, type, visible";
@@ -276,7 +276,7 @@ class mailing_thirdparties extends MailingTargets
 
 		$s .= '</select> ';
 		$s .= $langs->trans('ProspectCustomer');
-		$s .= ': <select name="filter_client" class="flat">';
+		$s .= ' <select name="filter_client" class="flat marginrightonly">';
 		$s .= '<option value="-1">&nbsp;</option>';
 		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
 			$s .= '<option value="2">'.$langs->trans('Prospect').'</option>';
@@ -292,7 +292,7 @@ class mailing_thirdparties extends MailingTargets
 		$s .= '</select> ';
 
 		$s .= $langs->trans("Status");
-		$s .= ': <select name="filter_status" class="flat">';
+		$s .= ' <select name="filter_status" class="flat marginrightonly">';
 		$s .= '<option value="-1">&nbsp;</option>';
 		$s .= '<option value="1" selected>'.$langs->trans("Enabled").'</option>';
 		$s .= '<option value="0">'.$langs->trans("Disabled").'</option>';

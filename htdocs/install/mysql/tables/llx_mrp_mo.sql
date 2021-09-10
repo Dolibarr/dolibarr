@@ -17,8 +17,9 @@
 CREATE TABLE llx_mrp_mo(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
 	entity integer DEFAULT 1 NOT NULL, 
+	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
+	mrptype integer DEFAULT 0,                  -- 0 for a manufacture MO, 1 for a dismantle MO 
 	label varchar(255), 
 	qty real NOT NULL,
 	fk_warehouse integer,

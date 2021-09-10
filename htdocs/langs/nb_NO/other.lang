@@ -291,3 +291,7 @@ PopuCom=Varer/tjenester etter popularitet i ordre
 ProductStatistics=Varer/Tjenestestatistikk
 NbOfQtyInOrders=Antall i ordre
 SelectTheTypeOfObjectToAnalyze=Select an object to view its statistics...
+
+ConfirmBtnCommonContent = Are you sure you want to "%s" ?
+ConfirmBtnCommonTitle = Confirm your action
+CloseDialog = Lukk

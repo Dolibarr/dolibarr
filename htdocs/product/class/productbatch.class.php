@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013-2014 Cedric GROSS         <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,8 +44,8 @@ class Productbatch extends CommonObject
 
 	public $tms = '';
 	public $fk_product_stock;
-	public $sellby = '';
-	public $eatby = '';
+	public $sellby = '';	// dlc
+	public $eatby = '';		// dmd/dluo
 	public $batch = '';
 	public $qty;
 	public $warehouseid;
@@ -530,12 +530,12 @@ class Productbatch extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch AS pb ON pl.batch = pb.batch";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock AS ps ON ps.rowid = pb.fk_product_stock";
 		$sql .= " WHERE p.entity IN (".getEntity('product').")";
-		$sql .= " AND pl.fk_product = ".$fk_product;
+		$sql .= " AND pl.fk_product = ".((int) $fk_product);
 		if ($fk_warehouse > 0) {
-			$sql .= " AND ps.fk_entrepot = ".$fk_warehouse;
+			$sql .= " AND ps.fk_entrepot = ".((int) $fk_warehouse);
 		}
 		if ($qty_min !== null) {
-			$sql .= " AND pb.qty > ".$qty_min;
+			$sql .= " AND pb.qty > ".((float) price2num($qty_min, 'MS'));
 		}
 		$sql .= $db->order($sortfield, $sortorder);
 

@@ -111,7 +111,7 @@ class Warehouses extends DolibarrApi
 		$sql .= ' WHERE t.entity IN ('.getEntity('stock').')';
 		// Select warehouses of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".$this->db->escape($category);
+			$sql .= " AND c.fk_categorie = ".((int) $category);
 			$sql .= " AND c.fk_warehouse = t.rowid ";
 		}
 		// Add sql filters

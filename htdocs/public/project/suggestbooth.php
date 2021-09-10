@@ -81,9 +81,8 @@ $email = GETPOST("email");
 $societe = GETPOST("societe");
 $label = GETPOST("label");
 $note = GETPOST("note");
-$datestart = GETPOST("datestart");
-$dateend = GETPOST("dateend");
-
+$datestart = dol_mktime(0, 0, 0, GETPOST('datestartmonth', 'int'), GETPOST('datestartday', 'int'), GETPOST('datestartyear', 'int'));
+$dateend = dol_mktime(23, 59, 59, GETPOST('dateendmonth', 'int'), GETPOST('dateendday', 'int'), GETPOST('dateendyear', 'int'));
 $id = GETPOST('id');
 
 $project = new Project($db);
@@ -225,13 +224,19 @@ if (empty($reshook) && $action == 'add') {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Note"))."<br>\n";
 	}
-	if (!GETPOST("datestart")) {
+	if (empty($datestart)) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateStart"))."<br>\n";
+	} elseif ($datestart < $project->date_start) {
+			$error++;
+			$errmsg .= $langs->trans("DateMustBeAfterThan", $langs->transnoentitiesnoconv("DateStart"), dol_print_date($project->date_start))."<br>\n";
 	}
-	if (!GETPOST("dateend")) {
+	if (empty($dateend)) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd"))."<br>\n";
+	} elseif ($dateend > dol_mktime(23, 59, 59, dol_print_date($project->date_end, '%m'), dol_print_date($project->date_end, '%d'), dol_print_date($project->date_end, '%Y'))) {
+		$error++;
+		$errmsg .= $langs->trans("DateMustBeBeforeThan", $langs->transnoentitiesnoconv("DateEnd"), dol_print_date($project->date_end))."<br>\n";
 	}
 	if (!GETPOST("email")) {
 		$error++;
@@ -376,7 +381,7 @@ if (empty($reshook) && $action == 'add') {
 			$conforbooth->fk_project = $project->id;
 			$conforbooth->note = $note;
 			$conforbooth->fk_action = $eventtype;
-			$conforbooth->datep =$datestart;
+			$conforbooth->datep = $datestart;
 			$conforbooth->datep2 = $dateend;
 			$conforbooth->datec = dol_now();
 			$conforbooth->tms = dol_now();
@@ -423,7 +428,7 @@ if (empty($reshook) && $action == 'add') {
 								$error++;
 							} else {
 								$db->commit();
-								$facture->add_object_linked($contact->element, $contact->id);
+								$facture->add_object_linked($conforbooth->element, $conforbooth->id);
 							}
 						}
 
@@ -436,7 +441,7 @@ if (empty($reshook) && $action == 'add') {
 								$contact->errors = $facture->errors;
 								$error++;
 							}
-							if (!$error) {
+							/*if (!$error) {
 								$valid = true;
 								$sourcetouse = 'boothlocation';
 								$reftouse = $facture->id;
@@ -450,54 +455,12 @@ if (empty($reshook) && $action == 'add') {
 								}
 								Header("Location: ".$redirection);
 								exit;
-							}
+							}*/
 						}
 					} else {
 						// If no price has been set for the booth, we confirm it as suggested and we update
 						$conforbooth->status = ConferenceOrBooth::STATUS_SUGGESTED;
 						$conforbooth->update($user);
-						// Sending mail
-						require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-						$formmail = new FormMail($db);
-						// Set output language
-						$outputlangs = new Translate('', $conf);
-						$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
-						// Load traductions files required by page
-						$outputlangs->loadLangs(array("main", "members"));
-						// Get email content from template
-						$arraydefaultmessage = null;
-
-						$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH;
-						if (!empty($labeltouse)) {
-							$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $labeltouse, 1, '');
-						}
-
-						if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-							$subject = $arraydefaultmessage->topic;
-							$msg     = $arraydefaultmessage->content;
-						}
-
-						$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
-						complete_substitutions_array($substitutionarray, $outputlangs, $object);
-
-						$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
-						$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
-
-						$sendto = $thirdparty->email;
-						$from = $conf->global->MAILING_EMAIL_FROM;
-						$urlback = $_SERVER["REQUEST_URI"];
-
-						$ishtml = dol_textishtml($texttosend); // May contain urls
-
-						$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml);
-
-						$result = $mailfile->sendfile();
-						if ($result) {
-							dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
-						} else {
-							dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
-						}
 					}
 				}
 			}
@@ -505,6 +468,50 @@ if (empty($reshook) && $action == 'add') {
 	}
 	if (!$error) {
 		$db->commit();
+
+		// Sending mail
+		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		$formmail = new FormMail($db);
+		// Set output language
+		$outputlangs = new Translate('', $conf);
+		$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
+		// Load traductions files required by page
+		$outputlangs->loadLangs(array("main", "members"));
+		// Get email content from template
+		$arraydefaultmessage = null;
+
+		$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH;
+		if (!empty($labeltouse)) {
+			$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $labeltouse, 1, '');
+		}
+
+		if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+			$subject = $arraydefaultmessage->topic;
+			$msg     = $arraydefaultmessage->content;
+		}
+
+		$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
+		complete_substitutions_array($substitutionarray, $outputlangs, $object);
+
+		$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+		$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
+
+		$sendto = $thirdparty->email;
+		$from = $conf->global->MAILING_EMAIL_FROM;
+		$urlback = $_SERVER["REQUEST_URI"];
+
+		$ishtml = dol_textishtml($texttosend); // May contain urls
+
+		$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml);
+
+		$result = $mailfile->sendfile();
+		if ($result) {
+			dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
+		} else {
+			dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
+		}
+
 		$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
 		$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.$id.'&securekey='.$securekeyurl;
 		Header("Location: ".$redirection);
@@ -535,7 +542,7 @@ print '<div class="center subscriptionformhelptext justify">';
 // Welcome message
 $text  = '<tr><td class="textpublicpayment"><strong>'.$langs->trans("EvntOrgRegistrationBoothWelcomeMessage").'</strong></td></tr></br>';
 $text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgRegistrationBoothHelpMessage").' '.$id.'.<br><br></td></tr>'."\n";
-$text .= '<tr><td class="textpublicpayment">'.$project->note_public.'</td></tr>'."\n";;
+$text .= '<tr><td class="textpublicpayment">'.$project->note_public.'</td></tr>'."\n";
 print $text;
 print '</div>';
 
@@ -630,12 +637,23 @@ print '</td><td><input type="text" name="label" class="minwidth150" value="'.dol
 print '<tr><td>'.$langs->trans("Description").'<FONT COLOR="red">*</FONT></td>'."\n";
 print '<td><textarea name="note" id="note" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('note', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
 // Start Date
-print '<tr><td>'.$langs->trans("DateStart").'<FONT COLOR="red">*</FONT></td>'."\n";
-print '<td><input type="date" name="datestart" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('datestart')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("DateStart").'<FONT COLOR="red">*</FONT>';
+if (!empty($project->date_start)) {
+	print '('.$langs->trans('Min'). ' '.dol_print_date($project->date_start).')';
+}
+print '</td>'."\n";
+print '<td>';
+print $form->selectDate((empty($datestart)?$project->date_start:$datestart), 'datestart');
+print '</td></tr>'."\n";
 // End Date
-print '<tr><td>'.$langs->trans("DateEnd").'<FONT COLOR="red">*</FONT></td>'."\n";
-print '<td><input type="date" name="dateend" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('dateend')).'"></td></tr>'."\n";
-
+print '<tr><td>'.$langs->trans("DateEnd").'<FONT COLOR="red">*</FONT>';
+if (!empty($project->date_end)) {
+	print '('.$langs->trans('Max'). ' '.dol_print_date($project->date_end).')';
+}
+print '</td>'."\n";
+print '<td>';
+print $form->selectDate(empty($dateend)?$project->date_end:$dateend, 'dateend');
+print '</td></tr>'."\n";
 
 print "</table>\n";
 

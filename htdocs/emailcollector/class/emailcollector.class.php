@@ -30,6 +30,16 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentcandidature.class.php';
 
+require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php'; // customer proposal
+require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php'; // customer order
+require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php'; // Shipment
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php'; // supplier invoice
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php'; // supplier order
+require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php'; // supplier proposal
+require_once DOL_DOCUMENT_ROOT."/reception/class/reception.class.php"; // reception
+//require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php'; // Holidays (leave request)
+//require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php'; // expernse report
+
 
 /**
  * Class for EmailCollector
@@ -675,7 +685,7 @@ class EmailCollector extends CommonObject
 
 		$sql = 'SELECT rowid, type, rulevalue, status';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'emailcollector_emailcollectorfilter';
-		$sql .= ' WHERE fk_emailcollector = '.$this->id;
+		$sql .= ' WHERE fk_emailcollector = '.((int) $this->id);
 		//$sql.= ' ORDER BY position';
 
 		$resql = $this->db->query($sql);
@@ -707,7 +717,7 @@ class EmailCollector extends CommonObject
 
 		$sql = 'SELECT rowid, type, actionparam, status';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'emailcollector_emailcollectoraction';
-		$sql .= ' WHERE fk_emailcollector = '.$this->id;
+		$sql .= ' WHERE fk_emailcollector = '.((int) $this->id);
 		$sql .= ' ORDER BY position';
 
 		$resql = $this->db->query($sql);
@@ -1415,8 +1425,8 @@ class EmailCollector extends CommonObject
 				$reg = array();
 				if (!empty($headers['References'])) {
 					$arrayofreferences = preg_split('/(,|\s+)/', $headers['References']);
-					//var_dump($headers['References']);
-					//var_dump($arrayofreferences);
+					// var_dump($headers['References']);
+					// var_dump($arrayofreferences);
 
 					foreach ($arrayofreferences as $reference) {
 						//print "Process mail ".$iforemailloop." email_msgid ".$msgid.", date ".dol_print_date($date, 'dayhour').", subject ".$subject.", reference ".dol_escape_htmltag($reference)."<br>\n";
@@ -1432,8 +1442,29 @@ class EmailCollector extends CommonObject
 							if ($reg[1] == 'ctc') {
 								$objectemail = new Contact($this->db);
 							}
-							if ($reg[1] == 'inv') {
+							if ($reg[1] == 'inv') { // customer invoices
 								$objectemail = new Facture($this->db);
+							}
+							if ($reg[1] == 'sinv') { // supplier invoices
+								$objectemail = new FactureFournisseur($this->db);
+							}
+							if ($reg[1] == 'pro') { // customer proposals
+								$objectemail = new Propal($this->db);
+							}
+							if ($reg[1] == 'ord') { // customer orders
+								$objectemail = new Commande($this->db);
+							}
+							if ($reg[1] == 'shi') { // shipments
+								$objectemail = new Expedition($this->db);
+							}
+							if ($reg[1] == 'spro') { // supplier proposal
+								$objectemail = new SupplierProposal($this->db);
+							}
+							if ($reg[1] == 'sord') { // supplier order
+								$objectemail = new CommandeFournisseur($this->db);
+							}
+							if ($reg[1] == 'rec') { // Reception
+								$objectemail = new Reception($this->db);
 							}
 							if ($reg[1] == 'proj') {
 								$objectemail = new Project($this->db);
@@ -1456,6 +1487,12 @@ class EmailCollector extends CommonObject
 							if ($reg[1] == 'mem') {
 								$objectemail = new Adherent($this->db);
 							}
+							/*if ($reg[1] == 'leav') {
+								$objectemail = new Holiday($db);
+							}
+							if ($reg[1] == 'exp') {
+								$objectemail = new ExpenseReport($db);
+							}*/
 						} elseif (preg_match('/<(.*@.*)>/', $reference, $reg)) {
 							// This is an external reference, we check if we have it in our database
 							if (!is_object($objectemail)) {

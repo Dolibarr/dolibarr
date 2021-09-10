@@ -45,6 +45,11 @@ $arrayofparameters = array(
 	'DAV_ALLOW_ECM_DIR'=>array('css'=>'minwidth200', 'enabled'=>$conf->ecm->enabled)
 );
 
+// To fix when dire does not exists
+dol_mkdir($conf->dav->dir_output.'/temp');
+dol_mkdir($conf->dav->dir_output.'/public');
+dol_mkdir($conf->dav->dir_output.'/private');
+
 
 /*
  * Actions

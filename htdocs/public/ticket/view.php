@@ -68,6 +68,10 @@ if (isset($_SESSION['email_customer'])) {
 
 $object = new ActionsTicket($db);
 
+if (empty($conf->ticket->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
+
 
 /*
  * Actions
@@ -262,8 +266,10 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 		// Category
 		print '<tr><td>'.$langs->trans("Category").'</td><td>';
-		print img_picto('', 'category', 'class="pictofixedwidth"');
-		print dol_escape_htmltag($object->dao->category_label);
+		if ($object->dao->category_label) {
+			print img_picto('', 'category', 'class="pictofixedwidth"');
+			print dol_escape_htmltag($object->dao->category_label);
+		}
 		print '</td></tr>';
 
 		// Severity
@@ -393,7 +399,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 	print '</p>';
 
 	print '<p style="text-align: center; margin-top: 1.5em;">';
-	print '<input class="button" type="submit" name="btn_view_ticket" value="'.$langs->trans('ViewTicket').'" />';
+	print '<input type="submit" class="button" name="btn_view_ticket" value="'.$langs->trans('ViewTicket').'" />';
 	print "</p>\n";
 
 	print "</form>\n";

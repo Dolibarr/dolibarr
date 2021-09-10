@@ -1357,11 +1357,14 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		$desc = str_replace('(DEPOSIT)', $outputlangs->trans('Deposit'), $desc);
 	}
 
-	// Description short of product line
-	$libelleproduitservice = $label;
-	if (!empty($libelleproduitservice) && !empty($conf->global->PDF_BOLD_PRODUCT_LABEL)) {
-		$libelleproduitservice = '<b>'.$libelleproduitservice.'</b>';
+	if (empty($conf->global->PDF_HIDE_PRODUCT_LABEL_IN_SUPPLIER_LINES)) {
+		// Description short of product line
+		$libelleproduitservice = $label;
+		if (!empty($libelleproduitservice) && !empty($conf->global->PDF_BOLD_PRODUCT_LABEL)) {
+			$libelleproduitservice = '<b>'.$libelleproduitservice.'</b>';
+		}
 	}
+
 
 	// Add ref of subproducts
 	if (!empty($conf->global->SHOW_SUBPRODUCT_REF_IN_PDF)) {

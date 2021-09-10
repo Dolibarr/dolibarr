@@ -252,11 +252,9 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 
 		print dol_get_fiche_end();
 
-		print '<div class="center">';
-		print '<input type="submit" class="button" name="save" value="'.$langs->trans($action == "create" ? "Create" : "Modify").'">';
-		print ' &nbsp; &nbsp; ';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
+		$button_label = ($action == "create" ? "Create" : "Modify");
+		print $form->buttonsSaveCancel($button_label);
+
 		print '</div>';
 
 		print '</form>';

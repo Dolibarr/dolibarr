@@ -78,7 +78,26 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
+	$backurlforlist = DOL_URL_ROOT.'/compta/bank/list.php';
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/compta/bank/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			}
+		}
+	}
+
 	if ($cancel) {
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		}
 		$action = '';
 	}
 
@@ -212,7 +231,7 @@ if (empty($reshook)) {
 		$object->ics = trim(GETPOST("ics", 'alpha'));
 		$object->ics_transfer = trim(GETPOST("ics_transfer", 'alpha'));
 
-		$account_number = GETPOST('account_number', 'alpha');
+		$account_number = GETPOST('account_number', 'alphanohtml');
 		if (empty($account_number) || $account_number == '-1') {
 			$object->account_number = '';
 		} else {
@@ -565,11 +584,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("CreateAccount").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-	print '</div>';
+	print $form->buttonsSaveCancel("CreateAccount");
 
 	print '</form>';
 } else {
@@ -754,13 +769,13 @@ if ($action == 'create') {
 			print '</td></tr>';
 
 			if ($conf->prelevement->enabled) {
-				print '<tr><td>'.$langs->trans("ICS").'</td>';
+				print '<tr><td>'.$langs->trans("ICS").' ('.$langs->trans("StandingOrder").')</td>';
 				print '<td>'.$object->ics.'</td>';
 				print '</tr>';
 			}
 
 			if ($conf->paymentbybanktransfer->enabled) {
-				print '<tr><td>'.$langs->trans("ICSTransfer").'</td>';
+				print '<tr><td>'.$langs->trans("ICS").' ('.$langs->trans("BankTransfer").')</td>';
 				print '<td>'.$object->ics_transfer.'</td>';
 				print '</tr>';
 			}
@@ -1053,12 +1068,12 @@ if ($action == 'create') {
 			print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="11" type="text" class="flat" name="bic" value="'.$object->bic.'"></td></tr>';
 
 			if ($conf->prelevement->enabled) {
-				print '<tr><td>'.$langs->trans("ICS").'</td>';
+				print '<tr><td>'.$langs->trans("ICS").' ('.$langs->trans("StandingOrder").')</td>';
 				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics" value="'.$object->ics.'"></td></tr>';
 			}
 
 			if ($conf->paymentbybanktransfer->enabled) {
-				print '<tr><td>'.$langs->trans("ICSTransfer").'</td>';
+				print '<tr><td>'.$langs->trans("ICS").' ('.$langs->trans("BankTransfer").')</td>';
 				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics_transfer" value="'.$object->ics_transfer.'"></td></tr>';
 			}
 
@@ -1081,11 +1096,7 @@ if ($action == 'create') {
 
 		print dol_get_fiche_end();
 
-		print '<div class="center">';
-		print '<input value="'.$langs->trans("Modify").'" type="submit" class="button">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input name="cancel" value="'.$langs->trans("Cancel").'" type="submit" class="button button-cancel">';
-		print '</div>';
+		print $form->buttonsSaveCancel("Modify");
 
 		print '</form>';
 	}

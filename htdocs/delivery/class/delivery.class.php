@@ -166,11 +166,11 @@ class Delivery extends CommonObject
 		$sql .= ", fk_incoterms, location_incoterms";
 		$sql .= ") VALUES (";
 		$sql .= "'(PROV)'";
-		$sql .= ", ".$conf->entity;
-		$sql .= ", ".$this->socid;
+		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".((int) $this->socid);
 		$sql .= ", '".$this->db->escape($this->ref_customer)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".($this->date_delivery ? "'".$this->db->idate($this->date_delivery)."'" : "null");
 		$sql .= ", ".($this->fk_delivery_address > 0 ? $this->fk_delivery_address : "null");
 		$sql .= ", ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
@@ -189,7 +189,7 @@ class Delivery extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."delivery ";
 			$sql .= "SET ref = '".$this->db->escape($numref)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog("Delivery::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -273,10 +273,10 @@ class Delivery extends CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."deliverydet (fk_delivery, fk_origin_line,";
 		$sql .= " fk_product, description, qty)";
-		$sql .= " VALUES (".$this->id.",".$origin_id.",";
-		$sql .= " ".($idprod > 0 ? $idprod : "null").",";
+		$sql .= " VALUES (".$this->id.",".((int) $origin_id).",";
+		$sql .= " ".($idprod > 0 ? ((int) $idprod) : "null").",";
 		$sql .= " ".($description ? "'".$this->db->escape($description)."'" : "null").",";
-		$sql .= $qty.")";
+		$sql .= (price2num($qty, 'MS')).")";
 
 		dol_syslog(get_class($this)."::create_line", LOG_DEBUG);
 		if (!$this->db->query($sql)) {
@@ -412,7 +412,7 @@ class Delivery extends CommonObject
 					$sql .= " FROM ".MAIN_DB_PREFIX."delivery";
 					$sql .= " WHERE ref = '".$this->db->escape($numref)."'";
 					$sql .= " AND fk_statut <> 0";
-					$sql .= " AND entity = ".$conf->entity;
+					$sql .= " AND entity = ".((int) $conf->entity);
 
 					$resql = $this->db->query($sql);
 					if ($resql) {
@@ -427,7 +427,7 @@ class Delivery extends CommonObject
 					$sql .= ", fk_statut = 1";
 					$sql .= ", date_valid = '".$this->db->idate($now)."'";
 					$sql .= ", fk_user_valid = ".$user->id;
-					$sql .= " WHERE rowid = ".$this->id;
+					$sql .= " WHERE rowid = ".((int) $this->id);
 					$sql .= " AND fk_statut = 0";
 
 					$resql = $this->db->query($sql);
@@ -453,7 +453,7 @@ class Delivery extends CommonObject
 						if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 							// Now we rename also files into index
 							$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'expedition/receipt/".$this->db->escape($this->newref)."'";
-							$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expedition/receipt/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+							$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expedition/receipt/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 							$resql = $this->db->query($sql);
 							if (!$resql) {
 								$error++; $this->error = $this->db->lasterror();
@@ -641,7 +641,7 @@ class Delivery extends CommonObject
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."deliverydet";
-		$sql .= " WHERE fk_delivery = ".$this->id;
+		$sql .= " WHERE fk_delivery = ".((int) $this->id);
 		if ($this->db->query($sql)) {
 			// Delete linked object
 			$res = $this->deleteObjectLinked();
@@ -651,7 +651,7 @@ class Delivery extends CommonObject
 
 			if (!$error) {
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."delivery";
-				$sql .= " WHERE rowid = ".$this->id;
+				$sql .= " WHERE rowid = ".((int) $this->id);
 				if ($this->db->query($sql)) {
 					$this->db->commit();
 
@@ -761,7 +761,7 @@ class Delivery extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."deliverydet as ld";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on p.rowid = ld.fk_product";
 		$sql .= " WHERE ld.fk_origin_line = cd.rowid";
-		$sql .= " AND ld.fk_delivery = ".$this->id;
+		$sql .= " AND ld.fk_delivery = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -958,8 +958,8 @@ class Delivery extends CommonObject
 				$sql .= " WHERE ld.fk_delivery = l.rowid";
 				$sql .= " AND ld.fk_origin_line = cd.rowid";
 				$sql .= " AND cd.fk_".$this->linked_object[0]['type']." = c.rowid";
-				$sql .= " AND cd.fk_".$this->linked_object[0]['type']." = ".$this->linked_object[0]['linkid'];
-				$sql .= " AND ld.fk_origin_line = ".$objSourceLine->rowid;
+				$sql .= " AND cd.fk_".$this->linked_object[0]['type']." = ".((int) $this->linked_object[0]['linkid']);
+				$sql .= " AND ld.fk_origin_line = ".((int) $objSourceLine->rowid);
 				$sql .= " GROUP BY ld.fk_origin_line";
 
 				$result = $this->db->query($sql);
@@ -1001,7 +1001,7 @@ class Delivery extends CommonObject
 		if ($user->rights->expedition->creer) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."delivery";
 			$sql .= " SET date_delivery = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::setDeliveryDate", LOG_DEBUG);
 			$resql = $this->db->query($sql);

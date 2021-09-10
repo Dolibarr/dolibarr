@@ -88,6 +88,12 @@ class Salary extends CommonObject
 	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var user	User
+	 */
+	public $user;
+
+
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;
 
@@ -280,7 +286,7 @@ class Salary extends CommonObject
 		/*if (!$error)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."salary_extrafields";
-			$sql .= " WHERE fk_object=".$this->id;
+			$sql .= " WHERE fk_object = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql)
@@ -400,11 +406,11 @@ class Salary extends CommonObject
 		$sql .= "'".$this->db->escape($this->fk_user)."'";
 		//$sql .= ", '".$this->db->idate($this->datep)."'";
 		//$sql .= ", '".$this->db->idate($this->datev)."'";
-		$sql .= ", ".$this->amount;
-		$sql .= ", ".($this->fk_project > 0 ? $this->fk_project : 0);
-		$sql .= ", ".($this->salary > 0 ? $this->salary : "null");
-		$sql .= ", ".($this->type_payment > 0 ? $this->type_payment : 0);
-		$sql .= ", ".($this->accountid > 0 ? $this->accountid : "null");
+		$sql .= ", ".((double) $this->amount);
+		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : 0);
+		$sql .= ", ".($this->salary > 0 ? ((double) $this->salary) : "null");
+		$sql .= ", ".($this->type_payment > 0 ? ((int) $this->type_payment) : 0);
+		$sql .= ", ".($this->accountid > 0 ? ((int) $this->accountid) : "null");
 		if ($this->note) $sql .= ", '".$this->db->escape($this->note)."'";
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->idate($this->datesp)."'";
@@ -412,7 +418,7 @@ class Salary extends CommonObject
 		$sql .= ", '".$this->db->escape($user->id)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", NULL";
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -462,7 +468,7 @@ class Salary extends CommonObject
 	{
         // phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'salary SET fk_bank = '.((int) $id_bank);
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			return 1;
@@ -564,7 +570,7 @@ class Salary extends CommonObject
 
 		$sql = 'SELECT sum(amount) as amount';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql .= ' WHERE '.$field.' = '.$this->id;
+		$sql .= " WHERE ".$field." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -633,7 +639,7 @@ class Salary extends CommonObject
 		// phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."salary SET";
 		$sql .= " paye = 1";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$return = $this->db->query($sql);
 		if ($return) return 1;
 		else return -1;
@@ -651,7 +657,7 @@ class Salary extends CommonObject
 		// phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."salary SET";
 		$sql .= " paye = 0";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$return = $this->db->query($sql);
 		if ($return) return 1;
 		else return -1;
