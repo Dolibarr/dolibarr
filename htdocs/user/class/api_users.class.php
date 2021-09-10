@@ -152,7 +152,7 @@ class Users extends DolibarrApi
 	public function get($id, $includepermissions = 0)
 	{
 		$canread
-		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin) && DolibarrApiAccess::$user->id != $id) {
+		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin) && ($id == 0 || DolibarrApiAccess::$user->id != $id)) {
 			throw new RestException(401, 'Not allowed');
 		}
 
