@@ -119,10 +119,12 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 	}
 
 	if (!empty($excludeids)) {
-		$filter .= 'rowid NOT IN ('.$db->sanitize($excludeids).')';
+		$excludeids = explode(',', $excludeids);
+	} else {
+		$excludeids = array();
 	}
 
-	$arrayresult = $form->select_thirdparty_list(0, $htmlname, $filter, 1, $showtype, 0, null, $searchkey, $outjson);
+	$arrayresult = $form->select_thirdparty_list(0, $htmlname, $filter, 1, $showtype, 0, null, $searchkey, $outjson, 0, 'minwidth100', '', false, $excludeids);
 
 	$db->close();
 
