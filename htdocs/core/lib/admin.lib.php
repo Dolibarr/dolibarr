@@ -675,13 +675,13 @@ function ihm_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=language";
-	$head[$h][1] = $langs->trans("DefaultLanguage");
-	$head[$h][2] = 'language';
+	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=other";
+	$head[$h][1] = $langs->trans("LanguageAndPresentation");
+	$head[$h][2] = 'other';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=template";
-	$head[$h][1] = $langs->trans("DefaultSkin");
+	$head[$h][1] = $langs->trans("SkinAndColors");
 	$head[$h][2] = 'template';
 	$h++;
 
@@ -693,11 +693,6 @@ function ihm_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=login";
 	$head[$h][1] = $langs->trans("LoginPage");
 	$head[$h][2] = 'login';
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=other";
-	$head[$h][1] = $langs->trans("Miscellaneous");
-	$head[$h][2] = 'other';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'ihm_admin');
