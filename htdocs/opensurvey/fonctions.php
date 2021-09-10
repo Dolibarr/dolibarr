@@ -198,6 +198,7 @@ function getUrlSondage($id, $admin = false)
 	} else {
 		$url = get_server_name().'/public/studs.php?sondage='.$id;
 	}
+	$url = '<a href="'.$url.'">'.$url.'</a>';
 
 	return $url;
 }

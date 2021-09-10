@@ -1124,11 +1124,11 @@ while ($i < min($num, $limit)) {
 			// Other type
 		}
 
-		print '<td class="nowrap">';
+		print '<td class="maxwidth100">';
 
 		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 		// Picto + Ref
-		print '<td class="nobordernopadding nowrap">';
+		print '<td class="nobordernopadding">';
 
 		if ($line->doc_type == 'customer_invoice' || $line->doc_type == 'supplier_invoice' || $line->doc_type == 'expense_report') {
 			print $objectstatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
