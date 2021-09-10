@@ -7114,6 +7114,6 @@ if (!empty($conf->global->THEME_CUSTOM_CSS)) {
 ?>
 
 /* Must be at end */
-div.flot-text .flot-tick-label .tickLabel {
+div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;
 }
