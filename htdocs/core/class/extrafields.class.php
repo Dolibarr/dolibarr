@@ -1976,7 +1976,7 @@ class ExtraFields
 	 */
 	public function showSeparator($key, $object, $colspan = 2, $display_type = 'card')
 	{
-		global $langs;
+		global $langs, $conf;
 
 		if ($display_type=='card') {
 			$tagtype='tr';
