@@ -1359,7 +1359,7 @@ class Form
 			$sql .= " AND s.status <> 0";
 		}
 		if (!empty($excludeids)) {
-			$sql .= " AND rowid NOT IN (".$this->db->sanitize(join(',', $excludeids)).")";
+			$sql .= " AND s.rowid NOT IN (".$this->db->sanitize(join(',', $excludeids)).")";
 		}
 		// Add criteria
 		if ($filterkey && $filterkey != '') {
