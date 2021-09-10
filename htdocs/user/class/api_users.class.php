@@ -185,11 +185,16 @@ class Users extends DolibarrApi
 	 *
 	 * @url GET login/{login}
 	 *
-	 * @throws RestException 401 Insufficient rights
-	 * @throws RestException 404 User or group not found
+	 * @throws RestException 400    Bad request
+	 * @throws RestException 401 	Insufficient rights
+	 * @throws RestException 404 	User or group not found
 	 */
 	public function getByLogin($login, $includepermissions = 0)
 	{
+		if (empty($login)) {
+			throw new RestException(400, 'Bad parameters');
+		}
+
 		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin) && DolibarrApiAccess::$user->login != $login) {
 			throw new RestException(401, 'Not allowed');
 		}
@@ -219,11 +224,16 @@ class Users extends DolibarrApi
 	 *
 	 * @url GET email/{email}
 	 *
+	 * @throws RestException 400     Bad request
 	 * @throws RestException 401     Insufficient rights
 	 * @throws RestException 404     User or group not found
 	 */
 	public function getByEmail($email, $includepermissions = 0)
 	{
+		if (empty($email)) {
+			throw new RestException(400, 'Bad parameters');
+		}
+
 		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin) && DolibarrApiAccess::$user->email != $email) {
 			throw new RestException(401, 'Not allowed');
 		}
