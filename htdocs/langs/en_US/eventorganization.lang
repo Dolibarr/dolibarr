@@ -130,7 +130,7 @@ BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
 EventType = Event type
 LabelOfBooth=Booth label
 LabelOfconference=Conference label
-ConferenceIsNotConfirmed=Subcription not available, conference is not confirmed yet
+ConferenceIsNotConfirmed=Registration not available, conference is not confirmed yet
 DateMustBeBeforeThan=%s must be before %s
 DateMustBeAfterThan=%s must be after %s
 
@@ -148,11 +148,11 @@ VoteError = An error has occurred during the vote, please try again.
 #
 # SubscriptionOk page
 #
-SubscriptionOk = Your subscription to this conference has been validated
+SubscriptionOk = Your subscription has been validated
 #
 # Subscription validation mail
 #
-ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to a conference
+ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
 #
 # Payment page
 #
