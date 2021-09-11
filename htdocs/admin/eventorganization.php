@@ -16,7 +16,7 @@
  */
 
 /**
- * \file    htdocs/admin/setup.php
+ * \file    htdocs/admin/eventorganization.php
  * \ingroup eventorganization
  * \brief   EventOrganization setup page.
  */
