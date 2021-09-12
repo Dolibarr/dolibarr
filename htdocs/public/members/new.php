@@ -724,7 +724,7 @@ if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT) || !empty($conf->global->MEMBER
 	}
 
 	if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE)) {
-		$amount = $amount ? $amount : (GETPOST('amount') ? GETPOST('amount') : $conf->global->MEMBER_NEWFORM_AMOUNT);
+		$amount = $amount ? $amount : (GETPOST('amount') ? price2num(GETPOST('amount'), 'MT', 2) : $conf->global->MEMBER_NEWFORM_AMOUNT);
 	}
 
 	$amount = price2num($amount);
@@ -732,10 +732,10 @@ if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT) || !empty($conf->global->MEMBER
 	// $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal', 'paybox' or 'stripe'
 	print '<tr><td>'.$langs->trans("Subscription").'</td><td class="nowrap">';
 	if (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {
-		print '<input type="text" name="amount" id="amount" class="flat amount" size="6" value="'.$amount.'">';
+		print '<input type="text" name="amount" id="amount" class="flat amount width50" value="'.$amount.'">';
 	} else {
-		print '<input type="text" name="amount" id="amounthidden" class="flat amount" disabled size="6" value="'.$amount.'">';
-		print '<input type="hidden" name="amount" id="amount" class="flat amount" size="6" value="'.$amount.'">';
+		print '<input type="text" name="amount" id="amounthidden" class="flat amount width50" disabled value="'.$amount.'">';
+		print '<input type="hidden" name="amount" id="amount" class="flat amount" value="'.$amount.'">';
 	}
 	print ' '.$langs->trans("Currency".$conf->currency);
 	print '</td></tr>';

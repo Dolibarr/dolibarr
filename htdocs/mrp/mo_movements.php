@@ -423,7 +423,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Add fields from extrafields
 	if (!empty($extrafields->attributes[$objectlist->table_element]['label'])) {
 		foreach ($extrafields->attributes[$objectlist->table_element]['label'] as $key => $val) {
-			$sql .= ($extrafields->attributes[$objectlist->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+			$sql .= ($extrafields->attributes[$objectlist->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 		}
 	}
 	// Add fields from hooks

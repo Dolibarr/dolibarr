@@ -120,7 +120,7 @@ if (empty($reshook)) {
 
 	// Upadate / add for lang
 	if (($action == 'update' || $action == 'add') && !empty($permissiontoadd)) {
-		$object->lang = GETPOSTISSET('langkm', 'aZ09')?GETPOST('langkm', 'aZ09'):$object->lang;
+		$object->lang = (GETPOSTISSET('langkm') ? GETPOST('langkm', 'aZ09') : $object->lang);
 	}
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen

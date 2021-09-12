@@ -49,6 +49,7 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 // Initialize technical objects
 $object = new Mo($db);
 $objectbom = new BOM($db);
+
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mrp->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('mocard', 'globalcard')); // Note that conf->hooks_modules contains array
@@ -74,13 +75,14 @@ if (empty($action) && empty($id) && empty($ref)) {
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-if (GETPOST('fk_bom', 'int')) {
+if (GETPOST('fk_bom', 'int') > 0) {
 	$objectbom->fetch(GETPOST('fk_bom', 'int'));
 
 	if ($action != 'add') {
 		// We force calling parameters if we are not in the submit of creation of MO
 		$_POST['fk_product'] = $objectbom->fk_product;
 		$_POST['qty'] = $objectbom->qty;
+		$_POST['mrptype'] = $objectbom->bomtype;
 		$_POST['fk_warehouse'] = $objectbom->fk_warehouse;
 		$_POST['note_private'] = $objectbom->note_private;
 	}
@@ -205,6 +207,13 @@ llxHeader('', $title, '');
 
 // Part to create
 if ($action == 'create') {
+	if (GETPOST('fk_bom', 'int') > 0) {
+		$titlelist = $langs->trans("ToConsume");
+		if ($objectbom->bomtype == 1) {
+			$titlelist = $langs->trans("ToObtain");
+		}
+	}
+
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Mo")), '', 'mrp');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -245,7 +254,10 @@ if ($action == 'create') {
 						console.log(data);
 						if (typeof data.rowid != "undefined") {
 							console.log("New BOM loaded, we set values in form");
+							console.log(data);
 							$('#qty').val(data.qty);
+							$("#mrptype").val(data.bomtype);	// We set bomtype into mrptype
+							$('#mrptype').trigger('change'); // Notify any JS components that the value changed
 							$("#fk_product").val(data.fk_product);
 							$('#fk_product').trigger('change'); // Notify any JS components that the value changed
 							$('#note_private').val(data.description);
@@ -268,7 +280,7 @@ if ($action == 'create') {
 				else if (jQuery('#fk_bom').val() < 0) {
 					// Redirect to page with all fields defined except fk_bom set
 					console.log(jQuery('#fk_product').val());
-					window.location.href = '<?php echo $_SERVER["PHP_SELF"] ?>?action=create&qty='+jQuery('#qty').val()+'&fk_product='+jQuery('#fk_product').val()+'&label='+jQuery('#label').val()+'&fk_project='+jQuery('#fk_project').val()+'&fk_warehouse='+jQuery('#fk_warehouse').val();
+					window.location.href = '<?php echo $_SERVER["PHP_SELF"] ?>?action=create&qty='+jQuery('#qty').val()+'&mrptype='+jQuery('#mrptype').val()+'&fk_product='+jQuery('#fk_product').val()+'&label='+jQuery('#label').val()+'&fk_project='+jQuery('#fk_project').val()+'&fk_warehouse='+jQuery('#fk_warehouse').val();
 					/*
 					$('#qty').val('');
 					$("#fk_product").val('');
@@ -288,13 +300,14 @@ if ($action == 'create') {
 
 	print $form->buttonsSaveCancel("Create");
 
-	if (GETPOST('fk_bom', 'int') > 0) {
-		print load_fiche_titre($langs->trans("ToConsume"));
+	if ($objectbom->id > 0) {
+		print load_fiche_titre($titlelist);
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 
 		$object->lines = $objectbom->lines;
+		$object->mrptype = $objectbom->bomtype;
 		$object->bom = $objectbom;
 
 		$object->printOriginLinesList('', array());

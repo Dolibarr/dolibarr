@@ -473,6 +473,10 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	white-space: normal;
 	color: #888 !important;
 }
+.nofocusvisible:focus-visible {
+	outline: none;
+}
+
 div.buttonpayment input {
 	background-color: unset;
 	border-bottom: unset;
@@ -6870,6 +6874,16 @@ div.clipboardCPValue.hidewithsize {
 	input#addedfile {
 		width: 95%;
 	}
+	
+	#divbodywebsite {
+		word-break: break-all;
+	}
+
+	.websiteselectionsection {
+		border-left: unset;
+		boerder-right: unset;
+		padding-left: 5px;
+	}	
 }
 
 
@@ -6903,6 +6917,11 @@ if (is_object($db)) {
 }​
 
 div#topmenu-bookmark-dropdown {
-position: fixed;
-right: 20px;
+	position: fixed;
+	right: 20px;
+}
+
+/* Must be at end */
+div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
+	color: unset;
 }

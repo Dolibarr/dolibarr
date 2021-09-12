@@ -196,7 +196,7 @@ if ($disablenofollow) {
 </div></div>
 
 <?php
-if ($captcha) {
+if (!empty($captcha)) {
 	// Add a variable param to force not using cache (jmobile)
 	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
 	if (preg_match('/\?/', $php_self)) {
@@ -208,11 +208,11 @@ if ($captcha) {
 	?>
 	<!-- Captcha -->
 	<div class="trinputlogin">
-	<div class="tagtd none valignmiddle tdinputlogin">
+	<div class="tagtd none valignmiddle tdinputlogin nowrap">
 
 	<span class="fa fa-unlock"></span>
 	<span class="span-icon-security inline-block">
-	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width150" type="text" maxlength="5" name="code" tabindex="3" autocomplete="off" />
+	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width125" type="text" maxlength="5" name="code" tabindex="3" autocomplete="off" />
 	</span>
 	<span class="nowrap inline-block">
 	<img class="inline-block valignmiddle" src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />

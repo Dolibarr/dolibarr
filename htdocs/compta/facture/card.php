@@ -172,8 +172,23 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	$backurlforlist = DOL_URL_ROOT.'/compta/facture/list.php';
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/compta/facture/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			}
+		}
+	}
+
 	if ($cancel) {
-		if (!empty($backtopage)) {
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
 		}
@@ -506,7 +521,7 @@ if (empty($reshook)) {
 		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
 	} elseif ($action == 'setremisepercent' && $usercancreate) {
 		$object->fetch($id);
-		$result = $object->setDiscount($user, price2num(GETPOST('remise_percent'), 2));
+		$result = $object->setDiscount($user, price2num(GETPOST('remise_percent'), '', 2));
 	} elseif ($action == "setabsolutediscount" && $usercancreate) {
 		// POST[remise_id] or POST[remise_id_for_payment]
 
@@ -708,7 +723,7 @@ if (empty($reshook)) {
 			// On verifie si la facture a des paiements
 			$sql = 'SELECT pf.amount';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
-			$sql .= ' WHERE pf.fk_facture = '.$object->id;
+			$sql .= ' WHERE pf.fk_facture = '.((int) $object->id);
 
 			$result = $db->query($sql);
 			if ($result) {
@@ -834,7 +849,7 @@ if (empty($reshook)) {
 			}
 
 			// If some payments were already done, we change the amount to pay using same prorate
-			if (!empty($conf->global->INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED)) {
+			if (!empty($conf->global->INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) && $object->type == Facture::TYPE_CREDIT_NOTE) {
 				$alreadypaid = $object->getSommePaiement(); // This can be not 0 if we allow to create credit to reuse from credit notes partially refunded.
 				if ($alreadypaid && abs($alreadypaid) < abs($object->total_ttc)) {
 					$ratio = abs(($object->total_ttc - $alreadypaid) / $object->total_ttc);
@@ -873,7 +888,7 @@ if (empty($reshook)) {
 				$sql = 'SELECT SUM(pf.amount) as total_paiements';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'paiement as p';
 				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
-				$sql .= ' WHERE pf.fk_facture = '.$object->id;
+				$sql .= ' WHERE pf.fk_facture = '.((int) $object->id);
 				$sql .= ' AND pf.fk_paiement = p.rowid';
 				$sql .= ' AND p.entity IN ('.getEntity('invoice').')';
 				$resql = $db->query($sql);
@@ -889,7 +904,7 @@ if (empty($reshook)) {
 				$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 				$sql .= " re.description, re.fk_facture_source";
 				$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
-				$sql .= " WHERE fk_facture = ".$object->id;
+				$sql .= " WHERE fk_facture = ".((int) $object->id);
 				$resql = $db->query($sql);
 				if (!empty($resql)) {
 					while ($obj = $db->fetch_object($resql)) {
@@ -1022,8 +1037,8 @@ if (empty($reshook)) {
 				$object->cond_reglement_id	= GETPOST('cond_reglement_id', 'int');
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id', 'int');
 				$object->fk_account = GETPOST('fk_account', 'int');
-				$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
-				$object->remise_percent		= price2num(GETPOST('remise_percent'), 2);
+				$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU', 2);
+				$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
@@ -1079,7 +1094,7 @@ if (empty($reshook)) {
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id', 'int');
 				$object->fk_account = GETPOST('fk_account', 'int');
 				$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
-				$object->remise_percent		= price2num(GETPOST('remise_percent'), 2);
+				$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
@@ -1294,7 +1309,7 @@ if (empty($reshook)) {
 				$object->fk_account = GETPOST('fk_account', 'int');
 				$object->amount = price2num(GETPOST('amount'));
 				$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
-				$object->remise_percent		= price2num(GETPOST('remise_percent'), 2);
+				$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
@@ -1375,7 +1390,7 @@ if (empty($reshook)) {
 				$object->fk_account = GETPOST('fk_account', 'int');
 				$object->amount = price2num(GETPOST('amount'));
 				$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
-				$object->remise_percent		= price2num(GETPOST('remise_percent'), 2);
+				$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
@@ -1798,7 +1813,7 @@ if (empty($reshook)) {
 							$product->fetch(GETPOST('idprod'.$i, 'int'));
 							$startday = dol_mktime(12, 0, 0, GETPOST('date_start'.$i.'month'), GETPOST('date_start'.$i.'day'), GETPOST('date_start'.$i.'year'));
 							$endday = dol_mktime(12, 0, 0, GETPOST('date_end'.$i.'month'), GETPOST('date_end'.$i.'day'), GETPOST('date_end'.$i.'year'));
-							$result = $object->addline($product->description, $product->price, price2num(GETPOST('qty'.$i), 'MS'), $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, GETPOST('idprod'.$i, 'int'), price2num(GETPOST('remise_percent'.$i)), $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', $product->fk_unit);
+							$result = $object->addline($product->description, $product->price, price2num(GETPOST('qty'.$i), 'MS'), $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, GETPOST('idprod'.$i, 'int'), price2num(GETPOST('remise_percent'.$i), '', 2), $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', $product->fk_unit);
 						}
 					}
 				}
@@ -1899,8 +1914,8 @@ if (empty($reshook)) {
 				$object->fk_project = GETPOST('projectid', 'int');
 				$object->cond_reglement_id = GETPOST('cond_reglement_id', 'int');
 				$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
-				$object->remise_absolue =price2num(GETPOST('remise_absolue'), 'MU');
-				$object->remise_percent = price2num(GETPOST('remise_percent'), 2);
+				$object->remise_absolue =price2num(GETPOST('remise_absolue'), 'MU', 2);
+				$object->remise_percent = price2num(GETPOST('remise_percent'), '', 2);
 
 				// Proprietes particulieres a facture de remplacement
 
@@ -1986,8 +2001,8 @@ if (empty($reshook)) {
 			$tva_tx = '';
 		}
 
-		$qty = price2num(GETPOST('qty'.$predef), 'MS');
-		$remise_percent = price2num(GETPOST('remise_percent'.$predef), 2);
+		$qty = price2num(GETPOST('qty'.$predef), 'MS', 2);
+		$remise_percent = price2num(GETPOST('remise_percent'.$predef), '', 2);
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -2389,6 +2404,8 @@ if (empty($reshook)) {
 			}
 		}
 
+		$remise_percent = price2num(GETPOST('remise_percent'), '', 2);
+
 		// Check minimum price
 		$productid = GETPOST('productid', 'int');
 		if (!empty($productid)) {
@@ -2405,7 +2422,7 @@ if (empty($reshook)) {
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
 			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
-			if ($usercanproductignorepricemin && (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT) && $price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent'), 2) / 100) < price2num($price_min)))) {
+			if ($usercanproductignorepricemin && (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT) && $price_min && (price2num($pu_ht) * (1 - $remise_percent / 100) < price2num($price_min)))) {
 				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), null, 'errors');
 				$error++;
 			}
@@ -2458,7 +2475,7 @@ if (empty($reshook)) {
 				$description,
 				$pu_ht,
 				$qty,
-				price2num(GETPOST('remise_percent'), 2),
+				$remise_percent,
 				$date_start,
 				$date_end,
 				$vat_rate,
@@ -2596,10 +2613,10 @@ if (empty($reshook)) {
 					$errors = 0;
 					if (count($linkedCreditNotesList) > 0) {
 						// now, credit note must follow
-						$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture ';
-						$sql .= ' SET situation_cycle_ref='.$newCycle;
+						$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
+						$sql .= ' SET situation_cycle_ref = '.((int) $newCycle);
 						$sql .= ' , situation_final=0';
-						$sql .= ' , situation_counter='.$object->situation_counter;
+						$sql .= ' , situation_counter='.((int) $object->situation_counter);
 						$sql .= ' WHERE rowid IN ('.$db->sanitize(implode(',', $linkedCreditNotesList)).')';
 
 						$resql = $db->query($sql);
@@ -4884,7 +4901,7 @@ if ($action == 'create') {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-	$sql .= ' WHERE pf.fk_facture = '.$object->id.' AND pf.fk_paiement = p.rowid';
+	$sql .= ' WHERE pf.fk_facture = '.((int) $object->id).' AND pf.fk_paiement = p.rowid';
 	$sql .= ' AND p.entity IN ('.getEntity('invoice').')';
 	$sql .= ' ORDER BY p.datep, p.tms';
 
@@ -4975,7 +4992,7 @@ if ($action == 'create') {
 		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 		$sql .= " re.description, re.fk_facture_source";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
-		$sql .= " WHERE fk_facture = ".$object->id;
+		$sql .= " WHERE fk_facture = ".((int) $object->id);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
@@ -5064,23 +5081,27 @@ if ($action == 'create') {
 		// Remainder to pay
 		print '<tr><td colspan="'.$nbcols.'" class="right">';
 		print '<span class="opacitymedium">';
-		print $langs->trans('RemainderToPay');
-		if ($resteapayeraffiche < 0) {
-			print ' ('.$langs->trans('ExcessReceived').')';
+		if ($resteapayeraffiche >= 0) {
+			print $langs->trans('RemainderToPay');
+		} else {
+			print $langs->trans('ExcessReceived');
 		}
 		print '</span>';
 		print '</td>';
-		print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td>';
-		print '<td class="nowrap">&nbsp;</td></tr>';
+		print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td><td>&nbsp;</td></tr>';
 
 		// Remainder to pay Multicurrency
 		if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
 			print '<tr><td colspan="'.$nbcols.'" class="right">';
 			print '<span class="opacitymedium">';
-			print $langs->trans('MulticurrencyRemainderToPay');
+			if ($resteapayeraffiche >= 0) {
+				print $langs->trans('RemainderToPayMulticurrency');
+			} else {
+				print $langs->trans('ExcessReceivedMulticurrency');
+			}
 			print '</span>';
 			print '</td>';
-			print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.(!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency).' '.price(price2num($object->multicurrency_tx*$resteapayeraffiche, 'MT')).'</td>';
+			print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.(!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency).' '.price(price2num($object->multicurrency_tx*$resteapayeraffiche, 'MT')).'</td><td>&nbsp;</td></tr>';
 		}
 
 		// Retained warranty : usualy use on construction industry
@@ -5121,8 +5142,21 @@ if ($action == 'create') {
 			print ' ('.$langs->trans('ExcessPaid').')';
 		}
 		print ' :</td>';
-		print '<td class="right'.($resteapayeraffiche ? ' amountremaintopayback' : (' '.$cssforamountpaymentcomplete)).'">'.price($sign * $resteapayeraffiche).'</td>';
-		print '<td class="nowrap">&nbsp;</td></tr>';
+		print '<td class="right'.($resteapayeraffiche ? ' amountremaintopayback' : (' '.$cssforamountpaymentcomplete)).'">'.price($sign * $resteapayeraffiche).'</td><td>&nbsp;</td></tr>';
+
+		// Remainder to pay back Multicurrency
+		if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
+			print '<tr><td colspan="'.$nbcols.'" class="right">';
+			print '<span class="opacitymedium">';
+			if ($resteapayeraffiche <= 0) {
+				print $langs->trans('RemainderToPayBackMulticurrency');
+			} else {
+				print $langs->trans('ExcessPaidMulticurrency');
+			}
+			print '</span>';
+			print '</td>';
+			print '<td class="right'.($resteapayeraffiche ? ' amountremaintopayback' : (' '.$cssforamountpaymentcomplete)).'">'.(!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency).' '.price(price2num($sign * $object->multicurrency_tx * $resteapayeraffiche, 'MT')).'</td><td>&nbsp;</td></tr>';
+		}
 
 		// Sold credit note
 		// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans('TotalTTC').' :</td>';
@@ -5190,7 +5224,7 @@ if ($action == 'create') {
 			}
 			print '<td>&nbsp;</td>';
 			print '<td class="nowrap right"><input type="text" size="1" value="" name="all_progress">%</td>';
-			print '<td class="right"><input class="button" type="submit" name="all_percent" value="Modifier" /></td>';
+			print '<td class="right"><input type="submit" class="button" name="all_percent" value="Modifier" /></td>';
 			print '</tr>';
 
 			print '</table>';

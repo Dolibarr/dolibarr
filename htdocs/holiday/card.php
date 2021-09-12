@@ -124,8 +124,23 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	$backurlforlist = DOL_URL_ROOT.'/holiday/list.php';
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/holiday/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			}
+		}
+	}
+
 	if ($cancel) {
-		if (!empty($backtopage)) {
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
 		}
@@ -452,22 +467,24 @@ if (empty($reshook)) {
 
 				$message .= $langs->transnoentities("HolidaysToValidateBody")."\n";
 
-				$delayForRequest = $object->getConfCP('delayForRequest');
-				//$delayForRequest = $delayForRequest * (60*60*24);
-
-				$nextMonth = dol_time_plus_duree($now, $delayForRequest, 'd');
 
 				// option to warn the validator in case of too short delay
-				if ($object->getConfCP('AlertValidatorDelay')) {
-					if ($object->date_debut < $nextMonth) {
-						$message .= "\n";
-						$message .= $langs->transnoentities("HolidaysToValidateDelay", $object->getConfCP('delayForRequest'))."\n";
+				if (empty($conf->global->HOLIDAY_HIDE_APPROVER_ABOUT_TOO_LOW_DELAY)) {
+					$delayForRequest = 0;		// TODO Set delay depending of holiday leave type
+					if ($delayForRequest) {
+						$nowplusdelay = dol_time_plus_duree($now, $delayForRequest, 'd');
+
+						if ($object->date_debut < $nowplusdelay) {
+							$message .= "\n";
+							$message .= $langs->transnoentities("HolidaysToValidateDelay", $delayForRequest)."\n";
+						}
 					}
 				}
 
 				// option to notify the validator if the balance is less than the request
-				if ($object->getConfCP('AlertValidatorSolde')) {
+				if (empty($conf->global->HOLIDAY_HIDE_APPROVER_ABOUT_NEGATIVE_BALANCE)) {
 					$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
+
 					if ($nbopenedday > $object->getCPforUser($object->fk_user, $object->fk_type)) {
 						$message .= "\n";
 						$message .= $langs->transnoentities("HolidaysToValidateAlertSolde")."\n";
@@ -550,9 +567,10 @@ if (empty($reshook)) {
 				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
 				$newSolde = ($soldeActuel - $nbopenedday);
+				$label = $langs->transnoentitiesnoconv("Holidays").' - '.$object->ref;
 
 				// The modification is added to the LOG
-				$result = $object->addLogCP($user->id, $object->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $object->fk_type);
+				$result = $object->addLogCP($user->id, $object->fk_user, $label, $newSolde, $object->fk_type);
 				if ($result < 0) {
 					$error++;
 					setEventMessages(null, $object->errors, 'errors');
@@ -910,42 +928,40 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		}
 
 
-		$delayForRequest = $object->getConfCP('delayForRequest');
-		//$delayForRequest = $delayForRequest * (60*60*24);
-
-		$nextMonth = dol_time_plus_duree($now, $delayForRequest, 'd');
-
 		print '<script type="text/javascript">
-	    function valider()
-	    {
-    	    if(document.demandeCP.date_debut_.value != "")
-    	    {
-	           	if(document.demandeCP.date_fin_.value != "")
-	           	{
-	               if(document.demandeCP.valideur.value != "-1") {
-	                 return true;
-	               }
-	               else {
-	                 alert("'.dol_escape_js($langs->transnoentities('InvalidValidatorCP')).'");
-	                 return false;
-	               }
-	            }
-	            else
-	            {
-	              alert("'.dol_escape_js($langs->transnoentities('NoDateFin')).'");
-	              return false;
-	            }
-	        }
-	        else
-	        {
-	           alert("'.dol_escape_js($langs->transnoentities('NoDateDebut')).'");
-	           return false;
-	        }
-       	}
+		$( document ).ready(function() {
+			$("input.button-save").click("submit", function(e) {
+				console.log("Call valider()");
+	    	    if (document.demandeCP.date_debut_.value != "")
+	    	    {
+		           	if(document.demandeCP.date_fin_.value != "")
+		           	{
+		               if(document.demandeCP.valideur.value != "-1") {
+		                 return true;
+		               }
+		               else {
+		                 alert("'.dol_escape_js($langs->transnoentities('InvalidValidatorCP')).'");
+		                 return false;
+		               }
+		            }
+		            else
+		            {
+		              alert("'.dol_escape_js($langs->transnoentities('NoDateFin')).'");
+		              return false;
+		            }
+		        }
+		        else
+		        {
+		           alert("'.dol_escape_js($langs->transnoentities('NoDateDebut')).'");
+		           return false;
+		        }
+	       	});
+		});
        </script>'."\n";
 
+
 		// Formulaire de demande
-		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" onsubmit="return valider()" name="demandeCP">'."\n";
+		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" name="demandeCP">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'" />'."\n";
 		print '<input type="hidden" name="action" value="add" />'."\n";
 
@@ -1084,11 +1100,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 		print dol_get_fiche_end();
 
-		print '<div class="center">';
-		print '<input type="submit" value="'.$langs->trans("SendRequestCP").'" name="bouton" class="button">';
-		print '&nbsp; &nbsp; ';
-		print '<input type="button" value="'.$langs->trans("Cancel").'" class="button button-cancel" onclick="history.go(-1)">';
-		print '</div>';
+		print $form->buttonsSaveCancel("SendRequestCP");
 
 		print '</from>'."\n";
 	}

@@ -35,7 +35,7 @@ $out .= '<div class="tagtd"><label>'.$langs->trans('Busy').'</label> '.$form->se
 $out .= '<div class="tagtd"><label>'.$langs->trans('Mandatory').'</label> '.$form->selectyesno('mandatory', (GETPOSTISSET('mandatory') ? GETPOST('mandatory') : 0), 1).'</div>';
 
 $out .= '<div class="tagtd right">';
-$out .= '<input type="submit" id="add-resource-place" class="button" value="'.$langs->trans("Add").'"/>';
+$out .= '<input type="submit" id="add-resource-place" class="button button-add" value="'.$langs->trans("Add").'"/>';
 $out .= '</div>';
 
 $out .= '</form>';

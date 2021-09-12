@@ -12,8 +12,8 @@
 -- To change type of field: ALTER TABLE llx_table MODIFY COLUMN name varchar(60);
 -- To drop a foreign key:   ALTER TABLE llx_table DROP FOREIGN KEY fk_name;
 -- To create a unique index ALTER TABLE llx_table ADD UNIQUE INDEX uk_table_field (field);
--- To drop an index:        -- VMYSQL4.1 DROP INDEX nomindex on llx_table
--- To drop an index:        -- VPGSQL8.2 DROP INDEX nomindex
+-- To drop an index:        -- VMYSQL4.1 DROP INDEX nomindex on llx_table;
+-- To drop an index:        -- VPGSQL8.2 DROP INDEX nomindex;
 -- To make pk to be auto increment (mysql):    -- VMYSQL4.3 ALTER TABLE llx_table CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
 -- To make pk to be auto increment (postgres):
 -- -- VPGSQL8.2 CREATE SEQUENCE llx_table_rowid_seq OWNED BY llx_table.rowid;
@@ -35,12 +35,27 @@
 -- VMYSQL4.3 ALTER TABLE llx_partnership MODIFY COLUMN date_partnership_end date NULL;
 -- VPGSQL8.2 ALTER TABLE llx_partnership ALTER COLUMN date_partnership_end DROP NOT NULL;
 
+-- VMYSQL4.3 ALTER TABLE llx_eventorganization_conferenceorboothattendee MODIFY COLUMN fk_actioncomm integer NULL;
+-- VPGSQL8.2 ALTER TABLE llx_eventorganization_conferenceorboothattendee ALTER COLUMN fk_actioncomm DROP NOT NULL;
+
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_project integer NOT NULL;
+
+UPDATE llx_extrafields SET elementtype = 'salary' WHERE elementtype = 'payment_salary';
+ALTER TABLE llx_payment_salary_extrafields RENAME TO llx_salary_extrafields;
+-- VMYSQL4.1 DROP INDEX idx_payment_salary_extrafields on llx_salary_extrafields;
+-- VPGSQL8.2 DROP INDEX idx_payment_salary_extrafields;
+ALTER TABLE llx_salary_extrafields ADD INDEX idx_salary_extrafields (fk_object);
+
 
 -- v15
 
+ALTER TABLE llx_holiday ADD COLUMN date_approve   DATETIME DEFAULT NULL;
+ALTER TABLE llx_holiday ADD COLUMN fk_user_approve integer DEFAULT NULL;
+
 ALTER TABLE llx_emailcollector_emailcollectoraction MODIFY COLUMN actionparam TEXT;
 
-ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD lang varchar(6);
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN lang varchar(6);
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN entity integer DEFAULT 1;
 
 CREATE TABLE llx_categorie_ticket
 (
@@ -63,9 +78,9 @@ INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUE
 
 ALTER TABLE llx_product ADD COLUMN fk_default_bom integer DEFAULT NULL;
 
+ALTER TABLE llx_mrp_mo ADD COLUMN mrptype integer DEFAULT 0;
 
 DELETE FROM llx_menu WHERE type = 'top' AND module = 'cashdesk' AND mainmenu = 'cashdesk';
 
 
 INSERT INTO llx_c_action_trigger (code, label, description, elementtype, rang) values ('MEMBER_EXCLUDE', 'Member excluded', 'Executed when a member is excluded', 'member', 27);
-

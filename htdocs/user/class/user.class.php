@@ -1355,7 +1355,7 @@ class User extends CommonObject
 
 		// Insert into database
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec, login, ldap_sid, entity)";
-		$sql .= " VALUES('".$this->db->idate($this->datec)."','".$this->db->escape($this->login)."','".$this->db->escape($this->ldap_sid)."',".$this->db->escape($this->entity).")";
+		$sql .= " VALUES('".$this->db->idate($this->datec)."', '".$this->db->escape($this->login)."', '".$this->db->escape($this->ldap_sid)."', ".((int) $this->entity).")";
 		$result = $this->db->query($sql);
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -3125,7 +3125,7 @@ class User extends CommonObject
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."user";
 		$sql .= " WHERE fk_user = ".((int) $this->id);
 
-		dol_syslog(get_class($this)."::get_children sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::get_children", LOG_DEBUG);
 		$res = $this->db->query($sql);
 		if ($res) {
 			$users = array();
@@ -3380,14 +3380,21 @@ class User extends CommonObject
 	public function load_state_board()
 	{
 		// phpcs:enable
+		global $conf;
 
 		$this->nb = array();
 
-		$sql = "SELECT count(u.rowid) as nb";
+		$sql = "SELECT COUNT(DISTINCT u.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE u.statut > 0";
+		if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+			$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+			$sql .= " WHERE ug.entity IN (".getEntity('usergroup').")";
+			$sql .= " AND ug.fk_user = u.rowid";
+		} else {
+			$sql .= " WHERE u.entity IN (".getEntity('user').")";
+		}
+		$sql .= " AND u.statut > 0";
 		//$sql.= " AND employee != 0";
-		$sql .= " AND u.entity IN (".getEntity('user').")";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -3515,18 +3522,18 @@ class User extends CommonObject
 		if (!empty($filter)) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
-					$sqlwhere[] = $key.'='.$value;
-				} elseif (strpos($key, 'date') !== false) {
-					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
+					$sqlwhere[] = $key." = ".((int) $value);
+				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
 				} else {
-					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
 		}
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -3587,13 +3594,11 @@ class User extends CommonObject
 
 		$sql = 'SELECT rowid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'user';
-
 		if (!empty($conf->global->AGENDA_DISABLE_EXACT_USER_EMAIL_COMPARE_FOR_EXTERNAL_CALENDAR)) {
-			$sql .= ' WHERE email LIKE "%'.$email.'%"';
+			$sql .= " WHERE email LIKE '%".$this->db->escape($email)."%'";
 		} else {
-			$sql .= ' WHERE email = "'.$email.'"';
+			$sql .= " WHERE email = '".$this->db->escape($email)."'";
 		}
-
 		$sql .= ' LIMIT 1';
 
 		$resql = $this->db->query($sql);

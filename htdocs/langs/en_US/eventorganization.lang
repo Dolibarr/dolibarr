@@ -19,18 +19,27 @@
 #
 ModuleEventOrganizationName = Event Organization
 EventOrganizationDescription = Event Organization through Module Project
-EventOrganizationDescriptionLong= Manage the organization of an events including conferences, speakers or attendees, with public submission and subscription page
+EventOrganizationDescriptionLong= Manage the organization of an event (conferences, attendees, speakers, with public suggestion, vote or registration pages)
 #
 # Menu
 #
 EventOrganizationMenuLeft = Organized events
 EventOrganizationConferenceOrBoothMenuLeft = Conference Or Booth
 
+PaymentEvent=Payment of event
+
 #
 # Admin page
 #
+NewRegistration=Registration
+<<<<<<< HEAD
 EventOrganizationSetup = Event Organization setup
 Settings = Settings
+=======
+EventOrganizationSetup=Event Organization setup
+EventOrganization=Event organization
+Settings=Settings
+>>>>>>> branch '14.0' of git@github.com:Dolibarr/dolibarr.git
 EventOrganizationSetupPage = Event Organization setup page
 EVENTORGANIZATION_TASK_LABEL = Label of tasks to create automatically when project is validated
 EVENTORGANIZATION_TASK_LABELTooltip = When you validate an organized event, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conference<br>Send Call for Booth<br>Receive call for conferences<br>Receive call for Booth<br>Open subscriptions to events for attendees<br>Send remind of event to speakers<br>Send remind of event to Booth hoster<br>Send remind of event to attendees
@@ -49,11 +58,11 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filter thirdpartie's select list in att
 # Object
 #
 EventOrganizationConfOrBooth= Conference Or Booth
-ManageOrganizeEvent = Manage event organisation
+ManageOrganizeEvent = Manage the organization of an event
 ConferenceOrBooth = Conference Or Booth
 ConferenceOrBoothTab = Conference Or Booth
-AmountOfSubscriptionPaid = Amount of subscription paid
-DateSubscription = Date of subscription
+AmountPaid = Amount paid
+DateOfRegistration = Date of subscription
 ConferenceOrBoothAttendee = Conference Or Booth Attendee
 
 #
@@ -76,12 +85,13 @@ AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest conferences
 AllowUnknownPeopleSuggestBooth=Allow unknown people to suggest booth
 AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to suggest booth
 PriceOfRegistration=Price of registration
-PriceOfRegistrationHelp=Price of registration
+PriceOfRegistrationHelp=Price to pay to register or participate in the event
 PriceOfBooth=Subscription price to stand a booth
 PriceOfBoothHelp=Subscription price to stand a booth
 EventOrganizationICSLink=Link ICS for events
 ConferenceOrBoothInformation=Conference Or Booth informations
-Attendees = Attendees
+Attendees=Attendees
+ListOfAttendeesOfEvent=List of attendees of the event project
 DownloadICSLink = Download ICS link
 EVENTORGANIZATION_SECUREKEY = Secure Key of the public registration link to a conference
 SERVICE_BOOTH_LOCATION = Service used for the invoice row about a booth location
@@ -100,25 +110,27 @@ EvntOrgCancelled = Cancelled
 # Public page
 #
 SuggestForm = Suggestion page
-RegisterPage = Page for conferences or booth
-EvntOrgRegistrationHelpMessage = Here, you can vote for an event, or suggest a new conference or booth for the project
+SuggestOrVoteForConfOrBooth = Page for suggestion or vote
+EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or booth or suggest a new one for the event
 EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference for the project
 EvntOrgRegistrationBoothHelpMessage = Here, you can suggest a new booth for the project
 ListOfSuggestedConferences = List of suggested conferences
 ListOfSuggestedBooths = List of suggested booths
+ListOfConferencesOrBooths=List of conferences or booths of event project
 SuggestConference = Suggest a new conference
 SuggestBooth = Suggest a booth
 ViewAndVote = View and vote for suggested events
-PublicAttendeeSubscriptionPage = Public link of registration to a conference
+PublicAttendeeSubscriptionGlobalPage = Public link for registration to the event
+PublicAttendeeSubscriptionPage = Public link for registration to this event only
 MissingOrBadSecureKey = The security key is invalid or missing
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the conference : '%s'
+EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event : <b>%s</b>
 EvntOrgDuration = This conference starts on %s and ends on %s.
 ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
 BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
 EventType = Event type
 LabelOfBooth=Booth label
 LabelOfconference=Conference label
-ConferenceIsNotConfirmed=Subcription not available, conference is not confirmed yet
+ConferenceIsNotConfirmed=Registration not available, conference is not confirmed yet
 DateMustBeBeforeThan=%s must be before %s
 DateMustBeAfterThan=%s must be after %s
 
@@ -136,11 +148,11 @@ VoteError = An error has occurred during the vote, please try again.
 #
 # SubscriptionOk page
 #
-SubscriptionOk = Your subscription to this conference has been validated
+SubscriptionOk = Your subscription has been validated
 #
 # Subscription validation mail
 #
-ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to a conference
+ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
 #
 # Payment page
 #

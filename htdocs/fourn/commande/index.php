@@ -73,7 +73,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
 $sql .= " WHERE cf.fk_soc = s.rowid";
 $sql .= " AND cf.entity IN (".getEntity('supplier_order').")";
 if ($user->socid) {
-	$sql .= ' AND cf.fk_soc = '.$user->socid;
+	$sql .= ' AND cf.fk_soc = '.((int) $user->socid);
 }
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);

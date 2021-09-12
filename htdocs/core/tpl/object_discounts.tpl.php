@@ -30,6 +30,14 @@ $objclassname = get_class($object);
 $isInvoice = in_array($object->element, array('facture', 'invoice', 'facture_fourn', 'invoice_supplier'));
 $isNewObject = empty($object->id) && empty($object->rowid);
 
+// Clean variables not defined
+if (!isset($absolute_discount)) {
+	$absolute_discount = 0;
+}
+if (!isset($absolute_creditnote)) {
+	$absolute_creditnote = 0;
+}
+
 // Relative and absolute discounts
 $addrelativediscount = '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$thirdparty->id.'&backtopage='.$backtopage.'">'.$langs->trans("EditRelativeDiscount").'</a>';
 $addabsolutediscount = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$thirdparty->id.'&backtopage='.$backtopage.'">'.$langs->trans("EditGlobalDiscounts").'</a>';
