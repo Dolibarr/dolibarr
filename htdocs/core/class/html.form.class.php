@@ -6773,7 +6773,7 @@ class Form
 			$tmparray = explode('@', $objecttmp->ismultientitymanaged);
 			$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.$tmparray[1].' as parenttable ON parenttable.rowid = t.'.$tmparray[0];
 		}
-		if ($objecttmp->ismultientitymanaged == 'fk_soc@societe') {
+		if ($objecttmp->ismultientitymanaged === 'fk_soc@societe') {
 			if (!$user->rights->societe->client->voir && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
@@ -6802,7 +6802,7 @@ class Form
 			if ($searchkey != '') {
 				$sql .= natural_search(explode(',', $fieldstoshow), $searchkey);
 			}
-			if ($objecttmp->ismultientitymanaged == 'fk_soc@societe') {
+			if ($objecttmp->ismultientitymanaged === 'fk_soc@societe') {
 				if (!$user->rights->societe->client->voir && !$user->socid) {
 					$sql .= " AND t.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}
