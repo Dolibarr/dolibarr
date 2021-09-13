@@ -649,23 +649,13 @@ abstract class CommonInvoice extends CommonObject
 		// 1 : application of the "end of the month" rule
 		elseif ($cdr_type == 1)
 		{
-			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
+			// application of "end of month" first
+			$datelim = dol_mktime(12, 0, 0, date("m", $this->date), date("t", $this->date), date("Y", $this->date));
 
-			$mois = date('m', $datelim);
-			$annee = date('Y', $datelim);
-			if ($mois == 12)
-			{
-				$mois = 1;
-				$annee += 1;
-			}
-			else
-			{
-				$mois += 1;
-			}
-			// We move at the beginning of the next month, and we take a day off
-			$datelim = dol_mktime(12, 0, 0, $mois, 1, $annee);
-			$datelim -= (3600 * 24);
+			// then application of nb of days
+			$datelim += ($cdr_nbjour * 3600 * 24);
 
+			// then application of additionnal shift
 			$datelim += ($cdr_decalage * 3600 * 24);
 		}
 		// 2 : application of the rule, the N of the current or next month
