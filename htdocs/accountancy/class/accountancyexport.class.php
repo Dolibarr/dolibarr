@@ -543,7 +543,7 @@ class AccountancyExport
 
 			$Tab = array();
 
-			if (!empty($data->subledger_account)){
+			if (!empty($data->subledger_account)) {
 				$Tab['type_ligne'] = 'C';
 				$Tab['num_compte'] = str_pad(self::trunc($data->subledger_account, 8), 8);
 				$Tab['lib_compte'] = str_pad(self::trunc($data->subledger_label, 30), 30);
