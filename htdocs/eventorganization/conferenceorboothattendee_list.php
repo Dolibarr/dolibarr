@@ -57,7 +57,7 @@ $id = GETPOST('id', 'int');
 $conf_or_booth_id = GETPOST('conforboothid', 'int');
 
 $withproject = GETPOST('withproject', 'int');
-$fk_project = GETPOST('fk_project', 'int') ? GETPOST('fk_project', 'int') : GETPOST('projectid', 'int') ;
+$fk_project = GETPOST('fk_project', 'int') ? GETPOST('fk_project', 'int') : GETPOST('projectid', 'int');
 
 $withProjectUrl='';
 

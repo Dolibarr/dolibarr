@@ -85,7 +85,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
-$search_array_options = (array) $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -537,21 +537,7 @@ if ($sall) {
 }
 
 // Add where from extra fields
-foreach ($search_array_options as $key => $val) {
-	$crit = $val;
-	$tmpkey = preg_replace('/search_options_/', '', $key);
-	$typ = $extrafields->attributes[$object->table_element]['type'][$tmpkey];
-	$mode = 0;
-	if (in_array($typ, array('int', 'double', 'real'))) {
-		$mode = 1; // Search on a numeric
-	}
-	if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') {
-		$mode = 2; // Search on a foreign key int
-	}
-	if ($crit != '' && (!in_array($typ, array('select', 'sellist')) || $crit != '0')) {
-		$sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
