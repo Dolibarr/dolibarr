@@ -1700,15 +1700,15 @@ FreeLegalTextOnDeliveryReceipts=Free text on delivery receipts
 ##### FCKeditor #####
 AdvancedEditor=Advanced editor
 ActivateFCKeditor=Activate advanced editor for:
-FCKeditorForCompany=WYSIWIG creation/edition of elements description and note (except products/services)
-FCKeditorForProduct=WYSIWIG creation/edition of products/services description and note
+FCKeditorForNotePublic=WYSIWIG creation/edition of the field public notes of elements
+FCKeditorForNotePrivate=WYSIWIG creation/edition of the field private notes of elements
+FCKeditorForCompany=WYSIWIG creation/edition of the field description of elements (except products/services)
+FCKeditorForProduct=WYSIWIG creation/edition of the field description of products/services
 FCKeditorForProductDetails=WYSIWIG creation/edition of products details lines for all entities (proposals, orders, invoices, etc...). <span class="warning">Warning: Using this option for this case is seriously not recommended as it can create problems with special characters and page formatting when building PDF files.</span>
 FCKeditorForMailing= WYSIWIG creation/edition for mass eMailings (Tools->eMailing)
 FCKeditorForUserSignature=WYSIWIG creation/edition of user signature
 FCKeditorForMail=WYSIWIG creation/edition for all mail (except Tools->eMailing)
 FCKeditorForTicket=WYSIWIG creation/edition for tickets
-FCKeditorForNotePublic=WYSIWIG creation/edition for public notes
-FCKeditorForNotePrivate=WYSIWIG creation/edition for private notes
 ##### Stock #####
 StockSetup=Stock module setup
 IfYouUsePointOfSaleCheckModule=If you use the Point of Sale module (POS) provided by default or an external module, this setup may be ignored by your POS module. Most POS modules are designed by default to create an invoice immediately and decrease stock irrespective of the options here. So if you need or not to have a stock decrease when registering a sale from your POS, check also your POS module setup.
