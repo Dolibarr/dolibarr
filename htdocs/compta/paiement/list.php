@@ -321,6 +321,12 @@ if ($search_company) {
 if ($search_amount != '') {
 	$param .= '&search_amount='.urlencode($search_amount);
 }
+if ($search_paymenttype) {
+	$param .= '&search_paymenttype='.urlencode($search_paymenttype);
+}
+if ($search_account) {
+	$param .= '&search_account='.urlencode($search_account);
+}
 if ($search_payment_num) {
 	$param .= '&search_payment_num='.urlencode($search_payment_num);
 }
