@@ -1183,10 +1183,10 @@ if ($action == 'create')
 					$srcLine->fetch_optionals(); // fetch extrafields also available in orderline
 					$line->fetch_optionals();
 
-					$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 					if (empty($line->array_options) && !empty($dispatchLines[$indiceAsked]['array_options'])) {
 						$line->array_options = $dispatchLines[$indiceAsked]['array_options'];
 					}
+					$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 
 					print $line->showOptionals($extrafields, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), $indiceAsked);
 				}
