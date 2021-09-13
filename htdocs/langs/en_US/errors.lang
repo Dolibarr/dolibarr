@@ -307,10 +307,10 @@ WarningPaypalPaymentNotCompatibleWithStrict=The value 'Strict' makes the online 
 
 # Validate
 RequireValidValue = Value not valid
-RequireAtLeastXString = Requires at least % character(s)
-RequireXStringMax = Requires % character(s) max
-RequireAtLeastXDigits = Requires at least % digit(s)
-RequireXDigitsMax = Requires % digit(s) max
+RequireAtLeastXString = Requires at least %s character(s)
+RequireXStringMax = Requires %s character(s) max
+RequireAtLeastXDigits = Requires at least %s digit(s)
+RequireXDigitsMax = Requires %s digit(s) max
 RequireValidEmail = Email address is not valid
 RequireMaxLength = Length must be less than %s chars
 RequireMinLength = Length must be more than %s char(s)
