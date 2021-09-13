@@ -56,3 +56,5 @@ package-lock.json
 
 doc/install.lock
 desktop.ini
+htdocs/core/menus/standard/dropdown_responsive_menu.lib.php
+htdocs/core/menus/standard/dropdown_responsive_menu.php
