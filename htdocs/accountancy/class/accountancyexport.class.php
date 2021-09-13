@@ -547,18 +547,22 @@ class AccountancyExport
 				$Tab['type_ligne'] = 'C';
 				$Tab['num_compte'] = str_pad(self::trunc($data->subledger_account, 8), 8);
 				$Tab['lib_compte'] = str_pad(self::trunc($data->subledger_label, 30), 30);
-				$Tab['filler'] = str_repeat(' ', 59);
 
 				if ($data->doc_type == 'customer_invoice') {
+					$Tab['lib_alpha'] = strtoupper(str_pad('C'.self::trunc($data->subledger_label, 6), 6));
+					$Tab['filler'] = str_repeat(' ', 52);
 					$Tab['coll_compte'] = str_pad(self::trunc($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER, 8), 8);
 				} elseif ($data->doc_type == 'supplier_invoice') {
+					$Tab['lib_alpha'] = strtoupper(str_pad('F'.self::trunc($data->subledger_label, 6), 6));
+					$Tab['filler'] = str_repeat(' ', 52);
 					$Tab['coll_compte'] = str_pad(self::trunc($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER, 8), 8);
 				} else {
+					$Tab['filler'] = str_repeat(' ', 59);
 					$Tab['coll_compte'] = str_pad(' ', 8);
 				}
 
 				$Tab['filler2'] = str_repeat(' ', 110);
-				$Tab['Maj'] = 2; // Maj partielle (clé alpha, intitulé, adresse, collectif, RIB)
+				$Tab['Maj'] = 2; // Partial update (alpha key, label, address, collectif, RIB)
 
 				if ($data->doc_type == 'customer_invoice') {
 					$Tab['type_compte'] = 'C';
