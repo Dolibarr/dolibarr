@@ -1707,6 +1707,8 @@ FCKeditorForMailing= WYSIWIG creation/edition for mass eMailings (Tools->eMailin
 FCKeditorForUserSignature=WYSIWIG creation/edition of user signature
 FCKeditorForMail=WYSIWIG creation/edition for all mail (except Tools->eMailing)
 FCKeditorForTicket=WYSIWIG creation/edition for tickets
+FCKeditorForNotePublic=WYSIWIG creation/edition for public notes
+FCKeditorForNotePrivate=WYSIWIG creation/edition for private notes
 ##### Stock #####
 StockSetup=Stock module setup
 IfYouUsePointOfSaleCheckModule=If you use the Point of Sale module (POS) provided by default or an external module, this setup may be ignored by your POS module. Most POS modules are designed by default to create an invoice immediately and decrease stock irrespective of the options here. So if you need or not to have a stock decrease when registering a sale from your POS, check also your POS module setup.
