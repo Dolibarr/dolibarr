@@ -502,7 +502,15 @@ if (($id || $ref) && $action == 'edit') {
 
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
-	$res = $object->fetch_optionals();
+	$object->fetch_optionals();
+
+	$moreparam = '';
+	if ($withproject) {
+		$moreparam .= '&withproject=1';
+	}
+	if ($fk_project) {
+		$moreparam .= '&fk_project='.((int) $fk_project);
+	}
 
 	$head = conferenceorboothattendeePrepareHead($object);
 	print dol_get_fiche_head($head, 'card', $langs->trans("ConferenceOrBoothAttendee"), -1, $object->picto);
@@ -544,13 +552,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.dol_buildpath('/eventorganization/conferenceorboothattendee_list.php', 1).'?restore_lastsearch_values=1&conforboothid='.$confOrBooth->id .$withProjectUrl.'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dol_buildpath('/eventorganization/conferenceorboothattendee_list.php', 1).'?restore_lastsearch_values=1'.($confOrBooth->id > 0 ? '&conforboothid='.((int) $confOrBooth->id) : '').$moreparam.'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 
 	$morehtmlref .= '</div>';
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $moreparam);
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';

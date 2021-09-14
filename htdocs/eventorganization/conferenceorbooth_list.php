@@ -152,7 +152,7 @@ if (!$permissiontoread) accessforbidden();
  * Actions
  */
 
-if (preg_match('/^set/', $action) && $projectid > 0) {
+if (preg_match('/^set/', $action) && $projectid > 0 && !empty($user->rights->eventorganization->write)) {
 	$project = new Project($db);
 	//If "set" fields keys is in projects fields
 	$project_attr=preg_replace('/^set/', '', $action);
