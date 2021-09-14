@@ -264,7 +264,7 @@ if ($action == 'edit') {
 			} elseif (preg_match('/thirdparty_type/', $val['type'])) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 				$formcompany = new FormCompany($db);
-				print $formcompany->selectProspectCustomerType($conf->global->{$constname}, $constname);
+				print $formcompany->selectProspectCustomerType($conf->global->{$constname}, $constname, 'customerorprospect', 'form', '', 1);
 			} elseif ($val['type'] == 'securekey') {
 				print '<input required="required" type="text" class="flat" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ?GETPOST($constname, 'alpha') : $conf->global->{$constname}).'" size="40">';
 				if (!empty($conf->use_javascript_ajax)) {
