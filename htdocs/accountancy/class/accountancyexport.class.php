@@ -468,7 +468,7 @@ class AccountancyExport
 	/**
 	 * Export format : CIEL (Format XIMPORT)
 	 * Format since 2003 compatible CIEL version > 2002 / Sage50
-	 * Last review for this format : 2021/07/28 Alexandre Spangaro (aspangaro@open-dsi.fr)
+	 * Last review for this format : 2021-09-13 Alexandre Spangaro (aspangaro@open-dsi.fr)
 	 *
 	 * Help : https://sage50c.online-help.sage.fr/aide-technique/
 	 * In sage software | Use menu : "Exchange" > "Importing entries..."
@@ -496,7 +496,7 @@ class AccountancyExport
 
 			$Tab = array();
 			$Tab['num_ecriture'] = str_pad($data->piece_num, 5);
-			$Tab['code_journal'] = str_pad($data->code_journal, 2);
+			$Tab['code_journal'] = str_pad(self::trunc($data->code_journal, 2), 2);
 			$Tab['date_ecriture'] = str_pad($date_document, 8, ' ', STR_PAD_LEFT);
 			$Tab['date_echeance'] = str_pad($date_echeance, 8, ' ', STR_PAD_LEFT);
 			$Tab['num_piece'] = str_pad(self::trunc($data->doc_ref, 12), 12);
@@ -504,9 +504,9 @@ class AccountancyExport
 			$Tab['libelle_ecriture'] = str_pad(self::trunc(dol_string_unaccent($data->doc_ref).dol_string_unaccent($data->label_operation), 25), 25);
 			$Tab['montant'] = str_pad(price2fec(abs($data->debit - $data->credit)), 13, ' ', STR_PAD_LEFT);
 			$Tab['type_montant'] = str_pad($data->sens, 1);
-			$Tab['vide'] = str_repeat(' ', 18);
+			$Tab['vide'] = str_repeat(' ', 18); // Analytical accounting - Not managed in Dolibarr
 			$Tab['intitule_compte'] = str_pad(self::trunc(dol_string_unaccent($data->label_operation), 34), 34);
-			$Tab['end'] = 'O2003';
+			$Tab['end'] = 'O2003'; // 0 = EUR | 2003 = Format Ciel
 
 			$Tab['end_line'] = $end_line;
 
