@@ -260,13 +260,13 @@ $y = $year_current;
 
 $buttonbind = '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?year='.$year_current.'&action=validatehistory">'.$langs->trans("ValidateHistory").'</a>';
 
-print_barre_liste($langs->trans("OverviewOfAmountOfLinesNotBound"), '', '', '', '', '', '', -1, '', '', 0, $buttonbind, '', 0, 1, 1);
+print_barre_liste(img_picto('', 'unlink', 'class="paddingright fa-color-unset"').$langs->trans("OverviewOfAmountOfLinesNotBound"), '', '', '', '', '', '', -1, '', '', 0, $buttonbind, '', 0, 1, 1);
 //print load_fiche_titre($langs->trans("OverviewOfAmountOfLinesNotBound"), $buttonbind, '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td width="200">'.$langs->trans("Account").'</td>';
-print '<td width="200" class="left">'.$langs->trans("Label").'</td>';
+print '<tr class="liste_titre"><td class="minwidth100">'.$langs->trans("Account").'</td>';
+print '<td>'.$langs->trans("Label").'</td>';
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
 	if ($j > 12) {
@@ -314,12 +314,12 @@ if ($resql) {
 	while ($row = $db->fetch_row($resql)) {
 		print '<tr class="oddeven"><td>';
 		if ($row[0] == 'tobind') {
-			print $langs->trans("Unknown");
+			print '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
 		} else {
 			print length_accountg($row[0]);
 		}
 		print '</td>';
-		print '<td class="left">';
+		print '<td>';
 		if ($row[0] == 'tobind') {
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/customer/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
 		} else {
@@ -344,13 +344,13 @@ print '</div>';
 print '<br>';
 
 
-print_barre_liste($langs->trans("OverviewOfAmountOfLinesBound"), '', '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1);
+print_barre_liste(img_picto('', 'link', 'class="paddingright fa-color-unset"').$langs->trans("OverviewOfAmountOfLinesBound"), '', '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1);
 //print load_fiche_titre($langs->trans("OverviewOfAmountOfLinesBound"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td width="200">'.$langs->trans("Account").'</td>';
-print '<td width="200" class="left">'.$langs->trans("Label").'</td>';
+print '<tr class="liste_titre"><td class="minwidth100">'.$langs->trans("Account").'</td>';
+print '<td>'.$langs->trans("Label").'</td>';
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
 	if ($j > 12) {
@@ -404,7 +404,7 @@ if ($resql) {
 		}
 		print '</td>';
 
-		print '<td class="left">';
+		print '<td>';
 		if ($row[0] == 'tobind') {
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/customer/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
 		} else {
@@ -436,7 +436,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td width="400" class="left">'.$langs->trans("TotalVente").'</td>';
+	print '<tr class="liste_titre"><td lass="left">'.$langs->trans("TotalVente").'</td>';
 	for ($i = 1; $i <= 12; $i++) {
 		$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
 		if ($j > 12) {
@@ -497,7 +497,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 		print "<br>\n";
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td width="400">'.$langs->trans("TotalMarge").'</td>';
+		print '<tr class="liste_titre"><td>'.$langs->trans("TotalMarge").'</td>';
 		for ($i = 1; $i <= 12; $i++) {
 			$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
 			if ($j > 12) {

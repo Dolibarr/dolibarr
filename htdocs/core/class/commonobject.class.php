@@ -2010,6 +2010,11 @@ abstract class CommonObject
 			return 1;
 		}
 
+		// For backward compatibility
+		if ($this->table_element == 'facture_rec' && $fieldid == 'title') {
+			$fieldid = 'titre';
+		}
+
 		// Security on socid
 		$socid = 0;
 		if ($user->socid > 0) {
@@ -4292,10 +4297,10 @@ abstract class CommonObject
 					//print 'Found into table '.$table.', type '.$langs->transnoentitiesnoconv($elementname).', haschild='.$haschild;
 					$haschild += $obj->nb;
 					if (is_numeric($elementname)) {	// old usage
-						$this->errors[] = $langs->trans("ErrorRecordHasAtLeastOneChildOfType", $table);
+						$this->errors[] = $langs->transnoentities("ErrorRecordHasAtLeastOneChildOfType", method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $table);
 					} else // new usage: $elementname=Translation key
 					{
-						$this->errors[] = $langs->trans("ErrorRecordHasAtLeastOneChildOfType", $langs->transnoentitiesnoconv($elementname));
+						$this->errors[] = $langs->transnoentities("ErrorRecordHasAtLeastOneChildOfType", method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $langs->transnoentitiesnoconv($elementname));
 					}
 					break; // We found at least one, we stop here
 				}
@@ -8961,7 +8966,7 @@ abstract class CommonObject
 	 * @param 	User 	$user       			User that deletes
 	 * @param 	bool 	$notrigger  			false=launch triggers after, true=disable triggers
 	 * @param	int		$forcechilddeletion		0=no, 1=Force deletion of children
-	 * @return 	int             				<=0 if KO, >0 if OK
+	 * @return 	int             				<=0 if KO, 0=Nothing done because object has child, >0 if OK
 	 */
 	public function deleteCommon(User $user, $notrigger = false, $forcechilddeletion = 0)
 	{

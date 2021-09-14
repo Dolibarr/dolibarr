@@ -868,7 +868,7 @@ if (empty($reshook)) {
 			if (GETPOST('propalid') > 0) {
 				// Define cost price for margin calculation
 				$buyprice = 0;
-				if (($result = $propal->defineBuyPrice($pu_ht, price2num(GETPOST('remise_percent'), 2), $object->id)) < 0) {
+				if (($result = $propal->defineBuyPrice($pu_ht, price2num(GETPOST('remise_percent'), '', 2), $object->id)) < 0) {
 					dol_syslog($langs->trans('FailedToGetCostPrice'));
 					setEventMessages($langs->trans('FailedToGetCostPrice'), null, 'errors');
 				} else {
@@ -883,7 +883,7 @@ if (empty($reshook)) {
 					$localtax1_tx, // localtax1
 					$localtax2_tx, // localtax2
 					$object->id,
-					price2num(GETPOST('remise_percent'), 2),
+					price2num(GETPOST('remise_percent'), '', 2),
 					$price_base_type,
 					$pu_ttc,
 					0,
@@ -908,7 +908,7 @@ if (empty($reshook)) {
 			} elseif (GETPOST('commandeid') > 0) {
 				// Define cost price for margin calculation
 				$buyprice = 0;
-				if (($result = $commande->defineBuyPrice($pu_ht, GETPOST('remise_percent', 2), $object->id)) < 0) {
+				if (($result = $commande->defineBuyPrice($pu_ht, price2num(GETPOST('remise_percent'), '', 2), $object->id)) < 0) {
 					dol_syslog($langs->trans('FailedToGetCostPrice'));
 					setEventMessages($langs->trans('FailedToGetCostPrice'), null, 'errors');
 				} else {
@@ -923,7 +923,7 @@ if (empty($reshook)) {
 					$localtax1_tx, // localtax1
 					$localtax2_tx, // localtax2
 					$object->id,
-					price2num(GETPOST('remise_percent'), 2),
+					price2num(GETPOST('remise_percent'), '', 2),
 					'',
 					'',
 					$price_base_type,
@@ -942,13 +942,13 @@ if (empty($reshook)) {
 				);
 
 				if ($result > 0) {
-					header("Location: ".DOL_URL_ROOT."/commande/card.php?id=".$commande->id);
+					header("Location: ".DOL_URL_ROOT."/commande/card.php?id=".urlencode($commande->id));
 					exit;
 				}
 			} elseif (GETPOST('factureid') > 0) {
 				// Define cost price for margin calculation
 				$buyprice = 0;
-				if (($result = $facture->defineBuyPrice($pu_ht, GETPOST('remise_percent', 2), $object->id)) < 0) {
+				if (($result = $facture->defineBuyPrice($pu_ht, price2num(GETPOST('remise_percent'), '', 2), $object->id)) < 0) {
 					dol_syslog($langs->trans('FailedToGetCostPrice'));
 					setEventMessages($langs->trans('FailedToGetCostPrice'), null, 'errors');
 				} else {
@@ -963,7 +963,7 @@ if (empty($reshook)) {
 					$localtax1_tx,
 					$localtax2_tx,
 					$object->id,
-					price2num(GETPOST('remise_percent'), 2),
+					price2num(GETPOST('remise_percent'), '', 2),
 					'',
 					'',
 					'',

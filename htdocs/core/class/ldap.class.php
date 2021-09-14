@@ -205,14 +205,26 @@ class Ldap
 				if ($this->serverPing($host, $this->serverPort) === true) {
 					$this->connection = ldap_connect($host, $this->serverPort);
 				} else {
-					continue;
+					if (preg_match('/^ldaps/i', $host)) {
+						// With host = ldaps://server, the serverPing to ssl://server sometimes fails, even if the ldap_connect succeed, so
+						// we test this case and continue in suche a case even if serverPing fails.
+						$this->connection = ldap_connect($host, $this->serverPort);
+					} else {
+						continue;
+					}
 				}
 
 				if (is_resource($this->connection)) {
-					// Begin TLS if requested by the configuration
+					// Upgrade connexion to TLS, if requested by the configuration
 					if (!empty($conf->global->LDAP_SERVER_USE_TLS)) {
-						if (!ldap_start_tls($this->connection)) {
+						// For test/debug
+						//ldap_set_option($this->connection, LDAP_OPT_DEBUG_LEVEL, 7);
+						//ldap_set_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, 3);
+
+						$resulttls = ldap_start_tls($this->connection);
+						if (!$resulttls) {
 							dol_syslog(get_class($this)."::connect_bind failed to start tls", LOG_WARNING);
+							$this->error = 'ldap_start_tls Failed to start TLS '.ldap_errno($this->connection).' '.ldap_error($this->connection);
 							$connected = 0;
 							$this->close();
 						}
@@ -689,22 +701,38 @@ class Ldap
 	/**
 	 * Ping a server before ldap_connect for avoid waiting
 	 *
-	 * @param string		$host		Server host or address
+	 * @param string	$host		Server host or address
 	 * @param int		$port		Server port (default 389)
-	 * @param int		$timeout		Timeout in second (default 1s)
+	 * @param int		$timeout	Timeout in second (default 1s)
 	 * @return boolean				true or false
 	 */
 	public function serverPing($host, $port = 389, $timeout = 1)
 	{
-		// Replace ldaps:// by ssl://
+		$regs = array();
 		if (preg_match('/^ldaps:\/\/([^\/]+)\/?$/', $host, $regs)) {
+			// Replace ldaps:// by ssl://
 			$host = 'ssl://'.$regs[1];
-		}
-		// Remove ldap://
-		if (preg_match('/^ldap:\/\/([^\/]+)\/?$/', $host, $regs)) {
+		} elseif (preg_match('/^ldap:\/\/([^\/]+)\/?$/', $host, $regs)) {
+			// Remove ldap://
 			$host = $regs[1];
 		}
+
+		//var_dump($newhostforstream); var_dump($host); var_dump($port);
+		//$host = 'ssl://ldap.test.local:636';
+		//$port = 636;
+
+		$errno = $errstr = 0;
+		/*
+		if ($methodtochecktcpconnect == 'socket') {
+			Try to use socket_create() method.
+			Method that use stream_context_create() works only on registered listed in stream stream_get_wrappers(): http, https, ftp, ...
+		}
+		*/
+
+		// Use the method fsockopen to test tcp connect. No way to ignore ssl certificate errors with this method !
 		$op = @fsockopen($host, $port, $errno, $errstr, $timeout);
+
+		//var_dump($op);
 		if (!$op) {
 			return false; //DC is N/A
 		} else {
