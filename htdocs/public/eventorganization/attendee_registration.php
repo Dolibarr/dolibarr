@@ -279,10 +279,16 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		// At this point, we have an existing $confattendee. It may not be linked to a thirdparty.
 		//var_dump($confattendee);
 
-		// If the attendee has already been paid
-		if (!empty($confattendee->date_subscription)) {
-			$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
+		// If the registration has already been paid for this attendee
+		if (!empty($confattendee->date_subscription) && !empty($confattendee->amount)) {
+			$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 'master');
 			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.((int) $id).'&securekey='.urlencode($securekeyurl);
+
+			$mesg = $langs->trans("RegistrationAndPaymentWereAlreadyRecorder", $email);
+			setEventMessages($mesg, null, 'mesgs');
+
+			$db->commit();
+
 			Header("Location: ".$redirection);
 			exit;
 		}
@@ -359,6 +365,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				$thirdparty->country_code = getCountry($thirdparty->country_id, 2, $db, $langs);
 				$thirdparty->country      = getCountry($thirdparty->country_code, 0, $db, $langs);
 
+				// Update attendee country to match country of thirdparty
 				$confattendee->fk_soc     = $thirdparty->id;
 				$confattendee->update($user);
 			}
@@ -370,6 +377,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$outputlangs = $langs;
 			// TODO Use default language of $thirdparty->default_lang to build $outputlang
 
+			// Get product to use for invoice
 			$productforinvoicerow = new Product($db);
 			$productforinvoicerow->id = 0;
 
@@ -378,6 +386,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				$resultprod = $productforinvoicerow->fetch($conf->global->SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION);
 			}
 
+			// Create invoice
 			if ($resultprod < 0) {
 				$error++;
 				$errmsg .= $productforinvoicerow->error;
@@ -442,6 +451,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 						$redirection .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 					}
 				}
+
 				Header("Location: ".$redirection);
 				exit;
 			} else {
