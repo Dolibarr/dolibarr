@@ -258,8 +258,8 @@ if (empty($reshook)) {
 					$object->cond_reglement_id = GETPOST('cond_reglement_id');
 					$object->mode_reglement_id = GETPOST('mode_reglement_id');
 					$object->fk_account = GETPOST('fk_account', 'int');
-					$object->remise_percent = price2num(GETPOST('remise_percent'), 2);
-					$object->remise_absolue = price2num(GETPOST('remise_absolue'), 'MU');
+					$object->remise_percent = price2num(GETPOST('remise_percent'), '', 2);
+					$object->remise_absolue = price2num(GETPOST('remise_absolue'), 'MU', 2);
 					$object->socid = GETPOST('socid');
 					$object->fk_project = GETPOST('projectid', 'int');
 					$object->model_pdf = GETPOST('model');
@@ -915,8 +915,8 @@ if (empty($reshook)) {
 			$result = $object->updateline(
 				GETPOST('lineid', 'int'),
 				$ht,
-				price2num(GETPOST('qty'), 'MS'),
-				price2num(GETPOST('remise_percent'), 2),
+				price2num(GETPOST('qty'), 'MS', 2),
+				price2num(GETPOST('remise_percent'), '', 2),
 				$vat_rate,
 				$localtax1_rate,
 				$localtax2_rate,
@@ -996,9 +996,9 @@ if (empty($reshook)) {
 		// Terms of payments
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
 	} elseif ($action == 'setremisepercent' && $usercancreate) {
-		$result = $object->set_remise_percent($user, price2num(GETPOST('remise_percent'), 2));
+		$result = $object->set_remise_percent($user, price2num(GETPOST('remise_percent'), '', 2));
 	} elseif ($action == 'setremiseabsolue' && $usercancreate) {
-		$result = $object->set_remise_absolue($user, price2num(GETPOST('remise_absolue'), 'MU'));
+		$result = $object->set_remise_absolue($user, price2num(GETPOST('remise_absolue'), 'MU', 2));
 	} elseif ($action == 'setmode' && $usercancreate) {
 		// Payment mode
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));

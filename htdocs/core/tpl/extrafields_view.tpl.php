@@ -194,6 +194,9 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 			if ($object->element == 'contact') {
 				$permok = $user->rights->societe->contact->creer;
 			}
+			if ($object->element == 'salary') {
+				$permok = $user->rights->salaries->read;
+			}
 
 			$isdraft = ((isset($object->statut) && $object->statut == 0) || (isset($object->status) && $object->status == 0));
 			if (($isdraft || !empty($extrafields->attributes[$object->table_element]['alwayseditable'][$tmpkeyextra]))

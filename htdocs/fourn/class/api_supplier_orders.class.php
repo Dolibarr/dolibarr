@@ -224,7 +224,7 @@ class SupplierOrders extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->fournisseur->commande->creer || !DolibarrApiAccess::$user->rights->supplier_order->creer) {
+		if (empty(DolibarrApiAccess::$user->rights->fournisseur->commande->creer) && empty(DolibarrApiAccess::$user->rights->supplier_order->creer)) {
 			throw new RestException(401, "Insuffisant rights");
 		}
 		// Check mandatory fields
@@ -260,7 +260,7 @@ class SupplierOrders extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->fournisseur->commande->creer || !DolibarrApiAccess::$user->rights->supplier_order->creer) {
+		if (empty(DolibarrApiAccess::$user->rights->fournisseur->commande->creer) && empty(DolibarrApiAccess::$user->rights->supplier_order->creer)) {
 			throw new RestException(401);
 		}
 
@@ -340,7 +340,7 @@ class SupplierOrders extends DolibarrApi
 	 */
 	public function validate($id, $idwarehouse = 0, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->fournisseur->commande->creer || !DolibarrApiAccess::$user->rights->supplier_order->creer) {
+		if (empty(DolibarrApiAccess::$user->rights->fournisseur->commande->creer) && empty(DolibarrApiAccess::$user->rights->supplier_order->creer)) {
 			throw new RestException(401);
 		}
 		$result = $this->order->fetch($id);

@@ -455,8 +455,9 @@ class User extends CommonObject
 			}
 		}
 
-		if ($sid) {    // permet une recherche du user par son SID ActiveDirectory ou Samba
-			$sql .= " AND (u.ldap_sid = '".$this->db->escape($sid)."' OR u.login = '".$this->db->escape($login)."') LIMIT 1";
+		if ($sid) {
+			// permet une recherche du user par son SID ActiveDirectory ou Samba
+			$sql .= " AND (u.ldap_sid = '".$this->db->escape($sid)."' OR u.login = '".$this->db->escape($login)."')";
 		} elseif ($login) {
 			$sql .= " AND u.login = '".$this->db->escape($login)."'";
 		} elseif ($email) {
@@ -465,6 +466,11 @@ class User extends CommonObject
 			$sql .= " AND u.rowid = ".((int) $id);
 		}
 		$sql .= " ORDER BY u.entity ASC"; // Avoid random result when there is 2 login in 2 different entities
+
+		if ($sid) {
+			// permet une recherche du user par son SID ActiveDirectory ou Samba
+			$sql .= ' '.$this->db->plimit(1);
+		}
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -3350,14 +3356,21 @@ class User extends CommonObject
 	public function load_state_board()
 	{
 		// phpcs:enable
+		global $conf;
 
 		$this->nb = array();
 
-		$sql = "SELECT count(u.rowid) as nb";
+		$sql = "SELECT COUNT(DISTINCT u.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE u.statut > 0";
+		if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+			$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+			$sql .= " WHERE ug.entity IN (".getEntity('usergroup').")";
+			$sql .= " AND ug.fk_user = u.rowid";
+		} else {
+			$sql .= " WHERE u.entity IN (".getEntity('user').")";
+		}
+		$sql .= " AND u.statut > 0";
 		//$sql.= " AND employee != 0";
-		$sql .= " AND u.entity IN (".getEntity('user').")";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

@@ -748,7 +748,7 @@ if (empty($reshook)) {
 			GETPOST('product_desc', 'restricthtml'),
 			$ht,
 			price2num(GETPOST('qty'), 'MS'),
-			price2num(GETPOST('remise_percent'), 2),
+			price2num(GETPOST('remise_percent'), '', 2),
 			$vat_rate,
 			$localtax1_rate,
 			$localtax2_rate,
