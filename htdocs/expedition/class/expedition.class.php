@@ -1455,11 +1455,9 @@ class Expedition extends CommonObject
 			}
 		}
 
-		// delete batch expedition line
-		if (!$error && $conf->productbatch->enabled)
-		{
-			if (ExpeditionLineBatch::deletefromexp($this->db, $this->id) < 0)
-			{
+		// delete batch expedition line (we try deletion even if module not enabled in case of the module were enabled and disabled previously)
+		if (!$error) {
+			if (ExpeditionLineBatch::deletefromexp($this->db, $this->id) < 0) {
 				$error++; $this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
