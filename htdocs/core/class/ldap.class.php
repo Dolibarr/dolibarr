@@ -486,6 +486,7 @@ class Ldap
 		// For better compatibility with Samba4 AD
 		if ($this->serverType == "activedirectory") {
 			unset($info['cn']); // To avoid error : Operation not allowed on RDN (Code 67)
+			$info['unicodePwd'] = mb_convert_encoding("\"".$info['unicodePwd']."\"", "UTF-16LE", "UTF-8"); // To avoid error : LDAP Error: 53 (Unwilling to perform)
 		}
 		$result = @ldap_modify($this->connection, $dn, $info);
 
