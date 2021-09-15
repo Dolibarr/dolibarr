@@ -293,8 +293,11 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			exit;
 		}
 
+		$resultfetchthirdparty = -1;
+
 		// Getting the thirdparty or creating it
 		$thirdparty = new Societe($db);
+		$contact = new Contact($db);
 		// Fetch using fk_soc if the attendee was already found
 		if (!empty($confattendee->fk_soc) && $confattendee->fk_soc > 0) {
 			$resultfetchthirdparty = $thirdparty->fetch($confattendee->fk_soc);
@@ -304,10 +307,19 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				if (!empty($societe)) {
 					$resultfetchthirdparty = $thirdparty->fetch('', $societe, '', '', '', '', '', '', '', '', $email);
 					if ($resultfetchthirdparty <= 0) {
-						// Need to create a new one (not found or multiple with the same name/email)
-						$resultfetchthirdparty = 0;
+						// Try to find the thirdparty from the contact
+						$resultfetchcontact = $contact->fetch('', null, '', $email);
+						if ($resultfetchcontact <= 0 || $contact->fk_soc <= 0) {
+							// Need to create a new one (not found or multiple with the same name/email)
+							$resultfetchthirdparty = 0;
+						} else {
+							$thirdparty->fetch($contact->fk_soc);
+							$confattendee->fk_soc = $thirdparty->id;
+							$confattendee->update($user);
+							$resultfetchthirdparty = 1;
+						}
 					} else {
-						// We found an unique result with that name/email, so we set the fk_soc of attendee
+						// We found a unique result with that name/email, so we set the fk_soc of attendee
 						$confattendee->fk_soc = $thirdparty->id;
 						$confattendee->update($user);
 					}
@@ -316,6 +328,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 					$resultfetchthirdparty = 0;
 				}
 			} else {
+				// Need to create a thirdparty (put number>0 if we do not want to create a thirdparty for free-conferences)
 				$resultfetchthirdparty = 0;
 			}
 		}
