@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file       htdocs/public/eventorganization/attendee_registration.php
+ *	\file       htdocs/public/eventorganization/attendee_register.php
  *	\ingroup    project
  *	\brief      Example of form to subscribe to an event
  *
