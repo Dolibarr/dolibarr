@@ -111,7 +111,7 @@ class CommandeFournisseur extends CommonOrder
 
 	public $socid;
 	public $fourn_id;
-	public $date;
+	public $date_creation;
 	public $date_valid;
 	public $date_approve;
 	public $date_approve2; // Used when SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set
@@ -375,7 +375,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->total_localtax1		= $obj->localtax1;
 			$this->total_localtax2		= $obj->localtax2;
 			$this->total_ttc			= $obj->total_ttc;
-			$this->date = $this->db->jdate($obj->date_creation);
+			$this->date_creation = $this->db->jdate($obj->date_creation);
 			$this->date_valid = $this->db->jdate($obj->date_valid);
 			$this->date_approve			= $this->db->jdate($obj->date_approve);
 			$this->date_approve2		= $this->db->jdate($obj->date_approve2);
@@ -1282,7 +1282,7 @@ class CommandeFournisseur extends CommonOrder
 		$now = dol_now();
 
 		// set tmp vars
-		$date = ($this->date_commande ? $this->date_commande : $this->date); // in case of date is set
+		$date = ($this->date_commande ? $this->date_commande : $this->date_creation); // in case of date is set
 		if (empty($date)) {
 			$date = $now;
 		}
@@ -2847,9 +2847,9 @@ class CommandeFournisseur extends CommonOrder
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
 		$this->socid = 1;
-		$this->date = $now;
+		$this->date_creation = $now;
 		$this->date_commande = $now;
-		$this->date_lim_reglement = $this->date + 3600 * 24 * 30;
+		$this->date_lim_reglement = $this->date_creation + 3600 * 24 * 30;
 		$this->cond_reglement_code = 'RECEP';
 		$this->mode_reglement_code = 'CHQ';
 
