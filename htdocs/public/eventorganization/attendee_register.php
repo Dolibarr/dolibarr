@@ -595,13 +595,15 @@ if (!empty($conference->id) && $conference->status==ConferenceOrBooth::STATUS_CO
 	print '<table class="border" summary="form to subscribe" id="tablesubscribe">' . "\n";
 
 	// Email
-	print '<tr><td>' . $langs->trans("Email") . '<FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('email')) . '"></td></tr>' . "\n";
+	print '<tr><td>' . $langs->trans("Email") . '<font color="red">*</font></td><td><input type="text" name="email" maxlength="255" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('email')) . '"></td></tr>' . "\n";
 	// Company
 	print '<tr id="trcompany" class="trcompany"><td>' . $langs->trans("Company");
 	if (!empty(floatval($project->price_registration))) {
-		print '<FONT COLOR="red">*</FONT>';
+		print '<font color="red">*</font>';
 	}
-	print ' </td><td><input type="text" name="societe" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('societe')) . '"></td></tr>' . "\n";
+	print ' </td><td>';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<input type="text" name="societe" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('societe')) . '"></td></tr>' . "\n";
 	// Address
 	print '<tr><td>' . $langs->trans("Address") . '</td><td>' . "\n";
 	print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="' . ROWS_3 . '">' . dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1) . '</textarea></td></tr>' . "\n";
@@ -612,7 +614,8 @@ if (!empty($conference->id) && $conference->status==ConferenceOrBooth::STATUS_CO
 	print $formcompany->select_ziptown(GETPOST('town'), 'town', array('zipcode', 'selectcountry_id', 'state_id'), 0, 1);
 	print '</td></tr>';
 	// Country
-	print '<tr><td>' . $langs->trans('Country') . '<FONT COLOR="red">*</FONT></td><td>';
+	print '<tr><td>' . $langs->trans('Country') . '<font color="red">*</font></td><td>';
+	print img_picto('', 'country', 'class="pictofixedwidth"');
 	$country_id = GETPOST('country_id');
 	if (!$country_id && !empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) {
 		$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
