@@ -927,6 +927,7 @@ class Workstation extends CommonObject
 	{
 		$this->lines = array();
 
+		/*
 		$objectline = new WorkstationLine($this->db);
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_workstation = '.((int) $this->id)));
 
@@ -934,10 +935,12 @@ class Workstation extends CommonObject
 			$this->error = $this->error;
 			$this->errors = $this->errors;
 			return $result;
-		} else {
-			$this->lines = $result;
-			return $this->lines;
 		}
+
+		$this->lines = $result;
+		*/
+
+		return $this->lines;
 	}
 
 	/**
