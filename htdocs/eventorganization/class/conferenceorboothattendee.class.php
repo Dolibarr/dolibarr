@@ -392,7 +392,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 * @param  string      $sortfield    Sort field
 	 * @param  int         $limit        limit
 	 * @param  int         $offset       Offset
-	 * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
+	 * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...). WARNING: customerurl must be a sanitized SQL string.
 	 * @param  string      $filtermode   Filter mode (AND or OR)
 	 * @return array|int                 int <0 if KO, array of pages if OK
 	 */

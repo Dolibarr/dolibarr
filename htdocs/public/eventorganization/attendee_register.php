@@ -251,10 +251,10 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		$confattendee = new ConferenceOrBoothAttendee($db);
 
 		if ($type == 'global') {
-			$filter = array('t.fk_project'=>$id, 'customsql'=>'t.email="'.$email.'"');
+			$filter = array('t.fk_project'=>((int) $id), 'customsql'=>'t.email="'.$db->escape($email).'"');
 		}
 		if ($action == 'conf') {
-			$filter = array('t.fk_actioncomm'=>$id, 'customsql'=>'t.email="'.$email.'"');
+			$filter = array('t.fk_actioncomm'=>((int) $id), 'customsql'=>'t.email="'.$db->escape($email).'"');
 		}
 
 		// Check if there is already an attendee into table eventorganization_conferenceorboothattendee for same event (or conference/booth)
