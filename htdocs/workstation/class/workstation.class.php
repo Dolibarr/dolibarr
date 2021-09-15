@@ -928,7 +928,7 @@ class Workstation extends CommonObject
 		$this->lines = array();
 
 		$objectline = new WorkstationLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_workstation = '.$this->id));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_workstation = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;

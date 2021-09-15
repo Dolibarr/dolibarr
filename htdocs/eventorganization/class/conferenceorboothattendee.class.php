@@ -951,7 +951,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		$this->lines = array();
 
 		$objectline = new ConferenceOrBoothAttendeeLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_conferenceorboothattendee = '.$this->id));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_conferenceorboothattendee = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;

@@ -749,7 +749,7 @@ class ConferenceOrBooth extends ActionComm
 		$this->lines = array();
 
 		$objectline = new ConferenceOrBoothLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_conferenceorbooth = '.$this->id));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_conferenceorbooth = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;
