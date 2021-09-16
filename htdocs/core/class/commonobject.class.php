@@ -3741,7 +3741,6 @@ abstract class CommonObject
 		}
 		$sql .= ' ORDER BY '.$orderby;
 
-		print $sql;
 		dol_syslog(get_class($this)."::fetchObjectLink", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
