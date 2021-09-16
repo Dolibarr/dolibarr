@@ -45,6 +45,8 @@ TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Élevé
 TicketSeverityShortBLOCKING=Critique, bloquant
 
+TicketCategoryShortOTHER=Autre
+
 ErrorBadEmailAddress=Champ '%s' incorrect
 MenuTicketMyAssign=Mes tickets
 MenuTicketMyAssignNonClosed=Mes tickets ouverts
