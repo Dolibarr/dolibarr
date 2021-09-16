@@ -71,13 +71,13 @@ global $dolibarr_main_url_root;
 
 // Init vars
 $errmsg = '';
-$num = 0;
 $error = 0;
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 $email = GETPOST("email");
 $societe = GETPOST("societe");
+$emailcompany = GETPOST("emailcompany");
 
 // Getting id from Post and decoding it
 $type = GETPOST('type', 'aZ09');
@@ -296,7 +296,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 		$resultfetchthirdparty = 0;
 
-		$genericcompanyname = $langs->trans('EventParticipant').' '.$email;	// Keep this label simple so we can retreive same thirdparty for another event
+		$genericcompanyname = $langs->trans('EventParticipant').' '.($emailcompany ? $emailcompany : $email);	// Keep this label simple so we can retreive same thirdparty for another event
 
 		// Getting the thirdparty or creating it
 		$thirdparty = new Societe($db);
@@ -307,12 +307,47 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		} else {
 			if (empty($conf->global->EVENTORGANIZATION_DISABLE_RETREIVE_THIRDPARTY_FROM_NAME)) {
 				// Fetch using the field input by end user if we have just created the attendee
-				if ($resultfetchthirdparty <= 0 && !empty($societe)) {
+				if ($resultfetchthirdparty <= 0 && !empty($societe) && !empty($emailcompany)) {
+					$resultfetchthirdparty = $thirdparty->fetch('', $societe, '', '', '', '', '', '', '', '', $emailcompany);
+					if ($resultfetchthirdparty > 0) {
+						// We found a unique result with the name + emailcompany, so we set the fk_soc of attendee
+						$confattendee->fk_soc = $thirdparty->id;
+						$confattendee->update($user);
+					} elseif ($resultfetchthirdparty == -2) {
+						$thirdparty->error = $langs->trans("ErrorSeveralCompaniesWithNameContactUs", $mysoc->email);
+					}
+				}
+				// Fetch using the field input by end user if we have just created the attendee
+				if ($resultfetchthirdparty <= 0 && !empty($societe) && !empty($email) && $email != $emailcompany) {
 					$resultfetchthirdparty = $thirdparty->fetch('', $societe, '', '', '', '', '', '', '', '', $email);
 					if ($resultfetchthirdparty > 0) {
 						// We found a unique result with the name + email, so we set the fk_soc of attendee
 						$confattendee->fk_soc = $thirdparty->id;
 						$confattendee->update($user);
+					} elseif ($resultfetchthirdparty == -2) {
+						$thirdparty->error = $langs->trans("ErrorSeveralCompaniesWithNameContactUs", $mysoc->email);
+					}
+				}
+				if ($resultfetchthirdparty <= 0 && !empty($emailcompany)) {
+					// Try to find thirdparty from the email only
+					$resultfetchthirdparty = $thirdparty->fetch('', '', '', '', '', '', '', '', '', '', $emailcompany);
+					if ($resultfetchthirdparty > 0) {
+						// We found a unique result with that email only, so we set the fk_soc of attendee
+						$confattendee->fk_soc = $thirdparty->id;
+						$confattendee->update($user);
+					} elseif ($resultfetchthirdparty == -2) {
+						$thirdparty->error = $langs->trans("ErrorSeveralCompaniesWithEmailContactUs", $mysoc->email);
+					}
+				}
+				if ($resultfetchthirdparty <= 0 && !empty($email) && $email != $emailcompany) {
+					// Try to find thirdparty from the email only
+					$resultfetchthirdparty = $thirdparty->fetch('', '', '', '', '', '', '', '', '', '', $email);
+					if ($resultfetchthirdparty > 0) {
+						// We found a unique result with that email only, so we set the fk_soc of attendee
+						$confattendee->fk_soc = $thirdparty->id;
+						$confattendee->update($user);
+					} elseif ($resultfetchthirdparty == -2) {
+						$thirdparty->error = $langs->trans("ErrorSeveralCompaniesWithEmailContactUs", $mysoc->email);
 					}
 				}
 				if ($resultfetchthirdparty <= 0 && !empty($genericcompanyname)) {
@@ -322,15 +357,8 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 						// We found a unique result with that name + email, so we set the fk_soc of attendee
 						$confattendee->fk_soc = $thirdparty->id;
 						$confattendee->update($user);
-					}
-				}
-				if ($resultfetchthirdparty <= 0 && !empty($email)) {
-					// Try to find thirdparty from the email only
-					$resultfetchthirdparty = $thirdparty->fetch('', '', '', '', '', '', '', '', '', '', $email);
-					if ($resultfetchthirdparty > 0) {
-						// We found a unique result with that email only, so we set the fk_soc of attendee
-						$confattendee->fk_soc = $thirdparty->id;
-						$confattendee->update($user);
+					} elseif ($resultfetchthirdparty == -2) {
+						$thirdparty->error = $langs->trans("ErrorSeveralCompaniesWithNameContactUs", $mysoc->email);
 					}
 				}
 
@@ -367,9 +395,10 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		}
 
 		if ($resultfetchthirdparty < 0) {
+			// If an error was found
 			$error++;
 			$errmsg .= $thirdparty->error;
-		} elseif ($resultfetchthirdparty == 0) {
+		} elseif ($resultfetchthirdparty == 0) {	// No thirdparty found + a payment is expected
 			// Creation of a new thirdparty
 			if (!empty($societe)) {
 				$thirdparty->name     = $societe;
@@ -383,7 +412,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$thirdparty->fournisseur  = 0;
 			$thirdparty->country_id   = GETPOST("country_id", 'int');
 			$thirdparty->state_id     = GETPOST("state_id", 'int');
-			$thirdparty->email        = $email;
+			$thirdparty->email        = ($emailcompany ? $emailcompany : $email);
 
 			// Load object modCodeTiers
 			$module = (!empty($conf->global->SOCIETE_CODECLIENT_ADDON) ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
@@ -648,7 +677,7 @@ if (!empty($conference->id) && $conference->status==ConferenceOrBooth::STATUS_CO
 	print '<table class="border" summary="form to subscribe" id="tablesubscribe">' . "\n";
 
 	// Email
-	print '<tr><td>' . $langs->trans("Email") . '<font color="red">*</font></td><td><input type="text" name="email" maxlength="255" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('email')) . '"></td></tr>' . "\n";
+	print '<tr><td>' . $langs->trans("EmailAttendee") . '<font color="red">*</font></td><td><input type="text" name="email" maxlength="255" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('email')) . '"></td></tr>' . "\n";
 	// Company
 	print '<tr id="trcompany" class="trcompany"><td>' . $langs->trans("Company");
 	if (!empty(floatval($project->price_registration))) {
@@ -657,6 +686,10 @@ if (!empty($conference->id) && $conference->status==ConferenceOrBooth::STATUS_CO
 	print ' </td><td>';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
 	print '<input type="text" name="societe" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('societe')) . '"></td></tr>' . "\n";
+	if ($project->price_registration) {
+		// Email company for invoice
+		print '<tr><td>' . $langs->trans("EmailCompanyForInvoice") . '</td><td><input type="text" name="emailcompany" maxlength="255" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('emailcompany')) . '"></td></tr>' . "\n";
+	}
 	// Address
 	print '<tr><td>' . $langs->trans("Address") . '</td><td>' . "\n";
 	print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="' . ROWS_3 . '">' . dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1) . '</textarea></td></tr>' . "\n";

@@ -1835,7 +1835,7 @@ if ($source == 'organizedeventregistration') {
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Attendee");
 	print '</td><td class="CTableRow2"><b>';
 	print $attendee->email;
-	print ($thirdparty->name ? ' ('.$thirdparty->name.')' : '');
+	print ($thirdparty->name ? ' ('.$langs->trans("Company").' '.$thirdparty->name.')' : '');
 	print '</b>';
 	print '</td></tr>'."\n";
 
