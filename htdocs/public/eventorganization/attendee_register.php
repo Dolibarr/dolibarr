@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file       htdocs/public/eventorganization/attendee_registration.php
+ *	\file       htdocs/public/eventorganization/attendee_register.php
  *	\ingroup    project
  *	\brief      Example of form to subscribe to an event
  *
@@ -251,10 +251,10 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		$confattendee = new ConferenceOrBoothAttendee($db);
 
 		if ($type == 'global') {
-			$filter = array('t.fk_project'=>$id, 'customsql'=>'t.email="'.$email.'"');
+			$filter = array('t.fk_project'=>((int) $id), 'customsql'=>'t.email="'.$db->escape($email).'"');
 		}
 		if ($action == 'conf') {
-			$filter = array('t.fk_actioncomm'=>$id, 'customsql'=>'t.email="'.$email.'"');
+			$filter = array('t.fk_actioncomm'=>((int) $id), 'customsql'=>'t.email="'.$db->escape($email).'"');
 		}
 
 		// Check if there is already an attendee into table eventorganization_conferenceorboothattendee for same event (or conference/booth)
@@ -279,16 +279,25 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		// At this point, we have an existing $confattendee. It may not be linked to a thirdparty.
 		//var_dump($confattendee);
 
-		// If the attendee has already been paid
-		if (!empty($confattendee->date_subscription)) {
-			$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
+		// If the registration has already been paid for this attendee
+		if (!empty($confattendee->date_subscription) && !empty($confattendee->amount)) {
+			$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 'master');
 			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.((int) $id).'&securekey='.urlencode($securekeyurl);
+
+			$mesg = $langs->trans("RegistrationAndPaymentWereAlreadyRecorder", $email);
+			setEventMessages($mesg, null, 'mesgs');
+
+			$db->commit();
+
 			Header("Location: ".$redirection);
 			exit;
 		}
 
+		$resultfetchthirdparty = -1;
+
 		// Getting the thirdparty or creating it
 		$thirdparty = new Societe($db);
+		$contact = new Contact($db);
 		// Fetch using fk_soc if the attendee was already found
 		if (!empty($confattendee->fk_soc) && $confattendee->fk_soc > 0) {
 			$resultfetchthirdparty = $thirdparty->fetch($confattendee->fk_soc);
@@ -298,10 +307,19 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				if (!empty($societe)) {
 					$resultfetchthirdparty = $thirdparty->fetch('', $societe, '', '', '', '', '', '', '', '', $email);
 					if ($resultfetchthirdparty <= 0) {
-						// Need to create a new one (not found or multiple with the same name/email)
-						$resultfetchthirdparty = 0;
+						// Try to find the thirdparty from the contact
+						$resultfetchcontact = $contact->fetch('', null, '', $email);
+						if ($resultfetchcontact <= 0 || $contact->fk_soc <= 0) {
+							// Need to create a new one (not found or multiple with the same name/email)
+							$resultfetchthirdparty = 0;
+						} else {
+							$thirdparty->fetch($contact->fk_soc);
+							$confattendee->fk_soc = $thirdparty->id;
+							$confattendee->update($user);
+							$resultfetchthirdparty = 1;
+						}
 					} else {
-						// We found an unique result with that name/email, so we set the fk_soc of attendee
+						// We found a unique result with that name/email, so we set the fk_soc of attendee
 						$confattendee->fk_soc = $thirdparty->id;
 						$confattendee->update($user);
 					}
@@ -310,6 +328,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 					$resultfetchthirdparty = 0;
 				}
 			} else {
+				// Need to create a thirdparty (put number>0 if we do not want to create a thirdparty for free-conferences)
 				$resultfetchthirdparty = 0;
 			}
 		}
@@ -359,6 +378,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				$thirdparty->country_code = getCountry($thirdparty->country_id, 2, $db, $langs);
 				$thirdparty->country      = getCountry($thirdparty->country_code, 0, $db, $langs);
 
+				// Update attendee country to match country of thirdparty
 				$confattendee->fk_soc     = $thirdparty->id;
 				$confattendee->update($user);
 			}
@@ -370,6 +390,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$outputlangs = $langs;
 			// TODO Use default language of $thirdparty->default_lang to build $outputlang
 
+			// Get product to use for invoice
 			$productforinvoicerow = new Product($db);
 			$productforinvoicerow->id = 0;
 
@@ -378,6 +399,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				$resultprod = $productforinvoicerow->fetch($conf->global->SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION);
 			}
 
+			// Create invoice
 			if ($resultprod < 0) {
 				$error++;
 				$errmsg .= $productforinvoicerow->error;
@@ -428,8 +450,10 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			if (!$error) {
 				$db->commit();
 
-				// Registration was recorded and invoice was generated, so we send an email
+				// Registration was recorded and invoice was generated, but payment not yet done.
 				// TODO
+				// Send an email to says registration shas been received and that we are waiting for the payment.
+				// Should send email template (EventOrganizationEmailRegistrationEvent) saved into conf EVENTORGANIZATION_TEMPLATE_EMAIL_REGISTRATION_EVENT.
 
 				// Now we redirect to the payment page
 				$sourcetouse = 'organizedeventregistration';
@@ -442,6 +466,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 						$redirection .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 					}
 				}
+
 				Header("Location: ".$redirection);
 				exit;
 			} else {
@@ -585,13 +610,15 @@ if (!empty($conference->id) && $conference->status==ConferenceOrBooth::STATUS_CO
 	print '<table class="border" summary="form to subscribe" id="tablesubscribe">' . "\n";
 
 	// Email
-	print '<tr><td>' . $langs->trans("Email") . '<FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('email')) . '"></td></tr>' . "\n";
+	print '<tr><td>' . $langs->trans("Email") . '<font color="red">*</font></td><td><input type="text" name="email" maxlength="255" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('email')) . '"></td></tr>' . "\n";
 	// Company
 	print '<tr id="trcompany" class="trcompany"><td>' . $langs->trans("Company");
 	if (!empty(floatval($project->price_registration))) {
-		print '<FONT COLOR="red">*</FONT>';
+		print '<font color="red">*</font>';
 	}
-	print ' </td><td><input type="text" name="societe" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('societe')) . '"></td></tr>' . "\n";
+	print ' </td><td>';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<input type="text" name="societe" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('societe')) . '"></td></tr>' . "\n";
 	// Address
 	print '<tr><td>' . $langs->trans("Address") . '</td><td>' . "\n";
 	print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="' . ROWS_3 . '">' . dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1) . '</textarea></td></tr>' . "\n";
@@ -602,7 +629,8 @@ if (!empty($conference->id) && $conference->status==ConferenceOrBooth::STATUS_CO
 	print $formcompany->select_ziptown(GETPOST('town'), 'town', array('zipcode', 'selectcountry_id', 'state_id'), 0, 1);
 	print '</td></tr>';
 	// Country
-	print '<tr><td>' . $langs->trans('Country') . '<FONT COLOR="red">*</FONT></td><td>';
+	print '<tr><td>' . $langs->trans('Country') . '<font color="red">*</font></td><td>';
+	print img_picto('', 'country', 'class="pictofixedwidth"');
 	$country_id = GETPOST('country_id');
 	if (!$country_id && !empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) {
 		$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);

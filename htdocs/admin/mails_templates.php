@@ -228,7 +228,7 @@ if (!empty($conf->agenda->enabled)) {
 	$elementList['actioncomm_send'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventPush'));
 }
 if (!empty($conf->eventorganization->enabled) && !empty($user->rights->eventorganization->read)) {
-	$elementList['eventorganization_send'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventOrganization'));
+	$elementList['conferenceorbooth'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventOrganization'));
 }
 if (!empty($conf->partnership->enabled) && !empty($user->rights->partnership->read)) {
 	$elementList['partnership_send'] = img_picto('', 'partnership', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToPartnership'));
@@ -1071,8 +1071,8 @@ if ($resql) {
 						if ($showfield) {
 							print '<!-- '.$fieldlist[$field].' -->';
 							print '<td class="'.$class.'"';
-							if ($value == 'topic') {
-								print ' title="'.$valuetoshow.'"';
+							if (in_array($value, array('code', 'label', 'topic'))) {
+								print ' title="'.dol_escape_htmltag($valuetoshow).'"';
 							}
 							print '>';
 							print $valuetoshow;
