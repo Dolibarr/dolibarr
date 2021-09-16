@@ -610,6 +610,7 @@ class FormTicket
 		if (empty($outputlangs)) {
 			$outputlangs = $langs;
 		}
+		$outputlangs->load("tickets");
 
 		$ticketstat = new Ticket($this->db);
 		$ticketstat->loadCacheCategoriesTickets();
