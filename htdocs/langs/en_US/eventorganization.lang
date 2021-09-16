@@ -67,8 +67,8 @@ YourOrganizationEventConfRequestWasReceived = Your request for conference was re
 YourOrganizationEventBoothRequestWasReceived = Your request for booth was received
 EventOrganizationEmailAskConf = Request for conference
 EventOrganizationEmailAskBooth = Request for booth
-EventOrganizationEmailSubsBooth = Subscription for booth
-EventOrganizationEmailSubsEvent = Subscription for an event
+EventOrganizationEmailBoothPayment = Payment of your booth
+EventOrganizationEmailRegistrationPayment = Registration for an event
 EventOrganizationMassEmailAttendees = Communication to attendees
 EventOrganizationMassEmailSpeakers = Communication to speakers
 
