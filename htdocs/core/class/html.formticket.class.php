@@ -638,8 +638,7 @@ class FormTicket
 					$label = ($arraycategories['label'] != '-' ? $arraycategories['label'] : '');
 					if ($outputlangs->trans("TicketCategoryShort".$arraycategories['code']) != ("TicketCategoryShort".$arraycategories['code'])) {
 						$label = $outputlangs->trans("TicketCategoryShort".$arraycategories['code']);
-					}
-					if ($outputlangs->trans($arraycategories['code']) != $arraycategories['code']) {
+					} elseif ($outputlangs->trans($arraycategories['code']) != $arraycategories['code']) {
 						$label = $outputlangs->trans($arraycategories['code']);
 					}
 
@@ -725,9 +724,8 @@ class FormTicket
 						$label = ($obj->label != '-' ? $obj->label : '');
 						if ($outputlangs->trans("TicketCategoryShort".$obj->code) != ("TicketCategoryShort".$obj->code)) {
 							$label = $outputlangs->trans("TicketCategoryShort".$obj->code);
-						}
-						if ($outputlangs->trans($obj->code) != $obj->code) {
-							$label = $obj->code;
+						} elseif ($outputlangs->trans($obj->code) != $obj->code) {
+							$label = $outputlangs->trans($obj->code);
 						}
 
 						$grouprowid = $obj->rowid;
@@ -791,9 +789,8 @@ class FormTicket
 							$label = ($obj->label != '-' ? $obj->label : '');
 							if ($outputlangs->trans("TicketCategoryShort".$obj->code) != ("TicketCategoryShort".$obj->code)) {
 								$label = $outputlangs->trans("TicketCategoryShort".$obj->code);
-							}
-							if ($outputlangs->trans($obj->code) != $obj->code) {
-								$label = $obj->code;
+							} elseif ($outputlangs->trans($obj->code) != $obj->code) {
+								$label = $outputlangs->trans($obj->code);
 							}
 
 							$grouprowid = $obj->rowid;
