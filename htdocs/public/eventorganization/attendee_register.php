@@ -450,8 +450,10 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			if (!$error) {
 				$db->commit();
 
-				// Registration was recorded and invoice was generated, so we send an email
+				// Registration was recorded and invoice was generated, but payment not yet done.
 				// TODO
+				// Send an email to says registration shas been received and that we are waiting for the payment.
+				// Should send email template (EventOrganizationEmailRegistrationEvent) saved into conf EVENTORGANIZATION_TEMPLATE_EMAIL_REGISTRATION_EVENT.
 
 				// Now we redirect to the payment page
 				$sourcetouse = 'organizedeventregistration';
