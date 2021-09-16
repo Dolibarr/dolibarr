@@ -64,6 +64,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/paymentterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 global $dolibarr_main_instance_unique_id;
 global $dolibarr_main_url_root;
@@ -293,7 +294,9 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			exit;
 		}
 
-		$resultfetchthirdparty = -1;
+		$resultfetchthirdparty = 0;
+
+		$genericcompanyname = $langs->trans('EventParticipant').' '.$email;	// Keep this label simple so we can retreive same thirdparty for another event
 
 		// Getting the thirdparty or creating it
 		$thirdparty = new Societe($db);
@@ -303,34 +306,64 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$resultfetchthirdparty = $thirdparty->fetch($confattendee->fk_soc);
 		} else {
 			if (empty($conf->global->EVENTORGANIZATION_DISABLE_RETREIVE_THIRDPARTY_FROM_NAME)) {
-				// Fetch using the input field by user if we just created the attendee
-				if (!empty($societe)) {
+				// Fetch using the field input by end user if we have just created the attendee
+				if ($resultfetchthirdparty <= 0 && !empty($societe)) {
 					$resultfetchthirdparty = $thirdparty->fetch('', $societe, '', '', '', '', '', '', '', '', $email);
-					if ($resultfetchthirdparty <= 0) {
-						// Try to find the thirdparty from the contact
-						$resultfetchcontact = $contact->fetch('', null, '', $email);
-						if ($resultfetchcontact <= 0 || $contact->fk_soc <= 0) {
-							// Need to create a new one (not found or multiple with the same name/email)
-							$resultfetchthirdparty = 0;
-						} else {
-							$thirdparty->fetch($contact->fk_soc);
-							$confattendee->fk_soc = $thirdparty->id;
-							$confattendee->update($user);
-							$resultfetchthirdparty = 1;
-						}
-					} else {
-						// We found a unique result with that name/email, so we set the fk_soc of attendee
+					if ($resultfetchthirdparty > 0) {
+						// We found a unique result with the name + email, so we set the fk_soc of attendee
 						$confattendee->fk_soc = $thirdparty->id;
 						$confattendee->update($user);
 					}
-				} else {
-					// Need to create a thirdparty (put number>0 if we do not want to create a thirdparty for free-conferences)
-					$resultfetchthirdparty = 0;
 				}
-			} else {
-				// Need to create a thirdparty (put number>0 if we do not want to create a thirdparty for free-conferences)
-				$resultfetchthirdparty = 0;
+				if ($resultfetchthirdparty <= 0 && !empty($genericcompanyname)) {
+					// Try to find thirdparty from the generic mail only
+					$resultfetchthirdparty = $thirdparty->fetch('', $genericcompanyname, '', '', '', '', '', '', '', '', '');
+					if ($resultfetchthirdparty > 0) {
+						// We found a unique result with that name + email, so we set the fk_soc of attendee
+						$confattendee->fk_soc = $thirdparty->id;
+						$confattendee->update($user);
+					}
+				}
+				if ($resultfetchthirdparty <= 0 && !empty($email)) {
+					// Try to find thirdparty from the email only
+					$resultfetchthirdparty = $thirdparty->fetch('', '', '', '', '', '', '', '', '', '', $email);
+					if ($resultfetchthirdparty > 0) {
+						// We found a unique result with that email only, so we set the fk_soc of attendee
+						$confattendee->fk_soc = $thirdparty->id;
+						$confattendee->update($user);
+					}
+				}
+
+				// TODO Add more tests on a VAT number, profid or a name ?
+
+				if ($resultfetchthirdparty <= 0 && !empty($email)) {
+					// Try to find the thirdparty from the contact
+					$resultfetchcontact = $contact->fetch('', null, '', $email);
+					if ($resultfetchcontact > 0 && $contact->fk_soc > 0) {
+						$thirdparty->fetch($contact->fk_soc);
+						$confattendee->fk_soc = $thirdparty->id;
+						$confattendee->update($user);
+						$resultfetchthirdparty = 1;
+					}
+				}
+
+				if ($resultfetchthirdparty <= 0 && !empty($societe)) {
+					// Try to find thirdparty from the company name only
+					$resultfetchthirdparty = $thirdparty->fetch('', $societe, '', '', '', '', '', '', '', '', '');
+					if ($resultfetchthirdparty > 0) {
+						// We found a unique result with that name only, so we set the fk_soc of attendee
+						$confattendee->fk_soc = $thirdparty->id;
+						$confattendee->update($user);
+					} elseif ($resultfetchthirdparty == -2) {
+						$thirdparty->error = "ErrorSeveralCompaniesWithNameContactUs";
+					}
+				}
 			}
+		}
+
+		// If price is empty, no need to create a thirdparty, so we force $resultfetchthirdparty as if we have already found thirdp party.
+		if (empty(floatval($project->price_registration))) {
+			$resultfetchthirdparty = 1;
 		}
 
 		if ($resultfetchthirdparty < 0) {
@@ -341,7 +374,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			if (!empty($societe)) {
 				$thirdparty->name     = $societe;
 			} else {
-				$thirdparty->name     = $email;
+				$thirdparty->name     = $genericcompanyname;
 			}
 			$thirdparty->address      = GETPOST("address");
 			$thirdparty->zip          = GETPOST("zipcode");
@@ -387,6 +420,11 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 	if (!$error) {
 		if (!empty(floatval($project->price_registration))) {
+
+
+
+
+
 			$outputlangs = $langs;
 			// TODO Use default language of $thirdparty->default_lang to build $outputlang
 
