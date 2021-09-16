@@ -701,7 +701,7 @@ class FormTicket
 			$sql = "SELECT ctc.rowid, ctc.code, ctc.label, ctc.fk_parent, ctc.public, ";
 			$sql .= $this->db->ifsql("ctc.rowid NOT IN (SELECT ctcfather.rowid FROM llx_c_ticket_category as ctcfather JOIN llx_c_ticket_category as ctcjoin ON ctcfather.rowid = ctcjoin.fk_parent)", "'NOTPARENT'", "'PARENT'")." as isparent";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category as ctc";
-			$sql .= " WHERE ctc.active > 0 AND entity = ".((int) $conf->entity);
+			$sql .= " WHERE ctc.active > 0 AND ctc.entity = ".((int) $conf->entity);
 			if ($filtertype == 'public=1') {
 				$sql .= " AND ctc.public = 1";
 			}
@@ -752,7 +752,7 @@ class FormTicket
 				$sql .= $this->db->ifsql("ctc.rowid NOT IN (SELECT ctcfather.rowid FROM llx_c_ticket_category as ctcfather JOIN llx_c_ticket_category as ctcjoin ON ctcfather.rowid = ctcjoin.fk_parent)", "'NOTPARENT'", "'PARENT'")." as isparent";
 				$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category as ctc";
 				$sql .= " JOIN ".MAIN_DB_PREFIX."c_ticket_category as ctcjoin ON ctc.fk_parent = ctcjoin.rowid";
-				$sql .= " WHERE ctc.active > 0 AND entity = ".((int) $conf->entity);
+				$sql .= " WHERE ctc.active > 0 AND ctc.entity = ".((int) $conf->entity);
 				if ($filtertype == 'public=1') {
 					$sql .= " AND ctc.public = 1";
 				}
