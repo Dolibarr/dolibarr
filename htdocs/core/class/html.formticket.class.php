@@ -258,7 +258,7 @@ class FormTicket
 	
 					if (idgroupticket != "") {
 						$.ajax({ url: \''.DOL_URL_ROOT.'/core/ajax/fetchKnowledgeRecord.php\',
-							 data: { action: \'getKnowledgeRecord\', idticketgroup: idgroupticket, token: \''.newToken().'\', lang:\''.$langs->defaultlang.'\'},
+							 data: { action: \'getKnowledgeRecord\', idticketgroup: idgroupticket, token: \''.newToken().'\', lang:\''.$langs->defaultlang.'\', popupurl:false},
 							 type: \'GET\',
 							 success: function(response) {
 								var urllist = \'\';
@@ -266,7 +266,7 @@ class FormTicket
 								response = JSON.parse(response)
 								for (key in response) {
 									console.log(response[key])
-									urllist += "<li>" + response[key].title + ": " + \'<a href="\'+response[key].ref + "\">"+response[key].url+"</a></li>";
+									urllist += "<li>" + response[key].title + ": " +response[key].url+"</li>";
 								}
 								if (urllist != "") {
 									console.log(urllist)
