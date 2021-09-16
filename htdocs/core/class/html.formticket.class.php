@@ -635,7 +635,13 @@ class FormTicket
 						continue;
 					}
 
-					$label = ($outputlangs->trans("TicketCategoryShort".$arraycategories['code']) != ("TicketCategoryShort".$arraycategories['code']) ? $outputlangs->trans("TicketCategoryShort".$arraycategories['code']) : ($arraycategories['label'] != '-' ? $arraycategories['label'] : ''));
+					$label = ($arraycategories['label'] != '-' ? $arraycategories['label'] : '');
+					if ($outputlangs->trans("TicketCategoryShort".$arraycategories['code']) != ("TicketCategoryShort".$arraycategories['code'])) {
+						$label = $outputlangs->trans("TicketCategoryShort".$arraycategories['code']);
+					}
+					if ($outputlangs->trans($arraycategories['code']) != $arraycategories['code']) {
+						$label = $outputlangs->trans($arraycategories['code']);
+					}
 
 					if ($format == 0) {
 						print '<option value="'.$id.'"';
@@ -716,7 +722,13 @@ class FormTicket
 				while ($i < $num_rows_level0) {
 					$obj = $this->db->fetch_object($resql);
 					if ($obj) {
-						$label = ($outputlangs->trans("TicketCategoryShort".$obj->code) != ("TicketCategoryShort".$obj->code) ? $outputlangs->trans("TicketCategoryShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
+						$label = ($obj->label != '-' ? $obj->label : '');
+						if ($outputlangs->trans("TicketCategoryShort".$obj->code) != ("TicketCategoryShort".$obj->code)) {
+							$label = $outputlangs->trans("TicketCategoryShort".$obj->code);
+						}
+						if ($outputlangs->trans($obj->code) != $obj->code) {
+							$label = $obj->code;
+						}
 
 						$grouprowid = $obj->rowid;
 						$groupvalue = $obj->code;
@@ -776,7 +788,13 @@ class FormTicket
 					while ($i < $num_rows) {
 						$obj = $this->db->fetch_object($resql);
 						if ($obj) {
-							$label = ($outputlangs->trans("TicketCategoryShort".$obj->code) != ("TicketCategoryShort".$obj->code) ? $outputlangs->trans("TicketCategoryShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
+							$label = ($obj->label != '-' ? $obj->label : '');
+							if ($outputlangs->trans("TicketCategoryShort".$obj->code) != ("TicketCategoryShort".$obj->code)) {
+								$label = $outputlangs->trans("TicketCategoryShort".$obj->code);
+							}
+							if ($outputlangs->trans($obj->code) != $obj->code) {
+								$label = $obj->code;
+							}
 
 							$grouprowid = $obj->rowid;
 							$groupvalue = $obj->code;
