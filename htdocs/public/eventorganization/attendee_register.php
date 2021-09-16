@@ -493,9 +493,13 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 					$confattendee->error = $facture->error;
 					$confattendee->errors = $facture->errors;
 					$error++;
-				} else {
+				}
+
+				/*
+				if (!$error) {
 					$facture->add_object_linked($confattendee->element, $confattendee->id);
 				}
+				*/
 			}
 
 			if (!$error) {

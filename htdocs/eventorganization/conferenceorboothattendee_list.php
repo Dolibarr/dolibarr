@@ -646,22 +646,25 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 foreach ($search as $key => $val) {
 	if (is_array($search[$key]) && count($search[$key])) {
 		foreach ($search[$key] as $skey) {
-			$param .= '&search_'.$key.'[]='.urlencode($skey);
+			if ($skey != '') {
+				$param .= '&search_'.$key.'[]='.urlencode($skey);
+			}
 		}
-	} else {
+	} elseif ($search[$key] != '') {
 		$param .= '&search_'.$key.'='.urlencode($search[$key]);
 	}
 }
 if ($confOrBooth->id > 0) {
-	$param .= '&conforboothid='.urlencode($confOrBooth->id).$withProjectUrl;
+	$param .= '&conforboothid='.urlencode($confOrBooth->id);
 }
 if ($projectstatic->id > 0) {
-	$param .= '&fk_project='.urlencode($projectstatic->id).$withProjectUrl;
+	$param .= '&fk_project='.urlencode($projectstatic->id);
 }
-
+$param .= $withProjectUrl;
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
@@ -694,6 +697,8 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="withproject" value="'.$withproject.'">';
+print '<input type="hidden" name="fk_project" value="'.$fk_project.'">';
 
 $newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?action=create'.(!empty($confOrBooth->id)?'&conforboothid='.$confOrBooth->id:'').(!empty($projectstatic->id)?'&fk_project='.$projectstatic->id:'').$withProjectUrl.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?projectid='.$projectstatic->id.(empty($confOrBooth->id) ? '' : '&conforboothid='.$confOrBooth->id).$withProjectUrl), '', $permissiontoadd);
 

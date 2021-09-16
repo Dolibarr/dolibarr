@@ -48,7 +48,7 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $conf_or_booth_id = GETPOST('conforboothid', 'int');
 $fk_project = GETPOST('fk_project', 'int');
-$withproject = GETPOST('withproject', 'int');
+$withproject = 1;
 
 // Initialize technical objects
 $object = new ConferenceOrBoothAttendee($db);
@@ -65,6 +65,7 @@ if ($conf_or_booth_id > 0) {
 	} else {
 		$object->fk_actioncomm = $confOrBooth->id;
 		$object->fk_project = $confOrBooth->fk_project;
+		$fk_project = $object->fk_project;
 	}
 }
 
