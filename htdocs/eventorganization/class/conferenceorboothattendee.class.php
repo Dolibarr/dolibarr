@@ -392,7 +392,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 * @param  string      $sortfield    Sort field
 	 * @param  int         $limit        limit
 	 * @param  int         $offset       Offset
-	 * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
+	 * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...). WARNING: customerurl must be a sanitized SQL string.
 	 * @param  string      $filtermode   Filter mode (AND or OR)
 	 * @return array|int                 int <0 if KO, array of pages if OK
 	 */
@@ -951,7 +951,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		$this->lines = array();
 
 		$objectline = new ConferenceOrBoothAttendeeLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_conferenceorboothattendee = '.$this->id));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_conferenceorboothattendee = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;

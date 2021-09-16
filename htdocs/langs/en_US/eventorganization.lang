@@ -42,8 +42,8 @@ EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Category to add to third-parties autom
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Category to add to third-parties automatically created when they suggests a booth
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Template of email to send after receiving a suggestion of a conference.
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Template of email to send after receiving a suggestion of a booth.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send  after a subscription to a booth has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a subscription to an event has been paid.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send  after a registration to a booth has been paid.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a registration to an event has been paid.
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email of massaction to attendes
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email of massaction to speakers
 EVENTORGANIZATION_FILTERATTENDEES_CAT = Filter thirdpartie's select list in attendees creation card/form with category
@@ -67,8 +67,8 @@ YourOrganizationEventConfRequestWasReceived = Your request for conference was re
 YourOrganizationEventBoothRequestWasReceived = Your request for booth was received
 EventOrganizationEmailAskConf = Request for conference
 EventOrganizationEmailAskBooth = Request for booth
-EventOrganizationEmailSubsBooth = Subscription for booth
-EventOrganizationEmailSubsEvent = Subscription for an event
+EventOrganizationEmailBoothPayment = Payment of your booth
+EventOrganizationEmailRegistrationPayment = Registration for an event
 EventOrganizationMassEmailAttendees = Communication to attendees
 EventOrganizationMassEmailSpeakers = Communication to speakers
 
@@ -130,6 +130,12 @@ DateMustBeBeforeThan=%s must be before %s
 DateMustBeAfterThan=%s must be after %s
 
 NewSubscription=Registration
+OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
+OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
+OrganizationEventPaymentOfBoothWasReceived=Your payment for your booth has been recorded
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your event registration has been recorded
+OrganizationEventBulkMailToAttendees=This is a remind about your participation in the event as an attendee
+OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
 
 #
 # Vote page

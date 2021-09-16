@@ -1340,6 +1340,7 @@ if ($ispaymentok) {
 
 	$key = 'ONLINE_PAYMENT_MESSAGE_OK';
 	if (!empty($conf->global->$key)) {
+		print '<br>';
 		print $conf->global->$key;
 	}
 

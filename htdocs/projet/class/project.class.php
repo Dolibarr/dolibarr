@@ -1524,7 +1524,7 @@ class Project extends CommonObject
 			}
 		}
 
-		$clone_project->datec = $now;
+		$clone_project->date_c = $now;
 
 		if (!$clone_note) {
 			$clone_project->note_private = '';

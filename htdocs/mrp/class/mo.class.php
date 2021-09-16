@@ -1188,7 +1188,7 @@ class Mo extends CommonObject
 		$this->lines = array();
 
 		$objectline = new MoLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_mo = '.$this->id));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_mo = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;

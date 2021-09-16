@@ -1071,8 +1071,8 @@ if ($resql) {
 						if ($showfield) {
 							print '<!-- '.$fieldlist[$field].' -->';
 							print '<td class="'.$class.'"';
-							if ($value == 'topic') {
-								print ' title="'.$valuetoshow.'"';
+							if (in_array($value, array('code', 'label', 'topic'))) {
+								print ' title="'.dol_escape_htmltag($valuetoshow).'"';
 							}
 							print '>';
 							print $valuetoshow;

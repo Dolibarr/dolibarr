@@ -447,7 +447,7 @@ if ($projectid > 0) {
 	print $langs->trans("PublicAttendeeSubscriptionGlobalPage");
 	//print '</span>';
 	print '</td><td>';
-	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_registration.php?id='.$project->id.'&type=global';
+	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_register.php?id='.$project->id.'&type=global';
 	$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$project->id, 'md5');
 	$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 	//print '<div class="urllink">';

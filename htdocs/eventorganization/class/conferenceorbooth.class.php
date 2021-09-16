@@ -246,7 +246,7 @@ class ConferenceOrBooth extends ActionComm
 
 		$result = parent::fetch($id, $ref, $ref_ext, $email_msgid);
 
-		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_registration.php?id='.urlencode($id).'&type=conf';
+		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_register.php?id='.urlencode($id).'&type=conf';
 
 		$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
 		$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
@@ -749,7 +749,7 @@ class ConferenceOrBooth extends ActionComm
 		$this->lines = array();
 
 		$objectline = new ConferenceOrBoothLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_conferenceorbooth = '.$this->id));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_conferenceorbooth = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;

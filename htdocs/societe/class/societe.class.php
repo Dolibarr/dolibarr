@@ -1759,7 +1759,7 @@ class Societe extends CommonObject
 
 				$this->country_id   = $obj->country_id;
 				$this->country_code = $obj->country_id ? $obj->country_code : '';
-				$this->country = $obj->country_id ? ($langs->transnoentities('Country'.$obj->country_code) != 'Country'.$obj->country_code ? $langs->transnoentities('Country'.$obj->country_code) : $obj->country) : '';
+				$this->country = $obj->country_id ? (($langs->transnoentities('Country'.$obj->country_code) != 'Country'.$obj->country_code) ? $langs->transnoentities('Country'.$obj->country_code) : $obj->country) : '';
 
 				$this->state_id     = $obj->state_id;
 				$this->state_code   = $obj->state_code;
