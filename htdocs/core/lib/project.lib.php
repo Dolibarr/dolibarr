@@ -31,16 +31,17 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
  * Prepare array with list of tabs
  *
  * @param	Project	$project	Object related to tabs
+ * @param	string	$moreparam	More param on url
  * @return	array				Array of tabs to show
  */
-function project_prepare_head(Project $project)
+function project_prepare_head(Project $project, $moreparam = '')
 {
 	global $db, $langs, $conf, $user;
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/card.php?id='.$project->id;
+	$head[$h][0] = DOL_URL_ROOT.'/projet/card.php?id='.((int) $project->id).($moreparam ? '&'.$moreparam : '');
 	$head[$h][1] = $langs->trans("Project");
 	$head[$h][2] = 'project';
 	$h++;
@@ -56,7 +57,7 @@ function project_prepare_head(Project $project)
 		$nbContacts = count($project->liste_contact(-1, 'internal')) + count($project->liste_contact(-1, 'external'));
 		dol_setcache($cachekey, $nbContacts, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 	}
-	$head[$h][0] = DOL_URL_ROOT.'/projet/contact.php?id='.$project->id;
+	$head[$h][0] = DOL_URL_ROOT.'/projet/contact.php?id='.((int) $project->id).($moreparam ? '&'.$moreparam : '');
 	$head[$h][1] = $langs->trans("ProjectContact");
 	if ($nbContacts > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContacts.'</span>';
@@ -80,7 +81,7 @@ function project_prepare_head(Project $project)
 			$nbTasks = count($taskstatic->getTasksArray(0, 0, $project->id, 0, 0));
 			dol_setcache($cachekey, $nbTasks, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks.php?id='.$project->id;
+		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks.php?id='.((int) $project->id).($moreparam ? '&'.$moreparam : '');
 		$head[$h][1] = $langs->trans("Tasks");
 		if ($nbTasks > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbTasks).'</span>';
@@ -113,7 +114,7 @@ function project_prepare_head(Project $project)
 			}
 		}
 
-		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&projectid='.urlencode($project->id);
+		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&projectid='.((int) $project->id).($moreparam ? '&'.$moreparam : '');
 		$head[$h][1] = $langs->trans("TimeSpent");
 		if ($nbTimeSpent > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">...</span>';
@@ -207,7 +208,7 @@ function project_prepare_head(Project $project)
 	if ($conf->eventorganization->enabled && !empty($project->usage_organize_event)) {
 		$langs->load('eventorganization');
 		$head[$h][0] = DOL_URL_ROOT . '/eventorganization/conferenceorbooth_list.php?projectid=' . $project->id;
-		$head[$h][1] = $langs->trans("ConferenceOrBoothTab");
+		$head[$h][1] = $langs->trans("EventOrganization");
 
 		// Enable caching of conf or booth count
 		$nbConfOrBooth = 0;

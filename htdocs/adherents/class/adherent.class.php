@@ -1900,8 +1900,8 @@ class Adherent extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
 		$sql .= " statut = ".self::STATUS_VALIDATED;
 		$sql .= ", datevalid = '".$this->db->idate($now)."'";
-		$sql .= ", fk_user_valid=".$user->id;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= ", fk_user_valid=".((int) $user->id);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::validate", LOG_DEBUG);
 		$result = $this->db->query($sql);

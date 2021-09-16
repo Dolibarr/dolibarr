@@ -717,6 +717,8 @@ class FormCompany extends Form
 					print ' onChange="'.$javaScript.'"';
 				}
 				print '>';
+				print '<option value="-1">&nbsp;</option>';
+
 				$num = $this->db->num_rows($resql);
 				$i = 0;
 				if ($num) {
@@ -779,7 +781,7 @@ class FormCompany extends Form
 
 			$out .= '<select class="flat valignmiddle'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($showempty) {
-				$out .= '<option value="0"></option>';
+				$out .= '<option value="0">&nbsp;</option>';
 			}
 			foreach ($lesTypes as $key => $value) {
 				$out .= '<option value="'.$key.'"';
@@ -996,16 +998,16 @@ class FormCompany extends Form
 	/**
 	 * Return a HTML select for thirdparty type
 	 *
-	 * @param int $selected selected value
-	 * @param string $htmlname HTML select name
-	 * @param string $htmlidname HTML select id
-	 * @param string $typeinput HTML output
-	 * @param string $morecss More css
-	 * @return string HTML string
+	 * @param int 		$selected 		Selected value
+	 * @param string 	$htmlname 		HTML select name
+	 * @param string 	$htmlidname 	HTML select id
+	 * @param string 	$typeinput 		HTML output
+	 * @param string 	$morecss 		More css
+	 * @param string	$allowempty		Allow empty value or not
+	 * @return string 					HTML string
 	 */
-	public function selectProspectCustomerType($selected, $htmlname = 'client', $htmlidname = 'customerprospect', $typeinput = 'form', $morecss = '')
+	public function selectProspectCustomerType($selected, $htmlname = 'client', $htmlidname = 'customerprospect', $typeinput = 'form', $morecss = '', $allowempty = '')
 	{
-
 		global $conf, $langs;
 		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && !empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->fournisseur->enabled)) {
 			return '' ;
@@ -1013,8 +1015,14 @@ class FormCompany extends Form
 
 		$out = '<select class="flat '.$morecss.'" name="'.$htmlname.'" id="'.$htmlidname.'">';
 		if ($typeinput == 'form') {
-			if ($selected == '' || $selected == '-1') {
-				$out .= '<option value="-1">&nbsp;</option>';
+			if ($allowempty || ($selected == '' || $selected == '-1')) {
+				$out .= '<option value="-1">';
+				if (is_numeric($allowempty)) {
+					$out .= '&nbsp;';
+				} else {
+					$out .= $langs->trans($allowempty);
+				}
+				$out .= '</option>';
 			}
 			if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
 				$out .= '<option value="2"'.($selected == 2 ? ' selected' : '').'>'.$langs->trans('Prospect').'</option>';

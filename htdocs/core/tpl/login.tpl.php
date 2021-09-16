@@ -196,7 +196,7 @@ if ($disablenofollow) {
 </div></div>
 
 <?php
-if ($captcha) {
+if (!empty($captcha)) {
 	// Add a variable param to force not using cache (jmobile)
 	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
 	if (preg_match('/\?/', $php_self)) {
@@ -208,7 +208,7 @@ if ($captcha) {
 	?>
 	<!-- Captcha -->
 	<div class="trinputlogin">
-	<div class="tagtd none valignmiddle tdinputlogin">
+	<div class="tagtd none valignmiddle tdinputlogin nowrap">
 
 	<span class="fa fa-unlock"></span>
 	<span class="span-icon-security inline-block">
