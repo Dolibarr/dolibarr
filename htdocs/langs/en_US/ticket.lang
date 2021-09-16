@@ -45,6 +45,8 @@ TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=High
 TicketSeverityShortBLOCKING=Critical, Blocking
 
+TicketCategoryShortOTHER=Other
+
 ErrorBadEmailAddress=Field '%s' incorrect
 MenuTicketMyAssign=My tickets
 MenuTicketMyAssignNonClosed=My open tickets

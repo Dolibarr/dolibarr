@@ -455,8 +455,9 @@ class User extends CommonObject
 			}
 		}
 
-		if ($sid) {    // permet une recherche du user par son SID ActiveDirectory ou Samba
-			$sql .= " AND (u.ldap_sid = '".$this->db->escape($sid)."' OR u.login = '".$this->db->escape($login)."') LIMIT 1";
+		if ($sid) {
+			// permet une recherche du user par son SID ActiveDirectory ou Samba
+			$sql .= " AND (u.ldap_sid = '".$this->db->escape($sid)."' OR u.login = '".$this->db->escape($login)."')";
 		} elseif ($login) {
 			$sql .= " AND u.login = '".$this->db->escape($login)."'";
 		} elseif ($email) {
@@ -465,6 +466,11 @@ class User extends CommonObject
 			$sql .= " AND u.rowid = ".((int) $id);
 		}
 		$sql .= " ORDER BY u.entity ASC"; // Avoid random result when there is 2 login in 2 different entities
+
+		if ($sid) {
+			// permet une recherche du user par son SID ActiveDirectory ou Samba
+			$sql .= ' '.$this->db->plimit(1);
+		}
 
 		$result = $this->db->query($sql);
 		if ($result) {

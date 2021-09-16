@@ -103,7 +103,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>2, 'index'=>1, 'comment'=>"Reference of object"),
-		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'Attendee', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"LinkToThirparty", 'picto'=>'company', 'css'=>'maxwidth500'),
+		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status = 1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'Attendee', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"LinkToThirparty", 'picto'=>'company', 'css'=>'maxwidth500'),
 		'fk_actioncomm' => array('type'=>'integer:ActionComm:comm/action/class/actioncomm.class.php:1', 'label'=>'ConferenceOrBooth', 'enabled'=>'1', 'position'=>53, 'notnull'=>0, 'visible'=>0, 'index'=>1, 'picto'=>'agenda'),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'1', 'position'=>54, 'notnull'=>1, 'visible'=>0, 'index'=>1, 'picto'=>'project'),
 		'email' => array('type'=>'mail', 'label'=>'Email', 'enabled'=>'1', 'position'=>55, 'notnull'=>1, 'visible'=>1, 'index'=>1,),
@@ -197,8 +197,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 		if (!empty($conf->global->EVENTORGANIZATION_FILTERATTENDEES_CAT)) {
 			$this->fields['fk_soc']['type'] .= ' AND rowid IN (SELECT DISTINCT c.fk_soc FROM '.MAIN_DB_PREFIX.'categorie_societe as c WHERE c.fk_categorie='.(int) $conf->global->EVENTORGANIZATION_FILTERATTENDEES_CAT.')';
 		}
-		if ($conf->global->EVENTORGANIZATION_FILTERATTENDEES_TYPE!=='') {
-			$this->fields['fk_soc']['type'] .= ' AND client='.(int) $conf->global->EVENTORGANIZATION_FILTERATTENDEES_TYPE;
+		if (isset($conf->global->EVENTORGANIZATION_FILTERATTENDEES_TYPE)
+			&& $conf->global->EVENTORGANIZATION_FILTERATTENDEES_TYPE !== ''
+			&& $conf->global->EVENTORGANIZATION_FILTERATTENDEES_TYPE !== '-1') {
+			$this->fields['fk_soc']['type'] .= ' AND client = '.(int) $conf->global->EVENTORGANIZATION_FILTERATTENDEES_TYPE;
 		}
 
 		// Example to show how to set values of fields definition dynamically
@@ -390,7 +392,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 * @param  string      $sortfield    Sort field
 	 * @param  int         $limit        limit
 	 * @param  int         $offset       Offset
-	 * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
+	 * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...). WARNING: customerurl must be a sanitized SQL string.
 	 * @param  string      $filtermode   Filter mode (AND or OR)
 	 * @return array|int                 int <0 if KO, array of pages if OK
 	 */
@@ -416,9 +418,9 @@ class ConferenceOrBoothAttendee extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid' || $key == 't.fk_soc' || $key == 't.fk_project' || $key == 't.fk_actioncomm') {
-					$sqlwhere[] = $key.'='.$value;
+					$sqlwhere[] = $key.'='.((int) $value);
 				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
+					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
 				} elseif (strpos($value, '%') === false) {
@@ -949,7 +951,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		$this->lines = array();
 
 		$objectline = new ConferenceOrBoothAttendeeLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_conferenceorboothattendee = '.$this->id));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_conferenceorboothattendee = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;
