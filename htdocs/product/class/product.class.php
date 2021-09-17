@@ -5302,9 +5302,6 @@ class Product extends CommonObject
 		}
 
 		$this->stock_theorique = $this->stock_reel + $stock_inproduction;
-		var_dump($this->id);
-		var_dump($this->stock_theorique);
-		exit();
 
 		// Stock decrease mode
 		if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
