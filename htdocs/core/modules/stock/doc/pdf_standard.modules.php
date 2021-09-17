@@ -208,8 +208,6 @@ class pdf_standard extends ModelePDFStock
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "deliveries"));
 
-		$nblines = count($object->lines);
-
 		if ($conf->stock->dir_output) {
 			// Definition of $dir and $file
 			if ($object->specimen) {
