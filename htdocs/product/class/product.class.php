@@ -5302,6 +5302,7 @@ class Product extends CommonObject
 		}
 
 		$this->stock_theorique = $this->stock_reel + $stock_inproduction;
+		var_dump($this->id);
 		var_dump($this->stock_theorique);
 		exit();
 
