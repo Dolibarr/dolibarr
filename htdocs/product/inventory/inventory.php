@@ -748,7 +748,7 @@ if ($object->id > 0) {
 			print $warehouse_static->getNomUrl(1);
 			print '</td>';
 			print '<td id="id_'.$obj->rowid.'_product">';
-			print $product_static->getNomUrl(1);
+			print $product_static->getNomUrl(1).' - '.$product_static->label;
 			print '</td>';
 
 			if ($conf->productbatch->enabled) {
