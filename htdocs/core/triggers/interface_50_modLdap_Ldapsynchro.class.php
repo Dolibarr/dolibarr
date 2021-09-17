@@ -311,6 +311,14 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
 					}
 
+					// Avoid Ldap error due to empty member 
+					if(isset($info['member']) && empty($info['member'])){
+						unset($info['member']);
+					}
+
+					if ($ldap->serverType == "activedirectory") {
+						$info['sAMAccountName'] = $object->name;
+					}
 					$result = $ldap->add($dn, $info, $user);
 				}
 
