@@ -918,10 +918,17 @@ class FormTicket
 					if (arraynotparents.includes(this.value) || $(this).attr("child_id") == '.$use_multilevel.') {
 						$("#ticketcategory_select")[0].value = this.value;
 						$("#ticketcategory_select_child_id")[0].value = $(this).attr("child_id");
-						console.log("We choose to select "+ $("#ticketcategory_select")[0].value );
+						console.log("We choose to select "+ this.value);
 					}else{
-						$("#ticketcategory_select")[0].value = "";
-						$("#ticketcategory_select_child_id")[0].value = "";
+						if ($("#'.$htmlname.'_child_'.$levelid.' option").length <= 1) {
+							$("#ticketcategory_select")[0].value = this.value;
+							$("#ticketcategory_select_child_id")[0].value = $(this).attr("child_id");
+							console.log("We choose to select "+ this.value + " and next combo has no item, so we keep this selection");
+						} else {
+							console.log("We choose to select "+ this.value + " but next combo has some item, so we clean selected item");
+							$("#ticketcategory_select")[0].value = "";
+							$("#ticketcategory_select_child_id")[0].value = "";
+						}
 					}
 
 					console.log("We select a new value into combo child_id="+child_id);
@@ -937,7 +944,8 @@ class FormTicket
 
 					/* Now we enable the next combo */
 					$("#'.$htmlname.'_child_'.$levelid.'").val("");
-					if (!arraynotparents.includes(this.value)) {
+					if (!arraynotparents.includes(this.value) && $("#'.$htmlname.'_child_'.$levelid.' option").length > 1) {
+						console.log($("#'.$htmlname.'_child_'.$levelid.' option").length);
 						$("#'.$htmlname.'_child_'.$levelid.'").show()
 					} else {
 						$("#'.$htmlname.'_child_'.$levelid.'").hide()
