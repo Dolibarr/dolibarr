@@ -1805,7 +1805,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</tr>'."\n";
 
 			// API key
-			if (!empty($conf->api->enabled) && ($user->id == $id || $user->admin)) {
+			if (!empty($conf->api->enabled) && ($user->id == $id || $user->admin || $user->rights->api->apikey->generate)) {
 				print '<tr><td>'.$langs->trans("ApiKey").'</td>';
 				print '<td>';
 				if (!empty($object->api_key)) {
@@ -2328,7 +2328,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print "</td></tr>\n";
 
 			// API key
-			if (!empty($conf->api->enabled) && ($user->id == $id || $user->admin)) {
+			if (!empty($conf->api->enabled) && ($user->id == $id || $user->admin || $user->rights->api->apikey->generate)) {
 				print '<tr><td>'.$langs->trans("ApiKey").'</td>';
 				print '<td>';
 				print '<input class="minwidth300" maxsize="32" type="text" id="api_key" name="api_key" value="'.$object->api_key.'" autocomplete="off">';
