@@ -91,5 +91,8 @@ ALTER TABLE llx_mrp_mo ADD COLUMN mrptype integer DEFAULT 0;
 
 DELETE FROM llx_menu WHERE type = 'top' AND module = 'cashdesk' AND mainmenu = 'cashdesk';
 
-
 INSERT INTO llx_c_action_trigger (code, label, description, elementtype, rang) values ('MEMBER_EXCLUDE', 'Member excluded', 'Executed when a member is excluded', 'member', 27);
+
+ALTER TABLE llx_product_lot ADD COLUMN barcode varchar(180) DEFAULT NULL;
+ALTER TABLE llx_product_lot ADD COLUMN fk_barcode_type integer DEFAULT NULL;
+
