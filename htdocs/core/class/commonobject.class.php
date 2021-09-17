@@ -3845,7 +3845,13 @@ abstract class CommonObject
 						$classfile = 'conferenceorbooth';
 						$classname = 'ConferenceOrBooth';
 						$module = 'eventorganization';
+					} elseif ($objecttype == 'mo') {
+						$classpath = 'mrp/class';
+						$classfile = 'mo';
+						$classname = 'Mo';
+						$module = 'mrp';
 					}
+
 
 					// Here $module, $classfile and $classname are set
 					if ($conf->$module->enabled && (($element != $this->element) || $alsosametype)) {
