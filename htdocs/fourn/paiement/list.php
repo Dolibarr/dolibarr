@@ -35,8 +35,7 @@
 
 require '../../main.inc.php';
 
-// Security check
-if ($user->socid) $socid = $user->socid;
+
 
 // doesn't work :-(
 // restrictedArea($user, 'fournisseur');
@@ -63,6 +62,9 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage			= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'vendorpaymentlist';
 
 $socid = GETPOST('socid', 'int');
+
+// Security check
+if ($user->socid) $socid = $user->socid;
 
 $search_ref				= GETPOST('search_ref', 'alpha');
 $search_day				= GETPOST('search_day', 'int');
