@@ -782,7 +782,9 @@ class ActionComm extends CommonObject
 				$this->elementid = $obj->elementid;
 				$this->elementtype = $obj->elementtype;
 
-				$this->fetchResources();
+                $this->fetch_optionals();
+
+                $this->fetchResources();
 			}
 			$this->db->free($resql);
 		} else {
