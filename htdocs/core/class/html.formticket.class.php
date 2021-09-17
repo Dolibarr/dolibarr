@@ -761,6 +761,7 @@ class FormTicket
 			$arrayidused = array();
 			$arrayidusedconcat = array();
 			$arraycodenotparent = array();
+			$arraycodenotparent[] = "";
 
 			$stringtoprint = '<span class="supportemailfield bold">'.$langs->trans("GroupOfTicket").'</span> ';
 			$stringtoprint .= '<select id ="'.$htmlname.'" class="maxwidth500 minwidth400" child_id="0">';
