@@ -822,8 +822,7 @@ class FormTicket
 				$stringtoprint .= '<select id ="'.$htmlname.'_child_'.$levelid.'" class="maxwidth500 minwidth400 groupticketchild" child_id="'.$levelid.'">';
 				$stringtoprint .= '<option value="">&nbsp;</option>';
 
-				$sql = "SELECT ctc.rowid, ctc.code, ctc.label, ctc.fk_parent, ctc.public, ctcjoin.code as codefather, ";
-				//$sql .= $this->db->ifsql("ctc.rowid NOT IN (SELECT ctcfather.rowid FROM llx_c_ticket_category as ctcfather JOIN llx_c_ticket_category as ctcjoin ON ctcfather.rowid = ctcjoin.fk_parent)", "'NOTPARENT'", "'PARENT'")." as isparent";
+				$sql = "SELECT ctc.rowid, ctc.code, ctc.label, ctc.fk_parent, ctc.public, ctcjoin.code as codefather";
 				$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category as ctc";
 				$sql .= " JOIN ".MAIN_DB_PREFIX."c_ticket_category as ctcjoin ON ctc.fk_parent = ctcjoin.rowid";
 				$sql .= " WHERE ctc.active > 0 AND ctc.entity = ".((int) $conf->entity);
