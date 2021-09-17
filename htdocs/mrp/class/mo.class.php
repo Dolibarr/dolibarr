@@ -659,6 +659,12 @@ class Mo extends CommonObject
 					$role = 'toconsume';
 					$moline->role = 'toproduce';
 				}
+			} else {
+				if ($this->mrptype == 1) {
+					$moline->role = 'toconsume';
+				} else {
+					$moline->role = 'toproduce';
+				}
 			}
 
 			$resultline = $moline->create($user, false); // Never use triggers here
@@ -1200,7 +1206,7 @@ class Mo extends CommonObject
 		$this->lines = array();
 
 		$objectline = new MoLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_mo = '.$this->id));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_mo = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;

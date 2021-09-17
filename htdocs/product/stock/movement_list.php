@@ -548,7 +548,7 @@ if (!empty($search_user)) {
 if (!empty($search_batch)) {
 	$sql .= natural_search('m.batch', $search_batch);
 }
-if (!empty($product_id)) {
+if (!empty($product_id) && $product_id != '-1') {
 	$sql .= natural_search('p.rowid', $product_id);
 }
 if (!empty($search_fk_projet) && $search_fk_projet != '-1') {

@@ -1287,6 +1287,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 
 	$objecttmp = new $objectclass($db);
 	$nbok = 0;
+	$TMsg = array();
 	foreach ($toselect as $toselectid) {
 		$result = $objecttmp->fetch($toselectid);
 		if ($result > 0) {
@@ -1314,7 +1315,9 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 				$result = $objecttmp->delete($user);
 			}
 
-			if ($result <= 0) {
+			if (empty($result)) { // if delete returns 0, there is at least one object linked
+				$TMsg = array_merge($objecttmp->errors, $TMsg);
+			} elseif ($result < 0) { // if delete returns is < 0, there is an error, we break and rollback later
 				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 				$error++;
 				break;
@@ -1328,16 +1331,25 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 		}
 	}
 
-	if (!$error) {
+	if (empty($error)) {
+		// Message for elements well deleted
 		if ($nbok > 1) {
 			setEventMessages($langs->trans("RecordsDeleted", $nbok), null, 'mesgs');
-		} else {
+		} elseif ($nbok == 1) {
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		}
+
+		// Message for elements which can't be deleted
+		if (!empty($TMsg)) {
+			sort($TMsg);
+			setEventMessages('', array_unique($TMsg), 'warnings');
+		}
+
 		$db->commit();
 	} else {
 		$db->rollback();
 	}
+
 	//var_dump($listofobjectthirdparties);exit;
 }
 

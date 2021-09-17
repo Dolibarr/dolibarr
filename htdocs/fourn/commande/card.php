@@ -156,7 +156,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	$backurlforlist = DOL_URL_ROOT.'/fourn/commande/list.php'.($socid > 0 ? '&socid='.((int) $socid)  : '');
+	$backurlforlist = DOL_URL_ROOT.'/fourn/commande/list.php'.($socid > 0 ? '?socid='.((int) $socid)  : '');
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
@@ -759,7 +759,7 @@ if (empty($reshook)) {
 			GETPOST('product_desc', 'restricthtml'),
 			$ht,
 			price2num(GETPOST('qty'), 'MS'),
-			price2num(GETPOST('remise_percent'), 2),
+			price2num(GETPOST('remise_percent'), '', 2),
 			$vat_rate,
 			$localtax1_rate,
 			$localtax2_rate,

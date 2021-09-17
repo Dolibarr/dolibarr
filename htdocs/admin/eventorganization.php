@@ -16,7 +16,7 @@
  */
 
 /**
- * \file    htdocs/admin/setup.php
+ * \file    htdocs/admin/eventorganization.php
  * \ingroup eventorganization
  * \brief   EventOrganization setup page.
  */
@@ -213,7 +213,7 @@ if ($action == 'edit') {
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	foreach ($arrayofparameters as $constname => $val) {
 		if ($val['enabled']==1) {
@@ -264,7 +264,7 @@ if ($action == 'edit') {
 			} elseif (preg_match('/thirdparty_type/', $val['type'])) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 				$formcompany = new FormCompany($db);
-				print $formcompany->selectProspectCustomerType($conf->global->{$constname}, $constname);
+				print $formcompany->selectProspectCustomerType($conf->global->{$constname}, $constname, 'customerorprospect', 'form', '', 1);
 			} elseif ($val['type'] == 'securekey') {
 				print '<input required="required" type="text" class="flat" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ?GETPOST($constname, 'alpha') : $conf->global->{$constname}).'" size="40">';
 				if (!empty($conf->use_javascript_ajax)) {
@@ -305,7 +305,7 @@ if ($action == 'edit') {
 } else {
 	if (!empty($arrayofparameters)) {
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+		print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 		foreach ($arrayofparameters as $constname => $val) {
 			if ($val['enabled']==1) {
@@ -362,7 +362,7 @@ if ($action == 'edit') {
 					$product = new Product($db);
 					$resprod = $product->fetch($conf->global->{$constname});
 					if ($resprod > 0) {
-						print $product->ref;
+						print $product->getNomUrl(1);
 					} elseif ($resprod < 0) {
 						setEventMessages(null, $object->errors, "errors");
 					}

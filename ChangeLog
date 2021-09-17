@@ -2,6 +2,50 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 14.0.2 compared to 14.0.1 *****
+
+FIX: #18353 Invoice list translation issue
+FIX: #18375 SQL Error on tasks statistics
+FIX: #18465
+FIX: #18484
+FIX: #18531
+FIX: #18542 REST API: set global $user variable to DolibarrApiAccess::user.
+FIX: #18544 Shipment REST API: load thirdparty object into the shipment before validating.
+FIX: #18544 Shipment rest api: load thirdparty object when validating
+FIX: #18565
+FIX: #18589 #18617
+FIX: #18591 : Remove double quotes of SQL Queries for postgresql compatibility
+FIX: #18666 Order / Shipment list: Don't SQL JOIN category table when not necessary.
+FIX: Accountancy - Some problems of length with general & subledger account
+FIX: add DISTINCT
+FIX: Add option $noescapecommand in executeCLI for better compatibility
+FIX: Add token to remove error when removing widget
+FIX: Add token when remove the last widget on home page
+FIX: an approved holiday can be canceled by an admin.
+FIX: better sql request
+FIX: change LOG_DEBUG with LOG_WARNING in syslog and remove sql error in syslog (already done)
+FIX: Collapsing of extrafields has disappeared.
+FIX: Date of payment of subscription must not be set to 1970-01-01.
+FIX: Export of website generates a package that contains a sql error
+FIX: Field already present in SQL request
+FIX: increase maxlength of password input
+FIX: invoice fetch not found syslog debug level instead of error
+FIX: Invoice list - Wrong name for column total_tva
+FIX: invoice validation: when checking if any vat rate has a negative amount, prevent false positives with -1E-14 amounts
+FIX: Manage credit note on situation invoice for calculate margin
+FIX: Menu List of project was not visible.
+FIX: migration script
+FIX: multicompany transverse mode compatibility
+FIX: option "Default value for field 'Refuse bulk emailings'"
+FIX: Recommended session.cookie_samesite must be 'Lax' not 'Strict'.
+FIX: Relative discount with high nb of decimals
+FIX: salary extrafields don't work and table is not well named
+FIX: Supplier invoice list - Wrong language key used
+FIX: wrong table_element_line
+FIX: wrong users count in multicompany transverse mode
+FIX: #yogosha6944 Protection against traversal path.
+
+
 ***** ChangeLog for 14.0.1 compared to 14.0.0 *****
 
 FIX: $conf->task used but it does not exist, use $conf->projet instead
