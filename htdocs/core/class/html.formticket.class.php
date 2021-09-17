@@ -243,6 +243,65 @@ class FormTicket
 			}
 		}
 
+		if ($conf->knowledgemanagement->enabled) {
+			// KM Articles
+			print '<tr id="KWwithajax"></tr>';
+			print '<!-- Script to manage change of ticket group -->
+			<script>
+			jQuery(document).ready(function() {
+				function groupticketchange(){
+					console.log("We called groupticketchange, so we try to load list KM linked to event");
+					$("#KWwithajax").html("");
+					idgroupticket = $("#selectcategory_code").val();
+	
+					console.log("We have selected id="+idgroupticket);
+	
+					if (idgroupticket != "") {
+						$.ajax({ url: \''.DOL_URL_ROOT.'/core/ajax/fetchKnowledgeRecord.php\',
+							 data: { action: \'getKnowledgeRecord\', idticketgroup: idgroupticket, token: \''.newToken().'\', lang:\''.$langs->defaultlang.'\', popupurl:false},
+							 type: \'GET\',
+							 success: function(response) {
+								var urllist = \'\';
+								console.log("We received response "+response);
+								response = JSON.parse(response)
+								for (key in response) {
+									console.log(response[key])
+									urllist += "<li>" + response[key].title + ": " +response[key].url+"</li>";
+								}
+								if (urllist != "") {
+									console.log(urllist)
+									$("#KWwithajax").html(\'<td>'.$langs->trans("KMFoundForTicketGroup").'</td><td><ul style="list-style:none;padding-left: 0;">\'+urllist+\'</ul></td>\');
+									$("#KWwithajax").show();
+								}
+							 },
+							 error : function(output) {
+								console.log("error");
+							 },
+						});
+					}
+				};
+				$("#selectcategory_code").bind("change",function() { groupticketchange(); });
+				MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+				var trackChange = function(element) {
+				var observer = new MutationObserver(function(mutations, observer) {
+					if (mutations[0].attributeName == "value") {
+					$(element).trigger("change");
+					}
+				});
+				observer.observe(element, {
+					attributes: true
+				});
+				}
+	
+				trackChange($("#selectcategory_code")[0]);
+
+				if ($("#selectcategory_code").val() != "") {
+					groupticketchange();
+				}
+			});
+			</script>'."\n";
+		}
+
 		// MESSAGE
 		$msg = GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : '';
 		print '<tr><td><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span></label></td><td>';
