@@ -201,7 +201,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	$backurlforlist = DOL_URL_ROOT.'/product/list.php';
+	$backurlforlist = DOL_URL_ROOT.'/product/list.php?type='.$type;
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
