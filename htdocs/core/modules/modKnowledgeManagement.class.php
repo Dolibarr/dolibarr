@@ -362,6 +362,19 @@ class modKnowledgeManagement extends DolibarrModules
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user'=>2
 		);
+		$this->menu[$r++] = array(
+			'fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=knowledgemanagement_knowledgerecord',
+			'type' => 'left',
+			'titre' => 'Categories',
+			'mainmenu' => 'ticket',
+			'url' => '/categories/index.php?type=13',
+			'langs' => 'knowledgemanagement',
+			'position' => 112,
+			'enabled' => '$conf->knowledgemanagement->enabled',
+			'perms' => '$user->rights->knowledgemanagement->knowledgerecord->read',
+			'target' => '',
+			'user' => 0
+		);
 
 		/* END MODULEBUILDER LEFTMENU KNOWLEDGERECORD */
 

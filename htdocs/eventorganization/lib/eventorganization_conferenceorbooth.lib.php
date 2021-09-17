@@ -196,7 +196,7 @@ function conferenceorboothattendeePrepareHead($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/eventorganization/conferenceorboothattendee_card.php", 1).'?id='.$object->id.'&conforboothid='.$object->fk_actioncomm;
+	$head[$h][0] = DOL_URL_ROOT."/eventorganization/conferenceorboothattendee_card.php?id=".((int) $object->id).($object->fk_actioncomm > 0 ? '&conforboothid='.((int) $object->fk_actioncomm) : '').($object->fk_project > 0 ? '&withproject=1&fk_project='.((int) $object->fk_project) : '');
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;

@@ -946,7 +946,7 @@ class BOM extends CommonObject
 		$this->lines = array();
 
 		$objectline = new BOMLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_bom = '.$this->id));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_bom = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;
