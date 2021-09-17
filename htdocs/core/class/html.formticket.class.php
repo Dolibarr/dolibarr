@@ -253,9 +253,9 @@ class FormTicket
 					console.log("We called groupticketchange, so we try to load list KM linked to event");
 					$("#KWwithajax").html("");
 					idgroupticket = $("#selectcategory_code").val();
-	
+
 					console.log("We have selected id="+idgroupticket);
-	
+
 					if (idgroupticket != "") {
 						$.ajax({ url: \''.DOL_URL_ROOT.'/core/ajax/fetchKnowledgeRecord.php\',
 							 data: { action: \'getKnowledgeRecord\', idticketgroup: idgroupticket, token: \''.newToken().'\', lang:\''.$langs->defaultlang.'\', popupurl:false},
@@ -292,7 +292,7 @@ class FormTicket
 					attributes: true
 				});
 				}
-	
+
 				trackChange($("#selectcategory_code")[0]);
 
 				if ($("#selectcategory_code").val() != "") {
@@ -757,8 +757,11 @@ class FormTicket
 		} elseif ($htmlname!='') {
 			$groupticket=GETPOST($htmlname, 'aZ09');
 			$child_id=GETPOST($htmlname.'_child_id', 'aZ09')?GETPOST($htmlname.'_child_id', 'aZ09'):0;
-			$arraycodenotparent[] = "";
+
 			$arrayidused = array();
+			$arrayidusedconcat = array();
+			$arraycodenotparent = array();
+
 			$stringtoprint = '<span class="supportemailfield bold">'.$langs->trans("GroupOfTicket").'</span> ';
 			$stringtoprint .= '<select id ="'.$htmlname.'" class="maxwidth500 minwidth400" child_id="0">';
 			$stringtoprint .= '<option value="">&nbsp;</option>';
@@ -798,6 +801,7 @@ class FormTicket
 							$arraycodenotparent[] = $groupvalue;
 						}
 						$arrayidused[] = $grouprowid;
+						$arrayidusedconcat[] = $grouprowid;
 					}
 					$i++;
 				}
@@ -812,20 +816,23 @@ class FormTicket
 			}
 			$stringtoprint .= '</select>&nbsp;';
 
-			$levelid = 1;
-			while ($levelid <= $use_multilevel) {
+			$levelid = 1;	// The first combobox
+			while ($levelid <= $use_multilevel) {	// Loop to take the child of the combo
 				$tabscript = array();
 				$stringtoprint .= '<select id ="'.$htmlname.'_child_'.$levelid.'" class="maxwidth500 minwidth400 groupticketchild" child_id="'.$levelid.'">';
 				$stringtoprint .= '<option value="">&nbsp;</option>';
 
 				$sql = "SELECT ctc.rowid, ctc.code, ctc.label, ctc.fk_parent, ctc.public, ctcjoin.code as codefather, ";
-				$sql .= $this->db->ifsql("ctc.rowid NOT IN (SELECT ctcfather.rowid FROM llx_c_ticket_category as ctcfather JOIN llx_c_ticket_category as ctcjoin ON ctcfather.rowid = ctcjoin.fk_parent)", "'NOTPARENT'", "'PARENT'")." as isparent";
+				//$sql .= $this->db->ifsql("ctc.rowid NOT IN (SELECT ctcfather.rowid FROM llx_c_ticket_category as ctcfather JOIN llx_c_ticket_category as ctcjoin ON ctcfather.rowid = ctcjoin.fk_parent)", "'NOTPARENT'", "'PARENT'")." as isparent";
 				$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category as ctc";
 				$sql .= " JOIN ".MAIN_DB_PREFIX."c_ticket_category as ctcjoin ON ctc.fk_parent = ctcjoin.rowid";
 				$sql .= " WHERE ctc.active > 0 AND ctc.entity = ".((int) $conf->entity);
+				$sql .= " AND ctc.rowid NOT IN (".$this->db->sanitize(join(',', $arrayidusedconcat)).")";
+
 				if ($filtertype == 'public=1') {
 					$sql .= " AND ctc.public = 1";
 				}
+				// Add a test to take only record that are direct child
 				if (!empty($arrayidused)) {
 					$sql .= " AND ctc.fk_parent IN ( ";
 					foreach ($arrayidused as $idused) {
@@ -858,6 +865,7 @@ class FormTicket
 							$isparent = $obj->isparent;
 							$fatherid = $obj->fk_parent;
 							$arrayidused[] = $grouprowid;
+							$arrayidusedconcat[] = $grouprowid;
 							$groupcodefather = $obj->codefather;
 							if ($isparent == 'NOTPARENT') {
 								$arraycodenotparent[] = $groupvalue;
@@ -882,7 +890,7 @@ class FormTicket
 				$stringtoprint .='</select>';
 
 				$stringtoprint .='<script>';
-				$stringtoprint .='arraynotparents = '.json_encode($arraycodenotparent).';';
+				$stringtoprint .='arraynotparents = '.json_encode($arraycodenotparent).';';	// when the last visible combo list is number x, this is the array of group
 				$stringtoprint .='if (arraynotparents.includes($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'")[0].value)){
 					console.log("'.$htmlname.'_child_'.$levelid.'")
 					if($("#'.$htmlname.'_child_'.$levelid.'")[0].value == "" && ($("#'.$htmlname.'_child_'.$levelid.'").attr("child_id")>'.$child_id.')){
