@@ -130,7 +130,7 @@ class MultiCurrency extends CommonObject
 		if (empty($this->entity) || $this->entity <= 0) {
 			$this->entity = $conf->entity;
 		}
-		$now = date('Y-m-d H:i:s');
+		$now = dol_now();
 
 		// Insert request
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'(';
@@ -140,11 +140,11 @@ class MultiCurrency extends CommonObject
 		$sql .= ' date_create,';
 		$sql .= ' fk_user';
 		$sql .= ') VALUES (';
-		$sql .= ' \''.$this->db->escape($this->code).'\',';
-		$sql .= ' \''.$this->db->escape($this->name).'\',';
-		$sql .= ' \''.$this->entity.'\',';
-		$sql .= ' \''.$now.'\',';
-		$sql .= ' \''.$user->id.'\'';
+		$sql .= " '".$this->db->escape($this->code)."',";
+		$sql .= " '".$this->db->escape($this->name)."',";
+		$sql .= " ".((int) $this->entity).",";
+		$sql .= " '".$this->db->idate($now)."',";
+		$sql .= " ".((int) $user->id);
 		$sql .= ')';
 
 		$this->db->begin();
@@ -245,7 +245,7 @@ class MultiCurrency extends CommonObject
 	{
 		$sql = 'SELECT cr.rowid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as cr';
-		$sql .= ' WHERE cr.fk_multicurrency = '.$this->id;
+		$sql .= ' WHERE cr.fk_multicurrency = '.((int) $this->id);
 		$sql .= ' ORDER BY cr.date_sync DESC';
 
 		$this->rates = array();
@@ -479,8 +479,8 @@ class MultiCurrency extends CommonObject
 	{
 		$sql = 'SELECT cr.rowid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as cr';
-		$sql .= ' WHERE cr.fk_multicurrency = '.$this->id;
-		$sql .= ' AND cr.date_sync = (SELECT MAX(cr2.date_sync) FROM '.MAIN_DB_PREFIX.$this->table_element_line.' AS cr2 WHERE cr2.fk_multicurrency = '.$this->id.')';
+		$sql .= " WHERE cr.fk_multicurrency = ".((int) $this->id);
+		$sql .= " AND cr.date_sync = (SELECT MAX(cr2.date_sync) FROM ".MAIN_DB_PREFIX.$this->table_element_line." AS cr2 WHERE cr2.fk_multicurrency = ".((int) $this->id).")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -781,7 +781,7 @@ class CurrencyRate extends CommonObjectLine
 		$sql .= ' fk_multicurrency,';
 		$sql .= ' entity';
 		$sql .= ') VALUES (';
-		$sql .= ' '.$this->rate.',';
+		$sql .= ' '.((float) $this->rate).',';
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " ".((int) $fk_multicurrency).",";
 		$sql .= " ".((int) $this->entity);
@@ -880,13 +880,13 @@ class CurrencyRate extends CommonObjectLine
 		$this->rate = price2num($this->rate);
 
 		// Update request
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
-		$sql .= ' rate='.$this->rate;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+		$sql .= "SET rate =".((float) $this->rate);
 		if (!empty($this->date_sync)) {
 			$sql .= ", date_sync='".$this->db->idate($this->date_sync)."'";
 		}
 		if (!empty($this->fk_multicurrency)) {
-			$sql .= ', fk_multicurrency='.$this->fk_multicurrency;
+			$sql .= ', fk_multicurrency='.((int) $this->fk_multicurrency);
 		}
 		$sql .= ' WHERE rowid='.((int) $this->id);
 

@@ -116,7 +116,7 @@ if ($action == 'update' && !empty($user->rights->stock->mouvement->creer)) {
 	$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
 	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
-	$sql .= ' WHERE id.fk_inventory = '.$object->id;
+	$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -168,7 +168,7 @@ if ($action =='updateinventorylines' && $permissiontoadd) {
 	$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
 	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
-	$sql .= ' WHERE id.fk_inventory = '.$object->id;
+	$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
 
 	$db->begin();
 
@@ -449,7 +449,7 @@ if ($object->id > 0) {
 	print dol_get_fiche_end();
 
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form name="formrecord" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="updateinventorylines">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -537,11 +537,116 @@ if ($object->id > 0) {
 
 	// Popup for mass barcode scanning
 	if ($action == 'updatebyscaning') {
+		if ($permissiontoadd) {
+			print '<script>';
+			print 'function barcodescannerjs(){
+				console.log("We catch inputs in sacnner box");
+				var barcodemode = $("input[name=barcodemode]:checked").val();
+				var barcodeproductqty = $("input[name=barcodeproductqty]").val();
+				var textarea = $("textarea[name=barcodelist]").val();
+				var textarray = textarea.split("\n");
+				if(textarray[0] != ""){
+					var tabproduct = [];
+					$(".expectedqty").each(function(){
+						id = this.id;
+						warehouse = $("#"+id+"_warehouse").children().first().text();
+						productbarcode = $("#"+id+"_product").children().first().attr("title");
+						productbarcode = productbarcode.split("<br>");
+						productbarcode = productbarcode.filter(barcode => barcode.includes("'.$langs->trans('BarCode').'"))[0];
+						productbarcode = productbarcode.slice(productbarcode.indexOf("</b> ")+5);
+
+						productbatchcode = $("#"+id+"_batch").text();
+						if(barcodemode != "barcodeforproduct"){
+							tabproduct.forEach(product=>{
+								if(product.Batch == productbatchcode){
+									alert("'.$langs->trans('ErrorSameBatchNumber').': "+productbatchcode);
+									throw"'.$langs->trans('ErrorSameBatchNumber').': "+productbatchcode;
+								}
+							})
+						}
+						tabproduct.push({\'Id\':id,\'Warehouse\':warehouse,\'Barcode\':productbarcode,\'Batch\':productbatchcode,\'Qty\':0});
+					})
+					switch(barcodemode){
+						case "barcodeforautodetect":
+							textarray.forEach(function(element,index){
+								console.log("Product autodetect "+(index+=1)+": "+element);
+								BatchCodeDoesNotExist=0;
+								tabproduct.forEach(product => {
+									if(product.Batch == element || product.Barcode == element){
+										product.Qty+=1;
+									}else{
+										BatchCodeDoesNotExist+=1;
+									}
+								})
+								if(BatchCodeDoesNotExist >= tabproduct.length){
+									alert("'.$langs->trans('ProductDoesNotExist').': "+element);
+								}
+							})
+							break;
+						case "barcodeforproduct":
+							textarray.forEach(function(element,index){
+								console.log("Product "+(index+=1)+": "+element);
+								BarCodeDoesNotExist=0;
+								tabproduct.forEach(product => {
+									if(product.Barcode == element){
+										product.Qty+=1;
+									}else{
+										BarCodeDoesNotExist+=1;
+									}
+								})
+								if(BarCodeDoesNotExist >= tabproduct.length){
+									alert("'.$langs->trans('ProductBarcodeDoesNotExist').': "+element);
+								}
+							})
+							break;
+						case "barcodeforlotserial":
+							textarray.forEach(function(element,index){
+								console.log("Product batch/serial "+(index+=1)+": "+element);
+								BatchCodeDoesNotExist=0;
+								tabproduct.forEach(product => {
+									if(product.Batch == element){
+										product.Qty+=1;
+									}else{
+										BatchCodeDoesNotExist+=1;
+									}
+								})
+								if(BatchCodeDoesNotExist >= tabproduct.length){
+									alert("'.$langs->trans('ProductBatchDoesNotExist').': "+element);
+								}
+							})
+							break;
+						default:
+							alert("'.$langs->trans("ErrorWrongBarcodemode").' \""+barcodemode+"\"");
+							throw"'.$langs->trans('ErrorWrongBarcodemode').' \""+barcodemode+"\"";
+					}
+					tabproduct.forEach(product => {
+						if(product.Qty!=0){
+							console.log("We change #"+product.Id+"_input to match input in scanner box");
+							$("#"+product.Id+"_input").val(product.Qty*barcodeproductqty);
+						}
+					})
+					document.forms["formrecord"].submit();
+				}
+			}';
+			print '</script>';
+		}
 		include DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 		$formother = new FormOther($db);
 		print $formother->getHTMLScannerForm();
 	}
 
+	//Call method to undo changes in real qty
+	print '<script>';
+	print 'jQuery(document).ready(function() {
+		$(".undochangesqty").on("click",function undochangesqty(){
+			id = this.id;
+			id = id.split("_")[1];
+			tmpvalue = $("#id_"+id+"_input_tmp").val()
+			$("#id_"+id+"_input")[0].value = tmpvalue;
+			document.forms["formrecord"].submit();
+		});
+	});';
+	print '</script>';
 
 	print '<div class="fichecenter">';
 	//print '<div class="fichehalfleft">';
@@ -616,7 +721,7 @@ if ($object->id > 0) {
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
-			if (is_object($cacheOfWarehouses[$obj->fk_warehouse])) {
+			if (isset($cacheOfWarehouses[$obj->fk_warehouse])) {
 				$warehouse_static = $cacheOfWarehouses[$obj->fk_warehouse];
 			} else {
 				$warehouse_static = new Entrepot($db);
@@ -625,7 +730,7 @@ if ($object->id > 0) {
 				$cacheOfWarehouses[$warehouse_static->id] = $warehouse_static;
 			}
 
-			if (is_object($cacheOfProducts[$obj->fk_product])) {
+			if (isset($cacheOfProducts[$obj->fk_product])) {
 				$product_static = $cacheOfProducts[$obj->fk_product];
 			} else {
 				$product_static = new Product($db);
@@ -639,15 +744,15 @@ if ($object->id > 0) {
 			}
 
 			print '<tr class="oddeven">';
-			print '<td>';
+			print '<td id="id_'.$obj->rowid.'_warehouse">';
 			print $warehouse_static->getNomUrl(1);
 			print '</td>';
-			print '<td>';
+			print '<td id="id_'.$obj->rowid.'_product">';
 			print $product_static->getNomUrl(1);
 			print '</td>';
 
 			if ($conf->productbatch->enabled) {
-				print '<td>';
+				print '<td id="id_'.$obj->rowid.'_batch">';
 				print $obj->batch;
 				print '</td>';
 			}
@@ -665,8 +770,11 @@ if ($object->id > 0) {
 				print '<input type="text" class="maxwidth75 right realqty" name="id_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input" value="'.$qty_view.'">';
 				print '</td>';
 				print '<td class="right">';
+				print '<a id="undochangesqty_'.$obj->rowid.'" href="#" class="undochangesqty"><span class="fas fa-undo pictoundo" ></span></a> &nbsp';
 				print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&token='.newToken().'">'.img_delete().'</a>';
 				print '</td>';
+				$qty_tmp = price2num(GETPOST("id_".$obj->rowid."_input_tmp", 'MS')) >= 0 ? GETPOST("id_".$obj->rowid."_input_tmp") : $qty_view;
+				print '<input type="hidden" class="maxwidth75 right realqty" name="id_'.$obj->rowid.'_input_tmp" id="id_'.$obj->rowid.'_input_tmp" value="'.$qty_tmp.'">';
 			} else {
 				print $obj->qty_view;
 				$totalfound += $obj->qty_view;
@@ -685,7 +793,7 @@ if ($object->id > 0) {
 	print '</div>';
 
 	if ($object->status == $object::STATUS_VALIDATED) {
-		print '<center><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'"></center>';
+		print '<center><input id="submitrecord" type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'"></center>';
 	}
 
 	print '</div>';

@@ -179,6 +179,7 @@ print dol_get_fiche_head($head, 'settings', $langs->trans("BOMs"), -1, 'bom');
 
 print load_fiche_titre($langs->trans("BOMsNumberingModules"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -224,7 +225,7 @@ foreach ($dirmodels as $reldir) {
 							$langs->load("errors");
 							print '<div class="error">'.$langs->trans($tmp).'</div>';
 						} elseif ($tmp == 'NotConfigured') {
-							print $langs->trans($tmp);
+							print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
 						} else {
 							print $tmp;
 						}
@@ -272,7 +273,9 @@ foreach ($dirmodels as $reldir) {
 		}
 	}
 }
-print "</table><br>\n";
+print "</table>";
+print "</div>";
+print "<br>\n";
 
 
 /*
@@ -301,6 +304,7 @@ if ($resql) {
 }
 
 
+print '<div class="div-table-responsive-no-min">';
 print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
 print '<td>'.$langs->trans("Name").'</td>';
@@ -414,6 +418,7 @@ foreach ($dirmodels as $reldir) {
 }
 
 print '</table>';
+print '</div>';
 print "<br>";
 
 /*
@@ -421,6 +426,8 @@ print "<br>";
  */
 
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -450,7 +457,7 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
 	print $doleditor->Create();
 }
 print '</td><td class="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
 
@@ -464,11 +471,12 @@ print $form->textwithpicto($langs->trans("WatermarkOnDraftBOMs"), $htmltext, 1, 
 print '</td><td>';
 print '<input class="flat minwidth200" type="text" name="BOM_DRAFT_WATERMARK" value="'.$conf->global->BOM_DRAFT_WATERMARK.'">';
 print '</td><td class="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
 
 print '</table>';
+print '</div>';
 print '<br>';
 
 

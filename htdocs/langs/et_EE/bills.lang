@@ -259,6 +259,7 @@ DateMaxPayment=Payment due on
 DateInvoice=Arve kuupäev
 DatePointOfTax=Point of tax
 NoInvoice=Ühtki arvet ei ole
+NoOpenInvoice=No open invoice
 ClassifyBill=Liigita arve
 SupplierBillsToPay=Tasumata tarnija arved
 CustomerBillsUnpaid=Maksmata kliendiarved
@@ -589,3 +590,4 @@ FacParentLine=Invoice Line Parent
 SituationTotalRayToRest=Remainder to pay without taxe
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=Total progress %d %%
+SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s

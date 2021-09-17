@@ -205,11 +205,11 @@ if ($id > 0 || !empty($ref)) {
 			}
 			print ' ('.$langs->transnoentities("InvoiceHasAvoir") . (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits) . ')';
 		}
-		if ($facidnext > 0) {
-			$facthatreplace = new FactureFournisseur($db);
-			$facthatreplace->fetch($facidnext);
-			print ' ('.$langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1)).')';
-		}
+		//if ($facidnext > 0) {
+		//	$facthatreplace = new FactureFournisseur($db);
+		//	$facthatreplace->fetch($facidnext);
+		//	print ' ('.$langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1)).')';
+		//}
 		print '</td></tr>';
 
 		// Label
@@ -223,13 +223,13 @@ if ($id > 0 || !empty($ref)) {
 
 		// Amount Local Taxes
 		//TODO: Place into a function to control showing by country or study better option
-		if ($societe->localtax1_assuj == "1") { //Localtax1
-			print '<tr><td>'.$langs->transcountry("AmountLT1", $societe->country_code).'</td>';
+		if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) { //Localtax1
+			print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';
 			print '<td>'.price($object->total_localtax1, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
 			print '</tr>';
 		}
-		if ($societe->localtax2_assuj == "1") { //Localtax2
-			print '<tr><td>'.$langs->transcountry("AmountLT2", $societe->country_code).'</td>';
+		if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) { //Localtax2
+			print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td>';
 			print '<td>'.price($object->total_localtax2, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
 			print '</tr>';
 		}

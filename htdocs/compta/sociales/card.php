@@ -399,7 +399,7 @@ if ($action == 'create') {
 	print dol_get_fiche_end();
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+	print '<input type="submit" class="button button-add" value="'.$langs->trans("Add").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	print '</div>';
@@ -429,7 +429,7 @@ if ($id > 0) {
 			if (!empty($conf->global->TAX_ADD_CLONE_FOR_NEXT_MONTH_CHECKBOX)) {
 				$formquestion[] = array('type' => 'checkbox', 'name' => 'clone_for_next_month', 'label' => $langs->trans("CloneTaxForNextMonth"), 'value' => 1);
 			} else {
-				$formquestion[] = array('type' => 'date', 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
+				$formquestion[] = array('type' => 'date', 'datenow'=>1, 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
 				$formquestion[] = array('type' => 'date', 'name' => 'clone_period', 'label' => $langs->trans("PeriodEndDate"), 'value' => -1);
 			}
 
@@ -546,7 +546,7 @@ if ($id > 0) {
 		// Date
 		if ($action == 'edit') {
 			print '<tr><td>'.$langs->trans("Date")."</td><td>";
-			print $form->selectDate($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
+			print $form->selectDate($object->date_ech, 'ech', 0, 0, 0, 'charge', 1, 1);
 			print "</td></tr>";
 		} else {
 			print "<tr><td>".$langs->trans("Date")."</td><td>".dol_print_date($object->date_ech, 'day')."</td></tr>";

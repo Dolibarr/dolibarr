@@ -196,7 +196,7 @@ class EcmDirectory extends CommonObject
 			$sql .= " '".$this->db->escape($conf->entity)."',";
 			$sql .= " '".$this->db->escape($this->fk_parent)."',";
 			$sql .= " '".$this->db->escape($this->description)."',";
-			$sql .= " ".$this->cachenbofdoc.",";
+			$sql .= " ".((int) $this->cachenbofdoc).",";
 			$sql .= " '".$this->db->idate($this->date_c)."',";
 			$sql .= " '".$this->db->escape($this->fk_user_c)."'";
 			$sql .= ")";
@@ -305,7 +305,7 @@ class EcmDirectory extends CommonObject
 		} else {
 			$sql .= " cachenbofdoc = cachenbofdoc ".$value." 1";
 		}
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::changeNbOfFiles", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -764,7 +764,7 @@ class EcmDirectory extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
 		$sql .= " cachenbofdoc = '".count($filelist)."'";
 		if (empty($all)) {  // By default
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 		} else {
 			$sql .= " WHERE entity = ".$conf->entity;
 		}

@@ -133,7 +133,9 @@ $holidaystatic = new Holiday($db);
 
 $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
 
-llxHeader('', $langs->trans('CPTitreMenu'));
+$title = $langs->trans('CPTitreMenu');
+
+llxHeader('', $title);
 
 $search_month = GETPOST("remonth", 'int') ?GETPOST("remonth", 'int') : date("m", time());
 $search_year = GETPOST("reyear", 'int') ?GETPOST("reyear", 'int') : date("Y", time());

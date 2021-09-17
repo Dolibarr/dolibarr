@@ -205,7 +205,7 @@ if ($action == 'update' && $permtoadd) {
 			$object->fullpath_orig = '';
 			$object->gen_or_uploaded = 'unknown';
 			$object->description = ''; // indexed content
-			$object->keyword = ''; // keyword content
+			$object->keywords = ''; // keyword content
 			$result = $object->create($user);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'warnings');
@@ -405,11 +405,7 @@ print ajax_autoselect('downloadlink');
 print dol_get_fiche_end();
 
 if ($action == 'edit') {
-	print '<div class="center">';
-	print '<input type="submit" class="button button-save" name="submit" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; &nbsp; ';
-	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print '</form>';
 }

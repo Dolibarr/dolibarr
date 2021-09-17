@@ -165,7 +165,7 @@ if (empty($reshook)) {
 					$now = dol_now();
 
 					// Positioning date of start sending
-					$sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi='".$db->idate($now)."' WHERE rowid=".$object->id;
+					$sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi='".$db->idate($now)."' WHERE rowid=".((int) $object->id);
 					$resql2 = $db->query($sql);
 					if (!$resql2) {
 						dol_print_error($db);
@@ -368,7 +368,7 @@ if (empty($reshook)) {
 							dol_syslog("comm/mailing/card.php: error for #".$i.($mail->error ? ' - '.$mail->error : ''), LOG_WARNING);
 
 							$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-							$sql .= " SET statut=-1, error_text='".$db->escape($mail->error)."', date_envoi='".$db->idate($now)."' WHERE rowid=".$obj->rowid;
+							$sql .= " SET statut=-1, error_text='".$db->escape($mail->error)."', date_envoi='".$db->idate($now)."' WHERE rowid=".((int) $obj->rowid);
 							$resql2 = $db->query($sql);
 							if (!$resql2) {
 								dol_print_error($db);
@@ -577,7 +577,6 @@ if (empty($reshook)) {
 
 		if (!$isupload) {
 			$mesgs = array();
-
 			$object->sujet          = (string) GETPOST("sujet");
 			$object->body           = (string) GETPOST("bodyemail", 'restricthtml');
 			$object->bgcolor        = (string) GETPOST("bgcolor");
@@ -744,7 +743,7 @@ if ($action == 'create') {
 	print '<div style="padding-top: 10px">';
 	// wysiwyg editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('bodyemail', GETPOST('bodyemail', 'restricthtml'), '', 600, 'dolibarr_mailings', '', true, true, $conf->global->FCKEDITOR_ENABLE_MAILING, 20, '90%');
+	$doleditor = new DolEditor('bodyemail', GETPOST('bodyemail', 'restricthtmlallowunvalid'), '', 600, 'dolibarr_mailings', '', true, true, $conf->global->FCKEDITOR_ENABLE_MAILING, 20, '90%');
 	$doleditor->Create();
 	print '</div>';
 

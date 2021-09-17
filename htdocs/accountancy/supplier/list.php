@@ -193,7 +193,7 @@ if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
 				$accountventilated = new AccountingAccount($db);
 				$accountventilated->fetch($monCompte, '', 1);
 
-				dol_syslog('accountancy/supplier/list.php sql='.$sql, LOG_DEBUG);
+				dol_syslog('accountancy/supplier/list.php', LOG_DEBUG);
 				if ($db->query($sql)) {
 					$msg .= '<div><span style="color:green">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("VentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'</span></div>';
 					$ok++;
@@ -482,7 +482,7 @@ if ($result) {
 	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50 right" name="search_vat" placeholder="%" size="1" value="'.dol_escape_htmltag($search_vat).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth75imp" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 	print '<td class="liste_titre">';
-	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth125', 'code2', 1, 0, 1);
+	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth125', 'code2', 1, 0, 1, null, 1);
 	//print '<input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '">';
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_tvaintra" value="'.dol_escape_htmltag($search_tvaintra).'"></td>';
@@ -503,7 +503,7 @@ if ($result) {
 	//print_liste_field_titre("ProductLabel", $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("ProductDescription", $_SERVER["PHP_SELF"], "l.description", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "l.total_ht", "", $param, '', $sortfield, $sortorder, 'right maxwidth50 ');
-	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, '', $sortfield, $sortorder, 'right ', '', 1);
 	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Country", $_SERVER["PHP_SELF"], "co.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("VATIntraShort", $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder);
@@ -620,10 +620,12 @@ if ($result) {
 		}
 
 		// Level 3: Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
-		if (!empty($objp->company_code_buy)) {
-			$objp->code_buy_t = $objp->company_code_buy;
-			$objp->aarowid_suggest = $objp->aarowid_thirdparty;
-			$suggestedaccountingaccountfor = '';
+		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
+			if (!empty($objp->company_code_buy)) {
+				$objp->code_buy_t = $objp->company_code_buy;
+				$objp->aarowid_suggest = $objp->aarowid_thirdparty;
+				$suggestedaccountingaccountfor = '';
+			}
 		}
 
 		if (!empty($objp->code_buy_p)) {
@@ -671,7 +673,7 @@ if ($result) {
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->description);
 		print '</td>';
 
-		print '<td class="nowrap right">';
+		print '<td class="right nowraponall amount">';
 		print price($objp->total_ht);
 		print '</td>';
 
@@ -687,13 +689,13 @@ if ($result) {
 		print '<td class="tdoverflowmax100">'.$thirdpartystatic->getNomUrl(1, 'supplier').'</td>';
 
 		// Country
-		print '<td>';
 		$labelcountry = ($objp->country_code && ($langs->trans("Country".$objp->country_code) != "Country".$objp->country_code)) ? $langs->trans("Country".$objp->country_code) : $objp->country_label;
-		print $labelcountry;
+		print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($labelcountry).'">';
+		print dol_escape_htmltag($labelcountry);
 		print '</td>';
 
 		// VAT Num
-		print '<td>'.$objp->tva_intra.'</td>';
+		print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($objp->tva_intra).'">'.dol_escape_htmltag($objp->tva_intra).'</td>';
 
 		// Found accounts
 		print '<td class="small">';
@@ -724,11 +726,13 @@ if ($result) {
 			$s .= $langs->trans("NotDefined");
 			print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 		}
-		print '<br>';
-		$s = '3. '.(($objp->type_l == 1) ? $langs->trans("ServiceForThisThirdparty") : $langs->trans("ProductForThisThirdparty")).': ';
-		$shelp = '';
-		$s .= ($objp->code_buy_t > 0 ? length_accountg($objp->code_buy_t) : '<span style="'.$code_buy_t_notset.'">'.$langs->trans("NotDefined").'</span>');
-		print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
+		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
+			print '<br>';
+			$s = '3. '.(($objp->type_l == 1) ? $langs->trans("ServiceForThisThirdparty") : $langs->trans("ProductForThisThirdparty")).': ';
+			$shelp = '';
+			$s .= ($objp->code_buy_t > 0 ? length_accountg($objp->code_buy_t) : '<span style="'.$code_buy_t_notset.'">'.$langs->trans("NotDefined").'</span>');
+			print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
+		}
 		print '</td>';
 
 		// Suggested accounting account

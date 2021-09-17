@@ -116,7 +116,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 $warehouseStatus = array();
-if ($conf->global->ENTREPOT_EXTRA_STATUS) {
+if (!empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
 	//$warehouseStatus[] = Entrepot::STATUS_CLOSED;
 	$warehouseStatus[] = Entrepot::STATUS_OPEN_ALL;
 	$warehouseStatus[] = Entrepot::STATUS_OPEN_INTERNAL;
@@ -136,10 +136,10 @@ if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 		$sql .= " AND w.statut IN (".$db->sanitize(implode(',', $warehouseStatus)).")";
 	}
 	if ($productid > 0) {
-		$sql .= " AND ps.fk_product = ".$productid;
+		$sql .= " AND ps.fk_product = ".((int) $productid);
 	}
 	if ($fk_warehouse > 0) {
-		$sql .= " AND ps.fk_entrepot = ".$fk_warehouse;
+		$sql .= " AND ps.fk_entrepot = ".((int) $fk_warehouse);
 	}
 	$sql .= " GROUP BY fk_product, fk_entrepot";
 	//print $sql;
@@ -272,7 +272,7 @@ if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 	$sql .= " AND p.fk_product_type = 0";
 }
 if (!empty($canvas)) {
-	$sql .= ' AND p.canvas = "'.$db->escape($canvas).'"';
+	$sql .= " AND p.canvas = '".$db->escape($canvas)."'";
 }
 if ($fk_warehouse > 0) {
 	$sql .= ' GROUP BY p.rowid, p.ref, p.label, p.description, p.price, p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
@@ -294,8 +294,8 @@ if ($sortfield == 'stock' && $fk_warehouse > 0) {
 }
 $sql .= $db->order($sortfield, $sortorder);
 
+$nbtotalofrecords = 0;
 if ($date && $dateIsValid) {	// We avoid a heavy sql if mandatory parameter date not yet defined
-	$nbtotalofrecords = '';
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
@@ -356,14 +356,14 @@ print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
 print '<span class="fieldrequired">'.$langs->trans('Date').'</span> '.$form->selectDate(($date ? $date : -1), 'date');
 
 print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddingrightonly">&nbsp;</span> ';
-print img_picto('', 'product').' ';
-print $langs->trans('Product').'</span> ';
-print $form->select_produits($productid, 'productid', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'maxwidth300', 0, '', null, 1);
+print img_picto('', 'product', 'class="pictofiwedwidth"').' ';
+print '</span> ';
+print $form->select_produits($productid, 'productid', '', 0, 0, -1, 2, '', 0, array(), 0, $langs->trans('Product'), 0, 'maxwidth300', 0, '', null, 1);
 
 print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddingrightonly">&nbsp;</span> ';
-print img_picto('', 'stock').' ';
-print $langs->trans('Warehouse').'</span> ';
-print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? $fk_warehouse : 'ifone'), 'fk_warehouse', '', 1, 0, 0, '', 0, 0, null, '', null, 1, false, 'e.ref');
+print img_picto('', 'stock', 'class="pictofiwedwidth"');
+print '</span> ';
+print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? $fk_warehouse : 'ifone'), 'fk_warehouse', '', 1, 0, 0, $langs->trans('Warehouse'), 0, 0, null, '', null, 1, false, 'e.ref');
 print '</div>';
 
 $parameters = array();
@@ -373,7 +373,7 @@ if (empty($reshook)) {
 }
 
 print '<div class="inline-block valignmiddle">';
-print '<input class="button" type="submit" name="valid" value="'.$langs->trans('Refresh').'">';
+print '<input type="submit" class="button" name="valid" value="'.$langs->trans('Refresh').'">';
 print '</div>';
 
 //print '</form>';
@@ -488,7 +488,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$sql = 'SELECT label,description';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'product_lang';
 			$sql .= ' WHERE fk_product = '.((int) $objp->rowid);
-			$sql .= ' AND lang = "'.$langs->getDefaultLang().'"';
+			$sql .= " AND lang = '".$db->escape($langs->getDefaultLang())."'";
 			$sql .= ' LIMIT 1';
 
 			$resqlm = $db->query($sql);
@@ -618,7 +618,9 @@ if (empty($date) || ! $dateIsValid) {
 print '</table>';
 print '</div>';
 
-$db->free($resql);
+if (!empty($resql)) {
+	$db->free($resql);
+}
 
 print dol_get_fiche_end();
 

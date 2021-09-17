@@ -89,9 +89,16 @@ if ($resultproject < 0) {
 	$errmsg .= $project->error;
 }
 
+// Security check
+if (empty($conf->eventorganization->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
+
+
 /*
  * Actions
  */
+
 $tmpthirdparty = new Societe($db);
 
 $listOfConferences = $listOfBooths = '<tr><td>'.$langs->trans('Label').'</td>
@@ -254,10 +261,17 @@ if ($urllogo) {
 	}
 	print '</div>';
 }
+
+if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH)) {
+	print '<div class="backimagepublicsuggestbooth">';
+	print '<img id="idPROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH" src="'.$conf->global->PROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH.'">';
+	print '</div>';
+}
+
 print '<table id="welcome" class="center">'."\n";
 $text  = '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</strong></td></tr>'."\n";
 $text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgVoteHelpMessage").' : "'.$project->title.'".<br><br></td></tr>'."\n";
-$text .= '<tr><td class="textpublicpayment">'.$project->note_public.'</td></tr>'."\n";;
+$text .= '<tr><td class="textpublicpayment">'.$project->note_public.'</td></tr>'."\n";
 print $text;
 print '</table>'."\n";
 

@@ -15,6 +15,7 @@
  * Copyright (C) 2018	   Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2019	   Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2021	   Anthony Berton			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -216,18 +217,17 @@ $arrayfields = array(
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $permissiontoread = $user->rights->propal->lire;
-$permissiontoadd = $user->rights->propal->write;
+$permissiontoadd = $user->rights->propal->creer;
 $permissiontodelete = $user->rights->propal->supprimer;
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	$permissiontovalidate = $user->rights->propale->propal_advance->validate;
-	$permissiontoclose = $user->rights->propale->propal_advance->close;
-	$permissiontosendbymail = $user->rights->propale->propal_advance->send;
+	$permissiontovalidate = $user->rights->propal->propal_advance->validate;
+	$permissiontoclose = $user->rights->propal->propal_advance->close;
+	$permissiontosendbymail = $user->rights->propal->propal_advance->send;
 } else {
-	$permissiontovalidate = $user->rights->propal->write;
-	$permissiontoclose = $user->rights->propal->write;
+	$permissiontovalidate = $user->rights->propal->creer;
+	$permissiontoclose = $user->rights->propal->creer;
+	$permissiontosendbymail = $user->rights->propal->lire;
 }
-
-
 
 
 /*
@@ -346,7 +346,7 @@ if ($action == "sign" && $permissiontoclose) {
 		foreach ($toselect as $checked) {
 			if ($tmpproposal->fetch($checked)) {
 				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED) {
-					$tmpproposal->statut = $tmpproposal::STATUS_SIGNED;;
+					$tmpproposal->statut = $tmpproposal::STATUS_SIGNED;
 					if ($tmpproposal->closeProposal($user, $tmpproposal::STATUS_SIGNED)) {
 						setEventMessage($tmpproposal->ref." ".$langs->trans('Signed'), 'mesgs');
 					} else {
@@ -465,13 +465,13 @@ $sql .= " typent.code as typent_code,";
 $sql .= " ava.rowid as availability,";
 $sql .= " country.code as country_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= ' p.rowid, p.entity, p.note_private, p.total_ht, p.total_tva, p.total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut as status, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,p.date_livraison as ddelivery,';
+$sql .= ' p.rowid, p.entity as propal_entity, p.note_private, p.total_ht, p.total_tva, p.total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut as status, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,p.date_livraison as ddelivery,';
 $sql .= ' p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva, p.multicurrency_total_ttc,';
 $sql .= ' p.datec as date_creation, p.tms as date_update, p.date_cloture as date_cloture,';
 $sql .= ' p.note_public, p.note_private,';
 $sql .= ' p.fk_cond_reglement,p.fk_mode_reglement,p.fk_shipping_method,p.fk_input_reason,';
 $sql .= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label,";
-$sql .= ' u.login, u.lastname, u.firstname, u.email, u.statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
+$sql .= ' u.login, u.lastname, u.firstname, u.email, u.statut, u.entity as user_entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= ", sc.fk_soc, sc.fk_user";
 }
@@ -481,7 +481,7 @@ if ($search_categ_cus) {
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -517,10 +517,16 @@ if ($search_user > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as c";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
+
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 $sql .= ' WHERE p.fk_soc = s.rowid';
 $sql .= ' AND p.entity IN ('.getEntity('propal').')';
 if (!$user->rights->societe->client->voir && !$socid) { //restriction
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 
 if ($search_town) {
@@ -575,7 +581,7 @@ if ($search_warehouse != '' && $search_warehouse > 0) {
 	$sql .= natural_search("p.fk_warehouse", $search_warehouse, 1);
 }
 if ($search_multicurrency_code != '') {
-	$sql .= ' AND p.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
+	$sql .= " AND p.multicurrency_code = '".$db->escape($search_multicurrency_code)."'";
 }
 if ($search_multicurrency_tx != '') {
 	$sql .= natural_search('p.multicurrency_tx', $search_multicurrency_tx, 1);
@@ -593,27 +599,27 @@ if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 if ($search_categ_cus > 0) {
-	$sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
+	$sql .= " AND cc.fk_categorie = ".((int) $search_categ_cus);
 }
 if ($search_categ_cus == -2) {
 	$sql .= " AND cc.fk_categorie IS NULL";
 }
 
 if ($search_fk_cond_reglement > 0) {
-	$sql .= " AND p.fk_cond_reglement = ".$db->escape($search_fk_cond_reglement);
+	$sql .= " AND p.fk_cond_reglement = ".((int) $search_fk_cond_reglement);
 }
 if ($search_fk_shipping_method > 0) {
-	$sql .= " AND p.fk_shipping_method = ".$db->escape($search_fk_shipping_method);
+	$sql .= " AND p.fk_shipping_method = ".((int) $search_fk_shipping_method);
 }
 if ($search_fk_input_reason > 0) {
-	$sql .= " AND p.fk_input_reason = ".$db->escape($search_fk_input_reason);
+	$sql .= " AND p.fk_input_reason = ".((int) $search_fk_input_reason);
 }
 if ($search_fk_mode_reglement > 0) {
-	$sql .= " AND p.fk_mode_reglement = ".$db->escape($search_fk_mode_reglement);
+	$sql .= " AND p.fk_mode_reglement = ".((int) $search_fk_mode_reglement);
 }
 
 if ($search_product_category > 0) {
-	$sql .= " AND cp.fk_categorie = ".$db->escape($search_product_category);
+	$sql .= " AND cp.fk_categorie = ".((int) $search_product_category);
 }
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
@@ -1321,6 +1327,11 @@ if ($resql) {
 	$now = dol_now();
 	$i = 0;
 	$totalarray = array();
+	$totalarray['nbfield'] = 0;
+	$totalarray['val'] = array();
+	$totalarray['val']['p.total_ht'] = 0;
+	$totalarray['val']['p.total_tva'] = 0;
+	$totalarray['val']['p.total_ttc'] = 0;
 	$typenArray = null;
 
 	while ($i < min($num, $limit)) {
@@ -1396,7 +1407,7 @@ if ($resql) {
 			// Other picto tool
 			print '<td width="16" class="nobordernopadding right">';
 			$filename = dol_sanitizeFileName($obj->ref);
-			$filedir = $conf->propal->multidir_output[$obj->entity].'/'.dol_sanitizeFileName($obj->ref);
+			$filedir = $conf->propal->multidir_output[$obj->propal_entity].'/'.dol_sanitizeFileName($obj->ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
 			print '</td></tr></table>';
@@ -1705,7 +1716,7 @@ if ($resql) {
 		$userstatic->firstname = $obj->firstname;
 		$userstatic->email = $obj->email;
 		$userstatic->statut = $obj->statut;
-		$userstatic->entity = $obj->entity;
+		$userstatic->entity = $obj->user_entity;
 		$userstatic->photo = $obj->photo;
 		$userstatic->office_phone = $obj->office_phone;
 		$userstatic->office_fax = $obj->office_fax;

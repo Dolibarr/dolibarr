@@ -118,7 +118,7 @@ if (empty($reshook)) {
 									'mailmanspip', 'notification', 'oauth', 'syslog', 'user', 'webservices', 'workflow',
 									// Extended modules
 									'memcached', 'numberwords', 'zipautofillfr');
-	$alwayshiddenuncheckedmodules = array('collab', 'dav', 'debugbar', 'emailcollector', 'ftp', 'hrm', 'modulebuilder', 'printing', 'webservicesclient', 'zappier',
+	$alwayshiddenuncheckedmodules = array('cashdesk', 'collab', 'dav', 'debugbar', 'emailcollector', 'ftp', 'hrm', 'modulebuilder', 'printing', 'webservicesclient', 'zappier',
 									// Extended modules
 									'awstats', 'bittorrent', 'bootstrap', 'cabinetmed', 'cmcic', 'concatpdf', 'customfield', 'datapolicy', 'deplacement', 'dolicloud', 'filemanager', 'lightbox', 'mantis', 'monitoring', 'moretemplates', 'multicompany', 'nltechno', 'numberingpack', 'openstreetmap',
 									'ovh', 'phenix', 'phpsysinfo', 'pibarcode', 'postnuke', 'dynamicprices', 'receiptprinter', 'selectbank', 'skincoloreditor', 'submiteverywhere', 'survey', 'thomsonphonebook', 'topten', 'tvacerfa', 'voyage', 'webcalendar', 'webmail');
@@ -352,13 +352,13 @@ foreach ($demoprofiles as $profilearray) {
 		if (empty($profilearray['url'])) {
 			print '<div id="tr1'.$profilearray['key'].'" class="moduleline hidden" style="margin-left: 8px; margin-right: 8px; text-align: justify; font-size:14px; line-height: 130%; padding-bottom: 8px">';
 
-			print $langs->trans("ThisIsListOfModules").'<br><br>';
+			print '<span class="opacitymedium">'.$langs->trans("ThisIsListOfModules").'</span><br><br>';
 
 			print '<div class="csscolumns">';
 
 			$listofdisabledmodules = explode(',', $profilearray['disablemodules']);
 			$j = 0;
-			$nbcolsmod = empty($conf->dol_optimize_smallscreen) ? 4 : 3;
+			//$nbcolsmod = empty($conf->dol_optimize_smallscreen) ? 4 : 3;
 			//var_dump($modules);
 			foreach ($orders as $index => $key) { // Loop on qualified (enabled) modules
 				//print $index.' '.$key;
@@ -369,10 +369,10 @@ foreach ($demoprofiles as $profilearray) {
 				if (!empty($val->always_enabled) || in_array($modulekeyname, $alwayshiddenuncheckedmodules)) {
 					$modulequalified = 0;
 				}
-				if ($val->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && !$conf->global->$const_name) {
+				if ($val->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && empty($conf->global->$const_name)) {
 					$modulequalified = 0;
 				}
-				if ($val->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && !$conf->global->$const_name) {
+				if ($val->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && empty($conf->global->$const_name)) {
 					$modulequalified = 0;
 				}
 				if (!$modulequalified) {
@@ -383,7 +383,7 @@ foreach ($demoprofiles as $profilearray) {
 					print "\n".'<!-- Module '.$modulekeyname.' hidden and always checked -->';
 					print '<input type="hidden" name="'.$modulekeyname.'" value="1">';
 				} else {
-					$modulo = ($j % $nbcolsmod);
+					//$modulo = ($j % $nbcolsmod);
 					//if ($modulo == 0) print '<tr>';
 					print '<!-- id='.$val->numero.' -->';
 					print '<div class="nowrap">';

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2015 Regis Houssin       <regis.houssin@inodbox.com>
+/* Copyright (C) 2010-2021 Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2017      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -79,7 +79,7 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		$perm = 1;
 	} elseif ($table_element_line == 'facturedet' && $user->rights->facture->creer) {
 		$perm = 1;
-	} elseif ($table_element_line == 'facturerecdet' && $user->rights->facture->creer) {
+	} elseif ($table_element_line == 'facturedet_rec' && $user->rights->facture->creer) {
 		$perm = 1;
 	} elseif ($table_element_line == 'ecm_files' && $user->rights->ecm->creer) {
 		$perm = 1;
@@ -89,11 +89,11 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		$perm = 1;
 	} elseif ($table_element_line == 'mrp_production' && $user->rights->mrp->write) {
 		$perm = 1;
-	} elseif ($table_element_line == 'supplier_proposaldet' && $user->rights->supplier_proposal->write) {
+	} elseif ($table_element_line == 'supplier_proposaldet' && $user->rights->supplier_proposal->creer) {
 		$perm = 1;
-	} elseif ($table_element_line == 'commande_fournisseurdet' && $user->rights->fourn->commande->creer) {
+	} elseif ($table_element_line == 'commande_fournisseurdet' && $user->rights->fournisseur->commande->creer) {
 		$perm = 1;
-	} elseif ($table_element_line == 'facture_fourn_det' && $user->rights->fourn->facture->creer) {
+	} elseif ($table_element_line == 'facture_fourn_det' && $user->rights->fournisseur->facture->creer) {
 		$perm = 1;
 	} elseif ($table_element_line == 'ecm_files' && $fk_element == 'fk_product' && (!empty($user->rights->produit->creer) || !empty($user->rights->service->creer))) {
 		$perm = 1;

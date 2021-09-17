@@ -98,7 +98,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."bookmark as b LEFT JOIN ".MAIN_DB_PREFIX."user 
 $sql .= " WHERE 1=1";
 $sql .= " AND b.entity IN (".getEntity('bookmark').")";
 if (!$user->admin) {
-	$sql .= " AND (b.fk_user = ".$user->id." OR b.fk_user is NULL OR b.fk_user = 0)";
+	$sql .= " AND (b.fk_user = ".((int) $user->id)." OR b.fk_user is NULL OR b.fk_user = 0)";
 }
 
 $sql .= $db->order($sortfield.", position", $sortorder);

@@ -381,7 +381,7 @@ class Don extends CommonObject
 		$sql .= ", phone_mobile";
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($this->date ? $this->date : $now)."'";
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", ".price2num($this->amount);
 		$sql .= ", ".($this->modepaymentid ? $this->modepaymentid : "null");
 		$sql .= ", ".($this->socid > 0 ? $this->socid : "null");
@@ -396,7 +396,7 @@ class Don extends CommonObject
 		$sql .= ", ".($this->fk_project > 0 ? (int) $this->fk_project : "null");
 		$sql .= ", ".(!empty($this->note_private) ? ("'".$this->db->escape($this->note_private)."'") : "NULL");
 		$sql .= ", ".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", null";
 		$sql .= ", '".$this->db->idate($this->date)."'";
 		$sql .= ", '".$this->db->escape(trim($this->email))."'";
@@ -476,8 +476,8 @@ class Don extends CommonObject
 		$sql .= ",address='".$this->db->escape($this->address)."'";
 		$sql .= ",zip='".$this->db->escape($this->zip)."'";
 		$sql .= ",town='".$this->db->escape($this->town)."'";
-		$sql .= ",fk_country = ".($this->country_id > 0 ? $this->country_id : '0');
-		$sql .= ",public=".$this->public;
+		$sql .= ",fk_country = ".($this->country_id > 0 ? ((int) $this->country_id) : '0');
+		$sql .= ",public=".((int) $this->public);
 		$sql .= ",fk_projet=".($this->fk_project > 0 ? $this->fk_project : 'null');
 		$sql .= ",note_private=".(!empty($this->note_private) ? ("'".$this->db->escape($this->note_private)."'") : "NULL");
 		$sql .= ",note_public=".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
@@ -486,8 +486,8 @@ class Don extends CommonObject
 		$sql .= ",email='".$this->db->escape(trim($this->email))."'";
 		$sql .= ",phone='".$this->db->escape(trim($this->phone))."'";
 		$sql .= ",phone_mobile='".$this->db->escape(trim($this->phone_mobile))."'";
-		$sql .= ",fk_statut=".$this->statut;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= ",fk_statut=".((int) $this->statut);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::Update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -555,7 +555,7 @@ class Don extends CommonObject
 		// Delete donation
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."don_extrafields";
-			$sql .= " WHERE fk_object=".$this->id;
+			$sql .= " WHERE fk_object = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -1116,7 +1116,7 @@ class Don extends CommonObject
 			return -1;
 		}
 
-		$sql = 'SELECT SUM(amount) as sum_amount FROM '.MAIN_DB_PREFIX.'payment_donation WHERE fk_donation = '.$this->id;
+		$sql = 'SELECT SUM(amount) as sum_amount FROM '.MAIN_DB_PREFIX.'payment_donation WHERE fk_donation = '.((int) $this->id);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			dol_print_error($this->db);

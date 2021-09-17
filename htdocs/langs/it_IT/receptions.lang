@@ -19,7 +19,7 @@ NewReception=New reception
 CreateReception=Create reception
 QtyInOtherReceptions=Qty in other receptions
 OtherReceptionsForSameOrder=Other receptions for this order
-ReceptionsAndReceivingForSameOrder=Receptions and receipts for this order
+ReceptionsAndReceivingForSameOrder=Ricezioni per questo ordine
 ReceptionsToValidate=Receptions to validate
 StatusReceptionCanceled=Annullata
 StatusReceptionDraft=Bozza
@@ -44,4 +44,4 @@ ValidateOrderFirstBeforeReception=You must first validate the order before being
 ReceptionsNumberingModules=Numbering module for receptions
 ReceptionsReceiptModel=Document templates for receptions
 NoMorePredefinedProductToDispatch=Non ci sono più prodotti predefiniti da spedire
-
+ReceptionExist=A reception exists

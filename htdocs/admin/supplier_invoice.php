@@ -59,14 +59,19 @@ $specimenthirdparty->initAsSpecimen();
 if ($action == 'updateMask') {
 	$maskconstinvoice = GETPOST('maskconstinvoice', 'alpha');
 	$maskconstcredit = GETPOST('maskconstcredit', 'alpha');
+	$maskconstdeposit = GETPOST('maskconstdeposit', 'alpha');
 	$maskinvoice = GETPOST('maskinvoice', 'alpha');
 	$maskcredit = GETPOST('maskcredit', 'alpha');
+	$maskdeposit = GETPOST('maskdeposit', 'alpha');
 
 	if ($maskconstinvoice) {
 		$res = dolibarr_set_const($db, $maskconstinvoice, $maskinvoice, 'chaine', 0, '', $conf->entity);
 	}
 	if ($maskconstcredit) {
 		$res = dolibarr_set_const($db, $maskconstcredit, $maskcredit, 'chaine', 0, '', $conf->entity);
+	}
+	if ($maskconstdeposit) {
+		$res = dolibarr_set_const($db, $maskconstdeposit, $maskdeposit, 'chaine', 0, '', $conf->entity);
 	}
 
 	if (!($res > 0)) {
@@ -241,7 +246,7 @@ foreach ($dirmodels as $reldir) {
 							$langs->load("errors");
 							print '<div class="error">'.$langs->trans($tmp).'</div>';
 						} elseif ($tmp == 'NotConfigured') {
-							print $langs->trans($tmp);
+							print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
 						} else {
 							print $tmp;
 						}
@@ -459,7 +464,7 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
 	print $doleditor->Create();
 }
 print '</td><td class="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 
 print '</table><br>';

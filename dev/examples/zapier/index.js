@@ -2,12 +2,18 @@
 const triggerAction = require('./triggers/action');
 const triggerOrder = require('./triggers/order');
 const triggerThirdparty = require('./triggers/thirdparty');
+const triggerContact = require('./triggers/contact');
 const triggerTicket = require('./triggers/ticket');
 const triggerUser = require('./triggers/user');
+const triggerMember = require('./triggers/member');
 
 const searchThirdparty = require('./searches/thirdparty');
+const searchContact = require('./searches/contact');
+const searchMember = require('./searches/member');
 
 const createThirdparty = require('./creates/thirdparty');
+const createContact = require('./creates/contact');
+const createMember = require('./creates/member');
 
 const {
     config: authentication,
@@ -62,18 +68,24 @@ const App = {
         [triggerAction.key]: triggerAction,
         [triggerOrder.key]: triggerOrder,
         [triggerThirdparty.key]: triggerThirdparty,
+        [triggerContact.key]: triggerContact,
         [triggerTicket.key]: triggerTicket,
         [triggerUser.key]: triggerUser,
+        [triggerMember.key]: triggerMember,
     },
 
     // If you want your searches to show up, you better include it here!
     searches: {
         [searchThirdparty.key]: searchThirdparty,
+        [searchContact.key]: searchContact,
+        [searchMember.key]: searchMember,
     },
 
     // If you want your creates to show up, you better include it here!
     creates: {
         [createThirdparty.key]: createThirdparty,
+        [createContact.key]: createContact,
+        [createMember.key]: createMember,
     }
 };
 

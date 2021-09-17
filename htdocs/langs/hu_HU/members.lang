@@ -213,3 +213,5 @@ SendReminderForExpiredSubscription=Küldj e-mailes emlékeztetőt a tagnak az el
 MembershipPaid=A tagdíj kiegyenlítve az aktuális időszakra ( 1 %s-ig )
 YouMayFindYourInvoiceInThisEmail=A számlát ehhez az e-mailhez csatolva találhatja meg.
 XMembersClosed=1 %s tag(ok) lezárva
+XExternalUserCreated=%s external user(s) created
+ForceMemberNature=Force member nature (Individual or Corporation)

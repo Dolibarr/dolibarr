@@ -143,3 +143,4 @@ AsciiToHtmlConverter=ASCII到HTML轉換器
 AsciiToPdfConverter=ASCII到PDF轉換器
 TableNotEmptyDropCanceled=表不為空。刪除已被取消。
 ModuleBuilderNotAllowed=The module builder is available but not allowed to your user.
+ImportExportProfiles=Import and export profiles

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013-2014 Cedric GROSS         <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,8 +44,8 @@ class Productbatch extends CommonObject
 
 	public $tms = '';
 	public $fk_product_stock;
-	public $sellby = '';
-	public $eatby = '';
+	public $sellby = '';	// dlc
+	public $eatby = '';		// dmd/dluo
 	public $batch = '';
 	public $qty;
 	public $warehouseid;
@@ -384,7 +384,7 @@ class Productbatch extends CommonObject
 		$sql .= " t.qty,";
 		$sql .= " t.import_key";
 		$sql .= " FROM ".MAIN_DB_PREFIX.self::$_table_element." as t";
-		$sql .= " WHERE fk_product_stock=".$fk_product_stock;
+		$sql .= " WHERE fk_product_stock=".((int) $fk_product_stock);
 
 		if (!empty($eatby)) {
 			array_push($where, " eatby = '".$this->db->idate($eatby)."'"); // deprecated
@@ -436,7 +436,7 @@ class Productbatch extends CommonObject
 	 */
 	public static function findAll($db, $fk_product_stock, $with_qty = 0, $fk_product = 0)
 	{
-		global $langs;
+		global $langs, $conf;
 		$ret = array();
 
 		$sql = "SELECT";
@@ -454,13 +454,19 @@ class Productbatch extends CommonObject
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as t";
 		if ($fk_product > 0) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON pl.fk_product = ".$fk_product." AND pl.batch = t.batch";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON pl.fk_product = ".((int) $fk_product)." AND pl.batch = t.batch";
 			// TODO May add extrafields to ?
 		}
-		$sql .= " WHERE fk_product_stock=".$fk_product_stock;
+		$sql .= " WHERE fk_product_stock=".((int) $fk_product_stock);
 		if ($with_qty) {
 			$sql .= " AND t.qty <> 0";
 		}
+
+		$sql .= " ORDER BY ";
+		// TODO : use product lifo and fifo when product will implement it
+		if ($fk_product > 0) { $sql .= "pl.eatby ASC, pl.sellby ASC, "; }
+		$sql .= "t.eatby ASC, t.sellby ASC ";
+		$sql .= ", t.qty ".(!empty($conf->global->DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE)?'DESC':'ASC'); // Note : qty ASC is important for expedition card, to avoid stock fragmentation
 
 		dol_syslog("productbatch::findAll", LOG_DEBUG);
 		$resql = $db->query($sql);
@@ -524,12 +530,12 @@ class Productbatch extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch AS pb ON pl.batch = pb.batch";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock AS ps ON ps.rowid = pb.fk_product_stock";
 		$sql .= " WHERE p.entity IN (".getEntity('product').")";
-		$sql .= " AND pl.fk_product = ".$fk_product;
+		$sql .= " AND pl.fk_product = ".((int) $fk_product);
 		if ($fk_warehouse > 0) {
-			$sql .= " AND ps.fk_entrepot = ".$fk_warehouse;
+			$sql .= " AND ps.fk_entrepot = ".((int) $fk_warehouse);
 		}
 		if ($qty_min !== null) {
-			$sql .= " AND pb.qty > ".$qty_min;
+			$sql .= " AND pb.qty > ".((float) price2num($qty_min, 'MS'));
 		}
 		$sql .= $db->order($sortfield, $sortorder);
 

@@ -53,6 +53,16 @@ if ($cancel) {
 }
 
 if ($action == 'update') {
+	if (GETPOSTISSET('PROPOSAL_PDF_HIDE_PAYMENTTERM')) {
+		dolibarr_set_const($db, "PROPOSAL_PDF_HIDE_PAYMENTTERM", GETPOST("PROPOSAL_PDF_HIDE_PAYMENTTERM"), 'chaine', 0, '', $conf->entity);
+	}
+	if (GETPOSTISSET('PROPOSAL_PDF_HIDE_PAYMENTMODE')) {
+		dolibarr_set_const($db, "PROPOSAL_PDF_HIDE_PAYMENTMODE", GETPOST("PROPOSAL_PDF_HIDE_PAYMENTMODE"), 'chaine', 0, '', $conf->entity);
+	}
+	if (GETPOSTISSET('MAIN_GENERATE_PROPOSALS_WITH_PICTURE')) {
+		dolibarr_set_const($db, "MAIN_GENERATE_PROPOSALS_WITH_PICTURE", GETPOST("MAIN_GENERATE_PROPOSALS_WITH_PICTURE"), 'chaine', 0, '', $conf->entity);
+	}
+
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
@@ -78,7 +88,8 @@ $head = pdf_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'other', $langs->trans("other"), -1, 'pdf');
 
-print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("PDFOtherDesc"), $s)."</span><br>\n";
+$tooltiptext = '';
+print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("PDFOtherDesc"), $tooltiptext)."</span><br>\n";
 print "<br>\n";
 
 print load_fiche_titre($langs->trans("Proposal"), '', '');
@@ -116,10 +127,9 @@ print '</td></tr>';
 print '</table>';
 print '</div>';
 
-
-print '<br><div class="center">';
-print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
-print '</div>';
+/*
+	print $form->buttonsSaveCancel();
+*/
 
 print '</form>';
 

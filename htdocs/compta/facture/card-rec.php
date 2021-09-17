@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('bills', 'compta', 'admin', 'other', 'products', 'banks'));
+$langs->loadLangs(array('bills', 'companies', 'compta', 'admin', 'other', 'products', 'banks'));
 
 $action     = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
@@ -193,11 +193,11 @@ if (empty($reshook)) {
 				$action = "create";
 				$error++;
 			}
-			if ($nb_gen_max === '') {
+			/*if ($nb_gen_max === '') {
 				setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("MaxPeriodNumber")), null, 'errors');
 				$action = "create";
 				$error++;
-			}
+			}*/
 		}
 
 		if (!$error) {
@@ -433,8 +433,8 @@ if (empty($reshook)) {
 			$tva_tx = '';
 		}
 
-		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
-		$remise_percent = price2num(GETPOST('remise_percent'.$predef), 2);
+		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS', 2);
+		$remise_percent = price2num(GETPOST('remise_percent'.$predef), '', 2);
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -447,15 +447,15 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (empty($idprod) && ($price_ht < 0) && ($qty < 0)) {
+		if ((empty($idprod) || $idprod < 0) && ($price_ht < 0) && ($qty < 0)) {
 			setEventMessages($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 		}
-		if ($prod_entry_mode == 'free' && empty($idprod) && GETPOST('type') < 0) {
+		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && GETPOST('type') < 0) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 			$error++;
 		}
-		if ($prod_entry_mode == 'free' && empty($idprod) && (!($price_ht >= 0) || $price_ht == '')) { 	// Unit price can be 0 but not ''
+		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && (!($price_ht >= 0) || $price_ht == '')) { 	// Unit price can be 0 but not ''
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
 			$error++;
 		}
@@ -463,7 +463,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 		}
-		if ($prod_entry_mode == 'free' && empty($idprod) && empty($product_desc)) {
+		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && empty($product_desc)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
 			$error++;
 		}
@@ -473,7 +473,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (!$error && ($qty >= 0) && (!empty($product_desc) || !empty($idprod))) {
+		if (!$error && ($qty >= 0) && (!empty($product_desc) || (!empty($idprod) && $idprod > 0))) {
 			$ret = $object->fetch($id);
 			if ($ret < 0) {
 				dol_print_error($db, $object->error);
@@ -495,7 +495,7 @@ if (empty($reshook)) {
 			// Ecrase $tva_tx par celui du produit
 			// Ecrase $base_price_type par celui du produit
 			// Replaces $fk_unit with the product's
-			if (!empty($idprod)) {
+			if (!empty($idprod) && $idprod > 0) {
 				$prod = new Product($db);
 				$prod->fetch($idprod);
 
@@ -781,6 +781,8 @@ if (empty($reshook)) {
 				$result = -1;
 		}*/
 
+		$remise_percent = price2num(GETPOST('remise_percent'), '', 2);
+
 		// Check minimum price
 		$productid = GETPOST('productid', 'int');
 		if (!empty($productid)) {
@@ -797,7 +799,7 @@ if (empty($reshook)) {
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
 			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
-			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT) && $price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent', 2)) / 100) < price2num($price_min)))) {
+			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT) && $price_min && (price2num($pu_ht) * (1 - $remise_percent / 100) < price2num($price_min)))) {
 				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), null, 'errors');
 				$error++;
 			}
@@ -830,8 +832,8 @@ if (empty($reshook)) {
 				$vat_rate,
 				$localtax1_rate,
 				$localtax1_rate,
-				GETPOST('productid'),
-				price2num(GETPOST('remise_percent'), 2),
+				GETPOST('productid', 'int'),
+				$remise_percent,
 				'HT',
 				$info_bits,
 				0,
@@ -964,7 +966,7 @@ if ($action == 'create') {
 
 		// Title
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Title").'</td><td>';
-		print '<input class="flat quatrevingtpercent" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("titre", 'alphanohtml')).'">';
+		print '<input class="flat quatrevingtpercent" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'alphanohtml')).'">';
 		print '</td></tr>';
 
 		// Third party
@@ -1144,10 +1146,8 @@ if ($action == 'create') {
 		}
 		print "</table>\n";
 
-		print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-		print '</div>';
+		print $form->buttonsSaveCancel("Create");
+
 		print "</form>\n";
 	} else {
 		dol_print_error('', "Error, no invoice ".$object->id);
@@ -1227,6 +1227,8 @@ if ($action == 'create') {
 			}
 		}
 		$morehtmlref .= '</div>';
+
+		$morehtmlright = '';
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'title', 'none', $morehtmlref, '', 0, '', $morehtmlright);
 
@@ -1473,7 +1475,7 @@ if ($action == 'create') {
 			print '<tr><td>';
 			print "<input type='text' name='frequency' value='".$object->frequency."' size='5' />&nbsp;".$form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), ($object->unit_frequency ? $object->unit_frequency : 'm'));
 			print '</td>';
-			print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			print '<td class="left"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 			print '</tr></table></form>';
 		} else {
 			if ($object->frequency > 0) {

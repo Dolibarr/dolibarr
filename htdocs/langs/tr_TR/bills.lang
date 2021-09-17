@@ -259,6 +259,7 @@ DateMaxPayment=Ödeme vadesi
 DateInvoice=Fatura tarihi
 DatePointOfTax=Vergi noktası
 NoInvoice=Fatura yok
+NoOpenInvoice=No open invoice
 ClassifyBill=Faturayı sınıflandır
 SupplierBillsToPay=Ödenmemiş tedarikçi faturaları
 CustomerBillsUnpaid=Ödenmemiş müşteri faturaları
@@ -589,3 +590,4 @@ FacParentLine=Invoice Line Parent
 SituationTotalRayToRest=Remainder to pay without taxe
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=Total progress %d %%
+SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s

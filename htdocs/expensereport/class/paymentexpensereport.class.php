@@ -168,8 +168,8 @@ class PaymentExpenseReport extends CommonObject
 			$sql .= " fk_typepayment, num_payment, note, fk_user_creat, fk_bank)";
 			$sql .= " VALUES ($this->fk_expensereport, '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datepaid)."',";
-			$sql .= " ".$totalamount.",";
-			$sql .= " ".$this->fk_typepayment.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ".$user->id.",";
+			$sql .= " ".price2num($totalamount).",";
+			$sql .= " ".((int) $this->fk_typepayment).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ".((int) $user->id).",";
 			$sql .= " 0)";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -359,7 +359,7 @@ class PaymentExpenseReport extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
-			$sql .= " WHERE type='payment_expensereport' AND url_id=".$this->id;
+			$sql .= " WHERE type='payment_expensereport' AND url_id=".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);

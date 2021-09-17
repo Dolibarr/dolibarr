@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2015 Florian HENRY       <florian.henry@open-concept.pro>
- * Copyright (C) 2015      Laurent Destailleur <ldestailleur@users.sourceforge.net>
+ * Copyright (C) 2015-2021 Laurent Destailleur <ldestailleur@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,8 +45,7 @@ if ($user->socid > 0) {
 }
 $nowyear = strftime("%Y", dol_now());
 $year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
-//$startyear=$year-2;
-$startyear = $year - 1;
+$startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;
 
 // Load translation files required by the page
@@ -283,7 +282,8 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-print $form->select_company($socid, 'socid', '', 1, 0, 0, array(), 0, '', 'style="width: 95%"');
+print img_picto('', 'company', 'class="pictofixedwidth"');
+print $form->select_company($socid, 'socid', '', 1, 0, 0, array(), 0, 'widthcentpercentminusx maxwidth300', '');
 print '</td></tr>';
 // User
 /*print '<tr><td>'.$langs->trans("ProjectCommercial").'</td><td>';
@@ -300,7 +300,7 @@ if (!in_array($nowyear, $arrayyears)) {
 arsort($arrayyears);
 print $form->selectarray('year', $arrayyears, $year, 0);
 print '</td></tr>';
-print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button small" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';
 print '</form>';
 print '<br><br>';
@@ -325,12 +325,12 @@ foreach ($data_all_year as $val) {
 
 		print '<tr class="oddeven" height="24">';
 		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$oldyear.'</a></td>';
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
-			print '<td class="right">0</td>';
-			print '<td class="right">0</td>';
-			print '<td class="right">0</td>';
-		}
 		print '<td class="right">0</td>';
+		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			print '<td class="right amount nowraponall">0</td>';
+			print '<td class="right amount nowraponall">0</td>';
+			print '<td class="right amount nowraponall">0</td>';
+		}
 		print '</tr>';
 	}
 
@@ -338,9 +338,9 @@ foreach ($data_all_year as $val) {
 	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
 	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
-		print '<td class="right">'.($val['total'] ? price(price2num($val['total'], 'MT'), 1) : '0').'</td>';
-		print '<td class="right">'.($val['avg'] ? price(price2num($val['avg'], 'MT'), 1) : '0').'</td>';
-		print '<td class="right">'.(isset($val['weighted']) ? price(price2num($val['weighted'], 'MT'), 1) : '0').'</td>';
+		print '<td class="right amount nowraponall">'.($val['total'] ? price(price2num($val['total'], 'MT'), 1) : '0').'</td>';
+		print '<td class="right amount nowraponall">'.($val['avg'] ? price(price2num($val['avg'], 'MT'), 1) : '0').'</td>';
+		print '<td class="right amount nowraponall">'.(isset($val['weighted']) ? price(price2num($val['weighted'], 'MT'), 1) : '0').'</td>';
 	}
 	print '</tr>';
 	$oldyear = $year;

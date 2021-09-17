@@ -307,7 +307,7 @@ class Loan extends CommonObject
 
 		// Delete payments
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_loan where fk_loan=".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_loan where fk_loan=".((int) $this->id);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -356,12 +356,12 @@ class Loan extends CommonObject
 		$sql .= " capital='".price2num($this->db->escape($this->capital))."',";
 		$sql .= " datestart='".$this->db->idate($this->datestart)."',";
 		$sql .= " dateend='".$this->db->idate($this->dateend)."',";
-		$sql .= " nbterm=".$this->nbterm.",";
-		$sql .= " rate=".$this->db->escape($this->rate).",";
+		$sql .= " nbterm=".((float) $this->nbterm).",";
+		$sql .= " rate=".((float) $this->rate).",";
 		$sql .= " accountancy_account_capital = '".$this->db->escape($this->account_capital)."',";
 		$sql .= " accountancy_account_insurance = '".$this->db->escape($this->account_insurance)."',";
 		$sql .= " accountancy_account_interest = '".$this->db->escape($this->account_interest)."',";
-		$sql .= " fk_projet=".(empty($this->fk_project) ? 'NULL' : $this->fk_project).",";
+		$sql .= " fk_projet=".(empty($this->fk_project) ? 'NULL' : ((int) $this->fk_project)).",";
 		$sql .= " fk_user_modif = ".$user->id.",";
 		$sql .= " insurance_amount = '".price2num($this->db->escape($this->insurance_amount))."'";
 		$sql .= " WHERE rowid=".((int) $this->id);
@@ -404,7 +404,7 @@ class Loan extends CommonObject
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
 		$sql .= " paid = ".$this::STATUS_PAID;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$return = $this->db->query($sql);
 		if ($return) {
 			return 1;
@@ -440,7 +440,7 @@ class Loan extends CommonObject
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
 		$sql .= " paid = ".$this::STATUS_STARTED;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$return = $this->db->query($sql);
 		if ($return) {
 			return 1;
@@ -475,7 +475,7 @@ class Loan extends CommonObject
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
 		$sql .= " paid = ".$this::STATUS_UNPAID;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$return = $this->db->query($sql);
 		if ($return) {
 			return 1;
@@ -651,7 +651,7 @@ class Loan extends CommonObject
 
 		$sql = 'SELECT sum(amount_capital) as amount';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql .= ' WHERE '.$field.' = '.$this->id;
+		$sql .= " WHERE ".$field." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSumPayment", LOG_DEBUG);
 		$resql = $this->db->query($sql);

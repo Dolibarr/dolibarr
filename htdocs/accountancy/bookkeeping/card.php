@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2017  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2017  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -389,11 +389,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" value="'.$langs->trans("Cancel").'" class="button button-cancel" onclick="history.go(-1)" />';
-	print '</div>';
+	print $form->buttonsSaveCancel("Create");
 
 	print '</form>';
 } else {
@@ -450,7 +446,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="action" value="setdate">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
 			print $form->selectDate($object->doc_date ? $object->doc_date : - 1, 'doc_date', '', '', '', "setdate");
-			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
 			print $object->doc_date ? dol_print_date($object->doc_date, 'day') : '&nbsp;';
@@ -477,7 +473,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="action" value="setjournal">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
 			print $formaccounting->select_journal($object->code_journal, 'code_journal', 0, 0, array(), 1, 1);
-			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
 			print $object->code_journal;
@@ -504,7 +500,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="action" value="setdocref">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
 			print '<input type="text" size="20" name="doc_ref" value="'.dol_escape_htmltag($object->doc_ref).'">';
-			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
 			print $object->doc_ref;
@@ -534,6 +530,22 @@ if ($action == 'create') {
 		print '<td class="titlefield">'.$langs->trans("DateCreation").'</td>';
 		print '<td>';
 		print $object->date_creation ? dol_print_date($object->date_creation, 'day') : '&nbsp;';
+		print '</td>';
+		print '</tr>';
+
+		// Date document creation
+		print '<tr>';
+		print '<td class="titlefield">'.$langs->trans("DateExport").'</td>';
+		print '<td>';
+		print $object->date_export ? dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
+		print '</td>';
+		print '</tr>';
+
+		// Date document creation
+		print '<tr>';
+		print '<td class="titlefield">'.$langs->trans("DateValidation").'</td>';
+		print '<td>';
+		print $object->date_validation ? dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
 		print '</td>';
 		print '</tr>';
 
@@ -619,7 +631,11 @@ if ($action == 'create') {
 				print_liste_field_titre("LabelOperation");
 				print_liste_field_titre("Debit", "", "", "", "", 'class="right"');
 				print_liste_field_titre("Credit", "", "", "", "", 'class="right"');
-				print_liste_field_titre("Action", "", "", "", "", 'width="60" class="center"');
+				if (empty($object->date_validation)) {
+					print_liste_field_titre("Action", "", "", "", "", 'width="60" class="center"');
+				} else {
+					print_liste_field_titre("");
+				}
 
 				print "</tr>\n";
 
@@ -662,21 +678,25 @@ if ($action == 'create') {
 						}
 						print '</td>';
 						print '<td>'.$line->label_operation.'</td>';
-						print '<td class="nowrap right">'.price($line->debit).'</td>';
-						print '<td class="nowrap right">'.price($line->credit).'</td>';
+						print '<td class="right nowraponall amount">'.price($line->debit).'</td>';
+						print '<td class="right nowraponall amount">'.price($line->credit).'</td>';
 
 						print '<td class="center">';
-						print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=update&id='.$line->id.'&piece_num='.urlencode($line->piece_num).'&mode='.urlencode($mode).'&token='.urlencode(newToken()).'">';
-						print img_edit('', 0, 'class="marginrightonly"');
-						print '</a> &nbsp;';
-
-						$actiontodelete = 'delete';
-						if ($mode == '_tmp' || $action != 'delmouv') {
-							$actiontodelete = 'confirm_delete';
+						if (empty($line->date_export) && empty($line->date_validation)) {
+							print '<a class="editfielda reposition" href="' . $_SERVER["PHP_SELF"] . '?action=update&id=' . $line->id . '&piece_num=' . urlencode($line->piece_num) . '&mode=' . urlencode($mode) . '&token=' . urlencode(newToken()) . '">';
+							print img_edit('', 0, 'class="marginrightonly"');
+							print '</a> &nbsp;';
 						}
 
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action='.$actiontodelete.'&id='.$line->id.'&piece_num='.urlencode($line->piece_num).'&mode='.urlencode($mode).'&token='.urlencode(newToken()).'">';
-						print img_delete();
+						if (empty($line->date_validation)) {
+							$actiontodelete = 'delete';
+							if ($mode == '_tmp' || $action != 'delmouv') {
+								$actiontodelete = 'confirm_delete';
+							}
+
+							print '<a href="' . $_SERVER["PHP_SELF"] . '?action=' . $actiontodelete . '&id=' . $line->id . '&piece_num=' . urlencode($line->piece_num) . '&mode=' . urlencode($mode) . '&token=' . urlencode(newToken()) . '">';
+							print img_delete();
+						}
 
 						print '</a>';
 						print '</td>';
@@ -691,32 +711,33 @@ if ($action == 'create') {
 					setEventMessages(null, array($langs->trans('MvtNotCorrectlyBalanced', $total_debit, $total_credit)), 'warnings');
 				}
 
-				if ($action == "" || $action == 'add') {
-					print '<tr class="oddeven">';
-					print '<!-- td columns in add mode -->';
-					print '<td>';
-					print $formaccounting->select_account('', 'accountingaccount_number', 1, array(), 1, 1, '');
-					print '</td>';
-					print '<td>';
-					// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
-					// It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
-					// Also, it is not possible to use a value that is not in the list.
-					// Also, the label is not automatically filled when a value is selected.
-					if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
-						print $formaccounting->select_auxaccount('', 'subledger_account', 1);
-					} else {
-						print '<input type="text" class="maxwidth150" name="subledger_account" value="" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccount")).'">';
+				if (empty($object->date_export) && empty($object->date_validation)) {
+					if ($action == "" || $action == 'add') {
+						print '<tr class="oddeven">';
+						print '<!-- td columns in add mode -->';
+						print '<td>';
+						print $formaccounting->select_account('', 'accountingaccount_number', 1, array(), 1, 1, '');
+						print '</td>';
+						print '<td>';
+						// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
+						// It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
+						// Also, it is not possible to use a value that is not in the list.
+						// Also, the label is not automatically filled when a value is selected.
+						if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+							print $formaccounting->select_auxaccount('', 'subledger_account', 1);
+						} else {
+							print '<input type="text" class="maxwidth150" name="subledger_account" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '">';
+						}
+						print '<br><input type="text" class="maxwidth150" name="subledger_label" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '">';
+						print '</td>';
+						print '<td><input type="text" class="minwidth200" name="label_operation" value="' . $label_operation . '"/></td>';
+						print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
+						print '<td class="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
+						print '<td><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '"></td>';
+						print '</tr>';
 					}
-					print '<br><input type="text" class="maxwidth150" name="subledger_label" value="" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccountLabel")).'">';
-					print '</td>';
-					print '<td><input type="text" class="minwidth200" name="label_operation" value="'.$label_operation.'"/></td>';
-					print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
-					print '<td class="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
-					print '<td><input type="submit" class="button" name="save" value="'.$langs->trans("Add").'"></td>';
-					print '</tr>';
+					print '</table>';
 				}
-				print '</table>';
-
 
 				if ($mode == '_tmp' && $action == '') {
 					print '<br>';

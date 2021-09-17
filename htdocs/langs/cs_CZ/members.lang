@@ -213,3 +213,5 @@ SendReminderForExpiredSubscription=Odeslání připomenutí e-mailem členům p�
 MembershipPaid=Členství zaplaceno za běžné období (do %s)
 YouMayFindYourInvoiceInThisEmail=Vaše faktura můžete připojit k tomuto e-mailu
 XMembersClosed=člen %s uzavřen(i)
+XExternalUserCreated=%s external user(s) created
+ForceMemberNature=Force member nature (Individual or Corporation)

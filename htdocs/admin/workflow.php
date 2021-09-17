@@ -91,15 +91,21 @@ $workflowcodes = array(
 	),
 
 	// Automatic classification of order
-	'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING'=>array(
+	'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING'=>array(  // when shipping validated
 		'family'=>'classify_order',
 		'position'=>40,
 		'enabled'=>(!empty($conf->expedition->enabled) && !empty($conf->commande->enabled)),
 		'picto'=>'order'
 	),
-	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER'=>array(
+	'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED'=>array( // when shipping closed
 		'family'=>'classify_order',
 		'position'=>41,
+		'enabled'=>(!empty($conf->expedition->enabled) && !empty($conf->commande->enabled)),
+		'picto'=>'order'
+	),
+	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER'=>array(
+		'family'=>'classify_order',
+		'position'=>42,
 		'enabled'=>(!empty($conf->facture->enabled) && !empty($conf->commande->enabled)),
 		'picto'=>'order',
 		'warning'=>''

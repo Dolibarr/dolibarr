@@ -225,7 +225,7 @@ foreach ($dirmodels as $reldir) {
 							$langs->load("errors");
 							print '<div class="error">'.$langs->trans($tmp).'</div>';
 						} elseif ($tmp == 'NotConfigured') {
-							print $langs->trans($tmp);
+							print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
 						} else {
 							print $tmp;
 						}
@@ -465,12 +465,12 @@ print "</td></tr>\n";
 
 print '<tr><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftContractCards"), $htmltext).'<br>';
-print '<input size="50" class="flat" type="text" name="RECEPTION_DRAFT_WATERMARK" value="'.$conf->global->RECEPTION_DRAFT_WATERMARK.'">';
+print '<input class="flat minwidth200" type="text" name="RECEPTION_DRAFT_WATERMARK" value="'.$conf->global->RECEPTION_DRAFT_WATERMARK.'">';
 print "</td></tr>\n";
 */
 print '</table>';
 
-//print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+//print $form->buttonsSaveCancel("Modify", '');
 
 print '</form>';
 

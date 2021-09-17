@@ -175,6 +175,7 @@ $elementList = array();
 // We save list of template email Dolibarr can manage. This list can found by a grep into code on "->param['models']"
 $elementList = array();
 // Add all and none after the sort
+
 $elementList['all'] = '-- '.dol_escape_htmltag($langs->trans("All")).' --';
 $elementList['none'] = '-- '.dol_escape_htmltag($langs->trans("None")).' --';
 $elementList['user'] = img_picto('', 'user', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToUser'));
@@ -227,7 +228,10 @@ if (!empty($conf->agenda->enabled)) {
 	$elementList['actioncomm_send'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventPush'));
 }
 if (!empty($conf->eventorganization->enabled) && !empty($user->rights->eventorganization->read)) {
-	$elementList['eventorganization_send'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventOrganization'));
+	$elementList['conferenceorbooth'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventOrganization'));
+}
+if (!empty($conf->partnership->enabled) && !empty($user->rights->partnership->read)) {
+	$elementList['partnership_send'] = img_picto('', 'partnership', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToPartnership'));
 }
 
 $parameters = array('elementList'=>$elementList);
@@ -560,8 +564,8 @@ $sql = "SELECT rowid as rowid, module, label, type_template, lang, fk_user, priv
 $sql .= " FROM ".MAIN_DB_PREFIX."c_email_templates";
 $sql .= " WHERE entity IN (".getEntity('email_template').")";
 if (!$user->admin) {
-	$sql .= " AND (private = 0 OR (private = 1 AND fk_user = ".$user->id."))"; // Show only public and private to me
-	$sql .= " AND (active = 1 OR fk_user = ".$user->id.")"; // Show only active or owned by me
+	$sql .= " AND (private = 0 OR (private = 1 AND fk_user = ".((int) $user->id)."))"; // Show only public and private to me
+	$sql .= " AND (active = 1 OR fk_user = ".((int) $user->id).")"; // Show only active or owned by me
 }
 if (empty($conf->global->MAIN_MULTILANGS)) {
 	$sql .= " AND (lang = '".$db->escape($langs->defaultlang)."' OR lang IS NULL OR lang = '')";
@@ -742,7 +746,7 @@ if ($action == 'view') {
 		if ($tmpfieldlist == 'topic') {
 			print '<td class="center" rowspan="'.(count($fieldsforcontent)).'">';
 			if ($action != 'edit') {
-				print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
+				print '<input type="submit" class="button button-add" name="actionadd" value="'.$langs->trans("Add").'">';
 			}
 			print '</td>';
 		}
@@ -824,7 +828,7 @@ if ($resql) {
 			print '<td class="liste_titre"><input type="text" name="search_topic" value="'.dol_escape_htmltag($search_topic).'"></td>';
 		} elseif ($value == 'type_template') {
 			print '<td class="liste_titre center">';
-			print $form->selectarray('search_type_template', $elementList, $search_type_template, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth200', 1, '', 0, 1);
+			print $form->selectarray('search_type_template', $elementList, $search_type_template, 1, 0, 0, '', 0, 0, 0, '', 'minwidth150', 1, '', 0, 1);
 			print '</td>';
 		} elseif (!in_array($value, array('content', 'content_lines'))) {
 			print '<td class="liste_titre"></td>';
@@ -1067,8 +1071,8 @@ if ($resql) {
 						if ($showfield) {
 							print '<!-- '.$fieldlist[$field].' -->';
 							print '<td class="'.$class.'"';
-							if ($value == 'topic') {
-								print ' title="'.$valuetoshow.'"';
+							if (in_array($value, array('code', 'label', 'topic'))) {
+								print ' title="'.dol_escape_htmltag($valuetoshow).'"';
 							}
 							print '>';
 							print $valuetoshow;
@@ -1229,7 +1233,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 				print '<input type="hidden" name="type_template" value="'.$obj->{$value}.'">';
 				print $obj->{$value};
 			} else {
-				print $form->selectarray('type_template', $elementList, (!empty($obj->{$value}) ? $obj->{$value}:''), 1, 0, 0, '', 0, 0, 0, '', 'maxwidth200', 1, '', 0, 1);
+				print $form->selectarray('type_template', $elementList, (!empty($obj->{$value}) ? $obj->{$value}:''), 1, 0, 0, '', 0, 0, 0, '', 'minwidth150', 1, '', 0, 1);
 			}
 			print '</td>';
 		} elseif ($context == 'add' && in_array($value, array('topic', 'joinfiles', 'content', 'content_lines'))) {

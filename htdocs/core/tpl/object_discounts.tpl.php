@@ -30,6 +30,14 @@ $objclassname = get_class($object);
 $isInvoice = in_array($object->element, array('facture', 'invoice', 'facture_fourn', 'invoice_supplier'));
 $isNewObject = empty($object->id) && empty($object->rowid);
 
+// Clean variables not defined
+if (!isset($absolute_discount)) {
+	$absolute_discount = 0;
+}
+if (!isset($absolute_creditnote)) {
+	$absolute_creditnote = 0;
+}
+
 // Relative and absolute discounts
 $addrelativediscount = '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$thirdparty->id.'&backtopage='.$backtopage.'">'.$langs->trans("EditRelativeDiscount").'</a>';
 $addabsolutediscount = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$thirdparty->id.'&backtopage='.$backtopage.'">'.$langs->trans("EditGlobalDiscounts").'</a>';
@@ -53,7 +61,7 @@ if ($isNewObject) {
 
 // Is there is commercial discount or down payment available ?
 if ($absolute_discount > 0) {
-	if ($cannotApplyDiscount || !$isInvoice || $isNewObject || $object->statut > $objclassname::STATUS_DRAFT || $object->type == $objclassname::TYPE_CREDIT_NOTE || $object->type == $objclassname::TYPE_DEPOSIT) {
+	if (!empty($cannotApplyDiscount) || !$isInvoice || $isNewObject || $object->statut > $objclassname::STATUS_DRAFT || $object->type == $objclassname::TYPE_CREDIT_NOTE || $object->type == $objclassname::TYPE_DEPOSIT) {
 		$translationKey = !empty($discount_type) ? 'HasAbsoluteDiscountFromSupplier' : 'CompanyHasAbsoluteDiscount';
 		$text = $langs->trans($translationKey, price($absolute_discount), $langs->transnoentities("Currency".$conf->currency)).'.';
 

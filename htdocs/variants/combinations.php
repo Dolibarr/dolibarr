@@ -30,10 +30,13 @@ $langs->loadLangs(array("products", "other"));
 $id = GETPOST('id', 'int');
 $valueid = GETPOST('valueid', 'int');
 $ref = GETPOST('ref', 'alpha');
-$weight_impact = GETPOST('weight_impact', 'alpha');
-$price_impact = GETPOST('price_impact', 'alpha');
+$weight_impact = price2num(GETPOST('weight_impact', 'alpha'), 2);
 $price_impact_percent = (bool) GETPOST('price_impact_percent');
-
+if ($price_impact_percent) {
+	$price_impact = price2num(GETPOST('price_impact', 'alpha'), 2);
+} else {
+	$price_impact = price2num(GETPOST('price_impact', 'alpha'), 'MU');
+}
 $level_price_impact = GETPOST('level_price_impact', 'array');
 $level_price_impact_percent = GETPOST('level_price_impact_percent', 'array');
 

@@ -213,3 +213,5 @@ SendReminderForExpiredSubscription=Send reminder by email to members when subscr
 MembershipPaid=Membership paid for current period (until %s)
 YouMayFindYourInvoiceInThisEmail=Faturanızı bu e-postanın ekinde bulabilirsiniz
 XMembersClosed=%s üye kapatıldı
+XExternalUserCreated=%s external user(s) created
+ForceMemberNature=Force member nature (Individual or Corporation)

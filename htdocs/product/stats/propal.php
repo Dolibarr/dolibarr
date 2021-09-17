@@ -153,7 +153,7 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " WHERE p.fk_soc = s.rowid";
 			$sql .= " AND p.entity IN (".getEntity('propal').")";
 			$sql .= " AND d.fk_propal = p.rowid";
-			$sql .= " AND d.fk_product =".$product->id;
+			$sql .= " AND d.fk_product = ".((int) $product->id);
 			if (!empty($search_month)) {
 				$sql .= ' AND MONTH(p.datep) IN ('.$db->sanitize($search_month).')';
 			}
@@ -161,7 +161,7 @@ if ($id > 0 || !empty($ref)) {
 				$sql .= ' AND YEAR(p.datep) IN ('.$db->sanitize($search_year).')';
 			}
 			if (!$user->rights->societe->client->voir && !$socid) {
-				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($socid) {
 				$sql .= " AND p.fk_soc = ".((int) $socid);

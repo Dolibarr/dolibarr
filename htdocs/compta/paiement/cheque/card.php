@@ -538,7 +538,7 @@ if ($action == 'new') {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setdate">';
 		print $form->selectDate($object->date_bordereau, 'datecreate_', '', '', '', "setdate");
-		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+		print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	} else {
 		print $object->date_bordereau ? dol_print_date($object->date_bordereau, 'day') : '&nbsp;';
@@ -563,7 +563,7 @@ if ($action == 'new') {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setrefext">';
 		print '<input type="text" name="ref_ext" value="'.$object->ref_ext.'">';
-		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+		print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	}
 	else
@@ -606,7 +606,7 @@ if ($action == 'new') {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
 	$sql .= " WHERE ba.entity IN (".getEntity('bank_account').")";
 	$sql .= " AND b.fk_type= 'CHQ'";
-	$sql .= " AND b.fk_bordereau = ".$object->id;
+	$sql .= " AND b.fk_bordereau = ".((int) $object->id);
 	$sql .= $db->order($sortfield, $sortorder);
 
 	$resql = $db->query($sql);

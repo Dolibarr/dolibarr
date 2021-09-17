@@ -301,7 +301,7 @@ if ($search_country > 0) {
 }
 $sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 if ($socid) {
-	$sql .= " AND f.fk_soc = ".$socid;
+	$sql .= " AND f.fk_soc = ".((int) $socid);
 }
 $sql .= " GROUP BY s.rowid, s.nom, s.zip, s.town, s.fk_pays";
 $sql .= " ORDER BY s.rowid";

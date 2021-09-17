@@ -53,7 +53,8 @@ TypeOfLineServiceOrProduct=Тип ред (0 = продукт, 1 = услуга)
 FileWithDataToImport=Файл с данни за импортиране
 FileToImport=Входен файл за импортиране
 FileMustHaveOneOfFollowingFormat=Файлът за импортиране трябва да бъде в един от следните формати
-DownloadEmptyExample=Изтегляне на шаблонния файл с информация за съдържанието на полето (* са задължителни полета)
+DownloadEmptyExample=Download template file with field content information
+StarAreMandatory=* are mandatory fields
 ChooseFormatOfFileToImport=Изберете формата на файла, който да използвате като формат за импортиране, като кликнете върху иконата на %s, за да го изберете...
 ChooseFileToImport=Прикачете файл, след това кликнете върху иконата %s, за да изберете файла като източник при импортиране...
 SourceFileFormat=Формат на входния файл

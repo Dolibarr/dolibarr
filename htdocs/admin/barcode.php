@@ -272,8 +272,7 @@ if ($resql) {
 print "</table>\n";
 
 if (empty($conf->use_javascript_ajax)) {
-	print '<div class="center"><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'"></div>';
-	print '</form>';
+	print $form->buttonsSaveCancel("Save", '');
 }
 
 print "<br>";

@@ -58,12 +58,12 @@ error_reporting(0);
 error_reporting($err);
 
 
-$setuplang = GETPOST("selectlang", 'aZ09', 3) ?GETPOST("selectlang", 'aZ09', 3) : 'auto';
+$setuplang = GETPOST("selectlang", 'aZ09', 3) ? GETPOST("selectlang", 'aZ09', 3) : 'auto';
 $langs->setDefaultLang($setuplang);
-$versionfrom = GETPOST("versionfrom", 'alpha', 3) ?GETPOST("versionfrom", 'alpha', 3) : (empty($argv[1]) ? '' : $argv[1]);
-$versionto = GETPOST("versionto", 'alpha', 3) ?GETPOST("versionto", '', 3) : (empty($argv[2]) ? '' : $argv[2]);
-$dirmodule = ((GETPOST("dirmodule", 'alpha', 3) && GETPOST("dirmodule", 'alpha', 3) != 'ignoredbversion')) ?GETPOST("dirmodule", 'alpha', 3) : ((empty($argv[3]) || $argv[3] == 'ignoredbversion') ? '' : $argv[3]);
-$ignoredbversion = (GETPOST('ignoredbversion', 'alpha', 3) == 'ignoredbversion') ?GETPOST('ignoredbversion', 'alpha', 3) : ((empty($argv[3]) || $argv[3] != 'ignoredbversion') ? '' : $argv[3]);
+$versionfrom = GETPOST("versionfrom", 'alpha', 3) ? GETPOST("versionfrom", 'alpha', 3) : (empty($argv[1]) ? '' : $argv[1]);
+$versionto = GETPOST("versionto", 'alpha', 3) ? GETPOST("versionto", 'alpha', 3) : (empty($argv[2]) ? '' : $argv[2]);
+$dirmodule = ((GETPOST("dirmodule", 'alpha', 3) && GETPOST("dirmodule", 'alpha', 3) != 'ignoredbversion')) ? GETPOST("dirmodule", 'alpha', 3) : ((empty($argv[3]) || $argv[3] == 'ignoredbversion') ? '' : $argv[3]);
+$ignoredbversion = (GETPOST('ignoredbversion', 'alpha', 3) == 'ignoredbversion') ? GETPOST('ignoredbversion', 'alpha', 3) : ((empty($argv[3]) || $argv[3] != 'ignoredbversion') ? '' : $argv[3]);
 
 $langs->loadLangs(array("admin", "install", "other", "errors"));
 
@@ -102,7 +102,7 @@ if (!$versionfrom && !$versionto) {
 }
 
 
-pHeader('', "upgrade2", GETPOST('action', 'aZ09'), 'versionfrom='.$versionfrom.'&versionto='.$versionto);
+pHeader('', "upgrade2", GETPOST('action', 'aZ09'), 'versionfrom='.$versionfrom.'&versionto='.$versionto, '', 'main-inside main-inside-borderbottom');
 
 $actiondone = 0;
 
@@ -270,6 +270,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 						$values = $db->fetch_array($resql);
 						$i = 0;
 						$createsql = $values[1];
+						$reg = array();
 						while (preg_match('/CONSTRAINT `(0_[0-9a-zA-Z]+|[_0-9a-zA-Z]+_ibfk_[0-9]+)`/i', $createsql, $reg) && $i < 100) {
 							$sqldrop = "ALTER TABLE ".$val." DROP FOREIGN KEY ".$reg[1];
 							$resqldrop = $db->query($sqldrop);
@@ -282,7 +283,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 						$db->free($resql);
 					} else {
 						if ($db->lasterrno() != 'DB_ERROR_NOSUCHTABLE') {
-							print '<tr><td colspan="2"><span class="error">'.$sql.' : '.$db->lasterror()."</font></td></tr>\n";
+							print '<tr><td colspan="2"><span class="error">'.dol_escape_htmltag($sql).' : '.dol_escape_htmltag($db->lasterror())."</font></td></tr>\n";
 						}
 					}
 				}
@@ -348,8 +349,9 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").'</td><td class="right">'.$file.'</td></tr>'."\n";
 
 				// Run sql script
-				$ok = run_sql($dir.$file, 0, '', 1);
+				$ok = run_sql($dir.$file, 0, '', 1, '', 'default', 32768, 0, 0, 2);
 				$listoffileprocessed[$dir.$file] = $dir.$file;
+
 
 				// Scan if there is migration scripts that depends of Dolibarr version
 				// for modules htdocs/module/sql or htdocs/custom/module/sql (files called "dolibarr_x.y.z-a.b.c.sql")
@@ -369,17 +371,20 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 					}
 				}
 
-				foreach ($modulesfile as $modulefilelong => $modulefileshort) {
-					if (in_array($modulefilelong, $listoffileprocessed)) {
-						continue;
+				if (count($modulesfile)) {
+					print '<tr><td colspan="2"><hr style="border-color: #ccc; border-top-style: none;"></td></tr>';
+
+					foreach ($modulesfile as $modulefilelong => $modulefileshort) {
+						if (in_array($modulefilelong, $listoffileprocessed)) {
+							continue;
+						}
+
+						print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").' (external modules)</td><td class="right">'.$modulefileshort.'</td></tr>'."\n";
+
+						// Run sql script
+						$okmodule = run_sql($modulefilelong, 0, '', 1); // Note: Result of migration of external module should not decide if we continue migration of Dolibarr or not.
+						$listoffileprocessed[$modulefilelong] = $modulefilelong;
 					}
-
-					print '<tr><td colspan="2"><hr></td></tr>';
-					print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").' (external modules)</td><td class="right">'.$modulefileshort.'</td></tr>'."\n";
-
-					// Run sql script
-					$okmodule = run_sql($modulefilelong, 0, '', 1); // Note: Result of migration of external module should not decide if we continue migration of Dolibarr or not.
-					$listoffileprocessed[$modulefilelong] = $modulefilelong;
 				}
 			}
 		}

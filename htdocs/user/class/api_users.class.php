@@ -93,7 +93,7 @@ class Users extends DolibarrApi
 
 		// Select products of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".$this->db->escape($category);
+			$sql .= " AND c.fk_categorie = ".((int) $category);
 			$sql .= " AND c.fk_user = t.rowid";
 		}
 
@@ -151,7 +151,7 @@ class Users extends DolibarrApi
 	 */
 	public function get($id, $includepermissions = 0)
 	{
-		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) {
+		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin) && $id != 0 && DolibarrApiAccess::$user->id != $id) {
 			throw new RestException(401, 'Not allowed');
 		}
 
@@ -184,12 +184,17 @@ class Users extends DolibarrApi
 	 *
 	 * @url GET login/{login}
 	 *
-	 * @throws RestException 401 Insufficient rights
-	 * @throws RestException 404 User or group not found
+	 * @throws RestException 400    Bad request
+	 * @throws RestException 401 	Insufficient rights
+	 * @throws RestException 404 	User or group not found
 	 */
 	public function getByLogin($login, $includepermissions = 0)
 	{
-		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) {
+		if (empty($login)) {
+			throw new RestException(400, 'Bad parameters');
+		}
+
+		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin) && DolibarrApiAccess::$user->login != $login) {
 			throw new RestException(401, 'Not allowed');
 		}
 
@@ -218,12 +223,17 @@ class Users extends DolibarrApi
 	 *
 	 * @url GET email/{email}
 	 *
+	 * @throws RestException 400     Bad request
 	 * @throws RestException 401     Insufficient rights
 	 * @throws RestException 404     User or group not found
 	 */
 	public function getByEmail($email, $includepermissions = 0)
 	{
-		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) {
+		if (empty($email)) {
+			throw new RestException(400, 'Bad parameters');
+		}
+
+		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin) && DolibarrApiAccess::$user->email != $email) {
 			throw new RestException(401, 'Not allowed');
 		}
 
@@ -256,7 +266,7 @@ class Users extends DolibarrApi
 	 */
 	public function getInfo($includepermissions = 0)
 	{
-		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) {
+		if (empty(DolibarrApiAccess::$user->rights->user->self->creer) && empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(401, 'Not allowed');
 		}
 

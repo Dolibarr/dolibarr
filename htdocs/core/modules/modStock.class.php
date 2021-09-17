@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2021	   Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modStock extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -148,19 +148,19 @@ class modStock extends DolibarrModules
 		$this->rights[4][4] = 'mouvement';
 		$this->rights[4][5] = 'creer';
 
+		$this->rights[5][0] = 1011;
+		$this->rights[5][1] = 'inventoryReadPermission'; // Permission label
+		$this->rights[5][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[5][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[5][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+
+		$this->rights[6][0] = 1012;
+		$this->rights[6][1] = 'inventoryCreatePermission'; // Permission label
+		$this->rights[6][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[6][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[6][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+
 		if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
-			$this->rights[5][0] = 1011;
-			$this->rights[5][1] = 'inventoryReadPermission'; // Permission label
-			$this->rights[5][3] = 0; // Permission by default for new user (0/1)
-			$this->rights[5][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-			$this->rights[5][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-
-			$this->rights[6][0] = 1012;
-			$this->rights[6][1] = 'inventoryCreatePermission'; // Permission label
-			$this->rights[6][3] = 0; // Permission by default for new user (0/1)
-			$this->rights[6][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-			$this->rights[6][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-
 			$this->rights[8][0] = 1014;
 			$this->rights[8][1] = 'inventoryValidatePermission'; // Permission label
 			$this->rights[8][3] = 0; // Permission by default for new user (0/1)
@@ -453,10 +453,10 @@ class modStock extends DolibarrModules
 		$sql = array();
 
 		$sql = array(
-			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[1][2])."' AND type = 'stock' AND entity = ".$conf->entity,
-			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[1][2])."','stock',".$conf->entity.")",
-			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[2][2])."' AND type = 'mouvement' AND entity = ".$conf->entity,
-			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[2][2])."','mouvement',".$conf->entity.")",
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[1][2])."' AND type = 'stock' AND entity = ".((int) $conf->entity),
+			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[1][2])."','stock',".((int) $conf->entity).")",
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[2][2])."' AND type = 'mouvement' AND entity = ".((int) $conf->entity),
+			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[2][2])."','mouvement',".((int) $conf->entity).")",
 		);
 
 		return $this->_init($sql, $options);

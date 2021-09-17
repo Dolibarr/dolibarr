@@ -70,7 +70,7 @@ class AdherentStats extends Stats
 
 		$this->where .= " m.statut != -1";
 		$this->where .= " AND p.fk_adherent = m.rowid AND m.entity IN (".getEntity('adherent').")";
-		//if (!$user->rights->societe->client->voir && !$user->socid) $this->where .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+		//if (!$user->rights->societe->client->voir && !$user->socid) $this->where .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .((int) $user->id);
 		if ($this->memberid) {
 			$this->where .= " AND m.rowid = ".((int) $this->memberid);
 		}
@@ -92,7 +92,7 @@ class AdherentStats extends Stats
 		$sql = "SELECT date_format(p.dateadh,'%m') as dm, count(*)";
 		$sql .= " FROM ".$this->from;
 		//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql .= " WHERE date_format(p.dateadh,'%Y') = ".((int) $year);
+		$sql .= " WHERE ".dolSqlDateFilter('p.dateadh', 0, 0, (int) $year, 1);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
@@ -133,7 +133,7 @@ class AdherentStats extends Stats
 		$sql = "SELECT date_format(p.dateadh,'%m') as dm, sum(p.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql .= " WHERE date_format(p.dateadh,'%Y') = ".((int) $year);
+		$sql .= " WHERE ".dolSqlDateFilter('p.dateadh', 0, 0, (int) $year, 1);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
@@ -154,7 +154,7 @@ class AdherentStats extends Stats
 		$sql = "SELECT date_format(p.dateadh,'%m') as dm, avg(p.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		//if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql .= " WHERE date_format(p.dateadh,'%Y') = ".((int) $year);
+		$sql .= " WHERE ".dolSqlDateFilter('p.dateadh', 0, 0, (int) $year, 1);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');

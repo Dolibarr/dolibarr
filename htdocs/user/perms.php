@@ -90,7 +90,7 @@ $hookmanager->initHooks(array('usercard', 'userperms', 'globalcard'));
  * Actions
  */
 
-$parameters = array('id'=>$socid);
+$parameters = array('socid'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -193,7 +193,7 @@ $permsuser = array();
 
 $sql = "SELECT DISTINCT ur.fk_id";
 $sql .= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
-$sql .= " WHERE ur.entity = ".$entity;
+$sql .= " WHERE ur.entity = ".((int) $entity);
 $sql .= " AND ur.fk_user = ".((int) $object->id);
 
 dol_syslog("get user perms", LOG_DEBUG);
@@ -217,9 +217,9 @@ $permsgroupbyentity = array();
 $sql = "SELECT DISTINCT gr.fk_id, gu.entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 $sql .= " ".MAIN_DB_PREFIX."usergroup_user as gu";
-$sql .= " WHERE gr.entity = ".$entity;
+$sql .= " WHERE gr.entity = ".((int) $entity);
 $sql .= " AND gr.fk_usergroup = gu.fk_usergroup";
-$sql .= " AND gu.fk_user = ".$object->id;
+$sql .= " AND gu.fk_user = ".((int) $object->id);
 
 dol_syslog("get user perms", LOG_DEBUG);
 $result = $db->query($sql);
@@ -258,8 +258,8 @@ print '<div class="underbanner clearboth"></div>';
 if ($user->admin) {
 	print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
 }
-// Show warning about external users
-if (empty($user->socid)) {
+// If edited user is an extern user, we show warning for external users
+if (! empty($object->socid)) {
 	print info_admin(showModulesExludedForExternal($modules))."\n";
 }
 
@@ -293,10 +293,10 @@ if ($user->admin) {
 print '</tr>'."\n";
 
 //print "xx".$conf->global->MAIN_USE_ADVANCED_PERMS;
-$sql = "SELECT r.id, r.libelle as label, r.module, r.perms, r.subperms, r.module_position";
+$sql = "SELECT r.id, r.libelle as label, r.module, r.perms, r.subperms, r.module_position, r.bydefault";
 $sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
-$sql .= " AND r.entity = ".$entity;
+$sql .= " AND r.entity = ".((int) $entity);
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 	$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
 }
@@ -342,10 +342,12 @@ if ($result) {
 			}
 		}
 
+		// Break found, it's a new module to catch
 		if (isset($obj->module) && ($oldmod <> $obj->module)) {
 			$oldmod = $obj->module;
 
 			// Break detected, we get objMod
+			$objMod = $modules[$obj->module];
 			$picto = ($objMod->picto ? $objMod->picto : 'generic');
 
 			// Show break line
@@ -384,7 +386,7 @@ if ($result) {
 
 		// Picto and label of module
 		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
-		//print img_object('', $picto, 'class="pictoobjectwidth"').' '.$objMod->getName();
+		//print img_object('', $picto, 'class="inline-block pictoobjectwidth"').' '.$objMod->getName();
 		print '</td>';
 
 		// Permission and tick
@@ -405,7 +407,7 @@ if ($result) {
 			print '<td class="center nowrap">';
 			print img_picto($langs->trans("Active"), 'tick');
 			print '</td>';
-		} elseif (is_array($permsgroupbyentity[$entity])) {
+		} elseif (isset($permsgroupbyentity[$entity]) && is_array($permsgroupbyentity[$entity])) {
 			if (in_array($obj->id, $permsgroupbyentity[$entity])) {	// Permission granted by group
 				if ($caneditperms) {
 					print '<td class="center">';
@@ -436,9 +438,9 @@ if ($result) {
 			print '<td>&nbsp;</td>';
 		}
 
-		// Descrption of permission
+		// Description of permission
 		$permlabel = (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
-		print '<td class="">';
+		print '<td>';
 		print $permlabel;
 		if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 			if (preg_match('/_advance$/', $obj->perms)) {

@@ -204,12 +204,12 @@ class Establishment extends CommonObject
 		$sql .= ", '".$this->db->escape($this->address)."'";
 		$sql .= ", '".$this->db->escape($this->zip)."'";
 		$sql .= ", '".$this->db->escape($this->town)."'";
-		$sql .= ", ".$this->country_id;
-		$sql .= ", ".$this->status;
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $this->country_id);
+		$sql .= ", ".((int) $this->status);
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", '".$this->db->idate($now)."'";
-		$sql .= ", ".$user->id;
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $user->id);
+		$sql .= ", ".((int) $user->id);
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -231,7 +231,7 @@ class Establishment extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'establishment');
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."establishment SET ref = '".$this->db->escape($this->id)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$this->db->query($sql);
 
 			$this->db->commit();
@@ -264,12 +264,12 @@ class Establishment extends CommonObject
 		$sql .= ", zip = '".$this->db->escape($this->zip)."'";
 		$sql .= ", town = '".$this->db->escape($this->town)."'";
 		$sql .= ", fk_country = ".($this->country_id > 0 ? $this->country_id : 'null');
-		$sql .= ", status = ".$this->db->escape($this->status);
-		$sql .= ", fk_user_mod = ".$user->id;
-		$sql .= ", entity = ".$this->entity;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= ", status = ".((int) $this->status);
+		$sql .= ", fk_user_mod = ".((int) $user->id);
+		$sql .= ", entity = ".((int) $this->entity);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$this->db->commit();

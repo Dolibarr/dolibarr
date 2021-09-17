@@ -9,7 +9,7 @@ ConfirmDeleteEstablishment= Είστε βέβαιοι ότι θέλετε να �
 OpenEtablishment=Άνοιγμα εγκατάστασης
 CloseEtablishment=Κλείσιμο εγκατάστασης
 # Dictionary
-DictionaryPublicHolidays=HRM-δημόσιες αργίες
+DictionaryPublicHolidays=Leave - Public holidays
 DictionaryDepartment=HRM - Λίστα τμημάτων
 DictionaryFunction=HRM - Job positions
 # Module

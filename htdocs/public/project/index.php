@@ -94,6 +94,12 @@ if ($resultproject < 0) {
 	$errmsg .= $project->error;
 }
 
+// Security check
+if (empty($conf->projet->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
+
+
 /*
  * Actions
  */
@@ -180,11 +186,17 @@ if ($urllogo) {
 	print '</div>';
 }
 
+if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT)) {
+	print '<div class="backimagepublicorganizedevent">';
+	print '<img id="idPROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT" src="'.$conf->global->PROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT.'">';
+	print '</div>';
+}
+
 print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 
 $text  = '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</strong></td></tr>'."\n";
-$text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgRegistrationHelpMessage").' '.$id.'.<br><br></td></tr>'."\n";
-$text .= '<tr><td class="textpublicpayment">'.$project->note_public.'<br><br></td></tr>'."\n";;
+$text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgRegistrationHelpMessage").' '.$project->title.'.<br><br></td></tr>'."\n";
+$text .= '<tr><td class="textpublicpayment">'.$project->note_public.'<br><br></td></tr>'."\n";
 
 print $text;
 

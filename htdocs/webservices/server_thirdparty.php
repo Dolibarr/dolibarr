@@ -707,13 +707,13 @@ function getListOfThirdParties($authentication, $filterthirdparty)
 				$sql .= " AND s.name LIKE '%".$db->escape($val)."%'";
 			}
 			if ($key == 'client' && (int) $val > 0) {
-				$sql .= " AND s.client = ".$db->escape($val);
+				$sql .= " AND s.client = ".((int) $val);
 			}
 			if ($key == 'supplier' && (int) $val > 0) {
-				$sql .= " AND s.fournisseur = ".$db->escape($val);
+				$sql .= " AND s.fournisseur = ".((int) $val);
 			}
 			if ($key == 'category' && (int) $val > 0) {
-				$sql .= " AND s.rowid IN (SELECT fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe WHERE fk_categorie=".$db->escape($val).") ";
+				$sql .= " AND s.rowid IN (SELECT fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe WHERE fk_categorie = ".((int) $val).") ";
 			}
 		}
 		dol_syslog("Function: getListOfThirdParties", LOG_DEBUG);

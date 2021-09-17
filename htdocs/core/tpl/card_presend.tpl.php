@@ -137,6 +137,13 @@ if ($action == 'presend') {
 		$formmail->fromname = '';
 		$formmail->fromtype = 'special';
 	}
+	if ($object->element === 'order_supplier' && !empty($conf->global->ORDER_SUPPLIER_EMAIL_SENDER)) {
+		$formmail->frommail = $conf->global->ORDER_SUPPLIER_EMAIL_SENDER;
+		$formmail->fromname = '';
+		$formmail->fromtype = 'special';
+	}
+
+
 
 	$formmail->trackid = $trackid;
 	if (!empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2)) {	// If bit 2 is set
@@ -177,7 +184,7 @@ if ($action == 'presend') {
 		$listeuser = array();
 		$fuserdest = new User($db);
 
-		$result = $fuserdest->fetchAll('ASC', 't.lastname', 0, 0, array('customsql'=>'t.statut=1 AND t.employee=1 AND t.email IS NOT NULL AND t.email<>\'\''), 'AND', true);
+		$result = $fuserdest->fetchAll('ASC', 't.lastname', 0, 0, array('customsql'=>"t.statut=1 AND t.employee=1 AND t.email IS NOT NULL AND t.email <> ''"), 'AND', true);
 		if ($result > 0 && is_array($fuserdest->users) && count($fuserdest->users) > 0) {
 			foreach ($fuserdest->users as $uuserdest) {
 				$listeuser[$uuserdest->id] = $uuserdest->user_get_property($uuserdest->id, 'email');
@@ -194,7 +201,7 @@ if ($action == 'presend') {
 	$formmail->withto = $liste;
 	$formmail->withtofree = (GETPOSTISSET('sendto') ? (GETPOST('sendto', 'alphawithlgt') ? GETPOST('sendto', 'alphawithlgt') : '1') : '1');
 	$formmail->withtocc = $liste;
-	$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
+	$formmail->withtoccc = getDolGlobalString('MAIN_EMAIL_USECCC');
 	$formmail->withtopic = $topicmail;
 	$formmail->withfile = 2;
 	$formmail->withbody = 1;

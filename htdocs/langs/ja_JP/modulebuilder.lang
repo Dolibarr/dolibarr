@@ -143,3 +143,4 @@ AsciiToHtmlConverter=アスキーからHTMLへのコンバーター
 AsciiToPdfConverter=アスキーからPDFへのコンバーター
 TableNotEmptyDropCanceled=テーブルが空ではない。ドロップはキャンセルされた。
 ModuleBuilderNotAllowed=モジュールビルダーは利用できるが、あなたのユーザには許可されていない。
+ImportExportProfiles=プロファイルのインポートとエクスポート

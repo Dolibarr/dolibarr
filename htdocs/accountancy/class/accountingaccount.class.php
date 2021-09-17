@@ -150,7 +150,7 @@ class AccountingAccount extends CommonObject
 		global $conf;
 
 		$this->db = $db;
-		$this->next_prev_filter = 'fk_pcg_version IN (SELECT pcg_version FROM '.MAIN_DB_PREFIX.'accounting_system WHERE rowid='.$conf->global->CHARTOFACCOUNTS.')'; // Used to add a filter in Form::showrefnav method
+		$this->next_prev_filter = "fk_pcg_version IN (SELECT pcg_version FROM ".MAIN_DB_PREFIX."accounting_system WHERE rowid=".((int) $conf->global->CHARTOFACCOUNTS).")"; // Used to add a filter in Form::showrefnav method
 	}
 
 	/**
@@ -185,7 +185,7 @@ class AccountingAccount extends CommonObject
 				$sql .= " AND a.fk_pcg_version = '".$this->db->escape($limittoachartaccount)."'";
 			}
 
-			dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result) {
 				$obj = $this->db->fetch_object($result);
@@ -274,7 +274,7 @@ class AccountingAccount extends CommonObject
 		$sql .= ", reconcilable";
 		$sql .= ") VALUES (";
 		$sql .= " '".$this->db->idate($now)."'";
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", ".(empty($this->fk_pcg_version) ? 'NULL' : "'".$this->db->escape($this->fk_pcg_version)."'");
 		$sql .= ", ".(empty($this->pcg_type) ? 'NULL' : "'".$this->db->escape($this->pcg_type)."'");
 		$sql .= ", ".(empty($this->account_number) ? 'NULL' : "'".$this->db->escape($this->account_number)."'");
@@ -282,14 +282,14 @@ class AccountingAccount extends CommonObject
 		$sql .= ", ".(empty($this->label) ? "''" : "'".$this->db->escape($this->label)."'");
 		$sql .= ", ".(empty($this->labelshort) ? "''" : "'".$this->db->escape($this->labelshort)."'");
 		$sql .= ", ".(empty($this->account_category) ? 0 : (int) $this->account_category);
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".(int) $this->active;
 		$sql .= ", ".(int) $this->reconcilable;
 		$sql .= ")";
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;
@@ -352,7 +352,7 @@ class AccountingAccount extends CommonObject
 		$sql .= " , reconcilable = ".(int) $this->reconcilable;
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$this->db->commit();
@@ -374,12 +374,12 @@ class AccountingAccount extends CommonObject
 		global $langs;
 
 		$sql = "(SELECT fk_code_ventilation FROM ".MAIN_DB_PREFIX."facturedet";
-		$sql .= " WHERE fk_code_ventilation=".$this->id.")";
+		$sql .= " WHERE fk_code_ventilation=".((int) $this->id).")";
 		$sql .= "UNION";
 		$sql .= " (SELECT fk_code_ventilation FROM ".MAIN_DB_PREFIX."facture_fourn_det";
-		$sql .= " WHERE fk_code_ventilation=".$this->id.")";
+		$sql .= " WHERE fk_code_ventilation=".((int) $this->id).")";
 
-		dol_syslog(get_class($this)."::checkUsage sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::checkUsage", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
@@ -602,9 +602,9 @@ class AccountingAccount extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account ";
 			$sql .= "SET ".$fieldtouse." = '0'";
-			$sql .= " WHERE rowid = ".$this->db->escape($id);
+			$sql .= " WHERE rowid = ".((int) $id);
 
-			dol_syslog(get_class($this)."::accountDeactivate ".$fieldtouse." sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::accountDeactivate ".$fieldtouse, LOG_DEBUG);
 			$result = $this->db->query($sql);
 
 			if ($result) {
@@ -640,9 +640,9 @@ class AccountingAccount extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account";
 		$sql .= " SET ".$fieldtouse." = '1'";
-		$sql .= " WHERE rowid = ".$this->db->escape($id);
+		$sql .= " WHERE rowid = ".((int) $id);
 
-		dol_syslog(get_class($this)."::account_activate ".$fieldtouse." sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::account_activate ".$fieldtouse, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$this->db->commit();

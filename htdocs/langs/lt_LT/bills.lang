@@ -259,6 +259,7 @@ DateMaxPayment=Numatytas apmokėjimo terminas
 DateInvoice=Sąskaitos-faktūros data
 DatePointOfTax=Point of tax
 NoInvoice=Nėra sąskaitos-faktūros
+NoOpenInvoice=No open invoice
 ClassifyBill=Priskirti sąskaitą-faktūrą
 SupplierBillsToPay=Unpaid vendor invoices
 CustomerBillsUnpaid=Neapmokėtos kliento sąskaitos
@@ -589,3 +590,4 @@ FacParentLine=Invoice Line Parent
 SituationTotalRayToRest=Remainder to pay without taxe
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=Total progress %d %%
+SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s

@@ -123,7 +123,7 @@ class Donations extends DolibarrApi
 			$sql .= " AND t.fk_soc = sc.fk_soc";
 		}
 		if ($thirdparty_ids) {
-			$sql .= " AND t.fk_soc = ".$thirdparty_ids." ";
+			$sql .= " AND t.fk_soc = ".((int) $thirdparty_ids)." ";
 		}
 
 		// Add sql filters

@@ -46,7 +46,7 @@ if (!empty($user->socid)) {
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('productstatssupplyinvoice'));
+$hookmanager->initHooks(array('productstatssupplierinvoice'));
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -151,7 +151,7 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " WHERE f.fk_soc = s.rowid";
 			$sql .= " AND f.entity IN (".getEntity('facture_fourn').")";
 			$sql .= " AND d.fk_facture_fourn = f.rowid";
-			$sql .= " AND d.fk_product =".$product->id;
+			$sql .= " AND d.fk_product = ".((int) $product->id);
 			if (!empty($search_month)) {
 				$sql .= ' AND MONTH(f.datef) IN ('.$db->sanitize($search_month).')';
 			}
@@ -159,7 +159,7 @@ if ($id > 0 || !empty($ref)) {
 				$sql .= ' AND YEAR(f.datef) IN ('.$db->sanitize($search_year).')';
 			}
 			if (!$user->rights->societe->client->voir && !$socid) {
-				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($socid) {
 				$sql .= " AND f.fk_soc = ".((int) $socid);

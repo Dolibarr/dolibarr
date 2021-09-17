@@ -94,7 +94,7 @@ $search_categ_cus = trim(GETPOST("search_categ_cus", 'int'));
 $search_categ_sup = trim(GETPOST("search_categ_sup", 'int'));
 $search_country = GETPOST("search_country", 'intcomma');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
-$search_price_level = GETPOST('search_prive_level', 'int');
+$search_price_level = GETPOST('search_price_level', 'int');
 $search_staff = GETPOST("search_staff", 'int');
 $search_status = GETPOST("search_status", 'int');
 $search_type = GETPOST('search_type', 'alpha');
@@ -288,7 +288,7 @@ if ($action == "change") {	// Change customer for TakePOS
 		$invoice->module_source = 'takepos';
 		$invoice->pos_source = $_SESSION["takeposterminal"];
 		$placeid = $invoice->create($user);
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid=".$placeid;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid = ".((int) $placeid);
 		$db->query($sql);
 	}
 
@@ -356,7 +356,7 @@ if (empty($reshook)) {
 		$search_idprof6 = '';
 		$search_vat = '';
 		$search_type = '';
-		$search_prive_level = '';
+		$search_price_level = '';
 		$search_type_thirdparty = '';
 		$search_staff = '';
 		$search_status = -1;
@@ -454,7 +454,7 @@ $sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.barcode, s.address, s.tow
 $sql .= " s.entity,";
 $sql .= " st.libelle as stcomm, st.picto as stcomm_picto, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
 $sql .= " s.email, s.phone, s.fax, s.url, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.idprof5 as idprof5, s.idprof6 as idprof6, s.tva_intra, s.fk_pays,";
-$sql .= " s.tms as date_update, s.datec as date_creation,";
+$sql .= " s.tms as date_update, s.datec as date_creation, s.import_key,";
 $sql .= " s.code_compta, s.code_compta_fournisseur, s.parent as fk_parent,s.price_level,";
 $sql .= " s2.nom as name2,";
 $sql .= " typent.code as typent_code,";
@@ -476,7 +476,7 @@ if ($search_categ_sup && $search_categ_sup!=-1) {
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -485,7 +485,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s2 ON s.parent = s2.rowid";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (s.rowid = ef.fk_object)";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
@@ -513,9 +513,9 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " WHERE s.entity IN (".getEntity('societe').")";
-//if (empty($user->rights->societe->client->voir) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->societe->client->readallthirdparties_advance)) && !$socid)	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+//if (empty($user->rights->societe->client->voir) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->societe->client->readallthirdparties_advance)) && !$socid)	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_sale && $search_sale != '-1' && $search_sale != '-2') {
 	$sql .= " AND s.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
@@ -526,13 +526,13 @@ if (!$user->rights->fournisseur->lire) {
 if ($search_sale == -2) {
 	$sql .= " AND sc.fk_user IS NULL";
 } elseif ($search_sale > 0) {
-	$sql .= " AND sc.fk_user = ".$db->escape($search_sale);
+	$sql .= " AND sc.fk_user = ".((int) $search_sale);
 }
 if ($search_categ_cus > 0) {
-	$sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
+	$sql .= " AND cc.fk_categorie = ".((int) $search_categ_cus);
 }
 if ($search_categ_sup > 0) {
-	$sql .= " AND cs.fk_categorie = ".$db->escape($search_categ_sup);
+	$sql .= " AND cs.fk_categorie = ".((int) $search_categ_sup);
 }
 if ($search_categ_cus == -2) {
 	$sql .= " AND cc.fk_categorie IS NULL";
@@ -639,8 +639,8 @@ if ($search_status != '' && $search_status >= 0) {
 if (!empty($conf->barcode->enabled) && $search_barcode) {
 	$sql .= natural_search("s.barcode", $search_barcode);
 }
-if ($search_prive_level && $search_prive_level != '-1') {
-	$sql .= natural_search("s.price_level", $search_prive_level, 2);
+if ($search_price_level && $search_price_level != '-1') {
+	$sql .= natural_search("s.price_level", $search_price_level, 2);
 }
 if ($search_type_thirdparty && $search_type_thirdparty > 0) {
 	$sql .= natural_search("s.fk_typent", $search_type_thirdparty, 2);
@@ -654,8 +654,8 @@ if ($search_level) {
 if ($search_parent_name) {
 	$sql .= natural_search("s2.nom", $search_parent_name);
 }
-if ($search_stcomm != '' && $search_stcomm != -2) {
-	$sql .= natural_search("s.fk_stcomm", $search_stcomm, 2);
+if ($search_stcomm != '' && $search_stcomm != '-2') {	// -2 is not filter
+	$sql .= natural_search("s.fk_stcomm", $search_stcomm, 1);
 }
 if ($search_import_key) {
 	$sql .= natural_search("s.import_key", $search_import_key);
@@ -667,12 +667,12 @@ $parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 }
 $sql .= $hookmanager->resPrint;
 // Add GroupBy from hooks
-$parameters = array('all' => $all, 'fieldstosearchall' => $fieldstosearchall);
+$parameters = array('fieldstosearchall' => $fieldstosearchall);
 $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
@@ -813,8 +813,8 @@ if ($search_idprof6 != '') {
 if ($search_vat != '') {
 	$param .= '&search_vat='.urlencode($search_vat);
 }
-if ($search_prive_level != '') {
-	$param .= '&search_prive_level='.urlencode($search_prive_level);
+if ($search_price_level != '') {
+	$param .= '&search_price_level='.urlencode($search_price_level);
 }
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 	$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
@@ -830,7 +830,7 @@ if (is_array($search_level) && count($search_level)) {
 if ($search_status != '') {
 	$param .= '&search_status='.urlencode($search_status);
 }
-if ($search_stcomm != '') {
+if ($search_stcomm != '' && $search_stcomm != '-2') {		// -2 is no filter
 	$param .= '&search_stcomm='.urlencode($search_stcomm);
 }
 if ($search_parent_name != '') {
@@ -865,7 +865,13 @@ if ($user->rights->societe->supprimer) {
 if ($user->rights->societe->creer) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
+if ($user->rights->societe->creer) {
+	$arrayofmassactions['preenable'] = img_picto('', '', 'class="pictofixedwidth"').$langs->trans("SetToEnabled");
+}
+if ($user->rights->societe->creer) {
+	$arrayofmassactions['predisable'] = img_picto('', '', 'class="pictofixedwidth"').$langs->trans("SetToDisabled");
+}
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -1094,7 +1100,7 @@ if (!empty($arrayfields['typent.code']['checked'])) {
 // Multiprice level
 if (!empty($arrayfields['s.price_level']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_prive_level" value="'.dol_escape_htmltag($search_prive_level).'">';
+	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_price_level" value="'.dol_escape_htmltag($search_price_level).'">';
 	print '</td>';
 }
 // Staff
@@ -1502,10 +1508,10 @@ while ($i < min($num, $limit)) {
 	// Type ent
 	if (!empty($arrayfields['typent.code']['checked'])) {
 		print '<td class="center">';
-		if (!is_array($typenArray) || count($typenArray) == 0) {
+		if (!isset($typenArray) || !is_array($typenArray) || count($typenArray) == 0) {
 			$typenArray = $formcompany->typent_array(1);
 		}
-		print $typenArray[$obj->typent_code];
+		print empty($typenArray[$obj->typent_code]) ? '' : $typenArray[$obj->typent_code];
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

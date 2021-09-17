@@ -165,7 +165,9 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 
 						$application = ($conf->global->MAIN_APPLICATION_TITLE ? $conf->global->MAIN_APPLICATION_TITLE : 'Dolibarr ERP/CRM');
 
-						$body = str_replace('\n', '<br>', $langs->transnoentities('EmailSomeoneVoted', $nom, getUrlSondage($numsondage, true)));
+						$link = getUrlSondage($numsondage, true);
+						$link = '<a href="'.$link.'">'.$link.'</a>';
+						$body = str_replace('\n', '<br>', $langs->transnoentities('EmailSomeoneVoted', $nom, $link));
 						//var_dump($body);exit;
 
 						$cmailfile = new CMailFile("[".$application."] ".$langs->trans("Poll").': '.$object->title, $email, $conf->global->MAIN_MAIL_EMAIL_FROM, $body, null, null, null, '', '', 0, -1);
@@ -609,7 +611,7 @@ if ($ligneamodifier < 0 && (!isset($_SESSION['nom']))) {
 	if (isset($_SESSION['nom'])) {
 		print '<input type=hidden name="nom" value="'.$_SESSION['nom'].'">'.$_SESSION['nom']."\n";
 	} else {
-		print '<input type="text" name="nom" placeholder="'.dol_escape_htmltag($langs->trans("Name")).'" maxlength="64" size="24">'."\n";
+		print '<input type="text" name="nom" placeholder="'.dol_escape_htmltag($langs->trans("Name")).'" maxlength="64" class=" minwidth175">'."\n";
 	}
 	print '</td>'."\n";
 

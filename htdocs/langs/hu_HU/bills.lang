@@ -259,6 +259,7 @@ DateMaxPayment=Payment due on
 DateInvoice=Számla dátuma
 DatePointOfTax=Point of tax
 NoInvoice=Nincs számla
+NoOpenInvoice=No open invoice
 ClassifyBill=Számla osztályozása
 SupplierBillsToPay=Unpaid vendor invoices
 CustomerBillsUnpaid=Nyiott vevőszámlák
@@ -589,3 +590,4 @@ FacParentLine=Invoice Line Parent
 SituationTotalRayToRest=Remainder to pay without taxe
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=Total progress %d %%
+SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s
