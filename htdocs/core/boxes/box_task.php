@@ -122,7 +122,7 @@ class box_task extends ModeleBoxes
 			$boxcontent .= '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 			$selectArray = array('all' => $langs->trans("NoFilter"), 'im_task_contact' => $langs->trans("WhichIamLinkedTo"), 'im_project_contact' => $langs->trans("WhichIamLinkedToProject"));
 			$boxcontent .= $form->selectArray($cookie_name, $selectArray, $filterValue);
-			$boxcontent .= '<button type="submit" class="button buttongen">'.$langs->trans("Refresh").'</button>';
+			$boxcontent .= '<button type="submit" class="button buttongen button-save">'.$langs->trans("Refresh").'</button>';
 			$boxcontent .= '</form>'."\n";
 			$boxcontent .= '</div>'."\n";
 			if (!empty($conf->use_javascript_ajax)) {
