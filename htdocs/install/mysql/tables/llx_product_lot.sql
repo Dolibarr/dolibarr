@@ -29,6 +29,8 @@ CREATE TABLE llx_product_lot (
   scrapping_date datetime NULL,
   datec         datetime,
   tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  barcode                       varchar(180) DEFAULT NULL,          -- barcode
+  fk_barcode_type               integer      DEFAULT NULL,          -- barcode type
   fk_user_creat integer,
   fk_user_modif integer,
   import_key    integer
