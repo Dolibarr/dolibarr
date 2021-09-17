@@ -1972,7 +1972,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 							print $form->select_dolgroups('', 'group', 1, $exclude, 0, '', '', $object->entity);
 							print ' &nbsp; ';
 							print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-							print '<input type="submit" class="button buttongen" value="'.$langs->trans("Add").'" />';
+							print '<input type="submit" class="button buttongen button-add" value="'.$langs->trans("Add").'" />';
 						}
 						print '</th></tr>'."\n";
 

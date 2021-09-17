@@ -804,6 +804,7 @@ LinkToSupplierInvoice=Link to vendor invoice
 LinkToContract=Link to contract
 LinkToIntervention=Link to intervention
 LinkToTicket=Link to ticket
+LinkToMo=Link to Mo
 CreateDraft=Create draft
 SetToDraft=Back to draft
 ClickToEdit=Click to edit
