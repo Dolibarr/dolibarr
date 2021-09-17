@@ -1172,25 +1172,25 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			if (!empty($conf->commande->enabled)) {
 				print '<tr><td>'.$langs->trans("ContactForOrders").'</td><td colspan="3">';
-				print $object->ref_commande ? $object->ref_commande : $langs->trans("NoContactForAnyOrder");
+				print $object->ref_commande ? $object->ref_commande : ('<span class="opacitymedium">'.$langs->trans("NoContactForAnyOrder").'</span>');
 				print '</td></tr>';
 			}
 
 			if (!empty($conf->propal->enabled)) {
 				print '<tr><td>'.$langs->trans("ContactForProposals").'</td><td colspan="3">';
-				print $object->ref_propal ? $object->ref_propal : $langs->trans("NoContactForAnyProposal");
+				print $object->ref_propal ? $object->ref_propal : ('<span class="opacitymedium">'.$langs->trans("NoContactForAnyProposal").'</span>');
 				print '</td></tr>';
 			}
 
 			if (!empty($conf->contrat->enabled)) {
 				print '<tr><td>'.$langs->trans("ContactForContracts").'</td><td colspan="3">';
-				print $object->ref_contrat ? $object->ref_contrat : $langs->trans("NoContactForAnyContract");
+				print $object->ref_contrat ? $object->ref_contrat : ('<span class="opacitymedium">'.$langs->trans("NoContactForAnyContract").'</span>');
 				print '</td></tr>';
 			}
 
 			if (!empty($conf->facture->enabled)) {
 				print '<tr><td>'.$langs->trans("ContactForInvoices").'</td><td colspan="3">';
-				print $object->ref_facturation ? $object->ref_facturation : $langs->trans("NoContactForAnyInvoice");
+				print $object->ref_facturation ? $object->ref_facturation : ('<span class="opacitymedium">'.$langs->trans("NoContactForAnyInvoice").'</span>');
 				print '</td></tr>';
 			}
 
@@ -1201,7 +1201,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$result = $dolibarr_user->fetch($object->user_id);
 				print $dolibarr_user->getLoginUrl(1);
 			} else {
-				print $langs->trans("NoDolibarrAccess");
+				print '<span class="opacitymedium">'.$langs->trans("NoDolibarrAccess").'</span>';
 			}
 			print '</td></tr>';
 

@@ -83,7 +83,7 @@ ErrorCantSaveADoneUserWithZeroPercentage=Can't save an action with "status not s
 ErrorRefAlreadyExists=Ref used for creation already exists.
 ErrorPleaseTypeBankTransactionReportName=Please enter the bank statement name where the entry has to be reported (Format YYYYMM or YYYYMMDD)
 ErrorRecordHasChildren=Failed to delete record since it has some child records.
-ErrorRecordHasAtLeastOneChildOfType=Object has at least one child of type %s
+ErrorRecordHasAtLeastOneChildOfType=Object %s has at least one child of type %s
 ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into another object.
 ErrorModuleRequireJavascript=Javascript must not be disabled to have this feature working. To enable/disable Javascript, go to menu Home->Setup->Display.
 ErrorPasswordsMustMatch=Both typed passwords must match each other
@@ -307,10 +307,10 @@ WarningPaypalPaymentNotCompatibleWithStrict=The value 'Strict' makes the online 
 
 # Validate
 RequireValidValue = Value not valid
-RequireAtLeastXString = Requires at least % character(s)
-RequireXStringMax = Requires % character(s) max
-RequireAtLeastXDigits = Requires at least % digit(s)
-RequireXDigitsMax = Requires % digit(s) max
+RequireAtLeastXString = Requires at least %s character(s)
+RequireXStringMax = Requires %s character(s) max
+RequireAtLeastXDigits = Requires at least %s digit(s)
+RequireXDigitsMax = Requires %s digit(s) max
 RequireValidEmail = Email address is not valid
 RequireMaxLength = Length must be less than %s chars
 RequireMinLength = Length must be more than %s char(s)

@@ -418,7 +418,7 @@ if ($action == 'create') {
 					print $form->select_dolusers('', 'user', 1, $exclude, 0, '', '', $object->entity, 0, 0, '', 0, '', 'maxwidth300');
 					print ' &nbsp; ';
 					print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
-					print '<input type="submit" class="button buttongen" value="'.$langs->trans("Add").'">';
+					print '<input type="submit" class="button buttongen button-add" value="'.$langs->trans("Add").'">';
 					print '</td></tr>'."\n";
 					print '</table></form>'."\n";
 					print '<br>';

@@ -39,20 +39,20 @@ function conferenceorboothPrepareHead($object, $with_project = 0)
 
 	$withProjectUrl='';
 	if ($with_project>0) {
-		$withProjectUrl="&withproject=1";
+		$withProjectUrl = "&withproject=1";
 	}
 
-	$head[$h][0] = dol_buildpath("/eventorganization/conferenceorbooth_card.php", 1).'?id='.$object->id.$withProjectUrl;
+	$head[$h][0] = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_card.ph?id='.$object->id.$withProjectUrl;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/eventorganization/conferenceorbooth_contact.php", 1).'?id='.$object->id.$withProjectUrl;
+	$head[$h][0] = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_contact.php?id='.$object->id.$withProjectUrl;
 	$head[$h][1] = $langs->trans("ContactsAddresses");
 	$head[$h][2] = 'contact';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/eventorganization/conferenceorboothattendee_list.php", 1).'?conforboothid='.$object->id.$withProjectUrl;
+	$head[$h][0] = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php?conforboothid='.$object->id.$withProjectUrl;
 	$head[$h][1] = $langs->trans("Attendees");
 	$head[$h][2] = 'attendees';
 	// Enable caching of conf or booth count attendees
@@ -196,7 +196,7 @@ function conferenceorboothattendeePrepareHead($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/eventorganization/conferenceorboothattendee_card.php", 1).'?id='.$object->id.'&conforboothid='.$object->fk_actioncomm;
+	$head[$h][0] = DOL_URL_ROOT."/eventorganization/conferenceorboothattendee_card.php?id=".((int) $object->id).($object->fk_actioncomm > 0 ? '&conforboothid='.((int) $object->fk_actioncomm) : '').($object->fk_project > 0 ? '&withproject=1&fk_project='.((int) $object->fk_project) : '');
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;

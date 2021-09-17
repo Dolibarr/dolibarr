@@ -382,12 +382,18 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'submenus' => array(),
 	);
 
-	// Tickets and knwoledge base
+	// Tickets and knowledge base
 	$tmpentry = array(
-		'enabled'=>(!empty($conf->ticket->enabled) || !empty($conf->knwoledgemanagement->enabled)),
-		'perms'=>(!empty($user->rights->ticket->read) || !empty($user->rights->knwoledgemanagement->read)),
-		'module'=>'ticket|knwoledgemanagement'
+		'enabled'=>(!empty($conf->ticket->enabled) || !empty($conf->knowledgemanagement->enabled)),
+		'perms'=>(!empty($user->rights->ticket->read) || !empty($user->rights->knowledgemanagement->knowledgerecord->read)),
+		'module'=>'ticket|knowledgemanagement'
 	);
+	$link = '';
+	if (!empty($conf->ticket->enabled)) {
+		$link = '/ticket/index.php?mainmenu=ticket&amp;leftmenu=';
+	} else {
+		$link = '/knowledgemanagement/knowledgerecord_list.php?mainmenu=ticket&amp;leftmenu=';
+	}
 	$menu_arr[] = array(
 		'name' => 'Ticket',
 		'link' => '/ticket/index.php?mainmenu=ticket&amp;leftmenu=',
@@ -2098,8 +2104,10 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					$cssmenu = ' menu_contenu'.dol_string_nospecial(preg_replace('/\.php.*$/', '', $menu_array[$i]['url']));
 				}
 
-				if ($menu_array[$i]['enabled'] && $lastlevel0 == 'enabled') {     // Enabled so visible, except if parent was not enabled.
-					print '<div class="menu_contenu'.$cssmenu.'">'.$tabstring;
+				if ($menu_array[$i]['enabled'] && $lastlevel0 == 'enabled') {
+					// Enabled so visible, except if parent was not enabled.
+					print '<div class="menu_contenu'.$cssmenu.'">';
+					print $tabstring;
 					if ($shorturlwithoutparam) {
 						print '<a class="vsmenu" title="'.dol_escape_htmltag(dol_string_nohtmltag($menu_array[$i]['titre'])).'" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
 					} else {
@@ -2116,8 +2124,11 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 						print '<br>';
 					}
 					print '</div>'."\n";
-				} elseif ($showmenu && $lastlevel0 == 'enabled') {       // Not enabled but visible (so greyed), except if parent was not enabled.
-					print '<div class="menu_contenu'.$cssmenu.'">'.$tabstring.'<font class="vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</font><br></div>'."\n";
+				} elseif ($showmenu && $lastlevel0 == 'enabled') {
+					// Not enabled but visible (so greyed), except if parent was not enabled.
+					print '<div class="menu_contenu'.$cssmenu.'">';
+					print $tabstring;
+					print '<font class="vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</font><br></div>'."\n";
 				}
 			}
 

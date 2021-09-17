@@ -111,21 +111,32 @@ if (empty($reshook)) {
 	$error = 0;
 
 	if (!empty($withproject)) {
-		$backurlforlist = dol_buildpath('/eventorganization/conferenceorboothattendee_list.php?withproject=1', 1);
+		$backurlforlist = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php?withproject=1';
 	} else {
-		$backurlforlist = dol_buildpath('/eventorganization/conferenceorboothattendee_list.php', 1);
+		$backurlforlist = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php';
 	}
-
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = dol_buildpath('/eventorganization/conferenceorboothattendee_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+				$backtopage = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?id='.($id > 0 ? $id : '__ID__');
 			}
 		}
 	}
+
+	if ($cancel) {
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		}
+		$action = '';
+	}
+
 
 	$triggermodname = 'EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_MODIFY'; // Name of trigger action code to execute when we modify record
 
@@ -189,7 +200,7 @@ $object->project = clone $projectstatic;
 if (!empty($withproject)) {
 	// Tabs for project
 	$tab = 'eventorganisation';
-	$withProjectUrl="&withproject=1";
+	$withProjectUrl = "&withproject=1";
 	$head = project_prepare_head($projectstatic);
 	print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'), 0, '', '');
 
@@ -371,7 +382,7 @@ if (!empty($withproject)) {
 	print $langs->trans("PublicAttendeeSubscriptionGlobalPage");
 	//print '</span>';
 	print '</td><td>';
-	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_subscription.php?id='.$projectstatic->id.'&type=global';
+	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_register.php?id='.$projectstatic->id.'&type=global';
 	$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$projectstatic->id, 2);
 	$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 	//print '<div class="urllink">';
@@ -407,6 +418,7 @@ if ($action == 'create') {
 	}
 	if ($projectstatic->id > 0) {
 		print '<input type="hidden" name="fk_project" value="'.$projectstatic->id.'">';
+		print '<input type="hidden" name="projectid" value="'.$projectstatic->id.'">';
 	}
 
 
@@ -484,7 +496,15 @@ if (($id || $ref) && $action == 'edit') {
 
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
-	$res = $object->fetch_optionals();
+	$object->fetch_optionals();
+
+	$moreparam = '';
+	if ($withproject) {
+		$moreparam .= '&withproject=1';
+	}
+	if ($fk_project) {
+		$moreparam .= '&fk_project='.((int) $fk_project);
+	}
 
 	$head = conferenceorboothattendeePrepareHead($object);
 	print dol_get_fiche_head($head, 'card', $langs->trans("ConferenceOrBoothAttendee"), -1, $object->picto);
@@ -526,13 +546,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.dol_buildpath('/eventorganization/conferenceorboothattendee_list.php', 1).'?restore_lastsearch_values=1&conforboothid='.$confOrBooth->id .$withProjectUrl.'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dol_buildpath('/eventorganization/conferenceorboothattendee_list.php', 1).'?restore_lastsearch_values=1'.($confOrBooth->id > 0 ? '&conforboothid='.((int) $confOrBooth->id) : '').$moreparam.'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 
 	$morehtmlref .= '</div>';
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $moreparam);
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';

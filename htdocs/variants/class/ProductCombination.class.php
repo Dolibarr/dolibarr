@@ -715,6 +715,10 @@ class ProductCombination
 			$price_impact = $forced_pricevar;
 		}
 
+		if (!array($price_var_percent)) {
+			$price_var_percent[1] = (float) $price_var_percent;
+		}
+
 		$newcomb = new ProductCombination($this->db);
 		$existingCombination = $newcomb->fetchByProductCombination2ValuePairs($product->id, $combinations);
 
@@ -787,7 +791,7 @@ class ProductCombination
 			$newproduct->description .= '<strong>'.$prodattr->label.':</strong> '.$prodattrval->value;
 		}
 
-		$newcomb->variation_price_percentage = $price_var_percent;
+		$newcomb->variation_price_percentage = $price_var_percent[1];
 		$newcomb->variation_price = $price_impact[1];
 		$newcomb->variation_weight = $weight_impact;
 		$newcomb->variation_ref_ext = $this->db->escape($ref_ext);
