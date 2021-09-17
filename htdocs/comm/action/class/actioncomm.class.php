@@ -859,11 +859,11 @@ class ActionComm extends CommonObject
 				$this->event_paid = $obj->event_paid;
 				$this->status = $obj->status;
 
-                $this->fetch_optionals();
+				$this->fetch_optionals();
 
-                if ($loadresources){
-                	$this->fetchResources();
-                }
+				if ($loadresources) {
+					$this->fetchResources();
+				}
 			}
 			$this->db->free($resql);
 		} else {
