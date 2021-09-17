@@ -277,6 +277,11 @@ $param .= (GETPOST("orphelins") ? "&orphelins=1" : '');
 $param .= ($search_ref ? "&search_ref=".urlencode($search_ref) : '');
 $param .= ($search_company ? "&search_company=".urlencode($search_company) : '');
 $param .= ($search_amount ? "&search_amount=".urlencode($search_amount) : '');
+$param .= ($search_paymenttype ? "&search_paymenttype=".urlencode($search_paymenttype) : '');
+$param .= ($search_account ? "&search_account=".urlencode($search_account) : '');
+$param .= ($day ? "&day=".urlencode($day) : '');
+$param .= ($month ? "&month=".urlencode($month) : '');
+$param .= ($year ? "&year=".urlencode($year) : '');
 $param .= ($search_payment_num ? "&search_payment_num=".urlencode($search_payment_num) : '');
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
