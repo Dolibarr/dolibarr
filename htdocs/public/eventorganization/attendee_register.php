@@ -449,12 +449,8 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 	if (!$error) {
 		if (!empty(floatval($project->price_registration))) {
-
-
-
-
-
 			$outputlangs = $langs;
+
 			// TODO Use default language of $thirdparty->default_lang to build $outputlang
 
 			// Get product to use for invoice
