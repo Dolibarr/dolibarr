@@ -473,7 +473,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 	if (in_array(GETPOST('action', 'aZ09'), $arrayofactiontoforcetokencheck)) {
 		$sensitiveget = true;
 	}
-	if (preg_match('/^(classify|confirm_|delete|disable|enable|setremise)/', GETPOST('action', 'aZ09'))) {
+	if (preg_match('/^(classify|confirm_|delete|disable|enable|remove_|setremise)/', GETPOST('action', 'aZ09'))) {
 		$sensitiveget = true;
 	}
 
