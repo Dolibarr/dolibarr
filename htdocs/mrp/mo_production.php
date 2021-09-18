@@ -880,7 +880,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '</td>';
 					if ($conf->stock->enabled) {
 						print '<td>';
-						if ($tmpproduct->stock_reel < ($line->qty-$alreadyconsumed)) {
+						if ($tmpproduct->stock_reel < ($line->qty - $alreadyconsumed)) {
 							print img_warning($langs->trans('StockTooLow')).' ';
 						}
 						print $tmpproduct->stock_reel; // Available
