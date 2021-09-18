@@ -466,6 +466,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 		'activate', 'add', 'addrights', 'addtimespent',
 		'doprev', 'donext', 'dvprev', 'dvnext',
 		'install',
+		'reopen',
 		'setpricelevel', 'set_paid',
 		'update'
 	);
