@@ -78,6 +78,7 @@ $action = GETPOST('action', 'aZ09');
 $email = GETPOST("email");
 $societe = GETPOST("societe");
 $emailcompany = GETPOST("emailcompany");
+$note_public = GETPOST('note_public', "nohtml");
 
 // Getting id from Post and decoding it
 $type = GETPOST('type', 'aZ09');
@@ -270,6 +271,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$confattendee->email = $email;
 			$confattendee->fk_project = $project->id;
 			$confattendee->fk_actioncomm = $id;
+			$confattendee->note_public = $note_public;
 			$resultconfattendee = $confattendee->create($user);
 			if ($resultconfattendee < 0) {
 				$error++;
@@ -736,6 +738,14 @@ if (!empty($conference->id) && $conference->status==ConferenceOrBooth::STATUS_CO
 		print price($project->price_registration, 1, $langs, 1, -1, -1, $conf->currency);
 		print '</td></tr>';
 	}
+
+	$notetoshow = $note_public;
+	print '<tr><td>' . $langs->trans('Note') . '</td><td>';
+	if (!empty($conf->global->EVENTORGANIZATION_DEFAULT_NOTE_ON_REGISTRATION)) {
+		$notetoshow = str_replace('\n', "\n", $conf->global->EVENTORGANIZATION_DEFAULT_NOTE_ON_REGISTRATION);
+	}
+	print '<textarea name="note_public" class="centpercent" rows="'.ROWS_9.'">'.dol_escape_htmltag($notetoshow, 0, 1).'</textarea>';
+	print '</td></tr>';
 
 	print "</table>\n";
 
