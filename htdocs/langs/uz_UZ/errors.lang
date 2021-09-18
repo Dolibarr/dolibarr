@@ -88,9 +88,9 @@ ErrorRecordIsUsedCantDelete=Yozuvni o‘chirib bo‘lmadi. U allaqachon ishlatil
 ErrorModuleRequireJavascript=Ushbu xususiyat ishlashi uchun Javascript o'chirib qo'yilmasligi kerak. Javascriptni yoqish / o'chirish uchun Home-> Setup-> Display menyusiga o'ting.
 ErrorPasswordsMustMatch=Yozilgan har ikkala parol bir-biriga mos kelishi kerak
 ErrorContactEMail=Texnik xatolik yuz berdi. Iltimos, administrator bilan bog'laning. <b> %s </b> elektron pochta manziliga va sizning xabaringiz nusxasida ushbu ekranning nusxasini yoki sizning ekraningizda nusxa ko'chirish xatosini yuboring <b> %s </b>,
-ErrorWrongValueForField=Field <b>%s</b>: '<b>%s</b>' does not match regex rule <b>%s</b>
+ErrorWrongValueForField=Maydon <b> %s </b>: '<b> %s </b>' regex qoida <b>%s</b>
 ErrorFieldValueNotIn=Dala <b> %s </b>: «<b> %s </b>" bir qiymati dala <b> %s </b> topilmadi <b> %s </b>
-ErrorFieldRefNotIn=Field <b>%s</b>: '<b>%s</b>' is not a <b>%s</b> existing ref
+ErrorFieldRefNotIn=Maydon <b> %s </b>: '<b> %s </b>' <b>%s</b> emas
 ErrorsOnXLines=%s xatolar topildi
 ErrorFileIsInfectedWithAVirus=Antivirus dasturi faylni tekshira olmadi (faylga virus yuqishi mumkin)
 ErrorSpecialCharNotAllowedForField="%s" maydoni uchun maxsus belgilarga ruxsat berilmaydi
@@ -264,6 +264,7 @@ ErrorAnAmountWithoutTaxIsRequired=Xato, miqdor majburiydir
 ErrorAPercentIsRequired=Xato, foizni to'g'ri to'ldiring
 ErrorYouMustFirstSetupYourChartOfAccount=Avval hisob qaydnomangizni o'rnatishingiz kerak
 ErrorFailedToFindEmailTemplate=%s kodli shablonni topib bo'lmadi
+ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Duration not defined on service. No way to calculate the hourly price.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHP parametringiz upload_max_filesize (%s) PHP post_max_size (%s) parametridan yuqori. Bu izchil o'rnatish emas.

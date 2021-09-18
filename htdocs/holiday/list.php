@@ -213,6 +213,7 @@ if (empty($reshook)) {
 	$objectlabel = 'Holiday';
 	$permissiontoread = $user->rights->holiday->read;
 	$permissiontodelete = $user->rights->holiday->delete;
+	$permissiontoapprove = $user->rights->holiday->approve;
 	$uploaddir = $conf->holiday->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -295,7 +296,7 @@ $sql .= " ua.photo as validator_photo";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -440,6 +441,9 @@ if ($resql) {
 	);
 	if (!empty($user->rights->holiday->delete)) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
+	}
+	if (!empty($user->rights->holiday->approve)) {
+		$arrayofmassactions['preapproveleave'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Approve");
 	}
 	if (in_array($massaction, array('presend', 'predelete'))) {
 		$arrayofmassactions = array();
@@ -627,6 +631,12 @@ if ($resql) {
 		print '</td>';
 	}
 
+	// End date
+	if (!empty($arrayfields['cp.date_valid']['checked'])) {
+		print '<td class="liste_titre center nowraponall">';
+		print '</td>';
+	}
+
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 	// Fields from hook
@@ -686,6 +696,9 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['cp.date_fin']['checked'])) {
 		print_liste_field_titre($arrayfields['cp.date_fin']['label'], $_SERVER["PHP_SELF"], "cp.date_fin", "", $param, '', $sortfield, $sortorder, 'center ');
+	}
+	if (!empty($arrayfields['cp.date_valid']['checked'])) {
+		print_liste_field_titre($arrayfields['cp.date_valid']['label'], $_SERVER["PHP_SELF"], "cp.date_valid", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -816,6 +829,18 @@ if ($resql) {
 					$totalarray['nbfield']++;
 				}
 			}
+			if (!empty($arrayfields['cp.date_valid']['checked'])) {		// date_valid is both date_valid but also date_approval
+				print '<td class="center">';
+				print dol_print_date($db->jdate($obj->date_valid), 'day');
+				print '</td>';
+				if (!$i) $totalarray['nbfield']++;
+			}
+			/*if (!empty($arrayfields['cp.date_approve']['checked'])) {
+				 print '<td class="center">';
+				 print dol_print_date($db->jdate($obj->date_approve), 'day');
+				 print '</td>';
+				 if (!$i) $totalarray['nbfield']++;
+			 }*/
 
 			// Extra fields
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';

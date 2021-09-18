@@ -80,7 +80,7 @@ class DolibarrApiAccess implements iAuthenticate
 	public function __isAllowed()
 	{
 		// phpcs:enable
-		global $conf, $db;
+		global $conf, $db, $user;
 
 		$login = '';
 		$stored_key = '';
@@ -147,8 +147,14 @@ class DolibarrApiAccess implements iAuthenticate
 			if ($result <= 0) {
 				throw new RestException(503, 'Error when fetching user :'.$fuser->error.' (conf->entity='.$conf->entity.')');
 			}
+
 			$fuser->getrights();
+
+			// Set the property $user to the $user of API
 			static::$user = $fuser;
+
+			// Set also the global variable $user to the $user of API
+			$user = $fuser;
 
 			if ($fuser->socid) {
 				static::$role = 'external';

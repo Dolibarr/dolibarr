@@ -596,13 +596,13 @@ class TraceableDB extends DoliDB
 
 	/**
 	 * Encrypt sensitive data in database
-	 * Warning: This function includes the escape, so it must use direct value
+	 * Warning: This function includes the escape and add the SQL simple quotes on strings.
 	 *
-	 * @param   string 			$fieldorvalue 	Field name or value to encrypt
-	 * @param  	int 			$withQuotes 	Return string with quotes
-	 * @return 	string                     		XXX(field) or XXX('value') or field or 'value'
+	 * @param	string	$fieldorvalue	Field name or value to encrypt
+	 * @param	int		$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
+	 * @return	string					XXX(field) or XXX('value') or field or 'value'
 	 */
-	public function encrypt($fieldorvalue, $withQuotes = 0)
+	public function encrypt($fieldorvalue, $withQuotes = 1)
 	{
 		return $this->db->encrypt($fieldorvalue, $withQuotes);
 	}

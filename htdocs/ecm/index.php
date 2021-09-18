@@ -120,7 +120,8 @@ if (GETPOST("sendit", 'alphanohtml') && !empty($conf->global->MAIN_UPLOAD_DOC)) 
 
 	if (!$error) {
 		$generatethumbs = 0;
-		$res = dol_add_file_process($upload_dir, 0, 1, 'userfile', '', null, '', $generatethumbs);
+		$overwritefile = GETPOST('overwritefile', 'int')?GETPOST('overwritefile', 'int'):0;
+		$res = dol_add_file_process($upload_dir, $overwritefile, 1, 'userfile', '', null, '', $generatethumbs);
 		if ($res > 0) {
 			$result = $ecmdir->changeNbOfFiles('+');
 		}

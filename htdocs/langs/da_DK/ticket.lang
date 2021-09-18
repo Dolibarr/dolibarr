@@ -55,7 +55,7 @@ TypeContact_ticket_internal_SUPPORTTEC=Tildelt bruger
 TypeContact_ticket_external_SUPPORTCLI=Kundekontakt / hændelsesporing
 TypeContact_ticket_external_CONTRIBUTOR=Ekstern bidragyder
 
-OriginEmail=Reporter Email
+OriginEmail=Reporter-e-mail
 Notify_TICKET_SENTBYMAIL=Send opgaver besked via Email
 
 # Status
@@ -66,7 +66,7 @@ NeedMoreInformation=Venter på reporterfeedback
 NeedMoreInformationShort=Venter på feedback
 Answered=Besvaret
 Waiting=Venter
-Closed=Lukket
+SolvedClosed=Løst
 Deleted=Slettet
 
 # Dict
@@ -186,9 +186,11 @@ TicketSeverity=Alvorlighed
 ShowTicket=Se opgave
 RelatedTickets=Relaterede opgaver
 TicketAddIntervention=Opret indgreb
-CloseTicket=Luk opgave
-CloseATicket=Luk en opgave
+CloseTicket=Luk | Løs billet
+AbandonTicket=Forlad billet
+CloseATicket=Luk | Løs en billet
 ConfirmCloseAticket=Bekræft afslutningen af opgaven
+ConfirmAbandonTicket=Bekræfter du lukningen af billetten til status 'Forladt'
 ConfirmDeleteTicket=Venligst bekræft sletning af opgaven
 TicketDeletedSuccess=Opgave slettet med succes
 TicketMarkedAsClosed=Opgaven mærket som lukket
