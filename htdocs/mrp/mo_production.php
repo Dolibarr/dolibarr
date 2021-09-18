@@ -873,7 +873,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					}
 					print ' '.$alreadyconsumed;
 					print '</td>';
-					print '<td>'; // Warehouse
+					// Warehouse
+					print '<td>';
 					print '</td>';
 					print '<td>';
 					if ($tmpproduct->stock_reel < ($line->qty-$alreadyconsumed)) {
