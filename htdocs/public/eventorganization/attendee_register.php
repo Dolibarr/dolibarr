@@ -236,7 +236,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 	// If the price has been set, name is required for the invoice
 	if (!GETPOST("societe") && !empty(floatval($project->price_registration))) {
 		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Societe"))."<br>\n";
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Company"))."<br>\n";
 	}
 	if (GETPOST("email") && !isValidEmail(GETPOST("email"))) {
 		$error++;
