@@ -337,7 +337,7 @@ if ($result > 0) {
 					print $langs->trans("SMS");
 				}
 				print '</td>';
-				print '<td class="right"><a href="card.php?id='.$id.'&amp;action=delete&amp;token='.newToken().'&amp;actid='.$obj->rowid.'">'.img_delete().'</a></td>';
+				print '<td class="right"><a href="card.php?id='.$id.'&action=delete&token='.newToken().'&actid='.$obj->rowid.'">'.img_delete().'</a></td>';
 				print '</tr>';
 				$i++;
 			}
