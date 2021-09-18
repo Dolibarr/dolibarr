@@ -69,7 +69,7 @@ if ($action == 'updateMask') {
 	$modele = GETPOST('module', 'alpha');
 
 	$mo = new MO($db);
-	$mrp->initAsSpecimen();
+	$mo->initAsSpecimen();
 
 	// Search template files
 	$file = ''; $classname = ''; $filefound = 0;
@@ -88,7 +88,7 @@ if ($action == 'updateMask') {
 
 		$module = new $classname($db);
 
-		if ($module->write_file($mrp, $langs) > 0) {
+		if ($module->write_file($mo, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=mrp&file=SPECIMEN.pdf");
 			return;
 		} else {
@@ -225,7 +225,7 @@ foreach ($dirmodels as $reldir) {
 							$langs->load("errors");
 							print '<div class="error">'.$langs->trans($tmp).'</div>';
 						} elseif ($tmp == 'NotConfigured') {
-							print $langs->trans($tmp);
+							print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
 						} else {
 							print $tmp;
 						}

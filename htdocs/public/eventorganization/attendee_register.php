@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file       htdocs/public/eventorganization/attendee_subscription.php
+ *	\file       htdocs/public/eventorganization/attendee_register.php
  *	\ingroup    project
  *	\brief      Example of form to subscribe to an event
  *
@@ -79,26 +79,40 @@ $email = GETPOST("email");
 $societe = GETPOST("societe");
 
 // Getting id from Post and decoding it
-$id = GETPOST('id', 'int');
-
-$conference = new ConferenceOrBooth($db);
-$resultconf = $conference->fetch($id);
-if ($resultconf < 0) {
-	print 'Bad value for parameter id';
-	exit;
+$type = GETPOST('type', 'aZ09');
+if ($type == 'conf') {
+	$id = GETPOST('id', 'int');
+} else {
+	$id = GETPOST('fk_project', 'int') ? GETPOST('fk_project', 'int') : GETPOST('id', 'int');
 }
 
+$conference = new ConferenceOrBooth($db);
 $project = new Project($db);
-$resultproject = $project->fetch($conference->fk_project);
-if ($resultproject < 0) {
-	$error++;
-	$errmsg .= $project->error;
+
+if ($type == 'conf') {
+	$resultconf = $conference->fetch($id);
+	if ($resultconf < 0) {
+		print 'Bad value for parameter id';
+		exit;
+	}
+	$resultproject = $project->fetch($conference->fk_project);
+	if ($resultproject < 0) {
+		$error++;
+		$errmsg .= $project->error;
+	}
+}
+if ($type == 'global') {
+	$resultproject = $project->fetch($id);
+	if ($resultproject < 0) {
+		$error++;
+		$errmsg .= $project->error;
+	}
 }
 
 
 // Security check
 $securekeyreceived = GETPOST('securekey', 'alpha');
-$securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
+$securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 'md5');
 
 // We check if the securekey collected is OK
 if ($securekeytocompare != $securekeyreceived) {
@@ -206,7 +220,7 @@ if ($reshook < 0) {
 }
 
 // Action called when page is submitted
-if (empty($reshook) && $action == 'add' && $conference->status == 2) {
+if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conference->status!=2  || !empty($project->id) && $project->status == Project::STATUS_VALIDATED)) {
 	$error = 0;
 
 	$urlback = '';
@@ -235,14 +249,25 @@ if (empty($reshook) && $action == 'add' && $conference->status == 2) {
 	if (!$error) {
 		// Check if attendee already exists (by email and for this event)
 		$confattendee = new ConferenceOrBoothAttendee($db);
-		$resultfetchconfattendee = $confattendee->fetchAll('', '', 0, 0, array('t.fk_actioncomm'=>$id, 'customsql'=>'t.email="'.$email.'"'));
-		if ($resultfetchconfattendee > 0 && count($resultfetchconfattendee)>0) {
+
+		if ($type == 'global') {
+			$filter = array('t.fk_project'=>((int) $id), 'customsql'=>'t.email="'.$db->escape($email).'"');
+		}
+		if ($action == 'conf') {
+			$filter = array('t.fk_actioncomm'=>((int) $id), 'customsql'=>'t.email="'.$db->escape($email).'"');
+		}
+
+		// Check if there is already an attendee into table eventorganization_conferenceorboothattendee for same event (or conference/booth)
+		$resultfetchconfattendee = $confattendee->fetchAll('', '', 0, 0, $filter);
+
+		if (is_array($resultfetchconfattendee) && count($resultfetchconfattendee) > 0) {
 			// Found confattendee
 			$confattendee = array_shift($resultfetchconfattendee);
 		} else {
 			// Need to create a confattendee
-			$confattendee->date_subscription = dol_now();
+			$confattendee->date_creation = dol_now();
 			$confattendee->email = $email;
+			$confattendee->fk_project = $project->id;
 			$confattendee->fk_actioncomm = $id;
 			$resultconfattendee = $confattendee->create($user);
 			if ($resultconfattendee < 0) {
@@ -250,42 +275,69 @@ if (empty($reshook) && $action == 'add' && $conference->status == 2) {
 				$errmsg .= $confattendee->error;
 			}
 		}
-		// At this point, we have an attendee. It may not be linked to a thirdparty if we just created it
 
-		// If the attendee has already paid
-		if ($confattendee->status == 1) {
-			$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
-			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.$id.'&securekey='.$securekeyurl;
+		// At this point, we have an existing $confattendee. It may not be linked to a thirdparty.
+		//var_dump($confattendee);
+
+		// If the registration has already been paid for this attendee
+		if (!empty($confattendee->date_subscription) && !empty($confattendee->amount)) {
+			$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 'master');
+			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.((int) $id).'&securekey='.urlencode($securekeyurl);
+
+			$mesg = $langs->trans("RegistrationAndPaymentWereAlreadyRecorder", $email);
+			setEventMessages($mesg, null, 'mesgs');
+
+			$db->commit();
+
 			Header("Location: ".$redirection);
 			exit;
 		}
+
+		$resultfetchthirdparty = -1;
+
 		// Getting the thirdparty or creating it
 		$thirdparty = new Societe($db);
-		// Fetch using fk_soc if the attendee was already existing
-		if (!empty($confattendee->fk_soc)) {
+		$contact = new Contact($db);
+		// Fetch using fk_soc if the attendee was already found
+		if (!empty($confattendee->fk_soc) && $confattendee->fk_soc > 0) {
 			$resultfetchthirdparty = $thirdparty->fetch($confattendee->fk_soc);
 		} else {
-			// Fetch using the input field by user if we just created the attendee
-			if (!empty($societe)) {
-				$resultfetchthirdparty = $thirdparty->fetch('', $societe);
-				if ($resultfetchthirdparty<=0) {
-					// Need to create a new one (not found or multiple with the same name)
-					$resultfetchthirdparty = 0;
+			if (empty($conf->global->EVENTORGANIZATION_DISABLE_RETREIVE_THIRDPARTY_FROM_NAME)) {
+				// Fetch using the input field by user if we just created the attendee
+				if (!empty($societe)) {
+					$resultfetchthirdparty = $thirdparty->fetch('', $societe, '', '', '', '', '', '', '', '', $email);
+					if ($resultfetchthirdparty <= 0) {
+						// Try to find the thirdparty from the contact
+						$resultfetchcontact = $contact->fetch('', null, '', $email);
+						if ($resultfetchcontact <= 0 || $contact->fk_soc <= 0) {
+							// Need to create a new one (not found or multiple with the same name/email)
+							$resultfetchthirdparty = 0;
+						} else {
+							$thirdparty->fetch($contact->fk_soc);
+							$confattendee->fk_soc = $thirdparty->id;
+							$confattendee->update($user);
+							$resultfetchthirdparty = 1;
+						}
+					} else {
+						// We found a unique result with that name/email, so we set the fk_soc of attendee
+						$confattendee->fk_soc = $thirdparty->id;
+						$confattendee->update($user);
+					}
 				} else {
-					// We found an unique result with that name, so we put in in fk_soc of attendee
-					$confattendee->fk_soc = $thirdparty->id;
-					$confattendee->update($user);
+					// Need to create a thirdparty (put number>0 if we do not want to create a thirdparty for free-conferences)
+					$resultfetchthirdparty = 0;
 				}
 			} else {
 				// Need to create a thirdparty (put number>0 if we do not want to create a thirdparty for free-conferences)
 				$resultfetchthirdparty = 0;
 			}
 		}
-		if ($resultfetchthirdparty<0) {
+
+		if ($resultfetchthirdparty < 0) {
 			$error++;
 			$errmsg .= $thirdparty->error;
-		} elseif ($resultfetchthirdparty==0) {
-			// creation of a new thirdparty
+		} elseif ($resultfetchthirdparty == 0) {
+			// Creation of a new thirdparty
 			if (!empty($societe)) {
 				$thirdparty->name     = $societe;
 			} else {
@@ -294,7 +346,7 @@ if (empty($reshook) && $action == 'add' && $conference->status == 2) {
 			$thirdparty->address      = GETPOST("address");
 			$thirdparty->zip          = GETPOST("zipcode");
 			$thirdparty->town         = GETPOST("town");
-			$thirdparty->client       = 2;
+			$thirdparty->client       = $thirdparty::PROSPECT;
 			$thirdparty->fournisseur  = 0;
 			$thirdparty->country_id   = GETPOST("country_id", 'int');
 			$thirdparty->state_id     = GETPOST("state_id", 'int');
@@ -319,12 +371,14 @@ if (empty($reshook) && $action == 'add' && $conference->status == 2) {
 			}
 			$thirdparty->code_client = $tmpcode;
 			$readythirdparty = $thirdparty->create($user);
-			if ($readythirdparty <0) {
+			if ($readythirdparty < 0) {
 				$error++;
 				$errmsg .= $thirdparty->error;
 			} else {
 				$thirdparty->country_code = getCountry($thirdparty->country_id, 2, $db, $langs);
 				$thirdparty->country      = getCountry($thirdparty->country_code, 0, $db, $langs);
+
+				// Update attendee country to match country of thirdparty
 				$confattendee->fk_soc     = $thirdparty->id;
 				$confattendee->update($user);
 			}
@@ -332,10 +386,20 @@ if (empty($reshook) && $action == 'add' && $conference->status == 2) {
 	}
 
 	if (!$error) {
-		$db->commit();
 		if (!empty(floatval($project->price_registration))) {
+			$outputlangs = $langs;
+			// TODO Use default language of $thirdparty->default_lang to build $outputlang
+
+			// Get product to use for invoice
 			$productforinvoicerow = new Product($db);
-			$resultprod = $productforinvoicerow->fetch($conf->global->SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION);
+			$productforinvoicerow->id = 0;
+
+			$resultprod = 0;
+			if ($conf->global->SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION > 0) {
+				$resultprod = $productforinvoicerow->fetch($conf->global->SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION);
+			}
+
+			// Create invoice
 			if ($resultprod < 0) {
 				$error++;
 				$errmsg .= $productforinvoicerow->error;
@@ -347,6 +411,7 @@ if (empty($reshook) && $action == 'add' && $conference->status == 2) {
 				$facture->date = dol_now();
 				$facture->cond_reglement_id = $confattendee->cond_reglement_id;
 				$facture->fk_project = $project->id;
+
 				if (empty($facture->cond_reglement_id)) {
 					$paymenttermstatic = new PaymentTerm($confattendee->db);
 					$facture->cond_reglement_id = $paymenttermstatic->getDefaultId();
@@ -369,29 +434,47 @@ if (empty($reshook) && $action == 'add' && $conference->status == 2) {
 			if (!$error) {
 				// Add line to draft invoice
 				$vattouse = get_default_tva($mysoc, $thirdparty, $productforinvoicerow->id);
-				$result = $facture->addline($langs->trans("ConferenceAttendeeFee", $conference->label, dol_print_date($conference->datep, '%d/%m/%y %H:%M:%S'), dol_print_date($conference->datep2, '%d/%m/%y %H:%M:%S')), floatval($project->price_registration), 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, dol_now(), '', 0, 0, '', 'HT', 0, 1);
+
+				$labelforproduct = $outputlangs->trans("EventFee", $project->title);
+				$date_start = $project->date_start;
+				$date_end = $project->date_end;
+
+				$result = $facture->addline($labelforproduct, floatval($project->price_registration), 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, $date_start, $date_end, 0, 0, '', 'HT', 0, 1);
 				if ($result <= 0) {
 					$confattendee->error = $facture->error;
 					$confattendee->errors = $facture->errors;
 					$error++;
 				}
-				if (!$error) {
-					$valid = true;
-					$sourcetouse = 'conferencesubscription';
-					$reftouse = $facture->id;
-					$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.$sourcetouse.'&ref='.$reftouse;
-					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-							$redirection .= '&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $sourcetouse . $reftouse, 2); // Use the source in the hash to avoid duplicates if the references are identical
-						} else {
-							$redirection .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
-						}
+			}
+
+			if (!$error) {
+				$db->commit();
+
+				// Registration was recorded and invoice was generated, but payment not yet done.
+				// TODO
+				// Send an email to says registration shas been received and that we are waiting for the payment.
+				// Should send email template (EventOrganizationEmailRegistrationEvent) saved into conf EVENTORGANIZATION_TEMPLATE_EMAIL_REGISTRATION_EVENT.
+
+				// Now we redirect to the payment page
+				$sourcetouse = 'organizedeventregistration';
+				$reftouse = $facture->id;
+				$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.urlencode($sourcetouse).'&ref='.urlencode($reftouse);
+				if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
+					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
+						$redirection .= '&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $sourcetouse . $reftouse, 2); // Use the source in the hash to avoid duplicates if the references are identical
+					} else {
+						$redirection .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 					}
-					Header("Location: ".$redirection);
-					exit;
 				}
+
+				Header("Location: ".$redirection);
+				exit;
+			} else {
+				$db->rollback();
 			}
 		} else {
+			$db->commit();
+
 			// No price has been set
 			// Validating the subscription
 			$confattendee->setStatut(1);
@@ -440,7 +523,8 @@ if (empty($reshook) && $action == 'add' && $conference->status == 2) {
 			}
 
 			$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
-			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.$id.'&securekey='.$securekeyurl;
+			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.((int) $id).'&securekey='.urlencode($securekeyurl);
+
 			Header("Location: ".$redirection);
 			exit;
 		}
@@ -459,10 +543,10 @@ if (empty($reshook) && $action == 'add' && $conference->status == 2) {
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 
-llxHeaderVierge($langs->trans("NewSubscription"));
+llxHeaderVierge($langs->trans("NewRegistration"));
 
 print '<br>';
-print load_fiche_titre($langs->trans("NewSubscription"), '', '', 0, 0, 'center');
+print load_fiche_titre($langs->trans("NewRegistration"), '', '', 0, 0, 'center');
 
 
 print '<div align="center">';
@@ -470,24 +554,39 @@ print '<div id="divsubscribe">';
 print '<div class="center subscriptionformhelptext justify">';
 
 // Welcome message
-print $langs->trans("EvntOrgWelcomeMessage", $conference->label);
+
+print $langs->trans("EvntOrgWelcomeMessage", $project->title . ' '. $conference->label);
 print '<br>';
-print $langs->trans("EvntOrgDuration", dol_print_date($conference->datep), dol_print_date($conference->datef));
+if ($conference->id) {
+	print $langs->trans("Date").': ';
+	print dol_print_date($conference->datep);
+	if ($conference->date_end) {
+		print ' - ';
+		print dol_print_date($conference->datef);
+	}
+} else {
+	print $langs->trans("Date").': ';
+	print dol_print_date($project->date_start);
+	if ($project->date_end) {
+		print ' - ';
+		print dol_print_date($project->date_end);
+	}
+}
 print '</div>';
 
 print '<br>';
 
 dol_htmloutput_errors($errmsg);
 
-if ($conference->status!=2) {
-	print $langs->trans("ConferenceIsNotConfirmed");
-} else {
+if (!empty($conference->id) && $conference->status==ConferenceOrBooth::STATUS_CONFIRMED  || (!empty($project->id) && $project->status==Project::STATUS_VALIDATED)) {
 	// Print form
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="newmember">' . "\n";
 	print '<input type="hidden" name="token" value="' . newToken() . '" / >';
 	print '<input type="hidden" name="entity" value="' . $entity . '" />';
 	print '<input type="hidden" name="action" value="add" />';
-	print '<input type="hidden" name="id" value="' . $id . '" />';
+	print '<input type="hidden" name="type" value="' . $type . '" />';
+	print '<input type="hidden" name="id" value="' . $conference->id . '" />';
+	print '<input type="hidden" name="fk_project" value="' . $project->id . '" />';
 	print '<input type="hidden" name="securekey" value="' . $securekeyreceived . '" />';
 
 	print '<br>';
@@ -498,26 +597,28 @@ if ($conference->status!=2) {
 	print dol_get_fiche_head('');
 
 	print '<script type="text/javascript">
-jQuery(document).ready(function () {
-    jQuery(document).ready(function () {
-        jQuery("#selectcountry_id").change(function() {
-           document.newmember.action.value="create";
-           document.newmember.submit();
-        });
-    });
-});
-</script>';
+	jQuery(document).ready(function () {
+		jQuery(document).ready(function () {
+			jQuery("#selectcountry_id").change(function() {
+			   document.newmember.action.value="create";
+			   document.newmember.submit();
+			});
+		});
+	});
+	</script>';
 
 	print '<table class="border" summary="form to subscribe" id="tablesubscribe">' . "\n";
 
 	// Email
-	print '<tr><td>' . $langs->trans("Email") . '<FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="' . dol_escape_htmltag(GETPOST('email')) . '"></td></tr>' . "\n";
+	print '<tr><td>' . $langs->trans("Email") . '<font color="red">*</font></td><td><input type="text" name="email" maxlength="255" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('email')) . '"></td></tr>' . "\n";
 	// Company
 	print '<tr id="trcompany" class="trcompany"><td>' . $langs->trans("Company");
 	if (!empty(floatval($project->price_registration))) {
-		print '<FONT COLOR="red">*</FONT>';
+		print '<font color="red">*</font>';
 	}
-	print ' </td><td><input type="text" name="societe" class="minwidth150" value="' . dol_escape_htmltag(GETPOST('societe')) . '"></td></tr>' . "\n";
+	print ' </td><td>';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<input type="text" name="societe" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('societe')) . '"></td></tr>' . "\n";
 	// Address
 	print '<tr><td>' . $langs->trans("Address") . '</td><td>' . "\n";
 	print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="' . ROWS_3 . '">' . dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1) . '</textarea></td></tr>' . "\n";
@@ -528,7 +629,8 @@ jQuery(document).ready(function () {
 	print $formcompany->select_ziptown(GETPOST('town'), 'town', array('zipcode', 'selectcountry_id', 'state_id'), 0, 1);
 	print '</td></tr>';
 	// Country
-	print '<tr><td>' . $langs->trans('Country') . '<FONT COLOR="red">*</FONT></td><td>';
+	print '<tr><td>' . $langs->trans('Country') . '<font color="red">*</font></td><td>';
+	print img_picto('', 'country', 'class="pictofixedwidth"');
 	$country_id = GETPOST('country_id');
 	if (!$country_id && !empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) {
 		$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
@@ -558,6 +660,12 @@ jQuery(document).ready(function () {
 		print '</td></tr>';
 	}
 
+	if ($project->price_registration) {
+		print '<tr><td>' . $langs->trans('Price') . '</td><td>';
+		print price($project->price_registration, 1, $langs, 1, -1, -1, $conf->currency);
+		print '</td></tr>';
+	}
+
 	print "</table>\n";
 
 	print dol_get_fiche_end();
@@ -574,6 +682,8 @@ jQuery(document).ready(function () {
 	print "</form>\n";
 	print "<br>";
 	print '</div></div>';
+} else {
+	print $langs->trans("ConferenceIsNotConfirmed");
 }
 
 llxFooterVierge();

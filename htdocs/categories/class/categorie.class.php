@@ -58,6 +58,7 @@ class Categorie extends CommonObject
 	const TYPE_ACTIONCOMM = 'actioncomm';
 	const TYPE_WEBSITE_PAGE = 'website_page';
 	const TYPE_TICKET = 'ticket';
+	const TYPE_KNOWLEDGEMANAGEMENT = 'knowledgemanagement';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -81,7 +82,8 @@ class Categorie extends CommonObject
 		'warehouse'    => 9,
 		'actioncomm'   => 10,
 		'website_page' => 11,
-		'ticket'       => 12
+		'ticket'       => 12,
+		'knowledgemanagement' => 13
 	);
 
 	/**
@@ -102,7 +104,8 @@ class Categorie extends CommonObject
 		9 => 'warehouse',
 		10 => 'actioncomm',
 		11 => 'website_page',
-		12 => 'ticket'
+		12 => 'ticket',
+		13 => 'knowledgemanagement'
 	);
 
 	/**
@@ -146,7 +149,8 @@ class Categorie extends CommonObject
 		'warehouse'=> 'Entrepot',
 		'actioncomm' => 'ActionComm',
 		'website_page' => 'WebsitePage',
-		'ticket' => 'Ticket'
+		'ticket' => 'Ticket',
+		'knowledgemanagement' => 'KnowledgeRecord'
 	);
 
 	/**

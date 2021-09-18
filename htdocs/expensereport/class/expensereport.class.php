@@ -995,14 +995,14 @@ class ExpenseReport extends CommonObject
 			$sql .= " , total_tva = ".((float) price2num($total_tva, 'MT'));
 			$sql .= " WHERE rowid = ".((int) $id);
 			$result = $this->db->query($sql);
-			if ($result) :
+			if ($result) {
 				$this->db->free($result);
 				return 1;
-			else :
+			} else {
 				$this->error = $this->db->lasterror();
 				dol_syslog(get_class($this)."::recalculer: Error ".$this->error, LOG_ERR);
 				return -3;
-			endif;
+			}
 		} else {
 			$this->error = $this->db->lasterror();
 			dol_syslog(get_class($this)."::recalculer: Error ".$this->error, LOG_ERR);
@@ -1749,12 +1749,12 @@ class ExpenseReport extends CommonObject
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
-		if ($result) :
+		if ($result) {
 			return 1;
-		else :
+		} else {
 			$this->error = $this->db->error();
 			return -1;
-		endif;
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1779,12 +1779,12 @@ class ExpenseReport extends CommonObject
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
-		if ($result) :
+		if ($result) {
 			return 1;
-		else :
+		} else {
 			$this->error = $this->db->error();
 			return -1;
-		endif;
+		}
 	}
 
 	/**

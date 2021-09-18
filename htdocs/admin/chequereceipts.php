@@ -174,7 +174,7 @@ foreach ($dirmodels as $reldir) {
 								$langs->load("errors");
 								print '<div class="error">'.$langs->trans($tmp).'</div>';
 							} elseif ($tmp == 'NotConfigured') {
-								print $langs->trans($tmp);
+								print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
 							} else {
 								print $tmp;
 							}

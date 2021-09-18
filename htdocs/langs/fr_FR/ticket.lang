@@ -45,6 +45,8 @@ TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Élevé
 TicketSeverityShortBLOCKING=Critique, bloquant
 
+TicketCategoryShortOTHER=Autre
+
 ErrorBadEmailAddress=Champ '%s' incorrect
 MenuTicketMyAssign=Mes tickets
 MenuTicketMyAssignNonClosed=Mes tickets ouverts
@@ -319,3 +321,4 @@ BoxNumberOfTicketByDay=Nombre de nouveaux tickets par jour
 BoxNewTicketVSClose=Nombre de nouveaux tickets aujourd’hui par rapport aux tickets fermés aujourd’hui
 TicketCreatedToday=Ticket créé aujourd'hui
 TicketClosedToday=Ticket fermé aujourd'hui
+KMFoundForTicketGroup=Nous avons trouvé des sujets et des FAQ susceptibles de répondre à votre question, merci de les vérifier avant de soumettre le ticket

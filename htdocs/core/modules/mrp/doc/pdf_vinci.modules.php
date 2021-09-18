@@ -23,13 +23,14 @@
  */
 
 /**
- *	\file       htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
- *	\ingroup    fournisseur
- *	\brief      File of class to generate suppliers orders from cornas model
+ *	\file       htdocs/core/modules/mrp/doc/pdf_vinci.php
+ *	\ingroup    mrp
+ *	\brief      File of class to generate MO document from vinci model
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/mrp/modules_mo.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -37,9 +38,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 
 /**
- *	Class to generate the manufacturing orders with the cornas model
+ *	Class to generate the manufacturing orders with the vinci model
  */
-class pdf_testD extends ModelePDFMo
+class pdf_vinci extends ModelePDFMo
 {
 	/**
 	 * @var DoliDb Database handler
@@ -133,8 +134,8 @@ class pdf_testD extends ModelePDFMo
 		$langs->loadLangs(array("main", "bills"));
 
 		$this->db = $db;
-		$this->name = "pdf_testD";
-		$this->description = $langs->trans('DocumentModel');
+		$this->name = "vinci";
+		$this->description = $langs->trans('DocumentModelStandardPDF');
 		$this->update_main_doc_field = 1;		// Save the name of generated file as the main doc when generating a doc with this template
 
 		// Page size for A4 format
@@ -203,10 +204,11 @@ class pdf_testD extends ModelePDFMo
 			$outputlangsbis->loadLangs(array("main", "orders", "companies", "bills", "dict", "products"));
 		}
 
-		$nblines = count($object->lines);
+		if (!isset($object->lines) || !is_array($object->lines)) {
+			$object->lines = array();
+		}
 
-		//Change descriptionfield
-		$showsupplierSKU = false;
+		$nblines = count($object->lines);
 
 		$hidetop = 0;
 		if (!empty($conf->global->MAIN_PDF_DISABLE_COL_HEAD_TITLE)) {
@@ -281,10 +283,10 @@ class pdf_testD extends ModelePDFMo
 				$pdf->SetDrawColor(128, 128, 128);
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
-				$pdf->SetSubject($outputlangs->transnoentities("Order"));
+				$pdf->SetSubject($outputlangs->transnoentities("Mo"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Order")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Mo")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
 				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
 					$pdf->SetCompression(false);
 				}
@@ -1116,7 +1118,7 @@ class pdf_testD extends ModelePDFMo
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$title = $outputlangs->transnoentities("SupplierOrder")." ".$outputlangs->convToOutputCharset($object->ref);
+		$title = $outputlangs->transnoentities("Mo")." ".$outputlangs->convToOutputCharset($object->ref);
 		$pdf->MultiCell(100, 3, $title, '', 'R');
 		$posy += 1;
 
@@ -1152,16 +1154,16 @@ class pdf_testD extends ModelePDFMo
 			}
 		}
 
-		if (!empty($object->date_commande)) {
+		if (!empty($object->date_approve)) {
 			$posy += 5;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($object->date_commande, "day", false, $outputlangs, true), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("MoDate")." : ".dol_print_date($object->date_approve, "day", false, $outputlangs, true), '', 'R');
 		} else {
 			$posy += 5;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(255, 0, 0);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderToProcess"), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ToApprove"), '', 'R');
 		}
 
 		// product info
