@@ -482,7 +482,8 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 	if (
 		$_SERVER['REQUEST_METHOD'] == 'POST' ||
 		$sensitiveget ||
-		((GETPOSTISSET('actionlogin') || GETPOSTISSET('action') || GETPOSTISSET('massaction')) && defined('CSRFCHECK_WITH_TOKEN'))
+		GETPOSTISSET('massaction') ||
+		((GETPOSTISSET('actionlogin') || GETPOSTISSET('action')) && defined('CSRFCHECK_WITH_TOKEN'))
 	) {
 		// If token is not provided or empty, error (we are in case it is mandatory)
 		if (!GETPOST('token', 'alpha') || GETPOST('token', 'alpha') == 'notrequired') {
