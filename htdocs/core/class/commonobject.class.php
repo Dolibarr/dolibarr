@@ -1730,6 +1730,18 @@ abstract class CommonObject
 	 *
 	 *		@return		int			<0 if KO, >=0 if OK
 	 */
+	public function fetch_project()
+	{
+		// phpcs:enable
+		return $this->fetch_projet();
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *		Load the project with id $this->fk_project into this->project
+	 *
+	 *		@return		int			<0 if KO, >=0 if OK
+	 */
 	public function fetch_projet()
 	{
 		// phpcs:enable

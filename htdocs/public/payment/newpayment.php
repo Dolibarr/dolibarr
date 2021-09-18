@@ -1840,7 +1840,7 @@ if ($source == 'organizedeventregistration') {
 	print '</td></tr>'."\n";
 
 	if (! is_object($attendee->project)) {
-		$text = 'ErrorProjectotFound';
+		$text = 'ErrorProjectNotFound';
 	} else {
 		$text = $langs->trans("PaymentEvent").' - '.$attendee->project->title;
 	}
