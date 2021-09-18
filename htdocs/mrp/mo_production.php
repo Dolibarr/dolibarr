@@ -730,7 +730,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Available
 			print '<td>';
 			if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
-				print $langs->trans("Available");
+				print $langs->trans("Stock");
 			}
 			print '</td>';
 		}
