@@ -726,6 +726,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print $langs->trans("Warehouse");
 		}
 		print '</td>';
+		if ($conf->productbatch->enabled) {
+			// Available
+			print '<td>';
+			if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
+				print $langs->trans("Stock");
+			}
+			print '</td>';
+		}
 		// Lot - serial
 		if ($conf->productbatch->enabled) {
 			print '<td>';
@@ -867,8 +875,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					}
 					print ' '.$alreadyconsumed;
 					print '</td>';
-					print '<td>'; // Warehouse
+					// Warehouse
+					print '<td>';
 					print '</td>';
+					if ($conf->stock->enabled) {
+						print '<td>';
+						if ($tmpproduct->stock_reel < ($line->qty - $alreadyconsumed)) {
+							print img_warning($langs->trans('StockTooLow')).' ';
+						}
+						print $tmpproduct->stock_reel; // Available
+						print '</td>';
+					}
 					if ($conf->productbatch->enabled) {
 						print '<td></td>'; // Lot
 					}

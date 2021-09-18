@@ -87,7 +87,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			$value = $tmparraykey[GETPOST($key)].','.GETPOST($key.'2');
 		} else {
 			if ($key == 'lang') {
-				$value = GETPOST($key, 'aZ09');
+				$value = GETPOST($key, 'aZ09')?GETPOST($key, 'aZ09'):"";
 			} else {
 				$value = GETPOST($key, 'alphanohtml');
 			}
