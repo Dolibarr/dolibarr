@@ -52,7 +52,7 @@ $lineid = GETPOST('lineid', 'int');
 
 
 // Store current page url
-$url_page_current = dol_buildpath('/ticket/contact.php', 1);
+$url_page_current = DOL_URL_ROOT.'/ticket/contact.php';
 
 $object = new Ticket($db);
 

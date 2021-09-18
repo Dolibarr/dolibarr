@@ -515,7 +515,7 @@ class EmailCollector extends CommonObject
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
-		$url = dol_buildpath('/admin/emailcollector_card.php', 1).'?id='.$this->id;
+		$url = DOL_URL_ROOT.'/admin/emailcollector_card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not

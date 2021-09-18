@@ -148,14 +148,14 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$backurlforlist = dol_buildpath('/recruitment/recruitmentjobposition_list.php', 1);
+	$backurlforlist = DOL_URL_ROOT.'/recruitment/recruitmentjobposition_list.php';
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = dol_buildpath('/recruitment/recruitmentjobposition_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+				$backtopage = DOL_URL_ROOT.'/recruitment/recruitmentjobposition_card.php?id='.($id > 0 ? $id : '__ID__');
 			}
 		}
 	}
