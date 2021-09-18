@@ -470,34 +470,41 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				$errmsg .= $productforinvoicerow->error;
 			} else {
 				$facture = new Facture($db);
-				$facture->type = Facture::TYPE_STANDARD;
-				$facture->socid = $thirdparty->id;
-				$facture->paye = 0;
-				$facture->date = dol_now();
-				$facture->cond_reglement_id = $confattendee->cond_reglement_id;
-				$facture->fk_project = $project->id;
+				if (empty($confattendee->fk_invoice)) {
+					$facture->type = Facture::TYPE_STANDARD;
+					$facture->socid = $thirdparty->id;
+					$facture->paye = 0;
+					$facture->date = dol_now();
+					$facture->cond_reglement_id = $confattendee->cond_reglement_id;
+					$facture->fk_project = $project->id;
+					$facture->status = Facture::STATUS_DRAFT;
 
-				if (empty($facture->cond_reglement_id)) {
-					$paymenttermstatic = new PaymentTerm($confattendee->db);
-					$facture->cond_reglement_id = $paymenttermstatic->getDefaultId();
 					if (empty($facture->cond_reglement_id)) {
-						$error++;
-						$confattendee->error = 'ErrorNoPaymentTermRECEPFound';
-						$confattendee->errors[] = $confattendee->error;
+						$paymenttermstatic = new PaymentTerm($confattendee->db);
+						$facture->cond_reglement_id = $paymenttermstatic->getDefaultId();
+						if (empty($facture->cond_reglement_id)) {
+							$error++;
+							$confattendee->error = 'ErrorNoPaymentTermRECEPFound';
+							$confattendee->errors[] = $confattendee->error;
+						}
 					}
-				}
-				$resultfacture = $facture->create($user);
-				if ($resultfacture <= 0) {
-					$confattendee->error = $facture->error;
-					$confattendee->errors = $facture->errors;
-					$error++;
+					$resultfacture = $facture->create($user);
+					if ($resultfacture <= 0) {
+						$confattendee->error = $facture->error;
+						$confattendee->errors = $facture->errors;
+						$error++;
+					} else {
+						$confattendee->fk_invoice = $resultfacture;
+						$confattendee->update($user);
+					}
+				} else {
+					$facture->fetch($confattendee->fk_invoice);
 				}
 
-				/*
-				if (!$error) {
+				// Add link between invoice and the attendee registration
+				/*if (!$error) {
 					$facture->add_object_linked($confattendee->element, $confattendee->id);
-				}
-				*/
+				}*/
 			}
 
 			if (!$error) {

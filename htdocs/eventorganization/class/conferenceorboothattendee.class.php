@@ -108,6 +108,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		'email' => array('type'=>'mail', 'label'=>'EmailAttendee', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'index'=>1,),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status = 1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>40, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"LinkToThirparty", 'picto'=>'company', 'css'=>'tdoverflowmax150 maxwidth500'),
 		'date_subscription' => array('type'=>'datetime', 'label'=>'DateOfRegistration', 'enabled'=>'1', 'position'=>56, 'notnull'=>0, 'visible'=>1, 'showoncombobox'=>'1',),
+		'fk_invoice' => array('type'=>'integer:Facture:compta/facture/class/facture.class.php', 'label'=>'Invoice', 'enabled'=>'1', 'position'=>57, 'notnull'=>0, 'visible'=>-1, 'index'=>0, 'picto'=>'bill', 'css'=>'tdoverflowmax150 maxwidth500'),
 		'amount' => array('type'=>'price', 'label'=>'AmountPaid', 'enabled'=>'1', 'position'=>57, 'notnull'=>0, 'visible'=>1, 'default'=>'null', 'isameasure'=>'1', 'help'=>"AmountOfSubscriptionPaid",),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>3,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>3,),
@@ -126,6 +127,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public $fk_actioncomm;
 	public $email;
 	public $date_subscription;
+	public $fk_invoice;
 	public $amount;
 	public $note_public;
 	public $note_private;
