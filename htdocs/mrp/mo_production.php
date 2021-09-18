@@ -756,7 +756,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<td></td>';
 			// Warehouse
 			print '<td>';
-			print '<input type="submit" class="button buttongen" name="addconsumelinebutton" value="'.$langs->trans("Add").'">';
+			print '<input type="submit" class="button buttongen button-add" name="addconsumelinebutton" value="'.$langs->trans("Add").'">';
 			print '</td>';
 			// Lot - serial
 			if ($conf->productbatch->enabled) {
@@ -1025,7 +1025,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<td></td>';
 			// Warehouse
 			print '<td>';
-			print '<input type="submit" class="button buttongen" name="addproducelinebutton" value="'.$langs->trans("Add").'">';
+			print '<input type="submit" class="button buttongen button-add" name="addproducelinebutton" value="'.$langs->trans("Add").'">';
 			print '</td>';
 			// Lot - serial
 			if ($conf->productbatch->enabled) {
