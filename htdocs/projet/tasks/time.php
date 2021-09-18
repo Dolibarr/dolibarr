@@ -107,6 +107,13 @@ $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($projectstatic->table_element);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
+if ($id > 0 || $ref) {
+	$object->fetch($id, $ref);
+}
+
+restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
+
+
 
 /*
  * Actions
