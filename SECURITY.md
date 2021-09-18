@@ -90,9 +90,8 @@ Scope is the web application (back office) and the APIs.
 * Clickjacking/UI redressing
 * Physical or social engineering attempts or issues that require physical access to a victim’s computer/device
 * Presence of autocomplete attribute on web forms
-* Vulnerabilities affecting outdated browsers or platforms
+* Vulnerabilities affecting outdated browsers or platforms, or vulnerabilities inside browsers themself.
 * Logout and other instances of low-severity Cross-Site Request Forgery
-* Missing cookie flags
 * Missing security-related HTTP headers which do not lead directly to a vulnerability
 * Reports from automated web vulnerability scanners (Acunetix, Vega, etc.) that have not been validated
 * Invalid or missing SPF (Sender Policy Framework) records (Incomplete or missing SPF/DKIM/DMARC)
