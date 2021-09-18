@@ -464,8 +464,6 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 	// Array of action code where CSRFCHECK with token will be forced (so token must be provided on url request)
 	$arrayofactiontoforcetokencheck = array(
 		'activate', 'add', 'addrights', 'addtimespent',
-		'confirm_create_user', 'confirm_create_thirdparty', 'confirm_delete', 'confirm_deletedir', 'confirm_deletefile', 'confirm_deleteline', 'confirm_purge', 'confirm_reject_check',
-		'confirm_activate', 'confirm_validate', 'confirm_close',
 		'delete', 'deletecontact', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'delrights',
 		'disable',
 		'doprev', 'donext', 'dvprev', 'dvnext',
@@ -478,7 +476,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 	if (in_array(GETPOST('action', 'aZ09'), $arrayofactiontoforcetokencheck)) {
 		$sensitiveget = true;
 	}
-	if (preg_match('/^(disable_|enable_|setremise)/', GETPOST('action', 'aZ09'))) {
+	if (preg_match('/^(confirm_|disable_|enable_|setremise)/', GETPOST('action', 'aZ09'))) {
 		$sensitiveget = true;
 	}
 
