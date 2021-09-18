@@ -726,12 +726,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print $langs->trans("Warehouse");
 		}
 		print '</td>';
-		// Available
-		print '<td>';
-		if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
-			print $langs->trans("Available");
+		if ($conf->productbatch->enabled) {
+			// Available
+			print '<td>';
+			if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
+				print $langs->trans("Available");
+			}
+			print '</td>';
 		}
-		print '</td>';
 		// Lot - serial
 		if ($conf->productbatch->enabled) {
 			print '<td>';
