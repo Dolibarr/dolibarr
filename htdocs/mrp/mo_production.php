@@ -878,12 +878,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					// Warehouse
 					print '<td>';
 					print '</td>';
-					print '<td>';
-					if ($tmpproduct->stock_reel < ($line->qty-$alreadyconsumed)) {
-						print img_warning($langs->trans('StockTooLow')).' ';
+					if ($conf->stock->enabled) {
+						print '<td>';
+						if ($tmpproduct->stock_reel < ($line->qty-$alreadyconsumed)) {
+							print img_warning($langs->trans('StockTooLow')).' ';
+						}
+						print $tmpproduct->stock_reel; // Available
+						print '</td>';
 					}
-					print $tmpproduct->stock_reel; // Available
-					print '</td>';
 					if ($conf->productbatch->enabled) {
 						print '<td></td>'; // Lot
 					}
