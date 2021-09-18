@@ -1226,12 +1226,16 @@ if ($action == 'create') {
 	// Object linked
 	if (!empty($origin) && !empty($originid)) {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		print '<tr><td class="titlefieldcreate">'.$langs->trans("LinkedObject").'</td>';
-		print '<td colspan="3">'.dolGetElementUrl($originid, $origin, 1).'</td></tr>';
-		print '<input type="hidden" name="fk_element" value="'.GETPOST('originid', 'int').'">';
-		print '<input type="hidden" name="elementtype" value="'.GETPOST('origin').'">';
-		print '<input type="hidden" name="originid" value="'.GETPOST('originid', 'int').'">';
-		print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
+
+		if (! in_array($origin, array('societe', 'project', 'task', 'user'))) {
+			// We do not use link for object that already contains a hard coded
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("LinkedObject").'</td>';
+			print '<td colspan="3">'.dolGetElementUrl($originid, $origin, 1).'</td></tr>';
+			print '<input type="hidden" name="fk_element" value="'.GETPOST('originid', 'int').'">';
+			print '<input type="hidden" name="elementtype" value="'.GETPOST('origin').'">';
+			print '<input type="hidden" name="originid" value="'.GETPOST('originid', 'int').'">';
+			print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
+		}
 	}
 
 	$reg = array();
