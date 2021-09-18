@@ -694,8 +694,9 @@ if (!empty($conference->id) && $conference->status==ConferenceOrBooth::STATUS_CO
 
 	// Email company for invoice
 	if ($project->price_registration) {
+		print '<tr><td>' . $langs->trans("EmailCompanyForInvoice") . '</td><td>';
 		print img_picto('', 'email', 'class="pictofixedwidth"');
-		print '<tr><td>' . $langs->trans("EmailCompanyForInvoice") . '</td><td><input type="text" name="emailcompany" maxlength="255" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('emailcompany')) . '"></td></tr>' . "\n";
+		print '<input type="text" name="emailcompany" maxlength="255" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('emailcompany')) . '"></td></tr>' . "\n";
 	}
 
 	// Address
