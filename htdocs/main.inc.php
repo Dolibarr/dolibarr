@@ -466,7 +466,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 		'activate', 'add', 'addrights', 'addtimespent',
 		'doprev', 'donext', 'dvprev', 'dvnext',
 		'install',
-		'setpricelevel',
+		'setpricelevel', 'set_paid',
 		'update'
 	);
 	$sensitiveget = false;
