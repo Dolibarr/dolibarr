@@ -679,7 +679,10 @@ if (!empty($conference->id) && $conference->status==ConferenceOrBooth::STATUS_CO
 	print '<table class="border" summary="form to subscribe" id="tablesubscribe">' . "\n";
 
 	// Email
-	print '<tr><td>' . $langs->trans("EmailAttendee") . '<font color="red">*</font></td><td><input type="text" name="email" maxlength="255" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('email')) . '"></td></tr>' . "\n";
+	print '<tr><td>' . $langs->trans("EmailAttendee") . '<font color="red">*</font></td><td>';
+	print img_picto('', 'email', 'class="pictofixedwidth"');
+	print '<input type="text" name="email" maxlength="255" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('email')) . '"></td></tr>' . "\n";
+
 	// Company
 	print '<tr id="trcompany" class="trcompany"><td>' . $langs->trans("Company");
 	if (!empty(floatval($project->price_registration))) {
@@ -688,19 +691,24 @@ if (!empty($conference->id) && $conference->status==ConferenceOrBooth::STATUS_CO
 	print ' </td><td>';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
 	print '<input type="text" name="societe" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('societe')) . '"></td></tr>' . "\n";
+
+	// Email company for invoice
 	if ($project->price_registration) {
-		// Email company for invoice
+		print img_picto('', 'email', 'class="pictofixedwidth"');
 		print '<tr><td>' . $langs->trans("EmailCompanyForInvoice") . '</td><td><input type="text" name="emailcompany" maxlength="255" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('emailcompany')) . '"></td></tr>' . "\n";
 	}
+
 	// Address
 	print '<tr><td>' . $langs->trans("Address") . '</td><td>' . "\n";
-	print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="' . ROWS_3 . '">' . dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1) . '</textarea></td></tr>' . "\n";
+	print '<textarea name="address" id="address" wrap="soft" class="centpercent" rows="' . ROWS_2 . '">' . dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1) . '</textarea></td></tr>' . "\n";
+
 	// Zip / Town
 	print '<tr><td>' . $langs->trans('Zip') . ' / ' . $langs->trans('Town') . '</td><td>';
 	print $formcompany->select_ziptown(GETPOST('zipcode'), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6, 1);
 	print ' / ';
 	print $formcompany->select_ziptown(GETPOST('town'), 'town', array('zipcode', 'selectcountry_id', 'state_id'), 0, 1);
 	print '</td></tr>';
+
 	// Country
 	print '<tr><td>' . $langs->trans('Country') . '<font color="red">*</font></td><td>';
 	print img_picto('', 'country', 'class="pictofixedwidth"');
