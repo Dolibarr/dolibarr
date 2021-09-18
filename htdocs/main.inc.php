@@ -465,6 +465,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 	$arrayofactiontoforcetokencheck = array(
 		'activate', 'add', 'addrights', 'addtimespent',
 		'confirm_create_user', 'confirm_create_thirdparty', 'confirm_delete', 'confirm_deletedir', 'confirm_deletefile', 'confirm_purge', 'confirm_reject_check',
+		'confirm_validate', 'confirm_close',
 		'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'delrights',
 		'disable',
 		'doprev', 'donext', 'dvprev', 'dvnext',
