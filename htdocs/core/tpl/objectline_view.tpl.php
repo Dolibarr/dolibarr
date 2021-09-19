@@ -164,7 +164,7 @@ if (($line->info_bits & 2) == 2) {
 	// Show date range
 	if ($line->element == 'facturedetrec') {
 		if ($line->date_start_fill || $line->date_end_fill) {
-			print '<div class="clearboth nowraponall"><br>';
+			print '<div class="clearboth nowraponall">';
 		}
 		if ($line->date_start_fill) {
 			print '<span class="opacitymedium">'.$langs->trans('AutoFillDateFromShort').':</span> '.yn($line->date_start_fill);
