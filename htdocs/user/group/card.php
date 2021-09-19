@@ -384,7 +384,7 @@ if ($action == 'create') {
 			}
 
 			if ($candisableperms) {
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&id='.$object->id.'&token='.newToken().'">'.$langs->trans("DeleteGroup").'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("DeleteGroup").'</a>';
 			}
 
 			print "</div>\n";

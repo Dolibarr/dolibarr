@@ -466,15 +466,13 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 		'activate', 'add', 'addrights', 'addtimespent',
 		'doprev', 'donext', 'dvprev', 'dvnext',
 		'install',
-		'reopen',
-		'setpricelevel', 'set_paid',
-		'update'
+		'reopen'
 	);
 	$sensitiveget = false;
 	if (in_array(GETPOST('action', 'aZ09'), $arrayofactiontoforcetokencheck)) {
 		$sensitiveget = true;
 	}
-	if (preg_match('/^(classify|close|confirm_|delete|disable|enable|remove_|setremise)/', GETPOST('action', 'aZ09'))) {
+	if (preg_match('/^(classify|close|confirm|del|disable|enable|remove|set|update)/', GETPOST('action', 'aZ09'))) {
 		$sensitiveget = true;
 	}
 

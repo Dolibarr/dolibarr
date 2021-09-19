@@ -767,7 +767,7 @@ if ($id) {
 		}
 
 		if (!empty($user->rights->tax->charges->supprimer) && empty($totalpaye)) {
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&token='.newToken().'&action=delete">'.$langs->trans("Delete").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("DisabledBecausePayments"))).'">'.$langs->trans("Delete").'</a></div>';
 		}
