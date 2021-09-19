@@ -165,9 +165,9 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('USER_HIDE_INACTIVE_IN_COMBOBOX');
 } else {
 	if (empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX)) {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_USER_HIDE_INACTIVE_IN_COMBOBOX">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_USER_HIDE_INACTIVE_IN_COMBOBOX&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} else {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_USER_HIDE_INACTIVE_IN_COMBOBOX">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_USER_HIDE_INACTIVE_IN_COMBOBOX&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
 print '</td></tr>';
@@ -271,7 +271,7 @@ foreach ($dirmodels as $reldir) {
 								if (getDolGlobalString('USER_ADDON_PDF_ODT') == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scandir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 

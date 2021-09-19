@@ -235,7 +235,7 @@ foreach ($dirmodels as $reldir) {
 						if ($conf->global->BOM_ADDON == $file) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}
@@ -377,7 +377,7 @@ foreach ($dirmodels as $reldir) {
 								if ($conf->global->BOM_ADDON_PDF == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.$name.'&scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 

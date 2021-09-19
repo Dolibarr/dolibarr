@@ -144,7 +144,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_valu
 print load_fiche_titre($langs->trans("CreditTransferSetup"), $linkback, 'title_setup');
 print '<br>';
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=set">';
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<table class="noborder centpercent">';
@@ -318,7 +318,7 @@ foreach ($dirmodels as $reldir)
 								}
 								else
 								{
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 								}
 								print '</td>';
 

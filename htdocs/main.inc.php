@@ -464,8 +464,10 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	// Array of action code where CSRFCHECK with token will be forced (so token must be provided on url request)
 	$sensitiveget = false;
 	if ((GETPOSTISSET('massaction') || GETPOST('action', 'aZ09')) && getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') == 2) {
+		// All GET actions and mass actions are processed as sensitive.
 		$sensitiveget = true;
 	} else {
+		// Only GET actions coded with a &token into url are processed as sensitive.
 		$arrayofactiontoforcetokencheck = array(
 			'activate', 'add', 'addrights', 'addtimespent',
 			'doprev', 'donext', 'dvprev', 'dvnext',
@@ -475,7 +477,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 		if (in_array(GETPOST('action', 'aZ09'), $arrayofactiontoforcetokencheck)) {
 			$sensitiveget = true;
 		}
-		if (preg_match('/^(classify|close|confirm|del|disable|enable|remove|set|update)/', GETPOST('action', 'aZ09'))) {
+		if (preg_match('/^(classify|close|confirm|del|disable|enable|remove|set|unset|update)/', GETPOST('action', 'aZ09'))) {
 			$sensitiveget = true;
 		}
 	}

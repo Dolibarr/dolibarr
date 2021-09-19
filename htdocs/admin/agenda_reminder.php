@@ -174,7 +174,7 @@ if (empty($conf->global->AGENDA_REMINDER_BROWSER)) {
 		$langs->load("errors");
 		print img_warning($langs->trans("WarningAvailableOnlyForHTTPSServers"), '', 'valignmiddle size15x').' ';
 	}
-	print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER&amp;token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
+	print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER&token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
 	print '</td></tr>'."\n";
 } else {
 	if (!isHTTPS()) {
@@ -221,7 +221,7 @@ if (empty($conf->cron->enabled)) {
 	print '<span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module2300Name")).'</span>';
 } else {
 	if (empty($conf->global->AGENDA_REMINDER_EMAIL)) {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_EMAIL&amp;token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_EMAIL&token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
 	} else {
 		// Get the max frequency of reminder
 		if ($job->id > 0) {

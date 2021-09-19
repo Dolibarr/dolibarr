@@ -189,9 +189,9 @@ if (!empty($conf->use_javascript_ajax)) {
 	print ajax_constantonoff('ForceBuyingPriceIfNull');
 } else {
 	if (empty($conf->global->ForceBuyingPriceIfNull)) {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ForceBuyingPriceIfNull&amp;token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ForceBuyingPriceIfNull&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} else {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ForceBuyingPriceIfNull&amp;token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ForceBuyingPriceIfNull&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
 print '</td>';

@@ -229,7 +229,7 @@ foreach ($dirmodels as $reldir) {
 						if ($conf->global->EXPEDITION_ADDON_NUMBER == "$file") {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodel&amp;token='.newToken().'&amp;value='.$file.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodel&token='.newToken().'&value='.urlencode($file).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}
