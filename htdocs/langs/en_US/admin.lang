@@ -1626,8 +1626,7 @@ ProductSetup=Products module setup
 ServiceSetup=Services module setup
 ProductServiceSetup=Products and Services modules setup
 NumberOfProductShowInSelect=Maximum number of products to show in combo select lists (0=no limit)
-ViewProductDescInFormAbility=Display product descriptions in forms (otherwise shown in a tooltip popup)
-DoNotAddProductDescAtAddLines=Do not add product description (from product card) on submit add lines on forms
+ViewProductDescInFormAbility=Display product descriptions in lines of items (otherwise show description in a tooltip popup)
 OnProductSelectAddProductDesc=How to use the description of the products when adding a product as a line of a document
 AutoFillFormFieldBeforeSubmit=Auto fill the description input field with the description of product
 DoNotAutofillButAutoConcat=Do not autofill the input field with description of product. Description of the product will be concatenated to the entered description automatically. 
