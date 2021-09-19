@@ -806,7 +806,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Zip
 	if (!empty($arrayfields['s.zip']['checked'])) {
-		print '<td class="nocellnopadd">';
+		print '<td class="nocellnopadd center">';
 		print $obj->zip;
 		print '</td>';
 		if (!$i) {
@@ -815,7 +815,7 @@ while ($i < min($num, $limit)) {
 	}
 	// State
 	if (!empty($arrayfields['state.nom']['checked'])) {
-		print "<td>".$obj->state_name."</td>\n";
+		print '<td class="center">'.$obj->state_name."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
