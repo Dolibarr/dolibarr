@@ -1039,7 +1039,7 @@ if (!defined('NOLOGIN')) {
 		$user->rights->user->user->supprimer = 1;
 		$user->rights->user->self->creer = 1;
 		$user->rights->user->self->password = 1;
-		
+
 		//Required if advanced permissions are used with MAIN_USE_ADVANCED_PERMS
 		$user->rights->user->user_advance->readperms = 1;
 		$user->rights->user->user_advance->write = 1;
