@@ -898,9 +898,9 @@ while ($i < min($num, $limit)) {
 		}
 	}
 
-	// Ref customer
+	// Ref supplier
 	if (!empty($arrayfields['e.ref_supplier']['checked'])) {
-		print '<td title="'.dol_escape_htmltag($obj->ref_supplier).'">';
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->ref_supplier).'">';
 		print dol_escape_htmltag($obj->ref_supplier);
 		print "</td>\n";
 		if (!$i) {
@@ -919,8 +919,8 @@ while ($i < min($num, $limit)) {
 	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) {
-		print '<td class="nocellnopadd">';
-		print $obj->town;
+		print '<td class="nocellnopadd tdoverflowmax200" title="'.dol_escape_htmltag($obj->town).'">';
+		print dol_escape_htmltag($obj->town);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -929,7 +929,7 @@ while ($i < min($num, $limit)) {
 	// Zip
 	if (!empty($arrayfields['s.zip']['checked'])) {
 		print '<td class="nocellnopadd center"">';
-		print $obj->zip;
+		print dol_escape_htmltag($obj->zip);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -937,7 +937,7 @@ while ($i < min($num, $limit)) {
 	}
 	// State
 	if (!empty($arrayfields['state.nom']['checked'])) {
-		print "<td>".$obj->state_name."</td>\n";
+		print "<td>".dol_escape_htmltag($obj->state_name)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -946,7 +946,7 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['country.code_iso']['checked'])) {
 		print '<td class="center">';
 		$tmparray = getCountry($obj->fk_pays, 'all');
-		print $tmparray['label'];
+		print dol_escape_htmltag($tmparray['label']);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
