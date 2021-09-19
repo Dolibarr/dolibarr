@@ -900,7 +900,7 @@ while ($i < min($num, $limit)) {
 
 	// Ref customer
 	if (!empty($arrayfields['e.ref_supplier']['checked'])) {
-		print '<td title="'.dol_escape_htmltag($obj->ref_supplier).'>';
+		print '<td title="'.dol_escape_htmltag($obj->ref_supplier).'">';
 		print dol_escape_htmltag($obj->ref_supplier);
 		print "</td>\n";
 		if (!$i) {
