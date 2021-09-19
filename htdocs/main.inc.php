@@ -460,22 +460,25 @@ if (!defined('NOTOKENRENEWAL') && !defined('NOSESSION')) {
 //dol_syslog("aaaa - ".defined('NOCSRFCHECK')." - ".$dolibarr_nocsrfcheck." - ".$conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN." - ".$_SERVER['REQUEST_METHOD']." - ".GETPOST('token', 'alpha'));
 
 // Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set into page
-if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN)) || defined('CSRFCHECK_WITH_TOKEN')) {
+if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN')) || defined('CSRFCHECK_WITH_TOKEN')) {
 	// Array of action code where CSRFCHECK with token will be forced (so token must be provided on url request)
-	$arrayofactiontoforcetokencheck = array(
-		'activate', 'add', 'addrights', 'addtimespent',
-		'doprev', 'donext', 'dvprev', 'dvnext',
-		'install',
-		'reopen'
-	);
 	$sensitiveget = false;
-	if (in_array(GETPOST('action', 'aZ09'), $arrayofactiontoforcetokencheck)) {
+	if (getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') == 2) {
 		$sensitiveget = true;
+	} else {
+		$arrayofactiontoforcetokencheck = array(
+			'activate', 'add', 'addrights', 'addtimespent',
+			'doprev', 'donext', 'dvprev', 'dvnext',
+			'install',
+			'reopen'
+		);
+		if (in_array(GETPOST('action', 'aZ09'), $arrayofactiontoforcetokencheck)) {
+			$sensitiveget = true;
+		}
+		if (preg_match('/^(classify|close|confirm|del|disable|enable|remove|set|update)/', GETPOST('action', 'aZ09'))) {
+			$sensitiveget = true;
+		}
 	}
-	if (preg_match('/^(classify|close|confirm|del|disable|enable|remove|set|update)/', GETPOST('action', 'aZ09'))) {
-		$sensitiveget = true;
-	}
-
 	// Check a token is provided for all cases that need a mandatory token
 	// (all POST actions + all login, actions and mass actions on pages with CSRFCHECK_WITH_TOKEN set + all sensitive GET actions)
 	if (
