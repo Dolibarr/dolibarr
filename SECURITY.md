@@ -4,11 +4,11 @@ This file contains some policies about the security reports on Dolibarr ERP CRM 
 
 ## Supported Versions for security reports
 
-| Version    | Supported          |
-| ---------- | ------------------ |
-| <= 14.0.1  | :x:                |
-| >= 14.0.2+ | :white_check_mark: |
-
+| Version    | Supported              |
+| ---------- | ---------------------- |
+| <= 14.0.1  | :x:                    |
+| >= 14.0.2+ | :white_check_mark: except CSRF attacks|
+| >= develop | :white_check_mark:     |
 
 ## Reporting a Vulnerability
 
