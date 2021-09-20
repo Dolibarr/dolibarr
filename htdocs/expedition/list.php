@@ -409,16 +409,16 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
 if ($sall) {
-	$param .= "&amp;sall=".urlencode($sall);
+	$param .= "&sall=".urlencode($sall);
 }
 if ($search_ref_exp) {
-	$param .= "&amp;search_ref_exp=".urlencode($search_ref_exp);
+	$param .= "&search_ref_exp=".urlencode($search_ref_exp);
 }
 if ($search_ref_liv) {
-	$param .= "&amp;search_ref_liv=".urlencode($search_ref_liv);
+	$param .= "&search_ref_liv=".urlencode($search_ref_liv);
 }
 if ($search_ref_customer) {
-	$param .= "&amp;search_ref_customer=".urlencode($search_ref_customer);
+	$param .= "&search_ref_customer=".urlencode($search_ref_customer);
 }
 if ($search_user > 0) {
 	$param .= '&search_user='.urlencode($search_user);
@@ -427,13 +427,13 @@ if ($search_sale > 0) {
 	$param .= '&search_sale='.urlencode($search_sale);
 }
 if ($search_company) {
-	$param .= "&amp;search_company=".urlencode($search_company);
+	$param .= "&search_company=".urlencode($search_company);
 }
 if ($search_shipping_method_id) {
 	$param .= "&amp;search_shipping_method_id=".urlencode($search_shipping_method_id);
 }
 if ($search_tracking) {
-	$param .= "&amp;search_tracking=".urlencode($search_tracking);
+	$param .= "&search_tracking=".urlencode($search_tracking);
 }
 if ($search_town) {
 	$param .= '&search_town='.urlencode($search_town);
@@ -789,7 +789,7 @@ while ($i < min($num, $limit)) {
 
 	// Ref
 	if (!empty($arrayfields['e.ref']['checked'])) {
-		print "<td>";
+		print '<td class="nowraponall">';
 		print $shipment->getNomUrl(1);
 		print "</td>\n";
 		if (!$i) {
@@ -809,7 +809,7 @@ while ($i < min($num, $limit)) {
 
 	// Third party
 	if (!empty($arrayfields['s.nom']['checked'])) {
-		print '<td>';
+		print '<td class="tdoverflowmax150">';
 		print $companystatic->getNomUrl(1);
 		print '</td>';
 		if (!$i) {
@@ -827,7 +827,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Zip
 	if (!empty($arrayfields['s.zip']['checked'])) {
-		print '<td class="nocellnopadd">';
+		print '<td class="nocellnopadd center">';
 		print $obj->zip;
 		print '</td>';
 		if (!$i) {
@@ -836,7 +836,7 @@ while ($i < min($num, $limit)) {
 	}
 	// State
 	if (!empty($arrayfields['state.nom']['checked'])) {
-		print "<td>".$obj->state_name."</td>\n";
+		print '<td class="center">'.$obj->state_name."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
