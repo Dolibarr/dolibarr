@@ -281,8 +281,7 @@ class FactureStats extends Stats
 		$startYear = $endYear - $numberYears;
 		$sql = "SELECT date_format(datef,'%Y') as dm, SUM(f.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid)
-		{
+		if (!$user->rights->societe->client->voir && !$this->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= $this->join;

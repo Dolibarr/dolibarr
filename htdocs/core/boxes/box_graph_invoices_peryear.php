@@ -95,8 +95,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 		if ($user->socid) $socid = $user->socid;
 		if (!$user->rights->societe->client->voir || $socid) $prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
 
-		if ($user->rights->facture->lire)
-		{
+		if ($user->rights->facture->lire) {
 			$mesg = '';
 
 			$param_year = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
@@ -105,8 +104,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 			$autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
-			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode, $autosetarray))
-			{
+			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode, $autosetarray)) {
 				$endyear = GETPOST($param_year, 'int');
 				$showtot = GETPOST($param_showtot, 'alpha');
 			} else {
@@ -119,7 +117,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 			if (empty($endyear)) $endyear = $nowarray['year'];
 			$numberyears = (empty($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH) ? 5 : $conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH);
 			$startyear = $endyear - $numberyears;
-			$endyear = 
+			$endyear =
 
 			$mode = 'customer';
 			$WIDTH = (($showtot) || !empty($conf->dol_optimize_smallscreen)) ? '256' : '320';
@@ -137,18 +135,15 @@ class box_graph_invoices_peryear extends ModeleBoxes
 
 			$px2 = new DolGraph();
 			$mesg = $px2->isGraphKo();
-			if (!$mesg)
-			{
+			if (!$mesg) {
 				$langs->load("bills");
 
 				$px2->SetData($data2);
 				unset($data2);
 				$i = $startyear;
 				$legend = array();
-				while ($i <= $endyear)
-				{
-					if ($startmonth != 1)
-					{
+				while ($i <= $endyear) {
+					if ($startmonth != 1) {
 						$legend[] = sprintf("%d/%d", $i - 2001, $i - 2000);
 					} else {
 						$legend[] = $i;
@@ -169,14 +164,12 @@ class box_graph_invoices_peryear extends ModeleBoxes
 				$px2->draw($filenamenb, $fileurlnb);
 			}
 
-			if (empty($conf->use_javascript_ajax))
-			{
+			if (empty($conf->use_javascript_ajax)) {
 				$langs->load("errors");
 				$mesg = $langs->trans("WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs");
 			}
 
-			if (!$mesg)
-			{
+			if (!$mesg) {
 				$stringtoshow = '';
 				$stringtoshow .= '<script type="text/javascript" language="javascript">
 					jQuery(document).ready(function() {

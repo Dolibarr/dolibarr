@@ -619,7 +619,7 @@ abstract class Stats
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
-    /**
+	/**
 	 *  Returns the summed amounts per year for a given number of past years ending now
 	 *  @param  string  $sql    SQL
 	 *  @return array
@@ -628,12 +628,10 @@ abstract class Stats
 	{
 		$result = array();
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$row = $this->db->fetch_row($resql);
 				$j = (int) $row[0];
 				$result[] = [
@@ -646,5 +644,4 @@ abstract class Stats
 		}
 		return $result;
 	}
-
 }
