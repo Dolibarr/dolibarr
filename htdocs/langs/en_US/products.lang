@@ -75,6 +75,7 @@ SellingPriceTTC=Selling price (inc. tax)
 SellingMinPriceTTC=Minimum Selling price (inc. tax)
 CostPriceDescription=This price field (excl. tax) can be used to capture the average amount this product costs to your company. It may be any price you calculate yourself, for example, from the average buying price plus average production and distribution cost.
 CostPriceUsage=This value could be used for margin calculation.
+ManufacturingPrice=Manufacturing price
 SoldAmount=Sold amount
 PurchasedAmount=Purchased amount
 NewPrice=New price
