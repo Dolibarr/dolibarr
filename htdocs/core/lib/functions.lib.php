@@ -8846,7 +8846,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 				if ($newcrit != '') {
 					$numnewcrit = price2num($newcrit);
 					if (is_numeric($numnewcrit)) {
-						$newres .= ($i2 > 0 ? ' OR ' : '').$field.' '.$operator.' '.$db->sanitize($numnewcrit); // should be a numeric
+						$newres .= ($i2 > 0 ? ' OR ' : '').$field.' '.$operator.' '.((float) $numnewcrit); // should be a numeric
 					} else {
 						$newres .= ($i2 > 0 ? ' OR ' : '').'1 = 2'; // force false
 					}
@@ -8905,7 +8905,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 					$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '');
 
 					if (preg_match('/\.(id|rowid)$/', $field)) {	// Special case for rowid that is sometimes a ref so used as a search field
-						$newres .= $field." = ".(is_numeric(trim($tmpcrit)) ?trim($tmpcrit) : '0');
+						$newres .= $field." = ".(is_numeric(trim($tmpcrit)) ? ((float) trim($tmpcrit)) : '0');
 					} else {
 						$newres .= $field." LIKE '";
 

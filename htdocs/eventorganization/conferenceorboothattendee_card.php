@@ -351,13 +351,13 @@ if (!empty($withproject)) {
 	print '</td><td>';
 	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', $projectstatic->price_booth, $projectstatic, 0, 'amount', '', 0, 0, '', 0, '', 'projectid');
 	print "</td></tr>";
-	
+
 	print '<tr><td>';
 	print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
 	print '</td><td>';
 	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $projectstatic->price_registration, $projectstatic, 0, 'amount', '', 0, 0, '', 0, '', 'projectid');
 	print "</td></tr>";
-	
+
 	print '<tr><td valign="middle">'.$langs->trans("EventOrganizationICSLink").'</td><td>';
 	// Define $urlwithroot
 	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -575,6 +575,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">'."\n";
+
+	$keyforbreak = 'note_public';
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';

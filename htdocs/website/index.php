@@ -3127,7 +3127,7 @@ if (!GETPOST('hide_websitemenu')) {
 		print '</span>'; // end websitetools
 
 		print '<span class="websitehelp">';
-		if (GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha')) {
+		if ($action == 'editsource' || $action == 'editcontent' || GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha')) {
 			$url = 'https://wiki.dolibarr.org/index.php/Module_Website';
 
 			$htmltext = $langs->transnoentitiesnoconv("YouCanEditHtmlSource", $url);
