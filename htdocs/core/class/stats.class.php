@@ -624,7 +624,7 @@ abstract class Stats
 	 *  @param  string  $sql    SQL
 	 *  @return array
 	 */
-	function _getAmountByYear($sql)
+	protected function _getAmountByYear($sql)
 	{
 		$result = array();
 		$resql = $this->db->query($sql);
