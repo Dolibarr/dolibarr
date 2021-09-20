@@ -1045,10 +1045,10 @@ if (!defined('NOLOGIN')) {
 			if (empty($user->rights->user->user_advance)) {
 				$user->rights->user->user_advance = new stdClass(); // To avoid warnings
 			}
-			if (empty($user->rights->user->user_advance)) {
+			if (empty($user->rights->user->self_advance)) {
 				$user->rights->user->self_advance = new stdClass(); // To avoid warnings
 			}
-			if (empty($user->rights->user->user_advance)) {
+			if (empty($user->rights->user->group_advance)) {
 				$user->rights->user->group_advance = new stdClass(); // To avoid warnings
 			}
 
