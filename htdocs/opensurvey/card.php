@@ -156,14 +156,16 @@ if (empty($reshook)) {
 	}
 
 	// Delete comment
-	$idcomment = GETPOST('deletecomment', 'int');
-	if ($idcomment) {
-		// Security check
-		if (!$user->rights->opensurvey->write) {
-			accessforbidden();
-		}
+	if ($action == 'deletecomment') {
+		$idcomment = GETPOST('idcomment', 'int');
+		if ($idcomment > 0) {
+			// Security check
+			if (!$user->rights->opensurvey->write) {
+				accessforbidden();
+			}
 
-		$resql = $object->deleteComment($idcomment);
+			$resql = $object->deleteComment($idcomment);
+		}
 	}
 
 	if ($action == 'edit') {
@@ -356,7 +358,7 @@ print '<div class="tabsAction">';
 
 if ($action != 'edit' && $user->rights->opensurvey->write) {
 	//Modify button
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$numsondage.'">'.$langs->trans("Modify").'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.urlencode($numsondage).'">'.$langs->trans("Modify").'</a>';
 
 	if ($object->status == Opensurveysondage::STATUS_VALIDATED) {
 		//Close button
@@ -368,20 +370,23 @@ if ($action != 'edit' && $user->rights->opensurvey->write) {
 	}
 
 	//Delete button
-	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?suppressionsondage=1&id='.urlencode($numsondage).'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>';
+	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?suppressionsondage=1&action=delete&token='.newToken().'&id='.urlencode($numsondage).'">'.$langs->trans('Delete').'</a>';
 }
 
 print '</div>';
 
 if ($action == 'delete') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?&id='.$numsondage, $langs->trans("RemovePoll"), $langs->trans("ConfirmRemovalOfPoll", $id), 'delete_confirm', '', '', 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?&id='.urlencode($numsondage), $langs->trans("RemovePoll"), $langs->trans("ConfirmRemovalOfPoll", $id), 'delete_confirm', '', '', 1);
 }
 
 
 
 
-print '<form name="formulaire5" action="#" method="POST">'."\n";
+print '<form name="formulaire5" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="addcomment">';
+print '<input type="hidden" name="id" value="'.urlencode($numsondage).'">';
+print '<input type="hidden" name="page_y" value="">';
 
 print load_fiche_titre($langs->trans("CommentsOfVoters"), '', '');
 
@@ -391,7 +396,7 @@ $comments = $object->getComments();
 if ($comments) {
 	foreach ($comments as $comment) {
 		if ($user->rights->opensurvey->write) {
-			print '<a href="'.dol_buildpath('/opensurvey/card.php', 1).'?deletecomment='.$comment->id_comment.'&id='.$numsondage.'"> '.img_picto('', 'delete.png', '', false, 0, 0, '', '', 0).'</a> ';
+			print '<a class="reposition" href="'.DOL_URL_ROOT.'/opensurvey/card.php?action=deletecomment&token='.newToken().'&idcomment='.((int) $comment->id_comment).'&id='.urlencode($numsondage).'"> '.img_picto('', 'delete.png', '', false, 0, 0, '', '', 0).'</a> ';
 		}
 
 		print dol_htmlentities($comment->usercomment).': '.dol_nl2br(dol_htmlentities($comment->comment))." <br>";
@@ -407,10 +412,7 @@ if ($object->allow_comments) {
 	print $langs->trans("AddACommentForPoll").'<br>';
 	print '<textarea name="comment" rows="2" class="quatrevingtpercent"></textarea><br>'."\n";
 	print $langs->trans("Name").': <input type="text" class="minwidth300" name="commentuser" value="'.$user->getFullName($langs).'"> '."\n";
-	print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
-	if (isset($erreur_commentaire_vide) && $erreur_commentaire_vide == "yes") {
-		print "<font color=#FF0000>".$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Name"))."</font>";
-	}
+	print '<input type="submit" class="button reposition" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
 }
 
 print '</form>';
