@@ -117,7 +117,6 @@ class box_graph_invoices_peryear extends ModeleBoxes
 			if (empty($endyear)) $endyear = $nowarray['year'];
 			$numberyears = (empty($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH) ? 5 : $conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH);
 			$startyear = $endyear - $numberyears;
-			$endyear =
 
 			$mode = 'customer';
 			$WIDTH = (($showtot) || !empty($conf->dol_optimize_smallscreen)) ? '256' : '320';
