@@ -222,20 +222,21 @@ dol_banner_tab($object, 'id', $linkback, 1, 'id_sondage', 'id_sondage', $morehtm
 
 
 print '<div class="fichecenter">';
-print '<div class="underbanner clearboth"></div>';
 
+print '<div class="fichehalfleft">';
+print '<div class="underbanner clearboth"></div>';
 print '<table class="border tableforfield centpercent">';
 
 // Type
 $type = ($object->format == "A") ? 'classic' : 'date';
-print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td colspan="2">';
+print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
 print img_picto('', dol_buildpath('/opensurvey/img/'.($type == 'classic' ? 'chart-32.png' : 'calendar-32.png'), 1), 'width="16"', 1);
 print ' '.$langs->trans($type == 'classic' ? "TypeClassic" : "TypeDate").'</td></tr>';
 
 // Title
 print '<tr><td>';
 $adresseadmin = $object->mail_admin;
-print $langs->trans("Title").'</td><td colspan="2">';
+print $langs->trans("Title").'</td><td>';
 if ($action == 'edit') {
 	print '<input type="text" name="nouveautitre" style="width: 95%" value="'.dol_escape_htmltag(dol_htmlentities($object->title)).'">';
 } else {
@@ -244,7 +245,7 @@ if ($action == 'edit') {
 print '</td></tr>';
 
 // Description
-print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="2">';
+print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 if ($action == 'edit') {
 	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
 	$doleditor->Create(0, '');
@@ -256,17 +257,17 @@ print '</td></tr>';
 // EMail
 //If linked user, then emails are going to be sent to users' email
 if (!$object->fk_user_creat) {
-	print '<tr><td>'.$langs->trans("EMail").'</td><td colspan="2">';
+	print '<tr><td>'.$langs->trans("EMail").'</td><td>';
 	if ($action == 'edit') {
 		print '<input type="text" name="nouvelleadresse" class="minwith200" value="'.$object->mail_admin.'">';
 	} else {
-		print dol_print_email($object->mail_admin, 0, 0, 1);
+		print dol_print_email($object->mail_admin, 0, 0, 1, 0, 1, 1);
 	}
 	print '</td></tr>';
 }
 
 // Receive an email with each vote
-print '<tr><td>'.$langs->trans('ToReceiveEMailForEachVote').'</td><td colspan="2">';
+print '<tr><td>'.$langs->trans('ToReceiveEMailForEachVote').'</td><td>';
 if ($action == 'edit') {
 	print '<input type="checkbox" name="mailsonde" '.($object->mailsonde ? 'checked="checked"' : '').'">';
 } else {
@@ -282,7 +283,7 @@ if ($action == 'edit') {
 print '</td></tr>';
 
 // Users can comment
-print '<tr><td>'.$langs->trans('CanComment').'</td><td colspan="2">';
+print '<tr><td>'.$langs->trans('CanComment').'</td><td>';
 if ($action == 'edit') {
 	print '<input type="checkbox" name="cancomment" '.($object->allow_comments ? 'checked="checked"' : '').'">';
 } else {
@@ -291,7 +292,7 @@ if ($action == 'edit') {
 print '</td></tr>';
 
 // Users can see others vote
-print '<tr><td>'.$langs->trans('CanSeeOthersVote').'</td><td colspan="2">';
+print '<tr><td>'.$langs->trans('CanSeeOthersVote').'</td><td>';
 if ($action == 'edit') {
 	print '<input type="checkbox" name="canseeothersvote" '.($object->allow_spy ? 'checked="checked"' : '').'">';
 } else {
@@ -299,8 +300,16 @@ if ($action == 'edit') {
 }
 print '</td></tr>';
 
+print '</table>';
+
+print '</div>';
+print '<div class="fichehalfright">';
+print '<div class="underbanner clearboth"></div>';
+
+print '<table class="border tableforfield centpercent">';
+
 // Expire date
-print '<tr><td>'.$langs->trans('ExpireDate').'</td><td colspan="2">';
+print '<tr><td>'.$langs->trans('ExpireDate').'</td><td>';
 if ($action == 'edit') {
 	print $form->selectDate($expiredate ? $expiredate : $object->date_fin, 'expire', 0, 0, 0, '', 1, 0);
 } else {
@@ -313,7 +322,7 @@ print '</td></tr>';
 
 // Author
 print '<tr><td>';
-print $langs->trans("Author").'</td><td colspan="2">';
+print $langs->trans("Author").'</td><td>';
 if ($object->fk_user_creat) {
 	print $userstatic->getLoginUrl(1);
 } else {
@@ -322,7 +331,7 @@ if ($object->fk_user_creat) {
 print '</td></tr>';
 
 // Link
-print '<tr><td>'.img_picto('', 'globe').' '.$langs->trans("UrlForSurvey", '').'</td><td colspan="2">';
+print '<tr><td>'.img_picto('', 'globe').' '.$langs->trans("UrlForSurvey", '').'</td><td>';
 
 // Define $urlwithroot
 $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -338,8 +347,10 @@ if ($action != 'edit') {
 print '</td></tr>';
 
 print '</table>';
+print '</div>';
 
 print '</div>';
+print '<div class="clearboth"></div>';
 
 print dol_get_fiche_end();
 
