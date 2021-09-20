@@ -109,7 +109,7 @@ if (!empty($conf->global->TAKEPOS_HEADER) || !empty($conf->global->{$constFreeTe
 	$substitutionarray = getCommonSubstitutionArray($langs);
 	if (!empty($conf->global->TAKEPOS_HEADER))      $newfreetext .= make_substitutions($conf->global->TAKEPOS_HEADER, $substitutionarray);
 	if (!empty($conf->global->{$constFreeText}))    $newfreetext .= make_substitutions($conf->global->{$constFreeText}, $substitutionarray);
-	print $newfreetext;
+	print nl2br($newfreetext);
 }
 ?>
 </p>
