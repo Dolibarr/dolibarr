@@ -55,10 +55,10 @@ class FormEcm
 	 *  @param	int		$selected    		Id of preselected section
 	 *  @param  string	$select_name		Name of HTML select component
 	 *  @param	string	$module				Module ('ecm', 'medias', ...)
-	 *  @param	array	$ignore_id			Arroy of id to ignore
+	 *  @param	array	$ids_to_ignore		Array of id to ignore
 	 *  @return	string						String with HTML select
 	 */
-	public function selectAllSections($selected = 0, $select_name = '', $module = 'ecm', $ignore_id = array())
+	public function selectAllSections($selected = 0, $select_name = '', $module = 'ecm', $ids_to_ignore = array())
 	{
 		global $conf, $langs;
 		$langs->load("ecm");
@@ -66,8 +66,8 @@ class FormEcm
 		if ($select_name == '') {
 			$select_name = "catParent";
 		}
-		if (!is_array($ignore_id)) {
-			$ignore_id = array($ignore_id);
+		if (!is_array($ids_to_ignore)) {
+			$ids_to_ignore = array($ids_to_ignore);
 		}
 
 		$cate_arbo = null;
@@ -87,7 +87,7 @@ class FormEcm
 			} else {
 				$output .= '<option value="-1">&nbsp;</option>';
 				foreach ($cate_arbo as $key => $value) {
-					if (!in_array($cate_arbo[$key]['id'], $ignore_id)) {
+					if (!in_array($cate_arbo[$key]['id'], $ids_to_ignore)) {
 						$valueforoption = empty($cate_arbo[$key]['id']) ? $cate_arbo[$key]['relativename'] : $cate_arbo[$key]['id'];
 						if ($selected && $valueforoption == $selected) {
 							$add = 'selected ';
