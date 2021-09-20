@@ -381,7 +381,7 @@ class BOM extends CommonObject
 		if ($result > 0 && !empty($this->table_element_line)) {
 			$this->fetchLines();
 		}
-		$this->calculateCosts();
+		//$this->calculateCosts();		// This consume a high number of subrequests. Do not call it into fetch but when you need it.
 
 		return $result;
 	}
@@ -1035,7 +1035,8 @@ class BOM extends CommonObject
 	}
 
 	/**
-	 * BOM costs calculation based on cost_price or pmp of each BOM line
+	 * BOM costs calculation based on cost_price or pmp of each BOM line.
+	 * Set the property ->total_cost and ->unit_cost of BOM.
 	 *
 	 * @return void
 	 */
@@ -1045,30 +1046,36 @@ class BOM extends CommonObject
 		$this->unit_cost = 0;
 		$this->total_cost = 0;
 
-		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
-		$productFournisseur = new ProductFournisseur($this->db);
-
-		foreach ($this->lines as &$line) {
+		if (is_array($this->lines) && count($this->lines)) {
+			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+			$productFournisseur = new ProductFournisseur($this->db);
 			$tmpproduct = new Product($this->db);
-			$result = $tmpproduct->fetch($line->fk_product);
-			if ($result < 0) {
-				$this->error = $tmpproduct->error;
-				return -1;
-			}
-			$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
-			if (empty($line->unit_cost)) {
-				if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
-					$line->unit_cost = $productFournisseur->fourn_unitprice;
+
+			foreach ($this->lines as &$line) {
+				$tmpproduct->cost_price = 0;
+				$tmpproduct->pmp = 0;
+
+				$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);
+				if ($result < 0) {
+					$this->error = $tmpproduct->error;
+					return -1;
 				}
+				$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
+				if (empty($line->unit_cost)) {
+					if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
+						$line->unit_cost = $productFournisseur->fourn_unitprice;
+					}
+				}
+
+				$line->total_cost = price2num($line->qty * $line->unit_cost, 'MT');
+
+				$this->total_cost += $line->total_cost;
 			}
 
-			$line->total_cost = price2num($line->qty * $line->unit_cost, 'MT');
-			$this->total_cost += $line->total_cost;
-		}
-
-		$this->total_cost = price2num($this->total_cost, 'MT');
-		if ($this->qty) {
-			$this->unit_cost = price2num($this->total_cost / $this->qty, 'MU');
+			$this->total_cost = price2num($this->total_cost, 'MT');
+			if ($this->qty) {
+				$this->unit_cost = price2num($this->total_cost / $this->qty, 'MU');
+			}
 		}
 	}
 }
