@@ -1055,7 +1055,7 @@ class BOM extends CommonObject
 				$tmpproduct->cost_price = 0;
 				$tmpproduct->pmp = 0;
 
-				$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);
+				$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);	// We discard selling price and language loading
 				if ($result < 0) {
 					$this->error = $tmpproduct->error;
 					return -1;
