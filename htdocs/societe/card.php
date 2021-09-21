@@ -2942,7 +2942,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)) {	// We can't use preloaded confirm form with jmobile
 						print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
 					} else {
-						print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>'."\n";
+						print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>'."\n";
 					}
 				}
 			}

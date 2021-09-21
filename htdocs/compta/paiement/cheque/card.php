@@ -710,11 +710,11 @@ if ($action == 'new') {
 print '<div class="tabsAction">';
 
 if ($user->socid == 0 && !empty($object->id) && $object->statut == 0 && $user->rights->banque->cheque) {
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valide&amp;token='.newToken().'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$langs->trans('Validate').'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valide&token='.newToken().'&sortfield='.$sortfield.'&sortorder='.$sortorder.'">'.$langs->trans('Validate').'</a>';
 }
 
 if ($user->socid == 0 && !empty($object->id) && $user->rights->banque->cheque) {
-	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$langs->trans('Delete').'</a>';
+	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&sortfield='.$sortfield.'&sortorder='.$sortorder.'">'.$langs->trans('Delete').'</a>';
 }
 print '</div>';
 

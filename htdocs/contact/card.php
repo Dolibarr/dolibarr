@@ -1371,7 +1371,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						$titlealt = $val['label'];
 					}
 					if ($object->stcomm_id != $val['id']) {
-						print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&stcomm='.$val['code'].'&action=setstcomm&token='.newToken().'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
+						print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&stcomm='.urlencode($val['code']).'&action=setstcomm&token='.newToken().'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
 					}
 				}
 				print '</div></td></tr>';

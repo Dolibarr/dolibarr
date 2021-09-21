@@ -243,6 +243,65 @@ class FormTicket
 			}
 		}
 
+		if ($conf->knowledgemanagement->enabled) {
+			// KM Articles
+			print '<tr id="KWwithajax"></tr>';
+			print '<!-- Script to manage change of ticket group -->
+			<script>
+			jQuery(document).ready(function() {
+				function groupticketchange(){
+					console.log("We called groupticketchange, so we try to load list KM linked to event");
+					$("#KWwithajax").html("");
+					idgroupticket = $("#selectcategory_code").val();
+
+					console.log("We have selected id="+idgroupticket);
+
+					if (idgroupticket != "") {
+						$.ajax({ url: \''.DOL_URL_ROOT.'/core/ajax/fetchKnowledgeRecord.php\',
+							 data: { action: \'getKnowledgeRecord\', idticketgroup: idgroupticket, token: \''.newToken().'\', lang:\''.$langs->defaultlang.'\', popupurl:false},
+							 type: \'GET\',
+							 success: function(response) {
+								var urllist = \'\';
+								console.log("We received response "+response);
+								response = JSON.parse(response)
+								for (key in response) {
+									console.log(response[key])
+									urllist += "<li>" + response[key].title + ": " +response[key].url+"</li>";
+								}
+								if (urllist != "") {
+									console.log(urllist)
+									$("#KWwithajax").html(\'<td>'.$langs->trans("KMFoundForTicketGroup").'</td><td><ul style="list-style:none;padding-left: 0;">\'+urllist+\'</ul></td>\');
+									$("#KWwithajax").show();
+								}
+							 },
+							 error : function(output) {
+								console.log("error");
+							 },
+						});
+					}
+				};
+				$("#selectcategory_code").bind("change",function() { groupticketchange(); });
+				MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+				var trackChange = function(element) {
+				var observer = new MutationObserver(function(mutations, observer) {
+					if (mutations[0].attributeName == "value") {
+					$(element).trigger("change");
+					}
+				});
+				observer.observe(element, {
+					attributes: true
+				});
+				}
+
+				trackChange($("#selectcategory_code")[0]);
+
+				if ($("#selectcategory_code").val() != "") {
+					groupticketchange();
+				}
+			});
+			</script>'."\n";
+		}
+
 		// MESSAGE
 		$msg = GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : '';
 		print '<tr><td><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span></label></td><td>';
@@ -698,8 +757,12 @@ class FormTicket
 		} elseif ($htmlname!='') {
 			$groupticket=GETPOST($htmlname, 'aZ09');
 			$child_id=GETPOST($htmlname.'_child_id', 'aZ09')?GETPOST($htmlname.'_child_id', 'aZ09'):0;
-			$arraycodenotparent[] = "";
+
 			$arrayidused = array();
+			$arrayidusedconcat = array();
+			$arraycodenotparent = array();
+			$arraycodenotparent[] = "";
+
 			$stringtoprint = '<span class="supportemailfield bold">'.$langs->trans("GroupOfTicket").'</span> ';
 			$stringtoprint .= '<select id ="'.$htmlname.'" class="maxwidth500 minwidth400" child_id="0">';
 			$stringtoprint .= '<option value="">&nbsp;</option>';
@@ -739,6 +802,7 @@ class FormTicket
 							$arraycodenotparent[] = $groupvalue;
 						}
 						$arrayidused[] = $grouprowid;
+						$arrayidusedconcat[] = $grouprowid;
 					}
 					$i++;
 				}
@@ -753,20 +817,22 @@ class FormTicket
 			}
 			$stringtoprint .= '</select>&nbsp;';
 
-			$levelid = 1;
-			while ($levelid <= $use_multilevel) {
+			$levelid = 1;	// The first combobox
+			while ($levelid <= $use_multilevel) {	// Loop to take the child of the combo
 				$tabscript = array();
 				$stringtoprint .= '<select id ="'.$htmlname.'_child_'.$levelid.'" class="maxwidth500 minwidth400 groupticketchild" child_id="'.$levelid.'">';
 				$stringtoprint .= '<option value="">&nbsp;</option>';
 
-				$sql = "SELECT ctc.rowid, ctc.code, ctc.label, ctc.fk_parent, ctc.public, ctcjoin.code as codefather, ";
-				$sql .= $this->db->ifsql("ctc.rowid NOT IN (SELECT ctcfather.rowid FROM llx_c_ticket_category as ctcfather JOIN llx_c_ticket_category as ctcjoin ON ctcfather.rowid = ctcjoin.fk_parent)", "'NOTPARENT'", "'PARENT'")." as isparent";
+				$sql = "SELECT ctc.rowid, ctc.code, ctc.label, ctc.fk_parent, ctc.public, ctcjoin.code as codefather";
 				$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category as ctc";
 				$sql .= " JOIN ".MAIN_DB_PREFIX."c_ticket_category as ctcjoin ON ctc.fk_parent = ctcjoin.rowid";
 				$sql .= " WHERE ctc.active > 0 AND ctc.entity = ".((int) $conf->entity);
+				$sql .= " AND ctc.rowid NOT IN (".$this->db->sanitize(join(',', $arrayidusedconcat)).")";
+
 				if ($filtertype == 'public=1') {
 					$sql .= " AND ctc.public = 1";
 				}
+				// Add a test to take only record that are direct child
 				if (!empty($arrayidused)) {
 					$sql .= " AND ctc.fk_parent IN ( ";
 					foreach ($arrayidused as $idused) {
@@ -799,6 +865,7 @@ class FormTicket
 							$isparent = $obj->isparent;
 							$fatherid = $obj->fk_parent;
 							$arrayidused[] = $grouprowid;
+							$arrayidusedconcat[] = $grouprowid;
 							$groupcodefather = $obj->codefather;
 							if ($isparent == 'NOTPARENT') {
 								$arraycodenotparent[] = $groupvalue;
@@ -823,7 +890,7 @@ class FormTicket
 				$stringtoprint .='</select>';
 
 				$stringtoprint .='<script>';
-				$stringtoprint .='arraynotparents = '.json_encode($arraycodenotparent).';';
+				$stringtoprint .='arraynotparents = '.json_encode($arraycodenotparent).';';	// when the last visible combo list is number x, this is the array of group
 				$stringtoprint .='if (arraynotparents.includes($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'")[0].value)){
 					console.log("'.$htmlname.'_child_'.$levelid.'")
 					if($("#'.$htmlname.'_child_'.$levelid.'")[0].value == "" && ($("#'.$htmlname.'_child_'.$levelid.'").attr("child_id")>'.$child_id.')){
@@ -851,10 +918,17 @@ class FormTicket
 					if (arraynotparents.includes(this.value) || $(this).attr("child_id") == '.$use_multilevel.') {
 						$("#ticketcategory_select")[0].value = this.value;
 						$("#ticketcategory_select_child_id")[0].value = $(this).attr("child_id");
-						console.log("We choose to select "+ $("#ticketcategory_select")[0].value );
+						console.log("We choose to select "+ this.value);
 					}else{
-						$("#ticketcategory_select")[0].value = "";
-						$("#ticketcategory_select_child_id")[0].value = "";
+						if ($("#'.$htmlname.'_child_'.$levelid.' option").length <= 1) {
+							$("#ticketcategory_select")[0].value = this.value;
+							$("#ticketcategory_select_child_id")[0].value = $(this).attr("child_id");
+							console.log("We choose to select "+ this.value + " and next combo has no item, so we keep this selection");
+						} else {
+							console.log("We choose to select "+ this.value + " but next combo has some item, so we clean selected item");
+							$("#ticketcategory_select")[0].value = "";
+							$("#ticketcategory_select_child_id")[0].value = "";
+						}
 					}
 
 					console.log("We select a new value into combo child_id="+child_id);
@@ -870,7 +944,8 @@ class FormTicket
 
 					/* Now we enable the next combo */
 					$("#'.$htmlname.'_child_'.$levelid.'").val("");
-					if (!arraynotparents.includes(this.value)) {
+					if (!arraynotparents.includes(this.value) && $("#'.$htmlname.'_child_'.$levelid.' option").length > 1) {
+						console.log($("#'.$htmlname.'_child_'.$levelid.' option").length);
 						$("#'.$htmlname.'_child_'.$levelid.'").show()
 					} else {
 						$("#'.$htmlname.'_child_'.$levelid.'").hide()

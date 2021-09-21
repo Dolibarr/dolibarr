@@ -132,7 +132,7 @@ $date_end = dol_mktime(0, 0, 0, GETPOST('date_partnership_endmonth', 'int'), GET
 if (empty($reshook)) {
 	$error = 0;
 
-	$backtopage = dol_buildpath('/partnership/partnership.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+	$backtopage = DOL_URL_ROOT.'/partnership/partnership.php?id='.($id > 0 ? $id : '__ID__');
 
 	// Actions when linking object each other
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';

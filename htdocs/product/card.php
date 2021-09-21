@@ -201,7 +201,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	$backurlforlist = DOL_URL_ROOT.'/product/list.php';
+	$backurlforlist = DOL_URL_ROOT.'/product/list.php?type='.$type;
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
@@ -481,7 +481,7 @@ if (empty($reshook)) {
 				$object->setCategories($categories);
 
 				if (!empty($backtopage)) {
-					$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
+					$backtopage = preg_replace('/__ID__/', $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
 					if (preg_match('/\?/', $backtopage)) {
 						$backtopage .= '&socid='.$object->id; // Old method
 					}
@@ -2525,7 +2525,7 @@ if ($action != 'create' && $action != 'edit') {
 				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
 					print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
 				} else {
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;token='.newToken().'&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a>';
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
 				}
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a>';

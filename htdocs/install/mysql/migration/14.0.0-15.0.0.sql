@@ -91,5 +91,23 @@ ALTER TABLE llx_mrp_mo ADD COLUMN mrptype integer DEFAULT 0;
 
 DELETE FROM llx_menu WHERE type = 'top' AND module = 'cashdesk' AND mainmenu = 'cashdesk';
 
-
 INSERT INTO llx_c_action_trigger (code, label, description, elementtype, rang) values ('MEMBER_EXCLUDE', 'Member excluded', 'Executed when a member is excluded', 'member', 27);
+
+CREATE TABLE llx_categorie_knowledgemanagement
+(
+  fk_categorie  integer NOT NULL,
+  fk_knowledgemanagement    integer NOT NULL,
+  import_key    varchar(14)
+)ENGINE=innodb;
+
+ALTER TABLE llx_categorie_knowledgemanagement ADD PRIMARY KEY pk_categorie_knowledgemanagement (fk_categorie, fk_knowledgemanagement);
+ALTER TABLE llx_categorie_knowledgemanagement ADD INDEX idx_categorie_knowledgemanagement_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_knowledgemanagement ADD INDEX idx_categorie_knowledgemanagement_fk_knowledgemanagement (fk_knowledgemanagement);
+
+ALTER TABLE llx_categorie_knowledgemanagement ADD CONSTRAINT fk_categorie_knowledgemanagement_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_knowledgemanagement ADD CONSTRAINT fk_categorie_knowledgemanagement_knowledgemanagement_rowid   FOREIGN KEY (fk_knowledgemanagement) REFERENCES llx_knowledgemanagement (rowid);
+
+ALTER TABLE llx_product_lot ADD COLUMN barcode varchar(180) DEFAULT NULL;
+ALTER TABLE llx_product_lot ADD COLUMN fk_barcode_type integer DEFAULT NULL;
+
+ALTER TABLE llx_projet ADD COLUMN max_attendees integer DEFAULT 0;

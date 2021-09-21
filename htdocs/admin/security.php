@@ -260,7 +260,7 @@ foreach ($arrayhandler as $key => $module) {
 			//print img_picto('', 'tick');
 			print img_picto($langs->trans("Enabled"), 'switch_on');
 		} else {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=setgeneraterule&amp;token='.newToken().'&amp;value='.$key.'">';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=setgeneraterule&token='.newToken().'&value='.$key.'">';
 			//print $langs->trans("Activate");
 			print img_picto($langs->trans("Disabled"), 'switch_off');
 			print '</a>';

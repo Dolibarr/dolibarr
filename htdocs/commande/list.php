@@ -309,13 +309,14 @@ if ($action == 'validate' && $permissiontoadd) {
 						$idwarehouse = 0;
 					}
 					if ($objecttmp->valid($user, $idwarehouse)) {
-						setEventMessage($objecttmp->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
+						setEventMessage($langs->trans('hasBeenValidated', $objecttmp->ref), 'mesgs');
 					} else {
 						setEventMessage($langs->trans('CantBeValidated'), 'errors');
 						$error++;
 					}
 				} else {
-					setEventMessage($objecttmp->ref." ".$langs->trans('IsNotADraft'), 'errors');
+					$langs->load("errors");
+					setEventMessage($langs->trans('ErrorIsNotADraft', $objecttmp->ref), 'errors');
 					$error++;
 				}
 			} else {
@@ -339,13 +340,14 @@ if ($action == 'shipped' && $permissiontoadd) {
 			if ($objecttmp->fetch($checked)) {
 				if ($objecttmp->statut == 1) {
 					if ($objecttmp->cloture($user)) {
-						setEventMessage($objecttmp->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
+						setEventMessage($langs->trans('PassedInClosedStatus', $objecttmp->ref), 'mesgs');
 					} else {
-						setEventMessage($langs->trans('CantBeValidated'), 'errors');
+						setEventMessage($langs->trans('CantBeClosed'), 'errors');
 						$error++;
 					}
 				} else {
-					setEventMessage($objecttmp->ref." ".$langs->trans('IsNotADraft'), 'errors');
+					$langs->load("errors");
+					setEventMessage($langs->trans('ErrorIsNotADraft', $objecttmp->ref), 'errors');
 					$error++;
 				}
 			} else {

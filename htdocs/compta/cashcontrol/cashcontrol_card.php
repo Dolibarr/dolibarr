@@ -107,9 +107,9 @@ if (!$user->rights->cashdesk->run && !$user->rights->takepos->run) {
 $permissiontoadd = ($user->rights->cashdesk->run || $user->rights->takepos->run);
 $permissiontodelete = ($user->rights->cashdesk->run || $user->rights->takepos->run) || ($permissiontoadd && $object->status == 0);
 if (empty($backtopage)) {
-	$backtopage = dol_buildpath('/compta/cashcontrol/cashcontrol_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+	$backtopage = DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_card.php?id='.($id > 0 ? $id : '__ID__');
 }
-$backurlforlist = dol_buildpath('/compta/cashcontrol/cashcontrol_list.php', 1);
+$backurlforlist = DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_list.php';
 $triggermodname = 'CACHCONTROL_MODIFY'; // Name of trigger action code to execute when we modify record
 
 if (empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH) && empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH1)) {
@@ -679,11 +679,11 @@ if (empty($action) || $action == "view" || $action == "close") {
 			print '<div class="inline-block divButAction"><a target="_blank" class="butAction" href="report.php?id='.$id.'">'.$langs->trans('PrintTicket').'</a></div>';
 
 			if ($object->status == CashControl::STATUS_DRAFT) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=close&amp;contextpage='.$contextpage.'">'.$langs->trans('Close').'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=close&token='.newToken().'&contextpage='.$contextpage.'">'.$langs->trans('Close').'</a></div>';
 
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=confirm_delete">'.$langs->trans('Delete').'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=confirm_delete&token='.newToken().'">'.$langs->trans('Delete').'</a></div>';
 			} else {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=reopen&token='.newToken().'">'.$langs->trans('ReOpen').'</a></div>';
 			}
 
 			print '</div>';

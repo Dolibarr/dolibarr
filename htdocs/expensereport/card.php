@@ -1646,7 +1646,7 @@ if ($action == 'create') {
 			 if ($user->rights->commande->creer)
 			 {
 			 if ($action != 'classify')
-			 $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+			 $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			 if ($action == 'classify') {
 			 //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 			 $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -2155,10 +2155,10 @@ if ($action == 'create') {
 						if (($object->status < ExpenseReport::STATUS_VALIDATED || $object->status == ExpenseReport::STATUS_REFUSED) && $user->rights->expensereport->creer) {
 							print '<td class="nowrap right">';
 
-							print '<a class="editfielda reposition paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;token='.newToken().'&amp;rowid='.$line->rowid.'">';
+							print '<a class="editfielda reposition paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&rowid='.$line->rowid.'">';
 							print img_edit();
 							print '</a> &nbsp; ';
-							print '<a class="paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_line&amp;token='.newToken().'&amp;rowid='.$line->rowid.'">';
+							print '<a class="paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete_line&token='.newToken().'&rowid='.$line->rowid.'">';
 							print img_delete();
 							print '</a>';
 

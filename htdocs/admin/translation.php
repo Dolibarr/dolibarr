@@ -463,6 +463,8 @@ if ($mode == 'searchkey') {
 	}
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
+	$massactionbutton = '';
+
 	print '<input type="hidden" id="action" name="action" value="search">';
 	print '<input type="hidden" id="mode" name="mode" value="'.$mode.'">';
 
@@ -499,7 +501,7 @@ if ($mode == 'searchkey') {
 	//}
 	print '</td>';
 	// Action column
-	print '<td class="nowraponall">';
+	print '<td class="right nowraponall">';
 	$searchpicto = $form->showFilterAndCheckAddButtons(!empty($massactionbutton) ? 1 : 0, 'checkforselect', 1);
 	print $searchpicto;
 	print '</td>';
