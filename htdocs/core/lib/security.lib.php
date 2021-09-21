@@ -513,8 +513,8 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				if (!$user->rights->salaries->delete) {
 					$deleteok = 0;
 				}
-			} elseif ($feature == 'salaries') {
-				if (!$user->rights->salaries->delete) {
+			} elseif ($feature == 'adherent') {
+				if (!$user->rights->adherent->supprimer) {
 					$deleteok = 0;
 				}
 			} elseif (!empty($feature2)) {							// This is for permissions on 2 levels
