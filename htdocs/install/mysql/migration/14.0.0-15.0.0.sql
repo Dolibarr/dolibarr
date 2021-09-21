@@ -109,3 +109,5 @@ ALTER TABLE llx_categorie_knowledgemanagement ADD CONSTRAINT fk_categorie_knowle
 
 ALTER TABLE llx_product_lot ADD COLUMN barcode varchar(180) DEFAULT NULL;
 ALTER TABLE llx_product_lot ADD COLUMN fk_barcode_type integer DEFAULT NULL;
+
+ALTER TABLE llx_projet ADD COLUMN max_attendees integer DEFAULT 0;

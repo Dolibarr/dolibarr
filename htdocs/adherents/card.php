@@ -1979,10 +1979,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					$isinspip = $mailmanspip->is_in_spip($object);
 
 					if ($isinspip == 1) {
-						print '<a class="butAction" href="card.php?rowid='.$object->id.'&action=del_spip">'.$langs->trans("DeleteIntoSpip").'</a>'."\n";
+						print '<a class="butAction" href="card.php?rowid='.$object->id.'&action=del_spip&token='.newToken().'">'.$langs->trans("DeleteIntoSpip").'</a>'."\n";
 					}
 					if ($isinspip == 0) {
-						print '<a class="butAction" href="card.php?rowid='.$object->id.'&action=add_spip">'.$langs->trans("AddIntoSpip").'</a>'."\n";
+						print '<a class="butAction" href="card.php?rowid='.$object->id.'&action=add_spip&token='.newToken().'">'.$langs->trans("AddIntoSpip").'</a>'."\n";
 					}
 				}
 
@@ -2053,7 +2053,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, 'member', $socid, 1, 'listactions', $MAX, '', $morehtmlright);
+			$somethingshown = $formactions->showactions($object, $object->element, $socid, 1, 'listactions', $MAX, '', $morehtmlright);
 
 			print '</div></div></div>';
 		}

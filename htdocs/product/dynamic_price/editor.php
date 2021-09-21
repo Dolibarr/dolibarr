@@ -190,7 +190,7 @@ print '<span id="back" class="butAction">'.$langs->trans("Back").'</span>';
 if ($eid == 0) {
 	print '<div class="inline-block divButAction"><span id="action-delete" class="butActionRefused classfortooltip">'.$langs->trans('Delete').'</span></div>'."\n";
 } else {
-	print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;tab='.$tab.'&amp;eid='.$eid.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
+	print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&tab='.$tab.'&eid='.$eid.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
 }
 print '</div>';
 

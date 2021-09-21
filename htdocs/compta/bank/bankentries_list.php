@@ -1683,7 +1683,7 @@ if ($resql) {
 				}
 			}
 			if ($user->rights->banque->modifier) {
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;token='.newToken().'&amp;rowid='.$objp->rowid.'&amp;id='.$objp->bankid.'&amp;page='.$page.'">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&rowid='.$objp->rowid.'&id='.$objp->bankid.'&page='.$page.'">';
 				print img_delete('', 'class="marginleftonly"');
 				print '</a>';
 			}

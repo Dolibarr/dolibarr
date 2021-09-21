@@ -38,7 +38,7 @@ dol_include_once('/bom/class/bom.class.php');
 dol_include_once('/mrp/lib/mrp_mo.lib.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array("mrp", "stocks", "other", "productbatch"));
+$langs->loadLangs(array("mrp", "stocks", "other", "product", "productbatch"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -520,7 +520,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($permissiontoadd) {
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_soc, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -691,6 +691,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$bom = new Bom($db);
 			$res = $bom->fetch($object->fk_bom);
 			if ($res > 0) {
+				$bom->calculateCosts();
 				$bomcost = $bom->unit_cost;
 			}
 		}
@@ -726,6 +727,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print $langs->trans("Warehouse");
 		}
 		print '</td>';
+		if ($conf->productbatch->enabled) {
+			// Available
+			print '<td>';
+			if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
+				print $langs->trans("Stock");
+			}
+			print '</td>';
+		}
 		// Lot - serial
 		if ($conf->productbatch->enabled) {
 			print '<td>';
@@ -810,6 +819,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 					}
 
+					$bomcost = price2num($bomcost, 'MU');
+
 					$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
 					$alreadyconsumed = 0;
 					foreach ($arrayoflines as $line2) {
@@ -867,8 +878,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					}
 					print ' '.$alreadyconsumed;
 					print '</td>';
-					print '<td>'; // Warehouse
+					// Warehouse
+					print '<td>';
 					print '</td>';
+					if ($conf->stock->enabled) {
+						print '<td>';
+						if ($tmpproduct->stock_reel < ($line->qty - $alreadyconsumed)) {
+							print img_warning($langs->trans('StockTooLow')).' ';
+						}
+						print $tmpproduct->stock_reel; // Available
+						print '</td>';
+					}
 					if ($conf->productbatch->enabled) {
 						print '<td></td>'; // Lot
 					}
@@ -989,9 +1009,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<td class="right">'.$langs->trans("Qty").'</td>';
 		if ($permissiontoupdatecost) {
 			if (empty($bomcost)) {
-				print '<td class="right">'.$langs->trans("PMPValue").'</td>';
+				print '<td class="right">'.$form->textwithpicto($langs->trans("UnitCost"), $langs->trans("AmountUsedToUpdateWAP")).'</td>';
 			} else {
-				print '<td class="right">'.$langs->trans("UnitCost").'</td>';
+				print '<td class="right">'.$form->textwithpicto($langs->trans("ManufacturingPrice"), $langs->trans("AmountUsedToUpdateWAP")).'</td>';
 			}
 		}
 		print '<td class="right">'.$langs->trans("QtyAlreadyProduced").'</td>';
@@ -1056,10 +1076,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					$tmpproduct = new Product($db);
 					$tmpproduct->fetch($line->fk_product);
 
-					if (empty($bomcost)) {
-						$bomcost = $tmpproduct->pmp;
-					}
-
 					$arrayoflines = $object->fetchLinesLinked('produced', $line->id);
 					$alreadyproduced = 0;
 					foreach ($arrayoflines as $line2) {
@@ -1078,8 +1094,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '</td>';
 					print '<td class="right">'.$line->qty.'</td>';
 					if ($permissiontoupdatecost) {
+						// Defined $manufacturingcost
+						$manufacturingcost = $bomcost;
+						if (empty($manufacturingcost)) {
+							$manufacturingcost = price2num($tmpproduct->cost_price, 'MU');
+						}
+						if (empty($manufacturingcost)) {
+							$manufacturingcost = price2num($tmpproduct->pmp, 'MU');
+						}
+
 						print '<td class="right nowraponall">';
-						print price($bomcost);
+						if ($manufacturingcost) {
+							print price($manufacturingcost);
+						}
 						print '</td>';
 					}
 					print '<td class="right nowraponall">';
@@ -1171,11 +1198,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 						print '<td class="right"><input type="text" class="width50 right" id="qtytoproduce-'.$line->id.'-'.$i.'" name="qtytoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
 						if ($permissiontoupdatecost) {
+							// Defined $manufacturingcost
+							$manufacturingcost = $bomcost;
+							if (empty($manufacturingcost)) {
+								$manufacturingcost = price2num($tmpproduct->cost_price, 'MU');
+							}
+							if (empty($manufacturingcost)) {
+								$manufacturingcost = price2num($tmpproduct->pmp, 'MU');
+							}
+
 							if ($tmpproduct->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-								$preselected = (GETPOSTISSET('pricetoproduce-'.$line->id.'-'.$i) ? GETPOST('pricetoproduce-'.$line->id.'-'.$i) : price($bomcost));
+								$preselected = (GETPOSTISSET('pricetoproduce-'.$line->id.'-'.$i) ? GETPOST('pricetoproduce-'.$line->id.'-'.$i) : price($manufacturingcost));
 								print '<td class="right"><input type="text" class="width50 right" name="pricetoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
 							} else {
-								print '<td><input type="hidden" class="width50 right" name="pricetoproduce-'.$line->id.'-'.$i.'" value="'.$bomcost.'"></td>';
+								print '<td><input type="hidden" class="width50 right" name="pricetoproduce-'.$line->id.'-'.$i.'" value="'.$manufacturingcost.'"></td>';
 							}
 						}
 						print '<td></td>';
