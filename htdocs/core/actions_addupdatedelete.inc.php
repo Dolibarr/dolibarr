@@ -236,7 +236,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 
 		if ($conf->categorie->enabled) {
 			$categories = GETPOST('categories', 'array');
-			if (!empty($categories)) {
+			if (method_exists($object, 'setCategories')) {
 			    $object->setCategories($categories);
 			}
 		}
