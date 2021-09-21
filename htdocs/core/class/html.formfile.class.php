@@ -393,8 +393,26 @@ class FormFile
 
 		$reshook = 0;
 		if (is_object($hookmanager)) {
-			$parameters = array();
-			+			$reshook = $hookmanager->executeHooks('showdocuments', $parameters, $object);
+			$parameters = array(
+				'modulepart'=>&$modulepart, 
+				'modulesubdir'=>&$modulesubdir,
+				'filedir'=>&$filedir,
+				'urlsource'=>&$urlsource,
+				'genallowed'=>&$genallowed,
+				'delallowed'=>&$delallowed,
+				'modelselected'=>&$modelselected,
+				'allowgenifempty'=>&$allowgenifempty,
+				'forcenomultilang'=>&$forcenomultilang,
+				'noform'=>&$noform,
+				'param'=>&$param,
+				'title'=>&$title,
+				'buttonlabel'=>&$buttonlabel,
+				'codelang'=>&$codelang,
+				'morepicto'=>&$morepicto,
+				'hideifempty'=>&$hideifempty,
+				'removeaction'=>&$removeaction
+			);
+			$reshook = $hookmanager->executeHooks('showdocuments', $parameters, $object); // Note that parameters may have been updated by hook
 			// May report error
 			if ($reshook < 0) {
 				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
