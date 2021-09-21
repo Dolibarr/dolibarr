@@ -56,9 +56,9 @@ if (GETPOST('action', 'aZ09') == 'setremise') {
 	$discount_type = GETPOST('discount_type', 'int');
 
 	if (!empty($discount_type)) {
-		$result = $object->set_remise_supplier(price2num(GETPOST("remise")), GETPOST("note", "alphanohtml"), $user);
+		$result = $object->set_remise_supplier(price2num(GETPOST("remise")), GETPOST("note", "san_alpha"), $user);
 	} else {
-		$result = $object->set_remise_client(price2num(GETPOST("remise")), GETPOST("note", "alphanohtml"), $user);
+		$result = $object->set_remise_client(price2num(GETPOST("remise")), GETPOST("note", "san_alpha"), $user);
 	}
 
 	if ($result > 0) {

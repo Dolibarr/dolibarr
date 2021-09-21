@@ -158,7 +158,7 @@ if ($action == 'setremise' && $user->rights->societe->creer) {
 	//if ($user->rights->facture->creer)
 
 	$amount_ht = price2num(GETPOST('amount_ht', 'alpha'));
-	$desc = GETPOST('desc', 'alpha');
+	$desc = GETPOST('desc', 'san_alpha');
 	$tva_tx = GETPOST('tva_tx', 'alpha');
 	$discount_type = !empty($_POST['discount_type']) ?GETPOST('discount_type', 'alpha') : 0;
 
