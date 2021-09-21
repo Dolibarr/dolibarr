@@ -2278,8 +2278,8 @@ class Facture extends CommonInvoice
 			// Remove other links to the deleted invoice
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'eventorganization_conferenceorboothattendee';
-			$sql .= ' SET fk_facture = NULL';
-			$sql .= ' WHERE fk_facture = '.((int) $rowid);
+			$sql .= ' SET fk_invoice = NULL';
+			$sql .= ' WHERE fk_invoice = '.((int) $rowid);
 
 			if (!$this->db->query($sql)) {
 				$this->error = $this->db->error()." sql=".$sql;
