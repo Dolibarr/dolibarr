@@ -258,43 +258,41 @@ class FormTicket
 
 					if (idgroupticket != "") {
 						$.ajax({ url: \''.DOL_URL_ROOT.'/core/ajax/fetchKnowledgeRecord.php\',
-							 data: { action: \'getKnowledgeRecord\', idticketgroup: idgroupticket, token: \''.newToken().'\', lang:\''.$langs->defaultlang.'\', popupurl:false},
+							 data: { action: \'getKnowledgeRecord\', idticketgroup: idgroupticket, token: \''.newToken().'\', lang:\''.$langs->defaultlang.'\'},
 							 type: \'GET\',
 							 success: function(response) {
 								var urllist = \'\';
 								console.log("We received response "+response);
 								response = JSON.parse(response)
 								for (key in response) {
-									console.log(response[key])
-									urllist += "<li>" + response[key].title + ": " +response[key].url+"</li>";
+									answer = response[key].answer;
+									urllist += \'<li><a href="#" title="\'+response[key].title+\'" class="button_KMpopup" data-html="\'+answer+\'">\' +response[key].title+\'</a></li>\';
 								}
 								if (urllist != "") {
-									console.log(urllist)
-									$("#KWwithajax").html(\'<td>'.$langs->trans("KMFoundForTicketGroup").'</td><td><ul style="list-style:none;padding-left: 0;">\'+urllist+\'</ul></td>\');
+									$("#KWwithajax").html(\'<td>'.$langs->trans("KMFoundForTicketGroup").'</td><td><ul>\'+urllist+\'</ul></td>\');
 									$("#KWwithajax").show();
+									$(".button_KMpopup").on("click",function(){
+										console.log("Open popup with jQuery(...).dialog() with KM article")
+										var $dialog = $("<div></div>").html($(this).attr("data-html"))
+											.dialog({
+												autoOpen: false,
+												modal: true,
+												height: (window.innerHeight - 150),
+												width: "80%",
+												title: $(this).attr("title"),
+											});
+										$dialog.dialog("open");
+										console.log($dialog);
+									})
 								}
 							 },
 							 error : function(output) {
-								console.log("error");
+								console.error("Error on Fetch of KM articles");
 							 },
 						});
 					}
 				};
-				$("#selectcategory_code").bind("change",function() { groupticketchange(); });
-				MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
-				var trackChange = function(element) {
-				var observer = new MutationObserver(function(mutations, observer) {
-					if (mutations[0].attributeName == "value") {
-					$(element).trigger("change");
-					}
-				});
-				observer.observe(element, {
-					attributes: true
-				});
-				}
-
-				trackChange($("#selectcategory_code")[0]);
-
+				$("#selectcategory_code").on("change",function() { groupticketchange(); });
 				if ($("#selectcategory_code").val() != "") {
 					groupticketchange();
 				}

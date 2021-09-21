@@ -54,7 +54,6 @@ $action = GETPOST('action', 'aZ09');
 $idticketgroup = GETPOST('idticketgroup', 'aZ09');
 $idticketgroup = GETPOST('idticketgroup', 'aZ09');
 $lang = GETPOST('lang', 'aZ09');
-$popupurl = GETPOST('popupurl', 'bool');
 
 /*
  * Actions
@@ -69,13 +68,12 @@ $popupurl = GETPOST('popupurl', 'bool');
 
 if ($action == "getKnowledgeRecord") {
 	$response = '';
-	$sql = "SELECT kr.rowid, kr.ref, kr.question, kr.answer,l.url,ctc.code";
-	$sql .= " FROM ".MAIN_DB_PREFIX."links as l";
-	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."knowledgemanagement_knowledgerecord as kr ON kr.rowid = l.objectid";
-	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_ticket_category as ctc ON ctc.rowid = kr.fk_c_ticket_category";
+	$sql = "SELECT kr.rowid, kr.ref, kr.question, kr.answer,kr.url,ctc.code";
+	$sql .= " FROM ".MAIN_DB_PREFIX."knowledgemanagement_knowledgerecord as kr ";
+	$sql .= " JOIN ".MAIN_DB_PREFIX."c_ticket_category as ctc ON ctc.rowid = kr.fk_c_ticket_category";
 	$sql .= " WHERE ctc.code = '".$db->escape($idticketgroup)."'";
-	$sql .= " AND ctc.active = 1 AND ctc.public = 1 AND (kr.lang = '".$db->escape($lang)."' OR kr.lang = 0)";
-	$sql .= " AND kr.status = 1";
+	$sql .= " AND ctc.active = 1 AND ctc.public = 1 AND (kr.lang = '".$db->escape($lang)."' OR kr.lang = 0 OR kr.lang = NULL)";
+	$sql .= " AND kr.status = 1 AND (kr.answer != 0 OR kr.answer != NULL OR kr.answer != \"\")";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -83,33 +81,7 @@ if ($action == "getKnowledgeRecord") {
 		$response = array();
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
-			if ($popupurl == "false") {
-				$url = "<a href=\"".$obj->url. "\" target=\"_blank\">".$obj->url."</a></li>";
-				$response[] = array('title'=>$obj->question,'ref'=>$obj->url,'answer'=>$obj->answer,'url'=>$url);
-			} else {
-				$name = $obj->ref;
-				$buttonstring = $obj->url;
-				$url = $obj->url;
-				$urltoprint = '<a class="button_'.$name.'" style="cursor:pointer">'.$buttonstring.'</a>';
-				$urltoprint .= '<!-- Add js code to open dialog popup on dialog -->';
-				$urltoprint .= '<script language="javascript">
-							jQuery(document).ready(function () {
-								jQuery(".button_'.$name.'").click(function () {
-									console.log("Open popup with jQuery(...).dialog() on URL '.dol_escape_js($url).'")
-									var $dialog = $(\'<div></div>\').html(\'<iframe class="iframedialog" style="border: 0px;" src="'.$url.'" width="100%" height="98%"></iframe>\')
-										.dialog({
-											autoOpen: false,
-											modal: true,
-											height: (window.innerHeight - 150),
-											width: \'80%\',
-											title: "'.dol_escape_js($label).'"
-										});
-									$dialog.dialog(\'open\');
-								});
-							});
-						</script>';
-				$response[] = array('title'=>$obj->question,'ref'=>$obj->url,'answer'=>$obj->answer,'url'=>$urltoprint);
-			}
+			$response[] = array('title'=>$obj->question,'ref'=>$obj->ref,'answer'=>dol_escape_htmltag(preg_replace('/\\r|\\r\\n|\\n/', "", $obj->answer)),'url'=>$obj->url);
 			$i++;
 		}
 	} else {
