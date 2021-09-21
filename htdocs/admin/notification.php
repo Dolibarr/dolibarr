@@ -419,17 +419,17 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 		$nboftemplates = $formmail->fetchAllEMailTemplate($notifiedevent['elementtype'].'_send', $user, null, -1); // We set lang=null to get in priority record with no lang
 		//$arraydefaultmessage = $formmail->getEMailTemplate($db, $tmp[1], $user, null, 0, 1, '');
 		$arrayofmessagename = array();
-		if (is_array($formmail->lines_model)) {
-			foreach ($formmail->lines_model as $modelmail) {
-				//var_dump($modelmail);
-				$moreonlabel = '';
-				if (!empty($arrayofmessagename[$modelmail->label])) {
-					$moreonlabel = ' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
-				}
-				// The 'label' is the key that is unique if we exclude the language
-				$arrayofmessagename[$modelmail->label.':'.$elementPicto] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)).$moreonlabel;
+	if (is_array($formmail->lines_model)) {
+		foreach ($formmail->lines_model as $modelmail) {
+			//var_dump($modelmail);
+			$moreonlabel = '';
+			if (!empty($arrayofmessagename[$modelmail->label])) {
+				$moreonlabel = ' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
 			}
+			// The 'label' is the key that is unique if we exclude the language
+			$arrayofmessagename[$modelmail->label.':'.$elementPicto] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)).$moreonlabel;
 		}
+	}
 
 		print $form->selectarray($param, $arrayofmessagename, $value, 'None', 0, 0, '', 0, 0, 0, '', '', 1);
 	print '</td>';
