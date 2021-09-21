@@ -726,7 +726,11 @@ if ($action != 'new') {
 		$filedir = $dir.get_exdir($object->ref, 0, 1, 0, $object, 'checkdeposits');
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
-		print $formfile->showdocuments('remisecheque', $filename, $filedir, $urlsource, 1, 1);
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('showdocuments', $parameters, $object, $action);
+		if ($reshook < 0) {
+			print $formfile->showdocuments('remisecheque', $filename, $filedir, $urlsource, 1, 1);
+		}
 
 		print '<br>';
 	}

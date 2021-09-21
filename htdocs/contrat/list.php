@@ -986,8 +986,11 @@ $filedir = $diroutputmassaction;
 $genallowed = $user->rights->contrat->lire;
 $delallowed = $user->rights->contrat->lire;
 
-print $formfile->showdocuments('massfilesarea_contract', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-
+$parameters = array();
+$reshook = $hookmanager->executeHooks('showdocuments', $parameters, $object, $action);
+if ($reshook < 0) {
+	print $formfile->showdocuments('massfilesarea_contract', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+}
 
 llxFooter();
 $db->close();

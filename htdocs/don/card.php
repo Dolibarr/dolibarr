@@ -904,8 +904,12 @@ if (!empty($id) && $action != 'edit') {
 	$genallowed	= (($object->paid == 0 || $user->admin) && $user->rights->don->lire);
 	$delallowed	= $user->rights->don->creer;
 
-	print $formfile->showdocuments('donation', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
-
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('showdocuments', $parameters, $object, $action);
+	if ($reshook < 0) {
+		print $formfile->showdocuments('donation', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
+	}
+	
 	// Show links to link elements
 	$linktoelem = $form->showLinkToObjectBlock($object, null, array('don'));
 	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);

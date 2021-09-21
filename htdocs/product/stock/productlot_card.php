@@ -566,7 +566,11 @@ if ($action != 'presend') {
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = $usercanread; // If you can read, you can build the PDF to read content
 		$delallowed = $usercancreate; // If you can create/edit, you can remove a file on card
-		print $formfile->showdocuments('product_batch', $objref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $langs->default_lang, '', $object);
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('showdocuments', $parameters, $object, $action);
+		if ($reshook < 0) {
+			print $formfile->showdocuments('product_batch', $objref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $langs->default_lang, '', $object);
+		}
 	}
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';

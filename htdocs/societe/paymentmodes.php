@@ -1489,7 +1489,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		$genallowed = $user->rights->societe->lire;
 		$delallowed = $user->rights->societe->creer;
 
-		print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('showdocuments', $parameters, $object, $action);
+		if ($reshook < 0) {
+			print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
+		}
 
 		// Show direct download link
 		if (!empty($conf->global->BANK_ACCOUNT_ALLOW_EXTERNAL_DOWNLOAD)) {

@@ -2691,7 +2691,13 @@ if ($action != 'presend') {
 		$genallowed	= $user->rights->expensereport->creer;
 		$delallowed	= $user->rights->expensereport->creer;
 		$var = true;
-		print $formfile->showdocuments('expensereport', $filename, $filedir, $urlsource, $genallowed, $delallowed);
+
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('showdocuments', $parameters, $object, $action);
+		if ($reshook < 0) {
+			print $formfile->showdocuments('expensereport', $filename, $filedir, $urlsource, $genallowed, $delallowed);
+		}
+
 		$somethingshown = $formfile->numoffiles;
 	}
 

@@ -674,8 +674,12 @@ if ($action == 'create') {    // Create. Seems to no be used
 			$genallowed = $user->rights->expedition->delivery->lire;
 			$delallowed = $user->rights->expedition->delivery->creer;
 
-			print $formfile->showdocuments('delivery', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
-
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('showdocuments', $parameters, $object, $action);
+			if ($reshook < 0) {
+				print $formfile->showdocuments('delivery', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+			}
+			
 			/*
 			  * Linked object block (of linked shipment)
 			  */

@@ -3550,7 +3550,11 @@ if ($action == 'create') {
 					$delallowed = $usercancreate;
 					$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF) ? '' : $conf->global->INVOICE_SUPPLIER_ADDON_PDF));
 
-					print $formfile->showdocuments('facture_fournisseur', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
+					$parameters = array();
+					$reshook = $hookmanager->executeHooks('showdocuments', $parameters, $object, $action);
+					if ($reshook < 0) {
+						print $formfile->showdocuments('facture_fournisseur', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
+					}
 					$somethingshown = $formfile->numoffiles;
 
 					// Show links to link elements

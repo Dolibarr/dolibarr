@@ -2129,9 +2129,11 @@ if ($action == 'create') {
 			$genallowed = $user->rights->contrat->lire;
 			$delallowed = $user->rights->contrat->creer;
 
-
-			print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, ($object->model_pdf ? $object->model_pdf : $conf->global->CONTRACT_ADDON_PDF), 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);
-
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('showdocuments', $parameters, $object, $action);
+			if ($reshook < 0) {
+				print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, ($object->model_pdf ? $object->model_pdf : $conf->global->CONTRACT_ADDON_PDF), 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);
+			}
 
 			// Show links to link elements
 			$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));

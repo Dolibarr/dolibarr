@@ -2166,9 +2166,11 @@ if ($id > 0) {
 			$genallowed = $user->rights->agenda->myactions->read;
 			$delallowed = $user->rights->agenda->myactions->create;
 
-
-			print $formfile->showdocuments('actions', $object->id, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 0, 0, '', '', '', $object->default_lang);
-
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('showdocuments', $parameters, $object, $action);
+			if ($reshook < 0) {
+				print $formfile->showdocuments('actions', $object->id, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 0, 0, '', '', '', $object->default_lang);
+			}
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 

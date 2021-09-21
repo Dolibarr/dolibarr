@@ -1987,7 +1987,11 @@ if ($resql) {
 	$genallowed = $permissiontoread;
 	$delallowed = $permissiontoadd;
 
-	print $formfile->showdocuments('massfilesarea_orders', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('showdocuments', $parameters, $object, $action);
+	if ($reshook < 0) {
+		print $formfile->showdocuments('massfilesarea_orders', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+	}
 } else {
 	dol_print_error($db);
 }

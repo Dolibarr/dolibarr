@@ -2765,7 +2765,11 @@ if ($action == 'create' || $action == 'adduserldap') {
 			$genallowed = $user->rights->user->user->lire;
 			$delallowed = $user->rights->user->user->creer;
 
-			print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', empty($soc->default_lang) ? '' : $soc->default_lang);
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('showdocuments', $parameters, $object, $action);
+			if ($reshook < 0) {
+				print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', empty($soc->default_lang) ? '' : $soc->default_lang);
+			}
 			$somethingshown = $formfile->numoffiles;
 
 			// Show links to link elements

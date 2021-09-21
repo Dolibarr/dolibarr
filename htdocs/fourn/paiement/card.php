@@ -366,8 +366,12 @@ if ($result > 0) {
 		$genallowed = ($user->rights->fournisseur->facture->lire || $user->rights->supplier_invoice->lire);
 		$delallowed = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
 		$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF) ? '' : $conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
-
-		print $formfile->showdocuments('supplier_payment', $ref, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
+		
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('showdocuments', $parameters, $object, $action);
+		if ($reshook < 0) {
+			print $formfile->showdocuments('supplier_payment', $ref, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
+		}
 		$somethingshown = $formfile->numoffiles;
 	}
 

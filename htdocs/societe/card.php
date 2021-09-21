@@ -2969,7 +2969,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$genallowed = $user->rights->societe->lire;
 				$delallowed = $user->rights->societe->creer;
 
-				print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
+				$parameters = array();
+				$reshook = $hookmanager->executeHooks('showdocuments', $parameters, $object, $action);
+				if ($reshook < 0) {
+					print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
+				}
 			}
 
 			// Subsidiaries list
