@@ -71,6 +71,9 @@ if (empty($action) && empty($id) && empty($ref)) {
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+if ($object->id > 0) {
+	$object->calculateCosts();
+}
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
@@ -311,8 +314,6 @@ if (($id || $ref) && $action == 'edit') {
 
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
-	$res = $object->fetch_optionals();
-
 	$head = bomPrepareHead($object);
 	print dol_get_fiche_head($head, 'card', $langs->trans("BillOfMaterials"), -1, 'bom');
 

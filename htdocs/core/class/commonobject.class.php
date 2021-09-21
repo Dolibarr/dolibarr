@@ -7296,7 +7296,11 @@ abstract class CommonObject
 					dol_include_once($InfoFieldList[1]);
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
-						$object->fetch($value);
+						if ($object->element === 'product') {	// Special cas for product because default valut of fetch are wrong
+							$object->fetch($value, '', '', '', 0, 1, 1);
+						} else {
+							$object->fetch($value);
+						}
 						$value = $object->getNomUrl($getnomurlparam, $getnomurlparam2);
 					}
 				} else {
