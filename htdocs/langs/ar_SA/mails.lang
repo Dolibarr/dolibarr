@@ -137,6 +137,7 @@ MailSendSetupIs=وقد تم تكوين إرسال البريد الإلكترو�
 MailSendSetupIs2=يجب عليك أولا الذهاب، مع حساب مشرف، في القائمة٪ sHome - إعداد - رسائل البريد الإلكتروني٪ s إلى تغيير المعلمة <strong>'٪ ق'</strong> لاستخدام وضع '٪ ق'. مع هذا الوضع، يمكنك إدخال الإعداد خادم SMTP المقدمة من قبل موفر خدمة الإنترنت واستخدام قداس ميزة البريد الإلكتروني.
 MailSendSetupIs3=إذا كان لديك أي أسئلة حول كيفية إعداد ملقم SMTP الخاص بك، يمكنك أن تطلب إلى٪ s.
 YouCanAlsoUseSupervisorKeyword=يمكنك أيضا إضافة <strong>__SUPERVISOREMAIL__</strong> الكلمة أن يكون البريد الإلكتروني إرسالها إلى المشرف على المستخدم (يعمل فقط إذا تم تعريف بريد الكتروني لهذا المشرف)
+YouCanAlsoUseCreatorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the object author (works only if an email is defined for this supervisor)
 NbOfTargetedContacts=العدد الحالي من رسائل البريد الإلكتروني اتصال المستهدفة
 UseFormatFileEmailToTarget=Imported file must have format <strong>email;name;firstname;other</strong>
 UseFormatInputEmailToTarget=Enter a string with format <strong>email;name;firstname;other</strong>

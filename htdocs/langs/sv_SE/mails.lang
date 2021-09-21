@@ -137,6 +137,7 @@ MailSendSetupIs=Konfiguration av e-post att skicka har ställts in till "% s". D
 MailSendSetupIs2=Du måste först gå, med ett administratörskonto, i meny% Shome - Setup - e-post% s för att ändra parameter <strong>'% s'</strong> för att använda läget "% s". Med det här läget kan du ange inställningar för SMTP-servern från din internetleverantör och använda Mass mejla funktionen.
 MailSendSetupIs3=Om du har några frågor om hur man ställer in din SMTP-server, kan du be att% s.
 YouCanAlsoUseSupervisorKeyword=Du kan också lägga till sökordet <strong> __SUPERVISOREMAIL__ </strong> för att få mail skickad till handledaren av användaren (fungerar endast om ett email är definierat för denna handledare)
+YouCanAlsoUseCreatorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the object author (works only if an email is defined for this supervisor)
 NbOfTargetedContacts=Nuvarande antal riktade kontaktmail
 UseFormatFileEmailToTarget=Importerad fil måste ha format <strong> email, namn, förnamn; annan </strong>
 UseFormatInputEmailToTarget=Ange en sträng med format <strong> email, namn, förnamn, annat </strong>

@@ -137,6 +137,7 @@ MailSendSetupIs=電子郵件發送的設定已設定為“ %s”。此模式不�
 MailSendSetupIs2=您必須先使用管理員帳戶進入選單%s首頁-設定-EMails%s以將參數<strong>'%s'</strong>更改為使用模式 '%s'。使用此模式 ，您可以輸入Internet服務供應商提供的SMTP伺服器的設定，並使用批次電子郵件功能。
 MailSendSetupIs3=如果對如何設定SMTP伺服器有任何疑問，可以詢問%s。
 YouCanAlsoUseSupervisorKeyword=您還可以增加關鍵字<strong>__SUPERVISOREMAIL__</strong>以將電子郵件發送給用戶的主管（僅在為此主管定義了電子郵件的情況下有效）
+YouCanAlsoUseCreatorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the object author (works only if an email is defined for this supervisor)
 NbOfTargetedContacts=目前目標聯絡人電子郵件的數量
 UseFormatFileEmailToTarget=匯入檔案的格式必須為<strong>電子郵件; 姓;名;其他</strong>
 UseFormatInputEmailToTarget=輸入字串格式為<strong>電子郵件; 姓;名;其他</strong>

@@ -137,6 +137,7 @@ MailSendSetupIs=Konfiguracij pošiljanja e-pošte je bila nastavljena na '%s'. T
 MailSendSetupIs2=Najprej morate kot administrator preko menija %sDomov - Nastavitve - E-pošta%s spremeniti parameter <strong>'%s'</strong> za uporabo načina '%s'. V tem načinu lahko odprete nastavitve SMTP strežnika, ki vam jih omogoča vaš spletni oprerater in uporabite masovno pošiljanje.
 MailSendSetupIs3=Če imate vprašanja o nastavitvi SMTP strežnika, lahko vprašate %s.
 YouCanAlsoUseSupervisorKeyword=Lahko tudi dodate ključno besedo <strong>__SUPERVISOREMAIL__</strong> da bodo emaili poslani nadzorniku (deluje samo, če je email definiran za tega nadzornika)
+YouCanAlsoUseCreatorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the object author (works only if an email is defined for this supervisor)
 NbOfTargetedContacts=Trenutno število emailov ciljnih kontaktov
 UseFormatFileEmailToTarget=Imported file must have format <strong>email;name;firstname;other</strong>
 UseFormatInputEmailToTarget=Enter a string with format <strong>email;name;firstname;other</strong>

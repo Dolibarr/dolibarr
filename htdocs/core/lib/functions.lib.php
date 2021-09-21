@@ -3378,12 +3378,16 @@ function dol_print_address($address, $htmlid, $element, $id, $noprint = 0, $char
  *
  *	@param	    string		$address    			email (Ex: "toto@examle.com". Long form "John Do <johndo@example.com>" will be false)
  *  @param		int			$acceptsupervisorkey	If 1, the special string '__SUPERVISOREMAIL__' is also accepted as valid
+ *  @param		int			$acceptcreatorkey	If 1, the special string '__AUTHOREMAIL__' is also accepted as valid
  *	@return     boolean     						true if email syntax is OK, false if KO or empty string
  *  @see isValidMXRecord()
  */
-function isValidEmail($address, $acceptsupervisorkey = 0)
+function isValidEmail($address, $acceptsupervisorkey = 0, $acceptcreatorkey = 0)
 {
 	if ($acceptsupervisorkey && $address == '__SUPERVISOREMAIL__') {
+		return true;
+	}
+	if ($acceptsupervisorkey && $address == '__AUTHOREMAIL__') {
 		return true;
 	}
 	if (filter_var($address, FILTER_VALIDATE_EMAIL)) {
@@ -6875,6 +6879,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		));
 
 		if (is_object($user)) {
+			if ($user->fk_user) {
+				$supervisor = new User($db);
+				$supervisor->fetch($user->fk_user);
+			}
+
 			$substitutionarray = array_merge($substitutionarray, array(
 				'__USER_ID__' => (string) $user->id,
 				'__USER_LOGIN__' => (string) $user->login,
@@ -6883,8 +6892,13 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				'__USER_FIRSTNAME__' => (string) $user->firstname,
 				'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
 				'__USER_SUPERVISOR_ID__' => (string) ($user->fk_user ? $user->fk_user : '0'),
+				'__USER_SUPERVISOR_LOGIN__' => (string) ($supervisor ? $supervisor->login : ''),
+				'__USER_SUPERVISOR_EMAIL__' => (string) ($supervisor ? $supervisor->email : ''),
+				'__USER_SUPERVISOR_FIRSTNAME__' => (string) ($supervisor ? $supervisor->firstname : ''),
+				'__USER_SUPERVISOR_LASTNAME__' => (string) ($supervisor ? $supervisor->lastname : ''),
+				'__USER_SUPERVISOR_FULLNAME__' => (string) ($supervisor ? $supervisor->getFullName($outputlangs) : ''),
 				'__USER_REMOTE_IP__' => (string) getUserRemoteIP()
-				));
+			));
 		}
 	}
 	if ((empty($exclude) || !in_array('mycompany', $exclude)) && is_object($mysoc)) {
@@ -6921,6 +6935,14 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__NOTE_PUBLIC__'] = '__NOTE_PUBLIC__';
 			$substitutionarray['__NOTE_PRIVATE__'] = '__NOTE_PRIVATE__';
 			$substitutionarray['__EXTRAFIELD_XXX__'] = '__EXTRAFIELD_XXX__';
+
+			$substitutionarray['__OBJECT_AUTHOR_ID__'] = '__OBJECT_AUTHOR_ID__';
+			$substitutionarray['__OBJECT_AUTHOR_LOGIN__'] = '__OBJECT_AUTHOR_LOGIN__';
+			$substitutionarray['__OBJECT_AUTHOR_EMAIL__'] = '__OBJECT_AUTHOR_EMAIL__';
+			$substitutionarray['__OBJECT_AUTHOR_FIRSTNAME__'] = '__OBJECT_AUTHOR_FIRSTNAME__';
+			$substitutionarray['__OBJECT_AUTHOR_LASTNAME__'] = '__OBJECT_AUTHOR_LASTNAME__';
+			$substitutionarray['__OBJECT_AUTHOR_FULLNAME__'] = '__OBJECT_AUTHOR_FULLNAME__';
+
 
 			if (!empty($conf->societe->enabled)) {	// Most objects are concerned
 				$substitutionarray['__THIRDPARTY_ID__'] = '__THIRDPARTY_ID__';
@@ -7010,6 +7032,28 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__DATE_DELIVERY_HH__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, "%H") : '');
 			$substitutionarray['__DATE_DELIVERY_MM__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, "%M") : '');
 			$substitutionarray['__DATE_DELIVERY_SS__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, "%S") : '');
+
+			if ($object->user_author_id) {
+				$author = new User($db);
+				$author->fetch($object->user_author_id);
+			}
+			$substitutionarray['__OBJECT_AUTHOR_ID__'] = ($author ? $author->id : '0');
+			$substitutionarray['__OBJECT_AUTHOR_LOGIN__'] = ($author ? $author->login : '');
+			$substitutionarray['__OBJECT_AUTHOR_EMAIL__'] = ($author ? $author->email : '');
+			$substitutionarray['__OBJECT_AUTHOR_FIRSTNAME__'] = ($author ? $author->firstname : '');
+			$substitutionarray['__OBJECT_AUTHOR_LASTNAME__'] = ($author ? $author->lastname : '');
+			$substitutionarray['__OBJECT_AUTHOR_FULLNAME__'] = ($author ? $author->getFullName($outputlangs) : '');
+
+			if ($object->user_approve_id) {
+				$approver = new User($db);
+				$approver->fetch($object->user_approve_id);
+			}
+			$substitutionarray['__OBJECT_APPROVER_ID__'] = ($approver ? $approver->id : '0');
+			$substitutionarray['__OBJECT_APPROVER_LOGIN__'] = ($approver ? $approver->login : '');
+			$substitutionarray['__OBJECT_APPROVER_EMAIL__'] = ($approver ? $approver->email : '');
+			$substitutionarray['__OBJECT_APPROVER_FIRSTNAME__'] = ($approver ? $approver->firstname : '');
+			$substitutionarray['__OBJECT_APPROVER_LASTNAME__'] = ($approver ? $approver->lastname : '');
+			$substitutionarray['__OBJECT_APPROVER_FULLNAME__'] = ($approver ? $approver->getFullName($outputlangs) : '');
 
 			// For backward compatibility
 			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));

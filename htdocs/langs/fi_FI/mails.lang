@@ -137,6 +137,7 @@ MailSendSetupIs=Sähköpostin lähettämisen määritys on asetettu "%s": ksi. T
 MailSendSetupIs2=Sinun on ensin siirryttävä admin-tilillä valikkoon %sHome - Setup - EMails%s parametrin <strong> '%s' </strong> muuttamiseksi käytettäväksi tilassa "%s". Tässä tilassa voit syöttää Internet-palveluntarjoajan antaman SMTP-palvelimen vaatimat asetukset ja käyttää Massa-sähköpostitoimintoa.
 MailSendSetupIs3=Jos sinulla on kysyttävää SMTP-palvelimen määrittämisestä, voit kysyä osoitteesta %s.
 YouCanAlsoUseSupervisorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the supervisor of user (works only if an email is defined for this supervisor)
+YouCanAlsoUseCreatorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the object author (works only if an email is defined for this supervisor)
 NbOfTargetedContacts=Current number of targeted contact emails
 UseFormatFileEmailToTarget=Imported file must have format <strong>email;name;firstname;other</strong>
 UseFormatInputEmailToTarget=Enter a string with format <strong>email;name;firstname;other</strong>

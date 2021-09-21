@@ -137,6 +137,7 @@ MailSendSetupIs=Cấu hình gửi email đã được thiết lập thành '%s'.
 MailSendSetupIs2=Trước tiên, bạn phải đi, với tài khoản quản trị viên, vào menu %sNhà - Cài đặt - EMails %s để thay đổi tham số <strong>'%s'</strong> để sử dụng chế độ '%s' . Với chế độ này, bạn có thể nhập thiết lập máy chủ SMTP do Nhà cung cấp dịch vụ Internet của bạn cung cấp và sử dụng tính năng gửi email hàng loạt.
 MailSendSetupIs3=Nếu bạn có bất kỳ câu hỏi nào về cách thiết lập máy chủ SMTP của mình, bạn có thể hỏi %s.
 YouCanAlsoUseSupervisorKeyword=Bạn cũng có thể thêm từ khóa <strong>__SUPERVISOREMAIL__</strong> để gửi email đến người giám sát của người dùng (chỉ hoạt động nếu một email được xác định cho người giám sát này)
+YouCanAlsoUseCreatorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the object author (works only if an email is defined for this supervisor)
 NbOfTargetedContacts=Số lượng email liên hệ được nhắm mục tiêu hiện tại
 UseFormatFileEmailToTarget=Tệp đã nhập phải có định dạng <strong>email;tên;họ;tênkhác</strong>
 UseFormatInputEmailToTarget=Nhập một chuỗi với định dạng <strong>email;tên;họ;tênkhác</strong>

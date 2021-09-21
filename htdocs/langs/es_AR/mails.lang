@@ -102,6 +102,7 @@ MailSendSetupIs=La configuración de envío de correo ha sido establecida a '%s'
 MailSendSetupIs2=Debes dirigirte primero, utilizando una cuenta de administrador, al menú %s Inicio - Configuración - Correos%s para cambiar el parámetro <strong>'%s'</strong> para utilizar el modo '%s'. Con este modo, podrás entrar en la configuración del servidor SMTP provisto por tu proveedor de internet y utilizar la funcionalidad de envío masivo de correos.
 MailSendSetupIs3=Si tienes alguna consulta acerca de cómo configurar tu servidor SMTP, puedes preguntarle a %s.
 YouCanAlsoUseSupervisorKeyword=Puedes también agregar la clave <strong>__SUPERVISOREMAIL__</strong> para tener un correo enviado hacia el supervisor del usuario (sólo funciona si el correo es definido por el supervisor)
+YouCanAlsoUseCreatorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the object author (works only if an email is defined for this supervisor)
 NbOfTargetedContacts=Cantidad de contactos de correo objetivo
 UseFormatFileEmailToTarget=El archivo importado debe tener el formato <strong>correo;nombre;primer nombre;otro</strong>
 UseFormatInputEmailToTarget=Ingrese una cadena con el formato <strong>correo;nombre;primer nombre;otro</strong>

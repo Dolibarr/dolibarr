@@ -137,6 +137,7 @@ MailSendSetupIs=E-posta gönderme yapılandırması '%s'ye ayarlandı. Bu mod to
 MailSendSetupIs2='%s' Modunu kullanmak için <strong>'%s'</strong> parametresini değiştirecekseniz, önce yönetici hesabı ile %sGiriş - Ayarlar - E-postalar%s menüsüne gitmelisiniz. Bu mod ile İnternet Servis Sağlayıcınız tarafından sağlanan SMTP sunucusu ayarlarını girebilir ve Toplu e-posta özelliğini kullanabilirsiniz.
 MailSendSetupIs3=SMTP sunucusunun nasıl yapılandırılacağı konusunda sorunuz varsa, %s e sorabilirsiniz.
 YouCanAlsoUseSupervisorKeyword=Ayrıca; kullanıcının danışmanına giden epostayı almak için <strong>__SUPERVISOREMAIL__</strong> anahtar kelimesini de ekleyebilirsiniz (yalnızca bu danışman için bir e-posta tanımlanmışsa çalışır).
+YouCanAlsoUseCreatorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the object author (works only if an email is defined for this supervisor)
 NbOfTargetedContacts=Mevcut hedef kişi e-posta sayısı
 UseFormatFileEmailToTarget=Imported file must have format <strong>email;name;firstname;other</strong>
 UseFormatInputEmailToTarget=Enter a string with format <strong>email;name;firstname;other</strong>

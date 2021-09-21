@@ -137,6 +137,7 @@ MailSendSetupIs=La configuració de l'enviament de correu electrònic s'ha confi
 MailSendSetupIs2=Primer heu d’anar, amb un compte d’administrador, al menú %sInici - Configuració - Correus electrònics%s per a canviar el paràmetre <strong>'%s'</strong> per a utilitzar el mode '%s'. Amb aquest mode, podeu introduir la configuració del servidor SMTP proporcionat pel vostre proveïdor de serveis d'Internet i utilitzar la funció de correu electrònic massiu.
 MailSendSetupIs3=Si teniu cap pregunta sobre com configurar el servidor SMTP, podeu demanar-li a %s.
 YouCanAlsoUseSupervisorKeyword=També pot afegir l'etiqueta <strong>__SUPERVISOREMAIL__</strong> per tenir un e-mail enviat pel supervisor a l'usuari (només funciona si un e-mail és definit per aquest supervisor)
+YouCanAlsoUseCreatorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the object author (works only if an email is defined for this supervisor)
 NbOfTargetedContacts=Nombre actual de correus electrònics de contactes destinataris
 UseFormatFileEmailToTarget=El fitxer importat ha de tenir el format <strong>email;nom;cognom;altre</strong>
 UseFormatInputEmailToTarget=Entra una cadena amb el format <strong>email;nom;cognom;altre</strong>

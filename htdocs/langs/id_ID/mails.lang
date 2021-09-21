@@ -137,6 +137,7 @@ MailSendSetupIs=Konfigurasi pengiriman email telah diatur ke '%s'. Mode ini tida
 MailSendSetupIs2=Anda pertama-tama harus pergi, dengan akun admin, ke dalam menu %sHome - Setup - EMails%s untuk mengubah parameter<strong>'%s' </strong> untuk menggunakan mode ' %s'. Dengan mode ini, Anda dapat masuk ke pengaturan server SMTP yang disediakan oleh Penyedia Layanan Internet Anda dan menggunakan fitur kirim email dengan skala besar.
 MailSendSetupIs3=Jika Anda memiliki pertanyaan tentang cara mengatur server SMTP Anda, Anda dapat bertanya ke %s.
 YouCanAlsoUseSupervisorKeyword=Anda juga dapat menambahkan kata kunci <strong>__SUPERVISOREMAIL__</strong> untuk mengirim email kepada pengawas (hanya berfungsi jika email ditentukan untuk pengawas ini)
+YouCanAlsoUseCreatorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the object author (works only if an email is defined for this supervisor)
 NbOfTargetedContacts=Jumlah email kontak yang ditargetkan saat ini
 UseFormatFileEmailToTarget=Berkas yang diimpor harus memiliki format email <strong>email;nama;nama depan;lainnya</strong>
 UseFormatInputEmailToTarget=Masukkan string dengan format<strong>email;nama;nama depan;lainnya</strong>

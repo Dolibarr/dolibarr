@@ -137,6 +137,7 @@ MailSendSetupIs=E-postutsendelser er  blitt satt opp til '%s'. Denne modusen kan
 MailSendSetupIs2=Logg på som administrator, gå til menyen %sHjem - Oppsett - E-post%s for å endre parameter <strong>'%s'</strong> for å bruke '%s' modus. I denne modusen for du tilgang til oppsett av SMTP-server og muligheten til å bruke masseutsendelser.
 MailSendSetupIs3=Ved spørsmål om hvordan du skal sette opp SMTP-serveren din, kontakt %s
 YouCanAlsoUseSupervisorKeyword=Du kan også bruke nøkkelordet <strong>__SUPERVISOREMAIL__</strong> for å sende e-post til brukerens supervisor (supervisoren må ha e-postadresse)
+YouCanAlsoUseCreatorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the object author (works only if an email is defined for this supervisor)
 NbOfTargetedContacts=Nåværende antall kontakter på mailinglisten
 UseFormatFileEmailToTarget=Importert fil må følge formatet <strong>epost;navn;fornavn:annet</strong>
 UseFormatInputEmailToTarget=Tast inn en streng med format <strong>epost;navn;fornavn;annet</strong>

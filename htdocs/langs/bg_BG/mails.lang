@@ -137,6 +137,7 @@ MailSendSetupIs=Конфигурацията за изпращане на име
 MailSendSetupIs2=Трябва първо да отидете с администраторски акаунт в меню %sНачало - Настройка - Имейли%s и да промените параметър <strong>'%s'</strong>, за да използвате режим '%s'. С този режим може да въведете настройки за SMTP сървъра, предоставен от вашия доставчик на интернет услуги и да използвате функцията за изпращане на масови имейли.
 MailSendSetupIs3=Ако имате някакви въпроси как да настроите вашия SMTP сървър, може да се обърнете към %s.
 YouCanAlsoUseSupervisorKeyword=Може също да добавите ключовата дума <strong>__SUPERVISOREMAIL__</strong>, за да се изпраща имейл до прекия ръководител на потребителя (работи само ако е зададен имейл на прекия ръководител)
+YouCanAlsoUseCreatorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the object author (works only if an email is defined for this supervisor)
 NbOfTargetedContacts=Настоящ брой целеви имейли на контакти
 UseFormatFileEmailToTarget=Импортираният файл трябва да има формат <strong>имейл;фамилия;име;друго</strong>
 UseFormatInputEmailToTarget=Въведете низ с формат <strong>имейл;фамилия;име;друго</strong>

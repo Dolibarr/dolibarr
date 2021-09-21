@@ -137,6 +137,7 @@ MailSendSetupIs=Email电子邮箱配置设定 '%s'. 这个模式无法用于邮�
 MailSendSetupIs2=首先您得这么地, 得先有个管理员账号吧 admin , 进入菜单 %s主页 - 设置 - EMails%s 修改参数 <strong>'%s'</strong> 用 '%s'模式。 在此模式下， 您才可输入一个 SMTP 服务器地址 来供您收发邮件。
 MailSendSetupIs3=如果你对 SMTP 服务器的配置方面有疑问, 你可到这里询问 %s.
 YouCanAlsoUseSupervisorKeyword=您同样可以添加关键字 <strong>__SUPERVISOREMAIL__</strong> 来发送邮件给超级管理员们 (假如超级管理员们设有工作邮箱的地址的话)
+YouCanAlsoUseCreatorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the object author (works only if an email is defined for this supervisor)
 NbOfTargetedContacts=当前有针对性的联系电子邮件数量
 UseFormatFileEmailToTarget=导入的文件必须具有格式<strong>电子邮件;名称;名字;其他</strong>
 UseFormatInputEmailToTarget=输入格式为<strong>电子邮件;名称;名字;其他</strong>的字符串

@@ -137,6 +137,7 @@ MailSendSetupIs=Konfiguracija slanja mailova je podešena na "%s". Ovaj mod ne m
 MailSendSetupIs2=Prvo morate sa admin nalogom otvoriti meni %sHome - Setup - EMails%s da biste promenili parametar <strong>'%s'</strong> i prešli u mod '%s'. U ovom modu, možete uneti podešavanja SMTP servera Vašeg provajdera i koristiti funkcionalnost masovnog emailinga.
 MailSendSetupIs3=Ukoliko imate pitanja oko podešavanja SMTP servera, možete pitati %s.
 YouCanAlsoUseSupervisorKeyword=Takođe možete dodati parametar <strong>__SUPERVISOREMAIL__</strong> kako bi mail bio poslat supervizoru korisnika (radi samo ukoliko je mail definisan za ovog supervizora)
+YouCanAlsoUseCreatorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the object author (works only if an email is defined for this supervisor)
 NbOfTargetedContacts=Trenutni broj targetiranih kontakt mailova
 UseFormatFileEmailToTarget=Imported file must have format <strong>email;name;firstname;other</strong>
 UseFormatInputEmailToTarget=Enter a string with format <strong>email;name;firstname;other</strong>

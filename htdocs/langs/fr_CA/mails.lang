@@ -80,6 +80,7 @@ MailSendSetupIs=La configuration de l'envoi de courrier électronique a été co
 MailSendSetupIs2=Vous devez d'abord aller, avec un compte admin, dans le menu %sHome - Configuration - EMails%s pour modifier le paramètre <strong> '%s' </strong>pour utiliser le mode '%s'. Avec ce mode, vous pouvez entrer dans la configuration du serveur SMTP fourni par votre fournisseur de services Internet et utiliser la fonctionnalité de messagerie en masse.
 MailSendSetupIs3=Si vous avez des questions sur la configuration de votre serveur SMTP, vous pouvez demander à %s.
 YouCanAlsoUseSupervisorKeyword=Vous pouvez également ajouter le mot-clé <strong> __ SUPERVISOREMAIL __ </ strong> pour que le courrier électronique soit envoyé au superviseur de l'utilisateur (fonctionne uniquement si un email est défini pour ce superviseur)
+YouCanAlsoUseCreatorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the object author (works only if an email is defined for this supervisor)
 NbOfTargetedContacts=Nombre actuel d'emails de contact ciblés
 UseFormatFileEmailToTarget=Le fichier importé doit avoir un format <strong> email; nom; prénom; autre </ strong>
 UseFormatInputEmailToTarget=Entrez une chaîne avec le format <strong> email; nom; prénom; autre </ strong>

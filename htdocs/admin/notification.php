@@ -115,8 +115,9 @@ if ($action == 'setfixednotif' && $user->admin) {
 
 	if (!$error && is_array($_POST)) {
 		$reg = array();
+
 		foreach ($_POST as $key => $val) {
-			if (!preg_match('/^NOTIF_(.*)_key$/', $key, $reg)) {
+			if (!preg_match('/^NOTIF_(.*)_(key|template)$/', $key, $reg)) {
 				continue;
 			}
 
@@ -140,6 +141,16 @@ if ($action == 'setfixednotif' && $user->admin) {
 
 			if ($newkey && $newval) {
 				$result = dolibarr_set_const($db, $newkey, $newval, 'chaine', 0, '', $conf->entity);
+			}
+
+			if (preg_match('/^NOTIF_(.*)_template/', $key, $reg)) {
+				$templateKey = 'NOTIFICATION_FIXEDEMAIL_'.$reg[1].'_template';
+				$templateValue = preg_split('/:/', GETPOST($key, ''))[0];
+				if ($templateValue && $templateValue !== '-1') {
+					dolibarr_set_const($db, $templateKey, $templateValue, 'chaine', 0, '', $conf->entity);
+				} else {
+					dolibarr_del_const($db, $templateKey, $conf->entity);
+				}
 			}
 		}
 	}
@@ -351,6 +362,7 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Module").'</td>';
 print '<td>'.$langs->trans("Code").'</td>';
 print '<td>'.$langs->trans("Label").'</td>';
+print '<td>'.$langs->trans("EmailTemplate").'</td>';
 print '<td>'.$langs->trans("FixedEmailTarget").'</td>';
 print '<td>'.$langs->trans("Threshold").'</td>';
 print '<td></td>';
@@ -398,6 +410,30 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 	print '<td>'.$notifiedevent['code'].'</td>';
 	print '<td><span class="opacitymedium">'.$label.'</span></td>';
 	print '<td>';
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		$formmail = new FormMail($db);
+
+		$param = 'NOTIF_'.$notifiedevent['code'].'_template';
+		$key = 'NOTIFICATION_FIXEDEMAIL_'.$notifiedevent['code'].'_template';
+		$value = GETPOST($param) ? GETPOST($param, 'alpha') : $conf->global->$key.':'.$elementPicto;
+		$nboftemplates = $formmail->fetchAllEMailTemplate($notifiedevent['elementtype'].'_send', $user, null, -1); // We set lang=null to get in priority record with no lang
+		//$arraydefaultmessage = $formmail->getEMailTemplate($db, $tmp[1], $user, null, 0, 1, '');
+		$arrayofmessagename = array();
+		if (is_array($formmail->lines_model)) {
+			foreach ($formmail->lines_model as $modelmail) {
+				//var_dump($modelmail);
+				$moreonlabel = '';
+				if (!empty($arrayofmessagename[$modelmail->label])) {
+					$moreonlabel = ' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
+				}
+				// The 'label' is the key that is unique if we exclude the language
+				$arrayofmessagename[$modelmail->label.':'.$elementPicto] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)).$moreonlabel;
+			}
+		}
+
+		print $form->selectarray($param, $arrayofmessagename, $value, 'None', 0, 0, '', 0, 0, 0, '', '', 1);
+	print '</td>';
+	print '<td>';
 	$inputfieldalreadyshown = 0;
 	// Notification with threshold
 	foreach ($conf->global as $key => $val) {
@@ -420,7 +456,8 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 		if ((!empty($conf->global->$param)) && $showwarning) {
 			$s .= ' '.img_warning($langs->trans("ErrorBadEMail"));
 		}
-		print $form->textwithpicto($s, $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword"), 1, 'help', '', 0, 2);
+		print $form->textwithpicto($s, $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword").'<br>'.$langs->trans("YouCanAlsoUseCreatorKeyword"), 1, 'help', '', 0, 2);
+
 		print '<br>';
 
 		$inputfieldalreadyshown++;
@@ -428,7 +465,7 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 	// New entry input fields
 	if (empty($inputfieldalreadyshown) || !$codehasnotrigger) {
 		$s = '<input type="text" size="32" name="NOTIF_'.$notifiedevent['code'].'_new_key" value="">'; // Do not use type="email" here, we must be able to enter a list of email with , separator.
-		print $form->textwithpicto($s, $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword"), 1, 'help', '', 0, 2);
+		print $form->textwithpicto($s, $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword").'<br>'.$langs->trans("YouCanAlsoUseCreatorKeyword"), 1, 'help', '', 0, 2);
 	}
 	print '</td>';
 

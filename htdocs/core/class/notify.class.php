@@ -295,6 +295,19 @@ class Notify
 								$newval2 = '';
 							}
 						}
+						if ($newval2 == '__AUTHOREMAIL__') {
+							if ($object->user_author_id > 0) {
+								$tmpuser = new User($this->db);
+								$tmpuser->fetch($object->user_author_id);
+								if ($tmpuser->email) {
+									$newval2 = trim($tmpuser->email);
+								} else {
+									$newval2 = '';
+								}
+							} else {
+								$newval2 = '';
+							}
+						}
 						if ($newval2) {
 							$isvalid = isValidEmail($newval2, 0);
 							if (empty($resarray[$newval2])) {
@@ -802,11 +815,25 @@ class Notify
 					$mimefilename_list[] = $ref.".pdf";
 				}
 
-				$message .= $langs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
-				$message .= "\n";
-				$message .= $mesg;
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+				$formmail = new FormMail($this->db);
 
-				$message = nl2br($message);
+				$notificationTemplateVar = 'NOTIFICATION_FIXEDEMAIL_'.$notifcode.'_template';
+				$templateCode = $conf->global->$notificationTemplateVar;
+
+				$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $object_type.'_send', $user, $langs, 0, 1, $templateCode);
+				if ($arraydefaultmessage) {
+					$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $object);
+					complete_substitutions_array($substitutionarray, $langs, $object);
+					$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
+					$message = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
+				} else {
+					$message .= $langs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
+					$message .= "\n";
+					$message .= $mesg;
+
+					$message = nl2br($message);
+				}
 
 				// Replace keyword __SUPERVISOREMAIL__
 				if (preg_match('/__SUPERVISOREMAIL__/', $sendto)) {
@@ -821,6 +848,22 @@ class Notify
 					dol_syslog("Replace the __SUPERVISOREMAIL__ key into recipient email string with ".$newval);
 					$sendto = preg_replace('/__SUPERVISOREMAIL__/', $newval, $sendto);
 					$sendto = preg_replace('/,\s*,/', ',', $sendto); // in some case you can have $sendto like "email, __SUPERVISOREMAIL__ , otheremail" then you have "email,  , othermail" and it's not valid
+					$sendto = preg_replace('/^[\s,]+/', '', $sendto); // Clean start of string
+					$sendto = preg_replace('/[\s,]+$/', '', $sendto); // Clean end of string
+				}
+
+				if (preg_match('/__AUTHOREMAIL__/', $sendto)) {
+					$newval = '';
+					if ($object->user_author_id > 0) {
+						$authoruser = new User($this->db);
+						$authoruser->fetch($object->user_author_id);
+						if ($authoruser->email) {
+							$newval = trim(dolGetFirstLastname($authoruser->firstname, $authoruser->lastname).' <'.$authoruser->email.'>');
+						}
+					}
+
+					$sendto = preg_replace('/__AUTHOREMAIL__/', $newval, $sendto);
+					$sendto = preg_replace('/,\s*,/', ',', $sendto); // in some case you can have $sendto like "email, __AUTHOREMAIL__ , otheremail" then you have "email,  , othermail" and it's not valid
 					$sendto = preg_replace('/^[\s,]+/', '', $sendto); // Clean start of string
 					$sendto = preg_replace('/[\s,]+$/', '', $sendto); // Clean end of string
 				}

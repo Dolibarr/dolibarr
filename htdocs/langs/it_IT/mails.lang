@@ -137,6 +137,7 @@ MailSendSetupIs=La configurazione della posta elettronica di invio è stata impo
 MailSendSetupIs2=Con un account da amministratore è necessario cliccare su %sHome -> Setup -> EMails%s e modificare il parametro <strong>'%s'</strong> per usare la modalità '%s'. Con questa modalità è possibile inserire i dati del server SMTP di elezione e usare Il "Mass Emailing"
 MailSendSetupIs3=Se hai domande su come configurare il tuo server SMTP chiedi a %s.
 YouCanAlsoUseSupervisorKeyword=È inoltre possibile aggiungere la parola chiave <strong>__SUPERVISOREMAIL__</strong> per inviare email  al supervisore dell'utente (funziona solo se è definita una email per suddetto supervisor)
+YouCanAlsoUseCreatorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the object author (works only if an email is defined for this supervisor)
 NbOfTargetedContacts=Numero di indirizzi di posta elettronica di contatti mirati
 UseFormatFileEmailToTarget=Imported file must have format <strong>email;name;firstname;other</strong>
 UseFormatInputEmailToTarget=Enter a string with format <strong>email;name;firstname;other</strong>

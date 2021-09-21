@@ -137,6 +137,7 @@ MailSendSetupIs=A configuração do envio de email foi configurada para '%s'. Es
 MailSendSetupIs2=Você deve primeiro ir, com uma conta admin, no menu %sHome - Setup - EMails%s para alterar o parâmetro <strong> '%s' </ strong> para usar o modo '%s'. Com esse modo, você pode inserir a configuração do servidor SMTP fornecido pelo seu provedor de serviços de Internet e usar o recurso de envio de email em massa.
 MailSendSetupIs3=Se você tiver alguma dúvida sobre como configurar seu servidor SMTP, você pode perguntar para %s.
 YouCanAlsoUseSupervisorKeyword=Você também pode adicionar a palavra-chave <strong> __ SUPERVISOREMAIL __ </ strong> para que o email seja enviado ao supervisor do usuário (funciona somente se um email for definido para esse supervisor)
+YouCanAlsoUseCreatorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the object author (works only if an email is defined for this supervisor)
 NbOfTargetedContacts=Número atual de e-mails de contato segmentados
 UseFormatFileEmailToTarget=O arquivo importado deve ter formato <strong> email; nome; nome; outro </ strong>
 UseFormatInputEmailToTarget=Insira uma string com o formato <strong> email; nome; nome; outro </ strong>

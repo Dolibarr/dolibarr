@@ -137,6 +137,7 @@ MailSendSetupIs=Elektron pochta xabarlarini jo'natish konfiguratsiyasi '%s' ga o
 MailSendSetupIs2=You must first go, with an admin account, into menu %sHome - Setup - EMails%s to change parameter <strong>'%s'</strong> to use mode '%s'. With this mode, you can enter setup of the SMTP server provided by your Internet Service Provider and use Mass emailing feature.
 MailSendSetupIs3=SMTP-serveringizni sozlash bo'yicha savollaringiz bo'lsa, %s ga murojaat qilishingiz mumkin.
 YouCanAlsoUseSupervisorKeyword=Shuningdek, foydalanuvchi rahbariga elektron pochta xabarlarini yuborish uchun <strong> __SUPERVISOREMAIL__ </strong> kalit so'zini qo'shishingiz mumkin (faqat ushbu nazoratchi uchun elektron pochta manzili belgilangan taqdirda ishlaydi)
+YouCanAlsoUseCreatorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the object author (works only if an email is defined for this supervisor)
 NbOfTargetedContacts=Maqsadli elektron pochta xabarlarining joriy soni
 UseFormatFileEmailToTarget=Import qilingan fayl <strong> formatidagi elektron pochta; ism; ism; boshqa </strong> formatiga ega bo'lishi kerak
 UseFormatInputEmailToTarget=<strong> formatidagi qatorni kiriting elektron pochta; ism; ism; boshqa </strong>

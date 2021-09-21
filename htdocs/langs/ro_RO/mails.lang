@@ -137,6 +137,7 @@ MailSendSetupIs=Configurarea trimiterii de email a fost setată la '%s'.  Acest 
 MailSendSetupIs2=Trebuie mai întâi să mergi, cu un cont de administrator, în meniul %sAcasă - Setări - Emailuri%s  pentru a schimba parametrul  <strong>'%s'</strong> de utilizare în modul '%s'.  Cu acest mod, puteți introduce configurarea serverului SMTP al furnizorul de servicii Internet și de a folosi facilitatea Newslettere.
 MailSendSetupIs3=Dacă ai întrebări cu privire la modul de configurare al serverului SMTP, poţi cere informaţii la %s.
 YouCanAlsoUseSupervisorKeyword=De asemenea, poţi adăuga cuvântul cheie <strong>__SUPERVISOREMAIL__</strong> pentru a trimite un email către supervizorul utilizatorului (funcționează doar dacă supervizorul are o adresă de email definită)
+YouCanAlsoUseCreatorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the object author (works only if an email is defined for this supervisor)
 NbOfTargetedContacts=Număr curent de emailuri contacte destinatar
 UseFormatFileEmailToTarget=Fișierul importat trebuie să aibă formatul <strong>email;nume;prenume;altul</strong>
 UseFormatInputEmailToTarget=Introduceți un șir cu formatul <strong>email;nume;prenume;altul</strong>
