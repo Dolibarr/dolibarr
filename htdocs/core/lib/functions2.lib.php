@@ -1957,7 +1957,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 					}
 					if (is_dir($tmpdir)) {
 						// all type of template is allowed
-						$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '', '', 'name', SORT_ASC, 0);
+						$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '', null, 'name', SORT_ASC, 0);
 						if (count($tmpfiles)) {
 							$listoffiles = array_merge($listoffiles, $tmpfiles);
 						}
@@ -2266,6 +2266,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 			}
 			$i++;
 		}
+		$db->free($resql);
 	} else {
 		dol_print_error($db);
 	}
@@ -2277,7 +2278,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree." SET ".$fieldfkparent." = 0 WHERE ".$fieldfkparent." = rowid"; // So we update only records linked to themself
 		$resql = $db->query($sql);
 		if ($resql) {
-			$nb = $db->affected_rows($sql);
+			$nb = $db->affected_rows($resql);
 			if ($nb > 0) {
 				print '<br>Some record that were parent of themself were cleaned.';
 			}
@@ -2315,7 +2316,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		$sql .= " WHERE rowid IN (".$db->sanitize(join(',', $listofidtoclean)).")"; // So we update only records detected wrong
 		$resql = $db->query($sql);
 		if ($resql) {
-			$nb = $db->affected_rows($sql);
+			$nb = $db->affected_rows($resql);
 			if ($nb > 0) {
 				// Removed orphelins records
 				print '<br>Some records were detected to have parent that is a child, we set them as root record for id: ';
@@ -2332,7 +2333,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		$sql .= " WHERE ".$fieldfkparent." NOT IN (".$db->sanitize(join(',', $listofid), 1).")"; // So we update only records linked to a non existing parent
 		$resql = $db->query($sql);
 		if ($resql) {
-			$nb = $db->affected_rows($sql);
+			$nb = $db->affected_rows($resql);
 			if ($nb > 0) {
 				// Removed orphelins records
 				print '<br>Some orphelins were found and modified to be parent so records are visible again for id: ';
@@ -2346,6 +2347,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		print '<br>We fixed '.$totalnb.' record(s). Some records may still be corrupted. New check may be required.';
 		return $totalnb;
 	}
+	return 0;
 }
 
 

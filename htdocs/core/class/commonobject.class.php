@@ -2982,7 +2982,7 @@ abstract class CommonObject
 				while ($row = $this->db->fetch_row($resql)) {
 					$rows[] = $row[0];
 					if (!empty($includealltree)) {
-						$rows = array_merge($rows, $this->getChildrenOfLine($row[0]), $includealltree);
+						$rows = array_merge($rows, $this->getChildrenOfLine($row[0], $includealltree));
 					}
 				}
 			}
@@ -3145,6 +3145,7 @@ abstract class CommonObject
 	 */
 	public function getRangOfLine($rowid)
 	{
+		$toReturn = 1;
 		$sql = 'SELECT rang FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 		$sql .= ' WHERE rowid ='.((int) $rowid);
 
@@ -3152,8 +3153,10 @@ abstract class CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$row = $this->db->fetch_row($resql);
-			return $row[0];
+			$toReturn = $row[0];
+			$this->db->free($resql);
 		}
+		return $toReturn;
 	}
 
 	/**

@@ -684,7 +684,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 	}
 
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 

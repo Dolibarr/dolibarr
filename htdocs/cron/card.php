@@ -330,7 +330,7 @@ if (($action == "create") || ($action == "edit")) {
 	if ($action == "edit") {
 		print dol_get_fiche_head($head, 'card', $langs->trans("CronTask"), 0, 'cron');
 	} else {
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head();
 	}
 
 	print '<table class="border centpercent">';

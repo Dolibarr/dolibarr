@@ -47,7 +47,7 @@ function dol_basename($pathfile)
  *  @param	int			$recursive		Determines whether subdirectories are searched
  *  @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/' by doing preg_quote($var,'/'), since this char is used for preg_match function,
  *                                      but must not contains the start and end '/'. Filter is checked into basename only.
- *  @param	array		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). Exclude is checked both into fullpath and into basename (So '^xxx' may exclude 'xxx/dirscanned/...' and dirscanned/xxx').
+ *  @param	array|string		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). Exclude is checked both into fullpath and into basename (So '^xxx' may exclude 'xxx/dirscanned/...' and dirscanned/xxx').
  *  @param	string		$sortcriteria	Sort criteria ('','fullname','relativename','name','date','size')
  *  @param	string		$sortorder		Sort order (SORT_ASC, SORT_DESC)
  *	@param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only, 4=Force load of perm
@@ -396,9 +396,9 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 /**
  * Fast compare of 2 files identified by their properties ->name, ->date and ->size
  *
- * @param	string 	$a		File 1
- * @param 	string	$b		File 2
- * @return 	int				1, 0, 1
+ * @param	stdClass 	$a		File 1
+ * @param 	stdClass	$b		File 2
+ * @return 	int			1, 0, 1
  */
 function dol_compare_file($a, $b)
 {
@@ -433,6 +433,7 @@ function dol_compare_file($a, $b)
 		}
 		return ($a->size < $b->size) ? $retup : $retdown;
 	}
+	return 0;
 }
 
 
@@ -1364,7 +1365,7 @@ function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub =
  *  Note that preview image of PDF files is generated when required, by dol_banner_tab() for example.
  *
  *  @param	object	$object		Object to clean
- *  @return	int					0 if error, 1 if OK
+ *  @return	int|string					0 if error, 1 if OK
  *  @see dol_convert_file()
  */
 function dol_delete_preview($object)

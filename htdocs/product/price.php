@@ -1194,7 +1194,7 @@ if ($action == 'edit_vat' && ($user->rights->produit->creer || $user->rights->se
 	print '<input type="hidden" name="action" value="update_vat">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -1222,7 +1222,7 @@ if ($action == 'edit_price' && $object->getRights()->creer) {
 		print '<input type="hidden" name="action" value="update_price">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head();
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="border centpercent">';

@@ -31,7 +31,7 @@ $statutarray = array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOn
 
 <?php
 print load_fiche_titre($langs->trans("NewProduct"), '', 'product');
-print dol_get_fiche_head('');
+print dol_get_fiche_head();
 ?>
 
 <?php dol_htmloutput_errors((is_numeric($object->error) ? '' : $object->error), $object->errors); ?>

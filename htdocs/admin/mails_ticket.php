@@ -532,7 +532,7 @@ if ($action == 'edit') {
 		print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 		print load_fiche_titre($action == 'testhtml' ? $langs->trans("DoTestSendHTML") : $langs->trans("DoTestSend"));
 
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head();
 
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';

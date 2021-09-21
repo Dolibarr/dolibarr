@@ -275,7 +275,7 @@ $text .= '<tr><td class="textpublicpayment">'.$project->note_public.'</td></tr>'
 print $text;
 print '</table>'."\n";
 
-print dol_get_fiche_head('');
+print dol_get_fiche_head();
 
 print '<table border=1  cellpadding="10" id="conferences" class="center">'."\n";
 print '<th colspan="7">'.$langs->trans("ListOfSuggestedConferences").'</th>';

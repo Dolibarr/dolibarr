@@ -921,7 +921,7 @@ if ($rowid > 0) {
 		print '<input type="hidden" name="memberlabel" id="memberlabel" value="'.dol_escape_htmltag($object->getFullName($langs)).'">';
 		print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($object->company).'">';
 
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head();
 
 		print "<table class=\"border\" width=\"100%\">\n";
 		print '<tbody>';

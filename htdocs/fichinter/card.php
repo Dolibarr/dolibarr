@@ -866,7 +866,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="socid" value='.$soc->id.'>';
 		print '<input type="hidden" name="action" value="add">';
 
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head();
 
 		print '<table class="border centpercent">';
 
@@ -1012,7 +1012,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="create">';		// We go back to create action
 
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head();
 
 		if (is_object($objectsrc)) {
 			print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';

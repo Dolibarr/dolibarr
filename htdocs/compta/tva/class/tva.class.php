@@ -825,8 +825,10 @@ class Tva extends CommonObject
 			}
 
 			$this->db->free($result);
+			return 1;
 		} else {
 			dol_print_error($this->db);
+			return 0;
 		}
 	}
 
