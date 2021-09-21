@@ -234,7 +234,7 @@ if ($object->id) {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addthumb&amp;type='.$type.'&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'), 'refresh').'&nbsp;&nbsp;</a>';
 				}
 				if ($user->rights->categorie->creer) {
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'&amp;type='.$type.'&amp;file='.urlencode($pdir.$viewfilename).'">';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&type='.$type.'&file='.urlencode($pdir.$viewfilename).'">';
 					print img_delete().'</a>';
 				}
 				if ($nbbyrow) {

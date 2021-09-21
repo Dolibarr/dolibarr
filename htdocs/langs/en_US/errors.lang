@@ -270,6 +270,7 @@ ErrorActionCommBadType=Selected event type (id: %n, code: %s) do not exist in Ev
 CheckVersionFail=Version check fail
 ErrorWrongFileName=Name of the file cannot have __SOMETHING__ in it
 ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.
+ErrorIsNotADraft=%s is not a draft
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.

@@ -316,13 +316,14 @@ if ($action == 'validate' && $permissiontovalidate) {
 			if ($tmpproposal->fetch($checked)) {
 				if ($tmpproposal->statut == 0) {
 					if ($tmpproposal->valid($user)) {
-						setEventMessage($tmpproposal->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
+						setEventMessage($langs->trans('hasBeenValidated', $tmpproposal->ref), 'mesgs');
 					} else {
 						setEventMessage($langs->trans('CantBeValidated'), 'errors');
 						$error++;
 					}
 				} else {
-					setEventMessage($tmpproposal->ref." ".$langs->trans('IsNotADraft'), 'errors');
+					$langs->load("errors");
+					setEventMessage($langs->trans('ErrorIsNotADraft', $tmpproposal->ref), 'errors');
 					$error++;
 				}
 			} else {

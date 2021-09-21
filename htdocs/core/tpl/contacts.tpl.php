@@ -303,12 +303,12 @@ foreach ($list as $entry) {
 
 	if ($permission) {
 		$href = $_SERVER["PHP_SELF"];
-		$href .= '?id='.$object->id;
+		$href .= '?id='.((int) $object->id);
 		$href .= '&action=deletecontact&token='.newToken();
-		$href .= '&lineid='.$entry->id;
+		$href .= '&lineid='.((int) $entry->id);
 
-		print "<td class='center'>";
-		print "<a href='$href'>";
+		print '<td class="center">';
+		print '<a href="'.$href.'">';
 		print img_picto($langs->trans("Unlink"), "unlink");
 		print "</a>";
 		print "</td>";
