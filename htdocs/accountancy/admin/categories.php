@@ -128,7 +128,7 @@ if (!empty($cat_id)) {
 	}
 
 	if (is_array($accountingcategory->lines_cptbk) && count($accountingcategory->lines_cptbk) > 0) {
-		print $form->multiselectarray('cpt_bk', $arraykeyvalue, GETPOST('cpt_bk', 'array'), 0, 0, null, 0, "90%");
+		print $form->multiselectarray('cpt_bk', $arraykeyvalue, GETPOST('cpt_bk', 'array'), null, null, null, null, "90%");
 		print '<br>';
 		/*print '<select class="flat minwidth200" size="8" name="cpt_bk[]" multiple>';
 		foreach ( $accountingcategory->lines_cptbk as $cpt ) {

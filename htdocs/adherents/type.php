@@ -225,7 +225,7 @@ llxHeader('', $langs->trans("MembersTypeSetup"), $help_url);
 
 // List of members type
 if (!$rowid && $action != 'create' && $action != 'edit') {
-	//print dol_get_fiche_head();
+	//print dol_get_fiche_head('');
 
 	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.vote, d.statut as status, d.morphy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
@@ -342,7 +342,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print dol_get_fiche_head();
+	print dol_get_fiche_head('');
 
 	print '<table class="border centpercent">';
 	print '<tbody>';

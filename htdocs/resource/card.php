@@ -195,7 +195,7 @@ $formresource = new FormResource($db);
 if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 	if ($action == 'create') {
 		print load_fiche_titre($title, '', 'object_resource');
-		print dol_get_fiche_head();
+		print dol_get_fiche_head('');
 	} else {
 		$head = resource_prepare_head($object);
 		print dol_get_fiche_head($head, 'resource', $title, -1, 'resource');

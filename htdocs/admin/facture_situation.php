@@ -166,12 +166,12 @@ function _updateBtn()
  * Print a On/Off button
  *
  * @param string $confkey the conf key
- * @param string $title   Title of conf
+ * @param bool   $title   Title of conf
  * @param string $desc    Description
  *
  * @return void
  */
-function _printOnOff($confkey, $title = '', $desc = '')
+function _printOnOff($confkey, $title = false, $desc = '')
 {
 	global $langs;
 
@@ -192,7 +192,7 @@ function _printOnOff($confkey, $title = '', $desc = '')
  * Print a form part
  *
  * @param string $confkey the conf key
- * @param string $title   Title of conf
+ * @param bool   $title   Title of conf
  * @param string $desc    Description of
  * @param array  $metas   html meta
  * @param string $type    type of input textarea or input
@@ -200,7 +200,7 @@ function _printOnOff($confkey, $title = '', $desc = '')
  *
  * @return void
  */
-function _printInputFormPart($confkey, $title = '', $desc = '', $metas = array(), $type = 'input', $help = false)
+function _printInputFormPart($confkey, $title = false, $desc = '', $metas = array(), $type = 'input', $help = false)
 {
 	global $langs, $conf, $db, $inputCount;
 

@@ -286,11 +286,11 @@ function dol_getshmop($memoryid)
 	$data = null;
 
 	if (empty($shmkeys[$memoryid]) || !function_exists("shmop_open")) {
-		return 0;
+		return null;
 	}
 	$shmkey = dol_getshmopaddress($memoryid);
 	if (empty($shmkey)) {
-		return 0;		// No key reserved for this memoryid, we can't cache this memoryid
+		return null;		// No key reserved for this memoryid, we can't cache this memoryid
 	}
 
 	//print 'dol_getshmop memoryid='.$memoryid." shmkey=".$shmkey."<br>\n";
@@ -304,7 +304,7 @@ function dol_getshmop($memoryid)
 		}
 		shmop_close($handle);
 	} else {
-		return 0;	// Can't open existing block, so we suppose it was not created, so nothing were cached yet for the memoryid
+		return null;	// Can't open existing block, so we suppose it was not created, so nothing were cached yet for the memoryid
 	}
 	return $data;
 }

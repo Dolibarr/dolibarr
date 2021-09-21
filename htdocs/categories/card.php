@@ -234,7 +234,7 @@ if ($user->rights->categorie->creer) {
 
 		print load_fiche_titre($langs->trans("CreateCat"));
 
-		print dol_get_fiche_head();
+		print dol_get_fiche_head('');
 
 		print '<table width="100%" class="border">';
 

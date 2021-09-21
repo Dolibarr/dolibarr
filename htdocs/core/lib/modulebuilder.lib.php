@@ -91,7 +91,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 		dol_copy($pathoffiletoedittarget, $pathoffiletoedittarget.'.back', $newmask, 1);
 
 		// Edit class files
-		$contentclass = file_get_contents(dol_osencode($pathoffiletoeditsrc));
+		$contentclass = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
 
 		// Update ->fields (add or remove entries)
 		if (count($object->fields)) {
@@ -284,7 +284,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	// Backup old file
 	dol_copy($pathoffiletoedittarget, $pathoffiletoedittarget.'.back', $newmask, 1);
 
-	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc));
+	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
 
 	$i = 0;
 	$texttoinsert = '-- BEGIN MODULEBUILDER FIELDS'."\n";
@@ -346,7 +346,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 		$pathoffiletoedittarget = $destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql'.($readdir != $destdir ? '.new' : '');
 	}
 
-	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc));
+	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
 
 	$i = 0;
 	$texttoinsert = '-- BEGIN MODULEBUILDER INDEXES'."\n";

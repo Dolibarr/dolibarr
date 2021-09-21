@@ -745,7 +745,7 @@ if ($action == 'create') {
 				print '<input type="hidden" name="entrepot_id" value="'.GETPOST('entrepot_id', 'int').'">';
 			}
 
-			print dol_get_fiche_head();
+			print dol_get_fiche_head('');
 
 			print '<table class="border centpercent">';
 

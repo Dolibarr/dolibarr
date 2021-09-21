@@ -1564,7 +1564,7 @@ if ($action == 'create' && $usercancreate) {
 		print '<input type="hidden" name="originmulticurrency_tx" value="'.$currency_tx.'">';
 	}
 
-	print dol_get_fiche_head();
+	print dol_get_fiche_head('');
 
 	print '<table class="border centpercent">';
 

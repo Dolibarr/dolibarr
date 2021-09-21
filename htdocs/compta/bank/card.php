@@ -362,7 +362,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="clos" value="0">';
 
-	print dol_get_fiche_head();
+	print dol_get_fiche_head('');
 
 	print '<table class="border centpercent tableforfieldcreate">';
 

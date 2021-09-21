@@ -987,7 +987,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 		}
 
-		print dol_get_fiche_head();
+		print dol_get_fiche_head('');
 
 		print '<table class="border centpercent">';
 		print '<tbody>';

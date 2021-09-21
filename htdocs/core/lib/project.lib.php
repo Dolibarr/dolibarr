@@ -78,7 +78,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		} else {
 			require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 			$taskstatic = new Task($db);
-			$nbTasks = count($taskstatic->getTasksArray(null, null, $project->id, 0, 0));
+			$nbTasks = count($taskstatic->getTasksArray(0, 0, $project->id, 0, 0));
 			dol_setcache($cachekey, $nbTasks, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 		}
 		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks.php?id='.((int) $project->id).($moreparam ? '&'.$moreparam : '');

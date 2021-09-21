@@ -204,7 +204,7 @@ llxHeader('', $langs->trans("AssetsTypeSetup"), $help_url);
 
 // List of asset type
 if (!$rowid && $action != 'create' && $action != 'edit') {
-	//print dol_get_fiche_head();
+	//print dol_get_fiche_head('');
 
 	$sql = "SELECT d.rowid, d.label as label, d.accountancy_code_asset, d.accountancy_code_depreciation_asset, d.accountancy_code_depreciation_expense, d.note";
 	$sql .= " FROM ".MAIN_DB_PREFIX."asset_type as d";
@@ -339,7 +339,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print dol_get_fiche_head();
+	print dol_get_fiche_head('');
 
 	print '<table class="border centpercent">';
 	print '<tbody>';

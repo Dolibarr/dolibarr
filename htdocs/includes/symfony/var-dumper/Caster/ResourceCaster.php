@@ -58,9 +58,9 @@ class ResourceCaster
 
     public static function castMysqlLink($h, array $a, Stub $stub, $isNested)
     {
-        $a['host'] = mysqli_get_host_info($h);
-        $a['protocol'] = mysqli_get_proto_info($h);
-        $a['server'] = mysqli_get_server_info($h);
+        $a['host'] = mysql_get_host_info($h);
+        $a['protocol'] = mysql_get_proto_info($h);
+        $a['server'] = mysql_get_server_info($h);
 
         return $a;
     }
