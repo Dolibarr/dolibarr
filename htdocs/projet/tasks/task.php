@@ -631,8 +631,8 @@ if ($id > 0 || !empty($ref)) {
 		if ($reshook < 0) {
 			print $formfile->showdocuments('project_task', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 		}
-		
-    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 
 		// List of actions on element
