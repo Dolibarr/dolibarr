@@ -392,13 +392,13 @@ class FormFile
 		global $form;
 
 		$reshook = 0;
-		if (is_object($hookmanager)){
+		if (is_object($hookmanager)) {
 			$parameters = array();
-+			$reshook = $hookmanager->executeHooks('showdocuments', $parameters, $object);	
+			+			$reshook = $hookmanager->executeHooks('showdocuments', $parameters, $object);
 			// May report error
 			if ($reshook < 0) {
 				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-			} 
+			}
 		}
 		// Remode default action if $reskook > 0
 		if ($reshook > 0) {
