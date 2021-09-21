@@ -623,7 +623,7 @@ if ($rowid > 0) {
 		print '</td></tr>';
 	}
 
-	// Login Dolibarr
+	// Login Dolibarr - Link to user
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans("LinkedToDolibarrUser");
@@ -641,7 +641,9 @@ if ($rowid > 0) {
 		$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'userid', '');
 	} else {
 		if ($object->user_id) {
-			$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'none');
+			$linkeduser = new User($db);
+			$linkeduser->fetch($object->user_id);
+			print $linkeduser->getNomUrl(-1);
 		} else {
 			print '<span class="opacitymedium">'.$langs->trans("NoDolibarrAccess").'</span>';
 		}
