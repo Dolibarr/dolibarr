@@ -680,6 +680,7 @@ if (empty($reshook)) {
 		if ($socid > 0) {
 			$object->socid = GETPOST('socid', 'int');
 		}
+		$selectedLines = GETPOST('toselect', 'array');
 
 		$db->begin();
 
@@ -1112,6 +1113,10 @@ if (empty($reshook)) {
 
 							$num = count($lines);
 							for ($i = 0; $i < $num; $i++) { // TODO handle subprice < 0
+								if (!in_array($lines[$i]->id, $selectedLines)) {
+									continue; // Skip unselected lines
+								}
+
 								$desc = ($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
 								$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
 
@@ -2348,9 +2353,6 @@ if ($action == 'create') {
 	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
-	print "</form>\n";
-
-
 	// Show origin lines
 	if (is_object($objectsrc)) {
 		print '<br>';
@@ -2364,6 +2366,8 @@ if ($action == 'create') {
 
 		print '</table>';
 	}
+
+	print "</form>\n";
 } else {
 	if ($id > 0 || !empty($ref)) {
 		//
