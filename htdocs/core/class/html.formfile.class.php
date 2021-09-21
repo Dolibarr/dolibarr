@@ -394,7 +394,7 @@ class FormFile
 		$reshook = 0;
 		if (is_object($hookmanager)) {
 			$parameters = array(
-				'modulepart'=>&$modulepart, 
+				'modulepart'=>&$modulepart,
 				'modulesubdir'=>&$modulesubdir,
 				'filedir'=>&$filedir,
 				'urlsource'=>&$urlsource,
