@@ -592,7 +592,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed = $user->rights->eventorganization->read; // If you can read, you can build the PDF to read content
 			$delallowed = $user->rights->eventorganization->write; // If you can create/edit, you can remove a file on card
-			
+
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('showdocuments', $parameters, $object, $action);
 			if ($reshook < 0) {

@@ -679,7 +679,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 			if ($reshook < 0) {
 				print $formfile->showdocuments('delivery', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 			}
-			
+
 			/*
 			  * Linked object block (of linked shipment)
 			  */

@@ -695,7 +695,7 @@ if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $n
 	$filedir = $diroutputmassaction;
 	$genallowed = $permissiontoread;
 	$delallowed = $permissiontoadd;
-	
+
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('showdocuments', $parameters, $object, $action);
 	if ($reshook < 0) {
