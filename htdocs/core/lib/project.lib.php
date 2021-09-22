@@ -134,7 +134,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		if (!is_null($dataretrieved)) {
 			$nbElements = $dataretrieved;
 		} else {
-			if (!empty ($conf->stock->enabled)) {
+			if (!empty($conf->stock->enabled)) {
 				$nbElements += $project->getElementCount('stock', 'entrepot', 'fk_project');
 			}
 			if (!empty($conf->propal->enabled)) {
