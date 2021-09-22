@@ -340,6 +340,7 @@ if (empty($reshook)) {
 				$eatby = "dlc".$i;
 				$sellby = "dluo".$i;
 				$batch = "batch".$i;
+				$cost_price = "cost_price".$i;
 
 				if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && $conf->global->RECEPTION_GETS_ALL_ORDER_PRODUCTS)) {
 					$ent = "entl".$i;
@@ -364,8 +365,11 @@ if (empty($reshook)) {
 					$sellby = GETPOST($sellby, 'alpha');
 					$eatbydate = str_replace('/', '-', $eatby);
 					$sellbydate = str_replace('/', '-', $sellby);
-
-					$ret = $object->addline($entrepot_id, GETPOST($idl, 'int'), GETPOST($qty, 'int'), $array_options[$i], GETPOST($comment, 'alpha'), strtotime($eatbydate), strtotime($sellbydate), GETPOST($batch, 'alpha'));
+					if (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+						$ret = $object->addline($entrepot_id, GETPOST($idl, 'int'), GETPOST($qty, 'int'), $array_options[$i], GETPOST($comment, 'alpha'), strtotime($eatbydate), strtotime($sellbydate), GETPOST($batch, 'alpha'), GETPOST($cost_price, 'double'));
+					} else {
+						$ret = $object->addline($entrepot_id, GETPOST($idl, 'int'), GETPOST($qty, 'int'), $array_options[$i], GETPOST($comment, 'alpha'), strtotime($eatbydate), strtotime($sellbydate), GETPOST($batch, 'alpha'));
+					}
 					if ($ret < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
@@ -989,6 +993,9 @@ if ($action == 'create') {
 				print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
 				print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
 				print '<td class="center">'.$langs->trans("QtyToReceive");
+				if (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION || $conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+					print '<td>'.$langs->trans("ByingPrice").'</td>';
+				}
 				if (empty($conf->productbatch->enabled)) {
 					print ' <br>(<a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
 					print ' / <a href="#" id="autoreset">'.$langs->trans("Reset").'</a>)';
@@ -1118,6 +1125,7 @@ if ($action == 'create') {
 
 					$stock = + $product->stock_warehouse[$dispatchLines[$indiceAsked]['ent']]->real; // Convert to number
 					$deliverableQty = $dispatchLines[$indiceAsked]['qty'];
+					$cost_price = $dispatchLines[$indiceAsked]['pu'];
 
 					// Quantity to send
 					print '<td class="center">';
@@ -1131,6 +1139,12 @@ if ($action == 'create') {
 						print $langs->trans("NA");
 					}
 					print '</td>';
+
+					if (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+						print '<td>';
+						print '<input name="cost_price'.$indiceAsked.'" id="cost_price'.$indiceAsked.'" value="'.$cost_price.'">';
+						print '</td>';
+					}
 
 					// Stock
 					if (!empty($conf->stock->enabled)) {
