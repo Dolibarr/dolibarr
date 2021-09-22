@@ -18,3 +18,5 @@
 
 
 ALTER TABLE llx_entrepot ADD UNIQUE INDEX uk_entrepot_label (ref, entity);
+
+ALTER TABLE llx_entrepot ADD CONSTRAINT fk_entrepot_fk_project         FOREIGN KEY (fk_project) REFERENCES llx_projet (rowid);
