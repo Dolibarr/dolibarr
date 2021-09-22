@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
@@ -54,7 +54,9 @@ $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'pricesuppliercard';
 
 $socid = GETPOST('socid', 'int');
-$cost_price = GETPOST('cost_price', 'alpha');
+$cost_price = price2num(GETPOST('cost_price', 'alpha'), '', 2);
+$pmp = price2num(GETPOST('pmp', 'alpha'), '', 2);
+
 $backtopage = GETPOST('backtopage', 'alpha');
 $error = 0;
 
@@ -147,13 +149,29 @@ if (empty($reshook)) {
 			}
 		}
 	}
+	if ($action == 'setpmp') {
+		if ($id) {
+			$result = $object->fetch($id);
+			$object->pmp = price2num($pmp);
+			$sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".((float) $object->pmp)." WHERE rowid = ".((int) $id);
+			$resql = $db->query($sql);
+			//$result = $object->update($object->id, $user);
+			if ($resql) {
+				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+				$action = '';
+			} else {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+	}
 
 	if ($action == 'confirm_remove_pf') {
 		if ($rowid) {	// id of product supplier price to remove
 			$action = '';
 			$result = $object->remove_product_fournisseur_price($rowid);
 			if ($result > 0) {
-				$db->query("DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields WHERE fk_object = $rowid");
+				$db->query("DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields WHERE fk_object = ".((int) $rowid));
 				setEventMessages($langs->trans("PriceRemoved"), null, 'mesgs');
 			} else {
 				$error++;
@@ -425,11 +443,25 @@ if ($id > 0 || $ref) {
 			print '</td></tr>';
 
 			// PMP
-			print '<tr><td class="titlefieldcreate">'.$form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")).'</td>';
+			$usercaneditpmp = 0;
+			if (!empty($conf->global->PRODUCT_CAN_EDIT_WAP)) {
+				$usercaneditpmp = $usercancreate;
+			}
+			print '<tr><td class="titlefieldcreate">';
+			$textdesc = $langs->trans("AverageUnitPricePMPDesc");
+			$text = $form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $textdesc, 1, 'help', '');
+			print $form->editfieldkey($text, 'pmp', $object->pmp, $object, $usercaneditpmp, 'amount:6');
+			print '</td><td>';
+			print $form->editfieldval($text, 'pmp', ($object->pmp > 0 ? $object->pmp : ''), $object, $usercaneditpmp, 'amount:6');
+			if ($object->pmp > 0) {
+				print ' '.$langs->trans("HT");
+			}
+			/*
+			.$form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")).'</td>';
 			print '<td>';
 			if ($object->pmp > 0) {
 				print price($object->pmp).' '.$langs->trans("HT");
-			}
+			}*/
 			print '</td>';
 			print '</tr>';
 
