@@ -492,7 +492,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setsubject') {
+	if ($action == 'setsubject' && $user->rights->ticket->write) {
 		if ($object->fetch(GETPOST('id', 'int'))) {
 			if ($action == 'setsubject') {
 				$object->subject = GETPOST('subject', 'alphanohtml');

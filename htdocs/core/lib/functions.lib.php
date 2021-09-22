@@ -8192,8 +8192,8 @@ function picto_from_langcode($codelang, $moreatt = '')
  * Return default language from country code.
  * Return null if not found.
  *
- * @param 	string 	$countrycode	Country code like 'US', 'FR', 'CA', 'ES', 'MX', ...
- * @return	string					Value of locale like 'en_US', 'fr_FR', ...
+ * @param 	string 	$countrycode	Country code like 'US', 'FR', 'CA', 'ES', 'IN', 'MX', ...
+ * @return	string					Value of locale like 'en_US', 'fr_FR', ... or null if not found
  */
 function getLanguageCodeFromCountryCode($countrycode)
 {
@@ -8243,12 +8243,12 @@ function getLanguageCodeFromCountryCode($countrycode)
 		'ar-SY',
 		'ar-TN',
 		'ar-YE',
-		'as-IN',
+		//'as-IN',		// Moved after en-IN
 		'ba-RU',
 		'be-BY',
 		'bg-BG',
 		'bn-BD',
-		'bn-IN',
+		//'bn-IN',		// Moved after en-IN
 		'bo-CN',
 		'br-FR',
 		'ca-ES',
@@ -8269,6 +8269,8 @@ function getLanguageCodeFromCountryCode($countrycode)
 		'en-GB',
 		'en-IE',
 		'en-IN',
+		'as-IN',	// as-IN must be after en-IN (en in priority if country is IN)
+		'bn-IN',	// bn-IN must be after en-IN (en in priority if country is IN)
 		'en-JM',
 		'en-MY',
 		'en-NZ',
@@ -8406,7 +8408,7 @@ function getLanguageCodeFromCountryCode($countrycode)
 			$locale_language = locale_get_primary_language($locale);
 			$locale_region = locale_get_region($locale);
 			if (strtoupper($countrycode) == $locale_region) {
-				//var_dump($locale.'-'.$locale_language.'-'.$locale_region);
+				//var_dump($locale.' - '.$locale_language.' - '.$locale_region);
 				return strtolower($locale_language).'_'.strtoupper($locale_region);
 			}
 		}
@@ -8846,7 +8848,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 				if ($newcrit != '') {
 					$numnewcrit = price2num($newcrit);
 					if (is_numeric($numnewcrit)) {
-						$newres .= ($i2 > 0 ? ' OR ' : '').$field.' '.$operator.' '.$db->sanitize($numnewcrit); // should be a numeric
+						$newres .= ($i2 > 0 ? ' OR ' : '').$field.' '.$operator.' '.((float) $numnewcrit); // should be a numeric
 					} else {
 						$newres .= ($i2 > 0 ? ' OR ' : '').'1 = 2'; // force false
 					}
@@ -8905,7 +8907,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 					$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '');
 
 					if (preg_match('/\.(id|rowid)$/', $field)) {	// Special case for rowid that is sometimes a ref so used as a search field
-						$newres .= $field." = ".(is_numeric(trim($tmpcrit)) ?trim($tmpcrit) : '0');
+						$newres .= $field." = ".(is_numeric(trim($tmpcrit)) ? ((float) trim($tmpcrit)) : '0');
 					} else {
 						$newres .= $field." LIKE '";
 

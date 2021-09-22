@@ -67,8 +67,8 @@ YourOrganizationEventConfRequestWasReceived = Your request for conference was re
 YourOrganizationEventBoothRequestWasReceived = Your request for booth was received
 EventOrganizationEmailAskConf = Request for conference
 EventOrganizationEmailAskBooth = Request for booth
-EventOrganizationEmailSubsBooth = Subscription for booth
-EventOrganizationEmailSubsEvent = Subscription for an event
+EventOrganizationEmailBoothPayment = Payment of your booth
+EventOrganizationEmailRegistrationPayment = Registration for an event
 EventOrganizationMassEmailAttendees = Communication to attendees
 EventOrganizationMassEmailSpeakers = Communication to speakers
 
@@ -130,6 +130,12 @@ DateMustBeBeforeThan=%s must be before %s
 DateMustBeAfterThan=%s must be after %s
 
 NewSubscription=Registration
+OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
+OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
+OrganizationEventPaymentOfBoothWasReceived=Your payment for your booth has been recorded
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your event registration has been recorded
+OrganizationEventBulkMailToAttendees=This is a remind about your participation in the event as an attendee
+OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
 
 #
 # Vote page
@@ -149,3 +155,7 @@ PaymentConferenceAttendee = Conference attendee payment
 PaymentBoothLocation = Booth location payment
 
 RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
+EmailAttendee=Attendee email
+EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
+ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation

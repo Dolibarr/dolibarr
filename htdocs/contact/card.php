@@ -1284,7 +1284,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if ($objsoc->id > 0) {
 				$morehtmlref .= $objsoc->getNomUrl(1, 'contact');
 			} else {
-				$morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
+				$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("ContactNotLinkedToCompany").'</span>';
 			}
 		}
 		$morehtmlref .= '</div>';

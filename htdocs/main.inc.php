@@ -1039,6 +1039,18 @@ if (!defined('NOLOGIN')) {
 		$user->rights->user->user->supprimer = 1;
 		$user->rights->user->self->creer = 1;
 		$user->rights->user->self->password = 1;
+
+		//Required if advanced permissions are used with MAIN_USE_ADVANCED_PERMS
+		if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+			$user->rights->user->user_advance->readperms = 1;
+			$user->rights->user->user_advance->write = 1;
+			$user->rights->user->self_advance->readperms = 1;
+			$user->rights->user->self_advance->writeperms = 1;
+			$user->rights->user->group_advance->read = 1;
+			$user->rights->user->group_advance->readperms = 1;
+			$user->rights->user->group_advance->write = 1;
+			$user->rights->user->group_advance->delete = 1;
+		}
 	}
 
 	/*
