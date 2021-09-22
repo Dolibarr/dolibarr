@@ -1842,14 +1842,14 @@ if ($action == 'create') {
 			 print '</tr>';
 
 			 // Amount Local Taxes
-			 if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) { 		// Localtax1
-			 	print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';
-			 	print '<td class="valuefield">'.price($object->total_localtax1, 1, '', 1, -1, -1, $conf->currency).'</td></tr>';
-			 }
-			 if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) { 		// Localtax2 IRPF
-			 	print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td>';
-			 	print '<td class="valuefield">'.price($object->total_localtax2, 1, '', 1, -1, -1, $conf->currency).'</td></tr>';
-			 }
+			if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) { 		// Localtax1
+				print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';
+				print '<td class="valuefield">'.price($object->total_localtax1, 1, '', 1, -1, -1, $conf->currency).'</td></tr>';
+			}
+			if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) { 		// Localtax2 IRPF
+				print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td>';
+				print '<td class="valuefield">'.price($object->total_localtax2, 1, '', 1, -1, -1, $conf->currency).'</td></tr>';
+			}
 
 			 print '<tr>';
 			 print '<td>'.$langs->trans("AmountTTC").'</td>';
