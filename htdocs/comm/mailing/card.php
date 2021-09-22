@@ -749,7 +749,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("CreateMailing").'"></div>';
+	print $form->buttonsSaveCancel("CreateMailing", '');
 
 	print '</form>';
 } else {

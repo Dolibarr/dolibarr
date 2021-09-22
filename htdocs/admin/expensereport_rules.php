@@ -319,7 +319,7 @@ foreach ($rules as $rule) {
 		echo '<a class="editfielda paddingright paddingleft" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$rule->id.'">'.img_edit().'</a>&nbsp;';
 		echo '<a class="paddingright paddingleft" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$rule->id.'">'.img_delete().'</a>';
 	} else {
-		echo '<input type="submit" class="button" value="'.$langs->trans('Update').'" />&nbsp;';
+		echo '<input type="submit" class="button button-edit" value="'.$langs->trans('Update').'" />&nbsp;';
 		echo '<a href="'.$_SERVER['PHP_SELF'].'" class="button button-cancel">'.$langs->trans("Cancel").'</a>';
 	}
 	echo '</td>';
