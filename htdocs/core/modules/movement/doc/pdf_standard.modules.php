@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 /**
  *	Class to build documents using ODF templates generator
  */
-class pdf_stdandard extends ModelePDFMovement
+class pdf_standard extends ModelePDFMovement
 {
 	/**
 	 * @var DoliDb Database handler

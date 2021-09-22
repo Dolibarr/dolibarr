@@ -1344,7 +1344,7 @@ class Ticket extends CommonObject
 		$label .= '<b>'.$langs->trans('TicketTrackId').':</b> '.$this->track_id.'<br>';
 		$label .= '<b>'.$langs->trans('Subject').':</b> '.$this->subject;
 
-		$url = dol_buildpath('/ticket/card.php', 1).'?id='.$this->id;
+		$url = DOL_URL_ROOT.'/ticket/card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not

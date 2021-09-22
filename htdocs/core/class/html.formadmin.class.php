@@ -73,6 +73,18 @@ class FormAdmin
 
 		$langs_available = $langs->get_available_languages(DOL_DOCUMENT_ROOT, 12, 0, $mainlangonly);
 
+		// If the language to select is not inside the list of available language and empty value is not available, we must find
+		// an alternative as the language code to pre-select (to avoid to have first element in list pre-selected).
+		if ($selected && !in_array($selected, $langs_available) && empty($showempty)) {
+			$tmparray = explode('_', $selected);
+			if (!empty($tmparray[1])) {
+				$selected = getLanguageCodeFromCountryCode($tmparray[1]);
+			}
+			if (empty($selected)) {
+				$selected = $langs->defaultlang;
+			}
+		}
+
 		$out = '';
 
 		$out .= '<select '.($multiselect ? 'multiple="multiple" ' : '').'class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.($multiselect ? '[]' : '').'"'.($disabled ? ' disabled' : '').'>';
