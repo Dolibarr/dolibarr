@@ -21,7 +21,7 @@
 /**
  *       \file       htdocs/core/class/html.formticket.class.php
  *       \ingroup    ticket
- *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
+ *       \brief      File of class to generate the form for creating a new ticket.
  */
 require_once DOL_DOCUMENT_ROOT."/core/class/html.form.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/html.formmail.class.php";
@@ -32,12 +32,12 @@ if (!class_exists('FormCompany')) {
 }
 
 /**
- * Classe permettant la generation du formulaire d'un nouveau ticket.
+ * Class to generate the form for creating a new ticket.
+ * Usage: 	$formticket = new FormTicket($db)
+ * 			$formticket->proprietes=1 ou chaine ou tableau de valeurs
+ * 			$formticket->show_form() affiche le formulaire
  *
  * @package Ticket
- * \remarks Utilisation: $formticket = new FormTicket($db)
- * \remarks $formticket->proprietes=1 ou chaine ou tableau de valeurs
- * \remarks $formticket->show_form() affiche le formulaire
  */
 class FormTicket
 {
@@ -666,7 +666,7 @@ class FormTicket
 
 		dol_syslog(get_class($this)."::selectCategoryTickets ".$selected.", ".$htmlname.", ".$filtertype.", ".$format, LOG_DEBUG);
 
-		if (empty($outputlangs)) {
+		if (is_null($outputlangs) || !is_object($outputlangs)) {
 			$outputlangs = $langs;
 		}
 		$outputlangs->load("ticket");
