@@ -33,7 +33,6 @@
  *	\brief      Page to list orders
  */
 
-
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -187,6 +186,7 @@ $arrayfields = array(
 	'c.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>105),
 	'c.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>110),
 	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>115),
+	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>0, 'position'=>116),
 	'c.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>120),
 	'c.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>125),
 	'c.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>130),
@@ -309,13 +309,14 @@ if ($action == 'validate' && $permissiontoadd) {
 						$idwarehouse = 0;
 					}
 					if ($objecttmp->valid($user, $idwarehouse)) {
-						setEventMessage($objecttmp->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
+						setEventMessage($langs->trans('hasBeenValidated', $objecttmp->ref), 'mesgs');
 					} else {
 						setEventMessage($langs->trans('CantBeValidated'), 'errors');
 						$error++;
 					}
 				} else {
-					setEventMessage($objecttmp->ref." ".$langs->trans('IsNotADraft'), 'errors');
+					$langs->load("errors");
+					setEventMessage($langs->trans('ErrorIsNotADraft', $objecttmp->ref), 'errors');
 					$error++;
 				}
 			} else {
@@ -339,13 +340,14 @@ if ($action == 'shipped' && $permissiontoadd) {
 			if ($objecttmp->fetch($checked)) {
 				if ($objecttmp->statut == 1) {
 					if ($objecttmp->cloture($user)) {
-						setEventMessage($objecttmp->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
+						setEventMessage($langs->trans('PassedInClosedStatus', $objecttmp->ref), 'mesgs');
 					} else {
-						setEventMessage($langs->trans('CantBeValidated'), 'errors');
+						setEventMessage($langs->trans('CantBeClosed'), 'errors');
 						$error++;
 					}
 				} else {
-					setEventMessage($objecttmp->ref." ".$langs->trans('IsNotADraft'), 'errors');
+					$langs->load("errors");
+					setEventMessage($langs->trans('ErrorIsNotADraft', $objecttmp->ref), 'errors');
 					$error++;
 				}
 			} else {
@@ -429,13 +431,13 @@ $sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,
 $sql .= ' u.login, u.lastname, u.firstname, u.email, u.statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender,';
 $sql .= ' c.fk_cond_reglement,c.fk_mode_reglement,c.fk_shipping_method,';
 $sql .= ' c.fk_input_reason';
-if ($search_categ_cus) {
+if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -446,7 +448,7 @@ $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
-if (!empty($search_categ_cus)) {
+if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 }
 $sql .= ', '.MAIN_DB_PREFIX.'commande as c';
@@ -470,6 +472,12 @@ if ($search_user > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
+
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 $sql .= ' WHERE c.fk_soc = s.rowid';
 $sql .= ' AND c.entity IN ('.getEntity('commande').')';
 if ($search_product_category > 0) {
@@ -479,7 +487,7 @@ if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
 }
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_ref) {
 	$sql .= natural_search('c.ref', $search_ref);
@@ -494,15 +502,12 @@ if ($search_billed != '' && $search_billed >= 0) {
 	$sql .= ' AND c.facture = '.((int) $search_billed);
 }
 if ($search_status <> '') {
-	if ($search_status < 4 && $search_status > -4) {
+	if ($search_status <= 3 && $search_status >= -1) {	// status from -1 to 3 are real status (other are virtual combination)
 		if ($search_status == 1 && empty($conf->expedition->enabled)) {
 			$sql .= ' AND c.fk_statut IN (1,2)'; // If module expedition disabled, we include order with status 'sending in process' into 'validated'
 		} else {
-			$sql .= ' AND c.fk_statut = '.$search_status; // brouillon, validee, en cours, annulee
+			$sql .= ' AND c.fk_statut = '.((int) $search_status); // brouillon, validee, en cours, annulee
 		}
-	}
-	if ($search_status == 4) {
-		$sql .= ' AND c.facture = 1'; // invoice created
 	}
 	if ($search_status == -2) {	// To process
 		//$sql.= ' AND c.fk_statut IN (1,2,3) AND c.facture = 0';
@@ -513,8 +518,6 @@ if ($search_status <> '') {
 		//$sql.= ' AND c.facture = 0'; // invoice not created
 		$sql .= ' AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))'; // validated, in process or closed but not billed
 	}
-
-
 	if ($search_status == -4) {	//  "validate and in progress"
 		$sql .= ' AND (c.fk_statut IN (1,2))'; // validated, in process
 	}
@@ -563,7 +566,7 @@ if ($search_sale > 0) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
 }
 if ($search_user > 0) {
-	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
+	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".((int) $search_user);
 }
 if ($search_total_ht != '') {
 	$sql .= natural_search('c.total_ht', $search_total_ht, 1);
@@ -578,7 +581,7 @@ if ($search_warehouse != '' && $search_warehouse > 0) {
 	$sql .= natural_search('c.fk_warehouse', $search_warehouse, 1);
 }
 if ($search_multicurrency_code != '') {
-	$sql .= ' AND c.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
+	$sql .= " AND c.multicurrency_code = '".$db->escape($search_multicurrency_code)."'";
 }
 if ($search_multicurrency_tx != '') {
 	$sql .= natural_search('c.multicurrency_tx', $search_multicurrency_tx, 1);
@@ -667,9 +670,6 @@ if ($resql) {
 	}
 	if ($search_status == 3) {
 		$title .= ' - '.$langs->trans('StatusOrderToBillShort');
-	}
-	if ($search_status == 4) {
-		$title .= ' - '.$langs->trans('StatusOrderProcessedShort');
 	}
 	if ($search_status == -1) {
 		$title .= ' - '.$langs->trans('StatusOrderCanceledShort');
@@ -801,7 +801,7 @@ if ($resql) {
 	if ($search_product_category != '') {
 		$param .= '&search_product_category='.urlencode($search_product_category);
 	}
-	if ($search_categ_cus > 0) {
+	if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 		$param .= '&search_categ_cus='.urlencode($search_categ_cus);
 	}
 	if ($show_files) {
@@ -1180,6 +1180,9 @@ if ($resql) {
 		print '<input class="flat" size="4" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'">';
 		print '</td>';
 	}
+	if (!empty($arrayfields['sale_representative']['checked'])) {
+		print '<td class="liste_titre"></td>';
+	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 	// Fields from hook
@@ -1244,10 +1247,10 @@ if ($resql) {
 			Commande::STATUS_SHIPMENTONPROCESS=>$langs->trans("StatusOrderSentShort"),
 			Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
 			-3=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort").'+'.$langs->trans("StatusOrderDelivered"),
-			-4=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort"),
+			-2=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort"),
 			Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceledShort")
 		);
-		print $form->selectarray('search_status', $liststatus, $search_status, -4, 0, 0, '', 0, 0, 0, '', 'maxwidth100', 1);
+		print $form->selectarray('search_status', $liststatus, $search_status, -5, 0, 0, '', 0, 0, 0, '', 'maxwidth100', 1);
 		print '</td>';
 	}
 	// Action column
@@ -1337,6 +1340,9 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['u.login']['checked'])) {
 		print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, 'align="center"', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['sale_representative']['checked'])) {
+		print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "", "", "$param", '', $sortfield, $sortorder);
 	}
 
 	// Extra fields
@@ -1710,6 +1716,53 @@ if ($resql) {
 				print '&nbsp;';
 			}
 			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		if (!empty($arrayfields['sale_representative']['checked'])) {
+			// Sales representatives
+			print '<td>';
+			if ($obj->socid > 0) {
+				$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
+				if ($listsalesrepresentatives < 0) {
+					dol_print_error($db);
+				}
+				$nbofsalesrepresentative = count($listsalesrepresentatives);
+				if ($nbofsalesrepresentative > 6) {
+					// We print only number
+					print $nbofsalesrepresentative;
+				} elseif ($nbofsalesrepresentative > 0) {
+					$j = 0;
+					foreach ($listsalesrepresentatives as $val) {
+						$userstatic->id = $val['id'];
+						$userstatic->lastname = $val['lastname'];
+						$userstatic->firstname = $val['firstname'];
+						$userstatic->email = $val['email'];
+						$userstatic->statut = $val['statut'];
+						$userstatic->entity = $val['entity'];
+						$userstatic->photo = $val['photo'];
+						$userstatic->login = $val['login'];
+						$userstatic->office_phone = $val['office_phone'];
+						$userstatic->office_fax = $val['office_fax'];
+						$userstatic->user_mobile = $val['user_mobile'];
+						$userstatic->job = $val['job'];
+						$userstatic->gender = $val['gender'];
+						//print '<div class="float">':
+						print ($nbofsalesrepresentative < 2) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
+						$j++;
+						if ($j < $nbofsalesrepresentative) {
+							print ' ';
+						}
+						//print '</div>';
+					}
+				}
+				//else print $langs->trans("NoSalesRepresentativeAffected");
+			} else {
+				print '&nbsp;';
+			}
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

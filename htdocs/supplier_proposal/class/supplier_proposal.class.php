@@ -929,11 +929,11 @@ class SupplierProposal extends CommonObject
 		$sql .= ", multicurrency_tx";
 		$sql .= ") ";
 		$sql .= " VALUES (";
-		$sql .= $this->socid;
+		$sql .= ((int) $this->socid);
 		$sql .= ", 0";
-		$sql .= ", ".$this->remise;
-		$sql .= ", ".($this->remise_percent ? $this->db->escape($this->remise_percent) : 'null');
-		$sql .= ", ".($this->remise_absolue ? $this->db->escape($this->remise_absolue) : 'null');
+		$sql .= ", ".((double) $this->remise);
+		$sql .= ", ".($this->remise_percent ? ((double) $this->remise_percent) : 'null');
+		$sql .= ", ".($this->remise_absolue ? ((double) $this->remise_absolue) : 'null');
 		$sql .= ", 0";
 		$sql .= ", 0";
 		$sql .= ", '".$this->db->idate($now)."'";
@@ -942,16 +942,16 @@ class SupplierProposal extends CommonObject
 		$sql .= ", '".$this->db->escape($this->note_private)."'";
 		$sql .= ", '".$this->db->escape($this->note_public)."'";
 		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
-		$sql .= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'NULL');
-		$sql .= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'NULL');
-		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
+		$sql .= ", ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : 'NULL');
+		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : 'NULL');
+		$sql .= ", ".($this->fk_account > 0 ? ((int) $this->fk_account) : 'NULL');
 		$sql .= ", ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : "null");
-		$sql .= ", ".($this->shipping_method_id > 0 ? $this->shipping_method_id : 'NULL');
-		$sql .= ", ".($this->fk_project ? $this->fk_project : "null");
-		$sql .= ", ".$conf->entity;
-		$sql .= ", ".(int) $this->fk_multicurrency;
+		$sql .= ", ".($this->shipping_method_id > 0 ? ((int) $this->shipping_method_id) : 'NULL');
+		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
+		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".((int) $this->fk_multicurrency);
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
-		$sql .= ", ".(double) $this->multicurrency_tx;
+		$sql .= ", ".((double) $this->multicurrency_tx);
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -1294,7 +1294,7 @@ class SupplierProposal extends CommonObject
 				$sql .= ' d.fk_multicurrency, d.multicurrency_code, d.multicurrency_subprice, d.multicurrency_total_ht, d.multicurrency_total_tva, d.multicurrency_total_ttc, d.fk_unit';
 				$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposaldet as d";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
-				$sql .= " WHERE d.fk_supplier_proposal = ".$this->id;
+				$sql .= " WHERE d.fk_supplier_proposal = ".((int) $this->id);
 				$sql .= " ORDER by d.rang";
 
 				$result = $this->db->query($sql);
@@ -1417,8 +1417,8 @@ class SupplierProposal extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
 			$sql .= " SET ref = '".$this->db->escape($num)."',";
-			$sql .= " fk_statut = 1, date_valid='".$this->db->idate($now)."', fk_user_valid=".$user->id;
-			$sql .= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+			$sql .= " fk_statut = 1, date_valid='".$this->db->idate($now)."', fk_user_valid=".((int) $user->id);
+			$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut = 0";
 
 			dol_syslog(get_class($this)."::valid", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1517,7 +1517,7 @@ class SupplierProposal extends CommonObject
 		if (!empty($user->rights->supplier_proposal->creer)) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal ";
 			$sql .= " SET date_livraison = ".($delivery_date != '' ? "'".$this->db->idate($delivery_date)."'" : 'null');
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {
 				$this->date_livraison = $delivery_date;
@@ -1549,7 +1549,7 @@ class SupplierProposal extends CommonObject
 			$remise = price2num($remise, 2);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal SET remise_percent = ".((float) $remise);
-			$sql .= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+			$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut = 0";
 
 			if ($this->db->query($sql)) {
 				$this->remise_percent = ((float) $remise);
@@ -1584,7 +1584,7 @@ class SupplierProposal extends CommonObject
 		if (!empty($user->rights->supplier_proposal->creer)) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal ";
 			$sql .= " SET remise_absolue = ".((float) $remise);
-			$sql .= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+			$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut = 0";
 
 			if ($this->db->query($sql)) {
 				$this->remise_absolue = $remise;
@@ -1622,7 +1622,7 @@ class SupplierProposal extends CommonObject
 			$sql .= " note_private = '".$this->db->escape($note)."',";
 		}
 		$sql .= " date_cloture=NULL, fk_user_cloture=NULL";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -1681,7 +1681,7 @@ class SupplierProposal extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
 		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($note)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1881,7 +1881,7 @@ class SupplierProposal extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
 		$sql .= " SET fk_statut = ".self::STATUS_DRAFT;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		if ($this->db->query($sql)) {
 			if (!$error) {
@@ -1946,7 +1946,7 @@ class SupplierProposal extends CommonObject
 		$sql .= " AND p.fk_soc = s.rowid";
 		$sql .= " AND p.fk_statut = c.id";
 		if (!$user->rights->societe->client->voir && !$socid) { //restriction
-			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid) {
 			$sql .= " AND s.rowid = ".((int) $socid);
@@ -2016,10 +2016,10 @@ class SupplierProposal extends CommonObject
 		if (!$error) {
 			$main = MAIN_DB_PREFIX.'supplier_proposaldet';
 			$ef = $main."_extrafields";
-			$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_supplier_proposal = ".$this->id.")";
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."supplier_proposaldet WHERE fk_supplier_proposal = ".$this->id;
+			$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_supplier_proposal = ".((int) $this->id).")";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."supplier_proposaldet WHERE fk_supplier_proposal = ".((int) $this->id);
 			if ($this->db->query($sql)) {
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."supplier_proposal WHERE rowid = ".$this->id;
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."supplier_proposal WHERE rowid = ".((int) $this->id);
 				if ($this->db->query($sqlef) && $this->db->query($sql)) {
 					// Delete linked object
 					$res = $this->deleteObjectLinked();
@@ -2220,7 +2220,7 @@ class SupplierProposal extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p";
 		if (!$user->rights->societe->client->voir && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
-			$sql .= " WHERE sc.fk_user = ".$user->id;
+			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = " AND";
 		}
 		$sql .= $clause." p.entity IN (".getEntity('supplier_proposal').")";
@@ -2231,7 +2231,7 @@ class SupplierProposal extends CommonObject
 			$sql .= " AND p.fk_statut = 2";
 		}
 		if ($user->socid) {
-			$sql .= " AND p.fk_soc = ".$user->socid;
+			$sql .= " AND p.fk_soc = ".((int) $user->socid);
 		}
 
 		$resql = $this->db->query($sql);
@@ -2377,7 +2377,7 @@ class SupplierProposal extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
 		if (!$user->rights->societe->client->voir && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-			$sql .= " WHERE sc.fk_user = ".$user->id;
+			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
 		}
 		$sql .= " ".$clause." p.entity IN (".getEntity('supplier_proposal').")";
@@ -2565,7 +2565,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ' pt.fk_multicurrency, pt.multicurrency_code, pt.multicurrency_subprice, pt.multicurrency_total_ht, pt.multicurrency_total_tva, pt.multicurrency_total_ttc, pt.fk_unit';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'supplier_proposaldet as pt';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
-		$sql .= ' WHERE pt.fk_supplier_proposal = '.$this->id;
+		$sql .= ' WHERE pt.fk_supplier_proposal = '.((int) $this->id);
 		$sql .= ' ORDER BY pt.rang ASC, pt.rowid';
 
 		dol_syslog(get_class($this).'::getLinesArray', LOG_DEBUG);
@@ -3021,40 +3021,40 @@ class SupplierProposalLine extends CommonObjectLine
 		$sql .= ' ref_fourn,';
 		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc, fk_unit)';
 		$sql .= " VALUES (".$this->fk_supplier_proposal.",";
-		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape($this->fk_parent_line)."'" : "null").",";
+		$sql .= " ".($this->fk_parent_line > 0 ? ((int) $this->db->escape($this->fk_parent_line)) : "null").",";
 		$sql .= " ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
-		$sql .= " ".($this->fk_product ? "'".$this->db->escape($this->fk_product)."'" : "null").",";
+		$sql .= " ".($this->fk_product ? ((int) $this->fk_product) : "null").",";
 		$sql .= " '".$this->db->escape($this->product_type)."',";
 		$sql .= " ".($this->date_start ? "'".$this->db->idate($this->date_start)."'" : "null").",";
 		$sql .= " ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null").",";
-		$sql .= " ".($this->fk_remise_except ? "'".$this->db->escape($this->fk_remise_except)."'" : "null").",";
-		$sql .= " ".price2num($this->qty).",";
+		$sql .= " ".($this->fk_remise_except ? ((int) $this->db->escape($this->fk_remise_except)) : "null").",";
+		$sql .= " ".price2num($this->qty, 'MS').",";
 		$sql .= " ".price2num($this->tva_tx).",";
 		$sql .= " ".price2num($this->localtax1_tx).",";
 		$sql .= " ".price2num($this->localtax2_tx).",";
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql .= " ".(!empty($this->subprice) ?price2num($this->subprice) : "null").",";
-		$sql .= " ".price2num($this->remise_percent).",";
-		$sql .= " ".(isset($this->info_bits) ? "'".$this->db->escape($this->info_bits)."'" : "null").",";
-		$sql .= " ".price2num($this->total_ht).",";
-		$sql .= " ".price2num($this->total_tva).",";
-		$sql .= " ".price2num($this->total_localtax1).",";
-		$sql .= " ".price2num($this->total_localtax2).",";
-		$sql .= " ".price2num($this->total_ttc).",";
-		$sql .= " ".(!empty($this->fk_fournprice) ? "'".$this->db->escape($this->fk_fournprice)."'" : "null").",";
-		$sql .= " ".(isset($this->pa_ht) ? "'".price2num($this->pa_ht)."'" : "null").",";
-		$sql .= ' '.$this->special_code.',';
-		$sql .= ' '.$this->rang.',';
+		$sql .= " ".(!empty($this->subprice) ? price2num($this->subprice, 'MU') : "null").",";
+		$sql .= " ".((float) $this->remise_percent).",";
+		$sql .= " ".(isset($this->info_bits) ? ((int) $this->info_bits) : "null").",";
+		$sql .= " ".price2num($this->total_ht, 'MT').",";
+		$sql .= " ".price2num($this->total_tva, 'MT').",";
+		$sql .= " ".price2num($this->total_localtax1, 'MT').",";
+		$sql .= " ".price2num($this->total_localtax2, 'MT').",";
+		$sql .= " ".price2num($this->total_ttc, 'MT').",";
+		$sql .= " ".(!empty($this->fk_fournprice) ? ((int) $this->fk_fournprice) : "null").",";
+		$sql .= " ".(isset($this->pa_ht) ? price2num($this->pa_ht, 'MU') : "null").",";
+		$sql .= ' '.((int) $this->special_code).',';
+		$sql .= ' '.((int) $this->rang).',';
 		$sql .= " '".$this->db->escape($this->ref_fourn)."'";
-		$sql .= ", ".($this->fk_multicurrency > 0 ? $this->fk_multicurrency : 'null');
+		$sql .= ", ".($this->fk_multicurrency > 0 ? ((int) $this->fk_multicurrency) : 'null');
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
-		$sql .= ", ".$this->multicurrency_subprice;
-		$sql .= ", ".$this->multicurrency_total_ht;
-		$sql .= ", ".$this->multicurrency_total_tva;
-		$sql .= ", ".$this->multicurrency_total_ttc;
-		$sql .= ", ".($this->fk_unit ? $this->fk_unit : 'null');
+		$sql .= ", ".price2num($this->multicurrency_subprice, 'CU');
+		$sql .= ", ".price2num($this->multicurrency_total_ht, 'CT');
+		$sql .= ", ".price2num($this->multicurrency_total_tva, 'CT');
+		$sql .= ", ".price2num($this->multicurrency_total_ttc, 'CT');
+		$sql .= ", ".($this->fk_unit ? ((int) $this->fk_unit) : 'null');
 		$sql .= ')';
 
 		dol_syslog(get_class($this).'::insert', LOG_DEBUG);
@@ -3100,7 +3100,7 @@ class SupplierProposalLine extends CommonObjectLine
 		$error = 0;
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."supplier_proposaldet WHERE rowid = ".$this->id;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."supplier_proposaldet WHERE rowid = ".((int) $this->id);
 		dol_syslog("SupplierProposalLine::delete", LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			// Remove extrafields
@@ -3248,7 +3248,7 @@ class SupplierProposalLine extends CommonObjectLine
 		$sql .= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
 		$sql .= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
 
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -3296,7 +3296,7 @@ class SupplierProposalLine extends CommonObjectLine
 		$sql .= " total_ht=".price2num($this->total_ht, 'MT');
 		$sql .= ",total_tva=".price2num($this->total_tva, 'MT');
 		$sql .= ",total_ttc=".price2num($this->total_ttc, 'MT');
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog("SupplierProposalLine::update_total", LOG_DEBUG);
 

@@ -64,5 +64,5 @@ InterLineDuration=ライン持続時間出張
 InterLineDesc=行記述の出張
 RepeatableIntervention=出張のテンプレート
 ToCreateAPredefinedIntervention=事前定義された出張または定期的な出張を作成 には、共通の出張を作成し、それを出張テンプレートに変換 
-Reopen=再開 
 ConfirmReopenIntervention=出張 <b>%s </b> を開いてよいか？
+GenerateInter=出張を生成する

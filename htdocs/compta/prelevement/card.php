@@ -200,7 +200,8 @@ if ($id > 0 || $ref) {
 
 	//print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
 	print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
-	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
+
+	print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($object->amount).'</span></td></tr>';
 
 	// Status
 	/*
@@ -413,7 +414,7 @@ if ($id > 0 || $ref) {
 			print "<td>";
 			print $ligne->LibStatut($obj->statut, 2);
 			print "&nbsp;";
-			print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'&type='.$object->type.'&token='.newtoken().'">';
+			print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'&type='.$object->type.'&token='.newToken().'">';
 			print sprintf("%06s", $obj->rowid);
 			print '</a></td>';
 
@@ -434,7 +435,7 @@ if ($id > 0 || $ref) {
 					if ($obj->statut == 2) {
 						if ($user->rights->prelevement->bons->credit) {
 							//print '<a class="butActionDelete" href="line.php?action=rejet&id='.$obj->rowid.'">'.$langs->trans("StandingOrderReject").'</a>';
-							print '<a href="line.php?action=rejet&type='.$object->type.'&id='.$obj->rowid.'&token='.newtoken().'">'.$langs->trans("StandingOrderReject").'</a>';
+							print '<a href="line.php?action=rejet&type='.$object->type.'&id='.$obj->rowid.'&token='.newToken().'">'.$langs->trans("StandingOrderReject").'</a>';
 						} else {
 							//print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("StandingOrderReject").'</a>';
 						}

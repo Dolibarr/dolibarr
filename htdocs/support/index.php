@@ -40,14 +40,15 @@ if (!defined('DOL_URL_ROOT')) {
 
 $langs->loadLangs(array("other", $langs->load("help")));
 
+
 /*
  * View
  */
 
 pHeader($langs->trans("DolibarrHelpCenter"), $_SERVER["PHP_SELF"]);
 
-print '<br>'.$langs->trans("HelpCenterDesc1")."<br>\n";
-print $langs->trans("HelpCenterDesc2")."<br>\n";
+print '<br><span class="opacitymedium">'.$langs->trans("HelpCenterDesc1")."<br>\n";
+print $langs->trans("HelpCenterDesc2")."</span><br>\n";
 
 print '<br>';
 
@@ -80,12 +81,14 @@ print '<table class="login tablesupport" width="100%">';
 print '<tr class="title" valign="top">';
 print '<td width="100%" align="left" valign="middle">';
 
-print '<table summary="who"><tr><td>'.img_picto('', 'who.png', 'class="valigntextbottom"', 1).'</td><td>';
+print '<table summary="who"><tr><td>'.img_picto('', 'who.png', 'class="valignmiddle"', 1).'</td><td>';
 
 print '<font style="'.$style1.'">'.$langs->trans("CommunitySupport").'</font>';
-print '<br>'.$langs->trans("TypeOfSupport").': <font style="'.$style2.'">'.$langs->trans("TypeSupportCommunauty").'</font>';
-print '<br>'.$langs->trans("TypeOfHelp").'/'.$langs->trans("Efficiency").'/'.$langs->trans("Price").': ';
-print $langs->trans("TypeHelpDev").'/'.img_picto_common('', 'redstar', 'class="valigntextbottom"', 1).img_picto_common('', 'redstar', 'class="valigntextbottom"', 1).'/'.img_picto_common('', 'star', 'class="valigntextbottom"', 1).img_picto_common('', 'star', 'class="valigntextbottom"', 1).img_picto_common('', 'star', 'class="valigntextbottom"', 1).img_picto_common('', 'star', 'class="valigntextbottom"', 1);
+print '<span class="small">';
+print '<br><span class="opacitymedium">'.$langs->trans("TypeOfSupport").':</span> <font style="'.$style2.'">'.$langs->trans("TypeSupportCommunauty").'</font>';
+print '<br><span class="opacitymedium">'.$langs->trans("TypeOfHelp").'/'.$langs->trans("Efficiency").'/'.$langs->trans("Price").':</span> ';
+print $langs->trans("TypeHelpDev").'/'.img_picto_common('', 'redstar', 'class="valignmiddle"', 1).img_picto_common('', 'redstar', 'class="valignmiddle"', 1).'/'.img_picto_common('', 'star', 'class="valignmiddle"', 1).img_picto_common('', 'star', 'class="valignmiddle"', 1).img_picto_common('', 'star', 'class="valignmiddle"', 1).img_picto_common('', 'star', 'class="valignmiddle"', 1);
+print '</span>';
 
 print '</td></tr></table>';
 print '</td>';
@@ -142,12 +145,14 @@ print '<table class="login tablesupport" width="100%">';
 print '<tr class="title" valign="top">';
 print '<td width="100%" align="left" valign="middle">';
 
-print '<table summary="mail"><tr><td>'.img_picto('', 'mail.png', 'class="valigntextbottom"', 1).'</td><td>';
+print '<table summary="mail"><tr><td>'.img_picto('', 'mail.png', 'class="valignmiddle"', 1).'</td><td>';
 
 print '<font style="'.$style1.'">'.$langs->trans("EMailSupport").'</font>';
-print '<br>'.$langs->trans("TypeOfSupport").': <font style="'.$style2.'">'.$langs->trans("TypeSupportCommercial").'</font>';
-print '<br>'.$langs->trans("TypeOfHelp").'/'.$langs->trans("Efficiency").'/'.$langs->trans("Price").': ';
-print $langs->trans("TypeHelpOnly").'/'.img_picto_common('', 'redstar', 'class="valigntextbottom"', 1).img_picto_common('', 'redstar', 'class="valigntextbottom"', 1).img_picto_common('', 'redstar', 'class="valigntextbottom"', 1).'/'.img_picto_common('', 'star', 'class="valigntextbottom"', 1).img_picto_common('', 'star', 'class="valigntextbottom"', 1);
+print '<span class="small">';
+print '<br><span class="opacitymedium">'.$langs->trans("TypeOfSupport").':</span> <font style="'.$style2.'">'.$langs->trans("TypeSupportCommercial").'</font>';
+print '<br><span class="opacitymedium">'.$langs->trans("TypeOfHelp").'/'.$langs->trans("Efficiency").'/'.$langs->trans("Price").':</span> ';
+print $langs->trans("TypeHelpOnly").'/'.img_picto_common('', 'redstar', 'class="valignmiddle"', 1).img_picto_common('', 'redstar', 'class="valignmiddle"', 1).img_picto_common('', 'redstar', 'class="valignmiddle"', 1).'/'.img_picto_common('', 'star', 'class="valignmiddle"', 1).img_picto_common('', 'star', 'class="valignmiddle"', 1);
+print '</span>';
 
 print '</td></tr></table>';
 
@@ -157,7 +162,7 @@ $urlwiki = 'https://partners.dolibarr.org';
 print '<td align="center" valign="top">';
 print '<table class="nocellnopadd">';
 print '<tr><td align="center">';
-print '<br>'.$langs->trans("ToSeeListOfAvailableRessources").'<br>';
+print '<br><span class="opacitymedium">'.$langs->trans("ToSeeListOfAvailableRessources").'</span><br>';
 print '<b><a href="'.$urlwiki.'">'.$langs->trans("ClickHere").'</a></b><br>';
 print '<br><br>';
 print '<br><br>';
@@ -175,13 +180,15 @@ print '<table class="login tablesupport" width="100%">';
 print '<tr class="title">';
 print '<td width="100%" align="left" valign="middle">';
 
-print '<table summary="special"><tr><td>'.img_picto('', 'pagemaster.png', 'class="valigntextbottom"', 1).'</td><td>';
+print '<table summary="special"><tr><td>'.img_picto('', 'pagemaster.png', 'class="valignmiddle"', 1).'</td><td>';
 
 print '<font style="'.$style1.'">'.$langs->trans("OtherSupport").'</font>';
-print '<br>'.$langs->trans("TypeOfSupport").': <font style="'.$style2.'">'.$langs->trans("TypeSupportCommercial").'</font>';
+print '<span class="small">';
+print '<br><span class="opacitymedium">'.$langs->trans("TypeOfSupport").':</span> <font style="'.$style2.'">'.$langs->trans("TypeSupportCommercial").'</font>';
 //print '<br>'.$langs->trans("Efficiency").'/'.$langs->trans("Price").': '.img_picto_common('','redstar').img_picto_common('','redstar').img_picto_common('','redstar').' / '.img_picto_common('','star');
-print '<br>'.$langs->trans("TypeOfHelp").'/'.$langs->trans("Efficiency").'/'.$langs->trans("Price").': ';
+print '<br><span class="opacitymedium">'.$langs->trans("TypeOfHelp").'/'.$langs->trans("Efficiency").'/'.$langs->trans("Price").':</span> ';
 print $langs->trans("TypeHelpDevForm").'/?/?';
+print '</span>';
 
 print '</td></tr></table>';
 
@@ -191,7 +198,7 @@ $urlwiki = 'https://partners.dolibarr.org';
 print '<td align="center" valign="top">';
 print '<table class="nocellnopadd">';
 print '<tr><td align="center">';
-print '<br>'.$langs->trans("ToSeeListOfAvailableRessources").'<br>';
+print '<br><span class="opacitymedium">'.$langs->trans("ToSeeListOfAvailableRessources").'</span><br>';
 print '<b><a href="'.$urlwiki.'">'.$langs->trans("ClickHere").'</a></b><br>';
 print '<br><br>';
 print '<br><br>';

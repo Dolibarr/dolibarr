@@ -184,7 +184,7 @@ if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newtoken().'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print dol_get_fiche_head($head, 'members', $langs->trans("LDAPSetup"), -1);
@@ -433,7 +433,7 @@ print info_admin($langs->trans("LDAPDescValues"));
 
 print dol_get_fiche_end();
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+print $form->buttonsSaveCancel("Modify", '');
 
 print '</form>';
 

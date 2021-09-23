@@ -77,6 +77,10 @@ YourPartnershipRefusedContent=Сообщаем вам, что ваш запро�
 YourPartnershipAcceptedContent=Сообщаем вам, что ваш запрос на партнерство принят.
 YourPartnershipCanceledContent=Сообщаем вам, что ваше партнерство было расторгнуто.
 
+CountLastUrlCheckError=Number of errors for last URL check
+LastCheckBacklink=Date of last URL check
+ReasonDeclineOrCancel=Причина отклонения
+
 #
 # Status
 #

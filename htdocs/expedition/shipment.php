@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012-2015	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Philippe Grand          <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -293,7 +293,7 @@ if ($id > 0 || !empty($ref)) {
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->commande->creer) {
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 				}
 				if ($action == 'classify') {
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -379,7 +379,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdatedelivery">';
 			print $form->selectDate($object->delivery_date ? $object->delivery_date : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
-			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
 			print dol_print_date($object->delivery_date, 'dayhour');
@@ -624,6 +624,7 @@ if ($id > 0 || !empty($ref)) {
 		$sql .= ' p.rowid as prodid, p.label as product_label, p.entity, p.ref, p.fk_product_type as product_type, p.description as product_desc,';
 		$sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units,';
 		$sql .= ' p.surface, p.surface_units, p.volume, p.volume_units';
+		$sql .= ', p.tobatch, p.tosell, p.tobuy, p.barcode';
 		$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 		$sql .= " WHERE cd.fk_commande = ".((int) $object->id);
@@ -711,6 +712,10 @@ if ($id > 0 || !empty($ref)) {
 						$product_static->id = $objp->fk_product;
 						$product_static->ref = $objp->ref;
 						$product_static->entity = $objp->entity;
+						$product_static->status = $objp->tosell;
+						$product_static->status_buy = $objp->tobuy;
+						$product_static->status_batch = $objp->tobatch;
+						$product_static->barcode = $objp->barcode;
 
 						$product_static->weight = $objp->weight;
 						$product_static->weight_units = $objp->weight_units;

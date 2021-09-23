@@ -79,9 +79,9 @@ If you don't have time to install it yourself, you can try some commercial 'read
 
 ## UPGRADING
 
-Dolibarr supports upgrading usually wihtout the need for any (commercial) support (depending on if you use any commercial extensions) and supports upgrading all the way from any version after 2.8 without breakage. This is unique in the ERP ecosystem and a benefit our users highly appreciate!
+Dolibarr supports upgrading, usually without the need for any (commercial) support (depending on if you use any commercial extensions). It supports upgrading all the way from any version after 2.8 without breakage. This is unique in the ERP ecosystem and a benefit our users highly appreciate!
  
-- At first make a backup of your Dolibarr files & than [see](https://wiki.dolibarr.org/index.php/Installation_-_Upgrade#Upgrade_Dolibarr)
+- At first make a backup of your Dolibarr files & then [see](https://wiki.dolibarr.org/index.php/Installation_-_Upgrade#Upgrade_Dolibarr)
 - Check that your installed PHP version is supported by the new version [see PHP support](./doc/phpmatrix.md).
 - Overwrite all old files from 'dolibarr' directory with files provided into the new version's package.
 - At first next access, Dolibarr will redirect you to the "install/" page to follow the upgrade process.

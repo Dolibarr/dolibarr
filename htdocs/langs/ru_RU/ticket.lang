@@ -55,7 +55,7 @@ TypeContact_ticket_internal_SUPPORTTEC=Назначенный пользоват
 TypeContact_ticket_external_SUPPORTCLI=Контакты с клиентами / отслеживание инцидентов
 TypeContact_ticket_external_CONTRIBUTOR=Внешний участник
 
-OriginEmail=Reporter Email
+OriginEmail=Электронная почта репортера
 Notify_TICKET_SENTBYMAIL=Отправить билетное сообщение по электронной почте
 
 # Status
@@ -66,7 +66,7 @@ NeedMoreInformation=Жду отзывов репортера
 NeedMoreInformationShort=Жду отзывов
 Answered=Ответил
 Waiting=Ожидание
-Closed=Закрыты
+SolvedClosed=Solved
 Deleted=Удалено
 
 # Dict
@@ -186,9 +186,11 @@ TicketSeverity=Строгость
 ShowTicket=Посмотреть тикет
 RelatedTickets=Связанные тикеты
 TicketAddIntervention=СОздать посредничество
-CloseTicket=Закрыть тикет
-CloseATicket=Закрыть тикет
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Подтвердить закрытие тикета
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Подтвердите удаление тикета
 TicketDeletedSuccess=Тикет успешно удален
 TicketMarkedAsClosed=Тикет отмечен как закрытый

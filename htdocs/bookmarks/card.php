@@ -40,7 +40,7 @@ $action = GETPOST("action", "alpha");
 $title = (string) GETPOST("title", "alpha");
 $url = (string) GETPOST("url", "alpha");
 $urlsource = GETPOST("urlsource", "alpha");
-$target = GETPOST("target", "alpha");
+$target = GETPOST("target", "int");
 $userid = GETPOST("userid", "int");
 $position = GETPOST("position", "int");
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -169,7 +169,7 @@ if ($action == 'create') {
 	// Target
 	print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
 	$liste = array(0=>$langs->trans("ReplaceWindow"), 1=>$langs->trans("OpenANewWindow"));
-	print $form->selectarray('target', $liste, 1);
+	print $form->selectarray('target', $liste, GETPOSTISSET('target') ? GETPOST('target', 'int') : 1);
 	print '</td><td class="hideonsmartphone"><span class="opacitymedium">'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</span></td></tr>';
 
 	// Owner
@@ -301,7 +301,8 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	print dol_get_fiche_end();
 
 	if ($action == 'edit') {
-		print '<div align="center"><input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+		print $form->buttonsSaveCancel();
+
 		print '</form>';
 	}
 
@@ -312,12 +313,12 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 
 	// Edit
 	if ($user->rights->bookmark->creer && $action != 'edit') {
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit&amp;token='.newToken().'">'.$langs->trans("Edit").'</a>'."\n";
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Edit").'</a>'."\n";
 	}
 
 	// Remove
 	if ($user->rights->bookmark->supprimer && $action != 'edit') {
-		print '<a class="butActionDelete" href="list.php?bid='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a>'."\n";
+		print '<a class="butActionDelete" href="list.php?bid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>'."\n";
 	}
 
 	print '</div>';

@@ -999,11 +999,11 @@ if ($action == 'create') {
 				}
 				if (!empty($conf->productbatch->enabled)) {
 					print '<td class="left">'.$langs->trans("batch_number").'</td>';
-					if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-						print '<td class="left">'.$langs->trans("EatByDate").'</td>';
-					}
 					if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 						print '<td class="left">'.$langs->trans("SellByDate").'</td>';
+					}
+					if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+						print '<td class="left">'.$langs->trans("EatByDate").'</td>';
 					}
 				}
 				print "</tr>\n";
@@ -1153,12 +1153,12 @@ if ($action == 'create') {
 					if (!empty($conf->productbatch->enabled)) {
 						if (!empty($product->status_batch)) {
 							print '<td><input name="batch'.$indiceAsked.'" value="'.$dispatchLines[$indiceAsked]['lot'].'"></td>';
-							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 								print '<td class="nowraponall">';
 								print $form->selectDate($dispatchLines[$indiceAsked]['DLC'], 'dlc'.$indiceAsked, '', '', 1, "");
 								print '</td>';
 							}
-							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 								print '<td class="nowraponall">';
 								print $form->selectDate($dispatchLines[$indiceAsked]['DLUO'], 'dluo'.$indiceAsked, '', '', 1, "");
 								print '</td>';
@@ -1199,11 +1199,7 @@ if ($action == 'create') {
 
 			print '<br>';
 
-			print '<div class="center">';
-			print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
-			print '&nbsp; ';
-			print '<input type="'.($backtopage ? "submit" : "button").'" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
-			print '</div>';
+			print $form->buttonsSaveCancel("Create");
 
 			print '</form>';
 
@@ -1321,7 +1317,7 @@ if ($action == 'create') {
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if (0) {    // Do not change on reception
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 				}
 				if ($action == 'classify') {
 					// $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -1329,7 +1325,7 @@ if ($action == 'create') {
 					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 					$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-					$morehtmlref .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+					$morehtmlref .= '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 					$morehtmlref .= '</form>';
 				} else {
 					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
@@ -1407,7 +1403,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate_livraison">';
 			print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
-			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
 			print $object->date_delivery ? dol_print_date($object->date_delivery, 'dayhour') : '&nbsp;';
@@ -1544,7 +1540,7 @@ if ($action == 'create') {
 			if ($user->admin) {
 				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			}
-			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
 			if ($object->shipping_method_id > 0) {
@@ -1829,14 +1825,14 @@ if ($action == 'create') {
 						print '<td>'.$formproduct->selectWarehouses($lines[$i]->fk_entrepot, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1).'</td>';
 						// Batch number managment
 						if ($conf->productbatch->enabled && !empty($lines[$i]->product->status_batch)) {
-							print '<td class="nowraponall"><input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"></br>';
-							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-								print $langs->trans('EatByDate').' : ';
-								print $form->selectDate($lines[$i]->eatby, 'dlc'.$line_id, '', '', 1, "").'</br>';
-							}
+							print '<td class="nowraponall"><input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"><br>';
 							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 								print $langs->trans('SellByDate').' : ';
-								print $form->selectDate($lines[$i]->sellby, 'dluo'.$line_id, '', '', 1, "");
+								print $form->selectDate($lines[$i]->sellby, 'dlc'.$line_id, '', '', 1, "").'</br>';
+							}
+							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+								print $langs->trans('EatByDate').' : ';
+								print $form->selectDate($lines[$i]->eatby, 'dluo'.$line_id, '', '', 1, "");
 							}
 							print '</td>';
 						}
@@ -1924,10 +1920,10 @@ if ($action == 'create') {
 			} elseif ($object->statut == Reception::STATUS_DRAFT) {
 				// edit-delete buttons
 				print '<td class="linecoledit center">';
-				print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;token='.newToken().'&amp;lineid='.$lines[$i]->id.'">'.img_edit().'</a>';
+				print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&lineid='.$lines[$i]->id.'">'.img_edit().'</a>';
 				print '</td>';
 				print '<td class="linecoldelete" width="10">';
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deleteline&amp;token='.newToken().'&amp;lineid='.$lines[$i]->id.'">'.img_delete().'</a>';
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteline&token='.newToken().'&lineid='.$lines[$i]->id.'">'.img_delete().'</a>';
 				print '</td>';
 
 				// Display lines extrafields
@@ -1994,9 +1990,9 @@ if ($action == 'create') {
 			// 0=draft, 1=validated, 2=billed, we miss a status "delivered" (only available on order)
 			if ($object->statut == Reception::STATUS_CLOSED && $user->rights->reception->creer) {
 				if (!empty($conf->facture->enabled) && !empty($conf->global->WORKFLOW_BILL_ON_RECEPTION)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ClassifyUnbilled").'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("ClassifyUnbilled").'</a>';
 				} else {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("ReOpen").'</a>';
 				}
 			}
 
@@ -2030,12 +2026,12 @@ if ($action == 'create') {
 						$label = "ClassifyBilled";
 						$paramaction = 'classifybilled';
 					}
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action='.$paramaction.'">'.$langs->trans($label).'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action='.$paramaction.'">'.$langs->trans($label).'</a>';
 				}
 			}
 
 			if ($user->rights->reception->supprimer) {
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>';
 			}
 		}
 

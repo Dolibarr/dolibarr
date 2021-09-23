@@ -436,10 +436,8 @@ if ($action == 'create') {
 
 		print dol_get_fiche_end();
 
-		print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-		print '</div>';
+		print $form->buttonsSaveCancel("Create");
+
 		print "</form>\n";
 	} else {
 		dol_print_error('', "Error, no fichinter ".$object->id);
@@ -457,11 +455,9 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
 	print '<input type="hidden" name="action" value="createfrommodel">';
 	print '<input type="hidden" name="id" value="'.$id.'">';
-	print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel("CreateDraftIntervention", '');
 
 	print '</form>';
 } else {
@@ -494,7 +490,7 @@ if ($action == 'create') {
 				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 				if ($user->rights->ficheinter->creer) {
 					if ($action != 'classify') {
-						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">';
+						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">';
 						$morehtmlref .= img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 					}
 					if ($action == 'classify') {
@@ -605,7 +601,7 @@ if ($action == 'create') {
 				print '<input type="text" name="frequency" value="'.$object->frequency.'" size="5">&nbsp;';
 				print $form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), ($object->unit_frequency ? $object->unit_frequency : 'm'));
 				print '</td>';
-				print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+				print '<td class="left"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 				print '</tr></table></form>';
 			} else {
 				if ($object->frequency > 0) {
@@ -774,7 +770,7 @@ if ($action == 'create') {
 			$sql .= " AND s.rowid = ".((int) $socid);
 		}
 		if (!$user->rights->societe->client->voir && !$socid) {
-			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($search_ref) {
 			$sql .= natural_search('f.titre', $search_ref);

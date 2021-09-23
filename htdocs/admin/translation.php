@@ -101,6 +101,10 @@ if ($action == 'setMAIN_ENABLE_OVERWRITE_TRANSLATION') {
 }
 
 if ($action == 'update') {
+	if ($transkey == '') {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Key")), null, 'errors');
+		$error++;
+	}
 	if ($transvalue == '') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NewTranslationStringToShow")), null, 'errors');
 		$error++;
@@ -108,7 +112,7 @@ if ($action == 'update') {
 	if (!$error) {
 		$db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."overwrite_trans set transvalue = '".$db->escape($transvalue)."' WHERE rowid = ".GETPOST('rowid', 'int');
+		$sql = "UPDATE ".MAIN_DB_PREFIX."overwrite_trans set transkey = '".$db->escape($transkey)."', transvalue = '".$db->escape($transvalue)."' WHERE rowid = ".((int) GETPOST('rowid', 'int'));
 		$result = $db->query($sql);
 		if ($result > 0) {
 			$db->commit();
@@ -146,7 +150,7 @@ if ($action == 'add') {
 	if (!$error) {
 		$db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."overwrite_trans(lang, transkey, transvalue, entity) VALUES ('".$db->escape($langcode)."','".$db->escape($transkey)."','".$db->escape($transvalue)."', ".$db->escape($conf->entity).")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."overwrite_trans(lang, transkey, transvalue, entity) VALUES ('".$db->escape($langcode)."','".$db->escape($transkey)."','".$db->escape($transvalue)."', ".((int) $conf->entity).")";
 		$result = $db->query($sql);
 		if ($result > 0) {
 			$db->commit();
@@ -324,7 +328,13 @@ if ($mode == 'overwrite') {
 			print '<tr class="oddeven">';
 
 			print '<td>'.$obj->lang.'</td>'."\n";
-			print '<td>'.$obj->transkey.'</td>'."\n";
+			print '<td>';
+			if ($action == 'edit' && $obj->rowid == GETPOST('rowid', 'int')) {
+				print '<input type="text" class="quatrevingtpercent" name="transkey" value="'.dol_escape_htmltag($obj->transkey).'">';
+			} else {
+				print $obj->transkey;
+			}
+			print '</td>'."\n";
 
 			// Value
 			print '<td class="small">';
@@ -453,6 +463,8 @@ if ($mode == 'searchkey') {
 	}
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
+	$massactionbutton = '';
+
 	print '<input type="hidden" id="action" name="action" value="search">';
 	print '<input type="hidden" id="mode" name="mode" value="'.$mode.'">';
 
@@ -489,7 +501,7 @@ if ($mode == 'searchkey') {
 	//}
 	print '</td>';
 	// Action column
-	print '<td class="nowraponall">';
+	print '<td class="right nowraponall">';
 	$searchpicto = $form->showFilterAndCheckAddButtons(!empty($massactionbutton) ? 1 : 0, 'checkforselect', 1);
 	print $searchpicto;
 	print '</td>';
@@ -541,7 +553,7 @@ if ($mode == 'searchkey') {
 				print $form->textwithpicto('', $htmltext, 1, 'info');
 			} elseif (!empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) {
 				//print $key.'-'.$val;
-				print '<a class="reposition paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=overwrite&langcode='.urlencode($langcode).'&transkey='.urlencode($key).'">'.img_edit_add($langs->trans("Overwrite")).'</a>';
+				print '<a class="reposition paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=overwrite&langcode='.urlencode($langcode).'&transkey='.urlencode($key).'">'.img_edit_add($langs->trans("TranslationOverwriteKey")).'</a>';
 			}
 
 			if (!empty($conf->global->MAIN_FEATURES_LEVEL)) {

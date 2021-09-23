@@ -245,11 +245,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button button-save" name="submit" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; &nbsp; &nbsp; ';
-	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print '</form>';
 	print "\n";
@@ -398,7 +394,7 @@ if ($rowid && $action != 'edit') {
 	/*
 	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 	$formactions = new FormActions($db);
-	$somethingshown = $formactions->showactions($object, 'invoice', $socid, 1);
+	$somethingshown = $formactions->showactions($object, $object->element, $socid, 1);
 	*/
 
 	print '</div></div></div>';

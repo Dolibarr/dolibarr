@@ -119,6 +119,8 @@ EventType = Tip eveniment
 LabelOfBooth=Etichetă stand
 LabelOfconference=Etichetă conferinţă
 ConferenceIsNotConfirmed=Înscrierea nu este disponibilă, conferinţa nu este confirmată încă
+DateMustBeBeforeThan=%s trebuie să fie înainte de %s
+DateMustBeAfterThan=%s trebuie să fie după %s
 
 #
 # Vote page

@@ -1147,3 +1147,7 @@ RecordsEnabled=%s enregistrement(s) activé(s)
 RecordsDisabled=%s enregistrement(s) désactivé(s)
 RecordEnabled=Enregistrement activé
 RecordDisabled=Enregistrement désactivé
+ConfirmMassLeaveApprovalQuestion=Êtes-vous sur de vouloir approuver les %s enregistrement(s) sélectionné(s) ?
+ConfirmMassLeaveApproval=Confirmation d'approbation de congé en masse
+RecordAproved=Enregistrement approuvé
+RecordsApproved=%s enregistrement(s) approuvé(s)

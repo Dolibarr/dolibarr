@@ -588,6 +588,11 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
 
+	$disabled_modules = array();
+	if (!empty($_SESSION["disablemodules"])) {
+		$disabled_modules = explode(',', $_SESSION["disablemodules"]);
+	}
+
 	// Show list of modules
 	$oldfamily = '';
 	$foundoneexternalmodulewithupdate = 0;
@@ -613,6 +618,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			continue;
 		}
 
+		$modulenameshort = strtolower(preg_replace('/^mod/i', '', get_class($objMod)));
 		$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
 
 		// Check filters
@@ -754,6 +760,11 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		$codeenabledisable = '';
 		$codetoconfig = '';
 
+		// Force disable of module disabled into session (for demo for example)
+		if (in_array($modulenameshort, $disabled_modules)) {
+			$objMod->disabled = true;
+		}
+
 		// Activate/Disable and Setup (2 columns)
 		if (!empty($conf->global->$const_name)) {	// If module is already activated
 			// Set $codeenabledisable
@@ -761,6 +772,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			if (!empty($arrayofwarnings[$modName])) {
 				$codeenabledisable .= '<!-- This module has a warning to show when we activate it (note: your country is '.$mysoc->country_code.') -->'."\n";
 			}
+
 			if (!empty($objMod->disabled)) {
 				$codeenabledisable .= $langs->trans("Disabled");
 			} elseif (!empty($objMod->always_enabled) || ((!empty($conf->multicompany->enabled) && $objMod->core_enabled) && ($user->entity || $conf->entity != 1))) {
@@ -789,16 +801,16 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			if (!empty($objMod->config_page_url) && !$disableSetup) {
 				$backtourlparam = '';
 				if ($search_keyword != '') {
-					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_keyword='.$search_keyword; // No urlencode here, done later
+					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_keyword='.urlencode($search_keyword); // No urlencode here, done later
 				}
 				if ($search_nature > -1) {
-					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_nature='.$search_nature; // No urlencode here, done later
+					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_nature='.urlencode($search_nature); // No urlencode here, done later
 				}
 				if ($search_version > -1) {
-					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_version='.$search_version; // No urlencode here, done later
+					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_version='.urlencode($search_version); // No urlencode here, done later
 				}
 				if ($search_status > -1) {
-					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_status='.$search_status; // No urlencode here, done later
+					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_status='.urlencode($search_status); // No urlencode here, done later
 				}
 				$backtourl = $_SERVER["PHP_SELF"].$backtourlparam;
 
@@ -866,7 +878,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 					}
 				}
 				$codeenabledisable .= '<!-- Message to show: '.$warningmessage.' -->'."\n";
-				$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=set&amp;value='.$modName.'&amp;mode='.$mode.$param.'"';
+				$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&token='.newToken().'&module_position='.$module_position.'&action=set&token='.newtoken().'&value='.$modName.'&mode='.$mode.$param.'"';
 				if ($warningmessage) {
 					$codeenabledisable .= ' onclick="return confirm(\''.dol_escape_js($warningmessage).'\');"';
 				}
@@ -1013,16 +1025,16 @@ if ($mode == 'marketplace') {
 
 		print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="divsearchfield">';
 
-		print '<form method="POST" class="centpercent" id="searchFormList" action="'.$dolistore->url.'">';
+		print '<form method="POST" class="centpercent" id="searchFormList" action="'.urlencode($dolistore->url).'">';
 		?>
 					<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 					<input type="hidden" name="mode" value="marketplace">
 					<div class="divsearchfield">
-						<input name="search_keyword" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" class="minwidth200" value="<?php echo $options['search'] ?>"><br>
+						<input name="search_keyword" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" class="minwidth200" value="<?php echo dol_escape_htmltag($options['search']) ?>"><br>
 					</div>
 					<div class="divsearchfield">
 						<input class="button buttongen" value="<?php echo $langs->trans('Rechercher') ?>" type="submit">
-						<a class="buttonreset" href="<?php echo $dolistore->url ?>"><?php echo $langs->trans('Reset') ?></a>
+						<a class="buttonreset" href="<?php echo urlencode($dolistore->url) ?>"><?php echo $langs->trans('Reset') ?></a>
 
 						&nbsp;
 					</div>
@@ -1039,7 +1051,7 @@ if ($mode == 'marketplace') {
 
 			<div id="category-tree-left">
 				<ul class="tree">
-					<?php echo $dolistore->get_categories(); ?>
+					<?php echo dol_escape_htmltag($dolistore->get_categories()); ?>
 				</ul>
 			</div>
 			<div id="listing-content">

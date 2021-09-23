@@ -214,7 +214,7 @@ if ($conf->societe->enabled) {
 
 	print $langs->trans("CurrentlyNWithoutBarCode", $nbno, $nbtotal, $langs->transnoentitiesnoconv("ThirdParties")).'<br>'."\n";
 
-	print '<br><input class="button" type="submit" id="submitformbarcodethirdpartygen" '.((GETPOST("selectorforbarcode") && GETPOST("selectorforbarcode")) ? '' : 'disabled ').'value="'.$langs->trans("InitEmptyBarCode", $nbno).'"';
+	print '<br><input class="button button-add" type="submit" id="submitformbarcodethirdpartygen" '.((GETPOST("selectorforbarcode") && GETPOST("selectorforbarcode")) ? '' : 'disabled ').'value="'.$langs->trans("InitEmptyBarCode", $nbno).'"';
 	print ' title="'.dol_escape_htmltag($langs->trans("FeatureNotYetAvailable")).'" disabled';
 	print '>';
 	print '<br><br><br><br>';
@@ -283,10 +283,10 @@ if ($conf->product->enabled || $conf->product->service) {
 	print '<br>';
 	//print '<input type="checkbox" id="erasealreadyset" name="erasealreadyset"> '.$langs->trans("ResetBarcodeForAllRecords").'<br>';
 	$moretags1 = (($disabled || $disabled1) ? ' disabled title="'.dol_escape_htmltag($titleno).'"' : '');
-	print '<input class="button" type="submit" name="submitformbarcodeproductgen" id="submitformbarcodeproductgen" value="'.$langs->trans("InitEmptyBarCode", min($maxperinit, $nbno)).'"'.$moretags1.'>';
+	print '<input type="submit" class="button" name="submitformbarcodeproductgen" id="submitformbarcodeproductgen" value="'.$langs->trans("InitEmptyBarCode", min($maxperinit, $nbno)).'"'.$moretags1.'>';
 	$moretags2 = (($nbno == $nbtotal) ? ' disabled' : '');
 	print ' &nbsp; ';
-	print '<input class="button" type="submit" name="eraseallbarcode" id="eraseallbarcode" value="'.$langs->trans("EraseAllCurrentBarCode").'"'.$moretags2.' onClick="return confirm_erase();">';
+	print '<input type="submit" class="button" name="eraseallbarcode" id="eraseallbarcode" value="'.$langs->trans("EraseAllCurrentBarCode").'"'.$moretags2.' onClick="return confirm_erase();">';
 	print '<br><br><br><br>';
 }
 

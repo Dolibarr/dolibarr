@@ -118,7 +118,7 @@ ErrorCantReadFile=Misslyckades med att läsa filen &quot;%s&quot;
 ErrorCantReadDir=Misslyckades att läsa katalogen &quot;%s&quot;
 ErrorBadLoginPassword=Felaktigt värde för inloggning eller lösenord
 ErrorLoginDisabled=Ditt konto har inaktiverats
-ErrorFailedToRunExternalCommand=Failed to run external command. Check it is available and runnable by your PHP server user. Check also the command is not protected on shell level by a security layer like apparmor.
+ErrorFailedToRunExternalCommand=Det gick inte att köra externt kommando. Kontrollera att den är tillgänglig och kan köras av din PHP-serveranvändare. Kontrollera också att kommandot inte är skyddat på skalnivå av ett säkerhetslager som apparmor.
 ErrorFailedToChangePassword=Det gick inte att ändra lösenord
 ErrorLoginDoesNotExists=Användaren med inloggning <b>%s</b> kunde inte hittas.
 ErrorLoginHasNoEmail=Denna användare har inga e-postadress. Process avbruten.
@@ -264,6 +264,7 @@ ErrorAnAmountWithoutTaxIsRequired=Fel, belopp är obligatoriskt
 ErrorAPercentIsRequired=Fel, fyll i procent korrekt
 ErrorYouMustFirstSetupYourChartOfAccount=Du måste först ställa in ditt kontoplan
 ErrorFailedToFindEmailTemplate=Det gick inte att hitta mall med kodnamn %s
+ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Varaktighet definieras inte i tjänsten. Inget sätt att beräkna timpriset.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Din PHP-parameter upload_max_filesize (%s) är högre än PHP-parameter post_max_size (%s). Detta är inte en konsekvent installation.
@@ -301,4 +302,4 @@ ErrorActionCommPropertyUserowneridNotDefined=Användarens ägare krävs
 ErrorActionCommBadType=Vald händelsetyp (id: %n, kod: %s) finns inte i ordlistan för händelsetyp
 CheckVersionFail=Versionskontroll misslyckades
 ErrorWrongFileName=Filens namn kan inte innehålla __SOMETHING__
-ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.
+ErrorNotInDictionaryPaymentConditions=Inte i ordningen för betalningsvillkor, ändra.

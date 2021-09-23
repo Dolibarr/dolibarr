@@ -231,7 +231,7 @@ class SMTPs
 	/**
 	 * An array of options for stream_context_create()
 	 */
-	private $_options = [];
+	private $_options = array();
 
 	/**
 	 * Set delivery receipt
@@ -239,7 +239,7 @@ class SMTPs
 	 * @param	array		$_options		An array of options for stream_context_create()
 	 * @return	void
 	 */
-	public function setOptions($_options = [])
+	public function setOptions($_options = array())
 	{
 		$this->_options = $_options;
 	}

@@ -245,6 +245,7 @@ if (!empty($_SERVER['DOCUMENT_ROOT']) && substr($_SERVER['DOCUMENT_ROOT'], -6) !
 	set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 }
 
+
 // Include the conf.php and functions.lib.php. This defined the constants like DOL_DOCUMENT_ROOT, DOL_DATA_ROOT, DOL_URL_ROOT...
 require_once 'filefunc.inc.php';
 
@@ -286,6 +287,8 @@ $sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 if (!empty($_COOKIE[$sessiontimeout])) {
 	ini_set('session.gc_maxlifetime', $_COOKIE[$sessiontimeout]);
 }
+
+
 // This create lock, released by session_write_close() or end of page.
 // We need this lock as long as we read/write $_SESSION ['vars']. We can remove lock when finished.
 if (!defined('NOSESSION')) {
@@ -439,7 +442,7 @@ if ((!empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VE
 }
 
 // Creation of a token against CSRF vulnerabilities
-if (!defined('NOTOKENRENEWAL')) {
+if (!defined('NOTOKENRENEWAL') && !defined('NOSESSION')) {
 	// No token renewal on .css.php, .js.php and .json.php
 	if (!preg_match('/\.(css|js|json)\.php$/', $_SERVER["PHP_SELF"])) {
 		// Rolling token at each call ($_SESSION['token'] contains token of previous page)
@@ -457,33 +460,34 @@ if (!defined('NOTOKENRENEWAL')) {
 //dol_syslog("aaaa - ".defined('NOCSRFCHECK')." - ".$dolibarr_nocsrfcheck." - ".$conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN." - ".$_SERVER['REQUEST_METHOD']." - ".GETPOST('token', 'alpha'));
 
 // Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set into page
-if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN)) || defined('CSRFCHECK_WITH_TOKEN')) {
+if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN')) || defined('CSRFCHECK_WITH_TOKEN')) {
 	// Array of action code where CSRFCHECK with token will be forced (so token must be provided on url request)
-	$arrayofactiontoforcetokencheck = array(
-		'activate', 'add', 'addrights', 'addtimespent',
-		'confirm_create_user', 'confirm_create_thirdparty', 'confirm_delete', 'confirm_deletedir', 'confirm_deletefile', 'confirm_purge', 'confirm_reject_check',
-		'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'delrights',
-		'disable',
-		'doprev', 'donext', 'dvprev', 'dvnext',
-		'enable',
-		'install',
-		'setpricelevel',
-		'update'
-	);
 	$sensitiveget = false;
-	if (in_array(GETPOST('action', 'aZ09'), $arrayofactiontoforcetokencheck)) {
+	if ((GETPOSTISSET('massaction') || GETPOST('action', 'aZ09')) && getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') == 2) {
+		// All GET actions and mass actions are processed as sensitive.
 		$sensitiveget = true;
+	} else {
+		// Only GET actions coded with a &token into url are processed as sensitive.
+		$arrayofactiontoforcetokencheck = array(
+			'activate', 'add', 'addrights', 'addtimespent',
+			'doprev', 'donext', 'dvprev', 'dvnext',
+			'install',
+			'reopen'
+		);
+		if (in_array(GETPOST('action', 'aZ09'), $arrayofactiontoforcetokencheck)) {
+			$sensitiveget = true;
+		}
+		if (preg_match('/^(classify|close|confirm|del|disable|enable|remove|set|unset|update)/', GETPOST('action', 'aZ09'))) {
+			$sensitiveget = true;
+		}
 	}
-	if (preg_match('/^(disable_|enable_|setremise)/', GETPOST('action', 'aZ09'))) {
-		$sensitiveget = true;
-	}
-
 	// Check a token is provided for all cases that need a mandatory token
 	// (all POST actions + all login, actions and mass actions on pages with CSRFCHECK_WITH_TOKEN set + all sensitive GET actions)
 	if (
 		$_SERVER['REQUEST_METHOD'] == 'POST' ||
 		$sensitiveget ||
-		((GETPOSTISSET('actionlogin') || GETPOSTISSET('action') || GETPOSTISSET('massaction')) && defined('CSRFCHECK_WITH_TOKEN'))
+		GETPOSTISSET('massaction') ||
+		((GETPOSTISSET('actionlogin') || GETPOSTISSET('action')) && defined('CSRFCHECK_WITH_TOKEN'))
 	) {
 		// If token is not provided or empty, error (we are in case it is mandatory)
 		if (!GETPOST('token', 'alpha') || GETPOST('token', 'alpha') == 'notrequired') {
@@ -494,10 +498,11 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 				print $langs->trans("ErrorGoBackAndCorrectParameters");
 				die;
 			} else {
-				dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"])?'':$_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRFCHECK_WITH_TOKEN protection. Token not provided.", LOG_WARNING);
 				if (defined('CSRFCHECK_WITH_TOKEN')) {
+					dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"])?'':$_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (CSRFCHECK_WITH_TOKEN protection) in main.inc.php. Token not provided.", LOG_WARNING);
 					print "Access to a page that needs a token (constant CSRFCHECK_WITH_TOKEN is defined) is refused by CSRF protection in main.inc.php. Token not provided.\n";
 				} else {
+					dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"])?'':$_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (POST method or GET with a sensible value for 'action' parameter) in main.inc.php. Token not provided.", LOG_WARNING);
 					print "Access to this page this way (POST method or GET with a sensible value for 'action' parameter) is refused by CSRF protection in main.inc.php. Token not provided.\n";
 					print "If you access your server behind a proxy using url rewriting and the parameter is provided by caller, you might check that all HTTP header are propagated (or add the line \$dolibarr_nocsrfcheck=1 into your conf.php file or MAIN_SECURITY_CSRF_WITH_TOKEN to 0 into setup).\n";
 				}
@@ -509,7 +514,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 	$sessiontokenforthisurl = (empty($_SESSION['token']) ? '' : $_SESSION['token']);
 	// TODO Get the sessiontokenforthisurl into the array of session token
 	if (GETPOSTISSET('token') && GETPOST('token') != 'notrequired' && GETPOST('token', 'alpha') != $sessiontokenforthisurl) {
-		dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"])?'':$_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused due to invalid token, so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
+		dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"])?'':$_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (invalid token), so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
 		//print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
 		setEventMessages('SecurityTokenHasExpiredSoActionHasBeenCanceledPleaseRetry', null, 'warnings');
 		//if ($conf->global->MAIN_FEATURES_LEVEL >= 1) setEventMessages('Unset POST and GET params by CSRF protection in main.inc.php (Token provided was not generated by the previous page).'."<br>\n".'$_SERVER[REQUEST_URI] = '.$_SERVER['REQUEST_URI'].' $_SERVER[REQUEST_METHOD] = '.$_SERVER['REQUEST_METHOD'].' GETPOST(token) = '.GETPOST('token', 'alpha').' $_SESSION[token] = '.$_SESSION['token'], null, 'warnings');
@@ -651,7 +656,7 @@ if (!defined('NOLOGIN')) {
 				// Load translation files required by page
 				$langs->loadLangs(array('main', 'errors'));
 
-				$_SESSION["dol_loginmesg"] = $langs->trans("ErrorBadValueForCode");
+				$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorBadValueForCode");
 				$test = false;
 
 				// Call trigger for the "security events" log
@@ -745,7 +750,7 @@ if (!defined('NOLOGIN')) {
 				// Bad password. No authmode has found a good password.
 				// We set a generic message if not defined inside function checkLoginPassEntity or subfunctions
 				if (empty($_SESSION["dol_loginmesg"])) {
-					$_SESSION["dol_loginmesg"] = $langs->trans("ErrorBadLoginPassword");
+					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorBadLoginPassword");
 				}
 
 				// Call trigger for the "security events" log
@@ -798,7 +803,7 @@ if (!defined('NOLOGIN')) {
 				// Load translation files required by page
 				$langs->loadLangs(array('main', 'errors'));
 
-				$_SESSION["dol_loginmesg"] = $langs->trans("ErrorCantLoadUserFromDolibarrDatabase", $login);
+				$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorCantLoadUserFromDolibarrDatabase", $login);
 
 				$user->trigger_mesg = 'ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
 			}
@@ -862,7 +867,7 @@ if (!defined('NOLOGIN')) {
 				// Load translation files required by page
 				$langs->loadLangs(array('main', 'errors'));
 
-				$_SESSION["dol_loginmesg"] = $langs->trans("ErrorCantLoadUserFromDolibarrDatabase", $login);
+				$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorCantLoadUserFromDolibarrDatabase", $login);
 
 				$user->trigger_mesg = 'ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
 			}
@@ -1035,6 +1040,28 @@ if (!defined('NOLOGIN')) {
 		$user->rights->user->user->supprimer = 1;
 		$user->rights->user->self->creer = 1;
 		$user->rights->user->self->password = 1;
+
+		//Required if advanced permissions are used with MAIN_USE_ADVANCED_PERMS
+		if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+			if (empty($user->rights->user->user_advance)) {
+				$user->rights->user->user_advance = new stdClass(); // To avoid warnings
+			}
+			if (empty($user->rights->user->self_advance)) {
+				$user->rights->user->self_advance = new stdClass(); // To avoid warnings
+			}
+			if (empty($user->rights->user->group_advance)) {
+				$user->rights->user->group_advance = new stdClass(); // To avoid warnings
+			}
+
+			$user->rights->user->user_advance->readperms = 1;
+			$user->rights->user->user_advance->write = 1;
+			$user->rights->user->self_advance->readperms = 1;
+			$user->rights->user->self_advance->writeperms = 1;
+			$user->rights->user->group_advance->read = 1;
+			$user->rights->user->group_advance->readperms = 1;
+			$user->rights->user->group_advance->write = 1;
+			$user->rights->user->group_advance->delete = 1;
+		}
 	}
 
 	/*
@@ -1994,6 +2021,8 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	global $dolibarr_main_authentication, $dolibarr_main_demo;
 	global $menumanager;
 
+	$langs->load('companies');
+
 	$userImage = $userDropDownImage = '';
 	if (!empty($user->photo)) {
 		$userImage          = Form::showphoto('userphoto', $user, 0, 0, 0, 'photouserphoto userphoto', 'small', 0, 1);
@@ -2015,27 +2044,25 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$dropdownBody .= '<span id="topmenulogincompanyinfo-btn"><i class="fa fa-caret-right"></i> '.$langs->trans("ShowCompanyInfos").'</span>';
 	$dropdownBody .= '<div id="topmenulogincompanyinfo" >';
 
-	if (!empty($conf->global->MAIN_INFO_SIREN)) {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId1Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIREN).'</span>';
+	if ($langs->transcountry("ProfId1", $mysoc->country_code) != '-') {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId1", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton(getDolGlobalString("MAIN_INFO_SIREN")).'</span>';
 	}
-	if (!empty($conf->global->MAIN_INFO_SIRET)) {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId2Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIRET).'</span>';
+	if ($langs->transcountry("ProfId2", $mysoc->country_code) != '-') {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId2", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton(getDolGlobalString("MAIN_INFO_SIRET")).'</span>';
 	}
-	if (!empty($conf->global->MAIN_INFO_APE)) {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId3Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_APE).'</span>';
+	if ($langs->transcountry("ProfId3", $mysoc->country_code) != '-') {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId3", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton(getDolGlobalString("MAIN_INFO_APE")).'</span>';
 	}
-	if (!empty($conf->global->MAIN_INFO_RCS)) {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId4Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_RCS).'</span>';
+	if ($langs->transcountry("ProfId4", $mysoc->country_code) != '-') {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId4", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton(getDolGlobalString("MAIN_INFO_RCS")).'</span>';
 	}
-	if (!empty($conf->global->MAIN_INFO_PROFID5)) {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId5Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID5).'</span>';
+	if ($langs->transcountry("ProfId5", $mysoc->country_code) != '-') {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId5", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton(getDolGlobalString("MAIN_INFO_PROFID5")).'</span>';
 	}
-	if (!empty($conf->global->MAIN_INFO_PROFID6)) {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId6Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID6).'</span>';
+	if ($langs->transcountry("ProfId6", $mysoc->country_code) != '-') {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId6", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton(getDolGlobalString("MAIN_INFO_PROFID6")).'</span>';
 	}
-	if (!empty($conf->global->MAIN_INFO_TVAINTRA)) {
-		$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_TVAINTRA).'</span>';
-	}
+	$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.showValueWithClipboardCPButton(getDolGlobalString("MAIN_INFO_TVAINTRA")).'</span>';
 
 	$dropdownBody .= '</div>';
 

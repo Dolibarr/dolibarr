@@ -66,7 +66,7 @@ NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
 Answered=Answered
 Waiting=Odotus
-Closed=Suljettu
+SolvedClosed=Solved
 Deleted=Deleted
 
 # Dict
@@ -186,9 +186,11 @@ TicketSeverity=Vakavuus
 ShowTicket=See ticket
 RelatedTickets=Liittyvät tiketit
 TicketAddIntervention=Create intervention
-CloseTicket=Close ticket
-CloseATicket=Sulje tiketti
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Confirm ticket closing
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Please confirm ticket deleting
 TicketDeletedSuccess=Ticket deleted with success
 TicketMarkedAsClosed=Ticket marked as closed

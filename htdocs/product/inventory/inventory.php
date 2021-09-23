@@ -116,7 +116,7 @@ if ($action == 'update' && !empty($user->rights->stock->mouvement->creer)) {
 	$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
 	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
-	$sql .= ' WHERE id.fk_inventory = '.$object->id;
+	$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -168,7 +168,7 @@ if ($action =='updateinventorylines' && $permissiontoadd) {
 	$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
 	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
-	$sql .= ' WHERE id.fk_inventory = '.$object->id;
+	$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
 
 	$db->begin();
 
@@ -399,7 +399,7 @@ if ($object->id > 0) {
 		{
 			if ($action != 'classify')
 			{
-				$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				if ($action == 'classify') {
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 					$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -748,7 +748,7 @@ if ($object->id > 0) {
 			print $warehouse_static->getNomUrl(1);
 			print '</td>';
 			print '<td id="id_'.$obj->rowid.'_product">';
-			print $product_static->getNomUrl(1);
+			print $product_static->getNomUrl(1).' - '.$product_static->label;
 			print '</td>';
 
 			if ($conf->productbatch->enabled) {

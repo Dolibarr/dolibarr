@@ -67,6 +67,8 @@ $fk_user = GETPOSTINT('userid');
 $object = new Salary($db);
 $extrafields = new ExtraFields($db);
 
+$childids = $user->getAllChildIds(1);
+
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -76,6 +78,18 @@ $hookmanager->initHooks(array('salarycard', 'globalcard'));
 $object = new Salary($db);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
+
+	// Check current user can read this salary
+	$canread = 0;
+	if (!empty($user->rights->salaries->readall)) {
+		$canread = 1;
+	}
+	if (!empty($user->rights->salaries->read) && $object->fk_user > 0 && in_array($object->fk_user, $childids)) {
+		$canread = 1;
+	}
+	if (!$canread) {
+		accessforbidden();
+	}
 }
 
 // Security check
@@ -354,6 +368,30 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries-
 	}
 }
 
+// Action to update one extrafield
+if ($action == "update_extras" && !empty($user->rights->salaries->read)) {
+	$object->fetch(GETPOST('id', 'int'));
+
+	$attributekey = GETPOST('attribute', 'alpha');
+	$attributekeylong = 'options_'.$attributekey;
+
+	if (GETPOSTISSET($attributekeylong.'day') && GETPOSTISSET($attributekeylong.'month') && GETPOSTISSET($attributekeylong.'year')) {
+		// This is properties of a date
+		$object->array_options['options_'.$attributekey] = dol_mktime(GETPOST($attributekeylong.'hour', 'int'), GETPOST($attributekeylong.'min', 'int'), GETPOST($attributekeylong.'sec', 'int'), GETPOST($attributekeylong.'month', 'int'), GETPOST($attributekeylong.'day', 'int'), GETPOST($attributekeylong.'year', 'int'));
+		//var_dump(dol_print_date($object->array_options['options_'.$attributekey]));exit;
+	} else {
+		$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, 'alpha');
+	}
+
+	$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
+	if ($result > 0) {
+		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+		$action = 'view';
+	} else {
+		setEventMessages($object->error, $object->errors, 'errors');
+		$action = 'edit_extras';
+	}
+}
 
 /*
  *	View
@@ -466,8 +504,10 @@ if ($action == 'create') {
 	// Amount
 	print '<tr><td>';
 	print $form->editfieldkey('Amount', 'amount', '', $object, 0, 'string', '', 1).'</td><td>';
-	print '<input name="amount" id="amount" class="minwidth75 maxwidth100" value="'.GETPOST("amount").'">';
-	print '</td></tr>';
+	print '<input name="amount" id="amount" class="minwidth75 maxwidth100" value="'.GETPOST("amount").'">&nbsp;';
+	print '<button class="dpInvisibleButtons" id="updateAmountWithLastSalary" name="_useless" type="button">'.$langs->trans('UpdateAmountWithLastSalary').'</a>';
+	print '</td>';
+	print '</tr>';
 
 	// Project
 	if (!empty($conf->projet->enabled)) {
@@ -549,17 +589,53 @@ if ($action == 'create') {
 
 	print '<div class="hide_if_no_auto_create_payment paddingbottom">';
 	print '<input type="checkbox" checked value="1" name="closepaidsalary">'.$langs->trans("ClosePaidSalaryAutomatically");
-	print '<br>';
 	print '</div>';
 
-	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp; &nbsp;&nbsp;';
-	print '<input type="submit" class="button" name="saveandnew" value="'.$langs->trans("SaveAndNew").'">';
-	print '&nbsp;&nbsp; &nbsp;&nbsp;';
-	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
+
+	$addition_button = array(
+		'name' => 'saveandnew',
+		'label_key' => 'SaveAndNew',
+	);
+	print $form->buttonsSaveCancel("Save", "Cancel", $addition_button);
 
 	print '</form>';
+	print '<script>';
+	print '$( document ).ready(function() {';
+		print '$("#updateAmountWithLastSalary").on("click", function updateAmountWithLastSalary() {
+					console.log("We click on link to autofill salary amount");
+					var fk_user = $("#fk_user").val()
+					var url = "'.DOL_URL_ROOT.'/salaries/ajax/ajaxsalaries.php?fk_user="+fk_user;
+					if (fk_user != -1) {
+						$.get(
+							url,
+							function( data ) {
+								if(data!=null) {
+									console.log("Data returned: "+data);
+									item = JSON.parse(data);
+									if(item[0].key == "Amount") {
+										value = item[0].value;
+										if (value != null) {
+											$("#amount").val(item[0].value);
+										} else {
+											console.error("Error: Ajax url "+url+" has returned a null value.");
+										}
+									} else {
+										console.error("Error: Ajax url "+url+" has returned the wrong key.");
+									}
+								} else {
+									console.error("Error: Ajax url "+url+" has returned an empty page.");
+								}
+							}
+						);
+
+					} else {
+						alert("'.$langs->trans("FillFieldFirst").'");
+					}
+		});
+
+	})';
+	print '</script>';
 }
 
 
@@ -656,7 +732,7 @@ if ($id) {
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($user->rights->salaries->write) {
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -729,7 +805,7 @@ if ($id) {
 	if ($action == 'edit') {
 		print '<tr><td class="fieldrequired">' . $langs->trans("Amount") . '</td><td><input name="amount" size="10" value="' . price($object->amount) . '"></td></tr>';
 	} else {
-		print '<tr><td>' . $langs->trans("Amount") . '</td><td>' . price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency) . '</td></tr>';
+		print '<tr><td>' . $langs->trans("Amount") . '</td><td><span class="amount">' . price($object->amount, 0, $langs, 1, -1, -1, $conf->currency) . '</span></td></tr>';
 	}
 
 	// Default mode of payment
@@ -886,12 +962,8 @@ if ($id) {
 
 
 	if ($action == 'edit') {
-		print '<div align="center">';
-		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-		print ' &nbsp; ';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
-		print "</form>\n";
+		print $form->buttonsSaveCancel();
+		print "</form>";
 	}
 
 	print dol_get_fiche_end();
@@ -905,17 +977,17 @@ if ($id) {
 	if ($action != 'edit') {
 		// Reopen
 		if ($object->paye && $user->rights->salaries->write) {
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".dol_buildpath("/salaries/card.php", 1)."?id=".$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("ReOpen")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT."/salaries/card.php?id=".$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("ReOpen")."</a></div>";
 		}
 
 		// Edit
 		if ($object->paye == 0 && $user->rights->salaries->write) {
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/card.php?id=".$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT."/salaries/card.php?id=".$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify")."</a></div>";
 		}
 
 		// Emit payment
 		if ($object->paye == 0 && ((price2num($object->amount) < 0 && price2num($resteapayer, 'MT') < 0) || (price2num($object->amount) > 0 && price2num($resteapayer, 'MT') > 0)) && $user->rights->salaries->write) {
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/paiement_salary.php?id=".$object->id.'&action=create&token='.newToken().'">'.$langs->trans("DoPayment")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT."/salaries/paiement_salary.php?id=".$object->id.'&action=create&token='.newToken().'">'.$langs->trans("DoPayment")."</a></div>";
 		}
 
 		// Classify 'paid'
