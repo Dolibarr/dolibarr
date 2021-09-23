@@ -186,10 +186,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div align="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("CreateBookmark").'" name="create"> &nbsp; ';
-	print '<input type="submit" class="button button-cancel" value="'.$langs->trans("Cancel").'" name="cancel">';
-	print '</div>';
+	print $form->buttonsSaveCancel("CreateBookmark");
 
 	print '</form>';
 }
