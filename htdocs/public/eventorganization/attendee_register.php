@@ -330,63 +330,63 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 						$thirdparty->error = $langs->trans("ErrorSeveralCompaniesWithNameContactUs", $mysoc->email);
 					}
 				}
-				if ($resultfetchthirdparty <= 0 && !empty($emailcompany)) {
-					// Try to find thirdparty from the email only
-					$resultfetchthirdparty = $thirdparty->fetch('', '', '', '', '', '', '', '', '', '', $emailcompany);
-					if ($resultfetchthirdparty > 0) {
-						// We found a unique result with that email only, so we set the fk_soc of attendee
-						$confattendee->fk_soc = $thirdparty->id;
-						$confattendee->update($user);
-					} elseif ($resultfetchthirdparty == -2) {
-						$thirdparty->error = $langs->trans("ErrorSeveralCompaniesWithEmailContactUs", $mysoc->email);
-					}
+			}
+			if ($resultfetchthirdparty <= 0 && !empty($emailcompany)) {
+				// Try to find thirdparty from the email only
+				$resultfetchthirdparty = $thirdparty->fetch('', '', '', '', '', '', '', '', '', '', $emailcompany);
+				if ($resultfetchthirdparty > 0) {
+					// We found a unique result with that email only, so we set the fk_soc of attendee
+					$confattendee->fk_soc = $thirdparty->id;
+					$confattendee->update($user);
+				} elseif ($resultfetchthirdparty == -2) {
+					$thirdparty->error = $langs->trans("ErrorSeveralCompaniesWithEmailContactUs", $mysoc->email);
 				}
-				if ($resultfetchthirdparty <= 0 && !empty($email) && $email != $emailcompany) {
-					// Try to find thirdparty from the email only
-					$resultfetchthirdparty = $thirdparty->fetch('', '', '', '', '', '', '', '', '', '', $email);
-					if ($resultfetchthirdparty > 0) {
-						// We found a unique result with that email only, so we set the fk_soc of attendee
-						$confattendee->fk_soc = $thirdparty->id;
-						$confattendee->update($user);
-					} elseif ($resultfetchthirdparty == -2) {
-						$thirdparty->error = $langs->trans("ErrorSeveralCompaniesWithEmailContactUs", $mysoc->email);
-					}
+			}
+			if ($resultfetchthirdparty <= 0 && !empty($email) && $email != $emailcompany) {
+				// Try to find thirdparty from the email only
+				$resultfetchthirdparty = $thirdparty->fetch('', '', '', '', '', '', '', '', '', '', $email);
+				if ($resultfetchthirdparty > 0) {
+					// We found a unique result with that email only, so we set the fk_soc of attendee
+					$confattendee->fk_soc = $thirdparty->id;
+					$confattendee->update($user);
+				} elseif ($resultfetchthirdparty == -2) {
+					$thirdparty->error = $langs->trans("ErrorSeveralCompaniesWithEmailContactUs", $mysoc->email);
 				}
-				if ($resultfetchthirdparty <= 0 && !empty($genericcompanyname)) {
-					// Try to find thirdparty from the generic mail only
-					$resultfetchthirdparty = $thirdparty->fetch('', $genericcompanyname, '', '', '', '', '', '', '', '', '');
-					if ($resultfetchthirdparty > 0) {
-						// We found a unique result with that name + email, so we set the fk_soc of attendee
-						$confattendee->fk_soc = $thirdparty->id;
-						$confattendee->update($user);
-					} elseif ($resultfetchthirdparty == -2) {
-						$thirdparty->error = $langs->trans("ErrorSeveralCompaniesWithNameContactUs", $mysoc->email);
-					}
+			}
+			if ($resultfetchthirdparty <= 0 && !empty($genericcompanyname)) {
+				// Try to find thirdparty from the generic mail only
+				$resultfetchthirdparty = $thirdparty->fetch('', $genericcompanyname, '', '', '', '', '', '', '', '', '');
+				if ($resultfetchthirdparty > 0) {
+					// We found a unique result with that name + email, so we set the fk_soc of attendee
+					$confattendee->fk_soc = $thirdparty->id;
+					$confattendee->update($user);
+				} elseif ($resultfetchthirdparty == -2) {
+					$thirdparty->error = $langs->trans("ErrorSeveralCompaniesWithNameContactUs", $mysoc->email);
 				}
+			}
 
-				// TODO Add more tests on a VAT number, profid or a name ?
+			// TODO Add more tests on a VAT number, profid or a name ?
 
-				if ($resultfetchthirdparty <= 0 && !empty($email)) {
-					// Try to find the thirdparty from the contact
-					$resultfetchcontact = $contact->fetch('', null, '', $email);
-					if ($resultfetchcontact > 0 && $contact->fk_soc > 0) {
-						$thirdparty->fetch($contact->fk_soc);
-						$confattendee->fk_soc = $thirdparty->id;
-						$confattendee->update($user);
-						$resultfetchthirdparty = 1;
-					}
+			if ($resultfetchthirdparty <= 0 && !empty($email)) {
+				// Try to find the thirdparty from the contact
+				$resultfetchcontact = $contact->fetch('', null, '', $email);
+				if ($resultfetchcontact > 0 && $contact->fk_soc > 0) {
+					$thirdparty->fetch($contact->fk_soc);
+					$confattendee->fk_soc = $thirdparty->id;
+					$confattendee->update($user);
+					$resultfetchthirdparty = 1;
 				}
+			}
 
-				if ($resultfetchthirdparty <= 0 && !empty($societe)) {
-					// Try to find thirdparty from the company name only
-					$resultfetchthirdparty = $thirdparty->fetch('', $societe, '', '', '', '', '', '', '', '', '');
-					if ($resultfetchthirdparty > 0) {
-						// We found a unique result with that name only, so we set the fk_soc of attendee
-						$confattendee->fk_soc = $thirdparty->id;
-						$confattendee->update($user);
-					} elseif ($resultfetchthirdparty == -2) {
-						$thirdparty->error = "ErrorSeveralCompaniesWithNameContactUs";
-					}
+			if ($resultfetchthirdparty <= 0 && !empty($societe)) {
+				// Try to find thirdparty from the company name only
+				$resultfetchthirdparty = $thirdparty->fetch('', $societe, '', '', '', '', '', '', '', '', '');
+				if ($resultfetchthirdparty > 0) {
+					// We found a unique result with that name only, so we set the fk_soc of attendee
+					$confattendee->fk_soc = $thirdparty->id;
+					$confattendee->update($user);
+				} elseif ($resultfetchthirdparty == -2) {
+					$thirdparty->error = "ErrorSeveralCompaniesWithNameContactUs";
 				}
 			}
 		}
@@ -450,6 +450,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 	}
 
 	if (!$error) {
+		// If the registration needs a payment
 		if (!empty(floatval($project->price_registration))) {
 			$outputlangs = $langs;
 
@@ -515,11 +516,14 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				$date_start = $project->date_start;
 				$date_end = $project->date_end;
 
-				$result = $facture->addline($labelforproduct, floatval($project->price_registration), 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, $date_start, $date_end, 0, 0, '', 'HT', 0, 1);
-				if ($result <= 0) {
-					$confattendee->error = $facture->error;
-					$confattendee->errors = $facture->errors;
-					$error++;
+				// If there is no lines yet, we add one
+				if (empty($facture->lines)) {
+					$result = $facture->addline($labelforproduct, floatval($project->price_registration), 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, $date_start, $date_end, 0, 0, '', 'HT', 0, 1);
+					if ($result <= 0) {
+						$confattendee->error = $facture->error;
+						$confattendee->errors = $facture->errors;
+						$error++;
+					}
 				}
 			}
 

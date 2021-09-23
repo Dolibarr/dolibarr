@@ -1016,7 +1016,6 @@ class Product extends CommonObject
 		$this->accountancy_code_sell_export = trim($this->accountancy_code_sell_export);
 
 
-
 		$this->db->begin();
 
 		$result = 0;
@@ -5814,7 +5813,6 @@ class Product extends CommonObject
 	 */
 	public function setCategories($categories)
 	{
-
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		return parent::setCategoriesCommon($categories, Categorie::TYPE_PRODUCT);
 	}
