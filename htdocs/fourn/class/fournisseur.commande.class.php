@@ -111,6 +111,7 @@ class CommandeFournisseur extends CommonOrder
 
 	public $socid;
 	public $fourn_id;
+	public $date;
 	public $date_creation;
 	public $date_valid;
 	public $date_approve;
@@ -380,6 +381,11 @@ class CommandeFournisseur extends CommonOrder
 			$this->date_approve			= $this->db->jdate($obj->date_approve);
 			$this->date_approve2		= $this->db->jdate($obj->date_approve2);
 			$this->date_commande		= $this->db->jdate($obj->date_commande); // date we make the order to supplier
+			if (isset($this->date_commande)) {
+				$this->date = $this->date_commande;
+			} else {
+				$this->date = $this->date_creation;
+			}
 			$this->date_livraison = $this->db->jdate($obj->delivery_date); // deprecated
 			$this->delivery_date = $this->db->jdate($obj->delivery_date);
 			$this->remise_percent = $obj->remise_percent;
@@ -1282,7 +1288,7 @@ class CommandeFournisseur extends CommonOrder
 		$now = dol_now();
 
 		// set tmp vars
-		$date = ($this->date_commande ? $this->date_commande : $this->date_creation); // in case of date is set
+		$date = ($this->date_commande ? $this->date_commande : $this->date); // in case of date is set
 		if (empty($date)) {
 			$date = $now;
 		}
@@ -2847,9 +2853,9 @@ class CommandeFournisseur extends CommonOrder
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
 		$this->socid = 1;
-		$this->date_creation = $now;
+		$this->date = $now;
 		$this->date_commande = $now;
-		$this->date_lim_reglement = $this->date_creation + 3600 * 24 * 30;
+		$this->date_lim_reglement = $this->date + 3600 * 24 * 30;
 		$this->cond_reglement_code = 'RECEP';
 		$this->mode_reglement_code = 'CHQ';
 
@@ -3295,7 +3301,6 @@ class CommandeFournisseur extends CommonOrder
 					$keysinwishednotindelivered = array_diff(array_keys($qtywished), array_keys($qtydelivered)); // To check we also have same number of keys
 					$keysindeliverednotinwished = array_diff(array_keys($qtydelivered), array_keys($qtywished)); // To check we also have same number of keys
 					/*var_dump(array_keys($qtydelivered));
-
 					var_dump(array_keys($qtywished));
 					var_dump($diff_array);
 					var_dump($keysinwishednotindelivered);
