@@ -2508,7 +2508,7 @@ function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
  *										False or 0 or 'tzserver' = local to server TZ
  *										'auto'
  *										'tzuser' = local to user TZ taking dst into account at the current date. Not yet implemented.
- *										'tzuserrel' = local to user TZ taking dst into account at the given date. Use this one to convert date input from user.
+ *										'tzuserrel' = local to user TZ taking dst into account at the given date. Use this one to convert date input from user into a GMT date.
  *										'tz,TimeZone' = use specified timezone
  *	@param	int			$check			0=No check on parameters (Can use day 32, etc...)
  *	@return	int|string					Date as a timestamp, '' or false if error
