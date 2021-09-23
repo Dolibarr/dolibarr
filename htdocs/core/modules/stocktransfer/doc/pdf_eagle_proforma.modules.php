@@ -276,7 +276,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
 				$dir = $conf->stocktransfer->multidir_output[$conf->entity]."/".$object->element."/".$objectref;
-				$file = $dir."/".$objectref.".pdf";
+				$file = $dir."/".$objectref."-proforma.pdf";
 			}
 
 			if (!file_exists($dir)) {
