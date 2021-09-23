@@ -132,7 +132,9 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
-
+	if ($result < 0) {
+		dol_print_error($db, $object->error, $object->errors);
+	}
 	if (!empty($conf->product->enabled)) {
 		$upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
 	} elseif (!empty($conf->service->enabled)) {
@@ -1290,6 +1292,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td>'.$langs->trans("Duration").'</td><td>';
 			print '<input name="duration_value" size="4" value="'.GETPOST('duration_value', 'int').'">';
 			print $formproduct->selectMeasuringUnits("duration_unit", "time", (GETPOSTISSET('duration_value') ? GETPOSTISSET('duration_value', 'alpha') : 'h'), 0, 1);
+
+			// Mandatory period
+			print ' &nbsp; &nbsp; &nbsp; ';
+			print '<input type="checkbox" id="mandatoryperiod" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').'>';
+			print '<label for="mandatoryperiod">';
+			$htmltooltip = $langs->trans("mandatoryHelper");
+			print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 0);
+			print '</label>';
+
 			print '</td></tr>';
 		}
 
@@ -1429,6 +1440,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$defaultva = get_default_tva($mysoc, $mysoc);
 				print $form->load_tva("tva_tx", $defaultva, $mysoc, $mysoc, 0, 0, '', false, 1);
 				print '</td></tr>';
+
 				print '</table>';
 
 				print '<br>';
@@ -1452,14 +1464,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print $form->load_tva("tva_tx", $defaultva, $mysoc, $mysoc, 0, 0, '', false, 1);
 				print '</td></tr>';
 
-				if (!empty($conf->service->enabled)) {
-					if ($object->isService()) {
-						// Mandatory period
-						print '<tr><td class="titlefieldcreate">'.$langs->trans("mandatoryperiod").'</td>';
-						print '<td><input type="checkbox" name="mandatoryperiod" /> ';
-						print '</td></tr>';
-					}
-				}
 				print '</table>';
 
 				print '<br>';
@@ -1834,6 +1838,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td>'.$langs->trans("Duration").'</td><td>';
 				print '<input name="duration_value" size="5" value="'.$object->duration_value.'"> ';
 				print $formproduct->selectMeasuringUnits("duration_unit", "time", $object->duration_unit, 0, 1);
+
+				// Mandatory period
+				print ' &nbsp; &nbsp; &nbsp; ';
+				print '<input type="checkbox" id="mandatoryperiod" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').'>';
+				print '<label for="mandatoryperiod">';
+				$htmltooltip = $langs->trans("mandatoryHelper");
+				print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 0);
+				print '</label>';
+
 				print '</td></tr>';
 			} else {
 				if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
@@ -2050,13 +2063,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyExportCode").'</td>';
 					print '<td><input name="accountancy_code_buy_export" class="maxwidth200" value="'.$object->accountancy_code_buy_export.'">';
 					print '</td></tr>';
-
-					if ($object->isService()) {
-						// Mandatory period
-						print '<tr><td class="titlefieldcreate">'.$langs->trans("mandatoryperiod").'</td>';
-						print '<td><input type="checkbox" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').' /> ';
-						print '</td></tr>';
-					}
 				}
 			}
 			print '</table>';
@@ -2322,21 +2328,23 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			if ($object->isService()) {
 				// Duration
-				print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td>'.$object->duration_value.'&nbsp;';
+				print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td>';
+				print $object->duration_value;
 				if ($object->duration_value > 1) {
 					$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
 				} elseif ($object->duration_value > 0) {
 					$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
 				}
-				print (!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
-
-				print '</td></tr>';
+				print (!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? "&nbsp;".$langs->trans($dur[$object->duration_unit])."&nbsp;" : '');
 
 				// Mandatory period
-				$htmltooltip = '<br>'.$langs->trans("mandatoryHelper");
-				print '<tr><td class="titlefield">'.$langs->trans("mandatoryperiod");
-				print $form->textwithpicto('', $htmltooltip, 1, 0).'</td><td>';
-				print '<input type="checkbox" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').' disabled/> ';
+				if ($object->duration_value > 0) {
+					print ' &nbsp; &nbsp; &nbsp; ';
+				}
+				$htmltooltip = $langs->trans("mandatoryHelper");
+				print '<input type="checkbox" class="" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').' disabled>';
+				print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 0);
+
 				print '</td></tr>';
 			} else {
 				if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
@@ -2566,8 +2574,9 @@ if ($action != 'create' && $action != 'edit') {
 	print "\n</div>\n";
 }
 
+
 /*
- * All the "Add to" areas
+ * All the "Add to" areas if PRODUCT_ADD_FORM_ADD_TO is set
  */
 
 if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action == '' || $action == 'view') && $object->status) {

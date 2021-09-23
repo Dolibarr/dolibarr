@@ -468,16 +468,17 @@ jQuery(document).ready(function()
 		}
 	});
 
-	$("#date_start, #date_end").focusout(function()
-	{
-
-		if ( $(this).val() == ''  && !$(this).hasClass("error") ) {
-			$(this).addClass('error');
-		}else{
-			$(this).removeClass('error');
+	<?php if (in_array($this->table_element_line, array('propaldet', 'commandedet', 'facturedet'))) { ?>
+	$("#date_start, #date_end").focusout(function() {
+		if ( $(this).val() == ''  && !$(this).hasClass('inputmandatory') ) {
+			$(this).addClass('inputmandatory');
+		} else {
+			$(this).removeClass('inputmandatory');
 		}
 	});
-	<?php
+		<?php
+	}
+
 	if (!empty($conf->margin->enabled)) {
 		?>
 		/* Add rule to clear margin when we change some data, so when we change sell or buy price, margin will be recalculated after submitting form */

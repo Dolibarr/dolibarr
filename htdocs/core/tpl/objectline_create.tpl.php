@@ -674,22 +674,21 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 		$("#prod_entry_mode_predef").click();
 		<?php
 	}
-	?>
 
-<?php if ($this->table_element_line != 'commande_fournisseurdet') { ?>
-	$("#date_start, #date_end").focusout(function()
-	{
-		let  	type = $(this).attr('type');
-		let 	mandatoryP = $(this).attr('mandatoryperiod');
-		if (type == 1 && mandatoryP == 1 ){
-			if ( $(this).val() == ''  && !$(this).hasClass("error") ) {
-				$(this).addClass('error');
+	if (in_array($this->table_element_line, array('propaldet', 'commandedet', 'facturedet'))) { ?>
+	$("#date_start, #date_end").focusout(function() {
+		let type = $(this).attr('type');
+		let mandatoryP = $(this).attr('mandatoryperiod');
+		if (type == 1 && mandatoryP == 1) {
+			if ($(this).val() == ''  && !$(this).hasClass('inputmandatory')) {
+				$(this).addClass('inputmandatory');
 			}else{
-				$(this).removeClass('error');
+				$(this).removeClass('inputmandatory');
 			}
 		}
 	});
-<?php } ?>
+		<?php
+	} ?>
 	/* When changing predefined product, we reload list of supplier prices required for margin combo */
 	$("#idprod, #idprodfournprice").change(function()
 	{
@@ -718,23 +717,23 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 					function(data) {
 						console.log("Load unit price end, we got value "+data.price_ht);
 
-							$( '#date_start').removeAttr( "type" );
-							$( '#date_end' ).removeAttr( "type" );
-							$('#date_start').attr('type', data.type);
-							$('#date_end').attr('type', data.type);
+						$('#date_start').removeAttr('type');
+						$('#date_end').removeAttr('type');
+						$('#date_start').attr('type', data.type);
+						$('#date_end').attr('type', data.type);
 
-							$( '#date_start').removeAttr( "mandatoryperiod" );
-							$( '#date_end' ).removeAttr( "mandatoryperiod" );
-							$('#date_start').attr('mandatoryperiod', data.mandatory_period);
-							$('#date_end').attr('mandatoryperiod', data.mandatory_period);
+						$('#date_start').removeAttr('mandatoryperiod');
+						$('#date_end').removeAttr('mandatoryperiod');
+						$('#date_start').attr('mandatoryperiod', data.mandatory_period);
+						$('#date_end').attr('mandatoryperiod', data.mandatory_period);
 
-						//  service and we setted mandatory_period to true
-						if (data.mandatory_period == 1 && data.type == 1 ) {
-							jQuery("#date_start").addClass("error");
-							jQuery("#date_end").addClass("error");
+						// service and we setted mandatory_period to true
+						if (data.mandatory_period == 1 && data.type == 1) {
+							jQuery('#date_start').addClass('inputmandatory');
+							jQuery('#date_end').addClass('inputmandatory');
 						}else{
-							jQuery("#date_start").removeClass("error");
-							jQuery("#date_end").removeClass("error");
+							jQuery('#date_start').removeClass('inputmandatory');
+							jQuery('#date_end').removeClass('inputmandatory');
 						}
 
 						jQuery("#price_ht").val(data.price_ht);
