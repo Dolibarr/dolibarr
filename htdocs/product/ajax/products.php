@@ -91,7 +91,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 		$outtype = $object->type;
 		$outqty = 1;
 		$outdiscount = 0;
-
+		$mandatory_period = $object->mandatory_period;
 		$found = false;
 
 		$price_level = 1;
@@ -203,6 +203,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 			'tva_tx' => $outtva_tx,
 			'qty' => $outqty,
 			'discount' => $outdiscount,
+			'mandatory_period' => $mandatory_period,
 			'array_options'=>$object->array_options);
 	}
 
