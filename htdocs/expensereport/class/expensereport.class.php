@@ -1039,7 +1039,7 @@ class ExpenseReport extends CommonObject
 				$deplig->total_tva        = $objp->total_tva;
 				$deplig->total_ttc        = $objp->total_ttc;
 				$deplig->total_localtax1  = $objp->total_localtax1;
-				$deplig->total_localtax2  = $objp->total_totaltax2;
+				$deplig->total_localtax2  = $objp->total_localtax2;
 
 				$deplig->type_fees_code     = empty($objp->code_type_fees) ? 'TF_OTHER' : $objp->code_type_fees;
 				$deplig->type_fees_libelle  = $objp->libelle_type_fees;
