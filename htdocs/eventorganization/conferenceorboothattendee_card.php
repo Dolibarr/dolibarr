@@ -205,13 +205,12 @@ if (!empty($projectstatic->socid)) {
 	$projectstatic->fetch_thirdparty();
 }
 
-$withProjectUrl='';
+
 $object->project = clone $projectstatic;
 
 if (!empty($withproject)) {
 	// Tabs for project
 	$tab = 'eventorganisation';
-	$withProjectUrl = "&withproject=1";
 	$head = project_prepare_head($projectstatic);
 	print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'), 0, '', '');
 
@@ -421,8 +420,10 @@ if (!empty($withproject)) {
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("ConferenceOrBoothAttendee")), '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].(!empty($withProjectUrl)?'?'.$withProjectUrl:'').'">';
+
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].(empty($withproject) ? '' : '?withproject=1').'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="add">';
 
 	if ($confOrBooth->id > 0) {
 		print '<input type="hidden" name="conforboothid" value="'.$confOrBooth->id.'">';
@@ -432,8 +433,6 @@ if ($action == 'create') {
 		print '<input type="hidden" name="projectid" value="'.$projectstatic->id.'">';
 	}
 
-
-	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
