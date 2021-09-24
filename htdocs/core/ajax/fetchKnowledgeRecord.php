@@ -72,8 +72,8 @@ if ($action == "getKnowledgeRecord") {
 	$sql .= " FROM ".MAIN_DB_PREFIX."knowledgemanagement_knowledgerecord as kr ";
 	$sql .= " JOIN ".MAIN_DB_PREFIX."c_ticket_category as ctc ON ctc.rowid = kr.fk_c_ticket_category";
 	$sql .= " WHERE ctc.code = '".$db->escape($idticketgroup)."'";
-	$sql .= " AND ctc.active = 1 AND ctc.public = 1 AND (kr.lang = '".$db->escape($lang)."' OR kr.lang = 0 OR kr.lang = NULL)";
-	$sql .= " AND kr.status = 1 AND (kr.answer != 0 OR kr.answer != NULL OR kr.answer != '')";
+	$sql .= " AND ctc.active = 1 AND ctc.public = 1 AND (kr.lang = '".$db->escape($lang)."' OR kr.lang = 0 OR kr.lang IS NULL)";
+	$sql .= " AND kr.status = 1 AND (kr.answer IS NOT NULL AND kr.answer <> '')";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
