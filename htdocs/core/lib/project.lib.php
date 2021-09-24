@@ -977,6 +977,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 			}
 		}
 
+		// Computed progress
 		if (count($arrayfields) > 0 && !empty($arrayfields['t.progress_calculated']['checked'])) {
 			print '<td class="nowrap liste_total right">';
 			if ($total_projectlinesa_planned) {
@@ -984,6 +985,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 			}
 			print '</td>';
 		}
+
+		// Declared progress
 		if (count($arrayfields) > 0 && !empty($arrayfields['t.progress']['checked'])) {
 			print '<td class="nowrap liste_total right">';
 			if ($total_projectlinesa_planned) {
