@@ -562,9 +562,7 @@ class Reception extends CommonObject
 			$sql = "SELECT cd.fk_product, cd.subprice,";
 			$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
 			$sql .= " ed.eatby, ed.sellby, ed.batch";
-			if (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION || $conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
-				$sql .= ", ed.cost_price";
-			}
+			$sql .= ", ed.cost_price";
 			$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
 			$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
 			$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
