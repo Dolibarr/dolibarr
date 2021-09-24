@@ -173,7 +173,7 @@ if (empty($reshook)) {
 
 	$skilldetArray = GETPOST("descriptionline", "array");
 
-	if(!$error) {
+	if (!$error) {
 		if (is_array($skilldetArray) && count($skilldetArray) > 0) {
 			foreach ($skilldetArray as $key => $SkValueToUpdate) {
 				$skilldetObj = new Skilldet($object->db);
@@ -311,16 +311,14 @@ if (($id || $ref) && $action == 'edit') {
 	if (is_array($SkilldetRecords) && count($SkilldetRecords) > 0) {
 		print '<table>';
 		foreach ($SkilldetRecords as $sk) {
-
 			$MaxNumberSkill = isset($conf->global->HRM_MAXRANK) ? $conf->global->HRM_MAXRANK : Skill::DEFAULT_MAX_RANK_PER_SKILL;
-			if($sk->rank > $MaxNumberSkill) {
+			if ($sk->rank > $MaxNumberSkill) {
 				continue;
 			}
 
 			print '<table class="border centpercent =">' . "\n";
 			$sk->fields = dol_sort_array($sk->fields, 'position');
 			foreach ($sk->fields as $key => $val) {
-
 				if (abs($val['visible']) != 1 && abs($val['visible']) != 3 && abs($val['visible']) != 4) {
 					continue;
 				}
@@ -338,40 +336,40 @@ if (($id || $ref) && $action == 'edit') {
 					print ' tdtop';
 				}
 				print '">';
-//				if (!empty($val['help'])) {
-//					print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
-//				} else {
+				//              if (!empty($val['help'])) {
+				//                  print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
+				//              } else {
 					print $langs->trans($val['label']).'&nbsp;'.$langs->trans('Rank').'&nbsp;'.$sk->rank;
-//				}
+				//              }
 				print '</td>';
 				print '<td class="valuefieldcreate">';
-//				if (!empty($val['picto'])) {
-//					print img_picto('', $val['picto'], '', false, 0, 0, '', 'pictofixedwidth');
-//				}
-//				if (in_array($val['type'], array('int', 'integer'))) {
-//					$value = GETPOSTISSET($key) ? GETPOST($key, 'int') : $sk->$key;
-//				} elseif ($val['type'] == 'double') {
-//					$value = GETPOSTISSET($key) ? price2num(GETPOST($key, 'alphanohtml')) : $sk->$key;
-//				} elseif (preg_match('/^(text|html)/', $val['type'])) {
-//					$tmparray = explode(':', $val['type']);
-					if (!empty($tmparray[1])) {
-						$check = $tmparray[1];
-					} else {
-						$check = 'restricthtml';
-					}
+				//              if (!empty($val['picto'])) {
+				//                  print img_picto('', $val['picto'], '', false, 0, 0, '', 'pictofixedwidth');
+				//              }
+				//              if (in_array($val['type'], array('int', 'integer'))) {
+				//                  $value = GETPOSTISSET($key) ? GETPOST($key, 'int') : $sk->$key;
+				//              } elseif ($val['type'] == 'double') {
+				//                  $value = GETPOSTISSET($key) ? price2num(GETPOST($key, 'alphanohtml')) : $sk->$key;
+				//              } elseif (preg_match('/^(text|html)/', $val['type'])) {
+				//                  $tmparray = explode(':', $val['type']);
+				if (!empty($tmparray[1])) {
+					$check = $tmparray[1];
+				} else {
+					$check = 'restricthtml';
+				}
 
 					$skilldetArray = GETPOST("descriptionline", "array");
-					if(empty($skilldetArray)) {
-						$value = GETPOSTISSET($key) ? GETPOST($key, $check) : $sk->$key;
-					} else {
-						$value=$skilldetArray[$sk->id];
-					}
-//
-//				} elseif ($val['type'] == 'price') {
-//					$value = GETPOSTISSET($key) ? price2num(GETPOST($key)) : price2num($sk->$key);
-//				} else {
-//					$value = GETPOSTISSET($key) ? GETPOST($key, 'alpha') : $sk->$key;
-//				}
+				if (empty($skilldetArray)) {
+					$value = GETPOSTISSET($key) ? GETPOST($key, $check) : $sk->$key;
+				} else {
+					$value=$skilldetArray[$sk->id];
+				}
+				//
+				//              } elseif ($val['type'] == 'price') {
+				//                  $value = GETPOSTISSET($key) ? price2num(GETPOST($key)) : price2num($sk->$key);
+				//              } else {
+				//                  $value = GETPOSTISSET($key) ? GETPOST($key, 'alpha') : $sk->$key;
+				//              }
 				//var_dump($val.' '.$key.' '.$value);
 				if ($val['noteditable']) {
 					print $sk->showOutputField($val, $key, $value, '', '', '', 0);
@@ -492,7 +490,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		if (empty($reshook)) {
-
 			// Back to draft
 			if ($object->status == $object::STATUS_VALIDATED) {
 				print dolGetButtonAction($langs->trans('SetToDraft'), '', 'default', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=confirm_setdraft&confirm=yes&token=' . newToken(), '', $permissiontoadd);
@@ -505,7 +502,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 		print '</div>' . "\n";
 	}
-
 }
 
 //*----------------------------------------------------------------------------
@@ -515,7 +511,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 //*---------------------------------------------------------------------------
 
 if ($action != "create" && $action != "edit") {
-
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
@@ -523,8 +518,8 @@ if ($action != "create" && $action != "edit") {
 	// load hrm libraries
 	require_once __DIR__ . '/class/skilldet.class.php';
 
-// for other modules
-//dol_include_once('/othermodule/class/otherobject.class.php');
+	// for other modules
+	//dol_include_once('/othermodule/class/otherobject.class.php');
 
 	$action = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 	$massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
@@ -538,7 +533,7 @@ if ($action != "create" && $action != "edit") {
 
 	$id = GETPOST('id', 'int');
 
-// Load variable for pagination
+	// Load variable for pagination
 	$limit = 0;
 	$sortfield = GETPOST('sortfield', 'aZ09comma');
 	$sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -551,12 +546,12 @@ if ($action != "create" && $action != "edit") {
 	$pageprev = $page - 1;
 	$pagenext = $page + 1;
 
-// Initialize technical objects
+	// Initialize technical objects
 	$objectline = new Skilldet($db);
-//	$diroutputmassaction = $conf->hrm->dir_output . '/temp/massgeneration/' . $user->id;
-//	$hookmanager->initHooks(array('skilldetlist')); // Note that conf->hooks_modules contains array
+	//  $diroutputmassaction = $conf->hrm->dir_output . '/temp/massgeneration/' . $user->id;
+	//  $hookmanager->initHooks(array('skilldetlist')); // Note that conf->hooks_modules contains array
 
-// Default sort order (if not yet defined by previous GETPOST)
+	// Default sort order (if not yet defined by previous GETPOST)
 	if (!$sortfield) {
 		reset($objectline->fields);                    // Reset is required to avoid key() to return null.
 		$sortfield = "t." . key($objectline->fields); // Set here default search field. By default 1st field in definition.
@@ -565,7 +560,7 @@ if ($action != "create" && $action != "edit") {
 		$sortorder = "ASC";
 	}
 
-// Initialize array of search criterias
+	// Initialize array of search criterias
 	$search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 	$search = array();
 	foreach ($objectline->fields as $key => $val) {
@@ -578,7 +573,7 @@ if ($action != "create" && $action != "edit") {
 		}
 	}
 
-// List of fields to search into when doing a "search in all"
+	// List of fields to search into when doing a "search in all"
 	$fieldstosearchall = array();
 	foreach ($objectline->fields as $key => $val) {
 		if (!empty($val['searchall'])) {
@@ -586,12 +581,12 @@ if ($action != "create" && $action != "edit") {
 		}
 	}
 
-// Definition of array of fields for columns
+	// Definition of array of fields for columns
 	$arrayfields = array();
 	foreach ($objectline->fields as $key => $val) {
 		// If $val['visible']==0, then we never show the field
 		if (!empty($val['visible'])) {
-			$visible = (int)dol_eval($val['visible'], 1);
+			$visible = (int) dol_eval($val['visible'], 1);
 			$arrayfields['t.' . $key] = array(
 				'label' => $val['label'],
 				'checked' => (($visible < 0) ? 0 : 1),
@@ -620,8 +615,8 @@ if ($action != "create" && $action != "edit") {
 	$morecss = array();
 
 
-// Build and execute select
-// --------------------------------------------------------------------
+	// Build and execute select
+	// --------------------------------------------------------------------
 	$sql = 'SELECT ';
 	$sql .= $objectline->getFieldList('t');
 	$sql .= " FROM " . MAIN_DB_PREFIX . $objectline->table_element . " as t";
@@ -635,7 +630,7 @@ if ($action != "create" && $action != "edit") {
 		$sql .= " AND fk_skill = " . $id . " ";
 	}
 
-// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
+	// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
 	if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit))) {
 		$num = $nbtotalofrecords;
 	} else {
@@ -673,12 +668,12 @@ if ($action != "create" && $action != "edit") {
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_' . $object->picto, 0, "", '', '', 0, 0, 1);
 
-// Add code for pre mass action (confirmation or email presend form)
+	// Add code for pre mass action (confirmation or email presend form)
 	$topicmail = "SendSkilldetRef";
 	$modelmail = "skilldet";
 	$objecttmp = new Skilldet($db);
 	$trackid = 'xxxx' . $object->id;
-//include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+	//include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 	if ($search_all) {
 		foreach ($fieldstosearchall as $key => $val) {
@@ -707,27 +702,27 @@ if ($action != "create" && $action != "edit") {
 	}
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-//	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
-//	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+	//  $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+	//  $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="tagtable nobottomiftotal liste' . ($moreforfilter ? " listwithfilterbefore" : "") . '">' . "\n";
 
 
-// Fields title label
-// --------------------------------------------------------------------
+	// Fields title label
+	// --------------------------------------------------------------------
 	print '<tr class="liste_titre">';
 	foreach ($objectline->fields as $key => $val) {
-//		$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
-//		if ($key == 'status') {
-//			$cssforfield .= ($cssforfield ? ' ' : '') . 'center';
-//		} elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
-//			$cssforfield .= ($cssforfield ? ' ' : '') . 'center';
-//		} elseif (in_array($val['type'], array('timestamp'))) {
-//			$cssforfield .= ($cssforfield ? ' ' : '') . 'nowrap';
-//		} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
-//			$cssforfield .= ($cssforfield ? ' ' : '') . 'right';
-//		}
+		//      $cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
+		//      if ($key == 'status') {
+		//          $cssforfield .= ($cssforfield ? ' ' : '') . 'center';
+		//      } elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
+		//          $cssforfield .= ($cssforfield ? ' ' : '') . 'center';
+		//      } elseif (in_array($val['type'], array('timestamp'))) {
+		//          $cssforfield .= ($cssforfield ? ' ' : '') . 'nowrap';
+		//      } elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
+		//          $cssforfield .= ($cssforfield ? ' ' : '') . 'right';
+		//      }
 		if (!empty($arrayfields['t.' . $key]['checked'])) {
 			print getTitleFieldOfList($arrayfields['t.' . $key]['label'], 0, $_SERVER['PHP_SELF'], 't.' . $key, '', $param, ($cssforfield ? 'class="' . $cssforfield . '"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield . ' ' : '')) . "\n";
 		}
@@ -737,8 +732,8 @@ if ($action != "create" && $action != "edit") {
 	print '</tr>' . "\n";
 
 
-// Display all ranks of skill
-// --------------------------------------------------------------------
+	// Display all ranks of skill
+	// --------------------------------------------------------------------
 
 	$i = 0;
 	$totalarray = array();
@@ -750,7 +745,7 @@ if ($action != "create" && $action != "edit") {
 		}
 
 		$MaxNumberSkill = isset($conf->global->HRM_MAXRANK) ? $conf->global->HRM_MAXRANK : Skill::DEFAULT_MAX_RANK_PER_SKILL;
-		if($obj->rank > $MaxNumberSkill) {
+		if ($obj->rank > $MaxNumberSkill) {
 			continue;
 		}
 
@@ -760,22 +755,22 @@ if ($action != "create" && $action != "edit") {
 		// Show here line of result
 		print '<tr class="oddeven">';
 		foreach ($objectline->fields as $key => $val) {
-//			$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
-//			if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
-//				$cssforfield .= ($cssforfield ? ' ' : '') . 'center';
-//			} elseif ($key == 'status') {
-//				$cssforfield .= ($cssforfield ? ' ' : '') . 'center';
-//			}
-//
-//			if (in_array($val['type'], array('timestamp'))) {
-//				$cssforfield .= ($cssforfield ? ' ' : '') . 'nowrap';
-//			} elseif ($key == 'ref') {
-//				$cssforfield .= ($cssforfield ? ' ' : '') . 'nowrap';
-//			}
-//
-//			if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('rowid', 'status')) && empty($val['arrayofkeyval'])) {
-//				$cssforfield .= ($cssforfield ? ' ' : '') . 'right';
-//			}
+			//          $cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
+			//          if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
+			//              $cssforfield .= ($cssforfield ? ' ' : '') . 'center';
+			//          } elseif ($key == 'status') {
+			//              $cssforfield .= ($cssforfield ? ' ' : '') . 'center';
+			//          }
+			//
+			//          if (in_array($val['type'], array('timestamp'))) {
+			//              $cssforfield .= ($cssforfield ? ' ' : '') . 'nowrap';
+			//          } elseif ($key == 'ref') {
+			//              $cssforfield .= ($cssforfield ? ' ' : '') . 'nowrap';
+			//          }
+			//
+			//          if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('rowid', 'status')) && empty($val['arrayofkeyval'])) {
+			//              $cssforfield .= ($cssforfield ? ' ' : '') . 'right';
+			//          }
 			//if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';
 
 			if (!empty($arrayfields['t.' . $key]['checked'])) {
@@ -786,7 +781,6 @@ if ($action != "create" && $action != "edit") {
 					print $objectline->showOutputField($val, $key, $objectline->id, '');
 					// ajout pencil
 					print '<a class="timeline-btn" href="' . DOL_MAIN_URL_ROOT . '/comm/action/skilldet_card.php?action=edit&id=' . $objectline->id . '"><i class="fa fa-pencil" title="' . $langs->trans("Modify") . '" ></i></a>';
-
 				} else {
 					print $objectline->showOutputField($val, $key, $objectline->$key, '');
 				}
@@ -808,10 +802,7 @@ if ($action != "create" && $action != "edit") {
 					}
 					$totalarray['val']['t.' . $key] += $objectline->$key;
 				}
-
-
 			}
-
 		}
 
 
@@ -848,7 +839,7 @@ if ($action != "create" && $action != "edit") {
 	}
 
 
-// If no record found
+	// If no record found
 
 	if ($num == 0) {
 		$colspan = 1;
@@ -872,25 +863,25 @@ if ($action != "create" && $action != "edit") {
 
 	print '</form>' . "\n";
 
-//	if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
-//		$hidegeneratedfilelistifempty = 1;
-//		if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
-//			$hidegeneratedfilelistifempty = 0;
-//		}
-//
-//		require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
-//		$formfile = new FormFile($db);
-//
-//		// Show list of available documents
-//		$urlsource = $_SERVER['PHP_SELF'] . '?sortfield=' . $sortfield . '&sortorder=' . $sortorder;
-//		$urlsource .= str_replace('&amp;', '&', $param);
-//
-//		$filedir = $diroutputmassaction;
-//		$genallowed = $permissiontoread;
-//		$delallowed = $permissiontoadd;
-//
-//		print $formfile->showdocuments('massfilesarea_hrm', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-//	}
+	//  if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
+	//      $hidegeneratedfilelistifempty = 1;
+	//      if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
+	//          $hidegeneratedfilelistifempty = 0;
+	//      }
+	//
+	//      require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
+	//      $formfile = new FormFile($db);
+	//
+	//      // Show list of available documents
+	//      $urlsource = $_SERVER['PHP_SELF'] . '?sortfield=' . $sortfield . '&sortorder=' . $sortorder;
+	//      $urlsource .= str_replace('&amp;', '&', $param);
+	//
+	//      $filedir = $diroutputmassaction;
+	//      $genallowed = $permissiontoread;
+	//      $delallowed = $permissiontoadd;
+	//
+	//      print $formfile->showdocuments('massfilesarea_hrm', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+	//  }
 
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
@@ -911,7 +902,6 @@ if ($action != "create" && $action != "edit") {
 	$somethingshown = $formactions->showactions($object, $object->element . '@' . $object->module, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlright);
 
 	print '</div></div></div>';
-
 }
 
 // End of page
