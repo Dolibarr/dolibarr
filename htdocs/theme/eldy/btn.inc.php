@@ -294,27 +294,6 @@ div.pagination li:first-child a.btnTitle{
 .imgforviewmode {
 	color: #aaa;
 }
-/* this is a designed radio button used in HRM module */
-.radio_js_bloc_number {
-		display:inline-block;
-		padding:5px 7px;
-		min-width:20px;
-		border-radius:3px;
-		border:1px solid #ccc;
-		background:#eee;
-		color:#555;
-		cursor:pointer;
-		margin:2px;
-		text-align:center;
-	}
-
-.radio_js_bloc_number.selected {
-		transition:0.2s ease background;
-		background:#888;
-		color:#fff;
-		border-color:#555;
-	}
-/*---------------------------------------*/
 
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
 @media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
