@@ -72,24 +72,20 @@ if ((float) DOL_VERSION >= 6) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 }
 
-if($action == 'update') {
-
+if ($action == 'update') {
 	$max_rank = GETPOST('HRM_MAXRANK', 'int');
 
 	// We complete skill possible level notation if necessary
-	if(!empty($max_rank)) {
-
+	if (!empty($max_rank)) {
 		$static_skill = new Skill($db);
 		$TAllSkills = $static_skill->fetchAll();
 		foreach ($TAllSkills as &$skill) {
-			if(empty($skill->lines)) $skill->fetchLines();
-			if(count($skill->lines) < $conf->global->HRM_MAXRANK) {
+			if (empty($skill->lines)) $skill->fetchLines();
+			if (count($skill->lines) < $conf->global->HRM_MAXRANK) {
 				$skill->createSkills(count($skill->lines) + 1);
 			}
 		}
-
 	}
-
 } elseif ($action == 'updateMask') {
 	$maskconstorder = GETPOST('maskconstorder', 'alpha');
 	$maskorder = GETPOST('maskorder', 'alpha');

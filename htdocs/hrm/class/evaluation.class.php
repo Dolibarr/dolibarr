@@ -225,17 +225,14 @@ class Evaluation extends CommonObject
 	{
 		$resultcreate = $this->createCommon($user, $notrigger);
 
-		if ($resultcreate > 0)
-		{
+		if ($resultcreate > 0) {
 			dol_include_once('hrm/class/skillrank.class.php');
 			$skillRank = new SkillRank($this->db);
 			$TRequiredRanks = $skillRank->fetchAll('ASC', 't.rowid', 0, 0, array('customsql' => 'fk_object='.$this->fk_job.' AND objecttype="job"'));
 
-			if (is_array($TRequiredRanks) && !empty($TRequiredRanks))
-			{
+			if (is_array($TRequiredRanks) && !empty($TRequiredRanks)) {
 				$this->lines = array();
-				foreach ($TRequiredRanks as $required)
-				{
+				foreach ($TRequiredRanks as $required) {
 					$line = new Evaluationdet($this->db);
 					$line->fk_evaluation = $resultcreate;
 					$line->fk_skill = $required->fk_skill;
@@ -246,7 +243,6 @@ class Evaluation extends CommonObject
 					if ($res > 0) $this->lines[] = $line;
 				}
 			}
-
 		}
 
 		return $resultcreate;
@@ -412,7 +408,6 @@ class Evaluation extends CommonObject
 			$this->errors[] = $this->error;
 			return -1;
 		}
-
 	}
 
 
@@ -664,7 +659,8 @@ class Evaluation extends CommonObject
 	 *		 @param $fk_user
 	 * 		 @return Evaluation|null
 	 */
-	public static function getLastEvaluationForUser($fk_user) {
+	public static function getLastEvaluationForUser($fk_user)
+	{
 		global $db;
 
 
@@ -678,9 +674,8 @@ class Evaluation extends CommonObject
 
 		$Tab = $db->fetch_object($res);
 
-		if(empty($Tab)) return null;
-		else{
-
+		if (empty($Tab)) return null;
+		else {
 			$evaluation = new Evaluation($db);
 			$evaluation->fetch($Tab->rowid);
 
@@ -1180,9 +1175,5 @@ class Evaluation extends CommonObject
 		$description = '';
 
 		include dol_buildpath('hrm/tpl/objectline_view.tpl.php');
-
 	}
-
-
 }
-

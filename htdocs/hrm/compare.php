@@ -108,7 +108,7 @@ $job = new Job($db);
 $form = new Form($db);
 
 $fk_usergroup2 = 0;
-$fk_job = (int)GETPOST('fk_job');
+$fk_job = (int) GETPOST('fk_job');
 if ($fk_job <= 0) $fk_usergroup2 = GETPOST('fk_usergroup2');
 
 $fk_usergroup1 = GETPOST('fk_usergroup1');
@@ -177,8 +177,7 @@ $fk_usergroup1 = GETPOST('fk_usergroup1');
 
 			<div id="compare" width="100%" style="position:relative;">
 
-				<?php if($fk_usergroup1 > 0 || $fk_usergroup2 > 0 || $fk_job > 0) { ?>
-
+				<?php if ($fk_usergroup1 > 0 || $fk_usergroup2 > 0 || $fk_job > 0) { ?>
 					<table width="100%">
 						<tr>
 							<th></th>
@@ -200,8 +199,7 @@ $fk_usergroup1 = GETPOST('fk_usergroup1');
 						$skill = new Skill($db);
 						$TSkill1 = getSkillForUsers($TUser1);
 
-						if ($fk_job > 0)
-						{
+						if ($fk_job > 0) {
 							$TSkill2 = getSkillForJob($fk_job);
 
 							$job = new Job($db);
@@ -212,12 +210,9 @@ $fk_usergroup1 = GETPOST('fk_usergroup1');
 												  <p>'  . $job->description . '</p>
 											  </li>
 										  </ul>';
-						}
-						else
-						{
+						} else {
 							$userlist2 = displayUsersListWithPicto($TUser2, $fk_usergroup2, 'list2');
 							$TSkill2 = getSkillForUsers($TUser2);
-
 						}
 
 						$TMergedSkills = mergeSkills($TSkill1, $TSkill2);
@@ -270,15 +265,14 @@ function diff(&$TMergedSkills)
 		$class = 'diffnote';
 
 		if (empty($sk->rate2)) $class .= ' toohappy';
-		else if (empty($sk->rate1)) $class .= ' toosad';
-		else if ($sk->rate1 == $sk->rate2) $class .= ' happy';
-		else if ($sk->rate2 < $sk->rate1) $class .= ' veryhappy';
-		else if ($sk->rate2 > $sk->rate1) $class .= ' sad';
+		elseif (empty($sk->rate1)) $class .= ' toosad';
+		elseif ($sk->rate1 == $sk->rate2) $class .= ' happy';
+		elseif ($sk->rate2 < $sk->rate1) $class .= ' veryhappy';
+		elseif ($sk->rate2 > $sk->rate1) $class .= ' sad';
 
 		$out .= '<li fk_skill="' . $id . '" class="' . $class . '" style="text-align:center;">
 	      <span class="' . $class . '">&nbsp;</span>
 	    </li>';
-
 	}
 
 	$out .= '</ul>';
@@ -309,19 +303,17 @@ function rate(&$TMergedSkills, $field)
 			$how_many = ($field === 'rate1') ? $sk->how_many_max1 : $sk->how_many_max2;
 		}
 
-		if($field === 'rate2' && $fk_job > 0) $trad = $langs->trans('RequiredRank');
+		if ($field === 'rate2' && $fk_job > 0) $trad = $langs->trans('RequiredRank');
 		else $trad = $langs->trans('HighestRank');
 
 		$out .= '<li fk_skill="' . $id . '" style="text-align:center;">
 	      <p><span class="' . $class . ' classfortooltip" title="' . $trad . '">' . $note . '</span>' . ($how_many > 0 ? '<span class="bubble classfortooltip" title="' . $langs->trans('HowManyUserWithThisMaxNote') . '">' . $how_many . '</span>' : '') . '</p>
 	    </li>';
-
 	}
 
 	$out .= '</ul>';
 
 	return $out;
-
 }
 
 /**
@@ -336,18 +328,15 @@ function skillList(&$TMergedSkills)
 	$out = '<ul class="competence">';
 
 	foreach ($TMergedSkills as $id => &$sk) {
-
 		$out .= '<li fk_skill="' . $id . '">
 	      <h3>' . $sk->label . '</h3>
 	      <p>' . $sk->description . '</p>
 	    </li>';
-
 	}
 
 	$out .= '</ul>';
 
 	return $out;
-
 }
 
 /**
@@ -363,7 +352,6 @@ function mergeSkills($TSkill1, $TSkill2)
 	$Tab = array();
 
 	foreach ($TSkill1 as &$sk) {
-
 			if (empty($Tab[$sk->fk_skill])) $Tab[$sk->fk_skill] = new stdClass;
 
 			$Tab[$sk->fk_skill]->rate1 = $sk->rank;
@@ -373,7 +361,6 @@ function mergeSkills($TSkill1, $TSkill2)
 	}
 
 	foreach ($TSkill2 as &$sk) {
-
 			if (empty($Tab[$sk->fk_skill])) $Tab[$sk->fk_skill] = new stdClass;
 			$Tab[$sk->fk_skill]->rate2 = $sk->rank;
 			$Tab[$sk->fk_skill]->label = $sk->label;
@@ -382,7 +369,6 @@ function mergeSkills($TSkill1, $TSkill2)
 	}
 
 	return $Tab;
-
 }
 
 /**
@@ -398,7 +384,6 @@ function displayUsersListWithPicto(&$TUser, $fk_usergroup = 0, $namelist = 'list
 
 	$out = '';
 	if ($fk_usergroup > 0) {
-
 		$list = $namelist . '_excluded_id';
 
 		$excludedIdsList = GETPOST($list);
@@ -420,7 +405,6 @@ function displayUsersListWithPicto(&$TUser, $fk_usergroup = 0, $namelist = 'list
 		$out .= '<input id="'.$list.'" type="HIDDEN" name="'.$list.'" value="'.$excludedIdsList.'"> ';
 
 		while ($obj = $db->fetch_object($res)) {
-
 			$class = '';
 
 			$user = new User($db);
@@ -456,8 +440,6 @@ function displayUsersListWithPicto(&$TUser, $fk_usergroup = 0, $namelist = 'list
 		      <h3>' . $name . '</h3>
 		      <p>' . $desc . '</p>
 		    </li>';
-
-
 		}
 
 		$out .= '</ul>';
@@ -479,29 +461,28 @@ function getSkillForUsers($TUser)
 	global $db;
 
 	//I go back to the user with the highest score in a given group for all the skills assessed in that group
-	if(empty($TUser)) return array();
+	if (empty($TUser)) return array();
 
 	$sql = 'SELECT sk.rowid, sk.label, sk.description, sk.skill_type, sr.fk_object, sr.objecttype, sr.fk_skill, ';
 	$sql.= " MAX(sr.rank) as rank";
 	$sql.=' FROM '.MAIN_DB_PREFIX.'hrm_skill sk';
 	$sql.='	LEFT JOIN '.MAIN_DB_PREFIX.'hrm_skillrank sr ON (sk.rowid = sr.fk_skill)';
 	$sql.='	WHERE sr.objecttype = "'.SkillRank::SKILLRANK_TYPE_USER.'"';
-	$sql.=' AND sr.fk_object IN ('.implode(',',$TUser).')';
+	$sql.=' AND sr.fk_object IN ('.implode(',', $TUser).')';
 	$sql.=" GROUP BY sk.rowid "; // group par competence
 
 	$resql = $db->query($sql);
 	$Tab = array();
 
-	if ($resql){
+	if ($resql) {
 		//For each skill, we count the number of times that the max score has been reached within a given group
 		$num = 0;
-		while($obj = $db->fetch_object($resql) ) {
-
+		while ($obj = $db->fetch_object($resql) ) {
 			$sql1 = "SELECT count(*) as how_many_max FROM ".MAIN_DB_PREFIX."hrm_skillrank sr";
-			$sql1.=" WHERE sr.rank = ".(int)$obj->rank;
+			$sql1.=" WHERE sr.rank = ".(int) $obj->rank;
 			$sql1.=" AND sr.objecttype = '".Skillrank::SKILLRANK_TYPE_USER."'";
 			$sql1.=" AND sr.fk_skill = ".$obj->fk_skill;
-			$sql1.=" AND sr.fk_object IN (".implode(',',$TUser).")";
+			$sql1.=" AND sr.fk_object IN (".implode(',', $TUser).")";
 			$resql1 = $db->query($sql1);
 
 			$objMax = $db->fetch_object($resql1);
@@ -518,12 +499,11 @@ function getSkillForUsers($TUser)
 
 			$num++;
 		}
-	}else{
+	} else {
 		dol_print_error($db);
 	}
 
-return $Tab;
-
+	return $Tab;
 }
 
 /**
@@ -550,10 +530,9 @@ function getSkillForJob($fk_job)
 	$Tab = array();
 
 
-	if ($resql){
+	if ($resql) {
 		$num = 0;
-		while($obj = $db->fetch_object($resql) ) {
-
+		while ($obj = $db->fetch_object($resql) ) {
 			$Tab[$num] = new stdClass();
 			$Tab[$num]->fk_skill = $obj->fk_skill;
 			$Tab[$num]->label = $obj->label;
@@ -568,7 +547,7 @@ function getSkillForJob($fk_job)
 
 			$num++;
 		}
-	}else{
+	} else {
 		dol_print_error($db);
 	}
 
@@ -589,7 +568,7 @@ function getSkillForJob($fk_job)
  * @param string $morecss
  * @return string
  */
-function select_jobs($selected = '', $htmlname = 'groupid', $show_empty = 0,  $disabled = 0, $enableonly = '', $force_entity = '0', $multiple = false, $morecss = '')
+function select_jobs($selected = '', $htmlname = 'groupid', $show_empty = 0, $disabled = 0, $enableonly = '', $force_entity = '0', $multiple = false, $morecss = '')
 {
 	// phpcs:enable
 	global $conf, $user, $langs,$db;
@@ -607,7 +586,6 @@ function select_jobs($selected = '', $htmlname = 'groupid', $show_empty = 0,  $d
 
 	$resql = $db->query($sql);
 	if ($resql) {
-
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 		$out .= ajax_combobox($htmlname);
 		$out .= '<select class="flat minwidth200'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.($disabled ? ' disabled' : '').'>';

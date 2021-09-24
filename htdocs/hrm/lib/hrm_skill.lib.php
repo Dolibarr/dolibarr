@@ -96,9 +96,8 @@ function skillPrepareHead($object)
 
 
 //Affichage des 5 trades  pour cet object
-function showTraductionNote ($object){
-
-
+function showTraductionNote($object)
+{
 }
 
 
@@ -238,12 +237,12 @@ function show_traduction($conf, $langs, $db, $object, $backtopage = '')
 	$newcardbutton = '';
 	if ($user->rights->societe->contact->creer) {
 		$addTraduction = $langs->trans("AddTraduction");
-		$newcardbutton .= dolGetButtonTitle($addTraduction , '', 'fa fa-plus-circle', DOL_URL_ROOT.'/skilldet/card.php?skillid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
+		$newcardbutton .= dolGetButtonTitle($addTraduction, '', 'fa fa-plus-circle', DOL_URL_ROOT.'/skilldet/card.php?skillid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
 	}
 
 	print "\n";
 
-	$title = $langs->trans("TraductionRule") ;
+	$title = $langs->trans("TraductionRule");
 	print load_fiche_titre($title, $newcardbutton, '');
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';

@@ -1852,7 +1852,6 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			}
 
 			if (!empty($conf->hrm->enabled)) {
-
 				// Skills
 				$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("Skill"), 0, $user->rights->hrm->all->read, '', $mainmenu, 'hrm', 0, '', '', '', img_picto('', 'shapes', 'class="pictofixedwidth"'));
 				$newmenu->add("/hrm/skill_card.php?mainmenu=hrm&leftmenu=hrm&action=create", $langs->trans("NewSkill"), 1, $user->rights->hrm->all->write);
@@ -1872,9 +1871,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$newmenu->add("/hrm/evaluation_card.php?mainmenu=hrm&leftmenu=hrm&action=create", $langs->trans("NewEval"), 1, $user->rights->hrm->evaluation->write);
 				$newmenu->add("/hrm/evaluation_list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("List"), 1, $user->rights->hrm->evaluation->read);
 				$newmenu->add("/hrm/compare.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("Compare"), 1, $user->rights->hrm->compare->read);
-
 			}
-
 		}
 
 

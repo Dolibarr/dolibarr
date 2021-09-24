@@ -232,7 +232,7 @@ class Skill extends CommonObject
 		$resultcreate = $this->createCommon($user, $notrigger);
 
 
-		if ($resultcreate > 0){
+		if ($resultcreate > 0) {
 			// skillDet create
 			$this->createSkills();
 		}
@@ -240,15 +240,15 @@ class Skill extends CommonObject
 		return $resultcreate;
 	}
 
-	public function createSkills($i=1) {
+	public function createSkills($i = 1)
+	{
 
 		global $conf, $user, $langs;
 
 		$MaxNumberSkill = isset($conf->global->HRM_MAXRANK) ? $conf->global->HRM_MAXRANK : self::DEFAULT_MAX_RANK_PER_SKILL;
 		$defaultSkillDesc = !empty($conf->global->HRM_DEFAULT_SKILL_DESCRIPTION) ? $conf->global->HRM_DEFAULT_SKILL_DESCRIPTION : 'no Description';
-		require_once ( __DIR__ . '/skilldet.class.php');
-		for($i; $i <= $MaxNumberSkill ; $i++){
-
+		require_once __DIR__ . '/skilldet.class.php';
+		for ($i; $i <= $MaxNumberSkill ; $i++) {
 			$skilldet = new Skilldet($this->db);
 			$skilldet->description = $defaultSkillDesc . " " . $i ;
 			$skilldet->rank = $i;
@@ -256,11 +256,10 @@ class Skill extends CommonObject
 
 			$result =  $skilldet->create($user);
 
-			if ($result > 0){
-				setEventMessage($langs->trans('TraductionCreadted'),$i);
+			if ($result > 0) {
+				setEventMessage($langs->trans('TraductionCreadted'), $i);
 			}
 		}
-
 	}
 
 	/**
@@ -386,9 +385,9 @@ class Skill extends CommonObject
 	public function fetchLines()
 	{
 		$this->lines = array();
-		require_once ( __DIR__ . '/skilldet.class.php');
+		require_once __DIR__ . '/skilldet.class.php';
 		$skilldet = new Skilldet($this->db);
-		$this->lines = $skilldet->fetchAll('ASC','','','',array('fk_skill' => $this->id),'');
+		$this->lines = $skilldet->fetchAll('ASC', '', '', '', array('fk_skill' => $this->id), '');
 
 		return (count($this->lines) > 0 ) ? $this->lines : 0;
 	}
@@ -1121,15 +1120,15 @@ class Skill extends CommonObject
 	}
 
 
-	public static function typeCodeToLabel($code){
+	public static function typeCodeToLabel($code)
+	{
 		global $langs;
 		$result = '';
-		switch ($code){
-			case 0 : $result = $langs->trans("knowHow") ; break; //"Savoir Faire"
-			case 1 : $result = $langs->trans("HowToBe") ; break; // "Savoir être"
-			case 9 : $result = $langs->trans("knowledge")  ; break; //"Savoir"
+		switch ($code) {
+			case 0 : $result = $langs->trans("knowHow"); break; //"Savoir Faire"
+			case 1 : $result = $langs->trans("HowToBe"); break; // "Savoir être"
+			case 9 : $result = $langs->trans("knowledge"); break; //"Savoir"
 		}
 		return $result;
 	}
 }
-
