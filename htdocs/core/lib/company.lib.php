@@ -1447,9 +1447,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 			$sql .= ", o.ref";
 		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && $filterobj->table_element && $filterobj->element) {
-			if(!empty($filterobj->fields['ref'])) {
+			if (!empty($filterobj->fields['ref'])) {
 				$sql .= ", o.ref";
-			} elseif(!empty($filterobj->fields['label'])) {
+			} elseif (!empty($filterobj->fields['label'])) {
 				$sql .= ", o.label";
 			}
 		}

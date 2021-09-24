@@ -261,7 +261,6 @@ function DisplayJob($object)
 		print '<div class="clearboth"></div>';
 
 		print dol_get_fiche_end();
-
 }
 
 
@@ -360,7 +359,7 @@ function DisplayPositionList($conf, $langs, $db)
 	foreach ($object->fields as $key => $val) {
 		// If $val['visible']==0, then we never show the field
 		if (!empty($val['visible'])) {
-			$visible = (int)dol_eval($val['visible'], 1);
+			$visible = (int) dol_eval($val['visible'], 1);
 			$arrayfields['t.' . $key] = array(
 				'label' => $val['label'],
 				'checked' => (($visible < 0) ? 0 : 1),

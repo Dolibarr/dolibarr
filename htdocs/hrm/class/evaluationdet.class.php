@@ -451,8 +451,7 @@ class Evaluationdet extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
-		if ($this->fk_rank)
-		{
+		if ($this->fk_rank) {
 			$skillRank = new SkillRank($this->db);
 			$skillRank->fetch($this->fk_rank);
 			$skillRank->delete($user, $notrigger);

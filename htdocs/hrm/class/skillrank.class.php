@@ -219,8 +219,7 @@ class SkillRank extends CommonObject
 
 		$sqlfilter = 'fk_object='.$this->fk_object.' AND objecttype="'.$this->objecttype.'" AND fk_skill = '.$this->fk_skill;
 		$alreadyLinked = $this->fetchAll('ASC', 'rowid', 0, 0, array('customsql' => $sqlfilter));
-		if (!empty($alreadyLinked))
-		{
+		if (!empty($alreadyLinked)) {
 			$this->error = $langs->trans('ErrSkillAlreadyAdded');
 			return -1;
 		}
@@ -366,7 +365,8 @@ class SkillRank extends CommonObject
 	 * @param $user
 	 * @return int
 	 */
-	public function cloneFromCurrentSkill($currentSkill,$user,$fk_user){
+	public function cloneFromCurrentSkill($currentSkill, $user, $fk_user)
+	{
 
 		global $user;
 
@@ -1079,12 +1079,8 @@ class SkillRank extends CommonObject
 	 */
 	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
 	{
-		if ($key == "rank")
-		{
+		if ($key == "rank") {
 			return displayRankInfos($this);
-		}
-		else return parent::showOutputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
+		} else return parent::showOutputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
 	}
-
-
 }

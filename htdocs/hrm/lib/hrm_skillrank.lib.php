@@ -103,17 +103,15 @@ function displayRankInfos($selected_rank, $fk_skill, $inputname = 'TNote', $mode
 
 	// On charge les différentes notes possibles pour la compétence $fk_skill
 	$skilldet = new Skilldet($db);
-	$Lines = $skilldet->fetchAll('ASC', 'rank', 0,0, array('customsql'=>'fk_skill = '.$fk_skill));
+	$Lines = $skilldet->fetchAll('ASC', 'rank', 0, 0, array('customsql'=>'fk_skill = '.$fk_skill));
 
 	if (empty($Lines)) return $langs->trans('SkillHasNoLines');
 
 	$ret = '<!-- field jquery --><span title="'.$langs->trans('NA').'" class="radio_js_bloc_number '.$inputname.'_'.$fk_skill.(empty($selected_rank) ? ' selected' : '').'">0</span>';
 
-	foreach ($Lines as $line)
-	{
-
+	foreach ($Lines as $line) {
 		$MaxNumberSkill = isset($conf->global->HRM_MAXRANK) ? $conf->global->HRM_MAXRANK : Skill::DEFAULT_MAX_RANK_PER_SKILL;
-		if($line->rank > $MaxNumberSkill) {
+		if ($line->rank > $MaxNumberSkill) {
 			continue;
 		}
 
@@ -122,8 +120,7 @@ function displayRankInfos($selected_rank, $fk_skill, $inputname = 'TNote', $mode
 		$ret.= '">'.$line->rank.'</span>';
 	}
 
-	if ($mode == 'edit')
-	{
+	if ($mode == 'edit') {
 		$ret.= '
 		<input type="hidden" id="'.$inputname.'_'.$fk_skill.'" name="'.$inputname.'['.$fk_skill.']" value="'.$selected_rank.'">
 		<script type="text/javascript">

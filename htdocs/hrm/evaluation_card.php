@@ -201,82 +201,66 @@ if (empty($reshook)) {
 	$trackid = 'evaluation'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
-	if ($action == 'saveSkill')
-	{
+	if ($action == 'saveSkill') {
 		$TNote = GETPOST('TNote', 'array');
-		if (!empty($TNote))
-		{
-			foreach ($object->lines as $line)
-			{
-
+		if (!empty($TNote)) {
+			foreach ($object->lines as $line) {
 				$line->rank = $TNote[$line->fk_skill];
 				$line->update($user);
-
 			}
 		}
-
 	}
 
-	if ($action == 'close'){
-
+	if ($action == 'close') {
 		// save evaldet lines to user;
 		$sk = new SkillRank($db);
-		$SkillrecordsForActiveUser = $sk->fetchAll('ASC','fk_skill',0,0,array("customsql"=>"fk_object = ".$object->fk_user ." AND objecttype ='".SkillRank::SKILLRANK_TYPE_USER."'"),'AND');
+		$SkillrecordsForActiveUser = $sk->fetchAll('ASC', 'fk_skill', 0, 0, array("customsql"=>"fk_object = ".$object->fk_user ." AND objecttype ='".SkillRank::SKILLRANK_TYPE_USER."'"), 'AND');
 
 		$errors = 0;
 		// we go through the evaldets of the eval
-		foreach ($object->lines as $key => $line){
-
+		foreach ($object->lines as $key => $line) {
 			// no reference .. we add the line to use it
-			if (count($SkillrecordsForActiveUser) == 0){
-
-				if ($res > 0){
+			if (count($SkillrecordsForActiveUser) == 0) {
+				if ($res > 0) {
 					$newSkill = new SkillRank($db);
-					$resCreate = $newSkill->cloneFromCurrentSkill($line,$user,$object->fk_user);
+					$resCreate = $newSkill->cloneFromCurrentSkill($line, $user, $object->fk_user);
 
 					if ($resCreate <= 0) {
 						$errors++;
-						setEventMessage($langs->trans('ErrorCreateUserSkill'),$line->fk_skill);
+						setEventMessage($langs->trans('ErrorCreateUserSkill'), $line->fk_skill);
 					}
-
-				}else{
+				} else {
 					setEventMessage($langs->trans('NoSkilRankLoaded'));
 				}
-
-			} else{
+			} else {
 				//check if the skill is present to use it
 				$find = false;
 				$keyFind = 0;
-				foreach ($SkillrecordsForActiveUser as $k => $sr){
-					if ($sr->fk_skill == $line->fk_skill){
+				foreach ($SkillrecordsForActiveUser as $k => $sr) {
+					if ($sr->fk_skill == $line->fk_skill) {
 						$keyFind = $k;
 						$find = true;
 						break;
 					}
 				}
 				//we update the skill user
-				if ($find){
+				if ($find) {
 					$updSkill = $SkillrecordsForActiveUser[$k];
 
 					$updSkill->rank = $line->rank;
 					$updSkill->update($user);
-				}else{ // sinon on ajoute la skill
+				} else { // sinon on ajoute la skill
 					$newSkill = new SkillRank($db);
-					$resCreate = $newSkill->cloneFromCurrentSkill($line,$user,$object->fk_user);
+					$resCreate = $newSkill->cloneFromCurrentSkill($line, $user, $object->fk_user);
 				}
-
-
 			}
-
-
 		}
 		$object->setStatut(Evaluation::STATUS_CLOSED);
 	}
 
-	if ($action == 'reopen' ){
+	if ($action == 'reopen' ) {
 		// no update here we just change the evaluation status
 		$object->setStatut(Evaluation::STATUS_VALIDATED);
-
 	}
 }
 
@@ -356,8 +340,6 @@ if ($action == 'create') {
 	print '</div>';
 
 	print '</form>';
-
-
 }
 
 // Part to edit record
@@ -562,8 +544,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			print "</form>\n";
 			print "<br>";
-
-
 		}
 	}
 
@@ -588,7 +568,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($object->status == $object::STATUS_VALIDATED) {
 				print dolGetButtonAction($langs->trans('SetToDraft'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes&token='.newToken(), '', $permissiontoadd);
 				print dolGetButtonAction($langs->trans('Close'), '', 'close', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=close&token='.newToken(), '', $permissiontodelete || ($object->status == $object::STATUS_CLOSED && $permissiontoclose));
-			}elseif ($object->status != $object::STATUS_CLOSED) {
+			} elseif ($object->status != $object::STATUS_CLOSED) {
 				print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
 			}
 
@@ -610,7 +590,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
 			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken(), '', $permissiontodelete);
-
 		}
 
 
@@ -619,7 +598,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// list of comparison
 	if ($object->status != Evaluation::STATUS_DRAFT) {
-
 		// Recovery of skills related to this evaluation
 
 		$sql = 'select';
@@ -647,13 +625,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$sql .= '  LEFT JOIN ' . MAIN_DB_PREFIX . 'hrm_skilldet as skdet_required ON (skdet_required.fk_skill = sk.rowid AND skdet_required.rank = ed.required_rank)';
 		$sql .= " WHERE e.rowid =" . $object->id;
 
-//		echo $sql;
+		//      echo $sql;
 
 		$resql = $db->query($sql);
 		$Tab = array();
 
 		if ($resql) {
-
 			$num = 0;
 			while ($obj = $db->fetch_object($resql)) {
 				$Tab[$num] = new stdClass();
@@ -668,7 +645,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				if ($obj->userRankForSkill > $obj->required_rank) {
 					$class .= 'veryhappy';
 				} elseif ($obj->userRankForSkill == $obj->required_rank) {
-
 					$class .= 'happy';
 				} elseif ($obj->userRankForSkill < $obj->required_rank) {
 					$class .= 'sad';
@@ -677,7 +653,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$Tab[$num]->result = '<span class="' . $class . ' note">&nbsp;</span>';
 
 				$num++;
-
 			}
 
 			print load_fiche_titre($langs->trans("SkillList"), '', 'title');
@@ -720,8 +695,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			<?php
 		}
-
-
 	}
 
 

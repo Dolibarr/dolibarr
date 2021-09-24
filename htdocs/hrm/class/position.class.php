@@ -536,9 +536,9 @@ class Position extends CommonObject
 				$sql .= ", date_validation = '" . $this->db->idate($now) . "'";
 			}
 			if (!empty($this->fields['fk_user_valid'])) {
-				$sql .= ", fk_user_valid = " . ((int)$user->id);
+				$sql .= ", fk_user_valid = " . ((int) $user->id);
 			}
-			$sql .= " WHERE rowid = " . ((int)$this->id);
+			$sql .= " WHERE rowid = " . ((int) $this->id);
 
 			dol_syslog(get_class($this) . "::validate()", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -853,7 +853,7 @@ class Position extends CommonObject
 		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
 		$sql .= ' fk_user_creat, fk_user_modif';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
-		$sql .= ' WHERE t.rowid = ' . ((int)$id);
+		$sql .= ' WHERE t.rowid = ' . ((int) $id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {
@@ -946,7 +946,7 @@ class Position extends CommonObject
 			$classname = $conf->global->hrm_POSITION_ADDON;
 
 			// Include file with class
-			$dirmodels = array_merge(array('/'), (array)$conf->modules_parts['models']);
+			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 			foreach ($dirmodels as $reldir) {
 				$dir = dol_buildpath($reldir . "core/modules/hrm/");
 

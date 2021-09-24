@@ -254,7 +254,6 @@ function DisplayPositionCard(&$object)
 
 	// Part to edit record
 	if (($id || $ref) && $action == 'edit') {
-
 		print load_fiche_titre($langs->trans("Position"), '', 'object_' . $object->picto);
 
 		print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '">';
@@ -321,7 +320,7 @@ function DisplayPositionCard(&$object)
 
 		// Object card
 		// ------------------------------------------------------------
-//		$linkback = '<a href="' . dol_buildpath('/hrm/position.php', 1) . '?restore_lastsearch_values=1' . (!empty($object->fk_job) ? '&fk_job=' . $object->fk_job : '') . '">' . $langs->trans("BackToList") . '</a>';
+		//      $linkback = '<a href="' . dol_buildpath('/hrm/position.php', 1) . '?restore_lastsearch_values=1' . (!empty($object->fk_job) ? '&fk_job=' . $object->fk_job : '') . '">' . $langs->trans("BackToList") . '</a>';
 		$linkback = '<a href="' . dol_buildpath('/hrm/position_list.php', 1) . '">' . $langs->trans("BackToList") . '</a>';
 
 		$morehtmlref = '<div class="refidno">';
@@ -373,9 +372,7 @@ function DisplayPositionCard(&$object)
 
 		// Delete (need delete permission, or if draft, just need create/modify permission)
 		print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=delete&token=' . newToken(), '', $permissiontodelete);
-
 	}
-
 }
 
 //if ($action != 'presend') {
@@ -418,10 +415,10 @@ print '</div>' . "\n";
 print '</form>' . "\n";
 
 
-if($action !== 'edit' && $action !== 'create') {
+if ($action !== 'edit' && $action !== 'create') {
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
-// Show links to link elements
+	// Show links to link elements
 	$linktoelem = $form->showLinkToObjectBlock($object, null, array('position'));
 	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
@@ -433,7 +430,7 @@ if($action !== 'edit' && $action !== 'create') {
 	$morehtmlright = '<a href="' . dol_buildpath('/hrm/position_agenda.php', 1) . '?id=' . $object->id . '">';
 	$morehtmlright .= $langs->trans("SeeAll");
 	$morehtmlright .= '</a>';
-// List of actions on element
+	// List of actions on element
 	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 	$formactions = new FormActions($db);
 	$somethingshown = $formactions->showactions($object, $object->element . '@' . $object->module, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlright);

@@ -1028,5 +1028,3 @@ class Skilldet extends CommonObject
 		return $error;
 	}
 }
-
-
