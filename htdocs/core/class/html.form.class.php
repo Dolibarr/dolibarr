@@ -7874,6 +7874,11 @@ class Form
 					if (empty($conf->expedition->enabled)) {
 						continue; // Do not show if module disabled
 					}
+				} elseif ($objecttype == 'mo') {
+					$tplpath = 'mrp/mo';
+					if (empty($conf->mrp->enabled)) {
+						continue; // Do not show if module disabled
+					}
 				} elseif ($objecttype == 'ficheinter') {
 					$tplpath = 'fichinter';
 					if (empty($conf->ficheinter->enabled)) {
