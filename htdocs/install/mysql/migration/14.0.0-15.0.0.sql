@@ -57,6 +57,7 @@ INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private,
 
 
 -- v15
+ALTER TABLE llx_product ADD COLUMN mandatory_period tinyint NULL DEFAULT 0;
 
 ALTER TABLE llx_holiday ADD COLUMN date_approve   DATETIME DEFAULT NULL;
 ALTER TABLE llx_holiday ADD COLUMN fk_user_approve integer DEFAULT NULL;
