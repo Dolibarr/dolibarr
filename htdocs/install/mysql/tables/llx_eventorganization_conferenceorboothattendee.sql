@@ -21,6 +21,7 @@ CREATE TABLE llx_eventorganization_conferenceorboothattendee(
 	fk_soc integer,
 	fk_actioncomm integer,
 	fk_project integer NOT NULL,
+	fk_invoice integer NULL,
 	email varchar(100),
 	date_subscription datetime, 
 	amount double DEFAULT NULL, 

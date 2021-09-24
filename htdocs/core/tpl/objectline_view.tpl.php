@@ -164,7 +164,7 @@ if (($line->info_bits & 2) == 2) {
 	// Show date range
 	if ($line->element == 'facturedetrec') {
 		if ($line->date_start_fill || $line->date_end_fill) {
-			print '<div class="clearboth nowraponall"><br>';
+			print '<div class="clearboth nowraponall daterangeofline-facturedetrec">';
 		}
 		if ($line->date_start_fill) {
 			print '<span class="opacitymedium">'.$langs->trans('AutoFillDateFromShort').':</span> '.yn($line->date_start_fill);
@@ -180,8 +180,24 @@ if (($line->info_bits & 2) == 2) {
 		}
 	} else {
 		if ($line->date_start || $line->date_end) {
-			print '<div class="clearboth nowraponall opacitymedium">'.get_date_range($line->date_start, $line->date_end, $format).'</div>';
+			print '<div class="clearboth nowraponall opacitymedium daterangeofline">'.get_date_range($line->date_start, $line->date_end, $format).'</div>';
 		}
+		if (!$line->date_start || !$line->date_end) {
+			// show warning under line
+			// we need to fetch product associated to line for some test
+			if ($object->element == 'propal'  || $object->element == 'order' || $object->element == 'propal_supplier' || $object->element == 'supplier_proposal' || $object->element == 'commande') {
+				$res = $line->fetch_product();
+				if ($res  > 0  ) {
+					if ($line->product->isService() && $line->product->isMandatoryPeriod()) {
+						print '<div><span class="clearboth nowraponall warning">'.$langs->trans("mandatoryPeriodNeedTobeSet").'</span></div>';
+					}
+				}
+			}
+		}
+
+
+
+
 		//print get_date_range($line->date_start, $line->date_end, $format);
 	}
 

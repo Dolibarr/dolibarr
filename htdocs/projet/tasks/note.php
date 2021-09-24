@@ -31,7 +31,7 @@ $langs->load('projects');
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$mine = $_REQUEST['mode'] == 'mine' ? 1 : 0;
+$mine = GETPOST('mode') == 'mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -84,6 +84,12 @@ if (!empty($project_ref) && !empty($withproject)) {
 		}
 	}
 }
+
+if ($id > 0 || $ref) {
+	$object->fetch($id, $ref);
+}
+
+restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
 $permissionnote = ($user->rights->projet->creer || $user->rights->projet->all->creer);
 

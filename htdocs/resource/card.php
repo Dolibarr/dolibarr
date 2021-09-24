@@ -347,7 +347,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 			// Delete resource
 			if ($user->rights->resource->delete) {
 				print '<div class="inline-block divButAction">';
-				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=delete&amp;token='.newToken().'" class="butActionDelete">'.$langs->trans('Delete').'</a>';
+				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&action=delete&token='.newToken().'" class="butActionDelete">'.$langs->trans('Delete').'</a>';
 				print '</div>';
 			}
 		}
