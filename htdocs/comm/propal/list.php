@@ -471,7 +471,7 @@ $sql .= ' p.datec as date_creation, p.tms as date_update, p.date_cloture as date
 $sql .= ' p.note_public, p.note_private,';
 $sql .= ' p.fk_cond_reglement,p.fk_mode_reglement,p.fk_shipping_method,p.fk_input_reason,';
 $sql .= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label,";
-$sql .= ' u.login, u.lastname, u.firstname, u.email, u.statut, u.entity as user_entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
+$sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity as user_entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= ", sc.fk_soc, sc.fk_user";
 }
@@ -1708,8 +1708,8 @@ if ($resql) {
 		$userstatic->login = $obj->login;
 		$userstatic->lastname = $obj->lastname;
 		$userstatic->firstname = $obj->firstname;
-		$userstatic->email = $obj->email;
-		$userstatic->statut = $obj->statut;
+		$userstatic->email = $obj->user_email;
+		$userstatic->statut = $obj->user_statut;
 		$userstatic->entity = $obj->user_entity;
 		$userstatic->photo = $obj->photo;
 		$userstatic->office_phone = $obj->office_phone;
