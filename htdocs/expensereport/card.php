@@ -235,7 +235,7 @@ if (empty($reshook)) {
 			$object->fk_user_author = $user->id;
 		}
 
-		// Check that expense report is for a user inside the hierarchy or advanced permission for all is set
+		// Check that expense report is for a user inside the hierarchy, or that advanced permission for all is set
 		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer))
 			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer) && empty($user->rights->expensereport->writeall_advance))) {
 			$error++;
@@ -1110,7 +1110,7 @@ if (empty($reshook)) {
 			$action = '';
 		}
 
-		if ((int) $tmpvat < 0 || $tmpvat == '') {
+		if ((float) $tmpvat < 0 || $tmpvat === '') {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("VAT")), null, 'errors');
 			$action = '';
@@ -1205,7 +1205,6 @@ if (empty($reshook)) {
 				}
 			}
 
-			$object->update_totaux_del($object_ligne->total_ht, $object_ligne->total_tva);
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOST('id', 'int'));
 			exit;
 		} else {
@@ -1255,7 +1254,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 			$action = '';
 		}
-		if ((int) $tmpvat < 0 || $tmpvat == '') {
+		if ((float) $tmpvat < 0 || $tmpvat == '') {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Vat")), null, 'errors');
 			$action = '';
@@ -1291,8 +1290,6 @@ if (empty($reshook)) {
 						$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 					}
 				}
-
-				$result = $object->recalculer($id);
 
 				//header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 				//exit;
@@ -1452,8 +1449,6 @@ if ($action == 'create') {
 	print '</form>';
 } elseif ($id > 0 || $ref) {
 	$result = $object->fetch($id, $ref);
-
-	$res = $object->fetch_optionals();
 
 	if ($result > 0) {
 		if (!in_array($object->fk_user_author, $user->getAllChildIds(1))) {
@@ -1646,7 +1641,7 @@ if ($action == 'create') {
 			 if ($user->rights->commande->creer)
 			 {
 			 if ($action != 'classify')
-			 $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+			 $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			 if ($action == 'classify') {
 			 //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 			 $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -1852,12 +1847,22 @@ if ($action == 'create') {
 
 			 print '<tr>';
 			 print '<td>'.$langs->trans("AmountVAT").'</td>';
-			 print '<td class="nowrap amountcard">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency).'</td>';
+			 print '<td class="nowrap amountcard">'.price($object->total_tva, 1, '', 1, -1, -1, $conf->currency).'</td>';
 			 print '</tr>';
+
+			 // Amount Local Taxes
+			if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) { 		// Localtax1
+				print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';
+				print '<td class="valuefield">'.price($object->total_localtax1, 1, '', 1, -1, -1, $conf->currency).'</td></tr>';
+			}
+			if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) { 		// Localtax2 IRPF
+				print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td>';
+				print '<td class="valuefield">'.price($object->total_localtax2, 1, '', 1, -1, -1, $conf->currency).'</td></tr>';
+			}
 
 			 print '<tr>';
 			 print '<td>'.$langs->trans("AmountTTC").'</td>';
-			 print '<td class="nowrap amountcard">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'</td>';
+			 print '<td class="nowrap amountcard">'.price($object->total_ttc, 1, '', 1, -1, -1, $conf->currency).'</td>';
 			 print '</tr>';
 
 			 // List of payments already done
@@ -2062,7 +2067,7 @@ if ($action == 'create') {
 						// Comment
 						print '<td class="left">'.dol_nl2br($line->comments).'</td>';
 						// VAT rate
-						print '<td class="right">'.vatrate($line->vatrate, true).'</td>';
+						print '<td class="right">'.vatrate($line->vatrate.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), true).'</td>';
 						// Unit price HT
 						print '<td class="right">';
 						if (!empty($line->value_unit_ht)) {
@@ -2155,10 +2160,10 @@ if ($action == 'create') {
 						if (($object->status < ExpenseReport::STATUS_VALIDATED || $object->status == ExpenseReport::STATUS_REFUSED) && $user->rights->expensereport->creer) {
 							print '<td class="nowrap right">';
 
-							print '<a class="editfielda reposition paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;token='.newToken().'&amp;rowid='.$line->rowid.'">';
+							print '<a class="editfielda reposition paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&rowid='.$line->rowid.'">';
 							print img_edit();
 							print '</a> &nbsp; ';
-							print '<a class="paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_line&amp;token='.newToken().'&amp;rowid='.$line->rowid.'">';
+							print '<a class="paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete_line&token='.newToken().'&rowid='.$line->rowid.'">';
 							print img_delete();
 							print '</a>';
 
@@ -2269,8 +2274,9 @@ if ($action == 'create') {
 						print '</td>';
 
 						// VAT
+						$selectedvat = price2num($line->vatrate).($line->vat_src_code ? ' ('.$line->vat_src_code.')' : '');
 						print '<td class="right">';
-						print $form->load_tva('vatrate', (GETPOSTISSET("vatrate") ? GETPOST("vatrate") : $line->vatrate), $mysoc, '', 0, 0, '', false, 1);
+						print $form->load_tva('vatrate', (GETPOSTISSET("vatrate") ? GETPOST("vatrate") : $selectedvat), $mysoc, '', 0, 0, '', false, 1);
 						print '</td>';
 
 						// Unit price

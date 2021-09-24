@@ -37,20 +37,12 @@ $langs->loadLangs(array('projects', 'other'));
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$mine = $_REQUEST['mode'] == 'mine' ? 1 : 0;
+$mine = GETPOST('mode') == 'mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $withproject = GETPOST('withproject', 'int');
 $project_ref = GETPOST('project_ref', 'alpha');
-
-// Security check
-$socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-//$result=restrictedArea($user,'projet',$id,'');
-if (!$user->rights->projet->lire) {
-	accessforbidden();
-}
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -73,6 +65,17 @@ if (!$sortfield) {
 $object = new Task($db);
 $projectstatic = new Project($db);
 
+if ($id > 0 || $ref) {
+	$object->fetch($id, $ref);
+}
+
+// Security check
+$socid = 0;
+
+restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
+
+
+
 /*
  * Actions
  */
@@ -92,25 +95,21 @@ if (!empty($project_ref) && !empty($withproject)) {
 }
 
 if ($id > 0 || !empty($ref)) {
-	if ($object->fetch($id, $ref) > 0) {
-		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK) && method_exists($object, 'fetchComments') && empty($object->comments)) {
-			$object->fetchComments();
-		}
-		$projectstatic->fetch($object->fk_project);
-		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
-			$projectstatic->fetchComments();
-		}
-
-		if (!empty($projectstatic->socid)) {
-			$projectstatic->fetch_thirdparty();
-		}
-
-		$object->project = clone $projectstatic;
-
-		$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref);
-	} else {
-		dol_print_error($db);
+	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK) && method_exists($object, 'fetchComments') && empty($object->comments)) {
+		$object->fetchComments();
 	}
+	$projectstatic->fetch($object->fk_project);
+	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
+		$projectstatic->fetchComments();
+	}
+
+	if (!empty($projectstatic->socid)) {
+		$projectstatic->fetch_thirdparty();
+	}
+
+	$object->project = clone $projectstatic;
+
+	$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref);
 }
 
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';

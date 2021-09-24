@@ -1155,3 +1155,4 @@ ConfirmMassLeaveApproval=Mass leave approval confirmation
 RecordAproved=Record approved
 RecordsApproved=%s Record(s) approved
 Properties=Properties
+hasBeenValidated=%s has been validated
