@@ -381,10 +381,10 @@ class CommandeFournisseur extends CommonOrder
 			$this->date_approve			= $this->db->jdate($obj->date_approve);
 			$this->date_approve2		= $this->db->jdate($obj->date_approve2);
 			$this->date_commande		= $this->db->jdate($obj->date_commande); // date we make the order to supplier
-			if (isset($this->date_commande)) {
-				$this->date = $this->db->jdate($obj->date_commande);
+			if (isset($obj->date_commande)) {
+				$this->date = $this->date_commande;
 			} else {
-				$this->date = $this->db->jdate($obj->date_creation);
+				$this->date = $this->date_creation;
 			}
 			$this->date_livraison = $this->db->jdate($obj->delivery_date); // deprecated
 			$this->delivery_date = $this->db->jdate($obj->delivery_date);
