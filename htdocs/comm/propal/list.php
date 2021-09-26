@@ -476,7 +476,7 @@ $sql .= ' u.login, u.lastname, u.firstname, u.email, u.statut, u.entity as user_
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= ", sc.fk_soc, sc.fk_user";
 }
-if ($search_categ_cus) {
+if (!empty($search_categ_cus) && $search_categ_cus != '-1') {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
 }
 // Add fields from extrafields
@@ -494,7 +494,7 @@ $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
-if (!empty($search_categ_cus)) {
+if (!empty($search_categ_cus) && $search_categ_cus != '-1') {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 }
 $sql .= ', '.MAIN_DB_PREFIX.'propal as p';
@@ -599,6 +599,7 @@ if ($search_multicurrency_montant_ttc != '') {
 if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
+
 if ($search_categ_cus > 0) {
 	$sql .= " AND cc.fk_categorie = ".((int) $search_categ_cus);
 }
