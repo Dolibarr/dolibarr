@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("eventorganization", "other"));
+$langs->loadLangs(array("eventorganization", "other", "projects", "companies"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -109,6 +109,7 @@ $permissiontodelete = $user->rights->eventorganization->delete || ($permissionto
 $permissionnote = $user->rights->eventorganization->write; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->eventorganization->write; // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->eventorganization->multidir_output[isset($object->entity) ? $object->entity : 1];
+
 
 /*
  * Actions
