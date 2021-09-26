@@ -112,7 +112,7 @@ print $langs->trans("LDAPDescMembersTypes").'<br>';
 print '<br>';
 
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newtoken().'">';
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $form = new Form($db);
