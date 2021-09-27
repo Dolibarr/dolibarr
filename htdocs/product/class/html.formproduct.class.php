@@ -593,9 +593,8 @@ class FormProduct
 
 					if ( $use_baseval = 1 )
 						$out .= '<option value="'.$arraytypes['batch'].'"';
-					else
-						$out .= '<option value="'.$id.'"';
-					
+					else $out .= '<option value="'.$id.'"';
+
 					if ($selected == $id || ($selected == 'ifone' && $nboflot == 1)) {
 						$out .= ' selected';
 					}
