@@ -274,24 +274,24 @@ class Link extends CommonObject
 	/**
 	 *  Return nb of links
 	 *
-	 *  @param  DoliDb  $db         Database handler
+	 *  @param  DoliDb  $dbs         Database handler
 	 *  @param  string  $objecttype Type of the associated object in dolibarr
 	 *  @param  int     $objectid   Id of the associated object in dolibarr
 	 *  @return int                 Nb of links, -1 if error
 	 **/
-	public static function count($db, $objecttype, $objectid)
+	public static function count($dbs, $objecttype, $objectid)
 	{
 		global $conf;
 
 		$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."links";
-		$sql .= " WHERE objecttype = '".$db->escape($objecttype)."' AND objectid = ".((int) $objectid);
+		$sql .= " WHERE objecttype = '".$dbs->escape($objecttype)."' AND objectid = ".((int) $objectid);
 		if ($conf->entity != 0) {
 			$sql .= " AND entity = ".$conf->entity;
 		}
 
-		$resql = $db->query($sql);
+		$resql = $dbs->query($sql);
 		if ($resql) {
-			$obj = $db->fetch_object($resql);
+			$obj = $dbs->fetch_object($resql);
 			if ($obj) {
 				return $obj->nb;
 			}
