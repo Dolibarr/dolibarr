@@ -411,9 +411,9 @@ if ($id > 0 || $ref) {
 
 			// Status of line
 			print "<td>";
-			print $ligne->LibStatut($obj->statut, 2);
 			print '<a class="valignmiddle" href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'&type='.$object->type.'&token='.newToken().'">';
-			print sprintf("%06s", $obj->rowid);
+			print $ligne->LibStatut($obj->statut, 2);
+			print '<span class="paddingleft">'.$obj->rowid.'</span>';
 			print '</a></td>';
 
 			$thirdparty = new Societe($db);

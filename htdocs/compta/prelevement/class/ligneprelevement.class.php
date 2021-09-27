@@ -160,6 +160,8 @@ class LignePrelevement
 				return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts[$status]), 'statut8', 'class="valignmiddle"');
 			}
 		}
+
+		//return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 	/**
