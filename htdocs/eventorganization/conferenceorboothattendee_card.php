@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("eventorganization", "other"));
+$langs->loadLangs(array("eventorganization", "other", "projects", "companies"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -110,6 +110,7 @@ $permissionnote = $user->rights->eventorganization->write; // Used by the includ
 $permissiondellink = $user->rights->eventorganization->write; // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->eventorganization->multidir_output[isset($object->entity) ? $object->entity : 1];
 
+
 /*
  * Actions
  */
@@ -134,7 +135,7 @@ if (empty($reshook)) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?id='.($id > 0 ? $id : '__ID__');
+				$backtopage = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?fk_project='.((int) $fk_project).'&id='.($id > 0 ? $id : '__ID__');
 			}
 		}
 	}

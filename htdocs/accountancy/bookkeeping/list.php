@@ -591,7 +591,7 @@ if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->ex
 
 		if (!empty($accountancyexport->errors)) {
 			setEventMessages('', $accountancyexport->errors, 'errors');
-		} elseif (!$notifiedexportdate || !$notifiedvalidationdate) {
+		} elseif (!empty($notifiedexportdate) || !empty($notifiedvalidationdate)) {
 			// Specify as export : update field date_export or date_validated
 			$error = 0;
 			$db->begin();
@@ -602,17 +602,17 @@ if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->ex
 
 					$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
 					$sql .= " SET";
-					if (!$notifiedexportdate && !$notifiedvalidationdate) {
+					if (!empty($notifiedexportdate) && !empty($notifiedvalidationdate)) {
 						$sql .= " date_export = '".$db->idate($now)."'";
 						$sql .= ", date_validated = '".$db->idate($now)."'";
-					} elseif (!$notifiedexportdate) {
+					} elseif (!empty($notifiedexportdate)) {
 						$sql .= " date_export = '".$db->idate($now)."'";
-					} elseif (!$notifiedvalidationdate) {
+					} elseif (!empty($notifiedvalidationdate)) {
 						$sql .= " date_validated = '".$db->idate($now)."'";
 					}
 					$sql .= " WHERE rowid = ".((int) $movement->id);
 
-					dol_syslog("/accountancy/bookeeping/list.php Function export_file Specify movements as exported sql=".$sql, LOG_DEBUG);
+					dol_syslog("/accountancy/bookkeeping/list.php Function export_file Specify movements as exported sql=".$sql, LOG_DEBUG);
 					$result = $db->query($sql);
 					if (!$result) {
 						$error++;
