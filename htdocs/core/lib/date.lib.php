@@ -181,9 +181,9 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit)
 		$newtimetotalmonths = (($newtimeyear * 12) + $newtimemonth);
 
 		if ($monthsexpected < $newtimetotalmonths) {
-			$newtimehours = dol_print_date($newtime, '%m');
-			$newtimemins = dol_print_date($newtime, '%m');
-			$newtimesecs = dol_print_date($newtime, '%m');
+			$newtimehours = dol_print_date($newtime, '%h');
+			$newtimemins = dol_print_date($newtime, '%i');
+			$newtimesecs = dol_print_date($newtime, '%s');
 
 			$datelim = dol_mktime($newtimehours, $newtimemins, $newtimesecs, $newtimemonth, 1, $newtimeyear);
 			$datelim -= (3600 * 24);
