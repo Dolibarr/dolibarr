@@ -248,9 +248,9 @@ class ConferenceOrBoothAttendee extends CommonObject
 		}
 
 		$result = $this->createCommon($user, $notrigger);
-		if ($result>0) {
-			$result =$this->fetch($result);
-			if ($result>0) {
+		if ($result > 0) {
+			$result = $this->fetch($result);
+			if ($result > 0) {
 				$this->ref = $this->id;
 				$result = $this->update($user);
 			}
@@ -293,7 +293,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 		// Clear fields
 		if (property_exists($object, 'ref')) {
-			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
+			$object->ref = empty($this->fields['ref']['default']) ? "(PROV)" : $this->fields['ref']['default'];
 		}
 		if (property_exists($object, 'label')) {
 			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
@@ -327,6 +327,9 @@ class ConferenceOrBoothAttendee extends CommonObject
 			$error++;
 			$this->error = $object->error;
 			$this->errors = $object->errors;
+		} else {
+			$object->ref = $object->id;
+			$result = $object->update($user);
 		}
 
 		if (!$error) {
