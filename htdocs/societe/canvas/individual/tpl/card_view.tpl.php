@@ -187,14 +187,14 @@ if ($this->control->tpl['action_delete']) {
 
 <div class="tabsAction">
 <?php if ($user->rights->societe->creer) { ?>
-<a class="butAction" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&amp;action=edit&amp;canvas='.$canvas; ?>"><?php echo $langs->trans("Modify"); ?></a>
+<a class="butAction" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=edit&token='.newToken().'&canvas='.urlencode($canvas); ?>"><?php echo $langs->trans("Modify"); ?></a>
 <?php } ?>
 
 <?php if ($user->rights->societe->supprimer) { ?>
 	<?php if ($conf->use_javascript_ajax) { ?>
 		<span id="action-delete" class="butActionDelete"><?php echo $langs->trans('Delete'); ?></span>
 	<?php } else { ?>
-		<a class="butActionDelete" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.$canvas; ?>"><?php echo $langs->trans('Delete'); ?></a>
+		<a class="butActionDelete" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.urlencode($canvas); ?>"><?php echo $langs->trans('Delete'); ?></a>
 	<?php } ?>
 <?php } ?>
 </div>

@@ -469,7 +469,7 @@ if ($action == 'create') {
 
 			if ($object->statut < Deplacement::STATUS_REFUNDED) { 	// if not refunded
 				if ($user->rights->deplacement->creer) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$id.'">'.$langs->trans('Modify').'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
 				}

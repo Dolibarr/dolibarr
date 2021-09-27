@@ -609,7 +609,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		// Edit/Delete
 		print '<td class="right nowraponall">';
 		if ($permissiontoaddbankaccount) {
-			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&bankid='.$account->id.'&action=edit">';
+			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&bankid='.$account->id.'&action=edit&token='.newToken().'">';
 			print img_picto($langs->trans("Modify"), 'edit');
 			print '</a>';
 		}

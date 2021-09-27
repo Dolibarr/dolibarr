@@ -616,11 +616,11 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				// Action
 				if ($user->rights->produit->creer || $user->rights->service->creer) {
 					print '<td class="right nowraponall">';
-					print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=showlog_customer_price&amp;socid='.$object->id.'&amp;prodid='.$line->fk_product.'">';
+					print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=showlog_customer_price&token='.newToken().'&socid='.$object->id.'&prodid='.$line->fk_product.'">';
 					print img_info();
 					print '</a>';
 					print ' ';
-					print '<a class="editfielda paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=edit_customer_price&socid='.$object->id.'&lineid='.$line->id.'">';
+					print '<a class="editfielda paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=edit_customer_price&token='.newToken().'&socid='.$object->id.'&lineid='.$line->id.'">';
 					print img_edit('default', 0, 'style="vertical-align: middle;"');
 					print '</a>';
 					print ' ';
