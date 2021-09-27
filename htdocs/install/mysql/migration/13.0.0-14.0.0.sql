@@ -441,6 +441,7 @@ ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_evento
 
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD UNIQUE INDEX uk_eventorganization_conferenceorboothattendee(fk_project, email, fk_actioncomm);
 
+
 create table llx_eventorganization_conferenceorboothattendee_extrafields
 (
     rowid                     integer AUTO_INCREMENT PRIMARY KEY,
