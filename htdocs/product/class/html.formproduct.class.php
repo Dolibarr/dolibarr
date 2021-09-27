@@ -536,10 +536,11 @@ class FormProduct
 	 *  @param	int		$forcecombo		1=Force combo iso ajax select2
 	 *  @param	array	$events			Events to add to select2
 	 *  @param  string  $morecss		Add more css classes to HTML select
+	 *  @param int $use_baseval 1=uses batch as value within select
 	 *
 	 * 	@return	string					HTML select
 	 */
-	public function selectLotStock($selected = '', $htmlname = 'batch_id', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array(), $empty_label = '', $forcecombo = 0, $events = array(), $morecss = 'minwidth200')
+	public function selectLotStock($selected = '', $htmlname = 'batch_id', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array(), $empty_label = '', $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $use_baseval = 0)
 	{
 		global $conf, $langs;
 
@@ -590,7 +591,11 @@ class FormProduct
 						$label .= ' <span class=\'opacitymedium\'>('.$langs->trans("Stock").' '.$arraytypes['qty'].')</span>';
 					}
 
-					$out .= '<option value="'.$id.'"';
+					if ( $use_baseval = 1 )
+						$out .= '<option value="'.$arraytypes['batch'].'"';
+					else
+						$out .= '<option value="'.$id.'"';
+					
 					if ($selected == $id || ($selected == 'ifone' && $nboflot == 1)) {
 						$out .= ' selected';
 					}

@@ -945,7 +945,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						if ($action == 'consumeorproduce' && !GETPOSTISSET('qty-'.$line->id.'-'.$i)) {
 							$preselected = 0;
 						}
-						print '<td class="right"><input type="text" class="width50 right" name="qty-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
+					
+						$disable = 'disabled';
+						if ( ($line->qty - $alreadyconsumed) > 0 )
+							$disable = '';
+
+						print '<td class="right"><input type="text" class="width50 right" name="qty-'.$line->id.'-'.$i.'" value="'.$preselected.'" '.$disable.' ></td>';
 						if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
 							print '<td></td>';
 						}
@@ -967,7 +972,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							print '<td>';
 							if ($tmpproduct->status_batch) {
 								$preselected = (GETPOSTISSET('batch-'.$line->id.'-'.$i) ? GETPOST('batch-'.$line->id.'-'.$i) : '');
-								print '<input type="text" class="width50" name="batch-'.$line->id.'-'.$i.'" value="'.$preselected.'">';
+								print '<td>'.$formproduct->selectLotStock('', 'batch-'.$line->id.'-'.$i, '', 1, 0, $line->fk_product,'','','','','','',1).'</td>';
+								//print '<input type="text" class="width50" name="batch-'.$line->id.'-'.$i.'" value="'.$preselected.'">';
 							}
 							print '</td>';
 						}
