@@ -1240,11 +1240,12 @@ class Expedition extends CommonObject
 					// get lot/serial
 					$lotArray = null;
 					if ($conf->productbatch->enabled) {
-						$lotArray = $shipmentlinebatch->fetchAll($this->db, $obj->expeditiondet_id);
+						$lotArray = $shipmentlinebatch->fetchAll($obj->expeditiondet_id);
 						if (!is_array($lotArray)) {
 							$error++; $this->errors[] = "Error ".$this->db->lasterror();
 						}
 					}
+
 					if (empty($lotArray)) {
 						// no lot/serial
 						// We increment stock of product (and sub-products)
