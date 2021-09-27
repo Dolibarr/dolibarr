@@ -570,13 +570,13 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 }
 $param .= '&amp;begin='.urlencode($begin).'&amp;userid='.urlencode($userid).'&amp;contactname='.urlencode($sall);
 $param .= '&amp;type='.urlencode($type).'&amp;view='.urlencode($view);
-if (!empty($search_categ)) {
+if (!empty($search_categ) && $search_categ != '-1') {
 	$param .= '&amp;search_categ='.urlencode($search_categ);
 }
-if (!empty($search_categ_thirdparty)) {
+if (!empty($search_categ_thirdparty) && $search_categ_thirdparty != '-1') {
 	$param .= '&amp;search_categ_thirdparty='.urlencode($search_categ_thirdparty);
 }
-if (!empty($search_categ_supplier)) {
+if (!empty($search_categ_supplier) && $search_categ_supplier != '-1') {
 	$param .= '&amp;search_categ_supplier='.urlencode($search_categ_supplier);
 }
 if ($sall != '') {
