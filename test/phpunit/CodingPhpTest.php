@@ -201,7 +201,6 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 				|| in_array($file['name'], array('modules_boxes.php', 'rapport.pdf.php', 'TraceableDB.php'))) {
 				if (! in_array($file['name'], array(
 					'api.class.php',
-					'actioncomm.class.php',
 					'commonobject.class.php',
 					'conf.class.php',
 					'html.form.class.php',
@@ -213,16 +212,13 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 					'modules_product.class.php',
 					'modules_societe.class.php',
 					'TraceableDB.php',
-					'expeditionbatch.class.php',
-					'expensereport_ik.class.php',
-					'expensereport_rule.class.php',
 					'multicurrency.class.php',
 					'productbatch.class.php',
 					'reception.class.php',
 					'societe.class.php' ,
 					'account.class.php'
 				))) {
-					// Must must not found $db->
+					// Must not found $db->
 					$ok=true;
 					$matches=array();
 					// Check string $db-> inside a class.php file (it should be $this->db-> insto such classes)

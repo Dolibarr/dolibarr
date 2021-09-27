@@ -339,7 +339,10 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			$ret .= '<input type="hidden" name="action" value="setdefault_range">';
 			$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$ret .= '<input type="hidden" name="id" value="'.$object->id.'">';
-			$maxRangeNum = ExpenseReportIk::getMaxRangeNumber($object->default_c_exp_tax_cat);
+
+			$expensereportik = new ExpenseReportIk($db);
+			$maxRangeNum = $expensereportik->getMaxRangeNumber($object->default_c_exp_tax_cat);
+
 			$ret .= $form->selectarray('default_range', range(0, $maxRangeNum), $object->default_range);
 			$ret .= '<input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'"> ';
 			$ret .= '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';

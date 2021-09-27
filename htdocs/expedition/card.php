@@ -137,8 +137,15 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($cancel) {
-		$action = '';
-		$object->fetch($id); // show shipment also after canceling modification
+		if ($origin && $origin_id > 0) {
+			if ($origin == 'commande') {
+				header("Location: ".DOL_URL_ROOT.'/expedition/shipment.php?id='.((int) $origin_id));
+				exit;
+			}
+		} else {
+			$action = '';
+			$object->fetch($id); // show shipment also after canceling modification
+		}
 	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
@@ -1049,7 +1056,7 @@ if ($action == 'create') {
 				print '<td class="center">'.$langs->trans("QtyShipped").'</td>';
 				print '<td class="center">'.$langs->trans("QtyToShip");
 				if (empty($conf->productbatch->enabled)) {
-					print '<br><a href="#" id="autofill" class="opacitymedium link cursor cursorpointer">'.img_picto($langs->trans("Autofill"), 'autofill', 'class="paddingrightonly"').$langs->trans("Fill").'</a>';
+					print '<br><a href="#" id="autofill" class="opacitymedium link cursor cursorpointer">'.img_picto($langs->trans("Autofill"), 'autofill', 'class="paddingrightonly"').'</a>';
 					print ' / ';
 				} else {
 					print '<br>';
@@ -2482,7 +2489,7 @@ if ($action == 'create') {
 						$label = "ClassifyBilled";
 						$paramaction = 'classifybilled';
 					}
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action='.$paramaction.'">'.$langs->trans($label).'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action='.$paramaction.'&token='.newToken().'">'.$langs->trans($label).'</a>';
 				}
 			}
 
