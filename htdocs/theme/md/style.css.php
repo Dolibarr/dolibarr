@@ -6917,6 +6917,11 @@ if (is_object($db)) {
 }​
 
 div#topmenu-bookmark-dropdown {
-position: fixed;
-right: 20px;
+	position: fixed;
+	right: 20px;
+}
+
+/* Must be at end */
+div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
+	color: unset;
 }

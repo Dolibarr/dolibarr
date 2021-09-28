@@ -119,7 +119,7 @@ $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 $search_categ_sup = trim(GETPOST("search_categ_sup", 'int'));
 
-$option = GETPOST('option');
+$option = GETPOST('search_option');
 if ($option == 'late') {
 	$search_status = '1';
 }
@@ -441,7 +441,7 @@ $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
-if (!empty($search_categ_sup)) {
+if (!empty($search_categ_sup) && $search_categ_supplier != '-1') {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs ON s.rowid = cs.fk_soc";
 }
 
@@ -803,7 +803,7 @@ if ($resql) {
 		$param .= '&show_files='.urlencode($show_files);
 	}
 	if ($option) {
-		$param .= "&option=".urlencode($option);
+		$param .= "&search_option=".urlencode($option);
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
@@ -1428,9 +1428,9 @@ if ($resql) {
 
 			// Date limit
 			if (!empty($arrayfields['f.date_lim_reglement']['checked'])) {
-				print '<td class="center nowrap">'.dol_print_date($datelimit, 'day');
+				print '<td class="center nowraponall">'.dol_print_date($datelimit, 'day');
 				if ($facturestatic->hasDelay()) {
-					print img_warning($langs->trans('Late'));
+					print img_warning($langs->trans('Alert').' - '.$langs->trans('Late'));
 				}
 				print '</td>';
 				if (!$i) {

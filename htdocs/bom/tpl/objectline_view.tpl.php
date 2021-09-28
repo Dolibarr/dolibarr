@@ -121,7 +121,7 @@ if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines') {
 	$coldisplay++;
 	if (($line->info_bits & 2) == 2 || !empty($disableedit)) {
 	} else {
-		print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'">'.img_edit().'</a>';
+		print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=editline&token='.newToken().'&lineid='.$line->id.'">'.img_edit().'</a>';
 	}
 	print '</td>';
 
@@ -129,7 +129,7 @@ if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines') {
 	$coldisplay++;
 	if (($line->fk_prev_id == null) && empty($disableremove)) {
 		//La suppression n'est autorisée que si il n'y a pas de ligne dans une précédente situation
-		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=deleteline&amp;token='.newToken().'&amp;lineid='.$line->id.'">';
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=deleteline&token='.newToken().'&lineid='.$line->id.'">';
 		print img_delete();
 		print '</a>';
 	}

@@ -26,6 +26,8 @@
 /**
  *  Parent class for class inheritance lines of business objects
  *  This class is useless for the moment so no inherit are done on it
+ *
+ *  TODO For the moment we use the extends on CommonObject until PHP min is 5.4 so we can use Traits.
  */
 abstract class CommonObjectLine extends CommonObject
 {
@@ -61,7 +63,7 @@ abstract class CommonObjectLine extends CommonObject
 	}
 
 	/**
-	 *	Returns the label, shot_label or code found in units dictionary from ->fk_unit.
+	 *	Returns the label, short_label or code found in units dictionary from ->fk_unit.
 	 *  A langs->trans() must be called on result to get translated value.
 	 *
 	 * 	@param	string $type 	Label type ('long', 'short' or 'code'). This can be a translation key.
@@ -104,7 +106,4 @@ abstract class CommonObjectLine extends CommonObject
 			return -1;
 		}
 	}
-	// Currently we need function at end of file CommonObject for all object lines. Should find a way to avoid duplicate code.
-
-	// For the moment we use the extends on CommonObject until PHP min is 5.4 so use Traits.
 }

@@ -144,7 +144,6 @@ class EcmDirectory extends CommonObject
 
 		// Clean parameters
 		$this->label = dol_sanitizeFileName(trim($this->label));
-		$this->fk_parent = trim($this->fk_parent);
 		$this->description = trim($this->description);
 		$this->date_c = $now;
 		$this->fk_user_c = $user->id;
@@ -155,7 +154,7 @@ class EcmDirectory extends CommonObject
 
 		// Check if same directory does not exists with this name
 		$relativepath = $this->label;
-		if ($this->fk_parent) {
+		if ($this->fk_parent > 0) {
 			$parent = new EcmDirectory($this->db);
 			$parent->fetch($this->fk_parent);
 			$relativepath = $parent->getRelativePath().$relativepath;
@@ -194,11 +193,11 @@ class EcmDirectory extends CommonObject
 			$sql .= ") VALUES (";
 			$sql .= " '".$this->db->escape($this->label)."',";
 			$sql .= " '".$this->db->escape($conf->entity)."',";
-			$sql .= " '".$this->db->escape($this->fk_parent)."',";
+			$sql .= " ".($this->fk_parent > 0 ? ((int) $this->fk_parent) : "null").",";
 			$sql .= " '".$this->db->escape($this->description)."',";
 			$sql .= " ".((int) $this->cachenbofdoc).",";
 			$sql .= " '".$this->db->idate($this->date_c)."',";
-			$sql .= " '".$this->db->escape($this->fk_user_c)."'";
+			$sql .= " ".($this->fk_user_c > 0 ? ((int) $this->fk_user_c) : "null").",";
 			$sql .= ")";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -249,20 +248,19 @@ class EcmDirectory extends CommonObject
 
 		// Clean parameters
 		$this->label = trim($this->label);
-		$this->fk_parent = trim($this->fk_parent);
 		$this->description = trim($this->description);
-
-		// Check parameters
-		// Put here code to add control on parameters values
+		if ($this->fk_parent <= 0) {
+			$this->fk_parent = 0;
+		}
 
 		$this->db->begin();
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
-		$sql .= " label='".$this->db->escape($this->label)."',";
-		$sql .= " fk_parent='".$this->db->escape($this->fk_parent)."',";
-		$sql .= " description='".$this->db->escape($this->description)."'";
-		$sql .= " WHERE rowid=".((int) $this->id);
+		$sql .= " label = '".$this->db->escape($this->label)."',";
+		$sql .= " fk_parent = ".($this->fk_parent > 0 ? ((int) $this->fk_parent) : "null").",";
+		$sql .= " description = '".$this->db->escape($this->description)."'";
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -731,10 +729,10 @@ class EcmDirectory extends CommonObject
 		// We count number of _ to have level (we use strlen that is faster than dol_strlen)
 		$this->cats[$id_categ]['level'] = strlen(preg_replace('/([^_])/i', '', $this->cats[$id_categ]['fullpath']));
 
-		// Traite ces enfants
+		// Process children
 		$protection++;
 		if ($protection > 20) {
-			return; // On ne traite pas plus de 20 niveaux
+			return; // We never go more than 20 levels
 		}
 		if (isset($this->cats[$id_categ]['id_children']) && is_array($this->cats[$id_categ]['id_children'])) {
 			foreach ($this->cats[$id_categ]['id_children'] as $key => $val) {

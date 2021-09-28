@@ -48,6 +48,9 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 've
 
 $socid = GETPOST('socid', 'int');
 
+// Security check
+if ($user->socid) $socid = $user->socid;
+
 $search_ref				= GETPOST('search_ref', 'alpha');
 $search_date_startday	= GETPOST('search_date_startday', 'int');
 $search_date_startmonth	= GETPOST('search_date_startmonth', 'int');

@@ -31,16 +31,17 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
  * Prepare array with list of tabs
  *
  * @param	Project	$project	Object related to tabs
+ * @param	string	$moreparam	More param on url
  * @return	array				Array of tabs to show
  */
-function project_prepare_head(Project $project)
+function project_prepare_head(Project $project, $moreparam = '')
 {
 	global $db, $langs, $conf, $user;
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/card.php?id='.$project->id;
+	$head[$h][0] = DOL_URL_ROOT.'/projet/card.php?id='.((int) $project->id).($moreparam ? '&'.$moreparam : '');
 	$head[$h][1] = $langs->trans("Project");
 	$head[$h][2] = 'project';
 	$h++;
@@ -56,7 +57,7 @@ function project_prepare_head(Project $project)
 		$nbContacts = count($project->liste_contact(-1, 'internal')) + count($project->liste_contact(-1, 'external'));
 		dol_setcache($cachekey, $nbContacts, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 	}
-	$head[$h][0] = DOL_URL_ROOT.'/projet/contact.php?id='.$project->id;
+	$head[$h][0] = DOL_URL_ROOT.'/projet/contact.php?id='.((int) $project->id).($moreparam ? '&'.$moreparam : '');
 	$head[$h][1] = $langs->trans("ProjectContact");
 	if ($nbContacts > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContacts.'</span>';
@@ -80,7 +81,7 @@ function project_prepare_head(Project $project)
 			$nbTasks = count($taskstatic->getTasksArray(0, 0, $project->id, 0, 0));
 			dol_setcache($cachekey, $nbTasks, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks.php?id='.$project->id;
+		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks.php?id='.((int) $project->id).($moreparam ? '&'.$moreparam : '');
 		$head[$h][1] = $langs->trans("Tasks");
 		if ($nbTasks > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbTasks).'</span>';
@@ -113,7 +114,7 @@ function project_prepare_head(Project $project)
 			}
 		}
 
-		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&projectid='.urlencode($project->id);
+		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&projectid='.((int) $project->id).($moreparam ? '&'.$moreparam : '');
 		$head[$h][1] = $langs->trans("TimeSpent");
 		if ($nbTimeSpent > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">...</span>';
@@ -125,7 +126,7 @@ function project_prepare_head(Project $project)
 	if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
 		|| !empty($conf->propal->enabled) || !empty($conf->commande->enabled)
 		|| !empty($conf->facture->enabled) || !empty($conf->contrat->enabled)
-		|| !empty($conf->ficheinter->enabled) || !empty($conf->agenda->enabled) || !empty($conf->deplacement->enabled)) {
+		|| !empty($conf->ficheinter->enabled) || !empty($conf->agenda->enabled) || !empty($conf->deplacement->enabled) || !empty($conf->stock->enabled)) {
 		$nbElements = 0;
 		// Enable caching of thirdrparty count Contacts
 		$cachekey = 'count_elements_project_'.$project->id;
@@ -133,6 +134,9 @@ function project_prepare_head(Project $project)
 		if (!is_null($dataretrieved)) {
 			$nbElements = $dataretrieved;
 		} else {
+			if (!empty($conf->stock->enabled)) {
+				$nbElements += $project->getElementCount('stock', 'entrepot', 'fk_project');
+			}
 			if (!empty($conf->propal->enabled)) {
 				$nbElements += $project->getElementCount('propal', 'propal');
 			}
@@ -973,6 +977,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 			}
 		}
 
+		// Computed progress
 		if (count($arrayfields) > 0 && !empty($arrayfields['t.progress_calculated']['checked'])) {
 			print '<td class="nowrap liste_total right">';
 			if ($total_projectlinesa_planned) {
@@ -980,6 +985,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 			}
 			print '</td>';
 		}
+
+		// Declared progress
 		if (count($arrayfields) > 0 && !empty($arrayfields['t.progress']['checked'])) {
 			print '<td class="nowrap liste_total right">';
 			if ($total_projectlinesa_planned) {

@@ -231,9 +231,9 @@ print "\n<div class=\"tabsAction\">\n";
 
 if ($action == '') {
 	if ($user->rights->produit->creer || $user->rights->service->creer) {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&type='.$type.'">'.$langs->trans('Add').'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=add&token='.newToken().'&id='.$object->id.'&type='.$type.'">'.$langs->trans('Add').'</a>';
 		if ($cnt_trans > 0) {
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&id='.$object->id.'&type='.$type.'">'.$langs->trans('Update').'</a>';
+			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'&type='.$type.'">'.$langs->trans('Update').'</a>';
 		}
 	}
 }

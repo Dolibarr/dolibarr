@@ -898,6 +898,11 @@ Permission1002=Create/modify warehouses
 Permission1003=Delete warehouses
 Permission1004=Read stock movements
 Permission1005=Create/modify stock movements
+Permission1011=View inventories
+Permission1012=Create new inventory
+Permission1014=Validate inventory
+Permission1015=Allow to change PMP value for a product
+Permission1016=Delete inventory
 Permission1101=Read delivery receipts
 Permission1102=Create/modify delivery receipts
 Permission1104=Validate delivery receipts
@@ -1473,10 +1478,10 @@ LDAPSynchronizeMembersTypes=Organization of foundation's members types in LDAP
 LDAPPrimaryServer=Primary server
 LDAPSecondaryServer=Secondary server
 LDAPServerPort=Server port
-LDAPServerPortExample=Default port: 389
+LDAPServerPortExample=Standard or StartTLS: 389, LDAPs: 636
 LDAPServerProtocolVersion=Protocol version
 LDAPServerUseTLS=Use TLS
-LDAPServerUseTLSExample=Your LDAP server use TLS
+LDAPServerUseTLSExample=Your LDAP server use StartTLS
 LDAPServerDn=Server DN
 LDAPAdminDn=Administrator DN
 LDAPAdminDnExample=Complete DN (ex: cn=admin,dc=example,dc=com or cn=Administrator,cn=Users,dc=example,dc=com for active directory)
@@ -1626,8 +1631,7 @@ ProductSetup=Products module setup
 ServiceSetup=Services module setup
 ProductServiceSetup=Products and Services modules setup
 NumberOfProductShowInSelect=Maximum number of products to show in combo select lists (0=no limit)
-ViewProductDescInFormAbility=Display product descriptions in forms (otherwise shown in a tooltip popup)
-DoNotAddProductDescAtAddLines=Do not add product description (from product card) on submit add lines on forms
+ViewProductDescInFormAbility=Display product descriptions in lines of items (otherwise show description in a tooltip popup)
 OnProductSelectAddProductDesc=How to use the description of the products when adding a product as a line of a document
 AutoFillFormFieldBeforeSubmit=Auto fill the description input field with the description of product
 DoNotAutofillButAutoConcat=Do not autofill the input field with description of product. Description of the product will be concatenated to the entered description automatically. 
@@ -1706,8 +1710,10 @@ FreeLegalTextOnDeliveryReceipts=Free text on delivery receipts
 ##### FCKeditor #####
 AdvancedEditor=Advanced editor
 ActivateFCKeditor=Activate advanced editor for:
-FCKeditorForCompany=WYSIWIG creation/edition of elements description and note (except products/services)
-FCKeditorForProduct=WYSIWIG creation/edition of products/services description and note
+FCKeditorForNotePublic=WYSIWIG creation/edition of the field public notes of elements
+FCKeditorForNotePrivate=WYSIWIG creation/edition of the field private notes of elements
+FCKeditorForCompany=WYSIWIG creation/edition of the field description of elements (except products/services)
+FCKeditorForProduct=WYSIWIG creation/edition of the field description of products/services
 FCKeditorForProductDetails=WYSIWIG creation/edition of products details lines for all entities (proposals, orders, invoices, etc...). <span class="warning">Warning: Using this option for this case is seriously not recommended as it can create problems with special characters and page formatting when building PDF files.</span>
 FCKeditorForMailing= WYSIWIG creation/edition for mass eMailings (Tools->eMailing)
 FCKeditorForUserSignature=WYSIWIG creation/edition of user signature
