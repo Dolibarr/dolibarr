@@ -9135,6 +9135,11 @@ abstract class CommonObject
 	 */
 	public function setCategoriesCommon($categories, $type_categ = '', $remove_existing = true)
 	{
+	    // Handle single category
+	    if (!is_array($categories)) {
+	        $categories = array($categories);
+	    }
+
 		dol_syslog(get_class($this)."::setCategoriesCommon Oject Id:".$this->id.' type_categ:'.$type_categ.' nb tag add:'.count($categories), LOG_DEBUG);
 
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -9142,11 +9147,6 @@ abstract class CommonObject
 		if (empty($type_categ)) {
 			dol_syslog(__METHOD__.': Type '.$type_categ.'is an unknown category type. Done nothing.', LOG_ERR);
 			return -1;
-		}
-
-		// Handle single category
-		if (!is_array($categories)) {
-			$categories = array($categories);
 		}
 
 		// Get current categories
