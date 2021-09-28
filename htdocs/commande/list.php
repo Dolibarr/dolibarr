@@ -553,7 +553,7 @@ if ($search_state) {
 if ($search_country) {
 	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
 }
-if ($search_type_thirdparty) {
+if ($search_type_thirdparty && $search_type_thirdparty != '-1') {
 	$sql .= " AND s.fk_typent IN (".$db->sanitize($search_type_thirdparty).')';
 }
 if ($search_company) {
@@ -795,7 +795,7 @@ if ($resql) {
 	if ($search_country != '') {
 		$param .= '&search_country='.urlencode($search_country);
 	}
-	if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
+	if ($search_type_thirdparty && $search_type_thirdparty != '-1') {
 		$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 	}
 	if ($search_product_category != '') {
