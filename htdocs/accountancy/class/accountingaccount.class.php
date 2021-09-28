@@ -732,7 +732,8 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Return Suggest accounting accounts to bind
 	 *
-	 * @param Societe $thirdparty Societe Object seller or Buyers
+	 * @param Societe $buyer Societe Object Buyers
+	 * @param $seller Company Object seller
 	 * @param Product $product Product object sell or buy
 	 * @param Facture $facture Facture
 	 * @param FactureLigne $factureDet Facture Det
@@ -740,22 +741,22 @@ class AccountingAccount extends CommonObject
 	 *
 	 * @return    array        Accounting accounts suggested
 	 */
-	public function getAccountingCodeToBind(Societe $thirdparty, Product $product, Facture $facture, FactureLigne $factureDet, $accountingAccount = array())
+	public function getAccountingCodeToBind(Societe $buyer, $seller, Product $product, Facture $facture, FactureLigne $factureDet, $accountingAccount = array())
 	{
-		global $mysoc, $conf;
+		global $conf;
 		global $hookmanager;
 
 		// Instantiate hooks for external modules
 		$hookmanager->initHooks(array('accoutancyBindingCalculation'));
 
 		// Execute hook accoutancyBindingCalculation
-		$parameters = array('thirdparty' => $thirdparty, 'product' => $product, 'facture' => $facture, 'factureDet' => $factureDet ,'accountingAccount'=>$accountingAccount);
+		$parameters = array('buyer' => $buyer, 'seller' => $seller, 'product' => $product, 'facture' => $facture, 'factureDet' => $factureDet ,'accountingAccount'=>$accountingAccount);
 		$reshook = $hookmanager->executeHooks('accoutancyBindingCalculation', $parameters); // Note that $action and $object may have been modified by some hooks
 
 		if (empty($reshook)) {
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
-			$isBuyerInEEC = isInEEC($thirdparty);
-			$isSellerInEEC = isInEEC($mysoc);
+			$isBuyerInEEC = isInEEC($buyer);
+			$isSellerInEEC = isInEEC($seller);
 			$code_sell_l = '';
 			$code_sell_p = '';
 			$code_sell_t = '';
@@ -764,14 +765,14 @@ class AccountingAccount extends CommonObject
 			// Level 1: Search suggested default account for product/service
 			$suggestedaccountingaccountbydefaultfor = '';
 			if ($factureDet->product_type == 1) {
-				if ($thirdparty->country_code == $mysoc->country_code || empty($thirdparty->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
+				if ($buyer->country_code == $seller->country_code || empty($buyer->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
 					$code_sell_l = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : '');
 					$suggestedaccountingaccountbydefaultfor = '';
 				} else {
 					if ($isSellerInEEC && $isBuyerInEEC && $factureDet->tva_tx != 0) {    // European intravat sale, but with a VAT
 						$code_sell_l = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : '');
 						$suggestedaccountingaccountbydefaultfor = 'eecwithvat';
-					} elseif ($isSellerInEEC && $isBuyerInEEC && empty($thirdparty->tva_intra)) {    // European intravat sale, without VAT intra community number
+					} elseif ($isSellerInEEC && $isBuyerInEEC && empty($buyer->tva_intra)) {    // European intravat sale, without VAT intra community number
 						$code_sell_l = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : '');
 						$suggestedaccountingaccountbydefaultfor = 'eecwithoutvatnumber';
 					} elseif ($isSellerInEEC && $isBuyerInEEC) {    // European intravat sale
@@ -783,14 +784,14 @@ class AccountingAccount extends CommonObject
 					}
 				}
 			} elseif ($factureDet->product_type == 0) {
-				if ($thirdparty->country_code == $mysoc->country_code || empty($thirdparty->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
+				if ($buyer->country_code == $seller->country_code || empty($buyer->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
 					$code_sell_l = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : '');
 					$suggestedaccountingaccountbydefaultfor = '';
 				} else {
 					if ($isSellerInEEC && $isBuyerInEEC && $factureDet->tva_tx != 0) {    // European intravat sale, but with a VAT
 						$code_sell_l = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : '');
 						$suggestedaccountingaccountbydefaultfor = 'eecwithvat';
-					} elseif ($isSellerInEEC && $isBuyerInEEC && empty($thirdparty->tva_intra)) {    // European intravat sale, without VAT intra community number
+					} elseif ($isSellerInEEC && $isBuyerInEEC && empty($buyer->tva_intra)) {    // European intravat sale, without VAT intra community number
 						$code_sell_l = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : '');
 						$suggestedaccountingaccountbydefaultfor = 'eecwithoutvatnumber';
 					} elseif ($isSellerInEEC && $isBuyerInEEC) {    // European intravat sale
@@ -808,7 +809,7 @@ class AccountingAccount extends CommonObject
 
 			// Level 2: Search suggested account for product/service (similar code exists in page index.php to make automatic binding)
 			$suggestedaccountingaccountfor = '';
-			if ((($thirdparty->country_code == $mysoc->country_code) || empty($thirdparty->country_code)) && !empty($product->accountancy_code_sell)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
+			if ((($buyer->country_code == $seller->country_code) || empty($buyer->country_code)) && !empty($product->accountancy_code_sell)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
 				$code_sell_p = $product->accountancy_code_sell;
 				$suggestedid = $accountingAccount['dom'];
 				$suggestedaccountingaccountfor = 'prodserv';
@@ -817,7 +818,7 @@ class AccountingAccount extends CommonObject
 					$code_sell_p = $product->accountancy_code_sell;
 					$suggestedid = $accountingAccount['dom'];
 					$suggestedaccountingaccountfor = 'eecwithvat';
-				} elseif ($isSellerInEEC && $isBuyerInEEC && empty($thirdparty->tva_intra) && !empty($product->accountancy_code_sell)) {    // European intravat sale, without VAT intra community number
+				} elseif ($isSellerInEEC && $isBuyerInEEC && empty($buyer->tva_intra) && !empty($product->accountancy_code_sell)) {    // European intravat sale, without VAT intra community number
 					$code_sell_p = $product->accountancy_code_sell;
 					$suggestedid = $accountingAccount['dom']; // There is a doubt for this case. Is it an error on vat or we just forgot to fill vat number ?
 					$suggestedaccountingaccountfor = 'eecwithoutvatnumber';
@@ -834,8 +835,8 @@ class AccountingAccount extends CommonObject
 
 			// Level 3: Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
 			if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
-				if (!empty($thirdparty->code_compta)) {
-					$code_sell_t = $thirdparty->code_compta;
+				if (!empty($buyer->code_compta)) {
+					$code_sell_t = $buyer->code_compta;
 					$suggestedid = $accountingAccount['thirdparty'];
 					$suggestedaccountingaccountfor = 'thridparty';
 				}
