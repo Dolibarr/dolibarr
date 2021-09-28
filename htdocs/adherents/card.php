@@ -1839,7 +1839,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 		}
 
-		// Login Dolibarr
+		// Login Dolibarr - Link to user
 		print '<tr><td>';
 		$editenable = $user->rights->adherent->creer && $user->rights->user->user->creer;
 		print $form->editfieldkey('LinkedToDolibarrUser', 'login', '', $object, $editenable);
@@ -1907,7 +1907,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				// Modify
 				if (!empty($user->rights->adherent->creer)) {
-					print '<a class="butAction" href="card.php?rowid='.$id.'&action=edit">'.$langs->trans("Modify").'</a>'."\n";
+					print '<a class="butAction" href="card.php?rowid='.$id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>'."\n";
 				} else {
 					print '<span class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Modify").'</span>'."\n";
 				}

@@ -914,7 +914,7 @@ $(document).ready(function() {
 		selectedtext=$('#'+selectedline).find("td:first").html();
 		<?php
 		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-			print '$("#phonediv1").load("auto_order.php?action=editline&placeid="+placeid+"&selectedline="+selectedline, function() {
+			print '$("#phonediv1").load("auto_order.php?action=editline&token='.newToken().'&placeid="+placeid+"&selectedline="+selectedline, function() {
 			});';
 		}
 		?>

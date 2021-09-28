@@ -577,7 +577,7 @@ if ($id > 0) {
 		print $langs->trans('DefaultPaymentMode');
 		print '</td>';
 		if ($action != 'editmode') {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
@@ -595,7 +595,7 @@ if ($id > 0) {
 			print $langs->trans('DefaultBankAccount');
 			print '<td>';
 			if ($action != 'editbankaccount' && $user->rights->tax->charges->creer) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td><td>';

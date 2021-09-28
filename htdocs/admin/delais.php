@@ -452,7 +452,7 @@ if ($action == 'edit') {
 	print '</form>';
 } else {
 	print '<br><div class="tabsAction">';
-	print '<a class="butAction" href="delais.php?action=edit">'.$langs->trans("Modify").'</a></div>';
+	print '<a class="butAction" href="delais.php?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a></div>';
 }
 
 // End of page

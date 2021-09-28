@@ -19,7 +19,7 @@
 #
 ModuleEventOrganizationName = Event Organization
 EventOrganizationDescription = Event Organization through Module Project
-EventOrganizationDescriptionLong= Manage the organization of an event (conferences, attendees, speakers, with public suggestion, vote or registration pages)
+EventOrganizationDescriptionLong= Manage the organization of an event (show, conferences, attendees or speakers, with public pages for suggestion, vote or registration)
 #
 # Menu
 #

@@ -466,9 +466,9 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY', array(), null, 0);
 } else {
 	if (!empty($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY)) {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newtoken().'&MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	} else {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newtoken().'&MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	}
 }
 print "</td>";
@@ -482,9 +482,9 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY', array(), null, 0);
 } else {
 	if (!empty($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY)) {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newtoken().'&MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	} else {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newtoken().'&MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	}
 }
 print "</td>";
@@ -498,9 +498,9 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY', array(), null, 0, 0, 0, 2, 0, 1);
 } else {
 	if (!empty($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY)) {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newtoken().'&MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	} else {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newtoken().'&MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	}
 }
 print "</td>";
@@ -514,9 +514,9 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY', array(), null, 0, 0, 0, 2, 0, 1);
 } else {
 	if (!empty($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY)) {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newtoken().'&MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	} else {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newtoken().'&MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	}
 }
 print "</td>";

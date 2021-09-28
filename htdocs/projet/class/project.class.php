@@ -814,7 +814,7 @@ class Project extends CommonObject
 			'propal'=>'fk_projet', 'commande'=>'fk_projet', 'facture'=>'fk_projet',
 			'supplier_proposal'=>'fk_projet', 'commande_fournisseur'=>'fk_projet', 'facture_fourn'=>'fk_projet',
 			'expensereport_det'=>'fk_projet', 'contrat'=>'fk_projet', 'fichinter'=>'fk_projet', 'don'=>'fk_projet',
-			'actioncomm'=>'fk_project', 'mrp_mo'=>'fk_project'
+			'actioncomm'=>'fk_project', 'mrp_mo'=>'fk_project', 'entrepot'=>'fk_project'
 		);
 		foreach ($listoftables as $key => $value) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$key." SET ".$value." = NULL where ".$value." = ".((int) $this->id);

@@ -729,10 +729,10 @@ class EcmDirectory extends CommonObject
 		// We count number of _ to have level (we use strlen that is faster than dol_strlen)
 		$this->cats[$id_categ]['level'] = strlen(preg_replace('/([^_])/i', '', $this->cats[$id_categ]['fullpath']));
 
-		// Traite ces enfants
+		// Process children
 		$protection++;
 		if ($protection > 20) {
-			return; // On ne traite pas plus de 20 niveaux
+			return; // We never go more than 20 levels
 		}
 		if (isset($this->cats[$id_categ]['id_children']) && is_array($this->cats[$id_categ]['id_children'])) {
 			foreach ($this->cats[$id_categ]['id_children'] as $key => $val) {

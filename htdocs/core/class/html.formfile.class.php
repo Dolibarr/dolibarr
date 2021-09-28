@@ -1454,7 +1454,7 @@ class FormFile
 
 							if ($permtoeditline) {
 								$paramsectiondir = (in_array($modulepart, array('medias', 'ecm')) ? '&section_dir='.urlencode($relativepath) : '');
-								print '<a class="editfielda reposition editfilelink" href="'.(($useinecm == 1 || $useinecm == 5) ? '#' : ($url.'?action=editfile&urlfile='.urlencode($filepath).$paramsectiondir.$param)).'" rel="'.$filepath.'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
+								print '<a class="editfielda reposition editfilelink" href="'.(($useinecm == 1 || $useinecm == 5) ? '#' : ($url.'?action=editfile&token='.newToken().'&urlfile='.urlencode($filepath).$paramsectiondir.$param)).'" rel="'.$filepath.'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 							}
 						}
 						if ($permonobject) {
@@ -2033,8 +2033,8 @@ class FormFile
 				print '<td class="center">'.dol_print_date(dol_now(), "dayhour", "tzuser").'</td>';
 				print '<td class="right"></td>';
 				print '<td class="right">';
-				print '<input type="submit" name="save" class="button button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
-				print '<input type="submit" name="cancel" class="button button-cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+				print '<input type="submit" class="button button-save" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 				print '</td>';
 			} else {
 				print '<td>';
