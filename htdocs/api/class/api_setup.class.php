@@ -1339,22 +1339,22 @@ class Setup extends DolibarrApi
 
 		return $list;
 	}
-  
-/**
-	 * Get the list of staff.
-	 *
-	 * @param string    $sortfield  Sort field
-	 * @param string    $sortorder  Sort order
-	 * @param int       $limit      Number of items per page
-	 * @param int       $page       Page number (starting from zero)
-	 * @param int       $active     Staff is active or not {@min 0} {@max 1}
-	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
-	 * @return array				List of staff
-	 *
-	 * @url     GET dictionary/staff
-	 *
-	 * @throws RestException
-	 */
+
+	/**
+		 * Get the list of staff.
+		 *
+		 * @param string    $sortfield  Sort field
+		 * @param string    $sortorder  Sort order
+		 * @param int       $limit      Number of items per page
+		 * @param int       $page       Page number (starting from zero)
+		 * @param int       $active     Staff is active or not {@min 0} {@max 1}
+		 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
+		 * @return array				List of staff
+		 *
+		 * @url     GET dictionary/staff
+		 *
+		 * @throws RestException
+		 */
 	public function getListOfStaff($sortfield = "id", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
 	{
 		$list = array();
