@@ -103,6 +103,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	public $batch;
 	public $eatby = '';
 	public $sellby = '';
+	public $cost_price = 0;
 
 
 
@@ -189,7 +190,8 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		$sql .= "batch,";
 		$sql .= "eatby,";
 		$sql .= "sellby,";
-		$sql .= "fk_reception";
+		$sql .= "fk_reception,";
+		$sql .= "cost_price";
 
 
 		$sql .= ") VALUES (";
@@ -205,7 +207,8 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		$sql .= " ".(!isset($this->batch) ? 'NULL' : "'".$this->db->escape($this->batch)."'").",";
 		$sql .= " ".(!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : "'".$this->db->idate($this->eatby)."'").",";
 		$sql .= " ".(!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : "'".$this->db->idate($this->sellby)."'").",";
-		$sql .= " ".(!isset($this->fk_reception) ? 'NULL' : "'".$this->db->escape($this->fk_reception)."'")."";
+		$sql .= " ".(!isset($this->fk_reception) ? 'NULL' : "'".$this->db->escape($this->fk_reception)."'").",";
+		$sql .= " ".(!isset($this->cost_price) ? '0' : "'".$this->db->escape($this->cost_price)."'")."";
 		$sql .= ")";
 
 		$this->db->begin();
