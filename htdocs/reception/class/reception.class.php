@@ -561,8 +561,8 @@ class Reception extends CommonObject
 			// TODO in future, reception lines may not be linked to order line
 			$sql = "SELECT cd.fk_product, cd.subprice,";
 			$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
-			$sql .= " ed.eatby, ed.sellby, ed.batch";
-			$sql .= ", ed.cost_price";
+			$sql .= " ed.eatby, ed.sellby, ed.batch,";
+			$sql .= " ed.cost_price";
 			$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
 			$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
 			$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
