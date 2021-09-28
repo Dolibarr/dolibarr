@@ -339,7 +339,7 @@ if (($id || $ref) && $action == 'edit') {
 				//              if (!empty($val['help'])) {
 				//                  print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
 				//              } else {
-					print $langs->trans($val['label']).'&nbsp;'.$langs->trans('Rank').'&nbsp;'.$sk->rank;
+					print $langs->trans($val['label']).'&nbsp;'.$langs->trans('rank').'&nbsp;'.$sk->rank;
 				//              }
 				print '</td>';
 				print '<td class="valuefieldcreate">';

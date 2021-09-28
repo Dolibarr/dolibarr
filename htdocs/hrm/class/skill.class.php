@@ -240,6 +240,10 @@ class Skill extends CommonObject
 		return $resultcreate;
 	}
 
+	/**
+	 * @param int $i rank from which we want to create skilldets
+	 * @return null
+	 */
 	public function createSkills($i = 1)
 	{
 
@@ -1086,40 +1090,45 @@ class Skill extends CommonObject
 
 		return $error;
 	}
+
 	/**
 	 * Permet de retourner un select html du dictionnaire llx_c_skill_type
 	 *
-	 * @global type $conf
-	 * @param string $selected
-	 * @param string $htmlname
-	 * @param bool $emptyvalue
+	 * @param string $selected preselected element
+	 * @param string $htmlname html name of input
+	 * @param bool $emptyvalue true if we need to put an empty value
+	 * @param string $moreattr used to add more html attributes into input
+	 * @param string $more_class used if we want to add new css class to input
 	 * @return string
 	 */
-	public function select_skill_type($selected = '', $htmlname = 'code_c_skill_type', $emptyvalue = true, $moreattr = '', $more_class = '')
-	{
-		global $conf;
+//	public function select_skill_type($selected = '', $htmlname = 'code_c_skill_type', $emptyvalue = true, $moreattr = '', $more_class = '')
+//	{
+//		global $conf;
+//
+//		$out = '<select class="flat select_skill_type ' . $more_class . '" name="' . $htmlname . '" id="' . $htmlname . '" ' . $moreattr . '>';
+//		if ($emptyvalue)
+//			$out .= '<option value=""></options>';
+//
+//
+//		$sql = 'SELECT code, label FROM ' . MAIN_DB_PREFIX . 'c_skill_type WHERE active = 1 AND entity IN (0,' . $conf->entity.')';
+//		$resql = $this->db->query($sql);
+//		if ($resql) {
+//			while ( $obj = $this->db->fetch_object($resql) ) {
+//				$out .= '<option value="' . $obj->code . '" ' . ($selected == $obj->code ? 'selected' : '') . '>' . $obj->label . '</options>';
+//			}
+//		} else {
+//			dol_print_error($this->db);
+//		}
+//
+//		$out .= '</select>';
+//
+//		return $out;
+//	}
 
-		$out = '<select class="flat select_skill_type ' . $more_class . '" name="' . $htmlname . '" id="' . $htmlname . '" ' . $moreattr . '>';
-		if ($emptyvalue)
-			$out .= '<option value=""></options>';
-
-
-		$sql = 'SELECT code, label FROM ' . MAIN_DB_PREFIX . 'c_skill_type WHERE active = 1 AND entity IN (0,' . $conf->entity.')';
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			while ( $obj = $this->db->fetch_object($resql) ) {
-				$out .= '<option value="' . $obj->code . '" ' . ($selected == $obj->code ? 'selected' : '') . '>' . $obj->label . '</options>';
-			}
-		} else {
-			dol_print_error($this->db);
-		}
-
-		$out .= '</select>';
-
-		return $out;
-	}
-
-
+	/**
+	 * @param int $code number of code label
+	 * @return int|string
+	 */
 	public static function typeCodeToLabel($code)
 	{
 		global $langs;

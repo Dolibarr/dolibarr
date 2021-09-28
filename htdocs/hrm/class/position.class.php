@@ -981,10 +981,10 @@ class Position extends CommonObject
 	}
 
 	/**
-	 * @param $userid
+	 * @param int $userid id of user we need to get position list
 	 * @return array|int of positions of user with for each of them the job fetched into that array
 	 */
-	public function get_for_user($userid)
+	public function getForUser($userid)
 	{
 		$TPosition = array();
 

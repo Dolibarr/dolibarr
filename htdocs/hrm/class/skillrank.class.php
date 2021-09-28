@@ -362,10 +362,10 @@ class SkillRank extends CommonObject
 	 *  The skillrank table is a join table that is marked for multiple objects
 	 *
 	 * @param SkillRank $currentSkill
-	 * @param $user
-	 * @return int
+	 * @param int $fk_user id of user linked to skillrank
+	 * @return int > 0 if ok, < 0 if ko
 	 */
-	public function cloneFromCurrentSkill($currentSkill, $user, $fk_user)
+	public function cloneFromCurrentSkill($currentSkill, $fk_user)
 	{
 
 		global $user;

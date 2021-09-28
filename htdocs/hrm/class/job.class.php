@@ -602,7 +602,7 @@ class Job extends CommonObject
 	/**
 	 * 		Get last job for user
 	 *
-	 * 			@param $fk_user
+	 * 			@param int $fk_user id of user we need to get last job
 	 * 			@return mixed|string|null
 	 */
 	public function getLastJobForUser($fk_user)
@@ -610,7 +610,7 @@ class Job extends CommonObject
 		global $db;
 
 		$j = new Job($db);
-		$Tab = $j->get_for_user($fk_user);
+		$Tab = $j->getForUser($fk_user);
 
 		if (empty($Tab)) return '';
 
@@ -622,16 +622,16 @@ class Job extends CommonObject
 	/**
 	 * 		Get jobs for user
 	 *
-	 * 			@param $userid
+	 * 			@param int $userid id of user we need to get job list
 	 * 			@return array of jobs
 	 */
-	public function get_for_user($userid)
+	public function getForUser($userid)
 	{
 		global $db;
 
 		$TReturn = array();
 		$position = new Position($db);
-		$TPosition = $position->get_for_user($userid);
+		$TPosition = $position->getForUser($userid);
 		foreach ($TPosition as $UPosition) {
 			$TReturn[$UPosition->Job->rowid] = $UPosition->Job->ref;
 		}

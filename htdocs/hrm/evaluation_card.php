@@ -223,7 +223,7 @@ if (empty($reshook)) {
 			if (count($SkillrecordsForActiveUser) == 0) {
 				if ($res > 0) {
 					$newSkill = new SkillRank($db);
-					$resCreate = $newSkill->cloneFromCurrentSkill($line, $user, $object->fk_user);
+					$resCreate = $newSkill->cloneFromCurrentSkill($line, $object->fk_user);
 
 					if ($resCreate <= 0) {
 						$errors++;
@@ -251,7 +251,7 @@ if (empty($reshook)) {
 					$updSkill->update($user);
 				} else { // sinon on ajoute la skill
 					$newSkill = new SkillRank($db);
-					$resCreate = $newSkill->cloneFromCurrentSkill($line, $user, $object->fk_user);
+					$resCreate = $newSkill->cloneFromCurrentSkill($line, $object->fk_user);
 				}
 			}
 		}
