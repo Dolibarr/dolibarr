@@ -946,10 +946,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							$preselected = 0;
 						}
 
-						$disable = 'disabled';
-						if ( ($line->qty - $alreadyconsumed) > 0 )
-							$disable = '';
-
+						$disable = '';
+						if (!empty($conf->global->MRP_NEVER_CONSUME_MORE_THAN_EXPECTED) && ($line->qty - $alreadyconsumed) <= 0) {
+							$disable = 'disabled';
+						}
+						
 						print '<td class="right"><input type="text" class="width50 right" name="qty-'.$line->id.'-'.$i.'" value="'.$preselected.'" '.$disable.' ></td>';
 						if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
 							print '<td></td>';
