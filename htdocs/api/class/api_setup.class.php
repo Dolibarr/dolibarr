@@ -1299,7 +1299,6 @@ class Setup extends DolibarrApi
 	{
 		$list = array();
 
-		//TODO link with multicurrency module
 		$sql = "SELECT t.rowid, t.code, t.fk_pays, t.libelle, t.isvatexempted, t.active, t.module, t.position";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_forme_juridique as t";
 		$sql .= " WHERE t.active = ".((int) $active);
