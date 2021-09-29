@@ -1105,7 +1105,7 @@ if (!$variants) {
 							print '</a>';
 							// Disabled, because edition of stock content must use the "Correct stock menu".
 							// Do not use this, or data will be wrong (bad tracking of movement label, inventory code, ...
-							//print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=editline&amp;lineid='.$pdluo->id.'#'.$pdluo->id.'">';
+							//print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=editline&token='.newToken().'&lineid='.$pdluo->id.'#'.$pdluo->id.'">';
 							//print img_edit().'</a>';
 						}
 						print '</td>';
@@ -1117,7 +1117,7 @@ if (!$variants) {
 							print '</a>';
 							// Disabled, because edition of stock content must use the "Correct stock menu".
 							// Do not use this, or data will be wrong (bad tracking of movement label, inventory code, ...
-							//print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=editline&amp;lineid='.$pdluo->id.'#'.$pdluo->id.'">';
+							//print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=editline&token='.newToken().'&lineid='.$pdluo->id.'#'.$pdluo->id.'">';
 							//print img_edit().'</a>';
 						}
 						print '</td>';
