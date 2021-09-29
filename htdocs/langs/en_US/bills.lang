@@ -424,6 +424,7 @@ FixAmount=Fixed amount - 1 line with label '%s'
 VarAmount=Variable amount (%% tot.)
 VarAmountOneLine=Variable amount (%% tot.) - 1 line with label '%s'
 VarAmountAllLines=Variable amount (%% tot.) - all lines from origin
+DepositPercent=Deposit %%
 # PaymentType
 PaymentTypeVIR=Bank transfer
 PaymentTypeShortVIR=Bank transfer
