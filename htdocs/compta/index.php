@@ -206,6 +206,7 @@ if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 				print '<td class="nowrap">';
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+
 				print '<td class="nobordernopadding nowraponall">';
 				print $tmpinvoice->getNomUrl(1, '');
 				print '</td>';
@@ -222,15 +223,19 @@ if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 				print '</td></tr></table>';
 
 				print '</td>';
-				print '<td class="left">';
+
+				print '<td class="tdoverflowmax150">';
 				print $thirdpartystatic->getNomUrl(1, 'customer', 44);
 				print '</td>';
 				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
 					print '<td class="nowrap right"><span class="amount">'.price($obj->total_ht).'</span></td>';
 				}
 				print '<td class="nowrap right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
+
 				print '<td class="right">'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
+
 				print '<td>'.$tmpinvoice->getLibStatut(3, $obj->am).'</td>';
+
 				print '</tr>';
 
 				$total_ttc += $obj->total_ttc;
