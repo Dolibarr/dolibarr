@@ -2084,6 +2084,11 @@ if ($id > 0) {
 		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private));
 		print '</td></tr>';
 
+		// Numero de telephone
+		print '<tr><td class="tdtop">'.$langs->trans("Téléphone").'</td><td class="wordbreak">';
+		print '<a href=tel:'.$contact->phone_mobile.'>'.$contact->phone_mobile.'</a>';
+		print '</td></tr>';
+
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 

@@ -1428,6 +1428,8 @@ class Contact extends CommonObject
 		}
 		$label .= '<br><b>'.$langs->trans("Phone").':</b> '.implode('&nbsp;', $phonelist);
 		$label .= '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs);
+		//ajout visualisation de note privée
+		$label .= '<br><b>'.$langs->trans("NotePrivate").':</b> '.$this->note_private;
 
 		$url = DOL_URL_ROOT.'/contact/card.php?id='.$this->id;
 

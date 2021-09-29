@@ -1851,6 +1851,30 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					if (empty($event->transparency) && empty($conf->global->AGENDA_NO_TRANSPARENT_ON_NOT_BUSY)) {
 						print 'background: #f0f0f0;';
 						print 'border-left: 5px solid #'.$colortouse.';';
+					} elseif ($event->type_code == 'AC_RDV') { //Rendez-Vous
+						print 'background: #FAE364;';
+						print 'border-left: 5px solid #'.dol_color_minus($colortouse, -3).';';
+					} elseif ($event->type_code == 'AC_TEL') { //Appel téléphonique
+						print 'background: #CFADED ;';
+						print 'border-left: 5px solid #'.dol_color_minus($colortouse, -3).';';
+					} elseif ($event->type_code == 'AC_FAX') { //Envoi fax
+						print 'background: #B5FCAE;';
+						print 'border-left: 5px solid #'.dol_color_minus($colortouse, -3).';';
+					} elseif ($event->type_code == 'AC_EMAIL') { //Envoi email
+						print 'background: #DD5AE9;';
+						print 'border-left: 5px solid #'.dol_color_minus($colortouse, -3).';';
+					} elseif ($event->type_code == 'AC_EMAIL_IN') { //Reception d'email
+						print 'background: #64FAEB;';
+						print 'border-left: 5px solid #'.dol_color_minus($colortouse, -3).';';
+					} elseif ($event->type_code == 'AC_INT') { //Intervention sur site
+						print 'background: #32E5D9;';
+						print 'border-left: 5px solid #'.dol_color_minus($colortouse, -3).';';
+					} elseif ($event->type_code == 'AC_OTH') { //Autre
+						print 'background: #E5E95A;';
+						print 'border-left: 5px solid #'.dol_color_minus($colortouse, -3).';';
+					} elseif ($event->type_code == 'AC_OTH_AUTO') { //Évènements insérés automatiquement
+						print 'background: #FBC8B2;';
+						print 'border-left: 5px solid #'.dol_color_minus($colortouse, -3).';';
 					} else {
 						print 'background: #f0f0f0;';
 						print 'border-left: 5px solid #'.dol_color_minus($colortouse, -3).';';
@@ -2007,8 +2031,9 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 							}
 							$linerelatedto .= dolGetElementUrl($event->fk_element, $event->elementtype, 1);
 						}
-						if ($linerelatedto) {
-							print '<br>'.$linerelatedto;
+						if ($linerelatedto) print '<br>'.$linerelatedto.'<br>';
+						if (!empty($contact_id) && $contact_id > 0){
+							print '<a href=tel:'.$contact->phone_mobile.'>'.img_picto('', 'object_phoning').' '.$contact->phone_mobile.'</a>';
 						}
 					}
 
