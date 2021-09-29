@@ -252,6 +252,7 @@ if (empty($reshook)) {
 			$object->ref_client = GETPOST('ref_client', 'alpha');
 			$object->model_pdf = GETPOST('model');
 			$object->cond_reglement_id = GETPOST('cond_reglement_id');
+			$object->deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'int');
 			$object->mode_reglement_id = GETPOST('mode_reglement_id');
 			$object->fk_account = GETPOST('fk_account', 'int');
 			$object->availability_id = GETPOST('availability_id');
@@ -532,7 +533,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setmode' && $usercancreate) {
-		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
+		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'), GETPOST('mode_reglement_id_deposit_percent', 'int'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -553,7 +554,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setconditions' && $usercancreate) {
-		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
+		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'), GETPOST('cond_reglement_id_deposit_percent', 'int'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		} else {
@@ -1421,6 +1422,10 @@ if ($action == 'create' && $usercancreate) {
 
 	$currency_code = $conf->currency;
 
+	$cond_reglement_id = GETPOST('cond_reglement_id', 'int');
+	$deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'int');
+	$mode_reglement_id = GETPOST('mode_reglement_id', 'int');
+
 	if (!empty($origin) && !empty($originid)) {
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
@@ -1435,6 +1440,9 @@ if ($action == 'create' && $usercancreate) {
 
 			if (!$cond_reglement_id) {
 				$cond_reglement_id = $soc->cond_reglement_id;
+			}
+			if (!$deposit_percent) {
+				$deposit_percent = $soc->deposit_percent;
 			}
 			if (!$mode_reglement_id) {
 				$mode_reglement_id = $soc->mode_reglement_id;
@@ -1476,6 +1484,7 @@ if ($action == 'create' && $usercancreate) {
 
 			$soc = $objectsrc->thirdparty;
 			$cond_reglement_id	= (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0)); // TODO maybe add default value option
+			$deposit_percent	= (!empty($objectsrc->deposit_percent) ? $objectsrc->deposit_percent : (!empty($soc->deposit_percent) ? $soc->deposit_percent : null));
 			$mode_reglement_id	= (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
 			$fk_account         = (!empty($objectsrc->fk_account) ? $objectsrc->fk_account : (!empty($soc->fk_account) ? $soc->fk_account : 0));
 			$availability_id = (!empty($objectsrc->availability_id) ? $objectsrc->availability_id : (!empty($soc->availability_id) ? $soc->availability_id : 0));
@@ -1508,6 +1517,7 @@ if ($action == 'create' && $usercancreate) {
 		}
 	} else {
 		$cond_reglement_id  = $soc->cond_reglement_id;
+		$deposit_percent    = $soc->deposit_percent;
 		$mode_reglement_id  = $soc->mode_reglement_id;
 		$fk_account         = $soc->fk_account;
 		$availability_id    = $soc->availability_id;
@@ -1633,7 +1643,7 @@ if ($action == 'create' && $usercancreate) {
 	// Terms of the settlement
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 	print img_picto('', 'paiment');
-	$form->select_conditions_paiements($cond_reglement_id, 'cond_reglement_id', - 1, 1);
+	$form->select_conditions_paiements($cond_reglement_id, 'cond_reglement_id', - 1, 1, 0, '', $deposit_percent);
 	print '</td></tr>';
 
 	// Mode de reglement
@@ -2189,9 +2199,9 @@ if ($action == 'create' && $usercancreate) {
 		print $form->editfieldkey("PaymentConditionsShort", 'conditions', '', $object, $editenable);
 		print '</td><td class="valuefield">';
 		if ($action == 'editconditions') {
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id', 1);
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id', 1, $object->deposit_percent);
 		} else {
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'none', 1);
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'none', 1, $object->deposit_percent);
 		}
 		print '</td>';
 
