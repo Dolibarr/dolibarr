@@ -1077,10 +1077,10 @@ class SkillRank extends CommonObject
 	 * @param string $morecss
 	 * @return string
 	 */
-	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
-	{
-		if ($key == "rank") {
-			return displayRankInfos($this);
-		} else return parent::showOutputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
-	}
+//	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
+//	{
+//		if ($key == "rank") {
+//			return displayRankInfos($this);
+//		} else return parent::showOutputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
+//	}
 }
