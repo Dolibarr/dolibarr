@@ -3609,7 +3609,7 @@ class Form
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = "SELECT rowid, code, libelle as label";
+		$sql = "SELECT rowid, code, libelle as label, deposit_percent";
 		$sql .= " FROM ".MAIN_DB_PREFIX.'c_payment_term';
 		$sql .= " WHERE entity IN (".getEntity('c_payment_term').")";
 		$sql .= " AND active > 0";
@@ -3621,11 +3621,11 @@ class Form
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-
 				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 				$label = ($langs->trans("PaymentConditionShort".$obj->code) != ("PaymentConditionShort".$obj->code) ? $langs->trans("PaymentConditionShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$this->cache_conditions_paiements[$obj->rowid]['code'] = $obj->code;
 				$this->cache_conditions_paiements[$obj->rowid]['label'] = $label;
+				$this->cache_conditions_paiements[$obj->rowid]['deposit_percent'] = $obj->deposit_percent;
 				$i++;
 			}
 
@@ -3881,9 +3881,10 @@ class Form
 	 *		@param	int		$addempty		Add an empty entry
 	 * 		@param	int		$noinfoadmin		0=Add admin info, 1=Disable admin info
 	 * 		@param	string	$morecss			Add more CSS on select tag
+	 * 		@param	float	$deposit_percent	% of deposit if needed by payment conditions
 	 *		@return	void
 	 */
-	public function select_conditions_paiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '')
+	public function select_conditions_paiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '', $deposit_percent = null)
 	{
 		// phpcs:enable
 		global $langs, $user, $conf;
@@ -3901,13 +3902,24 @@ class Form
 		if ($addempty) {
 			print '<option value="0">&nbsp;</option>';
 		}
+
+		$selectedDepositPercent = null;
 		foreach ($this->cache_conditions_paiements as $id => $arrayconditions) {
 			if ($selected == $id) {
-				print '<option value="'.$id.'" selected>';
+				$selectedDepositPercent = ! empty($deposit_percent) ? $deposit_percent : $arrayconditions['deposit_percent'];
+				print '<option value="'.$id.'" data-deposit_percent="' . $arrayconditions['deposit_percent'] . '" selected>';
 			} else {
-				print '<option value="'.$id.'">';
+				print '<option value="'.$id.'" data-deposit_percent="' . $arrayconditions['deposit_percent'] . '">';
 			}
-			print $arrayconditions['label'];
+
+			$label = $arrayconditions['label'];
+
+			if (! empty($arrayconditions['deposit_percent'])) {
+				$label = sprintf($label, ! empty($deposit_percent) ? $deposit_percent : $arrayconditions['deposit_percent']);
+			}
+
+			print $label;
+
 			print '</option>';
 		}
 		print '</select>';
@@ -3915,6 +3927,28 @@ class Form
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
 		print ajax_combobox($htmlname);
+		print ' <span id="'.$htmlname.'_deposit_percent_container"' . (empty($selectedDepositPercent) ? ' style="display: none"' : '') . '>';
+		print $langs->trans('DepositPercent') . ' : ';
+		print '<input id="'.$htmlname.'_deposit_percent" name="'.$htmlname.'_deposit_percent" class="maxwidth50" value="' . floatval($deposit_percent) . '" />';
+		print '</span>';
+		print '
+			<script>
+				// let defaultDepositPercent = ' . (! empty($depositPercent) ? $depositPercent : null) . ';
+				$(document).ready(function () {
+					$("#' . $htmlname . '").change(function () {
+						let $selected = $(this).find("option:selected");
+						let depositPercent = $selected.attr("data-deposit_percent");
+
+						if (depositPercent.length > 0) {
+							$("#'.$htmlname.'_deposit_percent_container").show().find("#'.$htmlname.'_deposit_percent").val(depositPercent);
+						} else {
+							$("#'.$htmlname.'_deposit_percent_container").hide();
+						}
+
+						return true;
+					});
+				});
+			</script>';
 	}
 
 
@@ -5099,13 +5133,14 @@ class Form
 	/**
 	 *	Show a form to select payment conditions
 	 *
-	 *  @param	int		$page        	Page
-	 *  @param  string	$selected    	Id condition pre-selectionne
-	 *  @param  string	$htmlname    	Name of select html field
-	 *	@param	int		$addempty		Add empty entry
+	 *  @param	int		$page				Page
+	 *  @param  string	$selected			Id condition pre-selectionne
+	 *  @param  string	$htmlname			Name of select html field
+	 *	@param	int		$addempty			Add empty entry
+	 *  @param	float	$deposit_percent	% of deposit if needed by payment conditions
 	 *  @return	void
 	 */
-	public function form_conditions_reglement($page, $selected = '', $htmlname = 'cond_reglement_id', $addempty = 0)
+	public function form_conditions_reglement($page, $selected = '', $htmlname = 'cond_reglement_id', $addempty = 0, $deposit_percent = null)
 	{
 		// phpcs:enable
 		global $langs;
@@ -5113,14 +5148,20 @@ class Form
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setconditions">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			$this->select_conditions_paiements($selected, $htmlname, -1, $addempty);
+			$this->select_conditions_paiements($selected, $htmlname, -1, $addempty, 0, '', $deposit_percent);
 			print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		} else {
 			if ($selected) {
 				$this->load_cache_conditions_paiements();
 				if (isset($this->cache_conditions_paiements[$selected])) {
-					print $this->cache_conditions_paiements[$selected]['label'];
+					$label = $this->cache_conditions_paiements[$selected]['label'];
+
+					if (! empty($this->cache_conditions_paiements[$selected]['deposit_percent'])) {
+						$label = sprintf($label, ! empty($deposit_percent) ? $deposit_percent : $this->cache_conditions_paiements[$selected]['deposit_percent']);
+					}
+
+					print $label;
 				} else {
 					$langs->load('errors');
 					print $langs->trans('ErrorNotInDictionaryPaymentConditions');
