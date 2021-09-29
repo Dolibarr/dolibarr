@@ -9135,10 +9135,10 @@ abstract class CommonObject
 	 */
 	public function setCategoriesCommon($categories, $type_categ = '', $remove_existing = true)
 	{
-	    // Handle single category
-	    if (!is_array($categories)) {
-	        $categories = array($categories);
-	    }
+		// Handle single category
+		if (!is_array($categories)) {
+			$categories = array($categories);
+		}
 
 		dol_syslog(get_class($this)."::setCategoriesCommon Oject Id:".$this->id.' type_categ:'.$type_categ.' nb tag add:'.count($categories), LOG_DEBUG);
 
