@@ -71,13 +71,11 @@ $coldisplay = 0;
 <?php } ?>
 	<td class="linecollabel"><?php $coldisplay++; ?><div id="line_<?php print $line->id; ?>"></div>
 <?php
-	if ($line->fk_skill > 0) {
-
-		$skill = new Skill($this->db);
-		$resSkill = $skill->fetch($line->fk_skill);
-		if ($resSkill > 0) print $skill->getNomUrl(1);
-
-	}
+if ($line->fk_skill > 0) {
+	$skill = new Skill($this->db);
+	$resSkill = $skill->fetch($line->fk_skill);
+	if ($resSkill > 0) print $skill->getNomUrl(1);
+}
 ?>
 	</td>
 

@@ -2,8 +2,8 @@
 
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
-print "Error, template page can't be called as URL";
-exit;
+	print "Error, template page can't be called as URL";
+	exit;
 }
 /*
 // $permissionnote 	must be defined by caller. For example $permissionnote=$user->rights->module->create
@@ -78,10 +78,8 @@ $permission = $user->rights->ecm->setup;
 //else dol_print_error('','Bad value '.$module.' for param module');
 
 if (!empty($object->table_element_line)) {
-// Show object lines
-$result = $object->getLinesArray();
-
-
+	// Show object lines
+	$result = $object->getLinesArray();
 }
 
 
@@ -99,16 +97,16 @@ print '<div class="tagtable border table-border tableforfield centpercent">'."\n
 		print '</div>'."\n";
 	print '</div>'."\n";
 if (empty($user->socid)) {
-// Private notes (always hidden to external users)
-print '<div class="tagtr table-border-row">'."\n";
+	// Private notes (always hidden to external users)
+	print '<div class="tagtr table-border-row">'."\n";
 	$editmode = (GETPOST('action', 'aZ09') == 'edit'.$note_private);
 	print '<div class="tagtd tagtdnote tdtop'.($editmode ? '' : ' sensiblehtmlcontent').' table-key-border-col'.(empty($cssclass) ? '' : ' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
 	print $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, $moreparam, '', 0);
 	print '</div>'."\n";
-print '<div class="tagtd wordbreak table-val-border-col'.($editmode ? '' : ' sensiblehtmlcontent').'">'."\n";
+	print '<div class="tagtd wordbreak table-val-border-col'.($editmode ? '' : ' sensiblehtmlcontent').'">'."\n";
 	print $form->editfieldval("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, '', null, null, $moreparam, 1);
 	print '</div>'."\n";
-print '</div>'."\n";
+	print '</div>'."\n";
 }
 print '</div>'."\n";
 ?>
