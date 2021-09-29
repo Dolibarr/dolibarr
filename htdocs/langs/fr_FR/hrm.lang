@@ -59,6 +59,7 @@ ValidateEvaluation=Valider évaluation
 ConfirmValidateEvaluation=Etes vous sûr(e) de vouloir valider cette évaluation sous la référence <b>%s</b>?
 EvaluationCard=Fiche évaluation
 RequiredRank=Note requise pour ce métier
+EmployeeRank=Note employé pour cette compétence
 PositionCard=Fiche poste
 EmployeesInThisPosition=Salariés occupant ce poste
 Position=Poste

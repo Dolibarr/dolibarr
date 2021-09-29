@@ -324,32 +324,38 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<input type="hidden" name="action" value="saveSkill">';
 	}
 	print '<div class="div-table-responsive-no-min">';
-	print '<table id="tablelines" class="noborder noshadow" width="100%">';
+	print '<table id="tablelines" class="noborder centpercent" width="100%">';
 	print '<tr class="liste_titre">';
-	foreach ($skill->fields as $key => $infos) {
-		if($infos['label'] === 'Rank') $infos['label'] = 'RequiredRank';
-		if ($infos['visible'] > 0) print '<th class="linecol' . $key . '">' . $langs->trans($infos['label']) . '</th>';
+	print '<th>'.$langs->trans('SkillType').'</th>';
+	print '<th>'.$langs->trans('Label').'</th>';
+	print '<th>'.$langs->trans('Description').'</th>';
+	print '<th>'.$langs->trans($objecttype === 'job' ? 'RequiredRank' : 'EmployeeRank').'</th>';
+	if($objecttype === 'job') {
+		print '<th class="linecoledit"></th>';
+		print '<th class="linecoldelete"></th>';
 	}
-	print '<th class="linecoledit"></th>';
-	print '<th class="linecoldelete"></th>';
 	print '</tr>';
 	if (!is_array($TSkills) || empty($TSkills)) {
 		print '<tr><td>' . $langs->trans("NoRecordFound") . '</td></tr>';
 	} else {
 		$sk = new Skill($db);
 		foreach ($TSkills as $skillElement) {
-			print '<tr>';
-			print '<td class="linecolfk_skill">';
 			$sk->fetch($skillElement->fk_skill);
+			print '<tr>';
+			print '<td>';
+			print Skill::typeCodeToLabel($sk->skill_type);
+			print '</td><td class="linecolfk_skill">';
 			print $sk->getNomUrl(1);
 			print '</td>';
-			print '<td class="linecolrank">';
+			print $sk->description;
+			print '<td>';
+			print '</td><td class="linecolrank">';
 			print displayRankInfos($skillElement->rank, $skillElement->fk_skill, 'TNote', $objecttype == 'job' && $permissiontoadd ? 'edit' : 'view');
 			print '</td>';
-			print '<td class="linecoledit"></td>';
-			print '<td class="linecoldelete">';
 			if ($objecttype != 'user' && $permissiontoadd)
 			{
+				print '<td class="linecoledit"></td>';
+				print '<td class="linecoldelete">';
 				print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $skillElement->fk_object . '&amp;objecttype=' . $objecttype . '&amp;action=ask_deleteskill&amp;lineid=' . $skillElement->id . '">';
 				print img_delete();
 				print '</a>';
