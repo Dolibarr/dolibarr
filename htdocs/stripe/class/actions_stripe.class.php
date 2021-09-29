@@ -71,25 +71,21 @@ class ActionsStripeconnect
 	{
 		global $db, $conf, $user, $langs, $form;
 
-		if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')))
-		{
+		if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
 			$service = 'StripeTest';
 			dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
 		} else {
 			$service = 'StripeLive';
 		}
 
-		if (is_array($parameters) && !empty($parameters))
-		{
-			foreach ($parameters as $key=>$value)
-			{
+		if (is_array($parameters) && !empty($parameters)) {
+			foreach ($parameters as $key => $value) {
 				$key = $value;
 			}
 		}
 
 
-		if (is_object($object) && $object->element == 'societe')
-		{
+		if (is_object($object) && $object->element == 'societe') {
 			$this->resprints .= '<tr><td>';
 			$this->resprints .= '<table width="100%" class="nobordernopadding"><tr><td>';
 			$this->resprints .= $langs->trans('StripeCustomer');
@@ -195,20 +191,16 @@ class ActionsStripeconnect
 
 			$resteapayer = $object->total_ttc - $totalpaye;
 			// Request a direct debit order
-			if ($object->statut > Facture::STATUS_DRAFT && $object->statut < Facture::STATUS_ABANDONED && $object->paye == 0)
-			{
+			if ($object->statut > Facture::STATUS_DRAFT && $object->statut < Facture::STATUS_ABANDONED && $object->paye == 0) {
 				$stripe = new Stripe($this->db);
-				if ($resteapayer > 0)
-				{
-					if ($stripe->getStripeAccount($conf->entity))  // a modifier avec droit stripe
-					{
+				if ($resteapayer > 0) {
+					if ($stripe->getStripeAccount($conf->entity)) {  // a modifier avec droit stripe
 						$langs->load("withdrawals");
 						print '<a class="butActionDelete" href="'.dol_buildpath('/stripeconnect/payment.php?facid='.$object->id.'&action=create', 1).'" title="'.dol_escape_htmltag($langs->trans("StripeConnectPay")).'">'.$langs->trans("StripeConnectPay").'</a>';
 					} else {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("StripeConnectPay").'</a>';
 					}
-				} elseif ($resteapayer == 0)
-				{
+				} elseif ($resteapayer == 0) {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("StripeConnectPay").'</a>';
 				}
 			} else {

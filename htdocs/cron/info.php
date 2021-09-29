@@ -30,19 +30,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 $langs->loadLangs(array('admin', 'cron'));
 
 // Security check
-if (!$user->rights->cron->read) accessforbidden();
+if (!$user->rights->cron->read) {
+	accessforbidden();
+}
 
 $id = GETPOST('id', 'int');
 
-$mesg = '';
+$object = new Cronjob($db);
+
 
 /*
  * View
-*/
+ */
+
+$form = new Form($db);	// $form is required as global value into dol_banner_tab
 
 llxHeader('', $langs->trans("CronInfo"));
 
-$object = new Cronjob($db);
 $object->fetch($id);
 $object->info($id);
 

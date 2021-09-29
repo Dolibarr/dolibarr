@@ -60,7 +60,6 @@ ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_mrp_mo_fk_object(fk_object);
 
 
 -- For v13
-
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (111,11,     '0','0','No Sales Tax',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (112,11,     '4','0','Sales Tax 4%',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (113,11,     '6','0','Sales Tax 6%',1);
@@ -368,7 +367,7 @@ ALTER TABLE llx_actioncomm_reminder ADD UNIQUE uk_actioncomm_reminder_unique (fk
 
 ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_status (status);
 
-
+ALTER TABLE llx_inventorydet ADD COLUMN fk_warehouse integer DEFAULT 0;
 ALTER TABLE llx_inventorydet ADD UNIQUE uk_inventorydet(fk_inventory, fk_warehouse, fk_product, batch);
 
 ALTER TABLE llx_commandedet ADD COLUMN ref_ext varchar(255) AFTER label;
@@ -400,6 +399,8 @@ CREATE TABLE llx_ecm_files_extrafields
 ) ENGINE=innodb;
 
 ALTER TABLE llx_ecm_files_extrafields ADD INDEX idx_ecm_files_extrafields (fk_object);
+ALTER TABLE llx_ecm_files ADD COLUMN note_private text AFTER fk_user_m;
+ALTER TABLE llx_ecm_files ADD COLUMN note_public text AFTER note_private;
 
 CREATE TABLE llx_ecm_directories_extrafields
 (
@@ -410,6 +411,9 @@ CREATE TABLE llx_ecm_directories_extrafields
 ) ENGINE=innodb;
 
 ALTER TABLE llx_ecm_directories_extrafields ADD INDEX idx_ecm_directories_extrafields (fk_object);
+ALTER TABLE llx_ecm_directories ADD COLUMN note_private text AFTER fk_user_m;
+ALTER TABLE llx_ecm_directories ADD COLUMN note_public text AFTER note_private;
+
 ALTER TABLE llx_website_page ADD COLUMN allowed_in_frames integer DEFAULT 0;
 ALTER TABLE llx_website_page ADD COLUMN object_type varchar(255);
 ALTER TABLE llx_website_page ADD COLUMN fk_object varchar(255);
@@ -553,7 +557,7 @@ CREATE TABLE llx_session(
   fk_user integer NOT NULL,
   remote_ip varchar(64) NULL,
   user_agent varchar(128) NULL
-)ENGINE=innodb;
+) ENGINE=innodb;
 
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'github', 'Github', 'https://github.com/{socialid}', 'fa-github', 1);
 
@@ -575,7 +579,12 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_DELETE','Expense report deleted','Executed when an expense report is deleted','expensereport',205);
 
 -- Removed no more used function
--- VPGSQL8.2 DROP FUNCTION IF EXISTS update_modified_column_date_m CASCADE;
+-- VPGSQL8.2 DROP FUNCTION IF EXISTS update_modified_column_date_m() CASCADE;
+-- VPGSQL8.2 DROP TRIGGER update_customer_modtime ON llx_ecm_directories;
+-- VPGSQL8.2 DROP TRIGGER update_customer_modtime ON llx_ecm_files;
+-- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_ecm_directories FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+-- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_ecm_files FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+
 
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 6,'AC_EMAIL_IN','system','reception Email',NULL, 1, 4);
 
@@ -583,4 +592,5 @@ insert into llx_c_actioncomm (id, code, type, libelle, module, active, position)
 -- VMYSQL4.3 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN montant double(24,8) NULL;
 -- VPGSQL8.2 ALTER TABLE llx_accounting_bookkeeping ALTER COLUMN montant DROP NOT NULL;
 
+ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
 

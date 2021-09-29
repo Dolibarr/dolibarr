@@ -6,6 +6,7 @@
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
  * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,17 +38,29 @@
  *  MEMBER_NEWFORM_FORCECOUNTRYCODE     Force country
  */
 
-if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
-if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
-if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOLOGIN')) {
+	define("NOLOGIN", 1); // This means this output page does not require to be logged.
+}
+if (!defined('NOCSRFCHECK')) {
+	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', '1');
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // TODO This should be useless. Because entity must be retrieve from object ref and not from url.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_numeric($entity)) define("DOLENTITY", $entity);
+if (is_numeric($entity)) {
+	define("DOLENTITY", $entity);
+}
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -67,7 +80,9 @@ $action = GETPOST('action', 'aZ09');
 $langs->loadLangs(array("main", "members", "companies", "install", "other"));
 
 // Security check
-if (empty($conf->adherent->enabled)) accessforbidden('', 0, 0, 1);
+if (empty($conf->adherent->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
 
 if (empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print $langs->trans("Auto subscription form for public visitors has not been enabled");
@@ -115,18 +130,25 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 	}
 
 	print '<div class="center">';
+
 	// Output html code for logo
 	if ($urllogo) {
 		print '<div class="backgreypublicpayment">';
 		print '<div class="logopublicpayment">';
-		print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
-		print '>';
+		print '<img id="dolpaymentlogo" src="'.$urllogo.'">';
 		print '</div>';
 		if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
 			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 		}
 		print '</div>';
 	}
+
+	if (!empty($conf->global->MEMBER_IMAGE_PUBLIC_REGISTRATION)) {
+		print '<div class="backimagepublicregistration">';
+		print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->MEMBER_IMAGE_PUBLIC_REGISTRATION.'">';
+		print '</div>';
+	}
+
 	print '</div>';
 
 	print '<div class="divmainbodylarge">';
@@ -187,12 +209,12 @@ if (empty($reshook) && $action == 'add') {
 			$langs->load("errors");
 			$errmsg .= $langs->trans("ErrorPasswordsMustMatch")."<br>\n";
 		}
-		if (!GETPOST("email")) {
+		if (!GETPOST('email')) {
 			$error++;
 			$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("EMail"))."<br>\n";
 		}
 	}
-	if (GETPOST('type') <= 0) {
+	if (GETPOST('typeid') <= 0) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"))."<br>\n";
 	}
@@ -200,21 +222,24 @@ if (empty($reshook) && $action == 'add') {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv('Nature'))."<br>\n";
 	}
-	if (empty($_POST["lastname"])) {
+	if (!GETPOST('lastname')) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Lastname"))."<br>\n";
 	}
-	if (empty($_POST["firstname"])) {
+	if (!GETPOST('firstname')) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Firstname"))."<br>\n";
 	}
-	if (GETPOST("email") && !isValidEmail(GETPOST("email"))) {
+	if (!empty($conf->global->ADHERENT_MAIL_REQUIRED) && empty(GETPOST('email'))) {
 		$error++;
-		$langs->load("errors");
+		$errmsg .= $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Email'))."<br>\n";
+	} elseif (GETPOST("email") && !isValidEmail(GETPOST("email"))) {
+		$langs->load('errors');
+		$error++;
 		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
 	}
-	$birthday = dol_mktime($_POST["birthhour"], $_POST["birthmin"], $_POST["birthsec"], $_POST["birthmonth"], $_POST["birthday"], $_POST["birthyear"]);
-	if ($_POST["birthmonth"] && empty($birthday)) {
+	$birthday = dol_mktime(GETPOST("birthhour", 'int'), GETPOST("birthmin", 'int'), GETPOST("birthsec", 'int'), GETPOST("birthmonth", 'int'), GETPOST("birthday", 'int'), GETPOST("birthyear", 'int'));
+	if (GETPOST("birthmonth") && empty($birthday)) {
 		$error++;
 		$langs->load("errors");
 		$errmsg .= $langs->trans("ErrorBadDateFormat")."<br>\n";
@@ -226,40 +251,41 @@ if (empty($reshook) && $action == 'add') {
 		}
 	}
 
-	if (isset($public)) $public = 1;
-	else $public = 0;
+	$public = GETPOSTISSET('public') ? 1 : 0;
 
 	if (!$error) {
 		// email a peu pres correct et le login n'existe pas
 		$adh = new Adherent($db);
 		$adh->statut      = -1;
 		$adh->public      = $public;
-		$adh->firstname   = $_POST["firstname"];
-		$adh->lastname    = $_POST["lastname"];
-		$adh->gender      = $_POST["gender"];
-		$adh->civility_id = $_POST["civility_id"];
-		$adh->societe     = $_POST["societe"];
-		$adh->address     = $_POST["address"];
-		$adh->zip         = $_POST["zipcode"];
-		$adh->town        = $_POST["town"];
-		$adh->email       = $_POST["email"];
+		$adh->firstname   = GETPOST('firstname');
+		$adh->lastname    = GETPOST('lastname');
+		$adh->gender      = GETPOST('gender');
+		$adh->civility_id = GETPOST('civility_id');
+		$adh->societe     = GETPOST('societe');
+		$adh->address     = GETPOST('address');
+		$adh->zip         = GETPOST('zipcode');
+		$adh->town        = GETPOST('town');
+		$adh->email       = GETPOST('email');
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-			$adh->login       = $_POST["login"];
-			$adh->pass        = $_POST["pass1"];
+			$adh->login       = GETPOST('login');
+			$adh->pass        = GETPOST('pass1');
 		}
-		$adh->photo       = $_POST["photo"];
-		$adh->country_id  = $_POST["country_id"];
-		$adh->state_id    = $_POST["state_id"];
-		$adh->typeid      = $_POST["type"];
-		$adh->note_private = $_POST["note_private"];
-		$adh->morphy      = $_POST["morphy"];
+		$adh->photo       = GETPOST('photo');
+		$adh->country_id  = $conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE ? $conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE : GETPOST('country_id', 'int');
+		$adh->state_id    = GETPOST('state_id', 'int');
+		$adh->typeid      = $conf->global->MEMBER_NEWFORM_FORCETYPE ? $conf->global->MEMBER_NEWFORM_FORCETYPE : GETPOST('typeid', 'int');
+		$adh->note_private = GETPOST('note_private');
+		$adh->morphy      = $conf->global->MEMBER_NEWFORM_FORCEMORPHY ? $conf->global->MEMBER_NEWFORM_FORCEMORPHY : GETPOST('morphy');
 		$adh->birth       = $birthday;
 
 
 		// Fill array 'array_options' with data from add form
 		$extrafields->fetch_name_optionals_label($adh->table_element);
 		$ret = $extrafields->setOptionalsFromPost(null, $adh);
-		if ($ret < 0) $error++;
+		if ($ret < 0) {
+			$error++;
+		}
 
 		$result = $adh->create($user);
 		if ($result > 0) {
@@ -285,7 +311,9 @@ if (empty($reshook) && $action == 'add') {
 				$arraydefaultmessage = null;
 				$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER;
 
-				if (!empty($labeltouse)) $arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+				if (!empty($labeltouse)) {
+					$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+				}
 
 				if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 					$subject = $arraydefaultmessage->topic;
@@ -303,9 +331,9 @@ if (empty($reshook) && $action == 'add') {
 					$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
 				}
 				/*if ($result < 0) {
-            		$error++;
-            		setEventMessages($object->error, $object->errors, 'errors');
-            	}*/
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
+				}*/
 			}
 
 			// Send email to the foundation to say a new member subscribed with autosubscribe form
@@ -316,8 +344,12 @@ if (empty($reshook) && $action == 'add') {
 				if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
 					$appli = $conf->global->MAIN_APPLICATION_TITLE;
 					if (preg_match('/\d\.\d/', $appli)) {
-						if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
-					} else $appli .= " ".DOL_VERSION;
+						if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
+							$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
+						}
+					} else {
+						$appli .= " ".DOL_VERSION;
+					}
 				} else {
 					$appli .= " ".DOL_VERSION;
 				}
@@ -355,8 +387,12 @@ if (empty($reshook) && $action == 'add') {
 			if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) && $conf->global->MEMBER_NEWFORM_PAYONLINE != '-1') {
 				if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'all') {
 					$urlback = DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
-					if (price2num(GETPOST('amount', 'alpha'))) $urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
-					if (GETPOST('email')) $urlback .= '&email='.urlencode(GETPOST('email'));
+					if (price2num(GETPOST('amount', 'alpha'))) {
+						$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
+					}
+					if (GETPOST('email')) {
+						$urlback .= '&email='.urlencode(GETPOST('email'));
+					}
 					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
 							$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$adh->ref, 2));
@@ -366,8 +402,12 @@ if (empty($reshook) && $action == 'add') {
 					}
 				} elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paybox') {
 					$urlback = DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
-					if (price2num(GETPOST('amount', 'alpha'))) $urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
-					if (GETPOST('email')) $urlback .= '&email='.urlencode(GETPOST('email'));
+					if (price2num(GETPOST('amount', 'alpha'))) {
+						$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
+					}
+					if (GETPOST('email')) {
+						$urlback .= '&email='.urlencode(GETPOST('email'));
+					}
 					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
 							$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$adh->ref, 2));
@@ -377,8 +417,12 @@ if (empty($reshook) && $action == 'add') {
 					}
 				} elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paypal') {
 					$urlback = DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
-					if (price2num(GETPOST('amount', 'alpha'))) $urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
-					if (GETPOST('email')) $urlback .= '&email='.urlencode(GETPOST('email'));
+					if (price2num(GETPOST('amount', 'alpha'))) {
+						$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
+					}
+					if (GETPOST('email')) {
+						$urlback .= '&email='.urlencode(GETPOST('email'));
+					}
 					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
 							$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$adh->ref, 2));
@@ -388,8 +432,12 @@ if (empty($reshook) && $action == 'add') {
 					}
 				} elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'stripe') {
 					$urlback = DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?from=membernewform&source=membersubscription&ref='.$adh->ref;
-					if (price2num(GETPOST('amount', 'alpha'))) $urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
-					if (GETPOST('email')) $urlback .= '&email='.urlencode(GETPOST('email'));
+					if (price2num(GETPOST('amount', 'alpha'))) {
+						$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
+					}
+					if (GETPOST('email')) {
+						$urlback .= '&email='.urlencode(GETPOST('email'));
+					}
 					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
 							$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$adh->ref, 2));
@@ -403,7 +451,9 @@ if (empty($reshook) && $action == 'add') {
 				}
 			}
 
-			if (!empty($entity)) $urlback .= '&entity='.$entity;
+			if (!empty($entity)) {
+				$urlback .= '&entity='.$entity;
+			}
 			dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
 		} else {
 			$error++;
@@ -486,18 +536,23 @@ jQuery(document).ready(function () {
     jQuery(document).ready(function () {
         function initmorphy()
         {
-                if (jQuery("#morphy").val()==\'phy\') {
-                    jQuery("#trcompany").hide();
-                }
-                if (jQuery("#morphy").val()==\'mor\') {
-                    jQuery("#trcompany").show();
-                }
+			console.log("Call initmorphy");
+            if (jQuery("#morphy").val() == \'phy\') {
+                jQuery("#trcompany").hide();
+            }
+            if (jQuery("#morphy").val() == \'mor\') {
+                jQuery("#trcompany").show();
+            }
         };
         initmorphy();
-        jQuery("#morphy").click(function() {
+        jQuery("#morphy").change(function() {
             initmorphy();
         });
         jQuery("#selectcountry_id").change(function() {
+           document.newmember.action.value="create";
+           document.newmember.submit();
+        });
+        jQuery("#typeid").change(function() {
            document.newmember.action.value="create";
            document.newmember.submit();
         });
@@ -508,7 +563,7 @@ jQuery(document).ready(function () {
 
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 
-// Type
+	// Type
 if (empty($conf->global->MEMBER_NEWFORM_FORCETYPE)) {
 	$listoftype = $adht->liste_array();
 	$tmp = array_keys($listoftype);
@@ -519,12 +574,13 @@ if (empty($conf->global->MEMBER_NEWFORM_FORCETYPE)) {
 		$isempty = 0;
 	}
 	print '<tr><td class="titlefield">'.$langs->trans("Type").' <FONT COLOR="red">*</FONT></td><td>';
-	print $form->selectarray("type", $adht->liste_array(), GETPOST('type') ?GETPOST('type') : $defaulttype, $isempty);
+	print $form->selectarray("typeid", $adht->liste_array(1), GETPOST('typeid') ? GETPOST('typeid') : $defaulttype, $isempty);
 	print '</td></tr>'."\n";
 } else {
 	$adht->fetch($conf->global->MEMBER_NEWFORM_FORCETYPE);
-	print '<input type="hidden" id="type" name="type" value="'.$conf->global->MEMBER_NEWFORM_FORCETYPE.'">';
+	print '<input type="hidden" id="typeid" name="typeid" value="'.$conf->global->MEMBER_NEWFORM_FORCETYPE.'">';
 }
+
 // Moral/Physic attribute
 $morphys["phy"] = $langs->trans("Physical");
 $morphys["mor"] = $langs->trans("Moral");
@@ -536,21 +592,34 @@ if (empty($conf->global->MEMBER_NEWFORM_FORCEMORPHY)) {
 	print $morphys[$conf->global->MEMBER_NEWFORM_FORCEMORPHY];
 	print '<input type="hidden" id="morphy" name="morphy" value="'.$conf->global->MEMBER_NEWFORM_FORCEMORPHY.'">';
 }
-// Civility
+
+// Company
+print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'</td><td>';
+print img_picto('', 'company', 'class="pictofixedwidth"');
+print '<input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
+// Title
 print '<tr><td class="titlefield">'.$langs->trans('UserTitle').'</td><td>';
 print $formcompany->select_civility(GETPOST('civility_id'), 'civility_id').'</td></tr>'."\n";
 // Lastname
 print '<tr><td>'.$langs->trans("Lastname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
 // Firstname
 print '<tr><td>'.$langs->trans("Firstname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
+// EMail
+print '<tr><td>'.$langs->trans("Email").($conf->global->ADHERENT_MAIL_REQUIRED ? ' <span style="color:red;">*</span>' : '').'</td><td>';
+//print img_picto('', 'email', 'class="pictofixedwidth"');
+print '<input type="text" name="email" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+// Login
+if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+	print '<tr><td>'.$langs->trans("Login").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="login" maxlength="50" class="minwidth100"value="'.dol_escape_htmltag(GETPOST('login')).'"></td></tr>'."\n";
+	print '<tr><td>'.$langs->trans("Password").' <FONT COLOR="red">*</FONT></td><td><input type="password" maxlength="128" name="pass1" class="minwidth100" value="'.GETPOST("pass1", "nohtml").'"></td></tr>'."\n";
+	print '<tr><td>'.$langs->trans("PasswordAgain").' <FONT COLOR="red">*</FONT></td><td><input type="password" maxlength="128" name="pass2" class="minwidth100" value="'.GETPOST("pass2", "nohtml").'"></td></tr>'."\n";
+}
 // Gender
 print '<tr><td>'.$langs->trans("Gender").'</td>';
 print '<td>';
 $arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"));
 print $form->selectarray('gender', $arraygender, GETPOST('gender') ?GETPOST('gender') : $object->gender, 1);
 print '</td></tr>';
-// Company
-print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
 print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
@@ -562,7 +631,8 @@ print $formcompany->select_ziptown(GETPOST('town'), 'town', array('zipcode', 'se
 print '</td></tr>';
 // Country
 print '<tr><td>'.$langs->trans('Country').'</td><td>';
-$country_id = GETPOST('country_id');
+print img_picto('', 'country', 'class="pictofixedwidth"');
+$country_id = GETPOST('country_id', 'int');
 if (!$country_id && !empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) {
 	$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
 }
@@ -572,7 +642,9 @@ if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
 	if ($country_code) {
 		$new_country_id = getCountry($country_code, 3, $db, $langs);
 		//print 'xxx'.$country_code.' - '.$new_country_id;
-		if ($new_country_id) $country_id = $new_country_id;
+		if ($new_country_id) {
+			$country_id = $new_country_id;
+		}
 	}
 }
 $country_code = getCountry($country_id, 2, $db, $langs);
@@ -581,20 +653,13 @@ print '</td></tr>';
 // State
 if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
 	print '<tr><td>'.$langs->trans('State').'</td><td>';
-	if ($country_code) print $formcompany->select_state(GETPOST("state_id"), $country_code);
-	else print '';
+	if ($country_code) {
+		print $formcompany->select_state(GETPOST("state_id"), $country_code);
+	}
 	print '</td></tr>';
 }
-// EMail
-print '<tr><td>'.$langs->trans("Email").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
-// Login
-if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-	print '<tr><td>'.$langs->trans("Login").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="login" maxlength="50" class="minwidth100"value="'.dol_escape_htmltag(GETPOST('login')).'"></td></tr>'."\n";
-	print '<tr><td>'.$langs->trans("Password").' <FONT COLOR="red">*</FONT></td><td><input type="password" maxlength="128" name="pass1" class="minwidth100" value="'.GETPOST("pass1").'"></td></tr>'."\n";
-	print '<tr><td>'.$langs->trans("PasswordAgain").' <FONT COLOR="red">*</FONT></td><td><input type="password" maxlength="128" name="pass2" class="minwidth100" value="'.GETPOST("pass2").'"></td></tr>'."\n";
-}
 // Birthday
-print '<tr id="trbirth" class="trbirth"><td>'.$langs->trans("DateToBirth").'</td><td>';
+print '<tr id="trbirth" class="trbirth"><td>'.$langs->trans("DateOfBirth").'</td><td>';
 print $form->selectDate($birthday, 'birth', 0, 0, 1, "newmember", 1, 0);
 print '</td></tr>'."\n";
 // Photo
@@ -602,7 +667,7 @@ print '<tr><td>'.$langs->trans("URLPhoto").'</td><td><input type="text" name="ph
 // Public
 print '<tr><td>'.$langs->trans("Public").'</td><td><input type="checkbox" name="public"></td></tr>'."\n";
 // Other attributes
-$tpl_context = 'public'; //BUG #11554 : define templae context to public
+$tpl_context = 'public'; // define template context to public
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 // Comments
 print '<tr>';
@@ -611,6 +676,7 @@ print '<td class="tdtop"><textarea name="note_private" id="note_private" wrap="s
 print '</tr>'."\n";
 
 // Add specific fields used by Dolibarr foundation for example
+// TODO Move this into generic feature.
 if (!empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER)) {
 	$arraybudget = array('50'=>'<= 100 000', '100'=>'<= 200 000', '200'=>'<= 500 000', '300'=>'<= 1 500 000', '600'=>'<= 3 000 000', '1000'=>'<= 5 000 000', '2000'=>'5 000 000+');
 	print '<tr id="trbudget" class="trcompany"><td>'.$langs->trans("TurnoverOrBudget").' <FONT COLOR="red">*</FONT></td><td>';
@@ -627,11 +693,11 @@ if (!empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER)) {
                 if (jQuery("#budget").val() > 0) { jQuery(".amount").val(jQuery("#budget").val()); }
                 else { jQuery("#budget").val(\'\'); }
         });
-        /*jQuery("#type").change(function() {
-            if (jQuery("#type").val()==1) { jQuery("#morphy").val(\'mor\'); }
-            if (jQuery("#type").val()==2) { jQuery("#morphy").val(\'phy\'); }
-            if (jQuery("#type").val()==3) { jQuery("#morphy").val(\'mor\'); }
-            if (jQuery("#type").val()==4) { jQuery("#morphy").val(\'mor\'); }
+        /*jQuery("#typeid").change(function() {
+            if (jQuery("#typeid").val()==1) { jQuery("#morphy").val(\'mor\'); }
+            if (jQuery("#typeid").val()==2) { jQuery("#morphy").val(\'phy\'); }
+            if (jQuery("#typeid").val()==3) { jQuery("#morphy").val(\'mor\'); }
+            if (jQuery("#typeid").val()==4) { jQuery("#morphy").val(\'mor\'); }
             initturnover();
         });*/
         function initturnover() {
@@ -653,23 +719,31 @@ if (!empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER)) {
     </script>';
 	print '</td></tr>'."\n";
 }
+
 if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT) || !empty($conf->global->MEMBER_NEWFORM_PAYONLINE)) {
 	// $conf->global->MEMBER_NEWFORM_SHOWAMOUNT is an amount
-	$amount = 0;
+
+	// Set amount for the subscription
+	$amountbytype = $adht->amountByType(1);
+	$amount = !empty($amountbytype[GETPOST('typeid', 'int')]) ? $amountbytype[GETPOST('typeid', 'int')] : (isset($amount) ? $amount : 0);
+
 	if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
 		$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
 	}
 
 	if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE)) {
-		$amount = GETPOST('amount') ?GETPOST('amount') : $conf->global->MEMBER_NEWFORM_AMOUNT;
+		$amount = $amount ? $amount : (GETPOST('amount') ? price2num(GETPOST('amount'), 'MT', 2) : $conf->global->MEMBER_NEWFORM_AMOUNT);
 	}
+
+	$amount = price2num($amount);
+
 	// $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal', 'paybox' or 'stripe'
 	print '<tr><td>'.$langs->trans("Subscription").'</td><td class="nowrap">';
 	if (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {
-		print '<input type="text" name="amount" id="amount" class="flat amount" size="6" value="'.$amount.'">';
+		print '<input type="text" name="amount" id="amount" class="flat amount width50" value="'.$amount.'">';
 	} else {
-		print '<input type="text" name="amount" id="amounthidden" class="flat amount" disabled size="6" value="'.$amount.'">';
-		print '<input type="hidden" name="amount" id="amount" class="flat amount" size="6" value="'.$amount.'">';
+		print '<input type="text" name="amount" id="amounthidden" class="flat amount width50" disabled value="'.$amount.'">';
+		print '<input type="hidden" name="amount" id="amount" class="flat amount" value="'.$amount.'">';
 	}
 	print ' '.$langs->trans("Currency".$conf->currency);
 	print '</td></tr>';

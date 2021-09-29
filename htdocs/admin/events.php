@@ -44,7 +44,9 @@ $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1 or if we click on clear filters
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -57,17 +59,18 @@ $eventstolog = $securityevent->eventstolog;
  *	Actions
  */
 
-if ($action == "save")
-{
+if ($action == "save") {
 	$i = 0;
 
 	$db->begin();
 
-	foreach ($eventstolog as $key => $arr)
-	{
+	foreach ($eventstolog as $key => $arr) {
 		$param = 'MAIN_LOGEVENTS_'.$arr['id'];
-		if (GETPOST($param, 'alphanohtml')) dolibarr_set_const($db, $param, GETPOST($param, 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-		else dolibarr_del_const($db, $param, $conf->entity);
+		if (GETPOST($param, 'alphanohtml')) {
+			dolibarr_set_const($db, $param, GETPOST($param, 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		} else {
+			dolibarr_del_const($db, $param, $conf->entity);
+		}
 	}
 
 	$db->commit();
@@ -110,10 +113,8 @@ print getTitleFieldOfList("LogEvents", 0, $_SERVER["PHP_SELF"], '', '', '', '', 
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 print "</tr>\n";
 // Loop on each event type
-foreach ($eventstolog as $key => $arr)
-{
-	if ($arr['id'])
-	{
+foreach ($eventstolog as $key => $arr) {
+	if ($arr['id']) {
 		print '<tr class="oddeven">';
 		print '<td>'.$arr['id'].'</td>';
 		print '<td class="center">';

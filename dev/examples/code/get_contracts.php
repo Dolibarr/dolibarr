@@ -29,8 +29,8 @@ $path=dirname(__FILE__).'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-    exit;
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	exit;
 }
 
 // Global variables
@@ -49,14 +49,17 @@ $langs->load("main");				// To load language file for default language
 
 // Load user and its permissions
 $result=$user->fetch('', 'admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
-if (! $result > 0) { dol_print_error('', $user->error); exit; }
+if (! $result > 0) {
+	dol_print_error('', $user->error);
+	exit;
+}
 $user->getrights();
 
 
 print "***** ".$script_file." (".$version.") *****\n";
 if (! isset($argv[1])) {	// Check parameters
-    print "Usage: ".$script_file." id_thirdparty ...\n";
-    exit;
+	print "Usage: ".$script_file." id_thirdparty ...\n";
+	exit;
 }
 print '--- start'."\n";
 print 'Argument id_thirdparty='.$argv[1]."\n";

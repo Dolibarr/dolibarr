@@ -16,12 +16,13 @@ MarginDetails=Detalji marže
 ProductMargins=Marže proizvoda
 CustomerMargins=Marže kupaca
 SalesRepresentativeMargins=Marže prodajnog predstavnika
+ContactOfInvoice=Contact of invoice
 UserMargins=Korisničke marže
 ProductService=Proizvod ili usluga
 AllProducts=Svi proizvodi i usluge
 ChooseProduct/Service=Odaberite proizvod ili uslugu
 ForceBuyingPriceIfNull=Forsiraj kupovno/troškovnu cijenu kao prodajnu cijenu ako nije definirano
-ForceBuyingPriceIfNullDetails=Ako kupovna/troškovna cijena nije definirana, i ova opcija je uključena, marža će biti nula na stavki ( kupovno/troškovna cijena = prodajna cijena), u protivnom (isključeno), marža će biti jednaka sugeriranoj vrijednosti.
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0 on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100% if no default value can be found).
 MARGIN_METHODE_FOR_DISCOUNT=Načini marže za globalne rabate
 UseDiscountAsProduct=Kao proizvod
 UseDiscountAsService=Kao usluga
@@ -36,7 +37,7 @@ CostPrice=Cijena troška
 UnitCharges=Troškovi jedinice
 Charges=Troškovi
 AgentContactType=Vrsta kontakta komercijalnog agenta
-AgentContactTypeDetails=Odredite koji tip kontakta (povezan na računu) će biti korišten za izvještaj marže po prodajnom predstavniku
+AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per contact/address. Note that reading statistics on a contact is not reliable since in most cases the contact may not be defined explicitely on the invoices.
 rateMustBeNumeric=Stopa mora biti brojčana vrijednost
 markRateShouldBeLesserThan100=Mark rate should be lower than 100
 ShowMarginInfos=Prikaži infomacije o marži

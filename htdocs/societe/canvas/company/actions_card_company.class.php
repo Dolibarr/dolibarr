@@ -61,9 +61,15 @@ class ActionsCardCompany extends ActionsCardCommon
 
 		$out = '';
 
-		if ($action == 'view')      $out .= $langs->trans("ThirdParty");
-		if ($action == 'edit')      $out .= $langs->trans("EditCompany");
-		if ($action == 'create')    $out .= $langs->trans("NewCompany");
+		if ($action == 'view') {
+			$out .= $langs->trans("ThirdParty");
+		}
+		if ($action == 'edit') {
+			$out .= $langs->trans("EditCompany");
+		}
+		if ($action == 'create') {
+			$out .= $langs->trans("NewCompany");
+		}
 
 		return $out;
 	}
@@ -95,8 +101,7 @@ class ActionsCardCompany extends ActionsCardCommon
 		$this->tpl['profid3'] 	= $this->object->idprof3;
 		$this->tpl['profid4'] 	= $this->object->idprof4;
 
-		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_DISABLEVATCHECK))
-		{
+		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_DISABLEVATCHECK)) {
 			$js = "\n";
 			$js .= '<script language="JavaScript" type="text/javascript">';
 			$js .= "function CheckVAT(a) {\n";
@@ -107,10 +112,8 @@ class ActionsCardCompany extends ActionsCardCommon
 			$this->tpl['js_checkVatPopup'] = $js;
 		}
 
-		if ($action == 'create' || $action == 'edit')
-		{
-			for ($i = 1; $i <= 4; $i++)
-			{
+		if ($action == 'create' || $action == 'edit') {
+			for ($i = 1; $i <= 4; $i++) {
 				$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i, $this->object->country_code);
 				$this->tpl['showprofid'.$i]		= $formcompany->get_input_id_prof($i, 'idprof'.$i, $this->tpl['profid'.$i], $this->object->country_code);
 			}
@@ -126,12 +129,10 @@ class ActionsCardCompany extends ActionsCardCommon
 
 			// VAT intra
 			$s = '<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$this->object->tva_intra.'">';
-			if (empty($conf->global->MAIN_DISABLEVATCHECK))
-			{
+			if (empty($conf->global->MAIN_DISABLEVATCHECK)) {
 				$s .= ' ';
 
-				if ($conf->use_javascript_ajax)
-				{
+				if ($conf->use_javascript_ajax) {
 					$s .= '<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
 					$this->tpl['tva_intra'] = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
 				} else {
@@ -142,29 +143,24 @@ class ActionsCardCompany extends ActionsCardCommon
 			}
 		} else {
 			// Confirm delete third party
-			if ($action == 'delete')
-			{
+			if ($action == 'delete') {
 				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->object->id, $langs->trans("DeleteACompany"), $langs->trans("ConfirmDeleteCompany"), "confirm_delete", '', 0, "1,action-delete");
 			}
 
-			for ($i = 1; $i <= 4; $i++)
-			{
+			for ($i = 1; $i <= 4; $i++) {
 				$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i, $this->object->country_code);
 				$this->tpl['checkprofid'.$i]	= $this->object->id_prof_check($i, $this->object);
 				$this->tpl['urlprofid'.$i] = $this->object->id_prof_url($i, $this->object);
 			}
 
 			// TVA intra
-			if ($this->object->tva_intra)
-			{
+			if ($this->object->tva_intra) {
 				$s = $this->object->tva_intra;
 				$s .= '<input type="hidden" name="tva_intra" size="12" maxlength="20" value="'.$this->object->tva_intra.'">';
-				if (empty($conf->global->MAIN_DISABLEVATCHECK))
-				{
+				if (empty($conf->global->MAIN_DISABLEVATCHECK)) {
 					$s .= ' &nbsp; ';
 
-					if ($conf->use_javascript_ajax)
-					{
+					if ($conf->use_javascript_ajax) {
 						$s .= '<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
 						$this->tpl['tva_intra'] = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
 					} else {
@@ -178,8 +174,7 @@ class ActionsCardCompany extends ActionsCardCommon
 			}
 
 			// Parent company
-			if ($this->object->parent)
-			{
+			if ($this->object->parent) {
 				$socm = new Societe($this->db);
 				$socm->fetch($this->object->parent);
 				$this->tpl['parent_company'] = $socm->getNomUrl(1).' '.($socm->code_client ? "(".$socm->code_client.")" : "");

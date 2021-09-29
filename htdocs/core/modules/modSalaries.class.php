@@ -27,7 +27,7 @@
  *  \brief      Module to include salaries management
  *  \file       htdocs/core/modules/modSalaries.class.php
  *  \ingroup    salaries
- *  \brief      File to activate module salaries
+ *  \brief      Description and activation file for the module salaries
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -75,7 +75,7 @@ class modSalaries extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->langfiles = array("salaries", "bills");
 
 		// Constants
@@ -101,7 +101,7 @@ class modSalaries extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 511;
-		$this->rights[$r][1] = 'Read payments of employee salaries (yours and your subordinates)';
+		$this->rights[$r][1] = 'Read employee salaries and payments (yours and your subordinates)';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'read';
@@ -125,7 +125,7 @@ class modSalaries extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 517;
-		$this->rights[$r][1] = 'Read payments of salariests of every employee';
+		$this->rights[$r][1] = 'Read salaries and payments of all employees';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'readall';

@@ -61,5 +61,7 @@ MenuListTypeAssets = 清單列表
 #
 # Module
 #
+Asset=資產
 NewAssetType=新資產類型
 NewAsset=新資產
+ConfirmDeleteAsset=您確定要刪除此資產?

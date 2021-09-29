@@ -192,7 +192,7 @@ class ActionsTicket
 		// Initial message
 		print '<div class="underbanner clearboth"></div>';
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-		print '<table class="noborder centpercent margintable">';
+		print '<table class="noborder centpercent margintable margintablenotop">';
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 		print $langs->trans("InitialMessage");
 		print '</td><td>';
@@ -262,14 +262,15 @@ class ActionsTicket
 
 		// Load logs in cache
 		$ret = $this->dao->loadCacheMsgsTicket();
-		if ($ret < 0) dol_print_error($this->dao->db);
+		if ($ret < 0) {
+			dol_print_error($this->dao->db);
+		}
 
 		$action = GETPOST('action', 'aZ09');
 
 		$this->viewTicketOriginalMessage($user, $action, $object);
 
-		if (is_array($this->dao->cache_msgs_ticket) && count($this->dao->cache_msgs_ticket) > 0)
-		{
+		if (is_array($this->dao->cache_msgs_ticket) && count($this->dao->cache_msgs_ticket) > 0) {
 			print '<table class="border" style="width:100%;">';
 
 			print '<tr class="liste_titre">';
@@ -390,7 +391,7 @@ class ActionsTicket
 	{
 		global $langs;
 
-		print '<div class="div-table-responsive-no-min margintoponly">';
+		print '<div class="div-table-responsive-no-min margintoponly navBarForStatus">';
 		print '<div class="centpercent right">';
 		// Exclude status which requires specific method
 		$exclude_status = array(Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED);
@@ -407,7 +408,7 @@ class ActionsTicket
 				if ($status == 1) {
 					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=mark_ticket_read'; // To set as read, we use a dedicated action
 				} else {
-					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=set_status&token='.newToken().'&new_status='.$status;
+					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=confirm_set_status&token='.newToken().'&new_status='.$status;
 				}
 
 				print '<a class="butAction butStatus marginbottomonly" href="'.$urlforbutton.'">';
@@ -418,7 +419,9 @@ class ActionsTicket
 				print '</div>';
 			}
 		}
-		print '</div></div><br>';
+		print '</div>';
+		print '</div>';
+		print '<br>';
 	}
 
 	/**

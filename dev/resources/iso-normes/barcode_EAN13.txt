@@ -1,3 +1,7 @@
+Barcode EAN 13
+
+FR
+==
 Signification des chiffres.
 
 - 2 chiffres pour le code pays ou code systeme
@@ -8,6 +12,24 @@ Signification des chiffres.
 Cette regle subit de nombreuses entorses pour ameliorer l'usage des chiffres disponibles.
 Voici la liste des codes pays ou systeme :
 
+
+
+EN
+==
+Meaning of the numbers.
+
+- 2 digits for the country code or system code
+- 5 digits for the company identifier
+- 5 digits for item identifier
+- 1 digit for checksum
+
+This rule has been twisted many times to improve the use of the available numbers.
+Here is the list of country codes or system:
+
+
+
+List
+====
 
 00 � 13 UCC (Etats-Unis et Canada)
 20 � 29 Codification interne en magasin

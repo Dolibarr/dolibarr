@@ -131,7 +131,7 @@ InvoiceLinesDone=Bound lines of invoices
 ExpenseReportLines=Lines of expense reports to bind
 ExpenseReportLinesDone=Bound lines of expense reports
 IntoAccount=Bind line with the accounting account
-TotalForAccount=Total for accounting account
+TotalForAccount=Total accounting account
 
 
 Ventilate=Bind
@@ -158,7 +158,7 @@ ACCOUNTING_LENGTH_AACCOUNT=Length of the third-party accounting accounts (If you
 ACCOUNTING_MANAGE_ZERO=Allow to manage different number of zeros at the end of an accounting account. Needed by some countries (like Switzerland). If set to off (default), you can set the following two parameters to ask the application to add virtual zeros.
 BANK_DISABLE_DIRECT_INPUT=Disable direct recording of transaction in bank account
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
-ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties)
+ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
 ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, select period show by default
 
@@ -202,14 +202,14 @@ Docref=Reference
 LabelAccount=Label account
 LabelOperation=Label operation
 Sens=Direction
-AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you received<br>For an accounting account of a supplier, use Debit to record a payment you make
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you have received<br>For an accounting account of a supplier, use Debit to record a payment you made
 LetteringCode=Lettering code
 Lettering=Lettering
 Codejournal=Journal
 JournalLabel=Journal label
 NumPiece=Piece number
 TransactionNumShort=Num. transaction
-AccountingCategory=Personalized groups
+AccountingCategory=Custom group
 GroupByAccountAccounting=Group by general ledger account
 GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=You can define here some groups of accounting account. They will be used for personalized accounting reports.
@@ -297,7 +297,7 @@ NoNewRecordSaved=No more record to journalize
 ListOfProductsWithoutAccountingAccount=List of products not bound to any accounting account
 ChangeBinding=Change the binding
 Accounted=Accounted in ledger
-NotYetAccounted=Not yet accounted in ledger
+NotYetAccounted=Not yet accounted in the ledger
 ShowTutorial=Show Tutorial
 NotReconciled=Not reconciled
 WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
@@ -328,6 +328,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountanc
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
+NotifiedExportDate=Notified export date (modification of the entries will not be possible)
+NotifiedValidationDate=Validation of the entries (modification or deletion of the entries will not be possible)
+ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=Export draft journal
 Modelcsv=Model of export
 Selectmodelcsv=Select a model of export
@@ -402,7 +405,29 @@ UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to 
 
 ## Import
 ImportAccountingEntries=Accounting entries
+ImportAccountingEntriesFECFormat=Accounting entries - FEC format
+FECFormatJournalCode=Code journal (JournalCode)
+FECFormatJournalLabel=Label journal (JournalLib)
+FECFormatEntryNum=Piece number (EcritureNum)
+FECFormatEntryDate=Piece date (EcritureDate)
+FECFormatGeneralAccountNumber=General account number (CompteNum)
+FECFormatGeneralAccountLabel=General account label (CompteLib)
+FECFormatSubledgerAccountNumber=Subledger account number (CompAuxNum)
+FECFormatSubledgerAccountLabel=Subledger account number (CompAuxLib)
+FECFormatPieceRef=Piece ref (PieceRef)
+FECFormatPieceDate=Piece date creation (PieceDate)
+FECFormatLabelOperation=Label operation (EcritureLib)
+FECFormatDebit=Debit (Debit)
+FECFormatCredit=Credit (Credit)
+FECFormatReconcilableCode=Reconcilable code (EcritureLet)
+FECFormatReconcilableDate=Reconcilable date (DateLet)
+FECFormatValidateDate=Piece date validated (ValidDate)
+FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
+FECFormatMulticurrencyCode=Multicurrency code (Idevise)
+
 DateExport=Date export
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Expense Report Journal
 InventoryJournal=Inventory Journal
+
+NAccounts=%s accounts

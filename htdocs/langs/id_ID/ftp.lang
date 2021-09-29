@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=Penyiapan modul Klien FTP
-NewFTPClient=Pengaturan koneksi FTP baru
-FTPArea=Area FTP
-FTPAreaDesc=Layar ini menunjukkan tampilan server FTP.
-SetupOfFTPClientModuleNotComplete=Pengaturan modul klien FTP tampaknya tidak lengkap
-FTPFeatureNotSupportedByYourPHP=PHP Anda tidak mendukung fungsi FTP
-FailedToConnectToFTPServer=Gagal terhubung ke server FTP (server %s, port %s)
-FailedToConnectToFTPServerWithCredentials=Gagal masuk ke server FTP dengan login / kata sandi yang ditentukan
+FTPClientSetup=Penyiapan modul Klien FTP atau SFTP
+NewFTPClient=Pengaturan koneksi FTP / FTPS baru
+FTPArea=Area FTP / FTPS
+FTPAreaDesc=Layar ini menunjukkan tampilan server FTP dan SFTP.
+SetupOfFTPClientModuleNotComplete=Penyiapan modul klien FTP atau SFTP tampaknya tidak lengkap
+FTPFeatureNotSupportedByYourPHP=PHP Anda tidak mendukung fungsi FTP atau SFTP
+FailedToConnectToFTPServer=Gagal terhubung ke server (server %s, port %s)
+FailedToConnectToFTPServerWithCredentials=Gagal masuk ke server dengan login / kata sandi yang ditentukan
 FTPFailedToRemoveFile=Gagal menghapus file<b>%s </b>.
 FTPFailedToRemoveDir=Gagal menghapus direktori<b>%s </b>: periksa izin dan direktori tersebut kosong.
 FTPPassiveMode=Mode pasif
-ChooseAFTPEntryIntoMenu=Pilih situs FTP dari menu ...
+ChooseAFTPEntryIntoMenu=Choose a FTP/SFTP site from the menu...
 FailedToGetFile=Gagal mendapatkan file %s

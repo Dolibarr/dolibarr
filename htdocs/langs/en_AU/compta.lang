@@ -7,7 +7,6 @@ ShowVatPayment=Show GST payment
 CheckReceipt=Cheque deposit
 CheckReceiptShort=Cheque deposit
 NewCheckDeposit=New cheque deposit
-DateChequeReceived=Cheque received date
 RulesResultInOut=- It includes the real payments made on invoices, expenses, GST and salaries. <br>- It is based on the payment dates of the invoices, expenses, GST and salaries. The donation date for donation.
 VATReportByCustomersInInputOutputMode=Report by the customer GST collected and paid
 SeeVATReportInInputOutputMode=See report <b>%sGST encasement%s</b> for a standard calculation

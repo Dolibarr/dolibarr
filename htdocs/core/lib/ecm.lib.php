@@ -44,8 +44,7 @@ function ecm_prepare_dasboard_head($object)
 	$head[$h][2] = 'index';
 	$h++;
 
-	if (!empty($conf->global->ECM_AUTO_TREE_ENABLED))
-	{
+	if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
 		$head[$h][0] = DOL_URL_ROOT.'/ecm/index_auto.php';
 		$head[$h][1] = $langs->trans("ECMSectionsAuto").$form->textwithpicto('', $helptext, 1, 'info', '', 0, 3);
 		$head[$h][2] = 'index_auto';
@@ -78,8 +77,7 @@ function ecm_prepare_head($object, $module = 'ecm', $section = '')
 	$h = 0;
 	$head = array();
 
-	if ($module == 'ecm')
-	{
+	if ($module == 'ecm') {
 		$head[$h][0] = DOL_URL_ROOT.'/ecm/dir_card.php?section='.$object->id;
 		$head[$h][1] = $langs->trans("Directory");
 		$head[$h][2] = 'card';
@@ -109,6 +107,22 @@ function ecm_file_prepare_head($object)
 	$head[$h][0] = DOL_URL_ROOT.'/ecm/file_card.php?section='.$object->section_id.'&urlfile='.urlencode($object->label);
 	$head[$h][1] = $langs->trans("File");
 	$head[$h][2] = 'card';
+	$h++;
+
+	// Notes
+	$head[$h][0] = DOL_URL_ROOT.'/ecm/file_note.php?section='.$object->section_id.'&urlfile='.urlencode($object->label);
+	$head[$h][1] = $langs->trans("Notes");
+	$nbNote = 0;
+	if (!empty($object->note_private)) {
+		$nbNote++;
+	}
+	if (!empty($object->note_public)) {
+		$nbNote++;
+	}
+	if ($nbNote > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+	}
+	$head[$h][2] = 'note';
 	$h++;
 
 	return $head;

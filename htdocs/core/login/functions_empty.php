@@ -38,7 +38,7 @@ function check_user_password_empty($usertotest, $passwordtotest, $entitytotest)
 	dol_syslog("functions_empty::check_user_password_empty usertotest=".$usertotest);
 
 	$login = '';
-	$_SESSION["dol_loginmesg"] = $langs->trans("FailedToLogin");
+	$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("FailedToLogin");
 
 	return $login;
 }

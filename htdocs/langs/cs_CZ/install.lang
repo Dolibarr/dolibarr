@@ -206,6 +206,7 @@ MigrationUserPhotoPath=Migrace fotografických cest pro uživatele
 MigrationFieldsSocialNetworks=Migrace uživatelů v sociálních sítích (%s)
 MigrationReloadModule=Načíst modul %s
 MigrationResetBlockedLog=Resetovat modul BlockedLog pro algoritmus v7
+MigrationImportOrExportProfiles=Migration of import or export profiles (%s)
 ShowNotAvailableOptions=Zobrazit nedostupné volby
 HideNotAvailableOptions=Skrýt nedostupné možnosti
 ErrorFoundDuringMigration=Byly hlášeny chyb(a)y během procesu migrace, takže další krok není k dispozici. Chcete-li ignorovat chyby, můžete <a href="%s"> kliknout zde </a>, ale aplikace nebo některé funkce nemusí pracovat správně, dokud nejsou chyby vyřešeny.

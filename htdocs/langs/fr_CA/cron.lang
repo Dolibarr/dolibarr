@@ -28,7 +28,6 @@ CronObject=Instance / objet à créer
 CronSaveSucess=Sauvegarde réussie
 CronFieldMandatory=Les champs %s sont obligatoires
 CronErrEndDateStartDt=La date de fin ne peut pas être avant la date de début
-CronTaskInactive=Ce travail est désactivé
 CronClassFile=Nom de fichier avec classe
 CronCommandHelp=La ligne de commande du système à exécuter.
 CronCreateJob=Créer un nouvel emploi planifié

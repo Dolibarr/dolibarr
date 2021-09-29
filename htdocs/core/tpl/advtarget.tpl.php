@@ -154,7 +154,8 @@ if (!empty($array_query['cust_status'])) {
 }
 print '</td><td>';
 print $formadvtargetemaling->advMultiselectarray(
-	'cust_status', array(
+	'cust_status',
+	array(
 		'0' => $langs->trans('ActivityCeased'),
 		'1' => $langs->trans('InActivity')
 	),
@@ -473,8 +474,9 @@ if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
 	$extrafields->fetch_name_optionals_label($elementype);
 	if (!empty($extrafields->attributes[$elementtype]['type'])) {
 		foreach ($extrafields->attributes[$elementtype]['type'] as $key => &$value) {
-			if ($value == 'radio')
+			if ($value == 'radio') {
 				$value = 'select';
+			}
 		}
 	}
 	if (!empty($extrafields->attributes[$elementtype]['label'])) {

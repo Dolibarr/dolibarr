@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - ftp
+FTPFeatureNotSupportedByYourPHP=Su PHP no es compatible con las funciones FTP o SFTP
+FailedToConnectToFTPServerWithCredentials=No se pudo ingresar al servidor con el usuario/contraseña definidos
+FTPFailedToRemoveFile=No se pudo eliminar el archivo <b> %s </b>.
+FTPFailedToRemoveDir=No se pudo eliminar el directorio <b> %s </b>: verifique los permisos y que el directorio esté vacío.

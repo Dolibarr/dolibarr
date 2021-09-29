@@ -2,6 +2,7 @@
 
 use DebugBar\DataCollector\MessagesCollector;
 use Psr\Log\LogLevel;
+
 //use ReflectionClass;
 
 /**
@@ -74,15 +75,13 @@ class DolLogsCollector extends MessagesCollector
 
 		$uselogfile = $conf->global->DEBUGBAR_USE_LOGFILE;
 
-		if ($uselogfile)
-		{
+		if ($uselogfile) {
 			$this->getStorageLogs($this->path);
 		} else {
 			$log_levels = $this->getLevels();
 
 			foreach ($conf->logbuffer as $line) {
-				if ($this->nboflines >= $this->maxnboflines)
-				{
+				if ($this->nboflines >= $this->maxnboflines) {
 					break;
 				}
 				foreach ($log_levels as $level_key => $level) {

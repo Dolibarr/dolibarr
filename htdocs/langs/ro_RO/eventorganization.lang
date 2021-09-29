@@ -1,0 +1,147 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModuleEventOrganizationName = Organizare evenimente
+EventOrganizationDescription = Organizare evenimente utilizând modulul Proiecte
+EventOrganizationDescriptionLong= Gestionare organizare de evenimente conferințe, participanți, vorbitori și participanți, şi paginini publice de însciere
+#
+# Menu
+#
+EventOrganizationMenuLeft = Organizare evenimente
+EventOrganizationConferenceOrBoothMenuLeft = Conferinţe sau Stand-uri
+
+#
+# Admin page
+#
+EventOrganizationSetup = Configurare Organizare evenimente
+Settings = Configurări
+EventOrganizationSetupPage = Pagină de configurare Organizare evenimente
+EVENTORGANIZATION_TASK_LABEL = Etichetă task-uri de creat automat atunci când proiectul este validat 
+EVENTORGANIZATION_TASK_LABELTooltip = Când validezi un eveniment organizat, unele task-uri pot fi create automat în proiect<br><br> De exemplu: <br>Apel telefonic pentru conferință <br>Apel telefonic pentru Stand <br>Primire apel telefonic pentru conferințe<br> Primire apel telefonic pentru Stand<br> Deschidere înscrieri la evenimente pentru participanți<br> Trimitere remindere eveniment către speaker-i<br>Trimitere reminder eveniment către gazdă stand<br> Trimitere reminder eveniment către participanți
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Categorie de adăugat terților creaţi automat atunci când cineva sugerează o conferință
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Categorie de adăugat terților creaţi automat atunci când propun un stand
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Șablon email de trimis după primirea unei sugestii de conferință.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Șablon email de trimis după primirea unei propuneri de stand.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Șablon email de trimis după ce a fost plătită o înscriere la un stand.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Șablon email de trimis după ce a fost plătită o înscriere la un eveniment.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Șablon email newsletter către participanţi
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Șablon email newsletter către speaker-i
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Filtrează lista de selecție a terților în formularul/fişa de creare a participanților după tipul de client
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filtrează lista de selecție a terților în formularul/fişa de creare a participanților după tipul de client
+
+#
+# Object
+#
+EventOrganizationConfOrBooth= Conferinţe sau Stand-uri
+ManageOrganizeEvent = Management organizare evenimente
+ConferenceOrBooth = Conferinţe sau Stand-uri
+ConferenceOrBoothTab = Conferinţe sau Stand-uri
+AmountOfSubscriptionPaid = Valoare abonament plătită
+DateSubscription = Dată înscriere
+ConferenceOrBoothAttendee = Participant la Conferinţă sau Stand
+
+#
+# Template Mail
+#
+YourOrganizationEventConfRequestWasReceived = Solicitarea pentru conferinţă a fost recepţionată
+YourOrganizationEventBoothRequestWasReceived = Solicitarea ta pentru stand a fost primită
+EventOrganizationEmailAskConf = Solicitare conferinţă
+EventOrganizationEmailAskBooth = Solicitare stand
+EventOrganizationEmailSubsBooth = Înscriere la stand
+EventOrganizationEmailSubsEvent = Înscriere pentru un eveniment
+EventOrganizationMassEmailAttendees = Comunicare către participanţi
+EventOrganizationMassEmailSpeakers = Comunicare către speaker-i
+
+#
+# Event
+#
+AllowUnknownPeopleSuggestConf=Permite persoanelor necunoscute să sugereze conferințe
+AllowUnknownPeopleSuggestConfHelp=Permite persoanelor necunoscute să sugereze conferințe
+AllowUnknownPeopleSuggestBooth=Permite persoanelor necunoscute să propună stand-uri
+AllowUnknownPeopleSuggestBoothHelp=Permite persoanelor necunoscute să propună stand-uri
+PriceOfRegistration=Preţ înregistrare
+PriceOfRegistrationHelp=Preţ înregistrare
+PriceOfBooth=Preț înscriere pentru stand
+PriceOfBoothHelp=Preț înscriere pentru stand
+EventOrganizationICSLink=Asociere calendar ICS pentru evenimente
+ConferenceOrBoothInformation=Informaţii Conferinţă sau Stand
+Attendees = Participanți
+DownloadICSLink = Link descărcare ICS
+EVENTORGANIZATION_SECUREKEY = Cheie securizată link public de înregistrare la o conferință
+SERVICE_BOOTH_LOCATION = Serviciu utilizat pentru linia de facturare privind locaţia standului
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Serviciu utilizat pentru linia de facturare pentru o taxă de participare la o conferință
+NbVotes=Număr de voturi
+#
+# Status
+#
+EvntOrgDraft = Schiţă
+EvntOrgSuggested = Sugerat
+EvntOrgConfirmed = Confirmat
+EvntOrgNotQualified = Ne-calificat
+EvntOrgDone = Efectuat
+EvntOrgCancelled = Anulat
+#
+# Public page
+#
+SuggestForm = Pagină de propuneri
+RegisterPage = Pagină pentru conferinţă sau stand
+EvntOrgRegistrationHelpMessage = Aici, puteți vota pentru un eveniment sau puteți propune o nouă conferință sau stand pentru proiect
+EvntOrgRegistrationConfHelpMessage = Aici puteți propune o nouă conferință pentru proiect
+EvntOrgRegistrationBoothHelpMessage = Aici puteți propune un nou stand pentru proiect
+ListOfSuggestedConferences = Listă conferinţe propuse
+ListOfSuggestedBooths = Listă stand-uri propuse
+SuggestConference = Propune o nouă conferinţă
+SuggestBooth = Propune un stand
+ViewAndVote = Vizualizează și votează pentru evenimentele propuse
+PublicAttendeeSubscriptionPage = Link public de înscriere la conferinţă
+MissingOrBadSecureKey = Cheia de securitate lipseşte sau este invalidă
+EvntOrgWelcomeMessage = Acest formular vă permite să vă înregistrați ca nou participant la conferința: '%s'
+EvntOrgDuration = Această conferinţă începe pe %s şi se termină pe %s.
+ConferenceAttendeeFee = Taxă de participare la conferință pentru evenimentul: '%s' care are loc de pe %s până la %s.
+BoothLocationFee = Locaţie stand pentru evenimentul: '%s' care se desfăşoară între %s şi %s
+EventType = Tip eveniment
+LabelOfBooth=Etichetă stand
+LabelOfconference=Etichetă conferinţă
+ConferenceIsNotConfirmed=Înscrierea nu este disponibilă, conferinţa nu este confirmată încă
+
+#
+# Vote page
+#
+EvntOrgRegistrationWelcomeMessage = Bine ați venit pe pagina de propuneri conferință sau stand.
+EvntOrgRegistrationConfWelcomeMessage = Bine ai venit pe pagina de propuneri a conferinței.
+EvntOrgRegistrationBoothWelcomeMessage = Bine ai venit pe pagina de propuneri stand.
+EvntOrgVoteHelpMessage = Aici poți vizualiza și vota evenimentele propuse pentru proiect
+VoteOk = Votul tău a fost acceptat.
+AlreadyVoted = Ai votat deja pentru acest eveniment.
+VoteError = A apărut o eroare în timpul votului, vă rugăm să încercați din nou.
+
+#
+# SubscriptionOk page
+#
+SubscriptionOk = Abonamentul tău la această conferință a fost validat 
+#
+# Subscription validation mail
+#
+ConfAttendeeSubscriptionConfirmation = Confirmarea participării la o conferință
+#
+# Payment page
+#
+Attendee = Participant
+PaymentConferenceAttendee = Plată participant conferinţă
+PaymentBoothLocation = Plată locaţie stand

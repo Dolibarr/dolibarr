@@ -48,7 +48,6 @@ DateConciliating=Fecha de conciliación
 SocialContributionPayment=Pago de impuesto social/fiscal
 TransferFromToDone=La transferencia de <b>%s</b> hacia <b>%s</b> de <b>%s</b> %s ha sido registrada.
 ValidateCheckReceipt=¿Validar este recibo de cheque?
-ConfirmValidateCheckReceipt=¿Está seguro de que desea validar este recibo de cheques, ningún cambio será posible una vez hecho esto?
 DeleteCheckReceipt=¿Eliminar este recibo de cheque?
 BankChecks=Cheques bancarios
 BankChecksToReceipt=Cheques en espera de depósito

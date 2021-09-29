@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - vendors
 Suppliers=Προμηθευτές
 SuppliersInvoice=Τιμολόγιο προμηθευτή
+SupplierInvoices=Τιμολόγια προμηθευτή
 ShowSupplierInvoice=Εμφάνιση τιμολογίου προμηθευτή
 NewSupplier=Νέος πωλητής
 History=Ιστορικό

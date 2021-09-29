@@ -46,12 +46,13 @@ function fichinter_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
-	{
+	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][0] = DOL_URL_ROOT.'/fichinter/contact.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('InterventionContact');
-		if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		if ($nbContact > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		}
 		$head[$h][2] = 'contact';
 		$h++;
 	}
@@ -63,15 +64,14 @@ function fichinter_prepare_head($object)
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'intervention');
 
 	// Tab to link resources
-	if ($conf->resource->enabled)
-	{
+	if ($conf->resource->enabled) {
 		require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 		$objectres = new Dolresource($db);
 		$linked_resources = $objectres->getElementResources('fichinter', $object->id);
 		$nbResource = (is_array($linked_resources) ?count($linked_resources) : 0);
 		// if (is_array($objectres->available_resources))
 		// {
-	 	// 	foreach ($objectres->available_resources as $modresources => $resources)
+		// 	foreach ($objectres->available_resources as $modresources => $resources)
 		// 	{
 		// 		$resources=(array) $resources;  // To be sure $resources is an array
 		// 		foreach($resources as $resource_obj)
@@ -81,21 +81,28 @@ function fichinter_prepare_head($object)
 		// 	}
 		// }
 
-   		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=fichinter&element_id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=fichinter&element_id='.$object->id;
 		$head[$h][1] = $langs->trans("Resources");
-		if ($nbResource > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbResource.'</span>';
+		if ($nbResource > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbResource.'</span>';
+		}
 		$head[$h][2] = 'resource';
 		$h++;
 	}
 
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
-	{
+	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
 		$nbNote = 0;
-		if (!empty($object->note_private)) $nbNote++;
-		if (!empty($object->note_public)) $nbNote++;
+		if (!empty($object->note_private)) {
+			$nbNote++;
+		}
+		if (!empty($object->note_public)) {
+			$nbNote++;
+		}
 		$head[$h][0] = DOL_URL_ROOT.'/fichinter/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
-		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		if ($nbNote > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		}
 		$head[$h][2] = 'note';
 		$h++;
 	}
@@ -107,7 +114,9 @@ function fichinter_prepare_head($object)
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/fichinter/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
-	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	}
 	$head[$h][2] = 'documents';
 	$h++;
 

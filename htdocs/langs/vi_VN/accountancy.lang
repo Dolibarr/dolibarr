@@ -131,7 +131,7 @@ InvoiceLinesDone=Giới hạn dòng hóa đơn
 ExpenseReportLines=Dòng báo cáo chi phí để ràng buộc
 ExpenseReportLinesDone=Giới hạn dòng của báo cáo chi phí
 IntoAccount=Ràng buộc dòng với tài khoản kế toán
-TotalForAccount=Total for accounting account
+TotalForAccount=Total accounting account
 
 
 Ventilate=Ràng buộc
@@ -158,7 +158,7 @@ ACCOUNTING_LENGTH_AACCOUNT=Độ dài của tài khoản kế toán bên thứ b
 ACCOUNTING_MANAGE_ZERO=Cho phép quản lý các số không khác nhau ở cuối tài khoản kế toán. Nó cần thiết cho một số nước (như Thụy Sĩ). Nếu được đặt thành tắt (mặc định), bạn có thể đặt hai tham số sau để yêu cầu ứng dụng thêm số không ảo.
 BANK_DISABLE_DIRECT_INPUT=Vô hiệu hóa ghi trực tiếp giao dịch trong tài khoản ngân hàng
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Cho phép xuất dữ liệu bản nháp trong nhật ký
-ACCOUNTANCY_COMBO_FOR_AUX=Bật danh sách kết hợp cho tài khoản công ty con (có thể chậm nếu bạn có nhiều bên thứ ba)
+ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
 ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, select period show by default
 
@@ -202,14 +202,14 @@ Docref=Tham chiếu
 LabelAccount=Nhãn tài khoản
 LabelOperation=Nhãn hoạt động
 Sens=Direction
-AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you received<br>For an accounting account of a supplier, use Debit to record a payment you make
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you have received<br>For an accounting account of a supplier, use Debit to record a payment you made
 LetteringCode=Mã sắp đặt chữ
 Lettering=Sắp đặt chữ
 Codejournal=Nhật ký
 JournalLabel=Mã nhật ký
 NumPiece=Số lượng cái
 TransactionNumShort=Số Giao dịch
-AccountingCategory=Nhóm cá nhân hóa
+AccountingCategory=Custom group
 GroupByAccountAccounting=Group by general ledger account
 GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=Bạn có thể định nghĩa ở đây một số nhóm tài khoản kế toán. Chúng sẽ được sử dụng cho các báo cáo kế toán đã cá nhân hóa.
@@ -297,7 +297,7 @@ NoNewRecordSaved=Không có thêm hồ sơ để ghi nhật ký
 ListOfProductsWithoutAccountingAccount=Danh sách các sản phẩm không ràng buộc với bất kỳ tài khoản kế toán
 ChangeBinding=Thay đổi ràng buộc
 Accounted=Tài khoản trên Sổ cái
-NotYetAccounted=Chưa hạch toán vào Sổ cái
+NotYetAccounted=Not yet accounted in the ledger
 ShowTutorial=Chương trình hướng dẫn
 NotReconciled=Chưa đối chiếu
 WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
@@ -328,6 +328,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountanc
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
+NotifiedExportDate=Notified export date (modification of the entries will not be possible)
+NotifiedValidationDate=Validation of the entries (modification or deletion of the entries will not be possible)
+ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=Xuất dữ liệu bản nháp nhật ký
 Modelcsv=Mô hình xuất dữ liệu
 Selectmodelcsv=Chọn một mô hình xuất dữ liệu
@@ -402,7 +405,29 @@ UseMenuToSetBindindManualy=Các dòng chưa bị ràng buộc, sử dụng menu 
 
 ## Import
 ImportAccountingEntries=Ghi sổ kế toán
+ImportAccountingEntriesFECFormat=Accounting entries - FEC format
+FECFormatJournalCode=Code journal (JournalCode)
+FECFormatJournalLabel=Label journal (JournalLib)
+FECFormatEntryNum=Piece number (EcritureNum)
+FECFormatEntryDate=Piece date (EcritureDate)
+FECFormatGeneralAccountNumber=General account number (CompteNum)
+FECFormatGeneralAccountLabel=General account label (CompteLib)
+FECFormatSubledgerAccountNumber=Subledger account number (CompAuxNum)
+FECFormatSubledgerAccountLabel=Subledger account number (CompAuxLib)
+FECFormatPieceRef=Piece ref (PieceRef)
+FECFormatPieceDate=Piece date creation (PieceDate)
+FECFormatLabelOperation=Label operation (EcritureLib)
+FECFormatDebit=Debit (Debit)
+FECFormatCredit=Credit (Credit)
+FECFormatReconcilableCode=Reconcilable code (EcritureLet)
+FECFormatReconcilableDate=Reconcilable date (DateLet)
+FECFormatValidateDate=Piece date validated (ValidDate)
+FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
+FECFormatMulticurrencyCode=Multicurrency code (Idevise)
+
 DateExport=Ngày xuất
 WarningReportNotReliable=Cảnh báo, báo cáo này không dựa trên Sổ Cái, do đó không chứa giao dịch được sửa đổi thủ công trong Sổ Cái. Nếu nhật ký của bạn được cập nhật, chế độ xem sổ sách chính xác hơn.
 ExpenseReportJournal=Nhật ký báo cáo chi phí
 InventoryJournal=Nhật ký tồn kho
+
+NAccounts=%s accounts

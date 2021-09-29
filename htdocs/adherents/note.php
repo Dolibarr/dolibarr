@@ -33,9 +33,7 @@ $langs->loadLangs(array("companies", "members", "bills"));
 
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
-
-// Security check
-$result = restrictedArea($user, 'adherent', $id);
+$ref = GETPOST('ref', 'alphanohtml');
 
 $object = new Adherent($db);
 $result = $object->fetch($id);
@@ -45,6 +43,34 @@ if ($result > 0) {
 }
 
 $permissionnote = $user->rights->adherent->creer; // Used by the include of actions_setnotes.inc.php
+
+// Fetch object
+if ($id > 0 || !empty($ref)) {
+	// Load member
+	$result = $object->fetch($id, $ref);
+
+	// Define variables to know what current user can do on users
+	$canadduser = ($user->admin || $user->rights->user->user->creer);
+	// Define variables to know what current user can do on properties of user linked to edited member
+	if ($object->user_id) {
+		// $User is the user who edits, $object->user_id is the id of the related user in the edited member
+		$caneditfielduser = ((($user->id == $object->user_id) && $user->rights->user->self->creer)
+			|| (($user->id != $object->user_id) && $user->rights->user->user->creer));
+		$caneditpassworduser = ((($user->id == $object->user_id) && $user->rights->user->self->password)
+			|| (($user->id != $object->user_id) && $user->rights->user->user->password));
+	}
+}
+
+// Define variables to determine what the current user can do on the members
+$canaddmember = $user->rights->adherent->creer;
+// Define variables to determine what the current user can do on the properties of a member
+if ($id) {
+	$caneditfieldmember = $user->rights->adherent->creer;
+}
+
+// Security check
+$result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid', 0);
+
 
 /*
  * Actions
@@ -57,9 +83,12 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, 
 /*
  * View
  */
+
 $title = $langs->trans("Member")." - ".$langs->trans("Note");
-$helpurl = "EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
-llxHeader("", $title, $helpurl);
+
+$help_url = "EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder";
+
+llxHeader("", $title, $help_url);
 
 $form = new Form($db);
 
@@ -68,7 +97,7 @@ if ($id) {
 
 	print dol_get_fiche_head($head, 'note', $langs->trans("Member"), -1, 'user');
 
-	print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
+	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -91,8 +120,8 @@ if ($id) {
 	// Morphy
 	print '<tr><td class="titlefield">'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
 	/*print '<td rowspan="'.$rowspan.'" class="center" valign="middle" width="25%">';
-    print $form->showphoto('memberphoto',$member);
-    print '</td>';*/
+	print $form->showphoto('memberphoto',$member);
+	print '</td>';*/
 	print '</tr>';
 
 	// Company

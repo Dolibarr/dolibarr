@@ -1,8 +1,6 @@
 # Dolibarr language file - Source file is en_US - errors
 NoErrorCommitIsDone=Sin error, nos comprometemos
 ErrorButCommitIsDone=Errores encontrados pero validamos a pesar de esto
-ErrorBadEMail=Correo electrónico %s es incorrecto
-ErrorBadUrl=Url %s está mal
 ErrorBadValueForParamNotAString=Mal valor para su parámetro En general, se agrega cuando falta la traducción.
 ErrorLoginAlreadyExists=Login %s ya existe.
 ErrorRecordNotFound=Registro no encontrado.
@@ -34,8 +32,6 @@ ErrorBadDateFormat=El valor '%s' tiene formato de fecha incorrecto
 ErrorFailedToWriteInDir=Error al escribir en el directorio %s
 ErrorFoundBadEmailInFile=Se encontró una sintaxis de correo electrónico incorrecta para %s líneas en el archivo (línea de ejemplo %s con correo electrónico = %s)
 ErrorUserCannotBeDelete=El usuario no puede ser eliminado. Tal vez esté asociado a entidades dolibarr.
-ErrorFieldsRequired=Algunos campos requeridos no fueron completados.
-ErrorSubjectIsRequired=El tema del correo electrónico es obligatorio
 ErrorFailedToCreateDir=Error al crear un directorio. Compruebe que el usuario del servidor web tenga permisos para escribir en el directorio de documentos de Dolibarr. Si el parámetro <b> safe_mode </ b> está habilitado en este PHP, verifique que los archivos php de Dolibarr sean propiedad del usuario (o grupo) del servidor web.
 ErrorNoMailDefinedForThisUser=Sin correo definido para este usuario
 ErrorFeatureNeedJavascript=Esta característica necesita javascript para activarse para funcionar. Cambie esto en la configuración - visualización.
@@ -95,7 +91,6 @@ ErrorCantReadFile=Error al leer el archivo '%s'
 ErrorCantReadDir=Error al leer el directorio '%s'
 ErrorBadLoginPassword=Mal valor para el inicio de sesión o la contraseña
 ErrorLoginDisabled=Su cuenta ha sido deshabilitada
-ErrorFailedToRunExternalCommand=Error al ejecutar el comando externo. Verifique que esté disponible y ejecutable por su servidor PHP. Si PHP <b> Safe Mode </ b> está habilitado, verifique que el comando esté dentro de un directorio definido por el parámetro <b> safe_mode_exec_dir </ b>.
 ErrorFailedToChangePassword=Error al cambiar la contraseña
 ErrorLoginDoesNotExists=Usuario con inicio de sesión <b>%s</b> no se pudo encontrar.
 ErrorLoginHasNoEmail=Este usuario no tiene una dirección de correo electrónico. Proceso abortado

@@ -117,7 +117,7 @@ class Bookmark extends CommonObject
 		$sql = "SELECT rowid, fk_user, dateb as datec, url, target,";
 		$sql .= " title, position, favicon";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bookmark";
-		$sql .= " WHERE rowid = ".$id;
+		$sql .= " WHERE rowid = ".((int) $id);
 		$sql .= " AND entity = ".$conf->entity;
 
 		dol_syslog("Bookmark::fetch", LOG_DEBUG);
@@ -219,7 +219,7 @@ class Bookmark extends CommonObject
 		$sql .= " ,title = '".$this->db->escape($this->title)."'";
 		$sql .= " ,favicon = '".$this->db->escape($this->favicon)."'";
 		$sql .= " ,position = ".(int) $this->position;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog("Bookmark::update", LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -239,7 +239,7 @@ class Bookmark extends CommonObject
 	public function remove($id)
 	{
 		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."bookmark";
-		$sql .= " WHERE rowid = ".$id;
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		dol_syslog("Bookmark::remove", LOG_DEBUG);
 		$resql = $this->db->query($sql);

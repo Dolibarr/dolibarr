@@ -43,15 +43,23 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (!$sortorder) $sortorder = "ASC";
-if (!$sortfield) $sortfield = "s.nom";
-if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) { $page = 0; }
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+if (!$sortfield) {
+	$sortfield = "s.nom";
+}
+if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) {
+	$page = 0;
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'societe', $id, '');
 
 $object = new Societe($db);
@@ -64,51 +72,39 @@ $hookmanager->initHooks(array('contactthirdparty', 'globalcard'));
  * Actions
  */
 
-if ($action == 'addcontact' && $user->rights->societe->creer)
-{
+if ($action == 'addcontact' && $user->rights->societe->creer) {
 	$result = $object->fetch($id);
 
-	if ($result > 0 && $id > 0)
-	{
+	if ($result > 0 && $id > 0) {
 		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 	}
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-		{
+		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
 		} else {
 			$mesg = '<div class="error">'.$object->error.'</div>';
 		}
 	}
-}
-
-// bascule du statut d'un contact
-elseif ($action == 'swapstatut' && $user->rights->societe->creer)
-{
-	if ($object->fetch($id))
-	{
-		$result = $object->swapContactStatus(GETPOST('ligne'));
+} elseif ($action == 'swapstatut' && $user->rights->societe->creer) {
+	// bascule du statut d'un contact
+	if ($object->fetch($id)) {
+		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	} else {
 		dol_print_error($db);
 	}
-}
-
-// Efface un contact
-elseif ($action == 'deletecontact' && $user->rights->societe->creer)
-{
+} elseif ($action == 'deletecontact' && $user->rights->societe->creer) {
+	// Efface un contact
 	$object->fetch($id);
-	$result = $object->delete_contact($_GET["lineid"]);
+	$result = $object->delete_contact(GETPOST("lineid", 'int'));
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
@@ -145,10 +141,8 @@ $userstatic = new User($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-if ($id > 0 || !empty($ref))
-{
-	if ($object->fetch($id, $ref) > 0)
-	{
+if ($id > 0 || !empty($ref)) {
+	if ($object->fetch($id, $ref) > 0) {
 		$soc = new Societe($db);
 		$soc->fetch($object->socid);
 
@@ -169,41 +163,38 @@ if ($id > 0 || !empty($ref))
 
 		// Prospect/Customer
 		/*print '<tr><td class="titlefield">'.$langs->trans('ProspectCustomer').'</td><td>';
-    	print $object->getLibCustProspStatut();
-    	print '</td></tr>';
+		print $object->getLibCustProspStatut();
+		print '</td></tr>';
 
-    	// Supplier
-    	print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
-    	print yn($object->fournisseur);
-    	print '</td></tr>';*/
+		// Supplier
+		print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
+		print yn($object->fournisseur);
+		print '</td></tr>';*/
 
-		if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
-		{
+		if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
 			print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 		}
 
-		if ($object->client)
-		{
-		    print '<tr><td class="titlefield">';
-		    print $langs->trans('CustomerCode').'</td><td colspan="3">';
-		    print $object->code_client;
-		    $tmpcheck = $object->check_codeclient();
-		    if ($tmpcheck != 0 && $tmpcheck != -5) {
-		    	print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
-		    }
-		    print '</td></tr>';
+		if ($object->client) {
+			print '<tr><td class="titlefield">';
+			print $langs->trans('CustomerCode').'</td><td colspan="3">';
+			print $object->code_client;
+			$tmpcheck = $object->check_codeclient();
+			if ($tmpcheck != 0 && $tmpcheck != -5) {
+				print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+			}
+			print '</td></tr>';
 		}
 
-		if ($object->fournisseur)
-		{
-		    print '<tr><td class="titlefield">';
-		    print $langs->trans('SupplierCode').'</td><td colspan="3">';
-		    print $object->code_fournisseur;
-		    $tmpcheck = $object->check_codefournisseur();
-		    if ($tmpcheck != 0 && $tmpcheck != -5) {
-		    	print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
-		    }
-		    print '</td></tr>';
+		if ($object->fournisseur) {
+			print '<tr><td class="titlefield">';
+			print $langs->trans('SupplierCode').'</td><td colspan="3">';
+			print $object->code_fournisseur;
+			$tmpcheck = $object->check_codefournisseur();
+			if ($tmpcheck != 0 && $tmpcheck != -5) {
+				print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+			}
+			print '</td></tr>';
 		}
 		print '</table>';
 
@@ -214,15 +205,15 @@ if ($id > 0 || !empty($ref))
 
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
 		$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
-		foreach ($dirtpls as $reldir)
-		{
+		foreach ($dirtpls as $reldir) {
 			$res = @include dol_buildpath($reldir.'/contacts.tpl.php');
-			if ($res) break;
+			if ($res) {
+				break;
+			}
 		}
 
 		// additionnal list with adherents of company
-		if (!empty($conf->adherent->enabled) && $user->rights->adherent->lire)
-		{
+		if (!empty($conf->adherent->enabled) && $user->rights->adherent->lire) {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
@@ -236,17 +227,15 @@ if ($id > 0 || !empty($ref))
 			$sql .= " t.libelle as type, t.subscription";
 			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 			$sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
-			$sql .= " WHERE d.fk_soc = ".$id;
+			$sql .= " WHERE d.fk_soc = ".((int) $id);
 			$sql .= " AND d.fk_adherent_type = t.rowid";
 
 			dol_syslog("get list sql=".$sql);
 			$resql = $db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$num = $db->num_rows($resql);
 
-				if ($num > 0)
-				{
+				if ($num > 0) {
 					$param = '';
 
 					$titre = $langs->trans("MembersListOfTiers");
@@ -267,8 +256,7 @@ if ($id > 0 || !empty($ref))
 					print "</tr>\n";
 
 					$i = 0;
-					while ($i < $num && $i < $conf->liste_limit)
-					{
+					while ($i < $num && $i < $conf->liste_limit) {
 						$objp = $db->fetch_object($resql);
 
 						$datefin = $db->jdate($objp->datefin);
@@ -319,8 +307,7 @@ if ($id > 0 || !empty($ref))
 						print "</td>";
 
 						// End of subscription date
-						if ($datefin)
-						{
+						if ($datefin) {
 							print '<td class="center nowrap">';
 							print dol_print_date($datefin, 'day');
 							if ($memberstatic->hasDelay()) {
@@ -329,10 +316,11 @@ if ($id > 0 || !empty($ref))
 							print '</td>';
 						} else {
 							print '<td class="left nowrap">';
-							if ($objp->subscription == 'yes')
-							{
+							if (!empty($objp->subscription)) {
 								print $langs->trans("SubscriptionNotReceived");
-								if ($objp->statut > 0) print " ".img_warning();
+								if ($objp->statut > 0) {
+									print " ".img_warning();
+								}
 							} else {
 								print '&nbsp;';
 							}

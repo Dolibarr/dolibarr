@@ -90,7 +90,10 @@ class PrintingDriver
 		global $langs;
 		$langs->load("printing");
 		$transstring = "PrintingModuleDesc".$this->name;
-		if ($langs->trans($transstring) != $transstring) return $langs->trans($transstring);
-		else return $this->desc;
+		if ($langs->trans($transstring) != $transstring) {
+			return $langs->trans($transstring);
+		} else {
+			return $this->desc;
+		}
 	}
 }

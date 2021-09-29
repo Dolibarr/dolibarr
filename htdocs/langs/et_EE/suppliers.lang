@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - vendors
 Suppliers=Tarnijad
 SuppliersInvoice=Tarnija arve
+SupplierInvoices=Tarnija arved
 ShowSupplierInvoice=Show Vendor Invoice
 NewSupplier=New vendor
 History=Ajalugu

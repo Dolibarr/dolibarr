@@ -24,7 +24,9 @@
  * \brief Script to update users into Dolibarr from LDAP
  */
 
-if (!defined('NOSESSION')) define('NOSESSION', '1');
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
@@ -59,12 +61,27 @@ print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 // List of fields to get from LDAP
-$required_fields = array($conf->global->LDAP_KEY_USERS, $conf->global->LDAP_FIELD_FULLNAME, $conf->global->LDAP_FIELD_NAME, $conf->global->LDAP_FIELD_FIRSTNAME, $conf->global->LDAP_FIELD_LOGIN, $conf->global->LDAP_FIELD_LOGIN_SAMBA, $conf->global->LDAP_FIELD_PASSWORD, $conf->global->LDAP_FIELD_PASSWORD_CRYPTED, $conf->global->LDAP_FIELD_PHONE, $conf->global->LDAP_FIELD_FAX, $conf->global->LDAP_FIELD_MOBILE,
+$required_fields = array(
+	$conf->global->LDAP_KEY_USERS,
+	$conf->global->LDAP_FIELD_FULLNAME,
+	$conf->global->LDAP_FIELD_NAME,
+	$conf->global->LDAP_FIELD_FIRSTNAME,
+	$conf->global->LDAP_FIELD_LOGIN,
+	$conf->global->LDAP_FIELD_LOGIN_SAMBA,
+	$conf->global->LDAP_FIELD_PASSWORD,
+	$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
+	$conf->global->LDAP_FIELD_PHONE,
+	$conf->global->LDAP_FIELD_FAX,
+	$conf->global->LDAP_FIELD_MOBILE,
 	// $conf->global->LDAP_FIELD_ADDRESS,
 	// $conf->global->LDAP_FIELD_ZIP,
 	// $conf->global->LDAP_FIELD_TOWN,
 	// $conf->global->LDAP_FIELD_COUNTRY,
-	$conf->global->LDAP_FIELD_MAIL, $conf->global->LDAP_FIELD_TITLE, $conf->global->LDAP_FIELD_DESCRIPTION, $conf->global->LDAP_FIELD_SID);
+	$conf->global->LDAP_FIELD_MAIL,
+	$conf->global->LDAP_FIELD_TITLE,
+	$conf->global->LDAP_FIELD_DESCRIPTION,
+	$conf->global->LDAP_FIELD_SID
+);
 
 // Remove from required_fields all entries not configured in LDAP (empty) and duplicated
 $required_fields = array_unique(array_values(array_filter($required_fields, "dolValidElement")));
@@ -75,14 +92,18 @@ if (!isset($argv[1])) {
 }
 
 foreach ($argv as $key => $val) {
-	if ($val == 'commitiferror')
+	if ($val == 'commitiferror') {
 		$forcecommit = 1;
-	if (preg_match('/--server=([^\s]+)$/', $val, $reg))
+	}
+	if (preg_match('/--server=([^\s]+)$/', $val, $reg)) {
 		$conf->global->LDAP_SERVER_HOST = $reg[1];
-	if (preg_match('/--excludeuser=([^\s]+)$/', $val, $reg))
+	}
+	if (preg_match('/--excludeuser=([^\s]+)$/', $val, $reg)) {
 		$excludeuser = explode(',', $reg[1]);
-	if (preg_match('/-y$/', $val, $reg))
+	}
+	if (preg_match('/-y$/', $val, $reg)) {
 		$confirmed = 1;
+	}
 }
 
 print "Mails sending disabled (useless in batch mode)\n";
@@ -94,9 +115,11 @@ print "port=".$conf->global->LDAP_SERVER_PORT."\n";
 print "login=".$conf->global->LDAP_ADMIN_DN."\n";
 print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
 print "DN to extract=".$conf->global->LDAP_USER_DN."\n";
-if (!empty($conf->global->LDAP_FILTER_CONNECTION))
+if (!empty($conf->global->LDAP_FILTER_CONNECTION)) {
 	print 'Filter=('.$conf->global->LDAP_FILTER_CONNECTION.')'."\n"; // Note: filter is defined into function getRecords
-else print 'Filter=('.$conf->global->LDAP_KEY_USERS.'=*)'."\n";
+} else {
+	print 'Filter=('.$conf->global->LDAP_KEY_USERS.'=*)'."\n";
+}
 print "----- To Dolibarr database:\n";
 print "type=".$conf->db->type."\n";
 print "host=".$conf->db->host."\n";
@@ -200,7 +223,7 @@ if ($result >= 0) {
 			$fuser->job = $ldapuser[$conf->global->LDAP_FIELD_TITLE];
 			$fuser->note = $ldapuser[$conf->global->LDAP_FIELD_DESCRIPTION];
 			$fuser->admin = 0;
-			$fuser->societe_id = 0;
+			$fuser->socid = 0;
 			$fuser->contact_id = 0;
 			$fuser->fk_member = 0;
 
@@ -254,9 +277,11 @@ if ($result >= 0) {
 		}
 
 		if (!$error || $forcecommit) {
-			if (!$error)
+			if (!$error) {
 				print $langs->transnoentities("NoErrorCommitIsDone")."\n";
-			else print $langs->transnoentities("ErrorButCommitIsDone")."\n";
+			} else {
+				print $langs->transnoentities("ErrorButCommitIsDone")."\n";
+			}
 			$db->commit();
 		} else {
 			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error)."\n";

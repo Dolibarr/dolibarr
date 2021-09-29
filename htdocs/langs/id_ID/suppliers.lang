@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - vendors
 Suppliers=Vendor
 SuppliersInvoice=Faktur vendor
+SupplierInvoices=Vendor invoices
 ShowSupplierInvoice=Tampilkan Faktur Penjual
 NewSupplier=Vendor baru
 History=Riwayat

@@ -25,7 +25,7 @@ ModuleRecruitmentDesc =  Gestionează și urmărește campaniile de recrutare pe
 #
 # Admin page
 #
-RecruitmentSetup = Configurare modul Recrutare
+RecruitmentSetup = Configurare modul Recrutare personal
 Settings = Configurări
 RecruitmentSetupPage = Introdu aici setările pentru opţiunile principale ale modulului Recrutare personal
 RecruitmentArea=Recrutare personal
@@ -51,7 +51,7 @@ ListOfPositionsToBeFilled=Lista posturilor disponibile
 NewPositionToBeFilled=Posturi disponibile noi
 
 JobOfferToBeFilled=Posturi rămase neocupate
-ThisIsInformationOnJobPosition=Informaţii despre oferta job
+ThisIsInformationOnJobPosition=Informaţii despre oferta de job
 ContactForRecruitment=Contact pentru recrutare
 EmailRecruiter=Email recrutor
 ToUseAGenericEmail=Utilizare email generic. Dacă nu este definit, se va utiliza emailul responsabilului de recrutare
@@ -65,12 +65,12 @@ ContractRefused=Contract refuzat
 RecruitmentCandidature=Aplicare la job
 JobPositions=Joburi disponibile
 RecruitmentCandidatures=Aplicări la job
-InterviewToDo=Interviu de făcut
+InterviewToDo=Interviu de realizat
 AnswerCandidature=Răspuns aplicare
 YourCandidature=Aplicarea ta
 YourCandidatureAnswerMessage=Îţi mulţumim pentru aplicarea ta la job.<br>...
-JobClosedTextCandidateFound=Oferta de job este închisă. Postul a fost ocupat.
+JobClosedTextCandidateFound=Oferta de job nu mai este disponibilă. Postul a fost ocupat.
 JobClosedTextCanceled=Oferta de job este închisă.
 ExtrafieldsJobPosition=Atribute complementare (oferte job)
-ExtrafieldsCandidatures=Atribute complementare (aplicări job)
-MakeOffer=Fă o ofertă
+ExtrafieldsApplication=Atribute complementare (aplicări job)
+MakeOffer=Fă o ofertă de job

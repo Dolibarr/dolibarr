@@ -3,7 +3,8 @@
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+ * Copyright (C) 2017      	Ferran Marcet       	<fmarcet@2byte.es>
+ * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,13 +41,15 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
 $object = new FactureFournisseur($db);
 $object->fetch($id, $ref);
 
-$permissionnote = $user->rights->fournisseur->facture->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer); // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -56,11 +59,12 @@ $permissionnote = $user->rights->fournisseur->facture->creer; // Used by the inc
 include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
 // Set label
-if ($action == 'setlabel' && $user->rights->fournisseur->facture->creer)
-{
+if ($action == 'setlabel' && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
 	$object->label = $_POST['label'];
 	$result = $object->update($user);
-	if ($result < 0) dol_print_error($db);
+	if ($result < 0) {
+		dol_print_error($db);
+	}
 }
 
 
@@ -74,8 +78,7 @@ $title = $langs->trans('SupplierInvoice')." - ".$langs->trans('Notes');
 $helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
 llxHeader('', $title, $helpurl);
 
-if ($object->id > 0)
-{
+if ($object->id > 0) {
 	$object->fetch_thirdparty();
 
 	$alreadypaid = $object->getSommePaiement();
@@ -94,14 +97,14 @@ if ($object->id > 0)
 	$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
-	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
+	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
+		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
+	}
 	// Project
-	if (!empty($conf->projet->enabled))
-	{
+	if (!empty($conf->projet->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-		if ($user->rights->fournisseur->commande->creer)
-		{
+		if ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer) {
 			if ($action != 'classify') {
 				// $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				$morehtmlref .= ' : ';
@@ -142,37 +145,31 @@ if ($object->id > 0)
 
 	// Type
 	print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td>';
+	print '<span class="badgeneutral">';
 	print $object->getLibType();
-	if ($object->type == FactureFournisseur::TYPE_REPLACEMENT)
-	{
+	print '</span>';
+	if ($object->type == FactureFournisseur::TYPE_REPLACEMENT) {
 		$facreplaced = new FactureFournisseur($db);
 		$facreplaced->fetch($object->fk_facture_source);
 		print ' ('.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).')';
 	}
-	if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE)
-	{
+	if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
 		$facusing = new FactureFournisseur($db);
 		$facusing->fetch($object->fk_facture_source);
 		print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';
 	}
 
 	$facidavoir = $object->getListIdAvoirFromInvoice();
-	if (count($facidavoir) > 0)
-	{
-		print ' ('.$langs->transnoentities("InvoiceHasAvoir");
-		$i = 0;
-		foreach ($facidavoir as $fid)
-		{
-			if ($i == 0) print ' ';
-			else print ',';
+	if (count($facidavoir) > 0) {
+		$invoicecredits = array();
+		foreach ($facidavoir as $facid) {
 			$facavoir = new FactureFournisseur($db);
-			$facavoir->fetch($fid);
-			print $facavoir->getNomUrl(1);
+			$facavoir->fetch($facid);
+			$invoicecredits[] = $facavoir->getNomUrl(1);
 		}
-		print ')';
+		print ' ('.$langs->transnoentities("InvoiceHasAvoir") . implode(',', $invoicecredits) . ')';
 	}
-	if ($facidnext > 0)
-	{
+	if ($facidnext > 0) {
 		$facthatreplace = new FactureFournisseur($db);
 		$facthatreplace->fetch($facidnext);
 		print ' ('.$langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1)).')';
@@ -190,14 +187,12 @@ if ($object->id > 0)
 
 	// Amount Local Taxes
 	//TODO: Place into a function to control showing by country or study better option
-	if ($societe->localtax1_assuj == "1") //Localtax1
-	{
+	if ($societe->localtax1_assuj == "1") { //Localtax1
 		print '<tr><td>'.$langs->transcountry("AmountLT1", $societe->country_code).'</td>';
 		print '<td>'.price($object->total_localtax1, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
 		print '</tr>';
 	}
-	if ($societe->localtax2_assuj == "1") //Localtax2
-	{
+	if ($societe->localtax2_assuj == "1") { //Localtax2
 		print '<tr><td>'.$langs->transcountry("AmountLT2", $societe->country_code).'</td>';
 		print '<td>'.price($object->total_localtax2, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
 		print '</tr>';

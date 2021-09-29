@@ -92,9 +92,15 @@ class Cstate // extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		if (isset($this->code_departement)) $this->code_departement = trim($this->code_departement);
-		if (isset($this->nom)) $this->nom = trim($this->nom);
-		if (isset($this->active)) $this->active = trim($this->active);
+		if (isset($this->code_departement)) {
+			$this->code_departement = trim($this->code_departement);
+		}
+		if (isset($this->nom)) {
+			$this->nom = trim($this->nom);
+		}
+		if (isset($this->active)) {
+			$this->active = trim($this->active);
+		}
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -114,19 +120,20 @@ class Cstate // extends CommonObject
 
 		$this->db->begin();
 
-	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
 
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_departements");
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -155,15 +162,16 @@ class Cstate // extends CommonObject
 		$sql .= " t.nom,";
 		$sql .= " t.active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_departements as t";
-		if ($id)   $sql .= " WHERE t.rowid = ".$id;
-		elseif ($code) $sql .= " WHERE t.code_departement = '".$this->db->escape($code)."'";
+		if ($id) {
+			$sql .= " WHERE t.rowid = ".((int) $id);
+		} elseif ($code) {
+			$sql .= " WHERE t.code_departement = '".$this->db->escape($code)."'";
+		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
@@ -177,7 +185,7 @@ class Cstate // extends CommonObject
 
 			return 1;
 		} else {
-	  		$this->error = "Error ".$this->db->lasterror();
+			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -196,9 +204,15 @@ class Cstate // extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		if (isset($this->code_departement)) $this->code_departement = trim($this->code_departement);
-		if (isset($this->nom)) $this->nom = trim($this->nom);
-		if (isset($this->active)) $this->active = trim($this->active);
+		if (isset($this->code_departement)) {
+			$this->code_departement = trim($this->code_departement);
+		}
+		if (isset($this->nom)) {
+			$this->nom = trim($this->nom);
+		}
+		if (isset($this->active)) {
+			$this->active = trim($this->active);
+		}
 
 
 		// Check parameters
@@ -209,13 +223,16 @@ class Cstate // extends CommonObject
 		$sql .= " code_departement=".(isset($this->code_departement) ? "'".$this->db->escape($this->code_departement)."'" : "null").",";
 		$sql .= " nom=".(isset($this->nom) ? "'".$this->db->escape($this->nom)."'" : "null").",";
 		$sql .= " active=".(isset($this->active) ? $this->active : "null")."";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
 
 		// Commit or rollback
 		if ($error) {
@@ -231,32 +248,33 @@ class Cstate // extends CommonObject
 		}
 	}
 
- 	/**
- 	 *  Delete object in database
- 	 *
- 	 *	@param  User	$user        User that delete
- 	 *  @param	int		$notrigger	 0=launch triggers after, 1=disable triggers
- 	 *  @return	int					 <0 if KO, >0 if OK
- 	 */
+	/**
+	 *  Delete object in database
+	 *
+	 *	@param  User	$user        User that delete
+	 *  @param	int		$notrigger	 0=launch triggers after, 1=disable triggers
+	 *  @return	int					 <0 if KO, >0 if OK
+	 */
 	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_departements";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}

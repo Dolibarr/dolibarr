@@ -9,7 +9,6 @@ MailToUsers=Para usuario(s)
 MailCC=Copiar a
 MailToCCUsers=Copiar a usuario(s)
 MailCCC=Colocar en copia a
-MailTopic=Asunto del correo
 MailFile=Archivos adjuntos
 MailMessage=Cuerpo del correo
 SubjectNotIn=Fuera del asunto

@@ -22,7 +22,7 @@ ProductService=Sản phẩm hoặc dịch vụ
 AllProducts=Tất cả các sản phẩm và dịch vụ
 ChooseProduct/Service=Chọn sản phẩm hoặc dịch vụ
 ForceBuyingPriceIfNull=Ép buộc mua/giá thành giá bán nếu không được xác định
-ForceBuyingPriceIfNullDetails=Nếu giá mua/ giá thành không được xác định và tùy chọn này "BẬT", biên độ lợi nhuận sẽ bằng 0 trên dòng (giá mua/giá thành = giá bán), nếu không ("TẮT"), thì biên độ sẽ bằng với mặc định được đề xuất.
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0 on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100% if no default value can be found).
 MARGIN_METHODE_FOR_DISCOUNT=Phương pháp biên giảm giá toàn cầu
 UseDiscountAsProduct=Là một sản phẩm
 UseDiscountAsService=Là một dịch vụ

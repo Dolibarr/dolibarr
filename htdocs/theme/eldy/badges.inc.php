@@ -1,140 +1,142 @@
 <?php
-if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet');
+if (!defined('ISLOADEDBYSTEELSHEET')) {
+	die('Must be call by steelsheet');
+}
 ?>
 /* Badge style is based on boostrap framework */
 
 .badge {
-    display: inline-block;
-    padding: .1em .35em;
-    font-size: 80%;
-    font-weight: 700 !important;
-    line-height: 1;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: baseline;
-    border-radius: .25rem;
-    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-    border-width: 2px;
-    border-style: solid;
-    border-color: rgba(255,255,255,0);
-    box-sizing: border-box;
+	display: inline-block;
+	padding: .1em .35em;
+	font-size: 80%;
+	font-weight: 700 !important;
+	line-height: 1;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: baseline;
+	border-radius: .25rem;
+	transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+	border-width: 2px;
+	border-style: solid;
+	border-color: rgba(255,255,255,0);
+	box-sizing: border-box;
 }
 
 .badge-status {
-    font-size: 0.95em;
-    padding: .19em .35em;			/* more than 0.19 generate a change into heigth of lines */
+	font-size: 0.95em;
+	padding: .19em .35em;			/* more than 0.19 generate a change into heigth of lines */
 }
 .tabBar .arearef .statusref .badge-status, .tabBar .arearefnobottom .statusref .badge-status {
-    font-size: 1.1em;
-    padding: .4em .4em;
+	font-size: 1.1em;
+	padding: .4em .4em;
 }
 /* Force values for small screen 767 */
 @media only screen and (max-width: 767px)
 {
 	.tabBar .arearef .statusref .badge-status, .tabBar .arearefnobottom .statusref .badge-status {
-	    font-size: 0.95em;
-	    padding: .3em .2em;
+		font-size: 0.95em;
+		padding: .3em .2em;
 	}
 }
 
 .badge-pill, .tabs .badge {
-    padding-right: .5em;
-    padding-left: .5em;
-    border-radius: 0.25rem;
+	padding-right: .5em;
+	padding-left: .5em;
+	border-radius: 0.25rem;
 }
 
 .badge-dot {
-    padding: 0;
-    border-radius: 50%;
-    padding: 0.45em;
-    vertical-align: text-top;
+	padding: 0;
+	border-radius: 50%;
+	padding: 0.45em;
+	vertical-align: text-top;
 }
 
 a.badge:focus, a.badge:hover {
-    text-decoration: none;
+	text-decoration: none;
 }
 
 .liste_titre .badge:not(.nochangebackground) {
-    background-color: <?php print $badgeSecondary; ?>;
-    color: #fff;
+	background-color: <?php print $badgeSecondary; ?>;
+	color: #fff;
 }
 
 span.badgeneutral {
-    padding: 2px 7px 2px 7px;
-    background-color: #e4e4e4;
-    color: #666;
-    border-radius: 10px;
+	padding: 2px 7px 2px 7px;
+	background-color: #e4e4e4;
+	color: #666;
+	border-radius: 10px;
 }
 
 
 /* PRIMARY */
 .badge-primary{
-    color: #fff !important;
-    background-color: <?php print $badgePrimary; ?>;
+	color: #fff !important;
+	background-color: <?php print $badgePrimary; ?>;
 }
 a.badge-primary.focus, a.badge-primary:focus {
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($badgePrimary, 0.5); ?>;
+	outline: 0;
+	box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($badgePrimary, 0.5); ?>;
 }
 a.badge-primary:focus, a.badge-primary:hover {
-    color: #fff !important;
-    background-color: <?php print colorDarker($badgePrimary, 10); ?>;
+	color: #fff !important;
+	background-color: <?php print colorDarker($badgePrimary, 10); ?>;
 }
 
 /* SECONDARY */
 .badge-secondary, .tabs .badge {
-    color: #fff !important;
-    background-color: <?php print $badgeSecondary; ?>;
+	color: #fff !important;
+	background-color: <?php print $badgeSecondary; ?>;
 }
 a.badge-secondary.focus, a.badge-secondary:focus {
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($badgeSecondary, 0.5); ?>;
+	outline: 0;
+	box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($badgeSecondary, 0.5); ?>;
 }
 a.badge-secondary:focus, a.badge-secondary:hover {
-    color: #fff !important;
-    background-color: <?php print colorDarker($badgeSecondary, 10); ?>;
+	color: #fff !important;
+	background-color: <?php print colorDarker($badgeSecondary, 10); ?>;
 }
 
 /* SUCCESS */
 .badge-success {
-    color: #fff !important;
-    background-color: <?php print $badgeSuccess; ?>;
+	color: #fff !important;
+	background-color: <?php print $badgeSuccess; ?>;
 }
 a.badge-success.focus, a.badge-success:focus {
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($badgeSuccess, 0.5); ?>;
+	outline: 0;
+	box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($badgeSuccess, 0.5); ?>;
 }
 a.badge-success:focus, a.badge-success:hover {
-    color: #fff !important;
-    background-color: <?php print colorDarker($badgeSuccess, 10); ?>;
+	color: #fff !important;
+	background-color: <?php print colorDarker($badgeSuccess, 10); ?>;
 }
 
 /* DANGER */
 .badge-danger {
-    color: #fff !important;
-    background-color: <?php print $badgeDanger; ?>;
+	color: #fff !important;
+	background-color: <?php print $badgeDanger; ?>;
 }
 a.badge-danger.focus, a.badge-danger:focus {
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($badgeDanger, 0.5); ?>;
+	outline: 0;
+	box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($badgeDanger, 0.5); ?>;
 }
 a.badge-danger:focus, a.badge-danger:hover {
-    color: #fff !important;
-    background-color: <?php print colorDarker($badgeDanger, 10); ?>;
+	color: #fff !important;
+	background-color: <?php print colorDarker($badgeDanger, 10); ?>;
 }
 
 /* WARNING */
 .badge-warning {
-    color: #fff !important;
-    background-color: <?php print $badgeWarning; ?>;
+	color: #fff !important;
+	background-color: <?php print $badgeWarning; ?>;
 }
 a.badge-warning.focus, a.badge-warning:focus {
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($badgeWarning, 0.5); ?>;
+	outline: 0;
+	box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($badgeWarning, 0.5); ?>;
 }
 a.badge-warning:focus, a.badge-warning:hover {
-    color: #212529 !important;
-    background-color: <?php print colorDarker($badgeWarning, 10); ?>;
+	color: #212529 !important;
+	background-color: <?php print colorDarker($badgeWarning, 10); ?>;
 }
 
 /* WARNING colorblind */
@@ -150,60 +152,60 @@ body[class*="colorblind-"] a.badge-warning:focus, a.badge-warning:hover {
 
 /* INFO */
 .badge-info {
-    color: #fff !important;
-    background-color: <?php print $badgeInfo; ?>;
+	color: #fff !important;
+	background-color: <?php print $badgeInfo; ?>;
 }
 a.badge-info.focus, a.badge-info:focus {
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($badgeInfo, 0.5); ?>;
+	outline: 0;
+	box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($badgeInfo, 0.5); ?>;
 }
 a.badge-info:focus, a.badge-info:hover {
-    color: #fff !important;
-    background-color: <?php print colorDarker($badgeInfo, 10); ?>;
+	color: #fff !important;
+	background-color: <?php print colorDarker($badgeInfo, 10); ?>;
 }
 
 /* LIGHT */
 .badge-light {
-    color: #212529 !important;
-    background-color: <?php print $badgeLight; ?>;
+	color: #212529 !important;
+	background-color: <?php print $badgeLight; ?>;
 }
 a.badge-light.focus, a.badge-light:focus {
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($badgeLight, 0.5); ?>;
+	outline: 0;
+	box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($badgeLight, 0.5); ?>;
 }
 a.badge-light:focus, a.badge-light:hover {
-    color: #212529 !important;
-    background-color: <?php print colorDarker($badgeLight, 10); ?>;
+	color: #212529 !important;
+	background-color: <?php print colorDarker($badgeLight, 10); ?>;
 }
 
 /* DARK */
 .badge-dark {
-    color: #fff !important;
-    background-color: <?php print $badgeDark; ?>;
+	color: #fff !important;
+	background-color: <?php print $badgeDark; ?>;
 }
 a.badge-dark.focus, a.badge-dark:focus {
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($badgeDark, 0.5); ?>;
+	outline: 0;
+	box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($badgeDark, 0.5); ?>;
 }
 a.badge-dark:focus, a.badge-dark:hover {
-    color: #fff !important;
-    background-color: <?php print colorDarker($badgeDark, 10); ?>;
+	color: #fff !important;
+	background-color: <?php print colorDarker($badgeDark, 10); ?>;
 }
 
 
 @media only screen and (max-width: 570px)
 {
 	span.badge.badge-status {
-	    overflow: hidden;
-	    max-width: 130px;
-	    text-overflow: ellipsis;
+		overflow: hidden;
+		max-width: 130px;
+		text-overflow: ellipsis;
 	}
 }
 
 
 /* STATUS BADGES */
 <?php
-for ($i = 0; $i <= 9; $i++) {
+for ($i = 0; $i <= 10; $i++) {
 	/* Default Status */
 	_createStatusBadgeCss($i, '', "STATUS".$i);
 
@@ -234,7 +236,7 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 
 		$thisBadgeBackgroundColor = $thisBadgeBorderColor = ${$statusVarNamePrefix.'badgeStatus'.$statusName};
 
-		$TBadgeBorderOnly = array('0', '1b', '3', '4b', '5', '7');
+		$TBadgeBorderOnly = array('0', '1b', '3', '4b', '5', '7', '10');
 		$thisBadgeTextColor = colorIsLight(${$statusVarNamePrefix.'badgeStatus'.$statusName}) ? '#212529' : '#ffffff';
 
 		if (!empty(${$statusVarNamePrefix.'badgeStatus_textColor'.$statusName})) {
@@ -246,15 +248,19 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 			$thisBadgeBackgroundColor = "#fff";
 		}
 
-		if (in_array((string) $statusName, array('0', '5', '9'))) $thisBadgeTextColor = '#999999';
-		if (in_array((string) $statusName, array('6'))) $thisBadgeTextColor = '#777777';
+		if (in_array((string) $statusName, array('0', '5', '9'))) {
+			$thisBadgeTextColor = '#999999';
+		}
+		if (in_array((string) $statusName, array('6'))) {
+			$thisBadgeTextColor = '#777777';
+		}
 
 		print $cssPrefix.".badge-status".$statusName." {\n";
 		print "        color: ".$thisBadgeTextColor." !important;\n";
 		if (in_array((string) $statusName, $TBadgeBorderOnly)) {
-			print "        border-color: ".$thisBadgeBorderColor.";\n";
+			print "        border-color: ".$thisBadgeBorderColor." !important;\n";
 		}
-		print "        background-color: ".$thisBadgeBackgroundColor.";\n";
+		print "        background-color: ".$thisBadgeBackgroundColor." !important;\n";
 		print "}\n";
 
 		print $cssPrefix.".font-status".$statusName." {\n";
@@ -263,14 +269,14 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 
 		print $cssPrefix.".badge-status".$statusName.".focus, ".$cssPrefix.".badge-status".$statusName.":focus {\n";
 		print "    outline: 0;\n";
-		print "    box-shadow: 0 0 0 0.2rem ".colorHexToRgb($thisBadgeBackgroundColor, 0.5).";\n";
+		print "    box-shadow: 0 0 0 0.2rem ".colorHexToRgb($thisBadgeBackgroundColor, 0.5)." !important;\n";
 		print "}\n";
 
 		print $cssPrefix.".badge-status".$statusName.":focus, ".$cssPrefix.".badge-status".$statusName.":hover {\n";
 		print "    color: ".$thisBadgeTextColor." !important;\n";
 		//print "    background-color: " . colorDarker($thisBadgeBackgroundColor, 10) . ";\n";
 		if (in_array((string) $statusName, $TBadgeBorderOnly)) {
-			print "        border-color: ".colorDarker($thisBadgeBorderColor, 10).";\n";
+			print "        border-color: ".colorDarker($thisBadgeBorderColor, 10)." !important;\n";
 		}
 		print "}\n";
 	}

@@ -32,14 +32,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("propal", "facture", "orders", "sendings", "companies"));
+$langs->loadLangs(array("propal", "supplier_proposal", "facture", "orders", "sendings", "companies"));
 
 $id		= GETPOST('id', 'int');
 $ref	= GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'supplier_proposal', $id, 'supplier_proposal', '');
 
 $object = new SupplierProposal($db);
@@ -51,54 +53,43 @@ $permissiontoedit = $user->rights->supplier_proposal->creer;
  * Add a new contact
  */
 
-if ($action == 'addcontact' && $permissiontoedit)
-{
+if ($action == 'addcontact' && $permissiontoedit) {
 	$result = $object->fetch($id);
 
-	if ($result > 0 && $id > 0)
-	{
+	if ($result > 0 && $id > 0) {
 		$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-  		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+		$result = $object->add_contact($contactid, $typeid, GETPOST("source"));
 	}
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-		{
+		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-}
-
-// Toggle the status of a contact
-elseif ($action == 'swapstatut' && $permissiontoedit)
-{
-	if ($object->fetch($id))
-	{
-		$result = $object->swapContactStatus(GETPOST('ligne'));
+} elseif ($action == 'swapstatut' && $permissiontoedit) {
+	// Toggle the status of a contact
+	if ($object->fetch($id)) {
+		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	} else {
-		dol_print_error($db);
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
-}
-
-// Deleting a contact
-elseif ($action == 'deletecontact' && $permissiontoedit)
-{
+} elseif ($action == 'deletecontact' && $permissiontoedit) {
+	// Deleting a contact
 	$object->fetch($id);
 	$result = $object->delete_contact(GETPOST("lineid", 'int'));
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
-		dol_print_error($db);
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -107,9 +98,9 @@ elseif ($action == 'deletecontact' && $permissiontoedit)
 /*
  * View
  */
-
-$help_url = '';
-llxHeader('', $langs->trans("SupplierProposals"), $help_url);
+$title = $langs->trans('CommRequest')." - ".$langs->trans('ContactsAddresses');
+$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -123,12 +114,10 @@ $userstatic = new User($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$langs->trans("SupplierProposal");
 
-	if ($object->fetch($id, $ref) > 0)
-	{
+	if ($object->fetch($id, $ref) > 0) {
 		$object->fetch_thirdparty();
 
 		$head = supplier_proposal_prepare_head($object);
@@ -145,12 +134,10 @@ if ($id > 0 || !empty($ref))
 		// Thirdparty
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 		// Project
-		if (!empty($conf->projet->enabled))
-		{
+		if (!empty($conf->projet->enabled)) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-			if ($permissiontoedit)
-			{
+			if ($permissiontoedit) {
 				if ($action != 'classify') {
 					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 					$morehtmlref .= ' : ';

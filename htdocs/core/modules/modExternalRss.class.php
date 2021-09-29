@@ -21,7 +21,7 @@
  *	\brief      Module pour inclure des informations externes RSS
  *	\file       htdocs/core/modules/modExternalRss.class.php
  *	\ingroup    externalrss
- *	\brief      Fichier de description et activation du module externalrss
+ *	\brief      Description and activation file for the module externalrss
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -98,12 +98,10 @@ class modExternalRss extends DolibarrModules
 		$sql .= " WHERE name like 'EXTERNAL_RSS_TITLE_%'";
 		$sql .= " AND entity = ".$conf->entity;
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			while ($obj = $this->db->fetch_object($result))
-			{
-				if (preg_match('/EXTERNAL_RSS_TITLE_([0-9]+)/i', $obj->name, $reg))
-				{
+		if ($result) {
+			while ($obj = $this->db->fetch_object($result)) {
+				$reg = array();
+				if (preg_match('/EXTERNAL_RSS_TITLE_([0-9]+)/i', $obj->name, $reg)) {
 					// Definie la boite si on a trouvee une ancienne configuration
 					//$this->boxes[$reg[1]][0] = "(ExternalRSSInformations)";
 					$this->boxes[$reg[1]]['file'] = "box_external_rss.php";

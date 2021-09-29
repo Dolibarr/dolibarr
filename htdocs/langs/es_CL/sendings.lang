@@ -27,7 +27,6 @@ ConfirmDeleteSending=¿Seguro que quieres eliminar este envío?
 ConfirmValidateSending=¿Estas seguro que quieres validar este envió con referencia <b>%s</b>?
 ConfirmCancelSending=¿Seguro que quieres cancelar este envío?
 WarningNoQtyLeftToSend=Advertencia, no hay productos esperando ser enviados.
-StatsOnShipmentsOnlyValidated=Estadísticas realizadas en envíos solo validadas. La fecha utilizada es la fecha de validación del envío (no siempre se conoce la fecha de entrega planificada).
 DateDeliveryPlanned=Fecha planificada de entrega
 RefDeliveryReceipt=Ref. Recibo de entrega
 StatusReceipt=Recibo de entrega del estado

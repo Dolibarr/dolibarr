@@ -82,8 +82,7 @@ class CdavLib
 						LEFT OUTER JOIN '.MAIN_DB_PREFIX.'user AS u ON (u.rowid=fk_element)
 						WHERE ar.element_type=\'user\' AND fk_actioncomm=a.id) AS other_users
 				FROM '.MAIN_DB_PREFIX.'actioncomm AS a';
-		if (!$this->user->rights->societe->client->voir)//FIXME si 'voir' on voit plus de chose ?
-		{
+		if (!$this->user->rights->societe->client->voir) {//FIXME si 'voir' on voit plus de chose ?
 			$sql .= ' LEFT OUTER JOIN '.MAIN_DB_PREFIX.'societe_commerciaux AS sc ON (a.fk_soc = sc.fk_soc AND sc.fk_user='.$this->user->id.')
 					LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON (s.rowid = sc.fk_soc)
 					LEFT JOIN '.MAIN_DB_PREFIX.'socpeople AS sp ON (sp.fk_soc = sc.fk_soc AND sp.rowid = a.fk_contact)
@@ -100,8 +99,7 @@ class CdavLib
 						AND a.code IN (SELECT cac.code FROM '.MAIN_DB_PREFIX.'c_actioncomm cac WHERE cac.type<>\'systemauto\')
 						AND a.entity IN ('.getEntity('societe', 1).')';
 		if ($oid !== false) {
-			if ($ouri === false)
-			{
+			if ($ouri === false) {
 				$sql .= ' AND a.id = '.intval($oid);
 			} else {
 				$sql .= ' AND (a.id = '.intval($oid).' OR ac.uuidext = \''.$this->db->escape($ouri).'\')';
@@ -130,8 +128,7 @@ class CdavLib
 		$location = $obj->location;
 
 		// contact address
-		if (empty($location) && !empty($obj->address))
-		{
+		if (empty($location) && !empty($obj->address)) {
 			$location = trim(str_replace(array("\r", "\t", "\n"), ' ', $obj->address));
 			$location = trim($location.', '.$obj->zip);
 			$location = trim($location.' '.$obj->town);
@@ -139,8 +136,7 @@ class CdavLib
 		}
 
 		// contact address
-		if (empty($location) && !empty($obj->soc_address))
-		{
+		if (empty($location) && !empty($obj->soc_address)) {
 			$location = trim(str_replace(array("\r", "\t", "\n"), ' ', $obj->soc_address));
 			$location = trim($location.', '.$obj->soc_zip);
 			$location = trim($location.' '.$obj->soc_town);
@@ -148,16 +144,17 @@ class CdavLib
 		}
 
 		$address = explode("\n", $obj->address, 2);
-		foreach ($address as $kAddr => $vAddr)
-		{
+		foreach ($address as $kAddr => $vAddr) {
 			$address[$kAddr] = trim(str_replace(array("\r", "\t"), ' ', str_replace("\n", ' | ', trim($vAddr))));
 		}
 		$address[] = '';
 		$address[] = '';
 
-		if ($obj->percent == -1 && trim($obj->datep) != '')
+		if ($obj->percent == -1 && trim($obj->datep) != '') {
 			$type = 'VEVENT';
-		else $type = 'VTODO';
+		} else {
+			$type = 'VTODO';
+		}
 
 		$timezone = date_default_timezone_get();
 
@@ -169,60 +166,72 @@ class CdavLib
 		$caldata .= "CREATED:".gmdate('Ymd\THis', strtotime($obj->datec))."Z\n";
 		$caldata .= "LAST-MODIFIED:".gmdate('Ymd\THis', strtotime($obj->lastupd))."Z\n";
 		$caldata .= "DTSTAMP:".gmdate('Ymd\THis', strtotime($obj->lastupd))."Z\n";
-		if ($obj->sourceuid == '')
+		if ($obj->sourceuid == '') {
 			$caldata .= "UID:".$obj->id.'-ev-'.$calid.'-cal-'.constant('CDAV_URI_KEY')."\n";
-		else $caldata .= "UID:".$obj->sourceuid."\n";
+		} else {
+			$caldata .= "UID:".$obj->sourceuid."\n";
+		}
 		$caldata .= "SUMMARY:".$obj->label."\n";
 		$caldata .= "LOCATION:".$location."\n";
 		$caldata .= "PRIORITY:".$obj->priority."\n";
-		if ($obj->fulldayevent)
-		{
+		if ($obj->fulldayevent) {
 			$caldata .= "DTSTART;VALUE=DATE:".date('Ymd', strtotime($obj->datep))."\n";
-			if ($type == 'VEVENT')
-			{
-				if (trim($obj->datep2) != '')
+			if ($type == 'VEVENT') {
+				if (trim($obj->datep2) != '') {
 					$caldata .= "DTEND;VALUE=DATE:".date('Ymd', strtotime($obj->datep2) + 1)."\n";
-				else $caldata .= "DTEND;VALUE=DATE:".date('Ymd', strtotime($obj->datep) + (25 * 3600))."\n";
-			} elseif (trim($obj->datep2) != '')
+				} else {
+					$caldata .= "DTEND;VALUE=DATE:".date('Ymd', strtotime($obj->datep) + (25 * 3600))."\n";
+				}
+			} elseif (trim($obj->datep2) != '') {
 				$caldata .= "DUE;VALUE=DATE:".date('Ymd', strtotime($obj->datep2) + 1)."\n";
+			}
 		} else {
 			$caldata .= "DTSTART;TZID=".$timezone.":".strtr($obj->datep, array(" "=>"T", ":"=>"", "-"=>""))."\n";
-			if ($type == 'VEVENT')
-			{
-				if (trim($obj->datep2) != '')
+			if ($type == 'VEVENT') {
+				if (trim($obj->datep2) != '') {
 					$caldata .= "DTEND;TZID=".$timezone.":".strtr($obj->datep2, array(" "=>"T", ":"=>"", "-"=>""))."\n";
-				else $caldata .= "DTEND;TZID=".$timezone.":".strtr($obj->datep, array(" "=>"T", ":"=>"", "-"=>""))."\n";
-			} elseif (trim($obj->datep2) != '')
+				} else {
+					$caldata .= "DTEND;TZID=".$timezone.":".strtr($obj->datep, array(" "=>"T", ":"=>"", "-"=>""))."\n";
+				}
+			} elseif (trim($obj->datep2) != '') {
 				$caldata .= "DUE;TZID=".$timezone.":".strtr($obj->datep2, array(" "=>"T", ":"=>"", "-"=>""))."\n";
+			}
 		}
 		$caldata .= "CLASS:PUBLIC\n";
-		if ($obj->transparency == 1)
+		if ($obj->transparency == 1) {
 			$caldata .= "TRANSP:TRANSPARENT\n";
-		else $caldata .= "TRANSP:OPAQUE\n";
+		} else {
+			$caldata .= "TRANSP:OPAQUE\n";
+		}
 
-		if ($type == 'VEVENT')
+		if ($type == 'VEVENT') {
 			$caldata .= "STATUS:CONFIRMED\n";
-		elseif ($obj->percent == 0)
+		} elseif ($obj->percent == 0) {
 			$caldata .= "STATUS:NEEDS-ACTION\n";
-		elseif ($obj->percent == 100)
+		} elseif ($obj->percent == 100) {
 			$caldata .= "STATUS:COMPLETED\n";
-		else {
+		} else {
 			$caldata .= "STATUS:IN-PROCESS\n";
 			$caldata .= "PERCENT-COMPLETE:".$obj->percent."\n";
 		}
 
 		$caldata .= "DESCRIPTION:";
 		$caldata .= strtr($obj->note, array("\n"=>"\\n", "\r"=>""));
-		if (!empty($obj->soc_nom))
+		if (!empty($obj->soc_nom)) {
 			$caldata .= "\\n*DOLIBARR-SOC: ".$obj->soc_nom;
-		if (!empty($obj->soc_phone))
+		}
+		if (!empty($obj->soc_phone)) {
 			$caldata .= "\\n*DOLIBARR-SOC-TEL: ".$obj->soc_phone;
-		if (!empty($obj->firstname) || !empty($obj->lastname))
+		}
+		if (!empty($obj->firstname) || !empty($obj->lastname)) {
 			$caldata .= "\\n*DOLIBARR-CTC: ".trim($obj->firstname.' '.$obj->lastname);
-		if (!empty($obj->phone) || !empty($obj->phone_perso) || !empty($obj->phone_mobile))
+		}
+		if (!empty($obj->phone) || !empty($obj->phone_perso) || !empty($obj->phone_mobile)) {
 			$caldata .= "\\n*DOLIBARR-CTC-TEL: ".trim($obj->phone.' '.$obj->phone_perso.' '.$obj->phone_mobile);
-		if (strpos($obj->other_users, ',')) // several
+		}
+		if (strpos($obj->other_users, ',')) { // several
 			$caldata .= "\\n*DOLIBARR-USR: ".$obj->other_users;
+		}
 		$caldata .= "\n";
 
 		$caldata .= "END:".$type."\n";
@@ -243,24 +252,23 @@ class CdavLib
 		$calid = ($calendarId * 1);
 		$calevents = array();
 
-		if (!$this->user->rights->agenda->myactions->read)
+		if (!$this->user->rights->agenda->myactions->read) {
 			return $calevents;
+		}
 
-		if ($calid != $this->user->id && (!isset($this->user->rights->agenda->allactions->read) || !$this->user->rights->agenda->allactions->read))
+		if ($calid != $this->user->id && (!isset($this->user->rights->agenda->allactions->read) || !$this->user->rights->agenda->allactions->read)) {
 			return $calevents;
+		}
 
 		$sql = $this->getSqlCalEvents($calid);
 
 		$result = $this->db->query($sql);
 
-		if ($result)
-		{
-			while ($obj = $this->db->fetch_object($result))
-			{
+		if ($result) {
+			while ($obj = $this->db->fetch_object($result)) {
 				$calendardata = $this->toVCalendar($calid, $obj);
 
-				if ($bCalendarData)
-				{
+				if ($bCalendarData) {
 					$calevents[] = array(
 						'calendardata' => $calendardata,
 						'uri' => $obj->id.'-ev-'.constant('CDAV_URI_KEY'),

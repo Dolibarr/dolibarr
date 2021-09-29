@@ -27,5 +27,7 @@ Recipient=Παραλήπτης
 ErrorStockIsNotEnough=Δεν υπάρχει αρκετό απόθεμα
 Shippable=Για Αποστολή
 NonShippable=Δεν αποστέλλονται
+ShowShippableStatus=Show shippable status
 ShowReceiving=Show delivery receipt
 NonExistentOrder=Ανύπαρκτη σειρά
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines

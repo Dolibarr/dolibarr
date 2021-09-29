@@ -64,7 +64,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 	public function info()
 	{
 		global $langs;
-	  	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
 	}
 
 	/**
@@ -89,7 +89,8 @@ class mod_pacific extends ModeleNumRefFicheinter
 
 		$langs->load("bills");
 
-		$fayymm = ''; $max = '';
+		$fayymm = '';
+		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
@@ -98,13 +99,14 @@ class mod_pacific extends ModeleNumRefFicheinter
 		$sql .= " WHERE entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$row = $db->fetch_row($resql);
-			if ($row) { $fayymm = substr($row[0], 0, 6); $max = $row[0]; }
+			if ($row) {
+				$fayymm = substr($row[0], 0, 6);
+				$max = $row[0];
+			}
 		}
-		if (!$fayymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $fayymm))
-		{
+		if (!$fayymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $fayymm)) {
 			return true;
 		} else {
 			$langs->load("errors");
@@ -132,19 +134,24 @@ class mod_pacific extends ModeleNumRefFicheinter
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $db->fetch_object($resql);
-			if ($obj) $max = intval($obj->max);
-			else $max = 0;
+			if ($obj) {
+				$max = intval($obj->max);
+			} else {
+				$max = 0;
+			}
 		}
 
 		//$date=time();
 		$date = $object->datec;
 		$yymm = strftime("%y%m", $date);
 
-		if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
-		else $num = sprintf("%04s", $max + 1);
+		if ($max >= (pow(10, 4) - 1)) {
+			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
+		} else {
+			$num = sprintf("%04s", $max + 1);
+		}
 
 		return $this->prefix.$yymm."-".$num;
 	}

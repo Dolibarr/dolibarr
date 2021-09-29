@@ -18,8 +18,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -35,13 +34,12 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $var = true;
 $total = 0;
-foreach ($linkedObjectBlock as $key => $objectlink)
-{
+foreach ($linkedObjectBlock as $key => $objectlink) {
 	?>
 <tr <?php echo $GLOBALS['bc'][$var]; ?> >
 	<td><?php echo $langs->trans("ExpenseReport"); ?></td>
-    <td><?php echo $objectlink->getNomUrl(1); ?></td>
-    <td></td>
+	<td><?php echo $objectlink->getNomUrl(1); ?></td>
+	<td></td>
 	<td class="center"><?php echo dol_print_date($objectlink->date_debut, 'day'); ?></td>
 	<td class="right"><?php
 	if ($user->rights->expensereport->lire) {

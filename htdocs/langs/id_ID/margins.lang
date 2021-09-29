@@ -22,7 +22,7 @@ ProductService=Produk atau Layanan
 AllProducts=Semua produk dan layanan
 ChooseProduct/Service=Pilih produk atau layanan
 ForceBuyingPriceIfNull=Harga beli / biaya paksa untuk harga jual jika tidak ditentukan
-ForceBuyingPriceIfNullDetails=Jika harga beli / biaya tidak ditentukan, dan opsi ini "ON", margin akan menjadi nol on-line (harga beli / biaya = harga jual), jika tidak ("OFF"), marge akan sama dengan standar yang disarankan.
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0 on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100% if no default value can be found).
 MARGIN_METHODE_FOR_DISCOUNT=Metode margin untuk diskon global
 UseDiscountAsProduct=Sebagai produk
 UseDiscountAsService=Sebagai layanan
