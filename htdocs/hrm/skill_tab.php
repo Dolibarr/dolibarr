@@ -347,8 +347,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '</td><td class="linecolfk_skill">';
 			print $sk->getNomUrl(1);
 			print '</td>';
-			print $sk->description;
 			print '<td>';
+			print $sk->description;
 			print '</td><td class="linecolrank">';
 			print displayRankInfos($skillElement->rank, $skillElement->fk_skill, 'TNote', $objecttype == 'job' && $permissiontoadd ? 'edit' : 'view');
 			print '</td>';
