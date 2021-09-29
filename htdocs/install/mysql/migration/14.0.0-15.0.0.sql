@@ -149,3 +149,8 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2010', '
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2011', 'Ideell förening');
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2012', 'Stiftelse');
 
+-- Deposit generation helper with specific payment terms
+ALTER TABLE llx_c_payment_term ADD COLUMN deposit_percent real DEFAULT NULL AFTER decalage;
+ALTER TABLE llx_societe ADD COLUMN deposit_percent real DEFAULT NULL AFTER cond_reglement;
+ALTER TABLE llx_propal ADD COLUMN deposit_percent real DEFAULT NULL AFTER fk_cond_reglement;
+ALTER TABLE llx_commande ADD COLUMN deposit_percent real DEFAULT NULL AFTER fk_cond_reglement;
