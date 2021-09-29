@@ -1,0 +1,147 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModuleEventOrganizationName = Evenementenorganisatie
+EventOrganizationDescription = Evenementenorganisatie via moduleproject
+EventOrganizationDescriptionLong= Beheer evenementorganisatie voor conferentie, aanwezigen, spreker en aanwezigen, met openbare abonnementspagina
+#
+# Menu
+#
+EventOrganizationMenuLeft = Georganiseerde evenementen
+EventOrganizationConferenceOrBoothMenuLeft = Conferentie of stand
+
+#
+# Admin page
+#
+EventOrganizationSetup = Evenementorganisatie instellen
+Settings = Instellingen
+EventOrganizationSetupPage = Instellingenpagina voor evenementorganisatie
+EVENTORGANIZATION_TASK_LABEL = Label van taken om automatisch te maken wanneer het project is gevalideerd
+EVENTORGANIZATION_TASK_LABELTooltip = Wanneer u een georganiseerd evenement valideert, kunnen sommige taken automatisch worden aangemaakt in het project <br> <br> Bijvoorbeeld: <br> Send Call for Conference <br> Send Call for Booth <br> Send call for conferences a0342fcc Receive call for aanwezigen herinner aan evenement naar sprekers <br> Stuur herinnering aan evenement naar standhoster <br> Stuur herinnering aan evenement naar aanwezigen
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Categorie om toe te voegen aan derden, automatisch aangemaakt wanneer iemand een conferentie voorstelt
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Categorie om toe te voegen aan derden, automatisch aangemaakt wanneer ze een stand voorstellen
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Sjabloon van e-mail om te verzenden na ontvangst van een suggestie van een conferentie.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Sjabloon van e-mail om te verzenden na ontvangst van een suggestie van een stand.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Sjabloon van e-mail om te verzenden nadat een abonnement op een stand is betaald.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Sjabloon van e-mail om te verzenden nadat een abonnement op een evenement is betaald.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Sjabloon van e-mail van massage aan aanwezigen
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Sjabloon van e-mail van massage aan sprekers
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Filter de selectielijst van derden in de kaart/formulier voor het maken van deelnemers met categorie
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filter de selectielijst van derden in de kaart/formulier voor het maken van deelnemers met het klanttype
+
+#
+# Object
+#
+EventOrganizationConfOrBooth= Conferentie of stand
+ManageOrganizeEvent = Evenementenorganisatie beheren
+ConferenceOrBooth = Conferentie of stand
+ConferenceOrBoothTab = Conferentie of stand
+AmountOfSubscriptionPaid = Bedrag betaald abonnement
+DateSubscription = Datum van inschrijving
+ConferenceOrBoothAttendee = Conference Or Booth Attendee
+
+#
+# Template Mail
+#
+YourOrganizationEventConfRequestWasReceived = Uw verzoek voor een conferentie is ontvangen
+YourOrganizationEventBoothRequestWasReceived = Uw aanvraag voor een stand is ontvangen
+EventOrganizationEmailAskConf = Verzoek om conferentie
+EventOrganizationEmailAskBooth = Aanvraag voor stand
+EventOrganizationEmailSubsBooth = Abonnement op stand
+EventOrganizationEmailSubsEvent = Abonnement voor een evenement
+EventOrganizationMassEmailAttendees = Communicatie naar deelnemers
+EventOrganizationMassEmailSpeakers = Communicatie naar sprekers
+
+#
+# Event
+#
+AllowUnknownPeopleSuggestConf=Onbekenden toestaan om conferenties voor te stellen
+AllowUnknownPeopleSuggestConfHelp=Onbekenden toestaan om conferenties voor te stellen
+AllowUnknownPeopleSuggestBooth=Laat onbekenden een stand voorstellen
+AllowUnknownPeopleSuggestBoothHelp=Laat onbekenden een stand voorstellen
+PriceOfRegistration=Prijs van registratie
+PriceOfRegistrationHelp=Prijs van registratie
+PriceOfBooth=Abonnementsprijs om een stand te staan
+PriceOfBoothHelp=Abonnementsprijs om een stand te staan
+EventOrganizationICSLink=Link ICS voor evenementen
+ConferenceOrBoothInformation=Informatie over conferentie of stand Or
+Attendees = deelnemers
+DownloadICSLink = ICS-link downloaden
+EVENTORGANIZATION_SECUREKEY = Beveiligde sleutel van de openbare registratielink naar een conferentie
+SERVICE_BOOTH_LOCATION = Service gebruikt voor de factuurregel over een standlocatie
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service die wordt gebruikt voor de factuurrij over een deelnemersabonnement op een conferentie
+NbVotes=Number of votes
+#
+# Status
+#
+EvntOrgDraft = Ontwerp
+EvntOrgSuggested = Suggereerde
+EvntOrgConfirmed = bevestigd
+EvntOrgNotQualified = Niet gekwalificeerd
+EvntOrgDone = Uitgevoerd
+EvntOrgCancelled = Geannuleerd
+#
+# Public page
+#
+SuggestForm = Suggestie pagina
+RegisterPage = Pagina voor conferenties of stand
+EvntOrgRegistrationHelpMessage = Hier kunt u stemmen op een evenement of een nieuwe conferentie of stand voorstellen voor het project
+EvntOrgRegistrationConfHelpMessage = Hier kunt u een nieuwe conferentie voor het project voorstellen
+EvntOrgRegistrationBoothHelpMessage = Hier kunt u een nieuwe stand voor het project voorstellen
+ListOfSuggestedConferences = Lijst met voorgestelde conferenties
+ListOfSuggestedBooths = Lijst met voorgestelde stands
+SuggestConference = Een nieuwe conferentie voorstellen
+SuggestBooth = Stel een stand voor
+ViewAndVote = Bekijk en stem op voorgestelde evenementen
+PublicAttendeeSubscriptionPage = Openbare link van registratie voor een conferentie
+MissingOrBadSecureKey = De beveiligingssleutel is ongeldig of ontbreekt
+EvntOrgWelcomeMessage = Met dit formulier kunt u zich als nieuwe deelnemer aan de conferentie registreren: '%s'
+EvntOrgDuration = Deze conferentie begint op %s en eindigt op %s.
+ConferenceAttendeeFee = Conferentiebezoekerstarief voor het evenement: '%s' variërend van %s tot %s.
+BoothLocationFee = Standplaats voor het evenement : '%s' van %s tot %s
+EventType = Taak type
+LabelOfBooth=Booth label
+LabelOfconference=Conference label
+ConferenceIsNotConfirmed=Subcription not available, conference is not confirmed yet
+
+#
+# Vote page
+#
+EvntOrgRegistrationWelcomeMessage = Welkom op de congres- of standsuggestiepagina.
+EvntOrgRegistrationConfWelcomeMessage = Welkom op de pagina met congressuggesties.
+EvntOrgRegistrationBoothWelcomeMessage = Welkom op de stand suggestie pagina.
+EvntOrgVoteHelpMessage = Hier kunt u de voorgestelde evenementen voor het project bekijken en erop stemmen
+VoteOk = Uw stem is geaccepteerd.
+AlreadyVoted = Je hebt al op dit evenement gestemd.
+VoteError = Er is een fout opgetreden tijdens het stemmen, probeer het opnieuw.
+
+#
+# SubscriptionOk page
+#
+SubscriptionOk = Uw abonnement op deze conferentie is gevalideerd
+#
+# Subscription validation mail
+#
+ConfAttendeeSubscriptionConfirmation = Bevestiging van uw abonnement op een conferentie
+#
+# Payment page
+#
+Attendee = deelnemer
+PaymentConferenceAttendee = Conferentie deelnemer betaling
+PaymentBoothLocation = Standplaats betaling

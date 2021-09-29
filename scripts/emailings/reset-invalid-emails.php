@@ -22,8 +22,12 @@
  * \brief 		Script to reset (set email to empty) from a list of email
  */
 
-if (!defined('NOSESSION')) define('NOSESSION', '1');
-if (!defined('MAXEMAILS')) define('MAXEMAILS', 100);
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
+if (!defined('MAXEMAILS')) {
+	define('MAXEMAILS', 100);
+}
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
@@ -71,8 +75,7 @@ $db->begin();
 
 
 $myfile = fopen($fileofinvalidemail, "r");
-if (!$myfile)
-{
+if (!$myfile) {
 	echo "Failed to open file";
 	exit(-1);
 }
@@ -81,14 +84,11 @@ $tmp = 1;
 $counter = 1;
 $numerasedtotal = 0;
 
-while ($tmp != null)
-{
+while ($tmp != null) {
 	$groupofemails = array();
-	for ($i = 0; $i < MAXEMAILS; $i++)
-	{
+	for ($i = 0; $i < MAXEMAILS; $i++) {
 		$tmp = fgets($myfile);
-		if ($tmp == null)
-		{
+		if ($tmp == null) {
 			break;
 		}
 		$groupofemails[$i] = trim($tmp, "\n");
@@ -109,10 +109,9 @@ while ($tmp != null)
 
 	$sql_base = "UPDATE ".MAIN_DB_PREFIX;
 
-	if ($type == 'all' || $type == 'users')
-	{
+	if ($type == 'all' || $type == 'users') {
 		// Loop on each record and update the email to null if email into $groupofemails
-		$sql = $sql_base."user as u SET u.email = NULL WHERE u.email IN (".$emailsin.");";
+		$sql = $sql_base."user as u SET u.email = NULL WHERE u.email IN (".$db->sanitize($emailsin, 1).");";
 		print "Try to update users, ";
 		$resql = $db->query($sql);
 		if (!$resql) {
@@ -121,10 +120,9 @@ while ($tmp != null)
 		$numerased += $db->affected_rows($resql);
 	}
 
-	if ($type == 'all' || $type == 'thirdparties')
-	{
+	if ($type == 'all' || $type == 'thirdparties') {
 		// Loop on each record and update the email to null if email into $groupofemails
-		$sql = $sql_base."societe as s SET s.email = NULL WHERE s.email IN (".$emailsin.");";
+		$sql = $sql_base."societe as s SET s.email = NULL WHERE s.email IN (".$db->sanitize($emailsin, 1).");";
 		print "Try to update thirdparties, ";
 		$resql = $db->query($sql);
 		if (!$resql) {
@@ -133,11 +131,10 @@ while ($tmp != null)
 		$numerased += $db->affected_rows($resql);
 	}
 
-	if ($type == 'all' || $type == 'contacts')
-	{
+	if ($type == 'all' || $type == 'contacts') {
 		// Loop on each record and update the email to null if email into $groupofemails
 
-		$sql = $sql_base."socpeople as s SET s.email = NULL WHERE s.email IN (".$emailsin.");";
+		$sql = $sql_base."socpeople as s SET s.email = NULL WHERE s.email IN (".$db->sanitize($emailsin, 1).");";
 		print "Try to update contacts, ";
 		$resql = $db->query($sql);
 		if (!$resql) {
@@ -146,11 +143,10 @@ while ($tmp != null)
 		$numerased += $db->affected_rows($resql);
 	}
 
-	if ($type == 'all' || $type == 'members')
-	{
+	if ($type == 'all' || $type == 'members') {
 		// Loop on each record and update the email to null if email into $groupofemails
 
-		$sql = $sql_base."adherent as a SET a.email = NULL WHERE a.email IN (".$emailsin.");";
+		$sql = $sql_base."adherent as a SET a.email = NULL WHERE a.email IN (".$db->sanitize($emailsin, 1).");";
 		print "Try to update members, ";
 		$resql = $db->query($sql);
 		if (!$resql) {

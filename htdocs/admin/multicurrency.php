@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 $langs->loadLangs(array('admin', 'multicurrency'));
 
 // Access control
-if (!$user->admin) {
+if (!$user->admin || empty($conf->multicurrency->enabled)) {
 	accessforbidden();
 }
 
@@ -45,32 +45,27 @@ $action = GETPOST('action', 'aZ09');
  * Actions
  */
 
-
-if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
-{
+$reg = array();
+if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$code = $reg[1];
 	$value = GETPOST($code, 'alpha');
-	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
-	{
+	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
-if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
-{
+if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$code = $reg[1];
-	if (dolibarr_del_const($db, $code, 0) > 0)
-	{
+	if (dolibarr_del_const($db, $code, 0) > 0) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
-if ($action == 'add_currency')
-{
+if ($action == 'add_currency') {
 	$error = 0;
 
 	$langs->loadCacheCurrencies('');
@@ -81,59 +76,55 @@ if ($action == 'add_currency')
 	$currency->code = $code;
 	$currency->name = !empty($langs->cache_currencies[$code]['label']) ? $langs->cache_currencies[$code]['label'].' ('.$langs->getCurrencySymbol($code).')' : $code;
 
-	if (empty($rate))
-	{
+	if (empty($rate)) {
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Rate")), null, 'errors');
 		$error++;
 	}
-	if (!$error)
-	{
-		if ($currency->create($user) > 0)
-		{
-			if ($currency->addRate($rate)) setEventMessages($langs->trans('RecordSaved'), array());
-			else setEventMessages($langs->trans('ErrorAddRateFail'), array(), 'errors');
-		} else setEventMessages($langs->trans('ErrorAddCurrencyFail'), $currency->errors, 'errors');
+	if (!$error) {
+		if ($currency->create($user) > 0) {
+			if ($currency->addRate($rate)) {
+				setEventMessages($langs->trans('RecordSaved'), array());
+			} else {
+				setEventMessages($langs->trans('ErrorAddRateFail'), array(), 'errors');
+			}
+		} else {
+			setEventMessages($langs->trans('ErrorAddCurrencyFail'), $currency->errors, 'errors');
+		}
 	}
-} elseif ($action == 'update_currency')
-{
+} elseif ($action == 'update_currency') {
 	$error = 0;
 
-	if (GETPOST('updatecurrency', 'alpha'))
-	{
+	if (GETPOST('updatecurrency', 'alpha')) {
 		$fk_multicurrency = GETPOST('fk_multicurrency', 'int');
 		$rate = price2num(GETPOST('rate', 'alpha'));
 		$currency = new MultiCurrency($db);
 
-		if (empty($rate))
-		{
+		if (empty($rate)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Rate")), null, 'errors');
 			$error++;
 		}
-		if (!$error)
-		{
-			if ($currency->fetch($fk_multicurrency) > 0)
-			{
+		if (!$error) {
+			if ($currency->fetch($fk_multicurrency) > 0) {
 				$result = $currency->updateRate($rate);
 				if ($result < 0) {
 					setEventMessages(null, $currency->errors, 'errors');
 				}
 			}
 		}
-	} elseif (GETPOST('deletecurrency', 'alpha'))
-	{
+	} elseif (GETPOST('deletecurrency', 'alpha')) {
 		$fk_multicurrency = GETPOST('fk_multicurrency', 'int');
 		$currency = new MultiCurrency($db);
 
-		if ($currency->fetch($fk_multicurrency) > 0)
-		{
-			if ($currency->delete() > 0) setEventMessages($langs->trans('RecordDeleted'), array());
-			else setEventMessages($langs->trans('ErrorDeleteCurrencyFail'), array(), 'errors');
+		if ($currency->fetch($fk_multicurrency) > 0) {
+			if ($currency->delete() > 0) {
+				setEventMessages($langs->trans('RecordDeleted'), array());
+			} else {
+				setEventMessages($langs->trans('ErrorDeleteCurrencyFail'), array(), 'errors');
+			}
 		}
 	}
-} elseif ($action == 'setapilayer')
-{
-	if (GETPOSTISSET('modify_apilayer'))
-	{
+} elseif ($action == 'setapilayer') {
+	if (GETPOSTISSET('modify_apilayer')) {
 		dolibarr_set_const($db, 'MULTICURRENCY_APP_ID', GETPOST('MULTICURRENCY_APP_ID', 'alpha'));
 		dolibarr_set_const($db, 'MULTICURRENCY_APP_SOURCE', GETPOST('MULTICURRENCY_APP_SOURCE', 'alpha'));
 		//dolibarr_set_const($db, 'MULTICURRENCY_ALTERNATE_SOURCE', GETPOST('MULTICURRENCY_ALTERNATE_SOURCE', 'alpha'));
@@ -149,10 +140,8 @@ if ($action == 'add_currency')
 $TCurrency = array();
 $sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'multicurrency WHERE entity = '.$conf->entity;
 $resql = $db->query($sql);
-if ($resql)
-{
-	while ($obj = $db->fetch_object($resql))
-	{
+if ($resql) {
+	while ($obj = $db->fetch_object($resql)) {
 		$currency = new MultiCurrency($db);
 		$currency->fetch($obj->rowid);
 		$TCurrency[] = $currency;
@@ -167,8 +156,9 @@ if ($resql)
 $form = new Form($db);
 
 $page_name = "MultiCurrencySetup";
+$help_url = '';
 
-llxHeader('', $langs->trans($page_name));
+llxHeader('', $langs->trans($page_name), $help_url);
 
 // Subheader
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -176,7 +166,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback);
 
 // Configuration header
 $head = multicurrencyAdminPrepareHead();
-print dol_get_fiche_head($head, 'settings', $langs->trans("ModuleSetup"), -1, "multicurrency");
+print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "multicurrency");
 
 
 print '<table class="noborder centpercent">';
@@ -209,8 +199,7 @@ if ($conf->use_javascript_ajax) {
 print '</td></tr>';
 
 // Online payment with currency on document. This option should be on by default.
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-{
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->transnoentitiesnoconv("MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT").'</td>';
 	print '<td class="center">';
@@ -256,8 +245,7 @@ print '</table>';
 
 print '<br>';
 
-if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
-{
+if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION)) {
 	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" id="form_sync">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setapilayer">';
@@ -316,7 +304,7 @@ print '<input type="hidden" name="action" value="add_currency">';
 print '<tr class="oddeven">';
 print '<td>'.$form->selectCurrency('', 'code', 1).'</td>';
 print '<td class="right">';
-print '<input type="text" name="rate" value="" size="13" placeholder="'.$langs->trans('Rate').'" />&nbsp;';
+print '<input type="text" name="rate" value="" class="width75 right" placeholder="'.$langs->trans('Rate').'" />&nbsp;';
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 print '</td>';
 print '</tr>';
@@ -328,9 +316,10 @@ print '<td>'.$conf->currency.$form->textwithpicto(' ', $langs->trans("BaseCurren
 print '<td class="right">1</td>';
 print '</tr>';
 
-foreach ($TCurrency as &$currency)
-{
-	if ($currency->code == $conf->currency) continue;
+foreach ($TCurrency as &$currency) {
+	if ($currency->code == $conf->currency) {
+		continue;
+	}
 
 	print '<tr class="oddeven">';
 	print '<td>'.$currency->code.' - '.$currency->name.'</td>';
@@ -340,7 +329,7 @@ foreach ($TCurrency as &$currency)
 	print '<input type="hidden" name="action" value="update_currency">';
 	print '<input type="hidden" name="fk_multicurrency" value="'.$currency->id.'">';
 	print '1 '.$conf->currency.' = ';
-	print '<input type="text" name="rate" value="'.($currency->rate->rate ? $currency->rate->rate : '').'" size="13" />&nbsp;'.$currency->code.'&nbsp;';
+	print '<input type="text" name="rate" class="width75 right" value="'.($currency->rate->rate ? $currency->rate->rate : '').'" size="13">&nbsp;'.$currency->code.'&nbsp;';
 	print '<input type="submit" name="updatecurrency" class="button" value="'.$langs->trans("Modify").'">&nbsp;';
 	print '<input type="submit" name="deletecurrency" class="button" value="'.$langs->trans("Delete").'">';
 	print '</form>';

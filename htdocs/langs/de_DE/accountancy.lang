@@ -5,7 +5,7 @@ ACCOUNTING_EXPORT_SEPARATORCSV=Spaltentrennzeichen für die Exportdatei
 ACCOUNTING_EXPORT_DATE=Datumsformat der Exportdatei
 ACCOUNTING_EXPORT_PIECE=Stückzahl exportieren
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Mit globalem Konto exportieren
-ACCOUNTING_EXPORT_LABEL=Exportiere Bezeichnung
+ACCOUNTING_EXPORT_LABEL=Exportiere Beschriftung
 ACCOUNTING_EXPORT_AMOUNT=Exportiere Betrag
 ACCOUNTING_EXPORT_DEVISE=Exportiere Währung
 Selectformat=Wählen Sie das Format für die Datei
@@ -131,7 +131,7 @@ InvoiceLinesDone=verbundene Rechnungszeilen
 ExpenseReportLines=Zeilen von Spesenabrechnungen zu verbinden
 ExpenseReportLinesDone=Gebundene Zeile von Spesenabrechnungen
 IntoAccount=mit dem Buchhaltungskonto verbundene Zeilen
-TotalForAccount=Gesamtsumme für Buchhaltungskonto
+TotalForAccount=Buchhaltungskonto Summe
 
 
 Ventilate=zusammenfügen
@@ -158,7 +158,7 @@ ACCOUNTING_LENGTH_AACCOUNT=Länge der Geschäftspartner-Konten in der Buchhaltun
 ACCOUNTING_MANAGE_ZERO=Verwalten der Null am Ende eines Buchhaltungskontos. \nIn einigen Ländern notwendig (zB. Schweiz). \nStandardmäßig deaktiviert. \nWenn ausgeschaltet, können die folgenden 2 Parameter konfigurieren werden um virtuelle Nullen anzuhängen
 BANK_DISABLE_DIRECT_INPUT=Deaktivieren der direkte Aufzeichnung von Transaktion auf dem Bankkonto
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Entwurfexport für Journal aktivieren
-ACCOUNTANCY_COMBO_FOR_AUX=Kombinationsliste für Nebenkonto aktivieren \n(kann langsam sein, wenn Sie viele Geschäftspartner haben)
+ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
 ACCOUNTING_DATE_START_BINDING=Definieren Sie ein Datum, an dem die Bindung und Übertragung in der Buchhaltung beginnen soll. Transaktionen vor diesem Datum werden nicht in die Buchhaltung übertragen.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Bei der Übertragung der Buchhaltung standardmäßig den Zeitraum anzeigen auswählen anzeigen
 
@@ -202,14 +202,14 @@ Docref=Referenz
 LabelAccount=Konto-Beschriftung
 LabelOperation=Bezeichnung der Operation
 Sens=Richtung
-AccountingDirectionHelp=Verwenden Sie für ein Buchhaltungskonto eines Kunden «Guthaben», um eine Zahlung zu erfassen, die Sie erhalten haben. <br> Verwenden Sie für ein Buchhaltungskonto eines Lieferanten «Debit», um eine von Ihnen geleistete Zahlung zu erfassen
+AccountingDirectionHelp=Verwenden Sie für ein Buchhaltungskonto eines Kunden Guthaben, um eine Zahlung zu erfassen, die Sie erhalten haben. <br> Verwenden Sie für ein Buchhaltungskonto eines Lieferanten Debit, um eine von Ihnen geleistete Zahlung zu erfassen
 LetteringCode=Beschriftungscode
 Lettering=Beschriftung
 Codejournal=Journal
 JournalLabel=Journal-Bezeichnung
 NumPiece=Teilenummer
 TransactionNumShort=Anz. Buchungen
-AccountingCategory=Personalisierte Gruppen
+AccountingCategory=Benutzerdefinierte Gruppe
 GroupByAccountAccounting=Gruppieren nach Hauptbuchkonto
 GroupBySubAccountAccounting=Gruppieren nach Nebenbuchkonto
 AccountingAccountGroupsDesc=Hier können Kontengruppen definiert werden. Diese werden für personaliserte Buchhaltungsreports verwendet.
@@ -297,7 +297,7 @@ NoNewRecordSaved=Keine weiteren Einträge zum Übernehmen
 ListOfProductsWithoutAccountingAccount=Liste der Produkte, die nicht an ein Buchhaltungskonto gebunden sind
 ChangeBinding=Ändern der Zuordnung
 Accounted=im Hauptbuch erfasst
-NotYetAccounted=noch nicht im Hauptbuch erfasst
+NotYetAccounted=Noch nicht im Hauptbuch verbucht
 ShowTutorial=Tutorial anzeigen
 NotReconciled=nicht ausgeglichen
 WarningRecordWithoutSubledgerAreExcluded=Achtung, alle Vorgänge ohne definiertes Nebenbuchkonto werden gefiltert und von dieser Ansicht ausgeschlossen
@@ -328,6 +328,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Deaktivieren Sie die Bindung und Übertr
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Deaktivieren Sie die Bindung und Übertragung in der Buchhaltung für Spesenabrechnungen (Spesenabrechnungen werden bei der Buchhaltung nicht berücksichtigt).
 
 ## Export
+NotifiedExportDate=Notified export date (modification of the entries will not be possible)
+NotifiedValidationDate=Validation of the entries (modification or deletion of the entries will not be possible)
+ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=Entwurfsjournal exportieren
 Modelcsv=Exportmodell
 Selectmodelcsv=Wählen Sie ein Exportmodell
@@ -402,7 +405,29 @@ UseMenuToSetBindindManualy=Zeilen noch nicht zugeordnet, verwende das Menu <a hr
 
 ## Import
 ImportAccountingEntries=Buchaltungseinträge
+ImportAccountingEntriesFECFormat=Buchhaltungseinträge - FEC-Format
+FECFormatJournalCode=Codejournal (JournalCode)
+FECFormatJournalLabel=Label Journal (JournalLib)
+FECFormatEntryNum=Stücknummer (EcritureNum)
+FECFormatEntryDate=Stückdatum (EcritureDate)
+FECFormatGeneralAccountNumber=Allgemeine Kontonummer (CompteNum)
+FECFormatGeneralAccountLabel=Allgemeines Kontolabel (CompteLib)
+FECFormatSubledgerAccountNumber=Nebenbuchkontonummer (CompAuxNum)
+FECFormatSubledgerAccountLabel=Nebenbuchkontonummer (CompAuxLib)
+FECFormatPieceRef=Stück Referenz (PieceRef)
+FECFormatPieceDate=Stück Erstellungsdatum (PieceDate)
+FECFormatLabelOperation=Label operation (EcritureLib)
+FECFormatDebit=Lastschrift (Lastschrift)
+FECFormatCredit=Kredit (Kredit)
+FECFormatReconcilableCode=Abgleichbarer Code (EcritureLet)
+FECFormatReconcilableDate=Überbrückbares Datum (DateLet)
+FECFormatValidateDate=Piece date validated (ValidDate)
+FECFormatMulticurrencyAmount=Mehrwährungs-Betrag (Montantdevise)
+FECFormatMulticurrencyCode=Mehrwährungs-Code (Idevise)
+
 DateExport=Datum Export
 WarningReportNotReliable=Achtung, dieser Bericht basiert nicht auf dem Hauptbuch und enthält keine Transaktionen, die manuell im Hauptbuch geändert wurden. Wenn Ihre Journalisierung aktuell ist, ist die Buchhaltungsansicht genauer.
 ExpenseReportJournal=Spesenabrechnung Journal
 InventoryJournal=Inventarjournal
+
+NAccounts=%s Konten

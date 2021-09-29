@@ -16,50 +16,52 @@
 #
 # Generic
 #
-Assets = Assets
-NewAsset = New asset
-AccountancyCodeAsset = Accounting code (asset)
-AccountancyCodeDepreciationAsset = Accounting code (depreciation asset account)
-AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
-NewAssetType=New asset type
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
-AssetType=Asset type
-AssetsLines=Assets
-DeleteType=Delete
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
-ShowTypeCard=Show type '%s'
+Assets = Aktivlar
+NewAsset = Yangi aktiv
+AccountancyCodeAsset = Buxgalteriya kodi (aktiv)
+AccountancyCodeDepreciationAsset = Buxgalteriya kodi (amortizatsiya aktivlari hisobi)
+AccountancyCodeDepreciationExpense = Buxgalteriya kodi (amortizatsiya xarajatlari hisobi)
+NewAssetType=Yangi aktiv turi
+AssetsTypeSetup=Obyekt turini sozlash
+AssetTypeModified=Obyekt turi o'zgartirildi
+AssetType=Obyekt turi
+AssetsLines=Aktivlar
+DeleteType=O'chirish
+DeleteAnAssetType=Obyekt turini o'chirib tashlang
+ConfirmDeleteAssetType=Ushbu aktiv turini o'chirishni xohlaysizmi?
+ShowTypeCard="%s" turini ko'rsatish
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Assets
+ModuleAssetsName = Aktivlar
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Assets description
+ModuleAssetsDesc = Aktivlarning tavsifi
 
 #
 # Admin page
 #
-AssetsSetup = Assets setup
-Settings = Settings
-AssetsSetupPage = Assets setup page
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
-AssetsType=Asset type
-AssetsTypeId=Asset type id
-AssetsTypeLabel=Asset type label
-AssetsTypes=Assets types
+AssetsSetup = Aktivlarni sozlash
+Settings = Sozlamalar
+AssetsSetupPage = Aktivlarni sozlash sahifasi
+ExtraFieldsAssetsType = Qo'shimcha atributlar (aktiv turi)
+AssetsType=Obyekt turi
+AssetsTypeId=Obyekt turi identifikatori
+AssetsTypeLabel=Obyekt turi yorlig'i
+AssetsTypes=Aktiv turlari
 
 #
 # Menu
 #
-MenuAssets = Assets
-MenuNewAsset = New asset
-MenuTypeAssets = Type assets
-MenuListAssets = List
-MenuNewTypeAssets = New
-MenuListTypeAssets = List
+MenuAssets = Aktivlar
+MenuNewAsset = Yangi aktiv
+MenuTypeAssets = Aktivlarni kiriting
+MenuListAssets = Ro'yxat
+MenuNewTypeAssets = Yangi
+MenuListTypeAssets = Ro'yxat
 
 #
 # Module
 #
-NewAssetType=New asset type
-NewAsset=New asset
+Asset=Aktiv
+NewAssetType=Yangi aktiv turi
+NewAsset=Yangi aktiv
+ConfirmDeleteAsset=Haqiqatan ham ushbu aktivni o'chirishni xohlaysizmi?

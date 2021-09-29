@@ -36,12 +36,26 @@ if ($object->fetch($id) < 1) {
 	exit();
 }
 
+$permissiontoread = $user->rights->produit->lire || $user->rights->service->lire;
+
+// Security check
+if (empty($conf->variants->enabled)) {
+	accessforbidden('Module not enabled');
+}
+if ($user->socid > 0) { // Protection if external user
+	accessforbidden();
+}
+//$result = restrictedArea($user, 'variant');
+if (!$permissiontoread) accessforbidden();
+
 
 /*
  * Actions
  */
 
-if ($cancel) $action = '';
+if ($cancel) {
+	$action = '';
+}
 
 if ($action) {
 	if ($action == 'update') {
@@ -60,19 +74,16 @@ if ($action) {
 			$objectval->ref = $ref;
 			$objectval->value = GETPOST('value', 'alpha');
 
-			if (empty($objectval->ref))
-			{
+			if (empty($objectval->ref)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Ref")), null, 'errors');
 			}
-			if (empty($objectval->value))
-			{
+			if (empty($objectval->value)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				if ($objectval->update($user) > 0) {
 					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 				} else {
@@ -102,8 +113,7 @@ if ($confirm == 'yes') {
 			header('Location: '.dol_buildpath('/variants/list.php', 2));
 		}
 		exit();
-	} elseif ($action == 'confirm_deletevalue')
-	{
+	} elseif ($action == 'confirm_deletevalue') {
 		if ($objectval->fetch($valueid) > 0) {
 			if ($objectval->delete($user) < 1) {
 				setEventMessages($langs->trans('CoreErrorMessage'), $objectval->errors, 'errors');
@@ -124,9 +134,11 @@ if ($confirm == 'yes') {
 
 $langs->load('products');
 
+$help_url = 'EN:Module_Products#Variants';
+
 $title = $langs->trans('ProductAttributeName', dol_htmlentities($object->label));
 
-llxHeader('', $title);
+llxHeader('', $title, $help_url);
 
 //print load_fiche_titre($title);
 

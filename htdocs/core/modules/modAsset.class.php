@@ -22,7 +22,7 @@
  *
  *  \file       htdocs/core/modules/modAsset.class.php
  *  \ingroup    asset
- *  \brief      Description and activation file for module Assets
+ *  \brief      Description and activation file for the module assets
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -69,7 +69,7 @@ class modAsset extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto = 'accounting';
+		$this->picto = 'asset';
 
 		// Defined all module parts (triggers, login, substitutions, menus, css, etc...)
 		// for default path (eg: /asset/core/xxxxx) (0=disable, 1=enable)
@@ -90,7 +90,7 @@ class modAsset extends DolibarrModules
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("assets");
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(7, 0); // Minimum version of Dolibarr required by module
 		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
@@ -105,8 +105,7 @@ class modAsset extends DolibarrModules
 		$this->const = array();
 
 
-		if (!isset($conf->asset) || !isset($conf->asset->enabled))
-		{
+		if (!isset($conf->asset) || !isset($conf->asset->enabled)) {
 			$conf->asset = new stdClass();
 			$conf->asset->enabled = 0;
 		}

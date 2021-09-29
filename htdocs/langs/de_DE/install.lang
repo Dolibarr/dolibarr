@@ -206,6 +206,7 @@ MigrationUserPhotoPath=Migration der Foto-Verzeichnispfade für Benutzer
 MigrationFieldsSocialNetworks=Migration von Benutzerfeldern in sozialen Netzwerken (%s)
 MigrationReloadModule=Neu Laden von Modul %s
 MigrationResetBlockedLog=Modul BlockedLog für v7 Algorithmus zurücksetzen
+MigrationImportOrExportProfiles=Migration of import or export profiles (%s)
 ShowNotAvailableOptions=Nicht verfügbare Optionen anzeigen
 HideNotAvailableOptions=Nicht verfügbare Optionen ausblenden
 ErrorFoundDuringMigration=Während des Migrationsprozesses wurden Fehler gemeldet. Der nächste Schritt ist nicht verfügbar. Um Fehler zu ignorieren, können Sie <a href="%s"> hier klicken </a>, aber die Anwendung oder einige Funktionen funktionieren möglicherweise nicht richtig, bis die Fehler behoben sind.

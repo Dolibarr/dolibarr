@@ -21,7 +21,7 @@
  * 		\brief      Module for FTP client module
  *      \file       htdocs/core/modules/modFTP.class.php
  *      \ingroup    ftp
- *      \brief      Description and activation file for module FTP
+ *      \brief      Description and activation file for the module FTP
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

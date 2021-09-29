@@ -64,3 +64,5 @@ InterLineDuration=Line duration intervention
 InterLineDesc=Line description intervention
 RepeatableIntervention=Intervences paraugs
 ToCreateAPredefinedIntervention=Lai izveidotu iepriekš noteiktu vai atkārtotu intervenci, izveidojiet kopēju intervenci un pārveidojiet to par intervences veidni
+Reopen=Atvērt pa jaunu
+ConfirmReopenIntervention=Vai tiešām vēlaties atvērt iejaukšanos <b> %s </b>?

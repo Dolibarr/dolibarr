@@ -61,5 +61,7 @@ MenuListTypeAssets = Lista
 #
 # Module
 #
+Asset=Tillgång
 NewAssetType=Ny tillgångstyp
 NewAsset=Ny tillgång
+ConfirmDeleteAsset=Är du säker på att du vill ta bort denna tillgång?

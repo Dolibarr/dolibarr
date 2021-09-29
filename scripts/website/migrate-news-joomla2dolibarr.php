@@ -22,7 +22,9 @@
  * \brief Migrate news from a Joomla databse into a Dolibarr website
  */
 
-if (!defined('NOSESSION')) define('NOSESSION', '1');
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
@@ -82,8 +84,7 @@ $websiteid = $website->id;
 $importid = dol_print_date(dol_now(), 'dayhourlog');
 
 $dbjoomla = getDoliDBInstance('mysqli', $joomlahost, $joomlalogin, $joomlapass, $joomladatabase, $joomlaport);
-if ($dbjoomla->error)
-{
+if ($dbjoomla->error) {
 	dol_print_error($dbjoomla, "host=".$joomlahost.", port=".$joomlaport.", user=".$joomlalogin.", databasename=".$joomladatabase.", ".$dbjoomla->error);
 	exit(-1);
 }
@@ -124,10 +125,14 @@ while ($obj = $dbjoomla->fetch_object($resql)) {
 		$title = $obj->title;
 		//$description = dol_string_nohtmltag($obj->introtext);
 		$description = trim(dol_trunc(dol_string_nohtmltag($obj->metadesc), 250));
-		if (empty($description)) $description = trim(dol_trunc(dol_string_nohtmltag($obj->introtext), 250));
+		if (empty($description)) {
+			$description = trim(dol_trunc(dol_string_nohtmltag($obj->introtext), 250));
+		}
 
 		$htmltext = "";
-		if ($blogpostheader) $htmltext .= $blogpostheader."\n";
+		if ($blogpostheader) {
+			$htmltext .= $blogpostheader."\n";
+		}
 		$htmltext .= '<section id="mysectionnewsintro" contenteditable="true">'."\n";
 		$htmltext .= $obj->introtext;
 		$htmltext .= '</section>'."\n";
@@ -137,7 +142,9 @@ while ($obj = $dbjoomla->fetch_object($resql)) {
 			$htmltext .= $obj->fulltext;
 			$htmltext .= "</section>";
 		}
-		if ($blogpostfooter) $htmltext .= "\n".$blogpostfooter;
+		if ($blogpostfooter) {
+			$htmltext .= "\n".$blogpostfooter;
+		}
 
 		$language = ($forcelang ? $forcelang : ($obj->language && $obj->language != '*' ? $obj->language : 'en'));
 		$keywords = $obj->metakey;

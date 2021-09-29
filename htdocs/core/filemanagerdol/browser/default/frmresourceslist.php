@@ -115,25 +115,25 @@ function OpenFolder( folderPath )
 
 function GetUrlParam( paramName )
 {
-    var oRegex = new RegExp( '[\?&]' + paramName + '=([^&]+)', 'i' );
-    var oMatch = oRegex.exec( window.top.location.search );
+	var oRegex = new RegExp( '[\?&]' + paramName + '=([^&]+)', 'i' );
+	var oMatch = oRegex.exec( window.top.location.search );
 
-    if ( oMatch && oMatch.length > 1 )
-        return decodeURIComponent( oMatch[1] );
-    else
-        return '' ;
+	if ( oMatch && oMatch.length > 1 )
+		return decodeURIComponent( oMatch[1] );
+	else
+		return '' ;
 }
 
 // Note fileUrl must be already "URL encoded"
 function OpenFile( fileUrl )
 {
-    funcNum = GetUrlParam('CKEditorFuncNum');
-    //window.top.opener.CKEDITOR.tools.callFunction(funcNum, encodeURI( fileUrl ).replace( '#', '%23' ));
+	funcNum = GetUrlParam('CKEditorFuncNum');
+	//window.top.opener.CKEDITOR.tools.callFunction(funcNum, encodeURI( fileUrl ).replace( '#', '%23' ));
 	window.top.opener.CKEDITOR.tools.callFunction(funcNum, fileUrl.replace( '#', '%23' ));
 
-    ///////////////////////////////////
-    window.top.close();
-    window.top.opener.focus();
+	///////////////////////////////////
+	window.top.close();
+	window.top.opener.focus();
 }
 
 function LoadResources( resourceType, folderPath )

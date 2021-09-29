@@ -118,35 +118,47 @@ class Mailing extends CommonObject
 
 	/**
 	 * @var int id of user create
-	 * @deprecated
 	 */
 	public $user_creation;
 
 	/**
 	 * @var int id of user create
+	 * @deprecated
 	 */
 	public $user_creat;
 
 	/**
 	 * @var int id of user validate
-	 * @deprecated
 	 */
 	public $user_validation;
 
 	/**
 	 * @var int id of user validate
+	 * @deprecated
 	 */
 	public $user_valid;
 
 	/**
 	 * @var integer|string date_creation
+	 * @deprecated
 	 */
 	public $date_creat;
 
 	/**
+	 * @var integer|string date_creation
+	 */
+	public $date_creation;
+
+	/**
 	 * @var int date validate
+	 * @deprecated
 	 */
 	public $date_valid;
+
+	/**
+	 * @var int date validate
+	 */
+	public $date_validation;
 
 	/**
 	 * @var array extraparams
@@ -196,6 +208,12 @@ class Mailing extends CommonObject
 	{
 		global $conf, $langs;
 
+		// Check properties
+		if ($this->body === 'InvalidHTMLString') {
+			$this->error = 'InvalidHTMLString';
+			return -1;
+		}
+
 		$this->db->begin();
 
 		$this->title = trim($this->title);
@@ -240,11 +258,17 @@ class Mailing extends CommonObject
 	/**
 	 *  Update emailing record
 	 *
-	 *  @param	User	$user 		Object of user making change
+	 *  @param  User	$user 		Object of user making change
 	 *  @return int				    < 0 if KO, > 0 if OK
 	 */
 	public function update($user)
 	{
+		// Check properties
+		if ($this->body === 'InvalidHTMLString') {
+			$this->error = 'InvalidHTMLString';
+			return -1;
+		}
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
 		$sql .= " SET titre = '".$this->db->escape($this->title)."'";
 		$sql .= ", sujet = '".$this->db->escape($this->sujet)."'";
@@ -314,10 +338,14 @@ class Mailing extends CommonObject
 				$this->email_errorsto = $obj->email_errorsto;
 
 				$this->user_creat = $obj->fk_user_creat;
+				$this->user_creation = $obj->fk_user_creat;
 				$this->user_valid = $obj->fk_user_valid;
+				$this->user_validation = $obj->fk_user_valid;
 
 				$this->date_creat = $this->db->jdate($obj->date_creat);
+				$this->date_creation = $this->db->jdate($obj->date_creat);
 				$this->date_valid = $this->db->jdate($obj->date_valid);
+				$this->date_validation = $this->db->jdate($obj->date_valid);
 				$this->date_envoi = $this->db->jdate($obj->date_envoi);
 
 				$this->extraparams = (array) json_decode($obj->extraparams, true);
@@ -411,7 +439,7 @@ class Mailing extends CommonObject
 				$sql .= " source_id ,";
 				$sql .= " source_type";
 				$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles";
-				$sql .= " WHERE fk_mailing = ".$fromid;
+				$sql .= " WHERE fk_mailing = ".((int) $fromid);
 
 				$result = $this->db->query($sql);
 				if ($result) {
@@ -477,22 +505,44 @@ class Mailing extends CommonObject
 	/**
 	 *  Delete emailing
 	 *
-	 *  @param	int		$rowid      id du mailing a supprimer
-	 *  @return int         		1 en cas de succes
+	 *  @param	int		$rowid      Id if emailing to delete
+	 *  @param	int		$notrigger	Disable triggers
+	 *  @return int         		>0 if OK, <0 if KO
 	 */
-	public function delete($rowid)
+	public function delete($rowid, $notrigger = 0)
 	{
+		global $user;
+
+		$this->db->begin();
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing";
-		$sql .= " WHERE rowid = ".$rowid;
+		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog("Mailing::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			return $this->delete_targets();
+			$res = $this->delete_targets();
+			if ($res <= 0) {
+				$this->db->rollback();
+				$this->error = $this->db->lasterror();
+				return -1;
+			}
 		} else {
+			$this->db->rollback();
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
+
+		if (!$notrigger) {
+			$result = $this->call_trigger('MAILING_DELETE', $user);
+			if ($result < 0) {
+				$this->db->rollback();
+				return -1;
+			}
+		}
+
+		$this->db->commit();
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

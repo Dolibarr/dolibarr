@@ -147,8 +147,9 @@ class EvalMath
 		$this->last_error = null;
 		$this->last_error_code = null;
 		$expr = trim($expr);
-		if (substr($expr, - 1, 1) == ';')
+		if (substr($expr, - 1, 1) == ';') {
 			$expr = substr($expr, 0, strlen($expr) - 1); // strip semicolons at the end
+		}
 														 // ===============
 														 // is it a variable assignment?
 		$matches = array();
@@ -156,8 +157,9 @@ class EvalMath
 			if (in_array($matches[1], $this->vb)) { // make sure we're not assigning to a constant
 				return $this->trigger(1, "cannot assign to constant '$matches[1]'", $matches[1]);
 			}
-			if (($tmp = $this->pfx($this->nfx($matches[2]))) === false)
+			if (($tmp = $this->pfx($this->nfx($matches[2]))) === false) {
 				return false; // get the result and make sure it's good
+			}
 			$this->v[$matches[1]] = $tmp; // if so, stick it in the variable array
 			return $this->v[$matches[1]]; // and return the resulting value
 										  // ===============
@@ -168,8 +170,9 @@ class EvalMath
 				return $this->trigger(2, "cannot redefine built-in function '$matches[1]()'", $matches[1]);
 			}
 			$args = explode(",", preg_replace("/\s+/", "", $matches[2])); // get the arguments
-			if (($stack = $this->nfx($matches[3])) === false)
+			if (($stack = $this->nfx($matches[3])) === false) {
 				return false; // see if it can be converted to postfix
+			}
 			$nbstack = count($stack);
 			for ($i = 0; $i < $nbstack; $i++) { // freeze the state of the non-argument variables
 				$token = $stack[$i];
@@ -210,8 +213,9 @@ class EvalMath
 	private function funcs()
 	{
 		$output = array();
-		foreach ($this->f as $fnn => $dat)
+		foreach ($this->f as $fnn => $dat) {
 			$output[] = $fnn.'('.implode(',', $dat['args']).')';
+		}
 		return $output;
 	}
 
@@ -281,11 +285,13 @@ class EvalMath
 					$arg_count = $stack->pop(); // see how many arguments there were (cleverly stored on the stack, thank you)
 					$output[] = $stack->pop(); // pop the function and push onto the output
 					if (in_array($fnn, $this->fb)) { // check the argument count
-						if ($arg_count > 1)
+						if ($arg_count > 1) {
 							return $this->trigger(6, "wrong number of arguments ($arg_count given, 1 expected)", array($arg_count, 1));
+						}
 					} elseif (array_key_exists($fnn, $this->f)) {
-						if ($arg_count != count($this->f[$fnn]['args']))
+						if ($arg_count != count($this->f[$fnn]['args'])) {
 							return $this->trigger(6, "wrong number of arguments ($arg_count given, ".count($this->f[$fnn]['args'])." expected)", array($arg_count, count($this->f[$fnn]['args'])));
+						}
 					} else { // did we somehow push a non-function on the stack? this should never happen
 						return $this->trigger(7, "internal error");
 					}
@@ -301,8 +307,9 @@ class EvalMath
 					}
 				}
 				// make sure there was a function
-				if (!preg_match("/^([a-z]\w*)\($/", $stack->last(2), $matches))
+				if (!preg_match("/^([a-z]\w*)\($/", $stack->last(2), $matches)) {
 					return $this->trigger(5, "unexpected ','", ",");
+				}
 				$stack->push($stack->pop() + 1); // increment the argument count
 				$stack->push('('); // put the ( back on, we'll need to pop back to it again
 				$index++;
@@ -350,8 +357,9 @@ class EvalMath
 			}
 		}
 		while (!is_null($op = $stack->pop())) { // pop everything off the stack and push onto output
-			if ($op == '(')
+			if ($op == '(') {
 				return $this->trigger(11, "expecting ')'", ")"); // if there are (s on the stack, ()s were unbalanced
+			}
 			$output[] = $op;
 		}
 		return $output;
@@ -366,8 +374,9 @@ class EvalMath
 	 */
 	private function pfx($tokens, $vars = array())
 	{
-		if ($tokens == false)
+		if ($tokens == false) {
 			return false;
+		}
 
 		$stack = new EvalMathStack();
 
@@ -375,10 +384,12 @@ class EvalMath
 									  // if the token is a binary operator, pop two values off the stack, do the operation, and push the result back on
 			$matches = array();
 			if (in_array($token, array('+', '-', '*', '/', '^'))) {
-				if (is_null($op2 = $stack->pop()))
+				if (is_null($op2 = $stack->pop())) {
 					return $this->trigger(12, "internal error");
-				if (is_null($op1 = $stack->pop()))
+				}
+				if (is_null($op1 = $stack->pop())) {
 					return $this->trigger(13, "internal error");
+				}
 				switch ($token) {
 					case '+':
 						$stack->push($op1 + $op2);
@@ -390,8 +401,9 @@ class EvalMath
 						$stack->push($op1 * $op2);
 						break;
 					case '/':
-						if ($op2 == 0)
+						if ($op2 == 0) {
 							return $this->trigger(14, "division by zero");
+						}
 						$stack->push($op1 / $op2);
 						break;
 					case '^':
@@ -405,18 +417,21 @@ class EvalMath
 			} elseif (preg_match("/^([a-z]\w*)\($/", $token, $matches)) { // it's a function!
 				$fnn = $matches[1];
 				if (in_array($fnn, $this->fb)) { // built-in function:
-					if (is_null($op1 = $stack->pop()))
+					if (is_null($op1 = $stack->pop())) {
 						return $this->trigger(15, "internal error");
+					}
 					$fnn = preg_replace("/^arc/", "a", $fnn); // for the 'arc' trig synonyms
-					if ($fnn == 'ln')
+					if ($fnn == 'ln') {
 						$fnn = 'log';
+					}
 					eval('$stack->push('.$fnn.'($op1));'); // perfectly safe eval()
 				} elseif (array_key_exists($fnn, $this->f)) { // user function
 															  // get args
 					$args = array();
 					for ($i = count($this->f[$fnn]['args']) - 1; $i >= 0; $i--) {
-						if (is_null($args[$this->f[$fnn]['args'][$i]] = $stack->pop()))
+						if (is_null($args[$this->f[$fnn]['args'][$i]] = $stack->pop())) {
 							return $this->trigger(16, "internal error");
+						}
 					}
 					$stack->push($this->pfx($this->f[$fnn]['func'], $args)); // yay... recursion!!!!
 				}
@@ -434,8 +449,9 @@ class EvalMath
 			}
 		}
 		// when we're out of tokens, the stack should have a single element, the final result
-		if ($stack->count != 1)
+		if ($stack->count != 1) {
 			return $this->trigger(18, "internal error");
+		}
 		return $stack->pop();
 	}
 
@@ -451,8 +467,9 @@ class EvalMath
 	{
 		$this->last_error = $msg;
 		$this->last_error_code = array($code, $info);
-		if (!$this->suppress_errors)
+		if (!$this->suppress_errors) {
 			trigger_error($msg, E_USER_WARNING);
+		}
 		return false;
 	}
 }

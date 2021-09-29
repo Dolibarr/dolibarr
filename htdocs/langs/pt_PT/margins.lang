@@ -16,12 +16,13 @@ MarginDetails=Detalhes da margem
 ProductMargins=Margens do produto
 CustomerMargins=Margens do cliente
 SalesRepresentativeMargins=Margens de representantes de vendas
+ContactOfInvoice=Contact of invoice
 UserMargins=Margens do utilizador
 ProductService=Produto ou Serviço
 AllProducts=Todos os produtos e serviços
 ChooseProduct/Service=Escolher produto ou serviço
 ForceBuyingPriceIfNull=Forçar compra / preço de custo ao preço de venda, se não definido
-ForceBuyingPriceIfNullDetails=Se compra / preço de custo não definido, e esta opção "ON", a margem será zero on line (compra / preço de custo = preço de venda), caso contrário ("OFF"), a margem será igual ao padrão sugerido.
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0 on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100% if no default value can be found).
 MARGIN_METHODE_FOR_DISCOUNT=Método de margem para descontos globais
 UseDiscountAsProduct=Como um produto
 UseDiscountAsService=Como um serviço
@@ -31,12 +32,12 @@ MARGIN_TYPE=Preço de compra / custo sugerido por padrão para cálculo de marge
 MargeType1=Margem no melhor preço do fornecedor
 MargeType2=Margem no Preço Médio Ponderado (WAP)
 MargeType3=Margem no Preço de Custo
-MarginTypeDesc=* Margem sobre o melhor preço de compra = Preço de venda - Melhor preço de fornecedor definido no cartão do produto <br> * Margem no preço médio ponderado (WAP) = Preço de venda - Preço médio ponderado pelo produto (WAP) ou melhor preço do fornecedor se WAP ainda não definido br> * Margem no preço de custo = Preço de venda - Preço de custo definido no cartão do produto ou WAP se o preço de custo não estiver definido, ou melhor preço do fornecedor se o WAP ainda não estiver definido
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best vendor price if WAP not yet defined
 CostPrice=Preço de custo
 UnitCharges=Custos unitários
 Charges=Custos
 AgentContactType=Tipo de contacto usado para comissionamento
-AgentContactTypeDetails=Defina que tipo de contacto (associado em faturas) será usado no relatório de margens, por representante de vendas
+AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per contact/address. Note that reading statistics on a contact is not reliable since in most cases the contact may not be defined explicitely on the invoices.
 rateMustBeNumeric=A taxa deve ser um valor numérico
 markRateShouldBeLesserThan100=A taxa de marca deve ser menor que 100
 ShowMarginInfos=Mostrar informações da margem

@@ -52,18 +52,25 @@ function expensereport_prepare_head($object)
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/expensereport/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	}
 	$head[$h][2] = 'documents';
 	$h++;
 
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
-	{
+	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
 		$nbNote = 0;
-		if (!empty($object->note_private)) $nbNote++;
-		if (!empty($object->note_public)) $nbNote++;
+		if (!empty($object->note_private)) {
+			$nbNote++;
+		}
+		if (!empty($object->note_public)) {
+			$nbNote++;
+		}
 		$head[$h][0] = DOL_URL_ROOT.'/expensereport/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
-		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		if ($nbNote > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		}
 		$head[$h][2] = 'note';
 		$h++;
 	}
@@ -133,16 +140,14 @@ function expensereport_admin_prepare_head()
 	$head[$h][2] = 'expensereport';
 	$h++;
 
-	if (!empty($conf->global->MAIN_USE_EXPENSE_RULE))
-	{
+	if (!empty($conf->global->MAIN_USE_EXPENSE_RULE)) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/expensereport_rules.php";
 		$head[$h][1] = $langs->trans("ExpenseReportsRules");
 		$head[$h][2] = 'expenserules';
 		$h++;
 	}
 
-	if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
-	{
+	if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/expensereport_ik.php";
 		$head[$h][1] = $langs->trans("ExpenseReportsIk");
 		$head[$h][2] = 'expenseik';
@@ -163,8 +168,8 @@ function expensereport_admin_prepare_head()
 	/*
 	$head[$h][0] = DOL_URL_ROOT.'/fichinter/admin/fichinterdet_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
-    $head[$h][2] = 'attributesdet';
-    $h++;
+	$head[$h][2] = 'attributesdet';
+	$h++;
 	*/
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'expensereport_admin', 'remove');

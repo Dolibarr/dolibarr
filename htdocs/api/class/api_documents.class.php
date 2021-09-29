@@ -20,7 +20,6 @@
 use Luracast\Restler\RestException;
 use Luracast\Restler\Format\UploadFormat;
 
-
 require_once DOL_DOCUMENT_ROOT.'/main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -36,7 +35,7 @@ class Documents extends DolibarrApi
 	/**
 	 * @var array   $DOCUMENT_FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $DOCUMENT_FIELDS = array(
+	public static $DOCUMENT_FIELDS = array(
 		'modulepart'
 	);
 
@@ -106,8 +105,7 @@ class Documents extends DolibarrApi
 		$filename = basename($original_file);
 		$original_file_osencoded = dol_osencode($original_file); // New file name encoded in OS encoding charset
 
-		if (!file_exists($original_file_osencoded))
-		{
+		if (!file_exists($original_file_osencoded)) {
 			dol_syslog("Try to download not found file ".$original_file_osencoded, LOG_WARNING);
 			throw new RestException(404, 'File not found');
 		}
@@ -148,8 +146,7 @@ class Documents extends DolibarrApi
 		}
 
 		$outputlangs = $langs;
-		if ($langcode && $langs->defaultlang != $langcode)
-		{
+		if ($langcode && $langs->defaultlang != $langcode) {
 			$outputlangs = new Translate('', $conf);
 			$outputlangs->setDefaultLang($langcode);
 		}
@@ -187,8 +184,7 @@ class Documents extends DolibarrApi
 
 		$templateused = '';
 
-		if ($modulepart == 'facture' || $modulepart == 'invoice')
-		{
+		if ($modulepart == 'facture' || $modulepart == 'invoice') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$this->invoice = new Facture($this->db);
 			$result = $this->invoice->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
@@ -201,9 +197,7 @@ class Documents extends DolibarrApi
 			if ($result <= 0) {
 				throw new RestException(500, 'Error generating document');
 			}
-		}
-		elseif ($modulepart == 'commande' || $modulepart == 'order')
-		{
+		} elseif ($modulepart == 'commande' || $modulepart == 'order') {
 			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 			$this->order = new Commande($this->db);
 			$result = $this->order->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
@@ -215,9 +209,7 @@ class Documents extends DolibarrApi
 			if ($result <= 0) {
 				throw new RestException(500, 'Error generating document');
 			}
-		}
-		elseif ($modulepart == 'propal' || $modulepart == 'proposal')
-		{
+		} elseif ($modulepart == 'propal' || $modulepart == 'proposal') {
 			require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 			$this->propal = new Propal($this->db);
 			$result = $this->propal->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
@@ -236,8 +228,7 @@ class Documents extends DolibarrApi
 		$filename = basename($original_file);
 		$original_file_osencoded = dol_osencode($original_file); // New file name encoded in OS encoding charset
 
-		if (!file_exists($original_file_osencoded))
-		{
+		if (!file_exists($original_file_osencoded)) {
 			throw new RestException(404, 'File not found');
 		}
 
@@ -278,8 +269,7 @@ class Documents extends DolibarrApi
 		$recursive = 0;
 		$type = 'files';
 
-		if ($modulepart == 'societe' || $modulepart == 'thirdparty')
-		{
+		if ($modulepart == 'societe' || $modulepart == 'thirdparty') {
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 			if (!DolibarrApiAccess::$user->rights->societe->lire) {
@@ -293,9 +283,7 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->societe->multidir_output[$object->entity]."/".$object->id;
-		}
-		elseif ($modulepart == 'user')
-		{
+		} elseif ($modulepart == 'user') {
 			require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 			// Can get doc if has permission to read all user or if it is user itself
@@ -310,9 +298,7 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id;
-		}
-		elseif ($modulepart == 'adherent' || $modulepart == 'member')
-		{
+		} elseif ($modulepart == 'adherent' || $modulepart == 'member') {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 			if (!DolibarrApiAccess::$user->rights->adherent->lire) {
@@ -326,9 +312,7 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->adherent->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'member');
-		}
-		elseif ($modulepart == 'propal' || $modulepart == 'proposal')
-		{
+		} elseif ($modulepart == 'propal' || $modulepart == 'proposal') {
 			require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
 			if (!DolibarrApiAccess::$user->rights->propal->lire) {
@@ -342,9 +326,7 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
-		}
-		elseif ($modulepart == 'commande' || $modulepart == 'order')
-		{
+		} elseif ($modulepart == 'commande' || $modulepart == 'order') {
 			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
 			if (!DolibarrApiAccess::$user->rights->commande->lire) {
@@ -358,9 +340,7 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->commande->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'commande');
-		}
-		elseif ($modulepart == 'shipment' || $modulepart == 'expedition')
-		{
+		} elseif ($modulepart == 'shipment' || $modulepart == 'expedition') {
 			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
 			if (!DolibarrApiAccess::$user->rights->expedition->lire) {
@@ -374,9 +354,7 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
-		}
-		elseif ($modulepart == 'facture' || $modulepart == 'invoice')
-		{
+		} elseif ($modulepart == 'facture' || $modulepart == 'invoice') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 			if (!DolibarrApiAccess::$user->rights->facture->lire) {
@@ -390,9 +368,7 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->facture->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'invoice');
-		}
-		elseif ($modulepart == 'facture_fournisseur' || $modulepart == 'supplier_invoice')
-		{
+		} elseif ($modulepart == 'facture_fournisseur' || $modulepart == 'supplier_invoice') {
 			$modulepart = 'supplier_invoice';
 
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -408,9 +384,7 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->fournisseur->dir_output."/facture/".get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').dol_sanitizeFileName($object->ref);
-		}
-		elseif ($modulepart == 'produit' || $modulepart == 'product')
-		{
+		} elseif ($modulepart == 'produit' || $modulepart == 'product') {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 			if (!DolibarrApiAccess::$user->rights->produit->lire) {
@@ -426,9 +400,7 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'product');
-		}
-		elseif ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event')
-		{
+		} elseif ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event') {
 			require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 			if (!DolibarrApiAccess::$user->rights->agenda->myactions->read && !DolibarrApiAccess::$user->rights->agenda->allactions->read) {
@@ -442,9 +414,7 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($object->ref);
-		}
-		elseif ($modulepart == 'expensereport')
-		{
+		} elseif ($modulepart == 'expensereport') {
 			require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
 			if (!DolibarrApiAccess::$user->rights->expensereport->read && !DolibarrApiAccess::$user->rights->expensereport->read) {
@@ -458,9 +428,7 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
-		}
-		elseif ($modulepart == 'categorie' || $modulepart == 'category')
-		{
+		} elseif ($modulepart == 'categorie' || $modulepart == 'category') {
 			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 			if (!DolibarrApiAccess::$user->rights->categorie->lire) {
@@ -523,9 +491,9 @@ class Documents extends DolibarrApi
 	 * @throws RestException
 	 */
 	/*
-    public function get($id) {
-        return array('note'=>'xxx');
-    }*/
+	public function get($id) {
+		return array('note'=>'xxx');
+	}*/
 
 
 	/**
@@ -557,12 +525,11 @@ class Documents extends DolibarrApi
 		global $db, $conf;
 
 		/*var_dump($modulepart);
-        var_dump($filename);
-        var_dump($filecontent);
-        exit;*/
+		var_dump($filename);
+		var_dump($filecontent);
+		exit;*/
 
-		if (empty($modulepart))
-		{
+		if (empty($modulepart)) {
 			throw new RestException(400, 'Modulepart not provided.');
 		}
 
@@ -571,41 +538,39 @@ class Documents extends DolibarrApi
 		}
 
 		$newfilecontent = '';
-		if (empty($fileencoding)) $newfilecontent = $filecontent;
-		if ($fileencoding == 'base64') $newfilecontent = base64_decode($filecontent);
+		if (empty($fileencoding)) {
+			$newfilecontent = $filecontent;
+		}
+		if ($fileencoding == 'base64') {
+			$newfilecontent = base64_decode($filecontent);
+		}
 
 		$original_file = dol_sanitizeFileName($filename);
 
 		// Define $uploadir
 		$object = null;
 		$entity = DolibarrApiAccess::$user->entity;
-		if (empty($entity)) $entity = 1;
+		if (empty($entity)) {
+			$entity = 1;
+		}
 
-		if ($ref)
-		{
+		if ($ref) {
 			$tmpreldir = '';
 
-			if ($modulepart == 'facture' || $modulepart == 'invoice')
-			{
+			if ($modulepart == 'facture' || $modulepart == 'invoice') {
 				$modulepart = 'facture';
 
 				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 				$object = new Facture($this->db);
-			}
-			elseif ($modulepart == 'facture_fournisseur' || $modulepart == 'supplier_invoice')
-			{
+			} elseif ($modulepart == 'facture_fournisseur' || $modulepart == 'supplier_invoice') {
 				$modulepart = 'supplier_invoice';
 
 				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 				$object = new FactureFournisseur($this->db);
-			}
-			elseif ($modulepart == 'project')
-			{
+			} elseif ($modulepart == 'project') {
 				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$object = new Project($this->db);
-			}
-			elseif ($modulepart == 'task' || $modulepart == 'project_task')
-			{
+			} elseif ($modulepart == 'task' || $modulepart == 'project_task') {
 				$modulepart = 'project_task';
 
 				require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
@@ -614,36 +579,26 @@ class Documents extends DolibarrApi
 				$task_result = $object->fetch('', $ref);
 
 				// Fetching the tasks project is required because its out_dir might be a sub-directory of the project
-				if ($task_result > 0)
-				{
+				if ($task_result > 0) {
 					$project_result = $object->fetch_projet();
 
-					if ($project_result >= 0)
-					{
+					if ($project_result >= 0) {
 						$tmpreldir = dol_sanitizeFileName($object->project->ref).'/';
 					}
 				} else {
 					throw new RestException(500, 'Error while fetching Task '.$ref);
 				}
-			}
-			elseif ($modulepart == 'product' || $modulepart == 'produit' || $modulepart == 'service' || $modulepart == 'produit|service')
-			{
+			} elseif ($modulepart == 'product' || $modulepart == 'produit' || $modulepart == 'service' || $modulepart == 'produit|service') {
 				require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 				$object = new Product($this->db);
-			}
-			elseif ($modulepart == 'expensereport')
-			{
+			} elseif ($modulepart == 'expensereport') {
 				require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 				$object = new ExpenseReport($this->db);
-			}
-			elseif ($modulepart == 'adherent' || $modulepart == 'member')
-			{
+			} elseif ($modulepart == 'adherent' || $modulepart == 'member') {
 				$modulepart = 'adherent';
 				require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 				$object = new Adherent($this->db);
-			}
-			elseif ($modulepart == 'proposal' || $modulepart == 'propal' || $modulepart == 'propale')
-			{
+			} elseif ($modulepart == 'proposal' || $modulepart == 'propal' || $modulepart == 'propale') {
 				$modulepart = 'propale';
 				require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 				$object = new Propal($this->db);
@@ -652,22 +607,18 @@ class Documents extends DolibarrApi
 				throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
 			}
 
-			if (is_object($object))
-			{
+			if (is_object($object)) {
 				$result = $object->fetch('', $ref);
 
-				if ($result == 0)
-				{
+				if ($result == 0) {
 					throw new RestException(404, "Object with ref '".$ref."' was not found.");
-				}
-				elseif ($result < 0)
-				{
+				} elseif ($result < 0) {
 					throw new RestException(500, 'Error while fetching object: '.$object->error);
 				}
 			}
 
 			if (!($object->id > 0)) {
-   				throw new RestException(404, 'The object '.$modulepart." with ref '".$ref."' was not found.");
+				throw new RestException(404, 'The object '.$modulepart." with ref '".$ref."' was not found.");
 			}
 
 			// Special cases that need to use get_exdir to get real dir of object
@@ -681,13 +632,16 @@ class Documents extends DolibarrApi
 			$tmp = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, $ref, 'write');
 			$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
 
-			if (empty($upload_dir) || $upload_dir == '/')
-			{
+			if (empty($upload_dir) || $upload_dir == '/') {
 				throw new RestException(500, 'This value of modulepart ('.$modulepart.') does not support yet usage of ref. Check modulepart parameter or try to use subdir parameter instead of ref.');
 			}
 		} else {
-			if ($modulepart == 'invoice') $modulepart = 'facture';
-			if ($modulepart == 'member') $modulepart = 'adherent';
+			if ($modulepart == 'invoice') {
+				$modulepart = 'facture';
+			}
+			if ($modulepart == 'member') {
+				$modulepart = 'adherent';
+			}
 
 			$relativefile = $subdir;
 			$tmp = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, '', 'write');
@@ -771,12 +725,12 @@ class Documents extends DolibarrApi
 		// Special cases that need to use get_exdir to get real dir of object
 		// If future, all object should use this to define path of documents.
 		/*
-	    $tmpreldir = '';
-	    if ($modulepart == 'supplier_invoice') {
-	    	$tmpreldir = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier');
-	    }
+		$tmpreldir = '';
+		if ($modulepart == 'supplier_invoice') {
+			$tmpreldir = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier');
+		}
 
-	    $relativefile = $tmpreldir.dol_sanitizeFileName($object->ref); */
+		$relativefile = $tmpreldir.dol_sanitizeFileName($object->ref); */
 		$relativefile = $original_file;
 
 		$check_access = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, '', 'read');
@@ -794,8 +748,7 @@ class Documents extends DolibarrApi
 		$filename = basename($original_file);
 		$original_file_osencoded = dol_osencode($original_file); // New file name encoded in OS encoding charset
 
-		if (!file_exists($original_file_osencoded))
-		{
+		if (!file_exists($original_file_osencoded)) {
 			dol_syslog("Try to download not found file ".$original_file_osencoded, LOG_WARNING);
 			throw new RestException(404, 'File not found');
 		}
@@ -825,8 +778,9 @@ class Documents extends DolibarrApi
 		// phpcs:enable
 		$result = array();
 		foreach (Documents::$DOCUMENT_FIELDS as $field) {
-			if (!isset($data[$field]))
+			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
+			}
 			$result[$field] = $data[$field];
 		}
 		return $result;

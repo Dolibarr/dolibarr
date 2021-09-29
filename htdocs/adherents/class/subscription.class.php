@@ -84,8 +84,15 @@ class Subscription extends CommonObject
 	 * @var int ID
 	 */
 	public $fk_type;
+
+	/**
+	 * @var int Member ID
+	 */
 	public $fk_adherent;
 
+	/**
+	 * @var double amount subscription
+	 */
 	public $amount;
 
 	/**
@@ -140,7 +147,9 @@ class Subscription extends CommonObject
 			$this->error = $langs->trans("ErrorBadValueForDate");
 			return -1;
 		}
-		if (empty($this->datec)) $this->datec = $now;
+		if (empty($this->datec)) {
+			$this->datec = $now;
+		}
 
 
 		$this->db->begin();
@@ -156,10 +165,10 @@ class Subscription extends CommonObject
 		} else {
 			$type = $this->fk_type;
 		}
-		$sql .= " VALUES (".$this->fk_adherent.", '".$this->db->escape($type)."', '".$this->db->idate($now)."',";
+		$sql .= " VALUES (".((int) $this->fk_adherent).", '".$this->db->escape($type)."', '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->idate($this->dateh)."',";
 		$sql .= " '".$this->db->idate($this->datef)."',";
-		$sql .= " ".$this->amount.",";
+		$sql .= " ".((float) $this->amount).",";
 		$sql .= " '".$this->db->escape($this->note_public ? $this->note_public : $this->note)."')";
 
 		$resql = $this->db->query($sql);
@@ -177,7 +186,9 @@ class Subscription extends CommonObject
 			$this->context = array('member' => $member);
 			// Call triggers
 			$result = $this->call_trigger('MEMBER_SUBSCRIPTION_CREATE', $user);
-			if ($result < 0) { $error++; }
+			if ($result < 0) {
+				$error++;
+			}
 			// End call triggers
 		}
 
@@ -206,7 +217,7 @@ class Subscription extends CommonObject
 		$sql .= " datef,";
 		$sql .= " subscription, note, fk_bank";
 		$sql .= " FROM ".MAIN_DB_PREFIX."subscription";
-		$sql .= "	WHERE rowid=".$rowid;
+		$sql .= "	WHERE rowid=".((int) $rowid);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -256,14 +267,14 @@ class Subscription extends CommonObject
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."subscription SET ";
-		$sql .= " fk_type = ".$this->fk_type.",";
-		$sql .= " fk_adherent = ".$this->fk_adherent.",";
+		$sql .= " fk_type = ".((int) $this->fk_type).",";
+		$sql .= " fk_adherent = ".((int) $this->fk_adherent).",";
 		$sql .= " note=".($this->note ? "'".$this->db->escape($this->note)."'" : 'null').",";
 		$sql .= " subscription = ".price2num($this->amount).",";
 		$sql .= " dateadh='".$this->db->idate($this->dateh)."',";
 		$sql .= " datef='".$this->db->idate($this->datef)."',";
 		$sql .= " datec='".$this->db->idate($this->datec)."',";
-		$sql .= " fk_bank = ".($this->fk_bank ? $this->fk_bank : 'null');
+		$sql .= " fk_bank = ".($this->fk_bank ? ((int) $this->fk_bank) : 'null');
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -278,7 +289,9 @@ class Subscription extends CommonObject
 				$this->context = array('member'=>$member);
 				// Call triggers
 				$result = $this->call_trigger('MEMBER_SUBSCRIPTION_MODIFY', $user);
-				if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
+				if ($result < 0) {
+					$error++;
+				} //Do also here what you must do to rollback action if trigger fail
 				// End call triggers
 			}
 		} else {
@@ -320,13 +333,15 @@ class Subscription extends CommonObject
 			if (!$notrigger) {
 				// Call triggers
 				$result = $this->call_trigger('MEMBER_SUBSCRIPTION_DELETE', $user);
-				if ($result < 0) { $error++; } // Do also here what you must do to rollback action if trigger fail
+				if ($result < 0) {
+					$error++;
+				} // Do also here what you must do to rollback action if trigger fail
 				// End call triggers
 			}
 		}
 
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."subscription WHERE rowid = ".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."subscription WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -402,21 +417,29 @@ class Subscription extends CommonObject
 			$label .= '<br><b>'.$langs->trans('DateEnd').':</b> '.dol_print_date($this->datef, 'day');
 		}
 
-		$url = DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.$this->id;
+		$url = DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.((int) $this->id);
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
 		}
 
 		$linkstart = '<a href="'.$url.'" class="classfortooltip" title="'.dol_escape_htmltag($label, 1).'">';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= $this->ref;
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		}
+		if ($withpicto != 2) {
+			$result .= $this->ref;
+		}
 		$result .= $linkend;
 
 		return $result;
@@ -460,7 +483,7 @@ class Subscription extends CommonObject
 		$sql = 'SELECT c.rowid, c.datec,';
 		$sql .= ' c.tms as datem';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'subscription as c';
-		$sql .= ' WHERE c.rowid = '.$id;
+		$sql .= ' WHERE c.rowid = '.((int) $id);
 
 		$result = $this->db->query($sql);
 		if ($result) {

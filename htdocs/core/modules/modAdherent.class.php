@@ -27,7 +27,7 @@
  *      \brief      Module to manage members of a foundation
  *		\file       htdocs/core/modules/modAdherent.class.php
  *      \ingroup    member
- *      \brief      File descriptor or module Member
+ *      \brief      Description and activation file for the module member
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -66,7 +66,7 @@ class modAdherent extends DolibarrModules
 		);
 
 		// Config pages
-		$this->config_page_url = array("adherent.php@adherents");
+		$this->config_page_url = array("member.php@adherents");
 
 		// Dependencies
 		$this->hidden = false; // A condition to hide module
@@ -74,7 +74,7 @@ class modAdherent extends DolibarrModules
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array('modMailmanSpip'); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("members", "companies");
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 
 		// Constants
 		$this->const = array();
@@ -192,8 +192,12 @@ class modAdherent extends DolibarrModules
 		// Boxes
 		//-------
 		$this->boxes = array(
-			0=>array('file'=>'box_members.php', 'enabledbydefaulton'=>'Home'),
-			2=>array('file'=>'box_birthdays_members.php', 'enabledbydefaulton'=>'Home')
+			0 => array('file'=>'box_members.php', 'enabledbydefaulton'=>'Home'),
+			2 => array('file'=>'box_birthdays_members.php', 'enabledbydefaulton'=>'Home'),
+			3 => array('file'=>'box_members_last_modified.php', 'enabledbydefaulton'=>'membersindex'),
+			4 => array('file'=>'box_members_last_subscriptions.php', 'enabledbydefaulton'=>'membersindex'),
+			5 => array('file'=>'box_members_subscriptions_by_year.php', 'enabledbydefaulton'=>'membersindex'),
+			6 => array('file'=>'box_members_by_type.php', 'enabledbydefaulton'=>'membersindex'),
 		);
 
 		// Permissions
@@ -305,7 +309,9 @@ class modAdherent extends DolibarrModules
 			'c.rowid'=>'subscription', 'c.dateadh'=>'subscription', 'c.datef'=>'subscription', 'c.subscription'=>'subscription'
 		);
 		// Add extra fields
-		$keyforselect = 'adherent'; $keyforelement = 'member'; $keyforaliasextra = 'extra';
+		$keyforselect = 'adherent';
+		$keyforelement = 'member';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// End add axtra fields
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -338,29 +344,37 @@ class modAdherent extends DolibarrModules
 			'a.email'=>"Email", 'a.birth'=>"Birthday", 'a.statut'=>"Status*", 'a.photo'=>"Photo", 'a.note_public'=>"NotePublic", 'a.note_private'=>"NotePrivate",
 			'a.datec'=>'DateCreation', 'a.datefin'=>'DateEndSubscription'
 		);
+		if (!empty($conf->societe->enabled)) {
+			$this->import_fields_array[$r]['a.fk_soc'] = "ThirdParty";
+		}
 		// Add extra fields
 		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'adherent' AND entity IN (0,".$conf->entity.")";
 		$resql = $this->db->query($sql);
-		if ($resql)    // This can fail when class is used on old database (during migration for example)
-		{
-			while ($obj = $this->db->fetch_object($resql))
-			{
+		if ($resql) {    // This can fail when class is used on old database (during migration for example)
+			while ($obj = $this->db->fetch_object($resql)) {
 				$fieldname = 'extra.'.$obj->name;
 				$fieldlabel = ucfirst($obj->label);
 				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
 			}
 		}
 		// End add extra fields
+		$this->import_convertvalue_array[$r] = array();
+		if (!empty($conf->societe->enabled)) {
+			$this->import_convertvalue_array[$r]['a.fk_soc'] = array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty');
+		}
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'adherent'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_regex_array[$r] = array(
 			'a.civility'=>'code@'.MAIN_DB_PREFIX.'c_civility', 'a.fk_adherent_type'=>'rowid@'.MAIN_DB_PREFIX.'adherent_type', 'a.morphy'=>'(phy|mor)',
 			'a.statut'=>'^[0|1]', 'a.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 'a.datefin'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
 		$this->import_examplevalues_array[$r] = array(
-			'a.civility'=>"MR", 'a.lastname'=>'Smith', 'a.firstname'=>'John', 'a.login'=>'jsmith', 'a.pass'=>'passofjsmith', 'a.fk_adherent_type'=>'1',
+			'a.civility'=>"MR", 'a.lastname'=>'Smith', 'a.firstname'=>'John', 'a.gender'=>'man or woman', 'a.login'=>'jsmith', 'a.pass'=>'passofjsmith', 'a.fk_adherent_type'=>'1',
 			'a.morphy'=>'"mor" or "phy"', 'a.societe'=>'JS company', 'a.address'=>'21 jump street', 'a.zip'=>'55000', 'a.town'=>'New York', 'a.country'=>'1',
 			'a.email'=>'jsmith@example.com', 'a.birth'=>'1972-10-10', 'a.statut'=>"0 or 1", 'a.note_public'=>"This is a public comment on member",
 			'a.note_private'=>"This is private comment on member", 'a.datec'=>dol_print_date($now, '%Y-%m__%d'), 'a.datefin'=>dol_print_date(dol_time_plus_duree($now, 1, 'y'), '%Y-%m-%d')
 		);
+		if (!empty($conf->societe->enabled)) {
+			$this->import_examplevalues_array[$r]['a.fk_soc'] = "rowid or name";
+		}
 
 		// Cronjobs
 		$arraydate = dol_getdate(dol_now());
@@ -399,24 +413,22 @@ class modAdherent extends DolibarrModules
 		// Permissions
 		$this->remove($options);
 
-		//ODT template
+		// ODT template
 		/*
-        $src=DOL_DOCUMENT_ROOT.'/install/doctemplates/orders/template_order.odt';
-        $dirodt=DOL_DATA_ROOT.'/doctemplates/orders';
-        $dest=$dirodt.'/template_order.odt';
+		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/orders/template_order.odt';
+		$dirodt=DOL_DATA_ROOT.'/doctemplates/orders';
+		$dest=$dirodt.'/template_order.odt';
 
-        if (file_exists($src) && ! file_exists($dest))
-        {
-            require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-            dol_mkdir($dirodt);
-            $result=dol_copy($src,$dest,0,0);
-            if ($result < 0)
-            {
-                $langs->load("errors");
-                $this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
-                return 0;
-            }
-        }*/
+		if (file_exists($src) && ! file_exists($dest)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			dol_mkdir($dirodt);
+			$result=dol_copy($src,$dest,0,0);
+			if ($result < 0) {
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+				return 0;
+			}
+		}*/
 
 		$sql = array(
 			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type='member' AND entity = ".$conf->entity,

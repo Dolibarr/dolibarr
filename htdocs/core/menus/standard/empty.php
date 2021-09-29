@@ -285,13 +285,12 @@ class MenuManager
 							}
 							print $disabled.'">'; // ui-btn to highlight on clic
 							if ($relurl2) {
-								if ($val2['enabled']) {	// Allowed
-									print '<a href="'.$relurl2.'"';
-									//print ' data-ajax="false"';
-									print '>';
+								if ($val2['enabled']) {
+									// Allowed
+									print '<a href="'.$relurl2.'">';
 									$lastlevel2[$val2['level']] = 'enabled';
-								} else // Not allowed but visible (greyed)
-								{
+								} else {
+									// Not allowed but visible (greyed)
 									print '<a href="#" class="vsmenudisabled">';
 									$lastlevel2[$val2['level']] = 'greyed';
 								}
@@ -310,6 +309,7 @@ class MenuManager
 									// Allowed
 									print '</a>';
 								} else {
+									// Not allowed
 									print '</a>';
 								}
 							}
@@ -370,7 +370,9 @@ class MenuManager
 			}
 
 			if (empty($noout)) {
-				$alt = 0; $altok = 0; $blockvmenuopened = false;
+				$alt = 0;
+				$altok = 0;
+				$blockvmenuopened = false;
 				$num = count($menu_array);
 				for ($i = 0; $i < $num; $i++) {
 					$alt++;

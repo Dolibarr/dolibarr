@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - vendors
 Suppliers=仕入先s
 SuppliersInvoice=仕入先請求書
+SupplierInvoices=仕入先請求書
 ShowSupplierInvoice=仕入先の請求書を表示する
 NewSupplier=新規仕入先
 History=歴史
@@ -15,7 +16,7 @@ SomeSubProductHaveNoPrices=一部のサブ製品には価格が定義されて�
 AddSupplierPrice=購入価格を追加
 ChangeSupplierPrice=購入価格の変更
 SupplierPrices=仕入先価格
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=この仕入先リファレンスは、すでに製品に関連付けられています：%s
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=この仕入先リファレンスは、すでに製品に関連付けられている：%s
 NoRecordedSuppliers=仕入先は記録されていない
 SupplierPayment=仕入先の支払
 SuppliersArea=仕入先エリア

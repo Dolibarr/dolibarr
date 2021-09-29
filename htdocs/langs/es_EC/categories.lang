@@ -1,16 +1,7 @@
 # Dolibarr language file - Source file is en_US - categories
 Rubriques=Etiquetas/Categorías
-NoCategoryYet=No se ha creado ninguna etiqueta/categoría de este tipo
 AddIn=Añadir
 CategoriesArea=Etiquetas/Categorías área
-ProductsCategoriesArea=Área de etiquetas/categorías de productos/servicios
-SuppliersCategoriesArea=Área de etiquetas / categorías de proveedores
-CustomersCategoriesArea=Categorías de etiquetas/categorías de clientes
-MembersCategoriesArea=Miembros tags/categories area
-ContactsCategoriesArea=Zona de etiquetas/categorías de contactos
-AccountsCategoriesArea=Cuentas tags/categories area
-ProjectsCategoriesArea=Área de etiquetas/categorías de proyectos
-UsersCategoriesArea=Etiquetas de usuarios / área de categorías
 CatList=Lista de etiquetas/categorías
 CreateThisCat=Crea esta etiqueta/categoría
 NoSubCat=No subcategoría.

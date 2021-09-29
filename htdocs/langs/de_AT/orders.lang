@@ -4,6 +4,7 @@ OrderToProcess=Zu bearbeitende Bestellung
 StatusOrderValidatedShort=Bestätigt
 StatusOrderValidated=Bestätigt
 StatusOrderOnProcess=In Arbeit
+AddPurchaseOrder=Bestellung anlegen
 RefOrder=Bestellung Nr.
 AuthorRequest=Authorenrechte beantragen
 PaymentOrderRef=Zahlung zu Bestellung %s

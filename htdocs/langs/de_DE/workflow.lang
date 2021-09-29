@@ -22,4 +22,4 @@ descWORKFLOW_TICKET_CLOSE_INTERVENTION=Schließen Sie alle mit dem Ticket verkn�
 AutomaticCreation=automatische Erstellung
 AutomaticClassification=Automatische Klassifikation
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Klassifizieren Sie die verknüpfte Quellensendung als geschlossen, wenn die Kundenrechnung validiert ist.

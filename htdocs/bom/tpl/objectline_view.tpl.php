@@ -35,8 +35,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || !is_object($object))
-{
+if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -44,11 +43,21 @@ if (empty($object) || !is_object($object))
 
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
 
-if (empty($dateSelector)) $dateSelector = 0;
-if (empty($forceall)) $forceall = 0;
-if (empty($senderissupplier)) $senderissupplier = 0;
-if (empty($inputalsopricewithtax)) $inputalsopricewithtax = 0;
-if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax = 0;
+if (empty($dateSelector)) {
+	$dateSelector = 0;
+}
+if (empty($forceall)) {
+	$forceall = 0;
+}
+if (empty($senderissupplier)) {
+	$senderissupplier = 0;
+}
+if (empty($inputalsopricewithtax)) {
+	$inputalsopricewithtax = 0;
+}
+if (empty($outputalsopricetotalwithtax)) {
+	$outputalsopricetotalwithtax = 0;
+}
 
 // add html5 elements
 $domData  = ' data-element="'.$line->element.'"';
@@ -79,8 +88,7 @@ $coldisplay++;
 echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formating role of function price
 print '</td>';
 
-if (!empty($conf->global->PRODUCT_USE_UNITS))
-{
+if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 	print '<td class="linecoluseunit nowrap left">';
 	$label = $tmpproduct->getLabelOfUnit('long');
 	if ($label !== '') {
@@ -159,9 +167,8 @@ if ($action == 'selectlines') {
 print '</tr>';
 
 //Line extrafield
-if (!empty($extrafields))
-{
-	print $line->showOptionals($extrafields, 'view', array('style'=>'class="drag drop oddeven"', 'colspan'=>$coldisplay), '', '', 1);
+if (!empty($extrafields)) {
+	print $line->showOptionals($extrafields, 'view', array('style'=>'class="drag drop oddeven"', 'colspan'=>$coldisplay), '', '', 1, 'line');
 }
 
 print "<!-- END PHP TEMPLATE objectline_view.tpl.php -->\n";

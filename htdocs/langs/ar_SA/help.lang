@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - help
 CommunitySupport=منتدى / ويكي الدعم
 EMailSupport=دعم رسائل البريد الإلكتروني
-RemoteControlSupport=الوقت الحقيقي عبر الإنترنت / الدعم عن بعد
+RemoteControlSupport=Online real-time / remote support
 OtherSupport=دعم آخر
 ToSeeListOfAvailableRessources=للاتصال / الاطلاع على الموارد المتاحة:
-HelpCenter=مركز المساعدة
+HelpCenter=Help Center
 DolibarrHelpCenter=Dolibarr Help and Support Center
 ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
 TypeOfSupport=Type of support
@@ -17,7 +17,7 @@ TypeHelpOnly=المساعدة فقط
 TypeHelpDev=مساعدة + التنمية
 TypeHelpDevForm=Help+Development+Training
 BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+LinkToGoldMember=يمكنك اختيار احد المدربين المختارين مسبقا بواسطة دوليبار من اجل لغتك (1%s) بالضغط على البريمج الخاص بهم (يتم تحديث الحالة والحد الاعلى للسعر تلقائياً)
 PossibleLanguages=اللغات المدعومة
 SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
 SeeOfficalSupport=للحصول على دعم رسمي من دوليبار بلغتك: <br> <b> <a href="%s" target="_blank"> %s </a></b>

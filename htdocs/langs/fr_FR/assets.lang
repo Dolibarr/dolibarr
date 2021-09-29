@@ -61,5 +61,7 @@ MenuListTypeAssets = Liste
 #
 # Module
 #
+Asset=Immobilisations
 NewAssetType=Nouveau type d'immobilisation
 NewAsset=Nouvelle immobilisation
+ConfirmDeleteAsset=Voulez-vous vraiment supprimer cet élément?

@@ -30,9 +30,9 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/expensereport/class/expensereport.class.php';
 
 if (empty($user->id)) {
-    print "Load permissions for admin user nb 1\n";
-    $user->fetch(1);
-    $user->getrights();
+	print "Load permissions for admin user nb 1\n";
+	$user->fetch(1);
+	$user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
@@ -47,270 +47,270 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  */
 class ExpenseReportTest extends PHPUnit\Framework\TestCase
 {
-    protected $savconf;
-    protected $savuser;
-    protected $savlangs;
-    protected $savdb;
+	protected $savconf;
+	protected $savuser;
+	protected $savlangs;
+	protected $savdb;
 
-    /**
-     * Constructor
-     * We save global variables into local variables
-     *
-     * @return ExpenseReportTest
-     */
-    public function __construct()
-    {
-    	parent::__construct();
+	/**
+	 * Constructor
+	 * We save global variables into local variables
+	 *
+	 * @return ExpenseReportTest
+	 */
+	public function __construct()
+	{
+		parent::__construct();
 
-    	//$this->sharedFixture
-        global $conf,$user,$langs,$db;
-        $this->savconf=$conf;
-        $this->savuser=$user;
-        $this->savlangs=$langs;
-        $this->savdb=$db;
+		//$this->sharedFixture
+		global $conf,$user,$langs,$db;
+		$this->savconf=$conf;
+		$this->savuser=$user;
+		$this->savlangs=$langs;
+		$this->savdb=$db;
 
-        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-        //print " - db ".$db->db;
-        print "\n";
-    }
+		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+		//print " - db ".$db->db;
+		print "\n";
+	}
 
-    /**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
+	/**
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass()
+	{
+		global $conf,$user,$langs,$db;
+		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-        print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->rollback();
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass()
+	{
+		global $conf,$user,$langs,$db;
+		$db->rollback();
 
-        print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * Init phpunit tests
-     *
-     * @return  void
-     */
-    protected function setUp()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * Init phpunit tests
+	 *
+	 * @return  void
+	 */
+	protected function setUp()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        print __METHOD__."\n";
-        //print $db->getVersion()."\n";
-    }
-    /**
-     * End phpunit tests
-     *
-     * @return	void
-     */
-    protected function tearDown()
-    {
-        print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+		//print $db->getVersion()."\n";
+	}
+	/**
+	 * End phpunit tests
+	 *
+	 * @return	void
+	 */
+	protected function tearDown()
+	{
+		print __METHOD__."\n";
+	}
 
-    /**
-     * testExpenseReportCreate
-     *
-     * @return	void
-     */
-    public function testExpenseReportCreate()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testExpenseReportCreate
+	 *
+	 * @return	void
+	 */
+	public function testExpenseReportCreate()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        // Create supplier order with a too low quantity
-        $localobject=new ExpenseReport($db);
-        $localobject->initAsSpecimen();         // Init a specimen with lines
-        $localobject->status = 0;
-        $localobject->fk_statut = 0;
-        $localobject->date_fin = null;  // Force bad value
+		// Create supplier order with a too low quantity
+		$localobject=new ExpenseReport($db);
+		$localobject->initAsSpecimen();         // Init a specimen with lines
+		$localobject->status = 0;
+		$localobject->fk_statut = 0;
+		$localobject->date_fin = null;  // Force bad value
 
-        $result=$localobject->create($user);
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals(-1, $result, "Error on test ExpenseReport create 1 : ".$localobject->error);       // must be -1 because of missing mandatory fields
+		$result=$localobject->create($user);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(-1, $result, "Error on test ExpenseReport create 1 : ".$localobject->error);       // must be -1 because of missing mandatory fields
 
-        $sql="DELETE FROM ".MAIN_DB_PREFIX."expensereport where ref=''";
-        $db->query($sql);
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."expensereport where ref=''";
+		$db->query($sql);
 
-        // Create supplier order
-        $localobject2=new ExpenseReport($db);
-        $localobject2->initAsSpecimen();        // Init a specimen with lines
-        $localobject2->status = 0;
-        $localobject2->fk_statut = 0;
+		// Create supplier order
+		$localobject2=new ExpenseReport($db);
+		$localobject2->initAsSpecimen();        // Init a specimen with lines
+		$localobject2->status = 0;
+		$localobject2->fk_statut = 0;
 
-        $result=$localobject2->create($user);
-        print __METHOD__." result=".$result."\n";
-        $this->assertGreaterThanOrEqual(0, $result, "Error on test ExpenseReport create 2 : ".$localobject2->error);
+		$result=$localobject2->create($user);
+		print __METHOD__." result=".$result."\n";
+		$this->assertGreaterThanOrEqual(0, $result, "Error on test ExpenseReport create 2 : ".$localobject2->error);
 
-        return $result;
-    }
+		return $result;
+	}
 
 
-    /**
-     * testExpenseReportFetch
-     *
-     * @param   int $id     Id of supplier order
-     * @return  void
-     *
-     * @depends testExpenseReportCreate
-     * The depends says test is run only if previous is ok
-     */
-    public function testExpenseReportFetch($id)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testExpenseReportFetch
+	 *
+	 * @param   int $id     Id of supplier order
+	 * @return  void
+	 *
+	 * @depends testExpenseReportCreate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testExpenseReportFetch($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        $localobject=new ExpenseReport($this->savdb);
-        $result=$localobject->fetch($id);
+		$localobject=new ExpenseReport($this->savdb);
+		$result=$localobject->fetch($id);
 
-        print __METHOD__." id=".$id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        return $localobject;
-    }
+		print __METHOD__." id=".$id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		return $localobject;
+	}
 
-    /**
-     * testExpenseReportValid
-     *
-     * @param   Object $localobject     Supplier order
-     * @return  void
-     *
-     * @depends testExpenseReportFetch
-     * The depends says test is run only if previous is ok
-     */
-    public function testExpenseReportValid($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testExpenseReportValid
+	 *
+	 * @param   ExpenseReport $localobject     ExpenseReport
+	 * @return  void
+	 *
+	 * @depends testExpenseReportFetch
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testExpenseReportValid($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        $result=$localobject->setValidate($user);
+		$result=$localobject->setValidate($user);
 
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        return $localobject;
-    }
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		return $localobject;
+	}
 
-    /**
-     * testExpenseReportApprove
-     *
-     * @param   Object $localobject Supplier order
-     * @return  void
-     *
-     * @depends testExpenseReportValid
-     * The depends says test is run only if previous is ok
-     */
-    public function testExpenseReportApprove($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testExpenseReportApprove
+	 *
+	 * @param   ExpenseReport $localobject ExpenseReport
+	 * @return  void
+	 *
+	 * @depends testExpenseReportValid
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testExpenseReportApprove($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        $result=$localobject->setApproved($user);
+		$result=$localobject->setApproved($user);
 
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        return $localobject;
-    }
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		return $localobject;
+	}
 
-    /**
-     * testExpenseReportCancel
-     *
-     * @param   Object  $localobject        Supplier order
-     * @return  void
-     *
-     * @depends testExpenseReportApprove
-     * The depends says test is run only if previous is ok
-     */
-    public function testExpenseReportCancel($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testExpenseReportCancel
+	 *
+	 * @param   ExpenseReport  $localobject        ExpenseReport
+	 * @return  void
+	 *
+	 * @depends testExpenseReportApprove
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testExpenseReportCancel($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        $result=$localobject->set_cancel($user, 'Because...');
+		$result=$localobject->set_cancel($user, 'Because...');
 
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        return $localobject;
-    }
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		return $localobject;
+	}
 
-    /**
-     * testExpenseReportOther
-     *
-     * @param   Object $localobject     Supplier order
-     * @return  void
-     *
-     * @depends testExpenseReportCancel
-     * The depends says test is run only if previous is ok
-     */
-    public function testExpenseReportOther($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testExpenseReportOther
+	 *
+	 * @param   ExpenseReport $localobject     ExpenseReport
+	 * @return  void
+	 *
+	 * @depends testExpenseReportCancel
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testExpenseReportOther($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        $result=$localobject->getSumPayments();
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertGreaterThanOrEqual(0, $result);
+		$result=$localobject->getSumPayments();
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertGreaterThanOrEqual(0, $result);
 
-        return $localobject->id;
-    }
+		return $localobject->id;
+	}
 
-    /**
-     * testExpenseReportDelete
-     *
-     * @param   int $id     Id of order
-     * @return  void
-     *
-     * @depends testExpenseReportOther
-     * The depends says test is run only if previous is ok
-     */
-    public function testExpenseReportDelete($id)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testExpenseReportDelete
+	 *
+	 * @param   int $id     Id of order
+	 * @return  void
+	 *
+	 * @depends testExpenseReportOther
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testExpenseReportDelete($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        $localobject=new ExpenseReport($this->savdb);
-        $result=$localobject->fetch($id);
-        $result=$localobject->delete($user);
+		$localobject=new ExpenseReport($this->savdb);
+		$result=$localobject->fetch($id);
+		$result=$localobject->delete($user);
 
-        print __METHOD__." id=".$id." result=".$result."\n";
-        $this->assertGreaterThan(0, $result);
-        return $result;
-    }
+		print __METHOD__." id=".$id." result=".$result."\n";
+		$this->assertGreaterThan(0, $result);
+		return $result;
+	}
 }

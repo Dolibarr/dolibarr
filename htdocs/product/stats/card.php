@@ -51,16 +51,21 @@ $mesg = '';
 $graphfiles = array();
 
 $socid = '';
-if (!empty($user->socid)) $socid = $user->socid;
+if (!empty($user->socid)) {
+	$socid = $user->socid;
+}
 
 // Security check
 $fieldvalue = (!empty($id) ? $id : $ref);
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
-$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 $tmp = dol_getdate(dol_now());
 $currentyear = $tmp['year'];
-if (empty($search_year)) $search_year = $currentyear;
+if (empty($search_year)) {
+	$search_year = $currentyear;
+}
+
+$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 
 /*
@@ -83,7 +88,7 @@ if (!$id && empty($ref)) {
 
 	$type = GETPOST('type', 'int');
 
-   	$helpurl = '';
+	$helpurl = '';
 	if ($type == '0') {
 		$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 		//$title=$langs->trans("StatisticsOfProducts");
@@ -99,7 +104,9 @@ if (!$id && empty($ref)) {
 	}
 
 	$picto = 'product';
-	if ($type == 1) $picto = 'service';
+	if ($type == 1) {
+		$picto = 'service';
+	}
 
 	print load_fiche_titre($title, $mesg, $picto);
 } else {
@@ -178,9 +185,8 @@ if ($result || empty($id)) {
 		// Tag
 		if ($conf->categorie->enabled) {
 			print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
-			//$moreforfilter.='<div class="divsearchfield">';
-			$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1);
-			//$moreforfilter.='</div>';
+			$moreforfilter .= img_picto($langs->trans("Categories"), 'category', 'class="pictofixedwidth"');
+			$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1, 1, 'widthcentpercentminusx maxwidth300');
 			print $moreforfilter;
 			print '</td></tr>';
 		}
@@ -189,42 +195,65 @@ if ($result || empty($id)) {
 	// Year
 	print '<tr><td class="titlefield">'.$langs->trans("Year").'</td><td>';
 	$arrayyears = array();
-	for ($year = $currentyear - 25; $year < $currentyear; $year++)
-	{
+	for ($year = $currentyear - 25; $year < $currentyear; $year++) {
 		$arrayyears[$year] = $year;
 	}
-	if (!in_array($year, $arrayyears)) $arrayyears[$year] = $year;
-	if (!in_array($currentyear, $arrayyears)) $arrayyears[$currentyear] = $currentyear;
+	if (!in_array($year, $arrayyears)) {
+		$arrayyears[$year] = $year;
+	}
+	if (!in_array($currentyear, $arrayyears)) {
+		$arrayyears[$currentyear] = $currentyear;
+	}
 	arsort($arrayyears);
-	print $form->selectarray('search_year', $arrayyears, $search_year, 1);
+	print $form->selectarray('search_year', $arrayyears, $search_year, 1, 0, 0, '', 0, 0, 0, '', 'width75');
 	print '</td></tr>';
 	print '</table>';
-	print '<div class="center"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></div>';
-	print '</form>';
+	print '<div class="center"><input type="submit" name="submit" class="button small" value="'.$langs->trans("Refresh").'"></div>';
+	print '</form><br>';
 
 	print '<br>';
 
 
 	// Choice of stats mode (byunit or bynumber)
-	if (!empty($conf->dol_use_jmobile)) print "\n".'<div class="fichecenter"><div class="nowrap">'."\n";
+	if (!empty($conf->dol_use_jmobile)) {
+		print "\n".'<div class="fichecenter"><div class="nowrap">'."\n";
+	}
 
-	if ($mode == 'bynumber') print '<a class="a-mesure-disabled" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).($type != '' ? '&type='.$type : '').'&mode=byunit&search_year='.$search_year.'">';
-	else print '<span class="a-mesure">';
+	if ($mode == 'bynumber') {
+		print '<a class="a-mesure-disabled" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).($type != '' ? '&type='.$type : '').'&mode=byunit&search_year='.$search_year.'">';
+	} else {
+		print '<span class="a-mesure">';
+	}
 	print $langs->trans("StatsByNumberOfUnits");
-	if ($mode == 'bynumber') print '</a>';
-	else print '</span>';
+	if ($mode == 'bynumber') {
+		print '</a>';
+	} else {
+		print '</span>';
+	}
 
-	if (!empty($conf->dol_use_jmobile)) print '</div>'."\n".'<div class="nowrap">'."\n";
-	else print ' &nbsp; ';
+	if (!empty($conf->dol_use_jmobile)) {
+		print '</div>'."\n".'<div class="nowrap">'."\n";
+	} else {
+		print ' &nbsp; ';
+	}
 
-	if ($mode == 'byunit') print '<a class="a-mesure-disabled" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).($type != '' ? '&type='.$type : '').'&mode=bynumber&search_year='.$search_year.'">';
-	else print '<span class="a-mesure">';
+	if ($mode == 'byunit') {
+		print '<a class="a-mesure-disabled" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).($type != '' ? '&type='.$type : '').'&mode=bynumber&search_year='.$search_year.'">';
+	} else {
+		print '<span class="a-mesure">';
+	}
 	print $langs->trans("StatsByNumberOfEntities");
-	if ($mode == 'byunit') print '</a>';
-	else print '</span>';
+	if ($mode == 'byunit') {
+		print '</a>';
+	} else {
+		print '</span>';
+	}
 
-	if (!empty($conf->dol_use_jmobile)) print '</div></div>';
-	else print '<br>';
+	if (!empty($conf->dol_use_jmobile)) {
+		print '</div></div>';
+	} else {
+		print '<br>';
+	}
 	print '<br>';
 
 	//print '<table width="100%">';
@@ -294,7 +323,9 @@ if ($result || empty($id)) {
 		$mesg = $px->isGraphKo();
 		if (!$mesg) {
 			foreach ($graphfiles as $key => $val) {
-				if (!$graphfiles[$key]['file']) continue;
+				if (!$graphfiles[$key]['file']) {
+					continue;
+				}
 
 				$graph_data = array();
 
@@ -306,20 +337,36 @@ if ($result || empty($id)) {
 						$categ = new Categorie($db);
 						$categ->fetch($search_categ);
 						$listofprodids = $categ->getObjectsInCateg('product', 1);
-						$morefilters = ' AND d.fk_product IN ('.((is_array($listofprodids) && count($listofprodids)) ? join(',', $listofprodids) : '0').')';
+						$morefilters = ' AND d.fk_product IN ('.$db->sanitize((is_array($listofprodids) && count($listofprodids)) ? join(',', $listofprodids) : '0').')';
 					}
 					if ($search_categ == -2) {
 						$morefilters = ' AND d.fk_product NOT IN (SELECT cp.fk_product from '.MAIN_DB_PREFIX.'categorie_product as cp)';
 					}
 
-					if ($key == 'propal')             $graph_data = $object->get_nb_propal($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
-					if ($key == 'orders')             $graph_data = $object->get_nb_order($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
-					if ($key == 'invoices')           $graph_data = $object->get_nb_vente($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
-					if ($key == 'proposalssuppliers') $graph_data = $object->get_nb_propalsupplier($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
-					if ($key == 'invoicessuppliers')  $graph_data = $object->get_nb_achat($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
-					if ($key == 'orderssuppliers')    $graph_data = $object->get_nb_ordersupplier($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
-					if ($key == 'contracts')          $graph_data = $object->get_nb_contract($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
-					if ($key == 'mrp')                $graph_data = $object->get_nb_mos($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
+					if ($key == 'propal') {
+						$graph_data = $object->get_nb_propal($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
+					}
+					if ($key == 'orders') {
+						$graph_data = $object->get_nb_order($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
+					}
+					if ($key == 'invoices') {
+						$graph_data = $object->get_nb_vente($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
+					}
+					if ($key == 'proposalssuppliers') {
+						$graph_data = $object->get_nb_propalsupplier($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
+					}
+					if ($key == 'invoicessuppliers') {
+						$graph_data = $object->get_nb_achat($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
+					}
+					if ($key == 'orderssuppliers') {
+						$graph_data = $object->get_nb_ordersupplier($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
+					}
+					if ($key == 'contracts') {
+						$graph_data = $object->get_nb_contract($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
+					}
+					if ($key == 'mrp') {
+						$graph_data = $object->get_nb_mos($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
+					}
 
 					// TODO Save cachefile $graphfiles[$key]['file']
 				}
@@ -354,15 +401,31 @@ if ($result || empty($id)) {
 	$i = 0;
 	if (count($graphfiles) > 0) {
 		foreach ($graphfiles as $key => $val) {
-			if (!$graphfiles[$key]['file']) continue;
+			if (!$graphfiles[$key]['file']) {
+				continue;
+			}
 
-			if ($graphfiles == 'propal' && !$user->rights->propale->lire) continue;
-			if ($graphfiles == 'order' && !$user->rights->commande->lire) continue;
-			if ($graphfiles == 'invoices' && !$user->rights->facture->lire) continue;
-			if ($graphfiles == 'proposals_suppliers' && !$user->rights->supplier_proposal->lire) continue;
-			if ($graphfiles == 'invoices_suppliers' && !$user->rights->fournisseur->facture->lire) continue;
-			if ($graphfiles == 'orders_suppliers' && !$user->rights->fournisseur->commande->lire) continue;
-			if ($graphfiles == 'mrp' && empty($user->rights->mrp->mo->read)) continue;
+			if ($graphfiles == 'propal' && !$user->rights->propale->lire) {
+				continue;
+			}
+			if ($graphfiles == 'order' && !$user->rights->commande->lire) {
+				continue;
+			}
+			if ($graphfiles == 'invoices' && !$user->rights->facture->lire) {
+				continue;
+			}
+			if ($graphfiles == 'proposals_suppliers' && !$user->rights->supplier_proposal->lire) {
+				continue;
+			}
+			if ($graphfiles == 'invoices_suppliers' && !$user->rights->fournisseur->facture->lire) {
+				continue;
+			}
+			if ($graphfiles == 'orders_suppliers' && !$user->rights->fournisseur->commande->lire) {
+				continue;
+			}
+			if ($graphfiles == 'mrp' && empty($user->rights->mrp->mo->read)) {
+				continue;
+			}
 
 
 			if ($i % 2 == 0) {
@@ -373,8 +436,11 @@ if ($result || empty($id)) {
 
 			// Date generation
 			if ($graphfiles[$key]['output'] && !$px->isGraphKo()) {
-				if (file_exists($dir."/".$graphfiles[$key]['file']) && filemtime($dir."/".$graphfiles[$key]['file'])) $dategenerated = $langs->trans("GeneratedOn", dol_print_date(filemtime($dir."/".$graphfiles[$key]['file']), "dayhour"));
-				else $dategenerated = $langs->trans("GeneratedOn", dol_print_date(dol_now(), "dayhour"));
+				if (file_exists($dir."/".$graphfiles[$key]['file']) && filemtime($dir."/".$graphfiles[$key]['file'])) {
+					$dategenerated = $langs->trans("GeneratedOn", dol_print_date(filemtime($dir."/".$graphfiles[$key]['file']), "dayhour"));
+				} else {
+					$dategenerated = $langs->trans("GeneratedOn", dol_print_date(dol_now(), "dayhour"));
+				}
 			} else {
 				$dategenerated = ($mesg ? '<font class="error">'.$mesg.'</font>' : $langs->trans("ChartNotGenerated"));
 			}

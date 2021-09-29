@@ -31,10 +31,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 $langs->loadLangs(array("admin", "compta"));
 
 // Security check
-if ($user->socid > 0)
+if ($user->socid > 0) {
 	accessforbidden();
-if (empty($user->rights->accounting->fiscalyear->write))
+}
+if (empty($user->rights->accounting->fiscalyear->write)) {
 	accessforbidden();
+}
 
 $error = 0;
 
@@ -50,8 +52,9 @@ static $tmpstatut2label = array(
 $statut2label = array(
 		''
 );
-foreach ($tmpstatut2label as $key => $val)
+foreach ($tmpstatut2label as $key => $val) {
 	$statut2label[$key] = $langs->trans($val);
+}
 
 $object = new Fiscalyear($db);
 
@@ -113,15 +116,13 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 		header("Location: ./fiscalyear.php");
 		exit();
 	}
-}
-
-// Update record
-elseif ($action == 'update') {
+} elseif ($action == 'update') {
+	// Update record
 	if (!GETPOST('cancel', 'alpha')) {
 		$result = $object->fetch($id);
 
-		$object->date_start = empty($_POST["fiscalyear"]) ? '' : $date_start;
-		$object->date_end = empty($_POST["fiscalyearend"]) ? '' : $date_end;
+		$object->date_start = GETPOST("fiscalyear") ? $date_start : '';
+		$object->date_end = GETPOST("fiscalyearend") ? $date_end : '';
 		$object->label = GETPOST('label', 'alpha');
 		$object->statut = GETPOST('statut', 'int');
 
@@ -148,11 +149,12 @@ elseif ($action == 'update') {
 $form = new Form($db);
 
 $title = $langs->trans("Fiscalyear")." - ".$langs->trans("Card");
-$helpurl = "";
-llxHeader("", $title, $helpurl);
 
-if ($action == 'create')
-{
+$help_url = "EN:Module_Double_Entry_Accounting";
+
+llxHeader('', $title, $help_url);
+
+if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewFiscalYear"));
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -298,11 +300,10 @@ if ($action == 'create')
 
 			print dol_get_fiche_end();
 
-			if (!empty($user->rights->accounting->fiscalyear->write))
-			{
-				/*
-    			 * Barre d'actions
-    			 */
+			/*
+			 * Action bar
+			 */
+			if (!empty($user->rights->accounting->fiscalyear->write)) {
 				print '<div class="tabsAction">';
 
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$id.'">'.$langs->trans('Modify').'</a>';

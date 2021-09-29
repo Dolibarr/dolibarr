@@ -36,6 +36,8 @@ class box_funnel_of_prospection extends ModeleBoxes
 	public $boxlabel = "BoxTitleFunnelOfProspection";
 	public $depends = array("projet");
 
+	public $version = 'development';
+
 	/**
 	 * @var DoliDB Database handler.
 	 */
@@ -96,6 +98,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 		$listofopplabel = array();
 		$listofoppcode = array();
 		$colorseriesstat = array();
+		$bordercolorseries = array();
 		$sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "c_lead_status as cls";
 		$sql .= " WHERE active=1";
@@ -113,19 +116,24 @@ class box_funnel_of_prospection extends ModeleBoxes
 				$listofoppcode[$objp->rowid] = $objp->code;
 				switch ($objp->code) {
 					case 'PROSP':
-						$colorseriesstat[$objp->rowid] = "-" . $badgeStatus0;
+						$colorseriesstat[$objp->rowid] = '#FFFFFF';
+						$bordercolorseries[$objp->rowid] = $badgeStatus0;
 						break;
 					case 'QUAL':
-						$colorseriesstat[$objp->rowid] = "-" . $badgeStatus1;
+						$colorseriesstat[$objp->rowid] = '#FFFFFF';
+						$bordercolorseries[$objp->rowid] = $badgeStatus1;
 						break;
 					case 'PROPO':
 						$colorseriesstat[$objp->rowid] = $badgeStatus1;
+						$bordercolorseries[$objp->rowid] = $badgeStatus1;
 						break;
 					case 'NEGO':
 						$colorseriesstat[$objp->rowid] = $badgeStatus4;
+						$bordercolorseries[$objp->rowid] = $badgeStatus4;
 						break;
 					case 'WON':
 						$colorseriesstat[$objp->rowid] = $badgeStatus6;
+						$bordercolorseries[$objp->rowid] = $badgeStatus6;
 						break;
 					default:
 						break;
@@ -191,7 +199,10 @@ class box_funnel_of_prospection extends ModeleBoxes
 				$listofstatus = array_keys($listofoppstatus);
 				$liststatus = array();
 				$data = array('');
+				$customlabels = array();
+				$total=0;
 				foreach ($listofstatus as $status) {
+					$customlabel = '';
 					$labelStatus = '';
 					if ($status != 7) {
 						$code = dol_getIdFromCode($this->db, $status, 'c_lead_status', 'rowid', 'code');
@@ -201,8 +212,9 @@ class box_funnel_of_prospection extends ModeleBoxes
 						if (empty($labelStatus)) {
 							$labelStatus = $listofopplabel[$status];
 						}
-
-						$data[] = (isset($valsamount[$status]) ? (float) $valsamount[$status] : 0);
+						$amount = (isset($valsamount[$status]) ? (float) $valsamount[$status] : 0);
+						$data[] = $amount;
+						$customlabel = $amount;
 						$liststatus[] = $labelStatus;
 						if (!$conf->use_javascript_ajax) {
 							$stringtoprint .= '<tr class="oddeven">';
@@ -211,6 +223,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 							$stringtoprint .= "</tr>\n";
 						}
 					}
+					$customlabels[]=$customlabel;
 				}
 				$dataseries[] = $data;
 				if ($conf->use_javascript_ajax) {
@@ -219,13 +232,21 @@ class box_funnel_of_prospection extends ModeleBoxes
 					$dolgraph->SetMinValue(0);
 					$dolgraph->SetData($dataseries);
 					$dolgraph->SetLegend($liststatus);
+					$dolgraph->setHideXValues(true);
 					$dolgraph->SetDataColor(array_values($colorseriesstat));
+					$dolgraph->setBorderColor(array_values($bordercolorseries));
 					$dolgraph->setShowLegend(2);
+					if (!empty($conf->dol_optimize_smallscreen)) {
+						$px1->SetWidth(320);
+					}
 					$dolgraph->setShowPercent(1);
-					$dolgraph->setTitle('');
+					$dolgraph->setMirrorGraphValues(true);
+					$dolgraph->setBorderWidth(2);
 					$dolgraph->SetType(array('horizontalbars'));
 					$dolgraph->SetHeight('200');
 					$dolgraph->SetWidth('600');
+					$dolgraph->setTooltipsTitles($liststatus);
+					$dolgraph->setTooltipsLabels($customlabels);
 					$dolgraph->mode = 'depth';
 					$dolgraph->draw('idgraphleadfunnel');
 					$stringtoprint .= $dolgraph->show($totaloppnb ? 0 : 1);

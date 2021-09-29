@@ -31,8 +31,8 @@ $path=dirname(__FILE__).'/';
 // Test si mode batch
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-    exit;
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	exit;
 }
 
 // Recupere root dolibarr
@@ -57,8 +57,7 @@ define(GEN_NUMBER_SOCIETE, 10);
 
 
 $ret=$user->fetch('', 'admin');
-if (! $ret > 0)
-{
+if (! $ret > 0) {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
 	exit;
 }
@@ -68,8 +67,8 @@ $user->getrights();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product"; $productsid = array();
 $resql=$db->query($sql);
 if ($resql) {
-    $num = $db->num_rows($resql); $i = 0;
-    while ($i < $num) {
+	$num = $db->num_rows($resql); $i = 0;
+	while ($i < $num) {
 		$row = $db->fetch_row($resql);
 		$productsid[$i] = $row[0];
 		$i++;
@@ -80,63 +79,65 @@ $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe"; $societesid = array();
 $resql=$db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql); $i = 0;
-    while ($i < $num) {
+	while ($i < $num) {
 		$row = $db->fetch_row($resql);
 		$societesid[$i] = $row[0];
 		$i++;
 	}
-} else { print "err"; }
+} else {
+	print "err";
+}
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande"; $commandesid = array();
 $resql=$db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql); $i = 0;
-    while ($i < $num) {
+	while ($i < $num) {
 		$row = $db->fetch_row($resql);
 		$commandesid[$i] = $row[0];
 		$i++;
 	}
-} else { print "err"; }
+} else {
+	print "err";
+}
 
 
 
 print "Generates ".GEN_NUMBER_SOCIETE." companies\n";
-for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
-{
-    print "Company $s\n";
-    $soc = new Societe($db);
-    $soc->name = "Company num ".time()."$s";
-    $soc->town = $listoftown[mt_rand(0, count($listoftown)-1)];
-    $soc->client = mt_rand(1, 2);		// Une societe sur 2 est prospect, l'autre client
-    $soc->fournisseur = mt_rand(0, 1);	// Une societe sur 2 est fournisseur
-    $soc->code_client='CU'.time()."$s";
-    $soc->code_fournisseur='SU'.time()."$s";
-    $soc->tva_assuj=1;
-    $soc->country_id=1;
-    $soc->country_code='FR';
+for ($s = 0; $s < GEN_NUMBER_SOCIETE; $s++) {
+	print "Company $s\n";
+	$soc = new Societe($db);
+	$soc->name = "Company num ".time()."$s";
+	$soc->town = $listoftown[mt_rand(0, count($listoftown)-1)];
+	$soc->client = mt_rand(1, 2);		// Une societe sur 2 est prospect, l'autre client
+	$soc->fournisseur = mt_rand(0, 1);	// Une societe sur 2 est fournisseur
+	$soc->code_client='CU'.time()."$s";
+	$soc->code_fournisseur='SU'.time()."$s";
+	$soc->tva_assuj=1;
+	$soc->country_id=1;
+	$soc->country_code='FR';
 	// Un client sur 3 a une remise de 5%
-    $user_remise=mt_rand(1, 3); if ($user_remise==3) $soc->remise_percent=5;
+	$user_remise=mt_rand(1, 3); if ($user_remise==3) {
+		$soc->remise_percent=5;
+	}
 	print "> client=".$soc->client.", fournisseur=".$soc->fournisseur.", remise=".$soc->remise_percent."\n";
-    $soc->note_private = 'Company created by the script generate-societe.php';
-    $socid = $soc->create();
+	$soc->note_private = 'Company created by the script generate-societe.php';
+	$socid = $soc->create();
 
-    if ($socid >= 0)
-    {
-        $rand = mt_rand(1, 4);
-        print "> Generates $rand contact(s)\n";
-        for ($c = 0 ; $c < $rand ; $c++)
-        {
-            $contact = new Contact($db);
-            $contact->socid = $soc->id;
-            $contact->lastname = "Lastname".$c;
-            $contact->firstname = $listoflastname[mt_rand(0, count($listoflastname)-1)];
-            if ( $contact->create($user) )
-            {
-            }
-        }
+	if ($socid >= 0) {
+		$rand = mt_rand(1, 4);
+		print "> Generates $rand contact(s)\n";
+		for ($c = 0; $c < $rand; $c++) {
+			$contact = new Contact($db);
+			$contact->socid = $soc->id;
+			$contact->lastname = "Lastname".$c;
+			$contact->firstname = $listoflastname[mt_rand(0, count($listoflastname)-1)];
+			if ($contact->create($user)) {
+			}
+		}
 
-        print "Company ".$s." created nom=".$soc->name."\n";
-    } else {
-    	print "Error: ".$soc->error."\n";
-    }
+		print "Company ".$s." created nom=".$soc->name."\n";
+	} else {
+		print "Error: ".$soc->error."\n";
+	}
 }

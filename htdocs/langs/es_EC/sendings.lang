@@ -28,7 +28,6 @@ ConfirmValidateSending=¿Está seguro de que desea validar este envío con la re
 ConfirmCancelSending=¿Seguro que desea cancelar este envío?
 DocumentModelMerou=Modelo A5 de Merou
 WarningNoQtyLeftToSend=Advertencia, ningunos productos que esperan para ser enviados.
-StatsOnShipmentsOnlyValidated=Las estadísticas realizadas sobre envíos sólo se validan. La fecha utilizada es la fecha de validación del envío (no siempre se conoce la fecha de entrega planeada).
 RefDeliveryReceipt=Recibo de entrega de ref
 StatusReceipt=Recibo de entrega de estado
 DateReceived=Fecha de entrega recibida

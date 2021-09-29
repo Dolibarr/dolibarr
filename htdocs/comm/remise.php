@@ -33,8 +33,7 @@ $id = GETPOST("id", 'int');
 
 $socid = GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
 // Security check
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
@@ -45,14 +44,12 @@ $backtopage = GETPOST('backtopage', 'alpha');
  * Actions
  */
 
-if (GETPOST('cancel', 'alpha') && !empty($backtopage))
-{
+if (GETPOST('cancel', 'alpha') && !empty($backtopage)) {
 	 header("Location: ".$backtopage);
 	 exit;
 }
 
-if (GETPOST('action', 'aZ09') == 'setremise')
-{
+if (GETPOST('action', 'aZ09') == 'setremise') {
 	$object = new Societe($db);
 	$object->fetch($id);
 
@@ -64,20 +61,24 @@ if (GETPOST('action', 'aZ09') == 'setremise')
 		$result = $object->set_remise_client(price2num(GETPOST("remise")), GETPOST("note", "alphanohtml"), $user);
 	}
 
-	if ($result > 0)
-	{
-		if (!empty($backtopage))
-		{
+	if ($result > 0) {
+		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
 		} else {
-			header("Location: remise.php?id=".$_GET["id"]);
+			header("Location: remise.php?id=".GETPOST("id", 'int'));
 			exit;
 		}
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
+
+// Security check
+if ($user->socid > 0) {
+	$id = $user->socid;
+}
+$result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
 
 
 /*
@@ -88,14 +89,12 @@ $form = new Form($db);
 
 llxHeader();
 
-
 /*********************************************************************************
  *
  * Mode fiche
  *
  *********************************************************************************/
-if ($socid > 0)
-{
+if ($socid > 0) {
 	// On recupere les donnees societes par l'objet
 	$object = new Societe($db);
 	$object->fetch($socid);
@@ -154,25 +153,24 @@ if ($socid > 0)
 
 	/*if (! ($isCustomer && $isSupplier))
 	{
-	    if ($isCustomer && ! $isSupplier) {
-	        print '<input type="hidden" name="discount_type" value="0" />';
-	    }
-	    if (! $isCustomer && $isSupplier) {
-	        print '<input type="hidden" name="discount_type" value="1" />';
-	    }
+		if ($isCustomer && ! $isSupplier) {
+			print '<input type="hidden" name="discount_type" value="0" />';
+		}
+		if (! $isCustomer && $isSupplier) {
+			print '<input type="hidden" name="discount_type" value="1" />';
+		}
 	}*/
 
 	print '<table class="border centpercent">';
 
-	if ($isCustomer || $isSupplier)
-	{
+	if ($isCustomer || $isSupplier) {
 		// Discount type
 		print '<tr><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td><td>';
 		if ($isCustomer) {
-			print '<input type="radio" name="discount_type" id="discount_type_0" checked value="0"/> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
+			print '<input type="radio" name="discount_type" id="discount_type_0" '.(GETPOSTISSET('discount_type') ? (GETPOST('discount_type', 'int') == 0 ? ' checked' : '') : ' checked').' value="0"> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
 		}
 		if ($isSupplier) {
-			print ' <input type="radio" name="discount_type" id="discount_type_1"'.($isCustomer ? '' : ' checked').' value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
+			print ' <input type="radio" name="discount_type" id="discount_type_1"'.(GETPOSTISSET('discount_type') ? (GETPOST('discount_type', 'int') ? ' checked' : '') : ($isCustomer ? '' : ' checked')).' value="1"> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
 		}
 		print '</td></tr>';
 	}
@@ -193,8 +191,7 @@ if ($socid > 0)
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-	if (!empty($backtopage))
-	{
+	if (!empty($backtopage)) {
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	}
@@ -223,8 +220,7 @@ if ($socid > 0)
 		$sql .= " ORDER BY rc.datec DESC";
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			print '<table class="noborder centpercent">';
 			$tag = !$tag;
 			print '<tr class="liste_titre">';
@@ -234,11 +230,9 @@ if ($socid > 0)
 			print '<td class="center">'.$langs->trans("User").'</td>';
 			print '</tr>';
 			$num = $db->num_rows($resql);
-			if ($num > 0)
-			{
+			if ($num > 0) {
 				$i = 0;
-				while ($i < $num)
-				{
+				while ($i < $num) {
 					$obj = $db->fetch_object($resql);
 					print '<tr class="oddeven">';
 					print '<td>'.dol_print_date($db->jdate($obj->dc), "dayhour").'</td>';
@@ -278,8 +272,7 @@ if ($socid > 0)
 		$sql .= " ORDER BY rc.datec DESC";
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			print '<table class="noborder centpercent">';
 			$tag = !$tag;
 			print '<tr class="liste_titre">';
@@ -289,11 +282,9 @@ if ($socid > 0)
 			print '<td class="center">'.$langs->trans("User").'</td>';
 			print '</tr>';
 			$num = $db->num_rows($resql);
-			if ($num > 0)
-			{
+			if ($num > 0) {
 				$i = 0;
-				while ($i < $num)
-				{
+				while ($i < $num) {
 					$obj = $db->fetch_object($resql);
 					print '<tr class="oddeven">';
 					print '<td>'.dol_print_date($db->jdate($obj->dc), "dayhour").'</td>';

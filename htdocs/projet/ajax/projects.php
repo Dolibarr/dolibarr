@@ -23,19 +23,37 @@
  *       \brief      File to return Ajax response on product list request
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
-if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
+if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
 
 require '../../main.inc.php';
 
 $htmlname = GETPOST('htmlname', 'aZ09');
 $socid = GETPOST('socid', 'int');
+$mode = GETPOST('mode', 'aZ09');
 $discard_closed = GETPOST('discardclosed', 'int');
+
+// Security check
+restrictedArea($user, 'projet', 0, 'projet&project');
 
 
 /*
@@ -43,16 +61,17 @@ $discard_closed = GETPOST('discardclosed', 'int');
  */
 
 dol_syslog("Call ajax projet/ajax/projects.php");
-//dol_syslog(join(',', $_GET));
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
 top_httphead();
 
-if (empty($htmlname) && !GETPOST('mode', 'aZ09')) return;
+if (empty($htmlname) && !GETPOST('mode', 'aZ09')) {
+	return;
+}
 
 // Mode to get list of projects
-if (!GETPOST('mode', 'aZ09') || GETPOST('mode', 'aZ09') != 'gettasks') {
+if (empty($mode) || $mode != 'gettasks') {
 	// When used from jQuery, the search term is added as GET param "term".
 	$searchkey = (GETPOSTISSET($htmlname) ? GETPOST($htmlname, 'aZ09') : '');
 
@@ -61,9 +80,9 @@ if (!GETPOST('mode', 'aZ09') || GETPOST('mode', 'aZ09') != 'gettasks') {
 }
 
 // Mode to get list of tasks
-if (GETPOST('mode', 'aZ09') == 'gettasks') {
+if ($mode == 'gettasks') {
 	$formproject = new FormProjets($db);
-	$formproject->selectTasks((!empty($$socid) ? $socid : -1), 0, 'taskid', 24, 1, '1', 1, 0, 0, 'maxwidth500', GETPOST('projectid', 'int'), '');
+	$formproject->selectTasks((!empty($socid) ? $socid : -1), 0, 'taskid', 24, 1, '1', 1, 0, 0, 'maxwidth500', GETPOST('projectid', 'int'), '');
 	return;
 }
 

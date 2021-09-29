@@ -13,17 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#
-# Generic
-#
-
-# Module label 'ModuleZapierForDolibarrName'
 ModuleZapierForDolibarrName = Zapier para Dolibarr
-# Module description 'ModuleZapierForDolibarrDesc'
 ModuleZapierForDolibarrDesc = Zapier para el módulo Dolibarr
-
-#
-# Admin page
-#
-ZapierForDolibarrSetup = Configuración de Zapier para Dolibarr
+ZapierForDolibarrSetup=Configuración de Zapier para Dolibarr
 ZapierDescription=Interfaz con Zapier
+ZapierAbout=Sobre el módulo Zapier
+ZapierSetupPage=No es necesario realizar una configuración en el lado de Dolibarr para utilizar Zapier. Sin embargo, debe generar y publicar un paquete en zapier para poder usar Zapier con Dolibarr. Consulte la documentación sobre <a href="https://wiki.dolibarr.org/index.php/Module_Zapier"> en esta página wiki </a>.

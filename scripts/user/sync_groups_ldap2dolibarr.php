@@ -25,7 +25,9 @@
  * \brief Script to update groups into Dolibarr from LDAP
  */
 
-if (!defined('NOSESSION')) define('NOSESSION', '1');
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
@@ -72,14 +74,18 @@ if (!isset($argv[1])) {
 }
 
 foreach ($argv as $key => $val) {
-	if ($val == 'commitiferror')
+	if ($val == 'commitiferror') {
 		$forcecommit = 1;
-	if (preg_match('/--server=([^\s]+)$/', $val, $reg))
+	}
+	if (preg_match('/--server=([^\s]+)$/', $val, $reg)) {
 		$conf->global->LDAP_SERVER_HOST = $reg[1];
-	if (preg_match('/--excludeuser=([^\s]+)$/', $val, $reg))
+	}
+	if (preg_match('/--excludeuser=([^\s]+)$/', $val, $reg)) {
 		$excludeuser = explode(',', $reg[1]);
-	if (preg_match('/-y$/', $val, $reg))
+	}
+	if (preg_match('/-y$/', $val, $reg)) {
 		$confirmed = 1;
+	}
 }
 
 print "Mails sending disabled (useless in batch mode)\n";
@@ -91,7 +97,11 @@ print "port=".$conf->global->LDAP_SERVER_PORT."\n";
 print "login=".$conf->global->LDAP_ADMIN_DN."\n";
 print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
 print "DN to extract=".$conf->global->LDAP_GROUP_DN."\n";
-print 'Filter=('.$conf->global->LDAP_KEY_GROUPS.'=*)'."\n";
+if (!empty($conf->global->LDAP_GROUP_FILTER)) {
+	print 'Filter=('.$conf->global->LDAP_GROUP_FILTER.')'."\n"; // Note: filter is defined into function getRecords
+} else {
+	print 'Filter=('.$conf->global->LDAP_KEY_GROUPS.'=*)'."\n";
+}
 print "----- To Dolibarr database:\n";
 print "type=".$conf->db->type."\n";
 print "host=".$conf->db->host."\n";
@@ -121,7 +131,7 @@ if ($result >= 0) {
 	// We disable synchro Dolibarr-LDAP
 	$conf->global->LDAP_SYNCHRO_ACTIVE = 0;
 
-	$ldaprecords = $ldap->getRecords('*', $conf->global->LDAP_GROUP_DN, $conf->global->LDAP_KEY_GROUPS, $required_fields, 0, array($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS));
+	$ldaprecords = $ldap->getRecords('*', $conf->global->LDAP_GROUP_DN, $conf->global->LDAP_KEY_GROUPS, $required_fields, 'group', array($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS));
 	if (is_array($ldaprecords)) {
 		$db->begin();
 
@@ -167,8 +177,9 @@ if ($result >= 0) {
 			$userList = array();
 			$userIdList = array();
 			foreach ($ldapgroup[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] as $key => $userdn) {
-				if ($key === 'count')
+				if ($key === 'count') {
 					continue;
+				}
 				if (empty($userList[$userdn])) { // Récupération de l'utilisateur
 												 // Schéma rfc2307: les membres sont listés dans l'attribut memberUid sous form de login uniquement
 					if ($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS === 'memberUid') {
@@ -177,8 +188,9 @@ if ($result >= 0) {
 						$userFilter = explode(',', $userdn);
 						$userKey = $ldap->getAttributeValues('('.$userFilter[0].')', $conf->global->LDAP_KEY_USERS);
 					}
-					if (!is_array($userKey))
+					if (!is_array($userKey)) {
 						continue;
+					}
 
 					$fuser = new User($db);
 
@@ -212,9 +224,11 @@ if ($result >= 0) {
 		}
 
 		if (!$error || $forcecommit) {
-			if (!$error)
+			if (!$error) {
 				print $langs->transnoentities("NoErrorCommitIsDone")."\n";
-			else print $langs->transnoentities("ErrorButCommitIsDone")."\n";
+			} else {
+				print $langs->transnoentities("ErrorButCommitIsDone")."\n";
+			}
 			$db->commit();
 		} else {
 			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error)."\n";

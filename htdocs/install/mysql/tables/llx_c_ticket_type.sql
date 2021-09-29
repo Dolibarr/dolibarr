@@ -13,7 +13,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
---
+-- Type of ticket. For example: COM, ISSUE, REQUEST, PROJECT, OTHER, ...
 
 create table llx_c_ticket_type
 (

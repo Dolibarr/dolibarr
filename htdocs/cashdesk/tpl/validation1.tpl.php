@@ -17,8 +17,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($langs) || !is_object($langs))
-{
+if (empty($langs) || !is_object($langs)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -47,25 +46,27 @@ if ($obj_facturation->amountVat()) {
 		<tr><td class="resume_label"><?php echo $langs->trans("TotalTTC"); ?> </td><td><?php echo price(price2num($obj_facturation->amountWithTax(), 'MT'), 0, $langs, 0, 0, -1, $conf->currency); ?></td></tr>
 		<tr><td class="resume_label"><?php echo $langs->trans("PaymentMode"); ?> </td><td>
 		<?php
-		switch ($obj_facturation->getSetPaymentMode())
-		{
+		switch ($obj_facturation->getSetPaymentMode()) {
 			case 'ESP':
 				echo $langs->trans("Cash");
 				$filtre = 'courant=2';
-				if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CASH"]))
+				if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CASH"])) {
 					$selected = $_SESSION["CASHDESK_ID_BANKACCOUNT_CASH"];
+				}
 				break;
 			case 'CB':
 				echo $langs->trans("CreditCard");
 				$filtre = 'courant=1';
-				if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CB"]))
+				if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CB"])) {
 					$selected = $_SESSION["CASHDESK_ID_BANKACCOUNT_CB"];
+				}
 				break;
 			case 'CHQ':
 				echo $langs->trans("Cheque");
 				$filtre = 'courant=1';
-				if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CHEQUE"]))
+				if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CHEQUE"])) {
 					$selected = $_SESSION["CASHDESK_ID_BANKACCOUNT_CHEQUE"];
+				}
 				break;
 			case 'DIF':
 				echo $langs->trans("Reported");

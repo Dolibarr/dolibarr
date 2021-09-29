@@ -29,6 +29,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 $year = GETPOST("year", 'int');
 
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'reception', 0, '');
+
 
 /*
  * View
@@ -53,8 +59,7 @@ $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstats&file=reception
 
 $px = new DolGraph();
 $mesg = $px->isGraphKo();
-if (!$mesg)
-{
+if (!$mesg) {
 	$px->SetData($data);
 	$px->SetMaxValue($px->GetCeilMaxValue());
 	$px->SetWidth($WIDTH);

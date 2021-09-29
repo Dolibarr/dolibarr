@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - workflow
 WorkflowSetup=إعداد وحدة تدفق العمل
-WorkflowDesc=This module provides some automatic actions. By default, the workflow is open (you can do things in the order you want) but here you can activate some automatic actions.
+WorkflowDesc=هذه الوحدة توفر بعض الاجراءات التلقائية . في البداية يكون تدفق العمل مفتوحاً (يمكنك ان تعمل بالترتيب الذي تريد) لكن هنا يمكنك تفعيل بعض الجراءات التلقائية
 ThereIsNoWorkflowToModify=لا توجد تعديلات على سير العمل متوفرة مع الوحدات النشطة.
 # Autocreate
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a sales order after a commercial proposal is signed (the new order will have same amount as the proposal)

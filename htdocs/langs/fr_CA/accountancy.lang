@@ -30,6 +30,7 @@ CountriesInEEC=Pays membres du CEE
 CountriesNotInEEC=Pays non membres du CEE
 CountriesInEECExceptMe=Pays membres du CEE sauf %s
 CountriesExceptMe=Tous le pays sauf %s
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
 MainAccountForCustomersNotDefined=Compte comptable principal pour les clients non défini dans la configuration
 MainAccountForSuppliersNotDefined=Compte comptable principal pour les vendeurs non défini dans la configuration
 MainAccountForUsersNotDefined=Compte comptable principal pour les utilisateurs non défini dans la configuration
@@ -87,7 +88,6 @@ LineOfExpenseReport=Ligne de rapport de dépenses
 NoAccountSelected=Aucun compte comptable sélectionné
 VentilatedinAccount=Lié avec succès au compte comptable
 XLineFailedToBeBinded=%s produits / services n'étaient liés à aucun compte comptable
-ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Commencez le tri de la page "Reliure à faire" par les éléments les plus récents
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Commencez le tri de la page "Reliure faite" par les éléments les plus récents
 ACCOUNTING_LENGTH_DESCRIPTION=Tronquer la description des produits et services dans les listes après les caractères X (Best = 50)

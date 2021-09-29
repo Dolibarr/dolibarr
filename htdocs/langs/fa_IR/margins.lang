@@ -16,12 +16,13 @@ MarginDetails=جزئیات حاشیه
 ProductMargins=حاشیۀ محصولات
 CustomerMargins=حاشیۀ مشتری
 SalesRepresentativeMargins=حاشیه‌های نمایندۀ فروش
+ContactOfInvoice=Contact of invoice
 UserMargins=حاشیه‌های کاربر
 ProductService=محصولات و خدمات
 AllProducts=همۀ محصولات و خدمات
 ChooseProduct/Service=انتخاب محصول و یا خدمات
 ForceBuyingPriceIfNull=الزام مبلغ خرید/هزینه به قیمت فروش، در صورتی که تعریف نشده باشد
-ForceBuyingPriceIfNullDetails=در صورتی که مبلغ خرید/هزینه تعریف نشده باشد، و این گزینه "روشن" باشد، حاشیۀ این سطر صفر خواهد بود (مبلغ خرید/هزینه = قیمت فروش)، در غیر این‌صورت اگر ("خاموش") باشد، حاشیه برابر با پیش‌فرض پیشنهادی خواهد بود.
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0 on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100% if no default value can be found).
 MARGIN_METHODE_FOR_DISCOUNT=روش حاشیه برای تخفیف‌های سراسری
 UseDiscountAsProduct=به عنوان یک محصول
 UseDiscountAsService=به عنوان خدمات
@@ -36,7 +37,7 @@ CostPrice=قیمت هزینه
 UnitCharges=عوارض واحد
 Charges=عوارض
 AgentContactType=نوع طرف‌تماس نمایندۀ تجاری
-AgentContactTypeDetails=تعیین طرف‌تماس (پیوند شده روی صورت‌حساب‌ها) برای گزارش حاشیۀ بر حسب نمایندۀ فروش 
+AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per contact/address. Note that reading statistics on a contact is not reliable since in most cases the contact may not be defined explicitely on the invoices.
 rateMustBeNumeric=نرخ باید یک مقدار عددی باشد
 markRateShouldBeLesserThan100=نرخ نشان باید کم‌تر از 100 باشد
 ShowMarginInfos=نمایش اطلاعات حاشیه‌ها

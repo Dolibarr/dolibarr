@@ -34,7 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $langs->loadLangs(array("main"), "categories", "takepos", "printing");
 
-if (!$user->rights->categorie->lire) accessforbidden();
+if (!$user->rights->categorie->lire) {
+	accessforbidden();
+}
 
 $id = GETPOST('id', 'int');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
@@ -44,31 +46,39 @@ $printer1 = GETPOST('printer1', 'alpha');
 $printer2 = GETPOST('printer2', 'alpha');
 $printer3 = GETPOST('printer3', 'alpha');
 
-if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+if (is_numeric($type)) {
+	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+}
 
 /*
  * Actions
  */
 if ($action == "SavePrinter1") {
 	$printedcategories = ";";
-	if (is_array($printer1)) foreach ($printer1 as $cat) {
-		$printedcategories = $printedcategories.$cat.";";
+	if (is_array($printer1)) {
+		foreach ($printer1 as $cat) {
+			$printedcategories = $printedcategories.$cat.";";
+		}
 	}
 	dolibarr_set_const($db, "TAKEPOS_PRINTED_CATEGORIES_1", $printedcategories, 'chaine', 0, '', $conf->entity);
 }
 
 if ($action == "SavePrinter2") {
 	$printedcategories = ";";
-	if (is_array($printer2)) foreach ($printer2 as $cat) {
-		$printedcategories = $printedcategories.$cat.";";
+	if (is_array($printer2)) {
+		foreach ($printer2 as $cat) {
+			$printedcategories = $printedcategories.$cat.";";
+		}
 	}
 	dolibarr_set_const($db, "TAKEPOS_PRINTED_CATEGORIES_2", $printedcategories, 'chaine', 0, '', $conf->entity);
 }
 
 if ($action == "SavePrinter3") {
 	$printedcategories = ";";
-	if (is_array($printer3)) foreach ($printer3 as $cat) {
-		$printedcategories = $printedcategories.$cat.";";
+	if (is_array($printer3)) {
+		foreach ($printer3 as $cat) {
+			$printedcategories = $printedcategories.$cat.";";
+		}
 	}
 	dolibarr_set_const($db, "TAKEPOS_PRINTED_CATEGORIES_3", $printedcategories, 'chaine', 0, '', $conf->entity);
 }
@@ -145,8 +155,7 @@ $fulltree = $cate_arbo;
 // Define data (format for treeview)
 $data = array();
 $data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
-foreach ($fulltree as $key => $val)
-{
+foreach ($fulltree as $key => $val) {
 	$categstatic->id = $val['id'];
 	$categstatic->ref = $val['label'];
 	$categstatic->color = $val['color'];
@@ -168,13 +177,18 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 1</td><td></td><
 print '</td></tr>';
 $nbofentries = (count($data) - 1);
 print '<form action="orderprinters.php">';
-if ($nbofentries > 0)
-{
+if ($nbofentries > 0) {
 	print '<tr class="pair"><td colspan="3">';
 	print '<input type="hidden" name="action" value="SavePrinter1">';
 	foreach ($data as $row) {
-		if (strpos($conf->global->TAKEPOS_PRINTED_CATEGORIES_1, ';'.$row["rowid"].';') !== false) $checked = 'checked'; else $checked = '';
-		if ($row["fk_menu"] == 0) print '<input type="checkbox" name="printer1[]" value="'.$row["rowid"].'" '.$checked.'>'.$row["label"].'<br>';
+		if (strpos($conf->global->TAKEPOS_PRINTED_CATEGORIES_1, ';'.$row["rowid"].';') !== false) {
+			$checked = 'checked';
+		} else {
+			$checked = '';
+		}
+		if ($row["fk_menu"] == 0) {
+			print '<input type="checkbox" name="printer1[]" value="'.$row["rowid"].'" '.$checked.'>'.$row["label"].'<br>';
+		}
 	}
 	print '</td></tr>';
 } else {
@@ -196,13 +210,18 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 2</td><td></td><
 print '</td></tr>';
 $nbofentries = (count($data) - 1);
 print '<form action="orderprinters.php">';
-if ($nbofentries > 0)
-{
+if ($nbofentries > 0) {
 	print '<tr class="pair"><td colspan="3">';
 	print '<input type="hidden" name="action" value="SavePrinter2">';
 	foreach ($data as $row) {
-		if (strpos($conf->global->TAKEPOS_PRINTED_CATEGORIES_2, ';'.$row["rowid"].';') !== false) $checked = 'checked'; else $checked = '';
-		if ($row["fk_menu"] == 0) print '<input type="checkbox" name="printer2[]" value="'.$row["rowid"].'" '.$checked.'>'.$row["label"].'<br>';
+		if (strpos($conf->global->TAKEPOS_PRINTED_CATEGORIES_2, ';'.$row["rowid"].';') !== false) {
+			$checked = 'checked';
+		} else {
+			$checked = '';
+		}
+		if ($row["fk_menu"] == 0) {
+			print '<input type="checkbox" name="printer2[]" value="'.$row["rowid"].'" '.$checked.'>'.$row["label"].'<br>';
+		}
 	}
 	print '</td></tr>';
 } else {
@@ -224,13 +243,18 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 3</td><td></td><
 print '</td></tr>';
 $nbofentries = (count($data) - 1);
 print '<form action="orderprinters.php">';
-if ($nbofentries > 0)
-{
+if ($nbofentries > 0) {
 	print '<tr class="pair"><td colspan="3">';
 	print '<input type="hidden" name="action" value="SavePrinter3">';
 	foreach ($data as $row) {
-		if (strpos($conf->global->TAKEPOS_PRINTED_CATEGORIES_3, ';'.$row["rowid"].';') !== false) $checked = 'checked'; else $checked = '';
-		if ($row["fk_menu"] == 0) print '<input type="checkbox" name="printer3[]" value="'.$row["rowid"].'" '.$checked.'>'.$row["label"].'<br>';
+		if (strpos($conf->global->TAKEPOS_PRINTED_CATEGORIES_3, ';'.$row["rowid"].';') !== false) {
+			$checked = 'checked';
+		} else {
+			$checked = '';
+		}
+		if ($row["fk_menu"] == 0) {
+			print '<input type="checkbox" name="printer3[]" value="'.$row["rowid"].'" '.$checked.'>'.$row["label"].'<br>';
+		}
 	}
 	print '</td></tr>';
 } else {

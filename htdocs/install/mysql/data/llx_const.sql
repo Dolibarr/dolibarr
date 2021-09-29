@@ -56,7 +56,7 @@ insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_M
 --
 -- IHM
 --
-insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SIZE_LISTE_LIMIT','25','chaine','Maximum length of lists',0,0);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SIZE_LISTE_LIMIT','20','chaine','Maximum length of lists',0,0);
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SIZE_SHORTLIST_LIMIT','3','chaine','Maximum length of short lists',0,0);
 
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_MENU_STANDARD','eldy_menu.php','chaine','Menu manager for internal users',0,0);
@@ -86,7 +86,7 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_EXP
 -- Mail Mailing
 --
 insert into llx_const (name, value, type, note, visible) values ('MAIN_FIX_FOR_BUGGED_MTA','1','chaine','Set constant to fix email ending from PHP with some linux ike system',1);
-insert into llx_const (name, value, type, note, visible) values ('MAILING_EMAIL_FROM','dolibarr@domain.com','chaine','EMail emmetteur pour les envois d emailings',0);
+insert into llx_const (name, value, type, note, visible) values ('MAILING_EMAIL_FROM','no-reply@mydomain.com','chaine','EMail emmetteur pour les envois d emailings',0);
 
 
 --
@@ -102,4 +102,10 @@ insert into llx_const (name, value, type, visible, entity) VALUES ('USER_ADDON_P
 -- PRODUCTS
 --
 INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('PRODUCT_PRICE_BASE_TYPE', 0, 'HT', 'string', 0);
+
+
+--
+-- Membership
+--
+INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('ADHERENT_LOGIN_NOT_REQUIRED', 0, '1', 'string', 0);
 

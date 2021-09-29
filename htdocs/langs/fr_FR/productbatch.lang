@@ -1,8 +1,10 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Utiliser les numéros de lots/série
 ProductStatusOnBatch=Oui (Lot/Série requis)
+ProductStatusOnSerial=Oui (numéro de série unique requis)
 ProductStatusNotOnBatch=Non (Lot/Série non utilisé)
-ProductStatusOnBatchShort=Oui
+ProductStatusOnBatchShort=Lot
+ProductStatusOnSerialShort=Numéro Série
 ProductStatusNotOnBatchShort=Non
 Batch=Lot/Série
 atleast1batchfield=Date limite utilisation optimale, de consommation ou numéro de lot/série
@@ -22,3 +24,20 @@ ProductLotSetup=Configuration du module lot/série
 ShowCurrentStockOfLot=Afficher le stock actuel pour le couple produit / lot
 ShowLogOfMovementIfLot=Afficher l'historique des mouvements de couple produit / lot
 StockDetailPerBatch=Stock détaillé par lot
+SerialNumberAlreadyInUse=Le numéro de série %s est déjà utilisé pour le produit %s
+TooManyQtyForSerialNumber=Vous ne pouvez avoir qu'un seul produit %s pour le numéro de série %s
+ManageLotMask=Masque personnalisé
+CustomMasks=Option to define a different numbering mask for each product
+BatchLotNumberingModules=Numbering rule for automatic generation of lot number
+BatchSerialNumberingModules=Numbering rule for automatic generation of serial number (for products with property 1 unique lot/serial for each product)
+QtyToAddAfterBarcodeScan=Quantité à ajouter pour chaque code à barres/lot/série scanné
+LifeTime=Durée de vie (en jours)
+EndOfLife=Fin d'utilisation
+ManufacturingDate=Date de fabrication
+DestructionDate=Date de destruction
+FirstUseDate=Date de première mise en service
+QCFrequency=Fréquence du contrôle qualité (en jours)
+
+#Traceability - qc status
+OutOfOrder=Hors d'usage
+InWorkingOrder=En état de marche

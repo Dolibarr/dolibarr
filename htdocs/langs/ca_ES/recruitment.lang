@@ -35,7 +35,7 @@ EnablePublicRecruitmentPages=Activa les pàgines públiques de treballs actius
 #
 # About page
 #
-About = Sobre
+About = Quant a
 RecruitmentAbout = Quant a la contractació
 RecruitmentAboutPage = Pàgina quant a la contractació
 NbOfEmployeesExpected=Nombre previst d'empleats
@@ -53,7 +53,7 @@ NewPositionToBeFilled=Llocs de treball nous
 JobOfferToBeFilled=Lloc de treball a cobrir
 ThisIsInformationOnJobPosition=Informació del lloc de treball a ocupar
 ContactForRecruitment=Contacte per a la contractació
-EmailRecruiter=El reclutador de correu electrònic
+EmailRecruiter=Correu electrònic del reclutador
 ToUseAGenericEmail=Per a utilitzar un correu electrònic genèric. Si no està definit, s’utilitzarà el correu electrònic del responsable de la contractació
 NewCandidature=Candidatura nova
 ListOfCandidatures=Llista de candidatures
@@ -72,5 +72,5 @@ YourCandidatureAnswerMessage=Gràcies per la teva candidatura. <br> ...
 JobClosedTextCandidateFound=L’oferta de feina està tancada. El lloc s'ha cobert.
 JobClosedTextCanceled=L’oferta de feina està tancada.
 ExtrafieldsJobPosition=Atributs complementaris (llocs de treball)
-ExtrafieldsCandidatures=Atributs complementaris (sol·licituds de feina)
+ExtrafieldsApplication=Atributs complementaris (sol·licituds de feina)
 MakeOffer=Feu una oferta

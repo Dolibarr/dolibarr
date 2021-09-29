@@ -29,8 +29,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/comm/propal/class/propal.class.php';
 
-if (empty($user->id))
-{
+if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
@@ -74,40 +73,40 @@ class PropalTest extends PHPUnit\Framework\TestCase
 		print "\n";
 	}
 
-    /**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+	/**
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass()
+	{
+		global $conf,$user,$langs,$db;
+		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-        print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass()
+	{
+		global $conf,$user,$langs,$db;
 		$db->rollback();
 
 		print __METHOD__."\n";
-    }
+	}
 
 	/**
 	 * Init phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function setUp()
-    {
-    	global $conf,$user,$langs,$db;
+	protected function setUp()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
@@ -115,190 +114,190 @@ class PropalTest extends PHPUnit\Framework\TestCase
 
 		print __METHOD__."\n";
 		//print $db->getVersion()."\n";
-    }
+	}
 	/**
 	 * End phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function tearDown()
-    {
-    	print __METHOD__."\n";
-    }
+	protected function tearDown()
+	{
+		print __METHOD__."\n";
+	}
 
-    /**
-     * testPropalCreate
-     *
-     * @return	void
-     */
-    public function testPropalCreate()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * testPropalCreate
+	 *
+	 * @return	void
+	 */
+	public function testPropalCreate()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		$localobject=new Propal($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$result=$localobject->create($user);
+		$localobject->initAsSpecimen();
+		$result=$localobject->create($user);
 
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." result=".$result."\n";
-    	return $result;
-    }
+		$this->assertLessThan($result, 0);
+		print __METHOD__." result=".$result."\n";
+		return $result;
+	}
 
-    /**
-     * testPropalFetch
-     *
-     * @param	int		$id		Id of object
-     * @return	Propal
-     *
-     * @depends	testPropalCreate
-     * The depends says test is run only if previous is ok
-     */
-    public function testPropalFetch($id)
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * testPropalFetch
+	 *
+	 * @param	int		$id		Id of object
+	 * @return	Propal
+	 *
+	 * @depends	testPropalCreate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testPropalFetch($id)
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		$localobject=new Propal($this->savdb);
-    	$result=$localobject->fetch($id);
+		$result=$localobject->fetch($id);
 
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." id=".$id." result=".$result."\n";
-    	return $localobject;
-    }
+		$this->assertLessThan($result, 0);
+		print __METHOD__." id=".$id." result=".$result."\n";
+		return $localobject;
+	}
 
-    /**
-     * testPropalUpdate
-     *
-     * @param	Propal		$localobject	Proposal
-     * @return	Propal
-     *
-     * @depends	testPropalFetch
-     * The depends says test is run only if previous is ok
-     */
-    public function testPropalUpdate($localobject)
-    {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
-
-    	$localobject->note_private = 'New note private after update';
-    	$result = $localobject->update($user);
-
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	return $localobject;
-    }
-
-    /**
-     * testPropalAddLine
-     *
-     * @param	Propal		$localobject	Proposal
-     * @return	Propal
-     *
-     * @depends	testPropalUpdate
-     * The depends says test is run only if previous is ok
-     */
-    public function testPropalAddLine($localobject)
-    {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
-
-        $localobject->fetch_thirdparty();
-    	$result=$localobject->addline('Added line', 10, 2, 19.6);
-
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	return $localobject;
-    }
-
-    /**
-     * testPropalValid
-     *
-     * @param	Propal	$localobject	Proposal
-     * @return	Propal
-     *
-     * @depends	testPropalAddLine
-     * The depends says test is run only if previous is ok
-     */
-    public function testPropalValid($localobject)
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * testPropalUpdate
+	 *
+	 * @param	Propal		$localobject	Proposal
+	 * @return	Propal
+	 *
+	 * @depends	testPropalFetch
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testPropalUpdate($localobject)
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-    	$result=$localobject->valid($user);
+		$localobject->note_private = 'New note private after update';
+		$result = $localobject->update($user);
 
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-    	return $localobject;
-    }
+		$this->assertLessThan($result, 0);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		return $localobject;
+	}
 
-    /**
-     * testPropalOther
-     *
-     * @param	Propal	$localobject	Proposal
-     * @return	int
-     *
-     * @depends testPropalValid
-     * The depends says test is run only if previous is ok
-     */
-    public function testPropalOther($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testPropalAddLine
+	 *
+	 * @param	Propal		$localobject	Proposal
+	 * @return	Propal
+	 *
+	 * @depends	testPropalUpdate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testPropalAddLine($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        /*$result=$localobject->setstatus(0);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        */
+		$localobject->fetch_thirdparty();
+		$result=$localobject->addline('Added line', 10, 2, 19.6);
 
-        $localobject->info($localobject->id);
-        print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
-        $this->assertNotEquals($localobject->date_creation, '');
+		$this->assertLessThan($result, 0);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		return $localobject;
+	}
 
-        return $localobject->id;
-    }
+	/**
+	 * testPropalValid
+	 *
+	 * @param	Propal	$localobject	Proposal
+	 * @return	Propal
+	 *
+	 * @depends	testPropalAddLine
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testPropalValid($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-    /**
-     * testPropalDelete
-     *
-     * @param	int		$id		Id of proposal
-     * @return	void
-     *
-     * @depends	testPropalOther
-     * The depends says test is run only if previous is ok
-     */
-    public function testPropalDelete($id)
-    {
-    	global $conf,$user,$langs,$db;
+		$result=$localobject->valid($user);
+
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		return $localobject;
+	}
+
+	/**
+	 * testPropalOther
+	 *
+	 * @param	Propal	$localobject	Proposal
+	 * @return	int
+	 *
+	 * @depends testPropalValid
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testPropalOther($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		/*$result=$localobject->setstatus(0);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		*/
+
+		$localobject->info($localobject->id);
+		print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
+		$this->assertNotEquals($localobject->date_creation, '');
+
+		return $localobject->id;
+	}
+
+	/**
+	 * testPropalDelete
+	 *
+	 * @param	int		$id		Id of proposal
+	 * @return	void
+	 *
+	 * @depends	testPropalOther
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testPropalDelete($id)
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		$localobject=new Propal($this->savdb);
-    	$result=$localobject->fetch($id);
+		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-    	return $result;
-    }
+		$this->assertLessThan($result, 0);
+		return $result;
+	}
 }

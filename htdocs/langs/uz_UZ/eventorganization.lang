@@ -1,0 +1,147 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModuleEventOrganizationName = Tadbirni tashkil etish
+EventOrganizationDescription = Modul loyihasi orqali tadbirlarni tashkil etish
+EventOrganizationDescriptionLong= Konferentsiya, ishtirokchilar, ma'ruzachilar va ishtirokchilar uchun tadbirlarni tashkil qilishni ommaviy pastki sahifasi bilan boshqaring
+#
+# Menu
+#
+EventOrganizationMenuLeft = Tashkil etilgan tadbirlar
+EventOrganizationConferenceOrBoothMenuLeft = Konferentsiya yoki stend
+
+#
+# Admin page
+#
+EventOrganizationSetup = Tadbirni tashkil qilishni sozlash
+Settings = Sozlamalar
+EventOrganizationSetupPage = Tadbirni tashkil etish sahifasi
+EVENTORGANIZATION_TASK_LABEL = Loyiha tasdiqlanganda avtomatik ravishda yaratiladigan vazifalar yorlig'i
+EVENTORGANIZATION_TASK_LABELTooltip = Agar tashkil etilgan tadbirda tasdiqlashimiz bo'lsa, ba'zi vazifalar avtomatik ravishda Masalan loyiha <br> <br> yaratilgan bo'lishi mumkin: konferensiyasi uchun <br> Send qo'ng'iroq <br> tashrif buyurganlar uchun voqealarga ochiq obuna <br> But uchun qo'ng'iroq olish <br> konferentsiyalar uchun qo'ng'iroq olish <br> But chaqiraman yuborish <br> Tadbirni ma'ruzachilarga eslatib turish
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kimdir konferentsiya taklif qilganda avtomatik ravishda tuziladigan uchinchi tomonlarga qo'shiladigan toifadir
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Uchinchi shaxslarga qo'shiladigan toifani, ular stendni taklif qilganda avtomatik ravishda yaratiladi
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Konferentsiya taklifini olgandan so'ng yuborish uchun elektron pochta shablonini.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Stend taklifini olgandan keyin yuborish uchun elektron pochta shablonini.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Stendga obuna bo'lgandan keyin yuborish uchun elektron pochta shablonini.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Tadbirga obuna bo'lgandan keyin yuborish uchun elektron pochta shablonini.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Ishtirokchilarga ommaviy massaj elektron pochta shablonini
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Spikerlarga ommaviy elektron pochta orqali yuborilgan shablon
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Uchinchi tomonning tanlangan ro'yxatini ishtirokchilarni yaratish kartasida / toifadagi katakchasida filtrlang
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Uchinchi tomonning tanlangan ro'yxatini ishtirokchilarni yaratish kartasida / mijozning turiga qarab shaklda filtrlang
+
+#
+# Object
+#
+EventOrganizationConfOrBooth= Konferentsiya yoki stend
+ManageOrganizeEvent = Tadbirni tashkil qilishni boshqaring
+ConferenceOrBooth = Konferentsiya yoki stend
+ConferenceOrBoothTab = Konferentsiya yoki stend
+AmountOfSubscriptionPaid = To'langan obuna miqdori
+DateSubscription = Obuna sanasi
+ConferenceOrBoothAttendee = Konferentsiya yoki stend ishtirokchisi
+
+#
+# Template Mail
+#
+YourOrganizationEventConfRequestWasReceived = Konferentsiya uchun so'rovingiz qabul qilindi
+YourOrganizationEventBoothRequestWasReceived = Sizning kabinangizga bo'lgan talabingiz qabul qilindi
+EventOrganizationEmailAskConf = Konferentsiya uchun so'rov
+EventOrganizationEmailAskBooth = Stendga buyurtma
+EventOrganizationEmailSubsBooth = Stend uchun obuna
+EventOrganizationEmailSubsEvent = Hodisa uchun obuna
+EventOrganizationMassEmailAttendees = Ishtirokchilar bilan aloqa
+EventOrganizationMassEmailSpeakers = Spikerlar bilan aloqa
+
+#
+# Event
+#
+AllowUnknownPeopleSuggestConf=Noma'lum odamlarga konferentsiyalarni o'tkazishga ruxsat bering
+AllowUnknownPeopleSuggestConfHelp=Noma'lum odamlarga konferentsiyalarni o'tkazishga ruxsat bering
+AllowUnknownPeopleSuggestBooth=Noma'lum odamlarga stendni taklif qilishga ruxsat bering
+AllowUnknownPeopleSuggestBoothHelp=Noma'lum odamlarga stendni taklif qilishga ruxsat bering
+PriceOfRegistration=Ro'yxatdan o'tish narxi
+PriceOfRegistrationHelp=Ro'yxatdan o'tish narxi
+PriceOfBooth=Stendda turish uchun obuna narxi
+PriceOfBoothHelp=Stendda turish uchun obuna narxi
+EventOrganizationICSLink=Voqealar uchun ICS-ni bog'lang
+ConferenceOrBoothInformation=Konferentsiya yoki stend ma'lumotlari
+Attendees = Ishtirokchilar
+DownloadICSLink = ICS havolasini yuklab oling
+EVENTORGANIZATION_SECUREKEY = Konferentsiyaga ochiq ro'yxatdan o'tishning havfli kaliti
+SERVICE_BOOTH_LOCATION = Stend joylashgan joy haqida hisob-faktura qatori uchun ishlatiladigan xizmat
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Konferentsiyaga qatnashuvchi obuna haqida hisob-faktura satrida ishlatiladigan xizmat
+NbVotes=Number of votes
+#
+# Status
+#
+EvntOrgDraft = Qoralama
+EvntOrgSuggested = Tavsiya etilgan
+EvntOrgConfirmed = Tasdiqlandi
+EvntOrgNotQualified = Malakali emas
+EvntOrgDone = Bajarildi
+EvntOrgCancelled = Bekor qilindi
+#
+# Public page
+#
+SuggestForm = Takliflar sahifasi
+RegisterPage = Konferentsiyalar yoki stendlar uchun sahifa
+EvntOrgRegistrationHelpMessage = Bu erda siz tadbir uchun ovoz berishingiz yoki loyiha uchun yangi konferentsiya yoki stendni taklif qilishingiz mumkin
+EvntOrgRegistrationConfHelpMessage = Bu erda siz loyiha uchun yangi konferentsiya taklif qilishingiz mumkin
+EvntOrgRegistrationBoothHelpMessage = Bu erda siz loyiha uchun yangi stendni taklif qilishingiz mumkin
+ListOfSuggestedConferences = Tavsiya etilgan konferentsiyalar ro'yxati
+ListOfSuggestedBooths = Tavsiya etilgan kabinalar ro'yxati
+SuggestConference = Yangi konferentsiyani taklif eting
+SuggestBooth = Stendni taklif qiling
+ViewAndVote = Taklif etilgan tadbirlarni ko'ring va ovoz bering
+PublicAttendeeSubscriptionPage = Konferentsiyaga ro'yxatdan o'tishning ommaviy havolasi
+MissingOrBadSecureKey = Elektron kalit yaroqsiz yoki yo'q
+EvntOrgWelcomeMessage = Ushbu shakl sizga konferentsiyaning yangi ishtirokchisi sifatida ro'yxatdan o'tishga imkon beradi: '%s'
+EvntOrgDuration = Ushbu anjuman %s da boshlanadi va %s da tugaydi.
+ConferenceAttendeeFee = Tadbir uchun konferentsiya qatnashchilari uchun to'lov: '%s' %s dan %s gacha.
+BoothLocationFee = Hodisa uchun stend joylashuvi: %s dan %s gacha bo'lgan '%s'.
+EventType = Tadbir turi
+LabelOfBooth=Booth label
+LabelOfconference=Conference label
+ConferenceIsNotConfirmed=Subcription not available, conference is not confirmed yet
+
+#
+# Vote page
+#
+EvntOrgRegistrationWelcomeMessage = Konferentsiyada yoki kabinet takliflari sahifasida xush kelibsiz.
+EvntOrgRegistrationConfWelcomeMessage = Konferentsiya takliflari sahifasida xush kelibsiz.
+EvntOrgRegistrationBoothWelcomeMessage = Stend takliflari sahifasida xush kelibsiz.
+EvntOrgVoteHelpMessage = Bu erda siz loyiha uchun taklif qilingan tadbirlarni ko'rishingiz va ularga ovoz berishingiz mumkin
+VoteOk = Sizning ovozingiz qabul qilindi.
+AlreadyVoted = Siz ushbu tadbir uchun allaqachon ovoz bergansiz.
+VoteError = Ovoz berish paytida xatolik yuz berdi, qayta urinib ko'ring.
+
+#
+# SubscriptionOk page
+#
+SubscriptionOk = Ushbu konferentsiyaga obunangiz tasdiqlandi
+#
+# Subscription validation mail
+#
+ConfAttendeeSubscriptionConfirmation = Konferentsiyaga obuna bo'lganligingizni tasdiqlash
+#
+# Payment page
+#
+Attendee = Ishtirokchi
+PaymentConferenceAttendee = Konferentsiya qatnashchilarining to'lovlari
+PaymentBoothLocation = Stend joylashgan joy uchun to'lov

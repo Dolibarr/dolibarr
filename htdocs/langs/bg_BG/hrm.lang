@@ -9,7 +9,7 @@ ConfirmDeleteEstablishment=Сигурни ли сте, че искате да и
 OpenEtablishment=Отваряне на обект
 CloseEtablishment=Затваряне на обект
 # Dictionary
-DictionaryPublicHolidays=ЧР - Национални празници
+DictionaryPublicHolidays=Leave - Public holidays
 DictionaryDepartment=ЧР - Списък с отдели
 DictionaryFunction=ЧР - Длъжности
 # Module

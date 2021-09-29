@@ -16,4 +16,4 @@ Journals=Diarios Contables
 JournalFinancial=Diarios Financieros
 AssignDedicatedAccountingAccount=Nueva cuenta para asignar
 InvoiceLabel=Etiqueta de la factura
-ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.

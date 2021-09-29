@@ -57,7 +57,6 @@ IncludeDocGeneration=Gerar alguns documentos a partir do objeto
 IncludeDocGenerationHelp=Se você marcar isto, um código será gerado para adicionar uma caixa "Gerar documento" ao registro.
 ShowOnCombobox=Mostrar valor na caixa de combinação
 KeyForTooltip=Chave para dica de ferramenta
-CSSClass=Classe CSS
 NotEditable=Não editável
 ForeignKey=Chave estrangeira
 AsciiToHtmlConverter=Converter ASCII para HTML

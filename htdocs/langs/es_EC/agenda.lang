@@ -5,7 +5,6 @@ ListOfActions=Lista de eventos
 EventOnFullDay=Evento todo el día(s)
 MenuToDoActions=Todos los eventos incompletos
 MenuDoneActions=Todos los eventos terminados
-ListOfEvents=Lista de eventos (calendario interno)
 ActionsAskedBy=Eventos reportados por
 ViewCal=Vista de mes
 ViewDay=Vista del día

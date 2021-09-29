@@ -1,0 +1,147 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModuleEventOrganizationName = Organización de evento
+EventOrganizationDescription = Organización de eventos a través del proyecto de módulo
+EventOrganizationDescriptionLong= Administre la organización de eventos para conferencias, asistentes, oradores y asistentes, con una página de suscripción pública
+#
+# Menu
+#
+EventOrganizationMenuLeft = Eventos organizados
+EventOrganizationConferenceOrBoothMenuLeft = Conferencia o cabina
+
+#
+# Admin page
+#
+EventOrganizationSetup = Configuración de organización de eventos
+Settings = Configuraciones
+EventOrganizationSetupPage = Página de configuración de organización de eventos
+EVENTORGANIZATION_TASK_LABEL = Etiqueta de tareas para crear automáticamente cuando se valida el proyecto
+EVENTORGANIZATION_TASK_LABELTooltip = Cuando valida un evento organizado, algunas tareas se pueden crear automáticamente en el proyecto<br><br> Por ejemplo: <br>Enviar llamada para conferencia<br> Enviar llamada para cabina<br> Recibir llamada para conferencias<br> Recibir llamada para cabina<br> Abrir suscripciones a eventos para asistentes<br> Enviar recordatorio del evento a los oradores<br> Enviar recordatorio del evento al anfitrión del stand<br> Enviar recordatorio del evento a los asistentes
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Categoría para agregar a terceros creada automáticamente cuando alguien sugiere una conferencia
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Categoría para agregar a terceros creada automáticamente cuando sugieren un stand
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Plantilla de correo electrónico para enviar después de recibir una sugerencia de conferencia.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Plantilla de correo electrónico para enviar después de recibir sugerencia de stand.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Plantilla de correo electrónico para enviar después de que se haya pagado una suscripción a un stand.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Plantilla de correo electrónico para enviar después de que se haya pagado una suscripción a un evento.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Plantilla de correo electrónico de acción masiva a asistentes
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Plantilla de correo electrónico de acción masiva a ponentes
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Filtrar la lista de selección de terceros en la tarjeta / formulario de creación de asistentes con categoría
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filtre la lista de selección de terceros en la tarjeta / formulario de creación de asistentes con el tipo de cliente
+
+#
+# Object
+#
+EventOrganizationConfOrBooth= Conferencia o cabina
+ManageOrganizeEvent = Gestionar la organización de eventos
+ConferenceOrBooth = Conferencia o cabina
+ConferenceOrBoothTab = Conferencia o cabina
+AmountOfSubscriptionPaid = Cantidad de suscripción pagada
+DateSubscription = Fecha de suscripción
+ConferenceOrBoothAttendee = Asistente a la conferencia o al stand
+
+#
+# Template Mail
+#
+YourOrganizationEventConfRequestWasReceived = Se recibió su solicitud de conferencia
+YourOrganizationEventBoothRequestWasReceived = Se recibió su solicitud de stand
+EventOrganizationEmailAskConf = Solicitud de conferencia
+EventOrganizationEmailAskBooth = Solicitud de stand
+EventOrganizationEmailSubsBooth = Suscripción para stand
+EventOrganizationEmailSubsEvent = Suscripción a un evento
+EventOrganizationMassEmailAttendees = Comunicación a los asistentes
+EventOrganizationMassEmailSpeakers = Comunicación a los ponentes
+
+#
+# Event
+#
+AllowUnknownPeopleSuggestConf=Permitir que personas desconocidas sugieran conferencias
+AllowUnknownPeopleSuggestConfHelp=Permitir que personas desconocidas sugieran conferencias
+AllowUnknownPeopleSuggestBooth=Permitir que personas desconocidas sugieran stand
+AllowUnknownPeopleSuggestBoothHelp=Permitir que personas desconocidas sugieran stand
+PriceOfRegistration=Precio de inscripción
+PriceOfRegistrationHelp=Precio de inscripción
+PriceOfBooth=Precio de suscripción para hacer stand
+PriceOfBoothHelp=Precio de suscripción para hacer stand
+EventOrganizationICSLink=Enlace ICS para eventos
+ConferenceOrBoothInformation=Información sobre conferencias o stands
+Attendees = Asistentes
+DownloadICSLink = Descargar enlace ICS
+EVENTORGANIZATION_SECUREKEY = Secure Key del enlace de registro público a una conferencia
+SERVICE_BOOTH_LOCATION = Servicio utilizado para la fila de facturas sobre la ubicación de un stand
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Servicio utilizado para la fila de la factura sobre la suscripción de un asistente a una conferencia
+NbVotes=Number of votes
+#
+# Status
+#
+EvntOrgDraft = Borrador
+EvntOrgSuggested = Sugirió
+EvntOrgConfirmed = Confirmado
+EvntOrgNotQualified = No calificado
+EvntOrgDone = Realizadas
+EvntOrgCancelled = Cancelado
+#
+# Public page
+#
+SuggestForm = Página de sugerencias
+RegisterPage = Página para conferencias o stand
+EvntOrgRegistrationHelpMessage = Aquí, puede votar por un evento o sugerir una nueva conferencia o stand para el proyecto.
+EvntOrgRegistrationConfHelpMessage = Aquí, puede sugerir una nueva conferencia para el proyecto.
+EvntOrgRegistrationBoothHelpMessage = Aquí, puedes sugerir un nuevo stand para el proyecto.
+ListOfSuggestedConferences = Lista de conferencias sugeridas
+ListOfSuggestedBooths = Lista de cabinas sugeridas
+SuggestConference = Sugerir una nueva conferencia
+SuggestBooth = Sugerir un stand
+ViewAndVote = Ver y votar eventos sugeridos
+PublicAttendeeSubscriptionPage = Enlace público de inscripción a una conferencia
+MissingOrBadSecureKey = La clave de seguridad no es válida o falta
+EvntOrgWelcomeMessage = Este formulario le permite registrarse como nuevo participante en la conferencia: '%s'
+EvntOrgDuration = Esta conferencia comienza el %s y termina el %s.
+ConferenceAttendeeFee = Cuota de asistente a la conferencia para el evento: '%s' que ocurre desde %s a %s.
+BoothLocationFee = Ubicación del stand para el evento: '%s' que ocurre desde %s a %s
+EventType = Tipo de evento
+LabelOfBooth=Booth label
+LabelOfconference=Conference label
+ConferenceIsNotConfirmed=Subcription not available, conference is not confirmed yet
+
+#
+# Vote page
+#
+EvntOrgRegistrationWelcomeMessage = Bienvenido a la página de sugerencias de la conferencia o stand.
+EvntOrgRegistrationConfWelcomeMessage = Bienvenido a la página de sugerencias de la conferencia.
+EvntOrgRegistrationBoothWelcomeMessage = Bienvenido a la página de sugerencias del stand.
+EvntOrgVoteHelpMessage = Aquí puede ver y votar los eventos sugeridos para el proyecto.
+VoteOk = Tu voto ha sido aceptado.
+AlreadyVoted = Ya has votado por este evento.
+VoteError = Se produjo un error durante la votación, inténtelo de nuevo.
+
+#
+# SubscriptionOk page
+#
+SubscriptionOk = Su suscripción a esta conferencia ha sido validada
+#
+# Subscription validation mail
+#
+ConfAttendeeSubscriptionConfirmation = Confirmación de su suscripción a una conferencia
+#
+# Payment page
+#
+Attendee = Asistente
+PaymentConferenceAttendee = Pago de asistentes a la conferencia
+PaymentBoothLocation = Pago por ubicación de stand

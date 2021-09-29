@@ -59,6 +59,7 @@ ConfirmClonePropal=Er du sikker på, du vil klone tilbuddet <b>%s</b>?
 ConfirmReOpenProp=Er du sikker på, at du vil åbne det tilbud igen <b> %s </b>?
 ProposalsAndProposalsLines=Tilbud og linjer
 ProposalLine=Tilbudslinje
+ProposalLines=Tilbudslinjer
 AvailabilityPeriod=Tilgængelighed forsinkelse
 SetAvailability=Indstil tilgængelighed forsinkelse
 AfterOrder=efter at

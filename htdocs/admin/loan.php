@@ -26,14 +26,17 @@ require '../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+if (!empty($conf->accounting->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'loan'));
 
 // Security check
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 
@@ -48,8 +51,7 @@ $list = array(
  * Actions
  */
 
-if ($action == 'update')
-{
+if ($action == 'update') {
 	$error = 0;
 
 	foreach ($list as $constname) {
@@ -60,8 +62,7 @@ if ($action == 'update')
 		}
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
@@ -75,7 +76,9 @@ if ($action == 'update')
 llxHeader();
 
 $form = new Form($db);
-if (!empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
+if (!empty($conf->accounting->enabled)) {
+	$formaccounting = new FormAccounting($db);
+}
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('ConfigLoan'), $linkback, 'title_setup');
@@ -92,8 +95,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans('Options').'</td>';
 print "</tr>\n";
 
-foreach ($list as $key)
-{
+foreach ($list as $key) {
 	print '<tr class="oddeven value">';
 
 	// Param
@@ -102,8 +104,7 @@ foreach ($list as $key)
 
 	// Value
 	print '<td>';
-	if (!empty($conf->accounting->enabled))
-	{
+	if (!empty($conf->accounting->enabled)) {
 		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
 	} else {
 		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
