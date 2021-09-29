@@ -627,3 +627,14 @@ CREATE TABLE llx_onlinesignature
 
 ALTER TABLE llx_facture_fourn CHANGE COLUMN fk_mode_transport fk_transport_mode integer;
 
+
+
+
+-- Deposit generation helper with specific payment terms
+ALTER TABLE llx_c_payment_term ADD COLUMN deposit_percent real DEFAULT NULL AFTER decalage;
+ALTER TABLE llx_societe ADD COLUMN deposit_percent real DEFAULT NULL AFTER cond_reglement;
+ALTER TABLE llx_propal ADD COLUMN deposit_percent real DEFAULT NULL AFTER fk_cond_reglement;
+ALTER TABLE llx_commande ADD COLUMN deposit_percent real DEFAULT NULL AFTER fk_cond_reglement;
+
+
+

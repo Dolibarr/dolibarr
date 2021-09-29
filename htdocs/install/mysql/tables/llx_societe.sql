@@ -92,6 +92,7 @@ create table llx_societe
   remise_supplier          real           DEFAULT 0,            		-- discount by default granted by this supplier
   mode_reglement           tinyint,                             		-- payment mode customer
   cond_reglement           tinyint,                             		-- payment term customer
+  deposit_percent          real DEFAULT NULL,                           -- default deposit % if payment term needs it
   transport_mode           tinyint,                             		-- transport mode customer (Intracomm report)
   mode_reglement_supplier  tinyint,                             		-- payment mode supplier
   cond_reglement_supplier  tinyint,                             		-- payment term supplier
