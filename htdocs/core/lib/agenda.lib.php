@@ -69,7 +69,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	}
 	print '<input type="hidden" name="search_showbirthday" value="'.((int) $showbirthday).'">';
 
-	if ($canedit) {
+	//if ($canedit) {
 		print '<div class="divsearchfield">';
 
 		// Type
@@ -103,7 +103,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 			print $formresource->select_resource_list($resourceid, "search_resourceid", '', 1, 0, 0, null, '', 2, 0, 'maxwidth500');
 			print '</div>';
 		}
-	}
+	//}
 
 	if (!empty($conf->societe->enabled) && $user->rights->societe->lire) {
 		print '<div class="divsearchfield">';
