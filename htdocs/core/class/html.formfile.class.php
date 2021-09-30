@@ -1674,7 +1674,8 @@ class FormFile
 					dol_include_once($hookmanager->resArray['classpath']);
 					if (array_key_exists('classname', $hookmanager->resArray) && !empty($hookmanager->resArray['classname'])) {
 						if (class_exists($hookmanager->resArray['classname'])) {
-							$object_instance = new ${$hookmanager->resArray['classname']}($this->db);
+							$tmpclassname = $hookmanager->resArray['classname'];
+							$object_instance = new $tmpclassname($this->db);
 						}
 					}
 				}
@@ -1813,9 +1814,11 @@ class FormFile
 				print '</td>';
 
 				// File
+				// Check if document source has external module part, if it the case use it for module part on document.php
+				preg_match('/^[^@]*@([^@]*)$/', $modulepart.'@expertisemedical', $modulesuffix);
 				print '<td>';
 				//print "XX".$file['name']; //$file['name'] must be utf8
-				print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
+				print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.(empty($modulesuffix) ? $modulepart : $modulesuffix[1]);
 				if ($forcedownload) {
 					print '&attachment=1';
 				}
@@ -1826,7 +1829,7 @@ class FormFile
 
 				//print $this->getDocumentsLink($modulepart, $modulesubdir, $filedir, '^'.preg_quote($file['name'],'/').'$');
 
-				print $this->showPreview($file, $modulepart, $file['relativename']);
+				print $this->showPreview($file, (empty($modulesuffix) ? $modulepart : $modulesuffix[1]), $file['relativename']);
 
 				print "</td>\n";
 
