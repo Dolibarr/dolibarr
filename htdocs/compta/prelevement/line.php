@@ -151,7 +151,9 @@ if ($id) {
 		print $bon->getNomUrl(1).'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec, 'day').'</td></tr>';
-		print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($lipre->amount).'</td></tr>';
+
+		print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($lipre->amount).'</span></td></tr>';
+
 		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$lipre->LibStatut($lipre->statut, 1).'</td></tr>';
 
 		if ($lipre->statut == 3) {
@@ -159,6 +161,7 @@ if ($id) {
 			$resf = $rej->fetch($lipre->id);
 			if ($resf == 0) {
 				print '<tr><td>'.$langs->trans("RefusedReason").'</td><td>'.$rej->motif.'</td></tr>';
+
 				print '<tr><td>'.$langs->trans("RefusedData").'</td><td>';
 				if ($rej->date_rejet == 0) {
 					/* Historique pour certaines install */
@@ -167,6 +170,7 @@ if ($id) {
 					print dol_print_date($rej->date_rejet, 'day');
 				}
 				print '</td></tr>';
+
 				print '<tr><td>'.$langs->trans("RefusedInvoicing").'</td><td>'.$rej->invoicing.'</td></tr>';
 			} else {
 				print '<tr><td>'.$resf.'</td></tr>';
@@ -229,7 +233,7 @@ if ($id) {
 	/*
 	 * Action bar
 	 */
-	print "<div class=\"tabsAction\">";
+	print '<div class="tabsAction">';
 
 	if ($action == '') {
 		if ($bon->statut == BonPrelevement::STATUS_CREDITED) {
@@ -245,7 +249,7 @@ if ($id) {
 		}
 	}
 
-	print "</div>";
+	print '</div>';
 
 	/*
 	 * List of invoices
@@ -267,7 +271,7 @@ if ($id) {
 	if ($socid) {
 		$sql .= " AND s.rowid = ".((int) $socid);
 	}
-	$sql .= " ORDER BY $sortfield $sortorder ";
+	$sql .= $db->order($sortfield, $sortorder);
 	$sql .= $db->plimit($conf->liste_limit + 1, $offset);
 
 	$result = $db->query($sql);

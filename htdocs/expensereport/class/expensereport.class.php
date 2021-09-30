@@ -1887,7 +1887,8 @@ class ExpenseReport extends CommonObject
 		}
 		//$buyer = new Societe($this->db);
 
-		$rulestocheck = ExpenseReportRule::getAllRule($this->line->fk_c_type_fees, $this->line->date, $this->fk_user_author);
+		$expensereportrule = new ExpenseReportRule($db);
+		$rulestocheck = $expensereportrule->getAllRule($this->line->fk_c_type_fees, $this->line->date, $this->fk_user_author);
 
 		$violation = 0;
 		$rule_warning_message_tab = array();
@@ -1974,7 +1975,8 @@ class ExpenseReport extends CommonObject
 		}
 		//$buyer = new Societe($this->db);
 
-		$range = ExpenseReportIk::getRangeByUser($userauthor, $this->line->fk_c_exp_tax_cat);
+		$expenseik = new ExpenseReportIk($db);
+		$range = $expenseik->getRangeByUser($userauthor, $this->line->fk_c_exp_tax_cat);
 
 		if (empty($range)) {
 			$this->error = 'ErrorNoRangeAvailable';

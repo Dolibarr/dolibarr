@@ -139,11 +139,11 @@ if (!empty($this->control->tpl['action_delete'])) {
 if (empty($user->socid)) {
 	print '<div class="tabsAction">';
 	if ($user->rights->societe->contact->creer) {
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=edit&canvas='.$canvas.'">'.$langs->trans('Modify').'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=edit&token='.newToken().'&canvas='.$canvas.'">'.$langs->trans('Modify').'</a>';
 	}
 
 	if (!$this->control->tpl['user_id'] && $user->rights->user->user->creer) {
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=create_user&canvas='.$canvas.'">'.$langs->trans("CreateDolibarrLogin").'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=create_user&token='.newToken().'&canvas='.$canvas.'">'.$langs->trans("CreateDolibarrLogin").'</a>';
 	}
 
 	if ($user->rights->societe->contact->supprimer) {

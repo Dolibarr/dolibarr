@@ -432,7 +432,7 @@ class MultiCurrency extends CommonObject
 	 */
 	public function addRateFromDolibarr($code, $rate)
 	{
-		global $db, $user;
+		global $user;
 
 		$currency = new MultiCurrency($this->db);
 		$currency->code = $code;
@@ -441,8 +441,8 @@ class MultiCurrency extends CommonObject
 		$sql = 'SELECT label FROM '.MAIN_DB_PREFIX."c_currencies WHERE code_iso = '".$this->db->escape($code)."'";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
-		$resql = $db->query($sql);
-		if ($resql && ($line = $db->fetch_object($resql))) {
+		$resql = $this->db->query($sql);
+		if ($resql && ($line = $this->db->fetch_object($resql))) {
 			$currency->name = $line->label;
 		}
 
@@ -521,7 +521,7 @@ class MultiCurrency extends CommonObject
 	  * @param integer	$date_document	Date from document (propal, order, invoice, ...)
 	  *
 	  * @return 	array	[0] => id currency
-	  *					[1] => rate
+	  *						[1] => rate
 	  */
 	public static function getIdAndTxFromCode($db, $code, $date_document = '')
 	{
@@ -687,12 +687,10 @@ class MultiCurrency extends CommonObject
 	 * @param	string	$code 	current code to search
 	 * @return	boolean         True if exists, false if not exists
 	 */
-	public static function checkCodeAlreadyExists($code)
+	public function checkCodeAlreadyExists($code)
 	{
-		global $db;
-
-		$currency = new MultiCurrency($db);
-		if ($currency->fetch('', $code) > 0) {
+		$currencytmp = new MultiCurrency($this->db);
+		if ($currencytmp->fetch('', $code) > 0) {
 			return true;
 		} else {
 			return false;
