@@ -159,7 +159,7 @@ if (!$user->rights->ticket->read) {
 }
 
 // Store current page url
-$url_page_current = dol_buildpath('/ticket/list.php', 1);
+$url_page_current = DOL_URL_ROOT.'/ticket/list.php';
 
 if ($project_ref) {
 	$tmpproject = new Project($db);
@@ -897,7 +897,7 @@ print '</tr>'."\n";
 
 // Detect if we need a fetch on each output line
 $needToFetchEachLine = 0;
-if (is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
+if (!empty($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
 		if (preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object

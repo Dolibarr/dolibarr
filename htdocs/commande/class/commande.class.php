@@ -299,13 +299,9 @@ class Commande extends CommonOrder
 		'ref_client' =>array('type'=>'varchar(255)', 'label'=>'RefCustomer', 'enabled'=>1, 'visible'=>-1, 'position'=>28),
 		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
 		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
-		'date_creation' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
-		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>56),
-		'date_valid' =>array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
+		'date_commande' =>array('type'=>'date', 'label'=>'Date', 'enabled'=>1, 'visible'=>1, 'position'=>60),
+		'date_valid' =>array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>62),
 		'date_cloture' =>array('type'=>'datetime', 'label'=>'DateClosing', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
-		'date_commande' =>array('type'=>'date', 'label'=>'Date', 'enabled'=>1, 'visible'=>-1, 'position'=>70),
-		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
-		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>80),
 		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
 		'fk_user_cloture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserClosing', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 		'source' =>array('type'=>'smallint(6)', 'label'=>'Source', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
@@ -344,6 +340,10 @@ class Commande extends CommonOrder
 		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'visible'=>-1, 'position'=>270),
 		'module_source' =>array('type'=>'varchar(32)', 'label'=>'POSModule', 'enabled'=>1, 'visible'=>-1, 'position'=>275),
 		'pos_source' =>array('type'=>'varchar(32)', 'label'=>'POSTerminal', 'enabled'=>1, 'visible'=>-1, 'position'=>280),
+		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'position'=>300),
+		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>302),
+		'date_creation' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>304),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>306),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>400),
 		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>-1, 'position'=>500),
 	);
@@ -4400,21 +4400,21 @@ class OrderLine extends CommonOrderLine
 		$sql .= ' '.((int) $this->rang).',';
 		$sql .= ' '.(!empty($this->fk_fournprice) ? $this->fk_fournprice : "null").',';
 		$sql .= ' '.price2num($this->pa_ht).',';
-		$sql .= " '".$this->db->escape($this->info_bits)."',";
-		$sql .= " ".price2num($this->total_ht).",";
-		$sql .= " ".price2num($this->total_tva).",";
-		$sql .= " ".price2num($this->total_localtax1).",";
-		$sql .= " ".price2num($this->total_localtax2).",";
-		$sql .= " ".price2num($this->total_ttc).",";
+		$sql .= " ".((int) $this->info_bits).",";
+		$sql .= " ".price2num($this->total_ht, 'MT').",";
+		$sql .= " ".price2num($this->total_tva, 'MT').",";
+		$sql .= " ".price2num($this->total_localtax1, 'MT').",";
+		$sql .= " ".price2num($this->total_localtax2, 'MT').",";
+		$sql .= " ".price2num($this->total_ttc, 'MT').",";
 		$sql .= " ".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null").',';
 		$sql .= " ".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null").',';
-		$sql .= ' '.(!$this->fk_unit ? 'NULL' : $this->fk_unit);
-		$sql .= ", ".(!empty($this->fk_multicurrency) ? $this->fk_multicurrency : 'NULL');
+		$sql .= ' '.(!$this->fk_unit ? 'NULL' : ((int) $this->fk_unit));
+		$sql .= ", ".(!empty($this->fk_multicurrency) ? ((int) $this->fk_multicurrency) : 'NULL');
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
-		$sql .= ", ".$this->multicurrency_subprice;
-		$sql .= ", ".$this->multicurrency_total_ht;
-		$sql .= ", ".$this->multicurrency_total_tva;
-		$sql .= ", ".$this->multicurrency_total_ttc;
+		$sql .= ", ".price2num($this->multicurrency_subprice, 'CU');
+		$sql .= ", ".price2num($this->multicurrency_total_ht, 'CT');
+		$sql .= ", ".price2num($this->multicurrency_total_tva, 'CT');
+		$sql .= ", ".price2num($this->multicurrency_total_ttc, 'CT');
 		$sql .= ')';
 
 		dol_syslog(get_class($this)."::insert", LOG_DEBUG);

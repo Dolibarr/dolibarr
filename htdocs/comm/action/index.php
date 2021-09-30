@@ -265,6 +265,7 @@ if (empty($conf->global->AGENDA_DISABLE_EXT)) {
 		$name = 'AGENDA_EXT_NAME'.$i;
 		$offsettz = 'AGENDA_EXT_OFFSETTZ'.$i;
 		$color = 'AGENDA_EXT_COLOR'.$i;
+		$default = 'AGENDA_EXT_ACTIVEBYDEFAULT'.$i;
 		$buggedfile = 'AGENDA_EXT_BUGGEDFILE'.$i;
 		if (!empty($conf->global->$source) && !empty($conf->global->$name)) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
@@ -273,6 +274,7 @@ if (empty($conf->global->AGENDA_DISABLE_EXT)) {
 				'name'=>$conf->global->$name,
 				'offsettz' => (!empty($conf->global->$offsettz) ? $conf->global->$offsettz : 0),
 				'color'=>$conf->global->$color,
+				'default'=>$conf->global->$default,
 				'buggedfile'=>(isset($conf->global->buggedfile) ? $conf->global->buggedfile : 0)
 			);
 		}
@@ -288,6 +290,7 @@ if (empty($user->conf->AGENDA_DISABLE_EXT)) {
 		$offsettz = 'AGENDA_EXT_OFFSETTZ_'.$user->id.'_'.$i;
 		$color = 'AGENDA_EXT_COLOR_'.$user->id.'_'.$i;
 		$enabled = 'AGENDA_EXT_ENABLED_'.$user->id.'_'.$i;
+		$default = 'AGENDA_EXT_ACTIVEBYDEFAULT_'.$user->id.'_'.$i;
 		$buggedfile = 'AGENDA_EXT_BUGGEDFILE_'.$user->id.'_'.$i;
 		if (!empty($user->conf->$source) && !empty($user->conf->$name)) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
@@ -296,6 +299,7 @@ if (empty($user->conf->AGENDA_DISABLE_EXT)) {
 				'name'=>$user->conf->$name,
 				'offsettz' => (!empty($user->conf->$offsettz) ? $user->conf->$offsettz : 0),
 				'color'=>$user->conf->$color,
+				'default'=>$user->conf->$default,
 				'buggedfile'=>(isset($user->conf->buggedfile) ? $user->conf->buggedfile : 0)
 			);
 		}
@@ -576,6 +580,15 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	if (is_array($showextcals) && count($showextcals) > 0) {
 		$s .= '<script type="text/javascript">'."\n";
 		$s .= 'jQuery(document).ready(function () {
+				jQuery("div input[name^=\"check_ext\"]").each(function(index, elem) {
+					var name = jQuery(elem).attr("name");
+					if (jQuery(elem).is(":checked")) {
+					    jQuery(".family_ext" + name.replace("check_ext", "")).show();
+					} else {
+					    jQuery(".family_ext" + name.replace("check_ext", "")).hide();
+					}
+				});
+
 				jQuery("div input[name^=\"check_ext\"]").click(function() {
 					var name = $(this).attr("name");
 					jQuery(".family_ext" + name.replace("check_ext", "")).toggle();
@@ -585,7 +598,14 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 
 		foreach ($showextcals as $val) {
 			$htmlname = md5($val['name']);
-			$s .= '<div class="nowrap inline-block"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" checked> <label for="check_ext'.$htmlname.'">'.$val['name'].'</label> &nbsp; </div>';
+
+			if (!empty($val['default'])) {
+				$default = "checked";
+			} else {
+				$default = '';
+			}
+
+			$s .= '<div class="nowrap inline-block"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" '.$default.'> <label for="check_ext'.$htmlname.'">'.$val['name'].'</label> &nbsp; </div>';
 		}
 	}
 

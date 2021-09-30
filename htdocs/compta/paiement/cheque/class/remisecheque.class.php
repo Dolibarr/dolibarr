@@ -170,12 +170,12 @@ class RemiseCheque extends CommonObject
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".((int) $account_id);
 		$sql .= ", 0";
 		$sql .= ", 0";
 		$sql .= ", 0";
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", 0";
 		$sql .= ", ''";
 		$sql .= ")";

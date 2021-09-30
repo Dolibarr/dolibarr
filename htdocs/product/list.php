@@ -950,7 +950,7 @@ if ($resql) {
 	}
 
 	// Multiprice
-	if ($conf->global->PRODUIT_MULTIPRICES) {
+	if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 		foreach ($arraypricelevel as $key => $value) {
 			if (!empty($arrayfields['p.sellprice'.$key]['checked'])) {
 				print '<td class="liste_titre right">';
@@ -1156,7 +1156,7 @@ if ($resql) {
 	}
 
 	// Multiprices
-	if ($conf->global->PRODUIT_MULTIPRICES) {
+	if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 		foreach ($arraypricelevel as $key => $value) {
 			if (!empty($arrayfields['p.sellprice'.$key]['checked'])) {
 				print_liste_field_titre($arrayfields['p.sellprice'.$key]['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');

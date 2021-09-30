@@ -591,7 +591,7 @@ if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->ex
 
 		if (!empty($accountancyexport->errors)) {
 			setEventMessages('', $accountancyexport->errors, 'errors');
-		} elseif (!$notifiedexportdate || !$notifiedvalidationdate) {
+		} elseif (!empty($notifiedexportdate) || !empty($notifiedvalidationdate)) {
 			// Specify as export : update field date_export or date_validated
 			$error = 0;
 			$db->begin();
@@ -602,17 +602,18 @@ if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->ex
 
 					$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
 					$sql .= " SET";
-					if (!$notifiedexportdate && !$notifiedvalidationdate) {
+					if (!empty($notifiedexportdate) && !empty($notifiedvalidationdate)) {
 						$sql .= " date_export = '".$db->idate($now)."'";
 						$sql .= ", date_validated = '".$db->idate($now)."'";
-					} elseif (!$notifiedexportdate) {
+					} elseif (!empty($notifiedexportdate)) {
 						$sql .= " date_export = '".$db->idate($now)."'";
-					} elseif (!$notifiedvalidationdate) {
+					} elseif (!empty($notifiedvalidationdate)) {
 						$sql .= " date_validated = '".$db->idate($now)."'";
 					}
 					$sql .= " WHERE rowid = ".((int) $movement->id);
 
-					dol_syslog("/accountancy/bookeeping/list.php Function export_file Specify movements as exported", LOG_DEBUG);
+					dol_syslog("/accountancy/bookkeeping/list.php Function export_file Specify movements as exported", LOG_DEBUG);
+
 					$result = $db->query($sql);
 					if (!$result) {
 						$error++;
@@ -1250,7 +1251,7 @@ while ($i < min($num, $limit)) {
 	}
 	if (empty($line->date_validation)) {
 		if ($user->rights->accounting->mouvements->supprimer) {
-			print '<a class="reposition paddingleft marginrightonly" href="'.$_SERVER['PHP_SELF'].'?action=delmouv&mvt_num='.$line->piece_num.$param.'&page='.$page.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">'.img_delete().'</a>';
+			print '<a class="reposition paddingleft marginrightonly" href="'.$_SERVER['PHP_SELF'].'?action=delmouv&token='.newToken().'&mvt_num='.$line->piece_num.$param.'&page='.$page.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">'.img_delete().'</a>';
 		}
 	}
 	print '</td>';
@@ -1274,7 +1275,7 @@ print '</div>';
 // TODO Replace this with mass delete action
 if ($user->rights->accounting->mouvements->supprimer_tous) {
 	print '<div class="tabsAction tabsActionNoBottom">'."\n";
-	print '<a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear'.($param ? '&'.$param : '').'">'.$langs->trans("DeleteMvt").'</a>';
+	print '<a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear&token='.newToken().($param ? '&'.$param : '').'">'.$langs->trans("DeleteMvt").'</a>';
 	print '</div>';
 }
 

@@ -548,7 +548,7 @@ if (!empty($search_user)) {
 if (!empty($search_batch)) {
 	$sql .= natural_search('m.batch', $search_batch);
 }
-if (!empty($product_id)) {
+if (!empty($product_id) && $product_id != '-1') {
 	$sql .= natural_search('p.rowid', $product_id);
 }
 if (!empty($search_fk_projet) && $search_fk_projet != '-1') {
@@ -579,7 +579,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	 while ($db->fetch_object($resql)) {
 	 $nbtotalofrecords++;
 	 }*/
-	/* This fast and low memory method to get and count full list converts the sql into a sql count */
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^SELECT[a-z0-9\._\s\(\),]+FROM/i', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
 	$resql = $db->query($sqlforcount);
 	$objforcount = $db->fetch_object($resql);
@@ -654,7 +654,7 @@ if ($object->id > 0) {
 		$morehtmlref .= '<br>'.img_picto('', 'project').' '.$langs->trans('Project').' ';
 		if ($usercancreate && 1 == 2) {
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
 			if ($action == 'classify') {
 				$projectid = $object->fk_project;
@@ -864,6 +864,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions = array(
+	'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 //    'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 //    'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );

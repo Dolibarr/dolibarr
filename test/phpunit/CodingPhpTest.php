@@ -201,28 +201,21 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 				|| in_array($file['name'], array('modules_boxes.php', 'rapport.pdf.php', 'TraceableDB.php'))) {
 				if (! in_array($file['name'], array(
 					'api.class.php',
-					'actioncomm.class.php',
 					'commonobject.class.php',
 					'conf.class.php',
 					'html.form.class.php',
 					'html.formmail.class.php',
-					'infobox.class.php',
-					'link.class.php',
 					'translate.class.php',
 					'utils.class.php',
 					'modules_product.class.php',
 					'modules_societe.class.php',
 					'TraceableDB.php',
-					'expeditionbatch.class.php',
-					'expensereport_ik.class.php',
-					'expensereport_rule.class.php',
 					'multicurrency.class.php',
 					'productbatch.class.php',
 					'reception.class.php',
-					'societe.class.php' ,
-					'account.class.php'
+					'societe.class.php'
 				))) {
-					// Must must not found $db->
+					// Must not found $db->
 					$ok=true;
 					$matches=array();
 					// Check string $db-> inside a class.php file (it should be $this->db-> insto such classes)
@@ -290,7 +283,13 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			//  with xxx that is not 'thi' (for $this->db->sanitize) and 'db-' (for $db->sanitize). It means we forget a ' if string, or an (int) if int, when forging sql request.
 			preg_match_all('/(DELETE|OR|AND|WHERE|INSERT)\s.*([^\s][^\s][^\s])\s*=\s*"\s*\.\s*\$(...)/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
-				if ($val[2] == 'ity' && $val[3] == 'con') {		// exclude entity = $conf->entity
+				if ($val[2] == 'ity' && $val[3] == 'con') {		// exclude entity = ".$conf->entity
+					continue;
+				}
+				if ($val[2] == 'ame' && $val[3] == 'db-' && preg_match('/WHERE name/', $val[0])) {		// exclude name = ".$db->encrypt(
+					continue;
+				}
+				if ($val[2] == 'ame' && $val[3] == 'thi' && preg_match('/WHERE name/', $val[0])) {		// exclude name = ".$this->db->encrypt(
 					continue;
 				}
 				var_dump($matches);
@@ -305,7 +304,10 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			//  with xxx that is not 'db-' (for $db->escape). It means we forget a ' if string, or an (int) if int, when forging sql request.
 			preg_match_all('/(VALUES).*,\s*"\s*\.\s*\$(...)/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
-				if ($val[2] == 'VALUES' && $val[3] == 'db-') {		// exclude $db->escape(
+				if ($val[1] == 'VALUES' && $val[2] == 'db-') {		// exclude $db->escape(
+					continue;
+				}
+				if ($val[1] == 'VALUES' && $val[2] == 'thi' && preg_match('/this->db->encrypt/', $val[0])) {	// exclude ".$this->db->encrypt(
 					continue;
 				}
 				var_dump($matches);
@@ -332,7 +334,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			// Check string sql|set...'".$yyy->xxx   with xxx that is not 'escape', 'idate', .... It means we forget a db->escape when forging sql request.
 			preg_match_all('/(sql|SET|WHERE|INSERT|VALUES).+\s*\'"\s*\.\s*\$(.........)/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
-				if (! in_array($val[2], array('this->db-', 'this->esc', 'db->escap', 'mydb->esc', 'dbsession', 'db->idate', 'escapedli', 'excludeGr', 'includeGr'))) {
+				if (! in_array($val[2], array('this->db-', 'this->esc', 'db->escap', 'dbs->esca', 'mydb->esc', 'dbsession', 'db->idate', 'escapedli', 'excludeGr', 'includeGr'))) {
 					$ok=false;
 					break;
 				}
@@ -345,7 +347,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			// Check string sql|set...'.$yyy->xxx   with xxx that is not 'escape', 'idate', .... It means we forget a db->escape when forging sql request.
 			preg_match_all('/(\$sql|SET\s|WHERE\s|INSERT\s|VALUES\s|VALUES\().+\s*\'\s*\.\s*\$(.........)/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
-				if (! in_array($val[2], array('this->db-', 'db->sanit', 'conf->ent', 'key : \'\')', 'key])."\')', 'excludefi', 'regexstri', 'filtermod'))) {
+				if (! in_array($val[2], array('this->db-', 'db->sanit', 'conf->ent', 'key : \'\')', 'key])."\')', 'excludefi', 'regexstri', ''))) {
 					$ok=false;
 					var_dump($matches);
 					break;

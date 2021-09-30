@@ -424,7 +424,7 @@ if ($object->fetch($id) >= 0) {
 
 					print '<div class="tagtd right">';
 					if ($allowaddtarget) {
-						print '<input type="submit" class="button" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
+						print '<input type="submit" class="button button-add" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
 					} else {
 						print '<input type="submit" class="button disabled" disabled="disabled" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
 						//print $langs->trans("MailNoChangePossible");
@@ -635,11 +635,11 @@ if ($object->fetch($id) >= 0) {
 				$obj = $db->fetch_object($resql);
 
 				print '<tr class="oddeven">';
-				print '<td>'.$obj->email.'</td>';
-				print '<td>'.$obj->lastname.'</td>';
-				print '<td>'.$obj->firstname.'</td>';
+				print '<td class="tdoverflowmax150">'.img_picto('$obj->email', 'email', 'class="paddingright"').$obj->email.'</td>';
+				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">'.$obj->lastname.'</td>';
+				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->firstname).'">'.$obj->firstname.'</td>';
 				print '<td>'.$obj->other.'</td>';
-				print '<td class="center">';
+				print '<td class="center tdoverflowmax150">';
 				if (empty($obj->source_id) || empty($obj->source_type)) {
 					print empty($obj->source_url) ? '' : $obj->source_url; // For backward compatibility
 				} else {

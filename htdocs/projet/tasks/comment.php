@@ -47,13 +47,6 @@ $withproject = GETPOST('withproject', 'int');
 $project_ref = GETPOST('project_ref', 'alpha');
 $planned_workload = ((GETPOST('planned_workloadhour', 'int') != '' || GETPOST('planned_workloadmin', 'int') != '') ? (GETPOST('planned_workloadhour', 'int') > 0 ?GETPOST('planned_workloadhour', 'int') * 3600 : 0) + (GETPOST('planned_workloadmin', 'int') > 0 ?GETPOST('planned_workloadmin', 'int') * 60 : 0) : '');
 
-// Security check
-$socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-if (!$user->rights->projet->lire) {
-	accessforbidden();
-}
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('projecttaskcommentcard', 'globalcard'));
 
@@ -79,10 +72,21 @@ if (!empty($project_ref) && !empty($withproject)) {
 	}
 }
 
+
+if ($id > 0 || $ref) {
+	$object->fetch($id, $ref);
+}
+
+// Security check
+$socid = 0;
+
+restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
+
+
+
 /*
  * View
-*/
-
+ */
 
 llxHeader('', $langs->trans("CommentPage"));
 

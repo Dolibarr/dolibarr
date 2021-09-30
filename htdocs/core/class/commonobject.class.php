@@ -1739,6 +1739,18 @@ abstract class CommonObject
 	 *
 	 *		@return		int			<0 if KO, >=0 if OK
 	 */
+	public function fetch_project()
+	{
+		// phpcs:enable
+		return $this->fetch_projet();
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *		Load the project with id $this->fk_project into this->project
+	 *
+	 *		@return		int			<0 if KO, >=0 if OK
+	 */
 	public function fetch_projet()
 	{
 		// phpcs:enable
@@ -1941,9 +1953,9 @@ abstract class CommonObject
 
 		if ($fk_user_field) {
 			if (!empty($fuser) && is_object($fuser)) {
-				$sql .= ", ".$fk_user_field." = ".$fuser->id;
+				$sql .= ", ".$fk_user_field." = ".((int) $fuser->id);
 			} elseif (empty($fuser) || $fuser != 'none') {
-				$sql .= ", ".$fk_user_field." = ".$user->id;
+				$sql .= ", ".$fk_user_field." = ".((int) $user->id);
 			}
 		}
 
@@ -2008,6 +2020,11 @@ abstract class CommonObject
 		}
 		if ($fieldid == 'none') {
 			return 1;
+		}
+
+		// For backward compatibility
+		if ($this->table_element == 'facture_rec' && $fieldid == 'title') {
+			$fieldid = 'titre';
 		}
 
 		// Security on socid
@@ -3525,7 +3542,7 @@ abstract class CommonObject
 
 			$this->db->free($resql);
 
-			// Now update global field total_ht, total_ttc and tva
+			// Now update global field total_ht, total_ttc, total_tva, total_localtax1, total_localtax2, multicurrency_total_*
 			$fieldht = 'total_ht';
 			$fieldtva = 'tva';
 			$fieldlocaltax1 = 'localtax1';
@@ -3568,6 +3585,7 @@ abstract class CommonObject
 
 				dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
 				$resql = $this->db->query($sql);
+
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
@@ -3843,7 +3861,13 @@ abstract class CommonObject
 						$classfile = 'conferenceorbooth';
 						$classname = 'ConferenceOrBooth';
 						$module = 'eventorganization';
+					} elseif ($objecttype == 'mo') {
+						$classpath = 'mrp/class';
+						$classfile = 'mo';
+						$classname = 'Mo';
+						$module = 'mrp';
 					}
+
 
 					// Here $module, $classfile and $classname are set
 					if ($conf->$module->enabled && (($element != $this->element) || $alsosametype)) {
@@ -4295,10 +4319,10 @@ abstract class CommonObject
 					//print 'Found into table '.$table.', type '.$langs->transnoentitiesnoconv($elementname).', haschild='.$haschild;
 					$haschild += $obj->nb;
 					if (is_numeric($elementname)) {	// old usage
-						$this->errors[] = $langs->trans("ErrorRecordHasAtLeastOneChildOfType", $table);
+						$this->errors[] = $langs->transnoentities("ErrorRecordHasAtLeastOneChildOfType", method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $table);
 					} else // new usage: $elementname=Translation key
 					{
-						$this->errors[] = $langs->trans("ErrorRecordHasAtLeastOneChildOfType", $langs->transnoentitiesnoconv($elementname));
+						$this->errors[] = $langs->transnoentities("ErrorRecordHasAtLeastOneChildOfType", method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $langs->transnoentitiesnoconv($elementname));
 					}
 					break; // We found at least one, we stop here
 				}
@@ -6724,9 +6748,9 @@ abstract class CommonObject
 							foreach ($fields_label as $field_toshow) {
 								$translabel = $langs->trans($obj->$field_toshow);
 								if ($translabel != $obj->$field_toshow) {
-									$labeltoshow = dol_trunc($translabel, 18).' ';
+									$labeltoshow = dol_trunc($translabel).' ';
 								} else {
-									$labeltoshow = dol_trunc($obj->$field_toshow, 18).' ';
+									$labeltoshow = dol_trunc($obj->$field_toshow).' ';
 								}
 							}
 							$out .= '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
@@ -6736,7 +6760,7 @@ abstract class CommonObject
 								if ($translabel != $obj->{$InfoFieldList[1]}) {
 									$labeltoshow = dol_trunc($translabel, 18);
 								} else {
-									$labeltoshow = dol_trunc($obj->{$InfoFieldList[1]}, 18);
+									$labeltoshow = dol_trunc($obj->{$InfoFieldList[1]});
 								}
 							}
 							if (empty($labeltoshow)) {
@@ -6919,7 +6943,7 @@ abstract class CommonObject
 				}
 			}
 		} elseif ($type == 'link') {
-			$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath[:AddCreateButtonOrNot[:Filter]]'
+			$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'
 			$param_list_array = explode(':', $param_list[0]);
 			$showempty = (($required && $default != '') ? 0 : 1);
 
@@ -7321,7 +7345,11 @@ abstract class CommonObject
 					dol_include_once($InfoFieldList[1]);
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
-						$object->fetch($value);
+						if ($object->element === 'product') {	// Special cas for product because default valut of fetch are wrong
+							$object->fetch($value, '', '', '', 0, 1, 1);
+						} else {
+							$object->fetch($value);
+						}
 						$value = $object->getNomUrl($getnomurlparam, $getnomurlparam2);
 					}
 				} else {
@@ -8197,10 +8225,10 @@ abstract class CommonObject
 							// Special cas for product
 							if ($modulepart == 'product' && ($user->rights->produit->creer || $user->rights->service->creer)) {
 								// Link to resize
-								$return .= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"), 'resize', '').'</a> &nbsp; ';
+								$return .= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"), 'resize', '').'</a> &nbsp; ';
 
 								// Link to delete
-								$return .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=delete&amp;token='.newToken().'&amp;file='.urlencode($pdir.$viewfilename).'">';
+								$return .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=delete&token='.newToken().'&file='.urlencode($pdir.$viewfilename).'">';
 								$return .= img_delete().'</a>';
 							}
 						}
@@ -8226,10 +8254,10 @@ abstract class CommonObject
 							// Special case for product
 							if ($modulepart == 'product' && ($user->rights->produit->creer || $user->rights->service->creer)) {
 								// Link to resize
-								$return .= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"), 'resize', '').'</a> &nbsp; ';
+								$return .= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"), 'resize', '').'</a> &nbsp; ';
 
 								// Link to delete
-								$return .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=delete&amp;token='.newToken().'&amp;file='.urlencode($pdir.$viewfilename).'">';
+								$return .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=delete&token='.newToken().'&file='.urlencode($pdir.$viewfilename).'">';
 								$return .= img_delete().'</a>';
 							}
 						}
@@ -8964,7 +8992,7 @@ abstract class CommonObject
 	 * @param 	User 	$user       			User that deletes
 	 * @param 	bool 	$notrigger  			false=launch triggers after, true=disable triggers
 	 * @param	int		$forcechilddeletion		0=no, 1=Force deletion of children
-	 * @return 	int             				<=0 if KO, >0 if OK
+	 * @return 	int             				<=0 if KO, 0=Nothing done because object has child, >0 if OK
 	 */
 	public function deleteCommon(User $user, $notrigger = false, $forcechilddeletion = 0)
 	{

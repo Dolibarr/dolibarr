@@ -714,6 +714,17 @@ class DoliDBPgsql extends DoliDB
 	}
 
 	/**
+	 *	Escape a string to insert data
+	 *
+	 *	@param	string	$stringtoencode		String to escape
+	 *	@return	string						String escaped
+	 */
+	public function escapeunderscore($stringtoencode)
+	{
+		return str_replace('_', '\_', $stringtoencode);
+	}
+
+	/**
 	 *  Format a SQL IF
 	 *
 	 *  @param	string	$test           Test string (example: 'cd.statut=0', 'field IS NULL')
@@ -823,22 +834,22 @@ class DoliDBPgsql extends DoliDB
 	}
 
 	/**
-	 *  Encrypt sensitive data in database
-	 *  Warning: This function includes the escape, so it must use direct value
+	 * Encrypt sensitive data in database
+	 * Warning: This function includes the escape and add the SQL simple quotes on strings.
 	 *
-	 *  @param  string  $fieldorvalue   Field name or value to encrypt
-	 *  @param	int		$withQuotes     Return string with quotes
-	 *  @return string          		XXX(field) or XXX('value') or field or 'value'
+	 * @param	string	$fieldorvalue	Field name or value to encrypt
+	 * @param	int		$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
+	 * @return	string					XXX(field) or XXX('value') or field or 'value'
 	 */
-	public function encrypt($fieldorvalue, $withQuotes = 0)
+	public function encrypt($fieldorvalue, $withQuotes = 1)
 	{
 		global $conf;
 
 		// Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
-		$cryptType = ($conf->db->dolibarr_main_db_encryption ? $conf->db->dolibarr_main_db_encryption : 0);
+		//$cryptType = ($conf->db->dolibarr_main_db_encryption ? $conf->db->dolibarr_main_db_encryption : 0);
 
 		//Encryption key
-		$cryptKey = (!empty($conf->db->dolibarr_main_db_cryptkey) ? $conf->db->dolibarr_main_db_cryptkey : '');
+		//$cryptKey = (!empty($conf->db->dolibarr_main_db_cryptkey) ? $conf->db->dolibarr_main_db_cryptkey : '');
 
 		$return = $fieldorvalue;
 		return ($withQuotes ? "'" : "").$this->escape($return).($withQuotes ? "'" : "");

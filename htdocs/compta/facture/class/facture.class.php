@@ -678,8 +678,8 @@ class Facture extends CommonInvoice
 		$sql .= ", ".($this->fk_facture_source ? "'".$this->db->escape($this->fk_facture_source)."'" : "null");
 		$sql .= ", ".($user->id > 0 ? (int) $user->id : "null");
 		$sql .= ", ".($this->fk_project ? $this->fk_project : "null");
-		$sql .= ", ".$this->cond_reglement_id;
-		$sql .= ", ".$this->mode_reglement_id;
+		$sql .= ", ".((int) $this->cond_reglement_id);
+		$sql .= ", ".((int) $this->mode_reglement_id);
 		$sql .= ", '".$this->db->idate($this->date_lim_reglement)."'";
 		$sql .= ", ".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null");
 		$sql .= ", ".($this->situation_cycle_ref ? "'".$this->db->escape($this->situation_cycle_ref)."'" : "null");
@@ -1625,10 +1625,10 @@ class Facture extends CommonInvoice
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result) {
-			if ($this->db->num_rows($result)) {
-				$obj = $this->db->fetch_object($result);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
 				$this->entity = $obj->entity;
@@ -1730,14 +1730,18 @@ class Facture extends CommonInvoice
 					$this->error = $this->db->error();
 					return -3;
 				}
+
+				$this->db->free($resql);
+
 				return 1;
 			} else {
 				$this->error = 'Invoice with id='.$rowid.' or ref='.$ref.' or ref_ext='.$ref_ext.' not found';
-				dol_syslog(get_class($this)."::fetch Error ".$this->error, LOG_ERR);
+
+				dol_syslog(__METHOD__.$this->error, LOG_WARNING);
 				return 0;
 			}
 		} else {
-			$this->error = $this->db->error();
+			$this->error = $this->db->lasterror();
 			return -1;
 		}
 	}
@@ -2263,13 +2267,36 @@ class Facture extends CommonInvoice
 				$sql .= ' SET fk_facture = NULL, fk_facture_line = NULL';
 				$sql .= ' WHERE fk_facture_line IN ('.$this->db->sanitize(join(',', $list_rowid_det)).')';
 
-				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 				if (!$this->db->query($sql)) {
 					$this->error = $this->db->error()." sql=".$sql;
 					$this->errors[] = $this->error;
 					$this->db->rollback();
 					return -5;
 				}
+			}
+
+			// Remove other links to the deleted invoice
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'eventorganization_conferenceorboothattendee';
+			$sql .= ' SET fk_invoice = NULL';
+			$sql .= ' WHERE fk_invoice = '.((int) $rowid);
+
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->error()." sql=".$sql;
+				$this->errors[] = $this->error;
+				$this->db->rollback();
+				return -5;
+			}
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time';
+			$sql .= ' SET invoice_id = NULL, invoice_line_id = NULL';
+			$sql .= ' WHERE invoice_id = '.((int) $rowid);
+
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->error()." sql=".$sql;
+				$this->errors[] = $this->error;
+				$this->db->rollback();
+				return -5;
 			}
 
 			// If we decrease stock on invoice validation, we increase back if a warehouse id was provided
@@ -2295,16 +2322,12 @@ class Facture extends CommonInvoice
 			// Invoice line extrafileds
 			$main = MAIN_DB_PREFIX.'facturedet';
 			$ef = $main."_extrafields";
-			$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_facture = ".((int) $rowid).")";
+			$sqlef = "DELETE FROM ".$ef." WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_facture = ".((int) $rowid).")";
 			// Delete invoice line
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.((int) $rowid);
 
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-
 			if ($this->db->query($sqlef) && $this->db->query($sql) && $this->delete_linked_contact()) {
 				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.((int) $rowid);
-
-				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 
 				$resql = $this->db->query($sql);
 				if ($resql) {

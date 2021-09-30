@@ -134,10 +134,6 @@ if (!$sortorder) {
 	$sortorder = 'DESC';
 }
 
-if ($search_status == '') {
-	$search_status = -1;
-}
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new CommandeFournisseur($db);
 $hookmanager->initHooks(array('supplierorderlist'));
@@ -245,7 +241,7 @@ if (empty($reshook)) {
 		$search_multicurrency_montant_tva = '';
 		$search_multicurrency_montant_ttc = '';
 		$search_project_ref = '';
-		$search_status = -1;
+		$search_status = '';
 		$search_date_order_startday = '';
 		$search_date_order_startmonth = '';
 		$search_date_order_startyear = '';
@@ -277,8 +273,41 @@ if (empty($reshook)) {
 	$objectlabel = 'SupplierOrders';
 	$permissiontoread = $user->rights->fournisseur->commande->lire;
 	$permissiontodelete = $user->rights->fournisseur->commande->supprimer;
+	$permissiontovalidate = $user->rights->fournisseur->commande->creer;
 	$uploaddir = $conf->fournisseur->commande->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+	if ($action == 'validate' && $permissiontovalidate) {
+		if (GETPOST('confirm') == 'yes') {
+			$objecttmp = new CommandeFournisseur($db);
+			$db->begin();
+			$error = 0;
+
+			foreach ($toselect as $checked) {
+				if ($objecttmp->fetch($checked)) {
+					if ($objecttmp->statut == 0) {
+						$objecttmp->date_commande = dol_now();
+						$result = $objecttmp->valid($user);
+						if ($result >= 0) {
+							// If we have permission, and if we don't need to provide the idwarehouse, we go directly on approved step
+							if (empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE) && $user->rights->fournisseur->commande->approuver && !(!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $objecttmp->hasProductsOrServices(1))) {
+								$result = $objecttmp->approve($user);
+								setEventMessages($langs->trans("SupplierOrderValidatedAndApproved"), array($objecttmp->ref));
+							} else {
+								setEventMessages($langs->trans("SupplierOrderValidated"), array($objecttmp->ref));
+							}
+						} else {
+							setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+							$error++;
+						}
+					}
+				}
+			}
+
+			if (!$error) $db->commit();
+			else $db->rollback();
+		}
+	}
 
 	// Mass action to generate vendor bills
 	if ($massaction == 'confirm_createsupplierbills') {
@@ -342,7 +371,7 @@ if (empty($reshook)) {
 				$sql .= ") VALUES (";
 				$sql .= $id_order;
 				$sql .= ", '".$db->escape($objecttmp->origin)."'";
-				$sql .= ", ".$objecttmp->id;
+				$sql .= ", ".((int) $objecttmp->id);
 				$sql .= ", '".$db->escape($objecttmp->element)."'";
 				$sql .= ")";
 
@@ -947,6 +976,15 @@ if ($resql) {
 		'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 		'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
+
+	if ($permissiontovalidate) {
+		if ($user->rights->fournisseur->commande->approuver && empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE)) {
+			$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ValidateAndApprove");
+		} else {
+			$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate");
+		}
+	}
+
 	if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
 		$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisSupplier");
 	}
@@ -985,6 +1023,10 @@ if ($resql) {
 	$objecttmp = new CommandeFournisseur($db);
 	$trackid = 'sord'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
+	if ($massaction == 'prevalidate') {
+		print $form->formconfirm($_SERVER["PHP_SELF"].$fieldstosearchall, $langs->trans("ConfirmMassValidation"), $langs->trans("ConfirmMassValidationQuestion"), "validate", null, '', 0, 200, 500, 1);
+	}
 
 	if ($massaction == 'createbills') {
 		//var_dump($_REQUEST);

@@ -345,7 +345,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 
 				for ($j = 0; $j < $num; $j++) {
 					$from = $reg[0][$j];
-					$to = $db->encrypt($reg[1][$j], 1);
+					$to = $db->encrypt($reg[1][$j]);
 					$newsql = str_replace($from, $to, $newsql);
 				}
 				$sqlmodified++;
@@ -481,10 +481,10 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 
 
 /**
- *	Effacement d'une constante dans la base de donnees
+ *	Delete a constant
  *
  *	@param	    DoliDB		$db         Database handler
- *	@param	    string		$name		Name of constant or rowid of line
+ *	@param	    string|int	$name		Name of constant or rowid of line
  *	@param	    int			$entity		Multi company id, -1 for all entities
  *	@return     int         			<0 if KO, >0 if OK
  *
@@ -502,7 +502,7 @@ function dolibarr_del_const($db, $name, $entity = 1)
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 	$sql .= " WHERE (".$db->decrypt('name')." = '".$db->escape($name)."'";
 	if (is_numeric($name)) {
-		$sql .= " OR rowid = '".$db->escape($name)."'";
+		$sql .= " OR rowid = ".((int) $name);
 	}
 	$sql .= ")";
 	if ($entity >= 0) {
@@ -536,7 +536,7 @@ function dolibarr_get_const($db, $name, $entity = 1)
 
 	$sql = "SELECT ".$db->decrypt('value')." as value";
 	$sql .= " FROM ".MAIN_DB_PREFIX."const";
-	$sql .= " WHERE name = '".$db->escape($db->encrypt($name))."'";
+	$sql .= " WHERE name = ".$db->encrypt($name);
 	$sql .= " AND entity = ".((int) $entity);
 
 	dol_syslog("admin.lib::dolibarr_get_const", LOG_DEBUG);
@@ -583,7 +583,7 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 	$db->begin();
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-	$sql .= " WHERE name = '".$db->escape($db->encrypt($name))."'";
+	$sql .= " WHERE name = ".$db->encrypt($name);
 	if ($entity >= 0) {
 		$sql .= " AND entity = ".((int) $entity);
 	}
@@ -594,8 +594,8 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 	if (strcmp($value, '')) {	// true if different. Must work for $value='0' or $value=0
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity)";
 		$sql .= " VALUES (";
-		$sql .= $db->encrypt($name, 1);
-		$sql .= ", ".$db->encrypt($value, 1);
+		$sql .= $db->encrypt($name);
+		$sql .= ", ".$db->encrypt($value);
 		$sql .= ",'".$db->escape($type)."',".((int) $visible).",'".$db->escape($note)."',".((int) $entity).")";
 
 		//print "sql".$value."-".pg_escape_string($value)."-".$sql;exit;
@@ -675,24 +675,24 @@ function ihm_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=language";
-	$head[$h][1] = $langs->trans("DefaultLanguage");
-	$head[$h][2] = 'language';
+	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=other";
+	$head[$h][1] = $langs->trans("LanguageAndPresentation");
+	$head[$h][2] = 'other';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=template";
-	$head[$h][1] = $langs->trans("DefaultSkin");
+	$head[$h][1] = $langs->trans("SkinAndColors");
 	$head[$h][2] = 'template';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=dashboard";
+	$head[$h][1] = $langs->trans("Dashboard");
+	$head[$h][2] = 'dashboard';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=login";
 	$head[$h][1] = $langs->trans("LoginPage");
 	$head[$h][2] = 'login';
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=other";
-	$head[$h][1] = $langs->trans("Miscellaneous");
-	$head[$h][2] = 'other';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'ihm_admin');
@@ -753,7 +753,7 @@ function security_prepare_head()
 	$sql = "SELECT COUNT(r.id) as nb";
 	$sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 	$sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
-	$sql .= " AND entity = ".$conf->entity;
+	$sql .= " AND entity = ".((int) $conf->entity);
 	$sql .= " AND bydefault = 1";
 	if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 		$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
@@ -1839,7 +1839,7 @@ function delDocumentModel($name, $type)
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
 	$sql .= " WHERE nom = '".$db->escape($name)."'";
 	$sql .= " AND type = '".$db->escape($type)."'";
-	$sql .= " AND entity = ".$conf->entity;
+	$sql .= " AND entity = ".((int) $conf->entity);
 
 	dol_syslog("admin.lib::delDocumentModel", LOG_DEBUG);
 	$resql = $db->query($sql);

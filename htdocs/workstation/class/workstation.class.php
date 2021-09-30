@@ -440,7 +440,7 @@ class Workstation extends CommonObject
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
 		}
 
 		if (!empty($sortfield)) {
@@ -927,17 +927,20 @@ class Workstation extends CommonObject
 	{
 		$this->lines = array();
 
+		/*
 		$objectline = new WorkstationLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_workstation = '.$this->id));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_workstation = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;
 			$this->errors = $this->errors;
 			return $result;
-		} else {
-			$this->lines = $result;
-			return $this->lines;
 		}
+
+		$this->lines = $result;
+		*/
+
+		return $this->lines;
 	}
 
 	/**

@@ -81,7 +81,7 @@ class BankCateg // extends CommonObject
 		$sql .= ", entity";
 		$sql .= ") VALUES (";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'")."";
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
 
 		$this->db->begin();

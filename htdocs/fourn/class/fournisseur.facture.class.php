@@ -2440,7 +2440,7 @@ class FactureFournisseur extends CommonInvoice
 
 				if ($facturestatic->hasDelay()) {
 					$response->nbtodolate++;
-					$response->url_late = DOL_URL_ROOT.'/fourn/facture/list.php?option=late&mainmenu=billing&leftmenu=suppliers_bills';
+					$response->url_late = DOL_URL_ROOT.'/fourn/facture/list.php?search_option=late&mainmenu=billing&leftmenu=suppliers_bills';
 				}
 			}
 			$this->db->free($resql);
@@ -3387,19 +3387,10 @@ class SupplierInvoiceLine extends CommonObjectLine
 			$this->multicurrency_total_ttc = 0;
 		}
 
+		$fk_product = (int) $this->fk_product;
+		$fk_unit = (int) $this->fk_unit;
+
 		$this->db->begin();
-
-		if (empty($this->fk_product)) {
-			$fk_product = "null";
-		} else {
-			$fk_product = (int) $this->fk_product;
-		}
-
-		if (empty($this->fk_unit)) {
-			$fk_unit = "null";
-		} else {
-			$fk_unit = (int) $this->fk_unit;
-		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det SET";
 		$sql .= "  description ='".$this->db->escape($this->description)."'";

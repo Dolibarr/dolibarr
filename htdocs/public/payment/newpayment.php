@@ -113,25 +113,46 @@ if (!$action) {
 	}
 }
 
-if ($source == 'conferencesubscription') {
+if ($source == 'organizedeventregistration') {
 	// Finding the Attendee
-	$invoiceid = GETPOST('ref');
+	$attendee = new ConferenceOrBoothAttendee($db);
+
+	$invoiceid = GETPOST('ref', 'int');
 	$invoice = new Facture($db);
+
 	$resultinvoice = $invoice->fetch($invoiceid);
+
 	if ($resultinvoice <= 0) {
 		setEventMessages(null, $invoice->errors, "errors");
 	} else {
+		/*
+		$attendeeid = 0;
+
 		$invoice->fetchObjectLinked();
 		$linkedAttendees = $invoice->linkedObjectsIds['conferenceorboothattendee'];
 
 		if (is_array($linkedAttendees)) {
 			$linkedAttendees = array_values($linkedAttendees);
+			$attendeeid = $linkedAttendees[0];
+		}*/
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee";
+		$sql .= " WHERE fk_invoice = ".((int) $invoiceid);
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$attendeeid = $obj->rowid;
+			}
+		}
 
-			$attendee = new ConferenceOrBoothAttendee($db);
-			$resultattendee = $attendee->fetch($linkedAttendees[0]);
+		if ($attendeeid > 0) {
+			$resultattendee = $attendee->fetch($attendeeid);
+
 			if ($resultattendee <= 0) {
 				setEventMessages(null, $attendee->errors, "errors");
 			} else {
+				$attendee->fetch_projet();
+
 				$amount = price2num($invoice->total_ttc);
 				// Finding the associated thirdparty
 				$thirdparty = new Societe($db);
@@ -1806,9 +1827,9 @@ if ($source == 'donation') {
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
 }
 
-if ($source == 'conferencesubscription') {
+if ($source == 'organizedeventregistration') {
 	$found = true;
-	$langs->load("members");
+	$langs->loadLangs(array("members", "eventorganization"));
 
 	if (GETPOST('fulltag', 'alpha')) {
 		$fulltag = GETPOST('fulltag', 'alpha');
@@ -1829,14 +1850,20 @@ if ($source == 'conferencesubscription') {
 	// Debitor
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Attendee");
 	print '</td><td class="CTableRow2"><b>';
-	print $thirdparty->name;
+	print $attendee->email;
+	print ($thirdparty->name ? ' ('.$thirdparty->name.')' : '');
 	print '</b>';
 	print '</td></tr>'."\n";
 
+	if (! is_object($attendee->project)) {
+		$text = 'ErrorProjectNotFound';
+	} else {
+		$text = $langs->trans("PaymentEvent").' - '.$attendee->project->title;
+	}
+
 	// Object
-	$text = '<b>'.$langs->trans("PaymentConferenceAttendee").'</b>';
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
-	print '</td><td class="CTableRow2">'.$text;
+	print '</td><td class="CTableRow2"><b>'.$text.'</b>';
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($invoice->id).'">';
 	print '</td></tr>'."\n";

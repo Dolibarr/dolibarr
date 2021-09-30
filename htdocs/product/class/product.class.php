@@ -175,6 +175,9 @@ class Product extends CommonObject
 	public $prices_by_qty_id = array();
 	public $prices_by_qty_list = array();
 
+	//! Array for multilangs
+	public $multilangs = array();
+
 	//! Default VAT code for product (link to code into llx_c_tva but without foreign keys)
 	public $default_vat_code;
 
@@ -350,8 +353,6 @@ class Product extends CommonObject
 	public $stats_mrptoconsume = array();
 	public $stats_mrptoproduce = array();
 
-	public $multilangs = array();
-
 	//! Size of image
 	public $imgWidth;
 	public $imgHeight;
@@ -434,6 +435,13 @@ class Product extends CommonObject
 
 
 	/**
+	 *
+	 *
+	 *
+	 */
+	 public $mandatory_period;
+
+	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
@@ -483,6 +491,8 @@ class Product extends CommonObject
 		'import_key'    =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0, 'position'=>1000),
 		//'tosell'       =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
 		//'tobuy'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
+		'mandatory_period'        =>array('type'=>'integer', 'label'=>'mandatory_period', 'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000),
+
 	);
 
 	/**
@@ -634,7 +644,7 @@ class Product extends CommonObject
 
 		// Barcode value
 		$this->barcode = trim($this->barcode);
-
+		$this->mandatory_period = empty($this->mandatory_period) ? 0 : $this->mandatory_period;
 		// Check parameters
 		if (empty($this->label)) {
 			$this->error = 'ErrorMandatoryParametersNotProvided';
@@ -716,21 +726,22 @@ class Product extends CommonObject
 					$sql .= ", tobatch";
 					$sql .= ", batch_mask";
 					$sql .= ", fk_unit";
+					$sql .= ", mandatory_period";
 					$sql .= ") VALUES (";
 					$sql .= "'".$this->db->idate($now)."'";
-					$sql .= ", ".$conf->entity;
+					$sql .= ", ".((int) $conf->entity);
 					$sql .= ", '".$this->db->escape($this->ref)."'";
 					$sql .= ", ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 					$sql .= ", ".price2num($price_min_ht);
 					$sql .= ", ".price2num($price_min_ttc);
 					$sql .= ", ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
-					$sql .= ", ".$user->id;
-					$sql .= ", ".$this->type;
-					$sql .= ", ".price2num($price_ht);
-					$sql .= ", ".price2num($price_ttc);
+					$sql .= ", ".((int) $user->id);
+					$sql .= ", ".((int) $this->type);
+					$sql .= ", ".price2num($price_ht, 'MT');
+					$sql .= ", ".price2num($price_ttc, 'MT');
 					$sql .= ", '".$this->db->escape($this->price_base_type)."'";
-					$sql .= ", ".$this->status;
-					$sql .= ", ".$this->status_buy;
+					$sql .= ", ".((int) $this->status);
+					$sql .= ", ".((int) $this->status_buy);
 					if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 						$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
 						$sql .= ", '".$this->db->escape($this->accountancy_code_buy_intra)."'";
@@ -740,10 +751,11 @@ class Product extends CommonObject
 						$sql .= ", '".$this->db->escape($this->accountancy_code_sell_export)."'";
 					}
 					$sql .= ", '".$this->db->escape($this->canvas)."'";
-					$sql .= ", ".((!isset($this->finished) || $this->finished < 0 || $this->finished == '') ? 'null' : (int) $this->finished);
-					$sql .= ", ".((empty($this->status_batch) || $this->status_batch < 0) ? '0' : $this->status_batch);
+					$sql .= ", ".((!isset($this->finished) || $this->finished < 0 || $this->finished == '') ? 'NULL' : (int) $this->finished);
+					$sql .= ", ".((empty($this->status_batch) || $this->status_batch < 0) ? '0' : ((int) $this->status_batch));
 					$sql .= ", '".$this->db->escape($this->batch_mask)."'";
-					$sql .= ", ".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+					$sql .= ", ".($this->fk_unit > 0 ? ((int) $this->fk_unit) : 'NULL');
+					$sql .= ", '".$this->db->escape($this->mandatory_period)."'";
 					$sql .= ")";
 
 					dol_syslog(get_class($this)."::Create", LOG_DEBUG);
@@ -1015,7 +1027,6 @@ class Product extends CommonObject
 		$this->accountancy_code_sell_export = trim($this->accountancy_code_sell_export);
 
 
-
 		$this->db->begin();
 
 		$result = 0;
@@ -1149,7 +1160,7 @@ class Product extends CommonObject
 			$sql .= ", price_autogen = ".(!$this->price_autogen ? 0 : 1);
 			$sql .= ", fk_price_expression = ".($this->fk_price_expression != 0 ? (int) $this->fk_price_expression : 'NULL');
 			$sql .= ", fk_user_modif = ".($user->id > 0 ? $user->id : 'NULL');
-
+			$sql .= ", mandatory_period = ".($this->mandatory_period );
 			// stock field is not here because it is a denormalized value from product_stock.
 			$sql .= " WHERE rowid = ".((int) $id);
 
@@ -2229,8 +2240,8 @@ class Product extends CommonObject
 	 * @param  string $ref_ext           Ref ext of product/service to load
 	 * @param  string $barcode           Barcode of product/service to load
 	 * @param  int    $ignore_expression When module dynamicprices is on, ignores the math expression for calculating price and uses the db value instead
-	 * @param  int    $ignore_price_load Load product without loading prices arrays (when we are sure we don't need them)
-	 * @param  int    $ignore_lang_load  Load product without loading language arrays (when we are sure we don't need them)
+	 * @param  int    $ignore_price_load Load product without loading $this->multiprices... array (when we are sure we don't need them)
+	 * @param  int    $ignore_lang_load  Load product without loading $this->multilangs language arrays (when we are sure we don't need them)
 	 * @return int                       <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id = '', $ref = '', $ref_ext = '', $barcode = '', $ignore_expression = 0, $ignore_price_load = 0, $ignore_lang_load = 0)
@@ -2252,7 +2263,7 @@ class Product extends CommonObject
 		$sql .= " p.price_min, p.price_min_ttc, p.price_base_type, p.cost_price, p.default_vat_code, p.tva_tx, p.recuperableonly as tva_npr, p.localtax1_tx, p.localtax2_tx, p.localtax1_type, p.localtax2_type, p.tosell,";
 		$sql .= " p.tobuy, p.fk_product_type, p.duration, p.fk_default_warehouse, p.seuil_stock_alerte, p.canvas, p.net_measure, p.net_measure_units, p.weight, p.weight_units,";
 		$sql .= " p.length, p.length_units, p.width, p.width_units, p.height, p.height_units,";
-		$sql .= " p.surface, p.surface_units, p.volume, p.volume_units, p.barcode, p.fk_barcode_type, p.finished, p.fk_default_bom,";
+		$sql .= " p.surface, p.surface_units, p.volume, p.volume_units, p.barcode, p.fk_barcode_type, p.finished, p.fk_default_bom, p.mandatory_period,";
 		if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 			$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
 		} else {
@@ -2426,6 +2437,8 @@ class Product extends CommonObject
 				$this->fk_unit                        = $obj->fk_unit;
 				$this->price_autogen = $obj->price_autogen;
 				$this->model_pdf = $obj->model_pdf;
+
+				$this->mandatory_period = $obj->mandatory_period;
 
 				$this->db->free($resql);
 
@@ -5318,7 +5331,7 @@ class Product extends CommonObject
 			}
 			$stock_commande_fournisseur = $this->stats_commande_fournisseur['qty'];
 		}
-		if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && empty($conf->reception->enabled)) {
+		if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && !empty($conf->reception->enabled)) {
 			$filterStatus = '4';
 			if (isset($includedraftpoforvirtual)) {
 				$filterStatus = '0,'.$filterStatus;
@@ -5667,6 +5680,16 @@ class Product extends CommonObject
 		return ($this->type == Product::TYPE_SERVICE ? true : false);
 	}
 
+
+	/**
+	 * Return if  object have a constraint on mandatory_period
+	 *
+	 * @return boolean     True if mandatory_period setted to 1
+	 */
+	public function isMandatoryPeriod()
+	{
+		return ($this->mandatory_period == 1 ? true : false);
+	}
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Get a barcode from the module to generate barcode values.
@@ -5838,7 +5861,6 @@ class Product extends CommonObject
 	 */
 	public function setCategories($categories)
 	{
-
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		return parent::setCategoriesCommon($categories, Categorie::TYPE_PRODUCT);
 	}

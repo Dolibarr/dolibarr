@@ -155,8 +155,8 @@ class BonPrelevement extends CommonObject
 				}
 				$sql .= ",fk_prelevement_lignes";
 				$sql .= ") VALUES (";
-				$sql .= $invoice_id;
-				$sql .= ", ".$line_id;
+				$sql .= ((int) $invoice_id);
+				$sql .= ", ".((int) $line_id);
 				$sql .= ")";
 
 				if ($this->db->query($sql)) {

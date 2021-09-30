@@ -388,7 +388,7 @@ class RecruitmentCandidature extends CommonObject
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
 		}
 
 		if (!empty($sortfield)) {
@@ -893,7 +893,7 @@ class RecruitmentCandidature extends CommonObject
 		$this->lines = array();
 
 		$objectline = new RecruitmentCandidatureLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_recruitmentcandidature = '.$this->id));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_recruitmentcandidature = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;

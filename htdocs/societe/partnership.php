@@ -132,7 +132,7 @@ $date_end = dol_mktime(0, 0, 0, GETPOST('date_partnership_endmonth', 'int'), GET
 if (empty($reshook)) {
 	$error = 0;
 
-	$backtopage = dol_buildpath('/partnership/partnership.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+	$backtopage = DOL_URL_ROOT.'/partnership/partnership.php?id='.($id > 0 ? $id : '__ID__');
 
 	// Actions when linking object each other
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';
@@ -245,7 +245,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$socid = $object->id;
 
 
-	// TODO Replace this card with the list of all partnerships.
+	// TODO Replace this card with a table of list of all partnerships.
 
 	$object = new Partnership($db);
 	$partnershipid = $object->fetch(0, '', 0, $socid);
@@ -257,10 +257,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<table class="border centpercent tableforfield">'."\n";
 
 		// Common attributes
-		//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
-		//unset($object->fields['fk_project']);				// Hide field already shown in banner
-		//unset($object->fields['fk_member']);					// Hide field already shown in banner
+		unset($object->fields['fk_soc']); // Hide field already shown in banner
 		include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
+		$forcefieldid = 'socid';
+		$forceobjectid = $object->fk_soc;
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		print '</table>';
 		print '</div>';

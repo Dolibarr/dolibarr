@@ -70,6 +70,10 @@ $offsetvalue = GETPOST('offsetvalue', 'int');
 $offsetunit = GETPOST('offsetunittype_duration', 'aZ09');
 $remindertype = GETPOST('selectremindertype', 'aZ09');
 $modelmail = GETPOST('actioncommsendmodel_mail', 'int');
+$complete = GETPOST('complete', 'alpha');	// 'na' must be allowed
+if ($complete == 'na' || $complete == -2) {
+	$complete = -1;
+}
 
 $datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'));
 $datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'));
@@ -240,7 +244,7 @@ if (empty($reshook) && $action == 'add') {
 		exit;
 	}
 
-	$percentage = in_array(GETPOST('status'), array(-1, 100)) ?GETPOST('status') : (in_array(GETPOST('complete'), array(-1, 100)) ?GETPOST('complete') : GETPOST("percentage")); // If status is -1 or 100, percentage is not defined and we must use status
+	$percentage = in_array(GETPOST('status'), array(-1, 100)) ? GETPOST('status') : (in_array($complete, array(-1, 100)) ? $complete : GETPOST("percentage", 'int')); // If status is -1 or 100, percentage is not defined and we must use status
 
 	// Clean parameters
 	$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuser');
@@ -274,8 +278,20 @@ if (empty($reshook) && $action == 'add') {
 		$object->fulldayevent = (!empty($fulldayevent) ? 1 : 0);
 		$object->location = GETPOST("location", 'alphanohtml');
 		$object->label = GETPOST('label', 'alphanohtml');
-		$object->fk_element = GETPOST("fk_element", 'int');
-		$object->elementtype = GETPOST("elementtype", 'alpha');
+
+		if (GETPOST("elementtype", 'alpha')) {
+			$modulecodetouseforpermissioncheck = GETPOST("elementtype", 'alpha');
+
+			$hasPermissionOnLinkedObject = 0;
+			if ($user->hasRight($modulecodetouseforpermissioncheck, 'read')) {
+				$hasPermissionOnLinkedObject = 1;
+			}
+			if ($hasPermissionOnLinkedObject) {
+				$object->fk_element = GETPOST("fk_element", 'int');
+				$object->elementtype = GETPOST("elementtype", 'alpha');
+			}
+		}
+
 		if (!GETPOST('label')) {
 			if (GETPOST('actioncode', 'aZ09') == 'AC_RDV' && $contact->getFullName($langs)) {
 				$object->label = $langs->transnoentitiesnoconv("TaskRDVWith", $contact->getFullName($langs));
@@ -471,7 +487,7 @@ if (empty($reshook) && $action == 'update') {
 		$apmin = GETPOST('apmin', 'int');
 		$p2hour = GETPOST('p2hour', 'int');
 		$p2min = GETPOST('p2min', 'int');
-		$percentage = in_array(GETPOST('status'), array(-1, 100)) ?GETPOST('status') : (in_array(GETPOST('complete'), array(-1, 100)) ?GETPOST('complete') : GETPOST("percentage")); // If status is -1 or 100, percentage is not defined and we must use status
+		$percentage = in_array(GETPOST('status'), array(-1, 100)) ? GETPOST('status') : (in_array($complete, array(-1, 100)) ? $complete : GETPOST("percentage", 'int')); // If status is -1 or 100, percentage is not defined and we must use status
 
 		// Clean parameters
 		if ($aphour == -1) {
@@ -516,8 +532,20 @@ if (empty($reshook) && $action == 'update') {
 		}
 		$object->fk_project  = GETPOST("projectid", 'int');
 		$object->note_private = trim(GETPOST("note", "restricthtml"));
-		$object->fk_element	 = GETPOST("fk_element", "int");
-		$object->elementtype = GETPOST("elementtype", "alphanohtml");
+
+		if (GETPOST("elementtype", 'alpha')) {
+			$modulecodetouseforpermissioncheck = GETPOST("elementtype", 'alpha');
+
+			$hasPermissionOnLinkedObject = 0;
+			if ($user->hasRight($modulecodetouseforpermissioncheck, 'read')) {
+				$hasPermissionOnLinkedObject = 1;
+			}
+			if ($hasPermissionOnLinkedObject) {
+				$object->fk_element = GETPOST("fk_element", 'int');
+				$object->elementtype = GETPOST("elementtype", 'alpha');
+			}
+		}
+
 		if (!$datef && $percentage == 100) {
 			$error++; $donotclearsession = 1;
 			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd")), $object->errors, 'errors');
@@ -1074,15 +1102,15 @@ if ($action == 'create') {
 	// Status
 	print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
 	print '<td>';
-	$percent = GETPOST('complete')!=='' ? GETPOST('complete') : -1;
+	$percent = $complete !=='' ? $complete : -1;
 	if (GETPOSTISSET('status')) {
 		$percent = GETPOST('status');
 	} elseif (GETPOSTISSET('percentage')) {
-		$percent = GETPOST('percentage');
+		$percent = GETPOST('percentage', 'int');
 	} else {
-		if (GETPOST('complete') == '0' || GETPOST("afaire") == 1) {
+		if ($complete == '0' || GETPOST("afaire") == 1) {
 			$percent = '0';
-		} elseif (GETPOST('complete') == 100 || GETPOST("afaire") == 2) {
+		} elseif ($complete == 100 || GETPOST("afaire") == 2) {
 			$percent = 100;
 		}
 	}
@@ -1187,7 +1215,7 @@ if ($action == 'create') {
 		print img_picto('', 'project', 'class="pictofixedwidth"');
 		print $formproject->select_projects((empty($societe->id) ? '' : $societe->id), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
 
-		print '&nbsp;<a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.(empty($societe->id) ? '' : $societe->id).'&action=create&amp;backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">';
+		print '&nbsp;<a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.(empty($societe->id) ? '' : $societe->id).'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">';
 		print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
 		$urloption = '?action=create&donotclearsession=1';
 		$url = dol_buildpath('comm/action/card.php', 2).$urloption;
@@ -1214,7 +1242,7 @@ if ($action == 'create') {
 		if (!empty($projectid)) {
 			$projectsListId = $projectid;
 		}
-		$tid = GETPOST("projecttaskid") ? GETPOST("projecttaskid") : '';
+		$tid = GETPOSTISSET("projecttaskid") ? GETPOST("projecttaskid", 'int') : (GETPOSTISSET("taskid") ? GETPOST("taskid", 'int') : '');
 		$formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 24, 0, '1', 1, 0, 0, 'maxwidth500', $projectsListId);
 		print '</td></tr>';
 	}
@@ -1222,12 +1250,28 @@ if ($action == 'create') {
 	// Object linked
 	if (!empty($origin) && !empty($originid)) {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		print '<tr><td class="titlefieldcreate">'.$langs->trans("LinkedObject").'</td>';
-		print '<td colspan="3">'.dolGetElementUrl($originid, $origin, 1).'</td></tr>';
-		print '<input type="hidden" name="fk_element" value="'.GETPOST('originid', 'int').'">';
-		print '<input type="hidden" name="elementtype" value="'.GETPOST('origin').'">';
-		print '<input type="hidden" name="originid" value="'.GETPOST('originid', 'int').'">';
-		print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
+
+		$hasPermissionOnLinkedObject = 0;
+		if ($user->hasRight($origin, 'read')) {
+			$hasPermissionOnLinkedObject = 1;
+		}
+		//var_dump('origin='.$origin.' originid='.$originid.' $hasPermissionOnLinkedObject='.$hasPermissionOnLinkedObject);
+
+		if (! in_array($origin, array('societe', 'project', 'task', 'user'))) {
+			// We do not use link for object that already contains a hard coded field to make links with agenda events
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("LinkedObject").'</td>';
+			print '<td colspan="3">';
+			if ($hasPermissionOnLinkedObject) {
+				print dolGetElementUrl($originid, $origin, 1);
+				print '<input type="hidden" name="fk_element" value="'.$originid.'">';
+				print '<input type="hidden" name="elementtype" value="'.$origin.'">';
+				print '<input type="hidden" name="originid" value="'.$originid.'">';
+				print '<input type="hidden" name="origin" value="'.$origin.'">';
+			} else {
+				print '<!-- no permission on object to link '.$origin.' id '.$originid.' -->';
+			}
+			print '</td></tr>';
+		}
 	}
 
 	$reg = array();
@@ -1340,7 +1384,7 @@ if ($id > 0) {
 	$result5 = $object->fetch_optionals();
 
 	if ($listUserAssignedUpdated || $donotclearsession) {
-		$percentage = in_array(GETPOST('status'), array(-1, 100)) ?GETPOST('status') : (in_array(GETPOST('complete'), array(-1, 100)) ?GETPOST('complete') : GETPOST("percentage")); // If status is -1 or 100, percentage is not defined and we must use status
+		$percentage = in_array(GETPOST('status'), array(-1, 100)) ? GETPOST('status') : (in_array($complete, array(-1, 100)) ? $complete : GETPOST("percentage", 'int')); // If status is -1 or 100, percentage is not defined and we must use status
 
 		$datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuser');
 		$datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuser');
@@ -1534,7 +1578,7 @@ if ($id > 0) {
 
 		// Status
 		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
-		$percent = GETPOST("percentage") ? GETPOST("percentage") : $object->percentage;
+		$percent = GETPOSTISSET("percentage") ? GETPOST("percentage", "int") : $object->percentage;
 		$formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'maxwidth200');
 		print '</td></tr>';
 
@@ -1644,7 +1688,7 @@ if ($id > 0) {
 			print img_picto('', 'project', 'class="paddingrightonly"');
 			$numprojet = $formproject->select_projects(($object->socid > 0 ? $object->socid : -1), $object->fk_project, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, 'maxwidth500');
 			if ($numprojet == 0) {
-				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->socid.'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
+				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->socid.'&action=create&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
 			}
 			print '</td></tr>';
 		}
@@ -1843,7 +1887,7 @@ if ($id > 0) {
 			if ($user->rights->agenda->allactions->create ||
 				(($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create)) {
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 				}
 				if ($action == 'classify') {
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -2124,7 +2168,7 @@ if ($id > 0) {
 		if ($action != 'edit') {
 			if ($user->rights->agenda->allactions->create ||
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create)) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=edit&id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Modify").'</a></div>';
 			}

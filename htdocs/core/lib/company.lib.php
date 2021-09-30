@@ -1295,7 +1295,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 
 			// Edit
 			if ($user->rights->societe->contact->creer) {
-				print '<a class="editfielda paddingleft" href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
+				print '<a class="editfielda paddingleft" href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
 				print img_edit();
 				print '</a>';
 			}
@@ -1548,7 +1548,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 					$sql .= "OR (";
 				}
 				if (!empty($code)) {
-					addEventTypeSQL($sql, $code, $donetodo, $now, $filters, "");
+					addEventTypeSQL($sql, $code);
 				}
 				if ($key != 0) {
 					$sql .= ")";
@@ -1556,8 +1556,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			}
 			$sql .= ')';
 		} elseif (!empty($actioncode)) {
-			addEventTypeSQL($sql, $actioncode, $donetodo, $now, $filters);
+			addEventTypeSQL($sql, $actioncode);
 		}
+
+		addOtherFilterSQL($sql, $donetodo, $now, $filters);
 
 		if (is_array($actioncode)) {
 			foreach ($actioncode as $code) {
@@ -2001,7 +2003,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->code_client).'">'.$obj->code_client.'</td>';
 
 			print '<td class="center">';
-			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/societe/card.php?socid='.((int) $obj->rowid).'&action=edit">';
+			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/societe/card.php?socid='.((int) $obj->rowid).'&action=edit&token='.newToken().'">';
 			print img_edit();
 			print '</a></td>';
 
@@ -2021,13 +2023,10 @@ function show_subsidiaries($conf, $langs, $db, $object)
  *
  *		@param	string		$sql		    $sql modified
  * 		@param	string	    $actioncode		Action code
- * 		@param	string		$donetodo		donetodo
- * 		@param	string		$now		    now
- * 		@param	string		$filters		array
  * 		@param	string		$sqlANDOR		"AND", "OR" or "" sql condition
  * 		@return	string      sql request
  */
-function addEventTypeSQL(&$sql, $actioncode, $donetodo, $now, $filters, $sqlANDOR = "AND")
+function addEventTypeSQL(&$sql, $actioncode, $sqlANDOR = "AND")
 {
 	global $conf, $db;
 	// Condition on actioncode
@@ -2053,6 +2052,23 @@ function addEventTypeSQL(&$sql, $actioncode, $donetodo, $now, $filters, $sqlANDO
 			$sql .= " $sqlANDOR c.code = '".$db->escape($actioncode)."'";
 		}
 	}
+
+	return $sql;
+}
+
+/**
+ * 		Add Event Type SQL
+ *
+ *		@param	string		$sql		    $sql modified
+ * 		@param	string		$donetodo		donetodo
+ * 		@param	string		$now		    now
+ * 		@param	string		$filters		array
+ * 		@return	string      sql request
+ */
+function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
+{
+	global $conf, $db;
+	// Condition on actioncode
 
 	if ($donetodo == 'todo') {
 		$sql .= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";

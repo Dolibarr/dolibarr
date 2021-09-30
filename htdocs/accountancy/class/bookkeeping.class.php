@@ -382,9 +382,9 @@ class BookKeeping extends CommonObject
 				$sql .= ", '".$this->db->escape($this->numero_compte)."'";
 				$sql .= ", ".(!empty($this->label_compte) ? ("'".$this->db->escape($this->label_compte)."'") : "NULL");
 				$sql .= ", '".$this->db->escape($this->label_operation)."'";
-				$sql .= ", ".$this->debit;
-				$sql .= ", ".$this->credit;
-				$sql .= ", ".$this->montant;
+				$sql .= ", ".((float) $this->debit);
+				$sql .= ", ".((float) $this->credit);
+				$sql .= ", ".((float) $this->montant);
 				$sql .= ", ".(!empty($this->sens) ? ("'".$this->db->escape($this->sens)."'") : "NULL");
 				$sql .= ", '".$this->db->escape($this->fk_user_author)."'";
 				$sql .= ", '".$this->db->idate($now)."'";
@@ -888,14 +888,14 @@ class BookKeeping extends CommonObject
 		// Affichage par compte comptable
 		if (!empty($option)) {
 			$sql .= ' AND t.subledger_account IS NOT NULL';
-			$sql .= ' ORDER BY t.subledger_account ASC';
+			$sortfield = 't.subledger_account'.($sortfield ? ','.$sortfield : '');
+			$sortorder = 'ASC'.($sortfield ? ','.$sortfield : '');
 		} else {
-			$sql .= ' ORDER BY t.numero_compte ASC';
+			$sortfield = 't.numero_compte'.($sortfield ? ','.$sortfield : '');
+			$sortorder = 'ASC'.($sortorder ? ','.$sortorder : '');
 		}
 
-		if (!empty($sortfield)) {
-			$sql .= ", ".$sortfield." ".$sortorder;
-		}
+		$sql .= $this->db->order($sortfield, $sortorder);
 		if (!empty($limit)) {
 			$sql .= $this->db->plimit($limit + 1, $offset);
 		}

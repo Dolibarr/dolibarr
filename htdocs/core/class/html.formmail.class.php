@@ -956,15 +956,14 @@ class FormMail extends Form
 			$out .= '</table>'."\n";
 
 			if ($this->withform == 1 || $this->withform == -1) {
-				$out .= '<br><div class="center">';
-				$out .= '<input type="submit" class="button" id="sendmail" name="sendmail" value="'.$langs->trans("SendMail").'"';
+				$out .= '<div class="center">';
+				$out .= '<input type="submit" class="button button-add" id="sendmail" name="sendmail" value="'.$langs->trans("SendMail").'"';
 				// Add a javascript test to avoid to forget to submit file before sending email
 				if ($this->withfile == 2 && $conf->use_javascript_ajax) {
 					$out .= ' onClick="if (document.mailform.addedfile.value != \'\') { alert(\''.dol_escape_js($langs->trans("FileWasNotUploaded")).'\'); return false; } else { return true; }"';
 				}
 				$out .= ' />';
 				if ($this->withcancel) {
-					$out .= ' &nbsp; &nbsp; ';
 					$out .= '<input class="button button-cancel" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'" />';
 				}
 				$out .= '</div>'."\n";

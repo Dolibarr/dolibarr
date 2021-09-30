@@ -215,26 +215,33 @@ class Conf
 								// modules_parts['login'], modules_parts['menus'], modules_parts['substitutions'], modules_parts['triggers'], modules_parts['tpl'],
 								// modules_parts['models'], modules_parts['theme']
 								// modules_parts['sms'],
-								// modules_parts['css'], ...
+								// modules_parts['css'], modules_parts['js'],...
 
 								$modulename = strtolower($reg[1]);
 								$partname = strtolower($reg[2]);
 								if (!isset($this->modules_parts[$partname]) || !is_array($this->modules_parts[$partname])) {
 									$this->modules_parts[$partname] = array();
 								}
+
 								$arrValue = json_decode($value, true);
-								if (is_array($arrValue) && !empty($arrValue)) {
-									$value = $arrValue;
+
+								if (is_array($arrValue)) {
+									$newvalue = $arrValue;
 								} elseif (in_array($partname, array('login', 'menus', 'substitutions', 'triggers', 'tpl'))) {
-									$value = '/'.$modulename.'/core/'.$partname.'/';
+									$newvalue = '/'.$modulename.'/core/'.$partname.'/';
 								} elseif (in_array($partname, array('models', 'theme'))) {
-									$value = '/'.$modulename.'/';
+									$newvalue = '/'.$modulename.'/';
 								} elseif (in_array($partname, array('sms'))) {
-									$value = '/'.$modulename.'/';
+									$newvalue = '/'.$modulename.'/';
 								} elseif ($value == 1) {
-									$value = '/'.$modulename.'/core/modules/'.$partname.'/'; // ex: partname = societe
+									$newvalue = '/'.$modulename.'/core/modules/'.$partname.'/'; // ex: partname = societe
+								} else {
+									$newvalue = $value;
 								}
-								$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value)); // $value may be a string or an array
+
+								if (!empty($newvalue)) {
+									$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $newvalue)); // $value may be a string or an array
+								}
 							} elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)$/i', $key, $reg)) {
 								// If this is a module constant (must be at end)
 								$modulename = strtolower($reg[1]);
@@ -819,9 +826,10 @@ class Conf
 				$this->global->MAIN_MODULE_DOLISTORE_API_KEY = 'dolistorecatalogpublickey1234567';
 			}
 
-			// If we are in develop mode, we activate the option MAIN_SECURITY_CSRF_WITH_TOKEN to 1 if not already defined.
-			if (!isset($this->global->MAIN_SECURITY_CSRF_WITH_TOKEN) && $this->global->MAIN_FEATURES_LEVEL >= 2) {
-				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 1;
+			// Enable by default the CSRF protection by token.
+			if (!isset($this->global->MAIN_SECURITY_CSRF_WITH_TOKEN)) {
+				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 1;	// Value 2 uses also CSRF check for all GET requests
+				// Note: Set MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL=1 to have a renewal of token at each page call instead of each session (not recommended)
 			}
 
 			if (defined('MAIN_ANTIVIRUS_COMMAND')) {

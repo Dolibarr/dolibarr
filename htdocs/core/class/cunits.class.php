@@ -262,7 +262,7 @@ class CUnits // extends CommonObject
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+			$sql .= ' WHERE ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
 		}
 
 		if (!empty($sortfield)) {

@@ -152,19 +152,19 @@ $invoice = new Facture($db);
 if ($invoiceid > 0) {
 	$ret = $invoice->fetch($invoiceid);
 } else {
-	$ret = $invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')');
+	$ret = $invoice->fetch('', '(PROV-POS'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '') .'-'.$place.')');
 }
 if ($ret > 0) {
 	$placeid = $invoice->id;
 }
 
-$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
+$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'. isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '' ;
 
 $soc = new Societe($db);
 if ($invoice->socid > 0) {
 	$soc->fetch($invoice->socid);
 } else {
-	$soc->fetch($conf->global->$constforcompanyid);
+	$soc->fetch(getDolGlobalString("$constforcompanyid"));
 }
 
 
@@ -188,11 +188,9 @@ if ($action == 'valid' && $user->rights->facture->creer) {
 	if (!empty($conf->global->TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT)) {
 		$bankaccount = GETPOST('accountid', 'int');
 	} else {
-		if ($pay == "cash") {
+		if ($pay == 'LIQ') {
 			$bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]};            // For backward compatibility
-		} elseif ($pay == "card") {
-			$bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$_SESSION["takeposterminal"]};          // For backward compatibility
-		} elseif ($pay == "cheque") {
+		} elseif ($pay == "CHQ") {
 			$bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$_SESSION["takeposterminal"]};    // For backward compatibility
 		} else {
 			$accountname = "CASHDESK_ID_BANKACCOUNT_".$pay.$_SESSION["takeposterminal"];
@@ -477,10 +475,10 @@ if ($action == 'history' || $action == 'creditnote') {
 }
 
 if (($action == "addline" || $action == "freezone") && $placeid == 0) {
-	$invoice->socid = $conf->global->$constforcompanyid;
+	$invoice->socid = getDolGlobalString("$constforcompanyid");
 	$invoice->date = dol_now();
 	$invoice->module_source = 'takepos';
-	$invoice->pos_source = $_SESSION["takeposterminal"];
+	$invoice->pos_source =  isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '' ;
 	$invoice->entity = !empty($_SESSION["takeposinvoiceentity"]) ? $_SESSION["takeposinvoiceentity"] : $conf->entity;
 
 	if ($invoice->socid <= 0) {
@@ -549,7 +547,7 @@ if ($action == "addline") {
 	}
 	if ($idoflineadded <= 0) {
 		$invoice->fetch_thirdparty();
-		$idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, $parent_line, null, '', '', 0, 100, '', null, 0);
+		$idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, (!empty($parent_line)) ? $parent_line : '', null, '', '', 0, 100, '', null, 0);
 		if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
 			$CUSTOMER_DISPLAY_line1 = $prod->label;
 			$CUSTOMER_DISPLAY_line2 = price($price_ttc);
@@ -916,7 +914,7 @@ $(document).ready(function() {
 		selectedtext=$('#'+selectedline).find("td:first").html();
 		<?php
 		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-			print '$("#phonediv1").load("auto_order.php?action=editline&placeid="+placeid+"&selectedline="+selectedline, function() {
+			print '$("#phonediv1").load("auto_order.php?action=editline&token='.newToken().'&placeid="+placeid+"&selectedline="+selectedline, function() {
 			});';
 		}
 		?>
@@ -930,7 +928,7 @@ $(document).ready(function() {
 	}
 <?php
 
-if ($action == "order" and $order_receipt_printer1 != "") {
+if ($action == "order" && !empty($order_receipt_printer1)) {
 	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
 		?>
 		$.ajax({
@@ -951,7 +949,7 @@ if ($action == "order" and $order_receipt_printer1 != "") {
 	}
 }
 
-if ($action == "order" and $order_receipt_printer2 != "") {
+if ($action == "order" && !empty($order_receipt_printer2)) {
 	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
 		?>
 		$.ajax({
@@ -972,7 +970,7 @@ if ($action == "order" and $order_receipt_printer2 != "") {
 	}
 }
 
-if ($action == "order" and $order_receipt_printer3 != "") {
+if ($action == "order" && !empty($order_receipt_printer3)) {
 	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
 		?>
 		$.ajax({
@@ -992,7 +990,7 @@ if ($action == "search" || $action == "valid") {
 }
 
 
-if ($action == "temp" and $ticket_printer1 != "") {
+if ($action == "temp" && !empty($ticket_printer1)) {
 	?>
 	$.ajax({
 		type: "POST",
@@ -1039,7 +1037,7 @@ function TakeposPrinting(id){
 
 function TakeposConnector(id){
 	console.log("TakeposConnector" + id);
-	$.get("<?php echo DOL_URL_ROOT; ?>/takepos/ajax/ajax.php?action=printinvoiceticket&term=<?php echo urlencode($_SESSION["takeposterminal"]); ?>&id="+id+"&token=<?php echo currentToken(); ?>", function(data, status) {
+	$.get("<?php echo DOL_URL_ROOT; ?>/takepos/ajax/ajax.php?action=printinvoiceticket&term=<?php echo urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : ''); ?>&id="+id+"&token=<?php echo currentToken(); ?>", function(data, status) {
 		$.ajax({
 			type: "POST",
 			url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/printer/index.php',
@@ -1053,7 +1051,7 @@ function DolibarrTakeposPrinting(id) {
 	$.ajax({
 		type: "GET",
 		data: { token: '<?php echo currentToken(); ?>' },
-		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&term='.urlencode($_SESSION["takeposterminal"]).'&id='; ?>" + id,
+		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&term='.urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '').'&id='; ?>" + id,
 	});
 }
 
@@ -1086,7 +1084,7 @@ $( document ).ready(function() {
 	$sql = "SELECT rowid, datec, ref FROM ".MAIN_DB_PREFIX."facture";
 	if (empty($conf->global->TAKEPOS_CAN_EDIT_IF_ALREADY_VALIDATED)) {
 		// By default, only invoices with a ref not already defined can in list of open invoice we can edit.
-		$sql .= " WHERE ref LIKE '(PROV-POS".$db->escape($_SESSION["takeposterminal"])."-0%' AND entity IN (".getEntity('invoice').")";
+		$sql .= " WHERE ref LIKE '(PROV-POS".$db->escape(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '')."-0%' AND entity IN (".getEntity('invoice').")";
 	} else {
 		// If TAKEPOS_CAN_EDIT_IF_ALREADY_VALIDATED set, we show also draft invoice that already has a reference defined
 		$sql .= " WHERE pos_source = '".$db->escape($_SESSION["takeposterminal"])."'";
@@ -1127,12 +1125,12 @@ $( document ).ready(function() {
 
 	$s = '';
 
-	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
-	if (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1") {
+	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
+	if (!empty($conf->stock->enabled) && getDolGlobalString("$constantforkey") != "1") {
 		$s = '<span class="small">';
-		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
+		$constantforkey = 'CASHDESK_ID_WAREHOUSE'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
 		$warehouse = new Entrepot($db);
-		$warehouse->fetch($conf->global->$constantforkey);
+		$warehouse->fetch(getDolGlobalString($constantforkey));
 		$s .= $langs->trans("Warehouse").'<br>'.$warehouse->ref;
 		$s .= '</span>';
 	}

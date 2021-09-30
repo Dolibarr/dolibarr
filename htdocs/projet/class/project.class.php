@@ -381,10 +381,10 @@ class Project extends CommonObject
 		$sql .= ", '".$this->db->escape($this->title)."'";
 		$sql .= ", '".$this->db->escape($this->description)."'";
 		$sql .= ", ".($this->socid > 0 ? $this->socid : "null");
-		$sql .= ", ".$user->id;
-		$sql .= ", ".(is_numeric($this->statut) ? $this->statut : '0');
-		$sql .= ", ".((is_numeric($this->opp_status) && $this->opp_status > 0) ? $this->opp_status : 'NULL');
-		$sql .= ", ".(is_numeric($this->opp_percent) ? $this->opp_percent : 'NULL');
+		$sql .= ", ".((int) $user->id);
+		$sql .= ", ".(is_numeric($this->statut) ? ((int) $this->statut) : '0');
+		$sql .= ", ".((is_numeric($this->opp_status) && $this->opp_status > 0) ? ((int) $this->opp_status) : 'NULL');
+		$sql .= ", ".(is_numeric($this->opp_percent) ? ((int) $this->opp_percent) : 'NULL');
 		$sql .= ", ".($this->public ? 1 : 0);
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", ".($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
@@ -402,7 +402,7 @@ class Project extends CommonObject
 		$sql .= ", ".($this->email_msgid ? "'".$this->db->escape($this->email_msgid)."'" : 'null');
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : 'null');
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : 'null');
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -814,7 +814,7 @@ class Project extends CommonObject
 			'propal'=>'fk_projet', 'commande'=>'fk_projet', 'facture'=>'fk_projet',
 			'supplier_proposal'=>'fk_projet', 'commande_fournisseur'=>'fk_projet', 'facture_fourn'=>'fk_projet',
 			'expensereport_det'=>'fk_projet', 'contrat'=>'fk_projet', 'fichinter'=>'fk_projet', 'don'=>'fk_projet',
-			'actioncomm'=>'fk_project', 'mrp_mo'=>'fk_project'
+			'actioncomm'=>'fk_project', 'mrp_mo'=>'fk_project', 'entrepot'=>'fk_project'
 		);
 		foreach ($listoftables as $key => $value) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$key." SET ".$value." = NULL where ".$value." = ".((int) $this->id);
@@ -1525,7 +1525,7 @@ class Project extends CommonObject
 			}
 		}
 
-		$clone_project->datec = $now;
+		$clone_project->date_c = $now;
 
 		if (!$clone_note) {
 			$clone_project->note_private = '';

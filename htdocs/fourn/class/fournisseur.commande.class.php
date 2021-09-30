@@ -112,6 +112,7 @@ class CommandeFournisseur extends CommonOrder
 	public $socid;
 	public $fourn_id;
 	public $date;
+	public $date_creation;
 	public $date_valid;
 	public $date_approve;
 	public $date_approve2; // Used when SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set
@@ -375,11 +376,16 @@ class CommandeFournisseur extends CommonOrder
 			$this->total_localtax1		= $obj->localtax1;
 			$this->total_localtax2		= $obj->localtax2;
 			$this->total_ttc			= $obj->total_ttc;
-			$this->date = $this->db->jdate($obj->date_creation);
+			$this->date_creation = $this->db->jdate($obj->date_creation);
 			$this->date_valid = $this->db->jdate($obj->date_valid);
 			$this->date_approve			= $this->db->jdate($obj->date_approve);
 			$this->date_approve2		= $this->db->jdate($obj->date_approve2);
 			$this->date_commande		= $this->db->jdate($obj->date_commande); // date we make the order to supplier
+			if (isset($obj->date_commande)) {
+				$this->date = $this->date_commande;
+			} else {
+				$this->date = $this->date_creation;
+			}
 			$this->date_livraison = $this->db->jdate($obj->delivery_date); // deprecated
 			$this->delivery_date = $this->db->jdate($obj->delivery_date);
 			$this->remise_percent = $obj->remise_percent;
@@ -1335,14 +1341,14 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= ", '".$this->db->escape($this->ref_supplier)."'";
 		$sql .= ", '".$this->db->escape($this->note_private)."'";
 		$sql .= ", '".$this->db->escape($this->note_public)."'";
-		$sql .= ", ".$conf->entity;
-		$sql .= ", ".$this->socid;
-		$sql .= ", ".($this->fk_project > 0 ? $this->fk_project : "null");
+		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".((int) $this->socid);
+		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
 		$sql .= ", '".$this->db->idate($date)."'";
 		$sql .= ", ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : "null");
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".self::STATUS_DRAFT;
-		$sql .= ", ".$this->db->escape($this->source);
+		$sql .= ", ".((int) $this->source);
 		$sql .= ", '".$this->db->escape($conf->global->COMMANDE_SUPPLIER_ADDON_PDF)."'";
 		$sql .= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'null');
 		$sql .= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'null');
@@ -3295,7 +3301,6 @@ class CommandeFournisseur extends CommonOrder
 					$keysinwishednotindelivered = array_diff(array_keys($qtywished), array_keys($qtydelivered)); // To check we also have same number of keys
 					$keysindeliverednotinwished = array_diff(array_keys($qtydelivered), array_keys($qtywished)); // To check we also have same number of keys
 					/*var_dump(array_keys($qtydelivered));
-
 					var_dump(array_keys($qtywished));
 					var_dump($diff_array);
 					var_dump($keysinwishednotindelivered);

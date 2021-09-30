@@ -54,7 +54,7 @@ $langs->loadLangs(array(
 ));
 
 $action = GETPOST('action', 'aZ09');
-$cancelbutton = GETPOST('cancel', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
 
 // Security check
 $id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
@@ -73,7 +73,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $hookmanager->initHooks(array('suppliercard', 'globalcard'));
 
 // Security check
-$result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', 0);
+$result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
 
 if ($object->id > 0) {
 	if (!($object->fournisseur > 0) || empty($user->rights->fournisseur->lire)) {
@@ -93,7 +93,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($cancelbutton) {
+	if ($cancel) {
 		$action = "";
 	}
 
@@ -261,7 +261,7 @@ if ($object->id > 0) {
 	print $langs->trans('PaymentConditions');
 	print '<td>';
 	if (($action != 'editconditions') && $user->rights->societe->creer) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td>';
@@ -279,7 +279,7 @@ if ($object->id > 0) {
 	print $langs->trans('PaymentMode');
 	print '<td>';
 	if (($action != 'editmode') && $user->rights->societe->creer) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td>';
@@ -385,7 +385,7 @@ if ($object->id > 0) {
 	$boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom boxtablenotop" width="100%">';
 	$boxstat .= '<tr class="impair nohover"><td colspan="2" class="tdboxstats nohover">';
 
-	if ($conf->supplier_proposal->enabled) {
+	if (!empty($conf->supplier_proposal->enabled)) {
 		// Box proposals
 		$tmp = $object->getOutstandingProposals('supplier');
 		$outstandingOpened = $tmp['opened'];
@@ -428,6 +428,7 @@ if ($object->id > 0) {
 	}
 
 	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled)) {
+		$warn = '';
 		$tmp = $object->getOutstandingBills('supplier');
 		$outstandingOpened = $tmp['opened'];
 		$outstandingTotal = $tmp['total_ht'];
@@ -584,7 +585,7 @@ if ($object->id > 0) {
 	 */
 	$proposalstatic = new SupplierProposal($db);
 
-	if ($user->rights->supplier_proposal->lire) {
+	if (!empty($user->rights->supplier_proposal->lire)) {
 		$langs->loadLangs(array("supplier_proposal"));
 
 		$sql = "SELECT p.rowid, p.ref, p.date_valid as dc, p.fk_statut, p.total_ht, p.total_tva, p.total_ttc";
@@ -831,7 +832,7 @@ if ($object->id > 0) {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("ThirdPartyIsClosed").'</a></div>';
 		}
 
-		if ($conf->supplier_proposal->enabled && $user->rights->supplier_proposal->creer) {
+		if (!empty($conf->supplier_proposal->enabled) && !empty($user->rights->supplier_proposal->creer)) {
 			$langs->load("supplier_proposal");
 			if ($object->status == 1) {
 				print '<a class="butAction" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddSupplierProposal").'</a>';

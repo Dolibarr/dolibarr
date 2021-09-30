@@ -145,9 +145,9 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 				$filenamenb = $dir."/".$prefix."invoicesnbinyear-".$endyear.".png";
 				// default value for customer mode
-				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$endyear.'.png';
+				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=invoicesnbinyear-'.$endyear.'.png';
 				if ($mode == 'supplier') {
-					$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicessuppliernbinyear-'.$endyear.'.png';
+					$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&file=invoicessuppliernbinyear-'.$endyear.'.png';
 				}
 
 				$px1 = new DolGraph();

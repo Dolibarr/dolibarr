@@ -596,7 +596,7 @@ class Tva extends CommonObject
 		}
 		$sql .= ", '".$this->db->escape($user->id)."'";
 		$sql .= ", NULL";
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::addPayment", LOG_DEBUG);

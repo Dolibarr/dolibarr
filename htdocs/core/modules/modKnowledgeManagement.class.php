@@ -317,7 +317,7 @@ class modKnowledgeManagement extends DolibarrModules
 			// Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'enabled'=>'$conf->knowledgemanagement->enabled',
 			// Use 'perms'=>'$user->rights->knowledgemanagement->level1->level2' if you want your menu with a permission rules
-			'perms'=>'1',
+			'perms'=>'$user->rights->knowledgemanagement->knowledgerecord->read',
 			'target'=>'',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user'=>2,
@@ -337,7 +337,7 @@ class modKnowledgeManagement extends DolibarrModules
 			// Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'enabled'=>'$conf->knowledgemanagement->enabled',
 			// Use 'perms'=>'$user->rights->knowledgemanagement->level1->level2' if you want your menu with a permission rules
-			'perms'=>'1',
+			'perms'=>'$user->rights->knowledgemanagement->knowledgerecord->read',
 			'target'=>'',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user'=>2,
@@ -357,10 +357,23 @@ class modKnowledgeManagement extends DolibarrModules
 			// Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'enabled'=>'$conf->knowledgemanagement->enabled',
 			// Use 'perms'=>'$user->rights->knowledgemanagement->level1->level2' if you want your menu with a permission rules
-			'perms'=>'1',
+			'perms'=>'$user->rights->knowledgemanagement->knowledgerecord->write',
 			'target'=>'',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user'=>2
+		);
+		$this->menu[$r++] = array(
+			'fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=knowledgemanagement_knowledgerecord',
+			'type' => 'left',
+			'titre' => 'Categories',
+			'mainmenu' => 'ticket',
+			'url' => '/categories/index.php?type=13',
+			'langs' => 'knowledgemanagement',
+			'position' => 112,
+			'enabled' => '$conf->knowledgemanagement->enabled',
+			'perms' => '$user->rights->knowledgemanagement->knowledgerecord->read',
+			'target' => '',
+			'user' => 0
 		);
 
 		/* END MODULEBUILDER LEFTMENU KNOWLEDGERECORD */
