@@ -788,9 +788,7 @@ class ActionComm extends CommonObject
             }
 
             $this->db->free($resql);
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->lasterror();
             return -1;
         }
