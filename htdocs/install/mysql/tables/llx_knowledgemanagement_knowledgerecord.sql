@@ -16,11 +16,13 @@
 
 CREATE TABLE llx_knowledgemanagement_knowledgerecord(
 	-- BEGIN MODULEBUILDER FIELDS
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	entity integer DEFAULT 1 NOT NULL,  -- multi company id
 	ref varchar(128) NOT NULL, 
 	date_creation datetime NOT NULL, 
 	tms timestamp, 
 	last_main_doc varchar(255), 
+	lang varchar(6),
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
 	fk_user_valid integer, 
@@ -30,6 +32,7 @@ CREATE TABLE llx_knowledgemanagement_knowledgerecord(
 	answer text,
 	url varchar(255),
 	fk_ticket integer,
+	fk_c_ticket_category integer,
 	status integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

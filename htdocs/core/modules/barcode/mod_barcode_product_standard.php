@@ -107,8 +107,8 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		// Mask parameter
 		//$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("BarCodeModel").'):</td>';
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.(!empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK) ? $conf->global->BARCODE_STANDARD_PRODUCT_MASK : '').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"'.$disabled.'></td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" value="'.(!empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK) ? $conf->global->BARCODE_STANDARD_PRODUCT_MASK : '').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"'.$disabled.'></td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';

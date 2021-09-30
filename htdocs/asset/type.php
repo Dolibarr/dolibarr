@@ -90,6 +90,7 @@ $hookmanager->initHooks(array('assettypecard', 'globalcard'));
 
 $permissiontoadd = $user->rights->asset->setup_advance;
 
+
 /*
  *	Actions
  */
@@ -297,7 +298,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			print '</td>';
 
 			if ($user->rights->asset->write) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 			} else {
 				print '<td class="right">&nbsp;</td>';
 			}
@@ -396,11 +397,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Add").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'" onclick="history.go(-1)" />';
-	print '</div>';
+	print $form->buttonsSaveCancel("Add");
 
 	print "</form>\n";
 }
@@ -506,12 +503,12 @@ if ($rowid > 0) {
 
 		// Edit
 		if ($user->rights->asset->write) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&amp;rowid='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&rowid='.((int) $object->id).'">'.$langs->trans("Modify").'</a></div>';
 		}
 
 		// Delete
 		if ($user->rights->asset->write) {
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("DeleteType").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.((int) $object->id).'">'.$langs->trans("DeleteType").'</a></div>';
 		}
 
 		print "</div>";
@@ -600,9 +597,7 @@ if ($rowid > 0) {
 
 		print dol_get_fiche_end();
 
-		print '<div class="center"><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-		print ' &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
+		print $form->buttonsSaveCancel();
 
 		print "</form>";
 	}

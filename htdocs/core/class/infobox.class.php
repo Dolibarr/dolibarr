@@ -83,21 +83,20 @@ class InfoBox
 	/**
 	 *  Return array of boxes qualified for area and user
 	 *
-	 *  @param	DoliDB		$db				Database handler
+	 *  @param	DoliDB		$dbs				Database handler
 	 *  @param	string		$mode			'available' or 'activated'
-	 *  @param	string		$zone			Name or area (-1 for all, 0 for Homepage, 1 for Accountancy, 2 for xxx, ...)
+	 *  @param	int			$zone			Name or area (-1 for all, 0 for Homepage, 1 for Accountancy, 2 for xxx, ...)
 	 *  @param  User|null   $user	  		Object user to filter
 	 *  @param	array		$excludelist	Array of box id (box.box_id = boxes_def.rowid) to exclude
 	 *  @param  int         $includehidden  Include also hidden boxes
 	 *  @return array       	        	Array of boxes
 	 */
-	public static function listBoxes($db, $mode, $zone, $user = null, $excludelist = array(), $includehidden = 1)
+	public static function listBoxes($dbs, $mode, $zone, $user = null, $excludelist = array(), $includehidden = 1)
 	{
 		global $conf;
 
 		$boxes = array();
 
-		$confuserzone = 'MAIN_BOXES_'.$zone;
 		if ($mode == 'activated') {	// activated
 			$sql = "SELECT b.rowid, b.position, b.box_order, b.fk_user,";
 			$sql .= " d.rowid as box_id, d.file, d.note, d.tms";
@@ -120,12 +119,12 @@ class InfoBox
 		}
 
 		dol_syslog(get_class()."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user) ? $user->id : '')."", LOG_DEBUG);
-		$resql = $db->query($sql);
+		$resql = $dbs->query($sql);
 		if ($resql) {
-			$num = $db->num_rows($resql);
+			$num = $dbs->num_rows($resql);
 			$j = 0;
 			while ($j < $num) {
-				$obj = $db->fetch_object($resql);
+				$obj = $dbs->fetch_object($resql);
 
 				if (!in_array($obj->box_id, $excludelist)) {
 					$regs = array();
@@ -145,7 +144,7 @@ class InfoBox
 					// Goal is to avoid making a "new" done for each boxes returned by select.
 					dol_include_once($relsourcefile);
 					if (class_exists($boxname)) {
-						$box = new $boxname($db, $obj->note); // Constructor may set properties like box->enabled. obj->note is note into box def, not user params.
+						$box = new $boxname($dbs, $obj->note); // Constructor may set properties like box->enabled. obj->note is note into box def, not user params.
 						//$box=new stdClass();
 
 						// box properties
@@ -205,8 +204,8 @@ class InfoBox
 				$j++;
 			}
 		} else {
-			dol_syslog($db->lasterror(), LOG_ERR);
-			return array('error'=>$db->lasterror());
+			dol_syslog($dbs->lasterror(), LOG_ERR);
+			return array('error'=>$dbs->lasterror());
 		}
 
 		return $boxes;
@@ -216,13 +215,13 @@ class InfoBox
 	/**
 	 *  Save order of boxes for area and user
 	 *
-	 *  @param	DoliDB	$db				Database handler
-	 *  @param	string	$zone       	Name of area (0 for Homepage, ...)
+	 *  @param	DoliDB	$dbs				Database handler
+	 *  @param	int		$zone       	Name of area (0 for Homepage, ...)
 	 *  @param  string  $boxorder   	List of boxes with correct order 'A:123,456,...-B:789,321...'
 	 *  @param  int     $userid     	Id of user
 	 *  @return int                   	<0 if KO, 0=Nothing done, > 0 if OK
 	 */
-	public static function saveboxorder($db, $zone, $boxorder, $userid = 0)
+	public static function saveboxorder($dbs, $zone, $boxorder, $userid = 0)
 	{
 		global $conf;
 
@@ -236,18 +235,18 @@ class InfoBox
 			return 0;
 		}
 
-		$user = new User($db);
+		$user = new User($dbs);
 		$user->id = $userid;
 
-		$db->begin();
+		$dbs->begin();
 
 		// Save parameters to say user has a dedicated setup
 		$tab = array();
 		$confuserzone = 'MAIN_BOXES_'.$zone;
 		$tab[$confuserzone] = 1;
-		if (dol_set_user_param($db, $conf, $user, $tab) < 0) {
-			$error = $db->lasterror();
-			$db->rollback();
+		if (dol_set_user_param($dbs, $conf, $user, $tab) < 0) {
+			$error = $dbs->lasterror();
+			$dbs->rollback();
 			return -3;
 		}
 
@@ -258,7 +257,7 @@ class InfoBox
 		$sql .= " AND position = ".((int) $zone);
 
 		dol_syslog(get_class()."::saveboxorder", LOG_DEBUG);
-		$result = $db->query($sql);
+		$result = $dbs->query($sql);
 		if ($result) {
 			$colonnes = explode('-', $boxorder);
 			foreach ($colonnes as $collist) {
@@ -278,15 +277,14 @@ class InfoBox
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes";
 						$sql .= "(box_id, position, box_order, fk_user, entity)";
 						$sql .= " values (";
-						$sql .= " ".$id.",";
-						$sql .= " ".$zone.",";
-						$sql .= " '".$db->escape($colonne.$ii)."',";
-						$sql .= " ".$userid.",";
-						$sql .= " ".$conf->entity;
+						$sql .= " ".((int) $id).",";
+						$sql .= " ".((int) $zone).",";
+						$sql .= " '".$dbs->escape($colonne.$ii)."',";
+						$sql .= " ".((int) $userid).",";
+						$sql .= " ".((int) $conf->entity);
 						$sql .= ")";
 
-						dol_syslog(get_class()."::saveboxorder", LOG_DEBUG);
-						$result = $db->query($sql);
+						$result = $dbs->query($sql);
 						if ($result < 0) {
 							$error++;
 							break;
@@ -299,10 +297,10 @@ class InfoBox
 		}
 
 		if ($error) {
-			$db->rollback();
+			$dbs->rollback();
 			return -2;
 		} else {
-			$db->commit();
+			$dbs->commit();
 			return 1;
 		}
 	}

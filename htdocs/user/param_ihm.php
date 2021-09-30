@@ -328,11 +328,7 @@ if ($action == 'edit') {
 	showSkins($object, (($user->admin || empty($dolibarr_main_demo)) ? 1 : 0), true);
 
 
-	print '<div class="center">';
-	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 } else {
 	print dol_get_fiche_head($head, 'guisetup', $title, -1, 'user');
 
@@ -370,10 +366,12 @@ if ($action == 'edit') {
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
 	print '> '.$langs->trans("UsePersonalValue").'</td>';
 	print '<td>';
-	if (!empty($tmparray[$object->conf->MAIN_LANDING_PAGE])) {
-		print $langs->trans($tmparray[$object->conf->MAIN_LANDING_PAGE]);
-	} else {
-		print $object->conf->MAIN_LANDING_PAGE;
+	if (!empty($object->conf->MAIN_LANDING_PAGE)) {
+		if (!empty($tmparray[$object->conf->MAIN_LANDING_PAGE])) {
+			print $langs->trans($tmparray[$object->conf->MAIN_LANDING_PAGE]);
+		} else {
+			print $object->conf->MAIN_LANDING_PAGE;
+		}
 	}
 	//print $form->selectarray('MAIN_LANDING_PAGE', $tmparray, (! empty($object->conf->MAIN_LANDING_PAGE)?$object->conf->MAIN_LANDING_PAGE:''), 0, 0, 0, '', 1);
 	print '</td></tr>';
@@ -407,12 +405,12 @@ if ($action == 'edit') {
 
 	print '<div class="tabsAction">';
 	if (empty($user->admin) && !empty($dolibarr_main_demo)) {
-		print "<a class=\"butActionRefused classfortooltip\" title=\"".$langs->trans("FeatureDisabledInDemo")."\" href=\"#\">".$langs->trans("Modify")."</a>";
+		print '<a class="butActionRefused classfortooltip" title="'.$langs->trans("FeatureDisabledInDemo").'" href="#">'.$langs->trans("Modify").'</a>';
 	} else {
 		if ($caneditfield || !empty($user->admin)) {       // Si utilisateur edite = utilisateur courant (pas besoin de droits particulier car il s'agit d'une page de modif d'output et non de données) ou si admin
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
 		} else {
-			print "<a class=\"butActionRefused classfortooltip\" title=\"".$langs->trans("NotEnoughPermissions")."\" href=\"#\">".$langs->trans("Modify")."</a>";
+			print '<a class="butActionRefused classfortooltip" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Modify").'</a>';
 		}
 	}
 

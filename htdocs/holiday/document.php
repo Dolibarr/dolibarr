@@ -137,7 +137,9 @@ $form = new Form($db);
 
 $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
 
-llxHeader("", "", $langs->trans("InterventionCard"));
+$title = $langs->trans('InterventionCard');
+
+llxHeader('', $title);
 
 
 if ($object->id) {

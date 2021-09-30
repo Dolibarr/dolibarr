@@ -98,7 +98,7 @@ $resources = GETPOST('resources', 'array:int');
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
 foreach ($object->fields as $key => $val) {
-	if ($val['searchall']) {
+	if (!empty($val['searchall'])) {
 		$fieldstosearchall['t.'.$key] = $val['label'];
 	}
 }
@@ -114,7 +114,7 @@ foreach ($object->fields as $key => $val) {
 			'checked'=>(($visible < 0) ? 0 : 1),
 			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
 			'position'=>$val['position'],
-			'help'=>$val['help']
+			'help' => empty($val['help']) ? '' : $val['help']
 		);
 	}
 }
@@ -124,7 +124,7 @@ $arrayfields['wug.fk_usergroup'] = array(
 	'checked'=>(($visible < 0) ? 0 : 1),
 	'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
 	'position'=>1000,
-	'help'=>$val['help']
+	'help' => empty($val['help']) ? '' : $val['help']
 );
 
 $arrayfields['wr.fk_resource'] = array(
@@ -132,7 +132,7 @@ $arrayfields['wr.fk_resource'] = array(
 	'checked'=>(($visible < 0) ? 0 : 1),
 	'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
 	'position'=>1001,
-	'help'=>$val['help']
+	'help' => empty($val['help']) ? '' : $val['help']
 );
 
 // Extra fields
@@ -220,7 +220,7 @@ $sql .= $object->getFieldList('t');
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key.', ' : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key.', ' : '');
 	}
 }
 // Add fields from hooks
@@ -254,7 +254,7 @@ foreach ($search as $key => $val) {
 		}
 		$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
 		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0) || !empty($object->fields[$key]['arrayofkeyval'])) {
-			if ($search[$key] == '-1' || $search[$key] === '0') {
+			if ($search[$key] == '-1' || ($search[$key] === '0' && (empty($object->fields[$key]['arrayofkeyval']) || !array_key_exists('0', $object->fields[$key]['arrayofkeyval'])))) {
 				$search[$key] = '';
 			}
 			$mode_search = 2;
@@ -264,10 +264,10 @@ foreach ($search as $key => $val) {
 		}
 	} else {
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
-			$columnName=preg_replace('/(_dtstart|_dtend)$/', '', $key);
+			$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
 				if (preg_match('/_dtstart$/', $key)) {
-					$sql .= " AND t." . $columnName . " >= '" . $db->idate($search[$key]) . "'";
+					$sql .= " AND t.".$columnName." >= '".$db->idate($search[$key])."'";
 				}
 				if (preg_match('/_dtend$/', $key)) {
 					$sql .= " AND t." . $columnName . " <= '" . $db->idate($search[$key]) . "'";
@@ -300,7 +300,7 @@ $sql .= $hookmanager->resPrint;
 
 $sql.= " GROUP BY ";
 foreach ($object->fields as $key => $val) {
-	$sql.='t.'.$key.', ';
+	$sql .= "t.".$key.", ";
 }
 // Add fields from extrafields
 if (! empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -345,7 +345,7 @@ if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit
 if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
-	header("Location: ".dol_buildpath('/workstation/workstation_card.php', 1).'?id='.$id);
+	header("Location: ".DOL_URL_ROOT.'/workstation/workstation_card.php?id='.$id);
 	exit;
 }
 
@@ -619,6 +619,12 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if (!empty($val['isameasure'])) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
+				}
+				if (!isset($totalarray['val'])) {
+					$totalarray['val'] = array();
+				}
+				if (!isset($totalarray['val']['t.'.$key])) {
+					$totalarray['val']['t.'.$key] = 0;
 				}
 				$totalarray['val']['t.'.$key] += $object->$key;
 			}

@@ -87,7 +87,7 @@ class Productlot extends CommonObject
 	 */
 	public $fields = array(
 		'rowid'         => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'noteditable'=>1, 'notnull'=> 1, 'index'=>1, 'position'=>1, 'comment'=>'Id', 'css'=>'left'),
-		'fk_product'    => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>15, 'notnull'=>1, 'index'=>1, 'searchall'=>1),
+		'fk_product'    => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>5, 'notnull'=>1, 'index'=>1, 'searchall'=>1),
 		'batch'         => array('type'=>'varchar(30)', 'label'=>'Batch', 'enabled'=>1, 'visible'=>1, 'notnull'=>0, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'comment'=>'Batch', 'searchall'=>1),
 		'entity'        => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>20),
 		'sellby'        => array('type'=>'date', 'label'=>'SellByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_SELLBY)?1:0', 'visible'=>5, 'position'=>60),
@@ -402,7 +402,7 @@ class Productlot extends CommonObject
 		$sql .= ' sellby = '.(!isset($this->sellby) || dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null').',';
 		$sql .= ' eol_date = '.(!isset($this->eol_date) || dol_strlen($this->eol_date) != 0 ? "'".$this->db->idate($this->eol_date)."'" : 'null').',';
 		$sql .= ' manufacturing_date = '.(!isset($this->manufacturing_date) || dol_strlen($this->manufacturing_date) != 0 ? "'".$this->db->idate($this->manufacturing_date)."'" : 'null').',';
-		$sql .= ' scrapping_date = '.(!isset($this->destruction_date) || dol_strlen($this->destruction_date) != 0 ? "'".$this->db->idate($this->destruction_date)."'" : 'null').',';
+		$sql .= ' scrapping_date = '.(!isset($this->scrapping_date) || dol_strlen($this->scrapping_date) != 0 ? "'".$this->db->idate($this->scrapping_date)."'" : 'null').',';
 		//$sql .= ' commissionning_date = '.(!isset($this->first_use_date) || dol_strlen($this->first_use_date) != 0 ? "'".$this->db->idate($this->first_use_date)."'" : 'null').',';
 		//$sql .= ' qc_frequency = '.(!isset($this->qc_frequency) || dol_strlen($this->qc_frequency) != 0 ? "'".$this->db->escape($this->qc_frequency)."'" : 'null').',';
 		$sql .= ' datec = '.(!isset($this->datec) || dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').',';

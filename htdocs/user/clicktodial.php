@@ -150,7 +150,9 @@ if ($id > 0) {
 		if (!empty($user->admin)) {
 			print '<tr><td class="titlefield">ClickToDial URL</td>';
 			print '<td class="valeur">';
-			$url = $conf->global->CLICKTODIAL_URL;
+			if (!empty($conf->global->CLICKTODIAL_URL)) {
+				$url = $conf->global->CLICKTODIAL_URL;
+			}
 			if (!empty($object->clicktodial_url)) {
 				$url = $object->clicktodial_url;
 			}
@@ -198,7 +200,7 @@ if ($id > 0) {
 	print '<div class="tabsAction">';
 
 	if (!empty($user->admin) && $action <> 'edit') {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 	}
 
 	print "</div>\n";

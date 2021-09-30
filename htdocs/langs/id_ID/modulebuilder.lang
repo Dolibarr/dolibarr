@@ -143,3 +143,4 @@ AsciiToHtmlConverter=Pengonversi Ascii ke HTML
 AsciiToPdfConverter=Pengonversi ascii ke PDF
 TableNotEmptyDropCanceled=Meja tidak kosong. Drop telah dibatalkan.
 ModuleBuilderNotAllowed=The module builder is available but not allowed to your user.
+ImportExportProfiles=Import and export profiles

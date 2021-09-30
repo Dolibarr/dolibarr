@@ -161,9 +161,6 @@ if (empty($reshook)) {
 			if (empty($companybankaccount->rum)) {
 				$companybankaccount->rum = $prelevement->buildRumNumber($object->code_client, $companybankaccount->datec, $companybankaccount->id);
 			}
-			if (empty($companybankaccount->date_rum)) {
-				$companybankaccount->date_rum = dol_now();
-			}
 
 			$result = $companybankaccount->update($user);
 			if (!$result) {
@@ -268,9 +265,9 @@ if (empty($reshook)) {
 			$companybankaccount->domiciliation   = GETPOST('domiciliation', 'alpha');
 			$companybankaccount->proprio         = GETPOST('proprio', 'alpha');
 			$companybankaccount->owner_address   = GETPOST('owner_address', 'alpha');
-			$companybankaccount->frstrecur       = GETPOST('frstrecur');
+			$companybankaccount->frstrecur       = GETPOST('frstrecur', 'alpha');
 			$companybankaccount->rum             = GETPOST('rum', 'alpha');
-			$companybankaccount->date_rum        = dol_mktime(0, 0, 0, GETPOST('date_rummonth'), GETPOST('date_rumday'), GETPOST('date_rumyear'));
+			$companybankaccount->date_rum        = dol_mktime(0, 0, 0, GETPOST('date_rummonth', 'int'), GETPOST('date_rumday', 'int'), GETPOST('date_rumyear', 'int'));
 			$companybankaccount->datec = dol_now();
 			$companybankaccount->status          = 1;
 
@@ -300,7 +297,6 @@ if (empty($reshook)) {
 
 				if (empty($companybankaccount->rum)) {
 					$companybankaccount->rum = $prelevement->buildRumNumber($object->code_client, $companybankaccount->datec, $companybankaccount->id);
-					$companybankaccount->date_rum = dol_now();
 				}
 			}
 
@@ -520,7 +516,7 @@ if (empty($reshook)) {
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($site_account)."') AND fk_soc = ".$object->id." AND status = ".((int) $servicestatus)." AND entity = ".$conf->entity;
 			} else {
 				$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX."societe_account";
-				$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($site_account)."') AND fk_soc = ".$object->id." AND status = ".((int) $servicestatus)." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+				$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($site_account)."') AND fk_soc = ".((int) $object->id)." AND status = ".((int) $servicestatus)." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
 			}
 
 			$resql = $db->query($sql);
@@ -542,7 +538,7 @@ if (empty($reshook)) {
 				} else {
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."societe_account";
 					$sql .= " SET key_account = '".$db->escape(GETPOST('key_account', 'alpha'))."', site_account = '".$db->escape($site_account)."'";
-					$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($site_account)."') AND fk_soc = ".$object->id." AND status = ".((int) $servicestatus)." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+					$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($site_account)."') AND fk_soc = ".((int) $object->id)." AND status = ".((int) $servicestatus)." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
 					$resql = $db->query($sql);
 				}
 			}
@@ -566,7 +562,7 @@ if (empty($reshook)) {
 			if (empty($newsup)) {
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE fk_soc = ".$object->id." AND service = '".$db->escape($service)."' AND entity = ".$conf->entity;
 				// TODO Add site and site_account on oauth_token table
-				//$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$db->escape($site_account)."') AND fk_soc = ".$object->id." AND service = '".$db->escape($service)."' AND entity = ".$conf->entity;
+				//$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$db->escape($site_account)."') AND fk_soc = ".((int) $object->id)." AND service = '".$db->escape($service)."' AND entity = ".$conf->entity;
 			} else {
 				try {
 					$stripesup = \Stripe\Account::retrieve($db->escape(GETPOST('key_account_supplier', 'alpha')));
@@ -574,7 +570,7 @@ if (empty($reshook)) {
 					$tokenstring['type'] = $stripesup->type;
 					$sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
 					$sql .= " SET tokenstring = '".$db->escape(json_encode($tokenstring))."'";
-					$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$db->escape($site_account)."') AND fk_soc = ".$object->id." AND service = '".$db->escape($service)."' AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+					$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$db->escape($site_account)."') AND fk_soc = ".((int) $object->id)." AND service = '".$db->escape($service)."' AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
 					// TODO Add site and site_account on oauth_token table
 					$sql .= " WHERE fk_soc = ".$object->id." AND service = '".$db->escape($service)."' AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
 				} catch (Exception $e) {
@@ -591,7 +587,7 @@ if (empty($reshook)) {
 					$tokenstring['stripe_user_id'] = $stripesup->id;
 					$tokenstring['type'] = $stripesup->type;
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, fk_soc, entity, tokenstring)";
-					$sql .= " VALUES ('".$db->escape($service)."', ".$object->id.", ".$conf->entity.", '".$db->escape(json_encode($tokenstring))."')";
+					$sql .= " VALUES ('".$db->escape($service)."', ".((int) $object->id).", ".((int) $conf->entity).", '".$db->escape(json_encode($tokenstring))."')";
 					// TODO Add site and site_account on oauth_token table
 				} catch (Exception $e) {
 					$error++;
@@ -745,17 +741,19 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
-
-	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
-		print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
-	}
-
-	//if ($conf->agenda->enabled && $user->rights->agenda->myactions->read) $elementTypeArray['action']=$langs->transnoentitiesnoconv('Events');
-
 	print '<div class="fichecenter">';
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border tableforfield centpercent">';
+
+	// Type Prospect/Customer/Supplier
+	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+	print $object->getTypeUrl(1);
+	print '</td></tr>';
+
+	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
+		print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
+	}
 
 	if ($object->client) {
 		print '<tr><td class="titlefield">';
@@ -1636,8 +1634,10 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer) {
 		print '<tr><td class="titlefield">'.$langs->trans("RUM").'</td>';
 		print '<td><input class="minwidth300" type="text" name="rum" value="'.dol_escape_htmltag($companybankaccount->rum).'"></td></tr>';
 
+		$date_rum = dol_mktime(0, 0, 0, GETPOST('date_rummonth'), GETPOST('date_rumday'), GETPOST('date_rumyear'));
+
 		print '<tr><td class="titlefield">'.$langs->trans("DateRUM").'</td>';
-		print '<td>'.$form->selectDate(GETPOST('date_rum') ?GETPOST('date_rum') : $companybankaccount->date_rum, 'date_rum', 0, 0, 1, 'date_rum').'</td></tr>';
+		print '<td>'.$form->selectDate($date_rum ? $date_rum : $companybankaccount->date_rum, 'date_rum', 0, 0, 1, 'date_rum', 1, 1).'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("WithdrawMode").'</td><td>';
 		$tblArraychoice = array("FRST" => $langs->trans("FRST"), "RECUR" => $langs->trans("RECUR"));
@@ -1651,11 +1651,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer) {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
-	print '</div>';
+	print $form->buttonsSaveCancel("Modify");
 }
 
 // Edit Card
@@ -1697,11 +1693,7 @@ if ($socid && $action == 'editcard' && $user->rights->societe->creer) {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
-	print '</div>';
+	print $form->buttonsSaveCancel("Modify");
 }
 
 
@@ -1798,8 +1790,10 @@ if ($socid && $action == 'create' && $user->rights->societe->creer) {
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("RUM").'</td>';
 		print '<td colspan="4"><input type="text" class="minwidth300" name="rum" value="'.GETPOST('rum', 'alpha').'"> <div class="opacitymedium">'.$langs->trans("RUMWillBeGenerated").'</div></td></tr>';
 
+		$date_rum = dol_mktime(0, 0, 0, GETPOST('date_rummonth'), GETPOST('date_rumday'), GETPOST('date_rumyear'));
+
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("DateRUM").'</td>';
-		print '<td colspan="4">'.$form->selectDate(GETPOST('date_rum'), 'date_rum', 0, 0, 1, 'date_rum').'</td></tr>';
+		print '<td colspan="4">'.$form->selectDate($date_rum, 'date_rum', 0, 0, 1, 'date_rum', 1, 1).'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("WithdrawMode").'</td><td>';
 		$tblArraychoice = array("FRST" => $langs->trans("FRST"), "RECUR" => $langs->trans("RECUR"));
@@ -1815,11 +1809,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer) {
 
 	dol_set_focus('#label');
 
-	print '<div class="center">';
-	print '<input class="button" value="'.$langs->trans("Add").'" type="submit">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'" type="submit">';
-	print '</div>';
+	print $form->buttonsSaveCancel("Add");
 }
 
 // Create Card
@@ -1864,11 +1854,7 @@ if ($socid && $action == 'createcard' && $user->rights->societe->creer) {
 
 	dol_set_focus('#label');
 
-	print '<div class="center">';
-	print '<input class="button" value="'.$langs->trans("Add").'" type="submit">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'" type="submit">';
-	print '</div>';
+	print $form->buttonsSaveCancel("Add");
 }
 
 if ($socid && ($action == 'edit' || $action == 'editcard') && $user->rights->societe->creer) {

@@ -156,7 +156,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 		if ($result >= 0 || $result == -2) {	// Contact add ok or already contact of task
 			// Test if we are already contact of the project (should be rare but sometimes we can add as task contact without being contact of project, like when admin user has been removed from contact of project)
 			$sql = 'SELECT ec.rowid FROM '.MAIN_DB_PREFIX.'element_contact as ec, '.MAIN_DB_PREFIX.'c_type_contact as tc WHERE tc.rowid = ec.fk_c_type_contact';
-			$sql .= ' AND ec.fk_socpeople = '.((int) $idfortaskuser)." AND ec.element_id = '.$object->fk_project.' AND tc.element = 'project' AND source = 'internal'";
+			$sql .= ' AND ec.fk_socpeople = '.((int) $idfortaskuser)." AND ec.element_id = ".((int) $object->fk_project)." AND tc.element = 'project' AND source = 'internal'";
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -334,12 +334,12 @@ llxHeader("", $title, "", '', '', '', array('/core/js/timesheet.js'));
 //print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'title_project');
 
 $param = '';
-$param .= ($mode ? '&mode='.$mode : '');
-$param .= ($search_project_ref ? '&search_project_ref='.$search_project_ref : '');
-$param .= ($search_usertoprocessid > 0 ? '&search_usertoprocessid='.$search_usertoprocessid : '');
-$param .= ($search_thirdparty ? '&search_thirdparty='.$search_thirdparty : '');
-$param .= ($search_task_ref ? '&search_task_ref='.$search_task_ref : '');
-$param .= ($search_task_label ? '&search_task_label='.$search_task_label : '');
+$param .= ($mode ? '&mode='.urlencode($mode) : '');
+$param .= ($search_project_ref ? '&search_project_ref='.urlencode($search_project_ref) : '');
+$param .= ($search_usertoprocessid > 0 ? '&search_usertoprocessid='.urlencode($search_usertoprocessid) : '');
+$param .= ($search_thirdparty ? '&search_thirdparty='.urlencode($search_thirdparty) : '');
+$param .= ($search_task_ref ? '&search_task_ref='.urlencode($search_task_ref) : '');
+$param .= ($search_task_label ? '&search_task_label='.urlencode($search_task_label) : '');
 
 // Show navigation bar
 $nav = '<a class="inline-block valignmiddle" href="?year='.$prev_year."&month=".$prev_month."&day=".$prev_day.$param.'">'.img_previous($langs->trans("Previous"))."</a>\n";
@@ -596,9 +596,7 @@ print '</div>';
 print '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.count($tasksarray).'"/>'."\n";
 print '<input type="hidden" id="numberOfFirstLine" name="numberOfFirstLine" value="'.(reset($TWeek)).'"/>'."\n";
 
-print '<div class="center">';
-print '<input type="submit" class="button button-save" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
-print '</div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>'."\n\n";
 

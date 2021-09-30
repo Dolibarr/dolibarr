@@ -176,7 +176,6 @@ class box_graph_ticket_by_severity extends ModeleBoxes
 					}
 
 					$px1->SetData($data);
-					//$px1->setShowLegend(2);
 					$px1->setShowLegend(0);
 					$px1->SetType(array('bars'));
 					$px1->SetLegend($legend);

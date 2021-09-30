@@ -142,7 +142,7 @@ class AdherentType extends CommonObject
 
 		$sql = "SELECT lang, label, description, email";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type_lang";
-		$sql .= " WHERE fk_type=".$this->id;
+		$sql .= " WHERE fk_type = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -181,21 +181,21 @@ class AdherentType extends CommonObject
 			if ($key == $current_lang) {
 				$sql = "SELECT rowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type_lang";
-				$sql .= " WHERE fk_type=".$this->id;
+				$sql .= " WHERE fk_type = ".((int) $this->id);
 				$sql .= " AND lang = '".$this->db->escape($key)."'";
 
 				$result = $this->db->query($sql);
 
 				if ($this->db->num_rows($result)) { // if there is already a description line for this language
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."adherent_type_lang";
-					$sql2 .= " SET ";
-					$sql2 .= " label='".$this->db->escape($this->label)."',";
-					$sql2 .= " description='".$this->db->escape($this->description)."'";
-					$sql2 .= " WHERE fk_type=".$this->id." AND lang='".$this->db->escape($key)."'";
+					$sql2 .= " SET";
+					$sql2 .= " label = '".$this->db->escape($this->label)."',";
+					$sql2 .= " description = '".$this->db->escape($this->description)."'";
+					$sql2 .= " WHERE fk_type = ".((int) $this->id)." AND lang='".$this->db->escape($key)."'";
 				} else {
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type_lang (fk_type, lang, label, description";
 					$sql2 .= ")";
-					$sql2 .= " VALUES(".$this->id.",'".$this->db->escape($key)."','".$this->db->escape($this->label)."',";
+					$sql2 .= " VALUES(".((int) $this->id).",'".$this->db->escape($key)."','".$this->db->escape($this->label)."',";
 					$sql2 .= " '".$this->db->escape($this->description)."'";
 					$sql2 .= ")";
 				}
@@ -207,7 +207,7 @@ class AdherentType extends CommonObject
 			} elseif (isset($this->multilangs[$key])) {
 				$sql = "SELECT rowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type_lang";
-				$sql .= " WHERE fk_type=".$this->id;
+				$sql .= " WHERE fk_type = ".((int) $this->id);
 				$sql .= " AND lang = '".$this->db->escape($key)."'";
 
 				$result = $this->db->query($sql);
@@ -215,9 +215,9 @@ class AdherentType extends CommonObject
 				if ($this->db->num_rows($result)) { // if there is already a description line for this language
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."adherent_type_lang";
 					$sql2 .= " SET ";
-					$sql2 .= " label='".$this->db->escape($this->multilangs["$key"]["label"])."',";
-					$sql2 .= " description='".$this->db->escape($this->multilangs["$key"]["description"])."'";
-					$sql2 .= " WHERE fk_type=".$this->id." AND lang='".$this->db->escape($key)."'";
+					$sql2 .= " label = '".$this->db->escape($this->multilangs["$key"]["label"])."',";
+					$sql2 .= " description = '".$this->db->escape($this->multilangs["$key"]["description"])."'";
+					$sql2 .= " WHERE fk_type = ".((int) $this->id)." AND lang='".$this->db->escape($key)."'";
 				} else {
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type_lang (fk_type, lang, label, description";
 					$sql2 .= ")";
@@ -259,7 +259,7 @@ class AdherentType extends CommonObject
 	public function delMultiLangs($langtodelete, $user)
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type_lang";
-		$sql .= " WHERE fk_type=".$this->id." AND lang='".$this->db->escape($langtodelete)."'";
+		$sql .= " WHERE fk_type = ".((int) $this->id)." AND lang = '".$this->db->escape($langtodelete)."'";
 
 		dol_syslog(get_class($this).'::delMultiLangs', LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -584,7 +584,7 @@ class AdherentType extends CommonObject
 	/**
 	 * 	Return array of Member objects for member type this->id (or all if this->id not defined)
 	 *
-	 * 	@param	string	$excludefilter		Filter to exclude
+	 * 	@param	string	$excludefilter		Filter to exclude. This value must not come from a user input.
 	 *  @param	int		$mode				0=Return array of member instance
 	 *  									1=Return array of member instance without extra data
 	 *  									2=Return array of members id only
@@ -656,18 +656,18 @@ class AdherentType extends CommonObject
 	/**
 	 *  Return clicable name (with picto eventually)
 	 *
-	 *  @param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *  @param		int		$maxlen			length max label
-	 *  @param		int  	$notooltip		1=Disable tooltip
-	 *  @return		string					String with URL
+	 *  @param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+	 *  @param		int		$maxlen						length max label
+	 *  @param		int  	$notooltip					1=Disable tooltip
+	 *  @param  	string  $morecss                    Add more css on link
+	 *  @param  	int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @return		string								String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0)
+	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $langs;
 
 		$result = '';
-
-		$label = '';
 
 		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("MemberType").'</u>';
 		$label .= ' '.$this->getLibStatut(4);
@@ -676,7 +676,22 @@ class AdherentType extends CommonObject
 			$label .= '<br>'.$langs->trans("SubscriptionRequired").': '.yn($this->subscription);
 		}
 
-		$linkstart = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?rowid='.((int) $this->id).'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$option = '';
+
+		$url = DOL_URL_ROOT.'/adherents/type.php?rowid='.((int) $this->id);
+
+		if ($option != 'nolink') {
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
+		}
+
+		$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';
 
 		$result .= $linkstart;

@@ -447,6 +447,9 @@ abstract class CommonDocGenerator
 
 		$array_key.'_bank_iban'=>$bank_account->iban,
 		$array_key.'_bank_bic'=>$bank_account->bic,
+		$array_key.'_bank_label'=>$bank_account->label,
+		$array_key.'_bank_number'=>$bank_account->number,
+		$array_key.'_bank_proprio'=>$bank_account->proprio,
 
 		$array_key.'_total_ht_locale'=>price($object->total_ht, 0, $outputlangs),
 		$array_key.'_total_vat_locale'=>(!empty($object->total_vat) ?price($object->total_vat, 0, $outputlangs) : price($object->total_tva, 0, $outputlangs)),
@@ -489,7 +492,7 @@ abstract class CommonDocGenerator
 		$array_key.'_remain_to_pay'=>price2num($object->total_ttc - $remain_to_pay, 'MT')
 		);
 
-		if (method_exists($object, 'getTotalDiscount')) {
+		if (method_exists($object, 'getTotalDiscount') && in_array(get_class($object), array('Proposal', 'Commande', 'Facture', 'SupplierProposal', 'CommandeFournisseur', 'FactureFournisseur'))) {
 			$resarray[$array_key.'_total_discount_ht_locale'] = price($object->getTotalDiscount(), 0, $outputlangs);
 			$resarray[$array_key.'_total_discount_ht'] = price2num($object->getTotalDiscount());
 		} else {
@@ -531,11 +534,11 @@ abstract class CommonDocGenerator
 				$totalUp += $line->subprice * $line->qty;
 			}
 
-			// @GS: Calculate total up and total discount percentage
-			// Note that this added fields correspond to nothing in Dolibarr (Dolibarr manage discount on lines not globally)
+			// Calculate total up and total discount percentage
+			// Note that this added fields does not match a field into database in Dolibarr (Dolibarr manage discount on lines not as a global property of object)
 			$resarray['object_total_up'] = $totalUp;
 			$resarray['object_total_up_locale'] = price($resarray['object_total_up'], 0, $outputlangs);
-			if (method_exists($object, 'getTotalDiscount')) {
+			if (method_exists($object, 'getTotalDiscount') && in_array(get_class($object), array('Proposal', 'Commande', 'Facture', 'SupplierProposal', 'CommandeFournisseur', 'FactureFournisseur'))) {
 				$totalDiscount = $object->getTotalDiscount();
 			} else {
 				$totalDiscount = 0;
@@ -1201,11 +1204,12 @@ abstract class CommonDocGenerator
 	 *  get extrafield content for pdf writeHtmlCell compatibility
 	 *  usage for PDF line columns and object note block
 	 *
-	 *  @param	object		$object     common object
-	 *  @param	string		$extrafieldKey    	the extrafield key
+	 *  @param	object		$object     		Common object
+	 *  @param	string		$extrafieldKey    	The extrafield key
+	 *  @param	Translate	$outputlangs		The output langs (if value is __(XXX)__ we use it to translate it).
 	 *  @return	string
 	 */
-	public function getExtrafieldContent($object, $extrafieldKey)
+	public function getExtrafieldContent($object, $extrafieldKey, $outputlangs = null)
 	{
 		global $hookmanager;
 
@@ -1341,7 +1345,7 @@ abstract class CommonDocGenerator
 
 				$field = new stdClass();
 				$field->rank = intval($extrafields->attributes[$object->table_element]['pos'][$key]);
-				$field->content = $this->getExtrafieldContent($object, $key);
+				$field->content = $this->getExtrafieldContent($object, $key, $outputlangs);
 				$field->label = $outputlangs->transnoentities($label);
 				$field->type = $extrafields->attributes[$object->table_element]['type'][$key];
 

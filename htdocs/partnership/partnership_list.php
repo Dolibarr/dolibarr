@@ -82,7 +82,7 @@ if ($managedfor != 'member' && $sortfield == 'd.datefin') $sortfield = '';
 
 // Default sort order (if not yet defined by previous GETPOST)
 if (!$sortfield) {
-	reset($object->fields);					// Reset is required to avoid key() to return null.
+	reset($object->fields); // Reset is required to avoid key() to return null.
 	$sortfield = "t.".key($object->fields); // Set here default search field. By default 1st field in definition.
 }
 if (!$sortorder) {
@@ -110,7 +110,7 @@ if ($filter) {
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
 foreach ($object->fields as $key => $val) {
-	if ($val['searchall']) {
+	if (!empty($val['searchall'])) {
 		$fieldstosearchall['t.'.$key] = $val['label'];
 	}
 }
@@ -126,7 +126,7 @@ foreach ($object->fields as $key => $val) {
 			'checked'=>(($visible < 0) ? 0 : 1),
 			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
 			'position'=>$val['position'],
-			'help'=>$val['help']
+			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
 	}
 }
@@ -136,8 +136,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread 	= $user->rights->partnership->read;
-$permissiontoadd 	= $user->rights->partnership->write;
+$permissiontoread = $user->rights->partnership->read;
+$permissiontoadd = $user->rights->partnership->write;
 $permissiontodelete = $user->rights->partnership->delete;
 
 // Security check
@@ -260,7 +260,7 @@ if ($managedfor == 'member') {
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -294,8 +294,8 @@ foreach ($search as $key => $val) {
 			continue;
 		}
 		$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
-		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0)) {
-			if ($search[$key] == '-1' || $search[$key] === '0') {
+		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0) || !empty($object->fields[$key]['arrayofkeyval'])) {
+			if ($search[$key] == '-1' || ($search[$key] === '0' && (empty($object->fields[$key]['arrayofkeyval']) || !array_key_exists('0', $object->fields[$key]['arrayofkeyval'])))) {
 				$search[$key] = '';
 			}
 			$mode_search = 2;
@@ -305,13 +305,13 @@ foreach ($search as $key => $val) {
 		}
 	} else {
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
-			$columnName=preg_replace('/(_dtstart|_dtend)$/', '', $key);
+			$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
 				if (preg_match('/_dtstart$/', $key)) {
-					$sql .= " AND t." . $columnName . " >= '" . $db->idate($search[$key]) . "'";
+					$sql .= " AND t.".$columnName." >= '".$db->idate($search[$key])."'";
 				}
 				if (preg_match('/_dtend$/', $key)) {
-					$sql .= " AND t." . $columnName . " <= '" . $db->idate($search[$key]) . "'";
+					$sql .= " AND t.".$columnName." <= '".$db->idate($search[$key])."'";
 				}
 			}
 		}
@@ -342,7 +342,7 @@ $sql .= $hookmanager->resPrint;
 /* If a group by is required
 $sql.= " GROUP BY ";
 foreach($object->fields as $key => $val) {
-	$sql.='t.'.$key.', ';
+	$sql .= "t.".$key.", ";
 }
 // Add fields from extrafields
 if (! empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -398,20 +398,6 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'classforhorizontalscrolloftabs');
 
-// Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function() {
-		init_myfunc();
-	});
-});
-</script>';
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -538,7 +524,7 @@ foreach ($object->fields as $key => $val) {
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
-		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:')=== 0)) {
+		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) {
 			print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth125', 1);
 		} elseif (!preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
@@ -669,6 +655,12 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if (!empty($val['isameasure'])) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
+				}
+				if (!isset($totalarray['val'])) {
+					$totalarray['val'] = array();
+				}
+				if (!isset($totalarray['val']['t.'.$key])) {
+					$totalarray['val']['t.'.$key] = 0;
 				}
 				$totalarray['val']['t.'.$key] += $object->$key;
 			}

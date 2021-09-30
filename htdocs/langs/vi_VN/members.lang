@@ -213,3 +213,5 @@ SendReminderForExpiredSubscription=Gửi lời nhắc qua email cho các thành 
 MembershipPaid=Tư cách thành viên đã trả tiền cho kỳ hiện tại (cho đến khi %s)
 YouMayFindYourInvoiceInThisEmail=Bạn có thể tìm thấy hóa đơn của bạn được đính kèm với email này
 XMembersClosed=%s (các) thành viên đã đóng
+XExternalUserCreated=%s external user(s) created
+ForceMemberNature=Force member nature (Individual or Corporation)

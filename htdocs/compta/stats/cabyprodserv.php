@@ -295,8 +295,6 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
 	if ($selected_cat === -2) {	// Without any category
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
-	} elseif ($selected_cat) { 	// Into a specific category
-		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_product as cp";
 	}
 
 	$parameters = array();

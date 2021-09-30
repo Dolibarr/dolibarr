@@ -113,25 +113,46 @@ if (!$action) {
 	}
 }
 
-if ($source == 'conferencesubscription') {
+if ($source == 'organizedeventregistration') {
 	// Finding the Attendee
-	$invoiceid = GETPOST('ref');
+	$attendee = new ConferenceOrBoothAttendee($db);
+
+	$invoiceid = GETPOST('ref', 'int');
 	$invoice = new Facture($db);
+
 	$resultinvoice = $invoice->fetch($invoiceid);
+
 	if ($resultinvoice <= 0) {
 		setEventMessages(null, $invoice->errors, "errors");
 	} else {
+		/*
+		$attendeeid = 0;
+
 		$invoice->fetchObjectLinked();
 		$linkedAttendees = $invoice->linkedObjectsIds['conferenceorboothattendee'];
 
 		if (is_array($linkedAttendees)) {
 			$linkedAttendees = array_values($linkedAttendees);
+			$attendeeid = $linkedAttendees[0];
+		}*/
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee";
+		$sql .= " WHERE fk_invoice = ".((int) $invoiceid);
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$attendeeid = $obj->rowid;
+			}
+		}
 
-			$attendee = new ConferenceOrBoothAttendee($db);
-			$resultattendee = $attendee->fetch($linkedAttendees[0]);
+		if ($attendeeid > 0) {
+			$resultattendee = $attendee->fetch($attendeeid);
+
 			if ($resultattendee <= 0) {
 				setEventMessages(null, $attendee->errors, "errors");
 			} else {
+				$attendee->fetch_projet();
+
 				$amount = price2num($invoice->total_ttc);
 				// Finding the associated thirdparty
 				$thirdparty = new Societe($db);
@@ -326,6 +347,7 @@ if (!empty($conf->global->$paramcreditorlong)) {
 	$creditor = $conf->global->$paramcreditor;
 }
 
+$mesg = '';
 
 
 /*
@@ -357,7 +379,6 @@ if ($action == 'dopayment') {
 			$shipToState = 'ID-'.$shipToState;
 		}
 
-		$mesg = '';
 		if (empty($PAYPAL_API_PRICE) || !is_numeric($PAYPAL_API_PRICE)) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount"));
 			$action = '';
@@ -421,7 +442,6 @@ if ($action == 'dopayment') {
 		$urlok = preg_replace('/securekey=[^&]+/', '', $urlok);
 		$urlko = preg_replace('/securekey=[^&]+/', '', $urlko);
 
-		$mesg = '';
 		if (empty($PRICE) || !is_numeric($PRICE)) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount"));
 		} elseif (empty($email)) {
@@ -863,6 +883,11 @@ if ($urllogo) {
 	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
 		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 	}
+	print '</div>';
+}
+if (!empty($conf->global->MAIN_IMAGE_PUBLIC_PAYMENT)) {
+	print '<div class="backimagepublicpayment">';
+	print '<img id="idMAIN_IMAGE_PUBLIC_PAYMENT" src="'.$conf->global->MAIN_IMAGE_PUBLIC_PAYMENT.'">';
 	print '</div>';
 }
 
@@ -1512,7 +1537,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 		$oldtypeid = $member->typeid;
 		$newtypeid = (int) (GETPOSTISSET("typeid") ? GETPOST("typeid", 'int') : $member->typeid);
 
-		if ($oldtypeid != $newtypeid && !empty($conf->global->MEMBER_ALLOW_CHANGE_OF_TYPE)) {
+		if (!empty($conf->global->MEMBER_ALLOW_CHANGE_OF_TYPE)) {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 			$adht = new AdherentType($db);
 			// Amount by member type
@@ -1802,9 +1827,9 @@ if ($source == 'donation') {
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
 }
 
-if ($source == 'conferencesubscription') {
+if ($source == 'organizedeventregistration') {
 	$found = true;
-	$langs->load("members");
+	$langs->loadLangs(array("members", "eventorganization"));
 
 	if (GETPOST('fulltag', 'alpha')) {
 		$fulltag = GETPOST('fulltag', 'alpha');
@@ -1825,14 +1850,20 @@ if ($source == 'conferencesubscription') {
 	// Debitor
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Attendee");
 	print '</td><td class="CTableRow2"><b>';
-	print $thirdparty->name;
+	print $attendee->email;
+	print ($thirdparty->name ? ' ('.$thirdparty->name.')' : '');
 	print '</b>';
 	print '</td></tr>'."\n";
 
+	if (! is_object($attendee->project)) {
+		$text = 'ErrorProjectNotFound';
+	} else {
+		$text = $langs->trans("PaymentEvent").' - '.$attendee->project->title;
+	}
+
 	// Object
-	$text = '<b>'.$langs->trans("PaymentConferenceAttendee").'</b>';
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
-	print '</td><td class="CTableRow2">'.$text;
+	print '</td><td class="CTableRow2"><b>'.$text.'</b>';
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($invoice->id).'">';
 	print '</td></tr>'."\n";
@@ -1979,7 +2010,7 @@ if (!$found && !$mesg) {
 }
 
 if ($mesg) {
-	print '<tr><td align="center" colspan="2"><br><div class="warning">'.dol_escape_htmltag($mesg).'</div></td></tr>'."\n";
+	print '<tr><td align="center" colspan="2"><br><div class="warning">'.dol_escape_htmltag($mesg, 1, 1, 'br').'</div></td></tr>'."\n";
 }
 
 print '</table>'."\n";

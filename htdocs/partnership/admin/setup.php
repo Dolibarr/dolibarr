@@ -23,11 +23,7 @@
  */
 
 // Load Dolibarr environment
-require '../main.inc.php';
-
-global $langs, $user;
-
-// Libraries
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once '../lib/partnership.lib.php';
 //require_once "../class/myclass.class.php";
@@ -69,8 +65,10 @@ if ($action == 'setting') {
 	$error += $partnership->delete_menus();
 	$error += $partnership->insert_menus();
 
-	if (GETPOST("PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL", 'int'))
+	if (GETPOSTISSET("PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL")) {
 		dolibarr_set_const($db, "PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL", GETPOST("PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL", 'int'), 'chaine', 0, '', $conf->entity);
+	}
+
 	dolibarr_set_const($db, "PARTNERSHIP_BACKLINKS_TO_CHECK", GETPOST("PARTNERSHIP_BACKLINKS_TO_CHECK"), 'chaine', 0, '', $conf->entity);
 }
 
@@ -135,16 +133,16 @@ print '<td><span class="opacitymedium">'.$langs->trans("partnershipforthirdparty
 print '</tr>';
 
 
-if (!empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
-	print '<tr class="oddeven"><td>'.$langs->trans("PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL").'</td>';
-	print '<td>';
-	$dnbdays 	= '15';
-	$backlinks 	= (!empty($conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL)) ? $conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL : $dnbdays;
-	print '<input class="maxwidth50" type="text" name="PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL" value="'.$backlinks.'">';
-	print '</td>';
-	print '<td><span class="opacitymedium">'.$dnbdays.'</span></td>';
-	print '</tr>';
-}
+//if (!empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+print '<tr class="oddeven"><td>'.$langs->trans("PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL").'</td>';
+print '<td>';
+$dnbdays = '30';
+$backlinks = (!empty($conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL)) ? $conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL : $dnbdays;
+print '<input class="maxwidth50" type="text" name="PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL" value="'.$backlinks.'">';
+print '</td>';
+print '<td><span class="opacitymedium">'.$dnbdays.'</span></td>';
+print '</tr>';
+//}
 
 print '</table>';
 print '</div>';
@@ -168,7 +166,7 @@ print '</tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("PARTNERSHIP_BACKLINKS_TO_CHECK").'</td>';
 print '<td>';
-$backlinks 	= (empty($conf->global->PARTNERSHIP_BACKLINKS_TO_CHECK) ? '' : $conf->global->PARTNERSHIP_BACKLINKS_TO_CHECK);
+$backlinks = (empty($conf->global->PARTNERSHIP_BACKLINKS_TO_CHECK) ? '' : $conf->global->PARTNERSHIP_BACKLINKS_TO_CHECK);
 print '<input class="minwidth400" type="text" name="PARTNERSHIP_BACKLINKS_TO_CHECK" value="'.$backlinks.'">';
 print '</td>';
 print '<td><span class="opacitymedium">dolibarr.org|dolibarr.fr|dolibarr.es</span></td>';

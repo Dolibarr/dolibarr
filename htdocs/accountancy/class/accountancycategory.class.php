@@ -201,7 +201,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= "entity";
 		$sql .= ") VALUES (";
 		if ($this->rowid > 0) {
-			$sql .= " ".$this->rowid.",";
+			$sql .= " ".((int) $this->rowid).",";
 		}
 		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
@@ -209,10 +209,10 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " ".(!isset($this->sens) ? 'NULL' : "'".$this->db->escape($this->sens)."'").",";
 		$sql .= " ".(!isset($this->category_type) ? 'NULL' : "'".$this->db->escape($this->category_type)."'").",";
 		$sql .= " ".(!isset($this->formula) ? 'NULL' : "'".$this->db->escape($this->formula)."'").",";
-		$sql .= " ".(!isset($this->position) ? 'NULL' : $this->db->escape($this->position)).",";
-		$sql .= " ".(!isset($this->fk_country) ? 'NULL' : $this->db->escape($this->fk_country)).",";
-		$sql .= " ".(!isset($this->active) ? 'NULL' : $this->db->escape($this->active));
-		$sql .= ", ".$conf->entity;
+		$sql .= " ".(!isset($this->position) ? 'NULL' : ((int) $this->position)).",";
+		$sql .= " ".(!isset($this->fk_country) ? 'NULL' : ((int) $this->fk_country)).",";
+		$sql .= " ".(!isset($this->active) ? 'NULL' : ((int) $this->active));
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
 
 		$this->db->begin();
@@ -263,7 +263,7 @@ class AccountancyCategory // extends CommonObject
 		if ($id) {
 			$sql .= " WHERE t.rowid = ".((int) $id);
 		} else {
-			$sql .= " WHERE t.entity IN (".getEntity('c_accounting_category').")"; // Dont't use entity if you use rowid
+			$sql .= " WHERE t.entity IN (".getEntity('c_accounting_category').")"; // Don't use entity if you use rowid
 			if ($code) {
 				$sql .= " AND t.code = '".$this->db->escape($code)."'";
 			} elseif ($label) {
@@ -433,7 +433,7 @@ class AccountancyCategory // extends CommonObject
 
 		$this->lines_display = array();
 
-		dol_syslog(__METHOD__." sql=".$sql, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -632,7 +632,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " WHERE aa.rowid = ".((int) $cpt_id);
 		$this->db->begin();
 
-		dol_syslog(__METHOD__." sql=".$sql, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;

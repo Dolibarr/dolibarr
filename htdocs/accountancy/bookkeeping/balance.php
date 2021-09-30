@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->loadLangs(array("accountancy", "compta"));
 
 $action = GETPOST('action', 'aZ09');
+$contextpage = GETPOST('contextpage', 'aZ09');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -120,19 +121,19 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 $filter = array();
 if (!empty($search_date_start)) {
 	$filter['t.doc_date>='] = $search_date_start;
-	$param .= '&amp;date_startmonth='.GETPOST('date_startmonth', 'int').'&amp;date_startday='.GETPOST('date_startday', 'int').'&amp;date_startyear='.GETPOST('date_startyear', 'int');
+	$param .= '&date_startmonth='.GETPOST('date_startmonth', 'int').'&date_startday='.GETPOST('date_startday', 'int').'&date_startyear='.GETPOST('date_startyear', 'int');
 }
 if (!empty($search_date_end)) {
 	$filter['t.doc_date<='] = $search_date_end;
-	$param .= '&amp;date_endmonth='.GETPOST('date_endmonth', 'int').'&amp;date_endday='.GETPOST('date_endday', 'int').'&amp;date_endyear='.GETPOST('date_endyear', 'int');
+	$param .= '&date_endmonth='.GETPOST('date_endmonth', 'int').'&date_endday='.GETPOST('date_endday', 'int').'&date_endyear='.GETPOST('date_endyear', 'int');
 }
 if (!empty($search_accountancy_code_start)) {
 	$filter['t.numero_compte>='] = $search_accountancy_code_start;
-	$param .= '&amp;search_accountancy_code_start='.$search_accountancy_code_start;
+	$param .= '&search_accountancy_code_start='.urlencode($search_accountancy_code_start);
 }
 if (!empty($search_accountancy_code_end)) {
 	$filter['t.numero_compte<='] = $search_accountancy_code_end;
-	$param .= '&amp;search_accountancy_code_end='.$search_accountancy_code_end;
+	$param .= '&search_accountancy_code_end='.urlencode($search_accountancy_code_end);
 }
 if (!empty($search_ledger_code)) {
 	$filter['t.code_journal'] = $search_ledger_code;
@@ -388,7 +389,7 @@ if ($action != 'export_csv') {
 		} elseif (empty($tmparrayforrootaccount['label'])) {
 			// $tmparrayforrootaccount['label'] not defined = the account has not parent with a parent.
 			// This is useless, we should not create a new account when an account has no parent, we must edit it to fix its parent.
-			// BUG 1: Accounts on level root or level 1 must not have a parent 2 level higher, so shoule not show a link to create another account.
+			// BUG 1: Accounts on level root or level 1 must not have a parent 2 level higher, so should not show a link to create another account.
 			// BUG 2: Adding a link to create a new accounting account here is useless because it is not add as parent of the orphelin.
 			//$link = '<a href="' . DOL_URL_ROOT . '/accountancy/admin/card.php?action=create&token=' . newToken() . '&accountingaccount=' . length_accountg($line->numero_compte) . '">' . img_edit_add() . '</a>';
 		}
@@ -401,14 +402,14 @@ if ($action != 'export_csv') {
 					print '<tr class="liste_total">';
 					print '<td class="right">'.$langs->trans("SubTotal").':</td>';
 					if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
-						print '<td class="nowrap right">'.price($sous_total_opening_balance).'</td>';
+						print '<td class="right nowraponall amount">'.price($sous_total_opening_balance).'</td>';
 					}
-					print '<td class="nowrap right">'.price($sous_total_debit).'</td>';
-					print '<td class="nowrap right">'.price($sous_total_credit).'</td>';
+					print '<td class="right nowraponall amount">'.price($sous_total_debit).'</td>';
+					print '<td class="right nowraponall amount">'.price($sous_total_credit).'</td>';
 					if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
-						print '<td class="nowrap right">'.price(price2num($sous_total_opening_balance + $sous_total_debit - $sous_total_credit)).'</td>';
+						print '<td class="right nowraponall amount">'.price(price2num($sous_total_opening_balance + $sous_total_debit - $sous_total_credit)).'</td>';
 					} else {
-						print '<td class="nowrap right">'.price(price2num($sous_total_debit - $sous_total_credit)).'</td>';
+						print '<td class="right nowraponall amount">'.price(price2num($sous_total_debit - $sous_total_credit)).'</td>';
 					}
 					print "<td></td>\n";
 					print '</tr>';
@@ -429,7 +430,7 @@ if ($action != 'export_csv') {
 		print '<tr class="oddeven">';
 		print '<td>'.$accounting_account.'</td>';
 		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
-			print '<td class="nowraponall right">'.price($opening_balance).'</td>';
+			print '<td class="right nowraponall amount">'.price($opening_balance).'</td>';
 		}
 
 		$urlzoom = '';
@@ -443,14 +444,14 @@ if ($action != 'export_csv') {
 			}
 		}
 		// Debit
-		print '<td class="nowraponall right"><a href="'.$urlzoom.'">'.price($line->debit).'</a></td>';
+		print '<td class="right nowraponall amount"><a href="'.$urlzoom.'">'.price($line->debit).'</a></td>';
 		// Credit
-		print '<td class="nowraponall right"><a href="'.$urlzoom.'">'.price($line->credit).'</a></td>';
+		print '<td class="right nowraponall amount"><a href="'.$urlzoom.'">'.price($line->credit).'</a></td>';
 
 		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
-			print '<td class="nowraponall right">'.price(price2num($opening_balance + $line->debit - $line->credit, 'MT')).'</td>';
+			print '<td class="right nowraponall amount">'.price(price2num($opening_balance + $line->debit - $line->credit, 'MT')).'</td>';
 		} else {
-			print '<td class="nowraponall right">'.price(price2num($line->debit - $line->credit, 'MT')).'</td>';
+			print '<td class="right nowraponall amount">'.price(price2num($line->debit - $line->credit, 'MT')).'</td>';
 		}
 		print '<td class="center">';
 		print $link;
@@ -466,14 +467,14 @@ if ($action != 'export_csv') {
 	if (!empty($show_subgroup)) {
 		print '<tr class="liste_total"><td class="right">'.$langs->trans("SubTotal").':</td>';
 		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
-			print '<td class="nowrap right">'.price($sous_total_opening_balance).'</td>';
+			print '<td class="right nowraponall amount">'.price($sous_total_opening_balance).'</td>';
 		}
-		print '<td class="nowrap right">'.price($sous_total_debit).'</td>';
-		print '<td class="nowrap right">'.price($sous_total_credit).'</td>';
+		print '<td class="right nowraponall amount">'.price($sous_total_debit).'</td>';
+		print '<td class="right nowraponall amount">'.price($sous_total_credit).'</td>';
 		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
-			print '<td class="nowrap right">' . price(price2num($sous_total_opening_balance + $sous_total_debit - $sous_total_credit, 'MT')) . '</td>';
+			print '<td class="right nowraponall amount">' . price(price2num($sous_total_opening_balance + $sous_total_debit - $sous_total_credit, 'MT')) . '</td>';
 		} else {
-			print '<td class="nowrap right">' . price(price2num($sous_total_debit - $sous_total_credit, 'MT')) . '</td>';
+			print '<td class="right nowraponall amount">' . price(price2num($sous_total_debit - $sous_total_credit, 'MT')) . '</td>';
 		}
 		print "<td></td>\n";
 		print '</tr>';
@@ -483,12 +484,12 @@ if ($action != 'export_csv') {
 	if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 		print '<td class="nowrap right">'.price($total_opening_balance).'</td>';
 	}
-	print '<td class="nowrap right">'.price($total_debit).'</td>';
-	print '<td class="nowrap right">'.price($total_credit).'</td>';
+	print '<td class="right nowraponall amount">'.price($total_debit).'</td>';
+	print '<td class="right nowraponall amount">'.price($total_credit).'</td>';
 	if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
-		print '<td class="nowrap right">' . price(price2num($total_opening_balance + $total_debit - $total_credit, 'MT')) . '</td>';
+		print '<td class="right nowraponall amount">' . price(price2num($total_opening_balance + $total_debit - $total_credit, 'MT')) . '</td>';
 	} else {
-		print '<td class="nowrap right">' . price(price2num($total_debit - $total_credit, 'MT')) . '</td>';
+		print '<td class="right nowraponall amount">' . price(price2num($total_debit - $total_credit, 'MT')) . '</td>';
 	}
 	print "<td></td>\n";
 	print '</tr>';

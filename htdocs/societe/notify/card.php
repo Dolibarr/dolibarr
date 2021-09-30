@@ -162,6 +162,11 @@ if ($result > 0) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
+	// Type Prospect/Customer/Supplier
+	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+	print $object->getTypeUrl(1);
+	print '</td></tr>';
+
 	// Prefix
 	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
 		print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
@@ -283,7 +288,7 @@ if ($result > 0) {
 		$type = array('email'=>$langs->trans("EMail"));
 		print $form->selectarray("typeid", $type, '', 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 		print '</td>';
-		print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+		print '<td class="right"><input type="submit" class="button button-add" value="'.$langs->trans("Add").'"></td>';
 		print '</tr>';
 	} else {
 		print '<tr class="oddeven"><td colspan="4" class="opacitymedium">';

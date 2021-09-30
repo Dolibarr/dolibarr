@@ -64,7 +64,7 @@ function societe_prepare_head(Societe $object)
 			} else {
 				$sql = "SELECT COUNT(p.rowid) as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
-				$sql .= " WHERE p.fk_soc = ".$object->id;
+				$sql .= " WHERE p.fk_soc = ".((int) $object->id);
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
@@ -140,7 +140,7 @@ function societe_prepare_head(Societe $object)
 		} else {
 			$sql = "SELECT COUNT(n.rowid) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet as n";
-			$sql .= " WHERE fk_soc = ".$object->id;
+			$sql .= " WHERE fk_soc = ".((int) $object->id);
 			$sql .= " AND entity IN (".getEntity('project').")";
 			$resql = $db->query($sql);
 			if ($resql) {
@@ -223,7 +223,7 @@ function societe_prepare_head(Societe $object)
 
 		$sql = "SELECT COUNT(n.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as n";
-		$sql .= " WHERE n.fk_soc = ".$object->id;
+		$sql .= " WHERE n.fk_soc = ".((int) $object->id);
 		if (empty($conf->stripe->enabled)) {
 			$sql .= " AND n.stripe_card_ref IS NULL";
 		} else {
@@ -240,7 +240,7 @@ function societe_prepare_head(Societe $object)
 
 		//if (! empty($conf->stripe->enabled) && $nbBankAccount > 0) $nbBankAccount = '...';	// No way to know exact number
 
-		$head[$h][0] = DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.urlencode($object->id);
 		$head[$h][1] = $title;
 		if ($foundonexternalonlinesystem) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">...</span>';
@@ -252,12 +252,12 @@ function societe_prepare_head(Societe $object)
 	}
 
 	if (!empty($conf->website->enabled) && (!empty($conf->global->WEBSITE_USE_WEBSITE_ACCOUNTS)) && (!empty($user->rights->societe->lire))) {
-		$head[$h][0] = DOL_URL_ROOT.'/societe/website.php?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/societe/website.php?id='.urlencode($object->id);
 		$head[$h][1] = $langs->trans("WebSiteAccounts");
 		$nbNote = 0;
 		$sql = "SELECT COUNT(n.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_account as n";
-		$sql .= " WHERE fk_soc = ".$object->id.' AND fk_website > 0';
+		$sql .= " WHERE fk_soc = ".((int) $object->id).' AND fk_website > 0';
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
@@ -270,6 +270,19 @@ function societe_prepare_head(Societe $object)
 		}
 		$head[$h][2] = 'website';
 		$h++;
+	}
+
+	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'thirdparty') {
+		if (!empty($user->rights->partnership->read)) {
+			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;
+			$head[$h][0] = DOL_URL_ROOT.'/societe/partnership.php?socid='.$object->id;
+			$head[$h][1] = $langs->trans("Partnership");
+			$head[$h][2] = 'partnership';
+			if ($nbPartnership > 0) {
+				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbPartnership.'</span>';
+			}
+			$h++;
+		}
 	}
 
 	// Show more tabs from modules
@@ -291,7 +304,7 @@ function societe_prepare_head(Societe $object)
 			} else {
 				$sql = "SELECT COUNT(n.rowid) as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n";
-				$sql .= " WHERE fk_soc = ".$object->id;
+				$sql .= " WHERE fk_soc = ".((int) $object->id);
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
@@ -302,7 +315,7 @@ function societe_prepare_head(Societe $object)
 				dol_setcache($cachekey, $nbNotif, 120);		// If setting cache fails, this is not a problem, so we do not test result.
 			}
 
-			$head[$h][0] = DOL_URL_ROOT.'/societe/notify/card.php?socid='.$object->id;
+			$head[$h][0] = DOL_URL_ROOT.'/societe/notify/card.php?socid='.urlencode($object->id);
 			$head[$h][1] = $langs->trans("Notifications");
 			if ($nbNotif > 0) {
 				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNotif.'</span>';
@@ -319,7 +332,7 @@ function societe_prepare_head(Societe $object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/societe/note.php?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/societe/note.php?id='.urlencode($object->id);
 		$head[$h][1] = $langs->trans("Notes");
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -367,7 +380,7 @@ function societe_prepare_head(Societe $object)
 		} else {
 			$sql = "SELECT COUNT(id) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
-			$sql .= " WHERE fk_soc = ".$object->id;
+			$sql .= " WHERE fk_soc = ".((int) $object->id);
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -715,10 +728,7 @@ function getCountriesInEEC()
 	global $conf, $db;
 	$country_code_in_EEC = array();
 
-	if (!empty($conf->global->MAIN_COUNTRIES_IN_EEC)) {
-		// For example MAIN_COUNTRIES_IN_EEC = 'AT,BE,BG,CY,CZ,DE,DK,EE,ES,FI,FR,GB,GR,HR,NL,HU,IE,IM,IT,LT,LU,LV,MC,MT,PL,PT,RO,SE,SK,SI,UK'
-		$country_code_in_EEC = explode(',', $conf->global->MAIN_COUNTRIES_IN_EEC);
-	} elseif (!empty($conf->cache['country_code_in_EEC'])) {
+	if (!empty($conf->cache['country_code_in_EEC'])) {
 		// Use of cache to reduce number of database requests
 		$country_code_in_EEC = $conf->cache['country_code_in_EEC'];
 	} else {
@@ -796,7 +806,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 		$sql .= ", cls.code as opp_status_code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
-		$sql .= " WHERE p.fk_soc = ".$object->id;
+		$sql .= " WHERE p.fk_soc = ".((int) $object->id);
 		$sql .= " AND p.entity IN (".getEntity('project').")";
 		$sql .= " ORDER BY p.dateo DESC";
 
@@ -1073,9 +1083,9 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	$sql .= " t.civility as civility_id, t.address, t.zip, t.town";
 	$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
-	$sql .= " WHERE t.fk_soc = ".$object->id;
+	$sql .= " WHERE t.fk_soc = ".((int) $object->id);
 	if ($search_status != '' && $search_status != '-1') {
-		$sql .= " AND t.statut = ".$db->escape($search_status);
+		$sql .= " AND t.statut = ".((int) $search_status);
 	}
 	if ($search_name) {
 		$sql .= natural_search(array('t.lastname', 't.firstname'), $search_name);
@@ -1285,7 +1295,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 
 			// Edit
 			if ($user->rights->societe->contact->creer) {
-				print '<a class="editfielda paddingleft" href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
+				print '<a class="editfielda paddingleft" href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
 				print img_edit();
 				print '</a>';
 			}
@@ -1479,46 +1489,46 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 		if ($force_filter_contact === false) {
 			if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) {
-				$sql .= " AND a.fk_soc = ".$filterobj->id;
+				$sql .= " AND a.fk_soc = ".((int) $filterobj->id);
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') {
 				/* Nothing */
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) {
-				$sql .= " AND a.fk_project = ".$filterobj->id;
+				$sql .= " AND a.fk_project = ".((int) $filterobj->id);
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') {
 				$sql .= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".$filterobj->id;
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".$filterobj->id;
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Product') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'product'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".$filterobj->id;
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'ticket'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".$filterobj->id;
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'BOM') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'bom'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".$filterobj->id;
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'contract'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".$filterobj->id;
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && is_array($filterobj->fields['ref']) && $filterobj->table_element && $filterobj->element) {
 				// Generic case
-				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '".$db->escape($filterobj->element).($module ? '@'.$module : '')."'";
+				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '".$db->escape($filterobj->element).($module ? "@".$module : "")."'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".$filterobj->id;
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
 			}
 		}
@@ -1538,7 +1548,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 					$sql .= "OR (";
 				}
 				if (!empty($code)) {
-					addEventTypeSQL($sql, $code, $donetodo, $now, $filters, "");
+					addEventTypeSQL($sql, $code);
 				}
 				if ($key != 0) {
 					$sql .= ")";
@@ -1546,8 +1556,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			}
 			$sql .= ')';
 		} elseif (!empty($actioncode)) {
-			addEventTypeSQL($sql, $actioncode, $donetodo, $now, $filters);
+			addEventTypeSQL($sql, $actioncode);
 		}
+
+		addOtherFilterSQL($sql, $donetodo, $now, $filters);
 
 		if (is_array($actioncode)) {
 			foreach ($actioncode as $code) {
@@ -1616,8 +1628,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 
 						'contact_id'=>$obj->fk_contact,
 						'socpeopleassigned' => $contactaction->socpeopleassigned,
-						'lastname'=>$obj->lastname,
-						'firstname'=>$obj->firstname,
+						'lastname' => empty($obj->lastname) ? '' : $obj->lastname,
+						'firstname' => empty($obj->firstname) ? '' : $obj->firstname,
 						'fk_element'=>$obj->fk_element,
 						'elementtype'=>$obj->elementtype,
 						// Type of event
@@ -1902,7 +1914,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			}
 
 			// Status
-			$out .= '<td class="nowrap center">'.$actionstatic->LibStatut($histo[$key]['percent'], 3, 0, $histo[$key]['datestart']).'</td>';
+			$out .= '<td class="nowrap center">'.$actionstatic->LibStatut($histo[$key]['percent'], 2, 0, $histo[$key]['datestart']).'</td>';
 
 			// Actions
 			$out .= '<td></td>';
@@ -1951,7 +1963,9 @@ function show_subsidiaries($conf, $langs, $db, $object)
 		$socstatic = new Societe($db);
 
 		print load_fiche_titre($langs->trans("Subsidiaries"), '', '');
-		print "\n".'<table class="noborder centpercent">'."\n";
+
+		print "\n".'<div class="div-table-responsive-no-min">'."\n";
+		print '<table class="noborder centpercent">'."\n";
 
 		print '<tr class="liste_titre"><td>'.$langs->trans("Company").'</td>';
 		print '<td>'.$langs->trans("Address").'</td><td>'.$langs->trans("Zip").'</td>';
@@ -1979,17 +1993,17 @@ function show_subsidiaries($conf, $langs, $db, $object)
 
 			print '<tr class="oddeven">';
 
-			print '<td>';
+			print '<td class="tdoverflowmax150">';
 			print $socstatic->getNomUrl(1);
 			print '</td>';
 
-			print '<td>'.$obj->address.'</td>';
-			print '<td>'.$obj->zip.'</td>';
-			print '<td>'.$obj->town.'</td>';
-			print '<td>'.$obj->code_client.'</td>';
+			print '<td class="tdoverflowmax400" title="'.dol_escape_htmltag($obj->address).'">'.dol_escape_htmltag($obj->address).'</td>';
+			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->zip).'">'.$obj->zip.'</td>';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->town).'">'.$obj->town.'</td>';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->code_client).'">'.$obj->code_client.'</td>';
 
 			print '<td class="center">';
-			print '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$obj->rowid.'&amp;action=edit">';
+			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/societe/card.php?socid='.((int) $obj->rowid).'&action=edit&token='.newToken().'">';
 			print img_edit();
 			print '</a></td>';
 
@@ -1997,6 +2011,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 			$i++;
 		}
 		print "\n</table>\n";
+		print '</div>'."\n";
 	}
 
 	print "<br>\n";
@@ -2008,13 +2023,10 @@ function show_subsidiaries($conf, $langs, $db, $object)
  *
  *		@param	string		$sql		    $sql modified
  * 		@param	string	    $actioncode		Action code
- * 		@param	string		$donetodo		donetodo
- * 		@param	string		$now		    now
- * 		@param	string		$filters		array
  * 		@param	string		$sqlANDOR		"AND", "OR" or "" sql condition
  * 		@return	string      sql request
  */
-function addEventTypeSQL(&$sql, $actioncode, $donetodo, $now, $filters, $sqlANDOR = "AND")
+function addEventTypeSQL(&$sql, $actioncode, $sqlANDOR = "AND")
 {
 	global $conf, $db;
 	// Condition on actioncode
@@ -2040,6 +2052,23 @@ function addEventTypeSQL(&$sql, $actioncode, $donetodo, $now, $filters, $sqlANDO
 			$sql .= " $sqlANDOR c.code = '".$db->escape($actioncode)."'";
 		}
 	}
+
+	return $sql;
+}
+
+/**
+ * 		Add Event Type SQL
+ *
+ *		@param	string		$sql		    $sql modified
+ * 		@param	string		$donetodo		donetodo
+ * 		@param	string		$now		    now
+ * 		@param	string		$filters		array
+ * 		@return	string      sql request
+ */
+function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
+{
+	global $conf, $db;
+	// Condition on actioncode
 
 	if ($donetodo == 'todo') {
 		$sql .= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";

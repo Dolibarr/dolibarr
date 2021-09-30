@@ -160,7 +160,7 @@ class HookManager
 		//dol_syslog(get_class($this).'::executeHooks method='.$method." action=".$action." context=".$parameters['context']);
 
 		// Define type of hook ('output' or 'addreplace').
-		// TODO Remove hooks with type 'output'. All hooks must be converted into 'addreplace' hooks.
+		// TODO Remove hooks with type 'output' (exemple getNomUrl). All hooks must be converted into 'addreplace' hooks.
 		$hooktype = 'output';
 		if (in_array(
 			$method,
@@ -172,6 +172,7 @@ class HookManager
 				'addSearchEntry',
 				'addStatisticLine',
 				'addSectionECMAuto',
+				'checkSecureAccess',
 				'createDictionaryFieldlist',
 				'editDictionaryFieldlist',
 				'getFormMail',
@@ -188,11 +189,13 @@ class HookManager
 				'formConfirm',
 				'getAccessForbiddenMessage',
 				'getDirList',
+				'hookGetEntity',
 				'getFormMail',
 				'getFormatedCustomerRef',
 				'getFormatedSupplierRef',
 				'getIdProfUrl',
 				'getInputIdProf',
+				'menuLeftMenuItems',
 				'moveUploadedFile',
 				'moreHtmlStatus',
 				'pdf_build_address',
@@ -266,14 +269,16 @@ class HookManager
 					$actionclassinstance->error = 0;
 					$actionclassinstance->errors = array();
 
-					dol_syslog(get_class($this)."::executeHooks Qualified hook found (hooktype=".$hooktype."). We call method ".get_class($actionclassinstance).'->'.$method.", context=".$context.", module=".$module.", action=".$action.((is_object($object) && property_exists($object, 'id')) ? ', objectid='.$object->id : ''), LOG_DEBUG);
+					dol_syslog(get_class($this)."::executeHooks Qualified hook found (hooktype=".$hooktype."). We call method ".get_class($actionclassinstance).'->'.$method.", context=".$context.", module=".$module.", action=".$action.((is_object($object) && property_exists($object, 'id')) ? ', object id='.$object->id : '').((is_object($object) && property_exists($object, 'element')) ? ', object element='.$object->element : ''), LOG_DEBUG);
 
 					// Add current context to avoid method execution in bad context, you can add this test in your method : eg if($currentcontext != 'formfile') return;
 					$parameters['currentcontext'] = $context;
 					// Hooks that must return int (hooks with type 'addreplace')
 					if ($hooktype == 'addreplace') {
-						$resaction += $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
-						if ($resaction < 0 || !empty($actionclassinstance->error) || (!empty($actionclassinstance->errors) && count($actionclassinstance->errors) > 0)) {
+						$resactiontmp = $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
+						$resaction += $resactiontmp;
+
+						if ($resactiontmp < 0 || !empty($actionclassinstance->error) || (!empty($actionclassinstance->errors) && count($actionclassinstance->errors) > 0)) {
 							$error++;
 							$this->error = $actionclassinstance->error;
 							$this->errors = array_merge($this->errors, (array) $actionclassinstance->errors);
@@ -281,13 +286,22 @@ class HookManager
 						}
 
 						if (isset($actionclassinstance->results) && is_array($actionclassinstance->results)) {
-							$this->resArray = array_merge($this->resArray, $actionclassinstance->results);
+							if ($resactiontmp > 0) {
+								$this->resArray = $actionclassinstance->results;
+							} else {
+								$this->resArray = array_merge($this->resArray, $actionclassinstance->results);
+							}
 						}
 						if (!empty($actionclassinstance->resprints)) {
-							$this->resPrint .= $actionclassinstance->resprints;
+							if ($resactiontmp > 0) {
+								$this->resPrint = $actionclassinstance->resprints;
+							} else {
+								$this->resPrint .= $actionclassinstance->resprints;
+							}
 						}
 					} else {
 						// Generic hooks that return a string or array (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...)
+
 						// TODO. this test should be done into the method of hook by returning nothing
 						if (is_array($parameters) && !empty($parameters['special_code']) && $parameters['special_code'] > 3 && $parameters['special_code'] != $actionclassinstance->module_number) {
 							continue;

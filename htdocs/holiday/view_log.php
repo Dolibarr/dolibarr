@@ -180,7 +180,8 @@ $formother = new FormOther($db);
 $holidaylogstatic = new stdClass();
 $alltypeleaves = $object->getTypes(1, -1); // To have labels
 
-llxHeader('', $langs->trans('CPTitreMenu'));
+$title = $langs->trans('CPTitreMenu');
+llxHeader('', $title);
 
 $sqlwhere = '';
 

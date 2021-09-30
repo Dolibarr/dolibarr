@@ -214,7 +214,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 		if ($result >= 0 || $result == -2) {	// Contact add ok or already contact of task
 			// Test if we are already contact of the project (should be rare but sometimes we can add as task contact without being contact of project, like when admin user has been removed from contact of project)
 			$sql = 'SELECT ec.rowid FROM '.MAIN_DB_PREFIX.'element_contact as ec, '.MAIN_DB_PREFIX.'c_type_contact as tc WHERE tc.rowid = ec.fk_c_type_contact';
-			$sql .= ' AND ec.fk_socpeople = '.((int) $idfortaskuser)." AND ec.element_id = '.$object->fk_project.' AND tc.element = 'project' AND source = 'internal'";
+			$sql .= ' AND ec.fk_socpeople = '.((int) $idfortaskuser)." AND ec.element_id = ".((int) $object->fk_project)." AND tc.element = 'project' AND source = 'internal'";
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -852,9 +852,7 @@ print '</div>';
 
 print '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.count($tasksarray).'"/>'."\n";
 
-print '<div class="center">';
-print '<input type="submit" class="button button-save" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
-print '</div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>'."\n\n";
 

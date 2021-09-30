@@ -293,15 +293,15 @@ if ($resql) {
 
 	print '<tr class="oddeven">';
 	print '<td class="right" colspan="3">'.$langs->trans("Total").':</td>'."\n";
-	print '<td class="nowrap right"><strong>'.price($debit).'</strong></td>';
-	print '<td class="nowrap right"><strong>'.price($credit).'</strong></td>';
+	print '<td class="right nowraponall amount"><strong>'.price($debit).'</strong></td>';
+	print '<td class="right nowraponall amount"><strong>'.price($credit).'</strong></td>';
 	print '<td colspan="6"></td>';
 	print "</tr>\n";
 
 	print '<tr class="oddeven">';
 	print '<td class="right" colspan="3">'.$langs->trans("Balancing").':</td>'."\n";
 	print '<td colspan="2">&nbsp;</td>';
-	print '<td class="nowrap right"><strong>'.price($credit - $debit).'</strong></td>';
+	print '<td class="right nowraponall amount"><strong>'.price($credit - $debit).'</strong></td>';
 	print '<td colspan="4"></td>';
 	print "</tr>\n";
 

@@ -189,7 +189,7 @@ if ($fourn_id > 0) {
 	$sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".((int) $fourn_id);
 }
 // Insert categ filter
-if ($search_categ) {
+if ($search_categ > 0) {
 	$sql .= " AND cp.fk_categorie = ".((int) $search_categ);
 }
 $sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,";

@@ -81,9 +81,7 @@ if ($action == 'edit') {
 
 	print '</table>';
 
-	print '<br><div class="center">';
-	print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel("Save", '');
 
 	print '</form>';
 	print '<br>';
@@ -100,7 +98,7 @@ if ($action == 'edit') {
 	print '</table>';
 
 	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 	print '</div>';
 }
 

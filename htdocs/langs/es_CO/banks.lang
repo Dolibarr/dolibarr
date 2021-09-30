@@ -79,7 +79,6 @@ TransferTo=A
 TransferFromToDone=La transferencia de <b> %s </b> a <b> %s </b> de <b>%s</b> %s ha sido grabada
 CheckTransmitter=Remitente
 ValidateCheckReceipt=¿Validar este recibo de cheque?
-ConfirmValidateCheckReceipt=¿Está seguro de que desea enviar este recibo de cheque para su validación? Despues no es posible realizar cambios.
 DeleteCheckReceipt=¿Eliminar este recibo de cheque?
 ConfirmDeleteCheckReceipt=¿Está seguro de que desea eliminar este recibo de cheque?
 BankChecks=Cheques bancarios

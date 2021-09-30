@@ -132,5 +132,7 @@ FreeLegalTextOnHolidays=Free text on PDF
 WatermarkOnDraftHolidayCards=Watermarks on draft leave requests
 HolidaysToApprove=Holidays to approve
 NobodyHasPermissionToValidateHolidays=Nobody has permission to validate holidays
+HolidayBalanceMonthlyUpdate=Monthly update of holiday balance
+XIsAUsualNonWorkingDay=%s is usualy a NON working day
 BlockHolidayIfNegative=Block if balance negative
 LeaveRequestCreationBlockedBecauseBalanceIsNegative=The creation of this leave request is blocked because your balance is negative

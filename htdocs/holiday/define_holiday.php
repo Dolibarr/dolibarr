@@ -126,16 +126,16 @@ if (empty($reshook)) {
 	*/
 
 	// Si il y a une action de mise à jour
-	if ($action == 'update' && isset($_POST['update_cp'])) {
+	if ($action == 'update' && GETPOSTISSET('update_cp')) {
 		$error = 0;
 
 		$typeleaves = $holiday->getTypes(1, 1);
 
-		$userID = array_keys($_POST['update_cp']);
+		$userID = array_keys(GETPOST('update_cp'));
 		$userID = $userID[0];
 
 		foreach ($typeleaves as $key => $val) {
-			$userValue = $_POST['nb_holiday_'.$val['rowid']];
+			$userValue = GETPOST('nb_holiday_'.$val['rowid']);
 			$userValue = $userValue[$userID];
 
 			if (!empty($userValue) || (string) $userValue == '0') {
@@ -189,7 +189,10 @@ if (empty($reshook)) {
 $form = new Form($db);
 $userstatic = new User($db);
 
-llxHeader('', $langs->trans('CPTitreMenu'));
+
+$title = $langs->trans('CPTitreMenu');
+
+llxHeader('', $title);
 
 
 $typeleaves = $holiday->getTypes(1, 1);
@@ -355,7 +358,7 @@ if (count($typeleaves) == 0) {
 				//var_dump($users['rowid'].' - '.$val['rowid']);
 				print '<td style="text-align:center">';
 				if ($canedit) {
-					print '<input type="text"'.($canedit ? '' : ' disabled="disabled"').' value="'.$nbtoshow.'" name="nb_holiday_'.$val['rowid'].'['.$users['rowid'].']" size="5" style="text-align: center;"/>';
+					print '<input type="text"'.($canedit ? '' : ' disabled="disabled"').' value="'.$nbtoshow.'" name="nb_holiday_'.$val['rowid'].'['.$users['rowid'].']" class="width75 center" />';
 				} else {
 					print $nbtoshow;
 				}

@@ -62,7 +62,7 @@ $resultboxes = FormOther::getBoxesArea($user, "1");
 if (GETPOST('addbox')) {
 	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOST('areacode', 'aZ09');
+	$zone = GETPOST('areacode', 'int');
 	$userid = GETPOST('userid', 'int');
 	$boxorder = GETPOST('boxorder', 'aZ09');
 	$boxorder .= GETPOST('boxcombo', 'aZ09');
@@ -89,12 +89,12 @@ $searchbox .= '<input type="hidden" name="token" value="'.newToken().'">';
 $searchbox .= '<table class="noborder nohover centpercent">';
 $searchbox .= '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Search").'</td></tr>';
 $searchbox .= '<tr><td>';
-$searchbox .= $langs->trans("User").':</td><td><input class="flat inputsearch" type="text" name="search_user" size="18"></td></tr>';
+$searchbox .= $langs->trans("User").':</td><td><input class="flat inputsearch width200" type="text" name="search_user"></td></tr>';
 
 // Search Group
 if ($canreadperms) {
 	$searchbox .= '<tr><td>';
-	$searchbox .= $langs->trans("Group").':</td><td><input class="flat inputsearch" type="text" name="search_group" size="18"></td></tr>';
+	$searchbox .= $langs->trans("Group").':</td><td><input class="flat inputsearch width200" type="text" name="search_group"></td></tr>';
 }
 
 $searchbox .= '<tr><td class="center" colspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';

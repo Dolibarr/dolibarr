@@ -284,6 +284,7 @@ if ($conf->use_javascript_ajax) {
 	print '</script>'."\n";
 }
 
+$formconfirm = '';
 if ($action == 'delete') {
 	$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("CronDelete"), $langs->trans("CronConfirmDelete"), "confirm_delete", '', '', 1);
 
@@ -531,11 +532,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print dol_get_fiche_end();
 
-	print '<div align="center">';
-	print '<input type="submit" name="save" class="button button-save" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
-	print "</div>";
+	print $form->buttonsSaveCancel();
 
 	print "</form>\n";
 } else {
@@ -748,7 +745,7 @@ if (($action == "create") || ($action == "edit")) {
 	if (!$user->rights->cron->create) {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("Edit").'</a>';
 	} else {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&id='.$object->id.'">'.$langs->trans("Edit").'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Edit").'</a>';
 	}
 
 	if ((empty($user->rights->cron->execute))) {
@@ -756,7 +753,7 @@ if (($action == "create") || ($action == "edit")) {
 	} elseif (empty($object->status)) {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("JobDisabled")).'">'.$langs->trans("CronExecute").'</a>';
 	} else {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=execute&id='.$object->id.(empty($conf->global->CRON_KEY) ? '' : '&securitykey='.$conf->global->CRON_KEY).'">'.$langs->trans("CronExecute").'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=execute&token='.newToken().'&id='.$object->id.(empty($conf->global->CRON_KEY) ? '' : '&securitykey='.$conf->global->CRON_KEY).'">'.$langs->trans("CronExecute").'</a>';
 	}
 
 	if (!$user->rights->cron->create) {

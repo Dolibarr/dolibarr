@@ -161,6 +161,15 @@ class JsonLibTest extends PHPUnit\Framework\TestCase
 		$this->savlangs=$langs;
 		$this->savdb=$db;
 
+		// Try to decode a string encoded with serialize
+		$encoded = 'a:1:{s:7:"options";a:3:{s:3:"app";s:11:"Application";s:6:"system";s:6:"System";s:6:"option";s:6:"Option";}}';
+		$decoded=json_decode($encoded, true);
+		$this->assertEquals(null, $decoded, 'test to json_decode() a string that was encoded with serialize()');
+
+		$encoded = 'rubishstring!aa{bcd';
+		$decoded=json_decode($encoded, true);
+		$this->assertEquals(null, $decoded, 'test to json_decode() a string that was encoded with serialize()');
+
 		// Do a test with an array starting with 0
 		$arraytotest=array(0=>array('key'=>1,'value'=>'PRODREF','label'=>'Product ref with é and special chars \\ \' "'));
 		$arrayencodedexpected='[{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}]';

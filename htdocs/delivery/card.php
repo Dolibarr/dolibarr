@@ -249,7 +249,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
  *	View
  */
 
-llxHeader('', $langs->trans('Delivery'), 'Livraison');
+$title = $langs->trans('Delivery');
+
+llxHeader('', $title, 'Livraison');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -328,7 +330,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 				if (0) {    // Do not change on shipment
 					if ($action != 'classify') {
-						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$expedition->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$expedition->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 					}
 					if ($action == 'classify') {
 						// $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $expedition->id, $expedition->socid, $expedition->fk_project, 'projectid', 0, 0, 1, 1);
@@ -336,7 +338,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 						$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 						$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 						$morehtmlref .= $formproject->select_projects($expedition->socid, $expedition->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-						$morehtmlref .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+						$morehtmlref .= '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 						$morehtmlref .= '</form>';
 					} else {
 						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$expedition->id, $expedition->socid, $expedition->fk_project, 'none', 0, 0, 0, 1);
@@ -425,7 +427,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 			print '</td>';
 
 			if ($action != 'editdate_delivery') {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_delivery&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_delivery&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td><td colspan="2">';
@@ -434,7 +436,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="setdate_delivery">';
 				print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_delivery", 1, 1);
-				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+				print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			} else {
 				print $object->date_delivery ? dol_print_date($object->date_delivery, 'dayhour') : '&nbsp;';
@@ -449,7 +451,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 				print $langs->trans('IncotermLabel');
 				print '<td><td class="right">';
 				if ($user->rights->expedition->delivery->creer) {
-					print '<a class="editfielda" href="'.DOL_URL_ROOT.'/delivery/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+					print '<a class="editfielda" href="'.DOL_URL_ROOT.'/delivery/card.php?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
 				} else {
 					print '&nbsp;';
 				}
@@ -628,7 +630,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 			print dol_get_fiche_end();
 
 			//if ($object->statut == 0)	// only if draft
-			//	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+			// print $form->buttonsSaveCancel("Save", '');
 
 			print '</form>';
 
@@ -649,9 +651,9 @@ if ($action == 'create') {    // Create. Seems to no be used
 
 				if ($user->rights->expedition->delivery->supprimer) {
 					if ($conf->expedition_bon->enabled) {
-						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;expid='.$object->origin_id.'&amp;action=delete&amp;token='.newToken().'&amp;backtopage='.urlencode(DOL_URL_ROOT.'/expedition/card.php?id='.$object->origin_id).'">'.$langs->trans("Delete").'</a>';
+						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&expid='.$object->origin_id.'&action=delete&token='.newToken().'&amp;backtopage='.urlencode(DOL_URL_ROOT.'/expedition/card.php?id='.$object->origin_id).'">'.$langs->trans("Delete").'</a>';
 					} else {
-						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a>';
+						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>';
 					}
 				}
 

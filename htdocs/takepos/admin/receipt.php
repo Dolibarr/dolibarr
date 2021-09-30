@@ -44,8 +44,8 @@ $langs->loadLangs(array("admin", "cashdesk", "commercial"));
 if (GETPOST('action', 'alpha') == 'set') {
 	$db->begin();
 
-	$res = dolibarr_set_const($db, "TAKEPOS_HEADER", GETPOST('TAKEPOS_HEADER', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_FOOTER", GETPOST('TAKEPOS_FOOTER', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_HEADER", GETPOST('TAKEPOS_HEADER', 'restricthtml'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_FOOTER", GETPOST('TAKEPOS_FOOTER', 'restricthtml'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_RECEIPT_NAME", GETPOST('TAKEPOS_RECEIPT_NAME', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_SHOW_CUSTOMER", GETPOST('TAKEPOS_SHOW_CUSTOMER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_AUTO_PRINT_TICKETS", GETPOST('TAKEPOS_AUTO_PRINT_TICKETS', 'int'), 'int', 0, '', $conf->entity);
@@ -254,12 +254,20 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector" && filter_var($con
 	print "</td></tr>\n";
 }
 
+if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector" && filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
+	print '<tr class="oddeven"><td>';
+	print $langs->trans('CustomerDisplay');
+	print '<td colspan="2">';
+	print ajax_constantonoff("TAKEPOS_CUSTOMER_DISPLAY", array(), $conf->entity, 0, 0, 1, 0);
+	print "</td></tr>\n";
+}
+
 print '</table>';
 print '</div>';
 
 print '<br>';
 
-print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print "</form>\n";
 

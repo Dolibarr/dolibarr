@@ -44,4 +44,4 @@ ValidateOrderFirstBeforeReception=Trước tiên, bạn phải xác nhận đơn
 ReceptionsNumberingModules=Mô-đun đánh số cho tiếp nhận
 ReceptionsReceiptModel=Mẫu tài liệu cho tiếp nhận
 NoMorePredefinedProductToDispatch=No more predefined products to dispatch
-
+ReceptionExist=A reception exists

@@ -194,7 +194,7 @@ print '<script type="text/javascript">
  */
 $sql = "SELECT f.rowid as facid, f.ref as ref, f.ref_supplier, f.libelle as invoice_label, f.datef, f.fk_soc,";
 $sql .= " l.rowid, l.fk_product, l.product_type as line_type, l.description, l.total_ht , l.qty, l.tva_tx, l.vat_src_code,";
-$sql .= " aa.label, aa.labelshort, aa.account_number,";
+$sql .= " aa.label as label_account, aa.labelshort as labelshort_account, aa.account_number,";
 $sql .= " p.rowid as product_id, p.fk_product_type as product_type, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.tobuy, p.tosell,";
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export,";
@@ -369,9 +369,9 @@ if ($result) {
 	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 	print '<span class="opacitymedium">'.$langs->trans("DescVentilDoneSupplier").'</span><br>';
 
-	print '<br><div class="inline-block divButAction">'.$langs->trans("ChangeAccount").'<br>';
+	print '<br><div class="inline-block divButAction paddingbottom">'.$langs->trans("ChangeAccount").' ';
 	print $formaccounting->select_account($account_parent, 'account_parent', 2, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone valignmiddle');
-	print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("ChangeBinding").'"/></div>';
+	print '<input type="submit" class="button small valignmiddle" value="'.$langs->trans("ChangeBinding").'"/></div>';
 
 	$moreforfilter = '';
 
@@ -459,8 +459,8 @@ if ($result) {
 		$productstatic->accountancy_code_buy_export = $objp->accountancy_code_sell_buy;
 
 		$accountingaccountstatic->rowid = $objp->fk_compte;
-		$accountingaccountstatic->label = $objp->label;
-		$accountingaccountstatic->labelshort = $objp->labelshort;
+		$accountingaccountstatic->label = $objp->label_account;
+		$accountingaccountstatic->labelshort = $objp->labelshort_account;
 		$accountingaccountstatic->account_number = $objp->account_number;
 
 		print '<tr class="oddeven">';
@@ -497,7 +497,7 @@ if ($result) {
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->description);
 		print '</td>';
 
-		print '<td class="nowrap right">'.price($objp->total_ht).'</td>';
+		print '<td class="right nowraponall amount">'.price($objp->total_ht).'</td>';
 
 		print '<td class="right">'.vatrate($objp->tva_tx.($objp->vat_src_code ? ' ('.$objp->vat_src_code.')' : '')).'</td>';
 
@@ -513,7 +513,7 @@ if ($result) {
 
 		print '<td>'.$objp->tva_intra.'</td>';
 
-		print '<td class="center">';
+		print '<td>';
 		print $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);
 		print ' <a class="editfielda" href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
 		print img_edit();

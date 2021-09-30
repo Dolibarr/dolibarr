@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
 require_once DOL_DOCUMENT_ROOT.'/partnership/lib/partnership.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","partnership", "other"));
+$langs->loadLangs(array("companies", "partnership", "other"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -50,6 +50,9 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $socid = GETPOST('socid', 'int');
 if (!empty($user->socid)) {
 	$socid = $user->socid;
+}
+
+if (empty($id) && $socid && (empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) || $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'thirdparty')) {
 	$id = $socid;
 }
 
@@ -82,19 +85,27 @@ foreach ($object->fields as $key => $val) {
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-$permissiontoread 		= $user->rights->partnership->read;
-$permissiontoadd 		= $user->rights->partnership->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontoread = $user->rights->partnership->read;
+$permissiontoadd = $user->rights->partnership->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete 	= $user->rights->partnership->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-$permissionnote 		= $user->rights->partnership->write; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->partnership->write; // Used by the include of actions_setnotes.inc.php
 $permissiondellink 		= $user->rights->partnership->write; // Used by the include of actions_dellink.inc.php
-$usercanclose 			= $user->rights->partnership->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$upload_dir 			= $conf->partnership->multidir_output[isset($object->entity) ? $object->entity : 1];
+$usercanclose = $user->rights->partnership->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$upload_dir = $conf->partnership->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 
-if (!empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) && $conf->global->PARTNERSHIP_IS_MANAGED_FOR != 'thirdparty') accessforbidden();
-if (empty($conf->partnership->enabled)) accessforbidden();
-if (empty($permissiontoread)) accessforbidden();
-if ($action == 'edit' && empty($permissiontoadd)) accessforbidden();
+if (!empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) && $conf->global->PARTNERSHIP_IS_MANAGED_FOR != 'thirdparty') {
+	accessforbidden();
+}
+if (empty($conf->partnership->enabled)) {
+	accessforbidden();
+}
+if (empty($permissiontoread)) {
+	accessforbidden();
+}
+if ($action == 'edit' && empty($permissiontoadd)) {
+	accessforbidden();
+}
 
 if (($action == 'update' || $action == 'edit') && $object->status != $object::STATUS_DRAFT && !empty($user->socid)) {
 	accessforbidden();
@@ -121,14 +132,16 @@ $date_end = dol_mktime(0, 0, 0, GETPOST('date_partnership_endmonth', 'int'), GET
 if (empty($reshook)) {
 	$error = 0;
 
-	$backtopage = dol_buildpath('/partnership/partnership.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+	$backtopage = DOL_URL_ROOT.'/partnership/partnership.php?id='.($id > 0 ? $id : '__ID__');
 
 	// Actions when linking object each other
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';
 }
 
 $object->fields['fk_soc']['visible'] = 0;
-if ($object->id > 0 && $object->status == $object::STATUS_REFUSED && empty($action)) $object->fields['reason_decline_or_cancel']['visible'] = 1;
+if ($object->id > 0 && $object->status == $object::STATUS_REFUSED && empty($action)) {
+	$object->fields['reason_decline_or_cancel']['visible'] = 1;
+}
 $object->fields['note_public']['visible'] = 1;
 
 
@@ -232,7 +245,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$socid = $object->id;
 
 
-	// TODO Replace this card with the list of all partnerships.
+	// TODO Replace this card with a table of list of all partnerships.
 
 	$object = new Partnership($db);
 	$partnershipid = $object->fetch(0, '', 0, $socid);
@@ -244,10 +257,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<table class="border centpercent tableforfield">'."\n";
 
 		// Common attributes
-		//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
-		//unset($object->fields['fk_project']);				// Hide field already shown in banner
-		//unset($object->fields['fk_member']);					// Hide field already shown in banner
+		unset($object->fields['fk_soc']); // Hide field already shown in banner
 		include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
+		$forcefieldid = 'socid';
+		$forceobjectid = $object->fk_soc;
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		print '</table>';
 		print '</div>';

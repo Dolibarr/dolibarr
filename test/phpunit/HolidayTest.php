@@ -36,7 +36,7 @@ if (empty($user->id)) {
 	$user->getrights();
 }
 
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -366,6 +366,6 @@ class HolidayTest extends PHPUnit\Framework\TestCase
 
 		$localobjecta->updateConfCP('lastUpdate', '20100101120000');
 		$result = $localobjecta->updateBalance();
-		$this->assertEquals($result, 1);
+		$this->assertEquals($result, 0);
 	}
 }

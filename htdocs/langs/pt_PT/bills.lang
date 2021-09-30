@@ -259,6 +259,7 @@ DateMaxPayment=Pagamento devido em
 DateInvoice=Data da fatura
 DatePointOfTax=Ponto de imposto
 NoInvoice=Nenhuma fatura
+NoOpenInvoice=No open invoice
 ClassifyBill=Classificar a fatura
 SupplierBillsToPay=Faturas de fornecedores não pagas
 CustomerBillsUnpaid=Faturas a receber de clientes
@@ -589,3 +590,4 @@ FacParentLine=Invoice Line Parent
 SituationTotalRayToRest=Remainder to pay without taxe
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=Total progress %d %%
+SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@ if ($user->socid) {
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('productstatscontract'));
+$hookmanager->initHooks(array('productstatsmo'));
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -127,10 +127,10 @@ if ($id > 0 || !empty($ref)) {
 		$now = dol_now();
 
 		$sql = "SELECT";
-		$sql .= ' sum('.$db->ifsql("cd.role='toconsume'", "cd.qty", 0).') as nb_toconsume,';
-		$sql .= ' sum('.$db->ifsql("cd.role='consumed'", "cd.qty", 0).') as nb_consumed,';
-		$sql .= ' sum('.$db->ifsql("cd.role='toproduce'", "cd.qty", 0).') as nb_toproduce,';
-		$sql .= ' sum('.$db->ifsql("cd.role='produced'", "cd.qty", 0).') as nb_produced,';
+		$sql .= " sum(".$db->ifsql("cd.role='toconsume'", "cd.qty", 0).') as nb_toconsume,';
+		$sql .= " sum(".$db->ifsql("cd.role='consumed'", "cd.qty", 0).') as nb_consumed,';
+		$sql .= " sum(".$db->ifsql("cd.role='toproduce'", "cd.qty", 0).') as nb_toproduce,';
+		$sql .= " sum(".$db->ifsql("cd.role='produced'", "cd.qty", 0).') as nb_produced,';
 		$sql .= " c.rowid as rowid, c.ref, c.date_valid, c.status";
 		//$sql .= " s.nom as name, s.rowid as socid, s.code_client";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as c";

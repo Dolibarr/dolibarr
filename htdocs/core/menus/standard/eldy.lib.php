@@ -85,9 +85,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'position' => 10,
 		'id' => $id,
 		'idsel' => 'home',
-		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "home") ? 'class="tmenusel"' : 'class="tmenu"',
+		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "home") ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => '<span class="fa fa-home fa-fw paddingright"></span>',
-		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "home") ? 0 : 1),
+		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "home") ? 0 : 1),
 		'loadLangs' => array(),
 		'submenus' => array(),
 	);
@@ -110,9 +110,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'position' => 18,
 		'id' => $id,
 		'idsel' => 'members',
-		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "members") ? 'class="tmenusel"' : 'class="tmenu"',
+		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "members") ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => img_picto('', 'member', 'class="fa-fw paddingright"'),
-		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "members") ? 0 : 1),
+		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "members") ? 0 : 1),
 		'loadLangs' => array(),
 		'submenus' => array(),
 	);
@@ -139,9 +139,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'position' => 20,
 		'id' => $id,
 		'idsel' => 'companies',
-		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "companies") ? 'class="tmenusel"' : 'class="tmenu"',
+		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "companies") ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => img_picto('', 'company', 'class="fa-fw paddingright"'),
-		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "companies") ? 0 : 1),
+		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "companies") ? 0 : 1),
 		'loadLangs' => array("companies", "suppliers"),
 		'submenus' => array(),
 	);
@@ -166,9 +166,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'position' => 30,
 		'id' => $id,
 		'idsel' => 'products',
-		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "products") ? 'class="tmenusel"' : 'class="tmenu"',
+		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "products") ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => img_picto('', 'product', 'class="fa-fw paddingright"'),
-		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "products") ? 0 : 1),
+		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "products") ? 0 : 1),
 		'loadLangs' => array("products"),
 		'submenus' => array(),
 	);
@@ -191,9 +191,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'position' => 31,
 		'id' => $id,
 		'idsel' => 'mrp',
-		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "mrp") ? 'class="tmenusel"' : 'class="tmenu"',
+		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "mrp") ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => img_picto('', 'mrp', 'class="fa-fw paddingright"'),
-		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "mrp") ? 0 : 1),
+		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "mrp") ? 0 : 1),
 		'loadLangs' => array("mrp"),
 		'submenus' => array(),
 	);
@@ -216,9 +216,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'position' => 35,
 		'id' => $id,
 		'idsel' => 'project',
-		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "project") ? 'class="tmenusel"' : 'class="tmenu"',
+		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "project") ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => img_picto('', 'project', 'class="fa-fw paddingright"'),
-		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "project") ? 0 : 1),
+		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "project") ? 0 : 1),
 		'loadLangs' => array("projects"),
 		'submenus' => array(),
 	);
@@ -265,9 +265,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'position' => 40,
 		'id' => $id,
 		'idsel' => 'commercial',
-		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "commercial") ? 'class="tmenusel"' : 'class="tmenu"',
+		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "commercial") ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => img_picto('', 'contract', 'class="fa-fw paddingright"'),
-		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "commercial") ? 0 : 1),
+		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "commercial") ? 0 : 1),
 		'loadLangs' => array("commercial"),
 		'submenus' => array(),
 	);
@@ -299,9 +299,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'position' => 50,
 		'id' => $id,
 		'idsel' => 'billing',
-		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "billing") ? 'class="tmenusel"' : 'class="tmenu"',
+		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "billing") ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => img_picto('', 'bill', 'class="fa-fw paddingright"'),
-		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "billing") ? 0 : 1),
+		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "billing") ? 0 : 1),
 		'loadLangs' => array("compta"),
 		'submenus' => array(),
 	);
@@ -324,9 +324,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'position' => 52,
 		'id' => $id,
 		'idsel' => 'bank',
-		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "bank") ? 'class="tmenusel"' : 'class="tmenu"',
+		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "bank") ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => img_picto('', 'bank_account', 'class="fa-fw paddingright"'),
-		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "bank") ? 0 : 1),
+		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "bank") ? 0 : 1),
 		'loadLangs' => array("compta", "banks"),
 		'submenus' => array(),
 	);
@@ -334,7 +334,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	// Accounting
 	$tmpentry = array(
 		'enabled'=>(!empty($conf->comptabilite->enabled) || !empty($conf->accounting->enabled) || !empty($conf->asset->enabled) || !empty($conf->intracommreport->enabled)),
-		'perms'=>(!empty($user->rights->compta->resultat->lire) || !empty($user->rights->accounting->mouvements->lire) || !empty($user->rights->asset->read) || !empty($user->rights->intracommreport->read)),
+		'perms'=>(!empty($user->rights->compta->resultat->lire) || !empty($user->rights->accounting->comptarapport->lire) || !empty($user->rights->accounting->mouvements->lire) || !empty($user->rights->asset->read) || !empty($user->rights->intracommreport->read)),
 		'module'=>'comptabilite|accounting|asset|intracommreport'
 	);
 	$menu_arr[] = array(
@@ -349,9 +349,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'position' => 54,
 		'id' => $id,
 		'idsel' => 'accountancy',
-		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "accountancy") ? 'class="tmenusel"' : 'class="tmenu"',
+		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "accountancy") ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => img_picto('', 'accountancy', 'class="fa-fw paddingright"'),
-		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "accountancy") ? 0 : 1),
+		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "accountancy") ? 0 : 1),
 		'loadLangs' => array("compta", "accountancy", "assets", "intracommreport"),
 		'submenus' => array(),
 	);
@@ -375,10 +375,41 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'position' => 80,
 		'id' => $id,
 		'idsel' => 'hrm',
-		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "hrm") ? 'class="tmenusel"' : 'class="tmenu"',
+		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "hrm") ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => img_picto('', 'hrm', 'class="fa-fw paddingright"'),
-		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "hrm") ? 0 : 1),
+		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "hrm") ? 0 : 1),
 		'loadLangs' => array("holiday"),
+		'submenus' => array(),
+	);
+
+	// Tickets and knowledge base
+	$tmpentry = array(
+		'enabled'=>(!empty($conf->ticket->enabled) || !empty($conf->knowledgemanagement->enabled)),
+		'perms'=>(!empty($user->rights->ticket->read) || !empty($user->rights->knowledgemanagement->knowledgerecord->read)),
+		'module'=>'ticket|knowledgemanagement'
+	);
+	$link = '';
+	if (!empty($conf->ticket->enabled)) {
+		$link = '/ticket/index.php?mainmenu=ticket&amp;leftmenu=';
+	} else {
+		$link = '/knowledgemanagement/knowledgerecord_list.php?mainmenu=ticket&amp;leftmenu=';
+	}
+	$menu_arr[] = array(
+		'name' => 'Ticket',
+		'link' => '/ticket/index.php?mainmenu=ticket&amp;leftmenu=',
+		'title' =>  "Tickets",
+		'level' => 0,
+		'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
+		'target' => $atarget,
+		'mainmenu' => "ticket",
+		'leftmenu' => '',
+		'position' => 88,
+		'id' => $id,
+		'idsel' => 'ticket',
+		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "ticket") ? 'class="tmenusel"' : 'class="tmenu"',
+		'prefix' => img_picto('', 'ticket', 'class="fa-fw paddingright"'),
+		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "ticket") ? 0 : 1),
+		'loadLangs' => array("other"),
 		'submenus' => array(),
 	);
 
@@ -400,9 +431,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'position' => 90,
 		'id' => $id,
 		'idsel' => 'tools',
-		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "tools") ? 'class="tmenusel"' : 'class="tmenu"',
+		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "tools") ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => img_picto('', 'tools', 'class="fa-fw paddingright"'),
-		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "tools") ? 0 : 1),
+		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "tools") ? 0 : 1),
 		'loadLangs' => array("other"),
 		'submenus' => array(),
 	);
@@ -665,7 +696,8 @@ function print_end_menu_array()
  */
 function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabMenu, &$menu, $noout = 0, $forcemainmenu = '', $forceleftmenu = '', $moredata = null, $type_user = 0)
 {
-	global $user, $conf, $langs, $dolibarr_main_db_name, $mysoc;
+
+	global $user, $conf, $langs, $dolibarr_main_db_name, $mysoc, $hookmanager;
 
 	//var_dump($tabMenu);
 
@@ -1180,7 +1212,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 			// Accounting (Double entries)
 			if (!empty($conf->accounting->enabled)) {
-				$permtoshowmenu = (!empty($conf->accounting->enabled) || $user->rights->accounting->bind->write || $user->rights->compta->resultat->lire);
+				//$permtoshowmenu = (!empty($conf->accounting->enabled) || $user->rights->accounting->bind->write || $user->rights->compta->resultat->lire);
 				//$newmenu->add("/accountancy/index.php?leftmenu=accountancy", $langs->trans("MenuAccountancy"), 0, $permtoshowmenu, '', $mainmenu, 'accountancy');
 
 				// Configuration
@@ -1317,16 +1349,16 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				}
 
 				// Accounting
-				$newmenu->add("/accountancy/index.php?leftmenu=accountancy_accountancy", $langs->trans("MenuAccountancy"), 0, $user->rights->accounting->mouvements->lire, '', $mainmenu, 'accountancy', 1, '', '', '', img_picto('', 'accountancy', 'class="paddingright pictofixedwidth"'));
-
-				// Balance
-				$newmenu->add("/accountancy/bookkeeping/balance.php?mainmenu=accountancy&amp;leftmenu=accountancy_accountancy", $langs->trans("AccountBalance"), 1, $user->rights->accounting->mouvements->lire);
+				$newmenu->add("/accountancy/index.php?leftmenu=accountancy_accountancy", $langs->trans("MenuAccountancy"), 0, $user->rights->accounting->mouvements->lire || $user->rights->accounting->comptarapport->lire, '', $mainmenu, 'accountancy', 1, '', '', '', img_picto('', 'accountancy', 'class="paddingright pictofixedwidth"'));
 
 				// General Ledger
 				$newmenu->add("/accountancy/bookkeeping/listbyaccount.php?mainmenu=accountancy&amp;leftmenu=accountancy_accountancy", $langs->trans("Bookkeeping"), 1, $user->rights->accounting->mouvements->lire);
 
 				// Journals
 				$newmenu->add("/accountancy/bookkeeping/list.php?mainmenu=accountancy&amp;leftmenu=accountancy_accountancy", $langs->trans("Journals"), 1, $user->rights->accounting->mouvements->lire);
+
+				// Account Balance
+				$newmenu->add("/accountancy/bookkeeping/balance.php?mainmenu=accountancy&amp;leftmenu=accountancy_accountancy", $langs->trans("AccountBalance"), 1, $user->rights->accounting->mouvements->lire);
 
 				// Files
 				if (empty($conf->global->ACCOUNTANCY_HIDE_EXPORT_FILES_MENU)) {
@@ -1541,7 +1573,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 			// Cash Control
 			if (!empty($conf->takepos->enabled) || !empty($conf->cashdesk->enabled)) {
-				$permtomakecashfence = ($user->rights->cashdesk->run || $user->rights->takepos->run);
+				$permtomakecashfence = ($user->hasRight('cashdesk', 'run')|| $user->hasRight('takepos', 'run'));
 				$newmenu->add("/compta/cashcontrol/cashcontrol_list.php?action=list", $langs->trans("POS"), 0, $permtomakecashfence, '', $mainmenu, 'cashcontrol', 0, '', '', '', img_picto('', 'pos', 'class="pictofixedwidth"'));
 				$newmenu->add("/compta/cashcontrol/cashcontrol_card.php?action=create", $langs->trans("NewCashFence"), 1, $permtomakecashfence);
 				$newmenu->add("/compta/cashcontrol/cashcontrol_list.php?action=list", $langs->trans("List"), 1, $permtomakecashfence);
@@ -1707,11 +1739,11 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 				$titleboth = $langs->trans("LeadsOrProjects");
 				$titlenew = $langs->trans("NewLeadOrProject"); // Leads and opportunities by default
-				if ($conf->global->PROJECT_USE_OPPORTUNITIES == 0) {
+				if (empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 					$titleboth = $langs->trans("Projects");
 					$titlenew = $langs->trans("NewProject");
 				}
-				if ($conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
+				if (isset($conf->global->PROJECT_USE_OPPORTUNITIES) && $conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
 					$titleboth = $langs->trans("Leads");
 					$titlenew = $langs->trans("NewLead");
 				}
@@ -1720,13 +1752,13 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$newmenu->add("/projet/index.php?leftmenu=projects".($search_project_user ? '&search_project_user='.$search_project_user : ''), $titleboth, 0, $user->rights->projet->lire, '', $mainmenu, 'projects', 0, '', '', '', img_picto('', 'project', 'class="pictofixedwidth"'));
 				$newmenu->add("/projet/card.php?leftmenu=projects&action=create".($search_project_user ? '&search_project_user='.$search_project_user : ''), $titlenew, 1, $user->rights->projet->creer);
 
-				if ($conf->global->PROJECT_USE_OPPORTUNITIES == 0) {
+				if (empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 					$newmenu->add("/projet/list.php?leftmenu=projets".($search_project_user ? '&search_project_user='.$search_project_user : '').'&search_status=99', $langs->trans("List"), 1, $showmode, '', 'project', 'list');
-				} elseif ($conf->global->PROJECT_USE_OPPORTUNITIES == 1) {
+				} elseif (isset($conf->global->PROJECT_USE_OPPORTUNITIES) && $conf->global->PROJECT_USE_OPPORTUNITIES == 1) {
 					$newmenu->add("/projet/list.php?leftmenu=projets".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("List"), 1, $showmode, '', 'project', 'list');
 					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_usage_opportunity=1&search_status=99&search_opp_status=openedopp&contextpage=lead', $langs->trans("ListOpenLeads"), 2, $showmode);
 					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_opp_status=notopenedopp&search_status=99&contextpage=project', $langs->trans("ListOpenProjects"), 2, $showmode);
-				} elseif ($conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
+				} elseif (isset($conf->global->PROJECT_USE_OPPORTUNITIES) && $conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
 					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_usage_opportunity=1&search_status=99', $langs->trans("List"), 2, $showmode);
 				}
 
@@ -1772,11 +1804,11 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$newmenu->add("/holiday/card.php?mainmenu=hrm&leftmenu=holiday&action=create", $langs->trans("New"), 1, $user->rights->holiday->write);
 				$newmenu->add("/holiday/list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("List"), 1, $user->rights->holiday->read);
 				if ($usemenuhider || empty($leftmenu) || $leftmenu == "hrm") {
-					$newmenu->add("/holiday/list.php?search_statut=1&mainmenu=hrm&leftmenu=hrm", $langs->trans("DraftCP"), 2, $user->rights->holiday->read);
-					$newmenu->add("/holiday/list.php?search_statut=2&mainmenu=hrm&leftmenu=hrm", $langs->trans("ToReviewCP"), 2, $user->rights->holiday->read);
-					$newmenu->add("/holiday/list.php?search_statut=3&mainmenu=hrm&leftmenu=hrm", $langs->trans("ApprovedCP"), 2, $user->rights->holiday->read);
-					$newmenu->add("/holiday/list.php?search_statut=4&mainmenu=hrm&leftmenu=hrm", $langs->trans("CancelCP"), 2, $user->rights->holiday->read);
-					$newmenu->add("/holiday/list.php?search_statut=5&mainmenu=hrm&leftmenu=hrm", $langs->trans("RefuseCP"), 2, $user->rights->holiday->read);
+					$newmenu->add("/holiday/list.php?search_status=1&mainmenu=hrm&leftmenu=hrm", $langs->trans("DraftCP"), 2, $user->rights->holiday->read);
+					$newmenu->add("/holiday/list.php?search_status=2&mainmenu=hrm&leftmenu=hrm", $langs->trans("ToReviewCP"), 2, $user->rights->holiday->read);
+					$newmenu->add("/holiday/list.php?search_status=3&mainmenu=hrm&leftmenu=hrm", $langs->trans("ApprovedCP"), 2, $user->rights->holiday->read);
+					$newmenu->add("/holiday/list.php?search_status=4&mainmenu=hrm&leftmenu=hrm", $langs->trans("CancelCP"), 2, $user->rights->holiday->read);
+					$newmenu->add("/holiday/list.php?search_status=5&mainmenu=hrm&leftmenu=hrm", $langs->trans("RefuseCP"), 2, $user->rights->holiday->read);
 				}
 				$newmenu->add("/holiday/define_holiday.php?mainmenu=hrm&action=request", $langs->trans("MenuConfCP"), 1, $user->rights->holiday->read);
 				$newmenu->add("/holiday/month_report.php?mainmenu=hrm&leftmenu=holiday", $langs->trans("MenuReportMonth"), 1, $user->rights->holiday->readall);
@@ -1933,6 +1965,28 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		return 0;
 	}
 
+	// Allow the $menu_array of the menu to be manipulated by modules
+	$parameters = array(
+		'mainmenu' => $mainmenu,
+	);
+	$hook_items = $menu_array;
+	$reshook = $hookmanager->executeHooks('menuLeftMenuItems', $parameters, $hook_items); // Note that $action and $object may have been modified by some hooks
+
+	if (is_numeric($reshook)) {
+		if ($reshook == 0 && !empty($hookmanager->results)) {
+			$menu_array[] = $hookmanager->results; // add
+		} elseif ($reshook == 1) {
+			$menu_array = $hookmanager->results; // replace
+		}
+
+		// @todo Sort menu items by 'position' value
+		//      $position = array();
+		//      foreach ($menu_array as $key => $row) {
+		//          $position[$key] = $row['position'];
+		//      }
+		//      array_multisort($position, SORT_ASC, $menu_array);
+	}
+
 	// TODO Use the position property in menu_array to reorder the $menu_array
 	//var_dump($menu_array);
 	/*$new_menu_array = array();
@@ -2044,8 +2098,10 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					$cssmenu = ' menu_contenu'.dol_string_nospecial(preg_replace('/\.php.*$/', '', $menu_array[$i]['url']));
 				}
 
-				if ($menu_array[$i]['enabled'] && $lastlevel0 == 'enabled') {     // Enabled so visible, except if parent was not enabled.
-					print '<div class="menu_contenu'.$cssmenu.'">'.$tabstring;
+				if ($menu_array[$i]['enabled'] && $lastlevel0 == 'enabled') {
+					// Enabled so visible, except if parent was not enabled.
+					print '<div class="menu_contenu'.$cssmenu.'">';
+					print $tabstring;
 					if ($shorturlwithoutparam) {
 						print '<a class="vsmenu" title="'.dol_escape_htmltag(dol_string_nohtmltag($menu_array[$i]['titre'])).'" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
 					} else {
@@ -2062,8 +2118,11 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 						print '<br>';
 					}
 					print '</div>'."\n";
-				} elseif ($showmenu && $lastlevel0 == 'enabled') {       // Not enabled but visible (so greyed), except if parent was not enabled.
-					print '<div class="menu_contenu'.$cssmenu.'">'.$tabstring.'<font class="vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</font><br></div>'."\n";
+				} elseif ($showmenu && $lastlevel0 == 'enabled') {
+					// Not enabled but visible (so greyed), except if parent was not enabled.
+					print '<div class="menu_contenu'.$cssmenu.'">';
+					print $tabstring;
+					print '<font class="vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</font><br></div>'."\n";
 				}
 			}
 

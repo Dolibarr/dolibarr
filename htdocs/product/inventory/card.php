@@ -49,7 +49,10 @@ if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 // Initialize technical objects
 $object = new Inventory($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id;
+// no inventory docs yet
+$includedocgeneration = false;
+$diroutputmassaction = null;
+// $diroutputmassaction = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('inventorycard', 'globalcard')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
@@ -168,20 +171,6 @@ $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:Módulo_Stocks|DE:Modul_Best
 
 llxHeader('', $title, $help_url);
 
-// Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function() {
-		init_myfunc();
-	});
-});
-</script>';
 
 
 // Part to create
@@ -194,7 +183,7 @@ if ($action == 'create') {
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
-	if ($backtopageforcancel) {
+	if (!empty($backtopageforcancel)) {
 		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 	}
 
@@ -215,11 +204,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
-	print '&nbsp; ';
-	print '<input type="'.($backtopage ? "submit" : "button").'" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
-	print '</div>';
+	print $form->buttonsSaveCancel("Create");
 
 	print '</form>';
 
@@ -255,9 +240,7 @@ if (($id || $ref) && $action == 'edit') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print '</form>';
 }
@@ -274,10 +257,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Confirmation to delete
 	if ($action == 'delete') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteInventory'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
-	}
-	// Confirmation to delete line
-	if ($action == 'deleteline') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
 	}
 
 	// Clone confirmation
@@ -304,7 +283,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Call Hook formConfirm
-	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
+	$parameters = array('formConfirm' => $formconfirm);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		$formconfirm .= $hookmanager->resPrint;
@@ -336,7 +315,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		{
 			if ($action != 'classify')
 			{
-				$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				if ($action == 'classify') {
 					//$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -483,7 +462,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'inventory', $socid, 1, '', $MAXEVENT, '', $morehtmlright);
+		$somethingshown = $formactions->showactions($object, $object->element, 0, 1, '', $MAXEVENT, '', $morehtmlright);
 
 		print '</div></div></div>';
 	}

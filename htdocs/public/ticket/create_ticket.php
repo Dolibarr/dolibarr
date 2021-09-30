@@ -75,6 +75,10 @@ $extrafields = new ExtraFields($db);
 
 $extrafields->fetch_name_optionals_label($object->table_element);
 
+if (empty($conf->ticket->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
+
 
 /*
  * Actions
@@ -89,7 +93,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 // Add file in email form
-if (empty($reshook) && GETPOST('addfile', 'alpha') && !GETPOST('add', 'alpha')) {
+if (empty($reshook) && GETPOST('addfile', 'alpha') && !GETPOST('save', 'alpha')) {
 	////$res = $object->fetch('','',GETPOST('track_id'));
 	////if($res > 0)
 	////{
@@ -108,7 +112,7 @@ if (empty($reshook) && GETPOST('addfile', 'alpha') && !GETPOST('add', 'alpha')) 
 }
 
 // Remove file
-if (empty($reshook) && GETPOST('removedfile', 'alpha') && !GETPOST('add', 'alpha')) {
+if (empty($reshook) && GETPOST('removedfile', 'alpha') && !GETPOST('save', 'alpha')) {
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	// Set tmp directory
@@ -120,7 +124,7 @@ if (empty($reshook) && GETPOST('removedfile', 'alpha') && !GETPOST('add', 'alpha
 	$action = 'create_ticket';
 }
 
-if (empty($reshook) && $action == 'create_ticket' && GETPOST('add', 'alpha')) {
+if (empty($reshook) && $action == 'create_ticket' && GETPOST('save', 'alpha')) {
 	$error = 0;
 	$origin_email = GETPOST('email', 'alpha');
 	if (empty($origin_email)) {
@@ -258,7 +262,7 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('add', 'alpha')) {
 
 				$sendto = GETPOST('email', 'alpha');
 
-				$from = $conf->global->MAIN_INFO_SOCIETE_NOM.'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
+				$from = $conf->global->MAIN_INFO_SOCIETE_NOM.' <'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
 				$replyto = $from;
 				$sendtocc = '';
 				$deliveryreceipt = 0;
@@ -298,7 +302,6 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('add', 'alpha')) {
 					}
 					$message_admin .= '</ul>';
 
-					$message_admin .= '</ul>';
 					$message_admin .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
 					$message_admin .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'" rel="nofollow noopener">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
 
@@ -390,7 +393,7 @@ if ($action != "infos_success") {
 		print '<div class="error">';
 		print $langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketEmailNotificationFrom")).'<br>';
 		print $langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentities("Ticket"));
-		print '<div>';
+		print '</div>';
 	} else {
 		print '<div class="info marginleftonly marginrightonly">'.$langs->trans('TicketPublicInfoCreateTicket').'</div>';
 		$formticket->showForm(0, 'edit', 1);

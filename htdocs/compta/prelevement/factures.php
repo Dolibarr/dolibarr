@@ -100,8 +100,8 @@ if ($id > 0 || $ref) {
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent tableforfield">'."\n";
 
-		//print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
-		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
+		//print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
 		print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
 
 		if ($object->date_trans <> 0) {
@@ -131,7 +131,7 @@ if ($id > 0 || $ref) {
 		$acc = new Account($db);
 		$result = $acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
 
-		print '<tr><td class="titlefield">';
+		print '<tr><td class="titlefieldcreate">';
 		$labelofbankfield = "BankToReceiveWithdraw";
 		if ($object->type == 'bank-transfer') {
 			$labelofbankfield = 'BankToPayCreditTransfer';
@@ -145,7 +145,7 @@ if ($id > 0 || $ref) {
 		print '</td>';
 		print '</tr>';
 
-		print '<tr><td class="titlefield">';
+		print '<tr><td class="titlefieldcreate">';
 		$labelfororderfield = 'WithdrawalFile';
 		if ($object->type == 'bank-transfer') {
 			$labelfororderfield = 'CreditTransferFile';

@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2011 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015-2017 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015-2017 Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -501,7 +501,7 @@ class FormMail extends Form
 				}
 
 				$out .= ' &nbsp; ';
-				$out .= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
+				$out .= '<input type="submit" class="button" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				$out .= ' &nbsp; ';
 				$out .= '</div>';
 			} elseif (!empty($this->param['models']) && in_array($this->param['models'], array(
@@ -516,7 +516,7 @@ class FormMail extends Form
 					$out .= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')), 1);
 				}
 				$out .= ' &nbsp; ';
-				$out .= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" disabled="disabled" id="modelselected">';
+				$out .= '<input type="submit" class="button" value="'.$langs->trans('Apply').'" name="modelselected" disabled="disabled" id="modelselected">';
 				$out .= ' &nbsp; ';
 				$out .= '</div>';
 			} else {
@@ -584,7 +584,10 @@ class FormMail extends Form
 						$liste['company'] = $conf->global->MAIN_INFO_SOCIETE_NOM.' &lt;'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'&gt;';
 
 						// Add also email aliases if there is some
-						$listaliases = array('user_aliases'=>$user->email_aliases, 'global_aliases'=>$conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
+						$listaliases = array(
+							'user_aliases' => (empty($user->email_aliases) ? '' : $user->email_aliases),
+							'global_aliases' => getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'),
+						);
 
 						// Also add robot email
 						if (!empty($this->fromalsorobot)) {
@@ -598,7 +601,7 @@ class FormMail extends Form
 
 						// Add also email aliases from the c_email_senderprofile table
 						$sql = 'SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile';
-						$sql .= ' WHERE active = 1 AND (private = 0 OR private = '.$user->id.')';
+						$sql .= ' WHERE active = 1 AND (private = 0 OR private = '.((int) $user->id).')';
 						$sql .= ' ORDER BY position';
 						$resql = $this->db->query($sql);
 						if ($resql) {
@@ -818,7 +821,7 @@ class FormMail extends Form
 							$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
 						}
 						$out .= ' ';
-						$out .= '<input class="button" type="submit" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
+						$out .= '<input type="submit" class="button" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
 					}
 				} else {
 					$out .= $this->withfile;
@@ -953,15 +956,14 @@ class FormMail extends Form
 			$out .= '</table>'."\n";
 
 			if ($this->withform == 1 || $this->withform == -1) {
-				$out .= '<br><div class="center">';
-				$out .= '<input class="button" type="submit" id="sendmail" name="sendmail" value="'.$langs->trans("SendMail").'"';
+				$out .= '<div class="center">';
+				$out .= '<input type="submit" class="button button-add" id="sendmail" name="sendmail" value="'.$langs->trans("SendMail").'"';
 				// Add a javascript test to avoid to forget to submit file before sending email
 				if ($this->withfile == 2 && $conf->use_javascript_ajax) {
 					$out .= ' onClick="if (document.mailform.addedfile.value != \'\') { alert(\''.dol_escape_js($langs->trans("FileWasNotUploaded")).'\'); return false; } else { return true; }"';
 				}
 				$out .= ' />';
 				if ($this->withcancel) {
-					$out .= ' &nbsp; &nbsp; ';
 					$out .= '<input class="button button-cancel" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'" />';
 				}
 				$out .= '</div>'."\n";
@@ -1252,7 +1254,7 @@ class FormMail extends Form
 	 */
 	public function getEMailTemplate($db, $type_template, $user, $outputlangs, $id = 0, $active = 1, $label = '')
 	{
-		global $conf;
+		global $conf, $langs;
 
 		$ret = new ModelMail();
 
@@ -1273,7 +1275,7 @@ class FormMail extends Form
 		$sql .= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql .= " WHERE (type_template='".$db->escape($type_template)."' OR type_template='all')";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
-		$sql .= " AND (private = 0 OR fk_user = ".$user->id.")"; // Get all public or private owned
+		$sql .= " AND (private = 0 OR fk_user = ".((int) $user->id).")"; // Get all public or private owned
 		if ($active >= 0) {
 			$sql .= " AND active = ".((int) $active);
 		}
@@ -1396,7 +1398,7 @@ class FormMail extends Form
 		$sql .= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql .= " WHERE type_template='".$this->db->escape($type_template)."'";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
-		$sql .= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".$user->id.")";
+		$sql .= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".((int) $user->id).")";
 		if (is_object($outputlangs)) {
 			$sql .= " AND (lang = '".$this->db->escape($outputlangs->defaultlang)."' OR lang IS NULL OR lang = '')";
 		}
@@ -1432,7 +1434,7 @@ class FormMail extends Form
 		$sql .= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql .= " WHERE type_template IN ('".$this->db->escape($type_template)."', 'all')";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
-		$sql .= " AND (private = 0 OR fk_user = ".$user->id.")"; // See all public templates or templates I own.
+		$sql .= " AND (private = 0 OR fk_user = ".((int) $user->id).")"; // See all public templates or templates I own.
 		if ($active >= 0) {
 			$sql .= " AND active = ".((int) $active);
 		}

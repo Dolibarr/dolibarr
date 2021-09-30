@@ -79,9 +79,9 @@ If you don't have time to install it yourself, you can try some commercial 'read
 
 ## UPGRADING
 
-Dolibarr supports upgrading usually wihtout the need for any (commercial) support (depending on if you use any commercial extensions) and supports upgrading all the way from any version after 2.8 without breakage. This is unique in the ERP ecosystem and a benefit our users highly appreciate!
+Dolibarr supports upgrading, usually without the need for any (commercial) support (depending on if you use any commercial extensions). It supports upgrading all the way from any version after 2.8 without breakage. This is unique in the ERP ecosystem and a benefit our users highly appreciate!
  
-- At first make a backup of your Dolibarr files & than [see](https://wiki.dolibarr.org/index.php/Installation_-_Upgrade#Upgrade_Dolibarr)
+- At first make a backup of your Dolibarr files & then [see](https://wiki.dolibarr.org/index.php/Installation_-_Upgrade#Upgrade_Dolibarr)
 - Check that your installed PHP version is supported by the new version [see PHP support](./doc/phpmatrix.md).
 - Overwrite all old files from 'dolibarr' directory with files provided into the new version's package.
 - At first next access, Dolibarr will redirect you to the "install/" page to follow the upgrade process.
@@ -106,7 +106,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Barcodes 
 - Batches / Lots / Serials 
 - Product Variants 
-- Bill of Materials 
+- Bill of Materials (BOM)
 - Manufacturing Orders 
 
  Customer/Sales Management 
@@ -124,9 +124,10 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
  Supplier/Purchase Management 
 - Suppliers/Vendors + Contacts 
 - Supplier (price) requests 
-- Purchase Order management 
+- Purchase Orders management 
 - Delivery/Receiption 
 - Supplier Invoices/credit notes and payment management 
+- INCOTERMS 
 
  Finance / Accounting 
 - Invoices / Payments 
@@ -138,17 +139,17 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Margins 
 - Reports 
 
- 
+ Collaboration 
 - Shared calendar/agenda (with ical and vcal export for third party tools integration) 
 - Projects & Tasks management 
 - Ticket System 
+- Surveys
 
+ HR 
 - Employee's leave requests management 
 - Expense reports 
 - Recruitment management 
 - Timesheets 
-
-- (around 100 modules available by default, 1000+ on the addon market place)
 
 
 ### Other application/modules
@@ -156,7 +157,6 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Electronic Document Management (EDM) 
 - Bookmarks management
 - Reporting
-- Surveys
 - Data export/import
 - Barcodes 
 - Margin calculations
@@ -165,8 +165,12 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Mass emailing
 - RSS integration
 - Skype integration
+- Social platforms linking 
 - Payment platforms integration (PayPal, Stripe, Paybox...)
-- 
+- Email-Collector
+
+(around 100 modules available by default, 1000+ on the addon market place)
+
 
 ### Other general features
 
@@ -198,8 +202,11 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
 ### System Environment / Requirements
 
-- Works with PHP 5.6+ and MariaDB 5.0.3+, MySQL 5.0.3+ or PostgreSQL 8.1.4+ (See requirements on the [Wiki](https://wiki.dolibarr.org/index.php/Prerequisite))
+- PHP
+- MariaDB, MySQL or PostgreSQL 
 - Compatible with all Cloud solutions that match PHP & MySQL or PostgreSQL prerequisites.
+
+See exact requirements on the [Wiki](https://wiki.dolibarr.org/index.php/Prerequisite)
 
 
 ### Extending

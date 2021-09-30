@@ -86,16 +86,16 @@ class FactureStats extends Stats
 		$this->where = " f.fk_statut >= 0";
 		$this->where .= " AND f.entity IN (".getEntity('invoice').")";
 		if (!$user->rights->societe->client->voir && !$this->socid) {
-			$this->where .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+			$this->where .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($mode == 'customer') {
 			$this->where .= " AND (f.fk_statut <> 3 OR f.close_code <> 'replaced')"; // Exclude replaced invoices as they are duplicated (we count closed invoices for other reasons)
 		}
 		if ($this->socid) {
-			$this->where .= " AND f.fk_soc = ".$this->socid;
+			$this->where .= " AND f.fk_soc = ".((int) $this->socid);
 		}
 		if ($this->userid > 0) {
-			$this->where .= ' AND f.fk_user_author = '.$this->userid;
+			$this->where .= ' AND f.fk_user_author = '.((int) $this->userid);
 		}
 		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 			$this->where .= " AND f.type IN (0,1,2,5)";
@@ -265,5 +265,32 @@ class FactureStats extends Stats
 		//$sql.= $this->db->plimit(20);
 
 		return $this->_getAllByProduct($sql, $limit);
+	}
+	/**
+	 *      Return the invoices amount by year for a number of past years
+	 *
+	 *      @param  int             $numberYears    Years to scan
+	 *      @param  int             $format         0=Label of abscissa is a translated text, 1=Label of abscissa is year, 2=Label of abscissa is last number of year
+	 *      @return array                           Array with amount by year
+	 */
+	public function getAmountByYear($numberYears, $format = 0)
+	{
+		global $user;
+
+		$endYear = date('Y');
+		$startYear = $endYear - $numberYears;
+		$sql = "SELECT date_format(datef,'%Y') as dm, SUM(f.".$this->field.")";
+		$sql .= " FROM ".$this->from;
+		if (!$user->rights->societe->client->voir && !$this->socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
+		$sql .= $this->join;
+		$sql .= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($startYear))."' AND '".$this->db->idate(dol_get_last_day($endYear))."'";
+		$sql .= " AND ".$this->where;
+		$sql .= " GROUP BY dm";
+		$sql .= $this->db->order('dm', 'ASC');
+
+		$res = $this->_getAmountByYear($sql);
+		return $res;
 	}
 }

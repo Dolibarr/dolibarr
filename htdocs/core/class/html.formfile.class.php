@@ -77,12 +77,13 @@ class FormFile
 	 *  @param	string		$htmlname		Name and id of HTML form ('formuserfile' by default, 'formuserfileecm' when used to upload a file in ECM)
 	 *  @param	string		$accept			Specifies the types of files accepted (This is not a security check but an user interface facility. eg '.pdf,image/*' or '.png,.jpg' or 'video/*')
 	 *	@param	string		$sectiondir		If upload must be done inside a particular directory (if sectiondir defined, sectionid must not be)
-	 *  @param  int         $usewithoutform 0=Default, 1=Disable <form> and style to use in existing area
+	 *  @param  int         $usewithoutform 0=Default, 1=Disable <form> and <input hidden> to use in existing form area, 2=Disable the tag <form> only
 	 *  @param	int			$capture		1=Add tag capture="capture" to force use of micro or video recording to generate file. When setting this to 1, you must also provide a value for $accept.
 	 *  @param	int			$disablemulti	0=Default, 1=Disable multiple file upload
-	 * 	@return	int							<0 if KO, >0 if OK
+	 *  @param	int			$nooutput		0=Output result with print, 1=Return result
+	 * 	@return	int|string					<0 if KO, >0 if OK, or string if $noouput=1
 	 */
-	public function form_attach_new_file($url, $title = '', $addcancel = 0, $sectionid = 0, $perm = 1, $size = 50, $object = '', $options = '', $useajax = 1, $savingdocmask = '', $linkfiles = 1, $htmlname = 'formuserfile', $accept = '', $sectiondir = '', $usewithoutform = 0, $capture = 0, $disablemulti = 0)
+	public function form_attach_new_file($url, $title = '', $addcancel = 0, $sectionid = 0, $perm = 1, $size = 50, $object = '', $options = '', $useajax = 1, $savingdocmask = '', $linkfiles = 1, $htmlname = 'formuserfile', $accept = '', $sectiondir = '', $usewithoutform = 0, $capture = 0, $disablemulti = 0, $nooutput = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs, $hookmanager;
@@ -102,11 +103,16 @@ class FormFile
 			// TODO: Check this works with GED module, otherwise, force useajax to 0
 			// TODO: This does not support option savingdocmask
 			// TODO: This break feature to upload links too
+			// TODO: Thisdoes not work when param nooutput=1
 			return $this->_formAjaxFileUpload($object);
 		} else {
 			//If there is no permission and the option to hide unauthorized actions is enabled, then nothing is printed
 			if (!$perm && !empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
-				return 1;
+				if ($nooutput) {
+					return '';
+				} else {
+					return 1;
+				}
 			}
 
 			$out = "\n\n".'<!-- Start form attach new file --><div class="formattachnewfile">'."\n";
@@ -122,12 +128,15 @@ class FormFile
 				// Add a param as GET parameter to detect when POST were cleaned by PHP because a file larger than post_max_size
 				$url .= (strpos($url, '?') === false ? '?' : '&').'uploadform=1';
 
-				$out .= '<form name="'.$htmlname.'" id="'.$htmlname.'" action="'.$url.'" enctype="multipart/form-data" method="POST">';
-				$out .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$out .= '<input type="hidden" id="'.$htmlname.'_section_dir" name="section_dir" value="'.$sectiondir.'">';
-				$out .= '<input type="hidden" id="'.$htmlname.'_section_id"  name="section_id" value="'.$sectionid.'">';
-				$out .= '<input type="hidden" name="sortfield" value="'.GETPOST('sortfield', 'aZ09comma').'">';
-				$out .= '<input type="hidden" name="sortorder" value="'.GETPOST('sortorder', 'aZ09').'">';
+				$out .= '<form name="'.$htmlname.'" id="'.$htmlname.'" action="'.$url.'" enctype="multipart/form-data" method="POST">'."\n";
+			}
+			if (empty($usewithoutform) || $usewithoutform == 2) {
+				$out .= '<input type="hidden" name="token" value="'.newToken().'">'."\n";
+				$out .= '<input type="hidden" id="'.$htmlname.'_section_dir" name="section_dir" value="'.$sectiondir.'">'."\n";
+				$out .= '<input type="hidden" id="'.$htmlname.'_section_id"  name="section_id" value="'.$sectionid.'">'."\n";
+				$out .= '<input type="hidden" name="sortfield" value="'.GETPOST('sortfield', 'aZ09comma').'">'."\n";
+				$out .= '<input type="hidden" name="sortorder" value="'.GETPOST('sortorder', 'aZ09comma').'">'."\n";
+				$out .= '<input type="hidden" name="page_y" value="">'."\n";
 			}
 
 			$out .= '<table class="nobordernopadding centpercent">';
@@ -207,20 +216,21 @@ class FormFile
 				$langs->load('link');
 				$out .= '<span class="nowraponsmartphone"><input style="margin-right: 2px;" type="checkbox" id="overwritefile" name="overwritefile" value="1"><label for="overwritefile">'.$langs->trans("OverwriteIfExists").'</label></span>';
 			}
-			$out .= '<input type="submit" class="button reposition" name="sendit" value="'.$langs->trans("Upload").'"';
+			$out .= '<input type="submit" class="button small reposition" name="sendit" value="'.$langs->trans("Upload").'"';
 			$out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm) ? ' disabled' : '');
 			$out .= '>';
 
 			if ($addcancel) {
 				$out .= ' &nbsp; ';
-				$out .= '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+				$out .= '<input type="submit" class="button small button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			}
 
 			if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
 				if ($perm) {
+					$menudolibarrsetupmax = $langs->transnoentitiesnoconv("Home").'-'.$langs->transnoentitiesnoconv("Setup").'-'.$langs->transnoentitiesnoconv("Security");
 					$langs->load('other');
 					$out .= ' ';
-					$out .= info_admin($langs->trans("ThisLimitIsDefinedInSetup", $max, $maxphptoshow), 1);
+					$out .= info_admin($langs->trans("ThisLimitIsDefinedInSetupAt", $menudolibarrsetupmax, $max, $maxphptoshowparam, $maxphptoshow), 1);
 				}
 			} else {
 				$out .= ' ('.$langs->trans("UploadDisabled").')';
@@ -266,6 +276,7 @@ class FormFile
 					$out .= '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 					$out .= '<input type="hidden" id="'.$htmlname.'_link_section_dir" name="link_section_dir" value="">'."\n";
 					$out .= '<input type="hidden" id="'.$htmlname.'_link_section_id"  name="link_section_id" value="'.$sectionid.'">'."\n";
+					$out .= '<input type="hidden" name="page_y" value="">'."\n";
 				}
 
 				$out .= '<div class="valignmiddle">';
@@ -284,7 +295,7 @@ class FormFile
 				$out .= '<input type="hidden" name="objectid" value="'.$object->id.'">';
 				$out .= '</div>';
 				$out .= '<div class="inline-block" style="padding-right: 10px;">';
-				$out .= '<input type="submit" class="button" name="linkit" value="'.$langs->trans("ToLink").'"';
+				$out .= '<input type="submit" class="button small reposition" name="linkit" value="'.$langs->trans("ToLink").'"';
 				$out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm) ? ' disabled' : '');
 				$out .= '>';
 				$out .= '</div>';
@@ -300,13 +311,16 @@ class FormFile
 			$parameters = array('socid'=>(isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id'=>(isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'url'=>$url, 'perm'=>$perm, 'options'=>$options);
 			$res = $hookmanager->executeHooks('formattachOptions', $parameters, $object);
 			if (empty($res)) {
-				print '<div class="'.($usewithoutform ? 'inline-block valignmiddle' : 'attacharea attacharea'.$htmlname).'">';
-				print $out;
-				print '</div>';
+				$out = '<div class="'.($usewithoutform ? 'inline-block valignmiddle' : 'attacharea attacharea'.$htmlname).'">'.$out.'</div>';
 			}
-			print $hookmanager->resPrint;
+			$out .= $hookmanager->resPrint;
 
-			return 1;
+			if ($nooutput) {
+				return $out;
+			} else {
+				print $out;
+				return 1;
+			}
 		}
 	}
 
@@ -345,7 +359,7 @@ class FormFile
 	 *      Return a string to show the box with list of available documents for object.
 	 *      This also set the property $this->numoffiles
 	 *
-	 *      @param      string				$modulepart         Module the files are related to ('propal', 'facture', 'facture_fourn', 'mymodule', 'mymodule:nameofsubmodule', 'mymodule_temp', ...)
+	 *      @param      string				$modulepart         Module the files are related to ('propal', 'facture', 'facture_fourn', 'mymodule', 'mymodule:myobject', 'mymodule_temp', ...)
 	 *      @param      string				$modulesubdir       Existing (so sanitized) sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.
 	 *      @param      string				$filedir            Directory to scan
 	 *      @param      string				$urlsource          Url of origin page (for return)
@@ -667,7 +681,7 @@ class FormFile
 					$res = include_once $file;
 				}
 
-				$class = 'ModelePDF'.$submodulepart;
+				$class = 'ModelePDF'.ucfirst($submodulepart);
 
 				if (class_exists($class)) {
 					$modellist = call_user_func($class.'::liste_modeles', $this->db);
@@ -729,7 +743,7 @@ class FormFile
 			if (($allowgenifempty || (is_array($modellist) && count($modellist) > 0)) && !empty($conf->global->MAIN_MULTILANGS) && !$forcenomultilang && (!empty($modellist) || $showempty)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 				$formadmin = new FormAdmin($this->db);
-				$defaultlang = $codelang ? $codelang : $langs->getDefaultLang();
+				$defaultlang = ($codelang && $codelang != 'auto') ? $codelang : $langs->getDefaultLang();
 				$morecss = 'maxwidth150';
 				if ($conf->browser->layout == 'phone') {
 					$morecss = 'maxwidth100';
@@ -835,7 +849,7 @@ class FormFile
 					}
 
 					// Show file name with link to download
-					$out .= '<td class="minwidth200">';
+					$out .= '<td class="minwidth200 tdoverflowmax300">';
 					$out .= '<a class="documentdownload paddingright" href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
 
 					$mime = dol_mimetype($relativepath, '', 0);
@@ -858,8 +872,8 @@ class FormFile
 					$out .= '<td class="nowrap right">'.dol_print_date($date, 'dayhour', 'tzuser').'</td>';
 
 					// Show share link
-					$out .= '<td class="nowrap">';
-					if ($file['share']) {
+					$out .= '<td class="nowraponall">';
+					if (!empty($file['share'])) {
 						// Define $urlwithroot
 						$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 						$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
@@ -878,7 +892,7 @@ class FormFile
 						$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
 
 						$out .= img_picto($langs->trans("FileSharedViaALink"), 'globe').' ';
-						$out .= '<input type="text" class="quatrevingtpercent width75" id="downloadlink'.$file['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
+						$out .= '<input type="text" class="quatrevingtpercentminusx width75" id="downloadlink'.$file['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
 						$out .= ajax_autoselect('downloadlink'.$file['rowid']);
 					} else {
 						//print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
@@ -889,16 +903,16 @@ class FormFile
 						$out .= '<td class="right nowraponall">';
 						if ($delallowed) {
 							$tmpurlsource = preg_replace('/#[a-zA-Z0-9_]*$/', '', $urlsource);
-							$out .= '<a href="'.$tmpurlsource.((strpos($tmpurlsource, '?') === false) ? '?' : '&amp;').'action='.$removeaction.'&amp;file='.urlencode($relativepath);
-							$out .= ($param ? '&amp;'.$param : '');
+							$out .= '<a href="'.$tmpurlsource.((strpos($tmpurlsource, '?') === false) ? '?' : '&').'action='.urlencode($removeaction).'&token='.newToken().'&file='.urlencode($relativepath);
+							$out .= ($param ? '&'.$param : '');
 							//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
 							//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
 							$out .= '">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
 						}
 						if ($printer) {
 							//$out.= '<td class="right">';
-							$out .= '<a class="marginleftonly" href="'.$urlsource.(strpos($urlsource, '?') ? '&amp;' : '?').'action=print_file&amp;printer='.$modulepart.'&amp;file='.urlencode($relativepath);
-							$out .= ($param ? '&amp;'.$param : '');
+							$out .= '<a class="marginleftonly" href="'.$urlsource.(strpos($urlsource, '?') ? '&' : '?').'action=print_file&token='.newToken().'printer='.urlencode($modulepart).'&file='.urlencode($relativepath);
+							$out .= ($param ? '&'.$param : '');
 							$out .= '">'.img_picto($langs->trans("PrintFile", $relativepath), 'printer.png').'</a>';
 						}
 						if ($morepicto) {
@@ -969,13 +983,15 @@ class FormFile
 	 *  You may want to call this into a div like this:
 	 *  print '<div class="inline-block valignmiddle">'.$formfile->getDocumentsLink($element_doc, $filename, $filedir).'</div>';
 	 *
-	 *	@param	string	$modulepart		propal, facture, facture_fourn, ...
+	 *	@param	string	$modulepart		'propal', 'facture', 'facture_fourn', ...
 	 *	@param	string	$modulesubdir	Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.
 	 *	@param	string	$filedir		Full path to directory to scan
 	 *  @param	string	$filter			Filter filenames on this regex string (Example: '\.pdf$')
+	 *  @param	string	$morecss		Add more css to the download picto
+	 *  @param	string	$allfiles		0=Only generated docs, 1=All files
 	 *	@return	string              	Output string with HTML link of documents (might be empty string). This also fill the array ->infofiles
 	 */
-	public function getDocumentsLink($modulepart, $modulesubdir, $filedir, $filter = '')
+	public function getDocumentsLink($modulepart, $modulesubdir, $filedir, $filter = '', $morecss = 'valignmiddle', $allfiles = 0)
 	{
 		global $conf, $langs;
 
@@ -993,12 +1009,11 @@ class FormFile
 			$entity = ((!empty($regs[1]) && $regs[1] > 1) ? $regs[1] : 1); // If entity id not found in $filedir this is entity 1 by default
 		}
 
-		// Get list of files starting with name of ref (but not followed by "-" to discard uploaded files and get only generated files)
-		// @todo Why not showing by default all files by just removing the '[^\-]+' at end of regex ?
-		if (!empty($conf->global->MAIN_SHOW_ALL_FILES_ON_DOCUMENT_TOOLTIP)) {
-			$filterforfilesearch = preg_quote(basename($modulesubdir), '/');
+		// Get list of files starting with name of ref (Note: files with '^ref\.extension' are generated files, files with '^ref-...' are uploaded files)
+		if ($allfiles || !empty($conf->global->MAIN_SHOW_ALL_FILES_ON_DOCUMENT_TOOLTIP)) {
+			$filterforfilesearch = '^'.preg_quote(basename($modulesubdir), '/');
 		} else {
-			$filterforfilesearch = preg_quote(basename($modulesubdir), '/').'[^\-]+';
+			$filterforfilesearch = '^'.preg_quote(basename($modulesubdir), '/').'\.';
 		}
 		$file_list = dol_dir_list($filedir, 'files', 0, $filterforfilesearch, '\.meta$|\.png$'); // We also discard .meta and .png preview
 
@@ -1007,7 +1022,7 @@ class FormFile
 		$out .= '<!-- html.formfile::getDocumentsLink -->'."\n";
 		if (!empty($file_list)) {
 			$out = '<dl class="dropdown inline-block">
-    			<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight', '', 0, 0, 0, '', 'valignmiddle').'</a></dt>
+    			<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight', '', 0, 0, 0, '', $morecss).'</a></dt>
     			<dd><div class="multichoicedoc" style="position:absolute;left:100px;" ><ul class="ulselectedfields">';
 			$tmpout = '';
 
@@ -1170,7 +1185,7 @@ class FormFile
 		);
 		$reshook = $hookmanager->executeHooks('showFilesList', $parameters, $object);
 
-		if (isset($reshook) && $reshook != '') { // null or '' for bypass
+		if (!empty($reshook)) { // null or '' for bypass
 			return $reshook;
 		} else {
 			if (!is_object($form)) {
@@ -1441,7 +1456,7 @@ class FormFile
 
 							if ($permtoeditline) {
 								$paramsectiondir = (in_array($modulepart, array('medias', 'ecm')) ? '&section_dir='.urlencode($relativepath) : '');
-								print '<a class="editfielda reposition editfilelink" href="'.(($useinecm == 1 || $useinecm == 5) ? '#' : ($url.'?action=editfile&urlfile='.urlencode($filepath).$paramsectiondir.$param)).'" rel="'.$filepath.'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
+								print '<a class="editfielda reposition editfilelink" href="'.(($useinecm == 1 || $useinecm == 5) ? '#' : ($url.'?action=editfile&token='.newToken().'&urlfile='.urlencode($filepath).$paramsectiondir.$param)).'" rel="'.$filepath.'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 							}
 						}
 						if ($permonobject) {
@@ -1659,7 +1674,8 @@ class FormFile
 					dol_include_once($hookmanager->resArray['classpath']);
 					if (array_key_exists('classname', $hookmanager->resArray) && !empty($hookmanager->resArray['classname'])) {
 						if (class_exists($hookmanager->resArray['classname'])) {
-							$object_instance = new ${$hookmanager->resArray['classname']}($this->db);
+							$tmpclassname = $hookmanager->resArray['classname'];
+							$object_instance = new $tmpclassname($this->db);
 						}
 					}
 				}
@@ -1798,9 +1814,11 @@ class FormFile
 				print '</td>';
 
 				// File
+				// Check if document source has external module part, if it the case use it for module part on document.php
+				preg_match('/^[^@]*@([^@]*)$/', $modulepart.'@expertisemedical', $modulesuffix);
 				print '<td>';
 				//print "XX".$file['name']; //$file['name'] must be utf8
-				print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
+				print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.(empty($modulesuffix) ? $modulepart : $modulesuffix[1]);
 				if ($forcedownload) {
 					print '&attachment=1';
 				}
@@ -1811,7 +1829,7 @@ class FormFile
 
 				//print $this->getDocumentsLink($modulepart, $modulesubdir, $filedir, '^'.preg_quote($file['name'],'/').'$');
 
-				print $this->showPreview($file, $modulepart, $file['relativename']);
+				print $this->showPreview($file, (empty($modulesuffix) ? $modulepart : $modulesuffix[1]), $file['relativename']);
 
 				print "</td>\n";
 
@@ -2020,8 +2038,8 @@ class FormFile
 				print '<td class="center">'.dol_print_date(dol_now(), "dayhour", "tzuser").'</td>';
 				print '<td class="right"></td>';
 				print '<td class="right">';
-				print '<input type="submit" name="save" class="button button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
-				print '<input type="submit" name="cancel" class="button button-cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+				print '<input type="submit" class="button button-save" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 				print '</td>';
 			} else {
 				print '<td>';

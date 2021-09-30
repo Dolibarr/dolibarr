@@ -170,7 +170,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
-			$sql .= "SELECT t.rowid as id, t.entity, t.ref, t.paye as paid, t.total_ht, t.total_ttc, t.total_tva, t.multicurrency_code as currency, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'Invoice' as item, s.nom as thirdparty_name, s.code_client as thirdparty_code, c.code as country_code, s.tva_intra as vatnum, ".PAY_CREDIT." as sens";
+			$sql .= "SELECT t.rowid as id, t.entity, t.ref, t.paye as paid, t.total_ht, t.total_ttc, t.total_tva as total_vat, t.multicurrency_code as currency, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'Invoice' as item, s.nom as thirdparty_name, s.code_client as thirdparty_code, c.code as country_code, s.tva_intra as vatnum, ".PAY_CREDIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
 			$sql .= " WHERE datef between ".$wheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
@@ -547,7 +547,11 @@ print dol_get_fiche_head($head, 'AccountancyFiles');
 print '<form name="searchfiles" action="?action=searchfiles" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-print '<span class="opacitymedium">'.$langs->trans("ExportAccountingSourceDocHelp", $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Journals")).'</span><br>';
+print '<span class="opacitymedium">'.$langs->trans("ExportAccountingSourceDocHelp");
+if (!empty($conf->accounting->enabled)) {
+	print ' '.$langs->trans("ExportAccountingSourceDocHelp2", $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Journals"));
+}
+print '</span><br>';
 print '<br>';
 
 print $langs->trans("ReportPeriod").': ';
@@ -584,7 +588,7 @@ foreach ($listofchoices as $choice => $val) {
 	print '<div class="paddingleft inline-block marginrightonly"><input type="checkbox" id="'.$choice.'" name="'.$choice.'" value="1"'.$checked.$disabled.'> <label for="'.$choice.'">'.$langs->trans($val['label']).'</label></div>';
 }
 
-print '<input class="button" type="submit" name="search" value="'.$langs->trans("Search").'">';
+print '<input type="submit" class="button" name="search" value="'.$langs->trans("Search").'">';
 
 print '</form>'."\n";
 

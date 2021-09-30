@@ -50,7 +50,6 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'bills', 'companies', 'other'));
 
-$mesg = '';
 $error = 0;
 $errors = array();
 
@@ -305,7 +304,7 @@ if (empty($reshook)) {
 				$sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 				$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 				$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
-				$sql .= " AND t.taux = ".$tva_tx." AND t.active = 1";
+				$sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
 				$sql .= " AND t.code ='".$db->escape($vatratecode)."'";
 				$resql = $db->query($sql);
 				if ($resql) {
@@ -346,6 +345,7 @@ if (empty($reshook)) {
 
 				$newprice = price2num($newprice, 'MU');
 				$newprice_min = price2num($val['price_min'], 'MU');
+				$newvattx = price2num($val['vat_tx']);
 
 				if (!empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE) && $newprice_min < $maxpricesupplier) {
 					setEventMessages($langs->trans("MinimumPriceLimit", price($maxpricesupplier, 0, '', 1, - 1, - 1, 'auto')), null, 'errors');
@@ -353,12 +353,11 @@ if (empty($reshook)) {
 					break;
 				}
 
-				if ($object->multiprices[$key] != $newprice || $object->multiprices_min[$key] != $newprice_min || $object->multiprices_base_type[$key] != $val['price_base_type']) {
+				if ($object->multiprices[$key] != $newprice || $object->multiprices_min[$key] != $newprice_min || $object->multiprices_base_type[$key] != $val['price_base_type'] || $object->multiprices_tva_tx[$key] != $newvattx) {
 					$res = $object->updatePrice($newprice, $val['price_base_type'], $user, $val['vat_tx'], $newprice_min, $key, $val['npr'], $psq, 0, $val['localtaxes_array'], $val['default_vat_code']);
 				} else {
 					$res = 0;
 				}
-
 
 				if ($res < 0) {
 					$error++;
@@ -413,10 +412,10 @@ if (empty($reshook)) {
 		// Récupération des variables
 		$rowid = GETPOST('rowid', 'int');
 		$priceid = GETPOST('priceid', 'int');
-		$newprice = price2num(GETPOST("price"), 'MU');
+		$newprice = price2num(GETPOST("price"), 'MU', 2);
 		// $newminprice=price2num(GETPOST("price_min"),'MU'); // TODO : Add min price management
-		$quantity = price2num(GETPOST('quantity'), 'MS');
-		$remise_percent = price2num(GETPOST('remise_percent'), 2);
+		$quantity = price2num(GETPOST('quantity'), 'MS', 2);
+		$remise_percent = price2num(GETPOST('remise_percent'), '', 2);
 		$remise = 0; // TODO : allow discount by amount when available on documents
 
 		if (empty($quantity)) {
@@ -528,7 +527,7 @@ if (empty($reshook)) {
 			$sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 			$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
-			$sql .= " AND t.taux = ".$tva_tx." AND t.active = 1";
+			$sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
 			$sql .= " AND t.code ='".$db->escape($vatratecode)."'";
 			$resql = $db->query($sql);
 			if ($resql) {
@@ -621,7 +620,7 @@ if (empty($reshook)) {
 			$sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 			$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
-			$sql .= " AND t.taux = ".$tva_tx." AND t.active = 1";
+			$sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
 			$sql .= " AND t.code ='".$db->escape($vatratecode)."'";
 			$resql = $db->query($sql);
 			if ($resql) {
@@ -718,8 +717,18 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 		$soc->id = $socid;
 		$soc->fetch($socid);
 
+		// Type
+		if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+			$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
+			print '<tr><td class="">';
+			print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
+			print '</td><td>';
+			print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, 0, $typeformat);
+			print '</td></tr>';
+		}
+
 		// Selling price
-		print '<tr><td class="titlefield">';
+		print '<tr><td class="titlefieldcreate">';
 		print $langs->trans("SellingPrice");
 		print '</td>';
 		print '<td colspan="2">';
@@ -792,13 +801,33 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 		}
 	} else {
 		if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {  // using this option is a bug. kept for backward compatibility
+			// Type
+			if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
+				print '<tr><td class="">';
+				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
+				print '</td><td>';
+				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, 0, $typeformat);
+				print '</td></tr>';
+			}
+
 			// We show only vat for level 1
-			print '<tr><td class="titlefield">'.$langs->trans("DefaultTaxRate").'</td>';
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("DefaultTaxRate").'</td>';
 			print '<td colspan="2">'.vatrate($object->multiprices_tva_tx[1], true).'</td>';
 			print '</tr>';
 		} else {
+			// Type
+			if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
+				print '<tr><td class="">';
+				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
+				print '</td><td>';
+				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, 0, $typeformat);
+				print '</td></tr>';
+			}
+
 			// TVA
-			print '<tr><td class="titlefield">'.$langs->trans("DefaultTaxRate").'</td><td>';
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("DefaultTaxRate").'</td><td>';
 
 			$positiverates = '';
 			if (price2num($object->tva_tx)) {
@@ -830,7 +859,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 		print '<tr class="liste_titre"><td>';
 		print $langs->trans("PriceLevel");
 		if ($user->admin) {
-			print ' <a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editlabelsellingprice&amp;pricelevel='.$i.'&amp;id='.$object->id.'">'.img_edit($langs->trans('EditSellingPriceLabel'), 0).'</a>';
+			print ' <a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editlabelsellingprice&token='.newToken().'&pricelevel='.$i.'&id='.$object->id.'">'.img_edit($langs->trans('EditSellingPriceLabel'), 0).'</a>';
 		}
 		print '</td>';
 		print '<td style="text-align: right">'.$langs->trans("SellingPrice").'</td>';
@@ -924,9 +953,9 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 							print '<td class="right">'.price($prices['remise_percent']).' %</td>';
 							print '<td class="center">';
 							if (($user->rights->produit->creer || $user->rights->service->creer)) {
-								print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_price_by_qty&amp;rowid='.$prices["rowid"].'">';
+								print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit_price_by_qty&token='.newToken().'&rowid='.$prices["rowid"].'">';
 								print img_edit().'</a>';
-								print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_price_by_qty&amp;token='.newToken().'&amp;rowid='.$prices["rowid"].'">';
+								print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete_price_by_qty&token='.newToken().'&rowid='.$prices["rowid"].'">';
 								print img_delete().'</a>';
 							} else {
 								print '&nbsp;';
@@ -1077,9 +1106,9 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 					print '<td class="right">'.price($prices['remise_percent']).' %</td>';
 					print '<td class="center">';
 					if (($user->rights->produit->creer || $user->rights->service->creer)) {
-						print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_price_by_qty&amp;rowid='.$prices["rowid"].'">';
+						print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit_price_by_qty&token='.newToken().'&rowid='.$prices["rowid"].'">';
 						print img_edit().'</a>';
-						print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_price_by_qty&amp;token='.newToken().'&amp;rowid='.$prices["rowid"].'">';
+						print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete_price_by_qty&token='.newToken().'&rowid='.$prices["rowid"].'">';
 						print img_delete().'</a>';
 					} else {
 						print '&nbsp;';
@@ -1109,34 +1138,41 @@ print dol_get_fiche_end();
 /*
  * Action bar
  */
+
+
 if (!$action || $action == 'delete' || $action == 'showlog_customer_price' || $action == 'showlog_default_price' || $action == 'add_customer_price'
 	|| $action == 'activate_price_by_qty' || $action == 'disable_price_by_qty') {
 	print "\n".'<div class="tabsAction">'."\n";
 
-	if ($object->isVariant()) {
-		if ($user->rights->produit->creer || $user->rights->service->creer) {
-			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEditVariants")).'">'.$langs->trans("UpdateDefaultPrice").'</a></div>';
-		}
-	} else {
-		if (empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
-			if ($user->rights->produit->creer || $user->rights->service->creer) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit_price&amp;id='.$object->id.'">'.$langs->trans("UpdateDefaultPrice").'</a></div>';
-			}
-		}
 
-		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+	if (empty($reshook)) {
+		if ($object->isVariant()) {
 			if ($user->rights->produit->creer || $user->rights->service->creer) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=add_customer_price&amp;id='.$object->id.'">'.$langs->trans("AddCustomerPrice").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("NoEditVariants")) . '">' . $langs->trans("UpdateDefaultPrice") . '</a></div>';
 			}
-		}
-
-		if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
-			if ($user->rights->produit->creer || $user->rights->service->creer) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit_vat&amp;id='.$object->id.'">'.$langs->trans("UpdateVAT").'</a></div>';
+		} else {
+			if (empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
+				if ($user->rights->produit->creer || $user->rights->service->creer) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_price&token='.newToken().'&id=' . $object->id . '">' . $langs->trans("UpdateDefaultPrice") . '</a></div>';
+				}
 			}
 
-			if ($user->rights->produit->creer || $user->rights->service->creer) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit_price&amp;id='.$object->id.'">'.$langs->trans("UpdateLevelPrices").'</a></div>';
+			if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+				if ($user->rights->produit->creer || $user->rights->service->creer) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=add_customer_price&token='.newToken().'&id=' . $object->id . '">' . $langs->trans("AddCustomerPrice") . '</a></div>';
+				}
+			}
+
+			if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
+				if ($user->rights->produit->creer || $user->rights->service->creer) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_vat&token='.newToken().'&id=' . $object->id . '">' . $langs->trans("UpdateVAT") . '</a></div>';
+				}
+
+				if ($user->rights->produit->creer || $user->rights->service->creer) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_price&token='.newToken().'&id=' . $object->id . '">' . $langs->trans("UpdateLevelPrices") . '</a></div>';
+				}
 			}
 		}
 	}
@@ -1171,11 +1207,7 @@ if ($action == 'edit_vat' && ($user->rights->produit->creer || $user->rights->se
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print '<br></form><br>';
 }
@@ -1212,15 +1244,17 @@ if ($action == 'edit_price' && $object->getRights()->creer) {
 		// Only show price mode and expression selector if module is enabled
 		if (!empty($conf->dynamicprices->enabled)) {
 			// Price mode selector
+			print '<!-- Show price mode of dynamicprices editor -->'."\n";
 			print '<tr><td>'.$langs->trans("PriceMode").'</td><td>';
+			print img_picto('', 'dynamicprice', 'class="pictofixedwidth"');
 			$price_expression = new PriceExpression($db);
-			$price_expression_list = array(0 => $langs->trans("PriceNumeric")); //Put the numeric mode as first option
+			$price_expression_list = array(0 => $langs->trans("Numeric").' <span class="opacitymedium">('.$langs->trans("NoDynamicPrice").')</span>'); //Put the numeric mode as first option
 			foreach ($price_expression->list_price_expression() as $entry) {
 				$price_expression_list[$entry->id] = $entry->title;
 			}
 			$price_expression_preselection = GETPOST('eid') ? GETPOST('eid') : ($object->fk_price_expression ? $object->fk_price_expression : '0');
 			print $form->selectarray('eid', $price_expression_list, $price_expression_preselection);
-			print '&nbsp; <div id="expression_editor" class="button">'.$langs->trans("PriceExpressionEditor").'</div>';
+			print '&nbsp; <a id="expression_editor" class="classlink">'.$langs->trans("PriceExpressionEditor").'</a>';
 			print '</td></tr>';
 
 			// This code hides the numeric price input if is not selected, loads the editor page if editor button is pressed
@@ -1283,13 +1317,9 @@ if ($action == 'edit_price' && $object->getRights()->creer) {
 
 		print dol_get_fiche_end();
 
-		print '<div class="center">';
-		print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
+		print $form->buttonsSaveCancel();
 
-		print '<br></form>';
+		print '</form>';
 	} else {
 		print '<!-- Edit price per level -->'."\n";
 		?>
@@ -1406,10 +1436,8 @@ if ($action == 'edit_price' && $object->getRights()->creer) {
 
 		//print dol_get_fiche_end();
 
-		print '<div style="text-align: center">';
-		print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-		print '&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+		print $form->buttonsSaveCancel();
+
 		print '</form>';
 	}
 }
@@ -1609,8 +1637,8 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
 					}
 
 					print '<td class="right">';
-					if ($candelete) {
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;token='.newToken().'&amp;id='.$object->id.'&amp;lineid='.$objp->rowid.'">';
+					if ($candelete || ($db->jdate($objp->dp) >= dol_now())) {		// Test on date is to be able to delete a corrupted record with a date in future
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'&lineid='.$objp->rowid.'">';
 						print img_delete();
 						print '</a>';
 					} else {
@@ -1738,10 +1766,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<label for="updatechildprice">'.$langs->trans('ForceUpdateChildPriceSoc').'</label>';
 		print '</div>';
 
-		print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
+		print $form->buttonsSaveCancel();
 
 		print '</form>';
 	} elseif ($action == 'edit_customer_price') {
@@ -1823,10 +1848,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<label for="updatechildprice">'.$langs->trans('ForceUpdateChildPriceSoc').'</label>';
 		print "</div>";
 
-		print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
+		print $form->buttonsSaveCancel();
 
 		print '<br></form>';
 	} elseif ($action == 'showlog_customer_price') {
@@ -2082,11 +2104,11 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '</td>';
 		if ($user->rights->produit->supprimer || $user->rights->service->supprimer) {
 			print '<td class="nowraponall">';
-			print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=showlog_default_price&amp;id='.$object->id.'">';
+			print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=showlog_default_price&token='.newToken().'&id='.$object->id.'">';
 			print img_info($langs->trans('PriceByCustomerLog'));
 			print '</a>';
 			print ' ';
-			print '<a class="marginleftonly marginrightonly editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_price&amp;id='.$object->id.'">';
+			print '<a class="marginleftonly marginrightonly editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_price&token='.newToken().'&id='.$object->id.'">';
 			print img_edit('default', 0, 'style="vertical-align: middle;"');
 			print '</a>';
 			print '</td>';
@@ -2167,15 +2189,15 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				// Action
 				if ($user->rights->produit->supprimer || $user->rights->service->supprimer) {
 					print '<td class="right nowraponall">';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=showlog_customer_price&amp;id='.$object->id.'&amp;socid='.$line->fk_soc.'">';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=showlog_customer_price&token='.newToken().'&id='.$object->id.'&socid='.$line->fk_soc.'">';
 					print img_info($langs->trans('PriceByCustomerLog'));
 					print '</a>';
 					print ' ';
-					print '<a class="marginleftonly editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_customer_price&amp;id='.$object->id.'&amp;lineid='.$line->id.'">';
+					print '<a class="marginleftonly editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_customer_price&token='.newToken().'&id='.$object->id.'&lineid='.$line->id.'">';
 					print img_edit('default', 0, 'style="vertical-align: middle;"');
 					print '</a>';
 					print ' ';
-					print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&amp;token='.newToken().'&amp;id='.$object->id.'&amp;lineid='.$line->id.'">';
+					print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&token='.newToken().'&id='.$object->id.'&lineid='.$line->id.'">';
 					print img_delete('default', 'style="vertical-align: middle;"');
 					print '</a>';
 					print '</td>';

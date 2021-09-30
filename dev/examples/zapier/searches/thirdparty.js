@@ -19,21 +19,43 @@ module.exports = {
                 type: 'string',
                 label: 'Name',
                 helpText: 'Name to limit to the search to (i.e. The company or %company%).'
+            },
+            {
+                key: 'email',
+                type: 'string',
+                label: 'Email',
+                helpText: 'Email to limit to the search to.'
             }
         ],
 
-        perform: (z, bundle) => {
+        perform: async (z, bundle) => {
             const url = bundle.authData.url  + '/api/index.php/thirdparties/';
 
             // Put the search value in a query param. The details of how to build
             // a search URL will depend on how your API works.
-            const options = {
-                params: {
-                    sqlfilters: "t.nom like \'%"+bundle.inputData.name+"%\'"
+            let filter = '';
+            if (bundle.inputData.name) {
+                filter = "t.nom like \'%"+bundle.inputData.name+"%\'";
+            }
+            if (bundle.inputData.email) {
+                if (bundle.inputData.name) {
+                    filter += " and ";
                 }
-            };
-
-            return z.request(url, options).then(response => JSON.parse(response.content));
+                filter += "t.email like \'"+bundle.inputData.email+"\'";
+            }
+            const response = await z.request({
+                url: url,
+                // this parameter avoid throwing errors and let us manage them
+                skipThrowForStatus: true,
+                params: {
+                    sqlfilters: filter
+                }
+            });
+            //z.console.log(response);
+            if (response.status != 200) {
+                return [];
+            }
+            return response.json;
         },
 
         // In cases where Zapier needs to show an example record to the user, but we are unable to get a live example

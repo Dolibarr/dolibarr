@@ -135,7 +135,7 @@ if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 	$sql .= " WHERE s.rowid = f.fk_soc";
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
@@ -206,6 +206,7 @@ if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 				print '<td class="nowrap">';
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+
 				print '<td class="nobordernopadding nowraponall">';
 				print $tmpinvoice->getNomUrl(1, '');
 				print '</td>';
@@ -222,15 +223,19 @@ if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 				print '</td></tr></table>';
 
 				print '</td>';
-				print '<td class="left">';
+
+				print '<td class="tdoverflowmax150">';
 				print $thirdpartystatic->getNomUrl(1, 'customer', 44);
 				print '</td>';
 				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
-					print '<td class="nowrap right">'.price($obj->total_ht).'</td>';
+					print '<td class="nowrap right"><span class="amount">'.price($obj->total_ht).'</span></td>';
 				}
 				print '<td class="nowrap right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
+
 				print '<td class="right">'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
+
 				print '<td>'.$tmpinvoice->getLibStatut(3, $obj->am).'</td>';
+
 				print '</tr>';
 
 				$total_ttc += $obj->total_ttc;
@@ -280,7 +285,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 	$sql .= " WHERE s.rowid = ff.fk_soc";
 	$sql .= " AND ff.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND ff.fk_soc = ".((int) $socid);
@@ -592,7 +597,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 	$sql .= " WHERE c.fk_soc = s.rowid";
 	$sql .= " AND c.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND c.fk_soc = ".((int) $socid);

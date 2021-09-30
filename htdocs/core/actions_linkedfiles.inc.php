@@ -27,6 +27,15 @@
 //var_dump($upload_dirold);
 
 
+// Protection to understand what happen when submitting files larger than post_max_size
+if (GETPOST('uploadform', 'int') && empty($_POST) && empty($_FILES)) {
+	dol_syslog("The PHP parameter 'post_max_size' is too low. All POST parameters and FILES were set to empty.");
+	$langs->loadLangs(array("errors", "install"));
+	print $langs->trans("ErrorFileSizeTooLarge").' ';
+	print $langs->trans("ErrorGoBackAndCorrectParameters");
+	die;
+}
+
 // Submit file/link
 if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC) && (!isset($permissiontoadd) || $permissiontoadd)) {
 	if (!empty($_FILES)) {
@@ -103,21 +112,20 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && (!isset($permissiont
 			dol_delete_file($fileold, 0, 0, 0, (is_object($object) ? $object : null)); // Delete file using old path
 		}
 
-		// If it exists, remove thumb.
-		$regs = array();
-		if (preg_match('/(\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff)$/i', $file, $regs)) {
-			$photo_vignette = basename(preg_replace('/'.$regs[0].'/i', '', $file).'_small'.$regs[0]);
-			if (file_exists(dol_osencode($dirthumb.$photo_vignette))) {
-				dol_delete_file($dirthumb.$photo_vignette);
-			}
-
-			$photo_vignette = basename(preg_replace('/'.$regs[0].'/i', '', $file).'_mini'.$regs[0]);
-			if (file_exists(dol_osencode($dirthumb.$photo_vignette))) {
-				dol_delete_file($dirthumb.$photo_vignette);
-			}
-		}
-
 		if ($ret) {
+			// If it exists, remove thumb.
+			$regs = array();
+			if (preg_match('/(\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff)$/i', $file, $regs)) {
+				$photo_vignette = basename(preg_replace('/'.$regs[0].'/i', '', $file).'_small'.$regs[0]);
+				if (file_exists(dol_osencode($dirthumb.$photo_vignette))) {
+					dol_delete_file($dirthumb.$photo_vignette);
+				}
+
+				$photo_vignette = basename(preg_replace('/'.$regs[0].'/i', '', $file).'_mini'.$regs[0]);
+				if (file_exists(dol_osencode($dirthumb.$photo_vignette))) {
+					dol_delete_file($dirthumb.$photo_vignette);
+				}
+			}
 			setEventMessages($langs->trans("FileWasRemoved", $urlfile), null, 'mesgs');
 		} else {
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", $urlfile), null, 'errors');

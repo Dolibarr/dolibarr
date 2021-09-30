@@ -369,9 +369,9 @@ if ($result) {
 	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 	print '<span class="opacitymedium">'.$langs->trans("DescVentilDoneCustomer").'</span><br>';
 
-	print '<br><div class="inline-block divButAction">'.$langs->trans("ChangeAccount").'<br>';
+	print '<br><div class="inline-block divButAction paddingbottom">'.$langs->trans("ChangeAccount").' ';
 	print $formaccounting->select_account($account_parent, 'account_parent', 2, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone valignmiddle');
-	print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("ChangeBinding").'"/></div>';
+	print '<input type="submit" class="button small valignmiddle" value="'.$langs->trans("ChangeBinding").'"/></div>';
 
 	$moreforfilter = '';
 
@@ -458,8 +458,8 @@ if ($result) {
 		$productstatic->accountancy_code_sell_export = $objp->accountancy_code_sell_export;
 
 		$accountingaccountstatic->rowid = $objp->fk_compte;
-		$accountingaccountstatic->label = $objp->label;
-		$accountingaccountstatic->labelshort = $objp->labelshort;
+		$accountingaccountstatic->label = $objp->label_account;
+		$accountingaccountstatic->labelshort = $objp->labelshort_account;
 		$accountingaccountstatic->account_number = $objp->account_number;
 
 		print '<tr class="oddeven">';
@@ -492,7 +492,7 @@ if ($result) {
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->description);
 		print '</td>';
 
-		print '<td class="nowrap right">'.price($objp->total_ht).'</td>';
+		print '<td class="right nowraponall amount">'.price($objp->total_ht).'</td>';
 
 		print '<td class="right">'.vatrate($objp->tva_tx.($objp->vat_src_code ? ' ('.$objp->vat_src_code.')' : '')).'</td>';
 
