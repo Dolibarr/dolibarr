@@ -133,7 +133,18 @@ $fk_usergroup1 = GETPOST('fk_usergroup1');
 							<td><STRONG><?php print $langs->trans('or'); ?></STRONG></td>
 						</tr>
 						<tr>
-							<td><?php echo $langs->trans('OrJobToCompare') . '</td><td>' . select_jobs($fk_job, 'fk_job', 1); ?></td>
+							<td><?php
+									echo $langs->trans('OrJobToCompare') . '</td><td>';
+									$j = new Job($db);
+									$jobs = $j->fetchAll();
+									$TJobs = array();
+
+									foreach ($jobs as &$j) {
+										$TJobs[$j->id] = $j->label;
+									}
+
+									print $form->selectarray('fk_job', $TJobs, $fk_job, 1);
+								?></td>
 						</tr>
 					</table>
 				</div>
@@ -253,7 +264,7 @@ llxFooter();
  *
  * 	Return a html list element with diff  between required rank  and user rank
  *
- * 		@param $TMergedSkills
+ * 		@param array $TMergedSkills skill list with all rate to add good picto
  * 		@return string
  */
 function diff(&$TMergedSkills)
@@ -282,8 +293,8 @@ function diff(&$TMergedSkills)
 
 /**
  * 	Return a html list with rank informations
- * 		@param $TMergedSkills
- * 		@param $field
+ * 		@param array $TMergedSkills skill list for display
+ * 		@param string $field which column of comparison we are working with
  * 		@return string
  */
 function rate(&$TMergedSkills, $field)
@@ -319,7 +330,7 @@ function rate(&$TMergedSkills, $field)
 /**
  * 	  	return a html ul list of skills
  *
- * 			@param $TMergedSkills
+ * 			@param array $TMergedSkills skill list for display
  * 			@return string (ul list in html )
  */
 function skillList(&$TMergedSkills)
@@ -342,8 +353,8 @@ function skillList(&$TMergedSkills)
 /**
  *  create an array of lines [ skillLabel,dscription, maxrank on group1 , minrank needed for this skill ]
  *
- * @param $TSkill1
- * @param $TSkill2
+ * @param array $TSkill1 skill list of first column
+ * @param array $TSkill2 skill list of second column
  * @return array
  */
 function mergeSkills($TSkill1, $TSkill2)
@@ -373,9 +384,9 @@ function mergeSkills($TSkill1, $TSkill2)
 
 /**
  * 	Display a list of User with picto
- * 		@param $TUser
- * 		@param int $fk_usergroup
- * 		@param string $namelist
+ * 		@param array $TUser list of users (employees) in selected usergroup of a column
+ * 		@param int $fk_usergroup selected usergroup id
+ * 		@param string $namelist html name
  * 		@return string
  */
 function displayUsersListWithPicto(&$TUser, $fk_usergroup = 0, $namelist = 'list-user')
@@ -453,7 +464,7 @@ function displayUsersListWithPicto(&$TUser, $fk_usergroup = 0, $namelist = 'list
  *
  * 		Allow to get skill(s) of a user
  *
- * 		@param $TUser
+ * 		@param array $TUser array of employees we need to get skills
  * 		@return array|int
  */
 function getSkillForUsers($TUser)
@@ -509,7 +520,7 @@ function getSkillForUsers($TUser)
 /**
  * 		Allow to get skill(s) of a job
  *
- * 		@param $fk_job
+ * 		@param int $fk_job job we need to get required skills
  * 		@return array|int
  */
 function getSkillForJob($fk_job)
@@ -553,83 +564,4 @@ function getSkillForJob($fk_job)
 
 
 	return $Tab;
-}
-
-/**
- * duplicated with modified data from $form Class
- *
- * @param string $selected
- * @param string $htmlname
- * @param int $show_empty
- * @param int $disabled
- * @param string $enableonly
- * @param string $force_entity
- * @param false $multiple
- * @param string $morecss
- * @return string
- */
-function select_jobs($selected = '', $htmlname = 'groupid', $show_empty = 0, $disabled = 0, $enableonly = '', $force_entity = '0', $multiple = false, $morecss = '')
-{
-	// phpcs:enable
-	global $conf, $user, $langs,$db;
-
-	if (!is_array($selected)) {
-		$selected = array($selected);
-	}
-	$out = '';
-
-	// On recherche les groupes
-	$sql = "SELECT j.rowid, j.label as name";
-	$sql .= " FROM ".MAIN_DB_PREFIX."hrm_job as j ";
-	$sql .= " ORDER BY j.label ASC";
-
-
-	$resql = $db->query($sql);
-	if ($resql) {
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-		$out .= ajax_combobox($htmlname);
-		$out .= '<select class="flat minwidth200'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.($disabled ? ' disabled' : '').'>';
-		$num = $db->num_rows($resql);
-		$i = 0;
-		if ($num) {
-			if ($show_empty && !$multiple) {
-				$out .= '<option value="-1"'.(in_array(-1, $selected) ? ' selected' : '').'>&nbsp;</option>'."\n";
-			}
-
-			while ($i < $num) {
-				$obj = $db->fetch_object($resql);
-				$disableline = 0;
-				if (is_array($enableonly) && count($enableonly) && !in_array($obj->rowid, $enableonly)) {
-					$disableline = 1;
-				}
-
-				$out .= '<option value="'.$obj->rowid.'"';
-				if ($disableline) {
-					$out .= ' disabled';
-				}
-				if ((is_object($selected[0]) && $selected[0]->id == $obj->rowid) || (!is_object($selected[0]) && in_array($obj->rowid, $selected))) {
-					$out .= ' selected';
-				}
-				$out .= '>';
-
-				$out .= $obj->name;
-				if (!empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1) {
-					$out .= " (".$obj->label.")";
-				}
-
-				$out .= '</option>';
-				$i++;
-			}
-		} else {
-			if ($show_empty) {
-				$out .= '<option value="-1"'.(in_array(-1, $selected) ? ' selected' : '').'></option>'."\n";
-			}
-			$out .= '<option value="" disabled>'.$langs->trans("NoUserGroupDefined").'</option>';
-		}
-		$out .= '</select>';
-	} else {
-		dol_print_error($db);
-	}
-
-	return $out;
 }

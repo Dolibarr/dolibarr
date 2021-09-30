@@ -361,7 +361,7 @@ class SkillRank extends CommonObject
 	 *  Clone skillrank Object linked to job with user id
 	 *  The skillrank table is a join table that is marked for multiple objects
 	 *
-	 * @param SkillRank $currentSkill
+	 * @param SkillRank $currentSkill line of evaluation (skill) we need to clone and add to user skills list
 	 * @param int $fk_user id of user linked to skillrank
 	 * @return int > 0 if ok, < 0 if ko
 	 */
