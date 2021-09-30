@@ -672,7 +672,12 @@ if (empty($reshook)) {
 				$deposit = null;
 				$locationTarget = $_SERVER['PHP_SELF'] . '?id=' . $object->id;
 
-				if (!$error && GETPOST('statut', 'int') == $object::STATUS_SIGNED && GETPOST('generate_deposit', 'int') > 0) {
+				$deposit_percent_from_payment_terms = getDictvalue(MAIN_DB_PREFIX . 'c_payment_term', 'deposit_percent', $object->cond_reglement_id);
+
+				if (
+					!$error && GETPOST('statut', 'int') == $object::STATUS_SIGNED && GETPOST('generate_deposit', 'int') > 0
+					&& ! empty($deposit_percent_from_payment_terms) && ! empty($conf->facture->enabled) && ! empty($user->rights->facture->creer)
+				) {
 					$deposit = Facture::createDepositFromOrigin($object, $user, 0, GETPOST('validate_generated_deposit', 'int') > 0);
 
 					if ($deposit) {
@@ -1959,7 +1964,7 @@ if ($action == 'create') {
 
         $deposit_percent_from_payment_terms = getDictvalue(MAIN_DB_PREFIX . 'c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
-        if (! empty($deposit_percent_from_payment_terms)) {
+		if (! empty($deposit_percent_from_payment_terms) && ! empty($conf->facture->enabled) && ! empty($user->rights->facture->creer)) {
 			$object->fetchObjectLinked();
 
 			$eligibleForDepositGeneration = true;
