@@ -139,12 +139,12 @@ $fk_usergroup1 = GETPOST('fk_usergroup1');
 									$jobs = $j->fetchAll();
 									$TJobs = array();
 
-									foreach ($jobs as &$j) {
-										$TJobs[$j->id] = $j->label;
-									}
+							foreach ($jobs as &$j) {
+								$TJobs[$j->id] = $j->label;
+							}
 
 									print $form->selectarray('fk_job', $TJobs, $fk_job, 1);
-								?></td>
+							?></td>
 						</tr>
 					</table>
 				</div>
