@@ -1175,6 +1175,8 @@ if ($id) {
 		$sql .= natural_search("r.code_region", $search_code);
 	} elseif ($search_code != '' && $id == 7) {
 		$sql .= natural_search("a.code", $search_code);
+	} elseif ($search_code != '' && $id == 10) {
+		$sql .= natural_search("t.code", $search_code);
 	} elseif ($search_code != '' && $id != 9) {
 		$sql .= natural_search("code", $search_code);
 	}
