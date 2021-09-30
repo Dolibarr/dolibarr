@@ -432,7 +432,7 @@ if ($id > 0 || !empty($ref)) {
 						$hide = ' hideobject'; // By default, we do not show this. It makes screen very difficult to understand
 					}
 
-					print '<tr class="oddeven'.$hide.'" id="sub" parent_id="'.$value['id_parent'].'">';
+					print '<tr class="oddeven'.$hide.'" id="sub-'.$value['id_parent'].'" data-ignoreidfordnd=1>';
 
 					//$productstatic->ref=$value['label'];
 					$productstatic->ref = $value['ref'];
