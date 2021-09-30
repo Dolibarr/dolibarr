@@ -1671,7 +1671,7 @@ abstract class CommonObject
 			return 0;
 		}
 
-		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE '.$this->table_ref_field.' LIKE "'.$this->db->escape($ref).'" LIMIT 1';
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE ".$this->table_ref_field." LIKE '".$this->db->escape($ref)."' LIMIT 1";
 
 		$query = $this->db->query($sql);
 
@@ -2900,7 +2900,7 @@ abstract class CommonObject
 
 		// Count number of lines to reorder (according to choice $renum)
 		$nl = 0;
-		$sql = 'SELECT count(rowid) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+		$sql = "SELECT count(rowid) FROM ".MAIN_DB_PREFIX.$this->table_element_line;
 		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
 		if (!$renum) {
 			$sql .= ' AND rang = 0';
@@ -2922,7 +2922,7 @@ abstract class CommonObject
 			$rows = array();
 
 			// We first search all lines that are parent lines (for multilevel details lines)
-			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$this->table_element_line;
 			$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
 			if ($fk_parent_line) {
 				$sql .= ' AND fk_parent_line IS NULL';
@@ -2970,7 +2970,7 @@ abstract class CommonObject
 	{
 		$rows = array();
 
-		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$this->table_element_line;
 		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
 		$sql .= ' AND fk_parent_line = '.((int) $id);
 		$sql .= ' ORDER BY rang ASC';
@@ -3148,8 +3148,8 @@ abstract class CommonObject
 	 */
 	public function getRangOfLine($rowid)
 	{
-		$sql = 'SELECT rang FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql .= ' WHERE rowid ='.((int) $rowid);
+		$sql = "SELECT rang FROM ".MAIN_DB_PREFIX.$this->table_element_line;
+		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog(get_class($this)."::getRangOfLine", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -3167,9 +3167,9 @@ abstract class CommonObject
 	 */
 	public function getIdOfLine($rang)
 	{
-		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$this->table_element_line;
 		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
-		$sql .= ' AND rang = '.((int) $rang);
+		$sql .= " AND rang = ".((int) $rang);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$row = $this->db->fetch_row($resql);
@@ -3196,7 +3196,7 @@ abstract class CommonObject
 		if ($fk_parent_line) {
 			$sql = "SELECT max(".$positionfield.") FROM ".MAIN_DB_PREFIX.$this->table_element_line;
 			$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
-			$sql .= ' AND fk_parent_line = '.((int) $fk_parent_line);
+			$sql .= " AND fk_parent_line = ".((int) $fk_parent_line);
 
 			dol_syslog(get_class($this)."::line_max", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -3412,7 +3412,7 @@ abstract class CommonObject
 			$sql .= ', situation_percent';
 		}
 		$sql .= ', multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element_line;
 		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
 		if ($exclspec) {
 			$product_field = 'product_type';
@@ -3572,7 +3572,7 @@ abstract class CommonObject
 			}
 
 			if (empty($nodatabaseupdate)) {
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
+				$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element.' SET';
 				$sql .= " ".$fieldht." = ".((float) price2num($this->total_ht)).",";
 				$sql .= " ".$fieldtva." = ".((float) price2num($this->total_tva)).",";
 				$sql .= " ".$fieldlocaltax1." = ".((float) price2num($this->total_localtax1)).",";
@@ -4267,8 +4267,8 @@ abstract class CommonObject
 	 */
 	public function getSpecialCode($lineid)
 	{
-		$sql = 'SELECT special_code FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql .= ' WHERE rowid = '.((int) $lineid);
+		$sql = "SELECT special_code FROM ".MAIN_DB_PREFIX.$this->table_element_line;
+		$sql .= " WHERE rowid = ".((int) $lineid);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$row = $this->db->fetch_row($resql);
@@ -6687,8 +6687,8 @@ abstract class CommonObject
 				}
 
 				$sqlwhere = '';
-				$sql = 'SELECT '.$keyList;
-				$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
+				$sql = "SELECT ".$keyList;
+				$sql .= " FROM ".MAIN_DB_PREFIX.$InfoFieldList[0];
 				if (!empty($InfoFieldList[4])) {
 					// can use SELECT request
 					if (strpos($InfoFieldList[4], '$SEL$') !== false) {
@@ -6839,7 +6839,7 @@ abstract class CommonObject
 				}
 
 				$sqlwhere = '';
-				$sql = 'SELECT '.$keyList;
+				$sql = "SELECT ".$keyList;
 				$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
 				if (!empty($InfoFieldList[4])) {
 					// can use SELECT request
@@ -7200,7 +7200,7 @@ abstract class CommonObject
 				$keyList .= implode(', ', $fields_label);
 			}
 
-			$sql = 'SELECT '.$keyList;
+			$sql = "SELECT ".$keyList;
 			$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
 			if (strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
@@ -7283,7 +7283,7 @@ abstract class CommonObject
 				$keyList .= implode(', ', $fields_label);
 			}
 
-			$sql = 'SELECT '.$keyList;
+			$sql = "SELECT ".$keyList;
 			$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
 			if (strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';

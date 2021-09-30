@@ -5087,7 +5087,7 @@ class Product extends CommonObject
 		$langs->load('products');
 
 		if (isset($this->finished) && $this->finished >= 0) {
-			$sql = 'SELECT label, code FROM '.MAIN_DB_PREFIX.'c_product_nature where code='.((int) $this->finished).' AND active=1';
+			$sql = "SELECT label, code FROM ".MAIN_DB_PREFIX."c_product_nature where code = ".((int) $this->finished)." AND active=1";
 			$resql = $this->db->query($sql);
 			if ($resql && $this->db->num_rows($resql) > 0) {
 				$res = $this->db->fetch_array($resql);

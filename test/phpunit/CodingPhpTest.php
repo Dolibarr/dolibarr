@@ -298,7 +298,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			$this->assertTrue($ok, 'Found non quoted or not casted var into sql request '.$file['relativename'].' - Bad.');
 			//exit;
 
-			// Check that forged sql string is using " as string PHP quotes
+			// Check that forged sql string is using ' instead of " as string PHP quotes
 			$ok=true;
 			$matches=array();
 			preg_match_all('/\$sql \.= \'\s*VALUES.*\$/', $filecontent, $matches, PREG_SET_ORDER);
@@ -314,18 +314,16 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			$this->assertTrue($ok, 'Found a forged SQL string that mix on same line the use of \' for PHP string and PHP variables into file '.$file['relativename'].' Use " to forge PHP string like this: $sql = "SELET ".$myvar...');
 			//exit;
 
-			// Check that forged sql string is using " as string PHP quotes
-			/*
+			// Check that forged sql string is using ' instead of " as string PHP quotes
 			$ok=true;
 			$matches=array();
-			preg_match_all('/\$sql \.*= \'SELECT.*\$/', $filecontent, $matches, PREG_SET_ORDER);
+			preg_match_all('/\$sql \.?= \'SELECT.*\$/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
 				var_dump($matches);
 				$ok=false;
 				break;
 			}
 			$this->assertTrue($ok, 'Found a forged SQL string that mix on same line the use of \' for PHP string and PHP variables into file '.$file['relativename'].' Use " to forge PHP string like this: $sql = "SELET ".$myvar...');
-			*/
 
 			// Check sql string VALUES ... , ".$xxx
 			//  with xxx that is not 'db-' (for $db->escape). It means we forget a ' if string, or an (int) if int, when forging sql request.
