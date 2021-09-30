@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Add current page to bookmarks
+AddThisPageToBookmarks=将当前页添加为书签
 Bookmark=书签
 Bookmarks=书签
 ListOfBookmarks=书签列表
-EditBookmarks=List/edit bookmarks
+EditBookmarks=书签列表/编辑
 NewBookmark=新建书签
 ShowBookmark=显示书签
 OpenANewWindow=打开一个新窗口
@@ -11,10 +11,11 @@ ReplaceWindow=替换当前窗口
 BookmarkTargetNewWindowShort=新窗口
 BookmarkTargetReplaceWindowShort=当前窗口
 BookmarkTitle=书签标题
-UrlOrLink=网址
-BehaviourOnClick=Behaviour when a bookmark URL is selected
+UrlOrLink=网址URL
+BehaviourOnClick=选择书签URL时的行为
 CreateBookmark=创建书签
 SetHereATitleForLink=设置书签标题
-UseAnExternalHttpLinkOrRelativeDolibarrLink=使用外部的HTTP URL或相对Dolibarr网址
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=选择链接页面必须在新窗口中打开或不打开
+UseAnExternalHttpLinkOrRelativeDolibarrLink=使用外网/绝对链接（https://URL）或内网/相对链接(/DOLIBARR_ROOT/htdocs/...)
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=选择链接页面在此窗口或新窗口中打开
 BookmarksManagement=书签管理
+BookmarksMenuShortCut=Ctrl + shift + m

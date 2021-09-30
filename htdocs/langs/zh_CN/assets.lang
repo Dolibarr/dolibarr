@@ -16,33 +16,33 @@
 #
 # Generic
 #
-Assets = 资产
-NewAsset = 新资产
-AccountancyCodeAsset = 科目代码（资产）
-AccountancyCodeDepreciationAsset = 科目代码（折旧资产帐户）
-AccountancyCodeDepreciationExpense = 科目代码（折旧费用帐户）
+Assets=资产
+NewAsset=新建资产
+AccountancyCodeAsset=会计代码（资产）
+AccountancyCodeDepreciationAsset=会计代码（折旧资产帐户）
+AccountancyCodeDepreciationExpense=会计代码（折旧费用帐户）
 NewAssetType=新资产类型
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
-AssetType=Asset type
+AssetsTypeSetup=资产类型设置
+AssetTypeModified=资产类型已修改
+AssetType=资产类型
 AssetsLines=资产
 DeleteType=删除
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
-ShowTypeCard=显示类型'%s'
+DeleteAnAssetType=删除资产类型
+ConfirmDeleteAssetType=你确定要删除这个资产类型吗？
+ShowTypeCard=显示类型“%s”
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = 资产
+ModuleAssetsName=资产
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = 资产说明
+ModuleAssetsDesc=资产说明
 
 #
 # Admin page
 #
-AssetsSetup = 资产设置
-Settings = 设置
-AssetsSetupPage = 资产设置页面
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
+AssetsSetup=资产设置
+Settings=设置
+AssetsSetupPage=资产设置页面
+ExtraFieldsAssetsType=附加属性（资产类型）
 AssetsType=资产类型
 AssetsTypeId=资产类型ID
 AssetsTypeLabel=资产类型标签
@@ -51,15 +51,17 @@ AssetsTypes=资产类型
 #
 # Menu
 #
-MenuAssets = 资产
-MenuNewAsset = 新资产
-MenuTypeAssets = 输入资产
-MenuListAssets = 名单
-MenuNewTypeAssets = 新建
-MenuListTypeAssets = 名单
+MenuAssets=资产
+MenuNewAsset=新建资产
+MenuTypeAssets=类型资产
+MenuListAssets=列表
+MenuNewTypeAssets=新建
+MenuListTypeAssets=列表
 
 #
 # Module
 #
-NewAssetType=新资产类型
-NewAsset=新资产
+Asset=资产
+NewAssetType=新建资产类型
+NewAsset=新建资产
+ConfirmDeleteAsset=你确定要删除这个资产吗 ?
