@@ -669,11 +669,46 @@ if (empty($reshook)) {
 					$error++;
 				}
 
+				$deposit = null;
+				$locationTarget = $_SERVER['PHP_SELF'] . '?id=' . $object->id;
+
+				if (!$error && GETPOST('statut', 'int') == $object::STATUS_SIGNED && GETPOST('generate_deposit', 'int') > 0) {
+					$deposit = Facture::createDepositFromOrigin($object, $user, 0, GETPOST('validate_generated_deposit', 'int') > 0);
+
+					if ($deposit) {
+						setEventMessage('DepositGenerated');
+						$locationTarget = DOL_URL_ROOT . '/compta/facture/card.php?id=' . $deposit->id;
+					} else {
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				}
+
 				if (!$error) {
 					$db->commit();
+
+					if ($deposit && empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+						$ret = $deposit->fetch($deposit->id); // Reload to get new records
+						$outputlangs = $langs;
+
+						if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+							$outputlangs = new Translate('', $conf);
+							$outputlangs->setDefaultLang($deposit->thirdparty->default_lang);
+							$outputlangs->load('products');
+						}
+
+						$result = $deposit->generateDocument($deposit->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+						if ($result < 0) {
+							setEventMessages($deposit->error, $deposit->errors, 'errors');
+						}
+					}
 				} else {
 					$db->rollback();
 				}
+
+				header('Location: ' . $locationTarget);
+				exit;
 			}
 		}
 	} elseif ($action == 'confirm_reopen' && $usercanclose && !GETPOST('cancel', 'alpha')) {
@@ -1921,6 +1956,71 @@ if ($action == 'create') {
 			array('type' => 'select', 'name' => 'statut', 'label' => '<span class="fieldrequired">'.$langs->trans("CloseAs").'</span>', 'values' => array($object::STATUS_SIGNED => $object->LibStatut($object::STATUS_SIGNED), $object::STATUS_NOTSIGNED => $object->LibStatut($object::STATUS_NOTSIGNED))),
 			array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"), 'value' => '')				// Field to complete private note (not replace)
 		);
+
+        $deposit_percent_from_payment_terms = getDictvalue(MAIN_DB_PREFIX . 'c_payment_term', 'deposit_percent', $object->cond_reglement_id);
+
+        if (! empty($deposit_percent_from_payment_terms)) {
+			$object->fetchObjectLinked();
+
+			$eligibleForDepositGeneration = true;
+
+			if (array_key_exists('facture', $object->linkedObjects)) {
+				foreach ($object->linkedObjectsIds['facture'] as $invoice) {
+					if ($invoice->type == Facture::TYPE_DEPOSIT) {
+						$eligibleForDepositGeneration = false;
+						break;
+					}
+				}
+			}
+
+			if ($eligibleForDepositGeneration && array_key_exists('commande', $object->linkedObjects)) {
+				foreach ($object->linkedObjects['commande'] as $order) {
+					$order->fetchObjectLinked();
+
+					if (array_key_exists('facture', $order->linkedObjects)) {
+						foreach ($order->linkedObjects['facture'] as $invoice) {
+							if ($invoice->type == Facture::TYPE_DEPOSIT) {
+								$eligibleForDepositGeneration = false;
+								break 2;
+							}
+						}
+					}
+				}
+			}
+
+			if ($eligibleForDepositGeneration) {
+				$formquestion[] = array(
+					'type' => 'onecolumn',
+					'name' => 'generate_deposit,validate_generated_deposit',
+					'value' => '
+						<div id="generate-deposit-box" style="display: none">
+							<p>' . $langs->trans('PaymentConditionPermitsDepositGenerationSelected') . '</p>
+							<p style="padding-left: 20%">
+								<input type="checkbox" name="generate_deposit" id="generate_deposit" value="1" checked />
+								<label for="generate_deposit">' . $langs->trans('GenerateDeposit', $object->deposit_percent) . '</label><br />
+								<input type="checkbox" name="validate_generated_deposit" id="validate_generated_deposit" value="1" checked />
+								<label for="validate_generated_deposit">' . $langs->trans('ValidateGeneratedDeposit') . '</label>
+							</p>
+						</div>
+						<script>
+							let signedValue = ' . $object::STATUS_SIGNED . ';
+
+							$(document).ready(function() {
+								$("#statut").change(function(event) {
+									if ($(this).val() == signedValue) {
+										$("#generate-deposit-box").show();
+									} else {
+										$("#generate-deposit-box").hide();
+									}
+
+									return true;
+								});
+							});
+						</script>
+					'
+				);
+			}
+        }
 
 		if (!empty($conf->notification->enabled)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
