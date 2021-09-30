@@ -4036,7 +4036,7 @@ class Product extends CommonObject
 				$rank = $obj->max_rank + 1;
 				//Addition of a product with the highest rank +1
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_association(fk_product_pere,fk_product_fils,qty,incdec,rang)";
-				$sql .= " VALUES (".((int) $id_pere).", ".((int) $id_fils).", ".((float) $qty).", ".((float) $incdec).", ".$this->db->escape($rank).")";
+				$sql .= " VALUES (".((int) $id_pere).", ".((int) $id_fils).", ".price2num($qty, 'MS').", ".price2num($incdec, 'MS').", ".((int) $rank).")";
 				if (! $this->db->query($sql)) {
 					dol_print_error($this->db);
 					return -1;
@@ -4092,11 +4092,11 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Retire le lien entre un sousproduit et un produit/service
+	 *  Remove a link between a subproduct and a parent product/service
 	 *
-	 * @param  int $fk_parent Id du produit auquel ne sera plus lie le produit lie
-	 * @param  int $fk_child  Id du produit a ne plus lie
-	 * @return int                    < 0 if KO, > 0 if OK
+	 * @param  int $fk_parent Id of parent product (child will no more be linked to it)
+	 * @param  int $fk_child  Id of child product
+	 * @return int            < 0 if KO, > 0 if OK
 	 */
 	public function del_sousproduit($fk_parent, $fk_child)
 	{
@@ -4118,18 +4118,18 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		//Updated ranks so that none are missing
-		$sqlrank = 'SELECT rowid, rang FROM '.MAIN_DB_PREFIX.'product_association';
-		$sqlrank.= ' WHERE fk_product_pere  = '.$this->db->escape($fk_parent);
-		$sqlrank.= ' ORDER BY rang';
+		// Updated ranks so that none are missing
+		$sqlrank = "SELECT rowid, rang FROM ".MAIN_DB_PREFIX."product_association";
+		$sqlrank.= " WHERE fk_product_pere = ".((int) $fk_parent);
+		$sqlrank.= " ORDER BY rang";
 		$resqlrank = $this->db->query($sqlrank);
 		if ($resqlrank) {
 			$cpt = 0;
 			while ($objrank = $this->db->fetch_object($resqlrank)) {
 				$cpt++;
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_association';
-				$sql.= ' SET rang ='.$cpt;
-				$sql.= ' WHERE rowid ='.$this->db->escape($objrank->rowid);
+				$sql = "UPDATE ".MAIN_DB_PREFIX."product_association";
+				$sql.= " SET rang = ".((int) $cpt);
+				$sql.= " WHERE rowid = ".((int) $objrank->rowid);
 				if (! $this->db->query($sql)) {
 					dol_print_error($this->db);
 					return -1;
