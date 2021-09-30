@@ -539,7 +539,7 @@ class FormProduct
 	 *
 	 * 	@return	string					HTML select
 	 */
-	public function selectLotStock($selected = '', $htmlname = 'batch_id', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array(), $empty_label = '', $forcecombo = 0, $events = array(), $morecss = 'minwidth200' )
+	public function selectLotStock($selected = '', $htmlname = 'batch_id', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array(), $empty_label = '', $forcecombo = 0, $events = array(), $morecss = 'minwidth200')
 	{
 		global $conf, $langs;
 
@@ -623,7 +623,7 @@ class FormProduct
 	 *
 	 *  @return	string					HTML datalist
 	 */
-	public function selectLot( $htmlname = 'batch_id', $empty = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array() )
+	public function selectLot($htmlname = 'batch_id', $empty = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array())
 	{
 		global $conf, $langs;
 
