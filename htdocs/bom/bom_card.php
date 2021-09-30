@@ -75,6 +75,7 @@ if ($object->id > 0) {
 	$object->calculateCosts();
 }
 
+
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
@@ -115,8 +116,13 @@ if (empty($reshook)) {
 
 	$triggermodname = 'BOM_MODIFY'; // Name of trigger action code to execute when we modify record
 
+
 	// Actions cancel, add, update, delete or clone
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+	// The fetch/fetch_lines was redone into the inc.php so we must recall the calculateCosts()
+	if ($action == 'confirm_validate' && $object->id > 0) {
+		$object->calculateCosts();
+	}
 
 	// Actions when linking object each other
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';

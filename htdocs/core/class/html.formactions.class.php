@@ -178,7 +178,8 @@ class FormActions
 		$sortfield = 'a.datep,a.id';
 		$sortorder = 'DESC,DESC';
 
-		$listofactions = ActionComm::getActions($this->db, $socid, $object->id, $typeelement, '', $sortfield, $sortorder, ($max ? ($max + 1) : 0));
+		$actioncomm = new ActionComm($this->db);
+		$listofactions = $actioncomm->getActions($socid, $object->id, $typeelement, '', $sortfield, $sortorder, ($max ? ($max + 1) : 0));
 		if (!is_array($listofactions)) {
 			dol_print_error($this->db, 'FailedToGetActions');
 		}

@@ -699,7 +699,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
 			if ($user->rights->agenda->allactions->create ||
 				(($actionstatic->authorid == $user->id || $actionstatic->userownerid == $user->id) && $user->rights->agenda->myactions->create)) {
-				$out .= '<a class="timeline-btn" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?action=edit&id='.$actionstatic->id.'"><i class="fa fa-pencil" title="'.$langs->trans("Modify").'" ></i></a>';
+				$out .= '<a class="timeline-btn" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?action=edit&token='.newToken().'&id='.$actionstatic->id.'"><i class="fa fa-pencil" title="'.$langs->trans("Modify").'" ></i></a>';
 			}
 
 			$out .= '</span>';

@@ -1295,7 +1295,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 
 			// Edit
 			if ($user->rights->societe->contact->creer) {
-				print '<a class="editfielda paddingleft" href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
+				print '<a class="editfielda paddingleft" href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
 				print img_edit();
 				print '</a>';
 			}
@@ -2003,7 +2003,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->code_client).'">'.$obj->code_client.'</td>';
 
 			print '<td class="center">';
-			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/societe/card.php?socid='.((int) $obj->rowid).'&action=edit">';
+			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/societe/card.php?socid='.((int) $obj->rowid).'&action=edit&token='.newToken().'">';
 			print img_edit();
 			print '</a></td>';
 

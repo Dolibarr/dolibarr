@@ -2,6 +2,21 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 15.0.0 compared to 14.0.0 *****
+
+For developers:
+---------------
+
+WARNING:
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* Update hook 'printOriginObjectLine', removed check on product type and special code. Need now reshook.
+* Old deprecated module "SimplePOS" has been completely removed. Use module "TakePOS" is you need a Point Of Sale.
+* The method static ActionComm::getActions($db, ...) is no more static. Use $actioncomm->getActions(...) instead (without $db param). 
+
+
+
 ***** ChangeLog for 14.0.2 compared to 14.0.1 *****
 
 FIX: #18353 Invoice list translation issue
@@ -84,19 +99,6 @@ FIX: totalDayAll hours in tasks
 FIX: update product lot
 FIX: using Tulip, deposit mask was not saved
 FIX: #yogosha6907
-
-
-***** ChangeLog for 15.0.0 compared to 14.0.0 *****
-
-For developers:
----------------
-
-WARNING:
-
-Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
-* Update hook 'printOriginObjectLine', removed check on product type and special code. Need now reshook.
-* Old deprecated module "SimplePOS" has been completely removed. Use module "TakePOS" is you need a Point Of Sale.
-
 
 
 ***** ChangeLog for 14.0.0 compared to 13.0.0 *****

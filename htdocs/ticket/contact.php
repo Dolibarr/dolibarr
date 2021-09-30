@@ -176,7 +176,7 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 		if (!empty($conf->societe->enabled)) {
 			$morehtmlref .= '<br>'.$langs->trans('ThirdParty');
 			/*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->socid && $user->rights->ticket->write) {
-				$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&amp;track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
+				$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&token='.newToken().'&track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
 			}*/
 			$morehtmlref .= ' : ';
 			if ($action == 'editcustomer') {
