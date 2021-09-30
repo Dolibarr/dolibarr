@@ -2440,11 +2440,11 @@ if ($action == 'create') {
 					print '</td>';
 
 					// Select project
-					if (!empty($conf->projet->enabled)) {
-						print '<td>';
-						$formproject->select_projects(-1, $fk_project, 'fk_project', 0, 0, $projectRequired ? 0 : 1, -1, 0, 0, 0, '', 0, 0, 'maxwidth300');
-						print '</td>';
-					}
+				if (!empty($conf->projet->enabled)) {
+					print '<td>';
+					$formproject->select_projects(-1, $fk_project, 'fk_project', 0, 0, $projectRequired ? 0 : 1, -1, 0, 0, 0, '', 0, 0, 'maxwidth300');
+					print '</td>';
+				}
 
 					// Select type
 					print '<td class="center">';
