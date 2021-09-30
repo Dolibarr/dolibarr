@@ -452,6 +452,9 @@ abstract class CommonDocGenerator
 
 		$array_key.'_bank_iban'=>$bank_account->iban,
 		$array_key.'_bank_bic'=>$bank_account->bic,
+		$array_key.'_bank_label'=>$bank_account->label,
+		$array_key.'_bank_number'=>$bank_account->number,
+		$array_key.'_bank_proprio'=>$bank_account->proprio,
 
 		$array_key.'_total_ht_locale'=>price($object->total_ht, 0, $outputlangs),
 		$array_key.'_total_vat_locale'=>(!empty($object->total_vat) ?price($object->total_vat, 0, $outputlangs) : price($object->total_tva, 0, $outputlangs)),
