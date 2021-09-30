@@ -1048,6 +1048,7 @@ if ($id)
     elseif ($search_code != '' && $id == 28)    $sql .= natural_search("h.code", $search_code);
     elseif ($search_code != '' && $id == 32)    $sql .= natural_search("a.code", $search_code);
     elseif ($search_code != '' && $id == 3)     $sql .= natural_search("r.code_region", $search_code);
+    elseif ($search_code != '' && $id == 10)    $sql .= natural_search("t.code", $search_code);
     elseif ($search_code != '' && $id != 9)     $sql .= natural_search("code", $search_code);
 
     if ($sortfield)
