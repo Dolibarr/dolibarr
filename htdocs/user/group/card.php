@@ -384,7 +384,7 @@ if ($action == 'create') {
 			}
 
 			if ($candisableperms) {
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&id='.$object->id.'&token='.newToken().'">'.$langs->trans("DeleteGroup").'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("DeleteGroup").'</a>';
 			}
 
 			print "</div>\n";
@@ -415,7 +415,7 @@ if ($action == 'create') {
 					print '<table class="noborder centpercent">'."\n";
 					print '<tr class="liste_titre"><td class="titlefield liste_titre">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
 					print '<td class="liste_titre">';
-					print $form->select_dolusers('', 'user', 1, $exclude, 0, '', '', $object->entity, 0, 0, '', 0, '', 'maxwidth300');
+					print $form->select_dolusers('', 'user', 1, $exclude, 0, '', '', $object->entity, 0, 0, '', 0, '', 'minwidth200 maxwidth500');
 					print ' &nbsp; ';
 					print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 					print '<input type="submit" class="button buttongen button-add" value="'.$langs->trans("Add").'">';

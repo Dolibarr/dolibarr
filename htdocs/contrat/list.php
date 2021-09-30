@@ -431,40 +431,40 @@ if ($search_ref_supplier != '') {
 if ($search_op2df != '') {
 	$param .= '&search_op2df='.urlencode($search_op2df);
 }
-if ($search_date_startday) {
+if ($search_date_startday > 0) {
 	$param .= '&search_date_startday='.urlencode($search_date_startday);
 }
-if ($search_date_startmonth) {
+if ($search_date_startmonth > 0) {
 	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
 }
-if ($search_date_startyear) {
+if ($search_date_startyear > 0) {
 	$param .= '&search_date_startyear='.urlencode($search_date_startyear);
 }
-if ($search_date_endday) {
+if ($search_date_endday > 0) {
 	$param .= '&search_date_endday='.urlencode($search_date_endday);
 }
-if ($search_date_endmonth) {
+if ($search_date_endmonth > 0) {
 	$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
 }
-if ($search_date_endyear) {
+if ($search_date_endyear > 0) {
 	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
 }
-if ($search_dfyear != '') {
+if ($search_dfyear > 0) {
 	$param .= '&search_dfyear='.urlencode($search_dfyear);
 }
-if ($search_dfmonth != '') {
+if ($search_dfmonth > 0) {
 	$param .= '&search_dfmonth='.urlencode($search_dfmonth);
 }
-if ($search_sale != '') {
+if ($search_sale > 0) {
 	$param .= '&search_sale='.urlencode($search_sale);
 }
-if ($search_user != '') {
+if ($search_user > 0) {
 	$param .= '&search_user='.urlencode($search_user);
 }
-if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
+if ($search_type_thirdparty > 0) {
 	$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 }
-if ($search_product_category != '') {
+if ($search_product_category > 0) {
 	$param .= '&search_product_category='.urlencode($search_product_category);
 }
 if ($show_files) {

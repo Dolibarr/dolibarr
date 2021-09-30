@@ -761,20 +761,21 @@ class FormCompany extends Form
 	/**
 	 *  Return a select list with types of contacts
 	 *
-	 *  @param	object		$object         Object to use to find type of contact
-	 *  @param  string		$selected       Default selected value
-	 *  @param  string		$htmlname		HTML select name
-	 *  @param  string		$source			Source ('internal' or 'external')
-	 *  @param  string		$sortorder		Sort criteria ('position', 'code', ...)
-	 *  @param  int			$showempty      1=Add en empty line
-	 *  @param  string      $morecss        Add more css to select component
-	 *  @param  int      	$output         0=return HTML, 1= direct print
+	 *  @param	object		$object         	Object to use to find type of contact
+	 *  @param  string		$selected       	Default selected value
+	 *  @param  string		$htmlname			HTML select name
+	 *  @param  string		$source				Source ('internal' or 'external')
+	 *  @param  string		$sortorder			Sort criteria ('position', 'code', ...)
+	 *  @param  int			$showempty      	1=Add en empty line
+	 *  @param  string      $morecss        	Add more css to select component
+	 *  @param  int      	$output         	0=return HTML, 1= direct print
 	 *  @param	int			$forcehidetooltip	Force hide tooltip for admin
-	 *  @return	void
+	 *  @return	string|void						Depending on $output param, return the HTML select list (recommended method) or nothing
 	 */
 	public function selectTypeContact($object, $selected, $htmlname = 'type', $source = 'internal', $sortorder = 'position', $showempty = 0, $morecss = '', $output = 1, $forcehidetooltip = 0)
 	{
 		global $user, $langs;
+
 		$out = '';
 		if (is_object($object) && method_exists($object, 'liste_type_contact')) {
 			$lesTypes = $object->liste_type_contact($source, $sortorder, 0, 1);

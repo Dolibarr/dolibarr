@@ -1254,7 +1254,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			// Modify
 			if ($object->statut != Project::STATUS_CLOSED && $user->rights->projet->creer) {
 				if ($userWrite > 0) {
-					print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+					print '<a class="butAction" href="card.php?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Modify').'</a>';
 				}
@@ -1263,7 +1263,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			// Validate
 			if ($object->statut == Project::STATUS_DRAFT && $user->rights->projet->creer) {
 				if ($userWrite > 0) {
-					print '<a class="butAction" href="card.php?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
+					print '<a class="butAction" href="card.php?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans("Validate").'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Validate').'</a>';
 				}

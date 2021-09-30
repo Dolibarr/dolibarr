@@ -129,6 +129,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 
 	if (!$error) {
 		$result = $object->create($user);
+		var_dump($object);exit;
 		if ($result > 0) {
 			// Creation OK
 			if ($conf->categorie->enabled && method_exists($object, 'setCategories')) {
@@ -236,7 +237,9 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 
 		if ($conf->categorie->enabled) {
 			$categories = GETPOST('categories', 'array');
-			$object->setCategories($categories);
+			if (method_exists($object, 'setCategories')) {
+				$object->setCategories($categories);
+			}
 		}
 	}
 

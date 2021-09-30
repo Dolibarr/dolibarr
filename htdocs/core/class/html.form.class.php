@@ -165,7 +165,7 @@ class Form
 				$ret .= '<td class="right">';
 			}
 			if ($htmlname && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) {
-				$ret .= '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;'.$paramid.'='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1)).'</a>';
+				$ret .= '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&token='.newToken().'&'.$paramid.'='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1)).'</a>';
 			}
 			if (!empty($notabletag) && $notabletag == 1) {
 				$ret .= ' : ';
@@ -7872,6 +7872,11 @@ class Form
 				} elseif ($objecttype == 'delivery') {
 					$tplpath = 'delivery';
 					if (empty($conf->expedition->enabled)) {
+						continue; // Do not show if module disabled
+					}
+				} elseif ($objecttype == 'mo') {
+					$tplpath = 'mrp/mo';
+					if (empty($conf->mrp->enabled)) {
 						continue; // Do not show if module disabled
 					}
 				} elseif ($objecttype == 'ficheinter') {

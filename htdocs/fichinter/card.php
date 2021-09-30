@@ -1146,7 +1146,7 @@ if ($action == 'create') {
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				$morehtmlref .= '<input type="submit" class="button button-edit valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
 				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
@@ -1350,21 +1350,21 @@ if ($action == 'create') {
 					// Icon to edit and delete
 					if ($object->statut == 0 && $user->rights->ficheinter->creer) {
 						print '<td class="center">';
-						print '<a class="editfielda marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;line_id='.$objp->rowid.'#'.$objp->rowid.'">';
+						print '<a class="editfielda marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&line_id='.$objp->rowid.'#'.$objp->rowid.'">';
 						print img_edit();
 						print '</a>';
-						print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=ask_deleteline&amp;line_id='.$objp->rowid.'">';
+						print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=ask_deleteline&token='.newToken().'&line_id='.$objp->rowid.'">';
 						print img_delete();
 						print '</a></td>';
 						print '<td class="center">';
 						if ($num > 1) {
 							if ($i > 0) {
-								print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=up&amp;line_id='.$objp->rowid.'">';
+								print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=up&token='.newToken().'&line_id='.$objp->rowid.'">';
 								print img_up();
 								print '</a>';
 							}
 							if ($i < $num - 1) {
-								print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=down&amp;line_id='.$objp->rowid.'">';
+								print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=down&token='.newToken().'&line_id='.$objp->rowid.'">';
 								print img_down();
 								print '</a>';
 							}
