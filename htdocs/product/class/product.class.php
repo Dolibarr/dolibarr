@@ -4021,22 +4021,22 @@ class Product extends CommonObject
 		}
 
 		// Check not already father of id_pere (to avoid father -> child -> father links)
-		$sql = 'SELECT fk_product_pere from '.MAIN_DB_PREFIX.'product_association';
-		$sql .= ' WHERE fk_product_pere  = '.((int) $id_fils).' AND fk_product_fils = '.((int) $id_pere);
+		$sql = "SELECT fk_product_pere from ".MAIN_DB_PREFIX."product_association";
+		$sql .= " WHERE fk_product_pere = ".((int) $id_fils)." AND fk_product_fils = ".((int) $id_pere);
 		if (!$this->db->query($sql)) {
 			dol_print_error($this->db);
 			return -1;
 		} else {
 			//Selection of the highest row
-			$sql = 'SELECT MAX(rang) as max_rank FROM '.MAIN_DB_PREFIX.'product_association';
-			$sql .= ' WHERE fk_product_pere  = '.$id_pere;
+			$sql = "SELECT MAX(rang) as max_rank FROM ".MAIN_DB_PREFIX."product_association";
+			$sql .= " WHERE fk_product_pere  = ".((int) $id_pere);
 			$resql = $this->db->query($sql);
 			if ($resql > 0) {
 				$obj = $this->db->fetch_object($resql);
 				$rank = $obj->max_rank + 1;
 				//Addition of a product with the highest rank +1
-				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty,incdec,rang)';
-				$sql .= ' VALUES ('.$id_pere.', '.$id_fils.', '.$qty.', '.$incdec.', '.$this->db->escape($rank).')';
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_association(fk_product_pere,fk_product_fils,qty,incdec,rang)";
+				$sql .= " VALUES (".((int) $id_pere).", ".((int) $id_fils).", ".((float) $qty).", ".((float) $incdec).", ".$this->db->escape($rank).")";
 				if (! $this->db->query($sql)) {
 					dol_print_error($this->db);
 					return -1;
