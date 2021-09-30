@@ -94,6 +94,16 @@ function skillrankPrepareHead($object)
 	return $head;
 }
 
+/**
+ * Used to print ranks of a skill into several case, view or edit pour js necessary to select a rank
+ *
+ * @param int $selected_rank rank we want to preselect
+ * @param int $fk_skill id of skill we display ranks
+ * @param string $inputname html name of input
+ * @param string $mode view or edit
+ *
+ * @return string string result
+ */
 function displayRankInfos($selected_rank, $fk_skill, $inputname = 'TNote', $mode = 'view')
 {
 	global $db, $conf, $langs;

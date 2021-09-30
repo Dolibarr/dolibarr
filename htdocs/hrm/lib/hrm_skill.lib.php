@@ -95,12 +95,6 @@ function skillPrepareHead($object)
 }
 
 
-//Affichage des 5 trades  pour cet object
-function showTraductionNote($object)
-{
-}
-
-
 /**
  * 		Show html area for list of traduction
  *

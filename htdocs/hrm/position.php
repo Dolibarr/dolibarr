@@ -188,17 +188,16 @@ llxHeader('', $title, $help_url);
 
 if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	DisplayJob($job);
-	DisplayPositionList($conf, $langs, $db);
+	DisplayPositionList();
 }
 
 
 /**
  * 		Show the top of the page including informations of a job
  *
- * 		@param	DoliDB			 $db			  Database handler
  * 		@param	Job		 	     $object		  Job object
- * 		@param  $permissiontoadd $permissiontoadd Rights/permissions
- * 		@return array
+ *
+ * 		@return void
  */
 function DisplayJob($object)
 {
@@ -266,16 +265,12 @@ function DisplayJob($object)
 
 /**
  * 		Show a list of positions for the current job
-
- *		@param	Conf			 $conf			  Object conf
- * 		@param	Translate		 $langs			  Object langs
- * 		@param	DoliDB			 $db			  Database handler
- * 		@param	Position	     $object		  Position object
- * 		@return array|void
+ *
+ * 		@return void
  */
-function DisplayPositionList($conf, $langs, $db)
+function DisplayPositionList()
 {
-	global $user,$langs, $db, $conf, $extrafields, $hookmanager, $permissiontoadd, $permissiontodelete;
+	global $user, $langs, $db, $conf, $extrafields, $hookmanager, $permissiontoadd, $permissiontodelete;
 
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
@@ -897,7 +892,7 @@ function DisplayPositionList($conf, $langs, $db)
 
 		print $formfile->showdocuments('massfilesarea_hrm', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 	}
-	return array($arrayfields, $object, $action, $obj, $totalarray);
+
 }
 
 // Part to create
