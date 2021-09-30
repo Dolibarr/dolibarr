@@ -617,12 +617,11 @@ class FormProduct
 	 *
 	 *  @param  string	$htmlname		Name of html select html
 	 *  @param  int		$empty			1=Can be empty, 0 if not
-	 * 	@param	int		$fk_product		show lot numbers of product with id fk_product. All from objectLines if 0.
-	 * 	@param	int		$fk_entrepot	filter lot numbers for warehouse with id fk_entrepot. All if 0.
-	 * 	@param	array	$objectLines	Only cache lot numbers for products in lines of object. If no lines only for fk_product. If no fk_product, all.
-	 *  @param int $use_baseval 1=uses batch as value within select
+	 *  @param	int		$fk_product		show lot numbers of product with id fk_product. All from objectLines if 0.
+	 *  @param	int		$fk_entrepot	filter lot numbers for warehouse with id fk_entrepot. All if 0.
+	 *  @param	array	$objectLines	Only cache lot numbers for products in lines of object. If no lines only for fk_product. If no fk_product, all.
 	 *
-	 * 	@return	string					HTML select
+	 *  @return	string					HTML datalist
 	 */
 	public function selectLot( $htmlname = 'batch_id', $empty = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array() )
 	{
