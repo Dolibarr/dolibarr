@@ -24,7 +24,7 @@
 /**
  *  \file       htdocs/product/composition/card.php
  *  \ingroup    product
- *  \brief      Page de la fiche produit
+ *  \brief      Page of product file
  */
 
 require '../../main.inc.php';
@@ -335,19 +335,28 @@ if ($id > 0 || !empty($ref)) {
 		print '<input type="hidden" name="action" value="save_composed_product" />';
 		print '<input type="hidden" name="id" value="'.$id.'" />';
 
-		print '<table id="tablelines" class="ui-sortable liste">';
+		print '<table id="tablelines" class="ui-sortable liste nobottom">';
 
 		print '<tr class="liste_titre nodrag nodrop">';
+		// Rank
 		print '<td>'.$langs->trans('Rank').'</td>';
+		// Product ref
 		print '<td>'.$langs->trans('ComposedProduct').'</td>';
+		// Product label
 		print '<td>'.$langs->trans('Label').'</td>';
+		// Min supplier price
 		print '<td class="right" colspan="2">'.$langs->trans('MinSupplierPrice').'</td>';
+		// Min customer price
 		print '<td class="right" colspan="2">'.$langs->trans('MinCustomerPrice').'</td>';
+		// Stock
 		if (!empty($conf->stock->enabled)) {
 			print '<td class="right">'.$langs->trans('Stock').'</td>';
 		}
+		// Qty in kit
 		print '<td class="center">'.$langs->trans('Qty').'</td>';
+		// Stoc inc/dev
 		print '<td class="center">'.$langs->trans('ComposedProductIncDecStock').'</td>';
+		// Move
 		print '<td class="linecolmove" style="width: 10px"></td>';
 		print '</tr>'."\n";
 
@@ -359,12 +368,16 @@ if ($id > 0 || !empty($ref)) {
 				if ($value['level'] <= 1) {
 					print '<tr id="'.$object->sousprods[$parent_label][$value['id']][6].'" class="drag drop oddeven level1">';
 
+					// Rank
 					print '<td>'.$object->sousprods[$parent_label][$value['id']][7].'</td>';
 
 					$notdefined = 0;
 					$nb_of_subproduct = $value['nb'];
 
+					// Product ref
 					print '<td>'.$productstatic->getNomUrl(1, 'composition').'</td>';
+
+					// Product label
 					print '<td>'.$productstatic->label.'</td>';
 
 					// Best buying price
@@ -423,8 +436,9 @@ if ($id > 0 || !empty($ref)) {
 						print '<td>'.($value['incdec'] == 1 ? 'x' : '').'</td>';
 					}
 
-					print '<td class="linecolmove tdlineupdown center">';
-					print '</td>';
+					// Move action
+					print '<td class="linecolmove tdlineupdown center"></td>';
+
 					print '</tr>'."\n";
 				} else {
 					$hide = '';
@@ -436,12 +450,18 @@ if ($id > 0 || !empty($ref)) {
 
 					//$productstatic->ref=$value['label'];
 					$productstatic->ref = $value['ref'];
+
+					// Rankd
 					print '<td></td>';
+
+					// Product ref
 					print '<td>';
 					for ($i = 0; $i < $value['level']; $i++) {
 						print ' &nbsp; &nbsp; '; // Add indentation
 					}
 					print $productstatic->getNomUrl(1, 'composition').'</td>';
+
+					// Product label
 					print '<td>'.$productstatic->label.'</td>';
 
 					// Best buying price
@@ -451,19 +471,36 @@ if ($id > 0 || !empty($ref)) {
 					print '<td>&nbsp;</td>';
 					print '<td>&nbsp;</td>';
 
+					// Stock
 					if (!empty($conf->stock->enabled)) {
 						print '<td></td>'; // Real stock
 					}
+
+					// Qty in kit
 					print '<td class="center">'.$value['nb'].'</td>';
+
+					// Inc/dec
 					print '<td>&nbsp;</td>';
+
+					// Action move
 					print '<td>&nbsp;</td>';
 
 					print '</tr>'."\n";
 				}
 			}
 
+
+			// Total
+
 			print '<tr class="liste_total">';
+
+			// Rank
+			print '<td></td>';
+
+			// Product ref
 			print '<td class="liste_total"></td>';
+
+			// Product label
 			print '<td class="liste_total"></td>';
 
 			// Minimum buying price
@@ -495,11 +532,16 @@ if ($id > 0 || !empty($ref)) {
 				print '<td class="liste_total right">&nbsp;</td>';
 			}
 
-			print '<td class="right" colspan="2">';
+			print '<td></td>';
+
+			print '<td class="center">';
 			if ($user->rights->produit->creer || $user->rights->service->creer) {
 				print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 			}
 			print '</td>';
+
+			print '<td></td>';
+
 			print '</tr>'."\n";
 		} else {
 			$colspan = 8;
