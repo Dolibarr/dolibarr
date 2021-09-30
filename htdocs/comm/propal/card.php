@@ -2025,7 +2025,7 @@ if ($action == 'create') {
 					'
 				);
 			}
-        }
+		}
 
 		if (!empty($conf->notification->enabled)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
