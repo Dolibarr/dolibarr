@@ -865,6 +865,7 @@ class ActionComm extends CommonObject
 					$this->fetchResources();
 				}
 			}
+
 			$this->db->free($resql);
 		} else {
 			$this->error = $this->db->lasterror();
