@@ -270,17 +270,6 @@ class Holiday extends CommonObject
 			$this->error = "ErrorBadParameterFkType"; return -1;
 		}
 
-		$checkBalance = getDictvalue(MAIN_DB_PREFIX.'c_holiday_types', 'block_if_negative', $this->fk_type);
-
-		if ($checkBalance > 0) {
-			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-
-			if ($balance < 0) {
-				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
-				return -1;
-			}
-		}
-
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday(";
 		$sql .= "ref,";
@@ -910,7 +899,7 @@ class Holiday extends CommonObject
 
 		$checkBalance = getDictvalue(MAIN_DB_PREFIX.'c_holiday_types', 'block_if_negative', $this->fk_type);
 
-		if ($checkBalance > 0) {
+		if ($checkBalance > 0 && $this->statut != self::STATUS_DRAFT) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
 
 			if ($balance < 0) {
