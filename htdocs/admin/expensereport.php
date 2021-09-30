@@ -145,7 +145,14 @@ if ($action == 'updateMask') {
 	$draft = GETPOST('EXPENSEREPORT_DRAFT_WATERMARK', 'alpha');
 	$res2 = dolibarr_set_const($db, "EXPENSEREPORT_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
 
-	if (!$res1 > 0 || !$res2 > 0) {
+	if ($conf->projet->enabled) {
+		$projects = GETPOST('EXPENSEREPORT_PROJECT_IS_REQUIRED', 'int');
+		$res3 = dolibarr_set_const($db, 'EXPENSEREPORT_PROJECT_IS_REQUIRED', intval($projects), 'chaine', 0, '', $conf->entity);
+	} else {
+		$res3 = dolibarr_del_const($this->db, 'EXPENSEREPORT_PROJECT_IS_REQUIRED', $conf->entity);
+	}
+
+	if (!$res1 > 0 || !$res2 > 0 || !$res3 > 0) {
 		$error++;
 	}
 
@@ -457,6 +464,14 @@ print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftExpenseReports"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '<input class="flat minwidth200" type="text" name="EXPENSEREPORT_DRAFT_WATERMARK" value="'.$conf->global->EXPENSEREPORT_DRAFT_WATERMARK.'">';
 print '</td></tr>'."\n";
+
+if ($conf->projet->enabled) {
+	print '<tr class="oddeven"><td>';
+	print $langs->trans('ProjectIsRequiredOnExpenseReports');
+	print '</td><td class="right">';
+	print $form->selectyesno('EXPENSEREPORT_PROJECT_IS_REQUIRED', empty($conf->global->EXPENSEREPORT_PROJECT_IS_REQUIRED) ? 0 : 1, 1);
+	print '</td></tr>';
+}
 
 print '</table>';
 
