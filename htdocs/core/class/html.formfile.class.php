@@ -1672,7 +1672,8 @@ class FormFile
 					dol_include_once($hookmanager->resArray['classpath']);
 					if (array_key_exists('classname', $hookmanager->resArray) && !empty($hookmanager->resArray['classname'])) {
 						if (class_exists($hookmanager->resArray['classname'])) {
-							$object_instance = new $hookmanager->resArray['classname']($this->db);
+							$tmpclassname = $hookmanager->resArray['classname'];
+							$object_instance = new $tmpclassname($this->db);
 						}
 					}
 				}
