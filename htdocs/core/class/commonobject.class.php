@@ -3038,7 +3038,7 @@ abstract class CommonObject
 	 *
 	 * 	@param	int		$rowid		Id of line
 	 * 	@param	int		$rang		Position
-	 * 	@return	void
+	 * 	@return	int					<0 if KO, >0 if OK
 	 */
 	public function updateRangOfLine($rowid, $rang)
 	{
@@ -3054,10 +3054,13 @@ abstract class CommonObject
 		dol_syslog(get_class($this)."::updateRangOfLine", LOG_DEBUG);
 		if (!$this->db->query($sql)) {
 			dol_print_error($this->db);
+			return -1;
+		} else {
+			$parameters=array('rowid'=>$rowid, 'rang'=>$rang, 'fieldposition' => $fieldposition);
+			$action='';
+			$reshook = $hookmanager->executeHooks('afterRankOfLineUpdate', $parameters, $this, $action);
+			return 1;
 		}
-		$parameters=array('rowid'=>$rowid, 'rang'=>$rang, 'fieldposition' => $fieldposition);
-		$action='';
-		$reshook = $hookmanager->executeHooks('afterRankOfLineUpdate', $parameters, $this, $action);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
