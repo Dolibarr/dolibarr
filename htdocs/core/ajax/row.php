@@ -101,7 +101,7 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		$perm = 1;
 	} elseif ($table_element_line == 'product_association' && $fk_element == 'fk_product' && !empty($user->rights->produit->creer)) {
 		$perm = 1;
-  } elseif ($table_element_line == 'projet_task' && $fk_element == 'fk_projet' && $user->rights->projet->creer) {
+	} elseif ($table_element_line == 'projet_task' && $fk_element == 'fk_projet' && $user->rights->projet->creer) {
 		$perm = 1;
 	} else {
 		$tmparray = explode('_', $table_element_line);
