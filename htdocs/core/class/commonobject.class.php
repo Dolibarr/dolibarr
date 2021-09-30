@@ -8682,7 +8682,7 @@ abstract class CommonObject
 			// If field is an implicit foreign key field
 			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && empty($values[$key])) {
 				if (isset($this->fields[$key]['default'])) {
-					$values[$key] = $this->fields[$key]['default'];
+					$values[$key] = ((int) $this->fields[$key]['default']);
 				} else {
 					$values[$key] = 'null';
 				}
@@ -8699,9 +8699,9 @@ abstract class CommonObject
 		$this->db->begin();
 
 		if (!$error) {
-			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' ('.implode(", ", $keys).')';
-			$sql .= ' VALUES ('.implode(", ", $values).')';
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element;
+			$sql .= " (".implode(", ", $keys).')';
+			$sql .= " VALUES (".implode(", ", $values).")";		// $values can contains 'abc' or 123
 
 			$res = $this->db->query($sql);
 			if ($res === false) {
@@ -8717,7 +8717,7 @@ abstract class CommonObject
 		// If we have a field ref with a default value of (PROV)
 		if (!$error) {
 			if (key_exists('ref', $this->fields) && $this->fields['ref']['notnull'] > 0 && key_exists('default', $this->fields['ref']) && $this->fields['ref']['default'] == '(PROV)') {
-				$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ref = '(PROV".$this->id.")' WHERE (ref = '(PROV)' OR ref = '') AND rowid = ".((int) $this->id);
+				$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ref = '(PROV".((int) $this->id).")' WHERE (ref = '(PROV)' OR ref = '') AND rowid = ".((int) $this->id);
 				$resqlupdate = $this->db->query($sql);
 
 				if ($resqlupdate === false) {

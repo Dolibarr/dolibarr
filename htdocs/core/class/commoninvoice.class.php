@@ -734,7 +734,7 @@ abstract class CommonInvoice extends CommonObject
 							$sql .= 'fk_facture, ';
 						}
 						$sql .= ' amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib, sourcetype, entity)';
-						$sql .= ' VALUES ('.((int) $this->id);
+						$sql .= " VALUES (".((int) $this->id);
 						$sql .= ", ".((float) price2num($amount));
 						$sql .= ", '".$this->db->idate($now)."'";
 						$sql .= ", ".((int) $fuser->id);
