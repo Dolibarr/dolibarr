@@ -735,7 +735,10 @@ class Mo extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
+		$result = $this->call_trigger('MRP_MO_DELETE', $user);
+
 		return $this->deleteCommon($user, $notrigger);
+
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}
 
