@@ -412,7 +412,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 $langs->load("projects");
 	 $morehtmlref .= '<br>'.$langs->trans('Project') . ' ';
 	 if ($permissiontoadd) {
-	 //if ($action != 'classify') $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
+	 //if ($action != 'classify') $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
 	 $morehtmlref .= ' : ';
 	 if ($action == 'classify') {
 	 //$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -556,7 +556,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (empty($reshook)) {
 			// Send
 			if (empty($user->socid)) {
-				print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init&token='.newToken().'#formmailbeforetitle');
+				print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle');
 			}
 
 			if ($object->status == $object::STATUS_DRAFT) {
@@ -643,14 +643,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$MAXEVENT = 10;
 
-		$morehtmlright = '<a href="'.dol_buildpath('/partnership/partnership_agenda.php', 1).'?id='.$object->id.'">';
+		$morehtmlright = '<a href="'.DOL_URL_ROOT.'/partnership/partnership_agenda.php?id='.$object->id.'">';
 		$morehtmlright .= $langs->trans("SeeAll");
 		$morehtmlright .= '</a>';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, $object->element.'@'.$object->module, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlright);
+		$somethingshown = $formactions->showactions($object, $object->element, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlright);
 
 		print '</div></div></div>';
 	}

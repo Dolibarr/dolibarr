@@ -184,17 +184,21 @@ class LangTest extends PHPUnit\Framework\TestCase
 			$tmplangs->setDefaultLang($langcode);
 			$tmplangs->load("main");
 
+			$result=$tmplangs->transnoentitiesnoconv("FONTFORPDF");
+			print __METHOD__." FONTFORPDF=".$result."\n";
+			$this->assertTrue(in_array($result, array('msungstdlight', 'stsongstdlight', 'helvetica', 'DejaVuSans', 'cid0jp', 'cid0kr', 'freemono')), 'Error bad value '.$result.' for FONTFORPDF in main.lang file '.$code);
+
 			$result=$tmplangs->transnoentitiesnoconv("DIRECTION");
 			print __METHOD__." DIRECTION=".$result."\n";
-			$this->assertTrue(in_array($result, array('rtl', 'ltr')), 'Error for vale of DIRECTION in main.lang file '.$code);
+			$this->assertTrue(in_array($result, array('rtl', 'ltr')), 'Error bad value for DIRECTION in main.lang file '.$code);
 
 			$result=$tmplangs->transnoentitiesnoconv("SeparatorDecimal");
 			print __METHOD__." SeparatorDecimal=".$result."\n";
-			$this->assertContains($result, array('.',',','/',' ','','None'), 'Error for decimal separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
+			$this->assertContains($result, array('.',',','/',' ','','None'), 'Error on decimal separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
 
 			$result=$tmplangs->transnoentitiesnoconv("SeparatorThousand");
 			print __METHOD__." SeparatorThousand=".$result."\n";
-			$this->assertContains($result, array('.',',','/',' ','','\'','None','Space'), 'Error for thousand separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
+			$this->assertContains($result, array('.',',','/',' ','','\'','None','Space'), 'Error on thousand separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
 
 			// Test java string contains only d,M,y,/,-,. and not m,...
 			$result=$tmplangs->transnoentitiesnoconv("FormatDateShortJava");

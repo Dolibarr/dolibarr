@@ -659,6 +659,12 @@ class Mo extends CommonObject
 					$role = 'toconsume';
 					$moline->role = 'toproduce';
 				}
+			} else {
+				if ($this->mrptype == 1) {
+					$moline->role = 'toconsume';
+				} else {
+					$moline->role = 'toproduce';
+				}
 			}
 
 			$resultline = $moline->create($user, false); // Never use triggers here
@@ -1021,9 +1027,9 @@ class Mo extends CommonObject
 			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 		}
 
-		$url = dol_buildpath('/mrp/mo_card.php', 1).'?id='.$this->id;
+		$url = DOL_URL_ROOT.'/mrp/mo_card.php?id='.$this->id;
 		if ($option == 'production') {
-			$url = dol_buildpath('/mrp/mo_production.php', 1).'?id='.$this->id;
+			$url = DOL_URL_ROOT.'/mrp/mo_production.php?id='.$this->id;
 		}
 
 		if ($option != 'nolink') {
@@ -1186,6 +1192,8 @@ class Mo extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->initAsSpecimenCommon();
+
+		$this->lines = array();
 	}
 
 	/**
@@ -1198,7 +1206,7 @@ class Mo extends CommonObject
 		$this->lines = array();
 
 		$objectline = new MoLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_mo = '.$this->id));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_mo = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;

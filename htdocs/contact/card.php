@@ -1172,25 +1172,25 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			if (!empty($conf->commande->enabled)) {
 				print '<tr><td>'.$langs->trans("ContactForOrders").'</td><td colspan="3">';
-				print $object->ref_commande ? $object->ref_commande : $langs->trans("NoContactForAnyOrder");
+				print $object->ref_commande ? $object->ref_commande : ('<span class="opacitymedium">'.$langs->trans("NoContactForAnyOrder").'</span>');
 				print '</td></tr>';
 			}
 
 			if (!empty($conf->propal->enabled)) {
 				print '<tr><td>'.$langs->trans("ContactForProposals").'</td><td colspan="3">';
-				print $object->ref_propal ? $object->ref_propal : $langs->trans("NoContactForAnyProposal");
+				print $object->ref_propal ? $object->ref_propal : ('<span class="opacitymedium">'.$langs->trans("NoContactForAnyProposal").'</span>');
 				print '</td></tr>';
 			}
 
 			if (!empty($conf->contrat->enabled)) {
 				print '<tr><td>'.$langs->trans("ContactForContracts").'</td><td colspan="3">';
-				print $object->ref_contrat ? $object->ref_contrat : $langs->trans("NoContactForAnyContract");
+				print $object->ref_contrat ? $object->ref_contrat : ('<span class="opacitymedium">'.$langs->trans("NoContactForAnyContract").'</span>');
 				print '</td></tr>';
 			}
 
 			if (!empty($conf->facture->enabled)) {
 				print '<tr><td>'.$langs->trans("ContactForInvoices").'</td><td colspan="3">';
-				print $object->ref_facturation ? $object->ref_facturation : $langs->trans("NoContactForAnyInvoice");
+				print $object->ref_facturation ? $object->ref_facturation : ('<span class="opacitymedium">'.$langs->trans("NoContactForAnyInvoice").'</span>');
 				print '</td></tr>';
 			}
 
@@ -1201,7 +1201,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$result = $dolibarr_user->fetch($object->user_id);
 				print $dolibarr_user->getLoginUrl(1);
 			} else {
-				print $langs->trans("NoDolibarrAccess");
+				print '<span class="opacitymedium">'.$langs->trans("NoDolibarrAccess").'</span>';
 			}
 			print '</td></tr>';
 
@@ -1288,7 +1288,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if ($objsoc->id > 0) {
 				$morehtmlref .= $objsoc->getNomUrl(1, 'contact');
 			} else {
-				$morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
+				$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("ContactNotLinkedToCompany").'</span>';
 			}
 		}
 		$morehtmlref .= '</div>';
@@ -1348,7 +1348,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print $langs->trans('ProspectLevel');
 				print '<td>';
 				if ($action != 'editlevel' && $user->rights->societe->contact->creer) {
-					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlevel&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify'), 1).'</a></td>';
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlevel&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('Modify'), 1).'</a></td>';
 				}
 				print '</tr></table>';
 				print '</td><td>';
@@ -1371,7 +1371,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						$titlealt = $val['label'];
 					}
 					if ($object->stcomm_id != $val['id']) {
-						print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&stcomm='.$val['code'].'&action=setstcomm&token='.newToken().'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
+						print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&stcomm='.urlencode($val['code']).'&action=setstcomm&token='.newToken().'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
 					}
 				}
 				print '</div></td></tr>';
@@ -1486,11 +1486,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			if ($user->rights->societe->contact->creer) {
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit">'.$langs->trans('Modify').'</a>';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans('Modify').'</a>';
 			}
 
 			if (!$object->user_id && $user->rights->user->user->creer) {
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create_user&token='.newToken().'">'.$langs->trans("CreateDolibarrLogin").'</a>';
 			}
 
 			// Activer

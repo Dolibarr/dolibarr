@@ -217,15 +217,15 @@ class Dolistore
 		for ($i = 0; $i < $nbofcateg; $i++) {
 			$cat = $this->categories[$i];
 			if ($cat->is_root_category == 1 && $parent == 0) {
-				$html .= '<li class="root"><h3 class="nomargesupinf"><a class="nomargesupinf link2cat" href="?mode=marketplace&categorie='.$cat->id.'" ';
-				$html .= 'title="'.dol_escape_htmltag(strip_tags($cat->description->language[$this->lang - 1])).'">'.$cat->name->language[$this->lang - 1].' <sup>'.$cat->nb_products_recursive.'</sup></a></h3>';
+				$html .= '<li class="root"><h3 class="nomargesupinf"><a class="nomargesupinf link2cat" href="?mode=marketplace&categorie='.((int) $cat->id).'" ';
+				$html .= 'title="'.dol_escape_htmltag(strip_tags($cat->description->language[$this->lang - 1])).'">'.dol_escape_htmltag($cat->name->language[$this->lang - 1]).' <sup>'.dol_escape_htmltag($cat->nb_products_recursive).'</sup></a></h3>';
 				$html .= self::get_categories($cat->id);
 				$html .= "</li>\n";
 			} elseif (trim($cat->id_parent) == $parent && $cat->active == 1 && trim($cat->id_parent) != 0) { // si cat est de ce niveau
 				$select = ($cat->id == $this->categorie) ? ' selected' : '';
-				$html .= '<li><a class="link2cat'.$select.'" href="?mode=marketplace&categorie='.$cat->id.'"';
+				$html .= '<li><a class="link2cat'.$select.'" href="?mode=marketplace&categorie='.((int) $cat->id).'"';
 				$html .= ' title="'.dol_escape_htmltag(strip_tags($cat->description->language[$this->lang - 1])).'" ';
-				$html .= '>'.$cat->name->language[$this->lang - 1].' <sup>'.$cat->nb_products_recursive.'</sup></a>';
+				$html .= '>'.dol_escape_htmltag($cat->name->language[$this->lang - 1]).' <sup>'.dol_escape_htmltag($cat->nb_products_recursive).'</sup></a>';
 				$html .= self::get_categories($cat->id);
 				$html .= "</li>\n";
 			}
@@ -267,9 +267,9 @@ class Dolistore
 
 			// add image or default ?
 			if ($product->id_default_image != '') {
-				$image_url = DOL_URL_ROOT.'/admin/dolistore/ajax/image.php?id_product='.$product->id.'&id_image='.$product->id_default_image;
-				$images = '<a href="'.$image_url.'" class="documentpreview" target="_blank" mime="image/png" title="'.$product->name->language[$this->lang - 1].', '.$langs->trans('Version').' '.$product->module_version.'">';
-				$images .= '<img src="'.$image_url.'&quality=home_default" style="max-height:250px;max-width: 210px;" alt="" /></a>';
+				$image_url = DOL_URL_ROOT.'/admin/dolistore/ajax/image.php?id_product='.((int) $product->id).'&id_image='.((int) $product->id_default_image);
+				$images = '<a href="'.urlencode($image_url).'" class="documentpreview" target="_blank" mime="image/png" title="'.dol_escape_htmltag($product->name->language[$this->lang - 1].', '.$langs->trans('Version').' '.$product->module_version).'">';
+				$images .= '<img src="'.urlencode($image_url).'&quality=home_default" style="max-height:250px;max-width: 210px;" alt="" /></a>';
 			} else {
 				$images = '<img src="'.DOL_URL_ROOT.'/admin/dolistore/img/NoImageAvailable.png" />';
 			}
@@ -277,11 +277,11 @@ class Dolistore
 			// free or pay ?
 			if ($product->price > 0) {
 				$price = '<h3>'.price(price2num($product->price, 'MT'), 0, $langs, 1, -1, -1, 'EUR').' '.$langs->trans("HT").'</h3>';
-				$download_link = '<a target="_blank" href="'.$this->shop_url.$product->id.'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/follow.png" /></a>';
+				$download_link = '<a target="_blank" href="'.urlencode($this->shop_url.$product->id).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/follow.png" /></a>';
 			} else {
 				$price         = '<h3>'.$langs->trans('Free').'</h3>';
-				$download_link = '<a target="_blank" href="'.$this->shop_url.$product->id.'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/Download-128.png" /></a>';
-				$download_link .= '<br><br><a target="_blank" href="'.$this->shop_url.$product->id.'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/follow.png" /></a>';
+				$download_link = '<a target="_blank" href="'.urlencode($this->shop_url.$product->id).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/Download-128.png" /></a>';
+				$download_link .= '<br><br><a target="_blank" href="'.urlencode($this->shop_url.$product->id).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/follow.png" /></a>';
 			}
 
 			//checking versions
@@ -319,14 +319,14 @@ class Dolistore
 			//.'<br><a class="inline-block valignmiddle" target="_blank" href="'.$this->shop_url.$product->id.'"><span class="details button">'.$langs->trans("SeeInMarkerPlace").'</span></a>
 
 			//output template
-			$html .= '<tr class="app oddeven '.$compatible.'">
-                <td class="center" width="210"><div class="newAppParent">'.$newapp.$images.'</div></td>
-                <td class="margeCote"><h2 class="appTitle">'.$product->name->language[$this->lang - 1]
-						.'<br><small>'.$version.'</small></h2>
-                    <small> '.dol_print_date(dol_stringtotime($product->date_upd), 'dayhour').' - '.$langs->trans('Ref').': '.$product->reference.' - '.$langs->trans('Id').': '.$product->id.'</small><br><br>'.$product->description_short->language[$this->lang - 1].'</td>';
+			$html .= '<tr class="app oddeven '.dol_escape_htmltag($compatible).'">
+                <td class="center" width="210"><div class="newAppParent">'.dol_escape_htmltag($newapp.$images).'</div></td>
+                <td class="margeCote"><h2 class="appTitle">'.dol_escape_htmltag($product->name->language[$this->lang - 1])
+						.'<br><small>'.dol_escape_htmltag($version).'</small></h2>
+                    <small> '.dol_print_date(dol_stringtotime($product->date_upd), 'dayhour').' - '.$langs->trans('Ref').': '.dol_escape_htmltag($product->reference).' - '.dol_escape_htmltag($langs->trans('Id')).': '.((int) $product->id).'</small><br><br>'.dol_escape_htmltag($product->description_short->language[$this->lang - 1]).'</td>';
 			// do not load if display none
 			//$html .= '<td style="display:none;" class="long_description">'.$product->description->language[$this->lang - 1].'</td>';
-			$html .= '<td class="margeCote center">'.$price.'</td>';
+			$html .= '<td class="margeCote center">'.dol_escape_htmltag($price).'</td>';
 			$html .= '<td class="margeCote">'.$download_link.'</td>';
 			$html .= '</tr>';
 		}
@@ -343,7 +343,7 @@ class Dolistore
 	public function get_previous_link($text = '<<')
 	{
 		// phpcs:enable
-		return '<a href="'.$this->get_previous_url().'" class="button">'.$text.'</a>';
+		return '<a href="'.$this->get_previous_url().'" class="button">'.dol_escape_htmltag($text).'</a>';
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -356,7 +356,7 @@ class Dolistore
 	public function get_next_link($text = '>>')
 	{
 		// phpcs:enable
-		return '<a href="'.$this->get_next_url().'" class="button">'.$text.'</a>';
+		return '<a href="'.$this->get_next_url().'" class="button">'.dol_escape_htmltag($text).'</a>';
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

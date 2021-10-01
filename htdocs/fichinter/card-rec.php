@@ -490,7 +490,7 @@ if ($action == 'create') {
 				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 				if ($user->rights->ficheinter->creer) {
 					if ($action != 'classify') {
-						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">';
+						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">';
 						$morehtmlref .= img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 					}
 					if ($action == 'classify') {
@@ -587,7 +587,7 @@ if ($action == 'create') {
 			print $langs->trans('Frequency');
 			print '</td>';
 			if ($action != 'editfrequency' && $user->rights->ficheinter->creer) {
-				print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editfrequency&amp;id='.$id.'">';
+				print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editfrequency&token='.newToken().'&id='.$id.'">';
 				print img_edit($langs->trans('Edit'), 1).'</a></td>';
 			}
 			print '</tr></table>';

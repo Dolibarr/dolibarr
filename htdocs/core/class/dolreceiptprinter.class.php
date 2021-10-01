@@ -388,9 +388,9 @@ class dolReceiptPrinter extends Printer
 	{
 		global $conf;
 		$error = 0;
-		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'printer_receipt';
-		$sql .= ' (name, fk_type, fk_profile, parameter, entity)';
-		$sql .= ' VALUES ("'.$this->db->escape($name).'", '.((int) $type).', '.((int) $profile).', "'.$this->db->escape($parameter).'", '.$conf->entity.')';
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."printer_receipt";
+		$sql .= " (name, fk_type, fk_profile, parameter, entity)";
+		$sql .= " VALUES ('".$this->db->escape($name)."', ".((int) $type).", ".((int) $profile).", '".$this->db->escape($parameter)."', ".((int) $conf->entity).")";
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;
@@ -413,12 +413,14 @@ class dolReceiptPrinter extends Printer
 	{
 		global $conf;
 		$error = 0;
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'printer_receipt';
-		$sql .= ' SET name="'.$this->db->escape($name).'"';
-		$sql .= ', fk_type='.((int) $type);
-		$sql .= ', fk_profile='.((int) $profile);
-		$sql .= ', parameter="'.$this->db->escape($parameter).'"';
-		$sql .= ' WHERE rowid='.((int) $printerid);
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."printer_receipt";
+		$sql .= " SET name='".$this->db->escape($name)."'";
+		$sql .= ", fk_type=".((int) $type);
+		$sql .= ", fk_profile=".((int) $profile);
+		$sql .= ", parameter='".$this->db->escape($parameter)."'";
+		$sql .= " WHERE rowid=".((int) $printerid);
+
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;
@@ -458,9 +460,9 @@ class dolReceiptPrinter extends Printer
 	{
 		global $conf;
 		$error = 0;
-		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'printer_receipt_template';
-		$sql .= ' (name, template, entity) VALUES ("'.$this->db->escape($name).'"';
-		$sql .= ', "'.$this->db->escape($template).'", '.$conf->entity.')';
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."printer_receipt_template";
+		$sql .= " (name, template, entity) VALUES ('".$this->db->escape($name)."'";
+		$sql .= ", '".$this->db->escape($template)."', ".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;
@@ -502,10 +504,11 @@ class dolReceiptPrinter extends Printer
 	{
 		global $conf;
 		$error = 0;
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'printer_receipt_template';
-		$sql .= ' SET name="'.$this->db->escape($name).'"';
-		$sql .= ', template="'.$this->db->escape($template).'"';
-		$sql .= ' WHERE rowid='.((int) $templateid);
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."printer_receipt_template";
+		$sql .= " SET name='".$this->db->escape($name)."'";
+		$sql .= ", template='".$this->db->escape($template)."'";
+		$sql .= " WHERE rowid=".((int) $templateid);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;

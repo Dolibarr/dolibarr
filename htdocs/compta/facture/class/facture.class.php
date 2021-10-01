@@ -2267,13 +2267,36 @@ class Facture extends CommonInvoice
 				$sql .= ' SET fk_facture = NULL, fk_facture_line = NULL';
 				$sql .= ' WHERE fk_facture_line IN ('.$this->db->sanitize(join(',', $list_rowid_det)).')';
 
-				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 				if (!$this->db->query($sql)) {
 					$this->error = $this->db->error()." sql=".$sql;
 					$this->errors[] = $this->error;
 					$this->db->rollback();
 					return -5;
 				}
+			}
+
+			// Remove other links to the deleted invoice
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'eventorganization_conferenceorboothattendee';
+			$sql .= ' SET fk_invoice = NULL';
+			$sql .= ' WHERE fk_invoice = '.((int) $rowid);
+
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->error()." sql=".$sql;
+				$this->errors[] = $this->error;
+				$this->db->rollback();
+				return -5;
+			}
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time';
+			$sql .= ' SET invoice_id = NULL, invoice_line_id = NULL';
+			$sql .= ' WHERE invoice_id = '.((int) $rowid);
+
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->error()." sql=".$sql;
+				$this->errors[] = $this->error;
+				$this->db->rollback();
+				return -5;
 			}
 
 			// If we decrease stock on invoice validation, we increase back if a warehouse id was provided
@@ -2299,16 +2322,12 @@ class Facture extends CommonInvoice
 			// Invoice line extrafileds
 			$main = MAIN_DB_PREFIX.'facturedet';
 			$ef = $main."_extrafields";
-			$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_facture = ".((int) $rowid).")";
+			$sqlef = "DELETE FROM ".$ef." WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_facture = ".((int) $rowid).")";
 			// Delete invoice line
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.((int) $rowid);
 
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-
 			if ($this->db->query($sqlef) && $this->db->query($sql) && $this->delete_linked_contact()) {
 				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.((int) $rowid);
-
-				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 
 				$resql = $this->db->query($sql);
 				if ($resql) {
@@ -5764,7 +5783,7 @@ class FactureLigne extends CommonInvoiceLine
 				return 0;
 			}
 
-			$sql = 'SELECT situation_percent FROM '.MAIN_DB_PREFIX.'facturedet WHERE rowid='.((int) $this->fk_prev_id);
+			$sql = "SELECT situation_percent FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".((int) $this->fk_prev_id);
 			$resql = $this->db->query($sql);
 			if ($resql && $resql->num_rows > 0) {
 				$res = $this->db->fetch_array($resql);
@@ -5774,9 +5793,9 @@ class FactureLigne extends CommonInvoiceLine
 				if ($include_credit_note) {
 					$sql = 'SELECT fd.situation_percent FROM '.MAIN_DB_PREFIX.'facturedet fd';
 					$sql .= ' JOIN '.MAIN_DB_PREFIX.'facture f ON (f.rowid = fd.fk_facture) ';
-					$sql .= ' WHERE fd.fk_prev_id = '.((int) $this->fk_prev_id);
-					$sql .= ' AND f.situation_cycle_ref = '.((int) $invoicecache[$invoiceid]->situation_cycle_ref); // Prevent cycle outed
-					$sql .= ' AND f.type = '.Facture::TYPE_CREDIT_NOTE;
+					$sql .= " WHERE fd.fk_prev_id = ".((int) $this->fk_prev_id);
+					$sql .= " AND f.situation_cycle_ref = ".((int) $invoicecache[$invoiceid]->situation_cycle_ref); // Prevent cycle outed
+					$sql .= " AND f.type = ".Facture::TYPE_CREDIT_NOTE;
 
 					$res = $this->db->query($sql);
 					if ($res) {

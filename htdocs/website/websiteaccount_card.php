@@ -230,7 +230,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		{
 			if ($action != 'classify')
 			{
-				$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				if ($action == 'classify') {
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 					$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -302,7 +302,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			if ($user->rights->website->write) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a></div>'."\n";
 			}
 
 			/*
@@ -344,7 +344,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'websiteaccount', $socid, 1, '', $MAXEVENT);
+		$somethingshown = $formactions->showactions($object, $object->element, $socid, 1, '', $MAXEVENT);
 		*/
 
 		print '</div></div></div>';

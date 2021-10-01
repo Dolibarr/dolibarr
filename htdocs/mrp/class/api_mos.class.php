@@ -476,13 +476,13 @@ class Mos extends DolibarrApi
 						if (isset($line->fk_warehouse)) {	// If there is a warehouse to set
 							if (!($line->fk_warehouse > 0)) {	// If there is no warehouse set.
 								$langs->load("errors");
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref));
 								$error++;
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref));
 							}
 							if ($tmpproduct->status_batch) {
 								$langs->load("errors");
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref));
 								$error++;
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref));
 							}
 						}
 						$idstockmove = 0;
@@ -535,13 +535,13 @@ class Mos extends DolibarrApi
 						if (isset($line->fk_warehouse)) {	// If there is a warehouse to set
 							if (!($line->fk_warehouse > 0)) {	// If there is no warehouse set.
 								$langs->load("errors");
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref));
 								$error++;
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref));
 							}
 							if ($tmpproduct->status_batch) {
 								$langs->load("errors");
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref));
 								$error++;
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref));
 							}
 						}
 						$idstockmove = 0;
@@ -716,7 +716,7 @@ class Mos extends DolibarrApi
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}
-				$myobject[$field] = $data[$field];
+			$myobject[$field] = $data[$field];
 		}
 		return $myobject;
 	}

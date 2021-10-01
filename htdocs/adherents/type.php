@@ -318,6 +318,19 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			print "</tr>";
 			$i++;
 		}
+
+		// If no record found
+		if ($num == 0) {
+			/*$colspan = 1;
+			foreach ($arrayfields as $key => $val) {
+				if (!empty($val['checked'])) {
+					$colspan++;
+				}
+			}*/
+			$colspan = 8;
+			print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+		}
+
 		print "</table>";
 		print '</div>';
 
@@ -481,12 +494,12 @@ if ($rowid > 0) {
 
 		// Edit
 		if ($user->rights->adherent->configurer) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&amp;rowid='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
 		}
 
 		// Add
 		if ($user->rights->adherent->configurer && !empty($object->status)) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&typeid='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.$langs->trans("AddMember").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&token='.newToken().'&typeid='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.$langs->trans("AddMember").'</a></div>';
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoAddMember")).'">'.$langs->trans("AddMember").'</a></div>';
 		}
@@ -728,10 +741,10 @@ if ($rowid > 0) {
 				// Actions
 				print '<td class="center">';
 				if ($user->rights->adherent->creer) {
-					print '<a class="editfielda marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=edit&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
+					print '<a class="editfielda marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=edit&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
 				}
 				if ($user->rights->adherent->supprimer) {
-					print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resign">'.img_picto($langs->trans("Resiliate"), 'disable.png').'</a>';
+					print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resign&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'disable.png').'</a>';
 				}
 				print "</td>";
 

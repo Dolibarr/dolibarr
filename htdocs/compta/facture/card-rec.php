@@ -433,8 +433,8 @@ if (empty($reshook)) {
 			$tva_tx = '';
 		}
 
-		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
-		$remise_percent = price2num(GETPOST('remise_percent'.$predef), 2);
+		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS', 2);
+		$remise_percent = price2num(GETPOST('remise_percent'.$predef), '', 2);
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -781,6 +781,8 @@ if (empty($reshook)) {
 				$result = -1;
 		}*/
 
+		$remise_percent = price2num(GETPOST('remise_percent'), '', 2);
+
 		// Check minimum price
 		$productid = GETPOST('productid', 'int');
 		if (!empty($productid)) {
@@ -797,7 +799,7 @@ if (empty($reshook)) {
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
 			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
-			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT) && $price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent', 2)) / 100) < price2num($price_min)))) {
+			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT) && $price_min && (price2num($pu_ht) * (1 - $remise_percent / 100) < price2num($price_min)))) {
 				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), null, 'errors');
 				$error++;
 			}
@@ -830,8 +832,8 @@ if (empty($reshook)) {
 				$vat_rate,
 				$localtax1_rate,
 				$localtax1_rate,
-				GETPOST('productid'),
-				price2num(GETPOST('remise_percent'), 2),
+				GETPOST('productid', 'int'),
+				$remise_percent,
 				'HT',
 				$info_bits,
 				0,
@@ -1199,7 +1201,7 @@ if ($action == 'create') {
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->facture->creer) {
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 				}
 				if ($action == 'classify') {
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -1225,6 +1227,8 @@ if ($action == 'create') {
 			}
 		}
 		$morehtmlref .= '</div>';
+
+		$morehtmlright = '';
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'title', 'none', $morehtmlref, '', 0, '', $morehtmlright);
 
@@ -1265,7 +1269,7 @@ if ($action == 'create') {
 		print $langs->trans('PaymentConditionsShort');
 		print '</td>';
 		if ($action != 'editconditions' && $user->rights->facture->creer) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
@@ -1286,7 +1290,7 @@ if ($action == 'create') {
 		print $langs->trans('PaymentMode');
 		print '</td>';
 		if ($action != 'editmode' && $user->rights->facture->creer) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
@@ -1306,7 +1310,7 @@ if ($action == 'create') {
 			print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
 			print '</td>';
 			if ($usercancreate && $action != 'editmulticurrencycode' && !empty($object->brouillon)) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencycode&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencycode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td><td>';
@@ -1322,7 +1326,7 @@ if ($action == 'create') {
 				print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
 				print '</td>';
 				if ($usercancreate && $action != 'editmulticurrencyrate' && !empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
-					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencyrate&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
+					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencyrate&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 				}
 				print '</tr></table>';
 				print '</td><td>';
@@ -1394,7 +1398,7 @@ if ($action == 'create') {
 		print $langs->trans('BankAccount');
 		print '<td>';
 		if (($action != 'editbankaccount') && $user->rights->facture->creer && $object->statut == FactureRec::STATUS_DRAFT) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
@@ -1412,7 +1416,7 @@ if ($action == 'create') {
 		print $langs->trans('Model');
 		print '<td>';
 		if (($action != 'editmodelpdf') && $user->rights->facture->creer && $object->statut == FactureRec::STATUS_DRAFT) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmodelpdf&amp;id='.$object->id.'">'.img_edit($langs->trans('SetModel'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmodelpdf&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetModel'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
@@ -1459,7 +1463,7 @@ if ($action == 'create') {
 		print $langs->trans('Frequency');
 		print '</td>';
 		if ($action != 'editfrequency' && $user->rights->facture->creer) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editfrequency&amp;facid='.$object->id.'">'.img_edit($langs->trans('Edit'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editfrequency&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('Edit'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';

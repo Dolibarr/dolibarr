@@ -399,8 +399,8 @@ if (empty($reshook)) {
 					$object->cond_reglement_id = GETPOST('cond_reglement_id');
 					$object->mode_reglement_id = GETPOST('mode_reglement_id');
 					$object->fk_account = GETPOST('fk_account', 'int');
-					$object->remise_percent = price2num(GETPOST('remise_percent'), 2);
-					$object->remise_absolue = price2num(GETPOST('remise_absolue'), 'MU');
+					$object->remise_percent = price2num(GETPOST('remise_percent'), '', 2);
+					$object->remise_absolue = price2num(GETPOST('remise_absolue'), 'MU', 2);
 					$object->socid = GETPOST('socid', 'int');
 					$object->contact_id = GETPOST('contactid', 'int');
 					$object->fk_project = GETPOST('projectid', 'int');
@@ -841,8 +841,8 @@ if (empty($reshook)) {
 			$tva_tx = '';
 		}
 
-		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
-		$remise_percent = price2num(GETPOST('remise_percent'.$predef), 2);
+		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS', 2);
+		$remise_percent = price2num(GETPOST('remise_percent'.$predef), '', 2);
 		if (empty($remise_percent)) {
 			$remise_percent = 0;
 		}
@@ -1229,6 +1229,8 @@ if (empty($reshook)) {
 		$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 
+		$remise_percent = price2num(GETPOST('remise_percent'), '', 2);
+
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
 		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
@@ -1241,7 +1243,7 @@ if (empty($reshook)) {
 		}
 
 		// Define special_code for special lines
-		$special_code = GETPOST('special_code');
+		$special_code = GETPOST('special_code', 'int');
 		if (!GETPOST('qty')) {
 			$special_code = 3;
 		}
@@ -1260,7 +1262,7 @@ if (empty($reshook)) {
 			}
 
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
-			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && ($price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent'), 2) / 100) < price2num($price_min)))) {
+			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && ($price_min && (price2num($pu_ht) * (1 - $remise_percent / 100) < price2num($price_min)))) {
 				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), null, 'errors');
 				$error++;
 			}
@@ -1290,7 +1292,7 @@ if (empty($reshook)) {
 
 			$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 
-			$result = $object->updateline(GETPOST('lineid', 'int'), $pu_ht, $qty, price2num(GETPOST('remise_percent'), 2), $vat_rate, $localtax1_rate, $localtax2_rate, $description, 'HT', $info_bits, $special_code, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_options, GETPOST("units"), $pu_ht_devise);
+			$result = $object->updateline(GETPOST('lineid', 'int'), $pu_ht, $qty, $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $description, 'HT', $info_bits, $special_code, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_options, GETPOST("units"), $pu_ht_devise);
 
 			if ($result >= 0) {
 				$db->commit();
@@ -1358,9 +1360,9 @@ if (empty($reshook)) {
 		// Terms of payment
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
 	} elseif ($action == 'setremisepercent' && $usercancreate) {
-		$result = $object->set_remise_percent($user, price2num(GETPOST('remise_percent')));
+		$result = $object->set_remise_percent($user, price2num(GETPOST('remise_percent'), '', 2));
 	} elseif ($action == 'setremiseabsolue' && $usercancreate) {
-		$result = $object->set_remise_absolue($user, price2num(GETPOST('remise_absolue')));
+		$result = $object->set_remise_absolue($user, price2num(GETPOST('remise_absolue'), 'MU', 2));
 	} elseif ($action == 'setmode' && $usercancreate) {
 		// Payment choice
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
@@ -1972,6 +1974,21 @@ if ($action == 'create') {
 			$text .= $notify->confirmMessage('PROPAL_VALIDATE', $object->socid, $object);
 		}
 
+		// mandatoryPeriod
+		$nbMandated = 0;
+		foreach ($object->lines as $line) {
+			$res = $line->fetch_product();
+			if ($res  > 0  ) {
+				if ($line->product->isService() && $line->product->isMandatoryPeriod() && (empty($line->date_start) || empty($line->date_end) )) {
+					$nbMandated++;
+					break;
+				}
+			}
+		}
+		if ($nbMandated > 0) {
+			$text .= '<div><span class="clearboth nowraponall warning">'.$langs->trans("mandatoryPeriodNeedTobeSetMsgValidate").'</span></div>';
+		}
+
 		if (!$error) {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateProp'), $text, 'confirm_validate', '', 0, 1);
 		}
@@ -2009,7 +2026,7 @@ if ($action == 'create') {
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($usercancreate) {
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -2076,7 +2093,7 @@ if ($action == 'create') {
 	print $langs->trans('DatePropal');
 	print '</td>';
 	if ($action != 'editdate' && $object->statut == Propal::STATUS_DRAFT && $usercancreate) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td class="valuefield">';
@@ -2103,7 +2120,7 @@ if ($action == 'create') {
 	print $langs->trans('DateEndPropal');
 	print '</td>';
 	if ($action != 'editecheance' && $object->statut == Propal::STATUS_DRAFT && $usercancreate) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editecheance&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editecheance&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td class="valuefield">';
@@ -2133,7 +2150,7 @@ if ($action == 'create') {
 	print $langs->trans('PaymentConditionsShort');
 	print '</td>';
 	if ($action != 'editconditions' && $object->statut == Propal::STATUS_DRAFT && $usercancreate) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetConditions'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetConditions'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td class="valuefield">';
@@ -2152,7 +2169,7 @@ if ($action == 'create') {
 	print $langs->trans('PaymentMode');
 	print '</td>';
 	if ($action != 'editmode' && $object->statut == Propal::STATUS_DRAFT && $usercancreate) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMode'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMode'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td class="valuefieldcreate">';
@@ -2181,7 +2198,7 @@ if ($action == 'create') {
 	}
 	print '</td>';
 	if ($action != 'editavailability' && $object->statut == Propal::STATUS_DRAFT && $usercancreate) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editavailability&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetAvailability'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editavailability&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetAvailability'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td class="valuefield">';
@@ -2201,7 +2218,7 @@ if ($action == 'create') {
 		print $langs->trans('SendingMethod');
 		print '</td>';
 		if ($action != 'editshippingmethod' && $usercancreate) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td class="valuefield">';
@@ -2238,7 +2255,7 @@ if ($action == 'create') {
 	print $langs->trans('Source');
 	print '</td>';
 	if ($action != 'editdemandreason' && $object->statut == Propal::STATUS_DRAFT && $usercancreate) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDemandReason'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDemandReason'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td class="valuefield">';
@@ -2259,7 +2276,7 @@ if ($action == 'create') {
 		print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
 		print '</td>';
 		if ($action != 'editmulticurrencycode' && $object->statut == $object::STATUS_DRAFT && $usercancreate) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencycode&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencycode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td class="valuefield">';
@@ -2279,7 +2296,7 @@ if ($action == 'create') {
 			print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
 			print '</td>';
 			if ($action != 'editmulticurrencyrate' && $object->statut == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency && $usercancreate) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencyrate&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencyrate&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td><td class="valuefield">';
@@ -2320,7 +2337,7 @@ if ($action == 'create') {
 		print $langs->trans('BankAccount');
 		print '</td>';
 		if ($action != 'editbankaccount' && $usercancreate) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td class="valuefield">';
@@ -2356,7 +2373,7 @@ if ($action == 'create') {
 		print $langs->trans('IncotermLabel');
 		print '<td><td class="right">';
 		if ($usercancreate) {
-			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/comm/propal/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/comm/propal/card.php?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
 		} else {
 			print '&nbsp;';
 		}
@@ -2542,7 +2559,7 @@ if ($action == 'create') {
 
 				// ReOpen
 				if ( (( ! empty($conf->global->PROPAL_REOPEN_UNSIGNED_ONLY) && $object->statut == Propal::STATUS_NOTSIGNED) || (empty($conf->global->PROPAL_REOPEN_UNSIGNED_ONLY) && ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED))) && $usercanclose) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen'.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#reopen').'"';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#reopen').'"';
 					print '>'.$langs->trans('ReOpen').'</a>';
 				}
 
@@ -2550,7 +2567,7 @@ if ($action == 'create') {
 				if (empty($user->socid)) {
 					if ($object->statut == Propal::STATUS_VALIDATED || $object->statut == Propal::STATUS_SIGNED || !empty($conf->global->PROPOSAL_SENDBYEMAIL_FOR_ALL_STATUS)) {
 						if ($usercansend) {
-							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
 						} else {
 							print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('SendMail').'</a>';
 						}
@@ -2593,13 +2610,13 @@ if ($action == 'create') {
 				// Create an invoice and classify billed
 				if ($object->statut == Propal::STATUS_SIGNED && empty($conf->global->PROPOSAL_ARE_NOT_BILLABLE)) {
 					if (!empty($conf->facture->enabled) && $usercancreateinvoice) {
-						print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddBill").'</a>';
+						print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
 					}
 
 					$arrayofinvoiceforpropal = $object->getInvoiceArrayList();
 					if ((is_array($arrayofinvoiceforpropal) && count($arrayofinvoiceforpropal) > 0) || empty($conf->global->WORKFLOW_PROPAL_NEED_INVOICE_TO_BE_CLASSIFIED_BILLED)) {
 						if ($usercanclose) {
-							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled&amp;socid='.$object->socid.'">'.$langs->trans("ClassifyBilled").'</a>';
+							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=classifybilled&token='.newToken().'&socid='.$object->socid.'">'.$langs->trans("ClassifyBilled").'</a>';
 						} else {
 							print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("ClassifyBilled").'</a>';
 						}
@@ -2609,7 +2626,7 @@ if ($action == 'create') {
 				// Close as accepted/refused
 				if ($object->statut == Propal::STATUS_VALIDATED) {
 					if ($usercanclose) {
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=closeas'.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close').'"';
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=closeas&token='.newToken().(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close').'"';
 						print '>'.$langs->trans('SetAcceptedRefused').'</a>';
 					} else {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'"';
@@ -2619,12 +2636,12 @@ if ($action == 'create') {
 
 				// Clone
 				if ($usercancreate) {
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;token='.newToken().'&amp;object='.$object->element.'">'.$langs->trans("ToClone").'</a>';
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object='.$object->element.'">'.$langs->trans("ToClone").'</a>';
 				}
 
 				// Delete
 				if ($usercandelete) {
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'"';
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'"';
 					print '>'.$langs->trans('Delete').'</a>';
 				}
 			}

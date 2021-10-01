@@ -338,25 +338,25 @@ if (empty($reshook)) {
 
 				// If no start date
 				if (empty($_POST['date_debut_'])) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&error=nodatedebut');
+					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'&error=nodatedebut');
 					exit;
 				}
 
 				// If no end date
 				if (empty($_POST['date_fin_'])) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&error=nodatefin');
+					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'&error=nodatefin');
 					exit;
 				}
 
 				// If start date after end date
 				if ($date_debut > $date_fin) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&error=datefin');
+					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'&error=datefin');
 					exit;
 				}
 
 				// If no validator designated
 				if ($approverid < 1) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&error=Valideur');
+					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'&error=Valideur');
 					exit;
 				}
 
@@ -467,22 +467,24 @@ if (empty($reshook)) {
 
 				$message .= $langs->transnoentities("HolidaysToValidateBody")."\n";
 
-				$delayForRequest = $object->getConfCP('delayForRequest');
-				//$delayForRequest = $delayForRequest * (60*60*24);
-
-				$nextMonth = dol_time_plus_duree($now, $delayForRequest, 'd');
 
 				// option to warn the validator in case of too short delay
-				if ($object->getConfCP('AlertValidatorDelay')) {
-					if ($object->date_debut < $nextMonth) {
-						$message .= "\n";
-						$message .= $langs->transnoentities("HolidaysToValidateDelay", $object->getConfCP('delayForRequest'))."\n";
+				if (empty($conf->global->HOLIDAY_HIDE_APPROVER_ABOUT_TOO_LOW_DELAY)) {
+					$delayForRequest = 0;		// TODO Set delay depending of holiday leave type
+					if ($delayForRequest) {
+						$nowplusdelay = dol_time_plus_duree($now, $delayForRequest, 'd');
+
+						if ($object->date_debut < $nowplusdelay) {
+							$message .= "\n";
+							$message .= $langs->transnoentities("HolidaysToValidateDelay", $delayForRequest)."\n";
+						}
 					}
 				}
 
 				// option to notify the validator if the balance is less than the request
-				if ($object->getConfCP('AlertValidatorSolde')) {
+				if (empty($conf->global->HOLIDAY_HIDE_APPROVER_ABOUT_NEGATIVE_BALANCE)) {
 					$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
+
 					if ($nbopenedday > $object->getCPforUser($object->fk_user, $object->fk_type)) {
 						$message .= "\n";
 						$message .= $langs->transnoentities("HolidaysToValidateAlertSolde")."\n";
@@ -565,9 +567,10 @@ if (empty($reshook)) {
 				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
 				$newSolde = ($soldeActuel - $nbopenedday);
+				$label = $langs->transnoentitiesnoconv("Holidays").' - '.$object->ref;
 
 				// The modification is added to the LOG
-				$result = $object->addLogCP($user->id, $object->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $object->fk_type);
+				$result = $object->addLogCP($user->id, $object->fk_user, $label, $newSolde, $object->fk_type);
 				if ($result < 0) {
 					$error++;
 					setEventMessages(null, $object->errors, 'errors');
@@ -923,12 +926,6 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 			setEventMessages($errors, null, 'errors');
 		}
-
-
-		$delayForRequest = $object->getConfCP('delayForRequest');
-		//$delayForRequest = $delayForRequest * (60*60*24);
-
-		$nextMonth = dol_time_plus_duree($now, $delayForRequest, 'd');
 
 
 		print '<script type="text/javascript">
@@ -1342,7 +1339,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					}
 					$include_users = $object->fetch_users_approver_holiday();
 					if (is_array($include_users) && in_array($user->id, $include_users) && $object->statut == Holiday::STATUS_VALIDATED) {
-						print '<a class="editfielda paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editvalidator">'.img_edit($langs->trans("Edit")).'</a>';
+						print '<a class="editfielda paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editvalidator&token='.newToken().'">'.img_edit($langs->trans("Edit")).'</a>';
 					}
 					print '</td>';
 					print '</tr>';
@@ -1454,11 +1451,11 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print '<div class="tabsAction">';
 
 					if ($cancreate && $object->statut == Holiday::STATUS_DRAFT) {
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit" class="butAction">'.$langs->trans("EditCP").'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'" class="butAction">'.$langs->trans("EditCP").'</a>';
 					}
 
 					if ($cancreate && $object->statut == Holiday::STATUS_DRAFT) {		// If draft
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=sendToValidate" class="butAction">'.$langs->trans("Validate").'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=sendToValidate&token='.newToken().'" class="butAction">'.$langs->trans("Validate").'</a>';
 					}
 
 					if ($object->statut == Holiday::STATUS_VALIDATED) {	// If validated
@@ -1551,10 +1548,6 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 			$MAXEVENT = 10;
-
-			/*$morehtmlright = '<a href="'.dol_buildpath('/holiday/myobject_agenda.php', 1).'?id='.$object->id.'">';
-			$morehtmlright .= $langs->trans("SeeAll");
-			$morehtmlright .= '</a>';*/
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

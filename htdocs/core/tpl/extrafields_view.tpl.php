@@ -194,6 +194,9 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 			if ($object->element == 'contact') {
 				$permok = $user->rights->societe->contact->creer;
 			}
+			if ($object->element == 'salary') {
+				$permok = $user->rights->salaries->read;
+			}
 
 			$isdraft = ((isset($object->statut) && $object->statut == 0) || (isset($object->status) && $object->status == 0));
 			if (($isdraft || !empty($extrafields->attributes[$object->table_element]['alwayseditable'][$tmpkeyextra]))
@@ -205,7 +208,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 					$fieldid = 'socid';
 				}
 
-				print '<td class="right"><a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$valueid.'&action=edit_extras&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1">'.img_edit().'</a></td>';
+				print '<td class="right"><a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$valueid.'&action=edit_extras&token='.newToken().'&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1">'.img_edit().'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td>';

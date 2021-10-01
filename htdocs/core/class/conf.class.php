@@ -826,9 +826,10 @@ class Conf
 				$this->global->MAIN_MODULE_DOLISTORE_API_KEY = 'dolistorecatalogpublickey1234567';
 			}
 
-			// If we are in develop mode, we activate the option MAIN_SECURITY_CSRF_WITH_TOKEN to 1 if not already defined.
-			if (!isset($this->global->MAIN_SECURITY_CSRF_WITH_TOKEN) && $this->global->MAIN_FEATURES_LEVEL >= 2) {
-				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 1;
+			// Enable by default the CSRF protection by token.
+			if (!isset($this->global->MAIN_SECURITY_CSRF_WITH_TOKEN)) {
+				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 1;	// Value 2 uses also CSRF check for all GET requests
+				// Note: Set MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL=1 to have a renewal of token at each page call instead of each session (not recommended)
 			}
 
 			if (defined('MAIN_ANTIVIRUS_COMMAND')) {

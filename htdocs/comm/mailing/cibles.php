@@ -424,7 +424,7 @@ if ($object->fetch($id) >= 0) {
 
 					print '<div class="tagtd right">';
 					if ($allowaddtarget) {
-						print '<input type="submit" class="button" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
+						print '<input type="submit" class="button button-add" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
 					} else {
 						print '<input type="submit" class="button disabled" disabled="disabled" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
 						//print $langs->trans("MailNoChangePossible");

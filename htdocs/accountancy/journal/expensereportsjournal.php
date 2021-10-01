@@ -610,7 +610,7 @@ if (empty($action) || $action == 'view') {
 				$userstatic->id = $tabuser[$key]['id'];
 				$userstatic->name = $tabuser[$key]['name'];
 				print "<td>".$userstatic->getNomUrl(0, 'user', 16).' - '.$accountingaccount->label."</td>";
-				print '<td class="right nowraponall amount amount">'.($mt >= 0 ? price($mt) : '')."</td>";
+				print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 				print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 				print "</tr>";
 			}

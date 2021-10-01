@@ -345,7 +345,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 $langs->load("projects");
 	 $morehtmlref .= '<br>'.$langs->trans('Project') . ' ';
 	 if ($permissiontoadd) {
-	 //if ($action != 'classify') $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
+	 //if ($action != 'classify') $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
 	 $morehtmlref .= ' : ';
 	 if ($action == 'classify') {
 	 //$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -440,7 +440,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (empty($reshook)) {
 			// Modify
 			if ($permissiontoadd) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit">'.$langs->trans("Modify").'</a>'."\n";
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>'."\n";
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
 			}

@@ -43,9 +43,7 @@ if (!empty($conf->propal->enabled)) {
 if (!empty($conf->commande->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
-if (!empty($conf->productbatch->enabled)) {
-	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
-}
+require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionlinebatch.class.php';
 
 
 /**
@@ -1188,7 +1186,6 @@ class Expedition extends CommonObject
 		global $conf, $langs, $user;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
 
 		$error = 0;
 		$this->error = '';
@@ -1230,6 +1227,9 @@ class Expedition extends CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$cpt = $this->db->num_rows($resql);
+
+				$shipmentlinebatch = new ExpeditionLineBatch($this->db);
+
 				for ($i = 0; $i < $cpt; $i++) {
 					dol_syslog(get_class($this)."::delete movement index ".$i);
 					$obj = $this->db->fetch_object($resql);
@@ -1240,11 +1240,12 @@ class Expedition extends CommonObject
 					// get lot/serial
 					$lotArray = null;
 					if ($conf->productbatch->enabled) {
-						$lotArray = ExpeditionLineBatch::fetchAll($this->db, $obj->expeditiondet_id);
+						$lotArray = $shipmentlinebatch->fetchAll($obj->expeditiondet_id);
 						if (!is_array($lotArray)) {
 							$error++; $this->errors[] = "Error ".$this->db->lasterror();
 						}
 					}
+
 					if (empty($lotArray)) {
 						// no lot/serial
 						// We increment stock of product (and sub-products)
@@ -1276,7 +1277,8 @@ class Expedition extends CommonObject
 
 		// delete batch expedition line
 		if (!$error && $conf->productbatch->enabled) {
-			if (ExpeditionLineBatch::deletefromexp($this->db, $this->id) < 0) {
+			$shipmentlinebatch = new ExpeditionLineBatch($this->db);
+			if ($shipmentlinebatch->deleteFromShipment($this->id) < 0) {
 				$error++; $this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
@@ -1372,7 +1374,6 @@ class Expedition extends CommonObject
 		global $conf, $langs, $user;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
 
 		$error = 0;
 		$this->error = '';
@@ -1458,17 +1459,18 @@ class Expedition extends CommonObject
 			}
 		}
 
-		// delete batch expedition line
-		if (!$error && $conf->productbatch->enabled) {
-			if (ExpeditionLineBatch::deletefromexp($this->db, $this->id) < 0) {
+		// delete batch expedition line (we try deletion even if module not enabled in case of the module were enabled and disabled previously)
+		if (!$error) {
+			$shipmentlinebatch = ExpeditionLineBatch($this->db);
+			if ($shipmentlinebatch->deleteFromShipment($this->id) < 0) {
 				$error++; $this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
 		if (!$error) {
-					$main = MAIN_DB_PREFIX.'expeditiondet';
-					$ef = $main."_extrafields";
-					$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_expedition = ".((int) $this->id).")";
+			$main = MAIN_DB_PREFIX.'expeditiondet';
+			$ef = $main."_extrafields";
+			$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_expedition = ".((int) $this->id).")";
 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
 			$sql .= " WHERE fk_expedition = ".((int) $this->id);
@@ -1480,8 +1482,8 @@ class Expedition extends CommonObject
 					$error++;
 				}
 
-								// delete extrafields
-								$res = $this->deleteExtraFields();
+				// delete extrafields
+				$res = $this->deleteExtraFields();
 				if ($res < 0) {
 					$error++;
 				}
@@ -1597,6 +1599,7 @@ class Expedition extends CommonObject
 			$this->total_localtax2 = 0;
 
 			$line = new ExpeditionLigne($this->db);
+			$shipmentlinebatch = new ExpeditionLineBatch($this->db);
 
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
@@ -1695,9 +1698,8 @@ class Expedition extends CommonObject
 
 				// Detail of batch
 				if (!empty($conf->productbatch->enabled) && $obj->line_id > 0 && $obj->product_tobatch > 0) {
-					require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
+					$newdetailbatch = $shipmentlinebatch->fetchAll($obj->line_id, $obj->fk_product);
 
-					$newdetailbatch = ExpeditionLineBatch::fetchAll($this->db, $obj->line_id, $obj->fk_product);
 					if (is_array($newdetailbatch)) {
 						if ($originline != $obj->fk_origin_line) {
 							$line->detail_batch = $newdetailbatch;
@@ -2925,8 +2927,9 @@ class ExpeditionLigne extends CommonObjectLine
 			}
 
 			// fetch remaining lot qty
-			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
-			if (!$error && ($lotArray = ExpeditionLineBatch::fetchAll($this->db, $this->id)) < 0) {
+			$shipmentlinebatch = new ExpeditionLineBatch($this->db);
+
+			if (!$error && ($lotArray = $shipmentlinebatch->fetchAll($this->id)) < 0) {
 				$this->errors[] = $this->db->lasterror()." - ExpeditionLineBatch::fetchAll";
 				$error++;
 			} else {

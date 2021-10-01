@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       expedition/class/expeditionbatch.class.php
+ *  \file       htdocs/expedition/class/expeditionlinebatch.class.php
  *  \ingroup    productbatch
  *  \brief      This file implements CRUD method for managing shipment batch lines
  *				with batch record
@@ -33,7 +33,10 @@ class ExpeditionLineBatch extends CommonObject
 	 */
 	public $element = 'expeditionlignebatch';
 
-	private static $_table_element = 'expeditiondet_batch'; //!< Name of table without prefix where object is stored
+	/**
+	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
+	 */
+	public $table_element = 'expeditiondet_batch';
 
 	public $sellby;
 	public $eatby;
@@ -43,6 +46,7 @@ class ExpeditionLineBatch extends CommonObject
 	public $entrepot_id;
 	public $fk_origin_stock;
 	public $fk_expeditiondet;
+
 
 	/**
 	 *  Constructor
@@ -74,6 +78,7 @@ class ExpeditionLineBatch extends CommonObject
 		$sql .= " WHERE pb.rowid = ".(int) $id_stockdluo;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
@@ -106,7 +111,7 @@ class ExpeditionLineBatch extends CommonObject
 
 		$id_line_expdet = (int) $id_line_expdet;
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX.self::$_table_element." (";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (";
 		$sql .= "fk_expeditiondet";
 		$sql .= ", sellby";
 		$sql .= ", eatby";
@@ -129,7 +134,8 @@ class ExpeditionLineBatch extends CommonObject
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.self::$_table_element);
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
+
 			$this->fk_expeditiondet = $id_line_expdet;
 			return $this->id;
 		} else {
@@ -145,17 +151,16 @@ class ExpeditionLineBatch extends CommonObject
 	/**
 	 * Delete batch record attach to a shipment
 	 *
-	 * @param	DoliDB	$db				Database object
 	 * @param	int		$id_expedition	rowid of shipment
 	 * @return 	int						-1 if KO, 1 if OK
 	 */
-	public static function deletefromexp($db, $id_expedition)
+	public function deleteFromShipment($id_expedition)
 	{
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX.self::$_table_element;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE fk_expeditiondet in (SELECT rowid FROM ".MAIN_DB_PREFIX."expeditiondet WHERE fk_expedition=".((int) $id_expedition).")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
-		if ($db->query($sql)) {
+		if ($this->db->query($sql)) {
 			return 1;
 		} else {
 			return -1;
@@ -165,12 +170,11 @@ class ExpeditionLineBatch extends CommonObject
 	/**
 	 * Retrieve all batch number detailed information of a shipment line
 	 *
-	 * @param	DoliDB		$db					Database object
 	 * @param	int			$id_line_expdet		id of shipment line
 	 * @param	int			$fk_product			If provided, load also detailed information of lot
 	 * @return	int|array						-1 if KO, array of ExpeditionLineBatch if OK
 	 */
-	public static function fetchAll($db, $id_line_expdet, $fk_product = 0)
+	public function fetchAll($id_line_expdet, $fk_product = 0)
 	{
 		$sql = "SELECT";
 		$sql .= " eb.rowid,";
@@ -184,25 +188,24 @@ class ExpeditionLineBatch extends CommonObject
 			$sql .= ", pl.sellby";
 			$sql .= ", pl.eatby";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX.self::$_table_element." as eb";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as eb";
 		if ($fk_product > 0) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON pl.batch = eb.batch AND pl.fk_product = ".((int) $fk_product);
 		}
 		$sql .= " WHERE fk_expeditiondet=".(int) $id_line_expdet;
 
 		dol_syslog(__METHOD__."", LOG_DEBUG);
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql) {
-			$num = $db->num_rows($resql);
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			$ret = array();
 			while ($i < $num) {
-				$tmp = new self($db);
+				$obj = $this->db->fetch_object($resql);
 
-				$obj = $db->fetch_object($resql);
-
-				$tmp->sellby = $db->jdate($obj->sellby ? $obj->sellby : $obj->oldsellby);
-				$tmp->eatby = $db->jdate($obj->eatby ? $obj->eatby : $obj->oldeatby);
+				$tmp = new self($this->db);
+				$tmp->sellby = $this->db->jdate($obj->sellby ? $obj->sellby : $obj->oldsellby);
+				$tmp->eatby = $this->db->jdate($obj->eatby ? $obj->eatby : $obj->oldeatby);
 				$tmp->batch = $obj->batch;
 				$tmp->id = $obj->rowid;
 				$tmp->fk_origin_stock = $obj->fk_origin_stock;
@@ -213,10 +216,12 @@ class ExpeditionLineBatch extends CommonObject
 				$ret[] = $tmp;
 				$i++;
 			}
-			$db->free($resql);
+
+			$this->db->free($resql);
+
 			return $ret;
 		} else {
-			dol_print_error($db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}

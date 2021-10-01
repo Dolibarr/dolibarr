@@ -101,7 +101,7 @@ function ticket_prepare_head($object)
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	$upload_dir = $conf->ticket->dir_output."/".$object->ref;
 	$nbFiles = count(dol_dir_list($upload_dir, 'files'));
-	$head[$h][0] = dol_buildpath('/ticket/document.php', 1).'?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/ticket/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
 	if ($nbFiles > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbFiles.'</span>';
@@ -699,7 +699,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
 			if ($user->rights->agenda->allactions->create ||
 				(($actionstatic->authorid == $user->id || $actionstatic->userownerid == $user->id) && $user->rights->agenda->myactions->create)) {
-				$out .= '<a class="timeline-btn" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?action=edit&id='.$actionstatic->id.'"><i class="fa fa-pencil" title="'.$langs->trans("Modify").'" ></i></a>';
+				$out .= '<a class="timeline-btn" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?action=edit&token='.newToken().'&id='.$actionstatic->id.'"><i class="fa fa-pencil" title="'.$langs->trans("Modify").'" ></i></a>';
 			}
 
 			$out .= '</span>';

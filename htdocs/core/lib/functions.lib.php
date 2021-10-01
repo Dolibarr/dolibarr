@@ -2508,7 +2508,7 @@ function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
  *										False or 0 or 'tzserver' = local to server TZ
  *										'auto'
  *										'tzuser' = local to user TZ taking dst into account at the current date. Not yet implemented.
- *										'tzuserrel' = local to user TZ taking dst into account at the given date. Use this one to convert date input from user.
+ *										'tzuserrel' = local to user TZ taking dst into account at the given date. Use this one to convert date input from user into a GMT date.
  *										'tz,TimeZone' = use specified timezone
  *	@param	int			$check			0=No check on parameters (Can use day 32, etc...)
  *	@return	int|string					Date as a timestamp, '' or false if error
@@ -3615,7 +3615,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'margin', 'map-marker-alt', 'member', 'meeting', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 				'off', 'on', 'order',
 				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'stock', 'resize', 'service', 'stats', 'trip',
-				'security', 'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
+				'security', 'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'switch_on_red', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
 				'github', 'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
@@ -3659,7 +3659,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'member'=>'user-alt', 'meeting'=>'chalkboard-teacher', 'mrp'=>'cubes', 'next'=>'arrow-alt-circle-right',
 				'trip'=>'wallet', 'expensereport'=>'wallet', 'group'=>'users', 'movement'=>'people-carry',
 				'sign-out'=>'sign-out-alt',
-				'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star',
+				'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'switch_on_red'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star',
 				'bank'=>'university', 'close_title'=>'times', 'delete'=>'trash', 'edit'=>'pencil-alt', 'filter'=>'filter',
 				'list-alt'=>'list-alt', 'calendar'=>'calendar-alt', 'calendarmonth'=>'calendar-alt', 'calendarweek'=>'calendar-week', 'calendarmonth'=>'calendar-alt', 'calendarday'=>'calendar-day', 'calendarperuser'=>'table',
 				'intervention'=>'ambulance', 'invoice'=>'file-invoice-dollar', 'multicurrency'=>'dollar-sign', 'order'=>'file-invoice',
@@ -3720,7 +3720,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			// Define $marginleftonlyshort
 			$arrayconvpictotomarginleftonly = array(
 				'bank', 'check', 'delete', 'generic', 'grip', 'grip_title', 'jabber',
-				'grip_title', 'grip', 'listlight', 'note', 'on', 'off', 'playdisabled', 'printer', 'resize', 'sign-out', 'stats', 'switch_on', 'switch_off',
+				'grip_title', 'grip', 'listlight', 'note', 'on', 'off', 'playdisabled', 'printer', 'resize', 'sign-out', 'stats', 'switch_on', 'switch_on_red', 'switch_off',
 				'uparrow', '1uparrow', '1downarrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected'
 			);
 			if (!isset($arrayconvpictotomarginleftonly[$pictowithouttext])) {
@@ -3732,7 +3732,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'action'=>'infobox-action', 'account'=>'infobox-bank_account', 'accountline'=>'infobox-bank_account', 'accountancy'=>'infobox-bank_account', 'asset'=>'infobox-bank_account',
 				'bank_account'=>'bg-infobox-bank_account',
 				'bill'=>'infobox-commande', 'billa'=>'infobox-commande', 'billr'=>'infobox-commande', 'billd'=>'infobox-commande',
-				'conferenceorbooth'=>'infobox-project',
+				'margin'=>'infobox-bank_account', 'conferenceorbooth'=>'infobox-project',
 				'cash-register'=>'infobox-bank_account', 'contract'=>'infobox-contrat', 'check'=>'font-status4', 'collab'=>'infobox-action', 'conversation'=>'infobox-contrat',
 				'donation'=>'infobox-commande', 'dolly'=>'infobox-commande',  'dollyrevert'=>'flip infobox-order_supplier',
 				'ecm'=>'infobox-action', 'eventorganization'=>'infobox-project',
@@ -3742,7 +3742,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'members'=>'infobox-adherent', 'member'=>'infobox-adherent', 'money-bill-alt'=>'infobox-bank_account',
 				'order'=>'infobox-commande',
 				'user'=>'infobox-adherent', 'users'=>'infobox-adherent',
-				'error'=>'pictoerror', 'warning'=>'pictowarning', 'switch_on'=>'font-status4',
+				'error'=>'pictoerror', 'warning'=>'pictowarning', 'switch_on'=>'font-status4', 'switch_on_red'=>'font-status8',
 				'holiday'=>'infobox-holiday', 'info'=>'opacityhigh', 'invoice'=>'infobox-commande',
 				'knowledgemanagement'=>'infobox-contrat rotate90', 'loan'=>'infobox-bank_account',
 				'payment'=>'infobox-bank_account', 'poll'=>'infobox-adherent', 'pos'=>'infobox-bank_account', 'project'=>'infobox-project', 'projecttask'=>'infobox-project', 'propal'=>'infobox-propal',
@@ -4386,7 +4386,7 @@ function img_mime($file, $titlealt = '', $morecss = '')
 	}
 
 	//return img_picto_common($titlealt, 'mime/'.$mimeimg, 'class="'.$morecss.'"');
-	return '<i class="fa fa-'.$mimefa.' paddingright"'.($titlealt ? ' title="'.$titlealt.'"' : '').'></i>';
+	return '<i class="fa fa-'.$mimefa.' paddingright'.($morecss ? ' '.$morecss : '').'"'.($titlealt ? ' title="'.$titlealt.'"' : '').'></i>';
 }
 
 
@@ -6977,7 +6977,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = 'Security key for payment on a member subscription (one key per member)';
 			$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = 'Security key for payment on an order';
 			$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = 'Security key for payment on an invoice';
-			$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'Security key for payment on a a service';
+			$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'Security key for payment on a service of a contract';
 
 			$substitutionarray['__DIRECTDOWNLOAD_URL_PROPOSAL__'] = 'Direct download url of a proposal';
 			$substitutionarray['__DIRECTDOWNLOAD_URL_ORDER__'] = 'Direct download url of an order';
@@ -8230,8 +8230,8 @@ function picto_from_langcode($codelang, $moreatt = '', $notitlealt = 0)
  * Return default language from country code.
  * Return null if not found.
  *
- * @param 	string 	$countrycode	Country code like 'US', 'FR', 'CA', 'ES', 'MX', ...
- * @return	string					Value of locale like 'en_US', 'fr_FR', ...
+ * @param 	string 	$countrycode	Country code like 'US', 'FR', 'CA', 'ES', 'IN', 'MX', ...
+ * @return	string					Value of locale like 'en_US', 'fr_FR', ... or null if not found
  */
 function getLanguageCodeFromCountryCode($countrycode)
 {
@@ -8281,12 +8281,12 @@ function getLanguageCodeFromCountryCode($countrycode)
 		'ar-SY',
 		'ar-TN',
 		'ar-YE',
-		'as-IN',
+		//'as-IN',		// Moved after en-IN
 		'ba-RU',
 		'be-BY',
 		'bg-BG',
 		'bn-BD',
-		'bn-IN',
+		//'bn-IN',		// Moved after en-IN
 		'bo-CN',
 		'br-FR',
 		'ca-ES',
@@ -8307,6 +8307,8 @@ function getLanguageCodeFromCountryCode($countrycode)
 		'en-GB',
 		'en-IE',
 		'en-IN',
+		'as-IN',	// as-IN must be after en-IN (en in priority if country is IN)
+		'bn-IN',	// bn-IN must be after en-IN (en in priority if country is IN)
 		'en-JM',
 		'en-MY',
 		'en-NZ',
@@ -8444,7 +8446,7 @@ function getLanguageCodeFromCountryCode($countrycode)
 			$locale_language = locale_get_primary_language($locale);
 			$locale_region = locale_get_region($locale);
 			if (strtoupper($countrycode) == $locale_region) {
-				//var_dump($locale.'-'.$locale_language.'-'.$locale_region);
+				//var_dump($locale.' - '.$locale_language.' - '.$locale_region);
 				return strtolower($locale_language).'_'.strtoupper($locale_region);
 			}
 		}
@@ -8884,7 +8886,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 				if ($newcrit != '') {
 					$numnewcrit = price2num($newcrit);
 					if (is_numeric($numnewcrit)) {
-						$newres .= ($i2 > 0 ? ' OR ' : '').$field.' '.$operator.' '.$db->sanitize($numnewcrit); // should be a numeric
+						$newres .= ($i2 > 0 ? ' OR ' : '').$field.' '.$operator.' '.((float) $numnewcrit); // should be a numeric
 					} else {
 						$newres .= ($i2 > 0 ? ' OR ' : '').'1 = 2'; // force false
 					}
@@ -8943,7 +8945,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 					$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '');
 
 					if (preg_match('/\.(id|rowid)$/', $field)) {	// Special case for rowid that is sometimes a ref so used as a search field
-						$newres .= $field." = ".(is_numeric(trim($tmpcrit)) ?trim($tmpcrit) : '0');
+						$newres .= $field." = ".(is_numeric(trim($tmpcrit)) ? ((float) trim($tmpcrit)) : '0');
 					} else {
 						$newres .= $field." LIKE '";
 
