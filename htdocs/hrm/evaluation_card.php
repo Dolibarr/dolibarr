@@ -255,7 +255,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-		if(empty($errors)) {
+		if (empty($errors)) {
 			$object->setStatut(Evaluation::STATUS_CLOSED);
 			setEventMessage('EmployeeSkillsUpdated');
 		}
