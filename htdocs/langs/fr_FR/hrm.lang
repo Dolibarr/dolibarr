@@ -52,6 +52,7 @@ SkillHasNoLines=Cette compétence n'a pas de notes
 skill=Compétence
 Skills=Compétences
 SkillCard=Fiche compétence
+EmployeeSkillsUpdated=Les compétences du salarié ont été mises à jour (voir l'onglet "compétences" de la fiche du salarié)
 Eval=Evaluation
 Evals=Evaluations
 NewEval=Nouvelle evaluation

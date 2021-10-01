@@ -48,7 +48,7 @@ class Position extends CommonObject
 	/**
 	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
 	 */
-	public $table_element = 'hrm_position';
+	public $table_element = 'hrm_job_user';
 
 	/**
 	 * @var int  Does this object support multicompany module ?
@@ -144,7 +144,7 @@ class Position extends CommonObject
 	// /**
 	//  * @var string    Name of subtable line
 	//  */
-	// public $table_element_line = 'hrm_positionline';
+	// public $table_element_line = 'hrm_job_userline';
 
 	// /**
 	//  * @var string    Field with ID of parent key if this object has a parent
@@ -166,7 +166,7 @@ class Position extends CommonObject
 	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
 	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	//  */
-	// protected $childtablesoncascade = array('hrm_positiondet');
+	// protected $childtablesoncascade = array('hrm_job_userdet');
 
 	// /**
 	//  * @var PositionLine[]     Array of subtable lines

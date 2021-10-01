@@ -41,6 +41,7 @@ SkillHasNoLines=This skill has no lines
 skill=Skill
 Skills=Skills
 SkillCard=Skill card
+EmployeeSkillsUpdated=Employee skills have been updated (see "Skills" tab of employee card)
 Eval=Evaluation
 Evals=Evaluations
 NewEval=New evaluation

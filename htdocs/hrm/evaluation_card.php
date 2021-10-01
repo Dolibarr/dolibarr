@@ -255,7 +255,10 @@ if (empty($reshook)) {
 				}
 			}
 		}
-		$object->setStatut(Evaluation::STATUS_CLOSED);
+		if(empty($errors)) {
+			$object->setStatut(Evaluation::STATUS_CLOSED);
+			setEventMessage('EmployeeSkillsUpdated');
+		}
 	}
 
 	if ($action == 'reopen' ) {

@@ -147,7 +147,7 @@ class Job extends CommonObject
 	// /**
 	//  * @var array	List of child tables. To test if we can delete object.
 	//  */
-	protected $childtables = array('hrm_evaluation', 'hrm_position');
+	protected $childtables = array('hrm_evaluation', 'hrm_job_user');
 
 	// /**
 	//  * @var array    List of child tables. To know object to delete on cascade.
