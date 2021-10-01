@@ -253,7 +253,7 @@ ALTER TABLE llx_hrm_job_extrafields ADD INDEX idx_job_fk_object(fk_object);
 
 
 
-CREATE TABLE llx_hrm_position(
+CREATE TABLE llx_hrm_job_user(
     -- BEGIN MODULEBUILDER FIELDS
                                  rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
                                  -- ref varchar(128) NOT NULL,
@@ -273,11 +273,11 @@ CREATE TABLE llx_hrm_position(
     -- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
-ALTER TABLE llx_hrm_position ADD INDEX idx_hrm_position_rowid (rowid);
--- ALTER TABLE llx_hrm_position ADD INDEX idx_hrm_position_ref (ref);
+ALTER TABLE llx_hrm_job_user ADD INDEX idx_hrm_job_user_rowid (rowid);
+-- ALTER TABLE llx_hrm_job_user ADD INDEX idx_hrm_job_user_ref (ref);
 
 
-create table llx_hrm_position_extrafields
+create table llx_hrm_job_user_extrafields
 (
     rowid                     integer AUTO_INCREMENT PRIMARY KEY,
     tms                       timestamp,
@@ -285,7 +285,7 @@ create table llx_hrm_position_extrafields
     import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
 
-ALTER TABLE llx_hrm_position_extrafields ADD INDEX idx_position_fk_object(fk_object);
+ALTER TABLE llx_hrm_job_user_extrafields ADD INDEX idx_position_fk_object(fk_object);
 
 
 
