@@ -479,7 +479,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 		if (in_array(GETPOST('action', 'aZ09'), $arrayofactiontoforcetokencheck)) {
 			$sensitiveget = true;
 		}
-		if (preg_match('/^(add|classify|close|confirm|copy|del|disable|enable|remove|set|unset|update|save|)/', GETPOST('action', 'aZ09'))) {
+		if (preg_match('/^(add|classify|close|confirm|copy|del|disable|enable|remove|set|unset|update|save)/', GETPOST('action', 'aZ09'))) {
 			$sensitiveget = true;
 		}
 	}
