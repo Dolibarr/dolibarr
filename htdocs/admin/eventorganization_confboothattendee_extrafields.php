@@ -21,7 +21,7 @@
  */
 
 /**
- *      \file       admin/conferenceorboothattendee_extrafields.php
+ *      \file       htdocs/admin/eventorganization_confboothattendee_extrafields.php
  *		\ingroup    eventorganization
  *		\brief      Page to setup extra fields of conferenceorboothattendee
  */
