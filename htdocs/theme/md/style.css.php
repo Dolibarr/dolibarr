@@ -1915,7 +1915,7 @@ div.login_block {
 	padding-top: 20px;
 	<?php
 	if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
-	top: 50px ! important;
+	top: 66px ! important;
 	<?php } else { ?>
 	top: 60px ! important;
 	<?php } ?>
