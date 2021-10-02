@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file		htdocs/compat/facture/index.php
+ *	\file		htdocs/compta/facture/index.php
 *	\ingroup	facture
  *	\brief		Home page of customer invoices area
  */

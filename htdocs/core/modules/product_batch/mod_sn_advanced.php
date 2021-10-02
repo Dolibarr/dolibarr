@@ -22,7 +22,7 @@
  */
 
 /**
- * \file       htdocs/core/modules/product_batch/mod_batch_advanced.php
+ * \file       htdocs/core/modules/product_batch/mod_sn_advanced.php
  * \ingroup    productbatch
  * \brief      File containing class for numbering model of SN advanced
  */

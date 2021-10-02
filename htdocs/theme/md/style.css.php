@@ -1859,6 +1859,7 @@ body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block
 div.login_block {
 	/* border-right: none ! important; */
 	top: inherit !important;
+	border-right: 1px solid rgba(0,0,0,0.3);
 }
 
 .side-nav {
@@ -1914,7 +1915,7 @@ div.login_block {
 	padding-top: 20px;
 	<?php
 	if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
-	top: 50px ! important;
+	top: 66px ! important;
 	<?php } else { ?>
 	top: 60px ! important;
 	<?php } ?>
@@ -2810,9 +2811,9 @@ img.login, img.printer, img.entity {
 	font-weight: bold;
 }
 .userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {		/* size for user photo in login bar */
-	border-radius: 8px;
-	width: 16px;
-	height: 16px;
+	/* border-radius: 8px; */
+	width: 20px;
+	height: 20px;
 	background-size: contain;
 	vertical-align: text-bottom;
 	background-color: #FFF;

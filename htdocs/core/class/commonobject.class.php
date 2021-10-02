@@ -5324,7 +5324,7 @@ abstract class CommonObject
 								$ecmfile->gen_or_uploaded = 'generated';
 								$ecmfile->description = ''; // indexed content
 								$ecmfile->keywords = ''; // keyword content
-								$ecmfile->src_object_type = $this->table_element;
+								$ecmfile->src_object_type = $this->table_element.(empty($this->module) ? '' : '@'.$this->module);
 								$ecmfile->src_object_id   = $this->id;
 
 								$result = $ecmfile->create($user);
@@ -8220,7 +8220,7 @@ abstract class CommonObject
 							$return .= '<br>';
 							// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
 							if ($photo_vignette && (image_format_supported($photo) > 0) && ($this->imgWidth > $maxWidth || $this->imgHeight > $maxHeight)) {
-								$return .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'), 'refresh').'&nbsp;&nbsp;</a>';
+								$return .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=addthumb&token='.newToken().'&file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'), 'refresh').'&nbsp;&nbsp;</a>';
 							}
 							// Special cas for product
 							if ($modulepart == 'product' && ($user->rights->produit->creer || $user->rights->service->creer)) {
@@ -9405,6 +9405,11 @@ abstract class CommonObject
 	 */
 	public function setCategoriesCommon($categories, $type_categ = '', $remove_existing = true)
 	{
+		// Handle single category
+		if (!is_array($categories)) {
+			$categories = array($categories);
+		}
+
 		dol_syslog(get_class($this)."::setCategoriesCommon Oject Id:".$this->id.' type_categ:'.$type_categ.' nb tag add:'.count($categories), LOG_DEBUG);
 
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -9412,11 +9417,6 @@ abstract class CommonObject
 		if (empty($type_categ)) {
 			dol_syslog(__METHOD__.': Type '.$type_categ.'is an unknown category type. Done nothing.', LOG_ERR);
 			return -1;
-		}
-
-		// Handle single category
-		if (!is_array($categories)) {
-			$categories = array($categories);
 		}
 
 		// Get current categories

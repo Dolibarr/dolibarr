@@ -381,7 +381,7 @@ if (empty($reshook) && $action == 'add') {
 				$urlback = $conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
 				// TODO Make replacement of __AMOUNT__, etc...
 			} else {
-				$urlback = $_SERVER["PHP_SELF"]."?action=added";
+				$urlback = $_SERVER["PHP_SELF"]."?action=added&token=".newToken();
 			}
 
 			if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) && $conf->global->MEMBER_NEWFORM_PAYONLINE != '-1') {
