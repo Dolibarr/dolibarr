@@ -145,7 +145,10 @@ if ($action == 'updateMask') {
 	$draft = GETPOST('EXPENSEREPORT_DRAFT_WATERMARK', 'alpha');
 	$res2 = dolibarr_set_const($db, "EXPENSEREPORT_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
 
-	if (!$res1 > 0 || !$res2 > 0) {
+	$amounts = GETPOST('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', 'int');
+	$res3 = dolibarr_set_const($db, 'EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', intval($amounts), 'chaine', 0, '', $conf->entity);
+
+	if (!$res1 > 0 || !$res2 > 0 || !$res3 > 0) {
 		$error++;
 	}
 
@@ -458,6 +461,11 @@ print $form->textwithpicto($langs->trans("WatermarkOnDraftExpenseReports"), $htm
 print '<input class="flat minwidth200" type="text" name="EXPENSEREPORT_DRAFT_WATERMARK" value="'.$conf->global->EXPENSEREPORT_DRAFT_WATERMARK.'">';
 print '</td></tr>'."\n";
 
+print '<tr class="oddeven"><td>';
+print $langs->trans('ForceExpenseReportsLineAmountsIncludingTaxesOnly');
+print '</td><td class="right">';
+print $form->selectyesno('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', empty($conf->global->EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY) ? 0 : 1, 1);
+print '</td></tr>';
 print '</table>';
 
 print $form->buttonsSaveCancel("Save", '');
