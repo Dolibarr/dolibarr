@@ -471,7 +471,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	} elseif (getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 2) {
 		// Few GET actions coded with a &token into url are processed as sensitive.
 		$arrayofactiontoforcetokencheck = array(
-			'activate', 'add', 'addrights', 'addtimespent',
+			'activate',
 			'doprev', 'donext', 'dvprev', 'dvnext',
 			'install',
 			'reopen'
@@ -479,7 +479,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 		if (in_array(GETPOST('action', 'aZ09'), $arrayofactiontoforcetokencheck)) {
 			$sensitiveget = true;
 		}
-		if (preg_match('/^(classify|close|confirm|del|disable|enable|remove|set|unset|update)/', GETPOST('action', 'aZ09'))) {
+		if (preg_match('/^(add|classify|close|confirm|copy|del|disable|enable|remove|set|unset|update|save|)/', GETPOST('action', 'aZ09'))) {
 			$sensitiveget = true;
 		}
 	}
