@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/admin/credtitransfer.php
+ *	\file       htdocs/admin/paymentbybanktransfer.php
  *	\ingroup    paymentbybanktransfer
  *	\brief      Page to setup payments by credit transfer
  */
