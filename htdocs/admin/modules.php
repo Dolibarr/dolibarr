@@ -133,7 +133,7 @@ if ($action == 'install') {
 
 	// $original_file should match format module_modulename-x.y[.z].zip
 	$original_file = basename($_FILES["fileinstall"]["name"]);
-	$original_file = preg_replace('/\(\d+\)\.zip$/i', '.zip', $original_file);
+	$original_file = preg_replace('/\s*\(\d+\)\.zip$/i', '.zip', $original_file);
 	$newfile = $conf->admin->dir_temp.'/'.$original_file.'/'.$original_file;
 
 	if (!$original_file) {
