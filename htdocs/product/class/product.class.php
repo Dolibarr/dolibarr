@@ -5133,7 +5133,7 @@ class Product extends CommonObject
 			$op[1] = "-".trim($nbpiece);
 
 			$movementstock = new MouvementStock($this->db);
-			$movementstock->setOrigin($origin_element, $origin_id); // Set ->origin and ->origin->id
+			$movementstock->setOrigin($origin_element, $origin_id); // Set ->origin_type and ->origin_id
 			$result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode, '', '', '', '', false, 0, $disablestockchangeforsubproduct);
 
 			if ($result >= 0) {
@@ -5180,7 +5180,7 @@ class Product extends CommonObject
 			$op[1] = "-".trim($nbpiece);
 
 			$movementstock = new MouvementStock($this->db);
-			$movementstock->setOrigin($origin_element, $origin_id);
+			$movementstock->setOrigin($origin_element, $origin_id); // Set ->origin_type and ->fk_origin
 			$result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode, '', $dlc, $dluo, $lot, false, 0, $disablestockchangeforsubproduct);
 
 			if ($result >= 0) {
