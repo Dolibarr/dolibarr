@@ -724,7 +724,7 @@ function getFormeJuridiqueLabel($code)
 function getCountriesInEEC()
 {
 	// List of all country codes that are in europe for european vat rules
-	// List found on http://ec.europa.eu/taxation_customs/common/faq/faq_1179_en.htm#9
+	// List found on https://europa.eu/european-union/about-eu/countries_en
 	global $conf, $db;
 	$country_code_in_EEC = array();
 
