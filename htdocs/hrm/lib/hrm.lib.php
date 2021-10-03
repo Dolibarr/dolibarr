@@ -43,6 +43,11 @@ function hrmAdminPrepareHead()
 	$head[$h][2] = 'settings';
 	$h++;
 
+        $head[$h][0] = DOL_URL_ROOT.'/hrm/admin/admin_establishment.php';
+        $head[$h][1] = $langs->trans("Establishments");
+        $head[$h][2] = 'establishments';
+        $h++;
+
 	/*
 	$head[$h][0] = dol_buildpath("/workstation/admin/myobject_extrafields.php", 1);
 	$head[$h][1] = $langs->trans("ExtraFields");
@@ -63,7 +68,10 @@ function hrmAdminPrepareHead()
 	//$this->tabs = array(
 	//	'entity:-tabname:Title:@workstation:/workstation/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'hrm');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'hrm_admin');
+
+        complete_head_from_modules($conf, $langs, null, $head, $h, 'hrm_admin', 'remove');
 
 	return $head;
 }
+

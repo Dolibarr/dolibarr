@@ -191,7 +191,7 @@ if ($action == 'update') {
 $form = new Form($db);
 
 $help_url = '';
-$page_name = "HrmSetup";
+$page_name = "HRMSetup";
 
 llxHeader('', $langs->trans($page_name), $help_url);
 
