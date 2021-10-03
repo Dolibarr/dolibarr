@@ -643,6 +643,7 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="page_y" value="">';
 
 $title = $langs->trans("ListOfConferencesOrBooths");
 
