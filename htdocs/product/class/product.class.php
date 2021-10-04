@@ -5129,6 +5129,13 @@ class Product extends CommonObject
 
 			include_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
+			if ($nbpiece < 0) {
+				if (!$movement) {
+					$movement = 1;
+				}
+				$nbpiece *= -1;
+			}
+
 			$op[0] = "+".trim($nbpiece);
 			$op[1] = "-".trim($nbpiece);
 
@@ -5175,6 +5182,13 @@ class Product extends CommonObject
 			$this->db->begin();
 
 			include_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+
+			if ($nbpiece < 0) {
+				if (!$movement) {
+					$movement = 1;
+				}
+				$nbpiece *= -1;
+			}
 
 			$op[0] = "+".trim($nbpiece);
 			$op[1] = "-".trim($nbpiece);
