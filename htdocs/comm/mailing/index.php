@@ -184,7 +184,7 @@ if ($result) {
 			$i++;
 		}
 	} else {
-		print '<tr><td class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+		print '<tr><td><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 	print "</table></div><br>";
 	$db->free($result);

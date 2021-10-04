@@ -148,7 +148,7 @@ if ($id) {
 	print '<div class="tabsAction">';
 
 	if ($user->rights->user->user->creer && $action != 'edit') {
-		print "<a class=\"butAction\" href=\"note.php?id=".$object->id."&amp;action=edit\">".$langs->trans('Modify')."</a>";
+		print '<a class="butAction" href="note.php?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans('Modify')."</a>";
 	}
 
 	print "</div>";

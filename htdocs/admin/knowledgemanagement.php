@@ -17,7 +17,7 @@
  */
 
 /**
- * \file    knowledgemanagement/admin/setup.php
+ * \file    htdocs/admin/knowledgemanagement.php
  * \ingroup knowledgemanagement
  * \brief   KnowledgeManagement setup page.
  */
@@ -65,9 +65,7 @@ if (!$user->admin) {
  * Actions
  */
 
-if ((float) DOL_VERSION >= 6) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
-}
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
 	$maskconstorder = GETPOST('maskconstorder', 'alpha');
@@ -324,7 +322,7 @@ if ($action == 'edit') {
 		print '</table>';
 
 		print '<div class="tabsAction">';
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 		print '</div>';
 	} else {
 		//print '<br>'.$langs->trans("NothingToSetup");
