@@ -70,6 +70,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/stocktransfer/modules_stocktransfe
 
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "other", "productbatch", "companies"));
+ if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -361,7 +362,11 @@ if (empty($reshook)) {
 			setEventMessage('StockStransferIncrementedShortCancel', 'warnings');
 		}
 	}
-
+    // Set incoterm
+	if ($action == 'set_incoterms' && !empty($conf->incoterm->enabled) && $permissiontoadd)
+	{
+		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+	}
 	// Actions to send emails
 	$triggersendname = 'STOCKTRANSFER_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_STOCKTRANSFER_TO';
@@ -422,6 +427,14 @@ if ($action == 'create') {
 	// Common attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_add.tpl.php';
 
+    if (!empty($conf->incoterm->enabled))
+	{
+		print '<tr>';
+		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $soc->label_incoterms, 1).'</label></td>';
+		print '<td class="maxwidthonsmartphone">';
+		print $form->select_incoterms((!empty($soc->fk_incoterms) ? $soc->fk_incoterms : ''), (!empty($soc->location_incoterms) ? $soc->location_incoterms : ''),'','fk_incoterms');
+		print '</td></tr>';
+	}
 	// Template to use by default
 	print '<tr><td>'.$langs->trans('DefaultModel').'</td>';
 	print '<td>';
@@ -625,6 +638,29 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$object->fields['fk_soc']['visible']=0; // Already available in banner
 	$object->fields['fk_project']['visible']=0; // Already available in banner
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
+
+    // Incoterms
+	if (!empty($conf->incoterm->enabled))
+	{
+		print '<tr><td>';
+		print '<table width="100%" class="nobordernopadding"><tr><td>';
+		print $langs->trans('IncotermLabel');
+		print '<td><td class="right">';
+		if ($permissiontoadd && $action != 'editincoterm') print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+		else print '&nbsp;';
+		print '</td></tr></table>';
+		print '</td>';
+		print '<td>';
+		if ($action != 'editincoterm')
+		{
+			print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
+		}
+		else
+		{
+			print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?id='.$object->id);
+		}
+		print '</td></tr>';
+	}
 
 	echo '<tr>';
 	echo '<td>'.$langs->trans('EnhancedValue').'&nbsp;'.strtolower($langs->trans('TotalWoman'));

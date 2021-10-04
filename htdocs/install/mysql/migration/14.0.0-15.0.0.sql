@@ -116,14 +116,14 @@ CREATE TABLE llx_stocktransfer_stocktransfer(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
     entity integer  DEFAULT 1 NOT NULL,
-	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
-	label varchar(255), 
-	fk_soc integer, 
+	ref varchar(128) DEFAULT '(PROV)' NOT NULL,
+	label varchar(255),
+	fk_soc integer,
 	fk_project integer,
     fk_warehouse_source integer,
     fk_warehouse_destination integer,
     description text,
-	note_public text, 
+	note_public text,
 	note_private text,
 	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     date_creation datetime NOT NULL,
@@ -137,7 +137,9 @@ CREATE TABLE llx_stocktransfer_stocktransfer(
 	import_key varchar(14), 
 	model_pdf varchar(255), 
 	last_main_doc varchar(255),
-	status smallint NOT NULL
+	status smallint NOT NULL,
+	fk_incoterms integer, -- for incoterms
+    location_incoterms varchar(255)
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 

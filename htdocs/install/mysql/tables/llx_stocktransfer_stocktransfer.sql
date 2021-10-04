@@ -39,6 +39,8 @@ CREATE TABLE llx_stocktransfer_stocktransfer(
 	import_key varchar(14), 
 	model_pdf varchar(255), 
 	last_main_doc varchar(255),
-	status smallint NOT NULL
+	status smallint NOT NULL,
+	fk_incoterms          integer, -- for incoterms
+    location_incoterms    varchar(255)
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
