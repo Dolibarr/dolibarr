@@ -1735,15 +1735,15 @@ td.showDragHandle {
 /*
 .classforhorizontalscrolloftabs  .fiche .div-table-responsive
 {
-    transform:rotateX(180deg);
-    -ms-transform:rotateX(180deg);
-    -webkit-transform:rotateX(180deg);
+	transform:rotateX(180deg);
+	-ms-transform:rotateX(180deg);
+	-webkit-transform:rotateX(180deg);
 }
 .classforhorizontalscrolloftabs  .fiche .div-table-responsive-inside
 {
-    transform:rotateX(180deg);
-    -ms-transform:rotateX(180deg);
-    -webkit-transform:rotateX(180deg);
+	transform:rotateX(180deg);
+	-ms-transform:rotateX(180deg);
+	-webkit-transform:rotateX(180deg);
 }
 */
 
