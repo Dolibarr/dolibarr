@@ -412,7 +412,7 @@ class FormFile
 				'hideifempty'=>&$hideifempty,
 				'removeaction'=>&$removeaction
 			);
-			$reshook = $hookmanager->executeHooks('showdocuments', $parameters, $object); // Note that parameters may have been updated by hook
+			$reshook = $hookmanager->executeHooks('showDocuments', $parameters, $object); // Note that parameters may have been updated by hook
 			// May report error
 			if ($reshook < 0) {
 				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -420,7 +420,7 @@ class FormFile
 		}
 		// Remode default action if $reskook > 0
 		if ($reshook > 0) {
-			return '';
+			return $hookmanager->resPrint;
 		}
 
 		if (!is_object($form)) {
