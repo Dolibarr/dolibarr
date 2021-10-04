@@ -528,7 +528,7 @@ function getNumberInvoicesPieChart($mode)
 			$result = '<div class="div-table-responsive-no-min">';
 			$result .= '<table class="noborder nohover centpercent">';
 			$result .= '<tr class="liste_titre">';
-			$result .= '<td>'.$langs->trans("Statistics").' - ';
+			$result .= '<td>'.$langs->trans("NbOfOpenInvoices").' - ';
 			if ($mode == 'customers') {
 				$result .= $langs->trans("CustomerInvoice");
 			} elseif ($mode == 'fourn' || $mode == 'suppliers') {
@@ -550,8 +550,9 @@ function getNumberInvoicesPieChart($mode)
 				$dolgraph->setShowLegend(2);
 				$dolgraph->setShowPercent(1);
 				$dolgraph->SetType(array('bars', 'bars', 'bars', 'bars', 'bars', 'bars'));
-				$dolgraph->setHeight('180');
-				$dolgraph->setWidth('500');
+				$dolgraph->setHeight('160');
+				$dolgraph->setWidth('400');
+				$dolgraph->setHideXValues(true);
 				if ($mode == 'customers') {
 					$dolgraph->draw('idgraphcustomerinvoices');
 				} elseif ($mode == 'fourn' || $mode == 'suppliers') {
