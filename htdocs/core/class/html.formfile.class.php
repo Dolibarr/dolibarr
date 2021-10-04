@@ -393,6 +393,38 @@ class FormFile
 		global $langs, $conf, $user, $hookmanager;
 		global $form;
 
+		$reshook = 0;
+		if (is_object($hookmanager)) {
+			$parameters = array(
+				'modulepart'=>&$modulepart,
+				'modulesubdir'=>&$modulesubdir,
+				'filedir'=>&$filedir,
+				'urlsource'=>&$urlsource,
+				'genallowed'=>&$genallowed,
+				'delallowed'=>&$delallowed,
+				'modelselected'=>&$modelselected,
+				'allowgenifempty'=>&$allowgenifempty,
+				'forcenomultilang'=>&$forcenomultilang,
+				'noform'=>&$noform,
+				'param'=>&$param,
+				'title'=>&$title,
+				'buttonlabel'=>&$buttonlabel,
+				'codelang'=>&$codelang,
+				'morepicto'=>&$morepicto,
+				'hideifempty'=>&$hideifempty,
+				'removeaction'=>&$removeaction
+			);
+			$reshook = $hookmanager->executeHooks('showDocuments', $parameters, $object); // Note that parameters may have been updated by hook
+			// May report error
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			}
+		}
+		// Remode default action if $reskook > 0
+		if ($reshook > 0) {
+			return $hookmanager->resPrint;
+		}
+
 		if (!is_object($form)) {
 			$form = new Form($this->db);
 		}
