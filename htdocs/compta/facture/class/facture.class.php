@@ -1411,9 +1411,10 @@ class Facture extends CommonInvoice
 	 * @param User $user
 	 * @param type $notrigger
 	 * @param bool $autoValidate
+	 * @param array $overrideFields
 	 * @return Facture
 	 */
-	static public function createDepositFromOrigin(CommonObject $origin, User $user, $notrigger = 0, $autoValidateDeposit = false, $forceInvoiceDate = null)
+	static public function createDepositFromOrigin(CommonObject $origin, $date, $cond_reglement_id, User $user, $notrigger = 0, $autoValidateDeposit = false, $overrideFields = array())
 	{
 		global $conf, $langs, $hookmanager, $action;
 
@@ -1422,16 +1423,19 @@ class Facture extends CommonInvoice
 			return null;
 		}
 
+		if (empty($date)) {
+			$origin->error = $langs->trans('ErrorFieldRequired', $langs->transnoentities('DateInvoice'));
+			return null;
+		}
+
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
-		$invoiceDate = ! empty($forceInvoiceDate) ? $forceInvoiceDate : dol_now();
-
-		if ($invoiceDate > (dol_get_last_hour(dol_now('tzuserrel')) + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+		if ($date > (dol_get_last_hour(dol_now('tzuserrel')) + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
 			$origin->error = 'ErrorDateIsInFuture';
 			return null;
 		}
 
-		if ($origin->cond_reglement_id <= 0) {
+		if ($cond_reglement_id <= 0) {
 			$origin->error = $langs->trans('ErrorFieldRequired', $langs->transnoentities('PaymentConditionsShort'));
 			return null;
 		}
@@ -1453,9 +1457,9 @@ class Facture extends CommonInvoice
 		$deposit->type = self::TYPE_DEPOSIT;
 		$deposit->fk_project = $origin->fk_project;
 		$deposit->ref_client = $origin->ref_client;
-		$deposit->date = $invoiceDate;
-		$deposit->mode_reglement_id = $origin->mode_reglement_id; // CHECK
-		// TODO Deposit is always due upon reception ?
+		$deposit->date = $date;
+		$deposit->mode_reglement_id = $origin->mode_reglement_id;
+		$deposit->cond_reglement_id = $cond_reglement_id;
 		$deposit->availability_id = $origin->availability_id;
 		$deposit->demand_reason_id = $origin->demand_reason_id;
 		$deposit->fk_account = $origin->fk_account;
@@ -1491,6 +1495,10 @@ class Facture extends CommonInvoice
 		}
 
 		$deposit->linked_objects[$deposit->origin] = $deposit->origin_id;
+
+		foreach ($overrideFields as $key => $value) {
+			$deposit->$key = $value;
+		}
 
 		$deposit->context['createdepositfromorigin'] = 'createdepositfromorigin';
 

@@ -690,10 +690,17 @@ if (empty($reshook)) {
 				$deposit_percent_from_payment_terms = getDictvalue(MAIN_DB_PREFIX . 'c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
 				if (
-					!$error && GETPOST('statut', 'int') == $object::STATUS_SIGNED && GETPOST('generate_deposit', 'int') > 0
+					!$error && GETPOST('statut', 'int') == $object::STATUS_SIGNED && GETPOST('generate_deposit', 'alpha') == 'on'
 					&& ! empty($deposit_percent_from_payment_terms) && ! empty($conf->facture->enabled) && ! empty($user->rights->facture->creer)
 				) {
-					$deposit = Facture::createDepositFromOrigin($object, $user, 0, GETPOST('validate_generated_deposit', 'int') > 0);
+					$date = dol_mktime(0, 0, 0, GETPOST('datefmonth', 'int'), GETPOST('datefday', 'int'), GETPOST('datefyear', 'int'));
+					$forceFields = array();
+
+					if (GETPOSTISSET('date_pointoftax')) {
+						$forceFields['date_pointoftax'] = dol_mktime(0, 0, 0, GETPOST('date_pointoftaxmonth', 'int'), GETPOST('date_pointoftaxday', 'int'), GETPOST('date_pointoftaxyear', 'int'));
+					}
+
+					$deposit = Facture::createDepositFromOrigin($object, $date, GETPOST('cond_reglement_id', 'int'), $user, 0, GETPOST('validate_generated_deposit', 'alpha') == 'on', $forceFields);
 
 					if ($deposit) {
 						setEventMessage('DepositGenerated');
@@ -2005,33 +2012,89 @@ if ($action == 'create') {
 				}
 			}
 
+
 			if ($eligibleForDepositGeneration) {
 				$formquestion[] = array(
+					'type' => 'checkbox',
+					'tdclass' => 'showonlyifsigned',
+					'name' => 'generate_deposit',
+					'label' => $form->textwithpicto($langs->trans('GenerateDeposit', $object->deposit_percent), $langs->trans('PaymentConditionPermitsDepositGenerationSelected'))
+				);
+
+				$formquestion[] = array(
+					'type' => 'date',
+					'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
+					'name' => 'datef',
+					'label' => $langs->trans('DateInvoice'),
+					'value' => dol_now(),
+					'datenow' => true
+				);
+
+				if (! empty($conf->global->INVOICE_POINTOFTAX_DATE)) {
+					$formquestion[] = array(
+						'type' => 'date',
+						'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
+						'name' => 'date_pointoftax',
+						'label' => $langs->trans('DatePointOfTax'),
+						'value' => dol_now(),
+						'datenow' => true
+					);
+				}
+
+				ob_start();
+				$form->select_conditions_paiements(0, 'cond_reglement_id', 1, 0, 0, 'minwidth200'); // TODO param 3
+				$paymentTermsSelect = ob_get_clean();
+
+				$formquestion[] = array(
+					'type' => 'other',
+					'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
+					'name' => 'cond_reglement_id',
+					'label' => $langs->trans('PaymentTerm'),
+					'value' => $paymentTermsSelect
+				);
+
+				$formquestion[] = array(
+					'type' => 'checkbox',
+					'tdclass' => 'showonlyifgeneratedeposit',
+					'name' => 'validate_generated_deposit',
+					'label' => $langs->trans('ValidateGeneratedDeposit')
+				);
+
+				$formquestion[] = array(
 					'type' => 'onecolumn',
-					'name' => 'generate_deposit,validate_generated_deposit',
 					'value' => '
-						<div id="generate-deposit-box" style="display: none">
-							<p>' . $langs->trans('PaymentConditionPermitsDepositGenerationSelected') . '</p>
-							<p style="padding-left: 20%">
-								<input type="checkbox" name="generate_deposit" id="generate_deposit" value="1" checked />
-								<label for="generate_deposit">' . $langs->trans('GenerateDeposit', $object->deposit_percent) . '</label><br />
-								<input type="checkbox" name="validate_generated_deposit" id="validate_generated_deposit" value="1" checked />
-								<label for="validate_generated_deposit">' . $langs->trans('ValidateGeneratedDeposit') . '</label>
-							</p>
-						</div>
 						<script>
 							let signedValue = ' . $object::STATUS_SIGNED . ';
 
 							$(document).ready(function() {
-								$("#statut").change(function(event) {
-									if ($(this).val() == signedValue) {
-										$("#generate-deposit-box").show();
+								$("[name=generate_deposit]").change(function () {
+									let $self = $(this);
+									let $target = $(".showonlyifgeneratedeposit").parent(".tagtr");
+
+									if (! $self.parents(".tagtr").is(":hidden") && $self.is(":checked")) {
+										$target.show();
 									} else {
-										$("#generate-deposit-box").hide();
+										$target.hide();
 									}
 
 									return true;
 								});
+
+								$("#statut").change(function() {
+									let $target = $(".showonlyifsigned").parent(".tagtr");
+
+									if ($(this).val() == signedValue) {
+										$target.show();
+									} else {
+										$target.hide();
+									}
+
+									$("[name=generate_deposit]").trigger("change");
+
+									return true;
+								});
+
+								$("#statut").trigger("change");
 							});
 						</script>
 					'
