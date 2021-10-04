@@ -1659,7 +1659,7 @@ class Facture extends CommonInvoice
 			}
 		}
 
-		unset($object->context['createdepositfromorigin']);
+		unset($deposit->context['createdepositfromorigin']);
 
 		$origin->db->commit();
 
