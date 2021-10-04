@@ -37,10 +37,6 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 // Security check
 $socid = GETPOST('socid', 'int');
 $status = GETPOST('status', 'int');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'directdebitcredittransferlist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
@@ -72,6 +68,15 @@ if (!$sortfield) {
 $massactionbutton = '';
 
 $hookmanager->initHooks(array('withdrawalstodolist'));
+
+if ($user->socid) {
+	$socid = $user->socid;
+}
+if ($type == 'bank-transfer') {
+	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
+} else {
+	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
+}
 
 
 /*
