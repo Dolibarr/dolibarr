@@ -362,9 +362,8 @@ if (empty($reshook)) {
 			setEventMessage('StockStransferIncrementedShortCancel', 'warnings');
 		}
 	}
-    // Set incoterm
-	if ($action == 'set_incoterms' && !empty($conf->incoterm->enabled) && $permissiontoadd)
-	{
+	// Set incoterm
+	if ($action == 'set_incoterms' && !empty($conf->incoterm->enabled) && $permissiontoadd) {
 		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 	}
 	// Actions to send emails
@@ -427,12 +426,11 @@ if ($action == 'create') {
 	// Common attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_add.tpl.php';
 
-    if (!empty($conf->incoterm->enabled))
-	{
+	if (!empty($conf->incoterm->enabled)) {
 		print '<tr>';
 		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $soc->label_incoterms, 1).'</label></td>';
 		print '<td class="maxwidthonsmartphone">';
-		print $form->select_incoterms((!empty($soc->fk_incoterms) ? $soc->fk_incoterms : ''), (!empty($soc->location_incoterms) ? $soc->location_incoterms : ''),'','fk_incoterms');
+		print $form->select_incoterms((!empty($soc->fk_incoterms) ? $soc->fk_incoterms : ''), (!empty($soc->location_incoterms) ? $soc->location_incoterms : ''), '', 'fk_incoterms');
 		print '</td></tr>';
 	}
 	// Template to use by default
@@ -639,9 +637,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$object->fields['fk_project']['visible']=0; // Already available in banner
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
-    // Incoterms
-	if (!empty($conf->incoterm->enabled))
-	{
+	// Incoterms
+	if (!empty($conf->incoterm->enabled)) {
 		print '<tr><td>';
 		print '<table width="100%" class="nobordernopadding"><tr><td>';
 		print $langs->trans('IncotermLabel');
@@ -651,12 +648,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</td></tr></table>';
 		print '</td>';
 		print '<td>';
-		if ($action != 'editincoterm')
-		{
+		if ($action != 'editincoterm') {
 			print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
-		}
-		else
-		{
+		} else {
 			print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?id='.$object->id);
 		}
 		print '</td></tr>';
