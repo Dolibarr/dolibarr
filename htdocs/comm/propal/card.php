@@ -696,7 +696,7 @@ if (empty($reshook)) {
 						$ret = $deposit->fetch($deposit->id); // Reload to get new records
 						$outputlangs = $langs;
 
-						if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+						if ($conf->global->MAIN_MULTILANGS) {
 							$outputlangs = new Translate('', $conf);
 							$outputlangs->setDefaultLang($deposit->thirdparty->default_lang);
 							$outputlangs->load('products');
