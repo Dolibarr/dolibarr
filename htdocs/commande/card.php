@@ -1154,30 +1154,73 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			$locationTarget = $_SERVER['PHP_SELF'] . '?id=' . $object->id;
+			$db->begin();
 			$result = $object->valid($user, $idwarehouse);
 			if ($result >= 0) {
-				// Define output language
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-					$outputlangs = $langs;
-					$newlang = '';
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
-						$newlang = GETPOST('lang_id', 'aZ09');
-					}
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
-						$newlang = $object->thirdparty->default_lang;
-					}
-					if (!empty($newlang)) {
-						$outputlangs = new Translate("", $conf);
-						$outputlangs->setDefaultLang($newlang);
-					}
-					$model = $object->model_pdf;
-					$ret = $object->fetch($id); // Reload to get new records
+				$error = 0;
+				$deposit = null;
 
-					$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$deposit_percent_from_payment_terms = getDictvalue(MAIN_DB_PREFIX . 'c_payment_term', 'deposit_percent', $object->cond_reglement_id);
+
+				if (
+					GETPOST('generate_deposit', 'alpha') == 'on' && ! empty($deposit_percent_from_payment_terms)
+					&& ! empty($conf->facture->enabled) && ! empty($user->rights->facture->creer)
+				) {
+					$date = dol_mktime(0, 0, 0, GETPOST('datefmonth', 'int'), GETPOST('datefday', 'int'), GETPOST('datefyear', 'int'));
+					$forceFields = array();
+
+					if (GETPOSTISSET('date_pointoftax')) {
+						$forceFields['date_pointoftax'] = dol_mktime(0, 0, 0, GETPOST('date_pointoftaxmonth', 'int'), GETPOST('date_pointoftaxday', 'int'), GETPOST('date_pointoftaxyear', 'int'));
+					}
+
+					$deposit = Facture::createDepositFromOrigin($object, $date, GETPOST('cond_reglement_id', 'int'), $user, 0, GETPOST('validate_generated_deposit', 'alpha') == 'on', $forceFields);
+
+					if ($deposit) {
+						setEventMessage('DepositGenerated');
+						$locationTarget = DOL_URL_ROOT . '/compta/facture/card.php?id=' . $deposit->id;
+					} else {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				}
+
+				// Define output language
+				if (! $error) {
+					$db->commit();
+
+					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+						$outputlangs = $langs;
+						$newlang = '';
+						if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+							$newlang = GETPOST('lang_id', 'aZ09');
+						}
+						if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+							$newlang = $object->thirdparty->default_lang;
+						}
+						if (!empty($newlang)) {
+							$outputlangs = new Translate("", $conf);
+							$outputlangs->setDefaultLang($newlang);
+						}
+						$model = $object->model_pdf;
+						$ret = $object->fetch($id); // Reload to get new records
+
+						$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+						if ($deposit) {
+							$deposit->fetch($deposit->id);
+							$deposit->generateDocument($deposit->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+						}
+					}
+				} else {
+					$db->rollback();
 				}
 			} else {
+				$db->rollback();
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
+
+			header('Location: ' . $locationTarget);
+			exit;
 		}
 	} elseif ($action == 'confirm_modif' && $usercancreate) {
 		// Go back to draft status
@@ -1948,6 +1991,108 @@ if ($action == 'create' && $usercancreate) {
 			if ($nbMandated > 0 ) $text .= '<div><span class="clearboth nowraponall warning">'.$langs->trans("mandatoryPeriodNeedTobeSetMsgValidate").'</span></div>';
 
 
+			$deposit_percent_from_payment_terms = getDictvalue(MAIN_DB_PREFIX . 'c_payment_term', 'deposit_percent', $object->cond_reglement_id);
+
+			if (! empty($deposit_percent_from_payment_terms) && ! empty($conf->facture->enabled) && ! empty($user->rights->facture->creer)) {
+				$object->fetchObjectLinked();
+
+				$eligibleForDepositGeneration = true;
+
+				if (array_key_exists('facture', $object->linkedObjects)) {
+					foreach ($object->linkedObjects['facture'] as $invoice) {
+						if ($invoice->type == Facture::TYPE_DEPOSIT) {
+							$eligibleForDepositGeneration = false;
+							break;
+						}
+					}
+				}
+
+				if ($eligibleForDepositGeneration && array_key_exists('propal', $object->linkedObjects)) {
+					foreach ($object->linkedObjects['propal'] as $proposal) {
+						$proposal->fetchObjectLinked();
+
+						if (array_key_exists('facture', $proposal->linkedObjects)) {
+							foreach ($proposal->linkedObjects['facture'] as $invoice) {
+								if ($invoice->type == Facture::TYPE_DEPOSIT) {
+									$eligibleForDepositGeneration = false;
+									break 2;
+								}
+							}
+						}
+					}
+				}
+
+
+				if ($eligibleForDepositGeneration) {
+					$formquestion[] = array(
+						'type' => 'checkbox',
+						'tdclass' => '',
+						'name' => 'generate_deposit',
+						'label' => $form->textwithpicto($langs->trans('GenerateDeposit', $object->deposit_percent), $langs->trans('PaymentConditionPermitsDepositGenerationSelected'))
+					);
+
+					$formquestion[] = array(
+						'type' => 'date',
+						'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
+						'name' => 'datef',
+						'label' => $langs->trans('DateInvoice'),
+						'value' => dol_now(),
+						'datenow' => true
+					);
+
+					if (! empty($conf->global->INVOICE_POINTOFTAX_DATE)) {
+						$formquestion[] = array(
+							'type' => 'date',
+							'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
+							'name' => 'date_pointoftax',
+							'label' => $langs->trans('DatePointOfTax'),
+							'value' => dol_now(),
+							'datenow' => true
+						);
+					}
+
+					ob_start();
+					$form->select_conditions_paiements(0, 'cond_reglement_id', 1, 0, 0, 'minwidth200'); // TODO param 3
+					$paymentTermsSelect = ob_get_clean();
+
+					$formquestion[] = array(
+						'type' => 'other',
+						'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
+						'name' => 'cond_reglement_id',
+						'label' => $langs->trans('PaymentTerm'),
+						'value' => $paymentTermsSelect
+					);
+
+					$formquestion[] = array(
+						'type' => 'checkbox',
+						'tdclass' => 'showonlyifgeneratedeposit',
+						'name' => 'validate_generated_deposit',
+						'label' => $langs->trans('ValidateGeneratedDeposit')
+					);
+
+					$formquestion[] = array(
+						'type' => 'onecolumn',
+						'value' => '
+							<script>
+								$(document).ready(function() {
+									$("[name=generate_deposit]").change(function () {
+										let $self = $(this);
+										let $target = $(".showonlyifgeneratedeposit").parent(".tagtr");
+
+										if (! $self.parents(".tagtr").is(":hidden") && $self.is(":checked")) {
+											$target.show();
+										} else {
+											$target.hide();
+										}
+
+										return true;
+									});
+								});
+							</script>
+						'
+					);
+				}
+			}
 
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', $formquestion, 0, 1, 220);
 		}
