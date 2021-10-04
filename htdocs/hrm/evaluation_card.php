@@ -282,7 +282,9 @@ $formproject = new FormProjets($db);
 
 $title = $langs->trans("Evaluation");
 $help_url = '';
-llxHeader('', $title, $help_url);
+$css = array();
+$css[] = '/hrm/css/style.css';
+llxHeader('', $title, $help_url, '', 0, 0, '', $css);
 
 print '<script type="text/javascript" language="javascript">
 	$(document).ready(function() {
@@ -295,11 +297,10 @@ print '<script type="text/javascript" language="javascript">
 			 url: form.attr("action"),
 			 data: form.serialize(),
 			 dataType: "json"
+		 }).always(function() {
+             window.location.href = "'.dol_buildpath('/hrm/evaluation_card.php', 1).'?id='.$id.'&action=validate&token='.newToken().'";
+             return false;
 		 });
-
-         window.location.href = "'.dol_buildpath('/hrm/evaluation_card.php', 2).'?id='.$id.'&action=validate&token='.newToken().'";
-
-		 return false;
 
 	   });
 	});

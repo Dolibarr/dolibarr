@@ -1853,7 +1853,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 			if (!empty($conf->hrm->enabled)) {
 				// Skills
-				$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("Skill"), 0, $user->rights->hrm->all->read, '', $mainmenu, 'hrm', 0, '', '', '', img_picto('', 'shapes', 'class="pictofixedwidth"'));
+				$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("skill"), 0, $user->rights->hrm->all->read, '', $mainmenu, 'hrm', 0, '', '', '', img_picto('', 'shapes', 'class="pictofixedwidth"'));
 				$newmenu->add("/hrm/skill_card.php?mainmenu=hrm&leftmenu=hrm&action=create", $langs->trans("NewSkill"), 1, $user->rights->hrm->all->write);
 				$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("List"), 1, $user->rights->hrm->all->read);
 
@@ -1864,6 +1864,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 				// Position
 				$newmenu->add("/hrm/position_list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("Position"), 0, $user->rights->hrm->all->read, '', $mainmenu, 'hrm', 0, '', '', '', img_picto('', 'user-cog', 'class="pictofixedwidth"'));
+				$newmenu->add("/hrm/position.php?mainmenu=hrm&leftmenu=hrm&action=create", $langs->transnoentities("NewObject", $langs->trans("Position")), 1, $user->rights->hrm->all->write);
 				$newmenu->add("/hrm/position_list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("List"), 1, $user->rights->hrm->all->read);
 
 				// Evaluation

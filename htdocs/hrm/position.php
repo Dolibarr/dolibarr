@@ -166,7 +166,11 @@ if (empty($reshook)) {
 			if (empty($fk_job) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = dol_buildpath('/hrm/position.php', 1) . '?fk_job=' . ($fk_job > 0 ? $fk_job : '__ID__');
+				if($fk_job > 0) {
+					$backtopage = dol_buildpath('/hrm/position.php', 1) . '?fk_job=' . ($fk_job > 0 ? $fk_job : '__ID__');
+				} else {
+					$backtopage = dol_buildpath('/hrm/position_card.php', 1) . '?id=__ID__';
+				}
 			}
 		}
 	}

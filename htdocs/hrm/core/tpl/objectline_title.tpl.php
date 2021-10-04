@@ -62,7 +62,7 @@ print '<td class="linecollabel">'.$langs->trans('Label').'</td>';
 print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
 
 // Note
-print '<td class="linecolrank right" style="width: 80px">'.$langs->trans('Rank').'</td>';
+print '<td class="linecolrank right" style="width: 80px">'.$langs->trans('rank').'</td>';
 
 
 //print '<td class="linecoledit"></td>'; // No width to allow autodim
