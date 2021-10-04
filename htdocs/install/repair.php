@@ -1180,7 +1180,7 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 	foreach ($conf->modules as $key => $val) {
 		$listofmods .= ($listofmods ? ',' : '')."'".$val."'";
 	}
-	$sql = 'SELECT id, libelle as label, module from '.MAIN_DB_PREFIX.'rights_def WHERE module NOT IN ('.$db->sanitize($listofmods).') AND id > 100000';
+	$sql = "SELECT id, libelle as label, module from ".MAIN_DB_PREFIX."rights_def WHERE module NOT IN (".$db->sanitize($listofmods).") AND id > 100000";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -1191,7 +1191,7 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 				if ($obj->id > 0) {
 					print '<tr><td>Found line with id '.$obj->id.', label "'.$obj->label.'" of module "'.$obj->module.'" to delete';
 					if (GETPOST('clean_perm_table', 'alpha') == 'confirmed') {
-						$sqldelete = 'DELETE FROM '.MAIN_DB_PREFIX.'rights_def WHERE id = '.$obj->id;
+						$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE id = ".((int) $obj->id);
 						$resqldelete = $db->query($sqldelete);
 						if (!$resqldelete) {
 							dol_print_error($db);

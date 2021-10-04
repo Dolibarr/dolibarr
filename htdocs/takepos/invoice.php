@@ -1056,12 +1056,12 @@ function DolibarrTakeposPrinting(id) {
 }
 
 function CreditNote() {
-	$("#poslines").load("invoice.php?action=creditnote&invoiceid="+placeid, function() {
+	$("#poslines").load("invoice.php?action=creditnote&token=<?php echo newToken() ?>&invoiceid="+placeid, function() {
 	});
 }
 
 function SetNote() {
-	$("#poslines").load("invoice.php?action=addnote&invoiceid="+placeid+"&idline="+selectedline+"&addnote="+$("#textinput").val(), function() {
+	$("#poslines").load("invoice.php?action=addnote&token=<?php echo newToken() ?>&invoiceid="+placeid+"&idline="+selectedline+"&addnote="+$("#textinput").val(), function() {
 	});
 }
 

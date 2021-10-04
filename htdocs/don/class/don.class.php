@@ -1116,7 +1116,7 @@ class Don extends CommonObject
 			return -1;
 		}
 
-		$sql = 'SELECT SUM(amount) as sum_amount FROM '.MAIN_DB_PREFIX.'payment_donation WHERE fk_donation = '.((int) $this->id);
+		$sql = "SELECT SUM(amount) as sum_amount FROM ".MAIN_DB_PREFIX."payment_donation WHERE fk_donation = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			dol_print_error($this->db);

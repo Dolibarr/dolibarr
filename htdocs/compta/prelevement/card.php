@@ -33,11 +33,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals'));
 
-// Security check
-if ($user->socid > 0) {
-	accessforbidden();
-}
-
 // Get supervariables
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
@@ -71,11 +66,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 
 $hookmanager->initHooks(array('directdebitprevcard', 'globalcard', 'directdebitprevlist'));
 
-if (!$user->rights->prelevement->bons->lire && $object->type != 'bank-transfer') {
-	accessforbidden();
-}
-if (!$user->rights->paymentbybanktransfer->read && $object->type == 'bank-transfer') {
-	accessforbidden();
+$type = $object->type;
+if ($type == 'bank-transfer') {
+	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
+} else {
+	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 }
 
 

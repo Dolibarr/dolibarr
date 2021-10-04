@@ -54,8 +54,10 @@ class MouvementStock extends CommonObject
 
 	/**
 	 * @var int Type of movement
-	 * 0=input (stock increase by a stock transfer), 1=output (stock decrease after by a stock transfer),
-	 * 2=output (stock decrease), 3=input (stock increase)
+	 * 0=input (stock increase by a manual/direct stock transfer, correction or inventory),
+	 * 1=output (stock decrease after by a manual/direct stock transfer, correction or inventory),
+	 * 2=output (stock decrease after a business event like sale, shipment or manufacturing, ...),
+	 * 3=input (stock increase after a business event like purchase, reception or manufacturing, ...)
 	 * Note that qty should be > 0 with 0 or 3, < 0 with 1 or 2.
 	 */
 	public $type;
@@ -76,18 +78,32 @@ class MouvementStock extends CommonObject
 
 	/**
 	 * @var int ID
+	 * @deprecated
+	 * @see $origin_id
 	 */
 	public $fk_origin;
 
+	/**
+	 * @var int		Origin id
+	 */
+	public $origin_id;
+
+	/**
+	 * @var	string	origintype
+	 * @deprecated
+	 * see $origin_type
+	 */
 	public $origintype;
+
+	/**
+	 * @var string Origin type ('project', ...)
+	 */
+	public $origin_type;
+
 
 	public $inventorycode;
 	public $batch;
 
-	/**
-	 * @var Object		Object set as origin before calling livraison() or reception()
-	 */
-	public $origin;
 
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10, 'showoncombobox'=>1),
@@ -127,7 +143,7 @@ class MouvementStock extends CommonObject
 	/**
 	 *	Add a movement of stock (in one direction only).
 	 *  This is the lowest level method to record a stock change.
-	 *  $this->origin can be also be set to save the source object of movement.
+	 *  $this->origin_type and $this->origin_id can be also be set to save the source object of movement.
 	 *
 	 *	@param		User			$user				User object
 	 *	@param		int				$fk_product			Id of product
@@ -403,25 +419,20 @@ class MouvementStock extends CommonObject
 		}
 
 		if ($movestock) {	// Change stock for current product, change for subproduct is done after
-			// Set $origintype, fk_origin, fk_project
-			$fk_project = 0;
-			if (!empty($this->origin)) {			// This is set by caller for tracking reason
-				$origintype = empty($this->origin->origin_type) ? $this->origin->element : $this->origin->origin_type;
-				$fk_origin = $this->origin->id;
-				if ($origintype == 'project') {
-					$fk_project = $fk_origin;
-				} else {
-					$res = $this->origin->fetch($fk_origin);
-					if ($res > 0) {
-						if (!empty($this->origin->fk_project)) {
-							$fk_project = $this->origin->fk_project;
-						}
-					}
+			// Set $origin_type, origin_id and fk_project
+			$fk_project = $this->fk_project;
+			if (!empty($this->origin_type)) {			// This is set by caller for tracking reason
+				$origin_type = $this->origin_type;
+				$origin_id = $this->origin_id;
+				if (empty($fk_project) && $origin_type == 'project') {
+					$fk_project = $origin_id;
+					$origin_type = '';
+					$origin_id = 0;
 				}
 			} else {
-				$origintype = '';
-				$fk_origin = 0;
 				$fk_project = 0;
+				$origin_type = '';
+				$origin_id = 0;
 			}
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement(";
@@ -437,8 +448,8 @@ class MouvementStock extends CommonObject
 			$sql .= " '".$this->db->escape($label)."',";
 			$sql .= " ".($inventorycode ? "'".$this->db->escape($inventorycode)."'" : "null").",";
 			$sql .= " ".((float) price2num($price)).",";
-			$sql .= " ".((int) $fk_origin).",";
-			$sql .= " '".$this->db->escape($origintype)."',";
+			$sql .= " ".((int) $origin_id).",";
+			$sql .= " '".$this->db->escape($origin_type)."',";
 			$sql .= " ".((int) $fk_project);
 			$sql .= ")";
 
@@ -626,8 +637,8 @@ class MouvementStock extends CommonObject
 		$sql .= " t.type_mouvement,";
 		$sql .= " t.fk_user_author,";
 		$sql .= " t.label,";
-		$sql .= " t.fk_origin,";
-		$sql .= " t.origintype,";
+		$sql .= " t.fk_origin as origin_id,";
+		$sql .= " t.origintype as origin_type,";
 		$sql .= " t.inventorycode,";
 		$sql .= " t.batch,";
 		$sql .= " t.eatby,";
@@ -654,8 +665,10 @@ class MouvementStock extends CommonObject
 				$this->price = $obj->price;
 				$this->fk_user_author = $obj->fk_user_author;
 				$this->label = $obj->label;
-				$this->fk_origin = $obj->fk_origin;
-				$this->origintype = $obj->origintype;
+				$this->fk_origin = $obj->origin_id;		// For backward compatibility
+				$this->origintype = $obj->origin_type;	// For backward compatibility
+				$this->origin_id = $obj->origin_id;
+				$this->origin_type = $obj->origin_type;
 				$this->inventorycode = $obj->inventorycode;
 				$this->batch = $obj->batch;
 				$this->eatby = $this->db->jdate($obj->eatby);
@@ -730,6 +743,7 @@ class MouvementStock extends CommonObject
 		foreach ($pids as $key => $value) {
 			if (!$error) {
 				$tmpmove = dol_clone($this, 1);
+
 				$result = $tmpmove->_create($user, $pids[$key], $entrepot_id, ($qty * $pqtys[$key]), $type, 0, $label, $inventorycode); // This will also call _createSubProduct making this recursive
 				if ($result < 0) {
 					$this->error = $tmpmove->error;
@@ -921,16 +935,16 @@ class MouvementStock extends CommonObject
 	/**
 	 * Return Url link of origin object
 	 *
-	 * @param  int     $fk_origin      Id origin
-	 * @param  int     $origintype     Type origin
+	 * @param  int     $origin_id      Id origin
+	 * @param  int     $origin_type     Type origin
 	 * @return string
 	 */
-	public function get_origin($fk_origin, $origintype)
+	public function get_origin($origin_id, $origin_type)
 	{
 		// phpcs:enable
 		$origin = '';
 
-		switch ($origintype) {
+		switch ($origin_type) {
 			case 'commande':
 				require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 				$origin = new Commande($this->db);
@@ -973,11 +987,11 @@ class MouvementStock extends CommonObject
 				break;
 
 			default:
-				if ($origintype) {
+				if ($origin_type) {
 					// Separate originetype with "@" : left part is class name, right part is module name
-					$origintype_array = explode('@', $origintype);
-					$classname = ucfirst($origintype_array[0]);
-					$modulename = empty($origintype_array[1]) ? $classname : $origintype_array[1];
+					$origin_type_array = explode('@', $origin_type);
+					$classname = ucfirst($origin_type_array[0]);
+					$modulename = empty($origin_type_array[1]) ? $classname : $origin_type_array[1];
 					$result = dol_include_once('/'.$modulename.'/class/'.strtolower($classname).'.class.php');
 					if ($result) {
 						$classname = ucfirst($classname);
@@ -991,7 +1005,7 @@ class MouvementStock extends CommonObject
 			return '';
 		}
 
-		if ($origin->fetch($fk_origin) > 0) {
+		if ($origin->fetch($origin_id) > 0) {
 			return $origin->getNomUrl(1);
 		}
 
@@ -999,29 +1013,20 @@ class MouvementStock extends CommonObject
 	}
 
 	/**
-	 * Set attribute origin to object
+	 * Set attribute origin_type and fk_origin to object
 	 *
-	 * @param	string	$origin_element	type of element
-	 * @param	int		$origin_id		id of element
+	 * @param	string	$origin_element		Type of element
+	 * @param	int		$origin_id			Id of element
 	 *
 	 * @return	void
 	 */
 	public function setOrigin($origin_element, $origin_id)
 	{
-		if (!empty($origin_element) && $origin_id > 0) {
-			$origin = '';
-			if ($origin_element == 'project') {
-				if (!class_exists('Project')) {
-					require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-				}
-				$origin = new Project($this->db);
-			}
-
-			if (!empty($origin)) {
-				$this->origin = $origin;
-				$this->origin->id = $origin_id;
-			}
-		}
+		$this->origin_type = $origin_element;
+		$this->origin_id = $origin_id;
+		// For backward compatibility
+		$this->origintype = $origin_element;
+		$this->fk_origin = $origin_id;
 	}
 
 

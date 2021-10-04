@@ -828,7 +828,10 @@ class Conf
 
 			// Enable by default the CSRF protection by token.
 			if (!isset($this->global->MAIN_SECURITY_CSRF_WITH_TOKEN)) {
-				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 1;	// Value 2 uses also CSRF check for all GET requests
+				// Value 1 makes CSRF check for all POST parameters only
+				// Value 2 makes also CSRF check for GET requests with action = a sensitive requests like action=del, action=remove...
+				// Value 3 makes also CSRF check for all GET requests with a param action or massaction
+				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 1;
 				// Note: Set MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL=1 to have a renewal of token at each page call instead of each session (not recommended)
 			}
 
