@@ -258,6 +258,8 @@ print '<br>';
 print '<strong>$dolibarr_nocsrfcheck</strong>: '.(empty($dolibarr_nocsrfcheck) ? '0' : $dolibarr_nocsrfcheck);
 if (!empty($dolibarr_nocsrfcheck)) {
 	print ' &nbsp; '.img_picto('', 'warning').' '.$langs->trans("IfYouAreOnAProductionSetThis", 0);
+} else {
+	print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0)</span>';
 }
 print '<br>';
 
