@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy"));
@@ -46,6 +47,7 @@ if (!$user->rights->accounting->bind->write) {
 	accessforbidden();
 }
 
+$accountingAccount = new AccountingAccount($db);
 
 $month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
 if (GETPOST("year", 'int')) {
@@ -172,35 +174,75 @@ if ($action == 'validatehistory') {
 
 		$isSellerInEEC = isInEEC($mysoc);
 
+		$thirdpartystatic = new Societe($db);
+		$facture_static = new Facture($db);
+		$facture_static_det = new FactureLigne($db);
+		$product_static = new Product($db);
+
 		$i = 0;
 		while ($i < min($num_lines, 10000)) {	// No more than 10000 at once
 			$objp = $db->fetch_object($result);
 
-			$isBuyerInEEC = isInEEC($objp);	// This make a database request but there is a cache into $conf->cache['country_code_in_EEC']
+			$thirdpartystatic->id = $objp->socid;
+			$thirdpartystatic->name = $objp->name;
+			$thirdpartystatic->client = $objp->client;
+			$thirdpartystatic->fournisseur = $objp->fournisseur;
+			$thirdpartystatic->code_client = $objp->code_client;
+			$thirdpartystatic->code_compta_client = $objp->code_compta_client;
+			$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
+			$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
+			$thirdpartystatic->email = $objp->email;
+			$thirdpartystatic->country_code = $objp->country_code;
+			$thirdpartystatic->tva_intra = $objp->tva_intra;
+			$thirdpartystatic->code_compta = $objp->company_code_sell;
 
-			// Level 2: Search suggested account for product/service (similar code exists in page list.php to make manual binding)
-			$suggestedaccountingaccountfor = '';
-			if (($objp->country_code == $mysoc->country_code) || empty($objp->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
-				$objp->code_sell_p = $objp->code_sell;
-				$objp->aarowid_suggest = $objp->aarowid;
-				$suggestedaccountingaccountfor = '';
+			$product_static->ref = $objp->product_ref;
+			$product_static->id = $objp->product_id;
+			$product_static->type = $objp->type;
+			$product_static->label = $objp->product_label;
+			$product_static->status = $objp->status;
+			$product_static->status_buy = $objp->status_buy;
+			$product_static->accountancy_code_sell = $objp->code_sell;
+			$product_static->accountancy_code_sell_intra = $objp->code_sell_intra;
+			$product_static->accountancy_code_sell_export = $objp->code_sell_export;
+			$product_static->accountancy_code_buy = $objp->code_buy;
+			$product_static->accountancy_code_buy_intra = $objp->code_buy_intra;
+			$product_static->accountancy_code_buy_export = $objp->code_buy_export;
+			$product_static->tva_tx = $objp->tva_tx_prod;
+			$product_static->tva_tx = $objp->tva_tx_prod;
+
+			$facture_static->ref = $objp->ref;
+			$facture_static->id = $objp->facid;
+			$facture_static->type = $objp->ftype;
+			$facture_static->datef = $objp->datef;
+
+			$facture_static_det->id = $objp->rowid;
+			$facture_static_det->total_ht = $objp->total_ht;
+			$facture_static_det->tva_tx = $objp->tva_tx_line;
+			$facture_static_det->vat_src_code = $objp->vat_src_code;
+			$facture_static_det->product_type = $objp->type_l;
+			$facture_static_det->desc = $objp->description;
+
+			$accoutinAccountArray = array(
+				'dom'=>$objp->aarowid,
+				'intra'=>$objp->aarowid_intra,
+				'export'=>$objp->aarowid_export,
+				'thirdparty' =>$objp->aarowid_thirdparty);
+
+			$code_sell_p_notset = '';
+			$code_sell_t_notset = '';
+
+			$return=$accountingAccount->getAccountingCodeToBind($thirdpartystatic, $mysoc, $product_static, $facture_static, $facture_static_det, $accoutinAccountArray);
+			if (!is_array($return) && $return<0) {
+				setEventMessage($accountingAccount->error, 'errors');
 			} else {
-				if ($isSellerInEEC && $isBuyerInEEC && $objp->tva_tx_line != 0) {	// European intravat sale, but with VAT
-					$objp->code_sell_p = $objp->code_sell;
-					$objp->aarowid_suggest = $objp->aarowid;
-					$suggestedaccountingaccountfor = 'eecwithvat';
-				} elseif ($isSellerInEEC && $isBuyerInEEC && empty($objp->tva_intra)) {	// European intravat sale, without VAT intra community number
-					$objp->code_sell_p = $objp->code_sell;
-					$objp->aarowid_suggest = 0; // There is a doubt, no automatic binding
-					$suggestedaccountingaccountfor = 'eecwithoutvatnumber';
-				} elseif ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
-					$objp->code_sell_p = $objp->code_sell_intra;
-					$objp->aarowid_suggest = $objp->aarowid_intra;
-					$suggestedaccountingaccountfor = 'eec';
-				} else {                                        // Foreign sale
-					$objp->code_sell_p = $objp->code_sell_export;
-					$objp->aarowid_suggest = $objp->aarowid_export;
-					$suggestedaccountingaccountfor = 'export';
+				$suggestedid=$return['suggestedid'];
+				$suggestedaccountingaccountfor=$return['suggestedaccountingaccountfor'];
+
+				if (!empty($suggestedid) && $suggestedaccountingaccountfor<>'') {
+					$suggestedid=$return['suggestedid'];
+				} else {
+					$suggestedid=0;
 				}
 			}
 
@@ -215,8 +257,8 @@ if ($action == 'validatehistory') {
 
 			if ($objp->aarowid_suggest > 0) {
 				$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."facturedet";
-				$sqlupdate .= " SET fk_code_ventilation = ".((int) $objp->aarowid_suggest);
-				$sqlupdate .= " WHERE fk_code_ventilation <= 0 AND product_type <= 2 AND rowid = ".((int) $objp->rowid);
+				$sqlupdate .= " SET fk_code_ventilation = ".((int) $suggestedid);
+				$sqlupdate .= " WHERE fk_code_ventilation <= 0 AND product_type <= 2 AND rowid = ".((int) $facture_static_det->id);
 
 				$resqlupdate = $db->query($sqlupdate);
 				if (!$resqlupdate) {

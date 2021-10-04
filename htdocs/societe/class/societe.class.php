@@ -2581,13 +2581,13 @@ class Societe extends CommonObject
 			$label .= ' '.$this->getLibStatut(5);
 		}
 
-		if (!empty($this->name)) {
-			$label .= '<br><b>'.$langs->trans('Name').':</b> '.dol_escape_htmltag($this->name);
-			if (!empty($this->name_alias)) {
-				$label .= ' ('.dol_escape_htmltag($this->name_alias).')';
-			}
+		$label .= '<br><b>'.$langs->trans('Name').':</b> '.dol_escape_htmltag($this->name);
+		if (!empty($this->name_alias)) {
+			$label .= ' ('.dol_escape_htmltag($this->name_alias).')';
 		}
-		$label .= '<br>'.img_picto('', 'email', 'class="pictofixedwidth"').$this->email;
+		if ($this->email) {
+			$label .= '<br>'.img_picto('', 'email', 'class="pictofixedwidth"').$this->email;
+		}
 		if (!empty($this->phone) || !empty($this->fax)) {
 			$phonelist = array();
 			if ($this->phone) {
@@ -3749,7 +3749,7 @@ class Societe extends CommonObject
 	public function has_projects()
 	{
 		// phpcs:enable
-		$sql = 'SELECT COUNT(*) as numproj FROM '.MAIN_DB_PREFIX.'projet WHERE fk_soc = '.((int) $this->id);
+		$sql = "SELECT COUNT(*) as numproj FROM ".MAIN_DB_PREFIX."projet WHERE fk_soc = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);

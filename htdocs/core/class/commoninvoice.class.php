@@ -226,8 +226,8 @@ abstract class CommonInvoice extends CommonObject
 		$idarray = array();
 
 		$sql = 'SELECT rowid';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' WHERE fk_facture_source = '.((int) $this->id);
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " WHERE fk_facture_source = ".((int) $this->id);
 		$sql .= ' AND type = 2';
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -253,8 +253,8 @@ abstract class CommonInvoice extends CommonObject
 	public function getIdReplacingInvoice($option = '')
 	{
 		$sql = 'SELECT rowid';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' WHERE fk_facture_source = '.((int) $this->id);
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " WHERE fk_facture_source = ".((int) $this->id);
 		$sql .= ' AND type < 2';
 		if ($option == 'validated') {
 			$sql .= ' AND fk_statut = 1';
@@ -306,8 +306,8 @@ abstract class CommonInvoice extends CommonObject
 			$sharedentity = 'facture_fourn';
 		}
 
-		$sql = 'SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code'.$field3;
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$table.' as pf, '.MAIN_DB_PREFIX.$table2.' as p, '.MAIN_DB_PREFIX.'c_paiement as t';
+		$sql = "SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code".$field3;
+		$sql .= " FROM ".MAIN_DB_PREFIX.$table." as pf, ".MAIN_DB_PREFIX.$table2." as p, ".MAIN_DB_PREFIX."c_paiement as t";
 		$sql .= " WHERE pf.".$field." = ".((int) $this->id);
 		$sql .= " AND pf.".$field2." = p.rowid";
 		$sql .= ' AND p.fk_paiement = t.id';
@@ -335,12 +335,12 @@ abstract class CommonInvoice extends CommonObject
 			//look for credit notes and discounts and deposits
 			$sql = '';
 			if ($this->element == 'facture' || $this->element == 'invoice') {
-				$sql = 'SELECT rc.amount_ttc as amount, rc.multicurrency_amount_ttc as multicurrency_amount, rc.datec as date, f.ref as ref, rc.description as type';
+				$sql = "SELECT rc.amount_ttc as amount, rc.multicurrency_amount_ttc as multicurrency_amount, rc.datec as date, f.ref as ref, rc.description as type";
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
 				$sql .= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.((int) $this->id);
 				$sql .= ' AND (f.type = 2 OR f.type = 0 OR f.type = 3)'; // Find discount coming from credit note or excess received or deposits (payments from deposits are always null except if FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is set)
 			} elseif ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
-				$sql = 'SELECT rc.amount_ttc as amount, rc.multicurrency_amount_ttc as multicurrency_amount, rc.datec as date, f.ref as ref, rc.description as type';
+				$sql = "SELECT rc.amount_ttc as amount, rc.multicurrency_amount_ttc as multicurrency_amount, rc.datec as date, f.ref as ref, rc.description as type";
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture_fourn as f';
 				$sql .= ' WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = '.((int) $this->id);
 				$sql .= ' AND (f.type = 2 OR f.type = 0 OR f.type = 3)'; // Find discount coming from credit note or excess received or deposits (payments from deposits are always null except if FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is set)
@@ -734,7 +734,7 @@ abstract class CommonInvoice extends CommonObject
 							$sql .= 'fk_facture, ';
 						}
 						$sql .= ' amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib, sourcetype, entity)';
-						$sql .= ' VALUES ('.((int) $this->id);
+						$sql .= " VALUES (".((int) $this->id);
 						$sql .= ", ".((float) price2num($amount));
 						$sql .= ", '".$this->db->idate($now)."'";
 						$sql .= ", ".((int) $fuser->id);

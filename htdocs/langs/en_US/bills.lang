@@ -265,6 +265,7 @@ DateInvoice=Invoice date
 DatePointOfTax=Point of tax
 NoInvoice=No invoice
 NoOpenInvoice=No open invoice
+NbOfOpenInvoices=Number of open invoices
 ClassifyBill=Classify invoice
 SupplierBillsToPay=Unpaid vendor invoices
 CustomerBillsUnpaid=Unpaid customer invoices

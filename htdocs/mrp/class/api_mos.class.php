@@ -22,7 +22,7 @@ require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 
 
 /**
- * \file    mrp/class/api_mo.class.php
+ * \file    htdocs/mrp/class/api_mos.class.php
  * \ingroup mrp
  * \brief   File for API management of MO.
  */

@@ -791,7 +791,7 @@ class Form
 
 		// Warning: if you set submit button to disabled, post using 'Enter' will no more work if there is no another input submit. So we add a hidden button
 		$ret .= '<input type="submit" name="confirmmassactioninvisible" style="display: none" tabindex="-1">'; // Hidden button BEFORE so it is the one used when we submit with ENTER.
-		$ret .= '<input type="submit" disabled name="confirmmassaction"'.(empty($conf->use_javascript_ajax) ? '' : ' style="display: none"').' class="button'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' '.$name.' '.$name.'confirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
+		$ret .= '<input type="submit" disabled name="confirmmassaction"'.(empty($conf->use_javascript_ajax) ? '' : ' style="display: none"').' class="button small'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' '.$name.' '.$name.'confirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
 		$ret .= '</div>';
 
 		if (!empty($conf->use_javascript_ajax)) {
@@ -1680,11 +1680,6 @@ class Form
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			if ($conf->use_javascript_ajax && !$forcecombo && !$options_only) {
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlid, $events, getDolGlobalString("CONTACT_USE_SEARCH_TO_SELECT"));
-			}
-
 			if ($htmlname != 'none' && !$options_only) {
 				$out .= '<select class="flat'.($moreclass ? ' '.$moreclass : '').'" id="'.$htmlid.'" name="'.$htmlname.(($num || empty($disableifempty)) ? '' : ' disabled').($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.(!empty($moreparam) ? $moreparam : '').'>';
 			}
@@ -1813,6 +1808,11 @@ class Form
 
 			if ($htmlname != 'none' && !$options_only) {
 				$out .= '</select>';
+			}
+
+			if ($conf->use_javascript_ajax && !$forcecombo && !$options_only) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+				$out .= ajax_combobox($htmlid, $events, getDolGlobalString("CONTACT_USE_SEARCH_TO_SELECT"));
 			}
 
 			$this->num = $num;
@@ -8833,8 +8833,8 @@ class Form
 	public function showFilterButtons()
 	{
 		$out = '<div class="nowraponall">';
-		$out .= '<button type="submit" class="liste_titre button_search" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
-		$out .= '<button type="submit" class="liste_titre button_removefilter" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
+		$out .= '<button type="submit" class="liste_titre button_search reposition" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
+		$out .= '<button type="submit" class="liste_titre button_removefilter reposition" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
 		$out .= '</div>';
 
 		return $out;

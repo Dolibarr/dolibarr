@@ -948,9 +948,10 @@ class Reception extends CommonObject
 		}
 
 		if (!$error) {
-					$main = MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
-					$ef = $main."_extrafields";
-					$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_reception = ".((int) $this->id).")";
+			$main = MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
+			$ef = $main."_extrafields";
+
+			$sqlef = "DELETE FROM ".$ef." WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_reception = ".((int) $this->id).")";
 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch";
 			$sql .= " WHERE fk_reception = ".((int) $this->id);
@@ -1044,7 +1045,8 @@ class Reception extends CommonObject
 	{
 		// phpcs:enable
 		dol_include_once('/fourn/class/fournisseur.commande.dispatch.class.php');
-		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch WHERE fk_reception='.((int) $this->id);
+
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch WHERE fk_reception = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 
 		if (!empty($resql)) {

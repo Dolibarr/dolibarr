@@ -6051,7 +6051,7 @@ class FactureLigne extends CommonInvoiceLine
 				return 0;
 			}
 
-			$sql = 'SELECT situation_percent FROM '.MAIN_DB_PREFIX.'facturedet WHERE rowid='.((int) $this->fk_prev_id);
+			$sql = "SELECT situation_percent FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".((int) $this->fk_prev_id);
 			$resql = $this->db->query($sql);
 			if ($resql && $resql->num_rows > 0) {
 				$res = $this->db->fetch_array($resql);
@@ -6061,9 +6061,9 @@ class FactureLigne extends CommonInvoiceLine
 				if ($include_credit_note) {
 					$sql = 'SELECT fd.situation_percent FROM '.MAIN_DB_PREFIX.'facturedet fd';
 					$sql .= ' JOIN '.MAIN_DB_PREFIX.'facture f ON (f.rowid = fd.fk_facture) ';
-					$sql .= ' WHERE fd.fk_prev_id = '.((int) $this->fk_prev_id);
-					$sql .= ' AND f.situation_cycle_ref = '.((int) $invoicecache[$invoiceid]->situation_cycle_ref); // Prevent cycle outed
-					$sql .= ' AND f.type = '.Facture::TYPE_CREDIT_NOTE;
+					$sql .= " WHERE fd.fk_prev_id = ".((int) $this->fk_prev_id);
+					$sql .= " AND f.situation_cycle_ref = ".((int) $invoicecache[$invoiceid]->situation_cycle_ref); // Prevent cycle outed
+					$sql .= " AND f.type = ".Facture::TYPE_CREDIT_NOTE;
 
 					$res = $this->db->query($sql);
 					if ($res) {

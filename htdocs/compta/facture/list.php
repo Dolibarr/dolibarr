@@ -1846,8 +1846,8 @@ if ($resql) {
 			}
 			// Alias
 			if (!empty($arrayfields['s.name_alias']['checked'])) {
-				print '<td class="tdoverflowmax150" title="'.$obj->name_alias.'">';
-				print $obj->name_alias;
+				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->name_alias).'">';
+				print dol_escape_htmltag($obj->name_alias);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1855,8 +1855,8 @@ if ($resql) {
 			}
 			// Town
 			if (!empty($arrayfields['s.town']['checked'])) {
-				print '<td>';
-				print $obj->town;
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->town).'">';
+				print dol_escape_htmltag($obj->town);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1865,7 +1865,7 @@ if ($resql) {
 			// Zip
 			if (!empty($arrayfields['s.zip']['checked'])) {
 				print '<td class="nowraponall">';
-				print $obj->zip;
+				print dol_escape_htmltag($obj->zip);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1873,7 +1873,7 @@ if ($resql) {
 			}
 			// State
 			if (!empty($arrayfields['state.nom']['checked'])) {
-				print "<td>".$obj->state_name."</td>\n";
+				print "<td>".dol_escape_htmltag($obj->state_name)."</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1936,7 +1936,7 @@ if ($resql) {
 			// Module Source
 			if (!empty($arrayfields['f.module_source']['checked'])) {
 				print '<td>';
-				print $obj->module_source;
+				print dol_escape_htmltag($obj->module_source);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1946,7 +1946,7 @@ if ($resql) {
 			// POS Terminal
 			if (!empty($arrayfields['f.pos_source']['checked'])) {
 				print '<td>';
-				print $obj->pos_source;
+				print dol_escape_htmltag($obj->pos_source);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
