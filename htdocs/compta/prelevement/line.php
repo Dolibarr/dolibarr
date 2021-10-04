@@ -35,11 +35,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadlangs(array('banks', 'categories', 'bills', 'withdrawals'));
 
-// Security check
-if ($user->socid > 0) {
-	accessforbidden();
-}
-
 // Get supervariables
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
@@ -64,6 +59,13 @@ if ($sortorder == "") {
 }
 if ($sortfield == "") {
 	$sortfield = "pl.fk_soc";
+}
+
+$type = $object->type;
+if ($type == 'bank-transfer') {
+	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
+} else {
+	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 }
 
 
