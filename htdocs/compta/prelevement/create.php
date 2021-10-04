@@ -39,12 +39,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies', 'bills'));
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'prelevement', '', '', 'bons');
-
 $type = GETPOST('type', 'aZ09');
 
 // Get supervariables
@@ -62,6 +56,16 @@ if (empty($page) || $page == -1) {
 $offset = $limit * $page;
 
 $hookmanager->initHooks(array('directdebitcreatecard', 'globalcard'));
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+if ($type == 'bank-transfer') {
+	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
+} else {
+	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
+}
 
 
 /*
@@ -141,7 +145,11 @@ if (empty($reshook)) {
 		}
 	}
 	$objectclass = "BonPrelevement";
-	$uploaddir = $conf->prelevement->dir_output;
+	if ($type == 'bank-transfer') {
+		$uploaddir = $conf->paymentbybanktransfer->dir_output;
+	} else {
+		$uploaddir = $conf->prelevement->dir_output;
+	}
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 

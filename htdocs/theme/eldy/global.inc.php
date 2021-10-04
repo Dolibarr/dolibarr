@@ -3387,8 +3387,8 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	<?php
 	if ($userborderontable) { ?>
 	border-left: 1px solid var(--colortopbordertitle1);
-    border-right: 1px solid var(--colortopbordertitle1);
-    <?php } ?>
+	border-right: 1px solid var(--colortopbordertitle1);
+	<?php } ?>
 	/*width: calc(100% - 7px);
 	border-collapse: separate !important;
 	border-spacing: 0px;
