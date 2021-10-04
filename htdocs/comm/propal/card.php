@@ -1977,7 +1977,7 @@ if ($action == 'create') {
 			$eligibleForDepositGeneration = true;
 
 			if (array_key_exists('facture', $object->linkedObjects)) {
-				foreach ($object->linkedObjectsIds['facture'] as $invoice) {
+				foreach ($object->linkedObjects['facture'] as $invoice) {
 					if ($invoice->type == Facture::TYPE_DEPOSIT) {
 						$eligibleForDepositGeneration = false;
 						break;
