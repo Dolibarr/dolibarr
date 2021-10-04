@@ -3872,7 +3872,7 @@ class Form
 	 *
 	 *      @param	int		$selected		Id of payment term to preselect by default
 	 *      @param	string	$htmlname		Nom de la zone select
-	 *      @param	int		$filtertype		Not used
+	 *      @param	int		$filtertype		If > 0, don't include payment terms with deposit percentage (for invoices)
 	 *		@param	int		$addempty		Add an empty entry
 	 * 		@param	int		$noinfoadmin		0=Add admin info, 1=Disable admin info
 	 * 		@param	string	$morecss			Add more CSS on select tag
@@ -3900,6 +3900,10 @@ class Form
 
 		$selectedDepositPercent = null;
 		foreach ($this->cache_conditions_paiements as $id => $arrayconditions) {
+			if ($filtertype > 0 && ! empty($arrayconditions['deposit_percent'])) {
+				continue;
+			}
+
 			if ($selected == $id) {
 				$selectedDepositPercent = ! empty($deposit_percent) ? $deposit_percent : $arrayconditions['deposit_percent'];
 				print '<option value="'.$id.'" data-deposit_percent="' . $arrayconditions['deposit_percent'] . '" selected>';
@@ -3928,7 +3932,6 @@ class Form
 		print '</span>';
 		print '
 			<script>
-				// let defaultDepositPercent = ' . (! empty($depositPercent) ? $depositPercent : null) . ';
 				$(document).ready(function () {
 					$("#' . $htmlname . '").change(function () {
 						let $selected = $(this).find("option:selected");
