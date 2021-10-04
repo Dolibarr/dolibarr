@@ -399,7 +399,7 @@ if ($object->id > 0) {
 		{
 			if ($action != 'classify')
 			{
-				$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				if ($action == 'classify') {
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 					$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -748,7 +748,7 @@ if ($object->id > 0) {
 			print $warehouse_static->getNomUrl(1);
 			print '</td>';
 			print '<td id="id_'.$obj->rowid.'_product">';
-			print $product_static->getNomUrl(1);
+			print $product_static->getNomUrl(1).' - '.$product_static->label;
 			print '</td>';
 
 			if ($conf->productbatch->enabled) {

@@ -587,7 +587,7 @@ if ($rowid > 0) {
 		print $langs->trans("LinkedToDolibarrThirdParty");
 		print '</td>';
 		if ($action != 'editthirdparty' && $user->rights->adherent->creer) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&token='.newToken().'&rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td colspan="2" class="valeur">';
@@ -623,7 +623,7 @@ if ($rowid > 0) {
 		print '</td></tr>';
 	}
 
-	// Login Dolibarr
+	// Login Dolibarr - Link to user
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans("LinkedToDolibarrUser");
@@ -631,7 +631,7 @@ if ($rowid > 0) {
 	if ($action != 'editlogin' && $user->rights->adherent->creer) {
 		print '<td class="right">';
 		if ($user->rights->user->user->creer) {
-			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editlogin&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToUser'), 1).'</a>';
+			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editlogin&token='.newToken().'&rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToUser'), 1).'</a>';
 		}
 		print '</td>';
 	}
@@ -641,7 +641,9 @@ if ($rowid > 0) {
 		$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'userid', '');
 	} else {
 		if ($object->user_id) {
-			$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'none');
+			$linkeduser = new User($db);
+			$linkeduser->fetch($object->user_id);
+			print $linkeduser->getNomUrl(-1);
 		} else {
 			print '<span class="opacitymedium">'.$langs->trans("NoDolibarrAccess").'</span>';
 		}
@@ -668,7 +670,7 @@ if ($rowid > 0) {
 			print '<div class="tabsAction">';
 
 			if ($object->statut > 0) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'&action=addsubscription">'.$langs->trans("AddSubscription")."</a></div>";
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'&action=addsubscription&token='.newToken().'">'.$langs->trans("AddSubscription")."</a></div>";
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("AddSubscription").'</a></div>';
 			}

@@ -337,6 +337,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 			),
 		'supplier_proposal' =>
 			array(
+				'lang' => 'supplier_proposal',
 				'groupName' => 'SupplierProposals',
 				'globalStatsKey' => 'askprice',
 				'stats' =>
@@ -486,6 +487,9 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 			}
 
 			if (!empty($boards)) {
+				if (!empty($groupElement['lang'])) {
+					$langs->load($groupElement['lang']);
+				}
 				$groupName = $langs->trans($groupElement['groupName']);
 				$groupKeyLowerCase = strtolower($groupKey);
 				$nbTotalForGroup = 0;

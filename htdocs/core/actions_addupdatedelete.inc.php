@@ -87,7 +87,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			$value = $tmparraykey[GETPOST($key)].','.GETPOST($key.'2');
 		} else {
 			if ($key == 'lang') {
-				$value = GETPOST($key, 'aZ09');
+				$value = GETPOST($key, 'aZ09')?GETPOST($key, 'aZ09'):"";
 			} else {
 				$value = GETPOST($key, 'alphanohtml');
 			}
@@ -129,10 +129,11 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 
 	if (!$error) {
 		$result = $object->create($user);
+		var_dump($object);exit;
 		if ($result > 0) {
 			// Creation OK
-			if ($conf->categorie->enabled) {
-				$categories = GETPOST('categories', 'array');
+			if ($conf->categorie->enabled && method_exists($object, 'setCategories')) {
+				$categories = GETPOST('categories', 'array:int');
 				$object->setCategories($categories);
 			}
 			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
@@ -236,7 +237,9 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 
 		if ($conf->categorie->enabled) {
 			$categories = GETPOST('categories', 'array');
-			$object->setCategories($categories);
+			if (method_exists($object, 'setCategories')) {
+				$object->setCategories($categories);
+			}
 		}
 	}
 

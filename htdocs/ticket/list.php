@@ -159,7 +159,7 @@ if (!$user->rights->ticket->read) {
 }
 
 // Store current page url
-$url_page_current = dol_buildpath('/ticket/list.php', 1);
+$url_page_current = DOL_URL_ROOT.'/ticket/list.php';
 
 if ($project_ref) {
 	$tmpproject = new Project($db);

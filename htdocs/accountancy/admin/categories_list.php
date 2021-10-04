@@ -811,7 +811,7 @@ if ($resql) {
 
 				// Modify link
 				if ($canbemodified) {
-					print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+					print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a></td>';
 				} else {
 					print '<td>&nbsp;</td>';
 				}
@@ -820,7 +820,7 @@ if ($resql) {
 				if ($iserasable) {
 					print '<td class="center">';
 					if ($user->admin) {
-						print '<a href="'.$url.'action=delete">'.img_delete().'</a>';
+						print '<a href="'.$url.'action=delete&token='.newToken().'">'.img_delete().'</a>';
 					}
 					//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
 					print '</td>';

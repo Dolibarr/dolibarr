@@ -131,7 +131,7 @@ if (!function_exists("ldap_connect")) {
 $form = new Form($db);
 
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print dol_get_fiche_head($head, 'ldap', $langs->trans("LDAPSetup"), -1);

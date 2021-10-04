@@ -714,6 +714,17 @@ class DoliDBPgsql extends DoliDB
 	}
 
 	/**
+	 *	Escape a string to insert data
+	 *
+	 *	@param	string	$stringtoencode		String to escape
+	 *	@return	string						String escaped
+	 */
+	public function escapeunderscore($stringtoencode)
+	{
+		return str_replace('_', '\_', $stringtoencode);
+	}
+
+	/**
 	 *  Format a SQL IF
 	 *
 	 *  @param	string	$test           Test string (example: 'cd.statut=0', 'field IS NULL')

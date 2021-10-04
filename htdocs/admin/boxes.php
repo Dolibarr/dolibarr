@@ -360,7 +360,7 @@ foreach ($boxtoadd as $box) {
 	print '</tr>'."\n";
 }
 if (!count($boxtoadd) && count($boxactivated)) {
-	print '<tr><td class="opacitymedium" colspan="4">'.$langs->trans("AllWidgetsWereEnabled").'</td></tr>';
+	print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("AllWidgetsWereEnabled").'</span></td></tr>';
 }
 print '</table>'."\n";
 print '</div>';
@@ -423,8 +423,8 @@ foreach ($boxactivated as $key => $box) {
 	$hasprevious = ($key != 0);
 	print '<td class="center">'.($key + 1).'</td>';
 	print '<td class="center nowraponall">';
-	print ($hasnext ? '<a class="reposition" href="boxes.php?action=switch&amp;switchfrom='.$box->rowid.'&amp;switchto='.$boxactivated[$key + 1]->rowid.'">'.img_down().'</a>&nbsp;' : '');
-	print ($hasprevious ? '<a class="reposition" href="boxes.php?action=switch&amp;switchfrom='.$box->rowid.'&amp;switchto='.$boxactivated[$key - 1]->rowid.'">'.img_up().'</a>' : '');
+	print ($hasnext ? '<a class="reposition" href="boxes.php?action=switch&token='.newToken().'&switchfrom='.$box->rowid.'&switchto='.$boxactivated[$key + 1]->rowid.'">'.img_down().'</a>&nbsp;' : '');
+	print ($hasprevious ? '<a class="reposition" href="boxes.php?action=switch&token='.newToken().'&switchfrom='.$box->rowid.'&switchto='.$boxactivated[$key - 1]->rowid.'">'.img_up().'</a>' : '');
 	print '</td>';
 	print '<td class="center">';
 	print '<a class="reposition" href="boxes.php?rowid='.$box->rowid.'&action=delete&token='.newToken().'">'.img_delete().'</a>';

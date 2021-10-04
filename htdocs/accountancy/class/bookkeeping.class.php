@@ -888,9 +888,11 @@ class BookKeeping extends CommonObject
 		// Affichage par compte comptable
 		if (!empty($option)) {
 			$sql .= ' AND t.subledger_account IS NOT NULL';
-			$sql .= ' ORDER BY t.subledger_account ASC';
+			$sortfield = 't.subledger_account'.($sortfield ? ','.$sortfield : '');
+			$sortorder = 'ASC'.($sortfield ? ','.$sortfield : '');
 		} else {
-			$sql .= ' ORDER BY t.numero_compte ASC';
+			$sortfield = 't.numero_compte'.($sortfield ? ','.$sortfield : '');
+			$sortorder = 'ASC'.($sortorder ? ','.$sortorder : '');
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);

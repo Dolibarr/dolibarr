@@ -57,7 +57,6 @@ RUN echo "host mail" >> /etc/msmtprc
 RUN echo "from local@localdomain.com" >> /etc/msmtprc
 RUN echo "domain localhost.localdomain" >> /etc/msmtprc
 RUN echo "sendmail_path=/usr/bin/msmtp -t" >> /usr/local/etc/php/conf.d/php-sendmail.ini
-RUN echo "localhost localhost.localdomain" >> /etc/hosts
 
 EXPOSE 80
 
