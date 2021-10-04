@@ -37,6 +37,7 @@ if (!$user->admin) {
 $id = GETPOST('rowid', 'int');
 $action = GETPOST('action', 'aZ09');
 $optioncss = GETPOST('optionscss', 'aZ09');
+$contextpage = GETPOST('contextpage', 'aZ09');
 
 $langcode = GETPOST('langcode', 'alphanohtml');
 $transkey = GETPOST('transkey', 'alphanohtml');
@@ -458,18 +459,8 @@ if ($mode == 'searchkey') {
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print_liste_field_titre("Language_en_US_es_MX_etc", $_SERVER["PHP_SELF"], 'lang,transkey', '', $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Key", $_SERVER["PHP_SELF"], 'transkey', '', $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("CurrentTranslationString", $_SERVER["PHP_SELF"], 'transvalue', '', $param, '', $sortfield, $sortorder);
-	//if (! empty($conf->multicompany->enabled) && !$user->entity) print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], 'entity,transkey', '', $param, '', $sortfield, $sortorder);
-	print '<td align="center"></td>';
-	print "</tr>\n";
 
-	// Line to search new record
-	print "\n";
-
-	print '<tr class="oddeven"><td>';
+	print '<tr class="liste_titre_filter"><td>';
 	//print $formadmin->select_language($langcode,'langcode',0,null,$langs->trans("All"),0,0,'',1);
 	print $formadmin->select_language($langcode, 'langcode', 0, null, 0, 0, 0, 'maxwidth250', 1);
 	print '</td>'."\n";
@@ -494,6 +485,15 @@ if ($mode == 'searchkey') {
 	print $searchpicto;
 	print '</td>';
 	print '</tr>';
+
+	print '<tr class="liste_titre">';
+	print_liste_field_titre("Language_en_US_es_MX_etc", $_SERVER["PHP_SELF"], 'lang,transkey', '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Key", $_SERVER["PHP_SELF"], 'transkey', '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("CurrentTranslationString", $_SERVER["PHP_SELF"], 'transvalue', '', $param, '', $sortfield, $sortorder);
+	//if (! empty($conf->multicompany->enabled) && !$user->entity) print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], 'entity,transkey', '', $param, '', $sortfield, $sortorder);
+	print '<td align="center"></td>';
+	print "</tr>\n";
+
 
 	if ($sortfield == 'transkey' && strtolower($sortorder) == 'asc') {
 		ksort($recordtoshow);

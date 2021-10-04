@@ -866,11 +866,11 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		$sql .= " AND (";
 		$searchalgo = '';
 		if (preg_match('/meta/', $algo)) {
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.title LIKE '%".$db->escape($searchstring)."%' OR wp.description LIKE '%".$db->escape($searchstring)."%'";
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.keywords LIKE '".$db->escape($searchstring).",%' OR wp.keywords LIKE '% ".$db->escape($searchstring)."%'"; // TODO Use a better way to scan keywords
+			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.title LIKE '%".$db->escapeunderscore($db->escape($searchstring))."%' OR wp.description LIKE '%".$db->escapeunderscore($db->escape($searchstring))."%'";
+			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.keywords LIKE '".$db->escapeunderscore($db->escape($searchstring)).",%' OR wp.keywords LIKE '% ".$db->escapeunderscore($db->escape($searchstring))."%'"; // TODO Use a better way to scan keywords
 		}
 		if (preg_match('/content/', $algo)) {
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.content LIKE '%".$db->escape($searchstring)."%'";
+			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.content LIKE '%".$db->escapeunderscore($db->escape($searchstring))."%'";
 		}
 		$sql .= $searchalgo;
 		if (is_array($otherfilters) && !empty($otherfilters['category'])) {
@@ -879,6 +879,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		$sql .= ")";
 		$sql .= $db->order($sortfield, $sortorder);
 		$sql .= $db->plimit($max);
+		//print $sql;
 
 		$resql = $db->query($sql);
 		if ($resql) {

@@ -160,6 +160,7 @@ if (empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) {
 
 $tabhelp = array();
 $tabhelp[25] = array(
+	'label'=>$langs->trans('EnterAnyCode'),
 	'topic'=>'<span class="small">'.$helpsubstit.'</span>',
 	'joinfiles'=>$langs->trans('AttachMainDocByDefault'),
 	'content'=>'<span class="small">'.$helpsubstit.'</span>',
@@ -683,8 +684,8 @@ if ($action == 'view') {
 
 	$tmpaction = 'create';
 	$parameters = array(
-	'fieldlist' => $fieldlist,
-	'tabname' => $tabname[$id]
+		'fieldlist' => $fieldlist,
+		'tabname' => $tabname[$id]
 	);
 	$reshook = $hookmanager->executeHooks('createEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 	$error = $hookmanager->error;
@@ -822,7 +823,7 @@ if ($resql) {
 			print '</td>';
 		} elseif ($value == 'fk_user') {
 			print '<td class="liste_titre">';
-			print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 1, '', 0, '', 'maxwidth150');
+			print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'maxwidth150');
 			print '</td>';
 		} elseif ($value == 'topic') {
 			print '<td class="liste_titre"><input type="text" name="search_topic" value="'.dol_escape_htmltag($search_topic).'"></td>';
@@ -1187,7 +1188,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 		if ($value == 'fk_user') {
 			print '<td>';
 			if ($user->admin) {
-				print $form->select_dolusers(empty($obj->{$value}) ? '' : $obj->{$value}, 'fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 1, '', 0, '', 'maxwidth200');
+				print $form->select_dolusers(empty($obj->{$value}) ? '' : $obj->{$value}, 'fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'minwidth150 maxwidth300');
 			} else {
 				if ($context == 'add') {	// I am not admin and we show the add form
 					print $user->getNomUrl(1); // Me

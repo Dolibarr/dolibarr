@@ -1683,7 +1683,7 @@ class Setup extends DolibarrApi
 			if (!$xmlarray['curl_error_no'] && $xmlarray['http_code'] != '400' && $xmlarray['http_code'] != '404') {
 				$xmlfile = $xmlarray['content'];
 				//print "xmlfilestart".$xmlfile."endxmlfile";
-				$xml = simplexml_load_string($xmlfile);
+				$xml = simplexml_load_string($xmlfile, 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
 			} else {
 				$errormsg = $langs->trans('XmlNotFound').': '.$xmlremote.' - '.$xmlarray['http_code'].(($xmlarray['http_code'] == 400 && $xmlarray['content']) ? ' '.$xmlarray['content'] : '').' '.$xmlarray['curl_error_no'].' '.$xmlarray['curl_error_msg'];
 				throw new RestException(500, $errormsg);
