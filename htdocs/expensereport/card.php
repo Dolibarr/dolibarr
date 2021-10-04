@@ -277,10 +277,14 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error && empty($conf->global->EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS) && $object->periode_existe($fuser, $object->date_debut, $object->date_fin)) {
-			$error++;
-			setEventMessages($langs->trans("ErrorDoubleDeclaration"), null, 'errors');
-			$action = 'create';
+		if (!$error && empty($conf->global->EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS)) {
+			$overlappingExpenseReportID = $object->periode_existe($fuser, $object->date_debut, $object->date_fin, true);
+
+			if ($overlappingExpenseReportID > 0) {
+				$error++;
+				setEventMessages($langs->trans("ErrorDoubleDeclaration").' <a href="'.$_SERVER['PHP_SELF'].'?id='.$overlappingExpenseReportID.'">'. $langs->trans('ShowTrip').'</a>', null, 'errors');
+				$action = 'create';
+			}
 		}
 
 		if (!$error) {
