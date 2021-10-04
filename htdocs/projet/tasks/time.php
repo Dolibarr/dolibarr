@@ -1089,6 +1089,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 		print '<input type="hidden" name="projectid" value="'.$projectidforalltimes.'">';
 		print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 		print '<input type="hidden" name="tab" value="'.$tab.'">';
+		print '<input type="hidden" name="page_y" value="">';
 
 		// Form to convert time spent into invoice
 		if ($massaction == 'generateinvoice') {

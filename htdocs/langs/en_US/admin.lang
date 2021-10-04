@@ -133,7 +133,6 @@ IdModule=Module ID
 IdPermissions=Permissions ID
 LanguageBrowserParameter=Parameter %s
 LocalisationDolibarrParameters=Localization parameters
-ClientTZ=Client Time Zone (user)
 ClientHour=Client time (user)
 OSTZ=Server OS Time Zone
 PHPTZ=PHP server Time Zone
