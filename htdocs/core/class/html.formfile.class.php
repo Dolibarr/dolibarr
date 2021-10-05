@@ -931,6 +931,7 @@ class FormFile
 					}
 					$out .= '</td>';
 
+					// Show picto delete, print...
 					if ($delallowed || $printer || $morepicto) {
 						$out .= '<td class="right nowraponall">';
 						if ($delallowed) {
@@ -942,7 +943,6 @@ class FormFile
 							$out .= '">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
 						}
 						if ($printer) {
-							//$out.= '<td class="right">';
 							$out .= '<a class="marginleftonly" href="'.$urlsource.(strpos($urlsource, '?') ? '&' : '?').'action=print_file&token='.newToken().'printer='.urlencode($modulepart).'&file='.urlencode($relativepath);
 							$out .= ($param ? '&'.$param : '');
 							$out .= '">'.img_picto($langs->trans("PrintFile", $relativepath), 'printer.png').'</a>';
@@ -991,7 +991,7 @@ class FormFile
 			}
 
 			if (count($file_list) == 0 && count($link_list) == 0 && $headershown) {
-				$out .= '<tr><td colspan="'.(3 + ($addcolumforpicto ? 1 : 0)).'" class="opacitymedium">'.$langs->trans("None").'</td></tr>'."\n";
+				$out .= '<tr><td colspan="'.(3 + ($addcolumforpicto ? 1 : 0)).'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>'."\n";
 			}
 		}
 
