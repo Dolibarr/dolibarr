@@ -275,9 +275,9 @@ if ($resql) {
 		print "<td>".$langs->trans("Status")."</td>";
 		print "<td>";
 		if ($result > 0 && empty($rss->error)) {
-			print '<font class="ok">'.$langs->trans("Online").'</div>';
+			print '<span class="ok">'.$langs->trans("Online").'</div>';
 		} else {
-			print '<font class="error">'.$langs->trans("Offline");
+			print '<span class="error">'.$langs->trans("Offline");
 			$langs->load("errors");
 			if ($rssparser->error) {
 				print ' - '.$langs->trans($rssparser->error);
