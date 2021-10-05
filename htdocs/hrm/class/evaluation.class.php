@@ -71,7 +71,7 @@ class Evaluation extends CommonObject
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_CANCELED = 9;
-	const STATUS_CLOSED = 2;
+	const STATUS_CLOSED = 6;
 
 
 	/**
@@ -107,7 +107,7 @@ class Evaluation extends CommonObject
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
-		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'showoncombobox'=>'2',),
+		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'showoncombobox'=>'2',),
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>3,),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0,),
@@ -154,7 +154,7 @@ class Evaluation extends CommonObject
 	/**
 	 * @var string    Name of subtable class that manage subtable lines
 	 */
-	public $class_element_line = 'Evaluationdet';
+	public $class_element_line = 'Evaluationline';
 
 	// /**
 	//  * @var array	List of child tables. To test if we can delete object.
@@ -166,10 +166,10 @@ class Evaluation extends CommonObject
 	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
 	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	//  */
-	protected $childtablesoncascade = array('@Evaluationdet:hrm/class/evaluationdet.class.php:fk_evaluation');
+	protected $childtablesoncascade = array('@Evaluationline:hrm/class/evaluationdet.class.php:fk_evaluation');
 
 	/**
-	 * @var Evaluationdet[]     Array of subtable lines
+	 * @var Evaluationline[]     Array of subtable lines
 	 */
 	public $lines = array();
 
@@ -233,7 +233,7 @@ class Evaluation extends CommonObject
 			if (is_array($TRequiredRanks) && !empty($TRequiredRanks)) {
 				$this->lines = array();
 				foreach ($TRequiredRanks as $required) {
-					$line = new Evaluationdet($this->db);
+					$line = new Evaluationline($this->db);
 					$line->fk_evaluation = $resultcreate;
 					$line->fk_skill = $required->fk_skill;
 					$line->required_rank = $required->rank;
@@ -372,42 +372,8 @@ class Evaluation extends CommonObject
 	{
 		$this->lines = array();
 
-		$objectlineclassname = get_class($this).'det';
-		if (!class_exists($objectlineclassname)) {
-			$this->error = 'Error, class '.$objectlineclassname.' not found during call of fetchLinesCommon';
-			return -1;
-		}
-
-		$objectline = new $objectlineclassname($this->db);
-
-		$sql = 'SELECT '.$objectline->getFieldList('l');
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$objectline->table_element.' as l';
-		$sql .= ' WHERE l.fk_'.$this->element.' = '.$this->id;
-		if (isset($objectline->fields['position'])) {
-			$sql .= $this->db->order('position', 'ASC');
-		}
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num_rows = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num_rows) {
-				$obj = $this->db->fetch_object($resql);
-				if ($obj) {
-					$newline = new $objectlineclassname($this->db);
-					$newline->setVarsFromFetchObj($obj);
-
-					$this->lines[] = $newline;
-				}
-				$i++;
-			}
-
-			return 1;
-		} else {
-			$this->error = $this->db->lasterror();
-			$this->errors[] = $this->error;
-			return -1;
-		}
+		$result = $this->fetchLinesCommon();
+		return $result;
 	}
 
 
@@ -965,7 +931,7 @@ class Evaluation extends CommonObject
 	{
 		$this->lines = array();
 
-		$objectline = new Evaluationdet($this->db);
+		$objectline = new Evaluationline($this->db);
 		$result = $objectline->fetchAll('ASC', '', 0, 0, array('customsql'=>'fk_evaluation = '.$this->id));
 
 		if (is_numeric($result)) {

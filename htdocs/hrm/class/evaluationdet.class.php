@@ -32,9 +32,9 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/class/skillrank.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
- * Class for Evaluationdet
+ * Class for Evaluationline
  */
-class Evaluationdet extends CommonObject
+class Evaluationline extends CommonObject
 {
 	/**
 	 * @var string ID of module.
@@ -133,7 +133,7 @@ class Evaluationdet extends CommonObject
 	// /**
 	//  * @var string    Name of subtable line
 	//  */
-	// public $table_element_line = 'hrm_evaluationdetline';
+	// public $table_element_line = 'hrm_evaluationline';
 
 	// /**
 	//  * @var string    Field with ID of parent key if this object has a parent
@@ -143,7 +143,7 @@ class Evaluationdet extends CommonObject
 	// /**
 	//  * @var string    Name of subtable class that manage subtable lines
 	//  */
-	// public $class_element_line = 'Evaluationdetline';
+	// public $class_element_line = 'Evaluationline';
 
 	// /**
 	//  * @var array	List of child tables. To test if we can delete object.
@@ -158,7 +158,7 @@ class Evaluationdet extends CommonObject
 	// protected $childtablesoncascade = array('hrm_evaluationdetdet');
 
 	// /**
-	//  * @var EvaluationdetLine[]     Array of subtable lines
+	//  * @var EvaluationLine[]     Array of subtable lines
 	//  */
 	// public $lines = array();
 
@@ -543,7 +543,7 @@ class Evaluationdet extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('EVALUATIONDET_VALIDATE', $user);
+				$result = $this->call_trigger('EVALUATIONLINE_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -557,8 +557,8 @@ class Evaluationdet extends CommonObject
 			// Rename directory if dir was a temporary ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'evaluationdet/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'evaluationdet/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'evaluationline/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'evaluationline/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
@@ -567,15 +567,15 @@ class Evaluationdet extends CommonObject
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->hrm->dir_output.'/evaluationdet/'.$oldref;
-				$dirdest = $conf->hrm->dir_output.'/evaluationdet/'.$newref;
+				$dirsource = $conf->hrm->dir_output.'/evaluationline/'.$oldref;
+				$dirdest = $conf->hrm->dir_output.'/evaluationline/'.$newref;
 				if (!$error && file_exists($dirsource)) {
 					dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
 
 					if (@rename($dirsource, $dirdest)) {
 						dol_syslog("Rename ok");
 						// Rename docs starting with $oldref with $newref
-						$listoffiles = dol_dir_list($conf->hrm->dir_output.'/evaluationdet/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+						$listoffiles = dol_dir_list($conf->hrm->dir_output.'/evaluationline/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
 						foreach ($listoffiles as $fileentry) {
 							$dirsource = $fileentry['name'];
 							$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
@@ -625,7 +625,7 @@ class Evaluationdet extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'EVALUATIONDET_UNVALIDATE');
+		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'EVALUATIONLINE_UNVALIDATE');
 	}
 
 	/**
@@ -649,7 +649,7 @@ class Evaluationdet extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'EVALUATIONDET_CANCEL');
+		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'EVALUATIONLINE_CANCEL');
 	}
 
 	/**
@@ -673,7 +673,7 @@ class Evaluationdet extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'EVALUATIONDET_REOPEN');
+		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'EVALUATIONLINE_REOPEN');
 	}
 
 	/**
@@ -779,7 +779,7 @@ class Evaluationdet extends CommonObject
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
 		global $action, $hookmanager;
-		$hookmanager->initHooks(array('evaluationdetdao'));
+		$hookmanager->initHooks(array('evaluationlinedao'));
 		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
@@ -903,7 +903,7 @@ class Evaluationdet extends CommonObject
 	{
 		$this->lines = array();
 
-		$objectline = new EvaluationdetLine($this->db);
+		$objectline = new EvaluationLine($this->db);
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_evaluationdet = '.$this->id));
 
 		if (is_numeric($result)) {
@@ -926,15 +926,15 @@ class Evaluationdet extends CommonObject
 		global $langs, $conf;
 		$langs->load("hrm");
 
-		if (empty($conf->global->hrm_EVALUATIONDET_ADDON)) {
-			$conf->global->hrm_EVALUATIONDET_ADDON = 'mod_evaluationdet_standard';
+		if (empty($conf->global->hrm_EVALUATIONLINE_ADDON)) {
+			$conf->global->hrm_EVALUATIONLINE_ADDON = 'mod_evaluationdet_standard';
 		}
 
-		if (!empty($conf->global->hrm_EVALUATIONDET_ADDON)) {
+		if (!empty($conf->global->hrm_EVALUATIONLINE_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->hrm_EVALUATIONDET_ADDON.".php";
-			$classname = $conf->global->hrm_EVALUATIONDET_ADDON;
+			$file = $conf->global->hrm_EVALUATIONLINE_ADDON.".php";
+			$classname = $conf->global->hrm_EVALUATIONLINE_ADDON;
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -996,8 +996,8 @@ class Evaluationdet extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->EVALUATIONDET_ADDON_PDF)) {
-				$modele = $conf->global->EVALUATIONDET_ADDON_PDF;
+			} elseif (!empty($conf->global->EVALUATIONLINE_ADDON_PDF)) {
+				$modele = $conf->global->EVALUATIONLINE_ADDON_PDF;
 			}
 		}
 
@@ -1043,27 +1043,3 @@ class Evaluationdet extends CommonObject
 
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
-
-/**
- * Class EvaluationdetLine. You can also remove this and generate a CRUD class for lines objects.
- */
-class EvaluationdetLine extends CommonObjectLine
-{
-	// To complete with content of an object EvaluationdetLine
-	// We should have a field rowid, fk_evaluationdet and position
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
-	 * Constructor
-	 *
-	 * @param DoliDb $db Database handler
-	 */
-	public function __construct(DoliDB $db)
-	{
-		$this->db = $db;
-	}
-}

@@ -686,7 +686,10 @@ class User extends CommonObject
 			'fichinter' => 'ficheinter',
 			'invoice' => 'facture',
 			'invoice_supplier' => 'fournisseur',
-			'knowledgerecord' => 'knowledgerecord@knowledgemanagement'
+			'knowledgerecord' => 'knowledgerecord@knowledgemanagement',
+			'skill@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
+			'job@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
+			'position@hrm' => 'all@hrm' // skill / job / position objects rights are for the moment grouped into right level "all"
 		);
 		if (!empty($moduletomoduletouse[$module])) {
 			$module = $moduletomoduletouse[$module];
