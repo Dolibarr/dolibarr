@@ -2240,6 +2240,7 @@ function pdf_getTotalQty($object, $type, $outputlangs)
 				if (!empty($object->lines[$i]->fk_parent_line)) {
 					$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 				}
+				$hidedetails = '';
 				$parameters = array('i'=>$i, 'outputlangs'=>$outputlangs, 'hidedetails'=>$hidedetails, 'special_code'=>$special_code);
 				$action = '';
 				$reshook = $hookmanager->executeHooks('pdf_getTotalQty', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
