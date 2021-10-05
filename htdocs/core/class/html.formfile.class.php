@@ -1815,7 +1815,6 @@ class FormFile
 
 				// File
 				// Check if document source has external module part, if it the case use it for module part on document.php
-				var_dump($modulepart);
 				preg_match('/^[^_]*_([^_]*)$/', $modulepart, $modulesuffix);
 				print '<td>';
 				//print "XX".$file['name']; //$file['name'] must be utf8
