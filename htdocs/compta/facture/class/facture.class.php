@@ -1423,7 +1423,7 @@ class Facture extends CommonInvoice
 		global $conf, $langs, $hookmanager, $action;
 
 		if (! in_array($origin->element, array('propal', 'commande'))) {
-			$origin->error = 'ErrorCanOnlyAutomaticallyGenerateADepositFromProposalOrOrder'; // TRAD
+			$origin->error = 'ErrorCanOnlyAutomaticallyGenerateADepositFromProposalOrOrder';
 			return null;
 		}
 
