@@ -1226,7 +1226,7 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 					print "</tr>\n";
 				}
 
-				print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToTake").': '.price($total_ttc - $totalam).')</font> </td>';
+				print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <span style="font-weight: normal">('.$langs->trans("RemainderToTake").': '.price($total_ttc - $totalam).')</span> </td>';
 				print '<td>&nbsp;</td>';
 				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
 					print '<td class="right"><span class="amount">'.price($total).'</span></td>';
@@ -1391,7 +1391,7 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 					print "</tr>\n";
 				}
 
-				print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToPay").': '.price($total_ttc - $totalam).')</font> </td>';
+				print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <span style="font-weight: normal">('.$langs->trans("RemainderToPay").': '.price($total_ttc - $totalam).')</span> </td>';
 				print '<td>&nbsp;</td>';
 				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
 					print '<td class="right">'.price($total).'</td>';

@@ -1012,7 +1012,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if (count($listetype)) {
 			print $form->selectarray("typeid", $listetype, (GETPOST('typeid', 'int') ? GETPOST('typeid', 'int') : $typeid), (count($listetype) > 1 ? 1 : 0), 0, 0, '', 0, 0, 0, '', '', 1);
 		} else {
-			print '<font class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</font>';
+			print '<span class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</span>';
 		}
 		print "</td>\n";
 
@@ -1997,7 +1997,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</div>';
 
 		if ($isinspip == -1) {
-			print '<br><br><font class="error">'.$langs->trans('SPIPConnectionFailed').': '.$mailmanspip->error.'</font>';
+			print '<br><br><span class="error">'.$langs->trans('SPIPConnectionFailed').': '.$mailmanspip->error.'</span>';
 		}
 
 

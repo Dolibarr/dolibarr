@@ -2284,7 +2284,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
 			print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="';
 			print $object->capital != '' ? dol_escape_htmltag(price($object->capital)) : '';
-			print '"> <font class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</font></td></tr>';
+			print '"> <span class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
 
 			// Default language
 			if (!empty($conf->global->MAIN_MULTILANGS)) {
@@ -2511,7 +2511,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td>';
 			$tmpcheck = $object->check_codeclient();
 			if ($tmpcheck != 0 && $tmpcheck != -5) {
-				print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+				print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
 			}
 			print '</td>';
 			print '</tr>';
@@ -2524,7 +2524,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
 			$tmpcheck = $object->check_codefournisseur();
 			if ($tmpcheck != 0 && $tmpcheck != -5) {
-				print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+				print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
 			}
 			print '</td>';
 			print '</tr>';
@@ -2552,7 +2552,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					if ($object->id_prof_check($i, $object) > 0) {
 						print ' &nbsp; '.$object->id_prof_url($i, $object);
 					} else {
-						print ' <font class="error">('.$langs->trans("ErrorWrongValue").')</font>';
+						print ' <span class="error">('.$langs->trans("ErrorWrongValue").')</span>';
 					}
 				}
 				print '</td>';

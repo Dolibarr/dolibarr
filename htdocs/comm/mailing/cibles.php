@@ -284,7 +284,7 @@ if ($object->fetch($id) >= 0) {
 			}
 		}
 		if (empty($nbemail)) {
-			$nbemail .= ' '.img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>';
+			$nbemail .= ' '.img_warning('').' <span class="warning">'.$langs->trans("NoTargetYet").'</span>';
 		}
 		if ($text) {
 			print $form->textwithpicto($nbemail, $text, 1, 'warning');
