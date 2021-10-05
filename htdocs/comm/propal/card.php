@@ -2018,7 +2018,7 @@ if ($action == 'create') {
 					'type' => 'checkbox',
 					'tdclass' => 'showonlyifsigned',
 					'name' => 'generate_deposit',
-					'label' => $form->textwithpicto($langs->trans('GenerateDeposit', $object->deposit_percent), $langs->trans('PaymentConditionPermitsDepositGenerationSelected'))
+					'label' => $form->textwithpicto($langs->trans('GenerateDeposit', $object->deposit_percent), $langs->trans('DepositGenerationPermittedByThePaymentTermsSelected'))
 				);
 
 				$formquestion[] = array(
