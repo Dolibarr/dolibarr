@@ -1516,6 +1516,7 @@ class Facture extends CommonInvoice
 
 		$amount_ttc_diff = 0;
 		$amountdeposit = array();
+		$descriptions = array();
 
 		if (! empty($conf->global->MAIN_DEPOSIT_MULTI_TVA)) {
 			$amount = $origin->total_ttc * ($origin->deposit_percent / 100);
@@ -1526,6 +1527,10 @@ class Facture extends CommonInvoice
 					continue;
 				}
 				$TTotalByTva[$line->tva_tx] += $line->total_ttc;
+				$descriptions[$line->tva_tx] .= '<li>' . (! empty($line->product_ref) ? $line->product_ref . ' - ' :  '');
+				$descriptions[$line->tva_tx] .= (! empty($line->product_label) ? $line->product_label . ' - ' : '');
+				$descriptions[$line->tva_tx] .= $langs->trans('Qty') . ' : ' . $line->qty;
+				$descriptions[$line->tva_tx] .= ' - ' . $langs->trans('TotalHT') . ' : ' . price($line->total_ht) . '</li>';
 			}
 
 			foreach ($TTotalByTva as $tva => &$total) {
@@ -1549,6 +1554,10 @@ class Facture extends CommonInvoice
 				$totalamount += $lines[$i]->total_ht; // Fixme : is it not for the customer ? Shouldn't we take total_ttc ?
 				$tva_tx = $lines[$i]->tva_tx;
 				$amountdeposit[$tva_tx] += ($lines[$i]->total_ht * $origin->deposit_percent) / 100;
+				$descriptions[$tva_tx] .= '<li>' . (! empty($lines[$i]->product_ref) ? $lines[$i]->product_ref . ' - ' :  '');
+				$descriptions[$tva_tx] .= (! empty($lines[$i]->product_label) ? $lines[$i]->product_label . ' - ' : '');
+				$descriptions[$tva_tx] .= $langs->trans('Qty') . ' : ' . $lines[$i]->qty;
+				$descriptions[$tva_tx] .= ' - ' . $langs->trans('TotalHT') . ' : ' . price($lines[$i]->total_ht) . '</li>';
 			}
 
 			if ($totalamount == 0) {
@@ -1564,6 +1573,11 @@ class Facture extends CommonInvoice
 			}
 
 			$descline = '(DEPOSIT) ('. $origin->deposit_percent .'%) - '.$origin->ref;
+
+			// Hidden conf
+			if (! empty($conf->global->INVOICE_DEPOSIT_DETAIL_LINES_IN_DESCRIPTION) && ! empty($descriptions[$tva])) {
+				$descline .= '<ul>' . $descriptions[$tva] . '</ul>';
+			}
 
 			$addlineResult = $deposit->addline(
 				$descline,
