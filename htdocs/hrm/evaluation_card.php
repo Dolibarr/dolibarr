@@ -649,14 +649,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$Tab[$num]->required_rank = '<span title="'.$obj->required_rank_desc.'" class="radio_js_bloc_number TNote_1">' . $obj->required_rank . '</span>';
 
 				if ($obj->userRankForSkill > $obj->required_rank) {
-					$class .= 'veryhappy';
+					$title=$langs->trans('MaxlevelGreaterThanShort');
+					$class .= 'veryhappy diffnote';
 				} elseif ($obj->userRankForSkill == $obj->required_rank) {
-					$class .= 'happy';
+					$title=$langs->trans('MaxLevelEqualToShort');
+					$class .= 'happy diffnote';
 				} elseif ($obj->userRankForSkill < $obj->required_rank) {
+					$title=$langs->trans('MaxLevelLowerThanShort');
 					$class .= 'sad';
 				}
 
-				$Tab[$num]->result = '<span class="' . $class . ' note">&nbsp;</span>';
+				$Tab[$num]->result = '<span title="'.$title.'" class="classfortooltip ' . $class . ' note">&nbsp;</span>';
 
 				$num++;
 			}
