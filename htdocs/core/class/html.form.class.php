@@ -3877,7 +3877,7 @@ class Form
 	 *
 	 *      @param	int		$selected		Id of payment term to preselect by default
 	 *      @param	string	$htmlname		Nom de la zone select
-	 *      @param	int		$filtertype		If > 0, don't include payment terms with deposit percentage (for invoices)
+	 *      @param	int		$filtertype		If > 0, include payment terms with deposit percentage (for objects other than invoices and invoice templates)
 	 *		@param	int		$addempty		Add an empty entry
 	 * 		@param	int		$noinfoadmin		0=Add admin info, 1=Disable admin info
 	 * 		@param	string	$morecss			Add more CSS on select tag
@@ -3905,7 +3905,7 @@ class Form
 
 		$selectedDepositPercent = null;
 		foreach ($this->cache_conditions_paiements as $id => $arrayconditions) {
-			if ($filtertype > 0 && ! empty($arrayconditions['deposit_percent'])) {
+			if ($filtertype <= 0 && ! empty($arrayconditions['deposit_percent'])) {
 				continue;
 			}
 
@@ -5140,10 +5140,11 @@ class Form
 	 *  @param  string	$selected			Id condition pre-selectionne
 	 *  @param  string	$htmlname			Name of select html field
 	 *	@param	int		$addempty			Add empty entry
+	 *  @param	int		$filtertype			If > 0, include payment terms with deposit percentage (for objects other than invoices and invoice templates)
 	 *  @param	float	$deposit_percent	% of deposit if needed by payment conditions
 	 *  @return	void
 	 */
-	public function form_conditions_reglement($page, $selected = '', $htmlname = 'cond_reglement_id', $addempty = 0, $deposit_percent = null)
+	public function form_conditions_reglement($page, $selected = '', $htmlname = 'cond_reglement_id', $addempty = 0, $filtertype = -1, $deposit_percent = null)
 	{
 		// phpcs:enable
 		global $langs;
@@ -5151,7 +5152,7 @@ class Form
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setconditions">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			$this->select_conditions_paiements($selected, $htmlname, -1, $addempty, 0, '', $deposit_percent);
+			$this->select_conditions_paiements($selected, $htmlname, $filtertype, $addempty, 0, '', $deposit_percent);
 			print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		} else {

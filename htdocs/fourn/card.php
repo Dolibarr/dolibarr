@@ -266,7 +266,7 @@ if ($object->id > 0) {
 	print '</tr></table>';
 	print '</td><td>';
 	if ($action == 'editconditions') {
-		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->cond_reglement_supplier_id, 'cond_reglement_supplier_id', -1, 1);
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->cond_reglement_supplier_id, 'cond_reglement_supplier_id', 1);
 	} else {
 		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->cond_reglement_supplier_id, 'none');
 	}
