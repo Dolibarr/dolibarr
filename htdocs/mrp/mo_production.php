@@ -941,17 +941,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<!-- Enter line to consume -->'."\n";
 						print '<tr>';
 						print '<td><span class="opacitymedium">'.$langs->trans("ToConsume").'</span></td>';
-						$preselected = (GETPOSTISSET('qty-'.$line->id.'-'.$i) ? GETPOST('qty-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyconsumed));
-						if ($action == 'consumeorproduce' && !GETPOSTISSET('qty-'.$line->id.'-'.$i)) {
-							$preselected = 0;
-						}
-						print '<td class="right"><input type="text" class="width50 right" name="qty-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
-						if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
-							print '<td></td>';
-						}
-						print '<td></td>';
-						print '<td>';
-						if ($conf->productbatch->enabled) {
+						if ($conf->productbatch->enabled && $tmpproduct->status_batch) {
 							// Define nb of lines suggested for this order line
 							$nbofsuggested = 0;
 
@@ -969,39 +959,41 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 								$tmpwarehouseObject->fetch($warehouse_id);
 								if ($stock_warehouse->real > 0) {
+									$quantityToBeUSe = (GETPOSTISSET('qty-'.$line->id.'-'.$i.'-'.$warehouse_id) ? GETPOST('qty-'.$line->id.'-'.$i.'-'.$warehouse_id) : max(0, $line->qty - $alreadyconsumed));
+									if ($action == 'consumeorproduce' && !GETPOSTISSET('qty-'.$line->id.'-'.$i)) {
+										$preselectedQty = 0;
+									}
 									$stock = + $stock_warehouse->real; // Convert it to number
-									$deliverableQty = min($quantityToBeDelivered, $stock);
-									$deliverableQty = max(0, $deliverableQty);
-									// Quantity to send
-									print '<!-- subj='.$subj.'/'.$nbofsuggested.' -->';
-									print '<td colspan="3" ></td><td class="center"><!-- qty to ship (no lot management for product line indiceAsked='.$indiceAsked.') -->';
+									$consumableQty = min($quantityToBeUSe, $stock);
+									$consumableQty = max(0, $consumableQty);
+									//print '<!-- subj='.$subj.'/'.$nbofsuggested.' -->';
+									//print '<td colspan="3" ></td><td class="center"><!-- qty to ship (no lot management for product line indiceAsked='.$indiceAsked.') -->';
 									if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 										if (isset($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
-											$deliverableQty = min($quantityToBeDelivered, $stock - $alreadyQtySetted[$line->fk_product][intval($warehouse_id)]);
+											$consumableQty = min($quantityToBeUSe, $stock - $alreadyQtySetted[$line->fk_product][intval($warehouse_id)]);
 										} else {
 											if (!isset($alreadyQtySetted[$line->fk_product])) {
 												$alreadyQtySetted[$line->fk_product] = array();
 											}
 
-											$deliverableQty = min($quantityToBeDelivered, $stock);
+											$consumableQty = min($quantityToBeUSe, $stock);
 										}
 
-										if ($deliverableQty < 0) $deliverableQty = 0;
+										if ($consumableQty < 0) $consumableQty = 0;
 
 										$tooltip = '';
 										if (!empty($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
 											$tooltip = ' class="classfortooltip" title="'.$langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines').' : '.$alreadyQtySetted[$line->fk_product][intval($warehouse_id)].'" ';
 										}
 
-										$alreadyQtySetted[$line->fk_product][intval($warehouse_id)] = $deliverableQty + $alreadyQtySetted[$line->fk_product][intval($warehouse_id)];
+										$alreadyQtySetted[$line->fk_product][intval($warehouse_id)] = $consumableQty + $alreadyQtySetted[$line->fk_product][intval($warehouse_id)];
 
-										$inputName = 'qtyl'.$indiceAsked.'_'.$subj;
+										$inputName = 'qty-'.$line->id.'-'.$i.'-'.$warehouse_id;
 										if (GETPOSTISSET($inputName)) {
-											$deliverableQty = GETPOST($inputName, 'int');
+											$consumableQty = GETPOST($inputName, 'int');
 										}
-
-										print '<input '.$tooltip.' name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
-										print '<input name="ent1'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$warehouse_id.'">';
+										//print '<td class="right"><input type="text" class="width50 right" name="qty-'.$line->id.'-'.$i.'" value="'.$consumableQty.'"></td>';
+										print '<input '.$tooltip.' name="'.$inputName.'" id="'.$inputName.'" type="text" size="4" value="'.$consumableQty.'">';
 									} else {
 										print $langs->trans("NA");
 									}
@@ -1020,18 +1012,28 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 										}
 										print '</td>';
 									}
-									$quantityToBeDelivered -= $deliverableQty;
-									if ($quantityToBeDelivered < 0) {
-										$quantityToBeDelivered = 0;
+									$quantityToBeUSe -= $consumableQty;
+									if ($quantityToBeUSe < 0) {
+										$quantityToBeUSe = 0;
 									}
 									$subj++;
 								}
 							}
 						} else {
+							$preselectedQty = (GETPOSTISSET('qty-'.$line->id.'-'.$i) ? GETPOST('qty-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyconsumed));
+							if ($action == 'consumeorproduce' && !GETPOSTISSET('qty-'.$line->id.'-'.$i)) {
+								$preselectedQty = 0;
+							}
+							print '<td class="right"><input type="text" class="width50 right" name="qty-'.$line->id.'-'.$i.'" value="'.$preselectedQty.'"></td>';
+							if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
+								print '<td></td>';
+							}
+							print '<td></td>';
+							print '<td>';
 							if ($tmpproduct->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 								if (empty($line->disable_stock_change)) {
-									$preselected = (GETPOSTISSET('idwarehouse-'.$line->id.'-'.$i) ? GETPOST('idwarehouse-'.$line->id.'-'.$i) : ($tmpproduct->fk_default_warehouse > 0 ? $tmpproduct->fk_default_warehouse : 'ifone'));
-									print $formproduct->selectWarehouses($preselected, 'idwarehouse-'.$line->id.'-'.$i, '', 1, 0, $line->fk_product, '', 1, 0, null, 'maxwidth300');
+									$preselectedWarehouse = (GETPOSTISSET('idwarehouse-'.$line->id.'-'.$i) ? GETPOST('idwarehouse-'.$line->id.'-'.$i) : ($tmpproduct->fk_default_warehouse > 0 ? $tmpproduct->fk_default_warehouse : 'ifone'));
+									print $formproduct->selectWarehouses($preselectedWarehouse, 'idwarehouse-'.$line->id.'-'.$i, '', 1, 0, $line->fk_product, '', 1, 0, null, 'maxwidth300');
 								} else {
 									print '<span class="opacitymedium">'.$langs->trans("DisableStockChange").'</span>';
 								}
@@ -1040,7 +1042,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							}
 						}
 						// Lot / Batch
-						print '</td>';
+						/*print '</td>';
 						if ($conf->productbatch->enabled) {
 							print '<td>';
 							if ($tmpproduct->status_batch) {
@@ -1048,7 +1050,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								print '<input type="text" class="width50" name="batch-'.$line->id.'-'.$i.'" value="'.$preselected.'">';
 							}
 							print '</td>';
-						}
+						}*/
 						print '</tr>';
 					}
 				}
