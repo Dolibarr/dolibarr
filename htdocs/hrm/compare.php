@@ -403,7 +403,7 @@ function displayUsersListWithPicto(&$TUser, $fk_usergroup = 0, $namelist = 'list
 		$sql = "SELECT DISTINCT u.rowid FROM " . MAIN_DB_PREFIX . "user u
 		LEFT JOIN " . MAIN_DB_PREFIX . "usergroup_user as ugu ON (u.rowid = ugu.fk_user)
 		WHERE u.statut > 0
-		AND ugu.fk_usergroup=" . ((int)$fk_usergroup);
+		AND ugu.fk_usergroup=" . ((int) $fk_usergroup);
 
 		$res = $db->query($sql);
 		$out .= '<ul name="' . $namelist . '">';
