@@ -396,7 +396,7 @@ class Job extends CommonObject
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.$this->db->escape(implode(' '.$filtermode.' ', $sqlwhere)).')';
+			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
 		}
 
 		if (!empty($sortfield)) {
