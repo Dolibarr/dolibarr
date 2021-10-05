@@ -725,7 +725,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 			continue; // For a column name 'sortorder', we use the field name 'position'
 		}
 		if ((!GETPOSTISSET($value) || GETPOST($value) == '')
-			&& (!in_array($value, array('decalage', 'module', 'accountancy_code', 'accountancy_code_sell', 'accountancy_code_buy', 'tracking', 'picto'))  // Fields that are not mandatory
+			&& (!in_array($value, array('decalage', 'module', 'accountancy_code', 'accountancy_code_sell', 'accountancy_code_buy', 'tracking', 'picto', 'deposit_percent'))  // Fields that are not mandatory
 			&& ($id != 10 || ($value != 'code' && $value != 'note')) // Field code and note is not mandatory for dictionary table 10
 			)
 		) {
