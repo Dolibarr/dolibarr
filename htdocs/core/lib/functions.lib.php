@@ -6156,7 +6156,7 @@ function yn($yesno, $case = 1, $color = 0)
 		}
 	}
 	if ($color) {
-		return '<span class="'.$classname.'">'.$result.'</font>';
+		return '<span class="'.$classname.'">'.$result.'</span>';
 	}
 	return $result;
 }

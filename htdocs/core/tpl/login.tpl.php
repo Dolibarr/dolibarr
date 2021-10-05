@@ -310,7 +310,7 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->fil
 		print '<a class="alogin" href="'.$url.'">'.$langs->trans("LoginUsingOpenID").'</a>';
 	} else {
 		$langs->load("errors");
-		print '<font class="warning">'.$langs->trans("ErrorOpenIDSetupNotComplete", 'MAIN_AUTHENTICATION_OPENID_URL').'</font>';
+		print '<span class="warning">'.$langs->trans("ErrorOpenIDSetupNotComplete", 'MAIN_AUTHENTICATION_OPENID_URL').'</span>';
 	}
 
 	echo '</div>';

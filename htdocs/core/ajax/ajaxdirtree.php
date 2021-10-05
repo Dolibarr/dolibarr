@@ -439,7 +439,7 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 						print '</td>';
 						print '<td class="left">';
 						if ($nbofsubdir > 0 && $nboffilesinsubdir > 0) {
-							print '<font class="opacitymedium">+'.$nboffilesinsubdir.'</font> ';
+							print '<span class="opacitymedium">+'.$nboffilesinsubdir.'</span> ';
 						}
 						print '</td>';
 
