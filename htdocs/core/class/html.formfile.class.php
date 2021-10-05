@@ -1815,7 +1815,8 @@ class FormFile
 
 				// File
 				// Check if document source has external module part, if it the case use it for module part on document.php
-				preg_match('/^[^@]*@([^@]*)$/', $modulepart.'@expertisemedical', $modulesuffix);
+                var_dump($modulepart);
+				preg_match('/^[^_]*_([^_]*)$/', $modulepart, $modulesuffix);
 				print '<td>';
 				//print "XX".$file['name']; //$file['name'] must be utf8
 				print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.(empty($modulesuffix) ? $modulepart : $modulesuffix[1]);
