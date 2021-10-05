@@ -74,7 +74,10 @@ $coldisplay = 0;
 if ($line->fk_skill > 0) {
 	$skill = new Skill($this->db);
 	$resSkill = $skill->fetch($line->fk_skill);
-	if ($resSkill > 0) print $skill->getNomUrl(1);
+	if ($resSkill > 0) {
+		print Skill::typeCodeToLabel($skill->skill_type).'</td>';
+		print '<td>'.$skill->getNomUrl(1);
+	}
 }
 ?>
 	</td>

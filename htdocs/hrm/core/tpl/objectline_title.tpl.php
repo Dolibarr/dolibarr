@@ -55,7 +55,10 @@ if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 	print '<td class="linecolnum center">&nbsp;</td>';
 }
 
-// Description
+// Skill type
+print '<td class="linecollabel">'.$langs->trans('SkillType').'</td>';
+
+// Label skill
 print '<td class="linecollabel">'.$langs->trans('Label').'</td>';
 
 // Description

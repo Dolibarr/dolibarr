@@ -528,6 +528,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 
 			if (!empty($object->lines)) {
+				$conf->modules_parts['tpl']['hrm']='/hrm/core/tpl/'; // Pour utilisation du tpl hrm sur cet écran
 				print '<table id="tablelines" class="noborder noshadow">';
 				$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1, '');
 				print '</table>';
@@ -551,55 +552,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print "</form>\n";
 			print "<br>";
 		}
-	}
-
-
-	// Buttons for actions
-
-	if ($action != 'presend' && $action != 'editline') {
-		print '<div class="tabsAction">'."\n";
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		if ($reshook < 0) {
-			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-		}
-
-		if (empty($reshook)) {
-			// Send
-			if (empty($user->socid)) {
-				print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init&token='.newToken().'#formmailbeforetitle');
-			}
-
-			// Back to draft
-			if ($object->status == $object::STATUS_VALIDATED) {
-				print dolGetButtonAction($langs->trans('SetToDraft'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes&token='.newToken(), '', $permissiontoadd);
-				print dolGetButtonAction($langs->trans('Close'), '', 'close', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=close&token='.newToken(), '', $permissiontodelete || ($object->status == $object::STATUS_CLOSED && $permissiontoclose));
-			} elseif ($object->status != $object::STATUS_CLOSED) {
-				print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
-			}
-
-			if ($object->status == $object::STATUS_CLOSED) {
-				print dolGetButtonAction($langs->trans('ReOpen'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken(), '', $permissiontoadd);
-			}
-
-
-			// Validate
-			if ($object->status == $object::STATUS_DRAFT) {
-				if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) {
-					print dolGetButtonAction($langs->trans('Save').'&nbsp;'.$langs->trans('and').'&nbsp;'.$langs->trans('Valid'), '', 'default', '#', 'btn_valid', $permissiontovalidate);
-				} else {
-					$langs->load("errors");
-					print dolGetButtonAction($langs->trans("ErrorAddAtLeastOneLineFirst"), $langs->trans("Validate"), 'default', '#', '', 0);
-				}
-			}
-
-
-			// Delete (need delete permission, or if draft, just need create/modify permission)
-			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken(), '', $permissiontodelete);
-		}
-
-
-		print '</div>'."\n";
 	}
 
 	// list of comparison
@@ -664,7 +616,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$num++;
 			}
 
-			print load_fiche_titre($langs->trans("SkillList"), '', 'title');
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="noborder centpercent">';
 
@@ -706,7 +657,52 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 	}
 
+	// Buttons for actions
+	if ($action != 'presend' && $action != 'editline') {
+		print '<div class="tabsAction">'."\n";
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		}
 
+		if (empty($reshook)) {
+			// Send
+			if (empty($user->socid)) {
+				print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init&token='.newToken().'#formmailbeforetitle');
+			}
+
+			// Back to draft
+			if ($object->status == $object::STATUS_VALIDATED) {
+				print dolGetButtonAction($langs->trans('SetToDraft'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes&token='.newToken(), '', $permissiontoadd);
+				print dolGetButtonAction($langs->trans('Close'), '', 'close', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=close&token='.newToken(), '', $permissiontodelete || ($object->status == $object::STATUS_CLOSED && $permissiontoclose));
+			} elseif ($object->status != $object::STATUS_CLOSED) {
+				print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
+			}
+
+			if ($object->status == $object::STATUS_CLOSED) {
+				print dolGetButtonAction($langs->trans('ReOpen'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken(), '', $permissiontoadd);
+			}
+
+
+			// Validate
+			if ($object->status == $object::STATUS_DRAFT) {
+				if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) {
+					print dolGetButtonAction($langs->trans('Save').'&nbsp;'.$langs->trans('and').'&nbsp;'.$langs->trans('Valid'), '', 'default', '#', 'btn_valid', $permissiontovalidate);
+				} else {
+					$langs->load("errors");
+					print dolGetButtonAction($langs->trans("ErrorAddAtLeastOneLineFirst"), $langs->trans("Validate"), 'default', '#', '', 0);
+				}
+			}
+
+
+			// Delete (need delete permission, or if draft, just need create/modify permission)
+			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken(), '', $permissiontodelete);
+		}
+
+
+		print '</div>'."\n";
+	}
 
 	// Select mail models is same action as presend
 	if (GETPOST('modelselected')) {
