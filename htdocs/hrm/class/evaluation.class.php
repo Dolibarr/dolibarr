@@ -662,7 +662,7 @@ class Evaluation extends CommonObject
 	public function getLastEvaluationForUser($fk_user)
 	{
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."hrm_evaluation ";
-		$sql.=	"WHERE fk_user=".((int)$fk_user)." ";
+		$sql.=	"WHERE fk_user=".((int) $fk_user)." ";
 		$sql.=	"ORDER BY date_eval DESC ";
 		$sql.=	"LIMIT 1 ";
 
