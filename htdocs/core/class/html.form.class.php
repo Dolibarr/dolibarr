@@ -3921,7 +3921,7 @@ class Form
 			$label = $arrayconditions['label'];
 
 			if (! empty($arrayconditions['deposit_percent'])) {
-				$label = sprintf($label, $deposit_percent > 0 ? $deposit_percent : $arrayconditions['deposit_percent']);
+				$label = str_replace('__DEPOSIT_PERCENT__', $deposit_percent > 0 ? $deposit_percent : $arrayconditions['deposit_percent'], $label);
 			}
 
 			print $label;
@@ -5169,7 +5169,7 @@ class Form
 					$label = $this->cache_conditions_paiements[$selected]['label'];
 
 					if (! empty($this->cache_conditions_paiements[$selected]['deposit_percent'])) {
-						$label = sprintf($label, $deposit_percent > 0 ? $deposit_percent : $this->cache_conditions_paiements[$selected]['deposit_percent']);
+						$label = str_replace('__DEPOSIT_PERCENT__', $deposit_percent > 0 ? $deposit_percent : $this->cache_conditions_paiements[$selected]['deposit_percent'], $label);
 					}
 
 					print $label;
