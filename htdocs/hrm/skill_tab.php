@@ -178,7 +178,7 @@ if (empty($reshook)) {
 	} else if ($action == 'saveSkill') {
 		if (!empty($TNote)) {
 			foreach ($TNote as $skillId => $rank) {
-				$TSkills = $skill->fetchAll('ASC', 't.rowid', 0, 0, array('customsql' => 'fk_object=' . $id . ' AND objecttype="' . $objecttype . '" AND fk_skill = ' . $skillId));
+				$TSkills = $skill->fetchAll('ASC', 't.rowid', 0, 0, array('customsql' => 'fk_object=' . $id . " AND objecttype='" . $objecttype . "' AND fk_skill = " . $skillId));
 				if (is_array($TSkills) && !empty($TSkills)) {
 					foreach ($TSkills as $tmpObj) {
 						$tmpObj->rank = $rank;
@@ -283,7 +283,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// table of skillRank linked to current object
-	$TSkillsJob = $skill->fetchAll('ASC', 't.rowid', 0, 0, array('customsql' => 'fk_object=' . $id . ' AND objecttype="' . $objecttype . '"'));
+	$TSkillsJob = $skill->fetchAll('ASC', 't.rowid', 0, 0, array('customsql' => 'fk_object=' . $id . " AND objecttype='" . $objecttype . "'"));
 
 	$TAlreadyUsedSkill = array();
 	if (is_array($TSkillsJob) && !empty($TSkillsJob)) {

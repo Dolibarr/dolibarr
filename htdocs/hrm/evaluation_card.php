@@ -610,17 +610,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$sql .= '  e.ref,';
 		$sql .= '  e.date_creation,';
 		$sql .= '  e.fk_job,';
-		$sql .= '  j.label as refjob,';
+		$sql .= '  j.label as "refjob",';
 		$sql .= '  ed.fk_skill,';
 
-		$sql .= '  sk.label as skilllabel,';
+		$sql .= '  sk.label as "skilllabel",';
 		$sql .= '  sk.skill_type,';
 		$sql .= '  sk.description,';
 		$sql .= '  ed.rank,';
 		$sql .= '  ed.required_rank,';
-		$sql .= '  ed.rank as userRankForSkill,';
-		$sql .= '  skdet_user.description as userRankForSkillDesc,';
-		$sql .= '  skdet_required.description as required_rank_desc';
+		$sql .= '  ed.rank as "userRankForSkill",';
+		$sql .= '  skdet_user.description as "userRankForSkillDesc",';
+		$sql .= '  skdet_required.description as "required_rank_desc"';
 
 		$sql .= '  FROM ' . MAIN_DB_PREFIX . 'hrm_evaluation as e';
 		$sql .= '  LEFT JOIN ' . MAIN_DB_PREFIX . 'hrm_evaluationdet as ed ON  e.rowid = ed.fk_evaluation';

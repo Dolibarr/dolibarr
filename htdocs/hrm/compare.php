@@ -401,13 +401,11 @@ function displayUsersListWithPicto(&$TUser, $fk_usergroup = 0, $namelist = 'list
 
 
 		$sql = "SELECT DISTINCT u.rowid FROM " . MAIN_DB_PREFIX . "user u
-		LEFT JOIN " . MAIN_DB_PREFIX . "usergroup_user ugu ON (u.rowid = ugu.fk_user)
-		WHERE 1
-		AND u.statut > 0
-		AND ugu.fk_usergroup=" . $fk_usergroup;
+		LEFT JOIN " . MAIN_DB_PREFIX . "usergroup_user as ugu ON (u.rowid = ugu.fk_user)
+		WHERE u.statut > 0
+		AND ugu.fk_usergroup=" . ((int)$fk_usergroup);
 
 		$res = $db->query($sql);
-
 		$out .= '<ul name="' . $namelist . '">';
 
 		$TExcludedId = explode(',', $excludedIdsList);
@@ -476,12 +474,12 @@ function getSkillForUsers($TUser)
 	if (empty($TUser)) return array();
 
 	$sql = 'SELECT sk.rowid, sk.label, sk.description, sk.skill_type, sr.fk_object, sr.objecttype, sr.fk_skill, ';
-	$sql.= " MAX(sr.rank) as rank";
-	$sql.=' FROM '.MAIN_DB_PREFIX.'hrm_skill sk';
-	$sql.='	LEFT JOIN '.MAIN_DB_PREFIX.'hrm_skillrank sr ON (sk.rowid = sr.fk_skill)';
-	$sql.='	WHERE sr.objecttype = "'.SkillRank::SKILLRANK_TYPE_USER.'"';
-	$sql.=' AND sr.fk_object IN ('.implode(',', $TUser).')';
-	$sql.=" GROUP BY sk.rowid "; // group par competence
+	$sql.= ' MAX(sr.rank) as "rank"';
+	$sql.= ' FROM '.MAIN_DB_PREFIX.'hrm_skill sk';
+	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'hrm_skillrank sr ON (sk.rowid = sr.fk_skill)';
+	$sql.= " WHERE sr.objecttype = '".SkillRank::SKILLRANK_TYPE_USER."'";
+	$sql.= ' AND sr.fk_object IN ('.implode(',', $TUser).')';
+	$sql.= " GROUP BY sk.rowid, sk.label, sk.description, sk.skill_type, sr.fk_object, sr.objecttype, sr.fk_skill "; // group par competence
 
 	$resql = $db->query($sql);
 	$Tab = array();
@@ -531,12 +529,12 @@ function getSkillForJob($fk_job)
 	if (empty($fk_job)) return array();
 
 	$sql = 'SELECT sk.rowid, sk.label, sk.description, sk.skill_type, sr.fk_object, sr.objecttype, sr.fk_skill, ';
-	$sql.= " MAX(sr.rank) as rank";
+	$sql.= ' MAX(sr.rank) as "rank"';
 	$sql.=' FROM '.MAIN_DB_PREFIX.'hrm_skill sk';
 	$sql.='	LEFT JOIN '.MAIN_DB_PREFIX.'hrm_skillrank sr ON (sk.rowid = sr.fk_skill)';
-	$sql.='	WHERE sr.objecttype = "'.SkillRank::SKILLRANK_TYPE_JOB.'"';
+	$sql.="	WHERE sr.objecttype = '".SkillRank::SKILLRANK_TYPE_JOB."'";
 	$sql.=' AND sr.fk_object IN ('.$fk_job.')';
-	$sql.=' GROUP BY sk.rowid '; // group par competence*/
+	$sql.=' GROUP BY sk.rowid, sk.label, sk.description, sk.skill_type, sr.fk_object, sr.objecttype, sr.fk_skill '; // group par competence*/
 
 	$resql = $db->query($sql);
 	$Tab = array();
