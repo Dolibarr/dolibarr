@@ -951,15 +951,93 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 						print '<td></td>';
 						print '<td>';
-						if ($tmpproduct->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-							if (empty($line->disable_stock_change)) {
-								$preselected = (GETPOSTISSET('idwarehouse-'.$line->id.'-'.$i) ? GETPOST('idwarehouse-'.$line->id.'-'.$i) : ($tmpproduct->fk_default_warehouse > 0 ? $tmpproduct->fk_default_warehouse : 'ifone'));
-								print $formproduct->selectWarehouses($preselected, 'idwarehouse-'.$line->id.'-'.$i, '', 1, 0, $line->fk_product, '', 1, 0, null, 'maxwidth300');
-							} else {
-								print '<span class="opacitymedium">'.$langs->trans("DisableStockChange").'</span>';
+						if ($conf->productbatch->enabled) {
+							// Define nb of lines suggested for this order line
+							$nbofsuggested = 0;
+
+							foreach ($tmpproduct->stock_warehouse as $warehouse_id => $stock_warehouse) {
+								if ($stock_warehouse->real > 0) {
+									$nbofsuggested++;
+								}
+							}
+							$tmpwarehouseObject = new Entrepot($db);
+							foreach ($tmpproduct->stock_warehouse as $warehouse_id => $stock_warehouse) {    // $stock_warehouse is product_stock
+								if (!empty($warehousePicking) && !in_array($warehouse_id, $warehousePicking)) {
+									// if a warehouse was selected by user, picking is limited to this warehouse and his children
+									continue;
+								}
+
+								$tmpwarehouseObject->fetch($warehouse_id);
+								if ($stock_warehouse->real > 0) {
+									$stock = + $stock_warehouse->real; // Convert it to number
+									$deliverableQty = min($quantityToBeDelivered, $stock);
+									$deliverableQty = max(0, $deliverableQty);
+									// Quantity to send
+									print '<!-- subj='.$subj.'/'.$nbofsuggested.' -->';
+									print '<td colspan="3" ></td><td class="center"><!-- qty to ship (no lot management for product line indiceAsked='.$indiceAsked.') -->';
+									if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+										if (isset($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
+											$deliverableQty = min($quantityToBeDelivered, $stock - $alreadyQtySetted[$line->fk_product][intval($warehouse_id)]);
+										} else {
+											if (!isset($alreadyQtySetted[$line->fk_product])) {
+												$alreadyQtySetted[$line->fk_product] = array();
+											}
+
+											$deliverableQty = min($quantityToBeDelivered, $stock);
+										}
+
+										if ($deliverableQty < 0) $deliverableQty = 0;
+
+										$tooltip = '';
+										if (!empty($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
+											$tooltip = ' class="classfortooltip" title="'.$langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines').' : '.$alreadyQtySetted[$line->fk_product][intval($warehouse_id)].'" ';
+										}
+
+										$alreadyQtySetted[$line->fk_product][intval($warehouse_id)] = $deliverableQty + $alreadyQtySetted[$line->fk_product][intval($warehouse_id)];
+
+										$inputName = 'qtyl'.$indiceAsked.'_'.$subj;
+										if (GETPOSTISSET($inputName)) {
+											$deliverableQty = GETPOST($inputName, 'int');
+										}
+
+										print '<input '.$tooltip.' name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
+										print '<input name="ent1'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$warehouse_id.'">';
+									} else {
+										print $langs->trans("NA");
+									}
+									print '</td>';
+
+									// Stock
+									if (!empty($conf->stock->enabled)) {
+										print '<td class="left">';
+										if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+											print $tmpwarehouseObject->getNomUrl(0).' ';
+
+											print '<!-- Show details of stock -->';
+											print '('.$stock.')';
+										} else {
+											print $langs->trans("Service");
+										}
+										print '</td>';
+									}
+									$quantityToBeDelivered -= $deliverableQty;
+									if ($quantityToBeDelivered < 0) {
+										$quantityToBeDelivered = 0;
+									}
+									$subj++;
+								}
 							}
 						} else {
-							print '<span class="opacitymedium">'.$langs->trans("NoStockChangeOnServices").'</span>';
+							if ($tmpproduct->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+								if (empty($line->disable_stock_change)) {
+									$preselected = (GETPOSTISSET('idwarehouse-'.$line->id.'-'.$i) ? GETPOST('idwarehouse-'.$line->id.'-'.$i) : ($tmpproduct->fk_default_warehouse > 0 ? $tmpproduct->fk_default_warehouse : 'ifone'));
+									print $formproduct->selectWarehouses($preselected, 'idwarehouse-'.$line->id.'-'.$i, '', 1, 0, $line->fk_product, '', 1, 0, null, 'maxwidth300');
+								} else {
+									print '<span class="opacitymedium">'.$langs->trans("DisableStockChange").'</span>';
+								}
+							} else {
+								print '<span class="opacitymedium">'.$langs->trans("NoStockChangeOnServices").'</span>';
+							}
 						}
 						// Lot / Batch
 						print '</td>';
