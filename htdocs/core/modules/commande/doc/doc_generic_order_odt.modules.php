@@ -53,7 +53,8 @@ class doc_generic_order_odt extends ModelePDFCommandes
 	public $phpmin = array(5, 6);
 
 	/**
-	 * @var string Dolibarr version of the loaded document
+	 * Dolibarr version of the loaded document
+	 * @var string
 	 */
 	public $version = 'dolibarr';
 
@@ -234,6 +235,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 		$sav_charset_output = $outputlangs->charset_output;
 		$outputlangs->charset_output = 'UTF-8';
 
+		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
 		if ($conf->commande->dir_output) {
@@ -271,7 +273,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				$newfiletmp = preg_replace('/template_/i', '', $newfiletmp);
 				$newfiletmp = preg_replace('/modele_/i', '', $newfiletmp);
 				$newfiletmp = $objectref.'_'.$newfiletmp;
-				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
+
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
 				if (!empty($conf->global->MAIN_DOC_USE_TIMING)) {
@@ -459,7 +461,6 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				}
 
 				// Call the beforeODTSave hook
-
 				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
 				$reshook = $hookmanager->executeHooks('beforeODTSave', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
