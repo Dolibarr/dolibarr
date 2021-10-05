@@ -5120,7 +5120,6 @@ class Form
 	 *  @param  string	$htmlname			Name of select html field
 	 *	@param	int		$addempty			Add empty entry
 	 *  @param	int		$filtertype			If > 0, include payment terms with deposit percentage (for objects other than invoices and invoice templates)
-	 *  @param	float	$deposit_percent	% of deposit if needed by payment conditions
 	 * 	@param	float	$deposit_percent	< 0 : deposit_percent input makes no sense (for example, in list filters)
 	 *										0 : use default deposit percentage from entry
 	 *										> 0 : force deposit percentage (for example, from company object)
