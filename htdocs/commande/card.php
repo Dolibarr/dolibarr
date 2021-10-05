@@ -1189,7 +1189,7 @@ if (empty($reshook)) {
 
 						$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 						if ($deposit) {
-							$deposit->fetch($deposit->id);
+							$deposit->fetch($deposit->id); // Reload to get new records
 							$deposit->generateDocument($deposit->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 						}
 				}
@@ -1683,7 +1683,7 @@ if ($action == 'create' && $usercancreate) {
 	// Terms of the settlement
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 	print img_picto('', 'paiment');
-	$form->select_conditions_paiements($cond_reglement_id, 'cond_reglement_id', - 1, 1, 0, '', $deposit_percent);
+	$form->select_conditions_paiements($cond_reglement_id, 'cond_reglement_id', 1, 1, 0, '', $deposit_percent);
 	print '</td></tr>';
 
 	// Mode de reglement
@@ -2025,7 +2025,7 @@ if ($action == 'create' && $usercancreate) {
 					}
 
 					ob_start();
-					$form->select_conditions_paiements(0, 'cond_reglement_id', 1, 0, 0, 'minwidth200'); // TODO param 3
+					$form->select_conditions_paiements(0, 'cond_reglement_id', -1, 0, 0, 'minwidth200');
 					$paymentTermsSelect = ob_get_clean();
 
 					$formquestion[] = array(
@@ -2343,9 +2343,9 @@ if ($action == 'create' && $usercancreate) {
 		print $form->editfieldkey("PaymentConditionsShort", 'conditions', '', $object, $editenable);
 		print '</td><td class="valuefield">';
 		if ($action == 'editconditions') {
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id', 1, $object->deposit_percent);
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id', 1, 1, $object->deposit_percent);
 		} else {
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'none', 1, $object->deposit_percent);
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'none', 1, 1, $object->deposit_percent);
 		}
 		print '</td>';
 
