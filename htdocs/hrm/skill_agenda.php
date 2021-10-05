@@ -80,8 +80,8 @@ if (!$res) {
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-dol_include_once('/hrm/class/skill.class.php');
-dol_include_once('/hrm/lib/hrm_skill.lib.php');
+require_once DOL_DOCUMENT_ROOT . '/hrm/class/skill.class.php';
+require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_skill.lib.php';
 
 
 // Load translation files required by the page

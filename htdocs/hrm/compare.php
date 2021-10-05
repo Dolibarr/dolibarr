@@ -39,11 +39,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 ini_set('display_errors', 1);
 
-dol_include_once('/hrm/class/skill.class.php');
-dol_include_once('/hrm/class/job.class.php');
-dol_include_once('/hrm/class/evaluation.class.php');
-dol_include_once('/hrm/class/position.class.php');
-dol_include_once('/hrm/lib/hrm.lib.php');
+require_once DOL_DOCUMENT_ROOT . '/hrm/class/skill.class.php';
+require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
+require_once DOL_DOCUMENT_ROOT . '/hrm/class/evaluation.class.php';
+require_once DOL_DOCUMENT_ROOT . '/hrm/class/position.class.php';
+require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm.lib.php';
 
 $permissiontoread = $user->rights->hrm->compare->read;
 if (empty($conf->hrm->enabled)) accessforbidden();

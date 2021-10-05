@@ -84,10 +84,10 @@ if (!$res) {
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
-dol_include_once('/hrm/class/position.class.php');
-dol_include_once('/hrm/class/job.class.php');
-dol_include_once('/hrm/lib/hrm_position.lib.php');
-dol_include_once('/hrm/lib/hrm_job.lib.php');
+require_once DOL_DOCUMENT_ROOT . '/hrm/class/position.class.php';
+require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
+require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_position.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_job.lib.php';
 
 $action 	= GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $backtopage = GETPOST('backtopage', 'alpha');

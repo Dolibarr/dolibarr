@@ -84,8 +84,8 @@ if (!$res) {
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
-dol_include_once('/hrm/class/skill.class.php');
-dol_include_once('/hrm/lib/hrm_skill.lib.php');
+require_once DOL_DOCUMENT_ROOT . '/hrm/class/skill.class.php';
+require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_skill.lib.php';
 
 
 // Load translation files required by the page

@@ -26,8 +26,8 @@
  */
 
 // Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-dol_include_once('hrm/class/evaluationdet.class.php');
+require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT . '/hrm/class/evaluationdet.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -226,7 +226,7 @@ class Evaluation extends CommonObject
 		$resultcreate = $this->createCommon($user, $notrigger);
 
 		if ($resultcreate > 0) {
-			dol_include_once('hrm/class/skillrank.class.php');
+			require_once DOL_DOCUMENT_ROOT . '/hrm/class/skillrank.class.php';
 			$skillRank = new SkillRank($this->db);
 			$TRequiredRanks = $skillRank->fetchAll('ASC', 't.rowid', 0, 0, array('customsql' => 'fk_object='.$this->fk_job.' AND objecttype="job"'));
 
@@ -662,7 +662,7 @@ class Evaluation extends CommonObject
 	public function getLastEvaluationForUser($fk_user)
 	{
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."hrm_evaluation ";
-		$sql.=	"WHERE fk_user=".$fk_user." ";
+		$sql.=	"WHERE fk_user=".((int)$fk_user)." ";
 		$sql.=	"ORDER BY date_eval DESC ";
 		$sql.=	"LIMIT 1 ";
 

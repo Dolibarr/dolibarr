@@ -85,9 +85,9 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
-dol_include_once('/hrm/class/skill.class.php');
-dol_include_once('/hrm/class/skillrank.class.php');
-dol_include_once('/hrm/lib/hrm_skill.lib.php');
+require_once DOL_DOCUMENT_ROOT . '/hrm/class/skill.class.php';
+require_once DOL_DOCUMENT_ROOT . '/hrm/class/skillrank.class.php';
+require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_skill.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("hrm", "other"));
@@ -110,7 +110,7 @@ $skill = new SkillRank($db);
 // Initialize technical objects
 if (in_array($objecttype, $TAuthorizedObjects)) {
 	if ($objecttype == 'job') {
-		dol_include_once('/hrm/class/job.class.php');
+		require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
 		$object = new Job($db);
 	} else if ($objecttype == "user") {
 		$object = new User($db);
@@ -217,7 +217,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// view configuration
 	if ($objecttype == 'job') {
-		dol_include_once('/hrm/lib/hrm_job.lib.php');
+		require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_job.lib.php';
 		$head = jobPrepareHead($object);
 		$listLink = dol_buildpath('/hrm/job_list.php', 1);
 	} else if ($objecttype == "user") {

@@ -58,8 +58,8 @@ if (!$res) {
 
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-dol_include_once('/hrm/class/skill.class.php');
-dol_include_once('/hrm/lib/hrm_skill.lib.php');
+require_once DOL_DOCUMENT_ROOT . '/hrm/class/skill.class.php';
+require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_skill.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("hrm", "companies", "other", "mails"));

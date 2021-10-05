@@ -27,7 +27,7 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-dol_include_once('hrm/lib/hrm_skillrank.lib.php');
+require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_skillrank.lib.php';
 
 /**
  * Class for SkillRank

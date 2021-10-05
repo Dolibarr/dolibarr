@@ -81,8 +81,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-dol_include_once('/hrm/class/job.class.php');
-dol_include_once('/hrm/lib/hrm_job.lib.php');
+require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
+require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_job.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("hrm", "companies", "other", "mails"));
