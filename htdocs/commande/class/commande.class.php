@@ -3319,7 +3319,7 @@ class Commande extends CommonOrder
 		$sql .= " fk_user_valid=".(isset($this->user_valid) ? $this->user_valid : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
-		$sql .= " deposit_percent=".(! empty($this->deposit_percent) ? floatval($this->deposit_percent) : "null");
+		$sql .= " deposit_percent=".(! empty($this->deposit_percent) ? floatval($this->deposit_percent) : "null").",";
 		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? $this->mode_reglement_id : "null").",";
 		$sql .= " date_livraison=".(strval($this->delivery_date) != '' ? "'".$this->db->idate($this->delivery_date)."'" : 'null').",";
 		$sql .= " fk_shipping_method=".(isset($this->shipping_method_id) ? $this->shipping_method_id : "null").",";
