@@ -1407,14 +1407,18 @@ class Facture extends CommonInvoice
 	}
 
 	/**
-	 * @param Propal|Commande $origin
-	 * @param User $user
-	 * @param type $notrigger
-	 * @param bool $autoValidate
-	 * @param array $overrideFields
-	 * @return Facture
+	 * Creates a deposit from a proposal or an order by grouping lines by VAT rates
+	 *
+	 * @param	Propal|Commande		$origin					The original proposal or order
+	 * @param	int					$date					Invoice date
+	 * @param	int					$payment_terms_id		Invoice payment terms
+	 * @param	User				$user					Object user
+	 * @param	int					$notrigger				1=Does not execute triggers, 0= execute triggers
+	 * @param	bool				$autoValidateDeposit	Whether to aumatically validate the deposit created
+	 * @param	array				$overrideFields			Array of fields to force values
+	 * @return	Facture|null								The deposit created, or null if error (populates $origin->error in this case)
 	 */
-	static public function createDepositFromOrigin(CommonObject $origin, $date, $cond_reglement_id, User $user, $notrigger = 0, $autoValidateDeposit = false, $overrideFields = array())
+	static public function createDepositFromOrigin(CommonObject $origin, $date, $payment_terms_id, User $user, $notrigger = 0, $autoValidateDeposit = false, $overrideFields = array())
 	{
 		global $conf, $langs, $hookmanager, $action;
 
@@ -1435,7 +1439,7 @@ class Facture extends CommonInvoice
 			return null;
 		}
 
-		if ($cond_reglement_id <= 0) {
+		if ($payment_terms_id <= 0) {
 			$origin->error = $langs->trans('ErrorFieldRequired', $langs->transnoentities('PaymentConditionsShort'));
 			return null;
 		}
@@ -1459,7 +1463,7 @@ class Facture extends CommonInvoice
 		$deposit->ref_client = $origin->ref_client;
 		$deposit->date = $date;
 		$deposit->mode_reglement_id = $origin->mode_reglement_id;
-		$deposit->cond_reglement_id = $cond_reglement_id;
+		$deposit->cond_reglement_id = $payment_terms_id;
 		$deposit->availability_id = $origin->availability_id;
 		$deposit->demand_reason_id = $origin->demand_reason_id;
 		$deposit->fk_account = $origin->fk_account;
@@ -1575,7 +1579,7 @@ class Facture extends CommonInvoice
 			$descline = '(DEPOSIT) ('. $origin->deposit_percent .'%) - '.$origin->ref;
 
 			// Hidden conf
-			if (! empty($conf->global->INVOICE_DEPOSIT_DETAIL_LINES_IN_DESCRIPTION) && ! empty($descriptions[$tva])) {
+			if (! empty($conf->global->INVOICE_DEPOSIT_VARIABLE_MODE_DETAIL_LINES_IN_DESCRIPTION) && ! empty($descriptions[$tva])) {
 				$descline .= '<ul>' . $descriptions[$tva] . '</ul>';
 			}
 
