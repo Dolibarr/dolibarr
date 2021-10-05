@@ -3876,10 +3876,12 @@ class Form
 	 *		@param	int		$addempty		Add an empty entry
 	 * 		@param	int		$noinfoadmin		0=Add admin info, 1=Disable admin info
 	 * 		@param	string	$morecss			Add more CSS on select tag
-	 * 		@param	float	$deposit_percent	% of deposit if needed by payment conditions
+	 * 		@param	float	$deposit_percent	< 0 : deposit_percent input makes no sense (for example, in list filters)
+	 *											0 : use default deposit percentage from entry
+	 *											> 0 : force deposit percentage (for example, from company object)
 	 *		@return	void
 	 */
-	public function select_conditions_paiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '', $deposit_percent = null)
+	public function select_conditions_paiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '', $deposit_percent = -1)
 	{
 		// phpcs:enable
 		global $langs, $user, $conf;
@@ -3905,7 +3907,7 @@ class Form
 			}
 
 			if ($selected == $id) {
-				$selectedDepositPercent = ! empty($deposit_percent) ? $deposit_percent : $arrayconditions['deposit_percent'];
+				$selectedDepositPercent = $deposit_percent > 0 ? $deposit_percent : $arrayconditions['deposit_percent'];
 				print '<option value="'.$id.'" data-deposit_percent="' . $arrayconditions['deposit_percent'] . '" selected>';
 			} else {
 				print '<option value="'.$id.'" data-deposit_percent="' . $arrayconditions['deposit_percent'] . '">';
@@ -3914,7 +3916,7 @@ class Form
 			$label = $arrayconditions['label'];
 
 			if (! empty($arrayconditions['deposit_percent'])) {
-				$label = sprintf($label, ! empty($deposit_percent) ? $deposit_percent : $arrayconditions['deposit_percent']);
+				$label = sprintf($label, $deposit_percent > 0 ? $deposit_percent : $arrayconditions['deposit_percent']);
 			}
 
 			print $label;
@@ -3926,27 +3928,30 @@ class Form
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
 		print ajax_combobox($htmlname);
-		print ' <span id="'.$htmlname.'_deposit_percent_container"' . (empty($selectedDepositPercent) ? ' style="display: none"' : '') . '>';
-		print $langs->trans('DepositPercent') . ' : ';
-		print '<input id="'.$htmlname.'_deposit_percent" name="'.$htmlname.'_deposit_percent" class="maxwidth50" value="' . floatval($deposit_percent) . '" />';
-		print '</span>';
-		print '
-			<script>
-				$(document).ready(function () {
-					$("#' . $htmlname . '").change(function () {
-						let $selected = $(this).find("option:selected");
-						let depositPercent = $selected.attr("data-deposit_percent");
 
-						if (depositPercent.length > 0) {
-							$("#'.$htmlname.'_deposit_percent_container").show().find("#'.$htmlname.'_deposit_percent").val(depositPercent);
-						} else {
-							$("#'.$htmlname.'_deposit_percent_container").hide();
-						}
+		if ($deposit_percent >= 0) {
+			print ' <span id="'.$htmlname.'_deposit_percent_container"' . (empty($selectedDepositPercent) ? ' style="display: none"' : '') . '>';
+			print $langs->trans('DepositPercent') . ' : ';
+			print '<input id="'.$htmlname.'_deposit_percent" name="'.$htmlname.'_deposit_percent" class="maxwidth50" value="' . floatval($deposit_percent) . '" />';
+			print '</span>';
+			print '
+				<script>
+					$(document).ready(function () {
+						$("#' . $htmlname . '").change(function () {
+							let $selected = $(this).find("option:selected");
+							let depositPercent = $selected.attr("data-deposit_percent");
 
-						return true;
+							if (depositPercent.length > 0) {
+								$("#'.$htmlname.'_deposit_percent_container").show().find("#'.$htmlname.'_deposit_percent").val(depositPercent);
+							} else {
+								$("#'.$htmlname.'_deposit_percent_container").hide();
+							}
+
+							return true;
+						});
 					});
-				});
-			</script>';
+				</script>';
+		}
 	}
 
 
@@ -5116,9 +5121,12 @@ class Form
 	 *	@param	int		$addempty			Add empty entry
 	 *  @param	int		$filtertype			If > 0, include payment terms with deposit percentage (for objects other than invoices and invoice templates)
 	 *  @param	float	$deposit_percent	% of deposit if needed by payment conditions
+	 * 	@param	float	$deposit_percent	< 0 : deposit_percent input makes no sense (for example, in list filters)
+	 *										0 : use default deposit percentage from entry
+	 *										> 0 : force deposit percentage (for example, from company object)
 	 *  @return	void
 	 */
-	public function form_conditions_reglement($page, $selected = '', $htmlname = 'cond_reglement_id', $addempty = 0, $filtertype = -1, $deposit_percent = null)
+	public function form_conditions_reglement($page, $selected = '', $htmlname = 'cond_reglement_id', $addempty = 0, $filtertype = -1, $deposit_percent = -1)
 	{
 		// phpcs:enable
 		global $langs;
@@ -5136,7 +5144,7 @@ class Form
 					$label = $this->cache_conditions_paiements[$selected]['label'];
 
 					if (! empty($this->cache_conditions_paiements[$selected]['deposit_percent'])) {
-						$label = sprintf($label, ! empty($deposit_percent) ? $deposit_percent : $this->cache_conditions_paiements[$selected]['deposit_percent']);
+						$label = sprintf($label, $deposit_percent > 0 ? $deposit_percent : $this->cache_conditions_paiements[$selected]['deposit_percent']);
 					}
 
 					print $label;
