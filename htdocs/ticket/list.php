@@ -511,7 +511,7 @@ if ($socid && !$projectid && !$project_ref && $user->rights->societe->lire) {
 			print showValueWithClipboardCPButton(dol_escape_htmltag($socstat->code_client));
 			$tmpcheck = $socstat->check_codeclient();
 			if ($tmpcheck != 0 && $tmpcheck != -5) {
-				print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+				print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
 			}
 			print '</td>';
 			print '</tr>';
@@ -523,7 +523,7 @@ if ($socid && !$projectid && !$project_ref && $user->rights->societe->lire) {
 			print showValueWithClipboardCPButton(dol_escape_htmltag($socstat->code_fournisseur));
 			$tmpcheck = $socstat->check_codefournisseur();
 			if ($tmpcheck != 0 && $tmpcheck != -5) {
-				print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+				print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
 			}
 			print '</td>';
 			print '</tr>';
