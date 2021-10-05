@@ -407,7 +407,7 @@ class Position extends CommonObject
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND (' . implode(' ' . $filtermode . ' ', $sqlwhere) . ')';
+			$sql .= ' AND ('.$this->db->escape(implode(' '.$filtermode.' ', $sqlwhere)).')';
 		}
 
 		if (!empty($sortfield)) {
