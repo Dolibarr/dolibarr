@@ -3731,7 +3731,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="total"    value="'.$objectsrc->total_ttc.'">'."\n";
 		print '<input type="hidden" name="tva"      value="'.$objectsrc->total_tva.'">'."\n";
 		// The lines below override the parameters set by GET or POST for origin value and also be present in $origin and $originid variables (it make creation of invoice originating from an external module object impossible because for get an external module class we also need to know the name of the module in addition of the name of the element).
-        // This input fields already printed above at the <form> begin.
+		// This input fields already printed above at the <form> begin.
 		//print '<input type="hidden" name="origin"   value="'.$objectsrc->element.'">';
 		//print '<input type="hidden" name="originid" value="'.$objectsrc->id.'">';
 
