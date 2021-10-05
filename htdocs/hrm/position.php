@@ -184,7 +184,7 @@ if (empty($reshook)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("hrm", "other"));
+$langs->loadLangs(array("hrm", "other", 'products'));
 
 $title = $langs->trans("Position");
 $help_url = '';

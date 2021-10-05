@@ -88,7 +88,7 @@ require_once DOL_DOCUMENT_ROOT.'/hrm/lib/hrm_skillrank.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("hrm", "other"));
+$langs->loadLangs(array("hrm", "other", 'products'));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -540,7 +540,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 				if ($object->status == $object::STATUS_DRAFT && $permissiontoadd) {
 					print '<br><div class="center">';
-					print '<input class="button pll-right" type="submit" value="'.$langs->trans('SaveRank').'" >';
+					print '<input class="button pll-right" type="submit" value="'.$langs->trans('Save').'" >';
 					print '</div>';
 				}
 			}
@@ -579,14 +579,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			if ($object->status == $object::STATUS_CLOSED) {
-				print dolGetButtonAction($langs->trans('reopen'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken(), '', $permissiontoadd);
+				print dolGetButtonAction($langs->trans('ReOpen'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken(), '', $permissiontoadd);
 			}
 
 
 			// Validate
 			if ($object->status == $object::STATUS_DRAFT) {
 				if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) {
-					print dolGetButtonAction($langs->trans('SaveRank').'&nbsp;'.$langs->trans('and').'&nbsp;'.$langs->trans('Valid'), '', 'default', '#', 'btn_valid', $permissiontovalidate);
+					print dolGetButtonAction($langs->trans('Save').'&nbsp;'.$langs->trans('and').'&nbsp;'.$langs->trans('Valid'), '', 'default', '#', 'btn_valid', $permissiontovalidate);
 				} else {
 					$langs->load("errors");
 					print dolGetButtonAction($langs->trans("ErrorAddAtLeastOneLineFirst"), $langs->trans("Validate"), 'default', '#', '', 0);

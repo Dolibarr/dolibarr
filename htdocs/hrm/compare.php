@@ -436,7 +436,8 @@ function displayUsersListWithPicto(&$TUser, $fk_usergroup = 0, $namelist = 'list
 			$job = Job::getLastJobForUser($user->id);
 			$desc .= $job;
 
-			$evaluation = Evaluation::getLastEvaluationForUser($user->id);
+			$static_eval = new Evaluation($db);
+			$evaluation = $static_eval->getLastEvaluationForUser($user->id);
 
 			if (!empty($evaluation) && !empty($evaluation->date_eval)) {
 				$desc .= $langs->trans('DateLastEval') . ' : ' . dol_print_date($evaluation->date_eval);

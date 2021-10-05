@@ -93,7 +93,7 @@ dol_include_once('/hrm/lib/hrm_skill.lib.php');
 $langs->loadLangs(array("hrm", "other"));
 
 $id = GETPOST('id', 'int');
-$fk_skill = GETPOST('fk_skill', 'int');
+$TSkillsToAdd = GETPOST('fk_skill', 'array');
 $objecttype = GETPOST('objecttype', 'alpha');
 $TNote = GETPOST('TNote', 'array');
 $lineid = GETPOST('lineid', 'int');
@@ -159,19 +159,21 @@ if (empty($reshook)) {
 	if ($action == 'addSkill') {
 		$error = 0;
 
-		if ($fk_skill <= 0) {
+		if (empty($TSkillsToAdd)) {
 			setEventMessage('ErrNoSkillSelected', 'errors');
 			$error++;
 		}
 
 		if (!$error) {
-			$skillAdded = new SkillRank($db);
-			$skillAdded->fk_skill = $fk_skill;
-			$skillAdded->fk_object = $id;
-			$skillAdded->objecttype = $objecttype;
-			$ret = $skillAdded->create($user);
-			if ($ret < 0) setEventMessage($skillAdded->error, 'errors');
-			else unset($fk_skill);
+			foreach ($TSkillsToAdd as $k=>$v) {
+				$skillAdded = new SkillRank($db);
+				$skillAdded->fk_skill = $v;
+				$skillAdded->fk_object = $id;
+				$skillAdded->objecttype = $objecttype;
+				$ret = $skillAdded->create($user);
+				if ($ret < 0) setEventMessage($skillAdded->error, 'errors');
+				//else unset($TSkillsToAdd);
+			}
 		}
 	} else if ($action == 'saveSkill') {
 		if (!empty($TNote)) {
@@ -268,15 +270,27 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'rowid', $morehtmlref, '&objecttype='.$objecttype);
 
 
-	// table of skillRank linked to current object
-	$TSkills = $skill->fetchAll('ASC', 't.rowid', 0, 0, array('customsql' => 'fk_object=' . $id . ' AND objecttype="' . $objecttype . '"'));
+	// Get all available skills
+	$static_skill = new Skill($db);
+	$TAllSkills = $static_skill->fetchAll();
 
-//	$TAlreadyUsedSkill = array();
-//	if (is_array($TSkills) && !empty($TSkills)) {
-//		foreach ($TSkills as $skillElement) {
-//			$TAlreadyUsedSkill[] = $skillElement->fk_skill;
-//		}
-//	}
+	// Array format for multiselectarray function
+	$TAllSkillsFormatted=array();
+	if(!empty($TAllSkills)) {
+		foreach ($TAllSkills as $k=>$v) {
+			$TAllSkillsFormatted[$k] = $v->label;
+		}
+	}
+
+	// table of skillRank linked to current object
+	$TSkillsJob = $skill->fetchAll('ASC', 't.rowid', 0, 0, array('customsql' => 'fk_object=' . $id . ' AND objecttype="' . $objecttype . '"'));
+
+	$TAlreadyUsedSkill = array();
+	if (is_array($TSkillsJob) && !empty($TSkillsJob)) {
+		foreach ($TSkillsJob as $skillElement) {
+			$TAlreadyUsedSkill[$skillElement->fk_skill] = $skillElement->fk_skill;
+		}
+	}
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
@@ -298,13 +312,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<input type="hidden" name="action" value="addSkill">';
 		print '<div class="div-table-responsive-no-min">';
 		print '<table id="tablelines" class="noborder noshadow" width="100%">';
-		print '<tr><td>' . $langs->trans('AddSkill') . '</td><td></td></tr>';
+		print '<tr><td style="width:90%">' . $langs->trans('AddSkill') . '</td><td style="width:10%"></td></tr>';
 		print '<tr>';
-		foreach ($skill->fields as $key => $infos) {
-			if ($key == 'fk_skill') {
-				print '<td>' . $skill->showInputField($infos, $key, $$key) . '</td>';
-			}
-		}
+		print '<td>' . $form->multiselectarray('fk_skill', array_diff_key($TAllSkillsFormatted, $TAlreadyUsedSkill), array(), 0, 0, '', 0, '100%') . '</td>';
 		print '<td><input class="button reposition" type="submit" value="' . $langs->trans('Add') . '"></td>';
 		print '</tr>';
 		print '</table>';
@@ -335,11 +345,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<th class="linecoldelete"></th>';
 	}
 	print '</tr>';
-	if (!is_array($TSkills) || empty($TSkills)) {
+	if (!is_array($TSkillsJob) || empty($TSkillsJob)) {
 		print '<tr><td>' . $langs->trans("NoRecordFound") . '</td></tr>';
 	} else {
 		$sk = new Skill($db);
-		foreach ($TSkills as $skillElement) {
+		foreach ($TSkillsJob as $skillElement) {
 			$sk->fetch($skillElement->fk_skill);
 			print '<tr>';
 			print '<td>';

@@ -659,24 +659,21 @@ class Evaluation extends CommonObject
 	 *		 @param int $fk_user ID of user we need to get last eval
 	 * 		 @return Evaluation|null
 	 */
-	public static function getLastEvaluationForUser($fk_user)
+	public function getLastEvaluationForUser($fk_user)
 	{
-		global $db;
-
-
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."hrm_evaluation ";
 		$sql.=	"WHERE fk_user=".$fk_user." ";
 		$sql.=	"ORDER BY date_eval DESC ";
 		$sql.=	"LIMIT 1 ";
 
-		$res = $db->query($sql);
-		if (!$res) { dol_print_error($db);}
+		$res = $this->db->query($sql);
+		if (!$res) { dol_print_error($this->db);}
 
-		$Tab = $db->fetch_object($res);
+		$Tab = $this->db->fetch_object($res);
 
 		if (empty($Tab)) return null;
 		else {
-			$evaluation = new Evaluation($db);
+			$evaluation = new Evaluation($this->db);
 			$evaluation->fetch($Tab->rowid);
 
 			return $evaluation;

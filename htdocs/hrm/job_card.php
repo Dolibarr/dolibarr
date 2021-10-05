@@ -88,7 +88,7 @@ dol_include_once('/hrm/class/job.class.php');
 dol_include_once('/hrm/lib/hrm_job.lib.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array("hrm", "other"));
+$langs->loadLangs(array("hrm", "other", 'products'));
 
 // Get parameters
 $id = GETPOST('id', 'int');
