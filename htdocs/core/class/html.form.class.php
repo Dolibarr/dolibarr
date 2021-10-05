@@ -5783,11 +5783,11 @@ class Form
 
 				return $num;
 			} else {
-				$this->error = '<font class="error">'.$langs->trans("ErrorNoVATRateDefinedForSellerCountry", $country_code).'</font>';
+				$this->error = '<span class="error">'.$langs->trans("ErrorNoVATRateDefinedForSellerCountry", $country_code).'</span>';
 				return -1;
 			}
 		} else {
-			$this->error = '<font class="error">'.$this->db->error().'</font>';
+			$this->error = '<span class="error">'.$this->db->error().'</span>';
 			return -2;
 		}
 	}
@@ -5838,9 +5838,9 @@ class Form
 		// Check parameters
 		if (is_object($societe_vendeuse) && !$societe_vendeuse->country_code) {
 			if ($societe_vendeuse->id == $mysoc->id) {
-				$return .= '<font class="error">'.$langs->trans("ErrorYourCountryIsNotDefined").'</font>';
+				$return .= '<span class="error">'.$langs->trans("ErrorYourCountryIsNotDefined").'</span>';
 			} else {
-				$return .= '<font class="error">'.$langs->trans("ErrorSupplierCountryIsNotDefined").'</font>';
+				$return .= '<span class="error">'.$langs->trans("ErrorSupplierCountryIsNotDefined").'</span>';
 			}
 			return $return;
 		}
