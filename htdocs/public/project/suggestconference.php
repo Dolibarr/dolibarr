@@ -113,7 +113,7 @@ $extrafields = new ExtraFields($db);
 $user->loadDefaultValues();
 
 $cactioncomm = new CActionComm($db);
-$arrayofeventtype = $cactioncomm->liste_array('', 'id', '', 0, 'module=\'conference@eventorganization\'');
+$arrayofeventtype = $cactioncomm->liste_array('', 'id', '', 0, "module='conference@eventorganization'");
 
 // Security check
 if (empty($conf->eventorganization->enabled)) {

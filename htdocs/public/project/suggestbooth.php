@@ -94,7 +94,7 @@ if ($resultproject < 0) {
 
 // Security check
 $securekeyreceived = GETPOST("securekey");
-$securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
+$securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 'md5');
 
 if ($securekeytocompare != $securekeyreceived) {
 	print $langs->trans('MissingOrBadSecureKey');
@@ -112,7 +112,7 @@ $extrafields = new ExtraFields($db);
 $user->loadDefaultValues();
 
 $cactioncomm = new CActionComm($db);
-$arrayofeventtype = $cactioncomm->liste_array('', 'id', '', 0, 'module=\'booth@eventorganization\'');
+$arrayofeventtype = $cactioncomm->liste_array('', 'id', '', 0, "module='booth@eventorganization'");
 
 // Security check
 if (empty($conf->eventorganization->enabled)) {
