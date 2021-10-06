@@ -106,7 +106,5 @@ function moPrepareHead($object)
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'mo@mrp', 'remove');
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'mo@mrp', 'remove');
-
 	return $head;
 }
