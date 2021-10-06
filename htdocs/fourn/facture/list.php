@@ -1601,7 +1601,6 @@ if ($resql) {
 
 			// Author
 			if (!empty($arrayfields['u.login']['checked'])) {
-
 				print '<td class="tdoverflowmax200">';
 				if ($userstatic->id) {
 					print $userstatic->getLoginUrl(-1);
