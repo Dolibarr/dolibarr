@@ -16,9 +16,9 @@
  */
 
 /**
- *	\file       htdocs/public/members/new.php
+ *	\file       htdocs/public/project/suggestbooth.php
  *	\ingroup    member
- *	\brief      Example of form to add a new member
+ *	\brief      Example of form to suggest a booth
  *
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for auto-subscribe form
