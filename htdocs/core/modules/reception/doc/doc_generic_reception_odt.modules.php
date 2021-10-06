@@ -63,7 +63,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 		global $conf, $langs, $mysoc;
 
 		$langs->loadLangs(array("main", "companies"));
-		
+
 		$this->db = $db;
 		$this->name = "ODT templates";
 		$this->description = $langs->trans("DocumentModelOdt");
@@ -177,7 +177,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 		$texte .= '<input type="hidden" value="RECEPTION_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
 		$texte .= '<input type="submit" class="button small" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
 		$texte .= '</div>';
-		
+
 		$texte .= '</td>';
 
 		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
@@ -228,7 +228,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 		$outputlangs->charset_output = 'UTF-8';
 
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
-		
+
 		if ($conf->reception->dir_output."/reception") {
 			// If $object is id instead of object
 			if (!is_object($object)) {
@@ -413,26 +413,26 @@ class doc_generic_reception_odt extends ModelePdfReception
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 					if ($foundtagforlines) {
-					$linenumber = 0;
-					foreach ($object->lines as $line) {
-						$linenumber++;
-						$tmparray = $this->get_substitutionarray_reception_lines($line, $outputlangs);
-						complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
-						// Call the ODTSubstitutionLine hook
-						$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray, 'line'=>$line);
-						$reshook = $hookmanager->executeHooks('ODTSubstitutionLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-						foreach ($tmparray as $key => $val) {
-							try {
-								$listlines->setVars($key, $val, true, 'UTF-8');
-							} catch (OdfException $e) {
-								dol_syslog($e->getMessage(), LOG_INFO);
-							} catch (SegmentException $e) {
-								dol_syslog($e->getMessage(), LOG_INFO);
+						$linenumber = 0;
+						foreach ($object->lines as $line) {
+							$linenumber++;
+							$tmparray = $this->get_substitutionarray_reception_lines($line, $outputlangs);
+							complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
+							// Call the ODTSubstitutionLine hook
+							$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray, 'line'=>$line);
+							$reshook = $hookmanager->executeHooks('ODTSubstitutionLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+							foreach ($tmparray as $key => $val) {
+								try {
+									$listlines->setVars($key, $val, true, 'UTF-8');
+								} catch (OdfException $e) {
+									dol_syslog($e->getMessage(), LOG_INFO);
+								} catch (SegmentException $e) {
+									dol_syslog($e->getMessage(), LOG_INFO);
+								}
 							}
+							$listlines->merge();
 						}
-						$listlines->merge();
-					}
-					$odfHandler->mergeSegment($listlines);
+						$odfHandler->mergeSegment($listlines);
 					}
 				} catch (OdfException $e) {
 					$this->error = $e->getMessage();
@@ -482,7 +482,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 				$odfHandler = null; // Destroy object
 
 				$this->result = array('fullpath'=>$file);
-				
+
 				return 1; // Success
 			} else {
 				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
