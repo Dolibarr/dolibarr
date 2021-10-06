@@ -784,7 +784,7 @@ if ($action == 'edit') {
 	// Actions button
 	print '<div class="tabsAction">';
 
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 
 	if (empty($conf->global->MAIN_DISABLE_ALL_MAILS)) {
 		if ($conf->global->MAIN_MAIL_SENDMODE != 'mail' || !$linuxlike) {

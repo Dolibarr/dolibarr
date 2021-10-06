@@ -157,7 +157,7 @@ class box_validated_projects extends ModeleBoxes
 					);
 
 					if ($objp->fk_soc > 0) {
-						$sql = 'SELECT rowid, nom as name FROM '.MAIN_DB_PREFIX.'societe WHERE rowid = '.((int) $objp->fk_soc);
+						$sql = "SELECT rowid, nom as name FROM ".MAIN_DB_PREFIX."societe WHERE rowid = ".((int) $objp->fk_soc);
 						$resql = $this->db->query($sql);
 						//$socstatic = new Societe($this->db);
 						$obj2 = $this->db->fetch_object($resql);

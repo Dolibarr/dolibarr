@@ -85,7 +85,7 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_EXP
 --
 -- Mail Mailing
 --
-insert into llx_const (name, value, type, note, visible) values ('MAIN_FIX_FOR_BUGGED_MTA','1','chaine','Set constant to fix email ending from PHP with some linux ike system',1);
+--insert into llx_const (name, value, type, note, visible) values ('MAIN_FIX_FOR_BUGGED_MTA','1','chaine','Set constant to fix email ending from PHP with some linux like system',1);
 insert into llx_const (name, value, type, note, visible) values ('MAILING_EMAIL_FROM','no-reply@mydomain.com','chaine','EMail emmetteur pour les envois d emailings',0);
 
 

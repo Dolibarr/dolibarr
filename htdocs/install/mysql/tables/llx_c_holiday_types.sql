@@ -22,7 +22,7 @@ CREATE TABLE llx_c_holiday_types (
   label varchar(255) NOT NULL,
   affect integer NOT NULL,						-- a request will change sold or not
   delay integer NOT NULL,						-- Minimum delay to be allowed to make request
-  newByMonth double(8,5) DEFAULT 0 NOT NULL, -- Amount of new days for each user each month
+  newbymonth double(8,5) DEFAULT 0 NOT NULL, -- Amount of new days for each user each month
   fk_country integer DEFAULT NULL,			-- This type is dedicated to a country
   active integer DEFAULT 1
 ) ENGINE=innodb;

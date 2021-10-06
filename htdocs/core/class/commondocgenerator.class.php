@@ -220,6 +220,7 @@ abstract class CommonDocGenerator
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Define array with couple substitution key => substitution value
+	 * For example {company_name}, {company_name_alias}
 	 *
 	 * @param	Societe		$object			Object
 	 * @param   Translate	$outputlangs    Language object for output

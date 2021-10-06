@@ -561,6 +561,8 @@ if ($id > 0 || $ref) {
 					if($(this).text().indexOf('+') > 0) {
 						$(".batch_warehouse" + id_entrepot).show();
 						$(this).html('(-)');
+						jQuery("#show_all").hide();
+						jQuery("#hide_all").show();
 					}
 					else {
 						$(".batch_warehouse" + id_entrepot).hide();
@@ -574,6 +576,8 @@ if ($id > 0 || $ref) {
 					console.log("We click on show_all");
 					$("[class^=batch_warehouse]").show();
 					$("[class^=collapse_batch]").html('(-)');
+					jQuery("#show_all").hide();
+					jQuery("#hide_all").show();
 					return false;
 				});
 
@@ -581,6 +585,8 @@ if ($id > 0 || $ref) {
 					console.log("We click on hide_all");
 					$("[class^=batch_warehouse]").hide();
 					$("[class^=collapse_batch]").html('(+)');
+					jQuery("#hide_all").hide();
+					jQuery("#show_all").show();
 					return false;
 				});
 
@@ -938,10 +944,11 @@ if (!$variants) {
 
 	if ((!empty($conf->productbatch->enabled)) && $object->hasbatch()) {
 		$colspan = 3;
-		print '<tr class="liste_titre"><td width="14%">';
+		print '<tr class="liste_titre"><td class="minwidth200">';
 		if (!empty($conf->use_javascript_ajax)) {
-			print '<a id="show_all" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a> &nbsp; ';
-			print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>';
+			print '<a id="show_all" href="#" class="hideobject">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ShowAllLots").'</a>';
+			//print ' &nbsp; ';
+			print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("HideLots").'</a>';
 			//print '&nbsp;'.$form->textwithpicto('', $langs->trans('CollapseBatchDetailHelp'), 1, 'help', '');
 		}
 		print '</td>';
@@ -1097,7 +1104,7 @@ if (!$variants) {
 						}
 						print '<td class="right" colspan="'.$colspan.'">'.$pdluo->qty.($pdluo->qty < 0 ? ' '.img_warning() : '').'</td>';
 						print '<td colspan="4"></td>';
-						print '<td>';
+						print '<td class="center">';
 						if ($entrepotstatic->status != $entrepotstatic::STATUS_CLOSED) {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;id_entrepot='.$entrepotstatic->id.'&amp;action=transfert&amp;pdluoid='.$pdluo->id.'">';
 							print img_picto($langs->trans("TransferStock"), 'add', 'class="hideonsmartphone paddingright" style="color: #a69944"');
@@ -1105,11 +1112,11 @@ if (!$variants) {
 							print '</a>';
 							// Disabled, because edition of stock content must use the "Correct stock menu".
 							// Do not use this, or data will be wrong (bad tracking of movement label, inventory code, ...
-							//print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=editline&amp;lineid='.$pdluo->id.'#'.$pdluo->id.'">';
+							//print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=editline&token='.newToken().'&lineid='.$pdluo->id.'#'.$pdluo->id.'">';
 							//print img_edit().'</a>';
 						}
 						print '</td>';
-						print '<td>';
+						print '<td class="center">';
 						if ($entrepotstatic->status != $entrepotstatic::STATUS_CLOSED) {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;id_entrepot='.$entrepotstatic->id.'&amp;action=correction&amp;pdluoid='.$pdluo->id.'">';
 							print img_picto($langs->trans("CorrectStock"), 'add', 'class="hideonsmartphone paddingright" style="color: #a69944"');
@@ -1117,7 +1124,7 @@ if (!$variants) {
 							print '</a>';
 							// Disabled, because edition of stock content must use the "Correct stock menu".
 							// Do not use this, or data will be wrong (bad tracking of movement label, inventory code, ...
-							//print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=editline&amp;lineid='.$pdluo->id.'#'.$pdluo->id.'">';
+							//print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=editline&token='.newToken().'&lineid='.$pdluo->id.'#'.$pdluo->id.'">';
 							//print img_edit().'</a>';
 						}
 						print '</td>';
