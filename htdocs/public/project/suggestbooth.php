@@ -224,20 +224,6 @@ if (empty($reshook) && $action == 'add') {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Note"))."<br>\n";
 	}
-	if (empty($datestart)) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateStart"))."<br>\n";
-	} elseif ($datestart < $project->date_start) {
-			$error++;
-			$errmsg .= $langs->trans("DateMustBeAfterThan", $langs->transnoentitiesnoconv("DateStart"), dol_print_date($project->date_start))."<br>\n";
-	}
-	if (empty($dateend)) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd"))."<br>\n";
-	} elseif ($dateend > dol_mktime(23, 59, 59, dol_print_date($project->date_end, '%m'), dol_print_date($project->date_end, '%d'), dol_print_date($project->date_end, '%Y'))) {
-		$error++;
-		$errmsg .= $langs->trans("DateMustBeBeforeThan", $langs->transnoentitiesnoconv("DateEnd"), dol_print_date($project->date_end))."<br>\n";
-	}
 	if (!GETPOST("email")) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
@@ -541,7 +527,7 @@ print '<div class="center subscriptionformhelptext justify">';
 
 // Welcome message
 $text  = '<tr><td class="textpublicpayment"><strong>'.$langs->trans("EvntOrgRegistrationBoothWelcomeMessage").'</strong></td></tr></br>';
-$text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgRegistrationBoothHelpMessage").' '.$id.'.<br><br></td></tr>'."\n";
+$text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgRegistrationBoothHelpMessage").' '.$project->label.'.<br><br></td></tr>'."\n";
 $text .= '<tr><td class="textpublicpayment">'.$project->note_public.'</td></tr>'."\n";;
 print $text;
 print '</div>';
@@ -636,24 +622,6 @@ print '</td><td><input type="text" name="label" class="minwidth150" value="'.dol
 // Note
 print '<tr><td>'.$langs->trans("Description").'<FONT COLOR="red">*</FONT></td>'."\n";
 print '<td><textarea name="note" id="note" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('note', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
-// Start Date
-print '<tr><td>'.$langs->trans("DateStart").'<FONT COLOR="red">*</FONT>';
-if (!empty($project->date_start)) {
-	print '('.$langs->trans('Min'). ' '.dol_print_date($project->date_start).')';
-}
-print '</td>'."\n";
-print '<td>';
-print $form->selectDate((empty($datestart)?$project->date_start:$datestart), 'datestart');
-print '</td></tr>'."\n";
-// End Date
-print '<tr><td>'.$langs->trans("DateEnd").'<FONT COLOR="red">*</FONT>';
-if (!empty($project->date_end)) {
-	print '('.$langs->trans('Max'). ' '.dol_print_date($project->date_end).')';
-}
-print '</td>'."\n";
-print '<td>';
-print $form->selectDate(empty($dateend)?$project->date_end:$dateend, 'dateend');
-print '</td></tr>'."\n";
 
 print "</table>\n";
 

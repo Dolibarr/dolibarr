@@ -225,14 +225,6 @@ if (empty($reshook) && $action == 'add') {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Note"))."<br>\n";
 	}
-	if (!GETPOST("datestart")) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateStart"))."<br>\n";
-	}
-	if (!GETPOST("dateend")) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd"))."<br>\n";
-	}
 	if (!GETPOST("email")) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
@@ -472,7 +464,7 @@ print '<div class="center subscriptionformhelptext justify">';
 
 // Welcome message
 $text  = '<tr><td class="textpublicpayment"><strong>'.$langs->trans("EvntOrgRegistrationConfWelcomeMessage").'</strong></td></tr></br>';
-$text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgRegistrationConfHelpMessage").' '.$id.'.<br><br></td></tr>'."\n";
+$text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgRegistrationConfHelpMessage").' '.$project->label.'.<br><br></td></tr>'."\n";
 $text .= '<tr><td class="textpublicpayment">'.$project->note_public.'</td></tr>'."\n";;
 print $text;
 print '</div>';
@@ -568,13 +560,6 @@ print '</td><td><input type="text" name="label" class="minwidth150" value="'.dol
 // Note
 print '<tr><td>'.$langs->trans("Description").'<FONT COLOR="red">*</FONT></td>'."\n";
 print '<td><textarea name="note" id="note" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('note', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
-// Start Date
-print '<tr><td>'.$langs->trans("DateStart").'</td>'."\n";
-print '<td><input type="date" name="datestart" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('datestart')).'"></td></tr>'."\n";
-// End Date
-print '<tr><td>'.$langs->trans("DateEnd").'</td>'."\n";
-print '<td><input type="date" name="dateend" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('dateend')).'"></td></tr>'."\n";
-
 
 print "</table>\n";
 
