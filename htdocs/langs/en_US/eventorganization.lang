@@ -138,6 +138,9 @@ OrganizationEventBulkMailToAttendees=This is a remind about your participation i
 OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
 OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
 
+NewSuggestionOfBooth=Application for a booth
+NewSuggestionOfConference=Application for a conference
+
 #
 # Vote page
 #

@@ -515,10 +515,10 @@ if (empty($reshook) && $action == 'add') {
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 
-llxHeaderVierge($langs->trans("NewSuggestion"));
+llxHeaderVierge($langs->trans("NewSuggestionOfBooth"));
 
 
-print load_fiche_titre($langs->trans("NewSuggestion"), '', '', 0, 0, 'center');
+print load_fiche_titre($langs->trans("NewSuggestionOfBooth"), '', '', 0, 0, 'center');
 
 
 print '<div align="center">';
