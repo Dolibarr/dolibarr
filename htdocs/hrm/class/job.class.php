@@ -639,22 +639,6 @@ class Job extends CommonObject
 	}
 
 	/**
-	 *
-	 * 		@return array of   key [rowid] =>   ref
-	 */
-	public function getCombo()
-	{
-		global $db;
-
-		$res = $db->query("SELECT rowid, ref FROM ".MAIN_DB_PREFIX.'hrm_job WHERE 1 ORDER BY ref');
-		$Tab=array();
-		while ($obj = $db->fetch_object($res)) {
-			$Tab[$obj->rowid] = $obj->ref;
-		}
-
-		return $Tab;
-	}
-	/**
 	 *	Set draft status
 	 *
 	 *	@param	User	$user			Object user that modify
