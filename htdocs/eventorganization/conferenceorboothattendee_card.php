@@ -130,7 +130,7 @@ if (empty($reshook)) {
 	$error = 0;
 
 	if (!empty($withproject)) {
-		$backurlforlist = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php?withproject=1';
+		$backurlforlist = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php?withproject=1&fk_project='.((int) $fk_project);
 	} else {
 		$backurlforlist = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php';
 	}
@@ -155,7 +155,6 @@ if (empty($reshook)) {
 		}
 		$action = '';
 	}
-
 
 	$triggermodname = 'EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_MODIFY'; // Name of trigger action code to execute when we modify record
 
