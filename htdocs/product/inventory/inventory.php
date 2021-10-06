@@ -801,7 +801,7 @@ if ($object->id > 0) {
 	print '</div>';
 
 	// Call method to disable the button if no qty entered yet for inventory
-	if (!$hasinput) {
+	if ($object->status != $object::STATUS_VALIDATED || !$hasinput) {
 		print '<script type="text/javascript" language="javascript">
 					jQuery(document).ready(function() {
 						disablebuttonmakemovementandclose();
