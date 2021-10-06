@@ -3602,7 +3602,7 @@ abstract class CommonObject
 	public function add_object_linked($origin = null, $origin_id = null, $f_user = null, $notrigger = 0)
 	{
 		// phpcs:enable
-		global $user;
+		global $user, $hookmanager, $action;
 		$origin = (!empty($origin) ? $origin : $this->origin);
 		$origin_id = (!empty($origin_id) ? $origin_id : $this->origin_id);
 		$f_user = isset($f_user) ? $f_user : $user;
@@ -3620,14 +3620,25 @@ abstract class CommonObject
 		if ($origin == 'supplierorder') {
 			$origin = 'order_supplier';
 		}
-		$this->db->begin();
-		$error = 0;
+
+		$targettype = $this->element;
+
+		$parameters = array('sourcetype'=>$sourcetype, 'sourceid'=>$sourceid, 'targettype'=>$targettype, 'targetid'=>$targetid);
+		// Hook for explicitly set the targettype if it must be differtent than $this->element
+		$reshook = $hookmanager->executeHooks('setLinkedObjectSourceTargetType', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			if (!empty($hookmanager->resArray['targettype'])) $targettype = $hookmanager->resArray['targettype'];
+			if (!empty($hookmanager->resArray['sourcetype'])) $sourcetype = $hookmanager->resArray['sourcetype'];
+		}
 
 		// Elements of the core modules which have `$module` property but may to which we don't want to prefix module part to the element name for finding the linked object in llx_element_element.
 		// It's because an entry for this element may be exist in llx_element_element before this modification (version <=14.2) and ave named only with their element name in fk_source or fk_target.
 		$coremodule = array('knowledgemanagement', 'partnership', 'workstation', 'ticket', 'recruitment', 'eventorganization');
 		// Add module part to target type if object has $module property and isn't in core modules.
 		$targettype = ((!empty($this->module) && ! in_array($this->module, $coremodule)) ? $this->module.'_' : '').$this->element;
+
+		$this->db->begin();
+		$error = 0;
 
 		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "element_element (";
 		$sql .= "fk_source";
@@ -3691,7 +3702,7 @@ abstract class CommonObject
 	 */
 	public function fetchObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $clause = 'OR', $alsosametype = 1, $orderby = 'sourcetype', $loadalsoobjects = 1)
 	{
-		global $conf;
+		global $conf, $hookmanager, $action;
 
 		$this->linkedObjectsIds = array();
 		$this->linkedObjects = array();
@@ -3701,34 +3712,17 @@ abstract class CommonObject
 		$withtargettype = false;
 		$withsourcetype = false;
 
-		if (!empty($sourceid) && !empty($sourcetype) && empty($targetid)) {
-			$justsource = true; // the source (id and type) is a search criteria
-			if (!empty($targettype)) {
-				$withtargettype = true;
-			}
-		}
-		if (!empty($targetid) && !empty($targettype) && empty($sourceid)) {
-			$justtarget = true; // the target (id and type) is a search criteria
-			if (!empty($sourcetype)) {
-				$withsourcetype = true;
-			}
-		}
-
-		// Elements of the core modules which have `$module` property but may to which we don't want to prefix module part to the element name for finding the linked object in llx_element_element.
-		// It's because an entry for this element may be exist in llx_element_element before this modification (version <=14.2) and ave named only with their element name in fk_source or fk_target.
-		$coremodule = array('knowledgemanagement', 'partnership', 'workstation', 'ticket', 'recruitment', 'eventorganization');
-
 		$sourceid = (!empty($sourceid) ? $sourceid : $this->id);
 		$targetid = (!empty($targetid) ? $targetid : $this->id);
-		if (empty($sourcetype)) {
-			// If empty $sourcetype and no core module, add module part for searching element in llx_element_element (needed for external module).
-			if (!empty($this->module) && ! in_array($this->module, $coremodule)) $sourcetype = $this->module.'_'.$this->element;
-			else $sourcetype = $this->element;
-		}
-		if (empty($targettype)) {
-			// If empty $targettype and no core module, add module part for searching element in llx_element_element (needed for external module).
-			if (!empty($this->module) && ! in_array($this->module, $coremodule)) $targettype = $this->module.'_'.$this->element;
-			else $targettype = $this->element;
+		$sourcetype = (!empty($sourcetype) ? $sourcetype : $this->element);
+		$targettype = (!empty($targettype) ? $targettype : $this->element);
+
+		$parameters = array('sourcetype'=>$sourcetype, 'sourceid'=>$sourceid, 'targettype'=>$targettype, 'targetid'=>$targetid);
+		// Hook for explicitly set the targettype if it must be differtent than $this->element
+		$reshook = $hookmanager->executeHooks('setLinkedObjectSourceTargetType', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			if (!empty($hookmanager->resArray['sourcetype'])) $sourcetype = $hookmanager->resArray['sourcetype'];
+			if (!empty($hookmanager->resArray['targettype'])) $targettype = $hookmanager->resArray['targettype'];
 		}
 
 		/*if (empty($sourceid) && empty($targetid))
