@@ -360,7 +360,7 @@ foreach ($boxtoadd as $box) {
 	print '</tr>'."\n";
 }
 if (!count($boxtoadd) && count($boxactivated)) {
-	print '<tr><td class="opacitymedium" colspan="4">'.$langs->trans("AllWidgetsWereEnabled").'</td></tr>';
+	print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("AllWidgetsWereEnabled").'</span></td></tr>';
 }
 print '</table>'."\n";
 print '</div>';

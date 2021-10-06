@@ -587,7 +587,7 @@ if (!empty($id) || !empty($ref)) {
 
 			$htmltext = $langs->trans("GoOnMenuToCreateVairants", $langs->transnoentities("Product"), $langs->transnoentities("VariantAttributes"));
 			print $form->textwithpicto('', $htmltext);
-			/*print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&id='.$object->id).'">';
+			/*print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&token='.newToken().'&id='.$object->id).'">';
 			print $langs->trans("Create");
 			print '</a>';*/
 
@@ -605,7 +605,7 @@ if (!empty($id) || !empty($ref)) {
 					$htmltext = $langs->trans("GoOnMenuToCreateVairants", $langs->transnoentities("Product"), $langs->transnoentities("VariantAttributes"));
 					print $form->textwithpicto('', $htmltext);
 					/*
-						print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&id='.$object->id).'">';
+						print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&token='.newToken().'&id='.$object->id).'">';
 						print $langs->trans("Create");
 						print '</a>';
 					*/

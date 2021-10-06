@@ -624,12 +624,13 @@ class Conf
 			if (!empty($this->global->MAILING_EMAIL_FROM)) {
 				$this->mailing->email_from = $this->global->MAILING_EMAIL_FROM;
 			}
-			if (!isset($this->global->MAIN_EMAIL_ADD_TRACK_ID)) {
-				$this->global->MAIN_EMAIL_ADD_TRACK_ID = 1;
-			}
 
 			if (!isset($this->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP)) {
 				$this->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP = 1;
+			}
+
+			if (!isset($this->global->MAIN_FIX_FOR_BUGGED_MTA)) {
+				$this->global->MAIN_FIX_FOR_BUGGED_MTA = 1;
 			}
 
 			// Format for date (used by default when not found or not searched in lang)
@@ -828,7 +829,10 @@ class Conf
 
 			// Enable by default the CSRF protection by token.
 			if (!isset($this->global->MAIN_SECURITY_CSRF_WITH_TOKEN)) {
-				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 1;	// Value 2 uses also CSRF check for all GET requests
+				// Value 1 makes CSRF check for all POST parameters only
+				// Value 2 makes also CSRF check for GET requests with action = a sensitive requests like action=del, action=remove...
+				// Value 3 makes also CSRF check for all GET requests with a param action or massaction
+				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 1;
 				// Note: Set MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL=1 to have a renewal of token at each page call instead of each session (not recommended)
 			}
 

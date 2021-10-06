@@ -2309,7 +2309,7 @@ if ($module == 'initmodule') {
 						$i++;
 					}
 				} else {
-					print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("None").'</td></tr>';
+					print '<tr><td colspan="5"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 				}
 
 				print '</table>';
@@ -3106,7 +3106,7 @@ if ($module == 'initmodule') {
 						print '</tr>';
 					}
 				} else {
-					print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("None").'</td></tr>';
+					print '<tr><td colspan="5"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 				}
 
 				print '</table>';
@@ -3199,7 +3199,7 @@ if ($module == 'initmodule') {
 						print '</tr>';
 					}
 				} else {
-					print '<tr><td class="opacitymedium" colspan="4">'.$langs->trans("None").'</td></tr>';
+					print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 				}
 
 				print '</table>';
@@ -3696,7 +3696,7 @@ if ($module == 'initmodule') {
 						print '</tr>';
 					}
 				} else {
-					print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("None").'</td></tr>';
+					print '<tr><td colspan="5"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 				}
 
 				print '</table>';

@@ -2213,8 +2213,6 @@ class ExpenseReport extends CommonObject
 				$date_d_form = $date_debut;
 				$date_f_form = $date_fin;
 
-				$existe = false;
-
 				while ($i < $num_rows) {
 					$objp = $this->db->fetch_object($result);
 
@@ -2222,17 +2220,13 @@ class ExpenseReport extends CommonObject
 					$date_f_req = $this->db->jdate($objp->date_fin); // 4
 
 					if (!($date_f_form < $date_d_req || $date_d_form > $date_f_req)) {
-						$existe = true;
+						return $objp->rowid;
 					}
 
 					$i++;
 				}
 
-				if ($existe) {
-					return 1;
-				} else {
-					return 0;
-				}
+				return 0;
 			} else {
 				return 0;
 			}

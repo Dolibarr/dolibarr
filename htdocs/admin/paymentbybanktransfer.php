@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/admin/credtitransfer.php
+ *	\file       htdocs/admin/paymentbybanktransfer.php
  *	\ingroup    paymentbybanktransfer
  *	\brief      Page to setup payments by credit transfer
  */
@@ -429,7 +429,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 	}
 
 
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif">';
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif&token='.newToken().'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';

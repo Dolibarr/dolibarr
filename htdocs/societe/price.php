@@ -218,7 +218,7 @@ if ($object->client) {
 	print $object->code_client;
 	$tmpcheck = $object->check_codeclient();
 	if ($tmpcheck != 0 && $tmpcheck != -5) {
-		print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+		print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
 	}
 	print '</td></tr>';
 }
@@ -229,7 +229,7 @@ if ($object->fournisseur) {
 	print $object->code_fournisseur;
 	$tmpcheck = $object->check_codefournisseur();
 	if ($tmpcheck != 0 && $tmpcheck != -5) {
-		print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+		print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
 	}
 	print '</td></tr>';
 }
@@ -525,7 +525,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print "\n".'<div class="tabsAction">'."\n";
 
 		if ($user->rights->produit->creer || $user->rights->service->creer) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=add_customer_price&amp;socid='.$object->id.'">'.$langs->trans("AddCustomerPrice").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=add_customer_price&token='.newToken().'&socid='.$object->id.'">'.$langs->trans("AddCustomerPrice").'</a></div>';
 		}
 		print "\n</div>\n";
 
