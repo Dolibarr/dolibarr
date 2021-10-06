@@ -515,13 +515,20 @@ function getNumberInvoicesPieChart($mode)
 									,array($langs->trans('InvoiceNotLate'), $obj->nbnotlatenow - $obj->nbnotlate15)
 									,array($langs->trans('InvoiceNotLate15Days'), $obj->nbnotlate15 - $obj->nbnotlate30)
 									,array($langs->trans('InvoiceNotLate30Days'), $obj->nbnotlate30));*/
-				$dataseries[0]=array($langs->trans('NbOfOpenInvoices'), $obj->nblate30, $obj->nblate15 - $obj->nblate30, $obj->nblatenow - $obj->nblate15, $obj->nbnotlatenow - $obj->nbnotlate15, $obj->nbnotlate15 - $obj->nbnotlate30, $obj->nbnotlate30);
+				$dataseries[$i]=array($langs->trans('NbOfOpenInvoices'), $obj->nblate30, $obj->nblate15 - $obj->nblate30, $obj->nblatenow - $obj->nblate15, $obj->nbnotlatenow - $obj->nbnotlate15, $obj->nbnotlate15 - $obj->nbnotlate30, $obj->nbnotlate30);
 				$i++;
 			}
-			foreach ($dataseries as $key=>$value) {
-				$total += $value[1];
+			foreach ($dataseries[0] as $key=>$value) {
+				$total += $value;
 			}
-			$legend = array($langs->trans('InvoiceLate30Days'), $langs->trans('InvoiceLate15Days'), $langs->trans('InvoiceLateMinus15Days'), $langs->trans('InvoiceNotLate'), $langs->trans('InvoiceNotLate15Days'), $langs->trans('InvoiceNotLate30Days'));
+			$legend = array(
+				$langs->trans('InvoiceLate30Days'),
+				$langs->trans('InvoiceLate15Days'),
+				$langs->trans('InvoiceLateMinus15Days'),
+				$mode == 'customers' ? $langs->trans('InvoiceNotLate') : $langs->trans("InvoiceToPay"),
+				$mode == 'customers' ? $langs->trans('InvoiceNotLate15Days') : $langs->trans("InvoiceToPay15Days"),
+				$mode == 'customers' ? $langs->trans('InvoiceNotLate30Days') : $langs->trans("InvoiceToPay30Days"),
+			);
 
 			$colorseries = array($badgeStatus8, $badgeStatus1, $badgeStatus3, $badgeStatus4, $badgeStatus11, '-'.$badgeStatus11);
 
