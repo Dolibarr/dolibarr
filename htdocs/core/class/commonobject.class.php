@@ -3623,6 +3623,12 @@ abstract class CommonObject
 		$this->db->begin();
 		$error = 0;
 
+		// Elements of the core modules which have `$module` property but may to which we don't want to prefix module part to the element name for finding the linked object in llx_element_element.
+		// It's because an entry for this element may be exist in llx_element_element before this modification (version <=14.2) and ave named only with their element name in fk_source or fk_target.
+		$coremodule = array('knowledgemanagement', 'partnership', 'workstation', 'ticket', 'recruitment', 'eventorganization');
+        // Add module part to target type if object has $module property and isn't in core modules.
+        $targettype = ((!empty($this->module) && ! in_array($this->module, $coremodule)) ? $this->module.'_' : '').$this->element;
+
 		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "element_element (";
 		$sql .= "fk_source";
 		$sql .= ", sourcetype";
@@ -3632,7 +3638,7 @@ abstract class CommonObject
 		$sql .= ((int) $origin_id);
 		$sql .= ", '" . $this->db->escape($origin) . "'";
 		$sql .= ", " . ((int) $this->id);
-		$sql .= ", '" . $this->db->escape($this->element) . "'";
+		$sql .= ", '" . $this->db->escape($targettype) . "'";
 		$sql .= ")";
 
 		dol_syslog(get_class($this) . "::add_object_linked", LOG_DEBUG);
@@ -3714,7 +3720,6 @@ abstract class CommonObject
 
 		$sourceid = (!empty($sourceid) ? $sourceid : $this->id);
 		$targetid = (!empty($targetid) ? $targetid : $this->id);
-		// For module whit
 		if (empty($sourcetype)) {
 			// If empty $sourcetype and no core module, add module part for searching element in llx_element_element (needed for external module).
 			if (!empty($this->module) && ! in_array($this->module, $coremodule)) $sourcetype = $this->module.'_'.$this->element;
