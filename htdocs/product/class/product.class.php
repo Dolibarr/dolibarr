@@ -5111,7 +5111,7 @@ class Product extends CommonObject
 	 *
 	 * @param  User   $user           user asking change
 	 * @param  int    $id_entrepot    id of warehouse
-	 * @param  double $nbpiece        nb of units
+	 * @param  double $nbpiece        nb of units (should be always positive, use $movement to decide if we add or remove)
 	 * @param  int    $movement       0 = add, 1 = remove
 	 * @param  string $label          Label of stock movement
 	 * @param  double $price          Unit price HT of product, used to calculate average weighted price (PMP in french). If 0, average weighted price is not changed.
@@ -5128,6 +5128,13 @@ class Product extends CommonObject
 			$this->db->begin();
 
 			include_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+
+			if ($nbpiece < 0) {
+				if (!$movement) {
+					$movement = 1;
+				}
+				$nbpiece = abs($nbpiece);
+			}
 
 			$op[0] = "+".trim($nbpiece);
 			$op[1] = "-".trim($nbpiece);
@@ -5155,7 +5162,7 @@ class Product extends CommonObject
 	 *
 	 * @param  User     $user           user asking change
 	 * @param  int      $id_entrepot    id of warehouse
-	 * @param  double   $nbpiece        nb of units
+	 * @param  double   $nbpiece        nb of units (should be always positive, use $movement to decide if we add or remove)
 	 * @param  int      $movement       0 = add, 1 = remove
 	 * @param  string   $label          Label of stock movement
 	 * @param  double   $price          Price to use for stock eval
@@ -5175,6 +5182,13 @@ class Product extends CommonObject
 			$this->db->begin();
 
 			include_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+
+			if ($nbpiece < 0) {
+				if (!$movement) {
+					$movement = 1;
+				}
+				$nbpiece = abs($nbpiece);
+			}
 
 			$op[0] = "+".trim($nbpiece);
 			$op[1] = "-".trim($nbpiece);

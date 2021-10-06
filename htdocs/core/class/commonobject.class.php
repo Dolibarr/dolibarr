@@ -7808,7 +7808,7 @@ abstract class CommonObject
 								$out .= $labeltoshow;
 							}
 							if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) {
-								$out .= '&nbsp;<font color="red">*</font>';
+								$out .= '&nbsp;<span style="color: red">*</span>';
 							}
 						} else {
 							if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) {
