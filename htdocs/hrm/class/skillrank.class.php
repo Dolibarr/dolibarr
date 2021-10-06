@@ -217,7 +217,7 @@ class SkillRank extends CommonObject
 	{
 		global $langs;
 
-		$sqlfilter = 'fk_object='.$this->fk_object." AND objecttype='".$this->objecttype."' AND fk_skill = ".$this->fk_skill;
+		$sqlfilter = 'fk_object='.$this->fk_object." AND objecttype='".$this->objecttype."' AND fk_skill = ".((int)$this->fk_skill);
 		$alreadyLinked = $this->fetchAll('ASC', 'rowid', 0, 0, array('customsql' => $sqlfilter));
 		if (!empty($alreadyLinked)) {
 			$this->error = $langs->trans('ErrSkillAlreadyAdded');
@@ -585,7 +585,7 @@ class SkillRank extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'skillrank/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'skillrank/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'skillrank/".$this->db->escape($this->ref)."' and entity = ".((int)$conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
