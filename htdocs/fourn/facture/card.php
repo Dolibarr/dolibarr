@@ -981,8 +981,10 @@ if (empty($reshook))
 							$num = count($lines);
 							for ($i = 0; $i < $num; $i++) // TODO handle subprice < 0
 							{
-								if (!in_array($lines[$i]->id, $selectedLines)) continue; // Skip unselected lines
-
+								if (!in_array($lines[$i]->id, $selectedLines)) {
+									continue; // Skip unselected lines
+								}
+								
 								$desc = ($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
 								$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
 
