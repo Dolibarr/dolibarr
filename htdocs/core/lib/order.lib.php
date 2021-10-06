@@ -205,7 +205,7 @@ function getCustomerOrderPieChart($socid = 0)
 	$sql .= " WHERE c.fk_soc = s.rowid";
 	$sql .= " AND c.entity IN (".getEntity('societe').")";
 	if ($user->socid) {
-		$sql .= ' AND c.fk_soc = '.$user->socid;
+		$sql .= ' AND c.fk_soc = '.((int) $user->socid);
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);

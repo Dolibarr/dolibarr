@@ -1,5 +1,6 @@
--- ===================================================================
--- Copyright (C) 2019      Alexandre Spangaro	<aspangaro@open-dsi.fr>
+-- Copyright (C) 2021 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
+-- Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
+-- Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -12,9 +13,9 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <https://www.gnu.org/licenses/>.
---
--- ===================================================================
+-- along with this program. If not, see https://www.gnu.org/licenses/.
 
 
-ALTER TABLE llx_payment_salary_extrafields ADD INDEX idx_payment_salary_extrafields (fk_object);
+-- BEGIN MODULEBUILDER INDEXES
+ALTER TABLE llx_hrm_skilldet_extrafields ADD INDEX idx_skilldet_fk_object(fk_object);
+-- END MODULEBUILDER INDEXES

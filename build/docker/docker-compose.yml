@@ -46,6 +46,8 @@ services:
         networks:
             - internal-pod
             - external-pod
+        extra_hosts:
+            - "localhost.localdomain:127.0.0.1"
 
     mail:
         image: maildev/maildev

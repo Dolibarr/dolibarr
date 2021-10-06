@@ -328,13 +328,13 @@ if ($type == 'directory') {
 		if ($section) {
 			$param .= '&section='.$section;
 			if (isset($search_doc_ref) && $search_doc_ref != '') {
-				$param .= '&search_doc_ref='.$search_doc_ref;
+				$param .= '&search_doc_ref='.urlencode($search_doc_ref);
 			}
 
 			$textifempty = $langs->trans('NoFileFound');
 		} elseif ($section === '0') {
 			if ($module == 'ecm') {
-				$textifempty = '<br><div class="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
+				$textifempty = '<br><div class="center"><span class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</span></div><br>';
 			} else {
 				$textifempty = $langs->trans('NoFileFound');
 			}

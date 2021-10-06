@@ -72,6 +72,7 @@ NoStockChangeOnServices=Aucune variation de stock sur les services
 ProductQtyToConsumeByMO=Quantité de produit restant à consommer par OF ouvert
 ProductQtyToProduceByMO=Quantités restant à produire avec les OF ouverts
 AddNewConsumeLines=Ajouter une nouvelle ligne à consommer
+AddNewProduceLines=Ajouter une nouvelle ligne à produire
 ProductsToConsume=Produits à consommer
 ProductsToProduce=Produits à produire
 UnitCost=Coût unitaire

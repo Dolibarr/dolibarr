@@ -117,7 +117,7 @@ print '</tr>';
 print '</form>';
 print "</table>\n";
 
-print '<br><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
+print '<br><div style="text-align:center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Modify').'"></div>';
 
 // End of page
 llxFooter();

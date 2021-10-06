@@ -255,7 +255,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 			});
 		}, 2500);
 	}
-	
+
 <?php
 if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
 	echo "var line1='".$langs->trans('TotalTTC')."'.substring(0,20);";
@@ -274,18 +274,18 @@ if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
 <div style="position:relative; padding-top: 20px; left:5%; height:150px; width:90%;">
 
 <div class="paymentbordline paymentbordlinetotal">
-	<center><span class="takepospay"><font color="white"><?php echo $langs->trans('TotalTTC'); ?>: </font><span id="totaldisplay" class="colorwhite"><?php echo price($invoice->total_ttc, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?></span></span></center>
+	<center><span class="takepospay" style="color: white"><?php echo $langs->trans('TotalTTC'); ?>: </span><span id="totaldisplay" class="colorwhite"><?php echo price($invoice->total_ttc, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?></span></center>
 </div>
 <?php if ($remaintopay != $invoice->total_ttc) { ?>
 <div class="paymentbordline paymentbordlineremain">
-	<center><span class="takepospay"><font color="white"><?php echo $langs->trans('RemainToPay'); ?>: </font><span id="remaintopaydisplay" class="colorwhite"><?php echo price($remaintopay, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?></span></span></center>
+	<center><span class="takepospay" style="color: white"><?php echo $langs->trans('RemainToPay'); ?>: </span><span id="remaintopaydisplay" class="colorwhite"><?php echo price($remaintopay, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?></span></center>
 </div>
 <?php } ?>
 <div class="paymentbordline paymentbordlinereceived">
-	<center><span class="takepospay"><font color="white"><?php echo $langs->trans("Received"); ?>: </font><span class="change1 colorred"><?php echo price(0, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?></span><input type="hidden" id="change1" class="change1" value="0"></span></center>
+	<center><span class="takepospay" style="color: white"><?php echo $langs->trans("Received"); ?>: </span><span class="change1 colorred"><?php echo price(0, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?><input type="hidden" id="change1" class="change1" value="0"></span></center>
 </div>
 <div class="paymentbordline paymentbordlinechange">
-	<center><span class="takepospay"><font color="white"><?php echo $langs->trans("Change"); ?>: </font><span class="change2 colorwhite"><?php echo price(0, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?></span><input type="hidden" id="change2" class="change2" value="0"></span></center>
+	<center><span class="takepospay" style="color: white"><?php echo $langs->trans("Change"); ?>: </span><span class="change2 colorwhite"><?php echo price(0, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?><input type="hidden" id="change2" class="change2" value="0"></span></center>
 </div>
 <?php
 if (!empty($conf->global->TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT)) {
@@ -293,7 +293,7 @@ if (!empty($conf->global->TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT)) {
 	<center>';
 	$filter = '';
 	$form = new Form($db);
-	print '<span class="takepospay"><font color="white">'.$langs->trans("BankAccount").': </font></span>';
+	print '<span class="takepospay" style="color: white">'.$langs->trans("BankAccount").': </span>';
 	$form->select_comptes(0, 'accountid', 0, $filter, 1, '');
 	print ajax_combobox('selectaccountid');
 	print '</center>
@@ -330,23 +330,20 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 	$paycode = $arrayOfValidPaymentModes[0]->code;
 	$payIcon = '';
 	if ($paycode == 'LIQ') {
-		$paycode = 'cash';
 		if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON)) {
 			$payIcon = 'coins';
 		}
 	} elseif ($paycode == 'CB') {
-		$paycode = 'card';
 		if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON)) {
 			$payIcon = 'credit-card';
 		}
 	} elseif ($paycode == 'CHQ') {
-		$paycode = 'cheque';
 		if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON)) {
 			$payIcon = 'money-check';
 		}
 	}
 
-	print '<button type="button" class="calcbutton2" onclick="Validate(\''.$langs->trans($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><span class="hideonsmartphone"><br>'. $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[0]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[0]->code)).'</span></button>';
+	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><span class="hideonsmartphone"><br>'. $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[0]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[0]->code)).'</span></button>';
 } else {
 	print '<button type="button" class="calcbutton2">'.$langs->trans("NoPaimementModesDefined").'</button>';
 }
@@ -359,23 +356,20 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 	$paycode = $arrayOfValidPaymentModes[1]->code;
 	$payIcon = '';
 	if ($paycode == 'LIQ') {
-		$paycode = 'cash';
 		if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON)) {
 			$payIcon = 'coins';
 		}
 	} elseif ($paycode == 'CB') {
-		$paycode = 'card';
 		if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON)) {
 			$payIcon = 'credit-card';
 		}
 	} elseif ($paycode == 'CHQ') {
-		$paycode = 'cheque';
 		if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON)) {
 			$payIcon = 'money-check';
 		}
 	}
 
-	print '<button type="button" class="calcbutton2" onclick="Validate(\''.$langs->trans($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br> '. $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[1]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[1]->code)).'</button>';
+	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br> '. $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[1]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[1]->code)).'</button>';
 } else {
 	$button = array_pop($action_buttons);
 	print '<button type="button" class="calcbutton2" onclick="'.$button["function"].'"><span '.$button["span"].'>'.$button["text"].'</span></button>';
@@ -389,23 +383,20 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 	$paycode = $arrayOfValidPaymentModes[2]->code;
 	$payIcon = '';
 	if ($paycode == 'LIQ') {
-		$paycode = 'cash';
 		if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON)) {
 			$payIcon = 'coins';
 		}
 	} elseif ($paycode == 'CB') {
-		$paycode = 'card';
 		if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON)) {
 			$payIcon = 'credit-card';
 		}
 	} elseif ($paycode == 'CHQ') {
-		$paycode = 'cheque';
 		if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON)) {
 			$payIcon = 'money-check';
 		}
 	}
 
-	print '<button type="button" class="calcbutton2" onclick="Validate(\''.$langs->trans($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span>'.(!empty($conf->global->TAKEPOS_NUMPAD_FORCE_PAYMENT_ICONS_LABELS) ? '<br> '. $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[2]->code) : '') : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[2]->code)).'</button>';
+	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br>'. $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[2]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[2]->code)).'</button>';
 } else {
 	$button = array_pop($action_buttons);
 	print '<button type="button" class="calcbutton2" onclick="'.$button["function"].'"><span '.$button["span"].'>'.$button["text"].'</span></button>';
@@ -417,7 +408,23 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 
 $i = 3;
 while ($i < count($arrayOfValidPaymentModes)) {
-	print '<button type="button" class="calcbutton2" onclick="Validate(\''.$langs->trans($arrayOfValidPaymentModes[$i]->code).'\');">'.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[$i]->code).'</button>';
+	$paycode = $arrayOfValidPaymentModes[$i]->code;
+	$payIcon = '';
+	if ($paycode == 'LIQ') {
+		if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON)) {
+			$payIcon = 'coins';
+		}
+	} elseif ($paycode == 'CB') {
+		if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON)) {
+			$payIcon = 'credit-card';
+		}
+	} elseif ($paycode == 'CHQ') {
+		if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON)) {
+			$payIcon = 'money-check';
+		}
+	}
+
+	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br>'. $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[$i]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[$i]->code)).'</button>';
 	$i = $i + 1;
 }
 

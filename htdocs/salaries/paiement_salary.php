@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       htdocs/compta/paiement_salary.php
+ *      \file       htdocs/salaries/paiement_salary.php
  *      \ingroup    salary
  *      \brief      Page to add payment of a salary
  */
@@ -313,10 +313,13 @@ if ($action == 'create') {
 	}
 
 	print "</table>";
+
+	print '<br>';
+
 	// Bouton Save payment
 	print '<div class="center">';
-	print '<input type="checkbox" checked name="closepaidsalary"> '.$langs->trans("ClosePaidSalaryAutomatically");
-	print $form->buttonsSaveCancel("Save", "Cancel", '', true);
+	print '<div class="paddingbottom"><input type="checkbox" checked name="closepaidsalary" id="closepaidsalary"><label for="closepaidsalary">'.$langs->trans("ClosePaidSalaryAutomatically").'</label></div>';
+	print $form->buttonsSaveCancel("ToMakePayment", "Cancel", '', true);
 	print '</div>';
 
 

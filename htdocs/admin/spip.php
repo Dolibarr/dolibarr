@@ -149,7 +149,7 @@ if (!empty($conf->global->ADHERENT_USE_SPIP)) {
 } else {
 	print dol_get_fiche_head($head, 'spip', $langs->trans("Setup"), 0, 'user');
 
-	$link = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value=1&amp;name=ADHERENT_USE_SPIP">';
+	$link = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value=1&name=ADHERENT_USE_SPIP">';
 	//$link.=$langs->trans("Activate");
 	$link .= img_picto($langs->trans("Disabled"), 'switch_off');
 	$link .= '</a>';

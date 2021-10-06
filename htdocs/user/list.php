@@ -336,7 +336,7 @@ $sql .= " s.nom as name, s.canvas,";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.' as options_'.$key.', ' : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key." as options_".$key.', ' : '');
 	}
 }
 // Add fields from hooks
@@ -371,7 +371,7 @@ if ($search_supervisor > 0) {
 if ($search_thirdparty != '') {
 	$sql .= natural_search(array('s.nom'), $search_thirdparty);
 }
-if ($search_warehouse != '') {
+if ($search_warehouse > 0) {
 	$sql .= natural_search(array('u.fk_warehouse'), $search_warehouse);
 }
 if ($search_login != '') {
@@ -858,7 +858,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$canreadhrmdata = 1;
 	}
 	$canreadsecretapi = 0;
-	if ($user->id = $obj->rowid || !empty($user->admin)) {	// Current user or admin
+	if ($user->id == $obj->rowid || !empty($user->admin)) {	// Current user or admin
 		$canreadsecretapi = 1;
 	}
 

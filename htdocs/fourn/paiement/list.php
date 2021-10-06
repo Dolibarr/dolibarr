@@ -48,6 +48,9 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 've
 
 $socid = GETPOST('socid', 'int');
 
+// Security check
+if ($user->socid) $socid = $user->socid;
+
 $search_ref				= GETPOST('search_ref', 'alpha');
 $search_date_startday	= GETPOST('search_date_startday', 'int');
 $search_date_startmonth	= GETPOST('search_date_startmonth', 'int');
@@ -192,7 +195,7 @@ if (!$user->rights->societe->client->voir) {
 
 $sql .= ' WHERE f.entity = '.$conf->entity;
 if (!$user->rights->societe->client->voir) {
-	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = '.$user->id;
+	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = '.((int) $user->id);
 }
 if ($socid > 0) {
 	$sql .= ' AND f.fk_soc = '.((int) $socid);
