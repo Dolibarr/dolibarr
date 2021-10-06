@@ -3626,8 +3626,8 @@ abstract class CommonObject
 		// Elements of the core modules which have `$module` property but may to which we don't want to prefix module part to the element name for finding the linked object in llx_element_element.
 		// It's because an entry for this element may be exist in llx_element_element before this modification (version <=14.2) and ave named only with their element name in fk_source or fk_target.
 		$coremodule = array('knowledgemanagement', 'partnership', 'workstation', 'ticket', 'recruitment', 'eventorganization');
-        // Add module part to target type if object has $module property and isn't in core modules.
-        $targettype = ((!empty($this->module) && ! in_array($this->module, $coremodule)) ? $this->module.'_' : '').$this->element;
+		// Add module part to target type if object has $module property and isn't in core modules.
+		$targettype = ((!empty($this->module) && ! in_array($this->module, $coremodule)) ? $this->module.'_' : '').$this->element;
 
 		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "element_element (";
 		$sql .= "fk_source";
