@@ -213,9 +213,21 @@ if (empty($reshook) && $action == 'add') {
 
 	$db->begin();
 
+	if (!GETPOST("lastname")) {
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Lastname"))."<br>\n";
+	}
+	if (!GETPOST("firstname")) {
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Firstname"))."<br>\n";
+	}
 	if (!GETPOST("email")) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
+	}
+	if (!GETPOST("societe")) {
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Societe"))."<br>\n";
 	}
 	if (!GETPOST("label")) {
 		$error++;
@@ -224,22 +236,6 @@ if (empty($reshook) && $action == 'add') {
 	if (!GETPOST("note")) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Note"))."<br>\n";
-	}
-	if (!GETPOST("email")) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
-	}
-	if (!GETPOST("lastname")) {
-		$error++;
-			$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Lastname"))."<br>\n";
-	}
-	if (!GETPOST("firstname")) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Firstname"))."<br>\n";
-	}
-	if (!GETPOST("societe")) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Societe"))."<br>\n";
 	}
 	if (GETPOST("email") && !isValidEmail(GETPOST("email"))) {
 		$error++;
