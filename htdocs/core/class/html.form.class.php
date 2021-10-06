@@ -1268,6 +1268,7 @@ class Form
 				$selected_input_value = $societetmp->name;
 				unset($societetmp);
 			}
+
 			// mode 1
 			$urloption = 'htmlname='.urlencode($htmlname).'&outjson=1&filter='.urlencode($filter).(empty($excludeids) ? '' : '&excludeids='.join(',', $excludeids)).($showtype ? '&showtype='.urlencode($showtype) : '');
 			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
@@ -1441,6 +1442,10 @@ class Form
 
 					if (!empty($obj->name_alias)) {
 						$label .= ' ('.$obj->name_alias.')';
+					}
+
+					if ($conf->global->SOCIETE_SHOW_VAT_IN_LIST && !empty($obj->tva_intra)) {
+						$label .= ' - '.$obj->tva_intra.'';
 					}
 
 					if ($showtype) {
