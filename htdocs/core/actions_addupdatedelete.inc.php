@@ -117,7 +117,6 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 
 	if (!$error) {
 		$result = $object->create($user);
-		var_dump($object);exit;
 		if ($result > 0) {
 			// Creation OK
 			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
