@@ -22,3 +22,4 @@ AllSalaries=Tous les salaires
 SalariesStatistics=Statistiques
 SalariesAndPayments=Salaires et paiements
 ConfirmDeleteSalaryPayment=Voulez-vous supprimer ce paiement de salaire ?
+FillFieldFirst=Remplisez d'abord le champ salarié

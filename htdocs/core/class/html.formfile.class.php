@@ -393,6 +393,38 @@ class FormFile
 		global $langs, $conf, $user, $hookmanager;
 		global $form;
 
+		$reshook = 0;
+		if (is_object($hookmanager)) {
+			$parameters = array(
+				'modulepart'=>&$modulepart,
+				'modulesubdir'=>&$modulesubdir,
+				'filedir'=>&$filedir,
+				'urlsource'=>&$urlsource,
+				'genallowed'=>&$genallowed,
+				'delallowed'=>&$delallowed,
+				'modelselected'=>&$modelselected,
+				'allowgenifempty'=>&$allowgenifempty,
+				'forcenomultilang'=>&$forcenomultilang,
+				'noform'=>&$noform,
+				'param'=>&$param,
+				'title'=>&$title,
+				'buttonlabel'=>&$buttonlabel,
+				'codelang'=>&$codelang,
+				'morepicto'=>&$morepicto,
+				'hideifempty'=>&$hideifempty,
+				'removeaction'=>&$removeaction
+			);
+			$reshook = $hookmanager->executeHooks('showDocuments', $parameters, $object); // Note that parameters may have been updated by hook
+			// May report error
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			}
+		}
+		// Remode default action if $reskook > 0
+		if ($reshook > 0) {
+			return $hookmanager->resPrint;
+		}
+
 		if (!is_object($form)) {
 			$form = new Form($this->db);
 		}
@@ -702,9 +734,10 @@ class FormFile
 				$urlsource .= '#'.$forname.'_form'; // So we switch to form after a generation
 			}
 			if (empty($noform)) {
-				$out .= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#builddoc').'" id="'.$forname.'_form" method="post">';
+				$out .= '<form action="'.$urlsource.'" id="'.$forname.'_form" method="post">';
 			}
 			$out .= '<input type="hidden" name="action" value="builddoc">';
+			$out .= '<input type="hidden" name="page_y" value="">';
 			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 
 			$out .= load_fiche_titre($titletoshow, '', '');
@@ -754,7 +787,7 @@ class FormFile
 			}
 
 			// Button
-			$genbutton = '<input class="button buttongen" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
+			$genbutton = '<input class="button buttongen reposition" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
 			$genbutton .= ' type="submit" value="'.$buttonlabel.'"';
 			if (!$allowgenifempty && !is_array($modellist) && empty($modellist)) {
 				$genbutton .= ' disabled';
@@ -899,20 +932,20 @@ class FormFile
 					}
 					$out .= '</td>';
 
+					// Show picto delete, print...
 					if ($delallowed || $printer || $morepicto) {
 						$out .= '<td class="right nowraponall">';
 						if ($delallowed) {
 							$tmpurlsource = preg_replace('/#[a-zA-Z0-9_]*$/', '', $urlsource);
-							$out .= '<a href="'.$tmpurlsource.((strpos($tmpurlsource, '?') === false) ? '?' : '&amp;').'action='.$removeaction.'&amp;file='.urlencode($relativepath);
-							$out .= ($param ? '&amp;'.$param : '');
+							$out .= '<a class="reposition" href="'.$tmpurlsource.((strpos($tmpurlsource, '?') === false) ? '?' : '&').'action='.urlencode($removeaction).'&token='.newToken().'&file='.urlencode($relativepath);
+							$out .= ($param ? '&'.$param : '');
 							//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
 							//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
 							$out .= '">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
 						}
 						if ($printer) {
-							//$out.= '<td class="right">';
-							$out .= '<a class="marginleftonly" href="'.$urlsource.(strpos($urlsource, '?') ? '&amp;' : '?').'action=print_file&amp;printer='.$modulepart.'&amp;file='.urlencode($relativepath);
-							$out .= ($param ? '&amp;'.$param : '');
+							$out .= '<a class="marginleftonly reposition" href="'.$urlsource.(strpos($urlsource, '?') ? '&' : '?').'action=print_file&token='.newToken().'printer='.urlencode($modulepart).'&file='.urlencode($relativepath);
+							$out .= ($param ? '&'.$param : '');
 							$out .= '">'.img_picto($langs->trans("PrintFile", $relativepath), 'printer.png').'</a>';
 						}
 						if ($morepicto) {
@@ -959,7 +992,7 @@ class FormFile
 			}
 
 			if (count($file_list) == 0 && count($link_list) == 0 && $headershown) {
-				$out .= '<tr><td colspan="'.(3 + ($addcolumforpicto ? 1 : 0)).'" class="opacitymedium">'.$langs->trans("None").'</td></tr>'."\n";
+				$out .= '<tr><td colspan="'.(3 + ($addcolumforpicto ? 1 : 0)).'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>'."\n";
 			}
 		}
 
@@ -1456,7 +1489,7 @@ class FormFile
 
 							if ($permtoeditline) {
 								$paramsectiondir = (in_array($modulepart, array('medias', 'ecm')) ? '&section_dir='.urlencode($relativepath) : '');
-								print '<a class="editfielda reposition editfilelink" href="'.(($useinecm == 1 || $useinecm == 5) ? '#' : ($url.'?action=editfile&urlfile='.urlencode($filepath).$paramsectiondir.$param)).'" rel="'.$filepath.'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
+								print '<a class="editfielda reposition editfilelink" href="'.(($useinecm == 1 || $useinecm == 5) ? '#' : ($url.'?action=editfile&token='.newToken().'&urlfile='.urlencode($filepath).$paramsectiondir.$param)).'" rel="'.$filepath.'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 							}
 						}
 						if ($permonobject) {
@@ -2038,8 +2071,8 @@ class FormFile
 				print '<td class="center">'.dol_print_date(dol_now(), "dayhour", "tzuser").'</td>';
 				print '<td class="right"></td>';
 				print '<td class="right">';
-				print '<input type="submit" name="save" class="button button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
-				print '<input type="submit" name="cancel" class="button button-cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+				print '<input type="submit" class="button button-save" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 				print '</td>';
 			} else {
 				print '<td>';

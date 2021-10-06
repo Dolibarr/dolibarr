@@ -7,7 +7,8 @@
  * Copyright (C) 2015	   Claudio Aschieri		<c.aschieri@19.coop>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016-2018 Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2019      Nicolas Zabouri      <info@inovea-conseil.com>
+ * Copyright (C) 2021      Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,9 +67,14 @@ $search_product_category = GETPOST('search_product_category', 'int');
 $search_dfmonth = GETPOST('search_dfmonth', 'int');
 $search_dfyear = GETPOST('search_dfyear', 'int');
 $search_op2df = GETPOST('search_op2df', 'alpha');
-$day = GETPOST("day", "int");
-$year = GETPOST("year", "int");
-$month = GETPOST("month", "int");
+$search_date_startday = GETPOST('search_date_startday', 'int');
+$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
+$search_date_startyear = GETPOST('search_date_startyear', 'int');
+$search_date_endday = GETPOST('search_date_endday', 'int');
+$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
+$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
+$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 
 $optioncss = GETPOST('optioncss', 'alpha');
 
@@ -171,9 +177,6 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
-	$day = '';
-	$month = '';
-	$year = '';
 	$search_dfmonth = '';
 	$search_dfyear = '';
 	$search_op2df = '';
@@ -190,6 +193,14 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_user = '';
 	$search_sale = '';
 	$search_product_category = '';
+	$search_date_startday = '';
+	$search_date_startmonth = '';
+	$search_date_startyear = '';
+	$search_date_endday = '';
+	$search_date_endmonth = '';
+	$search_date_endyear = '';
+	$search_date_start = '';
+	$search_date_end = '';
 	$sall = "";
 	$search_status = "";
 	$toselect = '';
@@ -225,15 +236,15 @@ $sql .= ' s.rowid as socid, s.nom as name, s.name_alias, s.email, s.town, s.zip,
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") as lower_planned_end_date,";
-$sql .= ' SUM('.$db->ifsql("cd.statut=0", 1, 0).') as nb_initial,';
-$sql .= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')", 1, 0).') as nb_running,';
-$sql .= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')", 1, 0).') as nb_expired,';
-$sql .= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contrat->services->expires->warning_delay)."')", 1, 0).') as nb_late,';
-$sql .= ' SUM('.$db->ifsql("cd.statut=5", 1, 0).') as nb_closed';
+$sql .= " SUM(".$db->ifsql("cd.statut=0", 1, 0).') as nb_initial,';
+$sql .= " SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')", 1, 0).') as nb_running,';
+$sql .= " SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')", 1, 0).') as nb_expired,';
+$sql .= " SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contrat->services->expires->warning_delay)."')", 1, 0).') as nb_late,';
+$sql .= " SUM(".$db->ifsql("cd.statut=5", 1, 0).') as nb_closed';
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -273,7 +284,12 @@ if ($socid) {
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
-$sql .= dolSqlDateFilter('c.date_contrat', $day, $month, $year);
+if ($search_date_start) {
+	$sql .= " AND c.date_contrat >= '".$db->idate($search_date_start)."'";
+}
+if ($search_date_end) {
+	$sql .= " AND c.date_contrat <= '".$db->idate($search_date_end)."'";
+}
 if ($search_name) {
 	$sql .= natural_search('s.nom', $search_name);
 }
@@ -415,10 +431,28 @@ if ($search_ref_supplier != '') {
 if ($search_op2df != '') {
 	$param .= '&search_op2df='.urlencode($search_op2df);
 }
-if ($search_dfyear != '') {
+if ($search_date_startday > 0) {
+	$param .= '&search_date_startday='.urlencode($search_date_startday);
+}
+if ($search_date_startmonth > 0) {
+	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+}
+if ($search_date_startyear > 0) {
+	$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+}
+if ($search_date_endday > 0) {
+	$param .= '&search_date_endday='.urlencode($search_date_endday);
+}
+if ($search_date_endmonth > 0) {
+	$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+}
+if ($search_date_endyear > 0) {
+	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+}
+if ($search_dfyear > 0) {
 	$param .= '&search_dfyear='.urlencode($search_dfyear);
 }
-if ($search_dfmonth != '') {
+if ($search_dfmonth > 0) {
 	$param .= '&search_dfmonth='.urlencode($search_dfmonth);
 }
 if ($search_sale > 0) {
@@ -594,16 +628,13 @@ if (!empty($arrayfields['sale_representative']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
 if (!empty($arrayfields['c.date_contrat']['checked'])) {
-	// Date contract
-	print '<td class="liste_titre center nowraponall">';
-	//print $langs->trans('Month').': ';
-	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="day" value="'.$day.'">';
-	}
-	print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.$month.'">';
-	//print '&nbsp;'.$langs->trans('Year').': ';
-	$syear = $year;
-	print $formother->selectyear($syear, 'year', 1, 20, 5);
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 // Extra fields

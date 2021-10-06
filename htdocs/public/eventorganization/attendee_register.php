@@ -690,14 +690,14 @@ if (!empty($conference->id) && $conference->status==ConferenceOrBooth::STATUS_CO
 	print '<table class="border" summary="form to subscribe" id="tablesubscribe">' . "\n";
 
 	// Email
-	print '<tr><td>' . $langs->trans("EmailAttendee") . '<font color="red">*</font></td><td>';
+	print '<tr><td>' . $langs->trans("EmailAttendee") . '<span style="color: red">*</span></td><td>';
 	print img_picto('', 'email', 'class="pictofixedwidth"');
 	print '<input type="text" name="email" maxlength="255" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('email')) . '"></td></tr>' . "\n";
 
 	// Company
 	print '<tr id="trcompany" class="trcompany"><td>' . $langs->trans("Company");
 	if (!empty(floatval($project->price_registration))) {
-		print '<font color="red">*</font>';
+		print '<span style="color: red">*</span>';
 	}
 	print ' </td><td>';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
@@ -722,7 +722,7 @@ if (!empty($conference->id) && $conference->status==ConferenceOrBooth::STATUS_CO
 	print '</td></tr>';
 
 	// Country
-	print '<tr><td>' . $langs->trans('Country') . '<font color="red">*</font></td><td>';
+	print '<tr><td>' . $langs->trans('Country') . '<span style="color: red">*</span></td><td>';
 	print img_picto('', 'country', 'class="pictofixedwidth"');
 	$country_id = GETPOST('country_id');
 	if (!$country_id && !empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) {

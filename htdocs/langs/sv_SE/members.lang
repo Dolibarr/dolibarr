@@ -214,4 +214,4 @@ MembershipPaid=Medlemskap som betalats för nuvarande period (till %s)
 YouMayFindYourInvoiceInThisEmail=Du kan hitta din faktura bifogad till det här e-postmeddelandet
 XMembersClosed=%s medlem(ar) stängda
 XExternalUserCreated=%s externa användare har skapats
-ForceMemberNature=Force member nature (Individual or Corporation)
+ForceMemberNature=Tvinga medlemmarnas natur (individ eller företag)

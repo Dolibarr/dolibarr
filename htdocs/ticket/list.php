@@ -159,7 +159,7 @@ if (!$user->rights->ticket->read) {
 }
 
 // Store current page url
-$url_page_current = dol_buildpath('/ticket/list.php', 1);
+$url_page_current = DOL_URL_ROOT.'/ticket/list.php';
 
 if ($project_ref) {
 	$tmpproject = new Project($db);
@@ -335,12 +335,12 @@ $title = $langs->trans('TicketList');
 // --------------------------------------------------------------------
 $sql = 'SELECT ';
 foreach ($object->fields as $key => $val) {
-	$sql .= 't.'.$key.', ';
+	$sql .= "t.".$key.", ";
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.' as options_'.$key.', ' : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key." as options_".$key.', ' : '');
 	}
 }
 // Add fields from hooks
@@ -511,7 +511,7 @@ if ($socid && !$projectid && !$project_ref && $user->rights->societe->lire) {
 			print showValueWithClipboardCPButton(dol_escape_htmltag($socstat->code_client));
 			$tmpcheck = $socstat->check_codeclient();
 			if ($tmpcheck != 0 && $tmpcheck != -5) {
-				print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+				print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
 			}
 			print '</td>';
 			print '</tr>';
@@ -523,7 +523,7 @@ if ($socid && !$projectid && !$project_ref && $user->rights->societe->lire) {
 			print showValueWithClipboardCPButton(dol_escape_htmltag($socstat->code_fournisseur));
 			$tmpcheck = $socstat->check_codefournisseur();
 			if ($tmpcheck != 0 && $tmpcheck != -5) {
-				print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+				print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
 			}
 			print '</td>';
 			print '</tr>';
@@ -899,7 +899,7 @@ print '</tr>'."\n";
 
 // Detect if we need a fetch on each output line
 $needToFetchEachLine = 0;
-if (is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
+if (!empty($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
 		if (preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object

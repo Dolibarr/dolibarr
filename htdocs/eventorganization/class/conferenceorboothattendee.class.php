@@ -436,14 +436,14 @@ class ConferenceOrBoothAttendee extends CommonObject
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
 		}
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit, $offset);
+			$sql .= $this->db->plimit($limit, $offset);
 		}
 
 		$resql = $this->db->query($sql);
@@ -567,7 +567,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 			if (!empty($this->fields['fk_user_valid'])) {
 				$sql .= ", fk_user_valid = ".$user->id;
 			}
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -766,7 +766,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		$label .= '<br><b>'.$langs->trans('DateOfRegistration').':</b> '.dol_print_date($this->date_subscription, 'dayhour');
 		$label .= '<br><b>'.$langs->trans('AmountPaid').':</b> '.$this->amount;
 
-		$url = dol_buildpath('/eventorganization/conferenceorboothattendee_card.php', 1).'?id='.$this->id;
+		$url = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not

@@ -238,7 +238,7 @@ class Holiday extends CommonObject
 
 		if ($result >= 0) {
 			$this->db->commit();
-			return 1;
+			return 0; // for cronjob use (0 is OK, any other value is an error code)
 		} else {
 			$this->db->rollback();
 			return -1;
@@ -719,7 +719,7 @@ class Holiday extends CommonObject
 			$error++;
 		}
 		$sql .= " ref = '".$this->db->escape($num)."'";
-		$sql .= " WHERE rowid= ".((int) $this->id);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -782,9 +782,9 @@ class Holiday extends CommonObject
 		} else {
 			$error++;
 		}
-		$sql .= " halfday = ".$this->halfday.",";
+		$sql .= " halfday = ".((int) $this->halfday).",";
 		if (!empty($this->statut) && is_numeric($this->statut)) {
-			$sql .= " statut = ".$this->statut.",";
+			$sql .= " statut = ".((int) $this->statut).",";
 		} else {
 			$error++;
 		}
@@ -828,8 +828,7 @@ class Holiday extends CommonObject
 		} else {
 			$sql .= " detail_refuse = NULL";
 		}
-
-		$sql .= " WHERE rowid= ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -938,7 +937,7 @@ class Holiday extends CommonObject
 			$sql .= " detail_refuse = NULL";
 		}
 
-		$sql .= " WHERE rowid= ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -1448,7 +1447,7 @@ class Holiday extends CommonObject
 
 				// Update each user counter
 				foreach ($users as $userCounter) {
-					$nbDaysToAdd = (isset($typeleaves[$userCounter['type']]['newByMonth']) ? $typeleaves[$userCounter['type']]['newByMonth'] : 0);
+					$nbDaysToAdd = (isset($typeleaves[$userCounter['type']]['newbymonth']) ? $typeleaves[$userCounter['type']]['newbymonth'] : 0);
 					if (empty($nbDaysToAdd)) {
 						continue;
 					}
@@ -1602,7 +1601,7 @@ class Holiday extends CommonObject
 
 
 	/**
-	 *  Retourne le solde de congés payés pour un utilisateur
+	 *  Return balance of holiday for one user
 	 *
 	 *  @param	int		$user_id    ID de l'utilisateur
 	 *  @param	int		$fk_type	Filter on type
@@ -2082,7 +2081,7 @@ class Holiday extends CommonObject
 	{
 		global $mysoc;
 
-		$sql = "SELECT rowid, code, label, affect, delay, newByMonth";
+		$sql = "SELECT rowid, code, label, affect, delay, newbymonth";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_holiday_types";
 		$sql .= " WHERE (fk_country IS NULL OR fk_country = ".((int) $mysoc->country_id).')';
 		if ($active >= 0) {
@@ -2097,7 +2096,7 @@ class Holiday extends CommonObject
 			$num = $this->db->num_rows($result);
 			if ($num) {
 				while ($obj = $this->db->fetch_object($result)) {
-					$types[$obj->rowid] = array('rowid'=> $obj->rowid, 'code'=> $obj->code, 'label'=>$obj->label, 'affect'=>$obj->affect, 'delay'=>$obj->delay, 'newByMonth'=>$obj->newByMonth);
+					$types[$obj->rowid] = array('rowid'=> $obj->rowid, 'code'=> $obj->code, 'label'=>$obj->label, 'affect'=>$obj->affect, 'delay'=>$obj->delay, 'newbymonth'=>$obj->newbymonth);
 				}
 
 				return $types;
@@ -2203,12 +2202,12 @@ class Holiday extends CommonObject
 		$this->id = 0;
 		$this->specimen = 1;
 
-		$this->fk_user = 1;
+		$this->fk_user = $user->id;
 		$this->description = 'SPECIMEN description';
 		$this->date_debut = dol_now();
 		$this->date_fin = dol_now() + (24 * 3600);
 		$this->date_valid = dol_now();
-		$this->fk_validator = 1;
+		$this->fk_validator = $user->id;
 		$this->halfday = 0;
 		$this->fk_type = 1;
 		$this->statut = Holiday::STATUS_VALIDATED;

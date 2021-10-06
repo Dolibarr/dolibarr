@@ -68,6 +68,17 @@ $socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('socid_id', 
 
 $childids = $user->getAllChildIds(1);
 
+if (! empty($conf->global->EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH)) {
+	if (empty($date_start)) {
+		$date_start = dol_mktime(0, 0, 0, (int) dol_print_date(dol_now(), '%m'),  1, (int) dol_print_date(dol_now(), '%Y'));
+	}
+
+	if (empty($date_end)) {
+		// date('t') => number of days in the month, so last day of the month too
+		$date_end = dol_mktime(0, 0, 0, (int) dol_print_date(dol_now(), '%m'), (int) date('t'), (int) dol_print_date(dol_now(), '%Y'));
+	}
+}
+
 // Hack to use expensereport dir
 $rootfordata = DOL_DATA_ROOT;
 $rootforuser = DOL_DATA_ROOT;
@@ -138,8 +149,23 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	$backurlforlist = DOL_URL_ROOT.'/expensereport/list.php';
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/expensereport/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			}
+		}
+	}
+
 	if ($cancel) {
-		if (!empty($backtopage)) {
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
 		}
@@ -251,10 +277,14 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error && empty($conf->global->EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS) && $object->periode_existe($fuser, $object->date_debut, $object->date_fin)) {
-			$error++;
-			setEventMessages($langs->trans("ErrorDoubleDeclaration"), null, 'errors');
-			$action = 'create';
+		if (!$error && empty($conf->global->EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS)) {
+			$overlappingExpenseReportID = $object->periode_existe($fuser, $object->date_debut, $object->date_fin, true);
+
+			if ($overlappingExpenseReportID > 0) {
+				$error++;
+				setEventMessages($langs->trans("ErrorDoubleDeclaration").' <a href="'.$_SERVER['PHP_SELF'].'?id='.$overlappingExpenseReportID.'">'. $langs->trans('ShowTrip').'</a>', null, 'errors');
+				$action = 'create';
+			}
 		}
 
 		if (!$error) {
@@ -1429,10 +1459,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" value="'.$langs->trans("AddTrip").'" name="bouton" class="button" />';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="'.$langs->trans("Cancel").'" class="button button-cancel" onclick="history.go(-1)" />';
-	print '</div>';
+	print $form->buttonsSaveCancel("AddTrip");
 
 	print '</form>';
 } elseif ($id > 0 || $ref) {
@@ -1549,13 +1576,12 @@ if ($action == 'create') {
 
 			print dol_get_fiche_end();
 
-			print '<div class="center">';
-			print '<input type="submit" value="'.$langs->trans("Modify").'" name="bouton" class="button">';
-			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="'.$langs->trans("Cancel").'" class="button button-cancel" onclick="history.go(-1)" />';
-			print '</div>';
+			print $form->buttonsSaveCancel("Modify");
 
 			print '</form>';
 		} else {
+			$taxlessUnitPriceDisabled = ! empty($conf->global->EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY) ? ' disabled' : '';
+
 			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), -1, 'trip');
 
 			// Clone confirmation
@@ -1632,7 +1658,7 @@ if ($action == 'create') {
 			 if ($user->rights->commande->creer)
 			 {
 			 if ($action != 'classify')
-			 $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+			 $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			 if ($action == 'classify') {
 			 //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 			 $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -2151,10 +2177,10 @@ if ($action == 'create') {
 						if (($object->status < ExpenseReport::STATUS_VALIDATED || $object->status == ExpenseReport::STATUS_REFUSED) && $user->rights->expensereport->creer) {
 							print '<td class="nowrap right">';
 
-							print '<a class="editfielda reposition paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;token='.newToken().'&amp;rowid='.$line->rowid.'">';
+							print '<a class="editfielda reposition paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&rowid='.$line->rowid.'">';
 							print img_edit();
 							print '</a> &nbsp; ';
-							print '<a class="paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_line&amp;token='.newToken().'&amp;rowid='.$line->rowid.'">';
+							print '<a class="paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete_line&token='.newToken().'&rowid='.$line->rowid.'">';
 							print img_delete();
 							print '</a>';
 
@@ -2272,7 +2298,7 @@ if ($action == 'create') {
 
 						// Unit price
 						print '<td class="right">';
-						print '<input type="text" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag(price2num($line->value_unit_ht)).'" />';
+						print '<input type="text" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag(price2num($line->value_unit_ht)).'"'.$taxlessUnitPriceDisabled.' />';
 						print '</td>';
 
 						// Unit price with tax
@@ -2293,11 +2319,8 @@ if ($action == 'create') {
 						//print $line->fk_ecm_files;
 						print '</td>';
 
-						print '<td class="center">';
 						print '<input type="hidden" name="rowid" value="'.$line->rowid.'">';
-						print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-						print '<br><input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-						print '</td>';
+						print $form->buttonsSaveCancel();
 
 						print '</tr>';
 					}
@@ -2454,7 +2477,7 @@ if ($action == 'create') {
 
 					// Unit price net
 					print '<td class="right">';
-					print '<input type="text" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag($value_unit_ht).'">';
+					print '<input type="text" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag($value_unit_ht).'"'.$taxlessUnitPriceDisabled.' />';
 					print '</td>';
 
 					// Unit price with tax
@@ -2475,7 +2498,9 @@ if ($action == 'create') {
 					print '<td class="right"></td>';
 				}
 
-					print '<td class="center"><input type="submit" value="'.$langs->trans("Add").'" name="bouton" class="button"></td>';
+					print '<td class="center">';
+					print $form->buttonsSaveCancel("Add", '', '', 1);
+					print '</td>';
 
 					print '</tr>';
 			} // Fin si c'est payé/validé
@@ -2546,11 +2571,11 @@ if ($action != 'create' && $action != 'edit') {
 	if ($user->rights->expensereport->creer && $object->status == ExpenseReport::STATUS_DRAFT) {
 		if (in_array($object->fk_user_author, $user->getAllChildIds(1)) || !empty($user->rights->expensereport->writeall_advance)) {
 			// Modify
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
 
 			// Validate
 			if (count($object->lines) > 0) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=save&id='.$object->id.'">'.$langs->trans('ValidateAndSubmit').'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=save&token='.newToken().'&id='.$object->id.'">'.$langs->trans('ValidateAndSubmit').'</a></div>';
 			}
 		}
 	}
@@ -2563,12 +2588,12 @@ if ($action != 'create' && $action != 'edit') {
 	if ($user->rights->expensereport->creer && $object->status == ExpenseReport::STATUS_REFUSED) {
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) {
 			// Modify
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
 
 			// setdraft (le statut refusée est identique à brouillon)
-			//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$id.'">'.$langs->trans('BROUILLONNER').'</a>';
+			//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$id.'">'.$langs->trans('ReOpen').'</a>';
 			// Enregistrer depuis le statut "Refusée"
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=save_from_refuse&id='.$object->id.'">'.$langs->trans('ValidateAndSubmit').'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=save_from_refuse&token='.newToken().'&id='.$object->id.'">'.$langs->trans('ValidateAndSubmit').'</a></div>';
 		}
 	}
 

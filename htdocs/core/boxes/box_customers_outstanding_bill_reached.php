@@ -133,7 +133,8 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 					$thirdpartystatic->entity = $objp->entity;
 					$thirdpartystatic->outstanding_limit = $objp->outstanding_limit;
 
-					$outstandingtotal = $thirdpartystatic->getOutstandingBills()['opened'];
+					$tmp = $thirdpartystatic->getOutstandingBills();
+					$outstandingtotal = $tmp['opened'];
 					$outstandinglimit = $thirdpartystatic->outstanding_limit;
 
 					if ($outstandingtotal >= $outstandinglimit) {

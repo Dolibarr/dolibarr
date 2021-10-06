@@ -214,8 +214,10 @@ if ($action == 'update') {
 						$sql .= " WHERE rowid = ".((int) $productid);
 					}
 
+					dol_syslog("/accountancy/admin/productaccount.php", LOG_DEBUG);
+
 					$db->begin();
-					dol_syslog("/accountancy/admin/productaccount.php sql=".$sql, LOG_DEBUG);
+
 					if ($db->query($sql)) {
 						$ok++;
 						$db->commit();
@@ -346,7 +348,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 
 $sql .= $db->plimit($limit + 1, $offset);
 
-dol_syslog("/accountancy/admin/productaccount.php:: sql=".$sql, LOG_DEBUG);
+dol_syslog("/accountancy/admin/productaccount.php", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);

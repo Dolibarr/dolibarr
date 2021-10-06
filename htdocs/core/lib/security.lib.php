@@ -853,7 +853,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		print $hookmanager->resPrint;
 		if (empty($reshook)) {
 			if ($user->login) {
-				print $langs->trans("CurrentLogin").': <font class="error">'.$user->login.'</font><br>';
+				print $langs->trans("CurrentLogin").': <span class="error">'.$user->login.'</span><br>';
 				print $langs->trans("ErrorForbidden2", $langs->transnoentitiesnoconv("Home"), $langs->transnoentitiesnoconv("Users"));
 			} else {
 				print $langs->trans("ErrorForbidden3");

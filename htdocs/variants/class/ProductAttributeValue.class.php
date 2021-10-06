@@ -160,8 +160,7 @@ class ProductAttributeValue extends CommonObject
 		$this->value = $this->db->escape($this->value);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_attribute_value (fk_product_attribute, ref, value, entity)
-		VALUES ('".(int) $this->fk_product_attribute."', '".$this->db->escape($this->ref)."',
-		'".$this->value."', ".(int) $this->entity.")";
+		VALUES (".(int) $this->fk_product_attribute.", '".$this->db->escape($this->ref)."', '".$this->db->escape($this->value)."', ".(int) $this->entity.")";
 
 		$query = $this->db->query($sql);
 

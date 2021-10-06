@@ -264,6 +264,7 @@ ErrorAnAmountWithoutTaxIsRequired=Eroare, suma este obligatorie
 ErrorAPercentIsRequired=Eroare, completați procentajul corect
 ErrorYouMustFirstSetupYourChartOfAccount=Trebuie să setezi mai întâi planul de conturi
 ErrorFailedToFindEmailTemplate=Nu s-a găsit șablonul cu numele de cod %s
+ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Durata nu este definită pentru serviciu. Nicio modalitate de a calcula prețul pe oră.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Parametrul tău PHP upload_max_filesize (%s) este mai mare decât paramentrul PHP post_max_size (%s). Aceasta nu este o configuraţie consistentă.

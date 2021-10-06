@@ -122,7 +122,6 @@ MovementCorrectStock=Corrección de stock para el producto %s
 MovementTransferStock=Traslado de stock del producto %s a otro almacén
 InventoryCodeShort=Inv./Mov. código
 NoPendingReceptionOnSupplierOrder=No hay recepción pendiente debido a una orden de compra abierta
-OpenInternal=Abierto solo para acciones internas
 UseDispatchStatus=Utilice un estado de envío (aprobar / rechazar) para las líneas de productos en la recepción de la orden de compra
 OptionMULTIPRICESIsOn=La opción "varios precios por segmento" está activada. Significa que un producto tiene varios precios de venta, por lo que el valor de venta no se puede calcular.
 ProductStockWarehouseCreated=Límite de stock para alerta y stock óptimo deseado creado correctamente

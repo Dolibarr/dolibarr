@@ -26,6 +26,8 @@
 /**
  *  Parent class for class inheritance lines of business objects
  *  This class is useless for the moment so no inherit are done on it
+ *
+ *  TODO For the moment we use the extends on CommonObject until PHP min is 5.4 so we can use Traits.
  */
 abstract class CommonObjectLine extends CommonObject
 {
@@ -61,7 +63,7 @@ abstract class CommonObjectLine extends CommonObject
 	}
 
 	/**
-	 *	Returns the label, shot_label or code found in units dictionary from ->fk_unit.
+	 *	Returns the label, short_label or code found in units dictionary from ->fk_unit.
 	 *  A langs->trans() must be called on result to get translated value.
 	 *
 	 * 	@param	string $type 	Label type ('long', 'short' or 'code'). This can be a translation key.
@@ -86,7 +88,8 @@ abstract class CommonObjectLine extends CommonObject
 			$label_type = 'code';
 		}
 
-		$sql = 'select '.$label_type.', code from '.MAIN_DB_PREFIX.'c_units where rowid = '.((int) $this->fk_unit);
+		$sql = "SELECT ".$label_type.", code from ".MAIN_DB_PREFIX."c_units where rowid = ".((int) $this->fk_unit);
+
 		$resql = $this->db->query($sql);
 		if ($resql && $this->db->num_rows($resql) > 0) {
 			$res = $this->db->fetch_array($resql);
@@ -98,12 +101,9 @@ abstract class CommonObjectLine extends CommonObject
 			$this->db->free($resql);
 			return $label;
 		} else {
-			$this->error = $this->db->error().' sql='.$sql;
+			$this->error = $this->db->lasterror();
 			dol_syslog(get_class($this)."::getLabelOfUnit Error ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
-	// Currently we need function at end of file CommonObject for all object lines. Should find a way to avoid duplicate code.
-
-	// For the moment we use the extends on CommonObject until PHP min is 5.4 so use Traits.
 }

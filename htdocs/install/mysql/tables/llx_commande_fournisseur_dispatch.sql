@@ -36,5 +36,6 @@ create table llx_commande_fournisseur_dispatch
   sellby         date DEFAULT NULL,
   status         integer,
   datec          datetime,
-  tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  cost_price     double(24,8) DEFAULT 0
 )ENGINE=innodb;

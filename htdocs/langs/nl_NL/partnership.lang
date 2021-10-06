@@ -77,6 +77,10 @@ YourPartnershipRefusedContent=Wij informeren u dat uw partnerschapsverzoek is af
 YourPartnershipAcceptedContent=Wij informeren u dat uw partnerschapsverzoek is geaccepteerd.
 YourPartnershipCanceledContent=Wij informeren u dat uw partnerschap is beëindigd.
 
+CountLastUrlCheckError=Number of errors for last URL check
+LastCheckBacklink=Date of last URL check
+ReasonDeclineOrCancel=Reden afwijzing
+
 #
 # Status
 #

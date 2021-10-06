@@ -41,14 +41,14 @@ $socid = GETPOST('socid', 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'prelevement', '', '');
+$result = restrictedArea($user, 'prelevement', '', 'bons');
 
 
 /*
  * Actions
  */
 
-
+// None
 
 
 /*
@@ -225,7 +225,7 @@ if ($result) {
 			$i++;
 		}
 	} else {
-		print '<tr><td class="opacitymedium" colspan="4">'.$langs->trans("None").'</td></tr>';
+		print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 
 	print "</table></div><br>";

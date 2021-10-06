@@ -31,10 +31,10 @@ CREATE TABLE llx_expensereport_det
    value_unit                   double(24,8) NOT NULL,          -- P.U. TTC (example 120)
    remise_percent real,
    vat_src_code					varchar(10)  DEFAULT '',		-- Vat code used as source of vat fields. Not strict foreign key here.
-   tva_tx						double(6,3),					-- Vat rate
-   localtax1_tx               	double(6,3)  DEFAULT 0,    		-- localtax1 rate
+   tva_tx						double(7,4),					-- Vat rate
+   localtax1_tx               	double(7,4)  DEFAULT 0,    		-- localtax1 rate
    localtax1_type			 	varchar(10)	  	 NULL, 			-- localtax1 type
-   localtax2_tx               	double(6,3)  DEFAULT 0,    		-- localtax2 rate
+   localtax2_tx               	double(7,4)  DEFAULT 0,    		-- localtax2 rate
    localtax2_type			 	varchar(10)	  	 NULL, 			-- localtax2 type
    total_ht double(24,8) DEFAULT 0 NOT NULL,
    total_tva double(24,8) DEFAULT 0 NOT NULL,

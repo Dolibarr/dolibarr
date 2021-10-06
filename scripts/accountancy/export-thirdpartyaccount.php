@@ -96,8 +96,11 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 		$date_start = dol_get_first_day($year_start, 10, false);
 		$date_end = dol_get_last_day($year_start, 12, false);
 	}
-} else {
 }
+
+/*
+ * Main
+ */
 
 llxHeader();
 
@@ -186,9 +189,6 @@ if ($resql) {
 		$i++;
 	}
 
-	/*
-	 * View
-	 */
 
 	$thirdpartystatic = new Societe($db);
 

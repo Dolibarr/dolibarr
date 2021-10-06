@@ -3,7 +3,6 @@ OrdersArea=Kundenauftrags-Übersicht
 SuppliersOrdersArea=Lieferantenbestellungen
 OrderCard=Bestell-Karte
 CustomerOrder=Kundenbestellungen
-CustomersOrders=Kundenaufträge
 CustomersOrdersAndOrdersLines=Kundenbestellungen und Details
 OrdersDeliveredToBill=Zu verrechnende, gelieferte Kundenbestellungen
 OrdersToBill=Ausgelieferte Kundenbestellungen

@@ -2,6 +2,21 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 15.0.0 compared to 14.0.0 *****
+
+For developers:
+---------------
+
+WARNING:
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* Update hook 'printOriginObjectLine', removed check on product type and special code. Need now reshook.
+* Old deprecated module "SimplePOS" has been completely removed. Use module "TakePOS" is you need a Point Of Sale.
+* The method static ActionComm::getActions($db, ...) is no more static. Use $actioncomm->getActions(...) instead (without $db param). 
+
+
+
 ***** ChangeLog for 14.0.2 compared to 14.0.1 *****
 
 FIX: #18353 Invoice list translation issue
@@ -306,7 +321,7 @@ Following changes may create regressions for some external modules, but were nec
 * The ICS value for direct debit or credit transfer is now stored on each bank account instead of into the global setup.
 * API /setup/shipment_methods has been replaced with API /setup/shipping_methods
 * Field "total" renamed into "total_ht"  for table llx_facture, llx_facture_rec for better field name consistency
-* Field "tva"   renamed into "total_tva" for table llx_propal, llx_supplier_proposal, llx_commande, llx_commande_fournisseur for better field name consistency
+* Field "tva"   renamed into "total_tva" for llx_facture, table llx_propal, llx_supplier_proposal, llx_commande, llx_commande_fournisseur for better field name consistency
 * Field "total" renamed into "total_ttc" for table llx_propal, llx_supplier_proposal for better field name consistency
 * If your database is PostgreSQL, you must use version 9.1.0 or more (Dolibarr need the SQL function CONCAT)
 * If your database is MySQL or MariaDB, you need at least version 5.1
@@ -319,11 +334,11 @@ Following changes may create regressions for some external modules, but were nec
 ***** ChangeLog for 13.0.4 compared to 13.0.3 *****
 
 FIX: Allow disabling of a module (not a dangerous action) even if there is problem with token (due to bugged modules).
-FIX: 13.0 - fatal - missing inclusion of ajax.lib.php for calling `ajax_autocompleter()`
-FIX: #17919 pictures in docs.
+FIX: 13.0 - fatal - missing inclusion of ajax.lib.php for calling 'ajax_autocompleter()'
+FIX: #17919 pictures in docs
 FIX: #18006
 FIX: Accountancy - if we define a date start, automatic binding try to continue to solve old binding
-FIX: Accoutancy Limit date payment not registered on purchases operations
+FIX: Accountancy - Limit date payment not registered on purchases operations
 FIX: Can't edit replacement invoice
 FIX: deposit can create credit note in payment conf
 FIX: division by zero on create
@@ -427,7 +442,7 @@ FIX: File attachment on lots/batches
 FIX: handling $heightforinfotot when he's superior to a page height on Supplier Invoice
 FIX: hourglass and hide button to pay
 FIX: massaction validate invoice do not regenerate PDF
-FIX: missing mp4 video mime
+FIX: #16627 fix missing mp4 video mime
 FIX: picto on shipment to reset qty to 0. Some quantities were not reset.
 FIX: Protection to avoid #16504
 FIX: rounding amount on card updating

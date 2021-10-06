@@ -66,7 +66,7 @@ NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
 Answered=Đã trả lời
 Waiting=Đang chờ
-Closed=Đã đóng
+SolvedClosed=Solved
 Deleted=Đã xóa
 
 # Dict
@@ -186,9 +186,11 @@ TicketSeverity=Mức độ nghiêm trọng
 ShowTicket=Xem vé
 RelatedTickets=Vé liên quan
 TicketAddIntervention=Tạo sự can thiệp
-CloseTicket=Đóng vé
-CloseATicket=Đóng vé
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Xác nhận đóng vé
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Vui lòng xác nhận xóa vé
 TicketDeletedSuccess=Vé đã xóa thành công
 TicketMarkedAsClosed=Vé được đánh dấu là đã đóng

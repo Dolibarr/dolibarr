@@ -16,6 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Output javascript for interactions code of ecm module
+ * $conf, $module, $param, $preopened, $nameforformuserfile may be defined
  */
 
 // Protection to avoid direct call of template
@@ -47,8 +48,8 @@ $(document).ready(function() {
 	$('#filetree').fileTree({
 		root: '<?php print dol_escape_js($openeddir); ?>',
 		// Ajax called if we click to expand a dir (not a file). Parameter 'dir' is provided as a POST parameter by fileTree code to this following URL.
-		// We must use token=$_SESSION['token'] and not token=$_SESSION['newtoken'] here because ajaxdirtree has NOTOKENRENEWAL define so there is no rollup of token so we must compare with the one valid on main page
-		script: '<?php echo DOL_URL_ROOT.'/core/ajax/ajaxdirtree.php?token='.urlencode($_SESSION['token']).'&modulepart='.urlencode($module).(empty($preopened) ? '' : '&preopened='.urlencode($preopened)).'&openeddir='.urlencode($openeddir).(empty($paramwithoutsection) ? '' : $paramwithoutsection); ?>',
+		// We must use token=currentToken() and not newToken() here because ajaxdirtree has NOTOKENRENEWAL define so there is no rollup of token so we must compare with the one valid on main page
+		script: '<?php echo DOL_URL_ROOT.'/core/ajax/ajaxdirtree.php?token='.currentToken().'&modulepart='.urlencode($module).(empty($preopened) ? '' : '&preopened='.urlencode($preopened)).'&openeddir='.urlencode($openeddir).(empty($paramwithoutsection) ? '' : $paramwithoutsection); ?>',
 		folderEvent: 'click',	// 'dblclick'
 		multiFolder: false  },
 		// Called if we click on a file (not a dir)

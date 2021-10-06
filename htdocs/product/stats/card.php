@@ -59,6 +59,9 @@ if (!empty($user->socid)) {
 $fieldvalue = (!empty($id) ? $id : $ref);
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('productstatscard', 'globalcard'));
+
 $tmp = dol_getdate(dol_now());
 $currentyear = $tmp['year'];
 if (empty($search_year)) {
@@ -442,7 +445,7 @@ if ($result || empty($id)) {
 					$dategenerated = $langs->trans("GeneratedOn", dol_print_date(dol_now(), "dayhour"));
 				}
 			} else {
-				$dategenerated = ($mesg ? '<font class="error">'.$mesg.'</font>' : $langs->trans("ChartNotGenerated"));
+				$dategenerated = ($mesg ? '<span class="error">'.$mesg.'</span>' : $langs->trans("ChartNotGenerated"));
 			}
 			$linktoregenerate = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).((string) $type != '' ? '&type='.$type : '').'&action=recalcul&mode='.$mode.'&search_year='.$search_year.'&search_categ='.$search_categ.'">'.img_picto($langs->trans("ReCalculate").' ('.$dategenerated.')', 'refresh').'</a>';
 

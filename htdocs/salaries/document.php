@@ -35,6 +35,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+if (!empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "users", "salaries", "hrm"));
@@ -43,6 +47,9 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
+
+$label = GETPOST('label', 'alphanohtml');
+$projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -63,8 +70,28 @@ if (!$sortfield) {
 }
 
 $object = new Salary($db);
+$extrafields = new ExtraFields($db);
+
+$childids = $user->getAllChildIds(1);
+
+// fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element);
+
+$object = new Salary($db);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
+
+	// Check current user can read this salary
+	$canread = 0;
+	if (!empty($user->rights->salaries->readall)) {
+		$canread = 1;
+	}
+	if (!empty($user->rights->salaries->read) && $object->fk_user > 0 && in_array($object->fk_user, $childids)) {
+		$canread = 1;
+	}
+	if (!$canread) {
+		accessforbidden();
+	}
 }
 
 $upload_dir = $conf->salaries->dir_output.'/'.dol_sanitizeFileName($object->id);
@@ -84,12 +111,26 @@ restrictedArea($user, 'salaries', $object->id, 'salary', '');
 
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
+// Link to a project
+if ($action == 'classin' && $user->rights->banque->modifier) {
+	$object->fetch($id);
+	$object->setProject($projectid);
+}
+
+// set label
+if ($action == 'setlabel' && $user->rights->salaries->write) {
+	$object->fetch($id);
+	$object->label = $label;
+	$object->update($user);
+}
+
 
 /*
  * View
  */
 
 $form = new Form($db);
+if (!empty($conf->projet->enabled)) $formproject = new FormProjets($db);
 
 $title = $langs->trans('Salary')." - ".$langs->trans('Documents');
 $help_url = "";
@@ -116,7 +157,53 @@ if ($object->id) {
 	$userstatic = new User($db);
 	$userstatic->fetch($object->fk_user);
 
-	$morehtmlref .= $langs->trans('Employee').' : '.$userstatic->getNomUrl(1);
+	// Label
+	if ($action != 'editlabel') {
+		$morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
+		$morehtmlref .= $object->label;
+	} else {
+		$morehtmlref .= $langs->trans('Label').' :&nbsp;';
+		$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+		$morehtmlref .= '<input type="hidden" name="action" value="setlabel">';
+		$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$morehtmlref .= '<input type="text" name="label" value="'.$object->label.'"/>';
+		$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		$morehtmlref .= '</form>';
+	}
+
+	$morehtmlref .= '<br>'.$langs->trans('Employee').' : '.$userstatic->getNomUrl(1);
+
+	// Project
+	if (!empty($conf->projet->enabled)) {
+		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
+		if ($user->rights->salaries->write) {
+			if ($action != 'classify') {
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+			}
+			if ($action == 'classify') {
+				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+				$morehtmlref .= $formproject->select_projects(-1, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1, 0, 'maxwidth500');
+				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				$morehtmlref .= '</form>';
+			} else {
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+			}
+		} else {
+			if (!empty($object->fk_project)) {
+				$proj = new Project($db);
+				$proj->fetch($object->fk_project);
+				$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+				$morehtmlref .= $proj->ref;
+				$morehtmlref .= '</a>';
+			} else {
+				$morehtmlref .= '';
+			}
+		}
+	}
+
 	$morehtmlref .= '</div>';
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
@@ -136,7 +223,7 @@ if ($object->id) {
 	print dol_print_date($object->dateep, 'day');
 	print '</td></tr>';
 
-	print '<tr><td>' . $langs->trans("Amount") . '</td><td>' . price($object->amount, 0, $langs, 1, -1, -1, $conf->currency) . '</td></tr>';
+	print '<tr><td>' . $langs->trans("Amount") . '</td><td><span class="amount">' . price($object->amount, 0, $langs, 1, -1, -1, $conf->currency) . '</span></td></tr>';
 
 	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
 

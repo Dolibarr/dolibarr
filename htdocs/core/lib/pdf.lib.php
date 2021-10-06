@@ -49,7 +49,7 @@ function pdf_admin_prepare_head()
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/pdf.php';
-	$head[$h][1] = $langs->trans("Common");
+	$head[$h][1] = $langs->trans("Parameters");
 	$head[$h][2] = 'general';
 	$h++;
 
@@ -1357,11 +1357,14 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		$desc = str_replace('(DEPOSIT)', $outputlangs->trans('Deposit'), $desc);
 	}
 
-	// Description short of product line
-	$libelleproduitservice = $label;
-	if (!empty($libelleproduitservice) && !empty($conf->global->PDF_BOLD_PRODUCT_LABEL)) {
-		$libelleproduitservice = '<b>'.$libelleproduitservice.'</b>';
+	if (empty($conf->global->PDF_HIDE_PRODUCT_LABEL_IN_SUPPLIER_LINES)) {
+		// Description short of product line
+		$libelleproduitservice = $label;
+		if (!empty($libelleproduitservice) && !empty($conf->global->PDF_BOLD_PRODUCT_LABEL)) {
+			$libelleproduitservice = '<b>'.$libelleproduitservice.'</b>';
+		}
 	}
+
 
 	// Add ref of subproducts
 	if (!empty($conf->global->SHOW_SUBPRODUCT_REF_IN_PDF)) {
@@ -2237,6 +2240,7 @@ function pdf_getTotalQty($object, $type, $outputlangs)
 				if (!empty($object->lines[$i]->fk_parent_line)) {
 					$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 				}
+				$hidedetails = '';
 				$parameters = array('i'=>$i, 'outputlangs'=>$outputlangs, 'hidedetails'=>$hidedetails, 'special_code'=>$special_code);
 				$action = '';
 				$reshook = $hookmanager->executeHooks('pdf_getTotalQty', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks

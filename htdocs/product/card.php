@@ -64,12 +64,11 @@ if (!empty($conf->commande->enabled)) {
 }
 if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-}
-if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-}
-if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+}
+if (!empty($conf->bom->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 }
 
 // Load translation files required by the page
@@ -89,8 +88,8 @@ $mesg = ''; $error = 0; $errors = array();
 $refalreadyexists = 0;
 
 $id = GETPOST('id', 'int');
-$ref = GETPOST('ref', 'alpha');
-$type = (GETPOST('type', 'int') !== '') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT;
+$ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : null);
+$type = (GETPOSTISSET('type') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT);
 $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -106,11 +105,22 @@ $accountancy_code_buy = GETPOST('accountancy_code_buy', 'alpha');
 $accountancy_code_buy_intra = GETPOST('accountancy_code_buy_intra', 'alpha');
 $accountancy_code_buy_export = GETPOST('accountancy_code_buy_export', 'alpha');
 
+$checkmandatory = GETPOST('accountancy_code_buy_export', 'alpha');
 // by default 'alphanohtml' (better security); hidden conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML allows basic html
 $label_security_check = empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML) ? 'alphanohtml' : 'restricthtml';
 
 if (!empty($user->socid)) {
 	$socid = $user->socid;
+}
+
+// Load object modCodeProduct
+$module = (!empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) ? $conf->global->PRODUCT_CODEPRODUCT_ADDON : 'mod_codeproduct_leopard');
+if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php') {
+	$module = substr($module, 0, dol_strlen($module) - 4);
+}
+$result = dol_include_once('/core/modules/product/'.$module.'.php');
+if ($result > 0) {
+	$modCodeProduct = new $module();
 }
 
 $object = new Product($db);
@@ -122,7 +132,9 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
-
+	if ($result < 0) {
+		dol_print_error($db, $object->error, $object->errors);
+	}
 	if (!empty($conf->product->enabled)) {
 		$upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
 	} elseif (!empty($conf->service->enabled)) {
@@ -192,6 +204,29 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	$backurlforlist = DOL_URL_ROOT.'/product/list.php?type='.$type;
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/product/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			}
+		}
+	}
+
+	if ($cancel) {
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		}
+		$action = '';
+	}
+
 	// Type
 	if ($action == 'setfk_product_type' && $usercancreate) {
 		$result = $object->setValueFrom('fk_product_type', GETPOST('fk_product_type'), '', null, 'text', '', $user, 'PRODUCT_MODIFY');
@@ -248,9 +283,11 @@ if (empty($reshook)) {
 			$error++;
 		}
 		if (empty($ref)) {
-			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Ref')), null, 'errors');
-			$action = "create";
-			$error++;
+			if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
+					setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Ref')), null, 'errors');
+					$action = "create";
+					$error++;
+			}
 		}
 		if (!empty($duration_value) && empty($duration_unit)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Unit')), null, 'errors');
@@ -264,7 +301,7 @@ if (empty($reshook)) {
 			$object->ref                   = $ref;
 			$object->label                 = GETPOST('label', $label_security_check);
 			$object->price_base_type       = GETPOST('price_base_type', 'aZ09');
-
+			$object->mandatory_period 	   = !empty(GETPOST("mandatoryperiod", 'alpha')) ? 1 : 0;
 			if ($object->price_base_type == 'TTC') {
 				$object->price_ttc = GETPOST('price');
 			} else {
@@ -432,6 +469,11 @@ if (empty($reshook)) {
 				$error++;
 			}
 
+			if (!$ref && !empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
+				// Generate ref...
+				$ref = $modCodeProduct->getNextValue($object, $type);
+			}
+
 			if (!$error) {
 				$id = $object->create($user);
 			}
@@ -442,7 +484,7 @@ if (empty($reshook)) {
 				$object->setCategories($categories);
 
 				if (!empty($backtopage)) {
-					$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
+					$backtopage = preg_replace('/__ID__/', $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
 					if (preg_match('/\?/', $backtopage)) {
 						$backtopage .= '&socid='.$object->id; // Old method
 					}
@@ -471,7 +513,9 @@ if (empty($reshook)) {
 			if ($object->id > 0) {
 				$object->oldcopy = clone $object;
 
-				$object->ref                    = $ref;
+				if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
+					$object->ref                = $ref;
+				}
 				$object->label                  = GETPOST('label', $label_security_check);
 
 				$desc = dol_htmlcleanlastbr(preg_replace('/&nbsp;$/', '', GETPOST('desc', 'restricthtml')));
@@ -522,6 +566,13 @@ if (empty($reshook)) {
 					$object->finished = null;
 				}
 
+				$fk_default_bom = GETPOST('fk_default_bom', 'int');
+				if ($fk_default_bom >= 0) {
+					$object->fk_default_bom = $fk_default_bom;
+				} else {
+					$object->fk_default_bom = null;
+				}
+
 				$units = GETPOST('units', 'int');
 				if ($units > 0) {
 					$object->fk_unit = $units;
@@ -551,7 +602,7 @@ if (empty($reshook)) {
 				$accountancy_code_buy = GETPOST('accountancy_code_buy', 'alpha');
 				$accountancy_code_buy_intra = GETPOST('accountancy_code_buy_intra', 'alpha');
 				$accountancy_code_buy_export = GETPOST('accountancy_code_buy_export', 'alpha');
-
+				$checkmandatory = GETPOST('mandatoryperiod', 'alpha');
 				if (empty($accountancy_code_sell) || $accountancy_code_sell == '-1') {
 					$object->accountancy_code_sell = '';
 				} else {
@@ -582,6 +633,11 @@ if (empty($reshook)) {
 				} else {
 					$object->accountancy_code_buy_export = $accountancy_code_buy_export;
 				}
+				if ($object->isService()) {
+					$object->mandatory_period =  (!empty($checkmandatory)) ? 1 : 0 ;
+				}
+
+
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -1073,16 +1129,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		print '<table class="border centpercent">';
 
-		print '<tr>';
-		$tmpcode = '';
-		if (!empty($modCodeProduct->code_auto)) {
-			$tmpcode = $modCodeProduct->getNextValue($object, $type);
+		if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
+			print '<tr>';
+			$tmpcode = '';
+			if (!empty($modCodeProduct->code_auto)) {
+				$tmpcode = $modCodeProduct->getNextValue($object, $type);
+			}
+			print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
+			if ($refalreadyexists) {
+				print $langs->trans("RefAlreadyExists");
+			}
+			print '</td></tr>';
 		}
-		print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
-		if ($refalreadyexists) {
-			print $langs->trans("RefAlreadyExists");
-		}
-		print '</td></tr>';
 
 		// Label
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth300 maxwidth400onsmartphone" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label', $label_security_check)).'"></td></tr>';
@@ -1186,7 +1244,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Description (used in invoice, propal...)
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 
-		$doleditor = new DolEditor('desc', GETPOST('desc', 'restricthtml'), '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_4, '90%');
+		$doleditor = new DolEditor('desc', GETPOST('desc', 'restricthtml'), '', 160, 'dolibarr_details', '', false, true, getDolGlobalString('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_4, '90%');
 		$doleditor->Create();
 
 		print "</td></tr>";
@@ -1204,7 +1262,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 			print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
 			print $formproduct->selectWarehouses(GETPOST('fk_default_warehouse', 'int'), 'fk_default_warehouse', 'warehouseopen', 1, 0, 0, '', 0, 0, array(), 'minwidth300 widthcentpercentminusxx maxwidth500');
-			print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit').'">';
+			print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken()).'">';
 			print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span>';
 			print '</a>';
 			print '</td>';
@@ -1234,6 +1292,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td>'.$langs->trans("Duration").'</td><td>';
 			print '<input name="duration_value" size="4" value="'.GETPOST('duration_value', 'int').'">';
 			print $formproduct->selectMeasuringUnits("duration_unit", "time", (GETPOSTISSET('duration_value') ? GETPOSTISSET('duration_value', 'alpha') : 'h'), 0, 1);
+
+			// Mandatory period
+			print ' &nbsp; &nbsp; &nbsp; ';
+			print '<input type="checkbox" id="mandatoryperiod" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').'>';
+			print '<label for="mandatoryperiod">';
+			$htmltooltip = $langs->trans("mandatoryHelper");
+			print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 0);
+			print '</label>';
+
 			print '</td></tr>';
 		}
 
@@ -1244,7 +1311,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print $formproduct->selectProductNature('finished', $object->finished);
 				print '</td></tr>';
 			}
+		}
 
+		if ($type != 1) {
 			if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
 				// Brut Weight
 				print '<tr><td>'.$langs->trans("Weight").'</td><td>';
@@ -1343,13 +1412,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
 
 			// We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
-			$doleditor = new DolEditor('note_private', GETPOST('note_private', 'restricthtml'), '', 140, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_8, '90%');
+			$doleditor = new DolEditor('note_private', GETPOST('note_private', 'restricthtml'), '', 140, 'dolibarr_details', '', false, true, getDolGlobalString('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_8, '90%');
 			$doleditor->Create();
 
 			print "</td></tr>";
 		//}
 
-		if ($conf->categorie->enabled) {
+		if (!empty($conf->categorie->enabled)) {
 			// Categories
 			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
@@ -1371,6 +1440,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$defaultva = get_default_tva($mysoc, $mysoc);
 				print $form->load_tva("tva_tx", $defaultva, $mysoc, $mysoc, 0, 0, '', false, 1);
 				print '</td></tr>';
+
 				print '</table>';
 
 				print '<br>';
@@ -1534,11 +1604,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		print dol_get_fiche_end();
 
-		print '<div class="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
-		print ' &nbsp; &nbsp; ';
-		print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-		print '</div>';
+		print $form->buttonsSaveCancel("Create");
 
 		print '</form>';
 	} elseif ($object->id > 0) {
@@ -1772,6 +1838,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td>'.$langs->trans("Duration").'</td><td>';
 				print '<input name="duration_value" size="5" value="'.$object->duration_value.'"> ';
 				print $formproduct->selectMeasuringUnits("duration_unit", "time", $object->duration_unit, 0, 1);
+
+				// Mandatory period
+				print ' &nbsp; &nbsp; &nbsp; ';
+				print '<input type="checkbox" id="mandatoryperiod" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').'>';
+				print '<label for="mandatoryperiod">';
+				$htmltooltip = $langs->trans("mandatoryHelper");
+				print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 0);
+				print '</label>';
+
 				print '</td></tr>';
 			} else {
 				if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
@@ -1780,7 +1855,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print $formproduct->selectProductNature('finished', $object->finished);
 					print '</td></tr>';
 				}
+			}
 
+			if (!$object->isService() && !empty($conf->bom->enabled)) {
+				print '<tr><td>'.$form->textwithpicto($langs->trans("DefaultBOM"), $langs->trans("DefaultBOMDesc", $langs->transnoentitiesnoconv("Finished"))).'</td><td>';
+				$bomkey = "Bom:bom/class/bom.class.php:0:t.status=1 AND t.fk_product=".((int) $object->id);
+				print $form->selectForForms($bomkey, 'fk_default_bom', $object->fk_default_bom, 1);
+				print '</td></tr>';
+			}
+
+			if (!$object->isService()) {
 				if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
 					// Brut Weight
 					print '<tr><td>'.$langs->trans("Weight").'</td><td>';
@@ -1985,11 +2069,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			print dol_get_fiche_end();
 
-			print '<div class="center">';
-			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-			print '</div>';
+			print $form->buttonsSaveCancel();
 
 			print '</form>';
 		} else {
@@ -2210,7 +2290,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Public URL
 			if (empty($conf->global->PRODUCT_DISABLE_PUBLIC_URL)) {
 				print '<tr><td>'.$langs->trans("PublicUrl").'</td><td>';
-				print dol_print_url($object->url);
+				print dol_print_url($object->url, '_blank', 128);
 				print '</td></tr>';
 			}
 
@@ -2248,13 +2328,22 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			if ($object->isService()) {
 				// Duration
-				print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td>'.$object->duration_value.'&nbsp;';
+				print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td>';
+				print $object->duration_value;
 				if ($object->duration_value > 1) {
 					$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
 				} elseif ($object->duration_value > 0) {
 					$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
 				}
-				print (!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
+				print (!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? "&nbsp;".$langs->trans($dur[$object->duration_unit])."&nbsp;" : '');
+
+				// Mandatory period
+				if ($object->duration_value > 0) {
+					print ' &nbsp; &nbsp; &nbsp; ';
+				}
+				$htmltooltip = $langs->trans("mandatoryHelper");
+				print '<input type="checkbox" class="" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').' disabled>';
+				print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 0);
 
 				print '</td></tr>';
 			} else {
@@ -2264,7 +2353,19 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print $object->getLibFinished();
 					print '</td></tr>';
 				}
+			}
 
+			if (!$object->isService() && !empty($conf->bom->enabled) && $object->finished) {
+				print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("DefaultBOM"), $langs->trans("DefaultBOMDesc", $langs->transnoentitiesnoconv("Finished"))).'</td><td>';
+				if ($object->fk_default_bom) {
+					$bom_static = new BOM($db);
+					$bom_static->fetch($object->fk_default_bom);
+					print $bom_static->getNomUrl(1);
+				}
+				print '</td></tr>';
+			}
+
+			if (!$object->isService()) {
 				// Brut Weight
 				if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
 					print '<tr><td class="titlefield">'.$langs->trans("Weight").'</td><td>';
@@ -2386,16 +2487,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	}
 }
 
-// Load object modCodeProduct
-$module = (!empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) ? $conf->global->PRODUCT_CODEPRODUCT_ADDON : 'mod_codeproduct_leopard');
-if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php') {
-	$module = substr($module, 0, dol_strlen($module) - 4);
-}
-$result = dol_include_once('/core/modules/product/'.$module.'.php');
-if ($result > 0) {
-	$modCodeProduct = new $module();
-}
-
 $tmpcode = '';
 if (!empty($modCodeProduct->code_auto)) {
 	$tmpcode = $modCodeProduct->getNextValue($object, $object->type);
@@ -2452,14 +2543,14 @@ if ($action != 'create' && $action != 'edit') {
 	if (empty($reshook)) {
 		if ($usercancreate) {
 			if (!isset($object->no_button_edit) || $object->no_button_edit <> 1) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a>';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
 			}
 
 			if (!isset($object->no_button_copy) || $object->no_button_copy <> 1) {
 				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
 					print '<span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span>'."\n";
 				} else {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
 				}
 			}
 		}
@@ -2470,7 +2561,7 @@ if ($action != 'create' && $action != 'edit') {
 				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
 					print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
 				} else {
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;token='.newToken().'&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a>';
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
 				}
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a>';
@@ -2483,8 +2574,9 @@ if ($action != 'create' && $action != 'edit') {
 	print "\n</div>\n";
 }
 
+
 /*
- * All the "Add to" areas
+ * All the "Add to" areas if PRODUCT_ADD_FORM_ADD_TO is set
  */
 
 if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action == '' || $action == 'view') && $object->status) {
@@ -2574,7 +2666,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
 		print '</table>';
 
 		print '<div class="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+		print '<input type="submit" class="button button-add" value="'.$langs->trans("Add").'">';
 		print '</div>';
 
 		print dol_get_fiche_end();

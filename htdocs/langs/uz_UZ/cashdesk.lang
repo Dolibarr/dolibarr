@@ -128,3 +128,4 @@ PrintPaymentMethodOnReceipts=To'lov usulini chiptalarga chop eting | kvitansiyal
 WeighingScale=Tarozi o'lchovi
 ShowPriceHT = Ustunni narxni soliqsiz hisobga olgan holda ko'rsatish (ekranda)
 ShowPriceHTOnReceipt = Display the column with the price excluding tax (on the receipt)
+CustomerDisplay=Customer display
