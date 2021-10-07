@@ -513,8 +513,8 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				if (!$user->rights->salaries->delete) {
 					$deleteok = 0;
 				}
-			} elseif ($feature == 'salaries') {
-				if (!$user->rights->salaries->delete) {
+			} elseif ($feature == 'adherent') {
+				if (!$user->rights->adherent->supprimer) {
 					$deleteok = 0;
 				}
 			} elseif (!empty($feature2)) {							// This is for permissions on 2 levels
@@ -853,7 +853,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		print $hookmanager->resPrint;
 		if (empty($reshook)) {
 			if ($user->login) {
-				print $langs->trans("CurrentLogin").': <font class="error">'.$user->login.'</font><br>';
+				print $langs->trans("CurrentLogin").': <span class="error">'.$user->login.'</span><br>';
 				print $langs->trans("ErrorForbidden2", $langs->transnoentitiesnoconv("Home"), $langs->transnoentitiesnoconv("Users"));
 			} else {
 				print $langs->trans("ErrorForbidden3");

@@ -311,7 +311,7 @@ if ($action != 'edit') {
 		print '<div class="tabsAction">';
 
 		if ($user->rights->societe->contact->creer) {
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
+			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans('Modify').'</a>';
 		}
 
 		print "</div>";

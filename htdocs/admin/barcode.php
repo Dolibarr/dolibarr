@@ -302,7 +302,7 @@ if (!isset($_SERVER['WINDIR'])) {
 	print '<input type="text" size="40" name="GENBARCODE_LOCATION" value="'.$conf->global->GENBARCODE_LOCATION.'">';
 	if (!empty($conf->global->GENBARCODE_LOCATION) && !@file_exists($conf->global->GENBARCODE_LOCATION)) {
 		$langs->load("errors");
-		print '<br><font class="error">'.$langs->trans("ErrorFileNotFound", $conf->global->GENBARCODE_LOCATION).'</font>';
+		print '<br><span class="error">'.$langs->trans("ErrorFileNotFound", $conf->global->GENBARCODE_LOCATION).'</span>';
 	}
 	print '</td></tr>';
 }
@@ -373,12 +373,12 @@ if ($conf->product->enabled) {
 					print '</td>';
 					print '<td class="nowrap">'.$modBarCode->getExample($langs)."</td>\n";
 
-					if ($conf->global->BARCODE_PRODUCT_ADDON_NUM == "$file") {
-						print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproductoff&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
+					if (!empty($conf->global->BARCODE_PRODUCT_ADDON_NUM) && $conf->global->BARCODE_PRODUCT_ADDON_NUM == "$file") {
+						print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproductoff&token='.newToken().'&amp;value='.urlencode($file).'">';
 						print img_picto($langs->trans("Activated"), 'switch_on');
 						print '</a></td>';
 					} else {
-						print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproducton&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
+						print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproducton&token='.newToken().'&amp;value='.urlencode($file).'">';
 						print img_picto($langs->trans("Disabled"), 'switch_off');
 						print '</a></td>';
 					}

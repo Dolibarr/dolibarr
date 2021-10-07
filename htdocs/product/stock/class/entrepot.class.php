@@ -819,7 +819,7 @@ class Entrepot extends CommonObject
 		$parentid = $this->fk_parent; // If parent_id not defined on current object, we do not start consecutive searches of parents
 		$i = 0;
 		while ($parentid > 0 && $i < $protection) {
-			$sql = 'SELECT fk_parent FROM '.MAIN_DB_PREFIX.'entrepot WHERE rowid = '.((int) $parentid);
+			$sql = "SELECT fk_parent FROM ".MAIN_DB_PREFIX."entrepot WHERE rowid = ".((int) $parentid);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$objarbo = $this->db->fetch_object($resql);

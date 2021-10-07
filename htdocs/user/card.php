@@ -1805,7 +1805,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</tr>'."\n";
 
 			// API key
-			if (!empty($conf->api->enabled) && ($user->id == $id || $user->admin)) {
+			if (!empty($conf->api->enabled) && ($user->id == $id || $user->admin || $user->rights->api->apikey->generate)) {
 				print '<tr><td>'.$langs->trans("ApiKey").'</td>';
 				print '<td>';
 				if (!empty($object->api_key)) {
@@ -1861,11 +1861,11 @@ if ($action == 'create' || $action == 'adduserldap') {
 					if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("DisabledInMonoUserMode")).'">'.$langs->trans("Modify").'</a></div>';
 					} else {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a></div>';
 					}
 				} elseif ($caneditpassword && !$object->ldap_sid &&
 				(empty($conf->multicompany->enabled) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1))) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("EditPassword").'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("EditPassword").'</a></div>';
 				}
 
 				// Si on a un gestionnaire de generation de mot de passe actif
@@ -1972,7 +1972,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 							print $form->select_dolgroups('', 'group', 1, $exclude, 0, '', '', $object->entity);
 							print ' &nbsp; ';
 							print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-							print '<input type="submit" class="button buttongen" value="'.$langs->trans("Add").'" />';
+							print '<input type="submit" class="button buttongen button-add" value="'.$langs->trans("Add").'" />';
 						}
 						print '</th></tr>'."\n";
 
@@ -2328,7 +2328,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print "</td></tr>\n";
 
 			// API key
-			if (!empty($conf->api->enabled) && ($user->id == $id || $user->admin)) {
+			if (!empty($conf->api->enabled) && ($user->id == $id || $user->admin || $user->rights->api->apikey->generate)) {
 				print '<tr><td>'.$langs->trans("ApiKey").'</td>';
 				print '<td>';
 				print '<input class="minwidth300" maxsize="32" type="text" id="api_key" name="api_key" value="'.$object->api_key.'" autocomplete="off">';
@@ -2643,7 +2643,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if (!empty($conf->stock->enabled) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
 				print '<tr><td class="titlefield">'.$langs->trans("DefaultWarehouse").'</td><td>';
 				print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
-				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span></a>';
+				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken()).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span></a>';
 				print '</td></tr>';
 			}
 

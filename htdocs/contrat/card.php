@@ -1318,7 +1318,7 @@ if ($action == 'create') {
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->contrat->creer) {
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 				}
 				if ($action == 'classify') {
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -1541,17 +1541,17 @@ if ($action == 'create') {
 					print '<td class="nowrap right">';
 					if ($user->rights->contrat->creer && count($arrayothercontracts) && ($object->statut >= 0)) {
 						print '<!-- link to move service line into another contract -->';
-						print '<a class="reposition marginrightonly" style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=move&amp;rowid='.$objp->rowid.'">';
+						print '<a class="reposition marginrightonly" style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=move&token='.newToken().'&rowid='.$objp->rowid.'">';
 						print img_picto($langs->trans("MoveToAnotherContract"), 'uparrow');
 						print '</a>';
 					}
 					if ($user->rights->contrat->creer && ($object->statut >= 0)) {
-						print '<a class="reposition marginrightonly editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+						print '<a class="reposition marginrightonly editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=editline&token='.newToken().'&rowid='.$objp->rowid.'">';
 						print img_edit();
 						print '</a>';
 					}
 					if ($user->rights->contrat->creer && ($object->statut >= 0)) {
-						print '<a class="reposition marginrightonly" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=deleteline&amp;token='.newToken().'&amp;rowid='.$objp->rowid.'">';
+						print '<a class="reposition marginrightonly" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=deleteline&token='.newToken().'&rowid='.$objp->rowid.'">';
 						print img_delete();
 						print '</a>';
 					}
@@ -2039,7 +2039,7 @@ if ($action == 'create') {
 				}
 				if ($object->statut == 1) {
 					if ($user->rights->contrat->creer) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen&amp;token='.newToken().'">'.$langs->trans("Modify").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("Modify").'</a></div>';
 					} else {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Modify").'</a></div>';
 					}
@@ -2048,7 +2048,7 @@ if ($action == 'create') {
 				if (!empty($conf->commande->enabled) && $object->statut > 0 && $object->nbofservicesclosed < $nbofservices) {
 					$langs->load("orders");
 					if ($user->rights->commande->creer) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->thirdparty->id.'">'.$langs->trans("CreateOrder").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&token='.newToken().'&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id.'">'.$langs->trans("CreateOrder").'</a></div>';
 					} else {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateOrder").'</a></div>';
 					}
@@ -2103,7 +2103,7 @@ if ($action == 'create') {
 				// - Droit de creer + mode brouillon (erreur creation)
 				// - Droit de supprimer
 				if (($user->rights->contrat->creer && $object->statut == $object::STATUS_DRAFT) || $user->rights->contrat->supprimer) {
-					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
 				} else {
 					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("Delete").'</a></div>';
 				}

@@ -399,7 +399,7 @@ if ($object->id > 0) {
 		{
 			if ($action != 'classify')
 			{
-				$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				if ($action == 'classify') {
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 					$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -716,7 +716,7 @@ if ($object->id > 0) {
 		$num = $db->num_rows($resql);
 
 		$i = 0;
-		$totalfound = 0;
+		$hasinput = false;
 		$totalarray = array();
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
@@ -748,7 +748,7 @@ if ($object->id > 0) {
 			print $warehouse_static->getNomUrl(1);
 			print '</td>';
 			print '<td id="id_'.$obj->rowid.'_product">';
-			print $product_static->getNomUrl(1);
+			print $product_static->getNomUrl(1).' - '.$product_static->label;
 			print '</td>';
 
 			if ($conf->productbatch->enabled) {
@@ -766,7 +766,10 @@ if ($object->id > 0) {
 			print '<td class="center">';
 			if ($object->status == $object::STATUS_VALIDATED) {
 				$qty_view = GETPOST("id_".$obj->rowid) && price2num(GETPOST("id_".$obj->rowid), 'MS') >= 0 ? GETPOST("id_".$obj->rowid) : $obj->qty_view;
-				$totalfound += price2num($qty_view, 'MS');
+				if (!$hasinput && $qty_view !== null && $obj->qty_stock != $qty_view) {
+					$hasinput = true;
+				}
+
 				print '<input type="text" class="maxwidth75 right realqty" name="id_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input" value="'.$qty_view.'">';
 				print '</td>';
 				print '<td class="right">';
@@ -777,7 +780,6 @@ if ($object->id > 0) {
 				print '<input type="hidden" class="maxwidth75 right realqty" name="id_'.$obj->rowid.'_input_tmp" id="id_'.$obj->rowid.'_input_tmp" value="'.$qty_tmp.'">';
 			} else {
 				print $obj->qty_view;
-				$totalfound += $obj->qty_view;
 				print '</td>';
 			}
 			print '</tr>';
@@ -799,7 +801,7 @@ if ($object->id > 0) {
 	print '</div>';
 
 	// Call method to disable the button if no qty entered yet for inventory
-	if ($object->status != $object::STATUS_VALIDATED || $totalfound == 0) {
+	if ($object->status != $object::STATUS_VALIDATED || !$hasinput) {
 		print '<script type="text/javascript" language="javascript">
 					jQuery(document).ready(function() {
 						disablebuttonmakemovementandclose();

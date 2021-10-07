@@ -119,7 +119,7 @@ $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 $search_categ_sup = trim(GETPOST("search_categ_sup", 'int'));
 
-$option = GETPOST('option');
+$option = GETPOST('search_option');
 if ($option == 'late') {
 	$search_status = '1';
 }
@@ -418,7 +418,7 @@ $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " country.code as country_code,";
 $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
-$sql .= " u.login";
+$sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
 if ($search_categ_sup && $search_categ_sup != '-1') {
 	$sql .= ", cs.fk_categorie, cs.fk_soc";
 }
@@ -441,7 +441,7 @@ $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
-if (!empty($search_categ_sup)) {
+if (!empty($search_categ_sup) && $search_categ_supplier != '-1') {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs ON s.rowid = cs.fk_soc";
 }
 
@@ -634,7 +634,7 @@ if (!$search_all) {
 	$sql .= " state.code_departement, state.nom,";
 	$sql .= ' country.code,';
 	$sql .= " p.rowid, p.ref, p.title,";
-	$sql .= " u.login";
+	$sql .= " u.login, u.lastname, u.firstname, u.email, u.statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender";
 	if ($search_categ_sup && $search_categ_sup != '-1') {
 		$sql .= ", cs.fk_categorie, cs.fk_soc";
 	}
@@ -803,7 +803,7 @@ if ($resql) {
 		$param .= '&show_files='.urlencode($show_files);
 	}
 	if ($option) {
-		$param .= "&option=".urlencode($option);
+		$param .= "&search_option=".urlencode($option);
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
@@ -1428,9 +1428,9 @@ if ($resql) {
 
 			// Date limit
 			if (!empty($arrayfields['f.date_lim_reglement']['checked'])) {
-				print '<td class="center nowrap">'.dol_print_date($datelimit, 'day');
+				print '<td class="center nowraponall">'.dol_print_date($datelimit, 'day');
 				if ($facturestatic->hasDelay()) {
-					print img_warning($langs->trans('Late'));
+					print img_warning($langs->trans('Alert').' - '.$langs->trans('Late'));
 				}
 				print '</td>';
 				if (!$i) {
@@ -1585,13 +1585,25 @@ if ($resql) {
 				$totalarray['val']['f.total_ttc'] += $obj->total_ttc;
 			}
 
+			$userstatic->id = $obj->fk_user_author;
+			$userstatic->login = $obj->login;
+			$userstatic->lastname = $obj->lastname;
+			$userstatic->firstname = $obj->firstname;
+			$userstatic->email = $obj->user_email;
+			$userstatic->statut = $obj->user_statut;
+			$userstatic->entity = $obj->entity;
+			$userstatic->photo = $obj->photo;
+			$userstatic->office_phone = $obj->office_phone;
+			$userstatic->office_fax = $obj->office_fax;
+			$userstatic->user_mobile = $obj->user_mobile;
+			$userstatic->job = $obj->job;
+			$userstatic->gender = $obj->gender;
+
 			// Author
 			if (!empty($arrayfields['u.login']['checked'])) {
-				$userstatic->id = $obj->fk_user_author;
-				$userstatic->login = $obj->login;
-				print '<td align="center">';
+				print '<td class="tdoverflowmax200">';
 				if ($userstatic->id) {
-					print $userstatic->getLoginUrl(1);
+					print $userstatic->getLoginUrl(-1);
 				} else {
 					print '&nbsp;';
 				}

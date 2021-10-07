@@ -251,7 +251,7 @@ if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 if ($action == '') {
 	if ($user->rights->tax->charges->supprimer) {
 		if (!$disable_delete) {
-			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.GETPOST('id', 'int').'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.GETPOST('id', 'int').'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
 		}

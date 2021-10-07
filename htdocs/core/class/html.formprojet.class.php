@@ -39,6 +39,8 @@ class FormProjets
 	 */
 	public $error = '';
 
+	public $nboftasks;
+
 
 	/**
 	 *	Constructor
@@ -307,11 +309,11 @@ class FormProjets
 	 *  @param	int		$disabled		Disabled
 	 *  @param	string	$morecss        More css added to the select component
 	 *  @param	string	$projectsListId ''=Automatic filter on project allowed. List of id=Filter on project ids.
-	 *  @param	string	$showproject	'all' = Show project info, ''=Hide project info
+	 *  @param	string	$showmore		'all' = Show project info, 'progress' = Show task progression, ''=Show nothing more
 	 *  @param	User	$usertofilter	User object to use for filtering
 	 *	@return int         			Nbr of tasks if OK, <0 if KO
 	 */
-	public function selectTasks($socid = -1, $selected = '', $htmlname = 'taskid', $maxlength = 24, $option_only = 0, $show_empty = '1', $discard_closed = 0, $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500', $projectsListId = '', $showproject = 'all', $usertofilter = null)
+	public function selectTasks($socid = -1, $selected = '', $htmlname = 'taskid', $maxlength = 24, $option_only = 0, $show_empty = '1', $discard_closed = 0, $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500', $projectsListId = '', $showmore = 'all', $usertofilter = null)
 	{
 		global $user, $conf, $langs;
 
@@ -336,7 +338,8 @@ class FormProjets
 		}
 
 		// Search all projects
-		$sql = 'SELECT t.rowid, t.ref as tref, t.label as tlabel, p.rowid as pid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public,';
+		$sql = 'SELECT t.rowid, t.ref as tref, t.label as tlabel, t.progress,';
+		$sql .= ' p.rowid as pid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public, p.usage_task,';
 		$sql .= ' s.nom as name';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as p';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc,';
@@ -407,7 +410,7 @@ class FormProjets
 							$disabled = 1;
 						}
 
-						if ($showproject == 'all') {
+						if (preg_match('/all/', $showmore)) {
 							$labeltoshow .= dol_trunc($obj->ref, 18); // Project ref
 							//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 							//else $labeltoshow.=' ('.$langs->trans("Private").')';
@@ -442,6 +445,10 @@ class FormProjets
 						// Label for task
 						$labeltoshow .= $obj->tref.' '.dol_trunc($obj->tlabel, $maxlength);
 						$titletoshow .= $obj->tref.' '.dol_trunc($obj->tlabel, $maxlength);
+						if ($obj->usage_task && preg_match('/progress/', $showmore)) {
+							$labeltoshow .= ' <span class="opacitymedium">('.$obj->progress.'%)</span>';
+							$titletoshow .= ' <span class="opacitymedium">('.$obj->progress.'%)</span>';
+						}
 
 						if (!empty($selected) && $selected == $obj->rowid) {
 							$out .= '<option value="'.$obj->rowid.'" selected';
@@ -472,6 +479,8 @@ class FormProjets
 			if (empty($option_only)) {
 				$out .= '</select>';
 			}
+
+			$this->nboftasks = $num;
 
 			print $out;
 

@@ -1166,22 +1166,22 @@ class Ticket extends CommonObject
 	}
 
 	/**
-	 *      Charge dans cache la liste des catégories de tickets (paramétrable dans dictionnaire)
+	 *      Load into a cache array, the list of ticket categories (setup done into dictionary)
 	 *
 	 *      @return int             Number of lines loaded, 0 if already loaded, <0 if KO
 	 */
 	public function loadCacheCategoriesTickets()
 	{
-		global $langs;
+		global $conf, $langs;
 
 		if (!empty($this->cache_category_ticket) && count($this->cache_category_tickets)) {
+			// Cache already loaded
 			return 0;
 		}
-		// Cache deja charge
 
 		$sql = "SELECT rowid, code, label, use_default, pos, description, public, active, force_severity, fk_parent";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category";
-		$sql .= " WHERE active > 0";
+		$sql .= " WHERE active > 0 AND entity = ".((int) $conf->entity);
 		$sql .= " ORDER BY pos";
 		dol_syslog(get_class($this)."::load_cache_categories_tickets", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1191,15 +1191,18 @@ class Ticket extends CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 				$this->cache_category_tickets[$obj->rowid]['code'] = $obj->code;
-				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-				$label = ($langs->trans("TicketCategoryShort".$obj->code) != ("TicketCategoryShort".$obj->code) ? $langs->trans("TicketCategoryShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
-				$this->cache_category_tickets[$obj->rowid]['label'] = $label;
 				$this->cache_category_tickets[$obj->rowid]['use_default'] = $obj->use_default;
 				$this->cache_category_tickets[$obj->rowid]['pos'] = $obj->pos;
 				$this->cache_category_tickets[$obj->rowid]['public'] = $obj->public;
 				$this->cache_category_tickets[$obj->rowid]['active'] = $obj->active;
 				$this->cache_category_tickets[$obj->rowid]['force_severity'] = $obj->force_severity;
 				$this->cache_category_tickets[$obj->rowid]['fk_parent'] = $obj->fk_parent;
+
+				// If  translation exists, we use it to store already translated string.
+				// Warning: You should not use this and recompute the translated string into caller code to get the value into expected language
+				$label = ($langs->trans("TicketCategoryShort".$obj->code) != ("TicketCategoryShort".$obj->code) ? $langs->trans("TicketCategoryShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
+				$this->cache_category_tickets[$obj->rowid]['label'] = $label;
+
 				$i++;
 			}
 			return $num;
@@ -1341,7 +1344,7 @@ class Ticket extends CommonObject
 		$label .= '<b>'.$langs->trans('TicketTrackId').':</b> '.$this->track_id.'<br>';
 		$label .= '<b>'.$langs->trans('Subject').':</b> '.$this->subject;
 
-		$url = dol_buildpath('/ticket/card.php', 1).'?id='.$this->id;
+		$url = DOL_URL_ROOT.'/ticket/card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not

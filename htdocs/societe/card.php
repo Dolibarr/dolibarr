@@ -2284,7 +2284,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
 			print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="';
 			print $object->capital != '' ? dol_escape_htmltag(price($object->capital)) : '';
-			print '"> <font class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</font></td></tr>';
+			print '"> <span class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
 
 			// Default language
 			if (!empty($conf->global->MAIN_MULTILANGS)) {
@@ -2511,7 +2511,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td>';
 			$tmpcheck = $object->check_codeclient();
 			if ($tmpcheck != 0 && $tmpcheck != -5) {
-				print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+				print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
 			}
 			print '</td>';
 			print '</tr>';
@@ -2524,7 +2524,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
 			$tmpcheck = $object->check_codefournisseur();
 			if ($tmpcheck != 0 && $tmpcheck != -5) {
-				print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+				print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
 			}
 			print '</td>';
 			print '</tr>';
@@ -2552,7 +2552,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					if ($object->id_prof_check($i, $object) > 0) {
 						print ' &nbsp; '.$object->id_prof_url($i, $object);
 					} else {
-						print ' <font class="error">('.$langs->trans("ErrorWrongValue").')</font>';
+						print ' <span class="error">('.$langs->trans("ErrorWrongValue").')</span>';
 					}
 				}
 				print '</td>';
@@ -2592,7 +2592,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 					print '<input type="hidden" name="action" value="set_localtax1">';
 					print '<input type="hidden" name="token" value="'.newToken().'">';
-					print '<tr><td>'.$langs->transcountry("Localtax1", $mysoc->country_code).' <a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
+					print '<tr><td>'.$langs->transcountry("Localtax1", $mysoc->country_code).' <a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editRE&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 					if ($action == 'editRE') {
 						print '<td class="left">';
 						$formcompany->select_localtax(1, $object->localtax1_value, "lt1");
@@ -2606,7 +2606,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 					print '<input type="hidden" name="action" value="set_localtax2">';
 					print '<input type="hidden" name="token" value="'.newToken().'">';
-					print '<tr><td>'.$langs->transcountry("Localtax2", $mysoc->country_code).'<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
+					print '<tr><td>'.$langs->transcountry("Localtax2", $mysoc->country_code).'<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 					if ($action == 'editIRPF') {
 						print '<td class="left">';
 						$formcompany->select_localtax(2, $object->localtax2_value, "lt2");
@@ -2624,7 +2624,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 					print '<input type="hidden" name="action" value="set_localtax1">';
 					print '<input type="hidden" name="token" value="'.newToken().'">';
-					print '<tr><td> '.$langs->transcountry("Localtax1", $mysoc->country_code).'<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
+					print '<tr><td> '.$langs->transcountry("Localtax1", $mysoc->country_code).'<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editRE&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 					if ($action == 'editRE') {
 						print '<td class="left">';
 						$formcompany->select_localtax(1, $object->localtax1_value, "lt1");
@@ -2642,7 +2642,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 					print '<input type="hidden" name="action" value="set_localtax2">';
 					print '<input type="hidden" name="token" value="'.newToken().'">';
-					print '<tr><td> '.$langs->transcountry("Localtax2", $mysoc->country_code).' <a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
+					print '<tr><td> '.$langs->transcountry("Localtax2", $mysoc->country_code).' <a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 					if ($action == 'editIRPF') {
 						print '<td class="left">';
 						$formcompany->select_localtax(2, $object->localtax2_value, "lt2");
@@ -2744,7 +2744,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('ThirdPartyType').'</td>';
 		if ($action != 'editthirdpartytype' && $user->rights->societe->creer) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editthirdpartytype&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editthirdpartytype&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
@@ -2787,7 +2787,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td>';
 			print '<table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans('IncotermLabel').'</td>';
 			if ($action != 'editincoterm' && $user->rights->societe->creer) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=editincoterm">'.img_edit('', 1).'</a></td>';
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit('', 1).'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td><td colspan="3">';
@@ -2851,7 +2851,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('ParentCompany').'</td>';
 			if ($action != 'editparentcompany' && $user->rights->societe->creer) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editparentcompany&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editparentcompany&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td><td>';
@@ -2923,7 +2923,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 
 				if ($user->rights->societe->creer) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>'."\n";
 				}
 
 				if (!empty($conf->adherent->enabled)) {
@@ -2942,7 +2942,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)) {	// We can't use preloaded confirm form with jmobile
 						print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
 					} else {
-						print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>'."\n";
+						print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>'."\n";
 					}
 				}
 			}

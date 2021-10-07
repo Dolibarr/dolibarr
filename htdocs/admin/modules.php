@@ -133,7 +133,7 @@ if ($action == 'install') {
 
 	// $original_file should match format module_modulename-x.y[.z].zip
 	$original_file = basename($_FILES["fileinstall"]["name"]);
-	$original_file = preg_replace('/\(\d+\)\.zip$/i', '.zip', $original_file);
+	$original_file = preg_replace('/\s*\(\d+\)\.zip$/i', '.zip', $original_file);
 	$newfile = $conf->admin->dir_temp.'/'.$original_file.'/'.$original_file;
 
 	if (!$original_file) {
@@ -878,7 +878,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 					}
 				}
 				$codeenabledisable .= '<!-- Message to show: '.$warningmessage.' -->'."\n";
-				$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=set&amp;value='.$modName.'&amp;mode='.$mode.$param.'"';
+				$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&token='.newToken().'&module_position='.$module_position.'&action=set&token='.newToken().'&value='.$modName.'&mode='.$mode.$param.'"';
 				if ($warningmessage) {
 					$codeenabledisable .= ' onclick="return confirm(\''.dol_escape_js($warningmessage).'\');"';
 				}

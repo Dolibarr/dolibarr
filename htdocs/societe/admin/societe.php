@@ -183,6 +183,20 @@ if ($action == "setaddrefinlist") {
 	}
 }
 
+//Activate Set vat in list
+if ($action == "setvatinlist") {
+	$setvatinlist = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "SOCIETE_SHOW_VAT_IN_LIST", $setvatinlist, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
 //Activate Set adress in list
 if ($action == "setaddadressinlist") {
 	$val = GETPOST('value', 'int');
@@ -391,7 +405,7 @@ foreach ($arrayofmodules as $file => $modCodeTiers) {
 		$disabled = (!empty($conf->multicompany->enabled) && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? true : false);
 		print '<td class="center">';
 		if (!$disabled) {
-			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
+			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&token='.newToken().'&value='.urlencode($file).'">';
 		}
 		print img_picto($langs->trans("Disabled"), 'switch_off');
 		if (!$disabled) {
@@ -468,7 +482,7 @@ foreach ($arrayofmodules as $file => $modCodeCompta) {
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print '</td>';
 	} else {
-		print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodecompta&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
+		print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodecompta&token='.newToken().'&value='.urlencode($file).'">';
 		print img_picto($langs->trans("Disabled"), 'switch_off');
 		print '</a></td>';
 	}
@@ -560,7 +574,7 @@ foreach ($dirsociete as $dirroot) {
 						print "<td class=\"center\">\n";
 						//if ($conf->global->COMPANY_ADDON_PDF != "$name")
 						//{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'&token='.newToken().'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&token='.newToken().'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
 							print img_picto($langs->trans("Enabled"), 'switch_on');
 							print '</a>';
 						//}
@@ -576,7 +590,7 @@ foreach ($dirsociete as $dirroot) {
 							print "</td>";
 						} else {
 							print '<td class="center">'."\n";
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&token='.newToken().'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.urlencode($name).'&token='.newToken().'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 							print "</td>";
 						}
 					}
@@ -771,6 +785,20 @@ if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST)) {
 	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
 	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&token='.newToken().'&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+}
+print '</a></td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td width="80%">'.$langs->trans("AddVatInList").'</td>';
+print '<td>&nbsp;</td>';
+print '<td class="center">';
+if (!empty($conf->global->SOCIETE_SHOW_VAT_IN_LIST)) {
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setvatinlist&token='.newToken().'&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+} else {
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setvatinlist&token='.newToken().'&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 }
 print '</a></td>';

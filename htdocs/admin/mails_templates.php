@@ -160,6 +160,7 @@ if (empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) {
 
 $tabhelp = array();
 $tabhelp[25] = array(
+	'label'=>$langs->trans('EnterAnyCode'),
 	'topic'=>'<span class="small">'.$helpsubstit.'</span>',
 	'joinfiles'=>$langs->trans('AttachMainDocByDefault'),
 	'content'=>'<span class="small">'.$helpsubstit.'</span>',
@@ -228,7 +229,7 @@ if (!empty($conf->agenda->enabled)) {
 	$elementList['actioncomm_send'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventPush'));
 }
 if (!empty($conf->eventorganization->enabled) && !empty($user->rights->eventorganization->read)) {
-	$elementList['eventorganization_send'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventOrganization'));
+	$elementList['conferenceorbooth'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventOrganization'));
 }
 if (!empty($conf->partnership->enabled) && !empty($user->rights->partnership->read)) {
 	$elementList['partnership_send'] = img_picto('', 'partnership', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToPartnership'));
@@ -683,8 +684,8 @@ if ($action == 'view') {
 
 	$tmpaction = 'create';
 	$parameters = array(
-	'fieldlist' => $fieldlist,
-	'tabname' => $tabname[$id]
+		'fieldlist' => $fieldlist,
+		'tabname' => $tabname[$id]
 	);
 	$reshook = $hookmanager->executeHooks('createEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 	$error = $hookmanager->error;
@@ -822,7 +823,7 @@ if ($resql) {
 			print '</td>';
 		} elseif ($value == 'fk_user') {
 			print '<td class="liste_titre">';
-			print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 1, '', 0, '', 'maxwidth150');
+			print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'maxwidth150');
 			print '</td>';
 		} elseif ($value == 'topic') {
 			print '<td class="liste_titre"><input type="text" name="search_topic" value="'.dol_escape_htmltag($search_topic).'"></td>';
@@ -935,7 +936,7 @@ if ($resql) {
 				print '<td class="center">';
 				print '<input type="hidden" name="page" value="'.$page.'">';
 				print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-				print '<input type="submit" class="button buttongen" name="actionmodify" value="'.$langs->trans("Modify").'">';
+				print '<input type="submit" class="button buttongen button-save" name="actionmodify" value="'.$langs->trans("Modify").'">';
 				print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
 				print '<input type="submit" class="button buttongen button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 				print '</td>';
@@ -1071,8 +1072,8 @@ if ($resql) {
 						if ($showfield) {
 							print '<!-- '.$fieldlist[$field].' -->';
 							print '<td class="'.$class.'"';
-							if ($value == 'topic') {
-								print ' title="'.$valuetoshow.'"';
+							if (in_array($value, array('code', 'label', 'topic'))) {
+								print ' title="'.dol_escape_htmltag($valuetoshow).'"';
 							}
 							print '>';
 							print $valuetoshow;
@@ -1187,7 +1188,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 		if ($value == 'fk_user') {
 			print '<td>';
 			if ($user->admin) {
-				print $form->select_dolusers(empty($obj->{$value}) ? '' : $obj->{$value}, 'fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 1, '', 0, '', 'maxwidth200');
+				print $form->select_dolusers(empty($obj->{$value}) ? '' : $obj->{$value}, 'fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'minwidth150 maxwidth300');
 			} else {
 				if ($context == 'add') {	// I am not admin and we show the add form
 					print $user->getNomUrl(1); // Me

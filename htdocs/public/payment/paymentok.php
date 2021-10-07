@@ -1037,7 +1037,7 @@ if ($ispaymentok) {
 		}
 
 		// TODO send email with acknowledgment for the donation
-		//      (need that the donation module can gen a pdf document for the cerfa with pre filled content)
+		//      (we need first that the donation module is able to generate a pdf document for the cerfa with pre filled content)
 	} elseif (array_key_exists('ATT', $tmptag) && $tmptag['ATT'] > 0) {
 		// Record payment for registration to an event for an attendee
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -1445,6 +1445,7 @@ if ($ispaymentok) {
 
 	$key = 'ONLINE_PAYMENT_MESSAGE_OK';
 	if (!empty($conf->global->$key)) {
+		print '<br>';
 		print $conf->global->$key;
 	}
 
@@ -1505,12 +1506,12 @@ if ($ispaymentok) {
 		$content .= $companylangs->transnoentities("PostActionAfterPayment").' : ';
 		if ($ispostactionok > 0) {
 			//$topic.=' ('.$companylangs->transnoentitiesnoconv("Status").' '.$companylangs->transnoentitiesnoconv("OK").')';
-			$content .= '<font color="green">'.$companylangs->transnoentitiesnoconv("OK").'</font>';
+			$content .= '<span style="color: green">'.$companylangs->transnoentitiesnoconv("OK").'</span>';
 		} elseif ($ispostactionok == 0) {
 			$content .= $companylangs->transnoentitiesnoconv("None");
 		} else {
 			$topic .= ($ispostactionok ? '' : ' ('.$companylangs->trans("WarningPostActionErrorAfterPayment").')');
-			$content .= '<font color="red">'.$companylangs->transnoentitiesnoconv("Error").'</font>';
+			$content .= '<span style="color: red">'.$companylangs->transnoentitiesnoconv("Error").'</span>';
 		}
 		$content .= '<br>'."\n";
 		foreach ($postactionmessages as $postactionmessage) {
@@ -1629,7 +1630,7 @@ if ($ispaymentok) {
 		$urlback = $_SERVER["REQUEST_URI"];
 		$topic = '['.$appli.'] '.$companylangs->transnoentitiesnoconv("ValidationOfPaymentFailed");
 		$content = "";
-		$content .= '<font color="orange">'.$companylangs->transnoentitiesnoconv("PaymentSystemConfirmPaymentPageWasCalledButFailed")."</font>\n";
+		$content .= '<span style="color: orange">'.$companylangs->transnoentitiesnoconv("PaymentSystemConfirmPaymentPageWasCalledButFailed")."</span>\n";
 
 		$content .= "<br><br>\n";
 		$content .= '<u>'.$companylangs->transnoentitiesnoconv("TechnicalInformation").":</u><br>\n";

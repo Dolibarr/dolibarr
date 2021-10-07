@@ -41,7 +41,7 @@ global $dolibarr_main_url_root;
 //dol_include_once('/othermodule/class/otherobject.class.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array("eventorganization", "other", "projects"));
+$langs->loadLangs(array("eventorganization", "other", "projects", "companies"));
 
 $action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
@@ -55,6 +55,7 @@ $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always ''
 
 $id = GETPOST('id', 'int');
 $projectid = GETPOST('projectid', 'int');
+$projectref = GETPOST('ref');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -152,12 +153,12 @@ if (!$permissiontoread) accessforbidden();
  * Actions
  */
 
-if (preg_match('/^set/', $action) && $projectid > 0) {
+if (preg_match('/^set/', $action) && ($projectid > 0 || $projectref) && !empty($user->rights->eventorganization->write)) {
 	$project = new Project($db);
 	//If "set" fields keys is in projects fields
 	$project_attr=preg_replace('/^set/', '', $action);
 	if (array_key_exists($project_attr, $project->fields)) {
-		$result = $project->fetch($projectid);
+		$result = $project->fetch($projectid, $projectref);
 		if ($result < 0) {
 			setEventMessages(null, $project->errors, 'errors');
 		} else {
@@ -234,11 +235,13 @@ $now = dol_now();
 $help_url = '';
 $title = $langs->trans('ListOfConferencesOrBooths');
 
-if ($projectid > 0) {
+if ($projectid > 0 || $projectref) {
 	$project = new Project($db);
-	$result = $project->fetch($projectid);
+	$result = $project->fetch($projectid, $projectref);
 	if ($result < 0) {
 		setEventMessages(null, $project->errors, 'errors');
+	} else {
+		$projectid = $project->id;
 	}
 	$result = $project->fetch_thirdparty();
 	if ($result < 0) {
@@ -430,8 +433,8 @@ if ($projectid > 0) {
 	print $form->textwithpicto($langs->trans("SuggestOrVoteForConfOrBooth"), $langs->trans("EvntOrgRegistrationHelpMessage"));
 	//print '</span>';
 	print '</td><td>';
-	$linksuggest = $dolibarr_main_url_root.'/public/project/index.php?id='.$project->id;
-	$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$project->id, 'md5');
+	$linksuggest = $dolibarr_main_url_root.'/public/project/index.php?id='.((int) $project->id);
+	$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.((int) $project->id), 'md5');
 	$linksuggest .= '&securekey='.urlencode($encodedsecurekey);
 	//print '<div class="urllink">';
 	//print '<input type="text" value="'.$linksuggest.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
@@ -447,8 +450,8 @@ if ($projectid > 0) {
 	print $langs->trans("PublicAttendeeSubscriptionGlobalPage");
 	//print '</span>';
 	print '</td><td>';
-	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_registration.php?id='.$project->id.'&type=global';
-	$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$project->id, 'md5');
+	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_register.php?id='.((int) $project->id).'&type=global';
+	$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.((int) $project->id), 'md5');
 	$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 	//print '<div class="urllink">';
 	//print '<input type="text" value="'.$linkregister.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
@@ -582,7 +585,7 @@ if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit
 if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
-	header("Location: ".dol_buildpath('/eventorganization/conferenceorbooth_card.php', 1).'?id='.$id);
+	header("Location: ".DOL_URL_ROOT.'/eventorganization/conferenceorbooth_card.php?id='.((int) $id));
 	exit;
 }
 
@@ -640,6 +643,7 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="page_y" value="">';
 
 $title = $langs->trans("ListOfConferencesOrBooths");
 

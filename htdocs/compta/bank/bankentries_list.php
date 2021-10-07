@@ -889,7 +889,7 @@ if ($resql) {
 			print '</td>';
 		}*/
 		print '<td class="center">';
-		print '<input type="submit" name="save" class="button buttongen marginbottomonly" value="'.$langs->trans("Add").'"><br>';
+		print '<input type="submit" name="save" class="button buttongen marginbottomonly button-add" value="'.$langs->trans("Add").'"><br>';
 		print '<input type="submit" name="cancel" class="button buttongen marginbottomonly button-cancel" value="'.$langs->trans("Cancel").'">';
 		print '</td></tr>';
 
@@ -932,10 +932,10 @@ if ($resql) {
 				$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.urlencode($search_account).'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.urlencode($search_account)), '', $user->rights->banque->modifier);
 			} else // If direct entries is not done using miscellaneous payments
 			{
-				$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param, '', $user->rights->banque->modifier);
+				$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=addline&token='.newToken().'&page='.$page.$param, '', $user->rights->banque->modifier);
 			}
 		} else {
-			$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param, '', -1);
+			$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=addline&token='.newToken().'&page='.$page.$param, '', -1);
 		}
 	}
 
@@ -1683,7 +1683,7 @@ if ($resql) {
 				}
 			}
 			if ($user->rights->banque->modifier) {
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;token='.newToken().'&amp;rowid='.$objp->rowid.'&amp;id='.$objp->bankid.'&amp;page='.$page.'">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&rowid='.$objp->rowid.'&id='.$objp->bankid.'&page='.$page.'">';
 				print img_delete('', 'class="marginleftonly"');
 				print '</a>';
 			}

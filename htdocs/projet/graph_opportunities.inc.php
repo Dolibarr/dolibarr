@@ -83,6 +83,9 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 			$code = dol_getIdFromCode($db, $status, 'c_lead_status', 'rowid', 'code');
 			if ($code) {
 				$labelStatus = $langs->transnoentitiesnoconv("OppStatus".$code);
+				if ($code == 'WON' || $code == 'LOST') {
+					$labelStatus = $langs->transnoentitiesnoconv("OppStatus".$code).' ('.$langs->transnoentitiesnoconv("NotClosedYet").")";
+				}
 			}
 			if (empty($labelStatus)) {
 				$labelStatus = $listofopplabel[$status];

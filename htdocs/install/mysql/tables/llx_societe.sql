@@ -99,9 +99,9 @@ create table llx_societe
   fk_shipping_method       integer,                                     -- preferred shipping method id
   tva_assuj                tinyint        DEFAULT 1,	        		-- assujeti ou non a la TVA
   localtax1_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 1
-  localtax1_value 		   double(6,3),
+  localtax1_value 		   double(7,4),
   localtax2_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 2
-  localtax2_value 		   double(6,3),
+  localtax2_value 		   double(7,4),
   barcode                  varchar(180),                        		-- barcode
   fk_barcode_type          integer NULL   DEFAULT 0,                    -- barcode type
   price_level              integer NULL,                        		-- level of price for multiprices

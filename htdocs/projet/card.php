@@ -926,8 +926,8 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			print '<td>';
 			print $formproject->selectOpportunityStatus('opp_status', $object->opp_status, 1, 0, 0, 0, 'inline-block valignmiddle', 0, 1);
 			print '<div id="divtocloseproject" class="inline-block valign" style="display: none;"> &nbsp; &nbsp; ';
-			print '<input type="checkbox" id="inputcloseproject" name="closeproject" /> ';
-			print $langs->trans("AlsoCloseAProject");
+			print '<input type="checkbox" id="inputcloseproject" name="closeproject" />';
+			print '<label for="inputcloseproject">'.$langs->trans("AlsoCloseAProject").'</label>';
 			print '</div>';
 			print '</td>';
 			print '</tr>';
@@ -948,11 +948,11 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		// Date start
 		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
 		print $form->selectDate($object->date_start ? $object->date_start : -1, 'projectstart', 0, 0, 0, '', 1, 0);
-		print ' &nbsp; &nbsp; <input type="checkbox" class="valignmiddle" name="reportdate" value="yes" ';
+		print ' &nbsp; &nbsp; <input type="checkbox" class="valignmiddle" id="reportdate" name="reportdate" value="yes" ';
 		if ($comefromclone) {
 			print ' checked ';
 		}
-		print '/> '.$langs->trans("ProjectReportDate");
+		print '/><label for="reportdate">'.$langs->trans("ProjectReportDate").'</label>';
 		print '</td></tr>';
 
 		// Date end
@@ -1254,7 +1254,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			// Modify
 			if ($object->statut != Project::STATUS_CLOSED && $user->rights->projet->creer) {
 				if ($userWrite > 0) {
-					print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+					print '<a class="butAction" href="card.php?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Modify').'</a>';
 				}
@@ -1263,7 +1263,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			// Validate
 			if ($object->statut == Project::STATUS_DRAFT && $user->rights->projet->creer) {
 				if ($userWrite > 0) {
-					print '<a class="butAction" href="card.php?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
+					print '<a class="butAction" href="card.php?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans("Validate").'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Validate').'</a>';
 				}
@@ -1281,7 +1281,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			// Reopen
 			if ($object->statut == Project::STATUS_CLOSED && $user->rights->projet->creer) {
 				if ($userWrite > 0) {
-					print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+					print '<a class="butAction" href="card.php?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("ReOpen").'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ReOpen').'</a>';
 				}
@@ -1343,7 +1343,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			// Delete
 			if ($user->rights->projet->supprimer || ($object->statut == Project::STATUS_DRAFT && $user->rights->projet->creer)) {
 				if ($userDelete > 0 || ($object->statut == Project::STATUS_DRAFT && $user->rights->projet->creer)) {
-					print '<a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a>';
+					print '<a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Delete').'</a>';
 				}

@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004		Sebastien Di Cintio	<sdicintio@ressource-toi.org>
- * Copyright (C) 2004		Benoit Mortier		<benoit.mortier@opensides.be>
- * Copyright (C) 2005-2017	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2006-2020	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2011-2013	Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2006-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2013  Juanjo Menent           <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,7 +131,7 @@ if (!function_exists("ldap_connect")) {
 $form = new Form($db);
 
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print dol_get_fiche_head($head, 'ldap', $langs->trans("LDAPSetup"), -1);
@@ -153,7 +153,7 @@ $arraylist['dolibarr2ldap'] = $langs->trans("DolibarrToLDAP");
 print $form->selectarray('activesynchro', $arraylist, $conf->global->LDAP_SYNCHRO_ACTIVE);
 print '</td><td><span class="opacitymedium">'.$langs->trans("LDAPDnSynchroActiveExample").'</span>';
 if ($conf->global->LDAP_SYNCHRO_ACTIVE && !$conf->global->LDAP_USER_DN) {
-	print '<br><font class="error">'.$langs->trans("LDAPSetupNotComplete").'</font>';
+	print '<br><span class="error">'.$langs->trans("LDAPSetupNotComplete").'</span>';
 }
 print '</td></tr>';
 
@@ -297,24 +297,24 @@ if (function_exists("ldap_connect")) {
 		if ($result > 0) {
 			// Test ldap connect and bind
 			print img_picto('', 'info').' ';
-			print '<font class="ok">'.$langs->trans("LDAPTCPConnectOK", $conf->global->LDAP_SERVER_HOST, $conf->global->LDAP_SERVER_PORT).'</font>';
+			print '<span class="ok">'.$langs->trans("LDAPTCPConnectOK", $conf->global->LDAP_SERVER_HOST, $conf->global->LDAP_SERVER_PORT).'</span>';
 			print '<br>';
 
 			if ($conf->global->LDAP_ADMIN_DN && !empty($conf->global->LDAP_ADMIN_PASS)) {
 				if ($result == 2) {
 					print img_picto('', 'info').' ';
-					print '<font class="ok">'.$langs->trans("LDAPBindOK", $conf->global->LDAP_SERVER_HOST, $conf->global->LDAP_SERVER_PORT, $conf->global->LDAP_ADMIN_DN, preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)).'</font>';
+					print '<span class="ok">'.$langs->trans("LDAPBindOK", $conf->global->LDAP_SERVER_HOST, $conf->global->LDAP_SERVER_PORT, $conf->global->LDAP_ADMIN_DN, preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)).'</span>';
 					print '<br>';
 				} else {
 					print img_picto('', 'error').' ';
-					print '<font class="error">'.$langs->trans("LDAPBindKO", $conf->global->LDAP_SERVER_HOST, $conf->global->LDAP_SERVER_PORT, $conf->global->LDAP_ADMIN_DN, preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)).'</font>';
+					print '<span class="error">'.$langs->trans("LDAPBindKO", $conf->global->LDAP_SERVER_HOST, $conf->global->LDAP_SERVER_PORT, $conf->global->LDAP_ADMIN_DN, preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)).'</span>';
 					print '<br>';
 					print $langs->trans("Error").' '.$ldap->error;
 					print '<br>';
 				}
 			} else {
 				print img_picto('', 'warning').' ';
-				print '<font class="warning">'.$langs->trans("LDAPNoUserOrPasswordProvidedAccessIsReadOnly").'</font>';
+				print '<span class="warning">'.$langs->trans("LDAPNoUserOrPasswordProvidedAccessIsReadOnly").'</span>';
 				print '<br>';
 			}
 
@@ -322,18 +322,18 @@ if (function_exists("ldap_connect")) {
 			// Test ldap_getversion
 			if (($ldap->getVersion() == 3)) {
 				print img_picto('', 'info').' ';
-				print '<font class="ok">'.$langs->trans("LDAPSetupForVersion3").'</font>';
+				print '<span class="ok">'.$langs->trans("LDAPSetupForVersion3").'</span>';
 				print '<br>';
 			} else {
 				print img_picto('', 'info').' ';
-				print '<font class="ok">'.$langs->trans("LDAPSetupForVersion2").'</font>';
+				print '<span class="ok">'.$langs->trans("LDAPSetupForVersion2").'</span>';
 				print '<br>';
 			}
 
 			$unbind = $ldap->unbind();
 		} else {
 			print img_picto('', 'error').' ';
-			print '<font class="error">'.$langs->trans("LDAPTCPConnectKO", $conf->global->LDAP_SERVER_HOST, $conf->global->LDAP_SERVER_PORT).'</font>';
+			print '<span class="error">'.$langs->trans("LDAPTCPConnectKO", $conf->global->LDAP_SERVER_HOST, $conf->global->LDAP_SERVER_PORT).'</span>';
 			print '<br>';
 			print $langs->trans("Error").' '.$ldap->error;
 			print '<br>';

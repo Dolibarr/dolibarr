@@ -2668,7 +2668,7 @@ if (!GETPOST('hide_websitemenu')) {
 			print ' &nbsp; ';
 
 			//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
-			print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editcss" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "Properties" : "EditCss")).'</a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editcss&token='.newToken().'" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "Properties" : "EditCss")).'</a>';
 
 			$importlabel = $langs->trans("ImportSite");
 			$exportlabel = $langs->trans("ExportSite");
@@ -2964,10 +2964,10 @@ if (!GETPOST('hide_websitemenu')) {
 				print ' &nbsp; ';
 
 				//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editmeta" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "Properties" : "EditPageMeta")).'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editmeta&token='.newToken().'" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "Properties" : "EditPageMeta")).'</a>';
 
 				//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditHTMLSource")).'" name="editsource">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editsource" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "HTML" : "EditHTMLSource")).'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editsource&token='.newToken().'" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "HTML" : "EditHTMLSource")).'</a>';
 
 				print '<!-- button EditInLine and ShowSubcontainers -->'."\n";
 				print '<div class="websiteselectionsection inline-block">';
@@ -3123,7 +3123,7 @@ if (!GETPOST('hide_websitemenu')) {
 		print '</span>'; // end websitetools
 
 		print '<span class="websitehelp">';
-		if (GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha')) {
+		if ($action == 'editsource' || $action == 'editcontent' || GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha')) {
 			$url = 'https://wiki.dolibarr.org/index.php/Module_Website';
 
 			$htmltext = $langs->transnoentitiesnoconv("YouCanEditHtmlSource", $url);
@@ -3825,7 +3825,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print '</td><td>';
 	if ($action != 'createcontainer') {
 		// Has translation pages
-		$sql = 'SELECT rowid, lang from '.MAIN_DB_PREFIX.'website_page where fk_page = '.((int) $objectpage->id);
+		$sql = "SELECT rowid, lang from ".MAIN_DB_PREFIX."website_page where fk_page = ".((int) $objectpage->id);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num_rows = $db->num_rows($resql);
@@ -4341,7 +4341,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					// Edit properties, HTML sources, status
 					print '<td class="tdwebsitesearchresult right nowraponall">';
 					$disabled = '';
-					$urltoedithtmlsource = $_SERVER["PHP_SELF"].'?action=editmeta&websiteid='.$website->id.'&pageid='.$answerrecord->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].$param);
+					$urltoedithtmlsource = $_SERVER["PHP_SELF"].'?action=editmeta&token='.newToken().'&websiteid='.$website->id.'&pageid='.$answerrecord->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].$param);
 					if (empty($user->rights->website->write)) {
 						$disabled = ' disabled';
 						$urltoedithtmlsource = '';
@@ -4349,7 +4349,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '<a class="editfielda marginleftonly marginrightonly '.$disabled.'" href="'.$urltoedithtmlsource.'" title="'.$langs->trans("EditPageMeta").'">'.img_picto($langs->trans("EditPageMeta"), 'pencil-ruler').'</a>';
 
 					$disabled = '';
-					$urltoedithtmlsource = $_SERVER["PHP_SELF"].'?action=editsource&websiteid='.$website->id.'&pageid='.$answerrecord->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].$param);
+					$urltoedithtmlsource = $_SERVER["PHP_SELF"].'?action=editsource&token='.newToken().'&websiteid='.$website->id.'&pageid='.$answerrecord->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].$param);
 					if (empty($user->rights->website->write)) {
 						$disabled = ' disabled';
 						$urltoedithtmlsource = '';
@@ -4408,7 +4408,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					// Container url and label
 					print '<td>';
 					$backtopageurl = $_SERVER["PHP_SELF"].$param;
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcss&website='.$website->ref.'&backtopage='.urlencode($backtopageurl).'">'.$langs->trans("EditCss").'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcss&token='.newToken().'&website='.$website->ref.'&backtopage='.urlencode($backtopageurl).'">'.$langs->trans("EditCss").'</a>';
 					print '</td>';
 
 					// Language

@@ -735,13 +735,14 @@ class ActionComm extends CommonObject
 	/**
 	 *  Load object from database
 	 *
-	 *  @param  int		$id     		Id of action to get
-	 *  @param  string	$ref    		Ref of action to get
-	 *  @param  string	$ref_ext		Ref ext to get
-	 *  @param	string	$email_msgid	Email msgid
-	 *  @return	int						<0 if KO, >0 if OK
+	 *  @param  int		$id     			Id of action to get
+	 *  @param  string	$ref    			Ref of action to get
+	 *  @param  string	$ref_ext			Ref ext to get
+	 *  @param	string	$email_msgid		Email msgid
+	 *  @param	string	$loadresources		1=Load also resources
+	 *  @return	int							<0 if KO, >0 if OK
 	 */
-	public function fetch($id, $ref = '', $ref_ext = '', $email_msgid = '')
+	public function fetch($id, $ref = '', $ref_ext = '', $email_msgid = '', $loadresources = 1)
 	{
 		global $langs;
 
@@ -858,8 +859,13 @@ class ActionComm extends CommonObject
 				$this->event_paid = $obj->event_paid;
 				$this->status = $obj->status;
 
-				$this->fetchResources();
+				$this->fetch_optionals();
+
+				if ($loadresources) {
+					$this->fetchResources();
+				}
 			}
+
 			$this->db->free($resql);
 		} else {
 			$this->error = $this->db->lasterror();
@@ -1240,7 +1246,6 @@ class ActionComm extends CommonObject
 	 *  Load all objects with filters.
 	 *  @todo WARNING: This make a fetch on all records instead of making one request with a join.
 	 *
-	 *  @param		DoliDb	$db				Not used
 	 *  @param		int		$socid			Filter by thirdparty
 	 *  @param		int		$fk_element		Id of element action is linked to
 	 *  @param		string	$elementtype	Type of element action is linked to
@@ -1250,7 +1255,7 @@ class ActionComm extends CommonObject
 	 *  @param		string	$limit			Limit number of answers
 	 *  @return		array|string			Error string if KO, array with actions if OK
 	 */
-	public static function getActions($db, $socid = 0, $fk_element = 0, $elementtype = '', $filter = '', $sortfield = 'a.datep', $sortorder = 'DESC', $limit = 0)
+	public function getActions($socid = 0, $fk_element = 0, $elementtype = '', $filter = '', $sortfield = 'a.datep', $sortorder = 'DESC', $limit = 0)
 	{
 		global $conf, $langs;
 
@@ -1272,33 +1277,33 @@ class ActionComm extends CommonObject
 				$sql .= " (SELECT fk_actioncomm FROM ".MAIN_DB_PREFIX."actioncomm_resources WHERE";
 				$sql .= " element_type = 'socpeople' AND fk_element = ".((int) $fk_element).')';
 			} else {
-				$sql .= " AND a.fk_element = ".((int) $fk_element)." AND a.elementtype = '".$db->escape($elementtype)."'";
+				$sql .= " AND a.fk_element = ".((int) $fk_element)." AND a.elementtype = '".$this->db->escape($elementtype)."'";
 			}
 		}
 		if (!empty($filter)) {
 			$sql .= $filter;
 		}
 		if ($sortorder && $sortfield) {
-			$sql .= $db->order($sortfield, $sortorder);
+			$sql .= $this->db->order($sortfield, $sortorder);
 		}
-		$sql .= $db->plimit($limit, 0);
+		$sql .= $this->db->plimit($limit, 0);
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql) {
-			$num = $db->num_rows($resql);
+			$num = $this->db->num_rows($resql);
 
 			if ($num) {
 				for ($i = 0; $i < $num; $i++) {
-					$obj = $db->fetch_object($resql);
-					$actioncommstatic = new ActionComm($db);
+					$obj = $this->db->fetch_object($resql);
+					$actioncommstatic = new ActionComm($this->db);
 					$actioncommstatic->fetch($obj->id);
 					$resarray[$i] = $actioncommstatic;
 				}
 			}
-			$db->free($resql);
+			$this->db->free($resql);
 			return $resarray;
 		} else {
-			return $db->lasterror();
+			return $this->db->lasterror();
 		}
 	}
 

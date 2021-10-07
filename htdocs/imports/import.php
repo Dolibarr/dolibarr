@@ -1205,7 +1205,7 @@ if ($step == 4 && $datatoimport) {
 		//                    async: false
 		//        });'."\n";
 		// Now reload page
-		print 'var newlocation= \''.$_SERVER["PHP_SELF"].'?step=4'.$param.'&action=saveorder&boxorder=\' + boxorder;'."\n";
+		print 'var newlocation= \''.$_SERVER["PHP_SELF"].'?step=4'.$param.'&action=saveorder&token='.newToken().'&boxorder=\' + boxorder;'."\n";
 		//print 'alert(newlocation);';
 		print 'window.location.href=newlocation;'."\n";
 		print '}'."\n";

@@ -99,6 +99,10 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		$perm = 1;
 	} elseif ($table_element_line == 'ecm_files' && $fk_element == 'fk_ticket' && !empty($user->rights->ticket->write)) {
 		$perm = 1;
+	} elseif ($table_element_line == 'product_association' && $fk_element == 'fk_product' && !empty($user->rights->produit->creer)) {
+		$perm = 1;
+	} elseif ($table_element_line == 'projet_task' && $fk_element == 'fk_projet' && $user->rights->projet->creer) {
+		$perm = 1;
 	} else {
 		$tmparray = explode('_', $table_element_line);
 		$tmpmodule = $tmparray[0]; $tmpobject = preg_replace('/line$/', '', $tmparray[1]);
@@ -111,7 +115,7 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		// We should not be here. If we are not allowed to reorder rows, feature should not be visible on script.
 		// If we are here, it is a hack attempt, so we report a warning.
 		print 'Bad permission to modify position of lines for object in table '.$table_element_line;
-		dol_syslog('Bad permission to modify position of lines for object in table '.$table_element_line.', fk_element '.$fk_element, LOG_WARNING);
+		dol_syslog('Bad permission to modify position of lines for object in table='.$table_element_line.', fk_element='.$fk_element, LOG_WARNING);
 		accessforbidden('Bad permission to modify position of lines for object in table '.$table_element_line);
 	}
 

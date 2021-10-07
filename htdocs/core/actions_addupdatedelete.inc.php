@@ -87,7 +87,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			$value = $tmparraykey[GETPOST($key)].','.GETPOST($key.'2');
 		} else {
 			if ($key == 'lang') {
-				$value = GETPOST($key, 'aZ09');
+				$value = GETPOST($key, 'aZ09')?GETPOST($key, 'aZ09'):"";
 			} else {
 				$value = GETPOST($key, 'alphanohtml');
 			}
@@ -131,6 +131,10 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		$result = $object->create($user);
 		if ($result > 0) {
 			// Creation OK
+			if ($conf->categorie->enabled && method_exists($object, 'setCategories')) {
+				$categories = GETPOST('categories', 'array:int');
+				$object->setCategories($categories);
+			}
 			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
 			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
 			header("Location: ".$urltogo);
@@ -229,6 +233,13 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 				}
 			}
 		}
+
+		if ($conf->categorie->enabled) {
+			$categories = GETPOST('categories', 'array');
+			if (method_exists($object, 'setCategories')) {
+				$object->setCategories($categories);
+			}
+		}
 	}
 
 	// Fill array 'array_options' with data from add form
@@ -286,6 +297,7 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 	}
 
 	$result = $object->delete($user);
+
 	if ($result > 0) {
 		// Delete OK
 		setEventMessages("RecordDeleted", null, 'mesgs');

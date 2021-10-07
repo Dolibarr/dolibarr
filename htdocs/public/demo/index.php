@@ -281,7 +281,7 @@ print '</div>';
 print '<div class="demobantext" style="max-width: 1024px;">';
 print '<div style="font-size: 20px; padding: 40px;">';
 print '<div class="hideonsmartphone" style="text-align: justify;">'.$langs->trans("DemoDesc").'</div><br>';
-print '<div class="titre"><font style="font-size: 20px">'.$langs->trans("ChooseYourDemoProfil").'</font></div>';
+print '<div class="titre"><span style="font-size: 20px">'.$langs->trans("ChooseYourDemoProfil").'</span></div>';
 print '</div>';
 print '</div>';
 
