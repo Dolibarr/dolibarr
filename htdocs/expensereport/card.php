@@ -117,6 +117,8 @@ $permissiontoadd = $user->rights->expensereport->creer; // Used by the include o
 
 $upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
+$projectRequired = $conf->projet->enabled && ! empty($conf->global->EXPENSEREPORT_PROJECT_IS_REQUIRED);
+
 if ($object->id > 0) {
 	// Check current user can read this expense report
 	$canread = 0;
@@ -277,10 +279,14 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error && empty($conf->global->EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS) && $object->periode_existe($fuser, $object->date_debut, $object->date_fin)) {
-			$error++;
-			setEventMessages($langs->trans("ErrorDoubleDeclaration"), null, 'errors');
-			$action = 'create';
+		if (!$error && empty($conf->global->EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS)) {
+			$overlappingExpenseReportID = $object->periode_existe($fuser, $object->date_debut, $object->date_fin, true);
+
+			if ($overlappingExpenseReportID > 0) {
+				$error++;
+				setEventMessages($langs->trans("ErrorDoubleDeclaration").' <a href="'.$_SERVER['PHP_SELF'].'?id='.$overlappingExpenseReportID.'">'. $langs->trans('ShowTrip').'</a>', null, 'errors');
+				$action = 'create';
+			}
 		}
 
 		if (!$error) {
@@ -1143,6 +1149,12 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PriceUTTC")), null, 'errors');
 		}
 
+		// If no project entered
+		if ($projectRequired && $fk_project <= 0) {
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Project")), null, 'errors');
+		}
+
 		if (!$error) {
 			$type = 0; // TODO What if service ? We should take the type product/service from the type of expense report llx_c_type_fees
 
@@ -1274,6 +1286,12 @@ if (empty($reshook)) {
 		if ($date < $object->date_debut || $date > ($object->date_fin + (24 * 3600 - 1))) {
 			$langs->load("errors");
 			setEventMessages($langs->trans("WarningDateOfLineMustBeInExpenseReportRange"), null, 'warnings');
+		}
+
+		// If no project entered
+		if ($projectRequired && $projet_id <= 0) {
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Project")), null, 'errors');
 		}
 
 		if (!$error) {
@@ -2088,7 +2106,7 @@ if ($action == 'create') {
 						} else {
 							$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $line->vatrate));
 							$pricenettoshow = price2num($line->value_unit / (1 + $tmpvat / 100), 'MU');
-							print $pricenettoshow;
+							print price($pricenettoshow);
 						}
 						print '</td>';
 
@@ -2265,7 +2283,7 @@ if ($action == 'create') {
 						// Select project
 						if (!empty($conf->projet->enabled)) {
 							print '<td>';
-							$formproject->select_projects(-1, $line->fk_project, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
+							$formproject->select_projects(-1, $line->fk_project, 'fk_project', 0, 0, $projectRequired ? 0 : 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 							print '</td>';
 						}
 
@@ -2441,7 +2459,7 @@ if ($action == 'create') {
 					// Select project
 				if (!empty($conf->projet->enabled)) {
 					print '<td>';
-					$formproject->select_projects(-1, $fk_project, 'fk_project', 0, 0, 1, -1, 0, 0, 0, '', 0, 0, 'maxwidth300');
+					$formproject->select_projects(-1, $fk_project, 'fk_project', 0, 0, $projectRequired ? 0 : 1, -1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 					print '</td>';
 				}
 
