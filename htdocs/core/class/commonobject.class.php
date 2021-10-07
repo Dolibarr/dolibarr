@@ -5324,7 +5324,7 @@ abstract class CommonObject
 								$ecmfile->gen_or_uploaded = 'generated';
 								$ecmfile->description = ''; // indexed content
 								$ecmfile->keywords = ''; // keyword content
-								$ecmfile->src_object_type = $this->table_element.(empty($this->module) ? '' : '@'.$this->module);
+								$ecmfile->src_object_type = $this->table_element;	// $this->table_name is 'myobject' or 'mymodule_myobject'.
 								$ecmfile->src_object_id   = $this->id;
 
 								$result = $ecmfile->create($user);

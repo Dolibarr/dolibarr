@@ -152,7 +152,7 @@ if ($resql) {
 	while ($i < $num) {
 		$objp = $db->fetch_object($resql);
 		$listofoppstatus[$objp->rowid] = $objp->percent;
-		$listofopplabel[$objp->rowid] = $objp->label;
+		$listofopplabel[$objp->rowid] = $objp->label;		// default label if translation from "OppStatus".code not found.
 		$listofoppcode[$objp->rowid] = $objp->code;
 		switch ($objp->code) {
 			case 'PROSP':

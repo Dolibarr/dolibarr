@@ -145,9 +145,9 @@ if ($action == 'updateMask') {
 	$draft = GETPOST('EXPENSEREPORT_DRAFT_WATERMARK', 'alpha');
 	$res2 = dolibarr_set_const($db, "EXPENSEREPORT_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
 
-  $res3 = 0;
-  if (!empty($conf->projet->enabled) && GETPOSTISSET('EXPENSEREPORT_PROJECT_IS_REQUIRED')) {  // Option may not be provided
-    $res3 = dolibarr_set_const($db, 'EXPENSEREPORT_PROJECT_IS_REQUIRED', GETPOST('EXPENSEREPORT_PROJECT_IS_REQUIRED', 'int'), 'chaine', 0, '', $conf->entity);
+	$res3 = 0;
+	if (!empty($conf->projet->enabled) && GETPOSTISSET('EXPENSEREPORT_PROJECT_IS_REQUIRED')) {  // Option may not be provided
+		$res3 = dolibarr_set_const($db, 'EXPENSEREPORT_PROJECT_IS_REQUIRED', GETPOST('EXPENSEREPORT_PROJECT_IS_REQUIRED', 'int'), 'chaine', 0, '', $conf->entity);
 	}
 
 	$dates = GETPOST('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', 'int');
@@ -156,7 +156,7 @@ if ($action == 'updateMask') {
 	$amounts = GETPOST('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', 'int');
 	$res5 = dolibarr_set_const($db, 'EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', intval($amounts), 'chaine', 0, '', $conf->entity);
 
-	if (!($res1 > 0) || !($res2 > 0) || !($res3 > 0) || !($res4 >0) || !($res5 >0)) {
+	if (!($res1 > 0) || !($res2 > 0) || !($res3 >= 0) || !($res4 >0) || !($res5 >0)) {
 		$error++;
 	}
 
