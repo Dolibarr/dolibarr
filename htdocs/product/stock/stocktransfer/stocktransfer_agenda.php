@@ -89,7 +89,7 @@ if ($id > 0 || !empty($ref)) $upload_dir = $conf->stocktransfer->multidir_output
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'stocktransfer', $object->id);
+$result = restrictedArea($user, 'stocktransfer', $object->id, '', 'stocktransfer');
 
 $permissiontoadd = $user->rights->stocktransfer->stocktransfer->write; // Used by the include of actions_addupdatedelete.inc.php
 

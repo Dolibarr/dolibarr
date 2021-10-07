@@ -158,7 +158,7 @@ if ($user->socid > 0) {	// Protection if external user
 	accessforbidden();
 }
 //$result = restrictedArea($user, 'stocktransfer', $id, '');
-//if (!$permissiontoread) accessforbidden();
+if (!$permissiontoread) accessforbidden();
 
 
 
