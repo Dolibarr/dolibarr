@@ -217,7 +217,7 @@ class SkillRank extends CommonObject
 	{
 		global $langs;
 
-		$sqlfilter = 'fk_object='.((int)$this->fk_object)." AND objecttype='".$this->db->escape($this->objecttype)."' AND fk_skill = ".((int) $this->fk_skill);
+		$sqlfilter = 'fk_object='.((int) $this->fk_object)." AND objecttype='".$this->db->escape($this->objecttype)."' AND fk_skill = ".((int) $this->fk_skill);
 		$alreadyLinked = $this->fetchAll('ASC', 'rowid', 0, 0, array('customsql' => $sqlfilter));
 		if (!empty($alreadyLinked)) {
 			$this->error = $langs->trans('ErrSkillAlreadyAdded');
