@@ -984,7 +984,7 @@ if (empty($reshook))
 								if (!in_array($lines[$i]->id, $selectedLines)) {
 									continue; // Skip unselected lines
 								}
-								
+
 								$desc = ($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
 								$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
 
