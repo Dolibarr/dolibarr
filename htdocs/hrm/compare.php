@@ -489,9 +489,9 @@ function getSkillForUsers($TUser)
 		$num = 0;
 		while ($obj = $db->fetch_object($resql) ) {
 			$sql1 = "SELECT count(*) as how_many_max FROM ".MAIN_DB_PREFIX."hrm_skillrank sr";
-			$sql1.=" WHERE sr.rank = ".(int) $obj->rank;
+			$sql1.=" WHERE sr.rank = ".((int) $obj->rank);
 			$sql1.=" AND sr.objecttype = '".Skillrank::SKILLRANK_TYPE_USER."'";
-			$sql1.=" AND sr.fk_skill = ".$obj->fk_skill;
+			$sql1.=" AND sr.fk_skill = ".((int) $obj->fk_skill);
 			$sql1.=" AND sr.fk_object IN (".implode(',', $TUser).")";
 			$resql1 = $db->query($sql1);
 
@@ -533,7 +533,7 @@ function getSkillForJob($fk_job)
 	$sql.=' FROM '.MAIN_DB_PREFIX.'hrm_skill sk';
 	$sql.='	LEFT JOIN '.MAIN_DB_PREFIX.'hrm_skillrank sr ON (sk.rowid = sr.fk_skill)';
 	$sql.="	WHERE sr.objecttype = '".SkillRank::SKILLRANK_TYPE_JOB."'";
-	$sql.=' AND sr.fk_object IN ('.$fk_job.')';
+	$sql.=' AND sr.fk_object = '.((int) $fk_job);
 	$sql.=' GROUP BY sk.rowid, sk.label, sk.description, sk.skill_type, sr.fk_object, sr.objecttype, sr.fk_skill '; // group par competence*/
 
 	$resql = $db->query($sql);
