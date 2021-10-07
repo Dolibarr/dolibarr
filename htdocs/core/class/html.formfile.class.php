@@ -1545,7 +1545,7 @@ class FormFile
 	 *
 	 *  @param	string	$upload_dir         Directory that was scanned. This directory will contains files into subdirs REF/files
 	 *  @param  array	$filearray          Array of files loaded by dol_dir_list function before calling this function
-	 *  @param  string	$modulepart         Value for modulepart used by download wrapper
+	 *  @param  string	$modulepart         Value for modulepart used by download wrapper. Value can be $object->table_name (that is 'myobject' or 'mymodule_myobject') or $object->element.'-'.$module (for compatibility purpose)
 	 *  @param  string	$param              Parameters on sort links
 	 *  @param  int		$forcedownload      Force to open dialog box "Save As" when clicking on file
 	 *  @param  string	$relativepath       Relative path of docs (autodefined if not provided)
@@ -1709,7 +1709,8 @@ class FormFile
 				$id = 0;
 				$ref = '';
 
-				// To show ref or specific information according to view to show (defined by $module)
+				// To show ref or specific information according to view to show (defined by $modulepart)
+				// $modulepart can be $object->table_name (that is 'mymodule_myobject') or $object->element.'-'.$module (for compatibility purpose)
 				$reg = array();
 				if ($modulepart == 'company' || $modulepart == 'tax') {
 					preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg);
@@ -1815,10 +1816,9 @@ class FormFile
 
 				// File
 				// Check if document source has external module part, if it the case use it for module part on document.php
-				preg_match('/^[^@]*@([^@]*)$/', $modulepart.'@expertisemedical', $modulesuffix);
 				print '<td>';
 				//print "XX".$file['name']; //$file['name'] must be utf8
-				print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.(empty($modulesuffix) ? $modulepart : $modulesuffix[1]);
+				print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.urlencode($modulepart);
 				if ($forcedownload) {
 					print '&attachment=1';
 				}
@@ -1829,7 +1829,7 @@ class FormFile
 
 				//print $this->getDocumentsLink($modulepart, $modulesubdir, $filedir, '^'.preg_quote($file['name'],'/').'$');
 
-				print $this->showPreview($file, (empty($modulesuffix) ? $modulepart : $modulesuffix[1]), $file['relativename']);
+				print $this->showPreview($file, $modulepart, $file['relativename']);
 
 				print "</td>\n";
 

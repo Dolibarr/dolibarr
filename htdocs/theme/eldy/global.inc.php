@@ -1732,6 +1732,20 @@ td.showDragHandle {
 	display: inline-block;
 }
 
+/*
+.classforhorizontalscrolloftabs  .fiche .div-table-responsive
+{
+	transform:rotateX(180deg);
+	-ms-transform:rotateX(180deg);
+	-webkit-transform:rotateX(180deg);
+}
+.classforhorizontalscrolloftabs  .fiche .div-table-responsive-inside
+{
+	transform:rotateX(180deg);
+	-ms-transform:rotateX(180deg);
+	-webkit-transform:rotateX(180deg);
+}
+*/
 
 
 <?php if (empty($conf->global->THEME_DISABLE_STICKY_TOPMENU)) {  ?>
@@ -1842,10 +1856,11 @@ div.vmenu, td.vmenu {
 		display: none;
 	}
 
-	/* if no side-nav, we don't need to have width forced */
+	/* if no side-nav, we don't need to have width forced to calc(100% - 210px); */
 	.classforhorizontalscrolloftabs #id-right {
-		width: unset;
-		display: unset;
+		width: 100%;
+		/* width: unset; */
+		/* display: unset; */
 	}
 
 	body.sidebar-collapse .login_block {

@@ -75,10 +75,10 @@ EventOrganizationMassEmailSpeakers = Communication to speakers
 #
 # Event
 #
-AllowUnknownPeopleSuggestConf=Allow unknown people to suggest conferences
-AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest conferences
-AllowUnknownPeopleSuggestBooth=Allow unknown people to suggest booth
-AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to suggest booth
+AllowUnknownPeopleSuggestConf=Allow people to suggest conferences
+AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest a conference they want to do
+AllowUnknownPeopleSuggestBooth=Allow people to apply for a booth
+AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to apply for a booth
 PriceOfRegistration=Price of registration
 PriceOfRegistrationHelp=Price to pay to register or participate in the event
 PriceOfBooth=Subscription price to stand a booth
@@ -106,9 +106,9 @@ EvntOrgCancelled = Cancelled
 #
 SuggestForm = Suggestion page
 SuggestOrVoteForConfOrBooth = Page for suggestion or vote
-EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or booth or suggest a new one for the event
-EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference for the project
-EvntOrgRegistrationBoothHelpMessage = Here, you can suggest a new booth for the project
+EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or suggest a new one for the event. You can also apply to have a booth during the event.
+EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference to animate during the event.
+EvntOrgRegistrationBoothHelpMessage = Here, you can apply to have a booth during the event.
 ListOfSuggestedConferences = List of suggested conferences
 ListOfSuggestedBooths = List of suggested booths
 ListOfConferencesOrBooths=List of conferences or booths of event project
@@ -136,6 +136,10 @@ OrganizationEventPaymentOfBoothWasReceived=Your payment for your booth has been 
 OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your event registration has been recorded
 OrganizationEventBulkMailToAttendees=This is a remind about your participation in the event as an attendee
 OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
+OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
+
+NewSuggestionOfBooth=Application for a booth
+NewSuggestionOfConference=Application for a conference
 
 #
 # Vote page
@@ -153,7 +157,7 @@ ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an e
 Attendee = Attendee
 PaymentConferenceAttendee = Conference attendee payment
 PaymentBoothLocation = Booth location payment
-
+DeleteConferenceOrBoothAttendee=Remove attendee
 RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
 EmailAttendee=Attendee email
 EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)

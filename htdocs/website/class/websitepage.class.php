@@ -416,9 +416,9 @@ class WebsitePage extends CommonObject
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid' || $key == 't.fk_website' || $key == 'status') {
+				if ($key == 't.rowid' || $key == 'rowid' || $key == 't.fk_website' || $key == 'fk_website' || $key == 'status' || $key == 't.status') {
 					$sqlwhere[] = $key.' = '.((int) $value);
-				} elseif ($key == 'type_container') {
+				} elseif ($key == 'type_container' || $key == 't.type_container') {
 					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 'lang' || $key == 't.lang') {
 					$listoflang = array();
@@ -436,7 +436,7 @@ class WebsitePage extends CommonObject
 					}
 					$sqlwhere[] = $stringtouse;
 				} else {
-					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}

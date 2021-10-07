@@ -13,21 +13,12 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * For Paypal test: https://developer.paypal.com/
- * For Paybox test: ???
- * For Stripe test: Use credit card 4242424242424242 .More example on https://stripe.com/docs/testing
- *
- * Variants:
- * - When option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on, we use the new PaymentIntent API
- * - When option STRIPE_USE_NEW_CHECKOUT is on, we use the new checkout API
- * - If no option set, we use old APIS (charge)
  */
 
 /**
- *     	\file       htdocs/public/payment/newpayment.php
+ *     	\file       htdocs/public/project/index.php
  *		\ingroup    core
- *		\brief      File to offer a way to make a payment for a particular Dolibarr object
+ *		\brief      File to offer a way to suggest a conference or a booth for an event
  */
 
 if (!defined('NOLOGIN')) {
@@ -74,8 +65,8 @@ $langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paybox
 
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id');
-$securekeyreceived = GETPOST("securekey");
-$securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
+$securekeyreceived = GETPOST("securekey", 'alpha');
+$securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 'md5');
 
 if ($securekeytocompare != $securekeyreceived) {
 	print $langs->trans('MissingOrBadSecureKey');

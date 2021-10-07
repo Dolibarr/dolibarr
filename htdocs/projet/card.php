@@ -918,8 +918,8 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			print '<td>';
 			print $formproject->selectOpportunityStatus('opp_status', $object->opp_status, 1, 0, 0, 0, 'inline-block valignmiddle', 0, 1);
 			print '<div id="divtocloseproject" class="inline-block valign" style="display: none;"> &nbsp; &nbsp; ';
-			print '<input type="checkbox" id="inputcloseproject" name="closeproject" /> ';
-			print $langs->trans("AlsoCloseAProject");
+			print '<input type="checkbox" id="inputcloseproject" name="closeproject" />';
+			print '<label for="inputcloseproject">'.$langs->trans("AlsoCloseAProject").'</label>';
 			print '</div>';
 			print '</td>';
 			print '</tr>';
@@ -940,11 +940,11 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		// Date start
 		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
 		print $form->selectDate($object->date_start ? $object->date_start : -1, 'projectstart', 0, 0, 0, '', 1, 0);
-		print ' &nbsp; &nbsp; <input type="checkbox" class="valignmiddle" name="reportdate" value="yes" ';
+		print ' &nbsp; &nbsp; <input type="checkbox" class="valignmiddle" id="reportdate" name="reportdate" value="yes" ';
 		if ($comefromclone) {
 			print ' checked ';
 		}
-		print '/> '.$langs->trans("ProjectReportDate");
+		print '/><label for="reportdate">'.$langs->trans("ProjectReportDate").'</label>';
 		print '</td></tr>';
 
 		// Date end
