@@ -334,7 +334,7 @@ if ($type == 'directory') {
 			$textifempty = $langs->trans('NoFileFound');
 		} elseif ($section === '0') {
 			if ($module == 'ecm') {
-				$textifempty = '<br><div class="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
+				$textifempty = '<br><div class="center"><span class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</span></div><br>';
 			} else {
 				$textifempty = $langs->trans('NoFileFound');
 			}

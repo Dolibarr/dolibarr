@@ -89,6 +89,8 @@ if ($action == 'updateMask') {
 	if ($ret > 0) {
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
+} elseif ($action == 'unsetdoc') {
+	dolibarr_del_const($db, "SUPPLIER_PAYMENT_ADDON_PDF", $conf->entity);
 } elseif ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
 

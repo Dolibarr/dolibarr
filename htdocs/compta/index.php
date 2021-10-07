@@ -363,7 +363,8 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				}
 				print '<td class="nowrap right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
-				print '<td>'.$facstatic->getLibStatut(3).'</td>';
+				$alreadypaid = $facstatic->getSommePaiement();
+				print '<td>'.$facstatic->getLibStatut(3, $alreadypaid).'</td>';
 				print '</tr>';
 				$total_ht += $obj->total_ht;
 				$total_ttc += $obj->total_ttc;
@@ -711,7 +712,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 				print "</tr>\n";
 			}
 
-			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToBill").': '.price($tot_tobill).')</font> </td>';
+			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <span style="font-weight: normal">('.$langs->trans("RemainderToBill").': '.price($tot_tobill).')</span> </td>';
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
 				print '<td class="right">'.price($tot_ht).'</td>';
 			}

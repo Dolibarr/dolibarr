@@ -183,6 +183,20 @@ if ($action == "setaddrefinlist") {
 	}
 }
 
+//Activate Set vat in list
+if ($action == "setvatinlist") {
+	$setvatinlist = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "SOCIETE_SHOW_VAT_IN_LIST", $setvatinlist, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
 //Activate Set adress in list
 if ($action == "setaddadressinlist") {
 	$val = GETPOST('value', 'int');
@@ -771,6 +785,20 @@ if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST)) {
 	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
 	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&token='.newToken().'&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+}
+print '</a></td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td width="80%">'.$langs->trans("AddVatInList").'</td>';
+print '<td>&nbsp;</td>';
+print '<td class="center">';
+if (!empty($conf->global->SOCIETE_SHOW_VAT_IN_LIST)) {
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setvatinlist&token='.newToken().'&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+} else {
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setvatinlist&token='.newToken().'&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 }
 print '</a></td>';

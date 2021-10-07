@@ -846,7 +846,7 @@ class ProductFournisseur extends Product
 						$this->fourn_qty                = $record["quantity"];
 						$this->fourn_remise_percent     = $record["remise_percent"];
 						$this->fourn_remise             = $record["remise"];
-						$this->fourn_unitprice          = $record["unitprice"];
+						$this->fourn_unitprice          = $fourn_unitprice;
 						$this->fourn_charges            = $record["charges"]; // deprecated
 						$this->fourn_tva_tx             = $record["tva_tx"];
 						$this->fourn_id                 = $record["fourn_id"];

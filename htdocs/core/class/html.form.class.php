@@ -1268,6 +1268,7 @@ class Form
 				$selected_input_value = $societetmp->name;
 				unset($societetmp);
 			}
+
 			// mode 1
 			$urloption = 'htmlname='.urlencode($htmlname).'&outjson=1&filter='.urlencode($filter).(empty($excludeids) ? '' : '&excludeids='.join(',', $excludeids)).($showtype ? '&showtype='.urlencode($showtype) : '');
 			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
@@ -1441,6 +1442,10 @@ class Form
 
 					if (!empty($obj->name_alias)) {
 						$label .= ' ('.$obj->name_alias.')';
+					}
+
+					if ($conf->global->SOCIETE_SHOW_VAT_IN_LIST && !empty($obj->tva_intra)) {
+						$label .= ' - '.$obj->tva_intra.'';
 					}
 
 					if ($showtype) {
@@ -1680,11 +1685,6 @@ class Form
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			if ($conf->use_javascript_ajax && !$forcecombo && !$options_only) {
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlid, $events, getDolGlobalString("CONTACT_USE_SEARCH_TO_SELECT"));
-			}
-
 			if ($htmlname != 'none' && !$options_only) {
 				$out .= '<select class="flat'.($moreclass ? ' '.$moreclass : '').'" id="'.$htmlid.'" name="'.$htmlname.(($num || empty($disableifempty)) ? '' : ' disabled').($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.(!empty($moreparam) ? $moreparam : '').'>';
 			}
@@ -1813,6 +1813,11 @@ class Form
 
 			if ($htmlname != 'none' && !$options_only) {
 				$out .= '</select>';
+			}
+
+			if ($conf->use_javascript_ajax && !$forcecombo && !$options_only) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+				$out .= ajax_combobox($htmlid, $events, getDolGlobalString("CONTACT_USE_SEARCH_TO_SELECT"));
 			}
 
 			$this->num = $num;
@@ -5783,11 +5788,11 @@ class Form
 
 				return $num;
 			} else {
-				$this->error = '<font class="error">'.$langs->trans("ErrorNoVATRateDefinedForSellerCountry", $country_code).'</font>';
+				$this->error = '<span class="error">'.$langs->trans("ErrorNoVATRateDefinedForSellerCountry", $country_code).'</span>';
 				return -1;
 			}
 		} else {
-			$this->error = '<font class="error">'.$this->db->error().'</font>';
+			$this->error = '<span class="error">'.$this->db->error().'</span>';
 			return -2;
 		}
 	}
@@ -5838,9 +5843,9 @@ class Form
 		// Check parameters
 		if (is_object($societe_vendeuse) && !$societe_vendeuse->country_code) {
 			if ($societe_vendeuse->id == $mysoc->id) {
-				$return .= '<font class="error">'.$langs->trans("ErrorYourCountryIsNotDefined").'</font>';
+				$return .= '<span class="error">'.$langs->trans("ErrorYourCountryIsNotDefined").'</span>';
 			} else {
-				$return .= '<font class="error">'.$langs->trans("ErrorSupplierCountryIsNotDefined").'</font>';
+				$return .= '<span class="error">'.$langs->trans("ErrorSupplierCountryIsNotDefined").'</span>';
 			}
 			return $return;
 		}
@@ -7923,7 +7928,7 @@ class Form
 			}
 
 			if (!$nboftypesoutput) {
-				print '<tr><td class="impair opacitymedium" colspan="7">'.$langs->trans("None").'</td></tr>';
+				print '<tr><td class="impair" colspan="7"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 
 			print '</table>';
@@ -8789,8 +8794,8 @@ class Form
 	public function showFilterButtons()
 	{
 		$out = '<div class="nowraponall">';
-		$out .= '<button type="submit" class="liste_titre button_search" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
-		$out .= '<button type="submit" class="liste_titre button_removefilter" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
+		$out .= '<button type="submit" class="liste_titre button_search reposition" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
+		$out .= '<button type="submit" class="liste_titre button_removefilter reposition" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
 		$out .= '</div>';
 
 		return $out;

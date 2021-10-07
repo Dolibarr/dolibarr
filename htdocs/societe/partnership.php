@@ -189,7 +189,7 @@ if ($id > 0) {
 		print showValueWithClipboardCPButton(dol_escape_htmltag($societe->code_client));
 		$tmpcheck = $societe->check_codeclient();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+			print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
 		}
 		print '</td></tr>';
 	}
@@ -200,7 +200,7 @@ if ($id > 0) {
 		print showValueWithClipboardCPButton(dol_escape_htmltag($societe->code_fournisseur));
 		$tmpcheck = $societe->check_codefournisseur();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+			print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
 		}
 		print '</td>';
 		print '</tr>';
