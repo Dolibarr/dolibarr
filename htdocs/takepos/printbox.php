@@ -87,13 +87,13 @@ top_htmlhead($head, '', 0, 0, $arrayofjs, $arrayofcss);
 <br>
 <center>
 <?php
-	if ($action == "without_details") {
-		$label_default = getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS_LABEL_DEFAULT');
-		$qty_default = 1;
+if ($action == "without_details") {
+	$label_default = getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS_LABEL_DEFAULT');
+	$qty_default = 1;
 
-		print '<input type="text" id="label" name="label" class="takepospay" value="' . $label_default . '" style="width:40%;" placeholder="' . $langs->trans('Label') . '">';
-		print '<input type="text" id="qty" name="qty" class="takepospay" value="' . $qty_default . '" style="width:10%;" placeholder="' . $langs->trans('Qty') . '">';
-	}
+	print '<input type="text" id="label" name="label" class="takepospay" value="' . $label_default . '" style="width:40%;" placeholder="' . $langs->trans('Label') . '">';
+	print '<input type="text" id="qty" name="qty" class="takepospay" value="' . $qty_default . '" style="width:10%;" placeholder="' . $langs->trans('Qty') . '">';
+}
 ?>
 <input type="button" class="button takepospay clearboth" value="OK" onclick="Save();">
 </center>
