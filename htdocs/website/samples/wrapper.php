@@ -104,7 +104,7 @@ if ($rss) {
 
 	$website->fetch('', $websitekey);
 
-	$filters = array('type_container'=>'blogpost');
+	$filters = array('type_container'=>'blogpost', 'status'=>1);
 	if ($l) {
 		$filters['lang'] = $l;
 	}
