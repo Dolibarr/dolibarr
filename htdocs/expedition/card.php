@@ -1161,7 +1161,7 @@ if ($action == 'create') {
 					}
 
 					// unit of order
-					$unit_order = ''
+					$unit_order = '';
 					if ($conf->global->PRODUCT_USE_UNITS) {
 						$unit_order = measuringUnitString($line->fk_unit);
 					}
@@ -2182,7 +2182,7 @@ if ($action == 'create') {
 					print "</td>\n";
 				}
 
-				$unit_order = ''
+				$unit_order = '';
 				if ($conf->global->PRODUCT_USE_UNITS) {
 					$unit_order = measuringUnitString($lines[$i]->fk_unit);
 				}

@@ -271,7 +271,6 @@ class ConferenceOrBooth extends ActionComm
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
-
 		//TODO set percent according status
 		global $conf;
 

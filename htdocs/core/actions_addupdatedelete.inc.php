@@ -129,7 +129,6 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 
 	if (!$error) {
 		$result = $object->create($user);
-		var_dump($object);exit;
 		if ($result > 0) {
 			// Creation OK
 			if ($conf->categorie->enabled && method_exists($object, 'setCategories')) {
@@ -298,6 +297,7 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 	}
 
 	$result = $object->delete($user);
+
 	if ($result > 0) {
 		// Delete OK
 		setEventMessages("RecordDeleted", null, 'mesgs');
