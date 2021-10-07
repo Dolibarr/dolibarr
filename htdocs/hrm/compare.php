@@ -443,7 +443,7 @@ function displayUsersListWithPicto(&$TUser, $fk_usergroup = 0, $namelist = 'list
 				$desc .= $langs->trans('NoEval');
 			}
 
-			if (!empty($user->array_options['options_DDA'])) $desc .= '<br />' . $langs->trans('Anciennete') . ' : ' . dol_print_date(strtotime($user->array_options['options_DDA']));
+			if (!empty($user->array_options['options_DDA'])) $desc .= '<br>' . $langs->trans('Anciennete') . ' : ' . dol_print_date(strtotime($user->array_options['options_DDA']));
 
 			$out .= '<li fk_user="' . $user->id . '" class="' . $class . '">
 		      ' . $form->showphoto('userphoto', $user, 0, 0, 0, 'photoref', 'small', 1, 0, 1) . '
