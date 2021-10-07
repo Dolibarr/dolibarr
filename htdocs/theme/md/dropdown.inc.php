@@ -459,3 +459,27 @@ a.top-menu-dropdown-link {
 .hidden-search-result{
 	display: none !important;
 }
+
+
+.dropdown-holder {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  z-index: 1;
+  right:14px;
+}
+
+.dropdown-content a { 
+  margin-right: auto !important;
+  margin-left: auto !important;
+}
+
+.dropdown-content a:hover {box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1)} 
+
+.dropdown-holder:hover .dropdown-content {
+  display: block;
+}

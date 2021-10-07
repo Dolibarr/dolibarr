@@ -1,7 +1,4 @@
+CLOSE|Close #18479 Added a dropdown function.
 
-# ^=[ Subject: One line short summary ]=========^|
-# ~ Subject template: [KEYWORD] [ISSUENUM] DESC ~|
-
-# ^=[ Blank: Follow the Subject with a blank line, do NOT remove ]====^|
-
-# ^=[ Details: Describe what changed and explain why it changed ]=====^|
+Following the feature request #18479, we added a dropdown function in htdocs\projet.php\card.php to not have all the buttons visible at the same time.
+We also added CSS code at the end of both htdocs\theme\eldy\dropdown.inc.php and htdocs\theme\md\dropdown.inc.php to assist in the above change.
