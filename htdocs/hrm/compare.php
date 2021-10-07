@@ -478,7 +478,7 @@ function getSkillForUsers($TUser)
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'hrm_skill sk';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'hrm_skillrank sr ON (sk.rowid = sr.fk_skill)';
 	$sql.= " WHERE sr.objecttype = '".SkillRank::SKILLRANK_TYPE_USER."'";
-	$sql.= ' AND sr.fk_object IN ('.implode(',', $TUser).')';
+	$sql.= ' AND sr.fk_object IN ('.$db->sanitize(implode(',', $TUser)).')';
 	$sql.= " GROUP BY sk.rowid, sk.label, sk.description, sk.skill_type, sr.fk_object, sr.objecttype, sr.fk_skill "; // group par competence
 
 	$resql = $db->query($sql);
@@ -492,7 +492,7 @@ function getSkillForUsers($TUser)
 			$sql1.=" WHERE sr.rank = ".((int) $obj->rank);
 			$sql1.=" AND sr.objecttype = '".Skillrank::SKILLRANK_TYPE_USER."'";
 			$sql1.=" AND sr.fk_skill = ".((int) $obj->fk_skill);
-			$sql1.=" AND sr.fk_object IN (".implode(',', $TUser).")";
+			$sql1.=" AND sr.fk_object IN (".$db->sanitize(implode(',', $TUser)).")";
 			$resql1 = $db->query($sql1);
 
 			$objMax = $db->fetch_object($resql1);
