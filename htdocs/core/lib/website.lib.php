@@ -773,7 +773,7 @@ function getSocialNetworkHeaderCards($params = null)
 			$out .= '<meta name="twitter:description" content="'.$websitepage->description.'">'."\n";
 		}
 		if ($websitepage->image) {
-			$out .= '<meta name="twitter:image:src" content="'.$website->virtualhost.$image.'">'."\n";
+			$out .= '<meta name="twitter:image" content="'.$website->virtualhost.$image.'">'."\n";
 		}
 		//$out .= '<meta name="twitter:domain" content="'.getDomainFromURL($website->virtualhost, 1).'">';
 		/*
