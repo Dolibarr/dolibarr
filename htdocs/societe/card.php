@@ -75,6 +75,9 @@ if (!empty($conf->incoterm->enabled)) {
 if (!empty($conf->notification->enabled)) {
 	$langs->load("mails");
 }
+if (!empty($conf->accounting->enabled)) {
+	$langs->load("products");
+}
 
 $error = 0; $errors = array();
 

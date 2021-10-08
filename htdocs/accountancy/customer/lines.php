@@ -193,11 +193,11 @@ $sql = "SELECT f.rowid as facid, f.ref as ref, f.type, f.datef, f.ref_client,";
 $sql .= " fd.rowid, fd.description, fd.product_type as line_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.vat_src_code, fd.total_ttc,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_client,";
 if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-	$sql .= ", spe.accountancy_code_customer as code_compta_client";
-	$sql .= ", spe.accountancy_code_supplier as code_compta_fournisseur";
+	$sql .= " spe.accountancy_code_customer as code_compta_client,";
+	$sql .= " spe.accountancy_code_supplier as code_compta_fournisseur,";
 } else {
-	$sql .= ", s.code_compta as code_compta_client";
-	$sql .= ", s.code_compta_fournisseur";
+	$sql .= " s.code_compta as code_compta_client,";
+	$sql .= " s.code_compta_fournisseur,";
 }
 $sql .= " p.rowid as product_id, p.fk_product_type as product_type, p.ref as product_ref, p.label as product_label,";
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {

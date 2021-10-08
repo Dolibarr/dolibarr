@@ -125,9 +125,9 @@ class box_factures_imp extends ModeleBoxes
 			}
 			$sql .= " GROUP BY s.rowid, s.nom, s.name_alias, s.code_client, s.client, s.logo, s.email, s.entity, s.tva_intra, s.siren, s.siret, s.ape, s.idprof4, s.idprof5, s.idprof6,";
 			if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-				$sql .= " spe.accountancy_code_customer as code_compta";
+				$sql .= " spe.accountancy_code_customer as code_compta,";
 			} else {
-				$sql .= " s.code_compta";
+				$sql .= " s.code_compta,";
 			}
 			$sql .= " f.ref, f.date_lim_reglement,";
 			$sql .= " f.type, f.datef, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.fk_statut, f.rowid";
