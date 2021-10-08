@@ -623,8 +623,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<th style="width:auto;text-align:auto" class="liste_titre">' . $langs->trans("TypeSkill") . ' </th>';
 			print '<th style="width:auto;text-align:auto" class="liste_titre">' . $langs->trans("Label") . '</th>';
 			print '<th style="width:auto;text-align:auto" class="liste_titre">' . $langs->trans("Description") . '</th>';
-			print '<th style="width:auto;text-align:auto" class="liste_titre">' . $langs->trans("UserRank") . '</th>';
-			print '<th style="width:auto;text-align:auto" class="liste_titre">' . $langs->trans("RequiredRank") . '</th>';
+			print '<th style="width:auto;text-align:center" class="liste_titre">' . $langs->trans("EmployeeRank") . '</th>';
+			print '<th style="width:auto;text-align:center" class="liste_titre">' . $langs->trans("RequiredRank") . '</th>';
 			print '<th style="width:auto;text-align:auto" class="liste_titre">' . $langs->trans("Result") . '</th>';
 			print '</tr>';
 
@@ -635,8 +635,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print ' <td>' . Skill::typeCodeToLabel($t->skill_type) . '</td>';
 				print ' <td>' . $sk->getNomUrl(1) . '</td>';
 				print ' <td>' . $t->description . '</td>';
-				print ' <td>' . $t->userRankForSkill . '</td>';
-				print ' <td>' . $t->required_rank . '</td>';
+				print ' <td align="center">' . $t->userRankForSkill . '</td>';
+				print ' <td align="center">' . $t->required_rank . '</td>';
 				print ' <td>' . $t->result . '</td>';
 				print '</tr>';
 			}
