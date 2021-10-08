@@ -2876,11 +2876,10 @@ class Facture extends CommonInvoice
 				// POSTPONED TRIGGER
 				// In case of postpone PDF and triggers
 				if (!empty($conf->global->MAIN_POSTPONE_TRIGGER)) {
-
 					$this->statut = self::STATUS_VALIDATED;
 					$this->status = self::STATUS_VALIDATED;
 					$this->brouillon = 0;
-					$this->date_validation = $now;	
+					$this->date_validation = $now;
 
 					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 						$outputlangs = $langs;
