@@ -76,9 +76,6 @@ $userlogin = $argv[2];
 $version = DOL_VERSION;
 $error = 0;
 
-// Language Management
-$langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
-
 
 /*
  * Main
@@ -145,7 +142,10 @@ if (!empty($user->conf->MAIN_LANG_DEFAULT)) {
 }
 if ($langs->getDefaultLang() != $langcode) {
 	$langs->setDefaultLang($langcode);
+	$langs->tab_translate = array();
 }
+// Language Management
+$langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
 
 $user->getrights();
 
@@ -228,6 +228,8 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 			}
 			if ($langs->getDefaultLang() != $langcode) {
 				$langs->setDefaultLang($langcode);
+				$langs->tab_translate = array();
+				$langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
 			}
 		}
 
