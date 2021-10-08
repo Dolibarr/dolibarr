@@ -563,10 +563,22 @@ class Societe extends CommonObject
 	public $code_compta_client;
 
 	/**
-	 * Accounting code for suppliers
+	 * Accounting code for customer
+	 * @var string
+	 */
+	public $accountancy_code_customer;
+
+	/**
+	 * Accounting code for supplier
 	 * @var string
 	 */
 	public $code_compta_fournisseur;
+
+	/**
+	 * Accounting code for supplier
+	 * @var string
+	 */
+	public $accountancy_code_supplier;
 
 	/**
 	 * @var string
@@ -838,8 +850,8 @@ class Societe extends CommonObject
 		}
 		$this->import_key = trim($this->import_key);
 
-		$this->accountancy_code_customer = trim($this->accountancy_code_customer);
-		$this->accountancy_code_supplier = trim($this->accountancy_code_supplier);
+		$this->accountancy_code_customer = trim($this->code_compta);
+		$this->accountancy_code_supplier = trim($this->code_compta_fournisseur);
 		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
 		$this->accountancy_code_sell= trim($this->accountancy_code_sell);
 
@@ -2027,6 +2039,15 @@ class Societe extends CommonObject
 
 			// Remove third party
 			if (!$error) {
+				if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_perentity";
+					$sql .= " WHERE fk_soc = ".((int) $id);
+					if (!$this->db->query($sql)) {
+						$error++;
+						$this->errors[] = $this->db->lasterror();
+					}
+				}
+
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe";
 				$sql .= " WHERE rowid = ".((int) $id);
 				if (!$this->db->query($sql)) {
