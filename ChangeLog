@@ -2,6 +2,48 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 14.0.3 compared to 14.0.2 *****
+
+FIX: #18698 Supplier invoice list - "alert" checkbox not working
+FIX: #18735
+FIX: #18767 : Member delete
+FIX: #18854
+FIX: #18910 : MRP List SQL query syntax error with more than one extrafileds.
+FIX: Accountancy - Format Quadra export - Missing line type C to create automaticly a subledger account with label
+FIX: Accountancy - Missing specific filename for export on format FEC2, Ciel & repare it
+FIX: Accountancy - Option of export popup are inverted
+FIX: Accountancy - Some correction on export name
+FIX: Accountancy - Trunc code_journal to 2 in format XIMPORT (Ciel, Sage50)
+FIX: add warehouse in projects' overview count
+FIX: autocalculation of the supplier price in main currency.
+FIX: avoid warning if $categories is an id
+FIX: Bad use of a forced contact of another company on PDF/ODT documents
+FIX: Button text on proposal card to create a invoice
+FIX: calculateCosts of BOM must not be included into fetch
+FIX: check if greater 0
+FIX: default language defined for IN country
+FIX: fetch of product with modulebuilder load too much data
+FIX: Filter on categories
+FIX: indentation
+FIX: init hookmanager after loading $conf values
+FIX: legal issue on expense report pdf (must also show price without tax)
+FIX: missing filter status=1 on rss feeds
+FIX: move fetch_optionnal into $ac_static->fetch()
+FIX: payment using wrong type in takepos when too many payment mode
+FIX: Product accountancy affectation with product_perentity activated (PR #18620)
+FIX: products/services card: hidden extrafields were overridden
+FIX: Propal list - Problem of pagination on date
+FIX: selected lines on supplier invoice create
+FIX: Selection of type "people" for membership must hide the company
+FIX: select list of orders not complete when field type of company is on
+FIX: support of localtax on expense report
+FIX: task time: can't filter by user with pgsql + show error message
+FIX: task time: keep on using natural_search
+FIX: Test when date of invoie is in future (pb with TZ and offset)
+FIX: translation into email for member at membership validation.
+FIX: unprivileged user can see task associated with a not allowed project
+FIX: user without permission can set ticket subject
+
 ***** ChangeLog for 14.0.2 compared to 14.0.1 *****
 
 FIX: #18353 Invoice list translation issue
