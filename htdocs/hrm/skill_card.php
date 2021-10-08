@@ -627,7 +627,7 @@ if ($action != "create" && $action != "edit") {
 	}
 
 	if (!empty($id)) {
-		$sql .= " AND fk_skill = " . $id . " ";
+		$sql .= " AND fk_skill = " . ((int) $id) . " ";
 	}
 
 	// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.

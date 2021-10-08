@@ -479,7 +479,7 @@ function DisplayPositionList()
 	} else {
 		$sql .= " WHERE 1 = 1";
 	}
-	$sql .= " AND t.fk_job =  " . $fk_job . " ";
+	$sql .= " AND t.fk_job =  " . ((int) $fk_job) . " ";
 
 	foreach ($search as $key => $val) {
 		if (array_key_exists($key, $object->fields)) {
