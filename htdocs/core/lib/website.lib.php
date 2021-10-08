@@ -528,8 +528,10 @@ function includeContainer($containerref)
 }
 
 /**
- * Return HTML content to add structured data for an article, news or Blog Post.
- * Use the json-ld format.
+ * Return HTML content to add structured data for an article, news or Blog Post. Use the json-ld format.
+ * Example:
+ * <?php getStructureData('blogpost'); ?>
+ * <?php getStructureData('software', array('name'=>'Name', 'os'=>'Windows', 'price'=>10)); ?>
  *
  * @param 	string		$type				'blogpost', 'product', 'software', 'organization', 'qa',  ...
  * @param	array		$data				Array of data parameters for structured data
