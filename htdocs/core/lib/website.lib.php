@@ -759,7 +759,16 @@ function getSocialNetworkHeaderCards($params = null)
 		$companyname = str_replace('__WEBSITE_KEY__', $website->ref, $companyname);
 		$description = str_replace('__WEBSITE_KEY__', $website->ref, $description);
 
+		$shortlangcode = '';
+		if ($websitepage->lang) {
+			$shortlangcode = substr($websitepage->lang, 0, 2); // en_US or en-US -> en
+		}
+		if (empty($shortlangcode)) {
+			$shortlangcode = substr($website->lang, 0, 2); // en_US or en-US -> en
+		}
+
 		$fullurl = $website->virtualhost.'/'.$websitepage->pageurl.'.php';
+		$canonicalurl = $website->virtualhost.(($websitepage->id == $website->fk_default_home) ? '/' : (($shortlangcode != substr($website->lang, 0, 2) ? '/'.$shortlangcode : '').'/'.$websitepage->pageurl.'.php'));
 		$hashtags = trim(join(' #', array_map('trim', explode(',', $websitepage->keywords))));
 
 		// Open Graph
@@ -768,7 +777,7 @@ function getSocialNetworkHeaderCards($params = null)
 		if ($websitepage->image) {
 			$out .= '<meta name="og:image" content="'.$website->virtualhost.$image.'">'."\n";
 		}
-		$out .= '<meta name="og:url" content="'.$fullurl.'">'."\n";
+		$out .= '<meta name="og:url" content="'.$canonicalurl.'">'."\n";
 
 		// Twitter
 		$out .= '<meta name="twitter:card" content="summary">'."\n";
