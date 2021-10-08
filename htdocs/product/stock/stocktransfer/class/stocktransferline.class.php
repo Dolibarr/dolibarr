@@ -447,19 +447,21 @@ class StockTransferLine extends CommonObjectLine
 	public function doStockMovement($label, $code_inv, $fk_entrepot, $direction = 1)
 	{
 
-		global $db, $conf, $user, $langs;
+		global $conf, $user, $langs;
 
 		require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 		include_once DOL_DOCUMENT_ROOT . '/product/stock/class/mouvementstock.class.php';
+		include_once DOL_DOCUMENT_ROOT . '/product/stock/stocktransfer/class/stocktransfer.class.php';
 
-		$p = new Product($db);
+		$p = new Product($this->db);
 		$p->fetch($this->fk_product);
 
 		$op[0] = "+".trim($this->qty);
 		$op[1] = "-".trim($this->qty);
-		$movementstock = new MouvementStock($db);
-		$movementstock->origin = new StockTransfer($db);
-		$movementstock->origin->id = $this->fk_stocktransfer;
+		$movementstock = new MouvementStock($this->db);
+		$st = new StockTransfer($this->db);
+		$movementstock->origin_type = $st->origin_type;
+		$movementstock->origin_id = $this->fk_stocktransfer;
 
 		if (empty($this->batch)) { // no batch for line
 			/*$result = $p->correct_stock(
@@ -586,8 +588,8 @@ class StockTransferLine extends CommonObjectLine
 			$sql .= " SET ref = '".$this->db->escape($num)."',";
 			$sql .= " status = ".self::STATUS_VALIDATED;
 			if (!empty($this->fields['date_validation'])) $sql .= ", date_validation = '".$this->db->idate($now)."',";
-			if (!empty($this->fields['fk_user_valid'])) $sql .= ", fk_user_valid = ".$user->id;
-			$sql .= " WHERE rowid = ".$this->id;
+			if (!empty($this->fields['fk_user_valid'])) $sql .= ", fk_user_valid = ".((int) $user->id);
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -612,7 +614,7 @@ class StockTransferLine extends CommonObjectLine
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'stocktransferline/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'stocktransferline/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'stocktransferline/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) { $error++; $this->error = $this->db->lasterror(); }
 

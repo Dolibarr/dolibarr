@@ -505,7 +505,6 @@ class StockTransfer extends CommonObject
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = false)
 	{
-		global $db;
 		if ($this->status < 0) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
@@ -564,8 +563,8 @@ class StockTransfer extends CommonObject
 			$sql .= " SET ref = '".$this->db->escape($num)."',";
 			$sql .= " status = ".self::STATUS_VALIDATED;
 			if (!empty($this->fields['date_validation'])) $sql .= ", date_validation = '".$this->db->idate($now)."',";
-			if (!empty($this->fields['fk_user_valid'])) $sql .= ", fk_user_valid = ".$user->id;
-			$sql .= " WHERE rowid = ".$this->id;
+			if (!empty($this->fields['fk_user_valid'])) $sql .= ", fk_user_valid = ".((int) $user->id);
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -590,7 +589,7 @@ class StockTransfer extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'stocktransfer/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'stocktransfer/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'stocktransfer/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) { $error++; $this->error = $this->db->lasterror(); }
 
