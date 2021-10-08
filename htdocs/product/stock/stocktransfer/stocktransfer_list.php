@@ -216,7 +216,7 @@ $title = $langs->trans('StockTransferList');
 // --------------------------------------------------------------------
 $sql = 'SELECT ';
 foreach ($object->fields as $key => $val) {
-	$sql .= 't.'.$key.', ';
+	$sql .= "t.".$key.", ";
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -253,7 +253,7 @@ $sql .= $hookmanager->resPrint;
 $sql.= " GROUP BY ";
 foreach($object->fields as $key => $val)
 {
-	$sql.='t.'.$key.', ';
+	$sql.="t.".$key.", ";
 }
 // Add fields from extrafields
 if (! empty($extrafields->attributes[$object->table_element]['label'])) {
