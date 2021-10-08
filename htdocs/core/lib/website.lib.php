@@ -762,6 +762,14 @@ function getSocialNetworkHeaderCards($params = null)
 		$fullurl = $website->virtualhost.'/'.$websitepage->pageurl.'.php';
 		$hashtags = trim(join(' #', array_map('trim', explode(',', $websitepage->keywords))));
 
+		// Open Graph
+		$out .= '<meta name="og:type" content="website">'."\n";	// TODO If blogpost, use type article
+		$out .= '<meta name="og:title" content="'.$websitepage->title.'">'."\n";
+		if ($websitepage->image) {
+			$out .= '<meta name="og:image" content="'.$website->virtualhost.$image.'">'."\n";
+		}
+		$out .= '<meta name="og:url" content="'.$fullurl.'">'."\n";
+
 		// Twitter
 		$out .= '<meta name="twitter:card" content="summary">'."\n";
 		if (!empty($params) && !empty($params['twitter_account'])) {
