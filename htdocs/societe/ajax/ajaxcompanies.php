@@ -87,9 +87,9 @@ if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn', 'int
 		$socid = GETPOST('id_fourn', 'int');
 	}
 
-	$sql = "SELECT rowid, nom";
+	$sql = "SELECT s.rowid, s.nom";
 	if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST)) {
-		$sql .= "s.client, s.fournisseur, s.code_client, s.code_fournisseur";
+		$sql .= ", s.client, s.fournisseur, s.code_client, s.code_fournisseur";
 	}
 	if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
 		$sql .= ", s.address, s.zip, s.town";
