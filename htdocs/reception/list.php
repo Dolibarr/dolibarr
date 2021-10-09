@@ -612,11 +612,13 @@ if ($search_ref_supplier) {
 	$param .= "&search_ref_supplier=".urlencode($search_ref_supplier);
 }
 // Add $param from extra fields
-foreach ($search_array_options as $key => $val) {
-	$crit = $val;
-	$tmpkey = preg_replace('/search_options_/', '', $key);
-	if ($val != '') {
-		$param .= '&search_options_'.$tmpkey.'='.urlencode($val);
+if ($search_array_options) {
+	foreach ($search_array_options as $key => $val) {
+		$crit = $val;
+		$tmpkey = preg_replace('/search_options_/', '', $key);
+		if ($val != '') {
+			$param .= '&search_options_'.$tmpkey.'='.urlencode($val);
+		}
 	}
 }
 
