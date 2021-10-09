@@ -579,9 +579,12 @@ if ($action == "freezone") {
 }
 
 if ($action == "addnote") {
-	foreach ($invoice->lines as $line) {
+	$desc = GETPOST('addnote', 'alpha');
+	if ($idline==0){
+		$invoice->update_note_public($desc);
+	}
+	else foreach ($invoice->lines as $line) {
 		if ($line->id == $idline) {
-			$desc = GETPOST('addnote', 'alpha');
 			$result = $invoice->updateline($line->id, $desc, $line->subprice, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
 		}
 	}
@@ -1061,8 +1064,7 @@ function CreditNote() {
 }
 
 function SetNote() {
-	$("#poslines").load("invoice.php?action=addnote&token=<?php echo newToken() ?>&invoiceid="+placeid+"&idline="+selectedline+"&addnote="+$("#textinput").val(), function() {
-	});
+	$("#poslines").load("invoice.php?action=addnote&token=<?php echo newToken() ?>&invoiceid="+placeid+"&idline="+selectedline, { "addnote": $("#textinput").val() });
 }
 
 
