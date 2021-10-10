@@ -513,7 +513,7 @@ if ($object->id > 0) {
 			print img_warning('Error on default bank number for IBAN : '.$bac->error_message);
 		}
 	} else {
-		if ($numopen || ($type == 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type != 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
+		if ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
 			print img_warning($langs->trans("NoDefaultIBANFound"));
 		}
 	}
