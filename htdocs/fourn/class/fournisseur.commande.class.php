@@ -2289,7 +2289,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as dispatch ON supplierOrderDet.rowid = dispatch.fk_commandefourndet";
 		$sql .= " WHERE supplierOrderDet.fk_commande = ".$this->id;
 		$sql .= " GROUP BY supplierOrderDet.fk_product";
-		
+
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
@@ -2301,7 +2301,7 @@ class CommandeFournisseur extends CommonOrder
 
 				if ($objp) {
 					// If product not completly dispatched
-					if (is_null($objp->qty_dispatched) OR ($objp->qty_dispatched < $objp->qty_ordered)){
+					if (is_null($objp->qty_dispatched) OR ($objp->qty_dispatched < $objp->qty_ordered)) {
 						$ret[] = array(
 							'product_id' => $objp->product_id,
 							'qty_ordered' => $objp->qty_ordered,
