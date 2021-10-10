@@ -1542,11 +1542,11 @@ class FormFile
 				if (empty($disablemove)) {
 					$colspan++; // 6 columns or 7
 				}
-				print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">';
+				print '<tr class="oddeven"><td colspan="'.$colspan.'">';
 				if (empty($textifempty)) {
-					print $langs->trans("NoFileFound");
+					print '<span class="opacitymedium">'.$langs->trans("NoFileFound").'</span>';
 				} else {
-					print $textifempty;
+					print '<span class="opacitymedium">'.$textifempty.'</span>';
 				}
 				print '</td></tr>';
 			}
@@ -2096,8 +2096,8 @@ class FormFile
 			print "</tr>\n";
 		}
 		if ($nboflinks == 0) {
-			print '<tr class="oddeven"><td colspan="5" class="opacitymedium">';
-			print $langs->trans("NoLinkFound");
+			print '<tr class="oddeven"><td colspan="5">';
+			print '<span class="opacitymedium">'.$langs->trans("NoLinkFound").'</span>';
 			print '</td></tr>';
 		}
 		print "</table>";
