@@ -206,6 +206,34 @@ if ($object->id > 0) {
 		$head = facture_prepare_head($object);
 	}
 
+	$numopen = 0;
+	$pending = 0;
+	$numclosed = 0;
+
+	// How many Direct debit or Credit transfer open requests ?
+
+	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
+	$sql .= " , pfd.date_traite as date_traite";
+	$sql .= " , pfd.amount";
+	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+	if ($type == 'bank-transfer') {
+		$sql .= " WHERE fk_facture_fourn = ".((int) $object->id);
+	} else {
+		$sql .= " WHERE fk_facture = ".((int) $object->id);
+	}
+	$sql .= " AND pfd.traite = 0";
+	$sql .= " AND pfd.ext_payment_id IS NULL";
+	$sql .= " ORDER BY pfd.date_demande DESC";
+
+	$result_sql = $db->query($sql);
+	if ($result_sql) {
+		$num = $db->num_rows($result_sql);
+		$numopen = $num;
+	} else {
+		dol_print_error($db);
+	}
+
+
 	print dol_get_fiche_head($head, 'standingorders', $title, -1, ($type == 'bank-transfer' ? 'supplier_invoice' : 'bill'));
 
 	// Invoice content
@@ -481,7 +509,9 @@ if ($object->id > 0) {
 			print img_warning('Error on default bank number for IBAN : '.$bac->error_message);
 		}
 	} else {
-		print img_warning($langs->trans("NoDefaultIBANFound"));
+		if ($numopen || ($type == 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type != 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
+			print img_warning($langs->trans("NoDefaultIBANFound"));
+		}
 	}
 
 	print '</td></tr>';
@@ -564,34 +594,6 @@ if ($object->id > 0) {
 
 	print dol_get_fiche_end();
 
-
-	$numopen = 0;
-	$pending = 0;
-	$numclosed = 0;
-
-
-	// How many Direct debit opened requests ?
-
-	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
-	$sql .= " , pfd.date_traite as date_traite";
-	$sql .= " , pfd.amount";
-	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-	if ($type == 'bank-transfer') {
-		$sql .= " WHERE fk_facture_fourn = ".((int) $object->id);
-	} else {
-		$sql .= " WHERE fk_facture = ".((int) $object->id);
-	}
-	$sql .= " AND pfd.traite = 0";
-	$sql .= " AND pfd.ext_payment_id IS NULL";
-	$sql .= " ORDER BY pfd.date_demande DESC";
-
-	$result_sql = $db->query($sql);
-	if ($result_sql) {
-		$num = $db->num_rows($result_sql);
-		$numopen = $num;
-	} else {
-		dol_print_error($db);
-	}
 
 	// For which amount ?
 
