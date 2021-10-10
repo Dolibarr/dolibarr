@@ -2274,6 +2274,49 @@ class CommandeFournisseur extends CommonOrder
 		return $ret;
 	}
 
+	/**
+	 * Return array of the lines that are waiting to be dispatched
+	 *
+	 * @return	array				Array of lines
+	 */
+	public function getNotCompletlyDispatchedLines()
+	{
+		$ret = array();
+
+		$sql = "SELECT supplierOrderDet.fk_product as product_id, supplierOrderDet.qty as qty_ordered, supplierOrderDet.fk_commande,";
+		$sql .= " dispatch.rowid as dispatchedlineid, sum(dispatch.qty) as qty_dispatched";
+		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as supplierOrderDet";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as dispatch ON supplierOrderDet.rowid = dispatch.fk_commandefourndet";
+		$sql .= " WHERE supplierOrderDet.fk_commande = ".$this->id;
+		$sql .= " GROUP BY supplierOrderDet.fk_product";
+		
+		$resql = $this->db->query($sql);
+
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+
+			while ($i < $num) {
+				$objp = $this->db->fetch_object($resql);
+
+				if ($objp) {
+					// If product not completly dispatched
+					if (is_null($objp->qty_dispatched) OR ($objp->qty_dispatched < $objp->qty_ordered)){
+						$ret[] = array(
+							'product_id' => $objp->product_id,
+							'qty_ordered' => $objp->qty_ordered,
+							'qty_dispatched' => $objp->qty_dispatched,
+						);
+					}
+				}
+				$i++;
+			}
+		} else {
+			dol_print_error($this->db, 'Failed to execute request to get not completly dispatched lines');
+		}
+
+		return $ret;
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

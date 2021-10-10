@@ -157,8 +157,12 @@ function ordersupplier_prepare_head($object)
 
 	if (!empty($conf->stock->enabled) && (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE))) {
 		$langs->load("stocks");
+		$nbLineToDispatch = count($object->getNotCompletlyDispatchedLines());
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("OrderDispatch");
+		if ($nbLineToDispatch > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbLineToDispatch.'</span>';
+		}
 		$head[$h][2] = 'dispatch';
 		$h++;
 	}
