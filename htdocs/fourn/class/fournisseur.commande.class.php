@@ -2287,7 +2287,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " dispatch.rowid as dispatchedlineid, sum(dispatch.qty) as qty_dispatched";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as supplierOrderDet";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as dispatch ON supplierOrderDet.rowid = dispatch.fk_commandefourndet";
-		$sql .= " WHERE supplierOrderDet.fk_commande = ".$this->id;
+		$sql .= " WHERE supplierOrderDet.fk_commande = ".((int) $this->id);
 		$sql .= " GROUP BY supplierOrderDet.fk_product";
 
 		$resql = $this->db->query($sql);
