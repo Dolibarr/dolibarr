@@ -63,7 +63,7 @@ if ($action == 'updateform') {
 	if ($res3 && $res4 && $res5 && $res6) {
 		setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 	}
-} elseif ($action == 'delete') {
+} elseif ($action == 'deletefile') {
 	// Delete file
 	$langs->load("other");
 	$file = $conf->admin->dir_temp.'/'.GETPOST('urlfile', 'alpha');
