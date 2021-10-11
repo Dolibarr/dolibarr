@@ -3712,18 +3712,33 @@ abstract class CommonObject
 		$withtargettype = false;
 		$withsourcetype = false;
 
-		$sourceid = (!empty($sourceid) ? $sourceid : $this->id);
-		$targetid = (!empty($targetid) ? $targetid : $this->id);
-		$sourcetype = (!empty($sourcetype) ? $sourcetype : $this->element);
-		$targettype = (!empty($targettype) ? $targettype : $this->element);
-
 		$parameters = array('sourcetype'=>$sourcetype, 'sourceid'=>$sourceid, 'targettype'=>$targettype, 'targetid'=>$targetid);
 		// Hook for explicitly set the targettype if it must be differtent than $this->element
 		$reshook = $hookmanager->executeHooks('setLinkedObjectSourceTargetType', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			if (!empty($hookmanager->resArray['sourcetype'])) $sourcetype = $hookmanager->resArray['sourcetype'];
+			if (!empty($hookmanager->resArray['sourceid'])) $sourceid = $hookmanager->resArray['sourceid'];
 			if (!empty($hookmanager->resArray['targettype'])) $targettype = $hookmanager->resArray['targettype'];
+			if (!empty($hookmanager->resArray['targetid'])) $targetid = $hookmanager->resArray['targetid'];
 		}
+
+		if (!empty($sourceid) && !empty($sourcetype) && empty($targetid)) {
+			$justsource = true; // the source (id and type) is a search criteria
+			if (!empty($targettype)) {
+				$withtargettype = true;
+			}
+		}
+		if (!empty($targetid) && !empty($targettype) && empty($sourceid)) {
+			$justtarget = true; // the target (id and type) is a search criteria
+			if (!empty($sourcetype)) {
+				$withsourcetype = true;
+			}
+		}
+
+		$sourceid = (!empty($sourceid) ? $sourceid : $this->id);
+		$targetid = (!empty($targetid) ? $targetid : $this->id);
+		$sourcetype = (!empty($sourcetype) ? $sourcetype : $this->element);
+		$targettype = (!empty($targettype) ? $targettype : $this->element);
 
 		/*if (empty($sourceid) && empty($targetid))
 		 {
