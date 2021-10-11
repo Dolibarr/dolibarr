@@ -158,7 +158,7 @@ if ($ret > 0) {
 	$placeid = $invoice->id;
 }
 
-$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '') ;
+$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
 
 $soc = new Societe($db);
 if ($invoice->socid > 0) {
@@ -879,6 +879,9 @@ if ($action == "valid" || $action == "history" || $action == 'creditnote') {
 		$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
 	} else {
 		$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+		if (getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS')) {
+			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintBox('.$placeid.', \'without_details\');">'.$langs->trans('PrintWithoutDetails').'</button>';
+		}
 		if (getDolGlobalString('TAKEPOS_GIFT_RECEIPT')) {
 			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.', 1);">'.$langs->trans('GiftReceipt').'</button>';
 		}
@@ -1017,6 +1020,11 @@ function SendTicket(id)
 {
 	console.log("Open box to select the Print/Send form");
 	$.colorbox({href:"send.php?facid="+id, width:"70%", height:"30%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("SendTicket")); ?>'});
+}
+
+function PrintBox(id, action) {
+	console.log("Open box before printing");
+	$.colorbox({href:"printbox.php?facid="+id+"&action="+action, width:"80%", height:"200px", transition:"none", iframe:"true", title:"<?php echo $langs->trans("PrintWithoutDetails"); ?>"});
 }
 
 function Print(id, gift){

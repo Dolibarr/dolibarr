@@ -1148,6 +1148,18 @@ if ($action == 'create') {
 	} else {
 		print '<td colspan="2">';
 		print img_picto('', 'company').$form->select_company('', 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+		// reload page to retrieve customer informations
+		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE)) {
+			print '<script>
+			$(document).ready(function() {
+				$("#socid").change(function() {
+					var socid = $(this).val();
+					// reload page
+					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid;
+				});
+			});
+			</script>';
+		}
 		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		print '</td>';
 	}
