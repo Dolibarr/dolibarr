@@ -29,7 +29,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 /**
  *	Class to build sending documents with model espadon
@@ -648,6 +648,11 @@ class pdf_espadon extends ModelePdfExpedition
 
 					if ($this->getColumnStatus('qty_asked')) {
 						$this->printStdColumnContent($pdf, $curY, 'qty_asked', $object->lines[$i]->qty_asked);
+						$nexY = max($pdf->GetY(), $nexY);
+					}
+
+					if ($this->getColumnStatus('unit_order')) {
+						$this->printStdColumnContent($pdf, $curY, 'unit_order', measuringUnitString($object->lines[$i]->fk_unit));
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
@@ -1305,6 +1310,20 @@ class pdf_espadon extends ModelePdfExpedition
 			'status' => empty($conf->global->SHIPPING_PDF_HIDE_ORDERED) ? 1 : 0,
 			'title' => array(
 				'textkey' => 'QtyOrdered'
+			),
+			'border-left' => true, // add left line separator
+			'content' => array(
+				'align' => 'C',
+			),
+		);
+
+		$rank = $rank + 10;
+		$this->cols['unit_order'] = array(
+			'rank' => $rank,
+			'width' => 15, // in mm
+			'status' => empty($conf->global->PRODUCT_USE_UNITS) ? 0 : 1,
+			'title' => array(
+				'textkey' => 'Unit'
 			),
 			'border-left' => true, // add left line separator
 			'content' => array(
