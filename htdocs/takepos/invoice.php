@@ -158,7 +158,7 @@ if ($ret > 0) {
 	$placeid = $invoice->id;
 }
 
-$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'. isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '' ;
+$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '') ;
 
 $soc = new Societe($db);
 if ($invoice->socid > 0) {
