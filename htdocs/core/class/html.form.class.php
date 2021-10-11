@@ -4353,6 +4353,7 @@ class Form
 		if (!empty($unit_type)) {
 			$sql .= " AND unit_type = '".$this->db->escape($unit_type)."'";
 		}
+		$sql .= " ORDER BY sortorder";
 
 		$resql = $this->db->query($sql);
 		if ($resql && $this->db->num_rows($resql) > 0) {
