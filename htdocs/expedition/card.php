@@ -2552,8 +2552,8 @@ if ($action == 'create') {
 
 	// Presend form
 	$modelmail = 'shipping_send';
-	$defaulttopic = 'SendShippingRef';
-	$diroutput = $conf->expedition->dir_output;
+	$defaulttopic = $langs->trans('SendShippingRef');
+	$diroutput = $conf->expedition->dir_output.'/sending';
 	$trackid = 'shi'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
