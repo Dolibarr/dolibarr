@@ -8,7 +8,7 @@
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2018  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013       Peter Fontaine          <contact@peterfontaine.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -563,10 +563,22 @@ class Societe extends CommonObject
 	public $code_compta_client;
 
 	/**
-	 * Accounting code for suppliers
+	 * Accounting code for customer
+	 * @var string
+	 */
+	public $accountancy_code_customer;
+
+	/**
+	 * Accounting code for supplier
 	 * @var string
 	 */
 	public $code_compta_fournisseur;
+
+	/**
+	 * Accounting code for supplier
+	 * @var string
+	 */
+	public $accountancy_code_supplier;
 
 	/**
 	 * @var string
@@ -838,6 +850,8 @@ class Societe extends CommonObject
 		}
 		$this->import_key = trim($this->import_key);
 
+		$this->accountancy_code_customer = trim($this->code_compta);
+		$this->accountancy_code_supplier = trim($this->code_compta_fournisseur);
 		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
 		$this->accountancy_code_sell= trim($this->accountancy_code_sell);
 
@@ -922,11 +936,15 @@ class Societe extends CommonObject
 					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_perentity (";
 					$sql .= " fk_soc";
 					$sql .= ", entity";
+					$sql .= ", accountancy_code_customer";
+					$sql .= ", accountancy_code_supplier";
 					$sql .= ", accountancy_code_buy";
 					$sql .= ", accountancy_code_sell";
 					$sql .= ") VALUES (";
 					$sql .= $this->id;
 					$sql .= ", " . $conf->entity;
+					$sql .= ", '" . $this->db->escape($this->accountancy_code_customer) . "'";
+					$sql .= ", '" . $this->db->escape($this->accountancy_code_supplier) . "'";
 					$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
 					$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
 					$sql .= ")";
@@ -1281,7 +1299,7 @@ class Societe extends CommonObject
 		}
 
 		$this->code_compta_client = trim(empty($this->code_compta) ? $this->code_compta_client : $this->code_compta);
-		$this->code_compta = $this->code_compta_client;		// for backward compatbility
+		$this->code_compta = $this->code_compta_client;		// for backward compatibility
 		$this->code_compta_fournisseur = trim($this->code_compta_fournisseur);
 
 		// Check parameters. More tests are done later in the ->verify()
@@ -1451,6 +1469,14 @@ class Societe extends CommonObject
 			if (empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 				$sql .= ", accountancy_code_buy = '" . $this->db->escape($this->accountancy_code_buy) . "'";
 				$sql .= ", accountancy_code_sell= '" . $this->db->escape($this->accountancy_code_sell) . "'";
+
+				if ($customer) {
+					$sql .= ", code_compta = ".(!empty($this->code_compta_client) ? "'".$this->db->escape($this->code_compta_client)."'" : "null");
+				}
+
+				if ($supplier) {
+					$sql .= ", code_compta_fournisseur = ".(($this->code_compta_fournisseur != "") ? "'".$this->db->escape($this->code_compta_fournisseur)."'" : "null");
+				}
 			}
 			$sql .= ",webservices_url = ".(!empty($this->webservices_url) ? "'".$this->db->escape($this->webservices_url)."'" : "null");
 			$sql .= ",webservices_key = ".(!empty($this->webservices_key) ? "'".$this->db->escape($this->webservices_key)."'" : "null");
@@ -1461,12 +1487,10 @@ class Societe extends CommonObject
 
 			if ($customer) {
 				$sql .= ", code_client = ".(!empty($this->code_client) ? "'".$this->db->escape($this->code_client)."'" : "null");
-				$sql .= ", code_compta = ".(!empty($this->code_compta_client) ? "'".$this->db->escape($this->code_compta_client)."'" : "null");
 			}
 
 			if ($supplier) {
 				$sql .= ", code_fournisseur = ".(!empty($this->code_fournisseur) ? "'".$this->db->escape($this->code_fournisseur)."'" : "null");
-				$sql .= ", code_compta_fournisseur = ".(($this->code_compta_fournisseur != "") ? "'".$this->db->escape($this->code_compta_fournisseur)."'" : "null");
 			}
 			$sql .= ", fk_user_modif = ".($user->id > 0 ? $user->id : "null");
 			$sql .= ", fk_multicurrency = ".(int) $this->fk_multicurrency;
@@ -1540,11 +1564,15 @@ class Societe extends CommonObject
 					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_perentity (";
 					$sql .= " fk_soc";
 					$sql .= ", entity";
+					$sql .= ", accountancy_code_customer";
+					$sql .= ", accountancy_code_supplier";
 					$sql .= ", accountancy_code_buy";
 					$sql .= ", accountancy_code_sell";
 					$sql .= ") VALUES (";
 					$sql .= $this->id;
 					$sql .= ", " . $conf->entity;
+					$sql .= ", '" . $this->db->escape($this->code_compta_client)."'";
+					$sql .= ", '" . $this->db->escape($this->code_compta_fournisseur)."'";
 					$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
 					$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
 					$sql .= ")";
@@ -1646,11 +1674,11 @@ class Societe extends CommonObject
 		$sql .= ', s.fk_forme_juridique as forme_juridique_code';
 		$sql .= ', s.webservices_url, s.webservices_key, s.model_pdf';
 		if (empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-			$sql .= ', s.accountancy_code_buy, s.accountancy_code_sell';
+			$sql .= ', s.code_compta, s.code_compta_fournisseur, s.accountancy_code_buy, s.accountancy_code_sell';
 		} else {
-			$sql .= ', spe.accountancy_code_buy, spe.accountancy_code_sell';
+			$sql .= ', spe.accountancy_code_customer as code_compta, spe.accountancy_code_supplier as code_compta_fournisseur, spe.accountancy_code_buy, spe.accountancy_code_sell';
 		}
-		$sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
+		$sql .= ', s.code_client, s.code_fournisseur, s.parent, s.barcode';
 		$sql .= ', s.fk_departement as state_id, s.fk_pays as country_id, s.fk_stcomm, s.mode_reglement, s.cond_reglement, s.transport_mode';
 		$sql .= ', s.fk_account, s.tva_assuj';
 		$sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.transport_mode_supplier';
@@ -2011,6 +2039,15 @@ class Societe extends CommonObject
 
 			// Remove third party
 			if (!$error) {
+				if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_perentity";
+					$sql .= " WHERE fk_soc = ".((int) $id);
+					if (!$this->db->query($sql)) {
+						$error++;
+						$this->errors[] = $this->db->lasterror();
+					}
+				}
+
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe";
 				$sql .= " WHERE rowid = ".((int) $id);
 				if (!$this->db->query($sql)) {
@@ -3336,7 +3373,7 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *    Define parent commany of current company
+	 *    Define parent company of current company
 	 *
 	 *    @param	int		$id     Id of thirdparty to set or '' to remove
 	 *    @return	int     		<0 if KO, >0 if OK
