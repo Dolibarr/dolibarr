@@ -1334,7 +1334,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		if (empty($reshook)) {
-			print $object->showOptionals($extrafields, 'edit', $parameters);
+			print $object->showOptionals($extrafields, 'create', $parameters);
 		}
 
 		// Note (private, no output on invoices, propales...)

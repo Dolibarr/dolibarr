@@ -1231,7 +1231,7 @@ if ($action == 'confirm_deletesite' && $confirm == 'yes' && $permissiontodelete)
 }
 
 // Delete page (from website page menu)
-if (GETPOSTISSET('pageid') && $action == 'delete' && $permissiontodelete) {
+if (GETPOSTISSET('pageid') && $action == 'delete' && $permissiontodelete && !GETPOST('file_manager')) {
 	$error = 0;
 
 	$db->begin();
