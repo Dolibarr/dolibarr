@@ -22,7 +22,7 @@ require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 
 
 /**
- * \file    mrp/class/api_mo.class.php
+ * \file    htdocs/mrp/class/api_mos.class.php
  * \ingroup mrp
  * \brief   File for API management of MO.
  */
@@ -370,12 +370,12 @@ class Mos extends DolibarrApi
 						$qtytoprocess = $value["qty"];
 						if (isset($value["fk_warehouse"])) {	// If there is a warehouse to set
 							if (!($value["fk_warehouse"] > 0)) {	// If there is no warehouse set.
-								throw new RestException(500, "Field fk_warehouse must be > 0 in ".$arrayname);
 								$error++;
+								throw new RestException(500, "Field fk_warehouse must be > 0 in ".$arrayname);
 							}
 							if ($tmpproduct->status_batch) {
-								throw new RestException(500, "Product ".$tmpproduct->ref."must be in batch");
 								$error++;
+								throw new RestException(500, "Product ".$tmpproduct->ref."must be in batch");
 							}
 						}
 						$idstockmove = 0;
@@ -476,13 +476,13 @@ class Mos extends DolibarrApi
 						if (isset($line->fk_warehouse)) {	// If there is a warehouse to set
 							if (!($line->fk_warehouse > 0)) {	// If there is no warehouse set.
 								$langs->load("errors");
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref));
 								$error++;
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref));
 							}
 							if ($tmpproduct->status_batch) {
 								$langs->load("errors");
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref));
 								$error++;
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref));
 							}
 						}
 						$idstockmove = 0;
@@ -535,13 +535,13 @@ class Mos extends DolibarrApi
 						if (isset($line->fk_warehouse)) {	// If there is a warehouse to set
 							if (!($line->fk_warehouse > 0)) {	// If there is no warehouse set.
 								$langs->load("errors");
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref));
 								$error++;
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref));
 							}
 							if ($tmpproduct->status_batch) {
 								$langs->load("errors");
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref));
 								$error++;
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref));
 							}
 						}
 						$idstockmove = 0;
@@ -716,7 +716,7 @@ class Mos extends DolibarrApi
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}
-				$myobject[$field] = $data[$field];
+			$myobject[$field] = $data[$field];
 		}
 		return $myobject;
 	}

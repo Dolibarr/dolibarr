@@ -186,10 +186,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div align="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("CreateBookmark").'" name="create"> &nbsp; ';
-	print '<input type="submit" class="button button-cancel" value="'.$langs->trans("Cancel").'" name="cancel">';
-	print '</div>';
+	print $form->buttonsSaveCancel("CreateBookmark");
 
 	print '</form>';
 }
@@ -313,12 +310,12 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 
 	// Edit
 	if ($user->rights->bookmark->creer && $action != 'edit') {
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit&amp;token='.newToken().'">'.$langs->trans("Edit").'</a>'."\n";
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Edit").'</a>'."\n";
 	}
 
 	// Remove
 	if ($user->rights->bookmark->supprimer && $action != 'edit') {
-		print '<a class="butActionDelete" href="list.php?bid='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a>'."\n";
+		print '<a class="butActionDelete" href="list.php?bid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>'."\n";
 	}
 
 	print '</div>';

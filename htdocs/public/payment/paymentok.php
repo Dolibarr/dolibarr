@@ -23,9 +23,10 @@
 /**
  *     	\file       htdocs/public/payment/paymentok.php
  *		\ingroup    core
- *		\brief      File to show page after a successful payment
+ *		\brief      File to show page after a successful payment on a payment line system.
+ *					The payment was already really recorded. So an error here must send warning to admin but must still infor user that payment is ok.
  *                  This page is called by payment system with url provided to it completed with parameter TOKEN=xxx
- *                  This token can be used to get more informations.
+ *                  This token and session can be used to get more informations.
  */
 
 if (!defined('NOLOGIN')) {
@@ -585,7 +586,7 @@ if ($ispaymentok) {
 										}
 									} else {
 										$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_account (fk_soc, login, key_account, site, site_account, status, entity, date_creation, fk_user_creat)";
-										$sql .= " VALUES (".$object->fk_soc.", '', '".$db->escape($stripecu)."', 'stripe', '".$db->escape($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])."', ".$servicestatus.", ".$conf->entity.", '".$db->idate(dol_now())."', 0)";
+										$sql .= " VALUES (".((int) $object->fk_soc).", '', '".$db->escape($stripecu)."', 'stripe', '".$db->escape($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])."', ".((int) $servicestatus).", ".((int) $conf->entity).", '".$db->idate(dol_now())."', 0)";
 										$resql = $db->query($sql);
 										if (!$resql) {	// should not happen
 											$error++;
@@ -804,7 +805,7 @@ if ($ispaymentok) {
 							$ispostactionok = 1;
 						}
 					} else {
-						$postactionmessages[] = 'Setup of bank account to use in module '.$paymentmethod.' was not set. No way to record the payment.';
+						$postactionmessages[] = 'Setup of bank account to use in module '.$paymentmethod.' was not set. Your payment was really executed but we failed to record it. Please contact us.';
 						$ispostactionok = -1;
 						$error++;
 					}
@@ -1015,7 +1016,7 @@ if ($ispaymentok) {
 							$ispostactionok = 1;
 						}
 					} else {
-						$postactionmessages[] = 'Setup of bank account to use in module '.$paymentmethod.' was not set. No way to record the payment.';
+						$postactionmessages[] = 'Setup of bank account to use in module '.$paymentmethod.' was not set. Your payment was really executed but we failed to record it. Please contact us.';
 						$ispostactionok = -1;
 						$error++;
 					}
@@ -1036,9 +1037,9 @@ if ($ispaymentok) {
 		}
 
 		// TODO send email with acknowledgment for the donation
-		//      (need that the donation module can gen a pdf document for the cerfa with pre filled content)
+		//      (we need first that the donation module is able to generate a pdf document for the cerfa with pre filled content)
 	} elseif (array_key_exists('ATT', $tmptag) && $tmptag['ATT'] > 0) {
-		// Record payment for attendee
+		// Record payment for registration to an event for an attendee
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$object = new Facture($db);
 		$result = $object->fetch($ref);
@@ -1090,7 +1091,7 @@ if ($ispaymentok) {
 					}
 					$paiement->paiementid   = $paymentTypeId;
 					$paiement->num_payment = '';
-					$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
+					$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress.' for event registration';
 					$paiement->ext_payment_id = $TRANSACTIONID;
 					$paiement->ext_payment_site = $service;
 
@@ -1131,77 +1132,86 @@ if ($ispaymentok) {
 								$ispostactionok = 1;
 							}
 						} else {
-							$postactionmessages[] = 'Setup of bank account to use in module '.$paymentmethod.' was not set. No way to record the payment.';
+							$postactionmessages[] = 'Setup of bank account to use in module '.$paymentmethod.' was not set. Your payment was really executed but we failed to record it. Please contact us.';
 							$ispostactionok = -1;
 							$error++;
 						}
 					}
 
 					if (!$error) {
-						$db->commit();
-
 						// Validating the attendee
 						$attendeetovalidate = new ConferenceOrBoothAttendee($db);
 						$resultattendee = $attendeetovalidate->fetch($tmptag['ATT']);
 						if ($resultattendee < 0) {
+							$error++;
 							setEventMessages(null, $attendeetovalidate->errors, "errors");
 						} else {
-							$attendeetovalidate->amount=$FinalPaymentAmt;
-							$attendeetovalidate->update($user);
 							$attendeetovalidate->validate($user);
 
-							// Sending mail
-							$thirdparty = new Societe($db);
-							$resultthirdparty = $thirdparty->fetch($attendeetovalidate->fk_soc);
-							if ($resultthirdparty < 0) {
-								setEventMessages(null, $attendeetovalidate->errors, "errors");
+							$attendeetovalidate->amount = $FinalPaymentAmt;
+							$attendeetovalidate->date_subscription = dol_now();
+							$attendeetovalidate->update($user);
+						}
+					}
+
+					if (!$error) {
+						$db->commit();
+					} else {
+						setEventMessages(null, $postactionmessages, 'warnings');
+
+						$db->rollback();
+					}
+
+					if (! $error) {
+						// Sending mail
+						$thirdparty = new Societe($db);
+						$resultthirdparty = $thirdparty->fetch($attendeetovalidate->fk_soc);
+						if ($resultthirdparty < 0) {
+							setEventMessages(null, $attendeetovalidate->errors, "errors");
+						} else {
+							require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+							include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+							$formmail = new FormMail($db);
+							// Set output language
+							$outputlangs = new Translate('', $conf);
+							$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
+							// Load traductions files required by page
+							$outputlangs->loadLangs(array("main", "members"));
+							// Get email content from template
+							$arraydefaultmessage = null;
+
+							$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;
+
+							if (!empty($labeltouse)) {
+								$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $labeltouse, 1, '');
+							}
+
+							if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+								$subject = $arraydefaultmessage->topic;
+								$msg     = $arraydefaultmessage->content;
+							}
+
+							$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
+							complete_substitutions_array($substitutionarray, $outputlangs, $object);
+
+							$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+							$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
+
+							$sendto = $attendeetovalidate->email;
+							$from = $conf->global->MAILING_EMAIL_FROM;
+							$urlback = $_SERVER["REQUEST_URI"];
+
+							$ishtml = dol_textishtml($texttosend); // May contain urls
+
+							$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml);
+
+							$result = $mailfile->sendfile();
+							if ($result) {
+								dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
 							} else {
-								require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-								include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-								$formmail = new FormMail($db);
-								// Set output language
-								$outputlangs = new Translate('', $conf);
-								$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
-								// Load traductions files required by page
-								$outputlangs->loadLangs(array("main", "members"));
-								// Get email content from template
-								$arraydefaultmessage = null;
-
-								$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;
-
-								if (!empty($labeltouse)) {
-									$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $labeltouse, 1, '');
-								}
-
-								if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-									$subject = $arraydefaultmessage->topic;
-									$msg     = $arraydefaultmessage->content;
-								}
-
-								$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
-								complete_substitutions_array($substitutionarray, $outputlangs, $object);
-
-								$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
-								$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
-
-								$sendto = $attendeetovalidate->email;
-								$from = $conf->global->MAILING_EMAIL_FROM;
-								$urlback = $_SERVER["REQUEST_URI"];
-
-								$ishtml = dol_textishtml($texttosend); // May contain urls
-
-								$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml);
-
-								$result = $mailfile->sendfile();
-								if ($result) {
-									dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
-								} else {
-									dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
-								}
+								dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
 							}
 						}
-					} else {
-						$db->rollback();
 					}
 				}
 			} else {
@@ -1306,7 +1316,7 @@ if ($ispaymentok) {
 								$ispostactionok = 1;
 							}
 						} else {
-							$postactionmessages[] = 'Setup of bank account to use in module '.$paymentmethod.' was not set. No way to record the payment.';
+							$postactionmessages[] = 'Setup of bank account to use in module '.$paymentmethod.' was not set. Your payment was really executed but we failed to record it. Please contact us.';
 							$ispostactionok = -1;
 							$error++;
 						}
@@ -1435,6 +1445,7 @@ if ($ispaymentok) {
 
 	$key = 'ONLINE_PAYMENT_MESSAGE_OK';
 	if (!empty($conf->global->$key)) {
+		print '<br>';
 		print $conf->global->$key;
 	}
 
@@ -1495,12 +1506,12 @@ if ($ispaymentok) {
 		$content .= $companylangs->transnoentities("PostActionAfterPayment").' : ';
 		if ($ispostactionok > 0) {
 			//$topic.=' ('.$companylangs->transnoentitiesnoconv("Status").' '.$companylangs->transnoentitiesnoconv("OK").')';
-			$content .= '<font color="green">'.$companylangs->transnoentitiesnoconv("OK").'</font>';
+			$content .= '<span style="color: green">'.$companylangs->transnoentitiesnoconv("OK").'</span>';
 		} elseif ($ispostactionok == 0) {
 			$content .= $companylangs->transnoentitiesnoconv("None");
 		} else {
 			$topic .= ($ispostactionok ? '' : ' ('.$companylangs->trans("WarningPostActionErrorAfterPayment").')');
-			$content .= '<font color="red">'.$companylangs->transnoentitiesnoconv("Error").'</font>';
+			$content .= '<span style="color: red">'.$companylangs->transnoentitiesnoconv("Error").'</span>';
 		}
 		$content .= '<br>'."\n";
 		foreach ($postactionmessages as $postactionmessage) {
@@ -1619,7 +1630,7 @@ if ($ispaymentok) {
 		$urlback = $_SERVER["REQUEST_URI"];
 		$topic = '['.$appli.'] '.$companylangs->transnoentitiesnoconv("ValidationOfPaymentFailed");
 		$content = "";
-		$content .= '<font color="orange">'.$companylangs->transnoentitiesnoconv("PaymentSystemConfirmPaymentPageWasCalledButFailed")."</font>\n";
+		$content .= '<span style="color: orange">'.$companylangs->transnoentitiesnoconv("PaymentSystemConfirmPaymentPageWasCalledButFailed")."</span>\n";
 
 		$content .= "<br><br>\n";
 		$content .= '<u>'.$companylangs->transnoentitiesnoconv("TechnicalInformation").":</u><br>\n";

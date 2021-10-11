@@ -37,6 +37,7 @@ ALTER TABLE llx_prelevement_bons ADD COLUMN type varchar(16) DEFAULT 'debit-orde
 
 ALTER TABLE llx_prelevement_facture CHANGE COLUMN fk_facture_foun fk_facture_fourn integer NULL;
 
+ALTER TABLE llx_prelevement_facture_demande ADD COLUMN fk_facture_fourn INTEGER NULL;
 ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_demande_fk_facture (fk_facture);
 ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_demande_fk_facture_fourn (fk_facture_fourn);
 

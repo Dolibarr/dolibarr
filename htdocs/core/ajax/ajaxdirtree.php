@@ -283,7 +283,7 @@ if (empty($conf->use_javascript_ajax) || !empty($conf->global->MAIN_ECM_DISABLE_
 			print '</td>';
 			print '<td class="left">';
 			if ($nbofsubdir && $nboffilesinsubdir) {
-				print '<font color="#AAAAAA">+'.$nboffilesinsubdir.'</font> ';
+				print '<span style="color: #AAAAAA">+'.$nboffilesinsubdir.'</span> ';
 			}
 			print '</td>';
 
@@ -439,7 +439,7 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 						print '</td>';
 						print '<td class="left">';
 						if ($nbofsubdir > 0 && $nboffilesinsubdir > 0) {
-							print '<font class="opacitymedium">+'.$nboffilesinsubdir.'</font> ';
+							print '<span class="opacitymedium">+'.$nboffilesinsubdir.'</span> ';
 						}
 						print '</td>';
 

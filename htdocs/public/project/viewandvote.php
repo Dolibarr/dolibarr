@@ -67,7 +67,7 @@ $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors",
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id');
 $securekeyreceived = GETPOST("securekey");
-$securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
+$securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 'md5');
 
 if ($securekeytocompare != $securekeyreceived) {
 	print $langs->trans('MissingOrBadSecureKey');
@@ -271,7 +271,7 @@ if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH)) {
 print '<table id="welcome" class="center">'."\n";
 $text  = '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</strong></td></tr>'."\n";
 $text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgVoteHelpMessage").' : "'.$project->title.'".<br><br></td></tr>'."\n";
-$text .= '<tr><td class="textpublicpayment">'.$project->note_public.'</td></tr>'."\n";;
+$text .= '<tr><td class="textpublicpayment">'.$project->note_public.'</td></tr>'."\n";
 print $text;
 print '</table>'."\n";
 

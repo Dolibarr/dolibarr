@@ -526,8 +526,8 @@ if ($resql) {
 				if (in_array($obj->rowid, $arrayofselected)) {
 					$selected = 1;
 				}
-				print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=updateRate&amp;id_rate='.$obj->rowid.'">'.img_picto('edit', 'edit').'</a>';
-				print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=deleteRate&amp;id_rate='.$obj->rowid.'">'.img_picto('delete', 'delete').'</a>';
+				print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=updateRate&token='.newToken().'&id_rate='.$obj->rowid.'">'.img_picto('edit', 'edit').'</a>';
+				print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=deleteRate&token='.newToken().'&id_rate='.$obj->rowid.'">'.img_picto('delete', 'delete').'</a>';
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';

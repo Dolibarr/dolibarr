@@ -16,7 +16,7 @@
  */
 
 /**
- * \file    eventorganization/lib/eventorganization.lib.php
+ * \file    htdocs/core/lib/eventorganization.lib.php
  * \ingroup eventorganization
  * \brief   Library files with common functions for EventOrganization
  */

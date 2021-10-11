@@ -90,7 +90,7 @@ print '<input type="hidden" name="action" value="set">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
-print '<td class="right"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
+print '<td class="right"><input type="submit" class="button button-edit" '.$option.' value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
 print '<tr class="oddeven"><td>'.$langs->trans("DEBUGBAR_LOGS_LINES_NUMBER").'</td>';

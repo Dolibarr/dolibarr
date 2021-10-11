@@ -174,7 +174,7 @@ if (!empty($object->origin_email)) {
 if (!empty($conf->societe->enabled)) {
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty');
 	/*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->socid && $user->rights->ticket->write) {
-		$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&amp;track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
+		$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&token='.newToken().'&track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
 	}*/
 	$morehtmlref .= ' : ';
 	if ($action == 'editcustomer') {
@@ -190,7 +190,7 @@ if (!empty($conf->projet->enabled)) {
 	$morehtmlref .= '<br>'.$langs->trans('Project');
 	if ($user->rights->ticket->write) {
 		if ($action != 'classify') {
-			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
+			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
 			$morehtmlref .= ' : ';
 		}
 		if ($action == 'classify') {
@@ -217,7 +217,7 @@ if (!empty($conf->projet->enabled)) {
 
 $morehtmlref .= '</div>';
 
-$linkback = '<a href="'.dol_buildpath('/ticket/list.php', 1).'"><strong>'.$langs->trans("BackToList").'</strong></a> ';
+$linkback = '<a href="'.DOL_URL_ROOT.'/ticket/list.php"><strong>'.$langs->trans("BackToList").'</strong></a> ';
 
 dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 

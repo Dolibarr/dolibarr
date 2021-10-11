@@ -394,7 +394,7 @@ class CompanyPaymentMode extends CommonObject
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
-		$url = dol_buildpath('/monmodule/companypaymentmode_card.php', 1).'?id='.$this->id;
+		$url = '';
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not

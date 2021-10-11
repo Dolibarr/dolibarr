@@ -328,7 +328,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($permissiontoadd) {
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_soc, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -423,7 +423,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Add fields from extrafields
 	if (!empty($extrafields->attributes[$objectlist->table_element]['label'])) {
 		foreach ($extrafields->attributes[$objectlist->table_element]['label'] as $key => $val) {
-			$sql .= ($extrafields->attributes[$objectlist->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+			$sql .= ($extrafields->attributes[$objectlist->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 		}
 	}
 	// Add fields from hooks

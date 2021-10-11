@@ -226,12 +226,12 @@ print "<br>\n";
 // --------------------------------------------------------------------
 $sql = 'SELECT ';
 foreach ($object->fields as $key => $val) {
-	$sql .= 't.'.$key.', ';
+	$sql .= "t.".$key.", ";
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.' as options_'.$key.', ' : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key." as options_".$key.', ' : '');
 	}
 }
 // Add fields from hooks
@@ -282,7 +282,7 @@ $sql .= $hookmanager->resPrint;
 $sql.= " GROUP BY "
 foreach($object->fields as $key => $val)
 {
-	$sql.='t.'.$key.', ';
+	$sql .= "t.".$key.", ";
 }
 // Add fields from extrafields
 if (! empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -632,7 +632,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	if ($sortorder) {
 		$url .= '&page='.urlencode($sortorder);
 	}
-	print '<a class="editfielda reposition marginrightonly marginleftonly" href="'.$url.'&action=edit&rowid='.$obj->rowid.'">'.img_edit().'</a>';
+	print '<a class="editfielda reposition marginrightonly marginleftonly" href="'.$url.'&action=edit&token='.newToken().'&rowid='.$obj->rowid.'">'.img_edit().'</a>';
 	//print ' &nbsp; ';
 	print '<a class=" marginrightonly marginleftonly" href="'.$url.'&action=delete&token='.newToken().'">'.img_delete().'</a>  &nbsp; ';
 	if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined

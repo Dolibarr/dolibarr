@@ -90,21 +90,19 @@ class Contact extends CommonObject
 	 */
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
-		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>15),
-		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
-		'fk_soc' =>array('type'=>'integer', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>1, 'position'=>25, 'searchall'=>1),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>3, 'notnull'=>1, 'position'=>30, 'index'=>1),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>3, 'position'=>35),
 		'civility' =>array('type'=>'varchar(6)', 'label'=>'Civility', 'enabled'=>1, 'visible'=>3, 'position'=>40),
 		'lastname' =>array('type'=>'varchar(50)', 'label'=>'Lastname', 'enabled'=>1, 'visible'=>1, 'position'=>45, 'showoncombobox'=>1, 'searchall'=>1),
 		'firstname' =>array('type'=>'varchar(50)', 'label'=>'Firstname', 'enabled'=>1, 'visible'=>1, 'position'=>50, 'showoncombobox'=>1, 'searchall'=>1),
+		'poste' =>array('type'=>'varchar(80)', 'label'=>'PostOrFunction', 'enabled'=>1, 'visible'=>-1, 'position'=>52),
 		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
 		'zip' =>array('type'=>'varchar(25)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>1, 'position'=>60),
 		'town' =>array('type'=>'text', 'label'=>'Town', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
 		'fk_departement' =>array('type'=>'integer', 'label'=>'Fk departement', 'enabled'=>1, 'visible'=>3, 'position'=>70),
 		'fk_pays' =>array('type'=>'integer', 'label'=>'Fk pays', 'enabled'=>1, 'visible'=>3, 'position'=>75),
+		'fk_soc' =>array('type'=>'integer', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>1, 'position'=>77, 'searchall'=>1),
 		'birthday' =>array('type'=>'date', 'label'=>'Birthday', 'enabled'=>1, 'visible'=>3, 'position'=>80),
-		'poste' =>array('type'=>'varchar(80)', 'label'=>'PostOrFunction', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
 		'phone' =>array('type'=>'varchar(30)', 'label'=>'Phone', 'enabled'=>1, 'visible'=>1, 'position'=>90, 'searchall'=>1),
 		'phone_perso' =>array('type'=>'varchar(30)', 'label'=>'PhonePerso', 'enabled'=>1, 'visible'=>-1, 'position'=>95, 'searchall'=>1),
 		'phone_mobile' =>array('type'=>'varchar(30)', 'label'=>'PhoneMobile', 'enabled'=>1, 'visible'=>1, 'position'=>100, 'searchall'=>1),
@@ -113,15 +111,17 @@ class Contact extends CommonObject
 		'socialnetworks' =>array('type'=>'text', 'label'=>'SocialNetworks', 'enabled'=>1, 'visible'=>3, 'position'=>115),
 		'photo' =>array('type'=>'varchar(255)', 'label'=>'Photo', 'enabled'=>1, 'visible'=>3, 'position'=>170),
 		'priv' =>array('type'=>'smallint(6)', 'label'=>'ContactVisibility', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>175),
-		'fk_stcommcontact' =>array('type'=>'integer', 'label'=>'Fk stcommcontact', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>220),
+		'fk_stcommcontact' =>array('type'=>'integer', 'label'=>'ProspectStatus', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>220),
 		'fk_prospectlevel' =>array('type'=>'varchar(12)', 'label'=>'ProspectLevel', 'enabled'=>1, 'visible'=>-1, 'position'=>255),
 		'no_email' =>array('type'=>'smallint(6)', 'label'=>'No_Email', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>180),
-		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>3, 'position'=>185),
-		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>3, 'position'=>190),
 		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>3, 'position'=>195, 'searchall'=>1),
 		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>3, 'position'=>200, 'searchall'=>1),
 		'default_lang' =>array('type'=>'varchar(6)', 'label'=>'Default lang', 'enabled'=>1, 'visible'=>3, 'position'=>205),
 		'canvas' =>array('type'=>'varchar(32)', 'label'=>'Canvas', 'enabled'=>1, 'visible'=>3, 'position'=>210),
+		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>300),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>305),
+		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>3, 'position'=>310),
+		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>3, 'position'=>315),
 		'statut' =>array('type'=>'tinyint(4)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>500),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'position'=>1000),
 	);
@@ -165,7 +165,8 @@ class Contact extends CommonObject
 	/**
 	 * @var int Thirdparty ID
 	 */
-	public $socid;
+	public $socid;		// both socid and fk_soc are used
+	public $fk_soc;		// both socid and fk_soc are used
 
 	/**
 	 * @var int 0=inactive, 1=active
@@ -388,8 +389,8 @@ class Contact extends CommonObject
 			$sql .= " WHERE sp.fk_soc = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
 		}
-		$sql .= ' '.$clause.' sp.entity IN ('.getEntity($this->element).')';
-		$sql .= " AND (sp.priv='0' OR (sp.priv='1' AND sp.fk_user_creat=".((int) $user->id)."))";
+		$sql .= " ".$clause." sp.entity IN (".getEntity($this->element).")";
+		$sql .= " AND (sp.priv='0' OR (sp.priv='1' AND sp.fk_user_creat = ".((int) $user->id)."))";
 		if ($user->socid > 0) {
 			$sql .= " AND sp.fk_soc = ".((int) $user->socid);
 		}
@@ -595,7 +596,7 @@ class Contact extends CommonObject
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape($user->id)."'" : "NULL");
 		$sql .= ", default_lang=".($this->default_lang ? "'".$this->db->escape($this->default_lang)."'" : "NULL");
 		$sql .= ", entity = ".((int) $this->entity);
-		$sql .= " WHERE rowid=".((int) $id);
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -871,12 +872,12 @@ class Contact extends CommonObject
 
 		// Mis a jour contact
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET";
-		$sql .= " birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
+		$sql .= " birthday = ".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
 		$sql .= ", photo = ".($this->photo ? "'".$this->db->escape($this->photo)."'" : "null");
 		if ($user) {
-			$sql .= ", fk_user_modif=".$user->id;
+			$sql .= ", fk_user_modif = ".((int) $user->id);
 		}
-		$sql .= " WHERE rowid=".$this->db->escape($id);
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::update_perso this->birthday=".$this->birthday." -", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1027,7 +1028,8 @@ class Contact extends CommonObject
 				$this->country_code = $obj->country_id ? $obj->country_code : '';
 				$this->country			= $obj->country_id ? ($langs->trans('Country'.$obj->country_code) != 'Country'.$obj->country_code ? $langs->transnoentities('Country'.$obj->country_code) : $obj->country) : '';
 
-				$this->socid			= $obj->fk_soc;
+				$this->fk_soc			= $obj->fk_soc;		// Both fk_soc and socid are used
+				$this->socid			= $obj->fk_soc;		// Both fk_soc and socid are used
 				$this->socname			= $obj->socname;
 				$this->poste			= $obj->poste;
 				$this->statut = $obj->statut;
@@ -1278,7 +1280,7 @@ class Contact extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
-			$sql .= " WHERE rowid=".((int) $this->id);
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if (!$result) {

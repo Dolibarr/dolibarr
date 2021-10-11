@@ -197,9 +197,7 @@ print '</table>';
 
 print dol_get_fiche_end();
 
-print '<div class="center">';
-print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
-print '</div>';
+print $form->buttonsSaveCancel("Modify", '');
 
 print '</form>';
 

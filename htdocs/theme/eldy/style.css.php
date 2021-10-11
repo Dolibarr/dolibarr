@@ -118,7 +118,8 @@ $dol_no_mouse_hover = $conf->dol_no_mouse_hover;
 //$user->conf->THEME_ELDY_ENABLE_PERSONALIZED=0;
 //var_dump($user->conf->THEME_ELDY_RGB);
 
-$useboldtitle = (isset($conf->global->THEME_ELDY_USEBOLDTITLE) ? $conf->global->THEME_ELDY_USEBOLDTITLE : 0);
+$useboldtitle = getDolGlobalInt('THEME_ELDY_USEBOLDTITLE');
+$userborderontable = getDolGlobalInt('THEME_ELDY_USEBORDERONTABLE');
 $borderwidth = 1;
 
 // Case of option always editable
@@ -207,6 +208,8 @@ if ($tmpval <= 460) {
 } else {
 	$colortextbackvmenu = '000000';
 }
+
+$colortopbordertitle1 = join(',', colorStringToArray($colortopbordertitle1)); // Normalize value to 'x,y,z'
 
 $colorbacktitle1 = join(',', colorStringToArray($colorbacktitle1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbacktitle1);
