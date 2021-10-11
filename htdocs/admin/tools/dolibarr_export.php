@@ -55,7 +55,7 @@ if (!$user->admin) {
  * Actions
  */
 
-if ($action == 'delete') {
+if ($action == 'deletefile') {
 	if (preg_match('/^backup\//', GETPOST('urlfile', 'alpha'))) {
 		$file = $conf->admin->dir_output.'/backup/'.basename(GETPOST('urlfile', 'alpha'));
 		$ret = dol_delete_file($file, 1);

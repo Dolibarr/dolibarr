@@ -396,9 +396,9 @@ if (!empty($conf->global->MAIN_ECM_DISABLE_JS)) {
 
 //$param.=($param?'?':'').(preg_replace('/^&/','',$param));
 
-if ($useajax || $action == 'delete') {
+if ($useajax || $action == 'deletefile') {
 	$urlfile = '';
-	if ($action == 'delete') {
+	if ($action == 'deletefile') {
 		$urlfile = GETPOST('urlfile', 'alpha');
 	}
 

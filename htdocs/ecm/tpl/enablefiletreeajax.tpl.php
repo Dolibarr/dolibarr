@@ -78,13 +78,14 @@ $(document).ready(function() {
 	$('#refreshbutton').click( function() {
 		console.log("Click on refreshbutton");
 		$.pleaseBePatient("<?php echo $langs->trans('PleaseBePatient'); ?>");
-		$.get( "<?php echo DOL_URL_ROOT.'/ecm/ajax/ecmdatabase.php'; ?>", {
-			action: "build",
-			element: "ecm"
+		$.get("<?php echo DOL_URL_ROOT.'/ecm/ajax/ecmdatabase.php'; ?>", {
+			action: 'build',
+			token: '<?php echo newToken(); ?>',
+			element: 'ecm'
 		},
 		function(response) {
 			$.unblockUI();
-			location.href="<?php echo $_SERVER['PHP_SELF']; ?>";
+			location.href='<?php echo $_SERVER['PHP_SELF']; ?>';
 		});
 	});
 });
