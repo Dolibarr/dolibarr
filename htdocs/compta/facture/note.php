@@ -71,7 +71,6 @@ if (empty($object->id)) {
 	echo dol_get_fiche_head($head, 'note', $langs->trans("InvoiceCustomer"), -1, 'bill'),
 		'<div class="error">' . $langs->trans("ErrorRecordNotFound") . '</div>';
 	llxFooter();
-	dol_shutdown();
 	exit;
 }
 
