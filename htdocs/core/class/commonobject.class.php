@@ -3618,7 +3618,7 @@ abstract class CommonObject
 	public function add_object_linked($origin = null, $origin_id = null, $f_user = null, $notrigger = 0)
 	{
 		// phpcs:enable
-		global $user;
+		global $user, $hookmanager, $action;
 		$origin = (!empty($origin) ? $origin : $this->origin);
 		$origin_id = (!empty($origin_id) ? $origin_id : $this->origin_id);
 		$f_user = isset($f_user) ? $f_user : $user;
@@ -3636,6 +3636,23 @@ abstract class CommonObject
 		if ($origin == 'supplierorder') {
 			$origin = 'order_supplier';
 		}
+
+		$targettype = $this->element;
+
+		$parameters = array('sourcetype'=>$sourcetype, 'sourceid'=>$sourceid, 'targettype'=>$targettype, 'targetid'=>$targetid);
+		// Hook for explicitly set the targettype if it must be differtent than $this->element
+		$reshook = $hookmanager->executeHooks('setLinkedObjectSourceTargetType', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			if (!empty($hookmanager->resArray['targettype'])) $targettype = $hookmanager->resArray['targettype'];
+			if (!empty($hookmanager->resArray['sourcetype'])) $sourcetype = $hookmanager->resArray['sourcetype'];
+		}
+
+		// Elements of the core modules which have `$module` property but may to which we don't want to prefix module part to the element name for finding the linked object in llx_element_element.
+		// It's because an entry for this element may be exist in llx_element_element before this modification (version <=14.2) and ave named only with their element name in fk_source or fk_target.
+		$coremodule = array('knowledgemanagement', 'partnership', 'workstation', 'ticket', 'recruitment', 'eventorganization');
+		// Add module part to target type if object has $module property and isn't in core modules.
+		$targettype = ((!empty($this->module) && ! in_array($this->module, $coremodule)) ? $this->module.'_' : '').$this->element;
+
 		$this->db->begin();
 		$error = 0;
 
@@ -3648,7 +3665,7 @@ abstract class CommonObject
 		$sql .= ((int) $origin_id);
 		$sql .= ", '" . $this->db->escape($origin) . "'";
 		$sql .= ", " . ((int) $this->id);
-		$sql .= ", '" . $this->db->escape($this->element) . "'";
+		$sql .= ", '" . $this->db->escape($targettype) . "'";
 		$sql .= ")";
 
 		dol_syslog(get_class($this) . "::add_object_linked", LOG_DEBUG);
@@ -3701,7 +3718,7 @@ abstract class CommonObject
 	 */
 	public function fetchObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $clause = 'OR', $alsosametype = 1, $orderby = 'sourcetype', $loadalsoobjects = 1)
 	{
-		global $conf;
+		global $conf, $hookmanager, $action;
 
 		$this->linkedObjectsIds = array();
 		$this->linkedObjects = array();
@@ -3710,6 +3727,16 @@ abstract class CommonObject
 		$justtarget = false;
 		$withtargettype = false;
 		$withsourcetype = false;
+
+		$parameters = array('sourcetype'=>$sourcetype, 'sourceid'=>$sourceid, 'targettype'=>$targettype, 'targetid'=>$targetid);
+		// Hook for explicitly set the targettype if it must be differtent than $this->element
+		$reshook = $hookmanager->executeHooks('setLinkedObjectSourceTargetType', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			if (!empty($hookmanager->resArray['sourcetype'])) $sourcetype = $hookmanager->resArray['sourcetype'];
+			if (!empty($hookmanager->resArray['sourceid'])) $sourceid = $hookmanager->resArray['sourceid'];
+			if (!empty($hookmanager->resArray['targettype'])) $targettype = $hookmanager->resArray['targettype'];
+			if (!empty($hookmanager->resArray['targetid'])) $targetid = $hookmanager->resArray['targetid'];
+		}
 
 		if (!empty($sourceid) && !empty($sourcetype) && empty($targetid)) {
 			$justsource = true; // the source (id and type) is a search criteria
