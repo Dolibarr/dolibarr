@@ -941,7 +941,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<!-- Enter line to consume -->' . "\n";
 						print '<tr>';
 						print '<td><span class="opacitymedium">' . $langs->trans("ToConsume") . '</span></td>';
-						$preselectedQty = (GETPOSTISSET('qty-' . $line->id . '-' . $i) ? GETPOST('qty-' . $line->id . '-' . $i) : max(0, $line->qty - $alreadyconsumed));
 
 						if ($conf->productbatch->enabled && $tmpproduct->status_batch) {
 							$tmpwarehouseObject = new Entrepot($db);
@@ -953,25 +952,53 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								}
 							}
 							if (!empty($tmpproduct->stock_warehouse)) {
+								$qty_already_affected = 0;
+								$nb_line=0;
+								$quantityToAffect = $line->qty - $alreadyconsumed;
 								foreach ($tmpproduct->stock_warehouse as $warehouse_id => $stock_warehouse) {
+									if (GETPOSTISSET('qty-' . $line->id . '-' . $i . '-' . $warehouse_id)) {
+										$quantityToAffect = GETPOST('qty-' . $line->id . '-' . $i . '-'. $warehouse_id);
+									}
+									if (empty($quantityToAffect) || $quantityToAffect < 0) {
+										$quantityToAffect = 0;
+									}
 									$result = $tmpwarehouseObject->fetch($warehouse_id);
 									if ($result < 0) {
 										setEventMessage($tmpwarehouseObject->error, 'errors');
 									} else {
 										if (!empty($stock_warehouse->detail_batch)) {
+											$nb_line += count($stock_warehouse->detail_batch);
+											$cnt = 0;
 											foreach ($stock_warehouse->detail_batch as $serial_lot => $data_stock) {
-												print '<td class="right"><input type="text" class="width50 right" name="qty-' . $line->id . '-' . $i . '-' . $warehouse_id . '" value="' . $data_stock->qty . '"></td>';
+												$cnt++;
+												print '<td class="right">';
+												//There is a qty to affect and at least some stock
+												if ($data_stock->qty > 0 && $quantityToAffect > 0 && $qty_already_affected < $quantityToAffect) {
+													if ($quantityToAffect <= $data_stock->qty) {
+														print '<input type="text" class="width50 right" name="qty-' . $line->id . '-' . $i . '-' . $warehouse_id . '" value="' . $quantityToAffect . '">';
+														$qty_already_affected += $quantityToAffect;
+													}
+													if ($data_stock->qty < $quantityToAffect) {
+														print '<input type="text" class="width50 right" name="qty-' . $line->id . '-' . $i . '-' . $warehouse_id . '" value="' . $data_stock->qty . '">';
+														$qty_already_affected += $data_stock->qty;
+													}
+												} else {
+													print '<input type="text" class="width50 right" name="qty-' . $line->id . '-' . $i . '-' . $warehouse_id . '" value="0">';
+												}
+
+												print '</td>';
 												if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
 													print '<td></td>';
 												}
 												print '<td></td>';
-												print '<td class="right">' . $tmpwarehouseObject->getNomUrl(0) . '</td>';
-												print '<td class="right">' . $data_stock->qty . '</td>';
-												print '<td class="right">' . $serial_lot . '</td>';
+												print '<td>' . $tmpwarehouseObject->getNomUrl(0) . '</td>';
+												print '<td>' . $data_stock->qty . '</td>';
+												print '<td>' . $serial_lot . '</td>';
 												if ($permissiontodelete) {
 													print '<td></td>';
 												}
-												print '</tr><tr><td></td>';
+												print '</tr><tr>';
+												if ($cnt!==$nb_line-1) print '<td></td>';
 											}
 										}
 									}
@@ -980,6 +1007,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						} else {
 							if ($action == 'consumeorproduce' && !GETPOSTISSET('qty-' . $line->id . '-' . $i)) {
 								$preselectedQty = 0;
+							} else {
+								$preselectedQty = (GETPOSTISSET('qty-' . $line->id . '-' . $i) ? GETPOST('qty-' . $line->id . '-' . $i) : max(0, $line->qty - $alreadyconsumed));
 							}
 
 							$disable = '';
@@ -1003,18 +1032,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							} else {
 								print '<span class="opacitymedium">' . $langs->trans("NoStockChangeOnServices") . '</span>';
 							}
-						}
-						// Lot / Batch
-						/*print '</td>';
-						if ($conf->productbatch->enabled) {
-							print '<td>';
-							if ($tmpproduct->status_batch) {
-								$preselected = (GETPOSTISSET('batch-'.$line->id.'-'.$i) ? GETPOST('batch-'.$line->id.'-'.$i) : '');
-								print '<input type="text" class="width50" name="batch-'.$line->id.'-'.$i.'" value="'.$preselected.'" list="batch-'.$line->id.'-'.$i.'">';
-								print $formproduct->selectLot('batch-'.$line->id.'-'.$i, 0, $line->fk_product, '', '');
+							if ($permissiontodelete) {
+								print '<td></td>';
 							}
-							print '</td>';
-						}*/
+							print '<td></td>';
+							if ($conf->productbatch->enabled) {
+								print '<td></td>';
+							}
+						}
 						print '</tr>';
 					}
 				}
