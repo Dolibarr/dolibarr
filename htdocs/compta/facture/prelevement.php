@@ -81,6 +81,12 @@ if ($type == 'bank-transfer') {
 	}
 }
 
+if ($type == 'bank-transfer') {
+	$usercancreate = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
+} else {
+	$usercancreate = $user->rights->facture->creer;
+}
+
 
 /*
  * Actions
@@ -93,7 +99,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($action == "new") {
+	if ($action == "new" && $usercancreate) {
 		if ($object->id > 0) {
 			$db->begin();
 
@@ -117,13 +123,90 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == "delete") {
+	if ($action == "delete" && $usercancreate) {
 		if ($object->id > 0) {
 			$result = $object->demande_prelevement_delete($user, GETPOST('did', 'int'));
 			if ($result == 0) {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id.'&type='.$type);
 				exit;
 			}
+		}
+	}
+
+	// payments conditions
+	if ($action == 'setconditions' && $usercancreate) {
+		$object->fetch($id);
+		$object->cond_reglement_code = 0; // To clean property
+		$object->cond_reglement_id = 0; // To clean property
+
+		$error = 0;
+
+		$db->begin();
+
+		if (!$error) {
+			$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
+			if ($result < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+
+		if (!$error) {
+			$old_date_echeance = $object->date_echeance;
+			$new_date_echeance = $object->calculate_date_lim_reglement();
+			if ($new_date_echeance > $old_date_echeance) {
+				$object->date_echeance = $new_date_echeance;
+			}
+			if ($object->date_echeance < $object->date) {
+				$object->date_echeance = $object->date;
+			}
+			$result = $object->update($user);
+			if ($result < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+
+		if ($error) {
+			$db->rollback();
+		} else {
+			$db->commit();
+		}
+	} elseif ($action == 'setmode' && $usercancreate) {
+		// payment mode
+		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
+	} elseif ($action == 'setdatef' && $usercancreate) {
+		$newdate = dol_mktime(0, 0, 0, GETPOST('datefmonth', 'int'), GETPOST('datefday', 'int'), GETPOST('datefyear', 'int'), 'tzserver');
+		if ($newdate > (dol_now('tzuserrel') + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+			if (empty($conf->global->INVOICE_MAX_FUTURE_DELAY)) {
+				setEventMessages($langs->trans("WarningInvoiceDateInFuture"), null, 'warnings');
+			} else {
+				setEventMessages($langs->trans("WarningInvoiceDateTooFarInFuture"), null, 'warnings');
+			}
+		}
+
+		$object->date = $newdate;
+		$date_echence_calc = $object->calculate_date_lim_reglement();
+		if (!empty($object->date_echeance) && $object->date_echeance < $date_echence_calc) {
+			$object->date_echeance = $date_echence_calc;
+		}
+		if ($object->date_echeance && $object->date_echeance < $object->date) {
+			$object->date_echeance = $object->date;
+		}
+
+		$result = $object->update($user);
+		if ($result < 0) {
+			dol_print_error($db, $object->error);
+		}
+	} elseif ($action == 'setdate_lim_reglement' && $usercancreate) {
+		$object->date_echeance = dol_mktime(12, 0, 0, GETPOST('date_lim_reglementmonth', 'int'), GETPOST('date_lim_reglementday', 'int'), GETPOST('date_lim_reglementyear', 'int'));
+		if (!empty($object->date_echeance) && $object->date_echeance < $object->date) {
+			$object->date_echeance = $object->date;
+			setEventMessages($langs->trans("DatePaymentTermCantBeLowerThanObjectDate"), null, 'warnings');
+		}
+		$result = $object->update($user);
+		if ($result < 0) {
+			dol_print_error($db, $object->error);
 		}
 	}
 }
