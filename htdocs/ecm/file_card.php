@@ -411,8 +411,8 @@ if ($action == 'edit') {
 }
 
 
-// Confirmation de la suppression d'une ligne categorie
-if ($action == 'delete_file') {
+// Confirm deletion of a file
+if ($action == 'deletefile') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode($section), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile', $urlfile), 'confirm_deletefile', '', 1, 1);
 }
 
@@ -426,7 +426,7 @@ if ($action != 'edit') {
 	/*
 	if ($user->rights->ecm->setup)
 	{
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_file&token='.newToken().'&section='.$section.'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Delete').'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=deletefile&token='.newToken().'&section='.$section.'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Delete').'</a>';
 	}
 	else
 	{

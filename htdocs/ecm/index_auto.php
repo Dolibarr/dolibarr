@@ -376,7 +376,7 @@ print dol_get_fiche_head($head, 'index_auto', '', -1, '');
 
 
 // Confirm remove file (for non javascript users)
-if ($action == 'delete' && empty($conf->use_javascript_ajax)) {
+if ($action == 'deletefile' && empty($conf->use_javascript_ajax)) {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
 }
 
@@ -413,8 +413,8 @@ if ($action == 'delete_section') {
 // End confirm
 
 
-if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $action) || $action == 'delete') {
-	print '<table width="100%" class="liste noborderbottom">'."\n";
+if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $action) || $action == 'deletefile') {
+	print '<table class="liste centpercent">'."\n";
 
 	print '<!-- Title for auto directories -->'."\n";
 	print '<tr class="liste_titre">'."\n";

@@ -129,3 +129,6 @@ WeighingScale=échelle de poids
 ShowPriceHT = Afficher la colonne du prix HT (à l'écran)
 ShowPriceHTOnReceipt = Afficher la colonne avec le prix hors taxes (sur le ticket de caisse)
 CustomerDisplay=Customer display
+PrintWithoutDetailsButton=Ajouter un bouton "Imprimer sans détail"
+PrintWithoutDetailsLabelDefault=Libellé de la ligne par défaut sur l'impression sans détail
+PrintWithoutDetails=Imprimer sans détail
