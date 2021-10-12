@@ -3745,8 +3745,9 @@ if ($action == 'create') {
 		print '<input type="hidden" name="amount"   value="'.$objectsrc->total_ht.'">'."\n";
 		print '<input type="hidden" name="total"    value="'.$objectsrc->total_ttc.'">'."\n";
 		print '<input type="hidden" name="tva"      value="'.$objectsrc->total_tva.'">'."\n";
-		print '<input type="hidden" name="origin"   value="'.$objectsrc->element.'">';
-		print '<input type="hidden" name="originid" value="'.$objectsrc->id.'">';
+		// The commented lines below are fields already added as hidden parameters before
+		//print '<input type="hidden" name="origin"   value="'.$objectsrc->element.'">';
+		//print '<input type="hidden" name="originid" value="'.$objectsrc->id.'">';
 
 		switch (get_class($objectsrc)) {
 			case 'Propal':
