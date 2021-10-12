@@ -1428,6 +1428,7 @@ OrdersNumberingModules=Modèles de numérotation des commandes
 OrdersModelModule=Modèles de document des commandes
 FreeLegalTextOnOrders=Mention complémentaire sur les commandes
 WatermarkOnDraftOrders=Filigrane sur les brouillons de commandes (aucun si vide)
+SupplierOrderForbidProjectChange=Interdire de modifier le projet d'une commande validée (ou en brouillon mais ayant déjà une référence)
 ShippableOrderIconInList=Ajouter une icône dans la liste des commandes qui indique si la commande est expédiable.
 BANK_ASK_PAYMENT_BANK_DURING_ORDER=Demander le compte bancaire cible durant la commande
 ##### Interventions #####

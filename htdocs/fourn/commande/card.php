@@ -144,6 +144,11 @@ $permissiondellink	= $usercancreate; // Used by the include of actions_dellink.i
 $permissiontoedit	= $usercancreate; // Used by the include of actions_lineupdown.inc.php
 $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
 
+// Project permission
+if (!empty($conf->projet->enabled)) {
+	$caneditproject = empty($conf->global->FORBID_EDIT_PROJECT_ON_SUPPLIER_ORDER) || ($object->statut == CommandeFournisseur::STATUS_DRAFT && preg_match('/^[\(]?PROV/i', $object->ref));
+}
+
 
 /*
  * Actions
@@ -239,7 +244,7 @@ if (empty($reshook)) {
 	}
 
 	// Set project
-	if ($action == 'classin' && $usercancreate) {
+	if ($action == 'classin' && $usercancreate && $caneditproject) {
 		$result = $object->setProject($projectid);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -1988,7 +1993,7 @@ if ($action == 'create') {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($usercancreate) {
-			if ($action != 'classify') {
+			if ($action != 'classify' && $caneditproject) {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
 			if ($action == 'classify') {
