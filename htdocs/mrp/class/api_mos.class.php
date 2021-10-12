@@ -382,7 +382,9 @@ class Mos extends DolibarrApi
 						if (!$error && $value["fk_warehouse"] > 0) {
 							// Record stock movement
 							$id_product_batch = 0;
-							$stockmove->origin = $this->mo;
+
+							$stockmove->setOrigin($this->mo->element, $this->mo->id);
+
 							if ($qtytoprocess >= 0) {
 								$moline = new MoLine($this->db);
 								$moline->fk_mo = $this->mo->id;

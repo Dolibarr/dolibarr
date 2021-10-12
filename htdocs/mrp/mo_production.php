@@ -263,8 +263,7 @@ if (empty($reshook)) {
 							if (!$error && GETPOST('idwarehouse-' . $line->id . '-' . $i) > 0) {
 								// Record stock movement
 								$id_product_batch = 0;
-								$stockmove->origin_type = $object->element;
-								$stockmove->origin_id = $object->id;
+								$stockmove->setOrigin($object->element, $object->id);
 								if ($qtytoprocess >= 0) {
 									$idstockmove = $stockmove->livraison($user, $line->fk_product, GETPOST('idwarehouse-' . $line->id . '-' . $i), $qtytoprocess, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-' . $line->id . '-' . $i), $id_product_batch, $codemovement);
 								} else {
