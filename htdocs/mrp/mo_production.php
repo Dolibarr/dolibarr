@@ -205,7 +205,8 @@ if (empty($reshook)) {
 									if (!empty($qtytoprocess)) {
 										// Record stock movement
 										$id_product_batch = $data_stock->id;
-										$stockmove->origin = $object;
+										$stockmove->origin_type = $object->element;
+										$stockmove->origin_id = $object->id;
 										if ($qtytoprocess >= 0) {
 											$idstockmove = $stockmove->livraison($user, $line->fk_product, $warehouse_id, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $serial_lot, $id_product_batch, $codemovement);
 										} else {
@@ -262,7 +263,8 @@ if (empty($reshook)) {
 							if (!$error && GETPOST('idwarehouse-' . $line->id . '-' . $i) > 0) {
 								// Record stock movement
 								$id_product_batch = 0;
-								$stockmove->origin = $object;
+								$stockmove->origin_type = $object->element;
+								$stockmove->origin_id = $object->id;
 								if ($qtytoprocess >= 0) {
 									$idstockmove = $stockmove->livraison($user, $line->fk_product, GETPOST('idwarehouse-' . $line->id . '-' . $i), $qtytoprocess, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-' . $line->id . '-' . $i), $id_product_batch, $codemovement);
 								} else {
@@ -335,7 +337,8 @@ if (empty($reshook)) {
 						if (!$error && GETPOST('idwarehousetoproduce-' . $line->id . '-' . $i) > 0) {
 							// Record stock movement
 							$id_product_batch = 0;
-							$stockmove->origin = $object;
+							$stockmove->origin_type = $object->element;
+							$stockmove->origin_id = $object->id;
 							$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehousetoproduce-' . $line->id . '-' . $i), $qtytoprocess, $pricetoprocess, $labelmovement, '', '', GETPOST('batchtoproduce-' . $line->id . '-' . $i), dol_now(), $id_product_batch, $codemovement);
 							if ($idstockmove < 0) {
 								$error++;
@@ -994,8 +997,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
 						$i = 1;
 						print '<!-- Enter line to consume -->' . "\n";
-						print '<tr>';
-						print '<td><span class="opacitymedium">' . $langs->trans("ToConsume") . '</span></td>';
 
 						if ($conf->productbatch->enabled && $tmpproduct->status_batch) {
 							$tmpwarehouseObject = new Entrepot($db);
@@ -1022,23 +1023,32 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 										setEventMessage($tmpwarehouseObject->error, 'errors');
 									} else {
 										if (!empty($stock_warehouse->detail_batch)) {
-											$nb_line += count($stock_warehouse->detail_batch);
+											//$nb_line += count($stock_warehouse->detail_batch);
 											$cnt = 0;
+											print '<tr>';
 											foreach ($stock_warehouse->detail_batch as $serial_lot => $data_stock) {
+												if (empty($cnt)) {
+													print '<td><span class="opacitymedium">' . $langs->trans("ToConsume") . '</span></td>';
+												} else {
+													print '<td></td>';
+												}
 												$cnt++;
 												print '<td class="right">';
 												//There is a qty to affect and at least some stock
 												if ($data_stock->qty > 0 && $quantityToAffect > 0 && $qty_already_affected < $quantityToAffect) {
 													$qty_suggested = 0;
-													if ($quantityToAffect <= $data_stock->qty) {
-														$qty_suggested = $quantityToAffect;
+													$qty_let_to_affect= $quantityToAffect - $qty_already_affected;
+													if ($qty_let_to_affect <= $data_stock->qty) {
+														$qty_suggested = $qty_let_to_affect;
 													}
 													if ($data_stock->qty < $quantityToAffect) {
 														$qty_suggested = $data_stock->qty;
 													}
+													//print '$qty_already_affected='.$qty_already_affected. ' $quantityToAffect='.$quantityToAffect . ' $qty_suggested='.$qty_suggested . ' $data_stock->qty='.$data_stock->qty. ' $qty_already_affected='.$qty_already_affected;
 													print '<input type="text" class="width50 right" name="qtybybtach-'. $data_stock->id . '" value="' . $qty_suggested . '">';
 													$qty_already_affected += $qty_suggested;
 												} else {
+													//var_dump($data_stock->qty, $quantityToAffect, $qty_already_affected);
 													print '<input type="text" class="width50 right" name="qtybybtach-'. $data_stock->id . '" value="0">';
 												}
 
@@ -1053,14 +1063,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 												if ($permissiontodelete) {
 													print '<td></td>';
 												}
-												print '</tr><tr>';
-												if ($cnt!==$nb_line-1) print '<td></td>';
+												print '</tr>';
+												//if ($cnt!==$nb_line-1) print '<td></td>';
 											}
 										}
 									}
 								}
 							}
 						} else {
+							print '<tr><td><span class="opacitymedium">' . $langs->trans("ToConsume") . '</span></td>';
 							if ($action == 'consumeorproduce' && !GETPOSTISSET('qty-' . $line->id . '-' . $i)) {
 								$preselectedQty = 0;
 							} else {
