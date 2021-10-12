@@ -70,6 +70,23 @@ $search_date_delivery_endyear = GETPOST('search_date_delivery_endyear', 'int');
 $search_date_delivery_start = dol_mktime(0, 0, 0, $search_date_delivery_startmonth, $search_date_delivery_startday, $search_date_delivery_startyear);	// Use tzserver
 $search_date_delivery_end = dol_mktime(23, 59, 59, $search_date_delivery_endmonth, $search_date_delivery_endday, $search_date_delivery_endyear);
 
+$search_date_valid_startday = GETPOST('search_date_valid_startday', 'int');
+$search_date_valid_startmonth = GETPOST('search_date_valid_startmonth', 'int');
+$search_date_valid_startyear = GETPOST('search_date_valid_startyear', 'int');
+$search_date_valid_endday = GETPOST('search_date_valid_endday', 'int');
+$search_date_valid_endmonth = GETPOST('search_date_valid_endmonth', 'int');
+$search_date_valid_endyear = GETPOST('search_date_valid_endyear', 'int');
+$search_date_valid_start = dol_mktime(0, 0, 0, $search_date_valid_startmonth, $search_date_valid_startday, $search_date_valid_startyear);	// Use tzserver
+$search_date_valid_end = dol_mktime(23, 59, 59, $search_date_valid_endmonth, $search_date_valid_endday, $search_date_valid_endyear);
+$search_date_approve_startday = GETPOST('search_date_approve_startday', 'int');
+$search_date_approve_startmonth = GETPOST('search_date_approve_startmonth', 'int');
+$search_date_approve_startyear = GETPOST('search_date_approve_startyear', 'int');
+$search_date_approve_endday = GETPOST('search_date_approve_endday', 'int');
+$search_date_approve_endmonth = GETPOST('search_date_approve_endmonth', 'int');
+$search_date_approve_endyear = GETPOST('search_date_approve_endyear', 'int');
+$search_date_approve_start = dol_mktime(0, 0, 0, $search_date_approve_startmonth, $search_date_approve_startday, $search_date_approve_startyear);	// Use tzserver
+$search_date_approve_end = dol_mktime(23, 59, 59, $search_date_approve_endmonth, $search_date_approve_endday, $search_date_approve_endyear);
+
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 
 $search_product_category = GETPOST('search_product_category', 'int');
@@ -184,7 +201,9 @@ $arrayfields = array(
 	'cf.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	'cf.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
 	'cf.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
-	'cf.billed'=>array('label'=>"Billed", 'checked'=>1, 'position'=>1000, 'enabled'=>1)
+	'cf.billed'=>array('label'=>"Billed", 'checked'=>1, 'position'=>1000, 'enabled'=>1),
+	'cf.date_valid' =>array('label' => 'DateValidation', 'checked' => 0),
+	'cf.date_approve' =>array('label' => 'DateApprove', 'checked' => 0)
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -258,6 +277,22 @@ if (empty($reshook)) {
 		$search_date_delivery_endyear = '';
 		$search_date_delivery_start = '';
 		$search_date_delivery_end = '';
+		$search_date_valid_startday = '';
+		$search_date_valid_startmonth = '';
+		$search_date_valid_startyear = '';
+		$search_date_valid_endday = '';
+		$search_date_valid_endmonth = '';
+		$search_date_valid_endyear = '';
+		$search_date_valid_start = '';
+		$search_date_valid_end = '';
+		$search_date_approve_startday = '';
+		$search_date_approve_startmonth = '';
+		$search_date_approve_startyear = '';
+		$search_date_approve_endday = '';
+		$search_date_approve_endmonth = '';
+		$search_date_approve_endyear = '';
+		$search_date_approve_start = '';
+		$search_date_approve_end = '';
 		$billed = '';
 		$search_billed = '';
 		$toselect = '';
@@ -580,6 +615,42 @@ if (empty($reshook)) {
 			if ($search_date_delivery_endyear) {
 				$param .= '&search_date_delivery_endyear='.urlencode($search_date_delivery_endyear);
 			}
+			if ($search_date_valid_startday) {
+				$param .= '&search_date_valid_startday='.urlencode($search_date_valid_startday);
+			}
+			if ($search_date_valid_startmonth) {
+				$param .= '&search_date_valid_startmonth='.urlencode($search_date_valid_startmonth);
+			}
+			if ($search_date_valid_startyear) {
+				$param .= '&search_date_valid_startyear='.urlencode($search_date_valid_startyear);
+			}
+			if ($search_date_valid_endday) {
+				$param .= '&search_date_valid_endday='.urlencode($search_date_valid_endday);
+			}
+			if ($search_date_valid_endmonth) {
+				$param .= '&search_date_valid_endmonth='.urlencode($search_date_valid_endmonth);
+			}
+			if ($search_date_valid_endyear) {
+				$param .= '&search_date_valid_endyear='.urlencode($search_date_valid_endyear);
+			}
+			if ($search_date_approve_startday) {
+				$param .= '&search_date_approve_startday='.urlencode($search_date_approve_startday);
+			}
+			if ($search_date_approve_startmonth) {
+				$param .= '&search_date_approve_startmonth='.urlencode($search_date_approve_startmonth);
+			}
+			if ($search_date_approve_startyear) {
+				$param .= '&search_date_approve_startyear='.urlencode($search_date_approve_startyear);
+			}
+			if ($search_date_approve_endday) {
+				$param .= '&search_date_approve_endday='.urlencode($search_date_approve_endday);
+			}
+			if ($search_date_approve_endmonth) {
+				$param .= '&search_date_approve_endmonth='.urlencode($search_date_approve_endmonth);
+			}
+			if ($search_date_approve_endyear) {
+				$param .= '&search_date_approve_endyear='.urlencode($search_date_approve_endyear);
+			}
 			if ($search_ref) {
 				$param .= '&search_ref='.urlencode($search_ref);
 			}
@@ -673,7 +744,7 @@ if ($sall || $search_product_category > 0 || $search_user > 0) {
 $sql .= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, s.email,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= " cf.rowid, cf.ref, cf.ref_supplier, cf.fk_statut, cf.billed, cf.total_ht, cf.total_tva, cf.total_ttc, cf.fk_user_author, cf.date_commande as date_commande, cf.date_livraison as date_livraison,";
+$sql .= " cf.rowid, cf.ref, cf.ref_supplier, cf.fk_statut, cf.billed, cf.total_ht, cf.total_tva, cf.total_ttc, cf.fk_user_author, cf.date_commande as date_commande, cf.date_livraison as date_livraison,cf.date_valid, cf.date_approve,";
 $sql .= ' cf.fk_multicurrency, cf.multicurrency_code, cf.multicurrency_tx, cf.multicurrency_total_ht, cf.multicurrency_total_tva, cf.multicurrency_total_ttc,';
 $sql .= ' cf.date_creation as date_creation, cf.tms as date_update,';
 $sql .= ' cf.note_public, cf.note_private,';
@@ -763,6 +834,18 @@ if ($search_date_delivery_start) {
 }
 if ($search_date_delivery_end) {
 	$sql .= " AND cf.date_livraison <= '".$db->idate($search_date_delivery_end)."'";
+}
+if ($search_date_valid_start) {
+	$sql .= " AND cf.date_commande >= '".$db->idate($search_date_valid_start)."'";
+}
+if ($search_date_valid_end) {
+	$sql .= " AND cf.date_commande <= '".$db->idate($search_date_valid_end)."'";
+}
+if ($search_date_approve_start) {
+	$sql .= " AND cf.date_livraison >= '".$db->idate($search_date_approve_start)."'";
+}
+if ($search_date_approve_end) {
+	$sql .= " AND cf.date_livraison <= '".$db->idate($search_date_approve_end)."'";
 }
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
@@ -904,6 +987,42 @@ if ($resql) {
 	}
 	if ($search_date_delivery_endyear) {
 		$param .= '&search_date_delivery_endyear='.urlencode($search_date_delivery_endyear);
+	}
+	if ($search_date_valid_startday) {
+		$param .= '&search_date_valid_startday='.urlencode($search_date_valid_startday);
+	}
+	if ($search_date_valid_startmonth) {
+		$param .= '&search_date_valid_startmonth='.urlencode($search_date_valid_startmonth);
+	}
+	if ($search_date_valid_startyear) {
+		$param .= '&search_date_valid_startyear='.urlencode($search_date_valid_startyear);
+	}
+	if ($search_date_valid_endday) {
+		$param .= '&search_date_valid_endday='.urlencode($search_date_valid_endday);
+	}
+	if ($search_date_valid_endmonth) {
+		$param .= '&search_date_valid_endmonth='.urlencode($search_date_valid_endmonth);
+	}
+	if ($search_date_valid_endyear) {
+		$param .= '&search_date_valid_endyear='.urlencode($search_date_valid_endyear);
+	}
+	if ($search_date_approve_startday) {
+		$param .= '&search_date_approve_startday='.urlencode($search_date_approve_startday);
+	}
+	if ($search_date_approve_startmonth) {
+		$param .= '&search_date_approve_startmonth='.urlencode($search_date_approve_startmonth);
+	}
+	if ($search_date_approve_startyear) {
+		$param .= '&search_date_approve_startyear='.urlencode($search_date_approve_startyear);
+	}
+	if ($search_date_approve_endday) {
+		$param .= '&search_date_approve_endday='.urlencode($search_date_approve_endday);
+	}
+	if ($search_date_approve_endmonth) {
+		$param .= '&search_date_approve_endmonth='.urlencode($search_date_approve_endmonth);
+	}
+	if ($search_date_approve_endyear) {
+		$param .= '&search_date_approve_endyear='.urlencode($search_date_approve_endyear);
 	}
 	if ($search_ref) {
 		$param .= '&search_ref='.urlencode($search_ref);
@@ -1279,6 +1398,28 @@ if ($resql) {
 		print $form->selectyesno('search_billed', $search_billed, 1, 0, 1, 1);
 		print '</td>';
 	}
+	// Date valid
+	if (!empty($arrayfields['cf.date_valid']['checked'])) {
+		print '<td class="liste_titre center">';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_valid_start ? $search_date_valid_start : -1, 'search_date_valid_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+		print '</div>';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_valid_end ? $search_date_valid_end : -1, 'search_date_valid_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+		print '</div>';
+		print '</td>';
+	}
+	// Date approve
+	if (!empty($arrayfields['cf.date_approve']['checked'])) {
+		print '<td class="liste_titre center">';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_approve_start ? $search_date_approve_start : -1, 'search_date_approve_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+		print '</div>';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_approve_end ? $search_date_approve_end : -1, 'search_date_approve_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+		print '</div>';
+		print '</td>';
+	}
 	// Action column
 	print '<td class="liste_titre middle">';
 	$searchpicto = $form->showFilterButtons();
@@ -1369,6 +1510,12 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['cf.billed']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.billed']['label'], $_SERVER["PHP_SELF"], 'cf.billed', '', $param, '', $sortfield, $sortorder, 'center ');
+	}
+	if (!empty($arrayfields['cf.date_valid']['checked'])) {
+		print_liste_field_titre($arrayfields['cf.date_valid']['label'], $_SERVER["PHP_SELF"], "cf.date_valid", "", $param, '', $sortfield, $sortorder, 'center ');
+	}
+	if (!empty($arrayfields['cf.date_approve']['checked'])) {
+		print_liste_field_titre($arrayfields['cf.date_approve']['label'], $_SERVER["PHP_SELF"], 'cf.date_approve', '', $param, '', $sortfield, $sortorder, 'center ');
 	}
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print "</tr>\n";
@@ -1663,6 +1810,25 @@ if ($resql) {
 		// Billed
 		if (!empty($arrayfields['cf.billed']['checked'])) {
 			print '<td class="center">'.yn($obj->billed).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// valid date
+		if (!empty($arrayfields['cf.date_valid']['checked'])) {
+			print '<td class="center">';
+			print dol_print_date($db->jdate($obj->date_valid), 'day');
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// approve date
+		if (!empty($arrayfields['cf.date_approve']['checked'])) {
+			print '<td class="center">';
+			print dol_print_date($db->jdate($obj->date_approve), 'day');
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
