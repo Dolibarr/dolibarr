@@ -1162,7 +1162,7 @@ if ($action == 'create') {
 
 					// unit of order
 					$unit_order = '';
-					if ($conf->global->PRODUCT_USE_UNITS) {
+					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 						$unit_order = measuringUnitString($line->fk_unit);
 					}
 
