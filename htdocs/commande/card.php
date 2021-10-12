@@ -263,7 +263,11 @@ if (empty($reshook))
 			$object->fetch_thirdparty();
 
 			$db->begin();
-
+			/* NOVADATA */
+			if($conf->global->SET_AUTOMATIC_REF_BY_NUMBERSERIES == 1){
+				$object->ref = GETPOST('ref');
+			}
+			/* FIN NOVADATA */
 			$object->date_commande = $datecommande;
 			$object->note_private = GETPOST('note_private', 'restricthtml');
 			$object->note_public = GETPOST('note_public', 'restricthtml');
@@ -1550,8 +1554,26 @@ if ($action == 'create' && $usercancreate)
 
 	print '<table class="border centpercent">';
 
-	// Reference
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td>'.$langs->trans("Draft").'</td></tr>';
+	/* NOVADATA */
+	if(isset($conf->global->MAIN_MODULE_NUMBERSERIES) and $conf->global->MAIN_MODULE_NUMBERSERIES == 1){
+		//si está activado el numberseries debe sobre escribir el REF y colocar el selector del número de series.
+		$allextrafields = $extrafields->attributes['commande']['list'];
+		$extrafields->attributes['commande']['list'] = array('serie'=>-1);
+		if($conf->global->COMMANDE_ADDON == 'mod_commande_numberseries'){
+			require_once DOL_DOCUMENT_ROOT."/custom/numberseries/core/modules/commande/mod_commande_numberseries.php";
+			$serie = new mod_commande_numberseries();
+
+			$object->array_options['options_serie'] = (empty(GETPOST('options_serie'))) ? $serie->getDefaultSerie() : GETPOST('options_serie');
+			print $object->showOptionals($extrafields, 'create', $object->array_options['options_serie']);
+			print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td id="ref_numberseries">'.$serie->getNextValue($soc,$object).'</td><input type="hidden" name="ref" id="ref" value="'.$serie->getNextValue($soc,$object).'"></tr>';
+		}
+		$extrafields->attributes['commande']['list'] = $allextrafields;
+		$extrafields->attributes['commande']['list']['serie'] = 0;
+		
+	}else
+		// Reference
+		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td>'.$langs->trans("Draft").'</td></tr>';
+	/* FIN NOVADATA */ 
 
 	// Reference client
 	print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
@@ -1713,7 +1735,6 @@ if ($action == 'create' && $usercancreate)
 				$object->array_options = array_merge($object->array_options, $soc->array_options);
 			}
 		};
-
 		print $object->showOptionals($extrafields, 'edit', $parameters);
 	}
 

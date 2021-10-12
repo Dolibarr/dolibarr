@@ -97,7 +97,7 @@ $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-if ($id > 0 || !empty($ref)) {
+if ($id > 0 || !empty($ref and $action != 'add')) {
 	$ret = $object->fetch($id, $ref);
 	if ($ret > 0)
 		$ret = $object->fetch_thirdparty();
@@ -361,7 +361,7 @@ if (empty($reshook))
 			if (GETPOST('createmode') == 'copy' && GETPOST('copie_propal'))
 			{
 				if ($object->fetch(GETPOST('copie_propal', 'int')) > 0) {
-					$object->ref = GETPOST('ref');
+					$object->ref = $ref;
 					$object->datep = $datep;
 					$object->date = $datep;
 					$object->date_livraison = $date_delivery; // deprecated
@@ -391,7 +391,7 @@ if (empty($reshook))
 					setEventMessages($langs->trans("ErrorFailedToCopyProposal", GETPOST('copie_propal')), null, 'errors');
 				}
 			} else {
-				$object->ref = GETPOST('ref');
+				$object->ref = $ref;
 				$object->ref_client = GETPOST('ref_client');
 				$object->datep = $datep;
 				$object->date = $datep;
@@ -613,6 +613,7 @@ if (empty($reshook))
 						header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
 						exit();
 					} else {
+						print_r($error);exit;
 						$db->rollback();
 						$action = 'create';
 					}
@@ -1517,9 +1518,8 @@ if ($action == 'create')
 	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
-
-	//echo "<pre>";print_r($conf->global);exit;
-	// Reference
+ 
+	/* NOVADATA */
 	if(isset($conf->global->MAIN_MODULE_NUMBERSERIES) and $conf->global->MAIN_MODULE_NUMBERSERIES == 1){
 		//si está activado el numberseries debe sobre escribir el REF y colocar el selector del número de series.
 		$allextrafields = $extrafields->attributes['propal']['list'];
@@ -1529,25 +1529,20 @@ if ($action == 'create')
 			require_once DOL_DOCUMENT_ROOT."/custom/numberseries/core/modules/propale/mod_propale_numberseries.php";
 			$serie = new mod_propale_numberseries();
 
-			echo "<pre>";print_r($tmp);//exit;
-
-			print $object->showOptionals($extrafields, 'create', $params);
-			print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td id="ref_numberseries">'.$serie->getNextValue($soc,$object).'</td></tr>';
-			print '<script type="text/javascript">
-			$(document).ready(function() {
-				$("#options_serie").change(function() {
-					var socid = $("#socid").val();
-					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&ref_client="+$("input[name=ref_client]").val();
-				});
-			});
-			</script>';
+			//echo "<pre>";print_r($object);//exit;
+			$object->array_options['options_serie'] = (empty(GETPOST('options_serie'))) ? $serie->getDefaultSerie() : GETPOST('options_serie');
+			print $object->showOptionals($extrafields, 'create', $object->array_options['options_serie']);
+			print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td id="ref_numberseries">'.$serie->getNextValue($soc,$object).'</td>
+			<input type="hidden" name="ref" value="'.$serie->getNextValue($soc,$object).'">
+			</tr>';
 		}
 		$extrafields->attributes['propal']['list'] = $allextrafields;
 		$extrafields->attributes['propal']['list']['serie'] = 0;
 		
 	}else
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td>'.$langs->trans("Draft").'</td></tr>';
-	
+	/* FIN NOVADATA */
+
 	// Ref customer
 	print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
 	print '<input type="text" name="ref_client" value="'.GETPOST('ref_client').'"></td>';
@@ -1572,8 +1567,9 @@ if ($action == 'create')
 				$("#socid").change(function() {
 					console.log("We have changed the company - Reload page");
 					var socid = $(this).val();
+					var serie = $("#options_serie").val();
 					// reload page
-					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&ref_client="+$("input[name=ref_client]").val();
+					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&ref_client="+$("input[name=ref_client]").val()+"&ref_numberseries="+serie;
 				});
 			});
 			</script>';

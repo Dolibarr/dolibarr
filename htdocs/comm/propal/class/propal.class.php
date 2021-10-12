@@ -1104,7 +1104,7 @@ class Propal extends CommonObject
 
 			if ($this->id)
 			{
-				$this->ref = '(PROV'.$this->id.')';
+				$this->ref = (!empty($this->ref)) ? $this->ref : '(PROV'.$this->id.')';
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."propal SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".((int) $this->id);
 
 				dol_syslog(get_class($this)."::create", LOG_DEBUG);
