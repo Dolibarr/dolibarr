@@ -353,6 +353,9 @@ class Mos extends DolibarrApi
 
 		$stockmove = new MouvementStock($this->db);
 
+		$consumptioncomplete = true;
+		$productioncomplete = true;
+
 		if (!empty($arraytoconsume) && !empty($arraytoproduce)) {
 			$pos = 0;
 			$arrayofarrayname = array("arraytoconsume","arraytoproduce");
@@ -459,9 +462,6 @@ class Mos extends DolibarrApi
 				}
 			}
 			if (!$error) {
-				$consumptioncomplete = true;
-				$productioncomplete = true;
-
 				if ($autoclose <= 0) {
 					$consumptioncomplete = false;
 					$productioncomplete = false;
@@ -588,9 +588,6 @@ class Mos extends DolibarrApi
 			}
 
 			if (!$error) {
-				$consumptioncomplete = true;
-				$productioncomplete = true;
-
 				if ($autoclose > 0) {
 					foreach ($this->mo->lines as $line) {
 						if ($line->role == 'toconsume') {
@@ -622,6 +619,7 @@ class Mos extends DolibarrApi
 				}
 			}
 		}
+
 		// Update status of MO
 		dol_syslog("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
 		//var_dump("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
