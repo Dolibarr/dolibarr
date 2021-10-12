@@ -1436,7 +1436,6 @@ OrdersNumberingModules=Orders numbering models
 OrdersModelModule=Order documents models
 FreeLegalTextOnOrders=Free text on orders
 WatermarkOnDraftOrders=Watermark on draft orders (none if empty)
-SupplierOrderForbidProjectChange=Forbid changing the project of a supplier order or a draft which already has a reference
 ShippableOrderIconInList=Add an icon in Orders list which indicate if order is shippable
 BANK_ASK_PAYMENT_BANK_DURING_ORDER=Ask for bank account destination of order
 ##### Interventions #####
