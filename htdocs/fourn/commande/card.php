@@ -145,6 +145,7 @@ $permissiontoedit	= $usercancreate; // Used by the include of actions_lineupdown
 $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
 
 // Project permission
+$caneditproject = false;
 if (!empty($conf->projet->enabled)) {
 	$caneditproject = empty($conf->global->SUPPLIER_ORDER_FORBID_EDIT_PROJECT) || ($object->statut == CommandeFournisseur::STATUS_DRAFT && preg_match('/^[\(]?PROV/i', $object->ref));
 }
