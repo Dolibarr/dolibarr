@@ -1,10 +1,25 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - companies
 ErrorCompanyNameAlreadyExists=公司名称%s已经存在。请使用其它名称。
 ErrorSetACountryFirst=请先设置国家
 SelectThirdParty=选择第三方
-ConfirmDeleteCompany=你确定要删除这个公司和所有相关信息？
+ConfirmDeleteCompany=您确定要删除这个公司和所有相关信息？
 DeleteContact=删除联系人
-ConfirmDeleteContact=你确定要删除这个联系人和所有相关信息？
+ConfirmDeleteContact=您确定要删除这个联系人和所有相关信息？
 MenuNewThirdParty=新建第三方
 MenuNewCustomer=新建客户
 MenuNewProspect=新建准客户
@@ -27,7 +42,7 @@ AliasNames=别名(商号、商标……)
 AliasNameShort=别名
 Companies=公司
 CountryIsInEEC=欧洲经济共同体内的国家
-PriceFormatInCurrentLanguage=当前语言和货币的价格显示格式
+PriceFormatInCurrentLanguage=当前语言和币种的价格显示格式
 ThirdPartyName=第三方名称
 ThirdPartyEmail=第三方电子邮件
 ThirdParty=第三方
@@ -40,7 +55,7 @@ ThirdPartyCustomersWithIdProf12=%s或%s客户
 ThirdPartySuppliers=供应商
 ThirdPartyType=第三方类型
 Individual=私营个体
-ToCreateContactWithSameName=将自动在第三方下创建一个与第三方相同信息的联系人/地址。在大多数情况下，即使你的第三方是一个自然人，仅仅创建一个第三方就足够了。
+ToCreateContactWithSameName=将自动在第三方下创建一个与第三方相同信息的联系人/地址。在大多数情况下，即使您的第三方是一个自然人，仅仅创建一个第三方就足够了。
 ParentCompany=母公司
 Subsidiaries=子公司
 ReportByMonth=月度报告
@@ -80,7 +95,7 @@ Web=网站
 Poste=位置
 DefaultLang=默认语言
 VATIsUsed=使用销售税
-VATIsUsedWhenSelling=在此定义该第三方在向客户开具发票时是否包含销售税
+VATIsUsedWhenSelling=在此定义此第三方在向客户开具发票时是否包含销售税
 VATIsNotUsed=不使用销售税
 CopyAddressFromSoc=从第三方详细信息中复制地址
 ThirdpartyNotCustomerNotSupplierSoNoRef=第三方既非客户也非供应商，没有可用的索引对象
@@ -89,7 +104,7 @@ PaymentBankAccount=付款银行帐户
 OverAllProposals=报价书
 OverAllOrders=订单
 OverAllInvoices=发票
-OverAllSupplierProposals=询价申请
+OverAllSupplierProposals=询价
 ##### Local Taxes #####
 LocalTax1IsUsed=使用第二税率
 LocalTax1IsUsedES=RE已使用
@@ -309,16 +324,16 @@ CustomerRelativeDiscount=客户的相对折扣
 SupplierRelativeDiscount=供应商的相对折扣
 CustomerRelativeDiscountShort=相对折扣
 CustomerAbsoluteDiscountShort=绝对折扣
-CompanyHasRelativeDiscount=该客户有<b>%s%%</b>的默认折扣
-CompanyHasNoRelativeDiscount=该客户没有相对折扣
-HasRelativeDiscountFromSupplier=您在该供应商处有<b>%s%%</b>的默认折扣
-HasNoRelativeDiscountFromSupplier=您在该供应商处没有相对折扣
-CompanyHasAbsoluteDiscount=该客户有可用折扣（贷记单或首付款）<b>%s</b> %s
-CompanyHasDownPaymentOrCommercialDiscount=该客户有可用折扣（商贸、首付）<b>%s</b> %s
-CompanyHasCreditNote=此客户仍有贷记单<b>s%</b> %s
-HasNoAbsoluteDiscountFromSupplier=您在该供应商处没有折扣
-HasAbsoluteDiscountFromSupplier=您在该供应商处有可用折扣（贷记单或首付款）<b>%s</b> %s
-HasDownPaymentOrCommercialDiscountFromSupplier=您在该供应商处有可用折扣（商贸、首付）<b>%s</b> %s
+CompanyHasRelativeDiscount=此客户有<b>%s%%</b>的默认折扣
+CompanyHasNoRelativeDiscount=此客户没有相对折扣
+HasRelativeDiscountFromSupplier=您在此供应商处有<b>%s%%</b>的默认折扣
+HasNoRelativeDiscountFromSupplier=您在此供应商处没有相对折扣
+CompanyHasAbsoluteDiscount=此客户有可用折扣（贷记单或首付款）<b>%s</b> %s
+CompanyHasDownPaymentOrCommercialDiscount=此客户有可用折扣（商贸、首付）<b>%s</b> %s
+CompanyHasCreditNote=此客户仍有贷记单<b>%s</b> %s
+HasNoAbsoluteDiscountFromSupplier=您在此供应商处没有折扣
+HasAbsoluteDiscountFromSupplier=您在此供应商处有可用折扣（贷记单或首付款）<b>%s</b> %s
+HasDownPaymentOrCommercialDiscountFromSupplier=您在此供应商处有可用折扣（商贸、首付）<b>%s</b> %s
 HasCreditNoteFromSupplier=您有此供应商提供的贷记单<b>%s</b> %s
 CompanyHasNoAbsoluteDiscount=此客户没有可用的折扣
 CustomerAbsoluteDiscountAllUsers=客户绝对优惠（所有用户授予）
@@ -443,7 +458,7 @@ AddAddress=添加地址
 SupplierCategory=供应商类别
 JuridicalStatus200=独立
 DeleteFile=删除文件
-ConfirmDeleteFile=你确定要删除这个文件？
+ConfirmDeleteFile=您确定要删除这个文件？
 AllocateCommercial=指定销售代表
 Organization=组织
 FiscalYearInformation=财政年度
@@ -455,7 +470,7 @@ SocialNetworksLinkedinURL=Linkedin领英URL
 SocialNetworksInstagramURL=Instagram URL
 SocialNetworksYoutubeURL=Youtube URL
 SocialNetworksGithubURL=Github URL
-YouMustAssignUserMailFirst=在能够添加电子邮件通知之前，你必须为这个用户创建一个电子邮件。
+YouMustAssignUserMailFirst=在能够添加电子邮件通知之前，您必须为这个用户创建一个电子邮件。
 YouMustCreateContactFirst=为了能够添加电子邮件通知，您必须先为第三方定义具有有效电子邮件的联系人
 ListSuppliersShort=供应商名单
 ListProspectsShort=准客户名单
@@ -476,7 +491,7 @@ LeopardNumRefModelDesc=此代码可用，可以随时修改。
 ManagingDirectors=公司高管 (CEO、董事长、总裁……)的姓名
 MergeOriginThirdparty=复制第三方(要删除的第三方)
 MergeThirdparties=合并第三方
-ConfirmMergeThirdparties=你确定要合并选定的第三方与当前的第三方吗？所有链接的对象（发票、订单……）将被转移到当前的第三方，之后，所选的第三方将被删除。
+ConfirmMergeThirdparties=您确定要合并选定的第三方与当前的第三方吗？所有链接的对象（发票、订单……）将被转移到当前的第三方，之后，所选的第三方将被删除。
 ThirdpartiesMergeSuccess=第三方已合并
 SaleRepresentativeLogin=销售代表登陆账号
 SaleRepresentativeFirstname=销售代表的名字
@@ -491,9 +506,9 @@ PaymentTypeSupplier=付款方式 - 供应商
 PaymentTermsSupplier=付款条款 - 供应商
 PaymentTypeBoth=付款方式 - 客户和供应商
 MulticurrencyUsed=使用多币种
-MulticurrencyCurrency=货币
-InEEC=欧洲(EEC)
-RestOfEurope=欧洲(EEC)其他地区
-OutOfEurope=欧洲（EEC）以外
+MulticurrencyCurrency=币种
+InEEC=欧共体
+RestOfEurope=欧共体其他地区
+OutOfEurope=欧共体以外
 CurrentOutstandingBillLate=当前逾期未付的账单
-BecarefullChangeThirdpartyBeforeAddProductToInvoice=请注意，根据你的产品价格设置，你应该在将产品添加到POS前更改第三方。
+BecarefullChangeThirdpartyBeforeAddProductToInvoice=请注意，根据您的产品价格设置，您应该在将产品添加到POS前更改第三方。

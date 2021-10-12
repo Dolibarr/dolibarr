@@ -1,3 +1,18 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - help
 CommunitySupport=论坛/维基支持
 EMailSupport=电子邮件支持
@@ -5,19 +20,19 @@ RemoteControlSupport=网上实时/远程支持
 OtherSupport=其他支持
 ToSeeListOfAvailableRessources=查看/联络可用的资源：
 HelpCenter=帮助中心
-DolibarrHelpCenter=Dolibarr Help and Support Center
-ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
-TypeOfSupport=Type of support
+DolibarrHelpCenter=Dolibarr帮助和支持中心
+ToGoBackToDolibarr=否则，<a href="%s">点击这里，继续使用Dolibarr</a>。
+TypeOfSupport=支持类型
 TypeSupportCommunauty=社区（免费）
 TypeSupportCommercial=商业
 TypeOfHelp=类型
 NeedHelpCenter=需要帮助或支持？
 Efficiency=效率
-TypeHelpOnly=只有帮助
+TypeHelpOnly=只提供帮助
 TypeHelpDev=帮助+开发
-TypeHelpDevForm=Help+Development+Training
-BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+TypeHelpDevForm=帮助+开发+培训
+BackToHelpCenter=否则，<a href="%s">返回帮助中心主页</a>。
+LinkToGoldMember=您可以通过点击Dolibarr为您的语言（%s）预选的培训人员之一（状态和最高价格会自动更新）。
 PossibleLanguages=支持的语言
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
-SeeOfficalSupport=使用您的语言的 Dolibarr 官方支持: <br><b><a href="%s" target="_blank">%s</a></b>
+SubscribeToFoundation=帮助Dolibarr项目，成为我们的基金会会员。
+SeeOfficalSupport=获得Dolibarr对应您的语言的官方支持。<br><b><a href="%s" target="_blank">%s</a></b>。

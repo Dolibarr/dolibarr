@@ -1,45 +1,60 @@
-# Dolibarr language file - Source file is en_US - marges
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Dolibarr language file - Source file is en_US - margins
 
 Margin=利润
-Margins=利润空间
+Margins=利润
 TotalMargin=总利润
 MarginOnProducts=利润 / 产品
 MarginOnServices=利润 / 服务
 MarginRate=利润率
-MarkRate=标记税率
+MarkRate=标价利润率
 DisplayMarginRates=显示利润率
-DisplayMarkRates=显示mark rates
+DisplayMarkRates=显示标价利润率
 InputPrice=输入价格
-margin=利润和利润率管理
+margin=盈利利润管理
 margesSetup=盈利利润管理设置
-MarginDetails=利润明细
+MarginDetails=利润详情
 ProductMargins=产品利润
 CustomerMargins=客户利润
-SalesRepresentativeMargins=销售代表利润率
-ContactOfInvoice=Contact of invoice
+SalesRepresentativeMargins=销售代表利润
+ContactOfInvoice=发票联系人
 UserMargins=用户利润
 ProductService=产品或服务
 AllProducts=全部产品和服务
 ChooseProduct/Service=选择产品或服务
 ForceBuyingPriceIfNull=如期尚未定义则强制设定买入/成本价格为销售价格
-ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0 on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100% if no default value can be found).
-MARGIN_METHODE_FOR_DISCOUNT=全局纯利润计算方法
+ForceBuyingPriceIfNullDetails=如果我们添加新明细行时没有提供买入价/成本价，并且此选项为"启用"，则新明细行的利润将为0（买入价/成本价 = 销售价）。如果这个选项是"禁用"（推荐），利润将等于默认的建议值（如果找不到默认值，可能是100%）。
+MARGIN_METHODE_FOR_DISCOUNT=全局折扣的利润计算方法
 UseDiscountAsProduct=作为产品
 UseDiscountAsService=作为服务
-UseDiscountOnTotal=在小计
-MARGIN_METHODE_FOR_DISCOUNT_DETAILS=定义全局折扣是被视为产品，服务还是仅作为保证金计算的小计。
-MARGIN_TYPE=默认情况下建议的购买/成本价格用于保证金计算
-MargeType1=最佳供应商价格的保证金
-MargeType2=加权平均价差 (WAP)
-MargeType3=成本价格保证金
-MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best vendor price if WAP not yet defined
+UseDiscountOnTotal=用于小计
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=定义全局折扣是否被视为产品、服务或者仅作为利润计算的小计。
+MARGIN_TYPE=默认用于利润计算的建议购买/成本价格
+MargeType1=最佳供应商价格的润 
+MargeType2=加权平均价格（WAP）的利润
+MargeType3=成本价格利润
+MarginTypeDesc=* 最佳购买价格的利润 = 销售价格 - 产品卡信息上定义的最佳供应商价格<br>* 加权平均价格（WAP）的利润 = 销售价格 - 产品加权平均价格（WAP），或者如果尚未定义WAP则为最佳供应商价格<br>* 成本价格的利润 = 销售价格 - 产品信息卡上定义的成本价格，或者如果尚未定义成本价格则为WAP，又或者如果尚未定义WAP则未最佳供应商价格
 CostPrice=成本价
 UnitCharges=费用单位
 Charges=费用
-AgentContactType=商业代理联络类型
-AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per contact/address. Note that reading statistics on a contact is not reliable since in most cases the contact may not be defined explicitely on the invoices.
-rateMustBeNumeric=税率必须为数字值
-markRateShouldBeLesserThan100=Mark rate 将低于 100
+AgentContactType=商业代表联系人类型
+AgentContactTypeDetails=定义哪种联系人类型（在发票上链接）将被用于每个联系人/地址的利润报告。请注意，读取联系人的统计数据并不可靠，因为在大多数情况下，联系人可能没有在发票上明确定义。
+rateMustBeNumeric=利润率必须为数字值
+markRateShouldBeLesserThan100=标价率将低于100
 ShowMarginInfos=显示利润信息
 CheckMargins=利润明细
-MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any dedicated sale representative and some third parties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).
+MarginPerSaleRepresentativeWarning=每个用户的利润报告使用第三方与销售代表之间的关联关系来计算每个销售代表的利润。由于一些第三方可能没有专门的销售代表，而一些第三方可能与多个销售代表关联，因此有些金额可能不包括在此报告中（如果没有销售代表），有些金额则可能出现在不同的明细行中（针对每个销售代表）。

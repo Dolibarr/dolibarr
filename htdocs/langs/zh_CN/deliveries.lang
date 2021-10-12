@@ -1,7 +1,22 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=交付
 DeliveryRef=交付编号
-DeliveryCard=交付信息
+DeliveryCard=回执信息卡
 DeliveryOrder=交付回执
 DeliveryDate=交付日期
 CreateDeliveryOrder=生成交付回执
@@ -9,8 +24,8 @@ DeliveryStateSaved=交付状态已保存
 SetDeliveryDate=设置交付日期
 ValidateDeliveryReceipt=确认交付回执
 ValidateDeliveryReceiptConfirm=你确定要确认这个交付回执吗？
-DeleteDeliveryReceipt=删除回执
-DeleteDeliveryReceiptConfirm=你确定要删除回执<b>%s</b>吗？
+DeleteDeliveryReceipt=删除交付回执
+DeleteDeliveryReceiptConfirm=你确定要删除交付回执<b>%s</b>吗？
 DeliveryMethod=交付方式
 TrackingNumber=运单查询号码
 DeliveryNotValidated=交付尚未确认
@@ -28,6 +43,6 @@ ErrorStockIsNotEnough=库存不足
 Shippable=可交运
 NonShippable=不能交运
 ShowShippableStatus=显示可交付状态
-ShowReceiving=显示回执
+ShowReceiving=显示交付回执
 NonExistentOrder=不存在的订单
 StockQuantitiesAlreadyAllocatedOnPreviousLines=已分配到前几项的库存数量

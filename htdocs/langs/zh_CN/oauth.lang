@@ -1,32 +1,47 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - oauth
-ConfigOAuth=OAuth Configuration
-OAuthServices=OAuth Services
+ConfigOAuth=OAuth设置
+OAuthServices=OAuth服务
 ManualTokenGeneration=手动令牌生成
-TokenManager=Token Manager
-IsTokenGenerated=是否生成了令牌？
-NoAccessToken=没有访问token保存到本地数据库
-HasAccessToken=一个token已生成并保存到本地数据库
-NewTokenStored=令牌收到并保存
-ToCheckDeleteTokenOnProvider=点击此处查看/删除%s OAuth提供商保存的授权
-TokenDeleted=删除Token
-RequestAccess=单击此处请求/续订访问权限并接收要保存的新令牌
-DeleteAccess=点击这里删除token
-UseTheFollowingUrlAsRedirectURI=Use the following URL as the Redirect URI when creating your credentials with your OAuth provider:
-ListOfSupportedOauthProviders=Enter the credentials provided by your OAuth2 provider. Only supported OAuth2 providers are listedd here. These services may be used by other modules that need OAuth2 authentication.
+TokenManager=令牌管理
+IsTokenGenerated=令牌是否已生成？
+NoAccessToken=没有访问令牌已保存到本地数据库
+HasAccessToken=令牌已生成并保存到本地数据库
+NewTokenStored=令牌已收到并保存
+ToCheckDeleteTokenOnProvider=点击这次查看/删除%s OAuth提供商保存的授权
+TokenDeleted=删除这里
+RequestAccess=单击这里请求/续订访问权限并接收要保存的新令牌
+DeleteAccess=点击这里删除令牌
+UseTheFollowingUrlAsRedirectURI=在用您的OAuth提供商创建您的证书时，使用以下URL作为重定向URI。
+ListOfSupportedOauthProviders=输入您的OAuth2提供商提供的凭证。这里只列出了支持的OAuth2提供商。这些服务可能被其他需要OAuth2认证的模块使用。
 OAuthSetupForLogin=用于生成OAuth令牌的页面
 SeePreviousTab=见上一个标签
-OAuthIDSecret=OAuth ID和秘密
-TOKEN_REFRESH=令牌刷新存在
+OAuthIDSecret=OAuth ID和密匙
+TOKEN_REFRESH=令牌刷新已存在
 TOKEN_EXPIRED=令牌已过期
-TOKEN_EXPIRE_AT=令牌到期
-TOKEN_DELETE=删除已保存的Token
-OAUTH_GOOGLE_NAME=OAuth Google service
-OAUTH_GOOGLE_ID=OAuth Google Id
-OAUTH_GOOGLE_SECRET=OAuth Google Secret
-OAUTH_GOOGLE_DESC=Go to <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">this page</a> then "Credentials" to create OAuth credentials
-OAUTH_GITHUB_NAME=OAuth GitHub service
-OAUTH_GITHUB_ID=OAuth GitHub Id
-OAUTH_GITHUB_SECRET=OAuth GitHub Secret
-OAUTH_GITHUB_DESC=Go to <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">this page</a> then "Register a new application" to create OAuth credentials
-OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
-OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
+TOKEN_EXPIRE_AT=令牌到期日
+TOKEN_DELETE=删除已保存的令牌
+OAUTH_GOOGLE_NAME=谷歌OAuth服务
+OAUTH_GOOGLE_ID=谷歌OAuth ID
+OAUTH_GOOGLE_SECRET=谷歌OAuth密匙
+OAUTH_GOOGLE_DESC=转到<a class="notasortlink" href="https://console.developers.google.com/" target="_blank">这个页面</a>，然后点击"Credentials"创建OAuth凭证
+OAUTH_GITHUB_NAME=GitHub OAuth服务
+OAUTH_GITHUB_ID=GitHub OAuth ID 
+OAUTH_GITHUB_SECRET=GitHub OAuth密匙
+OAUTH_GITHUB_DESC=转到<a class="notasortlink" href="https://github.com/settings/developers" target="_blank">这个页面</a>，然后点击"注册一个新的应用程序"来创建OAuth凭证
+OAUTH_STRIPE_TEST_NAME=Stripe测试OAuth
+OAUTH_STRIPE_LIVE_NAME=Stripe实时OAuth

@@ -1,24 +1,40 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=用于合伙人的会计帐户
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated accounting account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=财务记账科目代码
-CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=By default, leave empty the option "Automatically create a total payment" when creating a Salary
-Salary=工资
-Salaries=工资
-NewSalary=New salary
-NewSalaryPayment=New salary card
-AddSalaryPayment=Add salary payment
-SalaryPayment=工资支付
-SalariesPayments=工资支付
-SalariesPaymentsOf=Salaries payments of %s
-ShowSalaryPayment=显示工资支付
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=用于第三方用户的会计帐户
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=用户信息定义的专用会计账户将只用于分账会计。如果用户信息没有定义专用的用户会计账户，此会计账户将用于总账，并作为分账会计的默认值。
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=用于薪资付款的财务记账科目代码
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=默认情况下，在创建工资时，将“自动创建全额付款”选项留空
+Salary=薪资
+Salaries=薪资
+NewSalary=新建薪资
+NewSalaryPayment=新建薪资卡
+AddSalaryPayment=添加薪资付款
+SalaryPayment=薪资付款
+SalariesPayments=薪资付款
+SalariesPaymentsOf=支付%s的薪资
+ShowSalaryPayment=显示薪资付款
 THM=平均时薪
 TJM=平均日薪
 CurrentSalary=当前薪资
-THMDescription=This value may be used to calculate the cost of time consumed on a project entered by users if module project is used
-TJMDescription=This value is currently for information only and is not used for any calculation
-LastSalaries=Latest %s salaries
-AllSalaries=All salaries
-SalariesStatistics=Salary statistics
-SalariesAndPayments=Salaries and payments
-ConfirmDeleteSalaryPayment=Do you want to delete this salary payment ?
+THMDescription=如果使用模块项目，此值可用于计算用户输入的项目所消耗的时间成本
+TJMDescription=这个值目前只供参考，不用于任何计算
+LastSalaries=最新的%s个薪资
+AllSalaries=所有薪资
+SalariesStatistics=薪资统计
+SalariesAndPayments=薪资和付款
+ConfirmDeleteSalaryPayment=你想删除这个薪资付款吗？
+FillFieldFirst=请先填写员工字段

@@ -1,4 +1,5 @@
 # Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,76 +17,76 @@
 #
 # Generic
 #
-ModulePartnershipName=Partnership management
-PartnershipDescription=Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
+ModulePartnershipName=合作关系管理
+PartnershipDescription=合作关系模块管理
+PartnershipDescriptionLong=合作关系模块管理
 
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
+AddPartnership=添加合作关系
+CancelPartnershipForExpiredMembers=合作关系：取消订阅过期成员的伙伴关系
+PartnershipCheckBacklink=合作关系：检查推荐的反向链接
 
 #
 # Menu
 #
-NewPartnership=New Partnership
-ListOfPartnerships=List of partnership
+NewPartnership=新建合作关系
+ListOfPartnerships=合作关系列表
 
 #
 # Admin page
 #
-PartnershipSetup=Partnership setup
-PartnershipAbout=About Partnership
-PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+PartnershipSetup=合作关系设置
+PartnershipAbout=关于合作关系
+PartnershipAboutPage=关于合作关系的页面
+partnershipforthirdpartyormember=合作伙伴身份必须在"第三方"或"成员"中设置
+PARTNERSHIP_IS_MANAGED_FOR=合作关系管理受益人
+PARTNERSHIP_BACKLINKS_TO_CHECK=要检查的反向链接
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=当订阅过期时，取消合作关系状态的天数
+ReferingWebsiteCheck=检查网站推荐
+ReferingWebsiteCheckDesc=你可以启用一个功能来检查你的合作伙伴是否在他们自己的网站上添加了对你网站域名的反向链接。
 
 #
 # Object
 #
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
+DeletePartnership=删除合作关系
+PartnershipDedicatedToThisThirdParty=献给这个第三方的合作关系
+PartnershipDedicatedToThisMember=献给这个会员的合作关系
 DatePartnershipStart=开始日期
 DatePartnershipEnd=结束日期
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
+ReasonDecline=拒绝原因
+ReasonDeclineOrCancel=拒绝原因
+PartnershipAlreadyExist=合作关系已经存在
+ManagePartnership=管理合作关系
+BacklinkNotFoundOnPartnerWebsite=在合作伙伴网站上找不到反向链接
+ConfirmClosePartnershipAsk=你确定要取消这个合作关系吗？
+PartnershipType=合作关系类型
 
 #
 # Template Mail
 #
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
+SendingEmailOnPartnershipWillSoonBeCanceled=合作关系即将取消
+SendingEmailOnPartnershipRefused=合作关系被拒绝
+SendingEmailOnPartnershipAccepted=合作关系已接受
+SendingEmailOnPartnershipCanceled=合作关系已取消
 
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
+YourPartnershipWillSoonBeCanceledTopic=合作关系即将取消
+YourPartnershipRefusedTopic=合作关系被拒绝
+YourPartnershipAcceptedTopic=合作关系已接受
+YourPartnershipCanceledTopic=合作关系已取消
 
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
+YourPartnershipWillSoonBeCanceledContent=特此通知您，您的合作关系将很快被取消（未找到反向链接）。
+YourPartnershipRefusedContent=特此通知您，您的合作关系请求已被拒绝。
+YourPartnershipAcceptedContent=特此通知您，您的合作关系请求已被接受。
+YourPartnershipCanceledContent=特此通知您，您的合作关系已经被取消了。
 
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Decline reason
+CountLastUrlCheckError=上次URL检查的错误数
+LastCheckBacklink=最后一次URL检查的日期
+ReasonDeclineOrCancel=取消原因
 
 #
 # Status
 #
 PartnershipDraft=草稿
-PartnershipAccepted=接受
-PartnershipRefused=已被拒绝
+PartnershipAccepted=已接受
+PartnershipRefused=已拒绝
 PartnershipCanceled=已取消
-PartnershipManagedFor=Partners are
+PartnershipManagedFor=合作伙伴是

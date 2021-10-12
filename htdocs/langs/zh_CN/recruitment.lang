@@ -1,4 +1,5 @@
-# Copyright (C) 2020 Laurent Destailleur
+# Copyright (C) 2020        Laurent Destailleur
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,6 +17,7 @@
 #
 # Generic
 #
+# Dolibarr language file - Source file is en_US - recruitment
 
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Recruitment
@@ -35,42 +37,42 @@ EnablePublicRecruitmentPages=Enable public pages of open jobs
 #
 # About page
 #
-About = 关于
-RecruitmentAbout = About Recruitment
-RecruitmentAboutPage = Recruitment about page
-NbOfEmployeesExpected=Expected nb of employees
-JobLabel=Label of job position
-WorkPlace=Work place
-DateExpected=Expected date
-FutureManager=Future manager
-ResponsibleOfRecruitement=Responsible of recruitment
-IfJobIsLocatedAtAPartner=If job is located at a partner place
-PositionToBeFilled=工作岗位
-PositionsToBeFilled=Job positions
-ListOfPositionsToBeFilled=List of job positions
-NewPositionToBeFilled=New job positions
+About=关于
+RecruitmentAbout=关于招聘
+RecruitmentAboutPage=关于招聘的页面
+NbOfEmployeesExpected=预期雇员人数
+JobLabel=职位标签
+WorkPlace=工作地点
+DateExpected=预期入职日期
+FutureManager=直属上司
+ResponsibleOfRecruitement=负责招聘的人
+IfJobIsLocatedAtAPartner=如果工作地点位于合作伙伴处
+PositionToBeFilled=职位
+PositionsToBeFilled=职位
+ListOfPositionsToBeFilled=职位列表
+NewPositionToBeFilled=新建职位
 
-JobOfferToBeFilled=Job position to be filled
-ThisIsInformationOnJobPosition=Information of the job position to be filled
-ContactForRecruitment=Contact for recruitment
-EmailRecruiter=Email recruiter
-ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
-NewCandidature=New application
-ListOfCandidatures=List of applications
-RequestedRemuneration=Requested remuneration
-ProposedRemuneration=Proposed remuneration
-ContractProposed=Contract proposed
-ContractSigned=Contract signed
-ContractRefused=Contract refused
-RecruitmentCandidature=Application
-JobPositions=Job positions
-RecruitmentCandidatures=Applications
-InterviewToDo=Interview to do
-AnswerCandidature=Application answer
-YourCandidature=Your application
-YourCandidatureAnswerMessage=Thanks you for your application.<br>...
-JobClosedTextCandidateFound=The job position is closed. The position has been filled.
-JobClosedTextCanceled=The job position is closed.
-ExtrafieldsJobPosition=Complementary attributes (job positions)
-ExtrafieldsApplication=Complementary attributes (job applications)
-MakeOffer=Make an offer
+JobOfferToBeFilled=待填补的职位
+ThisIsInformationOnJobPosition=待填补的职位信息
+ContactForRecruitment=招聘联系人
+EmailRecruiter=招聘人员电子邮件
+ToUseAGenericEmail=使用一个通用电邮地址。如果没有定义，将使用招聘负责人的电子邮件。
+NewCandidature=新建求职
+ListOfCandidatures=求职列表
+RequestedRemuneration=要求的薪酬
+ProposedRemuneration=建议的薪酬
+ContractProposed=拟议的合同
+ContractSigned=合同已签
+ContractRefused=合同被拒
+RecruitmentCandidature=求职
+JobPositions=工作岗位
+RecruitmentCandidatures=求职
+InterviewToDo=待面试
+AnswerCandidature=申请回复
+YourCandidature=您的申请
+YourCandidatureAnswerMessage=感谢您的申请。<br>...
+JobClosedTextCandidateFound=该工作职位已关闭。该职位已补员。
+JobClosedTextCanceled=该职位已被关闭
+ExtrafieldsJobPosition=补充属性（职位）
+ExtrafieldsApplication=补充属性（求职）
+MakeOffer=发出录用通知

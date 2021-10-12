@@ -1,68 +1,83 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - interventions
-Intervention=介入
-Interventions=干预
-InterventionCard=干预卡
-NewIntervention=新的干预
-AddIntervention=创建干预
-ChangeIntoRepeatableIntervention=Change to repeatable intervention
-ListOfInterventions=干预列表
-ActionsOnFicheInter=干预活动
-LastInterventions=最新 %s干预
-AllInterventions=所有干预
+Intervention=故障介入任务
+Interventions=故障介入任务
+InterventionCard=故障介入任务信息卡
+NewIntervention=新建故障介入任务
+AddIntervention=创建故障介入任务
+ChangeIntoRepeatableIntervention=改为可重复的故障介入任务
+ListOfInterventions=故障介入任务列表
+ActionsOnFicheInter=故障介入任务活动
+LastInterventions=最新%s个故障介入任务
+AllInterventions=所有故障介入任务
 CreateDraftIntervention=创建草稿
-InterventionContact=干预接触
-DeleteIntervention=删除干预
-ValidateIntervention=验证干预
-ModifyIntervention=变更干预
-DeleteInterventionLine=删除干预行
-ConfirmDeleteIntervention=您确定要删除此干预吗？
-ConfirmValidateIntervention=您确定要在名称<b> %s </b>下批准此干预吗？
-ConfirmModifyIntervention=您确定要修改此干预吗？
-ConfirmDeleteInterventionLine=您确定要删除此干预线吗？
-ConfirmCloneIntervention=您确定要克隆此干预吗？
-NameAndSignatureOfInternalContact=Name and signature of intervening:
-NameAndSignatureOfExternalContact=Name and signature of customer:
-DocumentModelStandard=标准文档模板的干预
-InterventionCardsAndInterventionLines=干预和干预明细
-InterventionClassifyBilled=分类“帐单”
-InterventionClassifyUnBilled=归类 'Unbilled'
+InterventionContact=故障介入任务联系人
+DeleteIntervention=删除故障介入任务
+ValidateIntervention=确认故障介入任务
+ModifyIntervention=修改故障介入任务
+DeleteInterventionLine=删除故障介入任务明细
+ConfirmDeleteIntervention=您确定要删除此故障介入任务吗？
+ConfirmValidateIntervention=您确定要名为<b> %s </b>的故障介入任务吗？
+ConfirmModifyIntervention=您确定要修改此故障介入任务吗？
+ConfirmDeleteInterventionLine=您确定要删除此故障介入任务明细吗？
+ConfirmCloneIntervention=您确定要克隆此故障介入任务吗？
+NameAndSignatureOfInternalContact=介入人姓名和签名：
+NameAndSignatureOfExternalContact=客户姓名和签名：
+DocumentModelStandard=故障介入任务标准文档模板
+InterventionCardsAndInterventionLines=故障介入任务及其明细
+InterventionClassifyBilled=归类“已开账单”
+InterventionClassifyUnBilled=归类“未开账单”
 InterventionClassifyDone=分类“完成”
-StatusInterInvoiced=帐单
-SendInterventionRef=提交的干预 %s
-SendInterventionByMail=Send intervention by email
-InterventionCreatedInDolibarr=干预 %s 已创建
-InterventionValidatedInDolibarr=干预 %s 已验证
-InterventionModifiedInDolibarr=干预 %s 已变更
-InterventionClassifiedBilledInDolibarr=干预 %s 设为账单
-InterventionClassifiedUnbilledInDolibarr=干预 %s 设为未账单
-InterventionSentByEMail=Intervention %s sent by email
-InterventionDeletedInDolibarr=干预 %s 已删除
-InterventionsArea=干预区
-DraftFichinter=干预草稿
-LastModifiedInterventions=最近变更的 %s 干预
-FichinterToProcess=要处理的干预措施
-TypeContact_fichinter_external_CUSTOMER=随访客户联系
-PrintProductsOnFichinter=在干预卡上也打印“产品”类型（不仅是服务）
-PrintProductsOnFichinterDetails=从订单生成干预
-UseServicesDurationOnFichinter=使用服务持续时间从订单生成干预
-UseDurationOnFichinter=隐藏干预记录的持续时间字段
-UseDateWithoutHourOnFichinter=隐藏干预记录的日期字段的小时和分钟
-InterventionStatistics=干预统计
-NbOfinterventions=No. of intervention cards
-NumberOfInterventionsByMonth=No. of intervention cards by month (date of validation)
-AmountOfInteventionNotIncludedByDefault=默认情况下，干预金额不包括在利润中（在大多数情况下，时间表用于计算花费的时间）。将选项PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT添加到1到home-setup-other以包含它们。
-InterId=干预身份
-InterRef=干预编号
-InterDateCreation=日期创建干预
-InterDuration=持续干预
-InterStatus=现状干预
-InterNote=注意干预
-InterLine=Line of intervention
-InterLineId=线路ID干预
-InterLineDate=行日期干预
-InterLineDuration=线路持续时间干预
-InterLineDesc=线描述干预
-RepeatableIntervention=Template of intervention
-ToCreateAPredefinedIntervention=To create a predefined or recurring intervention, create a common intervention and convert it into intervention template
-ConfirmReopenIntervention=Are you sure you want to open back the intervention <b>%s</b>?
-GenerateInter=Generate intervention
+StatusInterInvoiced=已开账单
+SendInterventionRef=提交故障介入任务 %s
+SendInterventionByMail=通过电邮发送故障介入任务
+InterventionCreatedInDolibarr=故障介入任务 %s 已创建
+InterventionValidatedInDolibarr=故障介入任务 %s 已确认
+InterventionModifiedInDolibarr=故障介入任务 %s 已变更
+InterventionClassifiedBilledInDolibarr=故障介入任务 %s 设为已开账单
+InterventionClassifiedUnbilledInDolibarr=故障介入任务 %s 设为未开账单
+InterventionSentByEMail=故障介入任务 %s 已通过电邮发送
+InterventionDeletedInDolibarr=故障介入任务 %s 已删除
+InterventionsArea=故障介入任务区
+DraftFichinter=故障介入任务草稿
+LastModifiedInterventions=最近变更的%s个故障介入任务
+FichinterToProcess=待处理的故障介入任务
+TypeContact_fichinter_external_CUSTOMER=客户跟进的联系人
+PrintProductsOnFichinter=在故障介入任务信息卡中也打印“产品”类型（不仅是服务）的明细
+PrintProductsOnFichinterDetails=从订单生成的故障介入任务
+UseServicesDurationOnFichinter=从订单生成的故障介入任务使用服务持续时间
+UseDurationOnFichinter=隐藏故障介入任务记录的持续时间字段
+UseDateWithoutHourOnFichinter=隐藏故障介入任务记录的日期字段的小时和分钟
+InterventionStatistics=故障介入任务统计
+NbOfinterventions=故障介入任务信息卡数量
+NumberOfInterventionsByMonth=月度故障介入数量（按确认日期）
+AmountOfInteventionNotIncludedByDefault=默认情况下，故障介入任务金额不包括在利润中（在大多数情况下，时间表用于计算花费的时间）。在“主页-设置-其它”中添加选项project_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT为1以包括它们。
+InterId=故障介入任务ID
+InterRef=故障介入任务编号
+InterDateCreation=创建故障介入任务的日期
+InterDuration=故障介入任务的持续时间
+InterStatus=故障介入任务状态
+InterNote=故障介入任务备注
+InterLine=故障介入任务明细
+InterLineId=故障介入任务明细ID
+InterLineDate=故障介入任务日期明细
+InterLineDuration=故障介入任务持续时间明细
+InterLineDesc=故障介入任务描述明细
+RepeatableIntervention=故障介入任务模板
+ToCreateAPredefinedIntervention=要创建预定义的或经常性的故障介入任务，先创建一个普通的故障介入任务并将其转换为故障介入任务模板
+ConfirmReopenIntervention=您确定要重新打开故障介入任务<b>%s</b>？
+GenerateInter=生成故障介入任务

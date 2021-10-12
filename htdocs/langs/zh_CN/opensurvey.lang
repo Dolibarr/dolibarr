@@ -1,61 +1,78 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - opensurvey
-Survey=调查
-Surveys=调查
-OrganizeYourMeetingEasily=Organize your meetings and polls easily. First select the type of poll...
-NewSurvey=新建调查
+Survey=调查问卷
+Surveys=调查问卷
+OrganizeYourMeetingEasily=轻松组织您的会议和调查问卷。首先选择调查问卷的类型。
+NewSurvey=新建调查问卷
 OpenSurveyArea=调查问卷区
-AddACommentForPoll=您可以在民意调查中添加评论......
+AddACommentForPoll=您可以在调查问卷中添加评论……
 AddComment=添加评论
 CreatePoll=创建调查问卷
 PollTitle=调查问卷标题
 ToReceiveEMailForEachVote=每次投票均接收邮件
 TypeDate=日期类型
 TypeClassic=标准类型
-OpenSurveyStep2=Select your dates among the free days (grey). The selected days are green. You can unselect a day previously selected by clicking again on it
+OpenSurveyStep2=在可选日期（灰色）中选择您的日期。被选中的日子会是绿色。您可以再次点击之前选择的某个日期，将其从选择种取消。
 RemoveAllDays=移除全部日期
 CopyHoursOfFirstDay=复制首日时数
-RemoveAllHours=删除所有小时
-SelectedDays=择日
+RemoveAllHours=删除所有时数
+SelectedDays=已选择的日期
 TheBestChoice=当前最佳选择是
 TheBestChoices=当前最佳选择是
 with=同
-OpenSurveyHowTo=如果您同意在此投票中投票，则必须提供您的姓名，选择最适合您的值，并使用行尾的加号按钮进行验证。
+OpenSurveyHowTo=如果您同意在此调查问卷中投票，则必须提供您的姓名，选择最适合您的值，并使用行尾的加号按钮进行确认。
 CommentsOfVoters=评论投票
-ConfirmRemovalOfPoll=你确定想要移除这个调查 (以及全部投票)
-RemovePoll=删除民意调查
-UrlForSurvey=获取直接访问调查以及进行沟通的URL地址
-PollOnChoice=你创建了一个多项选择的调查投票。首先先输入调查问卷的全部选项：
+ConfirmRemovalOfPoll=您确定想要移除这个调查问卷(及其全部投票)吗？
+RemovePoll=删除调查问卷
+UrlForSurvey=直接访问调查问卷的URL地址
+PollOnChoice=您正在创建一个多项选择的调查问卷。首先请输入调查问卷的全部选项：
 CreateSurveyDate=创建日期问卷
 CreateSurveyStandard=创建标准调查问卷
 CheckBox=简单的复选框
 YesNoList=列表 (空白/是/否)
-PourContreList=列表 (空白/禁止/反对)
-AddNewColumn=新建一列
-TitleChoice=选择标签
+PourContreList=列表 (空白/支持/反对)
+AddNewColumn=田间新列
+TitleChoice=选项标签
 ExportSpreadsheet=导出电子表格结果
 ExpireDate=限定日期
 NbOfSurveys=调查问卷数量
-NbOfVoters=No. of voters
-SurveyResults=结果
-PollAdminDesc=你有权限通过 "编辑"菜单来变更全部投票详细. 你也可以 , 移除 %s. 你更可以添加 %s.
-5MoreChoices=5 个以上选择
+NbOfVoters=投票数量
+SurveyResults=投票结果
+PollAdminDesc=您有权限通过"编辑"按钮来修改该调研问卷的全部投票明细。您也可以使用%s来移除列或行。您更可以使用%s来添加列。
+5MoreChoices=5个以上选项
 Against=反对
-YouAreInivitedToVote=你被邀请投票支持这项民意调查
-VoteNameAlreadyExists=该调查问卷投票名称已经存在
+YouAreInivitedToVote=您被邀请投票支持这项调查问卷
+VoteNameAlreadyExists=该调查问卷名称已经存在
 AddADate=添加日期
 AddStartHour=添加起始时间
 AddEndHour=添加结束时间
-votes=调查(s)
-NoCommentYet=这个调查投票问卷没有评论
+votes=投票
+NoCommentYet=这个调查投票问卷暂无评论
 CanComment=投票者可评论该投票
 CanSeeOthersVote=投票者可查看其他人的投票
-SelectDayDesc=For each selected day, you can choose, or not, meeting hours in the following format:<br>- empty,<br>- "8h", "8H" or "8:00" to give a meeting's start hour,<br>- "8-11", "8h-11h", "8H-11H" or "8:00-11:00" to give a meeting's start and end hour,<br>- "8h15-11h15", "8H15-11H15" or "8:15-11:15" for the same thing but with minutes.
-BackToCurrentMonth=回到当前月份
+YourVoteIsPrivate=这个投票是私人的，没有人可以看到您的投票。
+YourVoteIsPublic=这个投票是公开的，任何有链接的人都可以看到您的投票。
+SelectDayDesc=对于每个选定的日子，您可以选择或不选择以下格式的会议时间：<br>- 空，<br>- "8h"、"8H"或 "8:00"，表示会议的开始时间，<br>- "8-11"、"8h-11h"、"8H-11H"或"8:00-11:00"，表示会议的开始和结束时间，<br>- "8h15-11h15"、"8H15-11H15"或"8:15-11:15"表示同样的时间，但带分钟。
+BackToCurrentMonth=返回当前月份
 ErrorOpenSurveyFillFirstSection=您尚未填写投票创建的第一部分
 ErrorOpenSurveyOneChoice=输入至少一个选项
-ErrorInsertingComment=插入您的说明时出错
-MoreChoices=为选民输入更多选择
-SurveyExpiredInfo=民意调查已经结束或投票延迟已经到期。
-EmailSomeoneVoted=%s填了一条线。\n您可以在链接中找到您的民意调查：\n%s
-ShowSurvey=显示调查
-UserMustBeSameThanUserUsedToVote=您必须投票并使用与投票时相同的用户名发布评论
+ErrorInsertingComment=插入您的评论时出错
+MoreChoices=为投票者输入更多选项
+SurveyExpiredInfo=投票已关闭或投票已到期。
+EmailSomeoneVoted=%s填写了一行。\n您可以在链接中找到您的调查结果：\n%s
+ShowSurvey=显示调查结果
+UserMustBeSameThanUserUsedToVote=您必须已投票并使用与投票时相同的用户名发布评论

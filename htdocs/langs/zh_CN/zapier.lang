@@ -1,4 +1,5 @@
-# Copyright (C) 2019 Frédéric FRANCE <frederic.france@free.fr>
+# Copyright (C) 2019        Frédéric FRANCE         <frederic.france@free.fr>
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -11,11 +12,12 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-ModuleZapierForDolibarrName = Zapier for Dolibarr
-ModuleZapierForDolibarrDesc = Zapier for Dolibarr module
-ZapierForDolibarrSetup=Setup of Zapier for Dolibarr
-ZapierDescription=Interface with Zapier
-ZapierAbout=About the module Zapier
-ZapierSetupPage=There is no need for a setup on Dolibarr side to use Zapier. However, you must generate and publish a package on zapier to be able to use Zapier with Dolibarr. See documentation on <a href="https://wiki.dolibarr.org/index.php/Module_Zapier">this wiki page</a>.
+# Dolibarr language file - Source file is en_US - zapier
+ModuleZapierForDolibarrName=Zapier for Dolibarr模块
+ModuleZapierForDolibarrDesc=用于Dolibarr的Zapier模块
+ZapierForDolibarrSetup=Zapier for Dolibarr的设置
+ZapierDescription=Zapier接口
+ZapierAbout=关于Zapier模块
+ZapierSetupPage=使用Zapier，不需要在Dolibarr方面进行设置。然而，您必须在zapier上生成并发布一个包，以便能够在Dolibarr上使用Zapier。请参阅<a href="https://wiki.dolibarr.org/index.php/Module_Zapier">维基页面</a>上的文档。

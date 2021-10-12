@@ -1,43 +1,58 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=直接打印
-Module64000Desc=允许系统直接打印
-PrintingSetup=设置直接打印系统
-PrintingDesc=This module adds a Print button to send documents directly to a printer (without opening document into an application) with various module.
-MenuDirectPrinting=直接打印任务
-DirectPrint=直接打印
-PrintingDriverDesc=Configuration variables for printing driver.
+Module64000Name=一键打印
+Module64000Desc=启用一键打印系统
+PrintingSetup=设置一键打印系统
+PrintingDesc=这个模块增加了一个打印按钮，可以用各种模块将文件直接发送到打印机，无需从其它应用程序打开该文件。
+MenuDirectPrinting=一键打印任务
+DirectPrint=一键打印
+PrintingDriverDesc=打印驱动的配置变量。
 ListDrivers=驱动列表
 PrintTestDesc=打印机列表。
-FileWasSentToPrinter=文件 %s 已发送到打印机
-ViaModule=via the module
-NoActivePrintingModuleFound=No active driver to print document. Check setup of module %s.
+FileWasSentToPrinter=文件%s已发送到打印机
+ViaModule=通过该模块
+NoActivePrintingModuleFound=没有有效的驱动程序来打印文件。请检查模块%s的设置。
 PleaseSelectaDriverfromList=请在驱动列表中选择驱动程序。
-PleaseConfigureDriverfromList=请在下面配置列表中选择一个驱动程序。
+PleaseConfigureDriverfromList=请在驱动列表中选择驱动程序。
 SetupDriver=驱动设置
 TargetedPrinter=目标打印机
 UserConf=单用户设置
-PRINTGCP_INFO=谷歌 OAuth API 设置
+PRINTGCP_INFO=谷歌OAuth API设置
 PRINTGCP_AUTHLINK=认证
-PRINTGCP_TOKEN_ACCESS=谷歌云打印 OAuth Token
+PRINTGCP_TOKEN_ACCESS=谷歌云打印OAuth Token
 PrintGCPDesc=这个驱动允许发送文档至谷歌云打印机。
 GCP_Name=名称
 GCP_displayName=显示名称
 GCP_Id=打印机ID号
-GCP_OwnerName=用户名称
+GCP_OwnerName=机主名称
 GCP_State=打印机状态
 GCP_connectionStatus=在线状态
 GCP_Type=打印机类型
-PrintIPPDesc=This driver allow to send documents directly to a printer. It requires a Linux system with CUPS installed.
+PrintIPPDesc=这个驱动允许直接发送文件到打印机。它需要一个安装了CUPS的Linux系统。
 PRINTIPP_HOST=打印服务器
 PRINTIPP_PORT=端口
-PRINTIPP_USER=登陆
+PRINTIPP_USER=登录名
 PRINTIPP_PASSWORD=密码
 NoDefaultPrinterDefined=未设定默认打印机
 DefaultPrinter=默认打印机
 Printer=打印机
-IPP_Uri=打印Uri
-IPP_Name=打印名称
-IPP_State=打印状态
+IPP_Uri=打印机URL
+IPP_Name=打印机名称
+IPP_State=打印机状态
 IPP_State_reason=状态原因
 IPP_State_reason1=状态原因1
 IPP_BW=黑白
@@ -45,8 +60,10 @@ IPP_Color=彩色
 IPP_Device=设备
 IPP_Media=打印媒体
 IPP_Supported=媒体类型
-DirectPrintingJobsDesc=This page lists printing jobs found for available printers.
-GoogleAuthNotConfigured=Google OAuth setup not done. Enable module OAuth and set a Google ID/Secret.
-GoogleAuthConfigured=Google OAuth credentials were found into setup of module OAuth.
-PrintingDriverDescprintgcp=配置可用的谷歌云打印机驱动
-PrintTestDescprintgcp=谷歌云打印机列表
+DirectPrintingJobsDesc=本页面列出了找到的可用打印机的打印任务。
+GoogleAuthNotConfigured=谷歌OAuth尚未设置。启用OAuth模块，并设置一个谷歌ID/密匙。
+GoogleAuthConfigured=在设置OAuth模块时发现谷歌OAuth凭证。
+PrintingDriverDescprintgcp=谷歌云打印的打印机驱动程序的配置变量。
+PrintingDriverDescprintipp=Cups的打印机驱动程序的配置变量。
+PrintTestDescprintgcp=谷歌云打印的打印机列表。
+PrintTestDescprintipp=Cups打印机列表。

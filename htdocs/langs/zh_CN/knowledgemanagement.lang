@@ -1,4 +1,5 @@
-# Copyright (C) 2021 SuperAdmin
+# Copyright (C) 2021        SuperAdmin
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -11,39 +12,41 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see .
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = 知识库管理系统
+
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
+ModuleKnowledgeManagementDesc=管理知识库或帮助台文库
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management System setup
+KnowledgeManagementSetup = 知识库管理系统设置
 Settings = 设置
-KnowledgeManagementSetupPage = Knowledge Management System setup page
+KnowledgeManagementSetupPage = 知识库管理系统设置页面
 
 
 #
 # About page
 #
-About = 关于
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
+About=关于
+KnowledgeManagementAbout=关于知识库管理
+KnowledgeManagementAboutPage =关于知识库管理的页面
 
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
-KnowledgeRecord = 项目
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
+KnowledgeManagementArea=知识库管理
+MenuKnowledgeRecord=知识库
+ListKnowledgeRecord=条款列表
+NewKnowledgeRecord=新建条款
+ValidateReply=确认解决方案
+KnowledgeRecords=文章
+KnowledgeRecord=文章
+KnowledgeRecordExtraFields=文章的额外字段
+GroupOfTicket=故障单分组
+YouCanLinkArticleToATicketCategory=您可以将一个文章链接到一个故障单分组（因此在鉴定新故障单时，该条款会被推荐）
+SuggestedForTicketsInGroup=建议用于故障单，若分组为

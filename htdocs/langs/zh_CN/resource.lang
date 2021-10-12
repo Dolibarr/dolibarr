@@ -1,15 +1,30 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=资源
-MenuResourceAdd=新的资源
+MenuResourceAdd=新建资源
 DeleteResource=删除资源
 ConfirmDeleteResourceElement=确认从这个元素中删除资源
 NoResourceInDatabase=数据库中无资源
 NoResourceLinked=无资源链接
-
+ActionsOnResource=有关该资源的活事件
 ResourcePageIndex=资源列表
 ResourceSingular=资源
 ResourceCard=资源信息卡
-AddResource=新建资源
+AddResource=创建资源
 ResourceFormLabel_ref=资源名称
 ResourceType=资源类别
 ResourceFormLabel_description=资源描述
@@ -18,19 +33,22 @@ ResourcesLinkedToElement=资源链接到元素
 
 ShowResource=显示资源
 
-ResourceElementPage=元素资源
-ResourceCreatedWithSuccess=资源成功创建
-RessourceLineSuccessfullyDeleted=资源明细成功删除
-RessourceLineSuccessfullyUpdated=资源明细成功更新
+ResourceElementPage=资源元素
+ResourceCreatedWithSuccess=资源已成功创建
+RessourceLineSuccessfullyDeleted=资源明细已成功删除
+RessourceLineSuccessfullyUpdated=资源明细已成功更新
 ResourceLinkedWithSuccess=资源链接成功
 
-ConfirmDeleteResource=确认删除这个资源
-RessourceSuccessfullyDeleted=资源成功删除
+ConfirmDeleteResource=确认删除此资源
+RessourceSuccessfullyDeleted=资源已成功删除
 DictionaryResourceType=资源类别
 
 SelectResource=请选择资源
 
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
+IdResource=资源ID
+AssetNumber=序列号
+ResourceTypeCode=资源类型代码
 ImportDataset_resource_1=资源
+
+ErrorResourcesAlreadyInUse=某些资源正在使用中
+ErrorResourceUseInEvent=%s用于%s事件中

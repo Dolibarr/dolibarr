@@ -1,23 +1,38 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - sms
 Sms=短信
 SmsSetup=短信设置
 SmsDesc=此页面允许您定义全局选项上的短信功能
 SmsCard=短信信息
 AllSms=所有短信推广
-SmsTargets=目标
-SmsRecipients=目标
-SmsRecipient=目标
+SmsTargets=收信人
+SmsRecipients=收信人
+SmsRecipient=收信人
 SmsTitle=描述
-SmsFrom=发件人
-SmsTo=目标
-SmsTopic=短信的主题
+SmsFrom=发信人
+SmsTo=收信人
+SmsTopic=短信专题
 SmsText=讯息
 SmsMessage=短信讯息
 ShowSms=显示短信
 ListOfSms=短信推广列表
-NewSms=新短信推广
+NewSms=新建短信推广
 EditSms=编辑短信
-ResetSms=新发送
+ResetSms=新建发送
 DeleteSms=删除短信推广
 DeleteASms=移除短信推广
 PreviewSms=预览短信
@@ -32,20 +47,20 @@ SmsStatusValidated=已确认
 SmsStatusApproved=已批准
 SmsStatusSent=已发送
 SmsStatusSentPartialy=部分发送
-SmsStatusSentCompletely=完全发送
+SmsStatusSentCompletely=完整发送
 SmsStatusError=错误
 SmsStatusNotSent=未发送
-SmsSuccessfulySent=短信正确发送（从%s到%s）
-ErrorSmsRecipientIsEmpty=目标号码为空
-WarningNoSmsAdded=没有新的电话号码添加到目标列表
-ConfirmValidSms=你是否确认此推广的有效性？
+SmsSuccessfulySent=短信已正确发送（从%s到%s）
+ErrorSmsRecipientIsEmpty=收信人为空号码
+WarningNoSmsAdded=没有新的电话号码需要添加到收信人列表
+ConfirmValidSms=您确定要确认本次短信推广吗？
 NbOfUniqueSms=唯一电话号码的数量
 NbOfSms=电话号码数量
-ThisIsATestMessage=这是一条测试信息
+ThisIsATestMessage=这是一条测试讯息
 SendSms=发送短信
 SmsInfoCharRemain=剩余字符数
 SmsInfoNumero=（国际格式如：+33899701761）
 DelayBeforeSending=发送前的延迟时间（分钟）
-SmsNoPossibleSenderFound=没有可用的发件人。检查您的短信供应商的设置。
-SmsNoPossibleRecipientFound=没有可用目标。检查您的短信提供商的设置。
-DisableStopIfSupported=禁用STOP信息（如果支持）
+SmsNoPossibleSenderFound=没有可用的发信人。请检查您的短信供应商的设置。
+SmsNoPossibleRecipientFound=没有可用收信人。请检查您的短信提供商的设置。
+DisableStopIfSupported=禁用讯息停发功能（如果支持）

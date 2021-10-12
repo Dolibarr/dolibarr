@@ -1,57 +1,72 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=合同区
-ListOfContracts=联系人列表
+ListOfContracts=合同列表
 AllContracts=所有合同
-ContractCard=合同信息
+ContractCard=合同信息卡
 ContractStatusNotRunning=不运行
 ContractStatusDraft=草稿
-ContractStatusValidated=验证
-ContractStatusClosed=禁用
-ServiceStatusInitial=不运行
-ServiceStatusRunning=运行
+ContractStatusValidated=已确认
+ContractStatusClosed=已关闭
+ServiceStatusInitial=未运行
+ServiceStatusRunning=运行中
 ServiceStatusNotLate=运行中，未过期
-ServiceStatusNotLateShort=没有过期
+ServiceStatusNotLateShort=未过期
 ServiceStatusLate=运行中，已过期
-ServiceStatusLateShort=过期
-ServiceStatusClosed=禁用
-ShowContractOfService=显示联系人或服务
+ServiceStatusLateShort=已过期
+ServiceStatusClosed=已关闭
+ShowContractOfService=显示服务合同
 Contracts=合同
-ContractsSubscriptions=联系人/订阅
+ContractsSubscriptions=合同/订阅
 ContractsAndLine=合同及合同明细
 Contract=合同
 ContractLine=合同明细
 Closing=关闭
 NoContracts=没有合同
 MenuServices=服务
-MenuInactiveServices=服务不活跃
+MenuInactiveServices=未激活的服务
 MenuRunningServices=正在运行的服务
-MenuExpiredServices=过期服务
-MenuClosedServices=休息服务
-NewContract=新合同
-NewContractSubscription=New contract or subscription
-AddContract=创建联系人
+MenuExpiredServices=过期的服务
+MenuClosedServices=已关闭的服务
+NewContract=新建合同
+NewContractSubscription=新建合同或订阅
+AddContract=创建合同
 DeleteAContract=删除合同
 ActivateAllOnContract=激活所有服务
-CloseAContract=禁用联系人
+CloseAContract=关闭合同
 ConfirmDeleteAContract=您确定要删除此合同及其所有服务吗？
-ConfirmValidateContract=您确定要在名称<b> %s </b>下验证此合同吗？
+ConfirmValidateContract=您确定要确认名为<b> %s </b>的合同吗？
 ConfirmActivateAllOnContract=这将打开所有服务（尚未激活）。您确定要打开所有服务吗？
-ConfirmCloseContract=这将关闭所有服务（活动与否）。你确定要关闭这份合同吗？
-ConfirmCloseService=您确定要关闭这项服务与日期<b>%s吗</b> ？
-ValidateAContract=验证合同
+ConfirmCloseContract=这将关闭所有服务（过期或未过期）。你确定要关闭这个合同吗？
+ConfirmCloseService=您确定要在<b>%s</b>日期关闭这项服务吗？
+ValidateAContract=确认合同
 ActivateService=激活服务
-ConfirmActivateService=你确定要激活这项服务的日期<b>%s吗</b> ？
-RefContract=合同参考
+ConfirmActivateService=您是否确定要在<b>%s</b>日期前激活这项服务？
+RefContract=合同编号
 DateContract=合同日期
 DateServiceActivate=服务激活日期
 ListOfServices=服务列表
-ListOfInactiveServices=不主动服务列表
-ListOfExpiredServices=过期活动服务列表
-ListOfClosedServices=禁用服务列表
-ListOfRunningServices=运行服务的列表
-NotActivatedServices=不活跃的服务（除验证合同）
-BoardNotActivatedServices=在已确认的合同间激活服务
-BoardNotActivatedServicesShort=Services to activate
+ListOfInactiveServices=不活跃的服务列表
+ListOfExpiredServices=过期的有效服务列表
+ListOfClosedServices=已关闭服务的列表
+ListOfRunningServices=运行中的服务列表
+NotActivatedServices=不活跃的服务（在已确认的合同中）
+BoardNotActivatedServices=在已确认的合同中要激活的服务
+BoardNotActivatedServicesShort=需要激活的服务
 LastContracts=最近的 %s 份合同
 LastModifiedServices=最近变更的 %s 个服务
 ContractStartDate=开始日期
@@ -64,41 +79,41 @@ DateStartReal=实际开始日期
 DateStartRealShort=实际开始日期
 DateEndReal=实际结束日期
 DateEndRealShort=实际结束日期
-CloseService=禁用服务
-BoardRunningServices=Services running
-BoardRunningServicesShort=Services running
-BoardExpiredServices=Services expired
-BoardExpiredServicesShort=Services expired
-ServiceStatus=服务现状
+CloseService=关闭服务
+BoardRunningServices=正在进行的服务
+BoardRunningServicesShort=正在进行的服务
+BoardExpiredServices=服务已过期
+BoardExpiredServicesShort=服务已过期
+ServiceStatus=服务状态
 DraftContracts=合同草稿
-CloseRefusedBecauseOneServiceActive=Contract can't be closed as there is at least one open service on it
-ActivateAllContracts=激活所有合同行
-CloseAllContracts=关闭所有合同线
-DeleteContractLine=删除线合同
-ConfirmDeleteContractLine=您确定要删除此合约项吗？
-MoveToAnotherContract=移动到另一个合同的服务。
-ConfirmMoveToAnotherContract=我选用新的目标合同，确认我想进入这个合同这项服务。
-ConfirmMoveToAnotherContractQuestion=选择哪个现有合同（同一合作方），您想将此服务移至哪个？
-PaymentRenewContractId=续订合同线（%s的数目）
+CloseRefusedBecauseOneServiceActive=合同不能被关闭，因为它至少有一个开放的服务
+ActivateAllContracts=激活所有合同明细
+CloseAllContracts=关闭所有合同明细
+DeleteContractLine=删除合同明细
+ConfirmDeleteContractLine=您确定要删除此合同明细吗？
+MoveToAnotherContract=转移服务到另一个合同
+ConfirmMoveToAnotherContract=我选用新的目标合同，并确认想把这项服务转移到该合同。
+ConfirmMoveToAnotherContractQuestion=选择您想将此服务移至哪个现有合同（同一个第三方）？
+PaymentRenewContractId=更新合同明细行（编号%s）
 ExpiredSince=失效日期
-NoExpiredServices=空空如也——没有过期的主动服务
-ListOfServicesToExpireWithDuration=在 %s 天内将期满的服务列表
-ListOfServicesToExpireWithDurationNeg=服务超过 %s 天过期列表
+NoExpiredServices=没有过期的有效服务
+ListOfServicesToExpireWithDuration=在 %s 天内期满的服务列表
+ListOfServicesToExpireWithDurationNeg=过期超过%s天的服务列表
 ListOfServicesToExpire=服务到期列表
-NoteListOfYourExpiredServices=此列表只包含指派给你为销售代表的合作方的服务合同。
+NoteListOfYourExpiredServices=此列表只包含您作为销售代表与第三方的合同服务。
 StandardContractsTemplate=标准合同模板
-ContactNameAndSignature=%s签名和盖章：
-OnlyLinesWithTypeServiceAreUsed=仅 "Service" 类型明细将被复制。
-ConfirmCloneContract=您确定要克隆合约<b> %s </b>吗？
-LowerDateEndPlannedShort=缩短计划的活动服务结束日期
+ContactNameAndSignature=对于%s，姓名及签名：
+OnlyLinesWithTypeServiceAreUsed=仅"服务"类型的明细将被复制。
+ConfirmCloneContract=您确定要克隆合同<b> %s </b>吗？
+LowerDateEndPlannedShort=缩短计划的有效服务结束日期
 SendContractRef=合同信息__REF__
-OtherContracts=Other contracts
+OtherContracts=其他合同
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=签订合同的销售代表
 TypeContact_contrat_internal_SALESREPFOLL=跟进合同的销售代表
-TypeContact_contrat_external_BILLING=结算客户联系
-TypeContact_contrat_external_CUSTOMER=后续的客户联系
-TypeContact_contrat_external_SALESREPSIGN=签约客户的联系人
-HideClosedServiceByDefault=Hide closed services by default
-ShowClosedServices=Show Closed Services
-HideClosedServices=Hide Closed Services
+TypeContact_contrat_external_BILLING=客户的账单联系人
+TypeContact_contrat_external_CUSTOMER=客户的跟进合同联系人
+TypeContact_contrat_external_SALESREPSIGN=客户的签约联系人
+HideClosedServiceByDefault=默认隐藏已关闭的服务
+ShowClosedServices=显示已关闭服务
+HideClosedServices=隐藏已关闭服务

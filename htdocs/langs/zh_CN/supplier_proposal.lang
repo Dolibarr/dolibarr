@@ -1,54 +1,72 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=供应商商业报价
-supplier_proposalDESC=管理供应商询价申请
-SupplierProposalNew=新建询价申请
-CommRequest=询价申请
-CommRequests=询价申请
-SearchRequest=搜索申请
-DraftRequests=草稿
-SupplierProposalsDraft=供应商提案草案
-LastModifiedRequests=最近变更的 %s 份询价申请
-RequestsOpened=打开询价申请
-SupplierProposalArea=供应商提案区域
-SupplierProposalShort=供应商提案
-SupplierProposals=供应商提案
-SupplierProposalsShort=供应商提案
-NewAskPrice=新建询价申请
+supplier_proposalDESC=管理供应商询价
+SupplierProposalNew=新建询价
+CommRequest=询价
+CommRequests=询价
+SearchRequest=搜索询价
+DraftRequests=询价草稿
+SupplierProposalsDraft=供应商报价草案
+LastModifiedRequests=最近变更的%s份询价
+RequestsOpened=开放的询价
+SupplierProposalArea=供应商报价区
+SupplierProposalShort=供应商报价
+SupplierProposals=供应商报价
+SupplierProposalsShort=供应商报价
+NewAskPrice=新建询价
 ShowSupplierProposal=显示询价申请
 AddSupplierProposal=创建询价申请
-SupplierProposalRefFourn=供应商参考
-SupplierProposalDate=交货日期
-SupplierProposalRefFournNotice=在结束“接受”之前，请考虑掌握供应商的参考资料。
-ConfirmValidateAsk=您确定要在名称<b> %s </b>下验证此价格请求吗？
-DeleteAsk=删除申请
-ValidateAsk=验证申请
+SupplierProposalRefFourn=供应商编号
+SupplierProposalDate=交付日期
+SupplierProposalRefFournNotice=以“已接受”状态关闭之前，请考虑获取供应商编号。
+ConfirmValidateAsk=您确定要确认名为<b>%s</b>的询价吗？
+DeleteAsk=删除询价
+ValidateAsk=确认询价
 SupplierProposalStatusDraft=草稿(需要确认)
-SupplierProposalStatusValidated=验证（请求已打开）
-SupplierProposalStatusClosed=关闭
-SupplierProposalStatusSigned=接受
-SupplierProposalStatusNotSigned=拒绝
+SupplierProposalStatusValidated=已确认（询价已开放）
+SupplierProposalStatusClosed=已关闭
+SupplierProposalStatusSigned=已接受
+SupplierProposalStatusNotSigned=已拒绝
 SupplierProposalStatusDraftShort=草稿
 SupplierProposalStatusValidatedShort=已确认
-SupplierProposalStatusClosedShort=关闭
-SupplierProposalStatusSignedShort=接受
-SupplierProposalStatusNotSignedShort=拒绝
-CopyAskFrom=复制已创建的询价申请为新的询价申请
-CreateEmptyAsk=创建空白申请
-ConfirmCloneAsk=您确定要克隆价格请求<b> %s </b>吗？
-ConfirmReOpenAsk=您确定要打开价格请求<b> %s </b>吗？
-SendAskByMail=用邮件发送询价申请
-SendAskRef=发送询价申请 %s
-SupplierProposalCard=请求卡
-ConfirmDeleteAsk=您确定要删除此价格请求<b> %s </b>吗？
-ActionsOnSupplierProposal=询价申请的活动
-DocModelAuroreDescription=一个完成申请模型(logo...)
-CommercialAsk=询价申请
-DefaultModelSupplierProposalCreate=设置默认模板
-DefaultModelSupplierProposalToBill=当关闭询价申请时的默认模板 (接受)
-DefaultModelSupplierProposalClosed=当关闭询价申请时的默认模板 (拒绝)
-ListOfSupplierProposals=供应商提案请求列表
-ListSupplierProposalsAssociatedProject=与项目关联的供应商提案列表
-SupplierProposalsToClose=供应商提案结束
-SupplierProposalsToProcess=供应商提议处理
-LastSupplierProposals=最新的%s价格要求
-AllPriceRequests=全部申请
+SupplierProposalStatusClosedShort=已关闭
+SupplierProposalStatusSignedShort=已接受
+SupplierProposalStatusNotSignedShort=已拒绝
+CopyAskFrom=复制现有询价并创建新的询价
+CreateEmptyAsk=创建空白询价
+ConfirmCloneAsk=您确定要克隆询价<b>%s</b>吗？
+ConfirmReOpenAsk=您确定要重新开放询价<b>%s</b>吗？
+SendAskByMail=用邮件发送询价
+SendAskRef=发送询价%s
+SupplierProposalCard=询价信息卡
+ConfirmDeleteAsk=您确定要删除此询价<b>%s</b>吗？
+ActionsOnSupplierProposal=询价活动
+DocModelAuroreDescription=询价模板(徽标...)
+CommercialAsk=询价
+DefaultModelSupplierProposalCreate=创建默认模板
+DefaultModelSupplierProposalToBill=当关闭 (已接受)询价时的默认模板
+DefaultModelSupplierProposalClosed=当关闭(已拒绝)询价时的默认模板 
+ListOfSupplierProposals=供应商报价列表
+ListSupplierProposalsAssociatedProject=与项目相关的供应商报价列表
+SupplierProposalsToClose=供应商报价待关闭
+SupplierProposalsToProcess=供应商报价待处理
+LastSupplierProposals=最新的%s份询价
+AllPriceRequests=全部询价
+TypeContact_supplier_proposal_external_SHIPPING=供应商联系人 - 交付
+TypeContact_supplier_proposal_external_BILLING=供应商联系人 - 帐单
+TypeContact_supplier_proposal_external_SERVICE=供应商报价代表

@@ -1,36 +1,51 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - paypal
-PaypalSetup=贝宝模块的设置
-PaypalDesc=This module allows payment by customers via <a href="http://www.paypal.com" target="_blank">PayPal</a>. This can be used for a ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
-PaypalOrCBDoPayment=Pay with PayPal (Card or PayPal)
-PaypalDoPayment=Pay with PayPal
+PaypalSetup=PayPal模块设置
+PaypalDesc=该模块允许客户通过<a href="http://www.paypal.com" target="_blank">PayPal</a>进行支付。这可用于临时付款或与Dolibarr对象相关的付款（发票、订单...）
+PaypalOrCBDoPayment=用PayPal支付（卡或PayPal）
+PaypalDoPayment=用PayPal付款
 PAYPAL_API_SANDBOX=测试/沙箱模式
-PAYPAL_API_USER=API的用户名
+PAYPAL_API_USER=API用户名
 PAYPAL_API_PASSWORD=API密码
 PAYPAL_API_SIGNATURE=API签名
-PAYPAL_SSLVERSION=Curl SSL 版本
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offer "integral" payment (Credit card+PayPal) or "PayPal" only
-PaypalModeIntegral=积分
-PaypalModeOnlyPaypal=支付宝
-ONLINE_PAYMENT_CSS_URL=Optional URL of CSS stylesheet on online payment page
+PAYPAL_SSLVERSION=Curl SSL版本
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=提供"混合模式"付款（信用卡+PayPal）或只提供"PayPal"付款
+PaypalModeIntegral=混合模式
+PaypalModeOnlyPaypal=PayPal
+ONLINE_PAYMENT_CSS_URL=在线支付页面上的CSS样式表的可选URL
 ThisIsTransactionId=这是交易编号<b>：%s</b>
-PAYPAL_ADD_PAYMENT_URL=Include the PayPal payment url when you send a document by email
-NewOnlinePaymentReceived=收到新的在线支付
-NewOnlinePaymentFailed=新的在线支付尝试但失败了
-ONLINE_PAYMENT_SENDEMAIL=Email address for notifications after each payment attempt (for success and fail)
+PAYPAL_ADD_PAYMENT_URL=当你通过电子邮件发送文件时，包括PayPal付款网址
+NewOnlinePaymentReceived=新建在线支付已收到
+NewOnlinePaymentFailed=新建在线支付尝试但失败了
+ONLINE_PAYMENT_SENDEMAIL=每次付款尝试后通知的电子邮件地址（成功和失败）
 ReturnURLAfterPayment=付款后返回网页地址
-ValidationOfOnlinePaymentFailed=验证在线支付失败
+ValidationOfOnlinePaymentFailed=在线支付验证失败
 PaymentSystemConfirmPaymentPageWasCalledButFailed=支付系统调用支付确认页面返回错误
 SetExpressCheckoutAPICallFailed=SetExpressCheckout API调用失败。
 DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API调用失败。
-DetailedErrorMessage=详细的错误消息
+DetailedErrorMessage=详细的错误信息
 ShortErrorMessage=简短错误信息
 ErrorCode=错误代码
 ErrorSeverityCode=错误严重性代码
 OnlinePaymentSystem=在线支付系统
-PaypalLiveEnabled=PayPal "live" mode enabled (otherwise test/sandbox mode)
-PaypalImportPayment=Import PayPal payments
-PostActionAfterPayment=付款后发布操作
-ARollbackWasPerformedOnPostActions=对所有Post操作执行了回滚。如果必要，您必须手动完成后期操作。
-ValidationOfPaymentFailed=Validation of payment has failed
-CardOwner=Card holder
-PayPalBalance=Paypal credit
+PaypalLiveEnabled=启用PayPal"实时"模式（否则为测试/沙盒模式）
+PaypalImportPayment=导入PayPal付款
+PostActionAfterPayment=付款后Post操作
+ARollbackWasPerformedOnPostActions=对所有Post操作执行了回滚。如果必要，您必须手动完成Post操作。
+ValidationOfPaymentFailed=付款验证失败
+CardOwner=持卡人
+PayPalBalance=Paypal余额

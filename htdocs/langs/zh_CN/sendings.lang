@@ -1,3 +1,18 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - sendings
 RefSending=运单编号
 Sending=运单
@@ -6,29 +21,29 @@ AllSendings=全部运单
 Shipment=运单
 Shipments=运单
 ShowSending=显示运单
-Receivings=交付收据
-SendingsArea=运单区
+Receivings=交货收据
+SendingsArea=运单信息
 ListOfSendings=运单列表
 SendingMethod=运输方式
 LastSendings=最近的%s份运单
 StatisticsOfSendings=运单统计
-NbOfSendings=运单数
-NumberOfShipmentsByMonth=月度运单数
+NbOfSendings=运单数量
+NumberOfShipmentsByMonth=月度运单数量
 SendingCard=运单信息
 NewSending=新建运单
 CreateShipment=创建运单
 QtyShipped=已交运数量
-QtyShippedShort=已交运量
+QtyShippedShort=已交运数量
 QtyPreparedOrShipped=已备运或已交运数量
 QtyToShip=待交运数量
 QtyToReceive=待接收数量
 QtyReceived=已接收数量
-QtyInOtherShipments=其它运单数量
-KeepToShip=待交运余数
-KeepToShipShort=余数
+QtyInOtherShipments=其它运单中的数量
+KeepToShip=待交运剩余数量
+KeepToShipShort=剩余数量
 OtherSendingsForSameOrder=此订单的其他运单
 SendingsAndReceivingForSameOrder=此订单的运单和收据
-SendingsToValidate=运单待确认
+SendingsToValidate=待确认运单
 StatusSendingCanceled=已取消
 StatusSendingCanceledShort=已取消
 StatusSendingDraft=草稿
@@ -37,40 +52,40 @@ StatusSendingProcessed=已处理
 StatusSendingDraftShort=草稿
 StatusSendingValidatedShort=已确认
 StatusSendingProcessedShort=已处理
-SendingSheet=装运清单
+SendingSheet=发货单
 ConfirmDeleteSending=您确定要删除此运单吗？
 ConfirmValidateSending=您确定要确认此运单<b>%s</b>吗？
 ConfirmCancelSending=您确定要取消此运单吗？
-DocumentModelMerou=Merou A5模板
-WarningNoQtyLeftToSend=警告，无待交运产品。
-StatsOnShipmentsOnlyValidated=仅统计已确认的运单。统计中的日期是运单确认的日期（计划交付日期可能未知）。
-DateDeliveryPlanned=计划交付日期
+DocumentModelMerou=Merou A5格式
+WarningNoQtyLeftToSend=警告：没有待交运产品。
+StatsOnShipmentsOnlyValidated=仅统计已确认的运单。统计中的日期是运单确认的日期（计划交货日期未知）。
+DateDeliveryPlanned=计划交货日期
 RefDeliveryReceipt=交货收据编号
-StatusReceipt=交付收据状态
-DateReceived=收货日期
+StatusReceipt=交货收据状态
+DateReceived=交货接收日期
 ClassifyReception=归类接收
 SendShippingByEMail=通过电子邮件发送运单
 SendShippingRef=提交运单%s
-ActionsOnShipping=运单日志
+ActionsOnShipping=运单事件
 LinkToTrackYourPackage=运单查询链接
-ShipmentCreationIsDoneFromOrder=当前，新运单在订单信息中创建。
-ShipmentLine=运单项
+ShipmentCreationIsDoneFromOrder=目前，新运单是从订单记录中创建。
+ShipmentLine=运单明细行
 ProductQtyInCustomersOrdersRunning=未结销售订单的产品数量
 ProductQtyInSuppliersOrdersRunning=未结采购订单的产品数量
 ProductQtyInShipmentAlreadySent=未结销售订单中已交运的产品数量
 ProductQtyInSuppliersShipmentAlreadyRecevied=未结采购订单中已接收的产品数量
-NoProductToShipFoundIntoStock=在仓库<b>%s</b>中没有要运送的产品。更改库存或返回选择其他仓库。
+NoProductToShipFoundIntoStock=在仓库<b>%s</b>中没有待发货的产品。更正库存或返回选择其他仓库。
 WeightVolShort=重量/体积
-ValidateOrderFirstBeforeShipment=您必须先确认订单才能发货。
+ValidateOrderFirstBeforeShipment=您必须先确认订单才能创建运单。
 
 # Sending methods
 # ModelDocument
-DocumentModelTyphon=更多完整的交付收据的文档模板（徽标...）
-DocumentModelStorm=更多完整的交付收据和兼容自定义变量的文档模板（徽标...）
+DocumentModelTyphon=更多交货收据的完整文档模板（徽标...）
+DocumentModelStorm=更多交货收据和兼容自定义变量的完整文档模板（徽标...）
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=没有定义全局变量EXPEDITION_ADDON_NUMBER
-SumOfProductVolumes=产品总体积
-SumOfProductWeights=产品总重
+SumOfProductVolumes=产品体积总和
+SumOfProductWeights=产品重量总和
 
 # warehouse details
-DetailWarehouseNumber=仓库明细
+DetailWarehouseNumber=仓库详情
 DetailWarehouseFormat=仓库：%s (数量：%d)

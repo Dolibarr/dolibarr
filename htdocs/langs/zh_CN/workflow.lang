@@ -1,26 +1,41 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=工作流模块设置
-WorkflowDesc=This module provides some automatic actions. By default, the workflow is open (you can do things in the order you want) but here you can activate some automatic actions.
-ThereIsNoWorkflowToModify=没有工作流程，您可以修改你已激活的模块。
-# Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a sales order after a commercial proposal is signed (the new order will have same amount as the proposal)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (the new invoice will have same amount as the proposal)
+WorkflowSetup=工作流程模块设置
+WorkflowDesc=此模块提供了一些自动操作。默认情况下，工作流程是开放的（您可以按照您想要的顺序做事），但您可以通过此模块激活一些自动操作。
+ThereIsNoWorkflowToModify=已激活的模块没有可修改的工作流。
+# 自动创建
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=在签署商业报价书后自动创建销售订单（新订单的金额将与报价书相同）。
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=在签署商业报价书后自动创建客户发票（新发票的金额与报价书的金额相同）。
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=在合同确认后自动创建客户发票
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a sales order is closed (the new invoice will have same amount as the order)
-# Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when sales order is set to billed (and if the amount of the order is the same as the total amount of the signed linked proposal)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the signed linked proposal)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source sales order as shipped when a shipment is validated (and if the quantity shipped by all shipments is the same as in the order to update)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classify linked source sales order as shipped when a shipment is closed (and if the quantity shipped by all shipments is the same as in the order to update)
-# Autoclassify purchase order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposal)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
-# Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=在合同确认后自动创建客户发票（新的发票将与订单的金额相同）。
+# 自动归类客户报价书或订单
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=当销售订单被设置为已开票时，将关联的报价书归类为已开票（如果订单的金额与已签署的关联报价书的总金额相同）。
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=当客户发票被确认时（如果发票金额与已签署的关联报价书的总金额相同），将关联的报价书归类为已开票。
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=当客户发票被确认时，将关联的销售订单归类为已开票（如果发票金额与关联订单的总金额相同）。
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=当客户发票被设置为已付时，将关联的销售订单分类为已开票（如果发票金额与关联订单的总金额相同）。
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=当运单被确认时，将关联的销售订单归类为已交付（如果所有运单交付的总量与关联订单一致）。
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=当运单关闭时，将关联的销售订单归类为已交付（如果所有运单交付的总量与关联订单一致）。
+# 自动归类采购订单
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=当供应商发票被确认时，将关联的供应商报价书归类为已开票（如果发票的金额与关联报价书的总金额相同）。
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=当供应商发票被确认时，将关联的采购订单归类为已开票（如果发票金额与关联订单的总金额相同）。
+descWORKFLOW_BILL_ON_RECEPTION=当关联的供应商订单被确认时，将接收归类为"已开票"。
+# 自动关闭处理任务
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=当票据被关闭时，关闭所有与票据相关的处理任务。
 AutomaticCreation=自动创建
-AutomaticClassification=自动分类
-# Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated
+AutomaticClassification=自动归类
+# 自动归类运单
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=当客户发票被确认时，将关联的运单自动归类为已关闭。

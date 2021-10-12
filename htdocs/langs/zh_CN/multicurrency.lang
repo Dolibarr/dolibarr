@@ -1,39 +1,53 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - multicurrency
-MultiCurrency=多货币
+MultiCurrency=多币种
 ErrorAddRateFail=已添加汇率的错误
-ErrorAddCurrencyFail=已添加货币的错误
+ErrorAddCurrencyFail=已添加币种的错误
 ErrorDeleteCurrencyFail=删除失败错误
 multicurrency_syncronize_error=汇率同步错误：%s
-MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=使用文件的日期来寻找货币汇率，而不是使用最新的已知汇率
-multicurrency_useOriginTx=当一个对象从另一个对象创建时，保持源对象的原始汇率（否则使用最新的已知汇率）
-CurrencyLayerAccount=货币层API
-CurrencyLayerAccount_help_to_synchronize=您应该在网站%s创建账户方能使用此功能。<br>获得您的<b>API密钥</b>。<br>如果您使用的是免费账户，您不能修改<b>主货币</b>（默认为美元）。<br>如果您的主货币不是美元，此应用程序将自动计算<br><br>你每月同步次数被限制在1000次。
+MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=使用文件的日期来寻找汇率，而不是使用最新的已知汇率
+multicurrency_useOriginTx=当从另一个对象创建对象时，使用源对象的原始汇率（否则使用最新的已知汇率）
+CurrencyLayerAccount=CurrencyLayer API
+CurrencyLayerAccount_help_to_synchronize=您须在网站%s创建账户方能使用此功能。<br>获得您的<b>API密钥</b>。<br>如果您使用的是免费账户，则不能修改<b>主币种</b>（默认为美元）。<br>如果您的主币种不是美元，此应用程序将自动计算<br><br>您每月汇率同步的次数被限制在1000次。
 multicurrency_appId=API密钥
-multicurrency_appCurrencySource=主货币
-multicurrency_alternateCurrencySource=替代货币
-CurrenciesUsed=启用的货币
-CurrenciesUsed_help_to_add=添加您在<b>报价书</b>、<b>订单</b>等需要使用的不同货币和汇率。
+multicurrency_appCurrencySource=源币种
+multicurrency_alternateCurrencySource=备用源币种
+CurrenciesUsed=启用的币种
+CurrenciesUsed_help_to_add=添加您在<b>报价书</b>、<b>订单</b>等需要使用的不同币种和汇率。
 rate=汇率
 MulticurrencyReceived=已收金额，原币种
-MulticurrencyRemainderToTake=未付金额，原币种
+MulticurrencyRemainderToTake=余额，原币种
 MulticurrencyPaymentAmount=付款金额，原币种
-AmountToOthercurrency=金额转为（接收账户的货币）
-CurrencyRateSyncSucceed=汇率同步成功
-MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=使用文件中的货币进行在线支付
+AmountToOthercurrency=转换后金额（收款账户的币种）
+CurrencyRateSyncSucceed=汇率已同步成功
+MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=使用文档中的币种进行在线支付
 TabTitleMulticurrencyRate=汇率列表
-ListCurrencyRate=此货币的汇率列表
+ListCurrencyRate=此币种的汇率列表
 CreateRate=创建汇率
 FormCreateRate=汇率创建
 FormUpdateRate=汇率修改
-successRateCreate=货币%s的汇率已添加到数据库中
-ConfirmDeleteLineRate=你确定要将汇率值%s从货币%s（%s日期）予以删除吗？
+successRateCreate=币种%s的汇率已添加到数据库中
+ConfirmDeleteLineRate=您确定要将%s汇率从币种%s（日期%s）中删除吗？
 DeleteLineRate=清空汇率
 successRateDelete=汇率已删除
 errorRateDelete=删除汇率时出现错误
 successUpdateRate=修改完成
 ErrorUpdateRate=修改汇率时出现错误
-Codemulticurrency=货币代码
+Codemulticurrency=币种代码
 UpdateRate=修改汇率
 CancelUpdate=取消
 NoEmptyRate=汇率字段不能为空
-

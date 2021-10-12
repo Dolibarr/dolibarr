@@ -1,5 +1,5 @@
-# en_US lang file for module ticket
-# Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
+# Copyright (C) 2013        Jean-François FERRY     <hello@librethic.io>
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,305 +17,308 @@
 #
 # Generic
 #
+# Dolibarr language file - Source file is en_US - ticket
 
-Module56000Name=票据
-Module56000Desc=发行或请求管理的票务系统
+Module56000Name=故障单
+Module56000Desc=故障单问题或请求管理系统
 
-Permission56001=查看票据
-Permission56002=修改票证
-Permission56003=删除票据
-Permission56004=管理票据
-Permission56005=See tickets of all third parties (not effective for external users, always be limited to the third party they depend on)
+Permission56001=查看故障单
+Permission56002=修改故障单
+Permission56003=删除故障单
+Permission56004=管理故障单
+Permission56005=查看所有第三方的故障单（对外部用户无效，仅限于他们依赖的第三方）
 
-TicketDictType=Ticket - Types
-TicketDictCategory=Ticket - Groupes
-TicketDictSeverity=Ticket - Severities
-TicketDictResolution=Ticket - Resolution
+TicketDictType=故障单 - 类型
+TicketDictCategory=故障单 - 组别
+TicketDictSeverity=故障单 - 严重性
+TicketDictResolution=故障单 - 办法
 
 TicketTypeShortCOM=商业问题
-TicketTypeShortHELP=Request for functionnal help
-TicketTypeShortISSUE=Issue or bug
-TicketTypeShortPROBLEM=Problem
-TicketTypeShortREQUEST=Change or enhancement request
+TicketTypeShortHELP=功能帮助请求
+TicketTypeShortISSUE=问题或漏洞
+TicketTypeShortPROBLEM=问题所在
+TicketTypeShortREQUEST=更改或提高请求
 TicketTypeShortPROJET=项目
 TicketTypeShortOTHER=其他
 
 TicketSeverityShortLOW=低
 TicketSeverityShortNORMAL=正常
 TicketSeverityShortHIGH=高
-TicketSeverityShortBLOCKING=Critical, Blocking
+TicketSeverityShortBLOCKING=严重、阻断
 
-ErrorBadEmailAddress=字段'%s'不正确
-MenuTicketMyAssign=我的票据
-MenuTicketMyAssignNonClosed=我的有效票据
-MenuListNonClosed=有效票据
+TicketCategoryShortOTHER=其他
 
-TypeContact_ticket_internal_CONTRIBUTOR=捐助
+ErrorBadEmailAddress=字段“%s”不正确
+MenuTicketMyAssign=我的故障单
+MenuTicketMyAssignNonClosed=我的开放故障单
+MenuListNonClosed=开放的故障单
+
+TypeContact_ticket_internal_CONTRIBUTOR=贡献者
 TypeContact_ticket_internal_SUPPORTTEC=指定用户
 TypeContact_ticket_external_SUPPORTCLI=客户联系/事件跟踪
 TypeContact_ticket_external_CONTRIBUTOR=外部贡献者
 
-OriginEmail=Reporter Email
-Notify_TICKET_SENTBYMAIL=Send ticket message by email
+OriginEmail=报告人电子邮件
+Notify_TICKET_SENTBYMAIL=通过电子邮件发送故障单组信息
 
-# Status
-Read=阅读
-Assigned=分配
+# Status 状态
+Read=已读
+Assigned=已分配
 InProgress=进行中
-NeedMoreInformation=Waiting for reporter feedback
-NeedMoreInformationShort=Waiting for feedback
-Answered=回答
-Waiting=等候
-SolvedClosed=Solved
-Deleted=删除
+NeedMoreInformation=等待报告人反馈
+NeedMoreInformationShort=等待反馈意见
+Answered=已答复
+Waiting=等候处理
+SolvedClosed=已解决
+Deleted=已删除
 
-# Dict
+# Dict 字典
 Type=类型
-Severity=严重
-TicketGroupIsPublic=Group is public
-TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
+Severity=严重程度
+TicketGroupIsPublic=公开的编组
+TicketGroupIsPublicDesc=如果一个故障单组是公开的，当从公开界面创建故障单时，它将在表格中显示
 
-# Email templates
-MailToSendTicketMessage=从票证消息发送电子邮件
+# Email templates电子邮件模板
+MailToSendTicketMessage=从故障单消息发送电子邮件
 
 #
-# Admin page
+# Admin page 管理员页面
 #
 TicketSetup=故障单模块设置
 TicketSettings=设置
 TicketSetupPage=
-TicketPublicAccess=以下网址提供不需要识别的公共接口
-TicketSetupDictionaries=The type of ticket, severity and analytic codes are configurable from dictionaries
+TicketPublicAccess=以下网址提供不需要识别的公共界面
+TicketSetupDictionaries=故障单的类型、严重程度和分析代码可从字典中配置
 TicketParamModule=模块变量设置
 TicketParamMail=电子邮件设置
-TicketEmailNotificationFrom=来自的通知电子邮件
-TicketEmailNotificationFromHelp=用于票据消息通过示例回答
-TicketEmailNotificationTo=通知电子邮件至
+TicketEmailNotificationFrom=通知电子邮件来自
+TicketEmailNotificationFromHelp=用于故障单消息的答复范例
+TicketEmailNotificationTo=通知电子邮件发送至
 TicketEmailNotificationToHelp=向此地址发送电子邮件通知。
-TicketNewEmailBodyLabel=Text message sent after creating a ticket
-TicketNewEmailBodyHelp=此处指定的文本将插入到确认从公共界面创建新票证的电子邮件中。有关票务咨询的信息会自动添加。
+TicketNewEmailBodyLabel=创建故障单后发送的文本信息
+TicketNewEmailBodyHelp=此处指定的文本将插入到确认从公共界面创建新故障单的电子邮件中。有关故障咨询的信息会自动添加。
 TicketParamPublicInterface=公共界面设置
 TicketsEmailMustExist=需要现有电子邮件地址才能创建故障单
-TicketsEmailMustExistHelp=在公共界面中，电子邮件地址应该已经填入数据库以创建新票证。
+TicketsEmailMustExistHelp=在公共界面中，电子邮件地址应该已经填入数据库以创建新故障单。
 PublicInterface=公共界面
-TicketUrlPublicInterfaceLabelAdmin=Alternative URL for public interface
-TicketUrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server and thus make available the public interface with another URL (the server must act as a proxy on this new URL)
+TicketUrlPublicInterfaceLabelAdmin=公共界面的替代URL
+TicketUrlPublicInterfaceHelpAdmin=可以给网络服务器定义一个别名，从而用另一个URL提供公共界面（服务器必须在这个新的URL上充当代理）。
 TicketPublicInterfaceTextHomeLabelAdmin=公共界面的欢迎文本
-TicketPublicInterfaceTextHome=您可以从其标识符跟踪故障单创建支持凭单或查看现有支持凭证。
+TicketPublicInterfaceTextHome=您可以从其标识符跟踪故障单创建或查看现有服务支持单。
 TicketPublicInterfaceTextHomeHelpAdmin=此处定义的文本将显示在公共界面的主页上。
 TicketPublicInterfaceTopicLabelAdmin=界面标题
 TicketPublicInterfaceTopicHelp=此文本将显示为公共界面的标题。
-TicketPublicInterfaceTextHelpMessageLabelAdmin=帮助文本到消息条目
+TicketPublicInterfaceTextHelpMessageLabelAdmin=信息输入的帮助文本
 TicketPublicInterfaceTextHelpMessageHelpAdmin=此文本将显示在用户的消息输入区域上方。
-ExtraFieldsTicket=额外的属性
-TicketCkEditorEmailNotActivated=HTML编辑器未激活。请将FCKEDITOR_ENABLE_MAIL内容设置为1以获取它。
-TicketsDisableEmail=不要发送电子邮件以创建故障单或邮件记录
-TicketsDisableEmailHelp=默认情况下，会在创建新故障单或消息时发送电子邮件。启用此选项可禁用* all *电子邮件通知
+ExtraFieldsTicket=附加属性
+TicketCkEditorEmailNotActivated=HTML编辑器未激活。请将FCKEDITOR_ENABLE_MAIL内容设置为1以激活。
+TicketsDisableEmail=创建故障单或邮件记录时不发送电子邮件
+TicketsDisableEmailHelp=默认情况下，会在创建新故障单或消息时发送电子邮件。启用此选项可禁用*全部*电子邮件通知
 TicketsLogEnableEmail=通过电子邮件启用日志
-TicketsLogEnableEmailHelp=每次更改时，都会向与该票证相关联的每个联系人**发送一封电子邮件。
-TicketParams=PARAMS
+TicketsLogEnableEmailHelp=每次更改时，都会向与该故障单相关的**每个联系人**发送一封电子邮件。
+TicketParams=参数
 TicketsShowModuleLogo=在公共界面中显示模块的徽标
 TicketsShowModuleLogoHelp=启用此选项可在公共界面的页面中隐藏徽标模块
 TicketsShowCompanyLogo=在公共界面中显示公司的徽标
-TicketsShowCompanyLogoHelp=启用此选项可在公共界面的页面中隐藏主公司的徽标
-TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
-TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
-TicketsLimitViewAssignedOnly=Restrict the display to tickets assigned to the current user (not effective for external users, always be limited to the third party they depend on)
-TicketsLimitViewAssignedOnlyHelp=仅显示分配给当前用户的票证。不适用于具有票证管理权限的用户。
-TicketsActivatePublicInterface=激活公共接口
-TicketsActivatePublicInterfaceHelp=公共接口允许任何访问者创建票证。
-TicketsAutoAssignTicket=自动分配创建故障单的用户
-TicketsAutoAssignTicketHelp=创建故障单时，可以自动将用户分配给故障单。
-TicketNumberingModules=票据编号模块
-TicketsModelModule=Document templates for tickets
-TicketNotifyTiersAtCreation=Notify third party at creation
-TicketsDisableCustomerEmail=Always disable emails when a ticket is created from public interface
-TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
-TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
-TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
+TicketsShowCompanyLogoHelp=启用此选项可在公共界面页面中隐藏主公司的徽标TicketsEmailAlsoSendToMainAddress=同时发送通知到主邮件地址
+TicketsEmailAlsoSendToMainAddressHelp=启用此选项，同时向设置"%s"中定义的地址发送电子邮件（见标签"%s"）
+TicketsLimitViewAssignedOnly=限制显示分配给当前用户的故障单（对外部用户无效，始终限于他们所依赖的第三方）
+TicketsLimitViewAssignedOnlyHelp=只有分配给当前用户的故障单才可见。不适用于有故障单管理权的用户。
+TicketsActivatePublicInterface=激活公共界面
+TicketsActivatePublicInterfaceHelp=公共界面允许任何访问者创建票据。
+TicketsAutoAssignTicket=自动分配给创建票据的用户
+TicketsAutoAssignTicketHelp=当创建一个故障单时，此用户可以自动分配给该故障单。
+TicketNumberingModules=故障单编号模块
+TicketsModule=故障单文件模板 
+TicketNotifyTiersAtCreation=创建时通知第三方
+TicketsDisableCustomerEmail=当从公共界面创建故障单时，总是禁止发送电子邮件
+TicketsPublicNotificationNewMessage=当有新的信息/评论被添加到故障单中时发送电子邮件
+TicketsPublicNotificationNewMessageHelp=当从公共界面添加新消息时发送电子邮件（给指定用户或通知电子邮件（更新）和/或通知电子邮件至）
+TicketPublicNotificationNewMessageDefaultEmail=通知邮件发送至（更新）
+TicketPublicNotificationNewMessageDefaultEmailHelp=如果故障单没有指定用户或用户没有任何已知的电子邮件，则为每个新消息通知发送电子邮件到这个地址。
 #
-# Index & list page
+# Index & list page 索引和列表页
 #
-TicketsIndex=Tickets area
-TicketList=票据清单
-TicketAssignedToMeInfos=This page display ticket list created by or assigned to current user
-NoTicketsFound=没有找到票据
-NoUnreadTicketsFound=No unread ticket found
-TicketViewAllTickets=查看所有票据
-TicketViewNonClosedOnly=仅查看有效票据
-TicketStatByStatus=票据按状态
-OrderByDateAsc=Sort by ascending date
-OrderByDateDesc=Sort by descending date
-ShowAsConversation=Show as conversation list
-MessageListViewType=Show as table list
+TicketsIndex=故障单区
+TicketList=故障单清单
+TicketAssignedToMeInfos=此页面显示由当前用户创建或分配的故障单列表
+NoTicketsFound=没有找到故障单
+NoUnreadTicketsFound=没有发现未读故障单
+TicketViewAllTickets=查看所有故障单
+TicketViewNonClosedOnly=仅查看开放的故障单
+TicketStatByStatus=故障单状态排序
+OrderByDateAsc=按日期升序排序
+OrderByDateDesc=按日期降序排序
+ShowAsConversation=显示为对话列表
+MessageListViewType=显示为表格列表
 
 #
-# Ticket card
+# Ticket card故障单卡
 #
-Ticket=Ticket
-TicketCard=票据卡
-CreateTicket=创建票证
-EditTicket=编辑票证
-TicketsManagement=票据管理
-CreatedBy=制作：
-NewTicket=新票据
-SubjectAnswerToTicket=票据应答
+Ticket=故障单
+TicketCard=故障单卡
+CreateTicket=创建故障单
+EditTicket=编辑故障单
+TicketsManagement=故障单管理
+CreatedBy=创建者
+NewTicket=新建故障单
+SubjectAnswerToTicket=故障单应答
 TicketTypeRequest=请求类型
-TicketCategory=Ticket categorization
-SeeTicket=查看票据
-TicketMarkedAsRead=票据已标记为已读
-TicketReadOn=请继续阅读
+TicketCategory=故障单分类
+SeeTicket=查看故障单
+TicketMarkedAsRead=故障单已标记为已读
+TicketReadOn=继续查看
 TicketCloseOn=截止日期
-MarkAsRead=将票证标记为已读
-TicketHistory=票务历史
+MarkAsRead=标记故障单为已读
+TicketHistory=故障单历史
 AssignUser=分配给用户
-TicketAssigned=现在分配了票证
+TicketAssigned=故障单已被分配
 TicketChangeType=改变类型
-TicketChangeCategory=Change analytic code
+TicketChangeCategory=改变分析代码
 TicketChangeSeverity=改变严重程度
 TicketAddMessage=添加消息
 AddMessage=添加消息
-MessageSuccessfullyAdded=新增票据
+MessageSuccessfullyAdded=故障单已添加
 TicketMessageSuccessfullyAdded=消息已成功添加
 TicketMessagesList=消息列表
-NoMsgForThisTicket=此票证没有消息
-Properties=分类
-LatestNewTickets=最新%s最新票据（未读）
-TicketSeverity=严重
-ShowTicket=看票
-RelatedTickets=相关票据
-TicketAddIntervention=创建干预
-CloseTicket=Close|Solve ticket
-AbandonTicket=Abandon ticket
-CloseATicket=Close|Solve a ticket
-ConfirmCloseAticket=确认票据关闭
-ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
-ConfirmDeleteTicket=请确认删除票据
-TicketDeletedSuccess=票证已成功删除
-TicketMarkedAsClosed=票据标记为已关闭
-TicketDurationAuto=计算的持续时间
-TicketDurationAutoInfos=持续时间根据干预相关计算
-TicketUpdated=票据已更新
+NoMsgForThisTicket=此故障单没有消息
+Properties=归类
+LatestNewTickets=%s份最新故障单（未读）
+TicketSeverity=严重程度
+ShowTicket=查看故障单
+RelatedTickets=相关的故障单
+TicketAddIntervention=创建介入任务
+CloseTicket=关闭|解决故障单
+AbandonTicket=放弃故障单
+CloseATicket=关闭|解决故障单
+ConfirmCloseAticket=确认故障单关闭
+ConfirmAbandonTicket=您是否确认将故障单以"已放弃"状态关闭？
+ConfirmDeleteTicket=请确认删除故障单
+TicketDeletedSuccess=故障单已成功删除
+TicketMarkedAsClosed=故障单标记为已关闭
+TicketDurationAuto=计算的耗时
+TicketDurationAutoInfos=根据相关介入任务自动计算的耗时
+TicketUpdated=故障单已更新
 SendMessageByEmail=通过电子邮件发送消息
 TicketNewMessage=新消息
-ErrorMailRecipientIsEmptyForSendTicketMessage=收件人是空的。没有电子邮件发送
-TicketGoIntoContactTab=请进入“联系人”标签以选择它们
-TicketMessageMailIntro=介绍
+ErrorMailRecipientIsEmptyForSendTicketMessage=收件人为空。不能发送电子邮件
+TicketGoIntoContactTab=请进入“联系人”标签以选择他们
+TicketMessageMailIntro=简介
 TicketMessageMailIntroHelp=此文本仅在电子邮件的开头添加，不会保存。
 TicketMessageMailIntroLabelAdmin=发送电子邮件时的消息简介
-TicketMessageMailIntroText=Hello,<br>A new response was sent on a ticket that you contact. Here is the message:<br>
-TicketMessageMailIntroHelpAdmin=此文本将在对票证的响应文本之前插入。
+TicketMessageMailIntroText=您好，<br>您所联系的票据已发出新的回应。以下是消息内容：<br>
+TicketMessageMailIntroHelpAdmin=此文本将在对故障单的响应文本之前插入。
 TicketMessageMailSignature=签名
 TicketMessageMailSignatureHelp=此文本仅在电子邮件末尾添加，不会保存。
-TicketMessageMailSignatureText=<p>Sincerely,</p><p>--</p>
+TicketMessageMailSignatureText=<p>此致！</p><p>--</p>
 TicketMessageMailSignatureLabelAdmin=回复电子邮件的签名
 TicketMessageMailSignatureHelpAdmin=该文本将在响应消息后插入。
 TicketMessageHelp=只有此文本将保存在故障单卡的消息列表中。
 TicketMessageSubstitutionReplacedByGenericValues=替换变量由通用值替换。
-TimeElapsedSince=Time elapsed since
-TicketTimeToRead=Time elapsed before read
-TicketTimeElapsedBeforeSince=Time elapsed before / since
-TicketContacts=联系票
-TicketDocumentsLinked=与票证相关的文件
-ConfirmReOpenTicket=确认重新打开此票？
-TicketMessageMailIntroAutoNewPublicMessage=A new message was posted on the ticket with the subject %s:
-TicketAssignedToYou=机票已分配
-TicketAssignedEmailBody=您已获得%s的票据＃%s
-MarkMessageAsPrivate=将邮件标记为私有
+TimeElapsedSince=已耗时
+TicketTimeToRead=读取前耗时
+TicketTimeElapsedBeforeSince=之前/之后的时间
+TicketContacts=故障单联系人
+TicketDocumentsLinked=与故障单相关的文件
+ConfirmReOpenTicket=确认重新打开此故障单？
+TicketMessageMailIntroAutoNewPublicMessage=故障单上有一条新的信息，主题是%s：
+TicketAssignedToYou=故障单已分配
+TicketAssignedEmailBody=您已获得%s分配的故障单#%s
+MarkMessageAsPrivate=将信息标记为私人信息
 TicketMessagePrivateHelp=此消息不会显示给外部用户
-TicketEmailOriginIssuer=发行人在门票的原产地
-InitialMessage=初步讯息
-LinkToAContract=链接到合同
+TicketEmailOriginIssuer=故障单源提交者
+InitialMessage=初始信息
+LinkToAContract=关联合同
 TicketPleaseSelectAContract=选择合同
-UnableToCreateInterIfNoSocid=Can not create an intervention when no third party is defined
+UnableToCreateInterIfNoSocid=没有定义第三方时，不能创建一个介入任务
 TicketMailExchanges=邮件交流
-TicketInitialMessageModified=修改了初始消息
+TicketInitialMessageModified=初始消息已修改
 TicketMessageSuccesfullyUpdated=消息已成功更新
-TicketChangeStatus=改变状态
-TicketConfirmChangeStatus=Confirm the status change: %s ?
-TicketLogStatusChanged=Status changed: %s to %s
-TicketNotNotifyTiersAtCreate=不在创建时通知公司
-Unread=Unread
-TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
-ErrorTicketRefRequired=Ticket reference name is required
+TicketChangeStatus=更改状态
+TicketConfirmChangeStatus=确认状态更改：%s ?
+TicketLogStatusChanged=状态更改：%s至%s
+TicketNotNotifyTiersAtCreate=创建时不通知公司
+Unread=未读
+TicketNotCreatedFromPublicInterface=不详。故障单并未从公共界面创建。
+ErrorTicketRefRequired=故障单编号是必需的。
 
 #
-# Logs
+# Logs 日志
 #
-TicketLogMesgReadBy=Ticket %s read by %s
-NoLogForThisTicket=暂无此日志
-TicketLogAssignedTo=Ticket %s assigned to %s
-TicketLogPropertyChanged=Ticket %s modified: classification from %s to %s
-TicketLogClosedBy=Ticket %s closed by %s
-TicketLogReopen=Ticket %s re-open
+TicketLogMesgReadBy=故障单%s已被%s查阅
+NoLogForThisTicket=这个故障单还没有日志
+TicketLogAssignedTo=故障单%s分配给%s
+TicketLogPropertyChanged=故障单%s已修改：从%s归类为%s
+TicketLogClosedBy=故障单%s已被%s关闭。
+TicketLogReopen=故障单%s重新开放
 
 #
-# Public pages
+# Public pages 公共页面
 #
-TicketSystem=票务系统
-ShowListTicketWithTrackId=从曲目ID显示票证列表
-ShowTicketWithTrackId=从曲目ID显示票证
-TicketPublicDesc=您可以创建支持服务单或从现有ID进行检查。
-YourTicketSuccessfullySaved=票据已成功保存！
-MesgInfosPublicTicketCreatedWithTrackId=A new ticket has been created with ID %s and Ref %s.
-PleaseRememberThisId=请保留我们稍后可能会问你的跟踪号码。
-TicketNewEmailSubject=Ticket creation confirmation - Ref %s (public ticket ID %s)
-TicketNewEmailSubjectCustomer=新支持票
-TicketNewEmailBody=这是一封自动电子邮件，用于确认您已注册新票证。
+TicketSystem=故障单系统
+ShowListTicketWithTrackId=从追踪ID显示故障单列表
+ShowTicketWithTrackId=从追踪ID显示故障单
+TicketPublicDesc=您可以创建服务支持单或从现有ID进行查找。
+YourTicketSuccessfullySaved=故障单已成功保存！
+MesgInfosPublicTicketCreatedWithTrackId=一张新的故障单已被创建，ID为%s，编号为%s。
+PleaseRememberThisId=请保留追踪号码，我们以后可能会向您询问。
+TicketNewEmailSubject=故障单创建确认 - 编号%s (公共故障单ID %s)
+TicketNewEmailSubjectCustomer=新服务支持单
+TicketNewEmailBody=这是一封自动电子邮件，用于确认您已注册新故障单。
 TicketNewEmailBodyCustomer=这是一封自动发送的电子邮件，用于确认刚刚在您的帐户中创建了新的故障单。
 TicketNewEmailBodyInfosTicket=用于监控故障单的信息
-TicketNewEmailBodyInfosTrackId=Ticket tracking number: %s
+TicketNewEmailBodyInfosTrackId=故障单追踪号码：%s
 TicketNewEmailBodyInfosTrackUrl=您可以通过单击上面的链接查看故障单的进度。
-TicketNewEmailBodyInfosTrackUrlCustomer=您可以通过单击以下链接查看特定界面中故障单的进度
+TicketNewEmailBodyInfosTrackUrlCustomer=您可以通过单击以下链接查看特定界面中的故障单进度
 TicketEmailPleaseDoNotReplyToThisEmail=请不要直接回复此电子邮件！使用该链接回复界面。
-TicketPublicInfoCreateTicket=此表单允许您在我们的管理系统中记录支持服务单。
+TicketPublicInfoCreateTicket=此表单允许您在我们的管理系统中记录服务支持单。
 TicketPublicPleaseBeAccuratelyDescribe=请准确描述问题。提供尽可能多的信息，以便我们正确识别您的请求。
 TicketPublicMsgViewLogIn=请输入故障单跟踪ID
-TicketTrackId=Public Tracking ID
-OneOfTicketTrackId=One of your tracking ID
-ErrorTicketNotFound=Ticket with tracking ID %s not found!
+TicketTrackId=公共跟踪ID
+OneOfTicketTrackId=您的一个追踪ID
+ErrorTicketNotFound=未找到跟踪ID %s的故障单！
 Subject=主题
-ViewTicket=查看票证
-ViewMyTicketList=查看我的票证清单
-ErrorEmailMustExistToCreateTicket=Error: email address not found in our database
-TicketNewEmailSubjectAdmin=New ticket created - Ref %s (public ticket ID %s)
-TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see information:</p>
-SeeThisTicketIntomanagementInterface=请参阅管理界面中的票证
-TicketPublicInterfaceForbidden=The public interface for the tickets was not enabled
-ErrorEmailOrTrackingInvalid=Bad value for tracking ID or email
-OldUser=Old user
+ViewTicket=查看故障单
+ViewMyTicketList=查看我的故障单清单
+ErrorEmailMustExistToCreateTicket=错误：我们的数据库中没有找到电子邮件地址
+TicketNewEmailSubjectAdmin=新创建的故障单 - 编号%s (公共故障单ID %s)
+TicketNewEmailBodyAdmin=<p>刚刚创建了ID为#%s的故障单，参见信息：</p>。
+SeeThisTicketIntomanagementInterface=请参阅管理界面中的故障单
+TicketPublicInterfaceForbidden=故障单的公共界面未启用
+ErrorEmailOrTrackingInvalid=追踪ID或电子邮件的值不正确
+OldUser=老用户
 NewUser=新建用户
-NumberOfTicketsByMonth=Number of tickets per month
-NbOfTickets=Number of tickets
-# notifications
-TicketNotificationEmailSubject=票据%s已更新
-TicketNotificationEmailBody=这是一条自动消息，通知您刚刚更新了机票%s
+NumberOfTicketsByMonth=月度故障单数
+NbOfTickets=故障单数
+# notifications 通知
+TicketNotificationEmailSubject=故障单%s已更新
+TicketNotificationEmailBody=这是一条自动消息，通知您故障单%s刚刚被更新
 TicketNotificationRecipient=通知收件人
 TicketNotificationLogMessage=记录消息
-TicketNotificationEmailBodyInfosTrackUrlinternal=查看票证到界面
-TicketNotificationNumberEmailSent=Notification email sent: %s
+TicketNotificationEmailBodyInfosTrackUrlinternal=查看故障单进入界面
+TicketNotificationNumberEmailSent=邮件通知已发送：%s
 
-ActionsOnTicket=Events on ticket
+ActionsOnTicket=故障单上的事件
 
 #
 # Boxes
 #
-BoxLastTicket=最新创建的票据
-BoxLastTicketDescription=最新%s创建票据
+BoxLastTicket=最新创建的故障单
+BoxLastTicketDescription=最新%s个创建的故障单
 BoxLastTicketContent=
-BoxLastTicketNoRecordedTickets=没有最近未读的票据
-BoxLastModifiedTicket=最新修改的票据
-BoxLastModifiedTicketDescription=最新%s改装票据
+BoxLastTicketNoRecordedTickets=没有最近未读的故障单
+BoxLastModifiedTicket=最新修改的故障单
+BoxLastModifiedTicketDescription=最新%s个修改的故障单
 BoxLastModifiedTicketContent=
-BoxLastModifiedTicketNoRecordedTickets=没有最近修改的票据
-BoxTicketType=Distribution of open tickets by type
-BoxTicketSeverity=Number of open tickets by severity
-BoxNoTicketSeverity=No tickets opened
-BoxTicketLastXDays=Number of new tickets by days the last %s days
-BoxTicketLastXDayswidget = Number of new tickets by days the last X days
-BoxNoTicketLastXDays=No new tickets the last %s days
-BoxNumberOfTicketByDay=Number of new tickets by day
-BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
-TicketCreatedToday=Ticket created today
-TicketClosedToday=Ticket closed today
+BoxLastModifiedTicketNoRecordedTickets=没有最近修改的故障单
+BoxTicketType=未结案故障单的类型分布
+BoxTicketSeverity=按严重程度分类的未处理故障单数量
+BoxNoTicketSeverity=没有打开的故障单
+BoxTicketLastXDays=过去%s天内的新票数量
+BoxTicketLastXDayswidget=过去X天内的新票数量
+BoxNoTicketLastXDays=最近%s天内没有新票
+BoxNumberOfTicketByDay=每天的新票数量
+BoxNewTicketVSClose=今天的新票数与今天已关闭的票数
+TicketCreatedToday=今天创建的故障单
+TicketClosedToday=今天关闭的故障单
+KMFoundForTicketGroup=我们找到了可能回答您问题的主题和常见问题，感谢您在提交故障单前查看它们。

@@ -1,30 +1,44 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBox模块设置
-PayBoxDesc=该模块提供的网页，以便在付款<a href="http://www.paybox.com" target="_blank">Paybox</a>客户。这可以用来为一个自由付款或就某一Dolibarr对象（发票，订货，付款...）
-FollowingUrlAreAvailableToMakePayments=以下网址可提供给客户的网页上，能够作出Dolibarr支付对象
+PayBoxDesc=该模块提供的页面允许客户在<a href="http://www.paybox.com" target="_blank">Paybox</a>上付款。这可以用于免费支付或支付一个特定的Dolibarr对象（发票、订单...）
+FollowingUrlAreAvailableToMakePayments=以下网址可用于向客户提供一个页面，以便在Dolibarr对象上进行付款
 PaymentForm=付款方式
-WelcomeOnPaymentPage=Welcome to our online payment service
-ThisScreenAllowsYouToPay=这个屏幕允许你进行网上支付%s。
-ThisIsInformationOnPayment=这是在做付款信息
-ToComplete=要完成
-YourEMail=付款确认的电子邮件
-Creditor=债权人
+WelcomeOnPaymentPage=欢迎使用我们的在线支付服务
+ThisScreenAllowsYouToPay=此页面允许你进行网上付款给%s。
+ThisIsInformationOnPayment=这是在待付款信息
+ToComplete=待完成
+YourEMail=接收付款确认的电子邮件
+Creditor=收款人
 PaymentCode=付款代码
-PayBoxDoPayment=Pay with Paybox
-YouWillBeRedirectedOnPayBox=您将被重定向担保Paybox页，输入您的信用卡信息
+PayBoxDoPayment=Paybox付款
+YouWillBeRedirectedOnPayBox=您将被重定向Paybox安全页面，以输入您的信用卡信息
 Continue=下一个
-SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
-YourPaymentHasBeenRecorded=本页面确认您的付款已记录。谢谢。
-YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
+SetupPayBoxToHavePaymentCreatedAutomatically=用网址<b>%s</b>设置您的Paybox，以便在Paybox验证时自动创建付款。
+YourPaymentHasBeenRecorded=本页面确认您的付款已被记录。谢谢。
+YourPaymentHasNotBeenRecorded=您的付款未被记录，交易已被取消。谢谢。
 AccountParameter=帐户参数
 UsageParameter=使用参数
-InformationToFindParameters=帮助，找到你的%s帐户信息
-PAYBOX_CGI_URL_V2=钱箱付款CGI模块的调用地址
-VendorName=供应商名称
+InformationToFindParameters=帮助查找您的%s账户信息
+PAYBOX_CGI_URL_V2=Paybox付款CGI模块的URL
 CSSUrlForPaymentForm=付款方式的CSS样式表的URL
-NewPayboxPaymentReceived=新建收款钱箱
-NewPayboxPaymentFailed=尝试新建收款钱箱失败
-PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)
+NewPayboxPaymentReceived=新建Paybox付款已收到
+NewPayboxPaymentFailed=新建Paybox付款尝试失败
+PAYBOX_PAYONLINE_SENDEMAIL=支付尝试后的电子邮件通知（成功或失败）
 PAYBOX_PBX_SITE=PBX SITE参数值
 PAYBOX_PBX_RANG=PBX Rang参数值
 PAYBOX_PBX_IDENTIFIANT=PBX ID参数值

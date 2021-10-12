@@ -1,3 +1,18 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
 # Note for Chinese:
@@ -8,21 +23,21 @@ FONTFORPDF=stsongstdlight
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
 SeparatorThousand=,
-FormatDateShort=%Y/%m/%d
-FormatDateShortInput=%Y/%m/%d
-FormatDateShortJava=yyyy/MM/dd
-FormatDateShortJavaInput=yyyy/MM/dd
-FormatDateShortJQuery=yy/mm/dd
-FormatDateShortJQueryInput=yy/mm/dd
+FormatDateShort=%Y-%m-%d
+FormatDateShortInput=%Y-%m-%d
+FormatDateShortJava=yyyy-MM-dd
+FormatDateShortJavaInput=yyyy-MM-dd
+FormatDateShortJQuery=yy-mm-dd
+FormatDateShortJQueryInput=yy-mm-dd
 FormatHourShortJQuery=HH:MI
 FormatHourShort=%I:%M %p
 FormatHourShortDuration=%H:%M
-FormatDateTextShort=%Y-%b-%d
-FormatDateText=%Y年%b%d日
-FormatDateHourShort=%Y-%m-%d %I:%M %p
-FormatDateHourSecShort=%Y-%m-%d %I:%M:%S %p
-FormatDateHourTextShort=%Y-%b-%d %I:%M %p
-FormatDateHourText=%Y%B%d %I:%M %p
+FormatDateTextShort=%Y-%m-%d
+FormatDateText=%Y年%b月%d日
+FormatDateHourShort=%Y-%m-%d %H:%M
+FormatDateHourSecShort=%Y-%m-%d %H:%M:%S
+FormatDateHourTextShort=%Y年%m月%d日 %H:%M
+FormatDateHourText=%Y年%m月%d日 %I:%M %p
 DatabaseConnection=数据库连接
 NoTemplateDefined=此电子邮件类型没有可用的模板
 AvailableVariables=可用的替代变量
@@ -77,9 +92,9 @@ ClickHere=点击这里
 Here=这里
 Apply=申请
 BackgroundColorByDefault=默认的背景颜色
-FileRenamed=该文件已成功重命名
-FileGenerated=该文件已成功生成
-FileSaved=该文件已成功保存
+FileRenamed=此文件已成功重命名
+FileGenerated=此文件已成功生成
+FileSaved=此文件已成功保存
 FileUploaded=文件已成功上传
 FileTransferComplete=文件已成功上传
 FilesDeleted=文件已成功删除
@@ -469,10 +484,10 @@ ActionUncomplete=未完成
 LatestLinkedEvents=最新的%s个链接事件
 CompanyFoundation=公司/组织
 Accountant=会计
-ContactsForCompany=该第三方的联系人
-ContactsAddressesForCompany=该第三方的联系人/地址
-AddressesForCompany=该第三方的地址
-ActionsOnCompany=有关该第三方的事件
+ContactsForCompany=此第三方的联系人
+ContactsAddressesForCompany=此第三方的联系人/地址
+AddressesForCompany=此第三方的地址
+ActionsOnCompany=有关此第三方的事件
 ActionsOnContact=有关此联系人/地址的事件
 ActionsOnContract=有关此合同的事件
 ActionsOnMember=有关此会员的事件
@@ -871,9 +886,9 @@ Sincerely=诚挚的
 ConfirmDeleteObject=你确定要删除这个对象吗？
 DeleteLine=删除行
 ConfirmDeleteLine=您确定要删除此行吗？
-ErrorPDFTkOutputFileNotFound=错误：该文件没有生成。请检查$PATH环境变量（仅限linux/unix）目录中是否包含“pdftk”命令，或者联系您的系统管理员。
+ErrorPDFTkOutputFileNotFound=错误：此文件没有生成。请检查$PATH环境变量（仅限linux/unix）目录中是否包含“pdftk”命令，或者联系您的系统管理员。
 NoPDFAvailableForDocGenAmongChecked=在已检查记录中没有PDF可用于生成文档
-TooManyRecordForMassAction=选择了太多的记录用于批量操作。该操作被限制在%s条记录的列表中。
+TooManyRecordForMassAction=选择了太多的记录用于批量操作。此操作被限制在%s条记录的列表中。
 NoRecordSelected=未选定记录
 MassFilesArea=批量操作生成文件区
 ShowTempMassFilesArea=显示批量操作生成文件区
@@ -907,9 +922,9 @@ ViewSubAccountList=查看子账户分类帐
 RemoveString=删除字符串“%s”
 SomeTranslationAreUncomplete=所提供的语言可能只被部分翻译，或包含错误。请通过在<a href="https://transifex.com/projects/p/dolibarr/" target="_blank">https://transifex.com/projects/p/dolibarr/</a> 注册来帮助纠正您使用的语言，贡献您的改进。
 DirectDownloadLink=公共下载链接
-PublicDownloadLinkDesc=只需要链接就可以下载该文件
+PublicDownloadLinkDesc=只需要链接就可以下载此文件
 DirectDownloadInternalLink=私人下载链接
-PrivateDownloadLinkDesc=您需要登录，并且需要权限才能查看或下载该文件
+PrivateDownloadLinkDesc=您需要登录，并且需要权限才能查看或下载此文件
 Download=下载
 DownloadDocument=下载文件
 ActualizeCurrency=更新货币汇率
@@ -1079,7 +1094,7 @@ ToProcess=待处理
 ToApprove=待批准
 GlobalOpenedElemView=全局视图
 NoArticlesFoundForTheKeyword=没有找到关键词"<strong>%s</strong>"的物品
-NoArticlesFoundForTheCategory=没有找到该类别的物品
+NoArticlesFoundForTheCategory=没有找到此类别的物品
 ToAcceptRefuse=待接受|拒绝
 ContactDefault_agenda=事件
 ContactDefault_commande=订单

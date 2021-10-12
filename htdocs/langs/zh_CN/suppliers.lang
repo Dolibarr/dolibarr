@@ -1,4 +1,19 @@
-# Dolibarr language file - Source file is en_US - vendors
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Dolibarr language file - Source file is en_US - suppliers
 Suppliers=供应商
 SuppliersInvoice=供应商发票
 SupplierInvoices=供应商发票
@@ -25,24 +40,24 @@ Availability=可用性
 ExportDataset_fournisseur_1=供应商发票和发票详情
 ExportDataset_fournisseur_2=供应商发票和付款
 ExportDataset_fournisseur_3=采购订单和订单详情
-ApproveThisOrder=批准这一订单
-ConfirmApproveThisOrder=是否确定要批准订单<b>%s</b>?
-DenyingThisOrder=拒绝这笔订单
-ConfirmDenyingThisOrder=是否确定要拒绝订单<b>%s</b>？
-ConfirmCancelThisOrder=是否确定要取消订单<b>%s</b>？
+ApproveThisOrder=批准此订单
+ConfirmApproveThisOrder=您确定要批准订单<b>%s</b>?
+DenyingThisOrder=拒绝此订单
+ConfirmDenyingThisOrder=您确定要拒绝订单<b>%s</b>？
+ConfirmCancelThisOrder=您确定要取消订单<b>%s</b>？
 AddSupplierOrder=创建采购订单
 AddSupplierInvoice=创建供应商发票
 ListOfSupplierProductForSupplier=供应商<b>%s</b>的产品和价格清单
-SentToSuppliers=发送给供应商
+SentToSuppliers=已发送给供应商
 ListOfSupplierOrders=采购订单清单
-MenuOrdersSupplierToBill=采购订单开票
+MenuOrdersSupplierToBill=采购订单待开票
 NbDaysToDelivery=交付延迟（天）
-DescNbDaysToDelivery=该订单中产品的最长交付延迟时间
+DescNbDaysToDelivery=此订单中产品的最长延迟交付时间
 SupplierReputation=供应商声誉
-ReferenceReputation=参考声誉
+ReferenceReputation=声誉参考资料
 DoNotOrderThisProductToThisSupplier=不订购
 NotTheGoodQualitySupplier=低质量
-ReputationForThisProduct=信誉
+ReputationForThisProduct=声誉
 BuyerName=买方名称
 AllProductServicePrices=全部产品/服务价格
 AllProductReferencesOfSupplier=供应商全部产品编号

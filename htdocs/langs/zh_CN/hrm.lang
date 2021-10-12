@@ -1,19 +1,34 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - en_US - hrm
 # Admin
-HRM_EMAIL_EXTERNAL_SERVICE=电子邮件以防止HRM外部服务
+HRM_EMAIL_EXTERNAL_SERVICE=防止HRM外部服务的电子邮件
 Establishments=机构
 Establishment=机构
 NewEstablishment=新建机构
 DeleteEstablishment=删除机构
-ConfirmDeleteEstablishment=Are you sure you wish to delete this establishment?
+ConfirmDeleteEstablishment=你确定要删除这个机构吗？
 OpenEtablishment=打开机构
 CloseEtablishment=关闭机构
 # Dictionary
-DictionaryPublicHolidays=Leave - Public holidays
+DictionaryPublicHolidays=休假 - 公共假期
 DictionaryDepartment=HRM - 部门列表
-DictionaryFunction=HRM - Job positions
+DictionaryFunction=HRM - 工作职位
 # Module
 Employees=雇员
 Employee=雇员
 NewEmployee=新建雇员
-ListOfEmployees=List of employees
+ListOfEmployees=雇员名单

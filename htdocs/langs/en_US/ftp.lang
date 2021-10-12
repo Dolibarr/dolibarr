@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - ftp
 FTPClientSetup=FTP or SFTP Client module setup
-NewFTPClient=New FTP/FTPS connection setup
-FTPArea=FTP/FTPS Area
-FTPAreaDesc=This screen shows a view of an FTP et SFTP server.
+NewFTPClient=New FTP/SFTP connection setup
+FTPArea=FTP/SFTP Area
+FTPAreaDesc=This screen shows a view of an FTP and SFTP server.
 SetupOfFTPClientModuleNotComplete=The setup of the FTP or SFTP client module seems to be incomplete
 FTPFeatureNotSupportedByYourPHP=Your PHP does not support FTP or SFTP functions
 FailedToConnectToFTPServer=Failed to connect to server (server %s, port %s)

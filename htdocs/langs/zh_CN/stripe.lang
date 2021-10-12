@@ -1,72 +1,86 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe模块设置
-StripeDesc=Offer customers a Stripe online payment page for payments with credit/cebit cards via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
+StripeDesc=为客户提供一个Stripe在线支付页面，通过<a href="http://www.stripe.com" target="_blank">Stripe</a>用信用卡/借记卡付款。这可以用来让您的客户进行临时付款或与特定Dolibarr对象（发票、订单...）相关的付款
 StripeOrCBDoPayment=使用信用卡或Stripe付款
-FollowingUrlAreAvailableToMakePayments=以下网址可提供给客户的网页上，能够作出Dolibarr支付对象
-PaymentForm=付款方式
-WelcomeOnPaymentPage=Welcome to our online payment service
-ThisScreenAllowsYouToPay=这个屏幕允许你进行网上支付%s。
-ThisIsInformationOnPayment=这是在做付款信息
-ToComplete=要完成
-YourEMail=付款确认的电子邮件
-STRIPE_PAYONLINE_SENDEMAIL=Email notification after a payment attempt (success or fail)
-Creditor=债权人
+FollowingUrlAreAvailableToMakePayments=以下URL可用于向客户提供一个页面，以便在Dolibarr对象上进行付款
+PaymentForm=付款表格
+WelcomeOnPaymentPage=欢迎使用我们的在线支付服务
+ThisScreenAllowsYouToPay=此页面允许您进行网上付款给%s
+ThisIsInformationOnPayment=这是待执行的付款信息
+ToComplete=待完成
+YourEMail=接收付款确认的电子邮件
+STRIPE_PAYONLINE_SENDEMAIL=尝试支付后的电子邮件通知（成功或失败）
+Creditor=收款人
 PaymentCode=付款代码
-StripeDoPayment=Pay with Stripe
-YouWillBeRedirectedOnStripe=您将被重定向到受保护的Stripe页面以输入您的信用卡信息
-Continue=下一个
-ToOfferALinkForOnlinePayment=网址为%s支付
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment page for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=URL to offer a %s online payment page for a customer invoice
-ToOfferALinkForOnlinePaymentOnContractLine=URL to offer a %s online payment page for a contract line
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer a %s online payment page of any amount with no existing object
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL to offer a %s online payment page for a member subscription
-ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment page for payment of a donation
-YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+StripeDoPayment=用Stripe支付
+YouWillBeRedirectedOnStripe=您将被转到安全的Stripe页面，输入您的信用卡信息
+Continue=下一步
+ToOfferALinkForOnlinePayment=用于%s支付的URL
+ToOfferALinkForOnlinePaymentOnOrder=为销售订单提供%s在线支付页面的URL
+ToOfferALinkForOnlinePaymentOnInvoice=为客户发票提供%s在线支付页面的URL
+ToOfferALinkForOnlinePaymentOnContractLine=为合同行提供%s在线支付页面的URL
+ToOfferALinkForOnlinePaymentOnFreeAmount=提供%s在线支付页面、没有现有对象的URL
+ToOfferALinkForOnlinePaymentOnMemberSubscription=提供%s在线支付页面、用于会员订阅的URL
+ToOfferALinkForOnlinePaymentOnDonation=提供%s在线支付页面、用于支付捐款的URL
+YouCanAddTagOnUrl=您也可以在这些URL中添加参数<b>&tag=<i>value</i></b>（只对没有链接到对象的付款是强制性的）来添加您自己的付款评论标签。<br>对于没有现有对象的付款URL，您也可以添加参数<strong>&noidempotency=1</strong>，以便同一标签的同一链接可以被多次使用（一些付款模式可能限制没有这个参数的每个不同链接的付款为1。
 SetupStripeToHavePaymentCreatedAutomatically=使用网址<b> %s </b>设置Stripe，以便在Stripe验证时自动创建付款。
 AccountParameter=帐户参数
 UsageParameter=使用参数
-InformationToFindParameters=帮助，找到你的%s帐户信息
-STRIPE_CGI_URL_V2=Stripe CGI模块的URL用于付款
-VendorName=供应商名称
-CSSUrlForPaymentForm=付款方式的CSS样式表的URL
-NewStripePaymentReceived=收到新Stripe付款
-NewStripePaymentFailed=新Stripe付款尝试但失败了
-FailedToChargeCard=Failed to charge card
+InformationToFindParameters=帮助查找您的%s帐户信息
+STRIPE_CGI_URL_V2=Stripe CGI模块的付款URL
+CSSUrlForPaymentForm=付款表格的CSS样式表URL
+NewStripePaymentReceived=新Stripe付款已收到
+NewStripePaymentFailed=新Stripe付款尝试已失败
+FailedToChargeCard=银行卡扣款失败
 STRIPE_TEST_SECRET_KEY=秘密测试密钥
 STRIPE_TEST_PUBLISHABLE_KEY=可发布的测试密钥
 STRIPE_TEST_WEBHOOK_KEY=Webhook测试密钥
-STRIPE_LIVE_SECRET_KEY=秘密活钥匙
-STRIPE_LIVE_PUBLISHABLE_KEY=可发布的现场钥匙
-STRIPE_LIVE_WEBHOOK_KEY=Webhook live键
-ONLINE_PAYMENT_WAREHOUSE=在线支付完成时用于库存减少的库存<br>（TODO当对发票上的操作减少库存的选项并且在线支付自己生成发票？）
-StripeLiveEnabled=Stripe live enabled（否则为test / sandbox模式）
+STRIPE_LIVE_SECRET_KEY=秘密实时密钥
+STRIPE_LIVE_PUBLISHABLE_KEY=可发布的实时密钥
+STRIPE_LIVE_WEBHOOK_KEY=Webhook实时密钥
+ONLINE_PAYMENT_WAREHOUSE=在线支付完成时用于库存减少的库存<br>（TODO减少库存的选项是在发票上的某项操作中完成，并且在线支付自己生成发票？）
+StripeLiveEnabled=Stripe实时模式已启用（否则为测试/沙盒模式）
 StripeImportPayment=导入Stripe付款
-ExampleOfTestCreditCard=Example of credit card for test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestCreditCard=信用卡测试示例：%s =>有效，%s =>CVC错误，%s =>失效，%s =>收费失败
 StripeGateways=Stripe网关
 OAUTH_STRIPE_TEST_ID=Stripe连接客户端ID（ca _...）
 OAUTH_STRIPE_LIVE_ID=Stripe连接客户端ID（ca _...）
-BankAccountForBankTransfer=基金支付的银行账户
+BankAccountForBankTransfer=用于资金支付的银行账户
 StripeAccount=Stripe帐户
-StripeChargeList=Stripe费用清单
-StripeTransactionList=Stripe事务列表
+StripeChargeList=Stripe扣款清单
+StripeTransactionList=Stripe交易列表
 StripeCustomerId=Stripe客户ID
 StripePaymentModes=Stripe支付模式
 LocalID=本地ID
 StripeID=Stripe ID
 NameOnCard=卡片上的名字
 CardNumber=卡号
-ExpiryDate=到期日
-CVN=CVN
-DeleteACard=删除卡
+ExpiryDate=失效日期
+CVN=CVN码
+DeleteACard=删除支付卡
 ConfirmDeleteCard=您确定要删除此信用卡或借记卡吗？
 CreateCustomerOnStripe=在Stripe上创建客户
-CreateCardOnStripe=在Stripe上创建卡片
+CreateCardOnStripe=在Stripe上创建支付卡
 ShowInStripe=在Stripe中显示
-StripeUserAccountForActions=User account to use for email notification of some Stripe events (Stripe payouts)
-StripePayoutList=List of Stripe payouts
-ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mode)
-ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
-PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
-ClickHereToTryAgain=<a href="%s">Click here to try again...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s
+StripeUserAccountForActions=用户账户用于某些Stripe事件的电子邮件通知（Stripe支付）
+StripePayoutList=Stripe支付清单
+ToOfferALinkForTestWebhook=设置Stripe WebHook以调用IPN的链接（测试模式
+ToOfferALinkForLiveWebhook=设置Stripe WebHook调用IPN的链接(实时模式)
+PaymentWillBeRecordedForNextPeriod=付款将被记录到下一阶段。
+ClickHereToTryAgain=<a href="%s">点击这里再次尝试...</a>。
+CreationOfPaymentModeMustBeDoneFromStripeInterface=由于客户强认证规则，支付卡的创建必须从Stripe后台完成。您可以点击这里切换到Stripe客户记录：%s

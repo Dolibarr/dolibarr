@@ -1,11 +1,26 @@
-# Dolibarr language file - Source file is en_US - languages
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Dolibarr language file - Source file is en_US - link
 LinkANewFile=链接一份新文件/文档
-LinkedFiles=链接文件和文档
-NoLinkFound=空空如也
-LinkComplete=文件链接成功
-ErrorFileNotLinked=文件无法链接
+LinkedFiles=已链接的文件和文档
+NoLinkFound=没有记录的链接
+LinkComplete=该文件已被成功链接
+ErrorFileNotLinked=该文件无法被链接
 LinkRemoved=链接 %s 已移除
-ErrorFailedToDeleteLink= 移除链接失败 '<b>%s</b>'
-ErrorFailedToUpdateLink= 更新链接失败 '<b>%s</b>'
-URLToLink=URL网址超链接
-OverwriteIfExists=Overwrite file if exists
+ErrorFailedToDeleteLink=移除链接“<b>%s</b>”失败
+ErrorFailedToUpdateLink=更新链接“<b>%s</b>”失败
+URLToLink=待链接的URL
+OverwriteIfExists=如果存在则覆盖文件

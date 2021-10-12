@@ -1,34 +1,49 @@
-# Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank">manual development is here</a>.
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Dolibarr language file - Source file is en_US - ModuleBuilder
+ModuleBuilderDesc=这个工具只能由有经验的用户或开发者使用。它提供了建立或编辑您自己的模块的实用程序。替代<a href="%s" target="_blank" >手动开发的文档在这里</a>。
 EnterNameOfModuleDesc=输入要创建的模块/应用的名称，不含空格。使用大写字母分隔单词（例如：MyModule，EcommerceForShop，SyncWithMySystem ......）
 EnterNameOfObjectDesc=输入要创建的对象的名称，不包含空格。使用大写字母分隔单词（例如：MyObject，Student，Teacher ...）。将会生成包含CRUD方法的类文件，同时生成API文件，同时生成"列表/添加/编辑/删除"对象的页面和SQL文件。
-ModuleBuilderDesc2=Path where modules are generated/edited (first directory for external modules defined into %s): <strong>%s</strong>
+ModuleBuilderDesc2=模块生成/编辑的路径（外部模块定义到%s的第一个目录）：<strong>%s</strong>
 ModuleBuilderDesc3=找到生成/可编辑的模块：<strong> %s </strong>
 ModuleBuilderDesc4=当模块目录的根目录中存在<strong> %s </strong>文件时，模块被检测为“可编辑”
-NewModule=新模块
-NewObjectInModulebuilder=New object
+NewModule=新建模块
+NewObjectInModulebuilder=新建对象
 ModuleKey=模块名
 ObjectKey=对象名
 ModuleInitialized=模块已初始化
-FilesForObjectInitialized=初始化新对象'%s'的文件
+FilesForObjectInitialized=已初始化新对象'%s'的文件
 FilesForObjectUpdated=对象'%s'的文件已更新（.sql文件和.class.php文件）
 ModuleBuilderDescdescription=在此处输入描述模块的所有常规信息。
-ModuleBuilderDescspecifications=You can enter here a detailed description of the specifications of your module that is not already structured into other tabs. So you have within easy reach all the rules to develop. Also this text content will be included into the generated documentation (see last tab). You can use Markdown format, but it is recommended to use Asciidoc format (comparison between .md and .asciidoc: http://asciidoctor.org/docs/user-manual/#compared-to-markdown).
-ModuleBuilderDescobjects=在此定义要使用模块管理的对象。将生成CRUD DAO类，SQL文件，列出对象记录的页面，创建/编辑/查看记录和API。
+ModuleBuilderDescspecifications=您可以在这里输入您的模块规格的详细描述，这不是已经结构化的其他标签。因此，您可以很容易地得到所有要开发的规则。同时，这个文本内容将包括在生成的文档中（见最后一个标签）。您可以使用Markdown格式，但建议使用Asciidoc格式（.md和.asciidoc的比较：http://asciidoctor.org/docs/user-manual/#compared-to-markdown）。
+ModuleBuilderDescobjects=在此定义要使用模块管理的对象。将生成CRUD DAO类、SQL文件、列出对象记录的页面，创建/编辑/查看记录和API。
 ModuleBuilderDescmenus=此选项卡专用于定义模块提供的菜单条目。
 ModuleBuilderDescpermissions=此选项卡专用于定义要为模块提供的新权限。
 ModuleBuilderDesctriggers=这是模块提供的触发器视图。要包含启动触发的业务事件时执行的代码，只需编辑此文件即可。
-ModuleBuilderDeschooks=此选项卡专用于挂钩。
-ModuleBuilderDescwidgets=此选项卡专用于管理/构建窗口小部件。
+ModuleBuilderDeschooks=此选项卡专用于钩子功能。
+ModuleBuilderDescwidgets=此选项卡专用于管理/构建插件。
 ModuleBuilderDescbuildpackage=您可以在此处生成模块的“准备分发”包文件（规范化的.zip文件）和“准备分发”文档文件。只需单击按钮即可构建包或文档文件。
-EnterNameOfModuleToDeleteDesc=You can delete your module. WARNING: All coding files of module (generated or created manually) AND structured data and documentation will be deleted!
-EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to object will be deleted!
-DangerZone=危险区
-BuildPackage=Build package
-BuildPackageDesc=You can generate a zip package of your application so your are ready to distribute it on any Dolibarr. You can also distribute it or sell it on marketplace like <a href="https://www.dolistore.com">DoliStore.com</a>.
-BuildDocumentation=构建文档
-ModuleIsNotActive=This module is not activated yet. Go to %s to make it live or click here
-ModuleIsLive=This module has been activated. Any change may break a current live feature.
+EnterNameOfModuleToDeleteDesc=您可以删除您的模块。警告：所有模块的编码文件（生成或手动创建）以及结构化数据和文档都将被删除。
+EnterNameOfObjectToDeleteDesc=您可以删除一个对象。警告：所有与对象相关的编码文件（生成或手动创建）都将被删除。
+DangerZone=危险区域
+BuildPackage=建立软件包
+BuildPackageDesc=您可以为您的应用程序生成一个压缩包，这样您就可以在任何Dolibarr上发布它。您也可以分发它或在市场出售它，如<a href="https://www.dolistore.com">DoliStore.com</a>。
+BuildDocumentation=建立文档
+ModuleIsNotActive=这个模块还没有被激活。转到%s去激活它或点击这里。
+ModuleIsLive=此模块已被激活。任何改变都可能破坏当前的实时功能。
 DescriptionLong=详细描述
 EditorName=编辑器名字
 EditorUrl=编辑器的URL
@@ -40,107 +55,108 @@ PageForCreateEditView=用于创建/编辑/查看记录的PHP页面
 PageForAgendaTab=事件选项卡的PHP页面
 PageForDocumentTab=文档选项卡的PHP页面
 PageForNoteTab=注释选项卡的PHP页面
-PageForContactTab=PHP page for contact tab
-PathToModulePackage=zip /模块/应用程序包的路径
-PathToModuleDocumentation=Path to file of module/application documentation (%s)
+PageForContactTab=联系人选项卡的PHP页面
+PathToModulePackage=模块/应用程序包zip文件的路径
+PathToModuleDocumentation=模块/应用程序文件的路径(%s)
 SpaceOrSpecialCharAreNotAllowed=不允许使用空格或特殊字符。
 FileNotYetGenerated=文件尚未生成
-RegenerateClassAndSql=Force update of .class and .sql files
+RegenerateClassAndSql=强制更新.class和.sql文件
 RegenerateMissingFiles=生成丢失的文件
-SpecificationFile=File of documentation
+SpecificationFile=文档文件
 LanguageFile=语言文件
-ObjectProperties=Object Properties
-ConfirmDeleteProperty=Are you sure you want to delete the property <strong>%s</strong>? This will change code in PHP class but also remove column from table definition of object.
-NotNull=不是NULL
-NotNullDesc=1 =将数据库设置为NOT NULL。 -1 =如果为空（''或0），则允许空值和强制值为NULL。
-SearchAll=用于'搜索所有'
+ObjectProperties=对象属性
+ConfirmDeleteProperty=您确定要删除<strong>%s</strong>属性吗？这将改变PHP类中的代码，但也会从对象的表格定义中删除列。
+NotNull=非空
+NotNullDesc=1 =将数据库设置为NOT NULL。-1=如果为空（''或0），则允许空值和强制值为NULL。
+SearchAll=用于“搜索全部”
 DatabaseIndex=数据库索引
 FileAlreadyExists=文件%s已存在
 TriggersFile=触发器代码的文件
 HooksFile=钩子代码的文件
 ArrayOfKeyValues=键值数组
-ArrayOfKeyValuesDesc=对键/值对构成的数组（如果字段是具有固定值的组合列表）
+ArrayOfKeyValuesDesc=如果字段是固定值的组合列表，则为键和值的数组
 WidgetFile=小部件文件
-CSSFile=CSS file
-JSFile=Javascript file
+CSSFile=CSS文件
+JSFile=Javascript文件
 ReadmeFile=自述文件
 ChangeLog=ChangeLog文件
 TestClassFile=PHP单元测试类的文件
 SqlFile=Sql文件
-PageForLib=File for the common PHP library
-PageForObjLib=File for the PHP library dedicated to object
-SqlFileExtraFields=Sql文件用于附加字段
-SqlFileKey=密钥的Sql文件
-SqlFileKeyExtraFields=Sql file for keys of complementary attributes
+PageForLib=常用PHP库的文件
+PageForObjLib=专门用于对象的PHP库文件
+SqlFileExtraFields=用于附加字段的Sql文件
+SqlFileKey=键的Sql文件
+SqlFileKeyExtraFields=补充属性键的Sql文件
 AnObjectAlreadyExistWithThisNameAndDiffCase=已存在具有此名称和不同大小写的对象
-UseAsciiDocFormat=You can use Markdown format, but it is recommended to use Asciidoc format (omparison between .md and .asciidoc: http://asciidoctor.org/docs/user-manual/#compared-to-markdown)
+UseAsciiDocFormat=您可以使用Markdown格式，但建议使用Asciidoc格式（.md和.asciidoc的比较：http://asciidoctor.org/docs/user-manual/#compared-to-markdown）。
 IsAMeasure=是衡量标准
-DirScanned=扫描目录
+DirScanned=目录已扫描
 NoTrigger=没有触发器
 NoWidget=无插件
-GoToApiExplorer=API explorer
+GoToApiExplorer=API浏览器
 ListOfMenusEntries=菜单条目列表
-ListOfDictionariesEntries=List of dictionaries entries
+ListOfDictionariesEntries=字典条目列表
 ListOfPermissionsDefined=已定义权限的列表
-SeeExamples=见这里的例子
+SeeExamples=见这里的示例
 EnabledDesc=激活此字段的条件（示例：1 或 $conf->global->MYMODULE_MYOPTION）
-VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).<br><br>It can be an expression, for example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br>Currently, known compatibles PDF models are : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br><br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
-DisplayOnPdf=Display on PDF
-IsAMeasureDesc=Can the value of field be cumulated to get a total into list? (Examples: 1 or 0)
-SearchAllDesc=Is the field used to make a search from the quick search tool? (Examples: 1 or 0)
+VisibleDesc=该字段是否可见？(例子。0=从不可见，1=在列表和创建/更新/查看表单中可见，2=仅在列表中可见，3=仅在创建/更新/查看表单中可见（非列表），4=仅在列表和更新/查看表单中可见（非创建），5=仅在列表结束查看表单中可见（非创建、非更新）。 <br><br>使用负值意味着在列表中默认不显示字段，但可以选择查看）。<br><br>它可以是一个表达式，例如：<br>preg_match('/public/', $_SERVER['PHP_SELF'])? 0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
+DisplayOnPdfDesc=在兼容的PDF文档上显示这个字段，您可以用"Position"字段管理位置。 <br>目前，已知的兼容PDF模型有：eratosthene (销售订单), espadon (运单), sponge (发票), cyan (报价), cornas (采购订单)<br><br><strong>对于文档：</strong><br>0 = 不显示<br>1 = 显示<br>2 = 仅在非空时显示<br><br><strong>对于文档行。 </strong><br>0 =不显示 <br>1 =显示在一列<br>3 =显示在行描述栏后<br>4 =仅在描述栏后显示，如果不是空的话
+DisplayOnPdf=在PDF上显示
+IsAMeasureDesc=该字段的值是否可以累加以得到列表中的总数？(例如：1或0)
+SearchAllDesc=该字段是否用于从快速搜索工具中进行搜索？(例子：1或0)
 SpecDefDesc=在此输入您要为模块提供的所有文档，这些文档尚未由其他选项卡定义。您可以使用.md或更好的.asciidoc语法。
-LanguageDefDesc=在此文件中输入每个语言文件的所有密钥和翻译。
-MenusDefDesc=Define here the menus provided by your module
-DictionariesDefDesc=Define here the dictionaries provided by your module
-PermissionsDefDesc=Define here the new permissions provided by your module
-MenusDefDescTooltip=The menus provided by your module/application are defined into the array <strong>$this->menus</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and module re-activated), menus are also visible into the menu editor available to administrator users on %s.
-DictionariesDefDescTooltip=The dictionaries provided by your module/application are defined into the array <strong>$this->dictionaries</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and module re-activated), dictionaries are also visible into the setup area to administrator users on %s.
-PermissionsDefDescTooltip=The permissions provided by your module/application are defined into the array <strong>$this->rights</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and module re-activated), permissions are visible into the default permissions setup %s.
-HooksDefDesc=在<b> module_parts ['hooks'] </b>属性中定义，在模块描述符中，您想要管理的钩子的上下文（上下文列表可以通过搜索'<b> initHooks找到（</b>'在核心代码中。）<br>编辑钩子文件以添加钩子函数的代码（可通过在核心代码中搜索'<b> executeHooks </b>'找到可钩子函数）。
+LanguageDefDesc=在此文件中输入每个语言文件的所有密钥和译文。
+MenusDefDesc=在此定义您的模块所提供的菜单。
+DictionariesDefDesc=在此定义您的模块所提供的字典。
+PermissionsDefDesc=在此定义您的模块所提供的新权限。
+MenusDefDescTooltip=您的模块/应用程序提供的菜单被定义到数组<strong>$this->menus</strong>中的模块描述符文件。您可以手动编辑这个文件或使用嵌入式编辑器。<br><br>注意：一旦定义了（并且模块重新激活），菜单也可以在菜单编辑器中看到，管理员用户可以在%s上使用。
+DictionariesDefDescTooltip=由您的模块/应用程序提供的字典被定义到数组<strong>$this->dictionaries</strong>中的模块描述符文件。您可以手动编辑这个文件或使用嵌入式编辑器。<br><br>注意：一旦定义（和模块重新激活），字典也可以在设置区对%s的管理员用户可见。
+PermissionsDefDescTooltip=您的模块/应用程序提供的权限被定义到数组<strong>$this->rights</strong>中的模块描述符文件。您可以手动编辑这个文件或使用嵌入式编辑器。<br><br>注意：一旦定义（和模块重新激活），权限在默认权限设置%s中可见。
+HooksDefDesc=在<b> module_parts['hooks'] </b>属性中定义，在模块描述符中，您想要管理的钩子的上下文（上下文列表可以在核心代码中通过搜索'<b> initHooks</b>'查找）。<br>编辑钩子文件以添加钩子函数的代码（可通过在核心代码中搜索'<b>executeHooks</b>'找到可钩子函数）。
 TriggerDefDesc=在触发器文件中定义要为执行的每个业务事件执行的代码。
-SeeIDsInUse=查看安装中使用的ID
+SeeIDsInUse=查看您安装中使用的IDs
 SeeReservedIDsRangeHere=查看保留ID的范围
-ToolkitForDevelopers=Dolibarr开发人员工具包
-TryToUseTheModuleBuilder=If you have knowledge of SQL and PHP, you may use the native module builder wizard.<br>Enable the module <strong>%s</strong> and use the wizard by clicking the <span class="fa fa-bug"></span> on the top right menu.<br>Warning: This is an advanced developer feature, do <b>not</b> experiment on your production site!
+ToolkitForDevelopers=为Dolibarr开发者提供的工具箱
+TryToUseTheModuleBuilder=如果有SQL和PHP的知识，您可以使用本地模块生成器向导。<br>启用模块<strong>%s</strong>并通过点击右上方菜单上的<span class="fa fa-bug"></span>使用向导。<br>警告：这是高级开发者功能，请<b>不要</b>在您的运行网站上进行实验！
 SeeTopRightMenu=请参阅右上方菜单中的<span class="fa fa-bug"></span>
 AddLanguageFile=添加语言文件
-YouCanUseTranslationKey=你可以在这里使用一个密钥，它是在语言文件中找到的翻译密钥（参见“语言”选项卡）
-DropTableIfEmpty=(Destroy table if empty)
+YouCanUseTranslationKey=您可以在这里使用一个密钥，它是在语言文件中找到的翻译密钥（参见“语言”选项卡）
+DropTableIfEmpty=(如果是空表则销毁)
 TableDoesNotExists=表%s不存在
 TableDropped=表%s已删除
 InitStructureFromExistingTable=构建现有表的结构数组字符串
-UseAboutPage=Disable the about page
-UseDocFolder=Disable the documentation folder
-UseSpecificReadme=使用特定的自述文件
-ContentOfREADMECustomized=Note: The content of the README.md file has been replaced with the specific value defined into setup of ModuleBuilder.
-RealPathOfModule=Real path of module
-ContentCantBeEmpty=Content of file can't be empty
-WidgetDesc=You can generate and edit here the widgets that will be embedded with your module.
-CSSDesc=You can generate and edit here a file with personalized CSS embedded with your module.
-JSDesc=You can generate and edit here a file with personalized Javascript embedded with your module.
-CLIDesc=You can generate here some command line scripts you want to provide with your module.
-CLIFile=CLI File
-NoCLIFile=No CLI files
-UseSpecificEditorName = Use a specific editor name
-UseSpecificEditorURL = Use a specific editor URL
-UseSpecificFamily = Use a specific family
-UseSpecificAuthor = Use a specific author
-UseSpecificVersion = Use a specific initial version
-IncludeRefGeneration=The reference of object must be generated automatically
-IncludeRefGenerationHelp=Check this if you want to include code to manage the generation automatically of the reference
-IncludeDocGeneration=I want to generate some documents from the object
-IncludeDocGenerationHelp=If you check this, some code will be generated to add a "Generate document" box on the record.
-ShowOnCombobox=Show value into combobox
-KeyForTooltip=Key for tooltip
-CSSClass=CSS for edit/create form
-CSSViewClass=CSS for read form
-CSSListClass=CSS for list
-NotEditable=Not editable
-ForeignKey=Foreign key
-TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' means we add a + button after the combo to create the record, 'filter' can be 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' for example)
-AsciiToHtmlConverter=Ascii to HTML converter
-AsciiToPdfConverter=Ascii to PDF converter
-TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.
-ModuleBuilderNotAllowed=The module builder is available but not allowed to your user.
-ImportExportProfiles=Import and export profiles
+UseAboutPage=禁用关于页面
+UseDocFolder=禁用文档文件夹
+UseSpecificReadme=使用特定的自述文件README
+ContentOfREADMECustomized=注意：README.md文件的内容已被替换为ModuleBuilder设置中定义的特定值。
+RealPathOfModule=模块的真实路径
+ContentCantBeEmpty=文件内容不能为空。
+WidgetDesc=您可以在这里生成和编辑将被嵌入您的模块的小部件。
+CSSDesc=您可以在这里生成和编辑一个嵌入您的模块的个性化CSS文件。
+JSDesc=您可以在这里生成和编辑一个嵌入您的模块的个性化的Javascript文件。
+CLIDesc=您可以在这里生成一些您想提供给您的模块的命令行脚本。
+CLIFile=CLI文件
+NoCLIFile=没有CLI文件
+UseSpecificEditorName=使用特定编辑器的名称
+UseSpecificEditorURL = 使用特定编辑器的URL
+UseSpecificFamily = 使用特定的系列
+UseSpecificAuthor = 使用特定的作者
+UseSpecificVersion=使用特定的初始版本
+IncludeRefGeneration=必须自动生成对象编号
+IncludeRefGenerationHelp=如果您想包含管理自动生成编号的代码，请选中此项
+IncludeDocGeneration=我想从该对象生成一些文件
+IncludeDocGenerationHelp=如果您勾选此项，一些代码将被生成以在记录上添加一个"生成文档"框。
+ShowOnCombobox=在组合框中显示数值
+KeyForTooltip=工具提示的密钥
+CSSClass=用于编辑/创建表单的CSS
+CSSViewClass=读取表单的CSS
+CSSListClass=列表的CSS
+NotEditable=不可编辑
+ForeignKey=外部密钥
+TypeOfFieldsHelp=字段类型：<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1'意味着我们在组合框后添加一个+按钮来创建记录，'filter'示例可以是'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' )
+AsciiToHtmlConverter=Ascii到HTML转换器
+AsciiToPdfConverter=Ascii到PDF转换器
+TableNotEmptyDropCanceled=此表非空。Drop已被取消。
+ModuleBuilderNotAllowed=模块生成器可用但不允许您的用户使用。
+ImportExportProfiles=导入和导出配置文件
+ValidateModBuilderDesc=如果这个字段需要用$this->validateField()来验证，则输入1；如果需要验证，则输入0。

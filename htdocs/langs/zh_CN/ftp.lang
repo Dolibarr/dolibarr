@@ -1,14 +1,29 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=FTP客户端模块设置
-NewFTPClient=新建FTP链接
-FTPArea=FTP 区
-FTPAreaDesc=这个屏幕显示您的FTP服务器查看内容
-SetupOfFTPClientModuleNotComplete=模块的FTP客户端安装程序似乎是不完整
-FTPFeatureNotSupportedByYourPHP=您的PHP不支持FTP功能
-FailedToConnectToFTPServer=无法连接到FTP服务器（服务器%s，港口%s）
-FailedToConnectToFTPServerWithCredentials=无法登录到FTP服务器的定义登陆/密码
-FTPFailedToRemoveFile=无法删除文件<b>%s。</b>
-FTPFailedToRemoveDir=无法删除目录<b>%s（</b>检查权限和目录是空的）。
+FTPClientSetup=FTP或SFTP客户端模块设置
+NewFTPClient=新建FTP/SFTP连接设置
+FTPArea=FTP/SFTP区域
+FTPAreaDesc=该屏幕显示FTP和SFTP服务器的视图。
+SetupOfFTPClientModuleNotComplete=FTP或SFTP客户端模块的设置似乎没有不完整。
+FTPFeatureNotSupportedByYourPHP=您的PHP不支持FTP或SFTP功能。
+FailedToConnectToFTPServer=连接服务器失败（服务器%s，端口%s)
+FailedToConnectToFTPServerWithCredentials=未能用定义的登录名/密码登录到服务器。
+FTPFailedToRemoveFile=删除文件<b>%s</b>失败。
+FTPFailedToRemoveDir=删除目录<b>%s</b>失败：请检查权限并确认目录是否为空。
 FTPPassiveMode=被动模式
-ChooseAFTPEntryIntoMenu=在菜单中选择一个FTP选项
-FailedToGetFile=获取文件失败 %s
+ChooseAFTPEntryIntoMenu=在菜单中选择一个FTP/SFTP站点.
+FailedToGetFile=获取文件%s失败

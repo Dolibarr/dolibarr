@@ -1,54 +1,70 @@
-BlockedLog=Unalterable Logs
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Dolibarr language file - Source file is en_US - BlockedLog
+BlockedLog=不可更改日志
 Field=字段
-BlockedLogDesc=This module tracks some events into an unalterable log (that you can't modify once recorded) into a block chain, in real time. This module provides compatibility with requirements of laws of some countries (like France with the law Finance 2016 - Norme NF525).
-Fingerprints=Archived events and fingerprints
-FingerprintsDesc=This is the tool to browse or extract the unalterable logs. Unalterable logs are generated and archived locally into a dedicated table, in real time when you record a business event. You can use this tool to export this archive and save it into an external support (some countries, like France, ask that you do it every year). Note that, there is no feature to purge this log and every change tried to be done directly into this log (by a hacker for example) will be reported with a non-valid fingerprint. If you really need to purge this table because you used your application for a demo/test purpose and want to clean your data to start your production, you can ask your reseller or integrator to reset your database (all your data will be removed).
-CompanyInitialKey=Company initial key (hash of genesis block)
-BrowseBlockedLog=Unalterable logs
-ShowAllFingerPrintsMightBeTooLong=Show all archived logs (might be long)
-ShowAllFingerPrintsErrorsMightBeTooLong=Show all non-valid archive logs (might be long)
-DownloadBlockChain=Download fingerprints
-KoCheckFingerprintValidity=Archived log entry is not valid. It means someone (a hacker?) has modified some data of this record after it was recorded, or has erased the previous archived record (check that line with previous # exists).
-OkCheckFingerprintValidity=Archived log record is valid. The data on this line was not modified and the entry follows the previous one.
-OkCheckFingerprintValidityButChainIsKo=Archived log seems valid compared to previous one but the chain was corrupted previously.
-AddedByAuthority=Stored into remote authority
-NotAddedByAuthorityYet=Not yet stored into remote authority
-ShowDetails=Show stored details
-logPAYMENT_VARIOUS_CREATE=Payment (not assigned to an invoice) created
-logPAYMENT_VARIOUS_MODIFY=Payment (not assigned to an invoice) modified
-logPAYMENT_VARIOUS_DELETE=Payment (not assigned to an invoice) logical deletion
-logPAYMENT_ADD_TO_BANK=Payment added to bank
-logPAYMENT_CUSTOMER_CREATE=Customer payment created
-logPAYMENT_CUSTOMER_DELETE=Customer payment logical deletion
-logDONATION_PAYMENT_CREATE=Donation payment created
-logDONATION_PAYMENT_DELETE=Donation payment logical deletion
-logBILL_PAYED=Customer invoice paid
-logBILL_UNPAYED=Customer invoice set unpaid
-logBILL_VALIDATE=客户发票已验证
-logBILL_SENTBYMAIL=Customer invoice send by mail
-logBILL_DELETE=Customer invoice logically deleted
-logMODULE_RESET=Module BlockedLog was disabled
-logMODULE_SET=Module BlockedLog was enabled
-logDON_VALIDATE=Donation validated
-logDON_MODIFY=Donation modified
-logDON_DELETE=Donation logical deletion
-logMEMBER_SUBSCRIPTION_CREATE=Member subscription created
-logMEMBER_SUBSCRIPTION_MODIFY=Member subscription modified
-logMEMBER_SUBSCRIPTION_DELETE=Member subscription logical deletion
-logCASHCONTROL_VALIDATE=Cash desk closing recording
-BlockedLogBillDownload=Customer invoice download
-BlockedLogBillPreview=Customer invoice preview
-BlockedlogInfoDialog=Log Details
-ListOfTrackedEvents=List of tracked events
-Fingerprint=Fingerprint
-DownloadLogCSV=Export archived logs (CSV)
-logDOC_PREVIEW=Preview of a validated document in order to print or download
-logDOC_DOWNLOAD=Download of a validated document in order to print or send
-DataOfArchivedEvent=Full datas of archived event
-ImpossibleToReloadObject=Original object (type %s, id %s) not linked (see 'Full datas' column to get unalterable saved data)
-BlockedLogAreRequiredByYourCountryLegislation=Unalterable Logs module may be required by the legislation of your country. Disabling this module may render any future transactions invalid with respect to the law and the use of legal software as they can not be validated by a tax audit.
-BlockedLogActivatedBecauseRequiredByYourCountryLegislation=Unalterable Logs module was activated because of the legislation of your country. Disabling this module may render any future transactions invalid with respect to the law and the use of legal software as they cannot be validated by a tax audit.
-BlockedLogDisableNotAllowedForCountry=List of countries where usage of this module is mandatory (just to prevent to disable the module by error, if your country is in this list, disable of module is not possible without editing this list first. Note also that enabling/disabling this module will keep a track into the unalterable log).
-OnlyNonValid=Non-valid
-TooManyRecordToScanRestrictFilters=Too many records to scan/analyze. Please restrict list with more restrictive filters.
-RestrictYearToExport=Restrict month / year to export
+BlockedLogDesc=该模块将一些事件实时的记录到区块链上的不可更改日志中（一旦记录就不能修改）。这个模块符合一些国家的法律要求（如法国法律：金融2016 - NF525规范）。
+Fingerprints=存档的事件和指纹
+FingerprintsDesc=这是浏览或提取不可更改日志的工具。当你记录业务事件时，不可更改日志在本地实时生成并归档到一个专门的表格中。你可以用此工具导出该档案，并把它保存到外部支持设备中（有些国家，如法国，要求你每年都这样做）。请注意，没有清除这个日志的功能，每一个试图直接在这个日志中做的改变（例如由黑客所为）都会被报告为无效的指纹。如果你真的需要清除这个表，因为你把你的应用程序用于演示/测试目的，并希望清理你的数据以开始正式应用，你可以要求你的经销商或集成商重置你的数据库（你的所有数据将被删除）。
+CompanyInitialKey=公司初始密钥（创世块的哈希值）
+BrowseBlockedLog=不可更改的日志
+ShowAllFingerPrintsMightBeTooLong=显示所有存档的日志（可能很长）
+ShowAllFingerPrintsErrorsMightBeTooLong=显示所有无效的归档日志（可能很长）
+DownloadBlockChain=下载指纹
+KoCheckFingerprintValidity=存档的日志记录无效。这意味着有人（黑客？）在记录后修改了这个记录的某些数据，或者删除了以前的存档记录（请检查有以前#的那一行是否存在）。
+OkCheckFingerprintValidity=存档的日志记录有效。这一行的数据没有被修改，而且与前一行顺联。
+OkCheckFingerprintValidityButChainIsKo=与之前的记录相比，已归档日志似乎有效，但数据链之前有损坏。
+AddedByAuthority=已保存到远程权力部门
+NotAddedByAuthorityYet=尚未保存到远程权力部门
+ShowDetails=显示已保存的细节
+logPAYMENT_VARIOUS_CREATE=付款（未关联发票）已创建
+logPAYMENT_VARIOUS_MODIFY=付款（未关联发票）已修改
+logPAYMENT_VARIOUS_DELETE=付款（未关联发票）逻辑删除
+logPAYMENT_ADD_TO_BANK=付款添加到银行交易
+logPAYMENT_CUSTOMER_CREATE=客户付款已创建
+logPAYMENT_CUSTOMER_DELETE=客户付款逻辑删除
+logDONATION_PAYMENT_CREATE=捐赠付款已创建
+logDONATION_PAYMENT_DELETE=捐赠付款逻辑删除
+logBILL_PAYED=客户发票已付
+logBILL_UNPAYED=客户发票设置为未付
+logBILL_VALIDATE=客户发票已确认
+logBILL_SENTBYMAIL=客户发票通过邮件发送
+logBILL_DELETE=客户发票已逻辑删除
+logMODULE_RESET=不可更改日志模块被禁用。
+logMODULE_SET=不可更改日志模块已启用
+logDON_VALIDATE=捐款已确认
+logDON_MODIFY=捐款已修改
+logDON_DELETE=捐赠的逻辑删除
+logMEMBER_SUBSCRIPTION_CREATE=会员订阅已创建
+logMEMBER_SUBSCRIPTION_MODIFY=会员订阅已修改
+logMEMBER_SUBSCRIPTION_DELETE=会员订阅的逻辑删除
+logCASHCONTROL_VALIDATE=收银台关闭记录
+blockedLogBillDownload=客户发票下载
+blockedLogBillPreview=客户发票预览
+BlockedlogInfoDialog=日志细节
+ListOfTrackedEvents=被追踪事件清单
+Fingerprint=指纹
+DownloadLogCSV=导出存档的日志（CSV）
+logDOC_PREVIEW=预览已核对文件，以便打印或下载
+logDOC_DOWNLOAD=下载已核对文件，以便打印或发送。
+DataOfArchivedEvent=归档事件的完整数据
+ImpossibleToReloadObject=原始对象（类型%s，ID%s）未被链接（见"完整数据"栏以获得不可更改的保存数据）。
+BlockedLogAreRequiredByYourCountryLegislation=你所在国家的法律可能要求不可更改日志模块。禁用此模块可能导致任何未来的交易在合法性或合规软件方面无效，因为它们可能不被税务审计所承认。
+BlockedLogActivatedBecauseRequiredByYourCountryLegislation=因为你所在国家的法律要求，不可更改日志模块被激活。禁用此模块可能导致任何未来的交易在合法性或合规软件方面无效，因为它们可能不被税务审计所承认。
+BlockedLogDisableNotAllowedForCountry=必须使用该模块的国家列表（该列表是为了防止错误地禁用该模块。如果你的国家在这个列表中，不先编辑这个列表就无法禁用该模块。还请注意，启用/禁用该模块也会记录到不可更改的日志中)。
+OnlyNonValid=无效
+TooManyRecordToScanRestrictFilters=有太多的记录需要扫描/分析。请用更多的限制性条件来限制列表。
+RestrictYearToExport=限制输出的月份/年份

@@ -1,3 +1,18 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Language file - Source file is en_US - cashdesk
 CashDeskMenu=POS机
 CashDesk=POS机
@@ -31,7 +46,7 @@ ShowCompany=显示公司
 ShowStock=显示仓库
 DeleteArticle=点击删除此项目
 FilterRefOrLabelOrBC=搜索（编号/标签）
-UserNeedPermissionToEditStockToUsePos=你要求在创建发票时减少库存，所以使用POS的用户需要有编辑库存的权限。
+UserNeedPermissionToEditStockToUsePos=您要求在创建发票时减少库存，所以使用POS的用户需要有编辑库存的权限。
 DolibarrReceiptPrinter=Dolibarr收据打印机
 PointOfSale=POS机
 PointOfSaleShort=POS
@@ -67,12 +82,12 @@ AutoPrintTickets=自动打印票据|收据
 PrintCustomerOnReceipts=在票据|收据上打印顾客名
 EnableBarOrRestaurantFeatures=启用酒吧或餐厅的功能。
 ConfirmDeletionOfThisPOSSale=您是否确认删除当前销售？
-ConfirmDiscardOfThisPOSSale=你是否要放弃当前销售？
+ConfirmDiscardOfThisPOSSale=您是否要放弃当前销售？
 History=历史
 ValidateAndClose=确认并关闭
 Terminal=终端
 NumberOfTerminals=终端的数量
-TerminalSelect=选择你要使用的终端：
+TerminalSelect=选择您要使用的终端：
 POSTicket=POS票据
 POSTerminal=POS终端
 POSModule=POS模块
@@ -94,7 +109,7 @@ Browser=浏览器
 BrowserMethodDescription=简单而便利的收据打印。只需几个参数就可以配置收据。通过浏览器打印。
 TakeposConnectorMethodDescription=具有额外功能的外部模块。可以从云端打印。
 PrintMethod=打印方法
-ReceiptPrinterMethodDescription=强大的方法，有很多参数。完全可以用模板进行定制。托管应用程序的服务器不能在云端（必须能够到达你网络中的打印机）。
+ReceiptPrinterMethodDescription=强大的方法，有很多参数。完全可以用模板进行定制。托管应用程序的服务器不能在云端（必须能够到达您网络中的打印机）。
 ByTerminal=按终端
 TakeposNumpadUsePaymentIcon=在数字键盘的付款按钮上使用图标而不是文字。
 CashDeskRefNumberingModules=用于POS销售的编号模块

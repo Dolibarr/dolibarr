@@ -1,147 +1,163 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - website
 Shortname=代码
-WebsiteSetupDesc=Create here the websites you wish to use. Then go into menu Websites to edit them.
+WebsiteSetupDesc=在这里创建您想使用的网站，然后进入网站菜单进行编辑。
 DeleteWebsite=删除网址
-ConfirmDeleteWebsite=Are you sure you want to delete this web site? All its pages and content will also be removed. The files uploaded (like into the medias directory, the ECM module, ...) will remain.
-WEBSITE_TYPE_CONTAINER=页面/容器的类型
-WEBSITE_PAGE_EXAMPLE=以网页为例
+ConfirmDeleteWebsite=您确定要删除这个网站吗？它的所有页面和内容也将被删除。上传的文件（如进入medias目录，ECM模块，...）将保留。
+WEBSITE_TYPE_CONTAINER=页面/框架的类型
+WEBSITE_PAGE_EXAMPLE=网页示例
 WEBSITE_PAGENAME=页面名字/别名
 WEBSITE_ALIASALT=替代页面名称/别名
-WEBSITE_ALIASALTDesc=在此处使用其他名称/别名列表，以便也可以使用此其他名称/别名访问该页面（例如，重命名别名后的旧名称以保持旧链接/名称工作的反向链接）。语法是：<br> alternativename1，alternativename2，...
+WEBSITE_ALIASALTDesc=在此处使用其他名称/别名列表，这样该网页也可以用这个其他名称/别名访问（例如，重命名别名后的旧名称，以保持旧链接/名称的反向链接正常）。语法是：<br> alternativename1，alternativename2，...
 WEBSITE_CSS_URL=外部CSS文件的URL地址
-WEBSITE_CSS_INLINE=CSS文件内容（所有页面共有）
-WEBSITE_JS_INLINE=Javascript文件内容（所有页面共有）
+WEBSITE_CSS_INLINE=CSS文件内容（所有页面通用）
+WEBSITE_JS_INLINE=Javascript文件内容（所有页面通用）
 WEBSITE_HTML_HEADER=在HTML标题的底部添加（对所有页面通用）
 WEBSITE_ROBOT=机器人文件（robots.txt）
-WEBSITE_HTACCESS=Website .htaccess file
-WEBSITE_MANIFEST_JSON=Website manifest.json file
-WEBSITE_README=README.md file
-WEBSITE_KEYWORDSDesc=Use a comma to separate values
-EnterHereLicenseInformation=Enter here meta data or license information to fille a README.md file. if you distribute your website as a template, the file will be included into the temptate package.
-HtmlHeaderPage=HTML标头（仅限此页面）
-PageNameAliasHelp=页面的名称或别名。<br>当从Web服务器的虚拟主机（如Apacke，Nginx，...）运行网站时，此别名也用于伪造SEO URL。使用“<strong> %s </strong>”按钮编辑此别名。
-EditTheWebSiteForACommonHeader=注意：如果要为所有页面定义个性化标题，请在站点级别而不是页面/容器上编辑标题。
+WEBSITE_HTACCESS=网站.htaccess文件
+WEBSITE_MANIFEST_JSON=网站manifest.json文件
+WEBSITE_README=README.md文件
+WEBSITE_KEYWORDSDesc=使用逗号来分隔数值
+EnterHereLicenseInformation=在此输入元数据或许可信息，以填入README.md文件。如果您把您的网站作为模板发布，该文件将被包含在temptate包中。
+HtmlHeaderPage=HTML标题（仅限此页面）
+PageNameAliasHelp=页面名称或别名。<br>当从网站服务器的虚拟主机（如Apacke，Nginx，...）运行网站时，此别名也用于伪造SEO URL。使用“<strong> %s </strong>”按钮编辑此别名。
+EditTheWebSiteForACommonHeader=注意：如果要为所有页面定义个性化标题，请在站点级别而不是页面/框架上编辑标题。
 MediaFiles=媒体库
-EditCss=Edit website properties
+EditCss=编辑网站属性
 EditMenu=编辑菜单
 EditMedias=编辑媒体
-EditPageMeta=Edit page/container properties
-EditInLine=Edit inline
+EditPageMeta=编辑页面/框架属性
+EditInLine=内嵌式编辑
 AddWebsite=添加网站
-Webpage=网页/容器
-AddPage=添加页面/容器
+Webpage=网页/框架
+AddPage=添加页面/框架
 PageContainer=页面
-PreviewOfSiteNotYetAvailable=The preview of your website <strong>%s</strong> is not yet available. You must first '<strong>Import a full website template</strong>' or just '<strong>Add a page/container</strong>'.
-RequestedPageHasNoContentYet=ID为%s的请求页面尚无内容，或者删除了缓存文件.tpl.php。编辑页面内容以解决此问题。
-SiteDeleted=Web site '%s' deleted
-PageContent=页/ Contenair
-PageDeleted=页面/ contenair'%s'的网站%s已删除
-PageAdded=Page / Contenair'%s'补充道
+PreviewOfSiteNotYetAvailable=您的网站<strong>%s</strong>还不能预览。您必须先'<strong>导入一个完整的网站模板</strong>'或只是'<strong>添加一个页面/框架</strong>'。
+RequestedPageHasNoContentYet=ID %s的请求页面还没有内容，或者缓存文件.tpl.php被删除。编辑页面的内容来解决这个问题。
+SiteDeleted=网站“%s”已删除
+PageContent=网页/框架
+PageDeleted=网站%s的网页/框架“%s”已删除
+PageAdded=网页/框架“%s”已添加
 ViewSiteInNewTab=在新标签页查看网站
 ViewPageInNewTab=在新标签页查看页面
-SetAsHomePage=设为首页
+SetAsHomePage=设置为首页
 RealURL=真实URL地址
 ViewWebsiteInProduction=使用主页URL网址查看网页
-SetHereVirtualHost=<u>Use with Apache/NGinx/...</u><br>Create on your web server (Apache, Nginx, ...) a dedicated Virtual Host with PHP enabled and a Root directory on<br><strong>%s</strong>
-ExampleToUseInApacheVirtualHostConfig=Example to use in Apache virtual host setup:
-YouCanAlsoTestWithPHPS=<u>Use with PHP embedded server</u><br>On develop environment, you may prefer to test the site with the PHP embedded web server (PHP 5.5 required) by running<br><strong>php -S 0.0.0.0:8080 -t %s</strong>
-YouCanAlsoDeployToAnotherWHP=<u>Run your web site with another Dolibarr Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on internet, you can export and import your web site onto another Dolibarr instance provided by another Dolibarr hosting provider that provide full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank">https://saas.dolibarr.org</a>
-CheckVirtualHostPerms=Check also that the virtual host user (for example www-data) has <strong>%s</strong> permissions on files into<br><strong>%s</strong>
-ReadPerm=阅读
+SetHereVirtualHost=<u>使用Apache/NGinx/...</u><br>在您的网络服务器（Apache, Nginx, ...）上创建一个专用的虚拟主机，并启用PHP，根目录在<br><strong>%s</strong>。
+ExampleToUseInApacheVirtualHostConfig=在Apache虚拟主机设置中使用的例子：
+YouCanAlsoTestWithPHPS=<u>使用PHP嵌入式服务器</u><br>在开发环境中，您可能喜欢用PHP嵌入式网站服务器（需要PHP 5.5）来测试网站，运行<br><strong>php -S 0.0.0.0:8080 -t %s</strong>。
+YouCanAlsoDeployToAnotherWHP=<u>在另一个Dolibarr主机供应商处运行您的网站</u><br>如果您在互联网上没有像Apache或NGinx这样的Web服务器，您可以将您的网站导出并导入到另一个Dolibarr系统中，由另一个Dolibarr托管商提供，并与网站模块完全结合。您可以在<a href="https://saas.dolibarr.org" target="_blank">https://saas.dolibarr.org</a>上找到一些Dolibarr主机提供商的名单。
+CheckVirtualHostPerms=检查虚拟主机用户（例如www-data）是否有<strong>%s</strong>权限进入<br><strong>%s</strong>文件。
+ReadPerm=读
 WritePerm=写
-TestDeployOnWeb=Test/deploy on web
+TestDeployOnWeb=在网页测试/部署
 PreviewSiteServedByWebServer=<u>在新标签页中预览%s。</u> <br> <br> %s将由外部Web服务器（如Apache，Nginx，IIS）提供服务。您必须先安装并设置此服务器才能指向目录：<br> <strong> %s </strong> <br>外部服务器提供的URL：<br> <strong> %s </strong>
-PreviewSiteServedByDolibarr=<u>Preview %s in a new tab.</u><br><br>The %s will be served by Dolibarr server so it does not need any extra web server (like Apache, Nginx, IIS) to be installed.<br>The inconvenient is that the URLs of pages are not user friendly and start with the path of your Dolibarr.<br>URL served by Dolibarr:<br><strong>%s</strong><br><br>To use your own external web server to serve this web site, create a virtual host on your web server that points on directory<br><strong>%s</strong><br>then enter the name of this virtual server in the properties of this website and click on the link "Test/Deploy on the web".
-VirtualHostUrlNotDefined=未定义外部Web服务器所服务的虚拟主机的URL
+PreviewSiteServedByDolibarr=<u>在新标签中预览%s。</u><br><br>%s将由Dolibarr服务器提供服务，所以它不需要安装任何额外的Web服务器（如Apache、Nginx、IIS）。<br>不方便的是，页面的URL并不友好，以您Dolibarr的路径开始。 <br>由Dolibarr提供服务的URL：<br><strong>%s</strong><br><br>要使用您自己的外部Web服务器为这个网站提供服务，在您的Web服务器上创建一个虚拟主机，指向目录<br><strong>%s</strong><br>然后在这个网站的属性中输入这个虚拟服务器的名称，点击"在网页测试/部署"链接。
+VirtualHostUrlNotDefined=由外部网络服务器提供的虚拟主机的URL尚未定义
 NoPageYet=还没有页面
-YouCanCreatePageOrImportTemplate=You can create a new page or import a full website template
-SyntaxHelp=有关特定语法提示的帮助
-YouCanEditHtmlSourceckeditor=您可以使用编辑器中的“源”按钮编辑HTML源代码。
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
-#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
-YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
-YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank">the wiki documentation</a><br>.
-ClonePage=克隆页面/容器
+YouCanCreatePageOrImportTemplate=您可以创建一个新页面或导入一个完整的网站模板
+SyntaxHelp=关于特定语法的帮助提示
+YouCanEditHtmlSourceckeditor=您可以使用编辑器中的"源代码"按钮编辑HTML源代码。
+YouCanEditHtmlSource=<br><span class="fa fa-bug"></span>您可以使用标签<strong>&lt;?php ?&gt;</strong>将PHP代码包含在这个源码中。以下是全局变量：$conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs。<br><br><span class="fa fa-bug"></span>您也可以用以下语法包含另一个页面/框架的内容：<br><strong>&lt;? php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa-bug"></span>您可以用下面的语法来重定向到另一个页面/框架（注意：在重定向之前不要输出任何内容）：<br><strong>&lt;? php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> 要添加一个链接到另一个页面，使用语法：<br><strong>&lt;a href="alias_of_page_to_link_to. php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span>要包含一个<strong>链接来下载</strong>存储在<strong>documents</strong>目录下的文件，请使用<strong>document.php>。 php</strong>封装器：<br>例如，对于进入 documents/ecm 的文件（需要登录），语法是：<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>对于进入 documents/medias 的文件（开放目录供公众访问），语法是：<br><strong>&lt;a href="/document. php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>对于一个用共享链接共享的文件（使用文件的共享哈希键开放访问），语法是：<br><strong>&lt;a href="/document. php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span>要包括存储在<strong>documents</strong>目录中的<strong>图片</strong>，使用<strong>viewimage. php</strong>封装器：<br>举例来说，如果要将一个图片放入 documents/medias（开放目录供公众访问），语法是：<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext" &gt;</strong><br>
+#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span>要包括一个公开共享的<strong>图像</strong>，使用<strong>viewimage.php</strong>封装器：<br>以共享密钥123456789为例，语法是：<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource2=对于一个用共享链接共享的图片（使用文件的共享哈希键打开访问），语法是：<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSourceMore=<br><a href="%s" target="_blank">维基文档</a>有更多的HTML或动态代码的例子可用<br>。
+ClonePage=克隆页面/框架
 CloneSite=克隆网站
-SiteAdded=Website added
-ConfirmClonePage=请输入新页面的代码/别名，如果它是克隆页面的翻译。
+SiteAdded=网站已添加
+ConfirmClonePage=请输入新页面的代码/别名，以及它是否是克隆页面的翻译。
 PageIsANewTranslation=新页面是当前页面的翻译？
 LanguageMustNotBeSameThanClonedPage=您将页面克隆为翻译。新页面的语言必须与源页面的语言不同。
 ParentPageId=父页面ID
 WebsiteId=网站ID
-CreateByFetchingExternalPage=通过从外部URL获取页面来创建页面/容器...
-OrEnterPageInfoManually=Or create page from scratch or from a page template...
+CreateByFetchingExternalPage=通过从外部URL获取页面来创建页面/框架...
+OrEnterPageInfoManually=或者从头开始或从页面模板创建页面...
 FetchAndCreate=获取并创建
-ExportSite=Export website
-ImportSite=Import website template
+ExportSite=导出网站
+ImportSite=导入网站模板
 IDOfPage=页面ID
-Banner=旗帜
+Banner=横幅
 BlogPost=博客文章
-WebsiteAccount=Website account
-WebsiteAccounts=Website accounts
+WebsiteAccount=网站账户
+WebsiteAccounts=网站账户
+AddWebsiteAccount=创建网站账户
 AddWebsiteAccount=创建网站帐户
-BackToListForThirdParty=Back to list for the third-party
-DisableSiteFirst=首先停用网站
+BackToListForThirdParty=返回到第三方的列表中
+DisableSiteFirst=请先停用网站
 MyContainerTitle=我的网站标题
-AnotherContainer=This is how to include content of another page/container (you may have an error here if you enable dynamic code because the embedded subcontainer may not exists)
-SorryWebsiteIsCurrentlyOffLine=Sorry, this website is currently off line. Please comme back later...
+AnotherContainer=这样可以包含另一个页面/框架的内容（如果您启用动态代码，这里可能会出现错误，因为嵌入的子框架可能不存在）
+SorryWebsiteIsCurrentlyOffLine=对不起，此网站目前已经下线。请稍后再来...
 WEBSITE_USE_WEBSITE_ACCOUNTS=启用网站帐户表
-WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Enable the table to store web site accounts (login/pass) for each website / third party
+WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=启用该表以存储每个网站/第三方的网站账户（登录/密码）
 YouMustDefineTheHomePage=您必须先定义默认主页
-OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting javascript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor may not works correclty when used on a grabbed external page.
+OnlyEditionOfSourceForGrabbedContentFuture=警告：通过导入外部网页来创建网页是留给有经验的用户的。根据源网页的复杂性，导入的结果可能与原始网页不同。另外，如果源网页使用了普通的CSS格式或冲突的javascript，在处理这个网页时可能会破坏网站编辑器的外观或功能。这种方法是创建页面的一种快捷方式，但建议从头开始或从建议的页面模板创建您的新页面。<br>也请注意，当使用抓取的外部页面时，内嵌编辑器可能无法正常工作
 OnlyEditionOfSourceForGrabbedContent=当从外部站点获取内容时，只能使用HTML源代码
-GrabImagesInto=抓住发现到css和页面的图像。
+GrabImagesInto=也抓取在css和页面中发现的图片。
 ImagesShouldBeSavedInto=图像应保存到目录中
 WebsiteRootOfImages=网站图像的根目录
 SubdirOfPage=专用于页面的子目录
 AliasPageAlreadyExists=别名页面<strong> %s </strong>已存在
 CorporateHomePage=企业主页
 EmptyPage=空页面
-ExternalURLMustStartWithHttp=外部URL必须以http：//或https：//开头
-ZipOfWebsitePackageToImport=Upload the Zip file of the website template package
-ZipOfWebsitePackageToLoad=or Choose an available embedded website template package
-ShowSubcontainers=Show dynamic content
-InternalURLOfPage=Internal URL of page
-ThisPageIsTranslationOf=This page/container is a translation of
-ThisPageHasTranslationPages=This page/container has translation
-NoWebSiteCreateOneFirst=No website has been created yet. Create one first.
-GoTo=Go to
-DynamicPHPCodeContainsAForbiddenInstruction=You add dynamic PHP code that contains the PHP instruction '<strong>%s</strong>' that is forbidden by default as dynamic content (see hidden options WEBSITE_PHP_ALLOW_xxx to increase list of allowed commands).
-NotAllowedToAddDynamicContent=You don't have permission to add or edit PHP dynamic content in websites. Ask permission or just keep code into php tags unmodified.
-ReplaceWebsiteContent=Search or Replace website content
-DeleteAlsoJs=Delete also all javascript files specific to this website?
-DeleteAlsoMedias=Delete also all medias files specific to this website?
-MyWebsitePages=My website pages
-SearchReplaceInto=Search | Replace into
-ReplaceString=New string
-CSSContentTooltipHelp=Enter here CSS content. To avoid any conflict with the CSS of the application, be sure to prepend all declaration with the .bodywebsite class. For example:<br><br>#mycssselector, input.myclass:hover { ... }<br>must be<br>.bodywebsite #mycssselector, .bodywebsite input.myclass:hover { ... }<br><br>Note: If you have a large file without this prefix, you can use 'lessc' to convert it to append the .bodywebsite prefix everywhere.
-LinkAndScriptsHereAreNotLoadedInEditor=Warning: This content is output only when site is accessed from a server. It is not used in Edit mode so if you need to load javascript files also in edit mode, just add your tag 'script src=...' into the page.
-Dynamiccontent=Sample of a page with dynamic content
-ImportSite=Import website template
-EditInLineOnOff=Mode 'Edit inline' is %s
-ShowSubContainersOnOff=Mode to execute 'dynamic content' is %s
-GlobalCSSorJS=Global CSS/JS/Header file of web site
-BackToHomePage=Back to home page...
-TranslationLinks=Translation links
-YouTryToAccessToAFileThatIsNotAWebsitePage=You try to access to a page that is not available.<br>(ref=%s, type=%s, status=%s)
-UseTextBetween5And70Chars=For good SEO practices, use a text between 5 and 70 characters
-MainLanguage=Main language
-OtherLanguages=Other languages
-UseManifest=Provide a manifest.json file
-PublicAuthorAlias=Public author alias
-AvailableLanguagesAreDefinedIntoWebsiteProperties=Available languages are defined into website properties
-ReplacementDoneInXPages=Replacement done in %s pages or containers
-RSSFeed=RSS 源
-RSSFeedDesc=You can get a RSS feed of latest articles with type 'blogpost' using this URL
-PagesRegenerated=%s page(s)/container(s) regenerated
-RegenerateWebsiteContent=Regenerate web site cache files
-AllowedInFrames=Allowed in Frames
-DefineListOfAltLanguagesInWebsiteProperties=Define list of all available languages into web site properties.
-GenerateSitemaps=Generate website sitemap file
-ConfirmGenerateSitemaps=If you confirm, you will erase the existing sitemap file...
-ConfirmSitemapsCreation=Confirm sitemap generation
-SitemapGenerated=Sitemap file <b>%s</b> generated
-ImportFavicon=Favicon
-ErrorFaviconType=Favicon must be png
-ErrorFaviconSize=Favicon must be sized 16x16, 32x32 or 64x64
-FaviconTooltip=Upload an image which needs to be a png (16x16, 32x32 or 64x64)
+ExternalURLMustStartWithHttp=外部URL必须以http://或https://开头
+ZipOfWebsitePackageToImport=上传网站模板包的Zip文件
+ZipOfWebsitePackageToLoad=或选择一个可用的嵌入式网站模板包
+ShowSubcontainers=显示动态内容
+InternalURLOfPage=页面的内部URL
+ThisPageIsTranslationOf=这个页面/框架翻译自
+ThisPageHasTranslationPages=此页面/框架有翻译。
+NoWebSiteCreateOneFirst=还没有创建网站。请先创建一个。
+GoTo=转到
+DynamicPHPCodeContainsAForbiddenInstruction=您添加的动态PHP代码包含了默认禁止作为动态内容的PHP指令“<strong>%s</strong>”（见隐藏选项WEBSITE_PHP_ALLOW_xxx以增加允许的指令列表）。
+NotAllowedToAddDynamicContent=您没有权限添加或编辑网站中的PHP动态内容。申请权限，或只保持未修改的PHP标签代码。
+ReplaceWebsiteContent=搜索或替换网站内容
+DeleteAlsoJs=同时删除本网站的所有JavaScript文件？
+DeleteAlsoMedias=同时删除该网站的所有媒体文件？
+MyWebsitePages=我的网站页面
+SearchReplaceInto=搜索 | 替换成
+ReplaceString=新建字符串
+CSSContentTooltipHelp=在这里输入CSS内容。为了避免与应用程序的CSS发生冲突，一定要在所有声明前加上.bodywebsite类。例如：<br><br>#mycssselector, input.myclass:hover { ... }<br>必须是<br>.bodywebsite #mycssselector, .bodywebsite input.myclass:hover { ... }<br><br>注意：如果您有一个没有这个前缀的大文件，您可以用“lessc”来转换，在所有地方附加上.bodywebsite前缀。
+LinkAndScriptsHereAreNotLoadedInEditor=警告：该内容仅在从服务器访问网站时输出。它不用于编辑模式，所以如果您需要在编辑模式下加载javascript文件，只需在页面中添加您的标签'script src=...'。
+Dynamiccontent=有动态内容的页面样本
+ImportSite=导入网站
+EditInLineOnOff="内联编辑"模式为%s
+ShowSubContainersOnOff=执行"动态内容"的模式是%s
+GlobalCSSorJS=全局CSS/JS/网站头部文件
+BackToHomePage=返回到主页...
+TranslationLinks=翻译链接
+YouTryToAccessToAFileThatIsNotAWebsitePage=您试图访问一个不可用的页面。<br>(ref=%s, type=%s, status=%s)
+UseTextBetween5And70Chars=为了达到良好的SEO效果，请使用5到70个字符之间的文本
+MainLanguage=主要语言
+OtherLanguages=其他语言
+UseManifest=提供manifest.json文件
+PublicAuthorAlias=作者公开别名
+AvailableLanguagesAreDefinedIntoWebsiteProperties=已在网站属性中定义可用语言
+ReplacementDoneInXPages=已在%s页面或框架中进行了替换
+RSSFeed=RSS提要
+RSSFeedDesc=您可以通过这个URL获得最新的"博文"类型的文章RSS提要
+PagesRegenerated=%s个页面/框架已重新生成
+RegenerateWebsiteContent=重新生成网站的缓存文件
+AllowedInFrames=允许在框架中使用
+DefineListOfAltLanguagesInWebsiteProperties=在网站属性中定义所有可用语言列表。
+GenerateSitemaps=生成网站地图文件
+ConfirmGenerateSitemaps=如果确认，您将删除现有的网站地图文件...
+ConfirmSitemapsCreation=确认生成网站地图
+SitemapGenerated=网站地图文件<b>%s</b>已生成
+ImportFavicon=图标
+ErrorFaviconType=图标必须是PNG格式
+ErrorFaviconSize=图标的大小必须是16x16、32x32或64x64
+FaviconTooltip=上传图片必须是PNG格式（16x16、32x32或64x64）

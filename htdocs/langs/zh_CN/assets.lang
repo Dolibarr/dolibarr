@@ -1,4 +1,5 @@
-# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+# Copyright (C) 2018        Alexandre Spangaro      <aspangaro@open-dsi.fr>
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,14 +22,14 @@ NewAsset=新建资产
 AccountancyCodeAsset=会计代码（资产）
 AccountancyCodeDepreciationAsset=会计代码（折旧资产帐户）
 AccountancyCodeDepreciationExpense=会计代码（折旧费用帐户）
-NewAssetType=新资产类型
+NewAssetType=新建资产类型
 AssetsTypeSetup=资产类型设置
 AssetTypeModified=资产类型已修改
 AssetType=资产类型
 AssetsLines=资产
 DeleteType=删除
 DeleteAnAssetType=删除资产类型
-ConfirmDeleteAssetType=你确定要删除这个资产类型吗？
+ConfirmDeleteAssetType=您确定要删除这个资产类型吗？
 ShowTypeCard=显示类型“%s”
 
 # Module label 'ModuleAssetsName'
@@ -64,4 +65,4 @@ MenuListTypeAssets=列表
 Asset=资产
 NewAssetType=新建资产类型
 NewAsset=新建资产
-ConfirmDeleteAsset=你确定要删除这个资产吗 ?
+ConfirmDeleteAsset=您确定要删除这个资产吗 ?

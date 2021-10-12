@@ -1,27 +1,42 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - mailmanspip
-MailmanSpipSetup=Mailman 和 SPIP 模块设置
-MailmanTitle=Mailman 邮件列表系统
-TestSubscribe=测试订阅Mailman 邮件列表
-TestUnSubscribe=测试非订阅Mailman 邮件列表
+MailmanSpipSetup=Mailman和SPIP模块设置
+MailmanTitle=Mailman邮件列表系统
+TestSubscribe=测试订阅Mailman邮件列表
+TestUnSubscribe=测试取消订阅Mailman邮件列表
 MailmanCreationSuccess=订阅测试执行成功
-MailmanDeletionSuccess=非订阅测试执行成功
-SynchroMailManEnabled=Mailman更新执行
-SynchroSpipEnabled=SPIP更新执行
-DescADHERENT_MAILMAN_ADMINPW=Mailman 超级管理员administrator密码
+MailmanDeletionSuccess=取消订阅测试执行成功
+SynchroMailManEnabled=将进行Mailman更新
+SynchroSpipEnabled=将进行SPIP更新
+DescADHERENT_MAILMAN_ADMINPW=Mailman超级管理员密码
 DescADHERENT_MAILMAN_URL=Mailman的订阅URL地址
-DescADHERENT_MAILMAN_UNSUB_URL=Mailman的非订阅URL地址
-DescADHERENT_MAILMAN_LISTS=List(s) for automatic inscription of new members (separated by a comma)
+DescADHERENT_MAILMAN_UNSUB_URL=Mailman的取消订阅URL地址
+DescADHERENT_MAILMAN_LISTS=用于自动注册新会员的列表（用逗号分隔）
 SPIPTitle=SPIP内容管理系统
-DescADHERENT_SPIP_SERVEUR=SPIP服务
-DescADHERENT_SPIP_DB=SPIP 数据库名称
-DescADHERENT_SPIP_USER=SPIP 数据库账号
-DescADHERENT_SPIP_PASS=SPIP 数据库密码
+DescADHERENT_SPIP_SERVEUR=SPIP服务器
+DescADHERENT_SPIP_DB=SPIP数据库名称
+DescADHERENT_SPIP_USER=SPIP数据库账号
+DescADHERENT_SPIP_PASS=SPIP数据库密码
 AddIntoSpip=添加到SPIP
-AddIntoSpipConfirmation=你确定要将此会员添加到 SPIP吗?
+AddIntoSpipConfirmation=您确定要将此会员添加到SPIP吗?
 AddIntoSpipError=添加用户到SPIP失败
 DeleteIntoSpip=从SPIP移除
-DeleteIntoSpipConfirmation=你确定要将此会员从SPIP删除吗？
+DeleteIntoSpipConfirmation=您确定要将此会员从SPIP删除吗？
 DeleteIntoSpipError=从SPIP阻止用户失效
 SPIPConnectionFailed=SPIP连接失效
-SuccessToAddToMailmanList=%s 成功添加到 mailman 邮件列表 %s 或 SPIP数据库
-SuccessToRemoveToMailmanList=%s 成功从 mailman 邮件列表 %s 或SPIP 数据库删除
+SuccessToAddToMailmanList=%s成功添加到mailman列表%s或SPIP数据库中
+SuccessToRemoveToMailmanList=%s成功从mailman列表%s或SPIP数据库中移除

@@ -1,40 +1,56 @@
-Module68000Name = Intracomm report
-Module68000Desc = Intracomm report management (Support for French DEB/DES format)
-IntracommReportSetup = Intracommreport module setup
-IntracommReportAbout = About intracommreport
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Dolibarr language file - Source file is en_US - intracommreport
+Module68000Name = Intracomm报告
+Module68000Desc = Intracomm报告管理 (支持法国DEB/DES格式)
+IntracommReportSetup = Intracomm报告模块设置
+IntracommReportAbout = 关于Intracomm报告
 
 # Setup
-INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
-INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
-INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
-INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
-INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
-INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
+INTRACOMMREPORT_NUM_AGREMENT=认证号（由相关的CISD颁发）
+INTRACOMMREPORT_TYPE_ACTEUR=操作员的类型
+INTRACOMMREPORT_ROLE_ACTEUR=操作员的职务
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=申报的义务等级
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=货物的义务等级
+INTRACOMMREPORT_CATEG_FRAISDEPORT=“运输费用”类型的服务类别
 
-INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+INTRACOMMREPORT_NUM_DECLARATION=申报人编号
 
 # Menu
-MenuIntracommReport=Intracomm report
-MenuIntracommReportNew=New declaration
-MenuIntracommReportList=名单
+MenuIntracommReport=Intracomm报告
+MenuIntracommReportNew=新建申报单
+MenuIntracommReportList=列表
 
 # View
-NewDeclaration=New declaration
-Declaration=Declaration
-AnalysisPeriod=Analysis period
-TypeOfDeclaration=Type of declaration
-DEB=Goods exchange declaration (DEB)
-DES=Services exchange declaration (DES)
+NewDeclaration=新建申报单
+Declaration=申报单
+AnalysisPeriod=申报周期
+TypeOfDeclaration=申报单的类型
+DEB=货物交换申报单（DEB）
+DES=服务交换申报单（DES）
 
 # Export page
-IntracommReportTitle=Preparation of an XML file in ProDouane format
+IntracommReportTitle=准备一个ProDouane格式的XML文件
 
 # List
-IntracommReportList=List of generated declarations
-IntracommReportNumber=Numero of declaration
-IntracommReportPeriod=Period of nalysis
-IntracommReportTypeDeclaration=Type of declaration
-IntracommReportDownload=download XML file
+IntracommReportList=已生成的申报单列表
+IntracommReportNumber=申报单的数量
+IntracommReportPeriod=申报周期
+IntracommReportTypeDeclaration=申报单的类型
+IntracommReportDownload=下载XML文件
 
 # Invoice
-IntracommReportTransportMode=Transport mode
+IntracommReportTransportMode=传送方式

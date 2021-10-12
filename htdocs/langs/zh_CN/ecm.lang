@@ -1,47 +1,64 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - ecm
-ECMNbOfDocs=No. of documents in directory
+ECMNbOfDocs=目录中的文件数量
 ECMSection=目录
 ECMSectionManual=手册目录
 ECMSectionAuto=自动目录
 ECMSectionsManual=手动目录树
 ECMSectionsAuto=自动目录树
 ECMSections=目录
-ECMRoot=ECM Root
-ECMNewSection=新目录
-ECMAddSection=添加手册目录
+ECMRoot=ECM根目录
+ECMNewSection=新建目录
+ECMAddSection=添加目录
 ECMCreationDate=创建日期
-ECMNbOfFilesInDir=在目录中的文件数
-ECMNbOfSubDir=数子目录
+ECMNbOfFilesInDir=目录中的文件数
+ECMNbOfSubDir=子目录的数量
 ECMNbOfFilesInSubDir=子目录中的文件数量
-ECMCreationUser=创造者
+ECMCreationUser=创建者
 ECMArea=电子文档管理
-ECMAreaDesc=DMS / ECM（文档管理系统/电子内容管理）区域允许您快速保存，共享和搜索Dolibarr中的所有类型的文档。
-ECMAreaDesc2=*自动填写目录时自动加入一个元素从卡的文件。 <br> *手动目录可以用来保存未链接到一个特定元素的文件。
+ECMAreaDesc=DMS/ECM（文档管理系统/电子内容管理）区域允许您在Dolibarr中快速保存、共享和搜索所有类型的文档。
+ECMAreaDesc2=* 自动目录在从元素信息卡中添加文件时自动填充。<br>* 手动目录可用于保存与特定元素无关联的文件。
 ECMSectionWasRemoved=目录<b>%s</b>已被删除。
 ECMSectionWasCreated=目录<b> %s</b>已创建。
-ECMSearchByKeywords=搜寻关键字
+ECMSearchByKeywords=按关键词搜索
 ECMSearchByEntity=搜索对象
-ECMSectionOfDocuments=目录中的文件
+ECMSectionOfDocuments=文件的目录
 ECMTypeAuto=自动
-ECMDocsBy=Documents linked to %s
-ECMNoDirectoryYet=没有目录中创建
+ECMDocsBy=链接到%s的文件
+ECMNoDirectoryYet=没有创建目录
 ShowECMSection=显示目录
 DeleteSection=删除目录
-ConfirmDeleteSection=您能否确认要删除目录<b> %s </b>？
-ECMDirectoryForFiles=相对目录的文件
+ConfirmDeleteSection=您确认要删除目录<b> %s </b>？
+ECMDirectoryForFiles=文件的相对目录
 CannotRemoveDirectoryContainsFilesOrDirs=不可删除，因为它包含一些文件或子目录
 CannotRemoveDirectoryContainsFiles=不可删除，因为它包含一些文件
-ECMFileManager=档案管理员
-ECMSelectASection=请在左侧目录树中选取目录...
+ECMFileManager=文档管理器
+ECMSelectASection=请在目录树中选取目录……
 DirNotSynchronizedSyncFirst=此目录似乎是在ECM模块外部创建或修改的。您必须先单击“重新同步”按钮以同步磁盘和数据库以获取此目录的内容。
-ReSyncListOfDir=重新同步目录列表
-HashOfFileContent=散列文件内容
-NoDirectoriesFound=找不到目录
-FileNotYetIndexedInDatabase=文件尚未编入数据库（尝试重新上传）
-ExtraFieldsEcmFiles=Extrafields Ecm Files
-ExtraFieldsEcmDirectories=Extrafields Ecm Directories
-ECMSetup=ECM Setup
-GenerateImgWebp=Duplicate all images with another version with .webp format
-ConfirmGenerateImgWebp=If you confirm, you will generate an image in .webp format for all images currently into this folder (subfolders are not included)...
-ConfirmImgWebpCreation=Confirm all images duplication
-SucessConvertImgWebp=Images successfully duplicated
+ReSyncListOfDir=重新同步的目录列表
+HashOfFileContent=文件内容的哈希值
+NoDirectoriesFound=没有找到目录
+FileNotYetIndexedInDatabase=文件尚未在数据库进行索引（请尝试重新上传）
+ExtraFieldsEcmFiles=ECM文件自定义字段
+ExtraFieldsEcmDirectories=ECM目录自定义字段
+ECMSetup=ECM设置
+GenerateImgWebp=所有图像复制到.webp格式版本
+ConfirmGenerateImgWebp=如果确认，您将为此文件夹内现有的所有图像生成一个.webp格式的图像（不包括子文件夹）……
+ConfirmImgWebpCreation=确认复制所有图像
+SucessConvertImgWebp=图像复制成功。
+ECMDirName=目录名称
+ECMParentDirectory=上级目录

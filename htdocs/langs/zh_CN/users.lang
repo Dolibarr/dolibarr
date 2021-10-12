@@ -1,3 +1,18 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - users
 HRMArea=人力资源管理
 UserCard=用户信息
@@ -72,8 +87,8 @@ InternalUser=内部用户
 ExportDataset_user_1=用户及属性
 DomainUser=域用户%s
 Reactivate=重新激活
-CreateInternalUserDesc=这个表单允许你在你的公司/组织中创建一个内部用户。要创建一个外部用户（客户、供应商等），请使用该第三方联系信息上的“创建Dolibarr用户”按钮。
-InternalExternalDesc=一个<b>内部</b>用户是一个属于你的公司/组织的用户，或者是你的组织之外的合作伙伴用户，他可能需要看到比与他的公司相关的数据更多的数据（权限系统将定义他可以或不可以看到或做什么）。 <br>一个<b>外部</b>用户是一个客户、供应商或其他必须只查看与自己有关的数据（为第三方创建一个外部用户可以从第三方的联系记录中完成）。<br><br>在这两种情况下，你必须对用户需要的功能授予权限。
+CreateInternalUserDesc=这个表单允许您在您的公司/组织中创建一个内部用户。要创建一个外部用户（客户、供应商等），请使用该第三方联系信息上的“创建Dolibarr用户”按钮。
+InternalExternalDesc=一个<b>内部</b>用户是一个属于您的公司/组织的用户，或者是您的组织之外的合作伙伴用户，他可能需要看到比与他的公司相关的数据更多的数据（权限系统将定义他可以或不可以看到或做什么）。 <br>一个<b>外部</b>用户是一个客户、供应商或其他必须只查看与自己有关的数据（为第三方创建一个外部用户可以从第三方的联系记录中完成）。<br><br>在这两种情况下，您必须对用户需要的功能授予权限。
 PermissionInheritedFromAGroup=授予权限，从用户所属群组中继承。
 Inherited=继承
 UserWillBe=创建的用户将是
@@ -82,7 +97,7 @@ UserWillBeExternalUser=创建的用户将是外部用户(因为链接到一个�
 IdPhoneCaller=手机来电者身份
 NewUserCreated=用户%s已创建
 NewUserPassword=%s修改了密码
-NewPasswordValidated=你的新密码已通过验证，现在必须用它来登录。
+NewPasswordValidated=您的新密码已通过验证，现在必须用它来登录。
 EventUserModified=用户%s已变更
 UserDisabled=用户%s已禁用
 UserEnabled=用户%s已启动
@@ -96,7 +111,7 @@ ConfirmCreateThirdParty=您确定要为此会员创建第三方吗？
 LoginToCreate=创建登录名
 NameToCreate=要创建的第三方名称
 YourRole=您的角色
-YourQuotaOfUsersIsReached=你的活跃用户达到配额！
+YourQuotaOfUsersIsReached=您的活跃用户达到配额！
 NbOfUsers=用户数量
 NbOfPermissions=权限数量
 DontDowngradeSuperAdmin=只有超级管理员可以降级超级管理员
@@ -117,7 +132,7 @@ DateEmployment=入职日期
 DateEmploymentstart=雇佣起始日期
 DateEmploymentEnd=雇佣结束日期
 RangeOfLoginValidity=访问有效日期范围
-CantDisableYourself=你不能禁用自己的用户记录
+CantDisableYourself=您不能禁用自己的用户记录
 ForceUserExpenseValidator=强制更改费用报销审批人
 ForceUserHolidayValidator=强制更改休假审批人
 ValidatorIsSupervisorByDefault=默认情况下，审批人是用户的主管。若保持默认设置，此项留空。

@@ -1,34 +1,49 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - loan
 Loan=贷款
 Loans=贷款
-NewLoan=新贷款
+NewLoan=新建贷款
 ShowLoan=显示贷款
-PaymentLoan=贷款付款
-LoanPayment=贷款付款
-ShowLoanPayment=显示支付贷款
-LoanCapital=注册资金
+PaymentLoan=贷款还款
+LoanPayment=贷款还款
+ShowLoanPayment=显示贷款还款
+LoanCapital=本金
 Insurance=保险
 Interest=利率
-Nbterms=一些条款
-Term=术语
-LoanAccountancyCapitalCode=会计账户资金
-LoanAccountancyInsuranceCode=会计账户保险
-LoanAccountancyInterestCode=会计账户利息
-ConfirmDeleteLoan=确认删除本贷款
-LoanDeleted=成功删除贷款
-ConfirmPayLoan=确认支付本贷款
+Nbterms=贷款笔数
+Term=贷款
+LoanAccountancyCapitalCode=资金会计科目
+LoanAccountancyInsuranceCode=保险会计科目
+LoanAccountancyInterestCode=利息会计科目
+ConfirmDeleteLoan=确认删除此贷款
+LoanDeleted=贷款已成功删除
+ConfirmPayLoan=确认支付此贷款
 LoanPaid=贷款已支付
-ListLoanAssociatedProject=与项目相关的贷款清单
+ListLoanAssociatedProject=与项目相关的贷款列表
 AddLoan=创建贷款
 FinancialCommitment=财务承诺
 InterestAmount=利率
-CapitalRemain=资本依旧
-TermPaidAllreadyPaid = This term is allready paid
-CantUseScheduleWithLoanStartedToPaid = Can't use scheduler for a loan with payment started
-CantModifyInterestIfScheduleIsUsed = You can't modify interest if you use schedule
+CapitalRemain=本金余额
+TermPaidAllreadyPaid=该笔贷款已经还清
+CantUseScheduleWithLoanStartedToPaid=不能对已经开始付款的贷款使用还款进度表
+CantModifyInterestIfScheduleIsUsed=如果您使用还款进度表，则不能修改利息
 # Admin
 ConfigLoan=货款模块设置
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=默认会计科目资金
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=默认会计科目利息
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=默认会计科目保险
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=资金默认会计科目
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=利息默认会计科目
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=保险默认会计科目
 CreateCalcSchedule=编辑财务承诺

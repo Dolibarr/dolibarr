@@ -1,34 +1,50 @@
+# Copyright (C) 2021		Henry Guo			    <henrynopo@hotmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Dolibarr language file - Source file is en_US - donations
-Donation=捐款
+Donation=捐赠
 Donations=捐赠
 DonationRef=捐赠编号
 Donor=捐赠者
-AddDonation=新建捐赠
-NewDonation=新捐赠
+AddDonation=创建捐赠
+NewDonation=新建捐赠
 DeleteADonation=删除捐赠
-ConfirmDeleteADonation=您确定要删除此捐款吗？
-PublicDonation=市民捐款
+ConfirmDeleteADonation=您确定要删除此捐赠吗？
+PublicDonation=公众捐赠
 DonationsArea=捐赠区
 DonationStatusPromiseNotValidated=草案承诺
-DonationStatusPromiseValidated=验证承诺
-DonationStatusPaid=收到的捐款
+DonationStatusPromiseValidated=已确认的承诺
+DonationStatusPaid=捐赠已收到
 DonationStatusPromiseNotValidatedShort=草稿
-DonationStatusPromiseValidatedShort=验证
-DonationStatusPaidShort=收稿
-DonationTitle=捐款收据
-DonationDate=Donation date
+DonationStatusPromiseValidatedShort=已确认
+DonationStatusPaidShort=已接收
+DonationTitle=捐赠收据
+DonationDate=捐赠日期
 DonationDatePayment=付款日期
-ValidPromess=验证承诺
-DonationReceipt=捐款收据
-DonationsModels=捐赠收据的文件模式
-LastModifiedDonations=最近变更的 %s 份捐款
+ValidPromess=确认承诺
+DonationReceipt=捐赠收据
+DonationsModels=捐赠收据的文档模板
+LastModifiedDonations=最近变更的 %s 份捐赠
 DonationRecipient=受捐赠者
-IConfirmDonationReception=接收方声明接收，捐款，数额如下
+IConfirmDonationReception=接收方声明接收捐赠，数额如下
 MinimumAmount=最小数额为  %s
-FreeTextOnDonations=页脚额外说明文字
+FreeTextOnDonations=页脚自由文本
 FrenchOptions=法国选项
-DONATION_ART200=从CGI显示200笔
-DONATION_ART238=从CGI显示238笔
-DONATION_ART885=从CGI显示885笔
+DONATION_ART200=从CGI显示200条款
+DONATION_ART238=从CGI显示238条款
+DONATION_ART885=从CGI显示885条款
 DonationPayment=捐赠付款
 DonationValidated=捐赠%s经过验证
+DonationUseThirdparties=使用现有的第三方作为捐赠者信息
