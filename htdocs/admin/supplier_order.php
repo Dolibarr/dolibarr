@@ -149,7 +149,7 @@ if ($action == 'updateMask') {
 
 	$res1 = dolibarr_set_const($db, "SUPPLIER_ORDER_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 	$res2 = dolibarr_set_const($db, "SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED", $doubleapproval, 'chaine', 0, '', $conf->entity);
-	$res3 = dolibarr_set_const($db, "FORBID_EDIT_PROJECT_ON_SUPPLIER_ORDER", GETPOST('FORBID_EDIT_PROJECT_ON_SUPPLIER_ORDER', 'int'), 'chaine', 0, '', $conf->entity);
+	$res3 = dolibarr_set_const($db, "SUPPLIER_ORDER_FORBID_EDIT_PROJECT", GETPOST('SUPPLIER_ORDER_FORBID_EDIT_PROJECT', 'int'), 'chaine', 0, '', $conf->entity);
 
 	// TODO We add/delete permission here until permission can have a condition on a global var
 	include_once DOL_DOCUMENT_ROOT.'/core/modules/modFournisseur.class.php';
@@ -536,7 +536,7 @@ print "</tr>\n";
 // Option
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("SupplierOrderForbidProjectChange").'</td>';
-print '<td class="center">'.$form->selectyesno('FORBID_EDIT_PROJECT_ON_SUPPLIER_ORDER', $conf->global->FORBID_EDIT_PROJECT_ON_SUPPLIER_ORDER, 1).'</td>';
+print '<td class="center">'.$form->selectyesno('SUPPLIER_ORDER_FORBID_EDIT_PROJECT', $conf->global->SUPPLIER_ORDER_FORBID_EDIT_PROJECT, 1).'</td>';
 print '<td class="center">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print '</td>';

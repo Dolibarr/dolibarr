@@ -146,7 +146,7 @@ $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatede
 
 // Project permission
 if (!empty($conf->projet->enabled)) {
-	$caneditproject = empty($conf->global->FORBID_EDIT_PROJECT_ON_SUPPLIER_ORDER) || ($object->statut == CommandeFournisseur::STATUS_DRAFT && preg_match('/^[\(]?PROV/i', $object->ref));
+	$caneditproject = empty($conf->global->SUPPLIER_ORDER_FORBID_EDIT_PROJECT) || ($object->statut == CommandeFournisseur::STATUS_DRAFT && preg_match('/^[\(]?PROV/i', $object->ref));
 }
 
 
