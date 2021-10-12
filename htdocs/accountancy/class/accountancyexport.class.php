@@ -914,7 +914,8 @@ class AccountancyExport
 		print "ValidDate".$separator;
 		print "Montantdevise".$separator;
 		print "Idevise".$separator;
-		print "DateLimitReglmt";
+		print "DateLimitReglmt".$separator;
+		print "NumFacture".$separator;
 		print $end_line;
 
 		foreach ($objectLines as $line) {
@@ -926,6 +927,22 @@ class AccountancyExport
 				$date_lettering = dol_print_date($line->date_lettering, '%Y%m%d');
 				$date_validation = dol_print_date($line->date_validation, '%Y%m%d');
 				$date_limit_payment = dol_print_date($line->date_lim_reglement, '%Y%m%d');
+
+				if ($line->doc_type == 'customer_invoice') {
+					// Customer invoice
+					require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+					$invoice = new Facture($db);
+					$invoice->fetch($line->fk_doc);
+
+					$refInvoice = $invoice->ref;
+				} elseif ($line->doc_type == 'supplier_invoice') {
+					// Supplier invoice
+					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+					$invoice = new FactureFournisseur($db);
+					$invoice->fetch($line->fk_doc);
+
+					$refInvoice = $invoice->ref_supplier;
+				}
 
 				// FEC:JournalCode
 				print $line->code_journal . $separator;
@@ -984,6 +1001,9 @@ class AccountancyExport
 				// FEC_suppl:DateLimitReglmt
 				print $date_limit_payment;
 
+				// FEC_suppl:NumFacture
+				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1) . $separator;
+
 				print $end_line;
 			}
 		}
@@ -1020,7 +1040,8 @@ class AccountancyExport
 		print "ValidDate".$separator;
 		print "Montantdevise".$separator;
 		print "Idevise".$separator;
-		print "DateLimitReglmt";
+		print "DateLimitReglmt".$separator;
+		print "NumFacture".$separator;
 		print $end_line;
 
 		foreach ($objectLines as $line) {
@@ -1032,6 +1053,22 @@ class AccountancyExport
 				$date_lettering = dol_print_date($line->date_lettering, '%Y%m%d');
 				$date_validation = dol_print_date($line->date_validation, '%Y%m%d');
 				$date_limit_payment = dol_print_date($line->date_lim_reglement, '%Y%m%d');
+
+				if ($line->doc_type == 'customer_invoice') {
+					// Customer invoice
+					require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+					$invoice = new Facture($db);
+					$invoice->fetch($line->fk_doc);
+
+					$refInvoice = $invoice->ref;
+				} elseif ($line->doc_type == 'supplier_invoice') {
+					// Supplier invoice
+					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+					$invoice = new FactureFournisseur($db);
+					$invoice->fetch($line->fk_doc);
+
+					$refInvoice = $invoice->ref_supplier;
+				}
 
 				// FEC:JournalCode
 				print $line->code_journal . $separator;
@@ -1089,6 +1126,10 @@ class AccountancyExport
 
 				// FEC_suppl:DateLimitReglmt
 				print $date_limit_payment;
+
+				// FEC_suppl:NumFacture
+				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1) . $separator;
+
 
 				print $end_line;
 			}
