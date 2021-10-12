@@ -188,66 +188,118 @@ if (empty($reshook)) {
 				$tmpproduct = new Product($db);
 				$tmpproduct->fetch($line->fk_product);
 
-				$i = 1;
-				while (GETPOSTISSET('qty-' . $line->id . '-' . $i)) {
-					$qtytoprocess = price2num(GETPOST('qty-' . $line->id . '-' . $i));
-
-					if ($qtytoprocess != 0) {
-						// Check warehouse is set if we should have to
-						if (GETPOSTISSET('idwarehouse-' . $line->id . '-' . $i)) {    // If there is a warehouse to set
-							if (!(GETPOST('idwarehouse-' . $line->id . '-' . $i) > 0)) {    // If there is no warehouse set.
-								$langs->load("errors");
-								setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref), null, 'errors');
-								$error++;
-							}
-							if ($tmpproduct->status_batch && (!GETPOST('batch-' . $line->id . '-' . $i))) {
-								$langs->load("errors");
-								setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref), null, 'errors');
-								$error++;
-							}
-						}
-
-						$idstockmove = 0;
-						if (!$error && GETPOST('idwarehouse-' . $line->id . '-' . $i) > 0) {
-							// Record stock movement
-							$id_product_batch = 0;
-							$stockmove->origin = $object;
-							if ($qtytoprocess >= 0) {
-								$idstockmove = $stockmove->livraison($user, $line->fk_product, GETPOST('idwarehouse-' . $line->id . '-' . $i), $qtytoprocess, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-' . $line->id . '-' . $i), $id_product_batch, $codemovement);
-							} else {
-								$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehouse-' . $line->id . '-' . $i), $qtytoprocess, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-' . $line->id . '-' . $i), $id_product_batch, $codemovement);
-							}
-							if ($idstockmove < 0) {
-								$error++;
-								setEventMessages($stockmove->error, $stockmove->errors, 'errors');
-							}
-						}
-
-						if (!$error) {
-							// Record consumption
-							$moline = new MoLine($db);
-							$moline->fk_mo = $object->id;
-							$moline->position = $pos;
-							$moline->fk_product = $line->fk_product;
-							$moline->fk_warehouse = GETPOST('idwarehouse-' . $line->id . '-' . $i);
-							$moline->qty = $qtytoprocess;
-							$moline->batch = GETPOST('batch-' . $line->id . '-' . $i);
-							$moline->role = 'consumed';
-							$moline->fk_mrp_production = $line->id;
-							$moline->fk_stock_movement = $idstockmove;
-							$moline->fk_user_creat = $user->id;
-
-							$resultmoline = $moline->create($user);
-							if ($resultmoline <= 0) {
-								$error++;
-								setEventMessages($moline->error, $moline->errors, 'errors');
-							}
-
-							$pos++;
+				if ($conf->productbatch->enabled && $tmpproduct->status_batch) {
+					$tmpwarehouseObject = new Entrepot($db);
+					$productlotObject = new Productlot($db);
+					if (empty($tmpproduct->stock_warehouse)) {
+						$result = $tmpproduct->load_stock();
+						if ($result < 0) {
+							setEventMessage($tmpwarehouseObject->error, 'errors');
 						}
 					}
+					if (!empty($tmpproduct->stock_warehouse)) {
+						foreach ($tmpproduct->stock_warehouse as $warehouse_id => $stock_warehouse) {
+							if (!empty($stock_warehouse->detail_batch)) {
+								foreach ($stock_warehouse->detail_batch as $serial_lot => $data_stock) {
+									$qtytoprocess = price2num(GETPOST('qtybybtach-' . $data_stock->id));
+									if (!empty($qtytoprocess)) {
+										// Record stock movement
+										$id_product_batch = $data_stock->id;
+										$stockmove->origin = $object;
+										if ($qtytoprocess >= 0) {
+											$idstockmove = $stockmove->livraison($user, $line->fk_product, $warehouse_id, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $serial_lot, $id_product_batch, $codemovement);
+										} else {
+											$idstockmove = $stockmove->reception($user, $line->fk_product, $warehouse_id, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $serial_lot, $id_product_batch, $codemovement);
+										}
+										if ($idstockmove < 0) {
+											$error++;
+											setEventMessages($stockmove->error, $stockmove->errors, 'errors');
+										}
 
-					$i++;
+										if (!$error) {
+											// Record consumption
+											$moline = new MoLine($db);
+											$moline->fk_mo = $object->id;
+											$moline->position = $pos;
+											$moline->fk_product = $line->fk_product;
+											$moline->fk_warehouse = $warehouse_id;
+											$moline->qty = $qtytoprocess;
+											$moline->batch = $serial_lot;
+											$moline->role = 'consumed';
+											$moline->fk_mrp_production = $line->id;
+											$moline->fk_stock_movement = $idstockmove;
+											$moline->fk_user_creat = $user->id;
+
+											$resultmoline = $moline->create($user);
+											if ($resultmoline <= 0) {
+												$error++;
+												setEventMessages($moline->error, $moline->errors, 'errors');
+											}
+
+											$pos++;
+										}
+									}
+								}
+							}
+						}
+					}
+				} else {
+					$i = 1;
+					while (GETPOSTISSET('qty-' . $line->id . '-' . $i)) {
+						$qtytoprocess = price2num(GETPOST('qty-' . $line->id . '-' . $i));
+
+						if ($qtytoprocess != 0) {
+							// Check warehouse is set if we should have to
+							if (GETPOSTISSET('idwarehouse-' . $line->id . '-' . $i)) {    // If there is a warehouse to set
+								if (!(GETPOST('idwarehouse-' . $line->id . '-' . $i) > 0)) {    // If there is no warehouse set.
+									$langs->load("errors");
+									setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref), null, 'errors');
+									$error++;
+								}
+							}
+
+							$idstockmove = 0;
+							if (!$error && GETPOST('idwarehouse-' . $line->id . '-' . $i) > 0) {
+								// Record stock movement
+								$id_product_batch = 0;
+								$stockmove->origin = $object;
+								if ($qtytoprocess >= 0) {
+									$idstockmove = $stockmove->livraison($user, $line->fk_product, GETPOST('idwarehouse-' . $line->id . '-' . $i), $qtytoprocess, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-' . $line->id . '-' . $i), $id_product_batch, $codemovement);
+								} else {
+									$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehouse-' . $line->id . '-' . $i), $qtytoprocess, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-' . $line->id . '-' . $i), $id_product_batch, $codemovement);
+								}
+								if ($idstockmove < 0) {
+									$error++;
+									setEventMessages($stockmove->error, $stockmove->errors, 'errors');
+								}
+							}
+
+							if (!$error) {
+								// Record consumption
+								$moline = new MoLine($db);
+								$moline->fk_mo = $object->id;
+								$moline->position = $pos;
+								$moline->fk_product = $line->fk_product;
+								$moline->fk_warehouse = GETPOST('idwarehouse-' . $line->id . '-' . $i);
+								$moline->qty = $qtytoprocess;
+								$moline->batch = GETPOST('batch-' . $line->id . '-' . $i);
+								$moline->role = 'consumed';
+								$moline->fk_mrp_production = $line->id;
+								$moline->fk_stock_movement = $idstockmove;
+								$moline->fk_user_creat = $user->id;
+
+								$resultmoline = $moline->create($user);
+								if ($resultmoline <= 0) {
+									$error++;
+									setEventMessages($moline->error, $moline->errors, 'errors');
+								}
+
+								$pos++;
+							}
+						}
+
+						$i++;
+					}
 				}
 			}
 		}
@@ -659,8 +711,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			//$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : $object->ref.'_'.dol_print_date(dol_now(), 'dayhourlog');
 			$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : $langs->trans("ProductionForRef", $object->ref);
 
-			print '<div class="center' . (in_array($action, array('consumeorproduce',
-																  'consumeandproduceall')) ? ' formconsumeproduce' : '') . '">';
+			print '<div class="center formconsumeproduce">';
 			print '<div class="opacitymedium hideonsmartphone paddingbottom">' . $langs->trans("ConfirmProductionDesc", $langs->transnoentitiesnoconv("Confirm")) . '<br></div>';
 			print '<span class="fieldrequired">' . $langs->trans("InventoryCode") . ':</span> <input type="text" class="minwidth200 maxwidth250" name="inventorycode" value="' . $defaultstockmovementcode . '"> &nbsp; ';
 			print '<span class="clearbothonsmartphone"></span>';
@@ -926,6 +977,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							}
 						}
 						print '</td>';
+						print '<td></td>';
 						// Lot Batch
 						print '<td>';
 						if ($line2['batch'] != '') {
@@ -933,6 +985,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							print $tmpbatch->getNomUrl(1);
 						}
 						print '</td>';
+						if ($permissiontodelete) {
+							print '<td></td>';
+						}
 						print '</tr>';
 					}
 
@@ -974,16 +1029,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 												print '<td class="right">';
 												//There is a qty to affect and at least some stock
 												if ($data_stock->qty > 0 && $quantityToAffect > 0 && $qty_already_affected < $quantityToAffect) {
+													$qty_suggested = 0;
 													if ($quantityToAffect <= $data_stock->qty) {
-														print '<input type="text" class="width50 right" name="qty-' . $line->id . '-' . $i . '-' . $warehouse_id . '" value="' . $quantityToAffect . '">';
-														$qty_already_affected += $quantityToAffect;
+														$qty_suggested = $quantityToAffect;
 													}
 													if ($data_stock->qty < $quantityToAffect) {
-														print '<input type="text" class="width50 right" name="qty-' . $line->id . '-' . $i . '-' . $warehouse_id . '" value="' . $data_stock->qty . '">';
-														$qty_already_affected += $data_stock->qty;
+														$qty_suggested = $data_stock->qty;
 													}
+													print '<input type="text" class="width50 right" name="qtybybtach-'. $data_stock->id . '" value="' . $qty_suggested . '">';
+													$qty_already_affected += $qty_suggested;
 												} else {
-													print '<input type="text" class="width50 right" name="qty-' . $line->id . '-' . $i . '-' . $warehouse_id . '" value="0">';
+													print '<input type="text" class="width50 right" name="qtybybtach-'. $data_stock->id . '" value="0">';
 												}
 
 												print '</td>';
