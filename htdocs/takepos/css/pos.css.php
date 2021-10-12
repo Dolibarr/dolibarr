@@ -320,11 +320,12 @@ table.postablelines tr td {
 
 div.paymentbordline
 {
-	background-color: #888;
+	width:calc(50% - 16px);
+	background-color:#888;
 	border-radius: 8px;
-	margin: 4px auto;
+	margin-bottom: 4px;
+	display: inline-block;
 	padding: 5px;
-	width: calc(50% - 10px);
 }
 
 @media only screen and (max-aspect-ratio: 6/4) {
