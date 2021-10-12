@@ -130,3 +130,6 @@ ShowPriceHT = Display the column with the price excluding tax (on screen)
 ShowPriceHTOnReceipt = Display the column with the price excluding tax (on the receipt)
 CustomerDisplay=Customer display
 SplitSale=Split sale
+PrintWithoutDetailsButton=Add "Print without details" button
+PrintWithoutDetailsLabelDefault=Line label by default on printing without details
+PrintWithoutDetails=Print without details

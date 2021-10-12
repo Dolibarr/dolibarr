@@ -1252,7 +1252,7 @@ class ExtraFields
 					}
 
 					$sqlwhere = '';
-					$sql = 'SELECT '.$keyList;
+					$sql = "SELECT ".$keyList;
 					$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
 					if (!empty($InfoFieldList[4])) {
 						// can use curent entity filter
@@ -1420,7 +1420,7 @@ class ExtraFields
 					}
 
 					$sqlwhere = '';
-					$sql = 'SELECT '.$keyList;
+					$sql = "SELECT ".$keyList;
 					$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
 					if (!empty($InfoFieldList[4])) {
 						// can use SELECT request
@@ -1716,7 +1716,7 @@ class ExtraFields
 				}
 			}
 
-			$sql = 'SELECT '.$keyList;
+			$sql = "SELECT ".$keyList;
 			$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
 			if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
@@ -1820,8 +1820,8 @@ class ExtraFields
 				}
 			}
 
-			$sql = 'SELECT '.$keyList;
-			$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
+			$sql = "SELECT ".$keyList;
+			$sql .= " FROM ".MAIN_DB_PREFIX.$InfoFieldList[0];
 			if (strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}

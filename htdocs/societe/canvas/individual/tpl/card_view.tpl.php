@@ -57,7 +57,7 @@ if ($this->control->tpl['action_delete']) {
 	<td><?php echo $langs->trans('CustomerCode'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['code_client']; ?>
 	<?php if ($this->control->tpl['checkcustomercode'] <> 0) { ?>
-	<font class="error">(<?php echo $langs->trans("WrongCustomerCode"); ?>)</font>
+	<span class="error">(<?php echo $langs->trans("WrongCustomerCode"); ?>)</span>
 	<?php } ?>
 	</td>
 </tr>
@@ -68,7 +68,7 @@ if ($this->control->tpl['action_delete']) {
 	<td><?php echo $langs->trans('SupplierCode'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['code_fournisseur']; ?>
 	<?php if ($this->control->tpl['checksuppliercode'] <> 0) { ?>
-	<font class="error">(<?php echo $langs->trans("WrongSupplierCode"); ?>)</font>
+	<span class="error">(<?php echo $langs->trans("WrongSupplierCode"); ?>)</span>
 	<?php } ?>
 	</td>
 </tr>
