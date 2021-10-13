@@ -1592,7 +1592,7 @@ if ($resql) {
 		// Payment terms
 		if (!empty($arrayfields['c.fk_cond_reglement']['checked'])) {
 			print '<td>';
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'], $obj->fk_cond_reglement, 'none', 0, 1, $obj->deposit_percent);
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'], $obj->fk_cond_reglement, 'none', 0, '', 1, $obj->deposit_percent);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

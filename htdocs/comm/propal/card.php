@@ -2329,9 +2329,9 @@ if ($action == 'create') {
 	print '</tr></table>';
 	print '</td><td class="valuefield">';
 	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editconditions' && $usercancreate) {
-		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id', 0, 1, $object->deposit_percent);
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id', 0, '', 1, $object->deposit_percent);
 	} else {
-		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'none', 0, 1, $object->deposit_percent);
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'none', 0, '', 1, $object->deposit_percent);
 	}
 	print '</td>';
 	print '</tr>';

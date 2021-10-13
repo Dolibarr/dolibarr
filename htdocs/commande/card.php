@@ -2374,9 +2374,9 @@ if ($action == 'create' && $usercancreate) {
 		print $form->editfieldkey("PaymentConditionsShort", 'conditions', '', $object, $editenable);
 		print '</td><td class="valuefield">';
 		if ($action == 'editconditions') {
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id', 1, 1, $object->deposit_percent);
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id', 1, '', 1, $object->deposit_percent);
 		} else {
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'none', 1, 1, $object->deposit_percent);
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'none', 1, '', 1, $object->deposit_percent);
 		}
 		print '</td>';
 
