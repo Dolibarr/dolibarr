@@ -142,6 +142,8 @@ $updatekeys			= (GETPOST('updatekeys', 'array') ? GETPOST('updatekeys', 'array')
 $separator			= (GETPOST('separator', 'nohtml') ? GETPOST('separator', 'nohtml') : (!empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE) ? $conf->global->IMPORT_CSV_SEPARATOR_TO_USE : ','));
 $enclosure			= (GETPOST('enclosure', 'nohtml') ? GETPOST('enclosure', 'nohtml') : '"');
 
+$import_wip = 0;
+
 $objimport = new Import($db);
 $objimport->load_arrays($user, ($step == 1 ? '' : $datatoimport));
 
@@ -321,15 +323,30 @@ if ($action == 'saveorder') {
 	$serialized_array_match_file_to_database = '';
 	$array_match_file_to_database = array();
 	$fieldsarray = explode(',', $list);
-	$pos = 0;
+	if (empty($import_wip)) {
+		$pos = 0;
+	}
 	foreach ($fieldsarray as $fieldnb) {	// For each elem in list. fieldnb start from 1 to ...
 		// Get name of database fields at position $pos and put it into $namefield
-		$posbis = 0; $namefield = '';
+		if (empty($import_wip)) {
+			$posbis = 0;
+		} else {
+			$pos = 1;
+		}
+
+		$namefield = '';
 		foreach ($fieldstarget as $key => $val) {	// key:   val:
 			//dol_syslog('AjaxImport key='.$key.' val='.$val);
-			if ($posbis < $pos) {
-				$posbis++;
-				continue;
+			if (empty($import_wip)) {
+				if ($posbis < $pos) {
+					$posbis++;
+					continue;
+				}
+			} else {
+				if ($pos < $fieldnb) {
+					$pos++;
+					continue;
+				}
 			}
 			// We found the key of targets that is at position pos
 			$namefield = $key;
@@ -1000,9 +1017,9 @@ if ($step == 4 && $datatoimport) {
 	// List of source fields
 	$var = true;
 	$lefti = 1;
-	foreach ($array_match_file_to_database as $key => $val) {
+	foreach ($import_wip?$fieldssource:$array_match_file_to_database as $key => $val) {
 		$var = !$var;
-		show_elem($fieldssource, $key, $val, $var); // key is field number in source file
+		show_elem($fieldssource, $key, $val, $var, '', $import_wip); // key is field number in source file
 		//print '> '.$lefti.'-'.$key.'-'.$val;
 		$listofkeys[$key] = 1;
 		$fieldsplaced[$key] = 1;
@@ -1021,7 +1038,7 @@ if ($step == 4 && $datatoimport) {
 	while ($lefti <= $num) {
 		$var = !$var;
 		$newkey = getnewkey($fieldssource, $listofkeys);
-		show_elem($fieldssource, $newkey, '', $var); // key start after field number in source file
+		show_elem($fieldssource, $newkey, '', $var, '', $import_wip); // key start after field number in source file
 		//print '> '.$lefti.'-'.$newkey;
 		$listofkeys[$key] = 1;
 		$lefti++;
@@ -1035,11 +1052,20 @@ if ($step == 4 && $datatoimport) {
 	print '</td><td width="50%">';
 
 	// List of target fields
-	$height = '24px'; //needs px for css height attribute below
+	if (empty($import_wip)) {
+		$height = '24px'; //needs px for css height attribute below
+	} else {
+		$height = '29px';
+	}
 	$i = 0;
 	$mandatoryfieldshavesource = true;
-
+	if (!empty($import_wip)) {
+		$fieldselect = 1;
+	}
 	print '<table width="100%" class="nobordernopadding">';
+	if (!empty($import_wip)) {
+		$pos = 1;
+	}
 	foreach ($fieldstarget as $code => $label) {
 		print '<tr class="oddeven" style="height:'.$height.'">';
 
@@ -1054,18 +1080,45 @@ if ($step == 4 && $datatoimport) {
 
 		print '<td class="nowraponall" style="font-weight: normal">=>'.img_object('', $entityicon).' '.$langs->trans($entitylang).'</td>';
 		print '<td class="nowraponall" style="font-weight: normal">';
-		$newlabel = preg_replace('/\*$/', '', $label);
-		$text = $langs->trans($newlabel);
-		$more = '';
-		if (preg_match('/\*$/', $label)) {
-			$text = '<span class="fieldrequired">'.$text.'</span>';
-			$more = ((!empty($valforsourcefieldnb[$i]) && $valforsourcefieldnb[$i] <= count($fieldssource)) ? '' : img_warning($langs->trans("FieldNeedSource")));
-			if ($mandatoryfieldshavesource) {
-				$mandatoryfieldshavesource = (!empty($valforsourcefieldnb[$i]) && ($valforsourcefieldnb[$i] <= count($fieldssource)));
+		if (empty($import_wip)) {
+			$newlabel = preg_replace('/\*$/', '', $label);
+			$text = $langs->trans($newlabel);
+			$more = '';
+			if (preg_match('/\*$/', $label)) {
+				$text = '<span class="fieldrequired">'.$text.'</span>';
+				$more = ((!empty($valforsourcefieldnb[$i]) && $valforsourcefieldnb[$i] <= count($fieldssource)) ? '' : img_warning($langs->trans("FieldNeedSource")));
+				if ($mandatoryfieldshavesource) {
+					$mandatoryfieldshavesource = (!empty($valforsourcefieldnb[$i]) && ($valforsourcefieldnb[$i] <= count($fieldssource)));
+				}
+				//print 'xx'.($i).'-'.$valforsourcefieldnb[$i].'-'.$mandatoryfieldshavesource;
 			}
-			//print 'xx'.($i).'-'.$valforsourcefieldnb[$i].'-'.$mandatoryfieldshavesource;
+			print $text;
+		} else {
+			print '<select  class="flat minwidth200" autocomplete="off" name="selectfield_'.$fieldselect.'">';
+			print '<option value="-1">&nbsp;</option>';
+			$pos2=1;
+			foreach ($array_match_file_to_database as $idselect => $codeselect) {
+				$labelselect = $fieldstarget[$codeselect];
+				$newlabel = preg_replace('/\*$/', '', $labelselect);
+				$text = $langs->trans($newlabel);
+				if (preg_match('/\*$/', $label)) {
+					$text = '<span class="fieldrequired">'.$text.'</span>';
+					$more = ((!empty($valforsourcefieldnb[$i]) && $valforsourcefieldnb[$i] <= count($fieldssource)) ? '' : img_warning($langs->trans("FieldNeedSource")));
+					if ($mandatoryfieldshavesource) {
+						$mandatoryfieldshavesource = (!empty($valforsourcefieldnb[$i]) && ($valforsourcefieldnb[$i] <= count($fieldssource)));
+					}
+					//print 'xx'.($i).'-'.$valforsourcefieldnb[$i].'-'.$mandatoryfieldshavesource;
+				}
+				print '<option value="'.$codeselect.'" ';
+				if ($pos == $pos2) {
+					print 'selected';
+				}
+				print '>'.$text.'</option>';
+				$pos2++;
+			}
+			$pos++;
+			print '</select>';
 		}
-		print $text;
 		print '</td>';
 		// Info field
 		print '<td class="nowraponall" style="font-weight:normal; text-align:right">';
@@ -1127,6 +1180,9 @@ if ($step == 4 && $datatoimport) {
 		print '</td>';
 
 		print '</tr>';
+		if (!empty($import_wip)) {
+			$fieldselect++;
+		}
 	}
 	print '</table>';
 
@@ -1145,7 +1201,7 @@ if ($step == 4 && $datatoimport) {
 		if (empty($fieldsplaced[$key])) {
 			//
 			$nbofnotimportedfields++;
-			show_elem($fieldssource, $key, '', $var, 'nostyle');
+			show_elem($fieldssource, $key, '', $var, 'nostyle', $import_wip);
 			//print '> '.$lefti.'-'.$key;
 			$listofkeys[$key] = 1;
 			$lefti++;
@@ -1154,7 +1210,7 @@ if ($step == 4 && $datatoimport) {
 
 	// Print one more empty field
 	$newkey = getnewkey($fieldssource, $listofkeys);
-	show_elem($fieldssource, $newkey, '', $var, 'nostyle');
+	show_elem($fieldssource, $newkey, '', $var, 'nostyle', $import_wip);
 	//print '> '.$lefti.'-'.$newkey;
 	$listofkeys[$newkey] = 1;
 	$nbofnotimportedfields++;
@@ -1167,7 +1223,7 @@ if ($step == 4 && $datatoimport) {
 	$i = 0;
 	while ($i < $nbofnotimportedfields) {
 		// Print empty cells
-		show_elem('', '', 'none', $var, 'nostyle');
+		show_elem('', '', 'none', $var, 'nostyle', $import_wip);
 		$i++;
 	}
 	print '</td></tr>';
@@ -2089,13 +2145,18 @@ $db->close();
  * @param	string	$key			Key
  * @param	boolean	$var			Line style (odd or not)
  * @param	int		$nostyle		Hide style
+ * @param	int 	$import_wip		WIP
  * @return	void
  */
-function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
+function show_elem($fieldssource, $pos, $key, $var, $nostyle = '', $import_wip = 1)
 {
 	global $langs, $bc;
 
-	$height = '24px';
+	if (empty($import_wip)) {
+		$height = '24px';
+	} else {
+		$height = '29px';
+	}
 
 	if ($key == 'none') {
 		//stop multiple duplicate ids with no number
@@ -2112,7 +2173,9 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 	if ($pos && $pos > count($fieldssource)) {	// No fields
 		print '<tr'.($nostyle ? '' : ' '.$bc[$var]).' style="height:'.$height.'">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
-		print img_picto(($pos > 0 ? $langs->trans("MoveField", $pos) : ''), 'grip_title', 'class="boxhandle" style="cursor:move;"');
+		if (empty($import_wip)) {
+			print img_picto(($pos > 0 ? $langs->trans("MoveField", $pos) : ''), 'grip_title', 'class="boxhandle" style="cursor:move;"');
+		}
 		print '</td>';
 		print '<td style="font-weight: normal">';
 		print $langs->trans("NoFields");
@@ -2132,7 +2195,9 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 		print '<tr'.($nostyle ? '' : ' '.$bc[$var]).' style="height:'.$height.'">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
-		print img_picto($langs->trans("MoveField", $pos), 'grip_title', 'class="boxhandle" style="cursor:move;"');
+		if (empty($import_wip)) {
+			print img_picto($langs->trans("MoveField", $pos), 'grip_title', 'class="boxhandle" style="cursor:move;"');
+		}
 		print '</td>';
 		print '<td class="nowraponall" style="font-weight: normal">';
 		print $langs->trans("Field").' '.$pos;
