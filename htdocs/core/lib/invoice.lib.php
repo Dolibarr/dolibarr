@@ -519,8 +519,10 @@ function getNumberInvoicesPieChart($mode)
 				$i++;
 			}
 			if (!empty($dataseries[0])) {
-				foreach ($dataseries[0] as $key=>$value) {
-					$total += $value;
+				foreach ($dataseries[0] as $key => $value) {
+					if (is_numeric($value)) {
+						$total += $value;
+					}
 				}
 			}
 			$legend = array(
