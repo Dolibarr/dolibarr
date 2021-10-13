@@ -240,10 +240,14 @@ if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 $sql .= " p.tosell as status, p.tobuy as status_buy,";
 $sql .= " aa.rowid as aarowid, aa2.rowid as aarowid_intra, aa3.rowid as aarowid_export, aa4.rowid as aarowid_thirdparty,";
 $sql .= " co.code as country_code, co.label as country_label,";
-$sql .= " s.rowid as socid, s.nom as name, s.tva_intra, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,";
+$sql .= " s.rowid as socid, s.nom as name, s.tva_intra, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur,";
 if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+	$sql .= " spe.accountancy_code_customer as code_compta_client,";
+	$sql .= " spe.accountancy_code_supplier as code_compta_fournisseur,";
 	$sql .= " spe.accountancy_code_sell as company_code_sell";
 } else {
+	$sql .= " s.code_compta as code_compta_client,";
+	$sql .= " s.code_compta_fournisseur,";
 	$sql .= " s.accountancy_code_sell as company_code_sell";
 }
 $parameters = array();
@@ -635,7 +639,7 @@ if ($result) {
 
 		// Vat rate
 		$code_vat_differ='';
-		if ($product_static->tva_tx !== $facture_static_det->tva_tx) {
+		if ($product_static->tva_tx !== $facture_static_det->tva_tx && ! empty($facture_static_det->tva_tx)) {	// Note: having a vat rate of 0 is often the normal case when sells is intra b2b or to export
 			$code_vat_differ = 'font-weight:bold; text-decoration:blink; color:red';
 		}
 		print '<td style="'.$code_vat_differ.'" class="right">';
