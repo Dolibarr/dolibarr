@@ -2770,20 +2770,20 @@ class ContratLigne extends CommonObjectLine
 		$langs->load("contracts");
 
 		if ($status == self::STATUS_INITIAL) {
-			$labelStatus = $langs->trans("ServiceStatusInitial");
-			$labelStatusShort = $langs->trans("ServiceStatusInitial");
+			$labelStatus = $langs->transnoentities("ServiceStatusInitial");
+			$labelStatusShort = $langs->transnoentities("ServiceStatusInitial");
 		} elseif ($status == self::STATUS_OPEN && $expired == -1) {
-			$labelStatus = $langs->trans("ServiceStatusRunning");
-			$labelStatusShort = $langs->trans("ServiceStatusRunning");
+			$labelStatus = $langs->transnoentities("ServiceStatusRunning");
+			$labelStatusShort = $langs->transnoentities("ServiceStatusRunning");
 		} elseif ($status == self::STATUS_OPEN && $expired == 0) {
-			$labelStatus = $langs->trans("ServiceStatusNotLate");
-			$labelStatusShort = $langs->trans("ServiceStatusNotLateShort");
+			$labelStatus = $langs->transnoentities("ServiceStatusNotLate");
+			$labelStatusShort = $langs->transnoentities("ServiceStatusNotLateShort");
 		} elseif ($status == self::STATUS_OPEN && $expired == 1) {
-			$labelStatus = $langs->trans("ServiceStatusLate");
-			$labelStatusShort = $langs->trans("ServiceStatusLateShort");
+			$labelStatus = $langs->transnoentities("ServiceStatusLate");
+			$labelStatusShort = $langs->transnoentities("ServiceStatusLateShort");
 		} elseif ($status == self::STATUS_CLOSED) {
-			$labelStatus = $langs->trans("ServiceStatusClosed");
-			$labelStatusShort = $langs->trans("ServiceStatusClosed");
+			$labelStatus = $langs->transnoentities("ServiceStatusClosed");
+			$labelStatusShort = $langs->transnoentities("ServiceStatusClosed");
 		}
 
 		$statusType = 'status'.$status;
