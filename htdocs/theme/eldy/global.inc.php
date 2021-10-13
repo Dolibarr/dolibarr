@@ -7102,6 +7102,13 @@ div.clipboardCPValue.hidewithsize {
 		boerder-right: unset;
 		padding-left: 5px;
 	}
+
+	.a-mesure, .a-mesure-disabled {
+		display: block;
+		margin-bottom: 6px;
+		padding-left: 12px;
+		padding-right: 12px;
+	}
 }
 
 @media only screen and (max-width: 320px)

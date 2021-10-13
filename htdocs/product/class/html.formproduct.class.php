@@ -615,7 +615,7 @@ class FormProduct
 	/**
 	 *  Return list of lot numbers (stock from product_batch) with stock location and stock qty
 	 *
-	 *  @param  string	$htmlname		Name of html select html
+	 *  @param  string	$htmlname		Name of key that is inside attribute "list" of an input text field.
 	 *  @param  int		$empty			1=Can be empty, 0 if not
 	 *  @param	int		$fk_product		show lot numbers of product with id fk_product. All from objectLines if 0.
 	 *  @param	int		$fk_entrepot	filter lot numbers for warehouse with id fk_entrepot. All if 0.
