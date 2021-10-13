@@ -1268,6 +1268,7 @@ class Form
 				$selected_input_value = $societetmp->name;
 				unset($societetmp);
 			}
+
 			// mode 1
 			$urloption = 'htmlname='.urlencode($htmlname).'&outjson=1&filter='.urlencode($filter).(empty($excludeids) ? '' : '&excludeids='.join(',', $excludeids)).($showtype ? '&showtype='.urlencode($showtype) : '');
 			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
@@ -1441,6 +1442,10 @@ class Form
 
 					if (!empty($obj->name_alias)) {
 						$label .= ' ('.$obj->name_alias.')';
+					}
+
+					if ($conf->global->SOCIETE_SHOW_VAT_IN_LIST && !empty($obj->tva_intra)) {
+						$label .= ' - '.$obj->tva_intra.'';
 					}
 
 					if ($showtype) {
@@ -3621,6 +3626,7 @@ class Form
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
+
 				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 				$label = ($langs->trans("PaymentConditionShort".$obj->code) != ("PaymentConditionShort".$obj->code) ? $langs->trans("PaymentConditionShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$this->cache_conditions_paiements[$obj->rowid]['code'] = $obj->code;
@@ -3875,10 +3881,10 @@ class Form
 	 *      Constant MAIN_DEFAULT_PAYMENT_TERM_ID can used to set default value but scope is all application, probably not what you want.
 	 *      See instead to force the default value by the caller.
 	 *
-	 *      @param	int		$selected		Id of payment term to preselect by default
-	 *      @param	string	$htmlname		Nom de la zone select
-	 *      @param	int		$filtertype		If > 0, include payment terms with deposit percentage (for objects other than invoices and invoice templates)
-	 *		@param	int		$addempty		Add an empty entry
+	 *      @param	int		$selected			Id of payment term to preselect by default
+	 *      @param	string	$htmlname			Nom de la zone select
+	 *      @param	int		$filtertype			If > 0, include payment terms with deposit percentage (for objects other than invoices and invoice templates)
+	 *		@param	int		$addempty			Add an empty entry
 	 * 		@param	int		$noinfoadmin		0=Add admin info, 1=Disable admin info
 	 * 		@param	string	$morecss			Add more CSS on select tag
 	 * 		@param	float	$deposit_percent	< 0 : deposit_percent input makes no sense (for example, in list filters)
@@ -3904,20 +3910,17 @@ class Form
 		if ($addempty) {
 			print '<option value="0">&nbsp;</option>';
 		}
-
 		$selectedDepositPercent = null;
 		foreach ($this->cache_conditions_paiements as $id => $arrayconditions) {
 			if ($filtertype <= 0 && ! empty($arrayconditions['deposit_percent'])) {
 				continue;
 			}
-
 			if ($selected == $id) {
 				$selectedDepositPercent = $deposit_percent > 0 ? $deposit_percent : $arrayconditions['deposit_percent'];
 				print '<option value="'.$id.'" data-deposit_percent="' . $arrayconditions['deposit_percent'] . '" selected>';
 			} else {
 				print '<option value="'.$id.'" data-deposit_percent="' . $arrayconditions['deposit_percent'] . '">';
 			}
-
 			$label = $arrayconditions['label'];
 
 			if (! empty($arrayconditions['deposit_percent'])) {
@@ -3925,7 +3928,6 @@ class Form
 			}
 
 			print $label;
-
 			print '</option>';
 		}
 		print '</select>';
@@ -3933,7 +3935,6 @@ class Form
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
 		print ajax_combobox($htmlname);
-
 		if ($deposit_percent >= 0) {
 			print ' <span id="'.$htmlname.'_deposit_percent_container"' . (empty($selectedDepositPercent) ? ' style="display: none"' : '') . '>';
 			print $langs->trans('DepositPercent') . ' : ';
@@ -5145,20 +5146,24 @@ class Form
 	 *  @param  string	$selected			Id condition pre-selectionne
 	 *  @param  string	$htmlname			Name of select html field
 	 *	@param	int		$addempty			Add empty entry
+	 *  @param	string	$type				Type ('direct-debit' or 'bank-transfer')
 	 *  @param	int		$filtertype			If > 0, include payment terms with deposit percentage (for objects other than invoices and invoice templates)
 	 * 	@param	float	$deposit_percent	< 0 : deposit_percent input makes no sense (for example, in list filters)
 	 *										0 : use default deposit percentage from entry
 	 *										> 0 : force deposit percentage (for example, from company object)
 	 *  @return	void
 	 */
-	public function form_conditions_reglement($page, $selected = '', $htmlname = 'cond_reglement_id', $addempty = 0, $filtertype = -1, $deposit_percent = -1)
+	public function form_conditions_reglement($page, $selected = '', $htmlname = 'cond_reglement_id', $addempty = 0, $type = '', $filtertype = -1, $deposit_percent = -1)
 	{
 		// phpcs:enable
 		global $langs;
 		if ($htmlname != "none") {
-			print '<form method="post" action="'.$page.'">';
+			print '<form method="POST" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setconditions">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
+			if ($type) {
+				print '<input type="hidden" name="type" value="'.dol_escape_htmltag($type).'">';
+			}
 			$this->select_conditions_paiements($selected, $htmlname, $filtertype, $addempty, 0, '', $deposit_percent);
 			print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
 			print '</form>';
@@ -5259,10 +5264,11 @@ class Form
 	 *    @param    int			$displayhour 	Display hour selector
 	 *    @param    int			$displaymin		Display minutes selector
 	 *    @param	int			$nooutput		1=No print output, return string
+	 *    @param	string		$type			'direct-debit' or 'bank-transfer'
 	 *    @return	string
 	 *    @see		selectDate()
 	 */
-	public function form_date($page, $selected, $htmlname, $displayhour = 0, $displaymin = 0, $nooutput = 0)
+	public function form_date($page, $selected, $htmlname, $displayhour = 0, $displaymin = 0, $nooutput = 0, $type = '')
 	{
 		// phpcs:enable
 		global $langs;
@@ -5270,9 +5276,12 @@ class Form
 		$ret = '';
 
 		if ($htmlname != "none") {
-			$ret .= '<form method="post" action="'.$page.'" name="form'.$htmlname.'">';
+			$ret .= '<form method="POST" action="'.$page.'" name="form'.$htmlname.'">';
 			$ret .= '<input type="hidden" name="action" value="set'.$htmlname.'">';
 			$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
+			if ($type) {
+				$ret .= '<input type="hidden" name="type" value="'.dol_escape_htmltag($type).'">';
+			}
 			$ret .= '<table class="nobordernopadding">';
 			$ret .= '<tr><td>';
 			$ret .= $this->selectDate($selected, $htmlname, $displayhour, $displaymin, 1, 'form'.$htmlname, 1, 0);
@@ -5337,12 +5346,13 @@ class Form
 	 *    @param	string	$page        	Page
 	 *    @param    int		$selected    	Id mode pre-selectionne
 	 *    @param    string	$htmlname    	Name of select html field
-	 *    @param  	string	$filtertype		To filter on field type in llx_c_paiement (array('code'=>xx,'label'=>zz))
+	 *    @param  	string	$filtertype		To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
 	 *    @param    int     $active         Active or not, -1 = all
-	 *    @param   int     $addempty       1=Add empty entry
+	 *    @param   	int     $addempty       1=Add empty entry
+	 *    @param	string	$type			Type ('direct-debit' or 'bank-transfer')
 	 *    @return	void
 	 */
-	public function form_modes_reglement($page, $selected = '', $htmlname = 'mode_reglement_id', $filtertype = '', $active = 1, $addempty = 0)
+	public function form_modes_reglement($page, $selected = '', $htmlname = 'mode_reglement_id', $filtertype = '', $active = 1, $addempty = 0, $type = '')
 	{
 		// phpcs:enable
 		global $langs;
@@ -5350,7 +5360,10 @@ class Form
 			print '<form method="POST" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setmode">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			$this->select_types_paiements($selected, $htmlname, $filtertype, 0, $addempty, 0, 0, $active);
+			if ($type) {
+				print '<input type="hidden" name="type" value="'.dol_escape_htmltag($type).'">';
+			}
+			print $this->select_types_paiements($selected, $htmlname, $filtertype, 0, $addempty, 0, 0, $active, '', 1);
 			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		} else {
@@ -5835,11 +5848,11 @@ class Form
 
 				return $num;
 			} else {
-				$this->error = '<font class="error">'.$langs->trans("ErrorNoVATRateDefinedForSellerCountry", $country_code).'</font>';
+				$this->error = '<span class="error">'.$langs->trans("ErrorNoVATRateDefinedForSellerCountry", $country_code).'</span>';
 				return -1;
 			}
 		} else {
-			$this->error = '<font class="error">'.$this->db->error().'</font>';
+			$this->error = '<span class="error">'.$this->db->error().'</span>';
 			return -2;
 		}
 	}
@@ -5890,9 +5903,9 @@ class Form
 		// Check parameters
 		if (is_object($societe_vendeuse) && !$societe_vendeuse->country_code) {
 			if ($societe_vendeuse->id == $mysoc->id) {
-				$return .= '<font class="error">'.$langs->trans("ErrorYourCountryIsNotDefined").'</font>';
+				$return .= '<span class="error">'.$langs->trans("ErrorYourCountryIsNotDefined").'</span>';
 			} else {
-				$return .= '<font class="error">'.$langs->trans("ErrorSupplierCountryIsNotDefined").'</font>';
+				$return .= '<span class="error">'.$langs->trans("ErrorSupplierCountryIsNotDefined").'</span>';
 			}
 			return $return;
 		}

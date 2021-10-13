@@ -37,9 +37,6 @@ if (!defined('NOREQUIREMENU')) {
 if (!defined('NOREQUIREHTML')) {
 	define('NOREQUIREHTML', '1');
 }
-if (!defined('NOREQUIREAJAX')) {
-	define('NOREQUIREAJAX', '1');
-}
 
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -255,7 +252,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 			});
 		}, 2500);
 	}
-	
+
 <?php
 if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
 	echo "var line1='".$langs->trans('TotalTTC')."'.substring(0,20);";
@@ -274,26 +271,27 @@ if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
 <div style="position:relative; padding-top: 20px; left:5%; height:150px; width:90%;">
 
 <div class="paymentbordline paymentbordlinetotal">
-	<center><span class="takepospay"><font color="white"><?php echo $langs->trans('TotalTTC'); ?>: </font><span id="totaldisplay" class="colorwhite"><?php echo price($invoice->total_ttc, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?></span></span></center>
+	<center><span class="takepospay" style="color: white"><?php echo $langs->trans('TotalTTC'); ?>: </span><span id="totaldisplay" class="colorwhite"><?php echo price($invoice->total_ttc, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?></span></center>
 </div>
 <?php if ($remaintopay != $invoice->total_ttc) { ?>
 <div class="paymentbordline paymentbordlineremain">
-	<center><span class="takepospay"><font color="white"><?php echo $langs->trans('RemainToPay'); ?>: </font><span id="remaintopaydisplay" class="colorwhite"><?php echo price($remaintopay, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?></span></span></center>
+	<center><span class="takepospay" style="color: white"><?php echo $langs->trans('RemainToPay'); ?>: </span><span id="remaintopaydisplay" class="colorwhite"><?php echo price($remaintopay, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?></span></center>
 </div>
 <?php } ?>
 <div class="paymentbordline paymentbordlinereceived">
-	<center><span class="takepospay"><font color="white"><?php echo $langs->trans("Received"); ?>: </font><span class="change1 colorred"><?php echo price(0, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?></span><input type="hidden" id="change1" class="change1" value="0"></span></center>
+	<center><span class="takepospay" style="color: white"><?php echo $langs->trans("Received"); ?>: </span><span class="change1 colorred"><?php echo price(0, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?><input type="hidden" id="change1" class="change1" value="0"></span></center>
 </div>
 <div class="paymentbordline paymentbordlinechange">
-	<center><span class="takepospay"><font color="white"><?php echo $langs->trans("Change"); ?>: </font><span class="change2 colorwhite"><?php echo price(0, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?></span><input type="hidden" id="change2" class="change2" value="0"></span></center>
+	<center><span class="takepospay" style="color: white"><?php echo $langs->trans("Change"); ?>: </span><span class="change2 colorwhite"><?php echo price(0, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?><input type="hidden" id="change2" class="change2" value="0"></span></center>
 </div>
 <?php
 if (!empty($conf->global->TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT)) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 	print '<div class="paymentbordline paddingtop paddingbottom">
 	<center>';
 	$filter = '';
 	$form = new Form($db);
-	print '<span class="takepospay"><font color="white">'.$langs->trans("BankAccount").': </font></span>';
+	print '<span class="takepospay" style="color: white">'.$langs->trans("BankAccount").': </span>';
 	$form->select_comptes(0, 'accountid', 0, $filter, 1, '');
 	print ajax_combobox('selectaccountid');
 	print '</center>

@@ -37,9 +37,9 @@ create table llx_societe
   status            	   tinyint 		  DEFAULT 1,			        -- cessation d'activité ( 1 -- en activité, 0 -- cessation d'activité)
 
   code_client              varchar(24),                         		-- code client
-  code_fournisseur         varchar(24),                         		-- code founisseur
-  code_compta              varchar(24),                         		-- code compta client
-  code_compta_fournisseur  varchar(24),                         		-- code compta founisseur
+  code_fournisseur         varchar(24),                         		-- code fournisseur
+  code_compta              varchar(24),                         		-- customer accountancy auxiliary account
+  code_compta_fournisseur  varchar(24),                         		-- supplier accountancy auxiliary account
   address                  varchar(255),                        		-- company address
   zip                      varchar(25),                         		-- zipcode
   town                     varchar(50),                         		-- town

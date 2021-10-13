@@ -78,6 +78,9 @@ INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private,
 
 
 -- v15
+
+ALTER TABLE llx_c_holiday_types CHANGE COLUMN newByMonth newbymonth double(8,5) DEFAULT 0 NOT NULL;
+
 ALTER TABLE llx_product ADD COLUMN mandatory_period tinyint NULL DEFAULT 0;
 
 ALTER TABLE llx_holiday ADD COLUMN date_approve   DATETIME DEFAULT NULL;
@@ -376,3 +379,6 @@ ALTER TABLE llx_hrm_skillrank ADD CONSTRAINT llx_hrm_skillrank_fk_user_creat FOR
 
 --END  GRH/HRM MODULE
 
+-- Manage accountancy auxiliary account for thirdparties per entity
+ALTER TABLE llx_societe_perentity ADD COLUMN accountancy_code_customer varchar(24) AFTER entity;    -- equivalent to code_compta in llx_societe
+ALTER TABLE llx_societe_perentity ADD COLUMN accountancy_code_supplier varchar(24) AFTER accountancy_code_customer; -- equivalent to code_compta_supplier in llx_societe

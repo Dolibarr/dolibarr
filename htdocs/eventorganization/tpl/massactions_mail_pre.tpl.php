@@ -37,7 +37,7 @@ if ($massaction == 'presend_attendees') {
 		foreach ($arrayofselected as $toselectid) {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
-				$attendees = $attendee->fetchAll('', '', 0, 0, array('t.fk_actioncomm'=>$objecttmp->id));
+				$attendees = $attendee->fetchAll();
 				if (is_array($attendees) && count($attendees)>0) {
 					foreach ($attendees as $attmail) {
 						if (!empty($attmail->email)) {

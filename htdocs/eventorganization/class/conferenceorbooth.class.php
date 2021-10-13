@@ -238,9 +238,10 @@ class ConferenceOrBooth extends ActionComm
 	 * @param string $ref  Ref
 	 * @param  string	$ref_ext		Ref ext to get
 	 * @param	string	$email_msgid	Email msgid
+	 * @param int 		$loadresources	1=Load also resources
 	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = null, $ref_ext = '', $email_msgid = '')
+	public function fetch($id, $ref = null, $ref_ext = '', $email_msgid = '', $loadresources = 1)
 	{
 		global $dolibarr_main_url_root, $conf, $langs;
 
@@ -271,7 +272,6 @@ class ConferenceOrBooth extends ActionComm
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
-
 		//TODO set percent according status
 		global $conf;
 

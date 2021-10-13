@@ -81,6 +81,12 @@ if ($type == 'bank-transfer') {
 	}
 }
 
+if ($type == 'bank-transfer') {
+	$usercancreate = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
+} else {
+	$usercancreate = $user->rights->facture->creer;
+}
+
 
 /*
  * Actions
@@ -93,7 +99,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($action == "new") {
+	if ($action == "new" && $usercancreate) {
 		if ($object->id > 0) {
 			$db->begin();
 
@@ -117,13 +123,90 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == "delete") {
+	if ($action == "delete" && $usercancreate) {
 		if ($object->id > 0) {
 			$result = $object->demande_prelevement_delete($user, GETPOST('did', 'int'));
 			if ($result == 0) {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id.'&type='.$type);
 				exit;
 			}
+		}
+	}
+
+	// payments conditions
+	if ($action == 'setconditions' && $usercancreate) {
+		$object->fetch($id);
+		$object->cond_reglement_code = 0; // To clean property
+		$object->cond_reglement_id = 0; // To clean property
+
+		$error = 0;
+
+		$db->begin();
+
+		if (!$error) {
+			$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
+			if ($result < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+
+		if (!$error) {
+			$old_date_echeance = $object->date_echeance;
+			$new_date_echeance = $object->calculate_date_lim_reglement();
+			if ($new_date_echeance > $old_date_echeance) {
+				$object->date_echeance = $new_date_echeance;
+			}
+			if ($object->date_echeance < $object->date) {
+				$object->date_echeance = $object->date;
+			}
+			$result = $object->update($user);
+			if ($result < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+
+		if ($error) {
+			$db->rollback();
+		} else {
+			$db->commit();
+		}
+	} elseif ($action == 'setmode' && $usercancreate) {
+		// payment mode
+		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
+	} elseif ($action == 'setdatef' && $usercancreate) {
+		$newdate = dol_mktime(0, 0, 0, GETPOST('datefmonth', 'int'), GETPOST('datefday', 'int'), GETPOST('datefyear', 'int'), 'tzserver');
+		if ($newdate > (dol_now('tzuserrel') + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+			if (empty($conf->global->INVOICE_MAX_FUTURE_DELAY)) {
+				setEventMessages($langs->trans("WarningInvoiceDateInFuture"), null, 'warnings');
+			} else {
+				setEventMessages($langs->trans("WarningInvoiceDateTooFarInFuture"), null, 'warnings');
+			}
+		}
+
+		$object->date = $newdate;
+		$date_echence_calc = $object->calculate_date_lim_reglement();
+		if (!empty($object->date_echeance) && $object->date_echeance < $date_echence_calc) {
+			$object->date_echeance = $date_echence_calc;
+		}
+		if ($object->date_echeance && $object->date_echeance < $object->date) {
+			$object->date_echeance = $object->date;
+		}
+
+		$result = $object->update($user);
+		if ($result < 0) {
+			dol_print_error($db, $object->error);
+		}
+	} elseif ($action == 'setdate_lim_reglement' && $usercancreate) {
+		$object->date_echeance = dol_mktime(12, 0, 0, GETPOST('date_lim_reglementmonth', 'int'), GETPOST('date_lim_reglementday', 'int'), GETPOST('date_lim_reglementyear', 'int'));
+		if (!empty($object->date_echeance) && $object->date_echeance < $object->date) {
+			$object->date_echeance = $object->date;
+			setEventMessages($langs->trans("DatePaymentTermCantBeLowerThanObjectDate"), null, 'warnings');
+		}
+		$result = $object->update($user);
+		if ($result < 0) {
+			dol_print_error($db, $object->error);
 		}
 	}
 }
@@ -205,6 +288,34 @@ if ($object->id > 0) {
 	} else {
 		$head = facture_prepare_head($object);
 	}
+
+	$numopen = 0;
+	$pending = 0;
+	$numclosed = 0;
+
+	// How many Direct debit or Credit transfer open requests ?
+
+	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
+	$sql .= " , pfd.date_traite as date_traite";
+	$sql .= " , pfd.amount";
+	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+	if ($type == 'bank-transfer') {
+		$sql .= " WHERE fk_facture_fourn = ".((int) $object->id);
+	} else {
+		$sql .= " WHERE fk_facture = ".((int) $object->id);
+	}
+	$sql .= " AND pfd.traite = 0";
+	$sql .= " AND pfd.ext_payment_id IS NULL";
+	$sql .= " ORDER BY pfd.date_demande DESC";
+
+	$result_sql = $db->query($sql);
+	if ($result_sql) {
+		$num = $db->num_rows($result_sql);
+		$numopen = $num;
+	} else {
+		dol_print_error($db);
+	}
+
 
 	print dol_get_fiche_head($head, 'standingorders', $title, -1, ($type == 'bank-transfer' ? 'supplier_invoice' : 'bill'));
 
@@ -363,14 +474,14 @@ if ($object->id > 0) {
 	print $langs->trans('DateInvoice');
 	print '</td>';
 	if ($object->type != $object::TYPE_CREDIT_NOTE && $action != 'editinvoicedate' && !empty($object->brouillon) && $user->rights->facture->creer) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editinvoicedate&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editinvoicedate&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 
 	if ($object->type != $object::TYPE_CREDIT_NOTE) {
 		if ($action == 'editinvoicedate') {
-			$form->form_date($_SERVER['PHP_SELF'].'?id='.$object->id, $object->date, 'invoicedate');
+			print $form->form_date($_SERVER['PHP_SELF'].'?id='.$object->id, $object->date, 'invoicedate', 0, 0, 1, $type);
 		} else {
 			print dol_print_date($object->date, 'day');
 		}
@@ -386,13 +497,13 @@ if ($object->id > 0) {
 	print $langs->trans('PaymentConditionsShort');
 	print '</td>';
 	if ($object->type != $object::TYPE_CREDIT_NOTE && $action != 'editconditions' && !empty($object->brouillon) && $user->rights->facture->creer) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($object->type != $object::TYPE_CREDIT_NOTE) {
 		if ($action == 'editconditions') {
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id');
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id', 0, $type);
 		} else {
 			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'none');
 		}
@@ -407,7 +518,7 @@ if ($object->id > 0) {
 	print $langs->trans('DateMaxPayment');
 	print '</td>';
 	if ($object->type != $object::TYPE_CREDIT_NOTE && $action != 'editpaymentterm' && !empty($object->brouillon) && $user->rights->facture->creer) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editpaymentterm&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editpaymentterm&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td colspan="3">';
@@ -418,7 +529,7 @@ if ($object->id > 0) {
 		}
 
 		if ($action == 'editpaymentterm') {
-			$form->form_date($_SERVER['PHP_SELF'].'?id='.$object->id, $duedate, 'paymentterm');
+			print $form->form_date($_SERVER['PHP_SELF'].'?id='.$object->id, $duedate, 'paymentterm', 0, 0, 1, $type);
 		} else {
 			print dol_print_date($duedate, 'day');
 			if ($object->hasDelay()) {
@@ -436,12 +547,16 @@ if ($object->id > 0) {
 	print $langs->trans('PaymentMode');
 	print '</td>';
 	if ($action != 'editmode' && !empty($object->brouillon) && $user->rights->facture->creer) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td colspan="3">';
+	$filtertype = 'CRDT';
+	if ($type == 'bank-transfer') {
+		$filtertype = 'DBIT';
+	}
 	if ($action == 'editmode') {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', $filtertype, 1, 0, $type);
 	} else {
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'none');
 	}
@@ -453,7 +568,7 @@ if ($object->id > 0) {
 	print $langs->trans('BankAccount');
 	print '<td>';
 	if (($action != 'editbankaccount') && $user->rights->commande->creer && !empty($object->brouillon)) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td colspan="3">';
@@ -481,7 +596,9 @@ if ($object->id > 0) {
 			print img_warning('Error on default bank number for IBAN : '.$bac->error_message);
 		}
 	} else {
-		print img_warning($langs->trans("NoDefaultIBANFound"));
+		if ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
+			print img_warning($langs->trans("NoDefaultIBANFound"));
+		}
 	}
 
 	print '</td></tr>';
@@ -564,34 +681,6 @@ if ($object->id > 0) {
 
 	print dol_get_fiche_end();
 
-
-	$numopen = 0;
-	$pending = 0;
-	$numclosed = 0;
-
-
-	// How many Direct debit opened requests ?
-
-	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
-	$sql .= " , pfd.date_traite as date_traite";
-	$sql .= " , pfd.amount";
-	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-	if ($type == 'bank-transfer') {
-		$sql .= " WHERE fk_facture_fourn = ".((int) $object->id);
-	} else {
-		$sql .= " WHERE fk_facture = ".((int) $object->id);
-	}
-	$sql .= " AND pfd.traite = 0";
-	$sql .= " AND pfd.ext_payment_id IS NULL";
-	$sql .= " ORDER BY pfd.date_demande DESC";
-
-	$result_sql = $db->query($sql);
-	if ($result_sql) {
-		$num = $db->num_rows($result_sql);
-		$numopen = $num;
-	} else {
-		dol_print_error($db);
-	}
 
 	// For which amount ?
 
