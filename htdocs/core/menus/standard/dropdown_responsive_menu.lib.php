@@ -142,22 +142,22 @@ function print_ace_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 0
 		print '</button>';
 
 		print '<i id="a_link_spinner" class="fas fa-spinner fa-pulse"></i>';
-		
+
 		// Displays title
 		$appli = constant('DOL_APPLICATION_TITLE');
-		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-			$appli = $conf->global->MAIN_APPLICATION_TITLE;
-		}
+	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+		$appli = $conf->global->MAIN_APPLICATION_TITLE;
+	}
 
 		print '<a class="title">';
 		$titletoshow = '';
-		if ($title && !empty($conf->global->MAIN_HTML_TITLE) && preg_match('/noapp/', $conf->global->MAIN_HTML_TITLE)) {
-			$titletoshow = dol_htmlentities($title);
-		} elseif ($title) {
-			$titletoshow = dol_htmlentities($appli.' - '.$title);
-		} else {
-			$titletoshow = dol_htmlentities($appli);
-		}
+	if ($title && !empty($conf->global->MAIN_HTML_TITLE) && preg_match('/noapp/', $conf->global->MAIN_HTML_TITLE)) {
+		$titletoshow = dol_htmlentities($title);
+	} elseif ($title) {
+		$titletoshow = dol_htmlentities($appli.' - '.$title);
+	} else {
+		$titletoshow = dol_htmlentities($appli);
+	}
 
 		print $titletoshow;
 		print '</a>';
