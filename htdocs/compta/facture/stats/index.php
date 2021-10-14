@@ -283,7 +283,7 @@ if (! empty($conf->category->enabled)) {
 	    $cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Supplier"));
 	}
 	print '<tr><td>'.$cat_label.'</td><td>';
-	$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
+	$cate_arbo = $form->select_all_categories($cat_type, null, 'parent', null, null, 1);
 	print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null, null, "90%");
 	//print $formother->select_categories($cat_type, $categ_id, 'categ_id', true);
 	print '</td></tr>';
