@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  * @param	string	$mode			'top', 'topnb', 'left', 'jmobile'
  * @return	int						0
  */
-function print_ace_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 0, $mode = '',$moredata=null)
+function print_ace_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 0, $mode = '', $moredata = null)
 {
 	global $user, $conf, $langs, $mysoc;
 	global $dolibarr_main_db_name;
@@ -55,15 +55,15 @@ function print_ace_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 0
 
 	$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
 
-    $usemenuhider = 1;
+	$usemenuhider = 1;
 
 
 	// Show personalized menus
 	$menuArbo = new Menubase($db, 'auguria');
-	
+
 	//OPEN ALL LEFT MENU
 	$menuArbo->menuLoad('', 'all', ($user->socid ? 1 : 0), 'auguria', $tabMenu);
-	
+
 	$newTabMenu = $menuArbo->menuTopCharger('', '', $type_user, 'auguria', $tabMenu);
 
 	$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
@@ -72,32 +72,27 @@ function print_ace_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 0
 	$usemenuhider = 1;
 
 	$num = count($newTabMenu);
-	for ($i = 0; $i < $num; $i++)
-	{
+	for ($i = 0; $i < $num; $i++) {
 		$idsel = (empty($newTabMenu[$i]['mainmenu']) ? 'none' : $newTabMenu[$i]['mainmenu']);
 
 		$showmode = dol_auguria_showmenu($type_user, $newTabMenu[$i], $listofmodulesforexternal);
-		if ($showmode == 1)
-		{
+		if ($showmode == 1) {
 			$newTabMenu[$i]['url'] = make_substitutions($newTabMenu[$i]['url'], $substitarray);
 
 			$url = $shorturl = $newTabMenu[$i]['url'];
 
-			if (!preg_match("/^(http:\/\/|https:\/\/)/i", $newTabMenu[$i]['url']))
-			{
-			    $tmp = explode('?', $newTabMenu[$i]['url'], 2);
+			if (!preg_match("/^(http:\/\/|https:\/\/)/i", $newTabMenu[$i]['url'])) {
+				$tmp = explode('?', $newTabMenu[$i]['url'], 2);
 				$url = $shorturl = $tmp[0];
 				$param = (isset($tmp[1]) ? $tmp[1] : '');
 
 				// Complete param to force leftmenu to '' to close open menu when we click on a link with no leftmenu defined.
-			    if ((!preg_match('/mainmenu/i', $param)) && (!preg_match('/leftmenu/i', $param)) && !empty($newTabMenu[$i]['url']))
-			    {
-			        $param .= ($param ? '&' : '').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=';
-			    }
-			    if ((!preg_match('/mainmenu/i', $param)) && (!preg_match('/leftmenu/i', $param)) && empty($newTabMenu[$i]['url']))
-			    {
-			        $param .= ($param ? '&' : '').'leftmenu=';
-			    }
+				if ((!preg_match('/mainmenu/i', $param)) && (!preg_match('/leftmenu/i', $param)) && !empty($newTabMenu[$i]['url'])) {
+					$param .= ($param ? '&' : '').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=';
+				}
+				if ((!preg_match('/mainmenu/i', $param)) && (!preg_match('/leftmenu/i', $param)) && empty($newTabMenu[$i]['url'])) {
+					$param .= ($param ? '&' : '').'leftmenu=';
+				}
 				//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
 				$url = dol_buildpath($url, 1).($param ? '?'.$param : '');
 				//$shorturl = $shorturl.($param?'?'.$param:'');
@@ -107,19 +102,17 @@ function print_ace_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 0
 			}
 
 			// TODO Find a generic solution
-			if (preg_match('/search_project_user=__search_project_user__/', $shorturl))
-			{
-			    $search_project_user = GETPOST('search_project_user', 'int');
-			    if ($search_project_user) $shorturl = preg_replace('/search_project_user=__search_project_user__/', 'search_project_user='.$search_project_user, $shorturl);
-			    else $shorturl = preg_replace('/search_project_user=__search_project_user__/', '', $shorturl);
+			if (preg_match('/search_project_user=__search_project_user__/', $shorturl)) {
+				$search_project_user = GETPOST('search_project_user', 'int');
+				if ($search_project_user) $shorturl = preg_replace('/search_project_user=__search_project_user__/', 'search_project_user='.$search_project_user, $shorturl);
+				else $shorturl = preg_replace('/search_project_user=__search_project_user__/', '', $shorturl);
 			}
 
 			// Define the class (top menu selected or not)
 			if (!empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname = 'class="tmenusel"';
 			elseif (!empty($_SESSION["mainmenu"]) && $newTabMenu[$i]['mainmenu'] == $_SESSION["mainmenu"]) $classname = 'class="tmenusel"';
 			else $classname = 'class="tmenu"';
-		}
-		elseif ($showmode == 2) $classname = 'class="tmenu"';
+		} elseif ($showmode == 2) $classname = 'class="tmenu"';
 
 		$menu->add($shorturl, $newTabMenu[$i]['titre'], 0, $showmode, ($newTabMenu[$i]['target'] ? $newTabMenu[$i]['target'] : $atarget), ($newTabMenu[$i]['mainmenu'] ? $newTabMenu[$i]['mainmenu'] : $newTabMenu[$i]['rowid']), ($newTabMenu[$i]['leftmenu'] ? $newTabMenu[$i]['leftmenu'] : ''), $newTabMenu[$i]['position'], $id, $idsel, $classname);
 	}
@@ -141,7 +134,7 @@ function print_ace_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 0
 	//PRINT Menu
 	//**********************************************************************
 	print '<div class="menu-toggle">';
-	
+
 		print '<button type="button" id="logout-btn">';
 			print '<a accesskey="l" href="'.dol_buildpath("/user/logout.php", 1).'">';
 			print '<i class="fas fa-sign-out-alt" style="color:white"></i>';
@@ -156,16 +149,15 @@ function print_ace_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 0
 			print '<span class="icon-bar"></span>';
 		print '</button>';
 	print '</div>';
-	
-	
+
+
 	if (empty($noout)) print_start_menu_array();
 
 
-    // Output menu entries
+	// Output menu entries
 	// Show logo company
 
-	if ($mode != "jmobile" && empty($conf->global->MAIN_MENU_INVERT) && empty($noout) && !empty($conf->global->MAIN_SHOW_LOGO) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-	{
+	if ($mode != "jmobile" && empty($conf->global->MAIN_MENU_INVERT) && empty($noout) && !empty($conf->global->MAIN_SHOW_LOGO) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 		//$mysoc->logo_mini=(empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI);
 		$mysoc->logo_squarred_mini = (empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI) ? '' : $conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI);
 
@@ -174,13 +166,9 @@ function print_ace_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 0
 			$logoContainerAdditionalClass = '';
 		}
 
-		if (!empty($mysoc->logo_squarred_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini))
-		{
+		if (!empty($mysoc->logo_squarred_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini)) {
 			$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
-		}
-
-		else
-		{
+		} else {
 			$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo_squarred_alpha.png';
 			$logoContainerAdditionalClass = '';
 		}
@@ -194,29 +182,26 @@ function print_ace_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 0
 
 		print_end_menu_entry(4);
 	}
-	
+
 
 	$i=0;
 	$arrayMenu = $menu->liste;
 	$num = count($arrayMenu);
-	
-	
-	if($num > 0){
-		for ($i = 0; $i < $num; $i++){
-			
-			if($arrayMenu[$i]['enabled'])
-			{
-			
+
+
+	if ($num > 0) {
+		for ($i = 0; $i < $num; $i++) {
+			if ($arrayMenu[$i]['enabled']) {
 				print_start_menu_entry($arrayMenu[$i]['idsel'], $arrayMenu[$i]['classname'], $arrayMenu[$i]['enabled']);
 				print_text_menu_entry($arrayMenu[$i]['titre'], $arrayMenu[$i]['enabled'], (($arrayMenu[$i]['url'] != '#' && !preg_match('/^(http:\/\/|https:\/\/)/i', $arrayMenu[$i]['url'])) ? DOL_URL_ROOT:'').$arrayMenu[$i]['url'], $arrayMenu[$i]['id'], $arrayMenu[$i]['idsel'], $arrayMenu[$i]['classname'], ($arrayMenu[$i]['target'] ? $arrayMenu[$i]['target'] : $atarget));
-				
+
 				$menu_array = array();
 				$mainMenuName = trim($arrayMenu[$i]['mainmenu']);
 				$leftMenuName = trim($arrayMenu[$i]['leftmenu']);
-				
-				
-				if(!empty($mainMenuName)){
-					$menu_array = get_sub_menu($db,$mainMenuName,$leftMenuName,$tabMenu);
+
+
+				if (!empty($mainMenuName)) {
+					$menu_array = get_sub_menu($db, $mainMenuName, $leftMenuName, $tabMenu);
 					/*
 					if($i==4){
 						var_dump($menu_array);
@@ -224,24 +209,22 @@ function print_ace_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 0
 					}
 					*/
 				}
-				
-				if(!empty($menu_array)) print_sub_menu_entry($menu_array);
+
+				if (!empty($menu_array)) print_sub_menu_entry($menu_array);
 
 
 				print_end_menu_entry($arrayMenu[$i]['enabled']);
 			}
-
-			
 		}
 	}
-	
+
 
 	$showmode = 1;
-    if (empty($noout)) {
-        print_start_menu_entry('', 'class="tmenuend"', $showmode);
-        print_end_menu_entry($showmode);
-        print_end_menu_array();
-    }
+	if (empty($noout)) {
+		print_start_menu_entry('', 'class="tmenuend"', $showmode);
+		print_end_menu_entry($showmode);
+		print_end_menu_array();
+	}
 
 	return 0;
 }
@@ -254,7 +237,7 @@ function print_ace_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 0
  */
 function print_start_menu_array()
 {
-    global $conf;
+	global $conf;
 
 	print '<div class="tmenudiv">';
 	print '<ul id="dropdownMenu" role="navigation" class="dropdown-responsive-menu" data-menu-style="horizontal">';
@@ -270,8 +253,7 @@ function print_start_menu_array()
  */
 function print_start_menu_entry($idsel, $classname, $showmode)
 {
-	if ($showmode)
-	{
+	if ($showmode) {
 		print '<li '.$classname.' id="mainmenutd_'.$idsel.'">';
 	}
 }
@@ -301,7 +283,6 @@ function print_text_menu_entry($text, $showmode, $url, $id, $idsel, $classname, 
 		print $text;
 		print '</span>';
 		print '</a>';
-
 }
 
 /**
@@ -325,46 +306,42 @@ function print_sub_menu_entry($menu_array)
 	//**********************************************************
 	//SHOW SUB MENU
 	//**********************************************************
-	
+
 	$num = count($menu_array);
-	
+
 	//var_dump($menu_array);
 	//exit();
-	
-	if($num > 0){
+
+	if ($num > 0) {
 		print '<ul>';
 
-		
-		for ($i = 0; $i < $num; $i++)     // Loop on each menu entry
-		{
+
+		for ($i = 0; $i < $num; $i++) {     // Loop on each menu entry
 			$showmenu = true;
 			if (!empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) && empty($menu_array[$i]['enabled'])) 	$showmenu = false;
 
 			$url = dol_buildpath($menu_array[$i]['url'], 1);
-			
+
 
 			//print '<!-- Process menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['level'].' enabled='.$menu_array[$i]['enabled'].', position='.$menu_array[$i]['position'].' -->'."\n";
 
 			// Menu level 0
-			if ($menu_array[$i]['level'] == 0)
-			{
-				if ($menu_array[$i]['enabled'])     // Enabled so visible
-				{
-				
-					if($lastlevel == 0) {
+			if ($menu_array[$i]['level'] == 0) {
+				if ($menu_array[$i]['enabled']) {     // Enabled so visible
+					if ($lastlevel == 0) {
 						print '</li>';
 						print '<li>';
-					}elseif($lastlevel == 1) {
+					} elseif ($lastlevel == 1) {
 						print '</li>';
 						print '</ul>';
 						print '<li>';
-					}elseif($lastlevel == 2) {
+					} elseif ($lastlevel == 2) {
 						print '</li>';
 						print '</ul>';
 						print '</li>';
 						print '</ul>';
 						print '<li>';
-					}elseif($lastlevel == 3) {
+					} elseif ($lastlevel == 3) {
 						print '</li>';
 						print '</ul>';
 						print '</li>';
@@ -374,7 +351,7 @@ function print_sub_menu_entry($menu_array)
 						print '<li>';
 					}
 
-					print '<a href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';					
+					print '<a href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
 					print ($menu_array[$i]['prefix'] ? $menu_array[$i]['prefix'] : '').$menu_array[$i]['titre'];
 					print '</a>';
 
@@ -384,68 +361,56 @@ function print_sub_menu_entry($menu_array)
 			}
 
 			// Menu level == 1
-			if ($menu_array[$i]['level'] > 0)
-			{
-
-				if ($menu_array[$i]['enabled'])     // Enabled so visible, except if parent was not enabled.
-				{
-					
-					
+			if ($menu_array[$i]['level'] > 0) {
+				if ($menu_array[$i]['enabled']) {     // Enabled so visible, except if parent was not enabled.
 					$currentlevel = $menu_array[$i]['level'];
-					
-					if($currentlevel == $lastlevel){
+
+					if ($currentlevel == $lastlevel) {
 						print '</li>';
 						print '<li>';
-					}elseif($currentlevel>$lastlevel){						
+					} elseif ($currentlevel>$lastlevel) {
 						print '<ul class="ul_submenu">';
 						print '<li>';
-						
-					}elseif($currentlevel<$lastlevel){
-						
+					} elseif ($currentlevel<$lastlevel) {
 						$diff = $lastlevel-$currentlevel;
-						
+
 						for ($y = 0; $y < $diff; $y++) {
 							print '</li>';
 							print '</ul>';
 						}
-						
+
 						print '<li>';
-					}				
-					
+					}
+
 					print '<a class="vmenu" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
-					
+
 					if (stripos($menu_array[$i]['titre'], 'list') !== false) print '<i class="fas fa-list"></i>';
 					elseif (stripos($menu_array[$i]['titre'], 'nouv') !== false) print '<i class="fas fa-plus"></i>';
 					elseif (stripos($menu_array[$i]['titre'], 'stat') !== false) print '<i class="fas fa-chart-pie"></i>';
 					elseif (stripos($menu_array[$i]['titre'], 'tags') !== false) print '<i class="fas fa-tag"></i>';
 					elseif (stripos($menu_array[$i]['titre'], 'glement') !== false) print '<i class="fas fa-euro-sign"></i>';
 					elseif (stripos($menu_array[$i]['titre'], 'rapport') !== false) print '<i class="fas fa-file"></i>';
-					
+
 					print ($menu_array[$i]['prefix'] ? $menu_array[$i]['prefix'] : '').$menu_array[$i]['titre'];
 					print '</a>';
 
 					$lastlevel = $currentlevel;
 				}
-
-
 			}
-			
+
 
 			// If next is a new block or if there is nothing after
-			if ($i+1 == $num)               // End menu block
-			{
-				
+			if ($i+1 == $num) {               // End menu block
 				for ($y = 0; $y < $lastlevel; $y++) {
 					print '</li>';
 					print '</ul>';
 				}
-				
+
 				print '</li>';
 			}
 		}
 		print '</ul>';
 	}
-	
 }
 
 /**
@@ -456,8 +421,7 @@ function print_sub_menu_entry($menu_array)
  */
 function print_end_menu_entry($showmode)
 {
-	if ($showmode)
-	{
+	if ($showmode) {
 		//print '</div></li>';
 		print '</li>';
 	}
@@ -474,9 +438,9 @@ function print_end_menu_array()
 	print '</ul>';
 	print '</div>';
 	print "\n";
-	
+
 	print '<script type="text/javascript"> $("#dropdownMenu").dropDownResponsiveMenu(); </script>';
-	
+
 	print '<div style="clear: both;"></div>';
 }
 
@@ -497,13 +461,13 @@ function print_end_menu_array()
  * @param	array		$moredata			An array with more data to output
  * @return	int								Nb of menu entries
  */
-function get_sub_menu($db,$mainmenu,$leftmenu,$tabMenu)
+function get_sub_menu($db, $mainmenu, $leftmenu, $tabMenu)
 {
 	global $user, $conf, $langs, $dolibarr_main_db_name, $mysoc;
 
 	$newmenu = new Menu();
 
-    $usemenuhider = 0;
+	$usemenuhider = 0;
 
 
 	/**
@@ -512,21 +476,20 @@ function get_sub_menu($db,$mainmenu,$leftmenu,$tabMenu)
 	 */
 
 	$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
-	
-	
+
+
 	$menuArbo = new Menubase($db, 'auguria');
-		
+
 	$newmenu = $menuArbo->menuLeftCharger($newmenu, $mainmenu, $leftmenu, ($user->socid ? 1 : 0), 'auguria', $tabMenu);
-	
+
 	$menu_array = $newmenu->liste;
 
 
 
 
 	// We update newmenu for special dynamic menus
-	if ($conf->banque->enabled && $user->rights->banque->lire && $mainmenu == 'bank')	// Entry for each bank account
-	{
-	    include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // Required for to get Account::TYPE_CASH for example
+	if ($conf->banque->enabled && $user->rights->banque->lire && $mainmenu == 'bank') {	// Entry for each bank account
+		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // Required for to get Account::TYPE_CASH for example
 
 		$sql = "SELECT rowid, label, courant, rappro, courant";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
@@ -535,30 +498,25 @@ function get_sub_menu($db,$mainmenu,$leftmenu,$tabMenu)
 		$sql .= " ORDER BY label";
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$numr = $db->num_rows($resql);
 			$i = 0;
 
 			if ($numr > 0) 	$newmenu->add('/compta/bank/list.php', $langs->trans("BankAccounts"), 0, $user->rights->banque->lire);
 
-			while ($i < $numr)
-			{
+			while ($i < $numr) {
 				$objp = $db->fetch_object($resql);
 				$newmenu->add('/compta/bank/card.php?id='.$objp->rowid, $objp->label, 1, $user->rights->banque->lire);
-				if ($objp->rappro && $objp->courant != Account::TYPE_CASH && empty($objp->clos))  // If not cash account and not closed and can be reconciliate
-				{
+				if ($objp->rappro && $objp->courant != Account::TYPE_CASH && empty($objp->clos)) {  // If not cash account and not closed and can be reconciliate
 					$newmenu->add('/compta/bank/bankentries_list.php?id='.$objp->rowid, $langs->trans("Conciliate"), 2, $user->rights->banque->consolidate);
 				}
 				$i++;
 			}
-		}
-		else dol_print_error($db);
+		} else dol_print_error($db);
 		$db->free($resql);
 	}
 
-	if (!empty($conf->accounting->enabled) && !empty($user->rights->accounting->comptarapport->lire) && $mainmenu == 'accountancy') 	// Entry in accountancy journal for each bank account
-	{
+	if (!empty($conf->accounting->enabled) && !empty($user->rights->accounting->comptarapport->lire) && $mainmenu == 'accountancy') { 	// Entry in accountancy journal for each bank account
 		$newmenu->add('', $langs->trans("RegistrationInAccounting"), 1, $user->rights->accounting->comptarapport->lire, '', 'accountancy', 'accountancy', 10);
 
 		// Multi journal
@@ -569,15 +527,12 @@ function get_sub_menu($db,$mainmenu,$leftmenu,$tabMenu)
 		$sql .= " ORDER BY label DESC";
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$numr = $db->num_rows($resql);
 			$i = 0;
 
-			if ($numr > 0)
-			{
-				while ($i < $numr)
-				{
+			if ($numr > 0) {
+				while ($i < $numr) {
 					$objp = $db->fetch_object($resql);
 
 					$nature = '';
@@ -592,40 +547,32 @@ function get_sub_menu($db,$mainmenu,$leftmenu,$tabMenu)
 					if ($objp->nature == 9) $nature="hasnew";
 
 					// To enable when page exists
-					if (empty($conf->global->ACCOUNTANCY_SHOW_DEVELOP_JOURNAL))
-					{
+					if (empty($conf->global->ACCOUNTANCY_SHOW_DEVELOP_JOURNAL)) {
 						if ($nature == 'various' || $nature == 'hasnew' || $nature == 'inventory') $nature = '';
 					}
 
-					if ($nature)
-					{
-                        $langs->load('accountancy');
-                        $journallabel = $langs->transnoentities($objp->label); // Labels in this table are set by loading llx_accounting_abc.sql. Label can be 'ACCOUNTING_SELL_JOURNAL', 'InventoryJournal', ...
-                        $newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $journallabel, 2, $user->rights->accounting->comptarapport->lire);
+					if ($nature) {
+						$langs->load('accountancy');
+						$journallabel = $langs->transnoentities($objp->label); // Labels in this table are set by loading llx_accounting_abc.sql. Label can be 'ACCOUNTING_SELL_JOURNAL', 'InventoryJournal', ...
+						$newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $journallabel, 2, $user->rights->accounting->comptarapport->lire);
 					}
 					$i++;
 				}
-			}
-			else
-			{
+			} else {
 				// Should not happend. Entries are added
 				$newmenu->add('', $langs->trans("NoJournalDefined"), 2, $user->rights->accounting->comptarapport->lire);
 			}
-		}
-		else dol_print_error($db);
+		} else dol_print_error($db);
 		$db->free($resql);
 	}
 
-	if (!empty($conf->ftp->enabled) && $mainmenu == 'ftp')	// Entry for FTP
-	{
+	if (!empty($conf->ftp->enabled) && $mainmenu == 'ftp') {	// Entry for FTP
 		$MAXFTP = 20;
 		$i = 1;
-		while ($i <= $MAXFTP)
-		{
+		while ($i <= $MAXFTP) {
 			$paramkey = 'FTP_NAME_'.$i;
 			//print $paramkey;
-			if (!empty($conf->global->$paramkey))
-			{
+			if (!empty($conf->global->$paramkey)) {
 				$link = "/ftp/index.php?idmenu=".$_SESSION["idmenu"]."&numero_ftp=".$i;
 
 				$newmenu->add($link, dol_trunc($conf->global->$paramkey, 24));
@@ -662,12 +609,10 @@ function dol_auguria_showmenu($type_user, &$menuentry, &$listofmodulesforexterna
 	//print 'type_user='.$type_user.' module='.$menuentry['module'].' enabled='.$menuentry['enabled'].' perms='.$menuentry['perms'];
 	//print 'ok='.in_array($menuentry['module'], $listofmodulesforexternal);
 	if (empty($menuentry['enabled'])) return 0; // Entry disabled by condition
-	if ($type_user && $menuentry['module'])
-	{
+	if ($type_user && $menuentry['module']) {
 		$tmploops = explode('|', $menuentry['module']);
 		$found = 0;
-		foreach ($tmploops as $tmploop)
-		{
+		foreach ($tmploops as $tmploop) {
 			if (in_array($tmploop, $listofmodulesforexternal)) {
 				$found++; break;
 			}
