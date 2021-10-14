@@ -213,7 +213,15 @@ if ($conf->standard_menu == 'dropdown_responsive_menu.php') {
 		float: left;
 		width: 100%;
 		background: #333;
+		text-align: center;
 	}
+	
+	a.title {
+		color: #fff;
+		font-size: 300%;
+		margin: auto;
+	}
+
 	.menu-toggle h3 {
 		float: left;
 		color: #FFF;
