@@ -181,7 +181,9 @@ if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend'
+&& $massaction != 'presend_attendees'
+&& $massaction != 'confirm_presend_attendees') {
 	$massaction = '';
 }
 
@@ -216,6 +218,7 @@ if (empty($reshook)) {
 	$objectclass = 'ConferenceOrBoothAttendee';
 	$objectlabel = 'ConferenceOrBoothAttendee';
 	$uploaddir = $conf->eventorganization->dir_output;
+	include DOL_DOCUMENT_ROOT.'/eventorganization/core/actions_massactions_mail.inc.php';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -598,7 +601,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		if (empty($confOrBooth->id)) {
 			$head = conferenceorboothProjectPrepareHead($projectstatic);
 			$tab = 'attendees';
-			print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($project->public ? 'projectpub' : 'project'), 0, '', '');
+			print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($project->public ? 'projectpub' : 'project'), 0, '', 'reposition');
 		}
 	}
 
@@ -676,6 +679,7 @@ $arrayofmassactions = array(
 	//'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+	'presend_attendees'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail").' - '.$langs->trans("Attendees"),
 );
 if ($permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
@@ -709,6 +713,7 @@ $topicmail = "SendConferenceOrBoothAttendeeRef";
 $modelmail = "conferenceorboothattendee";
 $objecttmp = new ConferenceOrBoothAttendee($db);
 $trackid = 'xxxx'.$object->id;
+include DOL_DOCUMENT_ROOT.'/eventorganization/tpl/massactions_mail_pre.tpl.php';
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all) {

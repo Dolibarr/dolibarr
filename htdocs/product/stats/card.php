@@ -223,9 +223,9 @@ if ($result || empty($id)) {
 	}
 
 	if ($mode == 'bynumber') {
-		print '<a class="a-mesure-disabled" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).($type != '' ? '&type='.$type : '').'&mode=byunit&search_year='.$search_year.'">';
+		print '<a class="a-mesure-disabled marginleftonly marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).($type != '' ? '&type='.$type : '').'&mode=byunit&search_year='.$search_year.'">';
 	} else {
-		print '<span class="a-mesure">';
+		print '<span class="a-mesure marginleftonly marginrightonly">';
 	}
 	print $langs->trans("StatsByNumberOfUnits");
 	if ($mode == 'bynumber') {
@@ -236,14 +236,12 @@ if ($result || empty($id)) {
 
 	if (!empty($conf->dol_use_jmobile)) {
 		print '</div>'."\n".'<div class="nowrap">'."\n";
-	} else {
-		print ' &nbsp; ';
 	}
 
 	if ($mode == 'byunit') {
-		print '<a class="a-mesure-disabled" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).($type != '' ? '&type='.$type : '').'&mode=bynumber&search_year='.$search_year.'">';
+		print '<a class="a-mesure-disabled marginleftonly marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).($type != '' ? '&type='.$type : '').'&mode=bynumber&search_year='.$search_year.'">';
 	} else {
-		print '<span class="a-mesure">';
+		print '<span class="a-mesure marginleftonly marginrightonly">';
 	}
 	print $langs->trans("StatsByNumberOfEntities");
 	if ($mode == 'byunit') {

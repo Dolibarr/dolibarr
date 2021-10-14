@@ -109,7 +109,7 @@ if ($action == 'cancel_record' && $permissiontoadd) {
 
 if ($action == 'update' && !empty($user->rights->stock->mouvement->creer)) {
 	$stockmovment = new MouvementStock($db);
-	$stockmovment->origin = $object;
+	$stockmovment->setOrigin($object->element, $object->id);
 
 	$db->begin();
 
@@ -117,6 +117,7 @@ if ($action == 'update' && !empty($user->rights->stock->mouvement->creer)) {
 	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
 	$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
