@@ -119,10 +119,10 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 
 $filenamenb = $dir."/invoicesnbinyear-".$year.".png";
 if ($mode == 'customer') {
-	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$year.'.png';
+	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=invoicesnbinyear-'.$year.'.png';
 }
 if ($mode == 'supplier') {
-	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicesnbinyear-'.$year.'.png';
+	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&file=invoicesnbinyear-'.$year.'.png';
 }
 
 $px1 = new DolGraph();
