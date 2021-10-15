@@ -766,15 +766,17 @@ if (!empty($arrayfields['t.progress']['checked'])) {
 	print '<input type="text" class="flat" name="search_task_progress" value="'.$search_task_progress.'" size="4">';
 	print '</td>';
 }
+
+if (!empty($arrayfields['t.progress_summary']['checked'])) {
+	print '<td class="liste_titre"></td>';
+}
+
 if (!empty($arrayfields['t.budget_amount']['checked'])) {
 	print '<td class="liste_titre center">';
 	print '<input type="text" class="flat" name="search_task_budget_amount" value="'.$search_task_budget_amount.'" size="4">';
 	print '</td>';
 }
 
-if (!empty($arrayfields['t.progress_summary']['checked'])) {
-	print '<td class="liste_titre"></td>';
-}
 if (!empty($arrayfields['t.tobill']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
@@ -1146,7 +1148,7 @@ while ($i < min($num, $limit)) {
 			}
 			$totalarray['val']['t.budget_amount'] += $obj->budget_amount;
 			if (!$i) {
-				$totalarray['totalbudgetamount'] = $totalarray['nbfield'];
+				$totalarray['totalbudget_amount'] = $totalarray['nbfield'];
 			}
 			$totalarray['totalbudgetamount'] += $obj->budget_amount;
 			print '</td>';
@@ -1267,7 +1269,7 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 			print '<td class="center">'.convertSecondToTime($totalarray['totaltobill'], $plannedworkloadoutputformat).'</td>';
 		} elseif ($totalarray['totalbilledfield'] == $i) {
 			print '<td class="center">'.convertSecondToTime($totalarray['totalbilled'], $plannedworkloadoutputformat).'</td>';
-		} elseif ($totalarray['totalbudgetamount'] == $i) {
+		} elseif ($totalarray['totalbudget_amount'] == $i) {
 			print '<td class="center">'.price($totalarray['totalbudgetamount'], 0, $langs, 1, 0, 0, $conf->currency).'</td>';
 		} else {
 			print '<td></td>';

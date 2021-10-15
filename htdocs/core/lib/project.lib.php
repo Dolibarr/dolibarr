@@ -929,7 +929,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		}
 	}
 
-	if (($total_projectlinesa_planned > 0 || $total_projectlinesa_spent > 0 || $total_projectlinesa_tobill > 0 || $total_projectlinesa_billed > 0)
+	if (($total_projectlinesa_planned > 0 || $total_projectlinesa_spent > 0 || $total_projectlinesa_tobill > 0 || $total_projectlinesa_billed > 0 || $total_budget_amount > 0)
 		&& $level <= 0) {
 		print '<tr class="liste_total nodrag nodrop">';
 		print '<td class="liste_total">'.$langs->trans("Total").'</td>';
@@ -1031,8 +1031,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		}
 
 		if (count($arrayfields) > 0 && !empty($arrayfields['t.budget_amount']['checked'])) {
-			print '<td class="nowrap liste_total right">';
-			price($total_budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
+			print '<td class="nowrap liste_total center">';
+			print price($total_budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
 			print '</td>';
 		}
 
