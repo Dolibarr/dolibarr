@@ -49,6 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
 // Load translation files
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox"));
@@ -58,6 +59,8 @@ $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors",
 
 // Get parameters
 $action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
+$refusepropal = GETPOST('refusepropal', 'alpha');
 
 // Input are:
 // type ('invoice','order','contractline'),
@@ -80,7 +83,9 @@ if (!$action) {
 		exit;
 	}
 }
-
+if (!empty($refusepropal)) {
+	$action = "refusepropal";
+}
 
 // Define $urlwithroot
 //$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
@@ -112,14 +117,16 @@ $urlko = preg_replace('/&$/', '', $urlko); // Remove last &
 
 $creditor = $mysoc->name;
 
+$object = new Propal($db);
+$object->fetch(0, $ref);
 
 /*
  * Actions
  */
 
 
-if ($action == 'dosign') {
-	// TODO
+if ($action == 'refusepropal') {
+	//TODO: creer suite de cette action
 }
 
 
@@ -290,7 +297,69 @@ if ($action != 'dosign') {
 }
 
 print '</td></tr>'."\n";
+print '<tr><td align="center">';
+if ($action == "dosign" && empty($cancel)) {
+	print '<div class="tablepublicpayment">';
+	print '<input type="button" class="button" id="clearsignature" value="'.$langs->trans("ClearSignature").'">';
+	print '<div id="signature"></div>';
+	print '</div>';
+	print '<input type="button" class="button" id="signpropal" value="'.$langs->trans("Sign").'">';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<script language="JavaScript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jSignature/jSignature.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+	  $("#signature").jSignature({color:"#000",lineWidth:4});
 
+	  $("#signature").on("change",function(){
+		$("#clearsignature").css("display","");
+		$("#signpropal").attr("disabled",false);
+		if(!$._data($("#signpropal")[0], "events")){
+			$("#signpropal").on("click",function(){
+				var signature = $("#signature").jSignature("getData", "image");
+				$.ajax({ 
+					type: "POST", 
+					url: "'.DOL_URL_ROOT.'/core/ajax/onlineSign.php",
+					dataType: "text",
+					data: {
+						"action" : "importSignature",
+						"signaturebase64" : signature,
+						"ref" : "'.$REF.'",
+						"mode" : "propale",
+					},
+					success: function(response) {
+						if(response == "success"){
+							console.log("Success on saving signature");
+							window.location.replace("'.$_SERVER["SELF"].'?ref='.$ref.'");
+						}else{
+							console.error(response);
+						}
+					},
+				});
+			});
+		}
+	  });
+
+	  $("#clearsignature").on("click",function(){
+		$("#signature").jSignature("clear");
+		$("#signpropal").attr("disabled",true);
+		$("#clearsignature").css("display","none");
+	  });
+
+	  $("#clearsignature").css("display","none");
+	  $("#signpropal").attr("disabled",true);
+	});
+	</script>';
+} else {
+	if ($object->status == $object::STATUS_SIGNED) {
+		print $langs->trans("PropalSigned");
+	} elseif ($object->status == $object::STATUS_NOTSIGNED) {
+		print $langs->trans("PropalNotSigned");
+	} else {
+		print '<input type="submit" class="button" value="'.$langs->trans("SignPropal").'">';
+		print '<input name="refusepropal" type="submit" class="button" value="'.$langs->trans("RefusePropal").'">';
+	}
+}
+print '</td></tr>'."\n";
 print '</table>'."\n";
 print '</form>'."\n";
 print '</div>'."\n";
