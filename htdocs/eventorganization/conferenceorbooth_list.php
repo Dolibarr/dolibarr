@@ -475,7 +475,8 @@ if ($projectid > 0) {
 if (!empty($project->id)) {
 	$head = conferenceorboothProjectPrepareHead($project);
 	$tab = 'conferenceorbooth';
-	print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($project->public ? 'projectpub' : 'project'), 0, '', '');
+
+	print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($project->public ? 'projectpub' : 'project'), 0, '', 'reposition');
 }
 
 // Build and execute select
@@ -628,7 +629,7 @@ $arrayofmassactions = array(
 if ($permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'presend_attendees', 'predelete'))) {
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
