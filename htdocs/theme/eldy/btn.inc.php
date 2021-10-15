@@ -277,7 +277,7 @@ a.btnTitle.btnTitleSelected {
 }
 
 .btnTitle>.fa {
-	font-size: 20px;
+	font-size: 2em;
 	display: block;
 }
 
