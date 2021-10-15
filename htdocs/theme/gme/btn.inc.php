@@ -11,7 +11,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 			--btncolorborder: #FFF;
 			/* --butactionbg:rgba(150, 110, 162, 0.95); */
 			--butactionbg:rgb(118, 145, 225);
-			--butactionbg:rgba(150, 110, 162, 0.95);
+			--butactionbg:rgba(97, 172, 219, 1);
 			--butactiondeletebg: rgb(234,228,225);
 			/* tertiary color */
 			/* --butactionbg:rgb(218, 235, 225); */
