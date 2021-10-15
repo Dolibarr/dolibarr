@@ -290,7 +290,7 @@ if (!empty($search_progressdeclare)) {
 }
 
 if ($search_task_budget_amount) {
-	$morewherefilterarray[]= natural_search('t.budget_amount', $search_task_budget_amount, 1);
+	$morewherefilterarray[]= natural_search('t.budget_amount', $search_task_budget_amount, 1, 1);
 }
 
 $morewherefilter = '';
@@ -1029,7 +1029,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	*/
 
 	if (!empty($arrayfields['t.budget_amount']['checked'])) {
-		print_liste_field_titre($arrayfields['t.budget_amount']['label'], $_SERVER["PHP_SELF"], "t.budget_amount", "", $param, '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre($arrayfields['t.budget_amount']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
 
 	if (!empty($arrayfields['c.assigned']['checked'])) {
