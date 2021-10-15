@@ -2414,7 +2414,7 @@ if ($action == 'create') {
 			$multicurrency_resteapayer = price2num($object->multicurrency_total_ttc - $multicurrency_totalpaye - $multicurrency_totalcreditnotes - $multicurrency_totaldeposits, 'MT');
 			$resteapayer = price2num($multicurrency_resteapayer / $object->multicurrency_tx, 'MT');
 		}
-		
+
 		if ($object->paye) {
 			$resteapayer = 0;
 		}

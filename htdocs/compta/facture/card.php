@@ -3844,7 +3844,7 @@ if ($action == 'create') {
 	// $resteapayer=bcadd($object->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
 	// $resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
 	$resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
-	
+
 	// Multicurrency
 	if (!empty($conf->multicurrency->enabled)) {
 		$multicurrency_totalpaye = $object->getSommePaiement(1);
