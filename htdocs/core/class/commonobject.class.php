@@ -9056,10 +9056,15 @@ abstract class CommonObject
 					$className = str_replace('@', '', $deleteFromObject[0]);
 					$filePath = $deleteFromObject[1];
 					$columnName = $deleteFromObject[2];
+					$TMoreSQL = array();
+					$more_sql = $deleteFromObject[3];
+					if (!empty($more_sql)) {
+						$TMoreSQL['customsql'] = $more_sql;
+					}
 					if (dol_include_once($filePath)) {
 						$childObject = new $className($this->db);
 						if (method_exists($childObject, 'deleteByParentField')) {
-							$result = $childObject->deleteByParentField($this->id, $columnName);
+							$result = $childObject->deleteByParentField($this->id, $columnName, $TMoreSQL);
 							if ($result < 0) {
 								$error++;
 								$this->errors[] = $childObject->error;
@@ -9141,10 +9146,12 @@ abstract class CommonObject
 	 *
 	 * @param		int		$parentId      Parent Id
 	 * @param		string	$parentField   Name of Foreign key parent column
+	 * @param 		array 	$filter		an array filter
+	 * @param		string	$filtermode	AND or OR
 	 * @return		int						<0 if KO, >0 if OK
 	 * @throws Exception
 	 */
-	public function deleteByParentField($parentId = 0, $parentField = '')
+	public function deleteByParentField($parentId = 0, $parentField = '', $filter = array(), $filtermode = "AND")
 	{
 		global $user;
 
@@ -9156,6 +9163,23 @@ abstract class CommonObject
 
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " WHERE ".$parentField." = ".(int) $parentId;
+
+			// Manage filters
+			$sqlwhere = array();
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					if ($key == 'customsql') {
+						$sqlwhere[] = $value;
+					} elseif (strpos($value, '%') === false) {
+						$sqlwhere[] = $key." IN (".$this->db->sanitize($this->db->escape($value)).")";
+					} else {
+						$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+					}
+				}
+			}
+			if (count($sqlwhere) > 0) {
+				$sql .= " AND (".implode(" ".$filtermode." ", $sqlwhere).")";
+			}
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
