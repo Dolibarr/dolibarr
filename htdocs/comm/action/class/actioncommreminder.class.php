@@ -228,18 +228,18 @@ class ActionCommReminder extends CommonObject
 		// phpcs:enable
 		global $langs;
 
-		$labelStatus = $langs->trans('ToDo');
+		$labelStatus = $langs->transnoentitiesnoconv('ToDo');
 		if ($status == 1) {
-			$labelStatus = $langs->trans('Done');
+			$labelStatus = $langs->transnoentitiesnoconv('Done');
 		} elseif ($status == -1) {
-			$labelStatus = $langs->trans('Error');
+			$labelStatus = $langs->transnoentitiesnoconv('Error');
 		}
 
-		$labelStatusShort = $langs->trans('ToDo');
+		$labelStatusShort = $langs->transnoentitiesnoconv('ToDo');
 		if ($status == 1) {
-			$labelStatus = $langs->trans('Done');
+			$labelStatus = $langs->transnoentitiesnoconv('Done');
 		} elseif ($status == -1) {
-			$labelStatus = $langs->trans('Error');
+			$labelStatus = $langs->transnoentitiesnoconv('Error');
 		}
 
 		$statusType = 'status5';

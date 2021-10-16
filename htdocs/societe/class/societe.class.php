@@ -2801,10 +2801,10 @@ class Societe extends CommonObject
 		}
 
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
-			$this->labelStatus[0] = $langs->trans("ActivityCeased");
-			$this->labelStatus[1] = $langs->trans("InActivity");
-			$this->labelStatusShort[0] = $langs->trans("ActivityCeased");
-			$this->labelStatusShort[1] = $langs->trans("InActivity");
+			$this->labelStatus[0] = $langs->transnoentitiesnoconv("ActivityCeased");
+			$this->labelStatus[1] = $langs->transnoentitiesnoconv("InActivity");
+			$this->labelStatusShort[0] = $langs->transnoentitiesnoconv("ActivityCeased");
+			$this->labelStatusShort[1] = $langs->transnoentitiesnoconv("InActivity");
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);

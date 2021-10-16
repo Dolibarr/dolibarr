@@ -1558,8 +1558,8 @@ class Contact extends CommonObject
 			$statusType = 'status5';
 		}
 
-		$label = $langs->trans($labelStatus[$status]);
-		$labelshort = $langs->trans($labelStatusShort[$status]);
+		$label = $langs->transnoentitiesnoconv($labelStatus[$status]);
+		$labelshort = $langs->transnoentitiesnoconv($labelStatusShort[$status]);
 
 		return dolGetStatus($label, $labelshort, '', $statusType, $mode);
 	}

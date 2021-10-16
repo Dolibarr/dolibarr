@@ -5019,21 +5019,21 @@ class Product extends CommonObject
 		if ($type == 2) {
 			switch ($mode) {
 				case 0:
-					$label = ($status == 0 ? $langs->trans('ProductStatusNotOnBatch') : ($status == 1 ? $langs->trans('ProductStatusOnBatch') : $langs->trans('ProductStatusOnSerial')));
+					$label = ($status == 0 ? $langs->transnoentitiesnoconv('ProductStatusNotOnBatch') : ($status == 1 ? $langs->transnoentitiesnoconv('ProductStatusOnBatch') : $langs->transnoentitiesnoconv('ProductStatusOnSerial')));
 					return dolGetStatus($label);
 				case 1:
-					$label = ($status == 0 ? $langs->trans('ProductStatusNotOnBatchShort') : ($status == 1 ? $langs->trans('ProductStatusOnBatchShort') : $langs->trans('ProductStatusOnSerialShort')));
+					$label = ($status == 0 ? $langs->transnoentitiesnoconv('ProductStatusNotOnBatchShort') : ($status == 1 ? $langs->transnoentitiesnoconv('ProductStatusOnBatchShort') : $langs->transnoentitiesnoconv('ProductStatusOnSerialShort')));
 					return dolGetStatus($label);
 				case 2:
 					return $this->LibStatut($status, 3, 2).' '.$this->LibStatut($status, 1, 2);
 				case 3:
-					return dolGetStatus($langs->trans('ProductStatusNotOnBatch'), '', '', empty($status) ? 'status5' : 'status4', 3, 'dot');
+					return dolGetStatus($langs->transnoentitiesnoconv('ProductStatusNotOnBatch'), '', '', empty($status) ? 'status5' : 'status4', 3, 'dot');
 				case 4:
 					return $this->LibStatut($status, 3, 2).' '.$this->LibStatut($status, 0, 2);
 				case 5:
 					return $this->LibStatut($status, 1, 2).' '.$this->LibStatut($status, 3, 2);
 				default:
-					return dolGetStatus($langs->trans('Unknown'));
+					return dolGetStatus($langs->transnoentitiesnoconv('Unknown'));
 			}
 		}
 
@@ -5042,34 +5042,34 @@ class Product extends CommonObject
 		if ($status == 0) {
 			// $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
 			if ($type == 0) {
-				$labelStatus = $langs->trans('ProductStatusNotOnSellShort');
-				$labelStatusShort = $langs->trans('ProductStatusNotOnSell');
+				$labelStatus = $langs->transnoentitiesnoconv('ProductStatusNotOnSellShort');
+				$labelStatusShort = $langs->transnoentitiesnoconv('ProductStatusNotOnSell');
 			} elseif ($type == 1) {
-				$labelStatus = $langs->trans('ProductStatusNotOnBuyShort');
-				$labelStatusShort = $langs->trans('ProductStatusNotOnBuy');
+				$labelStatus = $langs->transnoentitiesnoconv('ProductStatusNotOnBuyShort');
+				$labelStatusShort = $langs->transnoentitiesnoconv('ProductStatusNotOnBuy');
 			} elseif ($type == 2) {
-				$labelStatus = $langs->trans('ProductStatusNotOnBatch');
-				$labelStatusShort = $langs->trans('ProductStatusNotOnBatchShort');
+				$labelStatus = $langs->transnoentitiesnoconv('ProductStatusNotOnBatch');
+				$labelStatusShort = $langs->transnoentitiesnoconv('ProductStatusNotOnBatchShort');
 			}
 		} elseif ($status == 1) {
 			// $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
 			if ($type == 0) {
-				$labelStatus = $langs->trans('ProductStatusOnSellShort');
-				$labelStatusShort = $langs->trans('ProductStatusOnSell');
+				$labelStatus = $langs->transnoentitiesnoconv('ProductStatusOnSellShort');
+				$labelStatusShort = $langs->transnoentitiesnoconv('ProductStatusOnSell');
 			} elseif ($type == 1) {
-				$labelStatus = $langs->trans('ProductStatusOnBuyShort');
-				$labelStatusShort = $langs->trans('ProductStatusOnBuy');
+				$labelStatus = $langs->transnoentitiesnoconv('ProductStatusOnBuyShort');
+				$labelStatusShort = $langs->transnoentitiesnoconv('ProductStatusOnBuy');
 			} elseif ($type == 2) {
-				$labelStatus = ($status == 1 ? $langs->trans('ProductStatusOnBatch') : $langs->trans('ProductStatusOnSerial'));
-				$labelStatusShort = ($status == 1 ? $langs->trans('ProductStatusOnBatchShort') : $langs->trans('ProductStatusOnSerialShort'));
+				$labelStatus = ($status == 1 ? $langs->transnoentitiesnoconv('ProductStatusOnBatch') : $langs->transnoentitiesnoconv('ProductStatusOnSerial'));
+				$labelStatusShort = ($status == 1 ? $langs->transnoentitiesnoconv('ProductStatusOnBatchShort') : $langs->transnoentitiesnoconv('ProductStatusOnSerialShort'));
 			}
 		} elseif ( $type == 2 && $status == 2 ) {
-			$labelStatus = $langs->trans('ProductStatusOnSerial');
-			$labelStatusShort = $langs->trans('ProductStatusOnSerialShort');
+			$labelStatus = $langs->transnoentitiesnoconv('ProductStatusOnSerial');
+			$labelStatusShort = $langs->transnoentitiesnoconv('ProductStatusOnSerialShort');
 		}
 
 		if ($mode > 6) {
-			return dolGetStatus($langs->trans('Unknown'), '', '', 'status0', 0);
+			return dolGetStatus($langs->transnoentitiesnoconv('Unknown'), '', '', 'status0', 0);
 		} else {
 			return dolGetStatus($labelStatus, $labelStatusShort, '', $statuttrans, $mode);
 		}

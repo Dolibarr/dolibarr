@@ -615,14 +615,14 @@ class Inventory extends CommonObject
 		global $langs;
 
 		$labelStatus = array();
-		$labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-		$labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated').' ('.$langs->trans('Started').')';
-		$labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
-		$labelStatus[self::STATUS_RECORDED] = $langs->trans('Closed');
-		$labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
-		$labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Started');
-		$labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
-		$labelStatusShort[self::STATUS_RECORDED] = $langs->trans('Closed');
+		$labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+		$labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated').' ('.$langs->transnoentitiesnoconv('Started').')';
+		$labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
+		$labelStatus[self::STATUS_RECORDED] = $langs->transnoentitiesnoconv('Closed');
+		$labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+		$labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Started');
+		$labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
+		$labelStatusShort[self::STATUS_RECORDED] = $langs->transnoentitiesnoconv('Closed');
 
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_RECORDED) {
