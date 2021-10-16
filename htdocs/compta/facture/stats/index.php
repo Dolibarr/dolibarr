@@ -92,17 +92,23 @@ print load_fiche_titre($title, '', $picto);
 dol_mkdir($dir);
 
 $stats = new FactureStats($db, $socid, $mode, ($userid > 0 ? $userid : 0), ($typent_id > 0 ? $typent_id : 0), ($categ_id > 0 ? $categ_id : 0));
-if ($mode == 'customer')
-{
-	if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND f.fk_statut IN ('.$db->sanitize($db->escape($object_status)).')';
+if ($mode == 'customer') {
+	if ($object_status != '' && $object_status >= 0) {
+		$stats->where .= ' AND f.fk_statut IN ('.$db->escape($object_status).')';
+	}
+    if (is_array($custcats) && !empty($custcats)) {
+        $stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cat ON (f.fk_soc = cat.fk_soc)';
+        $stats->where .= ' AND cat.fk_categorie IN ('.implode(',', $custcats).')';
+    }
+}
+if ($mode == 'supplier') {
+	if ($object_status != '' && $object_status >= 0) {
+		$stats->where .= ' AND f.fk_statut IN ('.$db->escape($object_status).')';
+	}
 	if (is_array($custcats) && !empty($custcats)) {
-		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cat ON (f.fk_soc = cat.fk_soc)';
+		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_fournisseur as cat ON (f.fk_soc = cat.fk_soc)';
 		$stats->where .= ' AND cat.fk_categorie IN ('.implode(',', $custcats).')';
 	}
-}
-if ($mode == 'supplier')
-{
-	if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND f.fk_statut IN ('.$db->sanitize($db->escape($object_status)).')';
 }
 
 // Build graphic number of object
@@ -281,7 +287,7 @@ if (!empty($conf->category->enabled)) {
 		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Supplier"));
 	}
 	print '<tr><td>'.$cat_label.'</td><td>';
-	$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
+	$cate_arbo = $form->select_all_categories($cat_type, null, 'parent', null, null, 1);
 	print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null, null, "90%");
 	//print $formother->select_categories($cat_type, $categ_id, 'categ_id', true);
 	print '</td></tr>';
