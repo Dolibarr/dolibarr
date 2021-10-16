@@ -121,6 +121,16 @@ class Task extends CommonObject
 
 	public $comments = array();
 
+	/**
+	 * @var float budget_amount
+	 */
+	public $budget_amount;
+
+	/**
+	 * @var float project_budget_amount
+	 */
+	public $project_budget_amount;
+
 	public $oldcopy;
 
 
@@ -172,6 +182,7 @@ class Task extends CommonObject
 		$sql .= ", datee";
 		$sql .= ", planned_workload";
 		$sql .= ", progress";
+		$sql .= ", budget_amount";
 		$sql .= ") VALUES (";
 		$sql .= ((int) $conf->entity);
 		$sql .= ", ".((int) $this->fk_project);
@@ -185,6 +196,7 @@ class Task extends CommonObject
 		$sql .= ", ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : 'null');
 		$sql .= ", ".(($this->planned_workload != '' && $this->planned_workload >= 0) ? ((int) $this->planned_workload) : 'null');
 		$sql .= ", ".(($this->progress != '' && $this->progress >= 0) ? ((int) $this->progress) : 'null');
+		$sql .= ", ".(($this->budget_amount != '' && $this->budget_amount >= 0) ? ((int) $this->budget_amount) : 'null');
 		$sql .= ")";
 
 		$this->db->begin();
@@ -261,6 +273,7 @@ class Task extends CommonObject
 		$sql .= " t.fk_user_valid,";
 		$sql .= " t.fk_statut,";
 		$sql .= " t.progress,";
+		$sql .= " t.budget_amount,";
 		$sql .= " t.priority,";
 		$sql .= " t.note_private,";
 		$sql .= " t.note_public,";
@@ -304,6 +317,7 @@ class Task extends CommonObject
 				$this->fk_user_valid		= $obj->fk_user_valid;
 				$this->fk_statut			= $obj->fk_statut;
 				$this->progress				= $obj->progress;
+				$this->budget_amount		= $obj->budget_amount;
 				$this->priority				= $obj->priority;
 				$this->note_private = $obj->note_private;
 				$this->note_public = $obj->note_public;
@@ -366,6 +380,9 @@ class Task extends CommonObject
 		if (isset($this->planned_workload)) {
 			$this->planned_workload = trim($this->planned_workload);
 		}
+		if (isset($this->budget_amount)) {
+			$this->budget_amount = trim($this->budget_amount);
+		}
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -382,6 +399,7 @@ class Task extends CommonObject
 		$sql .= " dateo=".($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null').",";
 		$sql .= " datee=".($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null').",";
 		$sql .= " progress=".(($this->progress != '' && $this->progress >= 0) ? $this->progress : 'null').",";
+		$sql .= " budget_amount=".(($this->budget_amount != '' && $this->budget_amount >= 0) ? $this->budget_amount : 'null').",";
 		$sql .= " rang=".((!empty($this->rang)) ? $this->rang : "0");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -791,8 +809,9 @@ class Task extends CommonObject
 		$sql .= " t.rowid as taskid, t.ref as taskref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut as status,";
 		$sql .= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang,";
 		$sql .= " t.description, ";
+		$sql .= " t.budget_amount, ";
 		$sql .= " s.rowid as thirdparty_id, s.nom as thirdparty_name, s.email as thirdparty_email,";
-		$sql .= " p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount";
+		$sql .= " p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount as project_budget_amount";
 		if (!empty($extrafields->attributes['projet']['label'])) {
 			foreach ($extrafields->attributes['projet']['label'] as $key => $val) {
 				$sql .= ($extrafields->attributes['projet']['type'][$key] != 'separate' ? ",efp.".$key." as options_".$key : '');
@@ -897,6 +916,7 @@ class Task extends CommonObject
 			$sql .= " t.rowid, t.ref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut,";
 			$sql .= " t.dateo, t.datee, t.planned_workload, t.rang,";
 			$sql .= " t.description, ";
+			$sql .= " t.budget_amount, ";
 			$sql .= " s.rowid, s.nom, s.email,";
 			$sql .= " p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount";
 			if (!empty($extrafields->attributes['projet']['label'])) {
@@ -950,6 +970,7 @@ class Task extends CommonObject
 					$tasks[$i]->opp_amount = $obj->opp_amount;
 					$tasks[$i]->opp_percent = $obj->opp_percent;
 					$tasks[$i]->budget_amount = $obj->budget_amount;
+					$tasks[$i]->project_budget_amount = $obj->project_budget_amount;
 					$tasks[$i]->usage_bill_time = $obj->usage_bill_time;
 
 					$tasks[$i]->label = $obj->label;
