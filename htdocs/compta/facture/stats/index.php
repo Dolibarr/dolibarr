@@ -109,7 +109,6 @@ if ($mode == 'supplier') {
 		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_fournisseur as cat ON (f.fk_soc = cat.fk_soc)';
 		$stats->where .= ' AND cat.fk_categorie IN ('.implode(',', $custcats).')';
 	}
-
 }
 
 // Build graphic number of object
