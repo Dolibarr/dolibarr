@@ -2285,7 +2285,7 @@ if ($action == 'create') {
 	}
 
 	if (empty($reshook)) {
-		print $object->showOptionals($extrafields, 'edit');
+		print $object->showOptionals($extrafields, 'create');
 	}
 
 	// Public note
