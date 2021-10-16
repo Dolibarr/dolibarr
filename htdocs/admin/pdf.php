@@ -165,8 +165,8 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "PDF_SHOW_LINK_TO_ONLINE_PAYMENT", GETPOST('PDF_SHOW_LINK_TO_ONLINE_PAYMENT', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
 
-	if (GETPOSTISSET('PDF_USE_1A')) {
-		dolibarr_set_const($db, "PDF_USE_1A", GETPOST('PDF_USE_1A', 'alpha'), 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('PDF_USE_A')) {
+		dolibarr_set_const($db, "PDF_USE_A", GETPOST('PDF_USE_A', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
 
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -538,11 +538,11 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
-print '<tr class="oddeven"><td>'.$langs->trans("PDF_USE_1A").'</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans("PDF_USE_A").'</td><td>';
 if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('PDF_USE_1A');
+	print ajax_constantonoff('PDF_USE_A');
 } else {
-	print $form->selectyesno('PDF_USE_1A', (!empty($conf->global->PDF_USE_1A)) ? $conf->global->PDF_USE_1A : 0, 1);
+	print $form->selectyesno('PDF_USE_A', (empty($conf->global->PDF_USE_1A) ? 0 : $conf->global->PDF_USE_A, 1);
 }
 print '</td></tr>';
 
