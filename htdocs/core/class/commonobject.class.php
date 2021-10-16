@@ -9169,9 +9169,9 @@ abstract class CommonObject
 					if ($key == 'customsql') {
 						$sqlwhere[] = $value;
 					} elseif (strpos($value, '%') === false) {
-						$sqlwhere[] = $key.' IN ('.$this->db->sanitize($this->db->escape($value)).')';
+						$sqlwhere[] = $key." IN (".$this->db->sanitize($this->db->escape($value)).")";
 					} else {
-						$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+						$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 					}
 				}
 			}
