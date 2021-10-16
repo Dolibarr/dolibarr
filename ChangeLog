@@ -2,7 +2,38 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
-***** ChangeLog for 13.0.4 compared to 13.0.2 *****
+
+***** ChangeLog for 13.0.5 compared to 13.0.4 *****
+
+FIX: 13.0: class CommandeFournisseurDispatch provides trigger for UPDATE but not for CREATE / DELETE
+FIX: #18389 Accountancy - Bug on LDcompta10 export for supplier invoice
+FIX: #18591 : Remove double quotes of SQL Queries for postgresql compatibility
+FIX: Accountancy - Debug Export Sage50 / CIEL Compta / CIEL Compta Evo (Format XIMPORT)
+FIX: Accountancy - Some problems of length with general & subledger account
+FIX: add DISTINCT
+FIX: an approved holiday can be canceled by an admin.
+FIX: autocalculation of the supplier price in main currency.
+FIX: better sql request
+FIX: cannot add time spend when column ref is not displayed
+FIX: compatibility postgre sql
+FIX: holiday card: hooks uninitialized
+FIX: Invoice - Missing button to reopen an abandoned situation invoice
+FIX: invoice validation: when checking if any VAT rate has a negative amount, prevent false positives with -1.0E-14 amounts
+FIX: list of categories in stats of supplier invoices
+FIX: Manage credit note on situation invoice for calculate margin
+FIX: method_exists needs object at first param
+FIX: move fetch_optionnal into $ac_static->fetch()
+FIX: multicompany transverse mode compatibility
+FIX: on supplier order, JOIN with product fourn price table must be done with fk_soc too to avoid display several times a same line (because of same supplier product ref)
+FIX: postgre filter select search extrafield
+FIX: products/services card: hidden extrafields were overridden
+FIX: shipping validation workflow: 'ORDER_NEW' trigger called from wrong object
+FIX: task time: can't filter by user with pgsql + show error message
+FIX: task time: keep on using natural_search
+FIX: wrong users count in multicompany transverse mode
+
+
+***** ChangeLog for 13.0.4 compared to 13.0.3 *****
 
 FIX: Allow disabling of a module (not a dangerous action) even if there is problem with token (due to bugged modules).
 FIX: 13.0 - fatal - missing inclusion of ajax.lib.php for calling `ajax_autocompleter()`
