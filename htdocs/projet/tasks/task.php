@@ -105,6 +105,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->projet->creer) {
 		$object->date_start = dol_mktime(GETPOST('dateohour', 'int'), GETPOST('dateomin', 'int'), 0, GETPOST('dateomonth', 'int'), GETPOST('dateoday', 'int'), GETPOST('dateoyear', 'int'));
 		$object->date_end = dol_mktime(GETPOST('dateehour', 'int'), GETPOST('dateemin', 'int'), 0, GETPOST('dateemonth', 'int'), GETPOST('dateeday', 'int'), GETPOST('dateeyear', 'int'));
 		$object->progress = price2num(GETPOST('progress', 'alphanohtml'));
+		$object->budget_amount = price2num(GETPOST('budget_amount', 'alphanohtml'));
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -442,6 +443,10 @@ if ($id > 0 || !empty($ref)) {
 		print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_4.'">'.$object->description.'</textarea>';
 		print '</td></tr>';
 
+		print '<tr><td>'.$langs->trans("Budget").'</td>';
+		print '<td><input size="5" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : price2num($object->budget_amount)).'"></td>';
+		print '</tr>';
+
 		// Other options
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -561,6 +566,13 @@ if ($id > 0 || !empty($ref)) {
 			}
 		} else {
 			print '<span class="opacitymedium">'.$langs->trans("WorkloadNotDefined").'</span>';
+		}
+		print '</td></tr>';
+
+		// Budget
+		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+		if (strcmp($object->budget_amount, '')) {
+			print price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
 		}
 		print '</td></tr>';
 
