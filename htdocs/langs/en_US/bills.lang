@@ -244,6 +244,7 @@ EscompteOffered=Discount offered (payment before term)
 EscompteOfferedShort=Discount
 SendBillRef=Submission of invoice %s
 SendReminderBillRef=Submission of invoice %s (reminder)
+SendPaymentReceipt=Submission of payment receipt %s
 NoDraftBills=No draft invoices
 NoOtherDraftBills=No other draft invoices
 NoDraftInvoices=No draft invoices
