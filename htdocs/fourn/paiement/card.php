@@ -411,7 +411,6 @@ if ($result > 0) {
 	$trackid = 'pre'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
-
 } else {
 	$langs->load("errors");
 	print $langs->trans("ErrorRecordNotFound");

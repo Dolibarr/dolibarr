@@ -826,7 +826,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 				$iban = $obj->iban_prefix;
 			}
 
-			if(!empty($iban)) {
+			if (!empty($iban)) {
 				$pdf->SetFont('', '', $default_font_size - 1);
 				$pdf->SetXY($posx + 2, $posy + 15);
 				$pdf->MultiCell($widthrecbox, 4, $langs->trans("IBAN").': '.$iban, 0, 'L');
