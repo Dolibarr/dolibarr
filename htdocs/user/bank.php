@@ -324,7 +324,8 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			$ret .= '</form>';
 			print $ret;
 		} else {
-			print dol_getIdFromCode($db, $object->default_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
+			$label_exp_tax_cat = dol_getIdFromCode($db, $object->default_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
+			print $langs->trans($label_exp_tax_cat);
 			//print $form->editfieldval("DefaultCategoryCar", 'default_c_exp_tax_cat', $object->default_c_exp_tax_cat, $object, $user->rights->user->user->creer, 'string', ($object->default_c_exp_tax_cat != '' ? $object->default_c_exp_tax_cat : ''));
 		}
 		print '</td>';
