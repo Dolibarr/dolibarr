@@ -523,18 +523,18 @@ class modMyModule extends DolibarrModules
 						$myTmpObjectKey
 					) . "' AND type = '" . $this->db->escape(
 						strtolower($myTmpObjectKey)
-					) . "' AND entity = " . ((int)$conf->entity),
+					) . "' AND entity = " . ((int) $conf->entity),
 					'INSERT INTO ' . MAIN_DB_PREFIX . "document_model (nom, type, entity) VALUES('standard_" . strtolower(
 						$myTmpObjectKey
-					) . "', '" . $this->db->escape(strtolower($myTmpObjectKey)) . "', " . ((int)$conf->entity) . ')',
+					) . "', '" . $this->db->escape(strtolower($myTmpObjectKey)) . "', " . ((int) $conf->entity) . ')',
 					'DELETE FROM ' . MAIN_DB_PREFIX . "document_model WHERE nom = 'generic_" . strtolower(
 						$myTmpObjectKey
 					) . "_odt' AND type = '" . $this->db->escape(
 						strtolower($myTmpObjectKey)
-					) . "' AND entity = " . ((int)$conf->entity),
+					) . "' AND entity = " . ((int) $conf->entity),
 					'INSERT INTO ' . MAIN_DB_PREFIX . "document_model (nom, type, entity) VALUES('generic_" . strtolower(
 						$myTmpObjectKey
-					) . "_odt', '" . $this->db->escape(strtolower($myTmpObjectKey)) . "', " . ((int)$conf->entity) . ')'
+					) . "_odt', '" . $this->db->escape(strtolower($myTmpObjectKey)) . "', " . ((int) $conf->entity) . ')'
 				]);
 			}
 		}

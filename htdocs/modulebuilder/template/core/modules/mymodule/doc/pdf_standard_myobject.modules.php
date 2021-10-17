@@ -793,7 +793,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 						$localtax2ligne -= ($localtax2ligne * $object->remise_percent) / 100;
 					}
 
-					$vatrate = (string)$object->lines[$i]->tva_tx;
+					$vatrate = (string) $object->lines[$i]->tva_tx;
 
 					// Retrieve type from database for backward compatibility with old records
 					if ((!isset($localtax1_type, $localtax2_type) || $localtax1_type === '' || $localtax2_type === '')
@@ -837,7 +837,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 						if ($pagenb === $pageposbeforeprintlines) {
 							$this->_tableau(
 								$pdf,
-								(string)$tab_top,
+								(string) $tab_top,
 								$this->page_hauteur - $tab_top - $heightforfooter,
 								0,
 								$outputlangs,
@@ -849,7 +849,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 						} else {
 							$this->_tableau(
 								$pdf,
-								(string)$tab_top_newpage,
+								(string) $tab_top_newpage,
 								$this->page_hauteur - $tab_top_newpage - $heightforfooter,
 								0,
 								$outputlangs,
@@ -876,7 +876,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 						if ($pagenb === $pageposafter) {
 							$this->_tableau(
 								$pdf,
-								(string)$tab_top,
+								(string) $tab_top,
 								$this->page_hauteur - $tab_top - $heightforfooter,
 								0,
 								$outputlangs,
@@ -888,7 +888,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 						} else {
 							$this->_tableau(
 								$pdf,
-								(string)$tab_top_newpage,
+								(string) $tab_top_newpage,
 								$this->page_hauteur - $tab_top_newpage - $heightforfooter,
 								0,
 								$outputlangs,
@@ -915,7 +915,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 				if ($pagenb === $pageposbeforeprintlines) {
 					$this->_tableau(
 						$pdf,
-						(string)$tab_top,
+						(string) $tab_top,
 						$this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter,
 						0,
 						$outputlangs,
@@ -927,7 +927,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 				} else {
 					$this->_tableau(
 						$pdf,
-						(string)$tab_top_newpage,
+						(string) $tab_top_newpage,
 						$this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter,
 						0,
 						$outputlangs,
@@ -1259,8 +1259,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 			}
 
 			// Recipient name
-			if ($object->contact->socid !== $object->thirdparty->id && (!isset
-					(
+			if ($object->contact->socid !== $object->thirdparty->id && (!isset(
 						$conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT
 					) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT))) {
 				$thirdparty = $object->contact;

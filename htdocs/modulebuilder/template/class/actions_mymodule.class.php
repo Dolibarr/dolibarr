@@ -384,13 +384,13 @@ class ActionsMyModule
 				$parameters['head'][$counter][2] = 'mymoduleemails';
 				$counter++;
 			}
-			if ($counter > 0 && (int)DOL_VERSION < 14) {
+			if ($counter > 0 && (int) DOL_VERSION < 14) {
 				$this->results = $parameters['head'];
 				// return 1 to replace standard code
 				return 1;
 			}
 
-// en V14 et + $parameters['head'] est modifiable par référence
+			// en V14 et + $parameters['head'] est modifiable par référence
 			return 0;
 		}
 	}
