@@ -25,7 +25,9 @@
  * Put detailed description here.
  */
 
-include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
+declare(strict_types=1);
+
+include_once DOL_DOCUMENT_ROOT . '/core/boxes/modules_boxes.php';
 
 
 /**
@@ -39,13 +41,13 @@ class mymodulewidget1 extends ModeleBoxes
 	/**
 	 * @var string Alphanumeric ID. Populated by the constructor.
 	 */
-	public $boxcode = "mymodulebox";
+	public string $boxcode = 'mymodulebox';
 
 	/**
 	 * @var string Box icon (in configuration page)
 	 * Automatically calls the icon named with the corresponding "object_" prefix
 	 */
-	public $boximg = "mymodule@mymodule";
+	public string $boximg = 'mymodule@mymodule';
 
 	/**
 	 * @var string Box label (in configuration page)
@@ -55,12 +57,12 @@ class mymodulewidget1 extends ModeleBoxes
 	/**
 	 * @var string[] Module dependencies
 	 */
-	public $depends = array('mymodule');
+	public array $depends = ['mymodule'];
 
 	/**
 	 * @var DoliDb Database handler
 	 */
-	public $db;
+	public DoliDB $db;
 
 	/**
 	 * @var mixed More parameters
@@ -68,19 +70,19 @@ class mymodulewidget1 extends ModeleBoxes
 	public $param;
 
 	/**
-	 * @var array Header informations. Usually created at runtime by loadBox().
+	 * @var array Header information. Usually created at runtime by loadBox().
 	 */
-	public $info_box_head = array();
+	public array $info_box_head = [];
 
 	/**
-	 * @var array Contents informations. Usually created at runtime by loadBox().
+	 * @var array Contents information. Usually created at runtime by loadBox().
 	 */
-	public $info_box_contents = array();
+	public array $info_box_contents = [];
 
 	/**
 	 * @var string 	Widget type ('graph' means the widget is a graph widget)
 	 */
-	public $widgettype = 'graph';
+	public string $widgettype = 'graph';
 
 
 	/**
@@ -92,26 +94,29 @@ class mymodulewidget1 extends ModeleBoxes
 	public function __construct(DoliDB $db, $param = '')
 	{
 		global $user, $conf, $langs;
-		$langs->load("boxes");
+		$langs->load('boxes');
 		$langs->load('mymodule@mymodule');
 
 		parent::__construct($db, $param);
 
-		$this->boxlabel = $langs->transnoentitiesnoconv("MyWidget");
+		$this->boxlabel = $langs->transnoentitiesnoconv('MyWidget');
 
 		$this->param = $param;
 
-		//$this->enabled = $conf->global->FEATURES_LEVEL > 0;         // Condition when module is enabled or not
-		//$this->hidden = ! ($user->rights->mymodule->myobject->read);   // Condition when module is visible by user (test on permission)
+		//$this->enabled = $conf->global->FEATURES_LEVEL > 0;
+		// Condition when module is enabled or not
+		//$this->hidden = ! ($user->rights->mymodule->myobject->read);
+		// Condition when module is visible by user (test on permission)
 	}
 
 	/**
 	 * Load data into info_box_contents array to show array later. Called by Dolibarr before displaying the box.
 	 *
 	 * @param int $max Maximum number of records to load
+	 *
 	 * @return void
 	 */
-	public function loadBox($max = 5)
+	public function loadBox(int $max = 5): void
 	{
 		global $langs;
 
@@ -121,8 +126,8 @@ class mymodulewidget1 extends ModeleBoxes
 		//dol_include_once("/mymodule/class/mymodule.class.php");
 
 		// Populate the head at runtime
-		$text = $langs->trans("MyModuleBoxDescription", $max);
-		$this->info_box_head = array(
+		$text = $langs->trans('MyModuleBoxDescription', $max);
+		$this->info_box_head = [
 			// Title text
 			'text' => $text,
 			// Add a link
@@ -139,12 +144,12 @@ class mymodulewidget1 extends ModeleBoxes
 			'limit' => 0,
 			// Adds translated " (Graph)" to a hidden form value's input (?)
 			'graph' => false
-		);
+		];
 
 		// Populate the contents at runtime
-		$this->info_box_contents = array(
-			0 => array( // First line
-				0 => array( // First Column
+		$this->info_box_contents = [
+			0 => [ // First line
+				0 => [ // First Column
 					//  HTML properties of the TR element. Only available on the first column.
 					'tr' => 'class="left"',
 					// HTML properties of the TD element
@@ -156,7 +161,8 @@ class mymodulewidget1 extends ModeleBoxes
 					'url' => 'http://example.com',
 					// Link's target HTML property
 					'target' => '_blank',
-					// Fist line logo (deprecated. Include instead logo html code into text or text2, and set asis property to true to avoid HTML cleaning)
+					// Fist line logo (deprecated. Include instead logo html code into text or text2,
+					// and set asis property to true to avoid HTML cleaning)
 					//'logo' => 'monmodule@monmodule',
 					// Unformatted text, added after text. Usefull to add/load javascript code
 					'textnoformat' => '',
@@ -170,34 +176,34 @@ class mymodulewidget1 extends ModeleBoxes
 					'asis' => false,
 					// Same for 'text2'
 					'asis2' => true
-				),
-				1 => array( // Another column
+				],
+				1 => [ // Another column
 					// No TR for n≠0
 					'td' => '',
 					'text' => 'Second cell',
-				)
-			),
-			1 => array( // Another line
-				0 => array( // TR
+				]
+			],
+			1 => [ // Another line
+				0 => [ // TR
 					'tr' => 'class="left"',
 					'text' => 'Another line'
-				),
-				1 => array( // TR
+				],
+				1 => [ // TR
 					'tr' => 'class="left"',
 					'text' => ''
-				)
-			),
-			2 => array( // Another line
-				0 => array( // TR
+				]
+			],
+			2 => [ // Another line
+				0 => [ // TR
 					'tr' => 'class="left"',
 					'text' => ''
-				),
-				1 => array( // TR
+				],
+				1 => [ // TR
 					'tr' => 'class="left"',
 					'text' => ''
-				)
-			),
-		);
+				]
+			],
+		];
 	}
 
 	/**
@@ -208,7 +214,7 @@ class mymodulewidget1 extends ModeleBoxes
 	 * @param int   $nooutput   No print, only return string
 	 * @return string
 	 */
-	public function showBox($head = null, $contents = null, $nooutput = 0)
+	public function showBox($head = null, $contents = null, $nooutput = 0): string
 	{
 		// You may make your own code here…
 		// … or use the parent's class function using the provided head and contents templates

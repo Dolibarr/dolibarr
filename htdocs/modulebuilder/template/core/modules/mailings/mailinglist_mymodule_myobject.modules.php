@@ -8,8 +8,10 @@
  * Code that need to be changed in this file are marked by "CHANGE THIS" tag.
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
-dol_include_once("/mymodule/class/myobject.class.php");
+declare(strict_types=1);
+
+include_once DOL_DOCUMENT_ROOT . '/core/modules/mailings/modules_mailings.php';
+dol_include_once('/mymodule/class/myobject.class.php');
 
 
 /**
@@ -18,24 +20,24 @@ dol_include_once("/mymodule/class/myobject.class.php");
 class mailing_mailinglist_mymodule_myobject extends MailingTargets
 {
 	// CHANGE THIS: Put here a name not already used
-	public $name = 'mailinglist_mymodule_myobject';
+	public string $name = 'mailinglist_mymodule_myobject';
 	// CHANGE THIS: Put here a description of your selector module
-	public $desc = 'My object emailing target selector';
+	public string $desc = 'My object emailing target selector';
 	// CHANGE THIS: Set to 1 if selector is available for admin users only
-	public $require_admin = 0;
+	public int $require_admin = 0;
 
-	public $enabled = 0;
-	public $require_module = array();
+	public int $enabled = 0;
+	public array $require_module = [];
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'mymodule@mymodule';
+	public string $picto = 'mymodule@mymodule';
 
 	/**
 	 * @var DoliDB Database handler.
 	 */
-	public $db;
+	public DoliDB $db;
 
 
 	/**
@@ -49,7 +51,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 
 		$this->db = $db;
 		if (is_array($conf->modules)) {
-			$this->enabled = in_array('mymodule', $conf->modules) ? 1 : 0;
+			$this->enabled = in_array('mymodule', $conf->modules, true) ? 1 : 0;
 		}
 	}
 
@@ -59,21 +61,20 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	 *
 	 *  @return     string      Retourne zone select
 	 */
-	public function formFilter()
+	public function formFilter(): string
 	{
 		global $langs;
-		$langs->load("members");
+		$langs->load('members');
 
 		$form = new Form($this->db);
 
-		$arraystatus = array(1=>'Option 1', 2=>'Option 2');
+		$arraystatus = [1 => 'Option 1', 2 => 'Option 2'];
 
-		$s = '';
-		$s .= $langs->trans("Status").': ';
+		$s = $langs->trans('Status') . ': ';
 		$s .= '<select name="filter" class="flat">';
 		$s .= '<option value="none">&nbsp;</option>';
 		foreach ($arraystatus as $status) {
-			$s .= '<option value="'.$status.'">'.$status.'</option>';
+			$s .= '<option value="' . $status . '">' . $status . '</option>';
 		}
 		$s .= '</select>';
 		$s .= '<br>';
@@ -85,35 +86,42 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	/**
 	 *  Renvoie url lien vers fiche de la source du destinataire du mailing
 	 *
-	 *  @param      int         $id     ID
-	 *  @return     string              Url lien
+	 * @param int $id ID
+	 *
+	 * @return     string              Url lien
 	 */
-	public function url($id)
+	public function url(int $id): string
 	{
-		return '<a href="'.dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.$id.'">'.img_object('', "generic").'</a>';
+		return '<a href="' . dol_buildpath('/mymodule/myobject_card.php', 1) . '?id=' . $id . '">' . img_object(
+				'',
+				'generic'
+			) . '</a>';
 	}
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+
 	/**
 	 *  This is the main function that returns the array of emails
 	 *
-	 *  @param  int     $mailing_id     Id of emailing
-	 *  @return int                     <0 if error, number of emails added if ok
+	 * @param int $mailing_id ID of emailing
+	 *
+	 * @return int                     <0 if error, number of emails added if ok
+	 * @throws Exception
 	 */
-	public function add_to_target($mailing_id)
+	public function add_to_target(int $mailing_id): int
 	{
 		// phpcs:enable
-		$target = array();
+		$target = [];
 		$j = 0;
 
-		$sql = " select rowid as id, email, firstname, lastname, plan, partner";
-		$sql .= " from ".MAIN_DB_PREFIX."myobject";
+		$sql = ' select rowid as id, email, firstname, lastname, plan, partner';
+		$sql .= ' from ' . MAIN_DB_PREFIX . 'myobject';
 		$sql .= " where email IS NOT NULL AND email != ''";
-		if (GETPOSTISSET('filter') && GETPOST('filter', 'alphanohtml') != 'none') {
-			$sql .= " AND status = '".$this->db->escape(GETPOST('filter', 'alphanohtml'))."'";
+		if (GETPOSTISSET('filter') && GETPOST('filter') !== 'none') {
+			$sql .= " AND status = '" . $this->db->escape(GETPOST('filter')) . "'";
 		}
-		$sql .= " ORDER BY email";
+		$sql .= ' ORDER BY email';
 
 		// Stocke destinataires dans target
 		$result = $this->db->query($sql);
@@ -121,13 +129,13 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 			$num = $this->db->num_rows($result);
 			$i = 0;
 
-			dol_syslog("mailinglist_mymodule_myobject.modules.php: mailing ".$num." targets found");
+			dol_syslog('mailinglist_mymodule_myobject.modules.php: mailing ' .$num. ' targets found');
 
 			$old = '';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email) {
-					$target[$j] = array(
+				if ($old !== $obj->email) {
+					$target[$j] = [
 						'email' => $obj->email,
 						'name' => $obj->lastname,
 						'id' => $obj->id,
@@ -136,7 +144,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 						'source_url' => $this->url($obj->id),
 						'source_id' => $obj->id,
 						'source_type' => 'dolicloud'
-					);
+					];
 					$old = $obj->email;
 					$j++;
 				}
@@ -170,14 +178,14 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	 *
 	 *  @return array
 	 */
-	public function getSqlArrayForStats()
+	public function getSqlArrayForStats(): array
 	{
 		// CHANGE THIS: Optionnal
 
 		//var $statssql=array();
 		//$this->statssql[0]="SELECT field1 as label, count(distinct(email)) as nb FROM mytable WHERE email IS NOT NULL";
 
-		return array();
+		return [];
 	}
 
 
@@ -186,13 +194,17 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	 *  For example if this selector is used to extract 500 different
 	 *  emails from a text file, this function must return 500.
 	 *
-	 *  @param  string  $filter     Filter
-	 *  @param  string	$option     Options
-	 *  @return int                 Nb of recipients or -1 if KO
+	 * @param string $filter Filter
+	 * @param string $option Options
+	 *
+	 * @return int                 Nb of recipients or -1 if KO
 	 */
-	public function getNbOfRecipients($filter = 1, $option = '')
+	public function getNbOfRecipients($filter = 1, string $option = ''): int
 	{
-		$a = parent::getNbOfRecipients("select count(distinct(email)) as nb from ".MAIN_DB_PREFIX."myobject as p where email IS NOT NULL AND email != ''");
+		$a = parent::getNbOfRecipients(
+			'select count(distinct(email)) as nb from ' . MAIN_DB_PREFIX . "myobject as p
+					where email IS NOT NULL AND email != ''"
+		);
 
 		if ($a < 0) {
 			return -1;

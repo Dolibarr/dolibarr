@@ -34,7 +34,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 	/**
 	 * @var DoliDB Database handler.
 	 */
-	public $db;
+	public DoliDB $db;
 
 	/**
 	 * @var string Error code (or message)

@@ -32,6 +32,8 @@
  * - The name property name must be MyTrigger
  */
 
+declare(strict_types=1);
+
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 
 
@@ -45,13 +47,13 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 	 *
 	 * @param DoliDB $db Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
-		$this->family = "demo";
-		$this->description = "MyModule triggers.";
+		$this->family = 'demo';
+		$this->description = 'MyModule triggers.';
 		// 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'development';
 		$this->picto = 'mymodule@mymodule';
@@ -62,7 +64,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 	 *
 	 * @return string Name of trigger file
 	 */
-	public function getName()
+	public function getName(): string
 	{
 		return $this->name;
 	}
@@ -72,7 +74,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 	 *
 	 * @return string Description of trigger file
 	 */
-	public function getDesc()
+	public function getDesc(): string
 	{
 		return $this->description;
 	}
@@ -83,14 +85,16 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 	 * All functions "runTrigger" are triggered if file
 	 * is inside directory core/triggers
 	 *
-	 * @param string 		$action 	Event action code
-	 * @param CommonObject 	$object 	Object
-	 * @param User 			$user 		Object user
-	 * @param Translate 	$langs 		Object langs
-	 * @param Conf 			$conf 		Object conf
-	 * @return int              		<0 if KO, 0 if no triggered ran, >0 if OK
+	 * @param string       $action Event action code
+	 * @param CommonObject $object Object
+	 * @param User         $user   Object user
+	 * @param Translate    $langs  Object langs
+	 * @param Conf         $conf   Object conf
+	 *
+	 * @return int                    <0 if KO, 0 if no triggered ran, >0 if OK
+	 * @throws Exception
 	 */
-	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf): int
 	{
 		if (empty($conf->mymodule) || empty($conf->mymodule->enabled)) {
 			return 0; // If module is not enabled, we do nothing
@@ -99,17 +103,19 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 		// Put here code you want to execute when a Dolibarr business events occurs.
 		// Data and type of action are stored into $object and $action
 
-		// You can isolate code for each action in a separate method: this method should be named like the trigger in camelCase.
-		// For example : COMPANY_CREATE => public function companyCreate($action, $object, User $user, Translate $langs, Conf $conf)
+		// You can isolate code for each action in a separate method: this method
+		// should be named like the trigger in camelCase.
+		// For example : COMPANY_CREATE => public function
+		// companyCreate($action, $object, User $user, Translate $langs, Conf $conf)
 		$methodName = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($action)))));
-		$callback = array($this, $methodName);
+		$callback = [$this, $methodName];
 		if (is_callable($callback)) {
 			dol_syslog(
-				"Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id
+				"Trigger '".$this->name."' for action '$action' launched by ".__FILE__. '. id=' .$object->id
 			);
 
-			return call_user_func($callback, $action, $object, $user, $langs, $conf);
-		};
+			return $callback($action, $object, $user, $langs, $conf);
+		}
 
 		// Or you can execute some code here
 		switch ($action) {
@@ -316,7 +322,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			// and more...
 
 			default:
-				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__. '. id=' .$object->id);
 				break;
 		}
 

@@ -23,36 +23,56 @@
  *      \brief      This file is an example for a command line script for module MyModule
  */
 
+declare(strict_types=1);
+
 //if (! defined('NOREQUIREDB'))              define('NOREQUIREDB', '1');				// Do not create database handler $db
 //if (! defined('NOREQUIREUSER'))            define('NOREQUIREUSER', '1');				// Do not load object $user
 //if (! defined('NOREQUIRESOC'))             define('NOREQUIRESOC', '1');				// Do not load object $mysoc
 //if (! defined('NOREQUIRETRAN'))            define('NOREQUIRETRAN', '1');				// Do not load object $langs
-//if (! defined('NOSCANGETFORINJECTION'))    define('NOSCANGETFORINJECTION', '1');		// Do not check injection attack on GET parameters
-//if (! defined('NOSCANPOSTFORINJECTION'))   define('NOSCANPOSTFORINJECTION', '1');		// Do not check injection attack on POST parameters
-//if (! defined('NOCSRFCHECK'))              define('NOCSRFCHECK', '1');				// Do not check CSRF attack (test on referer + on token if option MAIN_SECURITY_CSRF_WITH_TOKEN is on).
-//if (! defined('NOTOKENRENEWAL'))           define('NOTOKENRENEWAL', '1');				// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
-//if (! defined('NOSTYLECHECK'))             define('NOSTYLECHECK', '1');				// Do not check style html tag into posted data
-//if (! defined('NOREQUIREMENU'))            define('NOREQUIREMENU', '1');				// If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))            define('NOREQUIREHTML', '1');				// If we don't need to load the html.form.class.php
+//if (! defined('NOSCANGETFORINJECTION'))    define('NOSCANGETFORINJECTION', '1');
+//// Do not check injection attack on GET parameters
+//if (! defined('NOSCANPOSTFORINJECTION'))   define('NOSCANPOSTFORINJECTION', '1');
+//// Do not check injection attack on POST parameters
+//if (! defined('NOCSRFCHECK'))              define('NOCSRFCHECK', '1');
+//// Do not check CSRF attack (test on referer + on token if option MAIN_SECURITY_CSRF_WITH_TOKEN is on).
+//if (! defined('NOTOKENRENEWAL'))           define('NOTOKENRENEWAL', '1');
+//// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
+//if (! defined('NOSTYLECHECK'))             define('NOSTYLECHECK', '1');
+//// Do not check style html tag into posted data
+//if (! defined('NOREQUIREMENU'))            define('NOREQUIREMENU', '1');
+//// If there is no need to load and show top and left menu
+//if (! defined('NOREQUIREHTML'))            define('NOREQUIREHTML', '1');
+//// If we don't need to load the html.form.class.php
 //if (! defined('NOREQUIREAJAX'))            define('NOREQUIREAJAX', '1');       	  	// Do not load ajax.lib.php library
-//if (! defined("NOLOGIN"))                  define("NOLOGIN", '1');					// If this page is public (can be called outside logged session). This include the NOIPCHECK too.
-//if (! defined('NOIPCHECK'))                define('NOIPCHECK', '1');					// Do not check IP defined into conf $dolibarr_main_restrict_ip
-//if (! defined("MAIN_LANG_DEFAULT"))        define('MAIN_LANG_DEFAULT', 'auto');					// Force lang to a particular value
-//if (! defined("MAIN_AUTHENTICATION_MODE")) define('MAIN_AUTHENTICATION_MODE', 'aloginmodule');	// Force authentication handler
-//if (! defined("NOREDIRECTBYMAINTOLOGIN"))  define('NOREDIRECTBYMAINTOLOGIN', 1);		// The main.inc.php does not make a redirect if not logged, instead show simple error message
-//if (! defined("FORCECSP"))                 define('FORCECSP', 'none');				// Disable all Content Security Policies
-//if (! defined('CSRFCHECK_WITH_TOKEN'))     define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
-//if (! defined('NOBROWSERNOTIF'))     		 define('NOBROWSERNOTIF', '1');				// Disable browser notification
-if (!defined('NOSESSION')) define('NOSESSION', '1');	// On CLI mode, no need to use web sessions
+//if (! defined("NOLOGIN"))                  define("NOLOGIN", '1');
+//// If this page is public (can be called outside logged session). This includes the NOIPCHECK too.
+//if (! defined('NOIPCHECK'))                define('NOIPCHECK', '1');
+//// Do not check IP defined into conf $dolibarr_main_restrict_ip
+//if (! defined("MAIN_LANG_DEFAULT"))        define('MAIN_LANG_DEFAULT', 'auto');
+//// Force lang to a particular value
+//if (! defined("MAIN_AUTHENTICATION_MODE")) define('MAIN_AUTHENTICATION_MODE', 'aloginmodule');
+//// Force authentication handler
+//if (! defined("NOREDIRECTBYMAINTOLOGIN"))  define('NOREDIRECTBYMAINTOLOGIN', 1);
+//// The main.inc.php does not make a redirect if not logged, instead show simple error message
+//if (! defined("FORCECSP"))                 define('FORCECSP', 'none');
+//// Disable all Content Security Policies
+//if (! defined('CSRFCHECK_WITH_TOKEN'))     define('CSRFCHECK_WITH_TOKEN', '1');
+//// Force use of CSRF protection with tokens even for GET
+//if (! defined('NOBROWSERNOTIF'))     		 define('NOBROWSERNOTIF', '1');
+//// Disable browser notification
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}    // On CLI mode, no need to use web sessions
 
 
-$sapi_type = php_sapi_name();
+$sapi_type = PHP_SAPI;
 $script_file = basename(__FILE__);
 $path = __DIR__.'/';
 
 // Test if batch mode
-if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+if (strncmp($sapi_type, 'cgi', 3) === 0) {
+	echo 'Error: You are using PHP for CGI. To execute ' .$script_file."
+			from command line, you must use PHP for CLI mode.\n";
 	exit(-1);
 }
 
@@ -63,52 +83,62 @@ $error = 0;
 
 // -------------------- START OF YOUR CODE HERE --------------------
 @set_time_limit(0); // No timeout for this script
-define('EVEN_IF_ONLY_LOGIN_ALLOWED', 1); // Set this define to 0 if you want to lock your script when dolibarr setup is "locked to admin user only".
+const EVEN_IF_ONLY_LOGIN_ALLOWED = 1;
+// Set this defines to 0 if you want to lock your script when dolibarr setup is "locked to admin user only".
 
 // Load Dolibarr environment
 $res = 0;
-// Try master.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
-$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
-while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
-	$i--; $j--;
+// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
+if (!empty($_SERVER['CONTEXT_DOCUMENT_ROOT'])) {
+	$res = @include $_SERVER['CONTEXT_DOCUMENT_ROOT'] . '/main.inc.php';
 }
-if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/master.inc.php")) {
-	$res = @include substr($tmp, 0, ($i + 1))."/master.inc.php";
+// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
+$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME'];
+$tmp2 = realpath(__FILE__);
+$i = strlen($tmp) - 1;
+$j = strlen($tmp2) - 1;
+while (isset($tmp[$i], $tmp2[$j]) && $i > 0 && $j > 0 && $tmp[$i] === $tmp2[$j]) {
+	$i--;
+	$j--;
 }
-if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/master.inc.php")) {
-	$res = @include dirname(substr($tmp, 0, ($i + 1)))."/master.inc.php";
+if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1)) . '/main.inc.php')) {
+	$res = @include substr($tmp, 0, ($i + 1)) . '/main.inc.php';
 }
-// Try master.inc.php using relative path
-if (!$res && file_exists("../master.inc.php")) {
-	$res = @include "../master.inc.php";
+if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1))) . '/main.inc.php')) {
+	$res = @include dirname(substr($tmp, 0, ($i + 1))) . '/main.inc.php';
 }
-if (!$res && file_exists("../../master.inc.php")) {
-	$res = @include "../../master.inc.php";
+// Try main.inc.php using relative path
+if (!$res && file_exists('../main.inc.php')) {
+	$res = @include '../main.inc.php';
 }
-if (!$res && file_exists("../../../master.inc.php")) {
-	$res = @include "../../../master.inc.php";
+if (!$res && file_exists('../../main.inc.php')) {
+	$res = @include '../../main.inc.php';
+}
+if (!$res && file_exists('../../../main.inc.php')) {
+	$res = @include '../../../main.inc.php';
 }
 if (!$res) {
-	print "Include of master fails";
-	exit(-1);
+	die('Include of main fails');
 }
-// After this $db, $mysoc, $langs, $conf and $hookmanager are defined (Opened $db handler to database will be closed at end of file).
+
+// After this $db, $mysoc, $langs, $conf and $hookmanager are defined
+// (Opened $db handler to database will be closed at end of file).
 // $user is created but empty.
 
 //$langs->setDefaultLang('en_US'); 	// To change default language of $langs
-$langs->load("main"); // To load language file for default language
+$langs->load('main'); // To load language file for default language
 
 // Load user and its permissions
 $result = $user->fetch('', 'admin'); // Load user for login 'admin'. Comment line to run as anonymous user.
-if (!$result > 0) {
+if ((!$result) > 0) {
 	dol_print_error('', $user->error); exit;
 }
 $user->getrights();
 
 
-print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
+print '***** ' .$script_file. ' (' .$version. ') pid=' .dol_getmypid()." *****\n";
 if (!isset($argv[1])) {	// Check parameters
-	print "Usage: ".$script_file." param1 param2 ...\n";
+	print 'Usage: ' .$script_file." param1 param2 ...\n";
 	exit(-1);
 }
 print '--- start'."\n";
@@ -199,12 +229,12 @@ else
 
 // -------------------- END OF YOUR CODE --------------------
 
-if (!$error) {
-	$db->commit();
-	print '--- end ok'."\n";
-} else {
+if ($error) {
 	print '--- end error code='.$error."\n";
 	$db->rollback();
+} else {
+	$db->commit();
+	print '--- end ok'."\n";
 }
 
 $db->close(); // Close $db database opened handler

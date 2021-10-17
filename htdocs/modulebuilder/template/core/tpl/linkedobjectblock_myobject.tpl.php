@@ -15,6 +15,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -32,26 +34,32 @@ $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 // Load translation files required by the page
-$langs->load("mymodule");
+$langs->load('mymodule');
 
 $total = 0; $ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
 	$ilink++;
 
 	$trclass = 'oddeven';
-	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
+	if ($ilink === count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <=
+		1) {
 		$trclass .= ' liste_sub_total';
 	}
 	?>
-<tr class="<?php echo $trclass; ?>">
-	<td><?php echo $langs->trans("MyObject"); ?></td>
-	<td><?php echo $objectlink->getNomUrl(1); ?></td>
-	<td></td>
-	<td class="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
-	<td class="right"><?php echo ''; ?></td>
-	<td class="right"><?php echo $objectlink->getLibStatut(7); ?></td>
-	<td class="right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
-</tr>
+	<tr class="<?= $trclass ?>">
+		<td><?= $langs->trans('MyObject') ?></td>
+		<td><?= $objectlink->getNomUrl(1) ?></td>
+		<td></td>
+		<td class="center"><?= dol_print_date($objectlink->date, 'day') ?></td>
+		<td class="right"><?= '' ?></td>
+		<td class="right"><?= $objectlink->getLibStatut(7) ?></td>
+		<td class="right"><a class="reposition"
+							 href="<?= $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=dellink&token=' . newToken(
+							 ) . '&dellinkid=' . $key ?>"><?= img_picto(
+					$langs->transnoentitiesnoconv('RemoveLink'),
+					'unlink'
+				) ?></a></td>
+	</tr>
 	<?php
 }
 

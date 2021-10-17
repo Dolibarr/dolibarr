@@ -119,7 +119,7 @@ class ActionsDatapolicy
 				$object->country_id = '';
 				$object->note_private = $object->note_private.'<br>'.$langs->trans('ANONYMISER_AT', dol_print_date(time()));
 
-				if ($object->update($object->id, $user, 0)) {
+				if ($object->update($object->id, $user)) {
 					// On supprime les contacts associé
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".((int) $object->id);
 					$this->db->query($sql);

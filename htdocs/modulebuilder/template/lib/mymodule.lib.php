@@ -21,22 +21,24 @@
  * \brief   Library files with common functions for MyModule
  */
 
+declare(strict_types=1);
+
 /**
  * Prepare admin pages header
  *
  * @return array
  */
-function mymoduleAdminPrepareHead()
+function mymoduleAdminPrepareHead(): array
 {
 	global $langs, $conf;
 
-	$langs->load("mymodule@mymodule");
+	$langs->load('mymodule@mymodule');
 
 	$h = 0;
-	$head = array();
+	$head = [];
 
-	$head[$h][0] = dol_buildpath("/mymodule/admin/setup.php", 1);
-	$head[$h][1] = $langs->trans("Settings");
+	$head[$h][0] = dol_buildpath('/mymodule/admin/setup.php', 1);
+	$head[$h][1] = $langs->trans('Settings');
 	$head[$h][2] = 'settings';
 	$h++;
 
@@ -47,8 +49,8 @@ function mymoduleAdminPrepareHead()
 	$h++;
 	*/
 
-	$head[$h][0] = dol_buildpath("/mymodule/admin/about.php", 1);
-	$head[$h][1] = $langs->trans("About");
+	$head[$h][0] = dol_buildpath('/mymodule/admin/about.php', 1);
+	$head[$h][1] = $langs->trans('About');
 	$head[$h][2] = 'about';
 	$h++;
 

@@ -24,8 +24,11 @@
  * Put detailed description here.
  */
 
+declare(strict_types=1);
+
 namespace test\functional;
 
+use PHPUnit_Extensions_Selenium2TestCase;
 use PHPUnit_Extensions_Selenium2TestCase_WebDriverException;
 
 /**
@@ -41,34 +44,34 @@ use PHPUnit_Extensions_Selenium2TestCase_WebDriverException;
  *
  * @package Testmymodule
  */
-class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
+class MyModuleFunctionalTest extends PHPUnit_Extensions_Selenium2TestCase
 {
 	// TODO: move to a global configuration file?
 	/** @var string Base URL of the webserver under test */
-	protected static $base_url = 'http://dev.zenfusion.fr';
+	protected static string $base_url = 'https://dev.zenfusion.fr';
 	/**
 	 * @var string Dolibarr admin username
 	 * @see authenticate
 	 */
-	protected static $dol_admin_user = 'admin';
+	protected static string $dol_admin_user = 'admin';
 	/**
 	 * @var string Dolibarr admin password
 	 * @see authenticate
 	 */
-	protected static $dol_admin_pass = 'admin';
+	protected static string $dol_admin_pass = 'admin';
 	/** @var int Dolibarr module ID */
-	private static $module_id = 500000; // TODO: autodetect?
+	private static int $module_id = 500000; // TODO: autodetect?
 
 	/** @var array Browsers to test with */
-	public static $browsers = array(
-		array(
+	public static array $browsers = [
+		[
 			'browser' => 'Google Chrome on Linux',
 			'browserName' => 'chrome',
 			'sessionStrategy' => 'shared',
-			'desiredCapabilities' => array()
-		),
+			'desiredCapabilities' => []
+		],
 		// Geckodriver does not keep the session at the moment?!
-		// XPath selectors also don't seem to work
+		// XPath's selectors also don't seem to work
 		//array(
 		//    'browser' => 'Mozilla Firefox on Linux',
 		//    'browserName' => 'firefox',
@@ -77,20 +80,21 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 		//        'marionette' => true,
 		//    ),
 		//)
-	);
+	];
 
 	/**
 	 * Helper function to select links by href
 	 *
-	 * @param  string  $value      Href
+	 * @param string $value Href
+	 *
 	 * @return mixed               Helper string
 	 */
-	protected function byHref($value)
+	protected function byHref(string $value)
 	{
 		$anchor = null;
 		$anchors = $this->elements($this->using('tag name')->value('a'));
 		foreach ($anchors as $anchor) {
-			if (strstr($anchor->attribute('href'), $value)) {
+			if (strpos($anchor->attribute('href'), $value) !== false) {
 				break;
 			}
 		}
@@ -101,7 +105,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * Global test setup
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 	}
 
@@ -109,7 +113,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * Unit test setup
 	 * @return void
 	 */
-	public function setUp()
+	public function setUp(): void
 	{
 		$this->setSeleniumServerRequestsTimeout(3600);
 		$this->setBrowserUrl(self::$base_url);
@@ -119,7 +123,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * Verify pre conditions
 	 * @return void
 	 */
-	protected function assertPreConditions()
+	protected function assertPreConditions(): void
 	{
 	}
 
@@ -127,7 +131,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * Handle Dolibarr authentication
 	 * @return void
 	 */
-	private function authenticate()
+	private function authenticate(): void
 	{
 		try {
 			if ($this->byId('login')) {
@@ -148,7 +152,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * Test enabling developer mode
 	 * @return bool
 	 */
-	public function testEnableDeveloperMode()
+	public function testEnableDeveloperMode(): bool
 	{
 		$this->url('/admin/const.php');
 		$this->authenticate();
@@ -159,7 +163,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 		$this->byName('update')->click();
 		// Page reloaded, we need a new XPath
 		$main_features_level = $this->byXPath($main_features_level_path);
-		return $this->assertEquals('2', $main_features_level->value(), "MAIN_FEATURES_LEVEL value is 2");
+		return $this->assertEquals('2', $main_features_level->value(), 'MAIN_FEATURES_LEVEL value is 2');
 	}
 
 	/**
@@ -168,24 +172,16 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * @depends testEnableDeveloperMode
 	 * @return bool
 	 */
-	public function testModuleEnabled()
+	public function testModuleEnabled(): bool
 	{
 		$this->url('/admin/modules.php');
 		$this->authenticate();
-		$module_status_image_path = '//a[contains(@href, "'.self::$module_id.'")]/img';
+		$module_status_image_path = '//a[contains(@href, "' . self::$module_id . '")]/img';
 		$module_status_image = $this->byXPath($module_status_image_path);
-		if (strstr($module_status_image->attribute('src'), 'switch_off.png')) {
-			// Enable the module
-			$this->byHref('modMyModule')->click();
-		} else {
-			// Disable the module
-			$this->byHref('modMyModule')->click();
-			// Reenable the module
-			$this->byHref('modMyModule')->click();
-		}
+		$this->byHref('modMyModule')->click();
 		// Page reloaded, we need a new Xpath
 		$module_status_image = $this->byXPath($module_status_image_path);
-		return $this->assertContains('switch_on.png', $module_status_image->attribute('src'), "Module enabled");
+		return $this->assertContains('switch_on.png', $module_status_image->attribute('src'), 'Module enabled');
 	}
 
 	/**
@@ -194,7 +190,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * @depends testModuleEnabled
 	 * @return bool
 	 */
-	public function testConfigurationPage()
+	public function testConfigurationPage(): bool
 	{
 		$this->url('/custom/mymodule/admin/setup.php');
 		$this->authenticate();
@@ -207,7 +203,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * @depends testConfigurationPage
 	 * @return bool
 	 */
-	public function testAboutPage()
+	public function testAboutPage(): bool
 	{
 		$this->url('/custom/mymodule/admin/about.php');
 		$this->authenticate();
@@ -220,14 +216,14 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * @depends testAboutPage
 	 * @return bool
 	 */
-	public function testAboutPageRendersMarkdownReadme()
+	public function testAboutPageRendersMarkdownReadme(): bool
 	{
 		$this->url('/custom/mymodule/admin/about.php');
 		$this->authenticate();
 		return $this->assertEquals(
 			'Dolibarr Module Template (aka My Module)',
 			$this->byTag('h1')->text(),
-			"Readme title"
+			'Readme title'
 		);
 	}
 
@@ -237,11 +233,11 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * @depends testModuleEnabled
 	 * @return bool
 	 */
-	public function testBoxDeclared()
+	public function testBoxDeclared(): bool
 	{
 		$this->url('/admin/boxes.php');
 		$this->authenticate();
-		return $this->assertContains('mymodulewidget1', $this->source(), "Box enabled");
+		return $this->assertContains('mymodulewidget1', $this->source(), 'Box enabled');
 	}
 
 	/**
@@ -250,14 +246,14 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * @depends testModuleEnabled
 	 * @return bool
 	 */
-	public function testTriggerDeclared()
+	public function testTriggerDeclared(): bool
 	{
 		$this->url('/admin/triggers.php');
 		$this->authenticate();
 		return $this->assertContains(
 			'interface_99_modMyModule_MyModuleTriggers.class.php',
 			$this->byTag('body')->text(),
-			"Trigger declared"
+			'Trigger declared'
 		);
 	}
 
@@ -267,14 +263,16 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * @depends testTriggerDeclared
 	 * @return bool
 	 */
-	public function testTriggerEnabled()
+	public function testTriggerEnabled(): bool
 	{
 		$this->url('/admin/triggers.php');
 		$this->authenticate();
 		return $this->assertContains(
 			'tick.png',
-			$this->byXPath('//td[text()="interface_99_modMyModule_MyTrigger.class.php"]/following::img')->attribute('src'),
-			"Trigger enabled"
+			$this->byXPath('//td[text()="interface_99_modMyModule_MyTrigger.class.php"]/following::img')->attribute(
+				'src'
+			),
+			'Trigger enabled'
 		);
 	}
 
@@ -282,7 +280,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * Verify post conditions
 	 * @return void
 	 */
-	protected function assertPostConditions()
+	protected function assertPostConditions(): void
 	{
 	}
 
@@ -290,7 +288,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * Unit test teardown
 	 * @return void
 	 */
-	public function tearDown()
+	public function tearDown(): void
 	{
 	}
 
@@ -298,7 +296,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * Global test teardown
 	 * @return void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 	}
 }

@@ -23,17 +23,20 @@
  */
 
 /**
- *  \file			htdocs/core/modules/mymodule/modules_myobject.php
- *  \ingroup		mymodule
- *  \brief			File that contains parent class for myobjects document models and parent class for myobjects numbering models
+ *  \file            htdocs/core/modules/mymodule/modules_myobject.php
+ *  \ingroup        mymodule
+ *  \brief            File that contains parent class for myobjects document models
+ *                    and parent class for myobjects numbering models
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // required for use by classes that inherit
+declare(strict_types=1);
+
+require_once DOL_DOCUMENT_ROOT . '/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php'; // required for use by classes that inherit
 
 
 /**
- *	Parent class for documents models
+ *    Parent class for documents models
  */
 abstract class ModelePDFMyObject extends CommonDocGenerator
 {
@@ -42,19 +45,20 @@ abstract class ModelePDFMyObject extends CommonDocGenerator
 	/**
 	 *  Return list of active generation modules
 	 *
-	 *  @param	DoliDB	$db     			Database handler
-	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of templates
+	 * @param DoliDB $db                Database handler
+	 * @param int    $maxfilenamelength Max length of value to show
+	 *
+	 * @return    array                        List of templates
 	 */
-	public static function liste_modeles($db, $maxfilenamelength = 0)
+	public static function liste_modeles(DoliDB $db, int $maxfilenamelength = 0): array
 	{
 		// phpcs:enable
 		global $conf;
 
 		$type = 'myobject';
-		$list = array();
+		$list = [];
 
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		include_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 		$list = getListOfModels($db, $type, $maxfilenamelength);
 
 		return $list;
@@ -71,14 +75,14 @@ abstract class ModeleNumRefMyObject
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error = '';
+	public string $error = '';
 
 	/**
-	 *	Return if a module can be used or not
+	 *    Return if a module can be used or not
 	 *
-	 *	@return		boolean     true if module can be used
+	 * @return        bool     true if module can be used
 	 */
-	public function isEnabled()
+	public function isEnabled(): bool
 	{
 		return true;
 	}
@@ -88,11 +92,11 @@ abstract class ModeleNumRefMyObject
 	 *
 	 *	@return     string      Texte descripif
 	 */
-	public function info()
+	public function info(): string
 	{
 		global $langs;
-		$langs->load("mymodule@mymodule");
-		return $langs->trans("NoDescription");
+		$langs->load('mymodule@mymodule');
+		return $langs->trans('NoDescription');
 	}
 
 	/**
@@ -100,35 +104,37 @@ abstract class ModeleNumRefMyObject
 	 *
 	 *	@return     string      Example
 	 */
-	public function getExample()
+	public function getExample(): string
 	{
 		global $langs;
-		$langs->load("mymodule@mymodule");
-		return $langs->trans("NoExample");
+		$langs->load('mymodule@mymodule');
+		return $langs->trans('NoExample');
 	}
 
 	/**
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *	@param	Object		$object		Object we need next value for
-	 *	@return boolean     			false if conflict, true if ok
+	 * @param Object $object Object we need next value for
+	 *
+	 * @return bool                false if conflicted, true if ok
 	 */
-	public function canBeActivated($object)
+	public function canBeActivated(object $object): bool
 	{
 		return true;
 	}
 
 	/**
-	 *	Returns next assigned value
+	 *    Returns next assigned value
 	 *
-	 *	@param	Object		$object		Object we need next value for
-	 *	@return	string      Valeur
+	 * @param Object $object Object we need next value for
+	 *
+	 * @return    string      Valeur
 	 */
-	public function getNextValue($object)
+	public function getNextValue(object $object): string
 	{
 		global $langs;
-		return $langs->trans("NotAvailable");
+		return $langs->trans('NotAvailable');
 	}
 
 	/**
@@ -139,20 +145,20 @@ abstract class ModeleNumRefMyObject
 	public function getVersion()
 	{
 		global $langs;
-		$langs->load("admin");
+		$langs->load('admin');
 
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
+		if ($this->version === 'development') {
+			return $langs->trans('VersionDevelopment');
 		}
-		if ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
+		if ($this->version === 'experimental') {
+			return $langs->trans('VersionExperimental');
 		}
-		if ($this->version == 'dolibarr') {
+		if ($this->version === 'dolibarr') {
 			return DOL_VERSION;
 		}
 		if ($this->version) {
 			return $this->version;
 		}
-		return $langs->trans("NotAvailable");
+		return $langs->trans('NotAvailable');
 	}
 }
