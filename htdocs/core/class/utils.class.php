@@ -249,11 +249,9 @@ class Utils
 			$compression = $compression ? $compression : 'none';
 			if ($compression == 'gz') {
 				$outputfile .= '.gz';
-			}
-			elseif ($compression == 'bz') {
+			} elseif ($compression == 'bz') {
 				$outputfile .= '.bz2';
-			}
-			elseif ($compression == 'zstd') {
+			} elseif ($compression == 'zstd') {
 				$outputfile .= '.zst';
 			}
 			$outputerror = $outputfile.'.err';

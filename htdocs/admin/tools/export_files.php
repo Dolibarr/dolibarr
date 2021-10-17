@@ -157,11 +157,9 @@ if ($compression == 'zip') {
 	} else {
 		if ($compression == 'gz') {
 			$cmd = "gzip -f ".$outputdir."/".$file;
-		}
-		elseif ($compression == 'bz') {
+		} elseif ($compression == 'bz') {
 			$cmd = "bzip2 -f ".$outputdir."/".$file;
-		}
-		elseif ($compression == 'zstd') {
+		} elseif ($compression == 'zstd') {
 			$cmd = "zstd -z -9 -q --rm ".$outputdir."/".$file;
 		}
 
