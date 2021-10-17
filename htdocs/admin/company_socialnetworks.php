@@ -110,7 +110,7 @@ print '<br>';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';
-print '<td class="titlefield">'.$langs->trans("SocialNetworksInformation").'</td><td>'.$langs->trans("Url").'</td><td>'.$langs->trans("SocialNetworkId").'</td><td></td>';
+print '<td class="titlefieldcreate">'.$langs->trans("SocialNetworksInformation").'</td><td>'.$langs->trans("Url").'</td><td>'.$langs->trans("SocialNetworkId").'</td><td></td>';
 print "</tr>\n";
 
 
