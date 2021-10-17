@@ -886,6 +886,13 @@ span.fa.fa-plus-circle.paddingleft {
 	font-size: 1.5em; vertical-align: text-bottom;
 }
 
+.divoverflow {
+	overflow: hidden;
+	white-space: nowrap;
+	vertical-align: middle;
+	text-overflow: ellipsis;
+}
+
 
 /* Themes for badges */
 
