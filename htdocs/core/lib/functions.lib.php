@@ -1055,7 +1055,7 @@ function dol_size($size, $type = '')
 
 /**
  *	Clean a string to use it as a file name.
- *  Replace also '--' and ' -' strings, they are used for parameters separation.
+ *  Replace also '--' and ' -' strings, they are used for parameters separation (Note: ' - ' is allowed).
  *
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with.
@@ -1073,13 +1073,13 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 	$filesystem_forbidden_chars = array('<', '>', '/', '\\', '?', '*', '|', '"', ':', '°', '$', ';');
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
-	$tmp = preg_replace('/\s+\-/', ' _', $tmp);
+	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
 	return $tmp;
 }
 
 /**
  *	Clean a string to use it as a path name.
- *  Replace also '--' and ' -' strings, they are used for parameters separation.
+ *  Replace also '--' and ' -' strings, they are used for parameters separation (Note: ' - ' is allowed).
  *
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with
@@ -1093,7 +1093,7 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 	$filesystem_forbidden_chars = array('<', '>', '?', '*', '|', '"', '°');
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
-	$tmp = preg_replace('/\s+\-/', ' _', $tmp);
+	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
 	return $tmp;
 }
 
