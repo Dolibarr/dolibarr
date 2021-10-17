@@ -54,7 +54,6 @@ $code_expense_rules_type = GETPOST('code_expense_rules_type');
 $dates = dol_mktime(12, 0, 0, GETPOST('startmonth'), GETPOST('startday'), GETPOST('startyear'));
 $datee = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
 $amount = GETPOST('amount');
-$restrictive = GETPOST('restrictive');
 
 $object = new ExpenseReportRule($db);
 if (!empty($id)) {
@@ -138,7 +137,7 @@ if ($action == 'save') {
 	exit;
 }
 
-$rules = ExpenseReportRule::getAllRule();
+$rules = $object->getAllRule();
 
 $tab_apply = array(
 	'A' => $langs->trans('All'),
@@ -201,7 +200,7 @@ if ($action != 'edit') {
 	echo '<td>'.$form->selectDate(strtotime(date('Y-m-t', dol_now())), 'end', '', '', 0, '', 1, 0).'</td>';
 	echo '<td><input type="text" value="" class="maxwidth100" name="amount" class="amount" /> '.$conf->currency.'</td>';
 	echo '<td>'.$form->selectyesno('restrictive', 0, 1).'</td>';
-	echo '<td class="right"><input type="submit" class="button" value="'.$langs->trans('Add').'" /></td>';
+	echo '<td class="right"><input type="submit" class="button button-add" value="'.$langs->trans('Add').'" /></td>';
 	echo '</tr>';
 
 	echo '</table>';
@@ -319,7 +318,7 @@ foreach ($rules as $rule) {
 		echo '<a class="editfielda paddingright paddingleft" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$rule->id.'">'.img_edit().'</a>&nbsp;';
 		echo '<a class="paddingright paddingleft" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$rule->id.'">'.img_delete().'</a>';
 	} else {
-		echo '<input type="submit" class="button" value="'.$langs->trans('Update').'" />&nbsp;';
+		echo '<input type="submit" class="button button-edit" value="'.$langs->trans('Update').'" />&nbsp;';
 		echo '<a href="'.$_SERVER['PHP_SELF'].'" class="button button-cancel">'.$langs->trans("Cancel").'</a>';
 	}
 	echo '</td>';

@@ -152,7 +152,7 @@ if ($resql) {
 	while ($i < $num) {
 		$objp = $db->fetch_object($resql);
 		$listofoppstatus[$objp->rowid] = $objp->percent;
-		$listofopplabel[$objp->rowid] = $objp->label;
+		$listofopplabel[$objp->rowid] = $objp->label;		// default label if translation from "OppStatus".code not found.
 		$listofoppcode[$objp->rowid] = $objp->code;
 		switch ($objp->code) {
 			case 'PROSP':
@@ -223,7 +223,7 @@ if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LatestModifiedProjects", $max).'</th>';
+	print '<th colspan="5">'.$langs->trans("LatestModifiedProjects", $max).'</th>';
 	print '</tr>';
 
 	$num = $db->num_rows($resql);
@@ -277,12 +277,22 @@ if ($resql) {
 
 			print '</td>';
 
+			// Label
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->title).'">';
+			print $projectstatic->title;
+			print '</td>';
+
+			// Thirdparty
 			print '<td class="nowrap">';
 			if ($companystatic->id > 0) {
 				print $companystatic->getNomUrl(1, 'company', 16);
 			}
 			print '</td>';
+
+			// Date
 			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
+
+			// Status
 			print '<td class="right">'.$projectstatic->LibStatut($obj->status, 3).'</td>';
 			print '</tr>';
 			$i++;

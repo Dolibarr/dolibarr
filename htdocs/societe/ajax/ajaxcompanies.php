@@ -87,8 +87,18 @@ if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn', 'int
 		$socid = GETPOST('id_fourn', 'int');
 	}
 
-	$sql = "SELECT rowid, nom";
+	$sql = "SELECT s.rowid, s.nom";
+	if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST)) {
+		$sql .= ", s.client, s.fournisseur, s.code_client, s.code_fournisseur";
+	}
+	if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+		$sql .= ", s.address, s.zip, s.town";
+		$sql .= ", dictp.code as country_code";
+	}
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+	if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as dictp ON dictp.rowid = s.fk_pays";
+	}
 	$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 	if ($socid) {
 		$sql .= " AND (";
@@ -114,7 +124,22 @@ if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn', 'int
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($row = $db->fetch_array($resql)) {
-			$label = $row['nom'];
+			$label = '';
+			if ($conf->global->SOCIETE_ADD_REF_IN_LIST) {
+				if (($row['client']) && (!empty($row['code_client']))) {
+					$label = $row['code_client'].' - ';
+				}
+				if (($row['fournisseur']) && (!empty($row['code_fournisseur']))) {
+					$label .= $row['code_fournisseur'].' - ';
+				}
+				$label .= ' '.$row['name'];
+			}
+			if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+				$label .= ($row['address'] ? ' - '.$row['address'] : '').($row['zip'] ? ' - '.$row['zip'] : '').($row['town'] ? ' '.$row['town'] : '');
+				if (!empty($row['country_code'])) {
+					$label .= ', '.$langs->trans('Country'.$row['country_code']);
+				}
+			}
 			if ($socid) {
 				$label = preg_replace('/('.preg_quote($socid, '/').')/i', '<strong>$1</strong>', $label, 1);
 			}

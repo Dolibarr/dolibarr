@@ -178,6 +178,7 @@ var place="<?php echo $place; ?>";
 var editaction="qty";
 var editnumber="";
 var invoiceid=0;
+var search2_timer=null;
 
 /*
 var app = this;
@@ -433,7 +434,7 @@ function ClickProduct(position) {
 		console.log("Click on product at position "+position+" for idproduct "+idproduct);
 		if (idproduct=="") return;
 		// Call page invoice.php to generate the section with product lines
-		$("#poslines").load("invoice.php?action=addline&place="+place+"&idproduct="+idproduct+"&selectedline="+selectedline, function() {
+		$("#poslines").load("invoice.php?action=addline&token=<?php echo newToken() ?>&place="+place+"&idproduct="+idproduct+"&selectedline="+selectedline, function() {
 			<?php if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) echo "CustomerDisplay();";?>
 		});
 	}
@@ -479,6 +480,12 @@ function CloseBill() {
 	invoiceid = $("#invoiceid").val();
 	console.log("Open popup to enter payment on invoiceid="+invoiceid);
 	$.colorbox({href:"pay.php?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
+}
+
+function Split() {
+	invoiceid = $("#invoiceid").val();
+	console.log("Open popup to split on invoiceid="+invoiceid);
+	$.colorbox({href:"split.php?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
 }
 
 function Floors() {
@@ -545,62 +552,76 @@ function Search2(keyCodeForEnter) {
 	}
 
 	if (search === true) {
-		pageproducts = 0;
-		jQuery(".wrapper2 .catwatermark").hide();
-		$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&term=' + $('#search').val(), function (data) {
-			for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
-				if (typeof (data[i]) == "undefined") {
-					$("#prodesc" + i).text("");
-					$("#probutton" + i).text("");
-					$("#probutton" + i).hide();
-					$("#proprice" + i).attr("class", "hidden");
-					$("#proprice" + i).html("");
-					$("#proimg" + i).attr("src", "genimg/empty.png");
-					$("#prodiv" + i).data("rowid", "");
-					continue;
+
+		// temporization time to give time to type
+		if (search2_timer) {
+			clearTimeout(search2_timer);
+		}
+
+		search2_timer = setTimeout(function(){
+
+			pageproducts = 0;
+			jQuery(".wrapper2 .catwatermark").hide();
+			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&term=' + $('#search').val(), function (data) {
+				for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
+					if (typeof (data[i]) == "undefined") {
+						$("#prodesc" + i).text("");
+						$("#probutton" + i).text("");
+						$("#probutton" + i).hide();
+						$("#proprice" + i).attr("class", "hidden");
+						$("#proprice" + i).html("");
+						$("#proimg" + i).attr("src", "genimg/empty.png");
+						$("#prodiv" + i).data("rowid", "");
+						continue;
+					}
+					<?php
+					$titlestring = "'".dol_escape_js($langs->transnoentities('Ref').': ')."' + data[i]['ref']";
+					$titlestring .= " + ' - ".dol_escape_js($langs->trans("Barcode").': ')."' + data[i]['barcode']";
+					?>
+					var titlestring = <?php echo $titlestring; ?>;
+					$("#prodesc" + i).text(data[i]['label']);
+					$("#prodivdesc" + i).show();
+					$("#probutton" + i).text(data[i]['label']);
+					$("#probutton" + i).show();
+					if (data[i]['price_formated']) {
+						$("#proprice" + i).attr("class", "productprice");
+						$("#proprice" + i).html(data[i]['price_formated']);
+					}
+					$("#proimg" + i).attr("title", titlestring);
+					if( undefined !== data[i]['img']) {
+						$("#proimg" + i).attr("src", data[i]['img']);
+					}
+					else {
+						$("#proimg" + i).attr("src", "genimg/index.php?query=pro&id=" + data[i]['rowid']);
+					}
+					$("#prodiv" + i).data("rowid", data[i]['rowid']);
+					$("#prodiv" + i).data("iscat", 0);
 				}
-				<?php
-				$titlestring = "'".dol_escape_js($langs->transnoentities('Ref').': ')."' + data[i]['ref']";
-				$titlestring .= " + ' - ".dol_escape_js($langs->trans("Barcode").': ')."' + data[i]['barcode']";
-				?>
-				var titlestring = <?php echo $titlestring; ?>;
-				$("#prodesc" + i).text(data[i]['label']);
-				$("#prodivdesc" + i).show();
-				$("#probutton" + i).text(data[i]['label']);
-				$("#probutton" + i).show();
-				if (data[i]['price_formated']) {
-					$("#proprice" + i).attr("class", "productprice");
-					$("#proprice" + i).html(data[i]['price_formated']);
+			}).always(function (data) {
+				// If there is only 1 answer
+				if ($('#search').val().length > 0 && data.length == 1) {
+					console.log($('#search').val()+' - '+data[0]['barcode']);
+					if ($('#search').val() == data[0]['barcode'] && 'thirdparty' == data[0]['object']) {
+						console.log("There is only 1 answer with barcode matching the search, so we change the thirdparty "+data[0]['rowid']);
+						ChangeThirdparty(data[0]['rowid']);
+					}
+					else if ($('#search').val() == data[0]['barcode'] && 'product' == data[0]['object']) {
+						console.log("There is only 1 answer with barcode matching the search, so we add the product in basket");
+						ClickProduct(0);
+					}
 				}
-				$("#proimg" + i).attr("title", titlestring);
-				$("#proimg" + i).attr("src", "genimg/index.php?query=pro&id=" + data[i]['rowid']);
-				$("#prodiv" + i).data("rowid", data[i]['rowid']);
-				$("#prodiv" + i).data("iscat", 0);
-			}
-		}).always(function (data) {
-			// If there is only 1 answer
-			if ($('#search').val().length > 0 && data.length == 1) {
-				console.log($('#search').val()+' - '+data[0]['barcode']);
-				if ($('#search').val() == data[0]['barcode'] && 'thirdparty' == data[0]['object']) {
-					console.log("There is only 1 answer with barcode matching the search, so we change the thirdparty "+data[0]['rowid']);
-					ChangeThirdparty(data[0]['rowid']);
+				if (eventKeyCode == keyCodeForEnter){
+					if (data.length == 0) {
+						$('#search').val('<?php
+						$langs->load('errors');
+						echo dol_escape_js($langs->trans("ErrorRecordNotFound"));
+						?>');
+						$('#search').select();
+					}
+					else ClearSearch();
 				}
-				else if ($('#search').val() == data[0]['barcode'] && 'product' == data[0]['object']) {
-					console.log("There is only 1 answer with barcode matching the search, so we add the product in basket");
-					ClickProduct(0);
-				}
-			}
-			if (eventKeyCode == keyCodeForEnter){
-				if (data.length == 0) {
-					$('#search').val('<?php
-					$langs->load('errors');
-					echo dol_escape_js($langs->trans("ErrorRecordNotFound"));
-					?>');
-					$('#search').select();
-				}
-				else ClearSearch();
-			}
-		});
+			});
+		}, 500); // 500ms delay
 	}
 
 }
@@ -978,36 +999,39 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 <?php
 
 // TakePOS setup check
-$sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_paiement";
-$sql .= " WHERE entity IN (".getEntity('c_paiement').")";
-$sql .= " AND active = 1";
-$sql .= " ORDER BY libelle";
+if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"]) {
+	$sql = "SELECT code, libelle FROM " . MAIN_DB_PREFIX . "c_paiement";
+	$sql .= " WHERE entity IN (" . getEntity('c_paiement') . ")";
+	$sql .= " AND active = 1";
+	$sql .= " ORDER BY libelle";
 
-$resql = $db->query($sql);
-$paiementsModes = array();
-if ($resql) {
-	while ($obj = $db->fetch_object($resql)) {
-		$paycode = $obj->code;
-		if ($paycode == 'LIQ') {
-			$paycode = 'CASH';
-		}
-		if ($paycode == 'CHQ') {
-			$paycode = 'CHEQUE';
-		}
+	$resql          = $db->query($sql);
+	$paiementsModes = array();
+	if ($resql) {
+		while ( $obj = $db->fetch_object($resql) ) {
+			$paycode = $obj->code;
+			if ($paycode == 'LIQ') {
+				$paycode = 'CASH';
+			}
+			if ($paycode == 'CHQ') {
+				$paycode = 'CHEQUE';
+			}
 
-		$constantforkey = "CASHDESK_ID_BANKACCOUNT_".$paycode.$_SESSION["takeposterminal"];
-		//var_dump($constantforkey.' '.$conf->global->$constantforkey);
-		if (!empty($conf->global->$constantforkey) && $conf->global->$constantforkey > 0) {
-			array_push($paiementsModes, $obj);
+			$constantforkey = "CASHDESK_ID_BANKACCOUNT_" . $paycode . $_SESSION["takeposterminal"];
+			//var_dump($constantforkey.' '.$conf->global->$constantforkey);
+			if ( ! empty($conf->global->$constantforkey) && $conf->global->$constantforkey > 0) {
+				array_push($paiementsModes, $obj);
+			}
 		}
+	}
+
+	if (empty($paiementsModes)) {
+		$langs->load('errors');
+		setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("TakePOS")), null, 'errors');
+		setEventMessages($langs->trans("ProblemIsInSetupOfTerminal", $_SESSION["takeposterminal"]), null, 'errors');
 	}
 }
 
-if (empty($paiementsModes)) {
-	$langs->load('errors');
-	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("TakePOS")), null, 'errors');
-	setEventMessages($langs->trans("ProblemIsInSetupOfTerminal", $_SESSION["takeposterminal"]), null, 'errors');
-}
 if (count($maincategories) == 0) {
 	if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {
 		$tmpcategory = new Categorie($db);
@@ -1039,6 +1063,8 @@ $menus[$r++] = array('title'=>'<span class="far fa-money-bill-alt paddingrighton
 if (getDolGlobalString('TAKEPOS_DIRECT_PAYMENT')) {
 	$menus[$r++] = array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("DirectPayment").' <span class="opacitymedium">('.$langs->trans("Cash").')</span></div>', 'action'=>'DirectPayment();');
 }
+
+$menus[$r++] = array('title'=>'<span class="fas fa-cut paddingrightonly"></span><div class="trunc">'.$langs->trans("SplitSale").'</div>', 'action'=>'Split();');
 
 // BAR RESTAURANT specific menu
 if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
