@@ -36,7 +36,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	/**
 	 * @var DoliDB Database handler
 	 */
-	public DoliDb $db;
+	public $db;
 
 	/**
 	 * @var string Error message
@@ -102,7 +102,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	/**
 	 * @var string Alphanumeric ID
 	 */
-	public string $boxcode;
+	public $boxcode;
 
 	/**
 	 * @var string Note
@@ -112,7 +112,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	/**
 	 * @var string 	Widget type ('graph' means the widget is a graph widget)
 	 */
-	public string $widgettype = '';
+	public $widgettype = '';
 
 
 	/**
