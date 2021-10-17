@@ -143,7 +143,7 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
 			if ($obj) {
-				$max = (int)$obj->max;
+				$max = (int) $obj->max;
 			} else {
 				$max = 0;
 			}

@@ -191,7 +191,7 @@ if ($action === 'updateMask') {
 		$tmpobjectkey = GETPOST('object');
 		if (!empty($tmpobjectkey)) {
 			$constforval = 'MYMODULE_' . strtoupper($tmpobjectkey) . '_ADDON_PDF';
-			if ($conf->global->$constforval === (string)$value) {
+			if ($conf->global->$constforval === (string) $value) {
 				dolibarr_del_const($db, $constforval, $conf->entity);
 			}
 		}
@@ -264,8 +264,7 @@ if ($action === 'edit') {
 		if ($val['enabled'] === 1) {
 			$setupnotempty++;
 			print '<tr class="oddeven"><td>';
-			$tooltiphelp = (($langs->trans($constname . 'Tooltip') !== $constname . 'Tooltip') ? $langs->trans
-			(
+			$tooltiphelp = (($langs->trans($constname . 'Tooltip') !== $constname . 'Tooltip') ? $langs->trans(
 				$constname . 'Tooltip'
 			) : '');
 			print '<span id="helplink' . $constname . '" class="spanforparamtooltip">' . $form->textwithpicto(
@@ -405,8 +404,7 @@ if ($action === 'edit') {
 		if ($val['enabled'] === 1) {
 			$setupnotempty++;
 			print '<tr class="oddeven"><td>';
-			$tooltiphelp = (($langs->trans($constname . 'Tooltip') !== $constname . 'Tooltip') ? $langs->trans
-			(
+			$tooltiphelp = (($langs->trans($constname . 'Tooltip') !== $constname . 'Tooltip') ? $langs->trans(
 				$constname . 'Tooltip'
 			) : '');
 			print $form->textwithpicto($langs->trans($constname), $tooltiphelp);
@@ -586,7 +584,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 									) . '</b><br>';
 
 								$nextval = $module->getNextValue($mytmpinstance);
-								if ((string)$nextval !== $langs->trans('NotAvailable')) {  // Keep " on nextval
+								if ((string) $nextval !== $langs->trans('NotAvailable')) {  // Keep " on nextval
 									$htmltooltip .= '' . $langs->trans('NextValue') . ': ';
 									if ($nextval) {
 										if (strncmp($nextval, 'Error', 5) === 0 || $nextval === 'NotConfigured') {
@@ -803,7 +801,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 									print "</tr>\n";
 								}
-								}
+							}
 						}
 					}
 				}

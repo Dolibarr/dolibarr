@@ -285,7 +285,7 @@ if ($object->id > 0) {
 	$objcon = new stdClass();
 
 	$out = '&origin=' . urlencode($object->element . '@' . $object->module) . '&originid=' . urlencode(
-			(string)$object->id
+			(string) $object->id
 		);
 	$urlbacktopage = $_SERVER['PHP_SELF'] . '?id=' . $object->id;
 	$out .= '&backtopage='.urlencode($urlbacktopage);
@@ -293,7 +293,7 @@ if ($object->id > 0) {
 	if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
 		//$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
 		if (get_class($objthirdparty) === 'Societe') {
-			$out .= '&socid=' . urlencode((string)$objthirdparty->id);
+			$out .= '&socid=' . urlencode((string) $objthirdparty->id);
 		}
 		$out .= (!empty($objcon->id) ? '&contactid=' . urlencode($objcon->id) : '') . '&percentage=-1';
 		//$out.=$langs->trans("AddAnAction").' ';

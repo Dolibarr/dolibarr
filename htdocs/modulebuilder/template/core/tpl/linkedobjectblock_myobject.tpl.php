@@ -46,19 +46,17 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		$trclass .= ' liste_sub_total';
 	}
 	?>
-	<tr class="<?= $trclass ?>">
-		<td><?= $langs->trans('MyObject') ?></td>
-		<td><?= $objectlink->getNomUrl(1) ?></td>
+	<tr class="<?php echo $trclass ?>">
+		<td><?php echo $langs->trans('MyObject') ?></td>
+		<td><?php echo $objectlink->getNomUrl(1) ?></td>
 		<td></td>
-		<td class="center"><?= dol_print_date($objectlink->date, 'day') ?></td>
-		<td class="right"><?= '' ?></td>
-		<td class="right"><?= $objectlink->getLibStatut(7) ?></td>
-		<td class="right"><a class="reposition"
-							 href="<?= $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=dellink&token=' . newToken(
-							 ) . '&dellinkid=' . $key ?>"><?= img_picto(
+		<td class="center"><?php echo dol_print_date($objectlink->date, 'day') ?></td>
+		<td class="right"><?php echo '' ?></td>
+		<td class="right"><?php echo $objectlink->getLibStatut(7) ?>                                                        														 href="<?php echo $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=dellink&token=' . newToken(
+															) . '&dellinkid=' . $key ?>"><?php echo img_picto(
 					$langs->transnoentitiesnoconv('RemoveLink'),
 					'unlink'
-				) ?></a></td>
+															   ) ?></a></td>
 	</tr>
 	<?php
 }
