@@ -341,14 +341,11 @@ class Utils
 			$fullcommandclear = $command." ".$paramclear." 2>&1";
 			if ($compression == 'none') {
 				$handle = fopen($outputfile, 'w');
-			}
-			elseif ($compression == 'gz') {
+			} elseif ($compression == 'gz') {
 				$handle = gzopen($outputfile, 'w');
-			}
-			elseif ($compression == 'bz') {
+			} elseif ($compression == 'bz') {
 				$handle = bzopen($outputfile, 'w');
-			}
-			elseif ($compression == 'zstd') {
+			} elseif ($compression == 'zstd') {
 				$handle = fopen($outputfile, 'w');
 			}
 
@@ -415,14 +412,11 @@ class Utils
 
 				if ($compression == 'none') {
 					fclose($handle);
-				}
-				elseif ($compression == 'gz') {
+				} elseif ($compression == 'gz') {
 					gzclose($handle);
-				}
-				elseif ($compression == 'bz') {
+				} elseif ($compression == 'bz') {
 					bzclose($handle);
-				}
-				elseif ($compression == 'zstd') {
+				} elseif ($compression == 'zstd') {
 					fclose($handle);
 				}
 
@@ -438,14 +432,11 @@ class Utils
 			// Get errorstring
 			if ($compression == 'none') {
 				$handle = fopen($outputfile, 'r');
-			}
-			elseif ($compression == 'gz') {
+			} elseif ($compression == 'gz') {
 				$handle = gzopen($outputfile, 'r');
-			}
-			elseif ($compression == 'bz') {
+			} elseif ($compression == 'bz') {
 				$handle = bzopen($outputfile, 'r');
-			}
-			elseif ($compression == 'zstd') {
+			} elseif ($compression == 'zstd') {
 				$handle = fopen($outputfile, 'r');
 			}
 			if ($handle) {
@@ -456,14 +447,11 @@ class Utils
 				// Close file
 				if ($compression == 'none') {
 					fclose($handle);
-				}
-				elseif ($compression == 'gz') {
+				} elseif ($compression == 'gz') {
 					gzclose($handle);
-				}
-				elseif ($compression == 'bz') {
+				} elseif ($compression == 'bz') {
 					bzclose($handle);
-				}
-				elseif ($compression == 'zstd') {
+				} elseif ($compression == 'zstd') {
 					fclose($handle);
 				}
 				if ($ok && preg_match('/^-- (MySql|MariaDB)/i', $errormsg)) {	// No error
