@@ -104,8 +104,6 @@ print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
-// Social networks
-print '<br>';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent editmode">';
