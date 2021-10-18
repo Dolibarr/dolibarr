@@ -576,9 +576,9 @@ class MyObject extends CommonObject
 	}
 
 	/**
-	 * @param MyObject $object
-	 * @param          $langs
-	 * @param          $extrafields
+	 * @param MyObject	$object			Object created
+	 * @param mixed 	$langs			Define Languages used
+	 * @param mixed		$extrafields	Define extrafields
 	 */
 	protected function createFromCloneClearFields(MyObject $object, $langs, $extrafields): void
 	{
@@ -872,9 +872,9 @@ class MyObject extends CommonObject
 	}
 
 	/**
-	 * @param int    $error
-	 * @param        $conf
-	 * @param string $num
+	 * @param int    $error Error message
+	 * @param mixed  $conf  Global config
+	 * @param string $num	Number of returned rows
 	 *
 	 * @return int
 	 * @throws Exception
@@ -1098,13 +1098,13 @@ class MyObject extends CommonObject
 	}
 
 	/**
-	 * @param string $linkstart
-	 * @param string $result
-	 * @param int    $withpicto
-	 * @param int    $notooltip
-	 * @param        $label
-	 * @param        $conf
-	 * @param string $linkend
+	 * @param string $linkstart Start of link builder
+	 * @param string $result    Query result
+	 * @param int    $withpicto Use picto or not
+	 * @param int    $notooltip Use tooltip
+	 * @param string $label     Label of object
+	 * @param mixed  $conf      Global config
+	 * @param string $linkend   End of link builder
 	 *
 	 * @return string
 	 */
@@ -1113,7 +1113,7 @@ class MyObject extends CommonObject
 		string $result,
 		int $withpicto,
 		int $notooltip,
-		$label,
+		string $label,
 		$conf,
 		string $linkend
 	): string {

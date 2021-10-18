@@ -188,12 +188,13 @@ class MyModuleApi extends DolibarrApi
 	}
 
 	/**
-	 * @param MyObject $tmpobject
-	 * @param string   $sql
-	 * @param int      $restrictonsocid
-	 * @param          $socid
-	 * @param int      $search_sale
-	 * @param string   $sqlfilters
+	 * @param MyObject $tmpobject 		Temporary object
+	 * @param string   $sql				SQL Query
+	 * @param int      $restrictonsocid Set to 1 if there is a field socid in table of object
+	 * @param int      $socid			Societe ID
+	 * @param int      $search_sale		User ID
+	 * @param string   $sqlfilters		Other criteria to filter answers separated by a comma.
+	 *                           		Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 *
 	 * @return string
 	 * @throws RestException
