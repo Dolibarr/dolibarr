@@ -579,6 +579,8 @@ class MyObject extends CommonObject
 	 * @param MyObject	$object			Object created
 	 * @param mixed 	$langs			Define Languages used
 	 * @param mixed		$extrafields	Define extrafields
+	 *
+	 * @return void
 	 */
 	protected function createFromCloneClearFields(MyObject $object, $langs, $extrafields): void
 	{

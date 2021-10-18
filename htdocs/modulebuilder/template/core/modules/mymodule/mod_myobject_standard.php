@@ -90,12 +90,12 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
-		$sql = 'SELECT MAX(CAST(SUBSTRING(ref FROM ' . $posindice . ') AS SIGNED)) as max';
-		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'mymodule_myobject';
-		$sql .= ' WHERE ref LIKE "' . $db->escape($this->prefix) . '____-%"';
-		if ($object->ismultientitymanaged === 1) {
-			$sql .= ' AND entity = ' . $conf->entity;
-		} elseif ($object->ismultientitymanaged === 2) {
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql .= " FROM ".MAIN_DB_PREFIX."mymodule_myobject";
+		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
+		if ($object->ismultientitymanaged == 1) {
+			$sql .= " AND entity = ".$conf->entity;
+		} elseif ($object->ismultientitymanaged == 2) {
 			// TODO
 		}
 
@@ -130,12 +130,12 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 
 		// first we get the max value
 		$posindice = strlen($this->prefix) + 6;
-		$sql = 'SELECT MAX(CAST(SUBSTRING(ref FROM ' . $posindice . ') AS SIGNED)) as max';
-		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'mymodule_myobject';
-		$sql .= ' WHERE ref LIKE "' . $db->escape($this->prefix) . '____-%"';
-		if ($object->ismultientitymanaged === 1) {
-			$sql .= ' AND entity = ' . $conf->entity;
-		} elseif ($object->ismultientitymanaged === 2) {
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql .= " FROM ".MAIN_DB_PREFIX."mymodule_myobject";
+		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
+		if ($object->ismultientitymanaged == 1) {
+			$sql .= " AND entity = ".$conf->entity;
+		} elseif ($object->ismultientitymanaged == 2) {
 			// TODO
 		}
 
