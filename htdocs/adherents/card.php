@@ -2012,7 +2012,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Generated documents
 			$filename = dol_sanitizeFileName($object->ref);
-			//$filename =  'tmp_cards.php';
 			$filedir = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member');
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
 			$genallowed = $user->rights->adherent->lire;
