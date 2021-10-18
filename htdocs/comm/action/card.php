@@ -503,7 +503,7 @@ if (empty($reshook) && $action == 'update')
 		$object->note_private = trim(GETPOST("note", "restricthtml"));
 		$object->fk_element	 = GETPOST("fk_element", "int");
 		$object->elementtype = GETPOST("elementtype", "alphanohtml");
-		if (!$datef && $percentage == 100 && !preg_match('/^TICKET_MSG/', $object->code))
+		if (!$datef && $percentage == 100)
 		{
 			$error++; $donotclearsession = 1;
 			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd")), $object->errors, 'errors');
