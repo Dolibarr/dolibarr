@@ -281,6 +281,9 @@ class modSociete extends DolibarrModules
 		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 			$this->export_fields_array[$r]['s.price_level'] = 'PriceLevel';
 		}
+		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
+			$this->export_fields_array[$r] += array('s.accountancy_code_sell'=>'ProductAccountancySellCode', 's.accountancy_code_buy'=>'ProductAccountancyBuyCode');
+		}
 		// Add multicompany field
 		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
 			$nbofallowedentities = count(explode(',', getEntity('societe'))); // If project are shared, nb will be > 1
@@ -317,7 +320,8 @@ class modSociete extends DolibarrModules
 			'payterm.libelle'=>'Text', 'paymode.libelle'=>'Text',
 			's.outstanding_limit'=>'Numeric', 'pbacc.ref'=>'Text', 'incoterm.code'=>'Text',
 			'u.login'=>'Text', 'u.firstname'=>'Text', 'u.lastname'=>'Text',
-			's.entity'=>'Numeric', 's.price_level'=>'Numeric'
+			's.entity'=>'Numeric', 's.price_level'=>'Numeric',
+			's.accountancy_code_sell'=>'Text', 's.accountancy_code_buy'=>'Text'
 		);
 
 		$this->export_entities_array[$r] = array('u.login'=>'user', 'u.firstname'=>'user', 'u.lastname'=>'user'); // We define here only fields that use another picto
@@ -340,7 +344,7 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as incoterm ON s.fk_incoterms = incoterm.rowid';
 		$this->export_sql_end[$r] .= ' WHERE s.entity IN ('.getEntity('societe').')';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) {
-			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.$user->id.' ';
+			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.((int) $user->id).' ';
 			if (!empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
 				$subordinatesids = $user->getAllChildIds();
 				$this->export_sql_end[$r] .= count($subordinatesids) > 0 ? ' OR (sc.fk_user IN ('.$this->db->sanitize(implode(',', $subordinatesids)).')' : '';
@@ -410,7 +414,7 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id';
 		$this->export_sql_end[$r] .= ' WHERE c.entity IN ('.getEntity('socpeople').')';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) {
-			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.$user->id.' ';
+			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.((int) $user->id).' ';
 			if (!empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
 				$subordinatesids = $user->getAllChildIds();
 				$this->export_sql_end[$r] .= count($subordinatesids) > 0 ? ' OR (sc.fk_user IN ('.$this->db->sanitize(implode(',', $subordinatesids)).')' : '';
@@ -487,6 +491,9 @@ class modSociete extends DolibarrModules
 		);
 		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 			$this->import_fields_array[$r]['s.price_level'] = 'PriceLevel';
+		}
+		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
+			$this->import_fields_array[$r] += array('s.accountancy_code_sell'=>'ProductAccountancySellCode', 's.accountancy_code_buy'=>'ProductAccountancyBuyCode');
 		}
 		// Add extra fields
 		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'societe' AND entity IN (0, ".$conf->entity.")";
@@ -621,7 +628,9 @@ class modSociete extends DolibarrModules
 			's.canvas' => "empty / a custom canvas form layout url e.g. mycanvas@mymodule",
 			's.datec' => 'formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
 			's.fk_multicurrency' => '0 (use system default currency) / 1 (use local currency)',
-			's.multicurrency_code' => 'GBP/USD etc... matches field "code_iso" in table "'.MAIN_DB_PREFIX.'c_currencies"'
+			's.multicurrency_code' => 'GBP/USD etc... matches field "code_iso" in table "'.MAIN_DB_PREFIX.'c_currencies"',
+			's.accountancy_code_sell' => '707',
+			's.accountancy_code_buy' => '607',
 		);
 		$this->import_updatekeys_array[$r] = array(
 			's.nom' => 'Name',

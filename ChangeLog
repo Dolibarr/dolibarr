@@ -2,6 +2,63 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 15.0.0 compared to 14.0.0 *****
+
+For developers:
+---------------
+
+WARNING:
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* Update hook 'printOriginObjectLine', removed check on product type and special code. Need now reshook.
+* Old deprecated module "SimplePOS" has been completely removed. Use module "TakePOS" is you need a Point Of Sale.
+* The method static ActionComm::getActions($db, ...) is no more static. Use $actioncomm->getActions(...) instead (without $db param). 
+* The 'action=delete&file=...' has been replaced with 'action=deletefile&file=...' to avoid confusion with deletion of object lines.
+
+
+***** ChangeLog for 14.0.3 compared to 14.0.2 *****
+
+FIX: #18698 Supplier invoice list - "alert" checkbox not working
+FIX: #18735
+FIX: #18767 : Member delete
+FIX: #18854
+FIX: #18910 : MRP List SQL query syntax error with more than one extrafileds.
+FIX: Accountancy - Format Quadra export - Missing line type C to create automaticly a subledger account with label
+FIX: Accountancy - Missing specific filename for export on format FEC2, Ciel & repare it
+FIX: Accountancy - Option of export popup are inverted
+FIX: Accountancy - Some correction on export name
+FIX: Accountancy - Trunc code_journal to 2 in format XIMPORT (Ciel, Sage50)
+FIX: add warehouse in projects' overview count
+FIX: autocalculation of the supplier price in main currency.
+FIX: avoid warning if $categories is an id
+FIX: Bad use of a forced contact of another company on PDF/ODT documents
+FIX: Button text on proposal card to create a invoice
+FIX: calculateCosts of BOM must not be included into fetch
+FIX: check if greater 0
+FIX: default language defined for IN country
+FIX: fetch of product with modulebuilder load too much data
+FIX: Filter on categories
+FIX: indentation
+FIX: init hookmanager after loading $conf values
+FIX: legal issue on expense report pdf (must also show price without tax)
+FIX: missing filter status=1 on rss feeds
+FIX: move fetch_optionnal into $ac_static->fetch()
+FIX: payment using wrong type in takepos when too many payment mode
+FIX: Product accountancy affectation with product_perentity activated (PR #18620)
+FIX: products/services card: hidden extrafields were overridden
+FIX: Propal list - Problem of pagination on date
+FIX: selected lines on supplier invoice create
+FIX: Selection of type "people" for membership must hide the company
+FIX: select list of orders not complete when field type of company is on
+FIX: support of localtax on expense report
+FIX: task time: can't filter by user with pgsql + show error message
+FIX: task time: keep on using natural_search
+FIX: Test when date of invoie is in future (pb with TZ and offset)
+FIX: translation into email for member at membership validation.
+FIX: unprivileged user can see task associated with a not allowed project
+FIX: user without permission can set ticket subject
+
 ***** ChangeLog for 14.0.2 compared to 14.0.1 *****
 
 FIX: #18353 Invoice list translation issue
@@ -306,7 +363,7 @@ Following changes may create regressions for some external modules, but were nec
 * The ICS value for direct debit or credit transfer is now stored on each bank account instead of into the global setup.
 * API /setup/shipment_methods has been replaced with API /setup/shipping_methods
 * Field "total" renamed into "total_ht"  for table llx_facture, llx_facture_rec for better field name consistency
-* Field "tva"   renamed into "total_tva" for table llx_propal, llx_supplier_proposal, llx_commande, llx_commande_fournisseur for better field name consistency
+* Field "tva"   renamed into "total_tva" for llx_facture, table llx_propal, llx_supplier_proposal, llx_commande, llx_commande_fournisseur for better field name consistency
 * Field "total" renamed into "total_ttc" for table llx_propal, llx_supplier_proposal for better field name consistency
 * If your database is PostgreSQL, you must use version 9.1.0 or more (Dolibarr need the SQL function CONCAT)
 * If your database is MySQL or MariaDB, you need at least version 5.1
@@ -319,11 +376,11 @@ Following changes may create regressions for some external modules, but were nec
 ***** ChangeLog for 13.0.4 compared to 13.0.3 *****
 
 FIX: Allow disabling of a module (not a dangerous action) even if there is problem with token (due to bugged modules).
-FIX: 13.0 - fatal - missing inclusion of ajax.lib.php for calling `ajax_autocompleter()`
-FIX: #17919 pictures in docs.
+FIX: 13.0 - fatal - missing inclusion of ajax.lib.php for calling 'ajax_autocompleter()'
+FIX: #17919 pictures in docs
 FIX: #18006
 FIX: Accountancy - if we define a date start, automatic binding try to continue to solve old binding
-FIX: Accoutancy Limit date payment not registered on purchases operations
+FIX: Accountancy - Limit date payment not registered on purchases operations
 FIX: Can't edit replacement invoice
 FIX: deposit can create credit note in payment conf
 FIX: division by zero on create
@@ -427,7 +484,7 @@ FIX: File attachment on lots/batches
 FIX: handling $heightforinfotot when he's superior to a page height on Supplier Invoice
 FIX: hourglass and hide button to pay
 FIX: massaction validate invoice do not regenerate PDF
-FIX: missing mp4 video mime
+FIX: #16627 fix missing mp4 video mime
 FIX: picto on shipment to reset qty to 0. Some quantities were not reset.
 FIX: Protection to avoid #16504
 FIX: rounding amount on card updating

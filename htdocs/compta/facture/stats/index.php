@@ -42,7 +42,7 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies', 'other'));
 
-$mode = GETPOST("mode") ?GETPOST("mode") : 'customer';
+$mode = GETPOST("mode") ? GETPOST("mode") : 'customer';
 if ($mode == 'customer' && !$user->rights->facture->lire) {
 	accessforbidden();
 }
@@ -110,6 +110,10 @@ if ($mode == 'supplier') {
 	if ($object_status != '' && $object_status >= 0) {
 		$stats->where .= ' AND f.fk_statut IN ('.$db->sanitize($object_status).')';
 	}
+	if (is_array($custcats) && !empty($custcats)) {
+		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_fournisseur as cat ON (f.fk_soc = cat.fk_soc)';
+		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $custcats)).')';
+	}
 }
 
 // Build graphic number of object
@@ -119,10 +123,10 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 
 $filenamenb = $dir."/invoicesnbinyear-".$year.".png";
 if ($mode == 'customer') {
-	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$year.'.png';
+	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=invoicesnbinyear-'.$year.'.png';
 }
 if ($mode == 'supplier') {
-	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicesnbinyear-'.$year.'.png';
+	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&file=invoicesnbinyear-'.$year.'.png';
 }
 
 $px1 = new DolGraph();
@@ -244,7 +248,7 @@ if (!count($arrayyears)) {
 
 $h = 0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT.'/compta/facture/stats/index.php?mode='.$mode;
+$head[$h][0] = DOL_URL_ROOT.'/compta/facture/stats/index.php?mode='.urlencode($mode);
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
@@ -261,12 +265,12 @@ complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
 // We use select_thirdparty_list instead of select_company so we can use $filter and share same code for customer and supplier.
-$tmp_companies = $form->select_thirdparty_list($socid, 'socid', $filter, 1, 0, 0, array(), '', 1);
-//Array passed as an argument to Form::selectarray to build a proper select input
-$companies = array();
-
-foreach ($tmp_companies as $value) {
-	$companies[$value['key']] = $value['label'];
+$filter = '';
+if ($mode == 'customer') {
+	$filter = 's.client in (1,2,3)';
+}
+if ($mode == 'supplier') {
+	$filter = 's.fournisseur = 1';
 }
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -281,14 +285,8 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-if ($mode == 'customer') {
-	$filter = 's.client in (1,2,3)';
-}
-if ($mode == 'supplier') {
-	$filter = 's.fournisseur = 1';
-}
 print img_picto('', 'company', 'class="pictofixedwidth"');
-print $form->selectarray('socid', $companies, $socid, 1, 0, 0, '', 0, 0, 0, '', 'widthcentpercentminusx maxwidth300', 1);
+print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, 'widthcentpercentminusx maxwidth300');
 print '</td></tr>';
 
 // ThirdParty Type

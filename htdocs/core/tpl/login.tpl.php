@@ -310,7 +310,7 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->fil
 		print '<a class="alogin" href="'.$url.'">'.$langs->trans("LoginUsingOpenID").'</a>';
 	} else {
 		$langs->load("errors");
-		print '<font class="warning">'.$langs->trans("ErrorOpenIDSetupNotComplete", 'MAIN_AUTHENTICATION_OPENID_URL').'</font>';
+		print '<span class="warning">'.$langs->trans("ErrorOpenIDSetupNotComplete", 'MAIN_AUTHENTICATION_OPENID_URL').'</span>';
 	}
 
 	echo '</div>';
@@ -346,7 +346,7 @@ if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
 		$resgetcommitstrip = getURLContent("https://www.commitstrip.com/en/feed/");
 	}
 	if ($resgetcommitstrip && $resgetcommitstrip['http_code'] == '200') {
-		$xml = simplexml_load_string($resgetcommitstrip['content']);
+		$xml = simplexml_load_string($resgetcommitstrip['content'], 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
 		$little = $xml->channel->item[0]->children('content', true);
 		print preg_replace('/width="650" height="658"/', '', $little->encoded);
 	}

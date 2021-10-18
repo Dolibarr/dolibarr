@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceNotification extends DolibarrTriggers
 {
-	// @todo Defined also into notify.class.php)
+	// @todo Defined also into notify.class.php
 	public $listofmanagedevents = array(
 		'BILL_VALIDATE',
 		'BILL_PAYED',

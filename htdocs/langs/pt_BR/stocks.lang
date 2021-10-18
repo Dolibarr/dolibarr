@@ -37,7 +37,6 @@ StockTooLow=Estoque muito baixo
 EnhancedValueOfWarehouses=Valor de estoques
 AllowAddLimitStockByWarehouse=Gerenciar também o valor do estoque mínimo e desejado por emparelhamento (armazém de produtos), além do valor do estoque mínimo e desejado por produto
 RuleForWarehouse=Regra para armazéns
-WarehouseAskWarehouseOnThirparty=Inserir estoque no terceiro
 WarehouseAskWarehouseDuringPropal=Definir um armazém em propostas comerciais
 WarehouseAskWarehouseDuringOrder=Definir um armazém em Pedidos de venda
 UserDefaultWarehouse=Definir um armazém em Usuários

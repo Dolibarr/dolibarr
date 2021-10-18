@@ -202,7 +202,7 @@ $tabsql[3] = "SELECT r.rowid as rowid, r.code_region as state_code, r.nom as lib
 $tabsql[4] = "SELECT c.rowid as rowid, c.code, c.label, c.active, c.favorite FROM ".MAIN_DB_PREFIX."c_country AS c";
 $tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.label, c.active FROM ".MAIN_DB_PREFIX."c_civility AS c";
 $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active, a.module, a.color, a.position FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
-$tabsql[7] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, a.deductible, c.code as country_code, c.label as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_pays=c.rowid and c.active=1";
+$tabsql[7] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, c.code as country_code, c.label as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_pays=c.rowid and c.active=1";
 $tabsql[8] = "SELECT t.id	 as rowid, t.code as code, t.libelle, t.fk_country as country_id, c.code as country_code, c.label as country, t.position, t.active FROM ".MAIN_DB_PREFIX."c_typent as t LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON t.fk_country=c.rowid";
 $tabsql[9] = "SELECT c.code_iso as code, c.label, c.unicode, c.active FROM ".MAIN_DB_PREFIX."c_currencies AS c";
 $tabsql[10] = "SELECT t.rowid, t.code, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, c.label as country, c.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
@@ -223,7 +223,7 @@ $tabsql[24] = "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFI
 $tabsql[25] = "SELECT rowid   as rowid, code, label, active, module FROM ".MAIN_DB_PREFIX."c_type_container as t WHERE t.entity IN (".getEntity('c_type_container').")";
 //$tabsql[26]= "SELECT rowid   as rowid, code, label, short_label, active FROM ".MAIN_DB_PREFIX."c_units";
 $tabsql[27] = "SELECT id      as rowid, code, libelle, picto, active FROM ".MAIN_DB_PREFIX."c_stcomm";
-$tabsql[28] = "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.newByMonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid";
+$tabsql[28] = "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.newbymonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid";
 $tabsql[29] = "SELECT rowid   as rowid, code, label, percent, position, active FROM ".MAIN_DB_PREFIX."c_lead_status";
 $tabsql[30] = "SELECT rowid, code, name, paper_size, orientation, metric, leftmargin, topmargin, nx, ny, spacex, spacey, width, height, font_size, custom_x, custom_y, active FROM ".MAIN_DB_PREFIX."c_format_cards";
 //$tabsql[31]= "SELECT s.rowid as rowid, pcg_version, s.label, s.active FROM ".MAIN_DB_PREFIX."accounting_system as s";
@@ -294,7 +294,7 @@ $tabfield[3] = "code,libelle,country_id,country";
 $tabfield[4] = "code,label";
 $tabfield[5] = "code,label";
 $tabfield[6] = "code,libelle,type,color,position";
-$tabfield[7] = "code,libelle,country,accountancy_code,deductible";
+$tabfield[7] = "code,libelle,country,accountancy_code";
 $tabfield[8] = "code,libelle,country_id,country".(!empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? ',position' : '');
 $tabfield[9] = "code,label,unicode";
 $tabfield[10] = "country_id,country,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
@@ -315,7 +315,7 @@ $tabfield[24] = "code,label";
 $tabfield[25] = "code,label";
 //$tabfield[26]= "code,label,short_label";
 $tabfield[27] = "code,libelle,picto";
-$tabfield[28] = "code,label,affect,delay,newByMonth,country_id,country";
+$tabfield[28] = "code,label,affect,delay,newbymonth,country_id,country";
 $tabfield[29] = "code,label,percent,position";
 $tabfield[30] = "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 //$tabfield[31]= "pcg_version,label";
@@ -340,7 +340,7 @@ $tabfieldvalue[3] = "code,libelle,country";
 $tabfieldvalue[4] = "code,label";
 $tabfieldvalue[5] = "code,label";
 $tabfieldvalue[6] = "code,libelle,type,color,position";
-$tabfieldvalue[7] = "code,libelle,country,accountancy_code,deductible";
+$tabfieldvalue[7] = "code,libelle,country,accountancy_code";
 $tabfieldvalue[8] = "code,libelle,country".(!empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? ',position' : '');
 $tabfieldvalue[9] = "code,label,unicode";
 $tabfieldvalue[10] = "country,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
@@ -361,7 +361,7 @@ $tabfieldvalue[24] = "code,label";
 $tabfieldvalue[25] = "code,label";
 //$tabfieldvalue[26]= "code,label,short_label";
 $tabfieldvalue[27] = "code,libelle,picto";
-$tabfieldvalue[28] = "code,label,affect,delay,newByMonth,country";
+$tabfieldvalue[28] = "code,label,affect,delay,newbymonth,country";
 $tabfieldvalue[29] = "code,label,percent,position";
 $tabfieldvalue[30] = "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 //$tabfieldvalue[31]= "pcg_version,label";
@@ -386,7 +386,7 @@ $tabfieldinsert[3] = "code_region,nom,fk_pays";
 $tabfieldinsert[4] = "code,label";
 $tabfieldinsert[5] = "code,label";
 $tabfieldinsert[6] = "code,libelle,type,color,position";
-$tabfieldinsert[7] = "code,libelle,fk_pays,accountancy_code,deductible";
+$tabfieldinsert[7] = "code,libelle,fk_pays,accountancy_code";
 $tabfieldinsert[8] = "code,libelle,fk_country".(!empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? ',position' : '');
 $tabfieldinsert[9] = "code_iso,label,unicode";
 $tabfieldinsert[10] = "fk_pays,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
@@ -407,7 +407,7 @@ $tabfieldinsert[24] = "code,label";
 $tabfieldinsert[25] = "code,label";
 //$tabfieldinsert[26]= "code,label,short_label";
 $tabfieldinsert[27] = "code,libelle,picto";
-$tabfieldinsert[28] = "code,label,affect,delay,newByMonth,fk_country";
+$tabfieldinsert[28] = "code,label,affect,delay,newbymonth,fk_country";
 $tabfieldinsert[29] = "code,label,percent,position";
 $tabfieldinsert[30] = "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 //$tabfieldinsert[31]= "pcg_version,label";
@@ -548,7 +548,7 @@ $tabhelp[24] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[25] = array('code'=>$langs->trans('EnterAnyCode'));
 //$tabhelp[26] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[27] = array('code'=>$langs->trans("EnterAnyCode"), 'picto'=>$langs->trans("PictoHelp"));
-$tabhelp[28] = array('affect'=>$langs->trans("FollowedByACounter"), 'delay'=>$langs->trans("MinimumNoticePeriod"), 'newByMonth'=>$langs->trans("NbAddedAutomatically"));
+$tabhelp[28] = array('affect'=>$langs->trans("FollowedByACounter"), 'delay'=>$langs->trans("MinimumNoticePeriod"), 'newbymonth'=>$langs->trans("NbAddedAutomatically"));
 $tabhelp[29] = array('code'=>$langs->trans("EnterAnyCode"), 'percent'=>$langs->trans("OpportunityPercent"), 'position'=>$langs->trans("PositionIntoComboList"));
 $tabhelp[30] = array('code'=>$langs->trans("EnterAnyCode"), 'name'=>$langs->trans("LabelName"), 'paper_size'=>$langs->trans("LabelPaperSize"));
 //$tabhelp[31] = array('pcg_version'=>$langs->trans("EnterAnyCode"));
@@ -695,7 +695,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 	$listfieldmodify = explode(',', $tabfieldinsert[$id]);
 	$listfieldvalue = explode(',', $tabfieldvalue[$id]);
 
-	// Check that all fields are filled
+	// Check that all mandatory fields are filled
 	$ok = 1;
 	foreach ($listfield as $f => $value) {
 		// Discard check of mandatory fields for country for some tables
@@ -1175,6 +1175,8 @@ if ($id) {
 		$sql .= natural_search("r.code_region", $search_code);
 	} elseif ($search_code != '' && $id == 7) {
 		$sql .= natural_search("a.code", $search_code);
+	} elseif ($search_code != '' && $id == 10) {
+		$sql .= natural_search("t.code", $search_code);
 	} elseif ($search_code != '' && $id != 9) {
 		$sql .= natural_search("code", $search_code);
 	}
@@ -1341,6 +1343,9 @@ if ($id) {
 			if ($value == 'short_label') {
 				$valuetoshow = $langs->trans("ShortLabel");
 			}
+			if ($value == 'fk_parent') {
+				$valuetoshow = $langs->trans("ParentID"); $class = 'center';
+			}
 			if ($value == 'range_account') {
 				$valuetoshow = $langs->trans("Range");
 			}
@@ -1389,7 +1394,7 @@ if ($id) {
 			if ($value == 'delay') {
 				$valuetoshow = $langs->trans("NoticePeriod");
 			}
-			if ($value == 'newByMonth') {
+			if ($value == 'newbymonth') {
 				$valuetoshow = $langs->trans("NewByMonth");
 			}
 			if ($value == 'fk_tva') {
@@ -1452,6 +1457,10 @@ if ($id) {
 		print $tdsoffields;
 
 
+		// Line to enter new values
+		print '<!-- line to add new entry -->';
+		print '<tr class="oddeven nodrag nodrop nohover">';
+
 		$obj = new stdClass();
 		// If data was already input, we define them in obj to populate input fields.
 		if (GETPOST('actionadd')) {
@@ -1471,9 +1480,6 @@ if ($id) {
 			unset($fieldlist[2]); // Remove field ??? if dictionary Regions
 		}
 
-		// Line to enter new values
-		print '<!-- line to add new entry -->';
-		print '<tr class="oddeven nodrag nodrop nohover">';
 
 		if (empty($reshook)) {
 			fieldList($fieldlist, $obj, $tabname[$id], 'add');
@@ -1484,7 +1490,7 @@ if ($id) {
 		}
 		print '<td colspan="3" class="center">';
 		if ($action != 'edit') {
-			print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
+			print '<input type="submit" class="button button-add" name="actionadd" value="'.$langs->trans("Add").'">';
 		}
 		print '</td>';
 
@@ -1683,6 +1689,9 @@ if ($id) {
 			if ($value == 'short_label') {
 				$valuetoshow = $langs->trans("ShortLabel");
 			}
+			if ($value == 'fk_parent') {
+				$valuetoshow = $langs->trans("ParentID"); $cssprefix = 'center ';
+			}
 			if ($value == 'range_account') {
 				$valuetoshow = $langs->trans("Range");
 			}
@@ -1731,7 +1740,7 @@ if ($id) {
 			if ($value == 'delay') {
 				$valuetoshow = $langs->trans("NoticePeriod");
 			}
-			if ($value == 'newByMonth') {
+			if ($value == 'newbymonth') {
 				$valuetoshow = $langs->trans("NewByMonth");
 			}
 			if ($value == 'fk_tva') {
@@ -1807,7 +1816,7 @@ if ($id) {
 					if (!is_null($withentity)) {
 						print '<input type="hidden" name="entity" value="'.$withentity.'">';
 					}
-					print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+					print '<input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
 					print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 					print '</td>';
 				} else {
@@ -1992,10 +2001,7 @@ if ($id) {
 							if (in_array($value, array('pos', 'position'))) {
 								$class .= ' right';
 							}
-							if ($value == 'localtax1_type') {
-								$class .= ' nowrap';
-							}
-							if ($value == 'localtax2_type') {
+							if (in_array($value, array('localtax1_type', 'localtax2_type'))) {
 								$class .= ' nowrap';
 							}
 							if (in_array($value, array('use_default', 'fk_parent'))) {
@@ -2265,7 +2271,13 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print '<td>';
 			print $form->selectarray('source', $sourceList, (!empty($obj->{$value}) ? $obj->{$value}:''));
 			print '</td>';
+		} elseif (in_array($value, array('public', 'use_default'))) {
+			// Fields 0/1 with a combo select Yes/No
+			print '<td class="center">';
+			print $form->selectyesno($value, (!empty($obj->{$value}) ? $obj->{$value}:''), 1);
+			print '</td>';
 		} elseif ($value == 'private') {
+			// Fields 'no'/'yes' with a combo select Yes/No
 			print '<td>';
 			print $form->selectyesno("private", (!empty($obj->{$value}) ? $obj->{$value}:''));
 			print '</td>';
@@ -2361,7 +2373,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print $form->selectExpenseRanges($obj->fk_range);
 			print '</td>';
 		} else {
-			$fieldValue = isset($obj->{$value}) ? $obj->{$value}:'';
+			$fieldValue = isset($obj->{$value}) ? $obj->{$value}: '';
 
 			if ($value == 'sortorder') {
 				$fieldlist[$field] = 'position';
@@ -2377,11 +2389,17 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			if (in_array($fieldlist[$field], array('dayrule', 'day', 'month', 'year', 'use_default', 'affect', 'delay', 'public', 'sortorder', 'sens', 'category_type', 'fk_parent'))) {
 				$class = 'maxwidth50 center';
 			}
-			if (in_array($fieldlist[$field], array('use_default', 'public'))) {
+			if (in_array($fieldlist[$field], array('use_default', 'public', 'fk_parent'))) {
 				$classtd = 'center';
 			}
 			if (in_array($fieldlist[$field], array('libelle', 'label', 'tracking'))) {
 				$class = 'quatrevingtpercent';
+			}
+			// Fields that must be suggested as '0' instead of ''
+			if ($fieldlist[$field] == 'fk_parent') {
+				if (empty($fieldValue)) {
+					$fieldValue = '0';
+				}
 			}
 			print '<td class="'.$classtd.'">';
 			$transfound = 0;

@@ -209,7 +209,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 	// Subscription informations
 	$datesubscription = 0;
 	$datesubend = 0;
-	$paymentdate = '';	// Do not use 0 here, default value is '' that means not filled where 0 means 1970-01-01
+	$paymentdate = ''; // Do not use 0 here, default value is '' that means not filled where 0 means 1970-01-01
 	if (GETPOST("reyear", "int") && GETPOST("remonth", "int") && GETPOST("reday", "int")) {
 		$datesubscription = dol_mktime(0, 0, 0, GETPOST("remonth", "int"), GETPOST("reday", "int"), GETPOST("reyear", "int"));
 	}
@@ -587,7 +587,7 @@ if ($rowid > 0) {
 		print $langs->trans("LinkedToDolibarrThirdParty");
 		print '</td>';
 		if ($action != 'editthirdparty' && $user->rights->adherent->creer) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&token='.newToken().'&rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td colspan="2" class="valeur">';
@@ -601,7 +601,7 @@ if ($rowid > 0) {
 			print '<tr><td>';
 			print $form->select_company($object->fk_soc, 'socid', '', 1);
 			print '</td>';
-			print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			print '<td class="left"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 			print '</tr></table></form>';
 		} else {
 			if ($object->fk_soc) {
@@ -631,7 +631,7 @@ if ($rowid > 0) {
 	if ($action != 'editlogin' && $user->rights->adherent->creer) {
 		print '<td class="right">';
 		if ($user->rights->user->user->creer) {
-			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editlogin&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToUser'), 1).'</a>';
+			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editlogin&token='.newToken().'&rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToUser'), 1).'</a>';
 		}
 		print '</td>';
 	}
@@ -670,7 +670,7 @@ if ($rowid > 0) {
 			print '<div class="tabsAction">';
 
 			if ($object->statut > 0) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'&action=addsubscription">'.$langs->trans("AddSubscription")."</a></div>";
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'&action=addsubscription&token='.newToken().'">'.$langs->trans("AddSubscription")."</a></div>";
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("AddSubscription").'</a></div>';
 			}

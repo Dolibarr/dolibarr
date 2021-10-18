@@ -266,7 +266,7 @@ if ($result > 0) {
 	$sql .= ' pf.amount, s.nom as name, s.rowid as socid';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf,'.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
 	$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND f.fk_soc = s.rowid';
-	$sql .= ' AND pf.fk_paiementfourn = '.$object->id;
+	$sql .= ' AND pf.fk_paiementfourn = '.((int) $object->id);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -366,7 +366,7 @@ if ($result > 0) {
 	if ($user->socid == 0 && $action == '') {
 		if ($user->rights->fournisseur->facture->supprimer) {
 			if ($allow_delete) {
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
 			}

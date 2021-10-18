@@ -180,7 +180,7 @@ class WebservicesOtherTest extends PHPUnit\Framework\TestCase
 		}
 		if (! $result) {
 			//var_dump($soapclient);
-			print $soapclient->error_str;
+			print 'Error: '.$soapclient->error_str;
 			print "\n<br>\n";
 			print $soapclient->request;
 			print "\n<br>\n";
@@ -212,7 +212,7 @@ class WebservicesOtherTest extends PHPUnit\Framework\TestCase
 			print "\n";
 		}
 
-		print __METHOD__." count(result)=".count($result)."\n";
+		print __METHOD__." count(result)=".(is_array($result) ? count($result) : 0)."\n";
 		$this->assertEquals("SOAP-ENV:Client: Operation 'methodthatdoesnotexists' is not defined in the WSDL for this service", $soapclient->error_str);
 
 		return $result;

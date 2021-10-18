@@ -238,15 +238,16 @@ class ConferenceOrBooth extends ActionComm
 	 * @param string $ref  Ref
 	 * @param  string	$ref_ext		Ref ext to get
 	 * @param	string	$email_msgid	Email msgid
+	 * @param int 		$loadresources	1=Load also resources
 	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = null, $ref_ext = '', $email_msgid = '')
+	public function fetch($id, $ref = null, $ref_ext = '', $email_msgid = '', $loadresources = 1)
 	{
 		global $dolibarr_main_url_root, $conf, $langs;
 
 		$result = parent::fetch($id, $ref, $ref_ext, $email_msgid);
 
-		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_register.php?id='.urlencode($id).'&type=conf';
+		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.urlencode($id).'&type=conf';
 
 		$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
 		$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
@@ -271,7 +272,6 @@ class ConferenceOrBooth extends ActionComm
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
-
 		//TODO set percent according status
 		global $conf;
 
@@ -293,27 +293,27 @@ class ConferenceOrBooth extends ActionComm
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.id' || $key == 't.fk_project' || $key == 't.fk_soc' || $key == 't.fk_action') {
-					$sqlwhere[] = $key.'='.$value;
+					$sqlwhere[] = $key." = ".((int) $value);
 				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
+					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
 				} elseif (strpos($value, '%') === false) {
 					$sqlwhere[] = $key.' IN ('.$this->db->sanitize($this->db->escape($value)).')';
 				} else {
-					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
 		}
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit, $offset);
+			$sql .= $this->db->plimit($limit, $offset);
 		}
 
 		$resql = $this->db->query($sql);
@@ -672,18 +672,18 @@ class ConferenceOrBooth extends ActionComm
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("eventorganization@eventorganization");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_SUGGESTED] = $langs->trans('Suggested');
-			$this->labelStatus[self::STATUS_CONFIRMED] = $langs->trans('Confirmed');
-			$this->labelStatus[self::STATUS_NOT_QUALIFIED] = $langs->trans('NotSelected');
-			$this->labelStatus[self::STATUS_DONE] = $langs->trans('Done');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatusShort[self::STATUS_SUGGESTED] = $langs->trans('Suggested');
-			$this->labelStatusShort[self::STATUS_CONFIRMED] = $langs->trans('Confirmed');
-			$this->labelStatusShort[self::STATUS_NOT_QUALIFIED] = $langs->trans('NotSelected');
-			$this->labelStatusShort[self::STATUS_DONE] = $langs->trans('Done');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_SUGGESTED] = $langs->transnoentitiesnoconv('Suggested');
+			$this->labelStatus[self::STATUS_CONFIRMED] = $langs->transnoentitiesnoconv('Confirmed');
+			$this->labelStatus[self::STATUS_NOT_QUALIFIED] = $langs->transnoentitiesnoconv('NotSelected');
+			$this->labelStatus[self::STATUS_DONE] = $langs->transnoentitiesnoconv('Done');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatusShort[self::STATUS_SUGGESTED] = $langs->transnoentitiesnoconv('Suggested');
+			$this->labelStatusShort[self::STATUS_CONFIRMED] = $langs->transnoentitiesnoconv('Confirmed');
+			$this->labelStatusShort[self::STATUS_NOT_QUALIFIED] = $langs->transnoentitiesnoconv('NotSelected');
+			$this->labelStatusShort[self::STATUS_DONE] = $langs->transnoentitiesnoconv('Done');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
 		}
 
 		$statusType = 'status'.$status;

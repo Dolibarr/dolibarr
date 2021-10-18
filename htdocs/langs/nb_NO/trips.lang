@@ -90,7 +90,6 @@ DATE_REFUS=Avvist dato
 DATE_SAVE=Godkjennelsesdato
 DATE_CANCEL=Kansellert dato
 DATE_PAIEMENT=Betalt dato
-BROUILLONNER=Gjenåpne
 ExpenseReportRef=Ref. utgiftsrapport
 ValidateAndSubmit=Valider og send til godkjenning
 ValidatedWaitingApproval=Validert (venter på godkjenning)

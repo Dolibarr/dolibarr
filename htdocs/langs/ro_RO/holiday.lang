@@ -132,3 +132,5 @@ FreeLegalTextOnHolidays=Text liber pe PDF
 WatermarkOnDraftHolidayCards=Watermark-uri pe cererile de concediu schiţă
 HolidaysToApprove=Concedii de aprobat
 NobodyHasPermissionToValidateHolidays=Nimeni nu are permisiunea de a valida concedii
+HolidayBalanceMonthlyUpdate=Actualizare lunară a evidenţei concediilor
+XIsAUsualNonWorkingDay=%s este de obicei o zi NElucrătoare

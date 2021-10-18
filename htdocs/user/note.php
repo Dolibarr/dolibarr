@@ -137,11 +137,7 @@ if ($id) {
 	print dol_get_fiche_end();
 
 	if ($action == 'edit') {
-		print '<div class="center">';
-		print '<input type="submit" class="button button-save" name="update" value="'.$langs->trans("Save").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
+		print $form->buttonsSaveCancel();
 	}
 
 
@@ -152,7 +148,7 @@ if ($id) {
 	print '<div class="tabsAction">';
 
 	if ($user->rights->user->user->creer && $action != 'edit') {
-		print "<a class=\"butAction\" href=\"note.php?id=".$object->id."&amp;action=edit\">".$langs->trans('Modify')."</a>";
+		print '<a class="butAction" href="note.php?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans('Modify')."</a>";
 	}
 
 	print "</div>";

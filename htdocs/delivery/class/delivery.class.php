@@ -166,11 +166,11 @@ class Delivery extends CommonObject
 		$sql .= ", fk_incoterms, location_incoterms";
 		$sql .= ") VALUES (";
 		$sql .= "'(PROV)'";
-		$sql .= ", ".$conf->entity;
-		$sql .= ", ".$this->socid;
+		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".((int) $this->socid);
 		$sql .= ", '".$this->db->escape($this->ref_customer)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".($this->date_delivery ? "'".$this->db->idate($this->date_delivery)."'" : "null");
 		$sql .= ", ".($this->fk_delivery_address > 0 ? $this->fk_delivery_address : "null");
 		$sql .= ", ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
@@ -189,7 +189,7 @@ class Delivery extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."delivery ";
 			$sql .= "SET ref = '".$this->db->escape($numref)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog("Delivery::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -427,7 +427,7 @@ class Delivery extends CommonObject
 					$sql .= ", fk_statut = 1";
 					$sql .= ", date_valid = '".$this->db->idate($now)."'";
 					$sql .= ", fk_user_valid = ".$user->id;
-					$sql .= " WHERE rowid = ".$this->id;
+					$sql .= " WHERE rowid = ".((int) $this->id);
 					$sql .= " AND fk_statut = 0";
 
 					$resql = $this->db->query($sql);
@@ -651,7 +651,7 @@ class Delivery extends CommonObject
 
 			if (!$error) {
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."delivery";
-				$sql .= " WHERE rowid = ".$this->id;
+				$sql .= " WHERE rowid = ".((int) $this->id);
 				if ($this->db->query($sql)) {
 					$this->db->commit();
 
@@ -846,12 +846,12 @@ class Delivery extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[-1] = $langs->trans('StatusDeliveryCanceled');
-			$this->labelStatus[0] = $langs->trans('StatusDeliveryDraft');
-			$this->labelStatus[1] = $langs->trans('StatusDeliveryValidated');
-			$this->labelStatusShort[-1] = $langs->trans('StatusDeliveryCanceled');
-			$this->labelStatusShort[0] = $langs->trans('StatusDeliveryDraft');
-			$this->labelStatusShort[1] = $langs->trans('StatusDeliveryValidated');
+			$this->labelStatus[-1] = $langs->transnoentitiesnoconv('StatusDeliveryCanceled');
+			$this->labelStatus[0] = $langs->transnoentitiesnoconv('StatusDeliveryDraft');
+			$this->labelStatus[1] = $langs->transnoentitiesnoconv('StatusDeliveryValidated');
+			$this->labelStatusShort[-1] = $langs->transnoentitiesnoconv('StatusDeliveryCanceled');
+			$this->labelStatusShort[0] = $langs->transnoentitiesnoconv('StatusDeliveryDraft');
+			$this->labelStatusShort[1] = $langs->transnoentitiesnoconv('StatusDeliveryValidated');
 		}
 
 		$statusType = 'status0';
@@ -1001,7 +1001,7 @@ class Delivery extends CommonObject
 		if ($user->rights->expedition->creer) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."delivery";
 			$sql .= " SET date_delivery = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::setDeliveryDate", LOG_DEBUG);
 			$resql = $this->db->query($sql);
