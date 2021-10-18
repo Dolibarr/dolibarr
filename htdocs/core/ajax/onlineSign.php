@@ -117,6 +117,7 @@ if ($action == "importSignature") {
 					if (!$error) {
 						$db->commit();
 						$response = "success";
+						setEventMessage("PropalSigned");
 					} else {
 						$db->rollback();
 						$response = "error sql";

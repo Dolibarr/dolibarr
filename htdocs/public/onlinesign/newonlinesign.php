@@ -52,7 +52,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
 // Load translation files
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox"));
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox","propal"));
 
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
@@ -124,9 +124,22 @@ $object->fetch(0, $ref);
  * Actions
  */
 
-
-if ($action == 'refusepropal') {
-	//TODO: creer suite de cette action
+if ($action == 'confirm_refusepropal') {
+	$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
+	$sql .= " SET fk_statut = ".((int) $object::STATUS_NOTSIGNED).", note_private = '".$object->note_private."', date_signature='".$db->idate(dol_now())."'";
+	$sql .= " WHERE rowid = ".((int) $object->id);
+	dol_syslog(__METHOD__, LOG_DEBUG);
+	$resql = $db->query($sql);
+	if (!$resql) {
+		$error++;
+	}
+	if (!$error) {
+		$db->commit();
+		setEventMessage("PropalRefused");
+	} else {
+		$db->rollback();
+	}
+	$object->fetch(0, $ref);
 }
 
 
@@ -134,6 +147,7 @@ if ($action == 'refusepropal') {
  * View
  */
 
+$form = new Form($db);
 $head = '';
 if (!empty($conf->global->MAIN_SIGN_CSS_URL)) {
 	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MAIN_SIGN_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
@@ -144,6 +158,10 @@ $conf->dol_hide_leftmenu = 1;
 
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 llxHeader($head, $langs->trans("OnlineSignature"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1);
+
+if ($action == 'refusepropal') {
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?ref='.$ref, $langs->trans('RefusePropal'), $langs->trans('ConfirmRefusePropal', $object->ref), 'confirm_refusepropal', '', '', 1);
+}
 
 // Check link validity for param 'source'
 if (!empty($source) && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', ''))) {
@@ -351,9 +369,9 @@ if ($action == "dosign" && empty($cancel)) {
 	</script>';
 } else {
 	if ($object->status == $object::STATUS_SIGNED) {
-		print $langs->trans("PropalSigned");
+		print $langs->trans("PropalAlreadySigned");
 	} elseif ($object->status == $object::STATUS_NOTSIGNED) {
-		print $langs->trans("PropalNotSigned");
+		print $langs->trans("PropalAlreadyRefused");
 	} else {
 		print '<input type="submit" class="button" value="'.$langs->trans("SignPropal").'">';
 		print '<input name="refusepropal" type="submit" class="button" value="'.$langs->trans("RefusePropal").'">';
