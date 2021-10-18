@@ -161,8 +161,10 @@ class Conf
 	 */
 	public function setEntityValues($db, $entity)
 	{
-		$this->entity = $entity;
-		$this->setValues($db);
+		if ($this->entity != $entity) {
+			$this->entity = $entity;
+			$this->setValues($db);
+		}
 	}
 
 	/**
