@@ -309,7 +309,7 @@ class FormActions
 						$tmpa = dol_getdate($actioncomm->datep);
 						$tmpb = dol_getdate($actioncomm->datef);
 						if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
-							if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes'] && $tmpa['seconds'] != $tmpb['seconds']) {
+							if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
 								print '-'.dol_print_date($actioncomm->datef, 'hour', 'tzuserrel');
 							}
 						} else {
