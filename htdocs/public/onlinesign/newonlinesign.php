@@ -319,7 +319,7 @@ print '<tr><td align="center">';
 if ($action == "dosign" && empty($cancel)) {
 	print '<div class="tablepublicpayment">';
 	print '<input type="button" class="button" id="clearsignature" value="'.$langs->trans("ClearSignature").'">';
-	print '<div id="signature"></div>';
+	print '<div id="signature" style="border:solid;"></div>';
 	print '</div>';
 	print '<input type="button" class="button" id="signpropal" value="'.$langs->trans("Sign").'">';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
