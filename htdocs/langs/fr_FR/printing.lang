@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=Impressions Directe
-Module64000Desc=Activer le système d'impression Directe
-PrintingSetup=Réglages du module Impression Directe
-PrintingDesc=Ce module ajoute un bouton Imprimer afin d'envoyer directement les documents à une imprimante (sans ouvrir le document dans une application).
-MenuDirectPrinting=Travaux d'impressions directe
-DirectPrint=Impressions Directe
+Module64000Name=One click Printing
+Module64000Desc=Enable One click Printing System
+PrintingSetup=Setup of One click Printing System
+PrintingDesc=This module adds a Print button to various modules to allow documents to be printed directly to a printer with no need to open the document into another application.
+MenuDirectPrinting=One click Printing jobs
+DirectPrint=One click Print
 PrintingDriverDesc=Paramètres de configuration pour le driver d'impression
 ListDrivers=Liste des drivers
 PrintTestDesc=Liste des imprimantes
@@ -50,5 +50,5 @@ GoogleAuthNotConfigured=Configuration Google OAuth non terminé. Activer le modu
 GoogleAuthConfigured=Identifiants Google OAuth trouvé dans la configuration du module OAuth.
 PrintingDriverDescprintgcp=Paramètres de configuration des drivers Google Cloud Print pour les impressions.
 PrintingDriverDescprintipp=Variables de configuration pour le pilotes d'impression Cups.
-PrintTestDescprintgcp=List des imprimantes Google Cloud Print.
+PrintTestDescprintgcp=Liste des imprimantes Google Cloud Print.
 PrintTestDescprintipp=Liste des imprimantes pour Cups.

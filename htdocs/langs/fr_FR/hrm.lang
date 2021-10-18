@@ -1,15 +1,4 @@
-# Dolibarr language file - fr_FR - hrm
-
-
-#
-# Generic
-#
-
-# Module label 'ModuleHrmName'
-ModuleHrmName = GRH
-# Module description 'ModuleHrmDesc'
-ModuleHrmDesc = GRH description
-
+# Dolibarr language file - en_US - hrm
 
 
 # Admin
@@ -30,74 +19,74 @@ Employees=Salariés
 Employee=Salarié
 NewEmployee=Nouveau salarié
 ListOfEmployees=List des salariés
-HrmSetup = Configuration GPEC
-HrmSetupPage = Page de configuration du module GPEC
-HRM_MAXRANK=Note maximale pour une compétence
-HRM_DEFAULT_SKILL_DESCRIPTION=Description par défaut d'une note lors de la création d'une nouvelle compétence
-HrmAbout = A propos du module GPEC
+HrmSetup = Hrm setup
+HrmSetupPage = Hrm setup page
+HRM_MAXRANK=Maximum rank for a skill
+HRM_DEFAULT_SKILL_DESCRIPTION=Default description of ranks when skill is created
+HrmAbout = About Hrm
 traduction_note=Translate
-deplacement=Déplacement
-DateEval=Date évaluation
-JobCard=Fiche métier
-Job=Métier
-Jobs=Métiers
-NewSkill=Nouvelle compétence
-SkillType=Type de compétence
-Skilldets=Liste des notes pour cette compétence
+deplacement=Shift
+DateEval=Evaluation date
+JobCard=Job card
+Job=Travail planifié
+Jobs=Jobs
+NewSkill=New Skill
+SkillType=Skill type
+Skilldets=List of ranks for this skill
 Skilldet=Skill level
-rank=Note
-ErrNoSkillSelected=Aucune compétence sélectionnée
-ErrSkillAlreadyAdded=Cette compétence est déjà dans la liste
-SkillHasNoLines=Cette compétence n'a pas de notes
-skill=Compétence
-Skills=Compétences
-SkillCard=Fiche compétence
-EmployeeSkillsUpdated=Les compétences du salarié ont été mises à jour (voir l'onglet "compétences" de la fiche du salarié)
+rank=Rank
+ErrNoSkillSelected=No skill selected
+ErrSkillAlreadyAdded=This skill is already in the list
+SkillHasNoLines=This skill has no lines
+skill=Skill
+Skills=Skills
+SkillCard=Skill card
+EmployeeSkillsUpdated=Employee skills have been updated (see "Skills" tab of employee card)
 Eval=Evaluation
 Evals=Evaluations
-NewEval=Nouvelle evaluation
-ValidateEvaluation=Valider évaluation
-ConfirmValidateEvaluation=Etes vous sûr(e) de vouloir valider cette évaluation sous la référence <b>%s</b>?
-EvaluationCard=Fiche évaluation
-RequiredRank=Note requise pour ce métier
-EmployeeRank=Note employé pour cette compétence
-PositionCard=Fiche poste
-EmployeesInThisPosition=Salariés occupant ce poste
-Position=Poste
-Positions=Postes
-group1ToCompare=Groupe utilisateurs à analyser
-group2ToCompare=Second groupe utilisateurs pour comparaison
-OrJobToCompare=Comparer avec les compétences exigées pour un métier
-difference=Différence
-CompetenceAcquiredByOneOrMore=Compétence acquise par au moins un salarié mais non requise par le second élément de comparaison
-MaxlevelGreaterThan=Niveau maximal supérieur au niveau requis
-MaxLevelEqualTo=Niveau maximal égal au niveau requis
-MaxLevelLowerThan=Niveau maximal inférieur au niveau requis
-MaxlevelGreaterThanShort=Niveau salarié supérieur au niveau requis
-MaxLevelEqualToShort=Niveau salarié égal au niveau requis
-MaxLevelLowerThanShort= Niveau salarié inférieur au niveau requis
-SkillNotAcquired=Compétence non acquise par tous les utilisateur et requise par le second élément de comparaison
+NewEval=New evaluation
+ValidateEvaluation=Validate evaluation
+ConfirmValidateEvaluation=Are you sure you want to validate this evaluation with reference <b>%s</b>?
+EvaluationCard=Evaluation card
+RequiredRank=Required rank for this job
+EmployeeRank=Employee rank for this skill
+Position=Position
+Positions=Positions
+PositionCard=Position card
+EmployeesInThisPosition=Employees in this position
+group1ToCompare=Usergroup to analyze
+group2ToCompare=Second usergroup for comparison
+OrJobToCompare=Compare to job skills requirements
+difference=Difference
+CompetenceAcquiredByOneOrMore=Competence acquired by one or more users but not requested by the second comparator
+MaxlevelGreaterThan=Max level greater than the one requested
+MaxLevelEqualTo=Max level equal to that demand
+MaxLevelLowerThan=Max level lower than that demand
+MaxlevelGreaterThanShort=Employee level greater than the one requested
+MaxLevelEqualToShort=Employee level equals to that demand
+MaxLevelLowerThanShort=Employee level lower than that demand
+SkillNotAcquired=Skill not acquired by all users and requested by the second comparator
 legend=Légende
-TypeSkill=Type de compétence
-AddSkill=Ajouter des compétences à ce métier
-RequiredSkills=Compétences requises pour ce métier
-UserRank=Note utilisateur
-SkillList=Liste des compétences
-SaveRank=Enregistrer notes
-knowHow=Savoir faire
-HowToBe=Savoir être
-knowledge=Savoir
-AbandonmentComment=Commentaire abandon
-DateLastEval=Date dernière évaluation
-NoEval=Aucune évaluation effectuée pour ce salarié
-HowManyUserWithThisMaxNote=Nombre d'utilisateurs ayant cette note
-HighestRank=Note la plus haute
-SkillComparison=Comparaison des compétences
-ReadSkillJobPosition=Lire les compétences / métiers / postes
-CreateUpdateSkillJobPosition=Créer / mettre à jour les compétences / métiers / postes
-DeleteSkillJobPosition=Supprimer les compétences / métiers / postes
-ReadEval=Lire les évaluations
-CreateUpdateEval=Créer / mettre à jour les évaluations
-ValidateEval=Valider les évaluations
-DeleteEval=Supprimer les évaluations
-SeeComparisonMenu=Accéder au menu de comparaison des compétences
+TypeSkill=Skill type
+AddSkill=Add skills to job
+RequiredSkills=Required skills for this job
+UserRank=User Rank
+SkillList=Skill list
+SaveRank=Save rank
+knowHow=Know how
+HowToBe=How to be
+knowledge=Knowledge
+AbandonmentComment=Abandonment comment
+DateLastEval=Date last evaluation
+NoEval=No evaluation done for this employee
+HowManyUserWithThisMaxNote=Number of users with this rank
+HighestRank=Highest rank
+SkillComparison=Skill comparison
+ReadSkillJobPosition=Read skills / jobs / positions
+CreateUpdateSkillJobPosition=Create / update skills / jobs / positions
+DeleteSkillJobPosition=Delete skills / jobs / positions
+ReadEval=Read evaluations
+CreateUpdateEval=Create / update evaluations
+ValidateEval=Validate evaluations
+DeleteEval=Delete evaluations
+SeeComparisonMenu=Access skills comparison menu

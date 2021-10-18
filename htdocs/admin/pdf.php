@@ -165,6 +165,10 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "PDF_SHOW_LINK_TO_ONLINE_PAYMENT", GETPOST('PDF_SHOW_LINK_TO_ONLINE_PAYMENT', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
 
+	if (GETPOSTISSET('PDF_USE_A')) {
+		dolibarr_set_const($db, "PDF_USE_A", GETPOST('PDF_USE_A', 'alpha'), 'chaine', 0, '', $conf->entity);
+	}
+
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
@@ -531,6 +535,14 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('PDF_SHOW_LINK_TO_ONLINE_PAYMENT');
 } else {
 	print $form->selectyesno('PDF_SHOW_LINK_TO_ONLINE_PAYMENT', (!empty($conf->global->PDF_SHOW_LINK_TO_ONLINE_PAYMENT)) ? $conf->global->PDF_SHOW_LINK_TO_ONLINE_PAYMENT : 0, 1);
+}
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>'.$langs->trans("PDF_USE_A").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('PDF_USE_A');
+} else {
+	print $form->selectyesno('PDF_USE_A', (empty($conf->global->PDF_USE_A) ? 0 : $conf->global->PDF_USE_A), 1);
 }
 print '</td></tr>';
 

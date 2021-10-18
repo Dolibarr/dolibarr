@@ -518,8 +518,12 @@ function getNumberInvoicesPieChart($mode)
 				$dataseries[$i]=array($langs->trans('NbOfOpenInvoices'), $obj->nblate30, $obj->nblate15 - $obj->nblate30, $obj->nblatenow - $obj->nblate15, $obj->nbnotlatenow - $obj->nbnotlate15, $obj->nbnotlate15 - $obj->nbnotlate30, $obj->nbnotlate30);
 				$i++;
 			}
-			foreach ($dataseries[0] as $key=>$value) {
-				$total += $value;
+			if (!empty($dataseries[0])) {
+				foreach ($dataseries[0] as $key => $value) {
+					if (is_numeric($value)) {
+						$total += $value;
+					}
+				}
 			}
 			$legend = array(
 				$langs->trans('InvoiceLate30Days'),

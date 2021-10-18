@@ -1300,8 +1300,8 @@ class Ticket extends CommonObject
 		} elseif ($status == self::STATUS_CLOSED) {
 			$statusType = 'status6';
 		} else {
-			$labelStatus = $langs->trans('Unknown');
-			$labelStatusShort = $langs->trans('Unknown');
+			$labelStatus = 'Unknown';
+			$labelStatusShort = 'Unknown';
 			$statusType = 'status0';
 			$mode = 0;
 		}
@@ -1311,7 +1311,7 @@ class Ticket extends CommonObject
 			$params = array('tooltip' => 'no');
 		}
 
-		return dolGetStatus($langs->trans($labelStatus), $langs->trans($labelStatusShort), '', $statusType, $mode, '', $params);
+		return dolGetStatus($langs->transnoentitiesnoconv($labelStatus), $langs->transnoentitiesnoconv($labelStatusShort), '', $statusType, $mode, '', $params);
 	}
 
 

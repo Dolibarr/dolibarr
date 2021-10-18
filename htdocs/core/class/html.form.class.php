@@ -9307,11 +9307,12 @@ class Form
 	 *
 	 * @param   string  $save_label     Alternative label for save button
 	 * @param   string  $cancel_label   Alternative label for cancel button
-	 * @param   array   $morefields     Add additional buttons between save and cancel
+	 * @param   array   $morebuttons    Add additional buttons between save and cancel
 	 * @param   bool    $withoutdiv     Option to remove enclosing centered div
+	 * @param	string	$morecss		More CSS
 	 * @return 	string					Html code with the buttons
 	 */
-	public function buttonsSaveCancel($save_label = 'Save', $cancel_label = 'Cancel', $morefields = array(), $withoutdiv = 0)
+	public function buttonsSaveCancel($save_label = 'Save', $cancel_label = 'Cancel', $morebuttons = array(), $withoutdiv = 0, $morecss = '')
 	{
 		global $langs;
 
@@ -9335,8 +9336,8 @@ class Form
 
 		!empty($save_label) ? $buttons[] = $save : '';
 
-		if (!empty($morefields)) {
-			$buttons[] = $morefields;
+		if (!empty($morebuttons)) {
+			$buttons[] = $morebuttons;
 		}
 
 		!empty($cancel_label) ? $buttons[] = $cancel : '';
@@ -9345,7 +9346,7 @@ class Form
 
 		foreach ($buttons as $button) {
 			$addclass = empty($button['addclass']) ? '' : $button['addclass'];
-			$retstring .= '<input type="submit" class="button button-'.$button['name'].' '.$addclass.'" name="'.$button['name'].'" value="'.dol_escape_htmltag($langs->trans($button['label_key'])).'">';
+			$retstring .= '<input type="submit" class="button button-'.$button['name'].($morecss ? ' '.$morecss : '').' '.$addclass.'" name="'.$button['name'].'" value="'.dol_escape_htmltag($langs->trans($button['label_key'])).'">';
 		}
 		$retstring .= $withoutdiv ? '': '</div>';
 

@@ -641,13 +641,19 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 								print '<td class="right">';
 								if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
-									print price($objp->multicurrency_am);
+									print price($sign * $multicurrency_payment);
+									if ($multicurrency_creditnotes) {
+										print '+'.price($multicurrency_creditnotes);
+									}
+									if ($multicurrency_deposits) {
+										print '+'.price($multicurrency_deposits);
+									}
 								}
 								print '</td>';
 
 								print '<td class="right">';
 								if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
-									print price($objp->multicurrency_total_ttc - $objp->multicurrency_am);
+									print price($sign * $multicurrency_remaintopay);
 								}
 								print '</td>';
 							}
