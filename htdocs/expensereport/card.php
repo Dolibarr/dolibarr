@@ -2524,7 +2524,7 @@ if ($action == 'create') {
 
 print '<div class="tabsAction">';
 
-if ($action != 'create' && $action != 'edit') {
+if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	$object = new ExpenseReport($db);
 	$object->fetch($id, $ref);
 
