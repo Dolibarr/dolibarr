@@ -232,7 +232,7 @@ if ($action == 'edit') {
 	print dol_get_fiche_head($head, 'common_ticket', '', -1);
 
 	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
-	print "<br>\n";
+	print "<br><br>\n";
 
 
 	clearstatcache();
@@ -387,7 +387,7 @@ if ($action == 'edit') {
 	print dol_get_fiche_head($head, 'common_ticket', '', -1);
 
 	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
-	print "<br>\n";
+	print "<br><br>\n";
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
