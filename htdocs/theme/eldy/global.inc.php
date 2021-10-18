@@ -701,6 +701,9 @@ textarea.centpercent {
 .nowraponsmartphone {
 	white-space: <?php print ($dol_optimize_smallscreen ? 'nowrap' : 'normal'); ?>;
 }
+.wraponsmartphone {
+	white-space: <?php print ($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
+}
 .liste_titre .nowrap {
 	white-space: nowrap;
 }
@@ -1726,7 +1729,7 @@ td.showDragHandle {
 	<?php } ?>
 }
 #id-right {	/* This must stay id-right and not be replaced with echo $right */
-	padding-top: 10px;
+	padding-top: 14px;
 	width: 100%;
 	background: var(--colorbackbody);
 	padding-bottom: 20px;
@@ -6997,6 +7000,9 @@ div.clipboardCPValue.hidewithsize {
 	#id-left {
 		z-index: 201;
 		background: var(--colorbackvmenu1);
+	}
+	#id-right {	/* This must stay id-right and not be replaced with echo $right */
+		padding-top: 8px;
 	}
 
 	.login_vertical_align {

@@ -174,7 +174,8 @@ function showOnlinePaymentUrl($type, $ref)
 	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'</span><br>';
 	$url = getOnlinePaymentUrl(0, $type, $ref);
 	$out .= '<div class="urllink"><input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$url.'">';
-	$out .= '<a href="'.$url.'" target="_blank">'.img_picto('', 'globe', 'class="paddingleft"').'</a></div>';
+	$out .= '<a class="hideonsmartphone" href="'.$url.'" target="_blank">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
+	$out .= '</div>';
 	$out .= ajax_autoselect("onlinepaymenturl", 0);
 	return $out;
 }

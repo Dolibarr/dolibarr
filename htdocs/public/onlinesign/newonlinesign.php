@@ -240,7 +240,7 @@ if (!empty($conf->global->ONLINE_SIGN_NEWFORM_TEXT)) {
 }
 if (empty($text)) {
 	$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePage", $mysoc->name).'</strong></td></tr>'."\n";
-	$text .= '<tr><td class="textpublicpayment">'.$langs->trans("ThisScreenAllowsYouToSignDocFrom", $creditor).'<br><br></td></tr>'."\n";
+	$text .= '<tr><td class="textpublicpayment opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFrom", $creditor).'<br><br></td></tr>'."\n";
 }
 print $text;
 
@@ -251,9 +251,8 @@ print '<tr><td align="left" colspan="2" class="opacitymedium">'.$langs->trans("T
 
 $found = false;
 $error = 0;
-$var = false;
 
-// Payment on customer order
+// Signature on commercial proposal
 if ($source == 'proposal') {
 	$found = true;
 	$langs->load("proposal");
@@ -271,24 +270,44 @@ if ($source == 'proposal') {
 
 	// Creditor
 
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b>'.$creditor.'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Creditor");
+	print '</td><td class="CTableRow2">';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
 	// Debitor
 
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("ThirdParty");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b>'.$proposal->thirdparty->name.'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
+	print '</td><td class="CTableRow2">';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<b>'.$proposal->thirdparty->name.'</b>';
+	print '</td></tr>'."\n";
 
 	// Object
 
 	$text = '<b>'.$langs->trans("SignatureProposalRef", $proposal->ref).'</b>';
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Designation");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.$text;
+	print '<tr class="CTableRow2"><td class="CTableRow2 tdtop">'.$langs->trans("Designation");
+	print '</td><td class="CTableRow2">'.$text;
+	if ($proposal->status == $proposal::STATUS_VALIDATED) {
+		$directdownloadlink = $proposal->getLastMainDocLink('proposal');
+		if ($directdownloadlink) {
+			print '<br><a href="'.$directdownloadlink.'">';
+			print img_mime($proposal->last_main_doc, '');
+			print $langs->trans("DownloadDocument").'</a>';
+		}
+	} else {
+		/* TODO If proposal signed newer than proposal ref, get link of proposal signed
+
+		*/
+	}
+
 	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
 	print '<input type="hidden" name="ref" value="'.$proposal->ref.'">';
 	print '</td></tr>'."\n";
+
+	// TODO Add link to download PDF (similar code than for invoice)
 }
 
 
@@ -316,9 +335,10 @@ if ($action != 'dosign') {
 
 print '</td></tr>'."\n";
 print '<tr><td align="center">';
+
 if ($action == "dosign" && empty($cancel)) {
 	print '<div class="tablepublicpayment">';
-	print '<input type="button" class="button" id="clearsignature" value="'.$langs->trans("ClearSignature").'">';
+	print '<input type="button" class="buttonDelete small" id="clearsignature" value="'.$langs->trans("ClearSignature").'">';
 	print '<div id="signature" style="border:solid;"></div>';
 	print '</div>';
 	print '<input type="button" class="button" id="signpropal" value="'.$langs->trans("Sign").'">';
@@ -334,8 +354,8 @@ if ($action == "dosign" && empty($cancel)) {
 		if(!$._data($("#signpropal")[0], "events")){
 			$("#signpropal").on("click",function(){
 				var signature = $("#signature").jSignature("getData", "image");
-				$.ajax({ 
-					type: "POST", 
+				$.ajax({
+					type: "POST",
 					url: "'.DOL_URL_ROOT.'/core/ajax/onlineSign.php",
 					dataType: "text",
 					data: {
@@ -360,21 +380,23 @@ if ($action == "dosign" && empty($cancel)) {
 	  $("#clearsignature").on("click",function(){
 		$("#signature").jSignature("clear");
 		$("#signpropal").attr("disabled",true);
-		$("#clearsignature").css("display","none");
+		/* $("#clearsignature").css("display","none"); */
 	  });
 
-	  $("#clearsignature").css("display","none");
+	  /* $("#clearsignature").css("display","none"); */
 	  $("#signpropal").attr("disabled",true);
 	});
 	</script>';
 } else {
 	if ($object->status == $object::STATUS_SIGNED) {
-		print $langs->trans("PropalAlreadySigned");
+		print '<br>';
+		print '<span class="ok">'.$langs->trans("PropalAlreadySigned").'</span>';
 	} elseif ($object->status == $object::STATUS_NOTSIGNED) {
-		print $langs->trans("PropalAlreadyRefused");
+		print '<br>';
+		print '<span class="warning">'.$langs->trans("PropalAlreadyRefused").'</span>';
 	} else {
-		print '<input type="submit" class="button" value="'.$langs->trans("SignPropal").'">';
-		print '<input name="refusepropal" type="submit" class="button" value="'.$langs->trans("RefusePropal").'">';
+		print '<input type="submit" class="button small wraponsmartphone reposition" value="'.$langs->trans("SignPropal").'">';
+		print '<input name="refusepropal" type="submit" class="button small wraponsmartphone" value="'.$langs->trans("RefusePropal").'">';
 	}
 }
 print '</td></tr>'."\n";
