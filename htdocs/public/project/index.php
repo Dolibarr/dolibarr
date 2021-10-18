@@ -205,19 +205,27 @@ print "\n";
 
 // Show all action buttons
 print '<br>';
+
 // Output introduction text
+$foundaction = 0;
 if ($project->accept_booth_suggestions) {
-	print '<input type="submit" value="'.$langs->trans("SuggestBooth").'" id="suggestbooth" name="suggestbooth" class="button">';
+	$foundaction++;
+	print '<input type="submit" value="'.$langs->trans("SuggestBooth").'" id="suggestbooth" name="suggestbooth" class="button width500">';
 	print '<br><br>';
 }
-if ($project->accept_conference_suggestions) {
-	print '<input type="submit" value="'.$langs->trans("SuggestConference").'" id="suggestconference" name="suggestconference" class="button">';
+if ($project->accept_conference_suggestions == 1 || $project->accept_conference_suggestions == 2) {		// Can suggest conferences
+	$foundaction++;
+	print '<input type="submit" value="'.$langs->trans("SuggestConference").'" id="suggestconference" name="suggestconference" class="button width500">';
 	print '<br><br>';
 }
-print '<input type="submit" value="'.$langs->trans("ViewAndVote").'" id="viewandvote" name="viewandvote" class="button">';
+if ($project->accept_conference_suggestions == 2 || $project->accept_conference_suggestions == 3) {		// Can vote for conferences
+	$foundaction++;
+	print '<input type="submit" value="'.$langs->trans("ViewAndVote").'" id="viewandvote" name="viewandvote" class="button width500">';
+}
 
-
-
+if (! $foundaction) {
+	print '<span class="opacitymedium">'.$langs->trans("NoPublicActionsAllowedForThisEvent").'</span>';
+}
 
 print '</td></tr>'."\n";
 
