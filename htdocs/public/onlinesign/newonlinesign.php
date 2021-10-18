@@ -317,7 +317,7 @@ if (!$found && !$mesg) {
 }
 
 if ($mesg) {
-	print '<tr><td align="center" colspan="2"><br><div class="warning">'.dol_escape_htmltag($mesg).'</div></td></tr>'."\n";
+	print '<tr><td class="center" colspan="2"><br><div class="warning">'.dol_escape_htmltag($mesg).'</div></td></tr>'."\n";
 }
 
 print '</table>'."\n";
@@ -334,7 +334,7 @@ if ($action != 'dosign') {
 }
 
 print '</td></tr>'."\n";
-print '<tr><td align="center">';
+print '<tr><td class="center">';
 
 if ($action == "dosign" && empty($cancel)) {
 	print '<div class="tablepublicpayment">';
@@ -395,8 +395,8 @@ if ($action == "dosign" && empty($cancel)) {
 		print '<br>';
 		print '<span class="warning">'.$langs->trans("PropalAlreadyRefused").'</span>';
 	} else {
-		print '<input type="submit" class="button small wraponsmartphone reposition" value="'.$langs->trans("SignPropal").'">';
-		print '<input name="refusepropal" type="submit" class="button small wraponsmartphone" value="'.$langs->trans("RefusePropal").'">';
+		print '<input type="submit" class="butAction small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("SignPropal").'">';
+		print '<input name="refusepropal" type="submit" class="butActionDelete small wraponsmartphone marginbottomonly marginleftonly marginrightonly" value="'.$langs->trans("RefusePropal").'">';
 	}
 }
 print '</td></tr>'."\n";
