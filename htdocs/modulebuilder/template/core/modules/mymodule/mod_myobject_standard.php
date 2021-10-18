@@ -22,21 +22,23 @@
  *  \ingroup    mymodule
  *  \brief      File of class to manage MyObject numbering rules standard
  */
+declare(strict_types=1);
+
 dol_include_once('/mymodule/core/modules/mymodule/modules_myobject.php');
 
-
 /**
- *	Class to manage customer order numbering rules standard
+ *    Class to manage customer order numbering rules standard
  */
 class mod_myobject_standard extends ModeleNumRefMyObject
 {
 	/**
 	 * Dolibarr version of the loaded document
+	 *
 	 * @var string
 	 */
-	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
+	public string $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	public $prefix = 'MYOBJECT';
+	public string $prefix = 'MYOBJECT';
 
 	/**
 	 * @var string Error code (or message)
@@ -46,7 +48,7 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 	/**
 	 * @var string name
 	 */
-	public $name = 'standard';
+	public string $name = 'standard';
 
 
 	/**
@@ -54,10 +56,10 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 	 *
 	 *  @return     string      Text with description
 	 */
-	public function info()
+	public function info(): string
 	{
 		global $langs;
-		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+		return $langs->trans('SimpleNumRefModelDesc', $this->prefix);
 	}
 
 
@@ -66,9 +68,9 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 	 *
 	 *  @return     string      Example
 	 */
-	public function getExample()
+	public function getExample(): string
 	{
-		return $this->prefix."0501-0001";
+		return $this->prefix . '0501-0001';
 	}
 
 
@@ -76,22 +78,24 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return boolean     			false if conflict, true if ok
+	 * @param Object $object Object we need next value for
+	 *
+	 * @return bool                false if conflicted, true if ok
 	 */
-	public function canBeActivated($object)
+	public function canBeActivated(Object $object): bool
 	{
 		global $conf, $langs, $db;
 
-		$coyymm = ''; $max = '';
+		$coyymm = '';
+		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql .= " FROM ".MAIN_DB_PREFIX."mymodule_myobject";
-		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
-		if ($object->ismultientitymanaged == 1) {
-			$sql .= " AND entity = ".$conf->entity;
-		} elseif ($object->ismultientitymanaged == 2) {
+		$sql = 'SELECT MAX(CAST(SUBSTRING(ref FROM ' . $posindice . ') AS SIGNED)) as max';
+		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'mymodule_myobject';
+		$sql .= " WHERE ref LIKE '" . $db->escape($this->prefix) . "____-%'";
+		if ($object->ismultientitymanaged === 1) {
+			$sql .= ' AND entity = ' . $conf->entity;
+		} elseif ($object->ismultientitymanaged === 2) {
 			// TODO
 		}
 
@@ -99,11 +103,12 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 		if ($resql) {
 			$row = $db->fetch_row($resql);
 			if ($row) {
-				$coyymm = substr($row[0], 0, 6); $max = $row[0];
+				$coyymm = substr($row[0], 0, 6);
+				$max = $row[0];
 			}
 		}
 		if ($coyymm && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm)) {
-			$langs->load("errors");
+			$langs->load('errors');
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;
 		}
@@ -112,23 +117,25 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 	}
 
 	/**
-	 * 	Return next free value
+	 *    Return next free value
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 * @param Object $object Object we need next value for
+	 *
+	 * @return string                Value if KO, <0 if KO
+	 * @throws Exception
 	 */
-	public function getNextValue($object)
+	public function getNextValue(object $object)
 	{
 		global $db, $conf;
 
 		// first we get the max value
 		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql .= " FROM ".MAIN_DB_PREFIX."mymodule_myobject";
-		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
-		if ($object->ismultientitymanaged == 1) {
-			$sql .= " AND entity = ".$conf->entity;
-		} elseif ($object->ismultientitymanaged == 2) {
+		$sql = 'SELECT MAX(CAST(SUBSTRING(ref FROM ' . $posindice . ') AS SIGNED)) as max';
+		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'mymodule_myobject';
+		$sql .= " WHERE ref LIKE '" . $db->escape($this->prefix) . "____-%'";
+		if ($object->ismultientitymanaged === 1) {
+			$sql .= ' AND entity = ' . $conf->entity;
+		} elseif ($object->ismultientitymanaged === 2) {
 			// TODO
 		}
 
@@ -136,26 +143,26 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
 			if ($obj) {
-				$max = intval($obj->max);
+				$max = (int) $obj->max;
 			} else {
 				$max = 0;
 			}
 		} else {
-			dol_syslog("mod_myobject_standard::getNextValue", LOG_DEBUG);
+			dol_syslog('mod_myobject_standard::getNextValue', LOG_DEBUG);
 			return -1;
 		}
 
 		//$date=time();
 		$date = $object->date_creation;
-		$yymm = strftime("%y%m", $date);
+		$yymm = strftime('%y%m', $date);
 
-		if ($max >= (pow(10, 4) - 1)) {
+		if ($max >= ((10 ** 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
 		} else {
-			$num = sprintf("%04s", $max + 1);
+			$num = sprintf('%04s', $max + 1);
 		}
 
-		dol_syslog("mod_myobject_standard::getNextValue return ".$this->prefix.$yymm."-".$num);
-		return $this->prefix.$yymm."-".$num;
+		dol_syslog('mod_myobject_standard::getNextValue return ' . $this->prefix . $yymm . '-' . $num);
+		return $this->prefix . $yymm . '-' . $num;
 	}
 }

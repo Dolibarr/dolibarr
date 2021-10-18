@@ -19,46 +19,52 @@
  */
 
 /**
- *	\file       htdocs/modulebuilder/template/mymoduleindex.php
- *	\ingroup    mymodule
- *	\brief      Home page of mymodule top menu
+ *    \file       htdocs/modulebuilder/template/mymoduleindex.php
+ *    \ingroup    mymodule
+ *    \brief      Home page of mymodule top menu
  */
+
+declare(strict_types=1);
 
 // Load Dolibarr environment
 $res = 0;
 // Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
-	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
+if (!empty($_SERVER['CONTEXT_DOCUMENT_ROOT'])) {
+	$res = @include $_SERVER['CONTEXT_DOCUMENT_ROOT'] . '/main.inc.php';
 }
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
-$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
-while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
-	$i--; $j--;
+$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME'];
+$tmp2 = realpath(__FILE__);
+$i = strlen($tmp) - 1;
+$j = strlen($tmp2) - 1;
+while (isset($tmp[$i], $tmp2[$j]) && $i > 0 && $j > 0 && $tmp[$i] === $tmp2[$j]) {
+	$i--;
+	$j--;
 }
-if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) {
-	$res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
+if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1)) . '/main.inc.php')) {
+	$res = @include substr($tmp, 0, ($i + 1)) . '/main.inc.php';
 }
-if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php")) {
-	$res = @include dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php";
+if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1))) . '/main.inc.php')) {
+	$res = @include dirname(substr($tmp, 0, ($i + 1))) . '/main.inc.php';
 }
 // Try main.inc.php using relative path
-if (!$res && file_exists("../main.inc.php")) {
-	$res = @include "../main.inc.php";
+if (!$res && file_exists('../main.inc.php')) {
+	$res = @include '../main.inc.php';
 }
-if (!$res && file_exists("../../main.inc.php")) {
-	$res = @include "../../main.inc.php";
+if (!$res && file_exists('../../main.inc.php')) {
+	$res = @include '../../main.inc.php';
 }
-if (!$res && file_exists("../../../main.inc.php")) {
-	$res = @include "../../../main.inc.php";
+if (!$res && file_exists('../../../main.inc.php')) {
+	$res = @include '../../../main.inc.php';
 }
 if (!$res) {
-	die("Include of main fails");
+	die('Include of main fails');
 }
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("mymodule@mymodule"));
+$langs->loadLangs(['mymodule@mymodule']);
 
 $action = GETPOST('action', 'aZ09');
 
@@ -91,9 +97,9 @@ $now = dol_now();
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-llxHeader("", $langs->trans("MyModuleArea"));
+llxHeader('', $langs->trans('MyModuleArea'));
 
-print load_fiche_titre($langs->trans("MyModuleArea"), '', 'mymodule.png@mymodule');
+print load_fiche_titre($langs->trans('MyModuleArea'), '', 'mymodule.png@mymodule');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -104,7 +110,8 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 {
 	$langs->load("orders");
 
-	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.tva as total_tva, c.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
+	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.tva as total_tva, c.total_ttc, ';
+	$sql .= 's.rowid as socid, s.nom as name, s.client, s.canvas";
 	$sql.= ", s.code_client";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -112,7 +119,9 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 	$sql.= " WHERE c.fk_soc = s.rowid";
 	$sql.= " AND c.fk_statut = 0";
 	$sql.= " AND c.entity IN (".getEntity('commande').")";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	if (! $user->rights->societe->client->voir && ! $socid) {
+		$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	}
 	if ($socid)	$sql.= " AND c.fk_soc = ".((int) $socid);
 
 	$resql = $db->query($sql);
@@ -123,7 +132,8 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("DraftMyObjects").($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th></tr>';
+		print '<th colspan="3">'.$langs->trans("DraftMyObjects").($num?'<span class="badge marginleftonlyshort">
+				'.$num.'</span>':'').'</th></tr>';
 
 		$var = true;
 		if ($num > 0)
@@ -153,7 +163,8 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 			if ($total>0)
 			{
 
-				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
+				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td>
+						<td colspan="2" class="right">'.price($total)."</td></tr>";
 			}
 		}
 		else
@@ -187,7 +198,9 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 	$sql.= " FROM ".MAIN_DB_PREFIX."mymodule_myobject as s";
 	//if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.entity IN (".getEntity($myobjectstatic->element).")";
-	//if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	//if (! $user->rights->societe->client->voir && ! $socid) {
+		//$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	//}
 	//if ($socid)	$sql.= " AND s.rowid = $socid";
 	$sql .= " ORDER BY s.tms DESC";
 	$sql .= $db->plimit($max, 0);

@@ -22,11 +22,13 @@
  * \brief   PHPUnit test for MyObject class.
  */
 
+declare(strict_types=1);
+
 global $conf, $user, $langs, $db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/mymodule/class/myobject.class.php';
+require_once __DIR__ . '/../../htdocs/master.inc.php';
+require_once __DIR__ . '/../../htdocs/mymodule/class/myobject.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -35,7 +37,7 @@ if (empty($user->id)) {
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
-$langs->load("main");
+$langs->load('main');
 
 
 /**
@@ -56,7 +58,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return MyObjectTest
+	 * @return void
 	 */
 	public function __construct()
 	{
@@ -69,7 +71,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 		$this->savlangs = $langs;
 		$this->savdb = $db;
 
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+		print __METHOD__ . ' db->type=' . $db->type . ' user->id=' . $user->id;
 		//print " - db ".$db->db;
 		print "\n";
 	}
@@ -79,12 +81,12 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf, $user, $langs, $db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-		print __METHOD__."\n";
+		print __METHOD__ . "\n";
 	}
 
 	/**
@@ -92,7 +94,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf, $user, $langs, $db;
 		$conf = $this->savconf;
@@ -100,7 +102,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		print __METHOD__."\n";
+		print __METHOD__ . "\n";
 	}
 
 	/**
@@ -108,9 +110,9 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
-		print __METHOD__."\n";
+		print __METHOD__ . "\n";
 	}
 
 	/**
@@ -118,12 +120,12 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf, $user, $langs, $db;
 		$db->rollback();
 
-		print __METHOD__."\n";
+		print __METHOD__ . "\n";
 	}
 
 
@@ -132,7 +134,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return bool
 	 */
-	public function testSomething()
+	public function testSomething(): bool
 	{
 		global $conf, $user, $langs, $db;
 		$conf = $this->savconf;
@@ -142,7 +144,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 
 		$result = true;
 
-		print __METHOD__." result=".$result."\n";
+		print __METHOD__ . ' result=' . $result . "\n";
 		$this->assertTrue($result);
 
 		return $result;
@@ -153,7 +155,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return int
 	 */
-	public function testMyObjectCreate()
+	public function testMyObjectCreate(): int
 	{
 		global $conf, $user, $langs, $db;
 		$conf = $this->savconf;
@@ -165,7 +167,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 		$localobject->initAsSpecimen();
 		$result = $localobject->create($user);
 
-		print __METHOD__." result=".$result."\n";
+		print __METHOD__ . ' result=' . $result . "\n";
 		$this->assertLessThan($result, 0);
 
 		return $result;
@@ -174,13 +176,14 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * testMyObjectDelete
 	 *
-	 * @param	int		$id		Id of object
-	 * @return	int
+	 * @param int $id ID of object
 	 *
-	 * @depends	testMyObjectCreate
-	 * The depends says test is run only if previous is ok
+	 * @return    int
+	 *
+	 * @depends    testMyObjectCreate
+	 * The depends on says test is run only if previous is ok
 	 */
-	public function testMyObjectDelete($id)
+	public function testMyObjectDelete(int $id): int
 	{
 		global $conf, $user, $langs, $db;
 		$conf = $this->savconf;
@@ -192,7 +195,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 		$result = $localobject->fetch($id);
 		$result = $localobject->delete($user);
 
-		print __METHOD__." id=".$id." result=".$result."\n";
+		print __METHOD__ . ' id=' . $id . ' result=' . $result . "\n";
 		$this->assertLessThan($result, 0);
 		return $result;
 	}
