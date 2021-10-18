@@ -363,10 +363,10 @@ foreach ($search as $key => $val) {
 		$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
 		if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
 			if (preg_match('/_dtstart$/', $key)) {
-				$sql .= ' AND t.' . $columnName . " >= '" . $db->idate($val) . "'";
+				$sql .= ' AND t.' . $db->escape($columnName) . " >= '" . $db->idate($val) . "'";
 			}
 			if (preg_match('/_dtend$/', $key)) {
-				$sql .= ' AND t.' . $columnName . " <= '" . $db->idate($val) . "'";
+				$sql .= ' AND t.' . $db->escape($columnName) . " <= '" . $db->idate($val) . "'";
 			}
 		}
 	}
