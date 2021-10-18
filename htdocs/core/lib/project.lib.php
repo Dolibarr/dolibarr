@@ -471,11 +471,95 @@ function project_timesheet_prepare_head($mode, $fuser = null)
 		$h++;
 	}
 
+	if (empty($conf->global->PROJECT_DISABLE_TIMESHEET_STATISTICS_GLOBAL)) {
+		$head[$h][0] = DOL_URL_ROOT."/projet/activity/stats/statistics_global.php".($param ? '?'.$param : '');
+		$head[$h][1] = $langs->trans("InputStatisticsGlobal");
+		$head[$h][2] = 'inputstatisticsglobal';
+		$h++;
+	}
+
+	/*if (empty($conf->global->PROJECT_DISABLE_TIMESHEET_STATISTICS_BYUSER)) {
+		$head[$h][0] = DOL_URL_ROOT."/projet/activity/stats/statistics_byuser.php".($param ? '?'.$param : '');
+		$head[$h][1] = $langs->trans("InputStatisticsByUser");
+		$head[$h][2] = 'inputstatisticsbyuser';
+		$h++;
+	}
+
+	if (empty($conf->global->PROJECT_DISABLE_TIMESHEET_STATISTICS_BYTAG)) {
+		$head[$h][0] = DOL_URL_ROOT."/projet/activity/stats/statistics_bytag.php".($param ? '?'.$param : '');
+		$head[$h][1] = $langs->trans("InputStatisticsByTag");
+		$head[$h][2] = 'inputstatisticsbytag';
+		$h++;
+	}
+
+	if (empty($conf->global->PROJECT_DISABLE_TIMESHEET_STATISTICS_BYTASK)) {
+		$head[$h][0] = DOL_URL_ROOT."/projet/activity/stats/statistics_bytask.php".($param ? '?'.$param : '');
+		$head[$h][1] = $langs->trans("InputStatisticsByTask");
+		$head[$h][2] = 'inputstatisticsbytask';
+		$h++;
+	}*/
+
 	/*if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	{
 		$head[$h][0] = DOL_URL_ROOT."/projet/activity/perline.php".($param?'?'.$param:'');
 		$head[$h][1] = $langs->trans("InputDetail");
 		$head[$h][2] = 'inputperline';
+		$h++;
+	}*/
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'project_timesheet');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'project_timesheet', 'remove');
+
+	return $head;
+}
+
+/**
+ * Prepare array with list of tabs
+ *
+ * @param	string	$mode		Mode
+ * @param   string  $fuser      Filter on user
+ * @return  array				Array of tabs to show
+ */
+function project_timesheet_statistics_prepare_head($mode, $fuser = null)
+{
+	global $langs, $conf, $user;
+	$h = 0;
+	$head = array();
+
+	$h = 0;
+
+	$param = '';
+	$param .= ($mode ? '&mode='.$mode : '');
+	if (is_object($fuser) && $fuser->id > 0 && $fuser->id != $user->id) {
+		$param .= '&search_usertoprocessid='.$fuser->id;
+	}
+
+	if (empty($conf->global->PROJECT_DISABLE_TIMESHEET_STATISTICS_GLOBAL)) {
+		$head[$h][0] = DOL_URL_ROOT."/projet/activity/stats/statistics_global.php".($param ? '?'.$param : '');
+		$head[$h][1] = $langs->trans("InputStatisticsGlobal");
+		$head[$h][2] = 'inputstatisticsglobal';
+		$h++;
+	}
+
+	/*if (empty($conf->global->PROJECT_DISABLE_TIMESHEET_STATISTICS_BYUSER)) {
+		$head[$h][0] = DOL_URL_ROOT."/projet/activity/stats/statistics_byuser.php".($param ? '?'.$param : '');
+		$head[$h][1] = $langs->trans("InputStatisticsByUser");
+		$head[$h][2] = 'inputstatisticsbyuser';
+		$h++;
+	}
+
+	if (empty($conf->global->PROJECT_DISABLE_TIMESHEET_STATISTICS_BYTAG)) {
+		$head[$h][0] = DOL_URL_ROOT."/projet/activity/stats/statistics_bytag.php".($param ? '?'.$param : '');
+		$head[$h][1] = $langs->trans("InputStatisticsByTag");
+		$head[$h][2] = 'inputstatisticsbytag';
+		$h++;
+	}
+
+	if (empty($conf->global->PROJECT_DISABLE_TIMESHEET_STATISTICS_BYTASK)) {
+		$head[$h][0] = DOL_URL_ROOT."/projet/activity/stats/statistics_bytask.php".($param ? '?'.$param : '');
+		$head[$h][1] = $langs->trans("InputStatisticsByTask");
+		$head[$h][2] = 'inputstatisticsbytask';
 		$h++;
 	}*/
 

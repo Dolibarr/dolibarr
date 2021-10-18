@@ -77,7 +77,7 @@ abstract class Stats
 		}
 		// Load file into $data
 		if ($foundintocache) {    // Cache file found and is not too old
-			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
+			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile."_getNbByMonth ".$filedate.".");
 			$data = json_decode(file_get_contents($newpathofdestfile), true);
 		} else {
 			$year = $startyear;
@@ -120,6 +120,7 @@ abstract class Stats
 		}
 
 		// return array(array('Month',val1,val2,val3),...)
+		// var_dump($data);print '<br>';
 		return $data;
 	}
 
@@ -460,6 +461,93 @@ abstract class Stats
 		return $data;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 *
+	 *     @param   int		$year       Year
+	 *     @param   string	$sql        SQL
+	 *     @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 *     @return	array				Array of nb each month
+	 */
+	protected function _getNbByEntity($year, $sql, $format = 0, $limit = 0)
+	{
+		// phpcs:enable
+		$result = array();
+
+		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$row = $this->db->fetch_row($resql);
+				$result[$row[0]] = [0 => $row[0], 1 => $row[1]];
+				$i++;
+			}
+			$this->db->free($resql);
+		} else {
+			dol_print_error($this->db);
+		}
+
+		if($limit != 0)
+		{
+			$i = 1;
+
+			foreach($result as $key => $value)
+			{
+				if($i >= $limit)
+				{
+					$result['Autres'] = [0 => 'Autres ('.($i - $limit).')', 1 => isset($result['Autres'][1]) ? $result['Autres'][1] + $result[$key][1] : $result[$key][1]];
+
+					unset($result[$key]);
+				}
+
+				$i++;
+			}
+		}
+
+		return $result;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 *
+	 *     @param   int		$year       Year
+	 *     @param   string	$sql        SQL
+	 *     @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 *     @return	array				Array of nb each month
+	 */
+	protected function _getNbByEntityWithExplode($year, $sql, $format = 0, $parser)
+	{
+		// phpcs:enable
+		$result = array();
+
+		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$row = $this->db->fetch_row($resql);
+				$temp = explode($parser, $row[0]);
+
+				$result[$temp[0]] = [0 => $temp[0], 1 => isset($result[$temp[0][1]]) ? $row[1] + $temp[0][1] : $row[1]];
+				$i++;
+			}
+
+			$this->db->free($resql);
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+
+		return $result;
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
