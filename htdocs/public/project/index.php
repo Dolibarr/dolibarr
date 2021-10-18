@@ -64,7 +64,7 @@ $langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paybox
 // No check on module enabled. Done later according to $validpaymentmethod
 
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST('id');
+$id = GETPOST('id', 'int');
 $securekeyreceived = GETPOST("securekey", 'alpha');
 $securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 'md5');
 
@@ -183,11 +183,27 @@ if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT)) {
 	print '</div>';
 }
 
-print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
+print '<br>';
 
-$text  = '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</strong></td></tr>'."\n";
-$text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgRegistrationHelpMessage").' '.$project->title.'.<br><br></td></tr>'."\n";
-$text .= '<tr><td class="textpublicpayment">'.$project->note_public.'<br><br></td></tr>'."\n";
+
+// Event summary
+print '<div class="center">';
+print '<span class="large">'.$project->title.'</span><br>';
+print img_picto('', 'calendar', 'class="pictofixedwidth"').$langs->trans("Date").': ';
+print dol_print_date($project->date_start, 'daytext');
+if ($project->date_end && $project->date_start != $project->date_end) {
+	print ' - '.dol_print_date($project->date_end, 'daytext');
+}
+print '<br><br>'."\n";
+print $langs->trans("EvntOrgRegistrationWelcomeMessage")."\n";
+print $project->note_public."\n";
+//print img_picto('', 'map-marker-alt').$langs->trans("Location").': xxxx';
+print '</div>';
+
+
+print '<br>';
+
+print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 
 print $text;
 

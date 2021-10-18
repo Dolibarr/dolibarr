@@ -1421,6 +1421,7 @@ table[summary="list_of_modules"] .fa-cog {
 .titlefieldcreate { width: 20%; }
 .titlefield       { /* width: 25%; */ width: 250px; }
 .titlefieldmiddle { width: 50%; }
+.titlefieldmax45 { max-width: 45%; }
 .imgmaxwidth180 { max-width: 180px; }
 .imgmaxheight50 { max-height: 50px; }
 
