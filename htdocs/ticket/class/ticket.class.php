@@ -218,6 +218,7 @@ class Ticket extends CommonObject
 	const STATUS_IN_PROGRESS = 3;
 	const STATUS_NEED_MORE_INFO = 5;
 	const STATUS_WAITING = 7;			// on hold
+	const STATUS_FINISHED = 6;			// Completed by the user who has been assigned to the ticket. Waiting to be closed as solved.
 	const STATUS_CLOSED = 8;			// Closed - Solved
 	const STATUS_CANCELED = 9;			// Closed - Not solved
 
@@ -297,6 +298,7 @@ class Ticket extends CommonObject
 			self::STATUS_IN_PROGRESS => 'InProgress',
 			self::STATUS_WAITING => 'OnHold',
 			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformationShort',
+			self::STATUS_FINISHED => 'Completed',
 			self::STATUS_CLOSED => 'SolvedClosed',
 			self::STATUS_CANCELED => 'Canceled'
 		);
@@ -307,6 +309,7 @@ class Ticket extends CommonObject
 			self::STATUS_IN_PROGRESS => 'InProgress',
 			self::STATUS_WAITING => 'OnHold',
 			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation',
+			self::STATUS_FINISHED => 'Completed',
 			self::STATUS_CLOSED => 'SolvedClosed',
 			self::STATUS_CANCELED => 'Canceled'
 		);
@@ -1295,6 +1298,8 @@ class Ticket extends CommonObject
 			$statusType = 'status7';
 		} elseif ($status == self::STATUS_NEED_MORE_INFO) {
 			$statusType = 'status3';
+		} elseif ($status == self::STATUS_FINISHED) {
+			$statusType = 'status11';
 		} elseif ($status == self::STATUS_CANCELED) {
 			$statusType = 'status9';
 		} elseif ($status == self::STATUS_CLOSED) {
