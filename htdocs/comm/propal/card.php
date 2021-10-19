@@ -2079,6 +2079,8 @@ if ($action == 'create') {
 	$absolute_discount = price2num($absolute_discount, 'MT');
 	$absolute_creditnote = price2num($absolute_creditnote, 'MT');
 
+	$caneditfield = ($object->statut != Propal::STATUS_SIGNED && $object->statut != Propal::STATUS_BILLED);
+
 	$thirdparty = $soc;
 	$discount_type = 0;
 	$backtopage = urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -2092,12 +2094,12 @@ if ($action == 'create') {
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('DatePropal');
 	print '</td>';
-	if ($action != 'editdate' && $usercancreate) {
+	if ($action != 'editdate' && $usercancreate && $caneditfield) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td class="valuefield">';
-	if ($action == 'editdate' && $usercancreate) {
+	if ($action == 'editdate' && $usercancreate && $caneditfield) {
 		print '<form name="editdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setdate">';
@@ -2119,12 +2121,12 @@ if ($action == 'create') {
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('DateEndPropal');
 	print '</td>';
-	if ($action != 'editecheance' && $usercancreate) {
+	if ($action != 'editecheance' && $usercancreate && $caneditfield) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editecheance&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td class="valuefield">';
-	if ($action == 'editecheance' && $usercancreate) {
+	if ($action == 'editecheance' && $usercancreate && $caneditfield) {
 		print '<form name="editecheance" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setecheance">';
@@ -2149,12 +2151,12 @@ if ($action == 'create') {
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentConditionsShort');
 	print '</td>';
-	if ($action != 'editconditions' && $usercancreate) {
+	if ($action != 'editconditions' && $usercancreate && $caneditfield) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetConditions'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td class="valuefield">';
-	if ($action == 'editconditions' && $usercancreate) {
+	if ($action == 'editconditions' && $usercancreate && $caneditfield) {
 		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id');
 	} else {
 		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'none');
@@ -2168,12 +2170,12 @@ if ($action == 'create') {
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentMode');
 	print '</td>';
-	if ($action != 'editmode' && $usercancreate) {
+	if ($action != 'editmode' && $usercancreate && $caneditfield) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMode'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td class="valuefieldcreate">';
-	if ($action == 'editmode' && $usercancreate) {
+	if ($action == 'editmode' && $usercancreate && $caneditfield) {
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', 'CRDT', 1, 1);
 	} else {
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'none');
@@ -2183,9 +2185,9 @@ if ($action == 'create') {
 	// Delivery date
 	$langs->load('deliveries');
 	print '<tr><td>';
-	print $form->editfieldkey($langs->trans('DeliveryDate'), 'date_livraison', $object->delivery_date, $object, $usercancreate, 'datepicker');
+	print $form->editfieldkey($langs->trans('DeliveryDate'), 'date_livraison', $object->delivery_date, $object, $usercancreate && $caneditfield, 'datepicker');
 	print '</td><td class="valuefield">';
-	print $form->editfieldval($langs->trans('DeliveryDate'), 'date_livraison', $object->delivery_date, $object, $usercancreate, 'datepicker');
+	print $form->editfieldval($langs->trans('DeliveryDate'), 'date_livraison', $object->delivery_date, $object, $usercancreate && $caneditfield, 'datepicker');
 	print '</td>';
 	print '</tr>';
 
@@ -2198,12 +2200,12 @@ if ($action == 'create') {
 		print $langs->trans('AvailabilityPeriod');
 	}
 	print '</td>';
-	if ($action != 'editavailability' && $usercancreate) {
+	if ($action != 'editavailability' && $usercancreate && $caneditfield) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editavailability&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetAvailability'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td class="valuefield">';
-	if ($action == 'editavailability' && $usercancreate) {
+	if ($action == 'editavailability' && $usercancreate && $caneditfield) {
 		$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id, $object->availability_id, 'availability_id', 1);
 	} else {
 		$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id, $object->availability_id, 'none', 1);
@@ -2218,12 +2220,12 @@ if ($action == 'create') {
 		print '<table width="100%" class="nobordernopadding"><tr><td>';
 		print $langs->trans('SendingMethod');
 		print '</td>';
-		if ($action != 'editshippingmethod' && $usercancreate) {
+		if ($action != 'editshippingmethod' && $usercancreate && $caneditfield) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td class="valuefield">';
-		if ($action == 'editshippingmethod' && $usercancreate) {
+		if ($action == 'editshippingmethod' && $usercancreate && $caneditfield) {
 			$form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->shipping_method_id, 'shipping_method_id', 1);
 		} else {
 			$form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->shipping_method_id, 'none');
@@ -2373,7 +2375,7 @@ if ($action == 'create') {
 		print '<table width="100%" class="nobordernopadding"><tr><td>';
 		print $langs->trans('IncotermLabel');
 		print '<td><td class="right">';
-		if ($usercancreate) {
+		if ($action != 'editincoterm' && $usercancreate && $caneditfield) {
 			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/comm/propal/card.php?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
 		} else {
 			print '&nbsp;';
@@ -2381,10 +2383,10 @@ if ($action == 'create') {
 		print '</td></tr></table>';
 		print '</td>';
 		print '<td class="valuefield">';
-		if ($action != 'editincoterm') {
-			print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
-		} else {
+		if ($action == 'editincoterm' && $usercancreate && $caneditfield) {
 			print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?id='.$object->id);
+		} else {
+			print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 		}
 		print '</td></tr>';
 	}
