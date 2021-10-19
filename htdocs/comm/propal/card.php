@@ -2092,12 +2092,12 @@ if ($action == 'create') {
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('DatePropal');
 	print '</td>';
-	if ($action != 'editdate' && $object->statut == Propal::STATUS_DRAFT && $usercancreate) {
+	if ($action != 'editdate' && $usercancreate) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td class="valuefield">';
-	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editdate' && $usercancreate) {
+	if ($action == 'editdate' && $usercancreate) {
 		print '<form name="editdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setdate">';
@@ -2119,12 +2119,12 @@ if ($action == 'create') {
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('DateEndPropal');
 	print '</td>';
-	if ($action != 'editecheance' && $object->statut == Propal::STATUS_DRAFT && $usercancreate) {
+	if ($action != 'editecheance' && $usercancreate) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editecheance&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td class="valuefield">';
-	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editecheance' && $usercancreate) {
+	if ($action == 'editecheance' && $usercancreate) {
 		print '<form name="editecheance" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setecheance">';
@@ -2149,12 +2149,12 @@ if ($action == 'create') {
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentConditionsShort');
 	print '</td>';
-	if ($action != 'editconditions' && $object->statut == Propal::STATUS_DRAFT && $usercancreate) {
+	if ($action != 'editconditions' && $usercancreate) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetConditions'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td class="valuefield">';
-	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editconditions' && $usercancreate) {
+	if ($action == 'editconditions' && $usercancreate) {
 		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id');
 	} else {
 		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'none');
@@ -2168,12 +2168,12 @@ if ($action == 'create') {
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentMode');
 	print '</td>';
-	if ($action != 'editmode' && $object->statut == Propal::STATUS_DRAFT && $usercancreate) {
+	if ($action != 'editmode' && $usercancreate) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMode'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td class="valuefieldcreate">';
-	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editmode' && $usercancreate) {
+	if ($action == 'editmode' && $usercancreate) {
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', 'CRDT', 1, 1);
 	} else {
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'none');
@@ -2198,12 +2198,12 @@ if ($action == 'create') {
 		print $langs->trans('AvailabilityPeriod');
 	}
 	print '</td>';
-	if ($action != 'editavailability' && $object->statut == Propal::STATUS_DRAFT && $usercancreate) {
+	if ($action != 'editavailability' && $usercancreate) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editavailability&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetAvailability'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td class="valuefield">';
-	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editavailability' && $usercancreate) {
+	if ($action == 'editavailability' && $usercancreate) {
 		$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id, $object->availability_id, 'availability_id', 1);
 	} else {
 		$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id, $object->availability_id, 'none', 1);
@@ -2255,12 +2255,12 @@ if ($action == 'create') {
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('Source');
 	print '</td>';
-	if ($action != 'editdemandreason' && $object->statut == Propal::STATUS_DRAFT && $usercancreate) {
+	if ($action != 'editdemandreason' && $usercancreate) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDemandReason'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td class="valuefield">';
-	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editdemandreason' && $usercancreate) {
+	if ($action == 'editdemandreason' && $usercancreate) {
 		$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, $object->demand_reason_id, 'demand_reason_id', 1);
 	} else {
 		$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, $object->demand_reason_id, 'none');
