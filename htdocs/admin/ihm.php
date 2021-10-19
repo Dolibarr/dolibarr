@@ -299,6 +299,8 @@ $head = ihm_prepare_head();
 
 print dol_get_fiche_head($head, $mode, '', -1, '');
 
+print '<br>';
+
 clearstatcache();
 
 if ($mode == 'template') {

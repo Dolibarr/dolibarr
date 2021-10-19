@@ -101,9 +101,9 @@ $head = security_prepare_head();
 
 print dol_get_fiche_head($head, 'file', '', -1);
 
+print '<br>';
 
 // Upload options
-$var = false;
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';

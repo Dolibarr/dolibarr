@@ -3290,7 +3290,7 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 	padding-right: 7px !important;
 }
 input.button[name="upload"] {
-	padding: 4px !important;
+	padding: 5px !important;
 	font-size: 0.9em;
 }
 input.button.smallpaddingimp {

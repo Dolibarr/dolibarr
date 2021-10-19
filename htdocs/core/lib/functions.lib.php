@@ -9108,11 +9108,12 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata = 0, $param 
 /**
  * Make content of an input box selected when we click into input field.
  *
- * @param string	$htmlname	Id of html object ('#idvalue' or '.classvalue')
- * @param string	$addlink	Add a 'link to' after
+ * @param string	$htmlname		Id of html object ('#idvalue' or '.classvalue')
+ * @param string	$addlink		Add a 'link to' after
+ * @param string	$textonlink		Text to show on link or 'image'
  * @return string
  */
-function ajax_autoselect($htmlname, $addlink = '')
+function ajax_autoselect($htmlname, $addlink = '', $textonlink = 'Link')
 {
 	global $langs;
 	$out = '<script>
@@ -9121,7 +9122,11 @@ function ajax_autoselect($htmlname, $addlink = '')
 				});
 		    </script>';
 	if ($addlink) {
-		$out .= ' <a href="'.$addlink.'" target="_blank">'.$langs->trans("Link").'</a>';
+		if ($textonlink === 'image') {
+			$out .= ' <a href="'.$addlink.'" target="_blank">'.img_picto('', 'globe').'</a>';
+		} else {
+			$out .= ' <a href="'.$addlink.'" target="_blank">'.$langs->trans("Link").'</a>';
+		}
 	}
 	return $out;
 }
