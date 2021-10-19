@@ -24,6 +24,7 @@ if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
+
 /**
  * README : Montée de version Théoblad ;
  * les zones modifiés du fichier original sont bornées par
