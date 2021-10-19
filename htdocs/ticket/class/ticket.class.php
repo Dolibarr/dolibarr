@@ -1298,9 +1298,9 @@ class Ticket extends CommonObject
 			$statusType = 'status7';
 		} elseif ($status == self::STATUS_NEED_MORE_INFO) {
 			$statusType = 'status3';
-		} elseif ($status == self::STATUS_FINISHED) {
-			$statusType = 'status11';
 		} elseif ($status == self::STATUS_COMPLETED) {
+			$statusType = 'status11';
+		} elseif ($status == self::STATUS_CANCELED) {
 			$statusType = 'status9';
 		} elseif ($status == self::STATUS_CLOSED) {
 			$statusType = 'status6';
