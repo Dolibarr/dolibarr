@@ -205,7 +205,7 @@ a.badge-dark:focus, a.badge-dark:hover {
 
 /* STATUS BADGES */
 <?php
-for ($i = 0; $i <= 10; $i++) {
+for ($i = 0; $i <= 11; $i++) {
 	/* Default Status */
 	_createStatusBadgeCss($i, '', "STATUS".$i);
 
