@@ -374,7 +374,7 @@ foreach ($search as $key => $val) {
 			$newarrayofstatus[] = Ticket::STATUS_IN_PROGRESS;
 			$newarrayofstatus[] = Ticket::STATUS_NEED_MORE_INFO;
 			$newarrayofstatus[] = Ticket::STATUS_WAITING;
-			$newarrayofstatus[] = Ticket::STATUS_FINISHED;
+			$newarrayofstatus[] = Ticket::STATUS_COMPLETED;
 		}
 		if ($search['fk_statut'] == 'closeall' || in_array('closeall', $search['fk_statut'])) {
 			$newarrayofstatus[] = Ticket::STATUS_CLOSED;
