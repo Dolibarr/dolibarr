@@ -2192,9 +2192,10 @@ if ($action == 'create') {
 	// Delivery delay
 	print '<tr class="fielddeliverydelay"><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('AvailabilityPeriod');
 	if (!empty($conf->commande->enabled)) {
-		print ' ('.$langs->trans('AfterOrder').')';
+		print $form->textwithpicto($langs->trans('AvailabilityPeriod'), $langs->trans('AvailabilityPeriod').' ('.$langs->trans('AfterOrder').')');
+	} else {
+		print $langs->trans('AvailabilityPeriod');
 	}
 	print '</td>';
 	if ($action != 'editavailability' && $object->statut == Propal::STATUS_DRAFT && $usercancreate) {
@@ -2356,13 +2357,13 @@ if ($action == 'create') {
 	if ($totalWeight) {
 		print '<tr><td>'.$langs->trans("CalculatedWeight").'</td>';
 		print '<td class="valuefield">';
-		print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND) ? $conf->global->MAIN_WEIGHT_DEFAULT_ROUND : -1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no');
+		print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND) ? $conf->global->MAIN_WEIGHT_DEFAULT_ROUND : -1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no', 0);
 		print '</td></tr>';
 	}
 	if ($totalVolume) {
 		print '<tr><td>'.$langs->trans("CalculatedVolume").'</td>';
 		print '<td class="valuefield">';
-		print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND) ? $conf->global->MAIN_VOLUME_DEFAULT_ROUND : -1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT) ? $conf->global->MAIN_VOLUME_DEFAULT_UNIT : 'no');
+		print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND) ? $conf->global->MAIN_VOLUME_DEFAULT_ROUND : -1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT) ? $conf->global->MAIN_VOLUME_DEFAULT_UNIT : 'no', 0);
 		print '</td></tr>';
 	}
 

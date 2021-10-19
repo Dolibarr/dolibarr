@@ -5418,15 +5418,16 @@ function price2num($amount, $rounding = '', $option = 0)
 /**
  * Output a dimension with best unit
  *
- * @param   float       $dimension      Dimension
- * @param   int         $unit           Unit scale of dimension (Example: 0=kg, -3=g, -6=mg, 98=ounce, 99=pound, ...)
- * @param   string      $type           'weight', 'volume', ...
- * @param   Translate   $outputlangs    Translate language object
- * @param   int         $round          -1 = non rounding, x = number of decimal
+ * @param   float       $dimension      	Dimension
+ * @param   int         $unit           	Unit scale of dimension (Example: 0=kg, -3=g, -6=mg, 98=ounce, 99=pound, ...)
+ * @param   string      $type           	'weight', 'volume', ...
+ * @param   Translate   $outputlangs    	Translate language object
+ * @param   int         $round          	-1 = non rounding, x = number of decimal
  * @param   string      $forceunitoutput    'no' or numeric (-3, -6, ...) compared to $unit (In most case, this value is value defined into $conf->global->MAIN_WEIGHT_DEFAULT_UNIT)
- * @return  string                      String to show dimensions
+ * @param	int			$use_short_label	1=Use short label ('g' instead of 'gram'). Short labels are not translated.
+ * @return  string                      	String to show dimensions
  */
-function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round = -1, $forceunitoutput = 'no')
+function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round = -1, $forceunitoutput = 'no', $use_short_label = 0)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
@@ -5456,7 +5457,8 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
 		$unit = $forceunitoutput;
 	}*/
 
-	$ret = price($dimension, 0, $outputlangs, 0, 0, $round).' '.measuringUnitString(0, $type, $unit);
+	$ret = price($dimension, 0, $outputlangs, 0, 0, $round);
+	$ret .= ' '.measuringUnitString(0, $type, $unit, $use_short_label, $outputlangs);
 
 	return $ret;
 }
