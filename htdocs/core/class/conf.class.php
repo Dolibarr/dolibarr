@@ -163,8 +163,10 @@ class Conf
 	{
 		if ($this->entity != $entity) {
 			$this->entity = $entity;
-			$this->setValues($db);
+			return $this->setValues($db);
 		}
+
+		return 0;
 	}
 
 	/**
@@ -176,6 +178,8 @@ class Conf
 	 */
 	public function setValues($db)
 	{
+		dol_syslog(get_class($this)."::setValues");
+
 		// Unset all old modules values
 		if (!empty($this->modules)) {
 			foreach ($this->modules as $m) {
@@ -227,8 +231,6 @@ class Conf
 			'dir' => array(),
 			'syslog' => array(),
 		);
-
-		dol_syslog(get_class($this)."::setValues");
 
 		//Define all global constants into $this->global->key=value
 		$sql = "SELECT ".$db->decrypt('name')." as name,";
