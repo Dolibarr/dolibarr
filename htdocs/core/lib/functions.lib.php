@@ -6638,7 +6638,8 @@ function dol_htmlentitiesbr_decode($stringtodecode, $pagecodeto = 'UTF-8')
  */
 function dol_htmlcleanlastbr($stringtodecode)
 {
-	$ret = preg_replace('/(<br>|<br(\s[\sa-zA-Z_="]*)?\/?>|'."\n".'|'."\r".')+$/i', "", $stringtodecode);
+	$ret = preg_replace('/&nbsp;$/i', "", $stringtodecode);		// Because wysiwyg editor may add a &nbsp; at end of last line
+	$ret = preg_replace('/(<br>|<br(\s[\sa-zA-Z_="]*)?\/?>|'."\n".'|'."\r".')+$/i', "", $ret);
 	return $ret;
 }
 
