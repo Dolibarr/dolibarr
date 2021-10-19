@@ -535,7 +535,7 @@ abstract class Stats
 				$row = $this->db->fetch_row($resql);
 				$temp = explode($parser, $row[0]);
 
-				$result[$temp[0]] = [0 => $temp[0], 1 => isset($result[$temp[0][1]]) ? $row[1] + $temp[0][1] : $row[1]];
+				$result[$temp[0]] = [0 => $temp[0], 1 => isset($result[$temp[0]]) ? $row[1] + $result[$temp[0]][1] : $row[1]];
 				$i++;
 			}
 

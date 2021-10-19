@@ -117,8 +117,8 @@ class TimeStats extends Stats
 	{
 		$sql = "SELECT  CONCAT(lastname, ' ', firstname) AS username, ROUND(SUM(task_duration)/3600) AS nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as ptt";
-		$sql .= " LEFT JOIN gmelectronics.crm_user ON crm_user.rowid = ptt.fk_user";
-		$sql .= " WHERE YEAR(task_date)=".$year." AND crm_user.statut=1";
+		$sql .= " LEFT JOIN gmelectronics.".MAIN_DB_PREFIX."user ON ".MAIN_DB_PREFIX."user.rowid = ptt.fk_user";
+		$sql .= " WHERE YEAR(task_date)=".$year." AND ".MAIN_DB_PREFIX."user.statut=1";
 		$sql .= " GROUP BY ptt.fk_user";
 
 		// var_dump($data);print '<br>';
@@ -134,12 +134,12 @@ class TimeStats extends Stats
 	 */
 	public function getConsumedTimeByProject($year, $format = 0)
 	{
-		$sql = "SELECT crm_projet.title AS projectTitle, ROUND(SUM(task_duration)/3600) AS nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as ptt";
-		$sql .= " LEFT JOIN gmelectronics.crm_projet_task ON crm_projet_task.rowid = ptt.fk_task";
-		$sql .= " LEFT JOIN gmelectronics.crm_projet ON crm_projet_task.fk_projet = crm_projet.rowid";
+		$sql = "SELECT p.title AS projectTitle, ROUND(SUM(task_duration)/3600) AS nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."projet AS p";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task ON ".MAIN_DB_PREFIX."projet_task.fk_projet = p.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time ON ".MAIN_DB_PREFIX."projet_task.rowid = ".MAIN_DB_PREFIX."projet_task_time.fk_task";
 		$sql .= " WHERE YEAR(task_date)=".$year;
-		$sql .= " GROUP BY crm_projet.rowid ORDER BY nb";
+		$sql .= " GROUP BY p.rowid ORDER BY nb DESC";
 
 		// var_dump($data);print '<br>';
 		return $this->_getNbByEntity($year, $sql, $format, 10);
@@ -154,12 +154,10 @@ class TimeStats extends Stats
 	 */
 	public function getConsumedTimeByTeam($year, $format = 0)
 	{
-		$sql = "SELECT crm_projet_task.label AS projectTitle, ROUND(SUM(task_duration)/3600) AS nb";
+		$sql = "SELECT ".MAIN_DB_PREFIX."projet_task.label AS taskTitle, ROUND(SUM(task_duration)/3600) AS nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as ptt";
-		$sql .= " LEFT JOIN gmelectronics.crm_projet_task ON crm_projet_task.rowid = ptt.fk_task";
-		$sql .= " LEFT JOIN gmelectronics.crm_projet ON crm_projet_task.fk_projet = crm_projet.rowid";
-		$sql .= " WHERE YEAR(task_date)=".$year;
-		$sql .= " GROUP BY crm_projet.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task ON ".MAIN_DB_PREFIX."projet_task.rowid = ptt.fk_task";
+		$sql .= " WHERE YEAR(task_date)=".$year." GROUP BY ".MAIN_DB_PREFIX."projet_task.label";
 
 		// var_dump($data);print '<br>';
 		return $this->_getNbByEntityWithExplode($year, $sql, $format, "-");
