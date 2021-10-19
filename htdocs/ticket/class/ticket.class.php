@@ -1657,7 +1657,7 @@ class Ticket extends CommonObject
 		$actioncomm->userassigned = array($user->id);
 		$actioncomm->userownerid = $user->id;
 		$actioncomm->datep = $now;
-		$actioncomm->percentage = 100;
+		$actioncomm->percentage = -1; // percentage is not relevant for punctual events
 		$actioncomm->elementtype = 'ticket';
 		$actioncomm->fk_element = $this->id;
 
