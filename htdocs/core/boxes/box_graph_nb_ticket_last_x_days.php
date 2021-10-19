@@ -85,7 +85,7 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 
 
 		$param_day = 'DOLUSERCOOKIE_ticket_last_days';
-		if ($_POST[$param_day]) {
+		if (!empty($_POST[$param_day])) {
 			if ($_POST[$param_day] >= 15) {
 				$days = 14;
 			} else {
