@@ -836,6 +836,12 @@ class Conf
 				// Note: Set MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL=1 to have a renewal of token at each page call instead of each session (not recommended)
 			}
 
+			// To bypass MAIN_ANTIVIRUS_* constants
+			if (defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {
+				define("MAIN_ANTIVIRUS_COMMAND", false);
+				define("MAIN_ANTIVIRUS_PARAM", false);
+			}
+
 			if (defined('MAIN_ANTIVIRUS_COMMAND')) {
 				$this->global->MAIN_ANTIVIRUS_COMMAND = constant('MAIN_ANTIVIRUS_COMMAND');
 			}
