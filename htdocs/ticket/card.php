@@ -931,7 +931,7 @@ if ($action == 'create' || $action == 'presend') {
 		if (!empty($conf->societe->enabled)) {
 			$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' ';
 			if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->socid && $user->rights->ticket->write) {
-				$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editcustomer&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 0).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editcustomer&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 0).'</a> : ';
 			}
 			if ($action == 'editcustomer') {
 				$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, 'editcustomer', '', 1, 0, 0, array(), 1);

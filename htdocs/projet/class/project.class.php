@@ -706,9 +706,9 @@ class Project extends CommonObject
 		} elseif ($type == 'project_task_time') {	// Case we want to duplicate line foreach user
 			$sql = "SELECT DISTINCT pt.rowid, ptt.fk_user FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet_task_time as ptt WHERE pt.rowid = ptt.fk_task AND pt.fk_projet IN (".$this->db->sanitize($ids).")";
 		} elseif ($type == 'stock_mouvement') {
-			$sql = 'SELECT ms.rowid, ms.fk_user_author as fk_user FROM '.MAIN_DB_PREFIX."stock_mouvement as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin IN (".$this->db->sanitize($ids).") AND ms.type_mouvement = 1";
+			$sql = "SELECT ms.rowid, ms.fk_user_author as fk_user FROM ".MAIN_DB_PREFIX."stock_mouvement as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin IN (".$this->db->sanitize($ids).") AND ms.type_mouvement = 1";
 		} elseif ($type == 'loan') {
-			$sql = 'SELECT l.rowid, l.fk_user_author as fk_user FROM '.MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet IN (".$this->db->sanitize($ids).")";
+			$sql = "SELECT l.rowid, l.fk_user_author as fk_user FROM ".MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet IN (".$this->db->sanitize($ids).")";
 		} else {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." IN (".$this->db->sanitize($ids).") AND entity IN (".getEntity($type).")";
 		}
@@ -952,9 +952,9 @@ class Project extends CommonObject
 		} elseif ($type == 'project_task_time') {	// Case we want to duplicate line foreach user
 			$sql = "SELECT DISTINCT COUNT(pt.rowid) as nb FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet_task_time as ptt WHERE pt.rowid = ptt.fk_task AND pt.fk_projet = ".((int) $this->id);
 		} elseif ($type == 'stock_mouvement') {
-			$sql = 'SELECT COUNT(ms.rowid) as nb FROM '.MAIN_DB_PREFIX."stock_mouvement as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin = ".((int) $this->id)." AND ms.type_mouvement = 1";
+			$sql = "SELECT COUNT(ms.rowid) as nb FROM ".MAIN_DB_PREFIX."stock_mouvement as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin = ".((int) $this->id)." AND ms.type_mouvement = 1";
 		} elseif ($type == 'loan') {
-			$sql = 'SELECT COUNT(l.rowid) as nb FROM '.MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet = ".((int) $this->id);
+			$sql = "SELECT COUNT(l.rowid) as nb FROM ".MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet = ".((int) $this->id);
 		} else {
 			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." = ".((int) $this->id)." AND entity IN (".getEntity($type).")";
 		}
@@ -1152,7 +1152,7 @@ class Project extends CommonObject
 			$statusClass = $statustrans[$status];
 		}
 
-		return dolGetStatus($langs->trans($this->statuts_long[$status]), $langs->trans($this->statuts_short[$status]), '', $statusClass, $mode);
+		return dolGetStatus($langs->transnoentitiesnoconv($this->statuts_long[$status]), $langs->transnoentitiesnoconv($this->statuts_short[$status]), '', $statusClass, $mode);
 	}
 
 	/**

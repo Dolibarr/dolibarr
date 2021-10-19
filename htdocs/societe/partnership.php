@@ -65,7 +65,7 @@ if ($id > 0) {
 $object = new Partnership($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->partnership->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('partnershipthirdparty', 'globalcard')); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('thirdpartypartnership', 'globalcard')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -189,7 +189,7 @@ if ($id > 0) {
 		print showValueWithClipboardCPButton(dol_escape_htmltag($societe->code_client));
 		$tmpcheck = $societe->check_codeclient();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+			print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
 		}
 		print '</td></tr>';
 	}
@@ -200,7 +200,7 @@ if ($id > 0) {
 		print showValueWithClipboardCPButton(dol_escape_htmltag($societe->code_fournisseur));
 		$tmpcheck = $societe->check_codefournisseur();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+			print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
 		}
 		print '</td>';
 		print '</tr>';

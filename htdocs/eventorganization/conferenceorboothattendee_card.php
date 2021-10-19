@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("eventorganization", "other"));
+$langs->loadLangs(array("eventorganization", "other", "projects", "companies"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -57,9 +57,10 @@ $projectstatic = new Project($db);
 $diroutputmassaction = $conf->eventorganization->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('conferenceorboothattendeecard', 'globalcard')); // Note that conf->hooks_modules contains array
 
+
 if ($conf_or_booth_id > 0) {
 	$confOrBooth = new ConferenceOrBooth($db);
-	$result = $confOrBooth->fetch($conf_or_booth_id);
+	$result = $confOrBooth->fetch($id > 0 ? $id : $conf_or_booth_id);
 	if ($result < 0) {
 		setEventMessages(null, $confOrBooth->errors, 'errors');
 	} else {
@@ -102,6 +103,10 @@ if (empty($action) && empty($id) && empty($ref)) {
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
+// Now we have loaded the attendee, we can force the project (in case value provided as parameter is wrong or value not provided)
+if ($object->fk_project > 0) {
+	$fk_project = $object->fk_project;
+}
 
 $permissiontoread = $user->rights->eventorganization->read;
 $permissiontoadd = $user->rights->eventorganization->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -109,6 +114,7 @@ $permissiontodelete = $user->rights->eventorganization->delete || ($permissionto
 $permissionnote = $user->rights->eventorganization->write; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->eventorganization->write; // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->eventorganization->multidir_output[isset($object->entity) ? $object->entity : 1];
+
 
 /*
  * Actions
@@ -124,7 +130,7 @@ if (empty($reshook)) {
 	$error = 0;
 
 	if (!empty($withproject)) {
-		$backurlforlist = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php?withproject=1';
+		$backurlforlist = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php?withproject=1&fk_project='.((int) $fk_project);
 	} else {
 		$backurlforlist = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php';
 	}
@@ -134,7 +140,7 @@ if (empty($reshook)) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?id='.($id > 0 ? $id : '__ID__');
+				$backtopage = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?fk_project='.((int) $fk_project).'&id='.($id > 0 ? $id : '__ID__');
 			}
 		}
 	}
@@ -149,7 +155,6 @@ if (empty($reshook)) {
 		}
 		$action = '';
 	}
-
 
 	$triggermodname = 'EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_MODIFY'; // Name of trigger action code to execute when we modify record
 
@@ -392,7 +397,7 @@ if (!empty($withproject)) {
 	print $langs->trans("PublicAttendeeSubscriptionGlobalPage");
 	//print '</span>';
 	print '</td><td>';
-	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_register.php?id='.$projectstatic->id.'&type=global';
+	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.$projectstatic->id.'&type=global';
 	$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$projectstatic->id, 'md5');
 	$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 	//print '<div class="urllink">';
@@ -650,16 +655,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (empty($reshook)) {
 			// Send
 			if (empty($user->socid)) {
-				print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.(!empty($confOrBooth->id)?'&conforboothid='.$confOrBooth->id:'').(!empty($projectstatic->id)?'&fk_project='.$projectstatic->id:'').'&action=presend&mode=init#formmailbeforetitle');
+				print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.(!empty($confOrBooth->id)?'&conforboothid='.$confOrBooth->id:'').(!empty($projectstatic->id)?'&fk_project='.$projectstatic->id:'').'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle');
 			}
-			print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.(!empty($confOrBooth->id)?'&conforboothid='.$confOrBooth->id:'').(!empty($projectstatic->id)?'&fk_project='.$projectstatic->id:'').'&action=edit', '', $permissiontoadd);
+			print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.(!empty($confOrBooth->id)?'&conforboothid='.$confOrBooth->id:'').(!empty($projectstatic->id)?'&fk_project='.$projectstatic->id:'').'&action=edit&token='.newToken(), '', $permissiontoadd);
 
 			// Clone
-			print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object=scrumsprint', '', $permissiontoadd);
-
+			print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken().(!empty($projectstatic->id)?'&fk_project='.$projectstatic->id:''), '', $permissiontoadd);
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
-			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'', '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd));
+			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().(!empty($projectstatic->id)?'&fk_project='.$projectstatic->id:''), '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd));
 		}
 		print '</div>'."\n";
 	}

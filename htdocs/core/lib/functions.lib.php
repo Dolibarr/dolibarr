@@ -1071,7 +1071,7 @@ function dol_size($size, $type = '')
 
 /**
  *	Clean a string to use it as a file name.
- *  Replace also '--' and ' -' strings, they are used for parameters separation.
+ *  Replace also '--' and ' -' strings, they are used for parameters separation (Note: ' - ' is allowed).
  *
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with.
@@ -1089,13 +1089,13 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 	$filesystem_forbidden_chars = array('<', '>', '/', '\\', '?', '*', '|', '"', ':', '°', '$', ';');
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
-	$tmp = preg_replace('/\s+\-/', ' _', $tmp);
+	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
 	return $tmp;
 }
 
 /**
  *	Clean a string to use it as a path name.
- *  Replace also '--' and ' -' strings, they are used for parameters separation.
+ *  Replace also '--' and ' -' strings, they are used for parameters separation (Note: ' - ' is allowed).
  *
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with
@@ -1112,7 +1112,7 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 	$filesystem_forbidden_chars = array('<', '>', '?', '*', '|', '"', '°', '$', ';');
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
-	$tmp = preg_replace('/\s+\-/', ' _', $tmp);
+	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
 	return $tmp;
 }
 
@@ -1613,7 +1613,7 @@ function dol_fiche_head($links = array(), $active = '0', $title = '', $notab = 0
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  *  @param	string	$morehtmlright		Add more html content on right of tabs title
- *  @param	string	$morecss			More Css
+ *  @param	string	$morecss			More CSS on the link <a>
  *  @param	int		$limittoshow		Limit number of tabs to show. Use 0 to use automatic default value.
  *  @param	string	$moretabssuffix		A suffix to use when you have several dol_get_fiche_head() in same page
  * 	@return	string
@@ -2305,8 +2305,17 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 			} elseif ($tzoutput == 'tzuser' || $tzoutput == 'tzuserrel') {
 				$to_gmt = true;
 				$offsettzstring = (empty($_SESSION['dol_tz_string']) ? 'UTC' : $_SESSION['dol_tz_string']); // Example 'Europe/Berlin' or 'Indian/Reunion'
-				$offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60; // Will not be used anymore
-				$offsetdst = (empty($_SESSION['dol_dst']) ? 0 : $_SESSION['dol_dst']) * 60 * 60; // Will not be used anymore
+
+				if (class_exists('DateTimeZone')) {
+					$user_date_tz = new DateTimeZone($offsettzstring);
+					$user_dt = new DateTime();
+					$user_dt->setTimezone($user_date_tz);
+					$user_dt->setTimestamp($tzoutput == 'tzuser' ? dol_now() : $time);
+					$offsettz = $user_dt->getOffset();
+				} else {	// old method (The 'tzuser' was processed like the 'tzuserrel')
+					$offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60; // Will not be used anymore
+					$offsetdst = (empty($_SESSION['dol_dst']) ? 0 : $_SESSION['dol_dst']) * 60 * 60; // Will not be used anymore
+				}
 			}
 		}
 	}
@@ -3732,7 +3741,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'action'=>'infobox-action', 'account'=>'infobox-bank_account', 'accountline'=>'infobox-bank_account', 'accountancy'=>'infobox-bank_account', 'asset'=>'infobox-bank_account',
 				'bank_account'=>'bg-infobox-bank_account',
 				'bill'=>'infobox-commande', 'billa'=>'infobox-commande', 'billr'=>'infobox-commande', 'billd'=>'infobox-commande',
-				'conferenceorbooth'=>'infobox-project',
+				'margin'=>'infobox-bank_account', 'conferenceorbooth'=>'infobox-project',
 				'cash-register'=>'infobox-bank_account', 'contract'=>'infobox-contrat', 'check'=>'font-status4', 'collab'=>'infobox-action', 'conversation'=>'infobox-contrat',
 				'donation'=>'infobox-commande', 'dolly'=>'infobox-commande',  'dollyrevert'=>'flip infobox-order_supplier',
 				'ecm'=>'infobox-action', 'eventorganization'=>'infobox-project',
@@ -4386,7 +4395,7 @@ function img_mime($file, $titlealt = '', $morecss = '')
 	}
 
 	//return img_picto_common($titlealt, 'mime/'.$mimeimg, 'class="'.$morecss.'"');
-	return '<i class="fa fa-'.$mimefa.' paddingright"'.($titlealt ? ' title="'.$titlealt.'"' : '').'></i>';
+	return '<i class="fa fa-'.$mimefa.' paddingright'.($morecss ? ' '.$morecss : '').'"'.($titlealt ? ' title="'.$titlealt.'"' : '').'></i>';
 }
 
 
@@ -6156,7 +6165,7 @@ function yn($yesno, $case = 1, $color = 0)
 		}
 	}
 	if ($color) {
-		return '<font class="'.$classname.'">'.$result.'</font>';
+		return '<span class="'.$classname.'">'.$result.'</span>';
 	}
 	return $result;
 }
@@ -6977,7 +6986,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = 'Security key for payment on a member subscription (one key per member)';
 			$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = 'Security key for payment on an order';
 			$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = 'Security key for payment on an invoice';
-			$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'Security key for payment on a a service';
+			$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'Security key for payment on a service of a contract';
 
 			$substitutionarray['__DIRECTDOWNLOAD_URL_PROPOSAL__'] = 'Direct download url of a proposal';
 			$substitutionarray['__DIRECTDOWNLOAD_URL_ORDER__'] = 'Direct download url of an order';

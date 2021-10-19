@@ -42,6 +42,7 @@ if (!$section) {
 	$section = 0;
 }
 $section_dir = GETPOST('section_dir', 'alpha');
+$overwritefile = GETPOST('overwritefile', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -120,7 +121,6 @@ if (GETPOST("sendit", 'alphanohtml') && !empty($conf->global->MAIN_UPLOAD_DOC)) 
 
 	if (!$error) {
 		$generatethumbs = 0;
-		$overwritefile = GETPOST('overwritefile', 'int')?GETPOST('overwritefile', 'int'):0;
 		$res = dol_add_file_process($upload_dir, $overwritefile, 1, 'userfile', '', null, '', $generatethumbs);
 		if ($res > 0) {
 			$result = $ecmdir->changeNbOfFiles('+');

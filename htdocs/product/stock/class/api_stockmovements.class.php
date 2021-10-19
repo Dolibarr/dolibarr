@@ -165,11 +165,13 @@ class StockMovements extends DolibarrApi
 	 * @param string $price To update AWP (Average Weighted Price) when you make a stock increase (qty must be higher then 0). {@from body}
 	 * @param string $dlc Eat-by date. {@from body} {@type date}
 	 * @param string $dluo Sell-by date. {@from body} {@type date}
+	 * @param string $origin_type   Origin type (Element of source object, like 'project', 'inventory', ...)
+	 * @param string $origin_id     Origin id (Id of source object)
 	 *
 	 * @return  int                         ID of stock movement
 	 * @throws RestException
 	 */
-	public function post($product_id, $warehouse_id, $qty, $lot = '', $movementcode = '', $movementlabel = '', $price = '', $dlc = '', $dluo = '')
+	public function post($product_id, $warehouse_id, $qty, $lot = '', $movementcode = '', $movementlabel = '', $price = '', $dlc = '', $dluo = '', $origin_type = '', $origin_id = 0)
 	{
 		if (!DolibarrApiAccess::$user->rights->stock->creer) {
 			throw new RestException(401);
@@ -189,6 +191,7 @@ class StockMovements extends DolibarrApi
 		$eatBy = empty($dluo) ? '' : dol_stringtotime($dluo);
 		$sellBy = empty($dlc) ? '' : dol_stringtotime($dlc);
 
+		$this->stockmovement->setOrigin($origin_type, $origin_id);
 		if ($this->stockmovement->_create(DolibarrApiAccess::$user, $product_id, $warehouse_id, $qty, $type, $price, $movementlabel, $movementcode, '', $eatBy, $sellBy, $lot) <= 0) {
 			$errormessage = $this->stockmovement->error;
 			if (empty($errormessage)) {

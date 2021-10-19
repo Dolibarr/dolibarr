@@ -450,15 +450,15 @@ print dol_get_fiche_end();
 
 
 // Actions buttons
-if ($action != 'edit' && $action != 'delete') {
+if ($action != 'edit' && $action != 'delete' && $action != 'deletefile') {
 	print '<div class="tabsAction">';
 
 	if ($permtoadd) {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit'.($module ? '&module='.$module : '').'&section='.$section.'">'.$langs->trans('Edit').'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().($module ? '&module='.$module : '').'&section='.$section.'">'.$langs->trans('Edit').'</a>';
 	}
 
 	if ($permtoadd) {
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create'.($module ? '&module='.$module : '').'&catParent='.$section.'">'.$langs->trans('ECMAddSection').'</a>';
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&token='.newToken().($module ? '&module='.$module : '').'&catParent='.$section.'">'.$langs->trans('ECMAddSection').'</a>';
 	} else {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('ECMAddSection').'</a>';
 	}
@@ -482,8 +482,8 @@ if ($action != 'edit' && $action != 'delete') {
 }
 
 // Confirm remove file
-if ($action == 'delete') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.GETPOST("section", 'alpha').'&urlfile='.urlencode($_GET["urlfile"]).($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
+if ($action == 'deletefile') {
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode(GETPOST("section", 'alpha')).'&urlfile='.urlencode(GETPOST("urlfile")).($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
 }
 
 // Confirm remove file
@@ -498,7 +498,7 @@ if ($action == 'delete_dir') {
 		);
 	}
 
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.GETPOST('section', 'alpha').($module ? '&module='.$module : '').($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $relativepathwithoutslash), 'confirm_deletedir', $formquestion, 1, 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode(GETPOST('section', 'alpha')).($module ? '&module='.$module : '').($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $relativepathwithoutslash), 'confirm_deletedir', $formquestion, 1, 1);
 }
 
 

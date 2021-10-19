@@ -316,7 +316,7 @@ LastUpdated=Latest update
 CorrectlyUpdated=Correctly updated
 PropalMergePdfProductActualFile=Files use to add into PDF Azur are/is
 PropalMergePdfProductChooseFile=Select PDF files
-IncludingProductWithTag=Include products/services with tag
+IncludingProductWithTag=Including products/services with the tag
 DefaultPriceRealPriceMayDependOnCustomer=Default price, real price may depend on customer
 WarningSelectOneDocument=Please select at least one document
 DefaultUnitToShow=Unit
@@ -401,11 +401,10 @@ DeleteLinkedProduct=Delete the child product linked to the combination
 AmountUsedToUpdateWAP=Amount to use to update the Weighted Average Price
 PMPValue=Weighted average price
 PMPValueShort=WAP
-
 mandatoryperiod=Mandatory periods
 mandatoryPeriodNeedTobeSet=Attention periods not entered and mandatory
 mandatoryPeriodNeedTobeSetMsgValidate=A service requires a start and end period
 mandatoryHelper=Message to the user on the need to enter a start date and an end date on a service when creating / validating an invoice, commercial proposal, sales order. <br> This action is not blocking in the process of confirmation
 DefaultBOM=Default BOM
-DefaultBOMDesc=The default BOM recommended to use to manufacture this product. This field can be set only if nature of product is '%s'. 
-
+DefaultBOMDesc=The default BOM recommended to use to manufacture this product. This field can be set only if nature of product is '%s'.
+Rank=Rank

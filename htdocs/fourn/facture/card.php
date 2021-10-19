@@ -2285,7 +2285,7 @@ if ($action == 'create') {
 	}
 
 	if (empty($reshook)) {
-		print $object->showOptionals($extrafields, 'edit');
+		print $object->showOptionals($extrafields, 'create');
 	}
 
 	// Public note
@@ -2377,7 +2377,7 @@ if ($action == 'create') {
 
 		print '<table class="noborder centpercent">';
 
-		$objectsrc->printOriginLinesList();
+		$objectsrc->printOriginLinesList('', $selectedLines);
 
 		print '</table>';
 	}
@@ -2779,7 +2779,7 @@ if ($action == 'create') {
 		print $langs->trans('PaymentConditions');
 		print '<td>';
 		if ($action != 'editconditions' && $form_permission) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
@@ -2808,7 +2808,7 @@ if ($action == 'create') {
 		print $langs->trans('PaymentMode');
 		print '</td>';
 		if ($action != 'editmode' && $form_permission2) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
@@ -2828,7 +2828,7 @@ if ($action == 'create') {
 			print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
 			print '</td>';
 			if ($action != 'editmulticurrencycode' && $object->statut == $object::STATUS_DRAFT) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencycode&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencycode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td><td>';
@@ -2847,7 +2847,7 @@ if ($action == 'create') {
 				print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
 				print '</td>';
 				if ($action != 'editmulticurrencyrate' && $object->statut == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
-					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencyrate&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
+					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencyrate&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 				}
 				print '</tr></table>';
 				print '</td><td>';
@@ -2875,7 +2875,7 @@ if ($action == 'create') {
 			print $langs->trans('BankAccount');
 			print '<td>';
 			if ($action != 'editbankaccount' && $usercancreate) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td><td>';
@@ -2895,7 +2895,7 @@ if ($action == 'create') {
 			print $langs->trans('IncotermLabel');
 			print '<td><td class="right">';
 			if ($usercancreate) {
-				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
 			} else {
 				print '&nbsp;';
 			}
@@ -2918,7 +2918,7 @@ if ($action == 'create') {
 			print $langs->trans('IntracommReportTransportMode');
 			print '</td>';
 			if ($action != 'editmode' && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit().'</a></td>';
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit().'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td>';
@@ -3406,7 +3406,7 @@ if ($action == 'create') {
 					$ventilExportCompta = $object->getVentilExportCompta(); // Should be 0 since the sum of payments are zero. But we keep the protection.
 
 					if ($ventilExportCompta == 0) {
-						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
+						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans('Modify').'</a>';
 					} else {
 						print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseDispatchedInBookkeeping").'">'.$langs->trans('Modify').'</span>';
 					}

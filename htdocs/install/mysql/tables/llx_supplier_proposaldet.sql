@@ -24,10 +24,10 @@ CREATE TABLE llx_supplier_proposaldet (
   description text,
   fk_remise_except integer DEFAULT NULL,
   vat_src_code					varchar(10) DEFAULT '',		-- Vat code used as source of vat fields. Not strict foreign key here.
-  tva_tx 						double(6,3) DEFAULT 0,		-- Vat rate
-  localtax1_tx double(6,3) DEFAULT 0,
+  tva_tx 						double(7,4) DEFAULT 0,		-- Vat rate
+  localtax1_tx double(7,4) DEFAULT 0,
   localtax1_type varchar(10) DEFAULT NULL,
-  localtax2_tx double(6,3) DEFAULT 0,
+  localtax2_tx double(7,4) DEFAULT 0,
   localtax2_type varchar(10) DEFAULT NULL,
   qty double DEFAULT NULL,
   remise_percent double DEFAULT '0',

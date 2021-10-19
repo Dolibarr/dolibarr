@@ -517,7 +517,7 @@ if ($action == 'create') {
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (empty($reshook)) {
-		print $object->showOptionals($extrafields, 'edit', $parameters);
+		print $object->showOptionals($extrafields, 'create', $parameters);
 	}
 
 	print '</tbody>';
@@ -855,7 +855,7 @@ if (!empty($id) && $action != 'edit') {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_reopen&confirm=yes&token='.newToken().'">'.$langs->trans("ReOpen").'</a>';
 	}
 
-	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
+	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
 
 	if ($object->statut == $object::STATUS_DRAFT) {
 		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=valid_promesse&token='.newToken().'">'.$langs->trans("ValidPromess").'</a></div>';
@@ -870,7 +870,7 @@ if (!empty($id) && $action != 'edit') {
 		if ($remaintopay == 0) {
 			print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPayment').'</span></div>';
 		} else {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/don/payment/payment.php?rowid='.$object->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/don/payment/payment.php?rowid='.$object->id.'&action=create&token='.newToken().'">'.$langs->trans('DoPayment').'</a></div>';
 		}
 	}
 

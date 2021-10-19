@@ -945,7 +945,7 @@ if ($action == 'create') {
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		if (empty($reshook)) {
-			print $object->showOptionals($extrafields, 'edit');
+			print $object->showOptionals($extrafields, 'create');
 		}
 
 		// Show link to origin object
@@ -1350,21 +1350,21 @@ if ($action == 'create') {
 					// Icon to edit and delete
 					if ($object->statut == 0 && $user->rights->ficheinter->creer) {
 						print '<td class="center">';
-						print '<a class="editfielda marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;line_id='.$objp->rowid.'#'.$objp->rowid.'">';
+						print '<a class="editfielda marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&line_id='.$objp->rowid.'#'.$objp->rowid.'">';
 						print img_edit();
 						print '</a>';
-						print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=ask_deleteline&amp;line_id='.$objp->rowid.'">';
+						print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=ask_deleteline&token='.newToken().'&line_id='.$objp->rowid.'">';
 						print img_delete();
 						print '</a></td>';
 						print '<td class="center">';
 						if ($num > 1) {
 							if ($i > 0) {
-								print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=up&amp;line_id='.$objp->rowid.'">';
+								print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=up&token='.newToken().'&line_id='.$objp->rowid.'">';
 								print img_up();
 								print '</a>';
 							}
 							if ($i < $num - 1) {
-								print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=down&amp;line_id='.$objp->rowid.'">';
+								print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=down&token='.newToken().'&line_id='.$objp->rowid.'">';
 								print img_down();
 								print '</a>';
 							}

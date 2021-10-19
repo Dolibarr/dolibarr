@@ -1887,7 +1887,8 @@ class ExpenseReport extends CommonObject
 		}
 		//$buyer = new Societe($this->db);
 
-		$rulestocheck = ExpenseReportRule::getAllRule($this->line->fk_c_type_fees, $this->line->date, $this->fk_user_author);
+		$expensereportrule = new ExpenseReportRule($db);
+		$rulestocheck = $expensereportrule->getAllRule($this->line->fk_c_type_fees, $this->line->date, $this->fk_user_author);
 
 		$violation = 0;
 		$rule_warning_message_tab = array();
@@ -1974,7 +1975,8 @@ class ExpenseReport extends CommonObject
 		}
 		//$buyer = new Societe($this->db);
 
-		$range = ExpenseReportIk::getRangeByUser($userauthor, $this->line->fk_c_exp_tax_cat);
+		$expenseik = new ExpenseReportIk($db);
+		$range = $expenseik->getRangeByUser($userauthor, $this->line->fk_c_exp_tax_cat);
 
 		if (empty($range)) {
 			$this->error = 'ErrorNoRangeAvailable';
@@ -2211,8 +2213,6 @@ class ExpenseReport extends CommonObject
 				$date_d_form = $date_debut;
 				$date_f_form = $date_fin;
 
-				$existe = false;
-
 				while ($i < $num_rows) {
 					$objp = $this->db->fetch_object($result);
 
@@ -2220,17 +2220,13 @@ class ExpenseReport extends CommonObject
 					$date_f_req = $this->db->jdate($objp->date_fin); // 4
 
 					if (!($date_f_form < $date_d_req || $date_d_form > $date_f_req)) {
-						$existe = true;
+						return $objp->rowid;
 					}
 
 					$i++;
 				}
 
-				if ($existe) {
-					return 1;
-				} else {
-					return 0;
-				}
+				return 0;
 			} else {
 				return 0;
 			}

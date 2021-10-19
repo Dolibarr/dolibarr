@@ -132,7 +132,7 @@ $arrayfields = array(
 	'origin'=>array('label'=>"Origin", 'checked'=>1, 'position'=>155),
 	'm.fk_projet'=>array('label'=>'Project', 'checked'=>0, 'position'=>180),
 	'm.value'=>array('label'=>"Qty", 'checked'=>1, 'position'=>200),
-	'm.price'=>array('label'=>"UnitPurchaseValue", 'checked'=>0, 'position'=>210)
+	'm.price'=>array('label'=>"UnitPurchaseValue", 'checked'=>0, 'position'=>210, 'enabled'=>empty($conf->global->STOCK_MOVEMENT_LIST_HIDE_UNIT_PRICE))
 	//'m.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	//'m.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500)
 );
@@ -276,9 +276,9 @@ if ($action == "correct_stock") {
 				$user,
 				$id,
 				GETPOST("nbpiece", 'int'),
-				GETPOST("mouvement"),
-				GETPOST("label", 'san_alpha'),
-				GETPOST('unitprice'),
+				GETPOST("mouvement", 'int'),
+				GETPOST("label", 'alphanohtml'),
+				price2num(GETPOST('unitprice'), 'MT'),
 				$eatby,
 				$sellby,
 				$batch,
@@ -291,9 +291,9 @@ if ($action == "correct_stock") {
 				$user,
 				$id,
 				GETPOST("nbpiece", 'int'),
-				GETPOST("mouvement"),
-				GETPOST("label", 'san_alpha'),
-				GETPOST('unitprice'),
+				GETPOST("mouvement", "int"),
+				GETPOST("label", 'alphanohtml'),
+				price2num(GETPOST('unitprice'), 'MT'),
 				GETPOST('inventorycode', 'alphanohtml'),
 				$origin_element,
 				$origin_id

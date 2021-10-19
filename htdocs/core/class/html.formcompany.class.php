@@ -700,8 +700,18 @@ class FormCompany extends Form
 			return $socid;
 		} else {
 			// Search to list thirdparties
-			$sql = "SELECT s.rowid, s.nom as name FROM";
-			$sql .= " ".MAIN_DB_PREFIX."societe as s";
+			$sql = "SELECT s.rowid, s.nom as name ";
+			if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST)) {
+				$sql .= ", s.code_client, s.code_fournisseur";
+			}
+			if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+				$sql .= ", s.address, s.zip, s.town";
+				$sql .= ", dictp.code as country_code";
+			}
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+			if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as dictp ON dictp.rowid = s.fk_pays";
+			}
 			$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 			// For ajax search we limit here. For combo list, we limit later
 			if (is_array($limitto) && count($limitto)) {

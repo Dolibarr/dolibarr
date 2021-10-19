@@ -1148,6 +1148,18 @@ if ($action == 'create') {
 	} else {
 		print '<td colspan="2">';
 		print img_picto('', 'company').$form->select_company('', 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+		// reload page to retrieve customer informations
+		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE)) {
+			print '<script>
+			$(document).ready(function() {
+				$("#socid").change(function() {
+					var socid = $(this).val();
+					// reload page
+					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid;
+				});
+			});
+			</script>';
+		}
 		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		print '</td>';
 	}
@@ -1249,7 +1261,7 @@ if ($action == 'create') {
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (empty($reshook)) {
-		print $object->showOptionals($extrafields, 'edit', $parameters);
+		print $object->showOptionals($extrafields, 'create', $parameters);
 	}
 
 
@@ -1529,7 +1541,7 @@ if ($action == 'create') {
 	print $langs->trans('PaymentConditionsShort');
 	print '</td>';
 	if ($action != 'editconditions' && $object->statut != SupplierProposal::STATUS_NOTSIGNED) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetConditions'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetConditions'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td class="valuefield">';
@@ -1548,7 +1560,7 @@ if ($action == 'create') {
 	print $langs->trans('DeliveryDate');
 	print '</td>';
 	if ($action != 'editdate_livraison' && $object->statut == SupplierProposal::STATUS_VALIDATED) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDeliveryDate'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDeliveryDate'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td class="valuefield">';
@@ -1572,7 +1584,7 @@ if ($action == 'create') {
 	print $langs->trans('PaymentMode');
 	print '</td>';
 	if ($action != 'editmode' && $object->statut != SupplierProposal::STATUS_NOTSIGNED) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMode'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMode'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td class="valuefield">';
@@ -1592,7 +1604,7 @@ if ($action == 'create') {
 		print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
 		print '</td>';
 		if ($action != 'editmulticurrencycode' && $object->statut == $object::STATUS_VALIDATED) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencycode&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencycode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td class="valuefield">';
@@ -1611,7 +1623,7 @@ if ($action == 'create') {
 			print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
 			print '</td>';
 			if ($action != 'editmulticurrencyrate' && $object->statut == $object::STATUS_VALIDATED && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencyrate&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencyrate&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td><td class="valuefield">';
@@ -1653,7 +1665,7 @@ if ($action == 'create') {
 		print $langs->trans('BankAccount');
 		print '</td>';
 		if ($action != 'editbankaccount' && $usercancreate) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td class="valuefield">';

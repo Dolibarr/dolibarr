@@ -53,7 +53,8 @@ class doc_generic_order_odt extends ModelePDFCommandes
 	public $phpmin = array(5, 6);
 
 	/**
-	 * @var string Dolibarr version of the loaded document
+	 * Dolibarr version of the loaded document
+	 * @var string
 	 */
 	public $version = 'dolibarr';
 
@@ -96,7 +97,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 0; // Support add of a watermark on drafts
 
-		// Recupere emetteur
+		// Get source company
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
 			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
@@ -234,6 +235,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 		$sav_charset_output = $outputlangs->charset_output;
 		$outputlangs->charset_output = 'UTF-8';
 
+		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
 		if ($conf->commande->dir_output) {
@@ -271,7 +273,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				$newfiletmp = preg_replace('/template_/i', '', $newfiletmp);
 				$newfiletmp = preg_replace('/modele_/i', '', $newfiletmp);
 				$newfiletmp = $objectref.'_'.$newfiletmp;
-				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
+
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
 				if (!empty($conf->global->MAIN_DOC_USE_TIMING)) {
@@ -307,11 +309,14 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				// Recipient name
 				$contactobject = null;
 				if (!empty($usecontact)) {
-					if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
-						$socobject = $object->contact;
+					// We can use the company of contact instead of thirdparty company
+					if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT))) {
+						$object->contact->fetch_thirdparty();
+						$socobject = $object->contact->thirdparty;
+						$contactobject = $object->contact;
 					} else {
 						$socobject = $object->thirdparty;
-						// if we have a CUSTOMER contact and we dont use as recipient we store the contact object for later use
+						// if we have a CUSTOMER contact and we dont use it as thirdparty recipient we store the contact object for later use
 						$contactobject = $object->contact;
 					}
 				} else {
@@ -379,6 +384,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				$array_other = $this->get_substitutionarray_other($outputlangs);
 				// retrieve contact information for use in object as contact_xxx tags
 				$array_thirdparty_contact = array();
+
 				if ($usecontact && is_object($contactobject)) {
 					$array_thirdparty_contact = $this->get_substitutionarray_contact($contactobject, $outputlangs, 'contact');
 				}
@@ -455,7 +461,6 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				}
 
 				// Call the beforeODTSave hook
-
 				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
 				$reshook = $hookmanager->executeHooks('beforeODTSave', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 

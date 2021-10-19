@@ -254,18 +254,6 @@ if ($action == 'edit') {
 }
 print '</td></tr>';
 
-// EMail
-//If linked user, then emails are going to be sent to users' email
-if (!$object->fk_user_creat) {
-	print '<tr><td>'.$langs->trans("EMail").'</td><td>';
-	if ($action == 'edit') {
-		print '<input type="text" name="nouvelleadresse" class="minwith200" value="'.$object->mail_admin.'">';
-	} else {
-		print dol_print_email($object->mail_admin, 0, 0, 1, 0, 1, 1);
-	}
-	print '</td></tr>';
-}
-
 // Receive an email with each vote
 print '<tr><td>'.$langs->trans('ToReceiveEMailForEachVote').'</td><td>';
 if ($action == 'edit') {
@@ -323,10 +311,14 @@ print '</td></tr>';
 // Author
 print '<tr><td>';
 print $langs->trans("Author").'</td><td>';
-if ($object->fk_user_creat) {
+if ($object->fk_user_creat > 0) {
 	print $userstatic->getLoginUrl(1);
 } else {
-	print dol_htmlentities($object->nom_admin);
+	if ($action == 'edit') {
+		print '<input type="text" name="nouvelleadresse" class="minwith200" value="'.$object->mail_admin.'">';
+	} else {
+		print dol_print_email($object->mail_admin, 0, 0, 1, 0, 1, 1);
+	}
 }
 print '</td></tr>';
 

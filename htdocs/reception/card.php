@@ -340,6 +340,7 @@ if (empty($reshook)) {
 				$eatby = "dlc".$i;
 				$sellby = "dluo".$i;
 				$batch = "batch".$i;
+				$cost_price = "cost_price".$i;
 
 				if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && $conf->global->RECEPTION_GETS_ALL_ORDER_PRODUCTS)) {
 					$ent = "entl".$i;
@@ -364,8 +365,11 @@ if (empty($reshook)) {
 					$sellby = GETPOST($sellby, 'alpha');
 					$eatbydate = str_replace('/', '-', $eatby);
 					$sellbydate = str_replace('/', '-', $sellby);
-
-					$ret = $object->addline($entrepot_id, GETPOST($idl, 'int'), GETPOST($qty, 'int'), $array_options[$i], GETPOST($comment, 'alpha'), strtotime($eatbydate), strtotime($sellbydate), GETPOST($batch, 'alpha'));
+					if (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+						$ret = $object->addline($entrepot_id, GETPOST($idl, 'int'), GETPOST($qty, 'int'), $array_options[$i], GETPOST($comment, 'alpha'), strtotime($eatbydate), strtotime($sellbydate), GETPOST($batch, 'alpha'), price2num(GETPOST($cost_price, 'double'), 'MU'));
+					} else {
+						$ret = $object->addline($entrepot_id, GETPOST($idl, 'int'), GETPOST($qty, 'int'), $array_options[$i], GETPOST($comment, 'alpha'), strtotime($eatbydate), strtotime($sellbydate), GETPOST($batch, 'alpha'));
+					}
 					if ($ret < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
@@ -869,7 +873,7 @@ if ($action == 'create') {
 				if ($objectsrc->fetch_optionals() > 0) {
 					$recept->array_options = array_merge($recept->array_options, $objectsrc->array_options);
 				}
-				print $object->showOptionals($extrafields, 'edit', $parameters);
+				print $object->showOptionals($extrafields, 'create', $parameters);
 			}
 
 			// Incoterms
@@ -914,7 +918,7 @@ if ($action == 'create') {
 					$ent = "entrepot_".$reg[1].'_'.$reg[2];
 					$pu = "pu_".$reg[1].'_'.$reg[2]; // This is unit price including discount
 					$fk_commandefourndet = "fk_commandefourndet_".$reg[1].'_'.$reg[2];
-					$dispatchLines[$numAsked] = array('prod' => GETPOST($prod, 'int'), 'qty' =>GETPOST($qty), 'ent' =>GETPOST($ent, 'int'), 'pu' =>GETPOST($pu), 'comment' =>GETPOST('comment'), 'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'));
+					$dispatchLines[$numAsked] = array('prod' => GETPOST($prod, 'int'), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' => GETPOST($ent, 'int'), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' => GETPOST('comment'), 'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'));
 				}
 
 				// with batch module enabled
@@ -929,13 +933,13 @@ if ($action == 'create') {
 					$ent = 'entrepot_'.$reg[1].'_'.$reg[2];
 					$pu = 'pu_'.$reg[1].'_'.$reg[2];
 					$lot = 'lot_number_'.$reg[1].'_'.$reg[2];
-					$dDLUO = dol_mktime(12, 0, 0, $_POST['dluo_'.$reg[1].'_'.$reg[2].'month'], $_POST['dluo_'.$reg[1].'_'.$reg[2].'day'], $_POST['dluo_'.$reg[1].'_'.$reg[2].'year']);
-					$dDLC = dol_mktime(12, 0, 0, $_POST['dlc_'.$reg[1].'_'.$reg[2].'month'], $_POST['dlc_'.$reg[1].'_'.$reg[2].'day'], $_POST['dlc_'.$reg[1].'_'.$reg[2].'year']);
+					$dDLUO = dol_mktime(12, 0, 0, GETPOST('dluo_'.$reg[1].'_'.$reg[2].'month', 'int'), GETPOST('dluo_'.$reg[1].'_'.$reg[2].'day', 'int'), GETPOST('dluo_'.$reg[1].'_'.$reg[2].'year', 'int'));
+					$dDLC = dol_mktime(12, 0, 0, GETPOST('dlc_'.$reg[1].'_'.$reg[2].'month', 'int'), GETPOST('dlc_'.$reg[1].'_'.$reg[2].'day', 'int'), GETPOST('dlc_'.$reg[1].'_'.$reg[2].'year', 'int'));
 					$fk_commandefourndet = 'fk_commandefourndet_'.$reg[1].'_'.$reg[2];
-					$dispatchLines[$numAsked] = array('prod' => GETPOST($prod, 'int'), 'qty' =>GETPOST($qty), 'ent' =>GETPOST($ent, 'int'), 'pu' =>GETPOST($pu), 'comment' =>GETPOST('comment'), 'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'), 'DLC'=> $dDLC, 'DLUO'=> $dDLUO, 'lot'=> GETPOST($lot, 'alpha'));
+					$dispatchLines[$numAsked] = array('prod' => GETPOST($prod, 'int'), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' =>GETPOST($ent, 'int'), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' =>GETPOST('comment'), 'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'), 'DLC'=> $dDLC, 'DLUO'=> $dDLUO, 'lot'=> GETPOST($lot, 'alpha'));
 				}
 
-				// If create form is coming from same page post was sent but an error occured
+				// If create form is coming from same page, it means that post was sent but an error occured
 				if (preg_match('/^productid([0-9]+)$/i', $key, $reg)) {
 					$numAsked++;
 
@@ -951,7 +955,7 @@ if ($action == 'create') {
 					$dDLUO = dol_mktime(12, 0, 0, GETPOST('dluo'.$reg[1].'month', 'int'), GETPOST('dluo'.$reg[1].'day', 'int'), GETPOST('dluo'.$reg[1].'year', 'int'));
 					$dDLC = dol_mktime(12, 0, 0, GETPOST('dlc'.$reg[1].'month', 'int'), GETPOST('dlc'.$reg[1].'day', 'int'), GETPOST('dlc'.$reg[1].'year', 'int'));
 					$fk_commandefourndet = 'fk_commandefournisseurdet'.$reg[1];
-					$dispatchLines[$numAsked] = array('prod' => GETPOST($prod, 'int'), 'qty' =>GETPOST($qty), 'ent' =>GETPOST($ent, 'int'), 'pu' =>GETPOST($pu), 'comment' =>GETPOST($comment), 'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'), 'DLC'=> $dDLC, 'DLUO'=> $dDLUO, 'lot'=> GETPOST($lot, 'alpha'));
+					$dispatchLines[$numAsked] = array('prod' => GETPOST($prod, 'int'), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' =>GETPOST($ent, 'int'), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' =>GETPOST($comment), 'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'), 'DLC'=> $dDLC, 'DLUO'=> $dDLUO, 'lot'=> GETPOST($lot, 'alpha'));
 				}
 			}
 
@@ -989,6 +993,9 @@ if ($action == 'create') {
 				print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
 				print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
 				print '<td class="center">'.$langs->trans("QtyToReceive");
+				if (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION || $conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+					print '<td>'.$langs->trans("ByingPrice").'</td>';
+				}
 				if (empty($conf->productbatch->enabled)) {
 					print ' <br>(<a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
 					print ' / <a href="#" id="autoreset">'.$langs->trans("Reset").'</a>)';
@@ -1118,6 +1125,7 @@ if ($action == 'create') {
 
 					$stock = + $product->stock_warehouse[$dispatchLines[$indiceAsked]['ent']]->real; // Convert to number
 					$deliverableQty = $dispatchLines[$indiceAsked]['qty'];
+					$cost_price = $dispatchLines[$indiceAsked]['pu'];
 
 					// Quantity to send
 					print '<td class="center">';
@@ -1131,6 +1139,12 @@ if ($action == 'create') {
 						print $langs->trans("NA");
 					}
 					print '</td>';
+
+					if (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+						print '<td>';
+						print '<input name="cost_price'.$indiceAsked.'" id="cost_price'.$indiceAsked.'" value="'.$cost_price.'">';
+						print '</td>';
+					}
 
 					// Stock
 					if (!empty($conf->stock->enabled)) {
@@ -1394,7 +1408,7 @@ if ($action == 'create') {
 		print '</td>';
 
 		if ($action != 'editdate_livraison') {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td colspan="2">';
@@ -1527,7 +1541,7 @@ if ($action == 'create') {
 		print '</td>';
 
 		if ($action != 'editshipping_method_id') {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&amp;id='.$object->id.'">'.img_edit($langs->trans('SetReceptionMethod'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetReceptionMethod'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td colspan="2">';
@@ -1565,7 +1579,7 @@ if ($action == 'create') {
 			print $langs->trans('IncotermLabel');
 			print '<td><td class="right">';
 			if ($user->rights->reception->creer) {
-				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/reception/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/reception/card.php?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
 			} else {
 				print '&nbsp;';
 			}
@@ -2026,7 +2040,7 @@ if ($action == 'create') {
 						$label = "ClassifyBilled";
 						$paramaction = 'classifybilled';
 					}
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action='.$paramaction.'">'.$langs->trans($label).'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action='.$paramaction.'&token='.newToken().'">'.$langs->trans($label).'</a>';
 				}
 			}
 

@@ -243,7 +243,7 @@ if ($action == 'edit') {
 	print dol_get_fiche_head($head, 'common_emailing', '', -1);
 
 	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
-	print "<br>\n";
+	print "<br><br>\n";
 
 
 	clearstatcache();
@@ -412,7 +412,7 @@ if ($action == 'edit') {
 	print dol_get_fiche_head($head, 'common_emailing', '', -1);
 
 	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
-	print "<br>\n";
+	print "<br><br>\n";
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
@@ -515,7 +515,7 @@ if ($action == 'edit') {
 
 	print '<div class="tabsAction">';
 
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 
 	if (!empty($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && $conf->global->MAIN_MAIL_SENDMODE_EMAILING != 'default') {
 		if ($conf->global->MAIN_MAIL_SENDMODE_EMAILING != 'mail' || !$linuxlike) {

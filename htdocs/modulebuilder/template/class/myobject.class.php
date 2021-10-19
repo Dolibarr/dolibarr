@@ -430,13 +430,13 @@ class MyObject extends CommonObject
 
 		$records = array();
 
-		$sql = 'SELECT ';
+		$sql = "SELECT ";
 		$sql .= $this->getFieldList('t');
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			$sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+			$sql .= " WHERE t.entity IN (".getEntity($this->table_element).")";
 		} else {
-			$sql .= ' WHERE 1 = 1';
+			$sql .= " WHERE 1 = 1";
 		}
 		// Manage filter
 		$sqlwhere = array();
@@ -883,12 +883,12 @@ class MyObject extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule@mymodule");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Enabled');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Disabled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
 		}
 
 		$statusType = 'status'.$status;
@@ -908,10 +908,11 @@ class MyObject extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
-		$sql .= ' fk_user_creat, fk_user_modif';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.rowid = '.((int) $id);
+		$sql = "SELECT rowid, date_creation as datec, tms as datem,";
+		$sql .= " fk_user_creat, fk_user_modif";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+		$sql .= " WHERE t.rowid = ".((int) $id);
+
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {

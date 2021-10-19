@@ -427,7 +427,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 			print '</td>';
 
 			if ($action != 'editdate_delivery') {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_delivery&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_delivery&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td><td colspan="2">';
@@ -451,7 +451,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 				print $langs->trans('IncotermLabel');
 				print '<td><td class="right">';
 				if ($user->rights->expedition->delivery->creer) {
-					print '<a class="editfielda" href="'.DOL_URL_ROOT.'/delivery/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+					print '<a class="editfielda" href="'.DOL_URL_ROOT.'/delivery/card.php?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
 				} else {
 					print '&nbsp;';
 				}

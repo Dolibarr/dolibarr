@@ -761,7 +761,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
 		$tmpcheck = $object->check_codeclient();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+			print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
 		}
 		print '</td></tr>';
 		$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."facture where fk_soc = ".((int) $socid);
@@ -823,7 +823,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
 		$tmpcheck = $object->check_codefournisseur();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+			print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
 		}
 		print '</td></tr>';
 		$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."facture where fk_soc = ".((int) $socid);
@@ -1032,7 +1032,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 								print $img ? $img.' ' : '';
 								print getCountry($companypaymentmodetemp->country_code, 1);
 							} else {
-								print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+								print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 							}
 							print '</td>';
 							// Default
@@ -1141,7 +1141,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 						print $img ? $img.' ' : '';
 						print getCountry($src->country, 1);
 					} else {
-						print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
 				} elseif ($src->object == 'source' && $src->type == 'card') {
 					print '<span class="opacitymedium">'.$src->owner->name.'</span><br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
@@ -1152,7 +1152,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 						print $img ? $img.' ' : '';
 						print getCountry($src->card->country, 1);
 					} else {
-						print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
 				} elseif ($src->object == 'source' && $src->type == 'sepa_debit') {
 					print '<span class="opacitymedium">'.$src->billing_details->name.'</span><br>....'.$src->sepa_debit->last4;
@@ -1162,7 +1162,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print $img ? $img.' ' : '';
 							print getCountry($src->sepa_debit->country, 1);
 					} else {
-						print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
 				} elseif ($src->object == 'payment_method' && $src->type == 'card') {
 					print '<span class="opacitymedium">'.$src->billing_details->name.'</span><br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
@@ -1173,7 +1173,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 						print $img ? $img.' ' : '';
 						print getCountry($src->card->country, 1);
 					} else {
-						print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
 				} elseif ($src->object == 'payment_method' && $src->type == 'sepa_debit') {
 					print '<span class="opacitymedium">'.$src->billing_details->name.'</span><br>....'.$src->sepa_debit->last4;
@@ -1183,7 +1183,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 						print $img ? $img.' ' : '';
 						print getCountry($src->sepa_debit->country, 1);
 					} else {
-						print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
 				} else {
 					print '</td><td>';
@@ -1227,7 +1227,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 		if ($nbremote == 0 && $nblocal == 0) {
 			$colspan = (!empty($conf->global->STRIPE_ALLOW_LOCAL_CARD) ? 10 : 9);
-			print '<tr><td class="opacitymedium" colspan="'.$colspan.'">'.$langs->trans("None").'</td></tr>';
+			print '<tr><td colspan="'.$colspan.'"<span class="opacitymedium">>'.$langs->trans("None").'</span></td></tr>';
 		}
 		print "</table>";
 		print "</div>";

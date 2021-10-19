@@ -1125,12 +1125,12 @@ class Account extends CommonObject
 		$langs->load('banks');
 
 		if ($status == self::STATUS_OPEN) {
-			$label = $langs->trans("StatusAccountOpened");
-			$labelshort = $langs->trans("StatusAccountOpened");
+			$label = $langs->transnoentitiesnoconv("StatusAccountOpened");
+			$labelshort = $langs->transnoentitiesnoconv("StatusAccountOpened");
 			$statusType = 'status4';
 		} else {
-			$label = $langs->trans("StatusAccountClosed");
-			$labelshort = $langs->trans("StatusAccountClosed");
+			$label = $langs->transnoentitiesnoconv("StatusAccountClosed");
+			$labelshort = $langs->transnoentitiesnoconv("StatusAccountClosed");
 			$statusType = 'status5';
 		}
 
@@ -1503,7 +1503,7 @@ class Account extends CommonObject
 	{
 		$country_code = $this->getCountryCode();
 
-		if (in_array($country_code, array('FR', 'ES', 'GA', 'IT', 'NC'))) {
+		if (in_array($country_code, array('AD', 'FR', 'ES', 'GA', 'IT', 'NC'))) {
 			return 1; // France, Spain, Gabon, ... - Not valid for CH
 		}
 		if (in_array($country_code, array('AU', 'BE', 'CA', 'DE', 'DK', 'GR', 'GB', 'ID', 'IE', 'IR', 'KR', 'NL', 'NZ', 'UK', 'US'))) {
@@ -1696,21 +1696,21 @@ class Account extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB 	$db 			Database handler
+	 * @param DoliDB 	$dbs 			Database handler
 	 * @param int 		$origin_id 		Old thirdparty id
 	 * @param int 		$dest_id 		New thirdparty id
-	 * @return bool
+	 * @return bool						True=SQL success, False=SQL error
 	 */
-	public static function replaceThirdparty($db, $origin_id, $dest_id)
+	public static function replaceThirdparty($dbs, $origin_id, $dest_id)
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_url SET url_id = ".((int) $dest_id)." WHERE url_id = ".((int) $origin_id)." AND type='company'";
 
-		if (!$db->query($sql)) {
-			//if ($ignoreerrors) return true; // TODO Not enough. If there is A-B on kept thirdarty and B-C on old one, we must get A-B-C after merge. Not A-B.
-			//$this->errors = $db->lasterror();
-			return false;
-		} else {
+		if ($dbs->query($sql)) {
 			return true;
+		} else {
+			//if ($ignoreerrors) return true; // TODO Not enough. If there is A-B on kept thirdarty and B-C on old one, we must get A-B-C after merge. Not A-B.
+			//$this->errors = $dbs->lasterror();
+			return false;
 		}
 	}
 }

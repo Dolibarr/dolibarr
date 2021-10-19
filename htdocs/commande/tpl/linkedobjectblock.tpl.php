@@ -23,7 +23,7 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
-print "<!-- BEGIN PHP TEMPLATE -->\n";
+print "<!-- BEGIN PHP TEMPLATE commande/tpl/linkedopjectblock.tpl.php -->\n";
 
 global $user;
 global $noMoreLinkedObjectBlockAfter;

@@ -1252,7 +1252,7 @@ class ExtraFields
 					}
 
 					$sqlwhere = '';
-					$sql = 'SELECT '.$keyList;
+					$sql = "SELECT ".$keyList;
 					$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
 					if (!empty($InfoFieldList[4])) {
 						// can use curent entity filter
@@ -1420,7 +1420,7 @@ class ExtraFields
 					}
 
 					$sqlwhere = '';
-					$sql = 'SELECT '.$keyList;
+					$sql = "SELECT ".$keyList;
 					$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
 					if (!empty($InfoFieldList[4])) {
 						// can use SELECT request
@@ -1716,7 +1716,7 @@ class ExtraFields
 				}
 			}
 
-			$sql = 'SELECT '.$keyList;
+			$sql = "SELECT ".$keyList;
 			$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
 			if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
@@ -1820,8 +1820,8 @@ class ExtraFields
 				}
 			}
 
-			$sql = 'SELECT '.$keyList;
-			$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
+			$sql = "SELECT ".$keyList;
+			$sql .= " FROM ".MAIN_DB_PREFIX.$InfoFieldList[0];
 			if (strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
@@ -2047,9 +2047,9 @@ class ExtraFields
 	 *
 	 * @param   array	$extralabels    Deprecated (old $array of extrafields, now set this to null)
 	 * @param   object	$object         Object
-	 * @param	string	$onlykey		Only some keys are filled:$this
+	 * @param	string	$onlykey		Only some keys are filled:
 	 *                                  'string' => When we make update of only one extrafield ($action = 'update_extras'), calling page can set this to avoid to have other extrafields being reset.
-	 *                                  '@GETPOSTISSET' => When we make update of extrafields ($action = 'update'), calling page can set this to avoid to have fields not into POST being reset.
+	 *                                  '@GETPOSTISSET' => When we make update of several extrafields ($action = 'update'), calling page can set this to avoid to have fields not into POST being reset.
 	 * @return	int						1 if array_options set, 0 if no value, -1 if error (field required missing for example)
 	 */
 	public function setOptionalsFromPost($extralabels, &$object, $onlykey = '')
@@ -2079,14 +2079,23 @@ class ExtraFields
 				}
 
 				$enabled = 1;
-				if (isset($this->attributes[$object->table_element]['list'][$key])) {
-					$enabled = dol_eval($this->attributes[$object->table_element]['list'][$key], 1);
+				if (isset($this->attributes[$object->table_element]['enabled'][$key])) {	// 'enabled' is often a condition on module enabled or not
+					$enabled = dol_eval($this->attributes[$object->table_element]['enabled'][$key], 1);
 				}
+
+				$visibility = 1;
+				if (isset($this->attributes[$object->table_element]['list'][$key])) {		// 'list' is option for visibility
+					$visibility = dol_eval($this->attributes[$object->table_element]['list'][$key], 1);
+				}
+
 				$perms = 1;
 				if (isset($this->attributes[$object->table_element]['perms'][$key])) {
 					$perms = dol_eval($this->attributes[$object->table_element]['perms'][$key], 1);
 				}
 				if (empty($enabled)) {
+					continue;
+				}
+				if (empty($visibility)) {
 					continue;
 				}
 				if (empty($perms)) {

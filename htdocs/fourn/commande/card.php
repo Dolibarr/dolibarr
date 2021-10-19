@@ -144,6 +144,12 @@ $permissiondellink	= $usercancreate; // Used by the include of actions_dellink.i
 $permissiontoedit	= $usercancreate; // Used by the include of actions_lineupdown.inc.php
 $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
 
+// Project permission
+$caneditproject = false;
+if (!empty($conf->projet->enabled)) {
+	$caneditproject = empty($conf->global->SUPPLIER_ORDER_FORBID_EDIT_PROJECT) || ($object->statut == CommandeFournisseur::STATUS_DRAFT && preg_match('/^[\(]?PROV/i', $object->ref));
+}
+
 
 /*
  * Actions
@@ -239,7 +245,7 @@ if (empty($reshook)) {
 	}
 
 	// Set project
-	if ($action == 'classin' && $usercancreate) {
+	if ($action == 'classin' && $usercancreate && $caneditproject) {
 		$result = $object->setProject($projectid);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -1780,7 +1786,7 @@ if ($action == 'create') {
 	print $hookmanager->resPrint;
 
 	if (empty($reshook)) {
-		print $object->showOptionals($extrafields, 'edit');
+		print $object->showOptionals($extrafields, 'create');
 	}
 
 	// Bouton "Create Draft"
@@ -1975,7 +1981,7 @@ if ($action == 'create') {
 	}
 	if (empty($conf->global->MAIN_CAN_EDIT_SUPPLIER_ON_SUPPLIER_ORDER) || $action != 'edit_thirdparty') {
 		if (!empty($conf->global->MAIN_CAN_EDIT_SUPPLIER_ON_SUPPLIER_ORDER) && $object->statut == CommandeFournisseur::STATUS_DRAFT) {
-			$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_thirdparty&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetThirdParty')).'</a>';
+			$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_thirdparty&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetThirdParty')).'</a>';
 		}
 		$morehtmlref .= ' : '.$object->thirdparty->getNomUrl(1, 'supplier');
 		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
@@ -1988,7 +1994,7 @@ if ($action == 'create') {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($usercancreate) {
-			if ($action != 'classify') {
+			if ($action != 'classify' && $caneditproject) {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
 			if ($action == 'classify') {
@@ -2075,7 +2081,7 @@ if ($action == 'create') {
 	print $langs->trans('PaymentConditions');
 	print '<td>';
 	if ($action != 'editconditions') {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td>';
@@ -2094,7 +2100,7 @@ if ($action == 'create') {
 	print $langs->trans('PaymentMode');
 	print '</td>';
 	if ($action != 'editmode') {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td>';
@@ -2114,7 +2120,7 @@ if ($action == 'create') {
 		print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
 		print '</td>';
 		if ($action != 'editmulticurrencycode' && $object->statut == $object::STATUS_DRAFT) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencycode&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencycode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
@@ -2134,7 +2140,7 @@ if ($action == 'create') {
 			print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
 			print '</td>';
 			if ($action != 'editmulticurrencyrate' && $object->statut == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencyrate&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencyrate&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td><td>';
@@ -2162,7 +2168,7 @@ if ($action == 'create') {
 		print $langs->trans('BankAccount');
 		print '<td>';
 		if ($action != 'editbankaccount' && $usercancreate) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
@@ -2187,7 +2193,7 @@ if ($action == 'create') {
 	print $langs->trans('DateDeliveryPlanned');
 	print '</td>';
 	if ($action != 'editdate_livraison') {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td>';
@@ -2221,7 +2227,7 @@ if ($action == 'create') {
 		print $langs->trans('IncotermLabel');
 		print '<td><td class="right">';
 		if ($usercancreate) {
-			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
 		} else {
 			print '&nbsp;';
 		}
@@ -2625,8 +2631,9 @@ if ($action == 'create') {
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed = $usercanread;
 			$delallowed = $usercancreate;
+			$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (empty($conf->global->COMMANDE_SUPPLIER_ADDON_PDF) ? '' : $conf->global->COMMANDE_SUPPLIER_ADDON_PDF));
 
-			print $formfile->showdocuments('commande_fournisseur', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 0, 0, '', '', '', $object->thirdparty->default_lang);
+			print $formfile->showdocuments('commande_fournisseur', $objref, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 0, 0, '', '', '', $object->thirdparty->default_lang);
 			$somethingshown = $formfile->numoffiles;
 
 			// Show links to link elements

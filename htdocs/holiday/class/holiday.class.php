@@ -1266,16 +1266,16 @@ class Holiday extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('DraftCP');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('ToReviewCP');
-			$this->labelStatus[self::STATUS_APPROVED] = $langs->trans('ApprovedCP');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('CancelCP');
-			$this->labelStatus[self::STATUS_REFUSED] = $langs->trans('RefuseCP');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('DraftCP');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('ToReviewCP');
-			$this->labelStatusShort[self::STATUS_APPROVED] = $langs->trans('ApprovedCP');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('CancelCP');
-			$this->labelStatusShort[self::STATUS_REFUSED] = $langs->trans('RefuseCP');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('DraftCP');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('ToReviewCP');
+			$this->labelStatus[self::STATUS_APPROVED] = $langs->transnoentitiesnoconv('ApprovedCP');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('CancelCP');
+			$this->labelStatus[self::STATUS_REFUSED] = $langs->transnoentitiesnoconv('RefuseCP');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('DraftCP');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('ToReviewCP');
+			$this->labelStatusShort[self::STATUS_APPROVED] = $langs->transnoentitiesnoconv('ApprovedCP');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('CancelCP');
+			$this->labelStatusShort[self::STATUS_REFUSED] = $langs->transnoentitiesnoconv('RefuseCP');
 		}
 
 		$params = array();
@@ -1447,7 +1447,7 @@ class Holiday extends CommonObject
 
 				// Update each user counter
 				foreach ($users as $userCounter) {
-					$nbDaysToAdd = (isset($typeleaves[$userCounter['type']]['newByMonth']) ? $typeleaves[$userCounter['type']]['newByMonth'] : 0);
+					$nbDaysToAdd = (isset($typeleaves[$userCounter['type']]['newbymonth']) ? $typeleaves[$userCounter['type']]['newbymonth'] : 0);
 					if (empty($nbDaysToAdd)) {
 						continue;
 					}
@@ -2081,7 +2081,7 @@ class Holiday extends CommonObject
 	{
 		global $mysoc;
 
-		$sql = "SELECT rowid, code, label, affect, delay, newByMonth";
+		$sql = "SELECT rowid, code, label, affect, delay, newbymonth";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_holiday_types";
 		$sql .= " WHERE (fk_country IS NULL OR fk_country = ".((int) $mysoc->country_id).')';
 		if ($active >= 0) {
@@ -2096,7 +2096,7 @@ class Holiday extends CommonObject
 			$num = $this->db->num_rows($result);
 			if ($num) {
 				while ($obj = $this->db->fetch_object($result)) {
-					$types[$obj->rowid] = array('rowid'=> $obj->rowid, 'code'=> $obj->code, 'label'=>$obj->label, 'affect'=>$obj->affect, 'delay'=>$obj->delay, 'newByMonth'=>$obj->newByMonth);
+					$types[$obj->rowid] = array('rowid'=> $obj->rowid, 'code'=> $obj->code, 'label'=>$obj->label, 'affect'=>$obj->affect, 'delay'=>$obj->delay, 'newbymonth'=>$obj->newbymonth);
 				}
 
 				return $types;

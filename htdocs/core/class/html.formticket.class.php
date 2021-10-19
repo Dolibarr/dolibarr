@@ -762,7 +762,7 @@ class FormTicket
 			$arraycodenotparent[] = "";
 
 			$stringtoprint = '<span class="supportemailfield bold">'.$langs->trans("GroupOfTicket").'</span> ';
-			$stringtoprint .= '<select id ="'.$htmlname.'" class="maxwidth500 minwidth400" child_id="0">';
+			$stringtoprint .= '<select id ="'.$htmlname.'" class="minwidth500" child_id="0">';
 			$stringtoprint .= '<option value="">&nbsp;</option>';
 
 			$sql = "SELECT ctc.rowid, ctc.code, ctc.label, ctc.fk_parent, ctc.public, ";
@@ -1232,7 +1232,7 @@ class FormTicket
 		// External users can't send message email
 		if ($user->rights->ticket->write && !$user->socid) {
 			print '<tr><td></td><td>';
-			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : '');
+			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : ($conf->global->TICKETS_MESSAGE_FORCE_MAIL?'checked':''));
 			print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
 			print '<label for="send_msg_email">'.$langs->trans('SendMessageByEmail').'</label>';
 			print '</td></tr>';

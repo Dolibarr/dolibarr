@@ -49,7 +49,7 @@ function pdf_admin_prepare_head()
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/pdf.php';
-	$head[$h][1] = $langs->trans("Common");
+	$head[$h][1] = $langs->trans("Parameters");
 	$head[$h][2] = 'general';
 	$h++;
 
@@ -177,8 +177,8 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 	//$metric=$arrayformat['unit'];
 
 	$pdfa = false; // PDF-1.3
-	if (!empty($conf->global->PDF_USE_1A)) {
-		$pdfa = true; // PDF1/A
+	if (!empty($conf->global->PDF_USE_A)) {
+		$pdfa = $conf->global->PDF_USE_A; 	// PDF/A-1 ou PDF/A-3
 	}
 
 	if (class_exists('TCPDI')) {
@@ -2240,6 +2240,7 @@ function pdf_getTotalQty($object, $type, $outputlangs)
 				if (!empty($object->lines[$i]->fk_parent_line)) {
 					$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 				}
+				$hidedetails = '';
 				$parameters = array('i'=>$i, 'outputlangs'=>$outputlangs, 'hidedetails'=>$hidedetails, 'special_code'=>$special_code);
 				$action = '';
 				$reshook = $hookmanager->executeHooks('pdf_getTotalQty', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -2263,7 +2264,7 @@ function pdf_getTotalQty($object, $type, $outputlangs)
  * 	@param	Translate	$outputlangs	Object lang for output
  * 	@return	array                       Linked objects
  */
-function pdf_getLinkedObjects($object, $outputlangs)
+function pdf_getLinkedObjects(&$object, $outputlangs)
 {
 	global $db, $hookmanager;
 
@@ -2285,7 +2286,17 @@ function pdf_getLinkedObjects($object, $outputlangs)
 			}
 		} elseif ($objecttype == 'commande' || $objecttype == 'supplier_order') {
 			$outputlangs->load('orders');
-			foreach ($objects as $elementobject) {
+
+			if (count($objects) > 1) {
+				$object->note_public .= dol_concatdesc($object->note_public, '<br>'.$outputlangs->transnoentities("RefOrder").' : <br>');
+				foreach ($objects as $elementobject) {
+					$object->note_public .= dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref).($elementobject->ref_client ? ' ('.$elementobject->ref_client.')' : '').($elementobject->ref_supplier ? ' ('.$elementobject->ref_supplier.')' : '').' ');
+					$object->note_public .= dol_concatdesc($object->note_public, $outputlangs->transnoentities("OrderDate").' : ');
+					$object->note_public .= dol_concatdesc($object->note_public, dol_print_date($elementobject->date, 'day', '', $outputlangs));
+					$object->note_public .= dol_concatdesc($object->note_public, '<br>');
+				}
+			} elseif (count($objects) == 1) {
+				$elementobject = array_shift($objects);
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder");
 				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref).($elementobject->ref_client ? ' ('.$elementobject->ref_client.')' : '').($elementobject->ref_supplier ? ' ('.$elementobject->ref_supplier.')' : '');
 				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate");
@@ -2310,12 +2321,40 @@ function pdf_getLinkedObjects($object, $outputlangs)
 		} elseif ($objecttype == 'shipping') {
 			$outputlangs->loadLangs(array("orders", "sendings"));
 
-			foreach ($objects as $x => $elementobject) {
+			if (count($objects) > 1) {
+				$order = null;
+				if (empty($object->linkedObjects['commande']) && $object->element != 'commande') $object->note_public .= dol_concatdesc($object->note_public, '<br>'.$outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending").' : <br>');
+				else $object->note_public .= dol_concatdesc($object->note_public, '<br>'.$outputlangs->transnoentities("RefSending").' : <br>');
+				// We concat this record info into fields xxx_value. title is overwrote.
+				foreach ($objects as $elementobject) {
+					if (empty($object->linkedObjects['commande']) && $object->element != 'commande') {    // There is not already a link to order and object is not the order, so we show also info with order
+						$elementobject->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
+						if (! empty($elementobject->linkedObjectsIds['commande'])) {
+							include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+							$order = new Commande($db);
+							$ret = $order->fetch(reset($elementobject->linkedObjectsIds['commande']));
+							if ($ret < 1) {
+								$order = null;
+							}
+						}
+					}
+
+					if (! is_object($order)) {
+						$object->note_public .= dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref));
+						$object->note_public .= dol_concatdesc($object->note_public, '<br>');
+					} else {
+						$object->note_public .= dol_concatdesc($object->note_public, $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : ''));
+						$object->note_public .= dol_concatdesc($object->note_public, ' / '.$outputlangs->transnoentities($elementobject->ref));
+						$object->note_public .= dol_concatdesc($object->note_public, '<br>');
+					}
+				}
+			} elseif (count($objects) == 1) {
+				$elementobject = array_shift($objects);
 				$order = null;
 				// We concat this record info into fields xxx_value. title is overwrote.
-				if (empty($object->linkedObjects['commande']) && $object->element != 'commande') {	// There is not already a link to order and object is not the order, so we show also info with order
+				if (empty($object->linkedObjects['commande']) && $object->element != 'commande') {    // There is not already a link to order and object is not the order, so we show also info with order
 					$elementobject->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
-					if (!empty($elementobject->linkedObjectsIds['commande'])) {
+					if (! empty($elementobject->linkedObjectsIds['commande'])) {
 						include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 						$order = new Commande($db);
 						$ret = $order->fetch(reset($elementobject->linkedObjectsIds['commande']));
@@ -2324,24 +2363,15 @@ function pdf_getLinkedObjects($object, $outputlangs)
 						}
 					}
 				}
-				if (!is_object($order)) {
+
+				if (! is_object($order)) {
 					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefSending");
-					if (!empty($linkedobjects[$objecttype]['ref_value'])) {
-						$linkedobjects[$objecttype]['ref_value'] .= ' / ';
-					}
+					if (! empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'] .= ' / ';
 					$linkedobjects[$objecttype]['ref_value'] .= $outputlangs->transnoentities($elementobject->ref);
-					//$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DateShipment");
-					//if (! empty($linkedobjects[$objecttype]['date_value'])) $linkedobjects[$objecttype]['date_value'].=' / ';
-					//$linkedobjects[$objecttype]['date_value'].= dol_print_date($elementobject->date_delivery,'day','',$outputlangs);
 				} else {
 					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending");
-					if (empty($linkedobjects[$objecttype]['ref_value'])) {
-						$linkedobjects[$objecttype]['ref_value'] = $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : '');
-					}
+					if (empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'] = $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : '');
 					$linkedobjects[$objecttype]['ref_value'] .= ' / '.$outputlangs->transnoentities($elementobject->ref);
-					//$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate") . ($elementobject->date_delivery ? ' / ' . $outputlangs->transnoentities("DateShipment") : '');
-					//if (empty($linkedobjects[$objecttype]['date_value'])) $linkedobjects[$objecttype]['date_value'] = dol_print_date($order->date,'day','',$outputlangs);
-					//$linkedobjects[$objecttype]['date_value'].= ($elementobject->date_delivery ? ' / ' . dol_print_date($elementobject->date_delivery,'day','',$outputlangs) : '');
 				}
 			}
 		}

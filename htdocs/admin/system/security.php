@@ -98,7 +98,7 @@ if (!ini_get('session.cookie_samesite') || ini_get('session.cookie_samesite') ==
 	print ' &nbsp; '.img_warning().' <span class="opacitymedium">'.$langs->trans("WarningPaypalPaymentNotCompatibleWithStrict")."</span>";
 }
 print "<br>\n";
-print "<strong>PHP open_basedir</strong> = ".(ini_get('open_basedir') ? ini_get('open_basedir') : yn(0).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("ARestrictedPath").', '.$langs->transnoentitiesnoconv("Example").' '.$_SERVER["DOCUMENT_ROOT"]).')</span>')."<br>\n";
+print "<strong>PHP open_basedir</strong> = ".(ini_get('open_basedir') ? ini_get('open_basedir') : yn(0).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("ARestrictedPath").', '.$langs->transnoentitiesnoconv("Example").': '.$_SERVER["DOCUMENT_ROOT"].','.DOL_DATA_ROOT).')</span>')."<br>\n";
 print "<strong>PHP allow_url_fopen</strong> = ".(ini_get('allow_url_fopen') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_fopen') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).")</span><br>\n";
 print "<strong>PHP allow_url_include</strong> = ".(ini_get('allow_url_include') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_include') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).")</span><br>\n";
 //print "<strong>PHP safe_mode</strong> = ".(ini_get('safe_mode') ? ini_get('safe_mode') : yn(0)).' &nbsp; <span class="opacitymedium">'.$langs->trans("Deprecated")." (removed in PHP 5.4)</span><br>\n";
@@ -258,6 +258,8 @@ print '<br>';
 print '<strong>$dolibarr_nocsrfcheck</strong>: '.(empty($dolibarr_nocsrfcheck) ? '0' : $dolibarr_nocsrfcheck);
 if (!empty($dolibarr_nocsrfcheck)) {
 	print ' &nbsp; '.img_picto('', 'warning').' '.$langs->trans("IfYouAreOnAProductionSetThis", 0);
+} else {
+	print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0)</span>';
 }
 print '<br>';
 
@@ -391,7 +393,7 @@ if (empty($conf->api->enabled) && empty($conf->webservices->enabled)) {
 		print '<br>';
 	}
 	if (!empty($conf->api->enabled)) {
-		print '<strong>API_ENDPOINT_RULES</strong> = '.(empty($conf->global->API_ENDPOINT_RULES) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Example").': endpoint1:1,endpoint2:1,...)</span>' : $conf->global->API_ENDPOINT_RULES)."<br>\n";
+		print '<strong>API_ENDPOINT_RULES</strong> = '.(empty($conf->global->API_ENDPOINT_RULES) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Example").': login:0,users:0,setup:1,status:1,tickets:1,...)</span>' : $conf->global->API_ENDPOINT_RULES)."<br>\n";
 		print '<br>';
 	}
 }
@@ -442,7 +444,10 @@ print '<br>';
 print '<strong>MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES</strong> = '.(empty($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>' : $conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)."<br>";
 print '<br>';
 
-print '<strong>MAIN_SECURITY_CSRF_WITH_TOKEN</strong> = '.(empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>' : $conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN)."<br>";
+print '<strong>MAIN_SECURITY_CSRF_WITH_TOKEN</strong> = '.(empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 2)</span>' : $conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN)."<br>";
+print '<br>';
+
+print '<strong>MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL</strong> = '.(empty($conf->global->MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>' : $conf->global->MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL)."<br>";
 print '<br>';
 
 

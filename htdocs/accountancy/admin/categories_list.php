@@ -811,7 +811,7 @@ if ($resql) {
 
 				// Modify link
 				if ($canbemodified) {
-					print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+					print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a></td>';
 				} else {
 					print '<td>&nbsp;</td>';
 				}

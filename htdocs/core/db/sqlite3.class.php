@@ -646,6 +646,17 @@ class DoliDBSqlite3 extends DoliDB
 	}
 
 	/**
+	 *	Escape a string to insert data
+	 *
+	 *	@param	string	$stringtoencode		String to escape
+	 *	@return	string						String escaped
+	 */
+	public function escapeunderscore($stringtoencode)
+	{
+		return str_replace('_', '\_', $stringtoencode);
+	}
+
+	/**
 	 *	Renvoie le code erreur generique de l'operation precedente.
 	 *
 	 *	@return	string		Error code (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)

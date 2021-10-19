@@ -54,7 +54,9 @@ function bomAdminPrepareHead()
 	//$this->tabs = array(
 	//	'entity:-tabname:Title:@bom:/bom/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'bom');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'bom@mrp');
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bom@mrp', 'remove');
 
 	return $head;
 }

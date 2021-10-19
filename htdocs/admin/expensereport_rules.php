@@ -54,7 +54,6 @@ $code_expense_rules_type = GETPOST('code_expense_rules_type');
 $dates = dol_mktime(12, 0, 0, GETPOST('startmonth'), GETPOST('startday'), GETPOST('startyear'));
 $datee = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
 $amount = GETPOST('amount');
-$restrictive = GETPOST('restrictive');
 
 $object = new ExpenseReportRule($db);
 if (!empty($id)) {
@@ -138,7 +137,7 @@ if ($action == 'save') {
 	exit;
 }
 
-$rules = ExpenseReportRule::getAllRule();
+$rules = $object->getAllRule();
 
 $tab_apply = array(
 	'A' => $langs->trans('All'),

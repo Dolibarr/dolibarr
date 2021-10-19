@@ -865,6 +865,7 @@ class ActionComm extends CommonObject
 					$this->fetchResources();
 				}
 			}
+
 			$this->db->free($resql);
 		} else {
 			$this->error = $this->db->lasterror();
@@ -1245,7 +1246,6 @@ class ActionComm extends CommonObject
 	 *  Load all objects with filters.
 	 *  @todo WARNING: This make a fetch on all records instead of making one request with a join.
 	 *
-	 *  @param		DoliDb	$db				Not used
 	 *  @param		int		$socid			Filter by thirdparty
 	 *  @param		int		$fk_element		Id of element action is linked to
 	 *  @param		string	$elementtype	Type of element action is linked to
@@ -1255,7 +1255,7 @@ class ActionComm extends CommonObject
 	 *  @param		string	$limit			Limit number of answers
 	 *  @return		array|string			Error string if KO, array with actions if OK
 	 */
-	public static function getActions($db, $socid = 0, $fk_element = 0, $elementtype = '', $filter = '', $sortfield = 'a.datep', $sortorder = 'DESC', $limit = 0)
+	public function getActions($socid = 0, $fk_element = 0, $elementtype = '', $filter = '', $sortfield = 'a.datep', $sortorder = 'DESC', $limit = 0)
 	{
 		global $conf, $langs;
 
@@ -1277,33 +1277,33 @@ class ActionComm extends CommonObject
 				$sql .= " (SELECT fk_actioncomm FROM ".MAIN_DB_PREFIX."actioncomm_resources WHERE";
 				$sql .= " element_type = 'socpeople' AND fk_element = ".((int) $fk_element).')';
 			} else {
-				$sql .= " AND a.fk_element = ".((int) $fk_element)." AND a.elementtype = '".$db->escape($elementtype)."'";
+				$sql .= " AND a.fk_element = ".((int) $fk_element)." AND a.elementtype = '".$this->db->escape($elementtype)."'";
 			}
 		}
 		if (!empty($filter)) {
 			$sql .= $filter;
 		}
 		if ($sortorder && $sortfield) {
-			$sql .= $db->order($sortfield, $sortorder);
+			$sql .= $this->db->order($sortfield, $sortorder);
 		}
-		$sql .= $db->plimit($limit, 0);
+		$sql .= $this->db->plimit($limit, 0);
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql) {
-			$num = $db->num_rows($resql);
+			$num = $this->db->num_rows($resql);
 
 			if ($num) {
 				for ($i = 0; $i < $num; $i++) {
-					$obj = $db->fetch_object($resql);
-					$actioncommstatic = new ActionComm($db);
+					$obj = $this->db->fetch_object($resql);
+					$actioncommstatic = new ActionComm($this->db);
 					$actioncommstatic->fetch($obj->id);
 					$resarray[$i] = $actioncommstatic;
 				}
 			}
-			$db->free($resql);
+			$this->db->free($resql);
 			return $resarray;
 		} else {
-			return $db->lasterror();
+			return $this->db->lasterror();
 		}
 	}
 
@@ -1465,18 +1465,18 @@ class ActionComm extends CommonObject
 		// phpcs:enable
 		global $langs;
 
-		$labelStatus = $langs->trans('StatusNotApplicable');
+		$labelStatus = $langs->transnoentitiesnoconv('StatusNotApplicable');
 		if ($percent == -1 && !$hidenastatus) {
-			$labelStatus = $langs->trans('StatusNotApplicable');
+			$labelStatus = $langs->transnoentitiesnoconv('StatusNotApplicable');
 		} elseif ($percent == 0) {
-			$labelStatus = $langs->trans('StatusActionToDo').' (0%)';
+			$labelStatus = $langs->transnoentitiesnoconv('StatusActionToDo').' (0%)';
 		} elseif ($percent > 0 && $percent < 100) {
-			$labelStatus = $langs->trans('StatusActionInProcess').' ('.$percent.'%)';
+			$labelStatus = $langs->transnoentitiesnoconv('StatusActionInProcess').' ('.$percent.'%)';
 		} elseif ($percent >= 100) {
-			$labelStatus = $langs->trans('StatusActionDone').' (100%)';
+			$labelStatus = $langs->transnoentitiesnoconv('StatusActionDone').' (100%)';
 		}
 
-		$labelStatusShort = $langs->trans('StatusNotApplicable');
+		$labelStatusShort = $langs->transnoentitiesnoconv('StatusNotApplicable');
 		if ($percent == -1 && !$hidenastatus) {
 			$labelStatusShort = $langs->trans('NA');
 		} elseif ($percent == 0) {

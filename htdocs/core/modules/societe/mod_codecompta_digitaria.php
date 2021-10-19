@@ -252,17 +252,32 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 	 */
 	public function checkIfAccountancyCodeIsAlreadyUsed($db, $code, $type = '')
 	{
+		global $conf;
+
 		if ($type == 'supplier') {
-			$typethirdparty = 'code_compta_fournisseur';
+			if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+				$typethirdparty = 'accountancy_code_supplier';
+			} else {
+				$typethirdparty = 'code_compta_fournisseur';
+			}
 		} elseif ($type == 'customer') {
-			$typethirdparty = 'code_compta';
+			if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+				$typethirdparty = 'accountancy_code_customer';
+			} else {
+				$typethirdparty = 'code_compta';
+			}
 		} else {
 			$this->error = 'Bad value for parameter type';
 			return -1;
 		}
 
-		$sql = "SELECT ".$typethirdparty." FROM ".MAIN_DB_PREFIX."societe";
-		$sql .= " WHERE ".$typethirdparty." = '".$db->escape($code)."'";
+		if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+			$sql = "SELECT " . $typethirdparty . " FROM " . MAIN_DB_PREFIX . "societe_perentity";
+			$sql .= " WHERE " . $typethirdparty . " = '" . $db->escape($code) . "'";
+		} else {
+			$sql = "SELECT " . $typethirdparty . " FROM " . MAIN_DB_PREFIX . "societe";
+			$sql .= " WHERE " . $typethirdparty . " = '" . $db->escape($code) . "'";
+		}
 
 		$resql = $db->query($sql);
 		if ($resql) {

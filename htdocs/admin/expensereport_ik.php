@@ -33,10 +33,6 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php'
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "trips", "errors", "other", "dict"));
 
-if (!$user->admin) {
-	accessforbidden();
-}
-
 $error = 0;
 
 $action = GETPOST('action', 'aZ09');
@@ -45,10 +41,20 @@ $ikoffset = GETPOST('ikoffset', 'int');
 $coef = GETPOST('coef', 'int');
 
 $fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat');
-$fk_range = GETPOST('fk_range');
+$fk_range = GETPOST('fk_range', 'int');
+
+$expIk = new ExpenseReportIk($db);
+
+if (!$user->admin) {
+	accessforbidden();
+}
+
+
+/*
+ * Actions
+ */
 
 if ($action == 'updateik') {
-	$expIk = new ExpenseReportIk($db);
 	if ($id > 0) {
 		$result = $expIk->fetch($id);
 		if ($result < 0) {
@@ -61,13 +67,13 @@ if ($action == 'updateik') {
 
 	if ($result > 0) {
 		setEventMessages('SetupSaved', null, 'mesgs');
+
 		header('Location: '.$_SERVER['PHP_SELF']);
 		exit;
 	} else {
 		setEventMessages($expIk->error, $expIk->errors, 'errors');
 	}
 } elseif ($action == 'delete') { // TODO add confirm
-	$expIk = new ExpenseReportIk($db);
 	if ($id > 0) {
 		$result = $expIk->fetch($id);
 		if ($result < 0) {
@@ -77,12 +83,11 @@ if ($action == 'updateik') {
 		$expIk->delete($user);
 	}
 
-
 	header('Location: '.$_SERVER['PHP_SELF']);
 	exit;
 }
 
-$rangesbycateg = ExpenseReportIk::getAllRanges();
+$rangesbycateg = $expIk->getAllRanges();
 
 
 /*
@@ -102,7 +107,8 @@ print dol_get_fiche_head($head, 'expenseik', $langs->trans("ExpenseReportsIk"), 
 echo '<span class="opacitymedium">'.$langs->trans('ExpenseReportIkDesc').'</span>';
 print '<br><br>';
 
-echo '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
+echo '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+echo '<input type="hidden" name="token" value="'.newToken().'" />';
 
 if ($action == 'edit') {
 	echo '<input type="hidden" name="id" value="'.$id.'" />';
@@ -110,8 +116,6 @@ if ($action == 'edit') {
 	echo '<input type="hidden" name="fk_range" value="'.$fk_range.'" />';
 	echo '<input type="hidden" name="action" value="updateik" />';
 }
-
-echo '<input type="hidden" name="token" value="'.newToken().'" />';
 
 echo '<table class="noborder centpercent">';
 
