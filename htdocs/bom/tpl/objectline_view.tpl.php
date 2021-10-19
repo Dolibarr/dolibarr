@@ -182,7 +182,7 @@ print '</tr>';
 
 // Select of all the sub-BOM lines
 $sql = 'SELECT rowid, fk_bom_child, fk_product FROM '.MAIN_DB_PREFIX.'bom_bomline AS bl';
-$sql.= ' WHERE fk_bom = '.$tmpbom->id;
+$sql.= ' WHERE fk_bom ='. (int) $tmpbom->id;
 $resql = $object->db->query($sql);
 
 if ($resql) {
