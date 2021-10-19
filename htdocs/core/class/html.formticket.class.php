@@ -757,13 +757,13 @@ class FormTicket
 			$child_id=GETPOST($htmlname.'_child_id', 'aZ09')?GETPOST($htmlname.'_child_id', 'aZ09'):0;
 			if (!empty($groupticket)) {
 				$tmpgroupticket = $groupticket;
-				$sql = "SELECT ctc.rowid, ctc.fk_parent, ctc.code FROM ".MAIN_DB_PREFIX."c_ticket_category as ctc WHERE ctc.code = '".$tmpgroupticket."'";
+				$sql = "SELECT ctc.rowid, ctc.fk_parent, ctc.code FROM ".MAIN_DB_PREFIX."c_ticket_category as ctc WHERE ctc.code = '".$this->db->escape($tmpgroupticket)."'";
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
 					$selectedgroups[] = $obj->code;
 					while ($obj->fk_parent > 0) {
-						$sql = "SELECT ctc.rowid, ctc.fk_parent, ctc.code FROM ".MAIN_DB_PREFIX."c_ticket_category as ctc WHERE ctc.rowid ='".$obj->fk_parent."'";
+						$sql = "SELECT ctc.rowid, ctc.fk_parent, ctc.code FROM ".MAIN_DB_PREFIX."c_ticket_category as ctc WHERE ctc.rowid ='".$this->db->escape($obj->fk_parent)."'";
 						$resql = $this->db->query($sql);
 						if ($resql) {
 							$obj = $this->db->fetch_object($resql);
