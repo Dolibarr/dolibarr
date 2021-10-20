@@ -241,7 +241,7 @@ if ($resql) {
 			$total_cost.= $sub_bom_product->pmp * $line->qty;
 		} else {	// Minimum purchase price if cost price and PMP aren't defined
 			$sql_supplier_price = 'SELECT MIN(price) AS min_price FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
-			$sql_supplier_price.= ' WHERE fk_product = '.$sub_bom_product->id;
+			$sql_supplier_price.= ' WHERE fk_product = '. (int) $sub_bom_product->id;
 			$resql_supplier_price = $object->db->query($sql_supplier_price);
 			if ($resql_supplier_price) {
 				$obj = $object->db->fetch_object($resql_supplier_price);
