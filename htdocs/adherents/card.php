@@ -913,7 +913,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$object->state_id = GETPOST('state_id', 'int');
 
 		// We set country_id, country_code and country for the selected country
-		$object->country_id = GETPOST('country_id', 'int') ?GETPOST('country_id', 'int') : $mysoc->country_id;
+		$object->country_id = GETPOST('country_id', 'int') ? GETPOST('country_id', 'int') : $mysoc->country_id;
 		if ($object->country_id) {
 			$tmparray = getCountry($object->country_id, 'all');
 			$object->country_code = $tmparray['code'];
@@ -921,12 +921,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		if (!empty($socid)) {
-			$object = new Societe($db);
+			$soc = new Societe($db);
 			if ($socid > 0) {
-				$object->fetch($socid);
+				$soc->fetch($socid);
 			}
 
-			if (!($object->id > 0)) {
+			if (!($soc->id > 0)) {
 				$langs->load("errors");
 				print($langs->trans('ErrorRecordNotFound'));
 				exit;
@@ -1009,7 +1009,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print "</td>\n";
 
 		// Company
-		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET('societe') ? GETPOST('societe', 'alphanohtml') : $object->company).'"></td></tr>';
+		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET('societe') ? GETPOST('societe', 'alphanohtml') : $soc->name).'"></td></tr>';
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
@@ -1033,7 +1033,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// EMail
 		print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED ? '<span class="fieldrequired">' : '').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED ? '</span>' : '').'</td>';
-		print '<td>'.img_picto('', 'object_email').' <input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOSTISSET('member_email') ? GETPOST('member_email', 'alpha') : $object->email).'"></td></tr>';
+		print '<td>'.img_picto('', 'object_email').' <input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOSTISSET('member_email') ? GETPOST('member_email', 'alpha') : $soc->email).'"></td></tr>';
 
 		// Website
 		print '<tr><td>'.$form->editfieldkey('Web', 'member_url', '', $object, 0).'</td>';
@@ -1041,21 +1041,25 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Address
 		print '<tr><td class="tdtop">'.$langs->trans("Address").'</td><td>';
-		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="2">'.(GETPOSTISSET('address') ?GETPOST('address', 'alphanohtml') : $object->address).'</textarea>';
+		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="2">'.(GETPOSTISSET('address') ?GETPOST('address', 'alphanohtml') : $soc->address).'</textarea>';
 		print '</td></tr>';
 
 		// Zip / Town
 		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
-		print $formcompany->select_ziptown((GETPOSTISSET('zipcode') ? GETPOST('zipcode', 'alphanohtml') : $object->zip), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
+		print $formcompany->select_ziptown((GETPOSTISSET('zipcode') ? GETPOST('zipcode', 'alphanohtml') : $soc->zip), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
 		print ' ';
-		print $formcompany->select_ziptown((GETPOSTISSET('town') ? GETPOST('town', 'alphanohtml') : $object->town), 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+		print $formcompany->select_ziptown((GETPOSTISSET('town') ? GETPOST('town', 'alphanohtml') : $soc->town), 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 		print '</td></tr>';
 
 		// Country
-		$object->country_id = $object->country_id ? $object->country_id : $mysoc->country_id;
-		print '<tr><td width="25%">'.$langs->trans('Country').'</td><td>';
+		if (empty($soc->country_id)) {
+			$soc->country_id = $mysoc->country_id;
+			$soc->country_code = $mysoc->country_code;
+			$soc->state_id = $mysoc->state_id;
+		}
+		print '<tr><td>'.$langs->trans('Country').'</td><td>';
 		print img_picto('', 'country', 'class="pictofixedwidth"');
-		print $form->select_country(GETPOSTISSET('country_id') ? GETPOST('country_id', 'alpha') : $object->country_id, 'country_id');
+		print $form->select_country(GETPOSTISSET('country_id') ? GETPOST('country_id', 'alpha') : $soc->country_id, 'country_id');
 		if ($user->admin) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
@@ -1064,9 +1068,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// State
 		if (empty($conf->global->MEMBER_DISABLE_STATE)) {
 			print '<tr><td>'.$langs->trans('State').'</td><td>';
-			if ($object->country_id) {
+			if ($soc->country_id) {
 				print img_picto('', 'state', 'class="pictofixedwidth"');
-				print $formcompany->select_state(GETPOSTISSET('state_id') ? GETPOST('state_id', 'int') : $object->state_id, $object->country_code);
+				print $formcompany->select_state(GETPOSTISSET('state_id') ? GETPOST('state_id', 'int') : $soc->state_id, $soc->country_code);
 			} else {
 				print $countrynotdefined;
 			}
@@ -1075,7 +1079,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Pro phone
 		print '<tr><td>'.$langs->trans("PhonePro").'</td>';
-		print '<td>'.img_picto('', 'object_phoning').' <input type="text" name="phone" size="20" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $object->phone).'"></td></tr>';
+		print '<td>'.img_picto('', 'object_phoning').' <input type="text" name="phone" size="20" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $soc->phone).'"></td></tr>';
 
 		// Personal phone
 		print '<tr><td>'.$langs->trans("PhonePerso").'</td>';
