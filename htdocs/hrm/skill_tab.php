@@ -112,7 +112,7 @@ if (in_array($objecttype, $TAuthorizedObjects)) {
 	if ($objecttype == 'job') {
 		require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
 		$object = new Job($db);
-	} else if ($objecttype == "user") {
+	} elseif ($objecttype == "user") {
 		$object = new User($db);
 	}
 } else accessforbidden($langs->trans('ErrorBadObjectType'));
@@ -175,7 +175,7 @@ if (empty($reshook)) {
 				//else unset($TSkillsToAdd);
 			}
 		}
-	} else if ($action == 'saveSkill') {
+	} elseif ($action == 'saveSkill') {
 		if (!empty($TNote)) {
 			foreach ($TNote as $skillId => $rank) {
 				$TSkills = $skill->fetchAll('ASC', 't.rowid', 0, 0, array('customsql' => 'fk_object=' . ((int) $id) . " AND objecttype='" . $db->escape($objecttype) . "' AND fk_skill = " . ((int) $skillId)));
@@ -187,8 +187,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-
-	} else if ($action == 'confirm_deleteskill' && $confirm == 'yes') {
+	} elseif ($action == 'confirm_deleteskill' && $confirm == 'yes') {
 		$skillToDelete = new SkillRank($db);
 		$ret = $skillToDelete->fetch($lineid);
 		if ($ret > 0) {
@@ -220,7 +219,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_job.lib.php';
 		$head = jobPrepareHead($object);
 		$listLink = dol_buildpath('/hrm/job_list.php', 1);
-	} else if ($objecttype == "user") {
+	} elseif ($objecttype == "user") {
 		require_once DOL_DOCUMENT_ROOT . "/core/lib/usergroups.lib.php";
 		$object->getRights();
 		$head = user_prepare_head($object);
@@ -276,7 +275,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Array format for multiselectarray function
 	$TAllSkillsFormatted=array();
-	if(!empty($TAllSkills)) {
+	if (!empty($TAllSkills)) {
 		foreach ($TAllSkills as $k=>$v) {
 			$TAllSkillsFormatted[$k] = $v->label;
 		}
@@ -303,8 +302,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '<div class="clearboth"></div><br>';
 
-	if ($objecttype != 'user' && $permissiontoadd)
-	{
+	if ($objecttype != 'user' && $permissiontoadd) {
 		// form pour ajouter des compétences
 		print '<form name="addSkill" method="post" action="' . $_SERVER['PHP_SELF'] . '">';
 		print '<input type="hidden" name="objecttype" value="' . $objecttype . '">';
@@ -320,14 +318,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</table>';
 		print '</div>';
 		print '</form>';
-
 	}
 	print '<br>';
 
 	print '<div class="clearboth"></div>';
 
-	if ($objecttype != 'user' && $permissiontoadd)
-	{
+	if ($objecttype != 'user' && $permissiontoadd) {
 		print '<form name="saveSkill" method="post" action="' . $_SERVER['PHP_SELF'] . '">';
 		print '<input type="hidden" name="objecttype" value="' . $objecttype . '">';
 		print '<input type="hidden" name="id" value="' . $id . '">';
@@ -340,7 +336,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<th>'.$langs->trans('Label').'</th>';
 	print '<th>'.$langs->trans('Description').'</th>';
 	print '<th>'.$langs->trans($objecttype === 'job' ? 'RequiredRank' : 'EmployeeRank').'</th>';
-	if($objecttype === 'job') {
+	if ($objecttype === 'job') {
 		print '<th class="linecoledit"></th>';
 		print '<th class="linecoldelete"></th>';
 	}
@@ -362,8 +358,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '</td><td class="linecolrank">';
 			print displayRankInfos($skillElement->rank, $skillElement->fk_skill, 'TNote', $objecttype == 'job' && $permissiontoadd ? 'edit' : 'view');
 			print '</td>';
-			if ($objecttype != 'user' && $permissiontoadd)
-			{
+			if ($objecttype != 'user' && $permissiontoadd) {
 				print '<td class="linecoledit"></td>';
 				print '<td class="linecoldelete">';
 				print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $skillElement->fk_object . '&amp;objecttype=' . $objecttype . '&amp;action=ask_deleteskill&amp;lineid=' . $skillElement->id . '">';
@@ -386,5 +381,4 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print dol_get_fiche_end();
 
 	llxFooter();
-
 }

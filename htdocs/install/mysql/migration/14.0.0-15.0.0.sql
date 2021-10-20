@@ -375,7 +375,9 @@ ALTER TABLE llx_hrm_skillrank ADD CONSTRAINT llx_hrm_skillrank_fk_user_creat FOR
 ALTER TABLE llx_societe_perentity ADD COLUMN accountancy_code_customer varchar(24) AFTER entity;    -- equivalent to code_compta in llx_societe
 ALTER TABLE llx_societe_perentity ADD COLUMN accountancy_code_supplier varchar(24) AFTER accountancy_code_customer; -- equivalent to code_compta_supplier in llx_societe
 
--- Stock transfers
+ALTER TABLE llx_projet_task ADD COLUMN budget_amount double(24,8) AFTER priority;
+
+-- Stock transfers module
 
 CREATE TABLE llx_stocktransfer_stocktransfer(
 	-- BEGIN MODULEBUILDER FIELDS
@@ -454,3 +456,5 @@ create table llx_stocktransfer_stocktransferline_extrafields
 ALTER TABLE llx_stocktransfer_stocktransferline_extrafields ADD INDEX idx_fk_object(fk_object);
 
 ALTER TABLE llx_stock_mouvement CHANGE origintype origintype VARCHAR(64)
+
+-- End Stock transfers module

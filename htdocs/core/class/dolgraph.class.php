@@ -1384,7 +1384,7 @@ class DolGraph
 
 					$textoflegend = $arrayofgroupslegend[$i]['legendwithgroup'];
 				} else {
-					$textoflegend = $this->Legend[$i];
+					$textoflegend = !empty($this->Legend[$i]) ? $this->Legend[$i] : '';
 				}
 
 				if ($usecolorvariantforgroupby) {
@@ -1519,7 +1519,7 @@ class DolGraph
 			if (empty($conf->dol_optimize_smallscreen)) {
 				return ($defaultsize ? $defaultsize : '500');
 			} else {
-				return (empty($_SESSION['dol_screen_width']) ? '280' : ($_SESSION['dol_screen_width'] - 40));
+				return (empty($_SESSION['dol_screenwidth']) ? '280' : ($_SESSION['dol_screenwidth'] - 40));
 			}
 		}
 		if ($direction == 'height') {

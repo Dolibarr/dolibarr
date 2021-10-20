@@ -283,3 +283,4 @@ PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE=Classify project as closed when all 
 PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE_help=Note: existing projects with all tasks at 100 %% progress won't be affected: you will have to close them manually. This option only affects open projects.
 SelectLinesOfTimeSpentToInvoice=Select lines of time spent that are unbilled, then bulk action "Generate Invoice" to bill them
 ProjectTasksWithoutTimeSpent=Project tasks without time spent
+FormForNewLeadDesc=Thanks to fill the following form to contact us. You can also send us an email directly to <b>%s</b>.

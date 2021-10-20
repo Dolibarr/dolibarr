@@ -1853,8 +1853,8 @@ class Expedition extends CommonObject
 		// phpcs:enable
 		global $langs;
 
-		$labelStatus = $langs->trans($this->statuts[$status]);
-		$labelStatusShort = $langs->trans($this->statutshorts[$status]);
+		$labelStatus = $langs->transnoentitiesnoconv($this->statuts[$status]);
+		$labelStatusShort = $langs->transnoentitiesnoconv($this->statutshorts[$status]);
 
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_VALIDATED) {

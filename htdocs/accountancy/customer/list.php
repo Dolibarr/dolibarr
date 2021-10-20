@@ -639,7 +639,7 @@ if ($result) {
 
 		// Vat rate
 		$code_vat_differ='';
-		if ($product_static->tva_tx !== $facture_static_det->tva_tx) {
+		if ($product_static->tva_tx !== $facture_static_det->tva_tx && ! empty($facture_static_det->tva_tx)) {	// Note: having a vat rate of 0 is often the normal case when sells is intra b2b or to export
 			$code_vat_differ = 'font-weight:bold; text-decoration:blink; color:red';
 		}
 		print '<td style="'.$code_vat_differ.'" class="right">';

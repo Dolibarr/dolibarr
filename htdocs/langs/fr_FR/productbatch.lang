@@ -27,9 +27,9 @@ StockDetailPerBatch=Stock détaillé par lot
 SerialNumberAlreadyInUse=Le numéro de série %s est déjà utilisé pour le produit %s
 TooManyQtyForSerialNumber=Vous ne pouvez avoir qu'un seul produit %s pour le numéro de série %s
 ManageLotMask=Masque personnalisé
-CustomMasks=Option to define a different numbering mask for each product
-BatchLotNumberingModules=Numbering rule for automatic generation of lot number
-BatchSerialNumberingModules=Numbering rule for automatic generation of serial number (for products with property 1 unique lot/serial for each product)
+CustomMasks=Option pour définir un masque de numérotation différent pour chaque produit
+BatchLotNumberingModules=Règle de numérotation pour la génération automatique de numéro de lot
+BatchSerialNumberingModules=Règle de numérotation pour la génération automatique de numéro de série (pour les produits avec propriété 1 lot/série unique pour chaque produit)
 QtyToAddAfterBarcodeScan=Quantité à ajouter pour chaque code à barres/lot/série scanné
 LifeTime=Durée de vie (en jours)
 EndOfLife=Fin d'utilisation
@@ -37,7 +37,8 @@ ManufacturingDate=Date de fabrication
 DestructionDate=Date de destruction
 FirstUseDate=Date de première mise en service
 QCFrequency=Fréquence du contrôle qualité (en jours)
-
+ShowAllLots=Show all lots
+HideLots=Hide lots
 #Traceability - qc status
 OutOfOrder=Hors d'usage
 InWorkingOrder=En état de marche

@@ -211,7 +211,8 @@ if (empty($reshook)) {
 						if (!$error && GETPOST('idwarehouse-'.$line->id.'-'.$i) > 0) {
 							// Record stock movement
 							$id_product_batch = 0;
-							$stockmove->origin = $object;
+							$stockmove->setOrigin($object->element, $object->id);
+
 							if ($qtytoprocess >= 0) {
 								$idstockmove = $stockmove->livraison($user, $line->fk_product, GETPOST('idwarehouse-'.$line->id.'-'.$i), $qtytoprocess, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
 							} else {
@@ -974,7 +975,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							if ($tmpproduct->status_batch) {
 								$preselected = (GETPOSTISSET('batch-'.$line->id.'-'.$i) ? GETPOST('batch-'.$line->id.'-'.$i) : '');
 								print '<input type="text" class="width50" name="batch-'.$line->id.'-'.$i.'" value="'.$preselected.'" list="batch-'.$line->id.'-'.$i.'">';
-								print $formproduct->selectLot('batch-'.$line->id.'-'.$i, 0, $line->fk_product, '', '');
+								print $formproduct->selectLotDataList('batch-'.$line->id.'-'.$i, 0, $line->fk_product, '', '');
 							}
 							print '</td>';
 						}

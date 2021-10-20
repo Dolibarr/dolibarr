@@ -1027,7 +1027,7 @@ while ($i < min($num, $limit)) {
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
-			if (!empty($val['isameasure'])) {
+			if (!empty($val['isameasure']) && $val['isameasure'] == 1) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
 				}
@@ -1037,7 +1037,7 @@ while ($i < min($num, $limit)) {
 				if (!isset($totalarray['val']['t.'.$key])) {
 					$totalarray['val']['t.'.$key] = 0;
 				}
-				$totalarray['val']['t.'.$key] += $obj->$key;
+				$totalarray['val']['t.'.$key] += $object->$key;
 			}
 		}
 	}

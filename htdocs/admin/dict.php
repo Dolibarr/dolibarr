@@ -1457,6 +1457,10 @@ if ($id) {
 		print $tdsoffields;
 
 
+		// Line to enter new values
+		print '<!-- line to add new entry -->';
+		print '<tr class="oddeven nodrag nodrop nohover">';
+
 		$obj = new stdClass();
 		// If data was already input, we define them in obj to populate input fields.
 		if (GETPOST('actionadd')) {
@@ -1476,9 +1480,6 @@ if ($id) {
 			unset($fieldlist[2]); // Remove field ??? if dictionary Regions
 		}
 
-		// Line to enter new values
-		print '<!-- line to add new entry -->';
-		print '<tr class="oddeven nodrag nodrop nohover">';
 
 		if (empty($reshook)) {
 			fieldList($fieldlist, $obj, $tabname[$id], 'add');

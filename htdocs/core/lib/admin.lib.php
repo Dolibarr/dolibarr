@@ -834,7 +834,7 @@ function translation_prepare_head()
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=overwrite";
-	$head[$h][1] = $langs->trans("TranslationOverwriteKey").'<span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
+	$head[$h][1] = '<span class="valignmiddle">'.$langs->trans("TranslationOverwriteKey").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
 	$head[$h][2] = 'overwrite';
 	$h++;
 

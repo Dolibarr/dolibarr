@@ -95,7 +95,6 @@ Destination=Destino
 IdModule=ID del módulo
 IdPermissions=ID de permisos
 LanguageBrowserParameter=Parámetro %s
-ClientTZ=Zona horaria del cliente (usuario)
 ClientHour=Hora del cliente (usuario)
 OSTZ=Zona horaria del servidor OS
 PHPTZ=Servidor PHP Zona horaria

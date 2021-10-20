@@ -67,7 +67,7 @@ if (!$section) {
 	dol_print_error('', 'Error, section parameter missing');
 	exit;
 }
-$urlfile = (string) dol_sanitizePathName(GETPOST("urlfile"));
+$urlfile = (string) dol_sanitizePathName(GETPOST("urlfile"), '_', 0);
 if (!$urlfile) {
 	dol_print_error('', "ErrorParamNotDefined");
 	exit;
@@ -131,7 +131,7 @@ if ($action == 'update' && $permtoadd) {
 	$error = 0;
 
 	$oldlabel = GETPOST('urlfile', 'alpha');
-	$newlabel = dol_sanitizeFileName(GETPOST('label', 'alpha'));
+	$newlabel = dol_sanitizeFileName(GETPOST('label', 'alpha'), '_', 0);
 	$shareenabled = GETPOST('shareenabled', 'alpha');
 
 	//$db->begin();

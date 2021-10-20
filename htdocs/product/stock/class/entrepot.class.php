@@ -680,8 +680,8 @@ class Entrepot extends CommonObject
 		}
 
 		$langs->load('stocks');
-		$label = $langs->trans($this->statuts[$status]);
-		$labelshort = $langs->trans($this->statuts[$status]);
+		$label = $langs->transnoentitiesnoconv($this->statuts[$status]);
+		$labelshort = $langs->transnoentitiesnoconv($this->statuts[$status]);
 
 		return dolGetStatus($label, $labelshort, '', $statusType, $mode);
 	}

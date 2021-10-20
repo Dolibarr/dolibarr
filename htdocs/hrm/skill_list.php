@@ -296,7 +296,7 @@ foreach ($search as $key => $val) {
 		}
 		$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
 		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0) || !empty($object->fields[$key]['arrayofkeyval'])) {
-			if ($search[$key] == '-1' || $search[$key] === '0') {
+			if ($search[$key] == '-1' || ($search[$key] === '0' && (empty($object->fields[$key]['arrayofkeyval']) || !array_key_exists('0', $object->fields[$key]['arrayofkeyval'])))) {
 				$search[$key] = '';
 			}
 			$mode_search = 2;
@@ -634,7 +634,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 				print $object->getLibStatut(5);
 			} elseif ($key == 'rowid') {
 				print $object->showOutputField($val, $key, $object->id, '');
-			}elseif ($key == 'label'){
+			} elseif ($key == 'label') {
 				print $object->getNomUrl(1);
 			} else {
 				print $object->showOutputField($val, $key, $object->$key, '');
@@ -643,7 +643,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
-			if (!empty($val['isameasure'])) {
+			if (!empty($val['isameasure']) && $val['isameasure'] == 1) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
 				}

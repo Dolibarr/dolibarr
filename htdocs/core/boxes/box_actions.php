@@ -162,7 +162,7 @@ class box_actions extends ModeleBoxes
 
 					$this->info_box_contents[$line][2] = array(
 						'td' => 'class="center nowraponall"',
-						'text' => dol_print_date($datelimite, "dayhour", 'tzuserrel'),
+						'text' => $datelimite ? dol_print_date($datelimite, "dayhour", 'tzuserrel') : '',
 						'asis' => 1
 					);
 

@@ -258,7 +258,6 @@ class modHRM extends DolibarrModules
 		$this->rights[$r][4] = 'compare';
 		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->hrm->poste->delete)
 		$r++;
-
 	}
 
 	/**
