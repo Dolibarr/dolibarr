@@ -955,7 +955,7 @@ if ($rowid > 0) {
 			$dateto = dol_mktime(0, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
 		}
 		if (!$dateto) {
-			$dateto = -1; // By default, no date is suggested
+			$dateto = dol_time_plus_duree($datefrom, $defaultdelay, $defaultdelayunit); // By default, one year is suggested
 		}
 		print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td>';
 		print $form->selectDate($dateto, 'end', '', '', '', "subscription", 1, 0);
