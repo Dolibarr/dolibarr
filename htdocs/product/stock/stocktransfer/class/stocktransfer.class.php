@@ -170,7 +170,7 @@ class StockTransfer extends CommonObject
 	 *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
 	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	 */
-	//protected $childtablesoncascade = array('stocktransfer_stocktransferdet');
+	protected $childtablesoncascade = array('stocktransfer_stocktransferline');
 
 	/**
 	 * @var StockTransferLine[]     Array of subtable lines
@@ -487,12 +487,11 @@ class StockTransfer extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
-		if (empty($this->lines)) $this->fetchLines();
-		if (!empty($this->lines)) {
-			foreach ($this->lines as $l) $res = $this->deleteLine($user, $l->id);
+		if($this->status > self::STATUS_VALIDATED) {
+			return 0;
+		} else {
+			return $this->deleteCommon($user, $notrigger);
 		}
-		return $this->deleteCommon($user, $notrigger);
-		//return $this->deleteCommon($user, $notrigger, 1);
 	}
 
 	/**

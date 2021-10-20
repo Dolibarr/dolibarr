@@ -117,6 +117,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 $permissiontoread = $user->rights->stocktransfer->stocktransfer->read;
 $permissiontoadd = $user->rights->stocktransfer->stocktransfer->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissionnote = $user->rights->stocktransfer->stocktransfer->write; // Used by the include of actions_setnotes.inc.php
+$permissiontodelete = $user->rights->stocktransfer->stocktransfer->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 $permissiondellink = $user->rights->stocktransfer->stocktransfer->write; // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->stocktransfer->multidir_output[isset($object->entity) ? $object->entity : 1];
 
@@ -157,7 +158,7 @@ if (empty($reshook)) {
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
-	// On met cette permission ici car nécessaire d'avoir le dernier statut de l'objet après toute action exécutée dessus
+	// On remet cette lecture de permission ici car nécessaire d'avoir le nouveau statut de l'objet après toute action exécutée dessus (après incrémentation par exemple, le bouton supprimer doit disparaître)
 	$permissiontodelete = $user->rights->stocktransfer->stocktransfer->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 
 	// Actions when linking object each other
