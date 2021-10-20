@@ -897,7 +897,7 @@ class Holiday extends CommonObject
 		global $conf, $langs;
 		$error = 0;
 
-		$checkBalance = getDictvalue(MAIN_DB_PREFIX.'c_holiday_types', 'block_if_negative', $this->fk_type);
+		$checkBalance = getDictionaryValue(MAIN_DB_PREFIX.'c_holiday_types', 'block_if_negative', $this->fk_type);
 
 		if ($checkBalance > 0 && $this->statut != self::STATUS_DRAFT) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
