@@ -1979,8 +1979,9 @@ if ($id) {
 									}
 								}
 							} elseif ($value == 'fk_c_exp_tax_cat') {
-								$valuetoshow = getDictionaryValue(MAIN_DB_PREFIX.'c_exp_tax_cat', 'label', $valuetoshow);
-								$valuetoshow = $langs->trans($valuetoshow);
+								$tmpid = $valuetoshow;
+								$valuetoshow = getDictionaryValue(MAIN_DB_PREFIX.'c_exp_tax_cat', 'label', $tmpid);
+								$valuetoshow = $langs->trans($valuetoshow ? $valuetoshow : $tmpid);
 							} elseif ($tabname[$id] == MAIN_DB_PREFIX.'c_exp_tax_cat') {
 								$valuetoshow = $langs->trans($valuetoshow);
 							} elseif ($value == 'label' && $tabname[$id] == MAIN_DB_PREFIX.'c_units') {
