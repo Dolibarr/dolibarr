@@ -487,7 +487,7 @@ class StockTransfer extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
-		if($this->status > self::STATUS_VALIDATED) {
+		if ($this->status > self::STATUS_VALIDATED) {
 			return 0;
 		} else {
 			return $this->deleteCommon($user, $notrigger);
