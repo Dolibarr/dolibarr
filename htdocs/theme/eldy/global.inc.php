@@ -1549,7 +1549,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		height: 64px !important;
 	}
 
-	.divmainbodylarge { margin-left: 20px !important; margin-right: 20px !important; }
+	.divmainbodylarge { margin-left: 10px !important; margin-right: 10px !important; }
 
 	.tdoverflowonsmartphone {
 		max-width: 0;
