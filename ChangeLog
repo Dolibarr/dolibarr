@@ -15,6 +15,8 @@ Following changes may create regressions for some external modules, but were nec
 * Old deprecated module "SimplePOS" has been completely removed. Use module "TakePOS" is you need a Point Of Sale.
 * The method static ActionComm::getActions($db, ...) is no more static. Use $actioncomm->getActions(...) instead (without $db param). 
 * The 'action=delete&file=...' has been replaced with 'action=deletefile&file=...' to avoid confusion with deletion of object lines.
+* Method getDictvalue has been renamed into getDictionaryValue to match camel case rule.
+
 
 
 ***** ChangeLog for 14.0.3 compared to 14.0.2 *****

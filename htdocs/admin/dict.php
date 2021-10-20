@@ -1974,7 +1974,7 @@ if ($id) {
 									}
 								}
 							} elseif ($value == 'fk_c_exp_tax_cat') {
-								$valuetoshow = getDictvalue(MAIN_DB_PREFIX.'c_exp_tax_cat', 'label', $valuetoshow);
+								$valuetoshow = getDictionaryValue(MAIN_DB_PREFIX.'c_exp_tax_cat', 'label', $valuetoshow);
 								$valuetoshow = $langs->trans($valuetoshow);
 							} elseif ($tabname[$id] == MAIN_DB_PREFIX.'c_exp_tax_cat') {
 								$valuetoshow = $langs->trans($valuetoshow);
