@@ -106,10 +106,10 @@ class box_factures_fourn extends ModeleBoxes
 			$sql .= " WHERE f.fk_soc = s.rowid";
 			$sql .= " AND f.entity = ".$conf->entity;
 			if (!$user->rights->societe->client->voir && !$user->socid) {
-				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
-				$sql .= " AND s.rowid = ".$user->socid;
+				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
 			if (!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) {
 				$sql .= " ORDER BY f.datef DESC, f.ref DESC ";

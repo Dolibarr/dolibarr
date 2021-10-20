@@ -188,7 +188,7 @@ print '<table class="noborder centpercent">';
 print "<tr class=\"liste_titre\">";
 print "<td>".$langs->trans("Parameter")."</td>";
 print "<td>".$langs->trans("Name")."</td>";
-print "<td>".$langs->trans("ExtSiteUrlAgenda").'<div class="hideonsmartphone">'." (".$langs->trans("Example").': http://yoursite/agenda/agenda.ics)</div></td>';
+print "<td>".$langs->trans("ExtSiteUrlAgenda").'<div class="hideonsmartphone opacitymedium">'." (".$langs->trans("Example").': https://externalcalendar/agenda/agenda.ics)</div></td>';
 print "<td>".$form->textwithpicto($langs->trans("FixTZ"), $langs->trans("FillFixTZOnlyIfRequired"), 1).'</td>';
 print '<td class="right">'.$langs->trans("Color").'</td>';
 print "</tr>";
@@ -226,10 +226,12 @@ while ($i <= $MAXAGENDA) {
 print '</table>';
 print '</div>';
 
-
-print '<div class="center">';
-print '<input type="submit" id="save" name="save" class="button hideifnotset button-save" value="'.$langs->trans("Save").'">';
-print "</div>";
+$addition_button = array(
+	'name' => 'save',
+	'label_key' => 'Save',
+	'addclass' => 'hideifnotset',
+);
+print $form->buttonsSaveCancel("", "", $addition_button);
 
 print dol_get_fiche_end();
 

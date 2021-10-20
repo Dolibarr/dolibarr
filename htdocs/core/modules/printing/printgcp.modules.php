@@ -237,7 +237,7 @@ class printing_printgcp extends PrintingDriver
 			if ($conf->global->PRINTING_GCP_DEFAULT == $printer_det['id']) {
 				$html .= img_picto($langs->trans("Default"), 'on');
 			} else {
-				$html .= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&amp;token='.newToken().'&amp;mode=test&amp;varname=PRINTING_GCP_DEFAULT&amp;driver=printgcp&amp;value='.urlencode($printer_det['id']).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+				$html .= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'&mode=test&varname=PRINTING_GCP_DEFAULT&driver=printgcp&value='.urlencode($printer_det['id']).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 			}
 			$html .= '</td>';
 			$html .= '</tr>'."\n";
@@ -334,7 +334,7 @@ class printing_printgcp extends PrintingDriver
 		$fileprint .= '/'.$file;
 		$mimetype = dol_mimetype($fileprint);
 		// select printer uri for module order, propal,...
-		$sql = "SELECT rowid, printer_id, copy FROM ".MAIN_DB_PREFIX."printing WHERE module='".$this->db->escape($module)."' AND driver='printgcp' AND userid=".$user->id;
+		$sql = "SELECT rowid, printer_id, copy FROM ".MAIN_DB_PREFIX."printing WHERE module='".$this->db->escape($module)."' AND driver='printgcp' AND userid=".((int) $user->id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);

@@ -259,6 +259,7 @@ DateMaxPayment=Προθεσμία Πληρωμής
 DateInvoice=Ημερομηνία τιμολογίου
 DatePointOfTax=Point of tax
 NoInvoice=Δεν υπάρχει τιμολόγιο
+NoOpenInvoice=No open invoice
 ClassifyBill=Κατηγοριοποίηση Τιμολογίου
 SupplierBillsToPay=Μη πληρωθέντα τιμολόγια προμηθευτή
 CustomerBillsUnpaid=Ανεξόφλητα τιμολόγια πελάτη
@@ -589,3 +590,4 @@ FacParentLine=Invoice Line Parent
 SituationTotalRayToRest=Remainder to pay without taxe
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=Total progress %d %%
+SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s

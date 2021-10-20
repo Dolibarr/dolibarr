@@ -53,7 +53,8 @@ TypeOfLineServiceOrProduct=Loại dòng (0 = sản phẩm, dịch vụ = 1)
 FileWithDataToImport=Tập tin với dữ liệu để nhập
 FileToImport=Tập tin nguồn để nhập dữ liệu
 FileMustHaveOneOfFollowingFormat=Tệp để nhập phải có một trong các định dạng sau
-DownloadEmptyExample=Tải xuống tệp mẫu với thông tin nội dung trường (* là các trường bắt buộc)
+DownloadEmptyExample=Download template file with field content information
+StarAreMandatory=* are mandatory fields
 ChooseFormatOfFileToImport=Chọn định dạng tệp để sử dụng làm định dạng tệp nhập bằng cách nhấp vào biểu tượng %s để chọn ...
 ChooseFileToImport=Tải lên tệp sau đó nhấp vào biểu tượng %s để lựa chọn tệp là tệp nguồn nhập
 SourceFileFormat=Định dạng tệp nguồn

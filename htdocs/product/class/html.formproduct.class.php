@@ -93,7 +93,7 @@ class FormProduct
 		}
 
 		$sql = "SELECT e.rowid, e.ref as label, e.description, e.fk_parent";
-		if (!empty($fk_product)) {
+		if (!empty($fk_product) && $fk_product > 0) {
 			if (!empty($batch)) {
 				$sql .= ", pb.qty as stock";
 			} else {
@@ -104,7 +104,7 @@ class FormProduct
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_entrepot = e.rowid";
-		if (!empty($fk_product)) {
+		if (!empty($fk_product) && $fk_product > 0) {
 			$sql .= " AND ps.fk_product = ".((int) $fk_product);
 			if (!empty($batch)) {
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb on pb.fk_product_stock = ps.rowid AND pb.batch = '".$this->db->escape($batch)."'";
@@ -123,11 +123,11 @@ class FormProduct
 
 		// minimum stock
 		if ($stockMin !== false) {
-			if (!empty($fk_product)) {
+			if (!empty($fk_product) && $fk_product > 0) {
 				if (!empty($batch)) {
-					$sql .= " AND pb.qty > ".$this->db->escape($stockMin);
+					$sql .= " AND pb.qty > ".((float) $stockMin);
 				} else {
-					$sql .= " AND ps.reel > ".$this->db->escape($stockMin);
+					$sql .= " AND ps.reel > ".((float) $stockMin);
 				}
 			}
 		}
@@ -137,7 +137,7 @@ class FormProduct
 
 			// minimum stock
 			if ($stockMin !== false) {
-				$sql .= " HAVING sum(ps.reel) > ".$this->db->escape($stockMin);
+				$sql .= " HAVING sum(ps.reel) > ".((float) $stockMin);
 			}
 		}
 		$sql .= " ORDER BY ".$orderBy;
@@ -234,7 +234,7 @@ class FormProduct
 		if (empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
 			$filterstatus = '';
 		}
-		if (!empty($fk_product)) {
+		if (!empty($fk_product) && $fk_product > 0) {
 			$this->cache_warehouses = array();
 		}
 
@@ -340,7 +340,7 @@ class FormProduct
 			print '<tr><td>';
 			print $this->selectWarehouses($selected, $htmlname, '', $addempty);
 			print '</td>';
-			print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			print '<td class="left"><input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'"></td>';
 			print '</tr></table></form>';
 		} else {
 			if ($selected) {
@@ -414,7 +414,7 @@ class FormProduct
 			dol_print_error($db);
 			return -1;
 		} else {
-			$return .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$name.'">';
+			$return .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$name.'" id="'.$name.'">';
 			if ($adddefault || $adddefault === '') {
 				$return .= '<option value="0">'.($adddefault ? $langs->trans("Default") : '').'</option>';
 			}
@@ -447,6 +447,8 @@ class FormProduct
 			$return .= '</select>';
 		}
 
+		$return .= ajax_combobox($name);
+
 		return $return;
 	}
 
@@ -475,18 +477,13 @@ class FormProduct
 		$filter = array();
 		$filter['t.active'] = 1;
 
-		$result = $productNature->fetchAll(
-			'',
-			'',
-			0,
-			0,
-			$filter
-		);
+		$result = $productNature->fetchAll('', '', 0, 0, $filter);
+
 		if ($result < 0) {
 			dol_print_error($db);
 			return -1;
 		} else {
-			$return .= '<select class="flat" name="'.$name.'">';
+			$return .= '<select class="flat" name="'.$name.'" id="'.$name.'">';
 			if ($showempty || ($selected == '' || $selected == '-1')) {
 				$return .= '<option value="-1"';
 				if ($selected == '' || $selected == '-1') {
@@ -519,6 +516,8 @@ class FormProduct
 			$return .= '</select>';
 		}
 
+		$return .= ajax_combobox($name);
+
 		return $return;
 	}
 
@@ -544,13 +543,13 @@ class FormProduct
 	{
 		global $conf, $langs;
 
-		dol_syslog(get_class($this)."::selectLot $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $fk_entrepot, $empty_label, $forcecombo, $morecss", LOG_DEBUG);
+		dol_syslog(get_class($this)."::selectLotStock $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $fk_entrepot, $empty_label, $forcecombo, $morecss", LOG_DEBUG);
 
 		$out = '';
 		$productIdArray = array();
 		if (!is_array($objectLines) || !count($objectLines)) {
-			if (!empty($fk_product)) {
-				$productIdArray[] = $fk_product;
+			if (!empty($fk_product) && $fk_product > 0) {
+				$productIdArray[] = (int) $fk_product;
 			}
 		} else {
 			foreach ($objectLines as $line) {
@@ -572,8 +571,8 @@ class FormProduct
 		if ($empty) {
 			$out .= '<option value="-1">'.($empty_label ? $empty_label : '&nbsp;').'</option>';
 		}
-		if (!empty($fk_product)) {
-			$productIdArray = array($fk_product); // only show lot stock for product
+		if (!empty($fk_product) && $fk_product > 0) {
+			$productIdArray = array((int) $fk_product); // only show lot stock for product
 		} else {
 			foreach ($this->cache_lot as $key => $value) {
 				$productIdArray[] = $key;
@@ -592,6 +591,7 @@ class FormProduct
 					}
 
 					$out .= '<option value="'.$id.'"';
+
 					if ($selected == $id || ($selected == 'ifone' && $nboflot == 1)) {
 						$out .= ' selected';
 					}
@@ -609,6 +609,65 @@ class FormProduct
 
 		return $out;
 	}
+
+
+
+	/**
+	 *  Return list of lot numbers (stock from product_batch) for product and warehouse.
+	 *
+	 *  @param  string	$htmlname		Name of key that is inside attribute "list" of an input text field.
+	 *  @param  int		$empty			1=Can be empty, 0 if not
+	 *  @param	int		$fk_product		show lot numbers of product with id fk_product. All from objectLines if 0.
+	 *  @param	int		$fk_entrepot	filter lot numbers for warehouse with id fk_entrepot. All if 0.
+	 *  @param	array	$objectLines	Only cache lot numbers for products in lines of object. If no lines only for fk_product. If no fk_product, all.
+	 *  @return	string					HTML datalist
+	 */
+	public function selectLotDataList($htmlname = 'batch_id', $empty = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array())
+	{
+		global $conf, $langs;
+
+		dol_syslog(get_class($this)."::selectLotDataList $htmlname, $empty, $fk_product, $fk_entrepot,$objectLines", LOG_DEBUG);
+
+		$out = '';
+		$productIdArray = array();
+		if (!is_array($objectLines) || !count($objectLines)) {
+			if (!empty($fk_product) && $fk_product > 0) {
+				$productIdArray[] = (int) $fk_product;
+			}
+		} else {
+			foreach ($objectLines as $line) {
+				if ($line->fk_product) {
+					$productIdArray[] = $line->fk_product;
+				}
+			}
+		}
+
+		$nboflot = $this->loadLotStock($productIdArray);
+
+		$out .= '<datalist id="'.$htmlname.'" >';
+
+		if (!empty($fk_product) && $fk_product > 0) {
+			$productIdArray = array((int) $fk_product); // only show lot stock for product
+		} else {
+			foreach ($this->cache_lot as $key => $value) {
+				$productIdArray[] = $key;
+			}
+		}
+
+		foreach ($productIdArray as $productId) {
+			foreach ($this->cache_lot[$productId] as $id => $arraytypes) {
+				if (empty($fk_entrepot) || $fk_entrepot == $arraytypes['entrepot_id']) {
+					$label = $arraytypes['entrepot_label'].' - ';
+					$label .= $arraytypes['batch'];
+					$out .= '<option>'.$arraytypes['batch'].'</option>';
+				}
+			}
+		}
+		$out .= '</datalist>';
+
+		return $out;
+	}
+
 
 	/**
 	 * Load in cache array list of lot available in stock from a given list of products

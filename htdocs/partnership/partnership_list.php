@@ -126,7 +126,7 @@ foreach ($object->fields as $key => $val) {
 			'checked'=>(($visible < 0) ? 0 : 1),
 			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
 			'position'=>$val['position'],
-			'help'=>$val['help']
+			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
 	}
 }
@@ -260,7 +260,7 @@ if ($managedfor == 'member') {
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -294,8 +294,8 @@ foreach ($search as $key => $val) {
 			continue;
 		}
 		$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
-		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0)) {
-			if ($search[$key] == '-1' || $search[$key] === '0') {
+		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0) || !empty($object->fields[$key]['arrayofkeyval'])) {
+			if ($search[$key] == '-1' || ($search[$key] === '0' && (empty($object->fields[$key]['arrayofkeyval']) || !array_key_exists('0', $object->fields[$key]['arrayofkeyval'])))) {
 				$search[$key] = '';
 			}
 			$mode_search = 2;
@@ -342,7 +342,7 @@ $sql .= $hookmanager->resPrint;
 /* If a group by is required
 $sql.= " GROUP BY ";
 foreach($object->fields as $key => $val) {
-	$sql.='t.'.$key.', ';
+	$sql .= "t.".$key.", ";
 }
 // Add fields from extrafields
 if (! empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -398,20 +398,6 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'classforhorizontalscrolloftabs');
 
-// Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function() {
-		init_myfunc();
-	});
-});
-</script>';
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -666,7 +652,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
-			if (!empty($val['isameasure'])) {
+			if (!empty($val['isameasure']) && $val['isameasure'] == 1) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
 				}

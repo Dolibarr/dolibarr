@@ -131,6 +131,11 @@ print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent tableforfield">';
 
+// Type Prospect/Customer/Supplier
+print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+print $object->getTypeUrl(1);
+print '</td></tr>';
+
 if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
 	print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 }
@@ -143,7 +148,7 @@ if ($object->client) {
 	print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
 	$tmpcheck = $object->check_codeclient();
 	if ($tmpcheck != 0 && $tmpcheck != -5) {
-		print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+		print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
 	}
 	print '</td></tr>';
 	$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."facture where fk_soc = ".((int) $socid);
@@ -180,7 +185,7 @@ if ($object->fournisseur) {
 	print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
 	$tmpcheck = $object->check_codefournisseur();
 	if ($tmpcheck != 0 && $tmpcheck != -5) {
-		print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+		print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
 	}
 	print '</td></tr>';
 	$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."commande_fournisseur where fk_soc = ".((int) $socid);
@@ -379,7 +384,7 @@ if (empty($elementTypeArray) && !$object->client && !$object->fournisseur) {
 
 // Define type of elements
 $typeElementString = $form->selectarray("type_element", $elementTypeArray, GETPOST('type_element'), $showempty, 0, 0, '', 0, 0, $disabled, '', 'maxwidth150onsmartphone');
-$button = '<input type="submit" class="button buttonform" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+$button = '<input type="submit" class="button buttonform small" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 
 $param = '';
 $param .= "&sref=".urlencode($sref);
@@ -681,7 +686,7 @@ if ($sql_select) {
 	print_liste_field_titre('Quantity', $_SERVER['PHP_SELF'], 'prod_qty', '', $param, '', $sortfield, $sortorder, 'right ');
 	print "</tr>\n";
 
-	print '<tr class="oddeven"><td class="opacitymedium" colspan="5">'.$langs->trans("SelectElementAndClick", $langs->transnoentitiesnoconv("Search")).'</td></tr>';
+	print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("SelectElementAndClick", $langs->transnoentitiesnoconv("Search")).'</span></td></tr>';
 
 	print "</table>";
 } else {
@@ -689,7 +694,7 @@ if ($sql_select) {
 
 	print '<table class="liste centpercent">'."\n";
 
-	print '<tr class="oddeven"><td class="opacitymedium" colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
+	print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("FeatureNotYetAvailable").'</span></td></tr>';
 
 	print "</table>";
 }

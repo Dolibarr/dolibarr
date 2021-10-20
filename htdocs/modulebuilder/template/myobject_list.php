@@ -42,6 +42,7 @@
 //if (! defined("FORCECSP"))                 define('FORCECSP', 'none');				// Disable all Content Security Policies
 //if (! defined('CSRFCHECK_WITH_TOKEN'))     define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
 //if (! defined('NOBROWSERNOTIF'))     		 define('NOBROWSERNOTIF', '1');				// Disable browser notification
+//if (! defined('NOSESSION'))                define('NOSESSION', '1');					// On CLI mode, no need to use web sessions
 
 // Load Dolibarr environment
 $res = 0;
@@ -134,7 +135,7 @@ if (!$sortorder) {
 }
 
 // Initialize array of search criterias
-$search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
+$search_all = GETPOST('search_all', 'alphanohtml');
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
@@ -165,7 +166,7 @@ foreach ($object->fields as $key => $val) {
 			'checked'=>(($visible < 0) ? 0 : 1),
 			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
 			'position'=>$val['position'],
-			'help'=>$val['help']
+			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
 	}
 }
@@ -226,7 +227,7 @@ if (empty($reshook)) {
 				$search[$key.'_dtend'] = '';
 			}
 		}
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
@@ -265,7 +266,7 @@ $sql .= $object->getFieldList('t');
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key.', ' : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -293,7 +294,7 @@ foreach ($search as $key => $val) {
 		}
 		$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
 		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0) || !empty($object->fields[$key]['arrayofkeyval'])) {
-			if ($search[$key] == '-1' || $search[$key] === '0') {
+			if ($search[$key] == '-1' || ($search[$key] === '0' && (empty($object->fields[$key]['arrayofkeyval']) || !array_key_exists('0', $object->fields[$key]['arrayofkeyval'])))) {
 				$search[$key] = '';
 			}
 			$mode_search = 2;
@@ -303,10 +304,10 @@ foreach ($search as $key => $val) {
 		}
 	} else {
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
-			$columnName=preg_replace('/(_dtstart|_dtend)$/', '', $key);
+			$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
 				if (preg_match('/_dtstart$/', $key)) {
-					$sql .= " AND t." . $columnName . " >= '" . $db->idate($search[$key]) . "'";
+					$sql .= " AND t.".$columnName." >= '".$db->idate($search[$key])."'";
 				}
 				if (preg_match('/_dtend$/', $key)) {
 					$sql .= " AND t." . $columnName . " <= '" . $db->idate($search[$key]) . "'";
@@ -327,49 +328,68 @@ $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $objec
 $sql .= $hookmanager->resPrint;
 
 /* If a group by is required
-$sql.= " GROUP BY ";
+$sql .= " GROUP BY ";
 foreach($object->fields as $key => $val) {
-	$sql.='t.'.$key.', ';
+	$sql .= "t.".$key.", ";
 }
 // Add fields from extrafields
-if (! empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
+if (!empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
+	}
 }
 // Add where from hooks
-$parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters, $object);    // Note that $action and $object may have been modified by hook
-$sql.=$hookmanager->resPrint;
-$sql=preg_replace('/,\s*$/','', $sql);
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object);    // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql = preg_replace('/,\s*$/', '', $sql);
 */
 
-$sql .= $db->order($sortfield, $sortorder);
+// Add HAVING from hooks
+/*
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= !empty($hookmanager->resPrint) ? (" HAVING 1=1 " . $hookmanager->resPrint) : "";
+*/
 
 // Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	/* This old and fast method to get and count full list returns all record so use a high amount of memory.
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
+	*/
+	/* The slow method does not consume memory on mysql (not tested on pgsql) */
+	/*$resql = $db->query($sql, 0, 'auto', 1);
+	while ($db->fetch_object($resql)) {
+		$nbtotalofrecords++;
+	}*/
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^SELECT[a-z0-9\._\s\(\),]+FROM/i', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
+	$resql = $db->query($sqlforcount);
+	$objforcount = $db->fetch_object($resql);
+	$nbtotalofrecords = $objforcount->nbtotalofrecords;
 	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
-// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
-if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit))) {
-	$num = $nbtotalofrecords;
-} else {
-	if ($limit) {
-		$sql .= $db->plimit($limit + 1, $offset);
-	}
 
-	$resql = $db->query($sql);
-	if (!$resql) {
-		dol_print_error($db);
-		exit;
-	}
-
-	$num = $db->num_rows($resql);
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
 }
+
+$resql = $db->query($sql);
+if (!$resql) {
+	dol_print_error($db);
+	exit;
+}
+
+$num = $db->num_rows($resql);
+
 
 // Direct jump if only one record found
 if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
@@ -383,22 +403,22 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'classforhorizontalscrolloftabs');
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', '');
 
 // Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function() {
-		init_myfunc();
-	});
-});
-</script>';
+// print '<script type="text/javascript" language="javascript">
+// jQuery(document).ready(function() {
+// 	function init_myfunc()
+// 	{
+// 		jQuery("#myid").removeAttr(\'disabled\');
+// 		jQuery("#myid").attr(\'disabled\',\'disabled\');
+// 	}
+// 	init_myfunc();
+// 	jQuery("#mybutton").click(function() {
+// 		init_myfunc();
+// 	});
+// });
+// </script>';
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -412,9 +432,11 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 foreach ($search as $key => $val) {
 	if (is_array($search[$key]) && count($search[$key])) {
 		foreach ($search[$key] as $skey) {
-			$param .= '&search_'.$key.'[]='.urlencode($skey);
+			if ($skey != '') {
+				$param .= '&search_'.$key.'[]='.urlencode($skey);
+			}
 		}
-	} else {
+	} elseif ($search[$key] != '') {
 		$param .= '&search_'.$key.'='.urlencode($search[$key]);
 	}
 }
@@ -452,6 +474,7 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/mymodule/myobject_card.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
@@ -517,10 +540,8 @@ foreach ($object->fields as $key => $val) {
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
-		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:')=== 0)) {
+		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) {
 			print $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', 'maxwidth125', 1);
-		} elseif (!preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
-			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 			print '<div class="nowrap">';
 			print $form->selectDate($search[$key.'_dtstart'] ? $search[$key.'_dtstart'] : '', "search_".$key."_dtstart", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
@@ -528,6 +549,12 @@ foreach ($object->fields as $key => $val) {
 			print '<div class="nowrap">';
 			print $form->selectDate($search[$key.'_dtend'] ? $search[$key.'_dtend'] : '', "search_".$key."_dtend", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 			print '</div>';
+		} elseif ($key == 'lang') {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+			$formadmin = new FormAdmin($db);
+			print $formadmin->select_language($search[$key], 'search_lang', 0, null, 1, 0, 0, 'minwidth150 maxwidth200', 2);
+		} else {
+			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		}
 		print '</td>';
 	}
@@ -626,6 +653,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').'>';
 			if ($key == 'status') {
 				print $object->getLibStatut(5);
+			} elseif ($key == 'rowid') {
+				print $object->showOutputField($val, $key, $object->id, '');
 			} else {
 				print $object->showOutputField($val, $key, $object->$key, '');
 			}
@@ -633,7 +662,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
-			if (!empty($val['isameasure'])) {
+			if (!empty($val['isameasure']) && $val['isameasure'] == 1) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
 				}

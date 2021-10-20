@@ -63,7 +63,7 @@ class FormOther
 	 * @param	string	$jstoexecuteonadd		Name of javascript function to call
 	 * @return	string						HTML component
 	 */
-	public function getHTMLScannerForm($jstoexecuteonadd = 'barcodscannerjs')
+	public function getHTMLScannerForm($jstoexecuteonadd = 'barcodescannerjs')
 	{
 		global $langs;
 
@@ -73,9 +73,9 @@ class FormOther
 		$out .= '<div class="div-for-modal-topright" style="padding: 15px">';
 		$out .= '<center><strong>Barcode scanner tool...</strong></center><br>';
 
-		$out .= '<input type="checkbox" name="barcodeforautodetect" checked="checked"> Autodetect if we scan a product barcode or a lot/serial barcode<br>';
-		$out .= '<input type="checkbox" name="barcodeforproduct"> Scan a product barcode<br>';
-		$out .= '<input type="checkbox" name="barcodeforlotserial"> Scan a product lot or serial number<br>';
+		$out .= '<input type="radio" name="barcodemode" value="barcodeforautodetect" checked="checked"> Autodetect if we scan a product barcode or a lot/serial barcode<br>';
+		$out .= '<input type="radio" name="barcodemode" value="barcodeforproduct"> Scan a product barcode<br>';
+		$out .= '<input type="radio" name="barcodemode" value="barcodeforlotserial"> Scan a product lot or serial number<br>';
 
 		$out .= $langs->trans("QtyToAddAfterBarcodeScan").' <input type="text" name="barcodeproductqty" class="width50 right" value="1"><br>';
 		$out .= '<textarea type="text" name="barcodelist" class="centpercent" autofocus rows="'.ROWS_3.'"></textarea>';
@@ -88,13 +88,16 @@ class FormOther
 		*/
 		$out .= '<br>';
 		$out .= '<center>';
-		$out .= '<input type="submit" class="button marginleftonly marginrightonly" name="addscan" value="'.$langs->trans("Add").'">';
+		$out .= '<input type="submit" class="button marginleftonly marginrightonly" id ="exec'.dol_escape_js($jstoexecuteonadd).'" name="addscan" value="'.$langs->trans("Add").'">';
 		$out .= '<input type="submit" class="button marginleftonly marginrightonly" name="cancel" value="'.$langs->trans("Cancel").'">';
 		$out .= '<br>';
 
-		$out .= '<span class="opacitymedium">'.$langs->trans("FeatureNotYetAvailable").'</span>';
-
-		// TODO Add call of javascript $jstoexecuteonadd so each scan will add qty into the inventory page + an ajax save.
+		$out .= '<script>';
+		$out .= '$("#exec'.dol_escape_js($jstoexecuteonadd).'").click(function(){
+			console.log("We call js to execute '.dol_escape_js($jstoexecuteonadd).'");
+			'.dol_escape_js($jstoexecuteonadd).'();
+		})';
+		$out .= '</script>';
 
 		$out .= '</center>';
 		$out .= '</div>';
@@ -494,10 +497,10 @@ class FormOther
 		}
 
 		if (empty($user->rights->user->user->lire)) {
-			$sql_usr .= " AND u.rowid = ".$user->id;
+			$sql_usr .= " AND u.rowid = ".((int) $user->id);
 		}
 		if (!empty($user->socid)) {
-			$sql_usr .= " AND u.fk_soc = ".$user->socid;
+			$sql_usr .= " AND u.fk_soc = ".((int) $user->socid);
 		}
 
 		//Add hook to filter on user (for exemple on usergroup define in custom modules)
@@ -521,7 +524,7 @@ class FormOther
 				$sql_usr .= " WHERE u2.entity IN (".getEntity('user').")";
 			}
 
-			$sql_usr .= " AND u2.rowid = sc.fk_user AND sc.fk_soc=".$user->socid;
+			$sql_usr .= " AND u2.rowid = sc.fk_user AND sc.fk_soc = ".((int) $user->socid);
 
 			//Add hook to filter on user (for exemple on usergroup define in custom modules)
 			if (!empty($reshook)) {
@@ -860,9 +863,9 @@ class FormOther
 		                  }
 				        },
 						function(color, context) { console.log("close"); },
-						function(color, context) { var hex = color.val(\'hex\'); console.log("new color selected in jpicker "+hex);';
+						function(color, context) { var hex = color.val(\'hex\'); console.log("new color selected in jpicker "+hex+" setpropertyonselect='.dol_escape_js($setpropertyonselect).'");';
 				if ($setpropertyonselect) {
-					$out .= ' if (hex != null) document.documentElement.style.setProperty(\'--'.$setpropertyonselect.'\', \'#\'+hex);';
+					$out .= ' if (hex != null) document.documentElement.style.setProperty(\'--'.dol_escape_js($setpropertyonselect).'\', \'#\'+hex);';
 				}
 						$out .= '},
 						function(color, context) { console.log("cancel"); }
@@ -1206,7 +1209,7 @@ class FormOther
 	        			async: false
 	        		});
 	        		// We force reload to be sure to get all boxes into list
-	        		window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'&action=delbox\';
+	        		window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'&action=delbox&token='.newToken().'\';
 	        	}
 	        	else
 	        	{

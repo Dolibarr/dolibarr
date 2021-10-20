@@ -223,7 +223,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 			// Set CURLOPT_CONNECT_TO so curl will not try another resolution that may give a different result. Possible only on PHP v7+
 			if (defined('CURLOPT_CONNECT_TO')) {
-				$connect_to = array(sprintf("%s:%d:%s:%d", $newUrlArray['host'], $newUrlArray['port'], $iptocheck, $newUrlArray['port']));
+				$connect_to = array(sprintf("%s:%d:%s:%d", $newUrlArray['host'], empty($newUrlArray['port'])?'':$newUrlArray['port'], $iptocheck, empty($newUrlArray['port'])?'':$newUrlArray['port']));
 				//var_dump($newUrlArray);
 				//var_dump($connect_to);
 				curl_setopt($ch, CURLOPT_CONNECT_TO, $connect_to);

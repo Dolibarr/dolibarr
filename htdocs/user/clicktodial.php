@@ -119,7 +119,7 @@ if ($id > 0) {
 			print '<input name="url" value="'.(!empty($object->clicktodial_url) ? $object->clicktodial_url : '').'" size="92">';
 			if (empty($conf->global->CLICKTODIAL_URL) && empty($object->clicktodial_url)) {
 				$langs->load("errors");
-				print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</font>';
+				print '<span class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</span>';
 			} else {
 				print ' &nbsp; &nbsp; '.$form->textwithpicto($langs->trans("KeepEmptyToUseDefault").': '.$conf->global->CLICKTODIAL_URL, $langs->trans("ClickToDialUrlDesc"));
 			}
@@ -150,13 +150,15 @@ if ($id > 0) {
 		if (!empty($user->admin)) {
 			print '<tr><td class="titlefield">ClickToDial URL</td>';
 			print '<td class="valeur">';
-			$url = $conf->global->CLICKTODIAL_URL;
+			if (!empty($conf->global->CLICKTODIAL_URL)) {
+				$url = $conf->global->CLICKTODIAL_URL;
+			}
 			if (!empty($object->clicktodial_url)) {
 				$url = $object->clicktodial_url;
 			}
 			if (empty($url)) {
 				$langs->load("errors");
-				print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</font>';
+				print '<span class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</span>';
 			} else {
 				print $form->textwithpicto((empty($object->clicktodial_url) ? '<span class="opacitymedium">'.$langs->trans("DefaultLink").':</span> ' : '').$url, $langs->trans("ClickToDialUrlDesc"));
 			}
@@ -198,7 +200,7 @@ if ($id > 0) {
 	print '<div class="tabsAction">';
 
 	if (!empty($user->admin) && $action <> 'edit') {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 	}
 
 	print "</div>\n";

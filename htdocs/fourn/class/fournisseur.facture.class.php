@@ -438,19 +438,19 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " VALUES (";
 		$sql .= "'(PROV)'";
 		$sql .= ", '".$this->db->escape($this->ref_supplier)."'";
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", '".$this->db->escape($this->type)."'";
 		$sql .= ", '".$this->db->escape(isset($this->label) ? $this->label : (isset($this->libelle) ? $this->libelle : ''))."'";
-		$sql .= ", ".$this->socid;
+		$sql .= ", ".((int) $this->socid);
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->idate($this->date)."'";
-		$sql .= ", ".($this->fk_project > 0 ? $this->fk_project : "null");
-		$sql .= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : "null");
-		$sql .= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : "null");
-		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
+		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
+		$sql .= ", ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : "null");
+		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : "null");
+		$sql .= ", ".($this->fk_account > 0 ? ((int) $this->fk_account) : 'NULL');
 		$sql .= ", '".$this->db->escape($this->note_private)."'";
 		$sql .= ", '".$this->db->escape($this->note_public)."'";
-		$sql .= ", ".$user->id.",";
+		$sql .= ", ".((int) $user->id).",";
 		$sql .= $this->date_echeance != '' ? "'".$this->db->idate($this->date_echeance)."'" : "null";
 		$sql .= ", ".(int) $this->fk_incoterms;
 		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
@@ -506,7 +506,7 @@ class FactureFournisseur extends CommonInvoice
 				dol_syslog("There is ".count($this->lines)." lines that are invoice lines objects");
 				foreach ($this->lines as $i => $val) {
 					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn, special_code, fk_remise_except)';
-					$sql .= ' VALUES ('.$this->id.','.intval($this->lines[$i]->special_code).','.($this->lines[$i]->fk_remise_except > 0 ? $this->lines[$i]->fk_remise_except : 'NULL').')';
+					$sql .= " VALUES (".((int) $this->id).", ".((int) $this->lines[$i]->special_code).", ".($this->lines[$i]->fk_remise_except > 0 ? ((int) $this->lines[$i]->fk_remise_except) : 'NULL').')';
 
 					$resql_insert = $this->db->query($sql);
 					if ($resql_insert) {
@@ -530,7 +530,8 @@ class FactureFournisseur extends CommonInvoice
 							$this->lines[$i]->date_end,
 							$this->lines[$i]->array_options,
 							$this->lines[$i]->fk_unit,
-							$this->lines[$i]->multicurrency_subprice
+							$this->lines[$i]->multicurrency_subprice,
+							$this->lines[$i]->ref_supplier
 						);
 					} else {
 						$this->error = $this->db->lasterror();
@@ -551,7 +552,7 @@ class FactureFournisseur extends CommonInvoice
 					}
 
 					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn, special_code, fk_remise_except)';
-					$sql .= ' VALUES ('.$this->id.','.intval($this->lines[$i]->special_code).','.($this->lines[$i]->fk_remise_except > 0 ? $this->lines[$i]->fk_remise_except : 'NULL').')';
+					$sql .= " VALUES (".((int) $this->id).", ".((int) $this->lines[$i]->special_code).", ".($this->lines[$i]->fk_remise_except > 0 ? ((int) $this->lines[$i]->fk_remise_except) : 'NULL').')';
 
 					$resql_insert = $this->db->query($sql);
 					if ($resql_insert) {
@@ -568,7 +569,15 @@ class FactureFournisseur extends CommonInvoice
 							$line->fk_product,
 							'HT',
 							(!empty($line->info_bits) ? $line->info_bits : ''),
-							$line->product_type
+							$line->product_type,
+							$line->remise_percent,
+							0,
+							$line->date_start,
+							$line->date_end,
+							$line->array_options,
+							$line->fk_unit,
+							$line->multicurrency_subprice,
+							$line->ref_supplier
 						);
 					} else {
 						$this->error = $this->db->lasterror();
@@ -809,7 +818,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= ', f.fk_code_ventilation, f.fk_multicurrency, f.multicurrency_code, f.multicurrency_subprice, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
-		$sql .= ' WHERE fk_facture_fourn='.$this->id;
+		$sql .= ' WHERE fk_facture_fourn='.((int) $this->id);
 		$sql .= ' ORDER BY f.rang, f.rowid';
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
@@ -1366,7 +1375,7 @@ class FactureFournisseur extends CommonInvoice
 			if ($close_note) {
 				$sql .= ", close_note='".$this->db->escape($close_note)."'";
 			}
-			$sql .= ', fk_user_closing = '.$user->id;
+			$sql .= ', fk_user_closing = '.((int) $user->id);
 			$sql .= ", date_closing = '".$this->db->idate($now)."'";
 			$sql .= ' WHERE rowid = '.((int) $this->id);
 
@@ -1482,7 +1491,7 @@ class FactureFournisseur extends CommonInvoice
 		if ($close_note) {
 			$sql .= ", close_note='".$this->db->escape($close_note)."'";
 		}
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1490,7 +1499,7 @@ class FactureFournisseur extends CommonInvoice
 			// as they have not been used since the invoice is abandoned.
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 			$sql .= ' SET fk_invoice_supplier = NULL';
-			$sql .= ' WHERE fk_invoice_supplier = '.$this->id;
+			$sql .= ' WHERE fk_invoice_supplier = '.((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -1570,7 +1579,7 @@ class FactureFournisseur extends CommonInvoice
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
 		$sql .= " SET ref='".$this->db->escape($num)."', fk_statut = 1, fk_user_valid = ".((int) $user->id).", date_valid = '".$this->db->idate($now)."'";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::validate", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1697,7 +1706,7 @@ class FactureFournisseur extends CommonInvoice
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
 		$sql .= " SET fk_statut = ".self::STATUS_DRAFT;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -2305,7 +2314,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " AND pf.fk_paiementfourn IS NULL"; // Aucun paiement deja fait
 		$sql .= " AND ff.fk_statut IS NULL"; // Renvoi vrai si pas facture de remplacement
 		if ($socid > 0) {
-			$sql .= " AND f.fk_soc = ".$socid;
+			$sql .= " AND f.fk_soc = ".((int) $socid);
 		}
 		$sql .= " ORDER BY f.ref";
 
@@ -2353,7 +2362,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " AND ff.type=".self::TYPE_REPLACEMENT.")";
 		$sql .= " AND f.type != ".self::TYPE_CREDIT_NOTE; // Type non 2 si facture non avoir
 		if ($socid > 0) {
-			$sql .= " AND f.fk_soc = ".$socid;
+			$sql .= " AND f.fk_soc = ".((int) $socid);
 		}
 		$sql .= " ORDER BY f.ref";
 
@@ -2402,10 +2411,10 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= ' AND ff.fk_statut > 0';
 		$sql .= " AND ff.entity = ".$conf->entity;
 		if ($user->socid) {
-			$sql .= ' AND ff.fk_soc = '.$user->socid;
+			$sql .= ' AND ff.fk_soc = '.((int) $user->socid);
 		}
 		if (!$user->rights->societe->client->voir && !$user->socid) {
-			$sql .= " AND ff.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+			$sql .= " AND ff.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 
 		$resql = $this->db->query($sql);
@@ -2431,7 +2440,7 @@ class FactureFournisseur extends CommonInvoice
 
 				if ($facturestatic->hasDelay()) {
 					$response->nbtodolate++;
-					$response->url_late = DOL_URL_ROOT.'/fourn/facture/list.php?option=late&mainmenu=billing&leftmenu=suppliers_bills';
+					$response->url_late = DOL_URL_ROOT.'/fourn/facture/list.php?search_option=late&mainmenu=billing&leftmenu=suppliers_bills';
 				}
 			}
 			$this->db->free($resql);
@@ -2752,7 +2761,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
 		if (!$user->rights->societe->client->voir && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-			$sql .= " WHERE sc.fk_user = ".$user->id;
+			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
 		}
 		$sql .= " ".$clause." f.entity = ".$conf->entity;
@@ -2937,7 +2946,7 @@ class FactureFournisseur extends CommonInvoice
 	{
 		$isUsed = false;
 
-		$sql = "SELECT fk_invoice_supplier FROM ".MAIN_DB_PREFIX."societe_remise_except WHERE fk_invoice_supplier_source=".$this->id;
+		$sql = "SELECT fk_invoice_supplier FROM ".MAIN_DB_PREFIX."societe_remise_except WHERE fk_invoice_supplier_source = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if (!empty($resql)) {
 			$obj = $this->db->fetch_object($resql);
@@ -3308,7 +3317,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		if (!$error) {
 			// Supprime ligne
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det ';
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -3378,19 +3387,10 @@ class SupplierInvoiceLine extends CommonObjectLine
 			$this->multicurrency_total_ttc = 0;
 		}
 
+		$fk_product = (int) $this->fk_product;
+		$fk_unit = (int) $this->fk_unit;
+
 		$this->db->begin();
-
-		if (empty($this->fk_product)) {
-			$fk_product = "null";
-		} else {
-			$fk_product = $this->fk_product;
-		}
-
-		if (empty($this->fk_unit)) {
-			$fk_unit = "null";
-		} else {
-			$fk_unit = "'".$this->db->escape($this->fk_unit)."'";
-		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det SET";
 		$sql .= "  description ='".$this->db->escape($this->description)."'";
@@ -3401,7 +3401,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= ", pu_ttc = ".price2num($this->pu_ttc);
 		$sql .= ", qty = ".price2num($this->qty);
 		$sql .= ", remise_percent = ".price2num($this->remise_percent);
-		if ($this->fk_remise_except) $sql .= ", fk_remise_except=".((int) $this->fk_remise_except);
+		if ($this->fk_remise_except > 0) $sql .= ", fk_remise_except=".((int) $this->fk_remise_except);
 		else $sql .= ", fk_remise_except=null";
 		$sql .= ", vat_src_code = '".$this->db->escape(empty($this->vat_src_code) ? '' : $this->vat_src_code)."'";
 		$sql .= ", tva_tx = ".price2num($this->tva_tx);
@@ -3414,7 +3414,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= ", total_localtax1= ".price2num($this->total_localtax1);
 		$sql .= ", total_localtax2= ".price2num($this->total_localtax2);
 		$sql .= ", total_ttc = ".price2num($this->total_ttc);
-		$sql .= ", fk_product = ".((int) $fk_product);
+		$sql .= ", fk_product = ".($fk_product > 0 ? (int) $fk_product : 'null');
 		$sql .= ", product_type = ".((int) $this->product_type);
 		$sql .= ", info_bits = ".((int) $this->info_bits);
 		$sql .= ", fk_unit = ".($fk_unit > 0 ? (int) $fk_unit : 'null');
@@ -3550,7 +3550,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 			$this->error = 'ErrorProductTypeMustBe0orMore';
 			return -1;
 		}
-		if (!empty($this->fk_product)) {
+		if (!empty($this->fk_product) && $this->fk_product > 0) {
 			// Check product exists
 			$result = Product::isExistingObject('product', $this->fk_product);
 			if ($result <= 0) {
@@ -3583,7 +3583,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= " ".price2num($this->localtax2_tx).",";
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql .= ' '.(!empty($this->fk_product) ? $this->fk_product : "null").',';
+		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? $this->fk_product : "null").',';
 		$sql .= " ".((int) $this->product_type).",";
 		$sql .= " ".price2num($this->remise_percent).",";
 		$sql .= ' '.(! empty($this->fk_remise_except) ? ((int) $this->fk_remise_except) : "null").',';
@@ -3692,12 +3692,12 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det SET";
-		$sql .= "  total_ht='".price2num($this->total_ht)."'";
-		$sql .= ", tva='".price2num($this->total_tva)."'";
-		$sql .= ", total_localtax1='".price2num($this->total_localtax1)."'";
-		$sql .= ", total_localtax2='".price2num($this->total_localtax2)."'";
-		$sql .= ", total_ttc='".price2num($this->total_ttc)."'";
-		$sql .= " WHERE rowid = ".$this->rowid;
+		$sql .= "  total_ht = ".price2num($this->total_ht);
+		$sql .= ", tva= ".price2num($this->total_tva);
+		$sql .= ", total_localtax1 = ".price2num($this->total_localtax1);
+		$sql .= ", total_localtax2 = ".price2num($this->total_localtax2);
+		$sql .= ", total_ttc = ".price2num($this->total_ttc);
+		$sql .= " WHERE rowid = ".((int) $this->rowid);
 
 		dol_syslog("FactureFournisseurLigne.class.php::update_total", LOG_DEBUG);
 

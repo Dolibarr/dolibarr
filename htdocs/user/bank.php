@@ -339,7 +339,10 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			$ret .= '<input type="hidden" name="action" value="setdefault_range">';
 			$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$ret .= '<input type="hidden" name="id" value="'.$object->id.'">';
-			$maxRangeNum = ExpenseReportIk::getMaxRangeNumber($object->default_c_exp_tax_cat);
+
+			$expensereportik = new ExpenseReportIk($db);
+			$maxRangeNum = $expensereportik->getMaxRangeNumber($object->default_c_exp_tax_cat);
+
 			$ret .= $form->selectarray('default_range', range(0, $maxRangeNum), $object->default_range);
 			$ret .= '<input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'"> ';
 			$ret .= '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -366,12 +369,12 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		$payment_salary = new PaymentSalary($db);
 		$salary = new Salary($db);
 
-		$sql = "SELECT s.rowid as sid, s.ref as sref, s.label, s.datesp, s.dateep, s.paye, SUM(ps.amount) as alreadypaid";
+		$sql = "SELECT s.rowid as sid, s.ref as sref, s.label, s.datesp, s.dateep, s.paye, s.amount, SUM(ps.amount) as alreadypaid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_salary as ps ON (s.rowid = ps.fk_salary)";
-		$sql .= " WHERE s.fk_user = ".$object->id;
+		$sql .= " WHERE s.fk_user = ".((int) $object->id);
 		$sql .= " AND s.entity IN (".getEntity('salary').")";
-		$sql .= " GROUP BY s.rowid, s.ref, s.label, s.datesp, s.dateep, s.paye";
+		$sql .= " GROUP BY s.rowid, s.ref, s.label, s.datesp, s.dateep, s.paye, s.amount";
 		$sql .= " ORDER BY s.dateep DESC";
 
 		$resql = $db->query($sql);
@@ -381,7 +384,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			print '<table class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
-			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSalaries", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/salaries/list.php?search_user='.$object->login.'">'.$langs->trans("AllSalaries").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+			print '<td colspan="5"><table class="nobordernopadding centpercent"><tr><td>'.$langs->trans("LastSalaries", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/salaries/list.php?search_user='.$object->login.'">'.$langs->trans("AllSalaries").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 			print '</tr></table></td>';
 			print '</tr>';
 
@@ -389,16 +392,17 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			while ($i < $num && $i < $MAXLIST) {
 				$objp = $db->fetch_object($resql);
 
-				$payment_salary->id = $objp->rowid;
-				$payment_salary->ref = $objp->ref;
-				$payment_salary->datep = $db->jdate($objp->datep);
-
 				$salary->id = $objp->sid;
 				$salary->ref = $objp->sref ? $objp->sref : $objp->sid;
 				$salary->label = $objp->label;
 				$salary->datesp = $db->jdate($objp->datesp);
 				$salary->dateep = $db->jdate($objp->dateep);
 				$salary->paye = $objp->paye;
+				$salary->amount = $objp->amount;
+
+				$payment_salary->id = $objp->rowid;
+				$payment_salary->ref = $objp->ref;
+				$payment_salary->datep = $db->jdate($objp->datep);
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
@@ -407,7 +411,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->datesp), 'day')."</td>\n";
 				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->dateep), 'day')."</td>\n";
-				//print '<td class="right" class="nowraponall"><span class="ampount">'.price($objp->amount).'</span></td>';
+				print '<td class="right" class="nowraponall"><span class="amount">'.price($objp->amount).'</span></td>';
 				print '<td class="right" class="nowraponall">'.$salary->getLibStatut(5, $objp->alreadypaid).'</td>';
 
 				print '</tr>';
@@ -416,7 +420,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			$db->free($resql);
 
 			if ($num <= 0) {
-				print '<td colspan="4" class="opacitymedium">'.$langs->trans("None").'</a>';
+				print '<td colspan="5" class="opacitymedium">'.$langs->trans("None").'</a>';
 			}
 			print "</table>";
 		} else {
@@ -424,9 +428,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		}
 	}
 
-	/*
-	 * Last holidays
-	 */
+	// Latest leave requests
 	if (!empty($conf->holiday->enabled) &&
 		($user->rights->holiday->readall || ($user->rights->holiday->read && $object->id == $user->id))
 		) {
@@ -434,7 +436,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 		$sql = "SELECT h.rowid, h.statut as status, h.fk_type, h.date_debut, h.date_fin, h.halfday";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as h";
-		$sql .= " WHERE h.fk_user = ".$object->id;
+		$sql .= " WHERE h.fk_user = ".((int) $object->id);
 		$sql .= " AND h.entity IN (".getEntity('holiday').")";
 		$sql .= " ORDER BY h.date_debut DESC";
 
@@ -478,9 +480,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		}
 	}
 
-	/*
-	 * Last expense report
-	 */
+	// Latest expense report
 	if (!empty($conf->expensereport->enabled) &&
 		($user->rights->expensereport->readall || ($user->rights->expensereport->lire && $object->id == $user->id))
 		) {
@@ -488,8 +488,8 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 		$sql = "SELECT e.rowid, e.ref, e.fk_statut as status, e.date_debut, e.total_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e";
-		$sql .= " WHERE e.fk_user_author = ".$object->id;
-		$sql .= " AND e.entity = ".$conf->entity;
+		$sql .= " WHERE e.fk_user_author = ".((int) $object->id);
+		$sql .= " AND e.entity = ".((int) $conf->entity);
 		$sql .= " ORDER BY e.date_debut DESC";
 
 		$resql = $db->query($sql);
@@ -509,14 +509,13 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 				$exp->id = $objp->rowid;
 				$exp->ref = $objp->ref;
-				$exp->fk_type = $objp->fk_type;
 				$exp->status = $objp->status;
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
 				print $exp->getNomUrl(1);
 				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_debut), 'day')."</td>\n";
-				print '<td class="right" style="min-width: 60px">'.price($objp->total_ttc).'</td>';
+				print '<td class="right" style="min-width: 60px"><span class="amount">'.price($objp->total_ttc).'</span></td>';
 				print '<td class="right nowrap" style="min-width: 60px">'.$exp->LibStatut($objp->status, 5).'</td></tr>';
 				$i++;
 			}
@@ -560,7 +559,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	print_liste_field_titre("RIB");
 	print_liste_field_titre("IBAN");
 	print_liste_field_titre("BIC");
-	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
+	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', '', '', 'maxwidthsearch ');
 	print "</tr>\n";
 
 	if ($account->id > 0) {
@@ -613,7 +612,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		// Edit/Delete
 		print '<td class="right nowraponall">';
 		if ($permissiontoaddbankaccount) {
-			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&bankid='.$account->id.'&action=edit">';
+			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&bankid='.$account->id.'&action=edit&token='.newToken().'">';
 			print img_picto($langs->trans("Modify"), 'edit');
 			print '</a>';
 		}
@@ -704,11 +703,7 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->rights->user->us
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
-	print '</div>';
+	print $form->buttonsSaveCancel("Modify");
 }
 
 if ($id && $action == 'edit' && $user->rights->user->user->creer) {

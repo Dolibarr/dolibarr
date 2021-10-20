@@ -366,42 +366,42 @@ if (empty($reshook)) {
 	if (!empty($search_date_creation_start)) {
 		$filter['t.date_creation>='] = $search_date_creation_start;
 		$tmp = dol_getdate($search_date_creation_start);
-		$param .= '&date_creation_startmonth='.urlencode($tmp['mon']).'&date_creation_startday='.urlencode($tmp['mday']).'&date_creation_startyear='.urlencode($tmp['year']);
+		$param .= '&search_date_creation_startmonth='.urlencode($tmp['mon']).'&search_date_creation_startday='.urlencode($tmp['mday']).'&search_date_creation_startyear='.urlencode($tmp['year']);
 	}
 	if (!empty($search_date_creation_end)) {
 		$filter['t.date_creation<='] = $search_date_creation_end;
 		$tmp = dol_getdate($search_date_creation_end);
-		$param .= '&date_creation_endmonth='.urlencode($tmp['mon']).'&date_creation_endday='.urlencode($tmp['mday']).'&date_creation_endyear='.urlencode($tmp['year']);
+		$param .= '&search_date_creation_endmonth='.urlencode($tmp['mon']).'&search_date_creation_endday='.urlencode($tmp['mday']).'&search_date_creation_endyear='.urlencode($tmp['year']);
 	}
 	if (!empty($search_date_modification_start)) {
 		$filter['t.tms>='] = $search_date_modification_start;
 		$tmp = dol_getdate($search_date_modification_start);
-		$param .= '&date_modification_startmonth='.urlencode($tmp['mon']).'&date_modification_startday='.urlencode($tmp['mday']).'&date_modification_startyear='.urlencode($tmp['year']);
+		$param .= '&search_date_modification_startmonth='.urlencode($tmp['mon']).'&search_date_modification_startday='.urlencode($tmp['mday']).'&search_date_modification_startyear='.urlencode($tmp['year']);
 	}
 	if (!empty($search_date_modification_end)) {
 		$filter['t.tms<='] = $search_date_modification_end;
 		$tmp = dol_getdate($search_date_modification_end);
-		$param .= '&date_modification_endmonth='.urlencode($tmp['mon']).'&date_modification_endday='.urlencode($tmp['mday']).'&date_modification_endyear='.urlencode($tmp['year']);
+		$param .= '&search_date_modification_endmonth='.urlencode($tmp['mon']).'&search_date_modification_endday='.urlencode($tmp['mday']).'&search_date_modification_endyear='.urlencode($tmp['year']);
 	}
 	if (!empty($search_date_export_start)) {
 		$filter['t.date_export>='] = $search_date_export_start;
 		$tmp = dol_getdate($search_date_export_start);
-		$param .= '&date_export_startmonth='.urlencode($tmp['mon']).'&date_export_startday='.urlencode($tmp['mday']).'&date_export_startyear='.urlencode($tmp['year']);
+		$param .= '&search_date_export_startmonth='.urlencode($tmp['mon']).'&search_date_export_startday='.urlencode($tmp['mday']).'&search_date_export_startyear='.urlencode($tmp['year']);
 	}
 	if (!empty($search_date_export_end)) {
 		$filter['t.date_export<='] = $search_date_export_end;
 		$tmp = dol_getdate($search_date_export_end);
-		$param .= '&date_export_endmonth='.urlencode($tmp['mon']).'&date_export_endday='.urlencode($tmp['mday']).'&date_export_endyear='.urlencode($tmp['year']);
+		$param .= '&search_date_export_endmonth='.urlencode($tmp['mon']).'&search_date_export_endday='.urlencode($tmp['mday']).'&search_date_export_endyear='.urlencode($tmp['year']);
 	}
 	if (!empty($search_date_validation_start)) {
 		$filter['t.date_validated>='] = $search_date_validation_start;
 		$tmp = dol_getdate($search_date_validation_start);
-		$param .= '&date_validation_startmonth='.urlencode($tmp['mon']).'&date_validation_startday='.urlencode($tmp['mday']).'&date_validation_startyear='.urlencode($tmp['year']);
+		$param .= '&search_date_validation_startmonth='.urlencode($tmp['mon']).'&search_date_validation_startday='.urlencode($tmp['mday']).'&search_date_validation_startyear='.urlencode($tmp['year']);
 	}
 	if (!empty($search_date_validation_end)) {
 		$filter['t.date_validated<='] = $search_date_validation_end;
 		$tmp = dol_getdate($search_date_validation_end);
-		$param .= '&date_validation_endmonth='.urlencode($tmp['mon']).'&date_validation_endday='.urlencode($tmp['mday']).'&date_validation_endyear='.urlencode($tmp['year']);
+		$param .= '&search_date_validation_endmonth='.urlencode($tmp['mon']).'&search_date_validation_endday='.urlencode($tmp['mday']).'&search_date_validation_endyear='.urlencode($tmp['year']);
 	}
 	if (!empty($search_debit)) {
 		$filter['t.debit'] = $search_debit;
@@ -530,25 +530,25 @@ $sqlwhere = array();
 if (count($filter) > 0) {
 	foreach ($filter as $key => $value) {
 		if ($key == 't.doc_date') {
-			$sqlwhere[] = $key.'=\''.$db->idate($value).'\'';
+			$sqlwhere[] = $key."='".$db->idate($value)."'";
 		} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=') {
-			$sqlwhere[] = $key.'\''.$db->idate($value).'\'';
+			$sqlwhere[] = $key."'".$db->idate($value)."'";
 		} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=') {
-			$sqlwhere[] = $key.'\''.$db->escape($value).'\'';
+			$sqlwhere[] = $key."'".$db->escape($value)."'";
 		} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
-			$sqlwhere[] = $key.'='.$value;
+			$sqlwhere[] = $key.'='.((int) $value);
 		} elseif ($key == 't.numero_compte') {
-			$sqlwhere[] = $key.' LIKE \''.$db->escape($value).'%\'';
+			$sqlwhere[] = $key." LIKE '".$db->escape($value)."%'";
 		} elseif ($key == 't.subledger_account') {
 			$sqlwhere[] = natural_search($key, $value, 0, 1);
 		} elseif ($key == 't.date_creation>=' || $key == 't.date_creation<=') {
-			$sqlwhere[] = $key.'\''.$db->idate($value).'\'';
+			$sqlwhere[] = $key."'".$db->idate($value)."'";
 		} elseif ($key == 't.tms>=' || $key == 't.tms<=') {
-			$sqlwhere[] = $key.'\''.$db->idate($value).'\'';
+			$sqlwhere[] = $key."'".$db->idate($value)."'";
 		} elseif ($key == 't.date_export>=' || $key == 't.date_export<=') {
-			$sqlwhere[] = $key.'\''.$db->idate($value).'\'';
+			$sqlwhere[] = $key."'".$db->idate($value)."'";
 		} elseif ($key == 't.date_validated>=' || $key == 't.date_validated<=') {
-			$sqlwhere[] = $key.'\''.$db->idate($value).'\'';
+			$sqlwhere[] = $key."'".$db->idate($value)."'";
 		} elseif ($key == 't.credit' || $key == 't.debit') {
 			$sqlwhere[] = natural_search($key, $value, 1, 1);
 		} elseif ($key == 't.reconciled_option') {
@@ -576,7 +576,7 @@ if (!empty($sortfield)) {
 // Export into a file with format defined into setup (FEC, CSV, ...)
 // Must be after definition of $sql
 if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->export) {
-	// TODO Replace the fetchAll + ->export later that consume too much memory on large export with the query($sql) and loop on each line to export them.
+	// TODO Replace the fetchAll to get all ->line followed by call to ->export(). It consumew too much memory on large export. Replace this with the query($sql) and loop on each line to export them.
 	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', (empty($conf->global->ACCOUNTING_REEXPORT) ? 0 : 1));
 
 	if ($result < 0) {
@@ -591,7 +591,7 @@ if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->ex
 
 		if (!empty($accountancyexport->errors)) {
 			setEventMessages('', $accountancyexport->errors, 'errors');
-		} elseif (!$notifiedexportdate || !$notifiedvalidationdate) {
+		} elseif (!empty($notifiedexportdate) || !empty($notifiedvalidationdate)) {
 			// Specify as export : update field date_export or date_validated
 			$error = 0;
 			$db->begin();
@@ -602,17 +602,18 @@ if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->ex
 
 					$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
 					$sql .= " SET";
-					if (!$notifiedexportdate && !$notifiedvalidationdate) {
+					if (!empty($notifiedexportdate) && !empty($notifiedvalidationdate)) {
 						$sql .= " date_export = '".$db->idate($now)."'";
 						$sql .= ", date_validated = '".$db->idate($now)."'";
-					} elseif (!$notifiedexportdate) {
+					} elseif (!empty($notifiedexportdate)) {
 						$sql .= " date_export = '".$db->idate($now)."'";
-					} elseif (!$notifiedvalidationdate) {
+					} elseif (!empty($notifiedvalidationdate)) {
 						$sql .= " date_validated = '".$db->idate($now)."'";
 					}
 					$sql .= " WHERE rowid = ".((int) $movement->id);
 
-					dol_syslog("/accountancy/bookeeping/list.php Function export_file Specify movements as exported sql=".$sql, LOG_DEBUG);
+					dol_syslog("/accountancy/bookkeeping/list.php Function export_file Specify movements as exported", LOG_DEBUG);
+
 					$result = $db->query($sql);
 					if (!$result) {
 						$error++;
@@ -822,7 +823,7 @@ if (!empty($arrayfields['t.piece_num']['checked'])) {
 // Code journal
 if (!empty($arrayfields['t.code_journal']['checked'])) {
 	print '<td class="liste_titre center">';
-	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1);
+	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1, 'maxwidth150');
 	print '</td>';
 }
 // Date document
@@ -865,7 +866,7 @@ if (!empty($arrayfields['t.subledger_account']['checked'])) {
 		print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', $langs->trans('to'), 'maxwidth250', 'subledgeraccount');
 		print '</div>';
 	} else {
-		print '<input type="text" class="maxwidth100" name="search_accountancy_aux_code" value="'.$search_accountancy_aux_code.'">';
+		print '<input type="text" class="maxwidth75" name="search_accountancy_aux_code" value="'.$search_accountancy_aux_code.'">';
 	}
 	print '</td>';
 }
@@ -904,10 +905,10 @@ print $hookmanager->resPrint;
 if (!empty($arrayfields['t.date_creation']['checked'])) {
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
-	print $form->selectDate($search_date_creation_start, 'date_creation_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
+	print $form->selectDate($search_date_creation_start, 'search_date_creation_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
 	print '<div class="nowrap">';
-	print $form->selectDate($search_date_creation_end, 'date_creation_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
+	print $form->selectDate($search_date_creation_end, 'search_date_creation_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '</td>';
 }
@@ -915,10 +916,10 @@ if (!empty($arrayfields['t.date_creation']['checked'])) {
 if (!empty($arrayfields['t.tms']['checked'])) {
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
-	print $form->selectDate($search_date_modification_start, 'date_modification_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
+	print $form->selectDate($search_date_modification_start, 'search_date_modification_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
 	print '<div class="nowrap">';
-	print $form->selectDate($search_date_modification_end, 'date_modification_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
+	print $form->selectDate($search_date_modification_end, 'search_date_modification_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
 	print '</td>';
 }
@@ -926,10 +927,10 @@ if (!empty($arrayfields['t.tms']['checked'])) {
 if (!empty($arrayfields['t.date_export']['checked'])) {
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
-	print $form->selectDate($search_date_export_start, 'date_export_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
+	print $form->selectDate($search_date_export_start, 'search_date_export_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
 	print '<div class="nowrap">';
-	print $form->selectDate($search_date_export_end, 'date_export_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
+	print $form->selectDate($search_date_export_end, 'search_date_export_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '</td>';
 }
@@ -937,10 +938,10 @@ if (!empty($arrayfields['t.date_export']['checked'])) {
 if (!empty($arrayfields['t.date_validated']['checked'])) {
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
-	print $form->selectDate($search_date_validation_start, 'date_validation_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
+	print $form->selectDate($search_date_validation_start, 'search_date_validation_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
 	print '<div class="nowrap">';
-	print $form->selectDate($search_date_validation_end, 'date_validation_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
+	print $form->selectDate($search_date_validation_end, 'search_date_validation_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '</td>';
 }
@@ -1243,14 +1244,14 @@ while ($i < min($num, $limit)) {
 
 	// Action column
 	print '<td class="nowraponall center">';
-	if (empty($line->date_export) || empty($line->date_validation)) {
+	if (empty($line->date_export) && empty($line->date_validation)) {
 		if ($user->rights->accounting->mouvements->creer) {
 			print '<a class="editfielda paddingleft marginrightonly" href="' . DOL_URL_ROOT . '/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield=' . $sortfield : '') . ($sortorder ? '&sortorder=' . $sortorder : '') . '">' . img_edit() . '</a>';
 		}
 	}
 	if (empty($line->date_validation)) {
 		if ($user->rights->accounting->mouvements->supprimer) {
-			print '<a class="reposition paddingleft marginrightonly" href="'.$_SERVER['PHP_SELF'].'?action=delmouv&mvt_num='.$line->piece_num.$param.'&page='.$page.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">'.img_delete().'</a>';
+			print '<a class="reposition paddingleft marginrightonly" href="'.$_SERVER['PHP_SELF'].'?action=delmouv&token='.newToken().'&mvt_num='.$line->piece_num.$param.'&page='.$page.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">'.img_delete().'</a>';
 		}
 	}
 	print '</td>';
@@ -1274,7 +1275,7 @@ print '</div>';
 // TODO Replace this with mass delete action
 if ($user->rights->accounting->mouvements->supprimer_tous) {
 	print '<div class="tabsAction tabsActionNoBottom">'."\n";
-	print '<a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear'.($param ? '&'.$param : '').'">'.$langs->trans("DeleteMvt").'</a>';
+	print '<a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear&token='.newToken().($param ? '&'.$param : '').'">'.$langs->trans("DeleteMvt").'</a>';
 	print '</div>';
 }
 

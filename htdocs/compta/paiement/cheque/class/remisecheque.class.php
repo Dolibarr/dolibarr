@@ -170,12 +170,12 @@ class RemiseCheque extends CommonObject
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".((int) $account_id);
 		$sql .= ", 0";
 		$sql .= ", 0";
 		$sql .= ", 0";
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", 0";
 		$sql .= ", ''";
 		$sql .= ")";
@@ -290,7 +290,7 @@ class RemiseCheque extends CommonObject
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bordereau_cheque";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $this->db->query($sql);
@@ -305,7 +305,7 @@ class RemiseCheque extends CommonObject
 			if ($this->errno === 0) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
 				$sql .= " SET fk_bordereau = 0";
-				$sql .= " WHERE fk_bordereau = ".$this->id;
+				$sql .= " WHERE fk_bordereau = ".((int) $this->id);
 
 				$resql = $this->db->query($sql);
 				if (!$resql) {
@@ -344,7 +344,7 @@ class RemiseCheque extends CommonObject
 		if ($this->errno == 0 && $numref) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 			$sql .= " SET statut = 1, ref = '".$this->db->escape($numref)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$sql .= " AND entity = ".$conf->entity;
 			$sql .= " AND statut = 0";
 
@@ -585,7 +585,7 @@ class RemiseCheque extends CommonObject
 			$sql .= ", ".MAIN_DB_PREFIX."bordereau_cheque as bc";
 			$sql .= " WHERE b.fk_account = ba.rowid";
 			$sql .= " AND b.fk_bordereau = bc.rowid";
-			$sql .= " AND bc.rowid = ".$this->id;
+			$sql .= " AND bc.rowid = ".((int) $this->id);
 			$sql .= " AND bc.entity = ".$conf->entity;
 			$sql .= " ORDER BY b.dateo ASC, b.rowid ASC";
 
@@ -647,7 +647,7 @@ class RemiseCheque extends CommonObject
 		$nb = 0;
 		$sql = "SELECT amount ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-		$sql .= " WHERE fk_bordereau = ".$this->id;
+		$sql .= " WHERE fk_bordereau = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -661,7 +661,7 @@ class RemiseCheque extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 			$sql .= " SET amount = ".price2num($total);
 			$sql .= ", nbcheque = ".((int) $nb);
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$sql .= " AND entity = ".$conf->entity;
 
 			$resql = $this->db->query($sql);
@@ -851,7 +851,7 @@ class RemiseCheque extends CommonObject
 		if ($user->rights->banque->cheque) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 			$sql .= " SET date_bordereau = ".($date ? "'".$this->db->idate($date)."'" : 'null');
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog("RemiseCheque::set_date", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -880,8 +880,8 @@ class RemiseCheque extends CommonObject
 		// phpcs:enable
 		if ($user->rights->banque->cheque) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-			$sql .= " SET ref = '".$ref."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " SET ref = '".$this->db->escape($ref)."'";
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog("RemiseCheque::set_number", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1005,10 +1005,10 @@ class RemiseCheque extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			$langs->load('compta');
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('ToValidate');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('ToValidate');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Validated');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('ToValidate');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('ToValidate');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
 		}
 
 		$statusType = 'status'.$status;

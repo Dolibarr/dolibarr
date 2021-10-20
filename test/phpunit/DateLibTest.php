@@ -265,9 +265,9 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 		$db=$this->savdb;
 
 		// With same hours - Tuesday/Wednesday jan 2013
-		$date1=dol_mktime(0, 0, 0, 1, 1, 2013, 'gmt');
-		$date2=dol_mktime(0, 0, 0, 1, 2, 2013, 'gmt');
-		$date3=dol_mktime(0, 0, 0, 1, 3, 2013, 'gmt');
+		$date1=dol_mktime(0, 0, 0, 1, 1, 2013, 'gmt');	// tuesday
+		$date2=dol_mktime(0, 0, 0, 1, 2, 2013, 'gmt');	// wednesday
+		$date3=dol_mktime(0, 0, 0, 1, 3, 2013, 'gmt');	// thursday
 
 		$result=num_open_day($date1, $date2, 0, 1, 0, 'FR');
 		print __METHOD__." result=".$result."\n";
@@ -282,8 +282,8 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals(2, $result, 'NumOpenDay Wednesday 2 - Thursday 3 jan 2013 for FR');   // 2 opened days
 
 		// With same hours - Friday/Sunday jan 2013
-		$date1=dol_mktime(0, 0, 0, 1, 4, 2013, 'gmt');
-		$date2=dol_mktime(0, 0, 0, 1, 6, 2013, 'gmt');
+		$date1=dol_mktime(0, 0, 0, 1, 4, 2013, 'gmt');	// friday
+		$date2=dol_mktime(0, 0, 0, 1, 6, 2013, 'gmt');	// sunday
 
 		$result=num_open_day($date1, $date2, 0, 1, 0, 'FR');
 		print __METHOD__." result=".$result."\n";
@@ -292,6 +292,17 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 		$result=num_open_day($date1, $date2, 'XX', 1);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(1, $result, 'NumOpenDay for XX');   // 1 opened day, 2 closes (even if country unknown)
+
+		// Test option MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY and MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY
+		$conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY = 0;
+		$result=num_open_day($date1, $date2, 0, 1, 0, 'FR');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(2, $result, 'NumOpenDay for FR when saturday is a working day');   //2 opened day, 1 closed
+
+		$conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY = 0;
+		$result=num_open_day($date1, $date2, 'XX', 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(3, $result, 'NumOpenDay for XX when saturday + sunday are working days');   // 3 opened day, 0 closes (even if country unknown)
 	}
 
 	/**

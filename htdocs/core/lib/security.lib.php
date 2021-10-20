@@ -98,7 +98,7 @@ function dol_decode($chain, $key = '1')
  *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt (used only if hashing algorightm is something else than 'password_hash').
  *
  * 	@param 		string		$chain		String to hash
- * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap with no salt, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
+ * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap with no salt, '5':sha256, '6':password_hash). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		string					Hash of string
  *  @see getRandomPassword()
  */
@@ -124,8 +124,10 @@ function dol_hash($chain, $type = '0')
 		return md5($chain);
 	} elseif ($type == '4' || $type == 'md5openldap') {
 		return '{md5}'.base64_encode(mhash(MHASH_MD5, $chain)); // For OpenLdap with md5 (based on an unencrypted password in base)
-	} elseif ($type == '5') {
+	} elseif ($type == '5' || $type == 'sha256') {
 		return hash('sha256', $chain);
+	} elseif ($type == '6' || $type == 'password_hash') {
+		return password_hash($chain, PASSWORD_DEFAULT);
 	} elseif (!empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1') {
 		return sha1($chain);
 	} elseif (!empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1md5') {
@@ -511,8 +513,8 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				if (!$user->rights->salaries->delete) {
 					$deleteok = 0;
 				}
-			} elseif ($feature == 'salaries') {
-				if (!$user->rights->salaries->delete) {
+			} elseif ($feature == 'adherent') {
+				if (!$user->rights->adherent->supprimer) {
 					$deleteok = 0;
 				}
 			} elseif (!empty($feature2)) {							// This is for permissions on 2 levels
@@ -609,7 +611,7 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 			$feature = 'projet_task';
 		}
 
-		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salary', 'website'); // Test on entity only (Objects with no link to company)
+		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe'); // Test for societe object
 		$checkother = array('contact', 'agenda'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
@@ -666,7 +668,7 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				$sql .= ", ".MAIN_DB_PREFIX."societe as s)";
 				$sql .= " WHERE sc.fk_soc IN (".$db->sanitize($objectid, 1).")";
-				$sql .= " AND sc.fk_user = ".$user->id;
+				$sql .= " AND sc.fk_user = ".((int) $user->id);
 				$sql .= " AND sc.fk_soc = s.rowid";
 				$sql .= " AND s.entity IN (".getEntity($sharedelement, 1).")";
 			} elseif (!empty($conf->multicompany->enabled)) {
@@ -682,7 +684,7 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
-				$sql .= " AND dbt.fk_soc = ".$user->socid;
+				$sql .= " AND dbt.fk_soc = ".((int) $user->socid);
 			} elseif (!empty($conf->societe->enabled) && ($user->rights->societe->lire && !$user->rights->societe->client->voir)) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
@@ -752,7 +754,7 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 				$sql = "SELECT COUNT(dbt.".$dbt_keyfield.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.rowid IN (".$db->sanitize($objectid, 1).")";
-				$sql .= " AND dbt.".$dbt_keyfield." = ".$user->socid;
+				$sql .= " AND dbt.".$dbt_keyfield." = ".((int) $user->socid);
 			} elseif (!empty($conf->societe->enabled) && !$user->rights->societe->client->voir) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				if ($feature != 'ticket') {
@@ -765,15 +767,15 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 					$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 					$sql .= " AND sc.fk_soc = dbt.".$dbt_keyfield;
-					$sql .= " AND sc.fk_user = ".$user->id;
+					$sql .= " AND sc.fk_user = ".((int) $user->id);
 				} else {
 					// On ticket, the thirdparty is not mandatory, so we need a special test to accept record with no thirdparties.
 					$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 					$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = dbt.".$dbt_keyfield." AND sc.fk_user = ".$user->id;
+					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = dbt.".$dbt_keyfield." AND sc.fk_user = ".((int) $user->id);
 					$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
-					$sql .= " AND (sc.fk_user = ".$user->id." OR sc.fk_user IS NULL)";
+					$sql .= " AND (sc.fk_user = ".((int) $user->id)." OR sc.fk_user IS NULL)";
 				}
 			} elseif (!empty($conf->multicompany->enabled)) {
 				// If multicompany and internal users with all permissions, check user is in correct entity
@@ -851,7 +853,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		print $hookmanager->resPrint;
 		if (empty($reshook)) {
 			if ($user->login) {
-				print $langs->trans("CurrentLogin").': <font class="error">'.$user->login.'</font><br>';
+				print $langs->trans("CurrentLogin").': <span class="error">'.$user->login.'</span><br>';
 				print $langs->trans("ErrorForbidden2", $langs->transnoentitiesnoconv("Home"), $langs->transnoentitiesnoconv("Users"));
 			} else {
 				print $langs->trans("ErrorForbidden3");

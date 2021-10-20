@@ -143,3 +143,4 @@ AsciiToHtmlConverter=Convertitore da Ascii a HTML
 AsciiToPdfConverter=Convertitore da Ascii a PDF
 TableNotEmptyDropCanceled=Tabella non vuota. Il rilascio è stato annullato.
 ModuleBuilderNotAllowed=Il generatore di moduli è disponibile ma non è consentito all'utente.
+ImportExportProfiles=Import and export profiles

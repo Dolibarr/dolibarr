@@ -1,19 +1,19 @@
 # Dolibarr language file - en_US - hrm
 # Admin
-HRM_EMAIL_EXTERNAL_SERVICE=Email to prevent HRM external service
-Establishments=Establishments
-Establishment=Establishment
-NewEstablishment=New establishment
-DeleteEstablishment=Delete establishment
-ConfirmDeleteEstablishment=Are you sure you wish to delete this establishment?
-OpenEtablishment=Open establishment
-CloseEtablishment=Close establishment
+HRM_EMAIL_EXTERNAL_SERVICE=Электронная почта для предотвращения внешней службы HRM
+Establishments=Учреждения
+Establishment=Учреждение
+NewEstablishment=Новое заведение
+DeleteEstablishment=Удалить заведение
+ConfirmDeleteEstablishment=Вы уверены, что хотите удалить это заведение?
+OpenEtablishment=Открытое заведение
+CloseEtablishment=Закрыть заведение
 # Dictionary
-DictionaryPublicHolidays=HRM - Public holidays
-DictionaryDepartment=HRM - Department list
-DictionaryFunction=HRM - Job positions
+DictionaryPublicHolidays=Отпуск - праздничные дни
+DictionaryDepartment=HRM - Список отделов
+DictionaryFunction=HRM - Вакансии
 # Module
 Employees=Сотрудники
 Employee=Сотрудник
-NewEmployee=New employee
-ListOfEmployees=List of employees
+NewEmployee=Новый сотрудник
+ListOfEmployees=Список сотрудников

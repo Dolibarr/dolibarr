@@ -31,7 +31,7 @@ $langs->load('projects');
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$mine = $_REQUEST['mode'] == 'mine' ? 1 : 0;
+$mine = GETPOST('mode') == 'mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -44,6 +44,9 @@ $socid = 0;
 if (!$user->rights->projet->lire) {
 	accessforbidden();
 }
+
+$hookmanager->initHooks(array('projettasknote'));
+
 //$result = restrictedArea($user, 'projet', $id, '', 'task'); // TODO ameliorer la verification
 
 $object = new Task($db);
@@ -82,6 +85,12 @@ if (!empty($project_ref) && !empty($withproject)) {
 	}
 }
 
+if ($id > 0 || $ref) {
+	$object->fetch($id, $ref);
+}
+
+restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
+
 $permissionnote = ($user->rights->projet->creer || $user->rights->projet->all->creer);
 
 
@@ -89,7 +98,13 @@ $permissionnote = ($user->rights->projet->creer || $user->rights->projet->all->c
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';
+$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+}
 
 
 /*

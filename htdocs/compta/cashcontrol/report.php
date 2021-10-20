@@ -115,9 +115,9 @@ elseif ($syear && $smonth && ! $sday) $sql.= " AND dateo BETWEEN '".$db->idate(d
 elseif ($syear && $smonth && $sday)   $sql.= " AND dateo BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
 else dol_print_error('', 'Year not defined');
 // Define filter on bank account
-$sql.=" AND (b.fk_account=".$conf->global->CASHDESK_ID_BANKACCOUNT_CASH;
-$sql.=" OR b.fk_account=".$conf->global->CASHDESK_ID_BANKACCOUNT_CB;
-$sql.=" OR b.fk_account=".$conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
+$sql.=" AND (b.fk_account = ".((int) $conf->global->CASHDESK_ID_BANKACCOUNT_CASH);
+$sql.=" OR b.fk_account = ".((int) $conf->global->CASHDESK_ID_BANKACCOUNT_CB);
+$sql.=" OR b.fk_account = ".((int) $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE);
 $sql.=")";
 */
 $sql = "SELECT f.rowid as facid, f.ref, f.datef as do, pf.amount as amount, b.fk_account as bankid, cp.code";
@@ -177,7 +177,7 @@ if ($resql) {
 	$invoicetmp = new Facture($db);
 
 	print "<div style='text-align: right'><h2>";
-	print $langs->trans("InitialBankBalance").' - '.$langs->trans("Cash").' : <span class="amount">'.price($object->opening).'</span>';
+	print $langs->trans("InitialBankBalance").' - '.$langs->trans("Cash").' : <div class="inline-block amount width100">'.price($object->opening).'</div>';
 	print "</h2></div>";
 
 	print '<div class="div-table-responsive">';
@@ -200,6 +200,9 @@ if ($resql) {
 
 	$totalqty = 0;
 	$totalvat = 0;
+	$totalvatperrate = array();
+	$totallocaltax1 = 0;
+	$totallocaltax2 = 0;
 	$cachebankaccount = array();
 	$cacheinvoiceid = array();
 	$transactionspertype = array();
@@ -226,6 +229,14 @@ if ($resql) {
 			foreach ($invoicetmp->lines as $line) {
 				$totalqty += $line->qty;
 				$totalvat += $line->total_tva;
+				if ($line->tva_tx) {
+					if (empty($totalvatperrate[$line->tva_tx])) {
+						$totalvatperrate[$line->tva_tx] = 0;
+					}
+					$totalvatperrate[$line->tva_tx] += $line->total_tva;
+				}
+				$totallocaltax1 += $line->total_localtax1;
+				$totallocaltax2 += $line->total_localtax2;
 			}
 		}
 
@@ -348,35 +359,49 @@ if ($resql) {
 	print '<div style="text-align: right">';
 	print '<h2>';
 
-	print $langs->trans("Cash").' '.($transactionspertype['CASH'] ? '('.$transactionspertype['CASH'].')' : '').': <span class="amount">'.price($cash).'</span>';
+	print $langs->trans("Cash").($transactionspertype['CASH'] ? ' ('.$transactionspertype['CASH'].')' : '').' : <div class="inline-block amount width100">'.price($cash).'</div>';
 	if ($object->status == $object::STATUS_VALIDATED && $cash != $object->cash) {
-		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($object->cash).'</span>';
+		print ' <> <div class="inline-block amountremaintopay fontsizeunset">'.$langs->trans("Declared").': '.price($object->cash).'</div>';
 	}
 	print "<br>";
 
 	//print '<br>';
-	print $langs->trans("PaymentTypeCHQ").' '.($transactionspertype['CHQ'] ? '('.$transactionspertype['CHQ'].')' : '').': <span class="amount">'.price($cheque).'</span>';
+	print $langs->trans("PaymentTypeCHQ").($transactionspertype['CHQ'] ? ' ('.$transactionspertype['CHQ'].')' : '').' : <div class="inline-block amount width100">'.price($cheque).'</div>';
 	if ($object->status == $object::STATUS_VALIDATED && $cheque != $object->cheque) {
-		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($object->cheque).'</span>';
+		print ' <> <div class="inline-block amountremaintopay fontsizeunset">'.$langs->trans("Declared").' : '.price($object->cheque).'</div>';
 	}
 	print "<br>";
 
 	//print '<br>';
-	print $langs->trans("PaymentTypeCB").' '.($transactionspertype['CB'] ? '('.$transactionspertype['CB'].')' : '').': <span class="amount">'.price($bank).'</span>';
+	print $langs->trans("PaymentTypeCB").($transactionspertype['CB'] ? ' ('.$transactionspertype['CB'].')' : '').' : <div class="inline-block amount width100">'.price($bank).'</div>';
 	if ($object->status == $object::STATUS_VALIDATED && $bank != $object->card) {
-		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($object->card).'</span>';
+		print ' <> <div class="inline-block amountremaintopay fontsizeunset">'.$langs->trans("Declared").': '.price($object->card).'</div>';
 	}
 	print "<br>";
 
 	// print '<br>';
 	if ($other) {
-		print ''.$langs->trans("Other").' '.($transactionspertype['OTHER'] ? '('.$transactionspertype['OTHER'].')' : '').': <span class="amount">'.price($other)."</span>";
+		print ''.$langs->trans("Other").($transactionspertype['OTHER'] ? ' ('.$transactionspertype['OTHER'].')' : '').' : <div class="inline-block amount width100">'.price($other)."</div>";
 		print '<br>';
 	}
 
-	print $langs->trans("Total").' ('.$totalqty.' '.$langs->trans("Articles").') : <span class="amount">'.price($cash + $cheque + $bank + $other).'</span>';
-	print '<br>'.$langs->trans("TotalVAT").' : <span class="amount">'.price($totalvat).'</span>';
-	// TODO Add total localtaxes.
+	print $langs->trans("Total").' ('.$totalqty.' '.$langs->trans("Articles").') : <div class="inline-block amount width100">'.price($cash + $cheque + $bank + $other).'</div>';
+
+	print '<br>'.$langs->trans("TotalVAT").' : <div class="inline-block amount width100">'.price($totalvat).'</div>';
+
+	if ($mysoc->useLocalTax(1)) {
+		print '<br>'.$langs->trans("TotalLT1").' : <div class="inline-block amount width100">'.price($totallocaltax1).'</div>';
+	}
+	if ($mysoc->useLocalTax(1)) {
+		print '<br>'.$langs->trans("TotalLT2").' : <div class="inline-block amount width100">'.price($totallocaltax2).'</div>';
+	}
+
+	if (!empty($totalvatperrate) && is_array($totalvatperrate)) {
+		print '<br><br><div class="small inline-block">'.$langs->trans("VATRate").'</div>';
+		foreach ($totalvatperrate as $keyrate => $valuerate) {
+			print '<br><div class="small">'.$langs->trans("VATRate").' '.vatrate($keyrate, 1).' : <div class="inline-block amount width100">'.price($valuerate).'</div></div>';
+		}
+	}
 
 	print '</h2>';
 	print '</div>';

@@ -96,7 +96,7 @@ print load_fiche_titre($langs->trans("HRMArea"), '', 'hrm');
 if (!empty($setupcompanynotcomplete)) {
 	$langs->load("errors");
 	$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"));
-	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit').'">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
+	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit&token='.newToken()).'">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
 
 	llxFooter();
 	exit;
@@ -189,7 +189,7 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 	if (empty($user->rights->holiday->readall)) {
 		$sql .= ' AND x.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
 	}
-	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".((int) $socid);
 	$sql .= $db->order("x.tms", "DESC");
 	$sql .= $db->plimit($max, 0);
@@ -234,7 +234,7 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">'.$holidaystatic->getNomUrl(1).'</td>';
 				print '<td class="tdoverflowmax125">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
-				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($typeleaves[$obj->fk_type]['label']).'">'.dol_escape_htmltag($typeleaves[$obj->fk_type]['label']).'</td>';
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($langs->trans($typeleaves[$obj->fk_type]['code'])).'">'.dol_escape_htmltag($langs->trans($typeleaves[$obj->fk_type]['code'])).'</td>';
 
 				$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
 				$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
@@ -270,7 +270,7 @@ if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 	if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) {
 		$sql .= ' AND x.fk_user_author IN ('.$db->sanitize(join(',', $childids)).')';
 	}
-	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".((int) $socid);
 	$sql .= $db->order("x.tms", "DESC");
 	$sql .= $db->plimit($max, 0);
@@ -310,11 +310,11 @@ if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 				$userstatic->photo = $obj->photo;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowraponall">'.$expensereportstatic->getNomUrl(1).'</td>';
+				print '<td class="tdoverflowmax200">'.$expensereportstatic->getNomUrl(1).'</td>';
 				print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1).'</td>';
-				print '<td class="right">'.price($obj->total_ttc).'</td>';
+				print '<td class="right amount">'.price($obj->total_ttc).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
-				print '<td class="right nowrap" width="16">'.$expensereportstatic->LibStatut($obj->status, 3).'</td>';
+				print '<td class="right nowraponall" width="16">'.$expensereportstatic->LibStatut($obj->status, 3).'</td>';
 				print '</tr>';
 
 				$i++;
@@ -344,7 +344,7 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 	}
 	$sql .= " WHERE rc.entity IN (".getEntity($staticrecruitmentcandidature->element).")";
 	if ($conf->societe->enabled && !$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND rp.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND rp.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND rp.fk_soc = $socid";
@@ -381,9 +381,9 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 				$staticrecruitmentjobposition->label = $objp->label;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">'.$staticrecruitmentcandidature->getNomUrl(1, '').'</td>';
+				print '<td class="nowraponall">'.$staticrecruitmentcandidature->getNomUrl(1, '').'</td>';
 				print '<td class="tdoverflowmax150">'.$staticrecruitmentcandidature->getFullName($langs).'</td>';
-				print '<td class="nowrap">'.$staticrecruitmentjobposition->getNomUrl(1).'</td>';
+				print '<td class="nowraponall">'.$staticrecruitmentjobposition->getNomUrl(1).'</td>';
 				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms), 'day').'</td>';
 				print '<td class="right nowrap" width="16">';
 				print $staticrecruitmentcandidature->getLibStatut(3);

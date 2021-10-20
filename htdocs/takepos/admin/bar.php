@@ -200,7 +200,7 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT) {
 
 	print '<br>';
 
-	print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+	print $form->buttonsSaveCancel("Save", '');
 }
 
 if (!empty($conf->global->TAKEPOS_BAR_RESTAURANT)) {
@@ -210,7 +210,7 @@ if (!empty($conf->global->TAKEPOS_BAR_RESTAURANT)) {
 		print '<br>';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("URL").'</td><td class="right">'.$langs->trans("QR").'</td>';
+		print '<td>'.$langs->trans("URL").' - '.$langs->trans("CustomerMenu").'</td><td class="right">'.$langs->trans("QR").'</td>';
 		print "</tr>\n";
 		print '<tr class="oddeven value"><td>';
 		print '<a target="_blank" href="'.$urlwithroot.'/takepos/public/menu.php">'.$urlwithroot.'/takepos/public/menu.php</a>';
@@ -225,7 +225,7 @@ if (!empty($conf->global->TAKEPOS_BAR_RESTAURANT)) {
 		print '<br>';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Table").'</td><td>'.$langs->trans("URL").'</td><td class="right">'.$langs->trans("QR").'</td>';
+		print '<td>'.$langs->trans("Table").'</td><td>'.$langs->trans("URL").' - '.$langs->trans("AutoOrder").'</td><td class="right">'.$langs->trans("QR").'</td>';
 		print "</tr>\n";
 
 		//global $dolibarr_main_url_root;

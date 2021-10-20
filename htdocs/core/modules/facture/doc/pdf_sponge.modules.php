@@ -257,7 +257,7 @@ class pdf_sponge extends ModelePDFFactures
 					$pdir[0] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/";
 					$pdir[1] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/';
 				} else {
-					$pdir[0] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/'; // default
+					$pdir[0] = get_exdir(0, 0, 0, 0, $objphoto, 'product'); // default
 					$pdir[1] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/"; // alternative
 				}
 
@@ -766,7 +766,7 @@ class pdf_sponge extends ModelePDFFactures
 					if (!empty($object->lines[$i]->array_options)) {
 						foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue) {
 							if ($this->getColumnStatus($extrafieldColKey)) {
-								$extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey);
+								$extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey, $outputlangs);
 								$this->printStdColumnContent($pdf, $curY, $extrafieldColKey, $extrafieldValue);
 								$nexY = max($pdf->GetY(), $nexY);
 							}
@@ -906,10 +906,10 @@ class pdf_sponge extends ModelePDFFactures
 				}
 
 				// Display infos area
-				$posy = $this->drawInfoTable($pdf, $object, $bottomlasttab, $outputlangs);
+				$posy = $this->drawInfoTable($pdf, $object, $bottomlasttab, $outputlangs, $outputlangsbis);
 
 				// Display total zone
-				$posy = $this->drawTotalTable($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
+				$posy = $this->drawTotalTable($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs, $outputlangsbis);
 
 				// Display payment area
 				if (($deja_regle || $amount_credit_notes_included || $amount_deposits_included) && empty($conf->global->INVOICE_NO_PAYMENT_DETAILS)) {
@@ -1015,7 +1015,7 @@ class pdf_sponge extends ModelePDFFactures
 		$sql .= " re.description, re.fk_facture_source,";
 		$sql .= " f.type, f.datef";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re, ".MAIN_DB_PREFIX."facture as f";
-		$sql .= " WHERE re.fk_facture_source = f.rowid AND re.fk_facture = ".$object->id;
+		$sql .= " WHERE re.fk_facture_source = f.rowid AND re.fk_facture = ".((int) $object->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -1061,7 +1061,7 @@ class pdf_sponge extends ModelePDFFactures
 		$sql .= " cp.code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
-		$sql .= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = ".$object->id;
+		$sql .= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = ".((int) $object->id);
 		//$sql.= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = 1";
 		$sql .= " ORDER BY p.datep";
 
@@ -1104,9 +1104,10 @@ class pdf_sponge extends ModelePDFFactures
 	 *   @param		Facture		$object			Object to show
 	 *   @param		int			$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
+	 *   @param  	Translate	$outputlangsbis	Object lang for output bis
 	 *   @return	int							Pos y
 	 */
-	protected function drawInfoTable(&$pdf, $object, $posy, $outputlangs)
+	protected function drawInfoTable(&$pdf, $object, $posy, $outputlangs, $outputlangsbis)
 	{
 		global $conf, $mysoc;
 
@@ -1118,7 +1119,11 @@ class pdf_sponge extends ModelePDFFactures
 		if ($this->emetteur->country_code == 'FR' && empty($mysoc->tva_assuj)) {
 			$pdf->SetFont('', 'B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
+			if ($mysoc->forme_juridique_code == 92) {
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoiceAsso"), 0, 'L', 0);
+			} else {
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
+			}
 
 			$posy = $pdf->GetY() + 4;
 		}
@@ -1138,7 +1143,7 @@ class pdf_sponge extends ModelePDFFactures
 			$lib_condition_paiement = str_replace('\n', "\n", $lib_condition_paiement);
 			$pdf->MultiCell(67, 4, $lib_condition_paiement, 0, 'L');
 
-			$posy = $pdf->GetY() + 3;
+			$posy = $pdf->GetY() + 3; // We need spaces for 2 lines payment conditions
 		}
 
 		if ($object->type != 2) {
@@ -1163,7 +1168,7 @@ class pdf_sponge extends ModelePDFFactures
 			}
 
 			// Show payment mode
-			if ($object->mode_reglement_code
+			if (!empty($object->mode_reglement_code)
 			&& $object->mode_reglement_code != 'CHQ'
 			&& $object->mode_reglement_code != 'VIR') {
 				$pdf->SetFont('', 'B', $default_font_size - 2);
@@ -1176,9 +1181,25 @@ class pdf_sponge extends ModelePDFFactures
 				$lib_mode_reg = $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) != ('PaymentType'.$object->mode_reglement_code) ? $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) : $outputlangs->convToOutputCharset($object->mode_reglement);
 				$pdf->MultiCell(80, 5, $lib_mode_reg, 0, 'L');
 
-				// Show online payment link
-				$useonlinepayment = ((!empty($conf->paypal->enabled) || !empty($conf->stripe->enabled) || !empty($conf->paybox->enabled)) && !empty($conf->global->PDF_SHOW_LINK_TO_ONLINE_PAYMENT));
-				if (($object->mode_reglement_code == 'CB' || $object->mode_reglement_code == 'VAD') && $object->statut != Facture::STATUS_DRAFT && $useonlinepayment) {
+				$posy = $pdf->GetY();
+			}
+
+			// Show online payment link
+			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CB' || $object->mode_reglement_code == 'VAD') {
+				$useonlinepayment = 0;
+				if (!empty($conf->global->PDF_SHOW_LINK_TO_ONLINE_PAYMENT)) {
+					if (!empty($conf->paypal->enabled)) {
+						$useonlinepayment++;
+					}
+					if (!empty($conf->stripe->enabled)) {
+						$useonlinepayment++;
+					}
+					if (!empty($conf->paybox->enabled)) {
+						$useonlinepayment++;
+					}
+				}
+
+				if ($object->statut != Facture::STATUS_DRAFT && $useonlinepayment) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 					global $langs;
 
@@ -1187,10 +1208,11 @@ class pdf_sponge extends ModelePDFFactures
 					$paiement_url = getOnlinePaymentUrl('', 'invoice', $object->ref, '', '', '');
 					$linktopay = $langs->trans("ToOfferALinkForOnlinePayment", $servicename).' <a href="'.$paiement_url.'">'.$outputlangs->transnoentities("ClickHere").'</a>';
 
-					$pdf->writeHTMLCell(80, 10, '', '', dol_htmlentitiesbr($linktopay), 0, 1);
+					$pdf->SetXY($this->marge_gauche, $posy);
+					$pdf->writeHTMLCell(80, 5, '', '', dol_htmlentitiesbr($linktopay), 0, 1);
 				}
 
-				$posy = $pdf->GetY() + 2;
+				$posy = $pdf->GetY() + 1;
 			}
 
 			// Show payment mode CHQ
@@ -1263,9 +1285,10 @@ class pdf_sponge extends ModelePDFFactures
 	 *	@param  int			$deja_regle     Amount already paid (in the currency of invoice)
 	 *	@param	int			$posy			Position depart
 	 *	@param	Translate	$outputlangs	Objet langs
+	 *  @param  Translate	$outputlangsbis	Object lang for output bis
 	 *	@return int							Position pour suite
 	 */
-	protected function drawTotalTable(&$pdf, $object, $deja_regle, $posy, $outputlangs)
+	protected function drawTotalTable(&$pdf, $object, $deja_regle, $posy, $outputlangs, $outputlangsbis)
 	{
 		global $conf, $mysoc, $hookmanager;
 
@@ -1275,14 +1298,6 @@ class pdf_sponge extends ModelePDFFactures
 		}
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
-
-		$outputlangsbis = null;
-		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
-			$outputlangsbis = new Translate('', $conf);
-			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
-			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "propal"));
-			$default_font_size--;
-		}
 
 		$tab2_top = $posy;
 		$tab2_hl = 4;
@@ -1353,7 +1368,7 @@ class pdf_sponge extends ModelePDFFactures
 					$posy = $pdf->GetY();
 				}
 
-				// cumul TVA précédent
+				// Cumulate preceding VAT
 				$index++;
 				$pdf->SetFillColor(255, 255, 255);
 				$pdf->SetXY($col1x, $posy);
@@ -1427,7 +1442,7 @@ class pdf_sponge extends ModelePDFFactures
 		// Total remise
 		$total_line_remise = 0;
 		foreach ($object->lines as $i => $line) {
-			$total_line_remise += pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, 2); // TODO: add this methode to core/lib/pdf.lib
+			$total_line_remise += pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, 2); // TODO: add this method to core/lib/pdf.lib
 			// Gestion remise sous forme de ligne négative
 			if ($line->total_ht < 0) {
 				$total_line_remise += -$line->total_ht;
@@ -1458,7 +1473,7 @@ class pdf_sponge extends ModelePDFFactures
 		// Total HT
 		$pdf->SetFillColor(255, 255, 255);
 		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalHT") : ''), 0, 'L', 1);
+		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities(empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) ? "TotalHT" : "Total").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities(empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) ? "TotalHT" : "Total") : ''), 0, 'L', 1);
 
 		$total_ht = ((!empty($conf->multicurrency->enabled) && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
 		$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
@@ -1939,10 +1954,17 @@ class pdf_sponge extends ModelePDFFactures
 				$title .= $outputlangsbis->transnoentities("InvoiceProForma");
 			}
 		}
+		$title .= ' '.$outputlangs->convToOutputCharset($object->ref);
+		if ($object->statut == $object::STATUS_DRAFT) {
+			$pdf->SetTextColor(128, 0, 0);
+			$title .= ' - '.$outputlangs->transnoentities("NotValidated");
+		}
+
 		$pdf->MultiCell($w, 3, $title, '', 'R');
 
 		$pdf->SetFont('', 'B', $default_font_size);
 
+		/*
 		$posy += 5;
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
@@ -1951,9 +1973,9 @@ class pdf_sponge extends ModelePDFFactures
 			$pdf->SetTextColor(128, 0, 0);
 			$textref .= ' - '.$outputlangs->transnoentities("NotValidated");
 		}
-		$pdf->MultiCell($w, 4, $textref, '', 'R');
+		$pdf->MultiCell($w, 4, $textref, '', 'R');*/
 
-		$posy += 1;
+		$posy += 3;
 		$pdf->SetFont('', '', $default_font_size - 2);
 
 		if ($object->ref_client) {
@@ -2041,7 +2063,7 @@ class pdf_sponge extends ModelePDFFactures
 			$pdf->MultiCell($w, 3, $title." : ".dol_print_date($object->date_lim_reglement, "day", false, $outputlangs, true), '', 'R');
 		}
 
-		if ($object->thirdparty->code_client) {
+		if (empty($conf->global->MAIN_PDF_HIDE_CUSTOMER_CODE) && $object->thirdparty->code_client) {
 			$posy += 3;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
@@ -2088,20 +2110,24 @@ class pdf_sponge extends ModelePDFFactures
 
 
 			// Show sender frame
-			$pdf->SetTextColor(0, 0, 0);
-			$pdf->SetFont('', '', $default_font_size - 2);
-			$pdf->SetXY($posx, $posy - 5);
-			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillFrom"), 0, $ltrdirection);
-			$pdf->SetXY($posx, $posy);
-			$pdf->SetFillColor(230, 230, 230);
-			$pdf->MultiCell($widthrecbox, $hautcadre, "", 0, 'R', 1);
-			$pdf->SetTextColor(0, 0, 60);
+			if (empty($conf->global->MAIN_PDF_NO_SENDER_FRAME)) {
+				$pdf->SetTextColor(0, 0, 0);
+				$pdf->SetFont('', '', $default_font_size - 2);
+				$pdf->SetXY($posx, $posy - 5);
+				$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillFrom"), 0, $ltrdirection);
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetFillColor(230, 230, 230);
+				$pdf->MultiCell($widthrecbox, $hautcadre, "", 0, 'R', 1);
+				$pdf->SetTextColor(0, 0, 60);
+			}
 
 			// Show sender name
-			$pdf->SetXY($posx + 2, $posy + 3);
-			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->MultiCell($widthrecbox - 2, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, $ltrdirection);
-			$posy = $pdf->getY();
+			if (empty($conf->global->MAIN_PDF_HIDE_SENDER_NAME)) {
+				$pdf->SetXY($posx + 2, $posy + 3);
+				$pdf->SetFont('', 'B', $default_font_size);
+				$pdf->MultiCell($widthrecbox - 2, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, $ltrdirection);
+				$posy = $pdf->getY();
+			}
 
 			// Show sender information
 			$pdf->SetXY($posx + 2, $posy);
@@ -2117,7 +2143,7 @@ class pdf_sponge extends ModelePDFFactures
 			}
 
 			// Recipient name
-			if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
+			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;
@@ -2125,7 +2151,7 @@ class pdf_sponge extends ModelePDFFactures
 
 			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$mode =  'target';
+			$mode = 'target';
 			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, $mode, $object);
 
 			// Show recipient
@@ -2141,11 +2167,13 @@ class pdf_sponge extends ModelePDFFactures
 			}
 
 			// Show recipient frame
-			$pdf->SetTextColor(0, 0, 0);
-			$pdf->SetFont('', '', $default_font_size - 2);
-			$pdf->SetXY($posx + 2, $posy - 5);
-			$pdf->MultiCell($widthrecbox - 2, 5, $outputlangs->transnoentities("BillTo"), 0, $ltrdirection);
-			$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+			if (empty($conf->global->MAIN_PDF_NO_RECIPENT_FRAME)) {
+				$pdf->SetTextColor(0, 0, 0);
+				$pdf->SetFont('', '', $default_font_size - 2);
+				$pdf->SetXY($posx + 2, $posy - 5);
+				$pdf->MultiCell($widthrecbox - 2, 5, $outputlangs->transnoentities("BillTo"), 0, $ltrdirection);
+				$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+			}
 
 			// Show recipient name
 			$pdf->SetXY($posx + 2, $posy + 3);

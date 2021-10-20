@@ -65,7 +65,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
 }
 $sql .= " WHERE cf.fk_soc = s.rowid ";
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND sc.fk_user = ".$user->id;
+	$sql .= " AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " AND cf.entity = ".$conf->entity;
 $sql .= " GROUP BY cf.fk_statut";
@@ -111,12 +111,12 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 	}
 	$sql .= " WHERE cf.fk_soc = s.rowid";
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND sc.fk_user = ".$user->id;
+		$sql .= " AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " AND cf.entity = ".$conf->entity;
 	$sql .= " AND cf.fk_statut = 0";
 	if ($socid) {
-		$sql .= " AND cf.fk_soc = ".$socid;
+		$sql .= " AND cf.fk_soc = ".((int) $socid);
 	}
 
 	$resql = $db->query($sql);
@@ -167,7 +167,7 @@ if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_S
 	}
 	$sql .= " WHERE s.rowid = ff.fk_soc";
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND sc.fk_user = ".$user->id;
+		$sql .= " AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " AND ff.entity = ".$conf->entity;
 	$sql .= " AND ff.fk_statut = 0";
@@ -229,9 +229,17 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  * List last modified supliers
  */
 $max = 10;
-$sql = "SELECT s.rowid as socid, s.nom as name, s.town, s.datec, s.tms, s.prefix_comm, s.code_fournisseur, s.code_compta_fournisseur";
+$sql = "SELECT s.rowid as socid, s.nom as name, s.town, s.datec, s.tms, s.prefix_comm, s.code_fournisseur";
+if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+	$sql .= ", spe.accountancy_code_supplier as code_compta_fournisseur";
+} else {
+	$sql .= ", s.code_compta_fournisseur";
+}
 $sql .= ", st.libelle as stcomm";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
+}
 $sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -240,7 +248,7 @@ $sql .= " WHERE s.fk_stcomm = st.id";
 $sql .= " AND s.fournisseur = 1";
 $sql .= " AND s.entity IN (".getEntity('societe').")";
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
 	$sql .= " AND s.rowid = ".((int) $socid);

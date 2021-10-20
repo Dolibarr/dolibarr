@@ -89,4 +89,11 @@ IdProposal=Proposal ID
 IdProduct=Product ID
 PrParentLine=Proposal Parent Line
 LineBuyPriceHT=Buy Price Amount net of tax for line
-
+SignPropal=Sign proposal
+RefusePropal=Refuse proposal
+Sign=Sign
+PropalAlreadyRefused=Proposal already refused
+PropalAlreadySigned=Proposal already signed
+PropalSigned=Proposal signed
+PropalRefused=Proposal refused
+ConfirmRefusePropal=Are you sure you want to refuse this commercial proposal?

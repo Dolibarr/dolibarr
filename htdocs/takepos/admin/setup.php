@@ -196,7 +196,7 @@ foreach ($dirmodels as $reldir) {
 						if ($conf->global->TAKEPOS_REF_ADDON == "$file") {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setrefmod&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setrefmod&token='.newToken().'&value='.urlencode($file).'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}
@@ -474,7 +474,7 @@ if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
 
 print '<br>';
 
-print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print "</form>\n";
 

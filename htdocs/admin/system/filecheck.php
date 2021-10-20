@@ -79,7 +79,12 @@ $file_list = array('missing' => array(), 'updated' => array());
 
 // Local file to compare to
 $xmlshortfile = dol_sanitizeFileName(GETPOST('xmlshortfile', 'alpha') ? GETPOST('xmlshortfile', 'alpha') : 'filelist-'.DOL_VERSION.(empty($conf->global->MAIN_FILECHECK_LOCAL_SUFFIX) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml'.(empty($conf->global->MAIN_FILECHECK_LOCAL_EXT) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_EXT));
+
 $xmlfile = DOL_DOCUMENT_ROOT.'/install/'.$xmlshortfile;
+if (!preg_match('/\.zip$/i', $xmlfile) && dol_is_file($xmlfile.'.zip')) {
+	$xmlfile = $xmlfile.'.zip';
+}
+
 // Remote file to compare to
 $xmlremote = GETPOST('xmlremote', 'alphanohtml');
 if (empty($xmlremote) && !empty($conf->global->MAIN_FILECHECK_URL)) {
@@ -150,6 +155,10 @@ if (GETPOST('target') == 'local') {
 			}
 		}
 		$xml = simplexml_load_file($xmlfile);
+		if ($xml === false) {
+			print '<div class="warning">'.$langs->trans('XmlCorrupted').': '.$xmlfile.'</span>';
+			$error++;
+		}
 	} else {
 		print '<div class="warning">'.$langs->trans('XmlNotFound').': '.$xmlfile.'</span>';
 		$error++;
@@ -162,7 +171,7 @@ if (GETPOST('target') == 'remote') {
 	if (!$xmlarray['curl_error_no'] && $xmlarray['http_code'] != '400' && $xmlarray['http_code'] != '404') {
 		$xmlfile = $xmlarray['content'];
 		//print "xmlfilestart".$xmlfile."xmlfileend";
-		$xml = simplexml_load_string($xmlfile);
+		$xml = simplexml_load_string($xmlfile, 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
 	} else {
 		$errormsg = $langs->trans('XmlNotFound').': '.$xmlremote.' - '.$xmlarray['http_code'].(($xmlarray['http_code'] == 400 && $xmlarray['content']) ? ' '.$xmlarray['content'] : '').' '.$xmlarray['curl_error_no'].' '.$xmlarray['curl_error_msg'];
 		setEventMessages($errormsg, null, 'errors');

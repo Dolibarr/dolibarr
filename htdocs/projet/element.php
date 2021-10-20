@@ -36,6 +36,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+if (!empty($conf->stock->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+}
 if (!empty($conf->propal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
@@ -1030,7 +1033,7 @@ foreach ($listofreferent as $key => $value) {
 				$addform .= '<input type="hidden" name="dateerfc" value="'.dol_print_date($datee, 'dayhourrfc').'">';
 				$addform .= '<table><tr><td><span class="hideonsmartphone opacitymedium">'.$langs->trans("SelectElement").'</span></td>';
 				$addform .= '<td>'.$selectList.'</td>';
-				$addform .= '<td><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("LinkToElementShort")).'"></td>';
+				$addform .= '<td><input type="submit" class="button smallpaddingimp" value="'.dol_escape_htmltag($langs->trans("LinkToElementShort")).'"></td>';
 				$addform .= '</tr></table>';
 				$addform .= '</form>';
 				$addform .= '</div>';
@@ -1039,7 +1042,7 @@ foreach ($listofreferent as $key => $value) {
 		if (empty($conf->global->PROJECT_CREATE_ON_OVERVIEW_DISABLED) && $urlnew) {
 			$addform .= '<div class="inline-block valignmiddle">';
 			if ($testnew) {
-				$addform .= '<a class="buttonxxx" href="'.$urlnew.'"><span class="valignmiddle text-plus-circle hideonsmartphone">'.($buttonnew ? $langs->trans($buttonnew) : $langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+				$addform .= '<a class="buttonxxx marginleftonly" href="'.$urlnew.'"><span class="valignmiddle text-plus-circle hideonsmartphone">'.($buttonnew ? $langs->trans($buttonnew) : $langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			} elseif (empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
 				$addform .= '<a class="buttonxxx buttonRefused" disabled="disabled" href="#"><span class="valignmiddle text-plus-circle hideonsmartphone">'.($buttonnew ? $langs->trans($buttonnew) : $langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			}

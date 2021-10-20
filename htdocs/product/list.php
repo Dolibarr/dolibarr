@@ -394,7 +394,7 @@ if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTE
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -950,7 +950,7 @@ if ($resql) {
 	}
 
 	// Multiprice
-	if ($conf->global->PRODUIT_MULTIPRICES) {
+	if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 		foreach ($arraypricelevel as $key => $value) {
 			if (!empty($arrayfields['p.sellprice'.$key]['checked'])) {
 				print '<td class="liste_titre right">';
@@ -1023,11 +1023,15 @@ if ($resql) {
 	}
 	// Country
 	if (!empty($arrayfields['p.fk_country']['checked'])) {
-		print '<td class="liste_titre center">'.$form->select_country($search_country, 'search_country', '', 0).'</td>';
+		print '<td class="liste_titre center">';
+		print $form->select_country($search_country, 'search_country', '', 0);
+		print '</td>';
 	}
 	// State
 	if (!empty($arrayfields['p.fk_state']['checked'])) {
-		print '<td class="liste_titre center">'.$formcompany->select_state($search_state, $search_country).'</td>';
+		print '<td class="liste_titre center">';
+		print $formcompany->select_state($search_state, $search_country);
+		print '</td>';
 	}
 	// Accountancy code sell
 	if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_sell']['checked'])) {
@@ -1152,7 +1156,7 @@ if ($resql) {
 	}
 
 	// Multiprices
-	if ($conf->global->PRODUIT_MULTIPRICES) {
+	if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 		foreach ($arraypricelevel as $key => $value) {
 			if (!empty($arrayfields['p.sellprice'.$key]['checked'])) {
 				print_liste_field_titre($arrayfields['p.sellprice'.$key]['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
@@ -1249,8 +1253,8 @@ if ($resql) {
 		if (!empty($conf->global->MAIN_MULTILANGS)) {  // If multilang is enabled
 			$sql = "SELECT label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
-			$sql .= " WHERE fk_product=".$obj->rowid;
-			$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
+			$sql .= " WHERE fk_product = ".((int) $obj->rowid);
+			$sql .= " AND lang = '".$db->escape($langs->getDefaultLang())."'";
 			$sql .= " LIMIT 1";
 
 			$result = $db->query($sql);

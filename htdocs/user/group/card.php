@@ -96,7 +96,7 @@ if (empty($reshook)) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = dol_buildpath('/user/group/card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+				$backtopage = DOL_URL_ROOT.'/user/group/card.php?id='.($id > 0 ? $id : '__ID__');
 			}
 		}
 	}
@@ -380,11 +380,11 @@ if ($action == 'create') {
 			}
 
 			if ($caneditperms) {
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit&amp;token='.newToken().'">'.$langs->trans("Modify").'</a>';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 			}
 
 			if ($candisableperms) {
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&amp;id='.$object->id.'&amp;token='.newToken().'">'.$langs->trans("DeleteGroup").'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("DeleteGroup").'</a>';
 			}
 
 			print "</div>\n";
@@ -415,10 +415,10 @@ if ($action == 'create') {
 					print '<table class="noborder centpercent">'."\n";
 					print '<tr class="liste_titre"><td class="titlefield liste_titre">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
 					print '<td class="liste_titre">';
-					print $form->select_dolusers('', 'user', 1, $exclude, 0, '', '', $object->entity, 0, 0, '', 0, '', 'maxwidth300');
+					print $form->select_dolusers('', 'user', 1, $exclude, 0, '', '', $object->entity, 0, 0, '', 0, '', 'minwidth200 maxwidth500');
 					print ' &nbsp; ';
 					print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
-					print '<input type="submit" class="button buttongen" value="'.$langs->trans("Add").'">';
+					print '<input type="submit" class="button buttongen button-add" value="'.$langs->trans("Add").'">';
 					print '</td></tr>'."\n";
 					print '</table></form>'."\n";
 					print '<br>';
@@ -428,6 +428,7 @@ if ($action == 'create') {
 				 * Group members
 				 */
 
+				print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre">';
 				print '<td class="liste_titre">'.$langs->trans("Login").'</td>';
@@ -440,7 +441,7 @@ if ($action == 'create') {
 				if (!empty($object->members)) {
 					foreach ($object->members as $useringroup) {
 						print '<tr class="oddeven">';
-						print '<td>';
+						print '<td class="tdoverflowmax150">';
 						print $useringroup->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
 						if ($useringroup->admin && !$useringroup->entity) {
 							print img_picto($langs->trans("SuperAdministrator"), 'redstar');
@@ -465,6 +466,7 @@ if ($action == 'create') {
 					print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 				}
 				print "</table>";
+				print '</div>';
 			}
 
 			print "<br>";
@@ -533,9 +535,7 @@ if ($action == 'create') {
 
 			print dol_get_fiche_end();
 
-			print '<div class="center"><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-			print ' &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-			print '</div>';
+			print $form->buttonsSaveCancel();
 
 			print '</form>';
 		}

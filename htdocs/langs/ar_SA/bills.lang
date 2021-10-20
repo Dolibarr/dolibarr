@@ -259,6 +259,7 @@ DateMaxPayment=السداد المستحق في
 DateInvoice=تاريخ الفاتورة
 DatePointOfTax=Point of tax
 NoInvoice=لا فاتورة
+NoOpenInvoice=No open invoice
 ClassifyBill=صنف كفاتورة
 SupplierBillsToPay=فواتير المورد الغير مسددة
 CustomerBillsUnpaid=فواتير العملاء غير المسددة
@@ -589,3 +590,4 @@ FacParentLine=أصل سطر الفاتورة
 SituationTotalRayToRest=ما تبقى للدفع بدون ضريبة
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=إجمالي التقدم %d %%
+SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s

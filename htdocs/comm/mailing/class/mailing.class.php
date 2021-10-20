@@ -208,6 +208,12 @@ class Mailing extends CommonObject
 	{
 		global $conf, $langs;
 
+		// Check properties
+		if ($this->body === 'InvalidHTMLString') {
+			$this->error = 'InvalidHTMLString';
+			return -1;
+		}
+
 		$this->db->begin();
 
 		$this->title = trim($this->title);
@@ -222,7 +228,7 @@ class Mailing extends CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing";
 		$sql .= " (date_creat, fk_user_creat, entity)";
-		$sql .= " VALUES ('".$this->db->idate($now)."', ".$user->id.", ".$conf->entity.")";
+		$sql .= " VALUES ('".$this->db->idate($now)."', ".((int) $user->id).", ".((int) $conf->entity).")";
 
 		if (!$this->title) {
 			$this->title = $langs->trans("NoTitle");
@@ -257,6 +263,12 @@ class Mailing extends CommonObject
 	 */
 	public function update($user)
 	{
+		// Check properties
+		if ($this->body === 'InvalidHTMLString') {
+			$this->error = 'InvalidHTMLString';
+			return -1;
+		}
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
 		$sql .= " SET titre = '".$this->db->escape($this->title)."'";
 		$sql .= ", sujet = '".$this->db->escape($this->sujet)."'";
@@ -478,7 +490,7 @@ class Mailing extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
 		$sql .= " SET statut = 1, date_valid = '".$this->db->idate($now)."', fk_user_valid=".$user->id;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog("Mailing::valid", LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -543,7 +555,7 @@ class Mailing extends CommonObject
 	{
 		// phpcs:enable
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles";
-		$sql .= " WHERE fk_mailing = ".$this->id;
+		$sql .= " WHERE fk_mailing = ".((int) $this->id);
 
 		dol_syslog("Mailing::delete_targets", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -570,7 +582,7 @@ class Mailing extends CommonObject
 		// phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 		$sql .= " SET statut = 0";
-		$sql .= " WHERE fk_mailing = ".$this->id;
+		$sql .= " WHERE fk_mailing = ".((int) $this->id);
 
 		dol_syslog("Mailing::reset_targets_status", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -592,7 +604,7 @@ class Mailing extends CommonObject
 	public function countNbOfTargets($mode)
 	{
 		$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."mailing_cibles";
-		$sql .= " WHERE fk_mailing = ".$this->id;
+		$sql .= " WHERE fk_mailing = ".((int) $this->id);
 		if ($mode == 'alreadysent') {
 			$sql .= " AND statut <> 0";
 		} elseif ($mode == 'alreadysentok') {
@@ -626,7 +638,7 @@ class Mailing extends CommonObject
 	public function refreshNbOfTargets()
 	{
 		$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."mailing_cibles";
-		$sql .= " WHERE fk_mailing = ".$this->id;
+		$sql .= " WHERE fk_mailing = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -635,7 +647,7 @@ class Mailing extends CommonObject
 				$nbforupdate = $obj->nb;
 
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.'mailing SET nbemail = '.((int) $nbforupdate);
-				$sql .= ' WHERE rowid = '.$this->id;
+				$sql .= ' WHERE rowid = '.((int) $this->id);
 
 				$resqlupdate = $this->db->query($sql);
 				if (! $resqlupdate) {
@@ -764,8 +776,8 @@ class Mailing extends CommonObject
 		global $langs;
 		$langs->load("mailing");
 
-		$labelStatus = $langs->trans($this->statuts[$status]);
-		$labelStatusShort = $langs->trans($this->statuts[$status]);
+		$labelStatus = $langs->transnoentitiesnoconv($this->statuts[$status]);
+		$labelStatusShort = $langs->transnoentitiesnoconv($this->statuts[$status]);
 
 		$statusType = 'status'.$status;
 		if ($status == 2) {
@@ -796,16 +808,16 @@ class Mailing extends CommonObject
 		$labelStatus = array();
 		$labelStatusShort = array();
 
-		$labelStatus[-1] = $langs->trans('MailingStatusError');
-		$labelStatus[0] = $langs->trans('MailingStatusNotSent');
-		$labelStatus[1] = $langs->trans('MailingStatusSent');
-		$labelStatus[2] = $langs->trans('MailingStatusRead');
-		$labelStatus[3] = $langs->trans('MailingStatusNotContact');
-		$labelStatusShort[-1] = $langs->trans('MailingStatusError');
-		$labelStatusShort[0] = $langs->trans('MailingStatusNotSent');
-		$labelStatusShort[1] = $langs->trans('MailingStatusSent');
-		$labelStatusShort[2] = $langs->trans('MailingStatusRead');
-		$labelStatusShort[3] = $langs->trans('MailingStatusNotContact');
+		$labelStatus[-1] = $langs->transnoentitiesnoconv('MailingStatusError');
+		$labelStatus[0] = $langs->transnoentitiesnoconv('MailingStatusNotSent');
+		$labelStatus[1] = $langs->transnoentitiesnoconv('MailingStatusSent');
+		$labelStatus[2] = $langs->transnoentitiesnoconv('MailingStatusRead');
+		$labelStatus[3] = $langs->transnoentitiesnoconv('MailingStatusNotContact');
+		$labelStatusShort[-1] = $langs->transnoentitiesnoconv('MailingStatusError');
+		$labelStatusShort[0] = $langs->transnoentitiesnoconv('MailingStatusNotSent');
+		$labelStatusShort[1] = $langs->transnoentitiesnoconv('MailingStatusSent');
+		$labelStatusShort[2] = $langs->transnoentitiesnoconv('MailingStatusRead');
+		$labelStatusShort[3] = $langs->transnoentitiesnoconv('MailingStatusNotContact');
 
 		$statusType = 'status'.$status;
 		if ($status == -1) {

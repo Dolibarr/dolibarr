@@ -37,9 +37,9 @@ create table llx_societe
   status            	   tinyint 		  DEFAULT 1,			        -- cessation d'activité ( 1 -- en activité, 0 -- cessation d'activité)
 
   code_client              varchar(24),                         		-- code client
-  code_fournisseur         varchar(24),                         		-- code founisseur
-  code_compta              varchar(24),                         		-- code compta client
-  code_compta_fournisseur  varchar(24),                         		-- code compta founisseur
+  code_fournisseur         varchar(24),                         		-- code fournisseur
+  code_compta              varchar(24),                         		-- customer accountancy auxiliary account
+  code_compta_fournisseur  varchar(24),                         		-- supplier accountancy auxiliary account
   address                  varchar(255),                        		-- company address
   zip                      varchar(25),                         		-- zipcode
   town                     varchar(50),                         		-- town
@@ -99,9 +99,9 @@ create table llx_societe
   fk_shipping_method       integer,                                     -- preferred shipping method id
   tva_assuj                tinyint        DEFAULT 1,	        		-- assujeti ou non a la TVA
   localtax1_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 1
-  localtax1_value 		   double(6,3),
+  localtax1_value 		   double(7,4),
   localtax2_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 2
-  localtax2_value 		   double(6,3),
+  localtax2_value 		   double(7,4),
   barcode                  varchar(180),                        		-- barcode
   fk_barcode_type          integer NULL   DEFAULT 0,                    -- barcode type
   price_level              integer NULL,                        		-- level of price for multiprices

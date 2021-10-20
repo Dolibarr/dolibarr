@@ -240,14 +240,12 @@ class pdf_standard_myobject extends ModelePDFMyObject
 			{
 				if (empty($object->lines[$i]->fk_product)) continue;
 
-				$objphoto->fetch($object->lines[$i]->fk_product);
 				//var_dump($objphoto->ref);exit;
-				if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
-				{
+				if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
 					$pdir[0] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/";
 					$pdir[1] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/';
 				} else {
-					$pdir[0] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/'; // default
+					$pdir[0] = get_exdir(0, 0, 0, 0, $objphoto, 'product'); // default
 					$pdir[1] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/"; // alternative
 				}
 
@@ -647,7 +645,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 					if (!empty($object->lines[$i]->array_options)) {
 						foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue) {
 							if ($this->getColumnStatus($extrafieldColKey)) {
-								$extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey);
+								$extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey, $outputlangs);
 								$this->printStdColumnContent($pdf, $curY, $extrafieldColKey, $extrafieldValue);
 								$nexY = max($pdf->GetY(), $nexY);
 							}
@@ -1112,7 +1110,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 			}
 
 			// Recipient name
-			if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
+			if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;

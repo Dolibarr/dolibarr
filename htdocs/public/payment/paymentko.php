@@ -190,7 +190,7 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 		$urlback = $_SERVER["REQUEST_URI"];
 		$topic = '['.$appli.'] '.$companylangs->transnoentitiesnoconv("NewOnlinePaymentFailed");
 		$content = "";
-		$content .= '<font color="orange">'.$companylangs->transnoentitiesnoconv("ValidationOfOnlinePaymentFailed")."</font>\n";
+		$content .= '<span style="color: orange">'.$companylangs->transnoentitiesnoconv("ValidationOfOnlinePaymentFailed")."</span>\n";
 
 		$content .= "<br><br>\n";
 		$content .= '<u>'.$companylangs->transnoentitiesnoconv("TechnicalInformation").":</u><br>\n";

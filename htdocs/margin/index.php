@@ -32,4 +32,4 @@ if ($user->rights->produit->lire) {
 	$page = 'agentMargins';
 }
 
-header('Location: '.dol_buildpath('/margin/'.$page.'.php', 1));
+header('Location: '.DOL_URL_ROOT.'/margin/'.$page.'.php');

@@ -30,4 +30,4 @@ NonShippable=Non expédiable
 ShowShippableStatus=Afficher le statut Expédiable
 ShowReceiving=Afficher le bon de réception
 NonExistentOrder=Commande inexistante
-StockQuantitiesAlreadyAllocatedOnPreviousLines = Qtés de stock déja attribuées sur une ou des lignes précédentes
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Quantités de stock déjà allouées sur les lignes précédentes

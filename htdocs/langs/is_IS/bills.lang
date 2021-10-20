@@ -259,6 +259,7 @@ DateMaxPayment=Payment due on
 DateInvoice=Dagsetningu reiknings
 DatePointOfTax=Point of tax
 NoInvoice=Nei Reikningar
+NoOpenInvoice=No open invoice
 ClassifyBill=Flokka Reikningar
 SupplierBillsToPay=Unpaid vendor invoices
 CustomerBillsUnpaid=Unpaid customer invoices
@@ -589,3 +590,4 @@ FacParentLine=Invoice Line Parent
 SituationTotalRayToRest=Remainder to pay without taxe
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=Total progress %d %%
+SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s

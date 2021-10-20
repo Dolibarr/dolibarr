@@ -62,7 +62,7 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 						$totalarray['totalizable'][$key]['total'] += $obj->$tmpkey;
 					}
 				}
-				if (!empty($val['isameasure'])) {
+				if (!empty($val['isameasure']) && $val['isameasure'] == 1) {
 					if (!$i) {
 						$totalarray['pos'][$totalarray['nbfield']] = $extrafieldsobjectprefix.$tmpkey;
 					}

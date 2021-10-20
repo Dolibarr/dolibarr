@@ -547,7 +547,11 @@ print dol_get_fiche_head($head, 'AccountancyFiles');
 print '<form name="searchfiles" action="?action=searchfiles" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-print '<span class="opacitymedium">'.$langs->trans("ExportAccountingSourceDocHelp", $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Journals")).'</span><br>';
+print '<span class="opacitymedium">'.$langs->trans("ExportAccountingSourceDocHelp");
+if (!empty($conf->accounting->enabled)) {
+	print ' '.$langs->trans("ExportAccountingSourceDocHelp2", $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Journals"));
+}
+print '</span><br>';
 print '<br>';
 
 print $langs->trans("ReportPeriod").': ';
@@ -584,7 +588,7 @@ foreach ($listofchoices as $choice => $val) {
 	print '<div class="paddingleft inline-block marginrightonly"><input type="checkbox" id="'.$choice.'" name="'.$choice.'" value="1"'.$checked.$disabled.'> <label for="'.$choice.'">'.$langs->trans($val['label']).'</label></div>';
 }
 
-print '<input class="button" type="submit" name="search" value="'.$langs->trans("Search").'">';
+print '<input type="submit" class="button" name="search" value="'.$langs->trans("Search").'">';
 
 print '</form>'."\n";
 

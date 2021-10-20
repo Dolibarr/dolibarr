@@ -565,13 +565,13 @@ foreach ($dirmodels as $reldir) {
 								// Active
 								if (in_array($name, $def)) {
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&amp;token='.newToken().'&amp;value='.$name.'">';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
 									print img_picto($langs->trans("Enabled"), 'switch_on');
 									print '</a>';
 									print '</td>';
 								} else {
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
@@ -580,7 +580,7 @@ foreach ($dirmodels as $reldir) {
 								if ($conf->global->STOCK_ADDON_PDF == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 
@@ -644,7 +644,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MainDefaultWarehouse").'</td>';
 print '<td class="right">';
 print $formproduct->selectWarehouses($conf->global->MAIN_DEFAULT_WAREHOUSE, 'default_warehouse', '', 1, 0, 0, '', 0, 0, array(), 'left reposition');
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button button-edit small" value="'.$langs->trans("Modify").'">';
 print "</td>";
 print "</tr>\n";
 

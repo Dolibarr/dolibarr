@@ -116,9 +116,20 @@ class Task extends CommonObject
 	public $timespent_datehour; // More accurate start date (same than timespent_date but includes hours, minutes and seconds)
 	public $timespent_withhour; // 1 = we entered also start hours for timesheet line
 	public $timespent_fk_user;
+	public $timespent_thm;
 	public $timespent_note;
 
 	public $comments = array();
+
+	/**
+	 * @var float budget_amount
+	 */
+	public $budget_amount;
+
+	/**
+	 * @var float project_budget_amount
+	 */
+	public $project_budget_amount;
 
 	public $oldcopy;
 
@@ -171,19 +182,21 @@ class Task extends CommonObject
 		$sql .= ", datee";
 		$sql .= ", planned_workload";
 		$sql .= ", progress";
+		$sql .= ", budget_amount";
 		$sql .= ") VALUES (";
-		$sql .= $conf->entity;
-		$sql .= ", ".$this->fk_project;
+		$sql .= ((int) $conf->entity);
+		$sql .= ", ".((int) $this->fk_project);
 		$sql .= ", ".(!empty($this->ref) ? "'".$this->db->escape($this->ref)."'" : 'null');
-		$sql .= ", ".$this->fk_task_parent;
+		$sql .= ", ".((int) $this->fk_task_parent);
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->escape($this->description)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
-		$sql .= ", ".$user->id;
-		$sql .= ", ".($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
-		$sql .= ", ".($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
-		$sql .= ", ".(($this->planned_workload != '' && $this->planned_workload >= 0) ? $this->planned_workload : 'null');
-		$sql .= ", ".(($this->progress != '' && $this->progress >= 0) ? $this->progress : 'null');
+		$sql .= ", ".((int) $user->id);
+		$sql .= ", ".($this->date_start ? "'".$this->db->idate($this->date_start)."'" : 'null');
+		$sql .= ", ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : 'null');
+		$sql .= ", ".(($this->planned_workload != '' && $this->planned_workload >= 0) ? ((int) $this->planned_workload) : 'null');
+		$sql .= ", ".(($this->progress != '' && $this->progress >= 0) ? ((int) $this->progress) : 'null');
+		$sql .= ", ".(($this->budget_amount != '' && $this->budget_amount >= 0) ? ((int) $this->budget_amount) : 'null');
 		$sql .= ")";
 
 		$this->db->begin();
@@ -260,6 +273,7 @@ class Task extends CommonObject
 		$sql .= " t.fk_user_valid,";
 		$sql .= " t.fk_statut,";
 		$sql .= " t.progress,";
+		$sql .= " t.budget_amount,";
 		$sql .= " t.priority,";
 		$sql .= " t.note_private,";
 		$sql .= " t.note_public,";
@@ -303,6 +317,7 @@ class Task extends CommonObject
 				$this->fk_user_valid		= $obj->fk_user_valid;
 				$this->fk_statut			= $obj->fk_statut;
 				$this->progress				= $obj->progress;
+				$this->budget_amount		= $obj->budget_amount;
 				$this->priority				= $obj->priority;
 				$this->note_private = $obj->note_private;
 				$this->note_public = $obj->note_public;
@@ -365,6 +380,9 @@ class Task extends CommonObject
 		if (isset($this->planned_workload)) {
 			$this->planned_workload = trim($this->planned_workload);
 		}
+		if (isset($this->budget_amount)) {
+			$this->budget_amount = trim($this->budget_amount);
+		}
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -381,6 +399,7 @@ class Task extends CommonObject
 		$sql .= " dateo=".($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null').",";
 		$sql .= " datee=".($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null').",";
 		$sql .= " progress=".(($this->progress != '' && $this->progress >= 0) ? $this->progress : 'null').",";
+		$sql .= " budget_amount=".(($this->budget_amount != '' && $this->budget_amount >= 0) ? $this->budget_amount : 'null').",";
 		$sql .= " rang=".((!empty($this->rang)) ? $this->rang : "0");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -518,7 +537,7 @@ class Task extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task_time";
-			$sql .= " WHERE fk_task=".$this->id;
+			$sql .= " WHERE fk_task = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -528,7 +547,7 @@ class Task extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task_extrafields";
-			$sql .= " WHERE fk_object=".$this->id;
+			$sql .= " WHERE fk_object = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -602,7 +621,7 @@ class Task extends CommonObject
 
 		$sql = "SELECT COUNT(*) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task";
-		$sql .= " WHERE fk_task_parent=".$this->id;
+		$sql .= " WHERE fk_task_parent = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::hasChildren", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -635,7 +654,7 @@ class Task extends CommonObject
 
 		$sql = "SELECT COUNT(*) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time";
-		$sql .= " WHERE fk_task=".$this->id;
+		$sql .= " WHERE fk_task = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::hasTimeSpent", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -790,16 +809,17 @@ class Task extends CommonObject
 		$sql .= " t.rowid as taskid, t.ref as taskref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut as status,";
 		$sql .= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang,";
 		$sql .= " t.description, ";
+		$sql .= " t.budget_amount, ";
 		$sql .= " s.rowid as thirdparty_id, s.nom as thirdparty_name, s.email as thirdparty_email,";
-		$sql .= " p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount";
+		$sql .= " p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount as project_budget_amount";
 		if (!empty($extrafields->attributes['projet']['label'])) {
 			foreach ($extrafields->attributes['projet']['label'] as $key => $val) {
-				$sql .= ($extrafields->attributes['projet']['type'][$key] != 'separate' ? ",efp.".$key.' as options_'.$key : '');
+				$sql .= ($extrafields->attributes['projet']['type'][$key] != 'separate' ? ",efp.".$key." as options_".$key : '');
 			}
 		}
 		if (!empty($extrafields->attributes['projet_task']['label'])) {
 			foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
-				$sql .= ($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key.' as options_'.$key : '');
+				$sql .= ($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key." as options_".$key : '');
 			}
 		}
 		if ($includebilltime) {
@@ -896,6 +916,7 @@ class Task extends CommonObject
 			$sql .= " t.rowid, t.ref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut,";
 			$sql .= " t.dateo, t.datee, t.planned_workload, t.rang,";
 			$sql .= " t.description, ";
+			$sql .= " t.budget_amount, ";
 			$sql .= " s.rowid, s.nom, s.email,";
 			$sql .= " p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount";
 			if (!empty($extrafields->attributes['projet']['label'])) {
@@ -949,6 +970,7 @@ class Task extends CommonObject
 					$tasks[$i]->opp_amount = $obj->opp_amount;
 					$tasks[$i]->opp_percent = $obj->opp_percent;
 					$tasks[$i]->budget_amount = $obj->budget_amount;
+					$tasks[$i]->project_budget_amount = $obj->project_budget_amount;
 					$tasks[$i]->usage_bill_time = $obj->usage_bill_time;
 
 					$tasks[$i]->label = $obj->label;
@@ -1043,10 +1065,10 @@ class Task extends CommonObject
 		$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
 		$sql .= " WHERE pt.rowid = ec.element_id";
 		if ($userp && $filteronprojstatus > -1) {
-			$sql .= " AND pt.fk_statut = ".$filteronprojstatus;
+			$sql .= " AND pt.fk_statut = ".((int) $filteronprojstatus);
 		}
 		if ($usert && $filteronprojstatus > -1) {
-			$sql .= " AND pt.fk_projet = p.rowid AND p.fk_statut = ".$filteronprojstatus;
+			$sql .= " AND pt.fk_projet = p.rowid AND p.fk_statut = ".((int) $filteronprojstatus);
 		}
 		if ($userp) {
 			$sql .= " AND ctc.element = 'project'";
@@ -1056,10 +1078,10 @@ class Task extends CommonObject
 		}
 		$sql .= " AND ctc.rowid = ec.fk_c_type_contact";
 		if ($userp) {
-			$sql .= " AND ec.fk_socpeople = ".$userp->id;
+			$sql .= " AND ec.fk_socpeople = ".((int) $userp->id);
 		}
 		if ($usert) {
-			$sql .= " AND ec.fk_socpeople = ".$usert->id;
+			$sql .= " AND ec.fk_socpeople = ".((int) $usert->id);
 		}
 		$sql .= " AND ec.statut = 4";
 		$sql .= " AND ctc.source = 'internal'";
@@ -1158,6 +1180,18 @@ class Task extends CommonObject
 			$this->timespent_datehour = $this->timespent_date;
 		}
 
+		if (! empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
+
+			if ($this->timespent_date < $restrictBefore) {
+				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS);
+				$this->errors[] = $this->error;
+				return -1;
+			}
+		}
+
+
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task_time (";
@@ -1169,12 +1203,12 @@ class Task extends CommonObject
 		$sql .= ", fk_user";
 		$sql .= ", note";
 		$sql .= ") VALUES (";
-		$sql .= $this->id;
+		$sql .= ((int) $this->id);
 		$sql .= ", '".$this->db->idate($this->timespent_date)."'";
 		$sql .= ", '".$this->db->idate($this->timespent_datehour)."'";
 		$sql .= ", ".(empty($this->timespent_withhour) ? 0 : 1);
-		$sql .= ", ".$this->timespent_duration;
-		$sql .= ", ".$this->timespent_fk_user;
+		$sql .= ", ".((int) $this->timespent_duration);
+		$sql .= ", ".((int) $this->timespent_fk_user);
 		$sql .= ", ".(isset($this->timespent_note) ? "'".$this->db->escape($this->timespent_note)."'" : "null");
 		$sql .= ")";
 
@@ -1212,6 +1246,7 @@ class Task extends CommonObject
 				$ret = -2;
 			}
 
+			// Update hourly rate of this time spent entry
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time";
 			$sql .= " SET thm = (SELECT thm FROM ".MAIN_DB_PREFIX."user WHERE rowid = ".((int) $this->timespent_fk_user).")"; // set average hour rate of user
 			$sql .= " WHERE rowid = ".((int) $tasktime_id);
@@ -1425,6 +1460,7 @@ class Task extends CommonObject
 		$sql .= " ptt.task_duration,";
 		$sql .= " ptt.fk_user,";
 		$sql .= " ptt.note,";
+		$sql .= " ptt.thm,";
 		$sql .= " pt.rowid as task_id,";
 		$sql .= " pt.ref as task_ref,";
 		$sql .= " pt.label as task_label,";
@@ -1435,7 +1471,7 @@ class Task extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as ptt, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
 		$sql .= " WHERE ptt.fk_task = pt.rowid AND pt.fk_projet = p.rowid";
-		$sql .= " AND ptt.fk_user = ".$userobj->id;
+		$sql .= " AND ptt.fk_user = ".((int) $userobj->id);
 		$sql .= " AND pt.entity IN (".getEntity('project').")";
 		if ($morewherefilter) {
 			$sql .= $morewherefilter;
@@ -1471,6 +1507,7 @@ class Task extends CommonObject
 				$newobj->timespent_withhour = $obj->task_date_withhour;
 				$newobj->timespent_duration = $obj->task_duration;
 				$newobj->timespent_fk_user = $obj->fk_user;
+				$newobj->timespent_thm = $obj->thm;	// hourly rate
 				$newobj->timespent_note = $obj->note;
 
 				$arrayres[] = $newobj;
@@ -1519,6 +1556,17 @@ class Task extends CommonObject
 			$this->timespent_note = trim($this->timespent_note);
 		}
 
+		if (! empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
+
+			if ($this->timespent_date < $restrictBefore) {
+				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS);
+				$this->errors[] = $this->error;
+				return -1;
+			}
+		}
+
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time SET";
@@ -1552,16 +1600,29 @@ class Task extends CommonObject
 		}
 
 		if ($ret == 1 && ($this->timespent_old_duration != $this->timespent_duration)) {
-			$newDuration = $this->timespent_duration - $this->timespent_old_duration;
-
+			// Recalculate amount of time spent for task and update denormalized field
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
 			$sql .= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".((int) $this->id).")";
+			if (isset($this->progress)) {
+				$sql .= ", progress = ".((float) $this->progress); // Do not overwrite value if not provided
+			}
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::updateTimeSpent", LOG_DEBUG);
 			if (!$this->db->query($sql)) {
 				$this->error = $this->db->lasterror();
 				$this->db->rollback();
+				$ret = -2;
+			}
+
+			// Update hourly rate of this time spent entry, but only if it was not set initialy
+			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time";
+			$sql .= " SET thm = (SELECT thm FROM ".MAIN_DB_PREFIX."user WHERE rowid = ".((int) $this->timespent_fk_user).")"; // set average hour rate of user
+			$sql .= " WHERE (thm IS NULL OR thm = 0) AND rowid = ".((int) $this->timespent_id);
+
+			dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->lasterror();
 				$ret = -2;
 			}
 		}
@@ -1585,10 +1646,21 @@ class Task extends CommonObject
 
 		$error = 0;
 
+		if (! empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
+
+			if ($this->timespent_date < $restrictBefore) {
+				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS);
+				$this->errors[] = $this->error;
+				return -1;
+			}
+		}
+
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task_time";
-		$sql .= " WHERE rowid = ".$this->timespent_id;
+		$sql .= " WHERE rowid = ".((int) $this->timespent_id);
 
 		dol_syslog(get_class($this)."::delTimeSpent", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1610,7 +1682,7 @@ class Task extends CommonObject
 		if (!$error) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
 			$sql .= " SET duration_effective = duration_effective - ".$this->db->escape($this->timespent_duration ? $this->timespent_duration : 0);
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delTimeSpent", LOG_DEBUG);
 			if ($this->db->query($sql)) {
@@ -2011,7 +2083,7 @@ class Task extends CommonObject
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
-		// if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
+		// if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id).") OR (s.rowid IS NULL))";
 
 		//print $sql;
 		$resql = $this->db->query($sql);
@@ -2080,12 +2152,12 @@ class Task extends CommonObject
 			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		}
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
-		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 		if ($socid) {
 			$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 		}
 		if (!$user->rights->societe->client->voir && !$socid) {
-			$sql .= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id.") OR (s.rowid IS NULL))";
+			$sql .= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id).") OR (s.rowid IS NULL))";
 		}
 
 		$resql = $this->db->query($sql);
@@ -2118,7 +2190,7 @@ class Task extends CommonObject
 
 		$now = dol_now();
 
-		$datetouse = ($this->date_end > 0) ? $this->date_end : ($this->datee > 0 ? $this->datee : 0);
+		$datetouse = ($this->date_end > 0) ? $this->date_end : ((isset($this->datee) && $this->datee > 0) ? $this->datee : 0);
 
 		return ($datetouse > 0 && ($datetouse < ($now - $conf->projet->task->warning_delay)));
 	}

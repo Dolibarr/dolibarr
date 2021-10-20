@@ -23,7 +23,7 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
-print "<!-- BEGIN PHP TEMPLATE -->\n";
+print "<!-- BEGIN PHP TEMPLATE compta/facture/tpl/linkedopjectblock.tpl.php -->\n";
 
 global $user;
 global $noMoreLinkedObjectBlockAfter;
@@ -84,9 +84,16 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 			echo '<strike>'.price($objectlink->total_ht).'</strike>';
 		}
 	}
+
 	print '</td>';
-	print '<td class="linkedcol-statut right">'.$objectlink->getLibStatut(3).'</td>';
-	print '<td class="linkedcol-action right"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
+	print '<td class="linkedcol-statut right">';
+	if (method_exists($objectlink, 'getSommePaiement')) {
+		print $objectlink->getLibStatut(3, $objectlink->getSommePaiement());
+	} else {
+		print $objectlink->getLibStatut(3);
+	}
+	print '</td>';
+	print '<td class="linkedcol-action right"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
 	print "</tr>\n";
 }
 if (count($linkedObjectBlock) > 1) {

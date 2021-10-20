@@ -557,9 +557,9 @@ class Cronjob extends CommonObject
 		if (is_array($filter) && count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
-					$sql .= ' AND '.$key.' = '.((int) $value);
+					$sql .= " AND ".$key." = ".((int) $value);
 				} else {
-					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}
@@ -1432,10 +1432,10 @@ class Cronjob extends CommonObject
 				$moretext .= ' ('.$langs->trans("Error").')';
 			}
 
-			$this->labelStatus[self::STATUS_DISABLED] = $langs->trans('Disabled').$moretext;
-			$this->labelStatus[self::STATUS_ENABLED] = $langs->trans('Scheduled').$moretext;
-			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->trans('Disabled');
-			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->trans('Scheduled');
+			$this->labelStatus[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled').$moretext;
+			$this->labelStatus[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Scheduled').$moretext;
+			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Scheduled');
 		}
 
 		$statusType = 'status4';

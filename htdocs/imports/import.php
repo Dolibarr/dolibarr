@@ -462,7 +462,7 @@ if ($step == 2 && $datatoimport) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 
-	print '<table width="100%" class="border tableforfield">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Module
 	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
@@ -475,7 +475,7 @@ if ($step == 2 && $datatoimport) {
 	print $titleofmodule;
 	print '</td></tr>';
 
-	// Lot de donnees a importer
+	// Dataset to import
 	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
 	print '<td>';
 	$entity = preg_replace('/:.*$/', '', $objimport->array_import_icon[0]);
@@ -519,7 +519,9 @@ if ($step == 2 && $datatoimport) {
 		$text = $objmodelimport->getDriverDescForKey($key);
 		print '<td>'.$form->textwithpicto($objmodelimport->getDriverLabelForKey($key), $text).'</td>';
 		print '<td style="text-align:center">';
-		print img_picto('', 'download', 'class="paddingright opacitymedium"').'<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a>';
+		print img_picto('', 'download', 'class="paddingright opacitymedium"').'<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample");
+		print '</a>';
+		print ' <span class="opacitymedium hideonsmartphone">('.$langs->trans("StarAreMandatory").')</span>';
 		print '</td>';
 		// Action button
 		print '<td style="text-align:right">';
@@ -602,11 +604,13 @@ if ($step == 3 && $datatoimport) {
 
 	// Source file format
 	print '<tr><td class="titlefield">'.$langs->trans("SourceFileFormat").'</td>';
-	print '<td>';
+	print '<td class="nowraponall">';
 	$text = $objmodelimport->getDriverDescForKey($format);
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
 	print '</td><td style="text-align:right" class="nowrap">';
-	print img_picto('', 'download', 'class="paddingright opacitymedium"').'<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a>';
+	print img_picto('', 'download', 'class="paddingright opacitymedium"').'<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample");
+	print '</a>';
+	print ' <span class="opacitymedium hideonsmartphone">('.$langs->trans("StarAreMandatory").')</span>';
 	print '</td></tr>';
 
 	print '</table>';
@@ -641,18 +645,13 @@ if ($step == 3 && $datatoimport) {
 	print $s;
 	print '</span><br><br>';
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-	print '<table class="noborder centpercent" width="100%" cellpadding="4">';
-
 	$filetoimport = '';
 
-	//print '<tr class="liste_titre"><td colspan="6">'.$langs->trans("FileWithDataToImport").'</td></tr>';
-
 	// Input file name box
-	print '<tr class="oddeven nohover"><td colspan="6">';
+	print '<div class="marginbottomonly">';
 	print '<input type="file" name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
 	$out = (empty($conf->global->MAIN_UPLOAD_DOC) ? ' disabled' : '');
-	print '<input type="submit" class="button" value="'.$langs->trans("AddFile").'"'.$out.' name="sendit">';
+	print '<input type="submit" class="button small" value="'.$langs->trans("AddFile").'"'.$out.' name="sendit">';
 	$out = '';
 	if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
 		$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
@@ -705,8 +704,10 @@ if ($step == 3 && $datatoimport) {
 		$out .= ' ('.$langs->trans("UploadDisabled").')';
 	}
 	print $out;
-	print '</td>';
-	print "</tr>\n";
+	print '</div>';
+
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<table class="noborder centpercent" width="100%" cellpadding="4">';
 
 	// Search available imports
 	$filearray = dol_dir_list($conf->import->dir_temp, 'files', 0, '', '', 'name', SORT_DESC);
@@ -1051,8 +1052,8 @@ if ($step == 4 && $datatoimport) {
 		$entityicon = $entitytoicon[$entity] ? $entitytoicon[$entity] : $entity; // $entityicon must string name of picto of the field like 'project', 'company', 'contact', 'modulename', ...
 		$entitylang = $entitytolang[$entity] ? $entitytolang[$entity] : $objimport->array_import_label[0]; // $entitylang must be a translation key to describe object the field is related to, like 'Company', 'Contact', 'MyModyle', ...
 
-		print '<td class="nowrap" style="font-weight: normal">=>'.img_object('', $entityicon).' '.$langs->trans($entitylang).'</td>';
-		print '<td style="font-weight: normal">';
+		print '<td class="nowraponall" style="font-weight: normal">=>'.img_object('', $entityicon).' '.$langs->trans($entitylang).'</td>';
+		print '<td class="nowraponall" style="font-weight: normal">';
 		$newlabel = preg_replace('/\*$/', '', $label);
 		$text = $langs->trans($newlabel);
 		$more = '';
@@ -1067,7 +1068,7 @@ if ($step == 4 && $datatoimport) {
 		print $text;
 		print '</td>';
 		// Info field
-		print '<td style="font-weight:normal; text-align:right">';
+		print '<td class="nowraponall" style="font-weight:normal; text-align:right">';
 		$filecolumn = $array_match_database_to_file[$code];
 		// Source field info
 		$htmltext = '<b><u>'.$langs->trans("FieldSource").'</u></b><br>';
@@ -1126,7 +1127,6 @@ if ($step == 4 && $datatoimport) {
 		print '</td>';
 
 		print '</tr>';
-		$save_select .= $bit;
 	}
 	print '</table>';
 
@@ -1205,7 +1205,7 @@ if ($step == 4 && $datatoimport) {
 		//                    async: false
 		//        });'."\n";
 		// Now reload page
-		print 'var newlocation= \''.$_SERVER["PHP_SELF"].'?step=4'.$param.'&action=saveorder&boxorder=\' + boxorder;'."\n";
+		print 'var newlocation= \''.$_SERVER["PHP_SELF"].'?step=4'.$param.'&action=saveorder&token='.newToken().'&boxorder=\' + boxorder;'."\n";
 		//print 'alert(newlocation);';
 		print 'window.location.href=newlocation;'."\n";
 		print '}'."\n";
@@ -1247,6 +1247,7 @@ if ($step == 4 && $datatoimport) {
 		print '<input type="hidden" value="'.dol_escape_htmltag($separator).'" name="separator">';
 		print '<input type="hidden" value="'.dol_escape_htmltag($enclosure).'" name="enclosure">';
 
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table summary="selectofimportprofil" class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("ImportModelName").'</td>';
@@ -1255,7 +1256,7 @@ if ($step == 4 && $datatoimport) {
 		print '</tr>';
 
 		print '<tr class="oddeven">';
-		print '<td><input name="import_name" size="48" value=""></td>';
+		print '<td><input name="import_name" value=""></td>';
 		print '<td>';
 		$arrayvisibility = array('private'=>$langs->trans("Private"), 'all'=>$langs->trans("Everybody"));
 		print $form->selectarray('visibility', $arrayvisibility, 'private');
@@ -1306,6 +1307,8 @@ if ($step == 4 && $datatoimport) {
 		}
 
 		print '</table>';
+		print '</div>';
+
 		print '</form>';
 	}
 }
@@ -2124,14 +2127,14 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 		print '&nbsp;';
 		print '</td>';
 		print '</tr>';
-	} else // Print field of source file
-	{
+	} else {
+		// Print field of source file
 		print '<tr'.($nostyle ? '' : ' '.$bc[$var]).' style="height:'.$height.'">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
 		print img_picto($langs->trans("MoveField", $pos), 'grip_title', 'class="boxhandle" style="cursor:move;"');
 		print '</td>';
-		print '<td style="font-weight: normal">';
+		print '<td class="nowraponall" style="font-weight: normal">';
 		print $langs->trans("Field").' '.$pos;
 		$example = $fieldssource[$pos]['example1'];
 		if ($example) {

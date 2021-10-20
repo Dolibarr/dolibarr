@@ -29,7 +29,7 @@
  *  \brief      Page to activate/disable all modules
  */
 
-if (!defined('CSRFCHECK_WITH_TOKEN')) {
+if (!defined('CSRFCHECK_WITH_TOKEN') && (empty($_GET['action']) || $_GET['action'] != 'reset')) {	// We force security except to disable modules so we can do it if problem of a module
 	define('CSRFCHECK_WITH_TOKEN', '1'); // Force use of CSRF protection with tokens even for GET
 }
 
@@ -133,7 +133,7 @@ if ($action == 'install') {
 
 	// $original_file should match format module_modulename-x.y[.z].zip
 	$original_file = basename($_FILES["fileinstall"]["name"]);
-	$original_file = preg_replace('/\(\d+\)\.zip$/i', '.zip', $original_file);
+	$original_file = preg_replace('/\s*\(\d+\)\.zip$/i', '.zip', $original_file);
 	$newfile = $conf->admin->dir_temp.'/'.$original_file.'/'.$original_file;
 
 	if (!$original_file) {
@@ -481,7 +481,9 @@ print load_fiche_titre($langs->trans("ModulesSetup"), '', 'title_setup');
 $deschelp  = '';
 if ($mode == 'common' || $mode == 'commonkanban') {
 	$desc = $langs->trans("ModulesDesc", '{picto}');
+	$desc .= ' '.$langs->trans("ModulesDesc2", '{picto2}');
 	$desc = str_replace('{picto}', img_picto('', 'switch_off'), $desc);
+	$desc = str_replace('{picto2}', img_picto('', 'setup'), $desc);
 	if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only minimal initial modules enabled
 		$deschelp = '<div class="info hideonsmartphone">'.$desc."<br></div><br>\n";
 	}
@@ -586,6 +588,11 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
 
+	$disabled_modules = array();
+	if (!empty($_SESSION["disablemodules"])) {
+		$disabled_modules = explode(',', $_SESSION["disablemodules"]);
+	}
+
 	// Show list of modules
 	$oldfamily = '';
 	$foundoneexternalmodulewithupdate = 0;
@@ -611,6 +618,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			continue;
 		}
 
+		$modulenameshort = strtolower(preg_replace('/^mod/i', '', get_class($objMod)));
 		$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
 
 		// Check filters
@@ -752,6 +760,11 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		$codeenabledisable = '';
 		$codetoconfig = '';
 
+		// Force disable of module disabled into session (for demo for example)
+		if (in_array($modulenameshort, $disabled_modules)) {
+			$objMod->disabled = true;
+		}
+
 		// Activate/Disable and Setup (2 columns)
 		if (!empty($conf->global->$const_name)) {	// If module is already activated
 			// Set $codeenabledisable
@@ -759,6 +772,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			if (!empty($arrayofwarnings[$modName])) {
 				$codeenabledisable .= '<!-- This module has a warning to show when we activate it (note: your country is '.$mysoc->country_code.') -->'."\n";
 			}
+
 			if (!empty($objMod->disabled)) {
 				$codeenabledisable .= $langs->trans("Disabled");
 			} elseif (!empty($objMod->always_enabled) || ((!empty($conf->multicompany->enabled) && $objMod->core_enabled) && ($user->entity || $conf->entity != 1))) {
@@ -787,16 +801,16 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			if (!empty($objMod->config_page_url) && !$disableSetup) {
 				$backtourlparam = '';
 				if ($search_keyword != '') {
-					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_keyword='.$search_keyword; // No urlencode here, done later
+					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_keyword='.urlencode($search_keyword); // No urlencode here, done later
 				}
 				if ($search_nature > -1) {
-					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_nature='.$search_nature; // No urlencode here, done later
+					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_nature='.urlencode($search_nature); // No urlencode here, done later
 				}
 				if ($search_version > -1) {
-					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_version='.$search_version; // No urlencode here, done later
+					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_version='.urlencode($search_version); // No urlencode here, done later
 				}
 				if ($search_status > -1) {
-					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_status='.$search_status; // No urlencode here, done later
+					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_status='.urlencode($search_status); // No urlencode here, done later
 				}
 				$backtourl = $_SERVER["PHP_SELF"].$backtourlparam;
 
@@ -864,7 +878,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 					}
 				}
 				$codeenabledisable .= '<!-- Message to show: '.$warningmessage.' -->'."\n";
-				$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=set&amp;value='.$modName.'&amp;mode='.$mode.$param.'"';
+				$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&token='.newToken().'&module_position='.$module_position.'&action=set&token='.newToken().'&value='.$modName.'&mode='.$mode.$param.'"';
 				if ($warningmessage) {
 					$codeenabledisable .= ' onclick="return confirm(\''.dol_escape_js($warningmessage).'\');"';
 				}
@@ -919,7 +933,6 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			if ($objMod->needUpdate) {
 				$versionTitle = $langs->trans('ModuleUpdateAvailable').' : '.$objMod->lastVersion;
 				print '<span class="badge badge-warning classfortooltip" title="'.dol_escape_htmltag($versionTitle).'">'.$versiontrans.'</span>';
-				$foundoneexternalmodulewithupdate++;
 			} else {
 				print $versiontrans;
 			}
@@ -936,6 +949,9 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print '</td>';
 
 			print "</tr>\n";
+		}
+		if ($objMod->needUpdate) {
+			$foundoneexternalmodulewithupdate++;
 		}
 	}
 
@@ -1009,16 +1025,16 @@ if ($mode == 'marketplace') {
 
 		print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="divsearchfield">';
 
-		print '<form method="POST" class="centpercent" id="searchFormList" action="'.$dolistore->url.'">';
+		print '<form method="POST" class="centpercent" id="searchFormList" action="'.urlencode($dolistore->url).'">';
 		?>
 					<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 					<input type="hidden" name="mode" value="marketplace">
 					<div class="divsearchfield">
-						<input name="search_keyword" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" class="minwidth200" value="<?php echo $options['search'] ?>"><br>
+						<input name="search_keyword" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" class="minwidth200" value="<?php echo dol_escape_htmltag($options['search']) ?>"><br>
 					</div>
 					<div class="divsearchfield">
 						<input class="button buttongen" value="<?php echo $langs->trans('Rechercher') ?>" type="submit">
-						<a class="buttonreset" href="<?php echo $dolistore->url ?>"><?php echo $langs->trans('Reset') ?></a>
+						<a class="buttonreset" href="<?php echo urlencode($dolistore->url) ?>"><?php echo $langs->trans('Reset') ?></a>
 
 						&nbsp;
 					</div>
@@ -1035,7 +1051,7 @@ if ($mode == 'marketplace') {
 
 			<div id="category-tree-left">
 				<ul class="tree">
-					<?php echo $dolistore->get_categories(); ?>
+					<?php echo dol_escape_htmltag($dolistore->get_categories()); ?>
 				</ul>
 			</div>
 			<div id="listing-content">
@@ -1245,7 +1261,13 @@ if ($mode == 'develop') {
 	print '<div class="imgmaxheight50 logo_setup"></div>';
 	print '</td>';
 	print '<td>'.$langs->trans("TryToUseTheModuleBuilder", $langs->transnoentitiesnoconv("ModuleBuilder")).'</td>';
-	print '<td>'.$langs->trans("SeeTopRightMenu").'</td>';
+	print '<td class="maxwidth300">';
+	if (!empty($conf->modulebuilder->enabled)) {
+		print $langs->trans("SeeTopRightMenu");
+	} else {
+		print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("ModuleBuilder")).'</span>';
+	}
+	print '</td>';
 	print '</tr>';
 
 	print '<tr class="oddeven" height="80">'."\n";
