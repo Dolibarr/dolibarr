@@ -282,7 +282,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if($permissiontoadd) {
+	if ($permissiontoadd) {
 		// Décrémentation
 		if ($action == 'confirm_destock' && $confirm == 'yes' && $object->status == $object::STATUS_VALIDATED) {
 			$lines = $object->getLinesArray();
