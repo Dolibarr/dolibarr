@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2107 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2019	   Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2021	   Anthony Berton		<bertonanthony@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -165,6 +166,10 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "PDF_SHOW_LINK_TO_ONLINE_PAYMENT", GETPOST('PDF_SHOW_LINK_TO_ONLINE_PAYMENT', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
 
+	if (GETPOSTISSET('PDF_USE_A')) {
+		dolibarr_set_const($db, "PDF_USE_A", GETPOST('PDF_USE_A', 'alpha'), 'chaine', 0, '', $conf->entity);
+	}
+
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
@@ -307,7 +312,7 @@ for ($i = 1; $i <= 6; $i++) {
 			$pid = false;
 		}
 	} else {
-		$pid = img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+		$pid = img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 	}
 	if ($pid) {
 		print '<tr class="oddeven"><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid.'</td><td>';
@@ -531,6 +536,14 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('PDF_SHOW_LINK_TO_ONLINE_PAYMENT');
 } else {
 	print $form->selectyesno('PDF_SHOW_LINK_TO_ONLINE_PAYMENT', (!empty($conf->global->PDF_SHOW_LINK_TO_ONLINE_PAYMENT)) ? $conf->global->PDF_SHOW_LINK_TO_ONLINE_PAYMENT : 0, 1);
+}
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>'.$langs->trans("PDF_USE_A").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('PDF_USE_A');
+} else {
+	print $form->selectyesno('PDF_USE_A', (empty($conf->global->PDF_USE_A) ? 0 : $conf->global->PDF_USE_A), 1);
 }
 print '</td></tr>';
 

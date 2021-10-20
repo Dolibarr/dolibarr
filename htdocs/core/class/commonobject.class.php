@@ -3618,7 +3618,7 @@ abstract class CommonObject
 	public function add_object_linked($origin = null, $origin_id = null, $f_user = null, $notrigger = 0)
 	{
 		// phpcs:enable
-		global $user;
+		global $user, $hookmanager, $action;
 		$origin = (!empty($origin) ? $origin : $this->origin);
 		$origin_id = (!empty($origin_id) ? $origin_id : $this->origin_id);
 		$f_user = isset($f_user) ? $f_user : $user;
@@ -3636,6 +3636,20 @@ abstract class CommonObject
 		if ($origin == 'supplierorder') {
 			$origin = 'order_supplier';
 		}
+
+		// Elements of the core modules which have `$module` property but may to which we don't want to prefix module part to the element name for finding the linked object in llx_element_element.
+		// It's because an entry for this element may be exist in llx_element_element before this modification (version <=14.2) and ave named only with their element name in fk_source or fk_target.
+		$coremodule = array('knowledgemanagement', 'partnership', 'workstation', 'ticket', 'recruitment', 'eventorganization');
+		// Add module part to target type if object has $module property and isn't in core modules.
+		$targettype = ((!empty($this->module) && ! in_array($this->module, $coremodule)) ? $this->module.'_' : '').$this->element;
+
+		$parameters = array('targettype'=>$targettype);
+		// Hook for explicitly set the targettype if it must be differtent than $this->element
+		$reshook = $hookmanager->executeHooks('setLinkedObjectSourceTargetType', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			if (!empty($hookmanager->resArray['targettype'])) $targettype = $hookmanager->resArray['targettype'];
+		}
+
 		$this->db->begin();
 		$error = 0;
 
@@ -3648,7 +3662,7 @@ abstract class CommonObject
 		$sql .= ((int) $origin_id);
 		$sql .= ", '" . $this->db->escape($origin) . "'";
 		$sql .= ", " . ((int) $this->id);
-		$sql .= ", '" . $this->db->escape($this->element) . "'";
+		$sql .= ", '" . $this->db->escape($targettype) . "'";
 		$sql .= ")";
 
 		dol_syslog(get_class($this) . "::add_object_linked", LOG_DEBUG);
@@ -3701,7 +3715,7 @@ abstract class CommonObject
 	 */
 	public function fetchObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $clause = 'OR', $alsosametype = 1, $orderby = 'sourcetype', $loadalsoobjects = 1)
 	{
-		global $conf;
+		global $conf, $hookmanager, $action;
 
 		$this->linkedObjectsIds = array();
 		$this->linkedObjects = array();
@@ -3710,6 +3724,16 @@ abstract class CommonObject
 		$justtarget = false;
 		$withtargettype = false;
 		$withsourcetype = false;
+
+		$parameters = array('sourcetype'=>$sourcetype, 'sourceid'=>$sourceid, 'targettype'=>$targettype, 'targetid'=>$targetid);
+		// Hook for explicitly set the targettype if it must be differtent than $this->element
+		$reshook = $hookmanager->executeHooks('setLinkedObjectSourceTargetType', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			if (!empty($hookmanager->resArray['sourcetype'])) $sourcetype = $hookmanager->resArray['sourcetype'];
+			if (!empty($hookmanager->resArray['sourceid'])) $sourceid = $hookmanager->resArray['sourceid'];
+			if (!empty($hookmanager->resArray['targettype'])) $targettype = $hookmanager->resArray['targettype'];
+			if (!empty($hookmanager->resArray['targetid'])) $targetid = $hookmanager->resArray['targetid'];
+		}
 
 		if (!empty($sourceid) && !empty($sourcetype) && empty($targetid)) {
 			$justsource = true; // the source (id and type) is a search criteria
@@ -5324,7 +5348,7 @@ abstract class CommonObject
 								$ecmfile->gen_or_uploaded = 'generated';
 								$ecmfile->description = ''; // indexed content
 								$ecmfile->keywords = ''; // keyword content
-								$ecmfile->src_object_type = $this->table_element.(empty($this->module) ? '' : '@'.$this->module);
+								$ecmfile->src_object_type = $this->table_element;	// $this->table_name is 'myobject' or 'mymodule_myobject'.
 								$ecmfile->src_object_id   = $this->id;
 
 								$result = $ecmfile->create($user);
@@ -7808,7 +7832,7 @@ abstract class CommonObject
 								$out .= $labeltoshow;
 							}
 							if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) {
-								$out .= '&nbsp;<font color="red">*</font>';
+								$out .= '&nbsp;<span style="color: red">*</span>';
 							}
 						} else {
 							if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) {
@@ -8220,7 +8244,7 @@ abstract class CommonObject
 							$return .= '<br>';
 							// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
 							if ($photo_vignette && (image_format_supported($photo) > 0) && ($this->imgWidth > $maxWidth || $this->imgHeight > $maxHeight)) {
-								$return .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'), 'refresh').'&nbsp;&nbsp;</a>';
+								$return .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=addthumb&token='.newToken().'&file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'), 'refresh').'&nbsp;&nbsp;</a>';
 							}
 							// Special cas for product
 							if ($modulepart == 'product' && ($user->rights->produit->creer || $user->rights->service->creer)) {
@@ -9032,10 +9056,15 @@ abstract class CommonObject
 					$className = str_replace('@', '', $deleteFromObject[0]);
 					$filePath = $deleteFromObject[1];
 					$columnName = $deleteFromObject[2];
+					$TMoreSQL = array();
+					$more_sql = $deleteFromObject[3];
+					if (!empty($more_sql)) {
+						$TMoreSQL['customsql'] = $more_sql;
+					}
 					if (dol_include_once($filePath)) {
 						$childObject = new $className($this->db);
 						if (method_exists($childObject, 'deleteByParentField')) {
-							$result = $childObject->deleteByParentField($this->id, $columnName);
+							$result = $childObject->deleteByParentField($this->id, $columnName, $TMoreSQL);
 							if ($result < 0) {
 								$error++;
 								$this->errors[] = $childObject->error;
@@ -9117,10 +9146,12 @@ abstract class CommonObject
 	 *
 	 * @param		int		$parentId      Parent Id
 	 * @param		string	$parentField   Name of Foreign key parent column
+	 * @param 		array 	$filter		an array filter
+	 * @param		string	$filtermode	AND or OR
 	 * @return		int						<0 if KO, >0 if OK
 	 * @throws Exception
 	 */
-	public function deleteByParentField($parentId = 0, $parentField = '')
+	public function deleteByParentField($parentId = 0, $parentField = '', $filter = array(), $filtermode = "AND")
 	{
 		global $user;
 
@@ -9132,6 +9163,23 @@ abstract class CommonObject
 
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " WHERE ".$parentField." = ".(int) $parentId;
+
+			// Manage filters
+			$sqlwhere = array();
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					if ($key == 'customsql') {
+						$sqlwhere[] = $value;
+					} elseif (strpos($value, '%') === false) {
+						$sqlwhere[] = $key." IN (".$this->db->sanitize($this->db->escape($value)).")";
+					} else {
+						$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+					}
+				}
+			}
+			if (count($sqlwhere) > 0) {
+				$sql .= " AND (".implode(" ".$filtermode." ", $sqlwhere).")";
+			}
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {

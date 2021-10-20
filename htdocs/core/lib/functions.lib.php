@@ -1071,7 +1071,7 @@ function dol_size($size, $type = '')
 
 /**
  *	Clean a string to use it as a file name.
- *  Replace also '--' and ' -' strings, they are used for parameters separation.
+ *  Replace also '--' and ' -' strings, they are used for parameters separation (Note: ' - ' is allowed).
  *
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with.
@@ -1089,13 +1089,13 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 	$filesystem_forbidden_chars = array('<', '>', '/', '\\', '?', '*', '|', '"', ':', '°', '$', ';');
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
-	$tmp = preg_replace('/\s+\-/', ' _', $tmp);
+	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
 	return $tmp;
 }
 
 /**
  *	Clean a string to use it as a path name.
- *  Replace also '--' and ' -' strings, they are used for parameters separation.
+ *  Replace also '--' and ' -' strings, they are used for parameters separation (Note: ' - ' is allowed).
  *
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with
@@ -1112,7 +1112,7 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 	$filesystem_forbidden_chars = array('<', '>', '?', '*', '|', '"', '°', '$', ';');
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
-	$tmp = preg_replace('/\s+\-/', ' _', $tmp);
+	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
 	return $tmp;
 }
 
@@ -1613,7 +1613,7 @@ function dol_fiche_head($links = array(), $active = '0', $title = '', $notab = 0
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  *  @param	string	$morehtmlright		Add more html content on right of tabs title
- *  @param	string	$morecss			More Css
+ *  @param	string	$morecss			More CSS on the link <a>
  *  @param	int		$limittoshow		Limit number of tabs to show. Use 0 to use automatic default value.
  *  @param	string	$moretabssuffix		A suffix to use when you have several dol_get_fiche_head() in same page
  * 	@return	string
@@ -2305,8 +2305,17 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 			} elseif ($tzoutput == 'tzuser' || $tzoutput == 'tzuserrel') {
 				$to_gmt = true;
 				$offsettzstring = (empty($_SESSION['dol_tz_string']) ? 'UTC' : $_SESSION['dol_tz_string']); // Example 'Europe/Berlin' or 'Indian/Reunion'
-				$offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60; // Will not be used anymore
-				$offsetdst = (empty($_SESSION['dol_dst']) ? 0 : $_SESSION['dol_dst']) * 60 * 60; // Will not be used anymore
+
+				if (class_exists('DateTimeZone')) {
+					$user_date_tz = new DateTimeZone($offsettzstring);
+					$user_dt = new DateTime();
+					$user_dt->setTimezone($user_date_tz);
+					$user_dt->setTimestamp($tzoutput == 'tzuser' ? dol_now() : $time);
+					$offsettz = $user_dt->getOffset();
+				} else {	// old method (The 'tzuser' was processed like the 'tzuserrel')
+					$offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60; // Will not be used anymore
+					$offsetdst = (empty($_SESSION['dol_dst']) ? 0 : $_SESSION['dol_dst']) * 60 * 60; // Will not be used anymore
+				}
 			}
 		}
 	}
@@ -5409,15 +5418,16 @@ function price2num($amount, $rounding = '', $option = 0)
 /**
  * Output a dimension with best unit
  *
- * @param   float       $dimension      Dimension
- * @param   int         $unit           Unit scale of dimension (Example: 0=kg, -3=g, -6=mg, 98=ounce, 99=pound, ...)
- * @param   string      $type           'weight', 'volume', ...
- * @param   Translate   $outputlangs    Translate language object
- * @param   int         $round          -1 = non rounding, x = number of decimal
+ * @param   float       $dimension      	Dimension
+ * @param   int         $unit           	Unit scale of dimension (Example: 0=kg, -3=g, -6=mg, 98=ounce, 99=pound, ...)
+ * @param   string      $type           	'weight', 'volume', ...
+ * @param   Translate   $outputlangs    	Translate language object
+ * @param   int         $round          	-1 = non rounding, x = number of decimal
  * @param   string      $forceunitoutput    'no' or numeric (-3, -6, ...) compared to $unit (In most case, this value is value defined into $conf->global->MAIN_WEIGHT_DEFAULT_UNIT)
- * @return  string                      String to show dimensions
+ * @param	int			$use_short_label	1=Use short label ('g' instead of 'gram'). Short labels are not translated.
+ * @return  string                      	String to show dimensions
  */
-function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round = -1, $forceunitoutput = 'no')
+function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round = -1, $forceunitoutput = 'no', $use_short_label = 0)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
@@ -5447,7 +5457,8 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
 		$unit = $forceunitoutput;
 	}*/
 
-	$ret = price($dimension, 0, $outputlangs, 0, 0, $round).' '.measuringUnitString(0, $type, $unit);
+	$ret = price($dimension, 0, $outputlangs, 0, 0, $round);
+	$ret .= ' '.measuringUnitString(0, $type, $unit, $use_short_label, $outputlangs);
 
 	return $ret;
 }
@@ -6156,7 +6167,7 @@ function yn($yesno, $case = 1, $color = 0)
 		}
 	}
 	if ($color) {
-		return '<font class="'.$classname.'">'.$result.'</font>';
+		return '<span class="'.$classname.'">'.$result.'</span>';
 	}
 	return $result;
 }
@@ -6627,7 +6638,8 @@ function dol_htmlentitiesbr_decode($stringtodecode, $pagecodeto = 'UTF-8')
  */
 function dol_htmlcleanlastbr($stringtodecode)
 {
-	$ret = preg_replace('/(<br>|<br(\s[\sa-zA-Z_="]*)?\/?>|'."\n".'|'."\r".')+$/i', "", $stringtodecode);
+	$ret = preg_replace('/&nbsp;$/i', "", $stringtodecode);		// Because wysiwyg editor may add a &nbsp; at end of last line
+	$ret = preg_replace('/(<br>|<br(\s[\sa-zA-Z_="]*)?\/?>|'."\n".'|'."\r".')+$/i', "", $ret);
 	return $ret;
 }
 
@@ -9099,11 +9111,12 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata = 0, $param 
 /**
  * Make content of an input box selected when we click into input field.
  *
- * @param string	$htmlname	Id of html object ('#idvalue' or '.classvalue')
- * @param string	$addlink	Add a 'link to' after
+ * @param string	$htmlname		Id of html object ('#idvalue' or '.classvalue')
+ * @param string	$addlink		Add a 'link to' after
+ * @param string	$textonlink		Text to show on link or 'image'
  * @return string
  */
-function ajax_autoselect($htmlname, $addlink = '')
+function ajax_autoselect($htmlname, $addlink = '', $textonlink = 'Link')
 {
 	global $langs;
 	$out = '<script>
@@ -9112,7 +9125,11 @@ function ajax_autoselect($htmlname, $addlink = '')
 				});
 		    </script>';
 	if ($addlink) {
-		$out .= ' <a href="'.$addlink.'" target="_blank">'.$langs->trans("Link").'</a>';
+		if ($textonlink === 'image') {
+			$out .= ' <a href="'.$addlink.'" target="_blank">'.img_picto('', 'globe').'</a>';
+		} else {
+			$out .= ' <a href="'.$addlink.'" target="_blank">'.$langs->trans("Link").'</a>';
+		}
 	}
 	return $out;
 }
@@ -9546,21 +9563,24 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 }
 
 /**
- * Return value from dictionary
+ * Return the value of a filed into a dictionary for the record $id.
+ * This also set all the values into a cache for a next search.
  *
- * @param string	$tablename		name of dictionary
- * @param string	$field			the value to return
- * @param int		$id				id of line
- * @param bool		$checkentity	add filter on entity
- * @param string	$rowidfield		name of the column rowid
- * @return string
+ * @param string	$tablename		Name of dictionary
+ * @param string	$field			The name of field where to find the value to return
+ * @param int		$id				Id of line record
+ * @param bool		$checkentity	Add filter on entity
+ * @param string	$rowidfield		Name of the column rowid (to use for the filter on $id)
+ * @return string					The value of field $field. This also set $dictvalues cache.
  */
-function getDictvalue($tablename, $field, $id, $checkentity = false, $rowidfield = 'rowid')
+function getDictionaryValue($tablename, $field, $id, $checkentity = false, $rowidfield = 'rowid')
 {
-	global $dictvalues, $db, $langs;
+	global $conf, $db;
 
-	if (!isset($dictvalues[$tablename])) {
-		$dictvalues[$tablename] = array();
+	$dictvalues = (isset($conf->cache['dictvalues_'.$tablename]) ? $conf->cache['dictvalues_'.$tablename] : null);
+
+	if (is_null($dictvalues)) {
+		$dictvalues = array();
 
 		$sql = "SELECT * FROM ".$tablename." WHERE 1 = 1"; // Here select * is allowed as it is generic code and we don't have list of fields
 		if ($checkentity) {
@@ -9570,20 +9590,20 @@ function getDictvalue($tablename, $field, $id, $checkentity = false, $rowidfield
 		$resql = $db->query($sql);
 		if ($resql) {
 			while ($obj = $db->fetch_object($resql)) {
-				$dictvalues[$tablename][$obj->{$rowidfield}] = $obj;
+				$dictvalues[$obj->{$rowidfield}] = $obj;
 			}
 		} else {
 			dol_print_error($db);
 		}
+
+		$conf->cache['dictvalues_'.$tablename] = $dictvalues;
 	}
 
-	if (!empty($dictvalues[$tablename][$id])) {
-		return $dictvalues[$tablename][$id]->{$field}; // Found
-	} else // Not found
-	{
-		if ($id > 0) {
-			return $id;
-		}
+	if (!empty($dictvalues[$id])) {
+		// Found
+		return $dictvalues[$id]->{$field};
+	} else {
+		// Not found
 		return '';
 	}
 }

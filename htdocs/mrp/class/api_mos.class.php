@@ -22,7 +22,7 @@ require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 
 
 /**
- * \file    mrp/class/api_mo.class.php
+ * \file    htdocs/mrp/class/api_mos.class.php
  * \ingroup mrp
  * \brief   File for API management of MO.
  */
@@ -353,6 +353,9 @@ class Mos extends DolibarrApi
 
 		$stockmove = new MouvementStock($this->db);
 
+		$consumptioncomplete = true;
+		$productioncomplete = true;
+
 		if (!empty($arraytoconsume) && !empty($arraytoproduce)) {
 			$pos = 0;
 			$arrayofarrayname = array("arraytoconsume","arraytoproduce");
@@ -382,7 +385,9 @@ class Mos extends DolibarrApi
 						if (!$error && $value["fk_warehouse"] > 0) {
 							// Record stock movement
 							$id_product_batch = 0;
-							$stockmove->origin = $this->mo;
+
+							$stockmove->setOrigin($this->mo->element, $this->mo->id);
+
 							if ($qtytoprocess >= 0) {
 								$moline = new MoLine($this->db);
 								$moline->fk_mo = $this->mo->id;
@@ -457,9 +462,6 @@ class Mos extends DolibarrApi
 				}
 			}
 			if (!$error) {
-				$consumptioncomplete = true;
-				$productioncomplete = true;
-
 				if ($autoclose <= 0) {
 					$consumptioncomplete = false;
 					$productioncomplete = false;
@@ -586,9 +588,6 @@ class Mos extends DolibarrApi
 			}
 
 			if (!$error) {
-				$consumptioncomplete = true;
-				$productioncomplete = true;
-
 				if ($autoclose > 0) {
 					foreach ($this->mo->lines as $line) {
 						if ($line->role == 'toconsume') {
@@ -620,6 +619,7 @@ class Mos extends DolibarrApi
 				}
 			}
 		}
+
 		// Update status of MO
 		dol_syslog("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
 		//var_dump("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);

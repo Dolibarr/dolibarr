@@ -133,7 +133,6 @@ foreach ($listofnetworks as $key => $value) {
 print "</table>";
 print '</div>';
 
-print '<br>';
 
 print $form->buttonsSaveCancel("Save", '');
 

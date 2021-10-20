@@ -120,7 +120,7 @@ class Documents extends DolibarrApi
 	 *
 	 * Test sample 1: { "modulepart": "invoice", "original_file": "FA1701-001/FA1701-001.pdf", "doctemplate": "crabe", "langcode": "fr_FR" }.
 	 *
-	 * @param   string  $modulepart    Name of module or area concerned by file download ('invoice', 'order', ...).
+	 * @param   string  $modulepart		Name of module or area concerned by file download ('thirdparty', 'member', 'proposal', 'supplier_proposal', 'order', 'supplier_order', 'invoice', 'supplier_invoice', 'shipment', 'project',  ...)
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: IN201701-999/IN201701-999.pdf).
 	 * @param	string	$doctemplate	Set here the doc template to use for document generation (If not set, use the default template).
 	 * @param	string	$langcode		Language code like 'en_US', 'fr_FR', 'es_ES', ... (If not set, use the default language).
@@ -326,6 +326,20 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
+		} elseif ($modulepart == 'supplier_proposal') {
+			require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
+
+			if (!DolibarrApiAccess::$user->rights->supplier_proposal->read) {
+				throw new RestException(401);
+			}
+
+			$object = new Propal($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'Supplier proposal not found');
+			}
+
+			$upload_dir = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
 		} elseif ($modulepart == 'commande' || $modulepart == 'order') {
 			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
@@ -340,6 +354,22 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->commande->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'commande');
+		} elseif ($modulepart == 'commande_fournisseur' || $modulepart == 'supplier_order') {
+			$modulepart = 'supplier_order';
+
+			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+
+			if (empty(DolibarrApiAccess::$user->rights->fournisseur->commande->lire) && empty(DolibarrApiAccess::$user->rights->supplier_order->lire)) {
+				throw new RestException(401);
+			}
+
+			$object = new CommandeFournisseur($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'Purchase order not found');
+			}
+
+			$upload_dir = $conf->fournisseur->dir_output."/facture/".get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').dol_sanitizeFileName($object->ref);
 		} elseif ($modulepart == 'shipment' || $modulepart == 'expedition') {
 			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
@@ -373,7 +403,7 @@ class Documents extends DolibarrApi
 
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->fournisseur->facture->lire) {
+			if (empty(DolibarrApiAccess::$user->rights->fournisseur->facture->lire) && empty(DolibarrApiAccess::$user->rights->supplier_invoice->lire)) {
 				throw new RestException(401);
 			}
 
@@ -504,7 +534,7 @@ class Documents extends DolibarrApi
 	 * Test sample for medias file: { "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "image/mywebsite", "filecontent": "Y29udGVudCB0ZXh0Cg==", "fileencoding": "base64", "overwriteifexists": "0" }.
 	 *
 	 * @param   string  $filename           	Name of file to create ('FA1705-0123.txt')
-	 * @param   string  $modulepart         	Name of module or area concerned by file upload ('facture', 'project', 'project_task', ...)
+	 * @param   string  $modulepart         	Name of module or area concerned by file upload ('product', 'service', 'invoice', 'proposal', 'project', 'project_task', 'supplier_invoice', 'expensereport', 'member', ...)
 	 * @param   string  $ref                	Reference of object (This will define subdir automatically and store submited file into it)
 	 * @param   string  $subdir       			Subdirectory (Only if ref not provided)
 	 * @param   string  $filecontent        	File content (string with file content. An empty file will be created if this parameter is not provided)

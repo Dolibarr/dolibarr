@@ -2079,14 +2079,23 @@ class ExtraFields
 				}
 
 				$enabled = 1;
-				if (isset($this->attributes[$object->table_element]['list'][$key])) {
-					$enabled = dol_eval($this->attributes[$object->table_element]['list'][$key], 1);
+				if (isset($this->attributes[$object->table_element]['enabled'][$key])) {	// 'enabled' is often a condition on module enabled or not
+					$enabled = dol_eval($this->attributes[$object->table_element]['enabled'][$key], 1);
 				}
+
+				$visibility = 1;
+				if (isset($this->attributes[$object->table_element]['list'][$key])) {		// 'list' is option for visibility
+					$visibility = dol_eval($this->attributes[$object->table_element]['list'][$key], 1);
+				}
+
 				$perms = 1;
 				if (isset($this->attributes[$object->table_element]['perms'][$key])) {
 					$perms = dol_eval($this->attributes[$object->table_element]['perms'][$key], 1);
 				}
 				if (empty($enabled)) {
+					continue;
+				}
+				if (empty($visibility)) {
 					continue;
 				}
 				if (empty($perms)) {

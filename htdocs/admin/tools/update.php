@@ -61,7 +61,7 @@ $version = '0.0';
 if ($action == 'getlastversion') {
 	$result = getURLContent('https://sourceforge.net/projects/dolibarr/rss');
 	//var_dump($result['content']);
-	$sfurl = simplexml_load_string($result['content']);
+	$sfurl = simplexml_load_string($result['content'], 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
 }
 
 

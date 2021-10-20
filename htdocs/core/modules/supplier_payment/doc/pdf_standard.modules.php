@@ -812,6 +812,25 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->SetXY($posx + 2, $posy);
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
+
+			// Show default IBAN account
+			$sql = "SELECT iban_prefix";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as rib";
+			$sql .= " WHERE fk_soc = ".($object->thirdparty->id);
+			$sql .= " AND rib.default_rib = 1";
+			$sql .= " AND rib.type = 'ban'";
+			$sql .= " LIMIT 1";
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				$iban = $obj->iban_prefix;
+			}
+
+			if (!empty($iban)) {
+				$pdf->SetFont('', '', $default_font_size - 1);
+				$pdf->SetXY($posx + 2, $posy + 15);
+				$pdf->MultiCell($widthrecbox, 4, $langs->trans("IBAN").': '.$iban, 0, 'L');
+			}
 		}
 	}
 

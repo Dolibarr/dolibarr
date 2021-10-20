@@ -1012,7 +1012,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if (count($listetype)) {
 			print $form->selectarray("typeid", $listetype, (GETPOST('typeid', 'int') ? GETPOST('typeid', 'int') : $typeid), (count($listetype) > 1 ? 1 : 0), 0, 0, '', 0, 0, 0, '', '', 1);
 		} else {
-			print '<font class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</font>';
+			print '<span class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</span>';
 		}
 		print "</td>\n";
 
@@ -1997,7 +1997,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</div>';
 
 		if ($isinspip == -1) {
-			print '<br><br><font class="error">'.$langs->trans('SPIPConnectionFailed').': '.$mailmanspip->error.'</font>';
+			print '<br><br><span class="error">'.$langs->trans('SPIPConnectionFailed').': '.$mailmanspip->error.'</span>';
 		}
 
 
@@ -2012,7 +2012,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Generated documents
 			$filename = dol_sanitizeFileName($object->ref);
-			//$filename =  'tmp_cards.php';
 			$filedir = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member');
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
 			$genallowed = $user->rights->adherent->lire;
@@ -2046,14 +2045,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			$MAX = 10;
 
-			$morehtmlright = '<a href="'.DOL_URL_ROOT.'/adherents/agenda.php?id='.$object->id.'">';
-			$morehtmlright .= $langs->trans("SeeAll");
-			$morehtmlright .= '</a>';
+			$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/adherents/agenda.php?id='.$object->id);
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, $object->element, $socid, 1, 'listactions', $MAX, '', $morehtmlright);
+			$somethingshown = $formactions->showactions($object, $object->element, $socid, 1, 'listactions', $MAX, '', $morehtmlcenter);
 
 			print '</div></div></div>';
 		}

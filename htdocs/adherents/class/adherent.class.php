@@ -2338,12 +2338,12 @@ class Adherent extends CommonObject
 			}
 		} elseif ($status == self::STATUS_RESILIATED) {
 			$statusType = 'status6';
-			$labelStatus = $langs->trans("MemberStatusResiliated");
-			$labelStatusShort = $langs->trans("MemberStatusResiliatedShort");
+			$labelStatus = $langs->transnoentitiesnoconv("MemberStatusResiliated");
+			$labelStatusShort = $langs->transnoentitiesnoconv("MemberStatusResiliatedShort");
 		} elseif ($status == self::STATUS_EXCLUDED) {
 			$statusType = 'status10';
-			$labelStatus = $langs->trans("MemberStatusExcluded");
-			$labelStatusShort = $langs->trans("MemberStatusExcludedShort");
+			$labelStatus = $langs->transnoentitiesnoconv("MemberStatusExcluded");
+			$labelStatusShort = $langs->transnoentitiesnoconv("MemberStatusExcludedShort");
 		}
 
 		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);

@@ -63,10 +63,10 @@ if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket
 
 
 /*
- * Confirm form to delete
+ * Confirm form to delete a file
  */
 
-if ($action == 'delete') {
+if ($action == 'deletefile') {
 	$langs->load("companies"); // Need for string DeleteFile+ConfirmDeleteFiles
 	print $form->formconfirm(
 		$_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")).'&linkid='.GETPOST('linkid', 'int').(empty($param) ? '' : $param),

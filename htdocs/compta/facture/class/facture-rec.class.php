@@ -1461,56 +1461,55 @@ class FactureRec extends CommonInvoice
 		global $langs;
 		$langs->load('bills');
 
-		$labelStatus = $langs->trans('Active');
+		$labelStatus = $langs->transnoentitiesnoconv('Active');
 		$statusType = 'status0';
 
 		//print "$recur,$status,$mode,$alreadypaid,$type";
 		if ($mode == 0) {
-			$prefix = '';
 			if ($recur) {
 				if ($status == self::STATUS_SUSPENDED) {
-					$labelStatus = $langs->trans('Disabled');
+					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
-					$labelStatus = $langs->trans('Active');
+					$labelStatus = $langs->transnoentitiesnoconv('Active');
 				}
 			} else {
 				if ($status == self::STATUS_SUSPENDED) {
-					$labelStatus = $langs->trans('Disabled');
+					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
-					$labelStatus = $langs->trans("Draft");
+					$labelStatus = $langs->transnoentitiesnoconv("Draft");
 				}
 			}
 		} elseif ($mode == 1) {
 			$prefix = 'Short';
 			if ($recur) {
 				if ($status == self::STATUS_SUSPENDED) {
-					$labelStatus = $langs->trans('Disabled');
+					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
-					$labelStatus = $langs->trans('Active');
+					$labelStatus = $langs->transnoentitiesnoconv('Active');
 				}
 			} else {
 				if ($status == self::STATUS_SUSPENDED) {
-					$labelStatus = $langs->trans('Disabled');
+					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
-					$labelStatus = $langs->trans("Draft");
+					$labelStatus = $langs->transnoentitiesnoconv("Draft");
 				}
 			}
 		} elseif ($mode == 2) {
 			if ($recur) {
 				if ($status == self::STATUS_SUSPENDED) {
 					$statusType = 'status6';
-					$labelStatus = $langs->trans('Disabled');
+					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
 					$statusType = 'status4';
-					$labelStatus = $langs->trans('Active');
+					$labelStatus = $langs->transnoentitiesnoconv('Active');
 				}
 			} else {
 				if ($status == self::STATUS_SUSPENDED) {
 					$statusType = 'status6';
-					$labelStatus = $langs->trans('Disabled');
+					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
 					$statusType = 'status0';
-					$labelStatus = $langs->trans('Draft');
+					$labelStatus = $langs->transnoentitiesnoconv('Draft');
 				}
 			}
 		} elseif ($mode == 3) {
@@ -1518,18 +1517,18 @@ class FactureRec extends CommonInvoice
 				$prefix = 'Short';
 				if ($status == self::STATUS_SUSPENDED) {
 					$statusType = 'status6';
-					$labelStatus = $langs->trans('Disabled');
+					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
 					$statusType = 'status4';
-					$labelStatus = $langs->trans('Active');
+					$labelStatus = $langs->transnoentitiesnoconv('Active');
 				}
 			} else {
 				if ($status == self::STATUS_SUSPENDED) {
 					$statusType = 'status6';
-					$labelStatus = $langs->trans('Disabled');
+					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
 					$statusType = 'status0';
-					$labelStatus = $langs->trans('Draft');
+					$labelStatus = $langs->transnoentitiesnoconv('Draft');
 				}
 			}
 		} elseif ($mode == 4) {
@@ -1537,18 +1536,18 @@ class FactureRec extends CommonInvoice
 			if ($recur) {
 				if ($status == self::STATUS_SUSPENDED) {
 					$statusType = 'status6';
-					$labelStatus = $langs->trans('Disabled');
+					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
 					$statusType = 'status4';
-					$labelStatus = $langs->trans('Active');
+					$labelStatus = $langs->transnoentitiesnoconv('Active');
 				}
 			} else {
 				if ($status == self::STATUS_SUSPENDED) {
 					$statusType = 'status6';
-					$labelStatus = $langs->trans('Disabled');
+					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
 					$statusType = 'status0';
-					$labelStatus = $langs->trans('Draft');
+					$labelStatus = $langs->transnoentitiesnoconv('Draft');
 				}
 			}
 		} elseif ($mode == 5 || $mode == 6) {
@@ -1559,25 +1558,23 @@ class FactureRec extends CommonInvoice
 			if ($recur) {
 				if ($status == self::STATUS_SUSPENDED) {
 					$statusType = 'status6';
-					$labelStatus = $langs->trans('Disabled');
+					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
 					$statusType = 'status4';
-					$labelStatus = $langs->trans('Active');
+					$labelStatus = $langs->transnoentitiesnoconv('Active');
 				}
 			} else {
 				if ($status == self::STATUS_SUSPENDED) {
 					$statusType = 'status6';
-					$labelStatus = $langs->trans('Disabled');
+					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
 					$statusType = 'status0';
-					$labelStatus = $langs->trans('Draft');
+					$labelStatus = $langs->transnoentitiesnoconv('Draft');
 				}
 			}
 		}
 
-		if (empty($labelStatusShort)) {
-			$labelStatusShort = $labelStatus;
-		}
+		$labelStatusShort = $labelStatus;
 
 		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
 	}

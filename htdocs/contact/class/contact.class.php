@@ -165,7 +165,8 @@ class Contact extends CommonObject
 	/**
 	 * @var int Thirdparty ID
 	 */
-	public $socid;
+	public $socid;		// both socid and fk_soc are used
+	public $fk_soc;		// both socid and fk_soc are used
 
 	/**
 	 * @var int 0=inactive, 1=active
@@ -1027,7 +1028,8 @@ class Contact extends CommonObject
 				$this->country_code = $obj->country_id ? $obj->country_code : '';
 				$this->country			= $obj->country_id ? ($langs->trans('Country'.$obj->country_code) != 'Country'.$obj->country_code ? $langs->transnoentities('Country'.$obj->country_code) : $obj->country) : '';
 
-				$this->socid			= $obj->fk_soc;
+				$this->fk_soc			= $obj->fk_soc;		// Both fk_soc and socid are used
+				$this->socid			= $obj->fk_soc;		// Both fk_soc and socid are used
 				$this->socname			= $obj->socname;
 				$this->poste			= $obj->poste;
 				$this->statut = $obj->statut;
@@ -1556,8 +1558,8 @@ class Contact extends CommonObject
 			$statusType = 'status5';
 		}
 
-		$label = $langs->trans($labelStatus[$status]);
-		$labelshort = $langs->trans($labelStatusShort[$status]);
+		$label = $langs->transnoentitiesnoconv($labelStatus[$status]);
+		$labelshort = $langs->transnoentitiesnoconv($labelStatusShort[$status]);
 
 		return dolGetStatus($label, $labelshort, '', $statusType, $mode);
 	}

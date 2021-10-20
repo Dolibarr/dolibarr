@@ -86,13 +86,23 @@ class box_contacts extends ModeleBoxes
 
 			$sql .= ", sp.address, sp.zip, sp.town, sp.phone, sp.phone_perso, sp.phone_mobile, sp.email as spemail";
 			$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
-			$sql .= ", s.code_client, s.code_compta, s.client";
+			$sql .= ", s.code_client, s.client";
 			$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
+			if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+				$sql .= ", spe.accountancy_code_customer as code_compta";
+				$sql .= ", spe.accountancy_code_supplier as code_compta_fournisseur";
+			} else {
+				$sql .= ", s.code_compta";
+				$sql .= ", s.code_compta_fournisseur";
+			}
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", co.label as country, co.code as country_code";
 			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON sp.fk_pays = co.rowid";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
+			if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
+			}
 			if (!$user->rights->societe->client->voir && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}

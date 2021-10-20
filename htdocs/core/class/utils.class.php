@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2016 Destailleur Laurent <eldy@users.sourceforge.net>
+/* Copyright (C) 2016	Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2021	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -202,7 +203,7 @@ class Utils
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		// Check compression parameter
-		if (!in_array($compression, array('none', 'gz', 'bz', 'zip'))) {
+		if (!in_array($compression, array('none', 'gz', 'bz', 'zip', 'zstd'))) {
 			$langs->load("errors");
 			$this->error = $langs->transnoentitiesnoconv("ErrorBadValueForParameter", $compression, "Compression");
 			return -1;
@@ -248,9 +249,10 @@ class Utils
 			$compression = $compression ? $compression : 'none';
 			if ($compression == 'gz') {
 				$outputfile .= '.gz';
-			}
-			if ($compression == 'bz') {
+			} elseif ($compression == 'bz') {
 				$outputfile .= '.bz2';
+			} elseif ($compression == 'zstd') {
+				$outputfile .= '.zst';
 			}
 			$outputerror = $outputfile.'.err';
 			dol_mkdir($conf->admin->dir_output.'/backup');
@@ -337,12 +339,12 @@ class Utils
 			$fullcommandclear = $command." ".$paramclear." 2>&1";
 			if ($compression == 'none') {
 				$handle = fopen($outputfile, 'w');
-			}
-			if ($compression == 'gz') {
+			} elseif ($compression == 'gz') {
 				$handle = gzopen($outputfile, 'w');
-			}
-			if ($compression == 'bz') {
+			} elseif ($compression == 'bz') {
 				$handle = bzopen($outputfile, 'w');
+			} elseif ($compression == 'zstd') {
+				$handle = fopen($outputfile, 'w');
 			}
 
 			$ok = 0;
@@ -408,12 +410,12 @@ class Utils
 
 				if ($compression == 'none') {
 					fclose($handle);
-				}
-				if ($compression == 'gz') {
+				} elseif ($compression == 'gz') {
 					gzclose($handle);
-				}
-				if ($compression == 'bz') {
+				} elseif ($compression == 'bz') {
 					bzclose($handle);
+				} elseif ($compression == 'zstd') {
+					fclose($handle);
 				}
 
 				if (!empty($conf->global->MAIN_UMASK)) {
@@ -428,12 +430,12 @@ class Utils
 			// Get errorstring
 			if ($compression == 'none') {
 				$handle = fopen($outputfile, 'r');
-			}
-			if ($compression == 'gz') {
+			} elseif ($compression == 'gz') {
 				$handle = gzopen($outputfile, 'r');
-			}
-			if ($compression == 'bz') {
+			} elseif ($compression == 'bz') {
 				$handle = bzopen($outputfile, 'r');
+			} elseif ($compression == 'zstd') {
+				$handle = fopen($outputfile, 'r');
 			}
 			if ($handle) {
 				// Get 2048 first chars of error message.
@@ -443,12 +445,12 @@ class Utils
 				// Close file
 				if ($compression == 'none') {
 					fclose($handle);
-				}
-				if ($compression == 'gz') {
+				} elseif ($compression == 'gz') {
 					gzclose($handle);
-				}
-				if ($compression == 'bz') {
+				} elseif ($compression == 'bz') {
 					bzclose($handle);
+				} elseif ($compression == 'zstd') {
+					fclose($handle);
 				}
 				if ($ok && preg_match('/^-- (MySql|MariaDB)/i', $errormsg)) {	// No error
 					$errormsg = '';

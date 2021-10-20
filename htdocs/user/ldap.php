@@ -189,7 +189,7 @@ if ($result > 0) {
 	// Affichage arbre
 	if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0)) {
 		if (!is_array($records)) {
-			print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+			print '<tr class="oddeven"><td colspan="2"><span class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</span></td></tr>';
 		} else {
 			$result = show_ldap_content($records, 0, $records['count'], true);
 		}

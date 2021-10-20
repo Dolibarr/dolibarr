@@ -225,7 +225,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 						break;
 					}
 					//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-					$this->assertTrue($ok, 'Found string $db-> into a .class.php file in '.$file['relativename']);
+					$this->assertTrue($ok, 'Found string $db-> into a .class.php file in '.$file['relativename'].'. Inside a .class file, you should use $this->db-> instead.');
 					//exit;
 				}
 			} else {
