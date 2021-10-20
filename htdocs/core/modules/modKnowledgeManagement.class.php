@@ -68,7 +68,7 @@ class modKnowledgeManagement extends DolibarrModules
 		$this->descriptionlong = "Manage a Knowledge Management (KM) or Help-Desk base";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 		// Url to the file with your last numberversion of this module
 		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
