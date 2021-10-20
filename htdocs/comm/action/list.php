@@ -625,22 +625,6 @@ print $nav;
 //print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
 //print dol_get_fiche_end();
 
-// Add link to show birthdays
-/*
-$link = '';
-if (empty($conf->use_javascript_ajax))
-{
-	$newparam=$param;   // newparam is for birthday links
-	$newparam=preg_replace('/showbirthday=[0-1]/i','showbirthday='.(empty($showbirthday)?1:0),$newparam);
-	if (! preg_match('/showbirthday=/i',$newparam)) $newparam.='&showbirthday=1';
-	$link='<a href="'.$_SERVER['PHP_SELF'];
-	$link.='?'.$newparam;
-	$link.='">';
-	if (empty($showbirthday)) $link.=$langs->trans("AgendaShowBirthdayEvents");
-	else $link.=$langs->trans("AgendaHideBirthdayEvents");
-	$link.='</a>';
-}
-*/
 
 $s = $newtitle;
 
@@ -656,7 +640,7 @@ if (empty($reshook)) {
 $viewmode = '';
 $viewmode .= '<a class="btnTitle btnTitleSelected reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
-$viewmode .= img_picto($langs->trans("List"), 'object_list', 'class="pictoactionview block"');
+$viewmode .= img_picto($langs->trans("List"), 'object_list', 'class="imgforviewmode pictoactionview block"');
 //$viewmode .= '</span>';
 $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewList").'</span></a>';
 

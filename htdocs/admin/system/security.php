@@ -306,7 +306,7 @@ print empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? '' : img_picto('', 'tick').
 print yn(empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? 0 : 1);
 if (!empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
 	print ' &nbsp; - '.$conf->global->MAIN_ANTIVIRUS_COMMAND;
-	if (defined('MAIN_ANTIVIRUS_COMMAND')) {
+	if (defined('MAIN_ANTIVIRUS_COMMAND') && !defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {
 		print ' - <span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
 	}
 }

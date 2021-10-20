@@ -247,7 +247,7 @@ class ConferenceOrBooth extends ActionComm
 
 		$result = parent::fetch($id, $ref, $ref_ext, $email_msgid);
 
-		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_register.php?id='.urlencode($id).'&type=conf';
+		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.urlencode($id).'&type=conf';
 
 		$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
 		$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
@@ -672,18 +672,18 @@ class ConferenceOrBooth extends ActionComm
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("eventorganization@eventorganization");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_SUGGESTED] = $langs->trans('Suggested');
-			$this->labelStatus[self::STATUS_CONFIRMED] = $langs->trans('Confirmed');
-			$this->labelStatus[self::STATUS_NOT_QUALIFIED] = $langs->trans('NotSelected');
-			$this->labelStatus[self::STATUS_DONE] = $langs->trans('Done');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatusShort[self::STATUS_SUGGESTED] = $langs->trans('Suggested');
-			$this->labelStatusShort[self::STATUS_CONFIRMED] = $langs->trans('Confirmed');
-			$this->labelStatusShort[self::STATUS_NOT_QUALIFIED] = $langs->trans('NotSelected');
-			$this->labelStatusShort[self::STATUS_DONE] = $langs->trans('Done');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_SUGGESTED] = $langs->transnoentitiesnoconv('Suggested');
+			$this->labelStatus[self::STATUS_CONFIRMED] = $langs->transnoentitiesnoconv('Confirmed');
+			$this->labelStatus[self::STATUS_NOT_QUALIFIED] = $langs->transnoentitiesnoconv('NotSelected');
+			$this->labelStatus[self::STATUS_DONE] = $langs->transnoentitiesnoconv('Done');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatusShort[self::STATUS_SUGGESTED] = $langs->transnoentitiesnoconv('Suggested');
+			$this->labelStatusShort[self::STATUS_CONFIRMED] = $langs->transnoentitiesnoconv('Confirmed');
+			$this->labelStatusShort[self::STATUS_NOT_QUALIFIED] = $langs->transnoentitiesnoconv('NotSelected');
+			$this->labelStatusShort[self::STATUS_DONE] = $langs->transnoentitiesnoconv('Done');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
 		}
 
 		$statusType = 'status'.$status;

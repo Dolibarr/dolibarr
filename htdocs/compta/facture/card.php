@@ -3651,7 +3651,7 @@ if ($action == 'create') {
 			}
 		};
 
-		print $object->showOptionals($extrafields, 'edit', $parameters);
+		print $object->showOptionals($extrafields, 'create', $parameters);
 	}
 
 	// Template to use by default

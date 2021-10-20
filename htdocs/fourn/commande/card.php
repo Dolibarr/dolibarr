@@ -1786,7 +1786,7 @@ if ($action == 'create') {
 	print $hookmanager->resPrint;
 
 	if (empty($reshook)) {
-		print $object->showOptionals($extrafields, 'edit');
+		print $object->showOptionals($extrafields, 'create');
 	}
 
 	// Bouton "Create Draft"

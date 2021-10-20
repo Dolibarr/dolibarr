@@ -8,7 +8,7 @@
  * Copyright (C) 2011		Remy Younes				<ryounes@gmail.com>
  * Copyright (C) 2012-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@ltairis.fr>
- * Copyright (C) 2011-2020	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
@@ -232,7 +232,7 @@ $tabsql[33] = "SELECT rowid, pos, code, label, active FROM ".MAIN_DB_PREFIX."c_h
 $tabsql[34] = "SELECT rowid, pos, code, label, c_level, active FROM ".MAIN_DB_PREFIX."c_hrm_function";
 $tabsql[35] = "SELECT c.rowid, c.label, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_cat c";
 $tabsql[36] = "SELECT r.rowid, r.fk_c_exp_tax_cat, r.range_ik, r.active, r.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_range r";
-$tabsql[37] = "SELECT r.rowid, r.code, r.label, r.short_label, r.unit_type, r.scale, r.active FROM ".MAIN_DB_PREFIX."c_units r";
+$tabsql[37] = "SELECT r.rowid, r.code, r.sortorder, r.label, r.short_label, r.unit_type, r.scale, r.active FROM ".MAIN_DB_PREFIX."c_units r";
 $tabsql[38] = "SELECT rowid, entity, code, label, url, icon, active FROM ".MAIN_DB_PREFIX."c_socialnetworks";
 $tabsql[39] = "SELECT code, label as libelle, sortorder, active FROM ".MAIN_DB_PREFIX."c_prospectcontactlevel";
 $tabsql[40] = "SELECT id      as rowid, code, libelle, picto, active FROM ".MAIN_DB_PREFIX."c_stcommcontact";
@@ -278,7 +278,7 @@ $tabsqlsort[33] = "code ASC";
 $tabsqlsort[34] = "code ASC";
 $tabsqlsort[35] = "c.label ASC";
 $tabsqlsort[36] = "r.fk_c_exp_tax_cat ASC, r.range_ik ASC";
-$tabsqlsort[37] = "r.unit_type ASC, r.scale ASC, r.code ASC";
+$tabsqlsort[37] = "sortorder ASC";
 $tabsqlsort[38] = "rowid, code ASC";
 $tabsqlsort[39] = "sortorder ASC";
 $tabsqlsort[40] = "code ASC";
@@ -324,7 +324,7 @@ $tabfield[33] = "code,label";
 $tabfield[34] = "code,label";
 $tabfield[35] = "label";
 $tabfield[36] = "range_ik,fk_c_exp_tax_cat";
-$tabfield[37] = "code,label,short_label,unit_type,scale";
+$tabfield[37] = "code,label,short_label,unit_type,scale,sortorder";
 $tabfield[38] = "code,label,url,icon,entity";
 $tabfield[39] = "code,libelle,sortorder";
 $tabfield[40] = "code,libelle,picto";
@@ -370,7 +370,7 @@ $tabfieldvalue[33] = "code,label";
 $tabfieldvalue[34] = "code,label";
 $tabfieldvalue[35] = "label";
 $tabfieldvalue[36] = "range_ik,fk_c_exp_tax_cat";
-$tabfieldvalue[37] = "code,label,short_label,unit_type,scale";
+$tabfieldvalue[37] = "code,label,short_label,unit_type,scale,sortorder";
 $tabfieldvalue[38] = "code,label,url,icon";
 $tabfieldvalue[39] = "code,libelle,sortorder";
 $tabfieldvalue[40] = "code,libelle,picto";
@@ -417,7 +417,7 @@ $tabfieldinsert[33] = "code,label";
 $tabfieldinsert[34] = "code,label";
 $tabfieldinsert[35] = "label";
 $tabfieldinsert[36] = "range_ik,fk_c_exp_tax_cat";
-$tabfieldinsert[37] = "code,label,short_label,unit_type,scale";
+$tabfieldinsert[37] = "code,label,short_label,unit_type,scale,sortorder";
 $tabfieldinsert[38] = "code,label,url,icon,entity";
 $tabfieldinsert[39] = "code,label,sortorder";
 $tabfieldinsert[40] = "code,libelle,picto";
@@ -1457,6 +1457,10 @@ if ($id) {
 		print $tdsoffields;
 
 
+		// Line to enter new values
+		print '<!-- line to add new entry -->';
+		print '<tr class="oddeven nodrag nodrop nohover">';
+
 		$obj = new stdClass();
 		// If data was already input, we define them in obj to populate input fields.
 		if (GETPOST('actionadd')) {
@@ -1476,9 +1480,6 @@ if ($id) {
 			unset($fieldlist[2]); // Remove field ??? if dictionary Regions
 		}
 
-		// Line to enter new values
-		print '<!-- line to add new entry -->';
-		print '<tr class="oddeven nodrag nodrop nohover">';
 
 		if (empty($reshook)) {
 			fieldList($fieldlist, $obj, $tabname[$id], 'add');

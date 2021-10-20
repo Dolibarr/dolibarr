@@ -116,7 +116,7 @@ class Evaluation extends CommonObject
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
-		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'default'=>0, 'visible'=>5, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Brouillon', '1'=>'Valid&eacute;'),),
+		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'default'=>0, 'visible'=>5, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '6' => 'Closed'),),
 		'date_eval' => array('type'=>'date', 'label'=>'DateEval', 'enabled'=>'1', 'position'=>502, 'notnull'=>1, 'visible'=>1,),
 		'fk_user' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'User', 'enabled'=>'1', 'position'=>504, 'notnull'=>1, 'visible'=>1,),
 		'fk_job' => array('type'=>'integer:Job:/hrm/class/job.class.php', 'label'=>'Job', 'enabled'=>'1', 'position'=>505, 'notnull'=>1, 'visible'=>1,),
@@ -844,12 +844,12 @@ class Evaluation extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("hrm");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated');
-			$this->labelStatus[self::STATUS_CLOSED] = $langs->trans('Closed');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Validated');
-			$this->labelStatus[self::STATUS_CLOSED] = $langs->trans('Closed');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
+			$this->labelStatus[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Closed');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
+			$this->labelStatus[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Closed');
 		}
 
 		$statusType = 'status'.$status;

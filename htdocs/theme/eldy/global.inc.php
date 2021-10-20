@@ -701,6 +701,9 @@ textarea.centpercent {
 .nowraponsmartphone {
 	white-space: <?php print ($dol_optimize_smallscreen ? 'nowrap' : 'normal'); ?>;
 }
+.wraponsmartphone {
+	white-space: <?php print ($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
+}
 .liste_titre .nowrap {
 	white-space: nowrap;
 }
@@ -884,6 +887,13 @@ span.fa.fa-plus-circle.paddingleft {
 .tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off
 {
 	font-size: 1.5em; vertical-align: text-bottom;
+}
+
+.divoverflow {
+	overflow: hidden;
+	white-space: nowrap;
+	vertical-align: middle;
+	text-overflow: ellipsis;
 }
 
 
@@ -1414,6 +1424,7 @@ table[summary="list_of_modules"] .fa-cog {
 .titlefieldcreate { width: 20%; }
 .titlefield       { /* width: 25%; */ width: 250px; }
 .titlefieldmiddle { width: 50%; }
+.titlefieldmax45 { max-width: 45%; }
 .imgmaxwidth180 { max-width: 180px; }
 .imgmaxheight50 { max-height: 50px; }
 
@@ -1718,7 +1729,7 @@ td.showDragHandle {
 	<?php } ?>
 }
 #id-right {	/* This must stay id-right and not be replaced with echo $right */
-	padding-top: 10px;
+	padding-top: 14px;
 	width: 100%;
 	background: var(--colorbackbody);
 	padding-bottom: 20px;
@@ -3279,7 +3290,7 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 	padding-right: 7px !important;
 }
 input.button[name="upload"] {
-	padding: 4px !important;
+	padding: 5px !important;
 	font-size: 0.9em;
 }
 input.button.smallpaddingimp {
@@ -3397,7 +3408,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-top-width: <?php echo $borderwidth ?>px;
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
-	margin: 0px 0px 5px 0px;
+	margin: 0px 0px 20px 0px;
 
 	<?php
 	if ($userborderontable) { ?>
@@ -6989,6 +7000,9 @@ div.clipboardCPValue.hidewithsize {
 	#id-left {
 		z-index: 201;
 		background: var(--colorbackvmenu1);
+	}
+	#id-right {	/* This must stay id-right and not be replaced with echo $right */
+		padding-top: 8px;
 	}
 
 	.login_vertical_align {

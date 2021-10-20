@@ -99,12 +99,9 @@ if ($massaction == 'presend') {
 
 	print '<input type="hidden" name="massaction" value="confirm_presend">';
 
-	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-	$formmail = new FormMail($db);
-
 	print dol_get_fiche_head(null, '', '');
 
-	// Cree l'objet formulaire mail
+	// Create mail form
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
 	$formmail->withform = -1;
