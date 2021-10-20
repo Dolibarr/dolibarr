@@ -1170,6 +1170,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
                         	$("#typent_id").change();
                         	$("#effectif_id").val(id_ef15);
                         	$("#effectif_id").change();
+							/* Force to recompute the width of a select2 field when it was hidden and then shown programatically */
+							if ($("#civility_id").data("select2")) {
+								$("#civility_id").select2({width: "resolve"});
+							}
                         	$("#TypeName").html(document.formsoc.LastName.value);
                         	document.formsoc.private.value=1;
                         });
