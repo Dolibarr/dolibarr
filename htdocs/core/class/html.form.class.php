@@ -2818,7 +2818,7 @@ class Form
 			$opt .= ' pbq="'.$objp->price_by_qty_rowid.'" data-pbq="'.$objp->price_by_qty_rowid.'" data-pbqup="'.$objp->price_by_qty_unitprice.'" data-pbqbase="'.$objp->price_by_qty_price_base_type.'" data-pbqqty="'.$objp->price_by_qty_quantity.'" data-pbqpercent="'.$objp->price_by_qty_remise_percent.'"';
 		}
 		if (!empty($conf->stock->enabled) && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
-			if (!empty($user->rights->stock->lire)) {
+			if ((!empty($user->rights->stock->lire)) || (!empty($user->rights->stock->availability->read))) {
 				if ($objp->stock > 0) {
 					$opt .= ' class="product_line_stock_ok"';
 				} elseif ($objp->stock <= 0) {
@@ -2984,12 +2984,42 @@ class Form
 					$tmpproduct->load_virtual_stock();
 					$virtualstock = $tmpproduct->stock_theorique;
 
-					$opt .= ' - '.$langs->trans("VirtualStock").':'.$virtualstock;
+					$opt .= ' - '.$langs->trans("VirtualStock").': '.$virtualstock;
 
-					$outval .= ' - '.$langs->transnoentities("VirtualStock").':';
+					$outval .= ' - '.$langs->transnoentities("VirtualStock").': ';
 					if ($virtualstock > 0) {
 						$outval .= '<span class="product_line_stock_ok">';
 					} elseif ($virtualstock <= 0) {
+						$outval .= '<span class="product_line_stock_too_low">';
+					}
+					$outval .= $virtualstock;
+					$outval .= '</span>';
+
+					unset($tmpproduct);
+				}
+			}else if (!empty($user->rights->stock->availability->read)) {
+				if ($objp->stock > 0) {
+					$opt .= ' - '.$langs->trans("Stock").': '.$langs->trans("Available");
+					$outval .= ' - <span class="product_line_stock_ok">'.$langs->transnoentities("Stock").': '.$langs->trans("Available");
+				} elseif ($objp->stock <= 0) {
+					$opt .= ' - '.$langs->trans("Stock").': '.$langs->trans("NotAvailable");
+					$outval .= ' - <span class="product_line_stock_too_low">'.$langs->transnoentities("Stock").': '.$langs->trans("NotAvailable");
+				}
+				$outval .= '</span>';
+				if (empty($novirtualstock) && !empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO)) {  // Warning, this option may slow down combo list generation
+					$langs->load("stocks");
+
+					$tmpproduct = new Product($this->db);
+					$tmpproduct->fetch($objp->rowid, '', '', '', 1, 1, 1); // Load product without lang and prices arrays (we just need to make ->virtual_stock() after)
+					$tmpproduct->load_virtual_stock();
+					$virtualstock = $tmpproduct->stock_virtual_available ? $langs->trans("Available") : $langs->trans("NotAvailable");
+
+					$opt .= ' - '.$langs->trans("VirtualStock").': '.$virtualstock;
+
+					$outval .= ' - '.$langs->transnoentities("VirtualStock").': ';
+					if ($tmpproduct->stock_virtual_available) {
+						$outval .= '<span class="product_line_stock_ok">';
+					} else {
 						$outval .= '<span class="product_line_stock_too_low">';
 					}
 					$outval .= $virtualstock;
@@ -3355,7 +3385,7 @@ class Form
 						} elseif ($objp->stock <= 0) {
 							$optlabel .= ' - <span class="product_line_stock_too_low">';
 						}
-						$optlabel .= $langs->transnoentities("Stock").':'.price(price2num($objp->stock, 'MS'));
+						$optlabel .= $langs->transnoentities("Stock").': '.price(price2num($objp->stock, 'MS'));
 						$optlabel .= '</span>';
 						if (empty($novirtualstock) && !empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO)) {  // Warning, this option may slow down combo list generation
 							$langs->load("stocks");
@@ -3365,14 +3395,44 @@ class Form
 							$tmpproduct->load_virtual_stock();
 							$virtualstock = $tmpproduct->stock_theorique;
 
-							$outvallabel .= ' - '.$langs->trans("VirtualStock").':'.$virtualstock;
+							$outvallabel .= ' - '.$langs->trans("VirtualStock").': '.$virtualstock;
 
-							$optlabel .= ' - '.$langs->transnoentities("VirtualStock").':';
 							if ($virtualstock > 0) {
 								$optlabel .= '<span class="product_line_stock_ok">';
 							} elseif ($virtualstock <= 0) {
 								$optlabel .= '<span class="product_line_stock_too_low">';
 							}
+							$optlabel .= ' - '.$langs->transnoentities("VirtualStock").': ';
+							$optlabel .= $virtualstock;
+							$optlabel .= '</span>';
+
+							unset($tmpproduct);
+						}
+					}else if (!empty($user->rights->stock->availability->read)) {
+						if ($objp->stock > 0) {
+							$outvallabel .= ' - '.$langs->trans("Stock").': '.$langs->trans("Available");
+							$optlabel .= ' - <span class="product_line_stock_ok">'.$langs->transnoentities("Stock").': '.$langs->trans("Available");
+						} elseif ($objp->stock <= 0) {
+							$outvallabel .= ' - '.$langs->trans("Stock").': '.$langs->trans("NotAvailable");
+							$optlabel .= ' - <span class="product_line_stock_too_low">'.$langs->transnoentities("Stock").': '.$langs->trans("NotAvailable");
+						}
+						$optlabel .= '</span>';
+						if (empty($novirtualstock) && !empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO)) {  // Warning, this option may slow down combo list generation
+							$langs->load("stocks");
+
+							$tmpproduct = new Product($this->db);
+							$tmpproduct->fetch($objp->rowid, '', '', '', 1, 1, 1); // Load product without lang and prices arrays (we just need to make ->virtual_stock() after)
+							$tmpproduct->load_virtual_stock();
+							$virtualstock = $tmpproduct->stock_virtual_available ? $langs->trans("Available") : $langs->trans("NotAvailable");
+
+							$outvallabel .= ' - '.$langs->trans("VirtualStock").': '.$virtualstock;
+
+							if ($tmpproduct->stock_virtual_available) {
+								$optlabel .= '<span class="product_line_stock_ok">';
+							} else {
+								$optlabel .= '<span class="product_line_stock_too_low">';
+							}
+							$optlabel .= ' - '.$langs->transnoentities("VirtualStock").': ';
 							$optlabel .= $virtualstock;
 							$optlabel .= '</span>';
 

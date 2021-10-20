@@ -1617,11 +1617,14 @@ class Products extends DolibarrApi
 			$combinations[$key]->attributes = $prodc2vp->fetchByFkCombination((int) $combination->id);
 			$combinations[$key] = $this->_cleanObjectDatas($combinations[$key]);
 
-			if ($includestock==1 && DolibarrApiAccess::$user->rights->stock->lire) {
+			if ($includestock==1 && (DolibarrApiAccess::$user->rights->stock->lire || DolibarrApiAccess::$user->rights->stock->availability->read)) {
 				$productModel = new Product($this->db);
 				$productModel->fetch((int) $combination->fk_product_child);
 				$productModel->load_stock();
-				$combinations[$key]->stock_warehouse = $this->_cleanObjectDatas($productModel)->stock_warehouse;
+
+				if(DolibarrApiAccess::$user->rights->stock->lire){ // full warehouse info needs full stock reading perms
+					$combinations[$key]->stock_warehouse = $this->_cleanObjectDatas($productModel)->stock_warehouse;
+				}
 			}
 		}
 
@@ -1859,7 +1862,7 @@ class Products extends DolibarrApi
 	public function getStock($id, $selected_warehouse_id = null)
 	{
 
-		if (!DolibarrApiAccess::$user->rights->produit->lire || !DolibarrApiAccess::$user->rights->stock->lire) {
+		if (!DolibarrApiAccess::$user->rights->produit->lire || !DolibarrApiAccess::$user->rights->stock->lire) { // full product and stock access required for detailed stock info
 			throw new RestException(401);
 		}
 
@@ -1945,9 +1948,17 @@ class Products extends DolibarrApi
 
 		unset($object->supplierprices);	// Mut use another API to get them
 
-		if (empty(DolibarrApiAccess::$user->rights->stock->lire)) {
+		// remove stock info if no stock read rights
+		if(!DolibarrApiAccess::$user->rights->stock->lire){
 			unset($object->stock_reel);
 			unset($object->stock_theorique);
+			unset($object->stock_warehouse);
+		}
+
+		// remove stock availability info if no stock read rights or availability read rights
+		if((!DolibarrApiAccess::$user->rights->stock->availability->read) && (!DolibarrApiAccess::$user->rights->stock->lire)){
+			unset($object->stock_real_available);
+			unset($object->stock_virtual_available);
 		}
 
 		return $object;
@@ -2012,7 +2023,7 @@ class Products extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if ($includestockdata && DolibarrApiAccess::$user->rights->stock->lire) {
+		if ($includestockdata && (DolibarrApiAccess::$user->rights->stock->lire || DolibarrApiAccess::$user->rights->stock->availability->read)) {
 			$this->product->load_stock();
 
 			if (is_array($this->product->stock_warehouse)) {

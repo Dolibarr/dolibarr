@@ -185,6 +185,7 @@ inventoryReadPermission=View inventories
 inventoryWritePermission=Update inventories
 inventoryValidatePermission=Validate inventory
 inventoryDeletePermission=Delete inventory
+stockAvailabilityReadPermission=See stock availability
 inventoryTitle=Inventory
 inventoryListTitle=Inventories
 inventoryListEmpty=No inventory in progress

@@ -212,6 +212,22 @@ class Product extends CommonObject
 	public $stock_theorique;
 
 	/**
+	 * Stock real available
+	 *
+	 * @var bool
+	 */
+	public $stock_real_available = false;
+
+	/**
+	 * Stock virtual available
+	 *
+	 * @var bool
+	 */
+	public $stock_virtual_available = false;
+
+
+
+	/**
 	 * Cost price
 	 *
 	 * @var float
@@ -5230,6 +5246,8 @@ class Product extends CommonObject
 		$this->stock_reel = 0;
 		$this->stock_warehouse = array();
 		$this->stock_theorique = 0;
+		$this->stock_real_available = false;
+		$this->stock_virtual_available = false;
 
 		// Set filter on warehouse status
 		$warehouseStatus = array();
@@ -5278,6 +5296,8 @@ class Product extends CommonObject
 				}
 			}
 			$this->db->free($result);
+
+			$this->stock_real_available = ($this->stock_reel > 0) ? true : false;
 
 			if (!preg_match('/novirtual/', $option)) {
 				$this->load_virtual_stock($includedraftpoforvirtual); // This also load all arrays stats_xxx...
@@ -5396,6 +5416,8 @@ class Product extends CommonObject
 		if ($reshook > 0) {
 			$this->stock_theorique = $hookmanager->resArray['stock_theorique'];
 		}
+
+		$this->stock_virtual_available = ($this->stock_theorique > 0) ? true : false;
 
 		return 1;
 	}
