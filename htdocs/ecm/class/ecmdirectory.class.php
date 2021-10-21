@@ -426,15 +426,14 @@ class EcmDirectory extends CommonObject
 			} else {
 				$result = @dol_delete_dir($file, 0);
 			}
-		}
-
-		if ($result || !@is_dir(dol_osencode($file))) {
-			$this->db->commit();
-		} else {
-			$this->error = 'ErrorFailToDeleteDir';
-			dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
-			$this->db->rollback();
-			$error++;
+			if ($result || !@is_dir(dol_osencode($file))) {
+				$this->db->commit();
+			} else {
+				$this->error = 'ErrorFailToDeleteDir';
+				dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
+				$this->db->rollback();
+				$error++;
+			}	
 		}
 
 		if (!$error) {
