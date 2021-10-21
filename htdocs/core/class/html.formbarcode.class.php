@@ -65,6 +65,7 @@ class FormBarCode
 		global $conf, $langs;
 
 		$disable = '';
+		$select_encoder = '';
 
 		if (!empty($conf->use_javascript_ajax)) {
 			print "\n".'<script type="text/javascript" language="javascript">';
@@ -93,7 +94,7 @@ class FormBarCode
 		}
 
 		$selectname = (!empty($conf->use_javascript_ajax) ? 'coder' : 'coder'.$code_id);
-		$select_encoder = '<select id="select'.$idForm.'" class="flat" name="'.$selectname.'">';
+		$select_encoder .= '<select id="select'.$idForm.'" class="flat" name="'.$selectname.'">';
 		$select_encoder .= '<option value="0"'.($selected == 0 ? ' selected' : '').' '.$disable.'>'.$langs->trans('Disable').'</option>';
 		$select_encoder .= '<option value="-1" disabled>--------------------</option>';
 		foreach ($barcodelist as $key => $value) {
