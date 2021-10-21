@@ -1601,17 +1601,18 @@ class Project extends CommonObject
 
 				foreach (array('internal', 'external') as $source) {
 					$tab = $origin_project->liste_contact(-1, $source);
-
-					foreach ($tab as $contacttoadd) {
-						$clone_project->add_contact($contacttoadd['id'], $contacttoadd['code'], $contacttoadd['source'], $notrigger);
-						if ($clone_project->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-							$langs->load("errors");
-							$this->error .= $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
-							$error++;
-						} else {
-							if ($clone_project->error != '') {
-								$this->error .= $clone_project->error;
+					if (is_array($tab) && count($tab)>0) {
+						foreach ($tab as $contacttoadd) {
+							$clone_project->add_contact($contacttoadd['id'], $contacttoadd['code'], $contacttoadd['source'], $notrigger);
+							if ($clone_project->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+								$langs->load("errors");
+								$this->error .= $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
 								$error++;
+							} else {
+								if ($clone_project->error != '') {
+									$this->error .= $clone_project->error;
+									$error++;
+								}
 							}
 						}
 					}
@@ -1660,7 +1661,7 @@ class Project extends CommonObject
 				foreach ($tasksarray as $tasktoclone) {
 					$result_clone = $taskstatic->createFromClone($user, $tasktoclone->id, $clone_project_id, $tasktoclone->fk_parent, $move_date, true, false, $clone_task_file, true, false);
 					if ($result_clone <= 0) {
-						$this->error .= $result_clone->error;
+						$this->error .= $taskstatic->error;
 						$error++;
 					} else {
 						$new_task_id = $result_clone;
@@ -1714,6 +1715,7 @@ class Project extends CommonObject
 		global $user, $langs, $conf;
 
 		$error = 0;
+		$result = 0;
 
 		$taskstatic = new Task($this->db);
 
