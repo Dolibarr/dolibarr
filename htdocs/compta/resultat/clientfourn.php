@@ -9,6 +9,7 @@
  * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Maxime DEMAREST         <maxime@indelog.fr>
+ * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -366,7 +367,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	}
 } else {
 	/*
-	 * Factures clients
+	 * Customer invoices
 	 */
 	print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("CustomersInvoices").'</td></tr>';
 
@@ -386,8 +387,8 @@ if ($modecompta == 'BOOKKEEPING') {
 		}
 	} elseif ($modecompta == 'RECETTES-DEPENSES') {
 		/*
-		 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
-		 * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
+		 * List of payments (old payments are not seen by this query because, on older versions, they were not linked via payment_invoice.
+		 * old versions, they were not linked via payment_invoice. They are added later)
 		 */
 		$sql = "SELECT s.nom as name, s.rowid as socid, sum(pf.amount) as amount_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -434,7 +435,7 @@ if ($modecompta == 'BOOKKEEPING') {
 		dol_print_error($db);
 	}
 
-	// On ajoute les paiements clients anciennes version, non lie par paiement_facture
+	// We add the old customer payments, not linked by payment_invoice
 	if ($modecompta == 'RECETTES-DEPENSES') {
 		$sql = "SELECT 'Autres' as name, '0' as idp, sum(p.amount) as amount_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -673,7 +674,7 @@ if ($modecompta == 'BOOKKEEPING') {
 
 
 	/*
-	 * Charges sociales non deductibles
+	 * Social / Fiscal contributions who are not deductible
 	 */
 
 	print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("SocialContributionsNondeductibles").'</td></tr>';
@@ -760,7 +761,7 @@ if ($modecompta == 'BOOKKEEPING') {
 
 
 	/*
-	 * Charges sociales deductibles
+	 * Social / Fiscal contributions who are deductible
 	 */
 
 	print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("SocialContributionsDeductibles").'</td></tr>';
@@ -932,7 +933,7 @@ if ($modecompta == 'BOOKKEEPING') {
 
 
 	/*
-	 * Expense
+	 * Expense report
 	 */
 
 	if (!empty($conf->expensereport->enabled)) {
@@ -1088,7 +1089,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	}
 
 	/*
-	 * Payement Loan
+	 * Payment Loan
 	 */
 
 	if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_LOAN) && !empty($conf->loan->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
@@ -1209,7 +1210,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			print '<td class="right"><span class="amount">'.price($amount)."</span></td>\n";
 			print "</tr>\n";
 
-			// VAT to retreive
+			// VAT to retrieve
 			$amount = 0;
 			$sql = "SELECT date_format(f.datef,'%Y-%m') as dm, sum(f.total_tva) as amount";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
