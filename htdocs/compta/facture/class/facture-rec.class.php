@@ -303,8 +303,8 @@ class FactureRec extends CommonInvoice
 			$sql .= ", ".((int) $facsrc->socid);
 			$sql .= ", ".((int) $conf->entity);
 			$sql .= ", '".$this->db->idate($now)."'";
-			$sql .= ", ".(!empty($facsrc->amount) ? ((float) $facsrc->amount) : '0');
-			$sql .= ", ".(!empty($facsrc->remise) ? ((float) $this->remise) : '0');
+			$sql .= ", ".(!empty($facsrc->total_ttc) ? ((float) $facsrc->total_ttc) : '0');
+			$sql .= ", ".(!empty($facsrc->remise_absolue) ? ((float) $this->remise_absolue) : '0');
 			$sql .= ", ".(!empty($this->note_private) ? ("'".$this->db->escape($this->note_private)."'") : "NULL");
 			$sql .= ", ".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
 			$sql .= ", ".(!empty($this->model_pdf) ? ("'".$this->db->escape($this->model_pdf)."'") : "NULL");
