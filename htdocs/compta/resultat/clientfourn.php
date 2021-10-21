@@ -862,7 +862,8 @@ if ($modecompta == 'BOOKKEEPING') {
 
 			$sql = "SELECT u.rowid, u.firstname, u.lastname, p.fk_user, p.label as label, date_format($column,'%Y-%m') as dm, sum(p.amount) as amount";
 			$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."salary as s ON s.rowid=p.fk_salary";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=s.fk_user";
 			$sql .= " WHERE p.entity IN (".getEntity('payment_salary').")";
 			if (!empty($date_start) && !empty($date_end)) {
 				$sql .= " AND $column >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
