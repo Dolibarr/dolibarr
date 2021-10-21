@@ -417,6 +417,9 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 					if ($subfeature == 'user' && $user->id == $objectid && $user->rights->user->self->password) {
 						continue; // User can edit its own password
 					}
+					if ($subfeature == 'user' && $user->id != $objectid && $user->rights->user->user->password) {
+						continue; // User can edit its own password
+					}
 
 					if (empty($user->rights->$feature->$subfeature->creer)
 					&& empty($user->rights->$feature->$subfeature->write)
