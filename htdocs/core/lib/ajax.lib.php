@@ -46,6 +46,8 @@
  */
 function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLength = 2, $autoselect = 0, $ajaxoptions = array(), $moreparams = '')
 {
+	global $conf;
+
 	if (empty($minLength)) {
 		$minLength = 1;
 	}
