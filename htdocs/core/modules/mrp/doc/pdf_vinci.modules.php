@@ -5,8 +5,8 @@
  * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet         <fmarcet@2byte.es>
- * Copyright (C) 2018      Frédéric France       <frederic.france@netlogic.fr>
- * Copyright (C) 2018      Frédéric France       <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021 Frédéric France       <frederic.france@netlogic.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -23,7 +23,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/mrp/doc/pdf_vinci.php
+ *	\file       htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
  *	\ingroup    mrp
  *	\brief      File of class to generate MO document from vinci model
  */
