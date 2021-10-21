@@ -383,7 +383,7 @@ class ConferenceOrBooth extends ActionComm
 		$error = 0;
 
 		// Protection
-		if ($this->status == self::STATUS_VALIDATED) {
+		if ($this->status == self::STATUS_CONFIRMED) {
 			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
 			return 0;
 		}
