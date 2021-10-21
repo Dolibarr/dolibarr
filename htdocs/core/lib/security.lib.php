@@ -411,11 +411,11 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				}
 			} elseif (!empty($feature2)) {														// This is for permissions on one level
 				foreach ($feature2 as $subfeature) {
-					if ($subfeature == 'user' && $user->id == $objectid && $user->rights->user->self->creer) {
-						continue; // User can edit its own card
-					}
-					if ($subfeature == 'user' && $user->id == $objectid && $user->rights->user->self->password) {
-						continue; // User can edit its own password
+					if ($subfeature == 'user') {
+						if ($user->id == $objectid && $user->rights->user->self->creer) continue; // User can edit own card
+						if ($user->id != $objectid && $user->rights->user->user->creer) continue; // User can edit card of other users
+						if ($user->id == $objectid && $user->rights->user->self->password) continue; // User can edit own password
+						if ($user->id != $objectid && $user->rights->user->user->password) continue; // User can edit other users' passwords
 					}
 
 					if (empty($user->rights->$feature->$subfeature->creer)
