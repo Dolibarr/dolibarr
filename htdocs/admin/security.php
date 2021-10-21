@@ -188,8 +188,9 @@ $head = security_prepare_head();
 
 print dol_get_fiche_head($head, 'passwords', '', -1);
 
+print '<br>';
 
-// Choix du gestionnaire du generateur de mot de passe
+// Select manager to generate passwords
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';

@@ -107,7 +107,6 @@ CurrentValueSeparatorThousand=Separador de milhar
 IdModule=Módulo ID
 IdPermissions=Permissão ID
 LanguageBrowserParameter=Parâmetro de Linguagem %s
-ClientTZ=Fuso Horário do cliente (usuário)
 ClientHour=Horário do Cliente (usuário)
 OSTZ=Fuso Horário do OS do Servidor
 PHPTZ=Fuso Horário do servidor PHP
@@ -1196,7 +1195,6 @@ ServiceSetup=Configurações do módulo de serviços
 ProductServiceSetup=Configurações dos módulos de produtos e serviços
 NumberOfProductShowInSelect=Número máximo de produtos para mostrar em listas de seleção de combinação (0 = sem limite)
 ViewProductDescInFormAbility=Exibir descrições de produtos em formulários (mostrados de outra forma em um pop-up de dicas de ferramentas)
-DoNotAddProductDescAtAddLines=Não adicionar descrição do produto (do cartão do produto) no envio, adicione linhas nos formulários
 OnProductSelectAddProductDesc=Como usar a descrição dos produtos ao adicionar um produto como uma linha de um documento
 AutoFillFormFieldBeforeSubmit=Preencher automaticamente o campo de entrada da descrição com a descrição do produto
 DoNotAutofillButAutoConcat=Não preencha automaticamente o campo de entrada com a descrição do produto. A descrição do produto será concatenada com a descrição inserida automaticamente.

@@ -698,8 +698,14 @@ class RecruitmentJobPosition extends CommonObject
 					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $this->thirdparty->default_lang);
 					$outputlangs->setDefaultLang($newlang);
 				}
+
+				// PDF
+				$hidedetails = (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0);
+				$hidedesc = (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0);
+				$hideref = (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0);
+
 				//$ret=$object->fetch($id);    // Reload to get new records
-				$this->generateDocument($modelpdf, $outputlangs);
+				$this->generateDocument($modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 
 			if (!$error) {
@@ -893,14 +899,14 @@ class RecruitmentJobPosition extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("recruitment");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated');
-			$this->labelStatus[self::STATUS_RECRUITED] = $langs->trans('Recruited');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Validated');
-			$this->labelStatusShort[self::STATUS_RECRUITED] = $langs->trans('Recruited');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
+			$this->labelStatus[self::STATUS_RECRUITED] = $langs->transnoentitiesnoconv('Recruited');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
+			$this->labelStatusShort[self::STATUS_RECRUITED] = $langs->transnoentitiesnoconv('Recruited');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
 		}
 
 		$statusType = 'status'.$status;

@@ -1646,13 +1646,19 @@ if ($action == 'create' && $usercancreate) {
 	print "</td>\n";
 	print '</tr>';
 
+	// Delivery delay
+	print '<tr class="fielddeliverydelay"><td>'.$langs->trans('AvailabilityPeriod').'</td><td>';
+	print img_picto('', 'clock', 'class="pictofixedwidth"');
+	$form->selectAvailabilityDelay($availability_id, 'availability_id', '', 1, 'maxwidth200 widthcentpercentminusx');
+	print '</td></tr>';
+
 	// Terms of the settlement
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 	print img_picto('', 'paiment');
 	$form->select_conditions_paiements($cond_reglement_id, 'cond_reglement_id', - 1, 1);
 	print '</td></tr>';
 
-	// Mode de reglement
+	// Payment mode
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
 	print img_picto('', 'bank', 'class="pictofixedwidth"');
 	$form->select_types_paiements($mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx');
@@ -1664,12 +1670,6 @@ if ($action == 'create' && $usercancreate) {
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes($fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 		print '</td></tr>';
 	}
-
-	// Delivery delay
-	print '<tr class="fielddeliverydelay"><td>'.$langs->trans('AvailabilityPeriod').'</td><td>';
-	print img_picto('', 'clock', 'class="pictofixedwidth"');
-	$form->selectAvailabilityDelay($availability_id, 'availability_id', '', 1, 'maxwidth200 widthcentpercentminusx');
-	print '</td></tr>';
 
 	// Shipping Method
 	if (!empty($conf->expedition->enabled)) {
@@ -1737,7 +1737,7 @@ if ($action == 'create' && $usercancreate) {
 			}
 		};
 
-		print $object->showOptionals($extrafields, 'edit', $parameters);
+		print $object->showOptionals($extrafields, 'create', $parameters);
 	}
 
 	// Template to use by default
@@ -2148,7 +2148,7 @@ if ($action == 'create' && $usercancreate) {
 			print '</form>';
 		} else {
 			print $object->date ? dol_print_date($object->date, 'day') : '&nbsp;';
-			if ($object->hasDelay()) {
+			if ($object->hasDelay() && empty($object->delivery_date)) {	// If there is a delivery date planned, warning should be on this date
 				print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
 			}
 		}
@@ -2175,6 +2175,18 @@ if ($action == 'create' && $usercancreate) {
 		}
 		print '</td>';
 		print '</tr>';
+
+		// Delivery delay
+		print '<tr class="fielddeliverydelay"><td>';
+		$editenable = $usercancreate;
+		print $form->editfieldkey("AvailabilityPeriod", 'availability', '', $object, $editenable);
+		print '</td><td class="valuefield">';
+		if ($action == 'editavailability') {
+			$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id, $object->availability_id, 'availability_id', 1);
+		} else {
+			$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id, $object->availability_id, 'none', 1);
+		}
+		print '</td></tr>';
 
 		// Shipping Method
 		if (!empty($conf->expedition->enabled)) {
@@ -2208,6 +2220,18 @@ if ($action == 'create' && $usercancreate) {
 			print '</td>';
 			print '</tr>';
 		}
+
+		// Source reason (why we have an order)
+		print '<tr><td>';
+		$editenable = $usercancreate;
+		print $form->editfieldkey("Source", 'demandreason', '', $object, $editenable);
+		print '</td><td class="valuefield">';
+		if ($action == 'editdemandreason') {
+			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, $object->demand_reason_id, 'demand_reason_id', 1);
+		} else {
+			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, $object->demand_reason_id, 'none');
+		}
+		print '</td></tr>';
 
 		// Terms of payment
 		print '<tr><td>';
@@ -2273,30 +2297,6 @@ if ($action == 'create' && $usercancreate) {
 				print '</td></tr>';
 			}
 		}
-
-		// Delivery delay
-		print '<tr class="fielddeliverydelay"><td>';
-		$editenable = $usercancreate;
-		print $form->editfieldkey("AvailabilityPeriod", 'availability', '', $object, $editenable);
-		print '</td><td class="valuefield">';
-		if ($action == 'editavailability') {
-			$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id, $object->availability_id, 'availability_id', 1);
-		} else {
-			$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id, $object->availability_id, 'none', 1);
-		}
-		print '</td></tr>';
-
-		// Source reason (why we have an ordrer)
-		print '<tr><td>';
-		$editenable = $usercancreate;
-		print $form->editfieldkey("Channel", 'demandreason', '', $object, $editenable);
-		print '</td><td class="valuefield">';
-		if ($action == 'editdemandreason') {
-			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, $object->demand_reason_id, 'demand_reason_id', 1);
-		} else {
-			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, $object->demand_reason_id, 'none');
-		}
-		print '</td></tr>';
 
 		// TODO Order mode (how we receive order). Not yet implemented
 		/*

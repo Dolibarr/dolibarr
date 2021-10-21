@@ -1065,16 +1065,16 @@ class Partnership extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("partnership");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated');
-			$this->labelStatus[self::STATUS_ACCEPTED] = $langs->trans('Accepted');
-			$this->labelStatus[self::STATUS_REFUSED] = $langs->trans('Refused');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Validated');
-			$this->labelStatusShort[self::STATUS_ACCEPTED] = $langs->trans('Accepted');
-			$this->labelStatusShort[self::STATUS_REFUSED] = $langs->trans('Refused');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
+			$this->labelStatus[self::STATUS_ACCEPTED] = $langs->transnoentitiesnoconv('Accepted');
+			$this->labelStatus[self::STATUS_REFUSED] = $langs->transnoentitiesnoconv('Refused');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
+			$this->labelStatusShort[self::STATUS_ACCEPTED] = $langs->transnoentitiesnoconv('Accepted');
+			$this->labelStatusShort[self::STATUS_REFUSED] = $langs->transnoentitiesnoconv('Refused');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
 		}
 
 		$statusType = 'status'.$status;

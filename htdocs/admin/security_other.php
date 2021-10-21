@@ -94,6 +94,7 @@ $head = security_prepare_head();
 
 print dol_get_fiche_head($head, 'misc', '', -1);
 
+print '<br>';
 
 // Other Options
 print '<table class="noborder centpercent">';
