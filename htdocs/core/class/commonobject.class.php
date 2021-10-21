@@ -5971,12 +5971,6 @@ abstract class CommonObject
 							dol_syslog('Error bad setup of extrafield', LOG_WARNING);
 						}
 						break;
-
-					case 'boolean':
-						if (empty($this->array_options["options_".$key])) {
-							$this->array_options["options_".$key] = null;
-						}
-						break;
 				}
 			}
 
