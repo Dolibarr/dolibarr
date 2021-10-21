@@ -1615,6 +1615,9 @@ class Project extends CommonObject
 								}
 							}
 						}
+					} elseif ($tab < 0) {
+						$this->error .= $origin_project->error;
+						$error++;
 					}
 				}
 			}
