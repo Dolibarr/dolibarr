@@ -433,7 +433,7 @@ class EcmDirectory extends CommonObject
 				dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				$error++;
-			}	
+			}
 		}
 
 		if (!$error) {
