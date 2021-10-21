@@ -250,6 +250,8 @@ class ExtraFields
 			return -1;
 		}
 
+		$result = 0;
+
 		if ($type == 'separate') {
 			$unique = 0;
 			$required = 0;
@@ -1978,10 +1980,10 @@ class ExtraFields
 	{
 		global $conf, $langs;
 
-		if ($display_type=='card') {
-			$tagtype='tr';
-			$tagtype_dyn='td';
-		} elseif ($display_type=='line') {
+		$tagtype='tr';
+		$tagtype_dyn='td';
+
+		if ($display_type=='line') {
 			$tagtype='div';
 			$tagtype_dyn='span';
 			$colspan=0;
