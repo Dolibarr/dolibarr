@@ -19,7 +19,7 @@
  */
 
 /**
- *     \file        hydocs/core/boxes/box_graph_new_vs_close_ticket.php
+ *     \file        htdocs/core/boxes/box_graph_new_vs_close_ticket.php
  *     \ingroup     ticket
  *     \brief       This box shows the number of new daily tickets the last X days
  */
