@@ -321,7 +321,6 @@ abstract class DoliDB implements Database
 	 * Dont add LIMIT to your query, it will be added by this method
 	 * @param string $sql the sql query string
 	 * @return bool| object
-	 * @deprecated
 	 */
 	public function getRow($sql)
 	{
@@ -341,7 +340,6 @@ abstract class DoliDB implements Database
 	 * be carefull with this method use it only with some limit of results to avoid performences loss
 	 * @param 	string $sql the sql query string
 	 * @return 	bool| array
-	 * @deprecated
 	 */
 	public function getRows($sql)
 	{
