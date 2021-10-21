@@ -728,8 +728,6 @@ class Categorie extends CommonObject
 				}
 			}
 
-
-
 			// Call trigger
 			$this->context = array('linkto'=>$obj); // Save object we want to link category to into category instance to provide information to trigger
 			$result = $this->call_trigger('CATEGORY_LINK', $user);
@@ -755,6 +753,8 @@ class Categorie extends CommonObject
 			}
 			return -1;
 		}
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -810,6 +810,8 @@ class Categorie extends CommonObject
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
+
+		return 0;
 	}
 
 	/**

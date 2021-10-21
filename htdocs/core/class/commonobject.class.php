@@ -9461,7 +9461,7 @@ abstract class CommonObject
 		}
 
 		$error = 0;
-		$ok=0;
+		$ok = 0;
 
 		// Process
 		foreach ($to_del as $del) {
@@ -9473,7 +9473,7 @@ abstract class CommonObject
 					$this->errors = $c->errors;
 					break;
 				} else {
-					$ok+=$result;
+					$ok += $result;
 				}
 			}
 		}
@@ -9486,7 +9486,7 @@ abstract class CommonObject
 					$this->errors = $c->errors;
 					break;
 				} else {
-					$ok+=$result;
+					$ok += $result;
 				}
 			}
 		}
