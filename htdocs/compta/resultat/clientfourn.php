@@ -869,8 +869,19 @@ if ($modecompta == 'BOOKKEEPING') {
 			if (!empty($date_start) && !empty($date_end)) {
 				$sql .= " AND $column >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
 			}
+			$sql .= " GROUP BY u.rowid, u.firstname, u.lastname, s.fk_user, p.label, dm";
 
+			// For backward compatibility with old module salary
+			$sql .= " UNION ";
+			$sql .= " SELECT u.rowid, u.firstname, u.lastname, p.fk_user, p.label as label, date_format($column,'%Y-%m') as dm, sum(p.amount) as amount";
+			$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user";
+			$sql .= " WHERE p.entity IN (".getEntity('payment_salary').")";
+			if (!empty($date_start) && !empty($date_end)) {
+				$sql .= " AND $column >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
+			}
 			$sql .= " GROUP BY u.rowid, u.firstname, u.lastname, p.fk_user, p.label, dm";
+
 			$newsortfield = $sortfield;
 			if ($newsortfield == 's.nom, s.rowid') {
 				$newsortfield = 'u.firstname, u.lastname';
