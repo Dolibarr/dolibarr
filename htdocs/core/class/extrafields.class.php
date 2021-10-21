@@ -2216,13 +2216,20 @@ class ExtraFields
 					$value_arr = (array) $value_arr;
 					$value_key = implode(',', $value_arr);
 				} elseif (in_array($key_type, array('price', 'double', 'int'))) {
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
+					if (!GETPOSTISSET($keysuffix . "options_" . $key . $keyprefix)) {
 						continue; // Value was not provided, we should not set it.
 					}
-					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
-					if ($keysuffix != 'search_') {	// If value is for a search, we must keep complex string like '>100 <=150'
+					$value_arr = GETPOST($keysuffix . "options_" . $key . $keyprefix);
+					if ($keysuffix != 'search_') {    // If value is for a search, we must keep complex string like '>100 <=150'
 						$value_key = price2num($value_arr);
 					} else {
+						$value_key = $value_arr;
+					}
+				} elseif (in_array($key_type, array('boolean'))) {
+					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
+						$value_key = '';
+					} else {
+						$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
 						$value_key = $value_arr;
 					}
 				} else {
