@@ -51,4 +51,3 @@ if (!defined('NOBROWSERNOTIF')) {
 }
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
-

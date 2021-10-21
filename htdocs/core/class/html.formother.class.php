@@ -77,9 +77,9 @@ class FormOther
 		$out .= '<input type="radio" name="barcodemode" value="barcodeforproduct"> Scan a product barcode<br>';
 		$out .= '<input type="radio" name="barcodemode" value="barcodeforlotserial"> Scan a product lot or serial number<br>';
 
-		$stringaddbarcode = $langs->trans("QtyToAddAfterBarcodeScan","tmphtml");
+		$stringaddbarcode = $langs->trans("QtyToAddAfterBarcodeScan", "tmphtml");
 		$htmltoreplaceby = '<select name="selectaddorreplace"><option selected value="add">'.$langs->trans("Add").'</option><option value="replace">'.$langs->trans("ToReplace").'</option></select>';
-		$stringaddbarcode = str_replace("tmphtml",$htmltoreplaceby,$stringaddbarcode);
+		$stringaddbarcode = str_replace("tmphtml", $htmltoreplaceby, $stringaddbarcode);
 		$out .= $stringaddbarcode.' <input type="text" name="barcodeproductqty" class="width50 right" value="1"><br>';
 		$out .= '<textarea type="text" name="barcodelist" class="centpercent" autofocus rows="'.ROWS_3.'"></textarea>';
 
