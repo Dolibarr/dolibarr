@@ -731,7 +731,7 @@ class FormCompany extends Form
 
 				$num = $this->db->num_rows($resql);
 				$i = 0;
-				$firstCompany = 0;
+				$firstCompany = '';
 				if ($num) {
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
