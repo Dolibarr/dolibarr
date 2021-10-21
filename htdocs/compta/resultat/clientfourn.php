@@ -34,6 +34,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -861,7 +862,7 @@ if ($modecompta == 'BOOKKEEPING') {
 				$column = 'p.datep';
 			}
 
-			$sql = "SELECT u.rowid, u.firstname, u.lastname, p.fk_user, p.label as label, date_format($column,'%Y-%m') as dm, sum(p.amount) as amount";
+			$sql = "SELECT u.rowid, u.firstname, u.lastname, s.fk_user as fk_user, p.label as label, date_format($column,'%Y-%m') as dm, sum(p.amount) as amount";
 			$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."salary as s ON s.rowid=p.fk_salary";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=s.fk_user";
@@ -873,7 +874,7 @@ if ($modecompta == 'BOOKKEEPING') {
 
 			// For backward compatibility with old module salary
 			$sql .= " UNION ";
-			$sql .= " SELECT u.rowid, u.firstname, u.lastname, p.fk_user, p.label as label, date_format($column,'%Y-%m') as dm, sum(p.amount) as amount";
+			$sql .= " SELECT u.rowid, u.firstname, u.lastname, p.fk_user as fk_user, p.label as label, date_format($column,'%Y-%m') as dm, sum(p.amount) as amount";
 			$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user";
 			$sql .= " WHERE p.entity IN (".getEntity('payment_salary').")";
@@ -913,7 +914,10 @@ if ($modecompta == 'BOOKKEEPING') {
 
 					print '<tr class="oddeven"><td>&nbsp;</td>';
 
-					print "<td>".$langs->trans("Salary")." <a href=\"".DOL_URL_ROOT."/salaries/list.php?filtre=s.fk_user=".$obj->fk_user."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
+					$userstatic = new User($db);
+					$userstatic->fetch($obj->fk_user);
+
+					print "<td>".$langs->trans("Salary")." <a href=\"".DOL_URL_ROOT."/salaries/list.php?search_user=".$userstatic->getFullName($langs)."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
 					if ($modecompta == 'CREANCES-DETTES') {
 						print '<td class="right"><span class="amount">'.price(-$obj->amount).'</span></td>';
