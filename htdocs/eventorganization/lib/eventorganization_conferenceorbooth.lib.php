@@ -127,6 +127,7 @@ function conferenceorboothProjectPrepareHead($object)
 	$head[$h][2] = 'conferenceorbooth';
 	// Enable caching of conf or booth count attendees
 	$nbAttendees = 0;
+	$nbConferenceOrBooth= 0;
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 	$cachekey = 'count_conferenceorbooth_project_'.$object->id;
 	$dataretrieved = dol_getcache($cachekey);
