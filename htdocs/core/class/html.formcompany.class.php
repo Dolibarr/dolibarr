@@ -57,7 +57,7 @@ class FormCompany extends Form
 
 		$sql = "SELECT id, code, libelle";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_typent";
-		$sql .= " WHERE active = 1 AND (fk_country IS NULL OR fk_country = ".(empty($mysoc->country_id) ? '0' : $mysoc->country_id).")";
+		$sql .= " WHERE active = 1 AND (fk_country IS NULL OR fk_country ='".(empty($mysoc->country_id) ? '0' : $mysoc->country_id)."')";
 		if ($filter) {
 			$sql .= " ".$filter;
 		}
@@ -87,6 +87,7 @@ class FormCompany extends Form
 			}
 			$this->db->free($resql);
 		}
+
 
 		return $effs;
 	}
