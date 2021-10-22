@@ -121,27 +121,6 @@ class modSociete extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
-		$this->const[$r][0] = "SOCIETE_SHOW_VAT_IN_LIST";
-		$this->const[$r][1] = "yesno";
-		$this->const[$r][2] = "0";
-		$this->const[$r][3] = "Display customer ref into select list";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "COMPANY_USE_SEARCH_TO_SELECT";
-		$this->const[$r][1] = "yesno";
-		$this->const[$r][2] = "0";
-		$this->const[$r][3] = "Use easy find customer";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "CONTACT_USE_SEARCH_TO_SELECT";
-		$this->const[$r][1] = "yesno";
-		$this->const[$r][2] = "0";
-		$this->const[$r][3] = "use easy find contact";
-		$this->const[$r][4] = 0;
-		$r++;
-
 		// Boxes
 		$this->boxes = array(
 			0=>array('file'=>'box_clients.php', 'enabledbydefaulton'=>'Home'),
