@@ -250,10 +250,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 		setEventMessages($errmsg, null, 'errors');
 		$action = 'addsubscription';
 	}
-	if (!$datesubend) {
-		// empty end date subscription should be possible to accept endlife validity
-		// $datesubend = dol_time_plus_duree(dol_time_plus_duree($datesubscription, $defaultdelay, $defaultdelayunit), -1, 'd');
-	}
+	
 	if (($option == 'bankviainvoice' || $option == 'bankdirect') && !$paymentdate) {
 		$error++;
 		$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatePayment"));
