@@ -2036,7 +2036,11 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Civility
 			print '<tr><td class="titlefieldcreate"><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
-			print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'aZ09') : $object->civility_code, 'civility_code');
+			if ($caneditfield && !$object->ldap_sid) {
+				print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'aZ09') : $object->civility_code, 'civility_code');
+			} elseif ($object->civility_code) {
+				print $langs->trans("Civility".$object->civility_code);
+			}
 			print '</td></tr>';
 
 			// Lastname
