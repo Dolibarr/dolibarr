@@ -221,6 +221,7 @@ print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?socid='.$socid.'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $sql_select = '';
+$documentstaticline = '';
 /*if ($type_element == 'action')
 { 	// Customer : show products from invoices
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -343,7 +344,7 @@ if (!empty($sql_select)) {
 		$sql .= ' d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_ouverture as date_start, d.date_cloture as date_end, d.qty, d.qty as prod_qty, d.total_ht as total_ht, ';
 	}
 	if ($type_element != 'fichinter') {
-		$sql .= ' p.ref as ref, p.rowid as prod_id, p.rowid as fk_product, p.fk_product_type as prod_type, p.fk_product_type as fk_product_type, p.entity as pentity,';
+		$sql .= ' p.ref as ref, p.rowid as prod_id, p.rowid as fk_product, p.fk_product_type as prod_type, p.fk_product_type as fk_product_type, p.entity as pentity, NULL as total_ht';
 	}
 	$sql .= " s.rowid as socid ";
 	if ($type_element != 'fichinter') {
@@ -654,7 +655,7 @@ if ($sql_select) {
 		$total_qty += $objp->prod_qty;
 
 		print '<td class="right"><span class="amount">'.price($objp->total_ht).'</span></td>';
-		$total_ht += $objp->total_ht;
+		$total_ht += (float) $objp->total_ht;
 
 		print '<td class="right">'.price($objp->total_ht / (empty($objp->prod_qty) ? 1 : $objp->prod_qty)).'</td>';
 
