@@ -42,6 +42,7 @@
  * {dol_cut_paper_partial}                          Cut ticket partially
  * {dol_open_drawer}                                Open cash drawer
  * {dol_beep}                                       Activate buzzer
+ * {dol_beep_alternative}							Activate buzzer (alternative mode)
  * {dol_print_barcode}                              Print barcode
  * {dol_print_logo}                                 Print logo stored on printer. Example : <print_logo>32|32
  * {dol_print_logo_old}                             Print logo stored on printer. Must be followed by logo code. For old printers.
@@ -52,6 +53,7 @@
  * {dol_print_order_lines}                          Print order lines for Printer
  * {dol_print_object_lines_with_notes}              Print object lines with notes
  * {dol_print_payment}                              Print payment method
+ * {dol_print_curr_date}							Print the current date/time. Must be followed by format string.
  *
  * Code which can be placed everywhere
  * <dol_value_date>                                 Replaced by date AAAA-MM-DD
@@ -177,6 +179,7 @@ class dolReceiptPrinter extends Printer
 			'dol_cut_paper_partial' => 'DOL_CUT_PAPER_PARTIAL',
 			'dol_open_drawer' => 'DOL_OPEN_DRAWER',
 			'dol_beep' => 'DOL_BEEP',
+			'dol_beep_alternative' => 'DOL_BEEP_ALTERNATIVE',
 			'dol_print_text' => 'DOL_PRINT_TEXT',
 			'dol_print_barcode' => 'DOL_PRINT_BARCODE',
 			'dol_value_date' => 'DateInvoice',
@@ -187,6 +190,7 @@ class dolReceiptPrinter extends Printer
 			'dol_value_day' => 'DOL_VALUE_DAY',
 			'dol_value_day_letters' => 'DOL_VALUE_DAY',
 			'dol_print_payment' => 'DOL_PRINT_PAYMENT',
+			'dol_print_curr_date' => 'DOL_PRINT_CURR_DATE',
 			'dol_print_logo' => 'DOL_PRINT_LOGO',
 			'dol_print_logo_old' => 'DOL_PRINT_LOGO_OLD',
 			'dol_value_object_id' => 'InvoiceID',
@@ -707,6 +711,9 @@ class dolReceiptPrinter extends Printer
 						$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 						$this->printer->text($title.$spaces.str_pad(price($object->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 						break;
+					case 'DOL_PRINT_CURR_DATE':
+						$this->printer->text(date($vals[$tplline]['value'])."\n");
+						break;
 					case 'DOL_LINE_FEED':
 						$this->printer->feed();
 						break;
@@ -788,6 +795,9 @@ class dolReceiptPrinter extends Printer
 						break;
 					case 'DOL_BEEP':
 						$this->printer->getPrintConnector() -> write("\x1e");
+						break;
+					case 'DOL_BEEP_ALTERNATIVE': //if DOL_BEEP not works
+						$this->printer->getPrintConnector() -> write(Printer::ESC . "B" . chr(4) . chr(1));
 						break;
 					case 'DOL_PRINT_ORDER_LINES':
 						foreach ($object->lines as $line) {
