@@ -250,7 +250,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 		setEventMessages($errmsg, null, 'errors');
 		$action = 'addsubscription';
 	}
-	
+
 	if (($option == 'bankviainvoice' || $option == 'bankdirect') && !$paymentdate) {
 		$error++;
 		$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatePayment"));
