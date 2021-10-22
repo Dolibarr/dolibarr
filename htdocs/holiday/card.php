@@ -266,7 +266,6 @@ if (empty($reshook)) {
 
 	// If update and we are an approver, we can update with another approver
 	if ($action == 'update' && GETPOSTISSET('savevalidator') && !empty($user->rights->holiday->approve)) {
-
 		$object->fetch($id);
 
 		$object->oldcopy = dol_clone($object);
