@@ -204,7 +204,7 @@ class SupplierInvoices extends DolibarrApi
 	 * Note: soc_id = dolibarr_order_id
 	 *
 	 * Example: {'ref': 'auto', 'ref_supplier': '7985630', 'socid': 1, 'note': 'Inserted with Python', 'order_supplier': 1, 'date': '2021-07-28'}
-	 * 
+	 *
 	 * @param array $request_data Request datas
 	 *
 	 * @return int  ID of supplier invoice
