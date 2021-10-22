@@ -176,7 +176,8 @@ if ($elemid && $action == 'addintocategory' &&
 	 ($type == Categorie::TYPE_TICKET && $user->rights->ticket->write) ||
 	 ($type == Categorie::TYPE_PROJECT && $user->rights->projet->creer) ||
 	 ($type == Categorie::TYPE_MEMBER && $user->rights->projet->creer) ||
-	 ($type == Categorie::TYPE_CONTACT && $user->rights->societe->creer)
+	 ($type == Categorie::TYPE_CONTACT && $user->rights->societe->creer) ||
+	 ($type == Categorie::TYPE_USER && $user->rights->user->user->creer)
    )) {
 	if ($type == Categorie::TYPE_PRODUCT) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -206,6 +207,10 @@ if ($elemid && $action == 'addintocategory' &&
 		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 		$newobject = new Contact($db);
 		$elementtype = 'contact';
+	} elseif ($type == Categorie::TYPE_USER) {
+		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+		$newobject = new User($db);
+		$elementtype = 'user';
 	}
 	$result = $newobject->fetch($elemid);
 
@@ -1004,6 +1009,25 @@ if ($type == Categorie::TYPE_USER) {
 	if ($users < 0) {
 		dol_print_error($db, $object->error, $object->errors);
 	} else {
+		// Form to add record into a category
+		$showclassifyform = 1;
+		if ($showclassifyform) {
+			print '<br>';
+			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+			print '<input type="hidden" name="type" value="'.$typeid.'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			print '<input type="hidden" name="action" value="addintocategory">';
+			print '<table class="noborder centpercent">';
+			print '<tr class="liste_titre"><td>';
+			print $langs->trans("AddProjectIntoCategory").' &nbsp;';
+			$form->select_users('', 'elemid');
+			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
+			print '</tr>';
+			print '</table>';
+			print '</form>';
+		}
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';

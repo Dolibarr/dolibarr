@@ -91,6 +91,7 @@ AddProductServiceIntoCategory=Ajouter le produit/service suivant
 AddCustomerIntoCategory=Assigner cette catégorie au client
 AddMemberIntoCategory=Assigner cette catégorie au membre
 AddContactIntoCategory=Assigner cette catégorie au contact
+AddUserIntoCategory=Assigner cette catégorie à l'utilisateur
 AddProjectIntoCategory=Assigner cette catégorie au projet
 AddTicketIntoCategory=Assigner cette catégorie au ticket
 AddSupplierIntoCategory=Assigner cette catégorie au fournisseur
