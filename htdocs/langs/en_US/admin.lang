@@ -279,6 +279,7 @@ SpaceX=Space X
 SpaceY=Space Y
 FontSize=Font size
 Content=Content
+ContentForLines=Content to display for each product or service (from variable __LINES__ of Content)
 NoticePeriod=Notice period
 NewByMonth=New by month
 Emails=Emails
