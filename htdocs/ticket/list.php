@@ -390,7 +390,11 @@ foreach ($search as $key => $val) {
 		}
 		continue;
 	}
-	$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
+	if (array_key_exists($key, $object->fields)) {
+		$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
+	} else {
+		$mode_search = 0;
+	}
 	if ($search[$key] != '') {
 		$sql .= natural_search($key, $search[$key], $mode_search);
 	}
@@ -912,6 +916,7 @@ if (!empty($extrafields->attributes[$object->table_element]['computed']) && is_a
 // --------------------------------------------------------------------
 $i = 0;
 $totalarray = array();
+$totalarray['nbfield']=0;
 $cacheofoutputfield = array();
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
@@ -946,15 +951,17 @@ while ($i < min($num, $limit)) {
 		}
 		if (!empty($arrayfields['t.'.$key]['checked'])) {
 			print '<td';
-			if ($cssforfield || $val['css']) {
+			if ($cssforfield || (array_key_exists('css', $val) && $val['css'])) {
 				print ' class="';
 			}
 			print $cssforfield;
-			if ($cssforfield && $val['css']) {
+			if ($cssforfield && array_key_exists('css', $val) && $val['css']) {
 				print ' ';
 			}
-			print $val['css'];
-			if ($cssforfield || $val['css']) {
+			if (array_key_exists('css', $val)) {
+				print $val['css'];
+			}
+			if ($cssforfield || (array_key_exists('css', $val) && $val['css'])) {
 				print '"';
 			}
 			print '>';
