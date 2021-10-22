@@ -792,6 +792,7 @@ class FormMail extends Form
 					if (count($listofpaths)) {
 						foreach ($listofpaths as $key => $val) {
 							$relativepathtofile = substr($val, (strlen(DOL_DATA_ROOT) - strlen($val)));
+
 							if ($conf->entity > 1) {
 								$relativepathtofile = str_replace($conf->entity.'/', '', $relativepathtofile);
 							}
@@ -802,6 +803,7 @@ class FormMail extends Form
 							$out .= '<div id="attachfile_'.$key.'">';
 							// Preview of attachment
 							$out .= img_mime($listofnames[$key]).' '.$listofnames[$key];
+
 							$out .= $formfile->showPreview(array(), $formfile_params[2], $formfile_params[4]);
 							if (!$this->withfilereadonly) {
 								$out .= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key + 1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';

@@ -479,7 +479,7 @@ if ($resql) {
 			//  var_dump($obj);
 			print ' <td><input class="minwidth200" name="dateinput" value="'. date('Y-m-d', dol_stringtotime($obj->date_sync)) .'" type="date"></td>';
 			print '<td>' . $form->selectMultiCurrency($obj->code, 'multicurrency_code', 1, " code != '".$conf->currency."'", true) . '</td>';
-			print ' <td><input type="number" min ="0" step="any" class="minwidth200" name="rateinput" value="' . dol_escape_htmltag($obj->rate) . '"></td>';
+			print ' <td><input type="text" min ="0" step="any" class="minwidth200" name="rateinput" value="' . dol_escape_htmltag($obj->rate) . '"></td>';
 
 			print '<td class="center nowrap ">';
 			print '<input type="hidden" name="page" value="'.dol_escape_htmltag($page).'">';

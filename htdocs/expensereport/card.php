@@ -2,7 +2,7 @@
 /* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2017  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -1421,7 +1421,7 @@ if ($action == 'create') {
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by
 	print $hookmanager->resPrint;
 	if (empty($reshook)) {
-		print $object->showOptionals($extrafields, 'edit', $parameters);
+		print $object->showOptionals($extrafields, 'create', $parameters);
 	}
 
 	print '<tbody>';
@@ -2282,7 +2282,7 @@ if ($action == 'create') {
 
 						// Quantity
 						print '<td class="right">';
-						print '<input type="number" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($line->qty).'" />';
+						print '<input type="text" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($line->qty).'" />';  // We must be able to enter decimal qty
 						print '</td>';
 
 						//print '<td class="right">'.$langs->trans('AmountHT').'</td>';
@@ -2524,7 +2524,7 @@ if ($action == 'create') {
 
 print '<div class="tabsAction">';
 
-if ($action != 'create' && $action != 'edit') {
+if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	$object = new ExpenseReport($db);
 	$object->fetch($id, $ref);
 
