@@ -51,3 +51,29 @@ if (!defined('NOBROWSERNOTIF')) {
 }
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
+
+$action = GETPOST("action", "alpha");
+$barcode = GETPOST("barcode", "aZ09");
+$response = "";
+$fk_entrepot = -1;
+if ($action == "existbarcode" && !empty($barcode)) {
+	$sql = "SELECT *";
+	$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
+	" WHERE p.barcode = '".$db->escape($barcode)."'";
+	$result = $db->query($sql);
+	if ($result) {
+		$objecttab = $db->fetch_row($resql);
+		$nbline = $db->num_rows($resql);
+		for ($i=0; $i < $nbline; $i++) {
+			if ($fk_entrepot != $objecttab[$i]) {
+				// code...
+			}
+		}
+	} else {
+		$response = "No results found for barcode";
+	}
+} else {
+	$response = "Error on action";
+}
+
+echo $response;
