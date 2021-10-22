@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2011-2017  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,19 +91,19 @@ $tabsql[32] = "SELECT a.rowid as rowid, a.code as code, a.label, a.range_account
 $tabsqlsort = array();
 $tabsqlsort[32] = "position ASC";
 
-// Nom des champs en resultat de select pour affichage du dictionnaire
+// Name of the fields in the result of select to display the dictionary
 $tabfield = array();
 $tabfield[32] = "code,label,range_account,category_type,formula,position,country";
 
-// Nom des champs d'edition pour modification d'un enregistrement
+// Name of editing fields for record modification
 $tabfieldvalue = array();
 $tabfieldvalue[32] = "code,label,range_account,category_type,formula,position,country_id";
 
-// Nom des champs dans la table pour insertion d'un enregistrement
+// Name of the fields in the table for inserting a record
 $tabfieldinsert = array();
 $tabfieldinsert[32] = "code,label,range_account,category_type,formula,position,fk_country";
 
-// Nom du rowid si le champ n'est pas de type autoincrement
+// Name of the rowid if the field is not of type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on
 //          "nameoffield" if id field is not "rowid" or has not autoincrement on
 $tabrowid = array();
@@ -151,7 +151,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		if ($value == 'range_account' && empty($_POST['range_account'])) {
 			continue;
 		}
-		if ($value == 'country' || $value == 'country_id') {
+		if (($value == 'country' || $value == 'country_id') && (!empty($_POST['country_id']))) {
 			continue;
 		}
 		if (!GETPOSTISSET($value) || GETPOST($value) == '') {
@@ -175,6 +175,9 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			}
 			if ($fieldnamekey == 'category_type') {
 				$fieldnamekey = 'Calculated';
+			}
+			if ($fieldnamekey == 'country') {
+				$fieldnamekey = 'Country';
 			}
 
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
@@ -263,7 +266,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 	}
 
-	// Si verif ok et action modify, on modifie la ligne
+	// If check ok and action modify, we modify the line
 	if ($ok && GETPOST('actionmodify', 'alpha')) {
 		if ($tabrowid[$id]) {
 			$rowidcol = $tabrowid[$id];
@@ -430,12 +433,12 @@ print load_fiche_titre($titre, $linkback, $titlepicto);
 
 print '<span class="opacitymedium">'.$langs->trans("AccountingAccountGroupsDesc", $langs->transnoentitiesnoconv("ByPersonalizedAccountGroups")).'</span><br><br>';
 
-// Confirmation de la suppression de la ligne
+// Confirmation of the deletion of the line
 if ($action == 'delete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$code.'&id='.$id.($search_country_id > 0 ? '&search_country_id='.$search_country_id : ''), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
 
-// Complete requete recherche valeurs avec critere de tri
+// Complete search query with sorting criteria
 $sql = $tabsql[$id];
 
 if ($search_country_id > 0) {
@@ -634,14 +637,14 @@ if ($resql) {
 	// Title of lines
 	print '<tr class="liste_titre">';
 	foreach ($fieldlist as $field => $value) {
-		// Determine le nom du champ par rapport aux noms possibles
-		// dans les dictionnaires de donnees
-		$showfield = 1; // By defaut
+		// Determines the name of the field in relation to the possible names
+		// in data dictionaries
+		$showfield = 1; // By default
 		$class = "left";
 		$sortable = 1;
 		$valuetoshow = '';
 
-		$valuetoshow = ucfirst($fieldlist[$field]); // By defaut
+		$valuetoshow = ucfirst($fieldlist[$field]); // By default
 		$valuetoshow = $langs->trans($valuetoshow); // try to translate
 		if ($fieldlist[$field] == 'source') {
 			$valuetoshow = $langs->trans("Contact");

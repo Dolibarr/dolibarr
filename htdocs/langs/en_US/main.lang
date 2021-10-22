@@ -1158,3 +1158,4 @@ Properties=Properties
 hasBeenValidated=%s has been validated
 ClientTZ=Client Time Zone (user)
 NotClosedYet=Not yet closed
+ClearSignature=Signature reset

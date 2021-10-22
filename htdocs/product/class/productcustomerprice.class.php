@@ -871,7 +871,7 @@ class Productcustomerprice extends CommonObject
 						$resultupd = $prodsocpricenew->create($user, 0, $forceupdateaffiliate);
 						if ($result < 0) {
 							$error++;
-							$this->error = $prodsocpriceupd->error;
+							$this->error = $prodsocpricenew->error;
 						}
 					}
 				}

@@ -25,7 +25,7 @@ if (empty($conf) || !is_object($conf)) {
 
 ?>
 
-<!-- BEGIN PHP TEMPLATE -->
+<!-- BEGIN PHP TEMPLATE reception/tpl/linkedopjectblock.tpl.php  -->
 
 <?php
 

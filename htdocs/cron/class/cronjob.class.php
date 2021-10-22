@@ -1432,10 +1432,10 @@ class Cronjob extends CommonObject
 				$moretext .= ' ('.$langs->trans("Error").')';
 			}
 
-			$this->labelStatus[self::STATUS_DISABLED] = $langs->trans('Disabled').$moretext;
-			$this->labelStatus[self::STATUS_ENABLED] = $langs->trans('Scheduled').$moretext;
-			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->trans('Disabled');
-			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->trans('Scheduled');
+			$this->labelStatus[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled').$moretext;
+			$this->labelStatus[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Scheduled').$moretext;
+			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Scheduled');
 		}
 
 		$statusType = 'status4';

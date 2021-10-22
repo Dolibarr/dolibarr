@@ -530,7 +530,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
 	// Can call a dedicated external upgrade process
 	if (!$error) {
-		$parameters = array('versionfrom'=>$versionfrom, 'versionto='.$versionto);
+		$parameters = array('versionfrom' => $versionfrom, 'versionto' => $versionto);
 		$object = new stdClass();
 		$action = "upgrade";
 		$reshook = $hookmanager->executeHooks('doUpgrade2', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks

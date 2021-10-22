@@ -20,7 +20,7 @@
  */
 
 /**
- * \file    hrm/admin/setup.php
+ * \file    htdocs/admin/hrm.php
  * \ingroup hrm
  * \brief   HrmTest setup page.
  */

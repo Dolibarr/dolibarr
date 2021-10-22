@@ -846,12 +846,12 @@ class Delivery extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[-1] = $langs->trans('StatusDeliveryCanceled');
-			$this->labelStatus[0] = $langs->trans('StatusDeliveryDraft');
-			$this->labelStatus[1] = $langs->trans('StatusDeliveryValidated');
-			$this->labelStatusShort[-1] = $langs->trans('StatusDeliveryCanceled');
-			$this->labelStatusShort[0] = $langs->trans('StatusDeliveryDraft');
-			$this->labelStatusShort[1] = $langs->trans('StatusDeliveryValidated');
+			$this->labelStatus[-1] = $langs->transnoentitiesnoconv('StatusDeliveryCanceled');
+			$this->labelStatus[0] = $langs->transnoentitiesnoconv('StatusDeliveryDraft');
+			$this->labelStatus[1] = $langs->transnoentitiesnoconv('StatusDeliveryValidated');
+			$this->labelStatusShort[-1] = $langs->transnoentitiesnoconv('StatusDeliveryCanceled');
+			$this->labelStatusShort[0] = $langs->transnoentitiesnoconv('StatusDeliveryDraft');
+			$this->labelStatusShort[1] = $langs->transnoentitiesnoconv('StatusDeliveryValidated');
 		}
 
 		$statusType = 'status0';

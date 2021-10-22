@@ -86,7 +86,6 @@ IdModule=ID del módulo
 IdPermissions=ID de permisos
 LanguageBrowserParameter=Parámetro %s
 LocalisationDolibarrParameters=Parametros de localización
-ClientTZ=Zona Horaria cliente (usuario)
 OSTZ=Servidor OS Zona Horaria
 PHPTZ=Servidor PHP Zona Horaria
 DaylingSavingTime=Hora de verano
