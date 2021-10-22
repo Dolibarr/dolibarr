@@ -152,7 +152,7 @@ if ($resql) {
 	while ($i < $num) {
 		$objp = $db->fetch_object($resql);
 		$listofoppstatus[$objp->rowid] = $objp->percent;
-		$listofopplabel[$objp->rowid] = $objp->label;
+		$listofopplabel[$objp->rowid] = $objp->label;		// default label if translation from "OppStatus".code not found.
 		$listofoppcode[$objp->rowid] = $objp->code;
 		switch ($objp->code) {
 			case 'PROSP':
@@ -200,7 +200,7 @@ print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppst
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Latest modified projects
-$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut as status, p.tms as datem";
+$sql = "SELECT p.rowid, p.ref, p.title, p.dateo, p.datee, p.fk_statut as status, p.tms as datem";
 $sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 $sql .= ", s.code_client, s.code_compta, s.client";
 $sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
@@ -223,7 +223,7 @@ if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LatestModifiedProjects", $max).'</th>';
+	print '<th colspan="5">'.$langs->trans("LatestModifiedProjects", $max).'</th>';
 	print '</tr>';
 
 	$num = $db->num_rows($resql);
@@ -240,7 +240,7 @@ if ($resql) {
 			$projectstatic->ref = $obj->ref;
 			$projectstatic->title = $obj->title;
 			$projectstatic->dateo = $obj->dateo;
-			$projectstatic->datep = $obj->datep;
+			$projectstatic->datee = $obj->datee;
 			$projectstatic->thirdparty_name = $obj->name;
 			$projectstatic->status = $obj->status;
 
@@ -277,12 +277,22 @@ if ($resql) {
 
 			print '</td>';
 
+			// Label
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->title).'">';
+			print $projectstatic->title;
+			print '</td>';
+
+			// Thirdparty
 			print '<td class="nowrap">';
 			if ($companystatic->id > 0) {
 				print $companystatic->getNomUrl(1, 'company', 16);
 			}
 			print '</td>';
+
+			// Date
 			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
+
+			// Status
 			print '<td class="right">'.$projectstatic->LibStatut($obj->status, 3).'</td>';
 			print '</tr>';
 			$i++;

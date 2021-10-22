@@ -17,7 +17,7 @@
 
 /**
  *       \file       htdocs/ecm/ajax/ecmdatabase.php
- *       \brief      File to build ecm database
+ *       \brief      File to build/refresh the ecm database for directories
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $action = GETPOST('action', 'aZ09');
 $element = GETPOST('element', 'alpha');
+
 
 /*
  * View
@@ -86,7 +87,7 @@ if (isset($action) && !empty($action)) {
 			}
 
 			if (!$dirisindatabase) {
-				$txt = "Directory found on disk ".$dirdesc['fullname'].", not found into database so we add it";
+				$txt = "Directory found on disk ".$dirdesc['fullname'].", not found into table ecm_directories, so we add it";
 				dol_syslog($txt);
 
 				// We must first find the fk_parent of directory to create $dirdesc['fullname']
@@ -155,15 +156,16 @@ if (isset($action) && !empty($action)) {
 		foreach ($sqltree as $dirdesc) {    // Loop on each sqltree to check dir is on disk
 			$dirtotest = $conf->$element->dir_output.'/'.$dirdesc['fullrelativename'];
 			if (!dol_is_dir($dirtotest)) {
-				$mesg .= $dirtotest." not found onto disk. We delete from database dir with id=".$dirdesc['id']."<br>\n";
+				dol_syslog($dirtotest." not found onto disk. We delete from database dir with id=".$dirdesc['id']);
 				$ecmdirtmp->id = $dirdesc['id'];
 				$ecmdirtmp->delete($user, 'databaseonly');
 				//exit;
 			}
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories set cachenbofdoc = -1 WHERE cachenbofdoc < 0"; // If pb into cahce counting, we set to value -1 = "unknown"
-		dol_syslog("sql = ".$sql);
+		dol_syslog("Nb of directories added into database = ".$adirwascreated);
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories set cachenbofdoc = -1 WHERE cachenbofdoc < 0"; // If pb into cache counting, we set to value -1 = "unknown"
 		$db->query($sql);
 	}
 }

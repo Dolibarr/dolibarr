@@ -66,7 +66,7 @@ NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
 Answered=Respondidas
 Waiting=Em espera
-Closed=Fechado
+SolvedClosed=Solved
 Deleted=Excluído
 
 # Dict
@@ -186,9 +186,11 @@ TicketSeverity=Severidade
 ShowTicket=Ver ticket
 RelatedTickets=Tickets relacionados
 TicketAddIntervention=Criar intervenção
-CloseTicket=Fechar ticket
-CloseATicket=Fechar um ticket
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Confirmar o fecho do ticket
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Por favor confirme a eliminação do ticket
 TicketDeletedSuccess=Ticket eliminado com sucesso
 TicketMarkedAsClosed=Ticket marcado como fechado

@@ -256,22 +256,22 @@ class Reception extends CommonObject
 		$sql .= ", fk_incoterms, location_incoterms";
 		$sql .= ") VALUES (";
 		$sql .= "'(PROV)'";
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", ".($this->ref_supplier ? "'".$this->db->escape($this->ref_supplier)."'" : "null");
 		$sql .= ", '".$this->db->idate($now)."'";
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".($this->date_reception > 0 ? "'".$this->db->idate($this->date_reception)."'" : "null");
 		$sql .= ", ".($this->date_delivery > 0 ? "'".$this->db->idate($this->date_delivery)."'" : "null");
-		$sql .= ", ".$this->socid;
-		$sql .= ", ".$this->fk_project;
-		$sql .= ", ".($this->shipping_method_id > 0 ? $this->shipping_method_id : "null");
+		$sql .= ", ".((int) $this->socid);
+		$sql .= ", ".((int) $this->fk_project);
+		$sql .= ", ".($this->shipping_method_id > 0 ? ((int) $this->shipping_method_id) : "null");
 		$sql .= ", '".$this->db->escape($this->tracking_number)."'";
-		$sql .= ", ".$this->weight;
-		$sql .= ", ".$this->sizeS; // TODO Should use this->trueDepth
-		$sql .= ", ".$this->sizeW; // TODO Should use this->trueWidth
-		$sql .= ", ".$this->sizeH; // TODO Should use this->trueHeight
-		$sql .= ", ".$this->weight_units;
-		$sql .= ", ".$this->size_units;
+		$sql .= ", ".((double) $this->weight);
+		$sql .= ", ".((double) $this->sizeS); // TODO Should use this->trueDepth
+		$sql .= ", ".((double) $this->sizeW); // TODO Should use this->trueWidth
+		$sql .= ", ".((double) $this->sizeH); // TODO Should use this->trueHeight
+		$sql .= ", ".((double) $this->weight_units);
+		$sql .= ", ".((double) $this->size_units);
 		$sql .= ", ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", ".(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ", ".(!empty($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null");
@@ -288,7 +288,7 @@ class Reception extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."reception";
 			$sql .= " SET ref = '(PROV".$this->id.")'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			if ($this->db->query($sql)) {
@@ -543,7 +543,7 @@ class Reception extends CommonObject
 		$sql .= ", fk_statut = 1";
 		$sql .= ", date_valid = '".$this->db->idate($now)."'";
 		$sql .= ", fk_user_valid = ".$user->id;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		dol_syslog(get_class($this)."::valid update reception", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
@@ -561,10 +561,11 @@ class Reception extends CommonObject
 			// TODO in future, reception lines may not be linked to order line
 			$sql = "SELECT cd.fk_product, cd.subprice,";
 			$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
-			$sql .= " ed.eatby, ed.sellby, ed.batch";
+			$sql .= " ed.eatby, ed.sellby, ed.batch,";
+			$sql .= " ed.cost_price";
 			$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
 			$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
-			$sql .= " WHERE ed.fk_reception = ".$this->id;
+			$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
 			$sql .= " AND cd.rowid = ed.fk_commandefourndet";
 
 			dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
@@ -589,7 +590,11 @@ class Reception extends CommonObject
 						// line without batch detail
 
 						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record.
-						$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionValidatedInDolibarr", $numref));
+						if (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION || $conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price, $langs->trans("ReceptionValidatedInDolibarr", $numref));
+						} else {
+							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionValidatedInDolibarr", $numref));
+						}
 						if ($result < 0) {
 							$error++;
 							$this->errors[] = $mouvS->error;
@@ -601,7 +606,11 @@ class Reception extends CommonObject
 
 						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record.
 						// Note: ->fk_origin_stock = id into table llx_product_batch (may be rename into llx_product_stock_batch in another version)
-						$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionValidatedInDolibarr", $numref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch);
+						if (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION || $conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price, $langs->trans("ReceptionValidatedInDolibarr", $numref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch);
+						} else {
+							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionValidatedInDolibarr", $numref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch);
+						}
 						if ($result < 0) {
 							$error++;
 							$this->errors[] = $mouvS->error;
@@ -704,9 +713,10 @@ class Reception extends CommonObject
 	 * @param	integer		$eatby					eat-by date
 	 * @param	integer		$sellby					sell-by date
 	 * @param	string		$batch					Lot number
+	 * @param	double		$cost_price			Line cost
 	 * @return	int							<0 if KO, index of line if OK
 	 */
-	public function addline($entrepot_id, $id, $qty, $array_options = 0, $comment = '', $eatby = '', $sellby = '', $batch = '')
+	public function addline($entrepot_id, $id, $qty, $array_options = 0, $comment = '', $eatby = '', $sellby = '', $batch = '', $cost_price = 0)
 	{
 		global $conf, $langs, $user;
 
@@ -746,8 +756,8 @@ class Reception extends CommonObject
 		$line->eatby = $eatby;
 		$line->sellby = $sellby;
 		$line->status = 1;
+		$line->cost_price = $cost_price;
 		$line->fk_reception = $this->id;
-
 		$this->lines[$num] = $line;
 
 		return $num;
@@ -915,7 +925,7 @@ class Reception extends CommonObject
 			$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot, ed.eatby, ed.sellby, ed.batch, ed.rowid as commande_fournisseur_dispatch_id";
 			$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
 			$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
-			$sql .= " WHERE ed.fk_reception = ".$this->id;
+			$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
 			$sql .= " AND cd.rowid = ed.fk_commandefourndet";
 
 			dol_syslog(get_class($this)."::delete select details", LOG_DEBUG);
@@ -938,12 +948,13 @@ class Reception extends CommonObject
 		}
 
 		if (!$error) {
-					$main = MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
-					$ef = $main."_extrafields";
-					$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_reception = ".$this->id.")";
+			$main = MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
+			$ef = $main."_extrafields";
+
+			$sqlef = "DELETE FROM ".$ef." WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_reception = ".((int) $this->id).")";
 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch";
-			$sql .= " WHERE fk_reception = ".$this->id;
+			$sql .= " WHERE fk_reception = ".((int) $this->id);
 
 			if ($this->db->query($sqlef) && $this->db->query($sql)) {
 				// Delete linked object
@@ -954,7 +965,7 @@ class Reception extends CommonObject
 
 				if (!$error) {
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."reception";
-					$sql .= " WHERE rowid = ".$this->id;
+					$sql .= " WHERE rowid = ".((int) $this->id);
 
 					if ($this->db->query($sql)) {
 						// Call trigger
@@ -1034,7 +1045,8 @@ class Reception extends CommonObject
 	{
 		// phpcs:enable
 		dol_include_once('/fourn/class/fournisseur.commande.dispatch.class.php');
-		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch WHERE fk_reception='.$this->id;
+
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch WHERE fk_reception = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 
 		if (!empty($resql)) {
@@ -1155,8 +1167,8 @@ class Reception extends CommonObject
 		// phpcs:enable
 		global $langs;
 
-		$labelStatus = $langs->trans($this->statuts[$status]);
-		$labelStatusShort = $langs->trans($this->statutshorts[$status]);
+		$labelStatus = $langs->transnoentitiesnoconv($this->statuts[$status]);
+		$labelStatusShort = $langs->transnoentitiesnoconv($this->statutshorts[$status]);
 
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_VALIDATED) {
@@ -1260,7 +1272,7 @@ class Reception extends CommonObject
 		if ($user->rights->reception->creer) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."reception";
 			$sql .= " SET date_delivery = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::setDeliveryDate", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1445,7 +1457,7 @@ class Reception extends CommonObject
 		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'reception SET fk_statut='.self::STATUS_CLOSED;
-		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
+		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > 0';
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1489,7 +1501,7 @@ class Reception extends CommonObject
 				$sql .= " ed.eatby, ed.sellby, ed.batch";
 				$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
 				$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
-				$sql .= " WHERE ed.fk_reception = ".$this->id;
+				$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
 				$sql .= " AND cd.rowid = ed.fk_commandefourndet";
 
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
@@ -1590,7 +1602,7 @@ class Reception extends CommonObject
 		$this->setClosed();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'reception SET  billed=1';
-		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
+		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > 0';
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1630,7 +1642,7 @@ class Reception extends CommonObject
 		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'reception SET fk_statut=1, billed=0';
-		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
+		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > 0';
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1650,7 +1662,7 @@ class Reception extends CommonObject
 				$sql .= " ed.eatby, ed.sellby, ed.batch";
 				$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
 				$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
-				$sql .= " WHERE ed.fk_reception = ".$this->id;
+				$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
 				$sql .= " AND cd.rowid = ed.fk_commandefourndet";
 
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
@@ -1755,7 +1767,7 @@ class Reception extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."reception";
 		$sql .= " SET fk_statut = ".self::STATUS_DRAFT;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -1772,7 +1784,7 @@ class Reception extends CommonObject
 				$sql .= " ed.eatby, ed.sellby, ed.batch";
 				$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
 				$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
-				$sql .= " WHERE ed.fk_reception = ".$this->id;
+				$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
 				$sql .= " AND cd.rowid = ed.fk_commandefourndet";
 
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);

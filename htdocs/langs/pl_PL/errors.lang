@@ -264,6 +264,7 @@ ErrorAnAmountWithoutTaxIsRequired=Błąd, kwota jest obowiązkowa
 ErrorAPercentIsRequired=Błąd, proszę poprawnie wpisać wartość procentową
 ErrorYouMustFirstSetupYourChartOfAccount=Najpierw musisz ustawić swój plan kont
 ErrorFailedToFindEmailTemplate=Nie udało się znaleźć szablonu o nazwie kodowej %s
+ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Duration not defined on service. No way to calculate the hourly price.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Twój parametr PHP upload_max_filesize (%s) jest wyższy niż parametr PHP post_max_size (%s). To nie jest spójna konfiguracja.

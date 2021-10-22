@@ -113,17 +113,17 @@ class box_activity extends ModeleBoxes
 			if ($refresh) {
 				$sql = "SELECT p.fk_statut, SUM(p.total_ttc) as Mnttot, COUNT(*) as nb";
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
-				if (!$user->rights->societe->client->voir && !$user->socid) {
+				if (empty($user->rights->societe->client->voir) && !$user->socid) {
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				}
 				$sql .= ")";
 				$sql .= " WHERE p.entity IN (".getEntity('propal').")";
 				$sql .= " AND p.fk_soc = s.rowid";
-				if (!$user->rights->societe->client->voir && !$user->socid) {
-					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+				if (empty($user->rights->societe->client->voir) && !$user->socid) {
+					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}
 				if ($user->socid) {
-					$sql .= " AND s.rowid = ".$user->socid;
+					$sql .= " AND s.rowid = ".((int) $user->socid);
 				}
 				$sql .= " AND p.datep >= '".$this->db->idate($tmpdate)."'";
 				$sql .= " AND p.date_cloture IS NULL"; // just unclosed
@@ -203,17 +203,17 @@ class box_activity extends ModeleBoxes
 			if ($refresh) {
 				$sql = "SELECT c.fk_statut, sum(c.total_ttc) as Mnttot, count(*) as nb";
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
-				if (!$user->rights->societe->client->voir && !$user->socid) {
+				if (empty($user->rights->societe->client->voir) && !$user->socid) {
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				}
 				$sql .= ")";
 				$sql .= " WHERE c.entity IN (".getEntity('commande').")";
 				$sql .= " AND c.fk_soc = s.rowid";
-				if (!$user->rights->societe->client->voir && !$user->socid) {
-					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+				if (empty($user->rights->societe->client->voir) && !$user->socid) {
+					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}
 				if ($user->socid) {
-					$sql .= " AND s.rowid = ".$user->socid;
+					$sql .= " AND s.rowid = ".((int) $user->socid);
 				}
 				$sql .= " AND c.date_commande >= '".$this->db->idate($tmpdate)."'";
 				$sql .= " GROUP BY c.fk_statut";
@@ -291,16 +291,16 @@ class box_activity extends ModeleBoxes
 			if ($refresh) {
 				$sql = "SELECT f.fk_statut, SUM(f.total_ttc) as Mnttot, COUNT(*) as nb";
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-				if (!$user->rights->societe->client->voir && !$user->socid) {
+				if (empty($user->rights->societe->client->voir) && !$user->socid) {
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				}
 				$sql .= ")";
 				$sql .= " WHERE f.entity IN (".getEntity('invoice').')';
-				if (!$user->rights->societe->client->voir && !$user->socid) {
-					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+				if (empty($user->rights->societe->client->voir) && !$user->socid) {
+					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}
 				if ($user->socid) {
-					$sql .= " AND s.rowid = ".$user->socid;
+					$sql .= " AND s.rowid = ".((int) $user->socid);
 				}
 				$sql .= " AND f.fk_soc = s.rowid";
 				$sql .= " AND f.datef >= '".$this->db->idate($tmpdate)."' AND f.paye=1";

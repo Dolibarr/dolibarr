@@ -171,7 +171,7 @@ class CompanyBankAccount extends Account
 		} else {
 			$sql .= ",label = NULL";
 		}
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -292,7 +292,7 @@ class CompanyBankAccount extends Account
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
-			$sql .= " WHERE rowid  = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if (!$this->db->query($sql)) {
 				$error++;

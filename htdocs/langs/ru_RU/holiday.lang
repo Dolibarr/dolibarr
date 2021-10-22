@@ -132,3 +132,5 @@ FreeLegalTextOnHolidays=Свободный текст в PDF
 WatermarkOnDraftHolidayCards=Водяные знаки на запросах на отпуск
 HolidaysToApprove=Праздники утвердить
 NobodyHasPermissionToValidateHolidays=Ни у кого нет разрешения подтверждать праздники
+HolidayBalanceMonthlyUpdate=Monthly update of holiday balance
+XIsAUsualNonWorkingDay=%s is usualy a NON working day

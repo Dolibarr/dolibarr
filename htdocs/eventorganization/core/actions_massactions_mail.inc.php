@@ -90,7 +90,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 		foreach ($toselect as $toselectid) {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
-				$attendees = $attendee->fetchAll('', '', 0, 0, array('t.fk_actioncomm' => $objecttmp->id));
+				$attendees = $attendee->fetchAll();
 				if (is_array($attendees) && count($attendees) > 0) {
 					foreach ($attendees as $attmail) {
 						if (!empty($attmail->email)) {
@@ -119,7 +119,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 			$receiver = array($receiver);
 		}
 	}
-	if (!trim($_POST['sendto']) && count($receiver) == 0 && count($listofselectedid) == 1) {    // if only one recipient, receiver is mandatory
+	if (!trim($_POST['sendto']) && count($receiver) == 0 && count($listofselectedid) == 0) {    // if only one recipient, receiver is mandatory
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Recipient")), null, 'warnings');
 		$massaction = 'presend_attendees';
@@ -173,7 +173,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 				$tmp = explode(',', $conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
 				$from = trim($tmp[($reg[1] - 1)]);
 			} elseif (preg_match('/senderprofile_(\d+)_(\d+)/', $fromtype, $reg)) {
-				$sql = 'SELECT rowid, label, email FROM ' . MAIN_DB_PREFIX . 'c_email_senderprofile WHERE rowid = ' . (int) $reg[1];
+				$sql = "SELECT rowid, label, email FROM " . MAIN_DB_PREFIX . "c_email_senderprofile WHERE rowid = " . (int) $reg[1];
 				$resql = $db->query($sql);
 				$obj = $db->fetch_object($resql);
 				if ($obj) {

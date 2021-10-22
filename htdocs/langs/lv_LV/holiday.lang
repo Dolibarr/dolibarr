@@ -132,3 +132,5 @@ FreeLegalTextOnHolidays=Brīvs teksts PDF
 WatermarkOnDraftHolidayCards=Ūdenszīmes uz atvaļinājuma pieprasījumiem
 HolidaysToApprove=Brīvdienas, kas jāapstiprina
 NobodyHasPermissionToValidateHolidays=Nevienam nav atļaujas apstiprināt brīvdienas
+HolidayBalanceMonthlyUpdate=Monthly update of holiday balance
+XIsAUsualNonWorkingDay=%s is usualy a NON working day

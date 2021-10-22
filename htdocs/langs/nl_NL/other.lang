@@ -291,3 +291,7 @@ PopuCom=Producten / services op populariteit in Orders
 ProductStatistics=Producten / diensten Statistieken
 NbOfQtyInOrders=Aantal in bestellingen
 SelectTheTypeOfObjectToAnalyze=Selecteer een object om de statistieken te bekijken...
+
+ConfirmBtnCommonContent = Weet je zeker dat je "1%s"?
+ConfirmBtnCommonTitle = Bevestig
+CloseDialog = Sluiten

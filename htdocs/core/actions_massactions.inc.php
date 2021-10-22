@@ -357,7 +357,7 @@ if (!$error && $massaction == 'confirm_presend') {
 					$tmp = explode(',', $conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
 					$from = trim($tmp[($reg[1] - 1)]);
 				} elseif (preg_match('/senderprofile_(\d+)_(\d+)/', $fromtype, $reg)) {
-					$sql = 'SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile WHERE rowid = '.(int) $reg[1];
+					$sql = "SELECT rowid, label, email FROM ".MAIN_DB_PREFIX."c_email_senderprofile WHERE rowid = ".(int) $reg[1];
 					$resql = $db->query($sql);
 					$obj = $db->fetch_object($resql);
 					if ($obj) {
@@ -631,6 +631,8 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 	$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
 	$validate_invoices = GETPOST('validate_invoices', 'int');
 
+	$errors = array();
+
 	$TFact = array();
 	$TFactThird = array();
 
@@ -645,18 +647,19 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 		if ($cmd->fetch($id_order) <= 0) {
 			continue;
 		}
+		$cmd->fetch_thirdparty();
 
 		$objecttmp = new Facture($db);
 		if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) {
-			$objecttmp = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
+			// If option "one bill per third" is set, and an invoice for this thirdparty was already created, we re-use it.
+			$objecttmp = $TFactThird[$cmd->socid];
 		} else {
-			// Load extrafields of order
-			$cmd->fetch_optionals();
-
+			// If we want one invoice per order or if there is no first invoice yet for this thirdparty.
 			$objecttmp->socid = $cmd->socid;
 			$objecttmp->type = $objecttmp::TYPE_STANDARD;
-			$objecttmp->cond_reglement_id	= $cmd->cond_reglement_id;
-			$objecttmp->mode_reglement_id	= $cmd->mode_reglement_id;
+			$objecttmp->cond_reglement_id	= ($cmd->cond_reglement_id || $cmd->thirdparty->cond_reglement_id);
+			$objecttmp->mode_reglement_id	= ($cmd->mode_reglement_id || $cmd->thirdparty->mode_reglement_id);
+
 			$objecttmp->fk_project = $cmd->fk_project;
 			$objecttmp->multicurrency_code = $cmd->multicurrency_code;
 			if (empty($createbills_onebythird)) {
@@ -680,23 +683,20 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 				$nb_bills_created++;
 				$lastref = $objecttmp->ref;
 				$lastid = $objecttmp->id;
+
+				$TFactThird[$cmd->socid] = $objecttmp;
+			} else {
+				$langs->load("errors");
+				$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->error);
+				$error++;
 			}
 		}
 
 		if ($objecttmp->id > 0) {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
-			$sql .= "fk_source";
-			$sql .= ", sourcetype";
-			$sql .= ", fk_target";
-			$sql .= ", targettype";
-			$sql .= ") VALUES (";
-			$sql .= $id_order;
-			$sql .= ", '".$db->escape($objecttmp->origin)."'";
-			$sql .= ", ".$objecttmp->id;
-			$sql .= ", '".$db->escape($objecttmp->element)."'";
-			$sql .= ")";
+			$res = $objecttmp->add_object_linked($objecttmp->origin, $id_order);
 
-			if (!$db->query($sql)) {
+			if ($res == 0) {
+				$errors[] = $objecttmp->error;
 				$error++;
 			}
 
@@ -845,7 +845,6 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 			}
 
 			$id = $objecttmp->id; // For builddoc action
-			$object = $objecttmp;
 
 			// Builddoc
 			$donotredirect = 1;
@@ -854,7 +853,7 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 
 			// Call action to build doc
 			$savobject = $object;
-				$object = $objecttmp;
+			$object = $objecttmp;
 			include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 			$object = $savobject;
 		}
@@ -949,6 +948,7 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 		exit;
 	} else {
 		$db->rollback();
+
 		$action = 'create';
 		$_GET["origin"] = $_POST["origin"];
 		$_GET["originid"] = $_POST["originid"];
@@ -1287,6 +1287,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 
 	$objecttmp = new $objectclass($db);
 	$nbok = 0;
+	$TMsg = array();
 	foreach ($toselect as $toselectid) {
 		$result = $objecttmp->fetch($toselectid);
 		if ($result > 0) {
@@ -1314,7 +1315,9 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 				$result = $objecttmp->delete($user);
 			}
 
-			if ($result <= 0) {
+			if (empty($result)) { // if delete returns 0, there is at least one object linked
+				$TMsg = array_merge($objecttmp->errors, $TMsg);
+			} elseif ($result < 0) { // if delete returns is < 0, there is an error, we break and rollback later
 				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 				$error++;
 				break;
@@ -1328,16 +1331,25 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 		}
 	}
 
-	if (!$error) {
+	if (empty($error)) {
+		// Message for elements well deleted
 		if ($nbok > 1) {
 			setEventMessages($langs->trans("RecordsDeleted", $nbok), null, 'mesgs');
-		} else {
+		} elseif ($nbok == 1) {
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		}
+
+		// Message for elements which can't be deleted
+		if (!empty($TMsg)) {
+			sort($TMsg);
+			setEventMessages('', array_unique($TMsg), 'warnings');
+		}
+
 		$db->commit();
 	} else {
 		$db->rollback();
 	}
+
 	//var_dump($listofobjectthirdparties);exit;
 }
 
@@ -1537,6 +1549,126 @@ if (!$error && ($massaction == 'disable' || ($action == 'disable' && $confirm ==
 			setEventMessages($langs->trans("RecordsDisabled", $nbok), null, 'mesgs');
 		} else {
 			setEventMessages($langs->trans("RecordDisabled"), null, 'mesgs');
+		}
+		$db->commit();
+	} else {
+		$db->rollback();
+	}
+}
+
+if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $confirm == 'yes')) && $permissiontoapprove) {
+	$db->begin();
+
+	$objecttmp = new $objectclass($db);
+	$nbok = 0;
+	foreach ($toselect as $toselectid) {
+		$result = $objecttmp->fetch($toselectid);
+		if ($result>0) {
+			if ($objecttmp->statut == Holiday::STATUS_VALIDATED && $user->id == $objecttmp->fk_validator) {
+				$objecttmp->oldcopy = dol_clone($objecttmp);
+
+				$objecttmp->date_valid = dol_now();
+				$objecttmp->fk_user_valid = $user->id;
+				$objecttmp->statut = Holiday::STATUS_APPROVED;
+
+				$db->begin();
+
+				$verif = $objecttmp->approve($user);
+				if ($verif <= 0) {
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+					$error++;
+				}
+
+				// If no SQL error, we redirect to the request form
+				if (!$error) {
+					// Calculcate number of days consummed
+					$nbopenedday = num_open_day($objecttmp->date_debut_gmt, $objecttmp->date_fin_gmt, 0, 1, $objecttmp->halfday);
+					$soldeActuel = $objecttmp->getCpforUser($objecttmp->fk_user, $objecttmp->fk_type);
+					$newSolde = ($soldeActuel - $nbopenedday);
+
+					// The modification is added to the LOG
+					$result = $objecttmp->addLogCP($user->id, $objecttmp->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $objecttmp->fk_type);
+					if ($result < 0) {
+						$error++;
+						setEventMessages(null, $objecttmp->errors, 'errors');
+					}
+
+					// Update balance
+					$result = $objecttmp->updateSoldeCP($objecttmp->fk_user, $newSolde, $objecttmp->fk_type);
+					if ($result < 0) {
+						$error++;
+						setEventMessages(null, $objecttmp->errors, 'errors');
+					}
+				}
+
+				if (!$error) {
+					// To
+					$destinataire = new User($db);
+					$destinataire->fetch($objecttmp->fk_user);
+					$emailTo = $destinataire->email;
+
+					if (!$emailTo) {
+						dol_syslog("User that request leave has no email, so we redirect directly to finished page without sending email");
+					} else {
+						// From
+						$expediteur = new User($db);
+						$expediteur->fetch($objecttmp->fk_validator);
+						//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
+						$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
+
+						// Subject
+						$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+						if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+							$societeName = $conf->global->MAIN_APPLICATION_TITLE;
+						}
+
+						$subject = $societeName." - ".$langs->transnoentitiesnoconv("HolidaysValidated");
+
+						// Content
+						$message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
+						$message .= "\n";
+
+						$message .= $langs->transnoentities("HolidaysValidatedBody", dol_print_date($objecttmp->date_debut, 'day'), dol_print_date($objecttmp->date_fin, 'day'))."\n";
+
+						$message .= "- ".$langs->transnoentitiesnoconv("ValidatedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
+
+						$message .= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$objecttmp->id."\n\n";
+						$message .= "\n";
+
+						$trackid = 'leav'.$objecttmp->id;
+
+						$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 0, '', '', $trackid);
+
+						// Sending email
+						$result = $mail->sendfile();
+
+						if (!$result) {
+							setEventMessages($mail->error, $mail->errors, 'warnings'); // Show error, but do no make rollback, so $error is not set to 1
+							$action = '';
+						}
+					}
+				}
+
+				if (!$error) {
+					$db->commit();
+					$nbok++;
+				} else {
+					$db->rollback();
+					$action = '';
+				}
+			}
+		} else {
+			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+			$error++;
+			break;
+		}
+	}
+
+	if (!$error) {
+		if ($nbok > 1) {
+			setEventMessages($langs->trans("RecordsApproved", $nbok), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("RecordAproved"), null, 'mesgs');
 		}
 		$db->commit();
 	} else {

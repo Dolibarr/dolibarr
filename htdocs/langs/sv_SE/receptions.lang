@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - receptions
-ReceptionsSetup=Product Reception setup
+ReceptionsSetup=Konfiguration av produktmottagning
 RefReception=Ref. reception
 Reception=Den process
 Receptions=mottagningar
@@ -41,7 +41,7 @@ ReceptionLine=Mottagningslinje
 ProductQtyInReceptionAlreadySent=Produktkvantitet från öppen försäljningsorder redan skickad
 ProductQtyInSuppliersReceptionAlreadyRecevied=Produktkvantitet från öppen leverantörsorder redan mottagen
 ValidateOrderFirstBeforeReception=Du måste först validera ordern innan du kan göra mottagningar.
-ReceptionsNumberingModules=Numbering module for receptions
-ReceptionsReceiptModel=Document templates for receptions
-NoMorePredefinedProductToDispatch=No more predefined products to dispatch
-ReceptionExist=A reception exists
+ReceptionsNumberingModules=Numreringsmodul för mottagningar
+ReceptionsReceiptModel=Dokumentmallar för mottagningar
+NoMorePredefinedProductToDispatch=Inga fler fördefinierade produkter att skicka
+ReceptionExist=Det finns en mottagning

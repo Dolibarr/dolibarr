@@ -281,6 +281,8 @@ $form = new Form($db);
 $pagetitle = $langs->trans('ResourceElementPage');
 llxHeader('', $pagetitle, '');
 
+$now = dol_now();
+$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
 
 // Load available resource, declared by modules
 $ret = count($object->available_resources);
@@ -500,7 +502,7 @@ if (!$ret) {
 				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 				if ($user->rights->commande->creer) {
 					if ($action != 'classify') {
-						//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $fichinter->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+						//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $fichinter->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 						$morehtmlref .= ' : ';
 					}
 					if ($action == 'classify') {

@@ -104,13 +104,11 @@ print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
-// Social networks
-print '<br>';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';
-print '<td class="titlefield">'.$langs->trans("SocialNetworksInformation").'</td><td>'.$langs->trans("Url").'</td><td>'.$langs->trans("SocialNetworkId").'</td><td></td>';
+print '<td class="titlefieldcreate">'.$langs->trans("SocialNetworksInformation").'</td><td>'.$langs->trans("Url").'</td><td>'.$langs->trans("SocialNetworkId").'</td><td></td>';
 print "</tr>\n";
 
 
@@ -133,11 +131,8 @@ foreach ($listofnetworks as $key => $value) {
 print "</table>";
 print '</div>';
 
-print '<br>';
 
-print '<br><div class="center">';
-print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-print '</div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 

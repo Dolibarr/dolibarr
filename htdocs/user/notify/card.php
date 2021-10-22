@@ -38,7 +38,7 @@ $id = GETPOST("id", 'int');
 $ref = GETPOST('ref', 'alpha');
 
 $action = GETPOST('action', 'aZ09');
-$actionid = GETPOST('actionid');
+$actionid = GETPOST('actionid', 'int');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -99,8 +99,8 @@ if ($action == 'add') {
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
 		$sql .= " WHERE fk_user=".((int) $id)." AND fk_action=".((int) $actionid);
 		if ($db->query($sql)) {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_user, fk_action)";
-			$sql .= " VALUES ('".$db->idate($now)."',".$id.",".$actionid.")";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec, fk_user, fk_action)";
+			$sql .= " VALUES ('".$db->idate($now)."', ".((int) $id).", ".((int) $actionid).")";
 
 			if (!$db->query($sql)) {
 				$error++;
@@ -226,13 +226,14 @@ if ($result > 0) {
 	// List of notifications enabled for contacts
 	$sql = "SELECT n.rowid, n.type,";
 	$sql .= " a.code, a.label,";
-	$sql .= " c.rowid as userid, c.lastname, c.firstname, c.email";
+	$sql .= " c.rowid as userid, c.entity, c.login, c.lastname, c.firstname, c.email, c.statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";
 	$sql .= " ".MAIN_DB_PREFIX."notify_def as n,";
 	$sql .= " ".MAIN_DB_PREFIX."user c";
 	$sql .= " WHERE a.rowid = n.fk_action";
 	$sql .= " AND c.rowid = n.fk_user";
-	$sql .= " AND c.rowid = ".$object->id;
+	$sql .= " AND c.rowid = ".((int) $object->id);
+	$sql .= " AND c.entity IN (".getEntity('user').')';
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -289,7 +290,7 @@ if ($result > 0) {
 			print $form->selectarray("typeid", $type);
 			print '</td>';
 			print '<td class="nowraponall">';
-			print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+			print '<input type="submit" class="button button-add" value="'.$langs->trans("Add").'">';
 			print '&nbsp;';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</td>';
@@ -311,6 +312,9 @@ if ($result > 0) {
 				$userstatic->id = $obj->userid;
 				$userstatic->lastname = $obj->lastname;
 				$userstatic->firstname = $obj->firstname;
+				$userstatic->email = $obj->email;
+				$userstatic->statut = $obj->status;
+
 				print '<tr class="oddeven"><td>'.$userstatic->getNomUrl(1);
 				if ($obj->type == 'email') {
 					if (isValidEmail($obj->email)) {
@@ -333,7 +337,7 @@ if ($result > 0) {
 					print $langs->trans("SMS");
 				}
 				print '</td>';
-				print '<td class="right"><a href="card.php?id='.$id.'&amp;action=delete&amp;token='.newToken().'&amp;actid='.$obj->rowid.'">'.img_delete().'</a></td>';
+				print '<td class="right"><a href="card.php?id='.$id.'&action=delete&token='.newToken().'&actid='.$obj->rowid.'">'.img_delete().'</a></td>';
 				print '</tr>';
 				$i++;
 			}
@@ -405,7 +409,7 @@ if ($result > 0) {
 	$sql .= " ".MAIN_DB_PREFIX."notify as n";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as c ON n.fk_user = c.rowid";
 	$sql .= " WHERE a.rowid = n.fk_action";
-	$sql .= " AND n.fk_user = ".$object->id;
+	$sql .= " AND n.fk_user = ".((int) $object->id);
 	$sql .= $db->order($sortfield, $sortorder);
 
 	// Count total nb of records
