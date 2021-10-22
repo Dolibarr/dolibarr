@@ -41,7 +41,7 @@ $langs->loadLangs(array("companies", "compta", "accountancy", "products"));
 if (empty($conf->accounting->enabled)) {
 	accessforbidden();
 }
-if (!$user->rights->accounting->bind->write) {
+if (empty($user->rights->accounting->bind->write)) {
 	accessforbidden();
 }
 

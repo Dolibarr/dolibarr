@@ -24,7 +24,7 @@
 /**
  *	\file       htdocs/public/project/new.php
  *	\ingroup    project
- *	\brief      Example of form to add a new lead
+ *	\brief      Page to record a message/lead into a project/lead
  */
 
 if (!defined('NOLOGIN')) {
@@ -65,7 +65,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Load translation files
-$langs->loadLangs(array("members", "companies", "install", "other"));
+$langs->loadLangs(array("members", "companies", "install", "other", "projects"));
 
 if (empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
 	print $langs->trans("Form for public lead registration has not been enabled");
@@ -381,7 +381,7 @@ print '<div class="center subscriptionformhelptext justify">';
 if (!empty($conf->global->PROJECT_NEWFORM_TEXT)) {
 	print $langs->trans($conf->global->PROJECT_NEWFORM_TEXT)."<br>\n";
 } else {
-	print $langs->trans("NewLeadDesc", $conf->global->MAIN_INFO_SOCIETE_MAIL)."<br>\n";
+	print $langs->trans("FormForNewLeadDesc", $conf->global->MAIN_INFO_SOCIETE_MAIL)."<br>\n";
 }
 print '</div>';
 

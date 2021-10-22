@@ -386,11 +386,11 @@ if (!empty($search_categ_thirdparty) && $search_categ_thirdparty != '-1') {
 if (!empty($search_categ_supplier) && $search_categ_supplier != '-1') {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs2 ON s.rowid = cs2.fk_soc"; // We need this table joined to the select in order to filter by categ
 }
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 }
 $sql .= ' WHERE p.entity IN ('.getEntity('socpeople').')';
-if (!$user->rights->societe->client->voir && !$socid) { //restriction
+if (empty($user->rights->societe->client->voir) && !$socid) { //restriction
 	$sql .= " AND (sc.fk_user = ".((int) $user->id)." OR p.fk_soc IS NULL)";
 }
 if (!empty($userid)) {    // propre au commercial

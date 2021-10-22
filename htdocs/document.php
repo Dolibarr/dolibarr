@@ -119,7 +119,7 @@ if ($user->socid > 0) {
 
 // For some module part, dir may be privates
 if (in_array($modulepart, array('facture_paiement', 'unpaid'))) {
-	if (!$user->rights->societe->client->voir || $socid) {
+	if (empty($user->rights->societe->client->voir) || $socid) {
 		$original_file = 'private/'.$user->id.'/'.$original_file; // If user has no permission to see all, output dir is specific to user
 	}
 }
@@ -196,8 +196,10 @@ if (!in_array($type, array('text/x-javascript')) && !dolIsAllowedForPreview($ori
 }
 
 // Security: Delete string ../ or ..\ into $original_file
+$original_file = preg_replace('/\.\.+/', '..', $original_file);	// Replace '... or more' with '..'
 $original_file = str_replace('../', '/', $original_file);
 $original_file = str_replace('..\\', '/', $original_file);
+
 
 // Find the subdirectory name as the reference
 $refname = basename(dirname($original_file)."/");

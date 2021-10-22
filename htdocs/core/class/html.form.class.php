@@ -1347,7 +1347,7 @@ class Form
 		if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as dictp ON dictp.rowid = s.fk_pays";
 		}
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE s.entity IN (".getEntity('societe').")";
@@ -1357,7 +1357,7 @@ class Form
 		if ($filter) {
 			$sql .= " AND (".$filter.")";
 		}
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if (!empty($conf->global->COMPANY_HIDE_INACTIVE_IN_COMBOBOX)) {
@@ -4353,6 +4353,7 @@ class Form
 		if (!empty($unit_type)) {
 			$sql .= " AND unit_type = '".$this->db->escape($unit_type)."'";
 		}
+		$sql .= " ORDER BY sortorder";
 
 		$resql = $this->db->query($sql);
 		if ($resql && $this->db->num_rows($resql) > 0) {
@@ -5159,7 +5160,8 @@ class Form
 			print '<input type="hidden" name="action" value="setavailability">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			$this->selectAvailabilityDelay($selected, $htmlname, -1, $addempty);
-			print '<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'">';
+			print '<input type="submit" name="modify" class="button smallpaddingimp" value="'.$langs->trans("Modify").'">';
+			print '<input type="submit" name="cancel" class="button smallpaddingimp" value="'.$langs->trans("Cancel").'">';
 			print '</form>';
 		} else {
 			if ($selected) {
@@ -7027,7 +7029,7 @@ class Form
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$tmparray[1]." as parenttable ON parenttable.rowid = t.".$tmparray[0];
 			}
 			if ($objecttmp->ismultientitymanaged === 'fk_soc@societe') {
-				if (!$user->rights->societe->client->voir && !$user->socid) {
+				if (empty($user->rights->societe->client->voir) && !$user->socid) {
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				}
 			}
@@ -7055,7 +7057,7 @@ class Form
 					}
 				}
 				if ($objecttmp->ismultientitymanaged === 'fk_soc@societe') {
-					if (!$user->rights->societe->client->voir && !$user->socid) {
+					if (empty($user->rights->societe->client->voir) && !$user->socid) {
 						$sql .= " AND t.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 					}
 				}
@@ -9307,11 +9309,12 @@ class Form
 	 *
 	 * @param   string  $save_label     Alternative label for save button
 	 * @param   string  $cancel_label   Alternative label for cancel button
-	 * @param   array   $morefields     Add additional buttons between save and cancel
+	 * @param   array   $morebuttons    Add additional buttons between save and cancel
 	 * @param   bool    $withoutdiv     Option to remove enclosing centered div
+	 * @param	string	$morecss		More CSS
 	 * @return 	string					Html code with the buttons
 	 */
-	public function buttonsSaveCancel($save_label = 'Save', $cancel_label = 'Cancel', $morefields = array(), $withoutdiv = 0)
+	public function buttonsSaveCancel($save_label = 'Save', $cancel_label = 'Cancel', $morebuttons = array(), $withoutdiv = 0, $morecss = '')
 	{
 		global $langs;
 
@@ -9335,8 +9338,8 @@ class Form
 
 		!empty($save_label) ? $buttons[] = $save : '';
 
-		if (!empty($morefields)) {
-			$buttons[] = $morefields;
+		if (!empty($morebuttons)) {
+			$buttons[] = $morebuttons;
 		}
 
 		!empty($cancel_label) ? $buttons[] = $cancel : '';
@@ -9345,7 +9348,7 @@ class Form
 
 		foreach ($buttons as $button) {
 			$addclass = empty($button['addclass']) ? '' : $button['addclass'];
-			$retstring .= '<input type="submit" class="button button-'.$button['name'].' '.$addclass.'" name="'.$button['name'].'" value="'.dol_escape_htmltag($langs->trans($button['label_key'])).'">';
+			$retstring .= '<input type="submit" class="button button-'.$button['name'].($morecss ? ' '.$morecss : '').' '.$addclass.'" name="'.$button['name'].'" value="'.dol_escape_htmltag($langs->trans($button['label_key'])).'">';
 		}
 		$retstring .= $withoutdiv ? '': '</div>';
 

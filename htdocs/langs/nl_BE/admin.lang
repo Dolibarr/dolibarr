@@ -48,7 +48,6 @@ NotConfigured=Module/Applicatie is niet geconfigureerd
 OtherSetup=Overige instellingen
 CurrentValueSeparatorThousand=Duizend scheidingsteken
 LocalisationDolibarrParameters=Lokalisatieparameters
-ClientTZ=Tijdzone van de klant (gebruiker)
 ClientHour=Tijd bij de klant (gebruiker)
 PHPTZ=Tijdzone binnen de PHP server
 DaylingSavingTime=Zomertijd (gebruiker)

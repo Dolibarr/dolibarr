@@ -68,7 +68,7 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	$accessallowed = 1;
 } elseif ($modulepart == 'member') {
 	$result = restrictedArea($user, 'adherent', $id, '', '', 'fk_soc', 'rowid');
-	if (!$user->rights->adherent->lire) {
+	if (empty($user->rights->adherent->lire)) {
 		accessforbidden();
 	}
 	$accessallowed = 1;

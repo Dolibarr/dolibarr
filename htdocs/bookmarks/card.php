@@ -154,9 +154,9 @@ if ($action == 'create') {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	print load_fiche_titre($langs->trans("NewBookmark"));
+	print load_fiche_titre($langs->trans("NewBookmark"), '', 'bookmark');
 
-	print dol_get_fiche_head($head, $hselected, $langs->trans("Bookmark"), -1, 'bookmark');
+	print dol_get_fiche_head(null, 'bookmark', '', 0, '');
 
 	print '<table class="border centpercent tableforfieldcreate">';
 
@@ -164,23 +164,23 @@ if ($action == 'create') {
 	dol_set_focus('#titlebookmark');
 
 	// Url
-	print '<tr><td class="fieldrequired">'.$langs->trans("UrlOrLink").'</td><td><input class="flat quatrevingtpercent" name="url" value="'.dol_escape_htmltag($url).'"></td><td class="hideonsmartphone"><span class="opacitymedium">'.$langs->trans("UseAnExternalHttpLinkOrRelativeDolibarrLink").'</span></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("UrlOrLink").'</td><td><input class="flat quatrevingtpercent minwidth500" name="url" value="'.dol_escape_htmltag($url).'"></td><td class="hideonsmartphone"><span class="opacitymedium">'.$langs->trans("UseAnExternalHttpLinkOrRelativeDolibarrLink").'</span></td></tr>';
 
 	// Target
 	print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
 	$liste = array(0=>$langs->trans("ReplaceWindow"), 1=>$langs->trans("OpenANewWindow"));
-	print $form->selectarray('target', $liste, GETPOSTISSET('target') ? GETPOST('target', 'int') : 1);
+	print $form->selectarray('target', $liste, GETPOSTISSET('target') ? GETPOST('target', 'int') : 1, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth300');
 	print '</td><td class="hideonsmartphone"><span class="opacitymedium">'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</span></td></tr>';
 
 	// Owner
 	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-	print img_picto('', 'user').' '.$form->select_dolusers(GETPOSTISSET('userid') ? GETPOST('userid', 'int') : $user->id, 'userid', 0, '', 0, ($user->admin ? '' : array($user->id)), '', 0, 0, 0, '', ($user->admin) ? 1 : 0, '', 'maxwidth300');
-	print '</td><td class="hideonsmartphone">&nbsp;</td></tr>';
+	print img_picto('', 'user').' '.$form->select_dolusers(GETPOSTISSET('userid') ? GETPOST('userid', 'int') : $user->id, 'userid', 0, '', 0, ($user->admin ? '' : array($user->id)), '', 0, 0, 0, '', ($user->admin) ? 1 : 0, '', 'maxwidth300 widthcentpercentminusx');
+	print '</td><td class="hideonsmartphone"></td></tr>';
 
 	// Position
 	print '<tr><td>'.$langs->trans("Position").'</td><td>';
-	print '<input class="flat" name="position" size="5" value="'.(GETPOSTISSET("position") ? GETPOST("position", 'int') : $object->position).'">';
-	print '</td><td class="hideonsmartphone">&nbsp;</td></tr>';
+	print '<input class="flat width50" name="position" value="'.(GETPOSTISSET("position") ? GETPOST("position", 'int') : $object->position).'">';
+	print '</td><td class="hideonsmartphone"></td></tr>';
 
 	print '</table>';
 

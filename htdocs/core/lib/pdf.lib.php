@@ -177,8 +177,8 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 	//$metric=$arrayformat['unit'];
 
 	$pdfa = false; // PDF-1.3
-	if (!empty($conf->global->PDF_USE_1A)) {
-		$pdfa = true; // PDF1/A
+	if (!empty($conf->global->PDF_USE_A)) {
+		$pdfa = $conf->global->PDF_USE_A; 	// PDF/A-1 ou PDF/A-3
 	}
 
 	if (class_exists('TCPDI')) {

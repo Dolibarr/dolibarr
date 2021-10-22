@@ -1005,10 +1005,10 @@ class RemiseCheque extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			$langs->load('compta');
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('ToValidate');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('ToValidate');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Validated');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('ToValidate');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('ToValidate');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
 		}
 
 		$statusType = 'status'.$status;

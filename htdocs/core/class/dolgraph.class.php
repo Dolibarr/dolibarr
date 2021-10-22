@@ -1054,6 +1054,7 @@ class DolGraph
 		}
 
 		$showlegend = $this->showlegend;
+		$bordercolor = "";
 
 		$legends = array();
 		$nblot = 0;
@@ -1384,7 +1385,7 @@ class DolGraph
 
 					$textoflegend = $arrayofgroupslegend[$i]['legendwithgroup'];
 				} else {
-					$textoflegend = $this->Legend[$i];
+					$textoflegend = !empty($this->Legend[$i]) ? $this->Legend[$i] : '';
 				}
 
 				if ($usecolorvariantforgroupby) {

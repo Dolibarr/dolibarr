@@ -1219,7 +1219,7 @@ if ($id > 0 || !empty($ref)) {
 				// Qty
 				print '<td class="right">';
 				if ($action == 'editline' && $lineid == $objp->dispatchlineid) {
-					print '<input style="width: 50px;" type="number" min="1" name="qty" value="'.$objp->qty.'" />';
+					print '<input style="width: 50px;" type="text" min="1" name="qty" value="'.$objp->qty.'" />';
 				} else {
 					print $objp->qty;
 				}

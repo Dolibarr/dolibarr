@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2020 Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2021 Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2021 Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy"));
@@ -40,10 +41,11 @@ if (empty($conf->accounting->enabled)) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->rights->accounting->bind->write) {
+if (empty($user->rights->accounting->bind->write)) {
 	accessforbidden();
 }
 
+$accountingAccount = new AccountingAccount($db);
 
 $month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
 if (GETPOST("year", 'int')) {
@@ -97,6 +99,7 @@ if (($action == 'clean' || $action == 'validatehistory') && $user->rights->accou
 	$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid='.$conf->global->CHARTOFACCOUNTS.' AND accnt.entity = '.$conf->entity.')';
 	$sql1 .= ' AND fd.fk_facture_fourn IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE entity = '.$conf->entity.')';
 	$sql1 .= ' AND fk_code_ventilation <> 0';
+
 	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
 	$resql1 = $db->query($sql1);
 	if (!$resql1) {
@@ -163,7 +166,7 @@ if ($action == 'validatehistory') {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa  ON " . $alias_product_perentity . ".accountancy_code_buy = aa.account_number         AND aa.active = 1  AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".$conf->entity;
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa2 ON " . $alias_product_perentity . ".accountancy_code_buy_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa2.entity = ".$conf->entity;
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa3 ON " . $alias_product_perentity . ".accountancy_code_buy_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa3.entity = ".$conf->entity;
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa4 ON " . $alias_product_perentity . ".accountancy_code_buy = aa4.account_number        AND aa4.active = 1 AND aa4.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa4.entity = ".$conf->entity;
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa4 ON " . $alias_societe_perentity . ".accountancy_code_buy = aa4.account_number        AND aa4.active = 1 AND aa4.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa4.entity = ".$conf->entity;
 	$sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 	$sql .= " AND l.product_type <= 2";
 	if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
@@ -181,27 +184,74 @@ if ($action == 'validatehistory') {
 
 		$isBuyerInEEC = isInEEC($mysoc);
 
+		$thirdpartystatic = new Societe($db);
+		$facture_static = new FactureFournisseur($db);
+		$facture_static_det = new SupplierInvoiceLine($db);
+		$product_static = new Product($db);
+
 		$i = 0;
 		while ($i < min($num_lines, 10000)) {	// No more than 10000 at once
 			$objp = $db->fetch_object($result);
 
-			$isSellerInEEC = isInEEC($objp);
+			$thirdpartystatic->id = $objp->socid;
+			$thirdpartystatic->name = $objp->name;
+			$thirdpartystatic->client = $objp->client;
+			$thirdpartystatic->fournisseur = $objp->fournisseur;
+			$thirdpartystatic->code_client = $objp->code_client;
+			$thirdpartystatic->code_compta_client = $objp->code_compta_client;
+			$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
+			$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
+			$thirdpartystatic->email = $objp->email;
+			$thirdpartystatic->country_code = $objp->country_code;
+			$thirdpartystatic->tva_intra = $objp->tva_intra;
+			$thirdpartystatic->code_compta = $objp->company_code_sell;
 
-			// Level 2: Search suggested account for product/service (similar code exists in page list.php to make manual binding)
-			$suggestedaccountingaccountfor = '';
-			if (($objp->country_code == $mysoc->country_code) || empty($objp->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
-				$objp->code_buy_p = $objp->code_buy;
-				$objp->aarowid_suggest = $objp->aarowid;
-				$suggestedaccountingaccountfor = '';
+			$product_static->ref = $objp->product_ref;
+			$product_static->id = $objp->product_id;
+			$product_static->type = $objp->type;
+			$product_static->label = $objp->product_label;
+			$product_static->status = $objp->status;
+			$product_static->status_buy = $objp->status_buy;
+			$product_static->accountancy_code_sell = $objp->code_sell;
+			$product_static->accountancy_code_sell_intra = $objp->code_sell_intra;
+			$product_static->accountancy_code_sell_export = $objp->code_sell_export;
+			$product_static->accountancy_code_buy = $objp->code_buy;
+			$product_static->accountancy_code_buy_intra = $objp->code_buy_intra;
+			$product_static->accountancy_code_buy_export = $objp->code_buy_export;
+			$product_static->tva_tx = $objp->tva_tx_prod;
+
+			$facture_static->ref = $objp->ref;
+			$facture_static->id = $objp->facid;
+			$facture_static->type = $objp->ftype;
+			$facture_static->datef = $objp->datef;
+
+			$facture_static_det->id = $objp->rowid;
+			$facture_static_det->total_ht = $objp->total_ht;
+			$facture_static_det->tva_tx = $objp->tva_tx_line;
+			$facture_static_det->vat_src_code = $objp->vat_src_code;
+			$facture_static_det->product_type = $objp->type_l;
+			$facture_static_det->desc = $objp->description;
+
+			$accountingAccountArray = array(
+				'dom'=>$objp->aarowid,
+				'intra'=>$objp->aarowid_intra,
+				'export'=>$objp->aarowid_export,
+				'thirdparty' =>$objp->aarowid_thirdparty);
+
+			$code_buy_p_notset = '';
+			$code_buy_t_notset = '';
+
+			$return = $accountingAccount->getAccountingCodeToBind($mysoc, $thirdpartystatic, $product_static, $facture_static, $facture_static_det, $accountingAccountArray, 'supplier');
+			if (!is_array($return) && $return<0) {
+				setEventMessage($accountingAccount->error, 'errors');
 			} else {
-				if ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
-					$objp->code_buy_p = $objp->code_buy_intra;
-					$objp->aarowid_suggest = $objp->aarowid_intra;
-					$suggestedaccountingaccountfor = 'eec';
-				} else {                                        // Foreign sale
-					$objp->code_buy_p = $objp->code_buy_export;
-					$objp->aarowid_suggest = $objp->aarowid_export;
-					$suggestedaccountingaccountfor = 'export';
+				$suggestedid=$return['suggestedid'];
+				$suggestedaccountingaccountfor=$return['suggestedaccountingaccountfor'];
+
+				if (!empty($suggestedid) && $suggestedaccountingaccountfor<>'') {
+					$suggestedid=$return['suggestedid'];
+				} else {
+					$suggestedid=0;
 				}
 			}
 
@@ -216,8 +266,8 @@ if ($action == 'validatehistory') {
 
 			if ($objp->aarowid_suggest > 0) {
 				$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
-				$sqlupdate .= " SET fk_code_ventilation = ".((int) $objp->aarowid_suggest);
-				$sqlupdate .= " WHERE fk_code_ventilation <= 0 AND product_type <= 2 AND rowid = ".((int) $objp->rowid);
+				$sqlupdate .= " SET fk_code_ventilation = ".((int) $suggestedid);
+				$sqlupdate .= " WHERE fk_code_ventilation <= 0 AND product_type <= 2 AND rowid = ".((int) $facture_static_det->id);
 
 				$resqlupdate = $db->query($sqlupdate);
 				if (!$resqlupdate) {
