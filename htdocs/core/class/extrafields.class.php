@@ -250,6 +250,8 @@ class ExtraFields
 			return -1;
 		}
 
+		$result = 0;
+
 		if ($type == 'separate') {
 			$unique = 0;
 			$required = 0;
@@ -1651,10 +1653,14 @@ class ExtraFields
 		$showsize = 0;
 		if ($type == 'date') {
 			$showsize = 10;
-			$value = dol_print_date($value, 'day');	// For date without hour, date is always GMT for storage and output
+			if ($value !== '') {
+				$value = dol_print_date($value, 'day');	// For date without hour, date is always GMT for storage and output
+			}
 		} elseif ($type == 'datetime') {
 			$showsize = 19;
-			$value = dol_print_date($value, 'dayhour', 'tzuserrel');
+			if ($value !== '') {
+				$value = dol_print_date($value, 'dayhour', 'tzuserrel');
+			}
 		} elseif ($type == 'int') {
 			$showsize = 10;
 		} elseif ($type == 'double') {
@@ -1978,10 +1984,10 @@ class ExtraFields
 	{
 		global $conf, $langs;
 
-		if ($display_type=='card') {
-			$tagtype='tr';
-			$tagtype_dyn='td';
-		} elseif ($display_type=='line') {
+		$tagtype='tr';
+		$tagtype_dyn='td';
+
+		if ($display_type=='line') {
 			$tagtype='div';
 			$tagtype_dyn='span';
 			$colspan=0;

@@ -157,6 +157,8 @@ class FormMail extends Form
 
 	public $lines_model;
 
+	public $withoptiononeemailperrecipient;
+
 
 	/**
 	 *	Constructor

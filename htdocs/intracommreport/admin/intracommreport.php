@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file		htdocs/admin/intracommreport.php
+ *      \file		htdocs/intracommreport/admin/intracommreport.php
  *      \ingroup	intracommreport
  *      \brief		Page to setup the module intracomm report
  */

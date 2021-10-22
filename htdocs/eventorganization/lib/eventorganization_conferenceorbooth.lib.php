@@ -42,7 +42,7 @@ function conferenceorboothPrepareHead($object, $with_project = 0)
 		$withProjectUrl = "&withproject=1";
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_card.ph?id='.$object->id.$withProjectUrl;
+	$head[$h][0] = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_card.php?id='.$object->id.$withProjectUrl;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
@@ -127,6 +127,7 @@ function conferenceorboothProjectPrepareHead($object)
 	$head[$h][2] = 'conferenceorbooth';
 	// Enable caching of conf or booth count attendees
 	$nbAttendees = 0;
+	$nbConferenceOrBooth= 0;
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 	$cachekey = 'count_conferenceorbooth_project_'.$object->id;
 	$dataretrieved = dol_getcache($cachekey);
