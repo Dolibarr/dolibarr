@@ -199,7 +199,7 @@ if ($elemid && $action == 'addintocategory' &&
 	if ($result >= 0) {
 		setEventMessages($langs->trans("WasAddedSuccessfully", $newobject->ref), null, 'mesgs');
 	} else {
-		if ($cat->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			setEventMessages($langs->trans("ObjectAlreadyLinkedToCategory"), null, 'warnings');
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
