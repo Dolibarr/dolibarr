@@ -415,6 +415,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn (";
 		$sql .= "ref";
 		$sql .= ", ref_supplier";
+		$sql .= ", ref_ext";
 		$sql .= ", entity";
 		$sql .= ", type";
 		$sql .= ", libelle";
@@ -438,6 +439,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " VALUES (";
 		$sql .= "'(PROV)'";
 		$sql .= ", '".$this->db->escape($this->ref_supplier)."'";
+		$sql .= ", '".$this->db->escape($this->ref_ext)."'";
 		$sql .= ", ".$conf->entity;
 		$sql .= ", '".$this->db->escape($this->type)."'";
 		$sql .= ", '".$this->db->escape(isset($this->label) ? $this->label : (isset($this->libelle) ? $this->libelle : ''))."'";
@@ -647,6 +649,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " t.rowid,";
 		$sql .= " t.ref,";
 		$sql .= " t.ref_supplier,";
+		$sql .= " t.ref_ext,";
 		$sql .= " t.entity,";
 		$sql .= " t.type,";
 		$sql .= " t.fk_soc,";
@@ -708,6 +711,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->ref = $obj->ref ? $obj->ref : $obj->rowid; // We take rowid if ref is empty for backward compatibility
 
 				$this->ref_supplier = $obj->ref_supplier;
+				$this->ref_ext			= $obj->ref_ext;
 				$this->entity				= $obj->entity;
 				$this->type					= empty($obj->type) ? self::TYPE_STANDARD : $obj->type;
 				$this->fk_soc				= $obj->fk_soc;
@@ -924,6 +928,9 @@ class FactureFournisseur extends CommonInvoice
 		if (isset($this->ref_supplier)) {
 			$this->ref_supplier = trim($this->ref_supplier);
 		}
+		if (isset($this->ref_ext)) {
+			$this->ref_ext = trim($this->ref_ext);
+		}
 		if (isset($this->entity)) {
 			$this->entity = trim($this->entity);
 		}
@@ -1013,6 +1020,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn SET";
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
 		$sql .= " ref_supplier=".(isset($this->ref_supplier) ? "'".$this->db->escape($this->ref_supplier)."'" : "null").",";
+		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
 		$sql .= " entity=".(isset($this->entity) ? $this->entity : "null").",";
 		$sql .= " type=".(isset($this->type) ? $this->type : "null").",";
 		$sql .= " fk_soc=".(isset($this->fk_soc) ? $this->fk_soc : "null").",";
