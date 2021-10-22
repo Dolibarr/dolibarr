@@ -138,6 +138,7 @@ if (in_array($modulepart, array('facture_paiement', 'unpaid'))) {
  */
 
 // If we have a hash public (hashp), we guess the original_file.
+$ecmfile='';
 if (!empty($hashp)) {
 	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 	$ecmfile = new EcmFiles($db);
