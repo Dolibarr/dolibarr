@@ -366,7 +366,6 @@ class User extends CommonObject
 	 */
 	public function __construct($db)
 	{
-		global $conf;
 		$this->db = $db;
 
 		// User preference
