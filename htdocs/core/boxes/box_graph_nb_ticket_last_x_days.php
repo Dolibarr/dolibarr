@@ -65,6 +65,8 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 	public function loadBox($max = 5)
 	{
 		global $conf, $user, $langs;
+		$dataseries = "";
+		$graphtoshow = "";
 
 		$badgeStatus0 = '#cbd3d3'; // draft
 		$badgeStatus1 = '#bc9526'; // validated
@@ -85,7 +87,7 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 
 
 		$param_day = 'DOLUSERCOOKIE_ticket_last_days';
-		if ($_POST[$param_day]) {
+		if (!empty($_POST[$param_day])) {
 			if ($_POST[$param_day] >= 15) {
 				$days = 14;
 			} else {

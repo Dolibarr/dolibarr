@@ -1617,7 +1617,7 @@ class Products extends DolibarrApi
 			$combinations[$key]->attributes = $prodc2vp->fetchByFkCombination((int) $combination->id);
 			$combinations[$key] = $this->_cleanObjectDatas($combinations[$key]);
 
-			if ($includestock==1) {
+			if ($includestock==1 && DolibarrApiAccess::$user->rights->stock->lire) {
 				$productModel = new Product($this->db);
 				$productModel->fetch((int) $combination->fk_product_child);
 				$productModel->load_stock();
@@ -1859,7 +1859,7 @@ class Products extends DolibarrApi
 	public function getStock($id, $selected_warehouse_id = null)
 	{
 
-		if (!DolibarrApiAccess::$user->rights->produit->lire) {
+		if (!DolibarrApiAccess::$user->rights->produit->lire || !DolibarrApiAccess::$user->rights->stock->lire) {
 			throw new RestException(401);
 		}
 
@@ -1945,6 +1945,10 @@ class Products extends DolibarrApi
 
 		unset($object->supplierprices);	// Mut use another API to get them
 
+		if (empty(DolibarrApiAccess::$user->rights->stock->lire)) {
+			unset($object->stock_reel);
+			unset($object->stock_theorique);
+		}
 
 		return $object;
 	}
@@ -2008,7 +2012,7 @@ class Products extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if ($includestockdata) {
+		if ($includestockdata && DolibarrApiAccess::$user->rights->stock->lire) {
 			$this->product->load_stock();
 
 			if (is_array($this->product->stock_warehouse)) {

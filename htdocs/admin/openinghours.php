@@ -81,7 +81,7 @@ $head = company_admin_prepare_head();
 print dol_get_fiche_head($head, 'openinghours', $langs->trans("Company"), -1, 'company');
 
 print '<span class="opacitymedium">'.$langs->trans("OpeningHoursDesc")."</span><br>\n";
-print "<br>\n";
+print "<br><br>\n";
 
 if (empty($action) || $action == 'edit' || $action == 'updateedit') {
 	/**
@@ -92,7 +92,7 @@ if (empty($action) || $action == 'edit' || $action == 'updateedit') {
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<table class="noborder centpercent editmode">';
-	print '<tr class="liste_titre"><th class="titlefield wordbreak">'.$langs->trans("Day").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
+	print '<tr class="liste_titre"><th class="titlefieldcreate wordbreak">'.$langs->trans("Day").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("Monday"), $langs->trans("OpeningHoursFormatDesc"));
