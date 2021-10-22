@@ -65,6 +65,8 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 	public function loadBox($max = 5)
 	{
 		global $conf, $user, $langs;
+		$dataseries = "";
+		$graphtoshow = "";
 
 		$badgeStatus0 = '#cbd3d3'; // draft
 		$badgeStatus1 = '#bc9526'; // validated
