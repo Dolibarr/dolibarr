@@ -934,9 +934,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$object->country_code = $tmparray['code'];
 			$object->country = $tmparray['label'];
 		}
-
+		$soc = new Societe($db);
 		if (!empty($socid)) {
-			$soc = new Societe($db);
 			if ($socid > 0) {
 				$soc->fetch($socid);
 			}
