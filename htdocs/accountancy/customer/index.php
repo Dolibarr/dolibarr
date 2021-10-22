@@ -243,7 +243,7 @@ if ($action == 'validatehistory') {
 			$code_sell_p_notset = '';
 			$code_sell_t_notset = '';
 
-			$return=$accountingAccount->getAccountingCodeToBind($thirdpartystatic, $mysoc, $product_static, $facture_static, $facture_static_det, $accoutingAccountArray);
+			$return=$accountingAccount->getAccountingCodeToBind($thirdpartystatic, $mysoc, $product_static, $facture_static, $facture_static_det, $accoutingAccountArray, 'customer');
 			if (!is_array($return) && $return<0) {
 				setEventMessage($accountingAccount->error, 'errors');
 			} else {

@@ -738,10 +738,11 @@ class AccountingAccount extends CommonObject
 	 * @param Facture $facture Facture
 	 * @param FactureLigne $factureDet Facture Det
 	 * @param array $accountingAccount array of Account account
+	 * @param string $type Customer / Supplier
 	 *
 	 * @return    array        Accounting accounts suggested
 	 */
-	public function getAccountingCodeToBind(Societe $buyer, $seller, Product $product, Facture $facture, FactureLigne $factureDet, $accountingAccount = array())
+	public function getAccountingCodeToBind(Societe $buyer, $seller, Product $product, Facture $facture, FactureLigne $factureDet, $accountingAccount = array(), $type = '')
 	{
 		global $conf;
 		global $hookmanager;
@@ -750,7 +751,7 @@ class AccountingAccount extends CommonObject
 		$hookmanager->initHooks(array('accoutancyBindingCalculation'));
 
 		// Execute hook accoutancyBindingCalculation
-		$parameters = array('buyer' => $buyer, 'seller' => $seller, 'product' => $product, 'facture' => $facture, 'factureDet' => $factureDet ,'accountingAccount'=>$accountingAccount);
+		$parameters = array('buyer' => $buyer, 'seller' => $seller, 'product' => $product, 'facture' => $facture, 'factureDet' => $factureDet ,'accountingAccount'=>$accountingAccount, $type);
 		$reshook = $hookmanager->executeHooks('accoutancyBindingCalculation', $parameters); // Note that $action and $object may have been modified by some hooks
 
 		if (empty($reshook)) {
