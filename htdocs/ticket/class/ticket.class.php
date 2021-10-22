@@ -589,6 +589,7 @@ class Ticket extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
+				$this->entity = $obj->entity;
 				$this->ref = $obj->ref;
 				$this->track_id = $obj->track_id;
 				$this->fk_soc = $obj->fk_soc;
