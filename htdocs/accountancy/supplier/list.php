@@ -578,7 +578,7 @@ if ($result) {
 		$code_buy_t_notset = '';
 		$objp->aarowid_suggest = ''; // Will be set later
 
-		$accoutingAccountArray = array(
+		$accountingAccountArray = array(
 			'dom'=>$objp->aarowid,
 			'intra'=>$objp->aarowid_intra,
 			'export'=>$objp->aarowid_export,
@@ -587,7 +587,7 @@ if ($result) {
 		$code_buy_p_notset = '';
 		$code_buy_t_notset = '';
 
-		$return=$accountingAccount->getAccountingCodeToBind($mysoc, $thirdpartystatic, $product_static, $facture_static, $facture_static_det, $accoutinAccountArray);
+		$return=$accountingAccount->getAccountingCodeToBind($mysoc, $thirdpartystatic, $product_static, $facturefourn_static, $facturefourn_static_det, $accountingAccountArray, 'supplier');
 		if (!is_array($return) && $return<0) {
 			setEventMessage($accountingAccount->error, 'errors');
 		} else {
