@@ -59,7 +59,7 @@ ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD UNIQUE INDEX uk_
 -- VMYSQL4.3 ALTER TABLE llx_eventorganization_conferenceorboothattendee MODIFY COLUMN fk_actioncomm integer NULL;
 -- VPGSQL8.2 ALTER TABLE llx_eventorganization_conferenceorboothattendee ALTER COLUMN fk_actioncomm DROP NOT NULL;
 
-
+ALTER TABLE llx_mrp_mo ADD COLUMN last_main_doc varchar(255);
 
 UPDATE llx_extrafields SET elementtype = 'salary' WHERE elementtype = 'payment_salary';
 ALTER TABLE llx_payment_salary_extrafields RENAME TO llx_salary_extrafields;

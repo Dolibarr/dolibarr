@@ -51,6 +51,11 @@ abstract class CommonObjectLine extends CommonObject
 	 */
 	public $fk_unit;
 
+	public $date_debut_prevue;
+	public $date_debut_reel;
+	public $date_fin_prevue;
+	public $date_fin_reel;
+
 
 	/**
 	 *	Constructor

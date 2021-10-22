@@ -770,7 +770,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 		print '<table class="noborder centpercent">'."\n";
 		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Ref").'</td></tr>'."\n";
 
-		if (count($contacts) > 0) {
+		if (is_array($contacts) && count($contacts) > 0) {
 			$i = 0;
 			foreach ($contacts as $key => $contact) {
 				$i++;

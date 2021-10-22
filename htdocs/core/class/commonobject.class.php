@@ -6488,7 +6488,7 @@ abstract class CommonObject
 
 		$out = '';
 		$type = '';
-		$isDependList=0;
+		$isDependList = 0;
 		$param = array();
 		$param['options'] = array();
 		$reg = array();
@@ -6796,7 +6796,7 @@ abstract class CommonObject
 
 							if (!empty($InfoFieldList[3]) && $parentField) {
 								$parent = $parentName.':'.$obj->{$parentField};
-								$isDependList=1;
+								$isDependList = 1;
 							}
 
 							$out .= '<option value="'.$obj->rowid.'"';
@@ -6951,7 +6951,7 @@ abstract class CommonObject
 
 							if (!empty($InfoFieldList[3]) && $parentField) {
 								$parent = $parentName.':'.$obj->{$parentField};
-								$isDependList=1;
+								$isDependList = 1;
 							}
 
 							$data[$obj->rowid] = $labeltoshow;
@@ -9485,7 +9485,7 @@ abstract class CommonObject
 		}
 
 		$error = 0;
-		$ok=0;
+		$ok = 0;
 
 		// Process
 		foreach ($to_del as $del) {
@@ -9497,7 +9497,7 @@ abstract class CommonObject
 					$this->errors = $c->errors;
 					break;
 				} else {
-					$ok+=$result;
+					$ok += $result;
 				}
 			}
 		}
@@ -9510,7 +9510,7 @@ abstract class CommonObject
 					$this->errors = $c->errors;
 					break;
 				} else {
-					$ok+=$result;
+					$ok += $result;
 				}
 			}
 		}

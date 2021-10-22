@@ -89,6 +89,7 @@ CategorieRecursiv=Lier automatiquement avec le(a) tag/catégorie parent(e)
 CategorieRecursivHelp=Si l'option est activé, quand un produit est ajouté dans une sous-catégorie, le produit sera ajouté aussi dans la catégorie parente.
 AddProductServiceIntoCategory=Ajouter le produit/service suivant
 AddCustomerIntoCategory=Assigner cette catégorie au client
+AddTicketIntoCategory=Assigner cette catégorie au ticket
 AddSupplierIntoCategory=Assigner cette catégorie au fournisseur
 ShowCategory=Afficher tag/catégorie
 ByDefaultInList=Par défaut dans la liste
