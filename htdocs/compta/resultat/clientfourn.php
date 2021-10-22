@@ -864,7 +864,7 @@ if ($modecompta == 'BOOKKEEPING') {
 
 			$sql = "SELECT u.rowid, u.firstname, u.lastname, s.fk_user as fk_user, p.label as label, date_format($column,'%Y-%m') as dm, sum(p.amount) as amount";
 			$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."salary as s ON s.rowid=p.fk_salary";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."salary as s ON s.rowid=p.fk_salary";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=s.fk_user";
 			$sql .= " WHERE p.entity IN (".getEntity('payment_salary').")";
 			if (!empty($date_start) && !empty($date_end)) {
@@ -917,7 +917,7 @@ if ($modecompta == 'BOOKKEEPING') {
 					$userstatic = new User($db);
 					$userstatic->fetch($obj->fk_user);
 
-					print "<td>".$langs->trans("Salary")." <a href=\"".DOL_URL_ROOT."/salaries/list.php?search_user=".$userstatic->getFullName($langs)."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
+					print "<td>".$langs->trans("Salary")." <a href=\"".DOL_URL_ROOT."/salaries/list.php?search_user=".urlencode($userstatic->getFullName($langs))."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
 					if ($modecompta == 'CREANCES-DETTES') {
 						print '<td class="right"><span class="amount">'.price(-$obj->amount).'</span></td>';
