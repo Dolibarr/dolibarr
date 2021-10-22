@@ -2703,7 +2703,7 @@ class Societe extends CommonObject
 		$linkend = '</a>';
 
 		global $user;
-		if (!$user->rights->societe->client->voir && $user->socid > 0 && $this->id != $user->socid) {
+		if (empty($user->rights->societe->client->voir) && $user->socid > 0 && $this->id != $user->socid) {
 			$linkstart = '';
 			$linkend = '';
 		}
