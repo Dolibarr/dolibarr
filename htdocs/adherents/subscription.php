@@ -77,7 +77,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $errmsg = '';
 
-// TODO add a global constant in admin panel of the adhetent module to adjust default delay. 
+// TODO add a global constant in admin panel of the adhetent module to adjust default delay.
 $defaultdelay = 1;
 $defaultdelayunit = 'y';
 
