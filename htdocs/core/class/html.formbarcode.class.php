@@ -87,7 +87,7 @@ class FormBarCode
 		}
 
 		if (!empty($conf->use_javascript_ajax)) {
-			$select_encoder = '<form action="'.DOL_URL_ROOT.'/admin/barcode.php" method="POST" id="form'.$idForm.'">';
+			$select_encoder .= '<form action="'.DOL_URL_ROOT.'/admin/barcode.php" method="POST" id="form'.$idForm.'">';
 			$select_encoder .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$select_encoder .= '<input type="hidden" name="action" value="update">';
 			$select_encoder .= '<input type="hidden" name="code_id" value="'.$code_id.'">';
