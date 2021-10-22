@@ -1912,12 +1912,12 @@ class ExpenseReport extends CommonObject
 					$this->errors[] = $this->error;
 
 					$new_current_total_ttc -= $amount_to_test - $rule->amount; // ex, entered 16€, limit 12€, subtracts 4€;
-					$rule_warning_message_tab[] = $langs->trans('ExpenseReportConstraintViolationError', $rule->id, price($amount_to_test, 0, $langs, 1, -1, -1, $conf->currency), price($rule->amount, 0, $langs, 1, -1, -1, $conf->currency), $langs->trans('by'.$rule->code_expense_rules_type, price($new_current_total_ttc, 0, $langs, 1, -1, -1, $conf->currency)));
+					$rule_warning_message_tab[] = $langs->trans('ExpenseReportConstraintViolationError', $rule->id, price($amount_to_test, 0, $langs, 1, -1, -1, $conf->currency), price($rule->amount, 0, $langs, 1, -1, -1, $conf->currency));
 				} else {
 					$this->error = 'ExpenseReportConstraintViolationWarning';
 					$this->errors[] = $this->error;
 
-					$rule_warning_message_tab[] = $langs->trans('ExpenseReportConstraintViolationWarning', $rule->id, price($amount_to_test, 0, $langs, 1, -1, -1, $conf->currency), price($rule->amount, 0, $langs, 1, -1, -1, $conf->currency), $langs->trans('nolimitby'.$rule->code_expense_rules_type));
+					$rule_warning_message_tab[] = $langs->trans('ExpenseReportConstraintViolationWarning', $rule->id, price($amount_to_test, 0, $langs, 1, -1, -1, $conf->currency), price($rule->amount, 0, $langs, 1, -1, -1, $conf->currency));
 				}
 
 				// No break, we sould test if another rule is violated
