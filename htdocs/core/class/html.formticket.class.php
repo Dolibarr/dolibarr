@@ -753,6 +753,8 @@ class FormTicket
 
 			print ajax_combobox('select'.$htmlname);
 		} elseif ($htmlname!='') {
+			$selectedgroups = array();
+			$groupvalue = "";
 			$groupticket=GETPOST($htmlname, 'aZ09');
 			$child_id=GETPOST($htmlname.'_child_id', 'aZ09')?GETPOST($htmlname.'_child_id', 'aZ09'):0;
 			if (!empty($groupticket)) {
