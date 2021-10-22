@@ -289,7 +289,6 @@ class User extends CommonObject
 	 */
 	public $rights;
 
-
 	/**
 	 * @var int  All permissions are loaded
 	 */
