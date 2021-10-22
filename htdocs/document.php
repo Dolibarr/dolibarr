@@ -195,7 +195,7 @@ if (!in_array($type, array('text/x-javascript')) && !dolIsAllowedForPreview($ori
 }
 
 // Security: Delete string ../ or ..\ into $original_file
-$original_file = preg_replace('/\.\.+/','..', $original_file);	// Replace '... or more' with '..'
+$original_file = preg_replace('/\.\.+/', '..', $original_file);	// Replace '... or more' with '..'
 $original_file = str_replace('../', '/', $original_file);
 $original_file = str_replace('..\\', '/', $original_file);
 
