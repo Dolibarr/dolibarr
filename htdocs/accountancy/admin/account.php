@@ -51,14 +51,14 @@ $confirm = GETPOST('confirm', 'alpha');
 
 $chartofaccounts = GETPOST('chartofaccounts', 'int');
 
-$permissiontoadd = $user->rights->accounting->chartofaccount;
-$permissiontodelete = $user->rights->accounting->chartofaccount;
+$permissiontoadd = !empty($user->rights->accounting->chartofaccount);
+$permissiontodelete = !empty($user->rights->accounting->chartofaccount);
 
 // Security check
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->rights->accounting->chartofaccount) {
+if (empty($user->rights->accounting->chartofaccount)) {
 	accessforbidden();
 }
 
