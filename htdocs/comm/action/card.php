@@ -2207,7 +2207,7 @@ if ($id > 0) {
 			$delallowed = $user->rights->agenda->myactions->create;
 
 
-			print $formfile->showdocuments('actions', $object->id, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 0, 0, '', '', '', $object->default_lang);
+			print $formfile->showdocuments('actions', $object->id, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 0, 0, '', '', '', $langs->getDefaultLang());
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

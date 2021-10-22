@@ -2175,8 +2175,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 					print $object->getLibStatut(0, 2);
 					print '</td></tr>';
-					if ((($object->status_batch == '1' && $conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced')
-						|| ($object->status_batch == '2' && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced' && $conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS))) {
+					if ((($object->status_batch == '1' && !empty($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS) && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced')
+						|| ($object->status_batch == '2' && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced' && !empty($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS)))) {
 						print '<tr><td>'.$langs->trans("ManageLotMask").'</td><td>';
 						print $object->batch_mask;
 						print '</td></tr>';
@@ -2686,7 +2686,6 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 
 	// Documents
 	$objectref = dol_sanitizeFileName($object->ref);
-	$relativepath = $comref.'/'.$objectref.'.pdf';
 	if (!empty($conf->product->multidir_output[$object->entity])) {
 		$filedir = $conf->product->multidir_output[$object->entity].'/'.$objectref; //Check repertories of current entities
 	} else {
@@ -2696,7 +2695,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	$genallowed = $usercanread;
 	$delallowed = $usercancreate;
 
-	print $formfile->showdocuments($modulepart, $object->ref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
+	print $formfile->showdocuments($modulepart, $object->ref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $langs->getDefaultLang(), '', $object);
 	$somethingshown = $formfile->numoffiles;
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
