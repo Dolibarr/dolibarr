@@ -77,6 +77,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $errmsg = '';
 
+// TODO add a global constant in admin panel of the adhetent module to adjust default delay. 
 $defaultdelay = 1;
 $defaultdelayunit = 'y';
 
@@ -250,7 +251,8 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 		$action = 'addsubscription';
 	}
 	if (!$datesubend) {
-		$datesubend = dol_time_plus_duree(dol_time_plus_duree($datesubscription, $defaultdelay, $defaultdelayunit), -1, 'd');
+		// empty end date subscription should be possible to accept endlife validity
+		// $datesubend = dol_time_plus_duree(dol_time_plus_duree($datesubscription, $defaultdelay, $defaultdelayunit), -1, 'd');
 	}
 	if (($option == 'bankviainvoice' || $option == 'bankdirect') && !$paymentdate) {
 		$error++;
