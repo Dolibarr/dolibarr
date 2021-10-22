@@ -46,7 +46,7 @@ $search_type = GETPOST('search_type', 'int');
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->rights->accounting->chartofaccount) {
+if (empty($user->rights->accounting->chartofaccount)) {
 	accessforbidden();
 }
 
