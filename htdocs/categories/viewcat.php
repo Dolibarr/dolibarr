@@ -811,7 +811,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><td>';
 			print $langs->trans("AddContactIntoCategory").' &nbsp;';
-			print $form->selectContacts('', '','elemid');
+			print $form->selectContacts('', '', 'elemid');
 			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 			print '</tr>';
 			print '</table>';
