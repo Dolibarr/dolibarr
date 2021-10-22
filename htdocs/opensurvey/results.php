@@ -531,7 +531,7 @@ if ($object->fk_user_creat) {
 print '</td></tr>';
 
 // Link
-print '<tr><td>'.img_picto('', 'globe').' '.$langs->trans("UrlForSurvey", '').'</td><td>';
+print '<tr><td>'.$langs->trans("UrlForSurvey", '').'</td><td>';
 
 // Define $urlwithroot
 $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -539,15 +539,10 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 $url = $urlwithouturlroot.dol_buildpath('/public/opensurvey/studs.php', 1).'?sondage='.$object->id_sondage;
-$urllink = '<input type="text" style="width: 60%" '.($action == 'edit' ? 'disabled' : '').' id="opensurveyurl" name="opensurveyurl" value="'.$url.'">';
+$urllink = '<input type="text" class="quatrevingtpercent" '.($action == 'edit' ? 'disabled' : '').' id="opensurveyurl" name="opensurveyurl" value="'.$url.'">';
 print $urllink;
 if ($action != 'edit') {
-	print '<script type="text/javascript">
-               jQuery(document).ready(function () {
-				    jQuery("#opensurveyurl").click(function() { jQuery(this).select(); } );
-				});
-		    </script>';
-	print ' <a href="'.$url.'" target="_blank">'.$langs->trans("Link").'</a>';
+	print ajax_autoselect("opensurveyurl", $url, 'image');
 }
 
 print '</td></tr>';
@@ -669,7 +664,7 @@ $nbcolonnes = substr_count($object->sujet, ',') + 1;
 print '<form name="formulaire" action="" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-print '<div class="cadre"> '."\n";
+print '<div class="cadre div-table-responsive-no-min"> '."\n";
 
 // Start to show survey result
 print '<table class="resultats">'."\n";
@@ -1041,7 +1036,7 @@ if (empty($testligneamodifier)) {
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
 	print '<td class="nom">'."\n";
-	print '<input type="text" placeholder="'.dol_escape_htmltag($langs->trans("Name")).'" name="nom" maxlength="64">'."\n";
+	print '<input type="text" class="maxwidthonsmartphone" placeholder="'.dol_escape_htmltag($langs->trans("Name")).'" name="nom" maxlength="64">'."\n";
 	print '</td>'."\n";
 
 	for ($i = 0; $i < $nbcolonnes; $i++) {

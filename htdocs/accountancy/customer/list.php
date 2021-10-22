@@ -559,7 +559,7 @@ if ($result) {
 		$facture_static->ref = $objp->ref;
 		$facture_static->id = $objp->facid;
 		$facture_static->type = $objp->ftype;
-		$facture_static->datef = $objp->datef;
+		$facture_static->date = $objp->datef;
 
 		$facture_static_det->id = $objp->rowid;
 		$facture_static_det->total_ht = $objp->total_ht;

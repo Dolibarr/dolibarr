@@ -131,14 +131,14 @@ class Partnership extends CommonObject
 	 */
 	public $rowid;
 
-	public $fk_soc;
+	public $fk_soc;			// Link to thirdparty
+	public $fk_member;		// Link to member
 
 	public $tms;
 	public $fk_user_creat;
 	public $fk_user_modif;
 
 	public $status;
-	public $fk_member;
 	public $date_partnership_start;
 	public $date_partnership_end;
 	public $count_last_url_check_error;

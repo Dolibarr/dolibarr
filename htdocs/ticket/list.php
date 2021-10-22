@@ -479,8 +479,7 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'classforhorizontalscrolloftabs');
-
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', '');
 
 if ($socid && !$projectid && !$project_ref && $user->rights->societe->lire) {
 	$socstat = new Societe($db);
@@ -1028,7 +1027,7 @@ while ($i < min($num, $limit)) {
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
-			if (!empty($val['isameasure'])) {
+			if (!empty($val['isameasure']) && $val['isameasure'] == 1) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
 				}
@@ -1038,7 +1037,7 @@ while ($i < min($num, $limit)) {
 				if (!isset($totalarray['val']['t.'.$key])) {
 					$totalarray['val']['t.'.$key] = 0;
 				}
-				$totalarray['val']['t.'.$key] += $obj->$key;
+				$totalarray['val']['t.'.$key] += $object->$key;
 			}
 		}
 	}

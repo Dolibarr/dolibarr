@@ -998,7 +998,7 @@ class ExpenseReport extends CommonObject
 		$sql .= ' de.localtax1_tx, de.localtax2_tx, de.localtax1_type, de.localtax2_type,';
 		$sql .= ' de.fk_ecm_files,';
 		$sql .= ' de.total_ht, de.total_tva, de.total_ttc,';
-		$sql .= ' de.total_localtax1, de.total_localtax2,';
+		$sql .= ' de.total_localtax1, de.total_localtax2, de.rule_warning_message,';
 		$sql .= ' ctf.code as code_type_fees, ctf.label as libelle_type_fees,';
 		$sql .= ' p.ref as ref_projet, p.title as title_projet';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as de';
@@ -1054,6 +1054,8 @@ class ExpenseReport extends CommonObject
 
 				$deplig->projet_ref         = $objp->ref_projet;
 				$deplig->projet_title       = $objp->title_projet;
+
+				$deplig->rule_warning_message = $objp->rule_warning_message;
 
 				$deplig->rang               = $objp->rang;
 
@@ -1874,10 +1876,6 @@ class ExpenseReport extends CommonObject
 
 		$langs->load('trips');
 
-		if (empty($conf->global->MAIN_USE_EXPENSE_RULE)) {
-			return true; // if don't use rules
-		}
-
 		// We don't know seller and buyer for expense reports
 		if (!is_object($seller)) {
 			$seller = $mysoc;			// We use same than current company (expense report are often done in same country)
@@ -1914,12 +1912,12 @@ class ExpenseReport extends CommonObject
 					$this->errors[] = $this->error;
 
 					$new_current_total_ttc -= $amount_to_test - $rule->amount; // ex, entered 16€, limit 12€, subtracts 4€;
-					$rule_warning_message_tab[] = $langs->trans('ExpenseReportConstraintViolationError', $rule->id, price($amount_to_test, 0, $langs, 1, -1, -1, $conf->currency), price($rule->amount, 0, $langs, 1, -1, -1, $conf->currency), $langs->trans('by'.$rule->code_expense_rules_type, price($new_current_total_ttc, 0, $langs, 1, -1, -1, $conf->currency)));
+					$rule_warning_message_tab[] = $langs->trans('ExpenseReportConstraintViolationError', $rule->id, price($amount_to_test, 0, $langs, 1, -1, -1, $conf->currency), price($rule->amount, 0, $langs, 1, -1, -1, $conf->currency));
 				} else {
 					$this->error = 'ExpenseReportConstraintViolationWarning';
 					$this->errors[] = $this->error;
 
-					$rule_warning_message_tab[] = $langs->trans('ExpenseReportConstraintViolationWarning', $rule->id, price($amount_to_test, 0, $langs, 1, -1, -1, $conf->currency), price($rule->amount, 0, $langs, 1, -1, -1, $conf->currency), $langs->trans('nolimitby'.$rule->code_expense_rules_type));
+					$rule_warning_message_tab[] = $langs->trans('ExpenseReportConstraintViolationWarning', $rule->id, price($amount_to_test, 0, $langs, 1, -1, -1, $conf->currency), price($rule->amount, 0, $langs, 1, -1, -1, $conf->currency));
 				}
 
 				// No break, we sould test if another rule is violated
@@ -1975,7 +1973,7 @@ class ExpenseReport extends CommonObject
 		}
 		//$buyer = new Societe($this->db);
 
-		$expenseik = new ExpenseReportIk($db);
+		$expenseik = new ExpenseReportIk($this->db);
 		$range = $expenseik->getRangeByUser($userauthor, $this->line->fk_c_exp_tax_cat);
 
 		if (empty($range)) {
@@ -2603,6 +2601,8 @@ class ExpenseReportLine
 	 */
 	public $fk_ecm_files;
 
+	public $rule_warning_message;
+
 
 	/**
 	 * Constructor
@@ -2624,7 +2624,7 @@ class ExpenseReportLine
 	{
 		$sql = 'SELECT fde.rowid, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_c_exp_tax_cat, fde.fk_projet as fk_project, fde.date,';
 		$sql .= ' fde.tva_tx as vatrate, fde.vat_src_code, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc, fde.fk_ecm_files,';
-		$sql .= ' fde.localtax1_tx, fde.localtax2_tx, fde.localtax1_type, fde.localtax2_type, fde.total_localtax1, fde.total_localtax2,';
+		$sql .= ' fde.localtax1_tx, fde.localtax2_tx, fde.localtax1_type, fde.localtax2_type, fde.total_localtax1, fde.total_localtax2, fde.rule_warning_message,';
 		$sql .= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
 		$sql .= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
@@ -2669,6 +2669,8 @@ class ExpenseReportLine
 			$this->total_localtax2 = $objp->total_localtax2;
 
 			$this->fk_ecm_files = $objp->fk_ecm_files;
+
+			$this->rule_warning_message = $objp->rule_warning_message;
 
 			$this->db->free($result);
 		} else {

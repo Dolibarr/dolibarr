@@ -199,7 +199,7 @@ if ($elemid && $action == 'addintocategory' &&
 	if ($result >= 0) {
 		setEventMessages($langs->trans("WasAddedSuccessfully", $newobject->ref), null, 'mesgs');
 	} else {
-		if ($cat->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			setEventMessages($langs->trans("ObjectAlreadyLinkedToCategory"), null, 'warnings');
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -770,7 +770,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 		print '<table class="noborder centpercent">'."\n";
 		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Ref").'</td></tr>'."\n";
 
-		if (count($contacts) > 0) {
+		if (is_array($contacts) && count($contacts) > 0) {
 			$i = 0;
 			foreach ($contacts as $key => $contact) {
 				$i++;

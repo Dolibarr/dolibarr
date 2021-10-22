@@ -46,6 +46,11 @@ function partnershipAdminPrepareHead()
 	$head[$h][2] = 'partnership_extrafields';
 	$h++;
 
+	$head[$h][0] = dol_buildpath("/partnership/admin/website.php", 1);
+	$head[$h][1] = $langs->trans("BlankSubscriptionForm");
+	$head[$h][2] = 'website';
+	$h++;
+
 	/*
 	$head[$h][0] = dol_buildpath("/partnership/admin/about.php", 1);
 	$head[$h][1] = $langs->trans("About");
