@@ -1054,6 +1054,7 @@ class DolGraph
 		}
 
 		$showlegend = $this->showlegend;
+		$bordercolor = "";
 
 		$legends = array();
 		$nblot = 0;
