@@ -235,7 +235,8 @@ $documentstaticline = '';
 if ($type_element == 'fichinter') { 	// Customer : show products from invoices
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 	$documentstatic = new Fichinter($db);
-	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datec as dateprint, f.fk_statut as status, NULL as paid,';
+	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datec as dateprint, f.fk_statut as status, NULL as paid, ';
+	$sql_select .= 'NULL as fk_product, NULL as info_bits, NULL as date_start, NULL as date_end, NULL as prod_qty, NULL as total_ht, ';
 	$tables_from = MAIN_DB_PREFIX."fichinter as f LEFT JOIN ".MAIN_DB_PREFIX."fichinterdet as d ON d.fk_fichinter = f.rowid"; // Must use left join to work also with option that disable usage of lines.
 	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND f.entity = ".$conf->entity;
@@ -245,7 +246,7 @@ if ($type_element == 'fichinter') { 	// Customer : show products from invoices
 if ($type_element == 'invoice') { 	// Customer : show products from invoices
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	$documentstatic = new Facture($db);
-	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, f.type as doc_type, f.datef as dateprint, f.fk_statut as status, f.paye as paid, ';
+	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, f.type as doc_type, f.datef as dateprint, f.fk_statut as status, f.paye as paid, d.fk_remise_except, ';
 	$tables_from = MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."facturedet as d";
 	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_facture = f.rowid";
@@ -344,7 +345,7 @@ if (!empty($sql_select)) {
 		$sql .= ' d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_ouverture as date_start, d.date_cloture as date_end, d.qty, d.qty as prod_qty, d.total_ht as total_ht, ';
 	}
 	if ($type_element != 'fichinter') {
-		$sql .= ' p.ref as ref, p.rowid as prod_id, p.rowid as fk_product, p.fk_product_type as prod_type, p.fk_product_type as fk_product_type, p.entity as pentity, NULL as total_ht';
+		$sql .= ' p.ref as ref, p.rowid as prod_id, p.rowid as fk_product, p.fk_product_type as prod_type, p.fk_product_type as fk_product_type, p.entity as pentity, ';
 	}
 	$sql .= " s.rowid as socid ";
 	if ($type_element != 'fichinter') {
@@ -570,6 +571,7 @@ if ($sql_select) {
 			</a>
 			<?php
 			if ($objp->description) {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 				if ($objp->description == '(CREDIT_NOTE)' && $objp->fk_remise_except > 0) {
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
@@ -655,6 +657,9 @@ if ($sql_select) {
 		$total_qty += $objp->prod_qty;
 
 		print '<td class="right"><span class="amount">'.price($objp->total_ht).'</span></td>';
+		if (empty($total_ht)) {
+			$total_ht = 0;
+		}
 		$total_ht += (float) $objp->total_ht;
 
 		print '<td class="right">'.price($objp->total_ht / (empty($objp->prod_qty) ? 1 : $objp->prod_qty)).'</td>';
