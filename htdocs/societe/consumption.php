@@ -50,6 +50,8 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$optioncss = GETPOST('optioncss', 'alpha');
+
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -160,16 +162,16 @@ if ($object->client) {
 	$obj = $db->fetch_object($resql);
 	$nbFactsClient = $obj->nb;
 	$thirdTypeArray['customer'] = $langs->trans("customer");
-	if ($conf->propal->enabled && $user->rights->propal->lire) {
+	if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 		$elementTypeArray['propal'] = $langs->transnoentitiesnoconv('Proposals');
 	}
-	if ($conf->commande->enabled && $user->rights->commande->lire) {
+	if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 		$elementTypeArray['order'] = $langs->transnoentitiesnoconv('Orders');
 	}
-	if ($conf->facture->enabled && $user->rights->facture->lire) {
+	if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
 		$elementTypeArray['invoice'] = $langs->transnoentitiesnoconv('Invoices');
 	}
-	if ($conf->contrat->enabled && $user->rights->contrat->lire) {
+	if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
 		$elementTypeArray['contract'] = $langs->transnoentitiesnoconv('Contracts');
 	}
 }
@@ -232,7 +234,7 @@ $sql_select = '';
 if ($type_element == 'fichinter') { 	// Customer : show products from invoices
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 	$documentstatic = new Fichinter($db);
-	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datec as dateprint, f.fk_statut as status, ';
+	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datec as dateprint, f.fk_statut as status, NULL as paid,';
 	$tables_from = MAIN_DB_PREFIX."fichinter as f LEFT JOIN ".MAIN_DB_PREFIX."fichinterdet as d ON d.fk_fichinter = f.rowid"; // Must use left join to work also with option that disable usage of lines.
 	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND f.entity = ".$conf->entity;
@@ -254,7 +256,7 @@ if ($type_element == 'invoice') { 	// Customer : show products from invoices
 if ($type_element == 'propal') {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 	$documentstatic = new Propal($db);
-	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.datep as dateprint, c.fk_statut as status, ';
+	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.datep as dateprint, c.fk_statut as status, NULL as paid,';
 	$tables_from = MAIN_DB_PREFIX."propal as c,".MAIN_DB_PREFIX."propaldet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_propal = c.rowid";
@@ -266,7 +268,7 @@ if ($type_element == 'propal') {
 if ($type_element == 'order') {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 	$documentstatic = new Commande($db);
-	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_commande as dateprint, c.fk_statut as status, ';
+	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_commande as dateprint, c.fk_statut as status, NULL as paid, ';
 	$tables_from = MAIN_DB_PREFIX."commande as c,".MAIN_DB_PREFIX."commandedet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_commande = c.rowid";
@@ -290,7 +292,7 @@ if ($type_element == 'supplier_invoice') { 	// Supplier : Show products from inv
 if ($type_element == 'supplier_proposal') {
 	require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 	$documentstatic = new SupplierProposal($db);
-	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_valid as dateprint, c.fk_statut as status, ';
+	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_valid as dateprint, c.fk_statut as status, NULL as paid, ';
 	$tables_from = MAIN_DB_PREFIX."supplier_proposal as c,".MAIN_DB_PREFIX."supplier_proposaldet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_supplier_proposal = c.rowid";
@@ -302,7 +304,7 @@ if ($type_element == 'supplier_proposal') {
 if ($type_element == 'supplier_order') { 	// Supplier : Show products from orders.
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 	$documentstatic = new CommandeFournisseur($db);
-	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_valid as dateprint, c.fk_statut as status, ';
+	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_valid as dateprint, c.fk_statut as status, NULL as paid, ';
 	$tables_from = MAIN_DB_PREFIX."commande_fournisseur as c,".MAIN_DB_PREFIX."commande_fournisseurdet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_commande = c.rowid";
@@ -315,7 +317,7 @@ if ($type_element == 'contract') { 	// Order
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 	$documentstatic = new Contrat($db);
 	$documentstaticline = new ContratLigne($db);
-	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_contrat as dateprint, d.statut as status, ';
+	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_contrat as dateprint, d.statut as status, NULL as paid,';
 	$tables_from = MAIN_DB_PREFIX."contrat as c,".MAIN_DB_PREFIX."contratdet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_contrat = c.rowid";
@@ -423,7 +425,7 @@ if ($sql_select) {
 	if ($year) {
 		$param .= "&year=".urlencode($year);
 	}
-	if ($optioncss != '') {
+	if ($optioncss) {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
 

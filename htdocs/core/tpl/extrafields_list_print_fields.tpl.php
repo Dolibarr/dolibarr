@@ -50,6 +50,9 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 				print $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey);
 				print '</td>';
 				if (!$i) {
+					if (empty($totalarray)) {
+						$totalarray['nbfield'] = 0;
+					}
 					$totalarray['nbfield']++;
 				}
 
