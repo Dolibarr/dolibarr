@@ -1048,7 +1048,7 @@ if ($type == Categorie::TYPE_USER) {
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><td>';
 			print $langs->trans("AddProjectIntoCategory").' &nbsp;';
-			$form->select_dolusers('', 'elemid');
+			print $form->select_dolusers('', 'elemid');
 			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 			print '</tr>';
 			print '</table>';
