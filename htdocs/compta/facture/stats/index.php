@@ -46,7 +46,7 @@ $mode = GETPOST("mode") ? GETPOST("mode") : 'customer';
 if ($mode == 'customer' && !$user->rights->facture->lire) {
 	accessforbidden();
 }
-if ($mode == 'supplier' && !$user->rights->fournisseur->facture->lire) {
+if ($mode == 'supplier' && empty($user->rights->fournisseur->facture->lire)) {
 	accessforbidden();
 }
 
