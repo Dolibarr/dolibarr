@@ -105,7 +105,7 @@ class box_actions extends ModeleBoxes
 			if ($user->socid) {
 				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
-			if (!$user->rights->agenda->allactions->read) {
+			if (empty($user->rights->agenda->allactions->read)) {
 				$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id)." OR a.fk_user_done = ".((int) $user->id).")";
 			}
 			$sql .= " ORDER BY a.datec DESC";
