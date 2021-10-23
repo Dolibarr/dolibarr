@@ -16,19 +16,19 @@
  */
 
 /**
- * \file    	emailcollector/lib/emailcollector.lib.php
- * \ingroup 	emailcollector
- * \brief   	Library files with common functions for EmailCollector
+ * \file        emailcollector/lib/emailcollector.lib.php
+ * \ingroup    emailcollector
+ * \brief    Library files with common functions for EmailCollector
  */
 
 
 /**
  * Prepare array of tabs for EmailCollector
  *
- * @param	EmailCollector	$object		EmailCollector
- * @return 	array						Array of tabs
+ * @param EmailCollector $object EmailCollector
+ * @return    array                        Array of tabs
  */
-function emailcollectorPrepareHead($object )
+function emailcollectorPrepareHead($object)
 {
 	global $db, $langs, $conf;
 
@@ -37,7 +37,7 @@ function emailcollectorPrepareHead($object )
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/admin/emailcollector_card.php", 1).'?id='.$object->id;
+	$head[$h][0] = dol_buildpath("/admin/emailcollector_card.php", 1) . '?id=' . $object->id;
 	$head[$h][1] = $langs->trans("EmailCollector");
 	$head[$h][2] = 'card';
 	$h++;
@@ -91,7 +91,7 @@ function emailcollectorPrepareHead($object )
  * @param object $structure structure du message
  * @return object|boolean parties du message|false en cas d'erreur
  */
-function getParts($structure )
+function getParts($structure)
 {
 	return isset($structure->parts) ? $structure->parts : false;
 }
@@ -101,7 +101,7 @@ function getParts($structure )
  * @param object $part partie du message
  * @return object|boolean définition du message|false en cas d'erreur
  */
-function getDParameters($part )
+function getDParameters($part)
 {
 	return $part->ifdparameters ? $part->dparameters : false;
 }
@@ -111,7 +111,7 @@ function getDParameters($part )
  * @param integer $jk numéro du mail
  * @return array type, filename, pos
  */
-function getAttachments($jk, $mbox )
+function getAttachments($jk, $mbox)
 {
 	$structure = imap_fetchstructure($mbox, $jk);
 	$parts = getParts($structure);
@@ -144,7 +144,7 @@ function getAttachments($jk, $mbox )
  * @param integer $type type de la pièce jointe
  * @return mixed data
  */
-function getFileData($jk, $fpos, $type, $mbox )
+function getFileData($jk, $fpos, $type, $mbox)
 {
 	$mege = imap_fetchbody($mbox, $jk, $fpos);
 	$data = getDecodeValue($mege, $type);
@@ -158,7 +158,7 @@ function getFileData($jk, $fpos, $type, $mbox )
  * @param mixed $data contenu à sauvegarder
  * @return string emplacement du fichier
  **/
-function saveAttachment($path, $filename, $data )
+function saveAttachment($path, $filename, $data)
 {
 	global $lang;
 	$tmp = explode('.', $filename);
@@ -187,7 +187,7 @@ function saveAttachment($path, $filename, $data )
  * @param integer $coding type de contenu
  * @return message décodé
  **/
-function getDecodeValue($message, $coding )
+function getDecodeValue($message, $coding)
 {
 	switch ($coding) {
 		case 0: //text
