@@ -42,7 +42,7 @@ $mode = GETPOSTISSET("mode") ? GETPOST("mode", 'aZ09') : 'customer';
 if ($mode == 'customer' && !$user->rights->commande->lire) {
 	accessforbidden();
 }
-if ($mode == 'supplier' && !$user->rights->fournisseur->commande->lire) {
+if ($mode == 'supplier' && empty($user->rights->fournisseur->commande->lire)) {
 	accessforbidden();
 }
 

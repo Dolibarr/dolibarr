@@ -279,7 +279,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 		}
 
 		if ($feature == 'societe') {
-			if (empty($user->rights->societe->lire) && !$user->rights->fournisseur->lire) {
+			if (empty($user->rights->societe->lire) && empty($user->rights->fournisseur->lire)) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -314,7 +314,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				$nbko++;
 			}
 		} elseif ($feature == 'payment_supplier') {
-			if (!$user->rights->fournisseur->facture->lire) {
+			if (empty($user->rights->fournisseur->facture->lire)) {
 				$readok = 0;
 				$nbko++;
 			}

@@ -98,7 +98,7 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	$accessallowed = 1;
 } elseif ($modulepart == 'facture_fourn' || $modulepart == 'facture_fournisseur') {
 	$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
-	if (!$user->rights->fournisseur->facture->lire) {
+	if (empty($user->rights->fournisseur->facture->lire)) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
