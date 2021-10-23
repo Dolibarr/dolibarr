@@ -67,6 +67,7 @@ $currentyear = $tmp['year'];
 if (empty($search_year)) {
 	$search_year = $currentyear;
 }
+$moreforfilter = "";
 
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
