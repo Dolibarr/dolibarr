@@ -28,7 +28,7 @@
  * @param	EmailCollector	$object		EmailCollector
  * @return 	array						Array of tabs
  */
-function emailcollectorPrepareHead($object)
+function emailcollectorPrepareHead($object )
 {
 	global $db, $langs, $conf;
 
@@ -86,7 +86,13 @@ function emailcollectorPrepareHead($object)
 	return $head;
 }
 
-function getParts($structure) {
+/**
+ * Récupère les parties d'un message
+ * @param object $structure structure du message
+ * @return object|boolean parties du message|false en cas d'erreur
+ */
+function getParts($structure )
+{
 	return isset($structure->parts) ? $structure->parts : false;
 }
 
@@ -95,7 +101,8 @@ function getParts($structure) {
  * @param object $part partie du message
  * @return object|boolean définition du message|false en cas d'erreur
  */
-function getDParameters($part) {
+function getDParameters($part )
+{
 	return $part->ifdparameters ? $part->dparameters : false;
 }
 
@@ -104,18 +111,18 @@ function getDParameters($part) {
  * @param integer $jk numéro du mail
  * @return array type, filename, pos
  */
- function getAttachments($jk,$mbox) {
+function getAttachments($jk, $mbox )
+{
 	$structure = imap_fetchstructure($mbox, $jk);
 	$parts = getParts($structure);
 	$fpos = 2;
 	$attachments = array();
-
 	if ($parts && count($parts)) {
 		for ($i = 1; $i < count($parts); $i++) {
 			$part = $parts[$i];
 
 			if ($part->ifdisposition && strtolower($part->disposition) == "attachment") {
-				$ext=$part->subtype;
+				$ext = $part->subtype;
 				$params = getDParameters($part);
 
 				if ($params) {
@@ -130,31 +137,44 @@ function getDParameters($part) {
 	return $attachments;
 }
 
-function getFileData($jk, $fpos, $type,$mbox) {
+/**
+ * Récupère la contenu de la pièce jointe par rapport a sa position dans un mail donné
+ * @param integer $jk numéro du mail
+ * @param integer $fpos position de la pièce jointe
+ * @param integer $type type de la pièce jointe
+ * @return mixed data
+ */
+function getFileData($jk, $fpos, $type, $mbox )
+{
 	$mege = imap_fetchbody($mbox, $jk, $fpos);
-	$data = getDecodeValue($mege,$type);
+	$data = getDecodeValue($mege, $type);
 
 	return $data;
 }
 
-function saveAttachment($path, $filename, $data) {
+/**
+ * Sauvegarde de la pièce jointe dans le dossier défini avec un nom unique
+ * @param string $filename nom du fichier
+ * @param mixed $data contenu à sauvegarder
+ * @return string emplacement du fichier
+ **/
+function saveAttachment($path, $filename, $data )
+{
 	global $lang;
 	$tmp = explode('.', $filename);
 	$ext = array_pop($tmp);
 	$filename = implode('.', $tmp);
-	if (! file_exists($path))
-	{
-		if (dol_mkdir($path) < 0)
-		{
+	if (!file_exists($path)) {
+		if (dol_mkdir($path) < 0) {
 			return -1;
 		}
 	}
 
-	$i=1;
-	$filepath = $path.$filename.'.'.$ext;
+	$i = 1;
+	$filepath = $path . $filename . '.' . $ext;
 
 	while (file_exists($filepath)) {
-		$filepath = $path.$filename.$i.'.'.$ext;
+		$filepath = $path . $filename . $i . '.' . $ext;
 		$i++;
 	}
 	file_put_contents($filepath, $data);
@@ -167,7 +187,8 @@ function saveAttachment($path, $filename, $data) {
  * @param integer $coding type de contenu
  * @return message décodé
  **/
-function getDecodeValue($message, $coding) {
+function getDecodeValue($message, $coding )
+{
 	switch ($coding) {
 		case 0: //text
 		case 1: //multipart

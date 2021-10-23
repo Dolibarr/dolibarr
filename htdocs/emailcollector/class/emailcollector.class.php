@@ -2040,15 +2040,16 @@ class EmailCollector extends CommonObject
 									$res = $objectmanaged->fetch($val);
 									if ($res) {
 										$path = ($objectmanaged->entity > 1 ? "/" . $objectmanaged->entity : '');
-										$dirs[] = DOL_DATA_ROOT . $path . "/" . $elementpath. '/'  . dol_sanitizeFileName( $objectmanaged->ref) .'/';
+										$dirs[] = DOL_DATA_ROOT . $path . "/" . $elementpath . '/' . dol_sanitizeFileName($objectmanaged->ref) . '/';
 									} else {
 										$this->errors = 'object not found';
 									}
 								}
 							}
-							foreach ($dirs as $target){
+							foreach ($dirs as $target) {
 								foreach ($data as $filename => $content) {
 									$prefix = $this->actions[$this->id]['actionparam'];
+
 									$resr = saveAttachment($target, $prefix . '_' . $filename, $content);
 									if ($resr == -1) {
 										$this->errors = 'Doc not saved';
