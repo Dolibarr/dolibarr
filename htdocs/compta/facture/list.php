@@ -1719,7 +1719,13 @@ if ($resql) {
 
 			print '<tr class="oddeven"';
 			if ($contextpage == 'poslist') {
-				print ' onclick="parent.$(\'#poslines\').load(\'invoice.php?action=history&placeid='.$obj->id.'\', function() {parent.$.colorbox.close();});"';
+				print ' onclick="parent.$(\'#poslines\').load(\'invoice.php?action=history&placeid='.$obj->id.'\', function() {parent.$.colorbox.close();';
+				if (strpos($obj->ref, 'PROV') !== false) {
+					//If is a draft invoice, load var to be able to add products
+					$place = str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
+					print 'parent.place=\''.$place.'\'';
+				}
+				print '});"';
 			}
 			print '>';
 
