@@ -625,7 +625,7 @@ class EmailCollector extends CommonObject
 		$sql = 'SELECT rowid, date_creation as 	datec, tms as datem,';
 		$sql .= ' fk_user_creat, fk_user_modif';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
-		$sql .= ' WHERE t.rowid = ' . ((int)$id);
+		$sql .= ' WHERE t.rowid = ' . ((int) $id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {
@@ -686,7 +686,7 @@ class EmailCollector extends CommonObject
 
 		$sql = 'SELECT rowid, type, rulevalue, status';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'emailcollector_emailcollectorfilter';
-		$sql .= ' WHERE fk_emailcollector = ' . ((int)$this->id);
+		$sql .= ' WHERE fk_emailcollector = ' . ((int) $this->id);
 		//$sql.= ' ORDER BY position';
 
 		$resql = $this->db->query($sql);
@@ -718,7 +718,7 @@ class EmailCollector extends CommonObject
 
 		$sql = 'SELECT rowid, type, actionparam, status';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'emailcollector_emailcollectoraction';
-		$sql .= ' WHERE fk_emailcollector = ' . ((int)$this->id);
+		$sql .= ' WHERE fk_emailcollector = ' . ((int) $this->id);
 		$sql .= ' ORDER BY position';
 
 		$resql = $this->db->query($sql);
