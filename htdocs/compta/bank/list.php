@@ -506,6 +506,8 @@ print "</tr>\n";
 
 $totalarray = array();
 $totalarray['nbfield'] = 0;
+$totalarray['val'] = array('balance'=>0);
+$total = array();
 $found = 0;
 $i = 0;
 $lastcurrencycode = '';
@@ -714,7 +716,11 @@ foreach ($accounts as $key => $type) {
 
 	print '</tr>';
 
-	$total[$objecttmp->currency_code] += $solde;
+	if (empty($total[$objecttmp->currency_code])) {
+		$total[$objecttmp->currency_code] = $solde;
+	} else {
+		$total[$objecttmp->currency_code] += $solde;
+	}
 
 	$i++;
 }
