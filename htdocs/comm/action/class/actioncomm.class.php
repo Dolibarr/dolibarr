@@ -1327,7 +1327,7 @@ class ActionComm extends CommonObject
 			$sql = "SELECT count(a.id) as nb";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 		}
 		if (!$user->rights->agenda->allactions->read) {
@@ -1339,7 +1339,7 @@ class ActionComm extends CommonObject
 			$sql .= " AND a.percent >= 0 AND a.percent < 100";
 		}
 		$sql .= " AND a.entity IN (".getEntity('agenda').")";
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
 		}
 		if ($user->socid) {
@@ -1465,18 +1465,18 @@ class ActionComm extends CommonObject
 		// phpcs:enable
 		global $langs;
 
-		$labelStatus = $langs->trans('StatusNotApplicable');
+		$labelStatus = $langs->transnoentitiesnoconv('StatusNotApplicable');
 		if ($percent == -1 && !$hidenastatus) {
-			$labelStatus = $langs->trans('StatusNotApplicable');
+			$labelStatus = $langs->transnoentitiesnoconv('StatusNotApplicable');
 		} elseif ($percent == 0) {
-			$labelStatus = $langs->trans('StatusActionToDo').' (0%)';
+			$labelStatus = $langs->transnoentitiesnoconv('StatusActionToDo').' (0%)';
 		} elseif ($percent > 0 && $percent < 100) {
-			$labelStatus = $langs->trans('StatusActionInProcess').' ('.$percent.'%)';
+			$labelStatus = $langs->transnoentitiesnoconv('StatusActionInProcess').' ('.$percent.'%)';
 		} elseif ($percent >= 100) {
-			$labelStatus = $langs->trans('StatusActionDone').' (100%)';
+			$labelStatus = $langs->transnoentitiesnoconv('StatusActionDone').' (100%)';
 		}
 
-		$labelStatusShort = $langs->trans('StatusNotApplicable');
+		$labelStatusShort = $langs->transnoentitiesnoconv('StatusNotApplicable');
 		if ($percent == -1 && !$hidenastatus) {
 			$labelStatusShort = $langs->trans('NA');
 		} elseif ($percent == 0) {

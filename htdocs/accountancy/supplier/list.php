@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2013-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
- * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2021	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>s
  * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
  *
@@ -46,6 +46,7 @@ $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
+$optioncss = GETPOST('optioncss', 'alpha');
 
 // Select Box
 $mesCasesCochees = GETPOST('toselect', 'array');
@@ -97,10 +98,7 @@ if (!$sortorder) {
 $hookmanager->initHooks(array('accountancysupplierlist'));
 
 $formaccounting = new FormAccounting($db);
-$accounting = new AccountingAccount($db);
-// TODO: we should need to check if result is a really exist accountaccount rowid.....
-$aarowid_s = $accounting->fetch('', $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT, 1);
-$aarowid_p = $accounting->fetch('', $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT, 1);
+$accountingAccount = new AccountingAccount($db);
 
 $chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
 
@@ -522,9 +520,9 @@ if ($result) {
 
 	$thirdpartystatic = new Societe($db);
 	$facturefourn_static = new FactureFournisseur($db);
+	$facturefourn_static_det = new SupplierInvoiceLine($db);
 	$product_static = new Product($db);
 
-	$isBuyerInEEC = isInEEC($mysoc);
 
 	$accountingaccount_codetotid_cache = array();
 
@@ -547,6 +545,8 @@ if ($result) {
 		$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
 		$thirdpartystatic->email = $objp->email;
 		$thirdpartystatic->country_code = $objp->country_code;
+		$thirdpartystatic->tva_intra = $objp->tva_intra;
+		$thirdpartystatic->code_compta_fournisseur = $objp->company_code_buy;
 
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;
@@ -560,95 +560,63 @@ if ($result) {
 		$product_static->accountancy_code_buy = $objp->code_buy;
 		$product_static->accountancy_code_buy_intra = $objp->code_buy_intra;
 		$product_static->accountancy_code_buy_export = $objp->code_buy_export;
+		$product_static->tva_tx = $objp->tva_tx_prod;
 
 		$facturefourn_static->ref = $objp->ref;
 		$facturefourn_static->id = $objp->facid;
 		$facturefourn_static->type = $objp->ftype;
 		$facturefourn_static->label = $objp->invoice_label;
 
+		$facturefourn_static_det->id = $objp->rowid;
+		$facturefourn_static_det->total_ht = $objp->total_ht;
+		$facturefourn_static_det->tva_tx_line = $objp->tva_tx_line;
+		$facturefourn_static_det->vat_src_code = $objp->vat_src_code;
+		$facturefourn_static_det->product_type = $objp->type_l;
+		$facturefourn_static_det->desc = $objp->description;
+
 		$code_buy_p_notset = '';
 		$code_buy_t_notset = '';
 		$objp->aarowid_suggest = ''; // Will be set later
 
-		$isSellerInEEC = isInEEC($objp);
+		$accountingAccountArray = array(
+			'dom'=>$objp->aarowid,
+			'intra'=>$objp->aarowid_intra,
+			'export'=>$objp->aarowid_export,
+			'thirdparty' =>$objp->aarowid_thirdparty);
 
-		// Level 1: Search suggested default account for product/service
-		$suggestedaccountingaccountbydefaultfor = '';
-		if ($objp->type_l == 1) {
-			if ($objp->country_code == $mysoc->country_code || empty($objp->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
-				$objp->code_buy_l = (!empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : '');
-				$suggestedaccountingaccountbydefaultfor = '';
-			} else {
-				if ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
-					$objp->code_buy_l = (!empty($conf->global->ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT : '');
-					$suggestedaccountingaccountbydefaultfor = 'eec';
-				} else {                                        // Foreign sale
-					$objp->code_buy_l = (!empty($conf->global->ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT : '');
-					$suggestedaccountingaccountbydefaultfor = 'export';
-				}
-			}
-		} elseif ($objp->type_l == 0) {
-			if ($objp->country_code == $mysoc->country_code || empty($objp->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
-				$objp->code_buy_l = (!empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : '');
-				$suggestedaccountingaccountbydefaultfor = '';
-			} else {
-				if ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
-					$objp->code_buy_l = (!empty($conf->global->ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT : '');
-					$suggestedaccountingaccountbydefaultfor = 'eec';
-				} else {
-					$objp->code_buy_l = (!empty($conf->global->ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT : '');
-					$suggestedaccountingaccountbydefaultfor = 'export';
-				}
-			}
-		}
-		if ($objp->code_sell_l == -1) {
-			$objp->code_sell_l = '';
-		}
+		$code_buy_p_notset = '';
+		$code_buy_t_notset = '';
 
-		// Level 2: Search suggested account for product/service (similar code exists in page index.php to make automatic binding)
-		$suggestedaccountingaccountfor = '';
-		if (($objp->country_code == $mysoc->country_code) || empty($objp->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
-			$objp->code_buy_p = $objp->code_buy;
-			$objp->aarowid_suggest = $objp->aarowid;
-			$suggestedaccountingaccountfor = '';
+		$return=$accountingAccount->getAccountingCodeToBind($mysoc, $thirdpartystatic, $product_static, $facturefourn_static, $facturefourn_static_det, $accountingAccountArray, 'supplier');
+		if (!is_array($return) && $return<0) {
+			setEventMessage($accountingAccount->error, 'errors');
 		} else {
-			if ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
-				$objp->code_buy_p = $objp->code_buy_intra;
-				$objp->aarowid_suggest = $objp->aarowid_intra;
-				$suggestedaccountingaccountfor = 'eec';
-			} else {                                        // Foreign sale
-				$objp->code_buy_p = $objp->code_buy_export;
-				$objp->aarowid_suggest = $objp->aarowid_export;
-				$suggestedaccountingaccountfor = 'export';
-			}
+			$suggestedid=$return['suggestedid'];
+			$suggestedaccountingaccountfor=$return['suggestedaccountingaccountfor'];
+			$suggestedaccountingaccountbydefaultfor=$return['suggestedaccountingaccountbydefaultfor'];
+			$code_buy_l=$return['code_buy_l'];
+			$code_buy_p=$return['code_buy_p'];
+			$code_buy_t=$return['code_buy_t'];
 		}
+		//var_dump($return);
 
-		// Level 3: Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
-		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
-			if (!empty($objp->company_code_buy)) {
-				$objp->code_buy_t = $objp->company_code_buy;
-				$objp->aarowid_suggest = $objp->aarowid_thirdparty;
-				$suggestedaccountingaccountfor = '';
-			}
-		}
-
-		if (!empty($objp->code_buy_p)) {
+		if (!empty($code_buy_p)) {
 			// Value was defined previously
 		} else {
 			$code_buy_p_notset = 'color:orange';
 		}
-		if (empty($objp->code_buy_l) && empty($objp->code_buy_p)) {
+		if (empty($code_buy_l) && empty($code_buy_p)) {
 			$code_buy_p_notset = 'color:red';
 		}
 
-		// $objp->code_buy_l is now default code of product/service
-		// $objp->code_buy_p is now code of product/service
-		// $objp->code_buy_t is now code of thirdparty
+		// $code_buy_l is now default code of product/service
+		// $code_buy_p is now code of product/service
+		// $code_buy_t is now code of thirdparty
 
 		print '<tr class="oddeven">';
 
 		// Line id
-		print '<td>'.$objp->rowid.'</td>';
+		print '<td>'.$facturefourn_static_det->id.'</td>';
 
 		// Ref Invoice
 		print '<td class="nowraponall">'.$facturefourn_static->getNomUrl(1).'</td>';
@@ -658,23 +626,23 @@ if ($result) {
 		print '</td>';
 		*/
 
-		print '<td class="center">'.dol_print_date($db->jdate($objp->datef), 'day').'</td>';
+		print '<td class="center">'.dol_print_date($db->jdate($facturefourn_static_det->datef), 'day').'</td>';
 
 		// Ref Product
 		print '<td class="tdoverflowmax150">';
 		if ($product_static->id > 0) {
 			print $product_static->getNomUrl(1);
 		}
-		if ($objp->product_label) {
-			print '<br><span class="opacitymedium small">'.$objp->product_label.'</span>';
+		if ($product_static->product_label) {
+			print '<br><span class="opacitymedium small">'.$product_static->product_label.'</span>';
 		}
 		print '</td>';
 
 		// Description
 		print '<td class="tdoverflowonsmartphone small">';
-		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description));
+		$text = dolGetFirstLineOfText(dol_string_nohtmltag($facturefourn_static_det->desc));
 		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
-		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->description);
+		print $form->textwithtooltip(dol_trunc($text, $trunclength), $facturefourn_static_det->desc);
 		print '</td>';
 
 		print '<td class="right nowraponall amount">';
@@ -686,7 +654,7 @@ if ($result) {
 			$code_vat_differ = 'font-weight:bold; text-decoration:blink; color:red';
 		}
 		print '<td style="'.$code_vat_differ.'" class="right">';
-		print vatrate($objp->tva_tx_line.($objp->vat_src_code ? ' ('.$objp->vat_src_code.')' : ''));
+		print vatrate($facturefourn_static_det->tva_tx_line.($facturefourn_static_det->vat_src_code ? ' ('.$facturefourn_static_det->vat_src_code.')' : ''));
 		print '</td>';
 
 		// Thirdparty
@@ -703,26 +671,26 @@ if ($result) {
 
 		// Found accounts
 		print '<td class="small">';
-		$s = '1. '.(($objp->type_l == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': ';
+		$s = '1. '.(($facturefourn_static_det->type_l == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': ';
 		$shelp = '';
 		if ($suggestedaccountingaccountbydefaultfor == 'eec') {
 			$shelp .= $langs->trans("SaleEEC");
 		} elseif ($suggestedaccountingaccountbydefaultfor == 'export') {
 			$shelp .= $langs->trans("SaleExport");
 		}
-		$s .= ($objp->code_buy_l > 0 ? length_accountg($objp->code_buy_l) : '<span style="'.$code_buy_p_notset.'">'.$langs->trans("NotDefined").'</span>');
+		$s .= ($code_buy_l > 0 ? length_accountg($code_buy_l) : '<span style="'.$code_buy_p_notset.'">'.$langs->trans("NotDefined").'</span>');
 		print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
-		if ($objp->product_id > 0) {
+		if ($product_static->id > 0) {
 			print '<br>';
-			$s = '2. '.(($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': ';
-			$shelp = '';
+			$s = '2. '.(($facturefourn_static_det->product_type == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': ';
+			$shelp = ''; $ttype = 'help';
 			if ($suggestedaccountingaccountfor == 'eec') {
 				$shelp = $langs->trans("SaleEEC");
 			} elseif ($suggestedaccountingaccountfor == 'export') {
 				$shelp = $langs->trans("SaleExport");
 			}
-			$s .= (empty($objp->code_buy_p) ? '<span style="'.$code_buy_p_notset.'">'.$langs->trans("NotDefined").'</span>' : length_accountg($objp->code_buy_p));
-			print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
+			$s .= (empty($code_buy_p) ? '<span style="'.$code_buy_p_notset.'">'.$langs->trans("NotDefined").'</span>' : length_accountg($code_buy_p));
+			print $form->textwithpicto($s, $shelp, 1, $ttype, '', 0, 2, '', 1);
 		} else {
 			print '<br>';
 			$s = '2. '.(($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': ';
@@ -732,35 +700,26 @@ if ($result) {
 		}
 		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
 			print '<br>';
-			$s = '3. '.(($objp->type_l == 1) ? $langs->trans("ServiceForThisThirdparty") : $langs->trans("ProductForThisThirdparty")).': ';
+			$s = '3. '.(($facturefourn_static_det->product_type == 1) ? $langs->trans("ServiceForThisThirdparty") : $langs->trans("ProductForThisThirdparty")).': ';
 			$shelp = '';
-			$s .= ($objp->code_buy_t > 0 ? length_accountg($objp->code_buy_t) : '<span style="'.$code_buy_t_notset.'">'.$langs->trans("NotDefined").'</span>');
+			$s .= ($code_buy_t > 0 ? length_accountg($code_buy_t) : '<span style="'.$code_buy_t_notset.'">'.$langs->trans("NotDefined").'</span>');
 			print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 		}
 		print '</td>';
 
 		// Suggested accounting account
 		print '<td>';
-		$suggestedid = $objp->aarowid_suggest;
-		if (empty($suggestedid) && empty($objp->code_buy_p) && !empty($objp->code_buy_l) && empty($conf->global->ACCOUNTANCY_DO_NOT_AUTOFILL_ACCOUNT_WITH_GENERIC)) {
-			if (empty($accountingaccount_codetotid_cache[$objp->code_buy_l])) {
-				$tmpaccount = new AccountingAccount($db);
-				$tmpaccount->fetch(0, $objp->code_buy_l, 1);
-				if ($tmpaccount->id > 0) {
-					$suggestedid = $tmpaccount->id;
-				}
-				$accountingaccount_codetotid_cache[$objp->code_buy_l] = $tmpaccount->id;
-			} else {
-				$suggestedid = $accountingaccount_codetotid_cache[$objp->code_buy_l];
-			}
-		}
-		print $formaccounting->select_account($suggestedid, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'codeventil maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone');
+		print $formaccounting->select_account($suggestedid, 'codeventil'.$facturefourn_static_det->id, 1, array(), 0, 0, 'codeventil maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
 
 		// Column with checkbox
 		print '<td class="center">';
-		$ischecked = $objp->aarowid_suggest;
-		print '<input type="checkbox" class="flat checkforselect checkforselect'.$objp->rowid.'" name="toselect[]" value="'.$objp->rowid."_".$i.'"'.($ischecked ? "checked" : "").'/>';
+		if (!empty($suggestedid)) {
+			$ischecked = 1;
+		} else {
+			$ischecked = 0;
+		}
+		print '<input type="checkbox" class="flat checkforselect checkforselect'.$facturefourn_static_det->id.'" name="toselect[]" value="'.$facturefourn_static_det->id."_".$i.'"'.($ischecked ? "checked" : "").'/>';
 		print '</td>';
 
 		print '</tr>';

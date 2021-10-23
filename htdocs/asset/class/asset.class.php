@@ -390,11 +390,11 @@ class Asset extends CommonObject
 
 		$langs->load("contracts");
 		$labelStatus = array();
-		$labelStatus[self::STATUS_DRAFT] = $langs->trans('Disabled');
-		$labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+		$labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Disabled');
+		$labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
 		$labelStatusShort = array();
-		$labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Disabled');
-		$labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+		$labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Disabled');
+		$labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
 
 		$statusType = 'status0';
 		if ($status == self::STATUS_VALIDATED) {

@@ -259,7 +259,7 @@ if ($result) {
 
 		print "\n";
 
-		print '<tr class="oddeven"><td>'.$obj->name.'</td>'."\n";
+		print '<tr class="oddeven" data-checkbox-id="check_'.$i.'"><td>'.$obj->name.'</td>'."\n";
 
 		// Value
 		print '<td>';

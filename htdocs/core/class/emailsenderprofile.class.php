@@ -326,9 +326,9 @@ class EmailSenderProfile extends CommonObject
 		global $langs;
 
 		if ($status == 1) {
-			$label = $labelshort = $langs->trans('Enabled');
+			$label = $labelshort = $langs->transnoentitiesnoconv('Enabled');
 		} else {
-			$label = $labelshort = $langs->trans('Disabled');
+			$label = $labelshort = $langs->transnoentitiesnoconv('Disabled');
 		}
 
 		$statusType = 'status'.$status;
