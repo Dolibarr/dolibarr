@@ -1917,9 +1917,9 @@ class EmailCollector extends CommonObject
 						if (count($pj) > 0) {
 							$sql = "SELECT rowid as id FROM " . MAIN_DB_PREFIX . "user WHERE email LIKE '%" . $from . "%'";
 							$resql = $this->db->query($sql);
-							//if ($resql->num_rows == 0) {
-							//	$this->errors = 'User Not allowed to add documents';
-							//}
+							if ($resql->num_rows == 0) {
+								$this->errors = 'User Not allowed to add documents';
+							}
 							$arrayobject = array(
 								'propale' => array('table' => 'propal',
 									'fields' => array('ref'),
