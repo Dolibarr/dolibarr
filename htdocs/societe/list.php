@@ -258,7 +258,7 @@ $arrayfields = array(
 	's.import_key'=>array('label'=>"ImportId", 'checked'=>0, 'position'=>1100),
 );
 if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
-	$arrayfields['s.price_level'] =array('label'=>"PriceLevel", 'position'=>30, 'checked'=>0);
+	$arrayfields['s.price_level'] = array('label'=>"PriceLevel", 'position'=>30, 'checked'=>0);
 }
 
 // Extra fields
@@ -467,10 +467,10 @@ if ($search_sale && $search_sale != '-1') {
 	$sql .= ", sc.fk_soc, sc.fk_user";
 }
 // We'll need these fields in order to filter by categ
-if ($search_categ_cus && $search_categ_cus!=-1) {
+if ($search_categ_cus && $search_categ_cus != -1) {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
 }
-if ($search_categ_sup && $search_categ_sup!=-1) {
+if ($search_categ_sup && $search_categ_sup != -1) {
 	$sql .= ", cs.fk_categorie, cs.fk_soc";
 }
 // Add fields from extrafields
@@ -573,7 +573,7 @@ if ($search_account_supplier_code) {
 	$sql .= natural_search("s.code_compta_fournisseur", $search_account_supplier_code);
 }
 if ($search_address) {
-	$sql.= natural_search('s.address', $search_address);
+	$sql .= natural_search('s.address', $search_address);
 }
 if ($search_town) {
 	$sql .= natural_search("s.town", $search_town);
@@ -751,7 +751,7 @@ if ($search_alias != '') {
 	$param .= "&search_alias=".urlencode($search_alias);
 }
 if ($search_address != '') {
-	$param .= '&search_address=' . urlencode($search_address);
+	$param .= '&search_address='.urlencode($search_address);
 }
 if ($search_town != '') {
 	$param .= "&search_town=".urlencode($search_town);

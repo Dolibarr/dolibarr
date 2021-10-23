@@ -202,7 +202,7 @@ $title = $langs->trans("ConferenceOrBoothAttendee");
 $help_url = '';
 llxHeader('', $title, $help_url);
 
-$result = $projectstatic->fetch(empty($confOrBooth->fk_project)?$fk_project:$confOrBooth->fk_project);
+$result = $projectstatic->fetch(empty($confOrBooth->fk_project) ? $fk_project : $confOrBooth->fk_project);
 if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
 	$projectstatic->fetchComments();
 }
