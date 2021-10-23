@@ -545,11 +545,9 @@ $formcompany = new FormCompany($db);
 
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
+$objsoc = new Societe($db);
 if ($socid > 0) {
-	$objsoc = new Societe($db);
 	$objsoc->fetch($socid);
-} else {
-	$objsoc = 0;
 }
 
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
