@@ -149,6 +149,7 @@ if (empty($reshook)) {
 
 		// Set if we used free entry or predefined product
 		$idprod = (int) GETPOST('idprod', 'int');
+		$bom_child = (int) GETPOST('bom_select', 'int');
 		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
 		$disable_stock_change = GETPOST('disable_stock_change', 'int');
@@ -172,6 +173,7 @@ if (empty($reshook)) {
 			$bomline = new BOMLine($db);
 			$bomline->fk_bom = $id;
 			$bomline->fk_product = $idprod;
+			$bomline->fk_bom_child = $bom_child;
 			$bomline->qty = $qty;
 			$bomline->qty_frozen = (int) $qty_frozen;
 			$bomline->disable_stock_change = (int) $disable_stock_change;
@@ -571,9 +573,78 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
 			print '</table>';
 		}
+		?>
+		<script>
+			let select_product_val;
+			let current_bom_id = <?php echo $object->id?>;
+			//On change on the bom select
+			$('#idprod').on('change', function () {
+				select_product_val = $('#idprod').select2().val();
+
+				//Ajax to set all options without reloading the page
+				$.ajax({
+					url: 'script/interface.php'
+					, method: 'POST'
+					, dataType: 'text'
+					, data: {
+						action: 'select_BOM'
+						, select_product_val: select_product_val
+						, current_bom_id: current_bom_id
+					}
+				}).done(function (data) {
+					//To remove all options of the bom select on change
+					$('#bom_select').get(0).length = 0;
+
+					//To set options for the bom select on change
+					let options = JSON.parse(data)
+					for (let key in options) {
+						let opt = new Option(options[key], key);
+						$('#bom_select').append(opt)
+					}
+				})
+			})
+		</script>
+		<?php
 		print '</div>';
 
 		print "</form>\n";
+		?>
+
+		<script type="text/javascript" language="javascript">
+			$(document).ready(function() {
+
+				$(".collapse_bom").click(function() {
+
+					var id_bom_line = $(this).attr('id').replace('collapse-', '');
+					if($(this).text().indexOf('+') > 0) {
+						$('[parentid="'+ id_bom_line +'"]').show();
+						$(this).html('(-)&nbsp;');
+					}
+					else {
+						$('[parentid="'+ id_bom_line +'"]').hide();
+						$(this).html('(+)&nbsp;');
+					}
+
+					return false;
+				});
+
+				//To Show all the sub bom lines
+				$("#show_all").click(function() {
+					$("[class^=sub_bom_lines]").show();
+					$("[class^=collapse_bom]").html('(-)&nbsp;');
+					return false;
+				});
+				//To Hide all the sub bom lines
+				$("#hide_all").click(function() {
+					$("[class^=sub_bom_lines]").hide();
+					$("[class^=collapse_bom]").html('(+)&nbsp;');
+					return false;
+				});
+
+			});
+		</script>
+
+		<?php
 	}
 
 

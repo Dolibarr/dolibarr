@@ -107,7 +107,7 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 		if ($dir = opendir($newpath)) {
 			$filedate = '';
 			$filesize = '';
-
+			$fileperm = '';
 			while (false !== ($file = readdir($dir))) {        // $file is always a basename (into directory $newpath)
 				if (!utf8_check($file)) {
 					$file = utf8_encode($file); // To be sure data is stored in utf8 in memory
