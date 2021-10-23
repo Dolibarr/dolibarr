@@ -44,25 +44,27 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 /**
  * Return dolibarr global constant string value
  * @param string $key key to return value, return '' if not set
+ * @param string $default value to return
  * @return string
  */
-function getDolGlobalString($key)
+function getDolGlobalString($key, $default = '')
 {
 	global $conf;
 	// return $conf->global->$key ?? '';
-	return (string) (empty($conf->global->$key) ? '' : $conf->global->$key);
+	return (string) (empty($conf->global->$key) ? $default : $conf->global->$key);
 }
 
 /**
  * Return dolibarr global constant int value
  * @param string $key key to return value, return 0 if not set
+ * @param int $default value to return
  * @return int
  */
-function getDolGlobalInt($key)
+function getDolGlobalInt($key, $default = 0)
 {
 	global $conf;
-	// return $conf->global->$key ?? 0;
-	return (int) (empty($conf->global->$key) ? 0 : $conf->global->$key);
+	// return $conf->global->$key ?? $default;
+	return (int) (empty($conf->global->$key) ? $default : $conf->global->$key);
 }
 
 /**
