@@ -2323,7 +2323,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			print '</table>';
 			print '</div>';
-			print '<div class="fichehalfright"><div class="ficheaddleft">';
+			print '<div class="fichehalfright">';
 
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border tableforfield centpercent">';
@@ -2479,7 +2479,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print "</table>\n";
 			print '</div>';
 
-			print '</div></div>';
+			print '</div>';
 			print '<div style="clear:both"></div>';
 
 			print dol_get_fiche_end();
@@ -2701,7 +2701,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	print $formfile->showdocuments($modulepart, $object->ref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
 	$somethingshown = $formfile->numoffiles;
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 
 	$MAXEVENT = 10;
 
@@ -2714,7 +2714,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	$formactions = new FormActions($db);
 	$somethingshown = $formactions->showactions($object, 'product', 0, 1, '', $MAXEVENT, '', $morehtmlright); // Show all action for product
 
-	print '</div></div></div>';
+	print '</div></div>';
 }
 
 // End of page

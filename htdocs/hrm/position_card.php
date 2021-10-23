@@ -344,7 +344,7 @@ function DisplayPositionCard(&$object)
 //	}
 //
 //
-//	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+//	print '</div><div class="fichehalfright">';
 //
 //	$MAXEVENT = 10;
 //
@@ -355,7 +355,7 @@ function DisplayPositionCard(&$object)
 //	$formactions = new FormActions($db);
 //	$somethingshown = $formactions->showactions($object, '', $object->id, 1, '', $MAXEVENT, '', $morehtmlright); // Show all action for thirdparty
 //
-//	print '</div></div></div>';
+//	print '</div></div>';
 //}
 
 
@@ -373,7 +373,7 @@ if ($action !== 'edit' && $action !== 'create') {
 	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 
 	$MAXEVENT = 10;
 
@@ -385,7 +385,7 @@ if ($action !== 'edit' && $action !== 'create') {
 	$formactions = new FormActions($db);
 	$somethingshown = $formactions->showactions($object, $object->element . '@' . $object->module, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlright);
 
-	print '</div></div></div>';
+	print '</div></div>';
 }
 
 

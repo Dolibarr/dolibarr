@@ -298,7 +298,7 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
 }
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 // Last modified contracts
@@ -622,7 +622,7 @@ if ($resql) {
 }
 
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardContracts', $parameters, $object); // Note that $action and $object may have been modified by hook

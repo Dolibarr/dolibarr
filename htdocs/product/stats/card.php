@@ -474,8 +474,8 @@ if ($result || empty($id)) {
 	}
 	// div not closed
 	if ($i % 2 == 1) {
-		print "\n".'<div class="fichehalfright"><div class="ficheaddleft">'."\n";
-		print "\n".'</div></div></div>';
+		print "\n".'<div class="fichehalfright">'."\n";
+		print "\n".'</div></div>';
 		print '<div class="clear"><div class="fichecenter"><br></div></div>'."\n";
 	}
 }

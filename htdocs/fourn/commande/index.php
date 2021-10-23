@@ -272,7 +272,7 @@ if ($resql) {
 }
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 /*
@@ -417,7 +417,7 @@ print "</table></div><br>";
 }
 */
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardOrdersSuppliers', $parameters, $object); // Note that $action and $object may have been modified by hook

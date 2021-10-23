@@ -778,7 +778,6 @@ if (!empty($id) && $action != 'edit') {
 
 	print '</div>';
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 
 	/*
 	 * Payments
@@ -836,7 +835,6 @@ if (!empty($id) && $action != 'edit') {
 		dol_print_error($db);
 	}
 
-	print '</div>';
 	print '</div>';
 	print '</div>';
 
