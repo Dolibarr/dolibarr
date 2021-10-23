@@ -1559,8 +1559,6 @@ if ($action == 'create') {
 		}
 	}
 
-	$object = new Propal($db);
-
 	print '<form name="addprop" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
