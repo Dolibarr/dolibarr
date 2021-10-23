@@ -175,7 +175,7 @@ $arrayfields = array(
 	'p.phone_mobile'=>array('label'=>"PhoneMobile", 'position'=>32, 'checked'=>1),
 	'p.fax'=>array('label'=>"Fax", 'position'=>33, 'checked'=>0),
 	'p.email'=>array('label'=>"EMail", 'position'=>40, 'checked'=>1),
-	'p.no_email'=>array('label'=>"No_Email", 'position'=>41, 'checked'=>0, 'enabled'=>(!empty($conf->mailing->enabled))),
+	'mu.rowid'=>array('label'=>"No_Email", 'position'=>41, 'checked'=>0, 'enabled'=>(!empty($conf->mailing->enabled))),
 	'p.thirdparty'=>array('label'=>"ThirdParty", 'position'=>50, 'checked'=>1, 'enabled'=>empty($conf->global->SOCIETE_DISABLE_CONTACTS)),
 	'p.priv'=>array('label'=>"ContactVisibility", 'checked'=>1, 'position'=>200),
 	'p.datec'=>array('label'=>"DateCreationShort", 'checked'=>0, 'position'=>500),
@@ -298,13 +298,16 @@ $contactstatic = new Contact($db);
 $title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
 $sql = "SELECT s.rowid as socid, s.nom as name,";
-$sql .= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.zip, p.town, p.poste, p.email, p.no_email,";
+$sql .= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.zip, p.town, p.poste, p.email,";
 $sql .= " p.socialnetworks, p.photo,";
 $sql .= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.datec as date_creation, p.tms as date_update,";
 $sql .= " co.label as country, co.code as country_code";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
+if(!empty($conf->mailing->enabled)) {
+	$sql .= ", mu.rowid as no_email";
 }
 // Add fields from hooks
 $parameters = array();
@@ -318,6 +321,7 @@ if (!empty($search_categ)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_conta
 if (!empty($search_categ_thirdparty)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc"; // We need this table joined to the select in order to filter by categ
 if (!empty($search_categ_supplier)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs2 ON s.rowid = cs2.fk_soc"; // We need this table joined to the select in order to filter by categ
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+if(!empty($conf->mailing->enabled)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."mailing_unsubscribe as mu ON mu.email = p.email";
 $sql .= ' WHERE p.entity IN ('.getEntity('socpeople').')';
 if (!$user->rights->societe->client->voir && !$socid) //restriction
 {
@@ -374,8 +378,8 @@ if (strlen($search_town))   		$sql .= natural_search("p.town", $search_town);
 if (count($search_roles) > 0) {
 	$sql .= " AND p.rowid IN (SELECT sc.fk_socpeople FROM ".MAIN_DB_PREFIX."societe_contacts as sc WHERE sc.fk_c_type_contact IN (".implode(',', $search_roles)."))";
 }
-
-if ($search_no_email != '' && $search_no_email >= 0) $sql .= " AND p.no_email = ".$db->escape($search_no_email);
+if ($search_no_email != -1 && $search_no_email > 0) $sql .= " AND mu.rowid IS NOT NULL";
+if ($search_no_email != -1 && $search_no_email == 0) $sql .= " AND mu.rowid IS NULL";
 if ($search_status != '' && $search_status >= 0) $sql .= " AND p.statut = ".$db->escape($search_status);
 if ($search_import_key)             $sql .= natural_search("p.import_key", $search_import_key);
 if ($type == "o")        // filtre sur type
@@ -662,7 +666,7 @@ if (!empty($arrayfields['p.email']['checked']))
 	print '<input class="flat" type="text" name="search_email" size="6" value="'.dol_escape_htmltag($search_email).'">';
 	print '</td>';
 }
-if (!empty($arrayfields['p.no_email']['checked']))
+if (!empty($arrayfields['mu.rowid']['checked']))
 {
 	print '<td class="liste_titre center">';
 	print $form->selectarray('search_no_email', array('-1'=>'', '0'=>$langs->trans('No'), '1'=>$langs->trans('Yes')), $search_no_email);
@@ -751,7 +755,7 @@ if (!empty($arrayfields['p.phone_perso']['checked']))         print_liste_field_
 if (!empty($arrayfields['p.phone_mobile']['checked']))        print_liste_field_titre($arrayfields['p.phone_mobile']['label'], $_SERVER["PHP_SELF"], "p.phone_mobile", $begin, $param, '', $sortfield, $sortorder);
 if (!empty($arrayfields['p.fax']['checked']))                 print_liste_field_titre($arrayfields['p.fax']['label'], $_SERVER["PHP_SELF"], "p.fax", $begin, $param, '', $sortfield, $sortorder);
 if (!empty($arrayfields['p.email']['checked']))               print_liste_field_titre($arrayfields['p.email']['label'], $_SERVER["PHP_SELF"], "p.email", $begin, $param, '', $sortfield, $sortorder);
-if (!empty($arrayfields['p.no_email']['checked']))            print_liste_field_titre($arrayfields['p.no_email']['label'], $_SERVER["PHP_SELF"], "p.no_email", $begin, $param, '', $sortfield, $sortorder, 'center ');
+if (!empty($arrayfields['mu.rowid']['checked']))              print_liste_field_titre($arrayfields['mu.rowid']['label'], $_SERVER["PHP_SELF"], "mu.rowid", $begin, $param, '', $sortfield, $sortorder, 'center ');
 if (!empty($conf->socialnetworks->enabled)) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active'] && !empty($arrayfields['p.'.$key]['checked'])) {
@@ -905,9 +909,9 @@ while ($i < min($num, $limit))
 		if (!$i) $totalarray['nbfield']++;
 	}
 	// No EMail
-	if (!empty($arrayfields['p.no_email']['checked']))
+	if (!empty($arrayfields['mu.rowid']['checked']))
 	{
-		print '<td class="center">'.yn($obj->no_email).'</td>';
+		print '<td class="center">'.yn(!is_null($obj->no_email) ? 1 : 0).'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	if (!empty($conf->socialnetworks->enabled)) {
