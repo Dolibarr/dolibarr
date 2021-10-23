@@ -609,20 +609,18 @@ if ($action == 'create') {    // Create. Seems to no be used
 
 						$object->lines[$i]->fetch_optionals();
 
-						if ($action == 'create_delivery') {
-							$srcLine = new ExpeditionLigne($db);
+					if ($action == 'create_delivery') {
+						$srcLine = new ExpeditionLigne($db);
 
+						$extrafields->fetch_name_optionals_label($srcLine->table_element);
+						$srcLine->id = $expedition->lines[$i]->id;
+						$srcLine->fetch_optionals();
+
+						$object->lines[$i]->array_options = array_merge($object->lines[$i]->array_options, $srcLine->array_options);
+					} else {
+							$srcLine = new DeliveryLine($db);
 							$extrafields->fetch_name_optionals_label($srcLine->table_element);
-							$srcLine->id = $expedition->lines[$i]->id;
-							$srcLine->fetch_optionals();
-
-							$object->lines[$i]->array_options = array_merge($object->lines[$i]->array_options, $srcLine->array_options);
-						}
-						else {
-						    $srcLine = new DeliveryLine($db);
-						    $extrafields->fetch_name_optionals_label($srcLine->table_element);
-
-						}
+					}
 						print $object->lines[$i]->showOptionals($extrafields, 'view', array('style' => 'class="oddeven"', 'colspan' => $colspan), '');
 					//}
 				}

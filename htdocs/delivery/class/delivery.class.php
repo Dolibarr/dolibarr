@@ -282,14 +282,14 @@ class Delivery extends CommonObject
 		if (!$this->db->query($sql)) {
 			$error++;
 		}
-		
+
 		$id = $this->db->last_insert_id(MAIN_DB_PREFIX."deliverydet");
-		
+
 		if (is_array($array_options) && count($array_options) > 0) {
-		    $line = new DeliveryLine($this->db);
-		    $line->id = $id;
-		    $line->array_options = $array_options;
-		    $result = $line->insertExtraFields();
+			$line = new DeliveryLine($this->db);
+			$line->id = $id;
+			$line->array_options = $array_options;
+			$result = $line->insertExtraFields();
 		}
 
 		if ($error == 0) {
@@ -541,7 +541,7 @@ class Delivery extends CommonObject
 			$line->qty               = $expedition->lines[$i]->qty_shipped;
 			$line->fk_product        = $expedition->lines[$i]->fk_product;
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($expedition->lines[$i]->array_options) && count($expedition->lines[$i]->array_options) > 0) { // For avoid conflicts if trigger used
-			    $line->array_options = $expedition->lines[$i]->array_options;
+				$line->array_options = $expedition->lines[$i]->array_options;
 			}
 			$this->lines[$i] = $line;
 		}
@@ -608,13 +608,13 @@ class Delivery extends CommonObject
 	{
 		global $conf;
 
-	    	$num = count($this->lines);
+			$num = count($this->lines);
 		$line = new DeliveryLine($this->db);
 
 		$line->origin_id = $origin_id;
 		$line->qty = $qty;
 		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) { // For avoid conflicts if trigger used
-		    $line->array_options = $array_options;
+			$line->array_options = $array_options;
 		}
 		$this->lines[$num] = $line;
 	}
