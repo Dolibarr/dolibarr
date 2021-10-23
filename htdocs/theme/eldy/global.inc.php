@@ -2266,7 +2266,7 @@ img.photorefnoborder {
 /* Menu top et 1ere ligne tableau                                                 */
 /* ============================================================================== */
 
-div#id-top {
+#id-top {
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
 	display:none;
 <?php } else { ?>

@@ -1820,7 +1820,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 
 		print "\n".'<!-- Start top horizontal -->'."\n";
 
-		print '<div class="side-nav-vert'.(GETPOST('dol_invisible_topmenu', 'int') ? ' hidden' : '').'"><div id="id-top">'; // dol_invisible_topmenu differs from dol_hide_topmenu: dol_invisible_topmenu means we output menu but we make it invisible.
+		print '<header id="id-top" class="side-nav-vert'.(GETPOST('dol_invisible_topmenu', 'int') ? ' hidden' : '').'">'; // dol_invisible_topmenu differs from dol_hide_topmenu: dol_invisible_topmenu means we output menu but we make it invisible.
 
 		// Show menu entries
 		print '<div id="tmenu_tooltip'.(empty($conf->global->MAIN_MENU_INVERT) ? '' : 'invert').'" class="tmenu">'."\n";
@@ -2004,7 +2004,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 
 		print "</div>\n"; // end div class="login_block"
 
-		print '</div></div>';
+		print '</header>';
 
 		print '<div style="clear: both;"></div>';
 		print "<!-- End top horizontal menu -->\n\n";
