@@ -613,13 +613,9 @@ div#moreinfo, div#infowarehouse {
 
 /* For small screens */
 
-@media screen and (max-width: 1024px) {
-	.topnav input[type="text"] {
-		max-width: 150px;
-	}
-}
 
-@media screen and (max-width: 767px) {
+
+@media screen and (max-width: 1024px) {
 	.header {
 		position: sticky;
 		top: 0;
