@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 $langs->loadLangs(array('bookmarks', 'other'));
 
 // Security check
-if (!$user->rights->bookmark->lire) {
+if (empty($user->rights->bookmark->lire)) {
 	restrictedArea($user, 'bookmarks');
 }
 
