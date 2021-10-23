@@ -221,8 +221,7 @@ if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_S
 }
 
 
-//print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 /*
@@ -318,8 +317,7 @@ if (count($companystatic->SupplierCategories)) {
 }
 
 
-//print "</td></tr></table>\n";
-print '</div></div></div>';
+print '</div></div>';
 
 // End of page
 llxFooter();

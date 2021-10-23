@@ -46,7 +46,7 @@ $mode = GETPOST("mode") ? GETPOST("mode") : 'customer';
 if ($mode == 'customer' && !$user->rights->facture->lire) {
 	accessforbidden();
 }
-if ($mode == 'supplier' && !$user->rights->fournisseur->facture->lire) {
+if ($mode == 'supplier' && empty($user->rights->fournisseur->facture->lire)) {
 	accessforbidden();
 }
 
@@ -392,7 +392,7 @@ foreach ($data as $val) {
 print '</table>';
 print '</div>';
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 // Show graphs
@@ -409,7 +409,7 @@ if ($mesg) {
 print '</td></tr></table>';
 
 
-print '</div></div></div>';
+print '</div></div>';
 print '<div style="clear:both"></div>';
 
 

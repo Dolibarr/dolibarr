@@ -4634,7 +4634,6 @@ if ($action == 'create') {
 
 	print '</div>';
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 
 	print '<!-- amounts -->'."\n";
 	print '<table class="border bordertop tableforfield centpercent">';
@@ -5198,7 +5197,6 @@ if ($action == 'create') {
 
 	print '</div>';
 	print '</div>';
-	print '</div>';
 
 	print '<div class="clearboth"></div><br>';
 
@@ -5607,14 +5605,14 @@ if ($action == 'create') {
 			print showOnlinePaymentUrl('invoice', $object->ref).'<br>';
 		}
 
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		print '</div><div class="fichehalfright">';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
 		$somethingshown = $formactions->showactions($object, 'invoice', $socid, 1);
 
-		print '</div></div></div>';
+		print '</div></div>';
 	}
 
 

@@ -1559,8 +1559,6 @@ if ($action == 'create') {
 		}
 	}
 
-	$object = new Propal($db);
-
 	print '<form name="addprop" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
@@ -2398,7 +2396,6 @@ if ($action == 'create') {
 
 	print '</div>';
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border tableforfield centpercent">';
@@ -2457,7 +2454,6 @@ if ($action == 'create') {
 		$formmargin->displayMarginInfos($object);
 	}
 
-	print '</div>';
 	print '</div>';
 	print '</div>';
 
@@ -2690,14 +2686,14 @@ if ($action == 'create') {
 			print showOnlineSignatureUrl('proposal', $object->ref).'<br>';
 		}
 
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		print '</div><div class="fichehalfright">';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
 		$somethingshown = $formactions->showactions($object, 'propal', $socid, 1);
 
-		print '</div></div></div>';
+		print '</div></div>';
 	}
 
 	// Presend form

@@ -1157,7 +1157,7 @@ if ($action == 'create' || $action == 'presend') {
 
 
 		// Fin colonne gauche et début colonne droite
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		print '</div><div class="fichehalfright">';
 
 
 		// View Original message
@@ -1357,7 +1357,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '</div>';
 		}
 
-		print '</div></div></div>';
+		print '</div></div>';
 		print '<div style="clear:both"></div>';
 
 		print dol_get_fiche_end();
@@ -1564,7 +1564,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '</div>';
 
 			if (empty($conf->global->TICKET_SHOW_MESSAGES_ON_CARD)) {
-				print '<div class="fichehalfright"><div class="ficheaddleft">';
+				print '<div class="fichehalfright">';
 
 				$MAXEVENT = 10;
 
@@ -1579,7 +1579,7 @@ if ($action == 'create' || $action == 'presend') {
 				$formactions = new FormActions($db);
 				$somethingshown = $formactions->showactions($object, 'ticket', $socid, 1, 'listactions', $MAXEVENT, '', $morehtmlcenter);
 
-				print '</div></div>';
+				print '</div>';
 			}
 
 			print '</div>';

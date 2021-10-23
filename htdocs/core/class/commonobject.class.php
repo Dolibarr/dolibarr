@@ -6080,7 +6080,6 @@ abstract class CommonObject
 			}
 
 			$sql .= ")";
-
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->error = $this->db->lasterror();
@@ -6332,6 +6331,11 @@ abstract class CommonObject
 						$this->array_options["options_".$key] = null;
 					} else {
 						$this->array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key]);
+					}
+					break;
+				case 'boolean':
+					if (empty($this->array_options["options_".$key])) {
+						$this->array_options["options_".$key] = null;
 					}
 					break;
 				/*
@@ -7693,7 +7697,7 @@ abstract class CommonObject
 						$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
 					}
 
-					$colspan = '';
+					$colspan = 0;
 					if (is_array($params) && count($params) > 0 && $display_type=='card') {
 						if (array_key_exists('cols', $params)) {
 							$colspan = $params['cols'];
@@ -7706,6 +7710,7 @@ abstract class CommonObject
 							}
 						}
 					}
+					$colspan = intval($colspan);
 
 					switch ($mode) {
 						case "view":
@@ -7772,7 +7777,7 @@ abstract class CommonObject
 						$html_id = (empty($this->id) ? '' : 'extrarow-'.$this->element.'_'.$key.'_'.$this->id);
 						if ($display_type=='card') {
 							if (!empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0) {
-								$colspan = '0';
+								$colspan = 0;
 							}
 
 							if ($action == 'selectlines') {

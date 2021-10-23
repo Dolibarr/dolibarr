@@ -392,7 +392,7 @@ if ($result > 0) {
 		$somethingshown = $formfile->numoffiles;
 	}
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 	//print '<br>';
 
 	// List of actions on element
@@ -401,7 +401,7 @@ if ($result > 0) {
 	$somethingshown = $formactions->showactions($object,'supplier_payment',$socid,1,'listaction'.($genallowed?'largetitle':''));
 	*/
 
-	print '</div></div></div>';
+	print '</div></div>';
 
 	// Presend form
 	$modelmail = ''; //TODO: Add new 'payment receipt' model in email models

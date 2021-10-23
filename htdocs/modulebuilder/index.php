@@ -1542,7 +1542,8 @@ if ($dirins && $action == 'generatepackage') {
 			if (!dol_is_dir($dirofmodule)) {
 				dol_mkdir($dirofmodule);
 			}
-			$result = dol_compress_dir($dir, $outputfilezip, 'zip', '', $modulelowercase);
+			// Note: We exclude /bin/ to not include the already generated zip
+			$result = dol_compress_dir($dir, $outputfilezip, 'zip', '/\/bin\//', $modulelowercase);
 		} else {
 			$result = -1;
 		}
@@ -1845,9 +1846,11 @@ if (is_array($listofmodules) && count($listofmodules) > 0) {
 			$linktoenabledisable .= ' &nbsp; <a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 8px"').'</a>';
 		}
 	} else {
-		$linktoenabledisable .= '<a class="reposition asetresetmodule valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=set&token='.newToken().'&value=mod'.$module.$param.'">';
-		$linktoenabledisable .= img_picto($langs->trans("ModuleIsNotActive", $urltomodulesetup), 'switch_off', 'style="padding-right: 8px"', false, 0, 0, '', 'classfortooltip', 1);
-		$linktoenabledisable .= "</a>\n";
+		if (!empty($moduleobj)) {
+			$linktoenabledisable .= '<a class="reposition asetresetmodule valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=set&token='.newToken().'&value=mod'.$module.$param.'">';
+			$linktoenabledisable .= img_picto($langs->trans("ModuleIsNotActive", $urltomodulesetup), 'switch_off', 'style="padding-right: 8px"', false, 0, 0, '', 'classfortooltip', 1);
+			$linktoenabledisable .= "</a>\n";
+		}
 	}
 
 	// Loop to show tab of each module
@@ -3589,7 +3592,7 @@ if ($module == 'initmodule') {
 						print '</tr>';
 					}
 				} else {
-					print '<tr><td><span class="fa fa-file-o"></span> '.$langs->trans("CLIFile").' : <span class="opacitymedium">'.$langs->trans("FileNotYetGenerated");'</span>';
+					print '<tr><td><span class="fa fa-file-o"></span> '.$langs->trans("CLIFile").' : <span class="opacitymedium">'.$langs->trans("FileNotYetGenerated"); '</span>';
 					print '</td><td><a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initcli&token='.newToken().'&format=php">'.img_picto('Generate', 'generate', 'class="paddingleft"').'</a>';
 					print '</td></tr>';
 				}
