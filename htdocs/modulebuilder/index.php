@@ -1542,6 +1542,13 @@ if ($dirins && $action == 'generatepackage') {
 			if (!dol_is_dir($dirofmodule)) {
 				dol_mkdir($dirofmodule);
 			}
+
+			//#14249 clean up bin directory before building new zip
+			$binContent = dol_dir_list($dirofmodule);
+			foreach ($binContent as $binKey => $binFile) {
+				dol_delete_file($binFile['fullname']);
+			}
+
 			$result = dol_compress_dir($dir, $outputfilezip, 'zip', '', $modulelowercase);
 		} else {
 			$result = -1;
