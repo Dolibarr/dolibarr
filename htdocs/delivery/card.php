@@ -114,7 +114,7 @@ if ($action == 'add') {
 		$idl = "idl".$i;
 		$qtytouse = price2num(GETPOST($qty));
 		if ($qtytouse > 0) {
-			$object->addline(GETPOST($idl), price2num($qtytouse));
+			$object->addline(GETPOST($idl), price2num($qtytouse), $arrayoptions);
 		}
 	}
 
@@ -603,7 +603,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 					print "</tr>";
 
 					// Display lines extrafields
-					if (!empty($extrafields)) {
+					//if (!empty($extrafields)) {
 						$colspan = 2;
 						$mode = ($object->statut == 0) ? 'edit' : 'view';
 
@@ -618,8 +618,13 @@ if ($action == 'create') {    // Create. Seems to no be used
 
 							$object->lines[$i]->array_options = array_merge($object->lines[$i]->array_options, $srcLine->array_options);
 						}
-						print $object->lines[$i]->showOptionals($extrafields, $mode, array('style' => 'class="oddeven"', 'colspan' => $colspan), $i);
-					}
+						else {
+						    $srcLine = new DeliveryLine($db);
+						    $extrafields->fetch_name_optionals_label($srcLine->table_element);
+
+						}
+						print $object->lines[$i]->showOptionals($extrafields, 'view', array('style' => 'class="oddeven"', 'colspan' => $colspan), '');
+					//}
 				}
 
 				$i++;
