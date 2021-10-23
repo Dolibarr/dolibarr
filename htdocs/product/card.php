@@ -1221,7 +1221,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if ($showbarcode) {
 			print '<tr><td>'.$langs->trans('BarcodeType').'</td><td>';
 			if (GETPOSTISSET('fk_barcode_type')) {
-				$fk_barcode_type = GETPOST('fk_barcode_type')?:0;
+				$fk_barcode_type = GETPOST('fk_barcode_type')?GETPOST('fk_barcode_type'):0;
 			} else {
 				if (empty($fk_barcode_type) && !empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) {
 					$fk_barcode_type = getDolGlobalInt("PRODUIT_DEFAULT_BARCODE_TYPE");
