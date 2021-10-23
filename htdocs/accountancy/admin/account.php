@@ -38,6 +38,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
 $massaction = GETPOST('massaction', 'aZ09');
+$optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'accountingaccountlist'; // To manage different context of search
 
 $search_account = GETPOST('search_account', 'alpha');
