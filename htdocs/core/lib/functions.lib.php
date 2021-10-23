@@ -50,7 +50,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 function getDolGlobalString($key, $default = '')
 {
 	global $conf;
-	// return $conf->global->$key ?? '';
+	// return $conf->global->$key ?? $default;
 	return (string) (empty($conf->global->$key) ? $default : $conf->global->$key);
 }
 

@@ -70,6 +70,7 @@ $search_onpurchase = GETPOST('search_onpurchase', 'alpha');
 $accounting_product_mode = GETPOST('accounting_product_mode', 'alpha');
 $btn_changeaccount = GETPOST('changeaccount', 'alpha');
 $btn_changetype = GETPOST('changetype', 'alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
 
 if (empty($accounting_product_mode)) {
 	$accounting_product_mode = 'ACCOUNTANCY_SELL';
