@@ -2515,7 +2515,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td>';
 			print '<td>';
 			print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
-			print '</td>';
 			$tmpcheck = $object->check_codeclient();
 			if ($tmpcheck != 0 && $tmpcheck != -5) {
 				print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
