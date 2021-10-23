@@ -718,7 +718,7 @@ foreach ($accounts as $key => $type) {
 
 	if (empty($total[$objecttmp->currency_code])) {
 		$total[$objecttmp->currency_code] = $solde;
-	}else{
+	} else {
 		$total[$objecttmp->currency_code] += $solde;
 	}
 
