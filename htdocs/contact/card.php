@@ -296,7 +296,7 @@ if (empty($reshook)) {
 		if (empty($error) && $id > 0) {
 			$db->commit();
 			if (!empty($backtopage)) {
-				$url = $backtopage;
+				$url = str_replace('__ID__', $id, $backtopage);
 			} else {
 				$url = 'card.php?id='.$id;
 			}
