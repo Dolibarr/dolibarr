@@ -207,7 +207,7 @@ class FormMargin
 			return;
 		}
 
-		if (!$user->rights->margins->liretous) {
+		if (empty($user->rights->margins->liretous)) {
 			return;
 		}
 
