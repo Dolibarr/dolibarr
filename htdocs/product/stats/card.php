@@ -432,7 +432,7 @@ if ($result || empty($id)) {
 			if ($i % 2 == 0) {
 				print "\n".'<div class="fichecenter"><div class="fichehalfleft">'."\n";
 			} else {
-				print "\n".'<div class="fichehalfright"><div class="ficheaddleft">'."\n";
+				print "\n".'<div class="fichehalfright">'."\n";
 			}
 
 			// Date generation
@@ -464,7 +464,7 @@ if ($result || empty($id)) {
 			if ($i % 2 == 0) {
 				print "\n".'</div>'."\n";
 			} else {
-				print "\n".'</div></div></div>';
+				print "\n".'</div></div>';
 				print '<div class="clear"><div class="fichecenter"><br></div></div>'."\n";
 			}
 

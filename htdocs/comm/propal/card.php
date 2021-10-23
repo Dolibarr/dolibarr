@@ -2688,14 +2688,14 @@ if ($action == 'create') {
 			print showOnlineSignatureUrl('proposal', $object->ref).'<br>';
 		}
 
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		print '</div><div class="fichehalfright">';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
 		$somethingshown = $formactions->showactions($object, 'propal', $socid, 1);
 
-		print '</div></div></div>';
+		print '</div></div>';
 	}
 
 	// Presend form

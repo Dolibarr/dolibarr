@@ -2758,13 +2758,13 @@ if ($action != 'presend') {
 	}
 	*/
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 	// List of actions on element
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 	$formactions = new FormActions($db);
 	$somethingshown = $formactions->showactions($object, 'expensereport', null);
 
-	print '</div></div></div>';
+	print '</div></div>';
 }
 
 // Presend form

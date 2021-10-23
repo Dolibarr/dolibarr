@@ -146,7 +146,7 @@ if (!empty($conf->commande->enabled)) {
 }
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 $max = 5;
@@ -414,7 +414,7 @@ if (!empty($conf->commande->enabled)) {
 }
 
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardOrders', $parameters, $object); // Note that $action and $object may have been modified by hook
