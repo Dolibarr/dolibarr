@@ -1172,8 +1172,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$tooltip .= '<br>'.$langs->trans("GenericMaskCodes3");
 				$tooltip .= '<br>'.$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
 				$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5");
-				if (($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced')
-					|| ($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced')) {
+				if ((!empty($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS) && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced')
+					|| (!empty($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS) && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced')) {
 					print '<tr><td id="mask_option">'.$langs->trans("ManageLotMask").'</td>';
 					$inherited_mask_lot = $conf->global->LOT_ADVANCED_MASK;
 					$inherited_mask_sn = $conf->global->SN_ADVANCED_MASK;
@@ -1221,10 +1221,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if ($showbarcode) {
 			print '<tr><td>'.$langs->trans('BarcodeType').'</td><td>';
 			if (GETPOSTISSET('fk_barcode_type')) {
-				$fk_barcode_type = GETPOST('fk_barcode_type');
+				$fk_barcode_type = GETPOST('fk_barcode_type')?:0;
 			} else {
 				if (empty($fk_barcode_type) && !empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) {
-					$fk_barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
+					$fk_barcode_type = getDolGlobalInt("PRODUIT_DEFAULT_BARCODE_TYPE");
+				} else {
+					$fk_barcode_type=0;
 				}
 			}
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
