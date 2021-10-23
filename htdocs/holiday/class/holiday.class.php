@@ -701,6 +701,7 @@ class Holiday extends CommonObject
 	public function validate($user = null, $notrigger = 0)
 	{
 		global $conf, $langs;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		$error = 0;
 
 		// Define new ref
@@ -739,6 +740,44 @@ class Holiday extends CommonObject
 				// End call triggers
 			}
 		}
+
+		if (!$error) {
+			$this->oldref = $this->ref;
+
+			// Rename directory if dir was a temporary ref
+			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
+				// Now we rename also files into index
+				$sql = 'UPDATE ' . MAIN_DB_PREFIX . "ecm_files set filename = CONCAT('" . $this->db->escape($this->newref) . "', SUBSTR(filename, " . (strlen($this->ref) + 1) . ")), filepath = 'holiday/" . $this->db->escape($this->newref) . "'";
+				$sql .= " WHERE filename LIKE '" . $this->db->escape($this->ref) . "%' AND filepath = 'holiday/" . $this->db->escape($this->ref) . "' and entity = " . ((int) $conf->entity);
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->error = $this->db->lasterror();
+				}
+
+				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
+				$oldref = dol_sanitizeFileName($this->ref);
+				$newref = dol_sanitizeFileName($num);
+				$dirsource = $conf->holiday->multidir_output[$this->entity] . '/' . $oldref;
+				$dirdest = $conf->holiday->multidir_output[$this->entity] . '/' . $newref;
+				if (!$error && file_exists($dirsource)) {
+					dol_syslog(get_class($this) . "::validate rename dir " . $dirsource . " into " . $dirdest);
+					if (@rename($dirsource, $dirdest)) {
+						dol_syslog("Rename ok");
+						// Rename docs starting with $oldref with $newref
+						$listoffiles = dol_dir_list($dirdest, 'files', 1, '^' . preg_quote($oldref, '/'));
+						foreach ($listoffiles as $fileentry) {
+							$dirsource = $fileentry['name'];
+							$dirdest = preg_replace('/^' . preg_quote($oldref, '/') . '/', $newref, $dirsource);
+							$dirsource = $fileentry['path'] . '/' . $dirsource;
+							$dirdest = $fileentry['path'] . '/' . $dirdest;
+							@rename($dirsource, $dirdest);
+						}
+					}
+				}
+			}
+		}
+
 
 		// Commit or rollback
 		if ($error) {

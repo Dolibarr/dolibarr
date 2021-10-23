@@ -1295,8 +1295,8 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Type")), null, 'errors');
 		}
-
 	}
+
 	if (!$error) {
 		$addfieldentry = array(
 			'name'=>GETPOST('propname', 'aZ09'),

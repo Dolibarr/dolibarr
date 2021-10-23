@@ -1945,7 +1945,7 @@ class Products extends DolibarrApi
 
 		unset($object->supplierprices);	// Mut use another API to get them
 
-		if(!DolibarrApiAccess::$user->rights->stock->lire){
+		if (empty(DolibarrApiAccess::$user->rights->stock->lire)) {
 			unset($object->stock_reel);
 			unset($object->stock_theorique);
 		}
