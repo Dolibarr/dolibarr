@@ -1005,6 +1005,7 @@ class Form
 		$langs->load("dict");
 
 		$out = '';
+		$moreattrib = '';
 		$incotermArray = array();
 
 		$sql = "SELECT rowid, code";
@@ -1444,7 +1445,7 @@ class Form
 						$label .= ' ('.$obj->name_alias.')';
 					}
 
-					if ($conf->global->SOCIETE_SHOW_VAT_IN_LIST && !empty($obj->tva_intra)) {
+					if (!empty($conf->global->SOCIETE_SHOW_VAT_IN_LIST) && !empty($obj->tva_intra)) {
 						$label .= ' - '.$obj->tva_intra.'';
 					}
 
@@ -8088,7 +8089,7 @@ class Form
 			}
 		} else {								// There is no list of fields already customized for user
 			foreach ($array as $key => $val) {
-				if ($array[$key]['checked'] < 0) {
+				if (!empty($array[$key]['checked']) && $array[$key]['checked'] < 0) {
 					$array[$key]['checked'] = 0;
 				}
 			}
@@ -8116,7 +8117,7 @@ class Form
 				}
 
 				// Note: $val['checked'] <> 0 means we must show the field into the combo list
-				$listoffieldsforselection .= '<li><input type="checkbox" id="checkbox'.$key.'" value="'.$key.'"'.((empty($val['checked']) && $val['checked'] != '-1') ? '' : ' checked="checked"').'/><label for="checkbox'.$key.'">'.dol_escape_htmltag($langs->trans($val['label'])).'</label></li>';
+				$listoffieldsforselection .= '<li><input type="checkbox" id="checkbox'.$key.'" value="'.$key.'"'.((empty($val['checked']) || $val['checked'] == '-1') ? '' : ' checked="checked"').'/><label for="checkbox'.$key.'">'.dol_escape_htmltag($langs->trans($val['label'])).'</label></li>';
 				$listcheckedstring .= (empty($val['checked']) ? '' : $key.',');
 			}
 		}
