@@ -621,7 +621,6 @@ if ($id > 0) {
 
 		print '</div>';
 		print '<div class="fichehalfright">';
-		print '<div class="ficheaddleft">';
 
 		/*
 		 * Payments
@@ -693,7 +692,6 @@ if ($id > 0) {
 			dol_print_error($db);
 		}
 
-		print '</div>';
 		print '</div>';
 		print '</div>';
 

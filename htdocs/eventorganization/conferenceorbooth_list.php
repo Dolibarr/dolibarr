@@ -282,13 +282,13 @@ if ($projectid > 0) {
 	// Title
 	$morehtmlref .= $project->title;
 	// Thirdparty
-	if ($project->thirdparty->id > 0) {
+	if (isset($project->thirdparty->id) && $project->thirdparty->id > 0) {
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$project->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref .= '</div>';
 
 	// Define a complementary filter for search of next/prev ref.
-	if (!$user->rights->project->all->lire) {
+	if (empty($user->rights->project->all->lire)) {
 		$objectsListId = $project->getProjectsAuthorizedForUser($user, 0, 0);
 		$project->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 	}
@@ -370,7 +370,6 @@ if ($projectid > 0) {
 
 	print '</div>';
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border tableforfield centpercent">';
@@ -465,7 +464,6 @@ if ($projectid > 0) {
 
 	print '</div>';
 	print '</div>';
-	print '</div>';
 
 	print '<div class="clearboth"></div>';
 
@@ -487,7 +485,7 @@ $sql .= $object->getFieldList('t');
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key.', ' : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks

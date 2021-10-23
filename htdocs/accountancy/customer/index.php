@@ -43,7 +43,7 @@ if (empty($conf->accounting->enabled)) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->rights->accounting->bind->write) {
+if (empty($user->rights->accounting->bind->write)) {
 	accessforbidden();
 }
 
@@ -73,12 +73,23 @@ $action = GETPOST('action', 'aZ09');
 
 $chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
 
+// Security check
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
+
 
 /*
  * Actions
  */
 
-if ($action == 'clean' || $action == 'validatehistory') {
+if (($action == 'clean' || $action == 'validatehistory') && $user->rights->accounting->bind->write) {
 	// Clean database
 	$db->begin();
 	$sql1 = "UPDATE ".MAIN_DB_PREFIX."facturedet as fd";
@@ -165,6 +176,7 @@ if ($action == 'validatehistory') {
 	}
 
 	dol_syslog('htdocs/accountancy/customer/index.php');
+
 	$result = $db->query($sql);
 	if (!$result) {
 		$error++;
@@ -209,12 +221,11 @@ if ($action == 'validatehistory') {
 			$product_static->accountancy_code_buy_intra = $objp->code_buy_intra;
 			$product_static->accountancy_code_buy_export = $objp->code_buy_export;
 			$product_static->tva_tx = $objp->tva_tx_prod;
-			$product_static->tva_tx = $objp->tva_tx_prod;
 
 			$facture_static->ref = $objp->ref;
 			$facture_static->id = $objp->facid;
 			$facture_static->type = $objp->ftype;
-			$facture_static->datef = $objp->datef;
+			$facture_static->date = $objp->datef;
 
 			$facture_static_det->id = $objp->rowid;
 			$facture_static_det->total_ht = $objp->total_ht;
@@ -223,7 +234,7 @@ if ($action == 'validatehistory') {
 			$facture_static_det->product_type = $objp->type_l;
 			$facture_static_det->desc = $objp->description;
 
-			$accoutinAccountArray = array(
+			$accountingAccountArray = array(
 				'dom'=>$objp->aarowid,
 				'intra'=>$objp->aarowid_intra,
 				'export'=>$objp->aarowid_export,
@@ -232,7 +243,7 @@ if ($action == 'validatehistory') {
 			$code_sell_p_notset = '';
 			$code_sell_t_notset = '';
 
-			$return=$accountingAccount->getAccountingCodeToBind($thirdpartystatic, $mysoc, $product_static, $facture_static, $facture_static_det, $accoutinAccountArray);
+			$return=$accountingAccount->getAccountingCodeToBind($thirdpartystatic, $mysoc, $product_static, $facture_static, $facture_static_det, $accountingAccountArray, 'customer');
 			if (!is_array($return) && $return<0) {
 				setEventMessage($accountingAccount->error, 'errors');
 			} else {

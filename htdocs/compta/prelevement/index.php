@@ -98,7 +98,7 @@ $sql .= " pfd.date_demande, pfd.amount,";
 $sql .= " s.nom as name, s.email, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
@@ -111,7 +111,7 @@ if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
 $sql .= " AND pfd.traite = 0";
 $sql .= " AND pfd.ext_payment_id IS NULL";
 $sql .= " AND pfd.fk_facture = f.rowid";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
@@ -174,7 +174,7 @@ if ($resql) {
 }
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 /*
@@ -235,7 +235,7 @@ if ($result) {
 }
 
 
-print '</div></div></div>';
+print '</div></div>';
 
 // End of page
 llxFooter();

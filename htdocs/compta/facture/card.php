@@ -3857,6 +3857,15 @@ if ($action == 'create') {
 	// $resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
 	$resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
 
+	// Multicurrency
+	if (!empty($conf->multicurrency->enabled)) {
+		$multicurrency_totalpaye = $object->getSommePaiement(1);
+		$multicurrency_totalcreditnotes = $object->getSumCreditNotesUsed(1);
+		$multicurrency_totaldeposits = $object->getSumDepositsUsed(1);
+		$multicurrency_resteapayer = price2num($object->multicurrency_total_ttc - $multicurrency_totalpaye - $multicurrency_totalcreditnotes - $multicurrency_totaldeposits, 'MT');
+		$resteapayer = price2num($multicurrency_resteapayer / $object->multicurrency_tx, 'MT');
+	}
+
 	if ($object->paye) {
 		$resteapayer = 0;
 	}
@@ -4625,7 +4634,6 @@ if ($action == 'create') {
 
 	print '</div>';
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 
 	print '<!-- amounts -->'."\n";
 	print '<table class="border bordertop tableforfield centpercent">';
@@ -5189,7 +5197,6 @@ if ($action == 'create') {
 
 	print '</div>';
 	print '</div>';
-	print '</div>';
 
 	print '<div class="clearboth"></div><br>';
 
@@ -5598,14 +5605,14 @@ if ($action == 'create') {
 			print showOnlinePaymentUrl('invoice', $object->ref).'<br>';
 		}
 
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		print '</div><div class="fichehalfright">';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
 		$somethingshown = $formactions->showactions($object, 'invoice', $socid, 1);
 
-		print '</div></div></div>';
+		print '</div></div>';
 	}
 
 

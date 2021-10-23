@@ -1170,6 +1170,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
                         	$("#typent_id").change();
                         	$("#effectif_id").val(id_ef15);
                         	$("#effectif_id").change();
+							/* Force to recompute the width of a select2 field when it was hidden and then shown programatically */
+							if ($("#civility_id").data("select2")) {
+								$("#civility_id").select2({width: "resolve"});
+							}
                         	$("#TypeName").html(document.formsoc.LastName.value);
                         	document.formsoc.private.value=1;
                         });
@@ -2718,10 +2722,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</table>';
 		print '</div>';
 
-		print '<div class="fichehalfright"><div class="ficheaddleft">';
+		print '<div class="fichehalfright">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield center">';
 
 		// Tags / categories
 		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
@@ -2891,7 +2895,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</table>';
 		print '</div>';
 
-		print '</div></div>';
+		print '</div>';
 		print '<div style="clear:both"></div>';
 
 		print dol_get_fiche_end();
@@ -2980,7 +2984,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$result = show_subsidiaries($conf, $langs, $db, $object);
 			}
 
-			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+			print '</div><div class="fichehalfright">';
 
 			$MAXEVENT = 10;
 
@@ -2991,7 +2995,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, '', $socid, 1, '', $MAXEVENT, '', $morehtmlcenter); // Show all action for thirdparty
 
-			print '</div></div></div>';
+			print '</div></div>';
 
 			if (!empty($conf->global->MAIN_DUPLICATE_CONTACTS_TAB_ON_MAIN_CARD)) {
 				// Contacts list

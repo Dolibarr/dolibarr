@@ -94,7 +94,7 @@ if ($action == 'addcontact') {
 		foreach ($task_array as $task) {
 			$task_already_affected=false;
 			$personsLinked = $task->liste_contact(-1, $source);
-			if (!is_array($personsLinked) && coun($personsLinked) < 0) {
+			if (!is_array($personsLinked) && count($personsLinked) < 0) {
 				setEventMessage($object->error, 'errors');
 			} else {
 				foreach ($personsLinked as $person) {
@@ -406,10 +406,9 @@ if ($id > 0 || !empty($ref)) {
 
 	print '</div>';
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border tableforfield" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Description
 	print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
@@ -425,7 +424,6 @@ if ($id > 0 || !empty($ref)) {
 
 	print '</table>';
 
-	print '</div>';
 	print '</div>';
 	print '</div>';
 

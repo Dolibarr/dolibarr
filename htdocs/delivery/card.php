@@ -689,11 +689,11 @@ if ($action == 'create') {    // Create. Seems to no be used
 			}
 
 
-			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+			print '</div><div class="fichehalfright">';
 
 			// Nothing on right
 
-			print '</div></div></div>';
+			print '</div></div>';
 		} else {
 			/* Expedition non trouvee */
 			print "Expedition inexistante ou acces refuse";

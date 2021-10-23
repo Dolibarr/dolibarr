@@ -48,7 +48,7 @@ $note = GETPOST('note', 'alpha');
 $typeid = (int) GETPOST('typeid', 'int');
 $amount = price2num(GETPOST('amount', 'alpha'), 'MT');
 
-if (!$user->rights->adherent->cotisation->lire) {
+if (empty($user->rights->adherent->cotisation->lire)) {
 	 accessforbidden();
 }
 
@@ -388,7 +388,7 @@ if ($rowid && $action != 'edit') {
 	if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
 	*/
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 
 	// List of actions on element
 	/*
@@ -397,7 +397,7 @@ if ($rowid && $action != 'edit') {
 	$somethingshown = $formactions->showactions($object, $object->element, $socid, 1);
 	*/
 
-	print '</div></div></div>';
+	print '</div></div>';
 }
 
 // End of page

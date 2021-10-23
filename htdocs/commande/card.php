@@ -1494,13 +1494,13 @@ if ($action == 'create' && $usercancreate) {
 			$cond_reglement_id	= (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0)); // TODO maybe add default value option
 			$mode_reglement_id	= (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
 			$fk_account         = (!empty($objectsrc->fk_account) ? $objectsrc->fk_account : (!empty($soc->fk_account) ? $soc->fk_account : 0));
-			$availability_id = (!empty($objectsrc->availability_id) ? $objectsrc->availability_id : (!empty($soc->availability_id) ? $soc->availability_id : 0));
+			$availability_id = (!empty($objectsrc->availability_id) ? $objectsrc->availability_id : 0);
 			$shipping_method_id = (!empty($objectsrc->shipping_method_id) ? $objectsrc->shipping_method_id : (!empty($soc->shipping_method_id) ? $soc->shipping_method_id : 0));
 			$warehouse_id       = (!empty($objectsrc->warehouse_id) ? $objectsrc->warehouse_id : (!empty($soc->warehouse_id) ? $soc->warehouse_id : 0));
 			$demand_reason_id = (!empty($objectsrc->demand_reason_id) ? $objectsrc->demand_reason_id : (!empty($soc->demand_reason_id) ? $soc->demand_reason_id : 0));
 			$remise_percent		= (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_percent) ? $soc->remise_percent : 0));
 			$remise_absolue		= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
-			$dateorder = empty($conf->global->MAIN_AUTOFILL_DATE_ORDER) ?-1 : '';
+			$dateorder = empty($conf->global->MAIN_AUTOFILL_DATE_ORDER) ? -1 : '';
 
 			$date_delivery = (!empty($objectsrc->delivery_date) ? $objectsrc->delivery_date : '');
 			if (empty($date_delivery)) {
@@ -1526,7 +1526,7 @@ if ($action == 'create' && $usercancreate) {
 		$cond_reglement_id  = $soc->cond_reglement_id;
 		$mode_reglement_id  = $soc->mode_reglement_id;
 		$fk_account         = $soc->fk_account;
-		$availability_id    = $soc->availability_id;
+		$availability_id    = 0;
 		$shipping_method_id = $soc->shipping_method_id;
 		$warehouse_id       = $soc->warehouse_id;
 		$demand_reason_id   = $soc->demand_reason_id;
@@ -2367,7 +2367,6 @@ if ($action == 'create' && $usercancreate) {
 
 		print '</div>';
 		print '<div class="fichehalfright">';
-		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border tableforfield centpercent">';
@@ -2424,7 +2423,6 @@ if ($action == 'create' && $usercancreate) {
 		}
 
 
-		print '</div>';
 		print '</div>';
 		print '</div>'; // Close fichecenter
 
@@ -2663,14 +2661,14 @@ if ($action == 'create' && $usercancreate) {
 				print showOnlinePaymentUrl('order', $object->ref).'<br>';
 			}
 
-			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+			print '</div><div class="fichehalfright">';
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'order', $socid, 1);
 
-			print '</div></div></div>';
+			print '</div></div>';
 		}
 
 		// Presend form

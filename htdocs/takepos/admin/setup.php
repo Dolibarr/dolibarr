@@ -256,8 +256,7 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>';
 print $langs->trans("NumberOfTerminals");
 print '<td colspan="2">';
-$array = array(1=>"1", 2=>"2", 3=>"3", 4=>"4", 5=>"5", 6=>"6", 7=>"7", 8=>"8", 9=>"9");
-print $form->selectarray('TAKEPOS_NUM_TERMINALS', $array, (empty($conf->global->TAKEPOS_NUM_TERMINALS) ? '0' : $conf->global->TAKEPOS_NUM_TERMINALS), 0);
+print '<input type="number" name="TAKEPOS_NUM_TERMINALS" min="1" value="' . (empty($conf->global->TAKEPOS_NUM_TERMINALS) ? '1' : $conf->global->TAKEPOS_NUM_TERMINALS)  . '">';
 print "</td></tr>\n";
 
 // Services

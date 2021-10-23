@@ -963,7 +963,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	print $formfile->showdocuments($modulepart, $object->ref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
 	$somethingshown = $formfile->numoffiles;
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 
 	$MAXEVENT = 10;
 
@@ -976,7 +976,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	$formactions = new FormActions($db);
 	$somethingshown = $formactions->showactions($object, 'stock', 0, 1, '', $MAXEVENT, '', $morehtmlright); // Show all action for product
 
-	print '</div></div></div>';
+	print '</div></div>';
 }
 
 // End of page

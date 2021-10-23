@@ -1566,7 +1566,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		height: 64px !important;
 	}
 
-	.divmainbodylarge { margin-left: 20px !important; margin-right: 20px !important; }
+	.divmainbodylarge { margin-left: 10px !important; margin-right: 10px !important; }
 
 	.tdoverflowonsmartphone {
 		max-width: 0;
@@ -2266,7 +2266,7 @@ img.photorefnoborder {
 /* Menu top et 1ere ligne tableau                                                 */
 /* ============================================================================== */
 
-div#id-top {
+#id-top {
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
 	display:none;
 <?php } else { ?>

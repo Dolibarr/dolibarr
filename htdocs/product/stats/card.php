@@ -67,6 +67,7 @@ $currentyear = $tmp['year'];
 if (empty($search_year)) {
 	$search_year = $currentyear;
 }
+$moreforfilter = "";
 
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
@@ -418,10 +419,10 @@ if ($result || empty($id)) {
 			if ($graphfiles == 'proposals_suppliers' && !$user->rights->supplier_proposal->lire) {
 				continue;
 			}
-			if ($graphfiles == 'invoices_suppliers' && !$user->rights->fournisseur->facture->lire) {
+			if ($graphfiles == 'invoices_suppliers' && empty($user->rights->fournisseur->facture->lire)) {
 				continue;
 			}
-			if ($graphfiles == 'orders_suppliers' && !$user->rights->fournisseur->commande->lire) {
+			if ($graphfiles == 'orders_suppliers' && empty($user->rights->fournisseur->commande->lire)) {
 				continue;
 			}
 			if ($graphfiles == 'mrp' && empty($user->rights->mrp->mo->read)) {
@@ -432,7 +433,7 @@ if ($result || empty($id)) {
 			if ($i % 2 == 0) {
 				print "\n".'<div class="fichecenter"><div class="fichehalfleft">'."\n";
 			} else {
-				print "\n".'<div class="fichehalfright"><div class="ficheaddleft">'."\n";
+				print "\n".'<div class="fichehalfright">'."\n";
 			}
 
 			// Date generation
@@ -464,7 +465,7 @@ if ($result || empty($id)) {
 			if ($i % 2 == 0) {
 				print "\n".'</div>'."\n";
 			} else {
-				print "\n".'</div></div></div>';
+				print "\n".'</div></div>';
 				print '<div class="clear"><div class="fichecenter"><br></div></div>'."\n";
 			}
 
