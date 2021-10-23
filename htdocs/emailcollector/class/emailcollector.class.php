@@ -2064,7 +2064,6 @@ class EmailCollector extends CommonObject
 									}
 								}
 							}
-
 						} else {
 							$this->errors = 'no joined piece';
 						}
@@ -2129,7 +2128,7 @@ class EmailCollector extends CommonObject
 								$classname = '';
 								$filefound = 0;
 								$reldir = '';
-								$dirmodels = array_merge(array('/'), (array)$conf->modules_parts['models']);
+								$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 								foreach ($dirmodels as $reldir) {
 									$file = dol_buildpath($reldir . "core/modules/project/" . $modele . '.php', 0);
 									if (file_exists($file)) {
@@ -2239,7 +2238,7 @@ class EmailCollector extends CommonObject
 								$classname = '';
 								$filefound = 0;
 								$reldir = '';
-								$dirmodels = array_merge(array('/'), (array)$conf->modules_parts['models']);
+								$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 								foreach ($dirmodels as $reldir) {
 									$file = dol_buildpath($reldir . "core/modules/ticket/" . $modele . '.php', 0);
 									if (file_exists($file)) {
