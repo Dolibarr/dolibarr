@@ -239,8 +239,6 @@ if ($resql) {
 			$projectstatic->id = $obj->rowid;
 			$projectstatic->ref = $obj->ref;
 			$projectstatic->title = $obj->title;
-			$projectstatic->dateo = $obj->dateo;
-			$projectstatic->datep = $obj->datep;
 			$projectstatic->thirdparty_name = $obj->name;
 			$projectstatic->status = $obj->status;
 
