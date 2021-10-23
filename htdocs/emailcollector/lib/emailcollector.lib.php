@@ -109,7 +109,7 @@ function getDParameters($part)
 /**
  * Récupère les pièces d'un mail donné
  * @param integer $jk numéro du mail
- * @param integer$mbox object connection imaap
+ * @param object $mbox object connection imaap
  * @return array type, filename, pos
  */
 function getAttachments($jk, $mbox)
@@ -143,7 +143,7 @@ function getAttachments($jk, $mbox)
  * @param integer $jk numéro du mail
  * @param integer $fpos position de la pièce jointe
  * @param integer $type type de la pièce jointe
- * * @param integer$mbox object connection imaap
+ * @param object $mbox object connection imaap
  * @return mixed data
  */
 function getFileData($jk, $fpos, $type, $mbox)
