@@ -178,7 +178,7 @@ function saveAttachment($path, $filename, $data)
 	$filepath = $path . $filename . '.' . $ext;
 
 	while (file_exists($filepath)) {
-		$filepath = $path . $filename . $i . '.' . $ext;
+		$filepath = $path . $filename . '(' . $i . ').' . $ext;
 		$i++;
 	}
 	file_put_contents($filepath, $data);
