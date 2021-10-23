@@ -600,6 +600,16 @@ if ($object->id > 0) {
 
 			function barcodeserialforproduct(textarray,tabproduct,barcodeproductqty,selectaddorreplace,mode,autodetect=false){
 				textarray.forEach(function(element,index){
+					$.ajax({ url: \''.DOL_URL_ROOT.'/product/inventory/ajax/searchfrombarcode.php\',
+						data: { "action":"existbarcode","barcode":element},
+						type: \'POST\',
+						success: function(response) {
+							console.log("test+1");
+						},
+						error : function(output) {
+						   console.error("Error on Fetch of KM articles");
+						},
+				   });
 					console.log("Product "+(index+=1)+": "+element);
 					BarCodeDoesNotExist=0;
 					tabproduct.forEach(product => {
