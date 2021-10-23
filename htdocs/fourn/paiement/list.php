@@ -177,7 +177,7 @@ $sql = 'SELECT p.rowid, p.ref, p.datep, p.amount as pamount, p.num_paiement';
 $sql .= ', s.rowid as socid, s.nom as name, s.email';
 $sql .= ', c.code as paiement_type, c.libelle as paiement_libelle';
 $sql .= ', ba.rowid as bid, ba.label';
-if (!$user->rights->societe->client->voir) {
+if (empty($user->rights->societe->client->voir)) {
 	$sql .= ', sc.fk_soc, sc.fk_user';
 }
 $sql .= ', SUM(pf.amount)';
@@ -189,12 +189,12 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement AS c ON p.fk_paiement = c.id';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON s.rowid = f.fk_soc';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-if (!$user->rights->societe->client->voir) {
+if (empty($user->rights->societe->client->voir)) {
 	$sql .= ', '.MAIN_DB_PREFIX.'societe_commerciaux as sc';
 }
 
 $sql .= ' WHERE f.entity = '.$conf->entity;
-if (!$user->rights->societe->client->voir) {
+if (empty($user->rights->societe->client->voir)) {
 	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = '.((int) $user->id);
 }
 if ($socid > 0) {
@@ -233,7 +233,7 @@ if ($search_all) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
 $sql .= ' GROUP BY p.rowid, p.ref, p.datep, p.amount, p.num_paiement, s.rowid, s.nom, s.email, c.code, c.libelle, ba.rowid, ba.label';
-if (!$user->rights->societe->client->voir) {
+if (empty($user->rights->societe->client->voir)) {
 	$sql .= ', sc.fk_soc, sc.fk_user';
 }
 

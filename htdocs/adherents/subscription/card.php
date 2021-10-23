@@ -48,7 +48,7 @@ $note = GETPOST('note', 'alpha');
 $typeid = (int) GETPOST('typeid', 'int');
 $amount = price2num(GETPOST('amount', 'alpha'), 'MT');
 
-if (!$user->rights->adherent->cotisation->lire) {
+if (empty($user->rights->adherent->cotisation->lire)) {
 	 accessforbidden();
 }
 

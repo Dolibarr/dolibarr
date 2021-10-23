@@ -418,10 +418,10 @@ if ($result || empty($id)) {
 			if ($graphfiles == 'proposals_suppliers' && !$user->rights->supplier_proposal->lire) {
 				continue;
 			}
-			if ($graphfiles == 'invoices_suppliers' && !$user->rights->fournisseur->facture->lire) {
+			if ($graphfiles == 'invoices_suppliers' && empty($user->rights->fournisseur->facture->lire)) {
 				continue;
 			}
-			if ($graphfiles == 'orders_suppliers' && !$user->rights->fournisseur->commande->lire) {
+			if ($graphfiles == 'orders_suppliers' && empty($user->rights->fournisseur->commande->lire)) {
 				continue;
 			}
 			if ($graphfiles == 'mrp' && empty($user->rights->mrp->mo->read)) {

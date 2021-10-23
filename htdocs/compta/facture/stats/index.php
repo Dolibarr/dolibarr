@@ -46,7 +46,7 @@ $mode = GETPOST("mode") ? GETPOST("mode") : 'customer';
 if ($mode == 'customer' && !$user->rights->facture->lire) {
 	accessforbidden();
 }
-if ($mode == 'supplier' && !$user->rights->fournisseur->facture->lire) {
+if ($mode == 'supplier' && empty($user->rights->fournisseur->facture->lire)) {
 	accessforbidden();
 }
 
@@ -192,7 +192,7 @@ if (!$mesg) {
 
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (!$user->rights->societe->client->voir || $user->socid) {
+if (empty($user->rights->societe->client->voir) || $user->socid) {
 	$filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
 	if ($mode == 'customer') {
 		$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';

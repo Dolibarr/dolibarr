@@ -96,7 +96,7 @@ class box_last_modified_ticket extends ModeleBoxes
 
 			$sql .= " WHERE t.entity IN (".getEntity('ticket').')';
 			//  		$sql.= " AND e.rowid = er.fk_event";
-			//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " WHERE s.rowid = sc.fk_soc AND sc.fk_user = " .((int) $user->id);
+			//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= " WHERE s.rowid = sc.fk_soc AND sc.fk_user = " .((int) $user->id);
 			if ($user->socid) {
 				$sql .= " AND t.fk_soc = ".((int) $user->socid);
 			}

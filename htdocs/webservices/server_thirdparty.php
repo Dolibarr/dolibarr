@@ -462,7 +462,7 @@ function createThirdParty($authentication, $thirdparty)
 		if ($thirdparty['country_code']) {
 			$newobject->country_id = getCountry($thirdparty['country_code'], 3);
 		}
-		$newobject->region_code = $thirdparty['region_code'];
+		$newobject->region_code = empty($thirdparty['region_code']) ? '' : $thirdparty['region_code'];
 		//if ($thirdparty['province_code']) $newobject->province_code=getCountry($thirdparty['province_code'],3);
 
 		$newobject->phone = $thirdparty['phone'];

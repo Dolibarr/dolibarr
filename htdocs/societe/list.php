@@ -520,7 +520,7 @@ if (empty($user->rights->societe->client->voir) && !$socid) {
 if ($search_sale && $search_sale != '-1' && $search_sale != '-2') {
 	$sql .= " AND s.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 }
-if (!$user->rights->fournisseur->lire) {
+if (empty($user->rights->fournisseur->lire)) {
 	$sql .= " AND (s.fournisseur <> 1 OR s.client <> 0)"; // client=0, fournisseur=0 must be visible
 }
 if ($search_sale == -2) {

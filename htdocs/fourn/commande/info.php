@@ -74,7 +74,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
-if (!$user->rights->fournisseur->commande->lire) {
+if (empty($user->rights->fournisseur->commande->lire)) {
 	accessforbidden();
 }
 
