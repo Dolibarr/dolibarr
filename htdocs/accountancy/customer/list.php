@@ -613,7 +613,7 @@ if ($result) {
 		// Ref Invoice
 		print '<td class="nowraponall">'.$facture_static->getNomUrl(1).'</td>';
 
-		print '<td class="center">'.dol_print_date($db->jdate($facture_static->datef), 'day').'</td>';
+		print '<td class="center">'.dol_print_date($db->jdate($facture_static->date), 'day').'</td>';
 
 		// Ref Product
 		print '<td class="tdoverflowmax150">';
