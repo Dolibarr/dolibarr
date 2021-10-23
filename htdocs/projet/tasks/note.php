@@ -44,6 +44,9 @@ $socid = 0;
 if (!$user->rights->projet->lire) {
 	accessforbidden();
 }
+
+$hookmanager->initHooks(array('projettasknote'));
+
 //$result = restrictedArea($user, 'projet', $id, '', 'task'); // TODO ameliorer la verification
 
 $object = new Task($db);
@@ -95,7 +98,13 @@ $permissionnote = ($user->rights->projet->creer || $user->rights->projet->all->c
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';
+$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+}
 
 
 /*
@@ -214,7 +223,6 @@ if ($object->id > 0) {
 
 		print '</div>';
 		print '<div class="fichehalfright">';
-		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border centpercent tableforfield">';
@@ -233,7 +241,6 @@ if ($object->id > 0) {
 
 		print '</table>';
 
-		print '</div>';
 		print '</div>';
 		print '</div>';
 

@@ -277,10 +277,9 @@ if ($id > 0 || !empty($ref)) {
 
 			print '</div>';
 			print '<div class="fichehalfright">';
-			print '<div class="ficheaddleft">';
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border tableforfield" width="100%">';
+			print '<table class="border tableforfield centpercent">';
 
 			// Description
 			print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
@@ -296,7 +295,6 @@ if ($id > 0 || !empty($ref)) {
 
 			print '</table>';
 
-			print '</div>';
 			print '</div>';
 			print '</div>';
 
@@ -408,7 +406,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<td>';
 			$formcompany->selectTypeContact($object, '', 'type', 'internal', 'rowid');
 			print '</td>';
-			print '<td class="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'" name="addsourceinternal"></td>';
+			print '<td class="right" colspan="3" ><input type="submit" class="button button-add" value="'.$langs->trans("Add").'" name="addsourceinternal"></td>';
 			print '</tr>';
 
 			// Line to add an external contact. Only if project linked to a third party.

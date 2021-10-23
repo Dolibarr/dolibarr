@@ -155,7 +155,6 @@ print '</table>';
 
 print '</div>';
 print '<div class="fichehalfright">';
-print '<div class="ficheaddleft">';
 print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border centpercent">';
@@ -179,7 +178,6 @@ print '</td></tr>';
 
 print '</table>';
 
-print '</div>';
 print '</div>';
 print '</div>';
 

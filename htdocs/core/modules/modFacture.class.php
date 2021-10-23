@@ -142,7 +142,7 @@ class modFacture extends DolibarrModules
 				'objectname'=>'Facture',
 				'method'=>'sendEmailsRemindersOnInvoiceDueDate',
 				'parameters'=>"10,all,EmailTemplateCode",
-				'comment'=>'Send an emails when the unpaid invoices reach a due date + n days = today. First param is the offset n of days, second parameter is "all" or a payment mode code, last paramater is the code of email template to use (an email template with EmailTemplateCode must exists. the version in the language of the thirdparty will be used in priority).',
+				'comment'=>'Send an emails when the unpaid invoices reach a due date + n days = today. First param is the offset n of days, second parameter is "all" or a payment mode code, last parameter is the code of email template to use (an email template with EmailTemplateCode must exists. the version in the language of the thirdparty will be used in priority).',
 				'frequency'=>1,
 				'unitfrequency'=>3600 * 24,
 				'priority'=>50,
@@ -273,7 +273,7 @@ class modFacture extends DolibarrModules
 		$this->export_TypeFields_array[$r] = array(
 			's.rowid'=>'Numeric', 's.nom'=>'Text', 'ps.nom'=>'Text', 's.code_client'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text', 'cd.nom'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text',
 			's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
-			'f.rowid'=>'Numeric', 'f.ref'=>"Text", 'f.ref_client'=>'Text', 'f.type'=>"Numeric", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>"Date",
+			'f.rowid'=>'Numeric', 'f.ref'=>"Text", 'f.ref_client'=>'Text', 'f.type'=>"Numeric", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>"Date", 'f.fk_mode_reglement'=>'Numeric',
 			'f.total_ht'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.total_tva'=>"Numeric", 'f.localtax1'=>'Numeric', 'f.localtax2'=>'Numeric', 'f.paye'=>"Boolean", 'f.fk_statut'=>'Numeric', 'f.close_code'=>'Text', 'f.close_note'=>'Text',
 			'none.rest'=>"NumericCompute",
 			'f.note_private'=>"Text", 'f.note_public'=>"Text", 'f.fk_user_author'=>'Numeric', 'uc.login'=>'Text', 'f.fk_user_valid'=>'Numeric', 'uv.login'=>'Text',
@@ -458,8 +458,8 @@ class modFacture extends DolibarrModules
 		}
 
 		$sql = array(
-				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[1][2])."' AND type = 'invoice' AND entity = ".$conf->entity,
-				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[1][2])."','invoice',".$conf->entity.")"
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[1][2])."' AND type = 'invoice' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[1][2])."','invoice',".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);

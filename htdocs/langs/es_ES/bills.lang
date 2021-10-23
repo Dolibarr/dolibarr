@@ -244,6 +244,7 @@ EscompteOffered=Descuento (Pronto pago)
 EscompteOfferedShort=Descuento
 SendBillRef=Envío de la factura %s
 SendReminderBillRef=Envío de la factura %s (recordatorio)
+SendPaymentReceipt=Envío del recibo de pago %s
 NoDraftBills=Ninguna factura borrador
 NoOtherDraftBills=Ninguna otra factura borrador
 NoDraftInvoices=Sin facturas borrador

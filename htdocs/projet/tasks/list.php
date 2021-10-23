@@ -3,6 +3,7 @@
  * Copyright (C) 2006-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2018	   Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,6 +65,7 @@ $search_task_ref_parent = GETPOST('search_task_ref_parent');
 $search_project_user = GETPOST('search_project_user', 'int');
 $search_task_user = GETPOST('search_task_user', 'int');
 $search_task_progress = GETPOST('search_task_progress');
+$search_task_budget_amount = GETPOST('search_task_budget_amount');
 $search_societe = GETPOST('search_societe');
 
 $mine = $_REQUEST['mode'] == 'mine' ? 1 : 0;
@@ -71,12 +73,22 @@ if ($mine) {
 	$search_task_user = $user->id; $mine = 0;
 }
 
-$search_sday	= GETPOST('search_sday', 'int');
-$search_smonth	= GETPOST('search_smonth', 'int');
-$search_syear	= GETPOST('search_syear', 'int');
-$search_eday	= GETPOST('search_eday', 'int');
-$search_emonth	= GETPOST('search_emonth', 'int');
-$search_eyear	= GETPOST('search_eyear', 'int');
+$search_date_startday = GETPOST('search_date_startday', 'int');
+$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
+$search_date_startyear = GETPOST('search_date_startyear', 'int');
+$search_date_endday = GETPOST('search_date_endday', 'int');
+$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
+$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
+$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
+$search_datelimit_startday = GETPOST('search_datelimit_startday', 'int');
+$search_datelimit_startmonth = GETPOST('search_datelimit_startmonth', 'int');
+$search_datelimit_startyear = GETPOST('search_datelimit_startyear', 'int');
+$search_datelimit_endday = GETPOST('search_datelimit_endday', 'int');
+$search_datelimit_endmonth = GETPOST('search_datelimit_endmonth', 'int');
+$search_datelimit_endyear = GETPOST('search_datelimit_endyear', 'int');
+$search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $search_datelimit_startday, $search_datelimit_startyear);
+$search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
 
 // Initialize context for list
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'tasklist';
@@ -143,6 +155,7 @@ $arrayfields = array(
 	't.progress_calculated'=>array('label'=>"ProgressCalculated", 'checked'=>1, 'position'=>104),
 	't.progress'=>array('label'=>"ProgressDeclared", 'checked'=>1, 'position'=>105),
 	't.progress_summary'=>array('label'=>"TaskProgressSummary", 'checked'=>1, 'position'=>106),
+	't.budget_amount'=>array('label'=>"Budget", 'checked'=>1, 'position'=>107),
 	't.tobill'=>array('label'=>"TimeToBill", 'checked'=>0, 'position'=>110),
 	't.billed'=>array('label'=>"TimeBilled", 'checked'=>0, 'position'=>111),
 	't.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
@@ -189,14 +202,25 @@ if (empty($reshook)) {
 		$search_task_description = "";
 		$search_task_ref_parent = "";
 		$search_task_progress = "";
+		$search_task_budget_amount = "";
 		$search_task_user = -1;
 		$search_project_user = -1;
-		$search_sday = '';
-		$search_smonth = '';
-		$search_syear = '';
-		$search_eday = '';
-		$search_emonth = '';
-		$search_eyear = '';
+		$search_date_startday = '';
+		$search_date_startmonth = '';
+		$search_date_startyear = '';
+		$search_date_endday = '';
+		$search_date_endmonth = '';
+		$search_date_endyear = '';
+		$search_date_start = '';
+		$search_date_end = '';
+		$search_datelimit_startday = '';
+		$search_datelimit_startmonth = '';
+		$search_datelimit_startyear = '';
+		$search_datelimit_endday = '';
+		$search_datelimit_endmonth = '';
+		$search_datelimit_endyear = '';
+		$search_datelimit_start = '';
+		$search_datelimit_end = '';
 		$toselect = '';
 		$search_array_options = array();
 	}
@@ -293,6 +317,7 @@ $sql .= " s.nom as name, s.rowid as socid,";
 $sql .= " t.datec as date_creation, t.dateo as date_start, t.datee as date_end, t.tms as date_update,";
 $sql .= " t.rowid as id, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut, ";
 $sql .= " t.description, t.fk_task_parent";
+$sql .= " ,t.budget_amount";
 // We'll need these fields in order to filter by categ
 if ($search_categ) {
 	$sql .= ", cs.fk_categorie, cs.fk_project";
@@ -304,7 +329,7 @@ if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -369,11 +394,24 @@ if ($search_task_ref_parent) {
 if ($search_task_progress) {
 	$sql .= natural_search('t.progress', $search_task_progress, 1);
 }
+if ($search_task_budget_amount) {
+	$sql .= natural_search('t.budget_amount', $search_task_budget_amount, 1);
+}
 if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);
 }
-$sql .= dolSqlDateFilter('t.dateo', $search_sday, $search_smonth, $search_syear);
-$sql .= dolSqlDateFilter('t.datee', $search_eday, $search_emonth, $search_eyear);
+if ($search_date_start) {
+	$sql .= " AND t.dateo >= '".$db->idate($search_date_start)."'";
+}
+if ($search_date_end) {
+	$sql .= " AND t.dateo <= '".$db->idate($search_date_end)."'";
+}
+if ($search_datelimit_start) {
+	$sql .= " AND t.datee >= '".$db->idate($search_datelimit_start)."'";
+}
+if ($search_datelimit_end) {
+	$sql .= " AND t.datee <= '".$db->idate($search_datelimit_end)."'";
+}
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
@@ -400,7 +438,7 @@ if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed
 	$sql .= " GROUP BY p.rowid, p.ref, p.title, p.fk_statut, p.datee, p.fk_opp_status, p.public, p.fk_user_creat,";
 	$sql .= " s.nom, s.rowid,";
 	$sql .= " t.datec, t.dateo, t.datee, t.tms,";
-	$sql .= " t.rowid, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut";
+	$sql .= " t.rowid, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress,t.budget_amount, t.fk_statut";
 	if ($search_categ) {
 		$sql .= ", cs.fk_categorie, cs.fk_project";
 	}
@@ -454,23 +492,44 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
-if ($search_sday) {
-	$param .= '&search_sday='.urlencode($search_sday);
+if ($search_date_startday) {
+	$param .= '&search_date_startday='.urlencode($search_date_startday);
 }
-if ($search_smonth) {
-	$param .= '&search_smonth='.urlencode($search_smonth);
+if ($search_date_startmonth) {
+	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
 }
-if ($search_syear) {
-	$param .= '&search_syear='.urlencode($search_syear);
+if ($search_date_startyear) {
+	$param .= '&search_date_startyear='.urlencode($search_date_startyear);
 }
-if ($search_eday) {
-	$param .= '&search_eday='.urlencode($search_eday);
+if ($search_date_endday) {
+	$param .= '&search_date_endday='.urlencode($search_date_endday);
 }
-if ($search_emonth) {
-	$param .= '&search_emonth='.urlencode($search_emonth);
+if ($search_date_endmonth) {
+	$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
 }
-if ($search_eyear) {
-	$param .= '&search_eyear='.urlencode($search_eyear);
+if ($search_date_endyear) {
+	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+}
+if ($search_datelimit_startday)	{
+	$param .= '&search_datelimit_startday='.urlencode($search_datelimit_startday);
+}
+if ($search_datelimit_startmonth) {
+	$param .= '&search_datelimit_startmonth='.urlencode($search_datelimit_startmonth);
+}
+if ($search_datelimit_startyear) {
+	$param .= '&search_datelimit_startyear='.urlencode($search_datelimit_startyear);
+}
+if ($search_datelimit_endday) {
+	$param .= '&search_datelimit_endday='.urlencode($search_datelimit_endday);
+}
+if ($search_datelimit_endmonth) {
+	$param .= '&search_datelimit_endmonth='.urlencode($search_datelimit_endmonth);
+}
+if ($search_datelimit_endyear) {
+	$param .= '&search_datelimit_endyear='.urlencode($search_datelimit_endyear);
+}
+if ($search_task_budget_amount) {
+	$param .= '&search_task_budget_amount='.urlencode($search_task_budget_amount);
 }
 if ($socid) {
 	$param .= '&socid='.urlencode($socid);
@@ -646,22 +705,26 @@ if (!empty($arrayfields['t.description']['checked'])) {
 }
 // Start date
 if (!empty($arrayfields['t.dateo']['checked'])) {
-	print '<td class="liste_titre center minwidth150">';
-	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-		print '<input class="flat" type="text" size="1" maxlength="2" name="search_sday" value="'.$search_sday.'">';
-	}
-	print '<input class="flat" type="text" size="1" maxlength="2" name="search_smonth" value="'.$search_smonth.'">';
-	print $formother->selectyear($search_syear ? $search_syear : -1, 'search_syear', 1, 20, 5, 0, 0, '', 'valignmiddle width75', 1);
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 // End date
 if (!empty($arrayfields['t.datee']['checked'])) {
-	print '<td class="liste_titre center minwidth150">';
-	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-		print '<input class="flat" type="text" size="1" maxlength="2" name="search_eday" value="'.$search_eday.'">';
-	}
-	print '<input class="flat" type="text" size="1" maxlength="2" name="search_emonth" value="'.$search_emonth.'">';
-	print $formother->selectyear($search_eyear ? $search_eyear : -1, 'search_eyear', 1, 20, 5, 0, 0, '', 'valignmiddle width75', 1);
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_datelimit_start ? $search_datelimit_start : -1, 'search_datelimit_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_datelimit_end ? $search_datelimit_end : -1, 'search_datelimit_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	// TODO Add option late
+	//print '<br><input type="checkbox" name="search_option" value="late"'.($option == 'late' ? ' checked' : '').'> '.$langs->trans("Alert");
+	print '</div>';
 	print '</td>';
 }
 if (!empty($arrayfields['p.ref']['checked'])) {
@@ -707,6 +770,13 @@ if (!empty($arrayfields['t.progress']['checked'])) {
 if (!empty($arrayfields['t.progress_summary']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
+
+if (!empty($arrayfields['t.budget_amount']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input type="text" class="flat" name="search_task_budget_amount" value="'.$search_task_budget_amount.'" size="4">';
+	print '</td>';
+}
+
 if (!empty($arrayfields['t.tobill']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
@@ -782,6 +852,9 @@ if (!empty($arrayfields['t.progress']['checked'])) {
 if (!empty($arrayfields['t.progress_summary']['checked'])) {
 	print_liste_field_titre($arrayfields['t.progress_summary']['label'], $_SERVER["PHP_SELF"], "t.progress", "", $param, '', $sortfield, $sortorder, 'center ');
 }
+if (!empty($arrayfields['t.budget_amount']['checked'])) {
+	print_liste_field_titre($arrayfields['t.budget_amount']['label'], $_SERVER["PHP_SELF"], "t.budget_amount", "", $param, '', $sortfield, $sortorder, 'center ');
+}
 if (!empty($arrayfields['t.tobill']['checked'])) {
 	print_liste_field_titre($arrayfields['t.tobill']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
 }
@@ -824,6 +897,7 @@ while ($i < min($num, $limit)) {
 	$object->description = $obj->description;
 	$object->fk_statut = $obj->fk_statut;
 	$object->progress = $obj->progress;
+	$object->budget_amount = $obj->budget_amount;
 	$object->date_start = $db->jdate($obj->date_start);
 	$object->date_end = $db->jdate($obj->date_end);
 	$object->planned_workload = $obj->planned_workload;
@@ -1063,6 +1137,22 @@ while ($i < min($num, $limit)) {
 				$totalarray['totalprogress_summary'] = $totalarray['nbfield'];
 			}
 		}
+		if (!empty($arrayfields['t.budget_amount']['checked'])) {
+			print '<td class="center">';
+			print price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+			if (!$i) {
+				$totalarray['pos'][$totalarray['nbfield']] = 't.budget_amount';
+			}
+			$totalarray['val']['t.budget_amount'] += $obj->budget_amount;
+			if (!$i) {
+				$totalarray['totalbudget_amount'] = $totalarray['nbfield'];
+			}
+			$totalarray['totalbudgetamount'] += $obj->budget_amount;
+			print '</td>';
+		}
 		// Time not billed
 		if (!empty($arrayfields['t.tobill']['checked'])) {
 			print '<td class="center">';
@@ -1179,6 +1269,8 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 			print '<td class="center">'.convertSecondToTime($totalarray['totaltobill'], $plannedworkloadoutputformat).'</td>';
 		} elseif ($totalarray['totalbilledfield'] == $i) {
 			print '<td class="center">'.convertSecondToTime($totalarray['totalbilled'], $plannedworkloadoutputformat).'</td>';
+		} elseif ($totalarray['totalbudget_amount'] == $i) {
+			print '<td class="center">'.price($totalarray['totalbudgetamount'], 0, $langs, 1, 0, 0, $conf->currency).'</td>';
 		} else {
 			print '<td></td>';
 		}

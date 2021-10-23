@@ -33,11 +33,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals'));
 
-// Security check
-if ($user->socid > 0) {
-	accessforbidden();
-}
-
 // Get supervariables
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
@@ -71,11 +66,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 
 $hookmanager->initHooks(array('directdebitprevcard', 'globalcard', 'directdebitprevlist'));
 
-if (!$user->rights->prelevement->bons->lire && $object->type != 'bank-transfer') {
-	accessforbidden();
-}
-if (!$user->rights->paymentbybanktransfer->read && $object->type == 'bank-transfer') {
-	accessforbidden();
+$type = $object->type;
+if ($type == 'bank-transfer') {
+	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
+} else {
+	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 }
 
 
@@ -198,8 +193,7 @@ if ($id > 0 || $ref) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
-	//print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
-	print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($object->amount).'</span></td></tr>';
 
@@ -237,7 +231,7 @@ if ($id > 0 || $ref) {
 	$acc = new Account($db);
 	$result = $acc->fetch(($object->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT));
 
-	print '<tr><td class="titlefield">';
+	print '<tr><td class="titlefieldcreate">';
 	$labelofbankfield = "BankToReceiveWithdraw";
 	if ($object->type == 'bank-transfer') {
 		$labelofbankfield = 'BankToPayCreditTransfer';
@@ -251,7 +245,7 @@ if ($id > 0 || $ref) {
 	print '</td>';
 	print '</tr>';
 
-	print '<tr><td class="titlefield">';
+	print '<tr><td class="titlefieldcreate">';
 	$labelfororderfield = 'WithdrawalFile';
 	if ($object->type == 'bank-transfer') {
 		$labelfororderfield = 'CreditTransferFile';
@@ -412,10 +406,9 @@ if ($id > 0 || $ref) {
 
 			// Status of line
 			print "<td>";
+			print '<a class="valignmiddle" href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'&type='.$object->type.'&token='.newToken().'">';
 			print $ligne->LibStatut($obj->statut, 2);
-			print "&nbsp;";
-			print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'&type='.$object->type.'&token='.newtoken().'">';
-			print sprintf("%06s", $obj->rowid);
+			print '<span class="paddingleft">'.$obj->rowid.'</span>';
 			print '</a></td>';
 
 			$thirdparty = new Societe($db);
@@ -435,7 +428,7 @@ if ($id > 0 || $ref) {
 					if ($obj->statut == 2) {
 						if ($user->rights->prelevement->bons->credit) {
 							//print '<a class="butActionDelete" href="line.php?action=rejet&id='.$obj->rowid.'">'.$langs->trans("StandingOrderReject").'</a>';
-							print '<a href="line.php?action=rejet&type='.$object->type.'&id='.$obj->rowid.'&token='.newtoken().'">'.$langs->trans("StandingOrderReject").'</a>';
+							print '<a href="line.php?action=rejet&type='.$object->type.'&id='.$obj->rowid.'&token='.newToken().'">'.$langs->trans("StandingOrderReject").'</a>';
 						} else {
 							//print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("StandingOrderReject").'</a>';
 						}

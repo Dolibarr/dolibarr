@@ -154,7 +154,7 @@ if ($id > 0 || !empty($ref)) {
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if (0) {    // Do not change on shipment
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
 			if ($action == 'classify') {
 				// $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -162,7 +162,7 @@ if ($id > 0 || !empty($ref)) {
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-				$morehtmlref .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+				$morehtmlref .= '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
 				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
@@ -221,11 +221,9 @@ if ($id > 0 || !empty($ref)) {
 
 	//print '</div>';
 	//print '<div class="fichehalfright">';
-	//print '<div class="ficheaddleft">';
 	//print '<div class="underbanner clearboth"></div>';
 
 
-	//print '</div>';
 	//print '</div>';
 	print '</div>';
 

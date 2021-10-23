@@ -384,6 +384,9 @@ class User extends CommonObject
 		$this->rights->user = new stdClass();
 		$this->rights->user->user = new stdClass();
 		$this->rights->user->self = new stdClass();
+		$this->rights->user->user_advance = new stdClass();
+		$this->rights->user->self_advance = new stdClass();
+		$this->rights->user->group_advance = new stdClass();
 	}
 
 	/**
@@ -659,6 +662,116 @@ class User extends CommonObject
 	}
 
 	/**
+	 *  Return if a user has a permission.
+	 *  You can use it like this: if ($user->hasRight('module', 'level11')).
+	 *  It replaces old syntax: if ($user->rights->module->level1)
+	 *
+	 * 	@param	int		$module			Module of permission to check
+	 *  @param  string	$permlevel1		Permission level1 (Example: 'read', 'write', 'delete')
+	 *  @param  string	$permlevel2		Permission level2
+	 *  @return int						1 if user has permission, 0 if not.
+	 *  @see	clearrights(), delrights(), getrights(), hasRight()
+	 */
+	public function hasRight($module, $permlevel1, $permlevel2 = '')
+	{
+		global $conf;
+
+		// For compatibility with bad naming permissions on module
+		$moduletomoduletouse = array(
+			'contract' => 'contrat',
+			'member' => 'adherent',	// We must check $user->rights->adherent...
+			'mo' => 'mrp',
+			'order' => 'commande',
+			'product' => 'produit',	// We must check $user->rights->produit...
+			'project' => 'projet',
+			'shipping' => 'expedition',
+			'task' => 'task@projet',
+			'fichinter' => 'ficheinter',
+			'invoice' => 'facture',
+			'invoice_supplier' => 'fournisseur',
+			'knowledgerecord' => 'knowledgerecord@knowledgemanagement',
+			'skill@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
+			'job@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
+			'position@hrm' => 'all@hrm' // skill / job / position objects rights are for the moment grouped into right level "all"
+		);
+		if (!empty($moduletomoduletouse[$module])) {
+			$module = $moduletomoduletouse[$module];
+		}
+
+		// If module is abc@module, we check permission user->rights->module->abc->permlevel1
+		$tmp = explode('@', $module, 2);
+		if (! empty($tmp[1])) {
+			$module = $tmp[1];
+			$permlevel2 = $permlevel1;
+			$permlevel1 = $tmp[0];
+		}
+
+		//var_dump($module);
+		//var_dump($this->rights->$module);
+		if (!in_array($module, $conf->modules)) {
+			return 0;
+		}
+
+		// For compatibility with bad naming permissions on permlevel1
+		if ($permlevel1 == 'propale') {
+			$permlevel1 = 'propal';
+		}
+		if ($permlevel1 == 'member') {
+			$permlevel1 = 'adherent';
+		}
+		if ($permlevel1 == 'recruitmentcandidature') {
+			$permlevel1 = 'recruitmentjobposition';
+		}
+
+		//var_dump($module.' '.$permlevel1.' '.$permlevel2);
+		if (empty($module) || empty($this->rights) || empty($this->rights->$module) || empty($permlevel1)) {
+			return 0;
+		}
+
+		if ($permlevel2) {
+			if (!empty($this->rights->$module->$permlevel1)) {
+				if (!empty($this->rights->$module->$permlevel1->$permlevel2)) {
+					return $this->rights->$module->$permlevel1->$permlevel2;
+				}
+				// For backward compatibility with old permissions called "lire", "creer", "create", "supprimer"
+				// instead of "read", "write", "delete"
+				if ($permlevel2 == 'read' && !empty($this->rights->$module->$permlevel1->lire)) {
+					return $this->rights->$module->lire;
+				}
+				if ($permlevel2 == 'write' && !empty($this->rights->$module->$permlevel1->creer)) {
+					return $this->rights->$module->create;
+				}
+				if ($permlevel2 == 'write' && !empty($this->rights->$module->$permlevel1->create)) {
+					return $this->rights->$module->create;
+				}
+				if ($permlevel2 == 'delete' && !empty($this->rights->$module->$permlevel1->supprimer)) {
+					return $this->rights->$module->supprimer;
+				}
+			}
+		} else {
+			if (!empty($this->rights->$module->$permlevel1)) {
+				return $this->rights->$module->$permlevel1;
+			}
+			// For backward compatibility with old permissions called "lire", "creer", "create", "supprimer"
+			// instead of "read", "write", "delete"
+			if ($permlevel1 == 'read' && !empty($this->rights->$module->lire)) {
+				return $this->rights->$module->lire;
+			}
+			if ($permlevel1 == 'write' && !empty($this->rights->$module->creer)) {
+				return $this->rights->$module->create;
+			}
+			if ($permlevel1 == 'write' && !empty($this->rights->$module->create)) {
+				return $this->rights->$module->create;
+			}
+			if ($permlevel1 == 'delete' && !empty($this->rights->$module->supprimer)) {
+				return $this->rights->$module->supprimer;
+			}
+		}
+
+		return 0;
+	}
+
+	/**
 	 *  Add a right to the user
 	 *
 	 * 	@param	int		$rid			Id of permission to add or 0 to add several permissions
@@ -667,7 +780,7 @@ class User extends CommonObject
 	 *  @param	int		$entity			Entity to use
 	 *  @param  int	    $notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *  @return int						> 0 if OK, < 0 if KO
-	 *  @see	clearrights(), delrights(), getrights()
+	 *  @see	clearrights(), delrights(), getrights(), hasRight()
 	 */
 	public function addrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
 	{
@@ -794,7 +907,7 @@ class User extends CommonObject
 	 *  @param	int		$entity		Entity to use
 	 *  @param  int	    $notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *  @return int         		> 0 if OK, < 0 if OK
-	 *  @see	clearrights(), addrights(), getrights()
+	 *  @see	clearrights(), addrights(), getrights(), hasRight()
 	 */
 	public function delrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
 	{
@@ -921,7 +1034,7 @@ class User extends CommonObject
 	 *  Clear all permissions array of user
 	 *
 	 *  @return	void
-	 *  @see	getrights()
+	 *  @see	getrights(), hasRight()
 	 */
 	public function clearrights()
 	{
@@ -939,7 +1052,7 @@ class User extends CommonObject
 	 *	@param  string	$moduletag		Limit permission for a particular module ('' by default means load all permissions)
 	 *  @param	int		$forcereload	Force reload of permissions even if they were already loaded (ignore cache)
 	 *	@return	void
-	 *  @see	clearrights(), delrights(), addrights()
+	 *  @see	clearrights(), delrights(), addrights(), hasRight()
 	 */
 	public function getrights($moduletag = '', $forcereload = 0)
 	{
@@ -1331,7 +1444,7 @@ class User extends CommonObject
 
 		// Insert into database
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec, login, ldap_sid, entity)";
-		$sql .= " VALUES('".$this->db->idate($this->datec)."','".$this->db->escape($this->login)."','".$this->db->escape($this->ldap_sid)."',".$this->db->escape($this->entity).")";
+		$sql .= " VALUES('".$this->db->idate($this->datec)."', '".$this->db->escape($this->login)."', '".$this->db->escape($this->ldap_sid)."', ".((int) $this->entity).")";
 		$result = $this->db->query($sql);
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -2618,7 +2731,7 @@ class User extends CommonObject
 	/**
 	 *  Return clickable link of login (eventualy with picto)
 	 *
-	 *	@param	int		$withpictoimg		Include picto into link
+	 *	@param	int		$withpictoimg		Include picto into link (1=picto, -1=photo)
 	 *	@param	string	$option				On what the link point to ('leave', 'accountancy', 'nolink', )
 	 *  @param	integer	$notooltip			1=Disable tooltip on picto and name
 	 *  @param  string  $morecss       		Add more css on link
@@ -2696,10 +2809,10 @@ class User extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_ENABLED] = $langs->trans('Enabled');
-			$this->labelStatus[self::STATUS_DISABLED] = $langs->trans('Disabled');
-			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->trans('Enabled');
-			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->trans('Disabled');
+			$this->labelStatus[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
 		}
 
 		$statusType = 'status5';
@@ -3101,7 +3214,7 @@ class User extends CommonObject
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."user";
 		$sql .= " WHERE fk_user = ".((int) $this->id);
 
-		dol_syslog(get_class($this)."::get_children sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::get_children", LOG_DEBUG);
 		$res = $this->db->query($sql);
 		if ($res) {
 			$users = array();
@@ -3498,18 +3611,18 @@ class User extends CommonObject
 		if (!empty($filter)) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
-					$sqlwhere[] = $key.'='.$value;
-				} elseif (strpos($key, 'date') !== false) {
-					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
+					$sqlwhere[] = $key." = ".((int) $value);
+				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
 				} else {
-					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
 		}
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -3570,13 +3683,11 @@ class User extends CommonObject
 
 		$sql = 'SELECT rowid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'user';
-
 		if (!empty($conf->global->AGENDA_DISABLE_EXACT_USER_EMAIL_COMPARE_FOR_EXTERNAL_CALENDAR)) {
-			$sql .= ' WHERE email LIKE "%'.$email.'%"';
+			$sql .= " WHERE email LIKE '%".$this->db->escape($email)."%'";
 		} else {
-			$sql .= ' WHERE email = "'.$email.'"';
+			$sql .= " WHERE email = '".$this->db->escape($email)."'";
 		}
-
 		$sql .= ' LIMIT 1';
 
 		$resql = $this->db->query($sql);

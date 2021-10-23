@@ -135,6 +135,28 @@ class modHoliday extends DolibarrModules
 		//$r++;
 
 
+		// Cronjobs
+		$arraydate = dol_getdate(dol_now());
+		$datestart = dol_mktime(4, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
+		$this->cronjobs = array(
+			0 => array(
+				'label' => 'HolidayBalanceMonthlyUpdate',
+				'jobtype' => 'method',
+				'class' => 'holiday/class/holiday.class.php',
+				'objectname' => 'Holiday',
+				'method' => 'updateBalance',
+				'parameters' => '',
+				'comment' => 'Update holiday balance every month',
+				'frequency' => 1,
+				'unitfrequency' => 3600 * 24,
+				'priority' => 50,
+				'status' => 1,
+				'test' => '$conf->holiday->enabled',
+				'datestart' => $datestart
+			)
+		);
+
+
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
 		$r = 0;
@@ -314,8 +336,8 @@ class modHoliday extends DolibarrModules
 		*/
 
 		$sql = array(
-		//	"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'holiday' AND entity = ".$conf->entity,
-		//	"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','holiday',".$conf->entity.")"
+			//	"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'holiday' AND entity = ".((int) $conf->entity),
+			//	"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','holiday',".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);

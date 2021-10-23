@@ -266,7 +266,7 @@ if ($user->rights->categorie->creer) {
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		if (empty($reshook)) {
-			print $object->showOptionals($extrafields, 'edit', $parameters);
+			print $object->showOptionals($extrafields, 'create', $parameters);
 		}
 
 		print '</table>';
@@ -274,7 +274,7 @@ if ($user->rights->categorie->creer) {
 		print dol_get_fiche_end('');
 
 		print '<div class="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" />';
+		print '<input type="submit" class="button b" value="'.$langs->trans("CreateThisCat").'" name="creation" />';
 		print '&nbsp; &nbsp; &nbsp;';
 		print '<input type="submit" class="button button-cancel" value="'.$langs->trans("Cancel").'" name="cancel" />';
 		print '</div>';

@@ -164,7 +164,7 @@ if (($line->info_bits & 2) == 2) {
 	// Show date range
 	if ($line->element == 'facturedetrec') {
 		if ($line->date_start_fill || $line->date_end_fill) {
-			print '<div class="clearboth nowraponall"><br>';
+			print '<div class="clearboth nowraponall daterangeofline-facturedetrec">';
 		}
 		if ($line->date_start_fill) {
 			print '<span class="opacitymedium">'.$langs->trans('AutoFillDateFromShort').':</span> '.yn($line->date_start_fill);
@@ -180,14 +180,31 @@ if (($line->info_bits & 2) == 2) {
 		}
 	} else {
 		if ($line->date_start || $line->date_end) {
-			print '<div class="clearboth nowraponall opacitymedium">'.get_date_range($line->date_start, $line->date_end, $format).'</div>';
+			print '<div class="clearboth nowraponall opacitymedium daterangeofline">'.get_date_range($line->date_start, $line->date_end, $format).'</div>';
 		}
+		if (!$line->date_start || !$line->date_end) {
+			// show warning under line
+			// we need to fetch product associated to line for some test
+			if ($object->element == 'propal'  || $object->element == 'order' || $object->element == 'propal_supplier' || $object->element == 'supplier_proposal' || $object->element == 'commande') {
+				$res = $line->fetch_product();
+				if ($res  > 0  ) {
+					if ($line->product->isService() && $line->product->isMandatoryPeriod()) {
+						print '<div><span class="clearboth nowraponall warning">'.$langs->trans("mandatoryPeriodNeedTobeSet").'</span></div>';
+					}
+				}
+			}
+		}
+
 		//print get_date_range($line->date_start, $line->date_end, $format);
 	}
 
 	// Add description in form
 	if ($line->fk_product > 0 && !empty($conf->global->PRODUIT_DESC_IN_FORM)) {
-		print (!empty($line->description) && $line->description != $line->product_label) ? (($line->date_start || $line->date_end) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
+		if ($line->element == 'facturedetrec') {
+			print (!empty($line->description) && $line->description != $line->product_label) ? (($line->date_start_fill || $line->date_end_fill) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
+		} else {
+			print (!empty($line->description) && $line->description != $line->product_label) ? (($line->date_start || $line->date_end) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
+		}
 	}
 
 	// Line extrafield
@@ -368,7 +385,7 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 	$coldisplay++;
 	if (($line->info_bits & 2) == 2 || !empty($disableedit)) {
 	} else { ?>
-		<a class="editfielda reposition" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#line_'.$line->id; ?>">
+		<a class="editfielda reposition" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=editline&token='.newToken().'&lineid='.$line->id.'#line_'.$line->id; ?>">
 		<?php print img_edit().'</a>';
 	}
 	print '</td>';
@@ -376,7 +393,7 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 	print '<td class="linecoldelete center">';
 	$coldisplay++;
 	if (!$situationinvoicelinewithparent && empty($disableremove)) { // For situation invoice, deletion is not possible if there is a parent company.
-		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=ask_deleteline&amp;lineid='.$line->id.'">';
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=ask_deleteline&token='.newToken().'&lineid='.$line->id.'">';
 		print img_delete();
 		print '</a>';
 	}
@@ -386,12 +403,12 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 		print '<td class="linecolmove tdlineupdown center">';
 		$coldisplay++;
 		if ($i > 0) { ?>
-			<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">
+			<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=up&token='.newToken().'&rowid='.$line->id; ?>">
 			<?php print img_up('default', 0, 'imgupforline'); ?>
 			</a>
 		<?php }
 		if ($i < $num - 1) { ?>
-			<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=down&amp;rowid='.$line->id; ?>">
+			<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=down&token='.newToken().'&rowid='.$line->id; ?>">
 			<?php print img_down('default', 0, 'imgdownforline'); ?>
 			</a>
 		<?php }

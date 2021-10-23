@@ -127,4 +127,5 @@ AllowDelayedPayment=支払いの遅延を許可する
 PrintPaymentMethodOnReceipts=チケットに支払い方法を印刷する|領収書
 WeighingScale=体重計
 ShowPriceHT = 税抜き価格の列を表示する（画面上）
-ShowPriceHTOnReceipt = Display the column with the price excluding tax (on the receipt)
+ShowPriceHTOnReceipt = （領収書に）税抜き価格の列を表示する
+CustomerDisplay=カスタマーディスプレイ

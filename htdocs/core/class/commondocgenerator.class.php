@@ -220,6 +220,7 @@ abstract class CommonDocGenerator
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Define array with couple substitution key => substitution value
+	 * For example {company_name}, {company_name_alias}
 	 *
 	 * @param	Societe		$object			Object
 	 * @param   Translate	$outputlangs    Language object for output
@@ -1204,11 +1205,12 @@ abstract class CommonDocGenerator
 	 *  get extrafield content for pdf writeHtmlCell compatibility
 	 *  usage for PDF line columns and object note block
 	 *
-	 *  @param	object		$object     common object
-	 *  @param	string		$extrafieldKey    	the extrafield key
+	 *  @param	object		$object     		Common object
+	 *  @param	string		$extrafieldKey    	The extrafield key
+	 *  @param	Translate	$outputlangs		The output langs (if value is __(XXX)__ we use it to translate it).
 	 *  @return	string
 	 */
-	public function getExtrafieldContent($object, $extrafieldKey)
+	public function getExtrafieldContent($object, $extrafieldKey, $outputlangs = null)
 	{
 		global $hookmanager;
 
@@ -1344,7 +1346,7 @@ abstract class CommonDocGenerator
 
 				$field = new stdClass();
 				$field->rank = intval($extrafields->attributes[$object->table_element]['pos'][$key]);
-				$field->content = $this->getExtrafieldContent($object, $key);
+				$field->content = $this->getExtrafieldContent($object, $key, $outputlangs);
 				$field->label = $outputlangs->transnoentities($label);
 				$field->type = $extrafields->attributes[$object->table_element]['type'][$key];
 

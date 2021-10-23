@@ -357,7 +357,7 @@ function task_prepare_head($object)
 	//$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
 	//$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
-	$sql .= " WHERE t.fk_task =".$object->id;
+	$sql .= " WHERE t.fk_task = ".((int) $object->id);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
@@ -368,7 +368,7 @@ function task_prepare_head($object)
 		dol_print_error($db);
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?id='.$object->id.(GETPOST('withproject') ? '&withproject=1' : '');
+	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?id='.urlencode($object->id).(GETPOST('withproject') ? '&withproject=1' : '');
 	$head[$h][1] = $langs->trans("TimeSpent");
 	if ($nbTimeSpent > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">...</span>';
@@ -390,7 +390,7 @@ function task_prepare_head($object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/note.php?id='.$object->id.(GETPOST('withproject') ? '&withproject=1' : '');
+		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/note.php?id='.urlencode($object->id).(GETPOST('withproject') ? '&withproject=1' : '');
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -572,7 +572,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 	$numlines = count($lines);
 
 	// We declare counter as global because we want to edit them into recursive call
-	global $total_projectlinesa_spent, $total_projectlinesa_planned, $total_projectlinesa_spent_if_planned, $total_projectlinesa_declared_if_planned, $total_projectlinesa_tobill, $total_projectlinesa_billed;
+	global $total_projectlinesa_spent, $total_projectlinesa_planned, $total_projectlinesa_spent_if_planned, $total_projectlinesa_declared_if_planned, $total_projectlinesa_tobill, $total_projectlinesa_billed, $total_budget_amount;
 
 	if ($level == 0) {
 		$total_projectlinesa_spent = 0;
@@ -581,6 +581,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		$total_projectlinesa_declared_if_planned = 0;
 		$total_projectlinesa_tobill = 0;
 		$total_projectlinesa_billed = 0;
+		$total_budget_amount = 0;
 	}
 
 	for ($i = 0; $i < $numlines; $i++) {
@@ -651,6 +652,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$taskstatic->datee = $lines[$i]->date_end; // deprecated
 				$taskstatic->planned_workload = $lines[$i]->planned_workload;
 				$taskstatic->duration_effective = $lines[$i]->duration;
+				$taskstatic->budget_amount = $lines[$i]->budget_amount;
 
 
 				if ($showproject) {
@@ -850,6 +852,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					}
 					print '</td>';
 				}*/
+				if (count($arrayfields) > 0 && !empty($arrayfields['c.assigned']['checked'])) {
+					print '<td class="center">';
+					print price($lines[$i]->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
+					$total_budget_amount += $lines[$i]->budget_amount;
+					print '</td>';
+				}
 
 				// Contacts of task
 				if (count($arrayfields) > 0 && !empty($arrayfields['c.assigned']['checked'])) {
@@ -921,7 +929,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		}
 	}
 
-	if (($total_projectlinesa_planned > 0 || $total_projectlinesa_spent > 0 || $total_projectlinesa_tobill > 0 || $total_projectlinesa_billed > 0)
+	if (($total_projectlinesa_planned > 0 || $total_projectlinesa_spent > 0 || $total_projectlinesa_tobill > 0 || $total_projectlinesa_billed > 0 || $total_budget_amount > 0)
 		&& $level <= 0) {
 		print '<tr class="liste_total nodrag nodrop">';
 		print '<td class="liste_total">'.$langs->trans("Total").'</td>';
@@ -977,6 +985,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 			}
 		}
 
+		// Computed progress
 		if (count($arrayfields) > 0 && !empty($arrayfields['t.progress_calculated']['checked'])) {
 			print '<td class="nowrap liste_total right">';
 			if ($total_projectlinesa_planned) {
@@ -984,6 +993,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 			}
 			print '</td>';
 		}
+
+		// Declared progress
 		if (count($arrayfields) > 0 && !empty($arrayfields['t.progress']['checked'])) {
 			print '<td class="nowrap liste_total right">';
 			if ($total_projectlinesa_planned) {
@@ -1018,6 +1029,13 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print '</td>';
 			}
 		}
+
+		if (count($arrayfields) > 0 && !empty($arrayfields['t.budget_amount']['checked'])) {
+			print '<td class="nowrap liste_total center">';
+			print price($total_budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
+			print '</td>';
+		}
+
 		// Contacts of task for backward compatibility,
 		if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
 			print '<td></td>';
@@ -1310,6 +1328,13 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 		$oldprojectforbreak = (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT) ? 0 : -1); // 0 to start break , -1 no break
 	}
 
+	$restrictBefore = null;
+
+	if (! empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
+	}
+
 	//dol_syslog('projectLinesPerDay inc='.$inc.' preselectedday='.$preselectedday.' task parent id='.$parent.' level='.$level." count(lines)=".$numlines." count(lineswithoutlevel0)=".count($lineswithoutlevel0));
 	for ($i = 0; $i < $numlines; $i++) {
 		if ($parent == 0) {
@@ -1555,6 +1580,10 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 					$disabledtask = 1;
 				}
 
+				if ($restrictBefore && $preselectedday < $restrictBefore) {
+					$disabledtask = 1;
+				}
+
 				// Form to add new time
 				print '<td class="nowrap leftborder center">';
 				$tableCell = $form->selectDate($preselectedday, $lines[$i]->id, 1, 1, 2, "addtime", 0, 0, $disabledtask);
@@ -1701,6 +1730,13 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 
 	if (empty($oldprojectforbreak)) {
 		$oldprojectforbreak = (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT) ? 0 : -1); // 0 = start break, -1 = never break
+	}
+
+	$restrictBefore = null;
+
+	if (! empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 	}
 
 	for ($i = 0; $i < $numlines; $i++) {
@@ -1981,6 +2017,12 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 						$cssweekend = 'weekend';
 					}
 
+					$disabledtaskday = $disabledtask;
+
+					if (! $disabledtask && $restrictBefore && $tmpday < $restrictBefore) {
+						$disabledtaskday = 1;
+					}
+
 					$tableCell = '<td class="center hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'">';
 					//$tableCell .= 'idw='.$idw.' '.$conf->global->MAIN_START_WEEK.' '.$numstartworkingday.'-'.$numendworkingday;
 					$placeholder = '';
@@ -1989,7 +2031,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 						//$placeholder=' placeholder="00:00"';
 						//$tableCell.='+';
 					}
-					$tableCell .= '<input type="text" alt="'.($disabledtask ? '' : $alttitle).'" title="'.($disabledtask ? '' : $alttitle).'" '.($disabledtask ? 'disabled' : $placeholder).' class="center smallpadd" size="2" id="timeadded['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="" cols="2"  maxlength="5"';
+					$tableCell .= '<input type="text" alt="'.($disabledtaskday ? '' : $alttitle).'" title="'.($disabledtaskday ? '' : $alttitle).'" '.($disabledtaskday ? 'disabled' : $placeholder).' class="center smallpadd" size="2" id="timeadded['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="" cols="2"  maxlength="5"';
 					$tableCell .= ' onkeypress="return regexEvent(this,event,\'timeChar\')"';
 					$tableCell .= ' onkeyup="updateTotal('.$idw.',\''.$modeinput.'\')"';
 					$tableCell .= ' onblur="regexEvent(this,event,\''.$modeinput.'\'); updateTotal('.$idw.',\''.$modeinput.'\')" />';
@@ -2081,6 +2123,13 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 
 	if (empty($oldprojectforbreak)) {
 		$oldprojectforbreak = (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT) ? 0 : -1); // 0 = start break, -1 = never break
+	}
+
+	$restrictBefore = null;
+
+	if (! empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 	}
 
 	for ($i = 0; $i < $numlines; $i++) {
@@ -2235,10 +2284,11 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				$modeinput = 'hours';
 				$TFirstDay = getFirstDayOfEachWeek($TWeek, date('Y', $firstdaytoshow));
 				$TFirstDay[reset($TWeek)] = 1;
-				foreach ($TFirstDay as &$fday) {
-					$fday--;
-				}
-				foreach ($TWeek as $weekNb) {
+
+				$firstdaytoshowarray = dol_getdate($firstdaytoshow);
+				$year = $firstdaytoshowarray['year'];
+				$month = $firstdaytoshowarray['mon'];
+				foreach ($TWeek as $weekIndex => $weekNb) {
 					$weekWorkLoad = $projectstatic->monthWorkLoadPerTask[$weekNb][$lines[$i]->id];
 					$totalforeachweek[$weekNb] += $weekWorkLoad;
 
@@ -2248,6 +2298,12 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 					}
 					$alttitle = $langs->trans("AddHereTimeSpentForWeek", $weekNb);
 
+					$disabledtaskweek = $disabledtask;
+					$firstdayofweek = dol_mktime(0, 0, 0, $month, $TFirstDay[$weekIndex], $year);
+
+					if (! $disabledtask && $restrictBefore && $firstdayofweek < $restrictBefore) {
+						$disabledtaskweek = 1;
+					}
 
 					$tableCell = '<td class="center hide weekend">';
 					$placeholder = '';
@@ -2257,7 +2313,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 						//$tableCell.='+';
 					}
 
-					$tableCell .= '<input type="text" alt="'.($disabledtask ? '' : $alttitle).'" title="'.($disabledtask ? '' : $alttitle).'" '.($disabledtask ? 'disabled' : $placeholder).' class="center smallpadd" size="2" id="timeadded['.$inc.']['.((int) $weekNb).']" name="task['.$lines[$i]->id.']['.$TFirstDay[$weekNb].']" value="" cols="2"  maxlength="5"';
+					$tableCell .= '<input type="text" alt="'.($disabledtaskweek ? '' : $alttitle).'" title="'.($disabledtaskweek ? '' : $alttitle).'" '.($disabledtaskweek ? 'disabled' : $placeholder).' class="center smallpadd" size="2" id="timeadded['.$inc.']['.((int) $weekNb).']" name="task['.$lines[$i]->id.']['.($TFirstDay[$weekNb] - 1).']" value="" cols="2"  maxlength="5"';
 					$tableCell .= ' onkeypress="return regexEvent(this,event,\'timeChar\')"';
 					$tableCell .= ' onkeyup="updateTotal('.$weekNb.',\''.$modeinput.'\')"';
 					$tableCell .= ' onblur="regexEvent(this,event,\''.$modeinput.'\'); updateTotal('.$weekNb.',\''.$modeinput.'\')" />';

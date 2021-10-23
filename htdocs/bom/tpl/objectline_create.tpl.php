@@ -61,6 +61,8 @@ if ($nolinesbefore) {
 	print '<td class="linecoldescription minwidth500imp">';
 	print '<div id="add"></div><span class="hideonsmartphone">'.$langs->trans('AddNewLine').'</span>';
 	print '</td>';
+	// Linked BOM
+	print '<td class="linecolBOM">'.$langs->trans('BOM').'</td>';
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 		print '<td class="linecoluseunit left">';
@@ -107,6 +109,10 @@ if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
 
 	echo '</span>';
 }
+$coldisplay++;
+print '<td class="bordertop nobottom linecolbom">';
+print '<select id="bom_select" name="bom_select"><options value="-1"></options></select>';
+print '</td>';
 
 $coldisplay++;
 print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : 1).'">';
@@ -138,7 +144,7 @@ print '</td>';
 
 $coldisplay += $colspan;
 print '<td class="bordertop nobottom linecoledit center valignmiddle" colspan="'.$colspan.'">';
-print '<input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline" id="addline">';
+print '<input type="submit" class="button button-add" name="addline" id="addline" value="'.$langs->trans('Add').'">';
 print '</td>';
 print '</tr>';
 

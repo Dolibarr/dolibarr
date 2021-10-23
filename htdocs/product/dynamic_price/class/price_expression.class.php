@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
-/* Copyright (C) 2015      Ion Agorria          <ion@agorria.com>
+ * Copyright (C) 2015      Ion Agorria          <ion@agorria.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -257,7 +257,7 @@ class PriceExpression
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
 		$sql .= " title = ".(isset($this->title) ? "'".$this->db->escape($this->title)."'" : "''").",";
 		$sql .= " expression = ".(isset($this->expression) ? "'".$this->db->escape($this->expression)."'" : "''")."";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 

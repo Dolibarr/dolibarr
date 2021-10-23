@@ -206,12 +206,12 @@ $param = '&mode='.$mode;
 $enabledisablehtml = $langs->trans("EnableDefaultValues").' ';
 if (empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES)) {
 	// Button off, click to enable
-	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&amp;token='.newToken().'&amp;value=1'.$param.'">';
+	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&token='.newToken().'&value=1'.$param.'">';
 	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
 	$enabledisablehtml .= '</a>';
 } else {
 	// Button on, click to disable
-	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&amp;token='.newToken().'&amp;value=0'.$param.'">';
+	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&token='.newToken().'&value=0'.$param.'">';
 	$enabledisablehtml .= img_picto($langs->trans("Activated"), 'switch_on');
 	$enabledisablehtml .= '</a>';
 }
@@ -399,7 +399,7 @@ if (!is_array($result) && $result<0) {
 			print '<input type="hidden" name="page" value="'.$page.'">';
 			print '<input type="hidden" name="rowid" value="'.$id.'">';
 			print '<div name="'.(!empty($defaultvalue->id) ? $defaultvalue->id : 'none').'"></div>';
-			print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+			print '<input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
 			print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 		}
 		print '</td>';

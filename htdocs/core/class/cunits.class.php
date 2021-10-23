@@ -240,6 +240,7 @@ class CUnits // extends CommonObject
 		$sql = 'SELECT';
 		$sql .= " t.rowid,";
 		$sql .= " t.code,";
+		$sql .= " t.sortorder,";
 		$sql .= " t.label,";
 		$sql .= " t.short_label,";
 		$sql .= " t.unit_type,";
@@ -251,25 +252,25 @@ class CUnits // extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid' || $key == 't.active' || $key == 't.scale') {
-					$sqlwhere[] = $key.'='.(int) $value;
+					$sqlwhere[] = $key." = ".((int) $value);
 				} elseif (strpos($key, 'date') !== false) {
-					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
+					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 't.unit_type' || $key == 't.code' || $key == 't.short_label') {
-					$sqlwhere[] = $key.' = \''.$this->db->escape($value).'\'';
+					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
 				} else {
-					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+			$sql .= ' WHERE ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
 		}
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit, $offset);
+			$sql .= $this->db->plimit($limit, $offset);
 		}
 
 		$resql = $this->db->query($sql);
@@ -280,8 +281,9 @@ class CUnits // extends CommonObject
 				while ($obj = $this->db->fetch_object($resql)) {
 					$record = new self($this->db);
 
-					$record->id    = $obj->rowid;
+					$record->id = $obj->rowid;
 					$record->code = $obj->code;
+					$record->sortorder = $obj->sortorder;
 					$record->label = $obj->label;
 					$record->short_label = $obj->short_label;
 					$record->unit_type = $obj->unit_type;
@@ -318,6 +320,9 @@ class CUnits // extends CommonObject
 		if (isset($this->code)) {
 			$this->code = trim($this->code);
 		}
+		if (isset($this->sortorder)) {
+			$this->sortorder = trim($this->sortorder);
+		}
 		if (isset($this->label)) {
 			$this->libelle = trim($this->label);
 		}
@@ -340,6 +345,7 @@ class CUnits // extends CommonObject
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."c_units SET";
 		$sql .= " code=".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").",";
+		$sql .= " sortorder=".(isset($this->sortorder) ? "'".$this->db->escape($this->sortorder)."'" : "null").",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " short_label=".(isset($this->short_label) ? "'".$this->db->escape($this->short_label)."'" : "null").",";
 		$sql .= " unit_type=".(isset($this->unit_type) ? "'".$this->db->escape($this->unit_type)."'" : "null").",";

@@ -502,7 +502,7 @@ if (!$ret) {
 				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 				if ($user->rights->commande->creer) {
 					if ($action != 'classify') {
-						//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $fichinter->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+						//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $fichinter->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 						$morehtmlref .= ' : ';
 					}
 					if ($action == 'classify') {

@@ -65,6 +65,7 @@ $search_filter = GETPOST("search_filter", 'alpha');
 $search_status = GETPOST("search_status", 'intcomma');
 $catid        = GETPOST("catid", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
+$socid = GETPOST('socid', 'int');
 
 $filter = GETPOST("filter", 'alpha');
 if ($filter) {
@@ -323,7 +324,7 @@ $sql .= " state.code_departement as state_code, state.nom as state_name,";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.' as options_'.$key.', ' : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key." as options_".$key.', ' : '');
 	}
 }
 // Add fields from hooks
@@ -601,7 +602,7 @@ if ($user->rights->societe->creer) {
 if ($user->rights->adherent->creer && $user->rights->user->user->creer) {
 	$arrayofmassactions['createexternaluser'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("CreateExternalUser");
 }
-if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
+if (in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -961,7 +962,7 @@ while ($i < min($num, $limit)) {
 	// Firstname
 	if (!empty($arrayfields['d.firstname']['checked'])) {
 		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->firstname).'">';
-		print $memberstatic->getNomUrl(0, 0, 'card', 'fistname');
+		print $memberstatic->getNomUrl(0, 0, 'card', 'firstname');
 		//print $obj->firstname;
 		print "</td>\n";
 		if (!$i) {

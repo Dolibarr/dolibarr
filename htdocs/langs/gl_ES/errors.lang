@@ -264,6 +264,7 @@ ErrorAnAmountWithoutTaxIsRequired=Erro, a cantidade é obrigatoria
 ErrorAPercentIsRequired=Erro, prégase cubra a porcentaxe correctamente
 ErrorYouMustFirstSetupYourChartOfAccount=Primeiro debe configurar o seu plan de contas
 ErrorFailedToFindEmailTemplate=Fallo ao atopar o modelo co nome de código %s 
+ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Duración non definida no servizo. Non hai forma de calcular o prezo por hora. 
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=O seu parámetro PHP upload_max_filesize (%s) é superior ao parámetro PHP post_max_size (%s). Esta non é unha configuración consistente.
@@ -301,4 +302,4 @@ ErrorActionCommPropertyUserowneridNotDefined=É preciso o supervisor do usuario
 ErrorActionCommBadType=O tipo de evento seleccionado (id: %n, código: %s) non existe no diccionario Tipo de Evento
 CheckVersionFail=Fallou a comprobación da versión
 ErrorWrongFileName=O nome do ficheiro non pode conte  __SOMETHING__ nel
-ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.
+ErrorNotInDictionaryPaymentConditions=Non está no Dicionario de Condicións de Pagamento. Modifíqueo. 

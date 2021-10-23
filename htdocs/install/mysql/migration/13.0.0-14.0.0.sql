@@ -76,6 +76,7 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 14, 'CA-ENG-BASE', 'Canadian basic chart of accounts - English', 1);
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 154, 'SAT/24-2019', 'Catalogo y codigo agrupador fiscal del 2019', 1);
 
+UPDATE llx_accounting_system SET fk_country = 1 WHERE fk_country IS NULL;
 
 UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'auguria';
 UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'bureau2crea';
@@ -425,14 +426,22 @@ CREATE TABLE llx_eventorganization_conferenceorboothattendee(
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_project integer NOT NULL;
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_invoice integer NULL;
 
+ALTER TABLE llx_eventorganization_conferenceorboothattendee DROP FOREIGN KEY fx_eventorganization_conferenceorboothattendee_fk_soc;
+ALTER TABLE llx_eventorganization_conferenceorboothattendee DROP FOREIGN KEY fx_eventorganization_conferenceorboothattendee_fk_actioncomm;
+ALTER TABLE llx_eventorganization_conferenceorboothattendee DROP FOREIGN KEY fx_eventorganization_conferenceorboothattendee_fk_project;
+
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_rowid (rowid);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_ref (ref);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_fk_soc (fk_soc);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_fk_actioncomm (fk_actioncomm);
-ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD CONSTRAINT fx_eventorganization_conferenceorboothattendee_fk_actioncomm FOREIGN KEY (fk_actioncomm) REFERENCES llx_actioncomm(id);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_email (email);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_status (status);
-ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD UNIQUE INDEX uk_eventorganization_conferenceorboothattendee(fk_soc, fk_actioncomm, email);
+
+-- VMYSQL4.1 DROP INDEX uk_eventorganization_conferenceorboothattendee on llx_eventorganization_conferenceorboothattendee;
+-- VPGSQL8.2 DROP INDEX uk_eventorganization_conferenceorboothattendee;
+
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD UNIQUE INDEX uk_eventorganization_conferenceorboothattendee(fk_project, email, fk_actioncomm);
+
 
 create table llx_eventorganization_conferenceorboothattendee_extrafields
 (
@@ -618,3 +627,5 @@ CREATE TABLE llx_onlinesignature
 
 ALTER TABLE llx_facture_fourn CHANGE COLUMN fk_mode_transport fk_transport_mode integer;
 
+ALTER TABLE llx_c_socialnetworks DROP INDEX idx_c_socialnetworks_code;
+ALTER TABLE llx_c_socialnetworks ADD UNIQUE INDEX idx_c_socialnetworks_code_entity (code, entity);
