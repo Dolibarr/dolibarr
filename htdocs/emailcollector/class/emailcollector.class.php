@@ -2049,8 +2049,7 @@ class EmailCollector extends CommonObject
 							foreach ($dirs as $target){
 								foreach ($data as $filename => $content) {
 									$prefix = $this->actions[$this->id]['actionparam'];
-									//var_dump($prefix . '_' . $filename);
-									//exit;
+									git pull
 									$resr = saveAttachment($target, $prefix . '_' . $filename, $content);
 									if ($resr == -1) {
 										$this->errors = 'Doc not saved';
