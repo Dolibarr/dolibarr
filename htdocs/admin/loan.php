@@ -105,7 +105,7 @@ foreach ($list as $key) {
 	// Value
 	print '<td>';
 	if (!empty($conf->accounting->enabled)) {
-		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
+		print $formaccounting->select_account(getDolGlobalString($key), $key, 1, '', 1, 1);
 	} else {
 		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
 	}

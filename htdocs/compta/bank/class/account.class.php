@@ -1125,12 +1125,12 @@ class Account extends CommonObject
 		$langs->load('banks');
 
 		if ($status == self::STATUS_OPEN) {
-			$label = $langs->trans("StatusAccountOpened");
-			$labelshort = $langs->trans("StatusAccountOpened");
+			$label = $langs->transnoentitiesnoconv("StatusAccountOpened");
+			$labelshort = $langs->transnoentitiesnoconv("StatusAccountOpened");
 			$statusType = 'status4';
 		} else {
-			$label = $langs->trans("StatusAccountClosed");
-			$labelshort = $langs->trans("StatusAccountClosed");
+			$label = $langs->transnoentitiesnoconv("StatusAccountClosed");
+			$labelshort = $langs->transnoentitiesnoconv("StatusAccountClosed");
 			$statusType = 'status5';
 		}
 

@@ -450,6 +450,22 @@ $formcompany = new FormCompany($db);
 
 llxHeaderVierge($langs->trans("NewSuggestionOfConference"));
 
+print '<br>';
+
+// Event summary
+print '<div class="center">';
+print '<span class="large">'.$project->title.'</span><br>';
+print img_picto('', 'calendar', 'class="pictofixedwidth"').$langs->trans("Date").': ';
+print dol_print_date($project->date_start, 'daytext');
+if ($project->date_end && $project->date_start != $project->date_end) {
+	print ' - '.dol_print_date($project->date_end, 'daytext');
+}
+print '<br><br>'."\n";
+//print $langs->trans("EvntOrgRegistrationWelcomeMessage")."\n";
+//print $project->note_public."\n";
+//print img_picto('', 'map-marker-alt').$langs->trans("Location").': xxxx';
+print '</div>';
+
 
 print load_fiche_titre($langs->trans("NewSuggestionOfConference"), '', '', 0, 0, 'center');
 
@@ -458,12 +474,6 @@ print '<div align="center">';
 print '<div id="divsubscribe">';
 print '<div class="center subscriptionformhelptext justify">';
 
-// Welcome message
-$text  = '<tr><td class="textpublicpayment"><strong>'.$langs->trans("EvntOrgRegistrationConfWelcomeMessage").'</strong></td></tr></br>';
-$text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgRegistrationConfHelpMessage").' '.$project->label.'.<br><br></td></tr>'."\n";
-$text .= '<tr><td class="textpublicpayment">'.$project->note_public.'</td></tr>'."\n";
-print $text;
-print '</div>';
 
 dol_htmloutput_errors($errmsg);
 

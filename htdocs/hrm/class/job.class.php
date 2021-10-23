@@ -154,7 +154,7 @@ class Job extends CommonObject
 	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
 	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	//  */
-	// protected $childtablesoncascade = array('hrm_jobdet');
+	protected $childtablesoncascade = array("@SkillRank:hrm/class/skillrank.class.php:fk_object:objecttype='job'");
 
 	// /**
 	//  * @var JobLine[]     Array of subtable lines
@@ -850,12 +850,12 @@ class Job extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("hrm");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Enabled');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Disabled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
 		}
 
 		$statusType = 'status'.$status;

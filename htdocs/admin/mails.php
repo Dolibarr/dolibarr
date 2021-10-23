@@ -292,7 +292,7 @@ if ($action == 'edit') {
 	print dol_get_fiche_head($head, 'common', '', -1);
 
 	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
-	print "<br>\n";
+	print "<br><br>\n";
 
 
 	clearstatcache();
@@ -543,7 +543,7 @@ if ($action == 'edit') {
 	print dol_get_fiche_head($head, 'common', '', -1);
 
 	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
-	print "<br>\n";
+	print "<br><br>\n";
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder centpercent">';

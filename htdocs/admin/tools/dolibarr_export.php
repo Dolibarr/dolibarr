@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2018	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2006-2021	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -440,6 +440,11 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 		'function' => 'bzopen',
 		'id' => 'radio_compression_bzip',
 		'label' => $langs->trans("Bzip2")
+	);
+	$compression['zstd'] = array(
+		'function' => 'zstd_compress',
+		'id' => 'radio_compression_zstd',
+		'label' => $langs->trans("Zstd")
 	);
 	$compression['none'] = array(
 		'function' => '',

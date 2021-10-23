@@ -94,7 +94,7 @@ if ($action == 'addcontact') {
 		foreach ($task_array as $task) {
 			$task_already_affected=false;
 			$personsLinked = $task->liste_contact(-1, $source);
-			if (!is_array($personsLinked) && coun($personsLinked) < 0) {
+			if (!is_array($personsLinked) && count($personsLinked) < 0) {
 				setEventMessage($object->error, 'errors');
 			} else {
 				foreach ($personsLinked as $person) {

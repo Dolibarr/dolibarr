@@ -850,6 +850,9 @@ textarea.centpercent {
 .nowraponsmartphone {
 	white-space: <?php print ($dol_optimize_smallscreen ? 'nowrap' : 'normal'); ?>;
 }
+.wraponsmartphone {
+	white-space: <?php print ($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
+}
 .liste_titre .nowrap {
 	white-space: nowrap;
 }
@@ -1586,7 +1589,7 @@ table[summary="list_of_modules"] .fa-cog {
 		min-width: 150px !important;
 	}
 
-	.divmainbodylarge { margin-left: 20px; margin-right: 20px; }
+	.divmainbodylarge { margin-left: 10px; margin-right: 10px; }
 
 	.tdoverflowonsmartphone {
 		max-width: 0;
@@ -3431,7 +3434,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-right: 1px solid #ccc;
 	border-left: 1px solid #ccc;
 
-	margin: 0px 0px 8px 0px;
+	margin: 0px 0px 20px 0px;
 
 	-webkit-border-radius: 0.1em;
 	border-radius: 0.1em;

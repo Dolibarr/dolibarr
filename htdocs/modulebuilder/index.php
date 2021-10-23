@@ -1295,21 +1295,33 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Type")), null, 'errors');
 		}
+	}
 
-		if (!$error) {
-			$addfieldentry = array(
-				'name'=>GETPOST('propname', 'aZ09'), 'label'=>GETPOST('proplabel', 'alpha'), 'type'=>GETPOST('proptype', 'alpha'),
-				'arrayofkeyval'=>GETPOST('proparrayofkeyval', 'restricthtml'), // Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
-				'visible'=>GETPOST('propvisible', 'int'), 'enabled'=>GETPOST('propenabled', 'int'),
-				'position'=>GETPOST('propposition', 'int'), 'notnull'=>GETPOST('propnotnull', 'int'), 'index'=>GETPOST('propindex', 'int'), 'searchall'=>GETPOST('propsearchall', 'int'),
-				'isameasure'=>GETPOST('propisameasure', 'int'), 'comment'=>GETPOST('propcomment', 'alpha'), 'help'=>GETPOST('prophelp', 'alpha'),
-				'css'=>GETPOST('propcss', 'aZ09'), 'cssview'=>GETPOST('propcssview', 'aZ09'), 'csslist'=>GETPOST('propcsslist', 'aZ09'),
-				'validate' => GETPOST('propvalidate', 'int')
-			);
+	if (!$error) {
+		$addfieldentry = array(
+			'name'=>GETPOST('propname', 'aZ09'),
+			'label'=>GETPOST('proplabel', 'alpha'),
+			'type'=>GETPOST('proptype', 'alpha'),
+			'arrayofkeyval'=>GETPOST('proparrayofkeyval', 'restricthtml'), // Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
+			'visible'=>GETPOST('propvisible', 'int'),
+			'enabled'=>GETPOST('propenabled', 'int'),
+			'position'=>GETPOST('propposition', 'int'),
+			'notnull'=>GETPOST('propnotnull', 'int'),
+			'index'=>GETPOST('propindex', 'int'),
+			'searchall'=>GETPOST('propsearchall', 'int'),
+			'isameasure'=>GETPOST('propisameasure', 'int'),
+			'comment'=>GETPOST('propcomment', 'alpha'),
+			'help'=>GETPOST('prophelp', 'alpha'),
+			'css'=>GETPOST('propcss', 'aZ09'),
+			'cssview'=>GETPOST('propcssview', 'aZ09'),
+			'csslist'=>GETPOST('propcsslist', 'aZ09'),
+			'default'=>GETPOST('propdefault', 'restricthtml'),
+			'noteditable'=>intval(GETPOST('propnoteditable', 'int')),
+			'validate' => GETPOST('propvalidate', 'int')
+		);
 
-			if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval'])) {
-				$addfieldentry['arrayofkeyval'] = json_decode($addfieldentry['arrayofkeyval'], true);
-			}
+		if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval'])) {
+			$addfieldentry['arrayofkeyval'] = json_decode($addfieldentry['arrayofkeyval'], true);
 		}
 	}
 
@@ -2804,7 +2816,7 @@ if ($module == 'initmodule') {
 										print '<input class="center" name="propvisible" size="2" value="'.dol_escape_htmltag($propvisible).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="propnoeditable" size="2" value="'.dol_escape_htmltag($propnoteditable).'">';
+										print '<input class="center" name="propnoteditable" size="2" value="'.dol_escape_htmltag($propnoteditable).'">';
 										print '</td>';
 										print '<td>';
 										print '<input class="center" name="propsearchall" size="2" value="'.dol_escape_htmltag($propsearchall).'">';

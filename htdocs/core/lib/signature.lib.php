@@ -39,8 +39,9 @@ function showOnlineSignatureUrl($type, $ref)
 	if ($url == $langs->trans("FeatureOnlineSignDisabled")) {
 		$out .= $url;
 	} else {
-		$out .= '<input type="text" id="onlinesignatureurl" class="quatrevingtpercent" value="'.$url.'">';
+		$out .= '<input type="text" id="onlinesignatureurl" class="quatrevingtpercentminusx" value="'.$url.'">';
 	}
+	$out .= '<a class="" href="'.$url.'" target="_blank">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
 	$out .= '</div>';
 	$out .= ajax_autoselect("onlinesignatureurl", 0);
 	return $out;
