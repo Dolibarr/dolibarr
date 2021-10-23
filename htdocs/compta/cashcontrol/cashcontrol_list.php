@@ -60,7 +60,7 @@ $pagenext = $page + 1;
 // Initialize technical objects
 $object = new CashControl($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction = $conf->takepos->dir_output.'/temp/massgeneration/'.$user->id;
+//$diroutputmassaction = $conf->mymodule->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('cashcontrol')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
