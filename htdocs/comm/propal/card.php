@@ -114,7 +114,7 @@ $usercanread = $user->rights->propal->lire;
 $usercancreate = $user->rights->propal->creer;
 $usercandelete = $user->rights->propal->supprimer;
 
-$usercanclose = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->propal->propal_advance->close)));
+$usercanclose = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->propal->cloturer) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->propal->cloturer)));
 $usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->propal->propal_advance->validate)));
 $usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->propal->propal_advance->send);
 
