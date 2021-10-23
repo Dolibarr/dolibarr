@@ -67,11 +67,13 @@ $search_task_user = GETPOST('search_task_user', 'int');
 $search_task_progress = GETPOST('search_task_progress');
 $search_task_budget_amount = GETPOST('search_task_budget_amount');
 $search_societe = GETPOST('search_societe');
+$search_opp_status = GETPOST('$search_projectstatus');
 
-$mine = $_REQUEST['mode'] == 'mine' ? 1 : 0;
+$mine = (!empty($_REQUEST['mode']) && $_REQUEST['mode'] == 'mine') ? 1 : 0;
 if ($mine) {
 	$search_task_user = $user->id; $mine = 0;
 }
+$type = GETPOST('type');
 
 $search_date_startday = GETPOST('search_date_startday', 'int');
 $search_date_startmonth = GETPOST('search_date_startmonth', 'int');
@@ -346,7 +348,7 @@ $sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed']['checked'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tt ON tt.fk_task = t.rowid";
 }
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
 if ($search_project_user > 0) {
@@ -634,7 +636,7 @@ if ($search_all) {
 	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
 }
 
-$morehtmlfilter = '';
+$moreforfilter = '';
 
 // Filter on categories
 if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
