@@ -118,8 +118,9 @@ function getAttachments($jk, $mbox)
 	$parts = getParts($structure);
 	$fpos = 2;
 	$attachments = array();
-	if ($parts && count($parts)) {
-		for ($i = 1; $i < count($parts); $i++) {
+	$nb = count($parts);
+	if ($parts && $nb) {
+		for ($i = 1; $i < $nb; $i++) {
 			$part = $parts[$i];
 
 			if ($part->ifdisposition && strtolower($part->disposition) == "attachment") {

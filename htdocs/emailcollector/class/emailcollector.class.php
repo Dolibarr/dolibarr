@@ -2060,9 +2060,7 @@ class EmailCollector extends CommonObject
 						} else {
 							$this->errors = 'no joined piece';
 						}
-
 					} elseif ($operation['type'] == 'project') {
-
 					// Create project / lead
 					$projecttocreate = new Project($this->db);
 
