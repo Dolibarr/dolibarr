@@ -19,7 +19,8 @@
 /**
  * This class help you create setup render
  */
-class formSetup{
+class formSetup
+{
 
 	/**
 	 * @var DoliDB Database handler.
@@ -48,10 +49,9 @@ class formSetup{
 		$this->db = $db;
 		$this->form = new Form($this->db);
 
-		if($outputLangs){
+		if ($outputLangs) {
 			$this->langs = $outputLangs;
-		}
-		else{
+		} else {
 			$this->langs = $langs;
 		}
 	}
@@ -59,7 +59,8 @@ class formSetup{
 	/**
 	 * @return string
 	 */
-	public function generateOutput($edit = false){
+	public function generateOutput($edit = false)
+	{
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
@@ -82,7 +83,8 @@ class formSetup{
 	 * @param bool $edit
 	 * @return string
 	 */
-	public function generateLineOutput($item, $edit = false){
+	public function generateLineOutput($item, $edit = false)
+	{
 
 		$out = '';
 		if ($item->enabled==1) {
@@ -97,14 +99,13 @@ class formSetup{
 
 			$out.= '<td>';
 
-			if($edit){
+			if ($edit) {
 				$out.= $item->generateInputField();
-			}
-			else{
+			} else {
 				$out.= $item->generateOutputField();
 			}
 
-			if(!empty($item->errors)){
+			if (!empty($item->errors)) {
 				// TODO : move set event message in a methode to be called by cards not by this class
 				setEventMessages(null, $item->errors, 'errors');
 			}
@@ -122,10 +123,11 @@ class formSetup{
 	 * @param array $params
 	 * @
 	 */
-	public function addItemsFromParamsArray($params){
+	public function addItemsFromParamsArray($params)
+	{
 
-		if(!array($params)){ return false; }
-		foreach ($params as $confKey => $param){
+		if (!array($params)) { return false; }
+		foreach ($params as $confKey => $param) {
 			$this->addItemFromParams($confKey, $param); // todo manage error
 		}
 	}
@@ -136,9 +138,10 @@ class formSetup{
 	 * @param string $confKey
 	 * @param array $params
 	 */
-	public function addItemFromParams($confKey, $params){
+	public function addItemFromParams($confKey, $params)
+	{
 
-		if(empty($confKey) || empty($params['type'])){ return false; }
+		if (empty($confKey) || empty($params['type'])) { return false; }
 
 		/*
 		 * Exemple from old module builder setup page
@@ -156,11 +159,11 @@ class formSetup{
 		$item->type = $params['type'];
 		$item->confKey = $confKey;
 
-		if(!empty($params['enabled'])) {
+		if (!empty($params['enabled'])) {
 			$item->enabled = $params['enabled'];
 		}
 
-		if(!empty($params['css'])){
+		if (!empty($params['css'])) {
 			$item->cssClass = $params['css'];
 		}
 
@@ -168,7 +171,6 @@ class formSetup{
 
 		return true;
 	}
-
 }
 
 
@@ -226,20 +228,23 @@ class formSetupItem
 		$this->confKey = $confKey;
 	}
 
-	public function getHelpText(){
-		if(!empty($this->helpText)){ return $this->helpText; }
+	public function getHelpText()
+	{
+		if (!empty($this->helpText)) { return $this->helpText; }
 		return (($this->langs->trans($this->confKey . 'Tooltip') != $this->confKey . 'Tooltip') ? $this->langs->trans($this->confKey . 'Tooltip') : '');
 	}
 
-	public function getNameText(){
-		if(!empty($this->nameText)){ return $this->nameText; }
-		return (($this->langs->trans($this->confKey) != $this->confKey) ? $this->langs->trans($this->confKey) : $this->langs->trans('MissingTranslationForConfKey',$this->confKey));
+	public function getNameText()
+	{
+		if (!empty($this->nameText)) { return $this->nameText; }
+		return (($this->langs->trans($this->confKey) != $this->confKey) ? $this->langs->trans($this->confKey) : $this->langs->trans('MissingTranslationForConfKey', $this->confKey));
 	}
 
-	public function generateInputField(){
+	public function generateInputField()
+	{
 		global $conf, $user;
 
-		if(!empty($this->fieldOverride)){
+		if (!empty($this->fieldOverride)) {
 			return $this->fieldOverride;
 		}
 
@@ -324,23 +329,24 @@ class formSetupItem
 	 * add error
 	 * @param array|string $errors
 	 */
-	public function setErrors($errors){
-		if(is_array($errors)){
-			if(!empty($errors)){
-				foreach ($errors as $error){
+	public function setErrors($errors)
+	{
+		if (is_array($errors)) {
+			if (!empty($errors)) {
+				foreach ($errors as $error) {
 					$this->setErrors($error);
 				}
 			}
-		}
-		elseif(!empty($errors)){
+		} elseif (!empty($errors)) {
 			$this->errors[] = $errors;
 		}
 	}
 
-	public function generateOutputField(){
+	public function generateOutputField()
+	{
 		global $conf, $user;
 
-		if(!empty($this->fieldOverride)){
+		if (!empty($this->fieldOverride)) {
 			return $this->fieldOverride;
 		}
 
@@ -399,5 +405,4 @@ class formSetupItem
 
 		return $out;
 	}
-
 }
