@@ -863,25 +863,27 @@ if (!empty($arrayfields['t.tobill']['checked'])) {
 if (!empty($arrayfields['t.billed']['checked'])) {
 	print_liste_field_titre($arrayfields['t.billed']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
 }
+// Hook fields
+$totalarray = array(
+	'nbfield' => 0,
+	'val' => array(
+		't.planned_workload' => 0,
+		't.duration_effective' => 0,
+		't.progress' => 0,
+		't.budget_amount' => 0,
+	),
+	'totalplannedworkload' => 0,
+	'totaldurationeffective' => 0,
+	'totaldurationdeclared' => 0,
+	'totaltobillfield' => 0,
+	'totalbilledfield' => 0,
+	'totalbudget_amountfield' => 0,
+	'totalbudgetamount' => 0,
+	'totaltobill' => 0,
+	'totalbilled' => 0,
+);
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
-// Hook fields
-$totalarray = array();
-$totalarray['nbfield'] = 0;
-$totalarray['val'] = array();
-$totalarray['val']['t.planned_workload'] = 0;
-$totalarray['val']['t.duration_effective'] = 0;
-$totalarray['val']['t.progress'] = 0;
-$totalarray['val']['t.budget_amount'] = 0;
-$totalarray['totalplannedworkload'] = 0;
-$totalarray['totaldurationeffective'] = 0;
-$totalarray['totaldurationdeclared'] = 0;
-$totalarray['totaltobillfield'] = array();
-$totalarray['totalbilledfield'] = 0;
-$totalarray['totalbudget_amountfield'] = 0;
-$totalarray['totalbudgetamount'] = 0;
-$totalarray['totaltobill'] = 0;
-$totalarray['totalbilled'] = 0;
 $parameters = array(
 	'arrayfields' => $arrayfields,
 	'param' => $param,
