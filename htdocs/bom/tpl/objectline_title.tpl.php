@@ -43,6 +43,8 @@ print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
 print "<thead>\n";
 
 print '<tr class="liste_titre nodrag nodrop">';
+print '<a id="show_all" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a>&nbsp;&nbsp;';
+print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>&nbsp;';
 
 // Adds a line numbering column
 if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
@@ -51,6 +53,9 @@ if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 
 // Description
 print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
+
+// Linked BOM
+print '<td class="linecolBOM">'.$langs->trans('BOM').'</td>';
 
 // Qty
 print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('Qty'), $langs->trans("QtyRequiredIfNoLoss")).'</td>';

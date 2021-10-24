@@ -358,7 +358,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	print '</table>';
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 
 	// Max number of elements in small lists
 	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
@@ -531,7 +531,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		}
 	}
 
-	print '</div></div></div>';
+	print '</div></div>';
 	print '<div style="clear:both"></div>';
 
 	print dol_get_fiche_end();

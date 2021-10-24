@@ -1139,6 +1139,7 @@ class BOMLine extends CommonObjectLine
 		'rowid' => array('type'=>'integer', 'label'=>'LineID', 'enabled'=>1, 'visible'=>-1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
 		'fk_bom' => array('type'=>'integer:BillOfMaterials:societe/class/bom.class.php', 'label'=>'BillOfMaterials', 'enabled'=>1, 'visible'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1,),
 		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>20, 'notnull'=>1, 'index'=>1,),
+		'fk_bom_child' => array('type'=>'integer:BOM:bom/class/bom.class.php', 'label'=>'BillOfMaterials', 'enabled'=>1, 'visible'=>-1, 'position'=>40, 'notnull'=>-1,),
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'notnull'=>-1,),
 		'qty' => array('type'=>'double(24,8)', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'position'=>100, 'notnull'=>1, 'isameasure'=>'1',),
 		'qty_frozen' => array('type'=>'smallint', 'label'=>'QuantityFrozen', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>105, 'css'=>'maxwidth50imp', 'help'=>'QuantityConsumedInvariable'),
@@ -1162,6 +1163,11 @@ class BOMLine extends CommonObjectLine
 	 * @var int Id of product
 	 */
 	public $fk_product;
+
+	/**
+	 * @var int Id of parent bom
+	 */
+	public $fk_bom_child;
 
 	/**
 	 * @var string description

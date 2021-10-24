@@ -146,7 +146,6 @@ if (!empty($conf->propal->enabled)) {
 print '</div>';
 
 print '<div class="fichetwothirdright">';
-print '<div class="ficheaddleft">';
 
 /*
  * Last modified proposals
@@ -456,7 +455,6 @@ if (! empty($conf->propal->enabled))
 }
 */
 
-print '</div>';
 print '</div>';
 print '</div>';
 

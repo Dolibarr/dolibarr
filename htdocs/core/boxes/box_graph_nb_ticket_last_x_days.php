@@ -65,7 +65,7 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 	public function loadBox($max = 5)
 	{
 		global $conf, $user, $langs;
-		$dataseries = "";
+		$dataseries = array();
 		$graphtoshow = "";
 
 		$badgeStatus0 = '#cbd3d3'; // draft
@@ -118,7 +118,6 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 			if ($resql) {
 				$num = $this->db->num_rows($resql);
 				$i = 0;
-				$dataseries = array();
 				while ($i < $num) {
 					$objp = $this->db->fetch_object($resql);
 					while ($minimumdatecformated < $objp->datec) {

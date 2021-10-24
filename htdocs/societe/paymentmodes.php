@@ -1507,10 +1507,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			}
 		}
 
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		print '</div><div class="fichehalfright">';
 
 
-		print '</div></div></div>';
+		print '</div></div>';
 
 		print '<br>';
 	}

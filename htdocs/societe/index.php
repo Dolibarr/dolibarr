@@ -104,7 +104,7 @@ if (empty($user->rights->societe->client->voir) && !$socid) {
 if ($socid > 0) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
-if (!$user->rights->fournisseur->lire) {
+if (empty($user->rights->fournisseur->lire)) {
 	$sql .= " AND (s.fournisseur <> 1 OR s.client <> 0)"; // client=0, fournisseur=0 must be visible
 }
 //print $sql;
@@ -287,7 +287,7 @@ if (empty($user->rights->societe->client->voir) && !$socid) {
 if ($socid) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
-if (!$user->rights->fournisseur->lire) {
+if (empty($user->rights->fournisseur->lire)) {
 	$sql .= " AND (s.fournisseur != 1 OR s.client != 0)";
 }
 $sql .= $db->order("s.tms", "DESC");

@@ -42,7 +42,7 @@ $mode = GETPOSTISSET("mode") ? GETPOST("mode", 'aZ09') : 'customer';
 if ($mode == 'customer' && !$user->rights->commande->lire) {
 	accessforbidden();
 }
-if ($mode == 'supplier' && !$user->rights->fournisseur->commande->lire) {
+if ($mode == 'supplier' && empty($user->rights->fournisseur->commande->lire)) {
 	accessforbidden();
 }
 
@@ -401,7 +401,7 @@ print '</table>';
 print '</div>';
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 // Show graphs
@@ -418,7 +418,7 @@ if ($mesg) {
 print '</td></tr></table>';
 
 
-print '</div></div></div>';
+print '</div></div>';
 print '<div style="clear:both"></div>';
 
 print dol_get_fiche_end();

@@ -759,8 +759,6 @@ class Categorie extends CommonObject
 			}
 			return -1;
 		}
-
-		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -816,8 +814,6 @@ class Categorie extends CommonObject
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
-
-		return 0;
 	}
 
 	/**

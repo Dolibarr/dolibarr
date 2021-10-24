@@ -1543,7 +1543,7 @@ if ($placeid > 0) {
 				$htmlforlines .= '</td>';
 			}
 			$htmlforlines .= '</tr>'."\n";
-			$htmlforlines .= empty($htmlsupplements[$line->id]) ? '' : empty($htmlsupplements[$line->id]);
+			$htmlforlines .= empty($htmlsupplements[$line->id]) ? '' : $htmlsupplements[$line->id];
 
 			print $htmlforlines;
 		}
