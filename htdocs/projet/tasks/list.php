@@ -636,7 +636,7 @@ if ($search_all) {
 	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
 }
 
-$morehtmlfilter = '';
+$moreforfilter = '';
 
 // Filter on categories
 if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
