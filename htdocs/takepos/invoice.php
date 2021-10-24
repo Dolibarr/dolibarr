@@ -1159,7 +1159,7 @@ $( document ).ready(function() {
 		$result = $adh->fetch('', '', $invoice->socid);
 		if ($result > 0) {
 			$adh->ref = $adh->getFullName($langs);
-			if (empty($adh->statut)) {
+			if (empty($adh->statut) || $adh->statut = -2) {
 				$s .= "<s>";
 			}
 			$s .= $adh->getFullName($langs);
@@ -1175,7 +1175,7 @@ $( document ).ready(function() {
 					$s .= " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
 				}
 			}
-			if (empty($adh->statut)) {
+			if (empty($adh->statut) || $adh->statut = -2) {
 				$s .= "</s>";
 			}
 		} else {
