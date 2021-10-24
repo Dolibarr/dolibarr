@@ -712,7 +712,8 @@ class dolReceiptPrinter extends Printer
 						$this->printer->text($title.$spaces.str_pad(price($object->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 						break;
 					case 'DOL_PRINT_CURR_DATE':
-						$this->printer->text(date($vals[$tplline]['value'])."\n");
+						if (strlen($vals[$tplline]['value'])<2) $this->printer->text(date('d/m/Y H:i:s')."\n");
+						else $this->printer->text(date($vals[$tplline]['value'])."\n");
 						break;
 					case 'DOL_LINE_FEED':
 						$this->printer->feed();
