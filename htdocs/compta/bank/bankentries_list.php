@@ -68,7 +68,7 @@ $contextpage = 'banktransactionlist'.(empty($object->ref) ? '' : '-'.$object->id
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
-if ($fielvalue) {
+if ($fieldvalue) {
 	if ($user->socid) {
 		$socid = $user->socid;
 	}
