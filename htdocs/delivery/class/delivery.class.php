@@ -262,6 +262,7 @@ class Delivery extends CommonObject
 	 *	@param	string	$qty					Quantity
 	 *	@param	string	$fk_product				Id of predefined product
 	 *	@param	string	$description			Description
+	 *  @param  array   $array_options          line extrafields
 	 *	@return	int								<0 if KO, >0 if OK
 	 */
 	public function create_line($origin_id, $qty, $fk_product, $description, $array_options = 0)
@@ -602,6 +603,7 @@ class Delivery extends CommonObject
 	 *
 	 *	@param	int		$origin_id		Origin id
 	 *	@param	int		$qty			Qty
+	 *  @param  array   $array_options  line extrafields
 	 *	@return	void
 	 */
 	public function addline($origin_id, $qty, $array_options = 0)
@@ -613,7 +615,8 @@ class Delivery extends CommonObject
 
 		$line->origin_id = $origin_id;
 		$line->qty = $qty;
-		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) { // For avoid conflicts if trigger used
+		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) {
+			// For avoid conflicts if trigger used
 			$line->array_options = $array_options;
 		}
 		$this->lines[$num] = $line;
