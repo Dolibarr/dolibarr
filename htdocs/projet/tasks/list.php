@@ -69,9 +69,10 @@ $search_task_budget_amount = GETPOST('search_task_budget_amount');
 $search_societe = GETPOST('search_societe');
 $search_opp_status = GETPOST("search_opp_status", 'alpha');
 
-$mine = (GETPOSTISSET('mode') && GETPOST('mode', 'alpha') == 'mine') ? 1 : 0;
+$mine = GETPOST('mode', 'alpha') == 'mine' ? 1 : 0;
 if ($mine) {
-	$search_task_user = $user->id; $mine = 0;
+	$search_task_user = $user->id;
+	$mine = 0;
 }
 
 $search_date_startday = GETPOST('search_date_startday', 'int');
@@ -882,11 +883,11 @@ $totalarray['totalbudgetamount'] = 0;
 $totalarray['totaltobill'] = 0;
 $totalarray['totalbilled'] = 0;
 $parameters = array(
-	'arrayfields'=>$arrayfields,
-	'param'=>$param,
-	'sortfield'=>$sortfield,
-	'sortorder'=>$sortorder,
-	'totalarray' => $totalarray,
+	'arrayfields' => $arrayfields,
+	'param' => $param,
+	'sortfield' => $sortfield,
+	'sortorder' => $sortorder,
+	'totalarray' => &$totalarray,
 );
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
