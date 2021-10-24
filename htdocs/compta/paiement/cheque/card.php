@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013 		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -388,7 +388,7 @@ if ($action == 'new') {
 		$i = 0;
 		while ($obj = $db->fetch_object($resql)) {
 			$accounts[$obj->bid] = $obj->label;
-			$lines[$obj->bid][$i]["date"] = $db->jdate($obj->date);
+			$lines[$obj->bid][$i]["date"] = $db->jdate($obj->datec);
 			$lines[$obj->bid][$i]["amount"] = $obj->amount;
 			$lines[$obj->bid][$i]["emetteur"] = $obj->emetteur;
 			$lines[$obj->bid][$i]["numero"] = $obj->num_chq;
@@ -398,6 +398,7 @@ if ($action == 'new') {
 			$lines[$obj->bid][$i]["label"] = $obj->transactionlabel;
 			$lines[$obj->bid][$i]["paymentid"] = $obj->paymentid;
 			$lines[$obj->bid][$i]["paymentref"] = $obj->paymentref;
+			$lines[$obj->bid][$i]["paymentdate"] = $db->jdate($obj->date);
 			$i++;
 		}
 
@@ -468,6 +469,7 @@ if ($action == 'new') {
 				print '<td class="center">';
 				$paymentstatic->id = $value["paymentid"];
 				$paymentstatic->ref = $value["paymentref"];
+				$paymentstatic->date = $value["paymentdate"];
 				if ($paymentstatic->id) {
 					print $paymentstatic->getNomUrl(1);
 				} else {
