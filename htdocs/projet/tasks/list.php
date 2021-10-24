@@ -863,7 +863,6 @@ if (!empty($arrayfields['t.tobill']['checked'])) {
 if (!empty($arrayfields['t.billed']['checked'])) {
 	print_liste_field_titre($arrayfields['t.billed']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
 }
-// Hook fields
 $totalarray = array(
 	'nbfield' => 0,
 	'val' => array(
@@ -884,6 +883,7 @@ $totalarray = array(
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+// Hook fields
 $parameters = array(
 	'arrayfields' => $arrayfields,
 	'param' => $param,
