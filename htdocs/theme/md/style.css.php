@@ -6717,6 +6717,30 @@ div.clipboardCPValue.hidewithsize {
 	display: none;
 }
 
+/* To make a div popup, we must use a position aboluste inside a position relative */
+
+.clipboardCPText {
+	position: relative;
+}
+.clipboardCPTextDivInside {
+	position: absolute;
+	background: #EEE;
+	color: 888;
+	border: 1px solid #DDD;
+	opacity: 1;
+	z-index: 20;
+	padding: 2px;
+	padding-left: 4px;
+	padding-right: 4px;
+	top: -5px;
+	left: 0px;
+	border-radius: 5px;
+	white-space: nowrap;
+	font-size: 0.95em;
+	box-shadow: 1px 1px 6px #ddd;
+}
+
+
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
