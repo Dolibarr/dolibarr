@@ -719,7 +719,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 			$head = project_prepare_head($projectstatic);
 			print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'));
 
-			$param = ($mode == 'mine' ? '&mode=mine' : '');
+			$param = ((!empty($mode) && $mode == 'mine') ? '&mode=mine' : '');
 
 			// Project card
 
@@ -729,13 +729,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 			// Title
 			$morehtmlref .= $projectstatic->title;
 			// Thirdparty
-			if ($projectstatic->thirdparty->id > 0) {
+			if (!empty($projectstatic->thirdparty->id) && $projectstatic->thirdparty->id > 0) {
 				$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$projectstatic->thirdparty->getNomUrl(1, 'project');
 			}
 			$morehtmlref .= '</div>';
 
 			// Define a complementary filter for search of next/prev ref.
-			if (!$user->rights->projet->all->lire) {
+			if (empty($user->rights->projet->all->lire)) {
 				$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
 				$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 			}

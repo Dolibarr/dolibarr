@@ -33,7 +33,7 @@ $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 
-$mine = $_REQUEST['mode'] == 'mine' ? 1 : 0;
+$mine = (isset($_REQUEST['mode']) && $_REQUEST['mode'] == 'mine') ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
@@ -100,7 +100,7 @@ if ($id > 0 || !empty($ref)) {
 	// Title
 	$morehtmlref .= $object->title;
 	// Thirdparty
-	if ($object->thirdparty->id > 0) {
+	if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref .= '</div>';
