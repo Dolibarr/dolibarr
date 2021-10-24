@@ -607,7 +607,6 @@ if ($object->id > 0) {
 
 	print '</div>';
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border centpercent tableforfield">';
@@ -672,7 +671,6 @@ if ($object->id > 0) {
 
 	print '</table>';
 
-	print '</div>';
 	print '</div>';
 	print '</div>';
 

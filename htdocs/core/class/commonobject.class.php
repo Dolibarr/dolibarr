@@ -6080,7 +6080,6 @@ abstract class CommonObject
 			}
 
 			$sql .= ")";
-
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->error = $this->db->lasterror();
@@ -6332,6 +6331,11 @@ abstract class CommonObject
 						$this->array_options["options_".$key] = null;
 					} else {
 						$this->array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key]);
+					}
+					break;
+				case 'boolean':
+					if (empty($this->array_options["options_".$key])) {
+						$this->array_options["options_".$key] = null;
 					}
 					break;
 				/*

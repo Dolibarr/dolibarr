@@ -317,7 +317,6 @@ if ($id > 0 || !empty($ref)) {
 		print '</div>';
 
 		print '<div class="fichehalfright">';
-		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border centpercent">';
@@ -336,7 +335,6 @@ if ($id > 0 || !empty($ref)) {
 
 		print '</table>';
 
-		print '</div>';
 		print '</div>';
 		print '</div>';
 
@@ -543,7 +541,7 @@ if ($id > 0 || !empty($ref)) {
 		print '</table>';
 		print '</div>';
 
-		print '<div class="fichehalfright"><div class="ficheaddleft">';
+		print '<div class="fichehalfright">';
 
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent tableforfield">';
@@ -583,7 +581,6 @@ if ($id > 0 || !empty($ref)) {
 
 		print '</table>';
 
-		print '</div>';
 		print '</div>';
 
 		print '</div>';
@@ -639,7 +636,7 @@ if ($id > 0 || !empty($ref)) {
 
 		print $formfile->showdocuments('project_task', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		print '</div><div class="fichehalfright">';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
@@ -647,7 +644,7 @@ if ($id > 0 || !empty($ref)) {
 		$defaultthirdpartyid = $socid > 0 ? $socid : $object->project->socid;
 		$formactions->showactions($object, 'task', $defaultthirdpartyid, 1, '', 10, 'withproject='.$withproject);
 
-		print '</div></div></div>';
+		print '</div></div>';
 	}
 }
 

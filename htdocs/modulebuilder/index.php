@@ -1542,7 +1542,8 @@ if ($dirins && $action == 'generatepackage') {
 			if (!dol_is_dir($dirofmodule)) {
 				dol_mkdir($dirofmodule);
 			}
-			$result = dol_compress_dir($dir, $outputfilezip, 'zip', '', $modulelowercase);
+			// Note: We exclude /bin/ to not include the already generated zip
+			$result = dol_compress_dir($dir, $outputfilezip, 'zip', '/\/bin\//', $modulelowercase);
 		} else {
 			$result = -1;
 		}
@@ -3591,7 +3592,7 @@ if ($module == 'initmodule') {
 						print '</tr>';
 					}
 				} else {
-					print '<tr><td><span class="fa fa-file-o"></span> '.$langs->trans("CLIFile").' : <span class="opacitymedium">'.$langs->trans("FileNotYetGenerated");'</span>';
+					print '<tr><td><span class="fa fa-file-o"></span> '.$langs->trans("CLIFile").' : <span class="opacitymedium">'.$langs->trans("FileNotYetGenerated"); '</span>';
 					print '</td><td><a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initcli&token='.newToken().'&format=php">'.img_picto('Generate', 'generate', 'class="paddingleft"').'</a>';
 					print '</td></tr>';
 				}

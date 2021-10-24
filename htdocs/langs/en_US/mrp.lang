@@ -104,4 +104,6 @@ HumanMachine=Human / Machine
 WorkstationArea=Workstation area
 Machines=Machines
 THMEstimatedHelp=This rate makes it possible to define a forecast cost of the item
+BOM=Bill Of Materials
+CollapseBOMHelp=You can define the default display of the details of the nomenclature in the configuration of the BOM module
 MOAndLines=Manufacturing Orders and lines

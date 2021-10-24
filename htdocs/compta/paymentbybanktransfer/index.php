@@ -174,7 +174,7 @@ if ($resql) {
 }
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 /*
@@ -233,7 +233,7 @@ if ($result) {
 }
 
 
-print '</div></div></div>';
+print '</div></div>';
 
 // End of page
 llxFooter();

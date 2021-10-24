@@ -2661,14 +2661,14 @@ if ($action == 'create' && $usercancreate) {
 				print showOnlinePaymentUrl('order', $object->ref).'<br>';
 			}
 
-			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+			print '</div><div class="fichehalfright">';
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'order', $socid, 1);
 
-			print '</div></div></div>';
+			print '</div></div>';
 		}
 
 		// Presend form

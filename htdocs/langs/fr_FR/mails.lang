@@ -177,4 +177,3 @@ IsAnAnswer=Est une réponse à un e-mail initial
 RecordCreatedByEmailCollector=Enregistrement créé par le Collecteur d'e-mails%s depuis l'email %s
 DefaultBlacklistMailingStatus=Statut par défaut des contacts pour refuser les emailing
 DefaultStatusEmptyMandatory=Vide mais obligatoire
-recordjoinpieceonobject = Enregitrer les pieces jointes de l'email dans la fiche object dont la reference est citée dans le sujet du mail si le mail de l'expediteur correspond a celui d'un user enregistré

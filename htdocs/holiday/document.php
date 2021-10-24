@@ -283,7 +283,6 @@ if ($object->id) {
 	/*
 	print '</div>';
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 
 	print '<div class="underbanner clearboth"></div>';
 
@@ -340,7 +339,6 @@ if ($object->id) {
 	print '</tbody>';
 	print '</table>';
 
-	print '</div>';
 	print '</div>'; */
 	print '</div>';
 

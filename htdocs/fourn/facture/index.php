@@ -73,7 +73,6 @@ if ($tmp) {
 print '</div>';
 
 print '<div class="fichetwothirdright">';
-print '<div class="ficheaddleft">';
 
 $tmp = getPurchaseInvoiceLatestEditTable($maxLatestEditCount, $socid);
 if ($tmp) {
@@ -87,7 +86,6 @@ if ($tmp) {
 	print '<br>';
 }
 
-print '</div>';
 print '</div>';
 
 print '</div>';

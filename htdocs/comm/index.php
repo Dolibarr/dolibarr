@@ -548,7 +548,6 @@ if (!empty($conf->ficheinter->enabled)) {
 }
 
 print '</div><div class="fichetwothirdright">';
-print '<div class="ficheaddleft">';
 
 /*
  * Last modified customers or prospects
@@ -1057,7 +1056,6 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 	}
 }
 
-print '</div>';
 print '</div>';
 print '</div>';
 

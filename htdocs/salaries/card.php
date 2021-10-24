@@ -854,7 +854,6 @@ if ($id) {
 	print '</div>';
 
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 
 	$nbcols = 3;
 	if (!empty($conf->banque->enabled)) {
@@ -955,7 +954,6 @@ if ($id) {
 		dol_print_error($db);
 	}
 
-	print '</div>';
 	print '</div>';
 	print '</div>';
 
