@@ -69,7 +69,7 @@ class formSetup{
 		$out.= '	<td>'.$this->langs->trans("Value").'</td>';
 		$out.= '</tr>';
 
-		foreach ($this->arrayOfParameters as $const => $item) {
+		foreach ($this->arrayOfParameters as $item) {
 			$out.= $this->generateLineOutput($item, $edit);
 		}
 
@@ -98,10 +98,10 @@ class formSetup{
 			$out.= '<td>';
 
 			if($edit){
-				$item->generateInputField();
+				$out.= $item->generateInputField();
 			}
 			else{
-				$item->generateOutputField();
+				$out.= $item->generateOutputField();
 			}
 
 			if(!empty($item->errors)){
@@ -125,7 +125,6 @@ class formSetup{
 	public function addItemsFromParamsArray($params){
 
 		if(!array($params)){ return false; }
-
 		foreach ($params as $confKey => $param){
 			$this->addItemFromParams($confKey, $param); // todo manage error
 		}
@@ -139,7 +138,7 @@ class formSetup{
 	 */
 	public function addItemFromParams($confKey, $params){
 
-		if(empty($confKey) || !empty($params['type'])){ return false; }
+		if(empty($confKey) || empty($params['type'])){ return false; }
 
 		/*
 		 * Exemple from old module builder setup page
@@ -155,13 +154,14 @@ class formSetup{
 
 		$item = new formSetupItem($this->db);
 		$item->type = $params['type'];
+		$item->confKey = $confKey;
 
 		if(!empty($params['enabled'])) {
 			$item->enabled = $params['enabled'];
 		}
 
 		if(!empty($params['css'])){
-			$item->enabled = $params['css'];
+			$item->cssClass = $params['css'];
 		}
 
 		$this->arrayOfParameters[$item->confKey] = $item;
@@ -233,7 +233,7 @@ class formSetupItem
 
 	public function getNameText(){
 		if(!empty($this->nameText)){ return $this->nameText; }
-		return (($this->langs->trans($this->confKey) != $this->confKey) ? $this->langs->trans($this->confKey) : '');
+		return (($this->langs->trans($this->confKey) != $this->confKey) ? $this->langs->trans($this->confKey) : $this->langs->trans('MissingTranslationForConfKey',$this->confKey));
 	}
 
 	public function generateInputField(){
@@ -313,7 +313,7 @@ class formSetupItem
 				$this->form->select_produits($selected, $this->confKey, '', 0);
 			}
 		} else {
-			$out.= '<input name="'.$this->confKey.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{$this->confKey}.'">';
+			$out.= '<input name="'.$this->confKey.'"  class="flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass).'" value="'.$conf->global->{$this->confKey}.'">';
 		}
 
 		return $out;
@@ -347,11 +347,11 @@ class formSetupItem
 		$out = '';
 
 		if ($this->type == 'textarea') {
-			print dol_nl2br($conf->global->{$this->confKey});
+			$out.= dol_nl2br($conf->global->{$this->confKey});
 		} elseif ($this->type== 'html') {
-			print  $conf->global->{$this->confKey};
+			$out.=  $conf->global->{$this->confKey};
 		} elseif ($this->type == 'yesno') {
-			print ajax_constantonoff($this->confKey);
+			$out.= ajax_constantonoff($this->confKey);
 		} elseif (preg_match('/emailtemplate:/', $this->type)) {
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 			$formmail = new FormMail($this->db);
@@ -362,7 +362,7 @@ class formSetupItem
 			if ($template<0) {
 				$this->setErrors($formmail->errors);
 			}
-			print $this->langs->trans($template->label);
+			$out.= $this->langs->trans($template->label);
 		} elseif (preg_match('/category:/', $this->type)) {
 			$c = new Categorie($this->db);
 			$result = $c->fetch($conf->global->{$this->confKey});
@@ -374,27 +374,27 @@ class formSetupItem
 			foreach ($ways as $way) {
 				$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';
 			}
-			print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
+			$out.= '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 		} elseif (preg_match('/thirdparty_type/', $this->type)) {
 			if ($conf->global->{$this->confKey}==2) {
-				print $this->langs->trans("Prospect");
+				$out.= $this->langs->trans("Prospect");
 			} elseif ($conf->global->{$this->confKey}==3) {
-				print $this->langs->trans("ProspectCustomer");
+				$out.= $this->langs->trans("ProspectCustomer");
 			} elseif ($conf->global->{$this->confKey}==1) {
-				print $this->langs->trans("Customer");
+				$out.= $this->langs->trans("Customer");
 			} elseif ($conf->global->{$this->confKey}==0) {
-				print $this->langs->trans("NorProspectNorCustomer");
+				$out.= $this->langs->trans("NorProspectNorCustomer");
 			}
 		} elseif ($this->type == 'product') {
 			$product = new Product($this->db);
 			$resprod = $product->fetch($conf->global->{$this->confKey});
 			if ($resprod > 0) {
-				print $product->ref;
+				$out.= $product->ref;
 			} elseif ($resprod < 0) {
 				$this->setErrors($product->errors);
 			}
 		} else {
-			print $conf->global->{$this->confKey};
+			$out.= $conf->global->{$this->confKey};
 		}
 
 		return $out;
