@@ -116,7 +116,7 @@ class Notify
 			foreach ($listofnotiftodo as $val) {
 				if ($val['type'] == 'touser') {
 					unset($listofnotiftodo[$val['email']]);
-					$listofnotiftodo = array_merge($listofnotiftodo);
+					//$listofnotiftodo = array_merge($listofnotiftodo);
 				}
 			}
 		}
@@ -124,7 +124,7 @@ class Notify
 			foreach ($listofnotiftodo as $val) {
 				if ($val['type'] == 'tofixedemail') {
 					unset($listofnotiftodo[$val['email']]);
-					$listofnotiftodo = array_merge($listofnotiftodo);
+					//$listofnotiftodo = array_merge($listofnotiftodo);
 				}
 			}
 		}
