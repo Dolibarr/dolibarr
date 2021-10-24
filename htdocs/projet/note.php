@@ -1,10 +1,9 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -13,55 +12,71 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *	\file       htdocs/projet/note.php
  *	\ingroup    project
  *	\brief      Fiche d'information sur un projet
+ *	\version    $Id$
  */
 
-require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require('./pre.inc.php');
+require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
-// Load translation files required by the page
 $langs->load('projects');
 
-$action = GETPOST('action', 'aZ09');
-$id = GETPOST('id', 'int');
-$ref = GETPOST('ref', 'alpha');
-
-$mine = $_REQUEST['mode'] == 'mine' ? 1 : 0;
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
-
-$object = new Project($db);
-
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
-if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) {
-	$object->fetchComments();
-}
+$id = isset($_GET["id"])?$_GET["id"]:'';
 
 // Security check
-$socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-$hookmanager->initHooks(array('projetnote'));
-$result = restrictedArea($user, 'projet', $id, 'projet&project');
-
-$permissionnote = $user->rights->projet->creer; // Used by the include of actions_setnotes.inc.php
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'projet', $id);
 
 
-/*
- * Actions
- */
 
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+/******************************************************************************/
+/*                     Actions                                                */
+/******************************************************************************/
+
+if ($_POST["action"] == 'update_public' && $user->rights->projet->creer)
+{
+	$project = new Project($db);
+	$project->fetch($_GET['id']);
+
+	$db->begin();
+
+	$res=$project->update_note_public($_POST["note_public"],$user);
+	if ($res < 0)
+	{
+		$mesg='<div class="error">'.$project->error.'</div>';
+		$db->rollback();
+	}
+	else
+	{
+		$db->commit();
+	}
 }
-if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+
+if ($_POST['action'] == 'update_private' && $user->rights->projet->creer)
+{
+	$project = new Project($db);
+	$project->fetch($_GET['id']);
+
+	$db->begin();
+
+	$res=$project->update_note($_POST["note_private"],$user);
+	if ($res < 0)
+	{
+		$mesg='<div class="error">'.$project->error.'</div>';
+		$db->rollback();
+	}
+	else
+	{
+		$db->commit();
+	}
 }
 
 
@@ -69,64 +84,123 @@ if (empty($reshook)) {
  * View
  */
 
-$title = $langs->trans("Project").' - '.$langs->trans("Note").' - '.$object->ref.' '.$object->name;
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
-	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Note");
-}
-$help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
-llxHeader("", $title, $help_url);
+llxHeader();
 
-$form = new Form($db);
-$userstatic = new User($db);
+$html = new Form($db);
 
-$now = dol_now();
-
-if ($id > 0 || !empty($ref)) {
-	// To verify role of users
-	//$userAccess = $object->restrictedProjectArea($user,'read');
-	$userWrite = $object->restrictedProjectArea($user, 'write');
-	//$userDelete = $object->restrictedProjectArea($user,'delete');
-	//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
-
-	$head = project_prepare_head($object);
-	print dol_get_fiche_head($head, 'notes', $langs->trans('Project'), -1, ($object->public ? 'projectpub' : 'project'));
+$userstatic=new User($db);
 
 
-	// Project card
+$id = $_GET['id'];
+$ref= $_GET['ref'];
+if ($id > 0 || ! empty($ref))
+{
+	if ($mesg) print $mesg;
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$now=gmmktime();
 
-	$morehtmlref = '<div class="refidno">';
-	// Title
-	$morehtmlref .= $object->title;
-	// Thirdparty
-	if ($object->thirdparty->id > 0) {
-		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
+	$project = new Project($db);
+
+	if ($project->fetch($id, $ref))
+	{
+		if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
+
+		// To verify role of users
+		$userAccess = $project->restrictedProjectArea($user);
+
+		$head = project_prepare_head($project);
+		dol_fiche_head($head, 'note', $langs->trans('Project'), 0, 'project');
+
+		print '<table class="border" width="100%">';
+
+		//$linkback="<a href=\"".$_SERVER["PHP_SELF"]."?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("BackToList")."</a>";
+
+		// Ref
+		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+		print $html->showrefnav($project,'ref','',1,'ref','ref');
+		print '</td></tr>';
+
+		// Label
+		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$project->title.'</td></tr>';
+
+		// Third party
+		print '<tr><td>'.$langs->trans("Company").'</td><td>';
+		if ($project->societe->id > 0) print $project->societe->getNomUrl(1);
+		else print'&nbsp;';
+		print '</td></tr>';
+
+		// Visibility
+		print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
+		if ($project->public) print $langs->trans('SharedProject');
+		else print $langs->trans('PrivateProject');
+		print '</td></tr>';
+
+		// Statut
+		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$project->getLibStatut(4).'</td></tr>';
+
+		// Note publique
+		print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';
+		print '<td valign="top" colspan="3">';
+		if ($_GET["action"] == 'edit')
+		{
+			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="action" value="update_public">';
+			print '<textarea name="note_public" cols="80" rows="8">'.$project->note_public."</textarea><br>";
+			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+			print '</form>';
+		}
+		else
+		{
+			print ($project->note_public?nl2br($project->note_public):"&nbsp;");
+		}
+		print "</td></tr>";
+
+		// Note privee
+		if (! $user->societe_id)
+		{
+			print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
+			print '<td valign="top" colspan="3">';
+			if ($_GET["action"] == 'edit')
+			{
+				print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="action" value="update_private">';
+				print '<textarea name="note_private" cols="80" rows="8">'.$project->note_private."</textarea><br>";
+				print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+				print '</form>';
+			}
+			else
+			{
+				print ($project->note_private?nl2br($project->note_private):"&nbsp;");
+			}
+			print "</td></tr>";
+		}
+
+		print "</table>";
+
+		print '</div>';
+
+		/*
+		 * Actions
+		 */
+
+		print '<div class="tabsAction">';
+		if ($user->rights->projet->creer && $_GET['action'] <> 'edit')
+		{
+			if ($userAccess)
+			{
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
+			}
+			else
+			{
+				print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Modify').'</a>';
+			}
+		}
+		print '</div>';
 	}
-	$morehtmlref .= '</div>';
-
-	// Define a complementary filter for search of next/prev ref.
-	if (!$user->rights->projet->all->lire) {
-		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-		$object->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
-	}
-
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-
-
-	print '<div class="fichecenter">';
-	print '<div class="underbanner clearboth"></div>';
-
-	$cssclass = "titlefield";
-	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
-
-	print '</div>';
-
-	print '<div class="clearboth"></div>';
-
-	print dol_get_fiche_end();
 }
-
-// End of page
-llxFooter();
 $db->close();
+
+llxFooter('$Date$ - $Revision: 1.15 ');
+?>

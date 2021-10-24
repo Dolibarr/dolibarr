@@ -1,10 +1,9 @@
 <?php
-/* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2018  Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -13,309 +12,326 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
- *      \file       htdocs/compta/paiement_charge.php
- *      \ingroup    tax
- *      \brief      Page to add payment of a tax
+ *	    \file       htdocs/compta/paiement_charge.php
+ *		\ingroup    tax
+ *		\brief      Page to add payment of a tax
+ *		\version    $Id$
  */
 
-require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+include_once("./pre.inc.php");
+include_once(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
+include_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 
-// Load translation files required by the page
 $langs->load("bills");
 
-$chid = GETPOST("id", 'int');
-$action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel');
+$chid=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
 
-$amounts = array();
-
-// Security check
-$socid = 0;
-if ($user->socid > 0) {
-	$socid = $user->socid;
+// Securite acces client
+if ($user->societe_id > 0)
+{
+	$action = '';
+	$socid = $user->societe_id;
 }
-
-$charge = new ChargeSociales($db);
 
 
 /*
- * Actions
+ * Actions ajoute paiement
  */
-
-if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes')) {
-	$error = 0;
-
-	if ($cancel) {
-		$loc = DOL_URL_ROOT.'/compta/sociales/card.php?id='.$chid;
-		header("Location: ".$loc);
+if ($_POST["action"] == 'add_paiement')
+{
+	if ($_POST["cancel"])
+	{
+		$loc = DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid;
+		Header("Location: $loc");
 		exit;
 	}
 
-	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", "int"), GETPOST("reday", "int"), GETPOST("reyear", "int"));
+	$datepaye = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 
-	if (!(GETPOST("paiementtype") > 0)) {
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode")), null, 'errors');
+	if (! $_POST["paiementtype"] > 0)
+	{
+		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
 		$error++;
-		$action = 'create';
 	}
-	if ($datepaye == '') {
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
+	if ($datepaye == '')
+	{
+		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Date"));
 		$error++;
-		$action = 'create';
-	}
-	if (!empty($conf->banque->enabled) && !(GETPOST("accountid") > 0)) {
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
-		$error++;
-		$action = 'create';
 	}
 
-	if (!$error) {
+	if (! $error)
+	{
 		$paymentid = 0;
 
 		// Read possible payments
-		foreach ($_POST as $key => $value) {
-			if (substr($key, 0, 7) == 'amount_') {
-				$other_chid = substr($key, 7);
-				$amounts[$other_chid] = price2num($_POST[$key]);
+		$amounts = array();
+		foreach ($_POST as $key => $value)
+		{
+			if (substr($key,0,7) == 'amount_')
+			{
+				$other_chid = substr($key,7);
+
+				$amounts[$other_chid] = $_POST[$key];
 			}
 		}
 
-		if (count($amounts) <= 0) {
-			$error++;
-			setEventMessages($langs->trans("ErrorNoPaymentDefined"), null, 'errors');
-			$action = 'create';
-		}
+		$db->begin();
 
-		if (!$error) {
-			$db->begin();
+		// Creation de la ligne paiement
+		$paiement = new PaiementCharge($db);
+		$paiement->chid         = $chid;
+		$paiement->datepaye     = $datepaye;
+		$paiement->amounts      = $amounts;   // Tableau de montant
+		$paiement->paiementtype = $_POST["paiementtype"];
+		$paiement->num_paiement = $_POST["num_paiement"];
+		$paiement->note         = $_POST["note"];
+		$paymentid = $paiement->create($user);
 
-			// Create a line of payments
-			$paiement = new PaymentSocialContribution($db);
-			$paiement->chid         = $chid;
-			$paiement->datepaye     = $datepaye;
-			$paiement->amounts      = $amounts; // Amount list
-			$paiement->paiementtype = GETPOST("paiementtype", 'alphanohtml');
-			$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
-			$paiement->note         = GETPOST("note", 'restricthtml');
-			$paiement->note_private = GETPOST("note", 'restricthtml');
-
-			if (!$error) {
-				$paymentid = $paiement->create($user, (GETPOST('closepaidcontrib') == 'on' ? 1 : 0));
-				if ($paymentid < 0) {
-					$error++;
-					setEventMessages($paiement->error, null, 'errors');
-					$action = 'create';
-				}
+		if ($paymentid > 0)
+		{
+			// On determine le montant total du paiement
+			$total=0;
+			foreach ($paiement->amounts as $key => $value)
+			{
+				$chid = $key;
+				$value = trim($value);
+				$amount = price2num(trim($value), 'MT');   // Un round est ok si nb avec '.'
+				$total += $amount;
 			}
 
-			if (!$error) {
-				$result = $paiement->addPaymentToBank($user, 'payment_sc', '(SocialContributionPayment)', GETPOST('accountid', 'int'), '', '');
-				if (!($result > 0)) {
-					$error++;
-					setEventMessages($paiement->error, null, 'errors');
-					$action = 'create';
-				}
-			}
+			// Insertion dans llx_bank
+			$langs->load("banks");
+			$label = $langs->transnoentities("SocialContributionPayment");
+			$acc = new Account($db, $_POST["accountid"]);
+			$bank_line_id = $acc->addline($paiement->datepaye, $paiement->paiementtype, $label, -abs($total), $paiement->num_paiement, '', $user);
 
-			if (!$error) {
+			// Mise a jour fk_bank dans llx_paiementcharge. On connait ainsi le paiement qui a genere l'ecriture bancaire
+			if ($bank_line_id > 0)
+			{
+				$paiement->update_fk_bank($bank_line_id);
+
+				// Mise a jour liens (pour chaque charge concernee par le paiement)
+				foreach ($paiement->amounts as $key => $value)
+				{
+					//$acc->add_url_line($bank_line_id, $chid, DOL_URL_ROOT.'/compta/charges.php?id=', '(socialcontribution)','payment_sc');
+					$acc->add_url_line($bank_line_id, $paymentid, DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id=', '(paiement)','payment_sc');
+				}
+
 				$db->commit();
-				$loc = DOL_URL_ROOT.'/compta/sociales/card.php?id='.$chid;
-				header('Location: '.$loc);
+
+				$loc = DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid;
+				Header("Location: $loc");
 				exit;
-			} else {
-				$db->rollback();
 			}
+			else {
+				$db->rollback();
+				$mesg = "Echec de la creation entree compte: ".$db->error();
+			}
+		}
+		else
+		{
+			$db->rollback();
+			$mesg = "Failed to create payment: paiement_id=$paymentid ".$db->error();
 		}
 	}
+
+	$_GET["action"]='create';
 }
 
 
 /*
- * View
+ * Affichage
  */
 
 llxHeader();
 
-$form = new Form($db);
+$html=new Form($db);
 
 
-// Form of charge payment creation
-if ($action == 'create') {
+/*
+ * Formulaire de creation d'un paiement de charge
+ */
+if ($_GET["action"] == 'create')
+{
+
+	$charge = new ChargeSociales($db);
 	$charge->fetch($chid);
-	$charge->accountid = $charge->fk_account ? $charge->fk_account : $charge->accountid;
-	$charge->paiementtype = $charge->mode_reglement_id ? $charge->mode_reglement_id : $charge->paiementtype;
 
 	$total = $charge->amount;
-	if (!empty($conf->use_javascript_ajax)) {
-		print "\n".'<script type="text/javascript" language="javascript">';
 
-		//Add js for AutoFill
-		print ' $(document).ready(function () {';
-		print ' 	$(".AutoFillAmount").on(\'click touchstart\', function(){
-                        var amount = $(this).data("value");
-						document.getElementById($(this).data(\'rowid\')).value = amount ;
-					});';
-		print '	});'."\n";
-
-		print '	</script>'."\n";
-	}
-
-	print load_fiche_titre($langs->trans("DoPayment"));
+	print_fiche_titre($langs->trans("DoPayment"));
 	print "<br>\n";
 
-	if ($mesg) {
+	if ($mesg)
+	{
 		print "<div class=\"error\">$mesg</div>";
 	}
 
-	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="id" value="'.$chid.'">';
-	print '<input type="hidden" name="chid" value="'.$chid.'">';
-	print '<input type="hidden" name="action" value="add_payment">';
+	print '<form name="add_paiement" action="paiement_charge.php" method="post">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print "<input type=\"hidden\" name=\"id\" value=\"$charge->id\">";
+	print '<input type="hidden" name="action" value="add_paiement">';
 
-	print dol_get_fiche_head('', '');
+	print '<table cellspacing="0" class="border" width="100%" cellpadding="2">';
 
-	print '<table class="border centpercent">';
+	print "<tr class=\"liste_titre\"><td colspan=\"3\">Charge</td>";
 
-	print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td><a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$chid.'">'.$chid.'</a></td></tr>';
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$charge->label."</td></tr>\n";
-	print '<tr><td>'.$langs->trans("Type")."</td><td>".$charge->type_label."</td></tr>\n";
-	print '<tr><td>'.$langs->trans("Period")."</td><td>".dol_print_date($charge->periode, 'day')."</td></tr>\n";
-	/*print '<tr><td>'.$langs->trans("DateDue")."</td><td>".dol_print_date($charge->date_ech,'day')."</td></tr>\n";
-	print '<tr><td>'.$langs->trans("Amount")."</td><td>".price($charge->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';*/
+	print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2">';
+	print '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid.'">'.$chid.'</a></td></tr>';
+	print '<tr><td>'.$langs->trans("Type")."</td><td colspan=\"2\">".$charge->type_libelle."</td></tr>\n";
+	print '<tr><td>'.$langs->trans("Period")."</td><td colspan=\"2\">".dol_print_date($charge->periode,'day')."</td></tr>\n";
+	print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$charge->lib."</td></tr>\n";
+	print '<tr><td>'.$langs->trans("DateDue")."</td><td colspan=\"2\">".dol_print_date($charge->date_ech,'day')."</td></tr>\n";
+
+	print '<tr><td>'.$langs->trans("AmountTTC")."</td><td colspan=\"2\"><b>".price($charge->amount).'</b> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
 	$sql = "SELECT sum(p.amount) as total";
-	$sql .= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
-	$sql .= " WHERE p.fk_charge = ".((int) $chid);
+	$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
+	$sql.= " WHERE p.fk_charge = ".$chid;
 	$resql = $db->query($sql);
-	if ($resql) {
-		$obj = $db->fetch_object($resql);
+	if ($resql)
+	{
+		$obj=$db->fetch_object($resql);
 		$sumpaid = $obj->total;
 		$db->free();
 	}
-	/*print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td>'.price($sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
-	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';*/
+	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td colspan="2"><b>'.price($sumpaid).'</b> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+	print "<tr><td valign=\"top\">".$langs->trans("RemainderToPay")."</td><td colspan=\"3\"><b>".price($total - $sumpaid).'</b> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+
+	print "<tr class=\"liste_titre\"><td colspan=\"3\">".$langs->trans("Payment").'</td>';
+
+	print "<input type=\"hidden\" name=\"chid\" value=\"$chid\">";
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
-	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE) ? (GETPOSTISSET("remonth") ? $datepaye : -1) : '';
-	print $form->selectDate($datepayment, '', '', '', 0, "add_payment", 1, 1, 0, '', '', $charge->date_ech, '', 1, $langs->trans("DateOfSocialContribution"));
+	$datepayment=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+	$html->select_date($datepayment,'','','','',"add_paiement",1,1);
 	print "</td>";
-	print '</tr>';
+	print '<td>'.$langs->trans("Comments").'</td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-	$form->select_types_paiements(GETPOSTISSET("paiementtype") ? GETPOST("paiementtype") : $charge->paiementtype, "paiementtype");
+	$html->select_types_paiements($charge->paiementtype, "paiementtype");
 	print "</td>\n";
-	print '</tr>';
+
+	print '<td rowspan="3" valign="top"><textarea name="comment" wrap="soft" cols="40" rows="'.ROWS_3.'"></textarea></td></tr>';
 
 	print '<tr>';
-	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
+	print '<td class="fieldrequired">'.$langs->trans('AccountToCredit').'</td>';
 	print '<td>';
-	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid", 'int') : $charge->accountid, "accountid", 0, '', 2); // Show opend bank account list
+	$html->select_comptes($charge->accountid, "accountid", 0, "courant=1");  // Affiche liste des comptes courant
 	print '</td></tr>';
 
-	// Number
 	print '<tr><td>'.$langs->trans('Numero');
 	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
-	print '</td>';
-	print '<td><input name="num_payment" type="text" value="'.GETPOST('num_payment', 'alphanohtml').'"></td></tr>'."\n";
-
-	print '<tr>';
-	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
-	print '<td class="tdtop"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'">'.GETPOST('note', 'alphanohtml').'</textarea></td>';
-	print '</tr>';
-
-	print '</table>';
-
-	print dol_get_fiche_end();
+	print "<td><input name=\"num_paiement\" type=\"text\"></td></tr>\n";
 
 	/*
-	  * Other unpaid charges
+ 	 * Autres charges impayees
 	 */
 	$num = 1;
 	$i = 0;
-
-	print '<table class="noborder centpercent">';
+	print '<tr><td colspan="3">';
+	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	//print '<td>'.$langs->trans("SocialContribution").'</td>';
-	print '<td class="left">'.$langs->trans("DateDue").'</td>';
-	print '<td class="right">'.$langs->trans("Amount").'</td>';
-	print '<td class="right">'.$langs->trans("AlreadyPaid").'</td>';
-	print '<td class="right">'.$langs->trans("RemainderToPay").'</td>';
-	print '<td class="center">'.$langs->trans("Amount").'</td>';
+	print '<td align="left">'.$langs->trans("DateDue").'</td>';
+	print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
+	print '<td align="right">'.$langs->trans("AlreadyPaid").'</td>';
+	print '<td align="right">'.$langs->trans("RemainderToPay").'</td>';
+	print '<td align="right">'.$langs->trans("Amount").'</td>';
 	print "</tr>\n";
 
-	$total = 0;
-	$totalrecu = 0;
+	$var=True;
+	$total=0;
+	$totalrecu=0;
 
-	while ($i < $num) {
+	while ($i < $num)
+	{
+		//$objp = $db->fetch_object($result);
 		$objp = $charge;
 
-		print '<tr class="oddeven">';
+		$var=!$var;
 
-		if ($objp->date_ech > 0) {
-			print '<td class="left">'.dol_print_date($objp->date_ech, 'day').'</td>'."\n";
-		} else {
+		print "<tr $bc[$var]>";
+
+		//print '<td>'.$charge->getNomUrl(1)."</td>\n";
+
+		if ($objp->date_ech > 0)
+		{
+			print "<td align=\"left\">".dol_print_date($objp->date_ech,'day')."</td>\n";
+		}
+		else
+		{
 			print "<td align=\"center\"><b>!!!</b></td>\n";
 		}
 
-		print '<td class="right"><span class="amount">'.price($objp->amount)."</span></td>";
+		print '<td align="right">'.price($objp->amount)."</td>";
 
-		print '<td class="right"><span class="amount">'.price($sumpaid)."</span></td>";
+		print '<td align="right">'.price($sumpaid)."</td>";
 
-		print '<td class="right"><span class="amount">'.price($objp->amount - $sumpaid)."</span></td>";
+		print '<td align="right">'.price($objp->amount-$sumpaid)."</td>";
 
-		print '<td class="center">';
-		if ($sumpaid < $objp->amount) {
+		print '<td align="right">';
+		if ($sumpaid < $objp->amount)
+		{
 			$namef = "amount_".$objp->id;
-			$nameRemain = "remain_".$objp->id;
-			if (!empty($conf->use_javascript_ajax)) {
-					print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
-			}
-			$remaintopay = $objp->amount - $sumpaid;
-			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
-			print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'" value="'.GETPOST('amount_'.$objp->id, 'alpha').'">';
-		} else {
+			print '<input type="text" size="8" name="'.$namef.'">';
+		}
+		else
+		{
 			print '-';
 		}
 		print "</td>";
 
 		print "</tr>\n";
-		$total += $objp->total;
-		$total_ttc += $objp->total_ttc;
-		$totalrecu += $objp->am;
+		$total+=$objp->total;
+		$total_ttc+=$objp->total_ttc;
+		$totalrecu+=$objp->am;
 		$i++;
 	}
-	if ($i > 1) {
+	if ($i > 1)
+	{
 		// Print total
-		print '<tr class="oddeven">';
-		print '<td colspan="2" class="left">'.$langs->trans("Total").':</td>';
-		print '<td class="right"><b>'.price($total_ttc).'</b></td>';
-		print '<td class="right"><b>'.price($totalrecu).'</b></td>';
-		print '<td class="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
+		print "<tr ".$bc[!$var].">";
+		print '<td colspan="2" align="left">'.$langs->trans("TotalTTC").':</td>';
+		print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
+		print "<td align=\"right\"><b>".price($totalrecu)."</b></td>";
+		print "<td align=\"right\"><b>".price($total_ttc - $totalrecu)."</b></td>";
 		print '<td align="center">&nbsp;</td>';
 		print "</tr>\n";
 	}
+	print "</table></td></tr>\n";
+	//		}
+	//	      $db->free();
+	//	    }
+	//	  else
+	//	    {
+	//	      print $sql ."<br>".$db->error();
+	//	    }
+	/*
+	*
+	*/
 
 	print "</table>";
 
-	// Save payment button
-	print '<br><div class="center"><input type="checkbox" checked name="closepaidcontrib"> '.$langs->trans("ClosePaidContributionsAutomatically");
-	print '<br><input type="submit" class="button" name="save" value="'.$langs->trans('ToMakePayment').'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print '<br><center>';
+	//print '<tr><td colspan="3" align="center">';
+	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+	print '&nbsp; &nbsp;';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 
+	print '</center>';
+	//print '</td></tr>';
 	print "</form>\n";
+	//    }
 }
 
-llxFooter();
+
 $db->close();
+
+llxFooter('$Date$ - $Revision$');
+?>

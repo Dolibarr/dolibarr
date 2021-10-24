@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <PADGEN_PML>
-	<AppVerInfo>PADGen 3.1.1.47</AppVerInfo>
+	<AppVerInfo>PADGen 3.1.0.41</AppVerInfo>
 	<CompanyName />
 	<Program_Info>
 		<Program_Name>DoliWamp</Program_Name>
-		<Program_Version>3.5.0</Program_Version>
-		<Program_Release_Month>01</Program_Release_Month>
-		<Program_Release_Day>01</Program_Release_Day>
-		<Program_Release_Year>2014</Program_Release_Year>
+		<Program_Version>2.8.0</Program_Version>
+		<Program_Release_Month>03</Program_Release_Month>
+		<Program_Release_Day>13</Program_Release_Day>
+		<Program_Release_Year>2010</Program_Release_Year>
 		<Program_Cost_Dollars />
 		<Program_Cost_Other_Code />
 		<Program_Cost_Other />
@@ -15,7 +15,7 @@
 		<Program_Release_Status>Major Update</Program_Release_Status>
 		<Program_Install_Support>Install and Uninstall</Program_Install_Support>
 		<Program_OS_Support>Win2000,Win7 x32,Win7 x64,Win98,WinOther,WinServer,WinVista,WinVista x64,WinXP,Other</Program_OS_Support>
-		<Program_Language>English,Arabic,Catalan,Chinese,Dutch,Finnish,French,German,Icelandic,Italian,Norwegian,Polish,Portuguese,Romanian,Russian,Slovenian,Spanish,Swedish,Turkish</Program_Language>
+		<Program_Language>English,Catalan,Danish,Dutch,French,German,Italian,Norwegian,Portuguese,Romanian,Russian,Spanish</Program_Language>
 		<Program_Change_Info>http://www.dolibarr.org</Program_Change_Info>
 		<Program_Specific_Category>Business</Program_Specific_Category>
 		<Program_Category_Class>Business::Accounting &amp; Finance</Program_Category_Class>
@@ -37,30 +37,16 @@
 	</Program_Info>
 	<Program_Descriptions>
 		<English>
-			<Keywords>doliwamp, dolibarr, erp, crm, invoices, commercial proposals, orders, accounting, stock, products, agenda, bank, business, company, foundation, management</Keywords>
+			<Keywords>doliwamp, dolibarr, erp, crm, management, company, accounting</Keywords>
 			<Char_Desc_45>DoliWamp, Dolibarr ERP/CRM for Windows</Char_Desc_45>
-			<Char_Desc_80>DoliWamp, the easy to use Dolibarr for Windows to manage your company,foundation</Char_Desc_80>
-			<Char_Desc_250>DoliWamp is the Dolibarr ERP/CRM for Windows, the easy to use open source software to manage your activity (invoices, customers, suppliers, contracts, agenda, emailings...) and any other things a small or mid-sized business or a foundation needs.</Char_Desc_250>
-			<Char_Desc_450>DoliWamp is the Dolibarr ERP/CRM autoinstaller for Windows users with no technical knowledge to install Dolibarr and all its prerequisites (Apache, Mysql, PHP) with just one auto-exe file. Dolibarr ERP/CRM is a software package built by modules addition (you enable only features you need), to manage small or mid-sized businesses, freelancers or foundations.</Char_Desc_450>
-			<Char_Desc_2000>DoliWamp is the Dolibarr ERP/CRM for Windows. Dolibarr ERP &amp; CRM is a software built by modules addition (you enable only features you need), to manage small or mid-sized businesses, freelancers or foundations (You can manage or follow contacts, invoices, orders, commercial proposals, products, stock management, agenda, mass emailings, members of a foundation, bank accounts...). Based on a WAMP, MAMP or LAMP server (Apache, Mysql, PHP for all Operating Systems), you can install it as a standalone program or use it from anywhere with any web browser. Dolibarr is an OpenSource project. It differs from other ERP or CRM softwares (like OpenAguila, OpenBravo, OpenERP, Neogia, Compiere, etc) because everything was made to be more simple: Simple to install, Simple to use, Simple to develop. 
-DoliWamp is the auto-installer for Windows users with no technical knowledge to install Dolibarr ERP/CRM and all its prerequisites (Apache, Mysql, PHP) with just one auto-exe file.</Char_Desc_2000>
+			<Char_Desc_80>DoliWamp, the easy to use Dolibarr for Windows to manage your companyfoundation</Char_Desc_80>
+			<Char_Desc_250>DoliWamp is the Dolibarr ERP/CRM for Windows, the easy to use open source software to manage your activity (invoices, customers, suppliers, contracts, agenda, emailings...) and any other things a small or medium company or a foundation needs.</Char_Desc_250>
+			<Char_Desc_450>DoliWamp is the Dolibarr ERP/CRM autoinstaller for Windows users with no technical knowledge to install Dolibarr and all its prerequisites (Apache, Mysql, PHP) with just one auto-exe file. Dolibarr ERP/CRM is a software built by modules addition (you enable only features you need), to manage small or medium companies, freelancers or foundations.</Char_Desc_450>
+			<Char_Desc_2000>DoliWamp is the Dolibarr ERP/CRM for Windows. It's an auto-installer for Windows users with no technical knowledge to install Dolibarr ERP/CRM and all its prerequisites (Apache, Mysql, PHP) with just one auto-exe file.
+Dolibarr ERP/CRM is a software built by modules addition (you enable only features you need), to manage small or medium companies, freelancers or foundations.
+It's an OpenSource project base on a WAMP, MAMP or LAMP server (Apache, Mysql, PHP for all Operating Systems). Dolibarr differs from other ERP or CRM softwares (like OpenAguila, OpenBravo, OpenERP, Neogia, Compiere, etc) because everything was made to be more simple: Simple to install, Simple to use, Simple to develop. 
+</Char_Desc_2000>
 		</English>
-		<French>
-			<Keywords>doliwamp, dolibarr, erp, crm, factures, devis, facturation, commandes, compta, trésorerie, stocks, produits, agenda, comptes bancaires, associations, entreprises, PME, TPE</Keywords>
-			<Char_Desc_45>DoliWamp, Dolibarr ERP/CRM pour Windows</Char_Desc_45>
-			<Char_Desc_80>DoliWamp, la distribution de Dolibarr pour gérer votre entreprise ou association</Char_Desc_80>
-			<Char_Desc_250>DoliWamp est la version spécialisée pour Windows de Dolibarr ERP-CRM, le logiciel simple et OpenSource pour gérer votre activité (factures, devis, facturation, commandes, compta, trésorerie, stocks, produits, agenda, comptes bancaires, associations)</Char_Desc_250>
-			<Char_Desc_450>DoliWamp est la version spécialisée pour Windows de Dolibarr ERP-CRM, le logiciel simple et OpenSource pour gérer votre activité (factures, devis, facturation, commandes, compta, trésorerie, stocks, produits, agenda, comptes bancaires, associations)</Char_Desc_450>
-			<Char_Desc_2000>DoliWamp est la version spécialisée pour Windows de Dolibarr ERP-CRM, le logiciel simple et OpenSource pour gérer votre activité (factures, devis, facturation, commandes, compta, trésorerie, stocks, produits, agenda, comptes bancaires, associations)</Char_Desc_2000>
-		</French>
-		<Italian>
-			<Keywords>doliwamp, dolibarr, erp, crm, gestionale, medie imprese, fondazioni</Keywords>
-			<Char_Desc_45>DoliWamp, Dolibarr ERP/CRM per Windows</Char_Desc_45>
-			<Char_Desc_80>Gestionale open source e gratuito per piccole e medie imprese, fondazioni</Char_Desc_80>
-			<Char_Desc_250>Dolibarr è un a gestionale open source e gratuito per piccole e medie imprese, fondazioni e liberi professionisti. Include varie funzionalità per Enterprise Resource Planning e gestione dei clienti (CRM), ma anche ulteriori attività.</Char_Desc_250>
-			<Char_Desc_450>Dolibarr è un programma gestionale open source e gratuito per piccole e medie imprese, fondazioni e liberi professionisti. Include varie funzionalità per Enterprise Resource Planning e gestione dei clienti (CRM), ma anche ulteriori attività. Dolibar è progettato per poter fornire solo ciò di cui hai bisogno ed essere facile da usare.</Char_Desc_450>
-			<Char_Desc_2000>Dolibarr è un programma gestionale open source e gratuito per piccole e medie imprese, fondazioni e liberi professionisti. Include varie funzionalità per Enterprise Resource Planning e gestione dei clienti (CRM), ma anche ulteriori attività. Dolibar è progettato per poter fornire solo ciò di cui hai bisogno ed essere facile da usare. Dolibar è completamente web-based, progettato per poter fornire solo ciò di cui hai bisogno ed essere facile da usare.</Char_Desc_2000>
-		</Italian>
 	</Program_Descriptions>
 	<Web_Info>
 		<Application_URLs>
@@ -84,7 +70,7 @@ DoliWamp is the auto-installer for Windows users with no technical knowledge to 
 	<Affiliates>
 		<Affiliates_FORM>Y</Affiliates_FORM>
 		<Affiliates_VERSION>1.4</Affiliates_VERSION>
-		<Affiliates_URL>http://pad.asp-software.org/extensions/Affiliates.htm</Affiliates_URL>
+		<Affiliates_URL>http://www.asp-shareware.org/pad/extensions/Affiliates.htm</Affiliates_URL>
 		<Affiliates_Information_Page />
 		<Affiliates_Avangate_Order_Page />
 		<Affiliates_Avangate_Vendor_ID />

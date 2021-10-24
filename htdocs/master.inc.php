@@ -1,19 +1,17 @@
-<?php
-/* Copyright (C) 2002-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2003		Xavier Dutoit			<doli@sydesy.com>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
- * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
- * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2005		Simon Tosser			<simon@kornog-computing.com>
- * Copyright (C) 2006		Andre Cianfarani		<andre.cianfarani@acdeveloppement.net>
- * Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
+<?PHP
+/* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005 	   Simon Tosser         <simon@kornog-computing.com>
+ * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -22,152 +20,229 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *	\file       htdocs/master.inc.php
  * 	\ingroup	core
  *  \brief      File that defines environment for all Dolibarr process (pages or scripts)
- * 				This script reads the conf file, init $lang, $db and and empty $user
+ * 				This script reads the conf.php file, init $lang, $db and empty $user
+ *  \version    $Id$
  */
 
-// Declaration of variables. May have been already require by main.inc.php. But may not by scripts. So, here the require_once must be kept.
-require_once 'filefunc.inc.php';
+define('DOL_VERSION','2.8.1');	// Also defined in htdocs/install/inc.php
+define('EURO',chr(128));
 
-
-if (!function_exists('is_countable')) {
-	/**
-	 * function is_countable (to remove when php version supported will be >= 7.3)
-	 * @param mixed $c data to check if countable
-	 * @return bool
-	 */
-	function is_countable($c)
+// Definition des constantes syslog
+if (function_exists("define_syslog_variables"))
+{
+	if (version_compare(PHP_VERSION, '5.3.0', '<'))
 	{
-		return is_array($c) || $c instanceof Countable;
+		define_syslog_variables(); // Deprecated since php 5.3.0, syslog variables no longer need to be initialized
 	}
 }
+else
+{
+	// Pour PHP sans syslog (comme sous Windows)
+	define('LOG_EMERG',0);
+	define('LOG_ALERT',1);
+	define('LOG_CRIT',2);
+	define('LOG_ERR',3);
+	define('LOG_WARNING',4);
+	define('LOG_NOTICE',5);
+	define('LOG_INFO',6);
+	define('LOG_DEBUG',7);
+}
+
+
+// Forcage du parametrage PHP error_reporting (Dolibarr non utilisable en mode error E_ALL)
+error_reporting(E_ALL ^ E_NOTICE);
+//error_reporting(E_ALL);
+
+
+// Include configuration
+$result=@include_once("conf/conf.php");
+if (! $result && $_SERVER["GATEWAY_INTERFACE"])	// If install not done and we are in a web session
+{
+	header("Location: install/index.php");
+	exit;
+}
+if (empty($dolibarr_main_db_host))
+{
+	print 'Dolibarr setup was run but was not completed.<br>'."\n";
+	print 'Please, click <a href="install/index.php">here to finish Dolibarr install process</a> ...'."\n";
+	exit;
+}
+if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
+if (empty($dolibarr_main_data_root))
+{
+	// Si repertoire documents non defini, on utilise celui par defaut
+	$dolibarr_main_data_root=str_replace("/htdocs","",$dolibarr_main_document_root);
+	$dolibarr_main_data_root.="/documents";
+}
+
+// Define some constants
+define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);		// Filesystem pages php (htdocs)
+define('DOL_DATA_ROOT', $dolibarr_main_data_root);				// Filesystem donnes (documents)
+if ($dolibarr_main_url_root == 'auto' && ! empty($_SERVER["SCRIPT_URL"]) && ! empty($_SERVER["SCRIPT_URI"]))
+{
+	$dolibarr_main_url_root=str_replace($_SERVER["SCRIPT_URL"],'',$_SERVER["SCRIPT_URI"]);
+}
+define('DOL_MAIN_URL_ROOT', $dolibarr_main_url_root);			// URL relative root
+$uri=preg_replace('/^http(s?):\/\//i','',$dolibarr_main_url_root);	// $uri contains url without http*
+$suburi = strstr ($uri, '/');		// $suburi contains url without domain
+if ($suburi == '/') $suburi = '';	// If $suburi is /, it is now ''
+define('DOL_URL_ROOT', $suburi);	// URL relative root ('', '/dolibarr', ...)
+if (! empty($dolibarr_main_url_root_static)) define('DOL_URL_ROOT_FULL_STATIC', $dolibarr_main_url_root_static);	// Used to put static images on another domain
+
+
+/*
+ * Include functions
+ */
+
+if (! file_exists(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php"))
+{
+	print "Error: Dolibarr config file content seems to be not correctly defined.<br>\n";
+	print "Please run dolibarr setup by calling page <b>/install</b>.<br>\n";
+	exit;
+}
+
+require_once(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php");	// Need 970ko memory (1.1 in 2.2)
+
+
+// If password is encoded, we decode it
+if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
+{
+	require_once(DOL_DOCUMENT_ROOT ."/lib/security.lib.php");
+	if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
+	{
+		$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
+		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
+		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass;	// We need to set this as it is used to know the password was initially crypted
+	}
+	else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+}
+//print memory_get_usage();
+
 
 /*
  * Create $conf object
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
+require_once(DOL_DOCUMENT_ROOT."/core/conf.class.php");
 
 $conf = new Conf();
 
-// Set properties specific to database
-$conf->db->host = $dolibarr_main_db_host;
-$conf->db->port = $dolibarr_main_db_port;
-$conf->db->name = $dolibarr_main_db_name;
-$conf->db->user = $dolibarr_main_db_user;
-$conf->db->pass = empty($dolibarr_main_db_pass) ? '' : $dolibarr_main_db_pass;
-$conf->db->type = $dolibarr_main_db_type;
+// Identifiant propres au serveur base de donnee
+$conf->db->host   = $dolibarr_main_db_host;
+if (empty($dolibarr_main_db_port)) $dolibarr_main_db_port=0;		// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
+$conf->db->port   = $dolibarr_main_db_port;
+$conf->db->name   = $dolibarr_main_db_name;
+$conf->db->user   = $dolibarr_main_db_user;
+$conf->db->pass   = $dolibarr_main_db_pass;
+if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
+$conf->db->type   = $dolibarr_main_db_type;
+if (empty($dolibarr_main_db_prefix)) $dolibarr_main_db_prefix='llx_';
 $conf->db->prefix = $dolibarr_main_db_prefix;
-$conf->db->character_set = $dolibarr_main_db_character_set;
-$conf->db->dolibarr_main_db_collation = $dolibarr_main_db_collation;
+if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set='latin1';		// Old installation
+$conf->db->character_set=$dolibarr_main_db_character_set;
+if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation='latin1_swedish_ci';	// Old installation
+$conf->db->dolibarr_main_db_collation=$dolibarr_main_db_collation;
+if (empty($dolibarr_main_db_encryption)) $dolibarr_main_db_encryption=0;
 $conf->db->dolibarr_main_db_encryption = $dolibarr_main_db_encryption;
+if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey='';
 $conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
-if (defined('TEST_DB_FORCE_TYPE')) {
-	$conf->db->type = constant('TEST_DB_FORCE_TYPE'); // Force db type (for test purpose, by PHP unit for example)
+// Identifiant autres
+$conf->file->main_authentication = empty($dolibarr_main_authentication)?'':$dolibarr_main_authentication;
+// Force https
+$conf->file->main_force_https = empty($dolibarr_main_force_https)?'':$dolibarr_main_force_https;
+// Define charset for HTML Output (can set hidden value force_charset in conf.php file)
+if (empty($force_charset_do_notuse)) $force_charset_do_notuse='UTF-8';
+$conf->file->character_set_client=strtoupper($force_charset_do_notuse);
+// Cookie cryptkey
+$conf->file->cookie_cryptkey = empty($dolibarr_main_cookie_cryptkey)?'':$dolibarr_main_cookie_cryptkey;
+
+// Define array of document root directories
+$conf->file->dol_document_root=array(DOL_DOCUMENT_ROOT);
+if (! empty($dolibarr_main_document_root_alt))
+{
+	// dolibarr_main_document_root_alt contains several directories
+	$values=preg_split('/[;,]/',$dolibarr_main_document_root_alt);
+	foreach($values as $value)
+	{
+		$conf->file->dol_document_root[]=$value;
+	}
 }
 
-// Set properties specific to conf file
-$conf->file->main_limit_users = $dolibarr_main_limit_users;
-$conf->file->mailing_limit_sendbyweb = $dolibarr_mailing_limit_sendbyweb;
-$conf->file->mailing_limit_sendbycli = $dolibarr_mailing_limit_sendbycli;
-$conf->file->main_authentication = empty($dolibarr_main_authentication) ? '' : $dolibarr_main_authentication; // Identification mode
-$conf->file->main_force_https = empty($dolibarr_main_force_https) ? '' : $dolibarr_main_force_https; // Force https
-$conf->file->strict_mode = empty($dolibarr_strict_mode) ? '' : $dolibarr_strict_mode; // Force php strict mode (for debug)
-$conf->file->instance_unique_id = empty($dolibarr_main_instance_unique_id) ? (empty($dolibarr_main_cookie_cryptkey) ? '' : $dolibarr_main_cookie_cryptkey) : $dolibarr_main_instance_unique_id; // Unique id of instance
-$conf->file->dol_document_root = array('main' => (string) DOL_DOCUMENT_ROOT); // Define array of document root directories ('/home/htdocs')
-$conf->file->dol_url_root = array('main' => (string) DOL_URL_ROOT); // Define array of url root path ('' or '/dolibarr')
-if (!empty($dolibarr_main_document_root_alt)) {
-	// dolibarr_main_document_root_alt can contains several directories
-	$values = preg_split('/[;,]/', $dolibarr_main_document_root_alt);
-	$i = 0;
-	foreach ($values as $value) {
-		$conf->file->dol_document_root['alt'.($i++)] = (string) $value;
-	}
-	$values = preg_split('/[;,]/', $dolibarr_main_url_root_alt);
-	$i = 0;
-	foreach ($values as $value) {
-		if (preg_match('/^http(s)?:/', $value)) {
-			// Show error message
-			$correct_value = str_replace($dolibarr_main_url_root, '', $value);
-			print '<b>Error:</b><br>'."\n";
-			print 'Wrong <b>$dolibarr_main_url_root_alt</b> value in <b>conf.php</b> file.<br>'."\n";
-			print 'We now use a relative path to $dolibarr_main_url_root to build alternate URLs.<br>'."\n";
-			print 'Value found: '.$value.'<br>'."\n";
-			print 'Should be replaced by: '.$correct_value.'<br>'."\n";
-			print "Or something like following examples:<br>\n";
-			print "\"/extensions\"<br>\n";
-			print "\"/extensions1,/extensions2,...\"<br>\n";
-			print "\"/../extensions\"<br>\n";
-			print "\"/custom\"<br>\n";
-			exit;
-		}
-		$conf->file->dol_url_root['alt'.($i++)] = (string) $value;
-	}
+// Define prefix
+if (isset($_SERVER["LLX_DBNAME"])) $dolibarr_main_db_prefix=$_SERVER["LLX_DBNAME"];
+define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
+
+// Detection browser
+if (isset($_SERVER["HTTP_USER_AGENT"]))
+{
+	// If phone/smartphone, we set osname.
+	if (preg_match('/android/i',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='android';
+	elseif (preg_match('/blackberry/i',$_SERVER["HTTP_USER_AGENT"]))	$conf->browser->phone='blackberry';
+	elseif (preg_match('/iphone/i',$_SERVER["HTTP_USER_AGENT"]))		$conf->browser->phone='iphone';
+	elseif (preg_match('/ipod/i',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='iphone';
+	elseif (preg_match('/palm/i',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='palm';
+	elseif (preg_match('/symbian/i',$_SERVER["HTTP_USER_AGENT"]))		$conf->browser->phone='symbian';
+	elseif (preg_match('/webos/i',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='webos';
+	// MS products at end
+	elseif (preg_match('/iemobile/i',$_SERVER["HTTP_USER_AGENT"]))		$conf->browser->phone='windowsmobile';
+	elseif (preg_match('/windows ce/i',$_SERVER["HTTP_USER_AGENT"]))	$conf->browser->phone='windowsmobile';
+	// Name
+	if (preg_match('/firefox/i',$_SERVER["HTTP_USER_AGENT"]))       $conf->browser->name='firefox';
+	elseif (preg_match('/chrome/i',$_SERVER["HTTP_USER_AGENT"]))    $conf->browser->name='chrome';
+	elseif (preg_match('/iceweasel/i',$_SERVER["HTTP_USER_AGENT"])) $conf->browser->name='iceweasel';
+	elseif ((empty($conf->browser->phone) || preg_match('/iphone/i',$_SERVER["HTTP_USER_AGENT"])) && preg_match('/safari/i',$_SERVER["HTTP_USER_AGENT"]))    $conf->browser->name='safari';	// Safari is often present in string but its not.
+	elseif (preg_match('/opera/i',$_SERVER["HTTP_USER_AGENT"]))     $conf->browser->name='opera';
+	// MS products at end
+	elseif (preg_match('/msie/i',$_SERVER["HTTP_USER_AGENT"]))      $conf->browser->name='ie';
+	else $conf->browser->name='unknown';
+	// Other
+	if (in_array($conf->browser->name,array('firefox','iceweasel'))) $conf->browser->firefox=1;
 }
 
 // Chargement des includes principaux de librairies communes
-if (!defined('NOREQUIREUSER')) {
-	require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php'; // Need 500ko memory
-}
-if (!defined('NOREQUIRETRAN')) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
-}
-if (!defined('NOREQUIRESOC')) {
-	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-}
-
+if (! defined('NOREQUIREUSER')) require_once(DOL_DOCUMENT_ROOT ."/user.class.php");		// Need 500ko memory
+if (! defined('NOREQUIRETRAN')) require_once(DOL_DOCUMENT_ROOT ."/translate.class.php");
+if (! defined('NOREQUIRESOC'))  require_once(DOL_DOCUMENT_ROOT ."/societe.class.php");
+if (! defined('NOREQUIREDB'))   require_once(DOL_DOCUMENT_ROOT ."/lib/databases/".$conf->db->type.".lib.php");
 
 /*
  * Creation objet $langs (must be before all other code)
  */
-if (!defined('NOREQUIRETRAN')) {
-	$langs = new Translate('', $conf); // Must be after reading conf
+if (! defined('NOREQUIRETRAN'))
+{
+	$langs = new Translate("",$conf);	// A mettre apres lecture de la conf
 }
 
 /*
- * Object $db
+ * Creation objet $db
  */
-$db = null;
-if (!defined('NOREQUIREDB')) {
-	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+if (! defined('NOREQUIREDB'))
+{
+	$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 
-	if ($db->error) {
-		// If we were into a website context
-		if (!defined('USEDOLIBARREDITOR') && !defined('USEDOLIBARRSERVER') && !empty($_SERVER['SCRIPT_FILENAME']) && (strpos($_SERVER['SCRIPT_FILENAME'], DOL_DATA_ROOT.'/website') === 0)) {
-			$sapi_type = php_sapi_name();
-			if (substr($sapi_type, 0, 3) != 'cgi') {
-				http_response_code(503); // To tel search engine this is a temporary error
-			}
-			print '<div class="center" style="text-align: center; margin: 100px;">';
-			if (is_object($langs)) {
-				$langs->setDefaultLang('auto');
-				$langs->load("website");
-				print $langs->trans("SorryWebsiteIsCurrentlyOffLine");
-			} else {
-				print "SorryWebsiteIsCurrentlyOffLine";
-			}
-			print '</div>';
-			exit;
-		}
-		dol_print_error($db, "host=".$conf->db->host.", port=".$conf->db->port.", user=".$conf->db->user.", databasename=".$conf->db->name.", ".$db->error);
+	if ($db->error)
+	{
+		dol_print_error($db,"host=".$conf->db->host.", port=".$conf->db->port.", user=".$conf->db->user.", databasename=".$conf->db->name.", ".$db->error);
 		exit;
 	}
 }
-
 // Now database connexion is known, so we can forget password
-//unset($dolibarr_main_db_pass); 	// We comment this because this constant is used in a lot of pages
-unset($conf->db->pass); // This is to avoid password to be shown in memory/swap dump
+//$dolibarr_main_db_pass=''; 	// Comment this because this constant is used in a lot of pages
+$conf->db->pass='';				// This is to avoid password to be shown in memory/swap dump
 
 /*
- * Object $user
+ * Creation objet $user
  */
-if (!defined('NOREQUIREUSER')) {
+if (! defined('NOREQUIREUSER'))
+{
 	$user = new User($db);
 }
 
@@ -175,62 +250,177 @@ if (!defined('NOREQUIREUSER')) {
  * Load object $conf
  * After this, all parameters conf->global->CONSTANTS are loaded
  */
+if (! defined('NOREQUIREDB'))
+{
+	// By default conf->entity is 1, but we change this if we ask another value.
+	if (session_id() && ! empty($_SESSION["dol_entity"]))				// Entity inside an opened session
+	{
+		$conf->entity = $_SESSION["dol_entity"];
+	}
+	elseif (! empty($_ENV["dol_entity"]))								// Entity inside a CLI script
+	{
+		$conf->entity = $_ENV["dol_entity"];
+	}
+	elseif (isset($_POST["loginfunction"]) && ! empty($_POST["entity"]))	// Just after a login page
+	{
+		$conf->entity = $_POST["entity"];
+	}
+	else
+	{
+		$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
+		if (! empty($_COOKIE[$entityCookieName]) && ! empty($conf->file->cookie_cryptkey)) 						// Just for view specific login page
+		{
+			include_once(DOL_DOCUMENT_ROOT."/core/cookie.class.php");
 
-// By default conf->entity is 1, but we change this if we ask another value.
-if (session_id() && !empty($_SESSION["dol_entity"])) {
-	// Entity inside an opened session
-	$conf->entity = $_SESSION["dol_entity"];
-} elseif (!empty($_ENV["dol_entity"])) {
-	// Entity inside a CLI script
-	$conf->entity = $_ENV["dol_entity"];
-} elseif (GETPOSTISSET("loginfunction") && GETPOST("entity", 'int')) {
-	// Just after a login page
-	$conf->entity = GETPOST("entity", 'int');
-} elseif (defined('DOLENTITY') && is_numeric(constant('DOLENTITY'))) {
-	// For public page with MultiCompany module
-	$conf->entity = constant('DOLENTITY');
+			$lastuser = '';
+			$lastentity = '';
+
+			$entityCookie = new DolCookie($conf->file->cookie_cryptkey);
+			$cookieValue = $entityCookie->_getCookie($entityCookieName);
+			list($lastuser, $lastentity) = explode('|', $cookieValue);
+			$conf->entity = $lastentity;
+		}
+	}
+
+	//print "Will work with data into entity instance number '".$conf->entity."'";
+
+	// Here we read database (llx_const table) and define $conf->global->XXX var.
+	$conf->setValues($db);
 }
 
-// Sanitize entity
-if (!is_numeric($conf->entity)) {
-	$conf->entity = 1;
-}
-
-//print "We work with data into entity instance number '".$conf->entity."'";
-
-// Here we read database (llx_const table) and define $conf->global->XXX var.
-$conf->setValues($db);
-
-// Create object $mysoc (A thirdparty object that contains properties of companies managed by Dolibarr.
-if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC')) {
-	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-
-	$mysoc = new Societe($db);
-	$mysoc->setMysoc($conf);
-
-	// For some countries, we need to invert our address with customer address
-	if ($mysoc->country_code == 'DE' && !isset($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
-		$conf->global->MAIN_INVERT_SENDER_RECIPIENT = 1;
+// If software has been locked. Only login $conf->global->MAIN_ONLY_LOGIN_ALLOWED is allowed.
+if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
+{
+	/*print '$_SERVER["GATEWAY_INTERFACE"]='.$_SERVER["GATEWAY_INTERFACE"].'<br>';
+	 print 'session_id()='.session_id().'<br>';
+	 print '$_SESSION["dol_login"]='.$_SESSION["dol_login"].'<br>';
+	 print '$conf->global->MAIN_ONLY_LOGIN_ALLOWED='.$conf->global->MAIN_ONLY_LOGIN_ALLOWED.'<br>';
+	 exit;*/
+	$ok=0;
+	if ((! session_id() || ! isset($_SESSION["dol_login"])) && ! isset($_POST["username"]) && ! empty($_SERVER["GATEWAY_INTERFACE"])) $ok=1;	// We let working pages if not logged and inside a web browser (login form, to allow login by admin)
+	elseif (isset($_POST["username"]) && $_POST["username"] == $conf->global->MAIN_ONLY_LOGIN_ALLOWED) $ok=1;				// We let working pages that is a login submission (login submit, to allow login by admin)
+	elseif (defined('NOREQUIREDB'))   $ok=1;				// We let working pages that don't need database access (xxx.css.php)
+	elseif (defined('EVEN_IF_ONLY_LOGIN_ALLOWED')) $ok=1;	// We let working pages that ask to work even if only login enabled (logout.php)
+	elseif (session_id() && isset($_SESSION["dol_login"]) && $_SESSION["dol_login"] == $conf->global->MAIN_ONLY_LOGIN_ALLOWED) $ok=1;	// We let working if user is allowed admin
+	if (! $ok)
+	{
+		if (session_id() && isset($_SESSION["dol_login"]) && $_SESSION["dol_login"] != $conf->global->MAIN_ONLY_LOGIN_ALLOWED)
+		{
+			print 'Sorry, your application is offline.'."\n";
+			print 'You are logged with user "'.$_SESSION["dol_login"].'" and only administrator user "'.$conf->global->MAIN_ONLY_LOGIN_ALLOWED.'" is allowed to connect for the moment.'."\n";
+			$nexturl=DOL_URL_ROOT.'/user/logout.php';
+			print 'Please try later or <a href="'.$nexturl.'">click here to disconnect and change login user</a>...'."\n";
+		}
+		else
+		{
+			print 'Sorry, your application is offline. Only administrator user "'.$conf->global->MAIN_ONLY_LOGIN_ALLOWED.'" is allowed to connect for the moment.'."\n";
+			$nexturl=DOL_URL_ROOT.'/';
+			print 'Please try later or <a href="'.$nexturl.'">click here to change login user</a>...'."\n";
+		}
+		exit;
 	}
 }
 
+/*
+ * Create object $mysoc (A "Societe" object that contains properties of companies managed by Dolibarr.
+ */
+if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
+{
+	require_once(DOL_DOCUMENT_ROOT ."/societe.class.php");
+	$mysoc=new Societe($db);
 
-// Set default language (must be after the setValues setting global $conf->global->MAIN_LANG_DEFAULT. Page main.inc.php will overwrite langs->defaultlang with user value later)
-if (!defined('NOREQUIRETRAN')) {
-	$langcode = (GETPOST('lang', 'aZ09') ? GETPOST('lang', 'aZ09', 1) : (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
-	if (defined('MAIN_LANG_DEFAULT')) {	// So a page can force the language whatever is setup and parameters in URL
-		$langcode = constant('MAIN_LANG_DEFAULT');
+	$mysoc->id=0;
+	$mysoc->nom=$conf->global->MAIN_INFO_SOCIETE_NOM;
+	$mysoc->adresse=$conf->global->MAIN_INFO_SOCIETE_ADRESSE; // TODO obsolete
+	$mysoc->address=$conf->global->MAIN_INFO_SOCIETE_ADRESSE;
+	$mysoc->cp=$conf->global->MAIN_INFO_SOCIETE_CP;
+	$mysoc->ville=$conf->global->MAIN_INFO_SOCIETE_VILLE;
+	// Si dans MAIN_INFO_SOCIETE_PAYS on a un id de pays, on recupere code
+	if (is_numeric($conf->global->MAIN_INFO_SOCIETE_PAYS))
+	{
+		$mysoc->pays_id=$conf->global->MAIN_INFO_SOCIETE_PAYS;
+		$sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
+		$sql .= " WHERE rowid = ".$conf->global->MAIN_INFO_SOCIETE_PAYS;
+		$result=$db->query($sql);
+		if ($result)
+		{
+			$obj = $db->fetch_object();
+			$mysoc->pays_code=$obj->code;
+		}
+		else {
+			dol_print_error($db);
+		}
 	}
-	$langs->setDefaultLang($langcode);
+	// Si dans MAIN_INFO_SOCIETE_PAYS on a deja un code, tout est fait
+	else
+	{
+		$mysoc->pays_code=$conf->global->MAIN_INFO_SOCIETE_PAYS;
+	}
+	$mysoc->tel=$conf->global->MAIN_INFO_SOCIETE_TEL;
+	$mysoc->fax=$conf->global->MAIN_INFO_SOCIETE_FAX;
+	$mysoc->url=$conf->global->MAIN_INFO_SOCIETE_WEB;
+	// Anciens id prof
+	$mysoc->siren=empty($conf->global->MAIN_INFO_SIREN)?'':$conf->global->MAIN_INFO_SIREN;
+	$mysoc->siret=empty($conf->global->MAIN_INFO_SIRET)?'':$conf->global->MAIN_INFO_SIRET;
+	$mysoc->ape=empty($conf->global->MAIN_INFO_APE)?'':$conf->global->MAIN_INFO_APE;
+	$mysoc->rcs=empty($conf->global->MAIN_INFO_RCS)?'':$conf->global->MAIN_INFO_RCS;
+	// Id prof generiques
+	$mysoc->profid1=empty($conf->global->MAIN_INFO_SIREN)?'':$conf->global->MAIN_INFO_SIREN;
+	$mysoc->profid2=empty($conf->global->MAIN_INFO_SIRET)?'':$conf->global->MAIN_INFO_SIRET;
+	$mysoc->profid3=empty($conf->global->MAIN_INFO_APE)?'':$conf->global->MAIN_INFO_APE;
+	$mysoc->profid4=empty($conf->global->MAIN_INFO_RCS)?'':$conf->global->MAIN_INFO_RCS;
+	$mysoc->tva_intra=$conf->global->MAIN_INFO_TVAINTRA;	// VAT number, not necessarly INTRA.
+	$mysoc->capital=$conf->global->MAIN_INFO_CAPITAL;
+	$mysoc->forme_juridique_code=$conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE;
+	$mysoc->email=$conf->global->MAIN_INFO_SOCIETE_MAIL;
+	$mysoc->adresse_full=$mysoc->adresse."\n".$mysoc->cp." ".$mysoc->ville; // TODO obsolete
+	$mysoc->full_address=$mysoc->adresse."\n".$mysoc->cp." ".$mysoc->ville;
+	$mysoc->logo=$conf->global->MAIN_INFO_SOCIETE_LOGO;
+	$mysoc->logo_small=$conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL;
+	$mysoc->logo_mini=$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
+
+	// Define if company use vat or not (Do not use conf->global->FACTURE_TVAOPTION anymore)
+	$mysoc->tva_assuj=((isset($conf->global->FACTURE_TVAOPTION) && $conf->global->FACTURE_TVAOPTION=='franchise')?0:1);
+
+	// Define if company use local taxes
+	$mysoc->localtax1_assuj=($conf->global->FACTURE_LOCAL_TAX1_OPTION?1:0);
+	$mysoc->localtax2_assuj=($conf->global->FACTURE_LOCAL_TAX2_OPTION?1:0);
 }
 
 
-// Create the global $hookmanager object
-include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-$hookmanager = new HookManager($db);
-
-
-if (!defined('MAIN_LABEL_MENTION_NPR')) {
-	define('MAIN_LABEL_MENTION_NPR', 'NPR');
+/*
+ * Set default language (must be after the setValues of $conf)
+ */
+if (! defined('NOREQUIRETRAN'))
+{
+	$langs->setDefaultLang($conf->global->MAIN_LANG_DEFAULT);
 }
-//if (! defined('PCLZIP_TEMPORARY_DIR')) define('PCLZIP_TEMPORARY_DIR', $conf->user->dir_temp);
+
+/*
+ * Pour utiliser d'autres versions des librairies externes que les
+ * versions embarquees dans Dolibarr, definir les constantes adequates:
+ * Pour FPDF:           FPDF_PATH
+ * Pour PHP_WriteExcel: PHP_WRITEEXCEL_PATH
+ * Pour MagpieRss:      MAGPIERSS_PATH
+ * Pour PHPlot:         PHPLOT_PATH
+ * Pour JPGraph:        JPGRAPH_PATH
+ * Pour NuSOAP:         NUSOAP_PATH
+ * Pour TCPDF:          TCPDF_PATH
+ */
+// Les path racines
+if (! defined('FPDF_PATH'))           { define('FPDF_PATH',          DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf/'); }
+if (! defined('FPDFI_PATH'))          { define('FPDFI_PATH',         DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdfi/'); }
+if (! defined('MAGPIERSS_PATH'))      { define('MAGPIERSS_PATH',     DOL_DOCUMENT_ROOT .'/includes/magpierss/'); }
+if (! defined('JPGRAPH_PATH'))        { define('JPGRAPH_PATH',       DOL_DOCUMENT_ROOT .'/includes/jpgraph/'); }
+if (! defined('NUSOAP_PATH'))         { define('NUSOAP_PATH',        DOL_DOCUMENT_ROOT .'/includes/nusoap/lib/'); }
+if (! defined('PHP_WRITEEXCEL_PATH')) { define('PHP_WRITEEXCEL_PATH',DOL_DOCUMENT_ROOT .'/includes/php_writeexcel/'); }
+if (! defined('PHPEXCELREADER'))      { define('PHPEXCELREADER',     DOL_DOCUMENT_ROOT .'/includes/phpexcelreader/'); }
+// Les autres path
+if (! defined('FPDF_FONTPATH'))       { define('FPDF_FONTPATH',      FPDF_PATH . 'font/'); }
+if (! defined('MAGPIE_DIR'))          { define('MAGPIE_DIR',         MAGPIERSS_PATH); }
+if (! defined('MAGPIE_CACHE_DIR'))    { define('MAGPIE_CACHE_DIR',   $conf->externalrss->dir_temp); }
+
+
+if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');
+
+?>

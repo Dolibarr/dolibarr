@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -14,347 +14,380 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- * or see https://www.gnu.org/
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * or see http://www.gnu.org/
  */
 
 /**
  *		\file       htdocs/viewimage.php
- *		\brief      Wrapper to show images into Dolibarr screens.
- *		\remarks    Call to wrapper is :
- *					DOL_URL_ROOT.'/viewimage.php?modulepart=diroffile&file=relativepathofofile&cache=0
- *					DOL_URL_ROOT.'/viewimage.php?hashp=sharekey
+ *		\brief      Wrapper permettant l'affichage de fichiers images Dolibarr
+ *      \remarks    L'appel est viewimage.php?file=pathrelatifdufichier&modulepart=repfichierconcerne
+ *		\version    $Id$
  */
 
-//if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
-if (!defined('NOREQUIRESOC')) {
-	define('NOREQUIRESOC', '1');
-}
-if (!defined('NOREQUIRETRAN')) {
-	define('NOREQUIRETRAN', '1');
-}
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
-if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', '1');
-}
-if (!defined('NOREQUIREMENU')) {
-	define('NOREQUIREMENU', '1');
-}
-if (!defined('NOREQUIREHTML')) {
-	define('NOREQUIREHTML', '1');
-}
-if (!defined('NOREQUIREAJAX')) {
-	define('NOREQUIREAJAX', '1');
-}
+define('NOTOKENRENEWAL',1); // Disables token renewal
 
-// Some value of modulepart can be used to get resources that are public so no login are required.
-// Note that only directory logo is free to access without login.
-if (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'mycompany' && preg_match('/^\/?logos\//', $_GET['file'])) {
-	if (!defined("NOLOGIN")) {
-		define("NOLOGIN", 1);
-	}
-	if (!defined("NOCSRFCHECK")) {
-		define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-	}
-	if (!defined("NOIPCHECK")) {
-		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-	}
-}
-// For direct external download link, we don't need to load/check we are into a login session
-if (isset($_GET["hashp"]) && !defined("NOLOGIN")) {
-	if (!defined("NOLOGIN")) {
-		define("NOLOGIN", 1);
-	}
-	if (!defined("NOCSRFCHECK")) {
-		define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-	}
-	if (!defined("NOIPCHECK")) {
-		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-	}
-}
-// Some value of modulepart can be used to get resources that are public so no login are required.
-if (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias') {
-	if (!defined("NOLOGIN")) {
-		define("NOLOGIN", 1);
-	}
-	if (!defined("NOCSRFCHECK")) {
-		define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-	}
-	if (!defined("NOIPCHECK")) {
-		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-	}
-}
+// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+$action = isset($_GET["action"])?$_GET["action"]:'';
+$original_file = isset($_GET["file"])?$_GET["file"]:'';
+$modulepart = isset($_GET["modulepart"])?$_GET["modulepart"]:'';
+$urlsource = isset($_GET["urlsource"])?$_GET["urlsource"]:'';
 
-// Used by TakePOS Auto Order
-if (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'product' && isset($_GET["publictakepos"])) {
-	if (!defined("NOLOGIN")) {
-		define("NOLOGIN", 1);
-	}
-	if (!defined("NOCSRFCHECK")) {
-		define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-	}
-	if (!defined("NOIPCHECK")) {
-		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-	}
-}
+// Pour autre que companylogo, on charge environnement + info issus de logon comme le user
+if (($modulepart == 'companylogo') && ! defined("NOLOGIN")) define("NOLOGIN",1);
 
-// For multicompany
-$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_numeric($entity)) {
-	define("DOLENTITY", $entity);
-}
+if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
+if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
-/**
- * Header empty
- *
- * @ignore
- * @return	void
- */
-function llxHeader()
-{
-}
-/**
- * Footer empty
- *
- * @ignore
- * @return	void
- */
-function llxFooter()
-{
-}
-
-require 'main.inc.php'; // Load $user and permissions
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-$action = GETPOST('action', 'aZ09');
-$original_file = GETPOST('file', 'alphanohtml'); // Do not use urldecode here ($_GET are already decoded by PHP).
-$hashp = GETPOST('hashp', 'aZ09');
-$modulepart = GETPOST('modulepart', 'alpha');
-$urlsource = GETPOST('urlsource', 'alpha');
-$entity = GETPOST('entity', 'int') ?GETPOST('entity', 'int') : $conf->entity;
-
-// Security check
-if (empty($modulepart) && empty($hashp)) {
-	accessforbidden('Bad link. Bad value for parameter modulepart', 0, 0, 1);
-}
-if (empty($original_file) && empty($hashp) && $modulepart != 'barcode') {
-	accessforbidden('Bad link. Missing identification to find file (param file or hashp)', 0, 0, 1);
-}
-if ($modulepart == 'fckeditor') {
-	$modulepart = 'medias'; // For backward compatibility
-}
+require("./main.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 
 
+// C'est un wrapper, donc header vierge
+function llxHeader() { }
 
-/*
- * Actions
- */
-
-// None
-
-
-
-/*
- * View
- */
-
-if (GETPOST("cache", 'alpha')) {
-	// Important: Following code is to avoid page request by browser and PHP CPU at
-	// each Dolibarr page access.
-	if (empty($dolibarr_nocache)) {
-		header('Cache-Control: max-age=3600, public, must-revalidate');
-		header('Pragma: cache'); // This is to avoid having Pragma: no-cache
-	} else {
-		header('Cache-Control: no-cache');
-	}
-	//print $dolibarr_nocache; exit;
-}
-
-// If we have a hash public (hashp), we guess the original_file.
-if (!empty($hashp)) {
-	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
-	$ecmfile = new EcmFiles($db);
-	$result = $ecmfile->fetch(0, '', '', '', $hashp);
-	if ($result > 0) {
-		$tmp = explode('/', $ecmfile->filepath, 2); // $ecmfile->filepath is relative to document directory
-		// filepath can be 'users/X' or 'X/propale/PR11111'
-		if (is_numeric($tmp[0])) { // If first tmp is numeric, it is subdir of company for multicompany, we take next part.
-			$tmp = explode('/', $tmp[1], 2);
-		}
-		$moduleparttocheck = $tmp[0]; // moduleparttocheck is first part of path
-
-		if ($modulepart) {	// Not required, so often not defined, for link using public hashp parameter.
-			if ($moduleparttocheck == $modulepart) {
-				// We remove first level of directory
-				$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
-				//var_dump($original_file); exit;
-			} else {
-				accessforbidden('Bad link. File is from another module part.', 0, 0, 1);
-			}
-		} else {
-			$modulepart = $moduleparttocheck;
-			$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
-		}
-	} else {
-		$langs->load("errors");
-		accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"), 0, 0, 1);
-	}
-}
 
 // Define mime type
 $type = 'application/octet-stream';
-if (GETPOST('type', 'alpha')) {
-	$type = GETPOST('type', 'alpha');
-} else {
-	$type = dol_mimetype($original_file);
-}
+if (! empty($_GET["type"])) $type=$_GET["type"];
+else $type=dol_mimetype($original_file);
 
-// Security: This wrapper is for images. We do not allow type/html
-if (preg_match('/html/i', $type)) {
-	accessforbidden('Error: Using the image wrapper to output a file with a mime type HTML is not possible.', 0, 0, 1);
-}
-// Security: This wrapper is for images. We do not allow files ending with .noexe
-if (preg_match('/\.noexe$/i', $original_file)) {
-	accessforbidden('Error: Using the image wrapper to output a file ending with .noexe is not allowed.', 0, 0, 1);
-}
+// Suppression de la chaine de caractere ../ dans $original_file
+$original_file = str_replace("../","/", $original_file);
 
-// Security: Delete string ../ or ..\ into $original_file
-$original_file = preg_replace('/\.\.+/', '..', $original_file);	// Replace '... or more' with '..'
-$original_file = str_replace('../', '/', $original_file);
-$original_file = str_replace('..\\', '/', $original_file);
+$accessallowed=0;
+if ($modulepart)
+{
+	// Check permissions and define directory
 
-// Find the subdirectory name as the reference
-$refname = basename(dirname($original_file)."/");
-
-// Security check
-if (empty($modulepart)) {
-	accessforbidden('Bad value for parameter modulepart', 0, 0, 1);
-}
-
-$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $refname);
-$accessallowed              = $check_access['accessallowed'];
-$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
-$fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
-
-if (!empty($hashp)) {
-	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
-	$sqlprotectagainstexternals = '';
-} elseif (isset($_GET["publictakepos"])) {
-	if (!empty($conf->global->TAKEPOS_AUTO_ORDER)) {
-		$accessallowed = 1; // Only if TakePOS Public Auto Order is enabled and received publictakepos variable
+	// Wrapping pour les photo utilisateurs
+	if ($modulepart == 'companylogo')
+	{
+		$accessallowed=1;
+		$original_file=$conf->mycompany->dir_output.'/logos/'.$original_file;
 	}
-} else {
-	// Basic protection (against external users only)
-	if ($user->socid > 0) {
-		if ($sqlprotectagainstexternals) {
-			$resql = $db->query($sqlprotectagainstexternals);
-			if ($resql) {
-				$num = $db->num_rows($resql);
-				$i = 0;
-				while ($i < $num) {
-					$obj = $db->fetch_object($resql);
-					if ($user->socid != $obj->fk_soc) {
-						$accessallowed = 0;
-						break;
-					}
-					$i++;
-				}
-			}
+
+	// Wrapping pour les photos utilisateurs
+	elseif ($modulepart == 'userphoto')
+	{
+		$accessallowed=1;
+		$original_file=$conf->user->dir_output.'/'.$original_file;
+	}
+
+	// Wrapping pour les photos adherents
+	elseif ($modulepart == 'memberphoto')
+	{
+		$accessallowed=1;
+		$original_file=$conf->adherent->dir_output.'/'.$original_file;
+	}
+
+	// Wrapping pour les apercu factures
+	elseif ($modulepart == 'apercufacture')
+	{
+		$user->getrights('facture');
+		if ($user->rights->facture->lire)
+		{
+			$accessallowed=1;
 		}
+		$original_file=$conf->facture->dir_output.'/'.$original_file;
+	}
+
+	// Wrapping pour les apercu propal
+	elseif ($modulepart == 'apercupropal')
+	{
+		$user->getrights('propale');
+		if ($user->rights->propale->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->propale->dir_output.'/'.$original_file;
+	}
+
+	// Wrapping pour les apercu commande
+	elseif ($modulepart == 'apercucommande')
+	{
+		$user->getrights('commande');
+		if ($user->rights->commande->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->commande->dir_output.'/'.$original_file;
+	}
+
+	// Wrapping pour les apercu intervention
+	elseif ($modulepart == 'apercufichinter')
+	{
+		$user->getrights('ficheinter');
+		if ($user->rights->ficheinter->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->ficheinter->dir_output.'/'.$original_file;
+	}
+
+	// Wrapping pour les images des stats propales
+	elseif ($modulepart == 'propalstats')
+	{
+		$user->getrights('propale');
+		if ($user->rights->propale->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->propale->dir_temp.'/'.$original_file;
+	}
+
+	// Wrapping pour les images des stats commandes
+	elseif ($modulepart == 'orderstats')
+	{
+		$user->getrights('commande');
+		if ($user->rights->commande->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->commande->dir_temp.'/'.$original_file;
+	}
+	elseif ($modulepart == 'orderstatssupplier')
+	{
+		$user->getrights('fournisseur');
+		if ($user->rights->fournisseur->commande->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->fournisseur->dir_output.'/commande/temp/'.$original_file;
+	}
+
+	// Wrapping pour les images des stats factures
+	elseif ($modulepart == 'billstats')
+	{
+		$user->getrights('facture');
+		if ($user->rights->facture->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->facture->dir_temp.'/'.$original_file;
+	}
+	elseif ($modulepart == 'billstatssupplier')
+	{
+		$user->getrights('fourn');
+		if ($user->rights->fournisseur->facture->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->fournisseur->dir_output.'/facture/temp/'.$original_file;
+	}
+
+	// Wrapping pour les images des stats expeditions
+	elseif ($modulepart == 'expeditionstats')
+	{
+		$user->getrights('expedition');
+		if ($user->rights->expedition->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->expedition->dir_temp.'/'.$original_file;
+	}
+
+	// Wrapping pour les images des stats produits
+	elseif (preg_match('/^productstats_/i',$modulepart))
+	{
+		$user->getrights('produit');
+		if ($user->rights->produit->lire || $user->rights->service->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=(!empty($conf->produit->dir_temp)?$conf->produit->dir_temp:$conf->service->dir_temp).'/'.$original_file;
+	}
+
+	// Wrapping for products or services
+	elseif ($modulepart == 'product')
+	{
+		$user->getrights('produit');
+		if ($user->rights->produit->lire || $user->rights->service->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=(!empty($conf->produit->dir_output)?$conf->produit->dir_output:$conf->service->dir_output).'/'.$original_file;
+	}
+
+	// Wrapping for categories
+	elseif ($modulepart == 'category')
+	{
+		$user->getrights('categorie');
+		if ($user->rights->categorie->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->categorie->dir_output.'/'.$original_file;
+	}
+
+	// Wrapping pour les prelevements
+	elseif ($modulepart == 'prelevement')
+	{
+		$user->getrights('prelevement');
+		if ($user->rights->prelevement->bons->lire) $accessallowed=1;
+
+		$original_file=$conf->prelevement->dir_output.'/receipts/'.$original_file;
+	}
+
+	// Wrapping pour les graph telephonie
+	elseif ($modulepart == 'telephoniegraph')
+	{
+		$user->getrights('telephonie');
+		if ($user->rights->telephonie->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->telephonie->dir_temp.'/'.$original_file;
+	}
+
+	// Wrapping pour les graph energie
+	elseif ($modulepart == 'energie')
+	{
+		$accessallowed=1;
+		$original_file=$conf->energie->dir_temp.'/'.$original_file;
+	}
+
+	// Wrapping pour les graph bank
+	elseif ($modulepart == 'bank')
+	{
+		$accessallowed=1;
+		$original_file=$conf->banque->dir_temp.'/'.$original_file;
+	}
+
+	// Wrapping pour les images wysiwyg
+	elseif ($modulepart == 'fckeditor')
+	{
+		$accessallowed=1;
+		$original_file=$conf->fckeditor->dir_output.'/'.$original_file;
+	}
+
+	// Wrapping pour les images wysiwyg mailing
+	elseif ($modulepart == 'mailing')
+	{
+		$accessallowed=1;
+		$original_file=$conf->mailing->dir_output.'/'.$original_file;
+	}
+
+	// Wrapping pour les graph energie
+	elseif ($modulepart == 'graph_stock')
+	{
+		$accessallowed=1;
+		$original_file=$conf->stock->dir_temp.'/'.$original_file;
+	}
+
+	// Wrapping pour les graph fournisseurs
+	elseif ($modulepart == 'graph_fourn')
+	{
+		$accessallowed=1;
+		$original_file=$conf->fournisseur->dir_temp.'/'.$original_file;
+	}
+
+	// Wrapping pour les graph des produits
+	elseif ($modulepart == 'graph_product')
+	{
+		$accessallowed=1;
+		$original_file=$conf->produit->dir_temp.'/'.$original_file;
+	}
+
+	// Wrapping pour les code barre
+	elseif ($modulepart == 'barcode')
+	{
+		$accessallowed=1;
+		// If viewimage is called for barcode, we try to output an image on the fly,
+		// with not build of file on disk.
+		//$original_file=$conf->barcode->dir_temp.'/'.$original_file;
+		$original_file='';
+	}
+
+	// Wrapping pour les icones de background des mailings
+	elseif ($modulepart == 'iconmailing')
+	{
+		$accessallowed=1;
+		$original_file=$conf->mailing->dir_temp.'/'.$original_file;
+	}
+
+	// Wrapping generique (allows any module to open a file if file is in directory
+	// called DOL_DATA_ROOT/modulepart).
+	else
+	{
+		$accessallowed=1;
+		$original_file=DOL_DATA_ROOT.'/'.$modulepart.'/'.$original_file;
 	}
 }
 
 // Security:
 // Limit access if permissions are wrong
-if (!$accessallowed) {
+if (! $accessallowed)
+{
 	accessforbidden();
 }
 
 // Security:
-// On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
-if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $fullpath_original_file)) {
-	dol_syslog("Refused to deliver file ".$fullpath_original_file);
-	print "ErrorFileNameInvalid: ".dol_escape_htmltag($original_file);
+// On interdit les remontees de repertoire ainsi que les pipe dans
+// les noms de fichiers.
+if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
+{
+	$langs->load("main");
+	dol_syslog("Refused to deliver file ".$original_file);
+	// Do no show plain path in shown error message
+	dol_print_error(0,$langs->trans("ErrorFileNameInvalid",$_GET["file"]));
 	exit;
 }
 
 
 
-if ($modulepart == 'barcode') {
-	$generator = GETPOST("generator", "aZ09");
-	$encoding = GETPOST("encoding", "aZ09");
-	$readable = GETPOST("readable", 'aZ09') ? GETPOST("readable", "aZ09") : "Y";
-	if (in_array($encoding, array('EAN8', 'EAN13'))) {
-		$code = GETPOST("code", 'alphanohtml');
-	} else {
-		$code = GETPOST("code", 'none'); // This can be rich content (qrcode, datamatrix, ...)
+if ($modulepart == 'barcode')
+{
+	$generator=$_GET["generator"];
+	$code=$_GET["code"];
+	$encoding=$_GET["encoding"];
+	$readable=$_GET["readable"]?$_GET["readable"]:"Y";
+
+	// Output files with barcode generators
+	foreach ($conf->file->dol_document_root as $dirroot)
+	{
+		$dir=$dirroot . "/includes/modules/barcode/";
+		$result=@include_once($dir.$generator.".modules.php");
+		if ($result) break;
 	}
 
-	if (empty($generator) || empty($encoding)) {
-		print 'Error: Parameter "generator" or "encoding" not defined';
+	// Chargement de la classe de codage
+	$classname = "mod".ucfirst($generator);
+	$module = new $classname($db);
+	if ($module->encodingIsSupported($encoding))
+	{
+		$result=$module->buildBarCode($code,$encoding,$readable);
+	}
+}
+else					// Open and return file
+{
+	clearstatcache();
+
+	// Output files on browser
+	dol_syslog("viewimage.php return file $original_file content-type=$type");
+	$original_file_osencoded=dol_osencode($original_file);
+
+	// This test if file exists should be useless. We keep it to find bug more easily
+	if (! file_exists($original_file_osencoded))
+	{
+		$langs->load("main");
+		dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$_GET["file"]));
 		exit;
 	}
 
-	$dirbarcode = array_merge(array("/core/modules/barcode/doc/"), $conf->modules_parts['barcode']);
-
-	$result = 0;
-
-	foreach ($dirbarcode as $reldir) {
-		$dir = dol_buildpath($reldir, 0);
-		$newdir = dol_osencode($dir);
-
-		// Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php)
-		if (!is_dir($newdir)) {
-			continue;
-		}
-
-		$result = @include_once $newdir.$generator.'.modules.php';
-		if ($result) {
-			break;
-		}
+	// Les drois sont ok et fichier trouve
+	if ($type)
+	{
+		header('Content-type: '.$type);
+	}
+	else
+	{
+		header('Content-type: image/png');
 	}
 
-	// Load barcode class
-	$classname = "mod".ucfirst($generator);
-	$module = new $classname($db);
-	if ($module->encodingIsSupported($encoding)) {
-		$result = $module->buildBarCode($code, $encoding, $readable);
-	}
-} else {
-	// Open and return file
-	clearstatcache();
-
-	$filename = basename($fullpath_original_file);
-
-	// Output files on browser
-	dol_syslog("viewimage.php return file $fullpath_original_file filename=$filename content-type=$type");
-
-	// This test is to avoid error images when image is not available (for example thumbs).
-	if (!dol_is_file($fullpath_original_file) && empty($_GET["noalt"])) {
-		$fullpath_original_file = DOL_DOCUMENT_ROOT.'/public/theme/common/nophoto.png';
-		/*$error='Error: File '.$_GET["file"].' does not exists or filesystems permissions are not allowed';
-		print $error;
-		exit;*/
-	}
-
-	// Permissions are ok and file found, so we return it
-	if ($type) {
-		top_httphead($type);
-		header('Content-Disposition: inline; filename="'.basename($fullpath_original_file).'"');
-	} else {
-		top_httphead('image/png');
-		header('Content-Disposition: inline; filename="'.basename($fullpath_original_file).'"');
-	}
-
-	$fullpath_original_file_osencoded = dol_osencode($fullpath_original_file);
-
-	readfile($fullpath_original_file_osencoded);
+	readfile($original_file_osencoded);
 }
 
-
-if (is_object($db)) {
-	$db->close();
-}
+?>
