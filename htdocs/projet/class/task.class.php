@@ -2077,7 +2077,7 @@ class Task extends CommonObject
 		$sql .= " AND p.fk_statut = 1";
 		$sql .= " AND t.fk_projet = p.rowid";
 		$sql .= " AND (t.progress IS NULL OR t.progress < 100)"; // tasks to do
-		if (!$user->rights->projet->all->lire) {
+		if (empty($user->rights->projet->all->lire)) {
 			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		}
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
@@ -2148,7 +2148,7 @@ class Task extends CommonObject
 		$sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 		$sql .= " WHERE p.entity IN (".getEntity('project', 0).')';
 		$sql .= " AND t.fk_projet = p.rowid"; // tasks to do
-		if ($mine || !$user->rights->projet->all->lire) {
+		if ($mine || empty($user->rights->projet->all->lire)) {
 			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		}
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser

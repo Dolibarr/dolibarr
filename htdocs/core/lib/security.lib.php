@@ -304,7 +304,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				$nbko++;
 			}
 		} elseif ($feature == 'projet') {
-			if (!$user->rights->projet->lire && !$user->rights->projet->all->lire) {
+			if (!$user->rights->projet->lire && empty($user->rights->projet->all->lire)) {
 				$readok = 0;
 				$nbko++;
 			}
