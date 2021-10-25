@@ -6840,6 +6840,10 @@ div.clipboardCPValue.hidewithsize {
 		min-width: 30px;
 	}
 
+	div.login_block {
+		border-right: 1px solid rgba(0,0,0,0.3);
+	}
+
 	div.tmenucenter {
 		  text-overflow: clip;
 	}
