@@ -7461,7 +7461,7 @@ abstract class CommonObject
 							}
 						}
 
-						$out .= $extrafields->showSeparator($key, $this, ($colspan + 1), $display_type);
+						$out .= $extrafields->showSeparator($key, $this, ((int) $colspan + 1), $display_type);
 					} else {
 						$class = (!empty($extrafields->attributes[$this->table_element]['hidden'][$key]) ? 'hideobject ' : '');
 						$csstyle = '';
@@ -7562,7 +7562,7 @@ abstract class CommonObject
 						if ($display_type == 'card') {
 							$out .= '<td '.($html_id ? 'id="'.$html_id.'" ' : '').' class="'.$this->element.'_extras_'.$key.'" '.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
 						} elseif ($display_type == 'line') {
-							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').' style="display: inline-block" class="'.$this->element.'_extras_'.$key.'">';
+							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').' class="'.$this->element.'_extras_'.$key.'">';
 						}
 
 						switch ($mode) {
