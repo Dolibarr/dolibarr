@@ -75,38 +75,43 @@ $nbofsearch = 0;
 $hookmanager->initHooks(array('bookmarks'));
 
 // Define $bookmarks
-$bookmarks = '';
-
+$bookmarkList = '';
+$searchForm = '';
 
 $arrayresult = array();
 //include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';
 
-$i = 0;
-$accesskeyalreadyassigned = array();
-foreach ($arrayresult as $key => $val) {
-	$tmp = explode('?', $val['url']);
-	$urlaction = $tmp[0];
-	$keysearch = 'search_all';
 
-	$accesskey = '';
-	if (!$accesskeyalreadyassigned[$val['label'][0]]) {
-		$accesskey = $val['label'][0];
-		$accesskeyalreadyassigned[$accesskey] = $accesskey;
+
+// Menu with list of bookmarks
+$sql = "SELECT rowid, title, url, target FROM ".MAIN_DB_PREFIX."bookmark";
+$sql .= " WHERE (fk_user = ".((int) $user->id)." OR fk_user is NULL OR fk_user = 0)";
+$sql .= " AND entity IN (".getEntity('bookmarks').")";
+$sql .= " ORDER BY position";
+if ($resql = $db->query($sql)) {
+	$bookmarkList = '<div id="dropdown-bookmarks-list" class="start">';
+	$i = 0;
+	while ((empty($conf->global->BOOKMARKS_SHOW_IN_MENU) || $i < $conf->global->BOOKMARKS_SHOW_IN_MENU) && $obj = $db->fetch_object($resql)) {
+		$bookmarkList .= '<a class="dropdown-item bookmark-item'.(strpos($obj->url, 'http') === 0 ? ' bookmark-item-external' : '').'" id="bookmark-item-'.$obj->rowid.'" data-id="'.$obj->rowid.'" '.($obj->target == 1 ? ' target="_blank"' : '').' href="'.dol_escape_htmltag($obj->url).'" >';
+		$bookmarkList .= dol_escape_htmltag($obj->title);
+		$bookmarkList .= '</a>';
+		$i++;
 	}
+	$bookmarkList .= '</div>';
 
-	//$bookmarks .= printSearchForm($urlaction, $urlaction, $val['label'], 'minwidth200', $keysearch, $accesskey, $key, $val['img'], $showtitlebefore, ($i > 0 ? 0 : 1));
-
-	$i++;
+	$searchForm .= '<input name="bookmark" id="top-bookmark-search-input" class="dropdown-search-input" placeholder="'.$langs->trans('Bookmarks').'" autocomplete="off" >';
+} else {
+	dol_print_error($db);
 }
 
 
-// Execute hook printSearchForm
-$parameters = array('bookmarks'=>$bookmarks);
+// Execute hook printBookmarks
+$parameters = array('bookmarks'=>$bookmarkList);
 $reshook = $hookmanager->executeHooks('printBookmarks', $parameters); // Note that $action and $object may have been modified by some hooks
 if (empty($reshook)) {
-	$bookmarks .= $hookmanager->resPrint;
+	$bookmarkList .= $hookmanager->resPrint;
 } else {
-	$bookmarks = $hookmanager->resPrint;
+	$bookmarkList = $hookmanager->resPrint;
 }
 
 
@@ -115,7 +120,7 @@ print "<!-- Begin Bookmarks list -->\n";
 print '<div class="center"><div class="center" style="padding: 6px;">';
 print '<style>.menu_titre { padding-top: 7px; }</style>';
 print '<div id="blockvmenusearch" class="tagtable center searchpage">'."\n";
-print $bookmarks;
+print $bookmarkList;
 print '</div>'."\n";
 print '</div></div>';
 print "\n<!-- End SearchForm -->\n";

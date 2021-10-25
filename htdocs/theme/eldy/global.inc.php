@@ -680,6 +680,12 @@ textarea.centpercent {
 .alignstart {
 	text-align: start;
 }
+.start {
+	text-align: start;
+}
+.end {
+	text-align: end;
+}
 .left {
 	text-align: <?php print $left; ?>;
 }
