@@ -370,7 +370,6 @@ if ($projectid > 0) {
 
 	print '</div>';
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border tableforfield centpercent">';
@@ -422,7 +421,7 @@ if ($projectid > 0) {
 
 	// Show message
 	$message = '<a target="_blank" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
-	$message .= '&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...');
+	$message .= '&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...'));
 	$message .= "&project=".$projectid.'&module='.urlencode('@eventorganization').'&status='.ConferenceOrBooth::STATUS_CONFIRMED.'">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
 	print $message;
 	print "</td></tr>";
@@ -434,7 +433,7 @@ if ($projectid > 0) {
 	//print '</span>';
 	print '</td><td>';
 	$linksuggest = $dolibarr_main_url_root.'/public/project/index.php?id='.((int) $project->id);
-	$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.((int) $project->id), 'md5');
+	$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $project->id), 'md5');
 	$linksuggest .= '&securekey='.urlencode($encodedsecurekey);
 	//print '<div class="urllink">';
 	//print '<input type="text" value="'.$linksuggest.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
@@ -451,7 +450,7 @@ if ($projectid > 0) {
 	//print '</span>';
 	print '</td><td>';
 	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.((int) $project->id).'&type=global';
-	$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.((int) $project->id), 'md5');
+	$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $project->id), 'md5');
 	$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 	//print '<div class="urllink">';
 	//print '<input type="text" value="'.$linkregister.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
@@ -463,7 +462,6 @@ if ($projectid > 0) {
 
 	print '</table>';
 
-	print '</div>';
 	print '</div>';
 	print '</div>';
 
@@ -700,6 +698,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 print '<tr class="liste_titre">';
 foreach ($object->fields as $key => $val) {
 	$cssforfield = (empty($val['css']) ? '' : $val['css']);
+	$searchkey = (empty($search[$key]) ? '' : $search[$key]);
 	if ($key == 'status') {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
@@ -712,11 +711,11 @@ foreach ($object->fields as $key => $val) {
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
-			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
+			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $searchkey, $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
 		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:')=== 0)) {
-			print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth125', 1);
+			print $object->showInputField($val, $key, $searchkey, '', '', 'search_', 'maxwidth125', 1);
 		} elseif (!preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
-			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
+			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($searchkey).'">';
 		} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 			print '<div class="nowrap">';
 			print $form->selectDate($search[$key.'_dtstart'] ? $search[$key.'_dtstart'] : '', "search_".$key."_dtstart", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));

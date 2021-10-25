@@ -273,7 +273,7 @@ if ($id) {
 }
 
 // Get list of project id allowed to user (in a string list separated by coma)
-if (!$user->rights->projet->all->lire) {
+if (empty($user->rights->projet->all->lire)) {
 	$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 }
 //var_dump($projectsListId);
@@ -357,7 +357,7 @@ if ($search_task_user > 0) {
 }
 $sql .= " WHERE t.fk_projet = p.rowid";
 $sql .= " AND p.entity IN (".getEntity('project').')';
-if (!$user->rights->projet->all->lire) {
+if (empty($user->rights->projet->all->lire)) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId ? $projectsListId : '0').")"; // public and assigned to projects, or restricted to company for external users
 }
 if (is_object($projectstatic) && $projectstatic->id > 0) {

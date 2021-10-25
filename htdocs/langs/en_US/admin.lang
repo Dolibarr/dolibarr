@@ -1699,6 +1699,8 @@ MailingDelay=Seconds to wait after sending next message
 NotificationSetup=Email Notification module setup
 NotificationEMailFrom=Sender email (From) for emails sent by the Notifications module
 FixedEmailTarget=Recipient
+NotificationDisableConfirmMessageFix=Disable notification info in confirm message for fix notification
+NotificationDisableConfirmMessageUser=Disable notification info in confirm message for user notification
 ##### Sendings #####
 SendingsSetup=Shipping module setup
 SendingsReceiptModel=Sending receipt model

@@ -1850,7 +1850,6 @@ if ($action == 'create') {
 
 			print '</div>';
 			print '<div class="fichehalfright">';
-			print '<div class="ficheaddleft">';
 			print '<div class="underbanner clearboth"></div>';
 
 			print '<table class="border tableforfield centpercent">';
@@ -1903,7 +1902,7 @@ if ($action == 'create') {
 				$nbcols++;
 			}
 
-			print '<table class="noborder paymenttable" width="100%">';
+			print '<table class="noborder paymenttable centpercent">';
 
 			print '<tr class="liste_titre">';
 			print '<td class="liste_titre">'.$langs->trans('Payments').'</td>';
@@ -2002,7 +2001,6 @@ if ($action == 'create') {
 			}
 			print "</table>";
 
-			print '</div>';
 			print '</div>';
 			print '</div>';
 
@@ -2758,13 +2756,13 @@ if ($action != 'presend') {
 	}
 	*/
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 	// List of actions on element
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 	$formactions = new FormActions($db);
 	$somethingshown = $formactions->showactions($object, 'expensereport', null);
 
-	print '</div></div></div>';
+	print '</div></div>';
 }
 
 // Presend form

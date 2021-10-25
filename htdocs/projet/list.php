@@ -357,7 +357,7 @@ $title = $langs->trans("Projects");
 
 // Get list of project id allowed to user (in a string list separated by comma)
 $projectsListId = '';
-if (!$user->rights->projet->all->lire) {
+if (empty($user->rights->projet->all->lire)) {
 	$projectsListId = $object->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 }
 
@@ -421,7 +421,7 @@ $sql .= " WHERE p.entity IN (".getEntity('project').')';
 if (!empty($conf->categorie->enabled)) {
 	$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_PROJECT, "p.rowid", $search_category_array);
 }
-if (!$user->rights->projet->all->lire) {
+if (empty($user->rights->projet->all->lire)) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 }
 // No need to check if company is external user, as filtering of projects must be done by getProjectsAuthorizedForUser

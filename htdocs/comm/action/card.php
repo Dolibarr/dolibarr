@@ -2214,10 +2214,10 @@ if ($id > 0) {
 
 			print $formfile->showdocuments('actions', $object->id, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 0, 0, '', '', '', $langs->getDefaultLang());
 
-			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+			print '</div><div class="fichehalfright">';
 
 
-			print '</div></div></div>';
+			print '</div></div>';
 		}
 	}
 }

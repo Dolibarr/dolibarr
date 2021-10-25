@@ -569,7 +569,7 @@ if ($action != 'presend') {
 		print $formfile->showdocuments('product_batch', $objref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $langs->default_lang, '', $object);
 	}
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 
 	$MAXEVENT = 10;
 
@@ -577,7 +577,7 @@ if ($action != 'presend') {
 	$formactions = new FormActions($db);
 	$somethingshown = $formactions->showactions($object, 'productlot', 0, 1, '', $MAXEVENT);
 
-	print '</div></div></div>';
+	print '</div></div>';
 }
 
 // End of page

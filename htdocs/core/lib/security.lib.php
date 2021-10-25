@@ -279,7 +279,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 		}
 
 		if ($feature == 'societe') {
-			if (empty($user->rights->societe->lire) && !$user->rights->fournisseur->lire) {
+			if (empty($user->rights->societe->lire) && empty($user->rights->fournisseur->lire)) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -299,12 +299,12 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				$nbko++;
 			}
 		} elseif ($feature == 'cheque') {
-			if (!$user->rights->banque->cheque) {
+			if (empty($user->rights->banque->cheque)) {
 				$readok = 0;
 				$nbko++;
 			}
 		} elseif ($feature == 'projet') {
-			if (!$user->rights->projet->lire && !$user->rights->projet->all->lire) {
+			if (!$user->rights->projet->lire && empty($user->rights->projet->all->lire)) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -314,7 +314,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				$nbko++;
 			}
 		} elseif ($feature == 'payment_supplier') {
-			if (!$user->rights->fournisseur->facture->lire) {
+			if (empty($user->rights->fournisseur->facture->lire)) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -385,22 +385,22 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 					$nbko++;
 				}
 			} elseif ($feature == 'commande_fournisseur') {
-				if (!$user->rights->fournisseur->commande->creer || !$user->rights->supplier_order->creer) {
+				if (empty($user->rights->fournisseur->commande->creer) || empty($user->rights->supplier_order->creer)) {
 					$createok = 0;
 					$nbko++;
 				}
 			} elseif ($feature == 'banque') {
-				if (!$user->rights->banque->modifier) {
+				if (empty($user->rights->banque->modifier)) {
 					$createok = 0;
 					$nbko++;
 				}
 			} elseif ($feature == 'cheque') {
-				if (!$user->rights->banque->cheque) {
+				if (empty($user->rights->banque->cheque)) {
 					$createok = 0;
 					$nbko++;
 				}
 			} elseif ($feature == 'import') {
-				if (!$user->rights->import->run) {
+				if (empty($user->rights->import->run)) {
 					$createok = 0;
 					$nbko++;
 				}
@@ -497,11 +497,11 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'banque') {
-				if (!$user->rights->banque->modifier) {
+				if (empty($user->rights->banque->modifier)) {
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'cheque') {
-				if (!$user->rights->banque->cheque) {
+				if (empty($user->rights->banque->cheque)) {
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'ecm') {

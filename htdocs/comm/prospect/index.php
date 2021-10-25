@@ -163,8 +163,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
 }
 
 
-//print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 /*
@@ -280,8 +279,7 @@ if ($resql) {
 }
 
 
-//print '</td></tr></table>';
-print '</div></div></div>';
+print '</div></div>';
 
 // End of page
 llxFooter();

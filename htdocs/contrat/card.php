@@ -2137,7 +2137,7 @@ if ($action == 'create') {
 			$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
-			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+			print '</div><div class="fichehalfright">';
 
 			$MAXEVENT = 10;
 
@@ -2148,7 +2148,7 @@ if ($action == 'create') {
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'contract', $socid, 1, 'listactions', $MAXEVENT, '', $morehtmlcenter);
 
-			print '</div></div></div>';
+			print '</div></div>';
 		}
 
 		// Presend form
