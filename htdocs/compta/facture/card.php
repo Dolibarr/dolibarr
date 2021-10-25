@@ -2101,7 +2101,12 @@ if (empty($reshook)) {
 
 				// if price ht was forced (ie: from gui when calculated by margin rate and cost price). TODO Why this ?
 				if (!empty($price_ht) || $price_ht === '0') {
-					$pu_ht = price2num($price_ht, 'MU');
+					if($price_ht === '0' && $price_ht_devise != '') { //added test to record multicurrency price while the default price is 0.
+						$pu_ht_devise = price2num($price_ht_devise, 'MU');
+						$pu_ht = price2num(GETPOST('price_ht', 'MU'));
+					} else {
+						$pu_ht = price2num($price_ht, 'MU');
+					}
 					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
 				} elseif ($tmpvat != $tmpprodvat) {
 					// On reevalue prix selon taux tva car taux tva transaction peut etre different
