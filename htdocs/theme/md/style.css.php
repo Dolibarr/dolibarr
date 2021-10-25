@@ -1869,11 +1869,6 @@ body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block
 .side-nav-vert {
 	margin-left: 0;
 }
-div.login_block {
-	/* border-right: none ! important; */
-	top: inherit !important;
-	border-right: 1px solid rgba(0,0,0,0.3);
-}
 
 .side-nav {
 	<?php
@@ -1899,10 +1894,6 @@ div.backgroundsemitransparent {
 
 /* Login */
 
-div.login_block {
-	/* position: initial !important;*/
-	/*display: none;*/
-}
 .login_block_getinfo {
 	text-align: center;
 }
@@ -2722,11 +2713,11 @@ table.login_table_securitycode tr td {
 }
 
 div.login_block {
-	/* border-right: 1px solid rgba(0,0,0,0.3); */
+	top: 0;
+	border-right: 1px solid rgba(0,0,0,0.3);
 	padding-top: 3px;
 	padding-bottom: 3px;
 	<?php print $left; ?>: 0;
-	top: 0px;
 <?php if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	position: absolute;
 <?php } else { ?>
@@ -6834,6 +6825,10 @@ div.clipboardCPValue.hidewithsize {
 /* rule to reduce top menu - 3rd reduction */
 @media only screen and (max-width: 570px)
 {
+	div.login_block {
+		top: auto;
+	}
+	
 	div#tmenu_tooltip {
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
 		display:none;

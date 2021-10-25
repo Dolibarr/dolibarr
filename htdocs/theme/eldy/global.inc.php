@@ -7050,7 +7050,7 @@ div.clipboardCPValue.hidewithsize {
 		padding-left: 20px;
 		padding-right: 20px;
 		padding-bottom: 16px;
-		top: inherit !important;
+		top: auto;
 		left: 0 !important;
 		text-align: center;
 		vertical-align: middle;
