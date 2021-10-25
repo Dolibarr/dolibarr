@@ -262,10 +262,10 @@ class Delivery extends CommonObject
 	 *	@param	string	$qty					Quantity
 	 *	@param	string	$fk_product				Id of predefined product
 	 *	@param	string	$description			Description
-	 *	@param	int	$array_options				Array options
+	 *  @param	array	$array_options			Array options
 	 *	@return	int								<0 if KO, >0 if OK
 	 */
-	public function create_line($origin_id, $qty, $fk_product, $description, $array_options = 0)
+	public function create_line($origin_id, $qty, $fk_product, $description, $array_options = null)
 	{
 		// phpcs:enable
 		$error = 0;
@@ -601,12 +601,12 @@ class Delivery extends CommonObject
 	/**
 	 * 	Add line
 	 *
-	 *	@param	int		$origin_id		Origin id
-	 *	@param	int		$qty			Qty
-	 *	@param	int	    $array_options	Array options
+	 *	@param	int		$origin_id				Origin id
+	 *	@param	int		$qty					Qty
+	 *  @param	array	$array_options			Array options
 	 *	@return	void
 	 */
-	public function addline($origin_id, $qty, $array_options = 0)
+	public function addline($origin_id, $qty, $array_options = null)
 	{
 		global $conf;
 

@@ -122,7 +122,7 @@ if ($user->socid) {
 $result = restrictedArea($user, 'expedition', $object->id, '');
 
 $permissiondellink = $user->rights->expedition->delivery->creer; // Used by the include of actions_dellink.inc.php
-//var_dump($object->lines[0]->detail_batch);
+$permissiontoadd = $user->rights->expedition->creer;
 
 
 /*
@@ -152,7 +152,6 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->expedition->dir_output.'/sending';
-	$permissiontoadd = $user->rights->expedition->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Reopen

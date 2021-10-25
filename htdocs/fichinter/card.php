@@ -66,16 +66,12 @@ $originid = (GETPOST('originid', 'int') ?GETPOST('originid', 'int') : GETPOST('o
 $note_public = GETPOST('note_public', 'restricthtml');
 $lineid = GETPOST('line_id', 'int');
 
+$error = 0;
+
 //PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
 $hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
 $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
-
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('interventioncard', 'globalcard'));
@@ -96,10 +92,14 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
+
 $permissionnote = $user->rights->ficheinter->creer; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->ficheinter->creer; // Used by the include of actions_dellink.inc.php
-
-$error = 0;
 
 
 /*

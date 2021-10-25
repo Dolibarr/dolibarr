@@ -1795,7 +1795,6 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 	global $hookmanager, $menumanager;
 
 	$searchform = '';
-	$bookmarks = '';
 
 	// Instantiate hooks for external modules
 	$hookmanager->initHooks(array('toprightmenu'));
@@ -1825,7 +1824,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		// Show menu entries
 		print '<div id="tmenu_tooltip'.(empty($conf->global->MAIN_MENU_INVERT) ? '' : 'invert').'" class="tmenu">'."\n";
 		$menumanager->atarget = $target;
-		$menumanager->showmenu('top', array('searchform'=>$searchform, 'bookmarks'=>$bookmarks)); // This contains a \n
+		$menumanager->showmenu('top', array('searchform'=>$searchform)); // This contains a \n
 		print "</div>\n";
 
 		// Define link to login card
@@ -1890,7 +1889,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		}
 
 		// Link to print main content area
-		if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $conf->browser->layout != 'phone') {
+		if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			$qs = dol_escape_htmltag($_SERVER["QUERY_STRING"]);
 
 			if (isset($_POST) && is_array($_POST)) {
@@ -2712,7 +2711,6 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 	global $hookmanager, $menumanager;
 
 	$searchform = '';
-	$bookmarks = '';
 
 	if (!empty($menu_array_before)) {
 		dol_syslog("Deprecated parameter menu_array_before was used when calling main::left_menu function. Menu entries of module should now be defined into module descriptor and not provided when calling left_menu.", LOG_WARNING);
@@ -2783,7 +2781,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		// Show left menu with other forms
 		$menumanager->menu_array = $menu_array_before;
 		$menumanager->menu_array_after = $menu_array_after;
-		$menumanager->showmenu('left', array('searchform'=>$searchform, 'bookmarks'=>$bookmarks)); // output menu_array and menu found in database
+		$menumanager->showmenu('left', array('searchform'=>$searchform)); // output menu_array and menu found in database
 
 		// Dolibarr version + help + bug report link
 		print "\n";
@@ -3225,6 +3223,7 @@ if (!function_exists("llxFooter")) {
 		if (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || $forceping) {
 			//print '<!-- instance_unique_id='.$conf->file->instance_unique_id.' MAIN_FIRST_PING_OK_ID='.$conf->global->MAIN_FIRST_PING_OK_ID.' -->';
 			$hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);
+
 			if (empty($conf->global->MAIN_FIRST_PING_OK_DATE)
 				|| (!empty($conf->file->instance_unique_id) && ($hash_unique_id != $conf->global->MAIN_FIRST_PING_OK_ID) && ($conf->global->MAIN_FIRST_PING_OK_ID != 'disabled'))
 			|| $forceping) {
@@ -3233,7 +3232,7 @@ if (!function_exists("llxFooter")) {
 					print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. It is an alpha version -->\n";
 				} elseif (empty($_COOKIE['DOLINSTALLNOPING_'.$hash_unique_id]) || $forceping) {	// Cookie is set when we uncheck the checkbox in the installation wizard.
 					// MAIN_LAST_PING_KO_DATE
-					// Disable ping if MAIN_LAST_PING_KO_DATE is set and is recent
+					// Disable ping if MAIN_LAST_PING_KO_DATE is set and is recent (this month)
 					if (!empty($conf->global->MAIN_LAST_PING_KO_DATE) && substr($conf->global->MAIN_LAST_PING_KO_DATE, 0, 6) == dol_print_date(dol_now(), '%Y%m') && !$forceping) {
 						print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. An error already occured this month, we will try later. -->\n";
 					} else {

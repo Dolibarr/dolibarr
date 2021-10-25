@@ -104,6 +104,8 @@ if ($user->socid) {
 }
 restrictedArea($user, 'salaries', $object->id, 'salary', '');
 
+$permissiontoadd = $user->rights->salaries->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
+
 
 /*
  * Actions

@@ -10522,9 +10522,9 @@ function showValueWithClipboardCPButton($valuetocopy, $showonlyonhover = 1, $tex
 
 	$tag = 'span'; 	// Using div does not work when using the js copy code.
 	if ($texttoshow) {
-		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><'.$tag.' class="clipboardCPValue hidewithsize">'.dol_escape_htmltag($valuetocopy, 1, 1).'</'.$tag.'><span class="clipboardCPValueToPrint">'.dol_escape_htmltag($texttoshow, 1, 1).'</span><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText opacitymedium"></span></span>';
+		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><'.$tag.' class="clipboardCPValue hidewithsize">'.dol_escape_htmltag($valuetocopy, 1, 1).'</'.$tag.'><span class="clipboardCPValueToPrint">'.dol_escape_htmltag($texttoshow, 1, 1).'</span><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText"></span></span>';
 	} else {
-		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><'.$tag.' class="clipboardCPValue">'.dol_escape_htmltag($valuetocopy, 1, 1).'</'.$tag.'><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText opacitymedium"></span></span>';
+		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><'.$tag.' class="clipboardCPValue">'.dol_escape_htmltag($valuetocopy, 1, 1).'</'.$tag.'><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText"></span></span>';
 	}
 
 	return $result;

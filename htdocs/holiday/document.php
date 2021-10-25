@@ -120,6 +120,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'holiday', $object->id, 'holiday');
 
+$permissiontoadd = $user->rights->holiday->write; // Used by the include of actions_setnotes.inc.php
 
 
 /*
