@@ -802,7 +802,7 @@ $currentdaytoshow = $firstdaytoshow;
 echo '<div class="div-table-responsive">';
 
 while ($currentdaytoshow < $lastdaytoshow) {
-	echo '<table width="100%" class="noborder nocellnopadd cal_month">';
+	echo '<table class="centpercent noborder nocellnopadd cal_month">';
 
 	echo '<tr class="liste_titre">';
 	echo '<td class="nopaddingtopimp nopaddingbottomimp nowraponsmartphone">';
@@ -829,7 +829,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		// Filter on days
 		print img_picto('', 'clock', 'class="fawidth30 inline-block paddingleft"');
 		print '<span class="hideonsmartphone" title="'.$langs->trans("VisibleDaysRange").'">'.$langs->trans("DaysOfWeek").'</span>';
-		print "\n".'<div class="ui-grid-a  inline-block"><div class="ui-block-a">';
+		print "\n".'<div class="ui-grid-a  inline-block"><div class="ui-block-a nowraponall">';
 		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7">';
 		if (empty($conf->dol_use_jmobile)) {
 			print ' - ';

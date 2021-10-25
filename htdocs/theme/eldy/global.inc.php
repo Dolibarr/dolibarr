@@ -298,6 +298,9 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	cursor: pointer;
 	max-width: 350px;
 }
+input.short {
+	width: 40px;
+}
 .nofocusvisible:focus-visible {
 	outline: none;
 }

@@ -441,6 +441,9 @@ input, select {
 input.button.massactionconfirmed {
 	margin: 4px;
 }
+input.short {
+	width: 40px;
+}
 
 textarea {
 	border-radius: 0;
