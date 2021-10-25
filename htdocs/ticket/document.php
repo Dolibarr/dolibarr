@@ -70,7 +70,7 @@ if ($result < 0) {
 	$upload_dir = $conf->ticket->dir_output."/".dol_sanitizeFileName($object->ref);
 }
 
-$permissiontoadd = $user->rights->ticket->write;
+$permissiontoadd = $user->rights->ticket->write;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
 
 // Security check - Protection if external user
 $result = restrictedArea($user, 'ticket', $object->id);

@@ -77,6 +77,8 @@ if ($object->fetch($id, $ref)) {
 	$upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$ref;
 }
 
+$permissiontoadd = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer); // Used by the include of actions_setnotes.inc.php
+
 
 /*
  * Actions

@@ -76,6 +76,7 @@ if ($socid > 0) { // Special for thirdparty
 	$element = 'societe';
 }
 
+// Permission is not permission on resources. We just make link here on objects.
 
 
 /*

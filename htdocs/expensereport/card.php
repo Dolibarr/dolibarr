@@ -139,6 +139,8 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'expensereport', $object->id, 'expensereport');
 
+$permissiontoadd = $user->rights->expensereport->creer;	// Used by the include of actions_dellink.inc.php
+
 
 /*
  * Actions
@@ -1339,7 +1341,6 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->expensereport->dir_output;
-	$permissiontoadd = $user->rights->expensereport->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 

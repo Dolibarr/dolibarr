@@ -87,16 +87,16 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
+$usercanread = (($user->rights->stock->lire));
+$usercancreate = (($user->rights->stock->creer));
+$usercandelete = (($user->rights->stock->supprimer));
+
 
 /*
  * Actions
  */
 
 $error = 0;
-
-$usercanread = (($user->rights->stock->lire));
-$usercancreate = (($user->rights->stock->creer));
-$usercandelete = (($user->rights->stock->supprimer));
 
 $parameters = array('id'=>$id, 'ref'=>$ref);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
