@@ -101,6 +101,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 			$sql .= " AND f.entity = ".$conf->entity;
 			$sql .= " AND f.paye = 0";
 			$sql .= " AND fk_statut = 1";
+			$sql .= " AND f.date_lim_reglement IS NOT NULL";
 			if (!$user->rights->societe->client->voir && !$user->socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
