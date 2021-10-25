@@ -886,10 +886,19 @@ foreach ($object->fields as $key => $val) {
 		print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, '', $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''))."\n";
 	}
 }
+$totalarray = array(
+	'nbfield' => 0,
+);
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$parameters = array(
+	'arrayfields' => $arrayfields,
+	'param' => $param,
+	'sortfield' => $sortfield,
+	'sortorder' => $sortorder,
+	'totalarray' => &$totalarray,
+);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ')."\n";
@@ -910,7 +919,6 @@ if (!empty($extrafields->attributes[$object->table_element]['computed']) && is_a
 // Loop on record
 // --------------------------------------------------------------------
 $i = 0;
-$totalarray = array();
 $cacheofoutputfield = array();
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
@@ -945,15 +953,15 @@ while ($i < min($num, $limit)) {
 		}
 		if (!empty($arrayfields['t.'.$key]['checked'])) {
 			print '<td';
-			if ($cssforfield || $val['css']) {
+			if (!empty($cssforfield) || !empty($val['css']) {
 				print ' class="';
 			}
-			print $cssforfield;
-			if ($cssforfield && $val['css']) {
+			print empty($cssforfield) ? '' : $cssforfield;
+			if (!empty($cssforfield) && !empty($val['css'])) {
 				print ' ';
 			}
-			print $val['css'];
-			if ($cssforfield || $val['css']) {
+			print empty($val['css']) ? '' : $val['css'];
+			if (!empty($cssforfield) || !empty($val['css'])) {
 				print '"';
 			}
 			print '>';
