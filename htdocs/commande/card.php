@@ -798,7 +798,7 @@ if (empty($reshook)) {
 
 				// if price ht is forced (ie: calculated by margin rate and cost price). TODO Why this ?
 				if (!empty($price_ht) || $price_ht === '0') {
-					if($price_ht === '0' && $price_ht_devise != '') { //added test to record multicurrency price while the default price is 0.
+					if ($price_ht === '0' && $price_ht_devise != '') { //added test to record multicurrency price while the default price is 0.
 						$pu_ht_devise = price2num($price_ht_devise, 'MU');
 						$pu_ht = price2num(GETPOST('price_ht', 'MU'));
 					} else {
