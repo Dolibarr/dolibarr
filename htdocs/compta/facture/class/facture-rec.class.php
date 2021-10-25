@@ -126,8 +126,8 @@ class FactureRec extends CommonInvoice
 
 	public $suspended; // status
 
-	public $auto_validate;			// 0 to create in draft, 1 to create and validate the new invoice
-	public $generate_pdf;			// 1 to generate PDF on invoice generation (default)
+	public $auto_validate; // 0 to create in draft, 1 to create and validate the new invoice
+	public $generate_pdf; // 1 to generate PDF on invoice generation (default)
 
 	/**
 	 * @var int 1 if status is draft
@@ -712,12 +712,12 @@ class FactureRec extends CommonInvoice
 				//$line->code_ventilation = $objp->fk_code_ventilation;
 
 				$line->fk_product_fournisseur_price = $objp->fk_product_fournisseur_price;
-				$line->fk_fournprice = $objp->fk_product_fournisseur_price;	// For backward compatibility
+				$line->fk_fournprice = $objp->fk_product_fournisseur_price; // For backward compatibility
 
 				$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $objp->fk_product_fournisseur_price, $objp->pa_ht);
 
 				$line->buyprice = $marginInfos[0];
-				$line->pa_ht = $marginInfos[0];			// For backward compatibility
+				$line->pa_ht = $marginInfos[0]; // For backward compatibility
 				$line->marge_tx			= $marginInfos[1];
 				$line->marque_tx		= $marginInfos[2];
 				$line->rang = $objp->rang;
@@ -1930,14 +1930,14 @@ class FactureLigneRec extends CommonInvoiceLine
 
 
 	public $fk_product_fournisseur_price;
-	public $fk_fournprice;					// For backward compatibility
+	public $fk_fournprice; // For backward compatibility
 
 	public $rang;
 
 	public $desc;
 	public $description;
 
-	public $fk_product_type;	// Use instead product_type
+	public $fk_product_type; // Use instead product_type
 
 	public $fk_contract_line;
 

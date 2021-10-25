@@ -618,7 +618,7 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 		$checksoc = array('societe'); // Test for societe object
 		$checkother = array('contact', 'agenda'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
-		$checktask = array('projet_task');	// Test for task object
+		$checktask = array('projet_task'); // Test for task object
 		$nocheck = array('barcode', 'stock'); // No test
 		//$checkdefault = 'all other not already defined'; // Test on entity + link to third party on field $dbt_keyfield. Not allowed if link is empty (Ex: invoice, orders...).
 

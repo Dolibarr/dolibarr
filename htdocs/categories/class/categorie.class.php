@@ -244,7 +244,6 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_ACTIONCOMM
 	 * @see Categorie::TYPE_WEBSITE_PAGE
 	 * @see Categorie::TYPE_TICKET
-
 	 */
 	public $type;
 
@@ -385,8 +384,8 @@ class Categorie extends CommonObject
 			}
 		} else {
 			dol_print_error($this->db);
-			$this->error=$this->db->lasterror;
-			$this->errors[]=$this->db->lasterror;
+			$this->error = $this->db->lasterror;
+			$this->errors[] = $this->db->lasterror;
 			return -1;
 		}
 	}

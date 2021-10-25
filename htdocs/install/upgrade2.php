@@ -4360,7 +4360,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 					$mod = new $classname($db);
 
 					//$mod->remove('noboxes');
-					$mod->delete_menus();	// We must delete to be sure it is inserted with new values
+					$mod->delete_menus(); // We must delete to be sure it is inserted with new values
 					$mod->init($reloadmode);
 				} else {
 					dolibarr_install_syslog('Failed to include '.DOL_DOCUMENT_ROOT.'/core/modules/mod'.$moduletoreloadshort.'.class.php');
