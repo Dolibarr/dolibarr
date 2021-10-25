@@ -25,7 +25,7 @@
 
 if (!empty($_POST['mode']) && $_POST['mode'] === 'label') {	// Page is called to build a PDF and output, we must ne renew the token.
 	if (!defined('NOTOKENRENEWAL')) {
-		define('NOTOKENRENEWAL', '1');				// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
+		define('NOTOKENRENEWAL', '1'); // Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
 	}
 }
 
@@ -277,10 +277,10 @@ dol_htmloutput_errors($mesg);
 //print img_picto('','puce').' '.$langs->trans("PrintsheetForOneBarCode").'<br>';
 //print '<br>';
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';		// The target is for brothers that open the file instead of downloading it
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">'; // The target is for brothers that open the file instead of downloading it
 print '<input type="hidden" name="mode" value="label">';
 print '<input type="hidden" name="action" value="builddoc">';
-print '<input type="hidden" name="token" value="'.currentToken().'">';	// The page will not renew the token but force download of a file, so we must use here currentToken
+print '<input type="hidden" name="token" value="'.currentToken().'">'; // The page will not renew the token but force download of a file, so we must use here currentToken
 
 print '<div class="tagtable">';
 

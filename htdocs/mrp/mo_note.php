@@ -60,7 +60,7 @@ if ($id > 0 || !empty($ref)) {
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'mrp', $object->id, 'mrp_mo', '', 'fk_soc', 'rowid', $isdraft);
 
-$permissionnote = $user->rights->mrp->write;	// Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->mrp->write; // Used by the include of actions_setnotes.inc.php
 
 
 

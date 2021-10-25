@@ -218,8 +218,8 @@ if ($type == 'directory') {
 
 	$parameters = array('modulepart'=>$module);
 	$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
-	if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray)>0) {
-		$automodules[]=$hookmanager->resArray['module'];
+	if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
+		$automodules[] = $hookmanager->resArray['module'];
 	}
 
 	// TODO change for multicompany sharing
