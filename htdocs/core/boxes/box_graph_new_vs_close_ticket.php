@@ -98,10 +98,10 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 				$num = $this->db->num_rows($resql);
 				if ($num > 0) {
 					$objp = $this->db->fetch_object($resql);
-					$data[] = array($langs->trans('TicketCreatedToday'), $objp->nb);
+					$data[] = array($langs->transnoentitiesnoconv('TicketCreatedToday'), $objp->nb);
 					$totalnb += $objp->nb;
 				} else {
-					$data[] = array($langs->trans('TicketCreatedToday'), 0);
+					$data[] = array($langs->transnoentitiesnoconv('TicketCreatedToday'), 0);
 				}
 			} else {
 				dol_print_error($this->db);
@@ -116,10 +116,10 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 				$num = $this->db->num_rows($resql);
 				if ($num > 0) {
 					$objp = $this->db->fetch_object($resql);
-					$data[] = array($langs->trans('TicketClosedToday'), $objp->nb);
+					$data[] = array($langs->transnoentitiesnoconv('TicketClosedToday'), $objp->nb);
 					$totalnb += $objp->nb;
 				} else {
-					$data[] = array($langs->trans('TicketClosedToday'), 0);
+					$data[] = array($langs->transnoentitiesnoconv('TicketClosedToday'), 0);
 				}
 			} else {
 				dol_print_error($this->db);

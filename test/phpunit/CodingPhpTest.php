@@ -360,13 +360,13 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
 			$this->assertTrue($ok, 'Found non escaped string in building of a sql request (case 1) in '.$file['relativename'].' - Bad.');
 
-			// Check string sql|set...'".$yyy->xxx   with xxx that is not 'escape', 'idate', .... It means we forget a db->escape when forging sql request.
+			// Check string sql|set|WHERE|...'".$yyy->xxx   with xxx that is not 'escape', 'idate', .... It means we forget a db->escape when forging sql request.
 			$ok=true;
 			$matches=array();
-			preg_match_all('/(sql|SET|WHERE|INSERT|VALUES).+\s*\'"\s*\.\s*\$(.........)/', $filecontent, $matches, PREG_SET_ORDER);
+			preg_match_all('/(sql|SET|WHERE|INSERT|VALUES).+\s*\'"\s*\.\s*\$(.......)/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
-				if (! in_array($val[2], array('this->db-', 'this->esc', 'db->escap', 'dbs->esca', 'mydb->esc', 'dbsession', 'db->idate', 'escapedli', 'excludeGr', 'includeGr'))) {
-					$ok=false;
+				if (! in_array($val[2], array('this->d', 'this->e', 'db->esc', 'dbs->es', 'mydb->e', 'dbsessi', 'db->ida', 'escaped', 'exclude', 'include'))) {
+					$ok=false;	// This will generate error
 					break;
 				}
 				//if ($reg[0] != 'db') $ok=false;

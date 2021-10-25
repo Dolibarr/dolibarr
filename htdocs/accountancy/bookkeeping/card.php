@@ -512,10 +512,10 @@ if ($action == 'create') {
 
 		print '</div>';
 
-		print '<div class="fichehalfright"><div class="ficheaddleft">';
+		print '<div class="fichehalfright">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Doc type
 		if (!empty($object->doc_type)) {
@@ -591,7 +591,7 @@ if ($action == 'create') {
 		*/
 		print "</table>\n";
 
-		print '</div></div><!-ee-->';
+		print '</div>';
 
 		print dol_get_fiche_end();
 

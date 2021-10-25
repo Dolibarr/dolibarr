@@ -163,7 +163,7 @@ print '<br>';
 
 // XDebug
 print '<strong>'.$langs->trans("XDebug").'</strong>: ';
-$test = !function_exists('xdebug_is_enabled');
+$test = !function_exists('xdebug_is_enabled') && !extension_loaded('xdebug');
 if ($test) {
 	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
 } else {

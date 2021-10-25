@@ -74,11 +74,11 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->workstation->multidir_output[$object->entity ? $object->entity : $conf->entity]."/workstation/".get_exdir(0, 0, 0, 1, $object);
 }
 
-$permissiontoadd = $user->rights->workstation->workstation->write; // Used by the include of actions_addupdatedelete.inc.php
-
 // Security check
 $isdraft = 0;
 restrictedArea($user, $object->element, $object->id, $object->table_element, 'workstation', 'fk_soc', 'rowid', $isdraft);
+
+$permissiontoadd = $user->rights->workstation->workstation->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
 
 
 /*

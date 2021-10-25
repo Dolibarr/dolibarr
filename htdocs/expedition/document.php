@@ -76,6 +76,8 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'expedition', $object->id, '');
 
+$permissiontoadd = $user->rights->expedition->creer;	// Used by the include of actions_dellink.inc.php
+
 
 /*
  * Actions

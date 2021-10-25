@@ -179,6 +179,9 @@ if ($object->id > 0) {
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productcard', 'globalcard'));
 
+$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
+$usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer));
 
 
 /*
@@ -189,9 +192,6 @@ if ($cancel) {
 	$action = '';
 }
 
-$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
-$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
-$usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer));
 $createbarcode = empty($conf->barcode->enabled) ? 0 : 1;
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->creer_advance)) {
 	$createbarcode = 0;
@@ -1172,8 +1172,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$tooltip .= '<br>'.$langs->trans("GenericMaskCodes3");
 				$tooltip .= '<br>'.$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
 				$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5");
-				if (($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced')
-					|| ($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced')) {
+				if ((!empty($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS) && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced')
+					|| (!empty($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS) && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced')) {
 					print '<tr><td id="mask_option">'.$langs->trans("ManageLotMask").'</td>';
 					$inherited_mask_lot = $conf->global->LOT_ADVANCED_MASK;
 					$inherited_mask_sn = $conf->global->SN_ADVANCED_MASK;
@@ -1221,10 +1221,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if ($showbarcode) {
 			print '<tr><td>'.$langs->trans('BarcodeType').'</td><td>';
 			if (GETPOSTISSET('fk_barcode_type')) {
-				$fk_barcode_type = GETPOST('fk_barcode_type');
+				$fk_barcode_type = GETPOST('fk_barcode_type')?GETPOST('fk_barcode_type'):0;
 			} else {
 				if (empty($fk_barcode_type) && !empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) {
-					$fk_barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
+					$fk_barcode_type = getDolGlobalInt("PRODUIT_DEFAULT_BARCODE_TYPE");
+				} else {
+					$fk_barcode_type=0;
 				}
 			}
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
@@ -2321,7 +2323,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			print '</table>';
 			print '</div>';
-			print '<div class="fichehalfright"><div class="ficheaddleft">';
+			print '<div class="fichehalfright">';
 
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border tableforfield centpercent">';
@@ -2477,7 +2479,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print "</table>\n";
 			print '</div>';
 
-			print '</div></div>';
+			print '</div>';
 			print '<div style="clear:both"></div>';
 
 			print dol_get_fiche_end();
@@ -2699,7 +2701,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	print $formfile->showdocuments($modulepart, $object->ref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
 	$somethingshown = $formfile->numoffiles;
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 
 	$MAXEVENT = 10;
 
@@ -2712,7 +2714,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	$formactions = new FormActions($db);
 	$somethingshown = $formactions->showactions($object, 'product', 0, 1, '', $MAXEVENT, '', $morehtmlright); // Show all action for product
 
-	print '</div></div></div>';
+	print '</div></div>';
 }
 
 // End of page

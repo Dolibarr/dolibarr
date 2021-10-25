@@ -1729,85 +1729,77 @@ class Contrat extends CommonObject
 			}
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet set description='".$this->db->escape($desc)."'";
-		$sql .= ",price_ht='".price2num($price)."'";
-		$sql .= ",subprice='".price2num($subprice)."'";
-		$sql .= ",remise='".price2num($remise)."'";
-		$sql .= ",remise_percent='".price2num($remise_percent)."'";
-		$sql .= ",qty='".$qty."'";
-		$sql .= ",tva_tx='".price2num($tvatx)."'";
-		$sql .= ",localtax1_tx='".price2num($localtax1tx)."'";
-		$sql .= ",localtax2_tx='".price2num($localtax2tx)."'";
-		$sql .= ",localtax1_type='".$this->db->escape($localtax1_type)."'";
-		$sql .= ",localtax2_type='".$this->db->escape($localtax2_type)."'";
-		$sql .= ", total_ht='".price2num($total_ht)."'";
-		$sql .= ", total_tva='".price2num($total_tva)."'";
-		$sql .= ", total_localtax1='".price2num($total_localtax1)."'";
-		$sql .= ", total_localtax2='".price2num($total_localtax2)."'";
-		$sql .= ", total_ttc='".price2num($total_ttc)."'";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet set description = '".$this->db->escape($desc)."'";
+		$sql .= ",price_ht = ".((float) price2num($price));
+		$sql .= ",subprice = ".((float) price2num($subprice));
+		$sql .= ",remise = ".((float) price2num($remise));
+		$sql .= ",remise_percent = ".((float) price2num($remise_percent));
+		$sql .= ",qty = ".((float) $qty);
+		$sql .= ",tva_tx = ".((float) price2num($tvatx));
+		$sql .= ",localtax1_tx = ".((float) price2num($localtax1tx));
+		$sql .= ",localtax2_tx = ".((float) price2num($localtax2tx));
+		$sql .= ",localtax1_type='".$this->db->escape($localtax1_type);
+		$sql .= ",localtax2_type='".$this->db->escape($localtax2_type);
+		$sql .= ", total_ht = ".((float) price2num($total_ht));
+		$sql .= ", total_tva = ".((float) price2num($total_tva));
+		$sql .= ", total_localtax1 = ".((float) price2num($total_localtax1));
+		$sql .= ", total_localtax2 = ".((float) price2num($total_localtax2));
+		$sql .= ", total_ttc = ".((float) price2num($total_ttc));
 		$sql .= ", fk_product_fournisseur_price=".($fk_fournprice > 0 ? $fk_fournprice : "null");
-		$sql .= ", buy_price_ht='".price2num($pa_ht)."'";
+		$sql .= ", buy_price_ht = ".((float) price2num($pa_ht));
 		if ($date_start > 0) {
-			$sql .= ",date_ouverture_prevue='".$this->db->idate($date_start)."'";
+			$sql .= ",date_ouverture_prevue = '".$this->db->idate($date_start)."'";
 		} else {
-			$sql .= ",date_ouverture_prevue=null";
+			$sql .= ",date_ouverture_prevue = null";
 		}
 		if ($date_end > 0) {
-			$sql .= ",date_fin_validite='".$this->db->idate($date_end)."'";
+			$sql .= ",date_fin_validite = '".$this->db->idate($date_end)."'";
 		} else {
-			$sql .= ",date_fin_validite=null";
+			$sql .= ",date_fin_validite = null";
 		}
 		if ($date_debut_reel > 0) {
-			$sql .= ",date_ouverture='".$this->db->idate($date_debut_reel)."'";
+			$sql .= ",date_ouverture = '".$this->db->idate($date_debut_reel)."'";
 		} else {
-			$sql .= ",date_ouverture=null";
+			$sql .= ",date_ouverture = null";
 		}
 		if ($date_fin_reel > 0) {
-			$sql .= ",date_cloture='".$this->db->idate($date_fin_reel)."'";
+			$sql .= ",date_cloture = '".$this->db->idate($date_fin_reel)."'";
 		} else {
-			$sql .= ",date_cloture=null";
+			$sql .= ",date_cloture = null";
 		}
-		$sql .= ", fk_unit=".($fk_unit ? "'".$this->db->escape($fk_unit)."'" : "null");
+		$sql .= ", fk_unit = ".($fk_unit > 0 ? ((int) $fk_unit) : "null");
 		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			$result = $this->update_statut($user);
-			if ($result >= 0) {
-				if (is_array($array_options) && count($array_options) > 0) { // For avoid conflicts if trigger used
-					$contractline = new ContratLigne($this->db);
-					$contractline->fetch($rowid);
-					$contractline->fetch_optionals();
+			if (is_array($array_options) && count($array_options) > 0) { // For avoid conflicts if trigger used
+				$contractline = new ContratLigne($this->db);
+				$contractline->fetch($rowid);
 
-					// We replace values in $contractline->array_options only for entries defined into $array_options
-					foreach ($array_options as $key => $value) {
-						$contractline->array_options[$key] = $array_options[$key];
-					}
-
-					$result = $contractline->insertExtraFields();
-					if ($result < 0) {
-						$this->error[] = $contractline->error;
-						$error++;
-					}
+				// We replace values in $contractline->array_options only for entries defined into $array_options
+				foreach ($array_options as $key => $value) {
+					$contractline->array_options[$key] = $array_options[$key];
 				}
 
-				if (empty($error)) {
-					// Call trigger
-					$result = $this->call_trigger('LINECONTRACT_UPDATE', $user);
-					if ($result < 0) {
-						$this->db->rollback();
-						return -3;
-					}
-					// End call triggers
-
-					$this->db->commit();
-					return 1;
+				$result = $contractline->insertExtraFields();
+				if ($result < 0) {
+					$this->error[] = $contractline->error;
+					$error++;
 				}
-			} else {
-				$this->db->rollback();
-				dol_syslog(get_class($this)."::updateline Erreur -2");
-				return -2;
+			}
+
+			if (empty($error)) {
+				// Call trigger
+				$result = $this->call_trigger('LINECONTRACT_UPDATE', $user);
+				if ($result < 0) {
+					$this->db->rollback();
+					return -3;
+				}
+				// End call triggers
+
+				$this->db->commit();
+				return 1;
 			}
 		} else {
 			$this->db->rollback();
@@ -2187,7 +2179,7 @@ class Contrat extends CommonObject
 		$this->from = " FROM ".MAIN_DB_PREFIX."contrat as c";
 		$this->from .= ", ".MAIN_DB_PREFIX."contratdet as cd";
 		$this->from .= ", ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$this->from .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 
@@ -2218,7 +2210,7 @@ class Contrat extends CommonObject
 		if ($user->socid) {
 			$sql .= " AND c.fk_soc = ".((int) $user->socid);
 		}
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 
@@ -2286,7 +2278,7 @@ class Contrat extends CommonObject
 		$sql = "SELECT count(c.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -2545,7 +2537,7 @@ class Contrat extends CommonObject
 
 		if (!$error) {
 			foreach ($this->lines as $line) {
-				$result = $clonedObj->addline($line->desc, $line->subprice, $line->qty, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->fk_product, $line->remise_percent, $line->date_ouverture, $line->date_cloture, 'HT', 0, $line->info_bits, $line->fk_fournprice, $line->pa_ht, $line->array_options, $line->fk_unit);
+				$result = $clonedObj->addline($line->description, $line->subprice, $line->qty, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->fk_product, $line->remise_percent, $line->date_ouverture, $line->date_cloture, 'HT', 0, $line->info_bits, $line->fk_fournprice, $line->pa_ht, $line->array_options, $line->fk_unit);
 				if ($result < 0) {
 					$error++;
 					$this->error = $clonedObj->error;

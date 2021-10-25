@@ -778,7 +778,6 @@ if (!empty($id) && $action != 'edit') {
 
 	print '</div>';
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 
 	/*
 	 * Payments
@@ -788,7 +787,7 @@ if (!empty($id) && $action != 'edit') {
 	$sql .= " FROM ".MAIN_DB_PREFIX."payment_donation as p";
 	$sql .= ", ".MAIN_DB_PREFIX."c_paiement as c ";
 	$sql .= ", ".MAIN_DB_PREFIX."don as d";
-	$sql .= " WHERE d.rowid = '".$id."'";
+	$sql .= " WHERE d.rowid = ".((int) $id);
 	$sql .= " AND p.fk_donation = d.rowid";
 	$sql .= " AND d.entity IN (".getEntity('donation').")";
 	$sql .= " AND p.fk_typepayment = c.id";
@@ -836,7 +835,6 @@ if (!empty($id) && $action != 'edit') {
 		dol_print_error($db);
 	}
 
-	print '</div>';
 	print '</div>';
 	print '</div>';
 
@@ -919,9 +917,9 @@ if (!empty($id) && $action != 'edit') {
 		print showOnlinePaymentUrl('donation', $object->ref).'<br>';
 	}
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 
-	print '</div></div></div>';
+	print '</div></div>';
 }
 
 llxFooter();

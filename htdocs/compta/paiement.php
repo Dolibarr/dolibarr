@@ -131,7 +131,7 @@ if (empty($reshook)) {
 			} elseif (substr($key, 0, 21) == 'multicurrency_amount_') {
 				$cursorfacid = substr($key, 21);
 				$multicurrency_amounts[$cursorfacid] = price2num(GETPOST($key));
-				$multicurrency_totalpayment += $multicurrency_amounts[$cursorfacid];
+				$multicurrency_totalpayment += floatval($multicurrency_amounts[$cursorfacid]);
 				if (!empty($multicurrency_amounts[$cursorfacid])) {
 					$atleastonepaymentnotnull++;
 				}

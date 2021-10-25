@@ -201,9 +201,9 @@ if ($object->id > 0) {
 	// Date start
 	print '<tr><td>'.$langs->trans("DateActionStart").'</td><td colspan="3">';
 	if (!$object->fulldayevent) {
-		print dol_print_date($object->datep, 'dayhour');
+		print dol_print_date($object->datep, 'dayhour', 'tzuser');
 	} else {
-		print dol_print_date($object->datep, 'day');
+		print dol_print_date($object->datep, 'day', 'tzuser');
 	}
 	if ($object->percentage == 0 && $object->datep && $object->datep < ($now - $delay_warning)) {
 		print img_warning($langs->trans("Late"));
@@ -214,9 +214,9 @@ if ($object->id > 0) {
 	// Date end
 	print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
 	if (!$object->fulldayevent) {
-		print dol_print_date($object->datef, 'dayhour');
+		print dol_print_date($object->datef, 'dayhour', 'tzuser');
 	} else {
-		print dol_print_date($object->datef, 'day');
+		print dol_print_date($object->datef, 'day', 'tzuser');
 	}
 	if ($object->percentage > 0 && $object->percentage < 100 && $object->datef && $object->datef < ($now - $delay_warning)) {
 		print img_warning($langs->trans("Late"));

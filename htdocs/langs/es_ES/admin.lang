@@ -280,6 +280,7 @@ SpaceX=Área X
 SpaceY=Área Y
 FontSize=Tamaño de fuente
 Content=Contenido
+ContentForLines=Contenido a mostrar por cada línea de producto o servicio (de la variable __LINES__ definida en Contenido)
 NoticePeriod=Plazo de aviso
 NewByMonth=Nuevo por mes
 Emails=E-Mails

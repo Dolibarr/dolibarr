@@ -205,12 +205,8 @@ if (empty($reshook) && $action == 'add') {
 
 		// We try to find the thirdparty or the member
 		if (empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) || $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'thirdparty') {
-
-
 			$partnership->fk_member = 0;
 		} elseif ($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
-
-
 			$partnership->fk_soc = 0;
 		}
 

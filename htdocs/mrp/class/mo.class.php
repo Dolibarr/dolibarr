@@ -625,6 +625,7 @@ class Mo extends CommonObject
 	public function updateProduction(User $user, $notrigger = true)
 	{
 		$error = 0;
+		$role = "";
 
 		if ($this->status != self::STATUS_DRAFT) {
 			$this->error = 'BadStatus';

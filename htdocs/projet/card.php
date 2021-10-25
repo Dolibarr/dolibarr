@@ -1006,13 +1006,13 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		$morehtmlref .= dol_escape_htmltag($object->title);
 		// Thirdparty
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : ';
-		if ($object->thirdparty->id > 0) {
+		if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 			$morehtmlref .= $object->thirdparty->getNomUrl(1, 'project');
 		}
 		$morehtmlref .= '</div>';
 
 		// Define a complementary filter for search of next/prev ref.
-		if (!$user->rights->projet->all->lire) {
+		if (empty($user->rights->projet->all->lire)) {
 			$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 			$object->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 		}
@@ -1129,10 +1129,9 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 		print '</div>';
 		print '<div class="fichehalfright">';
-		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Description
 		print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
@@ -1148,7 +1147,6 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 		print '</table>';
 
-		print '</div>';
 		print '</div>';
 		print '</div>';
 
@@ -1372,7 +1370,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 		print $formfile->showdocuments('project', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		print '</div><div class="fichehalfright">';
 
 		$MAXEVENT = 10;
 
@@ -1383,7 +1381,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		$formactions = new FormActions($db);
 		$somethingshown = $formactions->showactions($object, 'project', 0, 1, '', $MAXEVENT, '', $morehtmlcenter);
 
-		print '</div></div></div>';
+		print '</div></div>';
 	}
 
 	// Presend form

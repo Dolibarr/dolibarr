@@ -83,7 +83,7 @@ $canreaduser = (!empty($user->admin) || $user->rights->user->user->lire);
 $permissiontoaddbankaccount = (!empty($user->rights->salaries->write) || !empty($user->rights->hrm->employee->write) || !empty($user->rights->user->creer));
 
 // Ok if user->rights->salaries->read or user->rights->hrm->read
-//$result = restrictedArea($user, 'salaries|hrm', $id, 'user&user', $feature2);
+//$result = restrictedArea($user, 'salaries|hrm', $object->id, 'user&user', $feature2);
 $ok = false;
 if ($user->id == $id) {
 	$ok = true; // A user can always read its own card
@@ -358,7 +358,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	print '</table>';
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 
 	// Max number of elements in small lists
 	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
@@ -531,7 +531,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		}
 	}
 
-	print '</div></div></div>';
+	print '</div></div>';
 	print '<div style="clear:both"></div>';
 
 	print dol_get_fiche_end();

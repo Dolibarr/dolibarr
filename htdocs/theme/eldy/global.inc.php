@@ -680,6 +680,12 @@ textarea.centpercent {
 .alignstart {
 	text-align: start;
 }
+.start {
+	text-align: start;
+}
+.end {
+	text-align: end;
+}
 .left {
 	text-align: <?php print $left; ?>;
 }
@@ -1683,7 +1689,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 }
 .linkobject { cursor: pointer; }
 
-table.tableforfield tr>td:first-of-type, tr.trforfield>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
+table.tableforfield tr:not(.liste_titre)>td:first-of-type, tr.trforfield:not(.liste_titre)>td:first-of-type, div.tableforfield div.tagtr:not(.liste_titre)>div.tagtd:first-of-type {
 	color: var(--tableforfieldcolor);
 }
 
@@ -1963,7 +1969,7 @@ div.fichethirdleft {
 		print "float: ".$left.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: 50%;\n";
+		print "width: calc(50% - 14px);\n";
 	} ?>
 	<?php if ($conf->browser->layout == 'phone') {
 		print "padding-bottom: 6px;\n";
@@ -1974,14 +1980,11 @@ div.fichetwothirdright {
 		print "float: ".$right.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: 50%;\n";
+		print "width: calc(50% - 14px);\n";
 	} ?>
 	<?php if ($conf->browser->layout == 'phone') {
 		print "padding-bottom: 6px\n";
 	} ?>
-}
-div.fichetwothirdright div.ficheaddleft {
-	 padding-<?php echo $left; ?>: 28px;
 }
 div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone') {
@@ -2036,9 +2039,6 @@ div.secondcolumn div.box {
 		float: none;
 		width: auto;
 		padding-bottom: 6px;
-	}
-	div.fichetwothirdright div.ficheaddleft {
-		padding-left: 0;
 	}
 	div.fichehalfleft {
 		float: none;
@@ -2266,7 +2266,7 @@ img.photorefnoborder {
 /* Menu top et 1ere ligne tableau                                                 */
 /* ============================================================================== */
 
-div#id-top {
+#id-top {
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
 	display:none;
 <?php } else { ?>
@@ -3996,8 +3996,8 @@ div.tabBar .noborder {
 /* Prepare to remove class pair - impair */
 
 .noborder:not(.editmode) > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
 {
 	background: linear-gradient(bottom, var(----colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
 	background: -o-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
@@ -4011,8 +4011,8 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft
 }
 
 .noborder:not(.editmode) > tbody > tr:nth-child(odd):not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
 {
 	background: linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
 	background: -o-linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
@@ -4040,9 +4040,6 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	padding-right: 0px;
 	padding-left: 0px;
 	padding-bottom: 10px;
-}
-.ficheaddleft div.boxstats, .ficheaddright div.boxstats {
-	border: none;
 }
 .boxstatsborder {
 	/* border: 1px solid #CCC !important; */
@@ -6879,6 +6876,29 @@ div.clipboardCPValue.hidewithsize {
 	display: none;
 }
 
+/* To make a div popup, we must use a position aboluste inside a position relative */
+.clipboardCPText {
+	position: relative;
+}
+.clipboardCPTextDivInside {
+	position: absolute;
+	background: #f8f8fa;
+	color: #888;
+	border: 1px solid #E0E0E0;
+	opacity: 1;
+	z-index: 20;
+	padding: 2px;
+	padding-left: 5px;
+	padding-right: 5px;
+	top: -5px;
+	left: 0px;
+	border-radius: 5px;
+	white-space: nowrap;
+	font-size: 0.9em;
+	box-shadow: 1px 1px 6px #ddd;
+}
+
+
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
@@ -7036,7 +7056,7 @@ div.clipboardCPValue.hidewithsize {
 		padding-left: 20px;
 		padding-right: 20px;
 		padding-bottom: 16px;
-		top: inherit !important;
+		top: auto;
 		left: 0 !important;
 		text-align: center;
 		vertical-align: middle;
