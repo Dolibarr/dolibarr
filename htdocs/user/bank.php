@@ -83,7 +83,7 @@ $canreaduser = (!empty($user->admin) || $user->rights->user->user->lire);
 $permissiontoaddbankaccount = (!empty($user->rights->salaries->write) || !empty($user->rights->hrm->employee->write) || !empty($user->rights->user->creer));
 
 // Ok if user->rights->salaries->read or user->rights->hrm->read
-//$result = restrictedArea($user, 'salaries|hrm', $id, 'user&user', $feature2);
+//$result = restrictedArea($user, 'salaries|hrm', $object->id, 'user&user', $feature2);
 $ok = false;
 if ($user->id == $id) {
 	$ok = true; // A user can always read its own card
