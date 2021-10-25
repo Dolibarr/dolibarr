@@ -166,11 +166,11 @@ class Delivery extends CommonObject
 		$sql .= ", fk_incoterms, location_incoterms";
 		$sql .= ") VALUES (";
 		$sql .= "'(PROV)'";
-		$sql .= ", ".$conf->entity;
-		$sql .= ", ".$this->socid;
+		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".((int) $this->socid);
 		$sql .= ", '".$this->db->escape($this->ref_customer)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".($this->date_delivery ? "'".$this->db->idate($this->date_delivery)."'" : "null");
 		$sql .= ", ".($this->fk_delivery_address > 0 ? $this->fk_delivery_address : "null");
 		$sql .= ", ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
@@ -189,7 +189,7 @@ class Delivery extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."delivery ";
 			$sql .= "SET ref = '".$this->db->escape($numref)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog("Delivery::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -262,9 +262,10 @@ class Delivery extends CommonObject
 	 *	@param	string	$qty					Quantity
 	 *	@param	string	$fk_product				Id of predefined product
 	 *	@param	string	$description			Description
+	 *  @param	array	$array_options			Array options
 	 *	@return	int								<0 if KO, >0 if OK
 	 */
-	public function create_line($origin_id, $qty, $fk_product, $description, $array_options = 0)
+	public function create_line($origin_id, $qty, $fk_product, $description, $array_options = null)
 	{
 		// phpcs:enable
 		$error = 0;
@@ -394,126 +395,126 @@ class Delivery extends CommonObject
 		$error = 0;
 
 		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery->creer))
-		|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery_advance->validate))) {
-			if (!empty($conf->global->DELIVERY_ADDON_NUMBER)) {
-				// Setting the command numbering module name
-				$modName = $conf->global->DELIVERY_ADDON_NUMBER;
+			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery_advance->validate))) {
+				if (!empty($conf->global->DELIVERY_ADDON_NUMBER)) {
+					// Setting the command numbering module name
+					$modName = $conf->global->DELIVERY_ADDON_NUMBER;
 
-				if (is_readable(DOL_DOCUMENT_ROOT.'/core/modules/delivery/'.$modName.'.php')) {
-					require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/'.$modName.'.php';
+					if (is_readable(DOL_DOCUMENT_ROOT.'/core/modules/delivery/'.$modName.'.php')) {
+						require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/'.$modName.'.php';
 
-					$now = dol_now();
+						$now = dol_now();
 
-					// Retrieving the new reference
-					$objMod = new $modName($this->db);
-					$soc = new Societe($this->db);
-					$soc->fetch($this->socid);
+						// Retrieving the new reference
+						$objMod = new $modName($this->db);
+						$soc = new Societe($this->db);
+						$soc->fetch($this->socid);
 
-					if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
-						$numref = $objMod->delivery_get_num($soc, $this);
-					} else {
-						$numref = $this->ref;
-					}
-					$this->newref = dol_sanitizeFileName($numref);
-
-					// Test if is not already in valid status. If so, we stop to avoid decrementing the stock twice.
-					$sql = "SELECT ref";
-					$sql .= " FROM ".MAIN_DB_PREFIX."delivery";
-					$sql .= " WHERE ref = '".$this->db->escape($numref)."'";
-					$sql .= " AND fk_statut <> 0";
-					$sql .= " AND entity = ".((int) $conf->entity);
-
-					$resql = $this->db->query($sql);
-					if ($resql) {
-						$num = $this->db->num_rows($resql);
-						if ($num > 0) {
-							return 0;
+						if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
+							$numref = $objMod->delivery_get_num($soc, $this);
+						} else {
+							$numref = $this->ref;
 						}
-					}
+						$this->newref = dol_sanitizeFileName($numref);
 
-					$sql = "UPDATE ".MAIN_DB_PREFIX."delivery SET";
-					$sql .= " ref='".$this->db->escape($numref)."'";
-					$sql .= ", fk_statut = 1";
-					$sql .= ", date_valid = '".$this->db->idate($now)."'";
-					$sql .= ", fk_user_valid = ".$user->id;
-					$sql .= " WHERE rowid = ".$this->id;
-					$sql .= " AND fk_statut = 0";
+						// Test if is not already in valid status. If so, we stop to avoid decrementing the stock twice.
+						$sql = "SELECT ref";
+						$sql .= " FROM ".MAIN_DB_PREFIX."delivery";
+						$sql .= " WHERE ref = '".$this->db->escape($numref)."'";
+						$sql .= " AND fk_statut <> 0";
+						$sql .= " AND entity = ".((int) $conf->entity);
 
-					$resql = $this->db->query($sql);
-					if (!$resql) {
-						dol_print_error($this->db);
-						$this->error = $this->db->lasterror();
-						$error++;
-					}
+						$resql = $this->db->query($sql);
+						if ($resql) {
+							$num = $this->db->num_rows($resql);
+							if ($num > 0) {
+								return 0;
+							}
+						}
 
-					if (!$error && !$notrigger) {
-						// Call trigger
-						$result = $this->call_trigger('DELIVERY_VALIDATE', $user);
-						if ($result < 0) {
+						$sql = "UPDATE ".MAIN_DB_PREFIX."delivery SET";
+						$sql .= " ref='".$this->db->escape($numref)."'";
+						$sql .= ", fk_statut = 1";
+						$sql .= ", date_valid = '".$this->db->idate($now)."'";
+						$sql .= ", fk_user_valid = ".$user->id;
+						$sql .= " WHERE rowid = ".((int) $this->id);
+						$sql .= " AND fk_statut = 0";
+
+						$resql = $this->db->query($sql);
+						if (!$resql) {
+							dol_print_error($this->db);
+							$this->error = $this->db->lasterror();
 							$error++;
 						}
-						// End call triggers
-					}
 
-					if (!$error) {
-						$this->oldref = $this->ref;
-
-						// Rename directory if dir was a temporary ref
-						if (preg_match('/^[\(]?PROV/i', $this->ref)) {
-							// Now we rename also files into index
-							$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'expedition/receipt/".$this->db->escape($this->newref)."'";
-							$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expedition/receipt/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
-							$resql = $this->db->query($sql);
-							if (!$resql) {
-								$error++; $this->error = $this->db->lasterror();
+						if (!$error && !$notrigger) {
+							// Call trigger
+							$result = $this->call_trigger('DELIVERY_VALIDATE', $user);
+							if ($result < 0) {
+								$error++;
 							}
+							// End call triggers
+						}
 
-							// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
-							$oldref = dol_sanitizeFileName($this->ref);
-							$newref = dol_sanitizeFileName($numref);
-							$dirsource = $conf->expedition->dir_output.'/receipt/'.$oldref;
-							$dirdest = $conf->expedition->dir_output.'/receipt/'.$newref;
-							if (!$error && file_exists($dirsource)) {
-								dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
+						if (!$error) {
+							$this->oldref = $this->ref;
 
-								if (@rename($dirsource, $dirdest)) {
-									dol_syslog("Rename ok");
-									// Rename docs starting with $oldref with $newref
-									$listoffiles = dol_dir_list($conf->expedition->dir_output.'/receipt/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
-									foreach ($listoffiles as $fileentry) {
-										$dirsource = $fileentry['name'];
-										$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
-										$dirsource = $fileentry['path'].'/'.$dirsource;
-										$dirdest = $fileentry['path'].'/'.$dirdest;
-										@rename($dirsource, $dirdest);
+							// Rename directory if dir was a temporary ref
+							if (preg_match('/^[\(]?PROV/i', $this->ref)) {
+								// Now we rename also files into index
+								$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'expedition/receipt/".$this->db->escape($this->newref)."'";
+								$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expedition/receipt/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
+								$resql = $this->db->query($sql);
+								if (!$resql) {
+									$error++; $this->error = $this->db->lasterror();
+								}
+
+								// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
+								$oldref = dol_sanitizeFileName($this->ref);
+								$newref = dol_sanitizeFileName($numref);
+								$dirsource = $conf->expedition->dir_output.'/receipt/'.$oldref;
+								$dirdest = $conf->expedition->dir_output.'/receipt/'.$newref;
+								if (!$error && file_exists($dirsource)) {
+									dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
+
+									if (@rename($dirsource, $dirdest)) {
+										dol_syslog("Rename ok");
+										// Rename docs starting with $oldref with $newref
+										$listoffiles = dol_dir_list($conf->expedition->dir_output.'/receipt/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+										foreach ($listoffiles as $fileentry) {
+											$dirsource = $fileentry['name'];
+											$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
+											$dirsource = $fileentry['path'].'/'.$dirsource;
+											$dirdest = $fileentry['path'].'/'.$dirdest;
+											@rename($dirsource, $dirdest);
+										}
 									}
 								}
 							}
+
+							// Set new ref and current status
+							if (!$error) {
+								$this->ref = $numref;
+								$this->statut = 1;
+							}
+
+							dol_syslog(get_class($this)."::valid ok");
 						}
 
-						// Set new ref and current status
 						if (!$error) {
-							$this->ref = $numref;
-							$this->statut = 1;
+							$this->db->commit();
+							return 1;
+						} else {
+							$this->db->rollback();
+							return -1;
 						}
-
-						dol_syslog(get_class($this)."::valid ok");
-					}
-
-					if (!$error) {
-						$this->db->commit();
-						return 1;
-					} else {
-						$this->db->rollback();
-						return -1;
 					}
 				}
+			} else {
+				$this->error = "Non autorise";
+				dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
+				return -1;
 			}
-		} else {
-			$this->error = "Non autorise";
-			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
-			return -1;
-		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -600,15 +601,16 @@ class Delivery extends CommonObject
 	/**
 	 * 	Add line
 	 *
-	 *	@param	int		$origin_id		Origin id
-	 *	@param	int		$qty			Qty
+	 *	@param	int		$origin_id				Origin id
+	 *	@param	int		$qty					Qty
+	 *  @param	array	$array_options			Array options
 	 *	@return	void
 	 */
-	public function addline($origin_id, $qty, $array_options = 0)
+	public function addline($origin_id, $qty, $array_options = null)
 	{
 		global $conf;
 
-			$num = count($this->lines);
+		$num = count($this->lines);
 		$line = new DeliveryLine($this->db);
 
 		$line->origin_id = $origin_id;
@@ -666,7 +668,7 @@ class Delivery extends CommonObject
 
 			if (!$error) {
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."delivery";
-				$sql .= " WHERE rowid = ".$this->id;
+				$sql .= " WHERE rowid = ".((int) $this->id);
 				if ($this->db->query($sql)) {
 					$this->db->commit();
 
@@ -734,8 +736,8 @@ class Delivery extends CommonObject
 
 		//if ($option !== 'nolink')
 		//{
-			// Add param to save lastsearch_values or not
-			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+		// Add param to save lastsearch_values or not
+		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
 		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
@@ -861,12 +863,12 @@ class Delivery extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[-1] = $langs->trans('StatusDeliveryCanceled');
-			$this->labelStatus[0] = $langs->trans('StatusDeliveryDraft');
-			$this->labelStatus[1] = $langs->trans('StatusDeliveryValidated');
-			$this->labelStatusShort[-1] = $langs->trans('StatusDeliveryCanceled');
-			$this->labelStatusShort[0] = $langs->trans('StatusDeliveryDraft');
-			$this->labelStatusShort[1] = $langs->trans('StatusDeliveryValidated');
+			$this->labelStatus[-1] = $langs->transnoentitiesnoconv('StatusDeliveryCanceled');
+			$this->labelStatus[0] = $langs->transnoentitiesnoconv('StatusDeliveryDraft');
+			$this->labelStatus[1] = $langs->transnoentitiesnoconv('StatusDeliveryValidated');
+			$this->labelStatusShort[-1] = $langs->transnoentitiesnoconv('StatusDeliveryCanceled');
+			$this->labelStatusShort[0] = $langs->transnoentitiesnoconv('StatusDeliveryDraft');
+			$this->labelStatusShort[1] = $langs->transnoentitiesnoconv('StatusDeliveryValidated');
 		}
 
 		$statusType = 'status0';
@@ -995,7 +997,7 @@ class Delivery extends CommonObject
 					$array[$i]['label'] = $objSourceLine->label ? $objSourceLine->label : $objSourceLine->description;
 				}
 
-					$i++;
+				$i++;
 			}
 			return $array;
 		} else {
@@ -1016,7 +1018,7 @@ class Delivery extends CommonObject
 		if ($user->rights->expedition->creer) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."delivery";
 			$sql .= " SET date_delivery = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::setDeliveryDate", LOG_DEBUG);
 			$resql = $this->db->query($sql);
