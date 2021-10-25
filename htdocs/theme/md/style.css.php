@@ -2714,7 +2714,6 @@ table.login_table_securitycode tr td {
 
 div.login_block {
 	top: 0;
-	border-right: 1px solid rgba(0,0,0,0.3);
 	padding-top: 3px;
 	padding-bottom: 3px;
 	<?php print $left; ?>: 0;
@@ -6826,6 +6825,7 @@ div.clipboardCPValue.hidewithsize {
 @media only screen and (max-width: 570px)
 {
 	div.login_block {
+		border-right: 1px solid rgba(0,0,0,0.3);
 		top: auto;
 	}
 	

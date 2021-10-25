@@ -1094,7 +1094,7 @@ if (!empty($arrayfields['country.code_iso']['checked'])) {
 if (!empty($arrayfields['typent.code']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
 	// We use showempty=0 here because there is already an unknown value into dictionary.
-	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), 'minwidth50 maxwidth100', 1);
+	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), 'minwidth50 maxwidth125', 1);
 	print '</td>';
 }
 // Multiprice level
@@ -1508,11 +1508,13 @@ while ($i < min($num, $limit)) {
 	}
 	// Type ent
 	if (!empty($arrayfields['typent.code']['checked'])) {
-		print '<td class="center">';
 		if (!isset($typenArray) || !is_array($typenArray) || count($typenArray) == 0) {
 			$typenArray = $formcompany->typent_array(1);
 		}
-		print empty($typenArray[$obj->typent_code]) ? '' : $typenArray[$obj->typent_code];
+		$labeltypeofcompany= empty($typenArray[$obj->typent_code]) ? '' : $typenArray[$obj->typent_code];
+
+		print '<td class="center tdoverflowmax125" title="'.dol_escape_htmltag($labeltypeofcompany).'">';
+		print dol_escape_htmltag($labeltypeofcompany);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
