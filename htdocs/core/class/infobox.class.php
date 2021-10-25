@@ -215,7 +215,7 @@ class InfoBox
 	/**
 	 *  Save order of boxes for area and user
 	 *
-	 *  @param	DoliDB	$dbs				Database handler
+	 *  @param	DoliDB	$dbs			Database handler
 	 *  @param	int		$zone       	Name of area (0 for Homepage, ...)
 	 *  @param  string  $boxorder   	List of boxes with correct order 'A:123,456,...-B:789,321...'
 	 *  @param  int     $userid     	Id of user
