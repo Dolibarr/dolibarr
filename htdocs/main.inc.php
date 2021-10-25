@@ -1795,7 +1795,6 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 	global $hookmanager, $menumanager;
 
 	$searchform = '';
-	$bookmarks = '';
 
 	// Instantiate hooks for external modules
 	$hookmanager->initHooks(array('toprightmenu'));
@@ -1825,7 +1824,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		// Show menu entries
 		print '<div id="tmenu_tooltip'.(empty($conf->global->MAIN_MENU_INVERT) ? '' : 'invert').'" class="tmenu">'."\n";
 		$menumanager->atarget = $target;
-		$menumanager->showmenu('top', array('searchform'=>$searchform, 'bookmarks'=>$bookmarks)); // This contains a \n
+		$menumanager->showmenu('top', array('searchform'=>$searchform)); // This contains a \n
 		print "</div>\n";
 
 		// Define link to login card
@@ -2712,7 +2711,6 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 	global $hookmanager, $menumanager;
 
 	$searchform = '';
-	$bookmarks = '';
 
 	if (!empty($menu_array_before)) {
 		dol_syslog("Deprecated parameter menu_array_before was used when calling main::left_menu function. Menu entries of module should now be defined into module descriptor and not provided when calling left_menu.", LOG_WARNING);
@@ -2783,7 +2781,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		// Show left menu with other forms
 		$menumanager->menu_array = $menu_array_before;
 		$menumanager->menu_array_after = $menu_array_after;
-		$menumanager->showmenu('left', array('searchform'=>$searchform, 'bookmarks'=>$bookmarks)); // output menu_array and menu found in database
+		$menumanager->showmenu('left', array('searchform'=>$searchform)); // output menu_array and menu found in database
 
 		// Dolibarr version + help + bug report link
 		print "\n";
