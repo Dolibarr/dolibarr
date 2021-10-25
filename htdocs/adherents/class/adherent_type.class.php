@@ -250,12 +250,12 @@ class AdherentType extends CommonObject
 	}
 
 	   /**
-		* Delete a language for this member type
-		*
-		* @param string $langtodelete 	Language code to delete
-		* @param User   $user         	Object user making delete
-		* @return int                   <0 if KO, >0 if OK
-		*/
+	    * Delete a language for this member type
+	    *
+	    * @param string $langtodelete 	Language code to delete
+	    * @param User   $user         	Object user making delete
+	    * @return int                   <0 if KO, >0 if OK
+	    */
 	public function delMultiLangs($langtodelete, $user)
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type_lang";

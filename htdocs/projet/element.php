@@ -880,7 +880,7 @@ foreach ($listofreferent as $key => $value) {
 				}
 
 				// Add total if we have to
-				if ($qualifiedfortotal)	{
+				if ($qualifiedfortotal) {
 					$total_ht = $total_ht + $total_ht_by_line;
 					$total_ttc = $total_ttc + $total_ttc_by_line;
 				}

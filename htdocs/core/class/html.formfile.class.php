@@ -500,7 +500,7 @@ class FormFile
 			$modellist = array();
 
 			if ($modulepart == 'company') {
-				$showempty = 1;		// can have no template active
+				$showempty = 1; // can have no template active
 				if (is_array($genallowed)) {
 					$modellist = $genallowed;
 				} else {
@@ -564,7 +564,7 @@ class FormFile
 					$modellist = ModelePDFFactures::liste_modeles($this->db);
 				}
 			} elseif ($modulepart == 'contract') {
-				$showempty = 1;		// can have no template active
+				$showempty = 1; // can have no template active
 				if (is_array($genallowed)) {
 					$modellist = $genallowed;
 				} else {
@@ -628,7 +628,7 @@ class FormFile
 					$modellist = ModelePDFSuppliersOrders::liste_modeles($this->db);
 				}
 			} elseif ($modulepart == 'facture_fournisseur' || $modulepart == 'supplier_invoice') {
-				$showempty = 1; 	// can have no template active
+				$showempty = 1; // can have no template active
 				if (is_array($genallowed)) {
 					$modellist = $genallowed;
 				} else {
@@ -1708,7 +1708,7 @@ class FormFile
 		} else {
 			$parameters = array('modulepart'=>$modulepart);
 			$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
-			if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray)>0) {
+			if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
 				if (array_key_exists('classpath', $hookmanager->resArray) && !empty($hookmanager->resArray['classpath'])) {
 					dol_include_once($hookmanager->resArray['classpath']);
 					if (array_key_exists('classname', $hookmanager->resArray) && !empty($hookmanager->resArray['classname'])) {
@@ -1789,9 +1789,9 @@ class FormFile
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
 					$ref = (isset($reg[1]) ? $reg[1] : '');
 				} else {
-					$parameters = array('modulepart'=>$modulepart,'fileinfo'=>$file);
+					$parameters = array('modulepart'=>$modulepart, 'fileinfo'=>$file);
 					$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
-					if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray)>0) {
+					if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
 						if (array_key_exists('ref', $hookmanager->resArray) && !empty($hookmanager->resArray['ref'])) {
 							$ref = $hookmanager->resArray['ref'];
 						}

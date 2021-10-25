@@ -965,8 +965,8 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 	// We are in a particular day for $username, now we scan all events
 	foreach ($eventarray as $daykey => $notused) {
 		$annee = dol_print_date($daykey, '%Y');
-		$mois =  dol_print_date($daykey, '%m');
-		$jour =  dol_print_date($daykey, '%d');
+		$mois = dol_print_date($daykey, '%m');
+		$jour = dol_print_date($daykey, '%d');
 
 		if ($day == $jour && $month == $mois && $year == $annee) {	// Is it the day we are looking for when calling function ?
 			// Scan all event for this date
