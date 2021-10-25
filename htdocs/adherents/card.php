@@ -935,8 +935,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$object->country = $tmparray['label'];
 		}
 
+		$soc = new Societe($db);
 		if (!empty($socid)) {
-			$soc = new Societe($db);
 			if ($socid > 0) {
 				$soc->fetch($socid);
 			}
@@ -1783,10 +1783,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		print '</div>';
 
-		print '<div class="fichehalfright"><div class="ficheaddleft">';
+		print '<div class="fichehalfright">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border tableforfield tableforfield" width="100%">';
+		print '<table class="border tableforfield tableforfield centpercent">';
 
 		// Birth Date
 		print '<tr><td class="titlefield">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
@@ -1872,7 +1872,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		print "</table>\n";
 
-		print "</div></div></div>\n";
+		print "</div></div>\n";
 		print '<div style="clear:both"></div>';
 
 		print dol_get_fiche_end();
@@ -2045,7 +2045,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print showOnlinePaymentUrl('membersubscription', $object->ref);
 			}
 
-			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+			print '</div><div class="fichehalfright">';
 
 			$MAX = 10;
 
@@ -2056,7 +2056,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, $object->element, $socid, 1, 'listactions', $MAX, '', $morehtmlcenter);
 
-			print '</div></div></div>';
+			print '</div></div>';
 		}
 
 		// Presend form

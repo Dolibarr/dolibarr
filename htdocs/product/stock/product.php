@@ -709,7 +709,7 @@ if ($id > 0 || $ref) {
 			print '</table>';
 
 			print '</div>';
-			print '<div class="fichehalfright"><div class="ficheaddleft"><div class="underbanner clearboth"></div>';
+			print '<div class="fichehalfright"><div class="underbanner clearboth"></div>';
 
 			print '<table class="border tableforfield centpercent">';
 
@@ -863,7 +863,6 @@ if ($id > 0 || $ref) {
 
 			print "</table>";
 
-			print '</div>';
 			print '</div>';
 			print '</div>';
 

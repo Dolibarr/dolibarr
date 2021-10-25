@@ -19,7 +19,7 @@
  * 	\defgroup   eventorganization     Module EventOrganization
  *  \brief      EventOrganization module descriptor.
  *
- *  \file       htdocs/eventorganization/core/modules/modEventOrganization.class.php
+ *  \file       htdocs/core/modules/modEventOrganization.class.php
  *  \ingroup    eventorganization
  *  \brief      Description and activation file for the EventOrganization
  */

@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2014	Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2021	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)	<github@accedinfo.com>
- * Copyright (C) 2013-2014	Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2021	Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014	  	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016	  	Laurent Destailleur <eldy@users.sourceforge.net>
  *
@@ -192,10 +192,10 @@ if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
 
 				dol_syslog("accountancy/customer/list.php", LOG_DEBUG);
 				if ($db->query($sql)) {
-					$msg .= '<div><span style="color:green">'.$langs->trans("Lineofinvoice", $monId).' - '.$langs->trans("VentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'</span></div>';
+					$msg .= '<div><span style="color:green">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("VentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'</span></div>';
 					$ok++;
 				} else {
-					$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Lineofinvoice", $monId).' - '.$langs->trans("NotVentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'<br> <pre>'.$sql.'</pre></span></div>';
+					$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NotVentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'<br> <pre>'.$sql.'</pre></span></div>';
 					$ko++;
 				}
 			}
@@ -554,12 +554,11 @@ if ($result) {
 		$product_static->accountancy_code_buy_intra = $objp->code_buy_intra;
 		$product_static->accountancy_code_buy_export = $objp->code_buy_export;
 		$product_static->tva_tx = $objp->tva_tx_prod;
-		$product_static->tva_tx = $objp->tva_tx_prod;
 
 		$facture_static->ref = $objp->ref;
 		$facture_static->id = $objp->facid;
 		$facture_static->type = $objp->ftype;
-		$facture_static->datef = $objp->datef;
+		$facture_static->date = $objp->datef;
 
 		$facture_static_det->id = $objp->rowid;
 		$facture_static_det->total_ht = $objp->total_ht;
@@ -568,7 +567,7 @@ if ($result) {
 		$facture_static_det->product_type = $objp->type_l;
 		$facture_static_det->desc = $objp->description;
 
-		$accoutinAccountArray = array(
+		$accountingAccountArray = array(
 			'dom'=>$objp->aarowid,
 			'intra'=>$objp->aarowid_intra,
 			'export'=>$objp->aarowid_export,
@@ -577,7 +576,7 @@ if ($result) {
 		$code_sell_p_notset = '';
 		$code_sell_t_notset = '';
 
-		$return=$accountingAccount->getAccountingCodeToBind($thirdpartystatic, $mysoc, $product_static, $facture_static, $facture_static_det, $accoutinAccountArray);
+		$return=$accountingAccount->getAccountingCodeToBind($thirdpartystatic, $mysoc, $product_static, $facture_static, $facture_static_det, $accountingAccountArray, 'customer');
 		if (!is_array($return) && $return<0) {
 			setEventMessage($accountingAccount->error, 'errors');
 		} else {
@@ -614,7 +613,7 @@ if ($result) {
 		// Ref Invoice
 		print '<td class="nowraponall">'.$facture_static->getNomUrl(1).'</td>';
 
-		print '<td class="center">'.dol_print_date($db->jdate($facture_static->datef), 'day').'</td>';
+		print '<td class="center">'.dol_print_date($db->jdate($facture_static->date), 'day').'</td>';
 
 		// Ref Product
 		print '<td class="tdoverflowmax150">';

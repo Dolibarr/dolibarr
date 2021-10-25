@@ -1850,7 +1850,6 @@ if ($action == 'create') {
 
 			print '</div>';
 			print '<div class="fichehalfright">';
-			print '<div class="ficheaddleft">';
 			print '<div class="underbanner clearboth"></div>';
 
 			print '<table class="border tableforfield centpercent">';
@@ -1903,7 +1902,7 @@ if ($action == 'create') {
 				$nbcols++;
 			}
 
-			print '<table class="noborder paymenttable" width="100%">';
+			print '<table class="noborder paymenttable centpercent">';
 
 			print '<tr class="liste_titre">';
 			print '<td class="liste_titre">'.$langs->trans('Payments').'</td>';
@@ -2004,7 +2003,6 @@ if ($action == 'create') {
 
 			print '</div>';
 			print '</div>';
-			print '</div>';
 
 			print '<div class="clearboth"></div><br>';
 
@@ -2050,6 +2048,11 @@ if ($action == 'create') {
 				// Picture
 				print '<td>';
 				print '</td>';
+
+				// Information if theres a rule restriction
+				print '<td>';
+				print '</td>';
+
 				// Ajout des boutons de modification/suppression
 				if (($object->status < 2 || $object->status == 99) && $user->rights->expensereport->creer) {
 					print '<td class="right"></td>';
@@ -2190,6 +2193,10 @@ if ($action == 'create') {
 						}
 						print '</td>';
 
+						print '<td class="nowrap right">';
+						print !empty($line->rule_warning_message) ? img_warning(html_entity_decode($line->rule_warning_message)) : '&nbsp;';
+						print '</td>';
+
 						// Ajout des boutons de modification/suppression
 						if (($object->status < ExpenseReport::STATUS_VALIDATED || $object->status == ExpenseReport::STATUS_REFUSED) && $user->rights->expensereport->creer) {
 							print '<td class="nowrap right">';
@@ -2209,7 +2216,7 @@ if ($action == 'create') {
 
 					if ($action == 'editline' && $line->rowid == GETPOST('rowid', 'int')) {
 						// Add line with link to add new file or attach line to an existing file
-						$colspan = 10;
+						$colspan = 11;
 						if (!empty($conf->projet->enabled)) {
 							$colspan++;
 						}
@@ -2336,6 +2343,9 @@ if ($action == 'create') {
 						print '<td class="center">';
 						//print $line->fk_ecm_files;
 						print '</td>';
+						// Information if theres a rule restriction
+						print '<td class="center">';
+						print '</td>';
 
 						print '<td>';
 						print '<input type="hidden" name="rowid" value="'.$line->rowid.'">';
@@ -2351,7 +2361,7 @@ if ($action == 'create') {
 
 			 // Add a new line
 			if (($object->status == ExpenseReport::STATUS_DRAFT || $object->status == ExpenseReport::STATUS_REFUSED) && $action != 'editline' && $user->rights->expensereport->creer) {
-				$colspan = 11;
+				$colspan = 12;
 				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 					$colspan++;
 				}
@@ -2444,6 +2454,7 @@ if ($action == 'create') {
 				print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
 				print '<td class="right">'.$langs->trans('PriceUTTC').'</td>';
 				print '<td class="right">'.$langs->trans('Qty').'</td>';
+				print '<td></td>';
 				print '<td></td>';
 				print '<td></td>';
 				print '<td></td>';
@@ -2745,13 +2756,13 @@ if ($action != 'presend') {
 	}
 	*/
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 	// List of actions on element
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 	$formactions = new FormActions($db);
 	$somethingshown = $formactions->showactions($object, 'expensereport', null);
 
-	print '</div></div></div>';
+	print '</div></div>';
 }
 
 // Presend form

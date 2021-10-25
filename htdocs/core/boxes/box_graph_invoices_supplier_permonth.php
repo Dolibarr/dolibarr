@@ -98,7 +98,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 		if ($user->socid) {
 			$socid = $user->socid;
 		}
-		if (!$user->rights->societe->client->voir || $socid) {
+		if (empty($user->rights->societe->client->voir) || $socid) {
 			$prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
 		}
 

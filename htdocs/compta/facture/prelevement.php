@@ -71,7 +71,7 @@ $hookmanager->initHooks(array('directdebitcard', 'globalcard'));
 
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 'fk_soc', $fieldid, $isdraft);
-	if (!$user->rights->fournisseur->facture->lire) {
+	if (empty($user->rights->fournisseur->facture->lire)) {
 		accessforbidden();
 	}
 } else {
@@ -607,7 +607,6 @@ if ($object->id > 0) {
 
 	print '</div>';
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border centpercent tableforfield">';
@@ -672,7 +671,6 @@ if ($object->id > 0) {
 
 	print '</table>';
 
-	print '</div>';
 	print '</div>';
 	print '</div>';
 

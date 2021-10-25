@@ -175,7 +175,7 @@ if (!empty($conf->holiday->enabled)) {
 }
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 
@@ -189,7 +189,7 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 	if (empty($user->rights->holiday->readall)) {
 		$sql .= ' AND x.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
 	}
-	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".((int) $socid);
 	$sql .= $db->order("x.tms", "DESC");
 	$sql .= $db->plimit($max, 0);
@@ -264,13 +264,13 @@ if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.statut as user_status, u.photo,";
 	$sql .= " x.rowid, x.ref, x.date_debut as date, x.tms as dm, x.total_ttc, x.fk_statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as x, ".MAIN_DB_PREFIX."user as u";
-	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE u.rowid = x.fk_user_author";
 	$sql .= " AND x.entity = ".$conf->entity;
 	if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) {
 		$sql .= ' AND x.fk_user_author IN ('.$db->sanitize(join(',', $childids)).')';
 	}
-	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".((int) $socid);
 	$sql .= $db->order("x.tms", "DESC");
 	$sql .= $db->plimit($max, 0);
@@ -339,11 +339,11 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 	$sql.= " rp.rowid as jobid, rp.ref as jobref, rp.label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as rp ON rc.fk_recruitmentjobposition = rp.rowid";
-	if ($conf->societe->enabled && !$user->rights->societe->client->voir && !$socid) {
+	if ($conf->societe->enabled && empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE rc.entity IN (".getEntity($staticrecruitmentcandidature->element).")";
-	if ($conf->societe->enabled && !$user->rights->societe->client->voir && !$socid) {
+	if ($conf->societe->enabled && empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= " AND rp.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -404,7 +404,7 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 	}
 }
 
-print '</div></div></div>';
+print '</div></div>';
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $parameters = array('user' => $user);

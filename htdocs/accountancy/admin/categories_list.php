@@ -744,7 +744,7 @@ if ($resql) {
 				print '<td></td>';
 			} else {
 				$tmpaction = 'view';
-				$parameters = array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+				$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 				$reshook = $hookmanager->executeHooks('viewDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
 				$error = $hookmanager->error; $errors = $hookmanager->errors;

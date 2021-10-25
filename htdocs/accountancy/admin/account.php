@@ -38,6 +38,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
 $massaction = GETPOST('massaction', 'aZ09');
+$optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'accountingaccountlist'; // To manage different context of search
 
 $search_account = GETPOST('search_account', 'alpha');
@@ -51,14 +52,14 @@ $confirm = GETPOST('confirm', 'alpha');
 
 $chartofaccounts = GETPOST('chartofaccounts', 'int');
 
-$permissiontoadd = $user->rights->accounting->chartofaccount;
-$permissiontodelete = $user->rights->accounting->chartofaccount;
+$permissiontoadd = !empty($user->rights->accounting->chartofaccount);
+$permissiontodelete = !empty($user->rights->accounting->chartofaccount);
 
 // Security check
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->rights->accounting->chartofaccount) {
+if (empty($user->rights->accounting->chartofaccount)) {
 	accessforbidden();
 }
 
@@ -438,43 +439,37 @@ if ($resql) {
 	print $searchpicto;
 	print '</td>';
 	print '</tr>';
-	$totalarray = array();
 	print '<tr class="liste_titre">';
 	if (!empty($arrayfields['aa.account_number']['checked'])) {
 		print_liste_field_titre($arrayfields['aa.account_number']['label'], $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
-		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['aa.label']['checked'])) {
 		print_liste_field_titre($arrayfields['aa.label']['label'], $_SERVER["PHP_SELF"], "aa.label", "", $param, '', $sortfield, $sortorder);
-		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['aa.labelshort']['checked'])) {
 		print_liste_field_titre($arrayfields['aa.labelshort']['label'], $_SERVER["PHP_SELF"], "aa.labelshort", "", $param, '', $sortfield, $sortorder);
-		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['aa.account_parent']['checked'])) {
 		print_liste_field_titre($arrayfields['aa.account_parent']['label'], $_SERVER["PHP_SELF"], "aa.account_parent", "", $param, '', $sortfield, $sortorder, 'left ');
-		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['aa.pcg_type']['checked'])) {
 		print_liste_field_titre($arrayfields['aa.pcg_type']['label'], $_SERVER["PHP_SELF"], 'aa.pcg_type,aa.account_number', '', $param, '', $sortfield, $sortorder, '', $arrayfields['aa.pcg_type']['help'], 1);
-		$totalarray['nbfield']++;
 	}
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 		if (!empty($arrayfields['aa.reconcilable']['checked'])) {
 			print_liste_field_titre($arrayfields['aa.reconcilable']['label'], $_SERVER["PHP_SELF"], 'aa.reconcilable', '', $param, '', $sortfield, $sortorder);
-			$totalarray['nbfield']++;
 		}
 	}
 	if (!empty($arrayfields['aa.active']['checked'])) {
 		print_liste_field_titre($arrayfields['aa.active']['label'], $_SERVER["PHP_SELF"], 'aa.active', '', $param, '', $sortfield, $sortorder);
-		$totalarray['nbfield']++;
 	}
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print "</tr>\n";
 
 	$accountstatic = new AccountingAccount($db);
 	$accountparent = new AccountingAccount($db);
+	$totalarray = array();
+	$totalarray['nbfield'] = 0;
 
 	$i = 0;
 	while ($i < min($num, $limit)) {

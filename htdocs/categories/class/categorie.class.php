@@ -626,12 +626,18 @@ class Categorie extends CommonObject
 		}
 
 		$arraydelete = array(
-			'categorie_societe' => 'fk_categorie',
-			'categorie_fournisseur' => 'fk_categorie',
 			'categorie_product' => 'fk_categorie',
+			'categorie_fournisseur' => 'fk_categorie',
+			'categorie_societe' => 'fk_categorie',
 			'categorie_member' => 'fk_categorie',
 			'categorie_contact' => 'fk_categorie',
+			'categorie_user' => 'fk_categorie',
+			'categorie_project' => 'fk_categorie',
 			'categorie_account' => 'fk_categorie',
+			'categorie_website_page' => 'fk_categorie',
+			'categorie_warehouse' => 'fk_categorie',
+			'categorie_actioncomm' => 'fk_categorie',
+			'categorie_ticket' => 'fk_categorie',
 			'bank_class' => 'fk_categ',
 			'categorie_lang' => 'fk_category',
 			'categorie' => 'rowid',
@@ -727,8 +733,6 @@ class Categorie extends CommonObject
 					return -1;
 				}
 			}
-
-
 
 			// Call trigger
 			$this->context = array('linkto'=>$obj); // Save object we want to link category to into category instance to provide information to trigger

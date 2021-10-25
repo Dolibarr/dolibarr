@@ -82,14 +82,14 @@ if ($type == "f") {
 $sql = "SELECT s.rowid, s.nom as name, st.libelle as stcomm";
 $sql .= ", p.rowid as cidp, p.name, p.firstname, p.email, p.phone";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_stcomm as st,";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
 }
 $sql .= " ".MAIN_DB_PREFIX."socpeople as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 $sql .= " WHERE s.fk_stcomm = st.id";
 $sql .= " AND p.entity IN (".getEntity('socpeople').")";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($type == "c") {

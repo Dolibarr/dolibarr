@@ -1965,7 +1965,7 @@ div.fichethirdleft {
 		print "float: ".$left.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: 50%;\n";
+		print "width: calc(50% - 14px);\n";
 	} ?>
 	<?php if ($conf->browser->layout == 'phone') {
 		print "padding-bottom: 6px;\n";
@@ -1976,14 +1976,11 @@ div.fichetwothirdright {
 		print "float: ".$right.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: 50%;\n";
+		print "width: calc(50% - 14px);\n";
 	} ?>
 	<?php if ($conf->browser->layout == 'phone') {
 		print "padding-bottom: 6px\n";
 	} ?>
-}
-div.fichetwothirdright div.ficheaddleft {
-	padding-left: 20px;
 }
 div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone') {
@@ -2041,9 +2038,6 @@ div.secondcolumn div.box {
 		float: none;
 		width: auto;
 		padding-bottom: 6px;
-	}
-	div.fichetwothirdright div.ficheaddleft {
-		padding-left: 0;
 	}
 	div.fichehalfleft {
 		float: none;
@@ -3989,8 +3983,8 @@ div .tdtop {
 /* Prepare to remove class pair - impair */
 
 .noborder > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
 {
 	background: linear-gradient(to bottom, var(--colorbacklineimpair1) 0%, var(--colorbacklineimpair2) 100%);
 	background: -o-linear-gradient(bottom, var(--colorbacklineimpair1) 0%, var(--colorbacklineimpair2) 100%);
@@ -4004,8 +3998,8 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft
 }
 
 .noborder > tbody > tr:nth-child(odd):not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
 {
 	background: linear-gradient(to bottom, var(--colorbacklinepair1) 0%, var(--colorbacklinepair2) 100%);
 	background: -o-linear-gradient(bottom, var(--colorbacklinepair1) 0%, var(--colorbacklinepair2) 100%);
@@ -4033,9 +4027,6 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	padding-right: 0px;
 	padding-left: 0px;
 	padding-bottom: 12px;
-}
-.ficheaddleft div.boxstats, .ficheaddright div.boxstats {
-	border: none;
 }
 .boxstatsborder {
 	/* border: 1px solid #CCC !important; */
@@ -6901,7 +6892,7 @@ div.clipboardCPValue.hidewithsize {
 	input#addedfile {
 		width: 95%;
 	}
-	
+
 	#divbodywebsite {
 		word-break: break-all;
 	}
@@ -6910,7 +6901,7 @@ div.clipboardCPValue.hidewithsize {
 		border-left: unset;
 		boerder-right: unset;
 		padding-left: 5px;
-	}	
+	}
 }
 
 

@@ -205,7 +205,7 @@ foreach ($data_all_year as $val) {
 print '</table>';
 print '</div>';
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 $stringtoshow = '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
 if ($mesg) {
@@ -219,7 +219,7 @@ $stringtoshow .= '</td></tr></table>';
 print $stringtoshow;
 
 
-print '</div></div></div>';
+print '</div></div>';
 print '<div style="clear:both"></div>';
 
 // End of page
