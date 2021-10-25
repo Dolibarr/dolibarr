@@ -749,7 +749,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 	$permission = $user->rights->societe->creer;
 
 	$contacts = $object->getObjectsInCateg($type, 0, $limit, $offset);
-	if ($contacts < 0) {
+	if (!is_array($contacts) && $contacts < 0) {
 		dol_print_error($db, $object->error, $object->errors);
 	} else {
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
