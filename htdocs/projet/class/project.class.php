@@ -2015,7 +2015,7 @@ class Project extends CommonObject
 		//$socid=$user->socid;
 
 		$projectsListId = null;
-		if (!$user->rights->projet->all->lire) {
+		if (empty($user->rights->projet->all->lire)) {
 			$projectsListId = $this->getProjectsAuthorizedForUser($user, 0, 1);
 		}
 
@@ -2107,7 +2107,7 @@ class Project extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " WHERE";
 		$sql .= " p.entity IN (".getEntity('project').")";
-		if (!$user->rights->projet->all->lire) {
+		if (empty($user->rights->projet->all->lire)) {
 			$projectsListId = $this->getProjectsAuthorizedForUser($user, 0, 1);
 			$sql .= "AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		}

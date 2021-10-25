@@ -859,7 +859,7 @@ if ($action == 'create' || $action == 'presend') {
 				// Ref
 				print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
 				// Define a complementary filter for search of next/prev ref.
-				if (!$user->rights->projet->all->lire) {
+				if (empty($user->rights->projet->all->lire)) {
 					$objectsListId = $projectstat->getProjectsAuthorizedForUser($user, $mine, 0);
 					$projectstat->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 				}
