@@ -953,7 +953,7 @@ while ($i < min($num, $limit)) {
 		}
 		if (!empty($arrayfields['t.'.$key]['checked'])) {
 			print '<td';
-			if (!empty($cssforfield) || !empty($val['css']) {
+			if (!empty($cssforfield) || !empty($val['css'])) {
 				print ' class="';
 			}
 			print empty($cssforfield) ? '' : $cssforfield;
