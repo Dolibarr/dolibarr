@@ -842,8 +842,7 @@ if (!empty($arrayfields['p.email']['checked'])) {
 	print '<input class="flat" type="text" name="search_email" size="6" value="'.dol_escape_htmltag($search_email).'">';
 	print '</td>';
 }
-if (!empty($arrayfields['unsubscribed']['checked']))
-{
+if (!empty($arrayfields['unsubscribed']['checked'])) {
 	print '<td class="liste_titre center">';
 	print $form->selectarray('search_no_email', array('-1'=>'', '0'=>$langs->trans('No'), '1'=>$langs->trans('Yes')), $search_no_email);
 	print '</td>';
@@ -1144,8 +1143,7 @@ while ($i < min($num, $limit)) {
 		}
 	}
 	// No EMail
-	if (!empty($arrayfields['unsubscribed']['checked']))
-	{
+	if (!empty($arrayfields['unsubscribed']['checked'])) {
 		print '<td class="center">';
 		if (empty($obj->email)) {
 			//print '<span class="opacitymedium">'.$langs->trans("NoEmail").'</span>';
