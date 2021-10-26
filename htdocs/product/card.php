@@ -1638,7 +1638,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td colspan="3">';
 					}
 
-					print $formcompany->select_state($object->state_id, $object->country_code);
+					print $formcompany->select_state(GETPOSTISSET('state_id') ? GETPOST('state_id', 'int') : $object->state_id, $object->country_code);
 					print '</td>';
 				}
 				print '</tr>';

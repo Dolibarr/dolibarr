@@ -759,7 +759,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 				print '<tr>';
 				print '<td><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
-				print '<td>'.$form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'alpha') : $noemail), 1).'</td>';
+				print '<td>';
+				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'alpha') : $noemail), 1);
+				print '</td>';
 				print '</tr>';
 			}
 			print '</tr>';
@@ -1071,7 +1073,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				}
 
 				print '<td><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
-				print '<td>'.$form->selectyesno('no_email', (GETPOSTISSET("no_email") ?GETPOST("no_email", 'alpha') : $noemail), 1).'</td>';
+				print '<td>';
+				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ?GETPOST("no_email", 'alpha') : $noemail), 1);
+				print '</td>';
 			} else {
 				print '<td colspan="2"></td>';
 			}
@@ -1317,7 +1321,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 					$noemail = $obj->nb;
 				}
 			}
-			print '<tr><td>'.$langs->trans("No_Email").'</td><td>'.yn($noemail).'</td></tr>';
+			print '<tr><td>'.$langs->trans("No_Email").'</td><td>';
+			if ($object->email) {
+				print yn($noemail);
+			} else {
+				print '<span class="opacitymedium">'.$langs->trans("EMailNotDefined").'</span>';
+			}
+			print '</td></tr>';
 		}
 
 		print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td>';
