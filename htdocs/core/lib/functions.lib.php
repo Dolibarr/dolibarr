@@ -2288,6 +2288,12 @@ function dol_strftime($fmt, $ts = false, $is_gmt = false)
 function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = '', $encodetooutput = false)
 {
 	global $conf, $langs;
+	
+	// If date undefined or "", we return ""
+	// Must be tested before line $user_dt->setTimestamp($tzoutput == 'tzuser' ? dol_now() : $time);
+	if (dol_strlen($time) == 0) {
+		return ''; // $time=0 allowed (it means 01/01/1970 00:00:00)
+	}
 
 	if ($tzoutput === 'auto') {
 		$tzoutput = (empty($conf) ? 'tzserver' : (isset($conf->tzuserinputkey) ? $conf->tzuserinputkey : 'tzserver'));
@@ -2378,11 +2384,6 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	if ($reduceformat) {
 		$format = str_replace('%Y', '%y', $format);
 		$format = str_replace('yyyy', 'yy', $format);
-	}
-
-	// If date undefined or "", we return ""
-	if (dol_strlen($time) == 0) {
-		return ''; // $time=0 allowed (it means 01/01/1970 00:00:00)
 	}
 
 	// Clean format
