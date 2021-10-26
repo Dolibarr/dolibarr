@@ -494,10 +494,10 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'payment') {
-                        	if (!$user->rights->facture->supprimer) {
-                                	$deleteok = 0;
-                        	}
-                	}elseif ($feature == 'banque') {
+				if (!$user->rights->facture->supprimer) {
+						$deleteok = 0;
+				}
+			} elseif ($feature == 'banque') {
 				if (!$user->rights->banque->modifier) {
 					$deleteok = 0;
 				}
