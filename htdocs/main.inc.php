@@ -2421,9 +2421,9 @@ function printDropdownQuickadd()
 	$parameters = array();
 	$hook_items = $items;
 	$reshook = $hookmanager->executeHooks('menuDropdownQuickaddItems', $parameters, $hook_items); // Note that $action and $object may have been modified by some hooks
-	if (is_numeric($reshook) && !empty($hookmanager->results)) {
+	if (is_numeric($reshook) && is_array($hookmanager->results)) {
 		if ($reshook == 0) {
-			$items['items'][] = $hookmanager->results; // add
+			$items['items'] = array_merge($items['items'],$hookmanager->results); // add
 		} else {
 			$items = $hookmanager->results; // replace
 		}
