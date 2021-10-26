@@ -1624,7 +1624,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<td>'.$langs->trans("CountryOrigin").'</td>';
 				print '<td>';
 				print img_picto('', 'globe-americas', 'class="paddingrightonly"');
-				print $form->select_country($object->country_id, 'country_id', '', 0, 'minwidth100 maxwidthonsmartphone');
+				print $form->select_country(GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : $object->country_id, 'country_id', '', 0, 'minwidth100 maxwidthonsmartphone');
 				if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 				print '</td>';
 				// State
