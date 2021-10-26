@@ -213,7 +213,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 		 $sql .= " AND source_type='thirdparty'";
 		 dol_syslog(__METHOD__.": mailing update status to display thirdparty mail that do not want to be contacted");
 		 $result=$this->db->query($sql);
-		 
+
 		 //Update the status to show contact mail that don't want to be contacted anymore'
 		 $sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 		 $sql .= " SET statut=3";
@@ -222,7 +222,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 		 dol_syslog(__METHOD__.": mailing update status to display contact mail that do not want to be contacted",LOG_DEBUG);
 		 $result=$this->db->query($sql);
 		 */
-		
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 		$sql .= " SET statut=3";
 		$sql .= " WHERE fk_mailing=".((int) $mailing_id)." AND email IN (SELECT mu.email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe AS mu WHERE mu.entity IN ('".getEntity('mailing')."'))";
