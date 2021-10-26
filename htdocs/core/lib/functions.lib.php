@@ -2288,7 +2288,6 @@ function dol_strftime($fmt, $ts = false, $is_gmt = false)
 function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = '', $encodetooutput = false)
 {
 	global $conf, $langs;
-	
 	// If date undefined or "", we return ""
 	// Must be tested before line $user_dt->setTimestamp($tzoutput == 'tzuser' ? dol_now() : $time);
 	if (dol_strlen($time) == 0) {
