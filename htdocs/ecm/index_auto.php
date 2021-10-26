@@ -341,6 +341,7 @@ if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
 	}
 	if (!empty($conf->projet->enabled)) {
 		$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'project', 'test'=>$conf->projet->enabled, 'label'=>$langs->trans("Projects"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Projects")));
+		$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'project_task', 'test'=>$conf->projet->enabled, 'label'=>$langs->trans("Tasks"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Tasks")));
 	}
 	if (!empty($conf->ficheinter->enabled)) {
 		$langs->load("interventions"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'fichinter', 'test'=>$conf->ficheinter->enabled, 'label'=>$langs->trans("Interventions"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Interventions")));
@@ -353,6 +354,7 @@ if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
 	}
 	if (!empty($conf->banque->enabled)) {
 		$langs->load("banks"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'banque', 'test'=>$conf->banque->enabled, 'label'=>$langs->trans("BankAccount"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("BankAccount")));
+		$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'chequereceipt', 'test'=>$conf->banque->enabled, 'label'=>$langs->trans("CheckReceipt"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("CheckReceipt")));
 	}
 	if (!empty($conf->mrp->enabled)) {
 		$langs->load("mrp"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'mrp-mo', 'test'=>$conf->mrp->enabled, 'label'=>$langs->trans("MOs"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ManufacturingOrders")));

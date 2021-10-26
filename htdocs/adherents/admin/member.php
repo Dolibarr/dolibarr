@@ -228,7 +228,7 @@ print "</td></tr>\n";
 // Allow members to change type on renewal forms
 /* To test during next beta
 print '<tr class="oddeven"><td>'.$langs->trans("MemberAllowchangeOfType").'</td><td>';
-print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED', (!empty($conf->global->MEMBER_ALLOW_CHANGE_OF_TYPE) ? 0 : 1), 1);
+print $form->selectyesno('MEMBER_ALLOW_CHANGE_OF_TYPE', (!empty($conf->global->MEMBER_ALLOW_CHANGE_OF_TYPE) ? 0 : 1), 1);
 print "</td></tr>\n";
 */
 

@@ -379,13 +379,13 @@ class Export
 	 */
 	public function conditionDate($Field, $Value, $Sens)
 	{
-		// TODO date_format is forbidden, not performant and not portable. Use instead BETWEEN
+		// TODO date_format is forbidden, not performant and not portable. Use instead $Value to forge the range date.
 		if (strlen($Value) == 4) {
-			$Condition = " date_format(".$Field.",'%Y') ".$Sens." '".$Value."'";
+			$Condition = " date_format(".$Field.",'%Y') ".$Sens." '".$this->db->escape($Value)."'";
 		} elseif (strlen($Value) == 6) {
-			$Condition = " date_format(".$Field.",'%Y%m') ".$Sens." '".$Value."'";
+			$Condition = " date_format(".$Field.",'%Y%m') ".$Sens." '".$this->db->escape($Value)."'";
 		} else {
-			$Condition = " date_format(".$Field.",'%Y%m%d') ".$Sens." ".$Value;
+			$Condition = " date_format(".$Field.",'%Y%m%d') ".$Sens." '".$this->db->escape($Value)."'";
 		}
 		return $Condition;
 	}
@@ -416,7 +416,7 @@ class Export
 			case 'Duree':
 			case 'Numeric':
 			case 'Number':
-				// Must be a string text to allow to use comparison strings like "<= 999"
+				// Must be a string text to allow to use comparison strings like "<= 99.9"
 				$szFilterField = '<input type="text" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
 				break;
 			case 'Status':

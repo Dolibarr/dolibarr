@@ -205,12 +205,14 @@ if ($type == 'directory') {
 		'product',
 		'tax',
 		'project',
+		'project_task',
 		'fichinter',
 		'user',
 		'expensereport',
 		'holiday',
 		'recruitment-recruitmentcandidature',
 		'banque',
+		'chequereceipt',
 		'mrp-mo'
 	);
 
@@ -243,6 +245,8 @@ if ($type == 'directory') {
 		$upload_dir = $conf->tax->dir_output;
 	} elseif ($module == 'project') {
 		$upload_dir = $conf->projet->dir_output;
+	} elseif ($module == 'project_task') {
+		$upload_dir = $conf->projet->dir_output;
 	} elseif ($module == 'fichinter') {
 		$upload_dir = $conf->ficheinter->dir_output;
 	} elseif ($module == 'user') {
@@ -255,8 +259,10 @@ if ($type == 'directory') {
 		$upload_dir = $conf->recruitment->dir_output.'/recruitmentcandidature';
 	} elseif ($module == 'banque') {
 		$upload_dir = $conf->bank->dir_output;
+	} elseif ($module == 'chequereceipt') {
+		$upload_dir = $conf->bank->dir_output.'/checkdeposits';
 	} elseif ($module == 'mrp-mo') {
-		$upload_dir = $conf->mrp->dir_output.'/mo';
+		$upload_dir = $conf->mrp->dir_output;
 	} else {
 		$parameters = array('modulepart'=>$module);
 		$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
