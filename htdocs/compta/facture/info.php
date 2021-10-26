@@ -43,6 +43,16 @@ $ref = GETPOST("ref", 'alpha');
  * View
  */
 
+if (empty($object->id)) {
+	llxHeader();
+	$head = facture_prepare_head($object);
+	$langs->load('errors');
+	echo dol_get_fiche_head($head, 'info', $langs->trans("InvoiceCustomer"), -1, 'bill'),
+		'<div class="error">' . $langs->trans("ErrorRecordNotFound") . '</div>';
+	llxFooter();
+	exit;
+}
+
 $form = new Form($db);
 
 $title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('Info');
