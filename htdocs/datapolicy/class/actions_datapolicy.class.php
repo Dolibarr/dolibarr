@@ -133,7 +133,7 @@ class ActionsDatapolicy
 			header('Content-Disposition: attachment; filename=datapolicy_portabilite.csv');
 			header('Pragma: no-cache');
 			$object->fetch(GETPOST('socid'));
-			echo 'Name;Fistname;Civility;Thirdparty;Function;Address;ZipCode;City;Department;Country;Email;Pro Phone;Perso Phone;Mobile Phone;Instant Mail;Birthday;'.PHP_EOL;
+			echo 'Name;Firstname;Civility;Thirdparty;Function;Address;ZipCode;City;Department;Country;Email;Pro Phone;Perso Phone;Mobile Phone;Instant Mail;Birthday;'.PHP_EOL;
 			echo $object->name.';';
 			echo ';';
 			echo ';';
@@ -157,7 +157,7 @@ class ActionsDatapolicy
 			header('Pragma: no-cache');
 			$soc = $object->fetch_thirdparty();
 
-			echo 'Name;Fistname;Civility;Thirdparty;Function;Address;ZipCode;City;Department;Country;Email;Pro Phone;Perso Phone;Mobile Phone;Instant Mail;Birthday;'.PHP_EOL;
+			echo 'Name;Firstname;Civility;Thirdparty;Function;Address;ZipCode;City;Department;Country;Email;Pro Phone;Perso Phone;Mobile Phone;Instant Mail;Birthday;'.PHP_EOL;
 			echo $object->lastname.';';
 			echo $object->firstname.';';
 			echo $object->getCivilityLabel().';';
@@ -181,7 +181,7 @@ class ActionsDatapolicy
 			header('Content-Disposition: attachment; filename=datapolicy_portabilite.csv');
 			header('Pragma: no-cache');
 			$soc = $object->fetch_thirdparty();
-			echo 'Name;Fistname;Civility;Thirdparty;Function;Address;ZipCode;City;Department;Country;Email;Pro Phone;Perso Phone;Mobile Phone;Instant Mail;Birthday;'.PHP_EOL;
+			echo 'Name;Firstname;Civility;Thirdparty;Function;Address;ZipCode;City;Department;Country;Email;Pro Phone;Perso Phone;Mobile Phone;Instant Mail;Birthday;'.PHP_EOL;
 			echo $object->lastname.';';
 			echo $object->firstname.';';
 			echo $object->getCivilityLabel().';';

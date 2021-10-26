@@ -405,7 +405,7 @@ class Products extends DolibarrApi
 
 		$childsArbo = $this->product->getChildsArbo($id, 1);
 
-		$keys = ['rowid', 'qty', 'fk_product_type', 'label', 'incdec'];
+		$keys = ['rowid', 'qty', 'fk_product_type', 'label', 'incdec', 'ref'];
 		$childs = [];
 		foreach ($childsArbo as $values) {
 			$childs[] = array_combine($keys, $values);
