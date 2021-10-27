@@ -286,7 +286,7 @@ class modAdherent extends DolibarrModules
 		$this->export_label[$r] = 'MembersAndSubscriptions';
 		$this->export_permission[$r] = array(array("adherent", "export"));
 		$this->export_fields_array[$r] = array(
-			'a.rowid'=>'Id', 'a.civility'=>"UserTitle", 'a.lastname'=>"Lastname", 'a.firstname'=>"Firstname", 'a.login'=>"Login", 'a.gender'=>"Gender", 'a.morphy'=>'Nature',
+			'a.rowid'=>'Id', 'a.civility'=>"UserTitle", 'a.lastname'=>"Lastname", 'a.firstname'=>"Firstname", 'a.login'=>"Login", 'a.gender'=>"Gender", 'a.morphy'=>'MemberNature',
 			'a.societe'=>'Company', 'a.address'=>"Address", 'a.zip'=>"Zip", 'a.town'=>"Town", 'd.nom'=>"State", 'co.code'=>"CountryCode", 'co.label'=>"Country",
 			'a.phone'=>"PhonePro", 'a.phone_perso'=>"PhonePerso", 'a.phone_mobile'=>"PhoneMobile", 'a.email'=>"Email", 'a.birth'=>"Birthday", 'a.statut'=>"Status",
 			'a.photo'=>"Photo", 'a.note_public'=>"NotePublic", 'a.note_private'=>"NotePrivate", 'a.datec'=>'DateCreation', 'a.datevalid'=>'DateValidation',
@@ -339,7 +339,7 @@ class modAdherent extends DolibarrModules
 		$this->import_tables_creator_array[$r] = array('a'=>'fk_user_author'); // Fields to store import user id
 		$this->import_fields_array[$r] = array(
 			'a.civility'=>"UserTitle", 'a.lastname'=>"Lastname*", 'a.firstname'=>"Firstname", 'a.gender'=>"Gender", 'a.login'=>"Login*", "a.pass"=>"Password",
-			"a.fk_adherent_type"=>"MemberType*", 'a.morphy'=>'Nature*', 'a.societe'=>'Company', 'a.address'=>"Address", 'a.zip'=>"Zip", 'a.town'=>"Town",
+			"a.fk_adherent_type"=>"MemberType*", 'a.morphy'=>'MemberNature*', 'a.societe'=>'Company', 'a.address'=>"Address", 'a.zip'=>"Zip", 'a.town'=>"Town",
 			'a.state_id'=>'StateId', 'a.country'=>"CountryId", 'a.phone'=>"PhonePro", 'a.phone_perso'=>"PhonePerso", 'a.phone_mobile'=>"PhoneMobile",
 			'a.email'=>"Email", 'a.birth'=>"Birthday", 'a.statut'=>"Status*", 'a.photo'=>"Photo", 'a.note_public'=>"NotePublic", 'a.note_private'=>"NotePrivate",
 			'a.datec'=>'DateCreation', 'a.datefin'=>'DateEndSubscription'

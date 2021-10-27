@@ -203,6 +203,12 @@ if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 	$arrayfields['s.nom'] = array('label'=>"ThirdParty", 'position'=>25, 'checked'=>1);
 }
 
+$arrayfields['unsubscribed'] = array(
+		'label'=>'No_Email',
+		'checked'=>0,
+		'enabled'=>(!empty($conf->mailing->enabled)),
+		'position'=>41);
+
 if (!empty($conf->socialnetworks->enabled)) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active']) {
@@ -353,7 +359,7 @@ if ($resql) {
 }
 
 $sql = "SELECT s.rowid as socid, s.nom as name,";
-$sql .= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.zip, p.town, p.poste, p.email, p.no_email,";
+$sql .= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.zip, p.town, p.poste, p.email,";
 $sql .= " p.socialnetworks, p.photo,";
 $sql .= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.datec as date_creation, p.tms as date_update,";
 $sql .= " st.libelle as stcomm, st.picto as stcomm_picto, p.fk_stcommcontact as stcomm_id, p.fk_prospectcontactlevel,";
@@ -363,6 +369,9 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
 	}
+}
+if (!empty($conf->mailing->enabled)) {
+	$sql .= ", (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = p.email) as unsubscribed";
 }
 // Add fields from hooks
 $parameters = array();
@@ -494,8 +503,11 @@ if (strlen($search_town)) {
 if (count($search_roles) > 0) {
 	$sql .= " AND p.rowid IN (SELECT sc.fk_socpeople FROM ".MAIN_DB_PREFIX."societe_contacts as sc WHERE sc.fk_c_type_contact IN (".$db->sanitize(implode(',', $search_roles))."))";
 }
-if ($search_no_email != '' && $search_no_email >= 0) {
-	$sql .= " AND p.no_email = ".((int) $search_no_email);
+if ($search_no_email != -1 && $search_no_email > 0) {
+	$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = p.email) > 0";
+}
+if ($search_no_email != -1 && $search_no_email == 0) {
+	$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = p.email) = 0 AND p.email IS NOT NULL  AND p.email <> ''";
 }
 if ($search_status != '' && $search_status >= 0) {
 	$sql .= " AND p.statut = ".((int) $search_status);
@@ -830,7 +842,7 @@ if (!empty($arrayfields['p.email']['checked'])) {
 	print '<input class="flat" type="text" name="search_email" size="6" value="'.dol_escape_htmltag($search_email).'">';
 	print '</td>';
 }
-if (!empty($arrayfields['p.no_email']['checked'])) {
+if (!empty($arrayfields['unsubscribed']['checked'])) {
 	print '<td class="liste_titre center">';
 	print $form->selectarray('search_no_email', array('-1'=>'', '0'=>$langs->trans('No'), '1'=>$langs->trans('Yes')), $search_no_email);
 	print '</td>';
@@ -949,8 +961,8 @@ if (!empty($arrayfields['p.fax']['checked'])) {
 if (!empty($arrayfields['p.email']['checked'])) {
 	print_liste_field_titre($arrayfields['p.email']['label'], $_SERVER["PHP_SELF"], "p.email", $begin, $param, '', $sortfield, $sortorder);
 }
-if (!empty($arrayfields['p.no_email']['checked'])) {
-	print_liste_field_titre($arrayfields['p.no_email']['label'], $_SERVER["PHP_SELF"], "p.no_email", $begin, $param, '', $sortfield, $sortorder, 'center ');
+if (!empty($arrayfields['unsubscribed']['checked'])) {
+	print_liste_field_titre($arrayfields['unsubscribed']['label'], $_SERVER["PHP_SELF"], "unsubscribed", $begin, $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($conf->socialnetworks->enabled)) {
 	foreach ($socialnetworks as $key => $value) {
@@ -1131,8 +1143,14 @@ while ($i < min($num, $limit)) {
 		}
 	}
 	// No EMail
-	if (!empty($arrayfields['p.no_email']['checked'])) {
-		print '<td class="center">'.yn($obj->no_email).'</td>';
+	if (!empty($arrayfields['unsubscribed']['checked'])) {
+		print '<td class="center">';
+		if (empty($obj->email)) {
+			//print '<span class="opacitymedium">'.$langs->trans("NoEmail").'</span>';
+		} else {
+			print yn(($obj->unsubscribed > 0) ? 1 : 0);
+		}
+		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
