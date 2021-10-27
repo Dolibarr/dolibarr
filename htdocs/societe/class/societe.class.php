@@ -3024,6 +3024,79 @@ class Societe extends CommonObject
 		}
 	}
 
+	/**
+	 *    Get array of all default contacts for a thirdparty
+	 *
+	 *    @param	int         $list       0:Return array contains all properties, 1:Return array contains just id
+	 *    @param    string      $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
+	 *    @return	array|int		        Array of contacts, -1 if error
+	 */
+	public function getDefaultContacts($list = 0, $code = '')
+	{
+		global $langs;
+
+		$tab = array();
+
+		$sql = "SELECT sc.rowid, sc.fk_socpeople as id, sc.fk_c_type_contact"; // This field contains id of llx_socpeople or id of llx_user
+		$sql .= ", t.fk_soc as socid, t.statut as statuscontact";
+		$sql .= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
+		$sql .= ", tc.source, tc.element, tc.code, tc.libelle";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_contact tc";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_contacts sc ON sc.fk_c_type_contact = tc.rowid";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."socpeople t on sc.fk_socpeople = t.rowid";
+		$sql .= " WHERE sc.fk_soc = " . intval($this->id);
+		if ($code) {
+			$sql .= " AND tc.code = '".$this->db->escape($code)."'";
+		}
+		$sql .= " AND tc.source = 'external'";
+		$sql .= " AND tc.active = 1";
+		$sql .= " ORDER BY t.lastname ASC";
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$resql = $this->db->query($sql);
+
+		if (! $resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		$num = $this->db->num_rows($resql);
+		$i = 0;
+		while ($i < $num) {
+			$obj = $this->db->fetch_object($resql);
+
+			if (!$list) {
+				$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
+				$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
+				$tab[$i] = array(
+					'source' => $obj->source,
+					'socid' => $obj->socid,
+					'id' => $obj->id,
+					'nom' => $obj->lastname, // For backward compatibility
+					'civility' => $obj->civility,
+					'lastname' => $obj->lastname,
+					'firstname' => $obj->firstname,
+					'email'=>$obj->email,
+					'login'=> (empty($obj->login) ? '' : $obj->login),
+					'photo' => (empty($obj->photo) ? '' : $obj->photo),
+					'statuscontact' => $obj->statuscontact,
+					'rowid' => $obj->rowid,
+					'code' => $obj->code,
+					'element' => $obj->element,
+					'libelle' => $libelle_type,
+					'status' => 1,
+					'fk_c_type_contact' => $obj->fk_c_type_contact
+				);
+			} else {
+				$tab[$i] = $obj->id;
+			}
+
+			$i++;
+		}
+
+		return $tab;
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

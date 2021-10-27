@@ -66,6 +66,8 @@ if ($module == 'propal') {
 	$permission = $user->rights->reception->creer;
 } elseif ($module == 'project_task') {
 	$permission = $user->rights->projet->creer;
+} elseif ($module == 'societe') {
+	$permission = $user->rights->societe->contact->creer;
 } elseif (!isset($permission) && isset($user->rights->$module->creer)) {
 	$permission = $user->rights->$module->creer;
 } elseif (!isset($permission) && isset($user->rights->$module->write)) {
@@ -118,7 +120,13 @@ if ($permission) {
 		if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
 			$tmpobject = $objectsrc;
 		}
-		$formcompany->selectTypeContact($tmpobject, '', 'type', 'internal');
+
+		if ($object->element == 'societe') {
+			$contactType = $object->listeTypeContacts('internal', '', 1);
+			print $form->selectarray('type', $contactType, '', 0, 0, 0, '', 0, 0, 0, '', 'minwidth500');
+		} else {
+			$formcompany->selectTypeContact($tmpobject, '', 'type', 'internal');
+		}
 		?></div>
 		<div class="tagtd">&nbsp;</div>
 		<div class="tagtd center"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></div>
@@ -163,7 +171,13 @@ if ($permission) {
 			if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
 				$tmpobject = $objectsrc;
 			}
-			$formcompany->selectTypeContact($tmpobject, $preselectedtypeofcontact, 'typecontact', 'external', 'position', 0, 'minwidth100imp');
+
+			if ($object->element == 'societe') {
+				$contactType = $object->listeTypeContacts('external', '', 1);
+				print $form->selectarray('typecontact', $contactType, '', 0, 0, 0, '', 0, 0, 0, '', 'minwidth500');
+			} else {
+				$formcompany->selectTypeContact($tmpobject, $preselectedtypeofcontact, 'typecontact', 'external', 'position', 0, 'minwidth100imp');
+			}
 			?>
 		</div>
 		<div class="tagtd noborderbottom">&nbsp;</div>
@@ -191,6 +205,12 @@ $list = array();
 foreach (array('internal', 'external') as $source) {
 	if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
 		$contactlist = $objectsrc->liste_contact(-1, $source);
+	} elseif ($object->element == 'societe') {
+		if ($source == 'internal') {
+			continue; // Not implemented yet
+		}
+
+		$contactlist = $object->getDefaultContacts();
 	} else {
 		$contactlist = $object->liste_contact(-1, $source);
 	}
@@ -205,6 +225,10 @@ foreach (array('internal', 'external') as $source) {
 		$entry->contact_html = "";
 		$entry->contact_name = "";
 		$entry->status = "";
+
+		if ($object->element == 'societe') {
+			$entry->type = $langs->trans('ContactDefault_' . $contact['element']) . ' - '  . $entry->type;
+		}
 
 		if ($contact['source'] == 'internal') {
 			$entry->nature = $langs->trans("User");
