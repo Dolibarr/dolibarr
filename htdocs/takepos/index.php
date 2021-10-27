@@ -1122,25 +1122,25 @@ if ($resql) {
 
 $hookmanager->initHooks(array('takeposfrontend'));
 $parameters = array('menus'=>$menus);
-$reshook = $hookmanager->executeHooks('ActionButtons',$parameters);
+$reshook = $hookmanager->executeHooks('ActionButtons', $parameters);
 if ($reshook == 0) {  //add buttons
-    if (is_array($hookmanager->resArray) ) {
-        foreach ($hookmanager->resArray as $resArray) {
-            foreach ($resArray as $butmenu) {
-                $menus[$r++] = $butmenu;
-            }
-        }
-    }
-    elseif ($reshook == 1){
-        $r = 0; //replace buttons
-        if (is_array($hookmanager->resArray) ) {
-            foreach ($hookmanager->resArray as $resArray) {
-                foreach ($resArray as $butmenu) {
-                    $menus[$r++] = $butmenu;
-                }
-            }
-        }
-    }
+	if (is_array($hookmanager->resArray) ) {
+		foreach ($hookmanager->resArray as $resArray) {
+			foreach ($resArray as $butmenu) {
+				$menus[$r++] = $butmenu;
+			}
+		}
+	}
+	elseif ($reshook == 1) {
+		$r = 0; //replace buttons
+		if (is_array($hookmanager->resArray) ) {
+			foreach ($hookmanager->resArray as $resArray) {
+				foreach ($resArray as $butmenu) {
+					$menus[$r++] = $butmenu;
+				}
+			}
+		}
+	}
 }
 
 if ($r % 3 == 2) {
