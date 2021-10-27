@@ -123,6 +123,96 @@ if (empty($reshook)) {
 
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
+	// Handles only external contacts
+	if ($action == 'addcontact' && ! empty($user->rights->societe->contact->creer)) {
+		$error = 0;
+
+		$contactid = GETPOST('contactid', 'int');
+		$type = GETPOST('typecontact', 'int');
+
+		if ($contactid <= 0) {
+			$error++;
+			setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentities('Contact')), 'errors');
+		}
+
+		if ($type <= 0) {
+			$error++;
+			setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentities('ContactType')), 'errors');
+		}
+
+		$contact = new Contact($db);
+
+		$fetchResult = $contact->fetch($contactid);
+
+		if ($fetchResult <= 0) {
+			$error++;
+			setEventMessages($contact->error, $contact->errors, 'errors');
+		}
+
+		if (! $error && $object->id == $contact->socid) {
+			$error++;
+			setEventMessage('ContactMustBePartOfADifferentThirdparty', 'errors');
+		}
+
+		if (! $error) {
+			$result = $contact->fetchRoles();
+
+			if ($result < 0) {
+				$error++;
+				setEventMessages($contact->error, $contact->errors, 'errors');
+			}
+		}
+
+		if (! $error) {
+			foreach ($contact->roles as $roleKey => $roleDesc) {
+				// Role id for the thirdparty of the contact
+				if (! is_array($roleDesc)) {
+					continue;
+				}
+
+				if ($roleDesc['socid'] != $object->id) {
+					continue;
+				}
+
+				if ($roleDesc['id'] == $type) {
+					$error++;
+					setEventMessage('ErrorThisContactIsAlreadyDefinedAsThisType', 'errors');
+				}
+			}
+		}
+
+		if (! $error) {
+			$contact->roles[] = array('id' => $type, 'socid' => $object->id);
+
+			$result = $contact->updateRoles();
+
+			if ($result < 0) {
+				$error++;
+				setEventMessages($contact->error, $contact->errors, 'errors');
+			}
+		}
+
+		if (! $error) {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
+	} elseif ($action == 'deletecontact' && ! empty($user->rights->societe->contact->creer)) {
+		$error++;
+
+		$lineid = GETPOST('lineid', 'int');
+
+		$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'societe_contacts WHERE rowid = ' . intval($lineid);
+
+		$resql = $db->query($sql);
+
+		if (! $resql) {
+			setEventMessage($db->lasterror(), 'errors');
+		} else {
+			header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id);
+			exit;
+		}
+	}
 }
 
 
@@ -174,6 +264,19 @@ if ($action != 'presend') {
 	// Contacts list
 	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 		$result = show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id);
+
+		print load_fiche_titre($langs->trans('DefaultContactsFromAnotherCompany'), '', '');
+
+		$hideaddcontactforuser = true; // internal contacts not handled yet
+
+		// Contacts lines (modules that overwrite templates must declare this into descriptor)
+		$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+		foreach ($dirtpls as $reldir) {
+			$res = @include dol_buildpath($reldir.'/contacts.tpl.php');
+			if ($res) {
+				break;
+			}
+		}
 	}
 }
 
