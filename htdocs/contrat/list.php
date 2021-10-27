@@ -270,7 +270,7 @@ if ($search_user > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
-$sql .= " WHERE c.fk_soc = s.rowid ";
+$sql .= " WHERE c.fk_soc = s.rowid AND s.status > 0 ";
 $sql .= ' AND c.entity IN ('.getEntity('contract').')';
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 	$sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
