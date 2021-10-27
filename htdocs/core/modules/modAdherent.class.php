@@ -375,6 +375,7 @@ class modAdherent extends DolibarrModules
 		if (!empty($conf->societe->enabled)) {
 			$this->import_examplevalues_array[$r]['a.fk_soc'] = "rowid or name";
 		}
+		$this->import_updatekeys_array[$r] = array('a.login'=>'Login');
 
 		// Cronjobs
 		$arraydate = dol_getdate(dol_now());
