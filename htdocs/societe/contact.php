@@ -265,7 +265,8 @@ if ($action != 'presend') {
 	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 		$result = show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id);
 
-		print load_fiche_titre($langs->trans('DefaultContactsFromAnotherCompany'), '', '');
+		$titleTranskey = !empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? 'DefaultContactsFromOtherThirdparties' : 'DefaultContactsAddressesFromOtherThirdparties';
+		print load_fiche_titre($langs->trans($titleTranskey), '', '');
 
 		$hideaddcontactforuser = true; // internal contacts not handled yet
 
