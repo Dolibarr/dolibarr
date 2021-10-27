@@ -182,9 +182,9 @@ if ($action != 'create_updater' && $action != 'edit_updater') {
 			print '</tr>';
 		}
 	} else {
-		print '<tr colspan="7"><td class="opacitymedium">';
+		print '<tr colspan="7"><td><span class="opacitymedium">';
 		print $langs->trans("None");
-		print '</td></tr>';
+		print '</span></td></tr>';
 	}
 	print '</table>';
 
@@ -228,10 +228,8 @@ if ($action == 'create_variable' || $action == 'edit_variable') {
 	print '</table>';
 
 	//Form Buttons
-	print '<br><div class="center">';
-	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'"> &nbsp;';
-	print '<input type="submit" class="button button-cancel" name="cancel" id="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
+
 	print '</form>';
 }
 
@@ -349,10 +347,8 @@ if ($action == 'create_updater' || $action == 'edit_updater') {
 	print '</table>';
 
 	//Form Buttons
-	print '<br><div class="center">';
-	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'"> &nbsp;';
-	print '<input type="submit" class="button button-cancel" name="cancel" id="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
+
 	print '</form>';
 }
 

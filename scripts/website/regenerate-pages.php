@@ -17,7 +17,7 @@
  */
 
 /**
- * \file scripts/website/regenerate_pages.php
+ * \file scripts/website/regenerate-pages.php
  * \ingroup scripts
  * \brief Regenerate all pages of a web site
  */

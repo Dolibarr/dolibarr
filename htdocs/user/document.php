@@ -60,7 +60,7 @@ if ($id) {
 	|| (($user->id != $id) && $user->rights->user->user->password));
 }
 
-$permissiontoadd = $caneditfield;
+$permissiontoadd = $caneditfield;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
 $permtoedit = $caneditfield;
 
 // Security check
@@ -107,6 +107,7 @@ if ($id > 0 || !empty($ref)) {
 $hookmanager->initHooks(array('usercard', 'userdoc', 'globalcard'));
 
 
+
 /*
  * Actions
  */
@@ -138,8 +139,6 @@ if ($object->id) {
 		$langs->load("mails");
 	}
 	$head = user_prepare_head($object);
-
-	$form = new Form($db);
 
 	print dol_get_fiche_head($head, 'document', $langs->trans("User"), -1, 'user');
 

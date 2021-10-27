@@ -35,8 +35,7 @@ if (!empty($permissionedit) && empty($permissiontoadd)) {
 }
 
 if ($cancel) {
-	/*var_dump($cancel);
-	var_dump($backtopage);exit;*/
+	/*var_dump($cancel);var_dump($backtopage);var_dump($backtopageforcancel);exit;*/
 	if (!empty($backtopageforcancel)) {
 		header("Location: ".$backtopageforcancel);
 		exit;
@@ -74,7 +73,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
 			$value = GETPOST($key, 'restricthtml');
 		} elseif ($object->fields[$key]['type'] == 'date') {
-			$value = dol_mktime(12, 0, 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'));	// for date without hour, we use gmt
+			$value = dol_mktime(12, 0, 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int')); // for date without hour, we use gmt
 		} elseif ($object->fields[$key]['type'] == 'datetime') {
 			$value = dol_mktime(GETPOST($key.'hour', 'int'), GETPOST($key.'min', 'int'), GETPOST($key.'sec', 'int'), GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'), 'tzuserrel');
 		} elseif ($object->fields[$key]['type'] == 'duration') {
@@ -88,7 +87,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			$value = $tmparraykey[GETPOST($key)].','.GETPOST($key.'2');
 		} else {
 			if ($key == 'lang') {
-				$value = GETPOST($key, 'aZ09');
+				$value = GETPOST($key, 'aZ09') ?GETPOST($key, 'aZ09') : "";
 			} else {
 				$value = GETPOST($key, 'alphanohtml');
 			}
@@ -132,6 +131,10 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		$result = $object->create($user);
 		if ($result > 0) {
 			// Creation OK
+			if ($conf->categorie->enabled && method_exists($object, 'setCategories')) {
+				$categories = GETPOST('categories', 'array:int');
+				$object->setCategories($categories);
+			}
 			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
 			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
 			header("Location: ".$urltogo);
@@ -187,7 +190,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 				$value = GETPOST($key, 'restricthtml');
 			}
 		} elseif ($object->fields[$key]['type'] == 'date') {
-			$value = dol_mktime(12, 0, 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'));	// for date without hour, we use gmt
+			$value = dol_mktime(12, 0, 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int')); // for date without hour, we use gmt
 		} elseif ($object->fields[$key]['type'] == 'datetime') {
 			$value = dol_mktime(GETPOST($key.'hour', 'int'), GETPOST($key.'min', 'int'), GETPOST($key.'sec', 'int'), GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'), 'tzuserrel');
 		} elseif ($object->fields[$key]['type'] == 'duration') {
@@ -228,6 +231,13 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 				if (!$object->validateField($object->fields, $key, $value)) {
 					$error++;
 				}
+			}
+		}
+
+		if ($conf->categorie->enabled) {
+			$categories = GETPOST('categories', 'array');
+			if (method_exists($object, 'setCategories')) {
+				$object->setCategories($categories);
 			}
 		}
 	}
@@ -287,6 +297,7 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 	}
 
 	$result = $object->delete($user);
+
 	if ($result > 0) {
 		// Delete OK
 		setEventMessages("RecordDeleted", null, 'mesgs');

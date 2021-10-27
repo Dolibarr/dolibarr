@@ -132,7 +132,7 @@ $arrayfields = array(
 	'origin'=>array('label'=>"Origin", 'checked'=>1, 'position'=>155),
 	'm.fk_projet'=>array('label'=>'Project', 'checked'=>0, 'position'=>180),
 	'm.value'=>array('label'=>"Qty", 'checked'=>1, 'position'=>200),
-	'm.price'=>array('label'=>"UnitPurchaseValue", 'checked'=>0, 'position'=>210)
+	'm.price'=>array('label'=>"UnitPurchaseValue", 'checked'=>0, 'position'=>210, 'enabled'=>empty($conf->global->STOCK_MOVEMENT_LIST_HIDE_UNIT_PRICE))
 	//'m.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	//'m.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500)
 );
@@ -276,9 +276,9 @@ if ($action == "correct_stock") {
 				$user,
 				$id,
 				GETPOST("nbpiece", 'int'),
-				GETPOST("mouvement"),
-				GETPOST("label", 'san_alpha'),
-				GETPOST('unitprice'),
+				GETPOST("mouvement", 'int'),
+				GETPOST("label", 'alphanohtml'),
+				price2num(GETPOST('unitprice'), 'MT'),
 				$eatby,
 				$sellby,
 				$batch,
@@ -291,9 +291,9 @@ if ($action == "correct_stock") {
 				$user,
 				$id,
 				GETPOST("nbpiece", 'int'),
-				GETPOST("mouvement"),
-				GETPOST("label", 'san_alpha'),
-				GETPOST('unitprice'),
+				GETPOST("mouvement", "int"),
+				GETPOST("label", 'alphanohtml'),
+				price2num(GETPOST('unitprice'), 'MT'),
 				GETPOST('inventorycode', 'alphanohtml'),
 				$origin_element,
 				$origin_id
@@ -488,7 +488,7 @@ $sql .= " u.login, u.photo, u.lastname, u.firstname, u.email as user_email, u.st
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -548,7 +548,7 @@ if (!empty($search_user)) {
 if (!empty($search_batch)) {
 	$sql .= natural_search('m.batch', $search_batch);
 }
-if (!empty($product_id)) {
+if (!empty($product_id) && $product_id != '-1') {
 	$sql .= natural_search('p.rowid', $product_id);
 }
 if (!empty($search_fk_projet) && $search_fk_projet != '-1') {
@@ -579,7 +579,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	 while ($db->fetch_object($resql)) {
 	 $nbtotalofrecords++;
 	 }*/
-	/* This fast and low memory method to get and count full list converts the sql into a sql count */
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^SELECT[a-z0-9\._\s\(\),]+FROM/i', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
 	$resql = $db->query($sqlforcount);
 	$objforcount = $db->fetch_object($resql);
@@ -654,7 +654,7 @@ if ($object->id > 0) {
 		$morehtmlref .= '<br>'.img_picto('', 'project').' '.$langs->trans('Project').' ';
 		if ($usercancreate && 1 == 2) {
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
 			if ($action == 'classify') {
 				$projectid = $object->fk_project;
@@ -718,7 +718,6 @@ if ($object->id > 0) {
 
 	print '</div>';
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border centpercent tableforfield">';
@@ -760,7 +759,6 @@ if ($object->id > 0) {
 
 	print "</table>";
 
-	print '</div>';
 	print '</div>';
 	print '</div>';
 
@@ -864,6 +862,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions = array(
+	'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 //    'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 //    'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );

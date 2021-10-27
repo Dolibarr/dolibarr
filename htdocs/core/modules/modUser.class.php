@@ -90,7 +90,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 251;
-		$this->rights[$r][1] = 'Consulter les autres utilisateurs';
+		$this->rights[$r][1] = 'Read information of other users';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'user';
@@ -98,7 +98,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 252;
-		$this->rights[$r][1] = 'Consulter les permissions des autres utilisateurs';
+		$this->rights[$r][1] = 'Read permissions of other users';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'user_advance';
@@ -106,7 +106,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 253;
-		$this->rights[$r][1] = 'Creer/modifier utilisateurs internes et externes';
+		$this->rights[$r][1] = 'Create/modify internal and external users';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'user';
@@ -114,7 +114,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 254;
-		$this->rights[$r][1] = 'Creer/modifier utilisateurs externes seulement';
+		$this->rights[$r][1] = 'Create/modify external users only';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'user_advance';
@@ -122,7 +122,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 255;
-		$this->rights[$r][1] = 'Modifier le mot de passe des autres utilisateurs';
+		$this->rights[$r][1] = 'Modify the password of other users';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'user';
@@ -130,7 +130,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 256;
-		$this->rights[$r][1] = 'Supprimer ou desactiver les autres utilisateurs';
+		$this->rights[$r][1] = 'Delete or disable other users';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'user';
@@ -138,7 +138,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 341;
-		$this->rights[$r][1] = 'Consulter ses propres permissions';
+		$this->rights[$r][1] = 'Read its own permissions';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'self_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
@@ -146,7 +146,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 342;
-		$this->rights[$r][1] = 'Creer/modifier ses propres infos utilisateur';
+		$this->rights[$r][1] = 'Create/modify of its own user';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'self';
@@ -154,7 +154,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 343;
-		$this->rights[$r][1] = 'Modifier son propre mot de passe';
+		$this->rights[$r][1] = 'Modify its own password';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'self';
@@ -162,7 +162,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 344;
-		$this->rights[$r][1] = 'Modifier ses propres permissions';
+		$this->rights[$r][1] = 'Modify its own permissions';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'self_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
@@ -202,7 +202,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 358;
-		$this->rights[$r][1] = 'Exporter les utilisateurs';
+		$this->rights[$r][1] = 'Export all users';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'user';
@@ -322,7 +322,7 @@ class modUser extends DolibarrModules
 			'u.birth'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$'
 		);
 		$this->import_examplevalues_array[$r] = array(
-			'u.lastname'=>"Doe", 'u.firstname'=>'John', 'u.login'=>'jdoe', 'u.employee'=>'0 or 1', 'u.job'=>'CTO', 'u.gender'=>'0 or 1',
+			'u.lastname'=>"Doe", 'u.firstname'=>'John', 'u.login'=>'jdoe', 'u.employee'=>'0 or 1', 'u.job'=>'CTO', 'u.gender'=>'man or woman',
 			'u.pass_crypted'=>'Encrypted password',
 			'u.fk_soc'=>'0 (internal user) or company name (external user)', 'u.datec'=>dol_print_date(dol_now(), '%Y-%m-%d'), 'u.address'=>"61 jump street",
 			'u.zip'=>"123456", 'u.town'=>"Big town", 'u.fk_country'=>'US, FR, DE...', 'u.office_phone'=>"0101010101", 'u.office_fax'=>"0101010102",

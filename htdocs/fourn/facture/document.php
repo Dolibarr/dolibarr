@@ -77,6 +77,8 @@ if ($object->fetch($id, $ref)) {
 	$upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$ref;
 }
 
+$permissiontoadd = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer); // Used by the include of actions_setnotes.inc.php
+
 
 /*
  * Actions
@@ -118,7 +120,7 @@ if ($object->id > 0) {
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($user->rights->facture->creer) {
 			if ($action != 'classify') {
-				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				$morehtmlref .= ' : ';
 			}
 			if ($action == 'classify') {

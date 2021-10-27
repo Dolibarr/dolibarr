@@ -254,7 +254,7 @@ if (! empty($conf->recruitment->enabled) && $user->rights->recruitment->read)
 	$sql.= " WHERE c.fk_soc = s.rowid";
 	$sql.= " AND c.fk_statut = 0";
 	$sql.= " AND c.entity IN (".getEntity('commande').")";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	if ($socid)	$sql.= " AND c.fk_soc = ".((int) $socid);
 
 	$resql = $db->query($sql);
@@ -320,7 +320,7 @@ if (! empty($conf->recruitment->enabled) && $user->rights->recruitment->read)
 END MODULEBUILDER DRAFT MYOBJECT */
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 $NBMAX = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
@@ -331,12 +331,12 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 	$sql = "SELECT s.rowid, s.ref, s.label, s.date_creation, s.tms, s.status, COUNT(rc.rowid) as nbapplications";
 	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as s";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc ON rc.fk_recruitmentjobposition = s.rowid";
-	if ($conf->societe->enabled && !$user->rights->societe->client->voir && !$socid) {
+	if ($conf->societe->enabled && empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE s.entity IN (".getEntity($staticrecruitmentjobposition->element).")";
-	if ($conf->societe->enabled && !$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if ($conf->societe->enabled && empty($user->rights->societe->client->voir) && !$socid) {
+		$sql .= " AND s.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND s.fk_soc = $socid";
@@ -402,12 +402,12 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 	$sql = "SELECT rc.rowid, rc.ref, rc.email, rc.lastname, rc.firstname, rc.date_creation, rc.tms, rc.status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as s ON rc.fk_recruitmentjobposition = s.rowid";
-	if ($conf->societe->enabled && !$user->rights->societe->client->voir && !$socid) {
+	if ($conf->societe->enabled && empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE rc.entity IN (".getEntity($staticrecruitmentjobposition->element).")";
-	if ($conf->societe->enabled && !$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if ($conf->societe->enabled && empty($user->rights->societe->client->voir) && !$socid) {
+		$sql .= " AND s.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND s.fk_soc = $socid";
@@ -463,7 +463,7 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 	}
 }
 
-print '</div></div></div>';
+print '</div></div>';
 
 // End of page
 llxFooter();

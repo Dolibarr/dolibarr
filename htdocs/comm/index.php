@@ -106,10 +106,16 @@ print load_fiche_titre($langs->trans("CommercialArea"), '', 'commercial');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-print getCustomerProposalPieChart($socid);
-print '<br>';
-print getCustomerOrderPieChart($socid);
-print '<br>';
+$tmp = getCustomerProposalPieChart($socid);
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
+$tmp = getCustomerOrderPieChart($socid);
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
 
 /*
  * Draft customer proposals
@@ -123,14 +129,14 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p,";
 	$sql .= " ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE p.entity IN (".getEntity($propalstatic->element).")";
 	$sql .= " AND p.fk_soc = s.rowid";
 	$sql .= " AND p.fk_statut = ".Propal::STATUS_DRAFT;
-	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if (empty($user->rights->societe->client->voir) && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND s.rowid = ".((int) $socid);
@@ -220,14 +226,14 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p,";
 	$sql .= " ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE p.entity IN (".getEntity($supplierproposalstatic->element).")";
 	$sql .= " AND p.fk_statut = ".SupplierProposal::STATUS_DRAFT;
 	$sql .= " AND p.fk_soc = s.rowid";
-	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if (empty($user->rights->societe->client->voir) && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND s.rowid = ".((int) $socid);
@@ -316,14 +322,14 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande as c,";
 	$sql .= " ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE c.entity IN (".getEntity($orderstatic->element).")";
 	$sql .= " AND c.fk_statut = ".Commande::STATUS_DRAFT;
 	$sql .= " AND c.fk_soc = s.rowid";
-	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if (empty($user->rights->societe->client->voir) && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND c.fk_soc = ".((int) $socid);
@@ -413,17 +419,17 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf,";
 	$sql .= " ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE cf.entity IN (".getEntity($supplierorderstatic->element).")";
 	$sql .= " AND cf.fk_statut = ".CommandeFournisseur::STATUS_DRAFT;
 	$sql .= " AND cf.fk_soc = s.rowid";
-	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if (empty($user->rights->societe->client->voir) && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
-		$sql .= " AND cf.fk_soc = ".$socid;
+		$sql .= " AND cf.fk_soc = ".((int) $socid);
 	}
 
 	$resql = $db->query($sql);
@@ -505,7 +511,7 @@ if (!empty($conf->ficheinter->enabled)) {
 	$sql = "SELECT f.rowid, f.ref, s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
@@ -514,7 +520,7 @@ if (!empty($conf->ficheinter->enabled)) {
 	if ($socid) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 
@@ -542,7 +548,6 @@ if (!empty($conf->ficheinter->enabled)) {
 }
 
 print '</div><div class="fichetwothirdright">';
-print '<div class="ficheaddleft">';
 
 /*
  * Last modified customers or prospects
@@ -555,13 +560,13 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire) {
 	$sql .= ", s.canvas";
 	$sql .= ", s.datec, s.tms";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE s.entity IN (".getEntity($companystatic->element).")";
 	$sql .= " AND s.client IN (".Societe::CUSTOMER.", ".Societe::PROSPECT.", ".Societe::CUSTOMER_AND_PROSPECT.")";
-	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if (empty($user->rights->societe->client->voir) && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND s.rowid = $socid";
@@ -651,13 +656,13 @@ if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_S
 	$sql .= ", s.canvas";
 	$sql .= ", s.datec as dc, s.tms as dm";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$user->socid) {
+	if (empty($user->rights->societe->client->voir) && !$user->socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE s.entity IN (".getEntity($companystatic->element).")";
 	$sql .= " AND s.fournisseur = ".Societe::SUPPLIER;
-	if (!$user->rights->societe->client->voir && !$user->socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND s.rowid = ".((int) $socid);
@@ -756,14 +761,14 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) { // T
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."contrat as c";
 	$sql .= ", ".MAIN_DB_PREFIX."product as p";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE c.entity IN (".getEntity($staticcontrat->element).")";
 	$sql .= " AND c.fk_soc = s.rowid";
 	$sql .= " AND c.fk_product = p.rowid";
-	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if (empty($user->rights->societe->client->voir) && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND s.rowid = ".((int) $socid);
@@ -831,14 +836,14 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE p.entity IN (".getEntity($propalstatic->element).")";
 	$sql .= " AND p.fk_soc = s.rowid";
 	$sql .= " AND p.fk_statut = ".Propal::STATUS_VALIDATED;
-	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if (empty($user->rights->societe->client->voir) && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND s.rowid = ".((int) $socid);
@@ -947,14 +952,14 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE c.entity IN (".getEntity($orderstatic->element).")";
 	$sql .= " AND c.fk_soc = s.rowid";
 	$sql .= " AND c.fk_statut IN (".Commande::STATUS_VALIDATED.", ".Commande::STATUS_SHIPMENTONPROCESS.")";
-	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if (empty($user->rights->societe->client->voir) && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND s.rowid = ".((int) $socid);
@@ -1051,7 +1056,6 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 	}
 }
 
-print '</div>';
 print '</div>';
 print '</div>';
 

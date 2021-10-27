@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2012  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2012-2015  Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2012-2021  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
@@ -107,7 +107,7 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 		if ($dir = opendir($newpath)) {
 			$filedate = '';
 			$filesize = '';
-
+			$fileperm = '';
 			while (false !== ($file = readdir($dir))) {        // $file is always a basename (into directory $newpath)
 				if (!utf8_check($file)) {
 					$file = utf8_encode($file); // To be sure data is stored in utf8 in memory
@@ -1159,10 +1159,11 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  *  @param	object	$object			Current object in use
  *  @param	boolean	$allowdotdot	Allow to delete file path with .. inside. Never use this, it is reserved for migration purpose.
  *  @param	int		$indexdatabase	Try to remove also index entries.
+ *  @param	int		$nolog			Disable log file
  *  @return boolean         		True if no error (file is deleted or if glob is used and there's nothing to delete), False if error
  *  @see dol_delete_dir()
  */
-function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0, $object = null, $allowdotdot = false, $indexdatabase = 1)
+function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0, $object = null, $allowdotdot = false, $indexdatabase = 1, $nolog = 0)
 {
 	global $db, $conf, $user, $langs;
 	global $hookmanager;
@@ -1170,7 +1171,9 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 	// Load translation files required by the page
 	$langs->loadLangs(array('other', 'errors'));
 
-	dol_syslog("dol_delete_file file=".$file." disableglob=".$disableglob." nophperrors=".$nophperrors." nohook=".$nohook);
+	if (empty($nolog)) {
+		dol_syslog("dol_delete_file file=".$file." disableglob=".$disableglob." nophperrors=".$nophperrors." nohook=".$nohook);
+	}
 
 	// Security:
 	// We refuse transversal using .. and pipes into filenames.
@@ -1226,7 +1229,9 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 					}
 
 					if ($ok) {
-						dol_syslog("Removed file ".$filename, LOG_DEBUG);
+						if (empty($nolog)) {
+							dol_syslog("Removed file ".$filename, LOG_DEBUG);
+						}
 
 						// Delete entry into ecm database
 						$rel_filetodelete = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filename);
@@ -1264,7 +1269,9 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 				$ok = unlink($file_osencoded);
 			}
 			if ($ok) {
-				dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
+				if (empty($nolog)) {
+					dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
+				}
 			} else {
 				dol_syslog("Failed to remove file ".$file_osencoded, LOG_WARNING);
 			}
@@ -1304,11 +1311,15 @@ function dol_delete_dir($dir, $nophperrors = 0)
  *  @param  int		$nophperrors    Disable all PHP output errors
  *  @param	int		$onlysub		Delete only files and subdir, not main directory
  *  @param  int		$countdeleted   Counter to count nb of elements found really deleted
+ *  @param	int		$indexdatabase	Try to remove also index entries.
+ *  @param	int		$nolog			Disable log files (too verbose when making recursive directories)
  *  @return int             		Number of files and directory we try to remove. NB really removed is returned into var by reference $countdeleted.
  */
-function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub = 0, &$countdeleted = 0)
+function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub = 0, &$countdeleted = 0, $indexdatabase = 1, $nolog = 0)
 {
-	dol_syslog("functions.lib:dol_delete_dir_recursive ".$dir, LOG_DEBUG);
+	if (empty($nolog)) {
+		dol_syslog("functions.lib:dol_delete_dir_recursive ".$dir, LOG_DEBUG);
+	}
 	if (dol_is_dir($dir)) {
 		$dir_osencoded = dol_osencode($dir);
 		if ($handle = opendir("$dir_osencoded")) {
@@ -1319,9 +1330,9 @@ function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub =
 
 				if ($item != "." && $item != "..") {
 					if (is_dir(dol_osencode("$dir/$item")) && !is_link(dol_osencode("$dir/$item"))) {
-						$count = dol_delete_dir_recursive("$dir/$item", $count, $nophperrors, 0, $countdeleted);
+						$count = dol_delete_dir_recursive("$dir/$item", $count, $nophperrors, 0, $countdeleted, $indexdatabase, $nolog);
 					} else {
-						$result = dol_delete_file("$dir/$item", 1, $nophperrors);
+						$result = dol_delete_file("$dir/$item", 1, $nophperrors, 0, null, false, $indexdatabase, $nolog);
 						$count++;
 						if ($result) {
 							$countdeleted++;
@@ -1332,6 +1343,7 @@ function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub =
 			}
 			closedir($handle);
 
+			// Delete also the main directory
 			if (empty($onlysub)) {
 				$result = dol_delete_dir($dir, $nophperrors);
 				$count++;
@@ -1959,6 +1971,9 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 		} elseif ($mode == 'bz') {
 			$foundhandler = 1;
 			$compressdata = bzcompress($data, 9);
+		} elseif ($mode == 'zstd') {
+			$foundhandler = 1;
+			$compressdata = zstd_compress($data, 9);
 		} elseif ($mode == 'zip') {
 			if (class_exists('ZipArchive') && !empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_COMPRESS)) {
 				$foundhandler = 1;
@@ -2257,8 +2272,9 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
  */
 function dol_check_secure_access_document($modulepart, $original_file, $entity, $fuser = '', $refname = '', $mode = 'read')
 {
-	global $conf, $db, $user;
+	global $conf, $db, $user, $hookmanager;
 	global $dolibarr_main_data_root, $dolibarr_main_document_root_alt;
+	global $object;
 
 	if (!is_object($fuser)) {
 		$fuser = $user;
@@ -2290,9 +2306,13 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	$sqlprotectagainstexternals = '';
 	$ret = array();
 
-	// Find the subdirectory name as the reference. For exemple original_file='10/myfile.pdf' -> refname='10'
+	// Find the subdirectory name as the reference. For example original_file='10/myfile.pdf' -> refname='10'
 	if (empty($refname)) {
 		$refname = basename(dirname($original_file)."/");
+		if ($refname == 'thumbs') {
+			// If we get the thumbns directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
+			$refname = basename(dirname(dirname($original_file))."/");
+		}
 	}
 
 	// Define possible keys to use for permission check
@@ -2702,13 +2722,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if ($fuser->rights->expedition->{$lire} || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		$original_file = $conf->expedition->dir_output."/sending/".$original_file;
+		$original_file = $conf->expedition->dir_output."/".(strpos('sending/', $original_file) === 0 ? '' : 'sending/').$original_file;
+		//$original_file = $conf->expedition->dir_output."/".$original_file;
 	} elseif (($modulepart == 'livraison' || $modulepart == 'delivery') && !empty($conf->expedition->dir_output)) {
 		// Delivery Note Wrapping
 		if ($fuser->rights->expedition->delivery->{$lire} || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		$original_file = $conf->expedition->dir_output."/receipt/".$original_file;
+		$original_file = $conf->expedition->dir_output."/".(strpos('receipt/', $original_file) === 0 ? '' : 'receipt/').$original_file;
 	} elseif ($modulepart == 'actions' && !empty($conf->agenda->dir_output)) {
 		// Wrapping pour les actions
 		if ($fuser->rights->agenda->myactions->{$read} || preg_match('/^specimen/i', $original_file)) {
@@ -2846,6 +2867,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if ($fuser->admin) {
 			$accessallowed = 1; // If user is admin
 		}
+
 		$tmpmodulepart = explode('-', $modulepart);
 		if (!empty($tmpmodulepart[1])) {
 				$modulepart = $tmpmodulepart[0];
@@ -2915,20 +2937,25 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			}
 		}
 
-		// For modules who wants to manage different levels of permissions for documents
-		$subPermCategoryConstName = strtoupper($modulepart).'_SUBPERMCATEGORY_FOR_DOCUMENTS';
-		if (!empty($conf->global->$subPermCategoryConstName)) {
-			$subPermCategory = $conf->global->$subPermCategoryConstName;
-			if (!empty($subPermCategory) && (($fuser->rights->$modulepart->$subPermCategory->{$lire}) || ($fuser->rights->$modulepart->$subPermCategory->{$read}) || ($fuser->rights->$modulepart->$subPermCategory->{$download}))) {
-				$accessallowed = 1;
+		$parameters = array(
+			'modulepart' => $modulepart,
+			'original_file' => $original_file,
+			'entity' => $entity,
+			'fuser' => $fuser,
+			'refname' => '',
+			'mode' => $mode
+		);
+		$reshook = $hookmanager->executeHooks('checkSecureAccess', $parameters, $object);
+		if ($reshook > 0) {
+			if (!empty($hookmanager->resArray['original_file'])) {
+				$original_file = $hookmanager->resArray['original_file'];
 			}
-		}
-
-		// Define $sqlprotectagainstexternals for modules who want to protect access using a SQL query.
-		$sqlProtectConstName = strtoupper($modulepart).'_SQLPROTECTAGAINSTEXTERNALS_FOR_DOCUMENTS';
-		if (!empty($conf->global->$sqlProtectConstName)) {	// If module want to define its own $sqlprotectagainstexternals
-			// Example: mymodule__SQLPROTECTAGAINSTEXTERNALS_FOR_DOCUMENTS = "SELECT fk_soc FROM ".MAIN_DB_PREFIX.$modulepart." WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
-			eval('$sqlprotectagainstexternals = "'.$conf->global->$sqlProtectConstName.'";');
+			if (!empty($hookmanager->resArray['accessallowed'])) {
+				$accessallowed = $hookmanager->resArray['accessallowed'];
+			}
+			if (!empty($hookmanager->resArray['sqlprotectagainstexternals'])) {
+				$sqlprotectagainstexternals = $hookmanager->resArray['sqlprotectagainstexternals'];
+			}
 		}
 	}
 

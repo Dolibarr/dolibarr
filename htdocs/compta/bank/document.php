@@ -74,6 +74,8 @@ if ($id > 0 || !empty($ref)) {
 
 $result = restrictedArea($user, 'banque', $object->id, 'bank_account', '', '');
 
+$permissiontoadd = $user->rights->banque->modifier;	// Used by the include of actions_dellink.inc.php
+
 
 /*
  * Actions

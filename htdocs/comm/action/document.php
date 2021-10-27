@@ -108,6 +108,8 @@ $help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
 
 llxHeader('', $langs->trans("Agenda"), $help_url);
 
+$now = dol_now();
+$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
 
 if ($object->id > 0) {
 	$result1 = $object->fetch($id);
@@ -134,9 +136,6 @@ if ($object->id > 0) {
 
 
 	$head = actions_prepare_head($object);
-
-	$now = dol_now();
-	$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
 
 	print dol_get_fiche_head($head, 'documents', $langs->trans("Action"), -1, 'action');
 
@@ -202,9 +201,9 @@ if ($object->id > 0) {
 	// Date start
 	print '<tr><td>'.$langs->trans("DateActionStart").'</td><td colspan="3">';
 	if (!$object->fulldayevent) {
-		print dol_print_date($object->datep, 'dayhour');
+		print dol_print_date($object->datep, 'dayhour', 'tzuser');
 	} else {
-		print dol_print_date($object->datep, 'day');
+		print dol_print_date($object->datep, 'day', 'tzuser');
 	}
 	if ($object->percentage == 0 && $object->datep && $object->datep < ($now - $delay_warning)) {
 		print img_warning($langs->trans("Late"));
@@ -215,9 +214,9 @@ if ($object->id > 0) {
 	// Date end
 	print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
 	if (!$object->fulldayevent) {
-		print dol_print_date($object->datef, 'dayhour');
+		print dol_print_date($object->datef, 'dayhour', 'tzuser');
 	} else {
-		print dol_print_date($object->datef, 'day');
+		print dol_print_date($object->datef, 'day', 'tzuser');
 	}
 	if ($object->percentage > 0 && $object->percentage < 100 && $object->datef && $object->datef < ($now - $delay_warning)) {
 		print img_warning($langs->trans("Late"));

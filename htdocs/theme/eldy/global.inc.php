@@ -13,7 +13,7 @@
 	--colorbacktitle1: rgb(<?php print $colorbacktitle1; ?>);
 	--colorbacktabcard1: rgb(<?php print $colorbacktabcard1; ?>);
 	--colorbacktabactive: rgb(<?php print $colorbacktabactive; ?>);
-	--colorbacklineimpair1: rgb(<?php print $colorbacklineimpair1; ?>);
+	--colorbacklinepair1: rgb(<?php print $colorbacklineimpair1; ?>);
 	--colorbacklineimpair2: rgb(<?php print $colorbacklineimpair2; ?>);
 	--colorbacklinepair1: rgb(<?php print $colorbacklinepair1; ?>);
 	--colorbacklinepair2: rgb(<?php print $colorbacklinepair2; ?>);
@@ -28,8 +28,9 @@
 	--colortexttitlelink: rgba(<?php print $colortexttitlelink; ?>, 0.9);
 	--colortext: rgb(<?php print $colortext; ?>);
 	--colortextlink: rgb(<?php print $colortextlink; ?>);
-	--colortextbackhmenu: #<?php echo $colortextbackhmenu; ?>;
+	--colortextbackhmenu: #<?php print $colortextbackhmenu; ?>;
 	--colortextbackvmenu: #<?php print $colortextbackvmenu; ?>;
+	--colortopbordertitle1: rgb(<?php print $colortopbordertitle1; ?>);
 	--listetotal: #888888;
 	--inputbackgroundcolor: #FFF;
 	--inputbordercolor: rgba(0,0,0,.2);
@@ -297,6 +298,13 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	cursor: pointer;
 	max-width: 350px;
 }
+input.short {
+	width: 40px;
+}
+.nofocusvisible:focus-visible {
+	outline: none;
+}
+
 div.buttonpayment input:focus {
 	color: #008;
 }
@@ -675,6 +683,12 @@ textarea.centpercent {
 .alignstart {
 	text-align: start;
 }
+.start {
+	text-align: start;
+}
+.end {
+	text-align: end;
+}
 .left {
 	text-align: <?php print $left; ?>;
 }
@@ -695,6 +709,9 @@ textarea.centpercent {
 }
 .nowraponsmartphone {
 	white-space: <?php print ($dol_optimize_smallscreen ? 'nowrap' : 'normal'); ?>;
+}
+.wraponsmartphone {
+	white-space: <?php print ($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
 }
 .liste_titre .nowrap {
 	white-space: nowrap;
@@ -879,6 +896,13 @@ span.fa.fa-plus-circle.paddingleft {
 .tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off
 {
 	font-size: 1.5em; vertical-align: text-bottom;
+}
+
+.divoverflow {
+	overflow: hidden;
+	white-space: nowrap;
+	vertical-align: middle;
+	text-overflow: ellipsis;
 }
 
 
@@ -1387,6 +1411,7 @@ table[summary="list_of_modules"] .fa-cog {
 .width400 { width: 400px; }
 .width500 { width: 500px; }
 .maxwidth25  { max-width: 25px; }
+.maxwidth40  { max-width: 40px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
 .maxwidthdate  { max-width: 80px; }
@@ -1408,6 +1433,7 @@ table[summary="list_of_modules"] .fa-cog {
 .titlefieldcreate { width: 20%; }
 .titlefield       { /* width: 25%; */ width: 250px; }
 .titlefieldmiddle { width: 50%; }
+.titlefieldmax45 { max-width: 45%; }
 .imgmaxwidth180 { max-width: 180px; }
 .imgmaxheight50 { max-height: 50px; }
 
@@ -1549,7 +1575,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		height: 64px !important;
 	}
 
-	.divmainbodylarge { margin-left: 20px !important; margin-right: 20px !important; }
+	.divmainbodylarge { margin-left: 10px !important; margin-right: 10px !important; }
 
 	.tdoverflowonsmartphone {
 		max-width: 0;
@@ -1666,7 +1692,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 }
 .linkobject { cursor: pointer; }
 
-table.tableforfield tr>td:first-of-type, tr.trforfield>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
+table.tableforfield tr:not(.liste_titre)>td:first-of-type, tr.trforfield:not(.liste_titre)>td:first-of-type, div.tableforfield div.tagtr:not(.liste_titre)>div.tagtd:first-of-type {
 	color: var(--tableforfieldcolor);
 }
 
@@ -1712,7 +1738,7 @@ td.showDragHandle {
 	<?php } ?>
 }
 #id-right {	/* This must stay id-right and not be replaced with echo $right */
-	padding-top: 10px;
+	padding-top: 14px;
 	width: 100%;
 	background: var(--colorbackbody);
 	padding-bottom: 20px;
@@ -1732,6 +1758,20 @@ td.showDragHandle {
 	display: inline-block;
 }
 
+/*
+.classforhorizontalscrolloftabs  .fiche .div-table-responsive
+{
+	transform:rotateX(180deg);
+	-ms-transform:rotateX(180deg);
+	-webkit-transform:rotateX(180deg);
+}
+.classforhorizontalscrolloftabs  .fiche .div-table-responsive-inside
+{
+	transform:rotateX(180deg);
+	-ms-transform:rotateX(180deg);
+	-webkit-transform:rotateX(180deg);
+}
+*/
 
 
 <?php if (empty($conf->global->THEME_DISABLE_STICKY_TOPMENU)) {  ?>
@@ -1842,10 +1882,11 @@ div.vmenu, td.vmenu {
 		display: none;
 	}
 
-	/* if no side-nav, we don't need to have width forced */
+	/* if no side-nav, we don't need to have width forced to calc(100% - 210px); */
 	.classforhorizontalscrolloftabs #id-right {
-		width: unset;
-		display: unset;
+		width: 100%;
+		/* width: unset; */
+		/* display: unset; */
 	}
 
 	body.sidebar-collapse .login_block {
@@ -1931,7 +1972,7 @@ div.fichethirdleft {
 		print "float: ".$left.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: 50%;\n";
+		print "width: calc(50% - 14px);\n";
 	} ?>
 	<?php if ($conf->browser->layout == 'phone') {
 		print "padding-bottom: 6px;\n";
@@ -1942,14 +1983,11 @@ div.fichetwothirdright {
 		print "float: ".$right.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: 50%;\n";
+		print "width: calc(50% - 14px);\n";
 	} ?>
 	<?php if ($conf->browser->layout == 'phone') {
 		print "padding-bottom: 6px\n";
 	} ?>
-}
-div.fichetwothirdright div.ficheaddleft {
-	 padding-<?php echo $left; ?>: 28px;
 }
 div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone') {
@@ -2004,9 +2042,6 @@ div.secondcolumn div.box {
 		float: none;
 		width: auto;
 		padding-bottom: 6px;
-	}
-	div.fichetwothirdright div.ficheaddleft {
-		padding-left: 0;
 	}
 	div.fichehalfleft {
 		float: none;
@@ -2217,12 +2252,12 @@ img.photorefnoborder {
 .underrefbanner {
 }
 .underbanner {
-	border-bottom: <?php echo $borderwidth ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
+	border-bottom: <?php echo $borderwidth ?>px solid var(--colortopbordertitle1);
 	/* border-bottom: 2px solid var(--colorbackhmenu1); */
 }
 .trextrafieldseparator td, .trextrafields_collapse_last td {
 	/* border-bottom: 2px solid var(--colorbackhmenu1) !important; */
-	border-bottom: 2px solid rgb(<?php echo $colortopbordertitle1 ?>) !important;
+	border-bottom: 2px solid var(--colortopbordertitle1) !important;
 }
 
 .tdhrthin {
@@ -2234,7 +2269,7 @@ img.photorefnoborder {
 /* Menu top et 1ere ligne tableau                                                 */
 /* ============================================================================== */
 
-div#id-top {
+#id-top {
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
 	display:none;
 <?php } else { ?>
@@ -3258,7 +3293,7 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 	padding-right: 7px !important;
 }
 input.button[name="upload"] {
-	padding: 4px !important;
+	padding: 5px !important;
 	font-size: 0.9em;
 }
 input.button.smallpaddingimp {
@@ -3359,10 +3394,10 @@ td.border, div.tagtable div div.border {
 	border-bottom: none !important;
 }
 .bordertop {
-	border-top: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
+	border-top: 1px solid var(--colortopbordertitle1);
 }
 .borderbottom {
-	border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
+	border-bottom: 1px solid var(--colortopbordertitle1);
 }
 
 
@@ -3374,10 +3409,15 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-collapse: separate !important;
 	border-spacing: 0px;
 	border-top-width: <?php echo $borderwidth ?>px;
-	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
+	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
-	margin: 0px 0px 5px 0px;
+	margin: 0px 0px 20px 0px;
 
+	<?php
+	if ($userborderontable) { ?>
+	border-left: 1px solid var(--colortopbordertitle1);
+	border-right: 1px solid var(--colortopbordertitle1);
+	<?php } ?>
 	/*width: calc(100% - 7px);
 	border-collapse: separate !important;
 	border-spacing: 0px;
@@ -3390,20 +3430,20 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 }
 #tablelines {
 	border-bottom-width: 1px;
-	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
+	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
 }
 table.liste tr:last-of-type td, table.noborder:not(#tablelines) tr:last-of-type td, table.formdoc tr:last-of-type td, div.noborder tr:last-of-type td {
 	border-bottom-width: 1px;
-	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
+	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
 }
 div.tabBar div.fichehalfright table.noborder:not(.margintable):not(.paymenttable):not(.lastrecordtable):last-of-type {
-	border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
+	border-bottom: 1px solid var(--colortopbordertitle1);
 }
 div.tabBar table.border>tbody>tr:last-of-type>td {
 	border-bottom-width: 1px;
-	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
+	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
 }
 div.tabBar div.fichehalfright table.noborder {
@@ -3437,7 +3477,7 @@ tr.liste_titre_filter td.liste_titre:first-of-type {
 {
 	border-bottom-width: 0 !important;
 	border-top-width: 1px;
-	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
+	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
 }
 tr#trlinefordates td {
@@ -3446,7 +3486,7 @@ tr#trlinefordates td {
 .liste_titre_add td, .liste_titre_add th, .liste_titre_add .tagtd
 {
 	border-top-width: 1px;
-	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
+	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
 }
 table.liste tr, table.noborder tr, div.noborder form {
@@ -3711,14 +3751,14 @@ table.hidepaginationnext .paginationnext {
 {
 	font-family: <?php print $fontlist ?>;
 	margin-bottom: 1px;
-	color: var(--oddevencolor);
+	color: var(--oddeven);
 }
 .impair, .nohover .impair:hover, tr.impair td.nohover
 {
-	background: var(--colorbacklineimpair1);
+	background-color: var(--colorbacklineimpair2);
 }
 #GanttChartDIV {
-	background-color: var(--colorbacklineimpair1);
+	background-color: var(--colorbacklineimpair2);
 }
 
 .oddeven, .evenodd, .pair, .nohover .pair:hover, tr.pair td.nohover, .tagtr.oddeven {
@@ -3727,21 +3767,21 @@ table.hidepaginationnext .paginationnext {
 	color: var(--oddevencolor);
 }
 .pair, .nohover .pair:hover, tr.pair td.nohover {
-	background-color: var(--colorbacklinepair1);
+	background-color: var(--colorbacklinepair2);
 }
 
 table.dataTable tr.oddeven {
-	background-color: var(--colorbacklinepair1) !important;
+	background-color: var(--colorbacklinepair2) !important;
 }
 
 /* For no hover style */
 td.oddeven, table.nohover tr.impair, table.nohover tr.pair, table.nohover tr.impair td, table.nohover tr.pair td, tr.nohover td, form.nohover, form.nohover:hover {
-	background-color: var(--colorbacklineimpair1) !important;
-	background: var(--colorbacklineimpair1) !important;
+	background-color: var(--colorbacklineimpair2) !important;
+	background: var(--colorbacklineimpair2) !important;
 }
 td.evenodd, tr.nohoverpair td, #trlinefordates td {
-	background-color: var(--colorbacklinepair1) !important;
-	background: var(--colorbacklinepair1) !important;
+	background-color: var(--colorbacklinepair2) !important;
+	background: var(--colorbacklinepair2) !important;
 }
 .trforbreak td {
 	font-weight: 500;
@@ -3776,7 +3816,9 @@ tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td {
 }
 table.nobottomiftotal tr.liste_total td {
 	background-color: #fff;
+	<?php if (!$userborderontable) { ?>
 	border-bottom: 0px !important;
+	<?php } ?>
 }
 table.nobottom, td.nobottom {
 	border-bottom: 0px !important;
@@ -3792,8 +3834,12 @@ div.liste_titre {
 }
 div.liste_titre_bydiv {
 	border-top-width: <?php echo $borderwidth ?>px;
-	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
+	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
+	<?php if ($userborderontable) { ?>
+	border-left: <?php echo $borderwidth ?>px solid var(--colortopbordertitle1);
+	/* border-right: <?php echo $borderwidth ?>px solid var(--colortopbordertitle1); */
+	<?php } ?>
 
 	border-collapse: collapse;
 	display: table;
@@ -3824,7 +3870,7 @@ div.liste_titre_bydiv, .liste_titre div.tagtr, tr.liste_titre, tr.liste_titre_se
 }
 tr.liste_titre th, tr.liste_titre td, th.liste_titre
 {
-	border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
+	border-bottom: 1px solid var(--colortopbordertitle1);
 }
 tr.liste_titre:first-child th, tr:first-child th.liste_titre {
 /*    border-bottom: 1px solid #ddd ! important; */
@@ -3843,7 +3889,7 @@ tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, fo
 }
 tr.liste_titre_topborder td {
 	border-top-width: <?php echo $borderwidth; ?>px;
-	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
+	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
 }
 .liste_titre td a {
@@ -3944,7 +3990,7 @@ div.tabBar .noborder {
 }
 
 #tablelines tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td, .tableforservicepart1 tr.liste_titre td {
-	border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>) !important;
+	border-bottom: 1px solid var(--colortopbordertitle1) !important;
 }
 #tablelines tr td {
 	height: unset;
@@ -3953,14 +3999,13 @@ div.tabBar .noborder {
 /* Prepare to remove class pair - impair */
 
 .noborder:not(.editmode) > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
 {
-	background: linear-gradient(bottom, var(--colorbacklineimpair1) 85%, var(--colorbacklineimpair2) 100%);
-	background: -o-linear-gradient(bottom, var(--colorbacklineimpair1) 85%, var(--colorbacklineimpair2) 100%);
-	background: -moz-linear-gradient(bottom, var(--colorbacklineimpair1) 85%, var(--colorbacklineimpair2) 100%);
-	background: -webkit-linear-gradient(bottom, var(--colorbacklineimpair1) 85%, var(--colorbacklineimpair2) 100%);
-	/* background: -ms-linear-gradient(bottom, var(--colorbacklineimpair1) 85%, var(--colorbacklineimpair2) 100%); */
+	background: linear-gradient(bottom, var(----colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
+	background: -o-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
+	background: -moz-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
+	background: -webkit-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
 }
 .noborder > tbody > tr:nth-child(even):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(even):not(:last-child) td:not(.liste_titre),
 .noborder .oddeven.tagtr:nth-child(even):not(:last-child) .tagtd:not(.liste_titre)
@@ -3969,14 +4014,13 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft
 }
 
 .noborder:not(.editmode) > tbody > tr:nth-child(odd):not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
 {
-	background: linear-gradient(bottom, var(--colorbacklinepair1) 85%, var(--colorbacklinepair2) 100%);
-	background: -o-linear-gradient(bottom, var(--colorbacklinepair1) 85%, var(--colorbacklinepair2) 100%);
-	background: -moz-linear-gradient(bottom, var(--colorbacklinepair1) 85%, var(--colorbacklinepair2) 100%);
-	background: -webkit-linear-gradient(bottom, var(--colorbacklinepair1) 85%, var(--colorbacklinepair2) 100%);
-	/* background: -ms-linear-gradient(bottom, var(--colorbacklinepair1) 85%, var(--colorbacklinepair2) 100%); */
+	background: linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
+	background: -o-linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
+	background: -moz-linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
+	background: -webkit-linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
 }
 .noborder > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
 .noborder .oddeven.tagtr:nth-child(odd):not(:last-child) .tagtd:not(.liste_titre)
@@ -3999,9 +4043,6 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	padding-right: 0px;
 	padding-left: 0px;
 	padding-bottom: 10px;
-}
-.ficheaddleft div.boxstats, .ficheaddright div.boxstats {
-	border: none;
 }
 .boxstatsborder {
 	/* border: 1px solid #CCC !important; */
@@ -4191,7 +4232,7 @@ span.dashboardlineko {
 	margin-bottom: 25px !important;
 	border-bottom-width: 1px;
 	background: var(--colorbackbody);
-	border-top: <?php echo $borderwidth ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
+	border-top: <?php echo $borderwidth ?>px solid var(--colortopbordertitle1);
 	/* border-top: 2px solid var(--colorbackhmenu1) !important; */
 }
 table.noborder.boxtable tr td {
@@ -4770,8 +4811,11 @@ span[phptag] {
 	border-bottom: 1px solid #ccc;
 	background: #e6e6e6;
 	display: inline-block;
-	padding: 5px 0 5px 0;
+	padding: 5px 5px 5px 5px;
 	z-index: 1000;
+}
+.centpercent.websitebar {
+	width: calc(100% - 10px);
 }
 .websitebar .buttonDelete, .websitebar .button {
 	text-shadow: none;
@@ -4780,13 +4824,13 @@ span[phptag] {
 {
 	padding: 4px 5px 4px 5px !important;
 	margin: 2px 4px 2px 4px  !important;
-	line-height: normal;
+/*	line-height: normal; */
 	background: #f5f5f5 !important;
 	border: 1px solid #ccc !important;
 }
 .websiteselection {
 	/* display: inline-block; */
-	padding-left: 10px;
+	padding-<?php echo $right; ?>: 10px;
 	vertical-align: middle;
 	/* line-height: 28px; */
 }
@@ -4805,6 +4849,9 @@ span[phptag] {
 }
 .websiteiframenoborder {
 	border: 0px;
+}
+span.websiteselection span.select2.select2-container.select2-container--default {
+	margin: 0 0 0 4px;
 }
 span.websitebuttonsitepreview, a.websitebuttonsitepreview {
 	vertical-align: middle;
@@ -4867,11 +4914,10 @@ table.cal_month td { padding-left: 1px !important; padding-right: 1px !important
 .cal_past          { }
 .cal_peruser       { padding-top: 0 !important; padding-bottom: 0 !important; padding-<?php print $left; ?>: 1px !important; padding-<?php print $right; ?>: 1px !important; }
 .cal_impair        {
-	background: linear-gradient(bottom, var(--colorbacklinepair1) 85%, var(--colorbacklinepair2) 100%);
-	background: -o-linear-gradient(bottom, var(--colorbacklinepair1) 85%, var(--colorbacklinepair2) 100%);
-	background: -moz-linear-gradient(bottom, var(--colorbacklinepair1) 85%, var(--colorbacklinepair2) 100%);
-	background: -webkit-linear-gradient(bottom, var(--colorbacklinepair1) 85%, var(--colorbacklinepair2) 100%);
-	/*  background: -ms-linear-gradient(bottom, var(--colorbacklinepair1) 85%, var(--colorbacklinepair2) 100%); */
+	background: linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
+	background: -o-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
+	background: -moz-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
+	background: -webkit-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
 }
 .cal_today_peruser_impair { background: #F8F8F0; }
 .peruser_busy      { }
@@ -5437,7 +5483,7 @@ ul.filedirelem li {
 }
 
 ul.ecmjqft {
-	line-height: 16px;
+	line-height: 32px;
 	padding: 0px;
 	margin: 0px;
 	font-weight: normal;
@@ -5490,8 +5536,8 @@ div#ecm-layout-center {
 	float: right;
 }
 
-.ecmjqft LI.directory { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2.png', 1); ?>) left top no-repeat; }
-.ecmjqft LI.expanded { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2-expanded.png', 1); ?>) left top no-repeat; }
+.ecmjqft LI.directory { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2.png', 1); ?>) left top no-repeat; background-position-y: 8px; }
+.ecmjqft LI.expanded { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2-expanded.png', 1); ?>) left top no-repeat; background-position-y: 8px; }
 .ecmjqft LI.wait { font-weight:normal; background: url(<?php echo dol_buildpath('/theme/'.$theme.'/img/working.gif', 1); ?>) left top no-repeat; }
 
 
@@ -5643,7 +5689,7 @@ span#select2-taskid-container[title^='--'] {
 }
 
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
-	background-color: rgb(<?php echo $colorbackhmenu1 ?>);
+	background-color: var(--colorbackhmenu1);
 	color: var(--colortextbackhmenu);
 }
 .select2-container--default .select2-results__option--highlighted[aria-selected] span {
@@ -6648,7 +6694,6 @@ div.tabsElem a.tab {
   background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
   background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
   background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
-  background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
   background-image: linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
 }
 .cd-timeline-content:after {
@@ -6814,7 +6859,7 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 /* For copy-paste feature                                                         */
 /* ============================================================================== */
 
-span.clipboardCPValueToPrint {
+span.clipboardCPValueToPrint, div.clipboardCPValueToPrint  {
 	display: inline-block;
 }
 span.clipboardCPValue.hidewithsize {
@@ -6823,10 +6868,39 @@ span.clipboardCPValue.hidewithsize {
 	color: transparent;
 	white-space: nowrap;
 }
+div.clipboardCPValue.hidewithsize {
+	width: 0 !important;
+	display: none;
+	color: transparent;
+	white-space: nowrap;
+}
 
 .clipboardCPShowOnHover .clipboardCPButton {
 	display: none;
 }
+
+/* To make a div popup, we must use a position aboluste inside a position relative */
+.clipboardCPText {
+	position: relative;
+}
+.clipboardCPTextDivInside {
+	position: absolute;
+	background: #f8f8fa;
+	color: #888;
+	border: 1px solid #E0E0E0;
+	opacity: 1;
+	z-index: 20;
+	padding: 2px;
+	padding-left: 5px;
+	padding-right: 5px;
+	top: -5px;
+	left: 0px;
+	border-radius: 5px;
+	white-space: nowrap;
+	font-size: 0.9em;
+	box-shadow: 1px 1px 6px #ddd;
+}
+
 
 
 /* ============================================================================== */
@@ -6950,6 +7024,9 @@ span.clipboardCPValue.hidewithsize {
 		z-index: 201;
 		background: var(--colorbackvmenu1);
 	}
+	#id-right {	/* This must stay id-right and not be replaced with echo $right */
+		padding-top: 8px;
+	}
 
 	.login_vertical_align {
 		padding-left: 20px;
@@ -6982,7 +7059,7 @@ span.clipboardCPValue.hidewithsize {
 		padding-left: 20px;
 		padding-right: 20px;
 		padding-bottom: 16px;
-		top: inherit !important;
+		top: auto;
 		left: 0 !important;
 		text-align: center;
 		vertical-align: middle;
@@ -7056,6 +7133,19 @@ span.clipboardCPValue.hidewithsize {
 	#divbodywebsite {
 		word-break: break-all;
 	}
+
+	.websiteselectionsection {
+		border-left: unset;
+		boerder-right: unset;
+		padding-left: 5px;
+	}
+
+	.a-mesure, .a-mesure-disabled {
+		display: block;
+		margin-bottom: 6px;
+		padding-left: 12px;
+		padding-right: 12px;
+	}
 }
 
 @media only screen and (max-width: 320px)
@@ -7091,6 +7181,6 @@ if (!empty($conf->global->THEME_CUSTOM_CSS)) {
 ?>
 
 /* Must be at end */
-div.flot-text .flot-tick-label .tickLabel {
+div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;
 }

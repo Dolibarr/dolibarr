@@ -213,6 +213,8 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+$search_product_category = 0;
+
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Do we click on purge search criteria ?
@@ -297,14 +299,14 @@ $sql .= ' sp.rowid, sp.note_public, sp.note_private, sp.total_ht, sp.total_tva, 
 $sql .= ' sp.fk_multicurrency, sp.multicurrency_code, sp.multicurrency_tx, sp.multicurrency_total_ht, sp.multicurrency_total_tva as multicurrency_total_vat, sp.multicurrency_total_ttc,';
 $sql .= ' sp.datec as date_creation, sp.tms as date_update,';
 $sql .= " p.rowid as project_id, p.ref as project_ref,";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " sc.fk_soc, sc.fk_user,";
 }
 $sql .= " u.firstname, u.lastname, u.photo, u.login";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -328,7 +330,7 @@ if ($search_product_category > 0) {
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON sp.fk_user_author = u.rowid';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = sp.fk_projet";
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale > 0 || (!$user->rights->societe->client->voir && !$socid)) {
+if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 if ($search_user > 0) {
@@ -337,8 +339,8 @@ if ($search_user > 0) {
 }
 $sql .= ' WHERE sp.fk_soc = s.rowid';
 $sql .= ' AND sp.entity IN ('.getEntity('supplier_proposal').')';
-if (!$user->rights->societe->client->voir && !$socid) { //restriction
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+if (empty($user->rights->societe->client->voir) && !$socid) { //restriction
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
@@ -374,7 +376,7 @@ if ($search_montant_ttc != '') {
 	$sql .= natural_search("sp.total_ttc", $search_montant_ttc, 1);
 }
 if ($search_multicurrency_code != '') {
-	$sql .= ' AND sp.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
+	$sql .= " AND sp.multicurrency_code = '".$db->escape($search_multicurrency_code)."'";
 }
 if ($search_multicurrency_tx != '') {
 	$sql .= natural_search('sp.multicurrency_tx', $search_multicurrency_tx, 1);

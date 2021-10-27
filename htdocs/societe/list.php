@@ -89,9 +89,9 @@ $search_idprof4 = trim(GETPOST('search_idprof4', 'alpha'));
 $search_idprof5 = trim(GETPOST('search_idprof5', 'alpha'));
 $search_idprof6 = trim(GETPOST('search_idprof6', 'alpha'));
 $search_vat = trim(GETPOST('search_vat', 'alpha'));
-$search_sale = trim(GETPOST("search_sale", 'int'));
-$search_categ_cus = trim(GETPOST("search_categ_cus", 'int'));
-$search_categ_sup = trim(GETPOST("search_categ_sup", 'int'));
+$search_sale = GETPOST("search_sale", 'int');
+$search_categ_cus = GETPOST("search_categ_cus", 'int');
+$search_categ_sup = GETPOST("search_categ_sup", 'int');
 $search_country = GETPOST("search_country", 'intcomma');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_price_level = GETPOST('search_price_level', 'int');
@@ -100,8 +100,8 @@ $search_status = GETPOST("search_status", 'int');
 $search_type = GETPOST('search_type', 'alpha');
 $search_level = GETPOST("search_level", "array");
 $search_stcomm = GETPOST('search_stcomm', 'int');
-$search_import_key  = GETPOST("search_import_key", "alpha");
-$search_parent_name = GETPOST('search_parent_name', 'alpha');
+$search_import_key  = trim(GETPOST("search_import_key", "alpha"));
+$search_parent_name = trim(GETPOST('search_parent_name', 'alpha'));
 
 $type = GETPOST('type', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -258,7 +258,7 @@ $arrayfields = array(
 	's.import_key'=>array('label'=>"ImportId", 'checked'=>0, 'position'=>1100),
 );
 if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
-	$arrayfields['s.price_level'] =array('label'=>"PriceLevel", 'position'=>30, 'checked'=>0);
+	$arrayfields['s.price_level'] = array('label'=>"PriceLevel", 'position'=>30, 'checked'=>0);
 }
 
 // Extra fields
@@ -454,7 +454,7 @@ $sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.barcode, s.address, s.tow
 $sql .= " s.entity,";
 $sql .= " st.libelle as stcomm, st.picto as stcomm_picto, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
 $sql .= " s.email, s.phone, s.fax, s.url, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.idprof5 as idprof5, s.idprof6 as idprof6, s.tva_intra, s.fk_pays,";
-$sql .= " s.tms as date_update, s.datec as date_creation,";
+$sql .= " s.tms as date_update, s.datec as date_creation, s.import_key,";
 $sql .= " s.code_compta, s.code_compta_fournisseur, s.parent as fk_parent,s.price_level,";
 $sql .= " s2.nom as name2,";
 $sql .= " typent.code as typent_code,";
@@ -467,16 +467,16 @@ if ($search_sale && $search_sale != '-1') {
 	$sql .= ", sc.fk_soc, sc.fk_user";
 }
 // We'll need these fields in order to filter by categ
-if ($search_categ_cus && $search_categ_cus!=-1) {
+if ($search_categ_cus && $search_categ_cus != -1) {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
 }
-if ($search_categ_sup && $search_categ_sup!=-1) {
+if ($search_categ_sup && $search_categ_sup != -1) {
 	$sql .= ", cs.fk_categorie, cs.fk_soc";
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -485,7 +485,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s2 ON s.parent = s2.rowid";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (s.rowid = ef.fk_object)";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
@@ -494,10 +494,10 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_effectif as staff on (staff.id = s.fk_ef
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.	code_region = state.fk_region)";
 // We'll need this table joined to the select in order to filter by categ
-if (!empty($search_categ_cus) && $search_categ_cus!=-1) {
+if (!empty($search_categ_cus) && $search_categ_cus != '-1') {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 }
-if (!empty($search_categ_sup) && $search_categ_sup!=-1) {
+if (!empty($search_categ_sup) && $search_categ_sup != '-1') {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs ON s.rowid = cs.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 }
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."c_stcomm as st ON s.fk_stcomm = st.id";
@@ -513,14 +513,14 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " WHERE s.entity IN (".getEntity('societe').")";
-//if (empty($user->rights->societe->client->voir) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->societe->client->readallthirdparties_advance)) && !$socid)	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+//if (empty($user->rights->societe->client->voir) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->societe->client->readallthirdparties_advance)) && !$socid)	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_sale && $search_sale != '-1' && $search_sale != '-2') {
 	$sql .= " AND s.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 }
-if (!$user->rights->fournisseur->lire) {
+if (empty($user->rights->fournisseur->lire)) {
 	$sql .= " AND (s.fournisseur <> 1 OR s.client <> 0)"; // client=0, fournisseur=0 must be visible
 }
 if ($search_sale == -2) {
@@ -573,7 +573,7 @@ if ($search_account_supplier_code) {
 	$sql .= natural_search("s.code_compta_fournisseur", $search_account_supplier_code);
 }
 if ($search_address) {
-	$sql.= natural_search('s.address', $search_address);
+	$sql .= natural_search('s.address', $search_address);
 }
 if ($search_town) {
 	$sql .= natural_search("s.town", $search_town);
@@ -672,7 +672,7 @@ if (empty($reshook)) {
 }
 $sql .= $hookmanager->resPrint;
 // Add GroupBy from hooks
-$parameters = array('all' => $all, 'fieldstosearchall' => $fieldstosearchall);
+$parameters = array('fieldstosearchall' => $fieldstosearchall);
 $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
@@ -751,7 +751,7 @@ if ($search_alias != '') {
 	$param .= "&search_alias=".urlencode($search_alias);
 }
 if ($search_address != '') {
-	$param .= '&search_address=' . urlencode($search_address);
+	$param .= '&search_address='.urlencode($search_address);
 }
 if ($search_town != '') {
 	$param .= "&search_town=".urlencode($search_town);
@@ -1094,7 +1094,7 @@ if (!empty($arrayfields['country.code_iso']['checked'])) {
 if (!empty($arrayfields['typent.code']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
 	// We use showempty=0 here because there is already an unknown value into dictionary.
-	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), 'minwidth50 maxwidth100', 1);
+	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), 'minwidth50 maxwidth125', 1);
 	print '</td>';
 }
 // Multiprice level
@@ -1363,6 +1363,7 @@ print "</tr>\n";
 
 $i = 0;
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 
@@ -1507,11 +1508,13 @@ while ($i < min($num, $limit)) {
 	}
 	// Type ent
 	if (!empty($arrayfields['typent.code']['checked'])) {
-		print '<td class="center">';
-		if (!is_array($typenArray) || count($typenArray) == 0) {
+		if (!isset($typenArray) || !is_array($typenArray) || count($typenArray) == 0) {
 			$typenArray = $formcompany->typent_array(1);
 		}
-		print $typenArray[$obj->typent_code];
+		$labeltypeofcompany= empty($typenArray[$obj->typent_code]) ? '' : $typenArray[$obj->typent_code];
+
+		print '<td class="center tdoverflowmax125" title="'.dol_escape_htmltag($labeltypeofcompany).'">';
+		print dol_escape_htmltag($labeltypeofcompany);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1639,7 +1642,7 @@ while ($i < min($num, $limit)) {
 				$titlealt = $val['label'];
 			}
 			if ($obj->stcomm_id != $val['id']) {
-				print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?stcommsocid='.$obj->rowid.'&stcomm='.$val['code'].'&action=setstcomm&token='.newToken().$param.($page ? '&page='.urlencode($page) : '').'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
+				print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?stcommsocid='.$obj->rowid.'&stcomm='.urlencode($val['code']).'&action=setstcomm&token='.newToken().$param.($page ? '&page='.urlencode($page) : '').'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
 			}
 		}
 		print '</div></div></td>';

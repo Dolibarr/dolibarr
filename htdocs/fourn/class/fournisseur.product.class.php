@@ -164,7 +164,7 @@ class ProductFournisseur extends Product
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
-		$sql .= " WHERE fk_product = ".$this->id." AND fk_soc = ".((int) $id_fourn);
+		$sql .= " WHERE fk_product = ".((int) $this->id)." AND fk_soc = ".((int) $id_fourn);
 
 		dol_syslog(get_class($this)."::remove_fournisseur", LOG_DEBUG);
 		$resql2 = $this->db->query($sql);
@@ -438,7 +438,7 @@ class ProductFournisseur extends Product
 
 			// Delete price for this quantity
 			$sql = "DELETE FROM  ".MAIN_DB_PREFIX."product_fournisseur_price";
-			$sql .= " WHERE fk_soc = ".$fourn->id." AND ref_fourn = '".$this->db->escape($ref_fourn)."' AND quantity = ".((float) $qty)." AND entity = ".$conf->entity;
+			$sql .= " WHERE fk_soc = ".((int) $fourn->id)." AND ref_fourn = '".$this->db->escape($ref_fourn)."' AND quantity = ".((float) $qty)." AND entity = ".((int) $conf->entity);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				// Add price for this quantity to supplier
@@ -459,7 +459,7 @@ class ProductFournisseur extends Product
 				$sql .= " ".((int) $fourn->id).",";
 				$sql .= " '".$this->db->escape($ref_fourn)."',";
 				$sql .= " '".$this->db->escape($desc_fourn)."',";
-				$sql .= " ".$user->id.",";
+				$sql .= " ".((int) $user->id).",";
 				$sql .= " ".price2num($buyprice).",";
 				$sql .= " ".((float) $qty).",";
 				$sql .= " ".((float) $remise_percent).",";
@@ -846,7 +846,7 @@ class ProductFournisseur extends Product
 						$this->fourn_qty                = $record["quantity"];
 						$this->fourn_remise_percent     = $record["remise_percent"];
 						$this->fourn_remise             = $record["remise"];
-						$this->fourn_unitprice          = $record["unitprice"];
+						$this->fourn_unitprice          = $fourn_unitprice;
 						$this->fourn_charges            = $record["charges"]; // deprecated
 						$this->fourn_tva_tx             = $record["tva_tx"];
 						$this->fourn_id                 = $record["fourn_id"];
@@ -1183,7 +1183,7 @@ class ProductFournisseur extends Product
 			$label .= $this->displayPriceProductFournisseurLog($logPrices);
 		}
 
-		$url = dol_buildpath('/product/fournisseurs.php', 1).'?id='.$this->id.'&action=add_price&socid='.$this->fourn_id.'&rowid='.$this->product_fourn_price_id;
+		$url = dol_buildpath('/product/fournisseurs.php', 1).'?id='.$this->id.'&action=add_price&token='.newToken().'&socid='.$this->fourn_id.'&rowid='.$this->product_fourn_price_id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not

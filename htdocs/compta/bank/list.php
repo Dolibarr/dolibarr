@@ -185,7 +185,7 @@ $sql = "SELECT b.rowid, b.label, b.courant, b.rappro, b.account_number, b.fk_acc
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -506,6 +506,8 @@ print "</tr>\n";
 
 $totalarray = array();
 $totalarray['nbfield'] = 0;
+$totalarray['val'] = array('balance'=>0);
+$total = array();
 $found = 0;
 $i = 0;
 $lastcurrencycode = '';
@@ -714,7 +716,11 @@ foreach ($accounts as $key => $type) {
 
 	print '</tr>';
 
-	$total[$objecttmp->currency_code] += $solde;
+	if (empty($total[$objecttmp->currency_code])) {
+		$total[$objecttmp->currency_code] = $solde;
+	} else {
+		$total[$objecttmp->currency_code] += $solde;
+	}
 
 	$i++;
 }

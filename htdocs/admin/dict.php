@@ -8,7 +8,7 @@
  * Copyright (C) 2011		Remy Younes				<ryounes@gmail.com>
  * Copyright (C) 2012-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@ltairis.fr>
- * Copyright (C) 2011-2020	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
@@ -220,10 +220,10 @@ $tabsql[21] = "SELECT c.rowid as rowid, c.code, c.label, c.active, c.position FR
 $tabsql[22] = "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_input_reason";
 $tabsql[23] = "SELECT t.rowid as rowid, t.taux, t.revenuestamp_type, c.label as country, c.code as country_code, t.fk_pays as country_id, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_revenuestamp as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
 $tabsql[24] = "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_type_resource";
-$tabsql[25] = "SELECT rowid   as rowid, code, label, active, module FROM ".MAIN_DB_PREFIX."c_type_container as t WHERE t.entity IN (".getEntity('c_type_container').")";
+$tabsql[25] = "SELECT rowid   as rowid, code, label, active, module FROM ".MAIN_DB_PREFIX."c_type_container as t WHERE t.entity = ".getEntity($tabname[25]);
 //$tabsql[26]= "SELECT rowid   as rowid, code, label, short_label, active FROM ".MAIN_DB_PREFIX."c_units";
 $tabsql[27] = "SELECT id      as rowid, code, libelle, picto, active FROM ".MAIN_DB_PREFIX."c_stcomm";
-$tabsql[28] = "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.newByMonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid";
+$tabsql[28] = "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.newbymonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid";
 $tabsql[29] = "SELECT rowid   as rowid, code, label, percent, position, active FROM ".MAIN_DB_PREFIX."c_lead_status";
 $tabsql[30] = "SELECT rowid, code, name, paper_size, orientation, metric, leftmargin, topmargin, nx, ny, spacex, spacey, width, height, font_size, custom_x, custom_y, active FROM ".MAIN_DB_PREFIX."c_format_cards";
 //$tabsql[31]= "SELECT s.rowid as rowid, pcg_version, s.label, s.active FROM ".MAIN_DB_PREFIX."accounting_system as s";
@@ -232,8 +232,8 @@ $tabsql[33] = "SELECT rowid, pos, code, label, active FROM ".MAIN_DB_PREFIX."c_h
 $tabsql[34] = "SELECT rowid, pos, code, label, c_level, active FROM ".MAIN_DB_PREFIX."c_hrm_function";
 $tabsql[35] = "SELECT c.rowid, c.label, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_cat c";
 $tabsql[36] = "SELECT r.rowid, r.fk_c_exp_tax_cat, r.range_ik, r.active, r.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_range r";
-$tabsql[37] = "SELECT r.rowid, r.code, r.label, r.short_label, r.unit_type, r.scale, r.active FROM ".MAIN_DB_PREFIX."c_units r";
-$tabsql[38] = "SELECT rowid, entity, code, label, url, icon, active FROM ".MAIN_DB_PREFIX."c_socialnetworks";
+$tabsql[37] = "SELECT r.rowid, r.code, r.sortorder, r.label, r.short_label, r.unit_type, r.scale, r.active FROM ".MAIN_DB_PREFIX."c_units r";
+$tabsql[38] = "SELECT s.rowid, s.entity, s.code, s.label, s.url, s.icon, s.active FROM ".MAIN_DB_PREFIX."c_socialnetworks as s WHERE s.entity = ".getEntity($tabname[38]);
 $tabsql[39] = "SELECT code, label as libelle, sortorder, active FROM ".MAIN_DB_PREFIX."c_prospectcontactlevel";
 $tabsql[40] = "SELECT id      as rowid, code, libelle, picto, active FROM ".MAIN_DB_PREFIX."c_stcommcontact";
 $tabsql[41] = "SELECT rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_transport_mode";
@@ -278,7 +278,7 @@ $tabsqlsort[33] = "code ASC";
 $tabsqlsort[34] = "code ASC";
 $tabsqlsort[35] = "c.label ASC";
 $tabsqlsort[36] = "r.fk_c_exp_tax_cat ASC, r.range_ik ASC";
-$tabsqlsort[37] = "r.unit_type ASC, r.scale ASC, r.code ASC";
+$tabsqlsort[37] = "sortorder ASC";
 $tabsqlsort[38] = "rowid, code ASC";
 $tabsqlsort[39] = "sortorder ASC";
 $tabsqlsort[40] = "code ASC";
@@ -315,7 +315,7 @@ $tabfield[24] = "code,label";
 $tabfield[25] = "code,label";
 //$tabfield[26]= "code,label,short_label";
 $tabfield[27] = "code,libelle,picto";
-$tabfield[28] = "code,label,affect,delay,newByMonth,country_id,country";
+$tabfield[28] = "code,label,affect,delay,newbymonth,country_id,country";
 $tabfield[29] = "code,label,percent,position";
 $tabfield[30] = "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 //$tabfield[31]= "pcg_version,label";
@@ -324,7 +324,7 @@ $tabfield[33] = "code,label";
 $tabfield[34] = "code,label";
 $tabfield[35] = "label";
 $tabfield[36] = "range_ik,fk_c_exp_tax_cat";
-$tabfield[37] = "code,label,short_label,unit_type,scale";
+$tabfield[37] = "code,label,short_label,unit_type,scale,sortorder";
 $tabfield[38] = "code,label,url,icon,entity";
 $tabfield[39] = "code,libelle,sortorder";
 $tabfield[40] = "code,libelle,picto";
@@ -361,7 +361,7 @@ $tabfieldvalue[24] = "code,label";
 $tabfieldvalue[25] = "code,label";
 //$tabfieldvalue[26]= "code,label,short_label";
 $tabfieldvalue[27] = "code,libelle,picto";
-$tabfieldvalue[28] = "code,label,affect,delay,newByMonth,country";
+$tabfieldvalue[28] = "code,label,affect,delay,newbymonth,country";
 $tabfieldvalue[29] = "code,label,percent,position";
 $tabfieldvalue[30] = "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 //$tabfieldvalue[31]= "pcg_version,label";
@@ -370,7 +370,7 @@ $tabfieldvalue[33] = "code,label";
 $tabfieldvalue[34] = "code,label";
 $tabfieldvalue[35] = "label";
 $tabfieldvalue[36] = "range_ik,fk_c_exp_tax_cat";
-$tabfieldvalue[37] = "code,label,short_label,unit_type,scale";
+$tabfieldvalue[37] = "code,label,short_label,unit_type,scale,sortorder";
 $tabfieldvalue[38] = "code,label,url,icon";
 $tabfieldvalue[39] = "code,libelle,sortorder";
 $tabfieldvalue[40] = "code,libelle,picto";
@@ -407,7 +407,7 @@ $tabfieldinsert[24] = "code,label";
 $tabfieldinsert[25] = "code,label";
 //$tabfieldinsert[26]= "code,label,short_label";
 $tabfieldinsert[27] = "code,libelle,picto";
-$tabfieldinsert[28] = "code,label,affect,delay,newByMonth,fk_country";
+$tabfieldinsert[28] = "code,label,affect,delay,newbymonth,fk_country";
 $tabfieldinsert[29] = "code,label,percent,position";
 $tabfieldinsert[30] = "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 //$tabfieldinsert[31]= "pcg_version,label";
@@ -417,7 +417,7 @@ $tabfieldinsert[33] = "code,label";
 $tabfieldinsert[34] = "code,label";
 $tabfieldinsert[35] = "label";
 $tabfieldinsert[36] = "range_ik,fk_c_exp_tax_cat";
-$tabfieldinsert[37] = "code,label,short_label,unit_type,scale";
+$tabfieldinsert[37] = "code,label,short_label,unit_type,scale,sortorder";
 $tabfieldinsert[38] = "code,label,url,icon,entity";
 $tabfieldinsert[39] = "code,label,sortorder";
 $tabfieldinsert[40] = "code,libelle,picto";
@@ -548,7 +548,7 @@ $tabhelp[24] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[25] = array('code'=>$langs->trans('EnterAnyCode'));
 //$tabhelp[26] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[27] = array('code'=>$langs->trans("EnterAnyCode"), 'picto'=>$langs->trans("PictoHelp"));
-$tabhelp[28] = array('affect'=>$langs->trans("FollowedByACounter"), 'delay'=>$langs->trans("MinimumNoticePeriod"), 'newByMonth'=>$langs->trans("NbAddedAutomatically"));
+$tabhelp[28] = array('affect'=>$langs->trans("FollowedByACounter"), 'delay'=>$langs->trans("MinimumNoticePeriod"), 'newbymonth'=>$langs->trans("NbAddedAutomatically"));
 $tabhelp[29] = array('code'=>$langs->trans("EnterAnyCode"), 'percent'=>$langs->trans("OpportunityPercent"), 'position'=>$langs->trans("PositionIntoComboList"));
 $tabhelp[30] = array('code'=>$langs->trans("EnterAnyCode"), 'name'=>$langs->trans("LabelName"), 'paper_size'=>$langs->trans("LabelPaperSize"));
 //$tabhelp[31] = array('pcg_version'=>$langs->trans("EnterAnyCode"));
@@ -1175,6 +1175,8 @@ if ($id) {
 		$sql .= natural_search("r.code_region", $search_code);
 	} elseif ($search_code != '' && $id == 7) {
 		$sql .= natural_search("a.code", $search_code);
+	} elseif ($search_code != '' && $id == 10) {
+		$sql .= natural_search("t.code", $search_code);
 	} elseif ($search_code != '' && $id != 9) {
 		$sql .= natural_search("code", $search_code);
 	}
@@ -1392,7 +1394,7 @@ if ($id) {
 			if ($value == 'delay') {
 				$valuetoshow = $langs->trans("NoticePeriod");
 			}
-			if ($value == 'newByMonth') {
+			if ($value == 'newbymonth') {
 				$valuetoshow = $langs->trans("NewByMonth");
 			}
 			if ($value == 'fk_tva') {
@@ -1455,6 +1457,10 @@ if ($id) {
 		print $tdsoffields;
 
 
+		// Line to enter new values
+		print '<!-- line to add new entry -->';
+		print '<tr class="oddeven nodrag nodrop nohover">';
+
 		$obj = new stdClass();
 		// If data was already input, we define them in obj to populate input fields.
 		if (GETPOST('actionadd')) {
@@ -1474,9 +1480,6 @@ if ($id) {
 			unset($fieldlist[2]); // Remove field ??? if dictionary Regions
 		}
 
-		// Line to enter new values
-		print '<!-- line to add new entry -->';
-		print '<tr class="oddeven nodrag nodrop nohover">';
 
 		if (empty($reshook)) {
 			fieldList($fieldlist, $obj, $tabname[$id], 'add');
@@ -1487,7 +1490,7 @@ if ($id) {
 		}
 		print '<td colspan="3" class="center">';
 		if ($action != 'edit') {
-			print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
+			print '<input type="submit" class="button button-add" name="actionadd" value="'.$langs->trans("Add").'">';
 		}
 		print '</td>';
 
@@ -1737,7 +1740,7 @@ if ($id) {
 			if ($value == 'delay') {
 				$valuetoshow = $langs->trans("NoticePeriod");
 			}
-			if ($value == 'newByMonth') {
+			if ($value == 'newbymonth') {
 				$valuetoshow = $langs->trans("NewByMonth");
 			}
 			if ($value == 'fk_tva') {
@@ -1813,7 +1816,7 @@ if ($id) {
 					if (!is_null($withentity)) {
 						print '<input type="hidden" name="entity" value="'.$withentity.'">';
 					}
-					print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+					print '<input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
 					print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 					print '</td>';
 				} else {
@@ -1971,7 +1974,7 @@ if ($id) {
 									}
 								}
 							} elseif ($value == 'fk_c_exp_tax_cat') {
-								$valuetoshow = getDictvalue(MAIN_DB_PREFIX.'c_exp_tax_cat', 'label', $valuetoshow);
+								$valuetoshow = getDictionaryValue(MAIN_DB_PREFIX.'c_exp_tax_cat', 'label', $valuetoshow);
 								$valuetoshow = $langs->trans($valuetoshow);
 							} elseif ($tabname[$id] == MAIN_DB_PREFIX.'c_exp_tax_cat') {
 								$valuetoshow = $langs->trans($valuetoshow);

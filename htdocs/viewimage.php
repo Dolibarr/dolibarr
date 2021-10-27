@@ -221,8 +221,10 @@ if (preg_match('/\.noexe$/i', $original_file)) {
 	accessforbidden('Error: Using the image wrapper to output a file ending with .noexe is not allowed.', 0, 0, 1);
 }
 
-// Security: Delete string ../ into $original_file
-$original_file = str_replace("../", "/", $original_file);
+// Security: Delete string ../ or ..\ into $original_file
+$original_file = preg_replace('/\.\.+/', '..', $original_file);	// Replace '... or more' with '..'
+$original_file = str_replace('../', '/', $original_file);
+$original_file = str_replace('..\\', '/', $original_file);
 
 // Find the subdirectory name as the reference
 $refname = basename(dirname($original_file)."/");

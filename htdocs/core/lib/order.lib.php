@@ -199,16 +199,16 @@ function getCustomerOrderPieChart($socid = 0)
 	$sql = "SELECT count(c.rowid) as nb, c.fk_statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."commande as c";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE c.fk_soc = s.rowid";
 	$sql .= " AND c.entity IN (".getEntity('societe').")";
 	if ($user->socid) {
-		$sql .= ' AND c.fk_soc = '.$user->socid;
+		$sql .= ' AND c.fk_soc = '.((int) $user->socid);
 	}
-	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if (empty($user->rights->societe->client->voir) && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " GROUP BY c.fk_statut";
 

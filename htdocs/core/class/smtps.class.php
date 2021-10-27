@@ -231,7 +231,7 @@ class SMTPs
 	/**
 	 * An array of options for stream_context_create()
 	 */
-	private $_options = [];
+	private $_options = array();
 
 	/**
 	 * Set delivery receipt
@@ -239,7 +239,7 @@ class SMTPs
 	 * @param	array		$_options		An array of options for stream_context_create()
 	 * @return	void
 	 */
-	public function setOptions($_options = [])
+	public function setOptions($_options = array())
 	{
 		$this->_options = $_options;
 	}
@@ -1422,7 +1422,7 @@ class SMTPs
 		$this->_msgContent[$strType]['dataText'] = $strContentAltText;
 
 		if ($this->getMD5flag()) {
-			$this->_msgContent[$strType]['md5']      = dol_hash($strContent, 3);
+			$this->_msgContent[$strType]['md5'] = dol_hash($strContent, 3);
 		}
 		//}
 	}
@@ -1622,7 +1622,7 @@ class SMTPs
 			$this->_msgContent['image'][$strImageName]['data']     = $strContent;
 
 			if ($this->getMD5flag()) {
-				$this->_msgContent['image'][$strImageName]['md5']      = dol_hash($strContent, 3);
+				$this->_msgContent['image'][$strImageName]['md5'] = dol_hash($strContent, 3);
 			}
 		}
 	}

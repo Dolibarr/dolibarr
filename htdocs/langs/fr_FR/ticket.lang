@@ -45,6 +45,8 @@ TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Élevé
 TicketSeverityShortBLOCKING=Critique, bloquant
 
+TicketCategoryShortOTHER=Autre
+
 ErrorBadEmailAddress=Champ '%s' incorrect
 MenuTicketMyAssign=Mes tickets
 MenuTicketMyAssignNonClosed=Mes tickets ouverts
@@ -66,7 +68,7 @@ NeedMoreInformation=Attente retour demandeur
 NeedMoreInformationShort=En attente de retour
 Answered=Répondu
 Waiting=En attente
-SolvedClosed=Solved
+SolvedClosed=Résolu
 Deleted=Supprimé
 
 # Dict
@@ -180,17 +182,17 @@ MessageSuccessfullyAdded=Ticket créé
 TicketMessageSuccessfullyAdded=Message ajouté avec succès
 TicketMessagesList=Liste des messages
 NoMsgForThisTicket=Pas de message pour ce ticket
-Properties=Classification
+TicketProperties=Classification
 LatestNewTickets=Les %s derniers tickets (non lus)
 TicketSeverity=Sévérité
 ShowTicket=Voir le ticket
 RelatedTickets=Tickets liés
 TicketAddIntervention=Créer intervention
-CloseTicket=Close|Solve ticket
-AbandonTicket=Abandon ticket
-CloseATicket=Close|Solve a ticket
+CloseTicket=Fermer|Résoudre ticket
+AbandonTicket=Abandonner le ticket
+CloseATicket=Fermer|Résoudre un ticket
 ConfirmCloseAticket=Confirmer la fermeture du ticket
-ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
+ConfirmAbandonTicket=Confirmez-vous la fermeture du ticket au statut 'Abandonné'
 ConfirmDeleteTicket=Confirmez la suppression du ticket
 TicketDeletedSuccess=Ticket supprimé avec succès
 TicketMarkedAsClosed=Ticket indiqué fermé
@@ -319,3 +321,4 @@ BoxNumberOfTicketByDay=Nombre de nouveaux tickets par jour
 BoxNewTicketVSClose=Nombre de nouveaux tickets aujourd’hui par rapport aux tickets fermés aujourd’hui
 TicketCreatedToday=Ticket créé aujourd'hui
 TicketClosedToday=Ticket fermé aujourd'hui
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

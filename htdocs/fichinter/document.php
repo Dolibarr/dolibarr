@@ -78,6 +78,8 @@ $object->fetch($id, $ref);
 $upload_dir = $conf->ficheinter->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'fichinter';
 
+$permissiontoadd = $user->rights->ficheinter->creer; // Used by the include of actions_setnotes.inc.php
+
 
 /*
  * Actions
@@ -126,7 +128,7 @@ if ($object->id) {
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($user->rights->commande->creer) {
 			if ($action != 'classify') {
-				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				$morehtmlref .= ' : ';
 			}
 			if ($action == 'classify') {

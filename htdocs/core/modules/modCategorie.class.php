@@ -164,8 +164,8 @@ class modCategorie extends DolibarrModules
 			$typeexample .= ($typeexample ? " / " : "")."11=Website page";
 		}
 
-		$this->export_fields_array[$r] = array('cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.type'=>"Type", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory", 'pcat.label'=>"ParentCategoryLabel" );
-		$this->export_TypeFields_array[$r] = array('cat.label'=>"Text", 'cat.type'=>"Numeric", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid', 'pcat.label'=>'Text' );
+		$this->export_fields_array[$r] = array('cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.type'=>"Type", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory", 'pcat.label'=>"ParentCategoryLabel");
+		$this->export_TypeFields_array[$r] = array('cat.label'=>"Text", 'cat.type'=>"Numeric", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid', 'pcat.label'=>'Text');
 		$this->export_entities_array[$r] = array(); // We define here only fields that use another picto
 		$this->export_help_array[$r] = array('cat.type'=>$typeexample);
 
@@ -460,7 +460,7 @@ class modCategorie extends DolibarrModules
 		);
 
 		$this->import_examplevalues_array[$r] = array(
-			'ca.label'=>"My Category Label", 'ca.type'=>$typeexample, 'ca.description'=>"My Category description",		// $typeexample built above in exports
+			'ca.label'=>"My Category Label", 'ca.type'=>$typeexample, 'ca.description'=>"My Category description", // $typeexample built above in exports
 			'ca.fk_parent' => 'rowid or label'
 		);
 		$this->import_updatekeys_array[$r] = array('ca.label'=>'Label');
@@ -501,7 +501,7 @@ class modCategorie extends DolibarrModules
 					'cs.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
 					'cs.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty')
 			);
-			$this->import_examplevalues_array[$r] = array('cs.fk_categorie'=>"rowid or label", 'cs.fk_soc'=>"rowid or ref");
+			$this->import_examplevalues_array[$r] = array('cs.fk_categorie'=>"rowid or label", 'cs.fk_soc'=>"rowid or name");
 		}
 
 		// 2 Customers
@@ -522,7 +522,7 @@ class modCategorie extends DolibarrModules
 					'cs.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
 					'cs.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty')
 			);
-			$this->import_examplevalues_array[$r] = array('cs.fk_categorie'=>"rowid or label", 'cs.fk_soc'=>"rowid or ref");
+			$this->import_examplevalues_array[$r] = array('cs.fk_categorie'=>"rowid or label", 'cs.fk_soc'=>"rowid or name");
 		}
 
 		// 3 Members
@@ -538,7 +538,7 @@ class modCategorie extends DolibarrModules
 
 			$this->import_convertvalue_array[$r] = array(
 				'cs.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
-				'cs.fk_member'=>array('rule'=>'fetchidfromref','classfile'=>'/adherents/class/adherent.class.php','class'=>'Adherent','method'=>'fetch','element'=>'Member')
+				'cs.fk_member'=>array('rule'=>'fetchidfromref', 'classfile'=>'/adherents/class/adherent.class.php', 'class'=>'Adherent', 'method'=>'fetch', 'element'=>'Member')
 			);
 			$this->import_examplevalues_array[$r] = array('cs.fk_categorie'=>"rowid or label", 'cs.fk_member'=>"rowid or ref");
 		}
@@ -579,7 +579,7 @@ class modCategorie extends DolibarrModules
 
 			$this->import_convertvalue_array[$r] = array(
 				'cs.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
-				'cs.fk_project'=>array('rule'=>'fetchidfromref','classfile'=>'/projet/class/project.class.php','class'=>'Project','method'=>'fetch','element'=>'Project')
+				'cs.fk_project'=>array('rule'=>'fetchidfromref', 'classfile'=>'/projet/class/project.class.php', 'class'=>'Project', 'method'=>'fetch', 'element'=>'Project')
 			);
 			$this->import_examplevalues_array[$r] = array('cp.fk_categorie'=>"rowid or label", 'cp.fk_project'=>"rowid or ref");
 		}
@@ -597,7 +597,7 @@ class modCategorie extends DolibarrModules
 
 			$this->import_convertvalue_array[$r] = array(
 				'cu.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
-				'cu.fk_user'=>array('rule'=>'fetchidfromref','classfile'=>'/user/class/user.class.php','class'=>'User','method'=>'fetch','element'=>'User')
+				'cu.fk_user'=>array('rule'=>'fetchidfromref', 'classfile'=>'/user/class/user.class.php', 'class'=>'User', 'method'=>'fetch', 'element'=>'User')
 			);
 			$this->import_examplevalues_array[$r] = array('cu.fk_categorie'=>"rowid or label", 'cu.fk_user'=>"rowid or login");
 		}

@@ -67,6 +67,7 @@ $currentyear = $tmp['year'];
 if (empty($search_year)) {
 	$search_year = $currentyear;
 }
+$moreforfilter = "";
 
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
@@ -223,9 +224,9 @@ if ($result || empty($id)) {
 	}
 
 	if ($mode == 'bynumber') {
-		print '<a class="a-mesure-disabled" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).($type != '' ? '&type='.$type : '').'&mode=byunit&search_year='.$search_year.'">';
+		print '<a class="a-mesure-disabled marginleftonly marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).($type != '' ? '&type='.$type : '').'&mode=byunit&search_year='.$search_year.'">';
 	} else {
-		print '<span class="a-mesure">';
+		print '<span class="a-mesure marginleftonly marginrightonly">';
 	}
 	print $langs->trans("StatsByNumberOfUnits");
 	if ($mode == 'bynumber') {
@@ -236,14 +237,12 @@ if ($result || empty($id)) {
 
 	if (!empty($conf->dol_use_jmobile)) {
 		print '</div>'."\n".'<div class="nowrap">'."\n";
-	} else {
-		print ' &nbsp; ';
 	}
 
 	if ($mode == 'byunit') {
-		print '<a class="a-mesure-disabled" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).($type != '' ? '&type='.$type : '').'&mode=bynumber&search_year='.$search_year.'">';
+		print '<a class="a-mesure-disabled marginleftonly marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).($type != '' ? '&type='.$type : '').'&mode=bynumber&search_year='.$search_year.'">';
 	} else {
-		print '<span class="a-mesure">';
+		print '<span class="a-mesure marginleftonly marginrightonly">';
 	}
 	print $langs->trans("StatsByNumberOfEntities");
 	if ($mode == 'byunit') {
@@ -420,10 +419,10 @@ if ($result || empty($id)) {
 			if ($graphfiles == 'proposals_suppliers' && !$user->rights->supplier_proposal->lire) {
 				continue;
 			}
-			if ($graphfiles == 'invoices_suppliers' && !$user->rights->fournisseur->facture->lire) {
+			if ($graphfiles == 'invoices_suppliers' && empty($user->rights->fournisseur->facture->lire)) {
 				continue;
 			}
-			if ($graphfiles == 'orders_suppliers' && !$user->rights->fournisseur->commande->lire) {
+			if ($graphfiles == 'orders_suppliers' && empty($user->rights->fournisseur->commande->lire)) {
 				continue;
 			}
 			if ($graphfiles == 'mrp' && empty($user->rights->mrp->mo->read)) {
@@ -434,7 +433,7 @@ if ($result || empty($id)) {
 			if ($i % 2 == 0) {
 				print "\n".'<div class="fichecenter"><div class="fichehalfleft">'."\n";
 			} else {
-				print "\n".'<div class="fichehalfright"><div class="ficheaddleft">'."\n";
+				print "\n".'<div class="fichehalfright">'."\n";
 			}
 
 			// Date generation
@@ -445,7 +444,7 @@ if ($result || empty($id)) {
 					$dategenerated = $langs->trans("GeneratedOn", dol_print_date(dol_now(), "dayhour"));
 				}
 			} else {
-				$dategenerated = ($mesg ? '<font class="error">'.$mesg.'</font>' : $langs->trans("ChartNotGenerated"));
+				$dategenerated = ($mesg ? '<span class="error">'.$mesg.'</span>' : $langs->trans("ChartNotGenerated"));
 			}
 			$linktoregenerate = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).((string) $type != '' ? '&type='.$type : '').'&action=recalcul&mode='.$mode.'&search_year='.$search_year.'&search_categ='.$search_categ.'">'.img_picto($langs->trans("ReCalculate").' ('.$dategenerated.')', 'refresh').'</a>';
 
@@ -466,7 +465,7 @@ if ($result || empty($id)) {
 			if ($i % 2 == 0) {
 				print "\n".'</div>'."\n";
 			} else {
-				print "\n".'</div></div></div>';
+				print "\n".'</div></div>';
 				print '<div class="clear"><div class="fichecenter"><br></div></div>'."\n";
 			}
 
@@ -475,8 +474,8 @@ if ($result || empty($id)) {
 	}
 	// div not closed
 	if ($i % 2 == 1) {
-		print "\n".'<div class="fichehalfright"><div class="ficheaddleft">'."\n";
-		print "\n".'</div></div></div>';
+		print "\n".'<div class="fichehalfright">'."\n";
+		print "\n".'</div></div>';
 		print '<div class="clear"><div class="fichecenter"><br></div></div>'."\n";
 	}
 }
