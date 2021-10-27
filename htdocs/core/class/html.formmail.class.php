@@ -775,7 +775,7 @@ class FormMail extends Form
 					} elseif ($this->withmaindocfile == -1) {
 						$out .= '<input type="checkbox" id="addmaindocfile" name="addmaindocfile" value="1" checked="checked" />';
 					}
-					$out .= ' <label for="id="addmaindocfile">'.$langs->trans("JoinMainDoc").'.</label><br>';
+					$out .= ' <label for="addmaindocfile">'.$langs->trans("JoinMainDoc").'.</label><br>';
 				}
 
 				if (is_numeric($this->withfile)) {
