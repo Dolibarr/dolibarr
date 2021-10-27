@@ -1130,8 +1130,7 @@ if ($reshook == 0) {  //add buttons
 				$menus[$r++] = $butmenu;
 			}
 		}
-	}
-	elseif ($reshook == 1) {
+	} elseif ($reshook == 1) {
 		$r = 0; //replace buttons
 		if (is_array($hookmanager->resArray) ) {
 			foreach ($hookmanager->resArray as $resArray) {
