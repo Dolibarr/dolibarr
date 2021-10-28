@@ -164,9 +164,21 @@ if ($result > 0) {
 	// Login
 	print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
 	if (!empty($object->ldap_sid) && $object->statut == 0) {
-		print '<td class="error">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
+		print '<td class="error">';
+		print $langs->trans("LoginAccountDisableInDolibarr");
+		print '</td>';
 	} else {
-		print '<td>'.$object->login.'</td>';
+		print '<td>';
+		$addadmin = '';
+		if (property_exists($object, 'admin')) {
+			if (!empty($conf->multicompany->enabled) && !empty($object->admin) && empty($object->entity)) {
+				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
+			} elseif (!empty($object->admin)) {
+				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
+			}
+		}
+		print showValueWithClipboardCPButton($object->login).$addadmin;
+		print '</td>';
 	}
 	print '</tr>'."\n";
 
