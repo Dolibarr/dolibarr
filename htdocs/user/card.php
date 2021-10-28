@@ -2781,7 +2781,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		}
 
 		if (!empty($conf->ldap->enabled) && !empty($object->ldap_sid)) {
-			$ldap->close();
+			$ldap->unbind();
 		}
 	}
 }

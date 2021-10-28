@@ -290,7 +290,7 @@ if (function_exists("ldap_connect")) {
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test">'.$langs->trans("LDAPTestConnect").'</a><br><br>';
 	}
 
-	if ($_GET["action"] == 'test') {
+	if ($action == 'test') {
 		$ldap = new Ldap(); // Les parametres sont passes et recuperes via $conf
 
 		$result = $ldap->connect_bind();
@@ -330,7 +330,7 @@ if (function_exists("ldap_connect")) {
 				print '<br>';
 			}
 
-			$unbind = $ldap->unbind();
+			$ldap->unbind();
 		} else {
 			print img_picto('', 'error').' ';
 			print '<span class="error">'.$langs->trans("LDAPTCPConnectKO", $ldap->connectedServer, $conf->global->LDAP_SERVER_PORT).'</span>';
