@@ -3888,7 +3888,7 @@ class Form
 	 *		@param	int		$addempty			Add an empty entry
 	 * 		@param	int		$noinfoadmin		0=Add admin info, 1=Disable admin info
 	 * 		@param	string	$morecss			Add more CSS on select tag
-	 * 		@param	float	$deposit_percent	< 0 : deposit_percent input makes no sense (for example, in list filters)
+	 * 		@param	string	$deposit_percent	< 0 : deposit_percent input makes no sense (for example, in list filters)
 	 *											0 : use default deposit percentage from entry
 	 *											> 0 : force deposit percentage (for example, from company object)
 	 *		@return	void
@@ -3939,7 +3939,7 @@ class Form
 		if ($deposit_percent >= 0) {
 			print ' <span id="'.$htmlname.'_deposit_percent_container"' . (empty($selectedDepositPercent) ? ' style="display: none"' : '') . '>';
 			print $langs->trans('DepositPercent') . ' : ';
-			print '<input id="'.$htmlname.'_deposit_percent" name="'.$htmlname.'_deposit_percent" class="maxwidth50" value="' . floatval($deposit_percent) . '" />';
+			print '<input id="'.$htmlname.'_deposit_percent" name="'.$htmlname.'_deposit_percent" class="maxwidth50" value="' . strval($deposit_percent) . '" />';
 			print '</span>';
 			print '
 				<script>
@@ -5150,7 +5150,7 @@ class Form
 	 *	@param	int		$addempty			Add empty entry
 	 *  @param	string	$type				Type ('direct-debit' or 'bank-transfer')
 	 *  @param	int		$filtertype			If > 0, include payment terms with deposit percentage (for objects other than invoices and invoice templates)
-	 * 	@param	float	$deposit_percent	< 0 : deposit_percent input makes no sense (for example, in list filters)
+	 * 	@param	string	$deposit_percent	< 0 : deposit_percent input makes no sense (for example, in list filters)
 	 *										0 : use default deposit percentage from entry
 	 *										> 0 : force deposit percentage (for example, from company object)
 	 *  @return	void

@@ -268,7 +268,7 @@ if (empty($reshook)) {
 			$object->ref_client = GETPOST('ref_client', 'alpha');
 			$object->model_pdf = GETPOST('model');
 			$object->cond_reglement_id = GETPOST('cond_reglement_id');
-			$object->deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'int');
+			$object->deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'alpha');
 			$object->mode_reglement_id = GETPOST('mode_reglement_id');
 			$object->fk_account = GETPOST('fk_account', 'int');
 			$object->availability_id = GETPOST('availability_id');
@@ -570,7 +570,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setconditions' && $usercancreate) {
-		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'), GETPOST('cond_reglement_id_deposit_percent', 'int'));
+		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'), GETPOST('cond_reglement_id_deposit_percent', 'alpha'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		} else {
@@ -1484,7 +1484,7 @@ if ($action == 'create' && $usercancreate) {
 	$currency_code = $conf->currency;
 
 	$cond_reglement_id = GETPOST('cond_reglement_id', 'int');
-	$deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'int');
+	$deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'alpha');
 	$mode_reglement_id = GETPOST('mode_reglement_id', 'int');
 
 	if (!empty($origin) && !empty($originid)) {
