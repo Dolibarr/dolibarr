@@ -359,8 +359,8 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s ON p.rowid = s.fk_product';
-$list_warehouse = empty($listofqualifiedwarehousesid) ? '0' :$db->sanitize($listofqualifiedwarehousesid);
-$sql .= ' AND s.fk_entrepot  IN ('.$list_warehouse .')';
+$list_warehouse = empty($listofqualifiedwarehousesid) ? '0' :$listofqualifiedwarehousesid;
+$sql .= ' AND s.fk_entrepot  IN ('.$db->sanitize($list_warehouse) .')';
 
 //$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot AS ent ON s.fk_entrepot = ent.rowid AND ent.entity IN('.getEntity('stock').')';
 if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
@@ -581,7 +581,7 @@ print dol_get_fiche_head($head, 'replenish', '', -1, '');
 print '<span class="opacitymedium">'.$langs->trans("ReplenishmentStatusDesc").'</span>'."\n";
 
 
-$link = '<a title=' .$langs->trans("MenuNewWarehouse"). ' href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create">'.$langs->trans("MenuNewWarehouse").'</a>';
+$link = '<a title=' .$langs->trans("MenuNewWarehouse"). ' href="'.DOL_URL_ROOT.'/_product/stock/card.php?action=create">'.$langs->trans("MenuNewWarehouse").'</a>';
 print info_admin($langs->trans("ErrorAtLeastOneWarehouseNeededForReplenish") .' '. $link, 0, 0, 'info', 'clearboth');
 
 if (empty($fk_warhouse) && !empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
