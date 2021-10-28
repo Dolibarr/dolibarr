@@ -346,12 +346,12 @@ if ($object->id) {
 
 	print dol_get_fiche_end();
 
-
-
-	$modulepart = 'holiday';
 	$permissiontoadd = $user->rights->holiday->write;
 	$permtoedit = $user->rights->holiday->write;
 	$param = '&id='.$object->id;
+	$relativepathwithnofile = $modulepart.'/'.dol_sanitizeFileName($object->ref).'/';
+	$savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';
+
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	print $langs->trans("ErrorUnknown");
