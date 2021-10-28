@@ -32,6 +32,8 @@ if (! defined('NOLOGIN'))         define('NOLOGIN', 1);          // File must be
 if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
 if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
 
+session_cache_limiter('public');
+
 // Load Dolibarr environment
 $res=0;
 // Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
@@ -48,7 +50,7 @@ if (! $res) die("Include of main fails");
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-session_cache_limiter('public');
+
 // false or '' = keep cache instruction added by server
 // 'public'  = remove cache instruction added by server and if no cache-control added later, a default cache delay (10800) will be added by PHP.
 
@@ -61,7 +63,7 @@ session_cache_limiter('public');
 
 
 // Define css type
-header('Content-type: text/css');
+top_httphead('text/css');
 // Important: Following code is to cache this file to avoid page request by browser at each Dolibarr page access.
 // You can use CTRL+F5 to refresh your browser cache.
 if (empty($dolibarr_nocache)) header('Cache-Control: max-age=10800, public, must-revalidate');
@@ -80,11 +82,11 @@ if ($tmpval <= 460) { $colortextbackhmenu = 'FFFFFF'; } else { $colortextbackhme
 
 if ($conf->standard_menu == 'dropdown_responsive_menu.php') {
 	?>
-	
+
 	.side-nav-vert{
 		position:static;
 	}
-	
+
 	ul {
 		margin: 0px;
 		padding: 0px;
@@ -152,7 +154,7 @@ if ($conf->standard_menu == 'dropdown_responsive_menu.php') {
 		text-shadow: none;
 		width: 10px;
 		display: inline-block;
-		
+
 	}
 	.dropdown-responsive-menu > li > ul.sub-menu {
 		display: none;
@@ -215,7 +217,7 @@ if ($conf->standard_menu == 'dropdown_responsive_menu.php') {
 		background: #333;
 		text-align: center;
 	}
-	
+
 	a.title {
 		color: #fff;
 		font-size: 300%;
@@ -254,7 +256,7 @@ if ($conf->standard_menu == 'dropdown_responsive_menu.php') {
 		cursor: pointer;
 		margin: 10px;
 	}
-	
+
 	#logout-btn {
 		float: left;
 		background: #202020;
@@ -274,7 +276,7 @@ if ($conf->standard_menu == 'dropdown_responsive_menu.php') {
 		margin-top: 10px;
 		display: none;
 	}
-	
+
 	.hide-menu {
 		display: none;
 	}
@@ -286,7 +288,7 @@ if ($conf->standard_menu == 'dropdown_responsive_menu.php') {
 	ul[data-menu-style="accordion"] {
 		width: 250px;
 	}
-	ul[data-menu-style="accordion"] > li {    
+	ul[data-menu-style="accordion"] > li {
 		display: block;
 		margin: 0;
 		padding: 0;
@@ -382,28 +384,28 @@ if ($conf->standard_menu == 'dropdown_responsive_menu.php') {
 	----------------------------------------*/
 
 	@media screen and (max-width: 768px) {
-		
+
 		#dropdownMenu{
 			overflow-y: scroll;
 			height: 400px;
 		}
-		
-		
+
+
 		.menu-toggle {
 			display: block;
 			float: left;
 			width: 100%;
 			background: #333;
 		}
-		
+
 		.tmenucompanylogo{
 			display: none;
 		}
-		
+
 		#mainmenutd_companylogo{
 			display: none;
 		}
-		
+
 		.demo {
 			width:96%;
 			padding:2%;
@@ -411,7 +413,7 @@ if ($conf->standard_menu == 'dropdown_responsive_menu.php') {
 		ul[data-menu-style="vertical"] , ul[data-menu-style="accordion"],
 		ul[data-menu-style="vertical"] li ul.sub-menu {
 			width: 100% !important;
-		} 
+		}
 		.dropdown-responsive-menu {
 			float: left;
 			width:100%;
@@ -419,13 +421,13 @@ if ($conf->standard_menu == 'dropdown_responsive_menu.php') {
 		.dropdown-responsive-menu > li {
 			border-bottom: 1px solid #242424;
 		   float: none;
-		}   
+		}
 		.dropdown-responsive-menu li a:hover {
 			/*background: #272727 !important;*/
 		}
 		.dropdown-responsive-menu > li:first-child {
 			border-top: 2px solid #FD5025;
-		}    
+		}
 		.dropdown-responsive-menu > li > a i {
 			padding-right: 10px;
 			color: #FF5737;
@@ -453,11 +455,11 @@ if ($conf->standard_menu == 'dropdown_responsive_menu.php') {
 		.dropdown-responsive-menu li ul.sub-menu li ul.sub-menu li a
 			{
 			padding-left: 30px;
-		}  
-		.dropdown-responsive-menu li ul.sub-menu li ul.sub-menu li ul.sub-menu li a 
+		}
+		.dropdown-responsive-menu li ul.sub-menu li ul.sub-menu li ul.sub-menu li a
 		   {
 			padding-left: 50px;
-		}  
+		}
 		.dropdown-responsive-menu > li > ul.sub-menu {
 			position: static;
 		}
@@ -475,6 +477,6 @@ if ($conf->standard_menu == 'dropdown_responsive_menu.php') {
 		display: inline-block;
 		transform: rotate(90deg);
 		}
-	} 
+	}
 	<?php
 }
