@@ -18,6 +18,7 @@
 #
 Assets = Assets
 NewAsset = New asset
+ListOfEconomicDepreciationAccountancyAccountAsset=Accountancy accounts - Economic depreciation
 AccountancyAccountAsset=Asset
 AccountancyAccountDepreciationAsset=Depreciation asset
 AccountancyAccountDepreciationExpense=Depreciation expense
@@ -26,6 +27,10 @@ AccountancyAccountReceivableOnAssignment=Receivable on assignment
 AccountancyAccountProceedsFromSales=Proceeds from sales
 AccountancyAccountCollectedVAT=Collected VAT on assets
 AccountancyAccountDeductibleVAT=Deductible VAT on assets
+ListOfAcceleratedDepreciationAccountancyAccountAsset=Accountancy accounts - Accelerated depreciation
+AccountancyAccountAcceleratedDepreciation=Accounting account
+AccountancyAccountEndowmentAcceleratedDepreciation=Endowment
+AccountancyAccountProvisionAcceleratedDepreciation=Recovery of provision
 NewAssetType=New asset type
 AssetsTypeSetup=Asset type setup
 AssetTypeModified=Asset type modified

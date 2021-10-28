@@ -247,9 +247,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		}
 
 		$newcardbutton = '';
-		if ($user->rights->adherent->configurer) {
-			$newcardbutton .= dolGetButtonTitle($langs->trans('NewMemberType'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/type.php?action=create');
-		}
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewAssetType'), '', 'fa fa-plus-circle', dol_buildpath('/asset/type.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		if ($optioncss != '') {
@@ -259,6 +257,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 		print '<input type="hidden" name="action" value="list">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
 		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit, 0, 0, 1);
