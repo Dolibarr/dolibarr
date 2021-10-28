@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004		Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2017	Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2006-2015	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2021	Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2006-2021	Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,11 @@ class Ldap
 	 * Tableau des serveurs (IP addresses ou nom d'hotes)
 	 */
 	public $server = array();
+
+	/**
+	 * Current connected server
+	 */
+	public $connectedServer;
 
 	/**
 	 * Base DN (e.g. "dc=foo,dc=com")
@@ -158,8 +163,6 @@ class Ldap
 		$this->attr_fax        = $conf->global->LDAP_FIELD_FAX;
 		$this->attr_mobile     = $conf->global->LDAP_FIELD_MOBILE;
 	}
-
-
 
 	// Connection handling methods -------------------------------------------
 
@@ -288,6 +291,7 @@ class Ldap
 			$return = -1;
 			dol_syslog(get_class($this)."::connect_bind return=".$return.' - '.$this->error, LOG_WARNING);
 		}
+		$this->connectedServer = $host;
 		return $return;
 	}
 
