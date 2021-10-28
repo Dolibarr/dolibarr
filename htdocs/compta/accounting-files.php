@@ -578,7 +578,7 @@ print '<br>';
 
 foreach ($listofchoices as $choice => $val) {
 	if (empty($val['enabled'])) {
-		continue;		// list not qualified
+		continue; // list not qualified
 	}
 	$disabled = '';
 	if (empty($val['perms'])) {

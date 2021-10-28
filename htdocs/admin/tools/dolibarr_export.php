@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2018	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2006-2021	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -441,6 +441,11 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 		'id' => 'radio_compression_bzip',
 		'label' => $langs->trans("Bzip2")
 	);
+	$compression['zstd'] = array(
+		'function' => 'zstd_compress',
+		'id' => 'radio_compression_zstd',
+		'label' => $langs->trans("Zstd")
+	);
 	$compression['none'] = array(
 		'function' => '',
 		'id' => 'radio_compression_none',
@@ -534,13 +539,11 @@ print "</div> 	<!-- end div fichehalfleft -->\n";
 
 
 print '<div id="backupdatabaseright" class="fichehalfright" style="height:480px; overflow: auto;">';
-print '<div class="ficheaddleft">';
 
 $filearray = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ?SORT_ASC:SORT_DESC), 1);
 $result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'backup/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"));
 print '<br>';
 
-print '</div>';
 print '</div>';
 print '</form>';
 print '</fieldset>';
@@ -615,13 +618,11 @@ print '</div>';
 print '</div>';
 
 print '<div id="backupdatabaseright" class="fichehalfright" style="height:480px; overflow: auto;">';
-print '<div class="ficheaddleft">';
 
 $filearray = dol_dir_list($conf->admin->dir_output.'/documents', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ?SORT_ASC:SORT_DESC), 1);
 $result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'documents/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"));
 print '<br>';
 
-print '</div>';
 print '</div>';
 
 print '</fieldset>';

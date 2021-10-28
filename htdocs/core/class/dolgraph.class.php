@@ -1054,6 +1054,7 @@ class DolGraph
 		}
 
 		$showlegend = $this->showlegend;
+		$bordercolor = "";
 
 		$legends = array();
 		$nblot = 0;
@@ -1384,7 +1385,7 @@ class DolGraph
 
 					$textoflegend = $arrayofgroupslegend[$i]['legendwithgroup'];
 				} else {
-					$textoflegend = $this->Legend[$i];
+					$textoflegend = !empty($this->Legend[$i]) ? $this->Legend[$i] : '';
 				}
 
 				if ($usecolorvariantforgroupby) {
@@ -1414,12 +1415,12 @@ class DolGraph
 					$color = 'rgb(' . $newcolor[0] . ', ' . $newcolor[1] . ', ' . $newcolor[2] . ', 0.9)';
 					$bordercolor = 'rgb(' . $newcolor[0] . ', ' . $newcolor[1] . ', ' . $newcolor[2] . ')';
 				} else { // We do not use a 'group by'
-					if (is_array($this->datacolor[$i])) {
+					if (!empty($this->bordercolor[$i]) && is_array($this->datacolor[$i])) {
 						$color = 'rgb(' . $this->datacolor[$i][0] . ', ' . $this->datacolor[$i][1] . ', ' . $this->datacolor[$i][2] . ', 0.9)';
 					} else {
 						$color = $this->datacolor[$i];
 					}
-					if (is_array($this->bordercolor[$i])) {
+					if (!empty($this->bordercolor[$i]) && is_array($this->bordercolor[$i])) {
 						$color = 'rgb(' . $this->bordercolor[$i][0] . ', ' . $this->bordercolor[$i][1] . ', ' . $this->bordercolor[$i][2] . ', 0.9)';
 					} else {
 						if ($type != 'horizontalBar') {

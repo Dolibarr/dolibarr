@@ -75,8 +75,13 @@ if ($complete == 'na' || $complete == -2) {
 	$complete = -1;
 }
 
-$datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'));
-$datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'));
+if ($fulldayevent) {
+	$datep = dol_mktime('00', '00', 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'));
+	$datef = dol_mktime('23', '59', '59', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'));
+} else {
+	$datep = dol_mktime($aphour, $apmin, 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'));
+	$datef = dol_mktime($p2hour, $p2min, '59', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'));
+}
 
 // Security check
 $socid = GETPOST('socid', 'int');
@@ -967,7 +972,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="donotclearsession" value="1">';
 	print '<input type="hidden" name="page_y" value="">';
 	if ($backtopage) {
-		print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : htmlentities($_SERVER["HTTP_REFERER"])).'">';
+		print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : dol_htmlentities($_SERVER["HTTP_REFERER"])).'">';
 	}
 	if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 		print '<input type="hidden" name="actioncode" value="'.dol_getIdFromCode($db, 'AC_OTH', 'c_actioncomm').'">';
@@ -1298,7 +1303,7 @@ if ($action == 'create') {
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (empty($reshook)) {
-		print $object->showOptionals($extrafields, 'edit', $parameters);
+		print $object->showOptionals($extrafields, 'create', $parameters);
 	}
 
 	print '</table>';
@@ -2209,10 +2214,10 @@ if ($id > 0) {
 
 			print $formfile->showdocuments('actions', $object->id, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 0, 0, '', '', '', $object->default_lang);
 
-			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+			print '</div><div class="fichehalfright">';
 
 
-			print '</div></div></div>';
+			print '</div></div>';
 		}
 	}
 }

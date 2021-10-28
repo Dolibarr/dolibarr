@@ -1443,7 +1443,6 @@ if ($action == 'create') {
 
 		print '</div>';
 		print '<div class="fichehalfright">';
-		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
 
@@ -1591,7 +1590,6 @@ if ($action == 'create') {
 			print '<br>';
 		}
 
-		print '</div>';
 		print '</div>';
 		print '</div>';
 

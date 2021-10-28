@@ -51,6 +51,11 @@ abstract class CommonObjectLine extends CommonObject
 	 */
 	public $fk_unit;
 
+	public $date_debut_prevue;
+	public $date_debut_reel;
+	public $date_fin_prevue;
+	public $date_fin_reel;
+
 
 	/**
 	 *	Constructor
@@ -105,5 +110,21 @@ abstract class CommonObjectLine extends CommonObject
 			dol_syslog(get_class($this)."::getLabelOfUnit Error ".$this->error, LOG_ERR);
 			return -1;
 		}
+	}
+
+	/**
+	 * Empty function to prevent errors on call of this function must be overload if usefull
+	 *
+	 * @param string $sortorder Sort Order
+	 * @param string $sortfield Sort field
+	 * @param int $limit offset limit
+	 * @param int $offset offset limit
+	 * @param array $filter filter array
+	 * @param string $filtermode filter mode (AND or OR)
+	 * @return int <0 if KO, >0 if OK
+	 */
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	{
+		return 0;
 	}
 }

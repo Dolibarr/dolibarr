@@ -78,6 +78,8 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'tax', $object->id, 'chargesociales', 'charges');
 
+$permissiontoadd = $user->rights->tax->charges->creer;	// Used by the include of actions_dellink.inc.php
+
 
 /*
  * Actions

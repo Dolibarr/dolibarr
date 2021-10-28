@@ -532,6 +532,16 @@ if (empty($reshook)) {
 		}
 	}
 
+	if ($action == 'set_categories' && $user->rights->ticket->write) {
+		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
+			$result = $object->setCategories(GETPOST('categories', 'array'));
+
+			$url = 'card.php?action=view&track_id='.$object->track_id;
+			header("Location: ".$url);
+			exit();
+		}
+	}
+
 	if ($action == 'setsubject' && $user->rights->ticket->write) {
 		if ($object->fetch(GETPOST('id', 'int'))) {
 			if ($action == 'setsubject') {
@@ -787,7 +797,7 @@ if ($action == 'create' || $action == 'presend') {
 	print $form->buttonsSaveCancel();
 
 	print '</form>'; */
-} elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'presend' || $action == 'presend_addmessage' || $action == 'close' || $action == 'abandon' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'reopen'
+} elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'presend' || $action == 'presend_addmessage' || $action == 'close' || $action == 'abandon' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'categories' || $action == 'reopen'
 	|| $action == 'editsubject' || $action == 'edit_extras' || $action == 'update_extras' || $action == 'edit_extrafields' || $action == 'set_extrafields' || $action == 'classify' || $action == 'sel_contract' || $action == 'edit_message_init' || $action == 'set_status' || $action == 'dellink') {
 	if ($res > 0) {
 		// or for unauthorized internals users
@@ -849,7 +859,7 @@ if ($action == 'create' || $action == 'presend') {
 				// Ref
 				print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
 				// Define a complementary filter for search of next/prev ref.
-				if (!$user->rights->projet->all->lire) {
+				if (empty($user->rights->projet->all->lire)) {
 					$objectsListId = $projectstat->getProjectsAuthorizedForUser($user, $mine, 0);
 					$projectstat->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 				}
@@ -1101,9 +1111,43 @@ if ($action == 'create' || $action == 'presend') {
 
 		// Categories
 		if ($conf->categorie->enabled) {
-			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td colspan="3">';
-			print $form->showCategories($object->id, Categorie::TYPE_TICKET, 1);
-			print "</td></tr>";
+			print '<tr>';
+			print '<td class="valignmiddle">';
+			print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
+			print $langs->trans("Categories");
+			if ($action != 'categories' && !$user->socid) {
+				print '<td class="right"><a class="editfielda" href="'.$url_page_current.'?action=categories&amp;track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+			}
+			print '</table>';
+			print '</td>';
+
+			if ($user->rights->ticket->write && $action == 'categories') {
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_TICKET, '', 'parent', 64, 0, 1);
+				if (count($cate_arbo)) {
+					// Categories
+					print '<td colspan="3">';
+					print '<form action="'.$url_page_current.'" method="post">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
+					print '<input type="hidden" name="track_id" value="'.$track_id.'">';
+					print '<input type="hidden" name="action" value="set_categories">';
+
+					$category = new Categorie($db);
+					$cats = $category->containing($object->id, 'ticket');
+					$arrayselected = array();
+					foreach ($cats as $cat) {
+						$arrayselected[] = $cat->id;
+					}
+
+					print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+					print '<input type="submit" class="button button-edit" value="'.$langs->trans('Save').'">';
+					print '</form>';
+					print "</td>";
+				}
+			} else {
+				print '<td colspan="3">';
+				print $form->showCategories($object->id, Categorie::TYPE_TICKET, 1);
+				print "</td></tr>";
+			}
 		}
 
 		// Other attributes
@@ -1113,7 +1157,7 @@ if ($action == 'create' || $action == 'presend') {
 
 
 		// Fin colonne gauche et début colonne droite
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		print '</div><div class="fichehalfright">';
 
 
 		// View Original message
@@ -1313,7 +1357,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '</div>';
 		}
 
-		print '</div></div></div>';
+		print '</div></div>';
 		print '<div style="clear:both"></div>';
 
 		print dol_get_fiche_end();
@@ -1520,7 +1564,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '</div>';
 
 			if (empty($conf->global->TICKET_SHOW_MESSAGES_ON_CARD)) {
-				print '<div class="fichehalfright"><div class="ficheaddleft">';
+				print '<div class="fichehalfright">';
 
 				$MAXEVENT = 10;
 
@@ -1535,7 +1579,7 @@ if ($action == 'create' || $action == 'presend') {
 				$formactions = new FormActions($db);
 				$somethingshown = $formactions->showactions($object, 'ticket', $socid, 1, 'listactions', $MAXEVENT, '', $morehtmlcenter);
 
-				print '</div></div>';
+				print '</div>';
 			}
 
 			print '</div>';

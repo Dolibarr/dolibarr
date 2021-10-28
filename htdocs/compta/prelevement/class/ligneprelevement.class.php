@@ -137,11 +137,11 @@ class LignePrelevement
 			return $langs->trans($this->statuts[$status]);
 		} elseif ($mode == 1) {
 			if ($status == 0) {
-				return img_picto($langs->trans($this->statuts[$status]), 'statut1', 'class="valignmiddle"').' '.$langs->trans($this->statuts[$status]); // Waiting
+				return img_picto($langs->trans($this->statuts[$status]), 'statut1', 'class="valignmiddle"').' '.$langs->transnoentitiesnoconv($this->statuts[$status]); // Waiting
 			} elseif ($status == 2) {
-				return img_picto($langs->trans($this->statuts[$status]), 'statut6', 'class="valignmiddle"').' '.$langs->trans($this->statuts[$status]); // Credited
+				return img_picto($langs->trans($this->statuts[$status]), 'statut6', 'class="valignmiddle"').' '.$langs->transnoentitiesnoconv($this->statuts[$status]); // Credited
 			} elseif ($status == 3) {
-				return img_picto($langs->trans($this->statuts[$status]), 'statut8', 'class="valignmiddle"').' '.$langs->trans($this->statuts[$status]); // Refused
+				return img_picto($langs->trans($this->statuts[$status]), 'statut8', 'class="valignmiddle"').' '.$langs->transnoentitiesnoconv($this->statuts[$status]); // Refused
 			}
 		} elseif ($mode == 2) {
 			if ($status == 0) {
@@ -153,11 +153,11 @@ class LignePrelevement
 			}
 		} elseif ($mode == 3) {
 			if ($status == 0) {
-				return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts[$status]), 'statut1', 'class="valignmiddle"');
+				return $langs->trans($this->statuts[$status]).' '.img_picto($langs->transnoentitiesnoconv($this->statuts[$status]), 'statut1', 'class="valignmiddle"');
 			} elseif ($status == 2) {
-				return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts[$status]), 'statut6', 'class="valignmiddle"');
+				return $langs->trans($this->statuts[$status]).' '.img_picto($langs->transnoentitiesnoconv($this->statuts[$status]), 'statut6', 'class="valignmiddle"');
 			} elseif ($status == 3) {
-				return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts[$status]), 'statut8', 'class="valignmiddle"');
+				return $langs->trans($this->statuts[$status]).' '.img_picto($langs->transnoentitiesnoconv($this->statuts[$status]), 'statut8', 'class="valignmiddle"');
 			}
 		}
 

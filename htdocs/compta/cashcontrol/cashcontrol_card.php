@@ -647,9 +647,10 @@ if (empty($action) || $action == "view" || $action == "close") {
 		print '</table>';
 		print '</div>';
 
-		print '<div class="fichehalfright"><div class="ficheaddleft">';
+		print '<div class="fichehalfright">>';
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+
+		print '<table class="border tableforfield centpercent">';
 
 		print '<tr><td class="titlefield nowrap">';
 		print $langs->trans("DateCreationShort");
@@ -667,7 +668,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 		}
 
 		print "</table>\n";
-		print '</div>';
+
 		print '</div></div>';
 		print '<div style="clear:both"></div>';
 

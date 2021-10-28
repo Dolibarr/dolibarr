@@ -296,7 +296,7 @@ if (empty($reshook)) {
 		if (empty($error) && $id > 0) {
 			$db->commit();
 			if (!empty($backtopage)) {
-				$url = $backtopage;
+				$url = str_replace('__ID__', $id, $backtopage);
 			} else {
 				$url = 'card.php?id='.$id;
 			}
@@ -545,8 +545,8 @@ $formcompany = new FormCompany($db);
 
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
+$objsoc = new Societe($db);
 if ($socid > 0) {
-	$objsoc = new Societe($db);
 	$objsoc->fetch($socid);
 }
 
@@ -818,7 +818,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 				print '<tr>';
 				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
-				print '<td>'.$form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS), 1, false, ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2)).'</td>';
+				print '<td>';
+				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS), 1, false, ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2));
+				print '</td>';
 				print '</tr>';
 			}
 
@@ -1095,8 +1097,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 				print '<tr>';
 				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
+				print '<td>';
 				$useempty = (isset($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2));
-				print '<td>'.$form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $object->no_email), 1, false, $useempty).'</td>';
+				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $object->no_email), 1, false, $useempty);
+				print '</td>';
 				print '</tr>';
 			}
 
@@ -1323,7 +1327,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
-			print '<tr><td>'.$langs->trans("No_Email").'</td><td>'.yn($object->no_email).'</td></tr>';
+			print '<tr><td>'.$langs->trans("No_Email").'</td><td>';
+			if ($object->email) {
+				print yn($object->no_email);
+			} else {
+				print '<span class="opacitymedium">'.$langs->trans("EMailNotDefined").'</span>';
+			}
+			print '</td></tr>';
 		}
 
 		print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td>';
@@ -1381,10 +1391,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 		}
 
-		print '<div class="fichehalfright"><div class="ficheaddleft">';
+		print '<div class="fichehalfright">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Categories
 		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
@@ -1462,7 +1472,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		print "</table>";
 
-		print '</div></div></div>';
+		print '</div></div>';
 		print '<div style="clear:both"></div>';
 
 		print dol_get_fiche_end();
@@ -1518,7 +1528,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if ($action != 'presend') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 
-			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+			print '</div><div class="fichehalfright">';
 
 			$MAXEVENT = 10;
 
@@ -1529,7 +1539,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'contact', $object->socid, 1, '', $MAXEVENT, '', $morehtmlright); // Show all action for thirdparty
 
-			print '</div></div></div>';
+			print '</div></div>';
 		}
 
 		// Presend form

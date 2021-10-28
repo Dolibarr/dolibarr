@@ -873,7 +873,7 @@ if ($action == 'create') {
 				if ($objectsrc->fetch_optionals() > 0) {
 					$recept->array_options = array_merge($recept->array_options, $objectsrc->array_options);
 				}
-				print $object->showOptionals($extrafields, 'edit', $parameters);
+				print $object->showOptionals($extrafields, 'create', $parameters);
 			}
 
 			// Incoterms
@@ -1529,7 +1529,6 @@ if ($action == 'create') {
 
 		print '</div>';
 		print '<div class="fichehalfright">';
-		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border centpercent tableforfield">';
@@ -1596,7 +1595,6 @@ if ($action == 'create') {
 
 		print "</table>";
 
-		print '</div>';
 		print '</div>';
 		print '</div>';
 
@@ -2074,7 +2072,9 @@ if ($action == 'create') {
 		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
 		$somethingshown = $form->showLinkedObjectBlock($object, '');
 
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		print '</div><div class="fichehalfright">';
+
+		print '</div></div>';
 	}
 
 	// Presend form

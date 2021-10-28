@@ -339,6 +339,7 @@ if ($action == 'replacesiteconfirm') {
 }
 
 $usercanedit = $user->rights->website->write;
+$permissiontoadd = $user->rights->website->write;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
 $permissiontodelete = $user->rights->website->delete;
 
 
@@ -515,7 +516,7 @@ if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha') && $userca
 				}
 
 				// Save page of content
-				$result = dolSavePageContent($filetpl, $object, $objectpage);
+				$result = dolSavePageContent($filetpl, $object, $objectpage, 1);
 				if ($result) {
 					$nbreplacement++;
 					//var_dump($objectpage->content);exit;
@@ -1107,7 +1108,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 			}
 
 			// Save page of content
-			$result = dolSavePageContent($filetpl, $object, $objectpage);
+			$result = dolSavePageContent($filetpl, $object, $objectpage, 1);
 			if ($result) {
 				setEventMessages($langs->trans("Saved"), null, 'mesgs');
 			} else {
@@ -1850,7 +1851,7 @@ if ($action == 'updatemeta' && $usercanedit) {
 
 
 		// Save page of content
-		$result = dolSavePageContent($filetpl, $object, $objectpage);
+		$result = dolSavePageContent($filetpl, $object, $objectpage, 1);
 		if ($result) {
 			setEventMessages($langs->trans("Saved"), null, 'mesgs');
 
@@ -1945,7 +1946,7 @@ if ($usercanedit && (($action == 'updatesource' || $action == 'updatecontent' ||
 				//var_dump($filetpl);
 				//exit;
 
-				dolSavePageContent($filetpl, $tmpwebsite, $resultpage);
+				dolSavePageContent($filetpl, $tmpwebsite, $resultpage, 1);
 
 				// Switch on the new page if web site of new page/container is same
 				if (empty($newwebsiteid) || $newwebsiteid == $object->id) {

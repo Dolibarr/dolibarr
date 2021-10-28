@@ -80,6 +80,8 @@ $object->fetch($id, $ref);
 $upload_dir = $conf->don->dir_output.'/'.get_exdir($filename, 0, 0, 0, $object, 'donation').'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'don';
 
+$permissiontoadd = $user->rights->don->creer;	// Used by the include of actions_dellink.inc.php
+
 
 /*
  * Actions

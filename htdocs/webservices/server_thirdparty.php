@@ -103,7 +103,7 @@ $thirdparty_fields = array(
 		'address' => array('name'=>'address', 'type'=>'xsd:string'),
 		'zip' => array('name'=>'zip', 'type'=>'xsd:string'),
 		'town' => array('name'=>'town', 'type'=>'xsd:string'),
-		'province_id' => array('name'=>'province_id', 'type'=>'xsd:string'),
+		'region_code' => array('name'=>'region_code', 'type'=>'xsd:string'),
 		'country_id' => array('name'=>'country_id', 'type'=>'xsd:string'),
 		'country_code' => array('name'=>'country_code', 'type'=>'xsd:string'),
 		'country' => array('name'=>'country', 'type'=>'xsd:string'),
@@ -343,7 +343,7 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $bar
 						'address' => $thirdparty->address,
 						'zip' => $thirdparty->zip,
 						'town' => $thirdparty->town,
-						'province_id' => $thirdparty->state_id,
+						'region_code' => $thirdparty->region_code,
 						'country_id' => $thirdparty->country_id,
 						'country_code' => $thirdparty->country_code,
 						'country' => $thirdparty->country,
@@ -462,7 +462,7 @@ function createThirdParty($authentication, $thirdparty)
 		if ($thirdparty['country_code']) {
 			$newobject->country_id = getCountry($thirdparty['country_code'], 3);
 		}
-		$newobject->province_id = $thirdparty['province_id'];
+		$newobject->region_code = empty($thirdparty['region_code']) ? '' : $thirdparty['region_code'];
 		//if ($thirdparty['province_code']) $newobject->province_code=getCountry($thirdparty['province_code'],3);
 
 		$newobject->phone = $thirdparty['phone'];
@@ -597,7 +597,7 @@ function updateThirdParty($authentication, $thirdparty)
 			if ($thirdparty['country_code']) {
 				$object->country_id = getCountry($thirdparty['country_code'], 3);
 			}
-			$object->province_id = $thirdparty['province_id'];
+			$object->region_code = $thirdparty['region_code'];
 			//if ($thirdparty['province_code']) $newobject->province_code=getCountry($thirdparty['province_code'],3);
 
 			$object->phone = $thirdparty['phone'];

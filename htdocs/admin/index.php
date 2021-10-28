@@ -83,12 +83,14 @@ if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INF
 	$setupcompanynotcomplete = 1;
 }
 print img_picto('', 'company', 'class="paddingright valignmiddle double"').' '.$langs->trans("SetupDescriptionLink", DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit&token='.newToken()), $langs->transnoentities("Setup"), $langs->transnoentities("MenuCompanySetup"));
-print '<br><br>'.$langs->trans("SetupDescription3b");
+print '<br><br>';
+print $langs->trans("SetupDescription3b");
 if (!empty($setupcompanynotcomplete)) {
 	$langs->load("errors");
 	$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"), 'style="padding-right: 6px;"');
 	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit').'">'.$warnpicto.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
 }
+print '<br>';
 print '<br>';
 print '<br>';
 print '<br>';

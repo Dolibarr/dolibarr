@@ -80,13 +80,13 @@ if ($socid < 0) {
 }
 
 $canedit = 1;
-if (!$user->rights->agenda->myactions->read) {
+if (empty($user->rights->agenda->myactions->read)) {
 	accessforbidden();
 }
-if (!$user->rights->agenda->allactions->read) {
+if (empty($user->rights->agenda->allactions->read)) {
 	$canedit = 0;
 }
-if (!$user->rights->agenda->allactions->read || $filter == 'mine') {  // If no permission to see all, we show only affected to me
+if (empty($user->rights->agenda->allactions->read) || $filter == 'mine') {  // If no permission to see all, we show only affected to me
 	$filtert = $user->id;
 }
 
@@ -416,7 +416,7 @@ $massactionbutton = '';
 $viewmode = '';
 $viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
-$viewmode .= img_picto($langs->trans("List"), 'object_list', 'class="pictoactionview block"');
+$viewmode .= img_picto($langs->trans("List"), 'object_list', 'class="imgforviewmode pictoactionview block"');
 //$viewmode .= '</span>';
 $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewList").'</span></a>';
 
@@ -506,7 +506,7 @@ $sql .= ' a.transparency, a.priority, a.fulldayevent, a.location,';
 $sql .= ' a.fk_soc, a.fk_contact, a.fk_element, a.elementtype, a.fk_project,';
 $sql .= ' ca.code, ca.libelle as type_label, ca.color, ca.type as type_type, ca.picto as type_picto';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 }
 // We must filter on resource table
@@ -557,7 +557,7 @@ if ($resourceid > 0) {
 if ($pid) {
 	$sql .= " AND a.fk_project=".((int) $pid);
 }
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
 }
 if ($socid > 0) {
@@ -965,8 +965,8 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 	// We are in a particular day for $username, now we scan all events
 	foreach ($eventarray as $daykey => $notused) {
 		$annee = dol_print_date($daykey, '%Y');
-		$mois =  dol_print_date($daykey, '%m');
-		$jour =  dol_print_date($daykey, '%d');
+		$mois = dol_print_date($daykey, '%m');
+		$jour = dol_print_date($daykey, '%d');
 
 		if ($day == $jour && $month == $mois && $year == $annee) {	// Is it the day we are looking for when calling function ?
 			// Scan all event for this date

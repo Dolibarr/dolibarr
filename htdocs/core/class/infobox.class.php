@@ -151,7 +151,7 @@ class InfoBox
 						$box->rowid = (empty($obj->rowid) ? '' : $obj->rowid);
 						$box->id = (empty($obj->box_id) ? '' : $obj->box_id);
 						$box->position = ((isset($obj->position) && $obj->position == '') ? '' : (isset($obj->position) ? $obj->position : '')); // '0' must stay '0'
-						$box->box_order	= (empty($obj->box_order) ? '' : $obj->box_order);
+						$box->box_order = (empty($obj->box_order) ? '' : $obj->box_order);
 						$box->fk_user = (empty($obj->fk_user) ? 0 : $obj->fk_user);
 						$box->sourcefile = $relsourcefile;
 						$box->class = $boxname;
@@ -215,7 +215,7 @@ class InfoBox
 	/**
 	 *  Save order of boxes for area and user
 	 *
-	 *  @param	DoliDB	$dbs				Database handler
+	 *  @param	DoliDB	$dbs			Database handler
 	 *  @param	int		$zone       	Name of area (0 for Homepage, ...)
 	 *  @param  string  $boxorder   	List of boxes with correct order 'A:123,456,...-B:789,321...'
 	 *  @param  int     $userid     	Id of user

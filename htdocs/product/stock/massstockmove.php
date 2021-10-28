@@ -443,6 +443,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes') {
  */
 
 $now = dol_now();
+$error = 0;
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);

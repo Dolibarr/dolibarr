@@ -530,7 +530,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
 	// Can call a dedicated external upgrade process
 	if (!$error) {
-		$parameters = array('versionfrom'=>$versionfrom, 'versionto='.$versionto);
+		$parameters = array('versionfrom' => $versionfrom, 'versionto' => $versionto);
 		$object = new stdClass();
 		$action = "upgrade";
 		$reshook = $hookmanager->executeHooks('doUpgrade2', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -4360,7 +4360,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 					$mod = new $classname($db);
 
 					//$mod->remove('noboxes');
-					$mod->delete_menus();	// We must delete to be sure it is inserted with new values
+					$mod->delete_menus(); // We must delete to be sure it is inserted with new values
 					$mod->init($reloadmode);
 				} else {
 					dolibarr_install_syslog('Failed to include '.DOL_DOCUMENT_ROOT.'/core/modules/mod'.$moduletoreloadshort.'.class.php');
@@ -4537,7 +4537,8 @@ and rowid in (...)
 */
 
 /**
- * Migrate users fields facebook and co to socialnetworks
+ * Migrate users fields facebook and co to socialnetworks.
+ * Can be called only when version is 10.0.* or lower. Fields does not exists after.
  *
  * @return  void
  */
@@ -4628,6 +4629,7 @@ function migrate_users_socialnetworks()
 
 /**
  * Migrate members fields facebook and co to socialnetworks
+ * Can be called only when version is 10.0.* or lower. Fields does not exists after.
  *
  * @return  void
  */
@@ -4719,6 +4721,7 @@ function migrate_members_socialnetworks()
 
 /**
  * Migrate contacts fields facebook and co to socialnetworks
+ * Can be called only when version is 10.0.* or lower. Fields does not exists after.
  *
  * @return  void
  */
@@ -4814,6 +4817,7 @@ function migrate_contacts_socialnetworks()
 
 /**
  * Migrate thirdparties fields facebook and co to socialnetworks
+ * Can be called only when version is 10.0.* or lower. Fields does not exists after.
  *
  * @return  void
  */

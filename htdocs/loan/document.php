@@ -71,6 +71,8 @@ if ($id > 0) {
 $upload_dir = $conf->loan->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'loan';
 
+$permissiontoadd = $user->rights->loan->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
+
 
 /*
  * Actions

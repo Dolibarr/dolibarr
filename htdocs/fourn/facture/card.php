@@ -2285,7 +2285,7 @@ if ($action == 'create') {
 	}
 
 	if (empty($reshook)) {
-		print $object->showOptionals($extrafields, 'edit');
+		print $object->showOptionals($extrafields, 'create');
 	}
 
 	// Public note
@@ -2416,6 +2416,15 @@ if ($action == 'create') {
 		// $resteapayer=bcadd($object->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
 		// $resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
 		$resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+
+		// Multicurrency
+		if (!empty($conf->multicurrency->enabled)) {
+			$multicurrency_totalpaye = $object->getSommePaiement(1);
+			$multicurrency_totalcreditnotes = $object->getSumCreditNotesUsed(1);
+			$multicurrency_totaldeposits = $object->getSumDepositsUsed(1);
+			$multicurrency_resteapayer = price2num($object->multicurrency_total_ttc - $multicurrency_totalpaye - $multicurrency_totalcreditnotes - $multicurrency_totaldeposits, 'MT');
+			$resteapayer = price2num($multicurrency_resteapayer / $object->multicurrency_tx, 'MT');
+		}
 
 		if ($object->paye) {
 			$resteapayer = 0;
@@ -2939,7 +2948,6 @@ if ($action == 'create') {
 		print '</div>';
 
 		print '<div class="fichehalfright">';
-		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border tableforfield centpercent">';
@@ -3318,7 +3326,6 @@ if ($action == 'create') {
 
 		print '</div>';
 		print '</div>';
-		print '</div>';
 
 		print '<div class="clearboth"></div><br>';
 
@@ -3565,17 +3572,14 @@ if ($action == 'create') {
 					$linktoelem = $form->showLinkToObjectBlock($object, null, array('invoice_supplier'));
 					$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
-					print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-					//print '</td><td valign="top" width="50%">';
-					//print '<br>';
+					print '</div><div class="fichehalfright">';
 
 					// List of actions on element
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 					$formactions = new FormActions($db);
 					$somethingshown = $formactions->showactions($object, 'invoice_supplier', $socid, 1, 'listaction'.($genallowed ? 'largetitle' : ''));
 
-					print '</div></div></div>';
-					//print '</td></tr></table>';
+					print '</div></div>';
 				}
 			}
 		}

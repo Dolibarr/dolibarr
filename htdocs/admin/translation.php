@@ -458,7 +458,7 @@ if ($mode == 'searchkey') {
 	}
 
 	//print 'param='.$param.' $_SERVER["PHP_SELF"]='.$_SERVER["PHP_SELF"].' num='.$num.' page='.$page.' nbtotalofrecords='.$nbtotalofrecords." sortfield=".$sortfield." sortorder=".$sortorder;
-	$title = $langs->trans("TranslationKeySearch");
+	$title = $langs->trans("Translation");
 	if ($nbtotalofrecords > 0) {
 		$title .= ' <span class="opacitymedium colorblack paddingleft">('.$nbtotalofrecords.' / '.$nbtotalofrecordswithoutfilters.' - '.$nbtotaloffiles.' '.$langs->trans("Files").')</span>';
 	}

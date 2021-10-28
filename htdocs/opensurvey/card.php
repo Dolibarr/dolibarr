@@ -229,7 +229,7 @@ print '<table class="border tableforfield centpercent">';
 
 // Type
 $type = ($object->format == "A") ? 'classic' : 'date';
-print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
+print '<tr><td class="titlefieldmax45">'.$langs->trans("Type").'</td><td>';
 print img_picto('', dol_buildpath('/opensurvey/img/'.($type == 'classic' ? 'chart-32.png' : 'calendar-32.png'), 1), 'width="16"', 1);
 print ' '.$langs->trans($type == 'classic' ? "TypeClassic" : "TypeDate").'</td></tr>';
 
@@ -323,7 +323,7 @@ if ($object->fk_user_creat > 0) {
 print '</td></tr>';
 
 // Link
-print '<tr><td>'.img_picto('', 'globe').' '.$langs->trans("UrlForSurvey", '').'</td><td>';
+print '<tr><td>'.$langs->trans("UrlForSurvey", '').'</td><td>';
 
 // Define $urlwithroot
 $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -331,9 +331,9 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 $url = $urlwithroot.'/public/opensurvey/studs.php?sondage='.$object->id_sondage;
-print '<input type="text" style="width: 60%" '.($action == 'edit' ? 'disabled' : '').' id="opensurveyurl" name="opensurveyurl" value="'.$url.'">';
+print '<input type="text" class="quatrevingtpercent" '.($action == 'edit' ? 'disabled' : '').' id="opensurveyurl" name="opensurveyurl" value="'.$url.'">';
 if ($action != 'edit') {
-	print ajax_autoselect("opensurveyurl", $url);
+	print ajax_autoselect("opensurveyurl", $url, 'image');
 }
 
 print '</td></tr>';

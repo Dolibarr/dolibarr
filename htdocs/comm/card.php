@@ -682,7 +682,7 @@ if ($object->id > 0) {
 		print "</table>";
 	}
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 	print '<div class="underbanner clearboth"></div>';
 
 	$boxstat = '';
@@ -1341,7 +1341,7 @@ if ($object->id > 0) {
 		print $hookmanager->resPrint;
 	}
 
-	print '</div></div></div>';
+	print '</div></div>';
 	print '<div style="clear:both"></div>';
 
 	print dol_get_fiche_end();

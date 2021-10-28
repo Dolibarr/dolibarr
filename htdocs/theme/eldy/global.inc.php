@@ -298,6 +298,9 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	cursor: pointer;
 	max-width: 350px;
 }
+input.short {
+	width: 40px;
+}
 .nofocusvisible:focus-visible {
 	outline: none;
 }
@@ -680,6 +683,12 @@ textarea.centpercent {
 .alignstart {
 	text-align: start;
 }
+.start {
+	text-align: start;
+}
+.end {
+	text-align: end;
+}
 .left {
 	text-align: <?php print $left; ?>;
 }
@@ -700,6 +709,9 @@ textarea.centpercent {
 }
 .nowraponsmartphone {
 	white-space: <?php print ($dol_optimize_smallscreen ? 'nowrap' : 'normal'); ?>;
+}
+.wraponsmartphone {
+	white-space: <?php print ($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
 }
 .liste_titre .nowrap {
 	white-space: nowrap;
@@ -884,6 +896,13 @@ span.fa.fa-plus-circle.paddingleft {
 .tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off
 {
 	font-size: 1.5em; vertical-align: text-bottom;
+}
+
+.divoverflow {
+	overflow: hidden;
+	white-space: nowrap;
+	vertical-align: middle;
+	text-overflow: ellipsis;
 }
 
 
@@ -1413,7 +1432,8 @@ table[summary="list_of_modules"] .fa-cog {
 .minheight40 { min-height: 40px; }
 .titlefieldcreate { width: 20%; }
 .titlefield       { /* width: 25%; */ width: 250px; }
-.titlefieldmiddle { width: 50%; }
+.titlefieldmiddle { width: 45%; }
+.titlefieldmax45 { max-width: 45%; }
 .imgmaxwidth180 { max-width: 180px; }
 .imgmaxheight50 { max-height: 50px; }
 
@@ -1555,7 +1575,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		height: 64px !important;
 	}
 
-	.divmainbodylarge { margin-left: 20px !important; margin-right: 20px !important; }
+	.divmainbodylarge { margin-left: 10px !important; margin-right: 10px !important; }
 
 	.tdoverflowonsmartphone {
 		max-width: 0;
@@ -1672,7 +1692,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 }
 .linkobject { cursor: pointer; }
 
-table.tableforfield tr>td:first-of-type, tr.trforfield>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
+table.tableforfield tr:not(.liste_titre)>td:first-of-type, tr.trforfield:not(.liste_titre)>td:first-of-type, div.tableforfield div.tagtr:not(.liste_titre)>div.tagtd:first-of-type {
 	color: var(--tableforfieldcolor);
 }
 
@@ -1718,7 +1738,7 @@ td.showDragHandle {
 	<?php } ?>
 }
 #id-right {	/* This must stay id-right and not be replaced with echo $right */
-	padding-top: 10px;
+	padding-top: 14px;
 	width: 100%;
 	background: var(--colorbackbody);
 	padding-bottom: 20px;
@@ -1952,7 +1972,7 @@ div.fichethirdleft {
 		print "float: ".$left.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: 50%;\n";
+		print "width: calc(50% - 14px);\n";
 	} ?>
 	<?php if ($conf->browser->layout == 'phone') {
 		print "padding-bottom: 6px;\n";
@@ -1963,14 +1983,11 @@ div.fichetwothirdright {
 		print "float: ".$right.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: 50%;\n";
+		print "width: calc(50% - 14px);\n";
 	} ?>
 	<?php if ($conf->browser->layout == 'phone') {
 		print "padding-bottom: 6px\n";
 	} ?>
-}
-div.fichetwothirdright div.ficheaddleft {
-	 padding-<?php echo $left; ?>: 28px;
 }
 div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone') {
@@ -2025,9 +2042,6 @@ div.secondcolumn div.box {
 		float: none;
 		width: auto;
 		padding-bottom: 6px;
-	}
-	div.fichetwothirdright div.ficheaddleft {
-		padding-left: 0;
 	}
 	div.fichehalfleft {
 		float: none;
@@ -2255,7 +2269,7 @@ img.photorefnoborder {
 /* Menu top et 1ere ligne tableau                                                 */
 /* ============================================================================== */
 
-div#id-top {
+#id-top {
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
 	display:none;
 <?php } else { ?>
@@ -3279,7 +3293,7 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 	padding-right: 7px !important;
 }
 input.button[name="upload"] {
-	padding: 4px !important;
+	padding: 5px !important;
 	font-size: 0.9em;
 }
 input.button.smallpaddingimp {
@@ -3371,6 +3385,15 @@ td.border, div.tagtable div div.border {
 	width:auto;
 }
 
+/* To have left column sticky
+.tagtable td[data-key="ref"] {
+	position: sticky;
+	left: 0;
+	top: 0;
+	max-width: 150px !important;
+}
+*/
+
 
 /* Main boxes */
 .nobordertop, .nobordertop tr:first-of-type td {
@@ -3397,7 +3420,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-top-width: <?php echo $borderwidth ?>px;
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
-	margin: 0px 0px 5px 0px;
+	margin: 0px 0px 20px 0px;
 
 	<?php
 	if ($userborderontable) { ?>
@@ -3985,8 +4008,8 @@ div.tabBar .noborder {
 /* Prepare to remove class pair - impair */
 
 .noborder:not(.editmode) > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
 {
 	background: linear-gradient(bottom, var(----colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
 	background: -o-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
@@ -4000,8 +4023,8 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft
 }
 
 .noborder:not(.editmode) > tbody > tr:nth-child(odd):not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
 {
 	background: linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
 	background: -o-linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
@@ -4029,9 +4052,6 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	padding-right: 0px;
 	padding-left: 0px;
 	padding-bottom: 10px;
-}
-.ficheaddleft div.boxstats, .ficheaddright div.boxstats {
-	border: none;
 }
 .boxstatsborder {
 	/* border: 1px solid #CCC !important; */
@@ -4460,7 +4480,7 @@ div.titre {
 }
 div.fiche > table.table-fiche-title:first-of-type div {
 	color: var(--colortexttitlenotab);
-	font-size: 1.05em;
+	font-size: 1.1em;
 	/* text-transform: uppercase; */
 	/* font-weight: 600; */
 }
@@ -6868,6 +6888,29 @@ div.clipboardCPValue.hidewithsize {
 	display: none;
 }
 
+/* To make a div popup, we must use a position aboluste inside a position relative */
+.clipboardCPText {
+	position: relative;
+}
+.clipboardCPTextDivInside {
+	position: absolute;
+	background: #f8f8fa;
+	color: #888;
+	border: 1px solid #E0E0E0;
+	opacity: 1;
+	z-index: 20;
+	padding: 2px;
+	padding-left: 5px;
+	padding-right: 5px;
+	top: -5px;
+	left: 0px;
+	border-radius: 5px;
+	white-space: nowrap;
+	font-size: 0.9em;
+	box-shadow: 1px 1px 6px #ddd;
+}
+
+
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
@@ -6990,6 +7033,9 @@ div.clipboardCPValue.hidewithsize {
 		z-index: 201;
 		background: var(--colorbackvmenu1);
 	}
+	#id-right {	/* This must stay id-right and not be replaced with echo $right */
+		padding-top: 8px;
+	}
 
 	.login_vertical_align {
 		padding-left: 20px;
@@ -7022,7 +7068,7 @@ div.clipboardCPValue.hidewithsize {
 		padding-left: 20px;
 		padding-right: 20px;
 		padding-bottom: 16px;
-		top: inherit !important;
+		top: auto;
 		left: 0 !important;
 		text-align: center;
 		vertical-align: middle;
