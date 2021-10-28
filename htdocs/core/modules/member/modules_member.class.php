@@ -154,5 +154,3 @@ abstract class ModeleNumRefMembers
 		}
 	}
 }
-
-
