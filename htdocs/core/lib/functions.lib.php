@@ -241,36 +241,39 @@ function dol_shutdown()
 }
 
 /**
- * Return true if we are in a context of submitting a parameter
+ * Return true if we are in a context of submitting a parameter, or if there is a default value associated to this parameter,
+ * false otherwise.
  *
  * @param 	string	$paramname		Name or parameter to test
- * @return 	boolean					True if we have just submit a POST or GET request with the parameter provided (even if param is empty)
+ * @return 	boolean					True if we have just submit a POST or GET request with the parameter provided
+ *									(even if param is empty) or if there is a default value associated
+ *									(Input value on Createform, Form Order or Search Filter)
  */
 function GETPOSTISSET($paramname)
 {
 	$isset = 0;
+	global $user, $conf;
 
 	$relativepathstring = $_SERVER["PHP_SELF"];
 	// Clean $relativepathstring
 	if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'), '/').'/', '', $relativepathstring);
 	$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
 	$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
-	//var_dump($relativepathstring);
-	//var_dump($user->default_values);
+
 
 	// Code for search criteria persistence.
 	// Retrieve values if restore_lastsearch_values
-	if (!empty($_GET['restore_lastsearch_values']))        // Use $_GET here and not GETPOST
-	{
-		if (!empty($_SESSION['lastsearch_values_'.$relativepathstring]))	// If there is saved values
-		{
+	if (isset($_POST[$paramname]) || isset($_GET[$paramname])) {
+		$isset = 1;
+	} elseif (!empty($_GET['restore_lastsearch_values'])) {
+		// If there is saved values
+		if (!empty($_SESSION['lastsearch_values_'.$relativepathstring])) {
+
 			$tmp = json_decode($_SESSION['lastsearch_values_'.$relativepathstring], true);
-			if (is_array($tmp))
-			{
-				foreach ($tmp as $key => $val)
-				{
-					if ($key == $paramname)	// We are on the requested parameter
-					{
+			if (is_array($tmp)) {
+				foreach ($tmp as $key => $val) {
+					// We are on the requested parameter
+					if ($key == $paramname)	{
 						$isset = 1;
 						break;
 					}
@@ -278,21 +281,112 @@ function GETPOSTISSET($paramname)
 			}
 		}
 		// If there is saved contextpage, page or limit
-		if ($paramname == 'contextpage' && !empty($_SESSION['lastsearch_contextpage_'.$relativepathstring]))
-		{
+		if ($paramname == 'contextpage' && !empty($_SESSION['lastsearch_contextpage_'.$relativepathstring])) {
 			$isset = 1;
 		}
-		elseif ($paramname == 'page' && !empty($_SESSION['lastsearch_page_'.$relativepathstring]))
-		{
+		elseif ($paramname == 'page' && !empty($_SESSION['lastsearch_page_'.$relativepathstring])) {
 			$isset = 1;
 		}
-		elseif ($paramname == 'limit' && !empty($_SESSION['lastsearch_limit_'.$relativepathstring]))
-		{
+		elseif ($paramname == 'limit' && !empty($_SESSION['lastsearch_limit_'.$relativepathstring])) {
 			$isset = 1;
 		}
-	}
-	else {
-		$isset = (isset($_POST[$paramname]) || isset($_GET[$paramname]));
+
+	// Retreive default values if we are not doing a sort
+	// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_ENABLE_DEFAULT_VALUES is not set
+	} elseif (!isset($_GET['sortfield'])) {
+		if (!empty($_GET['action']) && $_GET['action'] == 'create') {
+			// Search default value from $object->field
+			global $object;
+			if (is_object($object) && isset($object->fields[$paramname]['default'])) {
+				$isset = 1;
+			}
+		}
+		// $user->default_values defined from menu 'Setup - Default values'
+		if (!empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES) && !empty($user->default_values)) {
+			// Now search in setup to overwrite default values
+			if (!empty($_GET['action']) && (preg_match('/^create/', $_GET['action']) || preg_match('/^presend/', $_GET['action']))) {
+				if (isset($user->default_values[$relativepathstring]['createform'])) {
+					foreach ($user->default_values[$relativepathstring]['createform'] as $defkey => $defval) {
+						$qualified = 0;
+						if ($defkey != '_noquery_') {
+							$tmpqueryarraytohave = explode('&', $defkey);
+							$tmpqueryarraywehave = explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
+							$foundintru = 0;
+
+							foreach ($tmpqueryarraytohave as $tmpquerytohave) {
+								if (!in_array($tmpquerytohave, $tmpqueryarraywehave)) {
+									$foundintru = 1;
+								}
+							}
+
+							if (!$foundintru) {
+								$qualified = 1;
+							}
+						} else {
+							$qualified = 1;
+						}
+
+						if ($qualified && isset($user->default_values[$relativepathstring]['createform'][$defkey][$paramname])) {
+							$isset = 1;
+							break;
+						}
+					}
+				}
+			// Management of default search_filters and sort order
+			} elseif (!empty($paramname)) {
+				// Sorted on which fields ? ASC or DESC ?
+				if ($paramname == 'sortfield' || $paramname == 'sortorder') {
+					// Even if paramname is sortfield, data are stored into ['sortorder...']
+					if (isset($user->default_values[$relativepathstring]['sortorder'])) {
+						foreach ($user->default_values[$relativepathstring]['sortorder'] as $defkey => $defval) {
+							$qualified = 0;
+							if ($defkey != '_noquery_') {
+								$tmpqueryarraytohave = explode('&', $defkey);
+								$tmpqueryarraywehave = explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
+								$foundintru = 0;
+								foreach ($tmpqueryarraytohave as $tmpquerytohave) {
+									if (!in_array($tmpquerytohave, $tmpqueryarraywehave)) {
+										$foundintru = 1;
+									}
+								}
+								if (!$foundintru) {
+									$qualified = 1;
+								}
+							} else {
+								$qualified = 1;
+							}
+
+							if ($qualified) {
+								$isset = 1;
+							}
+						}
+					}
+				} elseif (isset($user->default_values[$relativepathstring]['filters'])) {
+					// $defkey is a querystring like 'a=b&c=d', $defval is key of user
+					foreach ($user->default_values[$relativepathstring]['filters'] as $defkey => $defval) {
+						$qualified = 0;
+						if ($defkey != '_noquery_') {
+							$tmpqueryarraytohave = explode('&', $defkey);
+							$tmpqueryarraywehave = explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
+							$foundintru = 0;
+							foreach ($tmpqueryarraytohave as $tmpquerytohave) {
+								if (!in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru = 1;
+							}
+							if (!$foundintru) {
+								$qualified = 1;
+							}
+						} else {
+							$qualified = 1;
+						}
+
+						if ($qualified) {
+							$isset = 1;
+							break;
+						}
+					}
+				}
+			}
+		}
 	}
 
 	return $isset;
