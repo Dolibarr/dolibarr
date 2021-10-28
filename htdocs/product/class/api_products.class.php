@@ -462,7 +462,7 @@ class Products extends DolibarrApi
 
 		$childsArbo = $this->product->getChildsArbo($id, 1);
 
-		$keys = ['rowid', 'qty', 'fk_product_type', 'label', 'incdec'];
+		$keys = ['rowid', 'qty', 'fk_product_type', 'label', 'incdec', 'ref'];
 		$childs = [];
 		foreach ($childsArbo as $values) {
 			$childs[] = array_combine($keys, $values);
@@ -1945,7 +1945,7 @@ class Products extends DolibarrApi
 
 		unset($object->supplierprices);	// Mut use another API to get them
 
-		if(!DolibarrApiAccess::$user->rights->stock->lire){
+		if (empty(DolibarrApiAccess::$user->rights->stock->lire)) {
 			unset($object->stock_reel);
 			unset($object->stock_theorique);
 		}
