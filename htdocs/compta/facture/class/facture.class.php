@@ -1444,7 +1444,7 @@ class Facture extends CommonInvoice
 			return null;
 		}
 
-		$payment_conditions_deposit_percent = getDictvalue(MAIN_DB_PREFIX . 'c_payment_term', 'deposit_percent', $origin->cond_reglement_id);
+		$payment_conditions_deposit_percent = getDictionaryValue(MAIN_DB_PREFIX . 'c_payment_term', 'deposit_percent', $origin->cond_reglement_id);
 
 		if (empty($payment_conditions_deposit_percent)) {
 			$origin->error = 'ErrorPaymentConditionsNotEligibleToDepositCreation';

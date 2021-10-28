@@ -3269,7 +3269,7 @@ if ($action == 'create') {
 				$typedeposit = GETPOST('typedeposit', 'aZ09');
 				$valuedeposit = GETPOST('valuedeposit', 'int');
 				if (empty($typedeposit) && ! empty($objectsrc->deposit_percent)) {
-					$origin_payment_conditions_deposit_percent = getDictvalue(MAIN_DB_PREFIX . 'c_payment_term', 'deposit_percent', $objectsrc->cond_reglement_id);
+					$origin_payment_conditions_deposit_percent = getDictionaryValue(MAIN_DB_PREFIX . 'c_payment_term', 'deposit_percent', $objectsrc->cond_reglement_id);
 					if (! empty($origin_payment_conditions_deposit_percent)) {
 						$typedeposit = 'variable';
 					}
