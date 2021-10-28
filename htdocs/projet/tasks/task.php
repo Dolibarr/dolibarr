@@ -105,6 +105,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->projet->creer) {
 		$object->date_start = dol_mktime(GETPOST('dateohour', 'int'), GETPOST('dateomin', 'int'), 0, GETPOST('dateomonth', 'int'), GETPOST('dateoday', 'int'), GETPOST('dateoyear', 'int'));
 		$object->date_end = dol_mktime(GETPOST('dateehour', 'int'), GETPOST('dateemin', 'int'), 0, GETPOST('dateemonth', 'int'), GETPOST('dateeday', 'int'), GETPOST('dateeyear', 'int'));
 		$object->progress = price2num(GETPOST('progress', 'alphanohtml'));
+		$object->budget_amount = price2num(GETPOST('budget_amount', 'alphanohtml'));
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -234,7 +235,7 @@ if ($id > 0 || !empty($ref)) {
 		$morehtmlref .= '</div>';
 
 		// Define a complementary filter for search of next/prev ref.
-		if (!$user->rights->projet->all->lire) {
+		if (empty($user->rights->projet->all->lire)) {
 			$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
 			$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 		}
@@ -316,7 +317,6 @@ if ($id > 0 || !empty($ref)) {
 		print '</div>';
 
 		print '<div class="fichehalfright">';
-		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border centpercent">';
@@ -335,7 +335,6 @@ if ($id > 0 || !empty($ref)) {
 
 		print '</table>';
 
-		print '</div>';
 		print '</div>';
 		print '</div>';
 
@@ -403,8 +402,8 @@ if ($id > 0 || !empty($ref)) {
 
 			// Third party
 			print '<td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
-			if ($projectstatic->societe->id) {
-				print $projectstatic->societe->getNomUrl(1);
+			if ($projectstatic->thirdparty->id) {
+				print $projectstatic->thirdparty->getNomUrl(1);
 			} else {
 				print '&nbsp;';
 			}
@@ -441,6 +440,10 @@ if ($id > 0 || !empty($ref)) {
 		print '<td>';
 		print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_4.'">'.$object->description.'</textarea>';
 		print '</td></tr>';
+
+		print '<tr><td>'.$langs->trans("Budget").'</td>';
+		print '<td><input size="5" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : price2num($object->budget_amount)).'"></td>';
+		print '</tr>';
 
 		// Other options
 		$parameters = array();
@@ -538,7 +541,7 @@ if ($id > 0 || !empty($ref)) {
 		print '</table>';
 		print '</div>';
 
-		print '<div class="fichehalfright"><div class="ficheaddleft">';
+		print '<div class="fichehalfright">';
 
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent tableforfield">';
@@ -564,6 +567,13 @@ if ($id > 0 || !empty($ref)) {
 		}
 		print '</td></tr>';
 
+		// Budget
+		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+		if (strcmp($object->budget_amount, '')) {
+			print price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
+		}
+		print '</td></tr>';
+
 		// Other attributes
 		$cols = 3;
 		$parameters = array('socid'=>$socid);
@@ -571,7 +581,6 @@ if ($id > 0 || !empty($ref)) {
 
 		print '</table>';
 
-		print '</div>';
 		print '</div>';
 
 		print '</div>';
@@ -627,7 +636,7 @@ if ($id > 0 || !empty($ref)) {
 
 		print $formfile->showdocuments('project_task', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		print '</div><div class="fichehalfright">';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
@@ -635,7 +644,7 @@ if ($id > 0 || !empty($ref)) {
 		$defaultthirdpartyid = $socid > 0 ? $socid : $object->project->socid;
 		$formactions->showactions($object, 'task', $defaultthirdpartyid, 1, '', 10, 'withproject='.$withproject);
 
-		print '</div></div></div>';
+		print '</div></div>';
 	}
 }
 

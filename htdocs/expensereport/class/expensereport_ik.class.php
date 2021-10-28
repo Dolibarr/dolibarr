@@ -165,7 +165,7 @@ class ExpenseReportIk extends CoreObject
 			$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'c_exp_tax_cat c ON (r.fk_c_exp_tax_cat = c.rowid)';
 		}
 		$sql .= ' WHERE r.fk_c_exp_tax_cat = '.((int) $fk_c_exp_tax_cat);
-		$sql .= " AND entity IN(0, ".getEntity($this->element).")";
+		$sql .= " AND r.entity IN(0, ".getEntity($this->element).")";
 		if ($active) {
 			$sql .= ' AND r.active = 1 AND c.active = 1';
 		}

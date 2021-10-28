@@ -135,6 +135,13 @@ $upload_dir = $conf->fournisseur->payment->dir_output;
 $permissiontoadd = true;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
+// Actions to send emails
+$triggersendname = 'PAYMENTRECEIPT_SENTBYMAIL';
+$paramname = 'id';
+$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO';
+$trackid = 'pre'.$object->id;
+include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+
 
 /*
  * View
@@ -334,6 +341,18 @@ if ($result > 0) {
 	 */
 
 	print '<div class="tabsAction">';
+
+	// Send by mail
+	if ($user->socid == 0 && $action == '') {
+		$usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS));
+		if ($usercansend) {
+			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+		} else {
+			print '<span class="butActionRefused classfortooltip">'.$langs->trans('SendMail').'</span>';
+		}
+	}
+
+	// Payment validation
 	if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
 		if ($user->socid == 0 && $object->statut == 0 && $action == '') {
 			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && (!empty($user->rights->fournisseur->facture->creer) || !empty($user->rights->supplier_invoice->creer)))
@@ -342,6 +361,8 @@ if ($result > 0) {
 			}
 		}
 	}
+
+	// Delete payment
 	if ($user->socid == 0 && $action == '') {
 		if ($user->rights->fournisseur->facture->supprimer) {
 			if ($allow_delete) {
@@ -371,7 +392,7 @@ if ($result > 0) {
 		$somethingshown = $formfile->numoffiles;
 	}
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 	//print '<br>';
 
 	// List of actions on element
@@ -380,7 +401,16 @@ if ($result > 0) {
 	$somethingshown = $formactions->showactions($object,'supplier_payment',$socid,1,'listaction'.($genallowed?'largetitle':''));
 	*/
 
-	print '</div></div></div>';
+	print '</div></div>';
+
+	// Presend form
+	$modelmail = ''; //TODO: Add new 'payment receipt' model in email models
+	$defaulttopic = 'SendPaymentReceipt';
+	$diroutput = $conf->fournisseur->payment->dir_output;
+	$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO';
+	$trackid = 'pre'.$object->id;
+
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 } else {
 	$langs->load("errors");
 	print $langs->trans("ErrorRecordNotFound");

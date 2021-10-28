@@ -82,6 +82,7 @@ $search_planedworkload = GETPOST('search_planedworkload');
 $search_timespend = GETPOST('search_timespend');
 $search_progresscalc = GETPOST('search_progresscalc');
 $search_progressdeclare = GETPOST('search_progressdeclare');
+$search_task_budget_amount = GETPOST('search_task_budget_amount');
 
 $search_date_start_startmonth = GETPOST('search_date_start_startmonth', 'int');
 $search_date_start_startyear = GETPOST('search_date_start_startyear', 'int');
@@ -142,6 +143,7 @@ $diroutputmassaction = $conf->projet->dir_output.'/tasks/temp/massgeneration/'.$
 $hookmanager->initHooks(array('projecttaskscard', 'globalcard'));
 
 $progress = GETPOST('progress', 'int');
+$budget_amount = GETPOST('budget_amount', 'int');
 $label = GETPOST('label', 'alpha');
 $description = GETPOST('description', 'restricthtml');
 $planned_workloadhour = (GETPOST('planned_workloadhour', 'int') ?GETPOST('planned_workloadhour', 'int') : 0);
@@ -160,7 +162,8 @@ $arrayfields = array(
 	't.progress_calculated'=>array('label'=>$langs->trans("ProgressCalculated"), 'checked'=>1, 'position'=>8),
 	't.progress'=>array('label'=>$langs->trans("ProgressDeclared"), 'checked'=>1, 'position'=>9),
 	't.progress_summary'=>array('label'=>$langs->trans("TaskProgressSummary"), 'checked'=>1, 'position'=>10),
-	'c.assigned'=>array('label'=>$langs->trans("TaskRessourceLinks"), 'checked'=>1, 'position'=>11),
+	't.budget_amount'=>array('label'=>"Budget", 'checked'=>1, 'position'=>11),
+	'c.assigned'=>array('label'=>$langs->trans("TaskRessourceLinks"), 'checked'=>1, 'position'=>12),
 );
 if ($object->usage_bill_time) {
 	$arrayfields['t.tobill'] = array('label'=>$langs->trans("TimeToBill"), 'checked'=>0, 'position'=>11);
@@ -204,6 +207,7 @@ if (empty($reshook)) {
 		$search_timespend = '';
 		$search_progresscalc = '';
 		$search_progressdeclare = '';
+		$search_task_budget_amount = '';
 		$toselect = '';
 		$search_array_options = array();
 		$search_date_start_startmonth = "";
@@ -285,6 +289,10 @@ if (!empty($search_progressdeclare)) {
 	$morewherefilterarray[] = natural_search('t.progress', $search_progressdeclare, 1, 1);
 }
 
+if ($search_task_budget_amount) {
+	$morewherefilterarray[]= natural_search('t.budget_amount', $search_task_budget_amount, 1, 1);
+}
+
 $morewherefilter = '';
 if (count($morewherefilterarray) > 0) {
 	$morewherefilter = ' AND '.implode(' AND ', $morewherefilterarray);
@@ -338,6 +346,7 @@ if ($action == 'createtask' && $user->rights->projet->creer) {
 			$task->date_start = $date_start;
 			$task->date_end = $date_end;
 			$task->progress = $progress;
+			$task->budget_amount = $budget_amount;
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $task);
@@ -524,6 +533,9 @@ if ($id > 0 || !empty($ref)) {
 	if ($search_progressdeclare) {
 		$param .= '&search_progressdeclare='.urlencode($search_progressdeclare);
 	}
+	if ($search_task_budget_amount) {
+		$param .= '&search_task_budget_amount='.urlencode($search_task_budget_amount);
+	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
@@ -538,13 +550,13 @@ if ($id > 0 || !empty($ref)) {
 	// Title
 	$morehtmlref .= $object->title;
 	// Thirdparty
-	if ($object->thirdparty->id > 0) {
+	if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref .= '</div>';
 
 	// Define a complementary filter for search of next/prev ref.
-	if (!$user->rights->projet->all->lire) {
+	if (empty($user->rights->projet->all->lire)) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 		$object->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 	}
@@ -625,7 +637,6 @@ if ($id > 0 || !empty($ref)) {
 
 	print '</div>';
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border tableforfield centpercent">';
@@ -644,7 +655,6 @@ if ($id > 0 || !empty($ref)) {
 
 	print '</table>';
 
-	print '</div>';
 	print '</div>';
 	print '</div>';
 
@@ -756,6 +766,10 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '<td>';
 	print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_4.'">'.$description.'</textarea>';
 	print '</td></tr>';
+
+	print '<tr><td>'.$langs->trans("Budget").'</td>';
+	print '<td><input size="5" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : '').'"></td>';
+	print '</tr>';
 
 	// Other options
 	$parameters = array();
@@ -944,6 +958,12 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	}
 	*/
 
+	if (!empty($arrayfields['t.budget_amount']['checked'])) {
+		print '<td class="liste_titre center">';
+		print '<input type="text" class="flat" name="search_task_budget_amount" value="'.$search_task_budget_amount.'" size="4">';
+		print '</td>';
+	}
+
 	if (!empty($arrayfields['c.assigned']['checked'])) {
 		print '<td class="liste_titre right">';
 		print '</td>';
@@ -1005,6 +1025,11 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		print_liste_field_titre("TaskRessourceLinks", $_SERVER["PHP_SELF"], '', '', $param, $sortfield, $sortorder);
 	}
 	*/
+
+	if (!empty($arrayfields['t.budget_amount']['checked'])) {
+		print_liste_field_titre($arrayfields['t.budget_amount']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
+	}
+
 	if (!empty($arrayfields['c.assigned']['checked'])) {
 		print_liste_field_titre($arrayfields['c.assigned']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ', '');
 	}

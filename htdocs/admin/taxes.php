@@ -270,7 +270,7 @@ print '</form>';
 echo '<div>';
 echo '<table class="noborder centpercent">';
 echo '<thead>';
-echo '<tr class="liste_titre"><th>' . $langs->trans('Parameter') . '</th><th>' . $langs->trans('Value') . '</th></tr>';
+echo '<tr class="liste_titre"><th>'.$langs->trans('Parameter').'</th><th>'.$langs->trans('Value').'</th></tr>';
 echo '</thead>';
 echo '<tbody>';
 

@@ -54,12 +54,12 @@ ONLY vulnerabilities discovered, when the following setup on test platform is us
 * $dolibarr_main_prod must be set to 1 into conf.php
 * $dolibarr_nocsrfcheck must be kept to the value 0 into conf.php (this is the default value)
 * $dolibarr_main_force_https must be set to something else than 0.
-* The constant MAIN_SECURITY_CSRF_WITH_TOKEN must be set to 2 into backoffice menu Home - Setup - Other (this protection should be set to 2 soon by default)
+* The constant MAIN_SECURITY_CSRF_WITH_TOKEN must be set to 3 into backoffice menu Home - Setup - Other (this protection should be set to 3 soon by default)
 * The module DebugBar and ModuleBuilder must NOT be enabled (by default, these modules are not enabled. They are developer tools)
 * ONLY security reports on modules provided by default and with the "stable" status are valid (troubles into "experimental", "developement" or external modules are not valid vulnerabilities).
 * The root of web server must link to htdocs and the documents directory must be outside of the web server root (this is the default when using the default installer but may differs with external installer).
 * The web server setup must be done so only the documents directory is in write mode. The root directory called htdocs must be readonly.
-* CSRF attacks are accepted when using a POST URL, but when using GET URL, they are validated only for creating, updating or deleting data resctricted from pages restricted to admin users.
+* CSRF attacks are accepted but double check that you have set MAIN_SECURITY_CSRF_WITH_TOKEN to value 3.
 * Ability for a high level user to edit web site pages into the CMS by including HTML or Javascript is an expected feature. Vulnerabilities into the website module are validated only if HTML or Javascript injection can be done by a non allowed user.
 
 Scope is the web application (back office) and the APIs.

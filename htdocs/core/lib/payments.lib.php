@@ -99,7 +99,7 @@ function bankline_prepare_head($id)
  */
 function payment_supplier_prepare_head(Paiement $object)
 {
-	global $langs, $conf;
+	global $db, $langs, $conf;
 
 	$h = 0;
 	$head = array();
@@ -118,6 +118,19 @@ function payment_supplier_prepare_head(Paiement $object)
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/paiement/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Info');
 	$head[$h][2] = 'info';
+	$h++;
+
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	$upload_dir = $conf->fournisseur->payment->dir_output.'/'.$object->ref;
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+	$nbLinks = Link::count($db, $object->element, $object->id);
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/paiement/document.php?id='.$object->id;
+	$head[$h][1] = $langs->trans('Documents');
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	}
+	$head[$h][2] = 'documents';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'payment_supplier', 'remove');
@@ -173,8 +186,9 @@ function showOnlinePaymentUrl($type, $ref)
 
 	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'</span><br>';
 	$url = getOnlinePaymentUrl(0, $type, $ref);
-	$out .= '<div class="urllink"><input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$url.'">';
-	$out .= '<a href="'.$url.'" target="_blank">'.img_picto('', 'globe', 'class="paddingleft"').'</a></div>';
+	$out .= '<div class="urllink"><input type="text" id="onlinepaymenturl" class="quatrevingtpercentminusx" value="'.$url.'">';
+	$out .= '<a class="" href="'.$url.'" target="_blank">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
+	$out .= '</div>';
 	$out .= ajax_autoselect("onlinepaymenturl", 0);
 	return $out;
 }
@@ -224,7 +238,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 	}
 
 	if ($type == 'free') {
-		$out = $urltouse.'/public/payment/newpayment.php?amount='.($mode ? '<font color="#666666">' : '').$amount.($mode ? '</font>' : '').'&tag='.($mode ? '<font color="#666666">' : '').$freetag.($mode ? '</font>' : '');
+		$out = $urltouse.'/public/payment/newpayment.php?amount='.($mode ? '<span style="color: #666666">' : '').$amount.($mode ? '</span>' : '').'&tag='.($mode ? '<span style="color: #666666">' : '').$freetag.($mode ? '</span>' : '');
 		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
 				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
@@ -234,120 +248,120 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 		}
 		//if ($mode) $out.='&noidempotency=1';
 	} elseif ($type == 'order') {
-		$out = $urltouse.'/public/payment/newpayment.php?source=order&ref='.($mode ? '<font color="#666666">' : '');
+		$out = $urltouse.'/public/payment/newpayment.php?source=order&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
 			$out .= 'order_ref';
 		}
 		if ($mode == 0) {
 			$out .= urlencode($ref);
 		}
-		$out .= ($mode ? '</font>' : '');
+		$out .= ($mode ? '</span>' : '');
 		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
 				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 			} else {
-				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
+				$out .= '&securekey='.($mode ? '<span style="color: #666666">' : '');
 				if ($mode == 1) {
 					$out .= "hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + order_ref)";
 				}
 				if ($mode == 0) {
 					$out .= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$type.$ref, 2);
 				}
-				$out .= ($mode ? '</font>' : '');
+				$out .= ($mode ? '</span>' : '');
 			}
 		}
 	} elseif ($type == 'invoice') {
-		$out = $urltouse.'/public/payment/newpayment.php?source=invoice&ref='.($mode ? '<font color="#666666">' : '');
+		$out = $urltouse.'/public/payment/newpayment.php?source=invoice&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
 			$out .= 'invoice_ref';
 		}
 		if ($mode == 0) {
 			$out .= urlencode($ref);
 		}
-		$out .= ($mode ? '</font>' : '');
+		$out .= ($mode ? '</span>' : '');
 		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
 				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 			} else {
-				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
+				$out .= '&securekey='.($mode ? '<span style="color: #666666">' : '');
 				if ($mode == 1) {
 					$out .= "hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + invoice_ref)";
 				}
 				if ($mode == 0) {
 					$out .= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$type.$ref, 2);
 				}
-				$out .= ($mode ? '</font>' : '');
+				$out .= ($mode ? '</span>' : '');
 			}
 		}
 	} elseif ($type == 'contractline') {
-		$out = $urltouse.'/public/payment/newpayment.php?source=contractline&ref='.($mode ? '<font color="#666666">' : '');
+		$out = $urltouse.'/public/payment/newpayment.php?source=contractline&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
 			$out .= 'contractline_ref';
 		}
 		if ($mode == 0) {
 			$out .= urlencode($ref);
 		}
-		$out .= ($mode ? '</font>' : '');
+		$out .= ($mode ? '</span>' : '');
 		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
 				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 			} else {
-				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
+				$out .= '&securekey='.($mode ? '<span style="color: #666666">' : '');
 				if ($mode == 1) {
 					$out .= "hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + contractline_ref)";
 				}
 				if ($mode == 0) {
 					$out .= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$type.$ref, 2);
 				}
-				$out .= ($mode ? '</font>' : '');
+				$out .= ($mode ? '</span>' : '');
 			}
 		}
 	} elseif ($type == 'member' || $type == 'membersubscription') {
 		$newtype = 'member';
-		$out = $urltouse.'/public/payment/newpayment.php?source=member&ref='.($mode ? '<font color="#666666">' : '');
+		$out = $urltouse.'/public/payment/newpayment.php?source=member&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
 			$out .= 'member_ref';
 		}
 		if ($mode == 0) {
 			$out .= urlencode($ref);
 		}
-		$out .= ($mode ? '</font>' : '');
+		$out .= ($mode ? '</span>' : '');
 		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
 				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 			} else {
-				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
+				$out .= '&securekey='.($mode ? '<span style="color: #666666">' : '');
 				if ($mode == 1) {
 					$out .= "hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$newtype."' + member_ref)";
 				}
 				if ($mode == 0) {
 					$out .= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$newtype.$ref, 2);
 				}
-				$out .= ($mode ? '</font>' : '');
+				$out .= ($mode ? '</span>' : '');
 			}
 		}
 	}
 	if ($type == 'donation') {
-		$out = $urltouse.'/public/payment/newpayment.php?source=donation&ref='.($mode ? '<font color="#666666">' : '');
+		$out = $urltouse.'/public/payment/newpayment.php?source=donation&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
 			$out .= 'donation_ref';
 		}
 		if ($mode == 0) {
 			$out .= urlencode($ref);
 		}
-		$out .= ($mode ? '</font>' : '');
+		$out .= ($mode ? '</span>' : '');
 		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
 				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 			} else {
-				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
+				$out .= '&securekey='.($mode ? '<span style="color: #666666">' : '');
 				if ($mode == 1) {
 					$out .= "hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + donation_ref)";
 				}
 				if ($mode == 0) {
 					$out .= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$type.$ref, 2);
 				}
-				$out .= ($mode ? '</font>' : '');
+				$out .= ($mode ? '</span>' : '');
 			}
 		}
 	}
@@ -450,7 +464,7 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0,
 		}
 	}
 
-	print '<font style="font-size: 10px;"><br><hr>'."\n";
+	print '<span style="font-size: 10px;"><br><hr>'."\n";
 	print $fromcompany->name.'<br>';
 	print $line1;
 	if (strlen($line1.$line2) > 50) {
@@ -459,5 +473,5 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0,
 		print ' - ';
 	}
 	print $line2;
-	print '</font></div>'."\n";
+	print '</span></div>'."\n";
 }

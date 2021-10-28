@@ -341,6 +341,7 @@ if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
 	}
 	if (!empty($conf->projet->enabled)) {
 		$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'project', 'test'=>$conf->projet->enabled, 'label'=>$langs->trans("Projects"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Projects")));
+		$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'project_task', 'test'=>$conf->projet->enabled, 'label'=>$langs->trans("Tasks"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Tasks")));
 	}
 	if (!empty($conf->ficheinter->enabled)) {
 		$langs->load("interventions"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'fichinter', 'test'=>$conf->ficheinter->enabled, 'label'=>$langs->trans("Interventions"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Interventions")));
@@ -353,6 +354,7 @@ if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
 	}
 	if (!empty($conf->banque->enabled)) {
 		$langs->load("banks"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'banque', 'test'=>$conf->banque->enabled, 'label'=>$langs->trans("BankAccount"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("BankAccount")));
+		$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'chequereceipt', 'test'=>$conf->banque->enabled, 'label'=>$langs->trans("CheckReceipt"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("CheckReceipt")));
 	}
 	if (!empty($conf->mrp->enabled)) {
 		$langs->load("mrp"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'mrp-mo', 'test'=>$conf->mrp->enabled, 'label'=>$langs->trans("MOs"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ManufacturingOrders")));
@@ -364,8 +366,8 @@ if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
-	if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray)>0) {
-		$sectionauto[]=$hookmanager->resArray;
+	if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
+		$sectionauto[] = $hookmanager->resArray;
 		$rowspan += count($hookmanager->resArray);
 	}
 }
@@ -376,7 +378,7 @@ print dol_get_fiche_head($head, 'index_auto', '', -1, '');
 
 
 // Confirm remove file (for non javascript users)
-if ($action == 'delete' && empty($conf->use_javascript_ajax)) {
+if ($action == 'deletefile' && empty($conf->use_javascript_ajax)) {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
 }
 
@@ -413,8 +415,8 @@ if ($action == 'delete_section') {
 // End confirm
 
 
-if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $action) || $action == 'delete') {
-	print '<table width="100%" class="liste noborderbottom">'."\n";
+if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $action) || $action == 'deletefile') {
+	print '<table class="liste centpercent">'."\n";
 
 	print '<!-- Title for auto directories -->'."\n";
 	print '<tr class="liste_titre">'."\n";

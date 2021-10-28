@@ -753,9 +753,27 @@ class FormTicket
 
 			print ajax_combobox('select'.$htmlname);
 		} elseif ($htmlname!='') {
+			$selectedgroups = array();
+			$groupvalue = "";
 			$groupticket=GETPOST($htmlname, 'aZ09');
 			$child_id=GETPOST($htmlname.'_child_id', 'aZ09')?GETPOST($htmlname.'_child_id', 'aZ09'):0;
-
+			if (!empty($groupticket)) {
+				$tmpgroupticket = $groupticket;
+				$sql = "SELECT ctc.rowid, ctc.fk_parent, ctc.code FROM ".MAIN_DB_PREFIX."c_ticket_category as ctc WHERE ctc.code = '".$this->db->escape($tmpgroupticket)."'";
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					$obj = $this->db->fetch_object($resql);
+					$selectedgroups[] = $obj->code;
+					while ($obj->fk_parent > 0) {
+						$sql = "SELECT ctc.rowid, ctc.fk_parent, ctc.code FROM ".MAIN_DB_PREFIX."c_ticket_category as ctc WHERE ctc.rowid ='".$this->db->escape($obj->fk_parent)."'";
+						$resql = $this->db->query($sql);
+						if ($resql) {
+							$obj = $this->db->fetch_object($resql);
+							$selectedgroups[] = $obj->code;
+						}
+					}
+				}
+			}
 			$arrayidused = array();
 			$arrayidusedconcat = array();
 			$arraycodenotparent = array();
@@ -794,7 +812,11 @@ class FormTicket
 						$grouplabel = $label;
 
 						$isparent = $obj->isparent;
-						$iselected = $groupticket == $obj->code ?'selected':'';
+						if (is_array($selectedgroups)) {
+							$iselected = in_array($obj->code, $selectedgroups) ?'selected':'';
+						} else {
+							$iselected = $groupticket == $obj->code ?'selected':'';
+						}
 						$stringtoprint .= '<option '.$iselected.' class="'.$htmlname.dol_escape_htmltag($grouprowid).'" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
 						if ($isparent == 'NOTPARENT') {
 							$arraycodenotparent[] = $groupvalue;
@@ -868,10 +890,14 @@ class FormTicket
 							if ($isparent == 'NOTPARENT') {
 								$arraycodenotparent[] = $groupvalue;
 							}
-							$iselected = $groupticket == $obj->code ?'selected':'';
+							if (is_array($selectedgroups)) {
+								$iselected = in_array($obj->code, $selectedgroups) ?'selected':'';
+							} else {
+								$iselected = $groupticket == $obj->code ?'selected':'';
+							}
 							$stringtoprint .= '<option '.$iselected.' class="'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
 							if (empty($tabscript[$groupcodefather])) {
-								$tabscript[$groupcodefather] = 'if ($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'")[0].value == "'.dol_escape_js($groupcodefather).'"){
+								$tabscript[$groupcodefather] = 'if ($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'").val() == "'.dol_escape_js($groupcodefather).'"){
 									$(".'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'").show()
 									console.log("We show childs tickets of '.$groupcodefather.' group ticket")
 								}else{
@@ -889,23 +915,15 @@ class FormTicket
 
 				$stringtoprint .='<script>';
 				$stringtoprint .='arraynotparents = '.json_encode($arraycodenotparent).';';	// when the last visible combo list is number x, this is the array of group
-				$stringtoprint .='if (arraynotparents.includes($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'")[0].value)){
+				$stringtoprint .='if (arraynotparents.includes($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'").val())){
 					console.log("'.$htmlname.'_child_'.$levelid.'")
-					if($("#'.$htmlname.'_child_'.$levelid.'")[0].value == "" && ($("#'.$htmlname.'_child_'.$levelid.'").attr("child_id")>'.$child_id.')){
+					if($("#'.$htmlname.'_child_'.$levelid.'").val() == "" && ($("#'.$htmlname.'_child_'.$levelid.'").attr("child_id")>'.$child_id.')){
 						$("#'.$htmlname.'_child_'.$levelid.'").hide();
 						console.log("We hide '.$htmlname.'_child_'.$levelid.' input")
-					}else if(($("#'.$htmlname.'_child_'.$levelid.'").attr("child_id")!=0) && ($("#'.$htmlname.'_child_'.$levelid.'").attr("child_id")<'.$child_id.')){
-						$("#'.$htmlname.'_child_'.$levelid.'").attr("disabled",true);
-						console.log("We disable '.$htmlname.'_child_'.$levelid.' input");
-					}else{
-						$("#'.$htmlname.'_child_'.$levelid.'").attr("disabled",true);
-						$("#ticketcategory_select_child_id")[0].value = $("#'.$htmlname.'_child_'.$levelid.'").attr("child_id")
-						$("#ticketcategory_select")[0].value = $("#'.$htmlname.'_child_'.$levelid.'")[0].value;
-						console.log("We disable '.$htmlname.'_child_'.$levelid.' input and reload hidden input");
 					}
 					if(arraynotparents.includes("'.$groupticket.'") && '.$child_id.' == 0){
-						$("#ticketcategory_select_child_id")[0].value = $("#'.$htmlname.'").attr("child_id")
-						$("#ticketcategory_select")[0].value = $("#'.$htmlname.'")[0].value;
+						$("#ticketcategory_select_child_id").val($("#'.$htmlname.'").attr("child_id"))
+						$("#ticketcategory_select").val($("#'.$htmlname.'").val()) ;
 						console.log("We choose '.$htmlname.' input and reload hidden input");
 					}
 				}
@@ -913,19 +931,19 @@ class FormTicket
 					child_id = $("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid:'').'").attr("child_id");
 
 					/* Change of value to select this value*/
-					if (arraynotparents.includes(this.value) || $(this).attr("child_id") == '.$use_multilevel.') {
-						$("#ticketcategory_select")[0].value = this.value;
-						$("#ticketcategory_select_child_id")[0].value = $(this).attr("child_id");
-						console.log("We choose to select "+ this.value);
+					if (arraynotparents.includes($(this).val()) || $(this).attr("child_id") == '.$use_multilevel.') {
+						$("#ticketcategory_select").val($(this).val());
+						$("#ticketcategory_select_child_id").val($(this).attr("child_id")) ;
+						console.log("We choose to select "+ $(this).val());
 					}else{
 						if ($("#'.$htmlname.'_child_'.$levelid.' option").length <= 1) {
-							$("#ticketcategory_select")[0].value = this.value;
-							$("#ticketcategory_select_child_id")[0].value = $(this).attr("child_id");
-							console.log("We choose to select "+ this.value + " and next combo has no item, so we keep this selection");
+							$("#ticketcategory_select").val($(this).val());
+							$("#ticketcategory_select_child_id").val($(this).attr("child_id"));
+							console.log("We choose to select "+ $(this).val() + " and next combo has no item, so we keep this selection");
 						} else {
-							console.log("We choose to select "+ this.value + " but next combo has some item, so we clean selected item");
-							$("#ticketcategory_select")[0].value = "";
-							$("#ticketcategory_select_child_id")[0].value = "";
+							console.log("We choose to select "+ $(this).val() + " but next combo has some item, so we clean selected item");
+							$("#ticketcategory_select").val("");
+							$("#ticketcategory_select_child_id").val("");
 						}
 					}
 
@@ -942,7 +960,7 @@ class FormTicket
 
 					/* Now we enable the next combo */
 					$("#'.$htmlname.'_child_'.$levelid.'").val("");
-					if (!arraynotparents.includes(this.value) && $("#'.$htmlname.'_child_'.$levelid.' option").length > 1) {
+					if (!arraynotparents.includes($(this).val()) && $("#'.$htmlname.'_child_'.$levelid.' option").length > 1) {
 						console.log($("#'.$htmlname.'_child_'.$levelid.' option").length);
 						$("#'.$htmlname.'_child_'.$levelid.'").show()
 					} else {
@@ -958,9 +976,9 @@ class FormTicket
 			}
 			$stringtoprint .='<script>';
 			$stringtoprint .='$("#'.$htmlname.'_child_'.$use_multilevel.'").change(function() {
-				$("#ticketcategory_select")[0].value = this.value;
-				$("#ticketcategory_select_child_id")[0].value = $(this).attr("child_id");
-				console.log($("#ticketcategory_select")[0].value);
+				$("#ticketcategory_select").val($(this).val());
+				$("#ticketcategory_select_child_id").val($(this).attr("child_id"));
+				console.log($("#ticketcategory_select").val());
 			})';
 			$stringtoprint .='</script>';
 			$stringtoprint .= ajax_combobox($htmlname);
@@ -1232,7 +1250,7 @@ class FormTicket
 		// External users can't send message email
 		if ($user->rights->ticket->write && !$user->socid) {
 			print '<tr><td></td><td>';
-			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : '');
+			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : ($conf->global->TICKETS_MESSAGE_FORCE_MAIL?'checked':''));
 			print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
 			print '<label for="send_msg_email">'.$langs->trans('SendMessageByEmail').'</label>';
 			print '</td></tr>';

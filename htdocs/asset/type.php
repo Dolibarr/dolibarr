@@ -438,6 +438,13 @@ if ($action == 'create') {
 		print '<tr><td class="titlefield">'.$langs->trans("AccountancyAccountDeductibleVAT").'</td>';
 		print '<td><input name="accountancy_code_vat_deductible" class="maxwidth200" value="'.$object->accountancy_code_vat_deductible.'">';
 		print '</td></tr>';
+
+	// Other attributes
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	if (empty($reshook)) {
+		print $object->showOptionals($extrafields, 'create', $parameters);
 	}
 
 	print '<tbody>';
