@@ -90,7 +90,7 @@ $_SESSION["commandbackuptorun"] = '';
 $_SESSION["commandbackupresult"] = '';
 
 // Increase limit of time. Works only if we are not in safe mode
-$ExecTimeLimit = 600;	// Set it to 0 to not use a forced time limit
+$ExecTimeLimit = 600; // Set it to 0 to not use a forced time limit
 if (!empty($ExecTimeLimit)) {
 	$err = error_reporting();
 	error_reporting(0); // Disable all errors

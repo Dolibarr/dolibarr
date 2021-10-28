@@ -505,8 +505,8 @@ if (empty($reshook)) {
 				$desc = $prod->description;
 
 				//If text set in desc is the same as product descpription (as now it's preloaded) whe add it only one time
-				if ($product_desc==$desc && !empty($conf->global->PRODUIT_AUTOFILL_DESC)) {
-					$product_desc='';
+				if ($product_desc == $desc && !empty($conf->global->PRODUIT_AUTOFILL_DESC)) {
+					$product_desc = '';
 				}
 
 				if (!empty($product_desc) && !empty($conf->global->MAIN_NO_CONCAT_DESCRIPTION)) {
@@ -2137,7 +2137,7 @@ if ($action == 'create') {
 			$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
-			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+			print '</div><div class="fichehalfright">';
 
 			$MAXEVENT = 10;
 
@@ -2148,7 +2148,7 @@ if ($action == 'create') {
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'contract', $socid, 1, 'listactions', $MAXEVENT, '', $morehtmlcenter);
 
-			print '</div></div></div>';
+			print '</div></div>';
 		}
 
 		// Presend form

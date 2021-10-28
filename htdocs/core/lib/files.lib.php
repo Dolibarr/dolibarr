@@ -107,7 +107,7 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 		if ($dir = opendir($newpath)) {
 			$filedate = '';
 			$filesize = '';
-
+			$fileperm = '';
 			while (false !== ($file = readdir($dir))) {        // $file is always a basename (into directory $newpath)
 				if (!utf8_check($file)) {
 					$file = utf8_encode($file); // To be sure data is stored in utf8 in memory
@@ -2867,6 +2867,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if ($fuser->admin) {
 			$accessallowed = 1; // If user is admin
 		}
+
 		$tmpmodulepart = explode('-', $modulepart);
 		if (!empty($tmpmodulepart[1])) {
 				$modulepart = $tmpmodulepart[0];
@@ -2946,6 +2947,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		);
 		$reshook = $hookmanager->executeHooks('checkSecureAccess', $parameters, $object);
 		if ($reshook > 0) {
+			if (!empty($hookmanager->resArray['original_file'])) {
+				$original_file = $hookmanager->resArray['original_file'];
+			}
 			if (!empty($hookmanager->resArray['accessallowed'])) {
 				$accessallowed = $hookmanager->resArray['accessallowed'];
 			}

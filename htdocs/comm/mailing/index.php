@@ -141,8 +141,7 @@ if (is_resource($handle)) {
 print "</table><br>";
 
 
-//print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 /*
@@ -193,7 +192,7 @@ if ($result) {
 }
 
 
-print '</div></div></div>';
+print '</div></div>';
 
 
 $parameters = array('user' => $user);

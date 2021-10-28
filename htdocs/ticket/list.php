@@ -390,7 +390,7 @@ foreach ($search as $key => $val) {
 		}
 		continue;
 	}
-	$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
+	$mode_search = ((!empty($object->fields[$key]) && ($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key]))) ? 1 : 0);
 	if ($search[$key] != '') {
 		$sql .= natural_search($key, $search[$key], $mode_search);
 	}
@@ -478,8 +478,7 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'classforhorizontalscrolloftabs');
-
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', '');
 
 if ($socid && !$projectid && !$project_ref && $user->rights->societe->lire) {
 	$socstat = new Societe($db);
@@ -561,13 +560,13 @@ if ($projectid > 0 || $project_ref) {
 		// Title
 		$morehtmlref .= $object->title;
 		// Thirdparty
-		if ($object->thirdparty->id > 0) {
+		if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 			$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
 		}
 		$morehtmlref .= '</div>';
 
 		// Define a complementary filter for search of next/prev ref.
-		if (!$user->rights->projet->all->lire) {
+		if (empty($user->rights->projet->all->lire)) {
 			$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 			$object->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 		}
