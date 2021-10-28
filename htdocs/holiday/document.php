@@ -137,8 +137,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $form = new Form($db);
 
 $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
-
-$title = $langs->trans('InterventionCard');
+$title = $langs->trans("Leave").' - '.$langs->trans("Files");
 
 llxHeader('', $title);
 
