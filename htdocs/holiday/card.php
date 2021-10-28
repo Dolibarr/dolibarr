@@ -1158,7 +1158,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 				setEventMessages($errors, null, 'errors');
 			}
 
-			// On vérifie si l'utilisateur à le droit de lire cette demande
+			// check if the user has the right to read this request
 			if ($canread) {
 				$head = holiday_prepare_head($object);
 
@@ -1433,11 +1433,9 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 				if (($action == 'edit' && $object->statut == Holiday::STATUS_DRAFT) || ($action == 'editvalidator')) {
 					if ($action == 'edit' && $object->statut == Holiday::STATUS_DRAFT) {
-						print '<div class="center">';
 						if ($cancreate && $object->statut == Holiday::STATUS_DRAFT) {
-							print '<input type="submit" value="'.$langs->trans("Save").'" class="button button-save">';
+							print $form->buttonsSaveCancel();
 						}
-						print '</div>';
 					}
 
 					print '</form>';
@@ -1521,7 +1519,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			$action = 'presend';
 		}
 
-		if ($action != 'presend') {
+		if ($action != 'presend' && $action != 'edit') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre
 
@@ -1543,7 +1541,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			//$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
-			print '</div><div class="fichehalfright">';
+			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 			$MAXEVENT = 10;
 
@@ -1552,7 +1550,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, $object->element, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlright);
 
-			print '</div></div>';
+			print '</div></div></div>';
 		}
 	}
 }
