@@ -268,7 +268,6 @@ function GETPOSTISSET($paramname)
 	} elseif (!empty($_GET['restore_lastsearch_values'])) {
 		// If there is saved values
 		if (!empty($_SESSION['lastsearch_values_'.$relativepathstring])) {
-
 			$tmp = json_decode($_SESSION['lastsearch_values_'.$relativepathstring], true);
 			if (is_array($tmp)) {
 				foreach ($tmp as $key => $val) {
@@ -291,9 +290,8 @@ function GETPOSTISSET($paramname)
 			$isset = 1;
 		}
 
-	// Retreive default values if we are not doing a sort
-	// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_ENABLE_DEFAULT_VALUES is not set
-	} elseif (!isset($_GET['sortfield'])) {
+		// Else, retreive default values if we are not doing a sort
+	} elseif (!isset($_GET['sortfield'])) { // If we did a click on a field to sort, we do no apply default values. Same if option MAIN_ENABLE_DEFAULT_VALUES is not set
 		if (!empty($_GET['action']) && $_GET['action'] == 'create') {
 			// Search default value from $object->field
 			global $object;
@@ -332,8 +330,7 @@ function GETPOSTISSET($paramname)
 						}
 					}
 				}
-			// Management of default search_filters and sort order
-			} elseif (!empty($paramname)) {
+			} elseif (!empty($paramname)) { // Management of default search_filters and sort order
 				// Sorted on which fields ? ASC or DESC ?
 				if ($paramname == 'sortfield' || $paramname == 'sortorder') {
 					// Even if paramname is sortfield, data are stored into ['sortorder...']
