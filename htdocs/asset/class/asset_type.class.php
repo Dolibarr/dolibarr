@@ -45,51 +45,6 @@ class AssetType extends CommonObject
 	public $picto = 'asset';
 
 	/**
-	 *  'type' if the field format.
-	 *  'label' the translation key.
-	 *  'enabled' is a condition when the field must be managed.
-	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only. Using a negative value means field is not shown by default on list but can be selected for viewing)
-	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
-	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
-	 *  'position' is the sort order of field.
-	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
-	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
-	 *  'help' is a string visible as a tooltip on field
-	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
-	 *  'default' is a default value for creation (can still be replaced by the global setup of default values)
-	 *  'showoncombobox' if field must be shown into the label of combobox
-	 */
-
-	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
-	 */
-	public $fields = array(
-		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
-		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>15, 'index'=>1),
-		'label' =>array('type'=>'varchar(128)', 'label'=>'Code', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25, 'showoncombobox'=>1),
-		'note' =>array('type'=>'mediumtext', 'label'=>'Note', 'enabled'=>0, 'visible'=>-1, 'position'=>35),
-		'type' =>array('type'=>'integer', 'label'=>'Label', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>45, 'showoncombobox'=>1),
-		'type_economical' =>array('type'=>'integer', 'label'=>'Label', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>55, 'showoncombobox'=>1),
-		'duration' =>array('type'=>'varchar(2)', 'label'=>'Duration', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>65, 'showoncombobox'=>1),
-
-		'accountancy_code_asset' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountAsset', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
-		'accountancy_code_depreciation_asset' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountDepreciationAsset', 'enabled'=>0, 'visible'=>-1, 'position'=>110),
-		'accountancy_code_depreciation_expense' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountDepreciationExpense', 'enabled'=>0, 'visible'=>-1, 'position'=>120),
-		'accountancy_code_value_asset_sold' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountValueAssetSold', 'enabled'=>0, 'visible'=>-1, 'position'=>130),
-		'accountancy_code_receivable_on_assignment' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountReceivableOnAssignment', 'enabled'=>0, 'visible'=>-1, 'position'=>140),
-		'accountancy_code_proceeds_from_sales' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountProceedsFromSales', 'enabled'=>0, 'visible'=>-1, 'position'=>150),
-		'accountancy_code_vat_collected' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountCollectedVAT', 'enabled'=>0, 'visible'=>-1, 'position'=>160),
-		'accountancy_code_vat_deductible' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountDeductibleVAT', 'enabled'=>0, 'visible'=>-1, 'position'=>170),
-
-		'accountancy_code_accelerated_depreciation' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountAcceleratedDepreciation', 'enabled'=>0, 'visible'=>-1, 'position'=>210),
-		'accountancy_code_endowment_accelerated_depreciation' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountEndowmentAcceleratedDepreciation', 'enabled'=>0, 'visible'=>-1, 'position'=>220),
-		'accountancy_code_provision_accelerated_depreciation' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountProvisionAcceleratedDepreciation', 'enabled'=>0, 'visible'=>-1, 'position'=>230),
-		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>300),
-
-	);
-
-	/**
 	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 * @var int
 	 */
@@ -99,6 +54,9 @@ class AssetType extends CommonObject
 	 * @var string Asset type label
 	 */
 	public $label;
+
+	/** @var string 	Public note */
+	public $note;
 
 	/** @var string Accountancy account asset */
 	public $accountancy_code_asset;
@@ -124,11 +82,94 @@ class AssetType extends CommonObject
 	/** @var string Accounting account deductible VAT on assets */
 	public $accountancy_code_vat_deductible;
 
-	/** @var string 	Public note */
-	public $note;
-
 	/** @var array Array of asset */
 	public $asset = array();
+
+	/**
+	 *  'type' if the field format.
+	 *  'label' the translation key.
+	 *  'enabled' is a condition when the field must be managed.
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only. Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 *  'index' if we want an index in database.
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'position' is the sort order of field.
+	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
+	 *  'help' is a string visible as a tooltip on field
+	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 *  'default' is a default value for creation (can still be replaced by the global setup of default values)
+	 *  'showoncombobox' if field must be shown into the label of combobox
+	 */
+
+	// BEGIN MODULEBUILDER PROPERTIES
+	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields = array(
+		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>15, 'index'=>1),
+		'label' =>array('type'=>'varchar(128)', 'label'=>'Code', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>25, 'showoncombobox'=>1),
+		'note' =>array('type'=>'mediumtext', 'label'=>'Note', 'enabled'=>0, 'visible'=>1, 'position'=>35),
+		'type' =>array('type'=>'integer', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>45, 'showoncombobox'=>1),
+		'type_economical' =>array('type'=>'integer', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>55, 'showoncombobox'=>1),
+		'duration' =>array('type'=>'varchar(2)', 'label'=>'Duration', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>65, 'showoncombobox'=>1),
+
+		'accountancy_code_asset' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountAsset', 'enabled'=>0, 'visible'=>-1, 'position'=>100),
+		'accountancy_code_depreciation_asset' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountDepreciationAsset', 'enabled'=>0, 'visible'=>-1, 'position'=>110),
+		'accountancy_code_depreciation_expense' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountDepreciationExpense', 'enabled'=>0, 'visible'=>-1, 'position'=>120),
+		'accountancy_code_value_asset_sold' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountValueAssetSold', 'enabled'=>0, 'visible'=>-1, 'position'=>130),
+		'accountancy_code_receivable_on_assignment' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountReceivableOnAssignment', 'enabled'=>0, 'visible'=>-1, 'position'=>140),
+		'accountancy_code_proceeds_from_sales' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountProceedsFromSales', 'enabled'=>0, 'visible'=>-1, 'position'=>150),
+		'accountancy_code_vat_collected' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountCollectedVAT', 'enabled'=>0, 'visible'=>-1, 'position'=>160),
+		'accountancy_code_vat_deductible' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountDeductibleVAT', 'enabled'=>0, 'visible'=>-1, 'position'=>170),
+
+		'accountancy_code_accelerated_depreciation' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountAcceleratedDepreciation', 'enabled'=>0, 'visible'=>-1, 'position'=>210),
+		'accountancy_code_endowment_accelerated_depreciation' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountEndowmentAcceleratedDepreciation', 'enabled'=>0, 'visible'=>-1, 'position'=>220),
+		'accountancy_code_provision_accelerated_depreciation' =>array('type'=>'varchar(32)', 'label'=>'AccountancyAccountProvisionAcceleratedDepreciation', 'enabled'=>0, 'visible'=>-1, 'position'=>230),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>300),
+	);
+	// END MODULEBUILDER PROPERTIES
+
+	/**
+	 * Intangible fixed asset
+	 */
+	const TYPE_INTANGIBLE = 0;
+
+	/**
+	 * Tangible fixed asset
+	 */
+	const TYPE_TANGIBLE = 1;
+
+	/**
+	 * In progress fixed asset
+	 */
+	const TYPE_INPROGRESS = 2;
+
+	/**
+	 * Financial fixed asset
+	 */
+	const TYPE_FINANCIAL = 3;
+
+	/**
+	 * Intangible fixed asset
+	 */
+	const TYPE_ECONOMICAL_LINEAR = 0;
+
+	/**
+	 * Tangible fixed asset
+	 */
+	const TYPE_ECONOMICAL_ = 1;
+
+	/**
+	 * In progress fixed asset
+	 */
+	const TYPE_ECONOMICAL_INPROGRESS = 2;
+
+	/**
+	 * Financial fixed asset
+	 */
+	const TYPE_ECONOMICAL_FINANCIAL = 3;
 
 	/**
 	 *	Constructor
