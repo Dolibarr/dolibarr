@@ -232,9 +232,9 @@ print '</tr>';
 
 // Name
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldName").'</td><td>';
-print '<input size="25" type="text" name="fieldname" value="'.getDolGlobalString('>LDAP_FIELD_NAME').'">';
+print '<input size="25" type="text" name="fieldname" value="'.getDolGlobalString('LDAP_FIELD_NAME').'">';
 print '</td><td>'.$langs->trans("LDAPFieldNameExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_NAME"'.(getDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString('>LDAP_FIELD_NAME') ? ' checked' : '')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_NAME"'.(getDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString('LDAP_FIELD_NAME') ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Firstname
@@ -276,7 +276,7 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldMail").'</td><td>';
 print '<input size="25" type="text" name="fieldmail" value="'.getDolGlobalString('LDAP_FIELD_MAIL').'">';
 print '</td><td>'.$langs->trans("LDAPFieldMailExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_MAIL"'.(getDolGlobalString('LDAP_KEY_USERS') ==getDolGlobalString('LDAP_FIELD_MAIL') ? ' checked' : '')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_MAIL"'.(getDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString('LDAP_FIELD_MAIL') ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Phone
