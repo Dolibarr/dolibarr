@@ -2566,7 +2566,7 @@ abstract class CommonObject
 			}
 
 			if (empty($deposit_percent) || $deposit_percent < 0) {
-				$deposit_percent = null;
+				$deposit_percent = getDictionaryValue(MAIN_DB_PREFIX . 'c_payment_term', 'deposit_percent', $id);
 			}
 
 			if ($deposit_percent > 100) {
