@@ -204,7 +204,7 @@ if (empty($reshook)) {
 				$object->client = $object->client | $soc_origin->client;
 				$object->fournisseur = $object->fournisseur | $soc_origin->fournisseur;
 				$listofproperties = array(
-					'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'twitter', 'facebook', 'linkedin', 'socialnetworks', 'url', 'barcode',
+					'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'socialnetworks', 'url', 'barcode',
 					'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
 					'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'remise_supplier_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
 					'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
@@ -458,10 +458,7 @@ if (empty($reshook)) {
 			$object->town					= GETPOST('town', 'alphanohtml');
 			$object->country_id				= GETPOST('country_id', 'int');
 			$object->state_id				= GETPOST('state_id', 'int');
-			//$object->skype				= GETPOST('skype', 'alpha');
-			//$object->twitter				= GETPOST('twitter', 'alpha');
-			//$object->facebook				= GETPOST('facebook', 'alpha');
-			//$object->linkedin				= GETPOST('linkedin', 'alpha');
+
 			$object->socialnetworks = array();
 			if (!empty($conf->socialnetworks->enabled)) {
 				foreach ($socialnetworks as $key => $value) {
@@ -470,6 +467,7 @@ if (empty($reshook)) {
 					}
 				}
 			}
+
 			$object->phone					= GETPOST('phone', 'alpha');
 			$object->fax					= GETPOST('fax', 'alpha');
 			$object->email					= trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
@@ -1045,10 +1043,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$object->zip = GETPOST('zipcode', 'alphanohtml');
 		$object->town = GETPOST('town', 'alphanohtml');
 		$object->state_id = GETPOST('state_id', 'int');
-		//$object->skype				= GETPOST('skype', 'alpha');
-		//$object->twitter			= GETPOST('twitter', 'alpha');
-		//$object->facebook			= GETPOST('facebook', 'alpha');
-		//$object->linkedin			= GETPOST('linkedin', 'alpha');
+
 		$object->socialnetworks = array();
 		if (!empty($conf->socialnetworks->enabled)) {
 			foreach ($socialnetworks as $key => $value) {
@@ -1057,6 +1052,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 			}
 		}
+
 		$object->phone				= GETPOST('phone', 'alpha');
 		$object->fax				= GETPOST('fax', 'alpha');
 		$object->email				= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
@@ -1170,6 +1166,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
                         	$("#typent_id").change();
                         	$("#effectif_id").val(id_ef15);
                         	$("#effectif_id").change();
+							/* Force to recompute the width of a select2 field when it was hidden and then shown programatically */
+							if ($("#civility_id").data("select2")) {
+								$("#civility_id").select2({width: "resolve"});
+							}
                         	$("#TypeName").html(document.formsoc.LastName.value);
                         	document.formsoc.private.value=1;
                         });
@@ -1781,10 +1781,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$object->town = GETPOST('town', 'alphanohtml');
 				$object->country_id = GETPOST('country_id') ?GETPOST('country_id', 'int') : $mysoc->country_id;
 				$object->state_id = GETPOST('state_id', 'int');
-				//$object->skype				= GETPOST('skype', 'alpha');
-				//$object->twitter				= GETPOST('twitter', 'alpha');
-				//$object->facebook				= GETPOST('facebook', 'alpha');
-				//$object->linkedin				= GETPOST('linkedin', 'alpha');
+
 				$object->socialnetworks = array();
 				if (!empty($conf->socialnetworks->enabled)) {
 					foreach ($socialnetworks as $key => $value) {
@@ -1793,6 +1790,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						}
 					}
 				}
+
 				$object->phone					= GETPOST('phone', 'alpha');
 				$object->fax					= GETPOST('fax', 'alpha');
 				$object->email					= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
@@ -2491,7 +2489,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<div class="fichehalfleft">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Type Prospect/Customer/Supplier
 		print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
@@ -2511,7 +2509,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td>';
 			print '<td>';
 			print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
-			print '</td>';
 			$tmpcheck = $object->check_codeclient();
 			if ($tmpcheck != 0 && $tmpcheck != -5) {
 				print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
@@ -2718,10 +2715,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</table>';
 		print '</div>';
 
-		print '<div class="fichehalfright"><div class="ficheaddleft">';
+		print '<div class="fichehalfright">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Tags / categories
 		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
@@ -2891,7 +2888,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</table>';
 		print '</div>';
 
-		print '</div></div>';
+		print '</div>';
 		print '<div style="clear:both"></div>';
 
 		print dol_get_fiche_end();
@@ -2980,7 +2977,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$result = show_subsidiaries($conf, $langs, $db, $object);
 			}
 
-			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+			print '</div><div class="fichehalfright">';
 
 			$MAXEVENT = 10;
 
@@ -2991,7 +2988,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, '', $socid, 1, '', $MAXEVENT, '', $morehtmlcenter); // Show all action for thirdparty
 
-			print '</div></div></div>';
+			print '</div></div>';
 
 			if (!empty($conf->global->MAIN_DUPLICATE_CONTACTS_TAB_ON_MAIN_CARD)) {
 				// Contacts list

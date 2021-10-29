@@ -2,7 +2,7 @@
 /* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2017  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -138,6 +138,8 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'expensereport', $object->id, 'expensereport');
+
+$permissiontoadd = $user->rights->expensereport->creer;	// Used by the include of actions_dellink.inc.php
 
 
 /*
@@ -1339,7 +1341,6 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->expensereport->dir_output;
-	$permissiontoadd = $user->rights->expensereport->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -1850,7 +1851,6 @@ if ($action == 'create') {
 
 			print '</div>';
 			print '<div class="fichehalfright">';
-			print '<div class="ficheaddleft">';
 			print '<div class="underbanner clearboth"></div>';
 
 			print '<table class="border tableforfield centpercent">';
@@ -1903,7 +1903,7 @@ if ($action == 'create') {
 				$nbcols++;
 			}
 
-			print '<table class="noborder paymenttable" width="100%">';
+			print '<table class="noborder paymenttable centpercent">';
 
 			print '<tr class="liste_titre">';
 			print '<td class="liste_titre">'.$langs->trans('Payments').'</td>';
@@ -1924,7 +1924,7 @@ if ($action == 'create') {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-			$sql .= " WHERE e.rowid = '".$id."'";
+			$sql .= " WHERE e.rowid = ".((int) $id);
 			$sql .= " AND p.fk_expensereport = e.rowid";
 			$sql .= ' AND e.entity IN ('.getEntity('expensereport').')';
 			$sql .= " ORDER BY dp";
@@ -2004,7 +2004,6 @@ if ($action == 'create') {
 
 			print '</div>';
 			print '</div>';
-			print '</div>';
 
 			print '<div class="clearboth"></div><br>';
 
@@ -2050,6 +2049,11 @@ if ($action == 'create') {
 				// Picture
 				print '<td>';
 				print '</td>';
+
+				// Information if theres a rule restriction
+				print '<td>';
+				print '</td>';
+
 				// Ajout des boutons de modification/suppression
 				if (($object->status < 2 || $object->status == 99) && $user->rights->expensereport->creer) {
 					print '<td class="right"></td>';
@@ -2190,6 +2194,10 @@ if ($action == 'create') {
 						}
 						print '</td>';
 
+						print '<td class="nowrap right">';
+						print !empty($line->rule_warning_message) ? img_warning(html_entity_decode($line->rule_warning_message)) : '&nbsp;';
+						print '</td>';
+
 						// Ajout des boutons de modification/suppression
 						if (($object->status < ExpenseReport::STATUS_VALIDATED || $object->status == ExpenseReport::STATUS_REFUSED) && $user->rights->expensereport->creer) {
 							print '<td class="nowrap right">';
@@ -2209,7 +2217,7 @@ if ($action == 'create') {
 
 					if ($action == 'editline' && $line->rowid == GETPOST('rowid', 'int')) {
 						// Add line with link to add new file or attach line to an existing file
-						$colspan = 10;
+						$colspan = 11;
 						if (!empty($conf->projet->enabled)) {
 							$colspan++;
 						}
@@ -2326,7 +2334,7 @@ if ($action == 'create') {
 
 						// Quantity
 						print '<td class="right">';
-						print '<input type="number" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($line->qty).'" />';
+						print '<input type="text" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($line->qty).'" />';  // We must be able to enter decimal qty
 						print '</td>';
 
 						//print '<td class="right">'.$langs->trans('AmountHT').'</td>';
@@ -2335,6 +2343,9 @@ if ($action == 'create') {
 						// Picture
 						print '<td class="center">';
 						//print $line->fk_ecm_files;
+						print '</td>';
+						// Information if theres a rule restriction
+						print '<td class="center">';
 						print '</td>';
 
 						print '<td>';
@@ -2351,7 +2362,7 @@ if ($action == 'create') {
 
 			 // Add a new line
 			if (($object->status == ExpenseReport::STATUS_DRAFT || $object->status == ExpenseReport::STATUS_REFUSED) && $action != 'editline' && $user->rights->expensereport->creer) {
-				$colspan = 11;
+				$colspan = 12;
 				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 					$colspan++;
 				}
@@ -2444,6 +2455,7 @@ if ($action == 'create') {
 				print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
 				print '<td class="right">'.$langs->trans('PriceUTTC').'</td>';
 				print '<td class="right">'.$langs->trans('Qty').'</td>';
+				print '<td></td>';
 				print '<td></td>';
 				print '<td></td>';
 				print '<td></td>';
@@ -2745,13 +2757,13 @@ if ($action != 'presend') {
 	}
 	*/
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 	// List of actions on element
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 	$formactions = new FormActions($db);
 	$somethingshown = $formactions->showactions($object, 'expensereport', null);
 
-	print '</div></div></div>';
+	print '</div></div>';
 }
 
 // Presend form

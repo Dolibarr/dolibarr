@@ -250,6 +250,8 @@ class ExtraFields
 			return -1;
 		}
 
+		$result = 0;
+
 		if ($type == 'separate') {
 			$unique = 0;
 			$required = 0;
@@ -1651,10 +1653,14 @@ class ExtraFields
 		$showsize = 0;
 		if ($type == 'date') {
 			$showsize = 10;
-			$value = dol_print_date($value, 'day');	// For date without hour, date is always GMT for storage and output
+			if ($value !== '') {
+				$value = dol_print_date($value, 'day');	// For date without hour, date is always GMT for storage and output
+			}
 		} elseif ($type == 'datetime') {
 			$showsize = 19;
-			$value = dol_print_date($value, 'dayhour', 'tzuserrel');
+			if ($value !== '') {
+				$value = dol_print_date($value, 'dayhour', 'tzuserrel');
+			}
 		} elseif ($type == 'int') {
 			$showsize = 10;
 		} elseif ($type == 'double') {
@@ -1978,10 +1984,10 @@ class ExtraFields
 	{
 		global $conf, $langs;
 
-		if ($display_type=='card') {
-			$tagtype='tr';
-			$tagtype_dyn='td';
-		} elseif ($display_type=='line') {
+		$tagtype='tr';
+		$tagtype_dyn='td';
+
+		if ($display_type=='line') {
 			$tagtype='div';
 			$tagtype_dyn='span';
 			$colspan=0;
@@ -2229,9 +2235,16 @@ class ExtraFields
 						continue; // Value was not provided, we should not set it.
 					}
 					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
-					if ($keysuffix != 'search_') {	// If value is for a search, we must keep complex string like '>100 <=150'
+					if ($keysuffix != 'search_') {    // If value is for a search, we must keep complex string like '>100 <=150'
 						$value_key = price2num($value_arr);
 					} else {
+						$value_key = $value_arr;
+					}
+				} elseif (in_array($key_type, array('boolean'))) {
+					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
+						$value_key = '';
+					} else {
+						$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
 						$value_key = $value_arr;
 					}
 				} else {

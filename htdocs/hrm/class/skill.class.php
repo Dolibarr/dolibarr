@@ -384,7 +384,7 @@ class Skill extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int | array         <0 if KO, 0 if not found, array if OK
+	 * @return array|int         <0 if KO, 0 if not found, array if OK
 	 */
 	public function fetchLines()
 	{

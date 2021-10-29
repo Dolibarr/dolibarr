@@ -326,22 +326,14 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		$text = $langs->trans('SellingPrice');
 		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
 		print '</td><td>';
-		if ($object->price_base_type == 'TTC') {
-			print '<input name="price" size="10" value="'.price($object->price_ttc).'">';
-		} else {
-			print '<input name="price" size="10" value="'.price($object->price).'">';
-		}
+		print '<input name="price" size="10" value="'.GETPOST('price', 'int').'">';
 		print '</td></tr>';
 
 		// Price minimum
 		print '<tr><td>';
 		$text = $langs->trans('MinPrice');
 		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
-		if ($object->price_base_type == 'TTC') {
-			print '<td><input name="price_min" size="10" value="'.price($object->price_min_ttc).'">';
-		} else {
-			print '<td><input name="price_min" size="10" value="'.price($object->price_min).'">';
-		}
+		print '<td><input name="price_min" size="10" value="'.GETPOST('price_min', 'int').'">';
 		print '</td></tr>';
 
 		// Update all child soc
@@ -382,7 +374,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 			// Ref. Customer
 			print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
-			print '<td><input name="ref_customer" size="12" value="' . dol_escape_htmltag($prodcustprice->ref_customer) . '"></td></tr>';
+			print '<td><input name="ref_customer" size="12" value="'.dol_escape_htmltag($prodcustprice->ref_customer).'"></td></tr>';
 
 			// VAT
 			print '<tr><td>'.$langs->trans("VATRate").'</td><td>';

@@ -114,7 +114,7 @@ if ($action == 'add') {
 		$idl = "idl".$i;
 		$qtytouse = price2num(GETPOST($qty));
 		if ($qtytouse > 0) {
-			$object->addline(GETPOST($idl), price2num($qtytouse));
+			$object->addline(GETPOST($idl), price2num($qtytouse), $arrayoptions);
 		}
 	}
 
@@ -348,9 +348,10 @@ if ($action == 'create') {    // Create. Seems to no be used
 					if (!empty($objectsrc->fk_project)) {
 						$proj = new Project($db);
 						$proj->fetch($objectsrc->fk_project);
-						$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objectsrc->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-						$morehtmlref .= $proj->ref;
-						$morehtmlref .= '</a>';
+						$morehtmlref .= ' : '.$proj->getNomUrl(1);
+						if ($proj->title) {
+							$morehtmlref .= ' - '.$proj->title;
+						}
 					} else {
 						$morehtmlref .= '';
 					}
@@ -603,23 +604,26 @@ if ($action == 'create') {    // Create. Seems to no be used
 					print "</tr>";
 
 					// Display lines extrafields
-					if (!empty($extrafields)) {
+					//if (!empty($extrafields)) {
 						$colspan = 2;
 						$mode = ($object->statut == 0) ? 'edit' : 'view';
 
 						$object->lines[$i]->fetch_optionals();
 
-						if ($action == 'create_delivery') {
-							$srcLine = new ExpeditionLigne($db);
+					if ($action == 'create_delivery') {
+						$srcLine = new ExpeditionLigne($db);
 
+						$extrafields->fetch_name_optionals_label($srcLine->table_element);
+						$srcLine->id = $expedition->lines[$i]->id;
+						$srcLine->fetch_optionals();
+
+						$object->lines[$i]->array_options = array_merge($object->lines[$i]->array_options, $srcLine->array_options);
+					} else {
+							$srcLine = new DeliveryLine($db);
 							$extrafields->fetch_name_optionals_label($srcLine->table_element);
-							$srcLine->id = $expedition->lines[$i]->id;
-							$srcLine->fetch_optionals();
-
-							$object->lines[$i]->array_options = array_merge($object->lines[$i]->array_options, $srcLine->array_options);
-						}
-						print $object->lines[$i]->showOptionals($extrafields, $mode, array('style' => 'class="oddeven"', 'colspan' => $colspan), $i);
 					}
+						print $object->lines[$i]->showOptionals($extrafields, $mode, array('style' => 'class="oddeven"', 'colspan' => $colspan), '');
+					//}
 				}
 
 				$i++;
@@ -689,11 +693,11 @@ if ($action == 'create') {    // Create. Seems to no be used
 			}
 
 
-			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+			print '</div><div class="fichehalfright">';
 
 			// Nothing on right
 
-			print '</div></div></div>';
+			print '</div></div>';
 		} else {
 			/* Expedition non trouvee */
 			print "Expedition inexistante ou acces refuse";
