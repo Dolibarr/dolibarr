@@ -2489,7 +2489,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<div class="fichehalfleft">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Type Prospect/Customer/Supplier
 		print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
@@ -2718,7 +2718,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<div class="fichehalfright">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield center">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Tags / categories
 		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
