@@ -566,7 +566,6 @@ print '</tr>'."\n";
 // Loop on record
 // --------------------------------------------------------------------
 $i = 0;
-$totalarray = array();
 
 $warehouse = new Entrepot($db);
 
