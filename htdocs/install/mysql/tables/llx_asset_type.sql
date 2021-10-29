@@ -20,8 +20,8 @@ create table llx_asset_type
   tms                                                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   label                                                     varchar(128) NOT NULL,
   note                                                      text,
-  type					                                    tinyint     DEFAULT 0  NOT NULL,    -- type of asset
-  type_economical                                           tinyint     DEFAULT 0  NOT NULL,    -- economical type of asset
+  type_asset				                                tinyint     DEFAULT 0  NOT NULL,    -- type of asset
+  type_asset_economical                                     tinyint     DEFAULT 0  NOT NULL,    -- economical type of asset
   duration                                                  tinyint     DEFAULT 0  NOT NULL,
 
   accountancy_code_asset                                    varchar(32),

@@ -15,20 +15,44 @@
 
 
 CREATE TABLE llx_asset(
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
-	ref varchar(128) NOT NULL,
-	entity integer DEFAULT 1 NOT NULL,
-	label varchar(255),
-	amount_ht double(24,8) DEFAULT NULL,
-	amount_vat double(24,8) DEFAULT NULL,
-	fk_asset_type integer NOT NULL,
-	description text,
-	note_public text,
-	note_private text,
-	date_creation datetime NOT NULL,
-	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	fk_user_creat integer NOT NULL,
-	fk_user_modif integer,
-	import_key varchar(14),
-	status integer NOT NULL
+	rowid                                                   integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	ref                                                     varchar(128) NOT NULL,
+	entity                                                  integer DEFAULT 1 NOT NULL,
+	label                                                   varchar(255),
+	amount_ht                                               double(24,8) DEFAULT 0,
+	amount_vat                                              double(24,8) DEFAULT 0,
+	amount_base_depreciation_ht                             double(24,8) DEFAULT 0,
+	amount_base_deductible_ht                               double(24,8) DEFAULT 0,
+	fk_asset_type                                           integer NOT NULL,
+
+	type_asset				                                tinyint     DEFAULT 0  NOT NULL,    -- type of asset
+	type_asset_acquisition	                                tinyint     DEFAULT 0  NOT NULL,    -- type of asset
+    type_asset_economical                                   tinyint     DEFAULT 0  NOT NULL,    -- economical type of asset
+    duration                                                tinyint     DEFAULT 0  NOT NULL,
+
+    total_ht_last_depreciation                              double(24,8) DEFAULT 0,
+
+    accountancy_code_asset                                  varchar(32),
+    accountancy_code_depreciation_asset                     varchar(32),
+    accountancy_code_depreciation_expense                   varchar(32),
+    accountancy_code_value_asset_sold                       varchar(32),
+    accountancy_code_receivable_on_assignment               varchar(32),
+    accountancy_code_proceeds_from_sales                    varchar(32),
+    accountancy_code_vat_collected                          varchar(32),
+    accountancy_code_vat_deductible                         varchar(32),
+
+    accelerated_depreciation                                tinyint     DEFAULT 0  NOT NULL,
+    accountancy_code_accelerated_depreciation               varchar(32),
+    accountancy_code_endowment_accelerated_depreciation     varchar(32),
+    accountancy_code_provision_accelerated_depreciation     varchar(32),
+
+	description                                             text,
+	note_public                                             text,
+	note_private                                            text,
+	date_creation                                           datetime NOT NULL,
+	tms                                                     timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_user_creat                                           integer NOT NULL,
+	fk_user_modif                                           integer,
+	import_key                                              varchar(14),
+	status                                                  integer NOT NULL
 ) ENGINE=innodb;
