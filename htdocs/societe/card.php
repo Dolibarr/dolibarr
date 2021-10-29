@@ -2718,7 +2718,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<div class="fichehalfright">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield center">';
+		print '<table class="border tableforfield">';
 
 		// Tags / categories
 		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
