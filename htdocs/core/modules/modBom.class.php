@@ -352,7 +352,7 @@ class modBom extends DolibarrModules
 
 		// Add extra fields
 		$import_extrafield_sample = [];
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'bom_bom' AND entity IN (0, ".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type != 'separate' AND elementtype = 'bom_bom' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
@@ -422,7 +422,7 @@ class modBom extends DolibarrModules
 		];
 
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'bom_bomline' AND entity IN (0, ".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type != 'separate' AND elementtype = 'bom_bomline' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
