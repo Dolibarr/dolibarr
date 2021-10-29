@@ -179,6 +179,9 @@ if ($object->id > 0) {
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productcard', 'globalcard'));
 
+$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
+$usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer));
 
 
 /*
@@ -189,9 +192,6 @@ if ($cancel) {
 	$action = '';
 }
 
-$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
-$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
-$usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer));
 $createbarcode = empty($conf->barcode->enabled) ? 0 : 1;
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->creer_advance)) {
 	$createbarcode = 0;
@@ -1922,11 +1922,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td>'.$langs->trans("CountryOrigin").'</td>';
 				print '<td>';
 				print img_picto('', 'globe-americas', 'class="paddingrightonly"');
-				print $form->select_country($object->country_id, 'country_id', '', 0, 'minwidth100 maxwidthonsmartphone');
+				print $form->select_country(GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : $object->country_id, 'country_id', '', 0, 'minwidth100 maxwidthonsmartphone');
 				if ($user->admin) {
 					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 				}
 				print '</td></tr>';
+
 				// State
 				if (empty($conf->global->PRODUCT_DISABLE_STATE)) {
 					print '<tr>';
@@ -1937,7 +1938,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					}
 
 					print img_picto('', 'state', 'class="pictofixedwidth"');
-					print $formcompany->select_state($object->state_id, $object->country_code);
+					print $formcompany->select_state(GETPOSTISSET('state_id') ? GETPOST('state_id', 'int') : $object->state_id, $object->country_code);
 					print '</td>';
 					print '</tr>';
 				}

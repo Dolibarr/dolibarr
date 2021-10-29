@@ -84,6 +84,8 @@ $modulepart = 'contract';
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('contractcard', 'globalcard'));
 
+$permissiontoadd = $user->rights->contrat->creer;	// Used by the include of actions_dellink.inc.php
+
 
 /*
  * Actions
@@ -165,9 +167,10 @@ if ($object->id) {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-				$morehtmlref .= $proj->ref;
-				$morehtmlref .= '</a>';
+				$morehtmlref .= ' : '.$proj->getNomUrl(1);
+				if ($proj->title) {
+					$morehtmlref .= ' - '.$proj->title;
+				}
 			} else {
 				$morehtmlref .= '';
 			}

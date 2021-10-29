@@ -139,6 +139,8 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'expensereport', $object->id, 'expensereport');
 
+$permissiontoadd = $user->rights->expensereport->creer;	// Used by the include of actions_dellink.inc.php
+
 
 /*
  * Actions
@@ -1339,7 +1341,6 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->expensereport->dir_output;
-	$permissiontoadd = $user->rights->expensereport->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -1923,7 +1924,7 @@ if ($action == 'create') {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-			$sql .= " WHERE e.rowid = '".$id."'";
+			$sql .= " WHERE e.rowid = ".((int) $id);
 			$sql .= " AND p.fk_expensereport = e.rowid";
 			$sql .= ' AND e.entity IN ('.getEntity('expensereport').')';
 			$sql .= " ORDER BY dp";

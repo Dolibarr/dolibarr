@@ -304,7 +304,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				$nbko++;
 			}
 		} elseif ($feature == 'projet') {
-			if (!$user->rights->projet->lire && !$user->rights->projet->all->lire) {
+			if (!$user->rights->projet->lire && empty($user->rights->projet->all->lire)) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -364,7 +364,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	// Check write permission from module (we need to know write permission to create but also to delete drafts record or to upload files)
 	$createok = 1;
 	$nbko = 0;
-	$wemustcheckpermissionforcreate = (GETPOST('sendit', 'alpha') || GETPOST('linkit', 'alpha') || GETPOST('action', 'aZ09') == 'create' || GETPOST('action', 'aZ09') == 'update') || GETPOST('roworder', 'alpha', 2);
+	$wemustcheckpermissionforcreate = (GETPOST('sendit', 'alpha') || GETPOST('linkit', 'alpha') || in_array(GETPOST('action', 'aZ09'), array('create', 'update', 'add_element_resource', 'confirm_delete_linked_resource')) || GETPOST('roworder', 'alpha', 2));
 	$wemustcheckpermissionfordeletedraft = ((GETPOST("action", "aZ09") == 'confirm_delete' && GETPOST("confirm", "aZ09") == 'yes') || GETPOST("action", "aZ09") == 'delete');
 
 	if ($wemustcheckpermissionforcreate || $wemustcheckpermissionfordeletedraft) {
@@ -618,7 +618,7 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 		$checksoc = array('societe'); // Test for societe object
 		$checkother = array('contact', 'agenda'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
-		$checktask = array('projet_task');	// Test for task object
+		$checktask = array('projet_task'); // Test for task object
 		$nocheck = array('barcode', 'stock'); // No test
 		//$checkdefault = 'all other not already defined'; // Test on entity + link to third party on field $dbt_keyfield. Not allowed if link is empty (Ex: invoice, orders...).
 

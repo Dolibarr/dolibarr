@@ -158,7 +158,7 @@ class ProjectStats extends Stats
 		// Get list of project id allowed to user (in a string list separated by coma)
 		$object = new Project($this->db);
 		$projectsListId = '';
-		if (!$user->rights->projet->all->lire) {
+		if (empty($user->rights->projet->all->lire)) {
 			$projectsListId = $object->getProjectsAuthorizedForUser($user, 0, 1, $user->socid);
 		}
 
@@ -183,7 +183,7 @@ class ProjectStats extends Stats
 			$sqlwhere[] = " t.fk_opp_status IN (".$this->db->sanitize($this->status).")";
 		}
 
-		if (!$user->rights->projet->all->lire) {
+		if (empty($user->rights->projet->all->lire)) {
 			$sqlwhere[] = " t.rowid IN (".$this->db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 		}
 

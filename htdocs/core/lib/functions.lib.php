@@ -6677,7 +6677,7 @@ function dol_html_entity_decode($a, $b, $c = 'UTF-8', $keepsomeentities = 0)
  * @param   bool    $double_encode  When double_encode is turned off, PHP will not encode existing html entities
  * @return  string  $ret            Encoded string
  */
-function dol_htmlentities($string, $flags = null, $encoding = 'UTF-8', $double_encode = false)
+function dol_htmlentities($string, $flags = ENT_QUOTES|ENT_SUBSTITUTE, $encoding = 'UTF-8', $double_encode = false)
 {
 	return htmlentities($string, $flags, $encoding, $double_encode);
 }
@@ -10040,7 +10040,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 	}
 
 	$class = 'btnTitle';
-	if (in_array($iconClass, array('fa fa-plus-circle', 'fa fa-comment-dots'))) {
+	if (in_array($iconClass, array('fa fa-plus-circle', 'fa fa-plus-circle size15x', 'fa fa-comment-dots'))) {
 		$class .= ' btnTitlePlus';
 	}
 	$useclassfortooltip = 1;
@@ -10522,9 +10522,9 @@ function showValueWithClipboardCPButton($valuetocopy, $showonlyonhover = 1, $tex
 
 	$tag = 'span'; 	// Using div does not work when using the js copy code.
 	if ($texttoshow) {
-		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><'.$tag.' class="clipboardCPValue hidewithsize">'.dol_escape_htmltag($valuetocopy, 1, 1).'</'.$tag.'><span class="clipboardCPValueToPrint">'.dol_escape_htmltag($texttoshow, 1, 1).'</span><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText opacitymedium"></span></span>';
+		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><'.$tag.' class="clipboardCPValue hidewithsize">'.dol_escape_htmltag($valuetocopy, 1, 1).'</'.$tag.'><span class="clipboardCPValueToPrint">'.dol_escape_htmltag($texttoshow, 1, 1).'</span><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText"></span></span>';
 	} else {
-		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><'.$tag.' class="clipboardCPValue">'.dol_escape_htmltag($valuetocopy, 1, 1).'</'.$tag.'><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText opacitymedium"></span></span>';
+		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><'.$tag.' class="clipboardCPValue">'.dol_escape_htmltag($valuetocopy, 1, 1).'</'.$tag.'><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText"></span></span>';
 	}
 
 	return $result;

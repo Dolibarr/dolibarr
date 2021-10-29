@@ -1739,7 +1739,7 @@ class pdf_cyan extends ModelePDFPropales
 
 			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$mode =  'target';
+			$mode = 'target';
 			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, $mode, $object);
 
 			// Show recipient

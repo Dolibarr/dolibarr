@@ -2846,6 +2846,16 @@ if (empty($reshook)) {
  * View
  */
 
+if (empty($object->id)) {
+	llxHeader();
+	$head = facture_prepare_head($object);
+	$langs->load('errors');
+	echo dol_get_fiche_head($head, 'compta', $langs->trans("InvoiceCustomer"), -1, 'bill'),
+		'<div class="error">' . $langs->trans("ErrorRecordNotFound") . '</div>';
+	llxFooter();
+	exit;
+}
+
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
@@ -4093,6 +4103,8 @@ if ($action == 'create') {
 		$i++;
 		$close[$i]['code'] = 'badcustomer';
 		$i++;
+		$close[$i]['code'] = 'bankcharge';
+		$i++;
 		$close[$i]['code'] = 'other';
 		$i++;
 		// Help
@@ -4101,6 +4113,8 @@ if ($action == 'create') {
 		$i++;
 		$close[$i]['label'] = $langs->trans("ConfirmClassifyPaidPartiallyReasonBadCustomerDesc");
 		$i++;
+		$close[$i]['label'] = $langs->trans("ConfirmClassifyPaidPartiallyReasonBankChargeDesc");
+		$i++;
 		$close[$i]['label'] = $langs->trans("Other");
 		$i++;
 		// Texte
@@ -4108,6 +4122,8 @@ if ($action == 'create') {
 		$close[$i]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonDiscount", $resteapayer, $langs->trans("Currency".$conf->currency)), $close[$i]['label'], 1);
 		$i++;
 		$close[$i]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonBadCustomer", $resteapayer, $langs->trans("Currency".$conf->currency)), $close[$i]['label'], 1);
+		$i++;
+		$close[$i]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonBankCharge", $resteapayer, $langs->trans("Currency".$conf->currency)), $close[$i]['label'], 1);
 		$i++;
 		$close[$i]['reason'] = $form->textwithpicto($langs->transnoentities("Other"), $close[$i]['label'], 1);
 		$i++;
@@ -4243,9 +4259,10 @@ if ($action == 'create') {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-				$morehtmlref .= $proj->ref;
-				$morehtmlref .= '</a>';
+				$morehtmlref .= ' : '.$proj->getNomUrl(1);
+				if ($proj->title) {
+					$morehtmlref .= ' - '.$proj->title;
+				}
 			} else {
 				$morehtmlref .= '';
 			}

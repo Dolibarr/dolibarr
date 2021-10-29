@@ -441,6 +441,9 @@ input, select {
 input.button.massactionconfirmed {
 	margin: 4px;
 }
+input.short {
+	width: 40px;
+}
 
 textarea {
 	border-radius: 0;
@@ -828,6 +831,12 @@ textarea.centpercent {
 }
 .alignstart {
 	text-align: start;
+}
+.start {
+	text-align: start;
+}
+.end {
+	text-align: end;
 }
 .left {
 	text-align: <?php print $left; ?>;
@@ -1699,7 +1708,7 @@ table[summary="list_of_modules"] .fa-cog {
 }
 .linkobject { cursor: pointer; }
 
-table.tableforfield tr>td:first-of-type, tr.trforfield>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
+table.tableforfield tr:not(.liste_titre)>td:first-of-type, tr.trforfield:not(.liste_titre)>td:first-of-type, div.tableforfield div.tagtr:not(.liste_titre)>div.tagtd:first-of-type {
 	color: #666;
 }
 
@@ -1869,11 +1878,6 @@ body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block
 .side-nav-vert {
 	margin-left: 0;
 }
-div.login_block {
-	/* border-right: none ! important; */
-	top: inherit !important;
-	border-right: 1px solid rgba(0,0,0,0.3);
-}
 
 .side-nav {
 	<?php
@@ -1899,10 +1903,6 @@ div.backgroundsemitransparent {
 
 /* Login */
 
-div.login_block {
-	/* position: initial !important;*/
-	/*display: none;*/
-}
 .login_block_getinfo {
 	text-align: center;
 }
@@ -2722,11 +2722,10 @@ table.login_table_securitycode tr td {
 }
 
 div.login_block {
-	/* border-right: 1px solid rgba(0,0,0,0.3); */
+	top: 0;
 	padding-top: 3px;
 	padding-bottom: 3px;
 	<?php print $left; ?>: 0;
-	top: 0px;
 <?php if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	position: absolute;
 <?php } else { ?>
@@ -6708,6 +6707,30 @@ div.clipboardCPValue.hidewithsize {
 	display: none;
 }
 
+/* To make a div popup, we must use a position aboluste inside a position relative */
+
+.clipboardCPText {
+	position: relative;
+}
+.clipboardCPTextDivInside {
+	position: absolute;
+	background: #EEE;
+	color: 888;
+	border: 1px solid #DDD;
+	opacity: 1;
+	z-index: 20;
+	padding: 2px;
+	padding-left: 4px;
+	padding-right: 4px;
+	top: -5px;
+	left: 0px;
+	border-radius: 5px;
+	white-space: nowrap;
+	font-size: 0.95em;
+	box-shadow: 1px 1px 6px #ddd;
+}
+
+
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
@@ -6810,6 +6833,11 @@ div.clipboardCPValue.hidewithsize {
 /* rule to reduce top menu - 3rd reduction */
 @media only screen and (max-width: 570px)
 {
+	div.login_block {
+		border-right: 1px solid rgba(0,0,0,0.3);
+		top: auto;
+	}
+	
 	div#tmenu_tooltip {
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
 		display:none;
@@ -6819,6 +6847,10 @@ div.clipboardCPValue.hidewithsize {
 	}
 	li.tmenu, li.tmenusel {
 		min-width: 30px;
+	}
+
+	div.login_block {
+		border-right: 1px solid rgba(0,0,0,0.3);
 	}
 
 	div.tmenucenter {

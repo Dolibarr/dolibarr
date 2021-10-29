@@ -1851,7 +1851,7 @@ abstract class CommonObject
 		$result = false;
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$table;
-		$sql .= " WHERE ".$field." = '".$key."'";
+		$sql .= " WHERE ".$field." = '".$this->db->escape($key)."'";
 		if (!empty($element)) {
 			$sql .= " AND entity IN (".getEntity($element).")";
 		} else {

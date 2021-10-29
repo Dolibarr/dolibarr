@@ -500,7 +500,7 @@ class FormFile
 			$modellist = array();
 
 			if ($modulepart == 'company') {
-				$showempty = 1;		// can have no template active
+				$showempty = 1; // can have no template active
 				if (is_array($genallowed)) {
 					$modellist = $genallowed;
 				} else {
@@ -564,7 +564,7 @@ class FormFile
 					$modellist = ModelePDFFactures::liste_modeles($this->db);
 				}
 			} elseif ($modulepart == 'contract') {
-				$showempty = 1;		// can have no template active
+				$showempty = 1; // can have no template active
 				if (is_array($genallowed)) {
 					$modellist = $genallowed;
 				} else {
@@ -628,7 +628,7 @@ class FormFile
 					$modellist = ModelePDFSuppliersOrders::liste_modeles($this->db);
 				}
 			} elseif ($modulepart == 'facture_fournisseur' || $modulepart == 'supplier_invoice') {
-				$showempty = 1; 	// can have no template active
+				$showempty = 1; // can have no template active
 				if (is_array($genallowed)) {
 					$modellist = $genallowed;
 				} else {
@@ -1678,6 +1678,9 @@ class FormFile
 		} elseif ($modulepart == 'project') {
 			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 			$object_instance = new Project($this->db);
+		} elseif ($modulepart == 'project_task') {
+			include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+			$object_instance = new Task($this->db);
 		} elseif ($modulepart == 'fichinter') {
 			include_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 			$object_instance = new Fichinter($this->db);
@@ -1696,13 +1699,16 @@ class FormFile
 		} elseif ($modulepart == 'banque') {
 			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$object_instance = new Account($this->db);
+		} elseif ($modulepart == 'chequereceipt') {
+			include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
+			$object_instance = new RemiseCheque($this->db);
 		} elseif ($modulepart == 'mrp-mo') {
 			include_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 			$object_instance = new Mo($this->db);
 		} else {
 			$parameters = array('modulepart'=>$modulepart);
 			$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
-			if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray)>0) {
+			if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
 				if (array_key_exists('classpath', $hookmanager->resArray) && !empty($hookmanager->resArray['classpath'])) {
 					dol_include_once($hookmanager->resArray['classpath']);
 					if (array_key_exists('classname', $hookmanager->resArray) && !empty($hookmanager->resArray['classname'])) {
@@ -1750,14 +1756,19 @@ class FormFile
 					$id = (isset($reg[1]) ? $reg[1] : '');
 				} elseif ($modulepart == 'invoice_supplier') {
 					preg_match('/([^\/]+)\/[^\/]+$/', $relativefile, $reg);
-					$ref = (isset($reg[1]) ? $reg[1] : ''); if (is_numeric($ref)) {
+					$ref = (isset($reg[1]) ? $reg[1] : '');
+					if (is_numeric($ref)) {
 						$id = $ref;
 						$ref = '';
 					}
-				} elseif ($modulepart == 'user' || $modulepart == 'holiday') {
+				} elseif ($modulepart == 'user') {
 					// $ref may be also id with old supplier invoices
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
 					$id = (isset($reg[1]) ? $reg[1] : '');
+				} elseif ($modulepart == 'project_task') {
+					// $ref of task is the sub-directory of the project
+					$reg = explode("/", $relativefile);
+					$ref = (isset($reg[1]) ? $reg[1] : '');
 				} elseif (in_array($modulepart, array(
 					'invoice',
 					'propal',
@@ -1767,17 +1778,20 @@ class FormFile
 					'contract',
 					'product',
 					'project',
+					'project_task',
 					'fichinter',
 					'expensereport',
 					'recruitment-recruitmentcandidature',
 					'mrp-mo',
-					'banque'))) {
+					'banque',
+					'chequereceipt',
+					'holiday'))) {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
 					$ref = (isset($reg[1]) ? $reg[1] : '');
 				} else {
-					$parameters = array('modulepart'=>$modulepart,'fileinfo'=>$file);
+					$parameters = array('modulepart'=>$modulepart, 'fileinfo'=>$file);
 					$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
-					if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray)>0) {
+					if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
 						if (array_key_exists('ref', $hookmanager->resArray) && !empty($hookmanager->resArray['ref'])) {
 							$ref = $hookmanager->resArray['ref'];
 						}
