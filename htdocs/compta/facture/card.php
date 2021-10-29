@@ -408,7 +408,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'setinvoicedate' && $usercancreate) {
 		$object->fetch($id);
 		$old_date_lim_reglement = $object->date_lim_reglement;
-		$newdate = dol_mktime(0, 0, 0, GETPOST('invoicedatemonth', 'int'), GETPOST('invoicedateday', 'int'), GETPOST('invoicedateyear', 'int'), 'tzuserrel');
+		$newdate = dol_mktime(0, 0, 0, GETPOST('invoicedatemonth', 'int'), GETPOST('invoicedateday', 'int'), GETPOST('invoicedateyear', 'int'), 'tzserver');
 		if (empty($newdate)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 			header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id.'&action=editinvoicedate&token='.newToken());
@@ -437,7 +437,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'setdate_pointoftax' && $usercancreate) {
 		$object->fetch($id);
 
-		$date_pointoftax = dol_mktime(0, 0, 0, GETPOST('date_pointoftaxmonth', 'int'), GETPOST('date_pointoftaxday', 'int'), GETPOST('date_pointoftaxyear', 'int'), 'tzuserrel');
+		$date_pointoftax = dol_mktime(0, 0, 0, GETPOST('date_pointoftaxmonth', 'int'), GETPOST('date_pointoftaxday', 'int'), GETPOST('date_pointoftaxyear', 'int'), 'tzserver');
 
 		$object->date_pointoftax = $date_pointoftax;
 		$result = $object->update($user);
@@ -1011,8 +1011,8 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		$dateinvoice = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'), 'tzuserrel');	// If we enter the 02 january, we need to save the 02 january for server
-		$date_pointoftax = dol_mktime(0, 0, 0, GETPOST('date_pointoftaxmonth', 'int'), GETPOST('date_pointoftaxday', 'int'), GETPOST('date_pointoftaxyear', 'int'), 'tzuserrel');
+		$dateinvoice = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'), 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server
+		$date_pointoftax = dol_mktime(0, 0, 0, GETPOST('date_pointoftaxmonth', 'int'), GETPOST('date_pointoftaxday', 'int'), GETPOST('date_pointoftaxyear', 'int'), 'tzserver');
 
 		// Replacement invoice
 		if (GETPOST('type') == Facture::TYPE_REPLACEMENT) {
@@ -3528,8 +3528,8 @@ if ($action == 'create') {
 		print '</td></tr>';
 	}
 
-	$newdateinvoice = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'), 'tzuserrel');
-	$date_pointoftax = dol_mktime(0, 0, 0, GETPOST('date_pointoftaxmonth', 'int'), GETPOST('date_pointoftaxday', 'int'), GETPOST('date_pointoftaxyear', 'int'), 'tzuserrel');
+	$newdateinvoice = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'), 'tzserver');
+	$date_pointoftax = dol_mktime(0, 0, 0, GETPOST('date_pointoftaxmonth', 'int'), GETPOST('date_pointoftaxday', 'int'), GETPOST('date_pointoftaxyear', 'int'), 'tzserver');
 
 	// Date invoice
 	print '<tr><td class="fieldrequired">'.$langs->trans('DateInvoice').'</td><td colspan="2">';
