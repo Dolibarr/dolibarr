@@ -90,8 +90,9 @@ $formSetup = new formSetup($db);
 
 $formSetup->addItemsFromParamsArray($arrayofparameters);
 
+
 // Hôte
-$item = $formSetup->newItem('GPC_HOST');
+$item = $formSetup->newItem('NO_PARAM_JUST_TEXT');
 $item->fieldOverride = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
 
 // Setup conf MYMODULE_MYPARAM1 as a simple string input
@@ -99,12 +100,15 @@ $item = $formSetup->newItem('MYMODULE_MYPARAM1');
 
 // // Setup conf MYMODULE_MYPARAM1 as a simple textarea input but we replace the text of field title
 $item = $formSetup->newItem('MYMODULE_MYPARAM2');
-$item->nameText = $item->getNameText().' <a href="https://console.developers.google.com/apis/credentials">https://console.developers.google.com/apis/credentials</a>';
-
-// Clé pour API : Client Secret
-$formSetup->newItem('GPC_GOOGLE_CLIENT_SECRET');
+$item->nameText = $item->getNameText().' more html text ';
 
 
+// Setup conf MYMODULE_MYPARAM3
+$item = $formSetup->newItem('MYMODULE_MYPARAM3');
+$item->setAsThirdpartyType();
+
+// Setup conf MYMODULE_MYPARAM4 : quick define write style
+$formSetup->newItem('MYMODULE_MYPARAM4')->setAsYesNo();
 
 $error = 0;
 $setupnotempty = 0;
