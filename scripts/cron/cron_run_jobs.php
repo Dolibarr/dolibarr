@@ -49,33 +49,45 @@ $script_file = basename(__FILE__);
 $path = __DIR__.'/';
 
 // Error if Web mode
-if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+if (substr($sapi_type, 0, 3) == 'cgi') { 
+	echo "Warning: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	echo "PATH=".$path." \n";
+//	exit(-1); /* EDU: Even in web mode, accept the request instead exit, and setup the security key and user login name from config instead args of command line */
 }
 
-require_once $path."../../htdocs/master.inc.php";
+//require_once $path."../../htdocs/master.inc.php"; EDU deleted "/htdocs" part in the path of master.inc.php
+require_once $path."../../master.inc.php";
 require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
-// Check parameters
-if (!isset($argv[1]) || !$argv[1]) {
-	usage($path, $script_file);
-	exit(-1);
-}
+// Check parameters, EDU: if WEBmode instead the expected CLImode setup the security key and user login name from config instead args of command line
 $key = $argv[1];
-
-if (!isset($argv[2]) || !$argv[2]) {
-	usage($path, $script_file);
-	exit(-1);
+if (!isset($argv[1]) || !$argv[1]) {
+	if (substr($sapi_type, 0, 3) == 'cgi') {
+	    $key = $conf->global->CRON_KEY;
+	    echo "Scheduled job management setup securitykey=".$key;
+	}
+	else {
+	    usage($path, $script_file);
+	    exit(-1);
+	}
 }
 
 $userlogin = $argv[2];
+if (!isset($argv[2]) || !$argv[2]) {
+	if (substr($sapi_type, 0, 3) == 'cgi') {
+	    $userlogin = "firstadmin"; /* Reserver word 'firstadmin' to search in DB the fist user loginname with admin rights */
+	}
+    else {
+        echo "ARGV2 USAGE ERROR ".$userlogin." \n";
+        usage($path, $script_file);
+        exit(-1);
+    }
+}
 
 // Global variables
 $version = DOL_VERSION;
 $error = 0;
-
 
 /*
  * Main
@@ -286,6 +298,7 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 }
 
 $db->close();
+echo "\n\n";
 
 if ($nbofjobslaunchedko) {
 	exit(1);
