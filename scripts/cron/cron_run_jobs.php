@@ -49,10 +49,10 @@ $script_file = basename(__FILE__);
 $path = __DIR__.'/';
 
 // Error if Web mode
-if (substr($sapi_type, 0, 3) == 'cgi') { 
+if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Warning: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
 	echo "PATH=".$path." \n";
-//	exit(-1); /* Even in web mode, accept the request instead exit, and setup the security key and user login name from config instead args of command line */
+	//  exit(-1); /* Even in web mode, accept the request instead exit, and setup the security key and user login name from config instead args of command line */
 }
 
 require_once $path."../../htdocs/master.inc.php";
