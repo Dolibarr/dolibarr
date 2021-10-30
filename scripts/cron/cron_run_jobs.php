@@ -55,8 +55,9 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	//  exit(-1); /* EDU: Even in web mode, accept the request instead exit, and setup the security key and user login name from config instead args of command line */
 }
 
-//require_once $path."../../htdocs/master.inc.php"; EDU deleted "/htdocs" part in the path of master.inc.php
-require_once $path."../../master.inc.php";
+//The $path of master.inc.php is different if the Dolibarr instance was updated  from older versions or using tools like Cpanel or automatic installer tools.   
+if  file_exists($path."../../htdocs/master.inc.php") {require_once $path."../../htdocs/master.inc.php";}
+if  file_exists($path."../../master.inc.php") {require_once $path."../../master.inc.php";}
 require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
