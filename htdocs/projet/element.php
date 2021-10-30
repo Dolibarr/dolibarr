@@ -1,13 +1,13 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2012-2016 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015-2019 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2016      Josep Lluís Amador   <joseplluis@lliuretic.cat>
- * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2021      Noé Cendrier         <noe.cendrier@altairis.fr>
+/* Copyright (C) 2001-2004  Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2020  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010  Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2012-2016  Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015-2021  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015       Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2016       Josep Lluís Amador   <joseplluis@lliuretic.cat>
+ * Copyright (C) 2021		Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021       Noé Cendrier         <noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -590,8 +590,8 @@ $listofreferent = array(
 	'name'=>"Salaries",
 	'title'=>"ListSalariesAssociatedProject",
 	'class'=>'Salary',
-	'table'=>'payment_salary',
-	'datefieldname'=>'datev',
+	'table'=>'salary',
+	'datefieldname'=>'datesp',
 	'margin'=>'minus',
 	'disableamount'=>0,
 	'urlnew'=>DOL_URL_ROOT.'/salaries/card.php?action=create&projectid='.$id,
@@ -816,7 +816,7 @@ foreach ($listofreferent as $key => $value) {
 				}
 
 				// Define $total_ht_by_line
-				if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'payment_salary') {
+				if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'salary') {
 					$total_ht_by_line = $element->amount;
 				} elseif ($tablename == 'fichinter') {
 					$total_ht_by_line = $element->getAmount();
@@ -858,7 +858,7 @@ foreach ($listofreferent as $key => $value) {
 				}
 
 				// Define $total_ttc_by_line
-				if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'payment_salary') {
+				if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'salary') {
 					$total_ttc_by_line = $element->amount;
 				} elseif ($tablename == 'fichinter') {
 					$total_ttc_by_line = $element->getAmount();
@@ -1075,7 +1075,7 @@ foreach ($listofreferent as $key => $value) {
 			print ''; // if $key == 'project_task', we don't want details per user
 		} elseif (in_array($tablename, array('payment_various'))) {
 			print ''; // if $key == 'payment_various', we don't have any thirdparty
-		} elseif (in_array($tablename, array('expensereport_det', 'don', 'projet_task', 'stock_mouvement', 'payment_salary'))) {
+		} elseif (in_array($tablename, array('expensereport_det', 'don', 'projet_task', 'stock_mouvement', 'salary'))) {
 			print $langs->trans("User");
 		} else {
 			print $langs->trans("ThirdParty");
@@ -1233,8 +1233,8 @@ foreach ($listofreferent as $key => $value) {
 					$date = $element->date; // No draft status on lines
 				} elseif ($tablename == 'stock_mouvement') {
 					$date = $element->datem;
-				} elseif ($tablename == 'payment_salary') {
-					$date = $element->datev;
+				} elseif ($tablename == 'salary') {
+					$date = $element->datesp;
 				} elseif ($tablename == 'payment_various') {
 					$date = $element->datev;
 				} elseif ($tablename == 'chargesociales') {
@@ -1292,7 +1292,7 @@ foreach ($listofreferent as $key => $value) {
 					$tmpuser = new User($db);
 					$tmpuser->fetch($expensereport->fk_user_author);
 					print $tmpuser->getNomUrl(1, '', 48);
-				} elseif ($tablename == 'payment_salary') {
+				} elseif ($tablename == 'salary') {
 					$tmpuser = new User($db);
 					$tmpuser->fetch($element->fk_user);
 					print $tmpuser->getNomUrl(1, '', 48);
@@ -1320,7 +1320,7 @@ foreach ($listofreferent as $key => $value) {
 				if (empty($value['disableamount'])) {
 					$total_ht_by_line = null;
 					$othermessage = '';
-					if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'payment_salary') {
+					if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'salary') {
 						$total_ht_by_line = $element->amount;
 					} elseif ($tablename == 'fichinter') {
 						$total_ht_by_line = $element->getAmount();
@@ -1374,7 +1374,7 @@ foreach ($listofreferent as $key => $value) {
 				// Amount inc tax
 				if (empty($value['disableamount'])) {
 					$total_ttc_by_line = null;
-					if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'payment_salary') {
+					if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'salary') {
 						$total_ttc_by_line = $element->amount;
 					} elseif ($tablename == 'fichinter') {
 						$total_ttc_by_line = $element->getAmount();
