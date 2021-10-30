@@ -56,8 +56,8 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 //The $path of master.inc.php is different if the Dolibarr instance was updated  from older versions or using tools like Cpanel or automatic installer tools.
-if file_exists($path."../../htdocs/master.inc.php") {require_once $path."../../htdocs/master.inc.php";}
-if file_exists($path."../../master.inc.php") {require_once $path."../../master.inc.php";}
+if (file_exists($path."../../htdocs/master.inc.php")) {require_once $path."../../htdocs/master.inc.php";}
+if (file_exists($path."../../master.inc.php")) {require_once $path."../../master.inc.php";}
 require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
