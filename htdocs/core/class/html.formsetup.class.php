@@ -184,6 +184,24 @@ class formSetup
 	}
 
 	/**
+	 * used to export param array for /core/actions_setmoduleoptions.inc.php template
+	 * @return array $arrayofparameters for /core/actions_setmoduleoptions.inc.php
+	 * @deprecated
+	 */
+	public function exportItemsAsParamsArray()
+	{
+		$arrayofparameters = array();
+		foreach ($this->params as $key => $item) {
+			$arrayofparameters[$item->confKey] = array(
+				'type' => $item->type,
+				'enabled' => $item->enabled
+			);
+		}
+
+		return $arrayofparameters;
+	}
+
+	/**
 	 * Reload for each item default conf
 	 * note: this will override custom configuration
 	 * @return bool
@@ -396,7 +414,7 @@ class formSetupItem
 		} elseif ($this->type == 'product') {
 			if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
 				$selected = (empty($this->fieldValue) ? '' : $this->fieldValue);
-				$this->form->select_produits($selected, $this->confKey, '', 0);
+				$out.= $this->form->select_produits($selected, $this->confKey, '', 0, 0, 1, 2, '', 0, array(), 0, '1', 0, $this->cssClass, 0, '', null, 1);
 			}
 		} else {
 			$out.= '<input name="'.$this->confKey.'"  class="flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass).'" value="'.$this->fieldValue.'">';
@@ -501,75 +519,94 @@ class formSetupItem
 
 	/**
 	 * Set type of input as string
-	 * @return null
+	 * @return self
 	 */
 	public function setAsString()
 	{
 		$this->type = 'string';
+		return $this;
 	}
 
 	/**
 	 * Set type of input as textarea
-	 * @return null
+	 * @return self
 	 */
 	public function setAsTextarea()
 	{
 		$this->type = 'textarea';
+		return $this;
 	}
 
 	/**
 	 * Set type of input as html editor
-	 * @return null
+	 * @return self
 	 */
 	public function setAsHtml()
 	{
 		$this->type = 'html';
+		return $this;
 	}
 
 	/**
 	 * Set type of input as emailtemplate selector
-	 * @return null
+	 * @param string $templateType email template type
+	 * @return self
 	 */
-	public function setAsEmailTemplate()
+	public function setAsEmailTemplate($templateType)
 	{
-		$this->type = 'emailtemplate';
+		$this->type = 'emailtemplate:'.$templateType;
+		return $this;
 	}
 
 	/**
 	 * Set type of input as thirdparty_type selector
-	 * @return null
+	 * @return self
 	 */
 	public function setAsThirdpartyType()
 	{
 		$this->type = 'thirdparty_type';
+		return $this;
 	}
 
 	/**
 	 * Set type of input as Yes
-	 * @return null
+	 * @return self
 	 */
 	public function setAsYesNo()
 	{
 		$this->type = 'yesno';
+		return $this;
 	}
 
 	/**
 	 * Set type of input as secure key
-	 * @return null
+	 * @return self
 	 */
 	public function setAsSecureKey()
 	{
 		$this->type = 'securekey';
+		return $this;
+	}
+
+	/**
+	 * Set type of input as product
+	 * @return self
+	 */
+	public function setAsProduct()
+	{
+		$this->type = 'product';
+		return $this;
 	}
 
 	/**
 	 * Set type of input as a category selector
 	 * TODO add default value
 	 * @param	int		$catType		Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
-	 * @return null
+	 * @return self
 	 */
 	public function setAsCategory($catType)
 	{
 		$this->type = 'category:'.$catType;
+		return $this;
 	}
 }

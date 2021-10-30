@@ -94,21 +94,32 @@ $formSetup->addItemsFromParamsArray($arrayofparameters);
 // Hôte
 $item = $formSetup->newItem('NO_PARAM_JUST_TEXT');
 $item->fieldOverride = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
+$item->cssClass = 'minwidth500';
+
 
 // Setup conf MYMODULE_MYPARAM1 as a simple string input
 $item = $formSetup->newItem('MYMODULE_MYPARAM1');
 
-// // Setup conf MYMODULE_MYPARAM1 as a simple textarea input but we replace the text of field title
+// Setup conf MYMODULE_MYPARAM1 as a simple textarea input but we replace the text of field title
 $item = $formSetup->newItem('MYMODULE_MYPARAM2');
 $item->nameText = $item->getNameText().' more html text ';
-
 
 // Setup conf MYMODULE_MYPARAM3
 $item = $formSetup->newItem('MYMODULE_MYPARAM3');
 $item->setAsThirdpartyType();
 
-// Setup conf MYMODULE_MYPARAM4 : quick define write style
+// Setup conf MYMODULE_MYPARAM4 : exemple of quick define write style
 $formSetup->newItem('MYMODULE_MYPARAM4')->setAsYesNo();
+
+// Setup conf MYMODULE_MYPARAM5
+$formSetup->newItem('MYMODULE_MYPARAM5')->setAsEmailTemplate('thirdparty');
+
+// Setup conf MYMODULE_MYPARAM6
+$formSetup->newItem('MYMODULE_MYPARAM6')->setAsSecureKey()->enabled = 0; // disabled
+
+// Setup conf MYMODULE_MYPARAM7
+$formSetup->newItem('MYMODULE_MYPARAM7')->setAsProduct();
+
 
 $error = 0;
 $setupnotempty = 0;
@@ -121,6 +132,8 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
  */
 
 if ((float) DOL_VERSION >= 6) {
+	// TODO Add save setup by formSetup
+	$arrayofparameters = $formSetup->exportItemsAsParamsArray();
 	include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 	$formSetup->reloadConfs();
 }
