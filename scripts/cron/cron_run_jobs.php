@@ -25,48 +25,68 @@
  * \brief Execute pendings jobs
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOLOGIN'))        define('NOLOGIN', '1');
-
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOLOGIN')) {
+	define('NOLOGIN', '1');
+}
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__.'/';
 
 // Error if Web mode
-if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+if (substr($sapi_type, 0, 3) == 'cgi') { 
+	echo "Warning: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	echo "PATH=".$path." \n";
+//	exit(-1); /* Even in web mode, accept the request instead exit, and setup the security key and user login name from config instead args of command line */
 }
 
 require_once $path."../../htdocs/master.inc.php";
 require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
-// Check parameters
-if (!isset($argv[1]) || !$argv[1]) {
-	usage($path, $script_file);
-	exit(-1);
-}
+// Check parameters, if WEBmode instead the expected CLImode setup the security key and user login name from config instead args of command line
 $key = $argv[1];
-
-if (!isset($argv[2]) || !$argv[2]) {
-	usage($path, $script_file);
-	exit(-1);
+if (!isset($argv[1]) || !$argv[1]) {
+	if (substr($sapi_type, 0, 3) == 'cgi') {
+	    $key = $conf->global->CRON_KEY;
+	    echo "Scheduled job management setup securitykey=".$key;
+	}
+	else {
+	    usage($path, $script_file);
+	    exit(-1);
+	}
 }
 
 $userlogin = $argv[2];
+if (!isset($argv[2]) || !$argv[2]) {
+	if (substr($sapi_type, 0, 3) == 'cgi') {
+	    $userlogin = "firstadmin"; /* Reserver word 'firstadmin' to search in DB the fist user loginname with admin rights */
+	}
+    else {
+        echo "ARGV2 USAGE ERROR ".$userlogin." \n";
+        usage($path, $script_file);
+        exit(-1);
+    }
+}
 
 // Global variables
 $version = DOL_VERSION;
 $error = 0;
-
-// Language Management
-$langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
-
 
 /*
  * Main
@@ -106,13 +126,14 @@ if ($userlogin == 'firstadmin') {
 			$userlogin = $obj->login;
 			echo "First admin user found is login '".$userlogin."', entity ".$obj->entity."\n";
 		}
-	} else
+	} else {
 		dol_print_error($db);
+	}
 }
 
 // Check user login
 $user = new User($db);
-$result = $user->fetch('', $userlogin);
+$result = $user->fetch('', $userlogin, '', 1);
 if ($result < 0) {
 	echo "User Error: ".$user->error;
 	dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
@@ -124,9 +145,22 @@ if ($result < 0) {
 		exit(-1);
 	}
 }
+
+// Reload langs
+$langcode = (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT);
+if (!empty($user->conf->MAIN_LANG_DEFAULT)) {
+	$langcode = $user->conf->MAIN_LANG_DEFAULT;
+}
+if ($langs->getDefaultLang() != $langcode) {
+	$langs->setDefaultLang($langcode);
+	$langs->tab_translate = array();
+}
+// Language Management
+$langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
+
 $user->getrights();
 
-if (isset($argv[3]) || $argv[3]) {
+if (isset($argv[3]) && $argv[3]) {
 	$id = $argv[3];
 }
 
@@ -152,8 +186,7 @@ if ($result < 0) {
 
 $qualifiedjobs = array();
 foreach ($object->lines as $val) {
-	if (!verifCond($val->test))
-	{
+	if (!verifCond($val->test)) {
 		continue;
 	}
 	$qualifiedjobs[] = $val;
@@ -166,7 +199,7 @@ $nbofjobslaunchedok = 0;
 $nbofjobslaunchedko = 0;
 
 if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
-    $savconf = dol_clone($conf);
+	$savconf = dol_clone($conf);
 
 	// Loop over job
 	foreach ($qualifiedjobs as $line) {
@@ -174,41 +207,41 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label;
 
 		// Force reload of setup for the current entity
-		if ((empty($line->entity) ? 1 : $line->entity) != $conf->entity)
-		{
+		if ((empty($line->entity) ? 1 : $line->entity) != $conf->entity) {
 			dol_syslog("cron_run_jobs.php we work on another entity conf than ".$conf->entity." so we reload mysoc, langs, user and conf", LOG_DEBUG);
 			echo " -> we change entity so we reload mysoc, langs, user and conf";
 
-		    $conf->entity = (empty($line->entity) ? 1 : $line->entity);
-		    $conf->setValues($db); // This make also the $mc->setValues($conf); that reload $mc->sharings
-		    $mysoc->setMysoc($conf);
+			$conf->entity = (empty($line->entity) ? 1 : $line->entity);
+			$conf->setValues($db); // This make also the $mc->setValues($conf); that reload $mc->sharings
+			$mysoc->setMysoc($conf);
 
-		    // Force recheck that user is ok for the entity to process and reload permission for entity
-		    if ($conf->entity != $user->entity && $user->entity != 0)
-		    {
-    		    $result = $user->fetch('', $userlogin, '', 0, $conf->entity);
-    		    if ($result < 0)
-    		    {
-    		        echo "\nUser Error: ".$user->error."\n";
-    		        dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
-    		        exit(-1);
-    		    }
-    		    else
-    		    {
-    		        if ($result == 0)
-    		        {
-    		            echo "\nUser login: ".$userlogin." does not exists for entity ".$conf->entity."\n";
-    		            dol_syslog("User login:".$userlogin." does not exists", LOG_ERR);
-    		            exit(-1);
-    		        }
-    		    }
-    		    $user->getrights();
-		    }
+			// Force recheck that user is ok for the entity to process and reload permission for entity
+			if ($conf->entity != $user->entity) {
+				$result = $user->fetch('', $userlogin, '', 1);
+				if ($result < 0) {
+					echo "\nUser Error: ".$user->error."\n";
+					dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
+					exit(-1);
+				} else {
+					if ($result == 0) {
+						echo "\nUser login: ".$userlogin." does not exists for entity ".$conf->entity."\n";
+						dol_syslog("User login:".$userlogin." does not exists", LOG_ERR);
+						exit(-1);
+					}
+				}
+				$user->getrights();
+			}
 
-		    // Reload langs
-		    $langcode = (empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT);
-		    if (! empty($user->conf->MAIN_LANG_DEFAULT)) $langcode = $user->conf->MAIN_LANG_DEFAULT;
-		    if ($langs->getDefaultLang() != $langcode) $langs->setDefaultLang($langcode);
+			// Reload langs
+			$langcode = (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT);
+			if (!empty($user->conf->MAIN_LANG_DEFAULT)) {
+				$langcode = $user->conf->MAIN_LANG_DEFAULT;
+			}
+			if ($langs->getDefaultLang() != $langcode) {
+				$langs->setDefaultLang($langcode);
+				$langs->tab_translate = array();
+				$langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
+			}
 		}
 
 		//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database
@@ -259,16 +292,16 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 	}
 
 	$conf = $savconf;
-}
-else
-{
+} else {
 	echo "cron_run_jobs.php no qualified job found\n";
 }
 
 $db->close();
+echo "\n\n";
 
-if ($nbofjobslaunchedko)
+if ($nbofjobslaunchedko) {
 	exit(1);
+}
 exit(0);
 
 /**
