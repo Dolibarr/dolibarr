@@ -38,7 +38,6 @@ class formSetup
 	/** @var Form */
 	public $form;
 
-
 	/**
 	 * Constructor
 	 *
