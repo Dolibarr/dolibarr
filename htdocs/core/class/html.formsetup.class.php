@@ -19,7 +19,8 @@
 /**
  * This class help you create setup render
  */
-class formSetup{
+class formSetup
+{
 
 	/**
 	 * @var DoliDB Database handler.
@@ -27,7 +28,7 @@ class formSetup{
 	public $db;
 
 	/** @var formSetupItem[]  */
-	public $arrayOfParameters = array();
+	public $params = array();
 
 	public $setupNotEmpty = 0;
 
@@ -37,10 +38,12 @@ class formSetup{
 	/** @var Form */
 	public $form;
 
+
 	/**
 	 * Constructor
 	 *
-	 * @param		DoliDB		$db      Database handler
+	 * @param DoliDB $db Database handler
+	 * @param Translate $outputLangs if needed can use another lang
 	 */
 	public function __construct($db, $outputLangs = false)
 	{
@@ -48,41 +51,53 @@ class formSetup{
 		$this->db = $db;
 		$this->form = new Form($this->db);
 
-		if($outputLangs){
+		if ($outputLangs) {
 			$this->langs = $outputLangs;
-		}
-		else{
+		} else {
 			$this->langs = $langs;
 		}
 	}
 
 	/**
+	 * @param bool $editMode true will display output on edit mod
 	 * @return string
 	 */
-	public function generateOutput($edit = false){
+	public function generateOutput($editMode = false)
+	{
 
+		$out = '';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
-		$out = '<table class="noborder centpercent">';
+		$out.= '<input type="hidden" name="token" value="'.newToken().'">';
+		if ($editMode) {
+			$out .= '<input type="hidden" name="action" value="update">';
+		}
+
+		$out.= '<table class="noborder centpercent">';
+		$out.= '<thead>';
 		$out.= '<tr class="liste_titre">';
 		$out.= '	<td class="titlefield">'.$this->langs->trans("Parameter").'</td>';
 		$out.= '	<td>'.$this->langs->trans("Value").'</td>';
 		$out.= '</tr>';
+		$out.= '</thead>';
 
-		foreach ($this->arrayOfParameters as $item) {
-			$out.= $this->generateLineOutput($item, $edit);
+		$out.= '<tbody>';
+		foreach ($this->params as $item) {
+			$out.= $this->generateLineOutput($item, $editMode);
 		}
+		$out.= '</tbody>';
 
 		$out.= '</table>';
 		return $out;
 	}
 
 	/**
-	 * @param formSetupItem $item
-	 * @param bool $edit
-	 * @return string
+	 * @param formSetupItem $item the setup item
+	 * @param bool $editMode Display as edit mod
+	 * @return string the html output for an setup item
 	 */
-	public function generateLineOutput($item, $edit = false){
+	public function generateLineOutput($item, $editMode = false)
+	{
 
 		$out = '';
 		if ($item->enabled==1) {
@@ -97,14 +112,13 @@ class formSetup{
 
 			$out.= '<td>';
 
-			if($edit){
+			if ($editMode) {
 				$out.= $item->generateInputField();
-			}
-			else{
+			} else {
 				$out.= $item->generateOutputField();
 			}
 
-			if(!empty($item->errors)){
+			if (!empty($item->errors)) {
 				// TODO : move set event message in a methode to be called by cards not by this class
 				setEventMessages(null, $item->errors, 'errors');
 			}
@@ -118,14 +132,14 @@ class formSetup{
 
 
 	/**
-	 * @param string $confKey
-	 * @param array $params
-	 * @
+	 * @param array $params an array of arrays of params from old modulBuilder params
+	 * @deprecated was used to test  module builder convertion to this form usage
+	 * @return null
 	 */
-	public function addItemsFromParamsArray($params){
-
-		if(!array($params)){ return false; }
-		foreach ($params as $confKey => $param){
+	public function addItemsFromParamsArray($params)
+	{
+		if (!array($params)) { return false; }
+		foreach ($params as $confKey => $param) {
 			$this->addItemFromParams($confKey, $param); // todo manage error
 		}
 	}
@@ -133,12 +147,14 @@ class formSetup{
 
 	/**
 	 * From old
-	 * @param string $confKey
-	 * @param array $params
+	 * @param string $confKey the conf name to store
+	 * @param array $params an array of params from old modulBuilder params
+	 * @deprecated was used to test  module builder convertion to this form usage
+	 * @return bool
 	 */
-	public function addItemFromParams($confKey, $params){
-
-		if(empty($confKey) || empty($params['type'])){ return false; }
+	public function addItemFromParams($confKey, $params)
+	{
+		if (empty($confKey) || empty($params['type'])) { return false; }
 
 		/*
 		 * Exemple from old module builder setup page
@@ -152,26 +168,56 @@ class formSetup{
 			//'MYMODULE_MYPARAM7'=>array('type'=>'product', 'enabled'=>1),
 		 */
 
-		$item = new formSetupItem($this->db);
+		$item = new formSetupItem($confKey);
 		$item->type = $params['type'];
-		$item->confKey = $confKey;
 
-		if(!empty($params['enabled'])) {
+		if (!empty($params['enabled'])) {
 			$item->enabled = $params['enabled'];
 		}
 
-		if(!empty($params['css'])){
+		if (!empty($params['css'])) {
 			$item->cssClass = $params['css'];
 		}
 
-		$this->arrayOfParameters[$item->confKey] = $item;
+		$this->params[$item->confKey] = $item;
 
 		return true;
 	}
 
+	/**
+	 * Reload for each item default conf
+	 * note: this will override custom configuration
+	 * @return bool
+	 */
+	public function reloadConfs()
+	{
+
+		if (!array($this->params)) { return false; }
+		foreach ($this->params as $item) {
+			$item->reloadConf();
+		}
+
+		return true;
+	}
+
+
+
+	/**
+	 * Create a new item
+	 * @param $confKey the conf key used in database
+	 * @return formSetupItem the new setup item created
+	 */
+	public function newItem($confKey)
+	{
+		$item = new formSetupItem($confKey);
+		$this->params[$item->confKey] = $item;
+		return $this->params[$item->confKey];
+	}
 }
 
-
+/**
+ * This class help to create item for class formSetup
+ */
 class formSetupItem
 {
 	/**
@@ -194,8 +240,17 @@ class formSetupItem
 	/** @var string $helpText  */
 	public $helpText = '';
 
-	/** @var bool|string set this var to override field output */
+	/** @var string $value  */
+	public $fieldValue;
+
+	/** @var bool|string set this var to override field output will override $fieldInputOverride and $fieldOutputOverride too */
 	public $fieldOverride = false;
+
+	/** @var bool|string set this var to override field output */
+	public $fieldInputOverride = false;
+
+	/** @var bool|string set this var to override field output */
+	public $fieldOutputOverride = false;
 
 	/**
 	 * @var string $errors
@@ -203,58 +258,90 @@ class formSetupItem
 	public $errors = array();
 
 	/**
+	 * TODO each type must have setAs{type} method to help configuration
+	 *   And set var as protected when its done configuration must be done by method
 	 * @var string $type  'string', 'textarea', 'category:'.Categorie::TYPE_CUSTOMER', 'emailtemplate', 'thirdparty_type'
 	 */
-	public $type;
+	public $type = 'string';
 
-	public $enabled = 0;
+	public $enabled = 1;
 
 	public $cssClass = '';
 
 	/**
 	 * Constructor
 	 *
-	 * @param $confKey
+	 * @param $confKey the conf key used in database
 	 */
 	public function __construct($confKey)
 	{
-		global $langs, $db;
+		global $langs, $db, $conf;
 		$this->db = $db;
 		$this->form = new Form($this->db);
 		$this->langs = $langs;
 
 		$this->confKey = $confKey;
+		$this->fieldValue = $conf->global->{$this->confKey};
 	}
 
-	public function getHelpText(){
-		if(!empty($this->helpText)){ return $this->helpText; }
+	/**
+	 * reload conf value from databases
+	 * @return null
+	 */
+	public function reloadConf()
+	{
+		global $conf;
+		$this->fieldValue = $conf->global->{$this->confKey};
+	}
+
+	/**
+	 * Get help text or generate it
+	 * @return int|string
+	 */
+	public function getHelpText()
+	{
+		if (!empty($this->helpText)) { return $this->helpText; }
 		return (($this->langs->trans($this->confKey . 'Tooltip') != $this->confKey . 'Tooltip') ? $this->langs->trans($this->confKey . 'Tooltip') : '');
 	}
 
-	public function getNameText(){
-		if(!empty($this->nameText)){ return $this->nameText; }
-		return (($this->langs->trans($this->confKey) != $this->confKey) ? $this->langs->trans($this->confKey) : $this->langs->trans('MissingTranslationForConfKey',$this->confKey));
+	/**
+	 * Get field name text or generate it
+	 * @return false|int|string
+	 */
+	public function getNameText()
+	{
+		if (!empty($this->nameText)) { return $this->nameText; }
+		return (($this->langs->trans($this->confKey) != $this->confKey) ? $this->langs->trans($this->confKey) : $this->langs->trans('MissingTranslationForConfKey', $this->confKey));
 	}
 
-	public function generateInputField(){
+	/**
+	 * generate input field
+	 * @return bool|string
+	 */
+	public function generateInputField()
+	{
 		global $conf, $user;
 
-		if(!empty($this->fieldOverride)){
+		if (!empty($this->fieldOverride)) {
 			return $this->fieldOverride;
+		}
+
+		if (!empty($this->fieldInputOverride)) {
+			return $this->fieldInputOverride;
 		}
 
 		$out = '';
 
 		if ($this->type == 'textarea') {
 			$out.= '<textarea class="flat" name="'.$this->confKey.'" id="'.$this->confKey.'" cols="50" rows="5" wrap="soft">' . "\n";
-			$out.= dol_htmlentities($conf->global->{$this->confKey});
+			$out.= dol_htmlentities($this->fieldValue);
 			$out.= "</textarea>\n";
 		} elseif ($this->type== 'html') {
 			require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-			$doleditor = new DolEditor($this->confKey, $conf->global->{$this->confKey}, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
+			$doleditor = new DolEditor($this->confKey, $this->fieldValue, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
 			$doleditor->Create();
 		} elseif ($this->type == 'yesno') {
-			$out.= $this->form->selectyesno($this->confKey, $conf->global->{$this->confKey}, 1);
+			$out.= $this->form->selectyesno($this->confKey, $this->fieldValue, 1);
 		} elseif (preg_match('/emailtemplate:/', $this->type)) {
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 			$formmail = new FormMail($this->db);
@@ -274,7 +361,7 @@ class formSetupItem
 					$arrayOfMessageName[$modelMail->id] = $this->langs->trans(preg_replace('/\(|\)/', '', $modelMail->label)) . $moreonlabel;
 				}
 			}
-			$out.= $this->form->selectarray($this->confKey, $arrayOfMessageName, $conf->global->{$this->confKey}, 'None', 0, 0, '', 0, 0, 0, '', '', 1);
+			$out.= $this->form->selectarray($this->confKey, $arrayOfMessageName, $this->fieldValue, 'None', 0, 0, '', 0, 0, 0, '', '', 1);
 		} elseif (preg_match('/category:/', $this->type)) {
 			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -282,13 +369,13 @@ class formSetupItem
 
 			$tmp = explode(':', $this->type);
 			$out.= img_picto('', 'category', 'class="pictofixedwidth"');
-			$out.= $formother->select_categories($tmp[1],  $conf->global->{$this->confKey}, $this->confKey, 0, $this->langs->trans('CustomersProspectsCategoriesShort'));
+			$out.= $formother->select_categories($tmp[1],  $this->fieldValue, $this->confKey, 0, $this->langs->trans('CustomersProspectsCategoriesShort'));
 		} elseif (preg_match('/thirdparty_type/', $this->type)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 			$formcompany = new FormCompany($this->db);
-			$out.= $formcompany->selectProspectCustomerType($conf->global->{$this->confKey}, $this->confKey);
+			$out.= $formcompany->selectProspectCustomerType($this->fieldValue, $this->confKey);
 		} elseif ($this->type == 'securekey') {
-			$out.= '<input required="required" type="text" class="flat" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ?GETPOST($this->confKey, 'alpha') : $conf->global->{$this->confKey}).'" size="40">';
+			$out.= '<input required="required" type="text" class="flat" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ?GETPOST($this->confKey, 'alpha') : $this->fieldValue).'" size="40">';
 			if (!empty($conf->use_javascript_ajax)) {
 				$out.= '&nbsp;'.img_picto($this->langs->trans('Generate'), 'refresh', 'id="generate_token'.$this->confKey.'" class="linkobject"');
 			}
@@ -309,11 +396,11 @@ class formSetupItem
 			}
 		} elseif ($this->type == 'product') {
 			if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
-				$selected = (empty($conf->global->{$this->confKey}) ? '' : $conf->global->{$this->confKey});
+				$selected = (empty($this->fieldValue) ? '' : $this->fieldValue);
 				$this->form->select_produits($selected, $this->confKey, '', 0);
 			}
 		} else {
-			$out.= '<input name="'.$this->confKey.'"  class="flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass).'" value="'.$conf->global->{$this->confKey}.'">';
+			$out.= '<input name="'.$this->confKey.'"  class="flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass).'" value="'.$this->fieldValue.'">';
 		}
 
 		return $out;
@@ -321,35 +408,44 @@ class formSetupItem
 
 
 	/**
-	 * add error
-	 * @param array|string $errors
+	 * Add error
+	 * @param array|string $errors the error text
+	 * @return null
 	 */
-	public function setErrors($errors){
-		if(is_array($errors)){
-			if(!empty($errors)){
-				foreach ($errors as $error){
+	public function setErrors($errors)
+	{
+		if (is_array($errors)) {
+			if (!empty($errors)) {
+				foreach ($errors as $error) {
 					$this->setErrors($error);
 				}
 			}
-		}
-		elseif(!empty($errors)){
+		} elseif (!empty($errors)) {
 			$this->errors[] = $errors;
 		}
 	}
 
-	public function generateOutputField(){
+	/**
+	 * @return bool|string Generate the output html for this item
+	 */
+	public function generateOutputField()
+	{
 		global $conf, $user;
 
-		if(!empty($this->fieldOverride)){
+		if (!empty($this->fieldOverride)) {
 			return $this->fieldOverride;
+		}
+
+		if (!empty($this->fieldOutputOverride)) {
+			return $this->fieldOutputOverride;
 		}
 
 		$out = '';
 
 		if ($this->type == 'textarea') {
-			$out.= dol_nl2br($conf->global->{$this->confKey});
+			$out.= dol_nl2br($this->fieldValue);
 		} elseif ($this->type== 'html') {
-			$out.=  $conf->global->{$this->confKey};
+			$out.=  $this->fieldValue;
 		} elseif ($this->type == 'yesno') {
 			$out.= ajax_constantonoff($this->confKey);
 		} elseif (preg_match('/emailtemplate:/', $this->type)) {
@@ -358,14 +454,14 @@ class formSetupItem
 
 			$tmp = explode(':', $this->type);
 
-			$template = $formmail->getEMailTemplate($this->db, $tmp[1], $user, $this->langs, $conf->global->{$this->confKey});
+			$template = $formmail->getEMailTemplate($this->db, $tmp[1], $user, $this->langs, $this->fieldValue);
 			if ($template<0) {
 				$this->setErrors($formmail->errors);
 			}
 			$out.= $this->langs->trans($template->label);
 		} elseif (preg_match('/category:/', $this->type)) {
 			$c = new Categorie($this->db);
-			$result = $c->fetch($conf->global->{$this->confKey});
+			$result = $c->fetch($this->fieldValue);
 			if ($result < 0) {
 				$this->setErrors($c->errors);
 			}
@@ -376,28 +472,105 @@ class formSetupItem
 			}
 			$out.= '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 		} elseif (preg_match('/thirdparty_type/', $this->type)) {
-			if ($conf->global->{$this->confKey}==2) {
+			if ($this->fieldValue==2) {
 				$out.= $this->langs->trans("Prospect");
-			} elseif ($conf->global->{$this->confKey}==3) {
+			} elseif ($this->fieldValue==3) {
 				$out.= $this->langs->trans("ProspectCustomer");
-			} elseif ($conf->global->{$this->confKey}==1) {
+			} elseif ($this->fieldValue==1) {
 				$out.= $this->langs->trans("Customer");
-			} elseif ($conf->global->{$this->confKey}==0) {
+			} elseif ($this->fieldValue==0) {
 				$out.= $this->langs->trans("NorProspectNorCustomer");
 			}
 		} elseif ($this->type == 'product') {
 			$product = new Product($this->db);
-			$resprod = $product->fetch($conf->global->{$this->confKey});
+			$resprod = $product->fetch($this->fieldValue);
 			if ($resprod > 0) {
 				$out.= $product->ref;
 			} elseif ($resprod < 0) {
 				$this->setErrors($product->errors);
 			}
 		} else {
-			$out.= $conf->global->{$this->confKey};
+			$out.= $this->fieldValue;
 		}
 
 		return $out;
 	}
 
+	/*
+	 * METHODS FOR SETTING DISPLAY TYPE
+	 */
+
+	/**
+	 * Set type of input as string
+	 * @return null
+	 */
+	public function setAsString()
+	{
+		$this->type = 'string';
+	}
+
+	/**
+	 * Set type of input as textarea
+	 * @return null
+	 */
+	public function setAsTextarea()
+	{
+		$this->type = 'textarea';
+	}
+
+	/**
+	 * Set type of input as html editor
+	 * @return null
+	 */
+	public function setAsHtml()
+	{
+		$this->type = 'html';
+	}
+
+	/**
+	 * Set type of input as emailtemplate selector
+	 * @return null
+	 */
+	public function setAsEmailTemplate()
+	{
+		$this->type = 'emailtemplate';
+	}
+
+	/**
+	 * Set type of input as thirdparty_type selector
+	 * @return null
+	 */
+	public function setAsThirdpartyType()
+	{
+		$this->type = 'thirdparty_type';
+	}
+
+	/**
+	 * Set type of input as Yes
+	 * @return null
+	 */
+	public function setAsYesNo()
+	{
+		$this->type = 'yesno';
+	}
+
+	/**
+	 * Set type of input as secure key
+	 * @return null
+	 */
+	public function setAsSecureKey()
+	{
+		$this->type = 'securekey';
+	}
+
+	/**
+	 * Set type of input as a category selector
+	 * TODO add default value
+	 * @param	int		$catType		Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 * @return null
+	 */
+	public function setAsCategory($catType)
+	{
+		$this->type = 'category:'.$catType;
+	}
 }

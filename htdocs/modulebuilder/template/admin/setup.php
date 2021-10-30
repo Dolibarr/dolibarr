@@ -85,6 +85,27 @@ $arrayofparameters = array(
 	//'MYMODULE_MYPARAM7'=>array('type'=>'product', 'enabled'=>1),
 );
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
+$formSetup = new formSetup($db);
+
+$formSetup->addItemsFromParamsArray($arrayofparameters);
+
+// Hôte
+$item = $formSetup->newItem('GPC_HOST');
+$item->fieldOverride = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
+
+// Setup conf MYMODULE_MYPARAM1 as a simple string input
+$item = $formSetup->newItem('MYMODULE_MYPARAM1');
+
+// // Setup conf MYMODULE_MYPARAM1 as a simple textarea input but we replace the text of field title
+$item = $formSetup->newItem('MYMODULE_MYPARAM2');
+$item->nameText = $item->getNameText().' <a href="https://console.developers.google.com/apis/credentials">https://console.developers.google.com/apis/credentials</a>';
+
+// Clé pour API : Client Secret
+$formSetup->newItem('GPC_GOOGLE_CLIENT_SECRET');
+
+
+
 $error = 0;
 $setupnotempty = 0;
 
@@ -97,6 +118,7 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 if ((float) DOL_VERSION >= 6) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+	$formSetup->reloadConfs();
 }
 
 if ($action == 'updateMask') {
@@ -222,11 +244,6 @@ print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "mymo
 echo '<span class="opacitymedium">'.$langs->trans("MyModuleSetupPage").'</span><br><br>';
 
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
-$formSetup = new formSetup($db);
-
-$formSetup->addItemsFromParamsArray($arrayofparameters);
-
 if ($action == 'edit') {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -242,7 +259,6 @@ if ($action == 'edit') {
 	print '<br>';
 } else {
 	if (!empty($arrayofparameters)) {
-
 		print $formSetup->generateOutput();
 
 		print '<div class="tabsAction">';
