@@ -16,8 +16,8 @@
 --
 -- ============================================================================
 
-ALTER TABLE llx_element_tag ADD PRIMARY KEY pk_element_tag (fk_categorie, fk_socpeople);
+ALTER TABLE llx_element_tag ADD PRIMARY KEY pk_element_tag (fk_categorie, fk_element);
 ALTER TABLE llx_element_tag ADD INDEX idx_element_tag_fk_categorie (fk_categorie);
-ALTER TABLE llx_element_tag ADD INDEX idx_element_tag_fk_socpeople (fk_socpeople);
+ALTER TABLE llx_element_tag ADD INDEX idx_element_tag_fk_element (fk_element);
 
 ALTER TABLE llx_element_tag ADD CONSTRAINT fk_element_tag_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
