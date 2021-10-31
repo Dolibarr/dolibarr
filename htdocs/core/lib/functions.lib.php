@@ -2316,7 +2316,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 					$user_date_tz = new DateTimeZone($offsettzstring);
 					$user_dt = new DateTime();
 					$user_dt->setTimezone($user_date_tz);
-					$user_dt->setTimestamp($tzoutput == 'tzuser' ? dol_now() : $time);
+					$user_dt->setTimestamp(($tzoutput == 'tzuser' || empty($time)) ? dol_now() : $time);
 					$offsettz = $user_dt->getOffset();
 				} else {	// old method (The 'tzuser' was processed like the 'tzuserrel')
 					$offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60; // Will not be used anymore
