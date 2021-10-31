@@ -406,7 +406,7 @@ class FormTicket
 			}
 		}
 
-		if($subelement != 'project') {
+		if ($subelement != 'project') {
 			if (!empty($conf->projet->enabled) && !$this->ispublic) {
 				$formproject = new FormProjets($this->db);
 				print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';

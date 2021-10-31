@@ -200,7 +200,7 @@ if (empty($reshook)) {
 				}
 
 				// Link ticket to project
-				if(GETPOST('origin', 'alpha') == 'projet') {
+				if (GETPOST('origin', 'alpha') == 'projet') {
 					$projectid = GETPOST('originid', 'int');
 				} else {
 					$projectid = GETPOST('projectid', 'int');
