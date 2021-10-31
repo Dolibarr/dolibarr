@@ -795,7 +795,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 	$permission = $user->rights->societe->creer;
 
 	$contacts = $object->getObjectsInCateg($type, 0, $limit, $offset);
-	if ($contacts < 0) {
+	if (is_numeric($contacts) && $contacts < 0) {
 		dol_print_error($db, $object->error, $object->errors);
 	} else {
 		// Form to add record into a category
