@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2013-2016 Jean-François FERRY <hello@librethic.io>
- * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2018      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
+/* Copyright (C) 2013-2016 Jean-François FERRY  <hello@librethic.io>
+ * Copyright (C) 2016      Christophe Battarel  <christophe@altairis.fr>
+ * Copyright (C) 2018      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2021      Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -208,6 +209,12 @@ if (empty($reshook)) {
 				}
 
 				// Link ticket to project
+				if (GETPOST('origin', 'alpha') == 'projet') {
+					$projectid = GETPOST('originid', 'int');
+				} else {
+					$projectid = GETPOST('projectid', 'int');
+				}
+
 				if ($projectid > 0) {
 					$object->setProject($projectid);
 				}

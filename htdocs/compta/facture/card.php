@@ -2831,15 +2831,6 @@ if (empty($reshook)) {
  * View
  */
 
-if (empty($object->id)) {
-	llxHeader();
-	$head = facture_prepare_head($object);
-	$langs->load('errors');
-	echo dol_get_fiche_head($head, 'compta', $langs->trans("InvoiceCustomer"), -1, 'bill'),
-		'<div class="error">' . $langs->trans("ErrorRecordNotFound") . '</div>';
-	llxFooter();
-	exit;
-}
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -3816,8 +3807,16 @@ if ($action == 'create') {
 		print '</table>';
 	}
 
-	print '</form>';
+	print "</form>\n";
 } elseif ($id > 0 || !empty($ref)) {
+	if (empty($object->id)) {
+		llxHeader();
+		$langs->load('errors');
+		echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
+		llxFooter();
+		exit;
+	}
+
 	/*
 	 * Show object in view mode
 	 */
