@@ -63,6 +63,7 @@ RuleForWarehouse=Rule for warehouses
 WarehouseAskWarehouseOnThirparty=Set a warehouse on Third-parties
 WarehouseAskWarehouseDuringPropal=Set a warehouse on Commercial proposals
 WarehouseAskWarehouseDuringOrder=Set a warehouse on Sales Orders
+WarehouseAskWarehouseDuringProject=Set a warehouse on Projects
 UserDefaultWarehouse=Set a warehouse on Users
 MainDefaultWarehouse=Default warehouse
 MainDefaultWarehouseUser=Use a default warehouse for each user
