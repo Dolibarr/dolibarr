@@ -581,7 +581,7 @@ print dol_get_fiche_head($head, 'replenish', '', -1, '');
 print '<span class="opacitymedium">'.$langs->trans("ReplenishmentStatusDesc").'</span>'."\n";
 
 
-$link = '<a title=' .$langs->trans("MenuNewWarehouse"). ' href="'.DOL_URL_ROOT.'/_product/stock/card.php?action=create">'.$langs->trans("MenuNewWarehouse").'</a>';
+$link = '<a title=' .$langs->trans("MenuNewWarehouse"). ' href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create">'.$langs->trans("MenuNewWarehouse").'</a>';
 print info_admin($langs->trans("ErrorAtLeastOneWarehouseNeededForReplenish") .' '. $link, 0, 0, 'info', 'clearboth');
 
 if (empty($fk_warhouse) && !empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
