@@ -266,7 +266,7 @@ CREATE TABLE llx_hrm_job_user(
     fk_job integer NOT NULL,
     date_start date,
     date_end date,
-    commentaire_abandon varchar(255),
+    abort_comment varchar(255),
     note_public text,
     note_private text,
     fk_user_creat integer,
