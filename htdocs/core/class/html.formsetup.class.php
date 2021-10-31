@@ -63,11 +63,9 @@ class formSetup
 	 */
 	public function generateOutput($editMode = false)
 	{
-
-		$out = '';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
-		$out.= '<input type="hidden" name="token" value="'.newToken().'">';
+		$out = '<input type="hidden" name="token" value="'.newToken().'">';
 		if ($editMode) {
 			$out .= '<input type="hidden" name="action" value="update">';
 		}
@@ -168,7 +166,7 @@ class formSetup
 		 */
 
 		$item = new formSetupItem($confKey);
-		$item->type = $params['type'];
+		$item->setTypeFromTypeString($params['type']);
 
 		if (!empty($params['enabled'])) {
 			$item->enabled = $params['enabled'];
@@ -186,7 +184,7 @@ class formSetup
 	/**
 	 * used to export param array for /core/actions_setmoduleoptions.inc.php template
 	 * @return array $arrayofparameters for /core/actions_setmoduleoptions.inc.php
-	 * @deprecated
+	 * @deprecated yes this method came deprecated because it exists only for manage setup convertion
 	 */
 	public function exportItemsAsParamsArray()
 	{
@@ -279,7 +277,7 @@ class formSetupItem
 	 *   And set var as protected when its done configuration must be done by method
 	 * @var string $type  'string', 'textarea', 'category:'.Categorie::TYPE_CUSTOMER', 'emailtemplate', 'thirdparty_type'
 	 */
-	public $type = 'string';
+	protected $type = 'string';
 
 	public $enabled = 1;
 
@@ -349,14 +347,12 @@ class formSetupItem
 
 		$out = '';
 
-		if ($this->type == 'textarea') {
-			$out.= '<textarea class="flat" name="'.$this->confKey.'" id="'.$this->confKey.'" cols="50" rows="5" wrap="soft">' . "\n";
-			$out.= dol_htmlentities($this->fieldValue);
-			$out.= "</textarea>\n";
+		if ($this->type == 'title') {
+			$out.= $this->generateOutputField(); // title have no input
+		} elseif ($this->type == 'textarea') {
+			$out.= $this->generateInputFieldTextarea();
 		} elseif ($this->type== 'html') {
-			require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-			$doleditor = new DolEditor($this->confKey, $this->fieldValue, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
-			$doleditor->Create();
+			$out.= $this->generateInputFieldHtml();
 		} elseif ($this->type == 'yesno') {
 			$out.= $this->form->selectyesno($this->confKey, $this->fieldValue, 1);
 		} elseif (preg_match('/emailtemplate:/', $this->type)) {
@@ -423,6 +419,42 @@ class formSetupItem
 		return $out;
 	}
 
+	/**
+	 * generate input field for textarea
+	 * @return string
+	 */
+	public function generateInputFieldTextarea()
+	{
+		$out = '<textarea class="flat" name="'.$this->confKey.'" id="'.$this->confKey.'" cols="50" rows="5" wrap="soft">' . "\n";
+		$out.= dol_htmlentities($this->fieldValue);
+		$out.= "</textarea>\n";
+		return $out;
+	}
+	/**
+	 * generate input field for html
+	 * @return string
+	 */
+	public function generateInputFieldHtml()
+	{
+		global $conf;
+		require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+		$doleditor = new DolEditor($this->confKey, $this->fieldValue, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
+		return $doleditor->Create(1);
+	}
+
+	/**
+	 * set the type from string : used for old module builder setup conf style conversion and tests
+	 * because this two class will quickly evolve it's important to not set directly $this->type (will be protected) so this method exist
+	 * to be sure we can manage evolution easily
+	 * @param string $type possible values based on old module builder setup : 'string', 'textarea', 'category:'.Categorie::TYPE_CUSTOMER', 'emailtemplate', 'thirdparty_type'
+	 * @deprecated yes this method came deprecated because it exists only for manage setup convertion
+	 * @return bool
+	 */
+	public function setTypeFromTypeString($type)
+	{
+		$this->type = $type;
+		return true;
+	}
 
 	/**
 	 * Add error
@@ -459,7 +491,9 @@ class formSetupItem
 
 		$out = '';
 
-		if ($this->type == 'textarea') {
+		if ($this->type == 'title') {
+			// nothing to do
+		} elseif ($this->type == 'textarea') {
 			$out.= dol_nl2br($this->fieldValue);
 		} elseif ($this->type== 'html') {
 			$out.=  $this->fieldValue;
@@ -607,6 +641,17 @@ class formSetupItem
 	public function setAsCategory($catType)
 	{
 		$this->type = 'category:'.$catType;
+		return $this;
+	}
+
+	/**
+	 * Set type of input as a simple title
+	 * no data to store
+	 * @return self
+	 */
+	public function setAsTitle()
+	{
+		$this->type = 'title';
 		return $this;
 	}
 }
