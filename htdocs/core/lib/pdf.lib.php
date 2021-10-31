@@ -1045,7 +1045,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			$line2 .= ($line2 ? " - " : "").$fromcompany->email;
 		}
 	}
-	if ($showdetails == 2 || $showdetails == 3 || ($fromcompany->country_code == 'DE')) {
+	if ($showdetails == 2 || $showdetails == 3 || (!empty($fromcompany->country_code) && $fromcompany->country_code == 'DE')) {
 		// Managers
 		if ($fromcompany->managers) {
 			$line2 .= ($line2 ? " - " : "").$fromcompany->managers;
@@ -1054,11 +1054,11 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 	// Line 3 of company infos
 	// Juridical status
-	if ($fromcompany->forme_juridique_code) {
+	if (!empty($fromcompany->forme_juridique_code) && $fromcompany->forme_juridique_code) {
 		$line3 .= ($line3 ? " - " : "").$outputlangs->convToOutputCharset(getFormeJuridiqueLabel($fromcompany->forme_juridique_code));
 	}
 	// Capital
-	if ($fromcompany->capital) {
+	if (!empty($fromcompany->capital) && $fromcompany->capital) {
 		$tmpamounttoshow = price2num($fromcompany->capital); // This field is a free string
 		if (is_numeric($tmpamounttoshow) && $tmpamounttoshow > 0) {
 			$line3 .= ($line3 ? " - " : "").$outputlangs->transnoentities("CapitalOf", price($tmpamounttoshow, 0, $outputlangs, 0, 0, 0, $conf->currency));
@@ -1067,7 +1067,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		}
 	}
 	// Prof Id 1
-	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || !$fromcompany->idprof2)) {
+	if (!empty($fromcompany->idprof1) && $fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || !$fromcompany->idprof2)) {
 		$field = $outputlangs->transcountrynoentities("ProfId1", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
@@ -1075,7 +1075,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		$line3 .= ($line3 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof1);
 	}
 	// Prof Id 2
-	if ($fromcompany->idprof2) {
+	if (!empty($fromcompany->idprof2) && $fromcompany->idprof2) {
 		$field = $outputlangs->transcountrynoentities("ProfId2", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
@@ -1085,7 +1085,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 	// Line 4 of company infos
 	// Prof Id 3
-	if ($fromcompany->idprof3) {
+	if (!empty($fromcompany->idprof3) && $fromcompany->idprof3) {
 		$field = $outputlangs->transcountrynoentities("ProfId3", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
@@ -1093,7 +1093,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof3);
 	}
 	// Prof Id 4
-	if ($fromcompany->idprof4) {
+	if (!empty($fromcompany->idprof4) && $fromcompany->idprof4) {
 		$field = $outputlangs->transcountrynoentities("ProfId4", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
@@ -1101,7 +1101,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof4);
 	}
 	// Prof Id 5
-	if ($fromcompany->idprof5) {
+	if (!empty($fromcompany->idprof5) && $fromcompany->idprof5) {
 		$field = $outputlangs->transcountrynoentities("ProfId5", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
@@ -1109,7 +1109,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof5);
 	}
 	// Prof Id 6
-	if ($fromcompany->idprof6) {
+	if (!empty($fromcompany->idprof6) &&  $fromcompany->idprof6) {
 		$field = $outputlangs->transcountrynoentities("ProfId6", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
@@ -1117,7 +1117,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof6);
 	}
 	// IntraCommunautary VAT
-	if ($fromcompany->tva_intra != '') {
+	if (!empty($fromcompany->tva_intra)  && $fromcompany->tva_intra != '') {
 		$line4 .= ($line4 ? " - " : "").$outputlangs->transnoentities("VATIntraShort").": ".$outputlangs->convToOutputCharset($fromcompany->tva_intra);
 	}
 
