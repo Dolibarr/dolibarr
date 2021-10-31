@@ -121,8 +121,7 @@ elseif ($action == 'deletecontact' && $user->rights->facture->creer)
 if (empty($object->id)) {
 	llxHeader();
 	$langs->load('errors');
-	echo '<div class="error">'.$langs->trans("ErrorRecordNotFound");
-	echo ' <a href="javascript:history.go(-1)">'.$langs->trans('GoBack').'</div>';
+	echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
 	llxFooter();
 	exit;
 }
