@@ -193,12 +193,12 @@ class Form
 	 * @param	object	$object			Object
 	 * @param	boolean	$perm			Permission to allow button to edit parameter
 	 * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols%', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datepickerhour', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select;xkey:xval,ykey:yval,...')
-	 * @param	string	$editvalue		When in edit mode, use this value as $value instead of value (for example, you can provide here a formated price instead of value). Use '' to use same than $value
+	 * @param	string	$editvalue		When in edit mode, use this value as $value instead of value (for example, you can provide here a formated price instead of numeric value). Use '' to use same than $value
 	 * @param	object	$extObject		External object
 	 * @param	mixed	$custommsg		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
 	 * @param	string	$moreparam		More param to add on the form action href URL
 	 * @param   int     $notabletag     Do no output table tags
-	 * @param	string	$formatfunc		Call a specific function to output field
+	 * @param	string	$formatfunc		Call a specific function to output field in view mode (For example: 'dol_print_email')
 	 * @param	string	$paramid		Key of parameter for id ('id', 'socid')
 	 * @return  string					HTML edit field
 	 */
@@ -214,7 +214,7 @@ class Form
 		}
 
 		// When option to edit inline is activated
-		if (!empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && !preg_match('/^select;|datehourpicker/', $typeofdata)) { // TODO add jquery timepicker and support select
+		if (!empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && !preg_match('/^select;|day|datepicker|dayhour|datehourpicker/', $typeofdata)) { // TODO add jquery timepicker and support select
 			$ret .= $this->editInPlace($object, $value, $htmlname, $perm, $typeofdata, $editvalue, $extObject, $custommsg);
 		} else {
 			$editmode = (GETPOST('action', 'aZ09') == 'edit'.$htmlname);
@@ -236,7 +236,7 @@ class Form
 				} elseif (preg_match('/^(numeric|amount)/', $typeofdata)) {
 					$tmp = explode(':', $typeofdata);
 					$valuetoshow = price2num($editvalue ? $editvalue : $value);
-					$ret .= '<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($valuetoshow != '' ?price($valuetoshow) : '').'"'.($tmp[1] ? ' size="'.$tmp[1].'"' : '').' autofocus>';
+					$ret .= '<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($valuetoshow != '' ? price($valuetoshow) : '').'"'.($tmp[1] ? ' size="'.$tmp[1].'"' : '').' autofocus>';
 				} elseif (preg_match('/^(checkbox)/', $typeofdata)) {
 					$tmp = explode(':', $typeofdata);
 					$ret .= '<input type="checkbox" id="' . $htmlname . '" name="' . $htmlname . '" value="' . $value . '"' . ($tmp[1] ? $tmp[1] : '') . '/>';
@@ -5088,8 +5088,7 @@ class Form
 			if ($selected) {
 				$projet = new Project($this->db);
 				$projet->fetch($selected);
-				//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
-				$out .= $projet->getNomUrl(0, '', 1);
+				$out .= $projet->getNomUrl(1, '', 1);
 			} else {
 				$out .= "&nbsp;";
 			}
@@ -8679,7 +8678,7 @@ class Form
 	 */
 	public function showrefnav($object, $paramid, $morehtml = '', $shownav = 1, $fieldid = 'rowid', $fieldref = 'ref', $morehtmlref = '', $moreparam = '', $nodbprefix = 0, $morehtmlleft = '', $morehtmlstatus = '', $morehtmlright = '')
 	{
-		global $langs, $conf, $hookmanager, $extralanguages;
+		global $conf, $langs, $hookmanager, $extralanguages;
 
 		$ret = '';
 		if (empty($fieldid)) {
@@ -8691,7 +8690,7 @@ class Form
 
 		// Preparing gender's display if there is one
 		$addgendertxt = '';
-		if (!empty($object->gender)) {
+		if (property_exists($object, 'gender') && !empty($object->gender)) {
 			$addgendertxt = ' ';
 			switch ($object->gender) {
 				case 'man':
@@ -8705,6 +8704,15 @@ class Form
 					break;
 			}
 		}
+		/*
+		$addadmin = '';
+		if (property_exists($object, 'admin')) {
+			if (!empty($conf->multicompany->enabled) && !empty($object->admin) && empty($object->entity)) {
+				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
+			} elseif (!empty($object->admin)) {
+				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
+			}
+		}*/
 
 		// Add where from hooks
 		if (is_object($hookmanager)) {
@@ -8837,7 +8845,7 @@ class Form
 				$ret .= dol_htmlentities($fullname).$addgendertxt.((!empty($object->societe) && $object->societe != $fullname) ? ' ('.dol_htmlentities($object->societe).')' : '');
 			}
 		} elseif (in_array($object->element, array('contact', 'user', 'usergroup'))) {
-			$ret .= dol_htmlentities($object->getFullName($langs)).$addgendertxt;
+			$ret .= dol_htmlentities($object->getFullName($langs));
 		} elseif (in_array($object->element, array('action', 'agenda'))) {
 			$ret .= $object->ref.'<br>'.$object->label;
 		} elseif (in_array($object->element, array('adherent_type'))) {
@@ -9085,7 +9093,7 @@ class Form
 				}
 				$ret .= '<table class="nobordernopadding centpercent">';
 				if ($object->photo) {
-					$ret .= '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
+					$ret .= '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> <label for="photodelete">'.$langs->trans("Delete").'</label><br><br></td></tr>';
 				}
 				$ret .= '<tr><td class="tdoverflow"><input type="file" class="flat maxwidth200onsmartphone" name="photo" id="photoinput" accept="image/*"'.($capture ? ' capture="'.$capture.'"' : '').'></td></tr>';
 				$ret .= '</table>';

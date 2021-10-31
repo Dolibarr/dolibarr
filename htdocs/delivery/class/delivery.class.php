@@ -395,7 +395,7 @@ class Delivery extends CommonObject
 		$error = 0;
 
 		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery->creer))
-		|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery_advance->validate))) {
+			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery_advance->validate))) {
 			if (!empty($conf->global->DELIVERY_ADDON_NUMBER)) {
 				// Setting the command numbering module name
 				$modName = $conf->global->DELIVERY_ADDON_NUMBER;
@@ -610,7 +610,7 @@ class Delivery extends CommonObject
 	{
 		global $conf;
 
-			$num = count($this->lines);
+		$num = count($this->lines);
 		$line = new DeliveryLine($this->db);
 
 		$line->origin_id = $origin_id;
@@ -736,8 +736,8 @@ class Delivery extends CommonObject
 
 		//if ($option !== 'nolink')
 		//{
-			// Add param to save lastsearch_values or not
-			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+		// Add param to save lastsearch_values or not
+		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
 		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
@@ -997,7 +997,7 @@ class Delivery extends CommonObject
 					$array[$i]['label'] = $objSourceLine->label ? $objSourceLine->label : $objSourceLine->description;
 				}
 
-					$i++;
+				$i++;
 			}
 			return $array;
 		} else {

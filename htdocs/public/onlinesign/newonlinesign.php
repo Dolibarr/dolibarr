@@ -61,6 +61,7 @@ $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors",
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $refusepropal = GETPOST('refusepropal', 'alpha');
+$message = GETPOST('message', 'aZ09');
 
 // Input are:
 // type ('invoice','order','contractline'),
@@ -120,25 +121,33 @@ $creditor = $mysoc->name;
 $object = new Propal($db);
 $object->fetch(0, $ref);
 
+
 /*
  * Actions
  */
 
 if ($action == 'confirm_refusepropal') {
+	$db->begin();
+
 	$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
-	$sql .= " SET fk_statut = ".((int) $object::STATUS_NOTSIGNED).", note_private = '".$object->note_private."', date_signature='".$db->idate(dol_now())."'";
+	$sql .= " SET fk_statut = ".((int) $object::STATUS_NOTSIGNED).", note_private = '".$db->escape($object->note_private)."', date_signature='".$db->idate(dol_now())."'";
 	$sql .= " WHERE rowid = ".((int) $object->id);
+
 	dol_syslog(__METHOD__, LOG_DEBUG);
 	$resql = $db->query($sql);
 	if (!$resql) {
 		$error++;
 	}
+
 	if (!$error) {
 		$db->commit();
-		setEventMessage("PropalRefused");
+
+		$message = 'refused';
+		setEventMessages("PropalRefused", null, 'warning');
 	} else {
 		$db->rollback();
 	}
+
 	$object->fetch(0, $ref);
 }
 
@@ -367,7 +376,7 @@ if ($action == "dosign" && empty($cancel)) {
 					success: function(response) {
 						if(response == "success"){
 							console.log("Success on saving signature");
-							window.location.replace("'.$_SERVER["SELF"].'?ref='.$ref.'");
+							window.location.replace("'.$_SERVER["SELF"].'?ref='.$ref.'&message=signed");
 						}else{
 							console.error(response);
 						}
@@ -390,10 +399,18 @@ if ($action == "dosign" && empty($cancel)) {
 } else {
 	if ($object->status == $object::STATUS_SIGNED) {
 		print '<br>';
-		print '<span class="ok">'.$langs->trans("PropalAlreadySigned").'</span>';
+		if ($message == 'signed') {
+			print '<span class="ok">'.$langs->trans("PropalSigned").'</span>';
+		} else {
+			print '<span class="ok">'.$langs->trans("PropalAlreadySigned").'</span>';
+		}
 	} elseif ($object->status == $object::STATUS_NOTSIGNED) {
 		print '<br>';
-		print '<span class="warning">'.$langs->trans("PropalAlreadyRefused").'</span>';
+		if ($message == 'refused') {
+			print '<span class="ok">'.$langs->trans("PropalRefused").'</span>';
+		} else {
+			print '<span class="warning">'.$langs->trans("PropalAlreadyRefused").'</span>';
+		}
 	} else {
 		print '<input type="submit" class="butAction small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("SignPropal").'">';
 		print '<input name="refusepropal" type="submit" class="butActionDelete small wraponsmartphone marginbottomonly marginleftonly marginrightonly" value="'.$langs->trans("RefusePropal").'">';

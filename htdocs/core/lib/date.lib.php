@@ -681,7 +681,7 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
 function getGMTEasterDatetime($year)
 {
 	$base = new DateTime("$year-03-21", new DateTimeZone("UTC"));
-	$days = easter_days($year);	// Return number of days between 21 march and easter day.
+	$days = easter_days($year); // Return number of days between 21 march and easter day.
 	$tmp = $base->add(new DateInterval("P{$days}D"));
 	return $tmp->getTimestamp();
 }

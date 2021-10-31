@@ -441,6 +441,9 @@ input, select {
 input.button.massactionconfirmed {
 	margin: 4px;
 }
+input.short {
+	width: 40px;
+}
 
 textarea {
 	border-radius: 0;
@@ -828,6 +831,12 @@ textarea.centpercent {
 }
 .alignstart {
 	text-align: start;
+}
+.start {
+	text-align: start;
+}
+.end {
+	text-align: end;
 }
 .left {
 	text-align: <?php print $left; ?>;
@@ -1699,7 +1708,7 @@ table[summary="list_of_modules"] .fa-cog {
 }
 .linkobject { cursor: pointer; }
 
-table.tableforfield tr>td:first-of-type, tr.trforfield>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
+table.tableforfield tr:not(.liste_titre)>td:first-of-type, tr.trforfield:not(.liste_titre)>td:first-of-type, div.tableforfield div.tagtr:not(.liste_titre)>div.tagtd:first-of-type {
 	color: #666;
 }
 
@@ -4651,7 +4660,7 @@ div.visible {
 	display: block;
 }
 
-div.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
+div.hidden, header.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
 }
 

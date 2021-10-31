@@ -1422,7 +1422,7 @@ class SMTPs
 		$this->_msgContent[$strType]['dataText'] = $strContentAltText;
 
 		if ($this->getMD5flag()) {
-			$this->_msgContent[$strType]['md5']      = dol_hash($strContent, 3);
+			$this->_msgContent[$strType]['md5'] = dol_hash($strContent, 3);
 		}
 		//}
 	}
@@ -1622,7 +1622,7 @@ class SMTPs
 			$this->_msgContent['image'][$strImageName]['data']     = $strContent;
 
 			if ($this->getMD5flag()) {
-				$this->_msgContent['image'][$strImageName]['md5']      = dol_hash($strContent, 3);
+				$this->_msgContent['image'][$strImageName]['md5'] = dol_hash($strContent, 3);
 			}
 		}
 	}

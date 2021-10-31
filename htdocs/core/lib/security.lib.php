@@ -492,9 +492,13 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				if (!$user->rights->fournisseur->commande->supprimer) {
 					$deleteok = 0;
 				}
-			} elseif ($feature == 'payment_supplier') {
+			} elseif ($feature == 'payment_supplier') {	// Permission to delete a payment of an invoice is permission to edit an invoice.
 				if (!$user->rights->fournisseur->facture->creer) {
 					$deleteok = 0;
+				}
+			} elseif ($feature == 'payment') {	// Permission to delete a payment of an invoice is permission to edit an invoice.
+				if (!$user->rights->facture->creer) {
+						$deleteok = 0;
 				}
 			} elseif ($feature == 'banque') {
 				if (empty($user->rights->banque->modifier)) {
@@ -618,7 +622,7 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 		$checksoc = array('societe'); // Test for societe object
 		$checkother = array('contact', 'agenda'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
-		$checktask = array('projet_task');	// Test for task object
+		$checktask = array('projet_task'); // Test for task object
 		$nocheck = array('barcode', 'stock'); // No test
 		//$checkdefault = 'all other not already defined'; // Test on entity + link to third party on field $dbt_keyfield. Not allowed if link is empty (Ex: invoice, orders...).
 
