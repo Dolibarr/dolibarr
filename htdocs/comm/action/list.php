@@ -681,7 +681,7 @@ if (empty($reshook)) {
 
 $tmpforcreatebutton = dol_getdate(dol_now(), true);
 
-$newparam .= '&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
+$newparam = '&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
 
 //$param='month='.$monthshown.'&year='.$year;
 $hourminsec = '100000';
