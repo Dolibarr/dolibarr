@@ -75,22 +75,16 @@ if ($search_type != '') {
 }
 
 // Add $param from extra fields
-foreach ($search_array_options as $key => $val)
-{
-	$crit = $val;
-	$tmpkey = preg_replace('/search_options_/', '', $key);
-	$typ = $extrafields->attributes[$object->table_element]['type'][$tmpkey];
-	if ($val != '') {
-		$param .= '&search_options_'.$tmpkey.'='.urlencode($val);
-	}
-	$mode_search = 0;
-	if (in_array($typ, array('int', 'double', 'real'))) $mode_search = 1; // Search on a numeric
-	if (in_array($typ, array('sellist', 'link')) && $crit != '0' && $crit != '-1') $mode_search = 2; // Search on a foreign key int
-	if ($crit != '' && (!in_array($typ, array('select', 'sellist')) || $crit != '0') && (!in_array($typ, array('link')) || $crit != '-1'))
-	{
-		$filter['ef.'.$tmpkey] = natural_search('ef.'.$tmpkey, $crit, $mode_search);
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+$sql= null;
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+
+// Including the previous script generate the correct SQL filter for all the extrafields
+// we are playing with the behaviour of the Dolresource::fetch_all() by generating a fake
+// extrafields filter key to make it works
+$filter['ef.resource'] = $sql;
+
+
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 
 
