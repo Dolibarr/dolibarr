@@ -200,58 +200,58 @@ class modHRM extends DolibarrModules
 		$this->rights[$r][1] = 'Read skill/job/position'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'all';
-		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->hrm->poste->read)
+		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->hrm->all->read)
 		$r++;
 
 		$this->rights[$r][0] = 4011; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Create/modify skill/job/position'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'all';
-		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->hrm->poste->write)
+		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->hrm->all->write)
 		$r++;
 
 		$this->rights[$r][0] = 4012; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Delete skill/job/position'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'all';
-		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->hrm->poste->delete)
+		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->hrm->all->delete)
 		$r++;
 
 		// Evaluation
 		$this->rights[$r][0] = 4020; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Read evaluation'; // Permission label
+		$this->rights[$r][1] = 'Read evaluations'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'evaluation';
-		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->hrm->poste->read)
+		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->hrm->evaluation->read)
 		$r++;
 
 		$this->rights[$r][0] = 4021; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/modify evaluation'; // Permission label
+		$this->rights[$r][1] = 'Create/modify your own evaluation'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'evaluation';
-		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->hrm->poste->write)
+		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->hrm->evaluation->write)
 		$r++;
 
 		$this->rights[$r][0] = 4022; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Validate evaluation'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'evaluation';
-		$this->rights[$r][5] = 'validate'; // In php code, permission will be checked by test if ($user->rights->hrm->poste->write)
+		$this->rights[$r][4] = 'evaluation_advance';
+		$this->rights[$r][5] = 'validate'; // In php code, permission will be checked by test if ($user->rights->hrm->evaluation->validate)
 		$r++;
 
 		$this->rights[$r][0] = 4023; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Delete evaluation'; // Permission label
+		$this->rights[$r][1] = 'Delete all evaluations'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'evaluation';
-		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->hrm->poste->delete)
+		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->hrm->evaluation->delete)
 		$r++;
 
 		// Comparison
 		$this->rights[$r][0] = 4030; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'See comparison menu'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'compare';
-		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->hrm->poste->delete)
+		$this->rights[$r][4] = 'compare_advance';
+		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->hrm->compare_advance->read)
 		$r++;
 	}
 
