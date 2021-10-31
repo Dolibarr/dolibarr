@@ -2293,6 +2293,11 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 {
 	global $conf, $langs;
 
+	// If date undefined or "", we return ""
+	if (dol_strlen($time) == 0) {
+		return ''; // $time=0 allowed (it means 01/01/1970 00:00:00)
+	}
+
 	if ($tzoutput === 'auto') {
 		$tzoutput = (empty($conf) ? 'tzserver' : (isset($conf->tzuserinputkey) ? $conf->tzuserinputkey : 'tzserver'));
 	}
@@ -2316,7 +2321,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 					$user_date_tz = new DateTimeZone($offsettzstring);
 					$user_dt = new DateTime();
 					$user_dt->setTimezone($user_date_tz);
-					$user_dt->setTimestamp(($tzoutput == 'tzuser' || empty($time)) ? dol_now() : $time);
+					$user_dt->setTimestamp($tzoutput == 'tzuser' ? dol_now() : (int) $time);
 					$offsettz = $user_dt->getOffset();
 				} else {	// old method (The 'tzuser' was processed like the 'tzuserrel')
 					$offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60; // Will not be used anymore
@@ -2382,11 +2387,6 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	if ($reduceformat) {
 		$format = str_replace('%Y', '%y', $format);
 		$format = str_replace('yyyy', 'yy', $format);
-	}
-
-	// If date undefined or "", we return ""
-	if (dol_strlen($time) == 0) {
-		return ''; // $time=0 allowed (it means 01/01/1970 00:00:00)
 	}
 
 	// Clean format
