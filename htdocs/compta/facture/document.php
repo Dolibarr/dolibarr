@@ -88,10 +88,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 if (empty($object->id)) {
 	llxHeader();
-	$head = facture_prepare_head($object);
 	$langs->load('errors');
-	echo dol_get_fiche_head($head, 'documents', $langs->trans("InvoiceCustomer"), -1, 'bill'),
-		'<div class="error">' . $langs->trans("ErrorRecordNotFound") . '</div>';
+	echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
 	llxFooter();
 	exit;
 }
