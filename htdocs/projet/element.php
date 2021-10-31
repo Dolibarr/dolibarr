@@ -164,7 +164,7 @@ if ($id == '' && $ref == '') {
 	exit();
 }
 
-$mine = $_REQUEST['mode'] == 'mine' ? 1 : 0;
+$mine = (!empty($_REQUEST['mode']) && $_REQUEST['mode'] == 'mine') ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
@@ -216,13 +216,13 @@ $morehtmlref = '<div class="refidno">';
 // Title
 $morehtmlref .= $object->title;
 // Thirdparty
-if ($object->thirdparty->id > 0) {
+if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
 }
 $morehtmlref .= '</div>';
 
 // Define a complementary filter for search of next/prev ref.
-if (!$user->rights->projet->all->lire) {
+if (empty($user->rights->projet->all->lire)) {
 	$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 	$object->next_prev_filter = " te.rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 }
@@ -328,10 +328,9 @@ print '</table>';
 
 print '</div>';
 print '<div class="fichehalfright">';
-print '<div class="ficheaddleft">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border tableforfield" width="100%">';
+print '<table class="border tableforfield centpercent">';
 
 // Description
 print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
@@ -347,7 +346,6 @@ if ($conf->categorie->enabled) {
 
 print '</table>';
 
-print '</div>';
 print '</div>';
 print '</div>';
 
@@ -882,7 +880,7 @@ foreach ($listofreferent as $key => $value) {
 				}
 
 				// Add total if we have to
-				if ($qualifiedfortotal)	{
+				if ($qualifiedfortotal) {
 					$total_ht = $total_ht + $total_ht_by_line;
 					$total_ttc = $total_ttc + $total_ttc_by_line;
 				}

@@ -111,4 +111,20 @@ abstract class CommonObjectLine extends CommonObject
 			return -1;
 		}
 	}
+
+	/**
+	 * Empty function to prevent errors on call of this function must be overload if usefull
+	 *
+	 * @param string $sortorder Sort Order
+	 * @param string $sortfield Sort field
+	 * @param int $limit offset limit
+	 * @param int $offset offset limit
+	 * @param array $filter filter array
+	 * @param string $filtermode filter mode (AND or OR)
+	 * @return int <0 if KO, >0 if OK
+	 */
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	{
+		return 0;
+	}
 }

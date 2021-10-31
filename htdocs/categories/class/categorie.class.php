@@ -244,7 +244,6 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_ACTIONCOMM
 	 * @see Categorie::TYPE_WEBSITE_PAGE
 	 * @see Categorie::TYPE_TICKET
-
 	 */
 	public $type;
 
@@ -385,8 +384,8 @@ class Categorie extends CommonObject
 			}
 		} else {
 			dol_print_error($this->db);
-			$this->error=$this->db->lasterror;
-			$this->errors[]=$this->db->lasterror;
+			$this->error = $this->db->lasterror;
+			$this->errors[] = $this->db->lasterror;
 			return -1;
 		}
 	}
@@ -626,12 +625,18 @@ class Categorie extends CommonObject
 		}
 
 		$arraydelete = array(
-			'categorie_societe' => 'fk_categorie',
-			'categorie_fournisseur' => 'fk_categorie',
 			'categorie_product' => 'fk_categorie',
+			'categorie_fournisseur' => 'fk_categorie',
+			'categorie_societe' => 'fk_categorie',
 			'categorie_member' => 'fk_categorie',
 			'categorie_contact' => 'fk_categorie',
+			'categorie_user' => 'fk_categorie',
+			'categorie_project' => 'fk_categorie',
 			'categorie_account' => 'fk_categorie',
+			'categorie_website_page' => 'fk_categorie',
+			'categorie_warehouse' => 'fk_categorie',
+			'categorie_actioncomm' => 'fk_categorie',
+			'categorie_ticket' => 'fk_categorie',
 			'bank_class' => 'fk_categ',
 			'categorie_lang' => 'fk_category',
 			'categorie' => 'rowid',
@@ -753,8 +758,6 @@ class Categorie extends CommonObject
 			}
 			return -1;
 		}
-
-		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -810,8 +813,6 @@ class Categorie extends CommonObject
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
-
-		return 0;
 	}
 
 	/**

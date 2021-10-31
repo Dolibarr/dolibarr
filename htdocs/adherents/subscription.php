@@ -557,10 +557,10 @@ if ($rowid > 0) {
 	print '</table>';
 
 	print '</div>';
-	print '<div class="fichehalfright"><div class="ficheaddleft">';
+	print '<div class="fichehalfright">';
 
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border tableforfield" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Birthday
 	print '<tr><td class="titlefield">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
@@ -652,7 +652,7 @@ if ($rowid > 0) {
 
 	print "</table>\n";
 
-	print "</div></div></div>\n";
+	print "</div></div>\n";
 	print '<div style="clear:both"></div>';
 
 	print dol_get_fiche_end();
@@ -963,7 +963,7 @@ if ($rowid > 0) {
 
 		if ($adht->subscription) {
 			// Amount
-			print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="subscription" size="6" value="'.GETPOST('subscription').'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
+			print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="subscription" size="6" value="'. price(GETPOSTISSET('subscription') ? GETPOST('subscription') : $adht->amount).'"> '.$langs->trans("Currency".$conf->currency) .'</td></tr>';
 
 			// Label
 			print '<tr><td>'.$langs->trans("Label").'</td>';

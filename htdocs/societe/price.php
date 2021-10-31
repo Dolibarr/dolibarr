@@ -374,7 +374,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 			// Ref. Customer
 			print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
-			print '<td><input name="ref_customer" size="12" value="' . dol_escape_htmltag($prodcustprice->ref_customer) . '"></td></tr>';
+			print '<td><input name="ref_customer" size="12" value="'.dol_escape_htmltag($prodcustprice->ref_customer).'"></td></tr>';
 
 			// VAT
 			print '<tr><td>'.$langs->trans("VATRate").'</td><td>';

@@ -197,7 +197,7 @@ class EcmDirectory extends CommonObject
 			$sql .= " '".$this->db->escape($this->description)."',";
 			$sql .= " ".((int) $this->cachenbofdoc).",";
 			$sql .= " '".$this->db->idate($this->date_c)."',";
-			$sql .= " ".($this->fk_user_c > 0 ? ((int) $this->fk_user_c) : "null").",";
+			$sql .= " ".($this->fk_user_c > 0 ? ((int) $this->fk_user_c) : "null");
 			$sql .= ")";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);

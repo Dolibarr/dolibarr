@@ -539,13 +539,11 @@ print "</div> 	<!-- end div fichehalfleft -->\n";
 
 
 print '<div id="backupdatabaseright" class="fichehalfright" style="height:480px; overflow: auto;">';
-print '<div class="ficheaddleft">';
 
 $filearray = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ?SORT_ASC:SORT_DESC), 1);
 $result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'backup/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"));
 print '<br>';
 
-print '</div>';
 print '</div>';
 print '</form>';
 print '</fieldset>';
@@ -620,13 +618,11 @@ print '</div>';
 print '</div>';
 
 print '<div id="backupdatabaseright" class="fichehalfright" style="height:480px; overflow: auto;">';
-print '<div class="ficheaddleft">';
 
 $filearray = dol_dir_list($conf->admin->dir_output.'/documents', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ?SORT_ASC:SORT_DESC), 1);
 $result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'documents/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"));
 print '<br>';
 
-print '</div>';
 print '</div>';
 
 print '</fieldset>';

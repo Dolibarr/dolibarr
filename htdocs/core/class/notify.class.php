@@ -108,10 +108,26 @@ class Notify
 	 */
 	public function confirmMessage($action, $socid, $object)
 	{
-		global $langs;
+		global $conf, $langs;
 		$langs->load("mails");
 
 		$listofnotiftodo = $this->getNotificationsArray($action, $socid, $object, 0);
+		if (!empty($conf->global->NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_USER)) {
+			foreach ($listofnotiftodo as $val) {
+				if ($val['type'] == 'touser') {
+					unset($listofnotiftodo[$val['email']]);
+					//$listofnotiftodo = array_merge($listofnotiftodo);
+				}
+			}
+		}
+		if (!empty($conf->global->NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_FIX)) {
+			foreach ($listofnotiftodo as $val) {
+				if ($val['type'] == 'tofixedemail') {
+					unset($listofnotiftodo[$val['email']]);
+					//$listofnotiftodo = array_merge($listofnotiftodo);
+				}
+			}
+		}
 
 		$texte = '';
 		$nb = -1;

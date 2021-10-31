@@ -79,6 +79,9 @@ if ($object->fetch($id, $ref)) {
 	$upload_dir = $conf->fournisseur->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
 }
 
+$permissiontoadd = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer); // Used by the include of actions_setnotes.inc.php
+
+
 /*
  * Actions
  */

@@ -149,6 +149,7 @@ if (empty($reshook)) {
 
 		// Set if we used free entry or predefined product
 		$idprod = (int) GETPOST('idprod', 'int');
+		$bom_child = (int) GETPOST('bom_select', 'int');
 		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
 		$disable_stock_change = GETPOST('disable_stock_change', 'int');
@@ -172,6 +173,7 @@ if (empty($reshook)) {
 			$bomline = new BOMLine($db);
 			$bomline->fk_bom = $id;
 			$bomline->fk_product = $idprod;
+			$bomline->fk_bom_child = $bom_child;
 			$bomline->qty = $qty;
 			$bomline->qty_frozen = (int) $qty_frozen;
 			$bomline->disable_stock_change = (int) $disable_stock_change;
@@ -239,6 +241,7 @@ if (empty($reshook)) {
 		}
 	}
 }
+
 
 
 /*
@@ -574,6 +577,46 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</div>';
 
 		print "</form>\n";
+		?>
+
+		<script type="text/javascript" language="javascript">
+			$(document).ready(function() {
+				// When clicking on collapse
+				$(".collapse_bom").click(function() {
+					console.log("We click on collapse");
+					var id_bom_line = $(this).attr('id').replace('collapse-', '');
+					if($(this).text().indexOf('+') > 0) {
+						$('[parentid="'+ id_bom_line +'"]').show();
+						$(this).html('(-)&nbsp;');
+					}
+					else {
+						$('[parentid="'+ id_bom_line +'"]').hide();
+						$(this).html('(+)&nbsp;');
+					}
+
+					return false;
+				});
+
+				// To Show all the sub bom lines
+				$("#show_all").click(function() {
+					console.log("We click on show all");
+					$("[class^=sub_bom_lines]").show();
+					$("[class^=collapse_bom]").html('(-)&nbsp;');
+					return false;
+				});
+
+				// To Hide all the sub bom lines
+				$("#hide_all").click(function() {
+					console.log("We click on hide all");
+					$("[class^=sub_bom_lines]").hide();
+					$("[class^=collapse_bom]").html('(+)&nbsp;');
+					return false;
+				});
+
+			});
+		</script>
+
+		<?php
 	}
 
 
@@ -690,7 +733,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		print '</div><div class="fichehalfright">';
 
 		$MAXEVENT = 10;
 
@@ -703,7 +746,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formactions = new FormActions($db);
 		$somethingshown = $formactions->showactions($object, $object->element, $socid, 1, '', $MAXEVENT, '', $morehtmlright);
 
-		print '</div></div></div>';
+		print '</div></div>';
 	}
 
 	//Select mail models is same action as presend

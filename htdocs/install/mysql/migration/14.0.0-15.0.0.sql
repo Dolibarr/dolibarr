@@ -35,6 +35,7 @@
 -- VMYSQL4.3 ALTER TABLE llx_partnership MODIFY COLUMN date_partnership_end date NULL;
 -- VPGSQL8.2 ALTER TABLE llx_partnership ALTER COLUMN date_partnership_end DROP NOT NULL;
 
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_export datetime DEFAULT NULL;
 
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_project integer NOT NULL;
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_invoice integer NULL;
@@ -378,3 +379,54 @@ ALTER TABLE llx_societe_perentity ADD COLUMN accountancy_code_customer varchar(2
 ALTER TABLE llx_societe_perentity ADD COLUMN accountancy_code_supplier varchar(24) AFTER accountancy_code_customer; -- equivalent to code_compta_supplier in llx_societe
 
 ALTER TABLE llx_projet_task ADD COLUMN budget_amount double(24,8) AFTER priority;
+
+-- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_graph_ticket_by_severity.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_graph_ticket_by_severity.php' AND entity = 1);
+-- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_graph_nb_ticket_last_x_days.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_graph_nb_ticket_last_x_days.php' AND entity = 1);
+-- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_graph_nb_tickets_type.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_graph_nb_tickets_type.php' AND entity = 1);
+-- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_graph_new_vs_close_ticket.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_graph_new_vs_close_ticket.php' AND entity = 1);
+
+ALTER TABLE llx_user DROP COLUMN jabberid;
+ALTER TABLE llx_user DROP COLUMN skype;
+ALTER TABLE llx_user DROP COLUMN twitter;
+ALTER TABLE llx_user DROP COLUMN facebook;
+ALTER TABLE llx_user DROP COLUMN linkedin;
+ALTER TABLE llx_user DROP COLUMN instagram;
+ALTER TABLE llx_user DROP COLUMN snapchat;
+ALTER TABLE llx_user DROP COLUMN googleplus;
+ALTER TABLE llx_user DROP COLUMN youtube;
+ALTER TABLE llx_user DROP COLUMN whatsapp;
+
+ALTER TABLE llx_adherent DROP COLUMN jabberid;
+ALTER TABLE llx_adherent DROP COLUMN skype;
+ALTER TABLE llx_adherent DROP COLUMN twitter;
+ALTER TABLE llx_adherent DROP COLUMN facebook;
+ALTER TABLE llx_adherent DROP COLUMN linkedin;
+ALTER TABLE llx_adherent DROP COLUMN instagram;
+ALTER TABLE llx_adherent DROP COLUMN snapchat;
+ALTER TABLE llx_adherent DROP COLUMN googleplus;
+ALTER TABLE llx_adherent DROP COLUMN youtube;
+ALTER TABLE llx_adherent DROP COLUMN whatsapp;
+
+ALTER TABLE llx_societe DROP COLUMN jabberid;
+ALTER TABLE llx_societe DROP COLUMN skype;
+ALTER TABLE llx_societe DROP COLUMN twitter;
+ALTER TABLE llx_societe DROP COLUMN facebook;
+ALTER TABLE llx_societe DROP COLUMN linkedin;
+ALTER TABLE llx_societe DROP COLUMN instagram;
+ALTER TABLE llx_societe DROP COLUMN snapchat;
+ALTER TABLE llx_societe DROP COLUMN googleplus;
+ALTER TABLE llx_societe DROP COLUMN youtube;
+ALTER TABLE llx_societe DROP COLUMN whatsapp;
+
+ALTER TABLE llx_socpeople DROP COLUMN jabberid;
+ALTER TABLE llx_socpeople DROP COLUMN skype;
+ALTER TABLE llx_socpeople DROP COLUMN twitter;
+ALTER TABLE llx_socpeople DROP COLUMN facebook;
+ALTER TABLE llx_socpeople DROP COLUMN linkedin;
+ALTER TABLE llx_socpeople DROP COLUMN instagram;
+ALTER TABLE llx_socpeople DROP COLUMN snapchat;
+ALTER TABLE llx_socpeople DROP COLUMN googleplus;
+ALTER TABLE llx_socpeople DROP COLUMN youtube;
+ALTER TABLE llx_socpeople DROP COLUMN whatsapp;
+
+  

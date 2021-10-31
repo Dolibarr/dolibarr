@@ -93,7 +93,10 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		// Key
 		print "<td>".dol_escape_htmltag($key)."</td>\n";
 		// Type
-		print "<td>".dol_escape_htmltag($type2label[$extrafields->attributes[$elementtype]['type'][$key]])."</td>\n";
+		$typetoshow = $type2label[$extrafields->attributes[$elementtype]['type'][$key]];
+		print '<td title="'.dol_escape_htmltag($typetoshow).'" class="tdoverflowmax150">';
+		print dol_escape_htmltag($typetoshow);
+		print "</td>\n";
 		// Size
 		print '<td class="right">'.dol_escape_htmltag($extrafields->attributes[$elementtype]['size'][$key])."</td>\n";
 		// Computed field

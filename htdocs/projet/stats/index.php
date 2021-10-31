@@ -349,7 +349,7 @@ foreach ($data_all_year as $val) {
 print '</table>';
 print '</div>';
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 $stringtoshow = '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
 if ($mesg) {
