@@ -4537,7 +4537,8 @@ and rowid in (...)
 */
 
 /**
- * Migrate users fields facebook and co to socialnetworks
+ * Migrate users fields facebook and co to socialnetworks.
+ * Can be called only when version is 10.0.* or lower. Fields does not exists after.
  *
  * @return  void
  */
@@ -4628,6 +4629,7 @@ function migrate_users_socialnetworks()
 
 /**
  * Migrate members fields facebook and co to socialnetworks
+ * Can be called only when version is 10.0.* or lower. Fields does not exists after.
  *
  * @return  void
  */
@@ -4719,6 +4721,7 @@ function migrate_members_socialnetworks()
 
 /**
  * Migrate contacts fields facebook and co to socialnetworks
+ * Can be called only when version is 10.0.* or lower. Fields does not exists after.
  *
  * @return  void
  */
@@ -4814,6 +4817,7 @@ function migrate_contacts_socialnetworks()
 
 /**
  * Migrate thirdparties fields facebook and co to socialnetworks
+ * Can be called only when version is 10.0.* or lower. Fields does not exists after.
  *
  * @return  void
  */

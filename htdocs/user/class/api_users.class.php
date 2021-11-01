@@ -688,6 +688,7 @@ class Users extends DolibarrApi
 
 		unset($object->lines);
 		unset($object->model_pdf);
+
 		unset($object->skype);
 		unset($object->twitter);
 		unset($object->facebook);

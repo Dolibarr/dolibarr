@@ -4660,7 +4660,7 @@ div.visible {
 	display: block;
 }
 
-div.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
+div.hidden, header.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
 }
 

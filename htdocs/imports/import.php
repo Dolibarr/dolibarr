@@ -465,7 +465,7 @@ if ($step == 2 && $datatoimport) {
 	print '<table class="border tableforfield centpercent">';
 
 	// Module
-	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("Module").'</td>';
 	print '<td>';
 	$titleofmodule = $objimport->array_import_module[0]['module']->getName();
 	// Special cas for import common to module/services
@@ -571,10 +571,10 @@ if ($step == 3 && $datatoimport) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 
-	print '<table width="100%" class="border tableforfield">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Module
-	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("Module").'</td>';
 	print '<td>';
 	$titleofmodule = $objimport->array_import_module[0]['module']->getName();
 	// Special cas for import common to module/services
@@ -603,7 +603,7 @@ if ($step == 3 && $datatoimport) {
 	print '<table width="100%" class="border tableforfield">';
 
 	// Source file format
-	print '<tr><td class="titlefield">'.$langs->trans("SourceFileFormat").'</td>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td class="nowraponall">';
 	$text = $objmodelimport->getDriverDescForKey($format);
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
@@ -706,12 +706,12 @@ if ($step == 3 && $datatoimport) {
 	print $out;
 	print '</div>';
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-	print '<table class="noborder centpercent" width="100%" cellpadding="4">';
-
 	// Search available imports
 	$filearray = dol_dir_list($conf->import->dir_temp, 'files', 0, '', '', 'name', SORT_DESC);
 	if (count($filearray) > 0) {
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<table class="noborder centpercent" width="100%" cellpadding="4">';
+
 		$dir = $conf->import->dir_temp;
 
 		// Search available files to import
@@ -733,8 +733,8 @@ if ($step == 3 && $datatoimport) {
 			$relativepath = $file;
 
 			print '<tr class="oddeven">';
-			print '<td width="16">'.img_mime($file).'</td>';
 			print '<td>';
+			print img_mime($file, '', 'pictofixedwidth');
 			print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=3'.$param.'" target="_blank">';
 			print $file;
 			print '</a>';
@@ -752,10 +752,10 @@ if ($step == 3 && $datatoimport) {
 			print '</td>';
 			print '</tr>';
 		}
-	}
 
-	print '</table>';
-	print '</div>';
+		print '</table>';
+		print '</div>';
+	}
 
 	print '</form>';
 }
@@ -876,7 +876,7 @@ if ($step == 4 && $datatoimport) {
 	print '<table width="100%" class="border tableforfield">';
 
 	// Module
-	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("Module").'</td>';
 	print '<td>';
 	$titleofmodule = $objimport->array_import_module[0]['module']->getName();
 	// Special cas for import common to module/services
@@ -905,7 +905,7 @@ if ($step == 4 && $datatoimport) {
 	print '<table width="100%" class="border tableforfield">';
 
 	// Source file format
-	print '<tr><td class="titlefield">'.$langs->trans("SourceFileFormat").'</td>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
 	$text = $objmodelimport->getDriverDescForKey($format);
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
@@ -926,8 +926,8 @@ if ($step == 4 && $datatoimport) {
 		print $langs->trans("Separator").' : ';
 		print '<input type="text" size="1" name="separator" value="'.dol_escape_htmltag($separator).'"/>';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;'.$langs->trans("Enclosure").' : ';
-		print '<input type="text" size="1" name="enclosure" value="'.dol_escape_htmltag($enclosure).'"/>';
-		print '<input name="update" type="submit" value="'.$langs->trans('Update').'" class="button" />';
+		print '<input type="text" size="1" name="enclosure" value="'.dol_escape_htmltag($enclosure).'"/> ';
+		print '<input name="update" type="submit" value="'.$langs->trans('Update').'" class="button small" />';
 		print '</form>';
 		print '</td></tr>';
 	}
@@ -938,6 +938,7 @@ if ($step == 4 && $datatoimport) {
 	$modulepart = 'import';
 	$relativepath = GETPOST('filetoimport');
 	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=4'.$param.'" target="_blank">';
+	print img_mime($file, '', 'pictofixedwidth');
 	print $filetoimport;
 	print '</a>';
 	print '</td></tr>';
@@ -1385,7 +1386,7 @@ if ($step == 5 && $datatoimport) {
 	print '<table width="100%" class="border tableforfield">';
 
 	// Module
-	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("Module").'</td>';
 	print '<td>';
 	$titleofmodule = $objimport->array_import_module[0]['module']->getName();
 	// Special cas for import common to module/services
@@ -1414,7 +1415,7 @@ if ($step == 5 && $datatoimport) {
 	print '<table width="100%" class="border tableforfield">';
 
 	// Source file format
-	print '<tr><td class="titlefield">'.$langs->trans("SourceFileFormat").'</td>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
 	$text = $objmodelimport->getDriverDescForKey($format);
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
@@ -1435,6 +1436,7 @@ if ($step == 5 && $datatoimport) {
 	$modulepart = 'import';
 	$relativepath = GETPOST('filetoimport');
 	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=4'.$param.'" target="_blank">';
+	print img_mime($file, '', 'pictofixedwidth');
 	print $filetoimport;
 	print '</a>';
 	print '</td></tr>';
@@ -1509,7 +1511,7 @@ if ($step == 5 && $datatoimport) {
 	print '<table width="100%" class="border tableforfield">';
 
 	// Tables imported
-	print '<tr><td class="titlefield">';
+	print '<tr><td class="titlefieldcreate">';
 	print $langs->trans("TablesTarget");
 	print '</td><td>';
 	$listtables = array();
@@ -1675,10 +1677,15 @@ if ($step == 5 && $datatoimport) {
 			print '<div class="center">'.img_picto($langs->trans("OK"), 'tick').' <b>'.$langs->trans("NoError").'</b></div><br><br>';
 			print '<div class="ok">';
 			print $langs->trans("NbInsert", empty($obj->nbinsert) ? 0 : $obj->nbinsert).'<br>';
-			print $langs->trans("NbUpdate", empty($obj->nbupdate) ? 0 : $obj->nbupdate).'<br><br>';
+			print $langs->trans("NbUpdate", empty($obj->nbupdate) ? 0 : $obj->nbupdate).'<br>';
 			print '</div>';
+			print '<br>';
 		} else {
-			print $langs->trans("NbOfLinesOK", $nbok).'<br><br>';
+			print '<br>';
+			print '<div class="info">';
+			print $langs->trans("NbOfLinesOK", $nbok).'<br>';
+			print '</div>';
+			print '<br>';
 		}
 
 		// Show Errors
@@ -1823,7 +1830,7 @@ if ($step == 6 && $datatoimport) {
 	print '<table width="100%" class="border">';
 
 	// Module
-	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("Module").'</td>';
 	print '<td>';
 	$titleofmodule = $objimport->array_import_module[0]['module']->getName();
 	// Special cas for import common to module/services
@@ -1852,7 +1859,7 @@ if ($step == 6 && $datatoimport) {
 	print '<table width="100%" class="border">';
 
 	// Source file format
-	print '<tr><td class="titlefield">'.$langs->trans("SourceFileFormat").'</td>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
 	$text = $objmodelimport->getDriverDescForKey($format);
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
@@ -1875,6 +1882,7 @@ if ($step == 6 && $datatoimport) {
 	$modulepart = 'import';
 	$relativepath = GETPOST('filetoimport');
 	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=4'.$param.'" target="_blank">';
+	print img_mime($file, '', 'pictofixedwidth');
 	print $filetoimport;
 	print '</a>';
 	print '</td></tr>';

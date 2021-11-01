@@ -249,7 +249,10 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	$request = curl_getinfo($ch, CURLINFO_HEADER_OUT); // Reading of request must be done after sending request
 
 	dol_syslog("getURLContent request=".$request);
-	//dol_syslog("getURLContent response =".response);	// This may contains binary data, so we dont output it
+	if (!empty($conf->global->MAIN_GETURLCONTENT_OUTPUT_RESPONSE)) {
+		// This may contains binary data, so we dont output reponse by default.
+		dol_syslog("getURLContent response =".$response);
+	}
 	dol_syslog("getURLContent response size=".strlen($response)); // This may contains binary data, so we dont output it
 
 	$rep = array();

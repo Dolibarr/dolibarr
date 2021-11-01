@@ -82,19 +82,14 @@ $tmpproduct = new Product($object->db);
 $tmpproduct->fetch($line->fk_product);
 $tmpbom = new BOM($object->db);
 $res = $tmpbom->fetch($line->fk_bom_child);
-if (!empty($tmpbom->id)) {
+if ($tmpbom->id > 0) {
+	print $tmpbom->getNomUrl(1);
 	print '<a class="collapse_bom" id="collapse-'.$line->id.'" href="#">' . (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT) ? '(+)' : '(-)') . '&nbsp;</a>';
-}
-print $tmpproduct->getNomUrl(1);
-print ' - '.$tmpproduct->label;
-print '</td>';
-
-// To show BOM links in the list
-if ($res > 0) {
-	print '<td id="bom_id">'.$tmpbom->getNomUrl(1).'</td>';
 } else {
-		print '<td id="bom_id">&nbsp;</td>';
+	print $tmpproduct->getNomUrl(1);
+	print ' - '.$tmpproduct->label;
 }
+print '</td>';
 
 print '<td class="linecolqty nowrap right">';
 $coldisplay++;

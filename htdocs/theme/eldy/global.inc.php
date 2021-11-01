@@ -1432,7 +1432,7 @@ table[summary="list_of_modules"] .fa-cog {
 .minheight40 { min-height: 40px; }
 .titlefieldcreate { width: 20%; }
 .titlefield       { /* width: 25%; */ width: 250px; }
-.titlefieldmiddle { width: 50%; }
+.titlefieldmiddle { width: 45%; }
 .titlefieldmax45 { max-width: 45%; }
 .imgmaxwidth180 { max-width: 180px; }
 .imgmaxheight50 { max-height: 50px; }
@@ -3385,6 +3385,15 @@ td.border, div.tagtable div div.border {
 	width:auto;
 }
 
+/* To have left column sticky
+.tagtable td[data-key="ref"] {
+	position: sticky;
+	left: 0;
+	top: 0;
+	max-width: 150px !important;
+}
+*/
+
 
 /* Main boxes */
 .nobordertop, .nobordertop tr:first-of-type td {
@@ -4471,7 +4480,7 @@ div.titre {
 }
 div.fiche > table.table-fiche-title:first-of-type div {
 	color: var(--colortexttitlenotab);
-	font-size: 1.05em;
+	font-size: 1.1em;
 	/* text-transform: uppercase; */
 	/* font-weight: 600; */
 }
@@ -4765,7 +4774,7 @@ div.visible {
 	display: block;
 }
 
-div.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
+div.hidden, header.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
 }
 .unvisible {

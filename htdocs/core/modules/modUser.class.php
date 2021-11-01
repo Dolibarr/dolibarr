@@ -49,7 +49,7 @@ class modUser extends DolibarrModules
 		$this->module_position = '05';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "Gestion des utilisateurs (requis)";
+		$this->description = "Management of users and groups of users (mandatory)";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
@@ -90,7 +90,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 251;
-		$this->rights[$r][1] = 'Read information of other users';
+		$this->rights[$r][1] = 'Read information of other users, groups and permissions';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'user';
@@ -101,12 +101,12 @@ class modUser extends DolibarrModules
 		$this->rights[$r][1] = 'Read permissions of other users';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'user_advance';
+		$this->rights[$r][4] = 'user_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'readperms';
 
 		$r++;
 		$this->rights[$r][0] = 253;
-		$this->rights[$r][1] = 'Create/modify internal and external users';
+		$this->rights[$r][1] = 'Create/modify internal and external users, groups and permissions';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'user';
@@ -117,7 +117,7 @@ class modUser extends DolibarrModules
 		$this->rights[$r][1] = 'Create/modify external users only';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'user_advance';
+		$this->rights[$r][4] = 'user_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'write';
 
 		$r++;
@@ -170,7 +170,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 351;
-		$this->rights[$r][1] = 'Consulter les groupes';
+		$this->rights[$r][1] = 'Read groups';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
@@ -178,7 +178,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 352;
-		$this->rights[$r][1] = 'Consulter les permissions des groupes';
+		$this->rights[$r][1] = 'Read permissions of groups';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
@@ -186,7 +186,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 353;
-		$this->rights[$r][1] = 'Creer/modifier les groupes et leurs permissions';
+		$this->rights[$r][1] = 'Create/modify groups and permissions';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
@@ -194,7 +194,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 354;
-		$this->rights[$r][1] = 'Supprimer ou desactiver les groupes';
+		$this->rights[$r][1] = 'Delete groups';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
@@ -298,7 +298,7 @@ class modUser extends DolibarrModules
 			'u.statut'=>'Status'
 		);
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'user' AND entity IN (0,".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'user' AND entity IN (0,".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if ($resql) {    // This can fail when class is used on old database (during migration for example)
 			while ($obj = $this->db->fetch_object($resql)) {
