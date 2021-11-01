@@ -159,22 +159,22 @@ function ordersupplier_prepare_head($object)
 		$langs->load("stocks");
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("OrderDispatch");
-		
+
 		//If dispach process running we add the number of item to dispatch into the head
 		if ($object->statut == '3' OR $object->statut == '4' OR $object->statut == '5') {
 			$lines = $object->fetch_lines();
 			$dispachedLines = $object->getDispachedLines(1);
 			$sumQtyAllreadyDispatched = 0;
-			for ($line = 0 ; $line < count($dispachedLines) ; $line++) {
+			for ($line = 0 ; $line < count($dispachedLines); $line++) {
 				$sumQtyAllreadyDispatched = $sumQtyAllreadyDispatched + $dispachedLines[$line]['qty'];
 			}
 			$sumQtyOrdered = 0;
-			for ($line = 0 ; $line < count($object->lines) ; $line++) {
+			for ($line = 0 ; $line < count($object->lines); $line++) {
 				$sumQtyOrdered = $sumQtyOrdered + $object->lines[$line]->qty;
-			}		
+			}
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$sumQtyAllreadyDispatched.' / '.$sumQtyOrdered.'</span>';
 		}
-		
+
 		$head[$h][2] = 'dispatch';
 		$h++;
 	}
