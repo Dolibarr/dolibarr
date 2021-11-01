@@ -87,6 +87,9 @@ ALTER TABLE llx_product ADD COLUMN mandatory_period tinyint NULL DEFAULT 0;
 ALTER TABLE llx_holiday ADD COLUMN date_approve   DATETIME DEFAULT NULL;
 ALTER TABLE llx_holiday ADD COLUMN fk_user_approve integer DEFAULT NULL;
 
+ALTER TABLE llx_ticket MODIFY COLUMN progress integer;
+
+
 ALTER TABLE llx_emailcollector_emailcollectoraction MODIFY COLUMN actionparam TEXT;
 
 ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN lang varchar(6);
