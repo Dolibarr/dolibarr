@@ -919,6 +919,7 @@ if (!empty($extrafields->attributes[$object->table_element]['computed']) && is_a
 // Loop on record
 // --------------------------------------------------------------------
 $i = 0;
+
 $cacheofoutputfield = array();
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
@@ -953,15 +954,17 @@ while ($i < min($num, $limit)) {
 		}
 		if (!empty($arrayfields['t.'.$key]['checked'])) {
 			print '<td';
-			if (!empty($cssforfield) || !empty($val['css'])) {
+			if ($cssforfield || (array_key_exists('css', $val) && $val['css'])) {
 				print ' class="';
 			}
-			print empty($cssforfield) ? '' : $cssforfield;
-			if (!empty($cssforfield) && !empty($val['css'])) {
+			print $cssforfield;
+			if ($cssforfield && array_key_exists('css', $val) && $val['css']) {
 				print ' ';
 			}
-			print empty($val['css']) ? '' : $val['css'];
-			if (!empty($cssforfield) || !empty($val['css'])) {
+			if (array_key_exists('css', $val)) {
+				print $val['css'];
+			}
+			if ($cssforfield || (array_key_exists('css', $val) && $val['css'])) {
 				print '"';
 			}
 			print '>';
