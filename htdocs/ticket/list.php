@@ -383,15 +383,16 @@ foreach ($search as $key => $val) {
 			$sql .= natural_search($key, join(',', $newarrayofstatus), 2);
 		}
 		continue;
-	}
-	if ($key == 'fk_user_assign' || $key == 'fk_user_create' || $key == 'fk_project') {
+	} elseif ($key == 'fk_user_assign' || $key == 'fk_user_create' || $key == 'fk_project') {
 		if ($search[$key] > 0) {
 			$sql .= natural_search($key, $search[$key], 2);
 		}
 		continue;
 	}
+
 	$mode_search = ((!empty($object->fields[$key]) && ($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key]))) ? 1 : 0);
-	if ($search[$key] != '') {
+	// $search[$key] can be an array of values, or a string. We add filter if array not empty or if it is a string.
+	if ((is_array($search[$key]) && !empty($search[$key])) || (!is_array($search[$key]) && $search[$key] != '')) {
 		$sql .= natural_search($key, $search[$key], $mode_search);
 	}
 }
