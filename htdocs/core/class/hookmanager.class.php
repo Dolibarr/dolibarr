@@ -257,7 +257,7 @@ class HookManager
 					}
 
 					// jump to next module/class if method does not exist
-					if (!method_exists($actionclassinstance, $method)) {
+					if (!is_callable(array($actionclassinstance, $method))){
 						continue;
 					}
 
