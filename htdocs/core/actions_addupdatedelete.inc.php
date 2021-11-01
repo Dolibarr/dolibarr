@@ -110,7 +110,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		}
 
 		// Validation of fields values
-		if ($conf->global->MAIN_FEATURE_LEVEL >= 2 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
+		if (getDolGlobalInt('MAIN_FEATURE_LEVEL') >= 2 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
 			if (!$error && !empty($val['validate']) && is_callable(array($object, 'validateField'))) {
 				if (!$object->validateField($object->fields, $key, $value)) {
 					$error++;
