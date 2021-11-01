@@ -1258,12 +1258,12 @@ class Ticket extends CommonObject
 	/**
 	 * Return status label of object
 	 *
-	 * @param      int		$mode     	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 * @return     string    			Label
+	 * @param      	int		$mode     	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return     	string    			Label
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->libStatut($this->fk_statut, $mode);
+		return $this->libStatut($this->fk_statut, $mode, 0, $this->progress);
 	}
 
 
@@ -1274,9 +1274,10 @@ class Ticket extends CommonObject
 	 *    @param      string 	$status      Id status
 	 *    @param      int		$mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *    @param	  int		$notooltip	 1=No tooltip
+	 *    @param	  int		$progress	 Progression (0 to 100)
 	 *    @return     string     			 Label
 	 */
-	public function LibStatut($status, $mode = 0, $notooltip = 0)
+	public function LibStatut($status, $mode = 0, $notooltip = 0, $progress = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -1312,7 +1313,15 @@ class Ticket extends CommonObject
 			$params = array('tooltip' => 'no');
 		}
 
-		return dolGetStatus($langs->transnoentitiesnoconv($labelStatus), $langs->transnoentitiesnoconv($labelStatusShort), '', $statusType, $mode, '', $params);
+		$labelStatus = $langs->transnoentitiesnoconv($labelStatus);
+		$labelStatusShort = $langs->transnoentitiesnoconv($labelStatusShort);
+
+		if ($status == self::STATUS_IN_PROGRESS && $progress > 0) {
+			$labelStatus .= ' ('.round($progress).'%)';
+			$labelStatusShort .= ' ('.round($progress).'%)';
+		}
+
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $params);
 	}
 
 
