@@ -292,12 +292,12 @@ class Ldap
 	}
 
 
-
 	/**
-	 * Simply closes the connection set up earlier.
-	 * Returns true if OK, false if there was an error.
+	 * Simply closes the connection set up earlier. Returns true if OK, false if there was an error.
+	 * This method seems a duplicate/alias of unbind().
 	 *
 	 * @return	boolean			true or false
+	 * @see unbind()
 	 */
 	public function close()
 	{
@@ -349,16 +349,21 @@ class Ldap
 	}
 
 	/**
-	 * Unbind du serveur ldap.
+	 * Unbind of LDAP server (close connection).
 	 *
 	 * @return	boolean					true or false
+	 * @see close()
 	 */
 	public function unbind()
 	{
-		if (!$this->result = @ldap_unbind($this->connection)) {
-			return false;
-		} else {
+		$this->result = true;
+		if ($this->connection) {
+			$this->result = @ldap_unbind($this->connection);
+		}
+		if ($this->result) {
 			return true;
+		} else {
+			return false;
 		}
 	}
 
