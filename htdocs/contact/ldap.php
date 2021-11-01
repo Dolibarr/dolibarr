@@ -182,7 +182,6 @@ if ($result > 0) {
 	}
 
 	$ldap->unbind();
-	$ldap->close();
 } else {
 	setEventMessages($ldap->error, $ldap->errors, 'errors');
 }
