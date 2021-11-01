@@ -242,7 +242,7 @@ if (empty($reshook)) {
 	}
 }
 
-$conf->global->BOM_SUB_BOM=1;
+
 
 /*
  * View

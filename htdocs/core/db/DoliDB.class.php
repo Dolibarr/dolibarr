@@ -318,14 +318,14 @@ abstract class DoliDB implements Database
 	/**
 	 * Return first result from query as object
 	 * Note : This method executes a given SQL query and retrieves the first row of results as an object. It should only be used with SELECT queries
-	 * Dont add LIMIT to your query, it will be added by this method
-	 * @param string $sql the sql query string
-	 * @return bool| object
-	 * @deprecated
+	 * Dont add LIMIT to your query, it will be added by this method.
+	 *
+	 * @param 	string 			$sql 	The sql query string
+	 * @return 	bool|object				Result of fetch_object
 	 */
 	public function getRow($sql)
 	{
-		$sql .= ' LIMIT 1;';
+		$sql .= ' LIMIT 1';
 
 		$res = $this->query($sql);
 		if ($res) {
@@ -338,9 +338,10 @@ abstract class DoliDB implements Database
 	/**
 	 * return all results from query as an array of objects
 	 * Note : This method executes a given SQL query and retrieves all row of results as an array of objects. It should only be used with SELECT queries
-	 * be carefull with this method use it only with some limit of results to avoid performences loss
-	 * @param 	string $sql the sql query string
-	 * @return 	bool| array
+	 * be carefull with this method use it only with some limit of results to avoid performences loss.
+	 *
+	 * @param 	string 		$sql 		The sql query string
+	 * @return 	bool|array				Result
 	 * @deprecated
 	 */
 	public function getRows($sql)
