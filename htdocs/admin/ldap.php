@@ -2,7 +2,7 @@
 /* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2005-2021  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2013  Juanjo Menent           <jmenent@2byte.es>
  *
@@ -29,10 +29,11 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 
 // Load translation files required by the page
-$langs->load("admin");
+$langs->loadLangs(array("admin", "ldap"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -99,6 +100,9 @@ if (empty($reshook)) {
 		if (!dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_ACTIVE', GETPOST("activememberstypes", 'aZ09'), 'chaine', 0, '', $conf->entity)) {
 			$error++;
 		}
+		if (!dolibarr_set_const($db, 'LDAP_PASSWORD_HASH_TYPE', GETPOST("'LDAP_PASSWORD_HASH_TYPE'", 'aZ09'), 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
 
 		if (!$error) {
 			$db->commit();
@@ -129,7 +133,7 @@ if (!function_exists("ldap_connect")) {
 
 
 $form = new Form($db);
-
+$formldap = new FormLdap($db);
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -250,6 +254,11 @@ $arraylist['0'] = $langs->trans("No");
 $arraylist['1'] = $langs->trans("Yes");
 print $form->selectarray('usetls', $arraylist, $conf->global->LDAP_SERVER_USE_TLS);
 print '</td><td><span class="opacitymedium">'.$langs->trans("LDAPServerUseTLSExample").'</span></td></tr>';
+
+// Password hash type
+print '<tr class="oddeven"><td>'.$langs->trans("LDAPPasswordHashType").'</td><td>';
+print $formldap->selectLdapPasswordHashType(getDolGlobalString('LDAP_PASSWORD_HASH_TYPE'), 'LDAP_PASSWORD_HASH_TYPE');
+print '</td><td><span class="opacitymedium">'.$langs->trans("LDAPPasswordHashTypeExample").'</span></td></tr>';
 
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("ForANonAnonymousAccess").'</td>';

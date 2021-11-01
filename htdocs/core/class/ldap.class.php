@@ -159,8 +159,6 @@ class Ldap
 		$this->attr_mobile     = $conf->global->LDAP_FIELD_MOBILE;
 	}
 
-
-
 	// Connection handling methods -------------------------------------------
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -218,8 +216,9 @@ class Ldap
 					// Upgrade connexion to TLS, if requested by the configuration
 					if (!empty($conf->global->LDAP_SERVER_USE_TLS)) {
 						// For test/debug
-						//ldap_set_option($this->connection, LDAP_OPT_DEBUG_LEVEL, 7);
-						//ldap_set_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, 3);
+						ldap_set_option($this->connection, LDAP_OPT_DEBUG_LEVEL, 7);
+						ldap_set_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, 3);
+						ldap_set_option($this->connection, LDAP_OPT_REFERRALS, 0);
 
 						$resulttls = ldap_start_tls($this->connection);
 						if (!$resulttls) {
@@ -290,8 +289,6 @@ class Ldap
 		}
 		return $return;
 	}
-
-
 
 	/**
 	 * Simply closes the connection set up earlier.
@@ -906,10 +903,10 @@ class Ldap
 			return -3;
 		}
 
-		$search = ldap_search($this->connection, $dn, $filter);
+		$search = @ldap_search($this->connection, $dn, $filter);
 
 		// Only one entry should ever be returned
-		$entry = ldap_first_entry($this->connection, $search);
+		$entry = @ldap_first_entry($this->connection, $search);
 
 		if (!$entry) {
 			$this->ldapErrorCode = -1;
