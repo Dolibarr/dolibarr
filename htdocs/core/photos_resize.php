@@ -475,7 +475,7 @@ if ($action == 'confirm_crop') {
  * View
  */
 
-$title= $langs->trans("ImageEditor");
+$title = $langs->trans("ImageEditor");
 $morejs = array('/includes/jquery/plugins/jcrop/js/jquery.Jcrop.min.js', '/core/js/lib_photosresize.js');
 $morecss = array('/includes/jquery/plugins/jcrop/css/jquery.Jcrop.css');
 

@@ -156,7 +156,7 @@ foreach ($object->fields as $key => $val) {
 	if ($val['type'] == 'text') {
 		print ' wordbreak';
 	}
-	if ($val['cssview']) {
+	if (!empty($val['cssview'])) {
 		print ' '.$val['cssview'];
 	}
 	print '">';

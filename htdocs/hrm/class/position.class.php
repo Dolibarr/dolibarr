@@ -113,7 +113,7 @@ class Position extends CommonObject
 		'fk_job' => array('type'=>'integer:Job:/hrm/class/job.class.php', 'label'=>'Job', 'enabled'=>'1', 'position'=>56, 'notnull'=>1, 'visible'=>1,),
 		'date_start' => array('type'=>'date', 'label'=>'DateStart', 'enabled'=>'1', 'position'=>51, 'notnull'=>1, 'visible'=>1,),
 		'date_end' => array('type'=>'date', 'label'=>'DateEnd', 'enabled'=>'1', 'position'=>52, 'notnull'=>0, 'visible'=>1,),
-		'commentaire_abandon' => array('type'=>'varchar(255)', 'label'=>'AbandonmentComment', 'enabled'=>'1', 'position'=>502, 'notnull'=>0, 'visible'=>1,),
+		'abort_comment' => array('type'=>'varchar(255)', 'label'=>'AbandonmentComment', 'enabled'=>'1', 'position'=>502, 'notnull'=>0, 'visible'=>1,),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>0,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>71, 'notnull'=>0, 'visible'=>0,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
@@ -129,7 +129,7 @@ class Position extends CommonObject
 	public $fk_job;
 	public $date_start;
 	public $date_end;
-	public $commentaire_abandon;
+	public $abort_comment;
 	public $note_public;
 	public $note_private;
 	public $fk_user_creat;

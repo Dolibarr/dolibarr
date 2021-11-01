@@ -59,9 +59,9 @@ restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
 // Add new contact
 if ($action == 'addcontact' && $user->rights->projet->creer) {
-	$source  = 'internal';
+	$source = 'internal';
 	if (GETPOST("addsourceexternal")) {
-		$source  ='external';
+		$source = 'external';
 	}
 
 	$result = $object->fetch($id, $ref);
@@ -196,7 +196,7 @@ if ($id > 0 || !empty($ref)) {
 			$morehtmlref .= '</div>';
 
 			// Define a complementary filter for search of next/prev ref.
-			if (!$user->rights->projet->all->lire) {
+			if (empty($user->rights->projet->all->lire)) {
 				$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
 				$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 			}

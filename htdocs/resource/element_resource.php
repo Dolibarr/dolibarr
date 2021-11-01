@@ -76,6 +76,19 @@ if ($socid > 0) { // Special for thirdparty
 	$element = 'societe';
 }
 
+// Permission is not permission on resources. We just make link here on objects.
+if ($element == 'action') {
+	$result = restrictedArea($user, 'agenda', $element_id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
+}
+if ($element == 'fichinter') {
+	$result = restrictedArea($user, 'ficheinter', $element_id, 'fichinter');
+}
+if ($element == 'product' || $element == 'service') {	// When RESOURCE_ON_PRODUCTS or RESOURCE_ON_SERVICES is set
+	$tmpobject = new Product($db);
+	$tmpobject->fetch($element_id);
+	$fieldtype = $tmpobject->type;
+	$result = restrictedArea($user, 'produit|service', $element_id, 'product&product', '', '', $fieldtype);
+}
 
 
 /*
@@ -336,9 +349,7 @@ if (!$ret) {
 				if (!empty($act->fk_project)) {
 					$proj = new Project($db);
 					$proj->fetch($act->fk_project);
-					$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$act->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-					$morehtmlref .= $proj->ref;
-					$morehtmlref .= '</a>';
+					$morehtmlref .= ' : '.$proj->getNomUrl(1);
 					if ($proj->title) {
 						$morehtmlref .= ' - '.$proj->title;
 					}
@@ -370,9 +381,9 @@ if (!$ret) {
 			// Date start
 			print '<tr><td>'.$langs->trans("DateActionStart").'</td><td colspan="3">';
 			if (!$act->fulldayevent) {
-				print dol_print_date($act->datep, 'dayhour');
+				print dol_print_date($act->datep, 'dayhour', 'tzuser');
 			} else {
-				print dol_print_date($act->datep, 'day');
+				print dol_print_date($act->datep, 'day', 'tzuser');
 			}
 			if ($act->percentage == 0 && $act->datep && $act->datep < ($now - $delay_warning)) {
 				print img_warning($langs->trans("Late"));
@@ -383,9 +394,9 @@ if (!$ret) {
 			// Date end
 			print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
 			if (!$act->fulldayevent) {
-				print dol_print_date($act->datef, 'dayhour');
+				print dol_print_date($act->datef, 'dayhour', 'tzuser');
 			} else {
-				print dol_print_date($act->datef, 'day');
+				print dol_print_date($act->datef, 'day', 'tzuser');
 			}
 			if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < ($now - $delay_warning)) {
 				print img_warning($langs->trans("Late"));
@@ -520,9 +531,10 @@ if (!$ret) {
 					if (!empty($fichinter->fk_project)) {
 						$proj = new Project($db);
 						$proj->fetch($fichinter->fk_project);
-						$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$fichinter->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-						$morehtmlref .= $proj->ref;
-						$morehtmlref .= '</a>';
+						$morehtmlref .= ' : '.$proj->getNomUrl(1);
+						if ($proj->title) {
+							$morehtmlref .= ' - '.$proj->title;
+						}
 					} else {
 						$morehtmlref .= '';
 					}

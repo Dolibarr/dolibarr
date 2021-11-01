@@ -290,24 +290,24 @@ if (function_exists("ldap_connect")) {
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test">'.$langs->trans("LDAPTestConnect").'</a><br><br>';
 	}
 
-	if ($_GET["action"] == 'test') {
+	if ($action == 'test') {
 		$ldap = new Ldap(); // Les parametres sont passes et recuperes via $conf
 
 		$result = $ldap->connect_bind();
 		if ($result > 0) {
 			// Test ldap connect and bind
 			print img_picto('', 'info').' ';
-			print '<span class="ok">'.$langs->trans("LDAPTCPConnectOK", $conf->global->LDAP_SERVER_HOST, $conf->global->LDAP_SERVER_PORT).'</span>';
+			print '<span class="ok">'.$langs->trans("LDAPTCPConnectOK", $ldap->connectedServer, $conf->global->LDAP_SERVER_PORT).'</span>';
 			print '<br>';
 
-			if ($conf->global->LDAP_ADMIN_DN && !empty($conf->global->LDAP_ADMIN_PASS)) {
+			if (!empty($conf->global->LDAP_ADMIN_DN) && !empty($conf->global->LDAP_ADMIN_PASS)) {
 				if ($result == 2) {
 					print img_picto('', 'info').' ';
-					print '<span class="ok">'.$langs->trans("LDAPBindOK", $conf->global->LDAP_SERVER_HOST, $conf->global->LDAP_SERVER_PORT, $conf->global->LDAP_ADMIN_DN, preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)).'</span>';
+					print '<span class="ok">'.$langs->trans("LDAPBindOK", $ldap->connectedServer, $conf->global->LDAP_SERVER_PORT, $conf->global->LDAP_ADMIN_DN, preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)).'</span>';
 					print '<br>';
 				} else {
 					print img_picto('', 'error').' ';
-					print '<span class="error">'.$langs->trans("LDAPBindKO", $conf->global->LDAP_SERVER_HOST, $conf->global->LDAP_SERVER_PORT, $conf->global->LDAP_ADMIN_DN, preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)).'</span>';
+					print '<span class="error">'.$langs->trans("LDAPBindKO", $ldap->connectedServer, $conf->global->LDAP_SERVER_PORT, $conf->global->LDAP_ADMIN_DN, preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)).'</span>';
 					print '<br>';
 					print $langs->trans("Error").' '.$ldap->error;
 					print '<br>';
@@ -330,10 +330,10 @@ if (function_exists("ldap_connect")) {
 				print '<br>';
 			}
 
-			$unbind = $ldap->unbind();
+			$ldap->unbind();
 		} else {
 			print img_picto('', 'error').' ';
-			print '<span class="error">'.$langs->trans("LDAPTCPConnectKO", $conf->global->LDAP_SERVER_HOST, $conf->global->LDAP_SERVER_PORT).'</span>';
+			print '<span class="error">'.$langs->trans("LDAPTCPConnectKO", $ldap->connectedServer, $conf->global->LDAP_SERVER_PORT).'</span>';
 			print '<br>';
 			print $langs->trans("Error").' '.$ldap->error;
 			print '<br>';
