@@ -271,7 +271,7 @@ class Ticket extends CommonObject
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-1, 'enabled'=>1, 'position'=>520, 'notnull'=>1),
 		'message' => array('type'=>'text', 'label'=>'Message', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1,),
 		'email_msgid' => array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'help'=>'EmailMsgIDDesc'),
-		'progress' => array('type'=>'varchar(100)', 'label'=>'Progression', 'visible'=>-1, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'css'=>'right', 'help'=>"", 'isameasure'=>2),
+		'progress' => array('type'=>'integer', 'label'=>'Progression', 'visible'=>-1, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'css'=>'right', 'help'=>"", 'isameasure'=>2, 'csslist'=>'width50'),
 		'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-1, 'enabled'=>'$conf->global->TICKET_ENABLE_RESOLUTION', 'position'=>550, 'notnull'=>1),
 		'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'SolvedClosed', 9 => 'Deleted')),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
@@ -1258,12 +1258,12 @@ class Ticket extends CommonObject
 	/**
 	 * Return status label of object
 	 *
-	 * @param      int		$mode     	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 * @return     string    			Label
+	 * @param      	int		$mode     	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return     	string    			Label
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->libStatut($this->fk_statut, $mode);
+		return $this->libStatut($this->fk_statut, $mode, 0, $this->progress);
 	}
 
 
@@ -1274,9 +1274,10 @@ class Ticket extends CommonObject
 	 *    @param      string 	$status      Id status
 	 *    @param      int		$mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *    @param	  int		$notooltip	 1=No tooltip
+	 *    @param	  int		$progress	 Progression (0 to 100)
 	 *    @return     string     			 Label
 	 */
-	public function LibStatut($status, $mode = 0, $notooltip = 0)
+	public function LibStatut($status, $mode = 0, $notooltip = 0, $progress = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -1312,7 +1313,15 @@ class Ticket extends CommonObject
 			$params = array('tooltip' => 'no');
 		}
 
-		return dolGetStatus($langs->transnoentitiesnoconv($labelStatus), $langs->transnoentitiesnoconv($labelStatusShort), '', $statusType, $mode, '', $params);
+		$labelStatus = $langs->transnoentitiesnoconv($labelStatus);
+		$labelStatusShort = $langs->transnoentitiesnoconv($labelStatusShort);
+
+		if ($status == self::STATUS_IN_PROGRESS && $progress > 0) {
+			$labelStatus .= ' ('.round($progress).'%)';
+			$labelStatusShort .= ' ('.round($progress).'%)';
+		}
+
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $params);
 	}
 
 
