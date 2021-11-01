@@ -447,7 +447,7 @@ class formSetupItem
 	 * because this two class will quickly evolve it's important to not set directly $this->type (will be protected) so this method exist
 	 * to be sure we can manage evolution easily
 	 * @param string $type possible values based on old module builder setup : 'string', 'textarea', 'category:'.Categorie::TYPE_CUSTOMER', 'emailtemplate', 'thirdparty_type'
-	 * @deprecated yes this method came deprecated because it exists only for manage setup convertion
+	 * @deprecated yes this setTypeFromTypeString came deprecated because it exists only for manage setup convertion
 	 * @return bool
 	 */
 	public function setTypeFromTypeString($type)
@@ -521,7 +521,7 @@ class formSetupItem
 			foreach ($ways as $way) {
 				$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';
 			}
-			$out.= '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
+			$out.='<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 		} elseif (preg_match('/thirdparty_type/', $this->type)) {
 			if ($this->fieldValue==2) {
 				$out.= $this->langs->trans("Prospect");
