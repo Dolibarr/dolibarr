@@ -191,7 +191,7 @@ class formSetup
 		$arrayofparameters = array();
 		foreach ($this->params as $key => $item) {
 			$arrayofparameters[$item->confKey] = array(
-				'type' => $item->type,
+				'type' => $item->getType(),
 				'enabled' => $item->enabled
 			);
 		}
@@ -356,57 +356,15 @@ class formSetupItem
 		} elseif ($this->type == 'yesno') {
 			$out.= $this->form->selectyesno($this->confKey, $this->fieldValue, 1);
 		} elseif (preg_match('/emailtemplate:/', $this->type)) {
-			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
-			$formmail = new FormMail($this->db);
-
-			$tmp = explode(':', $this->type);
-			$nboftemplates = $formmail->fetchAllEMailTemplate($tmp[1], $user, null, 1); // We set lang=null to get in priority record with no lang
-			//$arraydefaultmessage = $formmail->getEMailTemplate($db, $tmp[1], $user, null, 0, 1, '');
-			$arrayOfMessageName = array();
-			if (is_array($formmail->lines_model)) {
-				foreach ($formmail->lines_model as $modelMail) {
-					//var_dump($modelmail);
-					$moreonlabel = '';
-					if (!empty($arrayOfMessageName[$modelMail->label])) {
-						$moreonlabel = ' <span class="opacitymedium">(' . $this->langs->trans("SeveralLangugeVariatFound") . ')</span>';
-					}
-					// The 'label' is the key that is unique if we exclude the language
-					$arrayOfMessageName[$modelMail->id] = $this->langs->trans(preg_replace('/\(|\)/', '', $modelMail->label)) . $moreonlabel;
-				}
-			}
-			$out.= $this->form->selectarray($this->confKey, $arrayOfMessageName, $this->fieldValue, 'None', 0, 0, '', 0, 0, 0, '', '', 1);
+			$out.= $this->generateInputFieldEmailTemplate();
 		} elseif (preg_match('/category:/', $this->type)) {
-			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-			$formother = new FormOther($this->db);
-
-			$tmp = explode(':', $this->type);
-			$out.= img_picto('', 'category', 'class="pictofixedwidth"');
-			$out.= $formother->select_categories($tmp[1],  $this->fieldValue, $this->confKey, 0, $this->langs->trans('CustomersProspectsCategoriesShort'));
+			$out.=$this->generateInputFieldCategories();
 		} elseif (preg_match('/thirdparty_type/', $this->type)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 			$formcompany = new FormCompany($this->db);
 			$out.= $formcompany->selectProspectCustomerType($this->fieldValue, $this->confKey);
 		} elseif ($this->type == 'securekey') {
-			$out.= '<input required="required" type="text" class="flat" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ?GETPOST($this->confKey, 'alpha') : $this->fieldValue).'" size="40">';
-			if (!empty($conf->use_javascript_ajax)) {
-				$out.= '&nbsp;'.img_picto($this->langs->trans('Generate'), 'refresh', 'id="generate_token'.$this->confKey.'" class="linkobject"');
-			}
-			if (!empty($conf->use_javascript_ajax)) {
-				$out.= "\n".'<script type="text/javascript">';
-				$out.= '$(document).ready(function () {
-                        $("#generate_token'.$this->confKey.'").click(function() {
-                	        $.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
-                		      action: \'getrandompassword\',
-                		      generic: true
-    				        },
-    				        function(token) {
-    					       $("#'.$this->confKey.'").val(token);
-            				});
-                         });
-                    });';
-				$out.= '</script>';
-			}
+			$out.= $this->generateInputFieldSecureKey();
 		} elseif ($this->type == 'product') {
 			if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
 				$selected = (empty($this->fieldValue) ? '' : $this->fieldValue);
@@ -430,6 +388,7 @@ class formSetupItem
 		$out.= "</textarea>\n";
 		return $out;
 	}
+
 	/**
 	 * generate input field for html
 	 * @return string
@@ -440,6 +399,96 @@ class formSetupItem
 		require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 		$doleditor = new DolEditor($this->confKey, $this->fieldValue, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
 		return $doleditor->Create(1);
+	}
+
+	/**
+	 * generate input field for categories
+	 * @return string
+	 */
+	public function generateInputFieldCategories()
+	{
+		global $conf;
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+		$formother = new FormOther($this->db);
+
+		$tmp = explode(':', $this->type);
+		$out= img_picto('', 'category', 'class="pictofixedwidth"');
+		$out.= $formother->select_categories($tmp[1],  $this->fieldValue, $this->confKey, 0, $this->langs->trans('CustomersProspectsCategoriesShort'));
+		return $out;
+	}
+
+	/**
+	 * generate input field for email template selector
+	 * @return string
+	 */
+	public function generateInputFieldEmailTemplate()
+	{
+		global $conf, $user;
+		$out = '';
+		if (preg_match('/emailtemplate:/', $this->type)) {
+			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
+			$formmail = new FormMail($this->db);
+
+			$tmp = explode(':', $this->type);
+			$nboftemplates = $formmail->fetchAllEMailTemplate($tmp[1], $user, null, 1); // We set lang=null to get in priority record with no lang
+			$arrayOfMessageName = array();
+			if (is_array($formmail->lines_model)) {
+				foreach ($formmail->lines_model as $modelMail) {
+					$moreonlabel = '';
+					if (!empty($arrayOfMessageName[$modelMail->label])) {
+						$moreonlabel = ' <span class="opacitymedium">(' . $this->langs->trans("SeveralLangugeVariatFound") . ')</span>';
+					}
+					// The 'label' is the key that is unique if we exclude the language
+					$arrayOfMessageName[$modelMail->id] = $this->langs->trans(preg_replace('/\(|\)/', '', $modelMail->label)) . $moreonlabel;
+				}
+			}
+			$out .= $this->form->selectarray($this->confKey, $arrayOfMessageName, $this->fieldValue, 'None', 0, 0, '', 0, 0, 0, '', '', 1);
+		}
+
+		return $out;
+	}
+
+
+	/**
+	 * generate input field for secure key
+	 * @return string
+	 */
+	public function generateInputFieldSecureKey()
+	{
+		global $conf;
+		$out = '<input required="required" type="text" class="flat" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ?GETPOST($this->confKey, 'alpha') : $this->fieldValue).'" size="40">';
+		if (!empty($conf->use_javascript_ajax)) {
+			$out.= '&nbsp;'.img_picto($this->langs->trans('Generate'), 'refresh', 'id="generate_token'.$this->confKey.'" class="linkobject"');
+		}
+		if (!empty($conf->use_javascript_ajax)) {
+			$out .= "\n" . '<script type="text/javascript">';
+			$out .= '$(document).ready(function () {
+                        $("#generate_token' . $this->confKey . '").click(function() {
+                	        $.get( "' . DOL_URL_ROOT . '/core/ajax/security.php", {
+                		      action: \'getrandompassword\',
+                		      generic: true
+    				        },
+    				        function(token) {
+    					       $("#' . $this->confKey . '").val(token);
+            				});
+                         });
+                    });';
+			$out .= '</script>';
+		}
+		return $out;
+	}
+
+	/**
+	 * get the type : used for old module builder setup conf style conversion and tests
+	 * because this two class will quickly evolve it's important to not set or get directly $this->type (will be protected) so this method exist
+	 * to be sure we can manage evolution easily
+	 *
+	 * @return string
+	 */
+	public function getType()
+	{
+		return $this->type;
 	}
 
 	/**
