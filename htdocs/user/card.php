@@ -817,7 +817,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 	print dol_get_fiche_head('', '', '', 0, '');
 
-	print dol_set_focus('#lastname');
+	dol_set_focus('#lastname');
 
 	print '<table class="border centpercent">';
 
@@ -2774,7 +2774,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		}
 
 		if (!empty($conf->ldap->enabled) && !empty($object->ldap_sid)) {
-			$ldap->close();
+			$ldap->unbind();
 		}
 	}
 }

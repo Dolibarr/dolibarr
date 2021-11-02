@@ -1788,19 +1788,19 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		print '<table class="border tableforfield tableforfield centpercent">';
 
-		// Birth Date
-		print '<tr><td class="titlefield">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
-
-		// Public
-		print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
-
-		// Categories
+		// Tags / Categories
 		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
 			print '<tr><td>'.$langs->trans("Categories").'</td>';
 			print '<td colspan="2">';
 			print $form->showCategories($object->id, Categorie::TYPE_MEMBER, 1);
 			print '</td></tr>';
 		}
+
+		// Birth Date
+		print '<tr><td class="titlefield">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
+
+		// Public
+		print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';

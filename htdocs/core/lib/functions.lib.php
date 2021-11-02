@@ -108,6 +108,10 @@ function getEntity($element, $shared = 1, $currentobject = null)
 {
 	global $conf, $mc, $hookmanager, $object, $action;
 
+	if (! is_object($hookmanager)) {
+		$hookmanager = new HookManager($db);
+	}
+
 	// fix different element names (France to English)
 	switch ($element) {
 		case 'contrat':
@@ -2289,6 +2293,11 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 {
 	global $conf, $langs;
 
+	// If date undefined or "", we return ""
+	if (dol_strlen($time) == 0) {
+		return ''; // $time=0 allowed (it means 01/01/1970 00:00:00)
+	}
+
 	if ($tzoutput === 'auto') {
 		$tzoutput = (empty($conf) ? 'tzserver' : (isset($conf->tzuserinputkey) ? $conf->tzuserinputkey : 'tzserver'));
 	}
@@ -2312,7 +2321,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 					$user_date_tz = new DateTimeZone($offsettzstring);
 					$user_dt = new DateTime();
 					$user_dt->setTimezone($user_date_tz);
-					$user_dt->setTimestamp($tzoutput == 'tzuser' ? dol_now() : $time);
+					$user_dt->setTimestamp($tzoutput == 'tzuser' ? dol_now() : (int) $time);
 					$offsettz = $user_dt->getOffset();
 				} else {	// old method (The 'tzuser' was processed like the 'tzuserrel')
 					$offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60; // Will not be used anymore
@@ -2380,11 +2389,6 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$format = str_replace('yyyy', 'yy', $format);
 	}
 
-	// If date undefined or "", we return ""
-	if (dol_strlen($time) == 0) {
-		return ''; // $time=0 allowed (it means 01/01/1970 00:00:00)
-	}
-
 	// Clean format
 	if (preg_match('/%b/i', $format)) {		// There is some text to translate
 		// We inhibate translation to text made by strftime functions. We will use trans instead later.
@@ -2401,7 +2405,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	// Analyze date
 	$reg = array();
 	if (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i', $time, $reg)) {	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
-		dol_print_error("Functions.lib::dol_print_date function called with a bad value from page ".$_SERVER["PHP_SELF"]);
+		dol_print_error('', "Functions.lib::dol_print_date function called with a bad value from page ".$_SERVER["PHP_SELF"]);
 		return '';
 	} elseif (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $time, $reg)) {    // Still available to solve problems in extrafields of type date
 		// This part of code should not be used anymore.
@@ -3670,9 +3674,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'member'=>'user-alt', 'meeting'=>'chalkboard-teacher', 'mrp'=>'cubes', 'next'=>'arrow-alt-circle-right',
 				'trip'=>'wallet', 'expensereport'=>'wallet', 'group'=>'users', 'movement'=>'people-carry',
 				'sign-out'=>'sign-out-alt',
-				'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'switch_on_red'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star',
-				'bank'=>'university', 'close_title'=>'times', 'delete'=>'trash', 'edit'=>'pencil-alt', 'filter'=>'filter',
-				'list-alt'=>'list-alt', 'calendar'=>'calendar-alt', 'calendarmonth'=>'calendar-alt', 'calendarweek'=>'calendar-week', 'calendarmonth'=>'calendar-alt', 'calendarday'=>'calendar-day', 'calendarperuser'=>'table',
+				'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'switch_on_red'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star',
+				'bank'=>'university', 'close_title'=>'times', 'delete'=>'trash', 'filter'=>'filter',
+				'list-alt'=>'list-alt', 'calendar'=>'calendar-alt', 'calendarmonth'=>'calendar-alt', 'calendarweek'=>'calendar-week', 'calendarday'=>'calendar-day', 'calendarperuser'=>'table',
 				'intervention'=>'ambulance', 'invoice'=>'file-invoice-dollar', 'multicurrency'=>'dollar-sign', 'order'=>'file-invoice',
 				'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
 				'other'=>'square',
@@ -3682,7 +3686,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
 				'refresh'=>'redo', 'region'=>'map-marked', 'resource'=>'laptop-house',
 				'state'=>'map-marked-alt', 'security'=>'key', 'salary'=>'wallet', 'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'stripe'=>'stripe-s',
-				'supplier'=>'building', 'supplier_invoice'=>'file-invoice-dollar', 'technic'=>'cogs', 'ticket'=>'ticket-alt',
+				'supplier'=>'building', 'technic'=>'cogs',
 				'timespent'=>'clock', 'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
 				'title_agenda'=>'calendar-alt',
 				'uncheck'=>'times', 'uparrow'=>'share', 'vcard'=>'address-card',
@@ -4473,7 +4477,7 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
 		$result = ($nodiv ? '' : '<div class="'.$class.' hideonsmartphone'.($morecss ? ' '.$morecss : '').($textfordropdown ? ' hidden' : '').'">').'<span class="fa fa-info-circle" title="'.dol_escape_htmltag($admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')).'"></span> '.$text.($nodiv ? '' : '</div>');
 
 		if ($textfordropdown) {
-			$tmpresult .= '<span class="'.$class.'text opacitymedium cursorpointer">'.$langs->trans($textfordropdown).' '.img_picto($langs->trans($textfordropdown), '1downarrow').'</span>';
+			$tmpresult = '<span class="'.$class.'text opacitymedium cursorpointer">'.$langs->trans($textfordropdown).' '.img_picto($langs->trans($textfordropdown), '1downarrow').'</span>';
 			$tmpresult .= '<script type="text/javascript" language="javascript">
 				jQuery(document).ready(function() {
 					jQuery(".'.$class.'text").click(function() {
@@ -4496,7 +4500,7 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
  *  This function must be called when a blocking technical error is encountered.
  *  However, one must try to call it only within php pages, classes must return their error through their property "error".
  *
- *	@param	 	DoliDB          $db      	Database handler
+ *	@param	 	DoliDB|string   $db      	Database handler
  *	@param  	string|string[] $error		String or array of errors strings to show
  *  @param		array           $errors		Array of errors
  *	@return 	void
@@ -4824,7 +4828,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
  *	Show a title.
  *
  *	@param	string	$title			Title to show
- *	@return	string					Title to show
+ *  @return	void
  *  @deprecated						Use load_fiche_titre instead
  *  @see load_fiche_titre()
  */
@@ -5189,16 +5193,16 @@ function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0)
  *		Function to format a value into an amount for visual output
  *		Function used into PDF and HTML pages
  *
- *		@param	float		$amount			Amount to format
- *		@param	integer		$form			Type of format, HTML or not (not by default)
- *		@param	Translate	$outlangs		Object langs for output
- *		@param	int			$trunc			1=Truncate if there is more decimals than MAIN_MAX_DECIMALS_SHOWN (default), 0=Does not truncate. Deprecated because amount are rounded (to unit or total amount accurancy) before beeing inserted into database or after a computation, so this parameter should be useless.
- *		@param	int			$rounding		Minimum number of decimal to show. If 0, no change, if -1, we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
- *		@param	int			$forcerounding	Force the number of decimal to forcerounding decimal (-1=do not force)
- *		@param	string		$currency_code	To add currency symbol (''=add nothing, 'auto'=Use default currency, 'XXX'=add currency symbols for XXX currency)
- *		@return	string						Chaine avec montant formate
+ *		@param	float				$amount			Amount to format
+ *		@param	integer				$form			Type of format, HTML or not (not by default)
+ *		@param	Translate|string	$outlangs		Object langs for output
+ *		@param	int					$trunc			1=Truncate if there is more decimals than MAIN_MAX_DECIMALS_SHOWN (default), 0=Does not truncate. Deprecated because amount are rounded (to unit or total amount accurancy) before beeing inserted into database or after a computation, so this parameter should be useless.
+ *		@param	int					$rounding		Minimum number of decimal to show. If 0, no change, if -1, we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
+ *		@param	int					$forcerounding	Force the number of decimal to forcerounding decimal (-1=do not force)
+ *		@param	string				$currency_code	To add currency symbol (''=add nothing, 'auto'=Use default currency, 'XXX'=add currency symbols for XXX currency)
+ *		@return	string								String with formated amount
  *
- *		@see	price2num()					Revert function of price
+ *		@see	price2num()							Revert function of price
  */
 function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $forcerounding = -1, $currency_code = '')
 {
@@ -5852,7 +5856,7 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 						$ret .= ' ('.$obj->default_vat_code.')';
 					}
 				}
-				$db->free($sql);
+				$db->free($resql);
 			} else {
 				dol_print_error($db);
 			}
@@ -8151,16 +8155,20 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1)
 		return 'Bad string syntax to evaluate: '.$s;
 	}
 
-	// We block using of php exec or php file functions
-	$forbiddenphpstrings = array("exec(", "passthru(", "shell_exec(", "system(", "proc_open(", "popen(", "eval(", "dol_eval(", "executeCLI(");
-	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array("fopen(", "file_put_contents(", "fputs(", "fputscsv(", "fwrite(", "fpassthru(", "unlink(", "mkdir(", "rmdir(", "symlink(", "touch(", "umask("));
-	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('function(', '$$', 'call_user_func('));
+	// We block use of php exec or php file functions
+	$forbiddenphpstrings = array('$$');
 	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST'));
-	$forbiddenphpregex = 'global\s+\$';
+
+	$forbiddenphpfunctions = array("exec", "passthru", "shell_exec", "system", "proc_open", "popen", "eval", "dol_eval", "executeCLI");
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "unlink", "mkdir", "rmdir", "symlink", "touch", "umask"));
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func"));
+
+	$forbiddenphpregex = 'global\s+\$|\b('.implode('|', $forbiddenphpfunctions).')\b';
+
 	do {
 		$oldstringtoclean = $s;
 		$s = str_ireplace($forbiddenphpstrings, '__forbiddenstring__', $s);
-		$s = preg_replace('/'.$forbiddenphpregex.'/', '__forbiddenstring__', $s);
+		$s = preg_replace('/'.$forbiddenphpregex.'/i', '__forbiddenstring__', $s);
 		//$s = preg_replace('/\$[a-zA-Z0-9_\->\$]+\(/i', '', $s);	// Remove $function( call and $mycall->mymethod(
 	} while ($oldstringtoclean != $s);
 
@@ -8818,7 +8826,7 @@ function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
  * Set focus onto field with selector (similar behaviour of 'autofocus' HTML5 tag)
  *
  * @param 	string	$selector	Selector ('#id' or 'input[name="ref"]') to use to find the HTML input field that must get the autofocus. You must use a CSS selector, so unique id preceding with the '#' char.
- * @return	string				HTML code to set focus
+ * @return	void
  */
 function dol_set_focus($selector)
 {

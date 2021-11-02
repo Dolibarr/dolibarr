@@ -251,7 +251,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	dol_syslog("getURLContent request=".$request);
 	if (!empty($conf->global->MAIN_GETURLCONTENT_OUTPUT_RESPONSE)) {
 		// This may contains binary data, so we dont output reponse by default.
-		dol_syslog("getURLContent response =".response);
+		dol_syslog("getURLContent response =".$response);
 	}
 	dol_syslog("getURLContent response size=".strlen($response)); // This may contains binary data, so we dont output it
 

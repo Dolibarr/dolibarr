@@ -377,7 +377,6 @@ if ($conf->use_javascript_ajax) {
 	$s .= 'jQuery(".family_birthday").toggle();'."\n";
 	if ($action == "show_week" || $action == "show_month" || empty($action)) {
 		$s .= 'jQuery( "td.sortable" ).sortable({connectWith: ".sortable",placeholder: "ui-state-highlight",items: "div:not(.unsortable)", receive: function( event, ui ) {';
-		$s .= 'var frm=jQuery("#move_event");frm.attr("action",ui.item.find("a.cal_event").attr("href")).children("#newdate").val(jQuery(event.target).closest("div").attr("id"));frm.submit();}});'."\n";
 	}
 	$s .= '});'."\n";
 	$s .= '</script>'."\n";
