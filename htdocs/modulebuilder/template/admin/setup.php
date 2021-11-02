@@ -79,7 +79,7 @@ $type = 'myobject';
 
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
-$formSetup = new formSetup($db);
+$formSetup = new FormSetup($db);
 
 
 // Hôte

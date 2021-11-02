@@ -19,7 +19,7 @@
 /**
  * This class help you create setup render
  */
-class formSetup
+class FormSetup
 {
 
 	/**
@@ -27,7 +27,7 @@ class formSetup
 	 */
 	public $db;
 
-	/** @var formSetupItem[]  */
+	/** @var FormSetupItem[]  */
 	public $items = array();
 
 	/**
@@ -147,7 +147,7 @@ class formSetup
 	}
 
 	/**
-	 * @param formSetupItem $item the setup item
+	 * @param FormSetupItem $item the setup item
 	 * @param bool $editMode Display as edit mod
 	 * @return string the html output for an setup item
 	 */
@@ -223,7 +223,7 @@ class formSetup
 			//'MYMODULE_MYPARAM7'=>array('type'=>'product', 'enabled'=>1),
 		 */
 
-		$item = new formSetupItem($confKey);
+		$item = new FormSetupItem($confKey);
 		$item->setTypeFromTypeString($params['type']);
 
 		if (!empty($params['enabled'])) {
@@ -280,11 +280,11 @@ class formSetup
 	 * @param $confKey the conf key used in database
 	 * @param string		$targetItemKey    	target item used to place the new item beside
 	 * @param bool		$insertAfterTarget    	insert before or after target item ?
-	 * @return formSetupItem the new setup item created
+	 * @return FormSetupItem the new setup item created
 	 */
 	public function newItem($confKey, $targetItemKey = false, $insertAfterTarget = false)
 	{
-		$item = new formSetupItem($confKey);
+		$item = new FormSetupItem($confKey);
 
 		// set item rank if not defined as last item
 		if (empty($item->rank)) {
@@ -377,11 +377,11 @@ class formSetup
 	/**
 	 *  uasort callback function to Sort params items
 	 *
-	 *  @param	formSetupItem	$a  formSetup item
-	 *  @param	formSetupItem	$b  formSetup item
+	 *  @param	FormSetupItem	$a  formSetup item
+	 *  @param	FormSetupItem	$b  formSetup item
 	 *  @return	int				Return compare result
 	 */
-	public function itemSort(formSetupItem $a, formSetupItem $b)
+	public function itemSort(FormSetupItem $a, FormSetupItem $b)
 	{
 		if (empty($a->rank)) {
 			$a->rank = 0;
@@ -399,7 +399,7 @@ class formSetup
 /**
  * This class help to create item for class formSetup
  */
-class formSetupItem
+class FormSetupItem
 {
 	/**
 	 * @var DoliDB Database handler.
