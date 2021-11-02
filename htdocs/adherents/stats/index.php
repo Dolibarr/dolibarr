@@ -196,7 +196,7 @@ foreach ($data as $val) {
 	print '<tr class="oddeven" height="24">';
 	print '<td class="center">';
 	//print '<a href="month.php?year='.$year.'">';
-	print $year;
+	print '<a href="../subscription/list.php?date_select='.$year.'">'.$year.'</a>';
 	//print '</a>';
 	print '</td>';
 	print '<td class="right">'.$val['nb'].'</td>';
