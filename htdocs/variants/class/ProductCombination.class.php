@@ -488,8 +488,14 @@ class ProductCombination
 
 		$child->price_autogen = $parent->price_autogen;
 		$child->weight = $parent->weight;
-		$child->status = $parent->status;
-
+		// Only when Parent Status are updated
+		if ($parent->oldcopy && ($parent->status != $parent->oldcopy->status)) {
+            $child->status = $parent->status;
+        }
+		if ($parent->oldcopy && ($parent->status_buy != $parent->oldcopy->status_buy)) {
+            $child->status_buy = $parent->status_buy;
+        }
+		
 		if ($this->variation_weight) {	// If we must add a delta on weight
 			$child->weight = ($child->weight ? $child->weight : 0) + $this->variation_weight;
 		}
