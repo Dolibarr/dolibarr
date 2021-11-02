@@ -60,6 +60,9 @@ require_once '../lib/mymodule.lib.php';
 // Translations
 $langs->loadLangs(array("admin", "mymodule@mymodule"));
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('mymodulesetup', 'globalsetup'));
+
 // Access control
 if (!$user->admin) {
 	accessforbidden();
@@ -74,21 +77,9 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'myobject';
 
-$arrayofparameters = array(
-	'MYMODULE_MYPARAM1'=>array('type'=>'string', 'css'=>'minwidth500' ,'enabled'=>1),
-	'MYMODULE_MYPARAM2'=>array('type'=>'textarea','enabled'=>1),
-	//'MYMODULE_MYPARAM3'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
-	//'MYMODULE_MYPARAM4'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),
-	//'MYMODULE_MYPARAM5'=>array('type'=>'yesno', 'enabled'=>1),
-	//'MYMODULE_MYPARAM5'=>array('type'=>'thirdparty_type', 'enabled'=>1),
-	//'MYMODULE_MYPARAM6'=>array('type'=>'securekey', 'enabled'=>1),
-	//'MYMODULE_MYPARAM7'=>array('type'=>'product', 'enabled'=>1),
-);
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 $formSetup = new formSetup($db);
-
-$formSetup->addItemsFromParamsArray($arrayofparameters);
 
 
 // Hôte
@@ -131,11 +122,10 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
  * Actions
  */
 
-if ((float) DOL_VERSION >= 6) {
-	// TODO Add save setup by formSetup
-	$arrayofparameters = $formSetup->exportItemsAsParamsArray();
-	include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
-	$formSetup->reloadConfs();
+if ((float) DOL_VERSION >= 15) {
+	if ($action == 'update') {
+		$formSetup->saveConfFromPost();
+	}
 }
 
 if ($action == 'updateMask') {
@@ -275,8 +265,9 @@ if ($action == 'edit') {
 	print '</form>';
 	print '<br>';
 } else {
-	if (!empty($arrayofparameters)) {
+	if (!empty($formSetup->params)) {
 		print $formSetup->generateOutput();
+		$setupnotempty++;
 
 		print '<div class="tabsAction">';
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';

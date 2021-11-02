@@ -30,6 +30,9 @@ class formSetup
 	/** @var formSetupItem[]  */
 	public $params = array();
 
+	/**
+	 * @var int
+	 */
 	public $setupNotEmpty = 0;
 
 	/** @var Translate */
@@ -37,6 +40,9 @@ class formSetup
 
 	/** @var Form */
 	public $form;
+
+	/** @var int */
+	protected $maxItemRank;
 
 	/**
 	 * Constructor
@@ -63,29 +69,81 @@ class formSetup
 	 */
 	public function generateOutput($editMode = false)
 	{
+		global $hookmanager, $action;
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
-		$out = '<input type="hidden" name="token" value="'.newToken().'">';
-		if ($editMode) {
-			$out .= '<input type="hidden" name="action" value="update">';
+		$parameters = array(
+			'editMode' => $editMode
+		);
+		$reshook = $hookmanager->executeHooks('formSetupBeforeGenerateOutput', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		}
 
-		$out.= '<table class="noborder centpercent">';
-		$out.= '<thead>';
-		$out.= '<tr class="liste_titre">';
-		$out.= '	<td class="titlefield">'.$this->langs->trans("Parameter").'</td>';
-		$out.= '	<td>'.$this->langs->trans("Value").'</td>';
-		$out.= '</tr>';
-		$out.= '</thead>';
+		if ($reshook > 0) {
+			return $hookmanager->resPrint;
+		} else {
+			$out = '<input type="hidden" name="token" value="' . newToken() . '">';
+			if ($editMode) {
+				$out .= '<input type="hidden" name="action" value="update">';
+			}
 
-		$out.= '<tbody>';
+			$out .= '<table class="noborder centpercent">';
+			$out .= '<thead>';
+			$out .= '<tr class="liste_titre">';
+			$out .= '	<td class="titlefield">' . $this->langs->trans("Parameter") . '</td>';
+			$out .= '	<td>' . $this->langs->trans("Value") . '</td>';
+			$out .= '</tr>';
+			$out .= '</thead>';
+
+			// Sort items before render
+			$this->sortingItems();
+
+			$out .= '<tbody>';
+			foreach ($this->params as $item) {
+				$out .= $this->generateLineOutput($item, $editMode);
+			}
+			$out .= '</tbody>';
+
+			$out .= '</table>';
+			return $out;
+		}
+	}
+
+	/**
+	 * @param bool $noMessageInUpdate display event message on errors and success
+	 * @return void|null
+	 */
+	public function saveConfFromPost($noMessageInUpdate = false)
+	{
+
+		if (empty($this->params)) {
+			return null;
+		}
+
+		$this->db->begin();
+		$error = 0;
 		foreach ($this->params as $item) {
-			$out.= $this->generateLineOutput($item, $editMode);
+			$res = $item->setValueFromPost();
+			if ($res > 0) {
+				$item->saveConfValue();
+			} elseif ($res < 0) {
+				$error++;
+				break;
+			}
 		}
-		$out.= '</tbody>';
 
-		$out.= '</table>';
-		return $out;
+		if (!$error) {
+			$this->db->commit();
+			if (empty($noMessageInUpdate)) {
+				setEventMessages($this->langs->trans("SetupSaved"), null);
+			}
+		} else {
+			$this->db->rollback();
+			if (empty($noMessageInUpdate)) {
+				setEventMessages($this->langs->trans("SetupNotSaved"), null, 'errors');
+			}
+		}
 	}
 
 	/**
@@ -209,24 +267,132 @@ class formSetup
 
 		if (!array($this->params)) { return false; }
 		foreach ($this->params as $item) {
-			$item->reloadConf();
+			$item->reloadValueFromConf();
 		}
 
 		return true;
 	}
 
 
-
 	/**
 	 * Create a new item
+	 * the tagret is useful with hooks : that allow externals modules to add setup items on good place
 	 * @param $confKey the conf key used in database
+	 * @param string		$targetItemKey    	target item used to place the new item beside
+	 * @param bool		$insertAfterTarget    	insert before or after target item ?
 	 * @return formSetupItem the new setup item created
 	 */
-	public function newItem($confKey)
+	public function newItem($confKey, $targetItemKey = false, $insertAfterTarget = false)
 	{
 		$item = new formSetupItem($confKey);
+
+		// set item rank if not defined as last item
+		if (empty($item->rank)) {
+			$item->rank = $this->getCurentItemMaxRank() + 1;
+			$this->setItemMaxRank($item->rank); // set new max rank if needed
+		}
+
+		// try to get rank from target column, this will override item->rank
+		if (!empty($targetItemKey)) {
+			if (isset($this->params[$targetItemKey])) {
+				$targetItem = $this->params[$targetItemKey];
+				$item->rank = $targetItem->rank; // $targetItem->rank will be increase after
+				if ($targetItem->rank >= 0 && $insertAfterTarget) {
+					$item->rank++;
+				}
+			}
+
+			// calc new rank for each item to make place for new item
+			foreach ($this->params as $fItem) {
+				if ($item->rank <= $fItem->rank) {
+					$fItem->rank = $fItem->rank + 1;
+					$this->setItemMaxRank($fItem->rank); // set new max rank if needed
+				}
+			}
+		}
+
 		$this->params[$item->confKey] = $item;
 		return $this->params[$item->confKey];
+	}
+
+	/**
+	 * Sort items according to rank
+	 * @return bool
+	 */
+	public function sortingItems()
+	{
+		// Sorting
+		return uasort($this->params, array($this, 'itemSort'));
+	}
+
+	/**
+	 * @param bool $cache To use cache or not
+	 * @return int
+	 */
+	public function getCurentItemMaxRank($cache = true)
+	{
+		if (empty($this->params)) {
+			return 0;
+		}
+
+		if ($cache && $this->maxItemRank > 0) {
+			return $this->maxItemRank;
+		}
+
+		$this->maxItemRank = 0;
+		foreach ($this->params as $item) {
+			$this->maxItemRank = max($this->maxItemRank, $item->rank);
+		}
+
+		return $this->maxItemRank;
+	}
+
+
+	/**
+	 * set new max rank if needed
+	 * @param int $rank the item rank
+	 * @return int|void
+	 */
+	public function setItemMaxRank($rank)
+	{
+		$this->maxItemRank = max($this->maxItemRank, $rank);
+	}
+
+
+	/**
+	 *   	get item position rank from item key
+	 *
+	 *   	@param	string		$itemKey    		the item key
+	 *      @return	int         rank on success and -1 on error
+	 */
+	public function getLineRank($itemKey)
+	{
+		if (!isset($this->params[$itemKey]->rank)) {
+			return -1;
+		}
+		return  $this->params[$itemKey]->rank;
+	}
+
+
+	/**
+	 *  uasort callback function to Sort params items
+	 *
+	 *  @param	formSetupItem	$a  formSetup item
+	 *  @param	formSetupItem	$b  formSetup item
+	 *  @return	int				Return compare result
+	 */
+	public function itemSort(formSetupItem $a, formSetupItem $b)
+	{
+		if (empty($a->rank)) {
+			$a->rank = 0;
+		}
+		if (empty($b->rank)) {
+			$b->rank = 0;
+		}
+		if ($a->rank == $b->rank) {
+			return 0;
+		}
+		return ($a->rank < $b->rank) ? -1 : 1;
 	}
 }
 
@@ -242,6 +408,9 @@ class formSetupItem
 
 	/** @var Translate */
 	public $langs;
+
+	/** @var int */
+	public $entity;
 
 	/** @var Form */
 	public $form;
@@ -266,6 +435,9 @@ class formSetupItem
 
 	/** @var bool|string set this var to override field output */
 	public $fieldOutputOverride = false;
+
+	/** @var int $rank  */
+	public $rank = 0;
 
 	/**
 	 * @var string $errors
@@ -294,6 +466,7 @@ class formSetupItem
 		$this->db = $db;
 		$this->form = new Form($this->db);
 		$this->langs = $langs;
+		$this->entity = $conf->entity;
 
 		$this->confKey = $confKey;
 		$this->fieldValue = $conf->global->{$this->confKey};
@@ -303,10 +476,56 @@ class formSetupItem
 	 * reload conf value from databases
 	 * @return null
 	 */
-	public function reloadConf()
+	public function reloadValueFromConf()
 	{
 		global $conf;
 		$this->fieldValue = $conf->global->{$this->confKey};
+	}
+
+
+	/**
+	 * Save const value based on htdocs/core/actions_setmoduleoptions.inc.php
+	 *	@return     int         			-1 if KO, 1 if OK
+	 */
+	public function saveConfValue()
+	{
+		// Modify constant only if key was posted (avoid resetting key to the null value)
+		if ($this->type != 'title') {
+			$result = dolibarr_set_const($this->db, $this->confKey, $this->fieldValue, 'chaine', 0, '', $this->entity);
+			if ($result < 0) {
+				return -1;
+			} else {
+				return 1;
+			}
+		}
+	}
+
+
+	/**
+	 * Save const value based on htdocs/core/actions_setmoduleoptions.inc.php
+	 *	@return     int         			-1 if KO, 0  nothing to do , 1 if OK
+	 */
+	public function setValueFromPost()
+	{
+		// Modify constant only if key was posted (avoid resetting key to the null value)
+		if ($this->type != 'title') {
+			if (preg_match('/category:/', $this->type)) {
+				if (GETPOST($this->confKey, 'int') == '-1') {
+					$val_const = '';
+				} else {
+					$val_const = GETPOST($this->confKey, 'int');
+				}
+			} else {
+				$val_const = GETPOST($this->confKey, 'alpha');
+			}
+
+			// TODO add value check with class validate
+			$this->fieldValue = $val_const;
+
+			return 1;
+		}
+
+		return 0;
 	}
 
 	/**
@@ -595,6 +814,7 @@ class formSetupItem
 
 		return $out;
 	}
+
 
 	/*
 	 * METHODS FOR SETTING DISPLAY TYPE
