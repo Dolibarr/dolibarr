@@ -490,12 +490,12 @@ class ProductCombination
 		$child->weight = $parent->weight;
 		// Only when Parent Status are updated
 		if ($parent->oldcopy && ($parent->status != $parent->oldcopy->status)) {
-            $child->status = $parent->status;
-        }
+			$child->status = $parent->status;
+		}
 		if ($parent->oldcopy && ($parent->status_buy != $parent->oldcopy->status_buy)) {
-            $child->status_buy = $parent->status_buy;
-        }
-		
+			$child->status_buy = $parent->status_buy;
+		}
+
 		if ($this->variation_weight) {	// If we must add a delta on weight
 			$child->weight = ($child->weight ? $child->weight : 0) + $this->variation_weight;
 		}
