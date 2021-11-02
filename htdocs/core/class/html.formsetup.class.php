@@ -28,7 +28,7 @@ class formSetup
 	public $db;
 
 	/** @var formSetupItem[]  */
-	public $params = array();
+	public $items = array();
 
 	/**
 	 * @var int
@@ -100,7 +100,7 @@ class formSetup
 			$this->sortingItems();
 
 			$out .= '<tbody>';
-			foreach ($this->params as $item) {
+			foreach ($this->items as $item) {
 				$out .= $this->generateLineOutput($item, $editMode);
 			}
 			$out .= '</tbody>';
@@ -117,13 +117,13 @@ class formSetup
 	public function saveConfFromPost($noMessageInUpdate = false)
 	{
 
-		if (empty($this->params)) {
+		if (empty($this->items)) {
 			return null;
 		}
 
 		$this->db->begin();
 		$error = 0;
-		foreach ($this->params as $item) {
+		foreach ($this->items as $item) {
 			$res = $item->setValueFromPost();
 			if ($res > 0) {
 				$item->saveConfValue();
@@ -234,7 +234,7 @@ class formSetup
 			$item->cssClass = $params['css'];
 		}
 
-		$this->params[$item->confKey] = $item;
+		$this->items[$item->confKey] = $item;
 
 		return true;
 	}
@@ -247,7 +247,7 @@ class formSetup
 	public function exportItemsAsParamsArray()
 	{
 		$arrayofparameters = array();
-		foreach ($this->params as $key => $item) {
+		foreach ($this->items as $key => $item) {
 			$arrayofparameters[$item->confKey] = array(
 				'type' => $item->getType(),
 				'enabled' => $item->enabled
@@ -265,8 +265,8 @@ class formSetup
 	public function reloadConfs()
 	{
 
-		if (!array($this->params)) { return false; }
-		foreach ($this->params as $item) {
+		if (!array($this->items)) { return false; }
+		foreach ($this->items as $item) {
 			$item->reloadValueFromConf();
 		}
 
@@ -294,8 +294,8 @@ class formSetup
 
 		// try to get rank from target column, this will override item->rank
 		if (!empty($targetItemKey)) {
-			if (isset($this->params[$targetItemKey])) {
-				$targetItem = $this->params[$targetItemKey];
+			if (isset($this->items[$targetItemKey])) {
+				$targetItem = $this->items[$targetItemKey];
 				$item->rank = $targetItem->rank; // $targetItem->rank will be increase after
 				if ($targetItem->rank >= 0 && $insertAfterTarget) {
 					$item->rank++;
@@ -303,7 +303,7 @@ class formSetup
 			}
 
 			// calc new rank for each item to make place for new item
-			foreach ($this->params as $fItem) {
+			foreach ($this->items as $fItem) {
 				if ($item->rank <= $fItem->rank) {
 					$fItem->rank = $fItem->rank + 1;
 					$this->setItemMaxRank($fItem->rank); // set new max rank if needed
@@ -311,8 +311,8 @@ class formSetup
 			}
 		}
 
-		$this->params[$item->confKey] = $item;
-		return $this->params[$item->confKey];
+		$this->items[$item->confKey] = $item;
+		return $this->items[$item->confKey];
 	}
 
 	/**
@@ -322,7 +322,7 @@ class formSetup
 	public function sortingItems()
 	{
 		// Sorting
-		return uasort($this->params, array($this, 'itemSort'));
+		return uasort($this->items, array($this, 'itemSort'));
 	}
 
 	/**
@@ -331,7 +331,7 @@ class formSetup
 	 */
 	public function getCurentItemMaxRank($cache = true)
 	{
-		if (empty($this->params)) {
+		if (empty($this->items)) {
 			return 0;
 		}
 
@@ -340,7 +340,7 @@ class formSetup
 		}
 
 		$this->maxItemRank = 0;
-		foreach ($this->params as $item) {
+		foreach ($this->items as $item) {
 			$this->maxItemRank = max($this->maxItemRank, $item->rank);
 		}
 
@@ -367,10 +367,10 @@ class formSetup
 	 */
 	public function getLineRank($itemKey)
 	{
-		if (!isset($this->params[$itemKey]->rank)) {
+		if (!isset($this->items[$itemKey]->rank)) {
 			return -1;
 		}
-		return  $this->params[$itemKey]->rank;
+		return  $this->items[$itemKey]->rank;
 	}
 
 

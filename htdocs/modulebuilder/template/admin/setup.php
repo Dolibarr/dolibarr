@@ -265,7 +265,7 @@ if ($action == 'edit') {
 	print '</form>';
 	print '<br>';
 } else {
-	if (!empty($formSetup->params)) {
+	if (!empty($formSetup->items)) {
 		print $formSetup->generateOutput();
 		$setupnotempty++;
 
