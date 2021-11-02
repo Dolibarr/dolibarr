@@ -1622,7 +1622,7 @@ class Products extends DolibarrApi
 				$productModel->fetch((int) $combination->fk_product_child);
 				$productModel->load_stock();
 
-				if(DolibarrApiAccess::$user->rights->stock->lire){ // full warehouse info needs full stock reading perms
+				if (DolibarrApiAccess::$user->rights->stock->lire) { // full warehouse info needs full stock reading perms
 					$combinations[$key]->stock_warehouse = $this->_cleanObjectDatas($productModel)->stock_warehouse;
 				}
 			}
@@ -1949,14 +1949,14 @@ class Products extends DolibarrApi
 		unset($object->supplierprices);	// Mut use another API to get them
 
 		// remove stock info if no stock read rights
-		if(!DolibarrApiAccess::$user->rights->stock->lire){
+		if (!DolibarrApiAccess::$user->rights->stock->lire) {
 			unset($object->stock_reel);
 			unset($object->stock_theorique);
 			unset($object->stock_warehouse);
 		}
 
 		// remove stock availability info if no stock read rights or availability read rights
-		if((!DolibarrApiAccess::$user->rights->stock->availability->read) && (!DolibarrApiAccess::$user->rights->stock->lire)){
+		if ((!DolibarrApiAccess::$user->rights->stock->availability->read) && (!DolibarrApiAccess::$user->rights->stock->lire)) {
 			unset($object->stock_real_available);
 			unset($object->stock_virtual_available);
 		}

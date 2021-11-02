@@ -166,7 +166,6 @@ class modStock extends DolibarrModules
 		$this->rights[7][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[7][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 
-		
 		if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 			$this->rights[8][0] = 1014;
 			$this->rights[8][1] = 'inventoryValidatePermission'; // Permission label

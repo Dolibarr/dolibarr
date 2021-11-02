@@ -2997,7 +2997,7 @@ class Form
 
 					unset($tmpproduct);
 				}
-			}else if (!empty($user->rights->stock->availability->read)) {
+			} elseif (!empty($user->rights->stock->availability->read)) {
 				if ($objp->stock > 0) {
 					$opt .= ' - '.$langs->trans("Stock").': '.$langs->trans("Available");
 					$outval .= ' - <span class="product_line_stock_ok">'.$langs->transnoentities("Stock").': '.$langs->trans("Available");
@@ -3408,7 +3408,7 @@ class Form
 
 							unset($tmpproduct);
 						}
-					}else if (!empty($user->rights->stock->availability->read)) {
+					} elseif (!empty($user->rights->stock->availability->read)) {
 						if ($objp->stock > 0) {
 							$outvallabel .= ' - '.$langs->trans("Stock").': '.$langs->trans("Available");
 							$optlabel .= ' - <span class="product_line_stock_ok">'.$langs->transnoentities("Stock").': '.$langs->trans("Available");
