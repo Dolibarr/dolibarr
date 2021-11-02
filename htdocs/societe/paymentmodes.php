@@ -1282,8 +1282,9 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	}
 
 	// List of bank accounts
-
-	$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create');
+	if ($permissiontoaddupdatepaymentinformation) {
+		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"] . '?socid=' . $object->id . '&amp;action=create');
+	}
 
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, 'bank');
 
