@@ -292,3 +292,5 @@ InvoiceLateMinus15Days = Invoices late
 InvoiceNotLate = To be collected < 15 days
 InvoiceNotLate15Days = To be collected in 15 days
 InvoiceNotLate30Days = To be collected in 30 days
+ConfirmPreselectAccount=Preselect accountancy code
+ConfirmPreselectAccountQuestion=Are you sure you want to preselect the %s selected lines with this accountancy code ?
