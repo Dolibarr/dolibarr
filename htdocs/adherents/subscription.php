@@ -943,7 +943,7 @@ if ($rowid > 0) {
 		}
 		if (!$datefrom) {
 			$datefrom = $object->datevalid;
-			if ($object->datefin > 0 && dol_now() > dol_time_plus_duree(dol_time_plus_duree($object->datefin, 2 * $defaultdelay, $defaultdelayunit), -1, 'd') {
+			if ($object->datefin > 0 && dol_now() > dol_time_plus_duree(dol_time_plus_duree($object->datefin, 2 * $defaultdelay, $defaultdelayunit), -1, 'd')) {
 				$datefrom = dol_time_plus_duree($object->datefin, 1, 'd');	
 			} else {
 				$datefrom = dol_get_first_day(dol_print_date(time(), "%Y"));
