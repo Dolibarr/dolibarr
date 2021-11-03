@@ -2721,8 +2721,12 @@ if ($action == 'create') {
 		}
 		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
 			$facusing = new FactureFournisseur($db);
-			$facusing->fetch($object->fk_facture_source);
-			print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';
+			if ($object->fk_facture_source > 0) {
+				$facusing->fetch($object->fk_facture_source);
+				print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';
+			} else {
+				print ' ('.$langs->transnoentities("NoInvoiceToCorrect").')';
+			}
 		}
 
 		$facidavoir = $object->getListIdAvoirFromInvoice();
