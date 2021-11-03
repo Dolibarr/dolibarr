@@ -2117,7 +2117,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 
 	$parameters=array('morehtmlref'=>$morehtmlref);
-	$reshook = $hookmanager->executeHooks('formDolBanner', $parameters, $object, '');
+	$reshook = $hookmanager->executeHooks('formDolBanner', $parameters, $object, $action);
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	} elseif (empty($reshook)) {
