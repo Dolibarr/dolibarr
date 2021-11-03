@@ -122,6 +122,21 @@ class Ldap
 	 */
 	public $result;
 
+	/**
+	 * No Ldap synchronization
+	 */
+	const SYNCHRO_NONE = 0;
+
+	/**
+	 * Dolibarr to Ldap synchronization
+	 */
+	const SYNCHRO_DOLIBARR_TO_LDAP = 1;
+
+	/**
+	 * Ldap to Dolibarr synchronization
+	 */
+	const SYNCHRO_LDAP_TO_DOLIBARR = 2;
+
 
 	/**
 	 *  Constructor
@@ -230,7 +245,7 @@ class Ldap
 							dol_syslog(get_class($this)."::connect_bind failed to start tls", LOG_WARNING);
 							$this->error = 'ldap_start_tls Failed to start TLS '.ldap_errno($this->connection).' '.ldap_error($this->connection);
 							$connected = 0;
-							$this->close();
+							$this->unbind();
 						}
 					}
 
@@ -279,7 +294,7 @@ class Ldap
 				}
 
 				if (!$connected) {
-					$this->close();
+					$this->unbind();
 				}
 			}
 		}

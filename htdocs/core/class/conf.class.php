@@ -775,8 +775,8 @@ class Conf
 				$this->contrat->services->expires->warning_delay = (isset($this->global->MAIN_DELAY_RUNNING_SERVICES) ? $this->global->MAIN_DELAY_RUNNING_SERVICES : 0) * 86400;
 			}
 			if (isset($this->commande)) {
-				$this->bank->rappro					= new stdClass();
-				$this->bank->cheque					= new stdClass();
+				$this->bank->rappro	= new stdClass();
+				$this->bank->cheque	= new stdClass();
 				$this->bank->rappro->warning_delay = (isset($this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE) ? $this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE : 0) * 86400;
 				$this->bank->cheque->warning_delay = (isset($this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT) ? $this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT : 0) * 86400;
 			}
@@ -843,6 +843,23 @@ class Conf
 				if (defined('MAIN_ANTIVIRUS_PARAM')) {
 					$this->global->MAIN_ANTIVIRUS_PARAM = constant('MAIN_ANTIVIRUS_PARAM');
 				}
+			}
+
+			// For backward compatibility
+			if (!empty($this->global->LDAP_SYNCHRO_ACTIVE)) {
+				if ($this->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') {
+					$this->global->LDAP_SYNCHRO_ACTIVE = 1;
+				} else if ($this->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr') {
+					$this->global->LDAP_SYNCHRO_ACTIVE = 2;
+				}
+			}
+			// For backward compatibility
+			if (!empty($this->global->LDAP_MEMBER_ACTIVE) && $this->global->LDAP_MEMBER_ACTIVE == 'ldap2dolibarr') {
+				$this->global->LDAP_MEMBER_ACTIVE = 2;
+			}
+			// For backward compatibility
+			if (!empty($this->global->LDAP_MEMBER_TYPE_ACTIVE) && $this->global->LDAP_MEMBER_TYPE_ACTIVE == 'ldap2dolibarr') {
+				$this->global->LDAP_MEMBER_TYPE_ACTIVE = 2;
 			}
 
 			if (!empty($this->global->MAIN_TZUSERINPUTKEY)) {

@@ -27,3 +27,5 @@ ErrorFailedToReadLDAP=Failed to read LDAP database. Check LDAP module setup and 
 PasswordOfUserInLDAP=Password of user in LDAP
 LDAPPasswordHashType=Password hash type
 LDAPPasswordHashTypeExample=Type of password hash used on the server
+SupportedForLDAPExportScriptOnly=Only supported by an ldap export script
+SupportedForLDAPImportScriptOnly=Only supported by an ldap import script
