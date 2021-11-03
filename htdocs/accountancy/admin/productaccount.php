@@ -198,7 +198,7 @@ if ($action == 'update') {
 							$nb_exists = $db->num_rows($resql_exists);
 							if ($nb_exists <= 0) {
 								// insert
-								$sql  = "INSERT INTO " . MAIN_DB_PREFIX . "product_perentity (fk_product, entity, '" . $db->escape($accountancy_field_name) . "')";
+								$sql  = "INSERT INTO " . MAIN_DB_PREFIX . "product_perentity (fk_product, entity, " . $db->escape($accountancy_field_name) . ")";
 								$sql .= " VALUES (" . ((int) $productid) . ", " . ((int) $conf->entity) . ", '" . $db->escape($accounting->account_number) . "')";
 							} else {
 								$obj_exists = $db->fetch_object($resql_exists);

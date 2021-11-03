@@ -2084,7 +2084,7 @@ class CommandeFournisseur extends CommonOrder
 
 		// Test we can delete
 		$this->fetchObjectLinked(null, 'order_supplier');
-		if (!empty($this->linkedObjects)) {
+		if (!empty($this->linkedObjects) && array_key_exists('reception', $this->linkedObjects)) {
 			foreach ($this->linkedObjects['reception'] as $element) {
 				if ($element->statut >= 0) {
 					$this->errors[] = $langs->trans('ReceptionExist');
