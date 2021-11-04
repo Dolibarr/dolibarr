@@ -254,7 +254,10 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 	if (!$error) {
 		$result = $object->update($user);
 		if ($result > 0) {
-			$action = 'view';
+			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
+			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
+			header("Location: ".$urltogo);
+			exit;
 		} else {
 			$error++;
 			// Creation KO
