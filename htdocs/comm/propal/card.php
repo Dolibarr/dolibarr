@@ -113,8 +113,8 @@ $hookmanager->initHooks(array('propalcard', 'globalcard'));
 $usercanread = $user->rights->propal->lire;
 $usercancreate = $user->rights->propal->creer;
 $usercandelete = $user->rights->propal->supprimer;
+$usercanclose = $user->rights->propal->cloturer;
 
-$usercanclose = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->propal->propal_advance->close)));
 $usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->propal->propal_advance->validate)));
 $usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->propal->propal_advance->send);
 
