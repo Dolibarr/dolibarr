@@ -308,7 +308,7 @@ abstract class DoliDB implements Database
 	 * Note : This method executes a given SQL query and retrieves the first row of results as an object. It should only be used with SELECT queries
 	 * Dont add LIMIT to your query, it will be added by this method
 	 * @param string $sql the sql query string
-	 * @return bool| object
+	 * @return bool|int|object    false on failure, 0 on empty, object on success
 	 */
 	public function getRow($sql)
 	{
@@ -317,7 +317,13 @@ abstract class DoliDB implements Database
 		$res = $this->query($sql);
 		if ($res)
 		{
-			return $this->fetch_object($res);
+			$obj = $this->fetch_object($res);
+			if(!$obj){
+				return 0;
+			}
+			else{
+				return $obj;
+			}
 		}
 
 		return false;
