@@ -20,7 +20,7 @@
 
 /**
  *       \file       htdocs/core/bookmarks_page.php
- *       \brief      File to return a page with the complete list of bookmarks (all search input fields)
+ *       \brief      File to return a page with the complete list of bookmarks
  */
 
 //if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -45,7 +45,7 @@ if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL by the main.inc.php
 }
 
-$langs->load("main");
+$langs->loadLangs(array("bookmarks"));
 
 $right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
 $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
@@ -57,7 +57,7 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 
 $title = $langs->trans("Bookmarks");
 
-// URL http://mydolibarr/core/search_page?dol_use_jmobile=1 can be used for tests
+// URL http://mydolibarr/core/bookmarks_page?dol_use_jmobile=1 can be used for tests
 $head = '<!-- Bookmarks access -->'."\n";
 $arrayofjs = array();
 $arrayofcss = array();
@@ -69,8 +69,6 @@ print '<body>'."\n";
 print '<div>';
 //print '<br>';
 
-$nbofsearch = 0;
-
 // Instantiate hooks of thirdparty module
 $hookmanager->initHooks(array('bookmarks'));
 
@@ -78,32 +76,43 @@ $hookmanager->initHooks(array('bookmarks'));
 $bookmarkList = '';
 $searchForm = '';
 
-$arrayresult = array();
-//include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';
 
-
-
-// Menu with list of bookmarks
-$sql = "SELECT rowid, title, url, target FROM ".MAIN_DB_PREFIX."bookmark";
-$sql .= " WHERE (fk_user = ".((int) $user->id)." OR fk_user is NULL OR fk_user = 0)";
-$sql .= " AND entity IN (".getEntity('bookmarks').")";
-$sql .= " ORDER BY position";
-if ($resql = $db->query($sql)) {
-	$bookmarkList = '<div id="dropdown-bookmarks-list" class="start">';
-	$i = 0;
-	while ((empty($conf->global->BOOKMARKS_SHOW_IN_MENU) || $i < $conf->global->BOOKMARKS_SHOW_IN_MENU) && $obj = $db->fetch_object($resql)) {
-		$bookmarkList .= '<a class="dropdown-item bookmark-item'.(strpos($obj->url, 'http') === 0 ? ' bookmark-item-external' : '').'" id="bookmark-item-'.$obj->rowid.'" data-id="'.$obj->rowid.'" '.($obj->target == 1 ? ' target="_blank"' : '').' href="'.dol_escape_htmltag($obj->url).'" >';
-		$bookmarkList .= dol_escape_htmltag($obj->title);
-		$bookmarkList .= '</a>';
-		$i++;
-	}
-	$bookmarkList .= '</div>';
-
-	$searchForm .= '<input name="bookmark" id="top-bookmark-search-input" class="dropdown-search-input" placeholder="'.$langs->trans('Bookmarks').'" autocomplete="off" >';
+if (empty($conf->bookmarks->enabled)) {
+	$langs->load("admin");
+	$bookmarkList .= '<br><span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Bookmarks")).'</span>';
+	$bookmarkList .= '<br><br>';
 } else {
-	dol_print_error($db);
-}
+	// Menu with list of bookmarks
+	$sql = "SELECT rowid, title, url, target FROM ".MAIN_DB_PREFIX."bookmark";
+	$sql .= " WHERE (fk_user = ".((int) $user->id)." OR fk_user is NULL OR fk_user = 0)";
+	$sql .= " AND entity IN (".getEntity('bookmarks').")";
+	$sql .= " ORDER BY position";
+	if ($resql = $db->query($sql)) {
+		$bookmarkList = '<div id="dropdown-bookmarks-list" class="start">';
+		$i = 0;
+		while ((empty($conf->global->BOOKMARKS_SHOW_IN_MENU) || $i < $conf->global->BOOKMARKS_SHOW_IN_MENU) && $obj = $db->fetch_object($resql)) {
+			$bookmarkList .= '<a class="dropdown-item bookmark-item'.(strpos($obj->url, 'http') === 0 ? ' bookmark-item-external' : '').'" id="bookmark-item-'.$obj->rowid.'" data-id="'.$obj->rowid.'" '.($obj->target == 1 ? ' target="_blank"' : '').' href="'.dol_escape_htmltag($obj->url).'" >';
+			$bookmarkList .= dol_escape_htmltag($obj->title);
+			$bookmarkList .= '</a>';
+			$i++;
+		}
+		if ($i == 0) {
+			$bookmarkList .= '<br><span class="opacitymedium">'.$langs->trans("NoBookmarks").'</span>';
+			$bookmarkList .= '<br><br>';
 
+			$newcardbutton = '';
+			$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bookmarks/card.php?action=create&backtopage='.urlencode(DOL_URL_ROOT.'/bookmarks/list.php'), '', !empty($user->rights->bookmark->creer));
+
+			$bookmarkList .= '<center>'.$newcardbutton.'</center>';
+		}
+		$bookmarkList .= '</div>';
+
+
+		$searchForm .= '<input name="bookmark" id="top-bookmark-search-input" class="dropdown-search-input" placeholder="'.$langs->trans('Bookmarks').'" autocomplete="off" >';
+	} else {
+		dol_print_error($db);
+	}
+}
 
 // Execute hook printBookmarks
 $parameters = array('bookmarks'=>$bookmarkList);

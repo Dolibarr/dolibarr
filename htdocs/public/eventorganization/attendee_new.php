@@ -268,6 +268,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		} else {
 			// Need to create a confattendee
 			$confattendee->date_creation = dol_now();
+			$confattendee->date_subscription = dol_now();
 			$confattendee->email = $email;
 			$confattendee->fk_project = $project->id;
 			$confattendee->fk_actioncomm = $id;

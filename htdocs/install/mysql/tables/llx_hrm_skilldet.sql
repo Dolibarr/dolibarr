@@ -17,12 +17,10 @@
 
 
 CREATE TABLE llx_hrm_skilldet(
-	-- BEGIN MODULEBUILDER FIELDS
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	description text, 
-	fk_user_creat integer NOT NULL, 
-	fk_user_modif integer, 
-	fk_skill integer NOT NULL, 
-	rank integer
-	-- END MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	description text,
+	fk_user_creat integer NOT NULL,
+	fk_user_modif integer,
+	fk_skill integer NOT NULL,
+	rankorder integer
 ) ENGINE=innodb;
