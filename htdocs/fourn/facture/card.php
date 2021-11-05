@@ -1,4 +1,4 @@
-<?php
+<?phpf
 /* Copyright (C) 2002-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2020	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
@@ -2721,8 +2721,12 @@ if ($action == 'create') {
 		}
 		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
 			$facusing = new FactureFournisseur($db);
-			$facusing->fetch($object->fk_facture_source);
-			print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';
+			if ($object->fk_facture_source > 0) {
+				$facusing->fetch($object->fk_facture_source);
+				print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';
+			} else {
+				print ' ('.$langs->transnoentities("CorrectedInvoiceNotFound").')';
+			}
 		}
 
 		$facidavoir = $object->getListIdAvoirFromInvoice();
