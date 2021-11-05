@@ -2563,11 +2563,11 @@ if ($action == 'create') {
 		}
 
 		// Confirmation set paid
-		if ($action == 'paid' && $resteapayer <= 0) {
+		if ($action == 'paid' && ($resteapayer <= 0 || (!empty($conf->global->SUPPLIER_INVOICE_CAN_FORCE_PAID_WHEN_NO_PAIEMENTS) && $resteapayer == $object->total_ttc))) {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $object->ref), 'confirm_paid', '', 0, 1);
 		}
 
-		if ($action == 'paid' && $resteapayer > 0) {
+		if ($action == 'paid' && $resteapayer > 0 && (empty($conf->global->SUPPLIER_INVOICE_CAN_FORCE_PAID_WHEN_NO_PAIEMENTS) || $resteapayer != $object->total_ttc)) {
 			$close = array();
 			// Code
 			$i = 0;
@@ -3500,14 +3500,17 @@ if ($action == 'create') {
 				}
 
 				// Classify paid
-				if (($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0 && (($object->type != FactureFournisseur::TYPE_CREDIT_NOTE && $object->type != FactureFournisseur::TYPE_DEPOSIT && $resteapayer <= 0) || ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $resteapayer >= 0)))
-					|| ($object->type == FactureFournisseur::TYPE_DEPOSIT && $object->paye == 0 && $object->total_ttc > 0 && $resteapayer == 0 && empty($discount->id))
+				if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0 && (
+						($object->type != FactureFournisseur::TYPE_CREDIT_NOTE && $object->type != FactureFournisseur::TYPE_DEPOSIT && ($resteapayer <= 0 || (!empty($conf->global->SUPPLIER_INVOICE_CAN_FORCE_PAID_WHEN_NO_PAIEMENTS) && $object->total_ttc == $resteapayer))) ||
+						($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $resteapayer >= 0) ||
+						($object->type == FactureFournisseur::TYPE_DEPOSIT && $object->total_ttc > 0 && ($resteapayer == 0 || (!empty($conf->global->SUPPLIER_INVOICE_CAN_FORCE_PAID_WHEN_NO_PAIEMENTS) && $object->total_ttc == $resteapayer)))
+					)
 				) {
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a>';
 				}
 
 				// Classify 'closed not completely paid' (possible if validated and not yet filed paid)
-				if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0 && $resteapayer > 0) {
+				if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0 && $resteapayer > 0 && (empty($conf->global->SUPPLIER_INVOICE_CAN_FORCE_PAID_WHEN_NO_PAIEMENTS) || $object->total_ttc != $resteapayer)) {
 					if ($totalpaye > 0 || $totalcreditnotes > 0) {
 						// If one payment or one credit note was linked to this invoice
 						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaidPartially').'</a>';
