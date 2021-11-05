@@ -312,17 +312,15 @@ abstract class DoliDB implements Database
 	 */
 	public function getRow($sql)
 	{
-		$sql .= ' LIMIT 1;';
+		$sql .= ' LIMIT 1';
 
 		$res = $this->query($sql);
-		if ($res)
-		{
+		if ($res) {
 			$obj = $this->fetch_object($res);
-			if(!$obj){
-				return 0;
-			}
-			else{
+			if ($obj) {
 				return $obj;
+			} else {
+				return 0;
 			}
 		}
 
