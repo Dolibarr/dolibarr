@@ -1,4 +1,4 @@
-<?php
+<?phpf
 /* Copyright (C) 2002-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2020	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
@@ -2725,7 +2725,7 @@ if ($action == 'create') {
 				$facusing->fetch($object->fk_facture_source);
 				print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';
 			} else {
-				print ' ('.$langs->transnoentities("CorrectInvoiceNotFound").')';
+				print ' ('.$langs->transnoentities("CorrectedInvoiceNotFound").')';
 			}
 		}
 
