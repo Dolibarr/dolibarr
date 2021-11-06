@@ -232,7 +232,7 @@ if (empty($reshook)) {
 	// Actions to send emails
 	$triggersendname = 'PARTNERSHIP_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_PARTNERSHIP_TO';
-	$trackid = 'partnership'.$object->id;
+	$trackid = 'pship'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	if (!empty($id) && !empty(GETPOST('confirm'))) {
@@ -664,7 +664,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$modelmail = 'partnership_send';
 	$defaulttopic = 'InformationMessage';
 	$diroutput = $conf->partnership->dir_output;
-	$trackid = 'partnership'.$object->id;
+	$trackid = 'pship'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
