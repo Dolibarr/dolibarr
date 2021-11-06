@@ -1042,6 +1042,16 @@ if (!defined('NOLOGIN')) {
 
 		//Required if advanced permissions are used with MAIN_USE_ADVANCED_PERMS
 		if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+			if (empty($user->rights->user->user_advance)) {
+				$user->rights->user->user_advance = new stdClass(); // To avoid warnings
+			}
+			if (empty($user->rights->user->self_advance)) {
+				$user->rights->user->self_advance = new stdClass(); // To avoid warnings
+			}
+			if (empty($user->rights->user->group_advance)) {
+				$user->rights->user->group_advance = new stdClass(); // To avoid warnings
+			}
+
 			$user->rights->user->user_advance->readperms = 1;
 			$user->rights->user->user_advance->write = 1;
 			$user->rights->user->self_advance->readperms = 1;
