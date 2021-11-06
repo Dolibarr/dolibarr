@@ -349,7 +349,7 @@ if ($object->id) {
 	$permissiontoadd = $user->rights->holiday->write;
 	$permtoedit = $user->rights->holiday->write;
 	$param = '&id='.$object->id;
-	$relativepathwithnofile = $modulepart.'/'.dol_sanitizeFileName($object->ref).'/';
+	$relativepathwithnofile = dol_sanitizeFileName($object->ref).'/';
 	$savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

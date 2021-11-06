@@ -118,6 +118,7 @@ $permissiontoadd = $user->rights->expensereport->creer; // Used by the include o
 $upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
 $projectRequired = $conf->projet->enabled && ! empty($conf->global->EXPENSEREPORT_PROJECT_IS_REQUIRED);
+$fileRequired = !empty($conf->global->EXPENSEREPORT_FILE_IS_REQUIRED);
 
 if ($object->id > 0) {
 	// Check current user can read this expense report
@@ -1155,6 +1156,12 @@ if (empty($reshook)) {
 		if ($projectRequired && $fk_project <= 0) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Project")), null, 'errors');
+		}
+
+		// If no file associated
+		if ($fileRequired && $fk_ecm_files == 0) {
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
 		}
 
 		if (!$error) {
