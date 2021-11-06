@@ -589,7 +589,28 @@ if ($result) {
 		}
 		//var_dump($return);
 
-		if (!empty($code_sell_p)) {
+		// Level 3: Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
+		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
+			if (!empty($objp->company_code_sell)) {
+				$objp->code_sell_t = $objp->company_code_sell;
+				$objp->aarowid_suggest = $objp->aarowid_thirdparty;
+				$suggestedaccountingaccountfor = '';
+			}
+		}
+
+		// Manage Deposit
+		if (!empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT)) {
+			if ($objp->description == "(DEPOSIT)" || $objp->ftype == $facture_static::TYPE_DEPOSIT) {
+				$accountdeposittoventilated = new AccountingAccount($db);
+				$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
+				$objp->code_sell_l = $accountdeposittoventilated->ref;
+				$objp->code_sell_p = '';
+				$objp->code_sell_t = '';
+				$objp->aarowid_suggest = $accountdeposittoventilated->rowid;
+			}
+		}
+
+		if (!empty($objp->code_sell_p)) {
 			// Value was defined previously
 		} else {
 			$code_sell_p_notset = 'color:orange';
