@@ -3355,7 +3355,8 @@ if ($module == 'initmodule') {
 					}
 				} else {
 					print '<tr><td>';
-					print '<span class="fa fa-file-o"></span> '.$langs->trans("NoTrigger");
+					print '<span class="fa fa-file-o"></span> '.$langs->trans("TriggersFile");
+					print ' : <span class="opacitymedium">'.$langs->trans("FileNotYetGenerated").'</span>';
 					print '<a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=inittrigger&format=php">'.img_picto('Generate', 'generate', 'class="paddingleft"').'</a></td>';
 					print '<td></td>';
 					print '</tr>';
