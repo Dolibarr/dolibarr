@@ -319,7 +319,7 @@ if ($sall) {
 }
 if ($search_user > 0) {
 	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='contrat' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".((int) $search_user);
-}
+}tdoverflowmax200
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -600,11 +600,11 @@ if (!empty($arrayfields['s.email']['checked'])) {
 }
 // Town
 if (!empty($arrayfields['s.town']['checked'])) {
-	print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_town" value="'.$search_town.'"></td>';
+	print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_town" value="'.dol_escape_htmltag($search_town).'"></td>';
 }
 // Zip
 if (!empty($arrayfields['s.zip']['checked'])) {
-	print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_zip" value="'.$search_zip.'"></td>';
+	print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_zip" value="'.dol_escape_htmltag($search_zip).'"></td>';
 }
 // State
 if (!empty($arrayfields['state.nom']['checked'])) {
@@ -797,7 +797,7 @@ while ($i < min($num, $limit)) {
 
 	// Ref thirdparty
 	if (!empty($arrayfields['c.ref_customer']['checked'])) {
-		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($contracttmp->getFormatedCustomerRef($obj->ref_customer)).'">'.$contracttmp->getFormatedCustomerRef($obj->ref_customer).'</td>';
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag(dol_string_nohtmltag($contracttmp->getFormatedCustomerRef($obj->ref_customer))).'">'.$contracttmp->getFormatedCustomerRef($obj->ref_customer).'</td>';
 	}
 	if (!empty($arrayfields['c.ref_supplier']['checked'])) {
 		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->ref_supplier).'">'.dol_escape_htmltag($obj->ref_supplier).'</td>';
