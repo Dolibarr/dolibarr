@@ -413,6 +413,9 @@ if ($result) {
 	if ($search_ref) {
 		$param .= '&search_ref='.urlencode($search_ref);
 	}
+	if ($search_label) {
+		$param .= '&search_label='.urlencode($search_label);
+	}
 	if ($search_desc) {
 		$param .= '&search_desc='.urlencode($search_desc);
 	}
@@ -491,7 +494,7 @@ if ($result) {
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
-	print '</tr>';
+	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "l.rowid", "", $param, '', $sortfield, $sortorder);
@@ -539,7 +542,7 @@ if ($result) {
 		$thirdpartystatic->email = $objp->email;
 		$thirdpartystatic->country_code = $objp->country_code;
 		$thirdpartystatic->tva_intra = $objp->tva_intra;
-		$thirdpartystatic->code_compta = $objp->company_code_sell;
+		$thirdpartystatic->code_compta_company = $objp->company_code_sell;
 
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;
@@ -558,7 +561,7 @@ if ($result) {
 		$facture_static->ref = $objp->ref;
 		$facture_static->id = $objp->facid;
 		$facture_static->type = $objp->ftype;
-		$facture_static->date = $objp->datef;
+		$facture_static->date = $db->jdate($objp->datef);
 
 		$facture_static_det->id = $objp->rowid;
 		$facture_static_det->total_ht = $objp->total_ht;
@@ -589,7 +592,28 @@ if ($result) {
 		}
 		//var_dump($return);
 
-		if (!empty($code_sell_p)) {
+		// Level 3: Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
+		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
+			if (!empty($objp->company_code_sell)) {
+				$objp->code_sell_t = $objp->company_code_sell;
+				$objp->aarowid_suggest = $objp->aarowid_thirdparty;
+				$suggestedaccountingaccountfor = '';
+			}
+		}
+
+		// Manage Deposit
+		if (!empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT)) {
+			if ($objp->description == "(DEPOSIT)" || $objp->ftype == $facture_static::TYPE_DEPOSIT) {
+				$accountdeposittoventilated = new AccountingAccount($db);
+				$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
+				$objp->code_sell_l = $accountdeposittoventilated->ref;
+				$objp->code_sell_p = '';
+				$objp->code_sell_t = '';
+				$objp->aarowid_suggest = $accountdeposittoventilated->rowid;
+			}
+		}
+
+		if (!empty($objp->code_sell_p)) {
 			// Value was defined previously
 		} else {
 			$code_sell_p_notset = 'color:orange';
@@ -613,7 +637,7 @@ if ($result) {
 		// Ref Invoice
 		print '<td class="nowraponall">'.$facture_static->getNomUrl(1).'</td>';
 
-		print '<td class="center">'.dol_print_date($db->jdate($facture_static->date), 'day').'</td>';
+		print '<td class="center">'.dol_print_date($facture_static->date, 'day').'</td>';
 
 		// Ref Product
 		print '<td class="tdoverflowmax150">';
@@ -707,7 +731,7 @@ if ($result) {
 
 		// Column with checkbox
 		print '<td class="center">';
-		if (!empty($suggestedid) && $suggestedaccountingaccountfor<>'') {
+		if (!empty($suggestedid) && $suggestedaccountingaccountfor <> '') {
 			$ischecked=1;
 		} elseif ($suggestedaccountingaccountfor == 'eecwithoutvatnumber') {
 			$ischecked = 0;

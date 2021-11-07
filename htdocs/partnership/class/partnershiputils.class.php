@@ -101,7 +101,7 @@ class PartnershipUtils
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_type as dty on (dty.rowid = d.fk_adherent_type)";
 		$sql .= " WHERE fk_member > 0";
 		$sql .= " AND (d.datefin < '".$this->db->idate($datetotest)."' AND dty.subscription = 1)";
-		$sql .= " AND p.status = ".((int) $partnership::STATUS_ACCEPTED); // Only accepted not yet canceled
+		$sql .= " AND p.status = ".((int) $partnership::STATUS_APPROVED); // Only accepted not yet canceled
 		$sql .= $this->db->order('d.rowid', 'ASC');
 		// Limit is managed into loop later
 
@@ -262,7 +262,7 @@ class PartnershipUtils
 
 		$sql .= " WHERE 1 = 1";
 		$sql .= " AND p.".$fk_partner." > 0";
-		$sql .= " AND p.status = ".((int) $partnership::STATUS_ACCEPTED); // Only accepted not yet canceled
+		$sql .= " AND p.status = ".((int) $partnership::STATUS_APPROVED); // Only accepted not yet canceled
 		$sql .= " AND (p.last_check_backlink IS NULL OR p.last_check_backlink <= '".$this->db->idate($now - 7 * 24 * 3600)."')"; // Every week, check that website contains a link to dolibarr.
 		$sql .= $this->db->order('p.rowid', 'ASC');
 		// Limit is managed into loop later

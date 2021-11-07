@@ -83,8 +83,8 @@ if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
 	$appli .= " ".DOL_VERSION;
 }
 
-if (!empty($conf->global->MAIN_FEATURES_LEVEL)) {
-	$appli .= "<br>".$langs->trans("LevelOfFeature").': '.$conf->global->MAIN_FEATURES_LEVEL;
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL')) {
+	$appli .= "<br>".$langs->trans("LevelOfFeature").': '.getDolGlobalInt('MAIN_FEATURES_LEVEL');
 }
 
 $logouttext = '';
