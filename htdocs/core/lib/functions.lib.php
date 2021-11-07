@@ -144,10 +144,10 @@ function getEntity($element, $shared = 1, $currentobject = null)
 	$reshook = $hookmanager->executeHooks('hookGetEntity', $parameters, $currentobject, $action); // Note that $action and $object may have been modified by some hooks
 
 	if (is_numeric($reshook)) {
-		if ($reshook == 0 && !empty($hookmanager->resprints)) {
-			$out .= ','.$hookmanager->resprints; // add
+		if ($reshook == 0 && !empty($hookmanager->resPrint)) {
+			$out .= ','.$hookmanager->resPrint; // add
 		} elseif ($reshook == 1) {
-			$out = $hookmanager->resprints; // replace
+			$out = $hookmanager->resPrint; // replace
 		}
 	}
 
