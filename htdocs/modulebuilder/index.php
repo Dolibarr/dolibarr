@@ -1724,8 +1724,8 @@ print load_fiche_titre($text, '', 'title_setup');
 
 print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModuleBuilderDesc", 'https://wiki.dolibarr.org/index.php/Module_development#Create_your_module').'</span><br>';
 
-print $textforlistofdirs;
-print '<br>';
+//print $textforlistofdirs;
+//print '<br>';
 //var_dump($listofmodules);
 
 
@@ -1750,7 +1750,7 @@ if ($message) {
 }
 
 //print $langs->trans("ModuleBuilderDesc3", count($listofmodules), $FILEFLAG).'<br>';
-$infomodulesfound = '<div style="padding: 12px 9px 12px">'.$form->textwithpicto('<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc3", count($listofmodules)).'</span>', $langs->trans("ModuleBuilderDesc4", $FILEFLAG)).'</div>';
+$infomodulesfound = '<div style="padding: 12px 9px 12px">'.$form->textwithpicto('<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc3", count($listofmodules)).'</span>', $langs->trans("ModuleBuilderDesc4", $FILEFLAG).'<br>'.$textforlistofdirs).'</div>';
 
 
 // Load module descriptor
