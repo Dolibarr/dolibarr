@@ -82,6 +82,8 @@ INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private,
 
 ALTER TABLE llx_c_partnership_type ADD UNIQUE INDEX uk_c_partnership_type(entity, code);
 
+ALTER TABLE llx_partnership ADD COLUMN fk_type integer DEFAULT 0 NOT NULL;
+
 ALTER TABLE llx_c_holiday_types CHANGE COLUMN newByMonth newbymonth double(8,5) DEFAULT 0 NOT NULL;
 
 ALTER TABLE llx_product ADD COLUMN mandatory_period tinyint NULL DEFAULT 0;

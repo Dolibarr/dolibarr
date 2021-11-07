@@ -2107,7 +2107,7 @@ if ($id) {
 					if ($iserasable) {
 						print '<td class="center">';
 						if ($user->admin) {
-							print '<a href="'.$url.'action=delete&token='.newToken().'">'.img_delete().'</a>';
+							print '<a class="reposition" href="'.$url.'action=delete&token='.newToken().'">'.img_delete().'</a>';
 						}
 						//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
 						print '</td>';

@@ -262,6 +262,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 
 		// Delete some files related to Object (because the previous dolCopyDir has copied everything)
 		dol_delete_file($destdir.'/myobject_card.php');
+		dol_delete_file($destdir.'/myobject_contact.php');
 		dol_delete_file($destdir.'/myobject_note.php');
 		dol_delete_file($destdir.'/myobject_document.php');
 		dol_delete_file($destdir.'/myobject_agenda.php');
@@ -337,6 +338,14 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 		setEventMessages('ModuleInitialized', null);
 		$module = $modulename;
 		$modulename = '';
+
+		clearstatcache(true);
+		if (function_exists('opcache_invalidate')) {
+			opcache_reset();	// remove the include cache hell !
+		}
+
+		header("Location: ".$_SERVER["PHP_SELF"].'?module='.$modulename);
+		exit;
 	}
 }
 
@@ -953,7 +962,7 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 			if ($notnull) {
 				$string .= ", 'notnull'=>".$notnull;
 			}
-			if ($fieldname == 'ref') {
+			if ($fieldname == 'ref' || $fieldname == 'code') {
 				$string .= ", 'showoncombobox'=>1";
 			}
 			$string .= ", 'position'=>".$position;
@@ -1417,6 +1426,14 @@ if ($dirins && $action == 'confirm_deletemodule') {
 
 		if ($result > 0) {
 			setEventMessages($langs->trans("DirWasRemoved", $modulelowercase), null);
+
+			clearstatcache(true);
+			if (function_exists('opcache_invalidate')) {
+				opcache_reset();	// remove the include cache hell !
+			}
+
+			header("Location: ".$_SERVER["PHP_SELF"].'?module=deletemodule');
+			exit;
 		} else {
 			setEventMessages($langs->trans("PurgeNothingToDelete"), null, 'warnings');
 		}
@@ -1757,6 +1774,10 @@ if (!empty($module) && $module != 'initmodule' && $module != 'deletemodule') {
 		$loadclasserrormessage = $e->getMessage()."<br>\n";
 		$loadclasserrormessage .= 'File: '.$e->getFile()."<br>\n";
 		$loadclasserrormessage .= 'Line: '.$e->getLine()."<br>\n";
+	} catch (Exception $e) {
+		$loadclasserrormessage = $e->getMessage()."<br>\n";
+		$loadclasserrormessage .= 'File: '.$e->getFile()."<br>\n";
+		$loadclasserrormessage .= 'Line: '.$e->getLine()."<br>\n";
 	}
 
 	if (class_exists($class)) {
@@ -1771,6 +1792,7 @@ if (!empty($module) && $module != 'initmodule' && $module != 'deletemodule') {
 			$error++;
 		}
 		$langs->load("errors");
+		print '<!-- ErrorFailedToLoadModuleDescriptorForXXX -->';
 		print img_warning('').' '.$langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module).'<br>';
 		print $loadclasserrormessage;
 	}
@@ -2423,8 +2445,8 @@ if ($module == 'initmodule') {
 				print '<span class="opacitymedium">'.$langs->trans("EnterNameOfObjectDesc").'</span><br><br>';
 
 				print '<input type="text" name="objectname" maxlength="64" value="'.dol_escape_htmltag(GETPOST('objectname', 'alpha') ? GETPOST('objectname', 'alpha') : $modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("ObjectKey")).'"><br>';
-				print '<input type="checkbox" name="includerefgeneration" value="includerefgeneration"> '.$form->textwithpicto($langs->trans("IncludeRefGeneration"), $langs->trans("IncludeRefGenerationHelp")).'<br>';
-				print '<input type="checkbox" name="includedocgeneration" value="includedocgeneration"> '.$form->textwithpicto($langs->trans("IncludeDocGeneration"), $langs->trans("IncludeDocGenerationHelp")).'<br>';
+				print '<input type="checkbox" name="includerefgeneration" id="includerefgeneration" value="includerefgeneration"> <label for="includerefgeneration">'.$form->textwithpicto($langs->trans("IncludeRefGeneration"), $langs->trans("IncludeRefGenerationHelp")).'</label><br>';
+				print '<input type="checkbox" name="includedocgeneration" id="includedocgeneration" value="includedocgeneration"> <label for="includedocgeneration">'.$form->textwithpicto($langs->trans("IncludeDocGeneration"), $langs->trans("IncludeDocGenerationHelp")).'</label><br>';
 				print '<input type="submit" class="button smallpaddingimp" name="create" value="'.dol_escape_htmltag($langs->trans("Generate")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
 				print '<br>';
 				print '<br>';
@@ -2633,6 +2655,7 @@ if ($module == 'initmodule') {
 
 						print '<br><br><br>';
 
+						clearstatcache(true);
 						if (function_exists('opcache_invalidate')) {
 							opcache_invalidate($dirread.'/'.$pathtoclass, true); // remove the include cache hell !
 						}

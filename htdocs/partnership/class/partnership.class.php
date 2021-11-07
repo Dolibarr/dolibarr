@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+/* Copyright (C) 2017 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2021 NextGestion         <contact@nextgestion.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+
 
 /**
  * Class for Partnership
@@ -105,7 +106,7 @@ class Partnership extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 15, 'index' => 1),
-		//'fk_type' => array('type' => 'integer:PartnershipType:partnership/class/partnershiptype.class.php', 'label' => 'Type', 'default' => 1, 'enabled' => 1, 'visible' => 1, 'position' => 20),
+		'fk_type' => array('type' => 'integer:PartnershipType:partnership/class/partnership_type.class.php', 'label' => 'Type', 'enabled' => 1, 'visible' => 1, 'position' => 20),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
@@ -366,14 +367,15 @@ class Partnership extends CommonObject
 			return -1;
 		}
 
-		$sql = 'SELECT p.rowid, p.ref, p.fk_soc, p.fk_member, p.status';
+		$sql = 'SELECT p.rowid, p.ref, p.fk_type, p.fk_soc, p.fk_member, p.status';
 		$sql .= ', p.entity, p.date_partnership_start, p.date_partnership_end, p.date_creation';
 		$sql .= ', p.fk_user_creat, p.tms, p.fk_user_modif, p.fk_user_modif';
 		$sql .= ', p.note_private, p.note_public';
 		$sql .= ', p.last_main_doc, p.count_last_url_check_error, p.last_check_backlink, p.reason_decline_or_cancel';
 		$sql .= ', p.import_key, p.model_pdf';
-
+		$sql .= ', pt.code as type_code, pt.label as type_label';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'partnership as p';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_partnership_type as pt ON p.fk_type = pt.rowid';
 
 		if ($id) {
 			$sql .= " WHERE p.rowid=".((int) $id);
@@ -400,8 +402,12 @@ class Partnership extends CommonObject
 			if ($obj) {
 				$this->id 							= $obj->rowid;
 				$this->entity 						= $obj->entity;
-				$this->rowid 						= $obj->rowid;
 				$this->ref 							= $obj->ref;
+
+				$this->fk_type						= $obj->fk_type;
+				$this->type_code					= $obj->type_code;
+				$this->type_label					= $obj->type_label;
+
 				$this->fk_soc 						= $obj->fk_soc;
 				$this->fk_member 					= $obj->fk_member;
 				$this->status 						= $obj->status;
