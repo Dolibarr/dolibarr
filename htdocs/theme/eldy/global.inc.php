@@ -1086,7 +1086,7 @@ select.flat.selectlimit {
 	max-width: 62px;
 }
 .selectlimit, .marginrightonly {
-	margin-right: 10px !important;
+	margin-<?php echo $right; ?>: 10px !important;
 }
 .marginleftonly {
 	margin-<?php echo $left; ?>: 10px !important;
