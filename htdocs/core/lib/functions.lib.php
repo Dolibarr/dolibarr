@@ -106,7 +106,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  */
 function getEntity($element, $shared = 1, $currentobject = null)
 {
-	global $conf, $mc, $hookmanager, $object, $action;
+	global $conf, $mc, $hookmanager, $object, $action, $db;
 
 	if (! is_object($hookmanager)) {
 		$hookmanager = new HookManager($db);
