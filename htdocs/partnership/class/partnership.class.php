@@ -67,7 +67,7 @@ class Partnership extends CommonObject
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;		// Validate (no more draft)
-	const STATUS_ACCEPTED = 2;		// Approved
+	const STATUS_APPROVED = 2;		// Approved
 	const STATUS_REFUSED = 3;		// Refused
 	const STATUS_CANCELED = 9;
 
@@ -707,13 +707,13 @@ class Partnership extends CommonObject
 	}
 
 	/**
-	 *	Accept object
+	 *	Approve object
 	 *
 	 *	@param		User	$user     		User making status change
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
 	 */
-	public function accept($user, $notrigger = 0)
+	public function approve($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -722,7 +722,7 @@ class Partnership extends CommonObject
 		$error = 0;
 
 		// Protection
-		if ($this->status == self::STATUS_ACCEPTED) {
+		if ($this->status == self::STATUS_APPROVED) {
 			dol_syslog(get_class($this)."::accept action abandonned: already acceptd", LOG_WARNING);
 			return 0;
 		}
@@ -751,7 +751,7 @@ class Partnership extends CommonObject
 			// Accept
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET ref = '".$this->db->escape($num)."',";
-			$sql .= " status = ".self::STATUS_ACCEPTED;
+			$sql .= " status = ".self::STATUS_APPROVED;
 			// if (!empty($this->fields['date_validation'])) {
 			// 	$sql .= ", date_validation = '".$this->db->idate($now)."'";
 			// }
@@ -818,7 +818,7 @@ class Partnership extends CommonObject
 		// Set new ref and current status
 		if (!$error) {
 			$this->ref = $num;
-			$this->status = self::STATUS_ACCEPTED;
+			$this->status = self::STATUS_APPROVED;
 		}
 
 		if (!$error) {
@@ -893,7 +893,7 @@ class Partnership extends CommonObject
 	public function cancel($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_ACCEPTED) {
+		if ($this->status != self::STATUS_APPROVED) {
 			return 0;
 		}
 
@@ -928,7 +928,7 @@ class Partnership extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_ACCEPTED, $notrigger, 'PARTNERSHIP_REOPEN');
+		return $this->setStatusCommon($user, self::STATUS_APPROVED, $notrigger, 'PARTNERSHIP_REOPEN');
 	}
 
 	/**
@@ -1073,18 +1073,18 @@ class Partnership extends CommonObject
 			//$langs->load("partnership");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
-			$this->labelStatus[self::STATUS_ACCEPTED] = $langs->transnoentitiesnoconv('Accepted');
+			$this->labelStatus[self::STATUS_APPROVED] = $langs->transnoentitiesnoconv('Approved');
 			$this->labelStatus[self::STATUS_REFUSED] = $langs->transnoentitiesnoconv('Refused');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
-			$this->labelStatusShort[self::STATUS_ACCEPTED] = $langs->transnoentitiesnoconv('Accepted');
+			$this->labelStatusShort[self::STATUS_APPROVED] = $langs->transnoentitiesnoconv('Approved');
 			$this->labelStatusShort[self::STATUS_REFUSED] = $langs->transnoentitiesnoconv('Refused');
 			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
 		}
 
 		$statusType = 'status'.$status;
-		if ($status == self::STATUS_ACCEPTED) {
+		if ($status == self::STATUS_APPROVED) {
 			$statusType = 'status4';
 		}
 		if ($status == self::STATUS_REFUSED) {
