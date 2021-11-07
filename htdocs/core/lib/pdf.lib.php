@@ -979,7 +979,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 	$outputlangs->load("dict");
 	$line = '';
-	$reg = aray();
+	$reg = array();
 
 	$dims = $pdf->getPageDimensions();
 
