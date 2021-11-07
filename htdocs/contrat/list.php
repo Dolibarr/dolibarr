@@ -492,7 +492,7 @@ $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $url = DOL_URL_ROOT.'/contrat/card.php?action=create';
 if (!empty($socid)) {
-	$url .= '&socid='.$socid;
+	$url .= '&socid='.((int) $socid);
 }
 $newcardbutton = dolGetButtonTitle($langs->trans('NewContractSubscription'), '', 'fa fa-plus-circle', $url, '', $user->rights->contrat->creer);
 
@@ -795,11 +795,12 @@ while ($i < min($num, $limit)) {
 		print '</td>';
 	}
 
+	// Ref thirdparty
 	if (!empty($arrayfields['c.ref_customer']['checked'])) {
-		print '<td>'.$contracttmp->getFormatedCustomerRef($obj->ref_customer).'</td>';
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($contracttmp->getFormatedCustomerRef($obj->ref_customer)).'">'.$contracttmp->getFormatedCustomerRef($obj->ref_customer).'</td>';
 	}
 	if (!empty($arrayfields['c.ref_supplier']['checked'])) {
-		print '<td>'.$obj->ref_supplier.'</td>';
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->ref_supplier).'">'.dol_escape_htmltag($obj->ref_supplier).'</td>';
 	}
 	if (!empty($arrayfields['s.nom']['checked'])) {
 		print '<td class="tdoverflowmax150">';
@@ -810,7 +811,7 @@ while ($i < min($num, $limit)) {
 		print '</td>';
 	}
 	if (!empty($arrayfields['s.email']['checked'])) {
-		print '<td>'.$obj->email.'</td>';
+		print '<td>'.dol_print_email($obj->email).'</td>';
 	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) {
