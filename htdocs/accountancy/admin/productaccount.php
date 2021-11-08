@@ -438,7 +438,7 @@ if ($result) {
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
-	if($massaction !== 'set_default_account') {
+	if ($massaction !== 'set_default_account') {
 		$arrayofmassactions = array(
 			'changeaccount'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Save")
 			,'set_default_account'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ConfirmPreselectAccount")
@@ -452,14 +452,12 @@ if ($result) {
 	$texte = $langs->trans("ListOfProductsServices");
 	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
-	if($massaction == 'set_default_account') {
-
+	if ($massaction == 'set_default_account') {
 		$formquestion[]=array('type' => 'other',
 			'name' => 'set_default_account',
 			'label' => $langs->trans("AccountancyCode"),
 			'value' => $form->select_account('', 'default_account', 1, array(), 0, 0, 'maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone'));
 		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmPreselectAccount"), $langs->trans("ConfirmPreselectAccountQuestion", count($chk_prod)), "confirm_set_default_account", $formquestion, 1, 0, 200, 500, 1);
-
 	}
 
 	print '<div class="div-table-responsive">';
@@ -738,9 +736,9 @@ if ($result) {
 			print '</td>';
 		}
 
-		if(!empty($chk_prod)) {
+		if (!empty($chk_prod)) {
 			$ischecked = 0;
-			if(in_array($product_static->id, $chk_prod)) {
+			if (in_array($product_static->id, $chk_prod)) {
 				$ischecked=true;
 			}
 		}

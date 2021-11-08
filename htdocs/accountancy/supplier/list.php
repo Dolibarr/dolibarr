@@ -442,7 +442,7 @@ if ($result) {
 	//if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	//if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 
-	if($massaction !== 'set_default_account') {
+	if ($massaction !== 'set_default_account') {
 		$massactionbutton = $form->selectMassAction('ventil', $arrayofmassactions, 1);
 	}
 
@@ -459,14 +459,12 @@ if ($result) {
 
 	print_barre_liste($langs->trans("InvoiceLines"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
-	if($massaction == 'set_default_account') {
-
+	if ($massaction == 'set_default_account') {
 		$formquestion[]=array('type' => 'other',
 			'name' => 'set_default_account',
 			'label' => $langs->trans("AccountancyCode"),
 			'value' => $formaccounting->select_account('', 'default_account', 1, array(), 0, 0, 'maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone'));
 		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmPreselectAccount"), $langs->trans("ConfirmPreselectAccountQuestion", count($toselect)), "confirm_set_default_account", $formquestion, 1, 0, 200, 500, 1);
-
 	}
 
 	print '<span class="opacitymedium">'.$langs->trans("DescVentilTodoCustomer").'</span></br><br>';
@@ -740,12 +738,11 @@ if ($result) {
 			$ischecked = 0;
 		}
 
-		if(!empty($toselect)) {
+		if (!empty($toselect)) {
 			$ischecked = 0;
-			if(in_array($objp->rowid."_".$i, $toselect)) {
+			if (in_array($objp->rowid."_".$i, $toselect)) {
 				$ischecked=1;
 			}
-
 		}
 
 		print '<input type="checkbox" class="flat checkforselect checkforselect'.$facturefourn_static_det->id.'" name="toselect[]" value="'.$facturefourn_static_det->id."_".$i.'"'.($ischecked ? "checked" : "").'/>';
