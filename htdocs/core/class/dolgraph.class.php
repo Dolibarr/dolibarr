@@ -1431,6 +1431,14 @@ class DolGraph
 							$bordercolor = $this->bordercolor[$i];
 						}
 					}
+
+					// For negative colors, we invert border and background
+					$tmp = str_replace('#', '', $color);
+					if (strpos($tmp, '-') !== false) {
+						$foundnegativecolor++;
+						$bordercolor = str_replace('-', '', $color);
+						$color = '#FFFFFF'; // If $val is '-123'
+					}
 				}
 				if ($i > 0) {
 					$this->stringtoshow .= ', ';
