@@ -1551,6 +1551,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 
 	// Now we convert \n into br
 	if (dol_textishtml($libelleproduitservice)) {
+		$libelleproduitservice = str_replace("\n", '<br/>', $libelleproduitservice);
 		$libelleproduitservice = preg_replace('/__N__/', '<br>', $libelleproduitservice);
 	} else {
 		$libelleproduitservice = preg_replace('/__N__/', "\n", $libelleproduitservice);
@@ -2229,6 +2230,7 @@ function pdf_getTotalQty($object, $type, $outputlangs)
 
 	$total = 0;
 	$nblines = count($object->lines);
+	$hidedetails = false;
 
 	// Loop on each lines
 	for ($i = 0; $i < $nblines; $i++) {

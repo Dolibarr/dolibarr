@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
+BoldRefAndPeriodOnPDF=Bold product ref on PDF
+BoldLabelOnPDF=Bold product label on PDF
 Foundation=Foundation
 Version=Version
 Publisher=Publisher

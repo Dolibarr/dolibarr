@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
+BoldRefAndPeriodOnPDF=Mettre en gras la référence et la période dans les PDF
+BoldLabelOnPDF=Mettre en gras le label des produits dans les PDF
 Foundation=Association
 Version=Version
 Publisher=Editeur
