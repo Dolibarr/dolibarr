@@ -168,8 +168,8 @@ if ($action == 'update') {
 
 	if (GETPOSTISSET('DOC_SHOW_FIRST_SALES_REP')) {
 		dolibarr_set_const($db, "DOC_SHOW_FIRST_SALES_REP", GETPOST('DOC_SHOW_FIRST_SALES_REP', 'alpha'), 'chaine', 0, '', $conf->entity);
-  }
-  
+	}
+
 	if (GETPOSTISSET('PDF_USE_A')) {
 		dolibarr_set_const($db, "PDF_USE_A", GETPOST('PDF_USE_A', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
