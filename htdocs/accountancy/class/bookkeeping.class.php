@@ -888,9 +888,11 @@ class BookKeeping extends CommonObject
 		// Affichage par compte comptable
 		if (!empty($option)) {
 			$sql .= ' AND t.subledger_account IS NOT NULL';
-			$sql .= ' ORDER BY t.subledger_account ASC';
+			$sortfield = 't.subledger_account'.($sortfield ? ','.$sortfield : '');
+			$sortorder = 'ASC'.($sortfield ? ','.$sortfield : '');
 		} else {
-			$sql .= ' ORDER BY t.numero_compte ASC';
+			$sortfield = 't.numero_compte'.($sortfield ? ','.$sortfield : '');
+			$sortorder = 'ASC'.($sortorder ? ','.$sortorder : '');
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -935,7 +937,6 @@ class BookKeeping extends CommonObject
 				$line->piece_num = $obj->piece_num;
 				$line->date_creation = $this->db->jdate($obj->date_creation);
 				$line->date_export = $this->db->jdate($obj->date_export);
-				$line->date_validation = $this->db->jdate($obj->date_validated);
 				$line->date_validation = $this->db->jdate($obj->date_validation);
 
 				$this->lines[] = $line;
@@ -1088,7 +1089,6 @@ class BookKeeping extends CommonObject
 				$line->date_lim_reglement = $this->db->jdate($obj->date_lim_reglement);
 				$line->date_modification = $this->db->jdate($obj->date_modification);
 				$line->date_export = $this->db->jdate($obj->date_export);
-				$line->date_validation = $this->db->jdate($obj->date_validated);
 				$line->date_validation = $this->db->jdate($obj->date_validation);
 
 				$this->lines[] = $line;
@@ -1750,7 +1750,6 @@ class BookKeeping extends CommonObject
 				$line->date_creation = $obj->date_creation;
 				$line->date_modification = $obj->date_modification;
 				$line->date_export = $obj->date_export;
-				$line->date_validation = $obj->date_validated;
 				$line->date_validation = $obj->date_validation;
 
 				$this->linesmvt[] = $line;
@@ -1815,7 +1814,6 @@ class BookKeeping extends CommonObject
 				$line->sens = $obj->sens;
 				$line->code_journal = $obj->code_journal;
 				$line->piece_num = $obj->piece_num;
-				$line->date_validation = $obj->date_validated;
 				$line->date_validation = $obj->date_validation;
 
 				$this->linesexport[] = $line;

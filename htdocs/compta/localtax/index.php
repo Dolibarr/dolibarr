@@ -568,8 +568,7 @@ print '</tr>';
 print '</table>';
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
-
+print '</div><div class="fichetwothirdright">';
 
 
 /*

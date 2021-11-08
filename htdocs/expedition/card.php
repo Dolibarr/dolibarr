@@ -122,7 +122,7 @@ if ($user->socid) {
 $result = restrictedArea($user, 'expedition', $object->id, '');
 
 $permissiondellink = $user->rights->expedition->delivery->creer; // Used by the include of actions_dellink.inc.php
-//var_dump($object->lines[0]->detail_batch);
+$permissiontoadd = $user->rights->expedition->creer;
 
 
 /*
@@ -137,15 +137,21 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($cancel) {
-		$action = '';
-		$object->fetch($id); // show shipment also after canceling modification
+		if ($origin && $origin_id > 0) {
+			if ($origin == 'commande') {
+				header("Location: ".DOL_URL_ROOT.'/expedition/shipment.php?id='.((int) $origin_id));
+				exit;
+			}
+		} else {
+			$action = '';
+			$object->fetch($id); // show shipment also after canceling modification
+		}
 	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
 
 	// Actions to build doc
 	$upload_dir = $conf->expedition->dir_output.'/sending';
-	$permissiontoadd = $user->rights->expedition->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Reopen
@@ -1049,7 +1055,7 @@ if ($action == 'create') {
 				print '<td class="center">'.$langs->trans("QtyShipped").'</td>';
 				print '<td class="center">'.$langs->trans("QtyToShip");
 				if (empty($conf->productbatch->enabled)) {
-					print '<br><a href="#" id="autofill" class="opacitymedium link cursor cursorpointer">'.img_picto($langs->trans("Autofill"), 'autofill', 'class="paddingrightonly"').$langs->trans("Fill").'</a>';
+					print '<br><a href="#" id="autofill" class="opacitymedium link cursor cursorpointer">'.img_picto($langs->trans("Autofill"), 'autofill', 'class="paddingrightonly"').'</a>';
 					print ' / ';
 				} else {
 					print '<br>';
@@ -1153,10 +1159,16 @@ if ($action == 'create') {
 						print "</td>\n";
 					}
 
+					// unit of order
+					$unit_order = '';
+					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+						$unit_order = measuringUnitString($line->fk_unit);
+					}
+
 					// Qty
 					print '<td class="center">'.$line->qty;
 					print '<input name="qtyasked'.$indiceAsked.'" id="qtyasked'.$indiceAsked.'" type="hidden" value="'.$line->qty.'">';
-					print '</td>';
+					print ''.$unit_order.'</td>';
 					$qtyProdCom = $line->qty;
 
 					// Qty already shipped
@@ -1164,7 +1176,7 @@ if ($action == 'create') {
 					$quantityDelivered = $object->expeditions[$line->id];
 					print $quantityDelivered;
 					print '<input name="qtydelivered'.$indiceAsked.'" id="qtydelivered'.$indiceAsked.'" type="hidden" value="'.$quantityDelivered.'">';
-					print '</td>';
+					print ''.$unit_order.'</td>';
 
 					// Qty to ship
 					$quantityAsked = $line->qty;
@@ -1690,7 +1702,7 @@ if ($action == 'create') {
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if (0) {    // Do not change on shipment
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 				}
 				if ($action == 'classify') {
 					// $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -1710,9 +1722,10 @@ if ($action == 'create') {
 				if (!empty($objectsrc->fk_project)) {
 					$proj = new Project($db);
 					$proj->fetch($objectsrc->fk_project);
-					$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objectsrc->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-					$morehtmlref .= $proj->ref;
-					$morehtmlref .= '</a>';
+					$morehtmlref .= ' : '.$proj->getNomUrl(1);
+					if ($proj->title) {
+						$morehtmlref .= ' - '.$proj->title;
+					}
 				} else {
 					$morehtmlref .= '';
 				}
@@ -1760,7 +1773,7 @@ if ($action == 'create') {
 		print '</td>';
 
 		if ($action != 'editdate_livraison') {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td colspan="2">';
@@ -1880,7 +1893,6 @@ if ($action == 'create') {
 
 		print '</div>';
 		print '<div class="fichehalfright">';
-		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border centpercent tableforfield">';
@@ -1892,7 +1904,7 @@ if ($action == 'create') {
 		print '</td>';
 
 		if ($action != 'editshipping_method_id') {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&amp;id='.$object->id.'">'.img_edit($langs->trans('SetSendingMethod'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetSendingMethod'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td colspan="2">';
@@ -1929,7 +1941,7 @@ if ($action == 'create') {
 			print $langs->trans('IncotermLabel');
 			print '<td><td class="right">';
 			if ($user->rights->expedition->creer) {
-				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
 			} else {
 				print '&nbsp;';
 			}
@@ -1951,7 +1963,6 @@ if ($action == 'create') {
 
 		print "</table>";
 
-		print '</div>';
 		print '</div>';
 		print '</div>';
 
@@ -2049,7 +2060,7 @@ if ($action == 'create') {
 		// Get list of products already sent for same source object into $alreadysent
 		$alreadysent = array();
 		if ($origin && $origin_id > 0) {
-			$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end";
+			$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.fk_unit, obj.date_start, obj.date_end";
 			$sql .= ", ed.rowid as shipmentline_id, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_origin_line, ed.fk_entrepot";
 			$sql .= ", e.rowid as shipment_id, e.ref as shipment_ref, e.date_creation, e.date_valid, e.date_delivery, e.date_expedition";
 			//if ($conf->delivery_note->enabled) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received";
@@ -2169,8 +2180,13 @@ if ($action == 'create') {
 					print "</td>\n";
 				}
 
+				$unit_order = '';
+				if ($conf->global->PRODUCT_USE_UNITS) {
+					$unit_order = measuringUnitString($lines[$i]->fk_unit);
+				}
+
 				// Qty ordered
-				print '<td class="center linecolqty">'.$lines[$i]->qty_asked.'</td>';
+				print '<td class="center linecolqty">'.$lines[$i]->qty_asked.' '.$unit_order.'</td>';
 
 				// Qty in other shipments (with shipment and warehouse used)
 				if ($origin && $origin_id > 0) {
@@ -2234,7 +2250,7 @@ if ($action == 'create') {
 								print '<!-- case edit 2 -->';
 								print '<tr>';
 								// Qty to ship or shipped
-								print '<td><input class="qtyl" name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'"></td>';
+								print '<td><input class="qtyl" name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'">'.$unit_order.'</td>';
 								// Warehouse source
 								print '<td>'.$formproduct->selectWarehouses($lines[$i]->entrepot_id, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1).'</td>';
 								// Batch number managment
@@ -2245,7 +2261,7 @@ if ($action == 'create') {
 								foreach ($lines[$i]->details_entrepot as $detail_entrepot) {
 									print '<tr>';
 									// Qty to ship or shipped
-									print '<td><input class="qtyl" name="qtyl'.$detail_entrepot->line_id.'" id="qtyl'.$detail_entrepot->line_id.'" type="text" size="4" value="'.$detail_entrepot->qty_shipped.'"></td>';
+									print '<td><input class="qtyl" name="qtyl'.$detail_entrepot->line_id.'" id="qtyl'.$detail_entrepot->line_id.'" type="text" size="4" value="'.$detail_entrepot->qty_shipped.'">'.$unit_order.'</td>';
 									// Warehouse source
 									print '<td>'.$formproduct->selectWarehouses($detail_entrepot->entrepot_id, 'entl'.$detail_entrepot->line_id, '', 1, 0, $lines[$i]->fk_product, '', 1).'</td>';
 									// Batch number managment
@@ -2260,7 +2276,7 @@ if ($action == 'create') {
 							print '<!-- case edit 5 -->';
 							print '<tr>';
 							// Qty to ship or shipped
-							print '<td><input class="qtyl" name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'"></td>';
+							print '<td><input class="qtyl" name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'">'.$unit_order.'</td>';
 							// Warehouse source
 							print '<td></td>';
 							// Batch number managment
@@ -2282,7 +2298,7 @@ if ($action == 'create') {
 					print '</table></td>';
 				} else {
 					// Qty to ship or shipped
-					print '<td class="linecolqtytoship center">'.$lines[$i]->qty_shipped.'</td>';
+					print '<td class="linecolqtytoship center">'.$lines[$i]->qty_shipped.' '.$unit_order.'</td>';
 
 					// Warehouse source
 					if (!empty($conf->stock->enabled)) {
@@ -2363,10 +2379,10 @@ if ($action == 'create') {
 				} elseif ($object->statut == Expedition::STATUS_DRAFT) {
 					// edit-delete buttons
 					print '<td class="linecoledit center">';
-					print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;lineid='.$lines[$i]->id.'">'.img_edit().'</a>';
+					print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&lineid='.$lines[$i]->id.'">'.img_edit().'</a>';
 					print '</td>';
 					print '<td class="linecoldelete" width="10">';
-					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deleteline&amp;token='.newToken().'&amp;lineid='.$lines[$i]->id.'">'.img_delete().'</a>';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteline&token='.newToken().'&lineid='.$lines[$i]->id.'">'.img_delete().'</a>';
 					print '</td>';
 
 					// Display lines extrafields
@@ -2442,9 +2458,9 @@ if ($action == 'create') {
 			// 0=draft, 1=validated, 2=billed, we miss a status "delivered" (only available on order)
 			if ($object->statut == Expedition::STATUS_CLOSED && $user->rights->expedition->creer) {
 				if (!empty($conf->facture->enabled) && !empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ClassifyUnbilled").'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("ClassifyUnbilled").'</a>';
 				} else {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("ReOpen").'</a>';
 				}
 			}
 
@@ -2482,20 +2498,20 @@ if ($action == 'create') {
 						$label = "ClassifyBilled";
 						$paramaction = 'classifybilled';
 					}
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action='.$paramaction.'">'.$langs->trans($label).'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action='.$paramaction.'&token='.newToken().'">'.$langs->trans($label).'</a>';
 				}
 			}
 
 			// Cancel
 			if ($object->statut == Expedition::STATUS_VALIDATED) {
 				if ($user->rights->expedition->supprimer) {
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel">'.$langs->trans("Cancel").'</a>';
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'">'.$langs->trans("Cancel").'</a>';
 				}
 			}
 
 			// Delete
 			if ($user->rights->expedition->supprimer) {
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>';
 			}
 		}
 
@@ -2526,14 +2542,14 @@ if ($action == 'create') {
 		$somethingshown = $form->showLinkedObjectBlock($object, '');
 
 
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		print '</div><div class="fichehalfright">';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
 		$somethingshown = $formactions->showactions($object, 'shipping', $socid, 1);
 
-		print '</div></div></div>';
+		print '</div></div>';
 	}
 
 
@@ -2548,7 +2564,7 @@ if ($action == 'create') {
 
 	// Presend form
 	$modelmail = 'shipping_send';
-	$defaulttopic = 'SendShippingRef';
+	$defaulttopic = $langs->trans('SendShippingRef');
 	$diroutput = $conf->expedition->dir_output.'/sending';
 	$trackid = 'shi'.$object->id;
 

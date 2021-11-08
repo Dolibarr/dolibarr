@@ -369,10 +369,10 @@ class Establishment extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_OPEN] = $langs->trans('Open');
-			$this->labelStatus[self::STATUS_CLOSED] = $langs->trans('Closed');
-			$this->labelStatusShort[self::STATUS_OPEN] = $langs->trans('Open');
-			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->trans('Closed');
+			$this->labelStatus[self::STATUS_OPEN] = $langs->transnoentitiesnoconv('Open');
+			$this->labelStatus[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Closed');
+			$this->labelStatusShort[self::STATUS_OPEN] = $langs->transnoentitiesnoconv('Open');
+			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Closed');
 		}
 
 		$statusType = 'status'.$status;

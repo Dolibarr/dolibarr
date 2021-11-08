@@ -739,7 +739,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " fk_product=".(isset($this->fk_product) ? $this->fk_product : "null").",";
 		$sql .= " fk_soc=".(isset($this->fk_soc) ? $this->fk_soc : "null").",";
-		$sql .= " ref_customer=".(isset($this->ref_customer) ? "'" . $this->db->escape($this->ref_customer) . "'" : "null").",";
+		$sql .= " ref_customer=".(isset($this->ref_customer) ? "'".$this->db->escape($this->ref_customer)."'" : "null").",";
 		$sql .= " price=".(isset($this->price) ? $this->price : "null").",";
 		$sql .= " price_ttc=".(isset($this->price_ttc) ? $this->price_ttc : "null").",";
 		$sql .= " price_min=".(isset($this->price_min) ? $this->price_min : "null").",";
@@ -871,7 +871,7 @@ class Productcustomerprice extends CommonObject
 						$resultupd = $prodsocpricenew->create($user, 0, $forceupdateaffiliate);
 						if ($result < 0) {
 							$error++;
-							$this->error = $prodsocpriceupd->error;
+							$this->error = $prodsocpricenew->error;
 						}
 					}
 				}

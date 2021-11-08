@@ -80,9 +80,17 @@ print '<div id="line_'.$line->id.'"></div>';
 $coldisplay++;
 $tmpproduct = new Product($object->db);
 $tmpproduct->fetch($line->fk_product);
-print $tmpproduct->getNomUrl(1);
-print ' - '.$tmpproduct->label;
+$tmpbom = new BOM($object->db);
+$res = $tmpbom->fetch($line->fk_bom_child);
+if ($tmpbom->id > 0) {
+	print $tmpbom->getNomUrl(1);
+	print '<a class="collapse_bom" id="collapse-'.$line->id.'" href="#">' . (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT) ? '(+)' : '(-)') . '&nbsp;</a>';
+} else {
+	print $tmpproduct->getNomUrl(1);
+	print ' - '.$tmpproduct->label;
+}
 print '</td>';
+
 print '<td class="linecolqty nowrap right">';
 $coldisplay++;
 echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formating role of function price
@@ -111,7 +119,8 @@ $coldisplay++;
 echo $line->efficiency;
 print '</td>';
 
-print '<td class="linecolcost nowrap right">';
+$total_cost = 0;
+print '<td id="costline_'.$line->id.'" class="linecolcost nowrap right">';
 $coldisplay++;
 echo price($line->total_cost);
 print '</td>';
@@ -121,7 +130,7 @@ if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines') {
 	$coldisplay++;
 	if (($line->info_bits & 2) == 2 || !empty($disableedit)) {
 	} else {
-		print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'">'.img_edit().'</a>';
+		print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=editline&token='.newToken().'&lineid='.$line->id.'">'.img_edit().'</a>';
 	}
 	print '</td>';
 
@@ -129,7 +138,7 @@ if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines') {
 	$coldisplay++;
 	if (($line->fk_prev_id == null) && empty($disableremove)) {
 		//La suppression n'est autorisée que si il n'y a pas de ligne dans une précédente situation
-		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=deleteline&amp;token='.newToken().'&amp;lineid='.$line->id.'">';
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=deleteline&token='.newToken().'&lineid='.$line->id.'">';
 		print img_delete();
 		print '</a>';
 	}
@@ -165,6 +174,93 @@ if ($action == 'selectlines') {
 }
 
 print '</tr>';
+
+// Select of all the sub-BOM lines
+$sql = 'SELECT rowid, fk_bom_child, fk_product FROM '.MAIN_DB_PREFIX.'bom_bomline AS bl';
+$sql.= ' WHERE fk_bom ='. (int) $tmpbom->id;
+$resql = $object->db->query($sql);
+
+if ($resql) {
+	// Loop on all the sub-BOM lines if they exist
+	while ($obj = $object->db->fetch_object($resql)) {
+		$sub_bom_product = new Product($object->db);
+		$sub_bom_product->fetch($obj->fk_product);
+
+		$sub_bom = new BOM($object->db);
+		$sub_bom->fetch($obj->fk_bom_child);
+
+		$sub_bom_line = new BOMLine($object->db);
+		$sub_bom_line->fetch($obj->rowid);
+
+		//If hidden conf is set, we show directly all the sub-BOM lines
+		if (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT)) {
+			print '<tr style="display:none" class="sub_bom_lines" parentid="'.$line->id.'">';
+		} else {
+			print '<tr class="sub_bom_lines" parentid="'.$line->id.'">';
+		}
+
+		// Product
+		print '<td style="padding-left: 5%" id="sub_bom_product_'.$sub_bom_line->id.'">'.$sub_bom_product->getNomUrl(1).'</td>';
+
+		// Sub-BOM
+		if ($sub_bom_line->fk_bom_child > 0) {
+			print '<td id="sub_bom_bom_'.$sub_bom_line->id.'">'.$sub_bom->getNomUrl(1).'</td>';
+		} else {
+			print '<td id="sub_bom_bom_'.$sub_bom_line->id.'">&nbsp;</td>';
+		}
+
+		// Qty
+		print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty * $line->qty, 0, '', 0, 0).'</td>';
+		if ($sub_bom_line->qty_frozen > 0) {
+			print '<td class="linecolqtyfrozen nowrap right" id="sub_bom_qty_frozen_'.$sub_bom_line->id.'">'.$sub_bom_line->qty_frozen.'</td>';
+		} else {
+			print '<td class="linecolqtyfrozen nowrap right" id="sub_bom_qty_frozen_'.$sub_bom_line->id.'">&nbsp;</td>';
+		}
+
+		// Disable stock change
+		if ($sub_bom_line->disable_stock_change > 0) {
+			print '<td class="linecoldisablestockchange nowrap right" id="sub_bom_stock_change_'.$sub_bom_line->id.'">'.$sub_bom_line->disable_stock_change.'</td>';
+		} else {
+			print '<td class="linecoldisablestockchange nowrap right" id="sub_bom_stock_change_'.$sub_bom_line->id.'">&nbsp;</td>';
+		}
+
+		// Efficiency
+		print '<td class="linecolefficiency nowrap right" id="sub_bom_efficiency_'.$sub_bom_line->id.'">'.$sub_bom_line->efficiency.'</td>';
+
+		// Cost price if it's defined
+		if ($sub_bom_product->cost_price > 0) {
+			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_product->cost_price * $line->qty).'</td>';
+			$total_cost.= $sub_bom_product->cost_price * $line->qty;
+		} elseif ($sub_bom_product->pmp > 0) {	// PMP if cost price isn't defined
+			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_product->pmp * $line->qty).'</td>';
+			$total_cost.= $sub_bom_product->pmp * $line->qty;
+		} else {	// Minimum purchase price if cost price and PMP aren't defined
+			$sql_supplier_price = 'SELECT MIN(price) AS min_price FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
+			$sql_supplier_price.= ' WHERE fk_product = '. (int) $sub_bom_product->id;
+			$resql_supplier_price = $object->db->query($sql_supplier_price);
+			if ($resql_supplier_price) {
+				$obj = $object->db->fetch_object($resql_supplier_price);
+				print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($obj->min_price * $line->qty).'</td>';
+				$total_cost+= $obj->min_price * $line->qty;
+			}
+		}
+
+		print '<td></td>';
+		print '<td></td>';
+		print '<td></td>';
+	}
+}
+
+// Replace of the total_cost value by the sum of all sub-BOM lines total_cost
+if ($total_cost > 0) {
+	$line->total_cost = price($total_cost);
+	?>
+	<script>
+		$('#costline_<?php echo $line->id?>').html("<?php echo "".price($total_cost)?>");
+	</script>
+	<?php
+}
+
 
 //Line extrafield
 if (!empty($extrafields)) {

@@ -142,7 +142,7 @@ class modFacture extends DolibarrModules
 				'objectname'=>'Facture',
 				'method'=>'sendEmailsRemindersOnInvoiceDueDate',
 				'parameters'=>"10,all,EmailTemplateCode",
-				'comment'=>'Send an emails when the unpaid invoices reach a due date + n days = today. First param is the offset n of days, second parameter is "all" or a payment mode code, last paramater is the code of email template to use (an email template with EmailTemplateCode must exists. the version in the language of the thirdparty will be used in priority).',
+				'comment'=>'Send an emails when the unpaid invoices reach a due date + n days = today. First param is the offset n of days, second parameter is "all" or a payment mode code, last parameter is the code of email template to use (an email template with EmailTemplateCode must exists. the version in the language of the thirdparty will be used in priority).',
 				'frequency'=>1,
 				'unitfrequency'=>3600 * 24,
 				'priority'=>50,

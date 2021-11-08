@@ -13,21 +13,12 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * For Paypal test: https://developer.paypal.com/
- * For Paybox test: ???
- * For Stripe test: Use credit card 4242424242424242 .More example on https://stripe.com/docs/testing
- *
- * Variants:
- * - When option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on, we use the new PaymentIntent API
- * - When option STRIPE_USE_NEW_CHECKOUT is on, we use the new checkout API
- * - If no option set, we use old APIS (charge)
  */
 
 /**
- *     	\file       htdocs/public/payment/newpayment.php
+ *     	\file       htdocs/public/project/index.php
  *		\ingroup    core
- *		\brief      File to offer a way to make a payment for a particular Dolibarr object
+ *		\brief      File to offer a way to suggest a conference or a booth for an event
  */
 
 if (!defined('NOLOGIN')) {
@@ -73,9 +64,9 @@ $langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paybox
 // No check on module enabled. Done later according to $validpaymentmethod
 
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST('id');
-$securekeyreceived = GETPOST("securekey");
-$securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
+$id = GETPOST('id', 'int');
+$securekeyreceived = GETPOST("securekey", 'alpha');
+$securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 'md5');
 
 if ($securekeytocompare != $securekeyreceived) {
 	print $langs->trans('MissingOrBadSecureKey');
@@ -192,11 +183,27 @@ if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT)) {
 	print '</div>';
 }
 
-print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
+print '<br>';
 
-$text  = '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</strong></td></tr>'."\n";
-$text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgRegistrationHelpMessage").' '.$project->title.'.<br><br></td></tr>'."\n";
-$text .= '<tr><td class="textpublicpayment">'.$project->note_public.'<br><br></td></tr>'."\n";
+
+// Event summary
+print '<div class="center">';
+print '<span class="large">'.$project->title.'</span><br>';
+print img_picto('', 'calendar', 'class="pictofixedwidth"').$langs->trans("Date").': ';
+print dol_print_date($project->date_start, 'daytext');
+if ($project->date_end && $project->date_start != $project->date_end) {
+	print ' - '.dol_print_date($project->date_end, 'daytext');
+}
+print '<br><br>'."\n";
+print $langs->trans("EvntOrgRegistrationWelcomeMessage")."\n";
+print $project->note_public."\n";
+//print img_picto('', 'map-marker-alt').$langs->trans("Location").': xxxx';
+print '</div>';
+
+
+print '<br>';
+
+print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 
 print $text;
 
@@ -214,19 +221,27 @@ print "\n";
 
 // Show all action buttons
 print '<br>';
+
 // Output introduction text
+$foundaction = 0;
 if ($project->accept_booth_suggestions) {
-	print '<input type="submit" value="'.$langs->trans("SuggestBooth").'" id="suggestbooth" name="suggestbooth" class="button">';
+	$foundaction++;
+	print '<input type="submit" value="'.$langs->trans("SuggestBooth").'" id="suggestbooth" name="suggestbooth" class="button width500">';
 	print '<br><br>';
 }
-if ($project->accept_conference_suggestions) {
-	print '<input type="submit" value="'.$langs->trans("SuggestConference").'" id="suggestconference" name="suggestconference" class="button">';
+if ($project->accept_conference_suggestions == 1 || $project->accept_conference_suggestions == 2) {		// Can suggest conferences
+	$foundaction++;
+	print '<input type="submit" value="'.$langs->trans("SuggestConference").'" id="suggestconference" name="suggestconference" class="button width500">';
 	print '<br><br>';
 }
-print '<input type="submit" value="'.$langs->trans("ViewAndVote").'" id="viewandvote" name="viewandvote" class="button">';
+if ($project->accept_conference_suggestions == 2 || $project->accept_conference_suggestions == 3) {		// Can vote for conferences
+	$foundaction++;
+	print '<input type="submit" value="'.$langs->trans("ViewAndVote").'" id="viewandvote" name="viewandvote" class="button width500">';
+}
 
-
-
+if (! $foundaction) {
+	print '<span class="opacitymedium">'.$langs->trans("NoPublicActionsAllowedForThisEvent").'</span>';
+}
 
 print '</td></tr>'."\n";
 

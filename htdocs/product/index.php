@@ -274,7 +274,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 	print '</table>';
 	print '</div>';
 }
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 /*
@@ -416,7 +416,7 @@ if (!empty($conf->global->MAIN_SHOW_PRODUCT_ACTIVITY_TRIM)) {
 }
 
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array('type' => $type, 'user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardProductsServices', $parameters, $object); // Note that $action and $object may have been modified by hook

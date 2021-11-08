@@ -120,6 +120,8 @@ if (GETPOST("rel") == 'prev') {
 	$found = true;
 }
 
+$permissiontoadd = $user->rights->banque->modifier;	// Used by the include of actions_dellink.inc.php
+
 
 /*
  * Actions

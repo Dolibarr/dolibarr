@@ -35,6 +35,7 @@ create table llx_projet_task
   planned_workload		real DEFAULT 0,
   progress				integer DEFAULT 0,				-- percentage increase
   priority				integer DEFAULT 0,				-- priority
+  budget_amount         double(24,8),
   fk_user_creat			integer,						-- user who created the task
   fk_user_modif			integer,						-- user who modify the task
   fk_user_valid			integer,						-- user who validated the task

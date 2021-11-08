@@ -297,8 +297,8 @@ class Website extends CommonObject
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
 		$sql .= " t.entity,";
 		$sql .= " t.ref,";
 		$sql .= " t.position,";
@@ -313,12 +313,12 @@ class Website extends CommonObject
 		$sql .= " t.fk_user_modif,";
 		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_modification";
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.entity IN ('.getEntity('website').')';
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+		$sql .= " WHERE t.entity IN (".getEntity('website').")";
 		if (!empty($ref)) {
 			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
 		} else {
-			$sql .= ' AND t.rowid = '.(int) $id;
+			$sql .= " AND t.rowid = ".(int) $id;
 		}
 
 		$resql = $this->db->query($sql);
@@ -395,8 +395,8 @@ class Website extends CommonObject
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
 		$sql .= " t.entity,";
 		$sql .= " t.ref,";
 		$sql .= " t.description,";
@@ -409,8 +409,8 @@ class Website extends CommonObject
 		$sql .= " t.fk_user_modif,";
 		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_modification";
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.entity IN ('.getEntity('website').')';
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+		$sql .= " WHERE t.entity IN (".getEntity('website').")";
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
@@ -867,10 +867,10 @@ class Website extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Disabled');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Disabled');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
 		}
 
 		$statusType = 'status5';
@@ -1252,7 +1252,7 @@ class Website extends CommonObject
 
 		// Read record of website that has been updated by the run_sql function previously called so we can get the
 		// value of fk_default_home that is ID of home page
-		$sql = 'SELECT fk_default_home FROM '.MAIN_DB_PREFIX.'website WHERE rowid = '.((int) $object->id);
+		$sql = "SELECT fk_default_home FROM ".MAIN_DB_PREFIX."website WHERE rowid = ".((int) $object->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -1297,7 +1297,7 @@ class Website extends CommonObject
 
 		$objectpagestatic = new WebsitePage($this->db);
 
-		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'website_page WHERE fk_website = '.((int) $this->id);
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."website_page WHERE fk_website = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {

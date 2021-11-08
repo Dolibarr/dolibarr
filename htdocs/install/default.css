@@ -466,7 +466,8 @@ table.tablesupport {
 @media only screen and (max-width: 570px)
 {
 	.blocksupport {
-		width: 90%;
+		width: calc(100% - 4px);
+		padding: 4px;
 	}
 	
 	.tablesupport {

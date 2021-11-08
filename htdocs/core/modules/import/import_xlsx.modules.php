@@ -627,18 +627,22 @@ class ImportXlsx extends ModeleImports
 										$arrayrecord[($key)]['type'] = -1; // If we get empty value, we will use "null"
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getrefifauto') {
-									$defaultref = '';
-									// TODO provide the $modTask (module of generation of ref) as parameter of import_insert function
-									$obj = empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
-									if (!empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . $conf->global->PROJECT_TASK_ADDON . ".php")) {
-										require_once DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . $conf->global->PROJECT_TASK_ADDON . '.php';
-										$modTask = new $obj;
-										$defaultref = $modTask->getNextValue(null, null);
-									}
-									if (is_numeric($defaultref) && $defaultref <= 0) {
+									if (strtolower($newval) == 'auto') {
 										$defaultref = '';
+
+										$classModForNumber = $objimport->array_import_convertvalue[0][$val]['class'];
+										$pathModForNumber = $objimport->array_import_convertvalue[0][$val]['path'];
+
+										if (!empty($classModForNumber) && !empty($pathModForNumber) && is_readable(DOL_DOCUMENT_ROOT.$pathModForNumber)) {
+											require_once DOL_DOCUMENT_ROOT.$pathModForNumber;
+											$modForNumber = new $classModForNumber;
+											$defaultref = $modForNumber->getNextValue(null, null);
+										}
+										if (is_numeric($defaultref) && $defaultref <= 0) {
+											$defaultref = '';
+										}
+										$newval = $defaultref;
 									}
-									$newval = $defaultref;
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'compute') {
 									$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
 									$class = $objimport->array_import_convertvalue[0][$val]['class'];

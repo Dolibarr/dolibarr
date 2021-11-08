@@ -212,9 +212,9 @@ $( document ).ready(function() {
 <?php if ($user->admin) {?>
 <div style="position: absolute; left: 0.1%; top: 0.8%; width:8%; height:11%;">
 	<?php if ($mode == "edit") {?>
-<a id="add" onclick="window.location.href='floors.php?mode=edit&action=add&floor=<?php echo $floor; ?>';"><?php echo $langs->trans("AddTable"); ?></a>
+<a id="add" onclick="window.location.href='floors.php?mode=edit&action=add&token=<?php echo newToken() ?>&floor=<?php echo $floor; ?>';"><?php echo $langs->trans("AddTable"); ?></a>
 	<?php } else { ?>
-<a onclick="window.location.href='floors.php?mode=edit&floor=<?php echo $floor; ?>';"><?php echo $langs->trans("Edit"); ?></a>
+<a onclick="window.location.href='floors.php?mode=edit&token=<?php echo newToken() ?>&floor=<?php echo $floor; ?>';"><?php echo $langs->trans("Edit"); ?></a>
 	<?php } ?>
 </div>
 <?php }

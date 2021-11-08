@@ -776,8 +776,8 @@ class Mailing extends CommonObject
 		global $langs;
 		$langs->load("mailing");
 
-		$labelStatus = $langs->trans($this->statuts[$status]);
-		$labelStatusShort = $langs->trans($this->statuts[$status]);
+		$labelStatus = $langs->transnoentitiesnoconv($this->statuts[$status]);
+		$labelStatusShort = $langs->transnoentitiesnoconv($this->statuts[$status]);
 
 		$statusType = 'status'.$status;
 		if ($status == 2) {
@@ -808,16 +808,16 @@ class Mailing extends CommonObject
 		$labelStatus = array();
 		$labelStatusShort = array();
 
-		$labelStatus[-1] = $langs->trans('MailingStatusError');
-		$labelStatus[0] = $langs->trans('MailingStatusNotSent');
-		$labelStatus[1] = $langs->trans('MailingStatusSent');
-		$labelStatus[2] = $langs->trans('MailingStatusRead');
-		$labelStatus[3] = $langs->trans('MailingStatusNotContact');
-		$labelStatusShort[-1] = $langs->trans('MailingStatusError');
-		$labelStatusShort[0] = $langs->trans('MailingStatusNotSent');
-		$labelStatusShort[1] = $langs->trans('MailingStatusSent');
-		$labelStatusShort[2] = $langs->trans('MailingStatusRead');
-		$labelStatusShort[3] = $langs->trans('MailingStatusNotContact');
+		$labelStatus[-1] = $langs->transnoentitiesnoconv('MailingStatusError');
+		$labelStatus[0] = $langs->transnoentitiesnoconv('MailingStatusNotSent');
+		$labelStatus[1] = $langs->transnoentitiesnoconv('MailingStatusSent');
+		$labelStatus[2] = $langs->transnoentitiesnoconv('MailingStatusRead');
+		$labelStatus[3] = $langs->transnoentitiesnoconv('MailingStatusNotContact');
+		$labelStatusShort[-1] = $langs->transnoentitiesnoconv('MailingStatusError');
+		$labelStatusShort[0] = $langs->transnoentitiesnoconv('MailingStatusNotSent');
+		$labelStatusShort[1] = $langs->transnoentitiesnoconv('MailingStatusSent');
+		$labelStatusShort[2] = $langs->transnoentitiesnoconv('MailingStatusRead');
+		$labelStatusShort[3] = $langs->transnoentitiesnoconv('MailingStatusNotContact');
 
 		$statusType = 'status'.$status;
 		if ($status == -1) {

@@ -443,6 +443,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes') {
  */
 
 $now = dol_now();
+$error = 0;
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);
@@ -632,7 +633,7 @@ foreach ($listofdata as $key => $val) {
 			print '</td>';
 		}
 		print '<td class="center">'.$val['qty'].'</td>';
-		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=delline&idline='.$val['id'].'">'.img_delete($langs->trans("Remove")).'</a></td>';
+		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=delline&token='.newToken().'&idline='.$val['id'].'">'.img_delete($langs->trans("Remove")).'</a></td>';
 		print '</tr>';
 	}
 }

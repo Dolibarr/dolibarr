@@ -625,6 +625,7 @@ class Mo extends CommonObject
 	public function updateProduction(User $user, $notrigger = true)
 	{
 		$error = 0;
+		$role = "";
 
 		if ($this->status != self::STATUS_DRAFT) {
 			$this->error = 'BadStatus';
@@ -657,6 +658,12 @@ class Mo extends CommonObject
 					$moline->role = 'toconsume';
 				} else {
 					$role = 'toconsume';
+					$moline->role = 'toproduce';
+				}
+			} else {
+				if ($this->mrptype == 1) {
+					$moline->role = 'toconsume';
+				} else {
 					$moline->role = 'toproduce';
 				}
 			}
@@ -1021,9 +1028,9 @@ class Mo extends CommonObject
 			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 		}
 
-		$url = dol_buildpath('/mrp/mo_card.php', 1).'?id='.$this->id;
+		$url = DOL_URL_ROOT.'/mrp/mo_card.php?id='.$this->id;
 		if ($option == 'production') {
-			$url = dol_buildpath('/mrp/mo_production.php', 1).'?id='.$this->id;
+			$url = DOL_URL_ROOT.'/mrp/mo_production.php?id='.$this->id;
 		}
 
 		if ($option != 'nolink') {
@@ -1200,7 +1207,7 @@ class Mo extends CommonObject
 		$this->lines = array();
 
 		$objectline = new MoLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_mo = '.$this->id));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_mo = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;

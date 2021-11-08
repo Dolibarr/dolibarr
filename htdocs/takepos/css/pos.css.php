@@ -321,7 +321,7 @@ table.postablelines tr td {
 div.paymentbordline
 {
 	width:calc(50% - 16px);
-	background-color:#888;
+	background-color:#aaa;
 	border-radius: 8px;
 	margin-bottom: 4px;
 	display: inline-block;

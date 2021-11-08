@@ -63,7 +63,7 @@ if ($action == 'updateform') {
 	if ($res3 && $res4 && $res5 && $res6) {
 		setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 	}
-} elseif ($action == 'delete') {
+} elseif ($action == 'deletefile') {
 	// Delete file
 	$langs->load("other");
 	$file = $conf->admin->dir_temp.'/'.GETPOST('urlfile', 'alpha');
@@ -101,9 +101,9 @@ $head = security_prepare_head();
 
 print dol_get_fiche_head($head, 'file', '', -1);
 
+print '<br>';
 
 // Upload options
-$var = false;
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
@@ -153,8 +153,8 @@ if (ini_get('safe_mode') && !empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
 		dol_syslog("safe_mode is on, basedir is ".$basedir.", safe_mode_exec_dir is ".ini_get('safe_mode_exec_dir'), LOG_WARNING);
 	}
 }
-print '<input type="text" '.(defined('MAIN_ANTIVIRUS_COMMAND') ? 'disabled ' : '').'name="MAIN_ANTIVIRUS_COMMAND" class="minwidth500imp" value="'.(!empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_COMMAND) : '').'">';
-if (defined('MAIN_ANTIVIRUS_COMMAND')) {
+print '<input type="text" '.((defined('MAIN_ANTIVIRUS_COMMAND') && !defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) ? 'disabled ' : '').'name="MAIN_ANTIVIRUS_COMMAND" class="minwidth500imp" value="'.(!empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_COMMAND) : '').'">';
+if (defined('MAIN_ANTIVIRUS_COMMAND') && !defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {
 	print '<br><span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
 }
 print "</td>";
