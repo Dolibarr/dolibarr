@@ -1521,11 +1521,11 @@ table[summary="list_of_modules"] .fa-cog {
 }
 
 /* Set a width. Note: add also a max-width, for example maxwidth500, that will be used in priority */
-.widthcentpercentminusx {
+select.widthcentpercentminusx, span.widthcentpercentminusx:not(.select2-selection), input.widthcentpercentminusx {
 	width: calc(100% - 50px) !important;
 	display: inline-block;
 }
-.widthcentpercentminusxx {
+select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
 	width: calc(100% - 70px) !important;
 	display: inline-block;
 }
@@ -3829,11 +3829,12 @@ div.liste_titre_bydiv {
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
 
-	box-shadow: none;
 	border-collapse: collapse;
 	display: table;
 	padding: 2px 0px 2px 0;
-	width: calc(100% - 1px);
+	box-shadow: none;
+	/*width: calc(100% - 1px);	1px more, i don't know why so i remove */
+	width: calc(100%);
 }
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr, tagtr.liste_titre
 {
