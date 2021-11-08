@@ -348,8 +348,8 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 							$nofile = array();
 							$nofile['id'] = $objd->id;
 							$nofile['entity'] = $objd->entity;
-							$nofile['date'] = $db->idate($objd->date);
-							$nofile['date_due'] = $db->idate($objd->date_due);
+							$nofile['date'] = $db->jdate($objd->date);
+							$nofile['date_due'] = $db->jdate($objd->date_due);
 							$nofile['paid'] = $objd->paid;
 							$nofile['amount_ht'] = $objd->total_ht;
 							$nofile['amount_ttc'] = $objd->total_ttc;
@@ -368,8 +368,8 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 							foreach ($files as $key => $file) {
 								$file['id'] = $objd->id;
 								$file['entity'] = $objd->entity;
-								$file['date'] = $db->idate($objd->date);
-								$file['date_due'] = $db->idate($objd->date_due);
+								$file['date'] = $db->jdate($objd->date);
+								$file['date_due'] = $db->jdate($objd->date_due);
 								$file['paid'] = $objd->paid;
 								$file['amount_ht'] = $objd->total_ht;
 								$file['amount_ttc'] = $objd->total_ttc;
