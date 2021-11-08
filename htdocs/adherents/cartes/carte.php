@@ -39,6 +39,7 @@ $day = dol_print_date($now, '%d');
 $foruserid = GETPOST('foruserid', 'alphanohtml');
 $foruserlogin = GETPOST('foruserlogin', 'alphanohtml');
 $mode = GETPOST('mode', 'aZ09');
+$modelcard = GETPOST("modelcard", 'aZ09'); // Doc template to use for business cards
 $model = GETPOST("model", 'aZ09'); // Doc template to use for business cards
 $modellabel = GETPOST("modellabel", 'aZ09'); // Doc template to use for address sheet
 $mesg = '';
@@ -84,10 +85,10 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 	$sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = 1";
 	$sql .= " AND d.entity IN (".getEntity('adherent').")";
 	if (is_numeric($foruserid)) {
-		$sql .= " AND d.rowid=".(int) $foruserid;
+		$sql .= " AND d.rowid = ".(int) $foruserid;
 	}
 	if ($foruserlogin) {
-		$sql .= " AND d.login='".$db->escape($foruserlogin)."'";
+		$sql .= " AND d.login = '".$db->escape($foruserlogin)."'";
 	}
 	$sql .= " ORDER BY d.rowid ASC";
 
@@ -143,7 +144,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 				'__MONTH__'=>$month,
 				'__DAY__'=>$day,
 				'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
-				'__SERVER__'=>"http://".$_SERVER["SERVER_NAME"]."/"
+				'__SERVER__'=>"https://".$_SERVER["SERVER_NAME"]."/"
 			);
 			complete_substitutions_array($substitutionarray, $langs, $adherentstatic);
 
@@ -155,7 +156,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 				$textright = make_substitutions($conf->global->ADHERENT_CARD_TEXT_RIGHT, $substitutionarray);
 
 				if (is_numeric($foruserid) || $foruserlogin) {
-					$nb = $_Avery_Labels[$model]['NX'] * $_Avery_Labels[$model]['NY'];
+					$nb = $_Avery_Labels[$model]['NX'] * $_Avery_Labels[$model]['NY'];	// $_Avery_Labels is defined into an include
 					if ($nb <= 0) {
 						$nb = 1; // Protection to avoid empty page
 					}
@@ -209,7 +210,19 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 		}
 
 		// Build and output PDF
-		if (empty($mode) || $mode == 'card' || $mode == 'cardlogin') {
+		$outputlangs = $langs;
+
+		if (empty($mode) || $mode == 'card') {
+			if (!count($arrayofmembers)) {
+				$mesg = $langs->trans("ErrorRecordNotFound");
+			}
+			if (empty($modelcard) || $modelcard == '-1') {
+				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DescADHERENT_CARD_TYPE"));
+			}
+			if (!$mesg) {
+				$result = members_card_pdf_create($db, $arrayofmembers, $modelcard, $outputlangs, '', 'standard', 'tmp_cards');
+			}
+		} elseif ($mode == 'cardlogin') {
 			if (!count($arrayofmembers)) {
 				$mesg = $langs->trans("ErrorRecordNotFound");
 			}
@@ -217,7 +230,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DescADHERENT_CARD_TYPE"));
 			}
 			if (!$mesg) {
-				$result = members_card_pdf_create($db, $arrayofmembers, $model, $outputlangs);
+				$result = members_card_pdf_create($db, $arrayofmembers, $model, $outputlangs, '', 'standard', 'tmp_cards_login');
 			}
 		} elseif ($mode == 'label') {
 			if (!count($arrayofmembers)) {
@@ -275,7 +288,7 @@ foreach (array_keys($_Avery_Labels) as $codecards) {
 	$arrayoflabels[$codecards] = $_Avery_Labels[$codecards]['name'];
 }
 asort($arrayoflabels);
-print $form->selectarray('model', $arrayoflabels, (GETPOST('model') ? GETPOST('model') : (empty($conf->global->ADHERENT_CARD_TYPE) ? '' : $conf->global->ADHERENT_CARD_TYPE)), 1, 0, 0, '', 0, 0, 0, '', '', 1);
+print $form->selectarray('modelcard', $arrayoflabels, (GETPOST('modelcard') ? GETPOST('modelcard') : (empty($conf->global->ADHERENT_CARD_TYPE) ? '' : $conf->global->ADHERENT_CARD_TYPE)), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 print '<br><input type="submit" class="button" value="'.$langs->trans("BuildDoc").'">';
 print '</form>';
 

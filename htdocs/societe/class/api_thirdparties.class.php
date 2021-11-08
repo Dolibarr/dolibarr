@@ -1799,6 +1799,11 @@ class Thirdparties extends DolibarrApi
 		unset($object->twitter);
 		unset($object->facebook);
 		unset($object->linkedin);
+		unset($object->instagram);
+		unset($object->snapchat);
+		unset($object->googleplus);
+		unset($object->youtube);
+		unset($object->whatsapp);
 
 		return $object;
 	}

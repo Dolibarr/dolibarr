@@ -974,7 +974,7 @@ class Dolresource extends CommonObject
 		$linkstart = '<a href="'.$url.$get_params.'"';
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
-		/*$linkstart = '<a href="'.dol_buildpath('/resource/card.php', 1).'?id='.$this->id.$get_params.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		/*$linkstart = '<a href="'.DOL_URL_ROOT.'/resource/card.php?id='.$this->id.$get_params.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';*/
 
 		$result .= $linkstart;

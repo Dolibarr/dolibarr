@@ -115,6 +115,8 @@ if (!$action) {
 
 if ($source == 'organizedeventregistration') {
 	// Finding the Attendee
+	$attendee = new ConferenceOrBoothAttendee($db);
+
 	$invoiceid = GETPOST('ref', 'int');
 	$invoice = new Facture($db);
 
@@ -123,14 +125,28 @@ if ($source == 'organizedeventregistration') {
 	if ($resultinvoice <= 0) {
 		setEventMessages(null, $invoice->errors, "errors");
 	} else {
+		/*
+		$attendeeid = 0;
+
 		$invoice->fetchObjectLinked();
 		$linkedAttendees = $invoice->linkedObjectsIds['conferenceorboothattendee'];
 
 		if (is_array($linkedAttendees)) {
 			$linkedAttendees = array_values($linkedAttendees);
+			$attendeeid = $linkedAttendees[0];
+		}*/
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee";
+		$sql .= " WHERE fk_invoice = ".((int) $invoiceid);
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$attendeeid = $obj->rowid;
+			}
+		}
 
-			$attendee = new ConferenceOrBoothAttendee($db);
-			$resultattendee = $attendee->fetch($linkedAttendees[0]);
+		if ($attendeeid > 0) {
+			$resultattendee = $attendee->fetch($attendeeid);
 
 			if ($resultattendee <= 0) {
 				setEventMessages(null, $attendee->errors, "errors");
@@ -937,7 +953,9 @@ if (!$source) {
 
 	// Creditor
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow2"><b>'.$creditor.'</b>';
+	print '</td><td class="CTableRow2">';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
@@ -1009,13 +1027,17 @@ if ($source == 'order') {
 
 	// Creditor
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow2"><b>'.$creditor.'</b>';
+	print '</td><td class="CTableRow2">';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
 	// Debitor
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
-	print '</td><td class="CTableRow2"><b>'.$order->thirdparty->name.'</b>';
+	print '</td><td class="CTableRow2">';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<b>'.$order->thirdparty->name.'</b>';
 	print '</td></tr>'."\n";
 
 	// Object
@@ -1133,13 +1155,17 @@ if ($source == 'invoice') {
 
 	// Creditor
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow2"><b>'.$creditor.'</b>';
+	print '</td><td class="CTableRow2">';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.dol_escape_htmltag($creditor).'">';
 	print '</td></tr>'."\n";
 
 	// Debitor
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
-	print '</td><td class="CTableRow2"><b>'.$invoice->thirdparty->name.'</b>';
+	print '</td><td class="CTableRow2">';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<b>'.$invoice->thirdparty->name.'</b>';
 	print '</td></tr>'."\n";
 
 	// Object
@@ -1834,12 +1860,13 @@ if ($source == 'organizedeventregistration') {
 	// Debitor
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Attendee");
 	print '</td><td class="CTableRow2"><b>';
-	print $thirdparty->name;
+	print $attendee->email;
+	print ($thirdparty->name ? ' ('.$thirdparty->name.')' : '');
 	print '</b>';
 	print '</td></tr>'."\n";
 
 	if (! is_object($attendee->project)) {
-		$text = 'ErrorProjectotFound';
+		$text = 'ErrorProjectNotFound';
 	} else {
 		$text = $langs->trans("PaymentEvent").' - '.$attendee->project->title;
 	}

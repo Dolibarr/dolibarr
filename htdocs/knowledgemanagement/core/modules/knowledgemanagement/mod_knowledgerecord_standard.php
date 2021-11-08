@@ -18,7 +18,7 @@
  */
 
 /**
- *  \file       htdocs/core/modules/knowledgemanagement/mod_knowledgerecord_standard.php
+ *  \file       htdocs/knowledgemanagement/core/modules/knowledgemanagement/mod_knowledgerecord_standard.php
  *  \ingroup    knowledgemanagement
  *  \brief      File of class to manage KnowledgeRecord numbering rules standard
  */

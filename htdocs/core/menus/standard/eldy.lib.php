@@ -382,12 +382,18 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'submenus' => array(),
 	);
 
-	// Tickets and knwoledge base
+	// Tickets and knowledge base
 	$tmpentry = array(
-		'enabled'=>(!empty($conf->ticket->enabled) || !empty($conf->knwoledgemanagement->enabled)),
-		'perms'=>(!empty($user->rights->ticket->read) || !empty($user->rights->knwoledgemanagement->read)),
-		'module'=>'ticket|knwoledgemanagement'
+		'enabled'=>(!empty($conf->ticket->enabled) || !empty($conf->knowledgemanagement->enabled)),
+		'perms'=>(!empty($user->rights->ticket->read) || !empty($user->rights->knowledgemanagement->knowledgerecord->read)),
+		'module'=>'ticket|knowledgemanagement'
 	);
+	$link = '';
+	if (!empty($conf->ticket->enabled)) {
+		$link = '/ticket/index.php?mainmenu=ticket&amp;leftmenu=';
+	} else {
+		$link = '/knowledgemanagement/knowledgerecord_list.php?mainmenu=ticket&amp;leftmenu=';
+	}
 	$menu_arr[] = array(
 		'name' => 'Ticket',
 		'link' => '/ticket/index.php?mainmenu=ticket&amp;leftmenu=',
@@ -1844,6 +1850,29 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					$newmenu->add("/projet/activity/perweek.php?leftmenu=tasks".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("NewTimeSpent"), 0, $user->rights->projet->lire, '', $mainmenu, 'timespent', 0, '', '', '', img_picto('', 'timespent', 'class="pictofixedwidth"'));
 				}
 			}
+
+			if (!empty($conf->hrm->enabled)) {
+				// Skills
+				$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("skill"), 0, $user->rights->hrm->all->read, '', $mainmenu, 'hrm', 0, '', '', '', img_picto('', 'shapes', 'class="pictofixedwidth"'));
+				$newmenu->add("/hrm/skill_card.php?mainmenu=hrm&leftmenu=hrm&action=create", $langs->trans("NewSkill"), 1, $user->rights->hrm->all->write);
+				$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("List"), 1, $user->rights->hrm->all->read);
+
+				// Job
+				$newmenu->add("/hrm/job_list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("Job"), 0, $user->rights->hrm->all->read, '', $mainmenu, 'hrm', 0, '', '', '', img_picto('', 'technic', 'class="pictofixedwidth"'));
+				$newmenu->add("/hrm/job_card.php?mainmenu=hrm&leftmenu=hrm&action=create", $langs->transnoentities("NewObject", $langs->trans("Job")), 1, $user->rights->hrm->all->write);
+				$newmenu->add("/hrm/job_list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("List"), 1, $user->rights->hrm->all->read);
+
+				// Position
+				$newmenu->add("/hrm/position_list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("Position"), 0, $user->rights->hrm->all->read, '', $mainmenu, 'hrm', 0, '', '', '', img_picto('', 'user-cog', 'class="pictofixedwidth"'));
+				$newmenu->add("/hrm/position.php?mainmenu=hrm&leftmenu=hrm&action=create", $langs->transnoentities("NewObject", $langs->trans("Position")), 1, $user->rights->hrm->all->write);
+				$newmenu->add("/hrm/position_list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("List"), 1, $user->rights->hrm->all->read);
+
+				// Evaluation
+				$newmenu->add("/hrm/evaluation_list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("Eval"), 0, $user->rights->hrm->evaluation->read, '', $mainmenu, 'hrm', 0, '', '', '', img_picto('', 'user', 'class="pictofixedwidth"'));
+				$newmenu->add("/hrm/evaluation_card.php?mainmenu=hrm&leftmenu=hrm&action=create", $langs->trans("NewEval"), 1, $user->rights->hrm->evaluation->write);
+				$newmenu->add("/hrm/evaluation_list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("List"), 1, $user->rights->hrm->evaluation->read);
+				$newmenu->add("/hrm/compare.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("Compare"), 1, $user->rights->hrm->compare->read);
+			}
 		}
 
 
@@ -2075,7 +2104,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					print '</div>'."\n";
 					$lastlevel0 = 'enabled';
 				} elseif ($showmenu) {                 // Not enabled but visible (so greyed)
-					print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$menu_array[$i]['titre'].'</font></div>'."\n";
+					print '<div class="menu_titre">'.$tabstring.'<span class="vmenudisabled">'.$menu_array[$i]['titre'].'</span></div>'."\n";
 					$lastlevel0 = 'greyed';
 				} else {
 					$lastlevel0 = 'hidden';
@@ -2092,8 +2121,10 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					$cssmenu = ' menu_contenu'.dol_string_nospecial(preg_replace('/\.php.*$/', '', $menu_array[$i]['url']));
 				}
 
-				if ($menu_array[$i]['enabled'] && $lastlevel0 == 'enabled') {     // Enabled so visible, except if parent was not enabled.
-					print '<div class="menu_contenu'.$cssmenu.'">'.$tabstring;
+				if ($menu_array[$i]['enabled'] && $lastlevel0 == 'enabled') {
+					// Enabled so visible, except if parent was not enabled.
+					print '<div class="menu_contenu'.$cssmenu.'">';
+					print $tabstring;
 					if ($shorturlwithoutparam) {
 						print '<a class="vsmenu" title="'.dol_escape_htmltag(dol_string_nohtmltag($menu_array[$i]['titre'])).'" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
 					} else {
@@ -2110,8 +2141,11 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 						print '<br>';
 					}
 					print '</div>'."\n";
-				} elseif ($showmenu && $lastlevel0 == 'enabled') {       // Not enabled but visible (so greyed), except if parent was not enabled.
-					print '<div class="menu_contenu'.$cssmenu.'">'.$tabstring.'<font class="vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</font><br></div>'."\n";
+				} elseif ($showmenu && $lastlevel0 == 'enabled') {
+					// Not enabled but visible (so greyed), except if parent was not enabled.
+					print '<div class="menu_contenu'.$cssmenu.'">';
+					print $tabstring;
+					print '<span class="vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</span><br></div>'."\n";
 				}
 			}
 

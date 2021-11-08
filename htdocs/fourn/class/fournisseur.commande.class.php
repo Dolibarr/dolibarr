@@ -112,6 +112,7 @@ class CommandeFournisseur extends CommonOrder
 	public $socid;
 	public $fourn_id;
 	public $date;
+	public $date_creation;
 	public $date_valid;
 	public $date_approve;
 	public $date_approve2; // Used when SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set
@@ -375,11 +376,16 @@ class CommandeFournisseur extends CommonOrder
 			$this->total_localtax1		= $obj->localtax1;
 			$this->total_localtax2		= $obj->localtax2;
 			$this->total_ttc			= $obj->total_ttc;
-			$this->date = $this->db->jdate($obj->date_creation);
+			$this->date_creation = $this->db->jdate($obj->date_creation);
 			$this->date_valid = $this->db->jdate($obj->date_valid);
 			$this->date_approve			= $this->db->jdate($obj->date_approve);
 			$this->date_approve2		= $this->db->jdate($obj->date_approve2);
 			$this->date_commande		= $this->db->jdate($obj->date_commande); // date we make the order to supplier
+			if (isset($obj->date_commande)) {
+				$this->date = $this->date_commande;
+			} else {
+				$this->date = $this->date_creation;
+			}
 			$this->date_livraison = $this->db->jdate($obj->delivery_date); // deprecated
 			$this->delivery_date = $this->db->jdate($obj->delivery_date);
 			$this->remise_percent = $obj->remise_percent;
@@ -1002,7 +1008,7 @@ class CommandeFournisseur extends CommonOrder
 			if (empty($secondlevel)) {	// standard or first level approval
 				$sql .= " date_approve='".$this->db->idate($now)."',";
 				$sql .= " fk_user_approve = ".$user->id;
-				if (!empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) && $conf->global->MAIN_FEATURES_LEVEL > 0 && $this->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) {
+				if (!empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) && $this->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) {
 					if (empty($this->user_approve_id2)) {
 						$movetoapprovestatus = false; // second level approval not done
 						$comment = ' (first level)';
@@ -2087,7 +2093,7 @@ class CommandeFournisseur extends CommonOrder
 
 		// Test we can delete
 		$this->fetchObjectLinked(null, 'order_supplier');
-		if (!empty($this->linkedObjects)) {
+		if (!empty($this->linkedObjects) && array_key_exists('reception', $this->linkedObjects)) {
 			foreach ($this->linkedObjects['reception'] as $element) {
 				if ($element->statut >= 0) {
 					$this->errors[] = $langs->trans('ReceptionExist');
@@ -2930,11 +2936,11 @@ class CommandeFournisseur extends CommonOrder
 					$this->user_approve_id2 = $obj->fk_user_approve2;
 				}
 
-				$this->date_creation     = $this->db->idate($obj->datec);
-				$this->date_modification = $this->db->idate($obj->datem);
-				$this->date_approve      = $this->db->idate($obj->datea);
-				$this->date_approve2     = $this->db->idate($obj->datea2);
-				$this->date_validation   = $this->db->idate($obj->date_validation);
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->datem);
+				$this->date_approve      = $this->db->jdate($obj->datea);
+				$this->date_approve2     = $this->db->jdate($obj->datea2);
+				$this->date_validation   = $this->db->jdate($obj->date_validation);
 			}
 			$this->db->free($result);
 		} else {
@@ -2959,7 +2965,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql = "SELECT count(co.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as co";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON co.fk_soc = s.rowid";
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -2997,7 +3003,7 @@ class CommandeFournisseur extends CommonOrder
 
 		$sql = "SELECT c.rowid, c.date_creation as datec, c.date_commande, c.fk_statut, c.date_livraison as delivery_date";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = " AND";
@@ -3295,7 +3301,6 @@ class CommandeFournisseur extends CommonOrder
 					$keysinwishednotindelivered = array_diff(array_keys($qtywished), array_keys($qtydelivered)); // To check we also have same number of keys
 					$keysindeliverednotinwished = array_diff(array_keys($qtydelivered), array_keys($qtywished)); // To check we also have same number of keys
 					/*var_dump(array_keys($qtydelivered));
-
 					var_dump(array_keys($qtywished));
 					var_dump($diff_array);
 					var_dump($keysinwishednotindelivered);

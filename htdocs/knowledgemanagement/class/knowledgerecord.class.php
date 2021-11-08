@@ -102,9 +102,10 @@ class KnowledgeRecord extends CommonObject
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'visible'=>5, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", "showoncombobox"=>1),
-		'question' => array('type'=>'text', 'label'=>'Question', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'csslist'=>'tdoverflowmax300', 'copytoclipboard'=>1),
-		'lang' => array('type'=>'varchar(6)', 'label'=>'Language', 'enabled'=>'1', 'position'=>40, 'notnull'=>0, 'visible'=>1),
-		'answer' => array('type'=>'html', 'label'=>'Solution', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>3, 'csslist'=>'tdoverflowmax300', 'copytoclipboard'=>1),
+		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>20, 'index'=>1),
+		'question' => array('type'=>'text', 'label'=>'Question', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'csslist'=>'tdoverflowmax300', 'copytoclipboard'=>1, 'tdcss'=>'titlefieldcreate nowraponall'),
+		'lang' => array('type'=>'varchar(6)', 'label'=>'Language', 'enabled'=>'1', 'position'=>40, 'notnull'=>0, 'visible'=>1, 'tdcss'=>'titlefieldcreate nowraponall'),
+		'answer' => array('type'=>'html', 'label'=>'Solution', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>3, 'csslist'=>'tdoverflowmax300', 'copytoclipboard'=>1, 'tdcss'=>'titlefieldcreate nowraponall'),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>2,),
 		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>'1', 'position'=>600, 'notnull'=>0, 'visible'=>0,),
@@ -119,6 +120,7 @@ class KnowledgeRecord extends CommonObject
 	);
 	public $rowid;
 	public $ref;
+	public $entity;
 	public $date_creation;
 	public $tms;
 	public $last_main_doc;
@@ -456,6 +458,15 @@ class KnowledgeRecord extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
+		$error = 0;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_member WHERE fk_member = ".((int) $this->rowid);
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++;
+			$this->error .= $this->db->lasterror();
+			$errorflag = -1;
+		}
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}
@@ -816,12 +827,12 @@ class KnowledgeRecord extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("knowledgemanagement");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Validated');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Disabled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
 		}
 
 		$statusType = 'status'.$status;
@@ -901,7 +912,7 @@ class KnowledgeRecord extends CommonObject
 		$this->lines = array();
 
 		$objectline = new KnowledgeRecordLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_knowledgerecord = '.$this->id));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_knowledgerecord = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;
@@ -1035,6 +1046,22 @@ class KnowledgeRecord extends CommonObject
 		$this->db->commit();
 
 		return $error;
+	}
+
+	/**
+	 * Sets object to supplied categories.
+	 *
+	 * Deletes object from existing categories not supplied.
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param int[]|int $categories Category or categories IDs
+	 * @return void
+	 */
+	public function setCategories($categories)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		return parent::setCategoriesCommon($categories, Categorie::TYPE_KNOWLEDGEMANAGEMENT);
 	}
 }
 
