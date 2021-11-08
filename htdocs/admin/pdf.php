@@ -165,11 +165,11 @@ if ($action == 'update') {
 	if (GETPOSTISSET('PDF_SHOW_LINK_TO_ONLINE_PAYMENT')) {
 		dolibarr_set_const($db, "PDF_SHOW_LINK_TO_ONLINE_PAYMENT", GETPOST('PDF_SHOW_LINK_TO_ONLINE_PAYMENT', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
-  
+
 	if (GETPOSTISSET('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME')) {
 		dolibarr_set_const($db, "PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME", GETPOST('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME', 'alpha'), 'chaine', 0, '', $conf->entity);
-  }
-  
+	}
+
 	if (GETPOSTISSET('PDF_USE_A')) {
 		dolibarr_set_const($db, "PDF_USE_A", GETPOST('PDF_USE_A', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
