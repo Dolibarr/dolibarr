@@ -1086,7 +1086,7 @@ select.flat.selectlimit {
 	max-width: 62px;
 }
 .selectlimit, .marginrightonly {
-	margin-right: 10px !important;
+	margin-<?php echo $right; ?>: 10px !important;
 }
 .marginleftonly {
 	margin-<?php echo $left; ?>: 10px !important;
@@ -1220,7 +1220,7 @@ select.flat.selectlimit {
 }
 
 /* Styles for amount on card */
-table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaintopay {
+table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaintopay, table.paymenttable td.amountremaintopayback {
 	padding-top: 0px;
 	padding-bottom: 0px;
 }

@@ -2901,7 +2901,7 @@ class User extends CommonObject
 			}
 		}
 		foreach ($socialnetworks as $key => $value) {
-			if ($this->socialnetworks[$value['label']] && !empty($conf->global->{'LDAP_FIELD_'.strtoupper($value['label'])})) {
+			if (!empty($this->socialnetworks[$value['label']]) && !empty($conf->global->{'LDAP_FIELD_'.strtoupper($value['label'])})) {
 				$info[$conf->global->{'LDAP_FIELD_'.strtoupper($value['label'])}] = $this->socialnetworks[$value['label']];
 			}
 		}

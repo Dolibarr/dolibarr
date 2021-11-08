@@ -979,6 +979,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 	$outputlangs->load("dict");
 	$line = '';
+	$reg = array();
 
 	$dims = $pdf->getPageDimensions();
 
@@ -1273,6 +1274,7 @@ function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $pos
 
 		// Fix bug of some HTML editors that replace links <img src="http://localhostgit/viewimage.php?modulepart=medias&file=image/efd.png" into <img src="http://localhostgit/viewimage.php?modulepart=medias&amp;file=image/efd.png"
 		// We make the reverse, so PDF generation has the real URL.
+		$nbrep = 0;
 		$labelproductservice = preg_replace('/(<img[^>]*src=")([^"]*)(&amp;)([^"]*")/', '\1\2&\4', $labelproductservice, -1, $nbrep);
 
 		//var_dump($labelproductservice);exit;
@@ -2213,49 +2215,6 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
 		}
 	}
 	return $result;
-}
-
-/**
- *	Return total quantity of products and/or services
- *
- *	@param	Object		$object				Object
- *	@param	string		$type				Type
- *  @param  Translate	$outputlangs		Object langs for output
- * 	@return	integer
- *  @deprecated Not used by Dolibarr core, so will be removed.
- */
-function pdf_getTotalQty($object, $type, $outputlangs)
-{
-	global $hookmanager;
-
-	$total = 0;
-	$nblines = count($object->lines);
-	$hidedetails = false;
-
-	// Loop on each lines
-	for ($i = 0; $i < $nblines; $i++) {
-		if ($object->lines[$i]->special_code != 3) {
-			if ($type == 'all') {
-				$total += $object->lines[$i]->qty;
-			} elseif ($type == 9 && is_object($hookmanager) && (($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line))) {
-				$special_code = $object->lines[$i]->special_code;
-				if (!empty($object->lines[$i]->fk_parent_line)) {
-					$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-				}
-				$hidedetails = '';
-				$parameters = array('i'=>$i, 'outputlangs'=>$outputlangs, 'hidedetails'=>$hidedetails, 'special_code'=>$special_code);
-				$action = '';
-				$reshook = $hookmanager->executeHooks('pdf_getTotalQty', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-				return $hookmanager->resPrint;
-			} elseif ($type == 0 && $object->lines[$i]->product_type == 0) {
-				$total += $object->lines[$i]->qty;
-			} elseif ($type == 1 && $object->lines[$i]->product_type == 1) {
-				$total += $object->lines[$i]->qty;
-			}
-		}
-	}
-
-	return $total;
 }
 
 /**

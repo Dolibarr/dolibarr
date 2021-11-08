@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2017 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2008-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2021 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2020	   Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -91,7 +91,6 @@ function dol_decode($chain, $key = '1')
 	return $chain;
 }
 
-
 /**
  * 	Returns a hash of a string.
  *  If constant MAIN_SECURITY_HASH_ALGO is defined, we use this function as hashing function (recommanded value is 'password_hash')
@@ -123,7 +122,7 @@ function dol_hash($chain, $type = '0')
 	} elseif ($type == '3' || $type == 'md5') {
 		return md5($chain);
 	} elseif ($type == '4' || $type == 'md5openldap') {
-		return '{md5}'.base64_encode(mhash(MHASH_MD5, $chain)); // For OpenLdap with md5 (based on an unencrypted password in base)
+		return '{md5}'.base64_encode(pack("H*", md5($chain))); // For OpenLdap with md5 (based on an unencrypted password in base)
 	} elseif ($type == '5' || $type == 'sha256') {
 		return hash('sha256', $chain);
 	} elseif ($type == '6' || $type == 'password_hash') {
@@ -167,7 +166,6 @@ function dol_verifyHash($chain, $hash, $type = '0')
 
 	return dol_hash($chain, $type) == $hash;
 }
-
 
 /**
  *	Check permissions of a user to show a page and an object. Check read permission.

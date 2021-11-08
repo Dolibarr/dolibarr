@@ -509,8 +509,8 @@ $tabcond[30] = !empty($conf->label->enabled);
 $tabcond[32] = (!empty($conf->holiday->enabled) || !empty($conf->hrm->enabled));
 $tabcond[33] = !empty($conf->hrm->enabled);
 $tabcond[34] = !empty($conf->hrm->enabled);
-$tabcond[35] = !empty($conf->expensereport->enabled);
-$tabcond[36] = !empty($conf->expensereport->enabled);
+$tabcond[35] = !empty($conf->expensereport->enabled) && !empty($conf->global->MAIN_USE_EXPENSE_IK);
+$tabcond[36] = !empty($conf->expensereport->enabled) && !empty($conf->global->MAIN_USE_EXPENSE_IK);
 $tabcond[37] = !empty($conf->product->enabled);
 $tabcond[38] = !empty($conf->socialnetworks->enabled);
 $tabcond[39] = (!empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && !empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES));
@@ -2107,7 +2107,7 @@ if ($id) {
 					if ($iserasable) {
 						print '<td class="center">';
 						if ($user->admin) {
-							print '<a href="'.$url.'action=delete&token='.newToken().'">'.img_delete().'</a>';
+							print '<a class="reposition" href="'.$url.'action=delete&token='.newToken().'">'.img_delete().'</a>';
 						}
 						//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
 						print '</td>';

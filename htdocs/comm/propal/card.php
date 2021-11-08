@@ -2679,7 +2679,7 @@ if ($action == 'create') {
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);
 
 		// Show online signature link
-		$useonlinesignature = $conf->global->MAIN_FEATURES_LEVEL; // Replace this with 1 when feature to make online signature is ok
+		$useonlinesignature = 1; // Replace this with 1 when feature to make online signature is ok
 
 		if ($object->statut != Propal::STATUS_DRAFT && $useonlinesignature) {
 			print '<br><!-- Link to sign -->';
