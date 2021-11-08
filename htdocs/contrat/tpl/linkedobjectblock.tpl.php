@@ -23,7 +23,7 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 
-print "<!-- BEGIN PHP TEMPLATE -->\n";
+print "<!-- BEGIN PHP TEMPLATE contrat/tpl/linkedopjectblock.tpl.php -->\n";
 
 
 global $user;
@@ -62,7 +62,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		echo price($totalcontrat);
 	} ?></td>
 	<td class="right"><?php echo $objectlink->getLibStatut(7); ?></td>
-	<td class="right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+	<td class="right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
 </tr>
 	<?php
 }

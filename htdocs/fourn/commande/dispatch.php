@@ -341,11 +341,11 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 							if (GETPOSTISSET($saveprice)) {
 								// TODO Use class
 								$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
-								$sql .= " SET unitprice='".GETPOST($pu)."'";
-								$sql .= ", price=".GETPOST($pu)."*quantity";
-								$sql .= ", remise_percent='".(!empty($dto) ? $dto : 0)."'";
-								$sql .= " WHERE fk_soc=".$object->socid;
-								$sql .= " AND fk_product=".GETPOST($prod, 'int');
+								$sql .= " SET unitprice = ".price2num(GETPOST($pu), 'MU', 2);
+								$sql .= ", price = ".price2num(GETPOST($pu), 'MU', 2)." * quantity";
+								$sql .= ", remise_percent = ".price2num((empty($dto) ? 0 : $dto), 3, 2)."'";
+								$sql .= " WHERE fk_soc = ".((int) $object->socid);
+								$sql .= " AND fk_product=".((int) GETPOST($prod, 'int'));
 
 								$resql = $db->query($sql);
 							}
@@ -547,7 +547,7 @@ if ($id > 0 || !empty($ref)) {
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer) {
 			if ($action != 'classify') {
-				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				$morehtmlref .= ' : ';
 			}
 			if ($action == 'classify') {
@@ -565,9 +565,10 @@ if ($id > 0 || !empty($ref)) {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-				$morehtmlref .= $proj->ref;
-				$morehtmlref .= '</a>';
+				$morehtmlref .= ' : '.$proj->getNomUrl(1);
+				if ($proj->title) {
+					$morehtmlref .= ' - '.$proj->title;
+				}
 			} else {
 				$morehtmlref .= '';
 			}
@@ -653,7 +654,7 @@ if ($id > 0 || !empty($ref)) {
 		$sql = "SELECT l.rowid, cfd.fk_product, sum(cfd.qty) as qty";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as l on l.rowid = cfd.fk_commandefourndet";
-		$sql .= " WHERE cfd.fk_commande = ".$object->id;
+		$sql .= " WHERE cfd.fk_commande = ".((int) $object->id);
 		$sql .= " GROUP BY l.rowid, cfd.fk_product";
 
 		$resql = $db->query($sql);
@@ -689,7 +690,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product=p.rowid";
-		$sql .= " WHERE l.fk_commande = ".$object->id;
+		$sql .= " WHERE l.fk_commande = ".((int) $object->id);
 		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 			$sql .= " AND l.product_type = 0";
 		}
@@ -1113,7 +1114,7 @@ if ($id > 0 || !empty($ref)) {
 	if ($conf->reception->enabled) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."reception as r ON cfd.fk_reception = r.rowid";
 	}
-	$sql .= " WHERE cfd.fk_commande = ".$object->id;
+	$sql .= " WHERE cfd.fk_commande = ".((int) $object->id);
 	$sql .= " AND cfd.fk_product = p.rowid";
 	$sql .= " ORDER BY cfd.rowid ASC";
 
@@ -1294,13 +1295,13 @@ if ($id > 0 || !empty($ref)) {
 				if ($action != 'editline' || $lineid != $objp->dispatchlineid) {
 					if (empty($reception->id) || ($reception->statut == Reception::STATUS_DRAFT)) { // only allow edit on draft reception
 						print '<td class="linecoledit center">';
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;lineid='.$objp->dispatchlineid.'#line_'.$objp->dispatchlineid.'">';
+						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&lineid='.$objp->dispatchlineid.'#line_'.$objp->dispatchlineid.'">';
 						print img_edit();
 						print '</a>';
 						print '</td>';
 
 						print '<td class="linecoldelete center">';
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=ask_deleteline&amp;lineid='.$objp->dispatchlineid.'#dispatch_received_products">';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=ask_deleteline&token='.newToken().'&lineid='.$objp->dispatchlineid.'#dispatch_received_products">';
 						print img_delete();
 						print '</a>';
 						print '</td>';

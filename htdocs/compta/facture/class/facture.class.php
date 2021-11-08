@@ -1560,8 +1560,11 @@ class Facture extends CommonInvoice
 		$hookmanager->initHooks(array('invoicedao'));
 		$parameters = array('id'=>$this->id, 'getnomurl'=>$result, 'notooltip' => $notooltip, 'addlinktonotes' => $addlinktonotes, 'save_lastsearch_value'=> $save_lastsearch_value, 'target' => $target);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) $result = $hookmanager->resPrint;
-		else $result .= $hookmanager->resPrint;
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 
 		return $result;
 	}
@@ -1737,7 +1740,7 @@ class Facture extends CommonInvoice
 			} else {
 				$this->error = 'Invoice with id='.$rowid.' or ref='.$ref.' or ref_ext='.$ref_ext.' not found';
 
-				dol_syslog(__METHOD__ . $this->error, LOG_WARNING);
+				dol_syslog(__METHOD__.$this->error, LOG_WARNING);
 				return 0;
 			}
 		} else {
@@ -1773,7 +1776,7 @@ class Facture extends CommonInvoice
 		$sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
-		$sql .= ' WHERE l.fk_facture = '.$this->id;
+		$sql .= ' WHERE l.fk_facture = '.((int) $this->id);
 		$sql .= ' ORDER BY l.rang, l.rowid';
 
 		dol_syslog(get_class($this).'::fetch_lines', LOG_DEBUG);
@@ -1880,8 +1883,8 @@ class Facture extends CommonInvoice
 		$this->tab_next_situation_invoice = array();
 
 		$sql = 'SELECT rowid, type, situation_cycle_ref, situation_counter FROM '.MAIN_DB_PREFIX.'facture';
-		$sql .= ' WHERE rowid <> '.$this->id;
-		$sql .= ' AND entity = '.$this->entity;
+		$sql .= " WHERE rowid <> ".((int) $this->id);
+		$sql .= ' AND entity = '.((int) $this->entity);
 		$sql .= ' AND situation_cycle_ref = '.(int) $this->situation_cycle_ref;
 		$sql .= ' ORDER BY situation_counter ASC';
 
@@ -2156,7 +2159,7 @@ class Facture extends CommonInvoice
 		} else {
 			$sql .= ' SET ref_client = \''.$this->db->escape($ref_client).'\'';
 		}
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(__METHOD__.' this->id='.$this->id.', ref_client='.$ref_client, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2431,9 +2434,9 @@ class Facture extends CommonInvoice
 			if ($close_note) {
 				$sql .= ", close_note='".$this->db->escape($close_note)."'";
 			}
-			$sql .= ', fk_user_closing = '.$user->id;
+			$sql .= ', fk_user_closing = '.((int) $user->id);
 			$sql .= ", date_closing = '".$this->db->idate($now)."'";
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -2497,7 +2500,7 @@ class Facture extends CommonInvoice
 		$sql .= ' SET paye=0, fk_statut='.self::STATUS_VALIDATED.', close_code=null, close_note=null,';
 		$sql .= ' date_closing=null,';
 		$sql .= ' fk_user_closing=null';
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::set_unpaid", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2568,7 +2571,7 @@ class Facture extends CommonInvoice
 		if ($close_note) {
 			$sql .= ", close_note='".$this->db->escape($close_note)."'";
 		}
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -2576,7 +2579,7 @@ class Facture extends CommonInvoice
 			// as they have not been used since the invoice is abandoned.
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 			$sql .= ' SET fk_facture = NULL';
-			$sql .= ' WHERE fk_facture = '.$this->id;
+			$sql .= ' WHERE fk_facture = '.((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -2716,7 +2719,7 @@ class Facture extends CommonInvoice
 				$sql .= ", datef='".$this->db->idate($this->date)."'";
 				$sql .= ", date_lim_reglement='".$this->db->idate($this->date_lim_reglement)."'";
 			}
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::validate", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -3296,8 +3299,8 @@ class Facture extends CommonInvoice
 			$this->line->desc = $desc;
 			$this->line->ref_ext = $ref_ext;
 
-			$this->line->qty = ($this->type == self::TYPE_CREDIT_NOTE ?abs($qty) : $qty); // For credit note, quantity is always positive and unit price negative
-			$this->line->subprice = ($this->type == self::TYPE_CREDIT_NOTE ?-abs($pu_ht) : $pu_ht); // For credit note, unit price always negative, always positive otherwise
+			$this->line->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs($qty) : $qty); // For credit note, quantity is always positive and unit price negative
+			$this->line->subprice = ($this->type == self::TYPE_CREDIT_NOTE ? -abs($pu_ht) : $pu_ht); // For credit note, unit price always negative, always positive otherwise
 
 			$this->line->vat_src_code = $vat_src_code;
 			$this->line->tva_tx = $txtva;
@@ -3306,11 +3309,11 @@ class Facture extends CommonInvoice
 			$this->line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
 			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 
-			$this->line->total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_ht) : $total_ht); // For credit note and if qty is negative, total is negative
-			$this->line->total_ttc = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_ttc) : $total_ttc); // For credit note and if qty is negative, total is negative
-			$this->line->total_tva = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_tva) : $total_tva); // For credit note and if qty is negative, total is negative
-			$this->line->total_localtax1 = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_localtax1) : $total_localtax1); // For credit note and if qty is negative, total is negative
-			$this->line->total_localtax2 = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_localtax2) : $total_localtax2); // For credit note and if qty is negative, total is negative
+			$this->line->total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_ht) : $total_ht); // For credit note and if qty is negative, total is negative
+			$this->line->total_ttc = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_ttc) : $total_ttc); // For credit note and if qty is negative, total is negative
+			$this->line->total_tva = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_tva) : $total_tva); // For credit note and if qty is negative, total is negative
+			$this->line->total_localtax1 = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_localtax1) : $total_localtax1); // For credit note and if qty is negative, total is negative
+			$this->line->total_localtax2 = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_localtax2) : $total_localtax2); // For credit note and if qty is negative, total is negative
 
 			$this->line->fk_product = $fk_product;
 			$this->line->product_type = $product_type;
@@ -3337,10 +3340,11 @@ class Facture extends CommonInvoice
 			// Multicurrency
 			$this->line->fk_multicurrency = $this->fk_multicurrency;
 			$this->line->multicurrency_code = $this->multicurrency_code;
-			$this->line->multicurrency_subprice		= $pu_ht_devise;
-			$this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
-			$this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
-			$this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
+			$this->line->multicurrency_subprice	= ($this->type == self::TYPE_CREDIT_NOTE ? -abs($pu_ht_devise) : $pu_ht_devise); // For credit note, unit price always negative, always positive otherwise
+
+			$this->line->multicurrency_total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($multicurrency_total_ht) : $multicurrency_total_ht); // For credit note and if qty is negative, total is negative
+			$this->line->multicurrency_total_tva = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($multicurrency_total_tva) : $multicurrency_total_tva); // For credit note and if qty is negative, total is negative
+			$this->line->multicurrency_total_ttc = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($multicurrency_total_ttc) : $multicurrency_total_ttc); // For credit note and if qty is negative, total is negative
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				$this->line->array_options = $array_options;
@@ -3778,7 +3782,7 @@ class Facture extends CommonInvoice
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 			$sql .= ' SET remise_percent = '.((float) $remise);
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$sql .= ' AND fk_statut = '.self::STATUS_DRAFT;
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -3840,7 +3844,7 @@ class Facture extends CommonInvoice
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 			$sql .= ' SET remise_absolue = '.((float) $remise);
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$sql .= ' AND fk_statut = '.self::STATUS_DRAFT;
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -3892,7 +3896,7 @@ class Facture extends CommonInvoice
 		global $conf, $langs;
 
 		if ($this->module_source == 'takepos') {
-			$langs->load('cashdesk@cashdesk');
+			$langs->load('cashdesk');
 
 			$moduleName = 'takepos';
 			$moduleSourceName = 'Takepos';
@@ -4055,16 +4059,16 @@ class Facture extends CommonInvoice
 
 		$sql = "SELECT s.rowid, s.nom as name, s.client,";
 		$sql .= " f.rowid as fid, f.ref as ref, f.datef as df";
-		if (!$user->rights->societe->client->voir && !$socid) {
+		if (empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= ", sc.fk_soc, sc.fk_user";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
-		if (!$user->rights->societe->client->voir && !$socid) {
+		if (empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE f.entity IN (".getEntity('invoice').")";
 		$sql .= " AND f.fk_soc = s.rowid";
-		if (!$user->rights->societe->client->voir && !$socid) { //restriction
+		if (empty($user->rights->societe->client->voir) && !$socid) { //restriction
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid) {
@@ -4254,7 +4258,7 @@ class Facture extends CommonInvoice
 
 		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin,f.fk_statut, f.total_ht";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON f.fk_soc = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = " AND";
@@ -4501,7 +4505,7 @@ class Facture extends CommonInvoice
 		$sql = "SELECT count(f.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -4621,7 +4625,7 @@ class Facture extends CommonInvoice
 
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'facture';
 		$sql .= ' WHERE situation_cycle_ref = '.((int) $this->situation_cycle_ref);
-		$sql .= ' AND situation_counter < '.$this->situation_counter;
+		$sql .= ' AND situation_counter < '.((int) $this->situation_counter);
 		$sql .= ' AND entity = '.($this->entity > 0 ? $this->entity : $conf->entity);
 		$resql = $this->db->query($sql);
 		$res = array();
@@ -4654,7 +4658,7 @@ class Facture extends CommonInvoice
 
 		$this->db->begin();
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET situation_final = '.$this->situation_final.' where rowid = '.((int) $this->id);
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET situation_final = '.((int) $this->situation_final).' WHERE rowid = '.((int) $this->id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -4872,10 +4876,11 @@ class Facture extends CommonInvoice
 	public function setRetainedWarranty($value)
 	{
 		dol_syslog(get_class($this).'::setRetainedWarranty('.$value.')');
+
 		if ($this->statut >= 0) {
 			$fieldname = 'retained_warranty';
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' SET '.$fieldname.' = '.floatval($value);
+			$sql .= " SET ".$fieldname." = ".((float) $value);
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
@@ -4912,8 +4917,8 @@ class Facture extends CommonInvoice
 		if ($this->statut >= 0) {
 			$fieldname = 'retained_warranty_date_limit';
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' SET '.$fieldname.' = '.(strval($timestamp) != '' ? '\''.$this->db->idate($timestamp).'\'' : 'null');
-			$sql .= ' WHERE rowid='.((int) $this->id);
+			$sql .= " SET ".$fieldname." = ".(strval($timestamp) != '' ? "'".$this->db->idate($timestamp)."'" : 'null');
+			$sql .= ' WHERE rowid = '.((int) $this->id);
 
 			if ($this->db->query($sql)) {
 				$this->retained_warranty_date_limit = $timestamp;
@@ -5408,9 +5413,9 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ' '.(!empty($this->fk_remise_except) ? $this->fk_remise_except : "null").',';
 		$sql .= " ".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null").",";
 		$sql .= " ".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null").",";
-		$sql .= ' '.$this->fk_code_ventilation.',';
-		$sql .= ' '.$this->rang.',';
-		$sql .= ' '.$this->special_code.',';
+		$sql .= ' '.((int) $this->fk_code_ventilation).',';
+		$sql .= ' '.((int) $this->rang).',';
+		$sql .= ' '.((int) $this->special_code).',';
 		$sql .= ' '.(!empty($this->fk_fournprice) ? $this->fk_fournprice : "null").',';
 		$sql .= ' '.price2num($this->pa_ht).',';
 		$sql .= " '".$this->db->escape($this->info_bits)."',";
@@ -5419,11 +5424,11 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= " ".price2num($this->total_ttc).",";
 		$sql .= " ".price2num($this->total_localtax1).",";
 		$sql .= " ".price2num($this->total_localtax2);
-		$sql .= ", ".$this->situation_percent;
+		$sql .= ", ".((float) $this->situation_percent);
 		$sql .= ", ".(!empty($this->fk_prev_id) ? $this->fk_prev_id : "null");
 		$sql .= ", ".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
-		$sql .= ", ".$user->id;
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $user->id);
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".(int) $this->fk_multicurrency;
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".price2num($this->multicurrency_subprice);
@@ -5782,7 +5787,7 @@ class FactureLigne extends CommonInvoiceLine
 				return 0;
 			}
 
-			$sql = 'SELECT situation_percent FROM '.MAIN_DB_PREFIX.'facturedet WHERE rowid='.$this->fk_prev_id;
+			$sql = "SELECT situation_percent FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".((int) $this->fk_prev_id);
 			$resql = $this->db->query($sql);
 			if ($resql && $resql->num_rows > 0) {
 				$res = $this->db->fetch_array($resql);
@@ -5792,9 +5797,9 @@ class FactureLigne extends CommonInvoiceLine
 				if ($include_credit_note) {
 					$sql = 'SELECT fd.situation_percent FROM '.MAIN_DB_PREFIX.'facturedet fd';
 					$sql .= ' JOIN '.MAIN_DB_PREFIX.'facture f ON (f.rowid = fd.fk_facture) ';
-					$sql .= ' WHERE fd.fk_prev_id = '.((int) $this->fk_prev_id);
-					$sql .= ' AND f.situation_cycle_ref = '.((int) $invoicecache[$invoiceid]->situation_cycle_ref); // Prevent cycle outed
-					$sql .= ' AND f.type = '.Facture::TYPE_CREDIT_NOTE;
+					$sql .= " WHERE fd.fk_prev_id = ".((int) $this->fk_prev_id);
+					$sql .= " AND f.situation_cycle_ref = ".((int) $invoicecache[$invoiceid]->situation_cycle_ref); // Prevent cycle outed
+					$sql .= " AND f.type = ".Facture::TYPE_CREDIT_NOTE;
 
 					$res = $this->db->query($sql);
 					if ($res) {

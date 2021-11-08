@@ -66,7 +66,7 @@ NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
 Answered=Cevaplandı
 Waiting=Bekliyor
-Closed=Kapalı
+SolvedClosed=Solved
 Deleted=Silindi
 
 # Dict
@@ -186,9 +186,11 @@ TicketSeverity=Önem seviyesi
 ShowTicket=Destek bildirimini gör
 RelatedTickets=İlgili destek bildirimleri
 TicketAddIntervention=Müdahale oluştur
-CloseTicket=Destek bildirimini kapat
-CloseATicket=Bir destek bildirimini kapat
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Destek bildirimi kapatmayı onayla
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Lütfen destek bildirimi silmeyi onaylayın
 TicketDeletedSuccess=Destek bildirimi başarı ile silindi
 TicketMarkedAsClosed=Destek bildirimi kapalı olarak işaretlendi

@@ -154,7 +154,7 @@ class doc_generic_member_odt extends ModelePDFMember
 		$texte .= $conf->global->MEMBER_ADDON_PDF_ODT_PATH;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button small" value="'.$langs->trans("Modify").'" name="Button">';
+		$texte .= '<input type="submit" class="button small" name="Button"value="'.$langs->trans("Modify").'">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
@@ -195,9 +195,10 @@ class doc_generic_member_odt extends ModelePDFMember
 	 * 	@param	string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *	@param	string		$mode				Tell if doc module is called for 'member', ...
 	 *  @param  int         $nooutput           1=Generate only file on disk and do not return it on response
+	 *  @param	string		$filename			Name of output file (without extension)
 	 *	@return	int         					1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs, $srctemplatepath, $mode = 'member', $nooutput = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath, $mode = 'member', $nooutput = 0, $filename = 'tmp_cards')
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;

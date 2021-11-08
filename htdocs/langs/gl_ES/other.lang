@@ -291,3 +291,7 @@ PopuCom=Produtos/Servizos por popularidade e Pedimentos
 ProductStatistics=Estatísticas de Produtos/Servizos
 NbOfQtyInOrders=Cantidade en pedimentos
 SelectTheTypeOfObjectToAnalyze=Seleccione un obxecto para ver as súas estatísticas ...
+
+ConfirmBtnCommonContent = Está certo de querer "%s"?
+ConfirmBtnCommonTitle = Confirma a súa acción
+CloseDialog = Peche

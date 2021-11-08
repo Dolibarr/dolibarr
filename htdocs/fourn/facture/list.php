@@ -344,7 +344,7 @@ if (empty($reshook)) {
 					$rsql .= " , u.rowid as user_id, u.lastname, u.firstname, u.login";
 					$rsql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 					$rsql .= " , ".MAIN_DB_PREFIX."user as u";
-					$rsql .= " WHERE fk_facture_fourn = ".$objecttmp->id;
+					$rsql .= " WHERE fk_facture_fourn = ".((int) $objecttmp->id);
 					$rsql .= " AND pfd.fk_user_demande = u.rowid";
 					$rsql .= " AND pfd.traite = 0";
 					$rsql .= " ORDER BY pfd.date_demande DESC";
@@ -430,7 +430,7 @@ if (!$search_all) {
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -461,7 +461,7 @@ if ($search_product_category > 0) {
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON f.fk_user_author = u.rowid';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = f.fk_projet";
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale > 0 || (!$user->rights->societe->client->voir && !$socid)) {
+if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 if ($search_user > 0) {
@@ -474,7 +474,7 @@ $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object
 $sql .= $hookmanager->resPrint;
 $sql .= ' WHERE f.fk_soc = s.rowid';
 $sql .= ' AND f.entity IN ('.getEntity('facture_fourn').')';
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_product_category > 0) {
@@ -549,7 +549,7 @@ if ($search_montant_ttc != '') {
 	$sql .= natural_search('f.total_ttc', $search_montant_ttc, 1);
 }
 if ($search_multicurrency_code != '') {
-	$sql .= ' AND f.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
+	$sql .= " AND f.multicurrency_code = '".$db->escape($search_multicurrency_code)."'";
 }
 if ($search_multicurrency_tx != '') {
 	$sql .= natural_search('f.multicurrency_tx', $search_multicurrency_tx, 1);
@@ -606,7 +606,7 @@ if ($filter && $filter != -1) {
 	$aFilter = explode(',', $filter);
 	foreach ($aFilter as $fil) {
 		$filt = explode(':', $fil);
-		$sql .= ' AND '.$db->escape(trim($filt[0]))." = '".$db->escape(trim($filt[1]))."'";
+		$sql .= " AND ".$db->escape(trim($filt[0]))." = '".$db->escape(trim($filt[1]))."'";
 	}
 }
 if ($search_sale > 0) {
@@ -655,7 +655,7 @@ if (!$search_all) {
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= !empty($hookmanager->resPrint) ? (' HAVING 1=1 ' . $hookmanager->resPrint) : '';
+$sql .= !empty($hookmanager->resPrint) ? (" HAVING 1=1 " . $hookmanager->resPrint) : "";
 
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -975,13 +975,13 @@ if ($resql) {
 	// Ref
 	if (!empty($arrayfields['f.ref']['checked'])) {
 		print '<td class="liste_titre left">';
-		print '<input class="flat maxwidth50" type="text" name="search_ref" value="'.$search_ref.'">';
+		print '<input class="flat maxwidth50" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 		print '</td>';
 	}
 	// Ref supplier
 	if (!empty($arrayfields['f.ref_supplier']['checked'])) {
 		print '<td class="liste_titre">';
-		print '<input class="flat maxwidth50" type="text" name="search_refsupplier" value="'.$search_refsupplier.'">';
+		print '<input class="flat maxwidth75" type="text" name="search_refsupplier" value="'.dol_escape_htmltag($search_refsupplier).'">';
 		print '</td>';
 	}
 	// Type
@@ -1006,7 +1006,7 @@ if ($resql) {
 	// Label
 	if (!empty($arrayfields['f.label']['checked'])) {
 		print '<td class="liste_titre">';
-		print '<input class="flat maxwidth75" type="text" name="search_label" value="'.$search_label.'">';
+		print '<input class="flat maxwidth75" type="text" name="search_label" value="'.dol_escape_htmltag($search_label).'">';
 		print '</td>';
 	}
 	// Date invoice
@@ -1037,11 +1037,11 @@ if ($resql) {
 	}
 	// Project
 	if (!empty($arrayfields['p.ref']['checked'])) {
-		print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_project" value="'.$search_project.'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_project" value="'.dol_escape_htmltag($search_project).'"></td>';
 	}
 	// Thirpdarty
 	if (!empty($arrayfields['s.nom']['checked'])) {
-		print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_company" value="'.$search_company.'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'"></td>';
 	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) {
@@ -1096,13 +1096,13 @@ if ($resql) {
 	if (!empty($arrayfields['f.total_localtax1']['checked'])) {
 		// Amount tax 1
 		print '<td class="liste_titre right">';
-		print '<input class="flat" type="text" size="5" name="search_montant_localtax1" value="'.$search_montant_localtax1.'">';
+		print '<input class="flat" type="text" size="5" name="search_montant_localtax1" value="'.dol_escape_htmltag($search_montant_localtax1).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['f.total_localtax2']['checked'])) {
 		// Amount tax 2
 		print '<td class="liste_titre right">';
-		print '<input class="flat" type="text" size="5" name="search_montant_localtax2" value="'.$search_montant_localtax2.'">';
+		print '<input class="flat" type="text" size="5" name="search_montant_localtax2" value="'.dol_escape_htmltag($search_montant_localtax2).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['f.total_ttc']['checked'])) {

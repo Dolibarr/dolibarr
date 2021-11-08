@@ -617,4 +617,31 @@ abstract class Stats
 
 		return $result;
 	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 *  Returns the summed amounts per year for a given number of past years ending now
+	 *  @param  string  $sql    SQL
+	 *  @return array
+	 */
+	protected function _getAmountByYear($sql)
+	{
+		$result = array();
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$row = $this->db->fetch_row($resql);
+				$j = (int) $row[0];
+				$result[] = [
+					0 => (int) $row[0],
+					1 => (int) $row[1],
+				];
+				$i++;
+			}
+			$this->db->free($resql);
+		}
+		return $result;
+	}
 }

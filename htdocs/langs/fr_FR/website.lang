@@ -31,7 +31,7 @@ AddWebsite=Ajouter site web
 Webpage=Page/container Web
 AddPage=Ajouter une page/container
 PageContainer=Page
-PreviewOfSiteNotYetAvailable=The preview of your website <strong>%s</strong> is not yet available. You must first '<strong>Import a full website template</strong>' or just '<strong>Add a page/container</strong>'.
+PreviewOfSiteNotYetAvailable=L'aperçu de votre site web <strong> %s </strong> n'est pas encore disponible. Vous devez d'abord " <strong> Importer un modèle de site Web complet </strong> " ou simplement " <strong> Ajouter une page/un conteneur </strong> ".
 RequestedPageHasNoContentYet=La page demandée avec l'id=%s ne présente encore aucun contenu ou le fichier cache .tpl.php a été supprimé. Ajoutez du contenu à la page pour résoudre cela.
 SiteDeleted=Site Web '%s' supprimé
 PageContent=Page/Container

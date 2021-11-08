@@ -178,7 +178,8 @@ class FormActions
 		$sortfield = 'a.datep,a.id';
 		$sortorder = 'DESC,DESC';
 
-		$listofactions = ActionComm::getActions($this->db, $socid, $object->id, $typeelement, '', $sortfield, $sortorder, ($max ? ($max + 1) : 0));
+		$actioncomm = new ActionComm($this->db);
+		$listofactions = $actioncomm->getActions($socid, $object->id, $typeelement, '', $sortfield, $sortorder, ($max ? ($max + 1) : 0));
 		if (!is_array($listofactions)) {
 			dol_print_error($this->db, 'FailedToGetActions');
 		}
@@ -221,10 +222,14 @@ class FormActions
 			if ($typeelement == 'project') {
 				$projectid = $object->id;
 			}
+			$taskid = 0;
+			if ($typeelement == 'task') {
+				$taskid = $object->id;
+			}
 
 			$newcardbutton = '';
 			if (!empty($conf->agenda->enabled) && !empty($user->rights->agenda->myactions->create)) {
-				$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog', 'tzuser')).'&amp;origin='.urlencode($typeelement).'&amp;originid='.$object->id.((!empty($object->socid) && $object->socid > 0) ? '&amp;socid='.$object->socid : ((!empty($socid) && $socid > 0) ? '&amp;socid='.$socid : '')).($projectid > 0 ? '&amp;projectid='.$projectid : '').'&amp;backtopage='.urlencode($urlbacktopage);
+				$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&token='.newToken().'&datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog', 'tzuser')).'&origin='.urlencode($typeelement).'&originid='.((int) $object->id).((!empty($object->socid) && $object->socid > 0) ? '&socid='.((int) $object->socid) : ((!empty($socid) && $socid > 0) ? '&socid='.((int) $socid) : '')).($projectid > 0 ? '&projectid='.((int) $projectid) : '').($taskid > 0 ? '&taskid='.((int) $taskid) : '').'&backtopage='.urlencode($urlbacktopage);
 				$newcardbutton .= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', $url);
 			}
 

@@ -393,6 +393,38 @@ class FormFile
 		global $langs, $conf, $user, $hookmanager;
 		global $form;
 
+		$reshook = 0;
+		if (is_object($hookmanager)) {
+			$parameters = array(
+				'modulepart'=>&$modulepart,
+				'modulesubdir'=>&$modulesubdir,
+				'filedir'=>&$filedir,
+				'urlsource'=>&$urlsource,
+				'genallowed'=>&$genallowed,
+				'delallowed'=>&$delallowed,
+				'modelselected'=>&$modelselected,
+				'allowgenifempty'=>&$allowgenifempty,
+				'forcenomultilang'=>&$forcenomultilang,
+				'noform'=>&$noform,
+				'param'=>&$param,
+				'title'=>&$title,
+				'buttonlabel'=>&$buttonlabel,
+				'codelang'=>&$codelang,
+				'morepicto'=>&$morepicto,
+				'hideifempty'=>&$hideifempty,
+				'removeaction'=>&$removeaction
+			);
+			$reshook = $hookmanager->executeHooks('showDocuments', $parameters, $object); // Note that parameters may have been updated by hook
+			// May report error
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			}
+		}
+		// Remode default action if $reskook > 0
+		if ($reshook > 0) {
+			return $hookmanager->resPrint;
+		}
+
 		if (!is_object($form)) {
 			$form = new Form($this->db);
 		}
@@ -468,7 +500,7 @@ class FormFile
 			$modellist = array();
 
 			if ($modulepart == 'company') {
-				$showempty = 1;		// can have no template active
+				$showempty = 1; // can have no template active
 				if (is_array($genallowed)) {
 					$modellist = $genallowed;
 				} else {
@@ -532,7 +564,7 @@ class FormFile
 					$modellist = ModelePDFFactures::liste_modeles($this->db);
 				}
 			} elseif ($modulepart == 'contract') {
-				$showempty = 1;		// can have no template active
+				$showempty = 1; // can have no template active
 				if (is_array($genallowed)) {
 					$modellist = $genallowed;
 				} else {
@@ -596,7 +628,7 @@ class FormFile
 					$modellist = ModelePDFSuppliersOrders::liste_modeles($this->db);
 				}
 			} elseif ($modulepart == 'facture_fournisseur' || $modulepart == 'supplier_invoice') {
-				$showempty = 1; 	// can have no template active
+				$showempty = 1; // can have no template active
 				if (is_array($genallowed)) {
 					$modellist = $genallowed;
 				} else {
@@ -702,9 +734,10 @@ class FormFile
 				$urlsource .= '#'.$forname.'_form'; // So we switch to form after a generation
 			}
 			if (empty($noform)) {
-				$out .= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#builddoc').'" id="'.$forname.'_form" method="post">';
+				$out .= '<form action="'.$urlsource.'" id="'.$forname.'_form" method="post">';
 			}
 			$out .= '<input type="hidden" name="action" value="builddoc">';
+			$out .= '<input type="hidden" name="page_y" value="">';
 			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 
 			$out .= load_fiche_titre($titletoshow, '', '');
@@ -754,7 +787,7 @@ class FormFile
 			}
 
 			// Button
-			$genbutton = '<input class="button buttongen" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
+			$genbutton = '<input class="button buttongen reposition" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
 			$genbutton .= ' type="submit" value="'.$buttonlabel.'"';
 			if (!$allowgenifempty && !is_array($modellist) && empty($modellist)) {
 				$genbutton .= ' disabled';
@@ -899,20 +932,20 @@ class FormFile
 					}
 					$out .= '</td>';
 
+					// Show picto delete, print...
 					if ($delallowed || $printer || $morepicto) {
 						$out .= '<td class="right nowraponall">';
 						if ($delallowed) {
 							$tmpurlsource = preg_replace('/#[a-zA-Z0-9_]*$/', '', $urlsource);
-							$out .= '<a href="'.$tmpurlsource.((strpos($tmpurlsource, '?') === false) ? '?' : '&amp;').'action='.$removeaction.'&amp;file='.urlencode($relativepath);
-							$out .= ($param ? '&amp;'.$param : '');
+							$out .= '<a class="reposition" href="'.$tmpurlsource.((strpos($tmpurlsource, '?') === false) ? '?' : '&').'action='.urlencode($removeaction).'&token='.newToken().'&file='.urlencode($relativepath);
+							$out .= ($param ? '&'.$param : '');
 							//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
 							//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
 							$out .= '">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
 						}
 						if ($printer) {
-							//$out.= '<td class="right">';
-							$out .= '<a class="marginleftonly" href="'.$urlsource.(strpos($urlsource, '?') ? '&amp;' : '?').'action=print_file&amp;printer='.$modulepart.'&amp;file='.urlencode($relativepath);
-							$out .= ($param ? '&amp;'.$param : '');
+							$out .= '<a class="marginleftonly reposition" href="'.$urlsource.(strpos($urlsource, '?') ? '&' : '?').'action=print_file&token='.newToken().'printer='.urlencode($modulepart).'&file='.urlencode($relativepath);
+							$out .= ($param ? '&'.$param : '');
 							$out .= '">'.img_picto($langs->trans("PrintFile", $relativepath), 'printer.png').'</a>';
 						}
 						if ($morepicto) {
@@ -959,7 +992,7 @@ class FormFile
 			}
 
 			if (count($file_list) == 0 && count($link_list) == 0 && $headershown) {
-				$out .= '<tr><td colspan="'.(3 + ($addcolumforpicto ? 1 : 0)).'" class="opacitymedium">'.$langs->trans("None").'</td></tr>'."\n";
+				$out .= '<tr><td colspan="'.(3 + ($addcolumforpicto ? 1 : 0)).'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>'."\n";
 			}
 		}
 
@@ -1305,11 +1338,11 @@ class FormFile
 					print '<tr class="oddeven" id="row-'.($filearray[$key]['rowid'] > 0 ? $filearray[$key]['rowid'] : 'AFTER'.$lastrowid.'POS'.($i + 1)).'">';
 
 					// File name
-					print '<td class="minwith200">';
+					print '<td class="minwith200 tdoverflowmax500">';
 
 					// Show file name with link to download
 					//print "XX".$file['name'];	//$file['name'] must be utf8
-					print '<a class="paddingright" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
+					print '<a class="paddingright valignmiddle" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 					if ($forcedownload) {
 						print '&attachment=1';
 					}
@@ -1318,7 +1351,7 @@ class FormFile
 					}
 					print '&file='.urlencode($filepath);
 					print '">';
-					print img_mime($file['name'], $file['name'].' ('.dol_print_size($file['size'], 0, 0).')', 'inline-block valignbottom paddingright');
+					print img_mime($file['name'], $file['name'].' ('.dol_print_size($file['size'], 0, 0).')', 'inline-block valignmiddle paddingright');
 					if ($showrelpart == 1) {
 						print $relativepath;
 					}
@@ -1340,7 +1373,7 @@ class FormFile
 					}
 					// Preview link
 					if (!$editline) {
-						print $this->showPreview($file, $modulepart, $filepath, 0, '&entity='.(!empty($object->entity) ? $object->entity : $conf->entity));
+						print $this->showPreview($file, $modulepart, $filepath, 0, 'entity='.(!empty($object->entity) ? $object->entity : $conf->entity));
 					}
 
 					print "</td>\n";
@@ -1456,7 +1489,7 @@ class FormFile
 
 							if ($permtoeditline) {
 								$paramsectiondir = (in_array($modulepart, array('medias', 'ecm')) ? '&section_dir='.urlencode($relativepath) : '');
-								print '<a class="editfielda reposition editfilelink" href="'.(($useinecm == 1 || $useinecm == 5) ? '#' : ($url.'?action=editfile&urlfile='.urlencode($filepath).$paramsectiondir.$param)).'" rel="'.$filepath.'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
+								print '<a class="editfielda reposition editfilelink" href="'.(($useinecm == 1 || $useinecm == 5) ? '#' : ($url.'?action=editfile&token='.newToken().'&urlfile='.urlencode($filepath).$paramsectiondir.$param)).'" rel="'.$filepath.'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 							}
 						}
 						if ($permonobject) {
@@ -1470,7 +1503,7 @@ class FormFile
 							if (!empty($conf->global->MAIN_ECM_DISABLE_JS)) {
 								$useajax = 0;
 							}
-							print '<a href="'.((($useinecm && $useinecm != 6) && $useajax) ? '#' : ($url.'?action=delete&token='.newToken().'&urlfile='.urlencode($filepath).$param)).'" class="reposition deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
+							print '<a href="'.((($useinecm && $useinecm != 6) && $useajax) ? '#' : ($url.'?action=deletefile&token='.newToken().'&urlfile='.urlencode($filepath).$param)).'" class="reposition deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
 						}
 						print "</td>";
 
@@ -1478,10 +1511,10 @@ class FormFile
 							if ($nboffiles > 1 && $conf->browser->layout != 'phone') {
 								print '<td class="linecolmove tdlineupdown center">';
 								if ($i > 0) {
-									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id.'">'.img_up('default', 0, 'imgupforline').'</a>';
+									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=up&rowid='.$line->id.'">'.img_up('default', 0, 'imgupforline').'</a>';
 								}
 								if ($i < $nboffiles - 1) {
-									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=down&amp;rowid='.$line->id.'">'.img_down('default', 0, 'imgdownforline').'</a>';
+									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=down&rowid='.$line->id.'">'.img_down('default', 0, 'imgdownforline').'</a>';
 								}
 								print '</td>';
 							} else {
@@ -1509,11 +1542,11 @@ class FormFile
 				if (empty($disablemove)) {
 					$colspan++; // 6 columns or 7
 				}
-				print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">';
+				print '<tr class="oddeven"><td colspan="'.$colspan.'">';
 				if (empty($textifempty)) {
-					print $langs->trans("NoFileFound");
+					print '<span class="opacitymedium">'.$langs->trans("NoFileFound").'</span>';
 				} else {
-					print $textifempty;
+					print '<span class="opacitymedium">'.$textifempty.'</span>';
 				}
 				print '</td></tr>';
 			}
@@ -1675,7 +1708,7 @@ class FormFile
 		} else {
 			$parameters = array('modulepart'=>$modulepart);
 			$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
-			if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray)>0) {
+			if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
 				if (array_key_exists('classpath', $hookmanager->resArray) && !empty($hookmanager->resArray['classpath'])) {
 					dol_include_once($hookmanager->resArray['classpath']);
 					if (array_key_exists('classname', $hookmanager->resArray) && !empty($hookmanager->resArray['classname'])) {
@@ -1756,9 +1789,9 @@ class FormFile
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
 					$ref = (isset($reg[1]) ? $reg[1] : '');
 				} else {
-					$parameters = array('modulepart'=>$modulepart,'fileinfo'=>$file);
+					$parameters = array('modulepart'=>$modulepart, 'fileinfo'=>$file);
 					$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
-					if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray)>0) {
+					if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
 						if (array_key_exists('ref', $hookmanager->resArray) && !empty($hookmanager->resArray['ref'])) {
 							$ref = $hookmanager->resArray['ref'];
 						}
@@ -2052,8 +2085,8 @@ class FormFile
 				print '<td class="center">'.dol_print_date(dol_now(), "dayhour", "tzuser").'</td>';
 				print '<td class="right"></td>';
 				print '<td class="right">';
-				print '<input type="submit" name="save" class="button button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
-				print '<input type="submit" name="cancel" class="button button-cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+				print '<input type="submit" class="button button-save" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 				print '</td>';
 			} else {
 				print '<td>';
@@ -2077,8 +2110,8 @@ class FormFile
 			print "</tr>\n";
 		}
 		if ($nboflinks == 0) {
-			print '<tr class="oddeven"><td colspan="5" class="opacitymedium">';
-			print $langs->trans("NoLinkFound");
+			print '<tr class="oddeven"><td colspan="5">';
+			print '<span class="opacitymedium">'.$langs->trans("NoLinkFound").'</span>';
 			print '</td></tr>';
 		}
 		print "</table>";

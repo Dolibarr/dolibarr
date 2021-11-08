@@ -192,6 +192,7 @@ Refused=zurückgewiesen
 ResultKo=Fehlschlag
 Validated=Freigegeben
 Opened=Offen
+OpenAll=Offen (alle Typen)
 ClosedAll=Geschlossen (alle Typen)
 Size=Grösse
 OriginalSize=Originalgrösse

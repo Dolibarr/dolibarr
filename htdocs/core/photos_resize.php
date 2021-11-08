@@ -68,7 +68,7 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	$accessallowed = 1;
 } elseif ($modulepart == 'member') {
 	$result = restrictedArea($user, 'adherent', $id, '', '', 'fk_soc', 'rowid');
-	if (!$user->rights->adherent->lire) {
+	if (empty($user->rights->adherent->lire)) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
@@ -86,7 +86,7 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	$accessallowed = 1;
 } elseif ($modulepart == 'bank') {
 	$result = restrictedArea($user, 'banque', $id, 'bank_account');
-	if (!$user->rights->banque->lire) {
+	if (empty($user->rights->banque->lire)) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
@@ -98,7 +98,7 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	$accessallowed = 1;
 } elseif ($modulepart == 'facture_fourn' || $modulepart == 'facture_fournisseur') {
 	$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
-	if (!$user->rights->fournisseur->facture->lire) {
+	if (empty($user->rights->fournisseur->facture->lire)) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
@@ -475,7 +475,7 @@ if ($action == 'confirm_crop') {
  * View
  */
 
-$title= $langs->trans("ImageEditor");
+$title = $langs->trans("ImageEditor");
 $morejs = array('/includes/jquery/plugins/jcrop/js/jquery.Jcrop.min.js', '/core/js/lib_photosresize.js');
 $morecss = array('/includes/jquery/plugins/jcrop/css/jquery.Jcrop.css');
 

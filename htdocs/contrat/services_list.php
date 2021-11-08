@@ -218,7 +218,7 @@ $sql = "SELECT c.rowid as cid, c.ref, c.statut as cstatut, c.ref_customer, c.ref
 $sql .= " s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur,";
 $sql .= " cd.rowid, cd.description, cd.statut,";
 $sql .= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype, p.entity as pentity,";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " sc.fk_soc, sc.fk_user,";
 }
 $sql .= " cd.date_ouverture_prevue,";
@@ -235,7 +235,7 @@ $sql .= " cd.tms as date_update";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -244,7 +244,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."contrat as c,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s,";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
 }
 $sql .= " ".MAIN_DB_PREFIX."contratdet as cd";
@@ -261,7 +261,7 @@ if ($search_product_category > 0) {
 	$sql .= " AND cp.fk_categorie = ".((int) $search_product_category);
 }
 $sql .= " AND c.fk_soc = s.rowid";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($mode == "0") {
@@ -291,6 +291,11 @@ if ($search_service) {
 if ($socid > 0) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
+
+$filter_dateouvertureprevue = '';
+$filter_date1 = '';
+$filter_date2 = '';
+$filter_opcloture = '';
 
 $filter_dateouvertureprevue_start = dol_mktime(0, 0, 0, $opouvertureprevuemonth, $opouvertureprevueday, $opouvertureprevueyear);
 $filter_dateouvertureprevue_end = dol_mktime(23, 59, 59, $opouvertureprevuemonth, $opouvertureprevueday, $opouvertureprevueyear);
@@ -425,6 +430,7 @@ if ($filter_date2_start != '') {
 if ($filter_datecloture_start != '') {
 	$param .= '&amp;opclotureday='.$op2day.'&amp;opcloturemonth='.$op2month.'&amp;opclotureyear='.$op2year;
 }
+
 if ($optioncss != '') {
 	$param .= '&optioncss='.$optioncss;
 }
@@ -468,7 +474,7 @@ if ($mode == "5") {
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'contract', 0, '', '', $limit);
 
-if ($sall) {
+if (!empty($sall)) {
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
@@ -476,6 +482,7 @@ if ($sall) {
 }
 
 $morefilter = '';
+$moreforfilter = '';
 
 // If the user can view categories of products
 if ($conf->categorie->enabled && ($user->rights->produit->lire || $user->rights->service->lire)) {

@@ -77,6 +77,10 @@ YourPartnershipRefusedContent=Informámoslle que a súa solicitude de subscrici�
 YourPartnershipAcceptedContent=Informámoslle que a súa solicitude de subscrición foi aceptada. 
 YourPartnershipCanceledContent=Informámoslle que a súa subscrición foi cancelada. 
 
+CountLastUrlCheckError=Number of errors for last URL check
+LastCheckBacklink=Date of last URL check
+ReasonDeclineOrCancel=Razón para declinar
+
 #
 # Status
 #

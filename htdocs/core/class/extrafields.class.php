@@ -250,6 +250,8 @@ class ExtraFields
 			return -1;
 		}
 
+		$result = 0;
+
 		if ($type == 'separate') {
 			$unique = 0;
 			$required = 0;
@@ -1252,7 +1254,7 @@ class ExtraFields
 					}
 
 					$sqlwhere = '';
-					$sql = 'SELECT '.$keyList;
+					$sql = "SELECT ".$keyList;
 					$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
 					if (!empty($InfoFieldList[4])) {
 						// can use curent entity filter
@@ -1273,16 +1275,16 @@ class ExtraFields
 						//We have to join on extrafield table
 						if (strpos($InfoFieldList[4], 'extra') !== false) {
 							$sql .= ' as main, '.MAIN_DB_PREFIX.$InfoFieldList[0].'_extrafields as extra';
-							$sqlwhere .= ' WHERE extra.fk_object=main.'.$InfoFieldList[2].' AND '.$InfoFieldList[4];
+							$sqlwhere .= " WHERE extra.fk_object=main.".$InfoFieldList[2]." AND ".$InfoFieldList[4];
 						} else {
-							$sqlwhere .= ' WHERE '.$InfoFieldList[4];
+							$sqlwhere .= " WHERE ".$InfoFieldList[4];
 						}
 					} else {
 						$sqlwhere .= ' WHERE 1=1';
 					}
 					// Some tables may have field, some other not. For the moment we disable it.
 					if (in_array($InfoFieldList[0], array('tablewithentity'))) {
-						$sqlwhere .= ' AND entity = '.$conf->entity;
+						$sqlwhere .= ' AND entity = '.((int) $conf->entity);
 					}
 					$sql .= $sqlwhere;
 					//print $sql;
@@ -1420,7 +1422,7 @@ class ExtraFields
 					}
 
 					$sqlwhere = '';
-					$sql = 'SELECT '.$keyList;
+					$sql = "SELECT ".$keyList;
 					$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
 					if (!empty($InfoFieldList[4])) {
 						// can use SELECT request
@@ -1485,16 +1487,16 @@ class ExtraFields
 						// We have to join on extrafield table
 						if (strpos($InfoFieldList[4], 'extra.') !== false) {
 							$sql .= ' as main, '.MAIN_DB_PREFIX.$InfoFieldList[0].'_extrafields as extra';
-							$sqlwhere .= ' WHERE extra.fk_object=main.'.$InfoFieldList[2].' AND '.$InfoFieldList[4];
+							$sqlwhere .= " WHERE extra.fk_object=main.".$InfoFieldList[2]." AND ".$InfoFieldList[4];
 						} else {
-							$sqlwhere .= ' WHERE '.$InfoFieldList[4];
+							$sqlwhere .= " WHERE ".$InfoFieldList[4];
 						}
 					} else {
 						$sqlwhere .= ' WHERE 1=1';
 					}
 					// Some tables may have field, some other not. For the moment we disable it.
 					if (in_array($InfoFieldList[0], array('tablewithentity'))) {
-						$sqlwhere .= ' AND entity = '.$conf->entity;
+						$sqlwhere .= " AND entity = ".((int) $conf->entity);
 					}
 					// $sql.=preg_replace('/^ AND /','',$sqlwhere);
 					// print $sql;
@@ -1651,10 +1653,14 @@ class ExtraFields
 		$showsize = 0;
 		if ($type == 'date') {
 			$showsize = 10;
-			$value = dol_print_date($value, 'day');	// For date without hour, date is always GMT for storage and output
+			if ($value !== '') {
+				$value = dol_print_date($value, 'day');	// For date without hour, date is always GMT for storage and output
+			}
 		} elseif ($type == 'datetime') {
 			$showsize = 19;
-			$value = dol_print_date($value, 'dayhour', 'tzuserrel');
+			if ($value !== '') {
+				$value = dol_print_date($value, 'dayhour', 'tzuserrel');
+			}
 		} elseif ($type == 'int') {
 			$showsize = 10;
 		} elseif ($type == 'double') {
@@ -1716,9 +1722,9 @@ class ExtraFields
 				}
 			}
 
-			$sql = 'SELECT '.$keyList;
+			$sql = "SELECT ".$keyList;
 			$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
-			if (strpos($InfoFieldList[4], 'extra') !== false) {
+			if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
 			if ($selectkey == 'rowid' && empty($value)) {
@@ -1820,8 +1826,8 @@ class ExtraFields
 				}
 			}
 
-			$sql = 'SELECT '.$keyList;
-			$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
+			$sql = "SELECT ".$keyList;
+			$sql .= " FROM ".MAIN_DB_PREFIX.$InfoFieldList[0];
 			if (strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
@@ -1978,10 +1984,10 @@ class ExtraFields
 	{
 		global $conf, $langs;
 
-		if ($display_type=='card') {
-			$tagtype='tr';
-			$tagtype_dyn='td';
-		} elseif ($display_type=='line') {
+		$tagtype='tr';
+		$tagtype_dyn='td';
+
+		if ($display_type=='line') {
 			$tagtype='div';
 			$tagtype_dyn='span';
 			$colspan=0;
@@ -2079,14 +2085,23 @@ class ExtraFields
 				}
 
 				$enabled = 1;
-				if (isset($this->attributes[$object->table_element]['list'][$key])) {
-					$enabled = dol_eval($this->attributes[$object->table_element]['list'][$key], 1);
+				if (isset($this->attributes[$object->table_element]['enabled'][$key])) {	// 'enabled' is often a condition on module enabled or not
+					$enabled = dol_eval($this->attributes[$object->table_element]['enabled'][$key], 1);
 				}
+
+				$visibility = 1;
+				if (isset($this->attributes[$object->table_element]['list'][$key])) {		// 'list' is option for visibility
+					$visibility = dol_eval($this->attributes[$object->table_element]['list'][$key], 1);
+				}
+
 				$perms = 1;
 				if (isset($this->attributes[$object->table_element]['perms'][$key])) {
 					$perms = dol_eval($this->attributes[$object->table_element]['perms'][$key], 1);
 				}
 				if (empty($enabled)) {
+					continue;
+				}
+				if (empty($visibility)) {
 					continue;
 				}
 				if (empty($perms)) {

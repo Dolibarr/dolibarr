@@ -874,6 +874,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print "result = ".$result."\n";
 		$this->assertContains('Bad string syntax to evaluate', $result);
 
+		$result=dol_eval('$a=exec ("ls")', 1, 1);
+		print "result = ".$result."\n";
+		$this->assertContains('Bad string syntax to evaluate', $result);
+
 		$result=dol_eval('$a="test"; $$a;', 1, 0);
 		print "result = ".$result."\n";
 		$this->assertContains('Bad string syntax to evaluate', $result);

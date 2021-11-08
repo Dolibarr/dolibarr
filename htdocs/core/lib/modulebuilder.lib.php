@@ -17,8 +17,8 @@
  */
 
 /**
- *  \file		htdocs/core/lib/memory.lib.php
- *  \brief		Set of function for memory/cache management
+ *  \file		htdocs/core/lib/modulebuilder.lib.php
+ *  \brief		Set of function for modulebuilder management
  */
 
 
@@ -175,6 +175,9 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 						$i++;
 					}
 					$texttoinsert .= "),";
+				}
+				if ($val['validate']) {
+					$texttoinsert .= " 'validate'=>'".$val['validate']."',";
 				}
 				if ($val['comment']) {
 					$texttoinsert .= " 'comment'=>\"".preg_replace('/"/', '', $val['comment'])."\"";

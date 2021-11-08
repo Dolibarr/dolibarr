@@ -60,11 +60,15 @@ if (!empty($user->socid)) {
 $fieldvalue = ($id > 0 ? $id : $ref);
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('productstatscard', 'globalcard'));
+
 $tmp = dol_getdate(dol_now());
 $currentyear = $tmp['year'];
 if (empty($search_year)) {
 	$search_year = $currentyear;
 }
+$moreforfilter = "";
 
 $object = new Product($db);
 if ($id > 0 || !empty($ref)) {
@@ -237,9 +241,9 @@ if ($result || !($id > 0)) {
 	}
 
 	if ($mode == 'bynumber') {
-		print '<a class="a-mesure-disabled" href="'.$_SERVER["PHP_SELF"].'?'.(GETPOSTISSET('id') ? 'id='.GETPOST('id', 'int') : 'id='.$object->id).(($type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&mode=byunit&search_year='.((int) $search_year).($notab ? '&notab='.$notab : '').'">';
+		print '<a class="a-mesure-disabled marginleftonly marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?'.(GETPOSTISSET('id') ? 'id='.GETPOST('id', 'int') : 'id='.$object->id).(($type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&mode=byunit&search_year='.((int) $search_year).($notab ? '&notab='.$notab : '').'">';
 	} else {
-		print '<span class="a-mesure">';
+		print '<span class="a-mesure marginleftonly marginrightonly">';
 	}
 	print $langs->trans("StatsByNumberOfUnits");
 	if ($mode == 'bynumber') {
@@ -250,14 +254,12 @@ if ($result || !($id > 0)) {
 
 	if (!empty($conf->dol_use_jmobile)) {
 		print '</div>'."\n".'<div class="nowrap">'."\n";
-	} else {
-		print ' &nbsp; ';
 	}
 
 	if ($mode == 'byunit') {
-		print '<a class="a-mesure-disabled" href="'.$_SERVER["PHP_SELF"].'?'.(GETPOSTISSET('id') ? 'id='.GETPOST('id', 'int') : 'id='.$object->id).(($type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&mode=bynumber&search_year='.((int) $search_year).($notab ? '&notab='.$notab : '').'">';
+		print '<a class="a-mesure-disabled marginleftonly marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?'.(GETPOSTISSET('id') ? 'id='.GETPOST('id', 'int') : 'id='.$object->id).(($type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&mode=bynumber&search_year='.((int) $search_year).($notab ? '&notab='.$notab : '').'">';
 	} else {
-		print '<span class="a-mesure">';
+		print '<span class="a-mesure marginleftonly marginrightonly">';
 	}
 	print $langs->trans("StatsByNumberOfEntities");
 	if ($mode == 'byunit') {
@@ -432,10 +434,10 @@ if ($result || !($id > 0)) {
 			if ($graphfiles == 'proposals_suppliers' && !$user->rights->supplier_proposal->lire) {
 				continue;
 			}
-			if ($graphfiles == 'invoices_suppliers' && !$user->rights->fournisseur->facture->lire) {
+			if ($graphfiles == 'invoices_suppliers' && empty($user->rights->fournisseur->facture->lire)) {
 				continue;
 			}
-			if ($graphfiles == 'orders_suppliers' && !$user->rights->fournisseur->commande->lire) {
+			if ($graphfiles == 'orders_suppliers' && empty($user->rights->fournisseur->commande->lire)) {
 				continue;
 			}
 			if ($graphfiles == 'mrp' && empty($user->rights->mrp->mo->read)) {
@@ -446,7 +448,7 @@ if ($result || !($id > 0)) {
 			if ($i % 2 == 0) {
 				print "\n".'<div class="fichecenter"><div class="fichehalfleft">'."\n";
 			} else {
-				print "\n".'<div class="fichehalfright"><div class="ficheaddleft">'."\n";
+				print "\n".'<div class="fichehalfright">'."\n";
 			}
 
 			// Date generation
@@ -457,7 +459,7 @@ if ($result || !($id > 0)) {
 					$dategenerated = $langs->trans("GeneratedOn", dol_print_date(dol_now(), "dayhour"));
 				}
 			} else {
-				$dategenerated = ($mesg ? '<font class="error">'.$mesg.'</font>' : $langs->trans("ChartNotGenerated"));
+				$dategenerated = ($mesg ? '<span class="error">'.$mesg.'</span>' : $langs->trans("ChartNotGenerated"));
 			}
 			$linktoregenerate = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?'.(GETPOSTISSET('id') ? 'id='.GETPOST('id', 'int') : 'id='.$object->id).(((string) $type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&action=recalcul&mode='.urlencode($mode).'&search_year='.((int) $search_year).($search_categ > 0 ? '&search_categ='.((int) $search_categ) : '').'">';
 			$linktoregenerate .= img_picto($langs->trans("ReCalculate").' ('.$dategenerated.')', 'refresh');
@@ -480,7 +482,7 @@ if ($result || !($id > 0)) {
 			if ($i % 2 == 0) {
 				print "\n".'</div>'."\n";
 			} else {
-				print "\n".'</div></div></div>';
+				print "\n".'</div></div>';
 				print '<div class="clear"><div class="fichecenter"><br></div></div>'."\n";
 			}
 
@@ -489,8 +491,8 @@ if ($result || !($id > 0)) {
 	}
 	// div not closed
 	if ($i % 2 == 1) {
-		print "\n".'<div class="fichehalfright"><div class="ficheaddleft">'."\n";
-		print "\n".'</div></div></div>';
+		print "\n".'<div class="fichehalfright">'."\n";
+		print "\n".'</div></div>';
 		print '<div class="clear"><div class="fichecenter"><br></div></div>'."\n";
 	}
 }

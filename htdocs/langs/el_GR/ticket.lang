@@ -66,7 +66,7 @@ NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
 Answered=Απαντήθηκε
 Waiting=Αναμονή
-Closed=Έκλεισε
+SolvedClosed=Solved
 Deleted=Διαγράφηκε
 
 # Dict
@@ -186,9 +186,11 @@ TicketSeverity=Δριμύτητα
 ShowTicket=Δείτε εισιτήριο
 RelatedTickets=Σχετικά εισιτήρια
 TicketAddIntervention=Δημιουργία παρέμβασης
-CloseTicket=Κλείστε το εισιτήριο
-CloseATicket=Κλείστε ένα εισιτήριο
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Επιβεβαιώστε το κλείσιμο εισιτηρίου
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Επιβεβαιώστε τη διαγραφή του εισιτηρίου
 TicketDeletedSuccess=Το εισιτήριο διαγράφηκε με επιτυχία
 TicketMarkedAsClosed=Το εισιτήριο επισημαίνεται ως κλειστό

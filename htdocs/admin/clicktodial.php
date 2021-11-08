@@ -101,8 +101,8 @@ print '<br>';
 print $langs->trans("ClickToDialUrlDesc").'<br>';
 print '<br>';
 print '<span class="opacitymedium">';
-print $langs->trans("Example").':<br>';
-print 'http://myphoneserver/mypage?login=__LOGIN__&password=__PASS__&caller=__PHONEFROM__&called=__PHONETO__<br>';
+print $langs->trans("Examples").':<br>';
+print 'https://myphoneserver/mypage?login=__LOGIN__&password=__PASS__&caller=__PHONEFROM__&called=__PHONETO__<br>';
 print 'sip:__PHONETO__@my.sip.server';
 print '</span>';
 
@@ -117,7 +117,7 @@ print '</td></tr>';
 print '</table>';
 print '</div>';
 
-print '<div class="center"><br><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+print $form->buttonsSaveCancel("Modify", '');
 
 print '</form><br><br>';
 
@@ -149,7 +149,7 @@ if (!empty($conf->global->CLICKTODIAL_URL)) {
 	}
 
 	if ($setupcomplete) {
-		print $langs->trans("LinkToTest", $user->login).': '.dol_print_phone($phonefortest, '', 0, 0, 'AC_TEL', '', 1);
+		print $langs->trans("LinkToTest", $user->login).': &nbsp; '.dol_print_phone($phonefortest, '', 0, 0, 'AC_TEL', '', 'mobile');
 	} else {
 		$langs->load("errors");
 		print '<div class="warning">'.$langs->trans("WarningClickToDialUserSetupNotComplete").'</div>';

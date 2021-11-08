@@ -106,7 +106,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // TODO Add a s
 			print '<tr '.$bc[false].'>';
 			print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'"></td>';
 			if ($i == 0) {
-				print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+				print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
 			}
 			print '</tr>';
 			$i++;
@@ -190,7 +190,7 @@ print '</tr>';
 print "</table>";
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 $max = 10;
@@ -252,7 +252,7 @@ if ($resql) {
 }
 
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardDonation', $parameters, $object); // Note that $action and $object may have been modified by hook

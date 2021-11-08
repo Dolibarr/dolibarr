@@ -218,8 +218,8 @@ if ($type == 'directory') {
 
 	$parameters = array('modulepart'=>$module);
 	$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
-	if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray)>0) {
-		$automodules[]=$hookmanager->resArray['module'];
+	if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
+		$automodules[] = $hookmanager->resArray['module'];
 	}
 
 	// TODO change for multicompany sharing
@@ -334,13 +334,13 @@ if ($type == 'directory') {
 		if ($section) {
 			$param .= '&section='.$section;
 			if (isset($search_doc_ref) && $search_doc_ref != '') {
-				$param .= '&search_doc_ref='.$search_doc_ref;
+				$param .= '&search_doc_ref='.urlencode($search_doc_ref);
 			}
 
 			$textifempty = $langs->trans('NoFileFound');
 		} elseif ($section === '0') {
 			if ($module == 'ecm') {
-				$textifempty = '<br><div class="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
+				$textifempty = '<br><div class="center"><span class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</span></div><br>';
 			} else {
 				$textifempty = $langs->trans('NoFileFound');
 			}
@@ -402,9 +402,9 @@ if (!empty($conf->global->MAIN_ECM_DISABLE_JS)) {
 
 //$param.=($param?'?':'').(preg_replace('/^&/','',$param));
 
-if ($useajax || $action == 'delete') {
+if ($useajax || $action == 'deletefile') {
 	$urlfile = '';
-	if ($action == 'delete') {
+	if ($action == 'deletefile') {
 		$urlfile = GETPOST('urlfile', 'alpha');
 	}
 

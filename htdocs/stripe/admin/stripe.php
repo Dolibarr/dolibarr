@@ -356,7 +356,7 @@ print img_picto('', 'bank_account').' ';
 $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS, 'STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
 print '</td></tr>';
 
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// What is this for ?
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// What is this for ?
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BankAccountForBankTransfer").'</td><td>';
 	print img_picto('', 'bank_account').' ';
@@ -446,15 +446,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
 	print '</td></tr>';
 }
 
-// Warehouse for automatic decrement
-//if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// warehouse to reduce stock for online payment
-//{
-//	print '<tr class="oddeven"><td>';
-//	print $langs->trans("ONLINE_PAYMENT_WAREHOUSE").'</td><td>';
-//	print $formproduct->selectWarehouses($conf->global->ONLINE_PAYMENT_WAREHOUSE, 'ONLINE_PAYMENT_WAREHOUSE', '', 1, $disabled);
-//	print '</td></tr>';
-//}
-
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
 print '<input size="64" type="text" name="ONLINE_PAYMENT_CSS_URL" value="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'">';
@@ -526,7 +517,7 @@ print '</div>';
 
 print dol_get_fiche_end();
 
-print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 

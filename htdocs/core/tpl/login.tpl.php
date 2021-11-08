@@ -57,7 +57,7 @@ if (!empty($conf->dol_use_jmobile)) {
 	$conf->use_javascript_ajax = 1;
 }
 
-$php_self = dol_escape_htmltag($_SERVER['PHP_SELF']);
+$php_self = empty($php_self) ? dol_escape_htmltag($_SERVER['PHP_SELF']) : $php_self;
 $php_self .= dol_escape_htmltag($_SERVER["QUERY_STRING"]) ? '?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]) : '';
 if (!preg_match('/mainmenu=/', $php_self)) {
 	$php_self .= (preg_match('/\?/', $php_self) ? '&' : '?').'mainmenu=home';
@@ -310,7 +310,7 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->fil
 		print '<a class="alogin" href="'.$url.'">'.$langs->trans("LoginUsingOpenID").'</a>';
 	} else {
 		$langs->load("errors");
-		print '<font class="warning">'.$langs->trans("ErrorOpenIDSetupNotComplete", 'MAIN_AUTHENTICATION_OPENID_URL').'</font>';
+		print '<span class="warning">'.$langs->trans("ErrorOpenIDSetupNotComplete", 'MAIN_AUTHENTICATION_OPENID_URL').'</span>';
 	}
 
 	echo '</div>';

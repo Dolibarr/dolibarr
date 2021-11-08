@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018		ATM Consulting		<support@atm-consulting.fr>
+ * Copyright (C) 2021       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,14 @@ print '<!-- BEGIN object_discounts.tpl.php -->'."\n";
 $objclassname = get_class($object);
 $isInvoice = in_array($object->element, array('facture', 'invoice', 'facture_fourn', 'invoice_supplier'));
 $isNewObject = empty($object->id) && empty($object->rowid);
+
+// Clean variables not defined
+if (!isset($absolute_discount)) {
+	$absolute_discount = 0;
+}
+if (!isset($absolute_creditnote)) {
+	$absolute_creditnote = 0;
+}
 
 // Relative and absolute discounts
 $addrelativediscount = '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$thirdparty->id.'&backtopage='.$backtopage.'">'.$langs->trans("EditRelativeDiscount").'</a>';
@@ -80,7 +89,7 @@ if ($absolute_discount > 0) {
 // Is there credit notes availables ?
 if ($absolute_creditnote > 0) {
 	// If validated, we show link "add credit note to payment"
-	if ($cannotApplyDiscount || !$isInvoice || $isNewObject || $object->statut != $objclassname::STATUS_VALIDATED || $object->type == $objclassname::TYPE_CREDIT_NOTE) {
+	if (!empty($cannotApplyDiscount) || !$isInvoice || $isNewObject || $object->statut != $objclassname::STATUS_VALIDATED || $object->type == $objclassname::TYPE_CREDIT_NOTE) {
 		$translationKey = !empty($discount_type) ? 'HasCreditNoteFromSupplier' : 'CompanyHasCreditNote';
 		$text = $langs->trans($translationKey, price($absolute_creditnote), $langs->transnoentities("Currency".$conf->currency)).'.';
 

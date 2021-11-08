@@ -80,13 +80,13 @@ if ($socid < 0) {
 }
 
 $canedit = 1;
-if (!$user->rights->agenda->myactions->read) {
+if (empty($user->rights->agenda->myactions->read)) {
 	accessforbidden();
 }
-if (!$user->rights->agenda->allactions->read) {
+if (empty($user->rights->agenda->allactions->read)) {
 	$canedit = 0;
 }
-if (!$user->rights->agenda->allactions->read || $filter == 'mine') {  // If no permission to see all, we show only affected to me
+if (empty($user->rights->agenda->allactions->read) || $filter == 'mine') {  // If no permission to see all, we show only affected to me
 	$filtert = $user->id;
 }
 
@@ -377,7 +377,6 @@ if ($conf->use_javascript_ajax) {
 	$s .= 'jQuery(".family_birthday").toggle();'."\n";
 	if ($action == "show_week" || $action == "show_month" || empty($action)) {
 		$s .= 'jQuery( "td.sortable" ).sortable({connectWith: ".sortable",placeholder: "ui-state-highlight",items: "div:not(.unsortable)", receive: function( event, ui ) {';
-		$s .= 'var frm=jQuery("#move_event");frm.attr("action",ui.item.find("a.cal_event").attr("href")).children("#newdate").val(jQuery(event.target).closest("div").attr("id"));frm.submit();}});'."\n";
 	}
 	$s .= '});'."\n";
 	$s .= '</script>'."\n";
@@ -506,7 +505,7 @@ $sql .= ' a.transparency, a.priority, a.fulldayevent, a.location,';
 $sql .= ' a.fk_soc, a.fk_contact, a.fk_element, a.elementtype, a.fk_project,';
 $sql .= ' ca.code, ca.libelle as type_label, ca.color, ca.type as type_type, ca.picto as type_picto';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 }
 // We must filter on resource table
@@ -557,7 +556,7 @@ if ($resourceid > 0) {
 if ($pid) {
 	$sql .= " AND a.fk_project=".((int) $pid);
 }
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
 }
 if ($socid > 0) {
@@ -965,8 +964,8 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 	// We are in a particular day for $username, now we scan all events
 	foreach ($eventarray as $daykey => $notused) {
 		$annee = dol_print_date($daykey, '%Y');
-		$mois =  dol_print_date($daykey, '%m');
-		$jour =  dol_print_date($daykey, '%d');
+		$mois = dol_print_date($daykey, '%m');
+		$jour = dol_print_date($daykey, '%d');
 
 		if ($day == $jour && $month == $mois && $year == $annee) {	// Is it the day we are looking for when calling function ?
 			// Scan all event for this date
