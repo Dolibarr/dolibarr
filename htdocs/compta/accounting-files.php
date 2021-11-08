@@ -610,8 +610,12 @@ if (!empty($date_start) && !empty($date_stop)) {
 
 	echo dol_print_date($date_start, 'day')." - ".dol_print_date($date_stop, 'day');
 
-	print '<input type="hidden" name="date_start" value="'.dol_print_date($date_start, 'dayxcard').'" />';
-	print '<input type="hidden" name="date_stop"  value="'.dol_print_date($date_stop, 'dayxcard').'" />';
+	print '<input type="hidden" name="date_startday" value="'.GETPOST('date_startday', 'int').'" />';
+	print '<input type="hidden" name="date_startmonth" value="'.GETPOST('date_startmonth', 'int').'" />';
+	print '<input type="hidden" name="date_startyear" value="'.GETPOST('date_startyear', 'int').'" />';
+	print '<input type="hidden" name="date_stopday" value="'.GETPOST('date_stopday', 'int').'" />';
+	print '<input type="hidden" name="date_stopmonth" value="'.GETPOST('date_stopmonth', 'int').'" />';
+	print '<input type="hidden" name="date_stopyear" value="'.GETPOST('date_stopyear', 'int').'" />';
 	foreach ($listofchoices as $choice => $val) {
 		print '<input type="hidden" name="'.$choice.'" value="'.GETPOST($choice).'">';
 	}
