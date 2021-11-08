@@ -3845,13 +3845,14 @@ if ($action == 'create') {
 	$totalpaye = $object->getSommePaiement();
 	$totalcreditnotes = $object->getSumCreditNotesUsed();
 	$totaldeposits = $object->getSumDepositsUsed();
-	// print "totalpaye=".$totalpaye." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits."
+	//print "totalpaye=".$totalpaye." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits."
 	// selleruserrevenuestamp=".$selleruserevenustamp;
 
 	// We can also use bcadd to avoid pb with floating points
 	// For example print 239.2 - 229.3 - 9.9; does not return 0.
 	// $resteapayer=bcadd($object->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
 	// $resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
+
 	$resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
 
 	// Multicurrency
@@ -5089,7 +5090,7 @@ if ($action == 'create') {
 		print '<span class="opacitymedium">';
 		print $langs->trans('RemainderToPay');
 		if ($resteapayeraffiche < 0) {
-			print ' ('.$langs->trans('ExcessReceived').')';
+			print ' ('.$langs->trans('NegativeIfExcessReceived').')';
 		}
 		print '</span>';
 		print '</td>';
@@ -5117,23 +5118,25 @@ if ($action == 'create') {
 			print ' :</td><td align="right">'.price($retainedWarranty).'</td><td>&nbsp;</td></tr>';
 		}
 	} else { // Credit note
+
+		$resteapayeraffiche = $resteapayer;
 		$cssforamountpaymentcomplete = 'amountpaymentneutral';
 
 		// Total already paid back
 		print '<tr><td colspan="'.$nbcols.'" class="right">';
-		print $langs->trans('AlreadyPaidBack');
-		print ' :</td><td class="right"><span class="amount">'.price($sign * $totalpaye).'</span></td><td>&nbsp;</td></tr>';
+		print '<span class="opacitymedium">'.$langs->trans('AlreadyPaidBack').'</span>';
+		print '</td><td class="right"><span class="amount">'.price($sign * $totalpaye).'</span></td><td>&nbsp;</td></tr>';
 
 		// Billed
-		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("Billed").' :</td><td class="right">'.price($sign * $object->total_ttc).'</td><td>&nbsp;</td></tr>';
+		print '<tr><td colspan="'.$nbcols.'" class="right"><span class="opacitymedium">'.$langs->trans("Billed").'</span></td><td class="right">'.price($sign * $object->total_ttc).'</td><td>&nbsp;</td></tr>';
 
 		// Remainder to pay back
 		print '<tr><td colspan="'.$nbcols.'" class="right">';
-		print $langs->trans('RemainderToPayBack');
+		print '<span class="opacitymedium">'.$langs->trans('RemainderToPayBack');
 		if ($resteapayeraffiche > 0) {
-			print ' ('.$langs->trans('ExcessPaid').')';
+			print ' ('.$langs->trans('NegativeIfExcessRefunded').')';
 		}
-		print ' :</td>';
+		print '</span></td>';
 		print '<td class="right'.($resteapayeraffiche ? ' amountremaintopayback' : (' '.$cssforamountpaymentcomplete)).'">'.price($sign * $resteapayeraffiche).'</td>';
 		print '<td class="nowrap">&nbsp;</td></tr>';
 
