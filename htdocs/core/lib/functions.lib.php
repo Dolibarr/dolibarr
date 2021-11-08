@@ -7227,7 +7227,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			if ($object->id > 0) {
 				$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = ($paymenturl ?str_replace('\n', "\n", $outputlangs->trans("PredefinedMailContentLink", $paymenturl)) : '');
 				$substitutionarray['__ONLINE_PAYMENT_URL__'] = $paymenturl;
-				
+
 				if (is_object($object) && $object->element == 'propal') {
 					$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'proposal', $object->ref);
 				}
