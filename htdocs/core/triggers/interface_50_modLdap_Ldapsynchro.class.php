@@ -93,7 +93,11 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					if ($ldap->serverType == "activedirectory") {
 						$info['userAccountControl'] = 512; 			//Account enabled
 					}
+<<<<<<< HEAD
 
+=======
+					
+>>>>>>> 1a6b6edbfdb4eeef8dd7b1d20cced75712c979fa
 					$result = $ldap->add($dn, $info, $user);
 				}
 

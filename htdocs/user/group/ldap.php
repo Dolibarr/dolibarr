@@ -75,6 +75,12 @@ if ($action == 'dolibarr2ldap') {
 		$dn = $object->_load_ldap_dn($info);
 		$olddn = $dn; // We can say that old dn = dn as we force synchro
 
+		if ($ldap->serverType == "activedirectory") {
+			$info['sAMAccountName'] = $object->name;
+		}
+
+		unset($info['member']);
+
 		$result = $ldap->update($dn, $info, $user, $olddn);
 	}
 
