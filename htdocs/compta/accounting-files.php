@@ -57,12 +57,12 @@ $date_start = GETPOST('date_start', 'alpha');
 $date_startDay = GETPOST('date_startday', 'int');
 $date_startMonth = GETPOST('date_startmonth', 'int');
 $date_startYear = GETPOST('date_startyear', 'int');
-$date_start = ($date_startDay ? dol_mktime(0, 0, 0, $date_startMonth, $date_startDay, $date_startYear, 'tzuserrel') : dol_stringtotime($date_start));
+$date_start = dol_mktime(0, 0, 0, $date_startMonth, $date_startDay, $date_startYear, 'tzuserrel');
 $date_stop = GETPOST('date_stop', 'alpha');
 $date_stopDay = GETPOST('date_stopday', 'int');
 $date_stopMonth = GETPOST('date_stopmonth', 'int');
 $date_stopYear = GETPOST('date_stopyear', 'int');
-$date_stop = ($date_stopDay ? dol_mktime(23, 59, 59, $date_stopMonth, $date_stopDay, $date_stopYear, 'tzuserrel') : dol_stringtotime($date_stop));
+$date_stop = dol_mktime(23, 59, 59, $date_stopMonth, $date_stopDay, $date_stopYear, 'tzuserrel');
 $action = GETPOST('action', 'aZ09');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -460,7 +460,7 @@ if ($result && $action == "dl" && !$error) {
 	$log .= ','.$langs->transnoentitiesnoconv("Country");
 	$log .= ','.$langs->transnoentitiesnoconv("VATIntra");
 	$log .= ','.$langs->transnoentitiesnoconv("Sens")."\n";
-	$zipname = $dirfortmpfile.'/'.dol_print_date($date_start, 'dayrfc')."-".dol_print_date($date_stop, 'dayrfc').'_export.zip';
+	$zipname = $dirfortmpfile.'/'.dol_print_date($date_start, 'dayrfc', 'tzuserrel')."-".dol_print_date($date_stop, 'dayrfc', 'tzuserrel').'_export.zip';
 
 	dol_delete_file($zipname);
 
@@ -608,7 +608,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 	print '<form name="dl" action="'.$_SERVER["PHP_SELF"].'?action=dl" method="POST">'."\n";
 	print '<input type="hidden" name="token" value="'.currentToken().'">';
 
-	echo dol_print_date($date_start, 'day')." - ".dol_print_date($date_stop, 'day');
+	echo dol_print_date($date_start, 'day', 'tzuserrel')." - ".dol_print_date($date_stop, 'day', 'tzuserrel');
 
 	print '<input type="hidden" name="date_startday" value="'.GETPOST('date_startday', 'int').'" />';
 	print '<input type="hidden" name="date_startmonth" value="'.GETPOST('date_startmonth', 'int').'" />';
@@ -745,19 +745,19 @@ if (!empty($date_start) && !empty($date_stop)) {
 				print '<td aling="left">'.$data['paid'].'</td>';
 
 				// Total ET
-				print '<td align="right">'.price($data['sens'] ? $data['amount_ht'] : -$data['amount_ht'])."</td>\n";
+				print '<td align="right">'.price(price2num($data['sens'] ? $data['amount_ht'] : -$data['amount_ht'], 'MT'))."</td>\n";
 				// Total IT
-				print '<td align="right">'.price($data['sens'] ? $data['amount_ttc'] : -$data['amount_ttc'])."</td>\n";
+				print '<td align="right">'.price(price2num($data['sens'] ? $data['amount_ttc'] : -$data['amount_ttc'], 'MT'))."</td>\n";
 				// Total VAT
-				print '<td align="right">'.price($data['sens'] ? $data['amount_vat'] : -$data['amount_vat'])."</td>\n";
+				print '<td align="right">'.price(price2num($data['sens'] ? $data['amount_vat'] : -$data['amount_vat'], 'MT'))."</td>\n";
 
-				print '<td class="tdoverflowmax150" title="'.$data['thirdparty_name'].'">'.$data['thirdparty_name']."</td>\n";
+				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($data['thirdparty_name']).'">'.dol_escape_htmltag($data['thirdparty_name'])."</td>\n";
 
 				print '<td class="center">'.$data['thirdparty_code']."</td>\n";
 
 				print '<td class="center">'.$data['country_code']."</td>\n";
 
-				print '<td align="right">'.$data['vatnum']."</td>\n";
+				print '<td class="tdoverflowmax150 right" title="'.dol_escape_htmltag($data['vatnum']).'">'.dol_escape_htmltag($data['vatnum'])."</td>\n";
 
 				if ($data['sens']) {
 					$totalET_credit += $data['amount_ht'];
