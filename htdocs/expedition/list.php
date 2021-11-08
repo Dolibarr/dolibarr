@@ -239,7 +239,7 @@ $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " e.date_creation as date_creation, e.tms as date_update,";
 $sql .= " u.login";
-if ($search_categ_cus) {
+if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
 }
 // Add fields from extrafields
@@ -264,7 +264,7 @@ if ($search_product_category > 0) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
-if (!empty($search_categ_cus)) {
+if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
@@ -277,7 +277,7 @@ if ($search_user > 0) {		// Get link to order to get the order id in eesource.fk
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as eesource ON eesource.fk_target = e.rowid AND eesource.targettype = 'shipping' AND eesource.sourcetype = 'commande'";
 }
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale > 0 || (!$user->rights->societe->client->voir && !$socid)) {
+if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 if ($search_user > 0) {
@@ -291,7 +291,7 @@ if ($search_product_category > 0) {
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.$socid;
 }
-if (!$user->rights->societe->client->voir && !$socid) {	// Internal user with no permission to see all
+if (empty($user->rights->societe->client->voir) && !$socid) {	// Internal user with no permission to see all
 	$sql .= " AND e.fk_soc = sc.fk_soc";
 	$sql .= " AND sc.fk_user = ".((int) $user->id);
 }
@@ -409,16 +409,16 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
 if ($sall) {
-	$param .= "&amp;sall=".urlencode($sall);
+	$param .= "&sall=".urlencode($sall);
 }
 if ($search_ref_exp) {
-	$param .= "&amp;search_ref_exp=".urlencode($search_ref_exp);
+	$param .= "&search_ref_exp=".urlencode($search_ref_exp);
 }
 if ($search_ref_liv) {
-	$param .= "&amp;search_ref_liv=".urlencode($search_ref_liv);
+	$param .= "&search_ref_liv=".urlencode($search_ref_liv);
 }
 if ($search_ref_customer) {
-	$param .= "&amp;search_ref_customer=".urlencode($search_ref_customer);
+	$param .= "&search_ref_customer=".urlencode($search_ref_customer);
 }
 if ($search_user > 0) {
 	$param .= '&search_user='.urlencode($search_user);
@@ -427,13 +427,13 @@ if ($search_sale > 0) {
 	$param .= '&search_sale='.urlencode($search_sale);
 }
 if ($search_company) {
-	$param .= "&amp;search_company=".urlencode($search_company);
+	$param .= "&search_company=".urlencode($search_company);
 }
 if ($search_shipping_method_id) {
 	$param .= "&amp;search_shipping_method_id=".urlencode($search_shipping_method_id);
 }
 if ($search_tracking) {
-	$param .= "&amp;search_tracking=".urlencode($search_tracking);
+	$param .= "&search_tracking=".urlencode($search_tracking);
 }
 if ($search_town) {
 	$param .= '&search_town='.urlencode($search_town);
@@ -459,7 +459,7 @@ if ($search_datereceipt_end) {
 if ($search_product_category != '') {
 	$param .= '&search_product_category='.urlencode($search_product_category);
 }
-if ($search_categ_cus > 0) {
+if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 	$param .= '&search_categ_cus='.urlencode($search_categ_cus);
 }
 if ($search_status != '') {
@@ -789,7 +789,7 @@ while ($i < min($num, $limit)) {
 
 	// Ref
 	if (!empty($arrayfields['e.ref']['checked'])) {
-		print "<td>";
+		print '<td class="nowraponall">';
 		print $shipment->getNomUrl(1);
 		print "</td>\n";
 		if (!$i) {
@@ -809,7 +809,7 @@ while ($i < min($num, $limit)) {
 
 	// Third party
 	if (!empty($arrayfields['s.nom']['checked'])) {
-		print '<td>';
+		print '<td class="tdoverflowmax150">';
 		print $companystatic->getNomUrl(1);
 		print '</td>';
 		if (!$i) {
@@ -827,7 +827,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Zip
 	if (!empty($arrayfields['s.zip']['checked'])) {
-		print '<td class="nocellnopadd">';
+		print '<td class="nocellnopadd center">';
 		print $obj->zip;
 		print '</td>';
 		if (!$i) {
@@ -836,7 +836,7 @@ while ($i < min($num, $limit)) {
 	}
 	// State
 	if (!empty($arrayfields['state.nom']['checked'])) {
-		print "<td>".$obj->state_name."</td>\n";
+		print '<td class="center">'.$obj->state_name."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

@@ -298,7 +298,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			print '</td>';
 
 			if ($user->rights->asset->write) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 			} else {
 				print '<td class="right">&nbsp;</td>';
 			}
@@ -390,7 +390,7 @@ if ($action == 'create') {
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (empty($reshook)) {
-		print $object->showOptionals($extrafields, 'edit', $parameters);
+		print $object->showOptionals($extrafields, 'create', $parameters);
 	}
 	print '<tbody>';
 	print "</table>\n";
@@ -503,7 +503,7 @@ if ($rowid > 0) {
 
 		// Edit
 		if ($user->rights->asset->write) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&amp;rowid='.((int) $object->id).'">'.$langs->trans("Modify").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&rowid='.((int) $object->id).'">'.$langs->trans("Modify").'</a></div>';
 		}
 
 		// Delete

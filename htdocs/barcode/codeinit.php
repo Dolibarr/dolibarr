@@ -274,7 +274,7 @@ if ($conf->product->enabled || $conf->product->service) {
 	} else {
 		$disabled = 1;
 		$titleno = $langs->trans("NoBarcodeNumberingTemplateDefined");
-		print '<font class="warning">'.$langs->trans("NoBarcodeNumberingTemplateDefined").'</font> (<a href="'.DOL_URL_ROOT.'/admin/barcode.php">'.$langs->trans("ToGenerateCodeDefineAutomaticRuleFirst").'</a>)<br>';
+		print '<span class="warning">'.$langs->trans("NoBarcodeNumberingTemplateDefined").'</span> (<a href="'.DOL_URL_ROOT.'/admin/barcode.php">'.$langs->trans("ToGenerateCodeDefineAutomaticRuleFirst").'</a>)<br>';
 	}
 	if (empty($nbno)) {
 		$disabled1 = 1;

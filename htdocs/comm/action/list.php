@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -73,8 +73,10 @@ $search_title = GETPOST('search_title', 'alpha');
 $search_note = GETPOST('search_note', 'alpha');
 
 $dateselect = dol_mktime(0, 0, 0, GETPOST('dateselectmonth', 'int'), GETPOST('dateselectday', 'int'), GETPOST('dateselectyear', 'int'), 'tzuserrel');
-$datestart = dol_mktime(0, 0, 0, GETPOST('datestartmonth', 'int'), GETPOST('datestartday', 'int'), GETPOST('datestartyear', 'int'), 'tzuserrel');
-$dateend = dol_mktime(0, 0, 0, GETPOST('dateendmonth', 'int'), GETPOST('dateendday', 'int'), GETPOST('dateendyear', 'int'), 'tzuserrel');
+$datestart_dtstart = dol_mktime(0, 0, 0, GETPOST('datestart_dtstartmonth', 'int'), GETPOST('datestart_dtstartday', 'int'), GETPOST('datestart_dtstartyear', 'int'), 'tzuserrel');
+$datestart_dtend = dol_mktime(23, 59, 59, GETPOST('datestart_dtendmonth', 'int'), GETPOST('datestart_dtendday', 'int'), GETPOST('datestart_dtendyear', 'int'), 'tzuserrel');
+$dateend_dtstart = dol_mktime(0, 0, 0, GETPOST('dateend_dtstartmonth', 'int'), GETPOST('dateend_dtstartday', 'int'), GETPOST('dateend_dtstartyear', 'int'), 'tzuserrel');
+$dateend_dtend = dol_mktime(23, 59, 59, GETPOST('dateend_dtendmonth', 'int'), GETPOST('dateend_dtendday', 'int'), GETPOST('dateend_dtendyear', 'int'), 'tzuserrel');
 if ($search_status == '' && !GETPOSTISSET('search_status')) {
 	$search_status = (empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
 }
@@ -134,13 +136,13 @@ if ($socid < 0) {
 }
 
 $canedit = 1;
-if (!$user->rights->agenda->myactions->read) {
+if (empty($user->rights->agenda->myactions->read)) {
 	accessforbidden();
 }
-if (!$user->rights->agenda->allactions->read) {
+if (empty($user->rights->agenda->allactions->read)) {
 	$canedit = 0;
 }
-if (!$user->rights->agenda->allactions->read || $filter == 'mine') {	// If no permission to see all, we show only affected to me
+if (empty($user->rights->agenda->allactions->read) || $filter == 'mine') {	// If no permission to see all, we show only affected to me
 	$filtert = $user->id;
 }
 
@@ -205,8 +207,10 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_id = '';
 	$search_title = '';
 	$search_note = '';
-	$datestart = '';
-	$dateend = '';
+	$datestart_dtstart = '';
+	$datestart_dtend = '';
+	$dateend_dtstart = '';
+	$dateend_dtend = '';
 	$search_status = '';
 	$toselect = '';
 	$search_array_options = array();
@@ -323,23 +327,41 @@ if ($search_title != '') {
 if ($search_note != '') {
 	$param .= '&search_note='.urlencode($search_note);
 }
-if (GETPOST('datestartday', 'int')) {
-	$param .= '&datestartday='.GETPOST('datestartday', 'int');
+if (GETPOST('datestartday_dtstart', 'int')) {
+	$param .= '&datestartday_dtstart='.GETPOST('datestartday_dtstart', 'int');
 }
-if (GETPOST('datestartmonth', 'int')) {
-	$param .= '&datestartmonth='.GETPOST('datestartmonth', 'int');
+if (GETPOST('datestartmonth_dtstart', 'int')) {
+	$param .= '&datestartmonth_dtstart='.GETPOST('datestartmonth_dtstart', 'int');
 }
-if (GETPOST('datestartyear', 'int')) {
-	$param .= '&datestartyear='.GETPOST('datestartyear', 'int');
+if (GETPOST('datestartyear_dtstart', 'int')) {
+	$param .= '&datestartyear_dtstart='.GETPOST('datestartyear_dtstart', 'int');
 }
-if (GETPOST('dateendday', 'int')) {
-	$param .= '&dateendday='.GETPOST('dateendday', 'int');
+if (GETPOST('datestartday_dtend', 'int')) {
+	$param .= '&datestartday_dtend='.GETPOST('datestartday_dtend', 'int');
 }
-if (GETPOST('dateendmonth', 'int')) {
-	$param .= '&dateendmonth='.GETPOST('dateendmonth', 'int');
+if (GETPOST('datestartmonth_dtend', 'int')) {
+	$param .= '&datestartmonth_dtend='.GETPOST('datestartmonth_dtend', 'int');
 }
-if (GETPOST('dateendyear', 'int')) {
-	$param .= '&dateendyear='.GETPOST('dateendyear', 'int');
+if (GETPOST('datestartyear_dtend', 'int')) {
+	$param .= '&datestartyear_dtend='.GETPOST('datestartyear_dtend', 'int');
+}
+if (GETPOST('dateendday_dtstart', 'int')) {
+	$param .= '&dateendday_dtstart='.GETPOST('dateendday_dtstart', 'int');
+}
+if (GETPOST('dateendmonth_dtstart', 'int')) {
+	$param .= '&dateendmonth_dtstart='.GETPOST('dateendmonth_dtstart', 'int');
+}
+if (GETPOST('dateendyear_dtstart', 'int')) {
+	$param .= '&dateendyear_dtstart='.GETPOST('dateendyear_dtstart', 'int');
+}
+if (GETPOST('dateendday_dtend', 'int')) {
+	$param .= '&dateendday_dtend='.GETPOST('dateendday_dtend', 'int');
+}
+if (GETPOST('dateendmonth_dtend', 'int')) {
+	$param .= '&dateendmonth_dtend='.GETPOST('dateendmonth_dtend', 'int');
+}
+if (GETPOST('dateendyear_dtend', 'int')) {
+	$param .= '&dateendyear_dtend='.GETPOST('dateendyear_dtend', 'int');
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -392,7 +414,7 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_extrafields as ef ON (a.id = ef.fk_object)";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
@@ -446,7 +468,7 @@ if ($resourceid > 0) {
 if ($pid) {
 	$sql .= " AND a.fk_project=".((int) $pid);
 }
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
 }
 if ($socid > 0) {
@@ -502,11 +524,17 @@ if ($filtert > 0 || $usergroup > 0) {
 if ($dateselect > 0) {
 	$sql .= " AND ((a.datep2 >= '".$db->idate($dateselect)."' AND a.datep <= '".$db->idate($dateselect + 3600 * 24 - 1)."') OR (a.datep2 IS NULL AND a.datep > '".$db->idate($dateselect - 3600)."' AND a.datep <= '".$db->idate($dateselect + 3600 * 24 - 1)."'))";
 }
-if ($datestart > 0) {
-	$sql .= " AND a.datep BETWEEN '".$db->idate($datestart)."' AND '".$db->idate($datestart + 3600 * 24 - 1)."'";
+if ($datestart_dtstart > 0) {
+	$sql .= " AND a.datep >= '".$db->idate($datestart_dtstart)."'";
 }
-if ($dateend > 0) {
-	$sql .= " AND a.datep2 BETWEEN '".$db->idate($dateend)."' AND '".$db->idate($dateend + 3600 * 24 - 1)."'";
+if ($datestart_dtend > 0) {
+	$sql .= " AND a.datep <= '".$db->idate($datestart_dtend)."'";
+}
+if ($dateend_dtstart > 0) {
+	$sql .= " AND a.datep2 >= '".$db->idate($dateend_dtstart)."'";
+}
+if ($dateend_dtend > 0) {
+	$sql .= " AND a.datep2 <= '".$db->idate($dateend_dtend)."'";
 }
 
 // Add where from extra fields
@@ -597,60 +625,47 @@ print $nav;
 //print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
 //print dol_get_fiche_end();
 
-// Add link to show birthdays
-/*
-$link = '';
-if (empty($conf->use_javascript_ajax))
-{
-	$newparam=$param;   // newparam is for birthday links
-	$newparam=preg_replace('/showbirthday=[0-1]/i','showbirthday='.(empty($showbirthday)?1:0),$newparam);
-	if (! preg_match('/showbirthday=/i',$newparam)) $newparam.='&showbirthday=1';
-	$link='<a href="'.$_SERVER['PHP_SELF'];
-	$link.='?'.$newparam;
-	$link.='">';
-	if (empty($showbirthday)) $link.=$langs->trans("AgendaShowBirthdayEvents");
-	else $link.=$langs->trans("AgendaHideBirthdayEvents");
-	$link.='</a>';
-}
-*/
 
 $s = $newtitle;
 
 // Calendars from hooks
-$parameters = array(); $object = null;
+$parameters = array();
+$object = null;
 $reshook = $hookmanager->executeHooks('addCalendarChoice', $parameters, $object, $action);
 if (empty($reshook)) {
 	$s .= $hookmanager->resPrint;
 } elseif ($reshook > 1) {
 	$s = $hookmanager->resPrint;
 }
-
+$viewyear = is_object($object) ? dol_print_date($object->datep, '%Y') : '';
+$viewmonth = is_object($object) ? dol_print_date($object->datep, '%m') : '';
+$viewday = is_object($object) ? dol_print_date($object->datep, '%d') : '';
 $viewmode = '';
 $viewmode .= '<a class="btnTitle btnTitleSelected reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
-$viewmode .= img_picto($langs->trans("List"), 'object_list', 'class="pictoactionview block"');
+$viewmode .= img_picto($langs->trans("List"), 'object_list', 'class="imgforviewmode pictoactionview block"');
 //$viewmode .= '</span>';
 $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewList").'</span></a>';
 
-$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
+$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.$viewyear.'&month='.$viewmonth.'&day='.$viewday.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewCal"), 'object_calendarmonth', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
 $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewCal").'</span></a>';
 
-$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_week&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
+$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_week&year='.$viewyear.'&month='.$viewmonth.'&day='.$viewday.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
 $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewWeek").'</span></a>';
 
-$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
+$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.$viewyear.'&month='.$viewmonth.'&day='.$viewday.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
 $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewDay").'</span></a>';
 
-$viewmode .= '<a class="btnTitle reposition marginrightonly" href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
+$viewmode .= '<a class="btnTitle reposition marginrightonly" href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.$viewyear.'&month='.$viewmonth.'&day='.$viewday.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
@@ -659,7 +674,8 @@ $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsm
 $viewmode .= '<span class="marginrightonly"></span>';
 
 // Add more views from hooks
-$parameters = array(); $object = null;
+$parameters = array();
+$object = null;
 $reshook = $hookmanager->executeHooks('addCalendarView', $parameters, $object, $action);
 if (empty($reshook)) {
 	$viewmode .= $hookmanager->resPrint;
@@ -669,7 +685,7 @@ if (empty($reshook)) {
 
 $tmpforcreatebutton = dol_getdate(dol_now(), true);
 
-$newparam .= '&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
+$newparam = '&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
 
 //$param='month='.$monthshown.'&year='.$year;
 $hourminsec = '100000';
@@ -723,12 +739,22 @@ if (!empty($arrayfields['a.note']['checked'])) {
 }
 if (!empty($arrayfields['a.datep']['checked'])) {
 	print '<td class="liste_titre nowraponall" align="center">';
-	print $form->selectDate($datestart, 'datestart', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
+	print '<div class="nowrap">';
+	print $form->selectDate($datestart_dtstart, 'datestart_dtstart', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'), 'tzuserrel');
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($datestart_dtend, 'datestart_dtend', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('To'), 'tzuserrel');
+	print '</div>';
 	print '</td>';
 }
 if (!empty($arrayfields['a.datep2']['checked'])) {
 	print '<td class="liste_titre nowraponall" align="center">';
-	print $form->selectDate($dateend, 'dateend', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
+	print '<div class="nowrap">';
+	print $form->selectDate($dateend_dtstart, 'dateend_dtstart', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'), 'tzuserrel');
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($dateend_dtend, 'dateend_dtend', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('To'), 'tzuserrel');
+	print '</div>';
 	print '</td>';
 }
 if (!empty($arrayfields['s.nom']['checked'])) {

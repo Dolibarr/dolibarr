@@ -140,12 +140,10 @@ function expensereport_admin_prepare_head()
 	$head[$h][2] = 'expensereport';
 	$h++;
 
-	if (!empty($conf->global->MAIN_USE_EXPENSE_RULE)) {
-		$head[$h][0] = DOL_URL_ROOT."/admin/expensereport_rules.php";
-		$head[$h][1] = $langs->trans("ExpenseReportsRules");
-		$head[$h][2] = 'expenserules';
-		$h++;
-	}
+	$head[$h][0] = DOL_URL_ROOT."/admin/expensereport_rules.php";
+	$head[$h][1] = $langs->trans("ExpenseReportsRules");
+	$head[$h][2] = 'expenserules';
+	$h++;
 
 	if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/expensereport_ik.php";

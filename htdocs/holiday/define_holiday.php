@@ -358,7 +358,7 @@ if (count($typeleaves) == 0) {
 				//var_dump($users['rowid'].' - '.$val['rowid']);
 				print '<td style="text-align:center">';
 				if ($canedit) {
-					print '<input type="text"'.($canedit ? '' : ' disabled="disabled"').' value="'.$nbtoshow.'" name="nb_holiday_'.$val['rowid'].'['.$users['rowid'].']" size="5" style="text-align: center;"/>';
+					print '<input type="text"'.($canedit ? '' : ' disabled="disabled"').' value="'.$nbtoshow.'" name="nb_holiday_'.$val['rowid'].'['.$users['rowid'].']" class="width75 center" />';
 				} else {
 					print $nbtoshow;
 				}

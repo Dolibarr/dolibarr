@@ -434,7 +434,7 @@ function ClickProduct(position) {
 		console.log("Click on product at position "+position+" for idproduct "+idproduct);
 		if (idproduct=="") return;
 		// Call page invoice.php to generate the section with product lines
-		$("#poslines").load("invoice.php?action=addline&place="+place+"&idproduct="+idproduct+"&selectedline="+selectedline, function() {
+		$("#poslines").load("invoice.php?action=addline&token=<?php echo newToken() ?>&place="+place+"&idproduct="+idproduct+"&selectedline="+selectedline, function() {
 			<?php if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) echo "CustomerDisplay();";?>
 		});
 	}
@@ -823,6 +823,7 @@ $( document ).ready(function() {
 	if (getDolGlobalString('TAKEPOS_CONTROL_CASH_OPENING')) {
 		$sql = "SELECT rowid, status FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
 		$sql .= " entity = ".$conf->entity." AND ";
+		$sql .= " posnumber = ".$_SESSION["takeposterminal"]." AND ";
 		$sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -999,36 +1000,39 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 <?php
 
 // TakePOS setup check
-$sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_paiement";
-$sql .= " WHERE entity IN (".getEntity('c_paiement').")";
-$sql .= " AND active = 1";
-$sql .= " ORDER BY libelle";
+if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"]) {
+	$sql = "SELECT code, libelle FROM " . MAIN_DB_PREFIX . "c_paiement";
+	$sql .= " WHERE entity IN (" . getEntity('c_paiement') . ")";
+	$sql .= " AND active = 1";
+	$sql .= " ORDER BY libelle";
 
-$resql = $db->query($sql);
-$paiementsModes = array();
-if ($resql) {
-	while ($obj = $db->fetch_object($resql)) {
-		$paycode = $obj->code;
-		if ($paycode == 'LIQ') {
-			$paycode = 'CASH';
-		}
-		if ($paycode == 'CHQ') {
-			$paycode = 'CHEQUE';
-		}
+	$resql          = $db->query($sql);
+	$paiementsModes = array();
+	if ($resql) {
+		while ( $obj = $db->fetch_object($resql) ) {
+			$paycode = $obj->code;
+			if ($paycode == 'LIQ') {
+				$paycode = 'CASH';
+			}
+			if ($paycode == 'CHQ') {
+				$paycode = 'CHEQUE';
+			}
 
-		$constantforkey = "CASHDESK_ID_BANKACCOUNT_".$paycode.$_SESSION["takeposterminal"];
-		//var_dump($constantforkey.' '.$conf->global->$constantforkey);
-		if (!empty($conf->global->$constantforkey) && $conf->global->$constantforkey > 0) {
-			array_push($paiementsModes, $obj);
+			$constantforkey = "CASHDESK_ID_BANKACCOUNT_" . $paycode . $_SESSION["takeposterminal"];
+			//var_dump($constantforkey.' '.$conf->global->$constantforkey);
+			if ( ! empty($conf->global->$constantforkey) && $conf->global->$constantforkey > 0) {
+				array_push($paiementsModes, $obj);
+			}
 		}
+	}
+
+	if (empty($paiementsModes)) {
+		$langs->load('errors');
+		setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("TakePOS")), null, 'errors');
+		setEventMessages($langs->trans("ProblemIsInSetupOfTerminal", $_SESSION["takeposterminal"]), null, 'errors');
 	}
 }
 
-if (empty($paiementsModes)) {
-	$langs->load('errors');
-	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("TakePOS")), null, 'errors');
-	setEventMessages($langs->trans("ProblemIsInSetupOfTerminal", $_SESSION["takeposterminal"]), null, 'errors');
-}
 if (count($maincategories) == 0) {
 	if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {
 		$tmpcategory = new Categorie($db);
@@ -1102,6 +1106,7 @@ if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
 
 $sql = "SELECT rowid, status, entity FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
 $sql .= " entity = ".$conf->entity." AND ";
+$sql .= " posnumber = ".$_SESSION["takeposterminal"]." AND ";
 $sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
 $resql = $db->query($sql);
 if ($resql) {
@@ -1116,14 +1121,24 @@ if ($resql) {
 }
 
 $hookmanager->initHooks(array('takeposfrontend'));
-$reshook = $hookmanager->executeHooks('ActionButtons');
-if (!empty($reshook)) {
-	if (is_array($reshook) && !isset($reshook['title'])) {
-		foreach ($reshook as $reshook) {
-			$menus[$r++] = $reshook;
+$parameters = array('menus'=>$menus);
+$reshook = $hookmanager->executeHooks('ActionButtons', $parameters);
+if ($reshook == 0) {  //add buttons
+	if (is_array($hookmanager->resArray) ) {
+		foreach ($hookmanager->resArray as $resArray) {
+			foreach ($resArray as $butmenu) {
+				$menus[$r++] = $butmenu;
+			}
 		}
-	} else {
-		$menus[$r++] = $reshook;
+	} elseif ($reshook == 1) {
+		$r = 0; //replace buttons
+		if (is_array($hookmanager->resArray) ) {
+			foreach ($hookmanager->resArray as $resArray) {
+				foreach ($resArray as $butmenu) {
+					$menus[$r++] = $butmenu;
+				}
+			}
+		}
 	}
 }
 

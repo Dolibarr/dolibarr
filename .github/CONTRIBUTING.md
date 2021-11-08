@@ -116,13 +116,13 @@ a process to follow to optimize the chance to have PRs merged efficiently...
 
 Also, some code changes need a prior approbation:
 
-* if you want to include a new external library (into htdocs/includes directory), please ask before to the core project manager (mention @dolibarr-yoda in your issue) to see if such a library can be accepted.
+* if you want to include a new external library (into htdocs/includes directory), please ask before to the core project manager (mention @dolibarr-jedi in your issue) to see if such a library can be accepted.
 
-* if you add a new table, you must first create a page on https://wiki.dolibarr.org/index.php/Category:Table_SQL (copy an existing page changing its name to see it into this index page). Then ask the project manager (@dolibarr-yoda) if the new data model you plan to add is compatible with curent and future works in progress and can be accepted as you suggest.
+* if you add a new tables or fields, you MUST first submit a standalone PR with the data structure changes you plan to add/modify (and only data structure changes). Start development only once this data structure has been accepted.
 
 Once a PR has been submitted, you may need to wait for its integration. It is common that the project leader let the PR open for a long delay to allow every developer discuss about the PR (A label is added in such a case).
 
-If the label of PR start with "Draft" or "WIP" (Work In Progress), it will not be analyzed for merging until you change the label of PR (but it can be analyzed for discussion).
+If the label of PR start with "Draft" or "WIP" (Work In Progress), it will not be analyzed for merging until you change the label of the PR (but it can be analyzed for discussion).
 
 If your PR has errors reported by the Continuous Integration Platform, it means your PR is not valid and nothing will be done with it. It will be kept open to allow developers to fix this, or it may be closed several month later. Don't expect anything on your PR if you have such errors, you MUST first fix the Continuous Integration error to have it taken into consideration.
 

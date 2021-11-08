@@ -44,7 +44,6 @@ DetailPosition=Nummer sortieren, um die Menüposition zu definieren
 NotConfigured=Modul / Anwendung nicht konfiguriert
 OtherOptions=Andere Optionen
 OtherSetup=Andere Einstellungen
-ClientTZ=Client-Zeitzone (Benutzer)
 ClientHour=Client-Zeit (Benutzer)
 DaylingSavingTime=Sommerzeit
 Language_en_US_es_MX_etc=Sprache (de_AT, en_UK, ...)

@@ -364,7 +364,7 @@ if (empty($numref)) {
 
 				print '<td class="center">';
 				if ($user->rights->banque->consolidate && $action != 'editbankreceipt') {
-					print '<a href="'.$_SERVER["PHP_SELF"].'?account='.$object->id.($page > 0 ? '&page='.$page : '').'&action=editbankreceipt&brref='.$objp->numr.'">'.img_edit().'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?account='.$object->id.($page > 0 ? '&page='.$page : '').'&action=editbankreceipt&token='.newToken().'&brref='.urlencode($objp->numr).'">'.img_edit().'</a>';
 				}
 				print '</td>';
 

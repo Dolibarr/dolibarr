@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/admin/credtitransfer.php
+ *	\file       htdocs/admin/paymentbybanktransfer.php
  *	\ingroup    paymentbybanktransfer
  *	\brief      Page to setup payments by credit transfer
  */
@@ -144,7 +144,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_valu
 print load_fiche_titre($langs->trans("CreditTransferSetup"), $linkback, 'title_setup');
 print '<br>';
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=set">';
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<table class="noborder centpercent">';
@@ -298,7 +298,7 @@ foreach ($dirmodels as $reldir)
 								if (in_array($name, $def))
 								{
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
 									print img_picto($langs->trans("Enabled"),'switch_on');
 									print '</a>';
 									print '</td>';
@@ -306,7 +306,7 @@ foreach ($dirmodels as $reldir)
 								else
 								{
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 									print "</td>";
 								}
 
@@ -318,7 +318,7 @@ foreach ($dirmodels as $reldir)
 								}
 								else
 								{
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 								}
 								print '</td>';
 
@@ -429,7 +429,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 	}
 
 
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif">';
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif&token='.newToken().'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';

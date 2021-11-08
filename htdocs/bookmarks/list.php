@@ -35,7 +35,7 @@ $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'bookmarklist'; // To manage different context of search
 
 // Security check
-if (!$user->rights->bookmark->lire) {
+if (empty($user->rights->bookmark->lire)) {
 	restrictedArea($user, 'bookmarks');
 }
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -62,9 +62,9 @@ $id = GETPOST("id", 'int');
 
 $object = new Bookmark($db);
 
-$permissiontoread = $user->rights->bookmark->lire;
-$permissiontoadd = $user->rights->bookmark->write;
-$permissiontodelete = $user->rights->bookmark->delete;
+$permissiontoread = !empty($user->rights->bookmark->lire);
+$permissiontoadd = !empty($user->rights->bookmark->creer);
+$permissiontodelete = !empty($user->rights->bookmark->supprimer);
 
 
 /*

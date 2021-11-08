@@ -76,11 +76,11 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->rights->ad
 	if ($forcelangprod == $current_lang) {
 		$object->label		 = GETPOST("libelle", 'alphanohtml');
 		$object->description = dol_htmlcleanlastbr(GETPOST("desc", 'restricthtml'));
-		$object->other		 = dol_htmlcleanlastbr(GETPOST("other", 'restricthtml'));
+		//$object->other		 = dol_htmlcleanlastbr(GETPOST("other", 'restricthtml'));
 	} else {
 		$object->multilangs[$forcelangprod]["label"] = GETPOST("libelle", 'alphanohtml');
 		$object->multilangs[$forcelangprod]["description"] = dol_htmlcleanlastbr(GETPOST("desc", 'restricthtml'));
-		$object->multilangs[$forcelangprod]["other"] = dol_htmlcleanlastbr(GETPOST("other", 'restricthtml'));
+		//$object->multilangs[$forcelangprod]["other"] = dol_htmlcleanlastbr(GETPOST("other", 'restricthtml'));
 	}
 
 	// backup into database
@@ -185,9 +185,9 @@ print "\n<div class=\"tabsAction\">\n";
 
 if ($action == '') {
 	if ($user->rights->produit->creer || $user->rights->service->creer) {
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=create&rowid='.$object->id.'">'.$langs->trans("Add").'</a>';
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=create&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("Add").'</a>';
 		if ($cnt_trans > 0) {
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=edit&rowid='.$object->id.'">'.$langs->trans("Update").'</a>';
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=edit&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("Update").'</a>';
 		}
 	}
 }

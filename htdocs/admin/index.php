@@ -82,13 +82,15 @@ print '<br><br>';
 if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) {
 	$setupcompanynotcomplete = 1;
 }
-print img_picto('', 'company', 'class="paddingright valignmiddle double"').' '.$langs->trans("SetupDescriptionLink", DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit'), $langs->transnoentities("Setup"), $langs->transnoentities("MenuCompanySetup"));
-print '<br><br>'.$langs->trans("SetupDescription3b");
+print img_picto('', 'company', 'class="paddingright valignmiddle double"').' '.$langs->trans("SetupDescriptionLink", DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit&token='.newToken()), $langs->transnoentities("Setup"), $langs->transnoentities("MenuCompanySetup"));
+print '<br><br>';
+print $langs->trans("SetupDescription3b");
 if (!empty($setupcompanynotcomplete)) {
 	$langs->load("errors");
 	$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"), 'style="padding-right: 6px;"');
 	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit').'">'.$warnpicto.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
 }
+print '<br>';
 print '<br>';
 print '<br>';
 print '<br>';
@@ -112,8 +114,8 @@ $reshook = $hookmanager->executeHooks('addHomeSetup', $parameters, $object, $act
 print $hookmanager->resPrint;
 if (empty($reshook)) {
 	// Show into other
-	print '<span class="opacitymedium">'.$langs->trans("SetupDescription5")."</span><br>";
-	print "<br>";
+	print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("SetupDescription5")."</span><br>";
+	print '<br class="hideonsmartphone">';
 
 	// Show logo
 	print '<div class="center"><div class="logo_setup"></div></div>';

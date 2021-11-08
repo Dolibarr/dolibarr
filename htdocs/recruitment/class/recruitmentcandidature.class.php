@@ -798,20 +798,20 @@ class RecruitmentCandidature extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("recruitment@recruitment");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Received').' ('.$langs->trans("InterviewToDo").')';
-			$this->labelStatus[self::STATUS_CONTRACT_PROPOSED] = $langs->trans('ContractProposed');
-			$this->labelStatus[self::STATUS_CONTRACT_SIGNED] = $langs->trans('ContractSigned');
-			$this->labelStatus[self::STATUS_CONTRACT_REFUSED] = $langs->trans('ContractRefused');
-			$this->labelStatus[self::STATUS_REFUSED] = $langs->trans('Refused');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Received');
-			$this->labelStatusShort[self::STATUS_CONTRACT_PROPOSED] = $langs->trans('ContractProposed');
-			$this->labelStatusShort[self::STATUS_CONTRACT_SIGNED] = $langs->trans('ContractSigned');
-			$this->labelStatusShort[self::STATUS_CONTRACT_REFUSED] = $langs->trans('ContractRefused');
-			$this->labelStatusShort[self::STATUS_REFUSED] = $langs->trans('Refused');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Received').' ('.$langs->transnoentitiesnoconv("InterviewToDo").')';
+			$this->labelStatus[self::STATUS_CONTRACT_PROPOSED] = $langs->transnoentitiesnoconv('ContractProposed');
+			$this->labelStatus[self::STATUS_CONTRACT_SIGNED] = $langs->transnoentitiesnoconv('ContractSigned');
+			$this->labelStatus[self::STATUS_CONTRACT_REFUSED] = $langs->transnoentitiesnoconv('ContractRefused');
+			$this->labelStatus[self::STATUS_REFUSED] = $langs->transnoentitiesnoconv('Refused');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Received');
+			$this->labelStatusShort[self::STATUS_CONTRACT_PROPOSED] = $langs->transnoentitiesnoconv('ContractProposed');
+			$this->labelStatusShort[self::STATUS_CONTRACT_SIGNED] = $langs->transnoentitiesnoconv('ContractSigned');
+			$this->labelStatusShort[self::STATUS_CONTRACT_REFUSED] = $langs->transnoentitiesnoconv('ContractRefused');
+			$this->labelStatusShort[self::STATUS_REFUSED] = $langs->transnoentitiesnoconv('Refused');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
 		}
 
 		$statusType = 'status'.$status;
@@ -893,7 +893,7 @@ class RecruitmentCandidature extends CommonObject
 		$this->lines = array();
 
 		$objectline = new RecruitmentCandidatureLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_recruitmentcandidature = '.$this->id));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_recruitmentcandidature = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;

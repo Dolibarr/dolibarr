@@ -31,10 +31,10 @@ create table llx_facturedet
   label							varchar(255) DEFAULT NULL,
   description					text,
   vat_src_code					varchar(10)  DEFAULT '',			-- Vat code used as source of vat fields. Not strict foreign key here.
-  tva_tx						double(6,3),						-- Vat rate (example 20%)
-  localtax1_tx               	double(6,3)  DEFAULT 0,    		 	-- localtax1 rate
+  tva_tx						double(7,4),						-- Vat rate (example 20%)
+  localtax1_tx               	double(7,4)  DEFAULT 0,    		 	-- localtax1 rate
   localtax1_type			 	varchar(10)	 NULL, 				 	-- localtax1 type
-  localtax2_tx               	double(6,3)  DEFAULT 0,    		 	-- localtax2 rate
+  localtax2_tx               	double(7,4)  DEFAULT 0,    		 	-- localtax2 rate
   localtax2_type			 	varchar(10)	 NULL, 				 	-- localtax2 type
   qty							real,								-- Quantity (exemple 2). Note: for credit note, the price is negative, not the quantity. Like for discount, price is negative, not quantity.
   remise_percent				real       DEFAULT 0,				-- % de la remise ligne (exemple 20%)

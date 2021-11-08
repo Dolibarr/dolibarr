@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 $langs->loadLangs(array('users', 'admin', 'companies', 'ldap'));
 
 $id = GETPOST('id', 'int');
+$action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userldap'; // To manage different context of search
 
 // Security check
@@ -62,7 +63,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($_GET["action"] == 'dolibarr2ldap') {
+	if ($action == 'dolibarr2ldap') {
 		$ldap = new Ldap();
 		$result = $ldap->connect_bind();
 
@@ -97,7 +98,7 @@ print dol_get_fiche_head($head, 'ldap', $title, 0, 'user');
 
 $linkback = '';
 
-if ($user->rights->user->user->lire || $user->admin) {
+if (!empty($user->rights->user->user->lire) || !empty($user->admin)) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
@@ -189,7 +190,7 @@ if ($result > 0) {
 	// Affichage arbre
 	if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0)) {
 		if (!is_array($records)) {
-			print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+			print '<tr class="oddeven"><td colspan="2"><span class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</span></td></tr>';
 		} else {
 			$result = show_ldap_content($records, 0, $records['count'], true);
 		}
@@ -198,7 +199,6 @@ if ($result > 0) {
 	}
 
 	$ldap->unbind();
-	$ldap->close();
 } else {
 	setEventMessages($ldap->error, $ldap->errors, 'errors');
 }

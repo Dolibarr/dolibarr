@@ -2346,16 +2346,16 @@ class BonPrelevement extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('StatusWaiting');
-			$this->labelStatus[self::STATUS_TRANSFERED] = $langs->trans('StatusTrans');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('StatusWaiting');
-			$this->labelStatusShort[self::STATUS_TRANSFERED] = $langs->trans('StatusTrans');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('StatusWaiting');
+			$this->labelStatus[self::STATUS_TRANSFERED] = $langs->transnoentitiesnoconv('StatusTrans');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('StatusWaiting');
+			$this->labelStatusShort[self::STATUS_TRANSFERED] = $langs->transnoentitiesnoconv('StatusTrans');
 			if ($this->type == 'bank-transfer') {
-				$this->labelStatus[self::STATUS_DEBITED] = $langs->trans('StatusDebited');
-				$this->labelStatusShort[self::STATUS_DEBITED] = $langs->trans('StatusDebited');
+				$this->labelStatus[self::STATUS_DEBITED] = $langs->transnoentitiesnoconv('StatusDebited');
+				$this->labelStatusShort[self::STATUS_DEBITED] = $langs->transnoentitiesnoconv('StatusDebited');
 			} else {
-				$this->labelStatus[self::STATUS_CREDITED] = $langs->trans('StatusCredited');
-				$this->labelStatusShort[self::STATUS_CREDITED] = $langs->trans('StatusCredited');
+				$this->labelStatus[self::STATUS_CREDITED] = $langs->transnoentitiesnoconv('StatusCredited');
+				$this->labelStatusShort[self::STATUS_CREDITED] = $langs->transnoentitiesnoconv('StatusCredited');
 			}
 		}
 
