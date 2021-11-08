@@ -222,7 +222,7 @@ if ($object->client) {
 	print $object->code_client;
 	$tmpcheck = $object->check_codeclient();
 	if ($tmpcheck != 0 && $tmpcheck != -5) {
-		print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+		print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
 	}
 	print '</td></tr>';
 }
@@ -233,7 +233,7 @@ if ($object->fournisseur) {
 	print $object->code_fournisseur;
 	$tmpcheck = $object->check_codefournisseur();
 	if ($tmpcheck != 0 && $tmpcheck != -5) {
-		print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+		print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
 	}
 	print '</td></tr>';
 }
@@ -493,8 +493,8 @@ while ($i < min($num, $limit)) {
 	$objectwebsiteaccount->login = $obj->login;
 	$objectwebsiteaccount->ref = $obj->login;
 	foreach ($objectwebsiteaccount->fields as $key => $val) {
-		if (property_exists($obj, $key)) {
-			$object->$key = $obj->$key;
+		if (property_exists($objectwebsiteaccount, $key)) {
+			$objectwebsiteaccount->$key = $obj->$key;
 		}
 	}
 
@@ -526,7 +526,7 @@ while ($i < min($num, $limit)) {
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
-			if (!empty($val['isameasure'])) {
+			if (!empty($val['isameasure']) && $val['isameasure'] == 1) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
 				}
@@ -536,7 +536,7 @@ while ($i < min($num, $limit)) {
 				if (!isset($totalarray['val']['t.'.$key])) {
 					$totalarray['val']['t.'.$key] = 0;
 				}
-				$totalarray['val']['t.'.$key] += $obj->$key;
+				$totalarray['val']['t.'.$key] += $objectwebsiteaccount->$key;
 			}
 		}
 	}

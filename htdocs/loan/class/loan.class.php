@@ -517,17 +517,17 @@ class Loan extends CommonObject
 		unset($this->labelStatus); // Force to reset the array of status label, because label can change depending on parameters
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
-			$this->labelStatus[self::STATUS_UNPAID] = $langs->trans('Unpaid');
-			$this->labelStatus[self::STATUS_PAID] = $langs->trans('Paid');
-			$this->labelStatus[self::STATUS_STARTED] = $langs->trans("BillStatusStarted");
+			$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('Unpaid');
+			$this->labelStatus[self::STATUS_PAID] = $langs->transnoentitiesnoconv('Paid');
+			$this->labelStatus[self::STATUS_STARTED] = $langs->transnoentitiesnoconv("BillStatusStarted");
 			if ($status == 0 && $alreadypaid > 0) {
-				$this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+				$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
 			}
-			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans('Unpaid');
-			$this->labelStatusShort[self::STATUS_PAID] = $langs->trans('Enabled');
-			$this->labelStatusShort[self::STATUS_STARTED] = $langs->trans("BillStatusStarted");
+			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('Unpaid');
+			$this->labelStatusShort[self::STATUS_PAID] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_STARTED] = $langs->transnoentitiesnoconv("BillStatusStarted");
 			if ($status == 0 && $alreadypaid > 0) {
-				$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+				$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
 			}
 		}
 

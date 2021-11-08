@@ -38,14 +38,21 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
+$object = new DolResource($db);
+
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'resource', $id, 'resource');
+$result = restrictedArea($user, 'resource', $object->id, 'resource');
 
-$object = new DolResource($db);
-$result = $object->fetch($id, $ref);
+// Security check
+if (!$user->rights->resource->read) {
+	accessforbidden();
+}
 
 
 /*

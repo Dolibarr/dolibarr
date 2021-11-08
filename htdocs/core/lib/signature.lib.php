@@ -39,8 +39,9 @@ function showOnlineSignatureUrl($type, $ref)
 	if ($url == $langs->trans("FeatureOnlineSignDisabled")) {
 		$out .= $url;
 	} else {
-		$out .= '<input type="text" id="onlinesignatureurl" class="quatrevingtpercent" value="'.$url.'">';
+		$out .= '<input type="text" id="onlinesignatureurl" class="quatrevingtpercentminusx" value="'.$url.'">';
 	}
+	$out .= '<a class="" href="'.$url.'" target="_blank">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
 	$out .= '</div>';
 	$out .= ajax_autoselect("onlinesignatureurl", 0);
 	return $out;
@@ -63,16 +64,16 @@ function getOnlineSignatureUrl($mode, $type, $ref = '')
 	$out = '';
 
 	if ($type == 'proposal') {
-		$out = DOL_MAIN_URL_ROOT.'/public/onlinesign/newonlinesign.php?source=proposal&ref='.($mode ? '<font color="#666666">' : '');
+		$out = DOL_MAIN_URL_ROOT.'/public/onlinesign/newonlinesign.php?source=proposal&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
 			$out .= 'proposal_ref';
 		}
 		if ($mode == 0) {
 			$out .= urlencode($ref);
 		}
-		$out .= ($mode ? '</font>' : '');
+		$out .= ($mode ? '</span>' : '');
 		if ($mode == 1) {
-			$out .= '&hashp=<font color="#666666">hash_of_file</font>';
+			$out .= '&hashp=<span style="color: #666666">hash_of_file</span>';
 		} else {
 			include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 			$propaltmp = new Propal($db);

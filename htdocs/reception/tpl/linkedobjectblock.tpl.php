@@ -25,7 +25,7 @@ if (empty($conf) || !is_object($conf)) {
 
 ?>
 
-<!-- BEGIN PHP TEMPLATE -->
+<!-- BEGIN PHP TEMPLATE reception/tpl/linkedopjectblock.tpl.php  -->
 
 <?php
 
@@ -69,7 +69,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		// For now, receptions must stay linked to order, so link is not deletable
 		if ($object->element != 'order_supplier') {
 			?>
-			<a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a>
+			<a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a>
 			<?php
 		}
 		?>

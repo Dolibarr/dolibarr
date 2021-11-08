@@ -866,15 +866,15 @@ class Tva extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_UNPAID] = $langs->trans('BillStatusNotPaid');
-			$this->labelStatus[self::STATUS_PAID] = $langs->trans('BillStatusPaid');
+			$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('BillStatusNotPaid');
+			$this->labelStatus[self::STATUS_PAID] = $langs->transnoentitiesnoconv('BillStatusPaid');
 			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) {
-				$this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+				$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
 			}
-			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans('BillStatusNotPaid');
-			$this->labelStatusShort[self::STATUS_PAID] = $langs->trans('BillStatusPaid');
+			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('BillStatusNotPaid');
+			$this->labelStatusShort[self::STATUS_PAID] = $langs->transnoentitiesnoconv('BillStatusPaid');
 			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) {
-				$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+				$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
 			}
 		}
 

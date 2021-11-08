@@ -2166,6 +2166,9 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$classpath = 'fichinter/class';
 		$module = 'ficheinter';
 		$myobject = 'fichinter';
+	} elseif ($objecttype == 'project') {
+		$classpath = 'projet/class';
+		$module = 'projet';
 	} elseif ($objecttype == 'task') {
 		$classpath = 'projet/class';
 		$module = 'projet';

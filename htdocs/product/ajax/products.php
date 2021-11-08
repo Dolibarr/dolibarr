@@ -91,7 +91,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 		$outtype = $object->type;
 		$outqty = 1;
 		$outdiscount = 0;
-
+		$mandatory_period = $object->mandatory_period;
 		$found = false;
 
 		$price_level = 1;
@@ -144,7 +144,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 		if (!$found && isset($price_level) && $price_level >= 1 && (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))) { // If we need a particular price level (from 1 to 6)
 			$sql = "SELECT price, price_ttc, price_base_type, tva_tx";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_price ";
-			$sql .= " WHERE fk_product = '".$id."'";
+			$sql .= " WHERE fk_product = ".((int) $id);
 			$sql .= " AND entity IN (".getEntity('productprice').")";
 			$sql .= " AND price_level = ".((int) $price_level);
 			$sql .= " ORDER BY date_price";
@@ -203,6 +203,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 			'tva_tx' => $outtva_tx,
 			'qty' => $outqty,
 			'discount' => $outdiscount,
+			'mandatory_period' => $mandatory_period,
 			'array_options'=>$object->array_options);
 	}
 

@@ -115,9 +115,10 @@ function getServerTimeZoneInt($refgmtdate = 'now')
  *  @param      int			$time               Date timestamp (or string with format YYYY-MM-DD)
  *  @param      int			$duration_value     Value of delay to add
  *  @param      int			$duration_unit      Unit of added delay (d, m, y, w, h, i)
+ *  @param      int         $ruleforendofmonth  Change the behavior of PHP over data-interval, 0 or 1
  *  @return     int      			        	New timestamp
  */
-function dol_time_plus_duree($time, $duration_value, $duration_unit)
+function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforendofmonth = 0)
 {
 	global $conf;
 
@@ -166,7 +167,31 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit)
 	} else {
 		$date->add($interval);
 	}
+	//Change the behavior of PHP over data-interval when the result of this function is Feb 29 (non-leap years), 30 or Feb 31 (php returns March 1, 2 or 3 respectively)
+	if ($ruleforendofmonth == 1 && $duration_unit == 'm') {
+		$timeyear = dol_print_date($time, '%Y');
+		$timemonth = dol_print_date($time, '%m');
+		$timetotalmonths = (($timeyear * 12) + $timemonth);
 
+		$monthsexpected = ($timetotalmonths + $duration_value);
+
+		$newtime = $date->getTimestamp();
+
+		$newtimeyear = dol_print_date($newtime, '%Y');
+		$newtimemonth = dol_print_date($newtime, '%m');
+		$newtimetotalmonths = (($newtimeyear * 12) + $newtimemonth);
+
+		if ($monthsexpected < $newtimetotalmonths) {
+			$newtimehours = dol_print_date($newtime, '%H');
+			$newtimemins = dol_print_date($newtime, '%M');
+			$newtimesecs = dol_print_date($newtime, '%S');
+
+			$datelim = dol_mktime($newtimehours, $newtimemins, $newtimesecs, $newtimemonth, 1, $newtimeyear);
+			$datelim -= (3600 * 24);
+
+			$date->setTimestamp($datelim);
+		}
+	}
 	return $date->getTimestamp();
 }
 
@@ -656,7 +681,7 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
 function getGMTEasterDatetime($year)
 {
 	$base = new DateTime("$year-03-21", new DateTimeZone("UTC"));
-	$days = easter_days($year);	// Return number of days between 21 march and easter day.
+	$days = easter_days($year); // Return number of days between 21 march and easter day.
 	$tmp = $base->add(new DateInterval("P{$days}D"));
 	return $tmp->getTimestamp();
 }

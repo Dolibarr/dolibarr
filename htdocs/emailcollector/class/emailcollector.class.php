@@ -515,7 +515,7 @@ class EmailCollector extends CommonObject
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
-		$url = dol_buildpath('/admin/emailcollector_card.php', 1).'?id='.$this->id;
+		$url = DOL_URL_ROOT.'/admin/emailcollector_card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -599,10 +599,10 @@ class EmailCollector extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_ENABLED] = $langs->trans('Enabled');
-			$this->labelStatus[self::STATUS_DISABLED] = $langs->trans('Disabled');
-			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->trans('Enabled');
-			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->trans('Disabled');
+			$this->labelStatus[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
 		}
 
 		$statusType = 'status5';
@@ -966,7 +966,7 @@ class EmailCollector extends CommonObject
 
 		dol_syslog("EmailCollector::doCollectOneCollector start for id=".$this->id, LOG_DEBUG);
 
-		$langs->loadLangs(array("project", "companies", "mails", "errors", "ticket", "agenda"));
+		$langs->loadLangs(array("project", "companies", "mails", "errors", "ticket", "agenda", "commercial"));
 
 		$error = 0;
 		$this->output = '';

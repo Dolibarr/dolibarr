@@ -700,8 +700,18 @@ class FormCompany extends Form
 			return $socid;
 		} else {
 			// Search to list thirdparties
-			$sql = "SELECT s.rowid, s.nom as name FROM";
-			$sql .= " ".MAIN_DB_PREFIX."societe as s";
+			$sql = "SELECT s.rowid, s.nom as name ";
+			if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST)) {
+				$sql .= ", s.code_client, s.code_fournisseur";
+			}
+			if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+				$sql .= ", s.address, s.zip, s.town";
+				$sql .= ", dictp.code as country_code";
+			}
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+			if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as dictp ON dictp.rowid = s.fk_pays";
+			}
 			$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 			// For ajax search we limit here. For combo list, we limit later
 			if (is_array($limitto) && count($limitto)) {
@@ -761,27 +771,28 @@ class FormCompany extends Form
 	/**
 	 *  Return a select list with types of contacts
 	 *
-	 *  @param	object		$object         Object to use to find type of contact
-	 *  @param  string		$selected       Default selected value
-	 *  @param  string		$htmlname		HTML select name
-	 *  @param  string		$source			Source ('internal' or 'external')
-	 *  @param  string		$sortorder		Sort criteria ('position', 'code', ...)
-	 *  @param  int			$showempty      1=Add en empty line
-	 *  @param  string      $morecss        Add more css to select component
-	 *  @param  int      	$output         0=return HTML, 1= direct print
+	 *  @param	object		$object         	Object to use to find type of contact
+	 *  @param  string		$selected       	Default selected value
+	 *  @param  string		$htmlname			HTML select name
+	 *  @param  string		$source				Source ('internal' or 'external')
+	 *  @param  string		$sortorder			Sort criteria ('position', 'code', ...)
+	 *  @param  int			$showempty      	1=Add en empty line
+	 *  @param  string      $morecss        	Add more css to select component
+	 *  @param  int      	$output         	0=return HTML, 1= direct print
 	 *  @param	int			$forcehidetooltip	Force hide tooltip for admin
-	 *  @return	void
+	 *  @return	string|void						Depending on $output param, return the HTML select list (recommended method) or nothing
 	 */
 	public function selectTypeContact($object, $selected, $htmlname = 'type', $source = 'internal', $sortorder = 'position', $showempty = 0, $morecss = '', $output = 1, $forcehidetooltip = 0)
 	{
 		global $user, $langs;
+
 		$out = '';
 		if (is_object($object) && method_exists($object, 'liste_type_contact')) {
 			$lesTypes = $object->liste_type_contact($source, $sortorder, 0, 1);
 
 			$out .= '<select class="flat valignmiddle'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($showempty) {
-				$out .= '<option value="0"></option>';
+				$out .= '<option value="0">&nbsp;</option>';
 			}
 			foreach ($lesTypes as $key => $value) {
 				$out .= '<option value="'.$key.'"';
@@ -998,16 +1009,16 @@ class FormCompany extends Form
 	/**
 	 * Return a HTML select for thirdparty type
 	 *
-	 * @param int $selected selected value
-	 * @param string $htmlname HTML select name
-	 * @param string $htmlidname HTML select id
-	 * @param string $typeinput HTML output
-	 * @param string $morecss More css
-	 * @return string HTML string
+	 * @param int 		$selected 		Selected value
+	 * @param string 	$htmlname 		HTML select name
+	 * @param string 	$htmlidname 	HTML select id
+	 * @param string 	$typeinput 		HTML output
+	 * @param string 	$morecss 		More css
+	 * @param string	$allowempty		Allow empty value or not
+	 * @return string 					HTML string
 	 */
-	public function selectProspectCustomerType($selected, $htmlname = 'client', $htmlidname = 'customerprospect', $typeinput = 'form', $morecss = '')
+	public function selectProspectCustomerType($selected, $htmlname = 'client', $htmlidname = 'customerprospect', $typeinput = 'form', $morecss = '', $allowempty = '')
 	{
-
 		global $conf, $langs;
 		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && !empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->fournisseur->enabled)) {
 			return '' ;
@@ -1015,8 +1026,14 @@ class FormCompany extends Form
 
 		$out = '<select class="flat '.$morecss.'" name="'.$htmlname.'" id="'.$htmlidname.'">';
 		if ($typeinput == 'form') {
-			if ($selected == '' || $selected == '-1') {
-				$out .= '<option value="-1">&nbsp;</option>';
+			if ($allowempty || ($selected == '' || $selected == '-1')) {
+				$out .= '<option value="-1">';
+				if (is_numeric($allowempty)) {
+					$out .= '&nbsp;';
+				} else {
+					$out .= $langs->trans($allowempty);
+				}
+				$out .= '</option>';
 			}
 			if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
 				$out .= '<option value="2"'.($selected == 2 ? ' selected' : '').'>'.$langs->trans('Prospect').'</option>';

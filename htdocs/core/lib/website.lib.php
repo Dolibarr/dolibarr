@@ -528,8 +528,10 @@ function includeContainer($containerref)
 }
 
 /**
- * Return HTML content to add structured data for an article, news or Blog Post.
- * Use the json-ld format.
+ * Return HTML content to add structured data for an article, news or Blog Post. Use the json-ld format.
+ * Example:
+ * <?php getStructureData('blogpost'); ?>
+ * <?php getStructureData('software', array('name'=>'Name', 'os'=>'Windows', 'price'=>10)); ?>
  *
  * @param 	string		$type				'blogpost', 'product', 'software', 'organization', 'qa',  ...
  * @param	array		$data				Array of data parameters for structured data
@@ -735,6 +737,81 @@ function getStructuredData($type, $data = array())
 }
 
 /**
+ * Return HTML content to add as header card for an article, news or Blog Post or home page.
+ *
+ * @param	array	$params					Array of parameters
+ * @return  string							HTML content
+ */
+function getSocialNetworkHeaderCards($params = null)
+{
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
+
+	$out = '';
+
+	if ($website->virtualhost) {
+		$pageurl = $websitepage->pageurl;
+		$title = $websitepage->title;
+		$image = $websitepage->image;
+		$companyname = $mysoc->name;
+		$description = $websitepage->description;
+
+		$pageurl = str_replace('__WEBSITE_KEY__', $website->ref, $pageurl);
+		$title = str_replace('__WEBSITE_KEY__', $website->ref, $title);
+		$image = '/medias'.(preg_match('/^\//', $image) ? '' : '/').str_replace('__WEBSITE_KEY__', $website->ref, $image);
+		$companyname = str_replace('__WEBSITE_KEY__', $website->ref, $companyname);
+		$description = str_replace('__WEBSITE_KEY__', $website->ref, $description);
+
+		$shortlangcode = '';
+		if ($websitepage->lang) {
+			$shortlangcode = substr($websitepage->lang, 0, 2); // en_US or en-US -> en
+		}
+		if (empty($shortlangcode)) {
+			$shortlangcode = substr($website->lang, 0, 2); // en_US or en-US -> en
+		}
+
+		$fullurl = $website->virtualhost.'/'.$websitepage->pageurl.'.php';
+		$canonicalurl = $website->virtualhost.(($websitepage->id == $website->fk_default_home) ? '/' : (($shortlangcode != substr($website->lang, 0, 2) ? '/'.$shortlangcode : '').'/'.$websitepage->pageurl.'.php'));
+		$hashtags = trim(join(' #', array_map('trim', explode(',', $websitepage->keywords))));
+
+		// Open Graph
+		$out .= '<meta name="og:type" content="website">'."\n";	// TODO If blogpost, use type article
+		$out .= '<meta name="og:title" content="'.$websitepage->title.'">'."\n";
+		if ($websitepage->image) {
+			$out .= '<meta name="og:image" content="'.$website->virtualhost.$image.'">'."\n";
+		}
+		$out .= '<meta name="og:url" content="'.$canonicalurl.'">'."\n";
+
+		// Twitter
+		$out .= '<meta name="twitter:card" content="summary">'."\n";
+		if (!empty($params) && !empty($params['twitter_account'])) {
+			$out .= '<meta name="twitter:site" content="@'.$params['twitter_account'].'">'."\n";
+			$out .= '<meta name="twitter:creator" content="@'.$params['twitter_account'].'">'."\n";
+		}
+		$out .= '<meta name="twitter:title" content="'.$websitepage->title.'">'."\n";
+		if ($websitepage->description) {
+			$out .= '<meta name="twitter:description" content="'.$websitepage->description.'">'."\n";
+		}
+		if ($websitepage->image) {
+			$out .= '<meta name="twitter:image" content="'.$website->virtualhost.$image.'">'."\n";
+		}
+		//$out .= '<meta name="twitter:domain" content="'.getDomainFromURL($website->virtualhost, 1).'">';
+		/*
+		 $out .= '<meta name="twitter:app:name:iphone" content="">';
+		 $out .= '<meta name="twitter:app:name:ipad" content="">';
+		 $out .= '<meta name="twitter:app:name:googleplay" content="">';
+		 $out .= '<meta name="twitter:app:url:iphone" content="">';
+		 $out .= '<meta name="twitter:app:url:ipad" content="">';
+		 $out .= '<meta name="twitter:app:url:googleplay" content="">';
+		 $out .= '<meta name="twitter:app:id:iphone" content="">';
+		 $out .= '<meta name="twitter:app:id:ipad" content="">';
+		 $out .= '<meta name="twitter:app:id:googleplay" content="">';
+		 */
+	}
+
+	return $out;
+}
+
+/**
  * Return HTML content to add structured data for an article, news or Blog Post.
  *
  * @return  string							HTML content
@@ -866,11 +943,11 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		$sql .= " AND (";
 		$searchalgo = '';
 		if (preg_match('/meta/', $algo)) {
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.title LIKE '%".$db->escape($searchstring)."%' OR wp.description LIKE '%".$db->escape($searchstring)."%'";
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.keywords LIKE '".$db->escape($searchstring).",%' OR wp.keywords LIKE '% ".$db->escape($searchstring)."%'"; // TODO Use a better way to scan keywords
+			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.title LIKE '%".$db->escapeunderscore($db->escape($searchstring))."%' OR wp.description LIKE '%".$db->escapeunderscore($db->escape($searchstring))."%'";
+			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.keywords LIKE '".$db->escapeunderscore($db->escape($searchstring)).",%' OR wp.keywords LIKE '% ".$db->escapeunderscore($db->escape($searchstring))."%'"; // TODO Use a better way to scan keywords
 		}
 		if (preg_match('/content/', $algo)) {
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.content LIKE '%".$db->escape($searchstring)."%'";
+			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.content LIKE '%".$db->escapeunderscore($db->escape($searchstring))."%'";
 		}
 		$sql .= $searchalgo;
 		if (is_array($otherfilters) && !empty($otherfilters['category'])) {
@@ -879,6 +956,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		$sql .= ")";
 		$sql .= $db->order($sortfield, $sortorder);
 		$sql .= $db->plimit($max);
+		//print $sql;
 
 		$resql = $db->query($sql);
 		if ($resql) {

@@ -338,25 +338,25 @@ if (empty($reshook)) {
 
 				// If no start date
 				if (empty($_POST['date_debut_'])) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&error=nodatedebut');
+					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'&error=nodatedebut');
 					exit;
 				}
 
 				// If no end date
 				if (empty($_POST['date_fin_'])) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&error=nodatefin');
+					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'&error=nodatefin');
 					exit;
 				}
 
 				// If start date after end date
 				if ($date_debut > $date_fin) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&error=datefin');
+					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'&error=datefin');
 					exit;
 				}
 
 				// If no validator designated
 				if ($approverid < 1) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&error=Valideur');
+					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'&error=Valideur');
 					exit;
 				}
 
@@ -567,9 +567,10 @@ if (empty($reshook)) {
 				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
 				$newSolde = ($soldeActuel - $nbopenedday);
+				$label = $langs->transnoentitiesnoconv("Holidays").' - '.$object->ref;
 
 				// The modification is added to the LOG
-				$result = $object->addLogCP($user->id, $object->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $object->fk_type);
+				$result = $object->addLogCP($user->id, $object->fk_user, $label, $newSolde, $object->fk_type);
 				if ($result < 0) {
 					$error++;
 					setEventMessages(null, $object->errors, 'errors');
@@ -881,7 +882,7 @@ $object = new Holiday($db);
 
 $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
 
-$title = $langs->trans('CPTitreMenu');
+$title = $langs->trans('Leave');
 $help_url = 'EN:Module_Holiday';
 
 llxHeader('', $title, $help_url);
@@ -1087,7 +1088,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '<tr>';
 		print '<td>'.$langs->trans("DescCP").'</td>';
 		print '<td class="tdtop">';
-		$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+		$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 
@@ -1157,7 +1158,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 				setEventMessages($errors, null, 'errors');
 			}
 
-			// On vérifie si l'utilisateur à le droit de lire cette demande
+			// check if the user has the right to read this request
 			if ($canread) {
 				$head = holiday_prepare_head($object);
 
@@ -1288,7 +1289,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print '<tr>';
 					print '<td>'.$langs->trans('DescCP').'</td>';
 					print '<td class="tdtop">';
-					$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+					$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, ROWS_3, '90%');
 					print $doleditor->Create(1);
 					print '</td></tr>';
 				}
@@ -1301,7 +1302,6 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 				print '</div>';
 				print '<div class="fichehalfright">';
-				print '<div class="ficheaddleft">';
 
 				print '<div class="underbanner clearboth"></div>';
 
@@ -1338,7 +1338,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					}
 					$include_users = $object->fetch_users_approver_holiday();
 					if (is_array($include_users) && in_array($user->id, $include_users) && $object->statut == Holiday::STATUS_VALIDATED) {
-						print '<a class="editfielda paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editvalidator">'.img_edit($langs->trans("Edit")).'</a>';
+						print '<a class="editfielda paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editvalidator&token='.newToken().'">'.img_edit($langs->trans("Edit")).'</a>';
 					}
 					print '</td>';
 					print '</tr>';
@@ -1392,7 +1392,6 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 				print '</div>';
 				print '</div>';
-				print '</div>';
 
 				print '<div class="clearboth"></div>';
 
@@ -1434,11 +1433,9 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 				if (($action == 'edit' && $object->statut == Holiday::STATUS_DRAFT) || ($action == 'editvalidator')) {
 					if ($action == 'edit' && $object->statut == Holiday::STATUS_DRAFT) {
-						print '<div class="center">';
 						if ($cancreate && $object->statut == Holiday::STATUS_DRAFT) {
-							print '<input type="submit" value="'.$langs->trans("Save").'" class="button button-save">';
+							print $form->buttonsSaveCancel();
 						}
-						print '</div>';
 					}
 
 					print '</form>';
@@ -1450,11 +1447,11 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print '<div class="tabsAction">';
 
 					if ($cancreate && $object->statut == Holiday::STATUS_DRAFT) {
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit" class="butAction">'.$langs->trans("EditCP").'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'" class="butAction">'.$langs->trans("EditCP").'</a>';
 					}
 
 					if ($cancreate && $object->statut == Holiday::STATUS_DRAFT) {		// If draft
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=sendToValidate" class="butAction">'.$langs->trans("Validate").'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=sendToValidate&token='.newToken().'" class="butAction">'.$langs->trans("Validate").'</a>';
 					}
 
 					if ($object->statut == Holiday::STATUS_VALIDATED) {	// If validated
@@ -1522,7 +1519,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			$action = 'presend';
 		}
 
-		if ($action != 'presend') {
+		if ($action != 'presend' && $action != 'edit') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre
 
@@ -1544,20 +1541,16 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			//$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
-			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+			print '</div><div class="fichehalfright">';
 
 			$MAXEVENT = 10;
-
-			/*$morehtmlright = '<a href="'.dol_buildpath('/holiday/myobject_agenda.php', 1).'?id='.$object->id.'">';
-			$morehtmlright .= $langs->trans("SeeAll");
-			$morehtmlright .= '</a>';*/
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, $object->element, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlright);
 
-			print '</div></div></div>';
+			print '</div></div>';
 		}
 	}
 }

@@ -158,7 +158,7 @@ if ($ret > 0) {
 	$placeid = $invoice->id;
 }
 
-$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'. isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '' ;
+$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
 
 $soc = new Societe($db);
 if ($invoice->socid > 0) {
@@ -188,11 +188,9 @@ if ($action == 'valid' && $user->rights->facture->creer) {
 	if (!empty($conf->global->TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT)) {
 		$bankaccount = GETPOST('accountid', 'int');
 	} else {
-		if ($pay == "cash") {
+		if ($pay == 'LIQ') {
 			$bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]};            // For backward compatibility
-		} elseif ($pay == "card") {
-			$bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$_SESSION["takeposterminal"]};          // For backward compatibility
-		} elseif ($pay == "cheque") {
+		} elseif ($pay == "CHQ") {
 			$bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$_SESSION["takeposterminal"]};    // For backward compatibility
 		} else {
 			$accountname = "CASHDESK_ID_BANKACCOUNT_".$pay.$_SESSION["takeposterminal"];
@@ -581,9 +579,11 @@ if ($action == "freezone") {
 }
 
 if ($action == "addnote") {
-	foreach ($invoice->lines as $line) {
+	$desc = GETPOST('addnote', 'alpha');
+	if ($idline==0) {
+		$invoice->update_note($desc, '_public');
+	} else foreach ($invoice->lines as $line) {
 		if ($line->id == $idline) {
-			$desc = GETPOST('addnote', 'alpha');
 			$result = $invoice->updateline($line->id, $desc, $line->subprice, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
 		}
 	}
@@ -879,6 +879,9 @@ if ($action == "valid" || $action == "history" || $action == 'creditnote') {
 		$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
 	} else {
 		$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+		if (getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS')) {
+			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintBox('.$placeid.', \'without_details\');">'.$langs->trans('PrintWithoutDetails').'</button>';
+		}
 		if (getDolGlobalString('TAKEPOS_GIFT_RECEIPT')) {
 			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.', 1);">'.$langs->trans('GiftReceipt').'</button>';
 		}
@@ -916,7 +919,7 @@ $(document).ready(function() {
 		selectedtext=$('#'+selectedline).find("td:first").html();
 		<?php
 		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-			print '$("#phonediv1").load("auto_order.php?action=editline&placeid="+placeid+"&selectedline="+selectedline, function() {
+			print '$("#phonediv1").load("auto_order.php?action=editline&token='.newToken().'&placeid="+placeid+"&selectedline="+selectedline, function() {
 			});';
 		}
 		?>
@@ -1019,6 +1022,11 @@ function SendTicket(id)
 	$.colorbox({href:"send.php?facid="+id, width:"70%", height:"30%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("SendTicket")); ?>'});
 }
 
+function PrintBox(id, action) {
+	console.log("Open box before printing");
+	$.colorbox({href:"printbox.php?facid="+id+"&action="+action, width:"80%", height:"200px", transition:"none", iframe:"true", title:"<?php echo $langs->trans("PrintWithoutDetails"); ?>"});
+}
+
 function Print(id, gift){
 	console.log("Call Print() to generate the receipt.");
 	$.colorbox({href:"receipt.php?facid="+id+"&gift="+gift, width:"40%", height:"90%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("PrintTicket")); ?>'});
@@ -1058,13 +1066,12 @@ function DolibarrTakeposPrinting(id) {
 }
 
 function CreditNote() {
-	$("#poslines").load("invoice.php?action=creditnote&invoiceid="+placeid, function() {
+	$("#poslines").load("invoice.php?action=creditnote&token=<?php echo newToken() ?>&invoiceid="+placeid, function() {
 	});
 }
 
 function SetNote() {
-	$("#poslines").load("invoice.php?action=addnote&invoiceid="+placeid+"&idline="+selectedline+"&addnote="+$("#textinput").val(), function() {
-	});
+	$("#poslines").load("invoice.php?action=addnote&token=<?php echo newToken() ?>&invoiceid="+placeid+"&idline="+selectedline, { "addnote": $("#textinput").val() });
 }
 
 
@@ -1152,7 +1159,7 @@ $( document ).ready(function() {
 		$result = $adh->fetch('', '', $invoice->socid);
 		if ($result > 0) {
 			$adh->ref = $adh->getFullName($langs);
-			if (empty($adh->statut)) {
+			if (empty($adh->statut) || $adh->statut == Adherent::STATUS_EXCLUDED ) {
 				$s .= "<s>";
 			}
 			$s .= $adh->getFullName($langs);
@@ -1168,7 +1175,7 @@ $( document ).ready(function() {
 					$s .= " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
 				}
 			}
-			if (empty($adh->statut)) {
+			if (empty($adh->statut) || $adh->statut == Adherent::STATUS_EXCLUDED) {
 				$s .= "</s>";
 			}
 		} else {
@@ -1536,7 +1543,7 @@ if ($placeid > 0) {
 				$htmlforlines .= '</td>';
 			}
 			$htmlforlines .= '</tr>'."\n";
-			$htmlforlines .= empty($htmlsupplements[$line->id]) ? '' : empty($htmlsupplements[$line->id]);
+			$htmlforlines .= empty($htmlsupplements[$line->id]) ? '' : $htmlsupplements[$line->id];
 
 			print $htmlforlines;
 		}

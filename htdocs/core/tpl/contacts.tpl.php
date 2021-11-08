@@ -135,19 +135,19 @@ if ($permission) {
 		<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
 		<input type="hidden" name="action" value="addcontact" />
 		<input type="hidden" name="source" value="external" />
+		<input type="hidden" name="page_y" value="" />
 		<?php if (!empty($withproject)) {
 			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 		} ?>
 
-		<div class="tagtd nowrap maxwidthonsmartphone noborderbottom">
+		<div class="tagtd nowrap noborderbottom">
 			<?php
 			$selectedCompany = GETPOSTISSET("newcompany") ? GETPOST("newcompany", 'int') : (empty($object->socid) ?  0 : $object->socid);
 			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp'); ?>
 		</div>
-		<!--  <div class="tagtd nowrap noborderbottom"><?php echo img_object('', 'contact').' '.$langs->trans("ThirdPartyContacts"); ?></div>-->
-		<div class="tagtd maxwidthonsmartphone noborderbottom">
+		<div class="tagtd noborderbottom minwidth500imp">
 			<?php
-			print img_object('', 'contact', 'class="pictofixedwidth"').$form->selectcontacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp');
+			print img_object('', 'contact', 'class="pictofixedwidth"').$form->selectcontacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth400');
 			$nbofcontacts = $form->num;
 
 			$newcardbutton = '';
@@ -157,7 +157,7 @@ if ($permission) {
 			print $newcardbutton;
 			?>
 		</div>
-		<div class="tagtd maxwidthonsmartphone noborderbottom">
+		<div class="tagtd noborderbottom">
 			<?php
 			$tmpobject = $object;
 			if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
@@ -303,12 +303,12 @@ foreach ($list as $entry) {
 
 	if ($permission) {
 		$href = $_SERVER["PHP_SELF"];
-		$href .= '?id='.$object->id;
+		$href .= '?id='.((int) $object->id);
 		$href .= '&action=deletecontact&token='.newToken();
-		$href .= '&lineid='.$entry->id;
+		$href .= '&lineid='.((int) $entry->id);
 
-		print "<td class='center'>";
-		print "<a href='$href'>";
+		print '<td class="center">';
+		print '<a href="'.$href.'">';
 		print img_picto($langs->trans("Unlink"), "unlink");
 		print "</a>";
 		print "</td>";

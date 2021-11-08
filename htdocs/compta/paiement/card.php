@@ -416,10 +416,13 @@ if ($resql) {
 			print '<td class="right">'.$invoice->getLibStatut(5, $alreadypayed).'</td>';
 
 			print "</tr>\n";
-			if ($objp->paye == 1) {	// If at least one invoice is paid, disable delete
+
+			// If at least one invoice is paid, disable delete. INVOICE_CAN_DELETE_PAYMENT_EVEN_IF_INVOICE_CLOSED Can be use for maintenance purpose. Never use this in production
+			if ($objp->paye == 1 && empty($conf->global->INVOICE_CAN_DELETE_PAYMENT_EVEN_IF_INVOICE_CLOSED)) {
 				$disable_delete = 1;
 				$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemovePaymentWithOneInvoicePaid"));
 			}
+
 			$total = $total + $objp->amount;
 			$i++;
 		}
@@ -445,7 +448,7 @@ print '<div class="tabsAction">';
 if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
 	if ($user->socid == 0 && $object->statut == 0 && $_GET['action'] == '') {
 		if ($user->rights->facture->paiement) {
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
+			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&facid='.$objp->facid.'&action=valide&token='.newToken().'">'.$langs->trans('Valid').'</a>';
 		}
 	}
 }
@@ -453,7 +456,7 @@ if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
 if ($user->socid == 0 && $action == '') {
 	if ($user->rights->facture->paiement) {
 		if (!$disable_delete) {
-			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
 		}

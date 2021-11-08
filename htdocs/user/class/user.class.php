@@ -384,6 +384,9 @@ class User extends CommonObject
 		$this->rights->user = new stdClass();
 		$this->rights->user->user = new stdClass();
 		$this->rights->user->self = new stdClass();
+		$this->rights->user->user_advance = new stdClass();
+		$this->rights->user->self_advance = new stdClass();
+		$this->rights->user->group_advance = new stdClass();
 	}
 
 	/**
@@ -455,8 +458,9 @@ class User extends CommonObject
 			}
 		}
 
-		if ($sid) {    // permet une recherche du user par son SID ActiveDirectory ou Samba
-			$sql .= " AND (u.ldap_sid = '".$this->db->escape($sid)."' OR u.login = '".$this->db->escape($login)."') LIMIT 1";
+		if ($sid) {
+			// permet une recherche du user par son SID ActiveDirectory ou Samba
+			$sql .= " AND (u.ldap_sid = '".$this->db->escape($sid)."' OR u.login = '".$this->db->escape($login)."')";
 		} elseif ($login) {
 			$sql .= " AND u.login = '".$this->db->escape($login)."'";
 		} elseif ($email) {
@@ -465,6 +469,11 @@ class User extends CommonObject
 			$sql .= " AND u.rowid = ".((int) $id);
 		}
 		$sql .= " ORDER BY u.entity ASC"; // Avoid random result when there is 2 login in 2 different entities
+
+		if ($sid) {
+			// permet une recherche du user par son SID ActiveDirectory ou Samba
+			$sql .= ' '.$this->db->plimit(1);
+		}
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -657,25 +666,105 @@ class User extends CommonObject
 	 *  You can use it like this: if ($user->hasRight('module', 'level11')).
 	 *  It replaces old syntax: if ($user->rights->module->level1)
 	 *
-	 * 	@param	int		$module			Id of permission to add or 0 to add several permissions
-	 *  @param  string	$permlevel1		Permission level1
+	 * 	@param	int		$module			Module of permission to check
+	 *  @param  string	$permlevel1		Permission level1 (Example: 'read', 'write', 'delete')
 	 *  @param  string	$permlevel2		Permission level2
 	 *  @return int						1 if user has permission, 0 if not.
 	 *  @see	clearrights(), delrights(), getrights(), hasRight()
 	 */
 	public function hasRight($module, $permlevel1, $permlevel2 = '')
 	{
+		global $conf;
+
+		// For compatibility with bad naming permissions on module
+		$moduletomoduletouse = array(
+			'contract' => 'contrat',
+			'member' => 'adherent',	// We must check $user->rights->adherent...
+			'mo' => 'mrp',
+			'order' => 'commande',
+			'product' => 'produit',	// We must check $user->rights->produit...
+			'project' => 'projet',
+			'shipping' => 'expedition',
+			'task' => 'task@projet',
+			'fichinter' => 'ficheinter',
+			'invoice' => 'facture',
+			'invoice_supplier' => 'fournisseur',
+			'knowledgerecord' => 'knowledgerecord@knowledgemanagement',
+			'skill@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
+			'job@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
+			'position@hrm' => 'all@hrm' // skill / job / position objects rights are for the moment grouped into right level "all"
+		);
+		if (!empty($moduletomoduletouse[$module])) {
+			$module = $moduletomoduletouse[$module];
+		}
+
+		// If module is abc@module, we check permission user->rights->module->abc->permlevel1
+		$tmp = explode('@', $module, 2);
+		if (! empty($tmp[1])) {
+			$module = $tmp[1];
+			$permlevel2 = $permlevel1;
+			$permlevel1 = $tmp[0];
+		}
+
+		//var_dump($module);
+		//var_dump($this->rights->$module);
+		if (!in_array($module, $conf->modules)) {
+			return 0;
+		}
+
+		// For compatibility with bad naming permissions on permlevel1
+		if ($permlevel1 == 'propale') {
+			$permlevel1 = 'propal';
+		}
+		if ($permlevel1 == 'member') {
+			$permlevel1 = 'adherent';
+		}
+		if ($permlevel1 == 'recruitmentcandidature') {
+			$permlevel1 = 'recruitmentjobposition';
+		}
+
+		//var_dump($module.' '.$permlevel1.' '.$permlevel2);
 		if (empty($module) || empty($this->rights) || empty($this->rights->$module) || empty($permlevel1)) {
 			return 0;
 		}
 
 		if ($permlevel2) {
-			if (!empty($this->rights->$module->$permlevel1) && !empty($this->rights->$module->$permlevel1->$permlevel2)) {
-				return $this->rights->$module->$permlevel1->$permlevel2;
+			if (!empty($this->rights->$module->$permlevel1)) {
+				if (!empty($this->rights->$module->$permlevel1->$permlevel2)) {
+					return $this->rights->$module->$permlevel1->$permlevel2;
+				}
+				// For backward compatibility with old permissions called "lire", "creer", "create", "supprimer"
+				// instead of "read", "write", "delete"
+				if ($permlevel2 == 'read' && !empty($this->rights->$module->$permlevel1->lire)) {
+					return $this->rights->$module->lire;
+				}
+				if ($permlevel2 == 'write' && !empty($this->rights->$module->$permlevel1->creer)) {
+					return $this->rights->$module->create;
+				}
+				if ($permlevel2 == 'write' && !empty($this->rights->$module->$permlevel1->create)) {
+					return $this->rights->$module->create;
+				}
+				if ($permlevel2 == 'delete' && !empty($this->rights->$module->$permlevel1->supprimer)) {
+					return $this->rights->$module->supprimer;
+				}
 			}
 		} else {
 			if (!empty($this->rights->$module->$permlevel1)) {
 				return $this->rights->$module->$permlevel1;
+			}
+			// For backward compatibility with old permissions called "lire", "creer", "create", "supprimer"
+			// instead of "read", "write", "delete"
+			if ($permlevel1 == 'read' && !empty($this->rights->$module->lire)) {
+				return $this->rights->$module->lire;
+			}
+			if ($permlevel1 == 'write' && !empty($this->rights->$module->creer)) {
+				return $this->rights->$module->create;
+			}
+			if ($permlevel1 == 'write' && !empty($this->rights->$module->create)) {
+				return $this->rights->$module->create;
+			}
+			if ($permlevel1 == 'delete' && !empty($this->rights->$module->supprimer)) {
+				return $this->rights->$module->supprimer;
 			}
 		}
 
@@ -2642,7 +2731,7 @@ class User extends CommonObject
 	/**
 	 *  Return clickable link of login (eventualy with picto)
 	 *
-	 *	@param	int		$withpictoimg		Include picto into link
+	 *	@param	int		$withpictoimg		Include picto into link (1=picto, -1=photo)
 	 *	@param	string	$option				On what the link point to ('leave', 'accountancy', 'nolink', )
 	 *  @param	integer	$notooltip			1=Disable tooltip on picto and name
 	 *  @param  string  $morecss       		Add more css on link
@@ -2720,10 +2809,10 @@ class User extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_ENABLED] = $langs->trans('Enabled');
-			$this->labelStatus[self::STATUS_DISABLED] = $langs->trans('Disabled');
-			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->trans('Enabled');
-			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->trans('Disabled');
+			$this->labelStatus[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
 		}
 
 		$statusType = 'status5';
@@ -2812,7 +2901,7 @@ class User extends CommonObject
 			}
 		}
 		foreach ($socialnetworks as $key => $value) {
-			if ($this->socialnetworks[$value['label']] && !empty($conf->global->{'LDAP_FIELD_'.strtoupper($value['label'])})) {
+			if (!empty($this->socialnetworks[$value['label']]) && !empty($conf->global->{'LDAP_FIELD_'.strtoupper($value['label'])})) {
 				$info[$conf->global->{'LDAP_FIELD_'.strtoupper($value['label'])}] = $this->socialnetworks[$value['label']];
 			}
 		}
@@ -3380,14 +3469,21 @@ class User extends CommonObject
 	public function load_state_board()
 	{
 		// phpcs:enable
+		global $conf;
 
 		$this->nb = array();
 
-		$sql = "SELECT count(u.rowid) as nb";
+		$sql = "SELECT COUNT(DISTINCT u.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE u.statut > 0";
+		if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+			$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+			$sql .= " WHERE ug.entity IN (".getEntity('usergroup').")";
+			$sql .= " AND ug.fk_user = u.rowid";
+		} else {
+			$sql .= " WHERE u.entity IN (".getEntity('user').")";
+		}
+		$sql .= " AND u.statut > 0";
 		//$sql.= " AND employee != 0";
-		$sql .= " AND u.entity IN (".getEntity('user').")";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

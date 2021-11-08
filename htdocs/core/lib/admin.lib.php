@@ -675,24 +675,24 @@ function ihm_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=language";
-	$head[$h][1] = $langs->trans("DefaultLanguage");
-	$head[$h][2] = 'language';
+	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=other";
+	$head[$h][1] = $langs->trans("LanguageAndPresentation");
+	$head[$h][2] = 'other';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=template";
-	$head[$h][1] = $langs->trans("DefaultSkin");
+	$head[$h][1] = $langs->trans("SkinAndColors");
 	$head[$h][2] = 'template';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=dashboard";
+	$head[$h][1] = $langs->trans("Dashboard");
+	$head[$h][2] = 'dashboard';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=login";
 	$head[$h][1] = $langs->trans("LoginPage");
 	$head[$h][2] = 'login';
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=other";
-	$head[$h][1] = $langs->trans("Miscellaneous");
-	$head[$h][2] = 'other';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'ihm_admin');
@@ -834,7 +834,7 @@ function translation_prepare_head()
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=overwrite";
-	$head[$h][1] = $langs->trans("TranslationOverwriteKey").'<span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
+	$head[$h][1] = '<span class="valignmiddle">'.$langs->trans("TranslationOverwriteKey").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
 	$head[$h][2] = 'overwrite';
 	$h++;
 
@@ -1127,7 +1127,7 @@ function activateModule($value, $withdeps = 1)
 
 	if (!count($ret['errors'])) {
 		$ret['nbmodules']++;
-		$ret['nbperms'] += count($objMod->rights);
+		$ret['nbperms'] += (is_array($objMod->rights)?count($objMod->rights):0);
 	}
 
 	return $ret;

@@ -120,7 +120,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					if ($ldapdebug) {
 						print "DEBUG: User ".$usertotest." must change password<br>\n";
 					}
-					$ldap->close();
+					$ldap->unbind();
 					sleep(1);
 					$langs->load('ldap');
 					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("YouMustChangePassNextLogon", $usertotest, $ldap->domainFQDN);
@@ -131,7 +131,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					print "DEBUG: ".$ldap->error."<br>\n";
 				}
 			}
-			$ldap->close();
+			$ldap->unbind();
 		}
 
 		// Forge LDAP user and password to test with them
@@ -166,14 +166,14 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 				$now = dol_now();
 				if ($tmpuser->datestartvalidity && $db->jdate($tmpuser->datestartvalidity) >= $now) {
-					$ldap->close();
+					$ldap->unbind();
 					// Load translation files required by the page
 					$langs->loadLangs(array('main', 'errors'));
 					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
 					return '--bad-login-validity--';
 				}
 				if ($tmpuser->dateendvalidity && $db->jdate($tmpuser->dateendvalidity) <= dol_get_first_hour($now)) {
-					$ldap->close();
+					$ldap->unbind();
 					// Load translation files required by the page
 					$langs->loadLangs(array('main', 'errors'));
 					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
@@ -271,7 +271,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 			$_SESSION["dol_loginmesg"] = ($ldap->error ? $ldap->error : $langs->transnoentitiesnoconv("ErrorBadLoginPassword"));
 		}
 
-		$ldap->close();
+		$ldap->unbind();
 	}
 
 	return $login;

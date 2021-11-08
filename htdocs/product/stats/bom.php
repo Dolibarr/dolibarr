@@ -261,14 +261,14 @@ if ($id > 0 || !empty($ref)) {
 		}
 
 		print '<div class="div-table-responsive">';
-		print '<table class="tagtable liste listwithfilterbefore" width="100%">';
+		print '<table class="tagtable liste listwithfilterbefore centpercent">';
 
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "b.rowid", "", "&amp;id=".$product->id, '', $sortfield, $sortorder);
 		print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "b.date_valid", "", "&amp;id=".$product->id, 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre("RowMaterial", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$product->id, '', $sortfield, $sortorder, 'center ');
 		print_liste_field_titre("Finished", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$product->id, '', $sortfield, $sortorder, 'center ');
-		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "b.status", "", "&amp;id=".$product->id, '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "b.status", "", "&amp;id=".$product->id, '', $sortfield, $sortorder, 'right ');
 		print "</tr>\n";
 
 		if (!empty($bom_data_result)) {
@@ -281,7 +281,7 @@ if ($id > 0 || !empty($ref)) {
 				print $data['date_valid']."</td>";
 				print '<td class="center">'.$data['qty_toconsume'].'</td>';
 				print '<td class="center">'.$data['qty_toproduce'].'</td>';
-				print '<td class="center">'.$data['status'].'</td>';
+				print '<td class="right">'.$data['status'].'</td>';
 				print "</tr>\n";
 			}
 			print '</table>';
