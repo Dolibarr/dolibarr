@@ -89,6 +89,11 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$info = $object->_load_ldap_info();
 					$dn = $object->_load_ldap_dn($info);
 
+					//For compatibility with Samba 4 AD
+					if ($ldap->serverType == "activedirectory") {
+						$info['userAccountControl'] = 512; 			//Account enabled
+					}
+
 					$result = $ldap->add($dn, $info, $user);
 				}
 
@@ -301,7 +306,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE === 'dolibarr2ldap') {
 				$ldap = new Ldap();
 				$result = $ldap->connect_bind();
-
+				
 				if ($result > 0) {
 					$info = $object->_load_ldap_info();
 					$dn = $object->_load_ldap_dn($info);
