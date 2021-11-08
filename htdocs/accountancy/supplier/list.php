@@ -291,7 +291,7 @@ if (strlen(trim($search_ref))) {
 	$sql .= natural_search("p.ref", $search_ref);
 }
 if (strlen(trim($search_label))) {
-	$sql .= natural_search("f.libelle", $search_label);
+	$sql .= natural_search(array("p.label", "f.libelle"), $search_label);
 }
 if (strlen(trim($search_desc))) {
 	$sql .= natural_search("l.description", $search_desc);
@@ -546,7 +546,7 @@ if ($result) {
 		$thirdpartystatic->email = $objp->email;
 		$thirdpartystatic->country_code = $objp->country_code;
 		$thirdpartystatic->tva_intra = $objp->tva_intra;
-		$thirdpartystatic->code_compta_fournisseur = $objp->company_code_buy;
+		$thirdpartystatic->code_compta_company = $objp->company_code_buy;
 
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;
@@ -566,10 +566,11 @@ if ($result) {
 		$facturefourn_static->id = $objp->facid;
 		$facturefourn_static->type = $objp->ftype;
 		$facturefourn_static->label = $objp->invoice_label;
+		$facturefourn_static->date = $db->jdate($objp->datef);
 
 		$facturefourn_static_det->id = $objp->rowid;
 		$facturefourn_static_det->total_ht = $objp->total_ht;
-		$facturefourn_static_det->tva_tx_line = $objp->tva_tx_line;
+		$facturefourn_static_det->tva_tx = $objp->tva_tx_line;
 		$facturefourn_static_det->vat_src_code = $objp->vat_src_code;
 		$facturefourn_static_det->product_type = $objp->type_l;
 		$facturefourn_static_det->desc = $objp->description;
@@ -608,6 +609,9 @@ if ($result) {
 		if (empty($code_buy_l) && empty($code_buy_p)) {
 			$code_buy_p_notset = 'color:red';
 		}
+		/*if ($suggestedaccountingaccountfor == 'eecwithoutvatnumber' && empty($code_sell_p_notset)) {
+			$code_sell_p_notset = 'color:orange';
+		}*/
 
 		// $code_buy_l is now default code of product/service
 		// $code_buy_p is now code of product/service
@@ -626,15 +630,15 @@ if ($result) {
 		print '</td>';
 		*/
 
-		print '<td class="center">'.dol_print_date($db->jdate($facturefourn_static_det->datef), 'day').'</td>';
+		print '<td class="center">'.dol_print_date($facturefourn_static->date, 'day').'</td>';
 
 		// Ref Product
 		print '<td class="tdoverflowmax150">';
 		if ($product_static->id > 0) {
 			print $product_static->getNomUrl(1);
 		}
-		if ($product_static->product_label) {
-			print '<br><span class="opacitymedium small">'.$product_static->product_label.'</span>';
+		if ($product_static->label) {
+			print '<br><span class="opacitymedium small">'.$product_static->label.'</span>';
 		}
 		print '</td>';
 
@@ -650,11 +654,12 @@ if ($result) {
 		print '</td>';
 
 		// Vat rate
+		$code_vat_differ='';
 		if ($objp->vat_tx_l != $objp->vat_tx_p && ! empty($objp->vat_tx_l)) {	// Note: having a vat rate of 0 is often the normal case when sells is intra b2b or to export
 			$code_vat_differ = 'font-weight:bold; text-decoration:blink; color:red';
 		}
 		print '<td style="'.$code_vat_differ.'" class="right">';
-		print vatrate($facturefourn_static_det->tva_tx_line.($facturefourn_static_det->vat_src_code ? ' ('.$facturefourn_static_det->vat_src_code.')' : ''));
+		print vatrate($facturefourn_static_det->tva_tx.($facturefourn_static_det->vat_src_code ? ' ('.$facturefourn_static_det->vat_src_code.')' : ''));
 		print '</td>';
 
 		// Thirdparty
@@ -671,7 +676,7 @@ if ($result) {
 
 		// Found accounts
 		print '<td class="small">';
-		$s = '1. '.(($facturefourn_static_det->type_l == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': ';
+		$s = '1. '.(($facturefourn_static_det->product_type == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': ';
 		$shelp = '';
 		if ($suggestedaccountingaccountbydefaultfor == 'eec') {
 			$shelp .= $langs->trans("SaleEEC");

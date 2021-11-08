@@ -304,7 +304,7 @@ class FormAdmin
 								if (preg_match('/\.lib/i', $filelib)) {
 									continue;
 								}
-								if (empty($conf->global->MAIN_FEATURES_LEVEL) && in_array($file, $expdevmenu)) {
+								if (getDolGlobalInt('MAIN_FEATURES_LEVEL') == 0 && in_array($file, $expdevmenu)) {
 									continue;
 								}
 

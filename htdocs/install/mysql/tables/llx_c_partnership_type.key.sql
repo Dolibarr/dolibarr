@@ -1,6 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2021 Laurent Destailleur  <eldy@users.sourceforge.net>
--- 
+--
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
 -- the Free Software Foundation; either version 3 of the License, or
@@ -14,22 +14,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- Defini les types de contact d'un element sert de reference pour
--- la table llx_element_contact
---
--- element est le nom de la table utilisant le type de contact.
--- i.e. contact, facture, projet, societe (sans le llx_ devant).
--- Libelle est un texte decrivant le type de contact.
--- active precise si cette valeur est 'active' ou 'archive'.
---
 -- ========================================================================
 
-create table llx_c_partnership_type
-(
-  rowid      	integer AUTO_INCREMENT PRIMARY KEY,
-  entity        integer DEFAULT 1 NOT NULL,
-  code          varchar(32) NOT NULL,
-  label 	    varchar(64)	NOT NULL,
-  active  	    tinyint DEFAULT 1 NOT NULL
-)ENGINE=innodb;
-
+ALTER TABLE llx_c_partnership_type ADD UNIQUE INDEX uk_c_partnership_type(entity, code);
