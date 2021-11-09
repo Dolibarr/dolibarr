@@ -71,6 +71,13 @@ if (empty($reshook)) {
 			$dn = $object->_load_ldap_dn($info);
 			$olddn = $dn; // We can say that old dn = dn as we force synchro
 
+			//For compatibility with Samba 4 AD 
+			if (intval($object->statut) === 1) {
+				$info['userAccountControl'] = 512; 			//Account disabled
+			} else {
+				$info['userAccountControl'] = 546; 			//Account enabled
+			}
+
 			$result = $ldap->update($dn, $info, $user, $olddn);
 		}
 
