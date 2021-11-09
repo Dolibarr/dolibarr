@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2017 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2021 	   Antonin MARCHAL      <antonin@letempledujeu.fr>
- * 
+ *
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ if (empty($reshook)) {
 			$dn = $object->_load_ldap_dn($info);
 			$olddn = $dn; // We can say that old dn = dn as we force synchro
 
-			//For compatibility with Samba 4 AD 
+			//For compatibility with Samba 4 AD
 			if ($ldap->serverType == "activedirectory") {
 				if (intval($object->statut) === 1) {
 					$info['userAccountControl'] = 512; 			//Account disabled

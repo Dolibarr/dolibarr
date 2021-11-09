@@ -215,13 +215,12 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'USER_ENABLEDISABLE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			//Manage only Samba 4 AD 
+			//Manage only Samba 4 AD
 			if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE === 'dolibarr2ldap') {
 				$ldap = new Ldap();
 				$result = $ldap->connect_bind();
 
 				if ($result > 0) {
-
 					$info = $object->_load_ldap_info();
 					$dn = $object->_load_ldap_dn($info);
 
@@ -331,7 +330,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE === 'dolibarr2ldap') {
 				$ldap = new Ldap();
 				$result = $ldap->connect_bind();
-				
+
 				if ($result > 0) {
 					$info = $object->_load_ldap_info();
 					$dn = $object->_load_ldap_dn($info);
@@ -341,8 +340,8 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
 					}
 
-					// Avoid Ldap error due to empty member 
-					if(isset($info['member']) && empty($info['member'])){
+					// Avoid Ldap error due to empty member
+					if (isset($info['member']) && empty($info['member'])) {
 						unset($info['member']);
 					}
 
