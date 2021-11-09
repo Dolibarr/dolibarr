@@ -93,11 +93,6 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					if ($ldap->serverType == "activedirectory") {
 						$info['userAccountControl'] = 512; 			//Account enabled
 					}
-<<<<<<< HEAD
-
-=======
-					
->>>>>>> 1a6b6edbfdb4eeef8dd7b1d20cced75712c979fa
 					$result = $ldap->add($dn, $info, $user);
 				}
 
@@ -219,6 +214,29 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'USER_ENABLEDISABLE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+			//Manage only Samba 4 AD 
+			if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE === 'dolibarr2ldap') {
+				$ldap = new Ldap();
+				$result = $ldap->connect_bind();
+
+				if ($result > 0) {
+
+					$info = $object->_load_ldap_info();
+					$dn = $object->_load_ldap_dn($info);
+
+					//Account Enabled, will be disabled
+					if (intval($object->statut) === 1) {
+						$info['userAccountControl'] = 546; 			//Account disabled
+					} else {
+						$info['userAccountControl'] = 512; 			//Account enabled
+					}
+				}
+				$result = $ldap->update($dn, $info, $user, $dn);
+
+				if ($result < 0) {
+					$this->error = "ErrorLDAP " . $ldap->error;
+				}
+			}
 		} elseif ($action == 'USER_DELETE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE === 'dolibarr2ldap') {
