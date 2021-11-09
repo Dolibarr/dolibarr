@@ -450,7 +450,7 @@ if (empty($reshook)) {
 				// Do we update also ->entity ?
 				if (!empty($conf->multicompany->enabled)) {	// If multicompany is not enabled, we never update the entity of a user.
 					if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-						if (GETPOST('superadmin', 'int') === 1) {
+						if (GETPOST('superadmin', 'int')) {
 							$object->entity = 0;
 						} else {
 							$object->entity = 1; // all users are in master entity
