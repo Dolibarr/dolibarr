@@ -72,10 +72,12 @@ if (empty($reshook)) {
 			$olddn = $dn; // We can say that old dn = dn as we force synchro
 
 			//For compatibility with Samba 4 AD 
-			if (intval($object->statut) === 1) {
-				$info['userAccountControl'] = 512; 			//Account disabled
-			} else {
-				$info['userAccountControl'] = 546; 			//Account enabled
+			if ($ldap->serverType == "activedirectory") {
+				if (intval($object->statut) === 1) {
+					$info['userAccountControl'] = 512; 			//Account disabled
+				} else {
+					$info['userAccountControl'] = 546; 			//Account enabled
+				}
 			}
 
 			$result = $ldap->update($dn, $info, $user, $olddn);
@@ -83,6 +85,9 @@ if (empty($reshook)) {
 
 		if ($result >= 0) {
 			setEventMessages($langs->trans("UserSynchronized"), null, 'mesgs');
+			if ($ldap->serverType == "activedirectory") {
+				setEventMessages($langs->trans("PasswordMustBeChangedToBeSynchronized"), null, 'warnings');
+			}
 		} else {
 			setEventMessages($ldap->error, $ldap->errors, 'errors');
 		}

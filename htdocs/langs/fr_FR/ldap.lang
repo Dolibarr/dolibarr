@@ -25,3 +25,4 @@ ContactSynchronized=Contact synchronisé
 ForceSynchronize=Forcer synchro Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Échec de la lecture de l'annuaire LDAP. Vérifier la configuration du module LDAP et l'accessibilité de l'annuaire.
 PasswordOfUserInLDAP=Mot de passe utilisateur dans LDAP
+PasswordMustBeChangedToBeSynchronized=Le mot de passe DOIT être changé ou régéneré pour qu'il soit inscrit en base LDAP.
