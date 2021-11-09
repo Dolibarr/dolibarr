@@ -450,11 +450,15 @@ if (empty($reshook)) {
 				// Do we update also ->entity ?
 				if (!empty($conf->multicompany->enabled)) {	// If multicompany is not enabled, we never update the entity of a user.
 					if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-						$object->entity = 1; // all users are in master entity
+						if (GETPOST('superadmin', 'int') === 1) {
+							$object->entity = 0;
+						} else {
+							$object->entity = 1; // all users are in master entity
+						}
 					} else {
 						// A user should not be able to move a user into another entity. Only superadmin should be able to do this.
 						if ($user->entity == 0 && $user->admin) {
-							if (GETPOST("superadmin")) {
+							if (GETPOST('superadmin', 'int')) {
 								// We try to set the user as superadmin.
 								$object->entity = 0;
 							} else {
