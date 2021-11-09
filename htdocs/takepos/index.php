@@ -67,7 +67,7 @@ if ($_SESSION["takeposterminal"] == "") {
 
 if ($setterminal > 0) {
 	$_SESSION["takeposterminal"] = $setterminal;
-	setcookie("takeposterminal", $setterminal, (time() + (86400 * 354)), '/', null, false, true); // Permanent takeposterminal var in a cookie
+	setcookie("takeposterminal", $setterminal, (time() + (86400 * 354)), '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Permanent takeposterminal var in a cookie
 }
 
 if ($setcurrency != "") {
@@ -178,6 +178,7 @@ var place="<?php echo $place; ?>";
 var editaction="qty";
 var editnumber="";
 var invoiceid=0;
+var search2_timer=null;
 
 /*
 var app = this;
@@ -433,8 +434,8 @@ function ClickProduct(position) {
 		console.log("Click on product at position "+position+" for idproduct "+idproduct);
 		if (idproduct=="") return;
 		// Call page invoice.php to generate the section with product lines
-		$("#poslines").load("invoice.php?action=addline&place="+place+"&idproduct="+idproduct+"&selectedline="+selectedline, function() {
-			//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+		$("#poslines").load("invoice.php?action=addline&token=<?php echo newToken() ?>&place="+place+"&idproduct="+idproduct+"&selectedline="+selectedline, function() {
+			<?php if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) echo "CustomerDisplay();";?>
 		});
 	}
 
@@ -479,6 +480,12 @@ function CloseBill() {
 	invoiceid = $("#invoiceid").val();
 	console.log("Open popup to enter payment on invoiceid="+invoiceid);
 	$.colorbox({href:"pay.php?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
+}
+
+function Split() {
+	invoiceid = $("#invoiceid").val();
+	console.log("Open popup to split on invoiceid="+invoiceid);
+	$.colorbox({href:"split.php?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
 }
 
 function Floors() {
@@ -545,62 +552,76 @@ function Search2(keyCodeForEnter) {
 	}
 
 	if (search === true) {
-		pageproducts = 0;
-		jQuery(".wrapper2 .catwatermark").hide();
-		$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&term=' + $('#search').val(), function (data) {
-			for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
-				if (typeof (data[i]) == "undefined") {
-					$("#prodesc" + i).text("");
-					$("#probutton" + i).text("");
-					$("#probutton" + i).hide();
-					$("#proprice" + i).attr("class", "hidden");
-					$("#proprice" + i).html("");
-					$("#proimg" + i).attr("src", "genimg/empty.png");
-					$("#prodiv" + i).data("rowid", "");
-					continue;
+
+		// temporization time to give time to type
+		if (search2_timer) {
+			clearTimeout(search2_timer);
+		}
+
+		search2_timer = setTimeout(function(){
+
+			pageproducts = 0;
+			jQuery(".wrapper2 .catwatermark").hide();
+			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&term=' + $('#search').val(), function (data) {
+				for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
+					if (typeof (data[i]) == "undefined") {
+						$("#prodesc" + i).text("");
+						$("#probutton" + i).text("");
+						$("#probutton" + i).hide();
+						$("#proprice" + i).attr("class", "hidden");
+						$("#proprice" + i).html("");
+						$("#proimg" + i).attr("src", "genimg/empty.png");
+						$("#prodiv" + i).data("rowid", "");
+						continue;
+					}
+					<?php
+					$titlestring = "'".dol_escape_js($langs->transnoentities('Ref').': ')."' + data[i]['ref']";
+					$titlestring .= " + ' - ".dol_escape_js($langs->trans("Barcode").': ')."' + data[i]['barcode']";
+					?>
+					var titlestring = <?php echo $titlestring; ?>;
+					$("#prodesc" + i).text(data[i]['label']);
+					$("#prodivdesc" + i).show();
+					$("#probutton" + i).text(data[i]['label']);
+					$("#probutton" + i).show();
+					if (data[i]['price_formated']) {
+						$("#proprice" + i).attr("class", "productprice");
+						$("#proprice" + i).html(data[i]['price_formated']);
+					}
+					$("#proimg" + i).attr("title", titlestring);
+					if( undefined !== data[i]['img']) {
+						$("#proimg" + i).attr("src", data[i]['img']);
+					}
+					else {
+						$("#proimg" + i).attr("src", "genimg/index.php?query=pro&id=" + data[i]['rowid']);
+					}
+					$("#prodiv" + i).data("rowid", data[i]['rowid']);
+					$("#prodiv" + i).data("iscat", 0);
 				}
-				<?php
-				$titlestring = "'".dol_escape_js($langs->transnoentities('Ref').': ')."' + data[i]['ref']";
-				$titlestring .= " + ' - ".dol_escape_js($langs->trans("Barcode").': ')."' + data[i]['barcode']";
-				?>
-				var titlestring = <?php echo $titlestring; ?>;
-				$("#prodesc" + i).text(data[i]['label']);
-				$("#prodivdesc" + i).show();
-				$("#probutton" + i).text(data[i]['label']);
-				$("#probutton" + i).show();
-				if (data[i]['price_formated']) {
-					$("#proprice" + i).attr("class", "productprice");
-					$("#proprice" + i).html(data[i]['price_formated']);
+			}).always(function (data) {
+				// If there is only 1 answer
+				if ($('#search').val().length > 0 && data.length == 1) {
+					console.log($('#search').val()+' - '+data[0]['barcode']);
+					if ($('#search').val() == data[0]['barcode'] && 'thirdparty' == data[0]['object']) {
+						console.log("There is only 1 answer with barcode matching the search, so we change the thirdparty "+data[0]['rowid']);
+						ChangeThirdparty(data[0]['rowid']);
+					}
+					else if ($('#search').val() == data[0]['barcode'] && 'product' == data[0]['object']) {
+						console.log("There is only 1 answer with barcode matching the search, so we add the product in basket");
+						ClickProduct(0);
+					}
 				}
-				$("#proimg" + i).attr("title", titlestring);
-				$("#proimg" + i).attr("src", "genimg/index.php?query=pro&id=" + data[i]['rowid']);
-				$("#prodiv" + i).data("rowid", data[i]['rowid']);
-				$("#prodiv" + i).data("iscat", 0);
-			}
-		}).always(function (data) {
-			// If there is only 1 answer
-			if ($('#search').val().length > 0 && data.length == 1) {
-				console.log($('#search').val()+' - '+data[0]['barcode']);
-				if ($('#search').val() == data[0]['barcode'] && 'thirdparty' == data[0]['object']) {
-					console.log("There is only 1 answer with barcode matching the search, so we change the thirdparty "+data[0]['rowid']);
-					ChangeThirdparty(data[0]['rowid']);
+				if (eventKeyCode == keyCodeForEnter){
+					if (data.length == 0) {
+						$('#search').val('<?php
+						$langs->load('errors');
+						echo dol_escape_js($langs->trans("ErrorRecordNotFound"));
+						?>');
+						$('#search').select();
+					}
+					else ClearSearch();
 				}
-				else if ($('#search').val() == data[0]['barcode'] && 'product' == data[0]['object']) {
-					console.log("There is only 1 answer with barcode matching the search, so we add the product in basket");
-					ClickProduct(0);
-				}
-			}
-			if (eventKeyCode == keyCodeForEnter){
-				if (data.length == 0) {
-					$('#search').val('<?php
-					$langs->load('errors');
-					echo dol_escape_js($langs->trans("ErrorRecordNotFound"));
-					?>');
-					$('#search').select();
-				}
-				else ClearSearch();
-			}
-		});
+			});
+		}, 500); // 500ms delay
 	}
 
 }
@@ -802,6 +823,7 @@ $( document ).ready(function() {
 	if (getDolGlobalString('TAKEPOS_CONTROL_CASH_OPENING')) {
 		$sql = "SELECT rowid, status FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
 		$sql .= " entity = ".$conf->entity." AND ";
+		$sql .= " posnumber = ".$_SESSION["takeposterminal"]." AND ";
 		$sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -1043,6 +1065,8 @@ if (getDolGlobalString('TAKEPOS_DIRECT_PAYMENT')) {
 	$menus[$r++] = array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("DirectPayment").' <span class="opacitymedium">('.$langs->trans("Cash").')</span></div>', 'action'=>'DirectPayment();');
 }
 
+$menus[$r++] = array('title'=>'<span class="fas fa-cut paddingrightonly"></span><div class="trunc">'.$langs->trans("SplitSale").'</div>', 'action'=>'Split();');
+
 // BAR RESTAURANT specific menu
 if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 	if ($conf->global->TAKEPOS_ORDER_PRINTERS) {
@@ -1082,6 +1106,7 @@ if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
 
 $sql = "SELECT rowid, status, entity FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
 $sql .= " entity = ".$conf->entity." AND ";
+$sql .= " posnumber = ".$_SESSION["takeposterminal"]." AND ";
 $sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
 $resql = $db->query($sql);
 if ($resql) {
@@ -1096,14 +1121,24 @@ if ($resql) {
 }
 
 $hookmanager->initHooks(array('takeposfrontend'));
-$reshook = $hookmanager->executeHooks('ActionButtons');
-if (!empty($reshook)) {
-	if (is_array($reshook) && !isset($reshook['title'])) {
-		foreach ($reshook as $reshook) {
-			$menus[$r++] = $reshook;
+$parameters = array('menus'=>$menus);
+$reshook = $hookmanager->executeHooks('ActionButtons', $parameters);
+if ($reshook == 0) {  //add buttons
+	if (is_array($hookmanager->resArray) ) {
+		foreach ($hookmanager->resArray as $resArray) {
+			foreach ($resArray as $butmenu) {
+				$menus[$r++] = $butmenu;
+			}
 		}
-	} else {
-		$menus[$r++] = $reshook;
+	} elseif ($reshook == 1) {
+		$r = 0; //replace buttons
+		if (is_array($hookmanager->resArray) ) {
+			foreach ($hookmanager->resArray as $resArray) {
+				foreach ($resArray as $butmenu) {
+					$menus[$r++] = $butmenu;
+				}
+			}
+		}
 	}
 }
 

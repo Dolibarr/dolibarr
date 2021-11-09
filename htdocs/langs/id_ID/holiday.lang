@@ -132,3 +132,5 @@ FreeLegalTextOnHolidays=Teks gratis di PDF
 WatermarkOnDraftHolidayCards=Tanda air pada permintaan cuti konsep
 HolidaysToApprove=Liburan disetujui
 NobodyHasPermissionToValidateHolidays=Tidak ada yang memiliki izin untuk memvalidasi hari libur
+HolidayBalanceMonthlyUpdate=Monthly update of holiday balance
+XIsAUsualNonWorkingDay=%s is usualy a NON working day

@@ -5,7 +5,7 @@
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2019       Christophe Battarel		<christophe@altairis.fr>
+ * Copyright (C) 2019-2021  Christophe Battarel		<christophe@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formintervention.class.php';
 
 // Load translation files required by the page
 $langsLoad=array('projects', 'bills', 'orders');
@@ -107,6 +108,13 @@ $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($projectstatic->table_element);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
+if ($id > 0 || $ref) {
+	$object->fetch($id, $ref);
+}
+
+restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
+
+
 
 /*
  * Actions
@@ -115,7 +123,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 if (GETPOST('cancel', 'alpha')) {
 	$action = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_generateinvoice') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_generateinvoice' && $massaction != 'confirm_generateinter') {
 	$massaction = '';
 }
 
@@ -448,6 +456,7 @@ if ($action == 'confirm_generateinvoice') {
 				}
 			} elseif ($generateinvoicemode == 'onelineperperiod') {	// One line for each time spent line
 				$arrayoftasks = array();
+				$withdetail=GETPOST('detail_time_duration', 'alpha');
 				foreach ($toselect as $key => $value) {
 					// Get userid, timepent
 					$object->fetchTimeSpent($value);
@@ -461,6 +470,20 @@ if ($action == 'confirm_generateinvoice') {
 					$arrayoftasks[$object->timespent_id]['timespent'] = $object->timespent_duration;
 					$arrayoftasks[$object->timespent_id]['totalvaluetodivideby3600'] = $object->timespent_duration * $object->timespent_thm;
 					$arrayoftasks[$object->timespent_id]['note'] = $ftask->ref.' - '.$ftask->label.' - '.$username.($object->timespent_note ? ' - '.$object->timespent_note : '');		// TODO Add user name in note
+					if (!empty($withdetail)) {
+						if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) {
+							$arrayoftasks[$object->timespent_id]['note'] .= "<br/>";
+						} else {
+							$arrayoftasks[$object->timespent_id]['note'] .= "\n";
+						}
+
+						if (!empty($object->timespent_withhour)) {
+							$arrayoftasks[$object->timespent_id]['note'] .= $langs->trans("Date") . ': ' . dol_print_date($object->timespent_datehour);
+						} else {
+							$arrayoftasks[$object->timespent_id]['note'] .= $langs->trans("Date") . ': ' . dol_print_date($object->timespent_date);
+						}
+						$arrayoftasks[$object->timespent_id]['note'] .= ' - '.$langs->trans("Duration").': '.convertSecondToTime($object->timespent_duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
+					}
 					$arrayoftasks[$object->timespent_id]['user'] = $object->timespent_fk_user;
 				}
 
@@ -470,7 +493,6 @@ if ($action == 'confirm_generateinvoice') {
 
 					// Define qty per hour
 					$qtyhour = $value['timespent'] / 3600;
-					$qtyhourtext = convertSecondToTime($value['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
 
 					// If no unit price known
 					if (empty($pu_ht)) {
@@ -567,6 +589,81 @@ if ($action == 'confirm_generateinvoice') {
 	}
 }
 
+if ($action == 'confirm_generateinter') {
+	$langs->load('interventions');
+
+	if (!empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
+
+	if (!($projectstatic->thirdparty->id > 0)) {
+		setEventMessages($langs->trans("ThirdPartyRequiredToGenerateIntervention"), null, 'errors');
+	} else {
+		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
+
+		require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+		$tmpinter = new Fichinter($db);
+		$tmptimespent = new Task($db);
+		$fuser = new User($db);
+
+		$db->begin();
+		$interToUse = GETPOST('interid', 'int');
+
+
+		$tmpinter->socid = $projectstatic->thirdparty->id;
+		$tmpinter->date = dol_mktime(GETPOST('rehour', 'int'), GETPOST('remin', 'int'), GETPOST('resec', 'int'), GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+		$tmpinter->fk_project = $projectstatic->id;
+		$tmpinter->description = $projectstatic->title . ( ! empty($projectstatic->description) ? '-' . $projectstatic->label : '' );
+
+		if ($interToUse) {
+			$tmpinter->fetch($interToUse);
+		} else {
+			$result = $tmpinter->create($user);
+			if ($result <= 0) {
+				$error++;
+				setEventMessages($tmpinter->error, $tmpinter->errors, 'errors');
+			}
+		}
+
+		if (!$error) {
+			$arrayoftasks = array();
+			foreach ($toselect as $key => $value) {
+				// Get userid, timepent
+				$object->fetchTimeSpent($value);
+				// $object->id is the task id
+				$arrayoftasks[$object->timespent_id]['timespent'] = $object->timespent_duration;
+				$arrayoftasks[$object->timespent_id]['totalvaluetodivideby3600'] = $object->timespent_duration * $object->timespent_thm;
+				$arrayoftasks[$object->timespent_id]['note'] = $object->timespent_note;
+				$arrayoftasks[$object->timespent_id]['date'] = date('Y-m-d H:i:s', $object->timespent_datehour);
+			}
+
+			foreach ($arrayoftasks as $timespent_id => $value) {
+				$ftask = new Task($db);
+				$ftask->fetch($object->id);
+				// Define qty per hour
+				$qtyhour = $value['timespent'] / 3600;
+				$qtyhourtext = convertSecondToTime($value['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
+
+				// Add lines
+				$lineid = $tmpinter->addline($user, $tmpinter->id, $ftask->label . ( ! empty($value['note']) ? ' - ' . $value['note'] : '' ), $value['date'], $value['timespent']);
+			}
+		}
+
+		if (!$error) {
+			$urltointer = $tmpinter->getNomUrl(0);
+			$mesg = $langs->trans("InterventionGeneratedFromTimeSpent", '{s1}');
+			$mesg = str_replace('{s1}', $urltointer, $mesg);
+			setEventMessages($mesg, null, 'mesgs');
+
+			//var_dump($tmpinvoice);
+
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+	}
+}
 
 /*
  * View
@@ -622,7 +719,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 			$head = project_prepare_head($projectstatic);
 			print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'));
 
-			$param = ($mode == 'mine' ? '&mode=mine' : '');
+			$param = ((!empty($mode) && $mode == 'mine') ? '&mode=mine' : '');
 
 			// Project card
 
@@ -632,13 +729,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 			// Title
 			$morehtmlref .= $projectstatic->title;
 			// Thirdparty
-			if ($projectstatic->thirdparty->id > 0) {
+			if (!empty($projectstatic->thirdparty->id) && $projectstatic->thirdparty->id > 0) {
 				$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$projectstatic->thirdparty->getNomUrl(1, 'project');
 			}
 			$morehtmlref .= '</div>';
 
 			// Define a complementary filter for search of next/prev ref.
-			if (!$user->rights->projet->all->lire) {
+			if (empty($user->rights->projet->all->lire)) {
 				$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
 				$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 			}
@@ -676,7 +773,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 					print '<br>';
 				}
 				if (!empty($conf->eventorganization->enabled)) {
-					print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')).'"> ';
+					print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_organize_event ? ' checked="checked"' : '')).'"> ';
 					$htmltext = $langs->trans("EventOrganizationDescriptionLong");
 					print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
 				}
@@ -719,10 +816,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 
 			print '</div>';
 			print '<div class="fichehalfright">';
-			print '<div class="ficheaddleft">';
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border tableforfield" width="100%">';
+			print '<table class="border tableforfield center">';
 
 			// Description
 			print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
@@ -738,7 +834,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 
 			print '</table>';
 
-			print '</div>';
 			print '</div>';
 			print '</div>';
 
@@ -775,17 +870,22 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 	}
 
 	$massactionbutton = '';
+	$arrayofmassactions = array();
 	if ($projectstatic->usage_bill_time) {
 		$arrayofmassactions = array(
 			'generateinvoice'=>$langs->trans("GenerateBill"),
 			//'builddoc'=>$langs->trans("PDFMerge"),
 		);
-		//if ($user->rights->projet->creer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
-		if (in_array($massaction, array('presend', 'predelete', 'generateinvoice'))) {
-			$arrayofmassactions = array();
-		}
-		$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 	}
+	if ( ! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer) {
+		$langs->load("interventions");
+		$arrayofmassactions['generateinter'] = $langs->trans("GenerateInter");
+	}
+	//if ($user->rights->projet->creer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+	if (in_array($massaction, array('presend', 'predelete', 'generateinvoice', 'generateinter'))) {
+		$arrayofmassactions = array();
+	}
+	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 	// Show section with information of task. If id of task is not defined and project id defined, then $projectidforalltimes is not empty.
 	if (empty($projectidforalltimes)) {
@@ -853,7 +953,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 		print '</table>';
 		print '</div>';
 
-		print '<div class="fichehalfright"><div class="ficheaddleft">';
+		print '<div class="fichehalfright">';
 
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border tableforfield centpercent">';
@@ -881,7 +981,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 
 		print '</table>';
 
-		print '</div>';
 		print '</div>';
 
 		print '</div>';
@@ -975,6 +1074,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 			print '<input type="hidden" name="action" value="addtimespent">';
 		} elseif ($massaction == 'generateinvoice' && $user->rights->facture->lire) {
 			print '<input type="hidden" name="action" value="confirm_generateinvoice">';
+		} elseif ($massaction == 'generateinter' && $user->rights->ficheinter->lire) {
+			print '<input type="hidden" name="action" value="confirm_generateinter">';
 		} else {
 			print '<input type="hidden" name="action" value="list">';
 		}
@@ -985,6 +1086,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 		print '<input type="hidden" name="projectid" value="'.$projectidforalltimes.'">';
 		print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 		print '<input type="hidden" name="tab" value="'.$tab.'">';
+		print '<input type="hidden" name="page_y" value="">';
 
 		// Form to convert time spent into invoice
 		if ($massaction == 'generateinvoice') {
@@ -1012,6 +1114,25 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 					'onelineperperiod'=>'OneLinePerTimeSpentLine',
 				);
 				print $form->selectarray('generateinvoicemode', $tmparray, 'onelineperuser', 0, 0, 0, '', 1);
+				print "\n".'<script type="text/javascript">';
+				print '
+				$(document).ready(function () {
+					setDetailVisibility();
+					$("#generateinvoicemode").change(function() {
+            			setDetailVisibility();
+            		});
+            		function setDetailVisibility() {
+            			generateinvoicemode = $("#generateinvoicemode option:selected").val();
+            			if (generateinvoicemode=="onelineperperiod") {
+            				$("#detail_time_duration").show();
+            			} else {
+            				$("#detail_time_duration").hide();
+            			}
+            		}
+            	});
+            			';
+				print '</script>'."\n";
+				print '<span style="display:none" id="detail_time_duration"><input type="checkbox" value="detail" name="detail_time_duration"/>'.$langs->trans('AddDetailDateAndDuration').'</span>';
 				print '</td>';
 				print '</tr>';
 
@@ -1054,6 +1175,36 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 				print '<div class="warning">'.$langs->trans("ThirdPartyRequiredToGenerateInvoice").'</div>';
 				print '<div class="center">';
 				print '<input type="submit" class="button button-cancel" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+				print '</div>';
+				$massaction = '';
+			}
+		} elseif ($massaction == 'generateinter') {
+			// Form to convert time spent into invoice
+			print '<input type="hidden" name="massaction" value="confirm_createinter">';
+
+			if ($projectstatic->thirdparty->id > 0) {
+				print '<table class="noborder" width="100%" >';
+				print '<tr>';
+				print '<td class="titlefield">';
+				print $langs->trans('InterToUse');
+				print '</td>';
+				print '<td>';
+				$forminter = new FormIntervention($db);
+				print $forminter->select_interventions($projectstatic->thirdparty->id, '', 'interid', 24, $langs->trans('NewInter'), true);
+				print '</td>';
+				print '</tr>';
+				print '</table>';
+
+				print '<br>';
+				print '<div class="center">';
+				print '<input type="submit" class="button" id="createinter" name="createinter" value="'.$langs->trans('GenerateInter').'">  ';
+				print '<input type="submit" class="button" id="cancel" name="cancel" value="'.$langs->trans('Cancel').'">';
+				print '</div>';
+				print '<br>';
+			} else {
+				print '<div class="warning">'.$langs->trans("ThirdPartyRequiredToGenerateIntervention").'</div>';
+				print '<div class="center">';
+				print '<input type="submit" class="button" id="cancel" name="cancel" value="'.$langs->trans('Cancel').'">';
 				print '</div>';
 				$massaction = '';
 			}
@@ -1196,7 +1347,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 			$nboftasks = 0;
 			if (empty($id)) {
 				print '<td class="maxwidthonsmartphone">';
-				$nboftasks = $formproject->selectTasks(-1, GETPOST('taskid', 'int'), 'taskid', 0, 0, 1, 1, 0, 0, 'maxwidth300', $projectstatic->id, '');
+				$nboftasks = $formproject->selectTasks(-1, GETPOST('taskid', 'int'), 'taskid', 0, 0, 1, 1, 0, 0, 'maxwidth300', $projectstatic->id, 'progress');
 				print '</td>';
 			}
 
@@ -1248,7 +1399,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 			}
 
 			print '<td class="center">';
-			print '<input type="submit" name="save" class="button buttongen marginleftonly margintoponlyshort marginbottomonlyshort" value="'.$langs->trans("Add").'">';
+			$form->buttonsSaveCancel();
+			print '<input type="submit" name="save" class="button buttongen marginleftonly margintoponlyshort marginbottomonlyshort button-add" value="'.$langs->trans("Add").'">';
 			print '<input type="submit" name="cancel" class="button buttongen marginleftonly margintoponlyshort marginbottomonlyshort button-cancel" value="'.$langs->trans("Cancel").'">';
 			print '</td></tr>';
 
@@ -1583,18 +1735,18 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 				if ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids) || $user->rights->projet->all->creer) {
 					if ($conf->MAIN_FEATURES_LEVEL >= 2) {
 						print '&nbsp;';
-						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=splitline&amp;lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
+						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&action=splitline&token='.newToken().'&lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
 						print img_split();
 						print '</a>';
 					}
 
 					print '&nbsp;';
-					print '<a class="reposition editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=editline&amp;lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
+					print '<a class="reposition editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&action=editline&token='.newToken().'&lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
 					print img_edit();
 					print '</a>';
 
 					print '&nbsp;';
-					print '<a class="reposition paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=deleteline&amp;token='.newToken().'&amp;lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
+					print '<a class="reposition paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&action=deleteline&token='.newToken().'&lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
 					print img_delete('default', 'class="pictodelete paddingleft"');
 					print '</a>';
 

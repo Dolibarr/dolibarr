@@ -20,6 +20,7 @@ CREATE TABLE llx_partnership(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
 	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
 	status smallint NOT NULL DEFAULT '0', 
+	fk_type integer DEFAULT 0 NOT NULL,
 	fk_soc integer, 
 	fk_member integer, 
 	date_partnership_start date NOT NULL, 

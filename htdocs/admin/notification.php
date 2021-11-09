@@ -97,6 +97,10 @@ if ($action == 'setvalue' && $user->admin) {
 		$error++;
 	}
 
+	$result = dolibarr_set_const($db, "NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE", GETPOST("notif_disable", "alphawithlgt"), 'chaine', 0, '', $conf->entity);
+	if ($result < 0) {
+		$error++;
+	}
 
 	if (!$error) {
 		$db->commit();
@@ -199,9 +203,32 @@ if (!empty($conf->global->NOTIFICATION_EMAIL_FROM) && !isValidEmail($conf->globa
 }
 print '</td>';
 print '</tr>';
+
+print '<tr class="oddeven"><td>';
+print $langs->trans("NotificationDisableConfirmMessageUser").'</td>';
+print '<td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_USER');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_USER", $arrval, $conf->global->NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_USER);
+}
+print '</td>';
+print '</tr>';
+print '<tr class="oddeven"><td>';
+print $langs->trans("NotificationDisableConfirmMessageFix").'</td>';
+print '<td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_FIX');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_FIX", $arrval, $conf->global->NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_FIX);
+}
+print '</td>';
+print '</tr>';
 print '</table>';
 
-print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 
@@ -280,7 +307,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	}
 	print '</div>';
 
-	print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+	print $form->buttonsSaveCancel("Save", '');
 } else {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -463,7 +490,7 @@ print '</table>';
 
 print '<br>';
 
-print '<div class="center"><input type="submit" class="button button-save reposition" value="'.$langs->trans("Save").'"></div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 

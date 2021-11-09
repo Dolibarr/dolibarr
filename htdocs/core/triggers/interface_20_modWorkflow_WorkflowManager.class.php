@@ -134,7 +134,6 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		// classify billed order & billed propososal
 		if ($action == 'BILL_VALIDATE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			$ret = 0;
 
 			// First classify billed the order to allow the proposal classify process
 			if (!empty($conf->commande->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER)) {
@@ -174,11 +173,11 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				}
 			}
 
-			if (! empty($conf->expedition->enabled) && ! empty($conf->workflow->enabled) && ! empty($conf->global->WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE)) {
+			if (!empty($conf->expedition->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE)) {
 				/** @var Facture $object */
 				$object->fetchObjectLinked('', 'shipping', $object->id, $object->element);
 
-				if (! empty($object->linkedObjects)) {
+				if (!empty($object->linkedObjects)) {
 					/** @var Expedition $shipment */
 					$shipment = array_shift($object->linkedObjects['shipping']);
 
@@ -244,12 +243,14 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
 					foreach ($object->linkedObjects['reception'] as $element) {
-						if ($element->statut == Reception::STATUS_VALIDATED) $totalonlinkedelements += $element->total_ht;
+						if ($element->statut == Reception::STATUS_VALIDATED) {
+							$totalonlinkedelements += $element->total_ht;
+						}
 					}
 					dol_syslog("Amount of linked reception = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
 					if ($totalonlinkedelements == $object->total_ht) {
 						foreach ($object->linkedObjects['reception'] as $element) {
-							$ret = $element->set_billed();
+							$ret = $element->setBilled();
 							if ($ret < 0) {
 								return $ret;
 							}
@@ -285,10 +286,15 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			}
 		}
 
-		if ($action == 'SHIPPING_VALIDATE') {
+		if (($action == 'SHIPPING_VALIDATE') || ($action == 'SHIPPING_CLOSED')) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			if (!empty($conf->commande->enabled) && !empty($conf->expedition->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING)) {
+			if (!empty($conf->commande->enabled) && !empty($conf->expedition->enabled) && !empty($conf->workflow->enabled) &&
+				(
+					(!empty($conf->global->WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING) && ($action == 'SHIPPING_VALIDATE')) ||
+					(!empty($conf->global->WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED) && ($action == 'SHIPPING_CLOSED'))
+				)
+			) {
 				$qtyshipped = array();
 				$qtyordred = array();
 				require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';

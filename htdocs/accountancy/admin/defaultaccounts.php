@@ -186,7 +186,7 @@ foreach ($list_account as $key) {
 		print '<td width="50%">'.$label.'</td>';
 		// Value
 		print '<td>'; // Do not force class=right, or it align also the content of the select box
-		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts');
+		print $formaccounting->select_account(getDolGlobalString($key), $key, 1, '', 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts');
 		print '</td>';
 		print '</tr>';
 	}
@@ -196,7 +196,7 @@ foreach ($list_account as $key) {
 print "</table>\n";
 
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
+print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Modify').'"></div>';
 
 print '</form>';
 

@@ -10,6 +10,7 @@
  * Copyright (C) 2015       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021       Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -291,8 +292,6 @@ if (empty($reshook)) {
 
 			$paiement->num_payment  = GETPOST('num_paiement', 'alphanohtml');
 			$paiement->note_private = GETPOST('comment', 'alpha');
-			$paiement->num_payment = $paiement->num_payment;
-			$paiement->note_private = $paiement->note_private;
 
 			if (!$error) {
 				$paiement_id = $paiement->create($user, (GETPOST('closepaidinvoices') == 'on' ? 1 : 0), $thirdparty);
@@ -361,16 +360,16 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 	$sql = 'SELECT s.nom as name, s.rowid as socid,';
 	$sql .= ' f.rowid, f.ref, f.ref_supplier, f.total_ttc as total, f.fk_mode_reglement, f.fk_account';
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", sc.fk_soc, sc.fk_user ";
 	}
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn as f';
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= ' WHERE f.fk_soc = s.rowid';
 	$sql .= ' AND f.rowid = '.((int) $facid);
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$resql = $db->query($sql);
@@ -510,8 +509,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				$sql .= ' SUM(pf.amount) as am, SUM(pf.multicurrency_amount) as multicurrency_am';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
-				$sql .= " WHERE f.entity = ".$conf->entity;
-				$sql .= ' AND f.fk_soc = '.$object->socid;
+				$sql .= " WHERE f.entity = ".((int) $conf->entity);
+				$sql .= ' AND f.fk_soc = '.((int) $object->socid);
 				$sql .= ' AND f.paye = 0';
 				$sql .= ' AND f.fk_statut = 1'; // Status=0 => unvalidated, Status=2 => canceled
 				if ($object->type != FactureFournisseur::TYPE_CREDIT_NOTE) {
@@ -642,13 +641,19 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 								print '<td class="right">';
 								if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
-									print price($objp->multicurrency_am);
+									print price($sign * $multicurrency_payment);
+									if ($multicurrency_creditnotes) {
+										print '+'.price($multicurrency_creditnotes);
+									}
+									if ($multicurrency_deposits) {
+										print '+'.price($multicurrency_deposits);
+									}
 								}
 								print '</td>';
 
 								print '<td class="right">';
 								if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
-									print price($objp->multicurrency_total_ttc - $objp->multicurrency_am);
+									print price($sign * $multicurrency_remaintopay);
 								}
 								print '</td>';
 							}
@@ -677,10 +682,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 									print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $remaintopay)."'");
 								}
 									print '<input type="hidden" class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
-									print '<input type="text" size="8" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';	// class is requied to be used by javascript callForResult();
+									print '<input type="text" size="8" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">'; // class is requied to be used by javascript callForResult();
 							} else {
 								print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.dol_escape_htmltag(GETPOST($namef)).'" disabled>';
-								print '<input type="hidden" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';	// class is requied to be used by javascript callForResult();
+								print '<input type="hidden" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">'; // class is requied to be used by javascript callForResult();
 							}
 							print "</td>";
 

@@ -39,7 +39,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'banque', $fieldvalue, 'bank_account', '', '', $fieldtype);
-if (!$user->rights->banque->lire && !$user->rights->banque->consolidate) {
+if (empty($user->rights->banque->lire) && !$user->rights->banque->consolidate) {
 	accessforbidden();
 }
 

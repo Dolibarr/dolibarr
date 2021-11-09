@@ -80,13 +80,13 @@ if ($socid < 0) {
 }
 
 $canedit = 1;
-if (!$user->rights->agenda->myactions->read) {
+if (empty($user->rights->agenda->myactions->read)) {
 	accessforbidden();
 }
-if (!$user->rights->agenda->allactions->read) {
+if (empty($user->rights->agenda->allactions->read)) {
 	$canedit = 0;
 }
-if (!$user->rights->agenda->allactions->read || $filter == 'mine') {  // If no permission to see all, we show only affected to me
+if (empty($user->rights->agenda->allactions->read) || $filter == 'mine') {  // If no permission to see all, we show only affected to me
 	$filtert = $user->id;
 }
 
@@ -387,7 +387,6 @@ if ($conf->use_javascript_ajax) {
 	$s .= 'jQuery(".family_birthday").toggle();'."\n";
 	if ($action == "show_week" || $action == "show_month" || empty($action)) {
 		$s .= 'jQuery( "td.sortable" ).sortable({connectWith: ".sortable",placeholder: "ui-state-highlight",items: "div:not(.unsortable)", receive: function( event, ui ) {';
-		$s .= 'var frm=jQuery("#move_event");frm.attr("action",ui.item.find("a.cal_event").attr("href")).children("#newdate").val(jQuery(event.target).closest("div").attr("id"));frm.submit();}});'."\n";
 	}
 	$s .= '});'."\n";
 	$s .= '</script>'."\n";
@@ -426,7 +425,7 @@ $massactionbutton = '';
 $viewmode = '';
 $viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
-$viewmode .= img_picto($langs->trans("List"), 'object_list', 'class="pictoactionview block"');
+$viewmode .= img_picto($langs->trans("List"), 'object_list', 'class="imgforviewmode pictoactionview block"');
 //$viewmode .= '</span>';
 $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewList").'</span></a>';
 
@@ -466,6 +465,7 @@ if (empty($reshook)) {
 }
 
 
+$newparam = '';
 $newcardbutton = '';
 if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create) {
 	$tmpforcreatebutton = dol_getdate(dol_now(), true);
@@ -489,6 +489,8 @@ if ($user->rights->agenda->myactions->create || $user->rights->agenda->allaction
 	$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : '')));
 }
 
+$num = '';
+
 print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
 
 $link = '';
@@ -505,6 +507,9 @@ $s = $newtitle;
 print $s;
 
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
+if (empty($search_status)) {
+	$search_status = '';
+}
 print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
 print '</div>';
 
@@ -527,7 +532,7 @@ $sql .= ' a.transparency, a.priority, a.fulldayevent, a.location,';
 $sql .= ' a.fk_soc, a.fk_contact, a.fk_element, a.elementtype, a.fk_project,';
 $sql .= ' ca.code, ca.libelle as type_label, ca.color, ca.type as type_type, ca.picto as type_picto';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 }
 // We must filter on resource table
@@ -578,7 +583,7 @@ if ($resourceid > 0) {
 if ($pid) {
 	$sql .= " AND a.fk_project = ".((int) $pid);
 }
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
 }
 if ($socid > 0) {
@@ -796,7 +801,7 @@ $currentdaytoshow = $firstdaytoshow;
 echo '<div class="div-table-responsive">';
 
 while ($currentdaytoshow < $lastdaytoshow) {
-	echo '<table width="100%" class="noborder nocellnopadd cal_month">';
+	echo '<table class="centpercent noborder nocellnopadd cal_month">';
 
 	echo '<tr class="liste_titre">';
 	echo '<td class="nopaddingtopimp nopaddingbottomimp nowraponsmartphone">';
@@ -823,7 +828,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		// Filter on days
 		print img_picto('', 'clock', 'class="fawidth30 inline-block paddingleft"');
 		print '<span class="hideonsmartphone" title="'.$langs->trans("VisibleDaysRange").'">'.$langs->trans("DaysOfWeek").'</span>';
-		print "\n".'<div class="ui-grid-a  inline-block"><div class="ui-block-a">';
+		print "\n".'<div class="ui-grid-a  inline-block"><div class="ui-block-a nowraponall">';
 		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7">';
 		if (empty($conf->dol_use_jmobile)) {
 			print ' - ';
@@ -1386,10 +1391,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 
 		$ids1 = '';
 		$ids2 = '';
-		if (is_array($cases1[$h]) && count($cases1[$h]) && array_keys($cases1[$h])) {
+		if (!empty($cases1[$h]) && is_array($cases1[$h]) && count($cases1[$h]) && array_keys($cases1[$h])) {
 			$ids1 = join(',', array_keys($cases1[$h]));
 		}
-		if (is_array($cases2[$h]) && count($cases2[$h]) && array_keys($cases2[$h])) {
+		if (!empty($cases2[$h]) && is_array($cases2[$h]) && count($cases2[$h]) && array_keys($cases2[$h])) {
 			$ids2 = join(',', array_keys($cases2[$h]));
 		}
 
@@ -1398,7 +1403,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		} else {
 			echo '<td class="'.$style.' cal_peruser'.($var ? ' cal_impair '.$style.'_impair' : '').'">';
 		}
-		if (is_array($cases1[$h]) && count($cases1[$h]) == 1) {	// only 1 event
+		if (!empty($cases1[$h]) && is_array($cases1[$h]) && count($cases1[$h]) == 1) {	// only 1 event
 			$output = array_slice($cases1[$h], 0, 1);
 			$title1 = $langs->trans("Ref").' '.$ids1.($title1 ? ' - '.$title1 : '');
 			if ($output[0]['string']) {
@@ -1407,12 +1412,12 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			if ($output[0]['color']) {
 				$color1 = $output[0]['color'];
 			}
-		} elseif (is_array($cases1[$h]) && count($cases1[$h]) > 1) {
+		} elseif (!empty($cases1[$h]) && is_array($cases1[$h]) && count($cases1[$h]) > 1) {
 			$title1 = $langs->trans("Ref").' '.$ids1.($title1 ? ' - '.$title1 : '');
 			$color1 = '222222';
 		}
 
-		if (is_array($cases2[$h]) && count($cases2[$h]) == 1) {	// only 1 event
+		if (!empty($cases2[$h]) && is_array($cases2[$h]) && count($cases2[$h]) == 1) {	// only 1 event
 			$output = array_slice($cases2[$h], 0, 1);
 			$title2 = $langs->trans("Ref").' '.$ids2.($title2 ? ' - '.$title2 : '');
 			if ($output[0]['string']) {
@@ -1421,7 +1426,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			if ($output[0]['color']) {
 				$color2 = $output[0]['color'];
 			}
-		} elseif (is_array($cases2[$h]) && count($cases2[$h]) > 1) {
+		} elseif (!empty($cases2[$h]) && is_array($cases2[$h]) && count($cases2[$h]) > 1) {
 			$title2 = $langs->trans("Ref").' '.$ids2.($title2 ? ' - '.$title2 : '');
 			$color2 = '222222';
 		}

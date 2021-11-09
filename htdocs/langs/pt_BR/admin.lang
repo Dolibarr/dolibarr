@@ -107,7 +107,6 @@ CurrentValueSeparatorThousand=Separador de milhar
 IdModule=Módulo ID
 IdPermissions=Permissão ID
 LanguageBrowserParameter=Parâmetro de Linguagem %s
-ClientTZ=Fuso Horário do cliente (usuário)
 ClientHour=Horário do Cliente (usuário)
 OSTZ=Fuso Horário do OS do Servidor
 PHPTZ=Fuso Horário do servidor PHP
@@ -171,8 +170,11 @@ FeatureAvailableOnlyOnStable=Funcionalidade somente disponível em versões est�
 OnlyActiveElementsAreShown=Somente elementos de <a href="%s">módulos ativos</a> são mostrado.
 ModulesDesc=Os módulos / aplicativos determinam quais recursos estão disponíveis no software. Alguns módulos exigem permissões a serem concedidas aos usuários após a ativação do módulo. Clique no botão liga / desliga <span class="small valignmiddle">%s</span> de cada módulo para ativar ou desativar um módulo / aplicativo.
 ModulesMarketPlaceDesc=Você pode encontrar mais módulos para download em sites externos na Internet ...
+ModulesDeployDesc=Se as permissões em seu sistema de arquivos permitirem, você poderá usar essa ferramenta para implantar um módulo externo. O módulo ficará visível na aba <strong> %s </ strong>.
 ModulesMarketPlaces=Encontrar app/módulos externos
 ModulesDevelopYourModule=Desenvolver seus próprios app/módulos
+ModulesDevelopDesc=Você também pode desenvolver seu próprio módulo ou encontrar um parceiro para desenvolver um para você.
+DOLISTOREdescriptionLong=Em vez de ligar o site <a href="https://www.dolistore.com"> www.dolistore.com </a> para encontrar um módulo externo, você pode usar essa ferramenta incorporada que fará a pesquisa no mercado externo para você (pode ser lento, precisa de um acesso à internet) ...
 FreeModule=Grátis
 NotCompatible=Este módulo não parece ser compatível com o seu Dolibarr %s (Mín %s - Máx %s).
 CompatibleAfterUpdate=Este módulo exige uma atualização do seu Dolibarr %s (Mín %s - Máx %s).
@@ -193,6 +195,7 @@ AvailableOnlyIfJavascriptAndAjaxNotDisabled=Disponível somente se Javascript n�
 UsedOnlyWithTypeOption=Usado por alguns opção agenda única
 Passwords=Senhas
 DoNotStoreClearPassword=Criptografar senhas armazenadas no banco de dados (NÃO como texto simples). É altamente recomendável ativar esta opção.
+MainDbPasswordFileConfEncrypted=Criptografe a senha do banco de dados armazenada em conf.php. É altamente recomendável ativar esta opção.
 InstrucToEncodePass=Para ter a senha codificada no arquivo <b>conf.php</b>, substitua a linha <br><b>$dolibarr_main_db_pass="..."</b><br>por<br><b>$dolibarr_main_db_pass="crypted:%s"</b>
 InstrucToClearPass=Para ter a senha não codificada(limpa) no arquivo <b>conf.php</b>, substitua a linha <br><b>$dolibarr_main_db_pass="crypted:..."</b><br>por<br><b>$dolibarr_main_db_pass="%s"</b>
 ProtectAndEncryptPdfFilesDesc=Proteção de um documento PDF mantém ele disponível para ler e imprimir com qualquer navegador PDF. No entanto, edição e cópia não é possível. Observe que a utilização deste recurso faz com que a construção de um PDF global mesclado não funcione.
@@ -1192,7 +1195,6 @@ ServiceSetup=Configurações do módulo de serviços
 ProductServiceSetup=Configurações dos módulos de produtos e serviços
 NumberOfProductShowInSelect=Número máximo de produtos para mostrar em listas de seleção de combinação (0 = sem limite)
 ViewProductDescInFormAbility=Exibir descrições de produtos em formulários (mostrados de outra forma em um pop-up de dicas de ferramentas)
-DoNotAddProductDescAtAddLines=Não adicionar descrição do produto (do cartão do produto) no envio, adicione linhas nos formulários
 OnProductSelectAddProductDesc=Como usar a descrição dos produtos ao adicionar um produto como uma linha de um documento
 AutoFillFormFieldBeforeSubmit=Preencher automaticamente o campo de entrada da descrição com a descrição do produto
 DoNotAutofillButAutoConcat=Não preencha automaticamente o campo de entrada com a descrição do produto. A descrição do produto será concatenada com a descrição inserida automaticamente.
@@ -1529,7 +1531,6 @@ LargerThan=Maior que
 IfTrackingIDFoundEventWillBeLinked=Observe que se um ID de rastreamento de um objeto for encontrado no email, ou se o email for uma resposta de um email já coletado e vinculado a um objeto, o evento criado será automaticamente vinculado ao objeto relacionado conhecido.
 WithGMailYouCanCreateADedicatedPassword=Com uma conta do GMail, se você ativou a validação de 2 etapas, é recomendável criar uma segunda senha dedicada para o aplicativo, em vez de usar sua própria senha da conta em https://myaccount.google.com/.
 EmailCollectorTargetDir=Pode ser um comportamento desejado mover o email para outra tag / diretório quando ele foi processado com êxito. Basta definir o nome do diretório aqui para usar este recurso (NÃO use caracteres especiais no nome). Observe que você também deve usar uma conta de logon de leitura / gravação.
-EmailCollectorLoadThirdPartyHelp=Você pode usar esta ação para usar o conteúdo de email para localizar e carregar uma terceira parte existente em seu banco de dados. A terceira parte encontrada (ou criada) será usada para seguir as ações que precisam dela. No campo de parâmetro, você pode usar, por exemplo, 'EXTRACT: BODY: Name: \\ s ([^ \\ s] *)' se desejar extrair o nome da terceira parte de uma cadeia de caracteres 'Name: name to find' encontrada na corpo.
 EndPointFor=Ponto final para %s : %s
 DeleteEmailCollector=Excluir coletor de e-mail
 ConfirmDeleteEmailCollector=Tem certeza de que deseja excluir este coletor de e-mail?

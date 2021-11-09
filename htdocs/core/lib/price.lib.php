@@ -157,8 +157,8 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
 			if ($obj) {
-				$localtax1_rate = (float) $obj->localtax1;		// Use float to force to get first numeric value when value is x:y:z
-				$localtax2_rate = (float) $obj->localtax2;		// Use float to force to get first numeric value when value is -19:-15:-9
+				$localtax1_rate = (float) $obj->localtax1; // Use float to force to get first numeric value when value is x:y:z
+				$localtax2_rate = (float) $obj->localtax2; // Use float to force to get first numeric value when value is -19:-15:-9
 				$localtax1_type = $obj->localtax1_type;
 				$localtax2_type = $obj->localtax2_type;
 				//var_dump($localtax1_rate.' '.$localtax2_rate.' '.$localtax1_type.' '.$localtax2_type);
@@ -443,7 +443,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	// initialize result array
 	//for ($i=0; $i <= 18; $i++) $result[$i] = (float) $result[$i];
 
-	dol_syslog('Price.lib::calcul_price_total MAIN_ROUNDING_RULE_TOT='.(empty($conf->global->MAIN_ROUNDING_RULE_TOT)?'':$conf->global->MAIN_ROUNDING_RULE_TOT).' pu='.$pu.' qty='.$qty.' price_base_type='.$price_base_type.' total_ht='.$result[0].'-total_vat='.$result[1].'-total_ttc='.$result[2]);
+	dol_syslog('Price.lib::calcul_price_total MAIN_ROUNDING_RULE_TOT='.(empty($conf->global->MAIN_ROUNDING_RULE_TOT) ? '' : $conf->global->MAIN_ROUNDING_RULE_TOT).' pu='.$pu.' qty='.$qty.' price_base_type='.$price_base_type.' total_ht='.$result[0].'-total_vat='.$result[1].'-total_ttc='.$result[2]);
 
 	return $result;
 }

@@ -160,7 +160,7 @@ class HookManager
 		//dol_syslog(get_class($this).'::executeHooks method='.$method." action=".$action." context=".$parameters['context']);
 
 		// Define type of hook ('output' or 'addreplace').
-		// TODO Remove hooks with type 'output'. All hooks must be converted into 'addreplace' hooks.
+		// TODO Remove hooks with type 'output' (exemple getNomUrl). All hooks must be converted into 'addreplace' hooks.
 		$hooktype = 'output';
 		if (in_array(
 			$method,
@@ -172,6 +172,7 @@ class HookManager
 				'addSearchEntry',
 				'addStatisticLine',
 				'addSectionECMAuto',
+				'checkSecureAccess',
 				'createDictionaryFieldlist',
 				'editDictionaryFieldlist',
 				'getFormMail',
@@ -188,11 +189,13 @@ class HookManager
 				'formConfirm',
 				'getAccessForbiddenMessage',
 				'getDirList',
+				'hookGetEntity',
 				'getFormMail',
 				'getFormatedCustomerRef',
 				'getFormatedSupplierRef',
 				'getIdProfUrl',
 				'getInputIdProf',
+				'menuLeftMenuItems',
 				'moveUploadedFile',
 				'moreHtmlStatus',
 				'pdf_build_address',
@@ -226,7 +229,8 @@ class HookManager
 				'showLinkToObjectBlock',
 				'setContentSecurityPolicy',
 				'setHtmlTitle',
-				'completeTabsHead'
+				'completeTabsHead',
+				'formDolBanner'
 				)
 		)) {
 			$hooktype = 'addreplace';
@@ -266,7 +270,7 @@ class HookManager
 					$actionclassinstance->error = 0;
 					$actionclassinstance->errors = array();
 
-					dol_syslog(get_class($this)."::executeHooks Qualified hook found (hooktype=".$hooktype."). We call method ".get_class($actionclassinstance).'->'.$method.", context=".$context.", module=".$module.", action=".$action.((is_object($object) && property_exists($object, 'id')) ? ', objectid='.$object->id : ''), LOG_DEBUG);
+					dol_syslog(get_class($this)."::executeHooks Qualified hook found (hooktype=".$hooktype."). We call method ".get_class($actionclassinstance).'->'.$method.", context=".$context.", module=".$module.", action=".$action.((is_object($object) && property_exists($object, 'id')) ? ', object id='.$object->id : '').((is_object($object) && property_exists($object, 'element')) ? ', object element='.$object->element : ''), LOG_DEBUG);
 
 					// Add current context to avoid method execution in bad context, you can add this test in your method : eg if($currentcontext != 'formfile') return;
 					$parameters['currentcontext'] = $context;

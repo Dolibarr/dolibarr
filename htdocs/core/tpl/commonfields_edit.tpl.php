@@ -19,6 +19,7 @@
  * $action
  * $conf
  * $langs
+ * $form
  */
 
 // Protection to avoid direct call of template
@@ -79,14 +80,21 @@ foreach ($object->fields as $key => $val) {
 		$value = GETPOSTISSET($key) ? GETPOST($key, $check) : $object->$key;
 	} elseif ($val['type'] == 'price') {
 		$value = GETPOSTISSET($key) ? price2num(GETPOST($key)) : price2num($object->$key);
+	} elseif ($key == 'lang') {
+		$value = GETPOSTISSET($key) ? GETPOST($key, 'aZ09') : $object->lang;
 	} else {
 		$value = GETPOSTISSET($key) ? GETPOST($key, 'alpha') : $object->$key;
 	}
 	//var_dump($val.' '.$key.' '.$value);
-	if ($val['noteditable']) {
+	if (!empty($val['noteditable'])) {
 		print $object->showOutputField($val, $key, $value, '', '', '', 0);
 	} else {
-		print $object->showInputField($val, $key, $value, '', '', '', 0);
+		if ($key == 'lang') {
+			print img_picto('', 'language', 'class="pictofixedwidth"');
+			print $formadmin->select_language($value, $key, 0, null, 1, 0, 0, 'minwidth300', 2);
+		} else {
+			print $object->showInputField($val, $key, $value, '', '', '', 0);
+		}
 	}
 	print '</td>';
 	print '</tr>';

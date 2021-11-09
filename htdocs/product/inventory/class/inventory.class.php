@@ -266,7 +266,7 @@ class Inventory extends CommonObject
 
 		if ($this->status == self::STATUS_DRAFT) {
 			// Delete inventory
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'inventorydet WHERE fk_inventory = '.$this->id;
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'inventorydet WHERE fk_inventory = '.((int) $this->id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->error = $this->db->lasterror();
@@ -286,10 +286,10 @@ class Inventory extends CommonObject
 				$sql .= " AND p.fk_product_type = 0";
 			}
 			if ($this->fk_product > 0) {
-				$sql .= ' AND ps.fk_product = '.$this->fk_product;
+				$sql .= ' AND ps.fk_product = '.((int) $this->fk_product);
 			}
 			if ($this->fk_warehouse > 0) {
-				$sql .= ' AND ps.fk_entrepot = '.$this->fk_warehouse;
+				$sql .= ' AND ps.fk_entrepot = '.((int) $this->fk_warehouse);
 			}
 
 			$inventoryline = new InventoryLine($this->db);
@@ -349,7 +349,7 @@ class Inventory extends CommonObject
 		$this->db->begin();
 
 		// Delete inventory
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'inventorydet WHERE fk_inventory = '.$this->id;
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'inventorydet WHERE fk_inventory = '.((int) $this->id);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$this->error = $this->db->lasterror();
@@ -615,14 +615,14 @@ class Inventory extends CommonObject
 		global $langs;
 
 		$labelStatus = array();
-		$labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-		$labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated').' ('.$langs->trans('Started').')';
-		$labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
-		$labelStatus[self::STATUS_RECORDED] = $langs->trans('Closed');
-		$labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
-		$labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Started');
-		$labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
-		$labelStatusShort[self::STATUS_RECORDED] = $langs->trans('Closed');
+		$labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+		$labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated').' ('.$langs->transnoentitiesnoconv('Started').')';
+		$labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
+		$labelStatus[self::STATUS_RECORDED] = $langs->transnoentitiesnoconv('Closed');
+		$labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+		$labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Started');
+		$labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
+		$labelStatusShort[self::STATUS_RECORDED] = $langs->transnoentitiesnoconv('Closed');
 
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_RECORDED) {

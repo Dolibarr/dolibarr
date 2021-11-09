@@ -310,7 +310,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 
 			// Redirect to avoid submit twice on back
-			header('Location: '.$_SERVER["PHP_SELF"].'?'.($projectid ? 'id='.$projectid : '').($search_usertoprocessid ? '&search_usertoprocessid='.$search_usertoprocessid : '').($mode ? '&mode='.$mode : '').'&year='.$yearofday.'&month='.$monthofday.'&day='.$dayofday);
+			header('Location: '.$_SERVER["PHP_SELF"].'?'.($projectid ? 'id='.$projectid : '').($search_usertoprocessid ? '&search_usertoprocessid='.urlencode($search_usertoprocessid) : '').($mode ? '&mode='.$mode : '').'&year='.$yearofday.'&month='.$monthofday.'&day='.$dayofday);
 			exit;
 		}
 	} else {

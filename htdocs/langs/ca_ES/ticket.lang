@@ -55,7 +55,7 @@ TypeContact_ticket_internal_SUPPORTTEC=Usuari assignat
 TypeContact_ticket_external_SUPPORTCLI=Contacte de clients / seguiment d'incidents
 TypeContact_ticket_external_CONTRIBUTOR=Col·laborador extern
 
-OriginEmail=Reporter Email
+OriginEmail=Correu electrònic del reporter
 Notify_TICKET_SENTBYMAIL=Envia el missatge del tiquet per correu electrònic
 
 # Status
@@ -66,7 +66,7 @@ NeedMoreInformation=Esperant els comentaris del informador
 NeedMoreInformationShort=Esperant comentaris
 Answered=Respost
 Waiting=En espera
-Closed=Tancat
+SolvedClosed=Solved
 Deleted=Esborrat
 
 # Dict
@@ -186,9 +186,11 @@ TicketSeverity=Gravetat
 ShowTicket=Consultar tiquet
 RelatedTickets=Tiquets relacionats
 TicketAddIntervention=Crea intervenció
-CloseTicket=Tanca el tiquet
-CloseATicket=Tanca el tiquet
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Confirma el tancament del tiquet
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Si us plau, confirmeu l'esborrat del tiquet
 TicketDeletedSuccess=Tiquet esborrat amb èxit
 TicketMarkedAsClosed=Tiquet marcat com tancat

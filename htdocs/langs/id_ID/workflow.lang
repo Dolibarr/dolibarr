@@ -13,6 +13,7 @@ descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Klasifikasi sumber proposal tautan s
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Klasifikasi sumber pesanan penjualan tautan sebagai tertagih saat faktur pelanggan divalidasi (dan jika jumlah faktur sama dengan jumlah total pesanan tautan)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Klasifikasi sumber pesanan penjualan tautan sebagai tertagih saat faktur pelanggan ditetapkan untuk dibayar (dan jika jumlah faktur sama dengan jumlah total pesanan tautan)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Klasifikasi sumber pesanan penjualan sumber tautan sebagai terkirim saat pengiriman divalidasi (dan jika jumlah yang dikirim oleh semua pengiriman sama dengan yang ada dalam pemesanan yan diperbaharui)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classify linked source sales order as shipped when a shipment is closed (and if the quantity shipped by all shipments is the same as in the order to update)
 # Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Klasifikasi sumber proposal vendor tautan sebagai tertagih ketika faktur vendor divalidasi (dan jika jumlah faktur sama dengan jumlah total proposal tautan)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Klasifikasi sumber pesanan pembelian tautan sebagai tertagih saat faktur vendor divalidasi (dan jika jumlah faktur sama dengan jumlah total pesanan tautan)

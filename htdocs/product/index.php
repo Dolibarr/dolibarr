@@ -34,10 +34,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
 $type = GETPOST("type", 'int');
-if ($type == '' && !$user->rights->produit->lire) {
+if ($type == '' && empty($user->rights->produit->lire)) {
 	$type = '1'; // Force global page on service page only
 }
-if ($type == '' && !$user->rights->service->lire) {
+if ($type == '' && empty($user->rights->service->lire)) {
 	$type = '0'; // Force global page on product page only
 }
 
@@ -274,7 +274,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 	print '</table>';
 	print '</div>';
 }
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 /*
@@ -355,10 +355,10 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
+				print '<td class="nowraponall tdoverflowmax100">';
 				print $product_static->getNomUrl(1, '', 16);
 				print "</td>\n";
-				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($objp->label).'">'.$objp->label.'</td>';
+				print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objp->label).'">'.dol_escape_htmltag($objp->label).'</td>';
 				print "<td>";
 				print dol_print_date($db->jdate($objp->datem), 'day');
 				print "</td>";
@@ -416,7 +416,7 @@ if (!empty($conf->global->MAIN_SHOW_PRODUCT_ACTIVITY_TRIM)) {
 }
 
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array('type' => $type, 'user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardProductsServices', $parameters, $object); // Note that $action and $object may have been modified by hook

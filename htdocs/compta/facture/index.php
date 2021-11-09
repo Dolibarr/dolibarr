@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file		htdocs/compat/facture/index.php
+ *	\file		htdocs/compta/facture/index.php
 *	\ingroup	facture
  *	\brief		Home page of customer invoices area
  */
@@ -73,7 +73,6 @@ if ($tmp) {
 print '</div>';
 
 print '<div class="fichetwothirdright">';
-print '<div class="ficheaddleft">';
 
 $tmp = getCustomerInvoiceLatestEditTable($maxLatestEditCount, $socid);
 if ($tmp) {
@@ -87,7 +86,6 @@ if ($tmp) {
 	print '<br>';
 }
 
-print '</div>';
 print '</div>';
 
 print '</div>';

@@ -37,7 +37,7 @@ if ($massaction == 'presend_attendees') {
 		foreach ($arrayofselected as $toselectid) {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
-				$attendees = $attendee->fetchAll('', '', 0, 0, array('t.fk_actioncomm'=>$objecttmp->id));
+				$attendees = $attendee->fetchAll();
 				if (is_array($attendees) && count($attendees)>0) {
 					foreach ($attendees as $attmail) {
 						if (!empty($attmail->email)) {
@@ -58,7 +58,7 @@ if ($massaction == 'presend_attendees') {
 
 	print dol_get_fiche_head(null, '', '');
 
-	// Cree l'objet formulaire mail
+	// Create form for email
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
 	$formmail->withform = -1;
@@ -68,10 +68,6 @@ if ($massaction == 'presend_attendees') {
 		$formmail->fromid = $user->id;
 	}
 	$formmail->trackid = $trackid;
-	if (!empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2)) { // If bit 2 is set
-		include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$formmail->frommail = dolAddEmailTrackId($formmail->frommail, $trackid);
-	}
 	$formmail->withfrom = 1;
 	$liste = $langs->trans("AllRecipientSelected", count($listofselectedid));
 	$formmail->withtoreadonly = 1;

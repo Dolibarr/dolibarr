@@ -471,7 +471,7 @@ $sql .= ' e.date_creation as date_creation, e.tms as date_update';
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -488,11 +488,17 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_ty
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as ee ON e.rowid = ee.fk_source AND ee.sourcetype = 'reception' AND ee.targettype = 'delivery'";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.rowid = ee.fk_target";
-if (!$user->rights->societe->client->voir && !$socid) {	// Internal user with no permission to see all
+if (empty($user->rights->societe->client->voir) && !$socid) {	// Internal user with no permission to see all
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
+
+// Add joins from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 $sql .= " WHERE e.entity IN (".getEntity('reception').")";
-if (!$user->rights->societe->client->voir && !$socid) {	// Internal user with no permission to see all
+if (empty($user->rights->societe->client->voir) && !$socid) {	// Internal user with no permission to see all
 	$sql .= " AND e.fk_soc = sc.fk_soc";
 	$sql .= " AND sc.fk_user = ".((int) $user->id);
 }
@@ -573,50 +579,52 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
 if ($sall) {
-	$param .= "&amp;sall=".urlencode($sall);
+	$param .= "&sall=".urlencode($sall);
 }
 if ($search_ref_rcp) {
-	$param .= "&amp;search_ref_rcp=".urlencode($search_ref_rcp);
+	$param .= "&search_ref_rcp=".urlencode($search_ref_rcp);
 }
 if ($search_ref_liv) {
-	$param .= "&amp;search_ref_liv=".urlencode($search_ref_liv);
+	$param .= "&search_ref_liv=".urlencode($search_ref_liv);
 }
 if ($search_company) {
-	$param .= "&amp;search_company=".urlencode($search_company);
+	$param .= "&search_company=".urlencode($search_company);
 }
 if ($optioncss != '') {
-	$param .= '&amp;optioncss='.urlencode($optioncss);
+	$param .= '&optioncss='.urlencode($optioncss);
 }
 if ($search_billed != '' && $search_billed >= 0) {
-	$param .= "&amp;search_billed=".urlencode($search_billed);
+	$param .= "&search_billed=".urlencode($search_billed);
 }
 if ($search_town) {
-	$param .= "&amp;search_town=".urlencode($search_town);
+	$param .= "&search_town=".urlencode($search_town);
 }
 if ($search_zip) {
-	$param .= "&amp;search_zip=".urlencode($search_zip);
+	$param .= "&search_zip=".urlencode($search_zip);
 }
 if ($search_state) {
-	$param .= "&amp;search_state=".urlencode($search_state);
+	$param .= "&search_state=".urlencode($search_state);
 }
 if ($search_status != '') {
-	$param .= "&amp;search_status=".urlencode($search_status);
+	$param .= "&search_status=".urlencode($search_status);
 }
 if ($search_country) {
-	$param .= "&amp;search_country=".urlencode($search_country);
+	$param .= "&search_country=".urlencode($search_country);
 }
 if ($search_type_thirdparty) {
-	$param .= "&amp;search_type_thirdparty=".urlencode($search_type_thirdparty);
+	$param .= "&search_type_thirdparty=".urlencode($search_type_thirdparty);
 }
 if ($search_ref_supplier) {
-	$param .= "&amp;search_ref_supplier=".urlencode($search_ref_supplier);
+	$param .= "&search_ref_supplier=".urlencode($search_ref_supplier);
 }
 // Add $param from extra fields
-foreach ($search_array_options as $key => $val) {
-	$crit = $val;
-	$tmpkey = preg_replace('/search_options_/', '', $key);
-	if ($val != '') {
-		$param .= '&search_options_'.$tmpkey.'='.urlencode($val);
+if ($search_array_options) {
+	foreach ($search_array_options as $key => $val) {
+		$crit = $val;
+		$tmpkey = preg_replace('/search_options_/', '', $key);
+		if ($val != '') {
+			$param .= '&search_options_'.$tmpkey.'='.urlencode($val);
+		}
 	}
 }
 
@@ -885,7 +893,7 @@ while ($i < min($num, $limit)) {
 
 	// Ref
 	if (!empty($arrayfields['e.ref']['checked'])) {
-		print "<td>";
+		print '<td class="nowraponall">';
 		print $reception->getNomUrl(1);
 		$filename = dol_sanitizeFileName($reception->ref);
 		$filedir = $conf->reception->dir_output.'/'.dol_sanitizeFileName($reception->ref);
@@ -898,10 +906,10 @@ while ($i < min($num, $limit)) {
 		}
 	}
 
-	// Ref customer
+	// Ref supplier
 	if (!empty($arrayfields['e.ref_supplier']['checked'])) {
-		print "<td>";
-		print $obj->ref_supplier;
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->ref_supplier).'">';
+		print dol_escape_htmltag($obj->ref_supplier);
 		print "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -910,7 +918,7 @@ while ($i < min($num, $limit)) {
 
 	// Third party
 	if (!empty($arrayfields['s.nom']['checked'])) {
-		print '<td>';
+		print '<td class="tdoverflowmax150">';
 		print $companystatic->getNomUrl(1);
 		print '</td>';
 		if (!$i) {
@@ -919,8 +927,8 @@ while ($i < min($num, $limit)) {
 	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) {
-		print '<td class="nocellnopadd">';
-		print $obj->town;
+		print '<td class="nocellnopadd tdoverflowmax200" title="'.dol_escape_htmltag($obj->town).'">';
+		print dol_escape_htmltag($obj->town);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -928,8 +936,8 @@ while ($i < min($num, $limit)) {
 	}
 	// Zip
 	if (!empty($arrayfields['s.zip']['checked'])) {
-		print '<td class="nocellnopadd">';
-		print $obj->zip;
+		print '<td class="nocellnopadd center"">';
+		print dol_escape_htmltag($obj->zip);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -937,7 +945,7 @@ while ($i < min($num, $limit)) {
 	}
 	// State
 	if (!empty($arrayfields['state.nom']['checked'])) {
-		print "<td>".$obj->state_name."</td>\n";
+		print "<td>".dol_escape_htmltag($obj->state_name)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -946,7 +954,7 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['country.code_iso']['checked'])) {
 		print '<td class="center">';
 		$tmparray = getCountry($obj->fk_pays, 'all');
-		print $tmparray['label'];
+		print dol_escape_htmltag($tmparray['label']);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
