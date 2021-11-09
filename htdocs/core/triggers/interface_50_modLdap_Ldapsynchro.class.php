@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
+ * Copyright (C) 2021 	   Antonin MARCHAL      <antonin@letempledujeu.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -224,11 +225,13 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$info = $object->_load_ldap_info();
 					$dn = $object->_load_ldap_dn($info);
 
-					//Account Enabled, will be disabled
-					if (intval($object->statut) === 1) {
-						$info['userAccountControl'] = 546; 			//Account disabled
-					} else {
-						$info['userAccountControl'] = 512; 			//Account enabled
+					if ($ldap->serverType == "activedirectory") {
+						//Account Enabled, will be disabled
+						if (intval($object->statut) === 1) {
+							$info['userAccountControl'] = 546; 			//Account disabled
+						} else {
+							$info['userAccountControl'] = 512; 			//Account enabled
+						}
 					}
 				}
 				$result = $ldap->update($dn, $info, $user, $dn);
