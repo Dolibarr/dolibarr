@@ -427,12 +427,10 @@ ALTER TABLE llx_socpeople DROP COLUMN whatsapp;
 -- ---------------------
 -- Assets
 -- ---------------------
-DROP TABLE llx_asset_type;
-
 ALTER TABLE llx_asset DROP INDEX idx_asset_fk_asset_type;
 ALTER TABLE llx_asset DROP FOREIGN KEY fk_asset_asset_type;
 
-ALTER TABLE llx_asset CHANGE COLUMN amount_ht fk_asset_asset_type double(24,8) NOT NULL;
+ALTER TABLE llx_asset CHANGE COLUMN amount_ht acquisition_value_ht double(24,8) NOT NULL;
 ALTER TABLE llx_asset CHANGE COLUMN amount_vat recovered_vat double(24,8) NOT NULL;
 DELETE FROM llx_asset WHERE fk_asset_type IS NOT NULL;
 ALTER TABLE llx_asset DROP COLUMN fk_asset_type;
@@ -446,6 +444,8 @@ ALTER TABLE llx_asset ADD COLUMN asset_type smallint DEFAULT 0 NOT NULL AFTER ac
 ALTER TABLE llx_asset ADD COLUMN not_depreciated integer(1) DEFAULT 0 AFTER asset_type;
 ALTER TABLE llx_asset ADD COLUMN last_main_doc varchar(255) AFTER fk_user_modif;
 ALTER TABLE llx_asset ADD COLUMN model_pdf varchar(255) AFTER import_key;
+
+DROP TABLE llx_asset_type;
 
 CREATE TABLE llx_asset_accountancy_codes_economic(
 	rowid						integer			AUTO_INCREMENT PRIMARY KEY NOT NULL,
